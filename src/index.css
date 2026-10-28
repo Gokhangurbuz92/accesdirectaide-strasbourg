@@ -1,0 +1,381 @@
+/* Blueprint Trust Design System - Global Styles */
+/* Inter loaded via local woff2 (@font-face below) + preload in index.html */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+}
+
+/* Motion Tokens */
+:root {
+  --ease-apple: cubic-bezier(.2, .8, .2, 1);
+  --duration-micro: 160ms;
+  --duration-layout: 240ms;
+  --duration-page: 360ms;
+}
+
+/* Base Styles */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 174 74% 26%;
+    /* ADA Teal */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 40%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    /* R24: red-700 (#b91c1c) — the red-500 used before gave white text 3.59:1 on « Supprimer » buttons (WCAG 1.4.3 needs 4.5:1) */
+    --destructive: 0 73.7% 41.8%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+
+    /* Chart Palette — Institutional triad */
+    --chart-1: 174 74% 26%;
+    /* ADA Teal */
+    --chart-2: 161 94% 30%;
+    /* Emerald-600 */
+    --chart-3: 38 92% 50%;
+    /* Amber-500 */
+    --chart-4: 199 89% 48%;
+    /* Sky-500 */
+    --chart-5: 271 81% 56%;
+    /* Violet-500 */
+
+    /* Brand Semantic Tokens */
+    --color-brand-primary: 79 70 229;
+    /* Indigo-600 #4F46E5 */
+    --color-brand-secondary: 5 150 105;
+    /* Emerald-600 #059669 */
+    --color-brand-highlight: 245 158 11;
+    /* Amber-500 #F59E0B */
+    --color-brand-background: 248 250 252;
+    /* Slate-50 #F8FAFC */
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* iOS Safe Area — notch / Dynamic Island / home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* iOS Safari: prevent auto-zoom on input focus (requires >= 16px) */
+@supports (-webkit-touch-callout: none) {
+
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Print Styles */
+@media print {
+
+  /* Hide navigation, footer, and interactive elements */
+  header,
+  footer,
+  nav,
+  .no-print,
+  button:not(.print-keep),
+  [role="banner"],
+  [role="navigation"],
+  [role="contentinfo"] {
+    display: none !important;
+  }
+
+  /* Basic page layout for print */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* Page breaks */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p, li, blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Remove shadows and backgrounds for cleaner print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Improve contrast */
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+
+  /* Show URLs after links */
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+    color: #666;
+  }
+
+  /* Remove link underlines for internal links */
+  a[href^="/"]:after,
+  a[href^="#"]:after {
+    content: "";
+  }
+
+  /* Optimize tables and cards for print */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  /* Cards should have visible borders in print */
+  .card,
+  [class*="card"] {
+    border: 1px solid #ddd !important;
+    background: white !important;
+  }
+
+  /* Margins for better print layout */
+  @page {
+    margin: 2cm;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .avoid-page-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* ============================================================
+   Phase 3.3 RGAA 4.1.2 — Focus Visible (WCAG 2.4.7)
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 4.9%));
+  outline-offset: 2px;
+}
+
+/* Remove default outline when using mouse (but keep for keyboard) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================================
+   Phase 3.4 RGAA — Accessibility Modes
+   ============================================================ */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --muted-foreground: 0 0% 20%;
+  --border: 0 0% 0%;
+}
+
+.high-contrast body,
+.high-contrast #root {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+.high-contrast a {
+  color: #00008b !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast button,
+.high-contrast [role="button"] {
+  border: 2px solid #000 !important;
+}
+
+/* Dark Mode */
+.dark-mode {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+}
+
+.dark-mode body,
+.dark-mode #root {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.dark-mode .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark-mode .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+.dark-mode .text-slate-900 {
+  color: #e2e8f0 !important;
+}
+
+.dark-mode .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+.dark-mode .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+/* Large Line Height */
+.large-line-height body,
+.large-line-height #root {
+  line-height: 2 !important;
+}
+
+.large-line-height p,
+.large-line-height li,
+.large-line-height span,
+.large-line-height div {
+  line-height: 2 !important;
+}
+
+/* Simplified Mode */
+.simplified-mode aside,
+.simplified-mode .hidden-in-simplified {
+  display: none !important;
+}
+
+.simplified-mode body {
+  font-family: 'Arial', sans-serif !important;
+}
+
+/* Screen reader only (utility) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+/* DTA S2A: the account-free action plan prints on its own (window.print from the plan section) */
+@media print {
+  body * { visibility: hidden !important; }
+  #action-plan, #action-plan * { visibility: visible !important; }
+  #action-plan { position: absolute; left: 0; top: 0; width: 100%; border: 0; }
+  #action-plan .print-hide { display: none !important; }
+}
+
+/* K0 / C04: "Réduire les animations" (settings screen) — the class existed but no rule used it */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

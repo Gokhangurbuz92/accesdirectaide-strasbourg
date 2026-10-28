@@ -1,0 +1,45 @@
+{
+  "schema": "ADA_WS2_SOURCE_MANIFEST_V1",
+  "launchReady": false,
+  "policy": {
+    "missingProvenance": "FAIL_CLOSED_NOT_LAUNCH_ELIGIBLE",
+    "sourceFabricationAllowed": false,
+    "staleFreshness": "FAIL_CLOSED_NOT_LAUNCH_ELIGIBLE",
+    "unknownFreshness": "FAIL_CLOSED_NOT_LAUNCH_ELIGIBLE",
+    "verificationFabricationAllowed": false
+  },
+  "datasets": [
+    {
+      "entityType": "Aide",
+      "freshnessStatus": "UNKNOWN",
+      "launchEligible": false,
+      "path": "data/aides-alsace.csv",
+      "recordCount": 15,
+      "verificationStatus": "UNVERIFIED"
+    },
+    {
+      "entityType": "Structure",
+      "freshnessStatus": "UNKNOWN",
+      "launchEligible": false,
+      "path": "data/structures-alsace.csv",
+      "recordCount": 24,
+      "verificationStatus": "UNVERIFIED"
+    },
+    {
+      "entityType": "Demarche",
+      "freshnessStatus": "UNKNOWN",
+      "launchEligible": false,
+      "path": "data/demarches-alsace.csv",
+      "recordCount": 10,
+      "verificationStatus": "UNVERIFIED"
+    },
+    {
+      "entityType": "ServicePublicSnapshot",
+      "freshnessStatus": "UNKNOWN",
+      "launchEligible": false,
+      "path": "data/strasbourg/service-public-demarches.snapshot.json",
+      "recordCount": 25,
+      "verificationStatus": "UNAVAILABLE"
+    }
+  ]
+}

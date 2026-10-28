@@ -1,0 +1,11 @@
+# .gitleaksignore
+# Test fixture dummy encryption keys — NOT real secrets.
+# These are used exclusively in unit tests for cryptography validation.
+
+# crypto.test.ts — dummy AES-256 key (all zeros pattern)
+66228ef5c011f9cf2a87254157d15c9b9c581e20:api/lib/messaging-crypto.test.js:generic-api-key:7
+66228ef5c011f9cf2a87254157d15c9b9c581e20:api/lib/crypto.test.ts:generic-api-key:7
+162d48fe4204b39488405c6305d119f165df0a5a:api/lib/crypto.test.ts:generic-api-key:7
+
+# vault-crypto.test.js — dummy test secret string
+162d48fe4204b39488405c6305d119f165df0a5a:tests/unit/vault-crypto.test.js:generic-api-key:38

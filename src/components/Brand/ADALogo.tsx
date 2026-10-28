@@ -1,0 +1,35 @@
+import React from 'react';
+
+interface ADALogoProps {
+    className?: string;
+    size?: number;
+    ariaLabel?: string;
+}
+
+/**
+ * Composant logo officiel ADA — SVG inline currentColor.
+ * Usage : <ADALogo size={36} className="text-white" />
+ */
+const ADALogo: React.FC<ADALogoProps> = ({
+    className,
+    size = 32,
+    ariaLabel = 'Logo ADA',
+}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1024 1024"
+        role="img"
+        aria-label={ariaLabel}
+        width={size}
+        height={size}
+        className={className}
+        focusable="false"
+    >
+        <path
+            fill="currentColor"
+            d="M152 152H352V212H212V352H152ZM412 152H612V352H552V212H472V352H412ZM672 152H872V352H812V212H672ZM152 412H352V612H292V562H212V612H152ZM212 472V502H292V472ZM412 412H552L612 472V552L552 612H412ZM472 472V552H532L552 532V492L532 472ZM672 412H872V612H812V562H732V612H672ZM732 472V502H812V472ZM152 672H212V812H352V872H152ZM412 672H472V812H552V672H612V872H412ZM812 672H872V872H672V812H812Z"
+        />
+    </svg>
+);
+
+export default ADALogo;

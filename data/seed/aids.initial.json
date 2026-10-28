@@ -1,0 +1,4422 @@
+[
+  {
+    "title": "Aide Nationale 1 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 2 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 3 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 4 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 5 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 6 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 7 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 8 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 9 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 10 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 11 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 12 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 13 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 14 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 15 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 16 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 17 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 18 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 19 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 20 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 21 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 22 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 23 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 24 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 25 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 26 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 27 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 28 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 29 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 30 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 31 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 32 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 33 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 34 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 35 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 36 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 37 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 38 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 39 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 40 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 41 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 42 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 43 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 44 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 45 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 46 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 47 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 48 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 49 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 50 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 51 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 52 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 53 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 54 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 55 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 56 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 57 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 58 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 59 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 60 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 61 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 62 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 63 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 64 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 65 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 66 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 67 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 68 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 69 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 70 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 71 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 72 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 73 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.538Z"
+  },
+  {
+    "title": "Aide Nationale 74 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 75 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 76 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 77 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 78 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 79 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 80 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 81 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 82 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 83 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 84 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 85 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 86 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 87 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 88 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 89 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 90 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 91 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 92 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 93 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 94 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 95 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 96 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 97 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 98 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 99 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 100 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 101 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 102 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 103 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 104 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 105 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 106 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 107 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 108 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de etudes-formation.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 109 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de famille.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 110 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de handicap.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 111 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de budget-impots.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 112 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de mobilite-transport.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 113 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de justice.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 114 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de immigration-integration.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 115 - CAF",
+    "summary": "Une aide de niveau national gérée par CAF pour soutenir les citoyens dans leurs démarches de numerique.",
+    "providerName": "CAF",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 116 - État",
+    "summary": "Une aide de niveau national gérée par État pour soutenir les citoyens dans leurs démarches de retraite.",
+    "providerName": "État",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 117 - Pôle Emploi",
+    "summary": "Une aide de niveau national gérée par Pôle Emploi pour soutenir les citoyens dans leurs démarches de energie.",
+    "providerName": "Pôle Emploi",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 118 - Assurance Retraite",
+    "summary": "Une aide de niveau national gérée par Assurance Retraite pour soutenir les citoyens dans leurs démarches de logement.",
+    "providerName": "Assurance Retraite",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 119 - Ameli",
+    "summary": "Une aide de niveau national gérée par Ameli pour soutenir les citoyens dans leurs démarches de sante.",
+    "providerName": "Ameli",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Nationale 120 - CNOUS",
+    "summary": "Une aide de niveau national gérée par CNOUS pour soutenir les citoyens dans leurs démarches de emploi.",
+    "providerName": "CNOUS",
+    "providerType": "NATIONAL_BODY",
+    "geoLevel": "NATIONAL",
+    "geoCodes": [
+      "FR"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.service-public.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 1 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour emploi destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 2 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour etudes-formation destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 3 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour famille destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 4 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour handicap destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 5 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour budget-impots destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 6 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour mobilite-transport destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 7 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour justice destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 8 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour immigration-integration destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 9 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour numerique destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 10 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour retraite destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 11 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour energie destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 12 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour logement destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 13 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour sante destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 14 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour emploi destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 15 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour etudes-formation destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 16 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour famille destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 17 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour handicap destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 18 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour budget-impots destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 19 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour mobilite-transport destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 20 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour justice destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 21 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour immigration-integration destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 22 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour numerique destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 23 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour retraite destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 24 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour energie destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 25 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour logement destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 26 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour sante destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 27 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour emploi destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 28 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour etudes-formation destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 29 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour famille destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 30 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour handicap destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 31 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour budget-impots destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 32 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour mobilite-transport destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 33 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour justice destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 34 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour immigration-integration destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 35 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour numerique destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 36 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour retraite destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 37 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour energie destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 38 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour logement destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 39 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour sante destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 40 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour emploi destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 41 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour etudes-formation destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 42 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour famille destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 43 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour handicap destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 44 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour budget-impots destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 45 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour mobilite-transport destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 46 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour justice destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 47 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour immigration-integration destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 48 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour numerique destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 49 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour retraite destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 50 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour energie destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 51 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour logement destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 52 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour sante destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 53 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour emploi destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 54 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour etudes-formation destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 55 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour famille destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 56 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour handicap destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 57 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour budget-impots destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 58 - Région Grand Est",
+    "summary": "Soutien de la Région Grand Est pour mobilite-transport destiné aux habitants du territoire.",
+    "providerName": "Région Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 59 - SNCF / Grand Est",
+    "summary": "Soutien de la Région Grand Est pour justice destiné aux habitants du territoire.",
+    "providerName": "SNCF / Grand Est",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Régionale Grand Est 60 - ARTE",
+    "summary": "Soutien de la Région Grand Est pour immigration-integration destiné aux habitants du territoire.",
+    "providerName": "ARTE",
+    "providerType": "REGION",
+    "geoLevel": "REGION",
+    "geoCodes": [
+      "FR-GES"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.grandest.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 1 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à famille.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 2 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à handicap.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 3 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à budget-impots.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 4 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à mobilite-transport.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 5 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à justice.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 6 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à immigration-integration.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 7 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à numerique.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 8 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à retraite.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 9 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à energie.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 10 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à logement.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 11 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à sante.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 12 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à emploi.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 13 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à etudes-formation.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 14 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à famille.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 15 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à handicap.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 16 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à budget-impots.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 17 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à mobilite-transport.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 18 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à justice.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 19 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à immigration-integration.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 20 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à numerique.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 21 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à retraite.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 22 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à energie.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 23 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à logement.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 24 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à sante.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 25 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à emploi.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 26 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à etudes-formation.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 27 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à famille.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 28 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à handicap.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 29 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à budget-impots.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 30 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à mobilite-transport.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 31 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à justice.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 32 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à immigration-integration.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 33 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à numerique.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 34 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à retraite.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 35 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à energie.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 36 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à logement.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 37 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à sante.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 38 - Département du Bas-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à emploi.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 39 - Département du Haut-Rhin",
+    "summary": "Dispositif du Bas-Rhin pour aider à etudes-formation.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Bas-Rhin 40 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Bas-Rhin pour aider à famille.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-67"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.bas-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 1 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à budget-impots.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 2 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à mobilite-transport.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 3 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à justice.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 4 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à immigration-integration.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 5 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à numerique.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 6 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à retraite.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 7 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à energie.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 8 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à logement.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 9 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à sante.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 10 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à emploi.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 11 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à etudes-formation.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 12 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à famille.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 13 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à handicap.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 14 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à budget-impots.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 15 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à mobilite-transport.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 16 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à justice.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 17 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à immigration-integration.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 18 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à numerique.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 19 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à retraite.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 20 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à energie.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 21 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à logement.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 22 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à sante.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 23 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à emploi.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 24 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à etudes-formation.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 25 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à famille.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 26 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à handicap.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 27 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à budget-impots.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 28 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à mobilite-transport.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "mobilite-transport",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 29 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à justice.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "justice",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 30 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à immigration-integration.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "immigration-integration",
+    "situations": [
+      "j-ai-besoin-daide-numerique"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 31 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à numerique.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "numerique",
+    "situations": [
+      "je-cherche-un-logement"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 32 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à retraite.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "retraite",
+    "situations": [
+      "je-suis-au-chomage"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 33 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à energie.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "energie",
+    "situations": [
+      "je-suis-etudiant"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 34 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à logement.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "logement",
+    "situations": [
+      "je-suis-parent"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 35 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à sante.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "sante",
+    "situations": [
+      "je-suis-en-situation-de-handicap"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 36 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à emploi.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "emploi",
+    "situations": [
+      "je-suis-etranger"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 37 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à etudes-formation.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "etudes-formation",
+    "situations": [
+      "je-suis-senior"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 38 - Département du Bas-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à famille.",
+    "providerName": "Département du Bas-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "famille",
+    "situations": [
+      "j-ai-des-difficultes-financieres"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 39 - Département du Haut-Rhin",
+    "summary": "Dispositif du Haut-Rhin pour aider à handicap.",
+    "providerName": "Département du Haut-Rhin",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "handicap",
+    "situations": [
+      "je-cherche-des-soins"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  },
+  {
+    "title": "Aide Départementale Haut-Rhin 40 - Collectivité européenne d'Alsace (CeA)",
+    "summary": "Dispositif du Haut-Rhin pour aider à budget-impots.",
+    "providerName": "Collectivité européenne d'Alsace (CeA)",
+    "providerType": "DEPARTMENT",
+    "geoLevel": "DEPARTMENT",
+    "geoCodes": [
+      "FR-68"
+    ],
+    "statut": "publie",
+    "categoryId": "budget-impots",
+    "situations": [
+      "je-cherche-une-formation"
+    ],
+    "officialUrl": "https://www.haut-rhin.fr",
+    "published_at": "2026-01-22T17:05:54.539Z"
+  }
+]

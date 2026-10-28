@@ -1,0 +1,376 @@
+[
+    {
+        "nom": "Les Restos du Cœur du Bas-Rhin",
+        "type_structure": "Association",
+        "description_courte": "Association humanitaire gérant 16 centres pour aide alimentaire, insertion, aide juridique, vestiaires.",
+        "adresse": "8 rue de l’Ardèche",
+        "code_postal": "67100",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "03 88 81 12 23",
+        "services": [
+            "Aide alimentaire",
+            "Insertion",
+            "Aide juridique",
+            "Vestiaire",
+            "Ateliers français"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Familles",
+            "Sans abri"
+        ]
+    },
+    {
+        "nom": "Secours Populaire Français – Fédération du Bas-Rhin",
+        "type_structure": "Association",
+        "description_courte": "Association de solidarité offrant aide alimentaire, vestimentaire et soutien matériel. Espaces Solidarité locaux.",
+        "adresse": "5 rue Jean-Henri Lambert",
+        "code_postal": "67100",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "03 88 36 28 91",
+        "services": [
+            "Aide alimentaire",
+            "Libre-service vêtements",
+            "Aide aux étudiants"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Familles",
+            "Etudiants",
+            "Personnes isolées"
+        ]
+    },
+    {
+        "nom": "Caritas Alsace – Réseau Secours Catholique (Délégation Bas-Rhin)",
+        "type_structure": "Association",
+        "description_courte": "Association caritative proposant aide alimentaire, vestimentaire, domiciliation et accompagnement social.",
+        "adresse": "80 avenue du Neuhof",
+        "code_postal": "67100",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "email": "acsalsace@gmail.com",
+        "services": [
+            "Aide alimentaire",
+            "Aide vestimentaire",
+            "Domiciliation",
+            "Accompagnement administratif",
+            "Microcrédit"
+        ],
+        "publics_accueillis": [
+            "Familles",
+            "Personnes isolées"
+        ]
+    },
+    {
+        "nom": "Croix-Rouge française – Unité locale de Strasbourg",
+        "type_structure": "Association",
+        "description_courte": "Association humanitaire et secourisme. Gère vestiaire, maraudes Samu social, cours de français.",
+        "adresse": "30 rue Schweighaeuser",
+        "code_postal": "67000",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "03 88 61 84 57",
+        "services": [
+            "Vestiaire",
+            "Maraudes",
+            "Cours de français",
+            "Secourisme"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Migrants",
+            "Sans abri"
+        ]
+    },
+    {
+        "nom": "Banque Alimentaire du Bas-Rhin (BA67)",
+        "type_structure": "Association",
+        "description_courte": "Collecte et redistribue des denrées aux associations partenaires (ne distribue pas directement au public).",
+        "adresse": "1 rue de l’Industrie",
+        "code_postal": "67300",
+        "ville": "Schiltigheim",
+        "departement": "67",
+        "telephone": "03 88 83 12 13",
+        "services": [
+            "Approvisionnement aide alimentaire"
+        ],
+        "publics_accueillis": [
+            "Associations"
+        ]
+    },
+    {
+        "nom": "SIAO du Bas-Rhin / 115",
+        "type_structure": "Service Public",
+        "description_courte": "Gestion du numéro d'urgence 115 pour hébergement d'urgence sans abri.",
+        "adresse": "",
+        "code_postal": "67000",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "115",
+        "services": [
+            "Hébergement d'urgence",
+            "Orientation sociale"
+        ],
+        "publics_accueillis": [
+            "Sans abri",
+            "Personnes en détresse sociale"
+        ]
+    },
+    {
+        "nom": "CCAS de Strasbourg",
+        "type_structure": "CCAS",
+        "description_courte": "Centre Communal d'Action Sociale : aides légales, domiciliation, aide financière.",
+        "adresse": "1 parc de l’Étoile",
+        "code_postal": "67076",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "services": [
+            "Aide sociale légale",
+            "Domiciliation",
+            "Aides facultatives"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Strasbourgeois"
+        ]
+    },
+    {
+        "nom": "Maison Départementale des Personnes Handicapées (MDPH) - Site Strasbourg",
+        "type_structure": "MDPH",
+        "description_courte": "Guichet unique pour les droits des personnes handicapées (AAH, PCH, RQTH).",
+        "adresse": "6A rue du Verdon",
+        "code_postal": "67100",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "03 69 49 39 00",
+        "email": "accueil.mdph@alsace.eu",
+        "services": [
+            "Droits handicap",
+            "RQTH",
+            "AAH",
+            "PCH"
+        ],
+        "publics_accueillis": [
+            "Personnes handicapées",
+            "Proches aidants"
+        ]
+    },
+    {
+        "nom": "CAF du Bas-Rhin",
+        "type_structure": "CAF",
+        "description_courte": "Caisse d'Allocations Familiales : RSA, APL, Prime activité, action sociale.",
+        "adresse": "22 route de l’Hôpital",
+        "code_postal": "67100",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "3230",
+        "services": [
+            "Prestations familiales",
+            "RSA",
+            "Aides au logement"
+        ],
+        "publics_accueillis": [
+            "Familles",
+            "Allocataires"
+        ]
+    },
+    {
+        "nom": "CPAM du Bas-Rhin",
+        "type_structure": "CPAM",
+        "description_courte": "Assurance Maladie : remboursements soins, CSS (ex-CMU), indemnités journalières.",
+        "adresse": "16 rue de Lausanne",
+        "code_postal": "67000",
+        "ville": "Strasbourg",
+        "departement": "67",
+        "telephone": "3646",
+        "services": [
+            "Assurance maladie",
+            "CSS",
+            "AME"
+        ],
+        "publics_accueillis": [
+            "Assurés sociaux"
+        ]
+    },
+    {
+        "nom": "Les Restos du Cœur du Haut-Rhin",
+        "type_structure": "Association",
+        "description_courte": "Association départementale gérant 18 centres. Aide alimentaire, insertion, Resto Bébés.",
+        "adresse": "7 rue des Perdrix",
+        "code_postal": "68110",
+        "ville": "Illzach",
+        "departement": "68",
+        "telephone": "03 89 53 85 25",
+        "services": [
+            "Aide alimentaire",
+            "Repas chauds",
+            "Accompagnement juridique"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Familles"
+        ]
+    },
+    {
+        "nom": "Secours Populaire Français – Fédération du Haut-Rhin",
+        "type_structure": "Association",
+        "description_courte": "Solidarité et aide alimentaire, vestiaire, accès vacances.",
+        "adresse": "25 rue des Vosges",
+        "code_postal": "68000",
+        "ville": "Colmar",
+        "departement": "68",
+        "telephone": "03 89 23 97 94",
+        "services": [
+            "Aide alimentaire",
+            "Vestiaire",
+            "Aide vacances"
+        ],
+        "publics_accueillis": [
+            "Tout public",
+            "Etudiants"
+        ]
+    },
+    {
+        "nom": "Caritas Alsace – Délégation du Haut-Rhin",
+        "type_structure": "Association",
+        "description_courte": "Coordination des équipes locales pour aide alimentaire, domiciliation, accompagnement.",
+        "adresse": "17 rue de la Cigale",
+        "code_postal": "68200",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "services": [
+            "Aide alimentaire",
+            "Domiciliation",
+            "Accompagnement social"
+        ],
+        "publics_accueillis": [
+            "Personnes isolées",
+            "Familles"
+        ]
+    },
+    {
+        "nom": "Croix-Rouge française – Unité Locale de Mulhouse",
+        "type_structure": "Association",
+        "description_courte": "Épicerie sociale, boutique vêtements, maraudes Samu social, secourisme.",
+        "adresse": "83 rue Koechlin",
+        "code_postal": "68200",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "telephone": "03 89 46 79 30",
+        "services": [
+            "Epicerie sociale",
+            "Vêtements",
+            "Maraudes",
+            "Secourisme"
+        ],
+        "publics_accueillis": [
+            "Tout public"
+        ]
+    },
+    {
+        "nom": "SIAO du Haut-Rhin / ACCES 68",
+        "type_structure": "Service Public",
+        "description_courte": "Gestion du 115 et coordination hébergement urgence Haut-Rhin.",
+        "adresse": "9 rue des Chaudronniers",
+        "code_postal": "68100",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "telephone": "03 89 33 38 00",
+        "services": [
+            "Hébergement d'urgence",
+            "Orientation SIAO"
+        ],
+        "publics_accueillis": [
+            "Sans abri"
+        ]
+    },
+    {
+        "nom": "MDPH Alsace - Site Colmar",
+        "type_structure": "MDPH",
+        "description_courte": "Guichet unique handicap pour le Haut-Rhin.",
+        "adresse": "125B av d’Alsace",
+        "code_postal": "68000",
+        "ville": "Colmar",
+        "departement": "68",
+        "telephone": "03 89 30 68 10",
+        "email": "mdph@haut-rhin.fr",
+        "services": [
+            "Droits handicap",
+            "RQTH",
+            "AAH",
+            "PCH"
+        ],
+        "publics_accueillis": [
+            "Personnes handicapées"
+        ]
+    },
+    {
+        "nom": "CAF du Haut-Rhin",
+        "type_structure": "CAF",
+        "description_courte": "Siège départemental allocations familiales.",
+        "adresse": "26 av Robert-Schuman",
+        "code_postal": "68100",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "telephone": "3230",
+        "services": [
+            "Prestations familiales",
+            "RSA",
+            "Action sociale"
+        ],
+        "publics_accueillis": [
+            "Allocataires"
+        ]
+    },
+    {
+        "nom": "CPAM du Haut-Rhin",
+        "type_structure": "CPAM",
+        "description_courte": "Siège départemental assurance maladie.",
+        "adresse": "26 av Robert-Schuman",
+        "code_postal": "68050",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "telephone": "3646",
+        "services": [
+            "Assurance maladie"
+        ],
+        "publics_accueillis": [
+            "Assurés sociaux"
+        ]
+    },
+    {
+        "nom": "Cap Emploi 67-68 - Site Mulhouse",
+        "type_structure": "Service Public",
+        "description_courte": "Organisme d’insertion professionnelle des personnes handicapées.",
+        "adresse": "13 rue de Pfastatt",
+        "code_postal": "68200",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "services": [
+            "Insertion professionnelle handicap",
+            "Maintien dans l'emploi"
+        ],
+        "publics_accueillis": [
+            "Travailleurs handicapés",
+            "Employeurs"
+        ]
+    },
+    {
+        "nom": "Mission Locale Mulhouse Sud-Alsace (Sémaphore)",
+        "type_structure": "Mission Locale",
+        "description_courte": "Accompagnement 16-25 ans : emploi, formation, logement, santé.",
+        "adresse": "32 av Kennedy",
+        "code_postal": "68100",
+        "ville": "Mulhouse",
+        "departement": "68",
+        "services": [
+            "Insertion jeunes 16-25 ans",
+            "Contrat Engagement Jeune"
+        ],
+        "publics_accueillis": [
+            "Jeunes 16-25 ans"
+        ]
+    }
+]

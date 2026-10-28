@@ -1,0 +1,262 @@
+{
+ "version": "retrieval-eval.v1",
+ "status": "PROPOSED_UNREVIEWED",
+ "note": "Synthetic evaluation set for the aide retrieval (PKG-11 / D16). The documents are simplified SYNTHETIC descriptions written for measurement, not official content, never published, never verified. Relevance judgments were proposed by engineering; their human review is the D18 gate.",
+ "documents": [
+  {
+   "key": "rsa",
+   "titre": "Revenu de solidarité active (RSA)",
+   "cest_quoi": "Un revenu minimum pour les personnes qui n'ont pas ou peu de ressources.",
+   "pour_qui": "Personnes de 25 ans ou plus, ou jeunes parents, avec de faibles ressources.",
+   "ce_que_ca_aide": "Assurer un minimum de ressources et un accompagnement vers l'emploi.",
+   "mots_cles": [
+    "revenu minimum",
+    "sans ressources",
+    "minima sociaux"
+   ],
+   "categorie": "budget"
+  },
+  {
+   "key": "apl",
+   "titre": "Aide personnalisée au logement (APL)",
+   "cest_quoi": "Une aide mensuelle pour réduire le loyer de votre logement.",
+   "pour_qui": "Locataires ou colocataires dont les ressources sont modestes.",
+   "ce_que_ca_aide": "Payer une partie du loyer, versée au bailleur ou à vous.",
+   "mots_cles": [
+    "loyer",
+    "logement",
+    "locataire"
+   ],
+   "categorie": "logement"
+  },
+  {
+   "key": "prime-activite",
+   "titre": "Prime d'activité",
+   "cest_quoi": "Un complément de revenus pour les travailleurs aux revenus modestes.",
+   "pour_qui": "Salariés et travailleurs indépendants de 18 ans ou plus aux revenus modestes.",
+   "ce_que_ca_aide": "Compléter les revenus du travail chaque mois.",
+   "mots_cles": [
+    "salaire",
+    "travail",
+    "complément de revenus"
+   ],
+   "categorie": "emploi"
+  },
+  {
+   "key": "aah",
+   "titre": "Allocation aux adultes handicapés (AAH)",
+   "cest_quoi": "Un revenu pour les personnes en situation de handicap.",
+   "pour_qui": "Adultes dont le taux d'incapacité est reconnu par la MDPH.",
+   "ce_que_ca_aide": "Garantir un minimum de ressources aux personnes handicapées.",
+   "mots_cles": [
+    "handicap",
+    "MDPH",
+    "incapacité"
+   ],
+   "categorie": "handicap"
+  },
+  {
+   "key": "aspa",
+   "titre": "Allocation de solidarité aux personnes âgées (ASPA)",
+   "cest_quoi": "Le minimum vieillesse pour les retraités aux faibles ressources.",
+   "pour_qui": "Personnes de 65 ans ou plus dont la pension de retraite est faible.",
+   "ce_que_ca_aide": "Compléter une petite retraite.",
+   "mots_cles": [
+    "retraite",
+    "minimum vieillesse",
+    "personne âgée"
+   ],
+   "categorie": "vieillissement"
+  },
+  {
+   "key": "css",
+   "titre": "Complémentaire santé solidaire",
+   "cest_quoi": "Une complémentaire santé gratuite ou à moins d'un euro par jour.",
+   "pour_qui": "Personnes aux ressources modestes affiliées à l'Assurance maladie.",
+   "ce_que_ca_aide": "Prendre en charge les frais de santé restant à payer.",
+   "mots_cles": [
+    "mutuelle",
+    "santé",
+    "frais médicaux"
+   ],
+   "categorie": "sante"
+  },
+  {
+   "key": "cheque-energie",
+   "titre": "Chèque énergie",
+   "cest_quoi": "Une aide pour payer les factures d'énergie du logement.",
+   "pour_qui": "Ménages aux revenus modestes.",
+   "ce_que_ca_aide": "Payer une facture d'électricité, de gaz, de fioul ou de bois.",
+   "mots_cles": [
+    "électricité",
+    "gaz",
+    "facture d'énergie"
+   ],
+   "categorie": "budget"
+  },
+  {
+   "key": "fsl",
+   "titre": "Fonds de solidarité pour le logement (FSL)",
+   "cest_quoi": "Une aide du département pour accéder à un logement ou s'y maintenir.",
+   "pour_qui": "Personnes en difficulté pour payer le loyer, le dépôt de garantie ou les charges.",
+   "ce_que_ca_aide": "Régler des impayés de loyer ou financer l'entrée dans un logement.",
+   "mots_cles": [
+    "impayé",
+    "dépôt de garantie",
+    "maintien dans le logement"
+   ],
+   "categorie": "logement"
+  },
+  {
+   "key": "bourse-lycee",
+   "titre": "Bourse de lycée",
+   "cest_quoi": "Une aide pour les frais de scolarité des lycéens.",
+   "pour_qui": "Familles aux ressources modestes dont un enfant est au lycée.",
+   "ce_que_ca_aide": "Aider à payer la scolarité au lycée.",
+   "mots_cles": [
+    "lycée",
+    "scolarité",
+    "élève"
+   ],
+   "categorie": "famille"
+  },
+  {
+   "key": "cmg",
+   "titre": "Complément de libre choix du mode de garde",
+   "cest_quoi": "Une aide pour faire garder un jeune enfant.",
+   "pour_qui": "Parents qui emploient une assistante maternelle ou une garde à domicile.",
+   "ce_que_ca_aide": "Prendre en charge une partie du coût de la garde.",
+   "mots_cles": [
+    "garde d'enfant",
+    "assistante maternelle",
+    "crèche"
+   ],
+   "categorie": "famille"
+  },
+  {
+   "key": "ars",
+   "titre": "Allocation de rentrée scolaire (ARS)",
+   "cest_quoi": "Une aide pour les dépenses de la rentrée scolaire.",
+   "pour_qui": "Familles aux ressources modestes avec des enfants de 6 à 18 ans scolarisés.",
+   "ce_que_ca_aide": "Payer fournitures et vêtements de la rentrée.",
+   "mots_cles": [
+    "rentrée",
+    "fournitures",
+    "école"
+   ],
+   "categorie": "famille"
+  },
+  {
+   "key": "aide-juridictionnelle",
+   "titre": "Aide juridictionnelle",
+   "cest_quoi": "Une prise en charge des frais de justice et d'avocat.",
+   "pour_qui": "Personnes aux ressources modestes qui ont besoin d'un avocat.",
+   "ce_que_ca_aide": "Payer tout ou partie des honoraires d'avocat et des frais de procédure.",
+   "mots_cles": [
+    "avocat",
+    "justice",
+    "procès"
+   ],
+   "categorie": "justice"
+  }
+ ],
+ "queries": [
+  {
+   "q": "aide pour payer mon loyer",
+   "relevant": [
+    "apl",
+    "fsl"
+   ]
+  },
+  {
+   "q": "je n'ai aucun revenu",
+   "relevant": [
+    "rsa"
+   ]
+  },
+  {
+   "q": "complément de salaire pour un petit salaire",
+   "relevant": [
+    "prime-activite"
+   ]
+  },
+  {
+   "q": "allocation handicap",
+   "relevant": [
+    "aah"
+   ]
+  },
+  {
+   "q": "minimum vieillesse",
+   "relevant": [
+    "aspa"
+   ]
+  },
+  {
+   "q": "mutuelle gratuite",
+   "relevant": [
+    "css"
+   ]
+  },
+  {
+   "q": "payer ma facture d'électricité",
+   "relevant": [
+    "cheque-energie"
+   ]
+  },
+  {
+   "q": "impayé de loyer",
+   "relevant": [
+    "fsl"
+   ]
+  },
+  {
+   "q": "bourse lycée",
+   "relevant": [
+    "bourse-lycee"
+   ]
+  },
+  {
+   "q": "faire garder mon enfant",
+   "relevant": [
+    "cmg"
+   ]
+  },
+  {
+   "q": "fournitures de la rentrée",
+   "relevant": [
+    "ars"
+   ]
+  },
+  {
+   "q": "payer un avocat",
+   "relevant": [
+    "aide-juridictionnelle"
+   ]
+  },
+  {
+   "q": "RSA",
+   "relevant": [
+    "rsa"
+   ]
+  },
+  {
+   "q": "APL",
+   "relevant": [
+    "apl"
+   ]
+  },
+  {
+   "q": "petite retraite",
+   "relevant": [
+    "aspa"
+   ]
+  },
+  {
+   "q": "frais de santé",
+   "relevant": [
+    "css"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Halo/Soleil (accent highlight) -->
+  <circle cx="32" cy="32" r="28" fill="#F6B445" opacity="0.15"/>
+  <circle cx="32" cy="32" r="20" fill="#F6B445" opacity="0.25"/>
+  
+  <!-- Pin principal (primary) -->
+  <path d="M32 12 C26 12 21 17 21 23 C21 30 32 42 32 42 C32 42 43 30 43 23 C43 17 38 12 32 12 Z" fill="#002D5A" stroke="#002D5A" stroke-width="1.5" stroke-linejoin="round"/>
+  
+  <!-- Point central (highlight) -->
+  <circle cx="32" cy="23" r="4" fill="#F6B445"/>
+</svg>

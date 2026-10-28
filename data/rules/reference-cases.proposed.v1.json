@@ -1,0 +1,445 @@
+{
+  "schema": "ada.rights-reference-cases.proposed.v1",
+  "builtAt": "2026-10-21",
+  "statement": "Reference cases PROPOSED by ADA engineering from the cited text of data/rules/rights-rules.v1.json, for an expert to accept, correct or reject. They are NOT validated: a right's register referenceCases[] only receives cases an expert has accepted (with name, role and date). Expected values are written from the source text, independently of api/lib/rulesDraft.js; the test that compares them only checks consistency.",
+  "cases": [
+    {
+      "id": "rsa-age-25",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          25,
+          25
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F19778 « au moins 25 ans » : 25 ans inclus",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-age-24",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          24,
+          24
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "F19778/F286 : moins de 25 ans, seule la voie RSA jeune actif (activité) reste ouverte : non tranchable par l'âge seul",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-band-18-24",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          18,
+          24
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "tranche entièrement sous 25 ans : même cas que rsa-age-24",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-band-25-59",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          25,
+          59
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "tranche entièrement à 25 ans ou plus",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-unread",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          40,
+          40
+        ]
+      },
+      "expected": {
+        "residence": "UNKNOWN",
+        "resources": "UNKNOWN",
+        "nationality": "UNKNOWN",
+        "activity": "UNKNOWN",
+        "activity_young": "UNKNOWN"
+      },
+      "basis": "conditions non lisibles à partir des réponses ADA : toujours inconnues",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "prime-age-17",
+      "right": "prime-activite",
+      "facts": {
+        "ageRange": [
+          17,
+          17
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "F2882 « 18 ans ou plus »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "prime-age-18",
+      "right": "prime-activite",
+      "facts": {
+        "ageRange": [
+          18,
+          18
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F2882 « 18 ans ou plus » : 18 inclus",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-age-15",
+      "right": "aah",
+      "facts": {
+        "ageRange": [
+          15,
+          15
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "F12242 : au moins 20 ans, 16 ans si plus à charge : 15 ans exclu",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-age-17",
+      "right": "aah",
+      "facts": {
+        "ageRange": [
+          17,
+          17
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "F12242 : 16-19 ans possible seulement si plus à charge pour les prestations familiales (non recueilli)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-age-20",
+      "right": "aah",
+      "facts": {
+        "ageRange": [
+          20,
+          20
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F12242 « au moins 20 ans »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-at-ceiling",
+      "right": "aah",
+      "facts": {
+        "annualResources": 12499,
+        "children": 0
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F12242 plafond annuel 12 499 € sans enfant : égal au plafond = sous le plafond (à confirmer par l'expert : « jusqu'à » inclusif)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-above",
+      "right": "aah",
+      "facts": {
+        "annualResources": 12500,
+        "children": 0
+      },
+      "expected": {
+        "resources": "NOT_MET"
+      },
+      "basis": "F12242 : au-dessus de 12 499 € sans enfant",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-1child",
+      "right": "aah",
+      "facts": {
+        "annualResources": 18000,
+        "children": 1
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F12242 : 18 749 € avec 1 enfant",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-2children",
+      "right": "aah",
+      "facts": {
+        "annualResources": 18000,
+        "children": 2
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "plafond pour 2 enfants non relevé dans le registre",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apa-age-59",
+      "right": "apa",
+      "facts": {
+        "ageRange": [
+          59,
+          59
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "F10009 « 60 ans ou plus »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apa-age-60",
+      "right": "apa",
+      "facts": {
+        "ageRange": [
+          60,
+          60
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F10009 « 60 ans ou plus »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apa-band-60plus",
+      "right": "apa",
+      "facts": {
+        "ageRange": [
+          60,
+          130
+        ]
+      },
+      "expected": {
+        "age": "MET",
+        "dependency": "UNKNOWN"
+      },
+      "basis": "GIR 1 à 4 : évaluation par l'équipe médico-sociale du Département, jamais lisible par ADA",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-age-15",
+      "right": "faj-strasbourg",
+      "facts": {
+        "ageRange": [
+          15,
+          15
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "strasbourg.eu « 16 à 25 ans »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-age-16",
+      "right": "faj-strasbourg",
+      "facts": {
+        "ageRange": [
+          16,
+          16
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "strasbourg.eu « 16 à 25 ans »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-age-25",
+      "right": "faj-strasbourg",
+      "facts": {
+        "ageRange": [
+          25,
+          25
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "strasbourg.eu « 16 à 25 ans » : inclusion des 25 ans non précisée (ambiguïté à trancher par l'expert)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-age-26",
+      "right": "faj-strasbourg",
+      "facts": {
+        "ageRange": [
+          26,
+          26
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "au-delà de 25 ans",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-67000",
+      "right": "faj-strasbourg",
+      "facts": {
+        "territory": "67000"
+      },
+      "expected": {
+        "territory": "UNKNOWN"
+      },
+      "basis": "code postal du Bas-Rhin : la liste des communes de l'Eurométropole n'est pas vérifiée",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-75011",
+      "right": "faj-strasbourg",
+      "facts": {
+        "territory": "75011"
+      },
+      "expected": {
+        "territory": "NOT_MET"
+      },
+      "basis": "hors Bas-Rhin, donc hors Eurométropole (le FAJ d'un autre territoire peut s'appliquer)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apl-tenant",
+      "right": "apl",
+      "facts": {
+        "housing": {
+          "status": "tenant"
+        }
+      },
+      "expected": {
+        "housing.status": "MET"
+      },
+      "basis": "F12006 « locataire »",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apl-owner",
+      "right": "apl",
+      "facts": {
+        "housing": {
+          "status": "owner"
+        }
+      },
+      "expected": {
+        "housing.status": "UNKNOWN"
+      },
+      "basis": "propriétaire : hors du champ de F12006 tel que relevé (APL accession non relevée)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-free",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 10421,
+        "householdSize": 1,
+        "area": "metropole"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-contribution",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 12000,
+        "householdSize": 1,
+        "area": "metropole"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F10027 : avec participation de 10 421 à 14 069 €",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-above",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 14070,
+        "householdSize": 1,
+        "area": "metropole"
+      },
+      "expected": {
+        "resources": "NOT_MET"
+      },
+      "basis": "F10027 : au-dessus de 14 069 €",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-household-2",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 12000,
+        "householdSize": 2,
+        "area": "metropole"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "barème au-delà d'une personne non relevé dans le registre",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "are-unread",
+      "right": "are",
+      "facts": {
+        "ageRange": [
+          30,
+          30
+        ]
+      },
+      "expected": {
+        "employment_loss": "UNKNOWN",
+        "affiliation": "UNKNOWN",
+        "registration": "UNKNOWN",
+        "residence": "UNKNOWN"
+      },
+      "basis": "ARE : aucune condition lisible à partir des réponses ADA (perte d'emploi, durée d'affiliation, inscription) : France Travail décide",
+      "status": "PROPOSED_UNREVIEWED"
+    }
+  ]
+}

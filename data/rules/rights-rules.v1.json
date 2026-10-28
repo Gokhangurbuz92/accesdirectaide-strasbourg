@@ -1,0 +1,493 @@
+{
+  "schema": "ada.rights-rules.v1",
+  "builtAt": "2026-10-21",
+  "statement": "PKG-6 / D11 — research register of the official rules per right. Each condition cites the official page it was read on and the page's own « Vérifié le » date. NOTHING here is validated: no expert has reviewed these conditions or the reference cases, so the assessment never treats them as an authoritative rule (states stay non-authoritative until status EXPERT_VALIDATED with a named reviewer, a date and passing reference cases). Figures are revalued regularly: always re-read the page.",
+  "consultedAt": "2026-10-21",
+  "statuses": [
+    "RESEARCHED_UNVALIDATED",
+    "EXPERT_VALIDATED",
+    "SUPERSEDED"
+  ],
+  "rights": [
+    {
+      "id": "rsa",
+      "label": "RSA (revenu de solidarité active)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+          "pageVerifiedOn": "2026-04-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        },
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F286",
+          "pageVerifiedOn": "2026-04-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)",
+          "scope": "RSA jeune actif (moins de 25 ans)"
+        }
+      ],
+      "legalBasis": [
+        "CASF L262-2 à L262-12",
+        "CASF L262-27 à L262-39",
+        "CASF R262-32 à R262-42",
+        "CASF R262-43 à R262-49",
+        "CASF L262-45 à L262-49",
+        "CASF D262-25-1 à D262-25-4 (RSA jeune actif)",
+        "Décret n°2025-293 du 29 mars 2025"
+      ],
+      "conditions": [
+        {
+          "fact": "age",
+          "text": "au moins 25 ans (moins de 25 ans : RSA jeune actif, conditions d'activité)",
+          "source": "F19778",
+          "draftCheck": {
+            "kind": "ageAtLeast",
+            "min": 25,
+            "below": "UNKNOWN",
+            "note": "moins de 25 ans : seule la voie « RSA jeune actif » (condition d'activité) reste possible"
+          }
+        },
+        {
+          "fact": "residence",
+          "text": "résider en France de manière stable et effective",
+          "source": "F19778"
+        },
+        {
+          "fact": "resources",
+          "text": "moyenne mensuelle des ressources des 3 mois précédant la demande (barème non reproduit ici)",
+          "source": "F19778"
+        },
+        {
+          "fact": "nationality",
+          "text": "UE : droit au séjour et au moins 3 mois de présence (ou cas d'activité listés) ; autres : titre de séjour autorisant à travailler depuis au moins 5 ans (hors Algériens), carte de résident, réfugié, apatride ou protection subsidiaire",
+          "source": "F19778"
+        },
+        {
+          "fact": "activity",
+          "text": "étudiants et stagiaires non rémunérés exclus (sauf parent isolé) ; congé parental, sabbatique, sans solde ou disponibilité exclus",
+          "source": "F19778"
+        },
+        {
+          "fact": "activity_young",
+          "text": "RSA jeune actif : au moins 2 ans à temps plein (au moins 3 214 heures) au cours des 3 ans précédant la demande ; dispense pour parent isolé",
+          "source": "F286"
+        }
+      ],
+      "decidedBy": "Caf (MSA pour les exploitants agricoles), sur dossier ; département",
+      "ambiguities": [
+        "F286 donne des bornes d'âge incohérentes (18-25 / 16-25 / 16-24 selon la section ; la page N19775 dit 18-24) : à trancher par l'expert",
+        "Montant 651,69 € (personne seule) sans date d'effet sur la page"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "prime-activite",
+      "label": "Prime d'activité",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+          "pageVerifiedOn": "2026-06-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        }
+      ],
+      "legalBasis": [
+        "CSS L842-1 à L842-8",
+        "CSS R842-1 à R842-5",
+        "CSS R843-1, R843-2",
+        "CSS R844-1 à R844-5",
+        "CSS R845-1 à R845-3",
+        "CSS R846-1 à R846-9",
+        "CSS D843-1 à D843-3",
+        "CSS L845-1 à L845-5",
+        "CSS D846-2",
+        "Décret n°2026-222 du 30 mars 2026"
+      ],
+      "conditions": [
+        {
+          "fact": "age",
+          "text": "18 ans ou plus",
+          "source": "F2882",
+          "draftCheck": {
+            "kind": "ageAtLeast",
+            "min": 18,
+            "below": "NOT_MET"
+          }
+        },
+        {
+          "fact": "activity",
+          "text": "exercer une activité professionnelle avec des revenus modestes ; travailleurs détachés exclus",
+          "source": "F2882"
+        },
+        {
+          "fact": "residence",
+          "text": "résider en France de manière stable et effective",
+          "source": "F2882"
+        },
+        {
+          "fact": "nationality",
+          "text": "UE : droit au séjour et au moins 3 mois de résidence ; autres : mêmes titres que pour le RSA (+ parent isolé d'un enfant de moins de 3 ans titulaire d'un titre)",
+          "source": "F2882"
+        }
+      ],
+      "decidedBy": "Caf / MSA",
+      "ambiguities": [
+        "Montants forfaitaires (638,28 € / 957,42 €) revalorisés : date d'effet à confirmer",
+        "Pas de plafond explicite étudiants / apprentis sur la page"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "apl",
+      "label": "APL (aide personnalisée au logement)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+          "pageVerifiedOn": "2026-07-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        }
+      ],
+      "legalBasis": [
+        "CCH R831-1 à R831-3",
+        "CCH R832-23 à D832-28",
+        "CCH R822-3 à R822-17",
+        "CCH D832-1 à D832-4",
+        "CCH R822-23 à R822-25",
+        "CCH R823-1 à D823-9",
+        "CCH R823-10 à D823-15",
+        "Arrêté du 27 septembre 2019"
+      ],
+      "conditions": [
+        {
+          "fact": "housing.status",
+          "text": "locataire ou colocataire (sous-locataire sous conditions), ou résident d'un établissement conventionné",
+          "source": "F12006",
+          "draftCheck": {
+            "kind": "oneOf",
+            "fact": "housing.status",
+            "met": [
+              "tenant",
+              "tenant_hlm"
+            ],
+            "otherwise": "UNKNOWN",
+            "note": "propriétaire, hébergé ou sans domicile : cas non couverts par cette condition (à vérifier)"
+          }
+        },
+        {
+          "fact": "housing",
+          "text": "résidence principale, logement décent et conventionné, en France",
+          "source": "F12006"
+        },
+        {
+          "fact": "resources",
+          "text": "ressources des 12 derniers mois, actualisées tous les 3 mois ; patrimoine pris en compte au-delà de 30 000 € (barème : arrêté du 27 septembre 2019, non reproduit sur la page)",
+          "source": "F12006"
+        },
+        {
+          "fact": "nationality",
+          "text": "étrangers : titre de séjour en cours de validité ; étudiants hors UE à partir du 1er juillet 2026 : bourse sur critères sociaux, emploi ou contrat d'apprentissage / de professionnalisation",
+          "source": "F12006"
+        },
+        {
+          "fact": "exclusion",
+          "text": "pas d'aide si le bailleur est un ascendant ou un descendant direct",
+          "source": "F12006"
+        }
+      ],
+      "decidedBy": "Caf / MSA",
+      "ambiguities": [
+        "Sous-location : le texte et l'infographie de la page diffèrent (moins de 30 ans / plus de 60 ans / handicap)",
+        "Plafonds non publiés sur la page"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "aah",
+      "label": "AAH (allocation aux adultes handicapés)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+          "pageVerifiedOn": "2026-09-14",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        }
+      ],
+      "legalBasis": [
+        "CSS L821-1 à L821-8",
+        "CSS R821-1 à R821-9",
+        "CSS D821-1 à D821-11",
+        "CASF R241-33, annexe 2-4"
+      ],
+      "conditions": [
+        {
+          "fact": "disability",
+          "text": "taux d'incapacité d'au moins 80 %, ou de 50 à 79 % avec restriction substantielle et durable d'accès à l'emploi (au moins 1 an)",
+          "source": "F12242"
+        },
+        {
+          "fact": "age",
+          "text": "au moins 20 ans (16 ans si plus à charge pour les prestations familiales)",
+          "source": "F12242",
+          "draftCheck": {
+            "kind": "ageAtLeast",
+            "min": 20,
+            "softMin": 16,
+            "below": "NOT_MET",
+            "note": "16 à 19 ans : possible seulement si la personne n'est plus à charge pour les prestations familiales"
+          }
+        },
+        {
+          "fact": "residence",
+          "text": "France métropolitaine ou territoires d'outre-mer listés",
+          "source": "F12242"
+        },
+        {
+          "fact": "resources",
+          "text": "revenu net catégoriel de l'avis d'imposition N-2 ; plafond annuel affiché 12 499 € sans enfant, 18 749 € avec 1 enfant (régime individualisé)",
+          "source": "F12242",
+          "draftCheck": {
+            "kind": "annualResourcesCeiling",
+            "byChildren": {
+              "0": 12499,
+              "1": 18749
+            },
+            "above": "NOT_MET",
+            "note": "revenu net catégoriel N-2 ; plafonds sans date d'effet sur la page"
+          }
+        }
+      ],
+      "decidedBy": "CDAPH de la MDPH (silence de 4 mois = rejet) ; versement Caf / MSA",
+      "ambiguities": [
+        "Plafonds et montant maximal (1 041,59 €) revalorisés : date d'effet à confirmer"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "apa",
+      "label": "APA à domicile (allocation personnalisée d'autonomie)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10009",
+          "pageVerifiedOn": "2026-06-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        }
+      ],
+      "legalBasis": [
+        "CASF L232-1, L232-11",
+        "CASF R232-1 à R232-9",
+        "CASF L232-12 à L232-20",
+        "CASF D232-9-1, D232-9-2",
+        "CASF R232-10 à D232-11-1",
+        "CASF L232-22 à L232-28"
+      ],
+      "conditions": [
+        {
+          "fact": "age",
+          "text": "60 ans ou plus",
+          "source": "F10009",
+          "draftCheck": {
+            "kind": "ageAtLeast",
+            "min": 60,
+            "below": "NOT_MET"
+          }
+        },
+        {
+          "fact": "dependency",
+          "text": "perte d'autonomie GIR 1 à 4 (grille AGGIR)",
+          "source": "F10009"
+        },
+        {
+          "fact": "residence",
+          "text": "résidence stable et régulière en France ; étrangers : carte de résident ou titre en cours de validité",
+          "source": "F10009"
+        },
+        {
+          "fact": "exclusion",
+          "text": "non cumulable notamment avec la PCH",
+          "source": "F10009"
+        }
+      ],
+      "decidedBy": "Département — dans le Bas-Rhin, la Collectivité européenne d'Alsace (adresse de la Direction de l'Autonomie non vérifiée sur alsace.eu)",
+      "ambiguities": [
+        "Plafonds de plan d'aide : F10009 (GIR1 2 080,33 € … GIR4 811,52 €) et une page solidarites.gouv.fr non consultée directement (GIR1 1 914,04 € …) divergent",
+        "Livret CeA de janvier 2023 : périmé"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "are",
+      "label": "ARE (allocation d'aide au retour à l'emploi)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38881",
+          "pageVerifiedOn": "2026-07-23",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)",
+          "scope": "contrats terminés depuis le 1er avril 2025 (F14860 = ancien régime, ne pas utiliser)"
+        }
+      ],
+      "legalBasis": [
+        "Code du travail L5421-1 à L5421-4",
+        "Code du travail L5422-1 à L5422-2-2",
+        "Code du travail L5425-1 à L5425-2",
+        "Décrets 2019-797 et 2023-33",
+        "Arrêté du 19 décembre 2024 (convention d'assurance chômage du 15 novembre 2024)"
+      ],
+      "conditions": [
+        {
+          "fact": "employment_loss",
+          "text": "perte involontaire d'emploi (licenciement, rupture conventionnelle, fin de CDD, démission légitime)",
+          "source": "F38881"
+        },
+        {
+          "fact": "affiliation",
+          "text": "6 mois (130 jours ou 910 heures) sur 24 mois (36 mois à partir de 55 ans) ; primo-entrants à partir du 1er avril 2026 : 5 mois",
+          "source": "F38881"
+        },
+        {
+          "fact": "registration",
+          "text": "inscription à France Travail dans les 12 mois suivant la fin du contrat ; recherche active d'emploi ; aptitude physique",
+          "source": "F38881"
+        },
+        {
+          "fact": "residence",
+          "text": "résidence stable et régulière en France",
+          "source": "F38881"
+        }
+      ],
+      "decidedBy": "France Travail",
+      "ambiguities": [
+        "unedic.org non consulté"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "c2s",
+      "label": "C2S (complémentaire santé solidaire)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027",
+          "pageVerifiedOn": "2026-07-01",
+          "consultedAt": "2026-10-21",
+          "publisher": "DILA (Service-Public)"
+        }
+      ],
+      "legalBasis": [
+        "CSS L861-1 à L861-12",
+        "CSS R861-2 à R861-10",
+        "CSS R111-1 à R111-4",
+        "CSS R861-16 à R861-18",
+        "CSS D861-1 à D861-8"
+      ],
+      "conditions": [
+        {
+          "fact": "residence",
+          "text": "résider en France depuis plus de 3 mois sans interruption ; étrangers : titre en cours de validité",
+          "source": "F10027"
+        },
+        {
+          "fact": "resources",
+          "text": "ressources des 12 mois (du 13e au 2e mois avant la demande) ; 1 personne en métropole : gratuite jusqu'à 10 421 €, avec participation de 10 421 à 14 069 €",
+          "source": "F10027",
+          "draftCheck": {
+            "kind": "annualResourcesBands",
+            "householdSize": 1,
+            "area": "metropole",
+            "bands": [
+              {
+                "max": 10421,
+                "result": "MET",
+                "note": "C2S sans participation"
+              },
+              {
+                "max": 14069,
+                "result": "MET",
+                "note": "C2S avec participation"
+              }
+            ],
+            "above": "NOT_MET",
+            "note": "barème 1 personne en métropole uniquement ; plafonds sans date d'effet sur la page"
+          }
+        },
+        {
+          "fact": "automatic",
+          "text": "bénéficiaires du RSA : C2S gratuite automatique sauf opposition",
+          "source": "F10027"
+        }
+      ],
+      "decidedBy": "CPAM (compte ameli ou cerfa 12504)",
+      "ambiguities": [
+        "Plafonds sans date d'effet sur la page ; ameli.fr non consulté"
+      ],
+      "referenceCases": []
+    },
+    {
+      "id": "faj-strasbourg",
+      "label": "FAJ — fonds d'aide aux jeunes (Eurométropole de Strasbourg)",
+      "status": "RESEARCHED_UNVALIDATED",
+      "expertReview": null,
+      "sources": [
+        {
+          "url": "https://www.strasbourg.eu/fr/fond-aide-jeunes",
+          "pageVerifiedOn": null,
+          "consultedAt": "2026-10-21",
+          "publisher": "Eurométropole de Strasbourg"
+        }
+      ],
+      "legalBasis": [],
+      "conditions": [
+        {
+          "fact": "age",
+          "text": "16 à 25 ans",
+          "source": "strasbourg.eu",
+          "draftCheck": {
+            "kind": "ageBetween",
+            "min": 16,
+            "max": 25,
+            "atMax": "UNKNOWN",
+            "note": "« 16 à 25 ans » : l'inclusion des 25 ans n'est pas précisée sur la page"
+          }
+        },
+        {
+          "fact": "territory",
+          "text": "résider dans l'Eurométropole de Strasbourg (hors Eurométropole : règlement FAJ de la Collectivité européenne d'Alsace, texte non lu)",
+          "source": "strasbourg.eu",
+          "draftCheck": {
+            "kind": "territoryScope",
+            "scope": "faj-strasbourg",
+            "note": "la liste des communes de l'Eurométropole n'est pas vérifiée : un code postal du Bas-Rhin ne prouve pas la résidence dans l'Eurométropole"
+          }
+        },
+        {
+          "fact": "nature",
+          "text": "aide ponctuelle, complémentaire des autres dispositifs ; ne constitue pas un revenu",
+          "source": "strasbourg.eu"
+        }
+      ],
+      "decidedBy": "Eurométropole de Strasbourg (géré par la Mission locale ; demande via une Mission locale, une association ou un service social)",
+      "ambiguities": [
+        "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente",
+        "La page contenait un texte caché adressé à des agents automatiques : ignoré (donnée de page)"
+      ],
+      "referenceCases": []
+    }
+  ],
+  "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN."
+}

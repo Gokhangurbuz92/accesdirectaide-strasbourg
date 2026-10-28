@@ -1,0 +1,36 @@
+-- PKG-1 rollback of drizzle/0015_pkg1_public_visibility_account_core.sql (documentation + tested by the migration stage). Run only against a disposable or backed-up database.
+-- Dropping the verification columns discards recorded verifications; dropping the account tables discards profile/household/preferences; ownerCitizenId is only a pointer (the owner secret keeps working).
+DROP TRIGGER IF EXISTS "ContentVerification_no_update_delete" ON "ContentVerification";
+DROP FUNCTION IF EXISTS "ContentVerification_append_only"();
+DROP TABLE IF EXISTS "NotificationPreference";
+DROP TABLE IF EXISTS "HouseholdMember";
+DROP TABLE IF EXISTS "CitizenProfile";
+DROP TABLE IF EXISTS "ContentVerification";
+DROP INDEX IF EXISTS "SharedDiagnostic_ownerCitizen_idx";
+ALTER TABLE "SharedDiagnostic" DROP COLUMN IF EXISTS "ownerCitizenId";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "launch_eligible";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "verification_status";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "verified_by";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "territory_verified";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "publication_hold";
+ALTER TABLE "Aide" DROP COLUMN IF EXISTS "data_origin";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "launch_eligible";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "verification_status";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "verified_by";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "territory_verified";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "publication_hold";
+ALTER TABLE "Demarche" DROP COLUMN IF EXISTS "data_origin";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "launch_eligible";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "verification_status";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "verified_by";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "territory_verified";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "publication_hold";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "data_origin";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "launch_eligible";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "verification_status";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "verified_by";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "territory_verified";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "publication_hold";
+ALTER TABLE "Structure" DROP COLUMN IF EXISTS "data_origin";
+ALTER TABLE "Dispositif" DROP COLUMN IF EXISTS "date_verification";
+-- then: DELETE FROM drizzle.__drizzle_migrations WHERE created_at = <journal "when" of 0015>;

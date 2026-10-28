@@ -1,0 +1,1 @@
+ALTER TABLE "ProUser" ADD COLUMN "sessionsValidAfter" timestamp (3);

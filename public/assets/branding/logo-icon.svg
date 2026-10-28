@@ -1,0 +1,5 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Placeholder SVG - À remplacer par l'icône vectorisée finale -->
+  <circle cx="30" cy="30" r="28" fill="#002D5A"/>
+  <path d="M30 10 L30 50 M10 30 L50 30" stroke="#F6B445" stroke-width="4" stroke-linecap="round"/>
+</svg>

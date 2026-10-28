@@ -1,0 +1,123 @@
+/**
+ * Design Tokens - AccesDirectAide
+ * Source de vérité pour les couleurs, typographie et espacements
+ * Généré depuis src/design/tokens.json
+ */
+
+:root {
+    /* ========================================
+       COULEURS BRAND
+       ======================================== */
+    
+    /* Primary - #002D5A - Texte, icônes, boutons, liens, focus */
+    --color-brand-primary: 0 45 90;
+    --color-brand-primary-rgb: rgb(0, 45, 90);
+    
+    /* Secondary - #2BC4D7 - Accent décoratif UNIQUEMENT */
+    --color-brand-secondary: 43 196 215;
+    --color-brand-secondary-rgb: rgb(43, 196, 215);
+    
+    /* Highlight - #F6B445 - Focus/attention (surfaces larges) */
+    --color-brand-highlight: 246 180 69;
+    --color-brand-highlight-rgb: rgb(246, 180, 69);
+    
+    /* Background - #F7F4EE - Fond de page */
+    --color-brand-background: 247 244 238;
+    --color-brand-background-rgb: rgb(247, 244, 238);
+    
+    /* ========================================
+       COULEURS BASE
+       ======================================== */
+    
+    --color-base-white: 255 255 255;
+    --color-base-white-rgb: rgb(255, 255, 255);
+    
+    /* ========================================
+       COULEURS TEXTE
+       ======================================== */
+    
+    /* Body - #1A1A1A - Texte principal */
+    --color-text-body: 26 26 26;
+    --color-text-body-rgb: rgb(26, 26, 26);
+    
+    /* Muted - #5E6E82 - Texte secondaire */
+    --color-text-muted: 94 110 130;
+    --color-text-muted-rgb: rgb(94, 110, 130);
+    
+    /* ========================================
+       COULEURS FEEDBACK
+       ======================================== */
+    
+    /* Success - #198038 */
+    --color-feedback-success: 25 128 56;
+    --color-feedback-success-rgb: rgb(25, 128, 56);
+    
+    /* Error - #D93025 */
+    --color-feedback-error: 217 48 37;
+    --color-feedback-error-rgb: rgb(217, 48, 37);
+    
+    /* ========================================
+       COULEURS SÉMANTIQUES
+       ======================================== */
+    
+    /* Surface - Cartes et conteneurs */
+    --color-surface: 255 255 255;
+    --color-surface-rgb: rgb(255, 255, 255);
+    
+    /* Borders */
+    --color-border: 226 232 240;
+    --color-border-rgb: rgb(226, 232, 240);
+    
+    --color-border-muted: 241 245 249;
+    --color-border-muted-rgb: rgb(241, 245, 249);
+    
+    /* ========================================
+       TYPOGRAPHIE
+       ======================================== */
+    
+    --font-family-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    
+    /* ========================================
+       ESPACEMENTS (hérités de Tailwind)
+       ======================================== */
+    
+    /* ========================================
+       BORDER RADIUS
+       ======================================== */
+    
+    --radius: 0.5rem;
+    --radius-sm: calc(var(--radius) - 0.125rem);
+    --radius-md: var(--radius);
+    --radius-lg: calc(var(--radius) + 0.25rem);
+    --radius-xl: calc(var(--radius) + 0.5rem);
+    
+    /* ========================================
+       SHADOWS
+       ======================================== */
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ========================================
+   MODE SOMBRE (optionnel - à adapter)
+   ======================================== */
+
+.dark {
+    --color-brand-background: 15 23 42;
+    --color-brand-background-rgb: rgb(15, 23, 42);
+    
+    --color-surface: 30 41 59;
+    --color-surface-rgb: rgb(30, 41, 59);
+    
+    --color-text-body: 241 245 249;
+    --color-text-body-rgb: rgb(241, 245, 249);
+    
+    --color-text-muted: 148 163 184;
+    --color-text-muted-rgb: rgb(148, 163, 184);
+    
+    --color-border: 51 65 85;
+    --color-border-rgb: rgb(51, 65, 85);
+}

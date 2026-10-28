@@ -1,0 +1,162 @@
+{
+  "git": { "deploymentEnabled": false },
+  "buildCommand": "npm run vercel-build",
+  "regions": ["fra1"],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 300,
+      "regions": ["fra1"],
+      "includeFiles": "{api/**/*.{js,ts,json},src/db/**/*.{js,ts},src/config/**/*.{js,ts},src/lib/**/*.{js,ts},data/**/*.{json,csv},docs/openapi.json,config/*.json,dist/index.html}"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/actualites",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/ingest-aids",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/ingest-structures",
+      "schedule": "0 2 * * 0"
+    },
+    {
+      "path": "/api/cron/ingest-demarches",
+      "schedule": "0 4 * * 1"
+    },
+    {
+      "path": "/api/cron/review-queue/scan",
+      "schedule": "30 */6 * * *"
+    },
+    {
+      "path": "/api/cron/ingest-annuaire",
+      "schedule": "0 1 * * 1"
+    },
+    {
+      "path": "/api/cron/parcours-reminder",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/referral-timeouts",
+      "schedule": "30 7 * * *"
+    },
+    {
+      "path": "/api/cron/rdv-reminder",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/gdpr-purge",
+      "schedule": "0 3 * * 0"
+    },
+    {
+      "path": "/api/cron/health-alert",
+      "schedule": "*/5 * * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "accesdirectaide.fr"
+        }
+      ],
+      "destination": "https://www.accesdirectaide.fr/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/(.+)/",
+      "destination": "/$1",
+      "permanent": true
+    },
+    {
+      "source": "/guide/:slug",
+      "destination": "/demarches",
+      "permanent": true
+    },
+    {
+      "source": "/aide/:slug",
+      "destination": "/aides/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/login/pro",
+      "destination": "/pro/login",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/structures",
+      "destination": "/annuaire",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap.xml"
+    },
+    {
+      "source": "/:section(aides|demarches|dispositifs|structures|annuaire)/:slug",
+      "destination": "/api/public/page?path=/:section/:slug"
+    },
+    {
+      "source": "/__dev/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/((?!api/|@vite/|@react-refresh|@fs/|@id/|__vite_ping|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(self), microphone=(self), geolocation=(), browsing-topics=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ=' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://*.ingest.de.sentry.io https://*.vercel-analytics.com; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; report-uri /api/monitor/csp-report; report-to csp;"
+        },
+        {
+          "key": "Reporting-Endpoints",
+          "value": "csp=\"/api/monitor/csp-report\""
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ=' https://va.vercel-scripts.com; style-src 'self' 'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://*.ingest.de.sentry.io https://*.vercel-analytics.com; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; report-uri /api/monitor/csp-report; report-to csp;"
+        }
+      ]
+    }
+  ]
+}

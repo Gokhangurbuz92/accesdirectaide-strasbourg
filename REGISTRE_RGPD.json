@@ -1,0 +1,832 @@
+{
+  "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
+  "version": "0.1",
+  "date_mise_a_jour": "2026-10-25",
+  "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
+  "sources_code": {
+    "retention": "api/_handlers/cron/gdpr-purge.js",
+    "registry": "api/_services/privacy.js",
+    "legalEntity": "src/config/legal-entity.ts"
+  },
+  "organisme": {
+    "nom_usage": "AccesDirectAide",
+    "statut": "IN_FORMATION",
+    "raison_sociale": null,
+    "siren": null,
+    "adresse": null,
+    "responsable_traitement": "[À COMPLÉTER : responsable de traitement — entité en formation]"
+  },
+  "dpo": null,
+  "dpo_statut": "non désigné",
+  "contact_protection_donnees": "[À COMPLÉTER : contact protection des données]",
+  "traitements": [
+    {
+      "id": "T01",
+      "nom": "Comptes citoyens (création, connexion, profil, foyer, préférences, délégations)",
+      "finalite": "Créer et gérer un compte, garder préférences et parcours, déléguer une consultation en lecture seule",
+      "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) ; options désactivées par défaut : consentement (art. 6.1.a) — à valider",
+      "categories_donnees": [
+        "E-mail",
+        "Empreinte du mot de passe (scrypt)",
+        "Téléphone (facultatif)",
+        "Profil (tranche d'âge, département, préférences d'accessibilité — art. 9 possible)",
+        "Foyer",
+        "Parcours, favoris, historique",
+        "Délégations"
+      ],
+      "categories_personnes": [
+        "Citoyens usagers",
+        "Délégataires invités",
+        "Membres du foyer décrits"
+      ],
+      "destinataires": [
+        "La personne",
+        "Ses délégataires (lecture seule)",
+        "Administrateurs AccesDirectAide pour la seule récupération de compte"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)",
+        "Upstash (limitation de débit, prévu)",
+        "Sentry (si DSN configuré)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Compte citoyen inactif",
+          "duree_jours": 730,
+          "source": "RETENTION_POLICY_REGISTRY.INACTIVE_ACCOUNT",
+          "statut": "non appliqué",
+          "mis_en_oeuvre_par": null,
+          "description": "non appliqué — règle prévue : suppression ou anonymisation après 730 jours d'inactivité ; aucun job ne l'applique (implementedBy: null)"
+        },
+        {
+          "donnee": "Jetons AuthToken",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "supprimés à expiration (cron gdpr-purge)"
+        },
+        {
+          "donnee": "Compte (sur demande)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "effacement sur demande approuvée après revue humaine"
+        }
+      ],
+      "mesures_securite": "Cookie HttpOnly SameSite=Strict, anti-CSRF double cookie, limitation de débit, verrouillage après échecs, mots de passe hachés (scrypt), jetons stockés en empreinte SHA-256"
+    },
+    {
+      "id": "T02",
+      "nom": "Questionnaire / diagnostic et simulation des droits",
+      "finalite": "Estimer de façon indicative les aides possibles",
+      "base_legale_proposee": "Service demandé (art. 6.1.b) ; art. 9.2.a si des réponses révèlent santé ou handicap — à valider",
+      "categories_donnees": [
+        "Revenus",
+        "Loyer",
+        "Composition du foyer",
+        "Situation professionnelle et familiale",
+        "Réponses pouvant révéler santé ou handicap (art. 9 possible)"
+      ],
+      "categories_personnes": [
+        "Citoyens (avec ou sans compte)",
+        "Membres du foyer décrits"
+      ],
+      "destinataires": [
+        "La personne",
+        "Les structures qu'elle choisit, uniquement après partage (T03)"
+      ],
+      "lieux_traitement": [
+        "Calcul : réponses envoyées à /api/diagnostic, non stockées par /api/diagnostic",
+        "Appareil : localStorage ada_diagnostic_state (lisible 24 heures, effacé à la visite suivante ou par « Réinitialiser tout »)",
+        "Partage : copie conservée chiffrée au repos (enveloppe, clé détenue par le serveur) dans SharedDiagnostic.situation quand la personne partage son dossier"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon pour la copie partagée (prévu)"
+      ],
+      "services_refuses": [
+        "OpenFisca (API publique) : refusé en production, prototype de développement uniquement"
+      ],
+      "conservation": [
+        {
+          "donnee": "Calcul /api/diagnostic",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "aucune conservation serveur pour le calcul seul"
+        },
+        {
+          "donnee": "Réponses sur l'appareil",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "24 heures, puis effacées à la visite suivante ; « Réinitialiser tout » les efface tout de suite"
+        },
+        {
+          "donnee": "Dossier partagé (SharedDiagnostic, dont la copie du questionnaire dans situation) et, en cascade, autorisations, invitations, messages, suivi et orientations",
+          "duree_jours": 90,
+          "source": "RETENTION.ENTITY_VERSION_DAYS",
+          "source_registre": "RETENTION_POLICY_REGISTRY.SHARED_DIAGNOSTIC",
+          "duree_jours_registre": 90,
+          "statut": "appliqué",
+          "description": "à l'expiration du lien (expiresAt) ou au plus tard 90 jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)"
+        }
+      ],
+      "mesures_securite": "Pas de conservation serveur hors partage ; la copie partagée (situation) est chiffrée au repos par enveloppe (le serveur détient les clés : pas de chiffrement de bout en bout)"
+    },
+    {
+      "id": "T03",
+      "nom": "Partage de dossier avec des structures",
+      "finalite": "À l'initiative de la personne, permettre à une structure vérifiée de consulter son dossier",
+      "base_legale_proposee": "Consentement spécifique par structure et par finalité (art. 6.1.a), révocable ; art. 9.2.a si données de santé — à valider",
+      "categories_donnees": [
+        "Copie du questionnaire (situation, chiffrée au repos) et résultats (non chiffrés)",
+        "Documents joints (chiffrés)",
+        "Autorisations, invitations, nombre de consultations"
+      ],
+      "categories_personnes": [
+        "Citoyens",
+        "Professionnels des structures"
+      ],
+      "destinataires": [
+        "Structures choisies par la personne (membres actifs)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)",
+        "Stockage objet S3/R2 (fournisseur à confirmer, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Dossier partagé (SharedDiagnostic, dont la copie du questionnaire dans situation) et, en cascade, autorisations, invitations, messages, suivi et orientations",
+          "duree_jours": 90,
+          "source": "RETENTION.ENTITY_VERSION_DAYS",
+          "source_registre": "RETENTION_POLICY_REGISTRY.SHARED_DIAGNOSTIC",
+          "duree_jours_registre": 90,
+          "statut": "appliqué",
+          "description": "à l'expiration du lien (expiresAt) ou au plus tard 90 jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)"
+        }
+      ],
+      "mesures_securite": "Invitation liée à une structure, à usage unique, stockée en empreinte ; révocation ; aucun accès administrateur au contenu ; chiffrement par enveloppe des fichiers"
+    },
+    {
+      "id": "T04",
+      "nom": "Messagerie et pièces jointes",
+      "finalite": "Échanges entre la personne et une structure (dossier partagé ou rendez-vous)",
+      "base_legale_proposee": "Service demandé (art. 6.1.b) ; art. 9.2.a si données de santé confiées — à valider",
+      "categories_donnees": [
+        "Messages du dossier (chiffrés par enveloppe)",
+        "Messages de rendez-vous (chiffrés à l'enregistrement, clé serveur)",
+        "Pièces jointes (chiffrées)"
+      ],
+      "categories_personnes": [
+        "Citoyens",
+        "Professionnels"
+      ],
+      "destinataires": [
+        "La personne et les membres actifs de la structure concernée"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)",
+        "Stockage objet S3/R2 (prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Messages du dossier partagé (cascade avec le dossier)",
+          "duree_jours": 90,
+          "source": "RETENTION.ENTITY_VERSION_DAYS",
+          "source_registre": "RETENTION_POLICY_REGISTRY.SHARED_DIAGNOSTIC",
+          "duree_jours_registre": 90,
+          "statut": "appliqué",
+          "description": "à l'expiration du lien (expiresAt) ou au plus tard 90 jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)"
+        },
+        {
+          "donnee": "Messagerie de rendez-vous",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "aucune purge ; supprimée seulement à l'effacement du compte"
+        }
+      ],
+      "mesures_securite": "Chiffrement par enveloppe (le serveur peut déchiffrer : pas de chiffrement de bout en bout), contrôle d'accès par structure, pas d'antivirus"
+    },
+    {
+      "id": "T05",
+      "nom": "Coffre (documents personnels)",
+      "finalite": "Conserver et retrouver ses justificatifs",
+      "base_legale_proposee": "Art. 6.1.b ; art. 9.2.a pour les documents médicaux déposés volontairement — à valider",
+      "categories_donnees": [
+        "Fichiers (art. 9 possible)",
+        "Nom de fichier chiffré",
+        "Catégorie, type, taille, empreinte"
+      ],
+      "categories_personnes": [
+        "Citoyens",
+        "Tiers figurant sur les documents"
+      ],
+      "destinataires": [
+        "La personne ; une structure seulement si le document est joint à un dossier partagé"
+      ],
+      "sous_traitants": [
+        "Stockage objet S3/R2 (prévu)",
+        "Neon (PostgreSQL, prévu)",
+        "Vercel (hébergement, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Documents du coffre",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "jusqu'à suppression par la personne ou effacement du compte ; expiresAt non purgé par le cron (non appliqué)"
+        }
+      ],
+      "mesures_securite": "Chiffrement par enveloppe du contenu et du nom ; pas d'antivirus (NOT_SCANNED)"
+    },
+    {
+      "id": "T06",
+      "nom": "Rendez-vous",
+      "finalite": "Prise, modification, annulation de rendez-vous avec une structure",
+      "base_legale_proposee": "Art. 6.1.b — à valider",
+      "categories_donnees": [
+        "Nom",
+        "Téléphone",
+        "E-mail",
+        "Notes (art. 9 possible)",
+        "Créneau, mode"
+      ],
+      "categories_personnes": [
+        "Citoyens",
+        "Bénéficiaires inscrits par une structure",
+        "Professionnels"
+      ],
+      "destinataires": [
+        "La structure et la personne"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Rendez-vous (nom, téléphone, e-mail, notes)",
+          "duree_jours": 730,
+          "source": "RETENTION.APPOINTMENT_ANON_DAYS",
+          "statut": "appliqué",
+          "description": "anonymisation après 730 jours (cron gdpr-purge, hebdomadaire)"
+        }
+      ],
+      "mesures_securite": "Contrôle d'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d'un rendez-vous créé par une structure chiffrés à l'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)"
+    },
+    {
+      "id": "T07",
+      "nom": "Suivi des personnes par les structures et orientations",
+      "finalite": "Suivi du dossier partagé par une structure et orientation vers une autre structure avec l'accord de la personne",
+      "base_legale_proposee": "À déterminer selon la qualification des structures (responsables de traitement probables ; AccesDirectAide sous-traitant) — à valider",
+      "categories_donnees": [
+        "ProCase",
+        "ProCaseNote (chiffrées, art. 9 très probable)",
+        "ProCaseEvent",
+        "Referral (messages chiffrés)"
+      ],
+      "categories_personnes": [
+        "Citoyens suivis",
+        "Professionnels",
+        "Tiers cités"
+      ],
+      "destinataires": [
+        "Membres actifs de la structure ; structure destinataire d'une orientation sur autorisation de la personne"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Suivi et orientations (cascade avec le dossier partagé)",
+          "duree_jours": 90,
+          "source": "RETENTION.ENTITY_VERSION_DAYS",
+          "source_registre": "RETENTION_POLICY_REGISTRY.SHARED_DIAGNOSTIC",
+          "duree_jours_registre": 90,
+          "statut": "appliqué",
+          "description": "à l'expiration du lien (expiresAt) ou au plus tard 90 jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)"
+        }
+      ],
+      "mesures_securite": "Notes et messages chiffrés par enveloppe ; historique en ajout seul ; contrôle par structure"
+    },
+    {
+      "id": "T08",
+      "nom": "Assistant IA local (citoyens)",
+      "finalite": "Répondre aux questions générales sur les aides à partir des fiches vérifiées, avec citations",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) avec opposition possible — à valider",
+      "categories_donnees": [
+        "Message",
+        "Intention détectée",
+        "Mode de recherche",
+        "Identifiant de session",
+        "Note et commentaire facultatifs",
+        "Métriques techniques"
+      ],
+      "categories_personnes": [
+        "Utilisateurs de l'assistant"
+      ],
+      "destinataires": [
+        "Aucun tiers — modèle local"
+      ],
+      "modele_ia": "Ollama local (qwen3:8b, nomic-embed-text), joint uniquement en boucle locale (127.0.0.1)",
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "fournisseurs_bloques": [
+        "Google Gemini : BLOQUÉ par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) — pas un destinataire"
+      ],
+      "conservation": [
+        {
+          "donnee": "Journaux de conversation (ConversationLog)",
+          "duree_jours": 90,
+          "source": "RETENTION.CONVERSATION_LOG_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 90 jours (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Métriques IA (AiMetric)",
+          "duree_jours": 90,
+          "source": "RETENTION.AI_METRIC_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 90 jours (cron gdpr-purge, hebdomadaire)"
+        }
+      ],
+      "mesures_securite": "Blocage NIR/IBAN/carte, tentatives d'injection et demandes de conseil juridique ; abstention sans fiche vérifiée ; filtre de sortie ; limitation de débit"
+    },
+    {
+      "id": "T09",
+      "nom": "FALC et contenus publics",
+      "finalite": "Produire des versions faciles à lire, toujours relues par une personne nommée",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) pour les données des relecteurs — à valider",
+      "categories_donnees": [
+        "Texte proposé",
+        "Relecteur",
+        "Décision"
+      ],
+      "categories_personnes": [
+        "Administrateurs / relecteurs"
+      ],
+      "destinataires": [
+        "Public après validation"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Versions de contenus (EntityVersion)",
+          "duree_jours": 90,
+          "source": "RETENTION.ENTITY_VERSION_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 90 jours (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "AiOutputReview",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "aucune purge"
+        }
+      ],
+      "mesures_securite": "Publication impossible sans relecture humaine nominative"
+    },
+    {
+      "id": "T10",
+      "nom": "Support (demandes d'aide)",
+      "finalite": "Répondre aux demandes d'aide et aux signalements",
+      "base_legale_proposee": "Art. 6.1.f ou 6.1.b — à valider",
+      "categories_donnees": [
+        "Catégorie",
+        "Message (chiffré, art. 9 possible)",
+        "Contact (chiffré)",
+        "Statut"
+      ],
+      "categories_personnes": [
+        "Usagers",
+        "Visiteurs",
+        "Professionnels"
+      ],
+      "destinataires": [
+        "Administrateurs AccesDirectAide"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "SupportRequest",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "aucune purge"
+        }
+      ],
+      "mesures_securite": "Chiffrement par enveloppe ; interrupteur de fermeture"
+    },
+    {
+      "id": "T11",
+      "nom": "Statistiques institutionnelles",
+      "finalite": "Statistiques territoriales agrégées pour les partenaires institutionnels",
+      "base_legale_proposee": "Art. 6.1.f (ou 6.1.e) — à valider",
+      "categories_donnees": [
+        "Agrégats uniquement (communes ≥ 3 structures vérifiées, cellules < 5 masquées)"
+      ],
+      "categories_personnes": [
+        "Indirectement : usagers et professionnels"
+      ],
+      "destinataires": [
+        "Comptes institutionnels actifs sous convention signée (aucune aujourd'hui)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Agrégats",
+          "duree_jours": null,
+          "source": null,
+          "statut": "sans objet",
+          "description": "les données sources suivent leur propre durée"
+        }
+      ],
+      "mesures_securite": "Export territorial fermé tant que la licence n'est pas décidée"
+    },
+    {
+      "id": "T12",
+      "nom": "Administration, sécurité et journalisation",
+      "finalite": "Administrer, sécuriser les accès, tracer les actions, diagnostiquer les erreurs",
+      "base_legale_proposee": "Intérêt légitime de sécurité (art. 6.1.f) ou obligation légale (art. 6.1.c) — à valider",
+      "categories_donnees": [
+        "AdminUser",
+        "AuditLog (IP en clair et empreinte)",
+        "ProAuditLog",
+        "UpdateLog",
+        "Erreurs et Session Replay Sentry"
+      ],
+      "categories_personnes": [
+        "Administrateurs",
+        "Professionnels",
+        "Usagers",
+        "Visiteurs"
+      ],
+      "destinataires": [
+        "Administrateurs AccesDirectAide",
+        "Sentry (sous-traitant, si DSN)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)",
+        "Sentry (si DSN configuré)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Journal d'audit (AuditLog)",
+          "duree_jours": 365,
+          "source": "RETENTION.AUDIT_LOG_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 365 jours (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Journal d'audit (registre interne)",
+          "duree_jours": 365,
+          "source": "RETENTION_POLICY_REGISTRY.AUDIT_LOG",
+          "statut": "appliqué",
+          "mis_en_oeuvre_par": "cron/gdpr-purge",
+          "description": "suppression après 365 jours (cron/gdpr-purge)"
+        },
+        {
+          "donnee": "Journal d'audit pro (ProAuditLog)",
+          "duree_jours": 365,
+          "source": "RETENTION.PRO_AUDIT_LOG_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 365 jours (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Journaux de mise à jour (UpdateLog)",
+          "duree_jours": 90,
+          "source": "RETENTION.CONVERSATION_LOG_DAYS",
+          "statut": "appliqué",
+          "description": "suppression après 90 jours (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Sentry",
+          "duree_jours": null,
+          "source": null,
+          "statut": "NON VÉRIFIÉ",
+          "description": "durée réglée dans la console Sentry, non vérifiée"
+        },
+        {
+          "donnee": "AdminUser",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "aucune purge"
+        }
+      ],
+      "mesures_securite": "MFA TOTP pour toute écriture administrateur ; élévation limitée ; CSRF ; limitation de débit ; rotation des clés de données testée"
+    },
+    {
+      "id": "T13",
+      "nom": "Exercice des droits",
+      "finalite": "Recevoir, instruire et tracer les demandes (accès, export, effacement, limitation, opposition) et les conservations légales",
+      "base_legale_proposee": "Obligation légale (art. 6.1.c, art. 12 à 22 RGPD)",
+      "categories_donnees": [
+        "DSRRequest",
+        "LegalHold",
+        "Entrées AuditLog (identifiant en empreinte SHA-256)"
+      ],
+      "categories_personnes": [
+        "Demandeurs",
+        "Relecteurs"
+      ],
+      "destinataires": [
+        "Administrateurs habilités"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "DSRRequest, LegalHold",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "conservés sans durée fixée"
+        },
+        {
+          "donnee": "Preuve des consentements (ConsentLog)",
+          "duree_jours": 1095,
+          "source": "RETENTION.CONSENT_LOG_DAYS",
+          "statut": "appliqué",
+          "description": "suppression 1095 jours après création (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Preuve des consentements (registre interne)",
+          "duree_jours": 1095,
+          "source": "RETENTION_POLICY_REGISTRY.CONSENT_LOG",
+          "statut": "appliqué",
+          "mis_en_oeuvre_par": "cron/gdpr-purge",
+          "description": "suppression 1095 jours après création (cron/gdpr-purge)"
+        }
+      ],
+      "mesures_securite": "Revue à deux personnes (proposition puis confirmation) ; levée d'une conservation légale à deux personnes"
+    },
+    {
+      "id": "T14",
+      "nom": "Comptes professionnels",
+      "finalite": "Gérer les comptes des professionnels et leurs droits dans leur structure",
+      "base_legale_proposee": "Art. 6.1.b ou 6.1.f — à valider",
+      "categories_donnees": [
+        "E-mail",
+        "Empreinte du mot de passe",
+        "Rôle, statut, structure",
+        "MFA",
+        "Invitations d'équipe"
+      ],
+      "categories_personnes": [
+        "Professionnels",
+        "Personnes invitées"
+      ],
+      "destinataires": [
+        "Administrateurs de la structure",
+        "Administrateurs AccesDirectAide"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "ProUser",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "inactif au départ, jamais supprimé"
+        },
+        {
+          "donnee": "Invitations d'équipe",
+          "duree_jours": 30,
+          "source": "RETENTION.INVITATION_GRACE_DAYS",
+          "statut": "appliqué",
+          "description": "suppression 30 jours après expiration (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Jetons Outlook (non activé)",
+          "duree_jours": 30,
+          "source": "RETENTION.OUTLOOK_TOKEN_GRACE_DAYS",
+          "statut": "appliqué",
+          "description": "suppression 30 jours après expiration (cron gdpr-purge, hebdomadaire)"
+        }
+      ],
+      "mesures_securite": "Membre inactif ou structure suspendue : réponse 404 ; MFA disponible"
+    },
+    {
+      "id": "T15",
+      "nom": "Partenaires institutionnels et demandes de partenariat",
+      "finalite": "Gérer conventions et comptes partenaires ; traiter les demandes de partenariat",
+      "base_legale_proposee": "Art. 6.1.b ou 6.1.f — à valider",
+      "categories_donnees": [
+        "InstitutionAccount",
+        "PartnerAgreement",
+        "PartnershipRequest"
+      ],
+      "categories_personnes": [
+        "Représentants des partenaires",
+        "Demandeurs"
+      ],
+      "destinataires": [
+        "Administrateurs AccesDirectAide"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement, prévu)",
+        "Neon (PostgreSQL, prévu)"
+      ],
+      "conservation": [
+        {
+          "donnee": "InstitutionAccount, PartnerAgreement, PartnershipRequest",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "aucune purge"
+        }
+      ],
+      "mesures_securite": "Compte actif seulement sous convention signée (aucune aujourd'hui)"
+    },
+    {
+      "id": "T16",
+      "nom": "Transmission au SIAO",
+      "statut": "non activé (SIAO_ENABLED off, aucune convention, aucune habilitation)",
+      "finalite": "Envisagée : transmettre une demande d'hébergement au SIAO à la demande de la personne",
+      "base_legale_proposee": "À déterminer",
+      "categories_donnees": [],
+      "categories_personnes": [],
+      "destinataires": [],
+      "sous_traitants": [],
+      "conservation": [
+        {
+          "donnee": "Aucun flux",
+          "duree_jours": null,
+          "source": null,
+          "statut": "sans objet",
+          "description": "non activé"
+        }
+      ],
+      "mesures_securite": "Sans objet"
+    },
+    {
+      "id": "T17",
+      "nom": "Mesure d'audience et de performance",
+      "statut": "actif dans le bundle (sauf mode mock)",
+      "finalite": "Mesurer l'audience (Vercel Analytics) et la performance (Vercel Speed Insights)",
+      "base_legale_proposee": "Art. 6.1.f, exemption de consentement si les conditions CNIL sont réunies (non vérifié)",
+      "categories_donnees": [
+        "Pages vues",
+        "Métriques de performance",
+        "Données techniques du navigateur"
+      ],
+      "categories_personnes": [
+        "Visiteurs"
+      ],
+      "destinataires": [
+        "Vercel (sous-traitant)"
+      ],
+      "sous_traitants": [
+        "Vercel Analytics et Speed Insights"
+      ],
+      "conservation": [
+        {
+          "donnee": "Données d'audience",
+          "duree_jours": null,
+          "source": null,
+          "statut": "NON VÉRIFIÉ",
+          "description": "durée réglée par Vercel, non vérifiée"
+        }
+      ],
+      "mesures_securite": "NON VÉRIFIÉ"
+    }
+  ],
+  "sous_traitants": [
+    {
+      "nom": "Vercel",
+      "role": "Hébergement front et fonctions serveur, cron",
+      "statut": "prévu",
+      "localisation": "UE — région fra1 (Francfort) pour les fonctions",
+      "entite_contractante": "Vercel Inc. (USA)",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Vercel Analytics + Speed Insights",
+      "role": "Audience et performance",
+      "statut": "activé (bundle, sauf mode mock)",
+      "localisation": "NON VÉRIFIÉ",
+      "entite_contractante": "Vercel Inc. (USA)",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Neon",
+      "role": "Base de données PostgreSQL",
+      "statut": "prévu",
+      "localisation": "NON VÉRIFIÉ",
+      "entite_contractante": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Upstash",
+      "role": "Limitation de débit (KV/Redis)",
+      "statut": "prévu",
+      "localisation": "NON VÉRIFIÉ",
+      "entite_contractante": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
+      "role": "Coffre, pièces jointes (fichiers chiffrés par enveloppe)",
+      "statut": "prévu",
+      "localisation": "non choisie",
+      "entite_contractante": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Sentry (Functional Software Inc.)",
+      "role": "Erreurs serveur et navigateur, Session Replay (1 % / 10 % en erreur), traces 10 %",
+      "statut": "activé si un DSN est configuré",
+      "localisation": "NON VÉRIFIÉ",
+      "entite_contractante": "Functional Software Inc. (USA)",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Mailjet (Sinch)",
+      "role": "E-mails transactionnels",
+      "statut": "non activé",
+      "localisation": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Twilio",
+      "role": "SMS",
+      "statut": "non activé",
+      "localisation": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Microsoft (Outlook / Graph)",
+      "role": "Agenda des professionnels",
+      "statut": "non activé",
+      "localisation": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    }
+  ],
+  "services_non_destinataires": [
+    {
+      "nom": "Google (Gemini API)",
+      "statut": "bloqué",
+      "motif": "Refusé par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) ; aucune donnée transmise ; pas un destinataire ni un sous-traitant",
+      "dpa": "aucun"
+    },
+    {
+      "nom": "Ollama (qwen3:8b, nomic-embed-text)",
+      "statut": "activé en local",
+      "motif": "Modèle de l'assistant, exécuté sur la même machine (127.0.0.1) ; aucun transfert ; pas un sous-traitant tant qu'il n'est pas hébergé par un tiers"
+    },
+    {
+      "nom": "OpenFisca (API publique)",
+      "statut": "refusé en production",
+      "motif": "Prototype de développement uniquement"
+    },
+    {
+      "nom": "SIAO",
+      "statut": "désactivé",
+      "motif": "SIAO_ENABLED off ; aucune convention"
+    }
+  ],
+  "transferts_hors_ue": "Aucun mécanisme de transfert vérifié (statut DPF NON VÉRIFIÉ pour tous les prestataires) ; aucun contrat art. 28 démontré",
+  "droits_exercables": [
+    "Droit d'accès (article 15) — export depuis le compte",
+    "Droit de rectification (article 16)",
+    "Droit à l'effacement (article 17) — demande enregistrée (HTTP 202) puis revue humaine avant exécution ; le cron gdpr-purge ne traite pas les demandes",
+    "Droit à la portabilité (article 20) — export JSON dans l'application : GET /api/auth/export-data",
+    "Droit à la limitation (article 18) et d'opposition (article 21) — demande puis revue humaine",
+    "Accès aux notes détenues par une structure — revue par deux personnes différentes avec MFA"
+  ]
+}

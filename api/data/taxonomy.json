@@ -1,0 +1,287 @@
+[
+  {
+    "slug": "papiers-citoyennete",
+    "label": "Papiers - Citoyenneté",
+    "color": "bg-slate-100 text-slate-800",
+    "keywords": [
+      "identité",
+      "état civil",
+      "passeport",
+      "carte d'identité",
+      "élections",
+      "recensement",
+      "papiers"
+    ],
+    "sub_themes": []
+  },
+  {
+    "slug": "famille",
+    "label": "Famille",
+    "color": "bg-pink-100 text-pink-800",
+    "keywords": [
+      "enfant",
+      "mariage",
+      "couple",
+      "naissance",
+      "adoption",
+      "scolarité",
+      "décès",
+      "succession",
+      "aeeh"
+    ],
+    "sub_themes": [
+      {
+        "slug": "aides-financieres",
+        "label": "Allocations et aides financières"
+      },
+      {
+        "slug": "enfance",
+        "label": "Enfance et scolarité"
+      }
+    ]
+  },
+  {
+    "slug": "social-sante",
+    "label": "Social - Santé",
+    "color": "bg-green-100 text-green-800",
+    "keywords": [
+      "sécurité sociale",
+      "carte vitale",
+      "rsa",
+      "prime d'activité",
+      "arrêt maladie",
+      "css",
+      "cmu",
+      "complémentaire santé",
+      "couverture"
+    ],
+    "sub_themes": [
+      {
+        "slug": "sante",
+        "label": "Santé et couverture maladie"
+      },
+      {
+        "slug": "aides-sociales",
+        "label": "Aides sociales et précarité"
+      }
+    ]
+  },
+  {
+    "slug": "personnes-agees",
+    "label": "Personnes âgées",
+    "color": "bg-amber-100 text-amber-800",
+    "keywords": [
+      "apa",
+      "aspa",
+      "ash",
+      "gir",
+      "ehpad",
+      "autonomie",
+      "vieillissement",
+      "retraite",
+      "minimum vieillesse",
+      "personnes âgées",
+      "senior",
+      "perte d'autonomie",
+      "aide-ménagère"
+    ],
+    "sub_themes": [
+      {
+        "slug": "maintien-domicile",
+        "label": "Maintien à domicile"
+      },
+      {
+        "slug": "hebergement",
+        "label": "Hébergement (EHPAD, résidence)"
+      }
+    ]
+  },
+  {
+    "slug": "handicap",
+    "label": "Handicap",
+    "color": "bg-purple-100 text-purple-800",
+    "keywords": [
+      "handicap",
+      "aah",
+      "pch",
+      "mdph",
+      "invalidité",
+      "rqth",
+      "cmi",
+      "carte mobilité inclusion",
+      "fauteuil",
+      "auxiliaire de vie"
+    ],
+    "sub_themes": [
+      {
+        "slug": "aides-handicap",
+        "label": "Aides financières handicap"
+      },
+      {
+        "slug": "insertion-pro",
+        "label": "Insertion professionnelle"
+      }
+    ]
+  },
+  {
+    "slug": "travail-formation",
+    "label": "Travail - Formation",
+    "color": "bg-blue-100 text-blue-800",
+    "keywords": [
+      "chômage",
+      "emploi",
+      "formation",
+      "contrat de travail",
+      "licenciement",
+      "démission",
+      "stage",
+      "apprentissage",
+      "france travail",
+      "pôle emploi"
+    ],
+    "sub_themes": [
+      {
+        "slug": "emploi",
+        "label": "Recherche d'emploi"
+      },
+      {
+        "slug": "formation",
+        "label": "Formation professionnelle"
+      }
+    ]
+  },
+  {
+    "slug": "logement",
+    "label": "Logement",
+    "color": "bg-orange-100 text-orange-800",
+    "keywords": [
+      "apl",
+      "demande de logement social",
+      "location",
+      "achat",
+      "travaux",
+      "déménagement",
+      "hébergement",
+      "hlm"
+    ],
+    "sub_themes": [
+      {
+        "slug": "aides-logement",
+        "label": "Aides au logement (APL, ALF, ALS)"
+      },
+      {
+        "slug": "travaux",
+        "label": "Aides aux travaux et rénovation"
+      }
+    ]
+  },
+  {
+    "slug": "transports",
+    "label": "Transports",
+    "color": "bg-cyan-100 text-cyan-800",
+    "keywords": [
+      "carte grise",
+      "permis de conduire",
+      "contrôle technique",
+      "transports en commun",
+      "mobilité",
+      "mobilite"
+    ],
+    "sub_themes": [
+      {
+        "slug": "permis",
+        "label": "Permis de conduire"
+      },
+      {
+        "slug": "carte-grise",
+        "label": "Immatriculation (Carte grise)"
+      }
+    ]
+  },
+  {
+    "slug": "argent",
+    "label": "Argent - Impôts",
+    "color": "bg-yellow-100 text-yellow-800",
+    "keywords": [
+      "impôts",
+      "banque",
+      "crédit",
+      "surendettement",
+      "épargne",
+      "consommation",
+      "budget"
+    ],
+    "sub_themes": []
+  },
+  {
+    "slug": "justice",
+    "label": "Justice",
+    "color": "bg-red-100 text-red-800",
+    "keywords": [
+      "casier judiciaire",
+      "plainte",
+      "victime",
+      "avocat",
+      "aide juridictionnelle"
+    ],
+    "sub_themes": []
+  },
+  {
+    "slug": "etranger",
+    "label": "Étranger",
+    "color": "bg-teal-100 text-teal-800",
+    "keywords": [
+      "titre de séjour",
+      "visa",
+      "asile",
+      "naturalisation",
+      "regroupement familial",
+      "etrangers"
+    ],
+    "sub_themes": []
+  },
+  {
+    "slug": "loisirs",
+    "label": "Loisirs - Sport - Culture",
+    "color": "bg-indigo-100 text-indigo-800",
+    "keywords": [
+      "sport",
+      "chasse",
+      "pêche",
+      "voyage",
+      "association",
+      "culture",
+      "numerique",
+      "numérique"
+    ],
+    "sub_themes": []
+  },
+  {
+    "slug": "lgbtqi-plus",
+    "label": "LGBTQI+",
+    "color": "bg-fuchsia-100 text-fuchsia-800",
+    "keywords": [
+      "lgbt",
+      "lgbtqi",
+      "lgbtqi+",
+      "lgbtqia",
+      "queer",
+      "trans",
+      "homophobie",
+      "discriminations",
+      "coming out",
+      "identité de genre",
+      "santé sexuelle"
+    ],
+    "sub_themes": [
+      {
+        "slug": "discriminations-lgbtqi",
+        "label": "Discriminations et droits"
+      },
+      {
+        "slug": "sante-sexuelle",
+        "label": "Santé sexuelle"
+      }
+    ]
+  }
+]

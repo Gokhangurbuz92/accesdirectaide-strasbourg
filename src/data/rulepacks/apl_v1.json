@@ -1,0 +1,67 @@
+{
+  "id": "apl_v1",
+  "title": "APL - Aide personnalisée au logement",
+  "jurisdiction": "France (CAF)",
+  "last_verified": "2026-02-10",
+  "sources": [
+    {
+      "label": "Service-Public - APL (conditions personne/logement/ressources)",
+      "ref": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006"
+    },
+    {
+      "label": "Service-Public - APL/ALF/ALS si logement appartient à la famille",
+      "ref": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32384"
+    }
+  ],
+  "questions": [
+    {"id":"q_status","label":"Êtes-vous locataire/colocataire (ou sous-locataire déclaré) ?","type":"single_choice","required":true,"help":"APL possible selon statut locataire/coloc/sous-locataire."},
+    {"id":"q_residence","label":"Ce logement est-il votre résidence principale en France ?","type":"boolean","required":true,"help":"APL pour résidence principale située en France."},
+    {"id":"q_conventionne","label":"Le logement est-il conventionné APL ?","type":"boolean","required":true,"help":"Votre propriétaire/gestionnaire doit pouvoir vous le confirmer."},
+    {"id":"q_title_sejour","label":"Si vous êtes étranger : avez-vous un titre de séjour en cours de validité ?","type":"boolean","required":false,"help":"Condition pour bénéficier de l’APL si étranger."},
+    {"id":"q_famille_proprio","label":"Le propriétaire est-il votre père/mère, grand-parent, enfant (ou ascendant/descendant) ?","type":"boolean","required":true,"help":"Dans ces cas, l’APL/ALF/ALS n’est pas possible."},
+    {"id":"q_parts","label":"Vous (ou votre famille) détenez-vous des parts de propriété/usufruit sur ce logement ?","type":"boolean","required":true,"help":"En général non éligible, sauf exception de parts très minoritaires."}
+  ],
+  "eligibility_rules": [
+    {
+      "id": "base_ok",
+      "if_all": [
+        {"question":"q_status","op":"in","value":["locataire","colocataire","sous_locataire_declare"]},
+        {"question":"q_residence","op":"eq","value":true},
+        {"question":"q_conventionne","op":"eq","value":true},
+        {"question":"q_famille_proprio","op":"eq","value":false},
+        {"question":"q_parts","op":"eq","value":false}
+      ],
+      "then": {"eligible":"potentially","reason":"Conditions principales remplies. La CAF calculera selon vos ressources des 12 derniers mois."}
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "family_owner_close",
+      "if_all": [{"question":"q_famille_proprio","op":"eq","value":true}],
+      "then": {"eligible":"no","reason":"Logement appartenant à un ascendant/descendant (cas non éligible)."}
+    },
+    {
+      "id": "not_conventioned",
+      "if_all": [{"question":"q_conventionne","op":"eq","value":false}],
+      "then": {"eligible":"no_or_other_aid","reason":"Pas APL si non conventionné (à orienter vers ALS/ALF selon cas)."}
+    }
+  ],
+  "required_documents": [
+    "Pièce d’identité",
+    "RIB",
+    "Bail / informations logement",
+    "Attestation/infos du bailleur (selon parcours CAF)"
+  ],
+  "output_templates": [
+    {
+      "id": "eligible_potentially",
+      "text": "D’après vos réponses, vous pourriez être éligible à l’APL. La CAF calculera le montant selon vos ressources des 12 derniers mois (mise à jour automatique). Prochaine étape : faire une simulation puis déposer la demande.
+Source : Service-Public (vérifié) / caf.fr."
+    },
+    {
+      "id": "not_eligible_family",
+      "text": "Dans votre situation, l’aide au logement n’est pas possible si le logement appartient à votre père/mère, grand-parent ou enfant (ascendant/descendant). On peut regarder d’autres options selon votre cas.
+Source : Service-Public."
+    }
+  ]
+}

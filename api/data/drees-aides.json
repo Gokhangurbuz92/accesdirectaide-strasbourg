@@ -1,0 +1,322 @@
+[
+    {
+        "id": "drees-apa",
+        "title": "Allocation Personnalisée d'Autonomie (APA)",
+        "description": "L'APA est une aide destinée aux personnes âgées de 60 ans et plus en perte d'autonomie (GIR 1 à 4). Elle finance tout ou partie des dépenses nécessaires pour rester à domicile ou en établissement.",
+        "content": "L'Allocation Personnalisée d'Autonomie (APA) est versée par le département. Elle permet de financer le plan d'aide à domicile (aide-ménagère, portage de repas, etc.) ou de contribuer au tarif dépendance en EHPAD. Le montant dépend du degré de perte d'autonomie (GIR) et des ressources du bénéficiaire. L'APA n'est pas soumise à condition de ressources pour l'attribution mais une participation peut être demandée au-delà d'un certain revenu.",
+        "theme": "personnes-agees",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F10009",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F10009",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-pch",
+        "title": "Prestation de Compensation du Handicap (PCH)",
+        "description": "La PCH est une aide financière versée par le département pour compenser les besoins liés au handicap : aides humaines, techniques, aménagement du logement, transport, charges spécifiques.",
+        "content": "La Prestation de Compensation du Handicap (PCH) est attribuée par la MDPH et versée par le département. Elle peut couvrir : les aides humaines (auxiliaire de vie), les aides techniques (fauteuil roulant), l'aménagement du logement ou du véhicule, les frais de transport, les charges spécifiques ou exceptionnelles, les aides animalières. La PCH est ouverte aux personnes en situation de handicap de moins de 60 ans (ou de plus de 60 ans si le handicap a été reconnu avant 60 ans).",
+        "theme": "handicap",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F14202",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F14202",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-ash",
+        "title": "Aide Sociale à l'Hébergement (ASH)",
+        "description": "L'ASH permet aux personnes âgées disposant de faibles ressources de financer leur hébergement en EHPAD ou en résidence autonomie habilitée à l'aide sociale.",
+        "content": "L'Aide Sociale à l'Hébergement (ASH) est versée par le département. Elle prend en charge tout ou partie des frais d'hébergement que la personne âgée ne peut pas payer sur ses propres ressources. La personne doit reverser 90% de ses revenus à l'établissement (10% restent à sa disposition). L'ASH est récupérable sur la succession si l'actif net dépasse un seuil fixé par le département.",
+        "theme": "personnes-agees",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F2444",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F2444",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-aah",
+        "title": "Allocation aux Adultes Handicapés (AAH)",
+        "description": "L'AAH garantit un revenu minimum aux personnes en situation de handicap. Son montant maximal est d'environ 971 € par mois. Elle est attribuée sous condition de taux d'incapacité et de ressources.",
+        "content": "L'Allocation aux Adultes Handicapés (AAH) est versée par la CAF ou la MSA. Elle garantit un revenu minimal aux personnes dont le taux d'incapacité permanente est d'au moins 80%, ou entre 50% et 79% avec une restriction substantielle et durable d'accès à l'emploi. L'AAH est attribuée pour une durée de 1 à 10 ans renouvelable. Elle n'est pas cumulable intégralement avec d'autres revenus.",
+        "theme": "handicap",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F12242",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/solidarite-et-insertion/l-allocation-aux-adultes-handicapes-aah",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-aspa",
+        "title": "Allocation de Solidarité aux Personnes Âgées (ASPA)",
+        "description": "L'ASPA (ex-minimum vieillesse) garantit un revenu minimal aux personnes de 65 ans et plus disposant de faibles ressources. Son montant mensuel est d'environ 961 € pour une personne seule.",
+        "content": "L'Allocation de Solidarité aux Personnes Âgées (ASPA) est versée par la caisse de retraite (CARSAT, MSA). Elle complète les revenus pour atteindre un minimum vieillesse. Conditions : avoir au moins 65 ans, résider en France de manière stable et régulière, avoir des ressources inférieures au plafond. L'ASPA est récupérable sur la succession si l'actif net dépasse 39 000 € (métropole).",
+        "theme": "personnes-agees",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F16871",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F16871",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-rsa",
+        "title": "Revenu de Solidarité Active (RSA)",
+        "description": "Le RSA assure un revenu minimum aux personnes sans ressources ou à faibles revenus. Il est versé par la CAF ou la MSA et son montant varie selon la composition du foyer.",
+        "content": "Le Revenu de Solidarité Active (RSA) est destiné aux personnes de 25 ans ou plus (ou moins de 25 ans avec un enfant à charge ou une activité professionnelle passée). Le montant forfaitaire pour une personne seule est d'environ 607 € par mois. Le RSA est soumis à des obligations d'insertion (signature d'un contrat d'engagement réciproque). Il est versé par la CAF ou la MSA et financé par le département. Les ressources du foyer sont prises en compte pour le calcul.",
+        "theme": "budget",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/N19775",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/solidarite-et-insertion/le-revenu-de-solidarite-active-rsa",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-prime-activite",
+        "title": "Prime d'activité",
+        "description": "La prime d'activité complète les revenus des travailleurs modestes. Elle est versée par la CAF ou la MSA, sous conditions de ressources, aux salariés et indépendants de 18 ans ou plus.",
+        "content": "La prime d'activité remplace le RSA activité et la prime pour l'emploi. Elle est destinée aux travailleurs de 18 ans et plus percevant des revenus modestes (environ jusqu'à 1,5 SMIC net). Son montant dépend des revenus d'activité, des autres ressources du foyer et de sa composition. Elle est versée mensuellement et doit être renouvelée tous les 3 mois via une déclaration trimestrielle de ressources. Les étudiants et apprentis peuvent en bénéficier s'ils perçoivent un revenu d'activité supérieur à environ 1 082 € net par mois.",
+        "theme": "emploi",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F2882",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/solidarite-et-insertion/la-prime-d-activite",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-apl",
+        "title": "Aide Personnalisée au Logement (APL)",
+        "description": "L'APL réduit le montant du loyer ou de la mensualité d'emprunt immobilier. Elle est versée par la CAF ou la MSA sous conditions de ressources et de logement conventionné.",
+        "content": "L'Aide Personnalisée au Logement (APL) est la principale aide au logement en France. Elle s'applique aux logements conventionnés (HLM ou parc privé conventionné). Le montant dépend des revenus du foyer, du loyer, de la zone géographique et de la composition familiale. L'APL est calculée sur les revenus des 12 derniers mois (calcul en temps réel depuis 2021). Elle peut être versée directement au bailleur (tiers-payant) ou au locataire.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F12006",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/logement-et-cadre-de-vie/les-aides-au-logement",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-als",
+        "title": "Allocation de Logement Sociale (ALS)",
+        "description": "L'ALS aide à payer le loyer d'un logement non conventionné. Elle s'adresse aux locataires, colocataires ou résidents en foyer qui ne peuvent pas bénéficier de l'APL ni de l'ALF.",
+        "content": "L'Allocation de Logement Sociale (ALS) est versée par la CAF ou la MSA. Elle concerne les logements non conventionnés et les personnes ne pouvant prétendre ni à l'APL ni à l'ALF. Le montant dépend des revenus, du loyer, de la zone géographique et de la composition du foyer. L'ALS peut aussi aider les résidents en foyer, maison de retraite ou logement meublé. Elle est souvent attribuée aux étudiants, jeunes travailleurs ou personnes seules sans enfant.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F1280",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/logement-et-cadre-de-vie/les-aides-au-logement",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-alf",
+        "title": "Allocation de Logement Familiale (ALF)",
+        "description": "L'ALF aide à payer le loyer des familles avec enfants ou personnes à charge, dans un logement non conventionné. Elle est versée par la CAF sous conditions de ressources.",
+        "content": "L'Allocation de Logement Familiale (ALF) est destinée aux ménages avec au moins un enfant à charge (ou à naître), un ascendant de plus de 65 ans à charge, ou un jeune ménage marié sans enfant. Elle s'applique aux logements non conventionnés. Le montant varie selon les revenus, le loyer, la zone géographique et la composition du foyer. L'ALF ne se cumule ni avec l'APL ni avec l'ALS.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F13132",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/logement-et-cadre-de-vie/les-aides-au-logement",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-css",
+        "title": "Complémentaire Santé Solidaire (CSS)",
+        "description": "La CSS (ex-CMU-C et ACS) offre une couverture complémentaire santé gratuite ou à moins de 1 € par jour aux personnes à faibles revenus. Elle couvre les consultations, médicaments, optique et dentaire.",
+        "content": "La Complémentaire Santé Solidaire (CSS) remplace la CMU-C et l'ACS depuis novembre 2019. Elle permet une prise en charge à 100% des dépenses de santé (consultations, médicaments, lunettes, prothèses dentaires et auditives) sans avance de frais. Elle est gratuite pour les foyers dont les revenus sont inférieurs au plafond CMU-C, et avec une participation de moins de 1 € par jour par personne pour les revenus entre le plafond CMU-C et le plafond ACS. La demande se fait auprès de la CPAM.",
+        "theme": "sante",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F10027",
+        "apply_url": "https://www.ameli.fr/assure/droits-demarches/difficultes-acces-droits-soins/complementaire-sante-solidaire",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-aeeh",
+        "title": "Allocation d'Éducation de l'Enfant Handicapé (AEEH)",
+        "description": "L'AEEH aide les familles à couvrir les frais liés au handicap d'un enfant de moins de 20 ans. Son montant de base est d'environ 142 € par mois, complété par des compléments selon la gravité.",
+        "content": "L'Allocation d'Éducation de l'Enfant Handicapé (AEEH) est versée par la CAF sur décision de la CDAPH (Commission des droits et de l'autonomie des personnes handicapées). L'enfant doit présenter un taux d'incapacité d'au moins 80%, ou entre 50% et 79% s'il fréquente un établissement spécialisé ou nécessite des soins. L'AEEH comprend une allocation de base pouvant être complétée par 6 niveaux de complément selon les dépenses engagées et la réduction d'activité professionnelle du parent. Une majoration pour parent isolé peut s'y ajouter.",
+        "theme": "handicap",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F14809",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F14809",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-ajpp",
+        "title": "Allocation Journalière de Présence Parentale (AJPP)",
+        "description": "L'AJPP est versée au parent qui réduit ou cesse son activité pour s'occuper d'un enfant gravement malade, accidenté ou handicapé nécessitant des soins contraignants.",
+        "content": "L'Allocation Journalière de Présence Parentale (AJPP) permet au parent de bénéficier de 310 jours de congé sur 3 ans pour s'occuper d'un enfant dont la maladie, le handicap ou l'accident rend indispensable une présence soutenue et des soins contraignants. Le montant est d'environ 64 € par jour pour un couple et 76 € pour un parent isolé. Un complément pour frais est possible si les dépenses mensuelles liées à l'état de santé de l'enfant dépassent un seuil. La demande est faite auprès de la CAF avec un certificat médical détaillé.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F15132",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F15132",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-ass",
+        "title": "Allocation de Solidarité Spécifique (ASS)",
+        "description": "L'ASS est destinée aux demandeurs d'emploi ayant épuisé leurs droits à l'allocation chômage (ARE). Son montant est d'environ 18,17 € par jour, sous conditions de ressources et d'activité antérieure.",
+        "content": "L'Allocation de Solidarité Spécifique (ASS) prend le relais de l'ARE (allocation chômage) pour les demandeurs d'emploi en fin de droits. Conditions : être inscrit comme demandeur d'emploi, justifier de 5 ans d'activité salariée dans les 10 ans précédant la fin du contrat, et avoir des ressources inférieures au plafond. L'ASS est versée par France Travail (ex-Pôle emploi) pour des périodes de 6 mois renouvelables. Son montant journalier est d'environ 18,17 €, soit environ 545 € par mois.",
+        "theme": "emploi",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F12484",
+        "apply_url": "https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allegem/a-chaque-situation-son-allocatio/quelle-est-ma-situation-professi.html",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-paje-prime-naissance",
+        "title": "Prime à la naissance ou à l'adoption (PAJE)",
+        "description": "La prime à la naissance (1 003,95 €) ou à l'adoption (2 007,91 €) aide à couvrir les premières dépenses liées à l'arrivée d'un enfant. Versée par la CAF sous conditions de ressources.",
+        "content": "La prime à la naissance est versée au 7e mois de grossesse. La prime à l'adoption est versée lors de l'arrivée de l'enfant au foyer. Ces primes font partie de la Prestation d'Accueil du Jeune Enfant (PAJE). Elles sont soumises à un plafond de ressources qui varie selon le nombre d'enfants au foyer et la situation (couple/parent isolé, un ou deux revenus). La prime n'est versée qu'une seule fois par enfant né ou adopté.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F2550",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/petite-enfance/la-prime-a-la-naissance-ou-a-l-adoption",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-paje-allocation-base",
+        "title": "Allocation de base de la PAJE",
+        "description": "L'allocation de base de la PAJE est versée mensuellement après la naissance ou l'adoption d'un enfant jusqu'à ses 3 ans, sous conditions de ressources. Montant : environ 184 € ou 92 € selon les revenus.",
+        "content": "L'allocation de base de la PAJE est versée du mois suivant la naissance jusqu'au mois précédant les 3 ans de l'enfant. Pour un enfant adopté, elle est versée pendant 3 ans à compter de l'arrivée au foyer. Le montant est à taux plein (environ 184 €) ou à taux partiel (environ 92 €) selon les ressources du foyer. En cas de naissances multiples, autant d'allocations de base sont versées que d'enfants nés.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F2552",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/petite-enfance/l-allocation-de-base",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-af",
+        "title": "Allocations Familiales (AF)",
+        "description": "Les allocations familiales sont versées automatiquement aux familles ayant au moins 2 enfants de moins de 20 ans à charge. Le montant varie selon les revenus et le nombre d'enfants.",
+        "content": "Les allocations familiales sont un droit pour toutes les familles ayant au moins 2 enfants à charge de moins de 20 ans, sans conditions de ressources pour l'ouverture du droit. Depuis 2015, le montant est modulé en fonction des revenus du foyer (3 tranches). Pour 2 enfants : environ 141 € (revenus modestes), 70 € ou 35 € selon la tranche. Une majoration est accordée pour chaque enfant de plus de 14 ans. Les allocations sont versées le 5 de chaque mois par la CAF ou la MSA.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F13213",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/enfance-et-jeunesse/les-allocations-familiales-af",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-ars",
+        "title": "Allocation de Rentrée Scolaire (ARS)",
+        "description": "L'ARS aide les familles à faibles revenus à financer la rentrée scolaire de leurs enfants de 6 à 18 ans. Son montant varie de 398 à 434 € selon l'âge de l'enfant.",
+        "content": "L'Allocation de Rentrée Scolaire (ARS) est versée une fois par an, fin août, par la CAF ou la MSA. Elle est soumise à conditions de ressources. Le montant varie selon l'âge de l'enfant : environ 398 € (6-10 ans), 420 € (11-14 ans), 434 € (15-18 ans). L'enfant doit être scolarisé, en apprentissage, ou pris en charge en établissement, et avoir entre 6 et 18 ans au 16 septembre de l'année de rentrée. Pour les enfants de 16-18 ans, une déclaration de scolarité ou d'apprentissage est requise.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F1878",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/enfance-et-jeunesse/l-allocation-de-rentree-scolaire-ars",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-asf",
+        "title": "Allocation de Soutien Familial (ASF)",
+        "description": "L'ASF est versée au parent qui élève seul un enfant privé de l'aide d'un des parents (décès, non-reconnaissance, pension alimentaire non versée). Montant : environ 187 € par mois et par enfant.",
+        "content": "L'Allocation de Soutien Familial (ASF) est versée par la CAF ou la MSA. Elle concerne les enfants orphelins de père ou de mère, non reconnus par un parent, ou dont l'un des parents ne verse pas la pension alimentaire fixée par le juge. Le montant est d'environ 187 € par mois pour un enfant privé de l'aide d'un parent, et 250 € si les deux parents sont défaillants. L'ASF peut être versée à titre d'avance de pension alimentaire. La CAF peut ensuite engager un recouvrement auprès du parent débiteur via l'Agence de recouvrement et d'intermédiation des pensions alimentaires (ARIPA).",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F815",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/enfance-et-jeunesse/l-allocation-de-soutien-familial-asf",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-cf",
+        "title": "Complément Familial (CF)",
+        "description": "Le complément familial est versé aux familles d'au moins 3 enfants de plus de 3 ans et de moins de 21 ans, sous conditions de ressources. Montant : environ 174 € à 262 € par mois.",
+        "content": "Le Complément Familial (CF) est attribué automatiquement par la CAF ou la MSA aux familles ayant au moins 3 enfants à charge, tous âgés de plus de 3 ans et de moins de 21 ans. Il est soumis à des plafonds de ressources. Le montant est majoré (environ 262 €) pour les familles les plus modestes et à taux partiel (environ 174 €) pour les autres. Le complément familial n'est pas cumulable avec l'allocation de base de la PAJE ni le PreParE.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F13214",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/enfance-et-jeunesse/le-complement-familial",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-ame",
+        "title": "Aide Médicale de l'État (AME)",
+        "description": "L'AME permet aux personnes étrangères en situation irrégulière résidant en France depuis plus de 3 mois d'accéder aux soins de santé. Elle couvre les consultations, hospitalisations et médicaments.",
+        "content": "L'Aide Médicale de l'État (AME) est destinée aux personnes étrangères en situation irrégulière résidant en France de manière stable depuis plus de 3 mois et dont les ressources sont inférieures au plafond CMU-C. Elle couvre les consultations médicales, les analyses, les hospitalisations, les médicaments, et certains soins dentaires et optiques. La demande se fait auprès de la CPAM. L'AME est accordée pour un an renouvelable. Les soins sont pris en charge à 100% des tarifs de la Sécurité sociale.",
+        "theme": "sante",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F3079",
+        "apply_url": "https://www.ameli.fr/assure/droits-demarches/situations-particulieres/protection-universelle-maladie",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-cej",
+        "title": "Contrat d'Engagement Jeune (CEJ)",
+        "description": "Le CEJ est un parcours d'accompagnement intensif de 6 à 12 mois pour les jeunes de 16 à 25 ans (ou 29 ans pour les personnes handicapées) sans emploi ni formation, avec une allocation pouvant atteindre 528 € par mois.",
+        "content": "Le Contrat d'Engagement Jeune (CEJ) remplace la Garantie Jeunes depuis mars 2022. Il propose un accompagnement intensif de 15 à 20 heures par semaine (ateliers, immersions en entreprise, formation, service civique). L'allocation mensuelle est de 528 € maximum pour les jeunes non rattachés au foyer fiscal de leurs parents, et de 314 € pour les rattachés. Le suivi est assuré par France Travail ou la Mission Locale. Le jeune doit respecter ses engagements sous peine de suspension ou suppression de l'allocation.",
+        "theme": "emploi",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F32700",
+        "apply_url": "https://www.1jeune1solution.gouv.fr/contrat-engagement-jeune",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-fsl",
+        "title": "Fonds de Solidarité pour le Logement (FSL)",
+        "description": "Le FSL aide les personnes en difficulté à accéder à un logement ou à s'y maintenir : prise en charge des dépôts de garantie, impayés de loyer, factures d'énergie et d'eau.",
+        "content": "Le Fonds de Solidarité pour le Logement (FSL) est géré par chaque département. Il peut intervenir sous forme d'aide financière (subvention ou prêt) ou d'accompagnement social lié au logement. Le FSL peut couvrir : le dépôt de garantie et le premier loyer (aide à l'accès), les impayés de loyer et de charges (aide au maintien), les factures d'énergie, d'eau et de téléphone. Les conditions d'attribution varient selon les départements. La demande se fait généralement via un travailleur social (CCAS, assistante sociale).",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F1334",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F1334",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-mvj",
+        "title": "Aide à la mobilité (Bons de transport France Travail)",
+        "description": "France Travail peut aider les demandeurs d'emploi à financer leurs frais de déplacement pour un entretien d'embauche, une formation ou une reprise d'emploi.",
+        "content": "L'aide à la mobilité de France Travail (ex-Pôle emploi) couvre les frais de déplacement, d'hébergement et de repas pour les demandeurs d'emploi qui doivent se déplacer à plus de 60 km aller-retour ou 2 heures de trajet pour un entretien d'embauche, une formation, un concours public ou une reprise d'emploi. L'aide couvre aussi les frais de permis de conduire dans certains cas. Le montant et les modalités varient selon la situation. La demande se fait directement auprès de France Travail.",
+        "theme": "mobilite",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F1011",
+        "apply_url": "https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allegem/a-chaque-situation-son-allocatio/que-peut-maccorder-pole-emploi.html",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-aide-juridictionnelle",
+        "title": "Aide juridictionnelle",
+        "description": "L'aide juridictionnelle permet aux personnes à faibles revenus de bénéficier d'une prise en charge totale ou partielle des frais de justice et d'avocat pour un procès civil, pénal ou administratif.",
+        "content": "L'aide juridictionnelle est accordée en fonction des ressources du demandeur. L'aide totale couvre l'intégralité des frais (honoraires d'avocat, frais d'expertise, huissier). L'aide partielle couvre une partie des frais. Le plafond de ressources est d'environ 12 271 € pour une personne seule (aide totale) et 18 404 € (aide partielle). Le patrimoine immobilier et mobilier est également pris en compte. La demande se fait via le formulaire Cerfa n° 16146*03 auprès du tribunal compétent.",
+        "theme": "justice",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F18074",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F18074",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-dalo",
+        "title": "Droit au logement opposable (DALO)",
+        "description": "Le DALO permet aux personnes mal logées ou sans logement de faire valoir leur droit à un logement décent. Après recours, l'État doit proposer un logement adapté dans un délai défini.",
+        "content": "Le Droit au logement opposable (DALO) est un recours amiable devant une commission de médiation départementale. Il concerne les personnes qui n'ont pas reçu de proposition de logement social adaptée malgré des démarches antérieures, et qui se trouvent dans une situation prioritaire : sans logement, menacées d'expulsion, hébergées temporairement, logées dans des locaux impropres ou dangereux, ou avec un délai d'attente anormalement long. Si la commission reconnaît le caractère prioritaire et urgent, le préfet doit proposer un logement. En cas de carence, un recours contentieux devant le tribunal administratif est possible.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F18005",
+        "apply_url": "https://www.service-public.fr/particuliers/vosdroits/F18005",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-puma",
+        "title": "Protection Universelle Maladie (PUMa)",
+        "description": "La PUMa garantit la prise en charge des frais de santé à toute personne résidant en France de manière stable et régulière, sans démarche particulière pour les salariés.",
+        "content": "La Protection Universelle Maladie (PUMa) remplace la CMU de base depuis 2016. Elle garantit à toute personne travaillant ou résidant en France de manière stable et régulière la prise en charge de ses frais de santé par la Sécurité sociale. L'affiliation est automatique pour les salariés. Les personnes sans activité doivent justifier d'une résidence en France depuis au moins 3 mois. La PUMa couvre le remboursement des soins au tarif de base de la Sécurité sociale. Une complémentaire santé (mutuelle ou CSS) est nécessaire pour compléter la prise en charge.",
+        "theme": "sante",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F34308",
+        "apply_url": "https://www.ameli.fr/assure/droits-demarches/situations-particulieres/protection-universelle-maladie",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-are",
+        "title": "Allocation d'aide au Retour à l'Emploi (ARE)",
+        "description": "L'ARE est l'allocation chômage versée par France Travail aux demandeurs d'emploi involontairement privés d'emploi, sous conditions de durée de travail antérieure et d'inscription.",
+        "content": "L'Allocation d'aide au Retour à l'Emploi (ARE) est la principale allocation chômage en France. Pour en bénéficier, il faut avoir travaillé au moins 6 mois (130 jours ou 910 heures) dans les 24 derniers mois (36 mois pour les 53 ans et plus), avoir été involontairement privé d'emploi (licenciement, fin de CDD, rupture conventionnelle), être inscrit comme demandeur d'emploi et rechercher activement un emploi. Le montant est d'environ 57% du salaire journalier de référence. La durée de versement dépend de la durée d'affiliation antérieure, avec un maximum de 24 mois (36 mois pour les 53 ans et plus).",
+        "theme": "emploi",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F14860",
+        "apply_url": "https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allegem/a-chaque-situation-son-allocatio/quelle-est-ma-situation-professi.html",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-prestation-accueil-jeune-enfant-cmg",
+        "title": "Complément de libre choix du Mode de Garde (CMG)",
+        "description": "Le CMG aide les parents à financer le coût de la garde de leur enfant de moins de 6 ans par une assistante maternelle, une garde à domicile ou une micro-crèche.",
+        "content": "Le Complément de libre choix du Mode de Garde (CMG) fait partie de la PAJE. Il couvre une partie des frais de garde pour un enfant de moins de 6 ans. Le CMG varie selon les revenus du foyer, l'âge de l'enfant (moins ou plus de 3 ans) et le mode de garde choisi. Pour une assistante maternelle, la CAF prend en charge les cotisations sociales et verse un complément financier. Pour une garde à domicile, la prise en charge des cotisations est partielle. Pour une micro-crèche ou crèche familiale, le CMG couvre une partie de la facture dans la limite d'un plafond.",
+        "theme": "famille",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F345",
+        "apply_url": "https://www.caf.fr/allocataires/droits-et-prestations/s-informer-sur-les-aides/petite-enfance/le-complement-de-libre-choix-du-mode-de-garde",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-garantie-visale",
+        "title": "Garantie Visale",
+        "description": "Visale est une caution locative gratuite d'Action Logement pour les jeunes de moins de 30 ans et les salariés précaires. Elle garantit le paiement du loyer et des charges au bailleur en cas d'impayé.",
+        "content": "La Garantie Visale est un dispositif gratuit d'Action Logement qui se porte garant pour le locataire auprès du bailleur. Elle est destinée aux jeunes de 18 à 30 ans (sans condition) et aux salariés de plus de 30 ans en situation de précarité (CDD, intérim, mutation, revenus modestes). Visale couvre les impayés de loyer et les dégradations locatives pendant toute la durée du bail dans le parc privé. Le bailleur est remboursé directement par Visale, qui se retourne ensuite vers le locataire pour le remboursement. La demande se fait en ligne sur visale.fr avant la signature du bail.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F33453",
+        "apply_url": "https://www.visale.fr/",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-cheque-energie",
+        "title": "Chèque énergie",
+        "description": "Le chèque énergie aide les ménages modestes à payer leurs factures d'énergie (électricité, gaz, bois, fioul) ou des travaux de rénovation énergétique. Montant : de 48 € à 277 € par an.",
+        "content": "Le chèque énergie est envoyé automatiquement par voie postale une fois par an (en avril), sans démarche à effectuer. Il est attribué en fonction du revenu fiscal de référence et de la composition du ménage. Le montant varie de 48 € à 277 € par an. Le chèque peut être utilisé pour payer les factures d'énergie (électricité, gaz, fioul, bois…), les charges d'énergie incluses dans la redevance de logement-foyer, ou pour financer des travaux de rénovation énergétique. Il ouvre aussi droit à la protection contre les coupures d'énergie pendant la trêve hivernale.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F33667",
+        "apply_url": "https://chequeenergie.gouv.fr/",
+        "territory_scope": "NATIONAL"
+    },
+    {
+        "id": "drees-maprimerennov",
+        "title": "MaPrimeRénov'",
+        "description": "MaPrimeRénov' finance les travaux de rénovation énergétique du logement : isolation, chauffage, ventilation. Le montant dépend des revenus du ménage et du type de travaux (jusqu'à 90% du coût).",
+        "content": "MaPrimeRénov' est la principale aide à la rénovation énergétique en France. Elle est ouverte à tous les propriétaires occupants, bailleurs et copropriétés, sans conditions de revenus (mais le montant est modulé). Les travaux éligibles incluent l'isolation (murs, toiture, fenêtres), le remplacement du chauffage (pompe à chaleur, chaudière biomasse), la ventilation et l'audit énergétique. Le montant varie de quelques centaines d'euros à plusieurs dizaines de milliers d'euros selon les revenus et le gain énergétique. La demande se fait sur maprimerenov.gouv.fr avant le début des travaux, par un artisan RGE.",
+        "theme": "logement",
+        "source_url": "https://www.service-public.fr/particuliers/vosdroits/F35083",
+        "apply_url": "https://www.maprimerenov.gouv.fr/",
+        "territory_scope": "NATIONAL"
+    }
+]

@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Sources Manifest",
+  "description": "Configuration for external data sources",
+  "type": "object",
+  "required": ["version", "sources"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest version"
+    },
+    "sources": {
+      "type": "array",
+      "description": "List of data sources",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "scope", "type", "url_exact"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Unique identifier (kebab-case)"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable name"
+          },
+          "scope": {
+            "type": "string",
+            "enum": ["national", "67", "68"],
+            "description": "Geographic scope"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["aide", "demarche", "structure", "dispositif"],
+            "description": "Content type"
+          },
+          "base_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Base URL of the source"
+          },
+          "url_exact": {
+            "type": "string",
+            "format": "uri",
+            "description": "Exact URL to fetch (must be specific, not just homepage)"
+          },
+          "strategy": {
+            "type": "string",
+            "enum": ["api", "scrape", "rss", "manual"],
+            "description": "Ingestion strategy"
+          },
+          "license": {
+            "type": "string",
+            "description": "Data license"
+          },
+          "trust_level": {
+            "type": "string",
+            "enum": ["OFFICIAL", "VERIFIED", "COMMUNITY"],
+            "description": "Trust level"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether this source is active"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes or configuration details"
+          }
+        }
+      }
+    }
+  }
+}

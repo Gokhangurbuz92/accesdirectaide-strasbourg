@@ -1,0 +1,300 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1773507815198,
+      "tag": "0000_fuzzy_fallen_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773510503465,
+      "tag": "0001_organic_morlun",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773512918004,
+      "tag": "0002_thankful_sunspot",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773512983484,
+      "tag": "0003_free_crusher_hogan",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773564905531,
+      "tag": "0004_confused_korvac",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774036250665,
+      "tag": "0005_low_firebird",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788354658113,
+      "tag": "0006_phase4_consolidation",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788385777817,
+      "tag": "0007_great_sue_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788506052159,
+      "tag": "0008_watery_harpoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788571708685,
+      "tag": "0009_fast_cammi",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788795240821,
+      "tag": "0010_ingestion_backoff_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788795253185,
+      "tag": "0011_gate2b3b_privacy_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792154605047,
+      "tag": "0012_shared_dossier_thread",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792193566440,
+      "tag": "0013_rc5_dossier_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792199240722,
+      "tag": "0014_rc5_org_bound_invites",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792338633639,
+      "tag": "0015_pkg1_public_visibility_account_core",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792361426875,
+      "tag": "0016_pkg2_mon_espace",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792363963458,
+      "tag": "0017_pkg2_parcours_reminders",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792372080490,
+      "tag": "0018_pkg2_delegation",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792373743198,
+      "tag": "0019_pkg3_reschedule",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792378878002,
+      "tag": "0020_pkg3_appointment_notices",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792379081303,
+      "tag": "0021_pkg3_modes_visio",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792457896760,
+      "tag": "0022_pkg4_cases_referrals",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792459667826,
+      "tag": "0023_pkg4_structure_proposals",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792490071178,
+      "tag": "0024_pkg4_batch3",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792499773472,
+      "tag": "0025_pkg5_batch1",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792536546706,
+      "tag": "0026_pkg5_batch2",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1792542123096,
+      "tag": "0027_pkg6_falc_review",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1792602327021,
+      "tag": "0028_pkg6_r17_dossier_synthesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1792670303762,
+      "tag": "0029_pkg11_pro_session_revocation",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792686495299,
+      "tag": "0030_pkg11_consent_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792743987428,
+      "tag": "0031_pkg11_retrieval_relations",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792749787352,
+      "tag": "0032_pkg11_citizen_session_revocation",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792803516631,
+      "tag": "0033_pkg11_admin_sessions_falc_fields_share_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1792818796525,
+      "tag": "0034_pkg11_owner_lab_review_integrity",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1792890470232,
+      "tag": "0035_pkg12_veille_automatique",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792891240223,
+      "tag": "0036_pkg12_demarche_conditions_falc",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1792896581678,
+      "tag": "0037_pkg12_veille_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1792941608207,
+      "tag": "0038_launch_retention_measures",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792978395536,
+      "tag": "0039_r11_structure_services_externes",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1792981309998,
+      "tag": "0040_r11_push_subscription",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1793227168624,
+      "tag": "0041_r24_member_absences",
+      "breakpoints": true
+    }
+  ]
+}

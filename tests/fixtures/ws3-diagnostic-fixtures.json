@@ -1,0 +1,95 @@
+{
+  "schema": "ada.ws3.local-diagnostic-fixtures.v1",
+  "referenceDate": "2026-09-01",
+  "scenarios": [
+    {
+      "id": "rsa-apl-single-no-income",
+      "answers": {
+        "birthDate": "1990-05-15",
+        "income": {
+          "salary": 0,
+          "unemployment": 0
+        },
+        "housing": {
+          "rent": 600,
+          "charges": 50,
+          "status": "tenant"
+        },
+        "householdSize": 1,
+        "territory": "67000",
+        "statut": "sans_emploi"
+      },
+      "expected": {
+        "eligible": [
+          "rsa",
+          "apl"
+        ],
+        "ineligible": [
+          "faj-strasbourg"
+        ],
+        "amounts": {
+          "rsa": 650,
+          "apl": 192
+        }
+      }
+    },
+    {
+      "id": "faj-young-strasbourg",
+      "answers": {
+        "birthDate": "2005-04-10",
+        "income": {
+          "salary": 0,
+          "unemployment": 0
+        },
+        "housing": {
+          "rent": 450,
+          "charges": 30,
+          "status": "tenant"
+        },
+        "householdSize": 1,
+        "territory": "67000",
+        "statut": "sans_emploi"
+      },
+      "expected": {
+        "eligible": [
+          "apl",
+          "faj-strasbourg"
+        ],
+        "ineligible": [
+          "rsa"
+        ],
+        "amounts": {
+          "apl": 144,
+          "faj-strasbourg": 0
+        }
+      }
+    },
+    {
+      "id": "high-income-no-local-orientation",
+      "answers": {
+        "birthDate": "1985-01-10",
+        "income": {
+          "salary": 4500,
+          "unemployment": 0
+        },
+        "housing": {
+          "rent": 900,
+          "charges": 100,
+          "status": "tenant"
+        },
+        "householdSize": 1,
+        "territory": "67000",
+        "statut": "salarié"
+      },
+      "expected": {
+        "eligible": [],
+        "ineligible": [
+          "rsa",
+          "apl",
+          "faj-strasbourg"
+        ],
+        "amounts": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,2643 @@
+{
+ "schema": "ADA_LEGAL_ARTICLES_INDEX_V1",
+ "referenceDate": "2026-10-27",
+ "source": {
+  "producer": "DILA",
+  "dataset": "LEGI (codes en vigueur)",
+  "licence": "Licence Ouverte / Open Licence 2.0",
+  "attribution": "Direction de l’information légale et administrative (DILA) — Légifrance",
+  "baseArchive": "Freemium_legi_global_20250713-140000.tar.gz",
+  "lastDelta": "LEGI_20261026-212955.tar.gz",
+  "deltasApplied": 477
+ },
+ "references": [
+  {
+   "right": "rsa",
+   "basis": "CASF L262-2 à L262-12",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L262-2",
+     "id": "LEGIARTI000031087764",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087764",
+     "kind": "article"
+    },
+    {
+     "num": "L262-3",
+     "id": "LEGIARTI000038833721",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038833721",
+     "kind": "article"
+    },
+    {
+     "num": "L262-4",
+     "id": "LEGIARTI000031087751",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087751",
+     "kind": "article"
+    },
+    {
+     "num": "L262-5",
+     "id": "LEGIARTI000019869098",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019869098",
+     "kind": "article"
+    },
+    {
+     "num": "L262-6",
+     "id": "LEGIARTI000019869092",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019869092",
+     "kind": "article"
+    },
+    {
+     "num": "L262-7",
+     "id": "LEGIARTI000033813652",
+     "dateDebut": "2017-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033813652",
+     "kind": "article"
+    },
+    {
+     "num": "L262-7-1",
+     "id": "LEGIARTI000021642861",
+     "dateDebut": "2010-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000021642861",
+     "kind": "article"
+    },
+    {
+     "num": "L262-8",
+     "id": "LEGIARTI000033813647",
+     "dateDebut": "2017-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033813647",
+     "kind": "article"
+    },
+    {
+     "num": "L262-9",
+     "id": "LEGIARTI000031087746",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087746",
+     "kind": "article"
+    },
+    {
+     "num": "L262-10",
+     "id": "LEGIARTI000047453055",
+     "dateDebut": "2023-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047453055",
+     "kind": "article"
+    },
+    {
+     "num": "L262-11",
+     "id": "LEGIARTI000019869051",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019869051",
+     "kind": "article"
+    },
+    {
+     "num": "L262-12",
+     "id": "LEGIARTI000041398800",
+     "dateDebut": "2020-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041398800",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "CASF L262-27 à L262-39",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L262-27",
+     "id": "LEGIARTI000048590704",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590704",
+     "kind": "article"
+    },
+    {
+     "num": "L262-27-1",
+     "id": "LEGIARTI000031077847",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077847",
+     "kind": "article"
+    },
+    {
+     "num": "L262-28",
+     "id": "LEGIARTI000054334520",
+     "dateDebut": "2026-06-27",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054334520",
+     "kind": "article"
+    },
+    {
+     "num": "L262-29",
+     "id": "LEGIARTI000048590688",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590688",
+     "kind": "article"
+    },
+    {
+     "num": "L262-30",
+     "id": "LEGIARTI000048590682",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590682",
+     "kind": "article"
+    },
+    {
+     "num": "L262-31",
+     "id": "LEGIARTI000048590674",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590674",
+     "kind": "article"
+    },
+    {
+     "num": "L262-34",
+     "id": "LEGIARTI000048590670",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590670",
+     "kind": "article"
+    },
+    {
+     "num": "L262-37",
+     "id": "LEGIARTI000048590667",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590667",
+     "kind": "article"
+    },
+    {
+     "num": "L262-38",
+     "id": "LEGIARTI000048590657",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590657",
+     "kind": "article"
+    },
+    {
+     "num": "L262-39",
+     "id": "LEGIARTI000048590651",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590651",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "CASF R262-32 à R262-42",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R262-32",
+     "id": "LEGIARTI000020526092",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526092",
+     "kind": "article"
+    },
+    {
+     "num": "R262-33",
+     "id": "LEGIARTI000020526088",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526088",
+     "kind": "article"
+    },
+    {
+     "num": "R262-35",
+     "id": "LEGIARTI000020526082",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526082",
+     "kind": "article"
+    },
+    {
+     "num": "R262-36",
+     "id": "LEGIARTI000020526080",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526080",
+     "kind": "article"
+    },
+    {
+     "num": "R262-37",
+     "id": "LEGIARTI000020526078",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526078",
+     "kind": "article"
+    },
+    {
+     "num": "R262-38",
+     "id": "LEGIARTI000028251822",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028251822",
+     "kind": "article"
+    },
+    {
+     "num": "R262-39",
+     "id": "LEGIARTI000020526072",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526072",
+     "kind": "article"
+    },
+    {
+     "num": "R262-40",
+     "id": "LEGIARTI000051679676",
+     "dateDebut": "2025-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051679676",
+     "kind": "article"
+    },
+    {
+     "num": "R262-41",
+     "id": "LEGIARTI000028251819",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028251819",
+     "kind": "article"
+    },
+    {
+     "num": "R262-42",
+     "id": "LEGIARTI000020526063",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526063",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "CASF R262-43 à R262-49",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R262-43",
+     "id": "LEGIARTI000020526059",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526059",
+     "kind": "article"
+    },
+    {
+     "num": "R262-44",
+     "id": "LEGIARTI000033979111",
+     "dateDebut": "2017-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033979111",
+     "kind": "article"
+    },
+    {
+     "num": "R262-45",
+     "id": "LEGIARTI000051679667",
+     "dateDebut": "2025-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051679667",
+     "kind": "article"
+    },
+    {
+     "num": "R262-46",
+     "id": "LEGIARTI000020526049",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526049",
+     "kind": "article"
+    },
+    {
+     "num": "R262-47",
+     "id": "LEGIARTI000028251794",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028251794",
+     "kind": "article"
+    },
+    {
+     "num": "R262-48",
+     "id": "LEGIARTI000020526044",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020526044",
+     "kind": "article"
+    },
+    {
+     "num": "R262-49",
+     "id": "LEGIARTI000028251815",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028251815",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "CASF L262-45 à L262-49",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L262-45",
+     "id": "LEGIARTI000038833712",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038833712",
+     "kind": "article"
+    },
+    {
+     "num": "L262-46",
+     "id": "LEGIARTI000046811438",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046811438",
+     "kind": "article"
+    },
+    {
+     "num": "L262-47",
+     "id": "LEGIARTI000027572660",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000027572660",
+     "kind": "article"
+    },
+    {
+     "num": "L262-48",
+     "id": "LEGIARTI000019868861",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019868861",
+     "kind": "article"
+    },
+    {
+     "num": "L262-49",
+     "id": "LEGIARTI000019868857",
+     "dateDebut": "2009-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019868857",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "CASF D262-25-1 à D262-25-4 (RSA jeune actif)",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D262-25-1",
+     "id": "LEGIARTI000033516276",
+     "dateDebut": "2017-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033516276",
+     "kind": "article"
+    },
+    {
+     "num": "D262-25-2",
+     "id": "LEGIARTI000046078803",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046078803",
+     "kind": "article"
+    },
+    {
+     "num": "D262-25-3",
+     "id": "LEGIARTI000022743597",
+     "dateDebut": "2010-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022743597",
+     "kind": "article"
+    },
+    {
+     "num": "D262-25-4",
+     "id": "LEGIARTI000022743600",
+     "dateDebut": "2010-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022743600",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "rsa",
+   "basis": "Décret n°2025-293 du 29 mars 2025",
+   "code": null,
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Décret n° 2025-293 du 29 mars 2025 portant revalorisation du montant forfaitaire du revenu de solidarité active",
+     "id": "LEGITEXT000051395296",
+     "dateDebut": "2025-03-31",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000051393086",
+     "kind": "text"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS L842-1 à L842-8",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L842-1",
+     "id": "LEGIARTI000031087527",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087527",
+     "kind": "article"
+    },
+    {
+     "num": "L842-2",
+     "id": "LEGIARTI000031087615",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087615",
+     "kind": "article"
+    },
+    {
+     "num": "L842-3",
+     "id": "LEGIARTI000037994814",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037994814",
+     "kind": "article"
+    },
+    {
+     "num": "L842-4",
+     "id": "LEGIARTI000033813782",
+     "dateDebut": "2017-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033813782",
+     "kind": "article"
+    },
+    {
+     "num": "L842-5",
+     "id": "LEGIARTI000031077014",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077014",
+     "kind": "article"
+    },
+    {
+     "num": "L842-7",
+     "id": "LEGIARTI000031077047",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077047",
+     "kind": "article"
+    },
+    {
+     "num": "L842-8",
+     "id": "LEGIARTI000036433576",
+     "dateDebut": "2018-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036433576",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS R842-1 à R842-5",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R842-1",
+     "id": "LEGIARTI000031694337",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031694337",
+     "kind": "article"
+    },
+    {
+     "num": "R842-2",
+     "id": "LEGIARTI000051258586",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051258586",
+     "kind": "article"
+    },
+    {
+     "num": "R842-3",
+     "id": "LEGIARTI000031675687",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031675687",
+     "kind": "article"
+    },
+    {
+     "num": "R842-4",
+     "id": "LEGIARTI000031675698",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031675698",
+     "kind": "article"
+    },
+    {
+     "num": "R842-5",
+     "id": "LEGIARTI000033979182",
+     "dateDebut": "2017-02-03",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033979182",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS R843-1, R843-2",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D843-1",
+     "id": "LEGIARTI000031673885",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031673885",
+     "kind": "article"
+    },
+    {
+     "num": "D843-2",
+     "id": "LEGIARTI000053741714",
+     "dateDebut": "2026-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053741714",
+     "kind": "article"
+    },
+    {
+     "num": "R843-1",
+     "id": "LEGIARTI000051258572",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051258572",
+     "kind": "article"
+    },
+    {
+     "num": "R843-2",
+     "id": "LEGIARTI000051300726",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051300726",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS R844-1 à R844-5",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R844-1",
+     "id": "LEGIARTI000054314917",
+     "dateDebut": "2026-06-27",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054314917",
+     "kind": "article"
+    },
+    {
+     "num": "R844-2",
+     "id": "LEGIARTI000038893083",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038893083",
+     "kind": "article"
+    },
+    {
+     "num": "R844-3",
+     "id": "LEGIARTI000048841687",
+     "dateDebut": "2023-12-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048841687",
+     "kind": "article"
+    },
+    {
+     "num": "R844-4",
+     "id": "LEGIARTI000038929265",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038929265",
+     "kind": "article"
+    },
+    {
+     "num": "R844-5",
+     "id": "LEGIARTI000048841615",
+     "dateDebut": "2023-12-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048841615",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS R845-1 à R845-3",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R845-1",
+     "id": "LEGIARTI000051258566",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051258566",
+     "kind": "article"
+    },
+    {
+     "num": "R845-2",
+     "id": "LEGIARTI000051258549",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051258549",
+     "kind": "article"
+    },
+    {
+     "num": "R845-3",
+     "id": "LEGIARTI000031676083",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676083",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS R846-1 à R846-9",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D846-1",
+     "id": "LEGIARTI000031673946",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031673946",
+     "kind": "article"
+    },
+    {
+     "num": "D846-2",
+     "id": "LEGIARTI000031674204",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031674204",
+     "kind": "article"
+    },
+    {
+     "num": "D846-3",
+     "id": "LEGIARTI000031674243",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031674243",
+     "kind": "article"
+    },
+    {
+     "num": "R846-1",
+     "id": "LEGIARTI000031676100",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676100",
+     "kind": "article"
+    },
+    {
+     "num": "R846-2",
+     "id": "LEGIARTI000031676112",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676112",
+     "kind": "article"
+    },
+    {
+     "num": "R846-3",
+     "id": "LEGIARTI000031676126",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676126",
+     "kind": "article"
+    },
+    {
+     "num": "R846-4",
+     "id": "LEGIARTI000031676137",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676137",
+     "kind": "article"
+    },
+    {
+     "num": "R846-5",
+     "id": "LEGIARTI000031676151",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676151",
+     "kind": "article"
+    },
+    {
+     "num": "R846-6",
+     "id": "LEGIARTI000031676181",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676181",
+     "kind": "article"
+    },
+    {
+     "num": "R846-7",
+     "id": "LEGIARTI000031676192",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676192",
+     "kind": "article"
+    },
+    {
+     "num": "R846-8",
+     "id": "LEGIARTI000031676201",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676201",
+     "kind": "article"
+    },
+    {
+     "num": "R846-9",
+     "id": "LEGIARTI000031676210",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676210",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS D843-1 à D843-3",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D843-1",
+     "id": "LEGIARTI000031673885",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031673885",
+     "kind": "article"
+    },
+    {
+     "num": "D843-2",
+     "id": "LEGIARTI000053741714",
+     "dateDebut": "2026-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053741714",
+     "kind": "article"
+    },
+    {
+     "num": "D843-3",
+     "id": "LEGIARTI000051396704",
+     "dateDebut": "2025-03-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051396704",
+     "kind": "article"
+    },
+    {
+     "num": "R843-1",
+     "id": "LEGIARTI000051258572",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051258572",
+     "kind": "article"
+    },
+    {
+     "num": "R843-2",
+     "id": "LEGIARTI000051300726",
+     "dateDebut": "2025-02-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051300726",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS L845-1 à L845-5",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L845-1",
+     "id": "LEGIARTI000031077480",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077480",
+     "kind": "article"
+    },
+    {
+     "num": "L845-2",
+     "id": "LEGIARTI000031077482",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077482",
+     "kind": "article"
+    },
+    {
+     "num": "L845-3",
+     "id": "LEGIARTI000046811447",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046811447",
+     "kind": "article"
+    },
+    {
+     "num": "L845-4",
+     "id": "LEGIARTI000031077486",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031077486",
+     "kind": "article"
+    },
+    {
+     "num": "L845-5",
+     "id": "LEGIARTI000041398622",
+     "dateDebut": "2019-12-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041398622",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "CSS D846-2",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D846-2",
+     "id": "LEGIARTI000031674204",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031674204",
+     "kind": "article"
+    },
+    {
+     "num": "R846-2",
+     "id": "LEGIARTI000031676112",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031676112",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "prime-activite",
+   "basis": "Décret n°2026-222 du 30 mars 2026",
+   "code": null,
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Décret n° 2026-222 du 30 mars 2026 portant revalorisation légale et exceptionnelle de la prime d'activité",
+     "id": "LEGITEXT000053739619",
+     "dateDebut": "2026-04-01",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000053733855",
+     "kind": "text"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R831-1 à R831-3",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R831-1",
+     "id": "LEGIARTI000038878776",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878776",
+     "kind": "article"
+    },
+    {
+     "num": "R831-2",
+     "id": "LEGIARTI000038878774",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878774",
+     "kind": "article"
+    },
+    {
+     "num": "R831-3",
+     "id": "LEGIARTI000038878772",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878772",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R832-23 à D832-28",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D832-24",
+     "id": "LEGIARTI000038878712",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878712",
+     "kind": "article"
+    },
+    {
+     "num": "D832-25",
+     "id": "LEGIARTI000047401364",
+     "dateDebut": "2023-04-05",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047401364",
+     "kind": "article"
+    },
+    {
+     "num": "D832-26",
+     "id": "LEGIARTI000047401357",
+     "dateDebut": "2023-04-05",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047401357",
+     "kind": "article"
+    },
+    {
+     "num": "D832-27",
+     "id": "LEGIARTI000038878706",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878706",
+     "kind": "article"
+    },
+    {
+     "num": "D832-28",
+     "id": "LEGIARTI000038878704",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878704",
+     "kind": "article"
+    },
+    {
+     "num": "R832-23",
+     "id": "LEGIARTI000038878714",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878714",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R822-3 à R822-17",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R822-3",
+     "id": "LEGIARTI000041419142",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419142",
+     "kind": "article"
+    },
+    {
+     "num": "R822-4",
+     "id": "LEGIARTI000045920163",
+     "dateDebut": "2022-06-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045920163",
+     "kind": "article"
+    },
+    {
+     "num": "R822-5",
+     "id": "LEGIARTI000041419180",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419180",
+     "kind": "article"
+    },
+    {
+     "num": "R822-6",
+     "id": "LEGIARTI000047985814",
+     "dateDebut": "2023-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047985814",
+     "kind": "article"
+    },
+    {
+     "num": "R822-7",
+     "id": "LEGIARTI000041419409",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419409",
+     "kind": "article"
+    },
+    {
+     "num": "R822-8",
+     "id": "LEGIARTI000041419400",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419400",
+     "kind": "article"
+    },
+    {
+     "num": "R822-9",
+     "id": "LEGIARTI000041419395",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419395",
+     "kind": "article"
+    },
+    {
+     "num": "R822-10",
+     "id": "LEGIARTI000041419390",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419390",
+     "kind": "article"
+    },
+    {
+     "num": "R822-11",
+     "id": "LEGIARTI000041419384",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419384",
+     "kind": "article"
+    },
+    {
+     "num": "R822-12",
+     "id": "LEGIARTI000041419379",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419379",
+     "kind": "article"
+    },
+    {
+     "num": "R822-13",
+     "id": "LEGIARTI000041419372",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419372",
+     "kind": "article"
+    },
+    {
+     "num": "R822-14",
+     "id": "LEGIARTI000041419358",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419358",
+     "kind": "article"
+    },
+    {
+     "num": "R822-15",
+     "id": "LEGIARTI000041419346",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419346",
+     "kind": "article"
+    },
+    {
+     "num": "R822-16",
+     "id": "LEGIARTI000041419340",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419340",
+     "kind": "article"
+    },
+    {
+     "num": "R822-17",
+     "id": "LEGIARTI000041419333",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419333",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH D832-1 à D832-4",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D832-1",
+     "id": "LEGIARTI000038878766",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878766",
+     "kind": "article"
+    },
+    {
+     "num": "D832-2",
+     "id": "LEGIARTI000041477269",
+     "dateDebut": "2020-01-11",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041477269",
+     "kind": "article"
+    },
+    {
+     "num": "D832-3",
+     "id": "LEGIARTI000038878762",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878762",
+     "kind": "article"
+    },
+    {
+     "num": "D832-4",
+     "id": "LEGIARTI000038878760",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878760",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R822-23 à R822-25",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R822-23",
+     "id": "LEGIARTI000038878949",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878949",
+     "kind": "article"
+    },
+    {
+     "num": "R822-24",
+     "id": "LEGIARTI000038878947",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878947",
+     "kind": "article"
+    },
+    {
+     "num": "R822-25",
+     "id": "LEGIARTI000038878945",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878945",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R823-1 à D823-9",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D823-9",
+     "id": "LEGIARTI000038878923",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878923",
+     "kind": "article"
+    },
+    {
+     "num": "R823-1",
+     "id": "LEGIARTI000038878939",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878939",
+     "kind": "article"
+    },
+    {
+     "num": "R823-2",
+     "id": "LEGIARTI000044636869",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044636869",
+     "kind": "article"
+    },
+    {
+     "num": "R823-3",
+     "id": "LEGIARTI000038878935",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878935",
+     "kind": "article"
+    },
+    {
+     "num": "R823-4",
+     "id": "LEGIARTI000047985801",
+     "dateDebut": "2023-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047985801",
+     "kind": "article"
+    },
+    {
+     "num": "R823-5",
+     "id": "LEGIARTI000038878931",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878931",
+     "kind": "article"
+    },
+    {
+     "num": "R823-6",
+     "id": "LEGIARTI000041419232",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419232",
+     "kind": "article"
+    },
+    {
+     "num": "R823-6-1",
+     "id": "LEGIARTI000042932258",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042932258",
+     "kind": "article"
+    },
+    {
+     "num": "R823-7",
+     "id": "LEGIARTI000038878927",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878927",
+     "kind": "article"
+    },
+    {
+     "num": "R823-8",
+     "id": "LEGIARTI000038878925",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878925",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "CCH R823-10 à D823-15",
+   "code": "Code de la construction et de l'habitation",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D823-15",
+     "id": "LEGIARTI000038878909",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878909",
+     "kind": "article"
+    },
+    {
+     "num": "R823-10",
+     "id": "LEGIARTI000038878919",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878919",
+     "kind": "article"
+    },
+    {
+     "num": "R823-11",
+     "id": "LEGIARTI000038878917",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878917",
+     "kind": "article"
+    },
+    {
+     "num": "R823-12",
+     "id": "LEGIARTI000038878915",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878915",
+     "kind": "article"
+    },
+    {
+     "num": "R823-13",
+     "id": "LEGIARTI000038878913",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878913",
+     "kind": "article"
+    },
+    {
+     "num": "R823-14",
+     "id": "LEGIARTI000038878911",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878911",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apl",
+   "basis": "Arrêté du 27 septembre 2019",
+   "code": null,
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Arrêté du 27 septembre 2019 relatif au calcul des aides personnelles au logement et de la prime de déménagement",
+     "id": "LEGITEXT000039160672",
+     "dateDebut": "2019-10-02",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000039160329",
+     "kind": "text"
+    }
+   ]
+  },
+  {
+   "right": "aah",
+   "basis": "CSS L821-1 à L821-8",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L821-1",
+     "id": "LEGIARTI000054477862",
+     "dateDebut": "2026-07-23",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054477862",
+     "kind": "article"
+    },
+    {
+     "num": "L821-1-2",
+     "id": "LEGIARTI000042685659",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042685659",
+     "kind": "article"
+    },
+    {
+     "num": "L821-2",
+     "id": "LEGIARTI000048850210",
+     "dateDebut": "2024-12-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048850210",
+     "kind": "article"
+    },
+    {
+     "num": "L821-3",
+     "id": "LEGIARTI000046194125",
+     "dateDebut": "2023-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046194125",
+     "kind": "article"
+    },
+    {
+     "num": "L821-3-1",
+     "id": "LEGIARTI000031781089",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031781089",
+     "kind": "article"
+    },
+    {
+     "num": "L821-4",
+     "id": "LEGIARTI000037994878",
+     "dateDebut": "2019-12-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037994878",
+     "kind": "article"
+    },
+    {
+     "num": "L821-5",
+     "id": "LEGIARTI000041398624",
+     "dateDebut": "2019-12-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041398624",
+     "kind": "article"
+    },
+    {
+     "num": "L821-5-1",
+     "id": "LEGIARTI000046811455",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046811455",
+     "kind": "article"
+    },
+    {
+     "num": "L821-6",
+     "id": "LEGIARTI000006745026",
+     "dateDebut": "2005-02-12",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745026",
+     "kind": "article"
+    },
+    {
+     "num": "L821-7",
+     "id": "LEGIARTI000037994861",
+     "dateDebut": "2019-12-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037994861",
+     "kind": "article"
+    },
+    {
+     "num": "L821-7-1",
+     "id": "LEGIARTI000006745351",
+     "dateDebut": "2005-02-12",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745351",
+     "kind": "article"
+    },
+    {
+     "num": "L821-7-3",
+     "id": "LEGIARTI000020039314",
+     "dateDebut": "2008-12-29",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020039314",
+     "kind": "article"
+    },
+    {
+     "num": "L821-8",
+     "id": "LEGIARTI000006745041",
+     "dateDebut": "2000-07-06",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745041",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "aah",
+   "basis": "CSS R821-1 à R821-9",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D821-1",
+     "id": "LEGIARTI000023097719",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097719",
+     "kind": "article"
+    },
+    {
+     "num": "D821-1-2",
+     "id": "LEGIARTI000030443726",
+     "dateDebut": "2015-04-06",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030443726",
+     "kind": "article"
+    },
+    {
+     "num": "D821-2",
+     "id": "LEGIARTI000047543983",
+     "dateDebut": "2023-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047543983",
+     "kind": "article"
+    },
+    {
+     "num": "D821-3",
+     "id": "LEGIARTI000019505277",
+     "dateDebut": "2008-09-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019505277",
+     "kind": "article"
+    },
+    {
+     "num": "D821-4",
+     "id": "LEGIARTI000006739703",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006739703",
+     "kind": "article"
+    },
+    {
+     "num": "D821-5",
+     "id": "LEGIARTI000047543976",
+     "dateDebut": "2023-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047543976",
+     "kind": "article"
+    },
+    {
+     "num": "D821-6",
+     "id": "LEGIARTI000023097733",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097733",
+     "kind": "article"
+    },
+    {
+     "num": "D821-7",
+     "id": "LEGIARTI000023482294",
+     "dateDebut": "2011-01-27",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023482294",
+     "kind": "article"
+    },
+    {
+     "num": "D821-8",
+     "id": "LEGIARTI000029891313",
+     "dateDebut": "2008-07-18",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029891313",
+     "kind": "article"
+    },
+    {
+     "num": "D821-9",
+     "id": "LEGIARTI000054339252",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054339252",
+     "kind": "article"
+    },
+    {
+     "num": "R821-1",
+     "id": "LEGIARTI000006754135",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754135",
+     "kind": "article"
+    },
+    {
+     "num": "R821-2",
+     "id": "LEGIARTI000039802690",
+     "dateDebut": "2020-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039802690",
+     "kind": "article"
+    },
+    {
+     "num": "R821-3",
+     "id": "LEGIARTI000006754149",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754149",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4",
+     "id": "LEGIARTI000054333572",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333572",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-1",
+     "id": "LEGIARTI000054333604",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333604",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-2",
+     "id": "LEGIARTI000054333614",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333614",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-3",
+     "id": "LEGIARTI000054333623",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333623",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-4",
+     "id": "LEGIARTI000046832992",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046832992",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-5",
+     "id": "LEGIARTI000023097753",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097753",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5",
+     "id": "LEGIARTI000039802699",
+     "dateDebut": "2020-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039802699",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5-1",
+     "id": "LEGIARTI000038929268",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038929268",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5-2",
+     "id": "LEGIARTI000006753385",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006753385",
+     "kind": "article"
+    },
+    {
+     "num": "R821-6",
+     "id": "LEGIARTI000031828854",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031828854",
+     "kind": "article"
+    },
+    {
+     "num": "R821-7",
+     "id": "LEGIARTI000041419323",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419323",
+     "kind": "article"
+    },
+    {
+     "num": "R821-7-1",
+     "id": "LEGIARTI000023097748",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097748",
+     "kind": "article"
+    },
+    {
+     "num": "R821-8",
+     "id": "LEGIARTI000031828843",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031828843",
+     "kind": "article"
+    },
+    {
+     "num": "R821-9",
+     "id": "LEGIARTI000006754206",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754206",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "aah",
+   "basis": "CSS D821-1 à D821-11",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D821-1",
+     "id": "LEGIARTI000023097719",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097719",
+     "kind": "article"
+    },
+    {
+     "num": "D821-1-2",
+     "id": "LEGIARTI000030443726",
+     "dateDebut": "2015-04-06",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030443726",
+     "kind": "article"
+    },
+    {
+     "num": "D821-2",
+     "id": "LEGIARTI000047543983",
+     "dateDebut": "2023-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047543983",
+     "kind": "article"
+    },
+    {
+     "num": "D821-3",
+     "id": "LEGIARTI000019505277",
+     "dateDebut": "2008-09-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019505277",
+     "kind": "article"
+    },
+    {
+     "num": "D821-4",
+     "id": "LEGIARTI000006739703",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006739703",
+     "kind": "article"
+    },
+    {
+     "num": "D821-5",
+     "id": "LEGIARTI000047543976",
+     "dateDebut": "2023-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047543976",
+     "kind": "article"
+    },
+    {
+     "num": "D821-6",
+     "id": "LEGIARTI000023097733",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097733",
+     "kind": "article"
+    },
+    {
+     "num": "D821-7",
+     "id": "LEGIARTI000023482294",
+     "dateDebut": "2011-01-27",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023482294",
+     "kind": "article"
+    },
+    {
+     "num": "D821-8",
+     "id": "LEGIARTI000029891313",
+     "dateDebut": "2008-07-18",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029891313",
+     "kind": "article"
+    },
+    {
+     "num": "D821-9",
+     "id": "LEGIARTI000054339252",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054339252",
+     "kind": "article"
+    },
+    {
+     "num": "D821-10",
+     "id": "LEGIARTI000054339259",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054339259",
+     "kind": "article"
+    },
+    {
+     "num": "D821-10-1",
+     "id": "LEGIARTI000042385619",
+     "dateDebut": "2021-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042385619",
+     "kind": "article"
+    },
+    {
+     "num": "D821-11",
+     "id": "LEGIARTI000038338706",
+     "dateDebut": "2019-04-05",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038338706",
+     "kind": "article"
+    },
+    {
+     "num": "R821-1",
+     "id": "LEGIARTI000006754135",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754135",
+     "kind": "article"
+    },
+    {
+     "num": "R821-2",
+     "id": "LEGIARTI000039802690",
+     "dateDebut": "2020-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039802690",
+     "kind": "article"
+    },
+    {
+     "num": "R821-3",
+     "id": "LEGIARTI000006754149",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754149",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4",
+     "id": "LEGIARTI000054333572",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333572",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-1",
+     "id": "LEGIARTI000054333604",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333604",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-2",
+     "id": "LEGIARTI000054333614",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333614",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-3",
+     "id": "LEGIARTI000054333623",
+     "dateDebut": "2026-06-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054333623",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-4",
+     "id": "LEGIARTI000046832992",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046832992",
+     "kind": "article"
+    },
+    {
+     "num": "R821-4-5",
+     "id": "LEGIARTI000023097753",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097753",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5",
+     "id": "LEGIARTI000039802699",
+     "dateDebut": "2020-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039802699",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5-1",
+     "id": "LEGIARTI000038929268",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038929268",
+     "kind": "article"
+    },
+    {
+     "num": "R821-5-2",
+     "id": "LEGIARTI000006753385",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006753385",
+     "kind": "article"
+    },
+    {
+     "num": "R821-6",
+     "id": "LEGIARTI000031828854",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031828854",
+     "kind": "article"
+    },
+    {
+     "num": "R821-7",
+     "id": "LEGIARTI000041419323",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041419323",
+     "kind": "article"
+    },
+    {
+     "num": "R821-7-1",
+     "id": "LEGIARTI000023097748",
+     "dateDebut": "2010-11-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000023097748",
+     "kind": "article"
+    },
+    {
+     "num": "R821-8",
+     "id": "LEGIARTI000031828843",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031828843",
+     "kind": "article"
+    },
+    {
+     "num": "R821-9",
+     "id": "LEGIARTI000006754206",
+     "dateDebut": "2005-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006754206",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "aah",
+   "basis": "CASF R241-33, annexe 2-4",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Annexe 2-4",
+     "id": "LEGIARTI000027037614",
+     "dateDebut": "2007-11-09",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000027037614",
+     "kind": "article"
+    },
+    {
+     "num": "R241-33",
+     "id": "LEGIARTI000037551602",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037551602",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF L232-1, L232-11",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L232-1",
+     "id": "LEGIARTI000006796961",
+     "dateDebut": "2002-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006796961",
+     "kind": "article"
+    },
+    {
+     "num": "L232-11",
+     "id": "LEGIARTI000006796989",
+     "dateDebut": "2002-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006796989",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF R232-1 à R232-9",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D232-8-1",
+     "id": "LEGIARTI000048840392",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048840392",
+     "kind": "article"
+    },
+    {
+     "num": "R232-1",
+     "id": "LEGIARTI000006905621",
+     "dateDebut": "2004-10-26",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006905621",
+     "kind": "article"
+    },
+    {
+     "num": "R232-2",
+     "id": "LEGIARTI000042946400",
+     "dateDebut": "2021-05-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042946400",
+     "kind": "article"
+    },
+    {
+     "num": "R232-3",
+     "id": "LEGIARTI000019416824",
+     "dateDebut": "2008-08-24",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019416824",
+     "kind": "article"
+    },
+    {
+     "num": "R232-4",
+     "id": "LEGIARTI000006905624",
+     "dateDebut": "2004-10-26",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006905624",
+     "kind": "article"
+    },
+    {
+     "num": "R232-5",
+     "id": "LEGIARTI000038928652",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038928652",
+     "kind": "article"
+    },
+    {
+     "num": "R232-6",
+     "id": "LEGIARTI000032138598",
+     "dateDebut": "2016-03-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032138598",
+     "kind": "article"
+    },
+    {
+     "num": "R232-7",
+     "id": "LEGIARTI000043588378",
+     "dateDebut": "2021-05-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043588378",
+     "kind": "article"
+    },
+    {
+     "num": "R232-8",
+     "id": "LEGIARTI000032138584",
+     "dateDebut": "2016-03-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032138584",
+     "kind": "article"
+    },
+    {
+     "num": "R232-9",
+     "id": "LEGIARTI000032138576",
+     "dateDebut": "2016-03-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032138576",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF L232-12 à L232-20",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L232-12",
+     "id": "LEGIARTI000031727723",
+     "dateDebut": "2015-12-30",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031727723",
+     "kind": "article"
+    },
+    {
+     "num": "L232-13",
+     "id": "LEGIARTI000031727714",
+     "dateDebut": "2015-12-30",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031727714",
+     "kind": "article"
+    },
+    {
+     "num": "L232-14",
+     "id": "LEGIARTI000031727706",
+     "dateDebut": "2015-12-30",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031727706",
+     "kind": "article"
+    },
+    {
+     "num": "L232-15",
+     "id": "LEGIARTI000036390671",
+     "dateDebut": "2018-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036390671",
+     "kind": "article"
+    },
+    {
+     "num": "L232-16",
+     "id": "LEGIARTI000046806331",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046806331",
+     "kind": "article"
+    },
+    {
+     "num": "L232-17",
+     "id": "LEGIARTI000044404556",
+     "dateDebut": "2022-05-14",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044404556",
+     "kind": "article"
+    },
+    {
+     "num": "L232-19",
+     "id": "LEGIARTI000031728906",
+     "dateDebut": "2015-12-30",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031728906",
+     "kind": "article"
+    },
+    {
+     "num": "L232-20",
+     "id": "LEGIARTI000033459110",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033459110",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF D232-9-1, D232-9-2",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D232-9-1",
+     "id": "LEGIARTI000049489615",
+     "dateDebut": "2024-05-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049489615",
+     "kind": "article"
+    },
+    {
+     "num": "D232-9-2",
+     "id": "LEGIARTI000049489626",
+     "dateDebut": "2024-05-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049489626",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF R232-10 à D232-11-1",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D232-11-1",
+     "id": "LEGIARTI000049489637",
+     "dateDebut": "2024-05-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049489637",
+     "kind": "article"
+    },
+    {
+     "num": "R232-10",
+     "id": "LEGIARTI000048878530",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048878530",
+     "kind": "article"
+    },
+    {
+     "num": "R232-10-1",
+     "id": "LEGIARTI000032133764",
+     "dateDebut": "2016-03-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032133764",
+     "kind": "article"
+    },
+    {
+     "num": "R232-11",
+     "id": "LEGIARTI000038681713",
+     "dateDebut": "2019-06-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038681713",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "apa",
+   "basis": "CASF L232-22 à L232-28",
+   "code": "Code de l'action sociale et des familles",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L232-22",
+     "id": "LEGIARTI000041721273",
+     "dateDebut": "2020-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041721273",
+     "kind": "article"
+    },
+    {
+     "num": "L232-23",
+     "id": "LEGIARTI000026799834",
+     "dateDebut": "2013-03-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000026799834",
+     "kind": "article"
+    },
+    {
+     "num": "L232-24",
+     "id": "LEGIARTI000006797026",
+     "dateDebut": "2002-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006797026",
+     "kind": "article"
+    },
+    {
+     "num": "L232-25",
+     "id": "LEGIARTI000027572833",
+     "dateDebut": "2015-03-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000027572833",
+     "kind": "article"
+    },
+    {
+     "num": "L232-26",
+     "id": "LEGIARTI000006797030",
+     "dateDebut": "2009-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006797030",
+     "kind": "article"
+    },
+    {
+     "num": "L232-28",
+     "id": "LEGIARTI000006797032",
+     "dateDebut": "2002-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006797032",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "are",
+   "basis": "Code du travail L5421-1 à L5421-4",
+   "code": "Code du travail",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L5421-1",
+     "id": "LEGIARTI000037388230",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037388230",
+     "kind": "article"
+    },
+    {
+     "num": "L5421-2",
+     "id": "LEGIARTI000037388221",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037388221",
+     "kind": "article"
+    },
+    {
+     "num": "L5421-3",
+     "id": "LEGIARTI000037388491",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037388491",
+     "kind": "article"
+    },
+    {
+     "num": "L5421-4",
+     "id": "LEGIARTI000051289909",
+     "dateDebut": "2026-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051289909",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "are",
+   "basis": "Code du travail L5422-1 à L5422-2-2",
+   "code": "Code du travail",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L5422-1",
+     "id": "LEGIARTI000048590547",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048590547",
+     "kind": "article"
+    },
+    {
+     "num": "L5422-1-1",
+     "id": "LEGIARTI000048600619",
+     "dateDebut": "2024-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048600619",
+     "kind": "article"
+    },
+    {
+     "num": "L5422-2",
+     "id": "LEGIARTI000054241899",
+     "dateDebut": "2026-06-13",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054241899",
+     "kind": "article"
+    },
+    {
+     "num": "L5422-2-1",
+     "id": "LEGIARTI000027550383",
+     "dateDebut": "2013-06-17",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000027550383",
+     "kind": "article"
+    },
+    {
+     "num": "L5422-2-2",
+     "id": "LEGIARTI000052437200",
+     "dateDebut": "2025-10-26",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000052437200",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "are",
+   "basis": "Code du travail L5425-1 à L5425-2",
+   "code": "Code du travail",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L5425-1",
+     "id": "LEGIARTI000037388288",
+     "dateDebut": "2019-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037388288",
+     "kind": "article"
+    },
+    {
+     "num": "L5425-1-1",
+     "id": "LEGIARTI000054318769",
+     "dateDebut": "2026-06-27",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054318769",
+     "kind": "article"
+    },
+    {
+     "num": "L5425-2",
+     "id": "LEGIARTI000006903902",
+     "dateDebut": "2008-05-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006903902",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "are",
+   "basis": "Décrets 2019-797 et 2023-33",
+   "code": null,
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Décret n° 2019-797 du 26 juillet 2019 relatif au régime d'assurance chômage",
+     "id": "LEGITEXT000038868382",
+     "dateDebut": "2019-07-29",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000038829574",
+     "kind": "text"
+    },
+    {
+     "num": "Décret n° 2023-33 du 26 janvier 2023 relatif au régime d'assurance chômage",
+     "id": "LEGITEXT000047062669",
+     "dateDebut": "2023-01-28",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000047061815",
+     "kind": "text"
+    }
+   ]
+  },
+  {
+   "right": "are",
+   "basis": "Arrêté du 19 décembre 2024 (convention d'assurance chômage du 15 novembre 2024)",
+   "code": null,
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "Arrêté du 19 décembre 2024 portant agrément de la convention du 15 novembre 2024 relative à l'assurance chômage, de la convention du 15 novembre 2024 relative à l'assurance chômage à Mayotte et de leurs textes associés",
+     "id": "LEGITEXT000050799729",
+     "dateDebut": "2024-12-21",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000050797861",
+     "kind": "text"
+    }
+   ]
+  },
+  {
+   "right": "c2s",
+   "basis": "CSS L861-1 à L861-12",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "L861-1",
+     "id": "LEGIARTI000037950247",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037950247",
+     "kind": "article"
+    },
+    {
+     "num": "L861-2",
+     "id": "LEGIARTI000048702111",
+     "dateDebut": "2024-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048702111",
+     "kind": "article"
+    },
+    {
+     "num": "L861-2-1",
+     "id": "LEGIARTI000006745356",
+     "dateDebut": "2006-12-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745356",
+     "kind": "article"
+    },
+    {
+     "num": "L861-3",
+     "id": "LEGIARTI000046812151",
+     "dateDebut": "2022-12-25",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046812151",
+     "kind": "article"
+    },
+    {
+     "num": "L861-4",
+     "id": "LEGIARTI000037950225",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037950225",
+     "kind": "article"
+    },
+    {
+     "num": "L861-4-1",
+     "id": "LEGIARTI000039778563",
+     "dateDebut": "2019-12-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039778563",
+     "kind": "article"
+    },
+    {
+     "num": "L861-5",
+     "id": "LEGIARTI000046806509",
+     "dateDebut": "2022-12-25",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046806509",
+     "kind": "article"
+    },
+    {
+     "num": "L861-7",
+     "id": "LEGIARTI000042686126",
+     "dateDebut": "2021-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042686126",
+     "kind": "article"
+    },
+    {
+     "num": "L861-8",
+     "id": "LEGIARTI000041397551",
+     "dateDebut": "2019-12-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041397551",
+     "kind": "article"
+    },
+    {
+     "num": "L861-9",
+     "id": "LEGIARTI000006745409",
+     "dateDebut": "2006-12-22",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745409",
+     "kind": "article"
+    },
+    {
+     "num": "L861-10",
+     "id": "LEGIARTI000037950193",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037950193",
+     "kind": "article"
+    },
+    {
+     "num": "L861-11",
+     "id": "LEGIARTI000044628815",
+     "dateDebut": "2021-12-25",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044628815",
+     "kind": "article"
+    },
+    {
+     "num": "L861-12",
+     "id": "LEGIARTI000039778713",
+     "dateDebut": "2019-12-28",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039778713",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "c2s",
+   "basis": "CSS R861-2 à R861-10",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D861-2",
+     "id": "LEGIARTI000030819781",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819781",
+     "kind": "article"
+    },
+    {
+     "num": "D861-3",
+     "id": "LEGIARTI000030819770",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819770",
+     "kind": "article"
+    },
+    {
+     "num": "D861-4",
+     "id": "LEGIARTI000046824497",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046824497",
+     "kind": "article"
+    },
+    {
+     "num": "D861-4-1",
+     "id": "LEGIARTI000038336334",
+     "dateDebut": "2019-04-05",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038336334",
+     "kind": "article"
+    },
+    {
+     "num": "D861-5",
+     "id": "LEGIARTI000030819761",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819761",
+     "kind": "article"
+    },
+    {
+     "num": "D861-6",
+     "id": "LEGIARTI000030819752",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819752",
+     "kind": "article"
+    },
+    {
+     "num": "D861-7",
+     "id": "LEGIARTI000030819104",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819104",
+     "kind": "article"
+    },
+    {
+     "num": "D861-8",
+     "id": "LEGIARTI000038682683",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038682683",
+     "kind": "article"
+    },
+    {
+     "num": "R861-2",
+     "id": "LEGIARTI000018052382",
+     "dateDebut": "2008-01-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000018052382",
+     "kind": "article"
+    },
+    {
+     "num": "R861-3",
+     "id": "LEGIARTI000038701537",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038701537",
+     "kind": "article"
+    },
+    {
+     "num": "R861-4",
+     "id": "LEGIARTI000051821170",
+     "dateDebut": "2025-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051821170",
+     "kind": "article"
+    },
+    {
+     "num": "R861-5",
+     "id": "LEGIARTI000031694499",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031694499",
+     "kind": "article"
+    },
+    {
+     "num": "R861-7",
+     "id": "LEGIARTI000038929244",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038929244",
+     "kind": "article"
+    },
+    {
+     "num": "R861-8",
+     "id": "LEGIARTI000051821176",
+     "dateDebut": "2025-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051821176",
+     "kind": "article"
+    },
+    {
+     "num": "R861-9",
+     "id": "LEGIARTI000047899655",
+     "dateDebut": "2023-07-29",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047899655",
+     "kind": "article"
+    },
+    {
+     "num": "R861-10",
+     "id": "LEGIARTI000051821125",
+     "dateDebut": "2025-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051821125",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "c2s",
+   "basis": "CSS R111-1 à R111-4",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R111-1",
+     "id": "LEGIARTI000046021807",
+     "dateDebut": "2022-07-04",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046021807",
+     "kind": "article"
+    },
+    {
+     "num": "R111-1-1",
+     "id": "LEGIARTI000038748172",
+     "dateDebut": "2019-07-08",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038748172",
+     "kind": "article"
+    },
+    {
+     "num": "R111-2",
+     "id": "LEGIARTI000049451865",
+     "dateDebut": "2025-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049451865",
+     "kind": "article"
+    },
+    {
+     "num": "R111-3",
+     "id": "LEGIARTI000038701568",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038701568",
+     "kind": "article"
+    },
+    {
+     "num": "R111-4",
+     "id": "LEGIARTI000053741813",
+     "dateDebut": "2026-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053741813",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "c2s",
+   "basis": "CSS R861-16 à R861-18",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "R861-16",
+     "id": "LEGIARTI000045602004",
+     "dateDebut": "2022-04-18",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045602004",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-1",
+     "id": "LEGIARTI000049853542",
+     "dateDebut": "2024-06-30",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049853542",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-2",
+     "id": "LEGIARTI000044492530",
+     "dateDebut": "2022-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044492530",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-3",
+     "id": "LEGIARTI000044492458",
+     "dateDebut": "2022-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044492458",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-4",
+     "id": "LEGIARTI000038676326",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038676326",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-5",
+     "id": "LEGIARTI000045601961",
+     "dateDebut": "2022-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045601961",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-6",
+     "id": "LEGIARTI000045598142",
+     "dateDebut": "2022-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045598142",
+     "kind": "article"
+    },
+    {
+     "num": "R861-16-7",
+     "id": "LEGIARTI000045598144",
+     "dateDebut": "2022-06-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045598144",
+     "kind": "article"
+    },
+    {
+     "num": "R861-17",
+     "id": "LEGIARTI000038701632",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038701632",
+     "kind": "article"
+    },
+    {
+     "num": "R861-18",
+     "id": "LEGIARTI000045601938",
+     "dateDebut": "2022-04-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045601938",
+     "kind": "article"
+    }
+   ]
+  },
+  {
+   "right": "c2s",
+   "basis": "CSS D861-1 à D861-8",
+   "code": "Code de la sécurité sociale",
+   "unresolved": null,
+   "articles": [
+    {
+     "num": "D861-1",
+     "id": "LEGIARTI000038682687",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038682687",
+     "kind": "article"
+    },
+    {
+     "num": "D861-2",
+     "id": "LEGIARTI000030819781",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819781",
+     "kind": "article"
+    },
+    {
+     "num": "D861-3",
+     "id": "LEGIARTI000030819770",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819770",
+     "kind": "article"
+    },
+    {
+     "num": "D861-4",
+     "id": "LEGIARTI000046824497",
+     "dateDebut": "2023-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046824497",
+     "kind": "article"
+    },
+    {
+     "num": "D861-4-1",
+     "id": "LEGIARTI000038336334",
+     "dateDebut": "2019-04-05",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038336334",
+     "kind": "article"
+    },
+    {
+     "num": "D861-5",
+     "id": "LEGIARTI000030819761",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819761",
+     "kind": "article"
+    },
+    {
+     "num": "D861-6",
+     "id": "LEGIARTI000030819752",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819752",
+     "kind": "article"
+    },
+    {
+     "num": "D861-7",
+     "id": "LEGIARTI000030819104",
+     "dateDebut": "2015-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000030819104",
+     "kind": "article"
+    },
+    {
+     "num": "D861-8",
+     "id": "LEGIARTI000038682683",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038682683",
+     "kind": "article"
+    },
+    {
+     "num": "R861-2",
+     "id": "LEGIARTI000018052382",
+     "dateDebut": "2008-01-31",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000018052382",
+     "kind": "article"
+    },
+    {
+     "num": "R861-3",
+     "id": "LEGIARTI000038701537",
+     "dateDebut": "2019-11-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038701537",
+     "kind": "article"
+    },
+    {
+     "num": "R861-4",
+     "id": "LEGIARTI000051821170",
+     "dateDebut": "2025-07-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051821170",
+     "kind": "article"
+    },
+    {
+     "num": "R861-5",
+     "id": "LEGIARTI000031694499",
+     "dateDebut": "2016-01-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031694499",
+     "kind": "article"
+    },
+    {
+     "num": "R861-7",
+     "id": "LEGIARTI000038929244",
+     "dateDebut": "2019-09-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038929244",
+     "kind": "article"
+    },
+    {
+     "num": "R861-8",
+     "id": "LEGIARTI000051821176",
+     "dateDebut": "2025-10-01",
+     "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051821176",
+     "kind": "article"
+    }
+   ]
+  }
+ ]
+}

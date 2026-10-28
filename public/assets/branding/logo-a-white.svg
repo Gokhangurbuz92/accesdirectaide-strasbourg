@@ -1,0 +1,13 @@
+<svg viewBox="0 0 280 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Halo/Soleil (version claire) -->
+  <circle cx="32" cy="32" r="28" fill="#FFFFFF" opacity="0.15"/>
+  <circle cx="32" cy="32" r="20" fill="#FFFFFF" opacity="0.25"/>
+  
+  <!-- Pin blanc -->
+  <path d="M32 12 C26 12 21 17 21 23 C21 30 32 42 32 42 C32 42 43 30 43 23 C43 17 38 12 32 12 Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="32" cy="23" r="4" fill="#F6B445"/>
+  
+  <!-- Texte blanc -->
+  <text x="72" y="28" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">ACCESDIRECT</text>
+  <text x="72" y="48" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">AIDE</text>
+</svg>

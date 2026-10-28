@@ -1,0 +1,17 @@
+<svg viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Rayons -->
+  <path d="M32 8 L32 16" stroke="#F6B445" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M48 16 L44 20" stroke="#F6B445" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M52 32 L44 32" stroke="#F6B445" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M16 16 L20 20" stroke="#F6B445" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M12 32 L20 32" stroke="#F6B445" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Pin -->
+  <path d="M32 14 C27 14 23 18 23 23 C23 29 32 40 32 40 C32 40 41 29 41 23 C41 18 37 14 32 14 Z" fill="#002D5A" stroke="#002D5A" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M32 40 Q28 46 26 52" stroke="#2BC4D7" stroke-width="1.5" stroke-dasharray="2 2" stroke-linecap="round" opacity="0.5"/>
+  <circle cx="32" cy="23" r="3.5" fill="#F6B445"/>
+  
+  <!-- Texte -->
+  <text x="72" y="28" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#002D5A" letter-spacing="-0.5">ACCESDIRECTAIDE</text>
+  <text x="72" y="50" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="400" fill="#5E6E82" letter-spacing="0.3">La lumière sur vos démarches</text>
+</svg>

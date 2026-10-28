@@ -1,0 +1,53 @@
+# ============================================================
+# Accès Direct Aide — .dockerignore
+# ============================================================
+
+# Dependencies (rebuilt in container)
+node_modules
+*/node_modules
+
+# Build output
+dist
+.next
+.turbo
+
+# Git
+.git
+.gitignore
+
+# Environment (secrets must be injected at runtime)
+.env
+.env.*
+!.env.example
+
+# Tests and development
+e2e
+__tests__
+*.test.js
+*.spec.js
+coverage
+
+# IDE and OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Frontend (not needed for API image) — src/ itself is needed: the API imports src/db, src/config, src/lib (launch-readiness item 51)
+src/components
+src/pages
+src/assets
+public
+index.html
+vite.config.*
+postcss.config.*
+tailwind.config.*
+
+# CI
+.github
+.semgrep

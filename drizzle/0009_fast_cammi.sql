@@ -1,0 +1,1 @@
+ALTER TABLE "Aide" ADD COLUMN "embedding_model" text DEFAULT 'LEGACY_UNKNOWN';

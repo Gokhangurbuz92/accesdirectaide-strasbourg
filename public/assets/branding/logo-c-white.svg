@@ -1,0 +1,13 @@
+<svg viewBox="0 0 280 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Éclat blanc -->
+  <path d="M32 10 L34 18 L42 16 L36 22 L44 26 L36 28 L38 36 L32 30 L26 36 L28 28 L20 26 L28 22 L22 16 L30 18 Z" fill="#FFFFFF" opacity="0.3"/>
+  
+  <!-- Pin blanc avec chevron -->
+  <path d="M32 16 C28 16 25 19 25 23 C25 28 32 38 32 38 C32 38 39 28 39 23 C39 19 36 16 32 16 Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M28 24 L32 28 L36 24" stroke="#2BC4D7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <circle cx="32" cy="22" r="2.5" fill="#F6B445"/>
+  
+  <!-- Texte blanc -->
+  <text x="72" y="28" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">ACCESDIRECT</text>
+  <text x="72" y="48" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">AIDE</text>
+</svg>

@@ -1,0 +1,98 @@
+# ============================================================
+# Accès Direct Aide — Docker Compose (Phase 1)
+# ============================================================
+# Usage:
+#   npm run docker:up     → Démarre les services
+#   npm run docker:down   → Arrête les services
+#
+# Services:
+#   - PostgreSQL 16 + pgvector (port 5432)
+#   - Redis 7 Alpine (port 6379)
+#   - pgAdmin 4 (port 5050) — optionnel, admin DB
+# ============================================================
+
+services:
+  # ---------------------------------------------------------
+  # Base de données principale avec support vectoriel (IA)
+  # ---------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ada-postgres
+    restart: unless-stopped
+    ports:
+      - "${DATABASE_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}
+      POSTGRES_DB: ${DATABASE_NAME:-acces_direct_aide}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ada-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USER:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------
+  # Cache et files d'attente
+  # ---------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: ada-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ada-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ---------------------------------------------------------
+  # Interface d'administration DB (optionnel)
+  # ---------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ada-pgadmin
+    restart: unless-stopped
+    profiles:
+      - admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@ada.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD is required}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    networks:
+      - ada-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ---------------------------------------------------------
+  # Moteur Législatif (OpenFisca)
+  # ---------------------------------------------------------
+  openfisca:
+    build:
+      context: ./infrastructure/openfisca
+      dockerfile: Dockerfile
+    container_name: ada-openfisca
+    restart: unless-stopped
+    ports:
+      - "2000:2000"
+    networks:
+      - ada-network
+
+networks:
+  ada-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

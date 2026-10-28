@@ -1,0 +1,1 @@
+ALTER TABLE "Structure" ADD COLUMN "services_externes" jsonb;

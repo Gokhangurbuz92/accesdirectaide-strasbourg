@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="#002D5A">
+  <!-- ADA grid logo - bold design optimized for all sizes -->
+  <!-- Row 1: Top brackets -->
+  <!-- ⌐ top-left -->
+  <rect x="0" y="0" width="37" height="13"/>
+  <rect x="0" y="0" width="13" height="37"/>
+  <!-- ∩ top-center -->
+  <rect x="42" y="0" width="36" height="13"/>
+  <rect x="42" y="0" width="13" height="37"/>
+  <rect x="65" y="0" width="13" height="37"/>
+  <!-- ⌐ mirror top-right -->
+  <rect x="83" y="0" width="37" height="13"/>
+  <rect x="107" y="0" width="13" height="37"/>
+
+  <!-- Row 2: ADA letters -->
+  <!-- A left -->
+  <rect x="0" y="42" width="13" height="36"/>
+  <rect x="24" y="42" width="13" height="36"/>
+  <rect x="0" y="42" width="37" height="13"/>
+  <rect x="0" y="57" width="37" height="11"/>
+  <!-- D center -->
+  <rect x="42" y="42" width="13" height="36"/>
+  <rect x="42" y="42" width="36" height="13"/>
+  <rect x="65" y="47" width="13" height="25"/>
+  <rect x="42" y="65" width="36" height="13"/>
+  <!-- A right -->
+  <rect x="83" y="42" width="13" height="36"/>
+  <rect x="107" y="42" width="13" height="36"/>
+  <rect x="83" y="42" width="37" height="13"/>
+  <rect x="83" y="57" width="37" height="11"/>
+
+  <!-- Row 3: Bottom brackets -->
+  <!-- ⌞ bottom-left -->
+  <rect x="0" y="83" width="13" height="37"/>
+  <rect x="0" y="107" width="37" height="13"/>
+  <!-- ∪ bottom-center -->
+  <rect x="42" y="83" width="13" height="37"/>
+  <rect x="65" y="83" width="13" height="37"/>
+  <rect x="42" y="107" width="36" height="13"/>
+  <!-- ⌟ bottom-right -->
+  <rect x="107" y="83" width="13" height="37"/>
+  <rect x="83" y="107" width="37" height="13"/>
+</svg>

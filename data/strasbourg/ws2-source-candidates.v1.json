@@ -1,0 +1,831 @@
+{
+  "schema": "ada.ws2.source-candidates.v1",
+  "builtAt": "2026-10-21",
+  "statement": "Research aid only: candidate official pages found by automated web research; no record is verified by this file; a human must open the page and decide.",
+  "records": [
+    {
+      "slug": "prime-activite",
+      "dataset": "aides",
+      "candidates": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+          "confirms": [
+            "name: Prime d'activité : salarié ou fonctionnaire",
+            "conditions: 18 ans minimum, activité professionnelle, ressources modestes, résidence stable en France",
+            "operator: Caf (régime général) / MSA (régime agricole)",
+            "page verified by DILA 2026-06-01"
+          ],
+          "discrepancies": [
+            "record official_source points to assemblee-nationale.fr (QE16745) and a justice.fr student/apprentice page, neither on the preferred official list; F2882 is the salarié/fonctionnaire page and does not cover students/apprentices specifically"
+          ]
+        },
+        {
+          "url": "https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/vie-professionnelle/la-prime-d-activite",
+          "confirms": [
+            "operator page for the benefit (found in caf.fr search results; not fetched)"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://wwwd.caf.fr/wps/portal/caffr/simulateurpa/",
+          "confirms": [
+            "official Caf simulator (search result; not fetched)"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "WebFetch service-public F2882; WebSearch caf.fr prime d'activité"
+    },
+    {
+      "slug": "aide-juridictionnelle",
+      "dataset": "aides",
+      "candidates": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F18074",
+          "confirms": [
+            "name: Aide juridictionnelle lors d'une procédure en France",
+            "conditions: nationalité française ou UE (sauf Danemark), ou étranger résidant habituellement en France même si titre expiré; frais non couverts par une assurance; RFR et patrimoine sous plafonds",
+            "2026 ceilings 1 person: 12 957 EUR (totale), 15 316 / 19 433 EUR (partielle)",
+            "page verified 2026-06-12"
+          ],
+          "discrepancies": [
+            "record conditions_falc reads as if EU nationality AND habitual residence were both required; official rule is nationality OR habitual residence for foreigners; residence condition waived for minors, protection-order holders and criminal-procedure parties",
+            "record omits the 'no legal-expenses insurance' condition",
+            "record official_source is e-justice.europa.eu (EU portal, not French operator)"
+          ]
+        },
+        {
+          "url": "https://www.justice.fr/fiche/aide-juridictionnelle-dune-procedure-france",
+          "confirms": [
+            "Ministry of Justice citizen page (search result; not fetched)"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.aidejuridictionnelle.justice.fr/",
+          "confirms": [
+            "official online application service; Cerfa 16146*03 alternative (search result)"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "WebFetch service-public F18074; WebSearch restricted to justice.fr / justice.gouv.fr"
+    },
+    {
+      "slug": "carte-solidaire-grand-est",
+      "dataset": "aides",
+      "candidates": [
+        {
+          "url": "https://www.ter.sncf.com/grand-est/tarifs-cartes/cartes-reduction/carte-solidaire",
+          "confirms": [
+            "operator page (TER Grand Est, on behalf of Région Grand Est) seen in search results: 80% on Fluo train tickets, 80% on Fluo bus subscriptions, 50% on Fluo bus tickets, 50% Fluo bike; eligibility = valid CSS certificate (free or paid) from CPAM or MSA; free; request online, card mailed within ~15 days"
+          ],
+          "discrepancies": [
+            "WebFetch returned HTTP 403, content known only from search snippet - human must open",
+            "host ter.sncf.com is not on the official-host list (operator of a regional public service)"
+          ]
+        },
+        {
+          "url": "https://www.fluo.grandest.fr/aide-et-contact",
+          "confirms": [
+            "Région Grand Est Fluo help page (fetched): mentions Carte Solidaire as a reduction card obtained via TER Grand Est site, 50% on a single car ticket on presentation"
+          ],
+          "discrepancies": [
+            "Fluo page says form can be printed and posted; TER page says request is entirely online - official pages disagree on application channel"
+          ]
+        },
+        {
+          "url": "https://mes-aides.francetravail.fr/transport/transports-en-commun/sncf-voyageurs/abonnement-mensuel-solidaire-ter-grand-est",
+          "confirms": [
+            "France Travail aid listing describing the 80% reduction and required documents (search result; not fetched)"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "WebSearch 'Carte Solidaire Grand Est TER Fluo CSS'; WebFetch ter.sncf.com (403) and fluo.grandest.fr (ok)"
+    },
+    {
+      "slug": "carte-fluo-alsace",
+      "dataset": "demarches",
+      "candidates": [
+        {
+          "url": "https://www.fluo.grandest.fr/aide-et-contact",
+          "confirms": [
+            "Région page referenced in record ou_faire exists and mentions Carte Solidaire"
+          ],
+          "discrepancies": [
+            "record etapes say 'téléchargez le formulaire'; TER Grand Est page (search snippet) says application is fully online - check which channel is current",
+            "DUPLICATE: same product and same source candidate (mes-aides--recmUKAti2bu3RUXK) as aides/carte-solidaire-grand-est; slug says 'carte-fluo' but title/content is Carte Solidaire (Carte Fluo is a different 50% card)"
+          ]
+        },
+        {
+          "url": "https://www.ter.sncf.com/grand-est/tarifs-cartes/cartes-reduction/carte-solidaire",
+          "confirms": [
+            "operator page for the same product (search result; fetch 403)"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "Same research as carte-solidaire-grand-est; ou_faire URL fetched"
+    },
+    {
+      "slug": "rdv-titre-sejour-67",
+      "dataset": "demarches",
+      "candidates": [
+        {
+          "url": "https://www.bas-rhin.gouv.fr/Demarches/Etranger-en-France/TITRES-DE-SEJOUR-ET-DE-CIRCULATION-demarches-ANEF-RDV-aux-guichets-et-listes-de-pieces/Titre-de-sejour-prendre-un-rendez-vous/Demarches-a-effectuer-en-prefecture-du-Bas-Rhin",
+          "confirms": [
+            "préfecture du Bas-Rhin page exists, updated 2026-03-23",
+            "appointments only for: remise de titre after SMS/e-mail, biometrics after ANEF notice, APS Ukraine renewal, PAN eMERAUDE digital mediator; récépissé/APS renewal via e-mail; counter renewal / first application via numeric form when not on ANEF"
+          ],
+          "discrepancies": [
+            "slug 'rdv-titre-sejour' suggests a general appointment booking; official page restricts appointments to specific cases, most applications go through ANEF"
+          ]
+        },
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N110",
+          "confirms": [
+            "national topic page 'Titres, cartes de séjour et documents de circulation pour étranger en France' - matches record summary_falc list of sub-topics"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.demarches-simplifiees.fr/commencer/prefecture-du-bas-rhin-pre-demande-premier-titre",
+          "confirms": [
+            "préfecture du Bas-Rhin pre-application form for a first title (search result; not fetched)"
+          ],
+          "discrepancies": [
+            "record official_source cites 'demarche.numerique.gouv.fr'; the URL seen in search is on demarches-simplifiees.fr - confirm current domain"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "WebSearch bas-rhin.gouv.fr titres de séjour ANEF; WebFetch the ou_faire URL and service-public N110"
+    },
+    {
+      "slug": "caisse-d-allocations-familiales-du-bas-rhin-caf-67-78fe9a7b",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/17729c6d-22c2-470c-9942-2b2c7cc49210",
+          "confirms": [
+            "name: Caf du Bas-Rhin - siège de Strasbourg",
+            "address: 22 route de l'Hôpital, Parc du Heyritz, 67100 Strasbourg",
+            "phone: 32 30 (students 0 969 32 52 52)"
+          ],
+          "discrepancies": [
+            "CSV phone +33388377543 does not appear on official pages (national line 32 30)",
+            "CSV email field contains a named staff mailbox (personal data) - replace with generic contact; not reproduced here"
+          ]
+        },
+        {
+          "url": "https://www.caf.fr/allocataires/caf-du-bas-rhin/nous-contacter/points-d-accueil-de-votre-caf/siege-de-la-caf-du-bas-rhin",
+          "confirms": [
+            "operator page: 22 route de l'Hôpital 67100 Strasbourg"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/77886849700034",
+          "confirms": [
+            "legal name CAISSE D'ALLOCATIONS FAMILIALES DU BAS RHIN (CAF 67), SIREN 778868497, siège 22 route de l'Hôpital 67100, active",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'caisse d'allocations familiales' Strasbourg; caf.fr; recherche-entreprises API"
+    },
+    {
+      "slug": "caisse-primaire-d-assurance-maladie-cpam-du-bas-rhin-5f222ae4",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/af1131e1-c3df-4b40-b1b0-2fd158681b51",
+          "confirms": [
+            "name: CPAM du Bas-Rhin - accueil de Strasbourg",
+            "address: 16 rue de Lausanne, 67090 Strasbourg Cedex",
+            "phone: 36 46"
+          ],
+          "discrepancies": [
+            "CSV postcode 67000 vs official postal 67090 Cedex (geographic 67000 plausible)"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/51744212500012",
+          "confirms": [
+            "legal name CAISSE PRIMAIRE D ASSURANCE MALADIE DU BAS RHIN, SIREN 517442125, siège 16 rue de Lausanne 67000 Strasbourg, active",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://acceslibre.beta.gouv.fr/app/67-strasbourg/a/administration-publique/erp/caisse-primaire-dassurance-maladie-cpam-du-bas-rhin-accueil-de-strasbourg/",
+          "confirms": [
+            "accessibility record for the same reception site, 16 rue de Lausanne"
+          ],
+          "discrepancies": [
+            "acceslibre shows postcode 67200 - inconsistent with other official sources"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search CPAM Strasbourg; recherche-entreprises API; WebSearch ameli/acceslibre"
+    },
+    {
+      "slug": "mission-locale-pour-l-emploi-89e0e6bd",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/c429a728-e793-44e5-b3ea-cfb791ac60a1",
+          "confirms": [
+            "name: Mission locale ... - Strasbourg - Martin-Bucer",
+            "address: 13 rue Martin-Bucer 67000 Strasbourg",
+            "phone: 03 88 21 43 00",
+            "website: https://www.mlpe.eu/accueil/"
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (89e0e6bd, 75144931, 5dd4b0ec) describe the same MLPE site at 13 rue Martin Bucer",
+            "CSV phone is a mobile number not shown on official page (official: 03 88 21 43 00)"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/34306524900017",
+          "confirms": [
+            "legal name MISSION LOCALE POUR L'EMPLOI (MLPE), SIREN 343065249, siège 13 rue Martin Bucer 67000, active; other active sites rue Augustin Fresnel 67200, rue de Sélestat 67100, rue Arthur Weeber 67100",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'mission locale' Strasbourg; recherche-entreprises API 'mission locale martin bucer'"
+    },
+    {
+      "slug": "mission-locale-pour-l-emploi-de-strasbourg-75144931",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/c429a728-e793-44e5-b3ea-cfb791ac60a1",
+          "confirms": [
+            "name: Mission locale ... - Strasbourg - Martin-Bucer",
+            "address: 13 rue Martin-Bucer 67000 Strasbourg",
+            "phone: 03 88 21 43 00",
+            "website: https://www.mlpe.eu/accueil/"
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (89e0e6bd, 75144931, 5dd4b0ec) describe the same MLPE site at 13 rue Martin Bucer",
+            "CSV phone 03 88 76 24 00 differs from official 03 88 21 43 00"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/34306524900017",
+          "confirms": [
+            "legal name MISSION LOCALE POUR L'EMPLOI (MLPE), SIREN 343065249, siège 13 rue Martin Bucer 67000, active; other active sites rue Augustin Fresnel 67200, rue de Sélestat 67100, rue Arthur Weeber 67100",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'mission locale' Strasbourg; recherche-entreprises API 'mission locale martin bucer'"
+    },
+    {
+      "slug": "mission-locale-pour-l-emploi-strasbourg-eurometropole-5dd4b0ec",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/c429a728-e793-44e5-b3ea-cfb791ac60a1",
+          "confirms": [
+            "name: Mission locale ... - Strasbourg - Martin-Bucer",
+            "address: 13 rue Martin-Bucer 67000 Strasbourg",
+            "phone: 03 88 21 43 00",
+            "website: https://www.mlpe.eu/accueil/"
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (89e0e6bd, 75144931, 5dd4b0ec) describe the same MLPE site at 13 rue Martin Bucer",
+            "phone matches official page"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/34306524900017",
+          "confirms": [
+            "legal name MISSION LOCALE POUR L'EMPLOI (MLPE), SIREN 343065249, siège 13 rue Martin Bucer 67000, active; other active sites rue Augustin Fresnel 67200, rue de Sélestat 67100, rue Arthur Weeber 67100",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'mission locale' Strasbourg; recherche-entreprises API 'mission locale martin bucer'"
+    },
+    {
+      "slug": "adie-strasbourg-association-pour-le-droit-a-l-initiativ-d5f565b8",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/35221687302969",
+          "confirms": [
+            "legal name ASSOCIATION POUR LE DROIT A L'INITIATIVE ECONOMIQUE (A.D.I.E.), SIREN 352216873 (siège Paris 19e), active Strasbourg establishment 'Bât B du lycée Couffignal, 11 route de la Fédération, 67100 Strasbourg'",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "CSV postcode 67000; registry gives 67100",
+            "older Strasbourg establishment 8 boulevard de Nancy (SIRET 35221687300443) closed 2021-06-30 - make sure no other record uses it"
+          ]
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'adie', 'adie federation'; WebSearch Adie Strasbourg route de la Fédération (no official page found); adie.org not fetched"
+    },
+    {
+      "slug": "cidff-du-bas-rhin-220dd4e1",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/6ab56769-e324-40bc-a172-b09bb90f2cc0",
+          "confirms": [
+            "name: CIDFF - Bas-Rhin",
+            "address: 24 rue du 22-Novembre 67000 Strasbourg",
+            "phone: 03 88 32 03 22 (matches CSV)",
+            "website: https://basrhin.cidff.info/"
+          ],
+          "discrepancies": [
+            "DUPLICATE: cidff-du-bas-rhin-220dd4e1 and cidff67-37a86c83 are the same organization/site"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/30583369100028",
+          "confirms": [
+            "legal name CENTRE D'INFORMATION SUR LES DROITS DES FEMMES ET DES FAMILLES (CIDFF), SIREN 305833691, 24 rue du 22 Novembre 67000, active; also active site in Haguenau",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "UR-CIDFF (regional union, SIREN 511681983) shares the same address - do not confuse"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search CIDFF Strasbourg; recherche-entreprises API 'CIDFF'"
+    },
+    {
+      "slug": "cidff67-37a86c83",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/6ab56769-e324-40bc-a172-b09bb90f2cc0",
+          "confirms": [
+            "name: CIDFF - Bas-Rhin",
+            "address: 24 rue du 22-Novembre 67000 Strasbourg",
+            "phone: 03 88 32 03 22 (matches CSV)",
+            "website: https://basrhin.cidff.info/"
+          ],
+          "discrepancies": [
+            "DUPLICATE: cidff-du-bas-rhin-220dd4e1 and cidff67-37a86c83 are the same organization/site"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/30583369100028",
+          "confirms": [
+            "legal name CENTRE D'INFORMATION SUR LES DROITS DES FEMMES ET DES FAMILLES (CIDFF), SIREN 305833691, 24 rue du 22 Novembre 67000, active; also active site in Haguenau",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "UR-CIDFF (regional union, SIREN 511681983) shares the same address - do not confuse"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search CIDFF Strasbourg; recherche-entreprises API 'CIDFF'"
+    },
+    {
+      "slug": "emmaus-connect-fdb15f66",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/79227291600059",
+          "confirms": [
+            "legal name EMMAUS CONNECT, SIREN 792272916 (siège Paris 19e), active establishment 33 rue Kageneck 67000 Strasbourg",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (fdb15f66, bf9ace5f, 403062cb) for the same Strasbourg site"
+          ]
+        },
+        {
+          "url": "https://emmaus-connect.org/strasbourg/",
+          "confirms": [
+            "own site (secondary): 33 rue Kageneck 67000 Strasbourg; national line 01 80 05 98 80; digital-inclusion services (reconditioned equipment, solidarity connectivity, workshops)",
+            "access condition: only people referred by a social structure"
+          ],
+          "discrepancies": [
+            "CSV has no phone; record should state the referral-only condition"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'emmaus connect'; WebFetch emmaus-connect.org/strasbourg; not listed in lannuaire"
+    },
+    {
+      "slug": "emmaus-connect-fondateur-abbe-pierre-bf9ace5f",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/79227291600059",
+          "confirms": [
+            "legal name EMMAUS CONNECT, SIREN 792272916 (siège Paris 19e), active establishment 33 rue Kageneck 67000 Strasbourg",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (fdb15f66, bf9ace5f, 403062cb) for the same Strasbourg site",
+            "'Fondateur Abbé Pierre' is a usage name; registry legal name is EMMAUS CONNECT"
+          ]
+        },
+        {
+          "url": "https://emmaus-connect.org/strasbourg/",
+          "confirms": [
+            "own site (secondary): 33 rue Kageneck 67000 Strasbourg; national line 01 80 05 98 80; digital-inclusion services (reconditioned equipment, solidarity connectivity, workshops)",
+            "access condition: only people referred by a social structure"
+          ],
+          "discrepancies": [
+            "CSV has no phone; record should state the referral-only condition"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'emmaus connect'; WebFetch emmaus-connect.org/strasbourg; not listed in lannuaire"
+    },
+    {
+      "slug": "emmaus-connect-strasbourg-403062cb",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/79227291600059",
+          "confirms": [
+            "legal name EMMAUS CONNECT, SIREN 792272916 (siège Paris 19e), active establishment 33 rue Kageneck 67000 Strasbourg",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "DUPLICATE: three records (fdb15f66, bf9ace5f, 403062cb) for the same Strasbourg site"
+          ]
+        },
+        {
+          "url": "https://emmaus-connect.org/strasbourg/",
+          "confirms": [
+            "own site (secondary): 33 rue Kageneck 67000 Strasbourg; national line 01 80 05 98 80; digital-inclusion services (reconditioned equipment, solidarity connectivity, workshops)",
+            "access condition: only people referred by a social structure"
+          ],
+          "discrepancies": [
+            "CSV has no phone; record should state the referral-only condition"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'emmaus connect'; WebFetch emmaus-connect.org/strasbourg; not listed in lannuaire"
+    },
+    {
+      "slug": "club-de-jeunes-l-etage-5dc96366",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/32588593700012",
+          "confirms": [
+            "legal name CLUB DE JEUNES L ETAGE, SIREN 325885937, 19 quai des Bateliers 67000 Strasbourg, active (association)",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "a similarly named entity CLUB DES JEUNES L ETAGE (SIREN 322271834) is ceased - do not use"
+          ]
+        },
+        {
+          "url": "https://association-etage.fr/",
+          "confirms": [
+            "own site (secondary): Association l'Étage, 19 quai des Bateliers 67000 Strasbourg; reception, support and housing for under-25s without home, families and isolated persons"
+          ],
+          "discrepancies": [
+            "own site phone 03 88 35 70 76 differs from CSV +33368711112"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'club de jeunes l etage', 'association l'etage'; WebFetch association-etage.fr"
+    },
+    {
+      "slug": "le-p-tit-home-a-l-etage-5a615b70",
+      "dataset": "structures",
+      "candidates": [],
+      "confidence": "LOW",
+      "notFound": true,
+      "searched": "recherche-entreprises API 'p'tit home etage', 'ptit home' (only unrelated 'LE P'TIT HOME D'ALSACE' micro-crèches elsewhere in 67), 'abbe lemire' (no organisation at 7 rue de l'Abbé Lemire 67200 other than a sole-trader record); WebSearch on strasbourg.eu and general web for \"P'tit Home à l'étage\" - nothing found. Possibly a family/early-childhood service of Association l'Étage (whose site mentions such a dispositif) but not confirmed; source is monenfant (Caf) - check monenfant.fr manually"
+    },
+    {
+      "slug": "cresus-alsace-du-nord-544cbc0d",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/82242934600015",
+          "confirms": [
+            "legal name CRESUS ALSACE DU NORD, SIREN 822429346, 25 rue de Lausanne 67000 Strasbourg, active (association)",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "same address hosts FEDERATION FRANCAISE DES ASS CRESUS (452169543), ASS CRESUS ALSACE (391302601) and CRESUS INITIATIVES SOLIDAIRES (844466805) - check which entity actually receives the public in Strasbourg"
+          ]
+        },
+        {
+          "url": "https://cresus-alsacedunord.fr/",
+          "confirms": [
+            "own site (secondary): non-profit affiliated to Fédération CRÉSUS, states it holds a Point Budget (PCB-type) label; free help on over-indebtedness, budget, microcredit"
+          ],
+          "discrepancies": [
+            "address/phone not visible on home page"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'cresus alsace du nord', 'cresus'; WebFetch cresus-alsacedunord.fr"
+    },
+    {
+      "slug": "federation-francaise-des-associations-cresus-a6104f97",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/45216954300025",
+          "confirms": [
+            "registry name FEDERATION FRANCAISE DES ASS CRESUS, SIREN 452169543, 25 rue de Lausanne 67000 Strasbourg, active (association)",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "federation is a national head body; may not provide direct public reception - possible overlap with cresus-alsace-du-nord-544cbc0d (same address)",
+            "older establishment Maison de la Famille, 7 rue Sédillot is closed"
+          ]
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'cresus', 'federation francaise associations cresus' (0 hits for full name); cresus.org not fetched"
+    },
+    {
+      "slug": "agence-france-travail-strasbourg-hautepierre-f67dd3a5",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/88429750-b4e0-4014-b773-64694d7f8ec7",
+          "confirms": [
+            "name: Agence France Travail STRASBOURG HAUTEPIERRE",
+            "address: 9 rue Alfred de Vigny 67200 Strasbourg",
+            "phone: 3949"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.francetravail.fr/annuaire/votre-agence-francetravail/strasbourg-hautepierre-67000",
+          "confirms": [
+            "operator page: general agency, 9 rue Alfred de Vigny 67200, 3949 / 3995"
+          ],
+          "discrepancies": [
+            "record official_source is truncated ('.../strasbourg-hautepierre-67000'); full URL is this one"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548118723",
+          "confirms": [
+            "France Travail (SIREN 130005481) establishment 9 rue Alfred de Vigny 67200 Strasbourg, active",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'France Travail' Strasbourg; francetravail.fr agency page; recherche-entreprises API"
+    },
+    {
+      "slug": "agence-france-travail-strasbourg-meinau-62599713",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/dc91285e-a1e0-407e-91c1-254a8ed60882",
+          "confirms": [
+            "name: Agence France Travail STRASBOURG MEINAU",
+            "address: 10 rue du Maréchal Lefèbvre 67100 Strasbourg (matches CSV)",
+            "phone: 3949"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.francetravail.fr/annuaire/votre-agence-francetravail/strasbourg-meinau-67000",
+          "confirms": [
+            "operator page: general agency, 10 rue du Maréchal Lefebvre, 3949 / 3995"
+          ],
+          "discrepancies": [
+            "francetravail.fr page shows postcode 67000 while lannuaire and registry show 67100",
+            "record official_source truncated; full URL is this one"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548118533",
+          "confirms": [
+            "France Travail establishment 10 rue du Maréchal Lefebvre 67100 Strasbourg, active",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'France Travail' Strasbourg; francetravail.fr agency page; recherche-entreprises API"
+    },
+    {
+      "slug": "agence-france-travail-strasbourg-pont-matthis-d2aca209",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/15f2b0ca-4fb5-45d0-b134-68830126dd3e",
+          "confirms": [
+            "name: Agence France Travail STRASBOURG PONT MATTHIS",
+            "address: 2 rue Gustave Adolphe Hirn 67000 Strasbourg (matches CSV)",
+            "phone: 3949"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.francetravail.fr/annuaire/votre-agence-francetravail/strasbourg-pont-matthis-67000",
+          "confirms": [
+            "operator page: general agency, same address, 3949 / 3995"
+          ],
+          "discrepancies": [
+            "record official_source truncated; full URL is this one"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548120117",
+          "confirms": [
+            "France Travail establishment 2 rue Gustave Adolphe Hirn 67000, active (enseigne AFT STBG PONT MATTHIS per INSEE notice in search results)",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "former establishment 4 rue Gustave Adolphe Hirn is closed"
+          ]
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search; francetravail.fr; recherche-entreprises API"
+    },
+    {
+      "slug": "agence-france-travail-strasbourg-seyboth-a71a98da",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548123491",
+          "confirms": [
+            "France Travail establishment, enseigne 'AFT STRASBOURG SEYBOTH', 8 rue Adolphe Seyboth 67000 Strasbourg, active since 2015",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "not listed in lannuaire nor findable in francetravail.fr agency directory - may be a specialised/non-public-reception site; confirm it receives the public before publishing"
+          ]
+        },
+        {
+          "url": "https://www.plus.transformation.gouv.fr/strasbourg-seyboth-france-travail",
+          "confirms": [
+            "government Services Publics+ page for 'Strasbourg Seyboth France Travail', 8 rue Adolphe Seyboth 67000, updated 2026-10-01"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "lannuaire search 'France Travail' Strasbourg (Seyboth NOT listed among 15 results); francetravail.fr/.../strasbourg-seyboth-67000 returned no agency; recherche-entreprises API; WebSearch"
+    },
+    {
+      "slug": "france-travail-direction-regionale-grand-est-b4a55f83",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/240e0321-8b93-4cd1-93f0-77e4a64cc775",
+          "confirms": [
+            "name: France Travail - Direction régionale Grand Est",
+            "address: 4a rue de la Haye 67300 Schiltigheim",
+            "phone: 03 88 10 53 89"
+          ],
+          "discrepancies": [
+            "CSV address 27 rue Jean Wenger-Valentin 67000 Strasbourg is outdated",
+            "DUPLICATE of france-travail-dr-grand-est-siege-9f9c21ab; regional HQ is not a public-reception service"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548119044",
+          "confirms": [
+            "establishment 'DR GRAND EST - SIEGE', Immeuble Le Lawn, 27 rue Jean Wenger-Valentin 67000",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "this establishment is CLOSED since 2024-06-01"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548126619",
+          "confirms": [
+            "establishment 'DR GRAND EST SIEGE', Immeuble Octopus, 4 A rue de la Haye 67300 Schiltigheim, active since 2022-05-01",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search 'France Travail' Strasbourg; recherche-entreprises API 'france travail wenger-valentin', 'rue de la haye'"
+    },
+    {
+      "slug": "france-travail-dr-grand-est-siege-9f9c21ab",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/240e0321-8b93-4cd1-93f0-77e4a64cc775",
+          "confirms": [
+            "name: France Travail - Direction régionale Grand Est",
+            "address: 4a rue de la Haye 67300 Schiltigheim"
+          ],
+          "discrepancies": [
+            "CSV 'Rue de La Haye 67000 Strasbourg': street number missing, postcode and commune wrong (67300 Schiltigheim)",
+            "DUPLICATE of france-travail-direction-regionale-grand-est-b4a55f83"
+          ]
+        },
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548126619",
+          "confirms": [
+            "establishment 'DR GRAND EST SIEGE', 4 A rue de la Haye 67300 Schiltigheim, active",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "HIGH",
+      "notFound": false,
+      "searched": "lannuaire search; recherche-entreprises API 'france travail rue de la haye'"
+    },
+    {
+      "slug": "france-travail-strasbourg-dt67-e62113d9",
+      "dataset": "structures",
+      "candidates": [
+        {
+          "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/13000548105779",
+          "confirms": [
+            "France Travail establishment Parc des Poteries, 24 avenue François Mitterrand 67200 Strasbourg (address matches CSV)",
+            "Registry data read via recherche-entreprises.api.gouv.fr (official API behind annuaire-entreprises); the annuaire page itself blocked automated fetch (redirect loop) - open it manually."
+          ],
+          "discrepancies": [
+            "this establishment is CLOSED since 2021-06-01 (pre-dates France Travail rename) - record likely obsolete",
+            "no DT67 entry found in lannuaire France Travail results for Strasbourg"
+          ]
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "recherche-entreprises API 'france travail francois mitterrand'; lannuaire search 'France Travail' Strasbourg; WebSearch 'France Travail direction territoriale Bas-Rhin' (only non-official directories)"
+    },
+    {
+      "slug": "faj-strasbourg",
+      "dataset": "aides",
+      "candidates": [
+        {
+          "url": "https://www.strasbourg.eu/fond-aide-jeunes",
+          "confirms": [
+            "R20 (28/10/2026) web research: page of the Ville et Eurométropole de Strasbourg (registered official source « strasbourg », capability aides) titled « Le fonds d’aide aux jeunes de l’Eurométropole de Strasbourg - FAJ’EMS »: social aid for young people aged 16 to 25 in difficulty living in the Eurométropole; managed by the Mission locale for the Eurométropole"
+          ],
+          "discrepancies": [
+            "the 24/10 hold noted 16–25 (this page) vs 18–25 (another institutional page): this page of the body that runs the fund says 16–25; the veille writes the texts from this page only and checks them (fidelity, FALC) before any publication"
+          ]
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "R20: web search « FAJ'EMS fonds d'aide aux jeunes Eurométropole de Strasbourg »; a hint only — the veille reads and checks the page like any other source"
+    }
+  ]
+}

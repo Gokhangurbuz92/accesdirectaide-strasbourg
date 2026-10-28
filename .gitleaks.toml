@@ -1,0 +1,16 @@
+title = "AccesDirectAide gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+[rules.allowlist]
+description = "False-positives in CSV"
+paths = [
+  "data/demarches-alsace\\.csv$",
+  "tests/unit/vault.*\\.test\\.(js|ts)$",
+  "api/_handlers/auth/outlook-callback\\.js$",
+  "docs/secrets-rotation\\.md$",
+  "docs/observability\\.md$"
+]

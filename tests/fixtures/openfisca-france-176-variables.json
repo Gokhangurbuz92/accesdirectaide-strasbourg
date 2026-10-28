@@ -1,0 +1,133 @@
+{
+ "engine": "OpenFisca-France 176.1.6 / OpenFisca-Core 44.7.1 (local loopback, 27/10/2026)",
+ "variables": {
+  "rsa": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "ppa": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "apl": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "aide_logement": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "aspa": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "ass": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "aah": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "af": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "cf": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "asf": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "bourse_college": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "css_participation_forfaitaire": {
+   "entity": "famille",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "date_naissance": {
+   "entity": "individu",
+   "definitionPeriod": "ETERNITY",
+   "valueType": "Date"
+  },
+  "activite": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "String",
+   "possibleValues": [
+    "actif",
+    "chomeur",
+    "etudiant",
+    "inactif",
+    "retraite"
+   ]
+  },
+  "salaire_net": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "chomage_net": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "salaire_imposable": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "chomage_imposable": {
+   "entity": "individu",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "loyer": {
+   "entity": "menage",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "charges_locatives": {
+   "entity": "menage",
+   "definitionPeriod": "MONTH",
+   "valueType": "Float"
+  },
+  "statut_occupation_logement": {
+   "entity": "menage",
+   "definitionPeriod": "MONTH",
+   "valueType": "String",
+   "possibleValues": [
+    "locataire_foyer",
+    "locataire_hlm",
+    "locataire_meuble",
+    "locataire_vide",
+    "loge_gratuitement",
+    "non_renseigne",
+    "primo_accedant",
+    "proprietaire",
+    "sans_domicile"
+   ]
+  },
+  "depcom": {
+   "entity": "menage",
+   "definitionPeriod": "MONTH",
+   "valueType": "String"
+  }
+ }
+}

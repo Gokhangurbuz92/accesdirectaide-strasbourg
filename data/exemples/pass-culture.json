@@ -1,0 +1,39 @@
+{
+    "titre": "Pass Culture",
+    "cest_quoi": "Le pass Culture vous offre un crédit pour accéder à la culture : cinéma, livres, musées, spectacles, cours de musique, abonnements numériques et bien plus.",
+    "pour_qui": "Tous les jeunes de 15 à 18 ans résidant en France. Le crédit est de 20€ à 15 ans, 30€ à 16 et 17 ans, et 300€ à 18 ans. Aucune condition de revenus.",
+    "ce_que_ca_aide": "Un crédit entre 20€ et 300€ selon votre âge, utilisable pour des sorties culturelles, l'achat de livres, des cours de pratique artistique, des abonnements presse ou streaming musical.",
+    "summary_falc": "Le pass Culture, c'est de l'argent que l'État vous donne pour aller au cinéma, acheter des livres, voir des spectacles ou prendre des cours de musique. Si vous avez entre 15 et 18 ans, vous pouvez en profiter. C'est gratuit et sans condition.",
+    "conditions_falc": "Avoir entre 15 et 18 ans. Habiter en France.",
+    "montant_falc": "20€ à 15 ans, 30€ à 16-17 ans, 300€ à 18 ans.",
+    "categorie": "Culture et loisirs",
+    "est_urgent": false,
+    "territoires": [
+        "FRANCE"
+    ],
+    "ou_demander": "Application pass Culture (iOS/Android) ou site web pass.culture.fr",
+    "lien_demande": "https://pass.culture.fr",
+    "documents_necessaires": [
+        "Pièce d'identité (CNI ou passeport)",
+        "Justificatif de domicile"
+    ],
+    "mots_cles": [
+        "culture",
+        "jeunes",
+        "cinéma",
+        "livres",
+        "spectacles",
+        "musique",
+        "loisirs",
+        "pass culture"
+    ],
+    "audiences": [
+        "jeunes",
+        "15-18 ans",
+        "étudiants"
+    ],
+    "montant_max": "300€",
+    "echelon_territorial": "NATIONAL",
+    "source_donnee": "MANUAL",
+    "lien_demarche": "https://pass.culture.fr"
+}

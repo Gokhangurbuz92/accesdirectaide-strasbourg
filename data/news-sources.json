@@ -1,0 +1,122 @@
+[
+  {
+    "id": "service_public_particuliers",
+    "name": "Service-Public - Particuliers",
+    "feedUrl": "https://www.service-public.gouv.fr/abonnements/rss/actu-actualites-particuliers.rss",
+    "homepageUrl": "https://www.service-public.fr/",
+    "domain": "service-public.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "famille",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  },
+  {
+    "id": "service_public_professionnels",
+    "name": "Service-Public - Professionnels",
+    "feedUrl": "https://www.service-public.gouv.fr/abonnements/rss/actu-actu-pro.rss",
+    "homepageUrl": "https://www.service-public.fr/",
+    "domain": "service-public.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "professionnel",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  },
+  {
+    "id": "grandest_actu",
+    "name": "Région Grand Est - Actualités",
+    "feedUrl": "https://www.grandest.fr/feed/",
+    "homepageUrl": "https://www.grandest.fr/",
+    "domain": "grandest.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "region",
+    "enabled": true,
+    "language": "fr",
+    "territory": "GRAND_EST"
+  },
+  {
+    "id": "prefecture_bas_rhin",
+    "name": "Préfecture du Bas-Rhin",
+    "feedUrl": "https://www.bas-rhin.gouv.fr/RSS",
+    "homepageUrl": "https://www.bas-rhin.gouv.fr/",
+    "domain": "bas-rhin.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "prefecture",
+    "enabled": true,
+    "language": "fr",
+    "territory": "DEP_67"
+  },
+  {
+    "id": "prefecture_haut_rhin",
+    "name": "Préfecture du Haut-Rhin",
+    "feedUrl": "https://www.haut-rhin.gouv.fr/RSS",
+    "homepageUrl": "https://www.haut-rhin.gouv.fr/",
+    "domain": "haut-rhin.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "prefecture",
+    "enabled": true,
+    "language": "fr",
+    "territory": "DEP_68"
+  },
+  {
+    "id": "ars_grand_est",
+    "name": "ARS Grand Est - Actualités",
+    "feedUrl": "https://www.grand-est.ars.sante.fr/feed",
+    "homepageUrl": "https://www.grand-est.ars.sante.fr/",
+    "domain": "grand-est.ars.sante.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "sante",
+    "enabled": true,
+    "language": "fr",
+    "territory": "GRAND_EST"
+  },
+  {
+    "id": "vigicrues",
+    "name": "Vigicrues - Vigilance Crues",
+    "feedUrl": "https://www.vigicrues.gouv.fr/rss/vigilance_crues_spc.xml",
+    "homepageUrl": "https://www.vigicrues.gouv.fr/",
+    "domain": "vigicrues.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "securite",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  },
+  {
+    "id": "boss_social",
+    "name": "BOSS - Bulletin Officiel de la Sécurité Sociale",
+    "feedUrl": "https://boss.gouv.fr/portail/rss",
+    "homepageUrl": "https://boss.gouv.fr/",
+    "domain": "boss.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "social",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  },
+  {
+    "id": "urssaf_actu",
+    "name": "URSSAF - Actualités",
+    "feedUrl": "https://www.urssaf.fr/accueil/actualites.rss",
+    "homepageUrl": "https://www.urssaf.fr/",
+    "domain": "urssaf.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "social",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  },
+  {
+    "id": "fonction_publique",
+    "name": "Fonction Publique - Actualités",
+    "feedUrl": "https://www.fonction-publique.gouv.fr/rss.xml",
+    "homepageUrl": "https://www.fonction-publique.gouv.fr/",
+    "domain": "fonction-publique.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "emploi",
+    "enabled": true,
+    "language": "fr",
+    "territory": "FRANCE"
+  }
+]

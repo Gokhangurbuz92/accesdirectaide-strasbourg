@@ -1,0 +1,1173 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Accès Direct Aide API",
+    "version": "1.0.0",
+    "description": "Documentation complète de l'API de la plateforme Accès Direct Aide — aide sociale, démarches, structures, rendez-vous professionnels et administration.",
+    "contact": {
+      "name": "Équipe AccesDirectAide",
+      "url": "https://www.accesdirectaide.fr"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://www.accesdirectaide.fr/api",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:5173/api",
+      "description": "Développement local (Vite proxy)"
+    },
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Développement local (API directe)"
+    }
+  ],
+  "tags": [
+    { "name": "Health", "description": "Endpoints de santé et monitoring" },
+    { "name": "Auth", "description": "Authentification utilisateur / admin" },
+    { "name": "Pro Auth", "description": "Authentification professionnelle (MFA, invitations)" },
+    { "name": "Pro", "description": "Espace professionnel (dossiers, slots, équipes)" },
+    { "name": "Public", "description": "Endpoints publics (passeport, FALC, assistant)" },
+    { "name": "Core Data", "description": "Données principales (aides, structures, démarches, actualités)" },
+    { "name": "Assistant", "description": "Assistant IA (chat, recommandations, feedback)" },
+    { "name": "Diagnostic", "description": "Diagnostic d'éligibilité (OpenFisca)" },
+    { "name": "Admin", "description": "Administration (inbox, features, stats, review)" },
+    { "name": "Cron", "description": "Tâches planifiées (pipelines, ingestion, backups)" },
+    { "name": "Monitor", "description": "Monitoring avancé (data quality, freshness, cron)" },
+    { "name": "Share", "description": "Partage de contenu" },
+    { "name": "Misc", "description": "PDF, TTS, téléchargements, taxonomie" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check (public)",
+        "description": "Vérifie que l'API est opérationnelle. Aucune vérification de dépendance.",
+        "responses": {
+          "200": {
+            "description": "Service opérationnel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/deep": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check approfondi (protégé)",
+        "description": "Vérifie DB, KV, Storage, Cron, Sentry. Requiert authentification admin ou cron.",
+        "security": [{ "AdminToken": [] }, { "CronSecret": [] }],
+        "responses": {
+          "200": { "description": "Tous les services opérationnels" },
+          "401": { "description": "Non autorisé" },
+          "503": { "description": "Un ou plusieurs services défaillants" }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check Kubernetes-compatible",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Connexion utilisateur",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "JWT Token retourné" },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Inscription utilisateur",
+        "responses": {
+          "201": { "description": "Compte créé, email de vérification envoyé" },
+          "400": { "description": "Données invalides" },
+          "409": { "description": "Email déjà enregistré" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Déconnexion",
+        "responses": {
+          "200": { "description": "Session invalidée" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Profil de l'utilisateur connecté",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profil utilisateur" },
+          "401": { "description": "Non authentifié" }
+        }
+      }
+    },
+    "/auth/verify-email": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Vérification d'email par token",
+        "responses": {
+          "200": { "description": "Email vérifié" },
+          "400": { "description": "Token invalide ou expiré" }
+        }
+      }
+    },
+    "/auth/resend-verification": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Renvoi de l'email de vérification",
+        "responses": {
+          "200": { "description": "Email renvoyé" }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Demande de réinitialisation de mot de passe",
+        "responses": {
+          "200": { "description": "Email de réinitialisation envoyé" }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Réinitialisation effective du mot de passe",
+        "responses": {
+          "200": { "description": "Mot de passe modifié" },
+          "400": { "description": "Token invalide" }
+        }
+      }
+    },
+    "/auth/callback/outlook": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Callback OAuth Outlook",
+        "responses": {
+          "302": { "description": "Redirection après authentification Outlook" }
+        }
+      }
+    },
+    "/pro/auth/login": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Connexion professionnelle",
+        "responses": {
+          "200": { "description": "Pré-authentifié (MFA requis si activé)" },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/pro/auth/mfa-verify": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Vérification MFA (TOTP)",
+        "responses": {
+          "200": { "description": "MFA validé, JWT retourné" },
+          "401": { "description": "Code TOTP invalide" }
+        }
+      }
+    },
+    "/pro/auth/register": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Inscription professionnelle",
+        "responses": {
+          "201": { "description": "Compte professionnel créé" }
+        }
+      }
+    },
+    "/pro/auth/forgot-password": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Réinitialisation mot de passe pro",
+        "responses": { "200": { "description": "Email envoyé" } }
+      }
+    },
+    "/pro/auth/reset-password": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Réinitialisation effective mot de passe pro",
+        "responses": { "200": { "description": "Mot de passe modifié" } }
+      }
+    },
+    "/pro/auth/register-invite": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Inscription par invitation",
+        "responses": { "201": { "description": "Compte créé via invitation" } }
+      }
+    },
+    "/pro/auth/refresh": {
+      "post": {
+        "tags": ["Pro Auth"],
+        "summary": "Rafraîchissement du JWT pro",
+        "responses": { "200": { "description": "Nouveau JWT retourné" } }
+      }
+    },
+    "/pro/me": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Profil du professionnel connecté",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profil professionnel" },
+          "401": { "description": "Non authentifié" }
+        }
+      }
+    },
+    "/pro/mfa-setup": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Configuration MFA (génération QR code TOTP)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Secret TOTP et QR code retournés" } }
+      }
+    },
+    "/pro/slots": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Liste des créneaux du professionnel",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des créneaux" } }
+      }
+    },
+    "/pro/availability": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Disponibilités du professionnel",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Créneaux disponibles" } }
+      }
+    },
+    "/pro/timeoff": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Congés et indisponibilités",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des congés" } }
+      }
+    },
+    "/pro/rdv/settings": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Paramètres de rendez-vous",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Configuration RDV" } }
+      }
+    },
+    "/pro/outlook/availability": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Synchronisation disponibilités Outlook",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Disponibilités Outlook" } }
+      }
+    },
+    "/pro/outlook": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Configuration intégration Outlook",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Statut intégration Outlook" } }
+      }
+    },
+    "/pro/team": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Membres de l'équipe",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des membres" } }
+      }
+    },
+    "/pro/invite": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Inviter un membre dans l'équipe",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Invitation envoyée" } }
+      }
+    },
+    "/pro/resend-invite": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Renvoyer une invitation",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Invitation renvoyée" } }
+      }
+    },
+    "/pro/dossier": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Liste des dossiers bénéficiaires",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Dossiers" } }
+      }
+    },
+    "/pro/dossier/upload-secure": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Upload sécurisé de document dans un dossier",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Document uploadé" } }
+      }
+    },
+    "/pro/dossier/export": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Export d'un dossier (PDF/ZIP)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Fichier d'export" } }
+      }
+    },
+    "/pro/dossier/views": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Historique des consultations d'un dossier",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des consultations" } }
+      }
+    },
+    "/pro/consent": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Gestion du consentement bénéficiaire",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Consentement enregistré" } }
+      }
+    },
+    "/pro/dossier-synthesis": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Synthèse IA d'un dossier",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Synthèse générée" } }
+      }
+    },
+    "/pro/attestation-data": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Données pour génération d'attestation officielle",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Données attestation" } }
+      }
+    },
+    "/pro/interop-siao": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Interopérabilité SIAO (hébergement d'urgence)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Données SIAO transmises" } }
+      }
+    },
+    "/pro/system-maintenance": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "État de maintenance système",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Statut maintenance" } }
+      }
+    },
+    "/pro/agent-discovery": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Découverte d'agents IA disponibles",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Agents disponibles" } }
+      }
+    },
+    "/pro/agent-scheduler": {
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Planification d'un agent IA",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Agent planifié" } }
+      }
+    },
+    "/pro/health-check": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Health check espace professionnel",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Services pro opérationnels" } }
+      }
+    },
+    "/pro/notifications/unread-count": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Nombre de notifications non lues",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Compteur non lu" } }
+      }
+    },
+    "/pro/notifications": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Liste des notifications",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Notifications" } }
+      }
+    },
+    "/pro/audit/list": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Historique d'audit de l'organisation",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Événements d'audit" } }
+      }
+    },
+    "/pro/audit": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Dashboard d'audit pro",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Rapport d'audit" } }
+      }
+    },
+    "/pro/reports": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Rapports d'activité professionnelle",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Rapports" } }
+      }
+    },
+    "/aides": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Liste des aides sociales",
+        "parameters": [
+          { "name": "category", "in": "query", "schema": { "type": "string" }, "description": "Filtrer par catégorie" },
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Recherche textuelle" },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 }, "description": "Numéro de page" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 }, "description": "Nombre de résultats par page" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste paginée des aides",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AidesList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aides/{slug}": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Détail d'une aide par slug",
+        "parameters": [
+          { "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Détail de l'aide" },
+          "404": { "description": "Aide non trouvée" }
+        }
+      }
+    },
+    "/structures": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Annuaire des structures d'accompagnement",
+        "parameters": [
+          { "name": "lat", "in": "query", "schema": { "type": "number" }, "description": "Latitude" },
+          { "name": "lon", "in": "query", "schema": { "type": "number" }, "description": "Longitude" },
+          { "name": "radius", "in": "query", "schema": { "type": "integer" }, "description": "Rayon en km" },
+          { "name": "type", "in": "query", "schema": { "type": "string" }, "description": "Type de structure" }
+        ],
+        "responses": {
+          "200": { "description": "Liste des structures" }
+        }
+      }
+    },
+    "/demarches": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Liste des démarches administratives",
+        "responses": { "200": { "description": "Liste des démarches" } }
+      }
+    },
+    "/demarches/{slug}": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Détail d'une démarche",
+        "parameters": [
+          { "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Détail démarche" },
+          "404": { "description": "Démarche non trouvée" }
+        }
+      }
+    },
+    "/actualites": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Flux d'actualités sociales",
+        "responses": { "200": { "description": "Liste des actualités" } }
+      }
+    },
+    "/guides": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Guides pratiques",
+        "responses": { "200": { "description": "Liste des guides" } }
+      }
+    },
+    "/dispositifs": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Dispositifs d'aide",
+        "responses": { "200": { "description": "Liste des dispositifs" } }
+      }
+    },
+    "/ressources": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Ressources documentaires",
+        "responses": { "200": { "description": "Liste des ressources" } }
+      }
+    },
+    "/tools": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Outils et simulateurs",
+        "responses": { "200": { "description": "Liste des outils" } }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Recherche globale (aides, structures, démarches)",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Terme de recherche" }
+        ],
+        "responses": { "200": { "description": "Résultats de recherche" } }
+      }
+    },
+    "/drees": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Données DREES (statistiques sociales)",
+        "responses": { "200": { "description": "Données DREES" } }
+      }
+    },
+    "/taxonomy": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Taxonomie des catégories d'aides",
+        "responses": { "200": { "description": "Arbre de taxonomie" } }
+      }
+    },
+    "/reports": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Rapports publics",
+        "responses": { "200": { "description": "Liste des rapports" } }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "tags": ["Core Data"],
+        "summary": "Envoi de feedback utilisateur",
+        "responses": { "201": { "description": "Feedback enregistré" } }
+      }
+    },
+    "/rdv": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Recherche de créneaux de rendez-vous",
+        "responses": { "200": { "description": "Créneaux disponibles" } }
+      }
+    },
+    "/assistant/chat": {
+      "post": {
+        "tags": ["Assistant"],
+        "summary": "Chat avec l'assistant IA",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Réponse de l'assistant (streaming SSE)" }
+        }
+      }
+    },
+    "/assistant/recommendations": {
+      "post": {
+        "tags": ["Assistant"],
+        "summary": "Recommandations d'aides personnalisées",
+        "responses": { "200": { "description": "Aides recommandées" } }
+      }
+    },
+    "/assistant/feedback": {
+      "post": {
+        "tags": ["Assistant"],
+        "summary": "Feedback sur une réponse de l'assistant",
+        "responses": { "201": { "description": "Feedback enregistré" } }
+      }
+    },
+    "/diagnostic": {
+      "post": {
+        "tags": ["Diagnostic"],
+        "summary": "Diagnostic d'éligibilité aux aides (OpenFisca)",
+        "responses": {
+          "200": { "description": "Résultats du diagnostic" }
+        }
+      }
+    },
+    "/public/dossier-revoke": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Révocation de consentement (bénéficiaire)",
+        "responses": { "200": { "description": "Consentement révoqué" } }
+      }
+    },
+    "/public/passport": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Passeport social du bénéficiaire",
+        "responses": { "200": { "description": "Données du passeport" } }
+      }
+    },
+    "/public/sms-notify": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Envoi de notification SMS",
+        "responses": { "200": { "description": "SMS envoyé" } }
+      }
+    },
+    "/public/falc/summarize": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Résumé FALC (Facile à Lire et à Comprendre)",
+        "description": "Génère un résumé simplifié d'un texte administratif pour en faciliter la compréhension.",
+        "responses": { "200": { "description": "Texte simplifié" } }
+      }
+    },
+    "/public/assistant/orient": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Orientation assistée vers les bonnes démarches",
+        "responses": { "200": { "description": "Orientation proposée" } }
+      }
+    },
+    "/public/suggest-structure": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Suggestion d'une structure manquante",
+        "responses": { "201": { "description": "Suggestion enregistrée" } }
+      }
+    },
+    "/secure-messages": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Messagerie E2EE (chiffrée de bout en bout)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Message envoyé/reçu" } }
+      }
+    },
+    "/tts": {
+      "post": {
+        "tags": ["Misc"],
+        "summary": "Synthèse vocale (Text-to-Speech)",
+        "responses": { "200": { "description": "Flux audio" } }
+      }
+    },
+    "/pdf": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Génération de PDF (attestations, exports)",
+        "responses": { "200": { "description": "Fichier PDF" } }
+      }
+    },
+    "/download": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Téléchargement de fichier sécurisé",
+        "responses": { "200": { "description": "Fichier" } }
+      }
+    },
+    "/login-pro-guard": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Guard de redirection vers login pro",
+        "responses": { "302": { "description": "Redirection" } }
+      }
+    },
+    "/share/create": {
+      "post": {
+        "tags": ["Share"],
+        "summary": "Créer un lien de partage",
+        "responses": { "201": { "description": "Lien créé" } }
+      }
+    },
+    "/share/get": {
+      "get": {
+        "tags": ["Share"],
+        "summary": "Récupérer un contenu partagé",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Contenu partagé" },
+          "404": { "description": "Lien expiré ou invalide" }
+        }
+      }
+    },
+    "/admin/inbox": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Boîte de réception admin",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Messages inbox" } }
+      }
+    },
+    "/admin/actions": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Actions administratives disponibles",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Liste des actions" } }
+      }
+    },
+    "/admin/runs": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Historique des exécutions (pipelines)",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Liste des runs" } }
+      }
+    },
+    "/admin/cron-runs": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Historique des exécutions cron",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Runs cron" } }
+      }
+    },
+    "/admin/partnerships": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Gestion des partenariats",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Partenariats" } }
+      }
+    },
+    "/admin/link-checks": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Résultats du contrôle de liens cassés",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Résultats link-check" } }
+      }
+    },
+    "/admin/validate-publication": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Valider une publication (aide/démarche)",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Publication validée" } }
+      }
+    },
+    "/admin/review-queue": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "File d'attente de révision",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Éléments en attente" } }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Statistiques de la plateforme",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Statistiques" } }
+      }
+    },
+    "/admin/national-stats": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Statistiques nationales",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Stats nationales" } }
+      }
+    },
+    "/admin/features": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Feature flags",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Flags actifs" } }
+      }
+    },
+    "/admin/rag-health": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Santé du RAG (Retrieval-Augmented Generation)",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "État du RAG" } }
+      }
+    },
+    "/admin/conversations": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Historique des conversations assistant",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Conversations" } }
+      }
+    },
+    "/admin/analytics": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Analytics avancés",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Données analytics" } }
+      }
+    },
+    "/admin/hive-repair": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Réparation des données Hive",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Réparation lancée" } }
+      }
+    },
+    "/admin/bulk-repair": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Réparation en masse",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Réparation lancée" } }
+      }
+    },
+    "/admin/mfa-setup": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Configuration MFA admin",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "MFA configuré" } }
+      }
+    },
+    "/admin/mfa-verify": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Vérification MFA admin",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "MFA validé" } }
+      }
+    },
+    "/admin/ai-metrics": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Métriques IA (tokens, coûts, latence)",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Métriques Gemini" } }
+      }
+    },
+    "/admin/alerts": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Historique des alertes santé",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Alertes récentes" } }
+      }
+    },
+    "/admin/logs": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Logs centralisés (Redis)",
+        "security": [{ "AdminToken": [] }],
+        "parameters": [
+          { "name": "count", "in": "query", "schema": { "type": "integer", "default": 50 }, "description": "Nombre de logs" },
+          { "name": "level", "in": "query", "schema": { "type": "string", "enum": ["info", "warn", "error", "critical"] }, "description": "Filtrer par niveau" }
+        ],
+        "responses": { "200": { "description": "Entrées de log" } }
+      }
+    },
+    "/admin/dashboard": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Dashboard opérationnel (santé, données, IA, crons, erreurs)",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Métriques agrégées" } }
+      }
+    },
+    "/monitor/cron/actualites": {
+      "get": {
+        "tags": ["Monitor"],
+        "summary": "Monitoring du cron actualités",
+        "responses": { "200": { "description": "État du cron" } }
+      }
+    },
+    "/monitor/core": {
+      "get": {
+        "tags": ["Monitor"],
+        "summary": "Monitoring des métriques cœur",
+        "responses": { "200": { "description": "Métriques core" } }
+      }
+    },
+    "/monitor/data-quality": {
+      "get": {
+        "tags": ["Monitor"],
+        "summary": "Qualité des données",
+        "responses": {
+          "200": { "description": "Métriques de qualité" },
+          "503": { "description": "Seuils dépassés" }
+        }
+      }
+    },
+    "/monitor/ingestion-freshness": {
+      "get": {
+        "tags": ["Monitor"],
+        "summary": "Fraîcheur de l'ingestion de données",
+        "responses": {
+          "200": { "description": "Données fraîches" },
+          "503": { "description": "Données obsolètes" }
+        }
+      }
+    },
+    "/monitor/pro-rdv": {
+      "get": {
+        "tags": ["Monitor"],
+        "summary": "Monitoring des rendez-vous pro",
+        "responses": { "200": { "description": "État RDV" } }
+      }
+    },
+    "/cron/pipeline": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Pipeline d'ingestion principal",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Pipeline exécuté" } }
+      }
+    },
+    "/cron/actualites": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Ingestion des actualités (RSS)",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Actualités ingérées" } }
+      }
+    },
+    "/cron/review-queue/scan": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Scan de la file de révision",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Scan terminé" } }
+      }
+    },
+    "/cron/hive-scan": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Scan Hive (cohérence données)",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Scan terminé" } }
+      }
+    },
+    "/cron/ingest-structures": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Ingestion des structures",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Structures ingérées" } }
+      }
+    },
+    "/cron/ingest-aids": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Ingestion des aides",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Aides ingérées" } }
+      }
+    },
+    "/cron/link-check": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Vérification des liens cassés",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Vérification terminée" } }
+      }
+    },
+    "/cron/rdv-reminder": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Envoi des rappels de rendez-vous",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Rappels envoyés" } }
+      }
+    },
+    "/cron/ingest-demarches": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Ingestion des démarches",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Démarches ingérées" } }
+      }
+    },
+    "/cron/ingest-annuaire": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Ingestion de l'annuaire",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Annuaire ingéré" } }
+      }
+    },
+    "/cron/backup-db": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Sauvegarde de la base de données",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Backup terminé" } }
+      }
+    },
+    "/docs/openapi.json": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Spécification OpenAPI (ce document)",
+        "responses": {
+          "200": {
+            "description": "Spécification OpenAPI 3.0",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "service": { "type": "string" },
+          "time": { "type": "string", "format": "date-time" },
+          "vercelEnv": { "type": "string" },
+          "release": { "type": "string", "nullable": true },
+          "requestId": { "type": "string", "format": "uuid" }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 }
+        }
+      },
+      "ChatRequest": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": { "type": "string" },
+          "conversationId": { "type": "string", "format": "uuid" },
+          "context": {
+            "type": "object",
+            "properties": {
+              "departement": { "type": "string" },
+              "situation": { "type": "string" }
+            }
+          }
+        }
+      },
+      "AidesList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AideSummary" }
+          },
+          "total": { "type": "integer" },
+          "page": { "type": "integer" },
+          "limit": { "type": "integer" }
+        }
+      },
+      "AideSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "category": { "type": "string" },
+          "source": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtenu via /auth/login ou /pro/auth/login"
+      },
+      "AdminToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-admin-token",
+        "description": "Token d'administration"
+      },
+      "CronSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "authorization",
+        "description": "Bearer token cron (CRON_SECRET)"
+      }
+    }
+  }
+}

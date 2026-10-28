@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Service-Public - Particuliers",
+        "url": "https://www.service-public.gouv.fr/abonnements/rss/actu-actualites-particuliers.rss",
+        "domain": "service-public.fr",
+        "trust_level": "OFFICIAL",
+        "category": "famille"
+    },
+    {
+        "name": "Service-Public - Professionnels",
+        "url": "https://www.service-public.gouv.fr/abonnements/rss/actu-actu-pro.rss",
+        "domain": "service-public.fr",
+        "trust_level": "OFFICIAL",
+        "category": "professionnel"
+    }
+]

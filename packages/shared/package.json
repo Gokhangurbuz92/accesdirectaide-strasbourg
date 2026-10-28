@@ -1,0 +1,23 @@
+{
+    "name": "@ada/shared",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "description": "Constantes, enums, et validators Zod partagés — Accès Direct Aide",
+    "main": "index.js",
+    "exports": {
+        ".": "./index.js",
+        "./validators": "./validators.js",
+        "./constants": "./constants.js",
+        "./cache": "./cache.js",
+        "./features": "./features.js",
+        "./logger": "./logger.js"
+    },
+    "scripts": {
+        "lint": "echo 'No lint configured yet'",
+        "test": "echo 'No tests configured yet'"
+    },
+    "dependencies": {
+        "zod": "^4.6.7"
+    }
+}

@@ -1,0 +1,4 @@
+# Launch-readiness item 54: every file under api/ becomes a Vercel function unless it is excluded — tests and the Docker-only server are never deployed.
+api/**/*.test.*
+api/tests/
+api/server.js

@@ -1,0 +1,120 @@
+# Phase 1: Repo Hygiene
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment Variables
+.env
+.env.local
+.env.*
+!.env.example
+!.env.template
+
+# Next.js / Vercel
+.vercel
+dist/sitemap.xml
+
+# Python / Virtualenv
+venv/
+__pycache__/
+*.pyc
+
+# Testing & Artifacts
+test-results/
+playwright-report/
+coverage/
+storybook-static/
+cookies*.txt
+test-img*.jpg
+test-img*
+test-failures.*
+test-results.txt
+failing-files.txt
+failing-tests.txt
+failing_tests.txt
+blob-report/
+
+# Debug & error files (never commit)
+API_ERROR.txt
+snapshot.png
+fix-auth.js
+*.error.log
+p10c-error*.log
+
+# Local Storage (Mock)
+uploads_mock/
+api/_utils/build-info.js
+
+# Lint outputs
+lint_output*.txt
+lint_final.txt
+
+# Generated build info
+.blackboxcli/
+
+# Documentation with sensitive data (should be regenerated without secrets)
+CONFIGURATION_COMPLETE.md
+DIAGNOSTIC_DB_RESULTS.md
+LIRE_MOI_CONFIGURATION.md
+RAPPORT_CONFIGURATION_ENV.md
+RAPPORT_DIAGNOSTIC_FINAL.md
+RESUME_FINAL_ENV.md
+SYNTHESE_TRAVAIL_EFFECTUE.md
+VERCEL_ENV_SETUP.md
+DEPLOYMENT_FIX_SUMMARY.md
+COMMIT_MESSAGE.txt
+
+# Scripts with hardcoded credentials (use env vars instead)
+scripts/test-db-simple.cjs
+scripts/apply-search-vector-migration.cjs
+scripts/check-db-columns.cjs
+scripts/check-db-extensions.cjs
+
+# Any file containing credentials or secrets
+*_CREDENTIALS.md
+*_SECRETS.md
+.env*.local
+!docs/ROTATE_SECRETS.md
+storybook-static
+audit_complet_*.md
+backups/
+exports/
+
+# k6 load test results
+tests/load/results.json
+
+# Security: files that leaked secrets in git history (never recommit)
+*.bak
+*.env.bak
+smoke-staging.sh
+BLACKBOX_AI_INTEGRATION.md
+RELEASE_P0_PROOF.md
+CI.md
+cookies_stg.txt
+cookies_deploy.txt
+.env*
+
+# PKG-5: local LAB build (scripts/lab-local.mjs)
+dist-lab/

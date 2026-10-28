@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pas de connexion — AccesDirectAide</title>
+<style>
+  :root { color-scheme: light dark; --bg: #F7FAFF; --fg: #0F172A; --muted: #334155; --card: #FFFFFF; --line: #CBD5E1; --link: #0B3A6A; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0B1220; --fg: #F1F5F9; --muted: #CBD5E1; --card: #111A2E; --line: #334155; --link: #93C5FD; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 1rem; }
+  p { margin: 0 0 1rem; color: var(--muted); }
+  ul { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  li { background: var(--card); border: 1px solid var(--line); border-radius: .75rem; margin: 0 0 .5rem; }
+  li a { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 1rem; color: var(--fg); text-decoration: none; min-height: 44px; align-items: center; }
+  li a strong { font-size: 1.25rem; color: var(--link); }
+  .retry { display: inline-block; padding: .75rem 1.25rem; border-radius: .5rem; background: #0B3A6A; color: #fff; text-decoration: none; min-height: 44px; box-sizing: border-box; }
+  a:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vous n'êtes pas connecté à Internet</h1>
+  <p>AccesDirectAide a besoin d'Internet pour afficher les aides et votre espace. Vos informations ne sont pas gardées sur cet appareil.</p>
+  <p>En cas d'urgence, vous pouvez appeler ces numéros gratuits :</p>
+  <ul data-offline-emergency>
+    <li><a href="tel:112"><span>Urgences européennes</span><strong>112</strong></a></li>
+    <li><a href="tel:15"><span>SAMU</span><strong>15</strong></a></li>
+    <li><a href="tel:17"><span>Police secours</span><strong>17</strong></a></li>
+    <li><a href="tel:18"><span>Sapeurs-pompiers</span><strong>18</strong></a></li>
+    <li><a href="tel:115"><span>SAMU social</span><strong>115</strong></a></li>
+  </ul>
+  <a class="retry" href="/">Réessayer</a>
+</main>
+</body>
+</html>

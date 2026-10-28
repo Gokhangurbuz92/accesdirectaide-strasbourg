@@ -1,0 +1,38 @@
+{
+  "name": "AccesDirectAide — Vos droits, clarifiés et sourcés",
+  "short_name": "AccesDirectAide",
+  "description": "Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7FAFF",
+  "theme_color": "#0B3A6A",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "id": "/",
+  "scope": "/",
+  "lang": "fr"
+}

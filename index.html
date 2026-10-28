@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr" data-suppress-hydration-warning="true">
+
+<head>
+    <meta name="referrer" content="no-referrer" />
+  <meta charset="UTF-8" />
+
+  <!-- DNS prefetch for API (same-origin on Vercel, but helps if proxied) -->
+  <link rel="dns-prefetch" href="https://www.accesdirectaide.fr" />
+
+  <!-- Favicons - Blueprint Trust -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Theme color - Brand Primary -->
+  <meta name="theme-color" content="#002D5A" />
+  <meta name="msapplication-TileColor" content="#002D5A" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>AccesDirectAide — La lumière sur vos démarches</title>
+  <meta name="description"
+    content="Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement. La lumière sur vos démarches." />
+  <!-- launch-readiness item 55: data-rh lets the page's own canonical (src/components/SEO.jsx) REPLACE this default instead of adding a second one -->
+  <link rel="canonical" href="https://www.accesdirectaide.fr/" data-rh="true" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.accesdirectaide.fr/" data-rh="true" />
+  <meta property="og:title" content="AccesDirectAide — La lumière sur vos démarches" />
+  <meta property="og:description"
+    content="Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement. La lumière sur vos démarches." />
+  <meta property="og:image" content="/og-image.webp" />
+  <meta property="og:locale" content="fr_FR" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AccesDirectAide — La lumière sur vos démarches" />
+  <meta name="twitter:description"
+    content="Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement." />
+  <meta name="twitter:image" content="/og-image.webp" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Local Fonts (Inter) — Only preload critical weights -->
+  <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://www.accesdirectaide.fr/#website",
+        "url": "https://www.accesdirectaide.fr/",
+        "name": "AccesDirectAide",
+        "description": "Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement.",
+        "inLanguage": "fr-FR"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://www.accesdirectaide.fr/#organization",
+        "name": "AccesDirectAide",
+        "url": "https://www.accesdirectaide.fr/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.accesdirectaide.fr/logo.svg"
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body data-suppress-hydration-warning="true">
+  <!-- Phase 3.4 RGAA: Early accessibility init (before React hydration) -->
+  <script>
+    try {
+      var s = JSON.parse(localStorage.getItem('accessibilitySettings') || '{}');
+      if (s.fontSize && s.fontSize !== 100) document.documentElement.style.fontSize = s.fontSize + '%';
+      if (s.contrast === 'high') document.documentElement.classList.add('high-contrast');
+      if (s.contrast === 'dark') document.documentElement.classList.add('dark-mode');
+      if (s.lineHeight === 'large') document.documentElement.classList.add('large-line-height');
+      if (s.simplifiedMode) document.documentElement.classList.add('simplified-mode');
+    } catch (e) { }
+  </script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>
