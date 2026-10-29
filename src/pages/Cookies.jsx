@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { AUDIENCE_OBJECTION_KEY, hasObjectedToAudience, setAudienceObjection } from '@/lib/audienceObjection';
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
+import { frontendEnv } from "@/config/env";
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/03_COOKIES_TRACEURS.md, option A (Session Replay disabled,
 // information banner). Any new cookie or storage key must be added here before publication.
@@ -167,7 +168,9 @@ export default function Cookies() {
                 <ul className="list-disc pl-5 mt-2 space-y-1">
                   <li>Selon son éditeur, cette solution ne dépose pas de cookie.</li>
                   <li>Nous n&apos;envoyons pas le texte de vos recherches.</li>
-                  <li>Durée de conservation chez Vercel : <em>[À COMPLÉTER : durée de conservation chez Vercel]</em>.</li>
+                  {frontendEnv.flags.publicBeta
+                    ? <li data-testid="beta-no-analytics"><strong>Pendant la bêta publique, cette mesure n&apos;est pas activée</strong> : aucune donnée n&apos;est envoyée à Vercel Web Analytics ni à Speed Insights.</li>
+                    : <li>Durée de conservation chez Vercel : <em>[À COMPLÉTER : durée de conservation chez Vercel]</em>.</li>}
                   <li>Vous pouvez vous y opposer ci-dessous, sans compte : votre choix est gardé sur cet appareil, rien n&apos;est envoyé, et la mesure s&apos;arrête aussitôt. Vous pouvez aussi nous écrire (voir la <a href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>).</li>
                 </ul>
                 <AudienceObjection />

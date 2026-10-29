@@ -79,6 +79,21 @@ describe('release gate in the beta', () => {
   });
 });
 
+describe('legal identity from build-time variables', () => {
+  it('fills the publisher fields from VITE_LEGAL_* and the release gate passes only then', async () => {
+    const names = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL_PUBLICATION_DIRECTOR', 'VITE_LEGAL_DATA_PROTECTION_CONTACT', 'VITE_LEGAL_SECURITY_CONTACT', 'VITE_LEGAL_RIGHTS_HOLDER'];
+    vi.resetModules();
+    const before = await import('../../src/config/legal-documents.js');
+    expect(JSON.stringify(before.LEGAL_PLACEHOLDERS)).toContain('[À COMPLÉTER');
+    for (const n of names) vi.stubEnv(n, `valeur de test ${n}`);
+    vi.resetModules();
+    const after = await import('../../src/config/legal-documents.js');
+    expect(JSON.stringify(after.LEGAL_PLACEHOLDERS)).not.toContain('[À COMPLÉTER');
+    expect(after.LEGAL_PLACEHOLDERS.publisherIdentity).toBe('valeur de test VITE_LEGAL_PUBLISHER_IDENTITY');
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
+  });
+});
+
 describe('browser side', () => {
   it('closes the account, booking, upload and form screens, keeps the public ones', () => {
     for (const p of ['/login', '/auth/signup', '/compte/coffre', '/pro', '/pro/login', '/admin/dashboard', '/rdv/x/booking', '/contact', '/institution', '/share/abc', '/diagnostic', '/assistant'])

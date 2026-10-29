@@ -21,7 +21,8 @@ import { MotionConfig } from 'framer-motion';
 import { dropIfObjected, hasObjectedToAudience } from '@/lib/audienceObjection';   // PKG-11 / C21: self-service objection to audience measurement
 
 // RC3 harness (decision pending, see docs/release): no third-party analytics in mock/offline mode.
-const ANALYTICS_ENABLED = import.meta.env.VITE_USE_MOCKS !== 'true';
+// restricted public beta (owner directive 29/10/2026): no audience measurement at all (the legal pages say so)
+const ANALYTICS_ENABLED = import.meta.env.VITE_USE_MOCKS !== 'true' && import.meta.env.VITE_PUBLIC_BETA !== 'true';
 
 function App(/** @type {Record<string, string | number | boolean | null | undefined>} */ { url }) {
   return (

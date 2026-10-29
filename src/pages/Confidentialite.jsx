@@ -3,6 +3,7 @@ import { Lock, EyeOff, UserCheck, ShieldAlert, Database, HelpCircle, Bot, BarCha
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import ClearDeviceAnswers from '@/components/privacy/ClearDeviceAnswers';
+import { frontendEnv } from "@/config/env";
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/02_POLITIQUE_CONFIDENTIALITE.md and FAITS_TECHNIQUES.md
 // (status: LEGAL_DOCS_VERSION.status). Only describe what the code really does; "[À COMPLÉTER : …]" placeholders are intentional.
@@ -132,7 +133,11 @@ export default function Confidentialite() {
               <div className="space-y-3 text-slate-700 leading-relaxed px-2 text-sm">
                 <p><strong>Vercel Web Analytics et Vercel Speed Insights</strong> (Vercel Inc., société américaine) : pages vues, actions principales et vitesse d&apos;affichage, pour notre seul compte. Nous n&apos;envoyons pas le texte de vos recherches. Base : intérêt légitime ; vous pouvez vous y opposer en nous écrivant.</p>
                 <p><strong>Sentry</strong> (société américaine) : quand une erreur se produit, nous envoyons sa description après avoir retiré votre e-mail, votre adresse IP, les paramètres de l&apos;adresse de la page, les cookies et les en-têtes de connexion. Les traces de performance concernent 10 % des visites. <strong>L&apos;enregistrement des sessions (Session Replay) est désactivé par défaut.</strong></p>
-                <p>Un accès depuis les États-Unis ne peut pas être exclu. <em>[À COMPLÉTER : garanties de transfert (Data Privacy Framework ou clauses contractuelles types) vérifiées pour chaque prestataire]</em></p>
+                {frontendEnv.flags.publicBeta ? (
+                  <p data-testid="beta-processors">Pendant la bêta publique, la mesure d&apos;audience et Sentry ne sont <strong>pas activés</strong>. Les seuls prestataires sont : Vercel Inc. (hébergement, fonctions exécutées à Francfort), qui adhère au Data Privacy Framework UE–États-Unis et prévoit des clauses contractuelles types ; Neon, LLC (groupe Databricks, base de données hébergée à Francfort), couvert par le Data Privacy Framework ; Upstash, Inc. (limitation de débit, données à Francfort), sous son accord de traitement des données — ses garanties de transfert restent à confirmer. Un accès depuis les États-Unis ne peut pas être exclu.</p>
+                ) : (
+                  <p>Un accès depuis les États-Unis ne peut pas être exclu. <em>[À COMPLÉTER : garanties de transfert (Data Privacy Framework ou clauses contractuelles types) vérifiées pour chaque prestataire]</em></p>
+                )}
               </div>
             </section>
 

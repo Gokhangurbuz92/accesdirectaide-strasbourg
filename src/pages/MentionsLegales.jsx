@@ -3,6 +3,7 @@ import { Scale, Building2, Server, FileText, AlertTriangle, ExternalLink, Mail }
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import brand from '@/lib/brand-config';
+import { frontendEnv } from "@/config/env";
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/01_MENTIONS_LEGALES.md — status: LEGAL_DOCS_VERSION.status.
 // The "[À COMPLÉTER : …]" placeholders are intentional and must be filled by the owner before any public launch.
@@ -64,10 +65,21 @@ export default function MentionsLegales() {
                 </p>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
                   <li><strong>Hébergement de l&apos;application (site et fonctions serveur) :</strong> Vercel Inc. — région d&apos;exécution choisie : Francfort (<code>fra1</code>) — <em>{LEGAL_PLACEHOLDERS.hostAddress}</em> — prévu pour la production.</li>
-                  <li><strong>Base de données :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
-                  <li><strong>Stockage des fichiers (Coffre, pièces jointes) :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
-                  <li><strong>Limitation de débit (sécurité) :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
-                  <li><strong>Journal des erreurs techniques :</strong> Sentry — <em>[À COMPLÉTER : entité contractante, adresse et téléphone]</em> — actif si configuré.</li>
+                  {frontendEnv.flags.publicBeta ? (
+                    <>
+                      <li data-testid="beta-host-db"><strong>Base de données :</strong> Neon, LLC (groupe Databricks ; Databricks, Inc., 160 Spear Street, Suite 1300, San Francisco, CA 94105, États-Unis) — base hébergée à Francfort (Union européenne), souscrite par l&apos;intermédiaire de Vercel.</li>
+                      <li><strong>Stockage des fichiers (Coffre, pièces jointes) :</strong> non utilisé pendant la bêta publique (aucun document ne peut être envoyé).</li>
+                      <li><strong>Limitation de débit (sécurité) :</strong> Upstash, Inc. — données hébergées à Francfort (Union européenne), souscrit par l&apos;intermédiaire de Vercel ; coordonnées : https://upstash.com.</li>
+                      <li><strong>Journal des erreurs techniques :</strong> Sentry n&apos;est pas activé pendant la bêta publique.</li>
+                    </>
+                  ) : (
+                    <>
+                      <li><strong>Base de données :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
+                      <li><strong>Stockage des fichiers (Coffre, pièces jointes) :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
+                      <li><strong>Limitation de débit (sécurité) :</strong> <em>[À COMPLÉTER : prestataire retenu, adresse et téléphone]</em> — prévu.</li>
+                      <li><strong>Journal des erreurs techniques :</strong> Sentry — <em>[À COMPLÉTER : entité contractante, adresse et téléphone]</em> — actif si configuré.</li>
+                    </>
+                  )}
                 </ul>
                 <p className="text-sm text-slate-600">
                   Vercel Inc. et l&apos;éditeur de Sentry sont des sociétés américaines. Le lieu de stockage et les garanties de transfert sont décrits dans la{' '}

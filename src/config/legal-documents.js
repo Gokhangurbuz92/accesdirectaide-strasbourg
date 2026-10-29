@@ -26,15 +26,26 @@ export function formatLegalDate(iso = LEGAL_DOCS_VERSION.date) {
 export const LEGAL_DOCS_LABEL = `Version projet du ${formatLegalDate(LEGAL_DOCS_VERSION.date)} — relecture juridique en cours`;
 
 /**
+ * Public beta (owner directive 29/10/2026): the publisher's identity is not kept in the public source code. It comes from build-time variables set in the
+ * Vercel project (VITE_LEGAL_*); the release gate runs in the same build, so a production build without them fails.
+ * @param {string} name
+ */
+function legalValue(name) {
+  const fromVite = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env[name] : undefined;
+  const fromNode = globalThis.process?.env ? globalThis.process.env[name] : undefined;
+  return String(fromVite || fromNode || '').trim();
+}
+
+/**
  * Visible placeholders: these values are NOT decided yet. They must be shown as-is (never replaced by an invented
  * address, name, SIRET or DPO) until the owner fills them in.
  */
 export const LEGAL_PLACEHOLDERS = Object.freeze({
-  dataProtectionContact: '[À COMPLÉTER : adresse de contact protection des données]',
-  publisherIdentity: "[À COMPLÉTER : identité de l'éditeur (dénomination ou nom, forme juridique, adresse, téléphone, numéro d'inscription au registre des associations)]",
-  publicationDirector: '[À COMPLÉTER : directeur ou directrice de la publication]',
+  dataProtectionContact: legalValue('VITE_LEGAL_DATA_PROTECTION_CONTACT') || '[À COMPLÉTER : adresse de contact protection des données]',
+  publisherIdentity: legalValue('VITE_LEGAL_PUBLISHER_IDENTITY') || "[À COMPLÉTER : identité de l'éditeur (dénomination ou nom, forme juridique, adresse, téléphone, numéro d'inscription au registre des associations)]",
+  publicationDirector: legalValue('VITE_LEGAL_PUBLICATION_DIRECTOR') || '[À COMPLÉTER : directeur ou directrice de la publication]',
   // address as published in vercel.com/legal/privacy-policy (read 30/10/2026); Vercel publishes no telephone number, only its help centre
   hostAddress: 'Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis — contact : https://vercel.com/help',
-  securityContact: '[À COMPLÉTER : adresse de signalement des failles de sécurité]',
-  rightsHolder: '[À COMPLÉTER : titulaire des droits]',
+  securityContact: legalValue('VITE_LEGAL_SECURITY_CONTACT') || '[À COMPLÉTER : adresse de signalement des failles de sécurité]',
+  rightsHolder: legalValue('VITE_LEGAL_RIGHTS_HOLDER') || '[À COMPLÉTER : titulaire des droits]',
 });
