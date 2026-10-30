@@ -83,6 +83,18 @@ describe('API entry with the beta on', () => {
   });
 });
 
+describe('record pages served by the API', () => {
+  it('carry the same Content-Security-Policy as the static pages (vercel.json)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
+    const pageCsp = vercel.headers.flatMap((h) => h.headers).find((x) => x.key === 'Content-Security-Policy').value;
+    const { PAGE_CSP, pageHeaders } = await import('../../api/_services/page-head.js');
+    expect(PAGE_CSP).toBe(pageCsp);
+    expect(pageHeaders({ status: 200, etag: 'x', robots: 'index' })['Content-Security-Policy']).toBe(pageCsp);
+    expect(pageCsp).toContain("'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ='");
+  });
+});
+
 describe('release gate in the beta', () => {
   const ENV = { AUTH_MODE: 'jwt', AUTH_SECRET: 's'.repeat(40), JWT_SECRET: 'j'.repeat(40), ADA_ENCRYPTION_KEY: 'ab'.repeat(32), CRON_SECRET: 'c'.repeat(32),
     DATABASE_URL: 'postgresql://u@db.example.test/prod', APP_BASE_URL: 'https://www.example.test', ADA_VAULT_KEY: 'cd'.repeat(32), KV_REST_API_URL: 'https://kv.example.test',
