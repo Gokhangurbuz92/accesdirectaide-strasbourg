@@ -1,5 +1,5 @@
 // Public-beta export (owner directive 29/10/2026): api/index.js differs from the frozen canonical file only by the CORS origin list (the deleted
-// legacy Vercel project removed, APP_BASE_URL origin added) and the restricted-beta allowlist gate; see tests/unit/public-beta-cors.test.js and public-beta.test.jsx. The pin below is that export's file.
+// legacy Vercel project removed, APP_BASE_URL origin added) the restricted-beta allowlist gate and record-page routing; see tests/unit/public-beta-cors.test.js and public-beta.test.jsx. The pin below is that export's file.
 // @vitest-environment jsdom
 /**
  * DTA S1C — regression for browser run 20261017T230707Z-1fa2c0 (DTA-B5 / DTA-B7 symptom): a recipient opening a shared diagnostic link in a FRESH browser has no `__csrf` cookie,
@@ -158,7 +158,7 @@ describe('ensureCsrfHeaders (library)', () => {
 describe('scope guard: the server CSRF / sharing / authorization code is byte-identical to the verified S1B baseline', () => {
   it.each([
     ['api/_utils/csrf.js', 'a4ae049f458a6c233bfe6768ad0a96c6a9a69d0884ae7bc06bcd627d83cc7337'],
-    ['api/index.js', '29fd8ca92ab32e9d7ab315d186c184a70ee7e63bdce86794fdc14eb6c145875a'],
+    ['api/index.js', '7c7ea713467d7dc255042e5d55e573eb27829175bccb4a2db7db78fb24170534'],
     ['api/_handlers/share/get.js', '6855c0833f4fdae60fdf354cdddffa3292850aaeaeec9604a7f84970ee9fa4d2'],
     ['api/_handlers/share/create.js', '94e7520add34528b7853bbdd1e0a5d7a92e0845f10a9006211d36d46283b4f5e'],
   ])('%s unchanged', (p, h) => { expect(sha(p)).toBe(h); });

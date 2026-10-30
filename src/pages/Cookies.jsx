@@ -113,7 +113,7 @@ export default function Cookies() {
                 <h2 className="text-xl font-bold text-green-900 mb-2">En bref</h2>
                 <p className="text-green-800 leading-relaxed mb-4">
                   La plupart de nos traceurs servent à vous garder connecté(e), à sécuriser le site et à garder vos réglages. Ils ne demandent pas votre accord.
-                  Nous mesurons aussi l&apos;audience pour savoir quelles pages sont utiles : vous pouvez vous y opposer.
+                  {frontendEnv.flags.publicBeta ? 'Pendant la bêta publique, nous ne mesurons pas l’audience.' : <>Nous mesurons aussi l&apos;audience pour savoir quelles pages sont utiles : vous pouvez vous y opposer.</>}
                 </p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-green-800">

@@ -196,6 +196,13 @@ export default async function handler(req, res) {
         // 3. Request Logging
         const urlObj = new URL(req.url, `https://${req.headers.host}`);
         let path = urlObj.pathname || "";
+        // Public beta (owner directive 29/10/2026): vercel.json rewrites a record page (/aides/<slug>, /annuaire/<slug> …) to /api/public/page, but the
+        // function still receives the ORIGINAL URL, which this router used to read as the JSON API (/aides/<slug> -> aides). A non-/api path is a page.
+        const recordPage = path.match(/^\/(aides|demarches|dispositifs|structures|annuaire)\/[^/]+\/?$/);
+        if (recordPage) {
+            req.query = { ...(req.query || {}), path: path.replace(/\/$/, '') };
+            path = '/api/public/page';
+        }
 
         // Normalize path
         path = path.replace(/^\/api(\/|$)/, "/");

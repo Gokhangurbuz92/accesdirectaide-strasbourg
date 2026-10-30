@@ -63,6 +63,24 @@ describe('API entry with the beta on', () => {
     }
     vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
   });
+  it('a record page reached through the hosting rewrite (original URL /annuaire/<slug>) is the page, not the JSON API nor a refusal', async () => {
+    vi.stubEnv('ADA_PUBLIC_BETA_RESTRICTED', '1');
+    vi.resetModules();
+    const { default: handler } = await import('../../api/index.js');
+    const headers = {}; let body; let sent;
+    const res = {
+      statusCode: 200, headersSent: false,
+      setHeader(k, v) { headers[k.toLowerCase()] = v; }, getHeader(k) { return headers[k.toLowerCase()]; }, removeHeader(k) { delete headers[k.toLowerCase()]; },
+      status(c) { this.statusCode = c; return this; }, json(b) { body = b; this.headersSent = true; return this; }, send(b) { sent = b; this.headersSent = true; return this; },
+      end(b) { sent = b; this.headersSent = true; return this; }, on() { return this; }, once() { return this; },
+    };
+    const req = { method: 'GET', url: '/annuaire/mairie-x', headers: { host: 'x' }, query: { path: '/annuaire/mairie-x' }, cookies: {} };
+    await handler(req, res);
+    expect(body?.error).not.toBe('PUBLIC_BETA_RESTRICTED');
+    expect(req.query.path).toBe('/annuaire/mairie-x');
+    expect(String(headers['content-type'] || '')).not.toMatch(/json/);
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
+  });
 });
 
 describe('release gate in the beta', () => {

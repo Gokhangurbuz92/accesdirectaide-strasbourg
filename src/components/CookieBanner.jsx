@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { bannerAnswered } from '@/lib/cookieBanner';
+import { frontendEnv } from '@/config/env';
 
 const STORAGE_KEY = 'ada_cookie_consent';
 
@@ -83,9 +84,18 @@ export default function CookieBanner() {
             }}
         >
             <p style={{ margin: 0, maxWidth: '600px', textAlign: 'center' }}>
-                AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,
-                sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous mesurons aussi l&apos;audience,
-                pour notre seul usage, et enregistrons les erreurs techniques. Vous pouvez vous y opposer.{' '}
+                {frontendEnv.flags.publicBeta ? (
+                    <>
+                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : sécuriser les formulaires
+                        et garder vos réglages d&apos;affichage. Pendant la bêta publique, nous ne mesurons pas l&apos;audience.{' '}
+                    </>
+                ) : (
+                    <>
+                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,
+                        sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous mesurons aussi l&apos;audience,
+                        pour notre seul usage, et enregistrons les erreurs techniques. Vous pouvez vous y opposer.{' '}
+                    </>
+                )}
                 <a
                     href="/cookies"
                     style={{ color: '#93c5fd', textDecoration: 'underline' }}

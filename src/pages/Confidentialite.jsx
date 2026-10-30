@@ -107,7 +107,7 @@ export default function Confidentialite() {
               <SectionTitle icon={Database}>Données traitées et pourquoi</SectionTitle>
               <div className="space-y-5 text-slate-700 leading-relaxed px-2">
                 <Item title="1. Lire le site sans compte">
-                  Vous pouvez lire les fiches sans compte. Nous mesurons l&apos;audience pour notre seul usage (pages vues, actions principales) et enregistrons les erreurs techniques. Les journaux de sécurité contiennent l&apos;adresse IP ; ils sont gardés 365 jours.
+                  Vous pouvez lire les fiches sans compte. {frontendEnv.flags.publicBeta ? <>Pendant la bêta publique, nous ne mesurons pas l&apos;audience et n&apos;enregistrons pas les erreurs chez un prestataire ; l&apos;hébergeur garde ses journaux techniques (dont l&apos;adresse IP) un jour, et la limitation de débit garde un compteur par adresse IP pendant quelques minutes.</> : <>Nous mesurons l&apos;audience pour notre seul usage (pages vues, actions principales) et enregistrons les erreurs techniques.</>} Les journaux de sécurité contiennent l&apos;adresse IP ; ils sont gardés 365 jours.
                 </Item>
                 <Item title="2. Le questionnaire">
                   Vos réponses sont envoyées à notre serveur pour le calcul, sans y être conservées. Votre appareil les garde 24 heures, puis les efface à votre visite suivante ; sur un appareil partagé, effacez-les tout de suite. Si vous partagez votre dossier avec une structure, une copie chiffrée de vos réponses est conservée pour ce partage.

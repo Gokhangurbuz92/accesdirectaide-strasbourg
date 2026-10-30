@@ -121,9 +121,9 @@ describe('pages use it', () => {
 });
 
 // Public-beta export (owner directive 29/10/2026): api/index.js differs from the frozen canonical file only by the CORS origin list (the deleted
-// legacy Vercel project removed, APP_BASE_URL origin added) and the restricted-beta allowlist gate; see tests/unit/public-beta-cors.test.js and public-beta.test.jsx. The pin below is that export's file.
+// legacy Vercel project removed, APP_BASE_URL origin added) the restricted-beta allowlist gate and record-page routing; see tests/unit/public-beta-cors.test.js and public-beta.test.jsx. The pin below is that export's file.
 describe('scope guard', () => {
-  it.each([['api/_utils/csrf.js', 'a4ae049f458a6c233bfe6768ad0a96c6a9a69d0884ae7bc06bcd627d83cc7337'], ['api/index.js', '29fd8ca92ab32e9d7ab315d186c184a70ee7e63bdce86794fdc14eb6c145875a']])('%s (server CSRF enforcement and cookie issuance) is byte-identical to S1C', (p, h) => { expect(sha(p)).toBe(h); });
+  it.each([['api/_utils/csrf.js', 'a4ae049f458a6c233bfe6768ad0a96c6a9a69d0884ae7bc06bcd627d83cc7337'], ['api/index.js', '7c7ea713467d7dc255042e5d55e573eb27829175bccb4a2db7db78fb24170534']])('%s (server CSRF enforcement and cookie issuance) is byte-identical to S1C', (p, h) => { expect(sha(p)).toBe(h); });
   it('the citizen first-POST call sites go through csrfFetch', () => {
     for (const f of ['src/pages/SharedDiagnostic.jsx', 'src/pages/DiagnosticPage.jsx', 'src/components/diagnostic/DiagnosticOutcome.jsx']) expect(readFileSync(f, 'utf8'), f).toContain('csrfFetch');
   });
