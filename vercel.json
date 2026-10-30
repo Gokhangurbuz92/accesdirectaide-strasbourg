@@ -93,8 +93,8 @@
       "permanent": true
     },
     {
-      "source": "/structures",
-      "destination": "/annuaire",
+      "source": "/annuaire",
+      "destination": "/structures",
       "permanent": true
     }
   ],

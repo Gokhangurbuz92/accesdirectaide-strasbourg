@@ -24,6 +24,8 @@ import DarkModeToggle from '@/components/ui/DarkModeToggle';
 import { adminClient as client } from '@/api/client';
 import PropTypes from 'prop-types';
 import brand from '@/lib/brand-config';
+import { frontendEnv } from '@/config/env';
+import { openLinks } from '@/lib/publicBeta';
 import '@/styles/layout-accessibility.css';   // the accessibility modes (an inline style element before Q04: CSP style-src)
 
 // Lazy-load non-critical components to reduce first-paint bundle
@@ -81,6 +83,9 @@ const FOOTER_LEGAL = [
   { label: 'Cookies', page: 'Cookies' },
   { label: 'Sécurité & RGPD', href: '/securite-et-rgpd' },
 ];
+
+/** @param {{ href?: string, page?: string }} link */
+const footerPath = (link) => link.href || createPageUrl(link.page);
 
 // @ts-ignore
 export default function Layout({ children, currentPageName }) {
@@ -327,7 +332,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-semibold mb-4 text-white">Ressources</h3>
               <ul className="space-y-2">
-                {FOOTER_RESSOURCES.map((link, idx) => (
+                {openLinks(FOOTER_RESSOURCES, frontendEnv.flags.publicBeta, footerPath).map((link, idx) => (
                   <li key={link.label + idx}>
                     <Link
                       to={link.href || createPageUrl(link.page)}
@@ -344,7 +349,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-semibold mb-4 text-white">À propos</h3>
               <ul className="space-y-2">
-                {FOOTER_ABOUT.map((link, idx) => (
+                {openLinks(FOOTER_ABOUT, frontendEnv.flags.publicBeta, footerPath).map((link, idx) => (
                   <li key={link.label + idx}>
                     <Link
                       to={link.href || createPageUrl(link.page)}
@@ -361,7 +366,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-semibold mb-4 text-white">Informations légales</h3>
               <ul className="space-y-2">
-                {FOOTER_LEGAL.map((link, idx) => (
+                {openLinks(FOOTER_LEGAL, frontendEnv.flags.publicBeta, footerPath).map((link, idx) => (
                   <li key={link.label + idx}>
                     <Link
                       to={link.href || createPageUrl(link.page)}
@@ -386,9 +391,12 @@ export default function Layout({ children, currentPageName }) {
       </footer>
 
       {/* Chat Assistant — lazy-loaded (not needed for first paint) */}
-      <Suspense fallback={null}>
-        <ChatAssistant />
-      </Suspense>
+      {/* public beta: the assistant is closed server-side, so its button is not shown */}
+      {!frontendEnv.flags.publicBeta && (
+        <Suspense fallback={null}>
+          <ChatAssistant />
+        </Suspense>
+      )}
 
       {/* Privacy Screen — Bouton "Cacher mon écran" */}
       <Suspense fallback={null}>

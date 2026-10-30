@@ -52,11 +52,11 @@ export async function pageHead({ db, pathname, origin, now = new Date() }) {
   if (!p.slug) return { ...notFound, etag: tag('404', pathname) };
   const k = KINDS[p.section]; const t = k.table;
   const [row] = await db.select({ id: t.id, slug: t.slug, name: t[k.title], description: t[k.desc], statut: t.statut, publishedAt: t.published_at, updatedAt: t[k.updated],
-    verifiedAt: t.date_verification, hold: t.publication_hold }).from(t).where(eq(t.slug, p.slug)).limit(1);
+    verifiedAt: t.date_verification, hold: t.publication_hold, sourceUrl: t.source_url }).from(t).where(eq(t.slug, p.slug)).limit(1);
   if (!row) return { ...notFound, etag: tag('404', pathname) };
   const [visible] = await db.select({ id: t.id }).from(t).where(and(eq(t.id, row.id), visibleWhere(t, k.kind, { now }))).limit(1);
   const iso = (d) => (d ? new Date(d).toISOString() : '');
-  const state = [row.id, row.statut, row.hold ? 'h' : '', iso(row.updatedAt), iso(row.verifiedAt), crypto.createHash('sha256').update(`${row.name}|${row.description || ''}`).digest('hex')].join('|');
+  const state = [row.id, row.statut, row.hold ? 'h' : '', iso(row.updatedAt), iso(row.verifiedAt), crypto.createHash('sha256').update(`${row.name}|${row.description || ''}|${row.sourceUrl || ''}`).digest('hex')].join('|');
   if (!visible) {
     // once public, now withdrawn or expired: Gone (a search engine drops it); never published: as unknown. Nothing of the record is said either way.
     return row.publishedAt ? { status: 410, title: `Page retirée — ${SITE}`, description: 'Cette information a été retirée : elle n’est plus vérifiée ou n’est plus d’actualité.', canonical: null, robots: 'noindex, nofollow', etag: tag('410', state) }
@@ -65,8 +65,18 @@ export async function pageHead({ db, pathname, origin, now = new Date() }) {
   const canonical = `${origin}/${p.section}/${encodeURIComponent(row.slug)}`;
   const name = cut(row.name, 90);
   const description = cut(row.description || `${k.label} : ${row.name}. Information vérifiée auprès de sources officielles.`, 160);
-  return { status: 200, title: `${name} — ${SITE}`, description, canonical, robots: 'index, follow', summary: { label: k.label, name: squash(row.name), text: squash(row.description || '') }, etag: tag('200', state) };
+  return { status: 200, title: `${name} — ${SITE}`, description, canonical, robots: 'index, follow', summary: { label: k.label, name: squash(row.name), text: squash(row.description || ''), source: officialUrl(row.sourceUrl), verifiedAt: row.verifiedAt ? new Date(row.verifiedAt) : null }, etag: tag('200', state) };
 }
+/** the record's official page, only as an http(s) address @param {unknown} u */
+const officialUrl = (u) => { try { const x = new URL(String(u || '')); return /^https?:$/.test(x.protocol) ? x : null; } catch { return null; } };
+const frDate = (d) => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+/** the provenance line of the readable summary: where the information comes from and when it was last checked (visible without JavaScript) */
+const provenance = (s) => {
+  const parts = [];
+  if (s.source) parts.push(`Source officielle : <a href="${escapeHtml(s.source.href)}" rel="noopener">${escapeHtml(s.source.hostname.replace(/^www\./, ''))}</a>.`);
+  if (s.verifiedAt && !Number.isNaN(s.verifiedAt.getTime())) parts.push(`Vérifiée le ${escapeHtml(frDate(s.verifiedAt))}.`);
+  return parts.length ? `<p>${parts.join(' ')}</p>` : '';
+};
 const tag = (...parts) => `"${crypto.createHash('sha256').update(parts.join('#')).digest('hex').slice(0, 32)}"`;
 
 /** the template with the page's head (title, description, canonical, robots, Open Graph) and a readable summary the SPA replaces when it starts */
@@ -87,7 +97,7 @@ export function renderPage(template, h) {
   }
   set(/<meta\s+name="robots"[\s\S]*?\/?>/, `<meta name="robots" content="${escapeHtml(h.robots)}" />`);
   const body = h.status === 200 && h.summary
-    ? `<main data-prerender="${escapeHtml(h.summary.label)}"><h1>${escapeHtml(h.summary.name)}</h1>${h.summary.text ? `<p>${escapeHtml(h.summary.text)}</p>` : ''}</main>`
+    ? `<main data-prerender="${escapeHtml(h.summary.label)}"><h1>${escapeHtml(h.summary.name)}</h1>${h.summary.text ? `<p>${escapeHtml(h.summary.text)}</p>` : ''}${provenance(h.summary)}</main>`
     : `<main data-prerender="${h.status}"><h1>${escapeHtml(h.title.replace(` — ${SITE}`, ''))}</h1><p>${escapeHtml(h.description)}</p><p><a href="/">Retour à l’accueil</a></p></main>`;
   return html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 }

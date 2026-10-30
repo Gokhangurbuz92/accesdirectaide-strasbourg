@@ -826,6 +826,45 @@
       "confidence": "MEDIUM",
       "notFound": false,
       "searched": "R20: web search « FAJ'EMS fonds d'aide aux jeunes Eurométropole de Strasbourg »; a hint only — the veille reads and checks the page like any other source"
+    },
+    {
+      "slug": "inscription-ccas",
+      "dataset": "demarches",
+      "candidates": [
+        {
+          "url": "https://www.strasbourg.eu/je-souhaite-etre-accompagne-socialement",
+          "confirms": [
+            "R25 (31/10/2026) web research: page of the Ville et Eurométropole de Strasbourg « Je souhaite être accompagné socialement »: social support in the centres médico-sociaux and the CCAS"
+          ],
+          "discrepancies": []
+        },
+        {
+          "url": "https://www.alsace.eu/aides-et-services/sante-action-sociale-et-insertion/etre-informe-et-accompagne/",
+          "confirms": [
+            "R25 (31/10/2026) web research: page of the Collectivité européenne d'Alsace « Être informé et accompagné »: Espaces Solidarités Alsace and social workers in the Bas-Rhin"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "R25: web search on alsace.eu and strasbourg.eu (Espaces Solidarités, centres médico-sociaux); only hints: the veille reads each page and publishes nothing it cannot match"
+    },
+    {
+      "slug": "rdv-social-alsace",
+      "dataset": "demarches",
+      "candidates": [
+        {
+          "url": "https://www.alsace.eu/aides-et-services/sante-action-sociale-et-insertion/etre-informe-et-accompagne/",
+          "confirms": [
+            "R25 (31/10/2026) web research: page of the Collectivité européenne d'Alsace « Être informé et accompagné »: support from the Espaces Solidarités Alsace (budget, housing, family, employment)"
+          ],
+          "discrepancies": []
+        }
+      ],
+      "confidence": "MEDIUM",
+      "notFound": false,
+      "searched": "R25: web search on alsace.eu and strasbourg.eu (Espaces Solidarités, centres médico-sociaux); only hints: the veille reads each page and publishes nothing it cannot match"
     }
   ]
 }

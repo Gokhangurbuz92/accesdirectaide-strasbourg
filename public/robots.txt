@@ -2,4 +2,12 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+# the public pages render with these read-only data routes: a crawler that cannot fetch them sees empty lists (their answers carry X-Robots-Tag: noindex)
+Allow: /api/aides
+Allow: /api/demarches
+Allow: /api/structures
+Allow: /api/dispositifs
+Allow: /api/taxonomy
+Allow: /api/glossaire
+Allow: /api/actualites
 Sitemap: https://www.accesdirectaide.fr/sitemap.xml

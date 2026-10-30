@@ -5,6 +5,8 @@ import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
 import { eq, and, isNotNull, desc } from 'drizzle-orm';
 import { getCanonicalOrigin } from '../_utils/site-origin.js';
+import { isPublicBetaRestricted } from '../_utils/public-beta.js';
+import { isBetaRestrictedPath } from '../../src/lib/publicBeta.js';
 
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
 const MAX_DYNAMIC_URLS = 10000;
@@ -13,7 +15,8 @@ const STATIC_PUBLIC_PATHS = [
   '/',
   '/aides',
   '/demarches',
-  '/annuaire',
+  '/structures',
+  '/dispositifs',
   '/actualites',
   '/orientation',
   '/mentions-legales',
@@ -67,12 +70,13 @@ function buildUrlNode(baseUrl, path, updatedAt) {
  * @param {Array<{slug: string | null, updatedAt: Date}>} [dispositifs]
  * @returns {string}
  */
-function buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs = []) {
+export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs = []) {
   /** @type {string[]} */
   const nodes = [];
 
   // Static pages
-  for (const path of STATIC_PUBLIC_PATHS) {
+  // public beta: a closed screen (assistant, contact…) answers with a notice, not with content — it is not offered to crawlers
+  for (const path of STATIC_PUBLIC_PATHS.filter((x) => !(isPublicBetaRestricted() && isBetaRestrictedPath(x)))) {
     nodes.push(buildUrlNode(baseUrl, path, null));
   }
 

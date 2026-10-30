@@ -391,7 +391,7 @@ export default function Demarches() {
                 (it answers 503 there); the directory of support structures works */}
             {!(q || category || situation) && (
               <div className="mt-4 flex justify-center">
-                <Link to="/annuaire">
+                <Link to="/structures">
                   <Button variant="outline" className="gap-2" data-testid="demarches-empty-directory">
                     Trouver une structure d&apos;accompagnement
                   </Button>

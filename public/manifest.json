@@ -1,7 +1,7 @@
 {
   "name": "AccesDirectAide — Vos droits, clarifiés et sourcés",
   "short_name": "AccesDirectAide",
-  "description": "Trouvez les aides sociales, préparez vos démarches (FALC) et prenez rendez-vous avec des structures d'accompagnement.",
+  "description": "Aides sociales, démarches et lieux d'accueil à Strasbourg et dans l'Eurométropole, vérifiés auprès de sources officielles, avec une version en langage simple.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F7FAFF",

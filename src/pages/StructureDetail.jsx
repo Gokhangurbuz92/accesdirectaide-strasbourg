@@ -99,7 +99,7 @@ export default function StructureDetail() {
           <p className="text-sm mb-6">{loadStatus === 429 ? 'Trop de demandes en peu de temps : patientez une minute puis réessayez.' : 'Le service ne répond pas pour le moment. Vérifiez votre connexion et réessayez.'}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button type="button" variant="outline" onClick={() => refetch()}>Réessayer</Button>
-            <Button variant="ghost" asChild><Link to="/annuaire">Retour à l’annuaire</Link></Button>
+            <Button variant="ghost" asChild><Link to="/structures">Retour à l’annuaire</Link></Button>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function StructureDetail() {
 
   const breadcrumbs = [
     { name: 'Accueil', url: '/' },
-    { name: 'Annuaire', url: '/annuaire' },
+    { name: 'Annuaire', url: '/structures' },
     { name: structure.nom, url: `/structures/${structure.slug}` }
   ];
 
@@ -243,7 +243,7 @@ export default function StructureDetail() {
           <nav className="flex items-center gap-2 text-sm text-slate-600">
             <Link to={createPageUrl('Home')} className="hover:text-blue-600">Accueil</Link>
             <ChevronRight className="h-4 w-4" />
-            <Link to="/annuaire" className="hover:text-blue-600">Annuaire</Link>
+            <Link to="/structures" className="hover:text-blue-600">Annuaire</Link>
             <ChevronRight className="h-4 w-4" />
             <span className="text-slate-900">{structure.nom}</span>
           </nav>
@@ -253,7 +253,7 @@ export default function StructureDetail() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Retour */}
         <Link
-          to="/annuaire"
+          to="/structures"
           className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-6"
         >
           <ArrowLeft className="h-4 w-4" />

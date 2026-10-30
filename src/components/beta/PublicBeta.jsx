@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 
 /** Discreet, always-visible notice of the restricted public beta (owner directive 29/10/2026). */
 export function PublicBetaBanner() {
@@ -15,6 +16,10 @@ export function PublicBetaBanner() {
 
 /** Shown instead of a screen that needs an account, a booking, a document or a form while the beta is restricted. */
 export function PublicBetaUnavailable() {
+  const { pathname } = useLocation();
+  // the contact form is closed, not the contact: the published address (mentions légales) is given instead of a dead end
+  const email = (String(LEGAL_PLACEHOLDERS.dataProtectionContact).match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [])[0];
+  const contact = /^\/contact(\/|$)/.test(pathname || '');
   return (
     <section data-testid="public-beta-unavailable" aria-labelledby="beta-unavailable-title" className="max-w-2xl mx-auto px-4 py-16">
       <h1 id="beta-unavailable-title" className="text-2xl font-semibold mb-4">Cette fonction n’est pas encore ouverte</h1>
@@ -27,6 +32,12 @@ export function PublicBetaUnavailable() {
         de contact ouvriront plus tard, quand les garanties de protection des données seront en place. Aucune donnée personnelle n’est
         collectée ici.
       </p>
+      {contact && email && (
+        <p className="mb-6" data-testid="public-beta-contact">
+          Pour une question ou pour signaler une erreur, écrivez-nous à <a href={`mailto:${email}`} className="underline font-medium">{email}</a>.
+          N’écrivez pas d’informations personnelles sensibles (santé, numéro de sécurité sociale, documents).
+        </p>
+      )}
       <p className="flex flex-wrap gap-4">
         <Link to="/aides" className="underline font-medium">Rechercher une aide</Link>
         <Link to="/demarches" className="underline font-medium">Voir les démarches</Link>

@@ -11,7 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import { zipSync, strToU8 } from 'fflate';
 import { loadArchive, parseFiche, readSource, resolveId, matchFiche, ficheMeta } from '../../api/_services/verification/dila.js';
-import { checkTexts, inventedNumbers, explainFirstUse, explanationsFor, writeTexts, sentences, wordCount, sourceExcerpt, contradictions } from '../../api/_services/verification/texts.js';
+import { checkTexts, inventedNumbers, explainFirstUse, explanationsFor, withoutGlossary, writeTexts, sentences, wordCount, sourceExcerpt, contradictions } from '../../api/_services/verification/texts.js';
 import { attestedSites, levelOf, isShared, SEED_SOURCES } from '../../api/_services/verification/sources.js';
 import { officeRecord, officeTexts, hoursText, OFFICE_KINDS } from '../../api/_services/verification/offices.js';
 import { fetchable, officialGet, SourceError } from '../../api/_services/verification/fetcher.js';
@@ -96,6 +96,26 @@ describe('texts: automatic checks', () => {
     expect(lines[1]).toBe('La Caf vous répond.');
     expect(explainFirstUse(['Le dossier (Caf ou MSA) est envoyé.'], explanationsFor({}))[0]).toBe('Le dossier (Caf ou MSA) est envoyé.');   // no nested brackets
     expect(wordCount('La Caf (Caisse d’allocations familiales) verse cette aide.')).toBe(5);
+  });
+  it('a difficult word gets its brackets even when its plain words already appear in the line (the check requires them)', () => {
+    const [line] = explainFirstUse(['Le montant maximum ne peut pas dépasser 50 % du plafond de la Sécurité sociale.'], explanationsFor({}));
+    expect(line).toBe('Le montant maximum ne peut pas dépasser 50 % du plafond (montant maximum) de la Sécurité sociale.');
+    expect(checkTexts(NORMAL, { ...FALC, montant: line }, `${SOURCE} 50 %`).problems.join(' ')).not.toMatch(/Mots difficiles/);
+    // an acronym written next to its expansion is still left as it is
+    expect(explainFirstUse(['L’aide personnalisée au logement, ou APL, vous aide.'], explanationsFor({}))[0]).toBe('L’aide personnalisée au logement, ou APL, vous aide.');
+  });
+  it('the faithfulness reading gets the sentence without the glossary explanations (they are not claims of the model)', () => {
+    const [line] = explainFirstUse(['Toute personne peut souscrire, même avec de faibles ressources.'], explanationsFor({}));
+    expect(line).toContain("ressources (l'argent que vous recevez)");
+    expect(withoutGlossary(line)).toBe('Toute personne peut souscrire, même avec de faibles ressources.');
+    expect(withoutGlossary('La Caf (Caisse d’allocations familiales) paie (selon la fiche).')).toBe('La Caf (Caisse d’allocations familiales) paie (selon la fiche).');   // other brackets stay
+  });
+  it('a compound acronym (« VLS-TS ») is explained once, and that explains each of its parts', () => {
+    const [line] = explainFirstUse(['Validez votre VLS-TS en ligne.'], explanationsFor({}));
+    expect(line).toBe('Validez votre VLS-TS (visa de long séjour qui sert de titre de séjour) en ligne.');
+    expect(checkTexts(NORMAL, { ...FALC, etapes: [line] }, SOURCE).problems.join(' ')).not.toMatch(/Sigles/);
+    expect(checkTexts(NORMAL, { ...FALC, etapes: ['Validez votre VLS-TS en ligne.'] }, SOURCE).problems.join(' ')).toMatch(/Sigles.*VLS/);
+    expect(checkTexts(NORMAL, { ...FALC, etapes: ['Le FAJ’EMS (Fonds d’aide aux jeunes) vous aide.'] }, SOURCE).problems.join(' ')).not.toMatch(/Sigles/);
   });
   it('reads the part of a long fiche that matters (introduction and conditions first)', () => {
     const src = { title: 'T', text: ['Intro.', ...Array.from({ length: 40 }, (_, i) => `### Chapitre annexe ${i}\n${'x '.repeat(300)}`), '### Qui peut en bénéficier ?\nVous devez avoir moins de 30 ans.'].join('\n') };

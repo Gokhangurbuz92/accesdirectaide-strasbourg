@@ -64,7 +64,7 @@ export default function MentionsLegales() {
                   Voici l&apos;hébergeur et les prestataires qui stockent des données pour le service. Certains sont seulement prévus pour la mise en ligne.
                 </p>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
-                  <li><strong>Hébergement de l&apos;application (site et fonctions serveur) :</strong> Vercel Inc. — région d&apos;exécution choisie : Francfort (<code>fra1</code>) — <em>{LEGAL_PLACEHOLDERS.hostAddress}</em> — prévu pour la production.</li>
+                  <li><strong>Hébergement de l&apos;application (site et fonctions serveur) :</strong> Vercel Inc. — région d&apos;exécution choisie : Francfort (<code>fra1</code>) — <em>{LEGAL_PLACEHOLDERS.hostAddress}</em> — {frontendEnv.flags.publicBeta ? <>en service pour la bêta publique. Les fonctions serveur s&apos;exécutent à Francfort ; les pages et fichiers publics sont distribués par le réseau mondial de Vercel, au plus près du visiteur.</> : <>prévu pour la production.</>}</li>
                   {frontendEnv.flags.publicBeta ? (
                     <>
                       <li data-testid="beta-host-db"><strong>Base de données :</strong> Neon, LLC (groupe Databricks ; Databricks, Inc., 160 Spear Street, Suite 1300, San Francisco, CA 94105, États-Unis) — base hébergée à Francfort (Union européenne), souscrite par l&apos;intermédiaire de Vercel.</li>

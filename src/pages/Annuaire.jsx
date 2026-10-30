@@ -162,7 +162,7 @@ export default function Annuaire() {
       <SEO
         title="Annuaire"
         description="Trouvez des structures (associations, services publics) et leurs coordonnées."
-        path="/annuaire"
+        path="/structures"
         schema={schema}
       />
 

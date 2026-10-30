@@ -5,6 +5,7 @@ import HeroSearch from '@/components/organisms/HeroSearch';
 import QuickAccessSection from '@/components/home/QuickAccessSection';
 import CategoriesSection from '@/components/home/CategoriesSection';
 import { buildSiteSchema } from '@/lib/seo';
+import { frontendEnv } from '@/config/env';
 
 // Below-fold sections — lazy-loaded to improve LCP and Time to Interactive
 const AssistantFeatureSection = lazy(() => import('@/components/home/AssistantFeatureSection'));
@@ -28,9 +29,12 @@ export default function Home() {
       <CategoriesSection />
 
       {/* Below-fold — lazy-loaded for performance */}
-      <Suspense fallback={null}>
-        <AssistantFeatureSection />
-      </Suspense>
+      {/* public beta: the guided assistant is closed, so it is not advertised */}
+      {!frontendEnv.flags.publicBeta && (
+        <Suspense fallback={null}>
+          <AssistantFeatureSection />
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <NewsSection />
       </Suspense>

@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { isAllowedInPublicBeta, isPublicBetaRestricted, PUBLIC_BETA_MESSAGE } from '../../api/_utils/public-beta.js';
 import { evaluateReleasePreflight } from '../../scripts/release-preflight.mjs';
-import { isBetaRestrictedPath } from '../../src/lib/publicBeta.js';
+import { isBetaRestrictedPath, openLinks } from '../../src/lib/publicBeta.js';
 import { PublicBetaBanner, PublicBetaUnavailable } from '../../src/components/beta/PublicBeta.jsx';
 
 vi.stubEnv('KV_REST_API_URL', 'http://localhost');
@@ -159,5 +159,64 @@ describe('browser side', () => {
     expect(screen.getByTestId('public-beta-banner').textContent).toContain('Bêta publique');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Cette fonction n’est pas encore ouverte');
     expect(screen.getByRole('link', { name: 'Rechercher une aide' }).getAttribute('href')).toBe('/aides');
+    expect(screen.queryByTestId('public-beta-contact')).toBeNull();   // not on a screen other than the contact form
+  });
+  it('a closed screen is not offered as a link (home tiles, footer); outside the beta every link stays', () => {
+    const links = [{ to: '/aides' }, { to: '/orientation' }, { to: '/diagnostic' }, { to: '/contact?sujet=signalement_erreur' }, { to: '/structures' }];
+    expect(openLinks(links, true, (l) => l.to).map((l) => l.to)).toEqual(['/aides', '/structures']);
+    expect(openLinks(links, false, (l) => l.to)).toHaveLength(5);
+    expect(isBetaRestrictedPath('/contact?sujet=partenariat')).toBe(true);
+  });
+  it('the closed contact form gives the published contact address instead of a dead end', async () => {
+    vi.stubEnv('VITE_LEGAL_DATA_PROTECTION_CONTACT', 'Association test — contact@exemple.test');
+    vi.resetModules();
+    const { PublicBetaUnavailable: Unavailable } = await import('../../src/components/beta/PublicBeta.jsx');
+    render(createElement(MemoryRouter, { initialEntries: ['/contact?sujet=signalement_erreur'] }, createElement(Unavailable)));
+    const link = screen.getByRole('link', { name: 'contact@exemple.test' });
+    expect(link.getAttribute('href')).toBe('mailto:contact@exemple.test');
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
+  });
+});
+
+describe('search engines (audit of 31/10/2026)', () => {
+  it('the sitemap offers the canonical list of places and no screen closed in the beta', async () => {
+    vi.stubEnv('ADA_PUBLIC_BETA_RESTRICTED', '1');
+    const { buildSitemapXml } = await import('../../api/_handlers/sitemap.js');
+    const xml = buildSitemapXml('https://www.accesdirectaide.fr', [{ slug: 'apl', updatedAt: new Date('2026-10-30') }], [], [{ slug: 'mairie-x', updatedAt: new Date('2026-10-30') }]);
+    const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace('https://www.accesdirectaide.fr', ''));
+    expect(locs).toEqual(expect.arrayContaining(['/', '/aides', '/demarches', '/structures', '/dispositifs', '/aides/apl', '/structures/mairie-x']));
+    for (const closed of ['/orientation', '/contact', '/annuaire']) expect(locs, closed).not.toContain(closed);
+    vi.stubEnv('ADA_PUBLIC_BETA_RESTRICTED', '0');
+    expect(buildSitemapXml('https://x.test', [], [], [])).toContain('<loc>https://x.test/contact</loc>');   // outside the beta the form is a public page
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
+  });
+  it('the public read data may be crawled to render the pages but is never indexed; the record pages, the sitemap and robots are', async () => {
+    const { isTechnicalNoIndexPath } = await import('../../api/_utils/robots.js');
+    for (const p of ['aides', 'aides/apl', 'structures', 'taxonomy', 'auth/me', 'health']) expect(isTechnicalNoIndexPath(p), p).toBe(true);
+    for (const p of ['public/page', 'sitemap.xml', 'robots.txt']) expect(isTechnicalNoIndexPath(p), p).toBe(false);
+    const { readFileSync } = await import('node:fs');
+    const robots = readFileSync('public/robots.txt', 'utf8');
+    for (const r of ['Disallow: /api/', 'Allow: /api/aides', 'Allow: /api/demarches', 'Allow: /api/structures', 'Sitemap: https://www.accesdirectaide.fr/sitemap.xml']) expect(robots).toContain(r);
+    expect(robots).not.toMatch(/Allow: \/api\/(auth|admin|cron|search|assistant)/);
+  });
+  it('one canonical list of places: /annuaire answers 308 to /structures (the app route), never the reverse', async () => {
+    const { readFileSync } = await import('node:fs');
+    const redirects = JSON.parse(readFileSync('vercel.json', 'utf8')).redirects;
+    expect(redirects).toContainEqual({ source: '/annuaire', destination: '/structures', permanent: true });
+    expect(redirects.find((r) => r.source === '/structures')).toBeUndefined();
+  });
+  it('the readable summary of a record page says where the information comes from and when it was checked', async () => {
+    const { renderPage } = await import('../../api/_services/page-head.js');
+    const html = renderPage('<html><head><title>x</title></head><body><div id="root"></div></body></html>', { status: 200, title: 'APL — AccesDirectAide', description: 'd', canonical: 'https://www.accesdirectaide.fr/aides/apl', robots: 'index, follow',
+      summary: { label: 'Aide', name: 'APL', text: 'Aide au loyer.', source: new URL('https://www.service-public.gouv.fr/particuliers/vosdroits/F12006'), verifiedAt: new Date('2026-10-30T10:00:00Z') } });
+    expect(html).toContain('Source officielle : <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F12006" rel="noopener">service-public.gouv.fr</a>.');
+    expect(html).toContain('Vérifiée le 30 octobre 2026.');
+  });
+  it('the shell promises nothing the beta does not offer and reads without JavaScript', async () => {
+    const { readFileSync } = await import('node:fs');
+    const html = readFileSync('index.html', 'utf8'); const manifest = readFileSync('public/manifest.json', 'utf8');
+    for (const t of [html, manifest]) { expect(t).not.toMatch(/rendez-vous/i); expect(t).not.toMatch(/lumière sur vos démarches/i); }
+    expect(html).toMatch(/<noscript>[\s\S]*href="\/sitemap\.xml"[\s\S]*<\/noscript>/);
+    expect(html.match(/<noscript>[\s\S]*<\/noscript>/)[0]).not.toMatch(/style=|<h1/);   // no inline style (CSP), no second h1 on a record page
   });
 });

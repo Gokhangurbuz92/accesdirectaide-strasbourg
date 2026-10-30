@@ -64,6 +64,7 @@ export const ACRONYM_EXPLAINED = {
   AVE: 'aide aux vacances des enfants', AVF: 'aide aux vacances des familles', CMI: 'carte mobilité inclusion', AJ: 'aide juridictionnelle', RFR: "revenu fiscal de référence (écrit sur l'avis d'impôt)",
   CMG: "aide pour payer la garde d'un enfant", ASI: "allocation supplémentaire d'invalidité", IME: 'institut médico-éducatif', MVA: 'majoration pour la vie autonome',
   ARS: 'agence régionale de santé', CESU: 'chèque emploi service universel', CERFA: 'formulaire officiel', Cerfa: 'formulaire officiel', PDF: 'document à imprimer',
+  'VLS-TS': 'visa de long séjour qui sert de titre de séjour',
 };
 /** Administrative words → the plain words put in brackets after them in a FALC text (words that cannot be explained stay forbidden: see JARGON). */
 export const JARGON_EXPLAINED = {
@@ -130,7 +131,7 @@ export function explanationsFor(src = {}) {
  */
 export function explainFirstUse(lines, acronyms = ACRONYM_EXPLAINED) {
   const done = new Set(); const out = [];
-  const terms = [...Object.entries(acronyms).map(([k, v]) => ({ k, v, re: new RegExp(`(^|[^\\p{L}\\p{N}])(${escapeRe(k)})(?![\\p{L}\\p{N}])(\\s*\\()?`, 'u') })),
+  const terms = [...Object.entries(acronyms).map(([k, v]) => ({ k, v, acronym: true, re: new RegExp(`(^|[^\\p{L}\\p{N}])(${escapeRe(k)})(?![\\p{L}\\p{N}])(\\s*\\()?`, 'u') })),
     ...Object.entries(JARGON_EXPLAINED).map(([k, v]) => ({ k: k.toLowerCase(), v, re: new RegExp(`(^|[^\\p{L}])(${escapeRe(k)}${k.includes(' ') ? '' : '[sx]?'})(?![\\p{L}])(\\s*\\()?`, 'iu') }))].sort((a, b) => b.k.length - a.k.length);
   for (const line of lines) {
     let l = line;
@@ -139,8 +140,9 @@ export function explainFirstUse(lines, acronyms = ACRONYM_EXPLAINED) {
       const m = l.match(t.re); if (!m) continue;
       done.add(t.k);
       if (m[3]) continue;   // already explained
-      // the expansion may already be written next to it (« aide personnalisée au logement (APL) » or « APL, aide personnalisée… »)
-      if (norm(l).includes(norm(t.v))) continue;
+      // the expansion may already be written next to an acronym (« aide personnalisée au logement (APL) » or « APL, aide personnalisée… »); a difficult word
+      // always gets its brackets, which the check requires (« Le montant maximum ne peut pas dépasser le plafond » was refused for « plafond »)
+      if (t.acronym && norm(l).includes(norm(t.v))) continue;
       const at = m.index + m[1].length + m[2].length;
       const before = l.slice(0, at);
       if ((before.match(/\(/g) || []).length > (before.match(/\)/g) || []).length) continue;   // inside brackets already: no nested explanation
@@ -183,7 +185,8 @@ export function acronymsOf(text, known = []) {
   for (const k of known) if (k && new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text)) found.add(k);
   return [...found];
 }
-const explained = (text, acr) => new RegExp(`(\\b${acr}\\b\\s*\\()|(\\([^)]*\\b${acr}\\b[^)]*\\))`).test(text);
+// a part of a compound acronym is explained with it: « VLS-TS (visa de long séjour…) » explains VLS and TS, « FAJ’EMS (Fonds d’aide aux jeunes…) » FAJ and EMS
+const explained = (text, acr) => new RegExp(`(\\b${acr}(?:[-’'][A-Z][A-Z0-9]{0,6})*\\s*\\()|(\\([^)]*\\b${acr}\\b[^)]*\\))`).test(text);
 const trigrams = (s) => { const w = norm(s).split(/[^a-z0-9]+/).filter(Boolean); const g = new Set(); for (let i = 0; i + 2 < w.length; i += 1) g.add(w.slice(i, i + 3).join(' ')); return g; };
 export function similarity(a, b) { const A = trigrams(a); const B = trigrams(b); if (!A.size || !B.size) return 0; let c = 0; for (const x of A) if (B.has(x)) c += 1; return c / Math.min(A.size, B.size); }
 
@@ -386,7 +389,8 @@ export async function writeTexts(src, deps = {}) {
     const parts = { 'normal.resume': sentences(normal.resume), 'normal.pour_qui': normal.pour_qui, 'normal.montant': normal.montant ? [normal.montant] : [], 'normal.etapes': normal.etapes, 'normal.documents': normal.documents || [],   // R14: the documents list was never read
       'falc.resume': falc.resume, 'falc.pour_qui': falc.pour_qui, 'falc.montant': falc.montant ? falc.montant.split('\n').filter(Boolean) : [], 'falc.etapes': falc.etapes };
     const flat = Object.entries(parts).flatMap(([part, list]) => list.map((sentence) => ({ part, sentence })));
-    const j = await judge(flat.map((x) => x.sentence), excerpt, call);
+    // the explanations in brackets come from the fixed glossary (explainFirstUse), not from the model: the fiche is not asked to confirm them
+    const j = await judge(flat.map((x) => withoutGlossary(x.sentence, explain)), excerpt, call);
     if (j.error) return { ok: false, reasons: [...reasons, j.error], model, draft: { normal, falc }, ms: Date.now() - started };
     // the reader's refusals, plus what the official text explicitly says is not a condition
     const refused = [...j.refused.map((r) => ({ ...flat[r.index], raison: r.raison })), ...contradictions(normal, falc, fullSource)];
@@ -409,6 +413,16 @@ export async function writeTexts(src, deps = {}) {
     return { ok: true, normal, falc, checks: { ...stats, rules: TEXT_RULES_VERSION, faithfulness: { checked: j.checked, removed: refused.map((r) => ({ part: r.part, sentence: r.sentence, raison: r.raison })), rounds: round + 1 } }, attempts, model, ms: Date.now() - started };
   }
   return { ok: false, reasons, model, ms: Date.now() - started };
+}
+
+/**
+ * A sentence without the glossary explanations explainFirstUse added (« vos ressources (l'argent que vous recevez) » → « vos ressources »).
+ * @param {string} sentence @param {Record<string, string>} [acronyms]
+ */
+export function withoutGlossary(sentence, acronyms = ACRONYM_EXPLAINED) {
+  let out = String(sentence);
+  for (const v of new Set([...Object.values(acronyms), ...Object.values(JARGON_EXPLAINED)])) out = out.split(` (${v})`).join('');
+  return out;
 }
 
 const refusedBlock = (problems) => `\n\nVotre essai précédent a été refusé par le contrôle automatique :\n- ${problems.join('\n- ')}\nCorrigez ces points.`;

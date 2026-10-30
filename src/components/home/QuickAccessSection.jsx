@@ -1,20 +1,24 @@
 import { Link } from 'react-router-dom';
 import { HandHeart, FileText, MapPin, Bot, Calculator } from 'lucide-react';
+import { frontendEnv } from '@/config/env';
+import { openLinks } from '@/lib/publicBeta';
 
 const items = [
   { label: 'Toutes les aides', to: '/aides', icon: HandHeart },
   { label: 'Démarches', to: '/demarches', icon: FileText },
-  { label: 'Lieux d\'accueil', to: '/annuaire', icon: MapPin },
+  { label: 'Lieux d\'accueil', to: '/structures', icon: MapPin },
   { label: 'Mon Assistant', to: '/orientation', icon: Bot },
   { label: 'Simulateur', to: '/diagnostic', icon: Calculator },
 ];
 
 export default function QuickAccessSection() {
+  // public beta: the assistant and the simulator are closed, so they are not offered
+  const shown = openLinks(items, frontendEnv.flags.publicBeta, (i) => i.to);
   return (
     <section className="border-y border-slate-200 bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          {items.map((item) => (
+        <div className={`grid grid-cols-2 gap-4 ${shown.length === 5 ? 'md:grid-cols-5' : 'md:grid-cols-3'}`}>
+          {shown.map((item) => (
             <Link
               key={item.label}
               to={item.to}
