@@ -31,7 +31,15 @@ export const LEGAL_DOCS_LABEL = `Version projet du ${formatLegalDate(LEGAL_DOCS_
  * @param {string} name
  */
 function legalValue(name) {
-  const fromVite = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env[name] : undefined;
+  // STATIC references only: a dynamic import.meta.env[name] makes Vite inline EVERY VITE_* variable of the build (integration URLs, Vercel metadata) into the bundle
+  const env = import.meta.env || {};
+  const fromVite = {
+    VITE_LEGAL_DATA_PROTECTION_CONTACT: env.VITE_LEGAL_DATA_PROTECTION_CONTACT,
+    VITE_LEGAL_PUBLISHER_IDENTITY: env.VITE_LEGAL_PUBLISHER_IDENTITY,
+    VITE_LEGAL_PUBLICATION_DIRECTOR: env.VITE_LEGAL_PUBLICATION_DIRECTOR,
+    VITE_LEGAL_SECURITY_CONTACT: env.VITE_LEGAL_SECURITY_CONTACT,
+    VITE_LEGAL_RIGHTS_HOLDER: env.VITE_LEGAL_RIGHTS_HOLDER,
+  }[name];
   const fromNode = globalThis.process?.env ? globalThis.process.env[name] : undefined;
   return String(fromVite || fromNode || '').trim();
 }
