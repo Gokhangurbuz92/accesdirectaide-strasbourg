@@ -6,6 +6,7 @@ import logger from '../_utils/logger.js';
 import { kv } from '../_utils/kv.js';
 import { env } from '../_utils/env.js';
 import { getMailerStatus } from '../_utils/mailer.js';
+import { isPublicBetaRestricted } from '../_utils/public-beta.js';
 
 /**
  * Health Endpoints
@@ -49,7 +50,9 @@ export default async function handler(/** @type {import('../_utils/http-types').
             // `noop`/unwired provider means the citizen journey cannot complete (fail closed, no secrets in the response).
             const mail = getMailerStatus();
             const isProduction = String(process.env.VERCEL_ENV || process.env.NODE_ENV || '').toLowerCase() === 'production';
-            if (isProduction && !mail.deliverable) {
+            // restricted public beta (owner directive 29/10/2026): no account and no booking, so no e-mail is ever sent (MAILER_PROVIDER=noop)
+            const betaNoMail = isPublicBetaRestricted();
+            if (isProduction && !mail.deliverable && !betaNoMail) {
                 logger.error({ msg: 'readiness.mail_undeliverable', provider: mail.provider, reason: mail.reason }, 'Readiness: mail delivery unavailable');
                 return res.status(503).json({
                     ok: false,
@@ -65,7 +68,7 @@ export default async function handler(/** @type {import('../_utils/http-types').
             return res.status(200).json({
                 ok: true,
                 status: 'ready',
-                checks: { database: 'ok', mail: mail.deliverable ? 'ok' : 'undeliverable (non-production)' },
+                checks: { database: 'ok', mail: mail.deliverable ? 'ok' : (betaNoMail ? 'not used (restricted public beta)' : 'undeliverable (non-production)') },
                 service: 'acces-direct-aide',
                 time: now,
                 timestamp: now,

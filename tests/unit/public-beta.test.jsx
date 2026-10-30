@@ -27,6 +27,10 @@ describe('server allowlist', () => {
       'diagnostic', 'pdf/x', 'download', 'health/deeper', 'aidesx', 'monitor/csp-report'])
       expect(isAllowedInPublicBeta('GET', p), p).toBe(false);
     for (const m of ['POST', 'PUT', 'PATCH', 'DELETE']) expect(isAllowedInPublicBeta(m, 'aides'), m).toBe(false);
+    // the citizen searches read only, through a POST body; nothing else is written
+    expect(isAllowedInPublicBeta('POST', 'search')).toBe(true);
+    expect(isAllowedInPublicBeta('POST', 'search-pro')).toBe(true);
+    expect(isAllowedInPublicBeta('PUT', 'search')).toBe(false);
   });
   it('is off unless ADA_PUBLIC_BETA_RESTRICTED is 1/true', () => {
     expect(isPublicBetaRestricted({})).toBe(false);
