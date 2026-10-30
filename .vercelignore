@@ -2,3 +2,5 @@
 api/**/*.test.*
 api/tests/
 api/server.js
+# Public beta (owner directive 29/10/2026): a manual cron entry nothing imports; as a file under api/ it would be deployed as its own function
+api/cron/reset-lock.js

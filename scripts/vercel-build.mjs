@@ -11,7 +11,7 @@
  * - Never print environment values (DB URLs, tokens, DSNs, etc).
  *
  * Expected Vercel setup:
- * - Build Command: `npm run vercel-build`
+ * - Build Command: `npm run build:vercel` (not « vercel-build »: @vercel/node runs a script of that name once per function under api/)
  */
 
 import { execSync } from 'node:child_process';

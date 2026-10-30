@@ -1,6 +1,6 @@
 {
   "git": { "deploymentEnabled": false },
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "npm run build:vercel",
   "regions": ["fra1"],
   "functions": {
     "api/index.js": {

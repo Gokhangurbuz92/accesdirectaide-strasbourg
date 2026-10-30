@@ -1,4 +1,5 @@
 import { next } from '@vercel/edge';
+import { PUBLIC_BETA_MESSAGE } from './api/_utils/public-beta.js';
 
 /**
  * Launch-readiness item 56 — MAINTENANCE_MODE=1 (Vercel environment variable): every PAGE answers 503 with this plain page (Retry-After, never cached), so
@@ -16,7 +17,25 @@ export function maintenanceResponse() {
   return new Response(MAINTENANCE_HTML, { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Retry-After': '3600', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
 }
 
+/**
+ * Public beta (owner directive 29/10/2026): every file under api/ is deployed as its own function, so the thin wrappers under api/cron and api/monitor (and
+ * any api/lib module) would answer directly, outside api/index.js and its restricted-beta allowlist. The matcher sends those paths here first:
+ * api/lib and api/routes are never HTTP endpoints (404); api/cron and api/monitor are refused while the beta is restricted (503), as api/index.js does.
+ * @param {URL} url
+ */
+export function directFunctionResponse(url) {
+  const p = url.pathname;
+  const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
+  if (/^\/api\/(lib\/|routes(\.js)?$)/.test(p)) return json(404, { error: 'Not Found' });
+  const beta = ['1', 'true'].includes(String(process.env.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
+  if (beta && /^\/api\/(cron|monitor)\//.test(p)) return json(503, { error: 'PUBLIC_BETA_RESTRICTED', message: PUBLIC_BETA_MESSAGE });
+  return null;
+}
+
 export default function middleware(request) {
+  const direct = new URL(request.url).pathname.startsWith('/api/') ? directFunctionResponse(new URL(request.url)) : null;
+  if (direct) return direct;
+  if (new URL(request.url).pathname.startsWith('/api/')) return next();
   if (['1', 'true'].includes(String(process.env.MAINTENANCE_MODE || ''))) return maintenanceResponse();
   const host = request.headers.get('host') || '';
   const domain = host.split(':')[0];
@@ -52,5 +71,7 @@ export default function middleware(request) {
 export const config = {
   matcher: [
     '/((?!api/|assets/|favicon.ico|robots.txt|sitemap.xml).*)',
+    // the direct api/ functions (see directFunctionResponse); the rest of /api goes straight to api/index.js
+    '/api/lib/:path*', '/api/routes', '/api/routes.js', '/api/cron/:path*', '/api/monitor/:path*',
   ],
 };

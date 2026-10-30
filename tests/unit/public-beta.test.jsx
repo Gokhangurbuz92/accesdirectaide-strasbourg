@@ -79,6 +79,25 @@ describe('release gate in the beta', () => {
   });
 });
 
+describe('edge middleware: direct api/ functions', () => {
+  it('never serves api/lib or api/routes, and refuses api/cron and api/monitor in the beta', async () => {
+    const { directFunctionResponse, config } = await import('../../middleware.js');
+    const u = (p) => new URL(`https://www.accesdirectaide.fr${p}`);
+    expect(directFunctionResponse(u('/api/lib/geography/COGIngestion')).status).toBe(404);
+    expect(directFunctionResponse(u('/api/routes')).status).toBe(404);
+    expect(directFunctionResponse(u('/api/cron/ingest-aids'))).toBeNull();
+    vi.stubEnv('ADA_PUBLIC_BETA_RESTRICTED', '1');
+    for (const p of ['/api/cron/ingest-aids', '/api/cron/actualites', '/api/monitor/core']) {
+      const r = directFunctionResponse(u(p));
+      expect(r.status, p).toBe(503);
+      expect(await r.json()).toMatchObject({ error: 'PUBLIC_BETA_RESTRICTED' });
+    }
+    for (const p of ['/api/aides', '/api/health', '/api/sitemap.xml']) expect(directFunctionResponse(u(p)), p).toBeNull();
+    expect(config.matcher).toEqual(expect.arrayContaining(['/api/lib/:path*', '/api/cron/:path*', '/api/monitor/:path*']));
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
+  });
+});
+
 describe('legal identity from build-time variables', () => {
   it('fills the publisher fields from VITE_LEGAL_* and the release gate passes only then', async () => {
     const names = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL_PUBLICATION_DIRECTOR', 'VITE_LEGAL_DATA_PROTECTION_CONTACT', 'VITE_LEGAL_SECURITY_CONTACT', 'VITE_LEGAL_RIGHTS_HOLDER'];

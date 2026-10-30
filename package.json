@@ -17,7 +17,7 @@
     "dev:full": "npx concurrently --names FE,API --prefix-colors cyan,yellow \"npm run dev\" \"npm run dev:api\"",
     "dev:all": "npm run dev:setup && npm run dev:full",
     "build": "vite build && npx tsx scripts/prerender.mjs && npx tsx scripts/generate-sitemap.mjs",
-    "vercel-build": "node scripts/vercel-build.mjs",
+    "build:vercel": "node scripts/vercel-build.mjs",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
