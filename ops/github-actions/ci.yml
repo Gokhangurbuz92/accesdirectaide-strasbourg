@@ -1,0 +1,37 @@
+# Q08 — continuous integration for every push and pull request on main: lint, typecheck, the unit gate, the dependency audit and the build.
+# It never deploys (production releases are made with scripts/release-production.sh, which requires this workflow to have succeeded).
+# To install: copy to .github/workflows/ci.yml (pushing a workflow needs a GitHub token with the « workflow » scope).
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: Unit gate (only the declared known failures may fail)
+        run: node scripts/unit-gate.mjs
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Build (public beta)
+        run: npx vite build
+        env:
+          VITE_PUBLIC_BETA: 'true'
+          VITE_LEGAL_DATA_PROTECTION_CONTACT: contact@accesdirectaide.fr

@@ -18,11 +18,12 @@ const SpeedInsights = lazy(() =>
 const CookieBanner = lazy(() => import('@/components/CookieBanner'));
 
 import { MotionConfig } from 'framer-motion';
+import { frontendEnv } from '@/config/env';
 import { dropIfObjected, hasObjectedToAudience } from '@/lib/audienceObjection';   // PKG-11 / C21: self-service objection to audience measurement
 
-// RC3 harness (decision pending, see docs/release): no third-party analytics in mock/offline mode.
-// restricted public beta (owner directive 29/10/2026): no audience measurement at all (the legal pages say so)
-const ANALYTICS_ENABLED = import.meta.env.VITE_USE_MOCKS !== 'true' && import.meta.env.VITE_PUBLIC_BETA !== 'true';
+// ADR-022 (docs/ADR-022-audience-measurement.md): no audience measurement unless VITE_AUDIENCE_MEASUREMENT=on, and never in the public beta or in
+// mock/offline mode; the cookie and privacy pages follow the same flag
+const ANALYTICS_ENABLED = frontendEnv.flags.audienceMeasurement;
 
 function App(/** @type {Record<string, string | number | boolean | null | undefined>} */ { url }) {
   return (

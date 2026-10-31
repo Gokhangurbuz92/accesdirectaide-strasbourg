@@ -35,5 +35,7 @@ export const frontendEnv = {
     publicEnableLogging: import.meta.env.VITE_PUBLIC_ENABLE_LOGGING === 'true',
     /** restricted public beta (owner directive 29/10/2026): banner + notice on account, booking and upload screens */
     publicBeta: import.meta.env.VITE_PUBLIC_BETA === 'true',
+    /** ADR-022: no audience measurement by default; it loads only when explicitly switched on, never in the beta or in mock mode */
+    audienceMeasurement: import.meta.env.VITE_AUDIENCE_MEASUREMENT === 'on' && import.meta.env.VITE_PUBLIC_BETA !== 'true' && import.meta.env.VITE_USE_MOCKS !== 'true',
   },
 };

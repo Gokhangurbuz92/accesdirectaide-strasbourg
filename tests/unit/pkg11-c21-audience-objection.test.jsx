@@ -21,11 +21,11 @@ const page = () => render(createElement(HelmetProvider, null, createElement(Memo
 describe('PKG-11 / C21 audience-measurement objection', () => {
   it('objecting on /cookies keeps the choice on the device, says so, and can be withdrawn', () => {
     page();
-    expect(screen.getByTestId('audience-objection')).toHaveTextContent("La mesure d'audience est active sur cet appareil.");
+    expect(screen.getByTestId('audience-objection')).toHaveTextContent("La mesure d'audience n'est pas activée sur ce site.");   // ADR-022: off by default
     fireEvent.click(screen.getByRole('button', { name: "Je m'oppose à la mesure d'audience" }));
     expect(globalThis.localStorage.getItem(AUDIENCE_OBJECTION_KEY)).toBe('yes');
     expect(hasObjectedToAudience()).toBe(true);
-    expect(screen.getByTestId('audience-objection-message')).toHaveTextContent("Opposition enregistrée sur cet appareil : la mesure d'audience est arrêtée.");
+    expect(screen.getByTestId('audience-objection-message')).toHaveTextContent("Opposition enregistrée sur cet appareil : la mesure d'audience ne sera pas activée pour vous.");
     expect(screen.getByTestId('audience-objection')).toHaveTextContent("Vous vous êtes opposé(e) à la mesure d'audience sur cet appareil.");
     fireEvent.click(screen.getByRole('button', { name: 'Retirer mon opposition' }));
     expect(globalThis.localStorage.getItem(AUDIENCE_OBJECTION_KEY)).toBeNull();

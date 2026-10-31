@@ -89,6 +89,11 @@ export default function CookieBanner() {
                         AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : sécuriser les formulaires
                         et garder vos réglages d&apos;affichage. Pendant la bêta publique, nous ne mesurons pas l&apos;audience.{' '}
                     </>
+                ) : !frontendEnv.flags.audienceMeasurement ? (
+                    <>
+                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,
+                        sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous ne mesurons pas l&apos;audience.{' '}
+                    </>
                 ) : (
                     <>
                         AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,

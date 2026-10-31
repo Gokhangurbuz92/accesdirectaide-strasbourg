@@ -36,7 +36,7 @@ function AudienceObjection() {
     const next = !objected;
     if (setAudienceObjection(next)) {
       setObjected(next);
-      setMessage(next ? 'Opposition enregistrée sur cet appareil : la mesure d\'audience est arrêtée.' : 'Opposition retirée sur cet appareil.');
+      setMessage(next ? (frontendEnv.flags.audienceMeasurement ? 'Opposition enregistrée sur cet appareil : la mesure d\'audience est arrêtée.' : 'Opposition enregistrée sur cet appareil : la mesure d\'audience ne sera pas activée pour vous.') : 'Opposition retirée sur cet appareil.');
     } else {
       setMessage('Votre navigateur n\'a pas permis de garder ce choix. Pour vous opposer, écrivez-nous.');
     }
@@ -44,7 +44,7 @@ function AudienceObjection() {
   return (
     <div className="mt-3 rounded-lg border border-slate-300 bg-slate-50 p-4" data-testid="audience-objection">
       <p id="audience-objection-state" className="font-medium text-slate-900">
-        {objected ? 'Vous vous êtes opposé(e) à la mesure d\'audience sur cet appareil.' : 'La mesure d\'audience est active sur cet appareil.'}
+        {objected ? 'Vous vous êtes opposé(e) à la mesure d\'audience sur cet appareil.' : frontendEnv.flags.audienceMeasurement ? 'La mesure d\'audience est active sur cet appareil.' : 'La mesure d\'audience n\'est pas activée sur ce site. Vous pouvez tout de même enregistrer votre opposition sur cet appareil, pour l\'avenir.'}
       </p>
       <Button type="button" variant="outline" className="mt-3 min-h-11" onClick={toggle} aria-describedby="audience-objection-state" data-testid="audience-objection-toggle">
         {objected ? 'Retirer mon opposition' : 'Je m\'oppose à la mesure d\'audience'}
@@ -106,7 +106,7 @@ export default function Cookies() {
                 <h2 className="text-xl font-bold text-green-900 mb-2">En bref</h2>
                 <p className="text-green-800 leading-relaxed mb-4">
                   La plupart de nos traceurs servent à vous garder connecté(e), à sécuriser le site et à garder vos réglages. Ils ne demandent pas votre accord.
-                  {frontendEnv.flags.publicBeta ? 'Pendant la bêta publique, nous ne mesurons pas l’audience.' : <>Nous mesurons aussi l&apos;audience pour savoir quelles pages sont utiles : vous pouvez vous y opposer.</>}
+                  {frontendEnv.flags.publicBeta ? 'Pendant la bêta publique, nous ne mesurons pas l’audience.' : !frontendEnv.flags.audienceMeasurement ? ' Nous ne mesurons pas l’audience.' : <>Nous mesurons aussi l&apos;audience pour savoir quelles pages sont utiles : vous pouvez vous y opposer.</>}
                 </p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-green-800">
@@ -163,7 +163,9 @@ export default function Cookies() {
                   <li>Nous n&apos;envoyons pas le texte de vos recherches.</li>
                   {frontendEnv.flags.publicBeta
                     ? <li data-testid="beta-no-analytics"><strong>Pendant la bêta publique, cette mesure n&apos;est pas activée</strong> : aucune donnée n&apos;est envoyée à Vercel Web Analytics ni à Speed Insights.</li>
-                    : <li>Durée de conservation chez Vercel : <em>[À COMPLÉTER : durée de conservation chez Vercel]</em>.</li>}
+                    : !frontendEnv.flags.audienceMeasurement
+                      ? <li data-testid="no-analytics"><strong>Cette mesure n&apos;est pas activée</strong> : aucune donnée n&apos;est envoyée à Vercel Web Analytics ni à Speed Insights. Si elle l&apos;était un jour, cette page serait mise à jour avant.</li>
+                      : <li>Durée de conservation chez Vercel : <em>[À COMPLÉTER : durée de conservation chez Vercel]</em>.</li>}
                   <li>Vous pouvez vous y opposer ci-dessous, sans compte : votre choix est gardé sur cet appareil, rien n&apos;est envoyé, et la mesure s&apos;arrête aussitôt. Vous pouvez aussi nous écrire (voir la <a href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>).</li>
                 </ul>
                 <AudienceObjection />
