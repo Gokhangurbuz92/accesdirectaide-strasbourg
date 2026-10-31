@@ -10,6 +10,7 @@ import fs from 'node:fs';
 
 const SECTIONS = { aide: 'items', demarche: 'demarches', structure: 'structures' };
 const K = 5;
+const PACE_MS = Number(process.env.EVAL_PACE_MS || 4000);
 
 /** labels a result list matches, per section @returns {{ recall: number|null, rr: number|null, hits: string[] }} */
 export function scoreSection(kind, results, labels) {
@@ -52,8 +53,15 @@ async function main() {
   const { cookie, token } = await session(base);
   const rows = []; const review = [['query_id', 'query', 'section', 'rank', 'slug', 'title', 'engineering_label', 'human_grade_0_1_2', 'reviewer', 'date']];
   for (const q of set.queries) {
-    const res = await fetch(`${base}/api/search`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie, origin: base }, body: JSON.stringify({ query: q.query }) });
-    const body = await res.json().catch(() => ({}));
+    // the public search is rate-limited per address: pace the queries, and wait out a limiter answer instead of scoring it as « no result »
+    let res; let body = {};
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await new Promise((r) => setTimeout(r, attempt ? 65000 : PACE_MS));
+      res = await fetch(`${base}/api/search`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie, origin: base }, body: JSON.stringify({ query: q.query }) });
+      body = await res.json().catch(() => ({}));
+      if (res.status !== 429 && !/patienter une minute/i.test(String(body.message || ''))) break;
+    }
+    if (res.status === 429 || /patienter une minute/i.test(String(body.message || ''))) throw new Error(`rate-limited on « ${q.query} » after retries`);
     const scores = {}; let shown = 0;
     for (const [kind, key] of Object.entries(SECTIONS)) {
       const list = Array.isArray(body[key]) ? body[key] : [];

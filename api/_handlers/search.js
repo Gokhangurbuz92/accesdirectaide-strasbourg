@@ -85,7 +85,7 @@ export default async function handler(req, res) {
 
       // 2-4. R31 (D16): démarches, places and news use the word search of their own list pages (api/lib/search-query.js, R27): each meaningful word, its
       // synonyms and plural, accents ignored, best match level. Before, the whole query was one ILIKE phrase: « demande logement social », « MDPH Strasbourg »
-      // or « titre de séjour » found no démarche or place (D16 baseline on production, 31/10/2026: démarches recall@5 0.36, places 0).
+      // found no démarche or place (D16, 40 catalogue queries replayed read-only on production data, 31/10/2026: démarches recall@5 0.42 → 0.89, places 0.17 → 0.83).
       let demarches = [];
       try {
         demarches = (await searchDemarches({ q: payload.query, page: 1, pageSize: 5 })).items

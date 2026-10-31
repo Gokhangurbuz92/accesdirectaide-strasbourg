@@ -346,7 +346,7 @@ export default function Recherche() {
                           <h3 className="font-semibold text-slate-900 group-hover:text-green-700 transition-colors">{s.title}</h3>
                           {s.ville && <p className="text-xs text-slate-500 mt-0.5">{s.ville}</p>}
                           {s.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2">{s.description}</p>}
-                          <span className="inline-flex items-center gap-1 text-green-600 text-sm font-medium mt-2">
+                          <span className="inline-flex items-center gap-1 text-green-700 text-sm font-medium mt-2">
                             Voir la structure <ArrowRight className="h-3 w-3" />
                           </span>
                         </Link>
@@ -372,7 +372,7 @@ export default function Recherche() {
                         >
                           <h3 className="font-semibold text-slate-900 group-hover:text-amber-700 transition-colors">{a.title}</h3>
                           {a.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2">{a.description}</p>}
-                          <span className="inline-flex items-center gap-1 text-amber-600 text-sm font-medium mt-2">
+                          <span className="inline-flex items-center gap-1 text-amber-800 text-sm font-medium mt-2">
                             Lire la suite <ArrowRight className="h-3 w-3" />
                           </span>
                         </Link>

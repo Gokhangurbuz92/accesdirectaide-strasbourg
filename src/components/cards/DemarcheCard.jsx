@@ -50,7 +50,7 @@ export default function DemarcheCard({ demarche, index = 0 }) {
           <div className="flex-1 p-6">
             <div className="flex justify-between items-start mb-4">
               <CategoryChip slug={demarche.categorie} label={demarche.category?.label} />
-              <div className="flex flex-col items-end gap-2">
+              <div className="ml-auto flex flex-col items-end gap-2">   {/* R31: stays right when the record has no category */}
                 <Badge
                   variant="outline"
                   className={FRESHNESS_BADGE_CLASS[freshness.state] || FRESHNESS_BADGE_CLASS.not_verified}
