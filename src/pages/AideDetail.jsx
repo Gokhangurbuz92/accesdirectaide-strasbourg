@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import SEO from '@/components/SEO';
+import { frontendEnv } from '@/config/env';
 import NotFound from "./NotFound";
 import Gone from "./Gone";
 import { Button } from "@/components/ui/button";
@@ -312,7 +313,11 @@ export default function AideDetail() {
             review={{ at: aide?.falc_reviewed_at, origin: aide?.falc_origin, fields: aide?.falc_field_review, auto: aide?.verification_auto?.textsWrittenAt || null }}
             onChange={() => { }}
           />
-          {isFalcMode && !hasFalcContent && (
+          {/* R29: in the public beta no text is generated on demand (the service is closed): say so instead of a button that always fails */}
+          {isFalcMode && !hasFalcContent && frontendEnv.flags.publicBeta && (
+            <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">Il n’y a pas encore de version facile à lire pour cette fiche. La fiche complète ci-dessous reste valable.</p>
+          )}
+          {isFalcMode && !hasFalcContent && !frontendEnv.flags.publicBeta && (
             <button
               type="button"
               disabled={isGeneratingFalc}
@@ -529,11 +534,12 @@ export default function AideDetail() {
                     className="w-full"
                     onClick={() => {
                       track('download_aide_pdf', { slug: aide.slug });
-                      window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer');
+                      // R29: the PDF service is closed in the public beta — the browser's own print (« Enregistrer en PDF ») makes the same document
+                      if (frontendEnv.flags.publicBeta) window.print(); else window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer');
                     }}
                   >
                     <Download className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Télécharger en PDF
+                    {frontendEnv.flags.publicBeta ? 'Imprimer ou enregistrer en PDF' : 'Télécharger en PDF'}
                   </Button>
                 )}
                 <FavoriteButton entityType="aide" entityId={aide.id} label={aide.titre} />

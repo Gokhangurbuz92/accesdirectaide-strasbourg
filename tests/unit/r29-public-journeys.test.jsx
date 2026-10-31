@@ -138,3 +138,17 @@ describe('mission page', () => {
     expect(src).toMatch(/data-testid="mission-next-steps"/);
   });
 });
+
+describe('beta: no button that always fails', () => {
+  it('PDF prints, on-demand simplification says there is none yet, the report opens an e-mail', () => {
+    for (const f of ['src/pages/AideDetail.jsx', 'src/pages/DemarcheDetail.jsx']) {
+      const src = fs.readFileSync(f, 'utf8');
+      expect(src, f).toMatch(/frontendEnv\.flags\.publicBeta \? 'Imprimer ou enregistrer en PDF' : 'Télécharger en PDF'/);
+      expect(src, f).toMatch(/data-testid="falc-not-available"/);
+      expect(src, f).toMatch(/&& !frontendEnv\.flags\.publicBeta && \(\s*<button/);
+    }
+    const fb = fs.readFileSync('src/components/FeedbackButton.jsx', 'utf8');
+    expect(fb).toMatch(/if \(frontendEnv\.flags\.publicBeta\) \{/);
+    expect(fb).toMatch(/mailtoWithSubject\(to, `Signaler une erreur : \$\{type\} \$\{where\}`\.trim\(\)\)/);
+  });
+});

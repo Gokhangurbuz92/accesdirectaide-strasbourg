@@ -3,6 +3,7 @@ import { SkeletonList } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { frontendEnv } from '@/config/env';
 import NotFound from "./NotFound";
 import Gone from "./Gone";
 import { createPageUrl } from '@/utils';
@@ -266,7 +267,11 @@ export default function DemarcheDetail() {
             review={{ at: demarche?.falc_reviewed_at, origin: demarche?.falc_origin, fields: demarche?.falc_field_review, auto: demarche?.verification_auto?.textsWrittenAt || null }}
             onChange={() => { }}
           />
-          {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && (
+          {/* R29: in the public beta no text is generated on demand (the service is closed): say so instead of a button that always fails */}
+          {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && frontendEnv.flags.publicBeta && (
+            <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">Il n’y a pas encore de version facile à lire pour cette démarche. La fiche complète ci-dessous reste valable.</p>
+          )}
+          {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && !frontendEnv.flags.publicBeta && (
             <button
               type="button"
               disabled={isGeneratingFalc}
@@ -463,10 +468,11 @@ export default function DemarcheDetail() {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer')}
+                    // R29: the PDF service is closed in the public beta — the browser's own print (« Enregistrer en PDF ») makes the same document
+                    onClick={() => (frontendEnv.flags.publicBeta ? window.print() : window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer'))}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    Télécharger en PDF
+                    {frontendEnv.flags.publicBeta ? 'Imprimer ou enregistrer en PDF' : 'Télécharger en PDF'}
                   </Button>
                 )}
                 <FavoriteButton entityType="demarche" entityId={demarche.id} label={demarche.titre} />

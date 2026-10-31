@@ -17,6 +17,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+import { frontendEnv } from '@/config/env';
+import { publicContactEmail, mailtoWithSubject } from '@/lib/contactEmail';
 /**
  * @param {{
  *   type: 'aide' | 'demarche',
@@ -81,6 +83,22 @@ export default function FeedbackButton({
       setSubmitting(false);
     }
   };
+
+  // R29: the report form is closed in the public beta (its submission was always refused, after the person had typed a message and an e-mail):
+  // the button opens an e-mail to the published contact address, with the page in the subject and nothing personal pre-filled
+  if (frontendEnv.flags.publicBeta) {
+    const to = publicContactEmail();
+    if (!to) return null;
+    const where = entitySlug || entityId || pageUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    return (
+      <Button asChild variant={variant} size={size} className="w-full gap-2" data-testid="feedback-button">
+        <a href={mailtoWithSubject(to, `Signaler une erreur : ${type} ${where}`.trim())}>
+          <Flag className="h-4 w-4" aria-hidden="true" />
+          Signaler une erreur par e-mail
+        </a>
+      </Button>
+    );
+  }
 
   return (
     <>
