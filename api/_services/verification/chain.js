@@ -730,7 +730,8 @@ async function checkContent(ctx, kind, row) {
   // none, texts written under older rules
   const outdated = chainTexts && row.auto_check?.texts?.sourceMark !== mark;
   // R31: a text that asserts a right (« Vous avez droit si… ») is not kept either: it is written again under the rule that forbids it
-  const stale = chainTexts && (inventedNumbers(currentTexts(row), fullSource).length > 0 || contradictions(published.normal, published.falc, fullSource).length > 0 || claimsEntitlement(currentTexts(row)));
+  const literalNull = ['cest_quoi', 'ce_que_ca_aide', 'montant', 'montant_falc', 'summary_falc', 'conditions_falc', 'pour_qui', 'description_courte'].some((k) => typeof row[k] === 'string' && /^\s*(null|undefined)\s*$/i.test(row[k]));
+  const stale = chainTexts && (inventedNumbers(currentTexts(row), fullSource).length > 0 || contradictions(published.normal, published.falc, fullSource).length > 0 || claimsEntitlement(currentTexts(row)) || literalNull);
   const oldRules = chainTexts && Number(row.auto_check?.texts?.checks?.rules || 1) < TEXT_RULES_VERSION;
   const needTexts = !chainTexts || outdated || stale || oldRules;
   const keepable = chainTexts && !outdated && !stale;   // only the rules improved: the texts stay published until they are rewritten

@@ -88,6 +88,8 @@ export function normalizeContent(input = {}) {
   return { ok: true, content: c };
 }
 
+/** « 1 240,50 € » (French grouping and decimal comma) */
+const frEur = (n) => `${Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 const sum = (lines) => Math.round(lines.reduce((s, l) => s + (l.montant || 0), 0) * 100) / 100;
 /** What is missing or not yet true, recomputed on every read. `blocking` warnings keep a dossier out of « prêt pour validation ». */
 export function warningsOf(d, now = new Date()) {
@@ -98,7 +100,7 @@ export function warningsOf(d, now = new Date()) {
   if (!charges.length) w.push({ code: 'BUDGET_EMPTY', blocking: true, message: 'Le budget ne compte aucune charge.' });
   const noAmount = (c.budget || []).filter((l) => l.montant === null);
   if (noAmount.length) w.push({ code: 'AMOUNT_MISSING', blocking: true, message: `${noAmount.length} ligne(s) du budget sans montant.` });
-  if (charges.length && Math.abs(sum(charges) - sum(produits)) > 0.009) w.push({ code: 'BUDGET_UNBALANCED', blocking: true, message: `Budget non équilibré : charges ${sum(charges).toFixed(2)} €, produits ${sum(produits).toFixed(2)} €.` });
+  if (charges.length && Math.abs(sum(charges) - sum(produits)) > 0.009) w.push({ code: 'BUDGET_UNBALANCED', blocking: true, message: `Budget non équilibré : charges ${frEur(sum(charges))}, produits ${frEur(sum(produits))}.` });
   const provisional = (c.budget || []).filter((l) => l.statut === 'PROVISOIRE');
   if (provisional.length) w.push({ code: 'BUDGET_PROVISIONAL', blocking: false, message: `${provisional.length} montant(s) provisoire(s) : à confirmer par un devis ou une facture avant dépôt.` });
   const missing = (c.pieces || []).filter((p) => p.statut === 'MANQUANTE');

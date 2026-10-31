@@ -57,7 +57,10 @@ export default function ProLogin() {
             }
             if (!res.ok) {
                 // the French message, never the API's English code
-                throw new Error(res.status === 401 ? 'Adresse ou mot de passe incorrect.' : res.status === 403 ? 'Ce compte est désactivé : contactez l’administrateur de votre structure.'
+                // R31: only the server's « Account disabled » means a disabled account; any other 403 (security check of the request) used to read « compte désactivé »
+                throw new Error(res.status === 401 ? 'Adresse ou mot de passe incorrect.' : res.status === 403 && data.error === 'Account disabled' ? 'Ce compte est désactivé : contactez l’administrateur de votre structure.'
+                    : res.status === 403 ? 'La connexion a été refusée par une vérification de sécurité. Rechargez la page, puis réessayez.'
+                    : res.status === 503 && data.error === 'PUBLIC_BETA_RESTRICTED' ? data.message
                     : res.status === 429 ? 'Trop de tentatives : patientez quelques minutes.' : 'La connexion a échoué. Réessayez.');
             }
 

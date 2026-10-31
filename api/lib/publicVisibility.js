@@ -136,6 +136,8 @@ export function stripReviewFields(row, isAdmin = false) {
   const ext = publicServices(/** @type {any} */ (row).services_externes);
   // R31: a published simplified text that asserts a right (« Vous avez droit si… ») is withheld until the chain rewrites it; the standard text stays
   const withheld = Object.keys(rest).filter((k) => k.endsWith('_falc') && claimsEntitlement(rest[k]));
+  // R31: a text field holding the WORD « null » or « undefined » (a writer's empty answer) is no text
+  for (const k of Object.keys(rest)) if (typeof rest[k] === 'string' && /^\s*(null|undefined)\s*$/i.test(rest[k])) rest[k] = null;
   for (const k of withheld) delete rest[k];
   return /** @type {T} */ ({ ...rest, ...(withheld.length ? { falc_withheld: withheld } : {}), ...(review ? { falc_field_review: review } : {}), ...(auto ? { verification_auto: auto } : {}), ...(ext ? { services_externes: ext } : {}) });
 }

@@ -50,7 +50,7 @@ describe('P27 funding dossiers', () => {
     const codes = w.map((x) => x.code);
     expect(codes).toEqual(expect.arrayContaining(['SECTION_EMPTY', 'BUDGET_UNBALANCED', 'BUDGET_PROVISIONAL', 'PIECES_MISSING', 'NOT_REGISTERED', 'NO_FUNDER', 'DEADLINE_SOON']));
     expect(w.find((x) => x.code === 'NOT_REGISTERED').blocking).toBe(false);
-    expect(w.find((x) => x.code === 'BUDGET_UNBALANCED').blocking).toBe(true);
+    expect(w.find((x) => x.code === 'BUDGET_UNBALANCED')).toMatchObject({ blocking: true, message: expect.stringMatching(/charges 10,00\s€, produits 0,00\s€/) });
   });
   it('exports a working document that says what it is and marks missing amounts', () => {
     const md = exportMarkdown({ id: 'abcdefgh-1', title: 'Essai', status: 'EN_PREPARATION', version: 2, content: { sections: { presentation: 'Texte' }, budget: [{ poste: 'P', nature: 'CHARGE', montant: null, statut: 'MESURE', justification: 'relevé' }], pieces: DEFAULT_PIECES.map(([code, libelle]) => ({ code, libelle, statut: 'MANQUANTE' })) } });

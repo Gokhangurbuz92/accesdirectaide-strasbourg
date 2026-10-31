@@ -25,6 +25,12 @@ describe('entitlement claims', () => {
     expect(out.cest_quoi).toBe('Le RSA est un revenu minimum.');
     expect(stripReviewFields(row, true).summary_falc).toContain('Vous avez droit');   // administrators see what is withheld
   });
+  it('a field holding the word « null » is no text (FAJ’EMS « Ce que ça aide », 31/10/2026)', async () => {
+    expect(stripReviewFields({ slug: 'faj', ce_que_ca_aide: 'null', cest_quoi: 'Texte.' }, false).ce_que_ca_aide).toBeNull();
+    const { blankWord } = await import('../../api/_services/verification/texts.js');
+    for (const v of [null, '', 'null', ' NULL ', 'undefined', 'aucun', 'N/A']) expect(blankWord(v), String(v)).toBe(true);
+    expect(blankWord('Entre 100 et 300 €')).toBe(false);
+  });
   it('the automatic writer check refuses a claim', () => {
     const normal = { resume: 'Le RSA est un revenu minimum pour les personnes qui ont peu de ressources. La Caf verse le RSA chaque mois après examen de la demande et de la situation du foyer.' };
     const falc = { resume: ['Le RSA vous donne un peu d’argent chaque mois.', 'Vous avez droit si vous avez 25 ans.', 'La Caf regarde votre demande.'] };

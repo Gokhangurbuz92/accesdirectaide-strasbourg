@@ -25,6 +25,9 @@ const PRIORITY = /condition|qui peut|b[ée]n[ée]fici|droit|montant|calcul|combi
  * The part of the official text the model reads (a whole fiche can be 30 000 characters): the introduction, then the chapters about conditions, amount and
  * procedure, then the rest, within the budget. @param {{ title?: string, description?: string, text: string }} src @param {number} [budget]
  */
+/** an empty answer written as a word (« null », « undefined », « aucun », « N/A ») @param {unknown} v */
+export const blankWord = (v) => v === null || v === undefined || /^\s*(null|undefined|none|aucune?|n\/?a|-)?\s*$/i.test(String(v));
+
 export function sourceExcerpt(src, budget = 14000) {
   const blocks = []; let cur = { head: '(intro)', lines: [] };
   for (const line of String(src.text || '').split('\n')) {
@@ -369,7 +372,8 @@ export async function writeTexts(src, deps = {}) {
       for (let i = 0; i < 2 && !normal; i += 1) {
         const r = await call(NORMAL_SYSTEM, `${block(excerpt)}\n\n${NORMAL_TASK}${feedback}`, NORMAL_SCHEMA);
         if (r.error) return { ok: false, reasons: [...reasons, r.error], model, ms: Date.now() - started };
-        const n = { resume: squash(r.content.resume), pour_qui: asLines(r.content.pour_qui), montant: r.content.montant ? squash(r.content.montant) : null, etapes: asLines(r.content.etapes), documents: asLines(r.content.documents) };
+        // R31: a model that has no amount sometimes writes the WORD « null »; it was published as the text « null » (FAJ'EMS, 31/10/2026)
+        const n = { resume: squash(r.content.resume), pour_qui: asLines(r.content.pour_qui), montant: blankWord(r.content.montant) ? null : squash(r.content.montant), etapes: asLines(r.content.etapes), documents: asLines(r.content.documents) };
         const c = checkNormal(n, fullSource);
         if (c.length) { reasons.push(...c.map((p) => `résumé, essai ${i + 1} : ${p}`)); feedback = `${judgeNormal}${refusedBlock(c)}`; } else normal = n;
       }

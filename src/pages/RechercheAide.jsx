@@ -403,7 +403,7 @@ export default function RechercheAide() {
               <div className="flex items-center gap-2 text-slate-700 font-medium">
                 <MapPin className="h-5 w-5 text-blue-500" />
                 <span>Où habitez-vous ?</span>
-                <span className="text-slate-400 text-sm font-normal">(optionnel)</span>
+                <span className="text-slate-600 text-sm font-normal">(optionnel)</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Input
