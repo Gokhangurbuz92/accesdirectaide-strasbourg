@@ -405,9 +405,16 @@ export default function Annuaire() {
         ) : structures.length > 0 ? (
           <>
             {viewMode === 'map' ? (
-              <React.Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-500">Chargement de la carte…</div>}>
-                <StructureMap structures={structures} />
-              </React.Suspense>
+              <>
+                {/* N11: the map tiles come from OpenStreetMap's servers, only once the visitor chooses « Carte »; the page says so */}
+                <p className="mb-3 text-sm text-slate-600" data-testid="map-provider-notice">
+                  Fonds de carte © OpenStreetMap. En affichant la carte, votre navigateur les charge depuis les serveurs de la fondation OpenStreetMap,
+                  qui reçoivent votre adresse IP. La vue « Liste » n’en charge aucun.
+                </p>
+                <React.Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-500">Chargement de la carte…</div>}>
+                  <StructureMap structures={structures} />
+                </React.Suspense>
+              </>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="structures-results-list">
                 {structures.map((/** @type {{ id: string | number }} */ s) => (

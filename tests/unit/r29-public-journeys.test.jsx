@@ -83,3 +83,12 @@ describe('small display fixes', () => {
     expect(screen.queryByTestId('freshness-badge')).toBeNull();
   });
 });
+
+describe('N11 map provider', () => {
+  it('the map view says that OpenStreetMap receives the IP address, and so does the privacy page (beta and after)', () => {
+    expect(fs.readFileSync('src/pages/Annuaire.jsx', 'utf8')).toMatch(/data-testid="map-provider-notice"/);
+    const privacy = fs.readFileSync('src/pages/Confidentialite.jsx', 'utf8');
+    expect(privacy.match(/fondation OpenStreetMap \(Royaume-Uni\), qui reçoivent votre adresse IP/g)).toHaveLength(2);
+    expect(fs.readFileSync('src/components/StructureMap.jsx', 'utf8')).toMatch(/openstreetmap\.org\/copyright/);   // attribution required by the tile policy
+  });
+});
