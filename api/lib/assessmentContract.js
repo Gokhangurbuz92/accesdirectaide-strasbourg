@@ -146,7 +146,11 @@ function item(code, label, state, extra = {}) {
  *   simulation  = result of runLocalSimulation (read ONLY when leadsEnabled === true)
  *   dataStatus  = status of the launch-data manifest ('UNVERIFIED' default); carried as a banner field, never as a verification claim
  */
-export function buildAssessment({ simulation, answers = {}, leadsEnabled: leadsInput = false, dataStatus = 'UNVERIFIED', unsupportedRights = [], referenceDate = null } = {}) {
+/**
+ * R31 (D11 → D20 → P13): `ruleReadings` are the readings of rights that passed the expert-validation gate (api/lib/validatedRules.js, computed by the caller:
+ * this module stays pure and never reads the register). Empty today. A reading only ever yields POSSIBLE or CHECK_REQUIRED, with its rule and official page.
+ */
+export function buildAssessment({ simulation, answers = {}, leadsEnabled: leadsInput = false, dataStatus = 'UNVERIFIED', unsupportedRights = [], referenceDate = null, ruleReadings = {} } = {}) {
   const leadsEnabled = leadsInput === true;                                            // strict: truthy values ('true', 1, {}) do NOT enable leads
   const items = [];
   const local = { source: null, verifiedAt: null, territory: null, rule: null, uncertainty: UNCERTAINTY_LOCAL };
@@ -170,6 +174,8 @@ export function buildAssessment({ simulation, answers = {}, leadsEnabled: leadsI
       }));
       continue;
     }
+    const reading = ruleReadings && Object.prototype.hasOwnProperty.call(ruleReadings, code) ? ruleReadings[code] : null;
+    if (reading) { items.push(readingItem(code, label, whoToAsk, facts, reading, local)); continue; }
     const hit = byCode.get(code);
     // leads disabled (default) => the heuristic is not read at all; enabled => a hit is only a lead, a miss is never "not applicable"
     const state = (leadsEnabled && hit && hit.eligible === true) ? STATES.POSSIBLE : STATES.CHECK_REQUIRED;
@@ -195,6 +201,23 @@ export function buildAssessment({ simulation, answers = {}, leadsEnabled: leadsI
     totals: null,                                                                       // never a summed estimate
     items,
   };
+}
+
+/** An item from an expert-validated rule reading: never a decision; says which conditions the answers meet, do not meet, or cannot tell. */
+function readingItem(code, label, whoToAsk, facts, reading, local) {
+  const all = reading.notMet.length === 0 && reading.unknown.length === 0;
+  const state = all ? STATES.POSSIBLE : STATES.CHECK_REQUIRED;
+  const parts = [];
+  if (all) parts.push('D\'après vos réponses, les conditions de la règle relue par un expert sont remplies.');
+  if (reading.notMet.length) parts.push(`D'après vos réponses, une condition de la règle relue ne semble pas remplie : ${reading.notMet.join(' ; ')}. Ce n'est pas un refus.`);
+  if (reading.unknown.length) parts.push(`Vos réponses ne permettent pas de vérifier : ${reading.unknown.join(' ; ')}.`);
+  const falc = all ? 'Vos réponses correspondent à la règle.' : reading.notMet.length ? 'Une condition ne semble pas remplie. Ce n\'est pas un refus.' : 'Certaines conditions sont à vérifier.';
+  return item(code, label, state, {
+    whoToAsk, basisFacts: facts,
+    explanation: `${TEXT[state].fr(whoToAsk)} ${parts.join(' ')}`,
+    explanationFalc: `${TEXT[state].falc(whoToAsk)} ${falc}`,
+    provenance: { ...local, rule: reading.rule, source: reading.source, verifiedAt: reading.verifiedAt, uncertainty: 'ORIENTATION_REGLE_RELUE' },
+  });
 }
 
 /** Authoritative engine configured but down (e.g. OpenFisca 503): NO fallback item, NO local result. */

@@ -13,10 +13,11 @@ export const UNSUPPORTED_RIGHTS = Object.freeze([
   Object.freeze({ code: 'impayes-loyer', label: 'Aide en cas d\'impayés de loyer', reason: 'Aucune règle vérifiée dans ADA' }),
 ]);
 
-export function assessSimulation(simulation, answers) {
+export function assessSimulation(simulation, answers, ruleReadings = {}) {
   return buildAssessment({
     simulation,
     answers,
+    ruleReadings,   // R31: readings of expert-validated rights only, computed by the handler (api/lib/validatedRules.js); empty today
     dataStatus: 'UNVERIFIED',
     unsupportedRights: UNSUPPORTED_RIGHTS,
     referenceDate: simulation?.meta?.referenceDate ?? null,
@@ -34,13 +35,13 @@ export function simulationProvenance(simulation) {
 }
 
 /** Public response body of the SIMULATION_MODE: the contract only — the legacy `rights[]` (eligible flags, estimated amounts) is not exposed. */
-export function simulationResponse(simulation, answers, meta) {
+export function simulationResponse(simulation, answers, meta, ruleReadings = {}) {
   return {
     mode: simulation.mode,
     authoritative: false,
     disclaimer: simulation.disclaimer,
     period: simulation.period,
-    assessment: assessSimulation(simulation, answers),
+    assessment: assessSimulation(simulation, answers, ruleReadings),
     provenance: simulationProvenance(simulation),
     meta: { source: simulation.meta?.source, engineVersion: simulation.meta?.engineVersion, referenceDate: simulation.meta?.referenceDate, ...meta },
   };

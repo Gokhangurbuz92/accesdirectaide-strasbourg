@@ -22,6 +22,16 @@ import { SyncRun } from '../../src/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import { engineUnavailableAssessment, simulationResponse } from '../lib/diagnosticAssessment.js';
+// R31: expert-validated rules only (the gate is api/lib/validatedRules.js; no right passes it today, so results are unchanged)
+import { validatedReadings } from '../lib/validatedRules.js';
+import fs from 'node:fs';
+import path from 'node:path';
+let rulesRegister;
+/** the register, read once; unreadable = no right passes the gate (fail closed: results stay non-authoritative) */
+const readings = (answers, referenceDate) => {
+  try { rulesRegister ??= JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/rules/rights-rules.v1.json'), 'utf8')); } catch { return {}; }
+  return validatedReadings(rulesRegister, answers, referenceDate);
+};
 import { ERROR_CODES, SAFE_MESSAGES, captureSafe, classifyError, parseJsonBody } from '../lib/diagnosticErrors.js';
 import { clientIp } from '../_utils/client-ip.js';
 
@@ -186,7 +196,7 @@ async function handleDiagnosticInner(req, res, track) {
             }
 
             // DTA S1 2b-1: the response carries the assessment contract (states + provenance), never the legacy eligible flags / estimated amounts.
-            return res.status(200).json(simulationResponse(simulation, answers, { requestId, duration_ms: duration }));
+            return res.status(200).json(simulationResponse(simulation, answers, { requestId, duration_ms: duration }, readings(answers, simulation?.meta?.referenceDate ?? null)));
         }
 
         // AUTHORITATIVE_MODE remains fail-closed. Never fall back to LocalRulesEngine.
