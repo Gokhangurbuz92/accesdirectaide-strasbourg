@@ -1,9 +1,14 @@
+import { randomUUID } from 'node:crypto';
 import { env } from './env.js';
+
+/** R27 / Q11: a random identifier of this function instance (process), so a test can see several instances answer and share one rate limit */
+export const INSTANCE_ID = randomUUID().slice(0, 8);
 
 /**
 * @param {{ [x: string]: any; statusCode?: number; getHeader?: (name: string) => any; setHeader: any; set?: (name: string, value: any) => any; writeHead?: (statusCode: number, headers?: any) => any; end?: (...args: any[]) => any; status?: (code: number) => import("./http-types.js").ApiResponse; json?: (body: any) => any; send?: (body: any) => any; redirect?: (codeOrUrl: any, url?: any) => any; }} res
 */
 export function applySecurityHeaders(res, /** @type {string | number | boolean | null | undefined} */ origin) {
+  res.setHeader('x-ada-instance', INSTANCE_ID);   // R27 / Q11: which function instance answered (a random id per process, nothing else)
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '0');

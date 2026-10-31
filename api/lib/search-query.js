@@ -27,6 +27,52 @@ export function resetSearchVectorCache() { SEARCH_VECTOR_CACHE.clear(); }
 /** @param {boolean} sv @param {string} v */
 const svOr = (sv, v) => (sv ? sql` OR ("search_vector" @@ plainto_tsquery('french', unaccent(${v})))` : sql``);
 
+// ------------------------------------------------------------------------------------------------ R27: word search (best match level)
+/**
+ * Words that carry no meaning for finding a record (« aide pour payer mon loyer » → « loyer »). A query was matched as ONE phrase (or as the synonyms of
+ * its words, never the words themselves): « payer loyer » and « CCAS Strasbourg » found nothing, « aide pour payer mon loyer » matched every aide.
+ */
+const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des du elle en est et etre faire il ils j je l la le les leur lui ma me mes moi mon '
+  + 'ne nos notre nous on ou par pas pour qu que qui sa se ses son sur ta te tes toi ton tu un une vos votre vous y d n s c m t aide aides aider besoin '
+  + 'cherche chercher trouver obtenir payer avoir droit droits quel quelle quels quelles veux voudrais peux puis faut ai as suis sont ont').split(' '));
+
+/** the meaningful words of a query, without accents, at most 6 (a 5-digit postal code is a word) @param {string} q */
+export function searchWords(q) {
+  const words = foldAccents(q).replace(/[^a-z0-9\s'’-]/g, ' ').split(/[\s'’-]+/).filter((w) => w && (w.length >= 2 || /\d/.test(w)) && !STOPWORDS.has(w));
+  return [...new Set(words)].slice(0, 6);
+}
+
+/** a word and its synonyms, without accents; a plural « s » / « x » dropped so that « loyers » finds « loyer » @param {string} w */
+export function wordTerms(w) {
+  const base = w.length > 4 ? w.replace(/[sx]$/, '') : w;
+  return [...new Set([base, ...expandQueryWithSynonyms(w).map(foldAccents)].map((t) => t.trim()).filter((t) => t.length >= 2))].slice(0, 12);
+}
+
+/**
+ * The SQL of a word search over some text columns (fixed identifiers): one group per word (the word OR one of its synonyms in one of the columns, or in
+ * the full-text vector), the number of groups a record matches, and the number matched in its title.
+ * @param {string} q @param {string[]} columns @param {string} titleColumn @param {boolean} sv @param {(term: string) => any} [extra] another match for a term
+ */
+export function wordPlan(q, columns, titleColumn, sv, extra) {
+  const words = searchWords(q);
+  if (!words.length) return null;
+  const group = (w, cols) => sql`(${sql.join(wordTerms(w).flatMap((t) => [...cols.map((c) => sql`${FOLDED(c)} LIKE ${`%${t}%`}`), ...(extra && cols.length > 1 ? [extra(t)] : [])]), sql.raw(' OR '))}${cols.length > 1 ? svOr(sv, w) : sql``})`;
+  const count = (cols) => sql.join(words.map((w) => sql`(CASE WHEN ${group(w, cols)} THEN 1 ELSE 0 END)`), sql.raw(' + '));
+  return { words, matchCount: sql`(${count(columns)})`, titleHits: sql`(${count([titleColumn])})` };
+}
+
+/**
+ * Only the records that match the most words of the query (all of them when some record does): « CCAS Strasbourg » gives the CCAS of Strasbourg, not
+ * every CCAS and every place in Strasbourg; a word found nowhere does not empty the result.
+ * @param {string} table @param {any[]} conditions the other conditions of the search @param {{ matchCount: any }} plan
+ */
+export async function bestMatchCondition(table, conditions, plan) {
+  const where = conditions.length ? sql`WHERE ${sql.join(conditions, sql.raw(' AND '))}` : sql``;
+  const res = await db.execute(sql`SELECT coalesce(max(${plan.matchCount}), 0)::int AS best FROM ${sql.raw(`"${table}"`)} ${where}`);
+  const best = Number((res.rows || res)[0]?.best || 0);
+  return sql`${plan.matchCount} >= ${Math.max(1, best)}`;
+}
+
 /** R26: the topics of the Aides menu and the words that put a record under each (written without accents; matched as whole-word starts) */
 export const THEME_WORDS = {
   logement: ['logement', 'loyer', 'hlm', 'hebergement'],
@@ -79,21 +125,8 @@ export async function searchAides(params) {
   const sv = q ? await hasSearchVector('Aide') : false;
   // 1. Full Text Search with Synonym Expansion
   // Use ILIKE fallback when search_vector or unaccent extension is missing
-  if (q) {
-    const expandedTerms = expandQueryWithSynonyms(q);
-
-    if (expandedTerms.length > 1) {
-      const searchConditions = expandedTerms.map(term =>
-        sql`("titre" ILIKE ${'%' + term + '%'} OR "cest_quoi" ILIKE ${'%' + term + '%'}${svOr(sv, term)})`
-      );
-      conditions.push(sql`(${sql.join(searchConditions, sql.raw(' OR '))})`);
-    } else {
-      conditions.push(sql`(
-        ("titre" ILIKE ${'%' + q + '%'}) OR ("cest_quoi" ILIKE ${'%' + q + '%'})
-        ${svOr(sv, q)}
-      )`);
-    }
-  }
+  // R27: word search, applied below once every other filter is known (best match level)
+  const plan = q ? wordPlan(q, ['"titre"', '"cest_quoi"', '"description"'], '"titre"', sv) : null;
 
   // 2. Filters
   const effectiveTheme = theme || category;
@@ -153,6 +186,7 @@ export async function searchAides(params) {
     conditions.push(sql`"est_urgent" = true`);
   }
 
+  if (plan) conditions.push(await bestMatchCondition('Aide', conditions, plan));
   const whereClause = conditions.length > 0
     ? sql`WHERE ${sql.join(conditions, sql.raw(' AND '))}`
     : sql``;
@@ -191,7 +225,7 @@ export async function searchAides(params) {
   };
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
-    selectRank = sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "cest_quoi" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END END as rank`;
+    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "cest_quoi" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to date.
@@ -377,14 +411,8 @@ export async function searchDemarches(params) {
   }
 
   const sv = q ? await hasSearchVector('Demarche') : false;
-  if (q) {
-    // ILIKE on titre + description; the full-text clause only when the column exists (hasSearchVector)
-    conditions.push(sql`(
-      ("titre" ILIKE ${'%' + q + '%'})
-      OR ("description_courte" ILIKE ${'%' + q + '%'})
-      ${svOr(sv, q)}
-    )`);
-  }
+  // R27: word search over titre + description, applied below once every other filter is known (best match level)
+  const plan = q ? wordPlan(q, ['"titre"', '"description_courte"'], '"titre"', sv) : null;
 
   if (effectiveCategory) {
     conditions.push(sql`("categoryId" = ${effectiveCategory} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Demarche"."categoryId" AND c.slug = ${effectiveCategory}))`);
@@ -435,6 +463,7 @@ export async function searchDemarches(params) {
     conditions.push(sql`NOT ("titre" ILIKE 'Test%' OR "titre" ILIKE 'Démarche Test%' OR "titre" ILIKE 'Demarche Test%')`);
   }
 
+  if (plan) conditions.push(await bestMatchCondition('Demarche', conditions, plan));
   const whereClause = conditions.length > 0
     ? sql`WHERE ${sql.join(conditions, sql.raw(' AND '))}`
     : sql``;
@@ -469,7 +498,7 @@ export async function searchDemarches(params) {
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
     // Use simple ordering by titre match when search_vector is missing
-    selectRank = sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
+    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to date.
@@ -488,7 +517,7 @@ export async function searchDemarches(params) {
         : sql`ORDER BY ${safeColumn} ASC, id ASC`;
     }
   } else if (q) {
-    selectRank = sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
+    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else {
     // Default without q: quality first, then recent.
@@ -593,13 +622,10 @@ export async function searchStructures(params) {
   const like = q ? '%' + q + '%' : null;
   const serviceMatch = q ? sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE declared.x ILIKE ${like})
       OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true AND bookable.name ILIKE ${like})))` : null;
-  if (q) {
-    conditions.push(sql`(
-      ("nom" ILIKE ${'%' + q + '%'}) OR ("description_courte" ILIKE ${'%' + q + '%'})
-      ${svOr(sv, q)}
-      OR ${serviceMatch}
-    )`);
-  }
+  // R27: word search over the name, description, commune, postal code and type, plus the declared services; applied below once every other filter is
+  // known (best match level): « CCAS Strasbourg » = a CCAS in Strasbourg
+  const declared = (t) => sql`EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(declared.x), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})`;
+  const plan = q ? wordPlan(q, ['"nom"', '"description_courte"', '"ville"', '"code_postal"', '"type_structure"'], '"nom"', sv, declared) : null;
 
   // Phase 9: StructureServiceArea Filtering (FR-010)
   if (params.territoryFilter && params.territoryFilter.userTerritoryIds && params.territoryFilter.userTerritoryIds.length > 0) {
@@ -643,6 +669,7 @@ export async function searchStructures(params) {
     conditions.push(sql`"accessibilite_pmr" = true`);
   }
 
+  if (plan) conditions.push(await bestMatchCondition('Structure', conditions, plan));
   const whereClause = conditions.length > 0
     ? sql`WHERE ${sql.join(conditions, sql.raw(' AND '))}`
     : sql``;
@@ -674,7 +701,7 @@ export async function searchStructures(params) {
   };
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
-    selectRank = sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
+    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
     orderBy = sql`ORDER BY rank DESC, quality_score DESC, nom ASC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to quality.

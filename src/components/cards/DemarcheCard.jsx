@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import CategoryChip from "@/components/ui/CategoryChip";
+import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { formatProvenanceDate, getFreshnessBadge, getProvenance } from '@/lib/provenance';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';
@@ -36,7 +37,7 @@ export default function DemarcheCard({ demarche, index = 0 }) {
 
   return (
     <AnimatedCard index={index}>
-      <Card className="hover:shadow-md transition-all border-slate-200 overflow-hidden group relative bg-white" data-testid="demarche-card">
+      <Card className="hover:shadow-md transition-all border-slate-200 overflow-hidden group relative bg-white flex h-full flex-col" data-testid="demarche-card">
         <Link
           to={targetUrl}
           className="absolute inset-0 z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl"
@@ -45,8 +46,8 @@ export default function DemarcheCard({ demarche, index = 0 }) {
           <span className="sr-only">Voir la démarche {demarche.titre}</span>
         </Link>
 
-        <CardContent className="p-0">
-          <div className="p-6">
+        <CardContent className="flex h-full flex-col p-0">
+          <div className="flex-1 p-6">
             <div className="flex justify-between items-start mb-4">
               <CategoryChip slug={demarche.categorie} label={demarche.category?.label} />
               <div className="flex flex-col items-end gap-2">
@@ -87,23 +88,9 @@ export default function DemarcheCard({ demarche, index = 0 }) {
                 <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> Guide pas à pas
               </span>
             </div>
-            {verificationLabel && (
-              <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {verificationLabel}
-                </span>
-              </div>
-            )}
+            <div className="mt-3"><RecordProvenance verifiedAt={verifiedAt} sourceHost={sourceHost} sourceUrl={provenance.sourceUrl} stale={freshness?.state === 'to_review'} /></div>
           </div>
-          <div className="bg-slate-50 px-6 py-3 border-t border-slate-100">
-            <div
-              className="inline-flex items-center gap-2 text-blue-600 font-bold text-sm group-hover:text-blue-800 transition-colors"
-            >
-              Démarrer la démarche
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </div>
-          </div>
+          <CardActionStrip label="Voir la démarche" />
         </CardContent>
       </Card>
     </AnimatedCard>

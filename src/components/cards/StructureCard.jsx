@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CategoryChip from "@/components/ui/CategoryChip";
+import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { formatProvenanceDate, getProvenance } from '@/lib/provenance';
 import { buildPublicRdvPath } from '@/lib/rdvRouting';
 import { useFalc } from '@/contexts/FalcContext';
@@ -52,7 +53,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
 
   return (
     <AnimatedCard index={index}>
-      <Card className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-blue-300 bg-white relative" data-testid="structure-card">
+      <Card className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-blue-300 bg-white relative flex h-full flex-col overflow-hidden" data-testid="structure-card">
         {/* Overlay Link */}
         <Link
           to={targetUrl}
@@ -62,8 +63,8 @@ export default function StructureCard({ structure, compact = false, index = 0 })
           <span className="sr-only">Voir la fiche de {structure.nom}</span>
         </Link>
 
-        <CardContent className={compact ? 'p-4' : 'p-6'}>
-          <div className="flex flex-col gap-3">
+        <CardContent className="flex h-full flex-col p-0">
+          <div className={`flex flex-1 flex-col gap-3 ${compact ? 'p-4' : 'p-6'}`}>
             {/* En-tête */}
             <div className="flex flex-wrap gap-2 items-start justify-between">
               <div className="flex flex-wrap gap-2">
@@ -141,7 +142,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
               )}
               {structure.telephone && (
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-slate-400" />
+                  <Phone className="h-4 w-4 shrink-0 text-slate-400" />
                   {/* Ensure telephone link is clickable */}
                   <a
                     href={`tel:${structure.telephone}`}
@@ -154,27 +155,12 @@ export default function StructureCard({ structure, compact = false, index = 0 })
               )}
               {structure.horaires && (
                 <div className="flex items-start gap-2">
-                  <Clock className="h-4 w-4 text-slate-400 mt-0.5" />
+                  <Clock className="h-4 w-4 shrink-0 text-slate-400 mt-0.5" />
                   <span>{structure.horaires}</span>
                 </div>
               )}
             </div>
-            {(verifiedAt || sourceHost) && (
-              <div className="mt-1 flex flex-wrap gap-4 text-xs text-slate-500">
-                {verifiedAt && (
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Vérifié: {verifiedAt}
-                  </span>
-                )}
-                {sourceHost && (
-                  <span className="flex items-center gap-1.5">
-                    <Globe className="h-3.5 w-3.5" />
-                    Source: {sourceHost}
-                  </span>
-                )}
-              </div>
-            )}
+            <div className="mt-1"><RecordProvenance verifiedAt={verifiedAt} sourceHost={sourceHost} sourceUrl={provenance?.sourceUrl} /></div>
 
             {/* Actions */}
             <div className="flex flex-wrap gap-2 mt-2">
@@ -203,14 +189,9 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                   </a>
                 </Button>
               )}
-              <div
-                className="inline-flex items-center gap-1 text-blue-600 font-medium text-sm group-hover:text-blue-800 transition-colors"
-              >
-                Plus d'infos
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </div>
             </div>
           </div>
+          <CardActionStrip label="Voir le lieu" />
         </CardContent>
       </Card>
     </AnimatedCard>

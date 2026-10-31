@@ -213,7 +213,9 @@ export default function AideDetail() {
   const resolved = resolveCategory(categorySlug) || (aide?.category?.label ? { label: aide.category.label } : null);
   const categoryLabel = resolved?.label || null;
   const provenance = getProvenance(aide);
-  const fetchedAtLabel = formatProvenanceDate(provenance.fetchedAt);
+  // R27: the header gives the date of the VERIFICATION (like the démarche page), only for a record the server says is verified; it used to give the
+  // date the record was first fetched (« Mise à jour : 24/10 ») next to « vérifiées le 31 octobre » further down
+  const verifiedAtLabel = provenance.contentStatus === 'VERIFIED' ? formatProvenanceDate(provenance.verifiedAt) : null;
   const pdfDownloadUrl = (aide?.slug || aide?.id)
     ? `/api/pdf/aides/${encodeURIComponent(aide.slug || aide.id)}`
     : null;
@@ -285,10 +287,10 @@ export default function AideDetail() {
                 {territoireLabel}
               </span>
             )}
-            {fetchedAtLabel && (
-              <span className="flex items-center gap-1" title="Date de dernière mise à jour de la source">
+            {verifiedAtLabel && (
+              <span className="flex items-center gap-1" title="Date de la dernière vérification sur la source officielle">
                 <Calendar className="h-4 w-4" />
-                Mise à jour : {fetchedAtLabel}
+                Vérifié le {verifiedAtLabel}
               </span>
             )}
             {aide.delai_indicatif && (

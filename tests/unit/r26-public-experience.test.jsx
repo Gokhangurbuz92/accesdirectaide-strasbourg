@@ -152,3 +152,53 @@ describe('R27 navigation fixes', () => {
     expect(read('src/pages/Layout.jsx')).toMatch(/className="xl:hidden h-11 w-11 min-w-11 shrink-0/);
   });
 });
+
+describe('R27 word search', () => {
+  it('keeps the meaningful words of a visitor sentence, without accents', async () => {
+    const { searchWords, wordTerms } = await import('../../api/lib/search-query.js');
+    expect(searchWords('aide pour payer mon loyer')).toEqual(['loyer']);
+    expect(searchWords('CCAS Strasbourg')).toEqual(['ccas', 'strasbourg']);
+    expect(searchWords('titre de séjour')).toEqual(['titre', 'sejour']);
+    expect(searchWords("j'ai besoin d'aide")).toEqual([]);
+    expect(searchWords('67000')).toEqual(['67000']);
+    expect(searchWords('aide')).toEqual([]);   // nothing meaningful: the whole list, not an empty one
+    expect(wordTerms('loyers')).toContain('loyer');
+  });
+  it('the three public searches use the word plan and keep only the records that match the most words', () => {
+    const src = read('api/lib/search-query.js');
+    for (const t of ['Aide', 'Demarche', 'Structure']) expect(src).toContain(`if (plan) conditions.push(await bestMatchCondition('${t}', conditions, plan));`);
+    expect(src).toMatch(/\['"nom"', '"description_courte"', '"ville"', '"code_postal"', '"type_structure"'\]/);
+  });
+});
+
+describe('R27 cards', () => {
+  it('aide, démarche and lieu cards share the provenance line and the action strip', () => {
+    expect(read('src/components/molecules/AidCard.tsx')).toMatch(/<CardActionStrip label="Voir l’aide" \/>/);
+    expect(read('src/components/cards/DemarcheCard.jsx')).toMatch(/<CardActionStrip label="Voir la démarche" \/>/);
+    expect(read('src/components/cards/StructureCard.jsx')).toMatch(/<CardActionStrip label="Voir le lieu" \/>/);
+    for (const f of ['src/components/molecules/AidCard.tsx', 'src/components/cards/DemarcheCard.jsx', 'src/components/cards/StructureCard.jsx']) expect(read(f), f).toMatch(/<RecordProvenance /);
+    expect(read('src/components/cards/StructureCard.jsx')).not.toMatch(/Vérifié: \{verifiedAt\}/);
+  });
+  it('renders « Vérifié le » with its source link, and « À actualiser » for an old check', async () => {
+    const { RecordProvenance } = await import('../../src/components/cards/RecordCardParts.jsx');
+    const { container } = render(createElement(RecordProvenance, { verifiedAt: '30/10/2026', sourceHost: 'service-public.gouv.fr', sourceUrl: 'https://www.service-public.gouv.fr/x' }));
+    expect(container.textContent).toContain('Vérifié le 30/10/2026');
+    expect(container.querySelector('a').getAttribute('href')).toBe('https://www.service-public.gouv.fr/x');
+    const old = render(createElement(RecordProvenance, { verifiedAt: '01/01/2026', stale: true }));
+    expect(old.container.textContent).toContain('À actualiser (vérifié le 01/01/2026)');
+  });
+  it('the aide page header gives the verification date, not the fetch date', () => {
+    const d = read('src/pages/AideDetail.jsx');
+    expect(d).toMatch(/Vérifié le \{verifiedAtLabel\}/);
+    expect(d).not.toMatch(/Mise à jour : \{fetchedAtLabel\}/);
+  });
+});
+
+describe('R27 multi-instance evidence', () => {
+  it('every API answer names its function instance with a random id (nothing else)', async () => {
+    const { applySecurityHeaders, INSTANCE_ID } = await import('../../api/_utils/security.js');
+    expect(INSTANCE_ID).toMatch(/^[0-9a-f]{8}$/);
+    const h = {}; applySecurityHeaders({ setHeader: (k, v) => { h[k] = v; } }, null);
+    expect(h['x-ada-instance']).toBe(INSTANCE_ID);
+  });
+});
