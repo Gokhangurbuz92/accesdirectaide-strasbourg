@@ -26,6 +26,9 @@ describe('ADR-022 audience measurement', () => {
     expect(adr).toMatch(/No audience measurement by default/);
     expect(adr).toMatch(/No tracker that needs consent, ever, without a new ADR/);
   });
+  it('the Content Security Policies do not allow the measurement script host while measurement is off (least privilege)', () => {
+    for (const f of ['vercel.json', 'api/_services/page-head.js', 'api/_utils/security.js']) expect(read(f), f).not.toMatch(/va\.vercel-scripts\.com/);
+  });
   it('no measurement script is referenced by the HTML shell', () => {
     expect(read('index.html')).not.toMatch(/plausible|matomo|googletagmanager|gtag\(|va\.vercel-scripts/);
   });

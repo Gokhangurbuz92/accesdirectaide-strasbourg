@@ -16,7 +16,7 @@ export function applySecurityHeaders(res, /** @type {string | number | boolean |
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   res.setHeader('Content-Security-Policy', [
       "default-src 'self'",
-      "script-src 'self' https://va.vercel-scripts.com",
+      "script-src 'self'",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self'",
       "img-src 'self' data:",
