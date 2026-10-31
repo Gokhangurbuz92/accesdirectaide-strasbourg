@@ -25,6 +25,14 @@ vi.mock('../../api/lib/search-cache.js', () => ({
 }));
 
 // Mock DB queries for cross-entity search (demarches, structures, actualites)
+// R31 (D16): the démarche, place and news sections use the word search of api/lib/search-query.js (no whole-phrase findMany any more)
+vi.mock('../../api/lib/search-query.js', () => ({
+    searchDemarches: vi.fn().mockResolvedValue({ items: [], total: 0 }),
+    searchStructures: vi.fn().mockResolvedValue({ items: [], total: 0 }),
+    wordPlan: vi.fn().mockReturnValue(null),
+    bestMatchCondition: vi.fn(),
+}));
+
 vi.mock('../../src/db/index.js', () => ({
     db: {
         query: {

@@ -208,10 +208,10 @@ function readingItem(code, label, whoToAsk, facts, reading, local) {
   const all = reading.notMet.length === 0 && reading.unknown.length === 0;
   const state = all ? STATES.POSSIBLE : STATES.CHECK_REQUIRED;
   const parts = [];
-  if (all) parts.push('D\'après vos réponses, les conditions de la règle relue par un expert sont remplies.');
-  if (reading.notMet.length) parts.push(`D'après vos réponses, une condition de la règle relue ne semble pas remplie : ${reading.notMet.join(' ; ')}. Ce n'est pas un refus.`);
+  if (all) parts.push('D’après vos réponses, les conditions de la règle relue par un expert sont remplies.');
+  if (reading.notMet.length) parts.push(`D’après vos réponses, une condition de la règle relue ne semble pas remplie : ${reading.notMet.join(' ; ')}. Ce n’est pas un refus.`);
   if (reading.unknown.length) parts.push(`Vos réponses ne permettent pas de vérifier : ${reading.unknown.join(' ; ')}.`);
-  const falc = all ? 'Vos réponses correspondent à la règle.' : reading.notMet.length ? 'Une condition ne semble pas remplie. Ce n\'est pas un refus.' : 'Certaines conditions sont à vérifier.';
+  const falc = all ? 'Vos réponses correspondent à la règle.' : reading.notMet.length ? 'Une condition ne semble pas remplie. Ce n’est pas un refus.' : 'Certaines conditions sont à vérifier.';
   return item(code, label, state, {
     whoToAsk, basisFacts: facts,
     explanation: `${TEXT[state].fr(whoToAsk)} ${parts.join(' ')}`,
