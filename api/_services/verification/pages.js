@@ -54,7 +54,30 @@ export function mainScope(h) {
   const main = (h.match(/<main[^>]*>([\s\S]*?)<\/main>/i) || [])[1];
   const body = (h.match(/<body[^>]*>([\s\S]*?)<\/body>/i) || [])[1];
   if (articles[0] && (!main || len(articles[0]) >= 0.4 * len(main))) return articles[0];
-  return main || articles[0] || body || h;
+  return main || articles[0] || cmsContent(h) || body || h;
+}
+
+/**
+ * D06 — the content area of a Liferay page (strasbourg.eu, the city and Eurométropole site) that has neither <main> nor <article>: the
+ * « layout-content » block of the page layout. Without it the whole <body> was read — the skip link, « Mon quartier, ma commune », « Mon profil »
+ * and the footer address became « content », and any change of those menus looked like a change of the aid.
+ * @param {string} h @returns {string | null}
+ */
+export function cmsContent(h) {
+  const open = h.search(/<div\b[^>]*\bclass="[^"]*\blayout-content\b[^"]*"[^>]*>/i);
+  return open < 0 ? null : innerOfBalanced(h, open, 'div');
+}
+
+/** the inside of the element that opens at `start`, matching nested elements of the same tag @param {string} h @param {number} start @param {string} tag */
+export function innerOfBalanced(h, start, tag) {
+  const re = new RegExp(`<(/?)${tag}\\b[^>]*>`, 'gi'); re.lastIndex = start;
+  let depth = 0; let first = null; let m;
+  while ((m = re.exec(h))) {
+    if (first === null) first = m.index + m[0].length;
+    depth += m[1] ? -1 : 1;
+    if (depth === 0) return h.slice(first, m.index);
+  }
+  return first === null ? null : h.slice(first);
 }
 
 /**
@@ -73,6 +96,7 @@ export function parseOfficialPage(html, url = '') {
     const body = textOf(part.replace(/^<h[2-4][^>]*>[\s\S]*?<\/h[2-4]>/i, ''))
       .split('\n').filter((l) => !/^v[ée]rifi[ée] le\b/i.test(l) && !/^(partager|imprimer|copier le lien|cette page vous a-t-elle été utile)/i.test(l)).join('\n').trim();
     if (heading && /lien vers cette page a été envoyé|partager la page|vous a-t-elle été utile/i.test(heading)) continue;   // sharing / feedback dialogs, not content
+    if (heading && /^(ent[êe]te|en-t[êe]te|pied) de (la )?page$/i.test(heading)) { if (body.length >= 20) chapters.push({ heading: null, text: body }); continue; }   // D06: a hidden landmark label, not a chapter
     if (body.length >= 20 || (heading && body)) chapters.push({ heading, text: body });
   }
   const fullText = chapters.map((c) => `${c.heading ? `## ${c.heading}\n` : ''}${c.text}`).join('\n\n');
