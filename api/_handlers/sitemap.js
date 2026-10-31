@@ -18,6 +18,8 @@ const STATIC_PUBLIC_PATHS = [
   '/structures',
   '/dispositifs',
   '/actualites',
+  '/bonnes-pratiques',
+  '/outils',
   '/orientation',
   '/mentions-legales',
   '/accessibilite',
@@ -68,9 +70,10 @@ function buildUrlNode(baseUrl, path, updatedAt) {
  * @param {Array<{slug: string | null, updatedAt: Date}>} demarches
  * @param {Array<{slug: string | null, updatedAt: Date}>} structures
  * @param {Array<{slug: string | null, updatedAt: Date}>} [dispositifs]
+ * @param {{ guides?: Array<{slug: string | null, updatedAt?: Date | null}>, actualites?: Array<{slug: string | null, updatedAt?: Date | null}> }} [more]
  * @returns {string}
  */
-export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs = []) {
+export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs = [], more = {}) {
   /** @type {string[]} */
   const nodes = [];
 
@@ -104,6 +107,16 @@ export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositi
     nodes.push(buildUrlNode(baseUrl, `/dispositifs/${encodeURIComponent(dispositif.slug)}`, dispositif.updatedAt));
   }
 
+  // R29: the published official guides and the verified news items
+  for (const guide of more.guides || []) {
+    if (!guide?.slug) continue;
+    nodes.push(buildUrlNode(baseUrl, `/bonnes-pratiques/${encodeURIComponent(guide.slug)}`, guide.updatedAt));
+  }
+  for (const actu of more.actualites || []) {
+    if (!actu?.slug) continue;
+    nodes.push(buildUrlNode(baseUrl, `/actualites/${encodeURIComponent(actu.slug)}`, actu.updatedAt));
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${nodes.join('\n')}
@@ -124,7 +137,7 @@ export default async function handler(req, res) {
 
   try {
     // Parallel queries for all dynamic content types
-    const [aides, demarches, structures, dispositifs] = await Promise.all([
+    const [aides, demarches, structures, dispositifs, guides, actualites] = await Promise.all([
       db.query.Aide.findMany({
         where: and(visibleWhere(schema.Aide, 'aide'), isNotNull(schema.Aide.slug)),
         columns: { slug: true, updatedAt: true },
@@ -149,9 +162,11 @@ export default async function handler(req, res) {
         limit: MAX_DYNAMIC_URLS,
         orderBy: [desc(schema.Dispositif.updatedAt)],
       }),
+      db.query.Guide.findMany({ where: eq(schema.Guide.statut, 'publie'), columns: { slug: true, updatedAt: true }, limit: MAX_DYNAMIC_URLS }),
+      db.query.Actualite.findMany({ where: eq(schema.Actualite.statut, 'publie'), columns: { slug: true, updatedAt: true }, limit: MAX_DYNAMIC_URLS, orderBy: [desc(schema.Actualite.date_publication)] }),
     ]);
 
-    const xml = buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs);
+    const xml = buildSitemapXml(baseUrl, aides, demarches, structures, dispositifs, { guides, actualites });
 
     res.setHeader('x-request-id', requestId);
     res.writeHead(200, {

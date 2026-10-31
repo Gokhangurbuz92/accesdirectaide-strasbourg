@@ -92,3 +92,16 @@ describe('N11 map provider', () => {
     expect(fs.readFileSync('src/components/StructureMap.jsx', 'utf8')).toMatch(/openstreetmap\.org\/copyright/);   // attribution required by the tile policy
   });
 });
+
+describe('sitemap: guides and news', () => {
+  it('lists the guides and news pages and the two catalogue pages', async () => {
+    const { buildSitemapXml } = await import('../../api/_handlers/sitemap.js');
+    const xml = buildSitemapXml('https://www.accesdirectaide.fr', [], [], [], [], {
+      guides: [{ slug: 'loyers-impayes-f31272', updatedAt: new Date('2026-10-31') }], actualites: [{ slug: 'colis-importes-187812', updatedAt: new Date('2026-10-31') }] });
+    for (const loc of ['/bonnes-pratiques', '/outils', '/bonnes-pratiques/loyers-impayes-f31272', '/actualites/colis-importes-187812'])
+      expect(xml).toContain(`<loc>https://www.accesdirectaide.fr${loc}</loc>`);
+    const src = fs.readFileSync('api/_handlers/sitemap.js', 'utf8');   // only published guides and news are offered to crawlers
+    expect(src).toMatch(/Guide\.findMany\(\{ where: eq\(schema\.Guide\.statut, 'publie'\)/);
+    expect(src).toMatch(/Actualite\.findMany\(\{ where: eq\(schema\.Actualite\.statut, 'publie'\)/);
+  });
+});

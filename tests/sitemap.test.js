@@ -13,6 +13,8 @@ vi.mock('../src/db/index.js', () => ({
       Demarche: { findMany: (...args) => mockFindMany('Demarche', ...args) },
       Structure: { findMany: (...args) => mockFindMany('Structure', ...args) },
       Dispositif: { findMany: (...args) => mockFindMany('Dispositif', ...args) },
+      Guide: { findMany: (...args) => mockFindMany('Guide', ...args) },
+      Actualite: { findMany: (...args) => mockFindMany('Actualite', ...args) },
     },
   },
 }));
@@ -24,6 +26,8 @@ vi.mock('../src/db/schema.js', () => {
     Demarche: { statut: col('statut'), slug: col('slug'), updatedAt: col('updatedAt') },
     Structure: { statut: col('statut'), slug: col('slug'), updatedAt: col('updatedAt') },
     Dispositif: { statut: col('statut'), slug: col('slug'), updatedAt: col('updatedAt') },
+    Guide: { statut: col('statut'), slug: col('slug'), updatedAt: col('updatedAt') },
+    Actualite: { statut: col('statut'), slug: col('slug'), updatedAt: col('updatedAt'), date_publication: col('date_publication') },
   };
 });
 
@@ -101,7 +105,7 @@ describe('Sitemap handler (P7-A)', () => {
     await sitemapHandler(createReq(), createRes());
     expect(mockVisibleWhere.mock.calls.map((c) => c[1]).sort()).toEqual(['aide', 'demarche', 'dispositif', 'structure']);
     const wheres = mockFindMany.mock.calls.map((c) => c[1].where);
-    expect(wheres).toHaveLength(4);
+    expect(wheres).toHaveLength(6);   // R29: + guides and news, which are listed only when statut = 'publie'
   });
 
   it('returns 503 without stack details when DB is unavailable', async () => {
