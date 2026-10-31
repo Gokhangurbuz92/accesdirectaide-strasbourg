@@ -95,6 +95,15 @@ const footerPath = (link) => link.href || createPageUrl(link.page);
 export default function Layout({ children }) {   // R26: the active menu entry comes from the address (navActive), no longer from currentPageName
   const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuButtonRef = React.useRef(null);
+  // Q01: Escape closes the phone menu and gives the focus back to its button; a new page closes it
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') { setMobileMenuOpen(false); menuButtonRef.current?.focus(); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen]);
+  React.useEffect(() => { setMobileMenuOpen(false); }, [pathname]);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -230,9 +239,11 @@ export default function Layout({ children }) {   // R26: the active menu entry c
                 size="icon"
                 // R26: the crowded phone header squeezed this button and its icon to 4 px wide; it can no longer shrink (44 px touch target)
                 className="xl:hidden h-11 w-11 min-w-11 shrink-0 border border-slate-200"
+                ref={menuButtonRef}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 {mobileMenuOpen ? <X className="h-6 w-6 shrink-0" aria-hidden="true" /> : <Menu className="h-6 w-6 shrink-0" aria-hidden="true" />}
               </Button>
@@ -242,7 +253,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
         {/* Menu mobile */}
         {mobileMenuOpen && (
-          <div className="xl:hidden border-t border-border bg-surface">
+          <div id="mobile-menu" className="xl:hidden border-t border-border bg-surface">
             <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1" aria-label="Navigation mobile">
               {filteredNavItems.map((item) => (
                 <div key={item.page}>

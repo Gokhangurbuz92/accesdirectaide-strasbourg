@@ -113,3 +113,13 @@ describe('public news fields', () => {
     expect(out).toEqual({ id: 'a', titre: 't', auto_publish: true });
   });
 });
+
+describe('Q01 keyboard: phone menu', () => {
+  it('Escape closes the menu and gives the focus back to its button; a new page closes it', () => {
+    const layout = fs.readFileSync('src/pages/Layout.jsx', 'utf8');
+    expect(layout).toMatch(/if \(e\.key === 'Escape'\) \{ setMobileMenuOpen\(false\); menuButtonRef\.current\?\.focus\(\); \}/);
+    expect(layout).toMatch(/React\.useEffect\(\(\) => \{ setMobileMenuOpen\(false\); \}, \[pathname\]\);/);
+    expect(layout).toMatch(/aria-controls="mobile-menu"/);
+    expect(fs.existsSync('scripts/q01-keyboard-journey.mjs')).toBe(true);
+  });
+});
