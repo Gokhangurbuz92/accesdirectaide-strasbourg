@@ -130,7 +130,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
             )}
 
             {/* Infos de contact */}
-            <div className="space-y-2 text-sm text-slate-600 relative z-20">
+            <div className="space-y-2 text-sm text-slate-600 relative z-20 pointer-events-none [&_a]:pointer-events-auto">   {/* R27: a click on the address or the hours opens the card (it did nothing); the phone link stays a phone link */}
               {/* Note: Links inside here like telephone/email must be z-20 to be clickable. */}
               {structure.adresse && (
                 <div className="flex items-start gap-2">

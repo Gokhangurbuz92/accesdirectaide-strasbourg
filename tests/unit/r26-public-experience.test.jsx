@@ -202,3 +202,15 @@ describe('R27 multi-instance evidence', () => {
     expect(h['x-ada-instance']).toBe(INSTANCE_ID);
   });
 });
+
+describe('R27 lieu journey', () => {
+  it('a click on the address or hours of a lieu card opens the card; the phone link stays clickable', () => {
+    expect(read('src/components/cards/StructureCard.jsx')).toMatch(/relative z-20 pointer-events-none \[&_a\]:pointer-events-auto/);
+  });
+  it('the lieu page links to its place on a map', async () => {
+    const { mapUrl } = await import('../../src/pages/StructureDetail.jsx');
+    expect(mapUrl({ latitude: 48.58, longitude: 7.75 })).toBe('https://www.openstreetmap.org/?mlat=48.58&mlon=7.75#map=17/48.58/7.75');
+    expect(mapUrl({ adresse: '1 parc de l’Étoile', code_postal: '67000', ville: 'Strasbourg' })).toBe(`https://www.openstreetmap.org/search?query=${encodeURIComponent('1 parc de l’Étoile 67000 Strasbourg')}`);
+    expect(read('src/pages/StructureDetail.jsx')).toMatch(/data-testid="structure-map-link"/);
+  });
+});

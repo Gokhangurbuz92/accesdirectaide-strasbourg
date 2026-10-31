@@ -53,6 +53,13 @@ const TYPE_LABELS = {
   pmi: 'PMI',
 };
 
+/** the place on OpenStreetMap: its marker when the coordinates are known, otherwise a search of its address @param {any} st */
+export function mapUrl(st) {
+  const lat = Number(st?.latitude); const lon = Number(st?.longitude);
+  if (Number.isFinite(lat) && Number.isFinite(lon) && lat !== 0 && lon !== 0) return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=17/${lat}/${lon}`;
+  return `https://www.openstreetmap.org/search?query=${encodeURIComponent([st?.adresse, st?.code_postal, st?.ville].filter(Boolean).join(' '))}`;
+}
+
 export default function StructureDetail() {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
@@ -138,6 +145,11 @@ export default function StructureDetail() {
                   {structure.adresse}<br />
                   {structure.code_postal} {structure.ville}
                 </p>
+                {/* R27: the visitor could not see where the place is — a map link (OpenStreetMap: no account, no tracking by AccesDirectAide) */}
+                <a href={mapUrl(structure)} target="_blank" rel="noopener noreferrer" data-testid="structure-map-link"
+                  className="mt-2 inline-flex min-h-11 items-center gap-1.5 font-semibold text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded">
+                  Voir sur une carte<span className="sr-only"> (OpenStreetMap, nouvel onglet)</span>
+                </a>
               </div>
             </div>
           )}
