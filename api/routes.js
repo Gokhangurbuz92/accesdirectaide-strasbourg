@@ -102,6 +102,7 @@ export const routes = [
     { path: 'pro/appointments/ics', match: 'exact', handler: () => import('./_handlers/pro/appointments/ics.js') },
     { path: 'pro/cases', match: 'exact', handler: () => import('./_handlers/pro/cases.js') },
     { path: 'pro/referrals', match: 'exact', handler: () => import('./_handlers/pro/referrals.js') },
+    { path: 'pro/selections', match: 'exact', handler: () => import('./_handlers/pro/orientation-baskets.js') },   // R18 (R31): orientation baskets
     { path: 'pro/structure', match: 'exact', handler: () => import('./_handlers/pro/structure.js') },
     // Citizen messaging (list / thread / send / from-appointment) — route lost in the 2026-03-14 cleanup.
     { path: 'messages', match: 'prefix', handler: () => import('./_handlers/messages.js') },
@@ -188,6 +189,8 @@ export const routes = [
     { path: 'admin/support', match: 'exact', handler: () => import('./_handlers/admin/support.js') },
     { path: 'admin/data-quality', match: 'exact', handler: () => import('./_handlers/admin/data-quality.js') },
     { path: 'admin/institutions', match: 'exact', handler: () => import('./_handlers/admin/institutions.js') },
+    { path: 'admin/funding', match: 'exact', handler: () => import('./_handlers/admin/funding.js') },   // P27 (R31): funding-application workspace
+    { path: 'admin/pilot', match: 'exact', handler: () => import('./_handlers/admin/pilot.js') },   // Q14 (R31): pilot measures
     { path: 'admin/falc', match: 'exact', handler: () => import('./_handlers/admin/falc.js') },
     { path: 'admin/ai-oversight', match: 'exact', handler: () => import('./_handlers/admin/ai-oversight.js') },
     { path: 'citizen/profile', match: 'exact', handler: () => import('./_handlers/citizen/profile.js') },

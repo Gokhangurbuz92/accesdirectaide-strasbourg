@@ -4,7 +4,7 @@ import { SkeletonList } from '@/components/ui/skeleton';
 // @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Clock3, MessageCircle, Shield, BarChart3, Settings, Menu, X, Globe } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Clock3, MessageCircle, Shield, BarChart3, Settings, Menu, X, Globe, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import NotificationCenter from '@/components/NotificationCenter';
@@ -181,6 +181,8 @@ function ProNavItems({ role }) {
         <>
             <NavLink to="/pro/dashboard" icon={LayoutDashboard}>Tableau de bord</NavLink>
             <NavLink to="/pro/dossiers" icon={FileText}>Dossiers suivis</NavLink>
+            {/* R18 (R31): working baskets of verified aides, démarches and lieux */}
+            <NavLink to="/pro/selections" icon={ListChecks}>Sélections d’orientation</NavLink>
             <NavLink to="/pro/orientations" icon={Users}>Orientations</NavLink>
             <NavLink to="/pro/rdv/agenda" icon={CalendarDays}>Agenda RDV</NavLink>
             <NavLink to="/pro/rdv/new" icon={FileText}>Nouveau RDV</NavLink>

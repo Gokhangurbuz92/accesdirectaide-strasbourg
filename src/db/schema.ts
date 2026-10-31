@@ -2825,3 +2825,95 @@ export const AiOutputReview = pgTable('AiOutputReview', {
 		.onDelete('cascade')
 		.onUpdate('cascade')
 }));
+
+/**
+ * R18 (R31) — ADA Pro « Sélections d'orientation »: a professional's working basket of verified public records (aides, démarches, lieux) organized around needs.
+ * items: [{ key, kind: 'aide'|'demarche'|'structure', refId, followUp, addedAt }] — references and codes only; the label and the professional's reasons are in
+ * privateEncrypted (sealed JSON, purpose orientation-basket, context basket:<id>). A basket holds no dossier data; a linked case is reached only through the
+ * case's own grant and access rule (api/_services/orientation-basket.js).
+ */
+export const ProOrientationBasket = pgTable('ProOrientationBasket', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	structureId: text('structureId').notNull(),
+	ownerProUserId: text('ownerProUserId'),
+	caseId: text('caseId'),
+	needCodes: text('needCodes').array().notNull().default(sql`ARRAY[]::text[]`),
+	items: jsonb('items').notNull().default(sql`'[]'::jsonb`),
+	privateEncrypted: text('privateEncrypted').notNull(),
+	status: text('status').notNull().default('ACTIVE'),
+	sharedAt: timestamp('sharedAt', { precision: 3 }),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'ProOrientationBasket_structure_fkey': foreignKey({ name: 'ProOrientationBasket_structure_fkey', columns: [t.structureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ProOrientationBasket_owner_fkey': foreignKey({ name: 'ProOrientationBasket_owner_fkey', columns: [t.ownerProUserId], foreignColumns: [ProUser.id] }).onDelete('set null').onUpdate('cascade'),
+	'ProOrientationBasket_case_fkey': foreignKey({ name: 'ProOrientationBasket_case_fkey', columns: [t.caseId], foreignColumns: [ProCase.id] }).onDelete('set null').onUpdate('cascade'),
+	'ProOrientationBasket_owner_idx': index('ProOrientationBasket_owner_idx').on(t.structureId, t.ownerProUserId, t.status)
+}));
+
+/**
+ * P27 (R31) — the publisher's funding-application workspace (« Dossiers de financement », administrators only). content holds the sections, the budget, the
+ * financing plan, milestones and the supporting-document checklist; every save keeps the previous content in FundingDossierVersion. An amount or an award is
+ * never assumed: an awarded line needs the funder's decision reference, a confirmed budget line its supporting document (api/_services/funding-dossiers.js).
+ */
+export const FundingDossier = pgTable('FundingDossier', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	title: text('title').notNull(),
+	funderName: text('funderName'),
+	programmeName: text('programmeName'),
+	programmeUrl: text('programmeUrl'),
+	deadline: timestamp('deadline', { precision: 3 }),
+	status: text('status').notNull().default('EN_PREPARATION'),
+	content: jsonb('content').notNull().default(sql`'{}'::jsonb`),
+	version: integer('version').notNull().default(1),
+	decisionRef: text('decisionRef'),
+	decisionAt: timestamp('decisionAt', { precision: 3 }),
+	submittedAt: timestamp('submittedAt', { precision: 3 }),
+	createdBy: text('createdBy').notNull(),
+	updatedBy: text('updatedBy').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+});
+
+export const FundingDossierVersion = pgTable('FundingDossierVersion', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	dossierId: text('dossierId').notNull(),
+	version: integer('version').notNull(),
+	status: text('status').notNull(),
+	content: jsonb('content').notNull(),
+	savedBy: text('savedBy').notNull(),
+	note: text('note'),
+	savedAt: timestamp('savedAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'FundingDossierVersion_dossier_fkey': foreignKey({ name: 'FundingDossierVersion_dossier_fkey', columns: [t.dossierId], foreignColumns: [FundingDossier.id] }).onDelete('cascade').onUpdate('cascade'),
+	'FundingDossierVersion_dossier_version_key': uniqueIndex('FundingDossierVersion_dossier_version_key').on(t.dossierId, t.version)
+}));
+
+/**
+ * Q14 (R31) — one observed task of the Strasbourg pilot (protocol docs/pilot/PROTOCOLE_PILOTE.md). No name, no contact, no free identifier: participantCode is a
+ * code the facilitator draws from the server and writes on the paper consent form (kept by the publisher, outside the product). Recorded only with
+ * consentRecorded = true; reported only as aggregates with small-number suppression (api/_services/pilot-measures.js).
+ */
+export const PilotSession = pgTable('PilotSession', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	protocolVersion: text('protocolVersion').notNull(),
+	participantCode: text('participantCode').notNull(),
+	journeyCode: text('journeyCode').notNull(),
+	environment: text('environment').notNull().default('PRODUCTION'),
+	deviceType: text('deviceType').notNull(),
+	assistiveTech: text('assistiveTech'),
+	outcome: text('outcome').notNull(),
+	assistance: text('assistance').notNull(),
+	durationSeconds: integer('durationSeconds'),
+	errorCount: integer('errorCount').notNull().default(0),
+	clarity: integer('clarity'),
+	accessibilityIssues: text('accessibilityIssues').array().notNull().default(sql`ARRAY[]::text[]`),
+	observation: text('observation'),
+	consentRecorded: boolean('consentRecorded').notNull(),
+	conductedAt: timestamp('conductedAt', { precision: 3 }).notNull(),
+	recordedBy: text('recordedBy').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'PilotSession_journey_idx': index('PilotSession_journey_idx').on(t.journeyCode, t.protocolVersion),
+	'PilotSession_consent_check': check('PilotSession_consent_check', sql`${t.consentRecorded} = true`)
+}));

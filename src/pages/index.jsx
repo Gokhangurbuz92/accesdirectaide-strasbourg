@@ -148,6 +148,8 @@ const AdminPrivacy = lazy(() => import("./admin/k5/Privacy.jsx"));
 const AdminSupport = lazy(() => import("./admin/k5/Support.jsx"));
 const AdminDataQuality = lazy(() => import("./admin/k5/DataQuality.jsx"));
 const AdminInstitutions = lazy(() => import("./admin/k5/Institutions.jsx"));
+const AdminFunding = lazy(() => import("./admin/k5/Funding.jsx"));
+const AdminPilot = lazy(() => import("./admin/k5/Pilot.jsx"));
 const AdminSubmissions = lazy(() => import("./admin/k5/Submissions.jsx"));
 const AdminVersions = lazy(() => import("./admin/k5/Versions.jsx"));
 const AdminFalc = lazy(() => import("./admin/k5/Falc.jsx"));
@@ -203,6 +205,7 @@ const ProVisio = lazy(() => import("./pro/Visio.jsx"));
 const ProMfaSettings = lazy(() => import("./pro/MfaSettings.jsx"));
 const ProCases = lazy(() => import("./pro/Cases.jsx"));
 const ProReferrals = lazy(() => import("./pro/Referrals.jsx"));
+const ProSelections = lazy(() => import("./pro/Selections.jsx"));
 const CompteOrientations = lazy(() => import("./CompteOrientations.jsx"));
 
 // Sentry
@@ -361,6 +364,9 @@ function PagesContent() {
                                     <Route path="support" element={<AdminSupport />} />
                                     <Route path="data-quality" element={<AdminDataQuality />} />
                                     <Route path="institutions" element={<AdminInstitutions />} />
+                                    <Route path="financement" element={<AdminFunding />} />
+                                    <Route path="financement/:id" element={<AdminFunding />} />
+                                    <Route path="pilote" element={<AdminPilot />} />
                                     <Route path="signalements" element={<AdminSubmissions />} />
                                     <Route path="versions" element={<AdminVersions />} />
                                     <Route path="falc" element={<AdminFalc />} />
@@ -437,6 +443,8 @@ function PagesContent() {
                                     <Route path="dossiers/:id" element={<ProGuard><ProCases /></ProGuard>} />
                                     <Route path="orientations" element={<ProGuard><ProReferrals /></ProGuard>} />
                                     <Route path="orientations/:id" element={<ProGuard><ProReferrals /></ProGuard>} />
+                                    <Route path="selections" element={<ProGuard><ProSelections /></ProGuard>} />
+                                    <Route path="selections/:id" element={<ProGuard><ProSelections /></ProGuard>} />
                                     <Route path="audit" element={<ProGuard><ProAuditLog /></ProGuard>} />
                                     <Route path="reports" element={<ProGuard><ImpactReports /></ProGuard>} />
                                     <Route path="regional" element={<ProGuard><RegionalDashboard /></ProGuard>} />

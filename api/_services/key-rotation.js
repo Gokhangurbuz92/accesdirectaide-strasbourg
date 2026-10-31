@@ -75,6 +75,8 @@ const TEXT_COLUMNS = [
   { table: 'EmailChangeRequest', idCol: 'id', col: 'newEmailEncrypted', purpose: 'email-change', ctx: (r) => `email-change:${r.id}`, select: '1 AS one' },
   // R11 / N04: a browser's web push subscription (its push-service address and keys)
   { table: 'PushSubscription', idCol: 'id', col: 'subscriptionEncrypted', purpose: 'push-subscription', ctx: (r) => `push:${r.userId}:${r.id}`, select: '"userId"' },
+  // R18 (R31): the label and reasons of a professional's orientation basket
+  { table: 'ProOrientationBasket', idCol: 'id', col: 'privateEncrypted', purpose: 'orientation-basket', ctx: (r) => `basket:${r.id}`, select: '1 AS one' },
 ];
 /** v1-only text columns (api/lib/crypto.ts encrypt): no envelope, re-encrypted with the primary key when a previous key wrote them */
 const V1_TEXT_COLUMNS = [

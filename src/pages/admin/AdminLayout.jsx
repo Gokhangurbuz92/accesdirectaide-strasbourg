@@ -92,6 +92,8 @@ const SIDEBAR_SECTIONS = [
         items: [
             { label: 'Opérations et journal d’audit', to: '/admin/operations', icon: Shield },
             { label: 'Partenaires institutionnels', to: '/admin/institutions', icon: Globe },
+            { label: 'Dossiers de financement', to: '/admin/financement', icon: FileStack },
+            { label: 'Mesures du pilote', to: '/admin/pilote', icon: Activity },
         ]
     },
     {

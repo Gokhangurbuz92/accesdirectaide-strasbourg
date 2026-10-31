@@ -17,6 +17,12 @@ const ROUTE_LABELS = {
     mfa: 'Sécurité MFA',
     audit: 'Journal d\'audit',
     visio: 'Visioconférence',
+    // R31: the case, referral and selection screens fell back to the raw segment (« Selections » without its accent)
+    dossiers: 'Dossiers suivis',
+    orientations: 'Orientations',
+    selections: 'Sélections d’orientation',
+    rdv: 'Rendez-vous',
+    regional: 'Observatoire territorial',
 };
 
 /**
@@ -35,7 +41,8 @@ export default function ProBreadcrumb({ className = '' }) {
 
     const crumbs = segments.map((segment, index) => {
         const path = '/' + segments.slice(0, index + 1).join('/');
-        const label = ROUTE_LABELS[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+        // an identifier (uuid / long code) is the record itself, not a section name
+        const label = ROUTE_LABELS[segment] || (/^[0-9a-f-]{16,}$/i.test(segment) ? 'Détail' : segment.charAt(0).toUpperCase() + segment.slice(1));
         const isLast = index === segments.length - 1;
 
         return { path, label, isLast };

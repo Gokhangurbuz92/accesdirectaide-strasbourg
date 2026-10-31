@@ -19,11 +19,11 @@ import crypto from 'node:crypto';
 import { env } from '../_utils/env.js';
 import { decrypt as decryptLegacyText, decryptBuffer as decryptLegacyBuffer } from './crypto.js';
 
-export type Purpose = 'dossier-message' | 'dossier-file' | 'dossier-filename' | 'coffre-file' | 'coffre-filename' | 'case-note' | 'referral-message' | 'message-attachment' | 'message-attachment-name' | 'support-request' | 'ownership-recovery' | 'diagnostic-situation' | 'email-change' | 'push-subscription';
+export type Purpose = 'dossier-message' | 'dossier-file' | 'dossier-filename' | 'coffre-file' | 'coffre-filename' | 'case-note' | 'referral-message' | 'message-attachment' | 'message-attachment-name' | 'support-request' | 'ownership-recovery' | 'diagnostic-situation' | 'email-change' | 'push-subscription' | 'orientation-basket';
 // PKG-4: case notes and referral messages have their own purposes (a note can never be opened as a referral message, a dossier file, etc.)
 // PKG-2: Mon Coffre has its own purposes (keys derived per purpose + context: a Coffre blob can never be opened as a dossier file and vice versa)
-const PURPOSE_CODE: Record<Purpose, string> = { 'dossier-message': 'm', 'dossier-file': 'f', 'dossier-filename': 'n', 'coffre-file': 'c', 'coffre-filename': 'k', 'case-note': 'q', 'referral-message': 'r', 'message-attachment': 'a', 'message-attachment-name': 'b', 'support-request': 's', 'ownership-recovery': 'o', 'diagnostic-situation': 'd', 'email-change': 'e', 'push-subscription': 'p' };
-const CODE_PURPOSE: Record<string, Purpose> = { m: 'dossier-message', f: 'dossier-file', n: 'dossier-filename', c: 'coffre-file', k: 'coffre-filename', q: 'case-note', r: 'referral-message', a: 'message-attachment', b: 'message-attachment-name', s: 'support-request', o: 'ownership-recovery', d: 'diagnostic-situation', e: 'email-change', p: 'push-subscription' };
+const PURPOSE_CODE: Record<Purpose, string> = { 'dossier-message': 'm', 'dossier-file': 'f', 'dossier-filename': 'n', 'coffre-file': 'c', 'coffre-filename': 'k', 'case-note': 'q', 'referral-message': 'r', 'message-attachment': 'a', 'message-attachment-name': 'b', 'support-request': 's', 'ownership-recovery': 'o', 'diagnostic-situation': 'd', 'email-change': 'e', 'push-subscription': 'p', 'orientation-basket': 'g' };
+const CODE_PURPOSE: Record<string, Purpose> = { m: 'dossier-message', f: 'dossier-file', n: 'dossier-filename', c: 'coffre-file', k: 'coffre-filename', q: 'case-note', r: 'referral-message', a: 'message-attachment', b: 'message-attachment-name', s: 'support-request', o: 'ownership-recovery', d: 'diagnostic-situation', e: 'email-change', p: 'push-subscription', g: 'orientation-basket' };
 const IV_LEN = 12;
 const TAG_LEN = 16;
 const BUF_MAGIC = Buffer.from('ADA2');
