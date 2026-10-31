@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
+import NoResultsHelp from '@/components/search/NoResultsHelp';
 import StructureCard from '@/components/cards/StructureCard';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
@@ -444,6 +445,9 @@ export default function Annuaire() {
             actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>Voir toutes les structures</Button>}
             data-testid="annuaire-empty"
           />
+        )}
+        {!isLoading && !structures.length && (
+          <NoResultsHelp kind="structures" q={q} />
         )}
         {!isLoading && !structures.length ? <OfficialResourcesNotice /> : null}
       </div>

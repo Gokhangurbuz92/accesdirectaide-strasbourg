@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
+import NoResultsHelp from '@/components/search/NoResultsHelp';
 import DemarcheCard from '@/components/cards/DemarcheCard';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 
@@ -387,6 +388,7 @@ export default function Demarches() {
               }
               data-testid="demarches-empty-component"
             />
+            {(q || category || situation) && <NoResultsHelp kind="demarches" q={q} />}
             {/* launch-readiness item 58: this pointed to the orientation assistant, whose calculation needs the OpenFisca engine that production does not have
                 (it answers 503 there); the directory of support structures works */}
             {!(q || category || situation) && (

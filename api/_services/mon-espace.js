@@ -15,6 +15,7 @@ import { ENTITY_TABLES, evidenceUrlAllowed } from './content-verification.js';
 import { storage as defaultStorage } from '../lib/storage.js';
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { isRestricted } from './processing-restriction.js';
+import { ageGate, ageRefusal } from './citizen-account.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -248,6 +249,8 @@ export async function uploadCoffre(userId, input, deps = {}) {
   const category = String(input?.category || '');
   if (!COFFRE_CATEGORIES.includes(category)) return bad('INVALID_CATEGORY', 'Catégorie inconnue.');
   if (!COFFRE_UPLOAD_CATEGORIES.includes(category)) return bad('HEALTH_DOCUMENTS_NOT_ACCEPTED', 'Mon Coffre n’accepte pas les documents de santé : leur hébergement demande un hébergeur agréé (HDS), qui n’est pas encore en place.', 422);
+  // C05 (R28), after the pure checks (R15: a health document is refused before the database is read): storing documents is a sensitive account feature — closed to a declared minor until a legally validated age policy says otherwise
+  const gate = await ageGate(userId, db); if (!gate.allowed) return ageRefusal(gate);
   const originalName = [...String(input?.originalName || '')].filter((ch) => ch.charCodeAt(0) > 31 && ch.charCodeAt(0) !== 127).join('').trim().slice(0, 200);
   if (!originalName) return bad('INVALID_NAME', 'Nom de fichier manquant.');
   const buf = decodeBase64(input?.fileBase64);
@@ -387,6 +390,7 @@ export async function removeDossierDocument(userId, shareId, fileId, deps = {}) 
  */
 export async function shareFromCoffre(userId, input, deps = {}) {
   const db = deps.db || defaultDb; const storage = deps.storage || defaultStorage;
+  const gate = await ageGate(userId, db); if (!gate.allowed) return ageRefusal(gate);   // C05 (R28): sending a document to an organisation, same rule
   const s = await ownedDossier(userId, input?.shareId, db);
   if (!s) return bad('not_found', 'Ce dossier est introuvable ou n’est pas rattaché à votre compte.', 404);
   // PKG-11 audit: nothing new is shared while the person restricts processing (art. 18)

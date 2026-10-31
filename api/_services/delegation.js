@@ -12,6 +12,7 @@ import { CitizenDelegation, CitizenUser, DelegationAccessEvent, ParcoursItem, Pr
 import { listCoffre } from './mon-espace.js';
 import { mailLedgerStatus } from '../_utils/mailer.js';
 import { isRestricted } from './processing-restriction.js';
+import { ageGate, ageRefusal } from './citizen-account.js';
 
 export const DELEGATION_ROLES = ['AIDANT', 'TUTEUR', 'CURATEUR', 'REPRESENTANT'];
 export const DELEGATION_SCOPES = ['PARCOURS_READ', 'COFFRE_LIST', 'RDV_READ'];
@@ -40,6 +41,8 @@ const view = (r, other) => ({ id: r.id, role: r.role, scopes: r.scopes, status: 
 /** The principal invites a person by e-mail. Returns the one-time link (also sent by e-mail when a provider is configured; delivery is reported honestly). */
 export async function inviteDelegate(principal, input, deps = {}) {
   const db = deps.db || defaultDb;
+  // C05 (R28): giving another person access to one's account is a sensitive account feature — same age rule as the Coffre and the household
+  const gate = await ageGate(principal.id, db); if (!gate.allowed) return ageRefusal(gate);
   const email = norm(input?.email); const role = String(input?.role || ''); const days = Number(input?.days);
   const scopes = [...new Set(Array.isArray(input?.scopes) ? input.scopes.map(String) : [])];
   if (!isEmail(email)) return bad('INVALID_EMAIL', 'Indiquez l’adresse e-mail de la personne de confiance.');

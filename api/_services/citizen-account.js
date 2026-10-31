@@ -61,7 +61,7 @@ export async function ageGate(userId, db = defaultDb) {
   }
   return evaluateAge(p?.ageBand ?? null, { guardianVerified });
 }
-const ageRefusal = (gate) => bad('AGE_POLICY_PENDING', gate.accountFeatures === 'POLICY_PENDING'
+export const ageRefusal = (gate) => bad('AGE_POLICY_PENDING', gate.accountFeatures === 'POLICY_PENDING'
   ? "Les informations publiques restent accessibles à tout âge. Les fonctions de compte sensibles pour les mineurs attendent un cadre de consentement validé juridiquement."
   : 'Cette fonction nécessite le consentement d’un représentant légal vérifié.', 409);
 

@@ -7,8 +7,13 @@ import { Printer } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import LazyImage from '@/components/ui/LazyImage';
 import LoadError from '@/components/LoadError';
+import OfficialText from '@/components/guides/OfficialText';
 
-const stepsOf = (raw) => { try { const v = typeof raw === 'string' ? JSON.parse(raw) : raw; return Array.isArray(v) ? v : []; } catch { return []; } };
+const parse = (raw) => { try { return typeof raw === 'string' ? JSON.parse(raw) : raw; } catch { return null; } };
+// R28: a guide is either the editorial step list, or an official Service-Public sheet reproduced without change ({ version: 'official-sheet-v1', intro, steps, provenance })
+const stepsOf = (raw) => { const v = parse(raw); return Array.isArray(v) ? v : Array.isArray(v?.steps) ? v.steps : []; };
+const officialOf = (raw) => { const v = parse(raw); return v && v.version === 'official-sheet-v1' ? v : null; };
+const frDay = (d) => { const x = d ? new Date(d) : null; return x && !Number.isNaN(x.getTime()) ? x.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' }) : null; };
 
 export default function GuideDetail() {
     const { slug } = useParams();
@@ -44,6 +49,7 @@ export default function GuideDetail() {
     );
 
     const steps = stepsOf(guide.contenu_json);
+    const official = officialOf(guide.contenu_json);
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8 print:p-0 print:max-w-none">
@@ -83,9 +89,23 @@ export default function GuideDetail() {
 
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{guide.titre}</h1>
 
+                    {official && (
+                        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-slate-800" data-testid="guide-official-provenance">
+                            <p><strong>Texte officiel de Service-Public.gouv.fr</strong>, repris sans modification (Licence Ouverte 2.0).
+                                {frDay(official.provenance?.checkedAt) && <> Vérifié le {frDay(official.provenance.checkedAt)}</>}
+                                {frDay(official.provenance?.importantChangeAt) && <> ; dernière modification importante de la fiche : {frDay(official.provenance.importantChangeAt)}</>}.</p>
+                            {official.provenance?.sourceUrl && (
+                                <a href={official.provenance.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-semibold text-blue-700 hover:underline">
+                                    Lire la fiche sur service-public.gouv.fr<span className="sr-only"> (nouvel onglet)</span>
+                                </a>
+                            )}
+                            <p className="mt-2 text-slate-600">Cette fiche explique les règles générales : seul l’organisme concerné décide de votre situation.</p>
+                        </div>
+                    )}
+                    {official?.intro && <p className="mt-4 text-lg text-slate-800" data-testid="guide-intro">{official.intro}</p>}
                     {guide.resume_falc && (
                         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-lg text-gray-800 font-medium">
-                            <span className="block text-sm uppercase text-yellow-700 mb-1 font-bold">Resumé Facile à Lire :</span>
+                            <span className="block text-sm uppercase text-yellow-700 mb-1 font-bold">Résumé facile à lire :</span>
                             {guide.resume_falc}
                         </div>
                     )}
@@ -94,8 +114,10 @@ export default function GuideDetail() {
                 <div className="space-y-8">
                     {Array.isArray(steps) && steps.map((step, idx) => (
                         <section key={idx} className="print:break-inside-avoid" data-testid="guide-step">
-                            {step.titre && <h3 className="text-2xl font-bold text-blue-900 mb-3">{idx + 1}. {step.titre}</h3>}
-                            {step.texte && <div className="prose max-w-none text-gray-700 whitespace-pre-line">{step.texte}</div>}
+                            {step.titre && (official
+                                ? <h2 className="text-xl font-bold text-blue-900 mb-3">{step.titre}</h2>
+                                : <h3 className="text-2xl font-bold text-blue-900 mb-3">{idx + 1}. {step.titre}</h3>)}
+                            {step.texte && (official ? <OfficialText text={step.texte} /> : <div className="prose max-w-none text-gray-700 whitespace-pre-line">{step.texte}</div>)}
                             {step.image && (
                                 <LazyImage src={step.image} alt="" className="mt-4 rounded shadow max-w-full md:max-w-md" />
                             )}
@@ -111,8 +133,8 @@ export default function GuideDetail() {
                     <footer className="mt-12 pt-6 border-t text-sm text-gray-500">
                         <h4 className="font-bold mb-2">Sources :</h4>
                         <ul className="list-disc pl-5">
-                            {guide.sources_urls.map((/** @type {number} */ url, i) => (
-                                <li key={i}>{url}</li>
+                            {guide.sources_urls.map((/** @type {string} */ url, i) => (
+                                <li key={i}><a href={url} target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-800">{url}</a></li>
                             ))}
                         </ul>
                     </footer>

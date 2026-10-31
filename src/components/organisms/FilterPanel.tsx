@@ -9,6 +9,8 @@ export interface FilterState {
 }
 
 export interface FilterPanelProps {
+    /** R28: the page's own search bar is the search; the panel's local field is shown only where there is none */
+    showSearch?: boolean;
     filters: FilterState;
     onChange: (next: FilterState) => void;
     onReset: () => void;
@@ -39,6 +41,7 @@ export default function FilterPanel({
     filters,
     onChange,
     onReset,
+    showSearch = true,
 }: FilterPanelProps) {
     const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -47,7 +50,7 @@ export default function FilterPanel({
     return (
         <aside aria-label="Filtres" className="space-y-6">
             {/* Search */}
-            <form onSubmit={handleSearchSubmit}>
+            {showSearch && <form onSubmit={handleSearchSubmit}>
                 <label htmlFor="filter-search" className="sr-only">
                     Rechercher une aide
                 </label>
@@ -58,7 +61,7 @@ export default function FilterPanel({
                     value={filters.search}
                     onChange={(e) => onChange({ ...filters, search: e.target.value })}
                 />
-            </form>
+            </form>}
 
             {/* Category */}
             <div>

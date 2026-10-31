@@ -142,7 +142,7 @@ export default function Guides() {
                                                 {guide.titre}
                                             </h2>
                                             <p className="text-gray-600 line-clamp-2">
-                                                {guide.resume_falc || "Voir le guide..."}
+                                                {guide.resume_falc || guide.contenu_json?.intro || "Voir le guide"}
                                             </p>
                                         </article>
                                     </Link>

@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import FilterPanel from '@/components/organisms/FilterPanel';
 import EmptyState from '@/components/ui/EmptyState';
+import NoResultsHelp from '@/components/search/NoResultsHelp';
 import AidGrid from '@/components/organisms/AidGrid';
 import { buildAidesItemListSchema, buildBreadcrumbSchema } from '@/lib/seo';
 import { useAidesListing } from '@/lib/hooks/useAidesListing';
@@ -488,6 +489,7 @@ export default function Aides() {
           {/* Sidebar FilterPanel */}
           <aside className="w-full shrink-0 lg:w-64" aria-label="Filtres de recherche">
             <FilterPanel
+              showSearch={false}
               filters={localFilters}
               onChange={setLocalFilters}
               onReset={resetLocalFilters}
@@ -558,6 +560,7 @@ export default function Aides() {
                         hasActiveFilters={true}
                         onReset={() => { clearFilters(); resetLocalFilters(); }}
                       />
+                      <NoResultsHelp kind="aides" q={q} />
                       <OfficialResourcesNotice />
                     </div>
                   )}
