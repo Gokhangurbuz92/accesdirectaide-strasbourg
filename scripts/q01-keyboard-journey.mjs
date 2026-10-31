@@ -21,7 +21,7 @@ async function tabUntil(p, pred, max = 60) { for (let i = 1; i <= max; i += 1) {
   ok('skip link moves focus to the main content', /main|contenu|content/i.test(afterSkip), afterSkip);
   const s = await tabUntil(p, (f) => f.tag === 'INPUT');
   ok('search field reachable by keyboard', !!s, s ? `${s.i} Tab` : '');
-  if (s) { ok('search field focus is visible', s.f.ring, JSON.stringify(s.f)); await p.keyboard.type('payer mon loyer'); await p.keyboard.press('Enter'); await p.waitForLoadState('networkidle'); await p.waitForTimeout(1500); }
+  if (s) { ok('search field focus is visible', s.f.ring, JSON.stringify(s.f)); await p.keyboard.type('payer mon loyer'); await p.keyboard.press('Enter'); await p.waitForLoadState('networkidle'); await p.locator('main a[href^="/aides/"]').first().waitFor({ timeout: 15000 }).catch(() => {}); }
   ok('Enter in the search opens results', /q=|recherche|aides/.test(p.url()), p.url().replace(B, ''));
   const card = await tabUntil(p, (f) => f.tag === 'A' && /^\/aides\/[^?]/.test(f.href || ''), 120);
   ok('a result card is reachable by keyboard', !!card, card ? `${card.i} Tab → ${card.f.href}` : '');
