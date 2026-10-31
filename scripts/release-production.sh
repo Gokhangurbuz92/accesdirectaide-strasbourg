@@ -40,7 +40,9 @@ node scripts/unit-gate.mjs
 npm audit --omit=dev --audit-level=high
 say "gate PASS"
 
-PREV=$($VERCEL inspect "$SITE" 2>&1 | awk '$1=="url"{print $2; exit}')
+# the whole output first: an early-closing pipe makes the CLI abort, and pipefail would stop the release
+INSPECT=$($VERCEL inspect "$SITE" 2>&1) || true
+PREV=$(printf '%s\n' "$INSPECT" | awk '$1=="url"{print $2}' | head -1)
 [ -n "$PREV" ] || { say "FAIL: the current production deployment could not be read (no rollback target)"; exit 2; }
 say "previous production $PREV"
 $VERCEL deploy --prod --yes
