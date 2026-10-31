@@ -68,7 +68,7 @@ describe('news names its publisher and its licence', () => {
     expect(list).toMatch(/<RecordProvenance verifiedAt=\{verifiedAt\} sourceHost=\{sourceLabel\}/);
     expect(list).toMatch(/<CardActionStrip label="Lire l’actualité" \/>/);
     expect(fs.readFileSync('src/pages/ActualiteDetail.jsx', 'utf8')).toMatch(/data-testid="news-attribution"/);
-    expect(fs.readFileSync('api/_handlers/actualites.js', 'utf8')).toMatch(/verifiedAt: newsVerifiedAt\(safeItem\)/);
+    expect(fs.readFileSync('api/_handlers/actualites.js', 'utf8')).toMatch(/verifiedAt: newsVerifiedAt\(row\)/);
   });
 });
 
@@ -103,5 +103,13 @@ describe('sitemap: guides and news', () => {
     const src = fs.readFileSync('api/_handlers/sitemap.js', 'utf8');   // only published guides and news are offered to crawlers
     expect(src).toMatch(/Guide\.findMany\(\{ where: eq\(schema\.Guide\.statut, 'publie'\)/);
     expect(src).toMatch(/Actualite\.findMany\(\{ where: eq\(schema\.Actualite\.statut, 'publie'\)/);
+  });
+});
+
+describe('public news fields', () => {
+  it('a visitor never receives who decided, the editorial note or the raw feed payload', async () => {
+    const { publicNewsFields } = await import('../../api/_handlers/actualites.js');
+    const out = publicNewsFields({ id: 'a', titre: 't', updatedBy: 'admin-42', commentaire_statut: 'Publiée par Camille Martin', raw_payload_json: {}, ingest_batch: 'b', raw_data_hash: 'h', auto_publish: true });
+    expect(out).toEqual({ id: 'a', titre: 't', auto_publish: true });
   });
 });

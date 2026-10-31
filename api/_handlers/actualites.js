@@ -15,6 +15,11 @@ const MALFORMED_SLUG = Symbol('malformed-slug');
 
 /** R29: an item published by the automatic verification was checked against its original page on that day; any other item has no verification date */
 const newsVerifiedAt = (item) => (item?.auto_publish && item?.updatedBy === 'verification-automatique' && item?.published_at) || null;
+/** R29: what a visitor receives — never who decided (`updatedBy`, an administrator id) nor the editorial note (it can name a reviewer), nor the raw feed payload */
+export const publicNewsFields = (row) => {
+  const { updatedBy: _by, commentaire_statut: _note, raw_payload_json: _raw, ingest_batch: _batch, raw_data_hash: _hash, ...rest } = row;
+  return rest;
+};
 /**
  * @param {string | null | undefined} url
  * @param {string | null | undefined} host
@@ -139,11 +144,12 @@ export default async function handler(req, res) {
             if (!item) return res.status(404).json({ error: 'Not found' });
             if (!isAdmin && item.statut !== 'publie') return res.status(404).json({ error: 'Not found' });
 
-            const { sourceDocument, ...safeItem } = item;
+            const { sourceDocument, ...row } = item;
+            const safeItem = isAdmin ? row : publicNewsFields(row);
             return res.status(200).json({
               ...safeItem,
               provenance: buildProvenance({
-                verifiedAt: newsVerifiedAt(safeItem),
+                verifiedAt: newsVerifiedAt(row),
                 fetchedAt: sourceDocument?.fetched_at || safeItem.fetched_at,
                 sourceUrl:
                   sourceDocument?.source_url ||
@@ -218,6 +224,9 @@ export default async function handler(req, res) {
                         source_url: true,
                         quality_score: true,
                         fetched_at: true,
+                        auto_publish: true,
+                        published_at: true,
+                        updatedBy: true,
                     },
                     with: {
                         sourceDocument: {
@@ -232,11 +241,12 @@ export default async function handler(req, res) {
             const total = Number(totalCountResult[0].count);
 
             const itemsWithProvenance = items.map((item) => {
-              const { sourceDocument, ...safeItem } = item;
+              const { sourceDocument, ...row } = item;
+              const safeItem = isAdmin ? row : publicNewsFields(row);
               return {
                 ...safeItem,
                 provenance: buildProvenance({
-                  verifiedAt: newsVerifiedAt(safeItem),
+                  verifiedAt: newsVerifiedAt(row),
                   fetchedAt: sourceDocument?.fetched_at || safeItem.fetched_at,
                   sourceUrl:
                     sourceDocument?.source_url ||
