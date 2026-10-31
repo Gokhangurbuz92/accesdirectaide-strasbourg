@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { ensureCsrfHeaders } from '@/lib/csrf';
+import { frontendEnv } from '@/config/env';
 
 class ApiError extends Error {
   /** @param {string} message @param {number} status @param {any} [payload] @param {string|null} [requestId] */
@@ -213,6 +214,8 @@ async function decryptConversationList(data) {
 
 export const rdvMessagingClient = {
   authMe() {
+    // R29: no account can exist in the public beta — the visitor is anonymous without asking the server (one refused request per page before)
+    if (frontendEnv.flags.publicBeta) return Promise.resolve({ authenticated: false, session: null });
     return requestJson('/api/auth/me', { auth: 'user' });
   },
   user: {
