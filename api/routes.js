@@ -196,6 +196,7 @@ export const routes = [
     { path: 'citizen/email-change-confirm', match: 'exact', handler: () => import('./_handlers/citizen/email-change-confirm.js') },
     { path: 'citizen/phone', match: 'exact', handler: () => import('./_handlers/citizen/phone.js') },
     { path: 'citizen/household', match: 'exact', handler: () => import('./_handlers/citizen/household.js') },
+    { path: 'citizen/guardians', match: 'exact', handler: () => import('./_handlers/citizen/guardians.js') },   // C05 (R30): minor ↔ legal guardian link
     { path: 'citizen/preferences', match: 'exact', handler: () => import('./_handlers/citizen/preferences.js') },
     { path: 'citizen/push', match: 'exact', handler: () => import('./_handlers/citizen/push.js') },   // R11 / N04: notifications on this device (Web Push)
     { path: 'citizen/shares', match: 'exact', handler: () => import('./_handlers/citizen/shares.js') },

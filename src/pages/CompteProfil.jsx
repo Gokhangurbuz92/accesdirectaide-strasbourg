@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
+import GuardianLinks from '@/components/account/GuardianLinks';
 import { AGE_BANDS } from '@/lib/ageBandOptions';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import DevicePush from '@/components/DevicePush';
@@ -133,6 +134,8 @@ export default function CompteProfil() {
           </form>
         </CardContent>
       </Card>
+
+      <GuardianLinks ageBand={account.profile?.ageBand || null} />
 
       <Card>
         <CardHeader><CardTitle className="text-lg">Mon foyer</CardTitle></CardHeader>

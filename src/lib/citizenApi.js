@@ -43,6 +43,9 @@ export const citizenApi = {
   setPhone: (/** @type {string | null} */ phone) => call('/api/citizen/phone', { method: 'PUT', body: { phone } }),
   addMember: (/** @type {Record<string, unknown>} */ member) => call('/api/citizen/household', { method: 'POST', body: member }),
   removeMember: (/** @type {string} */ id) => call('/api/citizen/household', { method: 'DELETE', body: { id } }),
+  // C05 (R30): the minor ↔ legal guardian link
+  listGuardians: () => call('/api/citizen/guardians'),
+  guardianAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/guardians', { method: 'POST', body }),
   setPreference: (/** @type {Record<string, unknown>} */ pref) => call('/api/citizen/preferences', { method: 'PUT', body: pref }),
   // R11 / N04: notifications on this device (Web Push)
   pushStatus: () => call('/api/citizen/push'),
