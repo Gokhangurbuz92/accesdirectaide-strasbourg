@@ -138,3 +138,17 @@ describe('official page reader', () => {
     expect(mainScope(sp).startsWith('<h2>Conditions</h2>')).toBe(true);
   });
 });
+
+describe('R27 navigation fixes', () => {
+  it('an old /situations/<slug> link opens the search of its home tile', async () => {
+    const { situationSearchPath } = await import('../../src/config/situations.js');
+    expect(situationSearchPath('etudiant')).toBe('/recherche?q=%C3%A9tudiant');
+    expect(situationSearchPath('travail')).toBe('/recherche?q=emploi');
+    expect(situationSearchPath('senior')).toBe(`/recherche?q=${encodeURIComponent('personnes âgées')}`);
+    expect(situationSearchPath('jeunes-actifs')).toBe('/recherche?q=jeunes%20actifs');
+    expect(read('src/pages/index.jsx')).toMatch(/path="\/situations\/:slug" element=\{<SituationRedirect \/>\}/);
+  });
+  it('the phone menu button cannot be squeezed (its icon was 4 px wide)', () => {
+    expect(read('src/pages/Layout.jsx')).toMatch(/className="xl:hidden h-11 w-11 min-w-11 shrink-0/);
+  });
+});

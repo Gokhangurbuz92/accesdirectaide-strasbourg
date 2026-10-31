@@ -226,12 +226,13 @@ export default function Layout({ children }) {   // R26: the active menu entry c
               <Button
                 variant="ghost"
                 size="icon"
-                className="xl:hidden"
+                // R26: the crowded phone header squeezed this button and its icon to 4 px wide; it can no longer shrink (44 px touch target)
+                className="xl:hidden h-11 w-11 min-w-11 shrink-0 border border-slate-200"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {mobileMenuOpen ? <X className="h-6 w-6 shrink-0" aria-hidden="true" /> : <Menu className="h-6 w-6 shrink-0" aria-hidden="true" />}
               </Button>
             </div>
           </div>

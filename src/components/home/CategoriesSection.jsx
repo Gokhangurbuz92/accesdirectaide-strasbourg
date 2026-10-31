@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
-// R18: each situation opens the search on its own words (aides, démarches and lieux d'accueil); every tile used to open the same unfiltered list of aides
-const categories = [['Étudiant', 'étudiant'], ['Travail', 'emploi'], ['Handicap', 'handicap'], ['Famille', 'famille'], ['Senior', 'personnes âgées'], ['Étranger', 'étranger'],
-  ['Logement', 'logement'], ['Santé', 'santé']];
+import { SITUATIONS as categories } from '@/config/situations';   // R18: each situation opens the search on its own words
 
 export default function CategoriesSection() {
   return (

@@ -3,6 +3,7 @@ import { BrowserRouter, MemoryRouter, Route, Routes, useLocation, Navigate, useP
 import { m, LazyMotion, domAnimation, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { frontendEnv } from "@/config/env";
 import { isBetaRestrictedPath } from "@/lib/publicBeta";
+import { situationSearchPath } from "@/config/situations";
 import { PublicBetaBanner, PublicBetaUnavailable } from "@/components/beta/PublicBeta";
 
 /**
@@ -237,6 +238,12 @@ function LegacyAideRedirect() {
 }
 
 /** PKG-11 audit: the sitemap lists /annuaire/<slug> (pinned by the frozen URL contract); the detail page lives at /structures/<slug> — it used to be a 404. */
+/** R26: an old /situations/<slug> link opens the same search as the home situation tile (the situation filter has no data: it showed an empty list) */
+function SituationRedirect() {
+    const { slug } = useParams();
+    return <Navigate to={situationSearchPath(slug)} replace />;
+}
+
 function AnnuaireSlugRedirect() {
     const { slug } = useParams();
     return <Navigate to={`/structures/${encodeURIComponent(slug || '')}`} replace />;
@@ -520,7 +527,7 @@ function PagesContent() {
                                 <Route path="/recherche" element={<Recherche />} />
                                 <Route path="/trouver-aide" element={<RechercheAide />} />
                                 <Route path="/categories/:slug" element={<Aides />} />
-                                <Route path="/situations/:slug" element={<Aides />} />
+                                <Route path="/situations/:slug" element={<SituationRedirect />} />
                                 <Route path="/glossaire" element={<Glossaire />} />
 
                                 <Route path="/structures" element={<Annuaire />} />
