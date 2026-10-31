@@ -23,6 +23,7 @@ import crypto from 'node:crypto';
  */
 import { and, eq, gte, inArray, isNotNull, isNull, lte, ne, notInArray, or, sql } from 'drizzle-orm';
 import { publicServices } from '../_services/verification/datainclusion.js';
+import { claimsEntitlement } from './entitlementWording.js';
 
 export const LAB_ORIGINS = ['unclassified', 'synthetic_fixture'];
 /** Product contract (docs/ada-agent/PRODUCT_CONTRACTS.md): <= 90 d current, 91-180 d update needed, > 180 d at risk. Beyond the second bound a verification no longer "remains current". */
@@ -133,7 +134,10 @@ export function stripReviewFields(row, isAdmin = false) {
   const auto = publicAutoCheck(/** @type {any} */ (row).auto_check);
   // R11 / D05: the services other platforms list, each with its producer and that producer's authority — never the run's bookkeeping (places, absences)
   const ext = publicServices(/** @type {any} */ (row).services_externes);
-  return /** @type {T} */ ({ ...rest, ...(review ? { falc_field_review: review } : {}), ...(auto ? { verification_auto: auto } : {}), ...(ext ? { services_externes: ext } : {}) });
+  // R31: a published simplified text that asserts a right (« Vous avez droit si… ») is withheld until the chain rewrites it; the standard text stays
+  const withheld = Object.keys(rest).filter((k) => k.endsWith('_falc') && claimsEntitlement(rest[k]));
+  for (const k of withheld) delete rest[k];
+  return /** @type {T} */ ({ ...rest, ...(withheld.length ? { falc_withheld: withheld } : {}), ...(review ? { falc_field_review: review } : {}), ...(auto ? { verification_auto: auto } : {}), ...(ext ? { services_externes: ext } : {}) });
 }
 
 /**

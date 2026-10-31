@@ -14,6 +14,7 @@
  */
 import { z } from 'zod';
 import { generateBackgroundLocalStructuredContent } from '../../lib/ai-foundation.js';
+import { ENTITLEMENT_CLAIM } from '../../lib/entitlementWording.js';
 
 const squash = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, "'");
@@ -220,6 +221,9 @@ export function checkTexts(normal, falc, source, opts = {}) {
   if (avg > 13) problems.push(`Les phrases FALC font ${avg.toFixed(1)} mots en moyenne : visez 8 à 10 mots.`);
   if ((falc.resume || []).length < 3 || (falc.resume || []).length > 9) problems.push('Le résumé FALC doit avoir 3 à 9 phrases courtes.');
   if (!/\bvous\b/i.test(falcText)) problems.push('Le texte FALC doit parler à la personne avec « vous ».');
+  // R31: never assert a right (« Vous avez droit si… ») — the organism decides; a question (« savoir si vous avez le droit ») is fine
+  const claims = sentences([...falcLines, ...normalText.split('\n')]).filter((x) => ENTITLEMENT_CLAIM.test(x));
+  if (claims.length) problems.push(`Ne dites jamais que la personne a droit à l'aide (c'est l'organisme qui décide) : « ${claims.slice(0, 2).join(' » ; « ')} ». Écrivez par exemple « Vous pouvez peut-être recevoir cette aide si… ».`);
   // a difficult word inside an explanation in brackets, or in the very name of the right (« Prestation de compensation du handicap »), is not a FALC fault
   // (a word explained at one of its uses — « vos ressources (l'argent que vous recevez) » — is accepted: the explanation is given where the reader meets it first)
   const name = opts.title ? String(opts.title).replace(/\s*\([^)]*\)\s*/g, ' ').trim() : '';
@@ -312,7 +316,8 @@ Règles :
 - Une idée par phrase. 12 mots au plus par phrase. Phrases simples : sujet, verbe, complément.
 - Mots de tous les jours. Parle au lecteur avec « vous ». Voix active.
 - Explique chaque sigle la première fois, entre parenthèses. Exemple : « la Caf (Caisse d'allocations familiales) ».
-- Remplace les mots difficiles : ressources → l'argent que vous recevez ; percevoir → recevoir ; bénéficiaire → la personne qui reçoit l'aide ; plafond → montant maximum ; éligible → avoir le droit ; prestation → aide ; justificatif → papier qui prouve.
+- Remplace les mots difficiles : ressources → l'argent que vous recevez ; percevoir → recevoir ; bénéficiaire → la personne qui reçoit l'aide ; plafond → montant maximum ; éligible → pouvoir recevoir l'aide ; prestation → aide ; justificatif → papier qui prouve.
+- N'écris jamais que le lecteur a droit à l'aide (« vous avez droit », « vous recevrez ») : c'est l'organisme qui décide. Écris « Vous pouvez peut-être recevoir cette aide si… ».
 - Garde exactement les montants et les âges de la fiche. N'écris aucun autre nombre. N'invente rien.
 - Ne recopie pas les phrases de la fiche : réécris-les plus simplement.
 Exemple. Avant : « L'aide personnalisée au logement est une prestation sociale versée par la CAF sous conditions de ressources afin de réduire la charge locative. »

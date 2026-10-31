@@ -38,6 +38,7 @@ import { readOfficialPage, sha256, frenchDate } from './pages.js';
 import { digits, lookupSiret, searchEstablishments } from './registries.js';
 import { checkStructure, sameStreet, sameStreetNumber, streetOnly, readableCase } from './structure-check.js';
 import { writeTexts, inventedNumbers, contradictions, TEXT_RULES_VERSION } from './texts.js';
+import { claimsEntitlement } from '../../lib/entitlementWording.js';
 import { refreshRegistry, refreshOnlineServices, ensureSeed, listDepartmentOffices, recordFeedHealth, reviewSources } from './sources.js';
 import { officeRecord, officeTexts } from './offices.js';
 import { fetchFiness, readFiness, finessTexts, termsVersion } from './finess.js';
@@ -728,7 +729,8 @@ async function checkContent(ctx, kind, row) {
   // texts written from an older version of the source (an important change since), texts with a number the source no longer has or a « condition » it says is
   // none, texts written under older rules
   const outdated = chainTexts && row.auto_check?.texts?.sourceMark !== mark;
-  const stale = chainTexts && (inventedNumbers(currentTexts(row), fullSource).length > 0 || contradictions(published.normal, published.falc, fullSource).length > 0);
+  // R31: a text that asserts a right (« Vous avez droit si… ») is not kept either: it is written again under the rule that forbids it
+  const stale = chainTexts && (inventedNumbers(currentTexts(row), fullSource).length > 0 || contradictions(published.normal, published.falc, fullSource).length > 0 || claimsEntitlement(currentTexts(row)));
   const oldRules = chainTexts && Number(row.auto_check?.texts?.checks?.rules || 1) < TEXT_RULES_VERSION;
   const needTexts = !chainTexts || outdated || stale || oldRules;
   const keepable = chainTexts && !outdated && !stale;   // only the rules improved: the texts stay published until they are rewritten
