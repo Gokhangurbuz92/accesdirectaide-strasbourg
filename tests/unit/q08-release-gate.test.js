@@ -33,7 +33,7 @@ describe('Q08 release script and CI workflow', () => {
   });
   it('the CI workflow never deploys and has read-only permissions', () => {
     const ci = fs.readFileSync('ops/github-actions/ci.yml', 'utf8');
-    expect(ci).toMatch(/permissions:\n  contents: read/);
+    expect(ci).toMatch(/permissions:\n {2}contents: read/);
     expect(ci).not.toMatch(/vercel|secrets\./i);
     expect(ci).toMatch(/node scripts\/unit-gate\.mjs/);
   });
