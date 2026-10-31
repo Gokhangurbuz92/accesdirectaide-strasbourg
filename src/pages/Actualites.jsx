@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, SlidersHorizontal, Calendar, ExternalLink, AlertTriangle, Info, RefreshCw, Star, ArrowRight, Brain } from 'lucide-react';
+import { Search, SlidersHorizontal, Calendar, AlertTriangle, Info, RefreshCw, Star, Brain } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
 import CategoryChip from '@/components/ui/CategoryChip';
@@ -18,6 +18,8 @@ import NewsFallback from '@/components/news/NewsFallback';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 import { formatProvenanceDate, getProvenance } from '@/lib/provenance';
 import { htmlToPlainText } from '@/lib/htmlText';
+import { newsSourceLabel, shownNewsCategory } from '@/lib/newsSource';
+import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';
 
@@ -361,13 +363,13 @@ export default function Actualites() {
                 const sourceUrl = getSourceUrl(actu);
                 const provenance = getProvenance(actu);
                 const verifiedAt = formatProvenanceDate(provenance.verifiedAt);
-                const sourceHost = provenance.sourceHost;
+                const sourceLabel = newsSourceLabel(sourceUrl, sourceName);
                 const excerpt = htmlToPlainText(actu.summary_falc || actu.resume || '', { maxLength: 220 });
 
                 return (
                   <AnimatedCard index={idx} key={actu.id}>
                     <Card
-                      className={`group hover:shadow-lg transition-all relative ${actu.est_important ? 'border-l-4 border-l-blue-500' : ''}`}
+                      className={`group relative flex h-full flex-col overflow-hidden hover:shadow-lg transition-all ${actu.est_important ? 'border-l-4 border-l-blue-500' : ''}`}
                       data-testid="actualite-card"
                     >
                       {/* Overlay Link */}
@@ -379,7 +381,7 @@ export default function Actualites() {
                         <span className="sr-only">Lire l'actualité {actu.titre}</span>
                       </Link>
 
-                      <CardContent className="p-6">
+                      <CardContent className="flex-1 p-6">
                         <div className="flex flex-wrap gap-2 mb-3">
                           <Badge className={TYPE_COLORS[typeKey] || 'bg-slate-100 text-slate-800'}>
                             <TypeIcon className="h-3 w-3 mr-1" />
@@ -388,7 +390,7 @@ export default function Actualites() {
                                 : typeKey === 'alerte' ? 'Alerte'
                                   : 'Information'}
                           </Badge>
-                          {actu.categorie && (
+                          {shownNewsCategory(actu.categorie) && (
                             <CategoryChip slug={actu.categorie} />
                           )}
                           {actu.est_important && (
@@ -416,47 +418,15 @@ export default function Actualites() {
                           </div>
                         )}
 
-                        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100 relative z-20">
-                          <div className="flex items-center gap-4 text-sm text-slate-500">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric',
-                              })}
-                            </span>
-                            {verifiedAt && (
-                              <span>Vérifié: {verifiedAt}</span>
-                            )}
-                            {sourceHost && (
-                              <span>Source: {sourceHost}</span>
-                            )}
-                            {!sourceHost && sourceName && (
-                              <span>Source: {sourceName}</span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-4">
-                            {sourceUrl && (
-                              <a
-                                href={sourceUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-slate-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                Source
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            )}
-                            <span className="text-blue-600 group-hover:text-blue-800 text-sm font-bold flex items-center gap-1 transition-colors">
-                              Lire la suite
-                              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </span>
-                          </div>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+                            Publiée le {new Date(actu.date_publication).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </span>
                         </div>
+                        <div className="mt-2"><RecordProvenance verifiedAt={verifiedAt} sourceHost={sourceLabel} sourceUrl={sourceUrl || null} /></div>
                       </CardContent>
+                      <CardActionStrip label="Lire l’actualité" />
                     </Card>
                   </AnimatedCard>
                 );

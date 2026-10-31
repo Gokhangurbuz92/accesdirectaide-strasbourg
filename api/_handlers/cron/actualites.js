@@ -4,12 +4,13 @@ import crypto from 'crypto';
 import { getCronAuth, getHeader, scheduledByVercel } from '../../_utils/cronAuth.js';
 import { withLock } from '../../_utils/pipelineLock.js';
 import { db } from '../../../src/db/index.js';
-import { CronRun } from '../../../src/db/schema.js';
+import { CronRun, Actualite } from '../../../src/db/schema.js';
 import { eq, desc, and } from 'drizzle-orm';
 import { env } from '../../_utils/env.js';
 import Sentry from '../../_utils/sentry.js';
 import { kv } from '../../_utils/kv.js';
 import { runIngestActualitesRss } from './ingest-actualites-rss.js';
+import { verifyNewsDrafts } from '../../_services/news-verification.js';
 
 const CRON_LOCK_KEY = 'cron:actualites:lock';
 const CRON_LOCK_TTL_SECONDS = 15 * 60; // 15 minutes
@@ -307,6 +308,9 @@ export default async function handler(req, res) {
 
       try {
         const result = await runIngestActualitesRss({ limit, runId });
+        // R29: the ingestion only writes drafts; the automatic verification publishes those that pass every check (a failure here keeps them drafts)
+        let verification = null;
+        try { verification = await verifyNewsDrafts({ db, schema: { Actualite }, ops: { eq } }); } catch (err) { logger.warn({ runId, job: 'actualites', error: err instanceof Error ? err.message : String(err) }, 'cron.actualites.verification_failed'); }
         const durationMs = Date.now() - startedAtMs;
 
         await db.update(CronRun).set({
@@ -324,10 +328,11 @@ export default async function handler(req, res) {
             updated: result?.updated ?? null,
             skippedExisting: result?.skippedExisting ?? null,
             errorCount: Array.isArray(result?.errors) ? result.errors.length : null,
+            verified: verification ? { checked: verification.checked, published: verification.published, kept: verification.kept } : null,
           },
         }).where(eq(CronRun.id, created.id));
 
-        return result;
+        return { ...result, verification };
       } catch (err) {
         const durationMs = Date.now() - startedAtMs;
         const message = err instanceof Error ? err.message : String(err);

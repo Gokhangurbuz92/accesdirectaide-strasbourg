@@ -10,7 +10,6 @@ import { env } from '../../_utils/env.js';
 import { computeContentHash, computeRawContentHash } from '../../_utils/contentHash.js';
 import { ensureSlugOrNull } from '../../_utils/slug.js';
 import { upsertSourceDocument } from '../../_utils/sourceDocument.js';
-import { isPublicBetaRestricted } from '../../_utils/public-beta.js';
 
 const DEFAULT_TIMEOUT_MS = 12_000;
 const DEFAULT_MAX_ITEMS_PER_SOURCE = 20;
@@ -220,9 +219,9 @@ export async function upsertActualiteFromFeedItem(input) {
     return { action: 'skipped' };
   }
 
-  // R28: during the restricted public beta nothing is published by the ingestion itself — every item, even from an official feed, waits as a draft for a
-  // named person (scripts/review-actualites.mjs); outside the beta the official-feed rule is unchanged
-  const autoPublish = Boolean(input.isOfficial) && !isPublicBetaRestricted();
+  // R29 (owner decision 31/10/2026): the ingestion itself never publishes. Every item is a draft; the automatic verification that follows
+  // (api/_services/news-verification.js: reuse rights, audience, date, publisher's own words, duplicate, live original page) publishes the ones that pass
+  const autoPublish = false;
   const publicationData = autoPublish
     ? {
         statut: 'publie',
@@ -274,8 +273,8 @@ export async function upsertActualiteFromFeedItem(input) {
   const { id: _id, createdAt: _createdAt, slug: _slug, ...refresh } = insertData;
   const humanFinal = ['rejected', 'archive', 'archived'].includes(String(existing?.statut || ''));
   const { statut: _statut, auto_publish: _auto, published_at: _pub, ...refreshKeepingDecision } = refresh;
-  // R28: in the beta a refresh never changes a person's decision either (a published, rejected or archived item keeps its status)
-  const updateData = humanFinal || isPublicBetaRestricted() ? refreshKeepingDecision : refresh;
+  // R28/R29: a refresh never changes a decision (a published, rejected or archived item keeps its status); a changed draft is checked again by the verification
+  const updateData = humanFinal || String(existing?.statut || '') === 'publie' ? refreshKeepingDecision : refresh;
 
 
   await db.insert(Actualite).values(insertData).onConflictDoUpdate({

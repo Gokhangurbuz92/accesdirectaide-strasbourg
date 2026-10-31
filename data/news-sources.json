@@ -6,10 +6,11 @@
     "homepageUrl": "https://www.service-public.fr/",
     "domain": "service-public.fr",
     "trustLevel": "OFFICIAL",
-    "category": "famille",
+    "category": "general",
     "enabled": true,
     "language": "fr",
-    "territory": "FRANCE"
+    "territory": "FRANCE",
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026"
   },
   {
     "id": "service_public_professionnels",
@@ -18,10 +19,11 @@
     "homepageUrl": "https://www.service-public.fr/",
     "domain": "service-public.fr",
     "trustLevel": "OFFICIAL",
-    "category": "professionnel",
+    "category": "general",
     "enabled": true,
     "language": "fr",
-    "territory": "FRANCE"
+    "territory": "FRANCE",
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026"
   },
   {
     "id": "grandest_actu",
@@ -31,9 +33,10 @@
     "domain": "grandest.fr",
     "trustLevel": "OFFICIAL",
     "category": "region",
-    "enabled": true,
+    "enabled": false,
     "language": "fr",
-    "territory": "GRAND_EST"
+    "territory": "GRAND_EST",
+    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grandest.fr/mentions-legales/) ; à réactiver seulement avec cet accord."
   },
   {
     "id": "prefecture_bas_rhin",
@@ -69,10 +72,11 @@
     "domain": "grand-est.ars.sante.fr",
     "trustLevel": "OFFICIAL",
     "category": "sante",
-    "enabled": true,
+    "enabled": false,
     "language": "fr",
     "territory": "GRAND_EST",
-    "note": "R28 (31/10/2026) : le flux a changé d’adresse (/feed → /rss.xml, vérifié : RSS valide)."
+    "note": "R28 (31/10/2026) : le flux a changé d’adresse (/feed → /rss.xml, vérifié : RSS valide).",
+    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grand-est.ars.sante.fr/mentions-legales-9) ; à réactiver seulement avec cet accord."
   },
   {
     "id": "vigicrues",

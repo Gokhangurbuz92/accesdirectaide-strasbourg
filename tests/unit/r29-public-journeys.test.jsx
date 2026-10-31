@@ -1,0 +1,85 @@
+// @vitest-environment jsdom
+/**
+ * R29 — public journeys, second round: a new page opens at its top, a guide leads to where to act, news names its publisher and licence, the
+ * provenance box never shows an empty badge, and inline HTML keeps « 1<sup>er</sup> » in one word.
+ */
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import fs from 'node:fs';
+import { createElement } from 'react';
+import { render, screen, cleanup, act } from '@testing-library/react';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
+import ScrollToTop from '../../src/components/navigation/ScrollToTop.jsx';
+import { guideNextSteps, GUIDE_NEXT_STEPS } from '../../src/config/guideNextSteps.js';
+import { newsPublisher, newsSourceLabel, shownNewsCategory } from '../../src/lib/newsSource.js';
+import { htmlToPlainText } from '../../src/lib/htmlText.js';
+import ProvenanceFreshness from '../../src/components/ProvenanceFreshness.jsx';
+
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+
+describe('a new page opens at its top', () => {
+  it('scrolls up on a forward navigation, not on a query-string change', async () => {
+    const spy = vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => {});
+    let go;
+    function Grab() { go = useNavigate(); return null; }
+    render(createElement(MemoryRouter, { initialEntries: ['/bonnes-pratiques'] }, createElement(ScrollToTop), createElement(Grab)));
+    spy.mockClear();
+    await act(async () => { go('/bonnes-pratiques/loyers-impayes-f31272'); });
+    expect(spy).toHaveBeenCalledWith(0, 0);
+    spy.mockClear();
+    await act(async () => { go('/bonnes-pratiques/loyers-impayes-f31272?x=1'); });
+    expect(spy).not.toHaveBeenCalled();
+    await act(async () => { go(-1); });
+    expect(spy).not.toHaveBeenCalled();   // going back keeps the browser's position
+  });
+  it('is mounted once, around every route', () => {
+    expect(fs.readFileSync('src/pages/index.jsx', 'utf8')).toMatch(/<BrowserRouter>\s*<ScrollToTop \/>/);
+  });
+});
+
+describe('a guide leads to where to act', () => {
+  it('every guide category has three next steps that open site lists', () => {
+    for (const [cat, steps] of Object.entries(GUIDE_NEXT_STEPS)) {
+      expect(steps, cat).toHaveLength(3);
+      for (const s of steps) expect(s.to, cat).toMatch(/^\/(aides|demarches|structures|dispositifs|outils)(\?|$)/);
+    }
+    expect(guideNextSteps({ categorie: 'logement' }).map((s) => s.to)).toEqual(['/aides?theme=logement', '/dispositifs', '/structures?q=ADIL']);
+    expect(guideNextSteps({ categorie: 'recours', contexte: ['recours', 'santé'] })[0].to).toBe('/structures?q=CPAM');
+    expect(guideNextSteps({ categorie: 'inconnue' }).length).toBe(2);
+  });
+  it('the guide page uses the shared page header and shows the next steps', () => {
+    const src = fs.readFileSync('src/pages/GuideDetail.jsx', 'utf8');
+    expect(src).toMatch(/<PageHeader title=\{guide\.titre\}/);
+    expect(src).toMatch(/data-testid="guide-next-steps"/);
+    expect(src).not.toMatch(/<h1 className/);
+  });
+});
+
+describe('news names its publisher and its licence', () => {
+  it('Service-Public items are attributed to the DILA under Licence Ouverte 2.0; others show their site', () => {
+    expect(newsPublisher('https://www.service-public.gouv.fr/particuliers/actualites/A1')).toMatchObject({ name: 'Service-Public.fr', licence: 'Licence Ouverte 2.0' });
+    expect(newsSourceLabel('https://www.service-public.gouv.fr/particuliers/actualites/A1')).toBe('Service-Public.fr');
+    expect(newsSourceLabel('https://www.exemple.fr/a', 'Exemple')).toBe('exemple.fr');
+    expect(newsSourceLabel('pas une adresse', 'Exemple')).toBe('Exemple');
+    expect(shownNewsCategory('general')).toBeNull();
+    expect(shownNewsCategory('logement')).toBe('logement');
+  });
+  it('the list and detail pages use the shared card parts and the attribution', () => {
+    const list = fs.readFileSync('src/pages/Actualites.jsx', 'utf8');
+    expect(list).toMatch(/<RecordProvenance verifiedAt=\{verifiedAt\} sourceHost=\{sourceLabel\}/);
+    expect(list).toMatch(/<CardActionStrip label="Lire l’actualité" \/>/);
+    expect(fs.readFileSync('src/pages/ActualiteDetail.jsx', 'utf8')).toMatch(/data-testid="news-attribution"/);
+    expect(fs.readFileSync('api/_handlers/actualites.js', 'utf8')).toMatch(/verifiedAt: newsVerifiedAt\(safeItem\)/);
+  });
+});
+
+describe('small display fixes', () => {
+  it('inline tags add no space; block tags still separate words', () => {
+    expect(htmlToPlainText('au 1<sup>er</sup> novembre')).toBe('au 1er novembre');
+    expect(htmlToPlainText('voir <a href="x">la fiche</a> officielle')).toBe('voir la fiche officielle');
+    expect(htmlToPlainText('<p>un</p><p>deux</p>')).toBe('un\ndeux');
+  });
+  it('no empty freshness badge when nothing was verified', () => {
+    render(createElement(MemoryRouter, null, createElement(ProvenanceFreshness, { provenance: { verifiedAt: null, fetchedAt: '2026-10-31T00:00:00Z', sourceUrl: 'https://www.service-public.gouv.fr/x' } })));
+    expect(screen.queryByTestId('freshness-badge')).toBeNull();
+  });
+});

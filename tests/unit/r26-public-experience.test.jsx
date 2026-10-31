@@ -32,7 +32,7 @@ describe('main menu', () => {
     expect(layout).toMatch(/!frontendEnv\.flags\.publicBeta && <AuthHeaderActions \/>/);
     expect(layout).toMatch(/!frontendEnv\.flags\.publicBeta && <AuthMobileActions/);
     expect(layout).toMatch(/\{ label: 'Outils', page: 'Tools'/);
-    expect(layout).not.toMatch(/\{ label: 'Actualités', page: 'Actualites', icon/);
+    expect(layout).toMatch(/\{ label: 'Actualités', page: 'Actualites', icon: Newspaper \}/);   // R29: back once verified news is published
     expect(layout).not.toMatch(/currentPageName === item\.page/);
   });
 });
@@ -112,15 +112,15 @@ describe('home page in the beta', () => {
   it('shows the live catalogue counts (no number when a list cannot be read)', async () => {
     const { loadCatalogueCounts, resetCatalogueCounts } = await import('../../src/hooks/useCatalogueCounts.js');
     resetCatalogueCounts();
-    const fake = async (url) => ({ ok: !url.includes('structures'), json: async () => ({ pagination: { total: url.includes('aides') ? 17 : 13 } }) });
-    expect(await loadCatalogueCounts(fake)).toEqual({ aides: 17, demarches: 13, structures: null });
+    const fake = async (url) => ({ ok: !url.includes('structures'), json: async () => (url.includes('guides') ? [{}, {}] : { pagination: { total: url.includes('aides') ? 17 : 13 } }) });
+    expect(await loadCatalogueCounts(fake)).toEqual({ aides: 17, demarches: 13, structures: null, guides: 2, actualites: 13 });
     resetCatalogueCounts();
   });
-  it('renders the four entries, with their links', async () => {
+  it('renders the six entries, with their links', async () => {
     const { default: VerifiedCatalogue } = await import('../../src/components/layout/VerifiedCatalogue.jsx');
     globalThis.fetch = vi.fn(async () => ({ ok: true, json: async () => ({ pagination: { total: 5 } }) }));
     render(createElement(MemoryRouter, null, createElement(VerifiedCatalogue)));
-    for (const [name, href] of [['Aides', '/aides'], ['Démarches', '/demarches'], ['Lieux d’accueil', '/structures'], ['Outils officiels', '/outils']])
+    for (const [name, href] of [['Aides', '/aides'], ['Démarches', '/demarches'], ['Lieux d’accueil', '/structures'], ['Guides pratiques', '/bonnes-pratiques'], ['Actualités', '/actualites'], ['Outils officiels', '/outils']])
       expect(screen.getByRole('link', { name: new RegExp(`^${name}`) }).getAttribute('href')).toBe(href);
     expect((await screen.findByTestId('count-outils')).textContent).toBe(`${OFFICIAL_TOOLS.length} outils officiels`);
   });

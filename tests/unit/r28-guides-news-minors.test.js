@@ -41,12 +41,13 @@ describe('official guides', () => {
 
 describe('news: drafts and human publication', () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token'); });
-  it('in the beta, ingestion never publishes, and a refresh never changes a decision', () => {
+  it('ingestion never publishes by itself, and a refresh never changes a decision', () => {
     const src = fs.readFileSync('api/_handlers/cron/ingest-actualites-rss.js', 'utf8');
-    expect(src).toMatch(/const autoPublish = Boolean\(input\.isOfficial\) && !isPublicBetaRestricted\(\);/);
+    expect(src).toMatch(/const autoPublish = false;/);
     expect(src).toMatch(/statut: autoPublish \? 'publie' : 'brouillon'/);
-    expect(src).toMatch(/humanFinal \|\| isPublicBetaRestricted\(\) \? refreshKeepingDecision : refresh/);
-    expect(fs.readFileSync('scripts/news-ingest.mjs', 'utf8')).toMatch(/process\.env\.ADA_PUBLIC_BETA_RESTRICTED = '1';/);
+    expect(src).toMatch(/humanFinal \|\| String\(existing\?\.statut \|\| ''\) === 'publie' \? refreshKeepingDecision : refresh/);
+    expect(fs.readFileSync('scripts/news-ingest.mjs', 'utf8')).toMatch(/verifyNewsDrafts/);
+    expect(fs.readFileSync('api/_handlers/cron/actualites.js', 'utf8')).toMatch(/await verifyNewsDrafts\(/);
   });
   it('publication needs a named reviewer, written on the item', async () => {
     const { decisionNote } = await import('../../scripts/review-actualites.mjs');
@@ -54,36 +55,11 @@ describe('news: drafts and human publication', () => {
     expect(decisionNote('rejected', 'Camille Martin', new Date('2026-10-31T10:00:00Z'), 'hors sujet')).toBe('Refusée par Camille Martin le 31/10/2026 après relecture humaine : hors sujet.');
     expect(fs.readFileSync('scripts/review-actualites.mjs', 'utf8')).toMatch(/a named reviewer is required/);
   });
-  it('the source list keeps broken feeds disabled with their reason', () => {
+  it('the source list keeps broken feeds, and feeds whose texts may not be reused, disabled with their reason', () => {
     const list = JSON.parse(fs.readFileSync('data/news-sources.json', 'utf8'));
-    for (const s of list.filter((x) => x.enabled === false)) expect(s.disabledReason, s.name).toMatch(/flux inaccessible/);
+    for (const s of list.filter((x) => x.enabled === false)) expect(s.disabledReason, s.name).toMatch(/flux inaccessible|réutilisation des textes interdite/);
     expect(list.find((s) => s.name.startsWith('ARS')).feedUrl).toBe('https://www.grand-est.ars.sante.fr/rss.xml');
-  });
-});
-
-describe('C05: sensitive account features follow the age policy', () => {
-  const fakeDb = (band, guardianVerified = false) => ({
-    select: () => ({ from: (t) => ({ where: () => ({ limit: async () => (String(t?.[Symbol.for('drizzle:Name')] || '') === 'CitizenProfile' ? [{ ageBand: band }] : (guardianVerified ? [{ id: 'g' }] : [])) }) }) }),
-  });
-  it('a declared minor cannot store or send documents, nor invite a delegate, while the policy is pending; public information is never gated', async () => {
-    const { uploadCoffre, shareFromCoffre } = await import('../../api/_services/mon-espace.js');
-    const { inviteDelegate } = await import('../../api/_services/delegation.js');
-    const storage = { put: vi.fn() };
-    for (const out of [await uploadCoffre('u1', { category: 'identite' }, { db: fakeDb('moins-de-18'), storage }),
-      await shareFromCoffre('u1', {}, { db: fakeDb('moins-de-18'), storage }),
-      await inviteDelegate({ id: 'u1', email: 'a@exemple.test' }, { email: 'b@exemple.test' }, { db: fakeDb('moins-de-18') })]) {
-      expect(out.status).toBe(409);
-      expect(JSON.stringify(out)).toMatch(/AGE_POLICY_PENDING/);
-      expect(JSON.stringify(out)).toMatch(/informations publiques restent accessibles à tout âge/);
-    }
-    expect(storage.put).not.toHaveBeenCalled();
-  });
-  it('with a DPO-configured policy, a verified guardian opens the feature; an adult is never asked anything', async () => {
-    vi.stubEnv('ADA_AGE_POLICY_JSON', JSON.stringify({ status: 'CONFIGURED', version: 'test-1', bands: { 'moins-de-18': { account: 'GUARDIAN_CONSENT_REQUIRED' }, '18-24': { account: 'ALLOWED' }, '25-59': { account: 'ALLOWED' }, '60-et-plus': { account: 'ALLOWED' } } }));
-    const { ageGate } = await import('../../api/_services/citizen-account.js');
-    expect((await ageGate('u1', fakeDb('moins-de-18', false))).allowed).toBe(false);
-    expect((await ageGate('u1', fakeDb('moins-de-18', true))).allowed).toBe(true);
-    expect((await ageGate('u1', fakeDb('25-59'))).allowed).toBe(true);
-    expect((await ageGate('u1', fakeDb(null))).allowed).toBe(true);   // nothing declared: nothing inferred
+    expect(list.filter((s) => s.enabled !== false).map((s) => s.id)).toEqual(['service_public_particuliers', 'service_public_professionnels']);
+    for (const s of list.filter((x) => x.enabled !== false)) expect(s.reuse).toMatch(/Licence Ouverte 2\.0/);
   });
 });

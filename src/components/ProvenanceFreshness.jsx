@@ -27,12 +27,14 @@ export default function ProvenanceFreshness({ provenance }) {
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             Provenance et fraîcheur
           </h2>
-          <Badge
-            className={BADGE_CLASSNAME[freshness.state] || BADGE_CLASSNAME.not_verified}
-            data-testid="freshness-badge"
-          >
-            {freshness.label}
-          </Badge>
+          {freshness.label && (
+            <Badge
+              className={BADGE_CLASSNAME[freshness.state] || BADGE_CLASSNAME.not_verified}
+              data-testid="freshness-badge"
+            >
+              {freshness.label}
+            </Badge>
+          )}
         </div>
 
         {provenance && provenance.contentStatus === 'LAB_UNVERIFIED' ? (

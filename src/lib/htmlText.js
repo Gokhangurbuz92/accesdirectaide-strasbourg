@@ -22,7 +22,10 @@ export function htmlToPlainText(value, options = {}) {
     .replace(/<\s*\/(p|div|li|h[1-6])\s*>/gi, '\n')
     .replace(/<\s*li\b[^>]*>/gi, '- ');
 
-  const withoutTags = withLineBreakHints.replace(/<[^>]+>/g, ' ');
+  // inline elements (« 1<sup>er</sup> », a link inside a sentence) add no space; other tags separate words
+  const withoutTags = withLineBreakHints
+    .replace(/<\/?(?:sup|sub|span|a|strong|em|b|i|u|abbr|small|mark|code)\b[^>]*>/gi, '')
+    .replace(/<[^>]+>/g, ' ');
 
   const decodedNamedEntities = withoutTags.replace(
     /&(nbsp|amp|lt|gt|quot);|&#39;/gi,
@@ -36,6 +39,7 @@ export function htmlToPlainText(value, options = {}) {
   const normalized = decodedEntities
     .replace(/\r/g, '')
     .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n[ \t]+/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .replace(/[ \t]{2,}/g, ' ')
     .trim();

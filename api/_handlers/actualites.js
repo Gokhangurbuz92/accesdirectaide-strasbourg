@@ -12,6 +12,9 @@ import { buildProvenance } from '../_utils/provenance.js';
  */
 
 const MALFORMED_SLUG = Symbol('malformed-slug');
+
+/** R29: an item published by the automatic verification was checked against its original page on that day; any other item has no verification date */
+const newsVerifiedAt = (item) => (item?.auto_publish && item?.updatedBy === 'verification-automatique' && item?.published_at) || null;
 /**
  * @param {string | null | undefined} url
  * @param {string | null | undefined} host
@@ -140,7 +143,7 @@ export default async function handler(req, res) {
             return res.status(200).json({
               ...safeItem,
               provenance: buildProvenance({
-                verifiedAt: null,
+                verifiedAt: newsVerifiedAt(safeItem),
                 fetchedAt: sourceDocument?.fetched_at || safeItem.fetched_at,
                 sourceUrl:
                   sourceDocument?.source_url ||
@@ -233,7 +236,7 @@ export default async function handler(req, res) {
               return {
                 ...safeItem,
                 provenance: buildProvenance({
-                  verifiedAt: null,
+                  verifiedAt: newsVerifiedAt(safeItem),
                   fetchedAt: sourceDocument?.fetched_at || safeItem.fetched_at,
                   sourceUrl:
                     sourceDocument?.source_url ||

@@ -26,6 +26,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { getProvenance } from '@/lib/provenance';
+import { newsPublisher, newsSourceLabel, shownNewsCategory } from '@/lib/newsSource';
 
 const TYPE_ICONS = {
   nouveaute: Star,
@@ -141,6 +142,7 @@ export default function ActualiteDetail() {
   const sourceName = actu.source_nom || actu.source_name || actu.source || '';
   const sourceUrl = actu.canonical_url || actu.lien_url || actu.url || actu.source_url || '';
   const provenance = getProvenance(actu);
+  const publisher = newsPublisher(sourceUrl);
   const descriptionText = htmlToPlainText(
     actu.summary_falc || actu.resume || actu.contenu || '',
     { maxLength: 160 },
@@ -198,7 +200,7 @@ export default function ActualiteDetail() {
                   actu.type_actu === 'modification' ? 'Modification' :
                     actu.type_actu === 'alerte' ? 'Alerte' : 'Information'}
               </Badge>
-              {actu.categorie && (
+              {shownNewsCategory(actu.categorie) && (
                 <Badge variant="outline">
                   {CATEGORIES[actu.categorie] || actu.categorie}
                 </Badge>
@@ -223,14 +225,22 @@ export default function ActualiteDetail() {
                   year: 'numeric'
                 })}
               </span>
-              {sourceName && (
-                <span>Source : {sourceName}</span>
+              {(sourceUrl || sourceName) && (
+                <span>Source : {newsSourceLabel(sourceUrl, sourceName)}</span>
               )}
             </div>
 
             <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
               {contentText}
             </div>
+
+            {publisher && (
+              <p className="mt-6 text-sm text-slate-600" data-testid="news-attribution">
+                Texte de {publisher.name}, site de la {publisher.owner}, repris sans modification sous{' '}
+                <a href={publisher.licenceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">{publisher.licence}<span className="sr-only"> (nouvel onglet)</span></a>.
+                {actu.auto_publish && actu.published_at && ` Publié sur AccesDirectAide le ${new Date(actu.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}, après une vérification automatique de la page d’origine (même titre, même date, même texte).`}
+              </p>
+            )}
 
             {sourceUrl && (
               <div className="mt-8">

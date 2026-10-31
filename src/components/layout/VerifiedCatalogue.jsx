@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { HandHeart, FileText, MapPin, Wrench } from 'lucide-react';
+import { HandHeart, FileText, MapPin, Wrench, BookOpen, Newspaper } from 'lucide-react';
 import useCatalogueCounts from '@/hooks/useCatalogueCounts';
 import { OFFICIAL_TOOLS } from '@/config/officialTools';
 
@@ -16,6 +16,8 @@ export default function VerifiedCatalogue({ heading = 'Ce que vous pouvez consul
     { key: 'aides', to: '/aides', icon: HandHeart, label: 'Aides', text: 'Aides nationales et locales, avec leurs conditions et leur source officielle.', n: c.aides, unit: 'aides vérifiées' },
     { key: 'demarches', to: '/demarches', icon: FileText, label: 'Démarches', text: 'Les étapes et les documents pour faire une demande, pas à pas.', n: c.demarches, unit: 'démarches vérifiées' },
     { key: 'structures', to: '/structures', icon: MapPin, label: 'Lieux d’accueil', text: 'Mairies, CCAS, Espaces France Services, associations, établissements médico-sociaux…', n: c.structures, unit: 'lieux vérifiés' },
+    { key: 'guides', to: '/bonnes-pratiques', icon: BookOpen, label: 'Guides pratiques', text: 'Les fiches officielles de Service-Public pour les papiers, le logement, le budget et les recours.', n: c.guides, unit: 'fiches officielles' },
+    { key: 'actualites', to: '/actualites', icon: Newspaper, label: 'Actualités', text: 'Ce qui change pour vos droits, repris de Service-Public et vérifié sur la page d’origine.', n: c.actualites, unit: 'actualités vérifiées' },
     { key: 'outils', to: '/outils', icon: Wrench, label: 'Outils officiels', text: 'Simulateurs et services en ligne des organismes publics.', n: OFFICIAL_TOOLS.length, unit: 'outils officiels' },
   ].filter((x) => !exclude.includes(x.key));
   return (

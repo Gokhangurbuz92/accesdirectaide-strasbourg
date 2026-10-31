@@ -18,6 +18,7 @@ import {
   Info,
   Calendar,
   ChevronDown,
+  Newspaper,
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { AuthHeaderActions, AuthMobileActions } from '@/components/auth/AuthHeaderActions';
@@ -51,8 +52,9 @@ const NAV_ITEMS = [
   },
   { label: 'Démarches', page: 'Demarches', icon: FileText },
   { label: 'Annuaire', page: 'Annuaire', icon: MapPin },
-  // R26: « Outils » (official simulators, real content) in the menu; « Actualités » stays in the footer while none is published
+  // R26: « Outils » (official simulators, real content) in the menu. R29: « Actualités » is back now that verified official news is published
   { label: 'Outils', page: 'Tools', icon: Wrench },
+  { label: 'Actualités', page: 'Actualites', icon: Newspaper },
   { label: 'Rendez-vous', page: 'AdminAppointments', icon: Calendar, adminOnly: true },
   { label: 'Structures', page: 'AdminStructures', icon: MapPin, adminOnly: true },
   { label: 'Démarches', page: 'AdminDemarches', icon: FileText, adminOnly: true },
