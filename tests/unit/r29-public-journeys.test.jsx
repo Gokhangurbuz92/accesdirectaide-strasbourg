@@ -129,3 +129,12 @@ describe('beta: no session request', () => {
     expect(fs.readFileSync('src/api/rdv-messaging-client.js', 'utf8')).toMatch(/if \(frontendEnv\.flags\.publicBeta\) return Promise\.resolve\(\{ authenticated: false, session: null \}\);/);
   });
 });
+
+describe('mission page', () => {
+  it('makes no unverified claim and leads somewhere', () => {
+    const src = fs.readFileSync('src/pages/Mission.jsx', 'utf8');
+    expect(src).not.toMatch(/utilisent ce site|pour toujours|Langage simple \(FALC\)/);
+    expect(src).toMatch(/n’ont pas encore été relues par des lecteurs/);
+    expect(src).toMatch(/data-testid="mission-next-steps"/);
+  });
+});

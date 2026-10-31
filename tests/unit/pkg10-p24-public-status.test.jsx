@@ -77,3 +77,17 @@ describe('PKG-10 / P24 status page', () => {
     expect(screen.queryByTestId('status-comptes-state')).toBeNull();
   });
 });
+
+describe('R29: public status during the beta', () => {
+  it('closed features are said closed, never « fonctionnent »; the site line follows the database', async () => {
+    const prev = process.env.ADA_PUBLIC_BETA_RESTRICTED; process.env.ADA_PUBLIC_BETA_RESTRICTED = '1';
+    try {
+      const b = await computeStatus();
+      const by = Object.fromEntries(b.components.map((c) => [c.id, c]));
+      expect(by.comptes).toMatchObject({ state: 'info', text: expect.stringMatching(/ne sont pas encore ouverts/) });
+      expect(by.emails.state).toBe('info'); expect(by.assistant.state).toBe('info');
+      expect(JSON.stringify(b)).not.toMatch(/fonctionnent/);
+      expect(by.donnees.text).toMatch(/vérifiée automatiquement sur sa source officielle/);
+    } finally { if (prev === undefined) delete process.env.ADA_PUBLIC_BETA_RESTRICTED; else process.env.ADA_PUBLIC_BETA_RESTRICTED = prev; }
+  });
+});

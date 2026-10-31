@@ -15,6 +15,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
 import { getMailerStatus } from '../_utils/mailer.js';
 import { AIProviderPolicy, LOCALITY } from '../lib/ai-policy.js';
+import { isPublicBetaRestricted } from '../_utils/public-beta.js';
 
 const TTL_MS = 30000;
 let cache = null;
@@ -46,7 +47,27 @@ function donnees() {
     : { state: 'info', text: 'Les fiches d\'aides et de structures sont en cours de vérification automatique à partir de leurs sources officielles : vérifiez toujours auprès de l\'organisme.' };
 }
 
+/**
+ * R29: during the public beta the accounts, appointments, e-mails and the assistant are CLOSED, not « working » — the page said « Les comptes, les
+ * rendez-vous et le partage de dossier fonctionnent » while every one of those screens was closed. The database check then says whether the published
+ * information can be read; the published records were each checked automatically on their source (the date is on every record).
+ */
+async function betaStatus() {
+  const c = await database();
+  return {
+    checkedAt: new Date().toISOString(),
+    components: [
+      { id: 'site', label: 'Site', ...(c.state === 'operational' ? { state: 'operational', text: 'Le site répond et les fiches publiées peuvent être consultées.' } : { state: 'unavailable', text: 'Les fiches ne peuvent pas être consultées pour le moment.' }) },
+      { id: 'comptes', label: 'Comptes et rendez-vous', state: 'info', text: 'Pendant la bêta publique, les comptes, les rendez-vous et le partage de dossier ne sont pas encore ouverts.' },
+      { id: 'emails', label: 'E-mails', state: 'info', text: 'Pendant la bêta publique, aucun e-mail n\'est envoyé.' },
+      { id: 'assistant', label: 'Assistant', state: 'info', text: 'Pendant la bêta publique, l\'assistant n\'est pas ouvert.' },
+      { id: 'donnees', label: 'Informations sur les aides', state: 'info', text: 'Chaque fiche publiée a été vérifiée automatiquement sur sa source officielle, à la date indiquée sur la fiche. Seul l\'organisme concerné décide de vos droits.' },
+    ],
+  };
+}
+
 export async function computeStatus() {
+  if (isPublicBetaRestricted()) return betaStatus();
   const [c, a] = await Promise.all([database(), assistant()]);
   return {
     checkedAt: new Date().toISOString(),
