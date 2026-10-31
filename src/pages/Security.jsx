@@ -1,5 +1,7 @@
 
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
+import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import { ShieldCheck, Lock, Trash2, EyeOff, Database, UserCheck, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
@@ -14,19 +16,10 @@ export default function Security() {
             />
 
             {/* Hero Section */}
-            <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-green-500/20 text-green-400 mb-6 ring-1 ring-green-500/30">
-                        <ShieldCheck className="w-8 h-8" />
-                    </div>
-                    <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Sécurité et Vie Privée</h1>
-                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Nous collectons le minimum possible d'informations vous concernant. Et nous les protégeons comme un trésor.
-                    </p>
-                </div>
-            </div>
+            <PageHeader width="reading" title={<>Sécurité et vie privée</>} description={<>Nous collectons le minimum possible d'informations vous concernant. Et nous les protégeons comme un trésor.</>} />
 
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10 space-y-6">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+              <BetaProcessingNotice />
 
                 {/* Piliers Sécurité */}
                 <Card className="border-green-200 bg-green-50/50 shadow-sm overflow-hidden">

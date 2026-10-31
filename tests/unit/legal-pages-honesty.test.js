@@ -56,9 +56,11 @@ describe('legal pages use a fixed, versioned date', () => {
 
 describe('the pages describe the real trackers honestly', () => {
   it('h1 texts expected by e2e/legal-pages.spec.js are kept', () => {
-    expect(read('src/pages/MentionsLegales.jsx')).toMatch(/>Mentions légales<\/h1>/);
-    expect(read('src/pages/Confidentialite.jsx')).toMatch(/>Politique de confidentialité<\/h1>/);
-    expect(read('src/pages/Cookies.jsx')).toMatch(/>Cookies<\/h1>/);
+    // R26: the level-1 heading is drawn by the shared page header (src/components/layout/PageHeader.jsx renders `title` in its <h1>)
+    expect(read('src/components/layout/PageHeader.jsx')).toMatch(/<h1 [^>]*>\{title\}<\/h1>/);
+    expect(read('src/pages/MentionsLegales.jsx')).toMatch(/<PageHeader [^>]*title=\{<>Mentions légales<\/>\}/);
+    expect(read('src/pages/Confidentialite.jsx')).toMatch(/<PageHeader [^>]*title=\{<>Politique de confidentialité<\/>\}/);
+    expect(read('src/pages/Cookies.jsx')).toMatch(/<PageHeader [^>]*title=\{<>Cookies<\/>\}/);
   });
 
   it('cookies and privacy pages name Vercel Analytics, Speed Insights and Sentry, with Replay disabled by default', () => {

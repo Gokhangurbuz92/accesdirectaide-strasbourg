@@ -65,6 +65,9 @@ export const ACRONYM_EXPLAINED = {
   CMG: "aide pour payer la garde d'un enfant", ASI: "allocation supplémentaire d'invalidité", IME: 'institut médico-éducatif', MVA: 'majoration pour la vie autonome',
   ARS: 'agence régionale de santé', CESU: 'chèque emploi service universel', CERFA: 'formulaire officiel', Cerfa: 'formulaire officiel', PDF: 'document à imprimer',
   'VLS-TS': 'visa de long séjour qui sert de titre de séjour',
+  // R26: housing schemes named by the FSL pages (Action Logement, ADIL, prevention of evictions, temporary-work social fund)
+  'LOCA-PASS': 'avance du dépôt de garantie par Action Logement', VISALE: 'garantie de loyer gratuite d’Action Logement', Visale: 'garantie de loyer gratuite d’Action Logement',
+  ADIL: 'agence départementale d’information sur le logement', CCAPEX: 'commission de prévention des expulsions locatives', FASTT: 'fonds d’action sociale du travail temporaire',
 };
 /** Administrative words → the plain words put in brackets after them in a FALC text (words that cannot be explained stay forbidden: see JARGON). */
 export const JARGON_EXPLAINED = {

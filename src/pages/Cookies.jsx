@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
+import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import { Cookie, ShieldCheck, PieChart, Info, Settings2, CheckCircle2, Bug } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
@@ -88,19 +90,10 @@ export default function Cookies() {
       />
 
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-400 mb-6 ring-1 ring-teal-500/30">
-            <Cookie className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Cookies</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Nous utilisons peu de traceurs. Voici lesquels, et comment faire vos choix.
-          </p>
-        </div>
-      </div>
+      <PageHeader width="reading" title={<>Cookies</>} description={<>Nous utilisons peu de traceurs. Voici lesquels, et comment faire vos choix.</>} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <BetaProcessingNotice />
 
         {/* En bref */}
         <Card className="border-green-200 bg-green-50/50 shadow-sm overflow-hidden">

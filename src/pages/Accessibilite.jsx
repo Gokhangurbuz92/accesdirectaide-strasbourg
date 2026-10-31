@@ -1,4 +1,5 @@
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 
 const linkClass =
   'font-medium text-blue-700 underline decoration-2 underline-offset-2 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2';
@@ -9,27 +10,20 @@ export default function Accessibilite() {
       {/* R7: the shared SEO component (canonical, social tags) like every other page; it set only a title and a description */}
       <SEO title="Accessibilité" description="Déclaration d’accessibilité d’AccesDirectAide, état de conformité, contact et voies de recours." path="/accessibilite" />
 
+      <PageHeader width="reading" titleId="accessibilite-title" eyebrow="Accessibilité numérique" title="Déclaration d’accessibilité" description="État de conformité d’AccesDirectAide, contact et voies de recours." />
       <article
-        className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8"
+        className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8"
         aria-labelledby="accessibilite-title"
       >
-        <header className="mb-10">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-600">
-            Accessibilité numérique
-          </p>
-          <h1
-            id="accessibilite-title"
-            className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
-          >
-            Déclaration d’accessibilité
-          </h1>
-          <p className="mt-4 text-lg font-semibold text-slate-900">
-            Accessibilité : non conforme — audit d’évaluation en cours de réalisation.
+        <header className="mb-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          {/* R26 (owner directive 31/10/2026): only automated and technical checks exist — no formal RGAA audit is under way or scheduled, so none is announced */}
+          <p id="accessibilite-status" className="text-lg font-semibold text-slate-900">
+            Accessibilité : non conforme — aucun audit de conformité n’a encore été réalisé.
           </p>
           <p className="mt-3 leading-7 text-slate-700">
-            Aucun audit complet de conformité au RGAA n’est encore disponible. Aucun taux de
-            conformité n’est donc publié. Cette page décrit l’état connu du service sans
-            revendiquer une conformité qui n’a pas été auditée.
+            Aucun audit complet de conformité au RGAA n’a été réalisé ni programmé à ce jour : seuls des contrôles automatisés et des vérifications
+            techniques sont faits pendant le développement. Aucun taux de conformité n’est donc publié. Cette page décrit l’état connu du service
+            sans revendiquer une conformité qui n’a pas été auditée.
           </p>
         </header>
 
@@ -62,7 +56,7 @@ export default function Accessibilite() {
 
           <section aria-labelledby="tests-title">
             <h2 id="tests-title" className="text-2xl font-bold text-slate-950">
-              Évaluation en cours
+              Contrôles faits pendant le développement
             </h2>
             <p className="mt-3 leading-7">
               Des contrôles automatisés et des vérifications techniques sont intégrés au

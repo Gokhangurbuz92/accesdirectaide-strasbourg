@@ -18,6 +18,8 @@ const PAGE_URL_MAP = {
   Aides: '/aides',
   AideDetail: '/aide/view',
   Demarches: '/demarches',
+  Annuaire: '/structures',   // R26: the canonical list of places (/annuaire answers 308 to it)
+  Tools: '/outils',
   DemarcheDetail: '/demarches/view',
   StructureDetail: '/structures/view',
   Actualites: '/actualites',

@@ -1,14 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
+import { publicContactEmail } from '@/lib/contactEmail';
 
 /** Discreet, always-visible notice of the restricted public beta (owner directive 29/10/2026). */
 export function PublicBetaBanner() {
   return (
-    <div role="note" data-testid="public-beta-banner" className="w-full bg-amber-50 border-b border-amber-200 text-amber-900 text-sm">
-      <p className="max-w-6xl mx-auto px-4 py-2">
-        <strong>Bêta publique</strong> — version pilote en cours d’essai à Strasbourg. Les informations affichées viennent de sources officielles
-        vérifiées ; les comptes, les rendez-vous et l’envoi de documents ne sont pas encore ouverts. Ce service ne remplace pas la décision
-        de l’organisme qui attribue une aide.
+    <div role="note" data-testid="public-beta-banner" className="w-full bg-amber-50 border-b border-amber-200 text-amber-950 text-xs sm:text-sm">
+      {/* R26: one short line — what works, what is not open yet, who decides (it used to fill three lines on a phone) */}
+      <p className="max-w-7xl mx-auto px-4 py-1.5 sm:px-6 lg:px-8">
+        <strong>Bêta publique</strong> · Aides, démarches et lieux vérifiés sur sources officielles. Comptes, rendez-vous et documents : pas encore
+        ouverts. Seul l’organisme concerné décide de vos droits.
       </p>
     </div>
   );
@@ -18,7 +18,7 @@ export function PublicBetaBanner() {
 export function PublicBetaUnavailable() {
   const { pathname } = useLocation();
   // the contact form is closed, not the contact: the published address (mentions légales) is given instead of a dead end
-  const email = (String(LEGAL_PLACEHOLDERS.dataProtectionContact).match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [])[0];
+  const email = publicContactEmail();
   const contact = /^\/contact(\/|$)/.test(pathname || '');
   return (
     <section data-testid="public-beta-unavailable" aria-labelledby="beta-unavailable-title" className="max-w-2xl mx-auto px-4 py-16">

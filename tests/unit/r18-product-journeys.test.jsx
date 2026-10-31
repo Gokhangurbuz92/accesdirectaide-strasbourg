@@ -63,9 +63,10 @@ describe('R18 public journeys', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => [] }));
     wrap(Dispositifs);
     const none = await screen.findByTestId('dispositifs-none-published');
-    expect(none).toHaveTextContent('vérifié sur une source officielle');
-    expect(screen.getByRole('link', { name: 'Voir les aides' })).toHaveAttribute('href', '/aides');
-    expect(screen.getByRole('link', { name: 'Trouver un lieu d’aide' })).toHaveAttribute('href', '/structures');
+    // R26: the next steps are the live catalogue of verified content (aides, démarches, lieux, outils officiels)
+    expect(none).toHaveTextContent('vérification sur la page officielle');
+    expect(screen.getByRole('link', { name: /^Aides/ })).toHaveAttribute('href', '/aides');
+    expect(screen.getByRole('link', { name: /^Lieux d’accueil/ })).toHaveAttribute('href', '/structures');
     expect(screen.queryByLabelText('Département')).toBeNull();
   });
 });

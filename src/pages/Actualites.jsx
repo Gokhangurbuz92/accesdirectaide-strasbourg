@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import EmptyState from '@/components/ui/EmptyState';
+import PageHeader from '@/components/layout/PageHeader';
+import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
 import ListSkeleton from '@/components/feedback/ListSkeleton';
 import { Badge } from '@/components/ui/badge';
 import NewsFallback from '@/components/news/NewsFallback';
@@ -98,6 +100,7 @@ export default function Actualites() {
   const page = parsePage(searchParams.get('page'));
   const limit = parseLimit(searchParams.get('limit') || searchParams.get('pageSize'));
   const sort = (searchParams.get('sort') || 'recent').trim();
+  const searched = Boolean(q || categorie || source);
 
   const [queryInput, setQueryInput] = useState(q);
 
@@ -139,6 +142,8 @@ export default function Actualites() {
 
   /** @type {ActualiteListItem[]} */
   const actualites = (data?.items ?? EMPTY_ITEMS);
+  // nothing published at all (not a search without result): the page says so and offers the verified content instead
+  const nothingPublished = !isLoading && !error && !searched && actualites.length === 0 && page === 1;
   const pagination = data?.pagination || {};
 
   const liveMessage = useMemo(() => {
@@ -219,24 +224,10 @@ export default function Actualites() {
         {liveMessage}
       </p>
 
-      {/* Gradient Banner */}
-      <div
-        className="relative overflow-hidden py-10 sm:py-14"
-        style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Actualités</h1>
-          <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
-            Recherchez et filtrez les dernières mises à jour.
-          </p>
-        </div>
-      </div>
+      <PageHeader title="Actualités" description="Les changements utiles sur vos droits et vos démarches, avec leur source officielle." />
 
-      {/* Header */}
+      {/* Header — R26: no search bar over an empty list (nothing published and nothing searched) */}
+      {!nothingPublished && (
       <div className="bg-white border-b border-slate-200 py-4 sticky top-16 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
@@ -346,8 +337,9 @@ export default function Actualites() {
           )}
         </div>
       </div>
+      )}
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className={`${nothingPublished ? 'max-w-7xl' : 'max-w-4xl'} mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8`}>
         {isLoading ? (
           <ListSkeleton layout="list" count={5} message="Chargement des actualités..." />
         ) : error ? (
@@ -493,6 +485,10 @@ export default function Actualites() {
               </div>
             )}
           </>
+        ) : nothingPublished ? (
+          <EmptyCatalogue title="Aucune actualité n’est encore publiée" testId="actualites-none-published">
+            <p>Chaque actualité est relue avant publication et cite sa source officielle. Aucune n’a encore été publiée pendant la bêta.</p>
+          </EmptyCatalogue>
         ) : (
           <NewsFallback />
         )}

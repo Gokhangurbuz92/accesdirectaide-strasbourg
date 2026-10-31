@@ -4,6 +4,36 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import LoadError from '@/components/LoadError';
+import PageHeader from '@/components/layout/PageHeader';
+import { OFFICIAL_TOOLS, OFFICIAL_TOOLS_CHECKED_AT } from '@/config/officialTools';
+import { ExternalLink } from 'lucide-react';
+
+const checkedDay = new Date(`${OFFICIAL_TOOLS_CHECKED_AT}T12:00:00Z`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+/** R26: the official public services and simulators — real, usable tools while AccesDirectAide publishes none of its own */
+function OfficialTools() {
+    return (
+        <section aria-labelledby="official-tools-title" data-testid="official-tools">
+            <h2 id="official-tools-title" className="text-xl font-bold text-slate-900">Outils officiels en ligne</h2>
+            <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Simulateurs et services en ligne des organismes publics. Ils s’ouvrent sur le site de l’organisme : AccesDirectAide ne les gère pas et
+                ne garantit pas leurs résultats. Adresses vérifiées le {checkedDay}.
+            </p>
+            <ul className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {OFFICIAL_TOOLS.map((t) => (
+                    <li key={t.id} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" data-testid="official-tool">
+                        <span className="w-fit rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-800">{t.categorie}</span>
+                        <h3 className="mt-3 text-base font-semibold text-slate-900">{t.titre}</h3>
+                        <p className="mt-1 flex-1 text-sm text-slate-600">{t.description}</p>
+                        <a href={t.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded">
+                            Ouvrir sur {new URL(t.url).hostname.replace(/^www\./, '')}<ExternalLink className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (nouvel onglet)</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+}
 
 export default function Tools() {
     const [tools, setTools] = useState([]);
@@ -49,6 +79,7 @@ export default function Tools() {
         fetchTools();
     }, [filters, attempt]);
 
+    const hasFilter = Boolean(filters.type || filters.categorie || filters.public);
     const typeLabels = {
         methode: "Méthode",
         numerique: "Outil Numérique",
@@ -64,22 +95,11 @@ export default function Tools() {
                 path="/outils"
             />
 
-            {/* Gradient Banner */}
-            <div
-                className="relative overflow-hidden py-10 sm:py-14"
-                style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
-            >
-                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                    <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-                </div>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Boîte à Outils</h1>
-                    <p className="mt-2 text-blue-100/80 text-sm sm:text-base">Outils pratiques pour l'accompagnement social et numérique.</p>
-                </div>
-            </div>
+            <PageHeader title="Boîte à outils" description="Simulateurs et services en ligne utiles pour vos démarches, choisis sur les sites des organismes publics." />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+            {failed && <LoadError what="les outils" onRetry={() => setAttempt((n) => n + 1)} testId="tools-error" />}
+            {(tools.length > 0 || hasFilter) && !failed && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Filters */}
                 <aside className="bg-white p-6 rounded-lg shadow h-fit">
@@ -132,8 +152,6 @@ export default function Tools() {
                 <div className="md:col-span-3">
                     {loading ? (
                         <div className="text-center py-10" role="status">Chargement…</div>
-                    ) : failed ? (
-                        <LoadError what="les outils" onRetry={() => setAttempt((n) => n + 1)} testId="tools-error" />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {tools.map(tool => (
@@ -166,6 +184,8 @@ export default function Tools() {
                     )}
                 </div>
             </div>
+            )}
+            <OfficialTools />
             </div>
         </div>
     );

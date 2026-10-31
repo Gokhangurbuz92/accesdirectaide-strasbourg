@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { EyeOff } from 'lucide-react';
+import { frontendEnv } from '@/config/env';
 
 export default function HideScreenButton() {
     const [isHidden, setIsHidden] = useState(false);
@@ -71,16 +72,19 @@ export default function HideScreenButton() {
     }
 
     return (
-        <div className="fixed bottom-24 right-6 z-[40]">
+        <div className={`fixed ${frontendEnv.flags.publicBeta ? 'bottom-6' : 'bottom-24'} right-4 z-[40] sm:right-6`}>   {/* above the assistant button when it is shown */}
+            {/* R26: a safety control (hide the page at once if someone looks over your shoulder) — its purpose is now written on it; a bare red
+                circle read as an alert or an error */}
             <button
+                type="button"
                 onClick={triggerHide}
-                className="group relative flex items-center justify-center w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
-                aria-label="Cacher mon écran immédiatement (Echap x3)"
+                className="flex min-h-11 items-center gap-2 rounded-full bg-slate-900 px-3 text-sm font-semibold text-white shadow-lg ring-1 ring-white/20 transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:px-4"
+                aria-label="Masquer l’écran immédiatement (ou appuyez trois fois sur Échap)"
+                title="Masquer l’écran immédiatement (Échap trois fois)"
+                data-testid="hide-screen-button"
             >
-                <EyeOff className="w-5 h-5" />
-                <span className="absolute right-full mr-3 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block">
-                    Cacher mon écran (Échap x3)
-                </span>
+                <EyeOff className="h-5 w-5" aria-hidden="true" />
+                <span className="hidden sm:inline">Masquer l’écran</span>
             </button>
         </div>
     );

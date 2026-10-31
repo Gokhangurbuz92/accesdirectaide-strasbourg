@@ -1,5 +1,6 @@
 
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 import { ShieldCheck, ExternalLink } from 'lucide-react';
 
 export default function Sources() {
@@ -13,14 +14,15 @@ export default function Sources() {
     ];
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="min-h-screen bg-slate-50">
             <SEO
                 title="Nos Sources"
                 description="Liste des sources officielles que nous utilisons."
                 path="/sources"
             />
 
-            <h1 className="text-3xl font-bold mb-6 text-blue-900">Nos Sources</h1>
+            <PageHeader width="reading" title="Nos sources" description="Les sites officiels d’où viennent les informations publiées sur AccesDirectAide." />
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-8">
                 <div className="flex items-center gap-4 mb-6">
@@ -56,6 +58,7 @@ export default function Sources() {
                 <strong>Important :</strong> Nous ne sommes pas l'administration.
                 Nous travaillons dur pour ne pas faire d'erreur, mais vérifiez toujours auprès de l'organisme officiel pour votre dossier personnel.
                 Chaque fiche vérifiée indique sa source officielle (« Consulter la source ») et la date de sa dernière vérification.
+            </div>
             </div>
         </div>
     );

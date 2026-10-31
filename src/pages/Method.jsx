@@ -1,17 +1,19 @@
 
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 import { ClipboardCheck, Edit, Eye, Check } from 'lucide-react';
 
 export default function Method() {
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="min-h-screen bg-slate-50">
             <SEO
                 title="Notre Méthode"
                 description="Comment l'information est collectée, simplifiée et vérifiée automatiquement sur ses sources officielles."
                 path="/notre-methode"
             />
 
-            <h1 className="text-3xl font-bold mb-6 text-blue-900">Notre Méthode</h1>
+            <PageHeader width="reading" title="Notre méthode" description="Comment chaque fiche est fabriquée, simplifiée et vérifiée sur sa source officielle." />
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-8" data-testid="method-steps">
                 <p className="text-lg text-gray-700 mb-6">
@@ -72,6 +74,7 @@ export default function Method() {
                     chaque signalement est lu, et la fiche est vérifiée à nouveau sur sa source.
                 </p>
 
+            </div>
             </div>
         </div>
     );

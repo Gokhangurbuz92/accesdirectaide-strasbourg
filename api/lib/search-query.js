@@ -26,6 +26,22 @@ export function hasSearchVector(table) {
 export function resetSearchVectorCache() { SEARCH_VECTOR_CACHE.clear(); }
 /** @param {boolean} sv @param {string} v */
 const svOr = (sv, v) => (sv ? sql` OR ("search_vector" @@ plainto_tsquery('french', unaccent(${v})))` : sql``);
+
+/** R26: the topics of the Aides menu and the words that put a record under each (written without accents; matched as whole-word starts) */
+export const THEME_WORDS = {
+  logement: ['logement', 'loyer', 'hlm', 'hebergement'],
+  sante: ['sante', 'soins', 'maladie', 'medical'],
+  handicap: ['handicap'],
+  emploi: ['emploi', 'chomage', 'travail', 'activite', 'entreprise'],
+  famille: ['famille', 'enfant', 'parent'],
+};
+const ACCENTED = 'àâäéèêëîïôöùûüç'; const PLAIN = 'aaaeeeeiioouuuc';
+/** @param {unknown} v */
+export const foldAccents = (v) => String(v || '').toLowerCase().replace(/[àâäéèêëîïôöùûüç]/g, (c) => PLAIN[ACCENTED.indexOf(c)]);
+/** a PostgreSQL regular expression for a topic (\\m = start of a word), or null for a topic without a word list */
+export const themePattern = (theme) => (THEME_WORDS[theme] ? `\\m(${THEME_WORDS[theme].join('|')})` : null);
+/** a column, lower-cased and without accents, in SQL (a fixed identifier, never user input) @param {string} col */
+const FOLDED = (col) => sql.raw(`translate(lower(coalesce(${col}, '')), '${ACCENTED}', '${PLAIN}')`);
 /** @param {boolean} sv */
 const svFlag = (sv) => (sv ? sql`TRUE` : sql`FALSE`);
 /** @param {boolean} sv @param {string} v */
@@ -82,8 +98,13 @@ export async function searchAides(params) {
   // 2. Filters
   const effectiveTheme = theme || category;
   if (effectiveTheme) {
-    // Match new 'theme' column OR legacy category relation
-    conditions.push(sql`("theme" = ${effectiveTheme} OR "categoryId" = ${effectiveTheme} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Aide"."categoryId" AND c.slug = ${effectiveTheme}))`);
+    // Match new 'theme' column OR legacy category relation — R26: OR the record's own category, OR the topic's words in its title and description
+    // (accents ignored). The verified records carry a coarse « categorie » and almost never a « theme », so the Aides menu (Logement, Santé, Handicap,
+    // Emploi, Famille) returned nothing for every topic.
+    const t = foldAccents(effectiveTheme);
+    const pattern = themePattern(t);
+    conditions.push(sql`("theme" = ${effectiveTheme} OR "categoryId" = ${effectiveTheme} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Aide"."categoryId" AND c.slug = ${effectiveTheme})
+      OR ${FOLDED('"categorie"')} = ${t}${pattern ? sql` OR (${FOLDED('"titre"')} || ' ' || ${FOLDED('"description"')}) ~ ${pattern}` : sql``})`);
   }
 
   if (sousTheme) {

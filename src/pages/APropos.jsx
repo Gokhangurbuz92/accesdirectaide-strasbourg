@@ -1,4 +1,5 @@
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 import { Lightbulb, Target, CheckCircle2, History, Globe2, HeartHandshake } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
@@ -13,19 +14,9 @@ export default function APropos() {
       />
 
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-orange-500/20 text-orange-400 mb-6 ring-1 ring-orange-500/30">
-            <Lightbulb className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Notre Histoire & Mission</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Née face à la complexité administrative, Accès Direct Aide s'engage pour garantir l'accès au bout des doigts, pour tous.
-          </p>
-        </div>
-      </div>
+      <PageHeader width="reading" title={<>Notre histoire et notre mission</>} description={<>Née face à la complexité administrative, Accès Direct Aide s'engage pour garantir l'accès au bout des doigts, pour tous.</>} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
         {/* Le Constat */}
         <Card className="border-orange-200 bg-orange-50/50 shadow-sm overflow-hidden">

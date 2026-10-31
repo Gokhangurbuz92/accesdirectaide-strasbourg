@@ -1,5 +1,6 @@
 // @ts-nocheck
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 import { Database, Search, Sparkles, BookOpenCheck, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,19 +53,9 @@ export default function SourcesMethode() {
       />
 
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-400 mb-6 ring-1 ring-teal-500/30">
-            <BookOpenCheck className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Sources & Méthodologie</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            La transparence est la base de la confiance. Découvrez l'exigence avec laquelle nous récoltons et vulgarisons l'information.
-          </p>
-        </div>
-      </div>
+      <PageHeader width="reading" title={<>Sources et méthode</>} description={<>La transparence est la base de la confiance. Découvrez l'exigence avec laquelle nous récoltons et vulgarisons l'information.</>} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
         {/* Le travail de l'IA démystifié */}
         <Card className="border-teal-200 bg-teal-50/50 shadow-sm overflow-hidden">

@@ -9,10 +9,12 @@ const source = fs.readFileSync(
 
 describe('WS5 accessibility statement contract', () => {
   it('uses non-conformity status while no valid formal audit exists', () => {
+    // owner directive 31/10/2026 (R26): no formal audit is under way or scheduled, so the statement no longer says one is « en cours de réalisation »
     expect(source).toContain(
-      'Accessibilité : non conforme — audit d’évaluation en cours de réalisation.'
+      'Accessibilité : non conforme — aucun audit de conformité n’a encore été réalisé.'
     );
-    expect(source).toContain('Aucun audit complet de conformité au RGAA n’est encore disponible');
+    expect(source).toContain('Aucun audit complet de conformité au RGAA n’a été réalisé ni programmé à ce jour');
+    expect(source).not.toContain('en cours de réalisation');
     expect(source).not.toContain('Accessibilité : totalement conforme');
     expect(source).not.toContain('Accessibilité : partiellement conforme');
   });
@@ -40,7 +42,8 @@ describe('WS5 accessibility statement contract', () => {
   });
 
   it('uses semantic headings and page labelling', () => {
-    expect(source).toContain('<h1');
+    // R26: the level-1 heading is drawn by the shared page header, with the id the article is labelled by
+    expect(source).toMatch(/<PageHeader[^>]*titleId="accessibilite-title"/);
     expect(source).toContain('<h2');
     expect(source).toContain('aria-labelledby="accessibilite-title"');
   });

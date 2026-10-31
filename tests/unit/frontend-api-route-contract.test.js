@@ -12,7 +12,7 @@ import { routes } from '../../api/routes.js';
 const KNOWN_UNROUTED = new Set([
   // (PKG-3, owner decision 2026-10-19: the legacy 'pro/appointments/start-visio' is retired; the frontend now uses the routed 'pro/appointments/visio')
   // legacy HMAC-token flow / legacy pages, owner decision pending (see docs/release/MESSAGING_ROUTE_REGRESSION.md)
-  'appointments', 'appointments/cancel', 'appointments/reschedule', 'public/availability', 'public/stats',
+  'appointments', 'appointments/cancel', 'appointments/reschedule', 'public/availability',   // R26: 'public/stats' is no longer called (the impact page shows the live published counts)
   // (PKG-4 batch 3, 2026-10-20: 'pro/regional-stats' and 'pro/team/stats' are routed)
   // dev/diagnostic or non-existent endpoints referenced by code paths not reachable in the Stage 6 scope
   'endpoint', 'ratelimit-test', 'integrations/core/invoke',

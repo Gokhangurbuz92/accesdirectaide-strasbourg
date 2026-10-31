@@ -43,6 +43,21 @@ export function keyFacts(text) {
 }
 
 /**
+ * The part of a page that holds its substance (R26). It used to be the FIRST <article>: on alsace.eu that is a 49-character « Pour aller plus loin »
+ * teaser, so the FSL page (11 000 characters) was read as almost nothing and no summary could ever be confirmed by it. Now: the largest <article> when it
+ * carries most of the <main> text (Service-Public sheets), otherwise <main>, otherwise <body>.
+ * @param {string} h
+ */
+export function mainScope(h) {
+  const len = (x) => textOf(x).length;
+  const articles = [...h.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/gi)].map((m) => m[1]).sort((a, b) => len(b) - len(a));
+  const main = (h.match(/<main[^>]*>([\s\S]*?)<\/main>/i) || [])[1];
+  const body = (h.match(/<body[^>]*>([\s\S]*?)<\/body>/i) || [])[1];
+  if (articles[0] && (!main || len(articles[0]) >= 0.4 * len(main))) return articles[0];
+  return main || articles[0] || body || h;
+}
+
+/**
  * Parse an official page. Service-Public sheets: chapters of the main article; other sites: the <main> (or <article>, or <body>) text as one chapter.
  * @param {string} html @param {string} url
  */
@@ -50,8 +65,7 @@ export function parseOfficialPage(html, url = '') {
   const h = String(html || '');
   const title = textOf((h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || (h.match(/<title>([\s\S]*?)<\/title>/i) || [])[1] || '').split('|')[0].trim() || null;
   const verified = frenchDate((decode(h).match(/V[ée]rifi[ée] le\s*([0-9]{1,2}(?:er)?\s+[a-zéû]+\s+[0-9]{4})/i) || [])[1]);
-  const scope = (h.match(/<article[^>]*>([\s\S]*?)<\/article>/i) || h.match(/<main[^>]*>([\s\S]*?)<\/main>/i) || h.match(/<body[^>]*>([\s\S]*?)<\/body>/i) || [null, h])[1]
-    .replace(/<(nav|header|footer|form|dialog|aside)[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  const scope = mainScope(h).replace(/<(nav|header|footer|form|dialog|aside)[^>]*>[\s\S]*?<\/\1>/gi, ' ');
   const parts = scope.split(/(?=<h[2-4][^>]*>)/i);
   const chapters = [];
   for (const part of parts) {

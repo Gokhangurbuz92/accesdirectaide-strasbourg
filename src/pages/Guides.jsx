@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import AnimatedCard from '@/components/ui/AnimatedCard';
 import LoadError from '@/components/LoadError';
+import PageHeader from '@/components/layout/PageHeader';
+import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
 
 export default function Guides() {
     const [guides, setGuides] = useState([]);
@@ -16,6 +18,7 @@ export default function Guides() {
         public: '',
         contexte: ''
     });
+    const hasFilter = Boolean(filters.categorie || filters.public || filters.contexte);
 
     useEffect(() => {
         // Load facets
@@ -58,22 +61,16 @@ export default function Guides() {
                 path="/bonnes-pratiques"
             />
 
-            {/* Gradient Banner */}
-            <div
-                className="relative overflow-hidden py-10 sm:py-14"
-                style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
-            >
-                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                    <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-                </div>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Bonnes Pratiques</h1>
-                    <p className="mt-2 text-blue-100/80 text-sm sm:text-base">Guides et bonnes pratiques FALC pour l'accessibilité.</p>
-                </div>
-            </div>
+            <PageHeader title="Bonnes pratiques" description="Des guides pratiques pour préparer vos démarches et vos rendez-vous, en langage simple." />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* R26: no published guide at all = said plainly, with the verified content to use instead (the filters only when there is something to filter) */}
+            {!loading && !failed && guides.length === 0 && !hasFilter ? (
+                <EmptyCatalogue title="Aucun guide n’est encore publié" testId="guides-none-published">
+                    <p>Les guides de bonnes pratiques sont en préparation : chacun sera publié après relecture.</p>
+                    <p>En attendant, chaque <strong>démarche</strong> explique déjà les étapes et les documents à préparer, et le <Link to="/glossaire" className="font-medium text-blue-700 underline">glossaire</Link> explique les sigles (RSA, APL, CCAS…).</p>
+                </EmptyCatalogue>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Filters */}
                 <aside className="bg-white p-6 rounded-lg shadow h-fit">
@@ -161,6 +158,7 @@ export default function Guides() {
                     )}
                 </div>
             </div>
+            )}
             </div>
         </div>
     );

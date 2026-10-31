@@ -1,4 +1,5 @@
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 import { Scale, Building2, Server, FileText, AlertTriangle, ExternalLink, Mail } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
@@ -17,19 +18,9 @@ export default function MentionsLegales() {
       />
 
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-400 mb-6 ring-1 ring-blue-500/30">
-            <Scale className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Mentions légales</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Qui édite AccesDirectAide, qui l&apos;héberge, d&apos;où viennent les informations.
-          </p>
-        </div>
-      </div>
+      <PageHeader width="reading" title={<>Mentions légales</>} description={<>Qui édite AccesDirectAide, qui l&apos;héberge, d&apos;où viennent les informations.</>} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <Card className="border-slate-200 shadow-md">
           <CardContent className="p-6 md:p-10 space-y-12">
 
@@ -71,6 +62,7 @@ export default function MentionsLegales() {
                       <li><strong>Stockage des fichiers (Coffre, pièces jointes) :</strong> non utilisé pendant la bêta publique (aucun document ne peut être envoyé).</li>
                       <li><strong>Limitation de débit (sécurité) :</strong> Upstash, Inc. — données hébergées à Francfort (Union européenne), souscrit par l&apos;intermédiaire de Vercel ; coordonnées : https://upstash.com.</li>
                       <li><strong>Journal des erreurs techniques :</strong> Sentry n&apos;est pas activé pendant la bêta publique.</li>
+                      <li><strong>Messagerie de contact :</strong> Microsoft (Outlook), pour l&apos;adresse de contact publiée ci-dessus : les messages reçus servent seulement à répondre.</li>
                     </>
                   ) : (
                     <>

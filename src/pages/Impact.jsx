@@ -1,108 +1,55 @@
-// @ts-nocheck
-
-import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { BarChart, Users, FileText, CheckCircle } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
+import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 
+/**
+ * PKG-11 / P25: only measured figures. R26: what is measured today is what is published — the live counts of verified records, read from the public
+ * lists themselves. Usage figures (visits, people helped, appointments) are not measured during the public beta, and the page says so instead of
+ * showing empty counters (it used to call a figures endpoint the beta refuses).
+ */
 export default function Impact() {
-    const [stats, setStats] = useState(null);
-    const [, setLoading] = useState(true);
-
-    // PKG-11 / P25: only measured figures — and none is shown when the service does not publish them (the public figures endpoint awaits an owner decision:
-    // tests/unit/frontend-api-route-contract.test.js). The page used to show « - » under « les chiffres clés à ce jour ».
-    useEffect(() => {
-        fetch('/api/public/stats')
-            .then(res => (res.ok ? res.json() : null))
-            .then(data => setStats(data && typeof data === 'object' ? data : null))
-            // @ts-ignore
-            .catch(e => { if (import.meta.env.DEV) console.error(e); })
-            .finally(() => setLoading(false));
-    }, []);
-
-    const metrics = [
-        { label: "Guides publiés", value: stats?.guides || "-", icon: FileText, color: "text-blue-600" },
-        { label: "Outils disponibles", value: stats?.tools || "-", icon: CheckCircle, color: "text-green-600" },
-        { label: "Structures référencées", value: stats?.structures || "-", icon: Users, color: "text-purple-600" },
-        { label: "Rendez-vous facilités", value: stats?.appointments || "-", icon: BarChart, color: "text-orange-600" },
-    ];
-
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             <SEO
-                title="Impact & Transparence"
-                description="Chiffres clés et impact d'Accès Direct Aide sur l'accès aux droits."
+                title="Notre impact"
+                description="Ce qu’AccesDirectAide publie aujourd’hui, ce qui est mesuré et ce qui ne l’est pas encore."
                 path="/impact"
             />
+            <PageHeader title="Notre impact" description="Nous ne publions que des chiffres mesurés. Voici ce qui l’est aujourd’hui, et ce qui ne l’est pas encore." />
 
-            {/* Hero Section */}
-            <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-400 mb-6 ring-1 ring-blue-500/30">
-                        <BarChart className="w-8 h-8" />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+                <VerifiedCatalogue heading="Publié aujourd’hui (chiffres en direct)" />
+
+                <section aria-labelledby="impact-not-measured" className="grid gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="impact-no-figures">
+                        <h2 id="impact-not-measured" className="text-lg font-semibold text-slate-900">Ce que nous ne mesurons pas encore</h2>
+                        <p className="mt-2 text-slate-700">
+                            Pendant la bêta publique, nous ne mesurons pas l’audience et aucun compte n’est ouvert : nous ne connaissons ni le nombre de visites,
+                            ni le nombre de personnes aidées. Ces chiffres seront publiés lorsqu’ils seront mesurés, avec leur méthode.
+                        </p>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Notre Impact</h1>
-                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Nous mesurons l'utilité de notre plateforme par des indicateurs concrets, et nous ne publions que des chiffres mesurés.
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <h2 className="text-lg font-semibold text-slate-900">Comment ces chiffres sont obtenus</h2>
+                        <p className="mt-2 text-slate-700">
+                            Ils comptent les fiches visibles sur le site : chaque aide, démarche ou lieu d’accueil n’est publié qu’après une vérification
+                            automatique et datée sur sa source officielle (Service-Public, répertoire FINESS, Annuaire de l’administration…).
+                        </p>
+                        <Link to="/sourcesmethode" className="mt-3 inline-block font-semibold text-blue-700 hover:underline">Notre méthode de vérification</Link>
+                    </div>
+                </section>
+
+                <section aria-labelledby="impact-goals" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+                    <h2 id="impact-goals" className="text-lg font-semibold text-slate-900">Ce que nous voulons améliorer</h2>
+                    <ol className="mt-4 grid gap-4 md:grid-cols-3">
+                        <li className="rounded-xl bg-slate-50 p-4"><p className="font-semibold text-slate-900">Plus de lieux et de dispositifs locaux</p><p className="mt-1 text-sm text-slate-600">Vérifier davantage de structures et les programmes de Strasbourg et de l’Eurométropole.</p></li>
+                        <li className="rounded-xl bg-slate-50 p-4"><p className="font-semibold text-slate-900">Des textes relus par des lecteurs</p><p className="mt-1 text-sm text-slate-600">Faire relire les versions simplifiées par des personnes concernées.</p></li>
+                        <li className="rounded-xl bg-slate-50 p-4"><p className="font-semibold text-slate-900">Mesurer l’utilité réelle</p><p className="mt-1 text-sm text-slate-600">Définir avec des partenaires une mesure respectueuse de la vie privée.</p></li>
+                    </ol>
+                    <p className="mt-6 text-slate-700">
+                        Vous êtes une structure d’aide ou un financeur ? <Link to="/partenaires" className="font-semibold text-blue-700 hover:underline">Découvrez l’espace partenaires</Link>.
                     </p>
-                </div>
-            </div>
-
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-10 relative z-10 space-y-8">
-            {/* Counters */}
-            {!stats ? (
-                <p className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center text-slate-700 mb-16" data-testid="impact-no-figures">
-                    Les chiffres d’usage ne sont pas encore publiés : ils le seront lorsqu’ils seront mesurés sur un service ouvert au public.
-                </p>
-            ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                {metrics.map((m, i) => (
-                    <div key={i} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center">
-                        <m.icon className={`w-12 h-12 mx-auto mb-4 ${m.color}`} />
-                        <div className="text-4xl font-bold text-gray-900 mb-2">{m.value}</div>
-                        <div className="text-gray-600 font-medium">{m.label}</div>
-                    </div>
-                ))}
-            </div>
-            )}
-
-            {/* Roadmap */}
-            <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-100">
-                <h2 className="text-2xl font-bold mb-6">Ce que nous voulons améliorer</h2>
-                <div className="space-y-4">
-                    <div className="flex gap-4">
-                        <div className="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded h-fit">1</div>
-                        <div>
-                            <h3 className="font-bold text-lg">Plus de couverture territoriale</h3>
-                            <p className="text-gray-600">Référencer davantage de structures locales pour un maillage fin.</p>
-                        </div>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="bg-green-100 text-green-800 font-bold px-3 py-1 rounded h-fit">2</div>
-                        <div>
-                            <h3 className="font-bold text-lg">Accessibilité renforcée</h3>
-                            <p className="text-gray-600">Aller plus loin que le FALC avec des versions audio et vidéo des guides.</p>
-                        </div>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded h-fit">3</div>
-                        <div>
-                            <h3 className="font-bold text-lg">Mesure d'impact qualitatif</h3>
-                            <p className="text-gray-600">Lancer des enquêtes de satisfaction auprès des bénéficiaires.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t">
-                    <h3 className="text-xl font-bold mb-4">Comment nous aider ?</h3>
-                    <p className="text-gray-700 mb-4">
-                        Vous êtes une structure d'aide ? Référencez-vous gratuitement.
-                        Vous êtes un financeur ? Contactez-nous pour soutenir le projet.
-                    </p>
-                    <a href="/partenaires" className="inline-block bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700 transition">
-                        Devenir partenaire
-                    </a>
-                </div>
-            </div>
+                </section>
             </div>
         </div>
     );

@@ -1,7 +1,8 @@
 // @ts-nocheck
 
 import React, { useState, lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { navActive } from '@/lib/navActive';
 import Logo from '@/components/Brand/Logo';
 import { createPageUrl } from '@/utils';
 import {
@@ -11,7 +12,7 @@ import {
   HandHeart,
   FileText,
   MapPin,
-  Newspaper,
+  Wrench,
   Activity,
   ListChecks,
   Info,
@@ -50,7 +51,8 @@ const NAV_ITEMS = [
   },
   { label: 'Démarches', page: 'Demarches', icon: FileText },
   { label: 'Annuaire', page: 'Annuaire', icon: MapPin },
-  { label: 'Actualités', page: 'Actualites', icon: Newspaper },
+  // R26: « Outils » (official simulators, real content) in the menu; « Actualités » stays in the footer while none is published
+  { label: 'Outils', page: 'Tools', icon: Wrench },
   { label: 'Rendez-vous', page: 'AdminAppointments', icon: Calendar, adminOnly: true },
   { label: 'Structures', page: 'AdminStructures', icon: MapPin, adminOnly: true },
   { label: 'Démarches', page: 'AdminDemarches', icon: FileText, adminOnly: true },
@@ -88,7 +90,8 @@ const FOOTER_LEGAL = [
 const footerPath = (link) => link.href || createPageUrl(link.page);
 
 // @ts-ignore
-export default function Layout({ children, currentPageName }) {
+export default function Layout({ children }) {   // R26: the active menu entry comes from the address (navActive), no longer from currentPageName
+  const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -158,13 +161,13 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         to={createPageUrl(item.page)}
                         className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-lg relative
-                          ${currentPageName === item.page
+                          ${navActive(pathname, item.page)
                             ? 'text-brand-primary after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-brand-primary'
                             : 'text-text-body hover:text-brand-primary hover:bg-brand-highlight/10'
                           }`}
                         aria-haspopup="menu"
                         aria-controls={`nav-${item.page.toLowerCase()}-menu`}
-                        aria-current={currentPageName === item.page ? 'page' : undefined}
+                        aria-current={navActive(pathname, item.page) ? 'page' : undefined}
                       >
                         {item.label}
                         <ChevronDown className="h-4 w-4" />
@@ -193,11 +196,11 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                       to={createPageUrl(item.page)}
                       className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-lg relative
-                        ${currentPageName === item.page
+                        ${navActive(pathname, item.page)
                           ? 'text-brand-primary after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-brand-primary'
                           : 'text-text-body hover:text-brand-primary hover:bg-brand-highlight/10'
                         }`}
-                      aria-current={currentPageName === item.page ? 'page' : undefined}
+                      aria-current={navActive(pathname, item.page) ? 'page' : undefined}
                     >
                       {item.label}
                     </Link>
@@ -208,7 +211,8 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Auth links — desktop */}
             <div className="hidden items-center gap-2 xl:flex">
-              <AuthHeaderActions />
+              {/* public beta: no account can be created or opened, so the menu does not offer it (the screens are closed server-side) */}
+              {!frontendEnv.flags.publicBeta && <AuthHeaderActions />}
             </div>
 
             {/* Actions */}
@@ -284,7 +288,7 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Auth links — mobile */}
               <hr className="my-2 border-border" />
-              <AuthMobileActions onNavigate={() => setMobileMenuOpen(false)} />
+              {!frontendEnv.flags.publicBeta && <AuthMobileActions onNavigate={() => setMobileMenuOpen(false)} />}
             </nav>
           </div>
         )}

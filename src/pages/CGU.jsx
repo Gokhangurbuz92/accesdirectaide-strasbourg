@@ -1,4 +1,6 @@
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
+import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import { FileCheck, Users, ShieldCheck, AlertTriangle, Ban, RefreshCw, Mail } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
@@ -13,19 +15,10 @@ export default function CGU() {
       />
 
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white pt-16 pb-24 border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 mb-6 ring-1 ring-emerald-500/30">
-            <FileCheck className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Conditions Générales d'Utilisation</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Règles d'usage de la plateforme Accès Direct Aide — une plateforme d'information solidaire.
-          </p>
-        </div>
-      </div>
+      <PageHeader width="reading" title={<>Conditions générales d’utilisation</>} description={<>Règles d'usage de la plateforme Accès Direct Aide — une plateforme d'information solidaire.</>} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <BetaProcessingNotice />
         <Card className="border-slate-200 shadow-md">
           <CardContent className="p-6 md:p-10 space-y-12">
 

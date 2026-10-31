@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { FileText, ExternalLink } from 'lucide-react';
 import { EMERGENCY_FALLBACK } from '@/lib/emergencyNumbers';
+import PageHeader from '@/components/layout/PageHeader';
+import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
 
 export default function Ressources() {
     const emergencyMode = new URLSearchParams(window.location.search).get('emergency') === '1';
@@ -51,14 +53,20 @@ export default function Ressources() {
     const emergencyList = emergencyMode ? (apiEmergency.length > 0 ? apiEmergency : EMERGENCY_FALLBACK) : [];
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="min-h-screen bg-slate-50">
             <SEO
-                title="Ressources d'accessibilité"
-                description="Découvrez les ressources pour améliorer l'accessibilité et l'inclusion."
+                title="Ressources utiles"
+                description="Numéros d’urgence et ressources utiles pour vos démarches."
                 path="/ressources"
             />
-
-            <h1 className="text-3xl font-bold mb-6 text-slate-800">Ressources d'Accessibilité</h1>
+            <PageHeader title="Ressources utiles" description="Numéros d’urgence et documents utiles pour vos démarches.">
+                {!emergencyMode && (
+                    <Link to="/ressources?emergency=1" data-testid="emergency-link" className="inline-flex min-h-11 items-center rounded-lg bg-white px-4 text-sm font-semibold text-red-800 shadow hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                        Voir les numéros d’urgence
+                    </Link>
+                )}
+            </PageHeader>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             {emergencyMode && (
                 <section data-testid="emergency-resources" aria-labelledby="emergency-resources-title" className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
@@ -75,6 +83,7 @@ export default function Ressources() {
                 </section>
             )}
 
+            {(filterType || ressources.some((r) => r.type !== 'URGENCE')) && (
             <div className="bg-white p-4 rounded-lg shadow mb-8 flex flex-wrap gap-4 items-center">
                 <select
                     className="border p-2 rounded"
@@ -89,6 +98,7 @@ export default function Ressources() {
                     <option value="link">Liens utiles</option>
                 </select>
             </div>
+            )}
 
             {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : failed ? (
                 <div role="alert" data-testid="ressources-error" className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900">
@@ -130,11 +140,17 @@ export default function Ressources() {
                         </Link>
                     ))}
                     {/* R7: the emergency numbers (type URGENCE) are shown above, not in this grid: « none found » only when the grid itself is empty */}
-                    {!emergencyMode && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
+                    {!emergencyMode && filterType && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
                         <p className="col-span-3 text-center text-gray-500" data-testid="ressources-empty">Aucune ressource trouvée pour ces critères.</p>
                     )}
                 </div>
             )}
+            {!loading && !failed && !emergencyMode && !filterType && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
+                <EmptyCatalogue title="Aucun document n’est encore publié ici" testId="ressources-none-published">
+                    <p>Les documents et liens utiles seront publiés après vérification de leur source. Les numéros d’urgence nationaux sont disponibles avec le bouton ci-dessus.</p>
+                </EmptyCatalogue>
+            )}
+            </div>
         </div>
     );
 }

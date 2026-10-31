@@ -1,16 +1,18 @@
 
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function Mission() {
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="min-h-screen bg-slate-50">
             <SEO
                 title="Notre Mission"
                 description="Pourquoi ce site existe : simplifier l'accès aux droits pour tous."
                 path="/notre-mission"
             />
 
-            <h1 className="text-3xl font-bold mb-6 text-blue-900">Notre Mission</h1>
+            <PageHeader width="reading" title="Notre mission" description="Pourquoi ce site existe : aider chacun à trouver ses droits et les bonnes personnes." />
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <div className="prose prose-lg max-w-none text-gray-700 bg-white p-8 rounded-lg shadow-sm border border-gray-100">
                 <p className="text-xl font-medium text-gray-900 mb-6">
@@ -46,6 +48,7 @@ export default function Mission() {
                         <li>Vos données servent seulement à vous aider, avec votre accord.</li>
                     </ol>
                 </div>
+            </div>
             </div>
         </div>
     );

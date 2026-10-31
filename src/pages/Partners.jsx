@@ -1,10 +1,15 @@
 import SEO from '@/components/SEO';
+import PageHeader from '@/components/layout/PageHeader';
+import { frontendEnv } from '@/config/env';
+import { publicContactEmail, mailtoWithSubject } from '@/lib/contactEmail';
 import { Link } from 'react-router-dom';
 import { Handshake, MapPin, Users, HeartHandshake, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function Partners() {
+    const beta = frontendEnv.flags.publicBeta;
+    const email = publicContactEmail();
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             <SEO
@@ -13,20 +18,30 @@ export default function Partners() {
                 path="/partenaires"
             />
 
-            {/* Hero Section */}
-            <div className="bg-slate-900 text-white pt-16 pb-32 border-b border-slate-800">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-purple-500/20 text-purple-400 mb-6 ring-1 ring-purple-500/30">
-                        <HeartHandshake className="w-8 h-8" />
-                    </div>
-                    <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-50">Espace Partenaires</h1>
-                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Notre plateforme s'appuie sur la transparence de l'Open Data et l'intelligence collective locale. Vous aidez le public ? Rejoignez le réseau.
-                    </p>
-                </div>
-            </div>
+            <PageHeader title="Espace partenaires" description="Associations, CCAS, structures solidaires et collectivités : comment votre structure apparaît sur AccesDirectAide, et comment nous joindre." />
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-20 relative z-10 space-y-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                {beta && (
+                    <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="partners-now" data-testid="partners-beta-now">
+                        <h2 id="partners-now" className="text-xl font-bold text-slate-900">Pendant la bêta publique</h2>
+                        <p className="mt-2 text-slate-700">
+                            L’espace professionnel, les comptes de structure et la prise de rendez-vous ne sont pas encore ouverts. Votre structure figure
+                            peut-être déjà dans l’annuaire : les lieux d’accueil sont repris des registres officiels (FINESS, Annuaire de l’administration,
+                            SIRENE) et vérifiés avant publication.
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                            <Link to="/structures" className="inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-5 font-semibold text-white hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+                                Chercher ma structure dans l’annuaire
+                            </Link>
+                            {email && (
+                                <a href={mailtoWithSubject(email, 'Partenariat AccesDirectAide')} data-testid="partners-mailto" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-5 font-semibold text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+                                    Nous écrire : {email}
+                                </a>
+                            )}
+                        </div>
+                        <p className="mt-4 text-sm text-slate-600">Pour corriger une fiche ou proposer un partenariat, écrivez-nous. N’envoyez pas d’informations personnelles sur les personnes que vous accompagnez.</p>
+                    </section>
+                )}
 
                 {/* Appel à partenaires (Puisque le projet démarre et n'a pas encore signé les acteurs) */}
                 <Card className="border-slate-200 shadow-xl overflow-hidden">
@@ -35,10 +50,10 @@ export default function Partners() {
 
                         <div className="max-w-2xl mx-auto">
                             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-                                Associations, CCAS, Structures Solidaires : Ralliez L'initiative
+                                {beta ? 'Ce que l’espace partenaires permettra' : 'Associations, CCAS, structures solidaires : rejoignez l’initiative'}
                             </h2>
                             <p className="text-lg text-slate-600 leading-relaxed">
-                                Accès Direct Aide est déployé pour simplifier la vie des demandeurs et soulager l'accueil des professionnels. <strong>Référencez votre structure</strong> dans notre annuaire pour bénéficier de la prise de RDV intégrée et d'une visibilité civique.
+                                Accès Direct Aide est déployé pour simplifier la vie des demandeurs et soulager l'accueil des professionnels. {beta ? <>À son ouverture, l’espace partenaires permettra de <strong>tenir à jour la fiche de votre structure</strong> et de recevoir des orientations.</> : <><strong>Référencez votre structure</strong> dans notre annuaire pour bénéficier de la prise de RDV intégrée et d&apos;une visibilité civique.</>}
                             </p>
                         </div>
 
@@ -70,7 +85,7 @@ export default function Partners() {
                 </Card>
 
                 {/* Engagements et CTA */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className={`grid gap-6 ${beta ? '' : 'md:grid-cols-2'}`}>
 
                     <Card className="border-slate-200 shadow-sm bg-white">
                         <CardContent className="p-8">
@@ -92,6 +107,7 @@ export default function Partners() {
                         </CardContent>
                     </Card>
 
+                    {!beta && (
                     <Card className="bg-slate-900 border-none text-white shadow-xl flex flex-col justify-center relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-10">
                             <HeartHandshake className="w-32 h-32" />
@@ -116,6 +132,7 @@ export default function Partners() {
                             </div>
                         </CardContent>
                     </Card>
+                    )}
 
                 </div>
 
