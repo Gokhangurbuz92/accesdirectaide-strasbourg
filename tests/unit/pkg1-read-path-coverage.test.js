@@ -18,7 +18,8 @@ const walk = (dir, out = []) => {
 /** public read paths: MUST apply the publication contract */
 const GUARDED = [
   'api/_handlers/aides.js', 'api/_handlers/demarches.js', 'api/_handlers/structures.js', 'api/_handlers/dispositifs/index.js', 'api/_handlers/drees.js', 'api/_handlers/pdf.js',
-  'api/_handlers/search.js', 'api/_handlers/search-pro.js', 'api/_handlers/sitemap.js', 'api/_handlers/taxonomy.js',
+  // R31 (D16): api/_handlers/search.js no longer reads a content table itself — its démarche and place sections go through api/lib/search-query.js (guarded)
+  'api/_handlers/search-pro.js', 'api/_handlers/sitemap.js', 'api/_handlers/taxonomy.js',
   'api/lib/search-query.js', 'api/lib/hybrid-search.js', 'api/lib/gemini.js', 'scripts/generate-sitemap.mjs',
   // P22 (R11): the record pages' initial HTML (scripts/prerender.mjs no longer reads any record)
   'api/_services/page-head.js',
@@ -57,6 +58,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/structure-proposals.js': 'Espace Structure: the organization\'s OWN record (members only) and the ADA MFA review queue; never public',
   'api/lib/retrieval-index.js': 'PKG-11 / D16: index rebuild of the D-5-VISIBLE aides only (visibleSql); writes vectors, no public output',
   'scripts/search-eval.mjs': 'PKG-11 / D16: LAB measurement on its own synthetic fixtures (refuses a non-local database); no public output',
+  'api/_handlers/pro/orientation-baskets.js': 'R18 (R31): reads only the nom of the caller\'s own organization for the summary heading; the catalogue items go through visibleSql (api/_services/orientation-basket.js)',
   'api/_services/link-check.js': 'PKG-11 / A05: link check of the D-5-VISIBLE records only (visibleSql), allow-listed official hosts; no public output',
   'api/_services/org-closure.js': 'PKG-11 / E08: the organization\'s own closure request and the ADA two-person MFA review (organization name, counts); never public',
   'api/_services/admin-content.js': 'PKG-11 / A02: the administrators\' catalogue editing (only through /api/admin/content: admin session + MFA); found by the R11 table-map detection, never a public read',

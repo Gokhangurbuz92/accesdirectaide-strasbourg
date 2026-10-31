@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { visibleWhere } from '../lib/publicVisibility.js';
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
@@ -8,6 +7,8 @@ import { searchAidesHybrid } from '../lib/hybrid-search.js';
 import { generateEmbedding, getActiveEmbeddingModel } from '../lib/EmbeddingProvider.js';
 import { cachedSearch } from '../lib/search-cache.js';
 import { GLOSSAIRE } from '../lib/glossaire.js';
+import { bestMatchCondition, searchDemarches, searchStructures, wordPlan } from '../lib/search-query.js';
+import { sql } from 'drizzle-orm';
 
 /**
  * Universal search handler — searches Aides, Démarches, Structures, Actualités.
@@ -82,85 +83,37 @@ export default async function handler(req, res) {
         territoryFilter
       });
 
-      // 2. Search Démarches (simple text search)
-      const queryLike = `%${payload.query}%`;
+      // 2-4. R31 (D16): démarches, places and news use the word search of their own list pages (api/lib/search-query.js, R27): each meaningful word, its
+      // synonyms and plural, accents ignored, best match level. Before, the whole query was one ILIKE phrase: « demande logement social », « MDPH Strasbourg »
+      // or « titre de séjour » found no démarche or place (D16 baseline on production, 31/10/2026: démarches recall@5 0.36, places 0).
       let demarches = [];
       try {
-        demarches = await db.query.Demarche.findMany({
-          where: (d, { or, and, ilike }) => and(
-            visibleWhere(d, 'demarche'),   // D-5 (this query had no status filter at all)
-            or(
-              ilike(d.titre, queryLike),
-              ilike(d.description_courte, queryLike),
-              ilike(d.contenu_detaille, queryLike)
-            )
-          ),
-          columns: {
-            id: true,
-            slug: true,
-            titre: true,
-            description_courte: true,
-            categorie: true,
-            summary_falc: true,
-          },
-          limit: 5,
-        });
+        demarches = (await searchDemarches({ q: payload.query, page: 1, pageSize: 5 })).items
+          .map((d) => ({ id: d.id, slug: d.slug, titre: d.titre, description_courte: d.description_courte, categorie: d.categorie, summary_falc: d.summary_falc }));
       } catch (e) {
         // @ts-ignore
         logger.warn('[search] demarches search failed:', e.message); partial.push('demarches');
       }
 
-      // 3. Search Structures (simple text search)
       let structures = [];
       try {
-        structures = await db.query.Structure.findMany({
-          where: (s, { or, and, ilike }) => and(
-            visibleWhere(s, 'structure'),   // D-5 (this query had no status filter at all)
-            or(
-              ilike(s.nom, queryLike),
-              ilike(s.description_courte, queryLike),
-              ilike(s.ville, queryLike)
-            )
-          ),
-          columns: {
-            id: true,
-            slug: true,
-            nom: true,
-            description_courte: true,
-            type_structure: true,
-            ville: true,
-            code_postal: true,
-          },
-          limit: 5,
-        });
+        structures = (await searchStructures({ q: payload.query, page: 1, pageSize: 5 })).items
+          .map((s) => ({ id: s.id, slug: s.slug, nom: s.nom, description_courte: s.description_courte, type_structure: s.type_structure, ville: s.ville, code_postal: s.code_postal }));
       } catch (e) {
         // @ts-ignore
         logger.warn('[search] structures search failed:', e.message); partial.push('structures');
       }
 
-      // 4. Search Actualités (simple text search)
       let actualites = [];
       try {
-        actualites = await db.query.Actualite.findMany({
-          where: (a, { and, or, ilike, eq }) => and(
-            eq(a.statut, 'publie'),
-            or(
-              ilike(a.titre, queryLike),
-              ilike(a.resume, queryLike)
-            )
-          ),
-          columns: {
-            id: true,
-            slug: true,
-            titre: true,
-            resume: true,
-            categorie: true,
-            date_publication: true,
-            summary_falc: true,
-          },
-          limit: 5,
-          orderBy: (a, { desc }) => [desc(a.date_publication)],
-        });
+        const plan = wordPlan(payload.query, ['"titre"', '"resume"'], '"titre"', false);
+        if (plan) {
+          const published = [sql`"statut" = 'publie'`];
+          const best = await bestMatchCondition('Actualite', published, plan);
+          const res = await db.execute(sql`SELECT id, slug, titre, resume, categorie, date_publication, summary_falc FROM "Actualite"
+            WHERE ${sql.join([...published, best], sql.raw(' AND '))} ORDER BY ${plan.titleHits} DESC, date_publication DESC NULLS LAST LIMIT 5`);
+          actualites = res.rows || res;
+        }
       } catch (e) {
         // @ts-ignore
         logger.warn('[search] actualites search failed:', e.message); partial.push('actualites');

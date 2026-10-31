@@ -1,0 +1,621 @@
+{
+  "schema": "ada.retrieval-eval.v2",
+  "builtAt": "2026-10-31",
+  "corpus": "catalogue public vérifié de production (accesdirectaide.fr), lu le 31/10/2026",
+  "labelStatus": "PROPOSED_BY_ENGINEERING",
+  "statement": "Requêtes écrites à partir de besoins de personnes ; jugements de pertinence PROPOSÉS par l'ingénierie (grade 2 = répond directement, 1 = utile), à partir des titres réels du catalogue. Ce ne sont PAS des jugements humains : humanJudgments reste vide tant qu'une personne n'a pas noté les résultats (fichier de revue produit par scripts/search-eval-live.mjs). Un score calculé sur ces étiquettes mesure la cohérence du moteur avec elles, pas la qualité réelle.",
+  "metrics": {
+    "k": 5,
+    "recall": "part des éléments étiquetés (grade ≥ 1) présents dans les 5 premiers de leur section",
+    "mrr": "inverse du rang du premier élément étiqueté dans sa section, moyenné",
+    "abstention": "nombre de résultats montrés pour une requête hors sujet (0 attendu)"
+  },
+  "queries": [
+    {
+      "id": "loyer",
+      "query": "payer mon loyer",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "apl",
+          "grade": 2
+        },
+        {
+          "kind": "aide",
+          "slug": "als",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "demande-hlm-67-68",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "logement-social",
+      "query": "demande logement social",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "demande-hlm-67-68",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "hlm",
+      "query": "HLM",
+      "category": "synonym",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "demande-hlm-67-68",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "mutuelle",
+      "query": "mutuelle gratuite",
+      "category": "synonym",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "c2s",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "demande-c2s",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "couverture-maladie-complementaire-mutuelle-f60fb1",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "complementaire",
+      "query": "complémentaire santé solidaire",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "c2s",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "demande-c2s",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "couverture-maladie-complementaire-mutuelle-f60fb1",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "c2s",
+      "query": "C2S",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "c2s",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "demande-c2s",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "rsa",
+      "query": "RSA",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "rsa",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "revenu-solidarite",
+      "query": "revenu de solidarité active",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "rsa",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "prime",
+      "query": "prime d'activité",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "prime-activite",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "prime-activite-caf",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "prime-typo",
+      "query": "prime activiter",
+      "category": "spelling",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "prime-activite",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "prime-activite-caf",
+          "grade": 2
+        }
+      ],
+      "note": "faute d'orthographe fréquente"
+    },
+    {
+      "id": "alloc-typo",
+      "query": "alocation logement",
+      "category": "spelling",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "als",
+          "grade": 2
+        },
+        {
+          "kind": "aide",
+          "slug": "apl",
+          "grade": 2
+        }
+      ],
+      "note": "faute d'orthographe fréquente"
+    },
+    {
+      "id": "aah",
+      "query": "AAH",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aah",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "handicap-adulte",
+      "query": "allocation handicap adulte",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aah",
+          "grade": 2
+        },
+        {
+          "kind": "aide",
+          "slug": "pch",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "enfant-handicape",
+      "query": "enfant handicapé",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aeeh",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "dossier-mdph-67-68",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "pch",
+      "query": "prestation de compensation du handicap",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "pch",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "apa",
+      "query": "APA personne âgée",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "apa-alsace",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "perte-autonomie",
+      "query": "perte d'autonomie",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "apa-alsace",
+          "grade": 2
+        },
+        {
+          "kind": "aide",
+          "slug": "pch",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "chomage",
+      "query": "chômage",
+      "category": "synonym",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
+          "grade": 2
+        },
+        {
+          "kind": "aide",
+          "slug": "allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+          "grade": 1
+        },
+        {
+          "kind": "demarche",
+          "slug": "actualisation-france-travail",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "actualisation",
+      "query": "actualisation France Travail",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "actualisation-france-travail",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "avocat",
+      "query": "avocat gratuit",
+      "category": "synonym",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aide-juridictionnelle",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "aide-juridictionnelle",
+      "query": "aide juridictionnelle",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aide-juridictionnelle",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "microcredit",
+      "query": "petit prêt",
+      "category": "synonym",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "microcredit-personnel",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "permis",
+      "query": "permis de conduire",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "permis",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "vacances",
+      "query": "vacances enfants",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "ave-avf",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "jeune-argent",
+      "query": "aide jeune 18 25 ans",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "faj-strasbourg",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "pass-culture-jeunes",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "faj",
+      "query": "fonds d'aide aux jeunes Strasbourg",
+      "category": "territorial",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "faj-strasbourg",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "entreprise",
+      "query": "créer mon entreprise",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "aide",
+          "slug": "aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "pass-culture",
+      "query": "pass culture",
+      "category": "programme",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "pass-culture-jeunes",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "retraite",
+      "query": "retraite",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "montant-de-la-retraite-de-l-agent-public-8e90c3",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "retraite-anticipee",
+      "query": "partir à la retraite plus tôt",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "titre-sejour",
+      "query": "titre de séjour",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "rdv-titre-sejour-67",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "etudiant-etranger",
+      "query": "étudiant étranger visa",
+      "category": "need",
+      "labels": [
+        {
+          "kind": "demarche",
+          "slug": "etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "mdph",
+      "query": "MDPH Strasbourg",
+      "category": "territorial",
+      "labels": [
+        {
+          "kind": "structure",
+          "slugPrefix": "mdph-de-la-collectivite-europeenne-d-alsace",
+          "grade": 2
+        },
+        {
+          "kind": "structure",
+          "slugPrefix": "maison-departementale-des-personnes-handicapees-mdph-bas-rhin",
+          "grade": 2
+        },
+        {
+          "kind": "demarche",
+          "slug": "dossier-mdph-67-68",
+          "grade": 1
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "mission-locale",
+      "query": "mission locale Strasbourg",
+      "category": "territorial",
+      "labels": [
+        {
+          "kind": "structure",
+          "slugPrefix": "mission-locale-pour-l",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "france-travail-agence",
+      "query": "agence France Travail Strasbourg",
+      "category": "territorial",
+      "labels": [
+        {
+          "kind": "structure",
+          "slugPrefix": "agence-france-travail-strasbourg",
+          "grade": 2
+        },
+        {
+          "kind": "structure",
+          "slugPrefix": "france-travail-strasbourg",
+          "grade": 2
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "aide-generique",
+      "query": "aide",
+      "category": "ambiguous",
+      "labels": [],
+      "note": "requête trop vague : pas de jugement de pertinence, on observe seulement ce qui est montré"
+    },
+    {
+      "id": "social",
+      "query": "social",
+      "category": "ambiguous",
+      "labels": [],
+      "note": "requête trop vague"
+    },
+    {
+      "id": "voiture-luxe",
+      "query": "acheter une voiture de luxe",
+      "category": "abstention",
+      "labels": [],
+      "note": "aucune fiche ne répond à ce besoin : le bon comportement est de ne rien proposer"
+    },
+    {
+      "id": "recette",
+      "query": "recette tarte flambée",
+      "category": "abstention",
+      "labels": [],
+      "note": "hors sujet"
+    },
+    {
+      "id": "bitcoin",
+      "query": "investir en bitcoin",
+      "category": "abstention",
+      "labels": [],
+      "note": "hors sujet"
+    }
+  ],
+  "humanJudgments": []
+}
