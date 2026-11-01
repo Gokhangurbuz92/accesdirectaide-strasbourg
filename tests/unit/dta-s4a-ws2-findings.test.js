@@ -36,10 +36,10 @@ describe('rules (synthetic)', () => {
     expect(JSON.stringify(r)).not.toMatch(/12 34|12\.34|\+33/);
   });
   it('structures: same address => POSSIBLE_DUPLICATE for each; nominative e-mail => PRIVACY_REVIEW with no address in the output; functional e-mails are not flagged', () => {
-    const rows = [base({ slug: 'p', email: 'marie.dupont@caf.example', provenance: 'source=x' }), base({ slug: 'q', email: 'contact@caf.example', provenance: 'source=x' }), base({ slug: 'r', adresse: 'ailleurs', provenance: 'source=x' })];
+    const rows = [base({ slug: 'p', email: 'marie.dupont@caf.example', provenance: 'source=x' }), base({ slug: 'q', email: 'contact@caf.example', provenance: 'source=x' }), base({ slug: 's', adresse: 'autre', email: 'espace-jeunes@ml.example', provenance: 'source=x' }), base({ slug: 'r', adresse: 'ailleurs', provenance: 'source=x' })];
     const r = findingsFrom({ datasets: { structures: rows }, manifest: {} });
     expect(codes(r)).toEqual(expect.arrayContaining(['structures/p/POSSIBLE_DUPLICATE', 'structures/q/POSSIBLE_DUPLICATE', 'structures/p/NOMINATIVE_EMAIL']));
-    expect(codes(r)).not.toContain('structures/q/NOMINATIVE_EMAIL'); expect(codes(r)).not.toContain('structures/r/POSSIBLE_DUPLICATE');
+    expect(codes(r)).not.toContain('structures/q/NOMINATIVE_EMAIL'); expect(codes(r)).not.toContain('structures/s/NOMINATIVE_EMAIL'); expect(codes(r)).not.toContain('structures/r/POSSIBLE_DUPLICATE');
     expect(JSON.stringify(r)).not.toMatch(/marie|dupont|@/);
   });
   it('territory consistency (S6): a national statutory regime narrowed to a locality, or a "Grand Est" list with outside départements, is REVIEW; consistent records are not flagged; nothing is rewritten', () => {
@@ -60,7 +60,7 @@ describe('the real LAB data (ratchet; technical findings only)', () => {
   it('stays fail-closed and the counts match the closure matrix', async () => {
     const r = await collectWs2Findings();
     expect(r.launchReady).toBe(false);
-    expect(r.summary.bySeverity).toEqual({ BLOCKING: 19, REVIEW: 19, PRIVACY_REVIEW: 4 });   // PKG-1 / N1 +1 PERSONAL_PHONE_REVIEW; S6: +2 territory-consistency findings (apl, carte-solidaire-grand-est)
+    expect(r.summary.bySeverity).toEqual({ BLOCKING: 19, REVIEW: 19, PRIVACY_REVIEW: 0 });   // S6: +2 territory-consistency findings (apl, carte-solidaire-grand-est). R33: 0 privacy findings — the public export removed the 2 nominative e-mails and the mobile number (CAF 67, Mission locale), and the last hit was a service mailbox (« espace-… »), no longer flagged
     const by = (code) => r.findings.filter((f) => f.code === code);
     expect(by('TERRITORY_NATIONAL_REGIME_NARROWED').map((f) => f.slug)).toEqual(['apl']);
     expect(by('TERRITORY_DEPARTMENTS_OUTSIDE_SCOPE').map((f) => f.slug)).toEqual(['carte-solidaire-grand-est']);
@@ -68,8 +68,8 @@ describe('the real LAB data (ratchet; technical findings only)', () => {
     expect(by('REQUIRED_FIELD_EMPTY').map((f) => `${f.slug}:${f.detail}`).sort()).toEqual(expect.arrayContaining(['rdv-social-alsace:summary_falc', 'rdv-social-alsace:pour_qui', 'rdv-social-alsace:etapes']));
     expect(by('SOURCE_ABSENT_FROM_SNAPSHOT')).toEqual([]); expect(by('SOURCE_HASH_MISMATCH')).toEqual([]);
     expect(by('NO_SERVICE_PUBLIC_SOURCE').map((f) => f.slug).sort()).toEqual(['carte-fluo-alsace', 'carte-solidaire-grand-est', 'faj-strasbourg', 'inscription-ccas', 'rdv-social-alsace']);
-    expect(by('POSSIBLE_DUPLICATE')).toHaveLength(12); expect(by('NOMINATIVE_EMAIL')).toHaveLength(3);
-    expect(by('PERSONAL_PHONE_REVIEW').map((f) => f.slug)).toEqual(['mission-locale-pour-l-emploi-89e0e6bd']);
+    expect(by('POSSIBLE_DUPLICATE')).toHaveLength(12); expect(by('NOMINATIVE_EMAIL')).toEqual([]);
+    expect(by('PERSONAL_PHONE_REVIEW')).toEqual([]);
     expect(JSON.stringify(r)).not.toMatch(/@/);
   });
 });

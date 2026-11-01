@@ -1,5 +1,5 @@
 /**
- * Q08 — the release gate: only the declared known failures may fail; the release script checks CI, runs the gate, deploys, smoke-tests and rolls back.
+ * Q08 — the release gate: no test may fail (the known-failure list is empty since R33); the release script checks CI, runs the gate, deploys, smoke-tests and rolls back.
  */
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
@@ -8,11 +8,11 @@ import { gateDecision, KNOWN_FAILURES } from '../../scripts/unit-gate.mjs';
 const file = (name, tests, status = 'passed') => ({ name: `/r/${name}`, status, assertionResults: tests.map(([t, s, anc = []]) => ({ title: t, status: s, ancestorTitles: anc })) });
 
 describe('Q08 unit gate', () => {
-  it('passes when only declared known failures fail, and says which known failures now pass', () => {
-    const [f, ...rest] = KNOWN_FAILURES[0].split(' > ');
-    const d = gateDecision({ testResults: [file(f, [[rest.at(-1), 'failed', rest.slice(0, -1)], ['ok', 'passed']]), file('tests/unit/a.test.js', [['x', 'passed']])] }, '/r');
-    expect(d).toMatchObject({ ok: true, passed: 2, failed: 1, unexpected: [] });
-    expect(d.nowPassing).toHaveLength(KNOWN_FAILURES.length - 1);
+  it('declares no known failure since R33: a clean run passes, and any failing test stops the release', () => {
+    expect(KNOWN_FAILURES).toEqual([]);
+    const d = gateDecision({ testResults: [file('tests/unit/a.test.js', [['x', 'passed'], ['y', 'passed', ['d']]])] }, '/r');
+    expect(d).toMatchObject({ ok: true, passed: 2, failed: 0, unexpected: [], nowPassing: [] });
+    expect(gateDecision({ testResults: [file('tests/unit/dta-s4a-ws2-findings.test.js', [['x', 'failed', ['d']]])] }, '/r').ok).toBe(false);
   });
   it('stops on any other failure, on a file that did not load, and on an empty run', () => {
     expect(gateDecision({ testResults: [file('tests/unit/a.test.js', [['x', 'failed', ['d']]])] }, '/r')).toMatchObject({ ok: false, unexpected: ['tests/unit/a.test.js > d > x'] });

@@ -10,7 +10,8 @@ import { parseCsv, truthy } from './verify-ws2-data.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LAUNCH_FIELDS = { aides: ['summary_falc', 'conditions_falc'], demarches: ['summary_falc', 'pour_qui', 'ou_faire', 'etapes'], structures: ['nom', 'adresse', 'summary_falc'] };
 const FILES = { aides: 'data/aides-alsace.csv', demarches: 'data/demarches-alsace.csv', structures: 'data/structures-alsace.csv' };
-const GENERIC_LOCAL = /^(contact|accueil|info|infos|secretariat|direction|mairie|ccas|cidff|bonjour|reception|administration|social|rdv)/i;
+// service mailboxes (« espace-jeunes@ », « antenne-nord@ ») are not person names
+const GENERIC_LOCAL = /^(contact|accueil|info|infos|secretariat|direction|mairie|ccas|cidff|bonjour|reception|administration|social|rdv|espace|maison|antenne|pole|service|point|relais|centre)/i;
 // Public administrative facts used only to detect internal inconsistency (not to verify a record): the ten départements of the Grand Est region, and statutory regimes that apply nationwide.
 const GRAND_EST_DEPARTMENTS = new Set(['08', '10', '51', '52', '54', '55', '57', '67', '68', '88']);
 const NATIONAL_REGIMES = new Set(['apl', 'als', 'aah', 'aeeh', 'c2s', 'rsa', 'prime-activite']);

@@ -13,7 +13,7 @@ describe('WS2 closure register (real LAB data)', () => {
     expect(new Set(r.records.map((x) => x.id)).size).toBe(49);
     expect(r.launchReady).toBe(false);
     expect(r.records.flatMap((x) => x.defects)).toHaveLength(f.findings.length);
-    expect(r.summary.findingsBySeverity).toEqual({ BLOCKING: 19, REVIEW: 19, PRIVACY_REVIEW: 4 });   // PKG-1 / N1: +1 PERSONAL_PHONE_REVIEW (mobile number in a structure record)
+    expect(r.summary.findingsBySeverity).toEqual({ BLOCKING: 19, REVIEW: 19, PRIVACY_REVIEW: 0 });   // R33: the public export holds no nominative e-mail or mobile number (see dta-s4a)
     expect(r.summary.withBlocking + r.summary.withoutTechnicalBlocker).toBe(49);
   });
   it('every record lists human verification still required and no technical correction is claimed (data files are not modified)', async () => {
