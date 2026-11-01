@@ -106,7 +106,7 @@ export function renderPage(template, h) {
  * Public beta (owner directive 29/10/2026): a record page is the SPA's HTML served by the API function, whose own API policy (no inline-script hash, no map
  * tiles) replaced the hosting's page policy and blocked the accessibility bootstrap script and the map. Same value as the vercel.json page header (tested).
  */
-export const PAGE_CSP = "default-src 'self'; script-src 'self' 'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://*.ingest.de.sentry.io https://*.vercel-analytics.com; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; report-uri /api/monitor/csp-report; report-to csp;";
+export const PAGE_CSP = "default-src 'self'; script-src 'self' 'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; report-uri /api/monitor/csp-report; report-to csp;";
 
 /** the headers of the answer: a shared cache of at most MAX_AGE seconds (a withdrawal by the veille is seen within minutes), never for an error page */
 export function pageHeaders(h) {

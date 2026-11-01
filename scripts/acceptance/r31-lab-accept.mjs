@@ -1,4 +1,4 @@
-// R31 LAB acceptance (synthetic data, isolated server http://127.0.0.1:3100): R18 selections, P27 funding dossiers, Q14 pilot, isolation, axe, phone width.
+// R31 LAB acceptance (synthetic data, isolated server http://127.0.0.1:5173): R18 selections, P27 funding dossiers, Q14 pilot, isolation, axe, phone width.
 import fs from 'node:fs';
 import { chromium } from 'playwright';
 import { generate } from 'otplib';
@@ -136,6 +136,16 @@ for (const who of ['pro2', 'other']) {
   await page.getByText('Séance enregistrée.').waitFor({ timeout: 10000 });
   const results = await page.getByTestId('pilot-results').innerText();
   ok('Q14 one session: result suppressed below 5', results.includes('moins de 5 séances'), '');
+  // 01/11/2026: pseudonymised data — stated on the page; an assistive technology needs the separate explicit consent; health words are refused
+  ok('Q14 the page says sessions are not anonymous', (await page.getByTestId('admin-pilot').innerText()).includes('ne sont pas anonymes'));
+  await page.selectOption('#pi-at', 'LECTEUR_ECRAN'); await page.check('#pi-consent');
+  ok('Q14 the explicit-consent box appears for an assistive technology', await page.locator('#pi-explicit').waitFor({ timeout: 5000 }).then(() => true, () => false));
+  await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+  ok('Q14 an assistive technology without the explicit consent is refused', await page.getByTestId('admin-pilot-problem').getByText('accord séparé').waitFor({ timeout: 10000 }).then(() => true, () => false));
+  await page.fill('#pi-obs', 'La personne est malvoyante.'); await page.check('#pi-explicit'); await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+  ok('Q14 a health word in the observation is refused', await page.getByTestId('admin-pilot-problem').getByText('jamais la santé').waitFor({ timeout: 10000 }).then(() => true, () => false));
+  await page.fill('#pi-obs', 'Le bouton « Lire la fiche » n’est pas annoncé.'); await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+  ok('Q14 with the explicit consent the session is recorded', await page.getByText('Séance enregistrée.').waitFor({ timeout: 10000 }).then(() => true, () => false));
   await axe(page, '/admin/pilote');
   ok('admin journeys: no page error / 5xx', errs.length === 0, errs.slice(0, 3).join(' | '));
   await page.setViewportSize({ width: 375, height: 812 }); await page.reload(); await page.getByTestId('admin-pilot').waitFor(); await overflow(page, '/admin/pilote');

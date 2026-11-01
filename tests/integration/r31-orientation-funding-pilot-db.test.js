@@ -199,6 +199,16 @@ describe.skipIf(!hasDatabase)('R31 — orientation baskets, funding dossiers, pi
     expect((await pilot.pilotReport()).journeys.find((j) => j.journeyCode === 'J3_LIEU').suppressed).toBe(true);
   });
 
+  it('Q14: pseudonymised sessions — the day only is stored, an assistive technology needs the separate explicit consent', async () => {
+    const code = pilot.newParticipantCode();
+    const base = { participantCode: code, journeyCode: 'J4_GUIDE', deviceType: 'ORDINATEUR', outcome: 'REUSSI', assistance: 'AUCUNE', consentRecorded: true, conductedAt: '2026-10-30T16:47:12+01:00' };
+    expect((await pilot.recordSession({ ...base, assistiveTech: 'LOUPE' }, BY)).code).toBe('EXPLICIT_CONSENT_REQUIRED');
+    expect((await pilot.recordSession({ ...base, assistiveTech: 'LOUPE', explicitConsent: true }, BY)).ok).toBe(true);
+    const [row] = (await db.execute(sql`SELECT "assistiveTech", to_char("conductedAt", 'YYYY-MM-DD HH24:MI:SS') AS at FROM "PilotSession" WHERE "participantCode" = ${code}`)).rows;
+    expect(row).toEqual({ assistiveTech: 'LOUPE', at: '2026-10-30 12:00:00' });
+    expect((await pilot.deleteSessions({ participantCode: code })).deleted).toBe(1);
+  });
+
   it('Q14: technical indicators equal the direct counts of the verified catalogue', async () => {
     const t = await pilot.technicalIndicators();
     const { visibleSql } = await import('../../api/lib/publicVisibility.js');

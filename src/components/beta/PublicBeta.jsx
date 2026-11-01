@@ -29,8 +29,9 @@ export function PublicBetaUnavailable() {
       </p>
       <p className="mb-6">
         La création de compte, l’espace personnel, la prise de rendez-vous, le partage de dossier, l’envoi de documents et les formulaires
-        de contact ouvriront plus tard, quand les garanties de protection des données seront en place. Aucune donnée personnelle n’est
-        collectée ici.
+        de contact ouvriront plus tard, quand les garanties de protection des données seront en place. Rien ne vous est demandé ici : seules
+        des données techniques sont traitées (adresse IP dans les journaux de l’hébergeur, cookie de sécurité), comme l’explique la page{' '}
+        <Link to="/confidentialite" className="underline font-medium">Confidentialité</Link>.
       </p>
       {contact && email && (
         <p className="mb-6" data-testid="public-beta-contact">

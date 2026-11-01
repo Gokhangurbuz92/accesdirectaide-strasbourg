@@ -7,7 +7,7 @@ import { Field, Status } from './ui.jsx';
 
 const pc = (v) => (v === null || v === undefined ? '—' : `${String(v).replace('.', ',')} %`);
 const empty = { participantCode: '', journeyCode: 'J1_AIDE_LOGEMENT', environment: 'PRODUCTION', deviceType: 'TELEPHONE', assistiveTech: 'AUCUNE', outcome: 'REUSSI', assistance: 'AUCUNE',
-  durationSeconds: '', errorCount: '0', clarity: '', accessibilityIssues: [], observation: '', consentRecorded: false };
+  durationSeconds: '', errorCount: '0', clarity: '', accessibilityIssues: [], observation: '', consentRecorded: false, explicitConsent: false };
 
 function Select({ id, label, value, onChange, options }) {
   return (
@@ -30,6 +30,7 @@ export default function AdminPilot() {
     <div className="space-y-6 p-4" data-testid="admin-pilot">
       <h1 className="text-2xl font-bold">Mesures du pilote</h1>
       <p className="text-sm text-slate-700">Aucune mesure d’audience : rien n’est collecté auprès des visiteurs. Les résultats du pilote viennent seulement des séances observées avec des personnes volontaires qui ont signé le formulaire de consentement ; ils ne sont affichés qu’au-delà de {d?.k ?? 5} séances par parcours.</p>
+      <p className="text-sm text-slate-700">Les séances ne sont pas anonymes : le code participant renvoie au formulaire papier qui porte le nom. Ce sont des données personnelles pseudonymisées, réservées aux administrateurs ; seul le jour de la séance est gardé, pas l’heure.</p>
       <Status msg={k.msg} problem={k.problem || k.error || problem} id="admin-pilot" />
 
       {d ? (
@@ -50,7 +51,7 @@ export default function AdminPilot() {
               <li key={j.journeyCode} className="rounded border p-2">
                 <p className="font-medium">{j.label}</p>
                 {j.suppressed || !j.sessions ? <p>{j.sessions} séance(s) — {j.reason}.</p> : (
-                  <p>{j.sessions} séances, {j.participants} participants — réussi sans aide {pc(j.successAlone)}, avec aide {pc(j.successWithHelp)}, échec ou abandon {pc(j.failure)} — durée médiane {j.medianDurationSeconds ?? '—'} s — erreurs médianes {j.medianErrors ?? '—'}{j.clarity ? ` — clarté ${String(j.clarity.mean).replace('.', ',')}/5 (${j.clarity.n} réponses)` : ''}{j.accessibilityIssues.length ? ` — difficultés : ${j.accessibilityIssues.map((x) => `${x.label} (${x.sessions})`).join(', ')}` : ''}</p>
+                  <p>{j.sessions} séances, {j.participants} participants — réussi sans aide {pc(j.successAlone)}, avec aide {pc(j.successWithHelp)}, échec ou abandon {pc(j.failure)} — durée médiane {j.medianDurationSeconds ?? '—'} s — erreurs médianes {j.medianErrors ?? '—'}{j.clarity ? ` — clarté ${String(j.clarity.mean).replace('.', ',')}/5 (${j.clarity.n} réponses)` : ''}{j.accessibilityIssues.length ? ` — difficultés : ${j.accessibilityIssues.map((x) => `${x.label} (${x.suppressed ? `moins de ${d.k} séances` : x.sessions})`).join(', ')}` : ''}</p>
                 )}
               </li>
             ))}
@@ -81,9 +82,13 @@ export default function AdminPilot() {
             <label key={c} className="flex min-h-11 items-center gap-2 text-sm" htmlFor={`pi-i-${c}`}><input id={`pi-i-${c}`} type="checkbox" className="h-5 w-5" checked={s.accessibilityIssues.includes(c)}
               onChange={(e) => set('accessibilityIssues', e.target.checked ? [...s.accessibilityIssues, c] : s.accessibilityIssues.filter((x) => x !== c))} />{l}</label>
           ))}</div></fieldset>
-        <Field id="pi-obs" label="Observation (sans nom, adresse ni numéro)" rows={3} value={s.observation} onChange={(x) => set('observation', x)} />
+        <Field id="pi-obs" label="Observation sur le site (ni nom, ni adresse, ni numéro, ni santé, handicap ou situation de la personne)" rows={3} value={s.observation} onChange={(x) => set('observation', x)} />
         <label className="flex min-h-11 items-center gap-2 text-sm" htmlFor="pi-consent"><input id="pi-consent" type="checkbox" className="h-5 w-5" checked={s.consentRecorded} onChange={(e) => set('consentRecorded', e.target.checked)} />
           La personne a signé le formulaire de consentement de ce protocole, qui porte ce code.</label>
+        {(s.assistiveTech && s.assistiveTech !== 'AUCUNE') || s.accessibilityIssues.includes('LECTEUR_ECRAN') ? (
+          <label className="flex min-h-11 items-center gap-2 text-sm" htmlFor="pi-explicit"><input id="pi-explicit" type="checkbox" className="h-5 w-5" checked={s.explicitConsent} onChange={(e) => set('explicitConsent', e.target.checked)} />
+            La personne a aussi coché l’accord séparé pour noter l’aide technique qu’elle utilise (cette information peut révéler un handicap). Sans cet accord, choisissez « Aucune ».</label>
+        ) : null}
         <Button disabled={k.busy} onClick={async () => { const out = await k.act({ action: 'record', ...s, accessibilityIssues: s.accessibilityIssues }, 'Séance enregistrée.'); if (out) setS({ ...empty, participantCode: s.participantCode }); }}>Enregistrer la séance</Button>
       </section>
 

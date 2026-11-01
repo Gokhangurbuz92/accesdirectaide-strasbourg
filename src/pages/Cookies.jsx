@@ -14,7 +14,7 @@ import { frontendEnv } from "@/config/env";
 
 const COOKIES = [
   ['ada_user_session', 'Vous garder connecté(e) à votre espace', '7 jours'],
-  ['__csrf', 'Protéger les formulaires contre la falsification de requêtes', '24 heures'],
+  ['__csrf', 'Protéger les formulaires contre la falsification de requêtes (une valeur tirée au hasard, que le site n’enregistre pas et ne relie pas à votre identité)', '24 heures'],
 ];
 
 const LOCAL_STORAGE = [

@@ -42,17 +42,32 @@ J1 à J5 se font sur le site public. J6 se fait dans l'espace de test (comptes p
 
 ## 4. Consentement et données
 
-- Avant la séance, l'animateur lit et remet le **formulaire de consentement** (`FORMULAIRE_CONSENTEMENT.md`) ; la personne le signe. Le formulaire porte le
-  **code participant** tiré dans `/admin/pilote` (« Tirer un nouveau code », format `P-XXXXXX`). Le formulaire papier est gardé par l'éditeur, hors du produit.
-- Dans le produit, une séance ne contient **ni nom, ni contact, ni identifiant** : seulement le code, le parcours, l'appareil, l'aide technique éventuelle, le
-  résultat, l'aide apportée, la durée, le nombre d'erreurs, la clarté si la personne répond, les difficultés (liste fermée) et une observation courte.
-  Le serveur refuse une séance sans consentement coché (la base de données le refuse aussi) et une observation contenant une adresse e-mail, un numéro de
-  téléphone ou un numéro d'identification.
-- Pas d'enregistrement audio, vidéo ou d'écran dans ce protocole. En ajouter un demande une nouvelle version du protocole et l'avis du DPO.
-- Retrait : à tout moment, sans justification. L'animateur supprime les séances du code concerné (« Retrait du consentement » dans `/admin/pilote`) et
-  détruit le formulaire papier.
-- Durée de conservation proposée (à valider par le DPO) : séances conservées jusqu'au rapport du pilote, puis 12 mois ; formulaires papier : même durée.
-- Base légale proposée : consentement de la personne (à confirmer par le DPO dans le registre des traitements).
+- Avant la séance, l'animateur lit et remet le **formulaire de consentement** (`FORMULAIRE_CONSENTEMENT.md`, version 2) ; la personne le signe. Le
+  formulaire porte le **code participant** tiré dans `/admin/pilote` (« Tirer un nouveau code », format `P-XXXXXX`). Le formulaire papier est gardé par
+  l'éditeur, sous clé, hors du produit.
+- **Les séances ne sont pas anonymes.** Elles ne contiennent ni nom ni contact, mais le code renvoie au formulaire qui porte le nom : ce sont des **données
+  personnelles pseudonymisées** (RGPD, art. 4(5)). Elles suivent toutes les règles des données personnelles (information, droits, durée, sécurité).
+- Dans le produit, une séance contient : le code, le parcours, l'appareil, l'aide technique (voir ci-dessous), le résultat, l'aide apportée, la durée, le
+  nombre d'erreurs, la clarté si la personne répond, les difficultés (liste fermée), une observation courte et **le jour** de la séance (l'heure n'est pas
+  gardée : elle permettrait de rapprocher la séance des journaux du serveur ou d'un planning).
+- **Aide technique utilisée** (lecteur d'écran, loupe, clavier seul, commande vocale, autre) : elle peut révéler un handicap, donc une donnée de santé
+  (art. 9). Elle n'est notée que si la personne a coché la **case 3** du formulaire (consentement explicite, art. 9(2)(a)) ; le serveur refuse sinon, de
+  même qu'une difficulté « lecteur d'écran ». Sans la case 3, l'animateur choisit « Aucune ». Refuser la case 3 n'empêche pas de participer.
+- **Observation** : ce qui s'est passé à l'écran, jamais la personne. Le serveur refuse une adresse e-mail, un numéro de téléphone, un numéro
+  d'identification et les mots qui décrivent la santé ou le handicap d'une personne (par exemple « malvoyant », « malade », « AAH »).
+- Le serveur refuse une séance sans consentement coché (la base de données le refuse aussi).
+- **Accès** : seuls les administrateurs de l'éditeur (mot de passe et double authentification) voient les séances ; elles ne sortent du produit que sous
+  forme d'agrégats, chaque nombre inférieur à 5 étant masqué, y compris le nombre de séances par difficulté.
+- **Risque de ré-identification** : avec 8 à 12 personnes, l'animateur sait qui est venu quel jour. C'est pourquoi les lignes de séance ne sortent jamais du
+  produit, que les petits nombres sont masqués et que le rapport ne cite que des agrégats. Le formulaire papier et les séances sont gardés séparément.
+- Pas d'enregistrement audio, vidéo ou d'écran dans ce protocole. En ajouter un demande une nouvelle version du protocole et une nouvelle analyse.
+- **Retrait** : à tout moment, sans justification, en donnant le code ou le nom (l'éditeur retrouve le code sur le formulaire). L'animateur supprime les
+  séances du code (« Retrait du consentement » dans `/admin/pilote`) et détruit le formulaire papier. Retrait de la seule case 3 : supprimer les séances du
+  code puis les enregistrer de nouveau avec « Aucune ».
+- **Durée de conservation** (valeur par défaut, à revoir et à approuver) : séances jusqu'au rapport du pilote, puis 12 mois ; formulaires papier : même
+  durée. Aucune suppression automatique n'est programmée : la suppression se fait à la main, à l'échéance, par l'administrateur.
+- **Base légale** proposée : consentement (art. 6(1)(a)) ; pour l'aide technique, consentement explicite (art. 9(2)(a)). À confirmer lors de la revue
+  juridique, dans le registre des traitements (T18).
 
 ## 5. Déroulé d'une séance (30 minutes environ)
 
@@ -75,5 +90,5 @@ J1 à J5 se font sur le site public. J6 se fait dans l'espace de test (comptes p
 ## 7. Ce qui reste à décider (hors ingénierie)
 
 - Lancement du pilote, structures partenaires et animateurs : éditeur.
-- Base légale, durée de conservation, conditions pour les personnes mineures : DPO.
+- Base légale, durée de conservation, conditions pour les personnes mineures : revue juridique (et DPO s'il en est désigné un).
 - Lieu des séances : voir l'exigence Q15 (local professionnel) — à défaut, dans les locaux d'une structure partenaire, avec son accord.

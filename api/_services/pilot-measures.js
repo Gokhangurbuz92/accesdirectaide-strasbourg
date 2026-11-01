@@ -7,9 +7,14 @@
  *      back by the D-5 rule, verified news and guides (technicalIndicators);
  *   2. pilot outcomes, only from observed sessions with consenting participants, recorded by a facilitator (recordSession) and reported only as aggregates
  *      with small-number suppression (pilotReport): below K sessions of a journey nothing is shown but the count.
- * No audience tracking is involved (ADR-022): nothing is collected from visitors. A session holds no name, contact or free identifier: participantCode is a
- * code drawn here and written on the paper consent form, which the publisher keeps outside the product. The observation field refuses e-mail addresses and
- * phone numbers. Until real sessions exist the report says « aucune séance » — no figure is ever produced from nothing.
+ * No audience tracking is involved (ADR-022): nothing is collected from visitors. A session holds no name or contact, but it is NOT anonymous: participantCode
+ * is drawn here and written on the paper consent form that carries the person's name, so the publisher can link the two. Sessions are pseudonymised personal
+ * data (GDPR art. 4(5)), and the assistive technology a person uses can reveal a disability, a health data under art. 9. Hence:
+ *   - an assistive technology (or a screen-reader difficulty) is recorded only with the person's separate explicit consent (box 3 of the form, art. 9(2)(a));
+ *   - the observation describes the site, never the person: contact data and words describing someone's health or disability are refused;
+ *   - the session keeps its day, not its time, so it cannot be matched with request logs or a booking sheet;
+ *   - outside the product only aggregates leave, every count below K suppressed, difficulty counts included.
+ * Until real sessions exist the report says « aucune séance » — no figure is ever produced from nothing.
  */
 import crypto from 'node:crypto';
 import { desc, eq, sql } from 'drizzle-orm';
@@ -38,6 +43,15 @@ export const ENVIRONMENTS = { PRODUCTION: 'Site public', LAB: 'Espace de test' }
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const PII = [/[^\s@]+@[^\s@]+\.[^\s@]+/, /(?:\+33|0)\s*[1-9](?:[\s.-]*\d{2}){4}/, /\b\d{13,15}\b/];
+// words that describe a person's health or disability, not the site (the closed lists already say what was observed on screen)
+const HEALTH = /(?<![\p{L}\d])(handicap\p{L}*|malvoyant\p{L}*|non[- ]voyant\p{L}*|aveugles?|malentendant\p{L}*|sourde?s?|dyslexi\p{L}*|dyspraxi\p{L}*|autis\p{L}*|trisomi\p{L}*|épilep\p{L}*|maladies?|malades?|enceinte|dépressi\p{L}*|psychiatri\p{L}*|diabèt\p{L}*|cancers?|vih|séropositi\p{L}*|alzheimer|parkinson|aah|invalidité)(?![\p{L}\d])/iu;
+// a value of these fields can reveal a disability: recorded only with the separate explicit consent of art. 9(2)(a)
+export const NEEDS_EXPLICIT_CONSENT = (row) => (row.assistiveTech && row.assistiveTech !== 'AUCUNE') || (row.accessibilityIssues || []).includes('LECTEUR_ECRAN');
+/** the day of a session (Paris calendar), kept at noon UTC: the time of day is not stored */
+export function sessionDay(date) {
+  const [y, m, d] = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date).split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12));
+}
 
 /** a participant code for the paper consent form: random, meaningless, not stored until a session is recorded */
 export function newParticipantCode() {
@@ -63,10 +77,14 @@ export function normalizeSession(input = {}, now = new Date()) {
   const accessibilityIssues = [...new Set((Array.isArray(input.accessibilityIssues) ? input.accessibilityIssues : []).filter((c) => A11Y_ISSUES[c]))];
   const observation = String(input.observation || '').replace(/\s+/g, ' ').trim().slice(0, 500);
   if (PII.some((re) => re.test(observation))) return bad('CONTACT_DATA', 'L’observation ne doit contenir ni adresse e-mail, ni numéro de téléphone, ni numéro d’identification.');
+  if (HEALTH.test(observation)) return bad('HEALTH_DATA', 'L’observation décrit ce qui s’est passé sur le site, jamais la santé, le handicap ou la situation de la personne.');
+  if (NEEDS_EXPLICIT_CONSENT({ assistiveTech, accessibilityIssues }) && input.explicitConsent !== true) {
+    return bad('EXPLICIT_CONSENT_REQUIRED', 'L’aide technique utilisée (ou une difficulté avec le lecteur d’écran) peut révéler un handicap : elle ne s’enregistre que si la personne a coché l’accord séparé du formulaire. Sinon, choisissez « Aucune » et ne cochez pas « Lecteur d’écran ».');
+  }
   const conductedAt = input.conductedAt ? new Date(input.conductedAt) : now;
   if (!Number.isFinite(conductedAt.getTime()) || conductedAt.getTime() > now.getTime() + 3600000) return bad('INVALID_DATE', 'Date de séance invalide.');
   return { ok: true, row: { protocolVersion: PROTOCOL_VERSION, participantCode, journeyCode, environment, deviceType, assistiveTech, outcome, assistance, durationSeconds, errorCount, clarity,
-    accessibilityIssues, observation: observation || null, consentRecorded: true, conductedAt } };
+    accessibilityIssues, observation: observation || null, consentRecorded: true, conductedAt: sessionDay(conductedAt) } };
 }
 
 export async function recordSession(input, by, db = defaultDb) {
@@ -103,7 +121,8 @@ export function aggregate(rows, k = K) {
       successAlone: pct(count('REUSSI'), s.length), successWithHelp: pct(count('REUSSI_AVEC_AIDE'), s.length), failure: pct(count('ECHEC') + count('ABANDON'), s.length),
       medianDurationSeconds: median(s.map((r) => r.durationSeconds)), medianErrors: median(s.map((r) => r.errorCount)),
       clarity: clarity.length >= k ? { n: clarity.length, mean: Math.round((clarity.reduce((a, b) => a + b, 0) / clarity.length) * 10) / 10 } : null,
-      accessibilityIssues: Object.entries(issues).sort((a, b) => b[1] - a[1]).map(([c, n]) => ({ code: c, label: A11Y_ISSUES[c], sessions: n })) });
+      // a difficulty seen in fewer than k sessions is not counted (it could point to one person's assistive technology)
+      accessibilityIssues: Object.entries(issues).sort((a, b) => b[1] - a[1]).map(([c, n]) => (n >= k ? { code: c, label: A11Y_ISSUES[c], sessions: n } : { code: c, label: A11Y_ISSUES[c], sessions: null, suppressed: true })) });
   }
   return out;
 }

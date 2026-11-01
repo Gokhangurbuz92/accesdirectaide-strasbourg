@@ -18,8 +18,12 @@ describe('CSP (vercel.json)', () => {
   it('images: the site itself and the OpenStreetMap tiles only — no "https:" wildcard', () => {
     expect(csp['img-src']).toEqual(["'self'", 'data:', 'blob:', 'https://tile.openstreetmap.org', 'https://*.tile.openstreetmap.org']);
   });
-  it('connections: no unused host, Sentry in the EU region only', () => {
-    expect(csp['connect-src']).toEqual(["'self'", 'https://*.ingest.de.sentry.io', 'https://*.vercel-analytics.com']);
+  // R31 (01/11/2026): Sentry (decision D5) and the audience measurement (ADR-022) are off, so no third-party host may receive a connection — an injected
+  // script could otherwise send data to any project on those services. Turning one on is a deliberate change of this list (docs/deployment.md).
+  it('connections: the site itself only while Sentry and the audience measurement are off', () => {
+    expect(csp['connect-src']).toEqual(["'self'"]);
+    expect(readFileSync('api/_services/page-head.js', 'utf8')).toContain("connect-src 'self';");
+    expect(readFileSync('api/_utils/security.js', 'utf8')).toContain(`"connect-src 'self'",`);
     expect(csp['object-src']).toEqual(["'none'"]);
   });
   it('violations are reported to a route that exists', () => {

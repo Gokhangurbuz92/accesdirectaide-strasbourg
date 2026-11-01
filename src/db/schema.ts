@@ -2890,8 +2890,9 @@ export const FundingDossierVersion = pgTable('FundingDossierVersion', {
 }));
 
 /**
- * Q14 (R31) — one observed task of the Strasbourg pilot (protocol docs/pilot/PROTOCOLE_PILOTE.md). No name, no contact, no free identifier: participantCode is a
- * code the facilitator draws from the server and writes on the paper consent form (kept by the publisher, outside the product). Recorded only with
+ * Q14 (R31) — one observed task of the Strasbourg pilot (protocol docs/pilot/PROTOCOLE_PILOTE.md). No name, no contact — but pseudonymised, not anonymous:
+ * participantCode is drawn from the server and written on the paper consent form that carries the name (kept by the publisher, outside the product).
+ * assistiveTech can reveal a disability (GDPR art. 9): recorded only with a separate explicit consent. conductedAt keeps the day only. Recorded only with
  * consentRecorded = true; reported only as aggregates with small-number suppression (api/_services/pilot-measures.js).
  */
 export const PilotSession = pgTable('PilotSession', {

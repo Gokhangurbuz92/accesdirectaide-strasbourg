@@ -1,8 +1,11 @@
 # R31 — product definitions made under the owner's delegation (P27, R18, Q14) and the Q15 premises requirement
 
 The owner delegated these definitions on 31/10/2026 (directive R31). Each one is implemented, tested and reversible (migration 0042 has a rollback,
-`drizzle/rollback/0042_down.sql`). Each awaits formal acceptance; none is enabled in the public beta, where the server refuses every account,
-professional and administration route.
+`drizzle/rollback/0042_down.sql`). None is enabled in the public beta, where the server refuses every account, professional and administration route.
+
+**Status (01/11/2026).** The owner accepted the three definitions as the current **engineering baselines**. That is not operational acceptance, not an
+authorization to collect real participant data, and not a permission to open these features in production. Migration 0042 is applied to production
+(four empty tables; evidence `evidence/r31/m0042-production-2026-11-01.json` in the plan folder); the features stay closed.
 
 ## What was checked first
 
@@ -98,14 +101,18 @@ person's space.
 
 **Privacy.**
 - No audience measurement (ADR-022).
-- A session holds no identity. The participant code is drawn by the server and written on the paper consent form, which is kept outside the product.
-- The database rejects a session without consent (CHECK constraint). The server rejects contact data in observations.
+- A session holds no name or contact, but it is **pseudonymised personal data, not anonymous**: the participant code is drawn by the server and written on the
+  paper consent form, which carries the name and is kept outside the product (correction of 01/11/2026).
+- The assistive technology used can reveal a disability (GDPR art. 9): it is recorded only with a separate explicit consent (box 3 of the form), and so is a
+  « screen reader » difficulty. Only the day of a session is kept, not the time.
+- The database rejects a session without consent (CHECK constraint). The server rejects contact data and health or disability words in observations.
+- Aggregates suppress every count below 5, difficulty counts included. Only administrators (MFA) see sessions.
 - Withdrawing consent deletes all of a code's sessions.
 - Only aggregates can be exported (CSV).
 
 **Ready to use.**
 - `docs/pilot/PROTOCOLE_PILOTE.md`: six journeys with success criteria, participants, consent, data, session procedure, analysis.
-- `docs/pilot/FORMULAIRE_CONSENTEMENT.md`: a template for DPO review.
+- `docs/pilot/FORMULAIRE_CONSENTEMENT.md` (version 2): a template for legal review.
 - `docs/pilot/FICHE_ANIMATEUR.md`.
 
 **Not done, and cannot be done by engineering.** The pilot itself: real participants, partner structures, facilitators, the DPO's opinion. Until then

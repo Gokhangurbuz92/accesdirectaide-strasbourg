@@ -4,8 +4,8 @@ Une fiche par participant. Elle reste **papier** et ne porte que le code ; elle 
 consentement.
 
 **Code participant :** P-______  **Date :** __ / __ / ____  **Appareil :** ☐ téléphone ☐ ordinateur ☐ tablette
-**Aide technique :** ☐ aucune ☐ lecteur d'écran ☐ loupe / zoom ☐ clavier seul ☐ commande vocale ☐ autre
-**Consentement signé :** ☐ oui (sinon, ne pas commencer)
+**Consentement signé (case 1) :** ☐ oui (sinon, ne pas commencer)  **Case 3 (aide technique) cochée :** ☐ oui ☐ non
+**Aide technique** (seulement si la case 3 est cochée ; sinon « aucune ») : ☐ aucune ☐ lecteur d'écran ☐ loupe / zoom ☐ clavier seul ☐ commande vocale ☐ autre
 
 | Parcours | Début | Fin | Durée (s) | Résultat | Aide apportée | Erreurs / retours | Clarté (1–5) | Difficultés |
 |---|---|---|---|---|---|---|---|---|
@@ -21,5 +21,9 @@ long · bouton difficile à toucher · se perdre dans les pages · autre.
 **Règles :**
 - Ne pas aider pendant la première minute de blocage ; ensuite un indice ; ensuite seulement un guidage pas à pas. Noter le niveau d'aide réellement donné.
 - Un « retour en arrière » ou une recherche relancée compte comme une erreur.
-- Observation : ce qui s'est passé à l'écran (« n'a pas vu le bouton Lire la fiche »), jamais ce que la personne a dit de sa vie.
-- Ne jamais écrire de nom, d'adresse ou de numéro, ni ici ni dans `/admin/pilote`.
+- Observation : ce qui s'est passé à l'écran (« n'a pas vu le bouton Lire la fiche »), jamais ce que la personne a dit de sa vie, de sa santé ou de son
+  handicap. Le site refuse ces mots.
+- La difficulté « lecteur d'écran » se coche seulement si la case 3 est cochée.
+- Ne jamais écrire de nom, d'adresse ou de numéro, ni ici ni dans `/admin/pilote`. Ne noter que le jour : l'heure n'est pas gardée.
+- Cette fiche porte le code, et le code renvoie au formulaire signé : la fiche est une donnée personnelle. La ranger sous clé avec le formulaire et la
+  détruire avec lui.

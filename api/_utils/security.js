@@ -20,7 +20,7 @@ export function applySecurityHeaders(res, /** @type {string | number | boolean |
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self'",
       "img-src 'self' data:",
-      "connect-src 'self' https://*.vercel-analytics.com https://*.ingest.de.sentry.io",
+      "connect-src 'self'",
       "object-src 'none'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
