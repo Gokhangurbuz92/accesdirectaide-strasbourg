@@ -8,28 +8,30 @@ import { buildSiteSchema } from '@/lib/seo';
 import { frontendEnv } from '@/config/env';
 import { Link } from 'react-router-dom';
 import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
+import { useT } from '@/i18n';
 
 /** R26: how a record gets onto the site — the three facts behind « vérifiée le … », in plain words, with the full method one click away */
 function HowWeVerify() {
+  const { t } = useT('home');
   const steps = [
-    ['Une source officielle', 'Chaque fiche part d’une source publique : Service-Public, répertoire FINESS, Annuaire de l’administration, sites des collectivités.'],
-    ['Une vérification datée', 'La fiche n’est publiée qu’après un contrôle automatique sur cette source ; la date du contrôle est affichée.'],
-    ['Un retrait si la source change', 'Si la source disparaît ou ne confirme plus l’information, la fiche est retirée jusqu’à la prochaine vérification.'],
+    [t('home:verify.source.title', 'Une source officielle'), t('home:verify.source.text', 'Chaque fiche part d’une source publique : Service-Public, répertoire FINESS, Annuaire de l’administration, sites des collectivités.')],
+    [t('home:verify.dated.title', 'Une vérification datée'), t('home:verify.dated.text', 'La fiche n’est publiée qu’après un contrôle automatique sur cette source ; la date du contrôle est affichée.')],
+    [t('home:verify.withdrawn.title', 'Un retrait si la source change'), t('home:verify.withdrawn.text', 'Si la source disparaît ou ne confirme plus l’information, la fiche est retirée jusqu’à la prochaine vérification.')],
   ];
   return (
     <section className="py-12" aria-labelledby="how-we-verify">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 id="how-we-verify" className="text-xl font-bold text-slate-900">Des informations sourcées et datées</h2>
+        <h2 id="how-we-verify" className="text-xl font-bold text-slate-900">{t('home:verify.title', 'Des informations sourcées et datées')}</h2>
         <ol className="mt-5 grid gap-4 md:grid-cols-3">
-          {steps.map(([t, d], i) => (
-            <li key={t} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          {steps.map(([title, text], i) => (
+            <li key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-800" aria-hidden="true">{i + 1}</span>
-              <p className="mt-3 font-semibold text-slate-900">{t}</p>
-              <p className="mt-1 text-sm text-slate-600">{d}</p>
+              <p className="mt-3 font-semibold text-slate-900">{title}</p>
+              <p className="mt-1 text-sm text-slate-600">{text}</p>
             </li>
           ))}
         </ol>
-        <Link to="/sourcesmethode" className="mt-5 inline-block font-semibold text-blue-700 hover:underline">Notre méthode en détail</Link>
+        <Link to="/sourcesmethode" className="mt-5 inline-block font-semibold text-blue-700 hover:underline">{t('home:verify.method', 'Notre méthode en détail')}</Link>
       </div>
     </section>
   );
@@ -40,13 +42,14 @@ const AssistantFeatureSection = lazy(() => import('@/components/home/AssistantFe
 const NewsSection = lazy(() => import('@/components/home/NewsSection'));
 
 export default function Home() {
+  const { t } = useT('home');
   const schema = buildSiteSchema();
 
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="Accueil"
-        description="Vos droits et démarches sociales, simplement."
+        title={t('home:seo.title', 'Accueil')}
+        description={t('home:seo.description', 'Vos droits et démarches sociales, simplement.')}
         path="/"
         schema={schema}
       />

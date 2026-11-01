@@ -1,0 +1,989 @@
+{
+ "schema": "ada-search-lexicon/1",
+ "purpose": "R32 — cross-language search: words typed in English, Turkish, Arabic, German or Ukrainian are mapped to the French search words of the verified catalogue (the search itself, its D-5 rule and its ranking are unchanged). A term ending with * matches every word that starts with it (inflections, compounds). Matching ignores case, accents, Arabic short vowels, the Arabic article and Turkish dotless i. This is a vocabulary for FINDING records, never a source of rules or eligibility.",
+ "status": "AI-drafted, to be reviewed by native speakers; extended from real queries",
+ "concepts": [
+  {
+   "id": "rent",
+   "fr": "loyer",
+   "en": [
+    "rent*",
+    "housing benefit",
+    "rent help",
+    "rent assistance"
+   ],
+   "tr": [
+    "kira*"
+   ],
+   "ar": [
+    "ايجار*",
+    "بدل سكن",
+    "مساعده سكن*"
+   ],
+   "de": [
+    "miet*",
+    "wohngeld*"
+   ],
+   "uk": [
+    "оренд*",
+    "квартплат*",
+    "житлов* допомог*",
+    "допомог* на житл*"
+   ]
+  },
+  {
+   "id": "housing",
+   "fr": "logement",
+   "en": [
+    "housing",
+    "accommodation",
+    "flat",
+    "apartment",
+    "home"
+   ],
+   "tr": [
+    "konut*",
+    "ev",
+    "evim",
+    "barınma*"
+   ],
+   "ar": [
+    "سكن*",
+    "مسكن",
+    "شقه",
+    "منزل",
+    "بيت"
+   ],
+   "de": [
+    "wohnung*",
+    "unterkunft*",
+    "wohnen"
+   ],
+   "uk": [
+    "житл*",
+    "квартир*"
+   ]
+  },
+  {
+   "id": "social-housing",
+   "fr": "logement social",
+   "en": [
+    "social housing",
+    "council housing",
+    "council flat"
+   ],
+   "tr": [
+    "sosyal konut*"
+   ],
+   "ar": [
+    "سكن اجتماعي"
+   ],
+   "de": [
+    "sozialwohnung*",
+    "sozialer wohnungsbau"
+   ],
+   "uk": [
+    "соціальн* житл*"
+   ]
+  },
+  {
+   "id": "shelter",
+   "fr": "hébergement",
+   "en": [
+    "shelter*",
+    "emergency accommodation",
+    "homeless*",
+    "night shelter"
+   ],
+   "tr": [
+    "barınak*",
+    "evsiz*"
+   ],
+   "ar": [
+    "ماوي",
+    "مشرد*",
+    "بلا ماوي"
+   ],
+   "de": [
+    "obdachlos*",
+    "notunterkunft*",
+    "notschlafstelle*"
+   ],
+   "uk": [
+    "безпритул*",
+    "без житла",
+    "притулк*"
+   ]
+  },
+  {
+   "id": "disability",
+   "fr": "handicap",
+   "en": [
+    "disab*",
+    "handicap*",
+    "wheelchair"
+   ],
+   "tr": [
+    "engelli*",
+    "engellilik*",
+    "özürlü*",
+    "sakat*"
+   ],
+   "ar": [
+    "اعاقه*",
+    "معاق*",
+    "ذوي الاعاقه"
+   ],
+   "de": [
+    "behinder*",
+    "rollstuhl*"
+   ],
+   "uk": [
+    "інвалідн*",
+    "обмежен* можлив*"
+   ]
+  },
+  {
+   "id": "health",
+   "fr": "santé",
+   "en": [
+    "health*",
+    "medical",
+    "doctor*",
+    "hospital*",
+    "treatment"
+   ],
+   "tr": [
+    "sağlık*",
+    "doktor*",
+    "hastane*",
+    "tedavi*"
+   ],
+   "ar": [
+    "صحه",
+    "صحي*",
+    "طبيب",
+    "مستشفي",
+    "علاج"
+   ],
+   "de": [
+    "gesundheit*",
+    "arzt*",
+    "ärzt*",
+    "krankenhaus*",
+    "behandlung*"
+   ],
+   "uk": [
+    "здоров*",
+    "лікар*",
+    "медичн*",
+    "лікуван*"
+   ]
+  },
+  {
+   "id": "health-insurance",
+   "fr": "assurance maladie",
+   "en": [
+    "health insurance",
+    "health cover",
+    "medical cover"
+   ],
+   "tr": [
+    "sağlık sigorta*"
+   ],
+   "ar": [
+    "تامين صحي",
+    "تامين طبي"
+   ],
+   "de": [
+    "krankenversicherung*",
+    "krankenkasse*"
+   ],
+   "uk": [
+    "медичн* страхув*"
+   ]
+  },
+  {
+   "id": "residence-permit",
+   "fr": "titre de séjour",
+   "en": [
+    "residence permit*",
+    "residence card*",
+    "visa*",
+    "immigration",
+    "permit to stay"
+   ],
+   "tr": [
+    "oturum*",
+    "ikamet*",
+    "vize*"
+   ],
+   "ar": [
+    "تصريح اقامه",
+    "بطاقه اقامه",
+    "اقامه",
+    "فيزا",
+    "تاشيره"
+   ],
+   "de": [
+    "aufenthalt*",
+    "visum*"
+   ],
+   "uk": [
+    "посвідк*",
+    "дозвіл на прожив*",
+    "віз*"
+   ]
+  },
+  {
+   "id": "temporary-protection",
+   "fr": "protection temporaire",
+   "en": [
+    "temporary protection"
+   ],
+   "tr": [
+    "geçici koruma*"
+   ],
+   "ar": [
+    "حمايه مؤقته"
+   ],
+   "de": [
+    "vorübergehend* schutz*"
+   ],
+   "uk": [
+    "тимчасов* захист*"
+   ]
+  },
+  {
+   "id": "asylum",
+   "fr": "asile",
+   "en": [
+    "asylum*",
+    "refugee*"
+   ],
+   "tr": [
+    "sığınma*",
+    "mülteci*"
+   ],
+   "ar": [
+    "لجوء",
+    "لاجئ*",
+    "لاجي*"
+   ],
+   "de": [
+    "asyl*",
+    "flüchtling*",
+    "geflüchtet*"
+   ],
+   "uk": [
+    "біженц*",
+    "біжен*"
+   ]
+  },
+  {
+   "id": "prefecture",
+   "fr": "préfecture",
+   "en": [
+    "prefecture"
+   ],
+   "tr": [
+    "valilik*"
+   ],
+   "ar": [
+    "المحافظه",
+    "مقر المحافظه"
+   ],
+   "de": [
+    "präfektur*"
+   ],
+   "uk": [
+    "префектур*"
+   ]
+  },
+  {
+   "id": "family-benefits",
+   "fr": "allocations familiales",
+   "en": [
+    "family benefit*",
+    "family allowance*",
+    "child benefit*"
+   ],
+   "tr": [
+    "aile yardım*",
+    "çocuk yardım*",
+    "aile ödenek*"
+   ],
+   "ar": [
+    "اعانات عائليه",
+    "منحه عائليه",
+    "مساعدات الاسره",
+    "اعانه الاطفال"
+   ],
+   "de": [
+    "kindergeld*",
+    "familienleistung*",
+    "familienbeihilfe*"
+   ],
+   "uk": [
+    "сімейн* допомог*",
+    "допомог* на дит*"
+   ]
+  },
+  {
+   "id": "children",
+   "fr": "enfant",
+   "en": [
+    "child*",
+    "baby",
+    "babies",
+    "birth",
+    "nursery",
+    "kindergarten"
+   ],
+   "tr": [
+    "çocuk*",
+    "bebek*",
+    "doğum*",
+    "kreş*"
+   ],
+   "ar": [
+    "طفل*",
+    "اطفال",
+    "ولاده",
+    "رضيع"
+   ],
+   "de": [
+    "kind*",
+    "baby*",
+    "geburt*",
+    "kita*"
+   ],
+   "uk": [
+    "дит*",
+    "немовл*",
+    "народжен*",
+    "садок",
+    "садочок"
+   ]
+  },
+  {
+   "id": "pregnancy",
+   "fr": "grossesse",
+   "en": [
+    "pregnan*",
+    "maternity"
+   ],
+   "tr": [
+    "hamile*",
+    "gebelik*"
+   ],
+   "ar": [
+    "حامل",
+    "الحمل"
+   ],
+   "de": [
+    "schwanger*",
+    "mutterschaft*"
+   ],
+   "uk": [
+    "вагітн*",
+    "материнств*"
+   ]
+  },
+  {
+   "id": "employment",
+   "fr": "emploi",
+   "en": [
+    "job*",
+    "employment",
+    "work",
+    "working",
+    "career"
+   ],
+   "tr": [
+    "iş arama",
+    "iş bulma",
+    "istihdam*",
+    "çalışma*",
+    "meslek*"
+   ],
+   "ar": [
+    "عمل",
+    "وظيفه",
+    "شغل",
+    "توظيف"
+   ],
+   "de": [
+    "arbeit",
+    "arbeitssuche*",
+    "job*",
+    "beschäftigung*",
+    "stellensuche*"
+   ],
+   "uk": [
+    "робот*",
+    "працевлаштув*",
+    "вакансі*"
+   ]
+  },
+  {
+   "id": "unemployment",
+   "fr": "chômage",
+   "en": [
+    "unemploy*",
+    "jobseeker*",
+    "job seeker*"
+   ],
+   "tr": [
+    "işsiz*"
+   ],
+   "ar": [
+    "بطاله",
+    "عاطل*"
+   ],
+   "de": [
+    "arbeitslos*"
+   ],
+   "uk": [
+    "безробіт*"
+   ]
+  },
+  {
+   "id": "income-support",
+   "fr": "RSA",
+   "en": [
+    "income support",
+    "minimum income",
+    "basic income",
+    "welfare benefit*"
+   ],
+   "tr": [
+    "gelir destek*",
+    "asgari gelir*"
+   ],
+   "ar": [
+    "الحد الادني للدخل",
+    "دخل التضامن",
+    "دعم الدخل"
+   ],
+   "de": [
+    "grundsicherung*",
+    "bürgergeld*",
+    "sozialhilfe*"
+   ],
+   "uk": [
+    "мінімальн* дох*",
+    "прожитков* мінімум*"
+   ]
+  },
+  {
+   "id": "social-services",
+   "fr": "action sociale",
+   "en": [
+    "social service*",
+    "social worker*",
+    "social centre",
+    "social center",
+    "welfare office"
+   ],
+   "tr": [
+    "sosyal hizmet*",
+    "sosyal yardım*",
+    "sosyal çalışmacı*"
+   ],
+   "ar": [
+    "خدمات اجتماعيه",
+    "مساعده اجتماعيه",
+    "مساعد اجتماعي",
+    "مرشد اجتماعي"
+   ],
+   "de": [
+    "sozialamt*",
+    "sozialarbeit*",
+    "sozialdienst*",
+    "soziale hilfe"
+   ],
+   "uk": [
+    "соціальн* служб*",
+    "соціальн* працівник*",
+    "соціальн* допомог*"
+   ]
+  },
+  {
+   "id": "food",
+   "fr": "alimentaire",
+   "en": [
+    "food bank*",
+    "food*",
+    "meal*",
+    "grocer*"
+   ],
+   "tr": [
+    "gıda*",
+    "yemek*",
+    "erzak*"
+   ],
+   "ar": [
+    "طعام",
+    "غذاء",
+    "غذائيه",
+    "بنك الطعام"
+   ],
+   "de": [
+    "lebensmittel*",
+    "tafel",
+    "essen*"
+   ],
+   "uk": [
+    "їж*",
+    "продукт*",
+    "харчуван*"
+   ]
+  },
+  {
+   "id": "energy",
+   "fr": "énergie",
+   "en": [
+    "energy",
+    "electricity",
+    "heating",
+    "gas bill*",
+    "power bill*"
+   ],
+   "tr": [
+    "enerji*",
+    "elektrik*",
+    "ısınma*",
+    "doğalgaz*",
+    "fatura*"
+   ],
+   "ar": [
+    "كهرباء",
+    "طاقه",
+    "تدفئه",
+    "فاتوره"
+   ],
+   "de": [
+    "energie*",
+    "strom*",
+    "heiz*"
+   ],
+   "uk": [
+    "енерг*",
+    "електрик*",
+    "електроенерг*",
+    "опален*"
+   ]
+  },
+  {
+   "id": "transport",
+   "fr": "transport",
+   "en": [
+    "transport*",
+    "bus",
+    "tram",
+    "travel pass*"
+   ],
+   "tr": [
+    "ulaşım*",
+    "otobüs*",
+    "tramvay*"
+   ],
+   "ar": [
+    "نقل",
+    "مواصلات",
+    "حافله",
+    "ترام"
+   ],
+   "de": [
+    "verkehr*",
+    "fahrkarte*",
+    "fahrschein*",
+    "straßenbahn*"
+   ],
+   "uk": [
+    "транспорт*",
+    "проїзд*",
+    "автобус*",
+    "трамва*"
+   ]
+  },
+  {
+   "id": "legal-aid",
+   "fr": "avocat",
+   "en": [
+    "lawyer*",
+    "legal aid",
+    "legal advice",
+    "court"
+   ],
+   "tr": [
+    "avukat*",
+    "hukuk*",
+    "mahkeme*"
+   ],
+   "ar": [
+    "محامي",
+    "قانوني*",
+    "محكمه",
+    "مساعده قانونيه"
+   ],
+   "de": [
+    "anwalt*",
+    "rechtshilfe*",
+    "rechtsberatung*",
+    "gericht*"
+   ],
+   "uk": [
+    "адвокат*",
+    "юрид*",
+    "суд*"
+   ]
+  },
+  {
+   "id": "students",
+   "fr": "étudiant",
+   "en": [
+    "student*",
+    "scholarship*",
+    "university"
+   ],
+   "tr": [
+    "öğrenci*",
+    "burs*",
+    "üniversite*"
+   ],
+   "ar": [
+    "طالب",
+    "طلاب",
+    "منحه دراسيه",
+    "جامعه"
+   ],
+   "de": [
+    "student*",
+    "stipendi*",
+    "bafög",
+    "universität*",
+    "studium*"
+   ],
+   "uk": [
+    "студент*",
+    "стипенд*",
+    "університет*"
+   ]
+  },
+  {
+   "id": "elderly",
+   "fr": "retraite",
+   "en": [
+    "pension*",
+    "retire*",
+    "elderly",
+    "old age",
+    "senior*"
+   ],
+   "tr": [
+    "emekli*",
+    "yaşlı*"
+   ],
+   "ar": [
+    "تقاعد",
+    "معاش",
+    "مسن*",
+    "كبار السن"
+   ],
+   "de": [
+    "rente*",
+    "ruhestand*",
+    "senior*"
+   ],
+   "uk": [
+    "пенсі*",
+    "літн*",
+    "похил* вік*"
+   ]
+  },
+  {
+   "id": "youth",
+   "fr": "jeunes",
+   "en": [
+    "youth",
+    "young people",
+    "young person"
+   ],
+   "tr": [
+    "genç*"
+   ],
+   "ar": [
+    "شباب",
+    "الشباب"
+   ],
+   "de": [
+    "jugend*",
+    "junge leute",
+    "junge menschen"
+   ],
+   "uk": [
+    "молод*"
+   ]
+  },
+  {
+   "id": "debt",
+   "fr": "dettes",
+   "en": [
+    "debt*",
+    "arrears",
+    "overindebted*"
+   ],
+   "tr": [
+    "borç*",
+    "borcum*"
+   ],
+   "ar": [
+    "ديون",
+    "مديونيه",
+    "قروض"
+   ],
+   "de": [
+    "schulden*",
+    "verschuld*"
+   ],
+   "uk": [
+    "борг*",
+    "заборгован*"
+   ]
+  },
+  {
+   "id": "documents",
+   "fr": "papiers",
+   "en": [
+    "identity card*",
+    "id card*",
+    "passport*",
+    "documents",
+    "papers"
+   ],
+   "tr": [
+    "kimlik*",
+    "pasaport*",
+    "belge*",
+    "evrak*"
+   ],
+   "ar": [
+    "بطاقه هويه",
+    "هويه",
+    "جواز سفر",
+    "وثائق",
+    "اوراق"
+   ],
+   "de": [
+    "ausweis*",
+    "reisepass*",
+    "dokument*",
+    "papiere"
+   ],
+   "uk": [
+    "паспорт*",
+    "посвідчен* особ*",
+    "документ*"
+   ]
+  },
+  {
+   "id": "bank-account",
+   "fr": "compte bancaire",
+   "en": [
+    "bank account*"
+   ],
+   "tr": [
+    "banka hesab*"
+   ],
+   "ar": [
+    "حساب بنكي",
+    "حساب مصرفي"
+   ],
+   "de": [
+    "bankkonto*",
+    "konto*"
+   ],
+   "uk": [
+    "банківськ* рахун*",
+    "рахун*"
+   ]
+  },
+  {
+   "id": "violence",
+   "fr": "violences",
+   "en": [
+    "violence",
+    "abuse*",
+    "domestic violence"
+   ],
+   "tr": [
+    "şiddet*"
+   ],
+   "ar": [
+    "عنف",
+    "العنف"
+   ],
+   "de": [
+    "gewalt*"
+   ],
+   "uk": [
+    "насильств*"
+   ]
+  },
+  {
+   "id": "french-lessons",
+   "fr": "français",
+   "en": [
+    "french course*",
+    "french lesson*",
+    "learn french",
+    "french class*"
+   ],
+   "tr": [
+    "fransızca*"
+   ],
+   "ar": [
+    "الفرنسيه",
+    "دروس فرنسيه",
+    "تعلم الفرنسيه"
+   ],
+   "de": [
+    "französisch*"
+   ],
+   "uk": [
+    "французьк*"
+   ]
+  },
+  {
+   "id": "mental-health",
+   "fr": "psychologue",
+   "en": [
+    "mental health",
+    "psycholog*",
+    "therapist*"
+   ],
+   "tr": [
+    "ruh sağlığ*",
+    "psikolog*"
+   ],
+   "ar": [
+    "صحه نفسيه",
+    "طبيب نفسي",
+    "اخصائي نفسي"
+   ],
+   "de": [
+    "psycholog*",
+    "psychotherap*",
+    "psychische gesundheit"
+   ],
+   "uk": [
+    "психолог*",
+    "психічн* здоров*"
+   ]
+  },
+  {
+   "id": "school",
+   "fr": "école",
+   "en": [
+    "school*"
+   ],
+   "tr": [
+    "okul*"
+   ],
+   "ar": [
+    "مدرسه"
+   ],
+   "de": [
+    "schule*"
+   ],
+   "uk": [
+    "школ*"
+   ]
+  },
+  {
+   "id": "tax",
+   "fr": "impôts",
+   "en": [
+    "tax*"
+   ],
+   "tr": [
+    "vergi*"
+   ],
+   "ar": [
+    "ضريبه",
+    "ضرائب"
+   ],
+   "de": [
+    "steuer*"
+   ],
+   "uk": [
+    "податк*",
+    "податок"
+   ]
+  },
+  {
+   "id": "family-quotient",
+   "fr": "quotient familial",
+   "en": [
+    "family quotient"
+   ],
+   "tr": [
+    "aile katsayı*"
+   ],
+   "ar": [
+    "الحصه العائليه"
+   ],
+   "de": [
+    "familienquotient*"
+   ],
+   "uk": [
+    "сімейн* коефіцієнт*"
+   ]
+  },
+  {
+   "id": "strasbourg",
+   "fr": "Strasbourg",
+   "en": [
+    "strasbourg"
+   ],
+   "tr": [
+    "strazburg*",
+    "strasbourg"
+   ],
+   "ar": [
+    "ستراسبورغ",
+    "ستراسبورج",
+    "ستراسبورغ*"
+   ],
+   "de": [
+    "straßburg*",
+    "strassburg*"
+   ],
+   "uk": [
+    "страсбург*",
+    "страсбурз*"
+   ]
+  },
+  {
+   "id": "eurometropole",
+   "fr": "Eurométropole",
+   "en": [
+    "eurometropol*"
+   ],
+   "tr": [
+    "eurometropol*"
+   ],
+   "ar": [
+    "اليورومتروبول"
+   ],
+   "de": [
+    "eurometropol*"
+   ],
+   "uk": [
+    "єврометропол*"
+   ]
+  }
+ ]
+}

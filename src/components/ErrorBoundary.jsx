@@ -5,6 +5,8 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { frontendEnv } from '@/config/env';
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
 
 /**
  * ErrorBoundary Fallback Component
@@ -14,6 +16,7 @@ import { frontendEnv } from '@/config/env';
  */
 // @ts-ignore
 function ErrorFallback({ error, resetError }) {
+  const { t } = useT('layout');
   const isDevelopment = frontendEnv.runtime.isDev;
 
   return (
@@ -28,18 +31,17 @@ function ErrorFallback({ error, resetError }) {
 
             {/* Title */}
             <h1 className="text-2xl font-bold text-slate-900 mb-3">
-              Une erreur est survenue
+              {t('layout:crash.title', 'Une erreur est survenue')}
             </h1>
 
             {/* Description */}
             <p className="text-slate-600 mb-6 max-w-md">
-              Nous sommes désolés, une erreur inattendue s'est produite.
-              Rechargez la page ou revenez à l'accueil ; si l'erreur se répète, signalez-la depuis la page Contact.
+              {t('layout:crash.text', "Nous sommes désolés, une erreur inattendue s'est produite. Rechargez la page ou revenez à l'accueil ; si l'erreur se répète, signalez-la depuis la page Contact.")}
             </p>
 
-            {/* Development-only error details */}
+            {/* Development-only error details (for developers: not translated) */}
             {isDevelopment && error && (
-              <div className="w-full mb-6 p-4 bg-slate-100 rounded-lg text-left">
+              <div className="w-full mb-6 p-4 bg-slate-100 rounded-lg text-start">
                 <p className="text-xs font-mono text-slate-700 mb-2">
                   <strong>Erreur (dev only):</strong>
                 </p>
@@ -66,7 +68,7 @@ function ErrorFallback({ error, resetError }) {
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
-                Réessayer
+                {t('layout:retry', 'Réessayer')}
               </Button>
               <Button
                 variant="outline"
@@ -74,19 +76,18 @@ function ErrorFallback({ error, resetError }) {
                 className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />
-                Retour à l'accueil
+                {t('layout:backHome', "Retour à l'accueil")}
               </Button>
             </div>
 
             {/* Support info */}
             <p className="text-sm text-slate-500 mt-6">
-              Si le problème persiste, contactez-nous à{' '}
-              <a 
-                href="mailto:support@accesdirectaide.fr" 
-                className="text-blue-600 underline underline-offset-2 hover:text-blue-800"
-              >
-                support@accesdirectaide.fr
-              </a>
+              <Trans
+                i18n={i18n}
+                i18nKey="layout:crash.support"
+                defaults="Si le problème persiste, contactez-nous à <0>support@accesdirectaide.fr</0>"
+                components={[<a key="support" href="mailto:support@accesdirectaide.fr" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">support@accesdirectaide.fr</a>]}
+              />
             </p>
           </div>
         </CardContent>

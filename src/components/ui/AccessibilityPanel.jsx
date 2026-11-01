@@ -16,8 +16,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ACCESSIBILITY_EVENT } from '@/lib/accountAccessibility';
+import { useT } from '@/i18n';
 
 export default function AccessibilityPanel() {
+  const { t } = useT('layout');
   const [settings, setSettings] = useState({
     fontSize: 100,
     contrast: 'normal',
@@ -84,9 +86,9 @@ export default function AccessibilityPanel() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 px-2 text-slate-700 hover:text-blue-700 rounded-r-none"
+          className="h-8 px-2 text-slate-700 hover:text-blue-700 rounded-e-none"
           onClick={() => adjustFontSize(-10)}
-          aria-label="Réduire la taille du texte"
+          aria-label={t('layout:a11y.smaller', 'Réduire la taille du texte')}
           disabled={settings.fontSize <= 80}
         >
           <div className="flex items-center gap-0.5">
@@ -100,9 +102,9 @@ export default function AccessibilityPanel() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 px-2 text-slate-700 hover:text-blue-700 rounded-l-none"
+          className="h-8 px-2 text-slate-700 hover:text-blue-700 rounded-s-none"
           onClick={() => adjustFontSize(10)}
-          aria-label="Augmenter la taille du texte"
+          aria-label={t('layout:a11y.larger', 'Augmenter la taille du texte')}
           disabled={settings.fontSize >= 150}
         >
           <div className="flex items-center gap-0.5">
@@ -118,10 +120,10 @@ export default function AccessibilityPanel() {
             variant="outline"
             size="sm"
             className="gap-2 text-foreground border-border hover:bg-accent hover:text-accent-foreground"
-            aria-label="Options d'accessibilité"
+            aria-label={t('layout:a11y.options', "Options d'accessibilité")}
           >
             <Eye className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden md:inline xl:hidden 2xl:inline">Accessibilité</span>{/* PKG-11 / P01: no room beside the full desktop menu from 1280 to 1535 px (the button keeps its name) */}
+            <span className="hidden md:inline xl:hidden 2xl:inline">{t('layout:a11y.button', 'Accessibilité')}</span>{/* PKG-11 / P01: no room beside the full desktop menu from 1280 to 1535 px (the button keeps its name) */}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[280px] p-4 bg-white border border-slate-200 shadow-xl rounded-xl" align="end" sideOffset={8}>
@@ -130,21 +132,21 @@ export default function AccessibilityPanel() {
             <div className="flex items-center gap-2 pb-1">
               <div className="w-1 h-5 rounded-full bg-gradient-to-b from-blue-600 to-indigo-600" />
               <h3 className="font-bold text-slate-900 text-sm">
-                Adapter l'affichage
+                {t('layout:a11y.title', "Adapter l'affichage")}
               </h3>
             </div>
 
             {/* Taille du texte */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                Taille du texte
+                {t('layout:a11y.textSize', 'Taille du texte')}
               </span>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => adjustFontSize(-10)}
-                  aria-label="Réduire la taille du texte"
+                  aria-label={t('layout:a11y.smaller', 'Réduire la taille du texte')}
                   disabled={settings.fontSize <= 80}
                   className="h-10 w-10 p-0 text-slate-600 bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300 rounded-lg transition-all"
                 >
@@ -157,7 +159,7 @@ export default function AccessibilityPanel() {
                   variant="outline"
                   size="sm"
                   onClick={() => adjustFontSize(10)}
-                  aria-label="Augmenter la taille du texte"
+                  aria-label={t('layout:a11y.larger', 'Augmenter la taille du texte')}
                   disabled={settings.fontSize >= 150}
                   className="h-10 w-10 p-0 text-slate-600 bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300 rounded-lg transition-all"
                 >
@@ -171,35 +173,38 @@ export default function AccessibilityPanel() {
             {/* Contraste */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                Contraste
+                {t('layout:a11y.contrast', 'Contraste')}
               </span>
               <div className="grid grid-cols-3 gap-1.5">
                 <Button
                   variant={settings.contrast === 'normal' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, contrast: 'normal' }))}
+                  aria-pressed={settings.contrast === 'normal'}
                   className={`text-xs h-8 ${settings.contrast !== 'normal' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
-                  <Sun className="h-3 w-3 mr-1" aria-hidden="true" />
-                  Normal
+                  <Sun className="h-3 w-3 me-1" aria-hidden="true" />
+                  {t('layout:a11y.contrast.normal', 'Normal')}
                 </Button>
                 <Button
                   variant={settings.contrast === 'high' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, contrast: 'high' }))}
+                  aria-pressed={settings.contrast === 'high'}
                   className={`text-xs h-8 ${settings.contrast !== 'high' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
-                  <Eye className="h-3 w-3 mr-1" aria-hidden="true" />
-                  Fort
+                  <Eye className="h-3 w-3 me-1" aria-hidden="true" />
+                  {t('layout:a11y.contrast.high', 'Fort')}
                 </Button>
                 <Button
                   variant={settings.contrast === 'dark' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, contrast: 'dark' }))}
+                  aria-pressed={settings.contrast === 'dark'}
                   className={`text-xs h-8 ${settings.contrast !== 'dark' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
-                  <Moon className="h-3 w-3 mr-1" aria-hidden="true" />
-                  Sombre
+                  <Moon className="h-3 w-3 me-1" aria-hidden="true" />
+                  {t('layout:a11y.contrast.dark', 'Sombre')}
                 </Button>
               </div>
             </div>
@@ -209,25 +214,27 @@ export default function AccessibilityPanel() {
             {/* Interligne */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                Espacement des lignes
+                {t('layout:a11y.lineSpacing', 'Espacement des lignes')}
               </span>
               <div className="grid grid-cols-2 gap-1.5">
                 <Button
                   variant={settings.lineHeight === 'normal' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, lineHeight: 'normal' }))}
+                  aria-pressed={settings.lineHeight === 'normal'}
                   className={`text-xs h-8 ${settings.lineHeight !== 'normal' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
-                  Normal
+                  {t('layout:a11y.lineSpacing.normal', 'Normal')}
                 </Button>
                 <Button
                   variant={settings.lineHeight === 'large' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, lineHeight: 'large' }))}
+                  aria-pressed={settings.lineHeight === 'large'}
                   className={`text-xs h-8 ${settings.lineHeight !== 'large' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
-                  <Maximize2 className="h-3 w-3 mr-1" aria-hidden="true" />
-                  Large
+                  <Maximize2 className="h-3 w-3 me-1" aria-hidden="true" />
+                  {t('layout:a11y.lineSpacing.large', 'Large')}
                 </Button>
               </div>
             </div>
@@ -240,10 +247,11 @@ export default function AccessibilityPanel() {
                 variant={settings.simplifiedMode ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSettings(prev => ({ ...prev, simplifiedMode: !prev.simplifiedMode }))}
+                aria-pressed={settings.simplifiedMode}
                 className={`w-full text-xs h-8 ${!settings.simplifiedMode ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
               >
-                <Type className="h-3 w-3 mr-1.5" aria-hidden="true" />
-                Mode lecture facile
+                <Type className="h-3 w-3 me-1.5" aria-hidden="true" />
+                {t('layout:a11y.easyReading', 'Mode lecture facile')}
               </Button>
               <Button
                 variant="ghost"
@@ -251,8 +259,8 @@ export default function AccessibilityPanel() {
                 onClick={resetSettings}
                 className="w-full text-[11px] h-7 text-slate-400 hover:text-slate-600"
               >
-                <RotateCcw className="h-3 w-3 mr-1.5" aria-hidden="true" />
-                Réinitialiser
+                <RotateCcw className="h-3 w-3 me-1.5" aria-hidden="true" />
+                {t('layout:a11y.reset', 'Réinitialiser')}
               </Button>
             </div>
           </div>

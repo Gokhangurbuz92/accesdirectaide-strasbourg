@@ -1,6 +1,8 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { Trans } from 'react-i18next';
 import { bannerAnswered } from '@/lib/cookieBanner';
 import { frontendEnv } from '@/config/env';
+import i18n, { useT } from '@/i18n';
 
 const STORAGE_KEY = 'ada_cookie_consent';
 
@@ -22,6 +24,7 @@ const STORAGE_KEY = 'ada_cookie_consent';
  * published as --cookie-banner-offset so fixed bottom controls stay above it.
  */
 export default function CookieBanner() {
+    const { t } = useT('layout');
     const [visible, setVisible] = useState(false);
     const ref = useRef(/** @type {HTMLDivElement | null} */ (null));
 
@@ -59,7 +62,7 @@ export default function CookieBanner() {
             id="cookie-banner"
             ref={ref}
             role="region"
-            aria-label="Information sur les cookies"
+            aria-label={t('layout:cookies.label', 'Information sur les cookies')}
             style={{
                 position: 'fixed',
                 bottom: 0,
@@ -86,26 +89,22 @@ export default function CookieBanner() {
             <p style={{ margin: 0, maxWidth: '600px', textAlign: 'center' }}>
                 {frontendEnv.flags.publicBeta ? (
                     <>
-                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : sécuriser les formulaires
-                        et garder vos réglages d&apos;affichage. Pendant la bêta publique, nous ne mesurons pas l&apos;audience.{' '}
+                        <Trans i18n={i18n} i18nKey="layout:cookies.beta" defaults="AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : sécuriser les formulaires et garder vos réglages d&apos;affichage. Pendant la bêta publique, nous ne mesurons pas l&apos;audience." />{' '}
                     </>
                 ) : !frontendEnv.flags.audienceMeasurement ? (
                     <>
-                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,
-                        sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous ne mesurons pas l&apos;audience.{' '}
+                        <Trans i18n={i18n} i18nKey="layout:cookies.necessary" defaults="AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté, sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous ne mesurons pas l&apos;audience." />{' '}
                     </>
                 ) : (
                     <>
-                        AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté,
-                        sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous mesurons aussi l&apos;audience,
-                        pour notre seul usage, et enregistrons les erreurs techniques. Vous pouvez vous y opposer.{' '}
+                        <Trans i18n={i18n} i18nKey="layout:cookies.audience" defaults="AccesDirectAide utilise uniquement des cookies et des stockages nécessaires : rester connecté, sécuriser les formulaires, garder vos réglages d&apos;affichage. Nous mesurons aussi l&apos;audience, pour notre seul usage, et enregistrons les erreurs techniques. Vous pouvez vous y opposer." />{' '}
                     </>
                 )}
                 <a
                     href="/cookies"
                     style={{ color: '#93c5fd', textDecoration: 'underline' }}
                 >
-                    En savoir plus et s&apos;opposer
+                    {t('layout:cookies.more', "En savoir plus et s'opposer")}
                 </a>
             </p>
             <button
@@ -128,7 +127,8 @@ export default function CookieBanner() {
                 onMouseOut={(e) => { /** @type {HTMLElement} */ (e.target).style.background = '#1d4ed8'; }}
                 onBlur={(e) => { /** @type {HTMLElement} */ (e.target).style.background = '#1d4ed8'; }}
             >
-                Fermer
+                {/* the French word is also the element's text: « Fermer », never « Accepter » (nothing is accepted, LEGAL_FR § 4.2) */}
+                <Trans i18n={i18n} i18nKey="layout:cookies.close" defaults="Fermer">Fermer</Trans>
             </button>
         </div>
     );

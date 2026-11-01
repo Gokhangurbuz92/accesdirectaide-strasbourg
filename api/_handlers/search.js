@@ -7,7 +7,8 @@ import { searchAidesHybrid } from '../lib/hybrid-search.js';
 import { generateEmbedding, getActiveEmbeddingModel } from '../lib/EmbeddingProvider.js';
 import { cachedSearch } from '../lib/search-cache.js';
 import { GLOSSAIRE } from '../lib/glossaire.js';
-import { bestMatchCondition, searchDemarches, searchStructures, wordPlan } from '../lib/search-query.js';
+import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
+import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -41,6 +42,16 @@ export default async function handler(req, res) {
     }
 
     const payload = validation.data;
+
+    // R32: a query typed in another language becomes French search words (api/lib/search-crosslanguage.js: « kira yardımı », « إيجار »,
+    // « допомога на оренду » → « loyer »). A query of which no word is understood gets NO result: before, an Arabic or Cyrillic query had no usable
+    // word and the démarches and places sections listed their first records as if they matched.
+    const cross = crossLanguageQuery(payload.query, payload.lang || 'fr');
+    if (cross.changed && !searchWords(cross.query).length) {
+      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] } });
+    }
+    const crossLanguage = cross.changed ? { understood: true, query: cross.query, concepts: cross.concepts } : undefined;
+    if (cross.changed) payload.query = cross.query;
 
     // Cache key params (exclude embedding since it's derived from query)
     const cacheParams = {
@@ -185,7 +196,7 @@ export default async function handler(req, res) {
       };
     });
 
-    return res.status(200).json({ ...searchResult, cached });
+    return res.status(200).json({ ...searchResult, cached, ...(crossLanguage ? { crossLanguage } : {}) });
   } catch (error) {
     logger.error('Search handler error:', error);
     return res.status(500).json({

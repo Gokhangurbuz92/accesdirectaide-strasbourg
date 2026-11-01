@@ -10,6 +10,7 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { FalcProvider } from '@/contexts/FalcContext.jsx'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.jsx'
 import { storage } from '@/lib/storage'
+import { bootLanguage } from '@/i18n'
 
 // Initialize Sentry asynchronously (non-blocking)
 void initSentry();
@@ -17,16 +18,19 @@ void initSentry();
 // launch-readiness item 63: questionnaire answers older than 24 hours are removed at the next visit of any page
 storage.purgeExpired();
 
-ReactDOM.createRoot(/** @type {HTMLElement} */ (document.getElementById('root'))).render(
-    <ErrorBoundary>
-        <ThemeProvider>
-            <FalcProvider>
-                <App />
-                <UpdatePrompt />
-            </FalcProvider>
-        </ThemeProvider>
-    </ErrorBoundary>
-)
+// R32: the interface language (address ?lang=, else the visitor's stored choice, else French) is ready before the first render — no flash of French
+void bootLanguage().finally(() => {
+    ReactDOM.createRoot(/** @type {HTMLElement} */ (document.getElementById('root'))).render(
+        <ErrorBoundary>
+            <ThemeProvider>
+                <FalcProvider>
+                    <App />
+                    <UpdatePrompt />
+                </FalcProvider>
+            </ThemeProvider>
+        </ErrorBoundary>
+    )
+})
 
 // WS5_STATIC_PWA_REGISTRATION_BEGIN
 // Production-only registration. The worker itself caches static shell assets only.

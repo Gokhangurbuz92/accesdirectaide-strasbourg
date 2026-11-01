@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useT } from '@/i18n';
 
 /**
  * ⚡ LazyImage — Optimized image component with native lazy loading
@@ -12,15 +13,18 @@ import { cn } from '@/lib/utils';
  *
  * @param {{ src: string, alt: string, className?: string, fallbackText?: string, [key: string]: any }} props
  */
-export default function LazyImage({ src, alt, className, fallbackText = 'Image indisponible', ...props }) {
+export default function LazyImage({ src, alt, className, fallbackText, ...props }) {
+  const { t } = useT('guides');
+  // R32: the default fallback in the interface language (the component is only used by the guide page)
+  const fallback = fallbackText ?? t('guides:image.unavailable', 'Image indisponible');
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
   // launch-readiness item 49: the fallback is drawn here — it used to load an image from placehold.co, a third party that then saw every visitor's address
   if (error) {
     return (
-      <div role="img" aria-label={alt || fallbackText} className={cn('relative flex items-center justify-center overflow-hidden bg-muted p-4 text-sm text-muted-foreground', className)}>
-        {fallbackText}
+      <div role="img" aria-label={alt || fallback} className={cn('relative flex items-center justify-center overflow-hidden bg-muted p-4 text-sm text-muted-foreground', className)}>
+        {fallback}
       </div>
     );
   }

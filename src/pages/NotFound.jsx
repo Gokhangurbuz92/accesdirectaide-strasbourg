@@ -4,13 +4,15 @@ import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import SEO from '@/components/SEO';
 import { FileQuestion } from 'lucide-react';
+import { useT } from '@/i18n';
 
 export default function NotFound() {
+  const { t } = useT('layout');
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <SEO
-        title="Page introuvable"
-        description="La page que vous recherchez n'existe pas."
+        title={t('layout:notFound.title', 'Page introuvable')}
+        description={t('layout:notFound.description', "La page que vous recherchez n'existe pas.")}
         noindex={true}
       />
 
@@ -21,23 +23,23 @@ export default function NotFound() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 mb-2">
-            Page introuvable
+            {t('layout:notFound.title', 'Page introuvable')}
           </h1>
 
           <p className="text-slate-600 mb-8">
-            Désolé, la page que vous recherchez n&apos;existe pas ou a été déplacée.
+            {t('layout:notFound.text', "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.")}
           </p>
 
           <div className="space-y-3">
             <Button asChild className="w-full">
               <Link to={createPageUrl('Home')}>
-                Retour à l&apos;accueil
+                {t('layout:backHome', "Retour à l'accueil")}
               </Link>
             </Button>
 
             <Button asChild variant="ghost" className="w-full">
               <Link to={createPageUrl('Aides')}>
-                Voir les aides
+                {t('layout:seeAides', 'Voir les aides')}
               </Link>
             </Button>
           </div>

@@ -1,0 +1,13 @@
+{
+ "status.loading": "Übersetzung wird gesucht…",
+ "status.auto_checked": "Maschinelle Übersetzung, durch automatische Tests geprüft. Sie wurde von keiner Person überprüft: Maßgeblich sind der französische Text und die offizielle Quelle.",
+ "status.partial": "Maschinelle Übersetzung, durch automatische Tests geprüft und von keiner Person überprüft. Abschnitte, die die Tests nicht bestanden haben, werden auf Französisch angezeigt. Maßgeblich sind der französische Text und die offizielle Quelle.",
+ "status.human_reviewed": "Von einer Person überprüfte Übersetzung. Maßgeblich sind der französische Text und die offizielle Quelle.",
+ "status.outdated": "Der französische Text wurde seit der Übersetzung geändert: Die Übersetzung ist zurückgezogen, bis sie neu erstellt und geprüft ist. Der Text wird auf Französisch angezeigt.",
+ "status.withheld": "Die maschinelle Übersetzung dieses Inhalts hat die Prüfungen nicht bestanden: Der Text wird auf Französisch angezeigt.",
+ "status.unavailable": "Dieser Inhalt ist noch nicht in Ihre Sprache übersetzt: Er wird auf Französisch angezeigt.",
+ "meta.reviewed": "Überprüft am {{date}}.",
+ "meta.machine": "Übersetzt am {{date}} mit einer Übersetzungssoftware auf dem Computer des Herausgebers (es werden keine persönlichen Texte übersetzt).",
+ "action.back": "Zurück zur Übersetzung",
+ "action.original": "Französischen Originaltext anzeigen"
+}

@@ -17,6 +17,7 @@ const walk = (dir, out = []) => {
 
 /** public read paths: MUST apply the publication contract */
 const GUARDED = [
+  'api/_handlers/translations.js',   // R32: decide()/visibleWhere before any translation is returned
   'api/_handlers/aides.js', 'api/_handlers/demarches.js', 'api/_handlers/structures.js', 'api/_handlers/dispositifs/index.js', 'api/_handlers/drees.js', 'api/_handlers/pdf.js',
   // R31 (D16): api/_handlers/search.js no longer reads a content table itself — its démarche and place sections go through api/lib/search-query.js (guarded)
   'api/_handlers/search-pro.js', 'api/_handlers/sitemap.js', 'api/_handlers/taxonomy.js',

@@ -37,6 +37,9 @@ import FeedbackButton from '@/components/FeedbackButton';
 import { getProvenance } from '@/lib/provenance';
 import CategoryChip, { resolveCategory } from '@/components/ui/CategoryChip';
 import { useFalc } from '@/contexts/FalcContext';
+import { formatDate, useT } from '@/i18n';
+import useContentTranslation from '@/hooks/useContentTranslation';
+import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 
 import FavoriteButton from '@/components/FavoriteButton';
 import { getCsrfHeaders } from '@/lib/csrf';
@@ -44,7 +47,11 @@ import { getCsrfHeaders } from '@/lib/csrf';
 /** @typedef {{ numero?: number, titre?: string, title?: string, nom?: string, description?: string, contenu?: string, text?: string, conseils?: string }} DemarcheStep */
 /** @typedef {{ url?: string, nom?: string }} DemarcheSource */
 
+/** the verification date as the page has always shown it (« 30/10/2026 »), in the interface language */
+const NUMERIC_DATE = { day: '2-digit', month: '2-digit', year: 'numeric' };
 
+/** the record texts the easy-to-read view reads (FalcContent), each one through the content translation */
+const FALC_VIEW_FIELDS = ['summary_falc', 'resume_falc', 'description_falc', 'conditions_falc', 'etapes_falc', 'description_courte', 'description', 'pour_qui', 'delai', 'cout', 'ou_faire', 'etapes', 'documents_necessaires'];
 
 /**
  * @param {string} slug
@@ -70,6 +77,7 @@ async function fetchDemarcheBySlug(slug, signal) {
 }
 
 export default function DemarcheDetail() {
+  const { t } = useT('demarches');
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -101,6 +109,9 @@ export default function DemarcheDetail() {
     ? queryData[0]
     : (queryData?.items ? queryData?.items[0] : queryData);
 
+  // R32: the record's texts in the interface language when a translation may be shown, otherwise French (marked lang="fr")
+  const tr = useContentTranslation('demarche', demarche);
+
   // Canonical Redirect: If accessed via ID but slug exists, redirect to slug URL
   useEffect(() => {
     if (demarche && !slug && demarche.slug) {
@@ -125,17 +136,17 @@ export default function DemarcheDetail() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 sm:px-6 py-12">
         <EmptyState
           headingLevel={1}
-          title="Impossible de charger la démarche"
-          description="Vérifiez votre connexion puis réessayez."
+          title={t('demarches:detail.error.title', 'Impossible de charger la démarche')}
+          description={t('demarches:error.description', 'Vérifiez votre connexion puis réessayez.')}
           icon={<AlertCircle className="h-6 w-6" />}
           actions={
             <div className="flex flex-wrap gap-3">
               <Button type="button" variant="outline" onClick={() => refetch()}>
-                Réessayer
+                {t('demarches:error.retry', 'Réessayer')}
               </Button>
               <Link to={createPageUrl('Demarches')}>
                 <Button type="button" variant="ghost">
-                  Retour aux démarches
+                  {t('demarches:detail.back', 'Retour aux démarches')}
                 </Button>
               </Link>
             </div>
@@ -169,19 +180,26 @@ export default function DemarcheDetail() {
     ? `/demarches/${demarche.slug}`
     : `/demarches/view?id=${encodeURIComponent(demarche.id)}`;
 
+  const title = tr.value('titre');
+  // the lead under the title: the short description, or the easy-to-read summary when there is none
+  const leadField = tr.value('description_courte') ? 'description_courte' : 'summary_falc';
+
   /** @type {string[]} */
-  const documentsNecessaires = asList(demarche.documents_necessaires);   // a list, or one document per line (automatic verification chain)
+  const documentsNecessaires = asList(tr.value('documents_necessaires'));   // a list, or one document per line (automatic verification chain)
 
   /** @type {DemarcheStep[]} */
-  const steps = Array.isArray(demarche.etapes) ? demarche.etapes : [];
+  const steps = Array.isArray(tr.value('etapes')) ? tr.value('etapes') : [];
 
   /** @type {DemarcheSource[]} */
-  const sources = Array.isArray(demarche.sources) ? demarche.sources : [];
+  const sources = Array.isArray(tr.value('sources')) ? tr.value('sources') : [];
+
+  // the easy-to-read view reads the same record, its texts through the content translation
+  const falcView = { ...demarche, ...Object.fromEntries(FALC_VIEW_FIELDS.map((field) => [field, tr.value(field)])) };
 
   const breadcrumbs = [
-    { name: 'Accueil', url: '/' },
-    { name: 'Démarches', url: '/demarches' },
-    { name: demarche.titre, url: canonicalPath }
+    { name: t('demarches:breadcrumb.home', 'Accueil'), url: '/' },
+    { name: t('demarches:breadcrumb.demarches', 'Démarches'), url: '/demarches' },
+    { name: title, url: canonicalPath }
   ];
 
   const schema = [
@@ -192,8 +210,8 @@ export default function DemarcheDetail() {
   return (
     <div className="min-h-screen bg-slate-50">
       <SEO
-        title={`${demarche.titre} – Démarches`}
-        description={demarche.description_courte || demarche.summary_falc}
+        title={t('demarches:detail.seo_title', '{{title}} – Démarches', { title })}
+        description={tr.value('description_courte') || tr.value('summary_falc')}
         path={canonicalPath}
         schema={schema}
       />
@@ -201,11 +219,11 @@ export default function DemarcheDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex items-center gap-2 text-sm text-slate-600">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">Accueil</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link to={createPageUrl('Demarches')} className="hover:text-blue-600">Démarches</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-slate-900">{demarche.titre}</span>
+            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('demarches:breadcrumb.home', 'Accueil')}</Link>
+            <ChevronRight className="h-4 w-4 rtl-flip" />
+            <Link to={createPageUrl('Demarches')} className="hover:text-blue-600">{t('demarches:breadcrumb.demarches', 'Démarches')}</Link>
+            <ChevronRight className="h-4 w-4 rtl-flip" />
+            <span className="text-slate-900" {...tr.attrs('titre')}>{title}</span>
           </nav>
         </div>
       </div>
@@ -216,8 +234,8 @@ export default function DemarcheDetail() {
           to={createPageUrl('Demarches')}
           className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-6"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Retour aux démarches
+          <ArrowLeft className="h-4 w-4 rtl-flip" />
+          {t('demarches:detail.back', 'Retour aux démarches')}
         </Link>
 
         {/* En-tête */}
@@ -225,32 +243,33 @@ export default function DemarcheDetail() {
           <CardContent className="p-6 md:p-8">
             {categoryLabel && <CategoryChip slug={categorySlug} label={categoryLabel} className="mb-4" />}
 
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-              {demarche.titre}
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4" {...tr.attrs('titre')}>
+              {title}
             </h1>
+            <ContentTranslationNotice translation={tr} className="mb-4" />
 
-            <p className="text-lg text-slate-600 mb-6">
-              {demarche.description_courte || demarche.summary_falc}
+            <p className="text-lg text-slate-600 mb-6" {...tr.attrs(leadField)}>
+              {tr.value(leadField)}
             </p>
 
             <div className="flex flex-wrap gap-4 text-sm text-slate-600">
               {demarche.delai && (
                 <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
                   <Clock className="h-4 w-4" />
-                  {demarche.delai}
+                  <span {...tr.attrs('delai')}>{tr.value('delai')}</span>
                 </span>
               )}
               {demarche.cout && (
                 <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
                   <Euro className="h-4 w-4" />
-                  {demarche.cout}
+                  <span {...tr.attrs('cout')}>{tr.value('cout')}</span>
                 </span>
               )}
               {/* PKG-11 audit: a date is a verification only when the server says the content is VERIFIED (a lab / unverified row's date is not) */}
               {demarche.provenance?.contentStatus === 'VERIFIED' && demarche.provenance?.verifiedAt && (
                 <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
                   <Calendar className="h-4 w-4" />
-                  Vérifié le {new Date(demarche.provenance.verifiedAt).toLocaleDateString('fr-FR')}
+                  {t('demarches:verified_on', 'Vérifié le {{date}}', { date: formatDate(demarche.provenance.verifiedAt, NUMERIC_DATE) })}
                 </span>
               )}
             </div>
@@ -269,7 +288,7 @@ export default function DemarcheDetail() {
           />
           {/* R29: in the public beta no text is generated on demand (the service is closed): say so instead of a button that always fails */}
           {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && frontendEnv.flags.publicBeta && (
-            <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">Il n’y a pas encore de version facile à lire pour cette démarche. La fiche complète ci-dessous reste valable.</p>
+            <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">{t('demarches:detail.falc.not_available', 'Il n’y a pas encore de version facile à lire pour cette démarche. La fiche complète ci-dessous reste valable.')}</p>
           )}
           {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && !frontendEnv.flags.publicBeta && (
             <button
@@ -298,19 +317,20 @@ export default function DemarcheDetail() {
               {isGeneratingFalc ? (
                 <>
                   <span className="animate-spin">⏳</span>
-                  Simplification en cours...
+                  {t('demarches:detail.falc.generating', 'Simplification en cours...')}
                 </>
               ) : (
                 <>
-                  Résumé simplifié automatique
+                  {t('demarches:detail.falc.generate', 'Résumé simplifié automatique')}
                 </>
               )}
             </button>
           )}
           {isFalcMode && falcPreview && (
             <div role="status" data-testid="falc-preview" className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-slate-900">
-              <p className="text-sm font-semibold">Résumé automatique, non relu par une personne. Il peut être incomplet : la fiche complète fait foi.</p>
-              <p className="mt-2 whitespace-pre-line">{falcPreview}</p>
+              <p className="text-sm font-semibold">{t('demarches:detail.falc.preview_warning', 'Résumé automatique, non relu par une personne. Il peut être incomplet : la fiche complète fait foi.')}</p>
+              {/* the automatic summary is always written in French */}
+              <p className="mt-2 whitespace-pre-line" lang="fr" dir="ltr">{falcPreview}</p>
             </div>
           )}
         </div>
@@ -322,7 +342,7 @@ export default function DemarcheDetail() {
               /* FALC Mode Content */
               <Card>
                 <CardContent className="p-6">
-                  <FalcContent falcData={demarche} entityType="demarche" />
+                  <FalcContent falcData={falcView} entityType="demarche" />
                 </CardContent>
               </Card>
             ) : (
@@ -335,10 +355,10 @@ export default function DemarcheDetail() {
                 {demarche.pour_qui && (
                   <Card>
                     <CardContent className="p-6">
-                      <h2 className="text-lg font-bold text-slate-900 mb-3">Pour qui ?</h2>
-                      {asList(demarche.pour_qui).length > 1 ? (
-                        <ul className="list-disc space-y-1 pl-5 text-slate-700">{asList(demarche.pour_qui).map((x, i) => <li key={i}>{x}</li>)}</ul>
-                      ) : <p className="text-slate-700">{demarche.pour_qui}</p>}
+                      <h2 className="text-lg font-bold text-slate-900 mb-3">{t('demarches:detail.for_whom', 'Pour qui ?')}</h2>
+                      {asList(tr.value('pour_qui')).length > 1 ? (
+                        <ul className="list-disc space-y-1 ps-5 text-slate-700" {...tr.attrs('pour_qui')}>{asList(tr.value('pour_qui')).map((x, i) => <li key={i}>{x}</li>)}</ul>
+                      ) : <p className="text-slate-700" {...tr.attrs('pour_qui')}>{tr.value('pour_qui')}</p>}
                     </CardContent>
                   </Card>
                 )}
@@ -349,7 +369,7 @@ export default function DemarcheDetail() {
                     <CardContent className="p-6">
                       <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                         <FileText className="h-5 w-5 text-blue-600" />
-                        Documents à préparer
+                        {t('demarches:detail.documents', 'Documents à préparer')}
                       </h2>
                       <ul className="space-y-3">
                         {documentsNecessaires.map((doc, idx) => (
@@ -357,7 +377,7 @@ export default function DemarcheDetail() {
                             <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <CheckCircle2 className="h-4 w-4 text-blue-600" />
                             </div>
-                            <span className="text-slate-700">{doc}</span>
+                            <span className="text-slate-700" {...tr.attrs('documents_necessaires')}>{doc}</span>
                           </li>
                         ))}
                       </ul>
@@ -370,29 +390,29 @@ export default function DemarcheDetail() {
                   <Card>
                     <CardContent className="p-6">
                       <h2 className="text-lg font-bold text-slate-900 mb-6">
-                        Les étapes à suivre
+                        {t('demarches:detail.steps', 'Les étapes à suivre')}
                       </h2>
                       <div className="space-y-6">
                         {steps.map((etape, idx) => (
                           <div key={idx} className="relative">
                             {idx < steps.length - 1 && (
-                              <div className="absolute left-4 top-10 bottom-0 w-0.5 bg-slate-200" />
+                              <div className="absolute start-4 top-10 bottom-0 w-0.5 bg-slate-200" />
                             )}
                             <div className="flex gap-4">
                               <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0 z-10">
                                 {etape.numero || idx + 1}
                               </div>
                               <div className="flex-1 pb-6">
-                                <h3 className="font-semibold text-slate-900 text-lg mb-2">
+                                <h3 className="font-semibold text-slate-900 text-lg mb-2" {...tr.attrs('etapes')}>
                                   {etape.titre}
                                 </h3>
-                                <p className="text-slate-600 mb-3">
+                                <p className="text-slate-600 mb-3" {...tr.attrs('etapes')}>
                                   {etape.description}
                                 </p>
                                 {etape.conseils && (
                                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
                                     <Lightbulb className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                                    <p className="text-sm text-amber-800">{etape.conseils}</p>
+                                    <p className="text-sm text-amber-800" {...tr.attrs('etapes')}>{etape.conseils}</p>
                                   </div>
                                 )}
                               </div>
@@ -408,13 +428,13 @@ export default function DemarcheDetail() {
                 {demarche.ou_faire && (
                   <Card>
                     <CardContent className="p-6">
-                      <h2 className="text-lg font-bold text-slate-900 mb-3">Où faire cette démarche ?</h2>
-                      <p className="text-slate-700 mb-4">{demarche.ou_faire}</p>
+                      <h2 className="text-lg font-bold text-slate-900 mb-3">{t('demarches:detail.where', 'Où faire cette démarche ?')}</h2>
+                      <p className="text-slate-700 mb-4" {...tr.attrs('ou_faire')}>{tr.value('ou_faire')}</p>
                       {demarche.lien_officiel && (
                         <Button asChild>
                           <a href={demarche.lien_officiel} target="_blank" rel="noopener noreferrer">
-                            Accéder au service en ligne
-                            <ExternalLink className="ml-2 h-4 w-4" />
+                            {t('demarches:detail.online_service', 'Accéder au service en ligne')}
+                            <ExternalLink className="ms-2 h-4 w-4" />
                           </a>
                         </Button>
                       )}
@@ -426,7 +446,7 @@ export default function DemarcheDetail() {
                 {sources.length > 0 && (
                   <Card className="bg-slate-50">
                     <CardContent className="p-6">
-                      <h2 className="text-lg font-bold text-slate-900 mb-3">Sources</h2>
+                      <h2 className="text-lg font-bold text-slate-900 mb-3">{t('demarches:detail.sources', 'Sources')}</h2>
                       <ul className="space-y-2">
                         {sources.map((source, idx) => (
                           <li key={idx}>
@@ -436,7 +456,7 @@ export default function DemarcheDetail() {
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline flex items-center gap-1"
                             >
-                              {source.nom}
+                              <span {...tr.attrs('sources')}>{source.nom}</span>
                               <ExternalLink className="h-3 w-3" />
                             </a>
                           </li>
@@ -459,8 +479,8 @@ export default function DemarcheDetail() {
                 {demarche.lien_officiel && (
                   <Button className="w-full" asChild>
                     <a href={demarche.lien_officiel} target="_blank" rel="noopener noreferrer">
-                      Commencer la démarche
-                      <ExternalLink className="ml-2 h-4 w-4" />
+                      {t('demarches:detail.start', 'Commencer la démarche')}
+                      <ExternalLink className="ms-2 h-4 w-4" />
                     </a>
                   </Button>
                 )}
@@ -471,8 +491,8 @@ export default function DemarcheDetail() {
                     // R29: the PDF service is closed in the public beta — the browser's own print (« Enregistrer en PDF ») makes the same document
                     onClick={() => (frontendEnv.flags.publicBeta ? window.print() : window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer'))}
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    {frontendEnv.flags.publicBeta ? 'Imprimer ou enregistrer en PDF' : 'Télécharger en PDF'}
+                    <Download className="me-2 h-4 w-4" />
+                    {frontendEnv.flags.publicBeta ? t('demarches:detail.pdf_print', 'Imprimer ou enregistrer en PDF') : t('demarches:detail.pdf_download', 'Télécharger en PDF')}
                   </Button>
                 )}
                 <FavoriteButton entityType="demarche" entityId={demarche.id} label={demarche.titre} />
@@ -490,30 +510,30 @@ export default function DemarcheDetail() {
             {/* Résumé */}
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="p-6">
-                <h3 className="font-bold text-slate-900 mb-3">En résumé</h3>
+                <h3 className="font-bold text-slate-900 mb-3">{t('demarches:detail.summary', 'En résumé')}</h3>
                 <div className="space-y-3 text-sm">
                   {steps.length > 0 && (
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                      <span>{steps.length} étapes</span>
+                      <span>{t('demarches:detail.steps_count', { count: steps.length, defaultValue_one: '{{count}} étape', defaultValue_other: '{{count}} étapes' })}</span>
                     </div>
                   )}
                   {documentsNecessaires.length > 0 && (
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-600" />
-                      <span>{documentsNecessaires.length} documents à préparer</span>
+                      <span>{t('demarches:detail.documents_count', { count: documentsNecessaires.length, defaultValue_one: '{{count}} document à préparer', defaultValue_other: '{{count}} documents à préparer' })}</span>
                     </div>
                   )}
                   {demarche.delai && (
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-600" />
-                      <span>{demarche.delai}</span>
+                      <span {...tr.attrs('delai')}>{tr.value('delai')}</span>
                     </div>
                   )}
                   {demarche.cout && (
                     <div className="flex items-center gap-2">
                       <Euro className="h-4 w-4 text-blue-600" />
-                      <span>{demarche.cout}</span>
+                      <span {...tr.attrs('cout')}>{tr.value('cout')}</span>
                     </div>
                   )}
                 </div>

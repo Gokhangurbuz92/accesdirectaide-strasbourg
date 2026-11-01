@@ -41,6 +41,7 @@ const CONFIG = {
     FEEDBACK: { limit: 6, window: 600 },    // 6 per 10 min
     CONTACT_FORM: { limit: 5, window: 3600 }, // PKG-11 / P20: public contact form, 5 per hour per IP
     CSP_REPORT: { limit: 20, window: 60 },
+    TRANSLATION_READ: { limit: 120, window: 60 },   // R32: public translations of verified content (a page asks once or twice)
     EMAIL_CHANGE: { limit: 3, window: 3600 },  // launch-readiness item 66: address change requests, 3 per hour per account    // launch-readiness item 49: browser CSP violation reports, 20 per minute per IP (logged, never stored)
     DSR_EXPORT: { limit: 10, window: 3600 },  // PKG-11 audit: each export files a DSR request
     // Auth

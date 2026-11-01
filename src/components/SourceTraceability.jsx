@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { ExternalLink, Calendar, Link as LinkIcon, Clock } from 'lucide-react';
+import { formatDate, useT } from '@/i18n';
 
 /**
  * SourceTraceability Component
@@ -19,6 +20,7 @@ export default function SourceTraceability({
     source_last_modified,
     fetched_at 
 }) {
+    const { t } = useT('shared');
     // Use fetched_at as fallback for retrieved_at
     const retrievedDate = retrieved_at || fetched_at;
 
@@ -27,46 +29,36 @@ export default function SourceTraceability({
         return null;
     }
 
-    const formatDate = (/** @type {string | number | Date} */ date) => {
-        if (!date) return null;
-        try {
-            return new Date(date).toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        } catch {
-            return null;
-        }
-    };
+    // R32: the date in the interface language (« 12 octobre 2026 », « 12 October 2026 »…)
+    const day = (/** @type {string | number | Date} */ date) => (date ? formatDate(date, { year: 'numeric', month: 'long', day: 'numeric' }) || null : null);
 
     return (
         <Card className="border-blue-200 bg-blue-50">
             <CardContent className="p-6">
                 <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 text-blue-900">
                     <LinkIcon className="h-5 w-5" />
-                    Source et traçabilité
+                    {t('shared:trace.title', 'Source et traçabilité')}
                 </h2>
                 <div className="space-y-2 text-sm">
                     <div className="flex items-start gap-2">
-                        <span className="font-medium text-blue-900 min-w-[140px]">Source :</span>
+                        <span className="font-medium text-blue-900 min-w-[140px]">{t('shared:trace.source', 'Source :')}</span>
                         <a 
                             href={source_url} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:underline flex items-center gap-1 break-all"
                         >
-                            {source_url}
-                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                            <span dir="ltr">{source_url}</span>
+                            <ExternalLink className="h-3 w-3 flex-shrink-0 rtl-flip" />
                         </a>
                     </div>
                     
                     {retrievedDate && (
                         <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-blue-700" />
-                            <span className="font-medium text-blue-900">Récupéré le :</span>
+                            <span className="font-medium text-blue-900">{t('shared:trace.retrieved', 'Récupéré le :')}</span>
                             <span className="text-blue-700">
-                                {formatDate(retrievedDate)}
+                                {day(retrievedDate)}
                             </span>
                         </div>
                     )}
@@ -74,9 +66,9 @@ export default function SourceTraceability({
                     {last_checked_at && (
                         <div className="flex items-center gap-2">
                             <Clock className="h-4 w-4 text-blue-700" />
-                            <span className="font-medium text-blue-900">Source consultée le :</span>
+                            <span className="font-medium text-blue-900">{t('shared:trace.checked', 'Source consultée le :')}</span>
                             <span className="text-blue-700">
-                                {formatDate(last_checked_at)}
+                                {day(last_checked_at)}
                             </span>
                         </div>
                     )}
@@ -84,9 +76,9 @@ export default function SourceTraceability({
                     {source_last_modified && (
                         <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-blue-700" />
-                            <span className="font-medium text-blue-900">Source modifiée le :</span>
+                            <span className="font-medium text-blue-900">{t('shared:trace.modified', 'Source modifiée le :')}</span>
                             <span className="text-blue-700">
-                                {formatDate(source_last_modified)}
+                                {day(source_last_modified)}
                             </span>
                         </div>
                     )}

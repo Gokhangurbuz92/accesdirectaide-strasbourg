@@ -1,0 +1,20 @@
+{
+ "emergency": "Im Notfall rufen Sie die 112 (Notruf), die 15 (SAMU, medizinischer Notdienst) oder die 115 (SAMU social, Notunterkunft) an: Diese Nummern hängen nicht von AccesDirectAide ab.",
+ "error": "Der Status des Dienstes kann im Moment nicht geprüft werden. Möglicherweise antwortet die Website oder Ihre Verbindung nicht.",
+ "last-checked": "Letzte Prüfung: {{date}}",
+ "live.failed": "Prüfung nicht möglich.",
+ "live.updated": "Status aktualisiert.",
+ "refresh": "Aktualisieren",
+ "section.assistant": "Assistent",
+ "section.comptes": "Konten und Termine",
+ "section.donnees": "Informationen zu Hilfen",
+ "section.emails": "E-Mails",
+ "seo.description": "Öffentlicher Status der Dienste von AccesDirectAide: Konten, Termine, E-Mails, Assistent und Informationen zu Hilfen.",
+ "seo.title": "Status des Dienstes — AccesDirectAide",
+ "state.degraded": "Funktioniert teilweise",
+ "state.info": "Gut zu wissen",
+ "state.operational": "Funktioniert",
+ "state.unavailable": "Nicht verfügbar",
+ "title": "Status des Dienstes",
+ "unchecked": "Nicht geprüft."
+}

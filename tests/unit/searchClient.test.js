@@ -46,6 +46,7 @@ describe('searchClient', () => {
       query: '  loyer étudiant Strasbourg  ',
       category: 'logement',
       limit: 5,
+      lang: 'fr',   // R32: the interface language travels with the query (cross-language search)
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -55,6 +56,7 @@ describe('searchClient', () => {
       query: 'loyer étudiant Strasbourg',
       category: 'logement',
       limit: 5,
+      lang: 'fr',   // R32: the interface language travels with the query (cross-language search)
     });
     expect(response.meta.total).toBe(1);
     expect(response.results[0]).toEqual(
@@ -97,6 +99,7 @@ describe('searchClient', () => {
       limit: 10,
       situations: ['etudiant', 'senior'],
       geoScope: 'NATIONAL',
+      lang: 'fr',
     });
   });
 

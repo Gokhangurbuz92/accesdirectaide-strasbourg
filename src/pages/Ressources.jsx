@@ -9,8 +9,13 @@ import { FileText, ExternalLink } from 'lucide-react';
 import { EMERGENCY_FALLBACK } from '@/lib/emergencyNumbers';
 import PageHeader from '@/components/layout/PageHeader';
 import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
+import { useLanguage, useT } from '@/i18n';
 
 export default function Ressources() {
+    const { t } = useT('resources');
+    const { isSource } = useLanguage();
+    // R32: the resources and the emergency numbers' names come from the API (or its built-in copy) in French: marked as such in another language
+    const fr = isSource ? {} : { lang: 'fr', dir: 'ltr' };
     const emergencyMode = new URLSearchParams(window.location.search).get('emergency') === '1';
     const [ressources, setRessources] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,14 +60,14 @@ export default function Ressources() {
     return (
         <div className="min-h-screen bg-slate-50">
             <SEO
-                title="Ressources utiles"
-                description="Numéros d’urgence et ressources utiles pour vos démarches."
+                title={t('resources:title', 'Ressources utiles')}
+                description={t('resources:seo.description', 'Numéros d’urgence et ressources utiles pour vos démarches.')}
                 path="/ressources"
             />
-            <PageHeader title="Ressources utiles" description="Numéros d’urgence et documents utiles pour vos démarches.">
+            <PageHeader title={t('resources:title', 'Ressources utiles')} description={t('resources:header.description', 'Numéros d’urgence et documents utiles pour vos démarches.')}>
                 {!emergencyMode && (
                     <Link to="/ressources?emergency=1" data-testid="emergency-link" className="inline-flex min-h-11 items-center rounded-lg bg-white px-4 text-sm font-semibold text-red-800 shadow hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
-                        Voir les numéros d’urgence
+                        {t('resources:emergency.link', 'Voir les numéros d’urgence')}
                     </Link>
                 )}
             </PageHeader>
@@ -70,16 +75,16 @@ export default function Ressources() {
 
             {emergencyMode && (
                 <section data-testid="emergency-resources" aria-labelledby="emergency-resources-title" className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
-                    <h2 id="emergency-resources-title" className="text-xl font-bold text-red-900">Ressources d’urgence</h2>
-                    <p className="mt-1 text-sm text-red-900">En cas de danger immédiat, utilisez le numéro adapté à votre situation.</p>
+                    <h2 id="emergency-resources-title" className="text-xl font-bold text-red-900">{t('resources:emergency.title', 'Ressources d’urgence')}</h2>
+                    <p className="mt-1 text-sm text-red-900">{t('resources:emergency.text', 'En cas de danger immédiat, utilisez le numéro adapté à votre situation.')}</p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                         {emergencyList.map((r) => (
-                            <a key={r.id} href={`tel:${r.phone}`} data-testid={`emergency-resource-${r.phone}`} className="rounded-md bg-white p-3 font-semibold text-red-800 underline focus:outline-none focus:ring-2 focus:ring-red-600">
+                            <a key={r.id} href={`tel:${r.phone}`} data-testid={`emergency-resource-${r.phone}`} className="rounded-md bg-white p-3 font-semibold text-red-800 underline focus:outline-none focus:ring-2 focus:ring-red-600" {...fr}>
                                 {r.title} — {r.phone}
                             </a>
                         ))}
                     </div>
-                    {!loading && apiEmergency.length === 0 && <p data-testid="emergency-fallback-note" className="mt-3 text-sm text-red-900">Ces numéros nationaux s’affichent même sans connexion au service.</p>}
+                    {!loading && apiEmergency.length === 0 && <p data-testid="emergency-fallback-note" className="mt-3 text-sm text-red-900">{t('resources:emergency.fallback', 'Ces numéros nationaux s’affichent même sans connexion au service.')}</p>}
                 </section>
             )}
 
@@ -89,21 +94,21 @@ export default function Ressources() {
                     className="border p-2 rounded"
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    aria-label="Filtrer par type de ressource"
+                    aria-label={t('resources:filter.label', 'Filtrer par type de ressource')}
                 >
-                    <option value="">Tous les types</option>
-                    <option value="guide">Guides</option>
-                    <option value="tool">Outils</option>
-                    <option value="document">Documents</option>
-                    <option value="link">Liens utiles</option>
+                    <option value="">{t('resources:filter.all', 'Tous les types')}</option>
+                    <option value="guide">{t('resources:filter.guide', 'Guides')}</option>
+                    <option value="tool">{t('resources:filter.tool', 'Outils')}</option>
+                    <option value="document">{t('resources:filter.document', 'Documents')}</option>
+                    <option value="link">{t('resources:filter.link', 'Liens utiles')}</option>
                 </select>
             </div>
             )}
 
             {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : failed ? (
                 <div role="alert" data-testid="ressources-error" className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900">
-                    <p>Les ressources n’ont pas pu être chargées. Ce n’est pas une absence de ressource.</p>
-                    <button type="button" data-testid="ressources-retry" onClick={() => setAttempt((n) => n + 1)} className="mt-3 rounded-md bg-amber-700 px-3 py-2 text-white">Réessayer</button>
+                    <p>{t('resources:error.text', 'Les ressources n’ont pas pu être chargées. Ce n’est pas une absence de ressource.')}</p>
+                    <button type="button" data-testid="ressources-retry" onClick={() => setAttempt((n) => n + 1)} className="mt-3 rounded-md bg-amber-700 px-3 py-2 text-white">{t('resources:retry', 'Réessayer')}</button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -115,24 +120,24 @@ export default function Ressources() {
                                 <CardContent className="p-6">
                                     <div className="flex items-start gap-3 mb-3">
                                         <FileText className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                                        <h3 className="font-semibold text-lg text-slate-900" data-testid="ressource-title">
+                                        <h3 className="font-semibold text-lg text-slate-900" data-testid="ressource-title" {...fr}>
                                             {r.title}
                                         </h3>
                                     </div>
                                     {r.type && (
-                                        <Badge className="mb-3 bg-blue-100 text-blue-800">
+                                        <Badge className="mb-3 bg-blue-100 text-blue-800" {...fr}>
                                             {r.type}
                                         </Badge>
                                     )}
                                     {r.content && (
-                                        <p className="text-sm text-slate-600 line-clamp-3">
+                                        <p className="text-sm text-slate-600 line-clamp-3" {...fr}>
                                             {r.content.substring(0, 150)}...
                                         </p>
                                     )}
                                     {r.source_url && (
                                         <div className="mt-3 flex items-center gap-1 text-xs text-blue-600">
                                             <ExternalLink className="h-3 w-3" />
-                                            <span>Source externe</span>
+                                            <span>{t('resources:card.external', 'Source externe')}</span>
                                         </div>
                                     )}
                                 </CardContent>
@@ -141,13 +146,13 @@ export default function Ressources() {
                     ))}
                     {/* R7: the emergency numbers (type URGENCE) are shown above, not in this grid: « none found » only when the grid itself is empty */}
                     {!emergencyMode && filterType && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
-                        <p className="col-span-3 text-center text-gray-500" data-testid="ressources-empty">Aucune ressource trouvée pour ces critères.</p>
+                        <p className="col-span-3 text-center text-gray-500" data-testid="ressources-empty">{t('resources:empty.filtered', 'Aucune ressource trouvée pour ces critères.')}</p>
                     )}
                 </div>
             )}
             {!loading && !failed && !emergencyMode && !filterType && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
-                <EmptyCatalogue title="Aucun document n’est encore publié ici" testId="ressources-none-published">
-                    <p>Les documents et liens utiles seront publiés après vérification de leur source. Les numéros d’urgence nationaux sont disponibles avec le bouton ci-dessus.</p>
+                <EmptyCatalogue title={t('resources:empty.title', 'Aucun document n’est encore publié ici')} testId="ressources-none-published">
+                    <p>{t('resources:empty.text', 'Les documents et liens utiles seront publiés après vérification de leur source. Les numéros d’urgence nationaux sont disponibles avec le bouton ci-dessus.')}</p>
                 </EmptyCatalogue>
             )}
             </div>

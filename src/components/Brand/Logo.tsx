@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { useT } from '@/i18n';
 
 /**
  * Composant Logo unifié pour l'application AccesDirectAide
@@ -26,6 +27,7 @@ const Logo = ({
     className,
     ...props
 }: import("react").ImgHTMLAttributes<HTMLImageElement> & { family?: string; variant?: string; tone?: string; size?: number | "sm" | "md" | "lg"; asLink?: boolean }) => {
+    const { t } = useT('layout');
     // Conversion size preset vers pixels
     const sizeMap = {
         sm: 24,
@@ -59,7 +61,7 @@ const Logo = ({
     }
 
     // Texte alternatif
-    const altText = alt || 'Logo AccesDirectAide';
+    const altText = alt || t('layout:header.logo', 'Logo AccesDirectAide');
     const whiteToneClass = tone === 'white' && isCurrentFamily ? 'brightness-0 invert' : '';
 
     // Composant image
@@ -84,7 +86,7 @@ const Logo = ({
             <Link
                 to="/"
                 className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded"
-                aria-label="Aller à l’accueil"
+                aria-label={t('layout:header.home', 'Aller à l’accueil')}
             >
                 {logoImage}
             </Link>

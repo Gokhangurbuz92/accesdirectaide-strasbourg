@@ -22,8 +22,12 @@ import SourceTraceability from '@/components/SourceTraceability';
 import FalcSummary from '@/components/FalcSummary';
 import AutoVerificationNote from '@/components/AutoVerificationNote';
 import LoadError from '@/components/LoadError';
+import { formatDate, useT } from '@/i18n';
+import useContentTranslation from '@/hooks/useContentTranslation';
+import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 
 export default function DispositifDetail() {
+  const { t } = useT('dispositifs');
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
@@ -47,6 +51,8 @@ export default function DispositifDetail() {
     queryFn: fetchDispositif,
     enabled: !!identifier
   });
+  // R32: the record's own text — a verified translation when one may be shown, else the French text marked lang="fr" (the FALC fields stay French)
+  const tr = useContentTranslation('dispositif', dispositif);
 
   if (isLoading) {
     return (
@@ -55,17 +61,21 @@ export default function DispositifDetail() {
   }
 
   if (isError) {
-    return <div className="max-w-4xl mx-auto px-4 py-8"><LoadError what="ce dispositif" onRetry={() => refetch()} testId="dispositif-error" headingLevel={1} /></div>;
+    return <div className="max-w-4xl mx-auto px-4 py-8"><LoadError what={t('dispositifs:load.one', 'ce dispositif')} onRetry={() => refetch()} testId="dispositif-error" headingLevel={1} /></div>;
   }
 
   if (!dispositif) {
     return <NotFound />;
   }
 
+  const titre = tr.value('titre');
+  const description = tr.value('description_falc');
+  const montant = tr.value('montant');
+  const liens = tr.value('liens');
   const breadcrumbs = [
-    { name: 'Accueil', url: '/' },
-    { name: 'Dispositifs', url: '/dispositifs' },
-    { name: dispositif.titre, url: `/dispositifs/${dispositif.slug}` }
+    { name: t('dispositifs:breadcrumb.home', 'Accueil'), url: '/' },
+    { name: t('dispositifs:breadcrumb.dispositifs', 'Dispositifs'), url: '/dispositifs' },
+    { name: titre, url: `/dispositifs/${dispositif.slug}` }
   ];
 
   const schema = [
@@ -76,8 +86,8 @@ export default function DispositifDetail() {
   return (
     <div className="min-h-screen bg-slate-50">
       <SEO
-        title={dispositif.titre}
-        description={dispositif.description_falc}
+        title={titre}
+        description={description}
         path={`/dispositifs/${dispositif.slug}`}
         schema={schema}
       />
@@ -86,11 +96,11 @@ export default function DispositifDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex items-center gap-2 text-sm text-slate-600">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">Accueil</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link to="/dispositifs" className="hover:text-blue-600">Dispositifs</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-slate-900 truncate max-w-[200px]">{dispositif.titre}</span>
+            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('dispositifs:breadcrumb.home', 'Accueil')}</Link>
+            <ChevronRight className="h-4 w-4 rtl-flip" />
+            <Link to="/dispositifs" className="hover:text-blue-600">{t('dispositifs:breadcrumb.dispositifs', 'Dispositifs')}</Link>
+            <ChevronRight className="h-4 w-4 rtl-flip" />
+            <span className="text-slate-900 truncate max-w-[200px]" {...tr.attrs('titre')}>{titre}</span>
           </nav>
         </div>
       </div>
@@ -100,8 +110,8 @@ export default function DispositifDetail() {
           to="/dispositifs"
           className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-6"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Retour aux dispositifs
+          <ArrowLeft className="h-4 w-4 rtl-flip" />
+          {t('dispositifs:detail.back', 'Retour aux dispositifs')}
         </Link>
 
         {/* Header */}
@@ -111,30 +121,34 @@ export default function DispositifDetail() {
               <Badge variant="outline" className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
                 {dispositif.departement === '67' ? 'Bas-Rhin (67)' :
-                  dispositif.departement === '68' ? 'Haut-Rhin (68)' : dispositif.departement}
+                  dispositif.departement === '68' ? 'Haut-Rhin (68)' : <span {...tr.attrs('departement')}>{dispositif.departement}</span>}
               </Badge>
             )}
             {dispositif.public && dispositif.public.map((/** @type {any} */ p, /** @type {any} */ i) => (
-              <Badge key={i} className="bg-blue-100 text-blue-800">
+              <Badge key={i} className="bg-blue-100 text-blue-800" {...tr.attrs('public')}>
                 {p}
               </Badge>
             ))}
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-            {dispositif.titre}
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4" {...tr.attrs('titre')}>
+            {titre}
           </h1>
+          <ContentTranslationNotice translation={tr} className="mb-4" />
 
-          {dispositif.montant && (
+          {montant && (
             <div className="flex items-center gap-2 text-green-700 font-medium bg-green-50 px-4 py-2 rounded-lg inline-flex mb-4">
               <Banknote className="h-5 w-5" />
-              <span>{dispositif.montant}</span>
+              <span {...tr.attrs('montant')}>{montant}</span>
             </div>
           )}
 
           {/* Metadata / Source Info */}
           <div className="text-xs text-slate-600 mt-4 border-t pt-4">
-            Source : {dispositif.source_url_exact ? 'Officielle' : 'Interne'} • Mis à jour le {new Date(dispositif.updatedAt).toLocaleDateString('fr-FR')}
+            {t('dispositifs:detail.meta', 'Source : {{source}} • Mis à jour le {{date}}', {
+              source: dispositif.source_url_exact ? t('dispositifs:detail.source_official', 'Officielle') : t('dispositifs:detail.source_internal', 'Interne'),
+              date: formatDate(dispositif.updatedAt, { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            })}
           </div>
           {/* PKG-12: checked by the automatic verification chain like the aides (when, against which source, how the texts were written) */}
           <div className="mt-4"><AutoVerificationNote record={dispositif} kind="dispositif" /></div>
@@ -143,33 +157,35 @@ export default function DispositifDetail() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* FALC Summary */}
+            {/* R32: FalcSummary keeps the easy-to-read text in French (lang="fr") itself; its title is translated */}
             {dispositif?.summary_falc ? <FalcSummary text={dispositif.summary_falc} /> : null}
 
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold text-slate-900 mb-3">Description</h2>
-                <div className="prose prose-slate max-w-none text-slate-700 whitespace-pre-wrap" data-testid="dispositif-description">
-                  {dispositif.description_falc || "Aucune description disponible."}
+                <h2 className="text-lg font-bold text-slate-900 mb-3">{t('dispositifs:detail.description', 'Description')}</h2>
+                <div className="prose prose-slate max-w-none text-slate-700 whitespace-pre-wrap" data-testid="dispositif-description" {...(description ? tr.attrs('description_falc') : {})}>
+                  {description || t('dispositifs:detail.no_description', 'Aucune description disponible.')}
                 </div>
               </CardContent>
             </Card>
 
             {/* Liens */}
-            {dispositif.liens && Array.isArray(dispositif.liens) && dispositif.liens.length > 0 && (
+            {liens && Array.isArray(liens) && liens.length > 0 && (
               <Card>
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Liens utiles</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4">{t('dispositifs:detail.links', 'Liens utiles')}</h2>
                   <ul className="space-y-3">
-                    {dispositif.liens.map((/** @type {{ url: any; nom: any; }} */ link, /** @type {any} */ idx) => (
+                    {liens.map((/** @type {{ url: any; nom: any; }} */ link, /** @type {any} */ idx) => (
                       <li key={idx}>
                         <a
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 text-blue-600 hover:underline font-medium"
+                          {...(link.nom ? tr.attrs('liens') : {})}
                         >
                           <ExternalLink className="h-4 w-4" />
-                          {link.nom || "Voir le lien"}
+                          {link.nom || t('dispositifs:detail.link_fallback', 'Voir le lien')}
                         </a>
                       </li>
                     ))}
@@ -182,10 +198,10 @@ export default function DispositifDetail() {
             {dispositif.related?.aides?.length > 0 && (
               <Card data-testid="dispositif-related-aides">
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Aides liées</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4">{t('dispositifs:detail.related_aides', 'Aides liées')}</h2>
                   <ul className="space-y-2">
                     {dispositif.related.aides.map((a) => (
-                      <li key={a.slug}><Link to={`/aides/${a.slug}`} className="inline-flex min-h-11 items-center text-blue-800 underline">{a.titre}</Link></li>
+                      <RelatedAide key={a.slug} aide={a} />
                     ))}
                   </ul>
                 </CardContent>
@@ -194,10 +210,10 @@ export default function DispositifDetail() {
             {dispositif.related?.structures?.length > 0 && (
               <Card data-testid="dispositif-related-structures">
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Structures qui accompagnent</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4">{t('dispositifs:detail.related_structures', 'Structures qui accompagnent')}</h2>
                   <ul className="space-y-2">
                     {dispositif.related.structures.map((st) => (
-                      <li key={st.slug}><Link to={`/structures/${st.slug}`} className="inline-flex min-h-11 items-center text-blue-800 underline">{st.nom}{st.ville ? ` — ${st.ville}` : ''}</Link></li>
+                      <RelatedStructure key={st.slug} structure={st} />
                     ))}
                   </ul>
                 </CardContent>
@@ -219,8 +235,8 @@ export default function DispositifDetail() {
               <CardContent className="p-6 space-y-3">
                 <Link to={createPageUrl('Contact') + `?page=${encodeURIComponent(window.location.href)}&sujet=signalement_erreur`}>
                   <Button variant="ghost" className="w-full text-slate-600">
-                    <Flag className="mr-2 h-4 w-4" />
-                    Signaler une erreur
+                    <Flag className="me-2 h-4 w-4" />
+                    {t('dispositifs:detail.report_error', 'Signaler une erreur')}
                   </Button>
                 </Link>
               </CardContent>
@@ -229,5 +245,21 @@ export default function DispositifDetail() {
         </div>
       </div>
     </div>
+  );
+}
+
+/** a related aide: its title through its own content-translation view (the French title, marked lang="fr", until a translation may be shown) */
+function RelatedAide({ aide }) {
+  const tr = useContentTranslation('aide', aide);
+  return (
+    <li><Link to={`/aides/${aide.slug}`} className="inline-flex min-h-11 items-center text-blue-800 underline" {...tr.attrs('titre')}>{tr.value('titre')}</Link></li>
+  );
+}
+
+/** a related structure: its name and town are never translated, only marked as French (lang="fr") outside French */
+function RelatedStructure({ structure }) {
+  const tr = useContentTranslation('structure', structure);
+  return (
+    <li><Link to={`/structures/${structure.slug}`} className="inline-flex min-h-11 items-center text-blue-800 underline" {...tr.attrs('nom')}>{structure.nom}{structure.ville ? ` — ${structure.ville}` : ''}</Link></li>
   );
 }

@@ -18,6 +18,9 @@ import AidGrid from '@/components/organisms/AidGrid';
 import { buildAidesItemListSchema, buildBreadcrumbSchema } from '@/lib/seo';
 import { useAidesListing } from '@/lib/hooks/useAidesListing';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
+import { categoryLabel } from '@/components/ui/CategoryChip';
+import { Trans } from 'react-i18next';
+import i18n, { useLanguage, useT } from '@/i18n';
 
 /** @param {string} t */
 const slugOf = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -26,6 +29,9 @@ const DEFAULT_LIMIT = 20;
 const LIMIT_OPTIONS = [10, 20, 50];
 
 const INITIAL_LOCAL_FILTERS = { search: '', category: '', urgentOnly: false };
+
+/** the listing hook (useAidesListing) reports a failure with this French sentence: it is shown in the interface language */
+const LISTING_ERROR_FR = 'Impossible de charger les aides. Réessayez.';
 
 /**
  * @param {string | null} value
@@ -48,6 +54,12 @@ function parseLimit(value) {
 }
 
 export default function Aides() {
+  const { t } = useT('aides');
+  const { isSource } = useLanguage();
+  // R32: a category as shown — in French the label given by the API (unchanged); in another language the shared name of a taxonomy category
+  // (fixed codes, CategoryChip's categoryLabel), else the API label, marked as French
+  const categoryText = (/** @type {{ slug: string, label: string }} */ cat) => (!isSource && categoryLabel(cat.slug, t)) || cat.label;
+  const categoryLang = (/** @type {{ slug: string }} */ cat) => (!isSource && categoryLabel(cat.slug, t) ? undefined : 'fr');
   const location = useLocation();
   const navigate = useNavigate();
   const { slug, categorySlug, territorySlug } = useParams();
@@ -156,12 +168,12 @@ export default function Aides() {
   // SEO & live message
   // ------------------------------------------------------------------
   const liveMessage = useMemo(() => {
-    if (isLoading) return 'Chargement des aides...';
-    if (isError) return "Erreur lors du chargement des aides.";
-    if (!filteredItems.length) return 'Aucune aide trouvée.';
+    if (isLoading) return t('aides:live.loading', 'Chargement des aides...');
+    if (isError) return t('aides:live.error', 'Erreur lors du chargement des aides.');
+    if (!filteredItems.length) return t('aides:live.none', 'Aucune aide trouvée.');
     const total = typeof pagination?.total === 'number' ? pagination.total : filteredItems.length;
-    return `${total} aide${total > 1 ? 's' : ''} trouvée${total > 1 ? 's' : ''}.`;
-  }, [isLoading, isError, filteredItems.length, pagination?.total]);
+    return t('aides:list.results', { count: total, defaultValue_one: '{{count}} aide trouvée.', defaultValue_other: '{{count}} aides trouvées.' });
+  }, [isLoading, isError, filteredItems.length, pagination?.total, t]);
 
   const handleParamChange = (/** @type {string} */ key, /** @type {string} */ value) => {
     track('filter_aides', { filter_key: key, filter_value: value || 'all' });
@@ -198,58 +210,60 @@ export default function Aides() {
   };
 
   const getTitle = () => {
-    if (q) return `Aides - ${q}`;
+    if (q) return t('aides:seo.title_search', 'Aides - {{q}}', { q });
     if (category && territory) {
       const taxonomyCat = taxonomy?.categories?.find((/** @type {{ slug: string; }} */ c) => c.slug === category);
-      const catLabel = taxonomyCat ? taxonomyCat.label : category;
-      return `Aides ${catLabel} en ${territory} | AccesDirectAide`;
+      const catLabel = taxonomyCat ? categoryText(taxonomyCat) : category;
+      return t('aides:seo.title_theme_territory', 'Aides {{theme}} en {{territory}} | AccesDirectAide', { theme: catLabel, territory });
     }
     if (category && taxonomy?.categories?.length) {
       const found = taxonomy.categories.find((/** @type {{ slug: string; }} */ c) => c.slug === category);
-      if (found) return `Aides - ${found.label} | AccesDirectAide`;
+      if (found) return t('aides:seo.title_theme', 'Aides - {{theme}} | AccesDirectAide', { theme: categoryText(found) });
     }
     if (situation && taxonomy?.aidSituations?.length) {
       const found = taxonomy.aidSituations.find((/** @type {{ code: string; slug: string; }} */ s) => s.code === situation || s.slug === situation);
-      if (found) return `Aides pour : ${found.label} | AccesDirectAide`;
+      if (found) return t('aides:seo.title_situation', 'Aides pour : {{situation}} | AccesDirectAide', { situation: found.label });
     }
-    return 'Aides sociales et démarches';
+    return t('aides:seo.title', 'Aides sociales et démarches');
   };
 
   const getDescription = () => {
-    if (q) return `Résultats pour la recherche "${q}" sur les aides disponibles.`;
+    if (q) return t('aides:seo.description_search', 'Résultats pour la recherche "{{q}}" sur les aides disponibles.', { q });
     if (category && territory) {
       const taxonomyCat = taxonomy?.categories?.find((/** @type {{ slug: string; }} */ c) => c.slug === category);
-      const catLabel = taxonomyCat ? taxonomyCat.label : category;
-      return `Découvrez toutes les aides ${catLabel} disponibles en ${territory}. Accédez aux démarches et accompagnements locaux.`;
+      const catLabel = taxonomyCat ? categoryText(taxonomyCat) : category;
+      return t('aides:seo.description_theme_territory', 'Découvrez toutes les aides {{theme}} disponibles en {{territory}}. Accédez aux démarches et accompagnements locaux.', { theme: catLabel, territory });
     }
     if (category && taxonomy?.categories?.length) {
       const found = taxonomy.categories.find((/** @type {{ slug: string; }} */ c) => c.slug === category);
-      if (found) return `Toutes les aides sociales de la catégorie ${found.label}.`;
+      if (found) return t('aides:seo.description_theme', 'Toutes les aides sociales de la catégorie {{theme}}.', { theme: categoryText(found) });
     }
     if (situation && taxonomy?.aidSituations?.length) {
       const found = taxonomy.aidSituations.find((/** @type {{ code: string; slug: string; }} */ s) => s.code === situation || s.slug === situation);
-      if (found) return `Toutes les aides sociales pour la situation : ${found.label}.`;
+      if (found) return t('aides:seo.description_situation', 'Toutes les aides sociales pour la situation : {{situation}}.', { situation: found.label });
     }
-    return "Retrouvez les aides sociales disponibles et filtrez par catégorie ou situation.";
+    return t('aides:seo.description', 'Retrouvez les aides sociales disponibles et filtrez par catégorie ou situation.');
   };
 
   const schema = useMemo(() => {
     const breadcrumb = buildBreadcrumbSchema([
-      { name: 'Accueil', url: '/' },
-      { name: 'Aides', url: '/aides' },
+      { name: t('aides:breadcrumb.home', 'Accueil'), url: '/' },
+      { name: t('aides:breadcrumb.aides', 'Aides'), url: '/aides' },
     ]);
     // Pass raw items for SEO (buildAidesItemListSchema expects raw aide objects)
     const itemList = buildAidesItemListSchema(filteredItems);
     return [breadcrumb, itemList].filter(Boolean);
-  }, [filteredItems]);
+  }, [filteredItems, t]);
 
   const territoryOptions = useMemo(() => {
     const facetTerritories = facets?.territoires || {};
     const keys = Object.keys(facetTerritories);
+    const allTerritories = { value: '', label: t('aides:filters.territory_all', 'Tous les territoires') };
+    const national = t('aides:territory.national', 'France entière');
     if (!keys.length) {
       return [
-        { value: '', label: 'Tous les territoires' },
-        { value: 'national', label: 'France entière' },
+        allTerritories,
+        { value: 'national', label: national },
         { value: '67', label: 'Bas-Rhin (67)' },
         { value: '68', label: 'Haut-Rhin (68)' },
       ];
@@ -258,13 +272,18 @@ export default function Aides() {
       .filter((key) => key)
       .sort((a, b) => String(a).localeCompare(String(b), 'fr'));
     const formatted = sorted.map((key) => {
-      if (key === 'national') return { value: key, label: 'France entière' };
+      if (key === 'national') return { value: key, label: national };
       if (key === '67') return { value: key, label: 'Bas-Rhin (67)' };
       if (key === '68') return { value: key, label: 'Haut-Rhin (68)' };
-      return { value: key, label: String(key) };
+      return { value: key, label: String(key), lang: 'fr' };   // a territory named by the API (French)
     });
-    return [{ value: '', label: 'Tous les territoires' }, ...formatted];
-  }, [facets?.territoires]);
+    return [allTerritories, ...formatted];
+  }, [facets?.territoires, t]);
+
+  // the listing hook's own French failure sentence, in the interface language
+  const errorText = errorMessage === LISTING_ERROR_FR
+    ? t('aides:error.listing', 'Impossible de charger les aides. Réessayez.')
+    : errorMessage || t('aides:error.hint', 'Vérifiez votre connexion puis réessayez.');
 
   const hasNext = Boolean(pagination?.hasNext);
   const totalPages = pagination?.totalPages || 1;
@@ -288,21 +307,29 @@ export default function Aides() {
         style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
+          <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
             {/* Q10: the address is never echoed into the heading — only a known theme / commune is named */}
-            {!categorySlug ? 'Aides sociales' : themeKnown ? `Aides : ${themeKnown.label}${communeKnown ? ` à ${communeKnown}` : ''}` : taxonomy ? 'Aides sociales' : 'Aides'}
+            {!categorySlug
+              ? t('aides:list.title', 'Aides sociales')
+              : themeKnown
+                ? (communeKnown
+                  ? t('aides:list.title_theme_commune', 'Aides : {{theme}} à {{commune}}', { theme: categoryText(themeKnown), commune: communeKnown })
+                  : t('aides:list.title_theme', 'Aides : {{theme}}', { theme: categoryText(themeKnown) }))
+                : taxonomy ? t('aides:list.title', 'Aides sociales') : t('aides:list.title_short', 'Aides')}
           </h1>
           {categorySlug && taxonomy && !themeKnown ? (
             <p className="mt-2 text-sm text-white" data-testid="aides-unknown-theme">
-              Ce thème n&apos;est pas reconnu. <Link to="/aides" className="underline underline-offset-2">Voir toutes les aides</Link>
+              {t('aides:list.unknown_theme', "Ce thème n'est pas reconnu.")} <Link to="/aides" className="underline underline-offset-2">{t('aides:list.see_all', 'Voir toutes les aides')}</Link>
             </p>
           ) : null}
           <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
-            {categorySlug && territorySlug ? 'Explorez les dispositifs et accompagnements disponibles pour votre région.' : 'Filtrez par catégorie, situation ou territoire, ou lancez une recherche.'}
+            {categorySlug && territorySlug
+              ? t('aides:list.intro_territory', 'Explorez les dispositifs et accompagnements disponibles pour votre région.')
+              : t('aides:list.intro', 'Filtrez par catégorie, situation ou territoire, ou lancez une recherche.')}
           </p>
         </div>
       </div>
@@ -313,7 +340,7 @@ export default function Aides() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
             <div className="flex items-center gap-2">
               <Link to="/recherche" className="text-sm font-semibold text-blue-700 hover:text-blue-900">
-                Recherche intelligente
+                {t('aides:list.smart_search', 'Recherche intelligente')}
               </Link>
               <Button
                 type="button"
@@ -323,7 +350,7 @@ export default function Aides() {
                 aria-expanded={isFiltersOpen}
               >
                 <SlidersHorizontal className="h-4 w-4" />
-                Filtres
+                {t('aides:filters.title', 'Filtres')}
               </Button>
             </div>
           </div>
@@ -331,26 +358,27 @@ export default function Aides() {
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3" role="search">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
               <Input
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
-                placeholder="Rechercher une aide (ex: APL, CSS, Visale...)"
-                aria-label="Rechercher une aide"
-                className="pl-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                placeholder={t('aides:search.placeholder', 'Rechercher une aide (ex: APL, CSS, Visale...)')}
+                aria-label={t('aides:search.label', 'Rechercher une aide')}
+                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
               />
             </div>
             <Button type="submit" className="h-11 bg-slate-950 text-white hover:bg-slate-800">
-              Rechercher
+              {t('aides:search.submit', 'Rechercher')}
             </Button>
           </form>
 
           <p className="text-sm text-slate-500">
-            Astuce : consultez notre{' '}
-            <Link to="/glossaire" className="text-blue-600 hover:text-blue-800 underline">
-              glossaire
-            </Link>{' '}
-            pour comprendre les sigles (RSA, APL, AAH...)
+            <Trans
+              i18n={i18n}
+              i18nKey="aides:list.glossary_tip"
+              defaults="Astuce : consultez notre <0>glossaire</0> pour comprendre les sigles (RSA, APL, AAH...)"
+              components={[<Link key="glossaire" to="/glossaire" className="text-blue-600 hover:text-blue-800 underline" />]}
+            />
           </p>
 
           {/* Filters */}
@@ -360,7 +388,7 @@ export default function Aides() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                   <div>
                     <label htmlFor="aides-category" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Catégorie
+                      {t('aides:filters.category', 'Catégorie')}
                     </label>
                     <select
                       id="aides-category"
@@ -368,10 +396,10 @@ export default function Aides() {
                       value={category}
                       onChange={(e) => handleParamChange('category', e.target.value)}
                     >
-                      <option value="">Toutes</option>
-                      {(taxonomy?.categories || []).map((/** @type {{ label: string | number, slug: string | number }} */ cat) => (
-                        <option key={cat.slug} value={cat.slug}>
-                          {cat.label}
+                      <option value="">{t('aides:filters.all', 'Toutes')}</option>
+                      {(taxonomy?.categories || []).map((/** @type {{ label: string, slug: string }} */ cat) => (
+                        <option key={cat.slug} value={cat.slug} lang={categoryLang(cat)}>
+                          {categoryText(cat)}
                         </option>
                       ))}
                     </select>
@@ -379,7 +407,7 @@ export default function Aides() {
 
                   <div>
                     <label htmlFor="aides-situation" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Situation
+                      {t('aides:filters.situation', 'Situation')}
                     </label>
                     <select
                       id="aides-situation"
@@ -387,9 +415,10 @@ export default function Aides() {
                       value={situation}
                       onChange={(e) => handleParamChange('situation', e.target.value)}
                     >
-                      <option value="">Toutes</option>
+                      <option value="">{t('aides:filters.all', 'Toutes')}</option>
+                      {/* the situations are named by the API (French) */}
                       {(taxonomy?.aidSituations || []).map((/** @type {{ code: string | number, label: string | number }} */ sit) => (
-                        <option key={sit.code} value={sit.code}>
+                        <option key={sit.code} value={sit.code} lang="fr">
                           {sit.label}
                         </option>
                       ))}
@@ -398,7 +427,7 @@ export default function Aides() {
 
                   <div>
                     <label htmlFor="aides-territory" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Territoire
+                      {t('aides:filters.territory', 'Territoire')}
                     </label>
                     <select
                       id="aides-territory"
@@ -407,7 +436,7 @@ export default function Aides() {
                       onChange={(e) => handleParamChange('territory', e.target.value)}
                     >
                       {territoryOptions.map((opt) => (
-                        <option key={opt.value || 'all'} value={opt.value}>
+                        <option key={opt.value || 'all'} value={opt.value} lang={opt.lang}>
                           {opt.label}
                         </option>
                       ))}
@@ -416,7 +445,7 @@ export default function Aides() {
 
                   <div>
                     <label htmlFor="aides-source" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Source
+                      {t('aides:filters.source', 'Source')}
                     </label>
                     <select
                       id="aides-source"
@@ -424,7 +453,7 @@ export default function Aides() {
                       value={source}
                       onChange={(e) => handleParamChange('source', e.target.value)}
                     >
-                      <option value="">Toutes les sources</option>
+                      <option value="">{t('aides:filters.source_all', 'Toutes les sources')}</option>
                       <option value="aides-territoires">Aides Territoires</option>
                       <option value="drees">DREES</option>
                       <option value="grand-est">Grand Est</option>
@@ -434,7 +463,7 @@ export default function Aides() {
 
                   <div>
                     <label htmlFor="aides-sort" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Trier
+                      {t('aides:filters.sort', 'Trier')}
                     </label>
                     <select
                       id="aides-sort"
@@ -442,17 +471,17 @@ export default function Aides() {
                       value={sort}
                       onChange={(e) => handleParamChange('sort', e.target.value)}
                     >
-                      <option value="quality">Qualité</option>
-                      <option value="recent">Récents</option>
+                      <option value="quality">{t('aides:sort.quality', 'Qualité')}</option>
+                      <option value="recent">{t('aides:sort.recent', 'Récents')}</option>
                       <option value="relevance" disabled={!q}>
-                        Pertinence {q ? '' : '(nécessite une recherche)'}
+                        {q ? t('aides:sort.relevance', 'Pertinence') : t('aides:sort.relevance_needs_query', 'Pertinence (nécessite une recherche)')}
                       </option>
                     </select>
                   </div>
 
                   <div>
                     <label htmlFor="aides-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Par page
+                      {t('aides:filters.per_page', 'Par page')}
                     </label>
                     <select
                       id="aides-limit"
@@ -471,10 +500,10 @@ export default function Aides() {
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <Button type="button" variant="ghost" onClick={clearFilters}>
-                    Réinitialiser
+                    {t('aides:filters.reset', 'Réinitialiser')}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => setIsFiltersOpen(false)}>
-                    Fermer
+                    {t('aides:filters.close', 'Fermer')}
                   </Button>
                 </div>
               </CardContent>
@@ -487,7 +516,7 @@ export default function Aides() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="flex flex-col gap-8 lg:flex-row">
           {/* Sidebar FilterPanel */}
-          <aside className="w-full shrink-0 lg:w-64" aria-label="Filtres de recherche">
+          <aside className="w-full shrink-0 lg:w-64" aria-label={t('aides:filters.region_label', 'Filtres de recherche')}>
             <FilterPanel
               showSearch={false}
               filters={localFilters}
@@ -497,17 +526,17 @@ export default function Aides() {
           </aside>
 
           {/* Results column */}
-          <section className="min-w-0 flex-1" aria-label="Résultats des aides">
+          <section className="min-w-0 flex-1" aria-label={t('aides:list.results_label', 'Résultats des aides')}>
             {/* Error state */}
             {isError && (
               <EmptyState
-                title="Impossible de charger les aides"
-                description={errorMessage || 'Vérifiez votre connexion puis réessayez.'}
+                title={t('aides:error.title', 'Impossible de charger les aides')}
+                description={errorText}
                 icon={<RotateCcw className="h-6 w-6" />}
                 actions={
                   <Button type="button" variant="outline" onClick={() => refetch()}>
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                    Réessayer
+                    <RotateCcw className="me-2 h-4 w-4" />
+                    {t('aides:error.retry', 'Réessayer')}
                   </Button>
                 }
                 role="alert"
@@ -535,7 +564,7 @@ export default function Aides() {
                 <>
                   {filteredItems.length > 0 && (
                     <p className="mb-4 text-sm text-muted-foreground" data-testid="aides-success-state">
-                      {pagination?.total ?? filteredItems.length} aide{(pagination?.total ?? filteredItems.length) > 1 ? 's' : ''} trouvée{(pagination?.total ?? filteredItems.length) > 1 ? 's' : ''}.
+                      {t('aides:list.results', { count: pagination?.total ?? filteredItems.length, defaultValue_one: '{{count}} aide trouvée.', defaultValue_other: '{{count}} aides trouvées.' })}
                     </p>
                   )}
 
@@ -543,8 +572,8 @@ export default function Aides() {
                   {filteredItems.length === 0 && !hasAnyFilters && (
                     <div className="my-8" data-testid="aides-empty-neutral">
                       <EmptyState
-                        title="Aucune aide disponible pour le moment"
-                        description="Notre catalogue d'aides est en cours de mise à jour. N'hésitez pas à revenir plus tard."
+                        title={t('aides:empty.none_title', 'Aucune aide disponible pour le moment')}
+                        description={t('aides:empty.none_text', "Notre catalogue d'aides est en cours de mise à jour. N'hésitez pas à revenir plus tard.")}
                         icon={<Search className="h-6 w-6" />}
                       />
                       <OfficialResourcesNotice />
@@ -582,17 +611,17 @@ export default function Aides() {
                         disabled={page <= 1}
                         onClick={() => handlePageChange(page - 1)}
                       >
-                        Précédent
+                        {t('aides:pagination.previous', 'Précédent')}
                       </Button>
                       <span className="flex items-center px-4 text-sm font-medium text-foreground">
-                        Page {page} / {totalPages}
+                        {t('aides:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
                       </span>
                       <Button
                         variant="outline"
                         disabled={!hasNext}
                         onClick={() => handlePageChange(page + 1)}
                       >
-                        Suivant
+                        {t('aides:pagination.next', 'Suivant')}
                       </Button>
                     </div>
                   )}

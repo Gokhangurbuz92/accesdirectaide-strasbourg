@@ -1,0 +1,6 @@
+{
+ "language.label": "Language",
+ "suggestion.text": "This site is also available in {{language}}.",
+ "suggestion.switch": "Switch to {{language}}",
+ "suggestion.stay": "Stay in French"
+}

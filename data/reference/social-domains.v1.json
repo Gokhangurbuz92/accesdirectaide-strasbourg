@@ -1,0 +1,1784 @@
+{
+ "schema": "ada-social-reference/1",
+ "version": "2026-11-01.1",
+ "status": "AI-drafted engineering reference from official classifications — to be reviewed by a social-sector expert; a category here is NOT evidence of coverage",
+ "sources": {
+  "casf": "CASF L312-1 I, 1° to 18° (LEGIARTI000054137518, in force 28/05/2026)",
+  "finess": "FINESS nomenclature TRE-R397 (ANS, Licence Ouverte 2.0)",
+  "dataInclusion": "data·inclusion schema v1.0.10 thématiques (Licence Ouverte 2.0)",
+  "emergency": "official numbers verified 01/11/2026 (3977 replaced by 3133 on 01/03/2026)",
+  "research": "STRASBOURG_FULL_PRODUCT_PLAN/R32_EXTERNAL_PACKAGES/research-social-reference.md"
+ },
+ "emergency": {
+  "112": "Urgences européennes",
+  "15": "SAMU",
+  "17": "Police / gendarmerie",
+  "18": "Pompiers",
+  "114": "Urgences par SMS (personnes sourdes ou malentendantes)",
+  "115": "Hébergement d'urgence (SIAO)",
+  "119": "Enfance en danger",
+  "3919": "Violences femmes info",
+  "3114": "Prévention du suicide",
+  "3133": "Maltraitance des personnes âgées et des adultes vulnérables",
+  "116006": "Aide aux victimes",
+  "0800059595": "Viols Femmes Informations"
+ },
+ "domains": [
+  {
+   "id": "precarite",
+   "letter": "A",
+   "fr": "Précarité, pauvreté et urgence sociale",
+   "legacy": {
+    "taxonomy": [
+     "social-sante"
+    ],
+    "situation": [],
+    "orientation": [
+     "BUDGET",
+     "DROITS"
+    ],
+    "need": [
+     "urgence",
+     "acces_droits"
+    ]
+   },
+   "lexicon": [
+    "food",
+    "income-support",
+    "shelter"
+   ],
+   "subdomains": [
+    {
+     "id": "aide-alimentaire",
+     "fr": "Alimentation, hygiène, vêtements",
+     "keywords": [
+      "alimentaire",
+      "colis",
+      "épicerie sociale",
+      "vêtements",
+      "hygiène"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "equipement-et-alimentation--"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "urgence-sociale",
+     "fr": "Aide d'urgence et secours",
+     "keywords": [
+      "urgence sociale",
+      "secours",
+      "aide d'urgence"
+     ],
+     "structureTypes": [
+      "CCAS (centre communal d'action sociale)"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "115"
+     ]
+    },
+    {
+     "id": "acces-aux-droits",
+     "fr": "Accès aux droits et non-recours",
+     "keywords": [
+      "accès aux droits",
+      "non-recours",
+      "domiciliation"
+     ],
+     "structureTypes": [
+      "Espace France Services",
+      "Maison des solidarités (Espace Solidarités)"
+     ],
+     "casf": [],
+     "dataInclusion": [
+      "difficultes-administratives-ou-juridiques--accompagnement-pour-lacces-aux-droits"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "accueil-de-jour",
+     "fr": "Accueils de jour et maraudes",
+     "keywords": [
+      "accueil de jour",
+      "maraude"
+     ],
+     "structureTypes": [
+      "Centre d’accueil"
+     ],
+     "casf": [
+      8
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "minima-sociaux",
+     "fr": "Revenus minimum et ressources",
+     "keywords": [
+      "RSA",
+      "prime d'activité",
+      "revenu"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "energie",
+     "fr": "Précarité énergétique",
+     "keywords": [
+      "énergie",
+      "chèque énergie",
+      "électricité",
+      "chauffage"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "logement",
+   "letter": "B",
+   "fr": "Logement, hébergement et habitat",
+   "legacy": {
+    "taxonomy": [
+     "logement"
+    ],
+    "situation": [
+     "Logement"
+    ],
+    "orientation": [
+     "LOGEMENT"
+    ],
+    "need": [
+     "logement"
+    ]
+   },
+   "lexicon": [
+    "housing",
+    "rent",
+    "social-housing",
+    "shelter"
+   ],
+   "subdomains": [
+    {
+     "id": "hebergement-urgence",
+     "fr": "Hébergement d'urgence et SIAO",
+     "keywords": [
+      "hébergement d'urgence",
+      "115",
+      "SIAO",
+      "mise à l'abri"
+     ],
+     "structureTypes": [
+      "Centre d’accueil"
+     ],
+     "casf": [
+      8
+     ],
+     "dataInclusion": [
+      "logement-hebergement--rechercher-une-solution-dhebergement-temporaire"
+     ],
+     "emergency": [
+      "115"
+     ]
+    },
+    {
+     "id": "chrs-insertion",
+     "fr": "Hébergement d'insertion (CHRS)",
+     "keywords": [
+      "CHRS",
+      "réinsertion sociale"
+     ],
+     "structureTypes": [],
+     "casf": [
+      8
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "logement-social",
+     "fr": "Demande de logement social",
+     "keywords": [
+      "logement social",
+      "HLM",
+      "demande de logement"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "logement-hebergement--sinformer-sur-les-demarches-liees-a-lacces-au-logement"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "aides-logement",
+     "fr": "Aides au paiement du logement",
+     "keywords": [
+      "APL",
+      "ALS",
+      "ALF",
+      "loyer",
+      "FSL"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "logement-hebergement--louer-un-logement"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "expulsion-impayes",
+     "fr": "Impayés de loyer et prévention des expulsions",
+     "keywords": [
+      "expulsion",
+      "impayés",
+      "dette de loyer"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "logement-hebergement--reduire-les-impayes-de-loyer",
+      "logement-hebergement--se-maintenir-dans-le-logement"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "dalo",
+     "fr": "Droit au logement opposable (DALO/DAHO)",
+     "keywords": [
+      "DALO",
+      "DAHO",
+      "droit au logement opposable"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "habitat-indigne",
+     "fr": "Logement indigne ou insalubre",
+     "keywords": [
+      "insalubre",
+      "logement indigne",
+      "décence"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "logement-accompagne",
+     "fr": "Logement accompagné et pensions de famille",
+     "keywords": [
+      "pension de famille",
+      "résidence sociale",
+      "maison relais",
+      "logement d'abord"
+     ],
+     "structureTypes": [
+      "Maison relais – pension de famille",
+      "Résidence sociale"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "logement-jeunes",
+     "fr": "Logement des jeunes",
+     "keywords": [
+      "foyer de jeunes travailleurs",
+      "FJT",
+      "logement étudiant"
+     ],
+     "structureTypes": [],
+     "casf": [
+      10
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "adaptation-logement",
+     "fr": "Adaptation du logement (âge, handicap)",
+     "keywords": [
+      "adaptation du logement",
+      "MaPrimeAdapt"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "protection-enfance",
+   "letter": "C",
+   "fr": "Protection de l'enfance et aide sociale à l'enfance",
+   "legacy": {
+    "taxonomy": [
+     "famille"
+    ],
+    "situation": [
+     "Famille"
+    ],
+    "orientation": [
+     "FAMILLE"
+    ],
+    "need": [
+     "famille",
+     "violences"
+    ]
+   },
+   "lexicon": [
+    "children",
+    "violence"
+   ],
+   "subdomains": [
+    {
+     "id": "ase",
+     "fr": "Aide sociale à l'enfance (ASE)",
+     "keywords": [
+      "aide sociale à l'enfance",
+      "ASE",
+      "placement"
+     ],
+     "structureTypes": [],
+     "casf": [
+      1
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "prevention-enfance",
+     "fr": "Prévention et AED/AEMO",
+     "keywords": [
+      "AED",
+      "AEMO",
+      "prévention spécialisée"
+     ],
+     "structureTypes": [],
+     "casf": [
+      1,
+      4
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "signalement",
+     "fr": "Enfant en danger : alerter",
+     "keywords": [
+      "enfant en danger",
+      "maltraitance",
+      "signalement",
+      "119"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "119"
+     ]
+    },
+    {
+     "id": "mna",
+     "fr": "Mineurs non accompagnés",
+     "keywords": [
+      "mineur non accompagné",
+      "MNA"
+     ],
+     "structureTypes": [],
+     "casf": [
+      17
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "sortie-ase",
+     "fr": "Jeunes majeurs sortant de l'ASE",
+     "keywords": [
+      "jeune majeur",
+      "sortie d'ASE",
+      "contrat jeune majeur"
+     ],
+     "structureTypes": [],
+     "casf": [
+      1
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "enfance-jeunesse",
+   "letter": "D",
+   "fr": "Enfance, jeunesse, éducation et vie étudiante",
+   "legacy": {
+    "taxonomy": [
+     "famille",
+     "travail-formation"
+    ],
+    "situation": [
+     "Étudiant"
+    ],
+    "orientation": [
+     "FAMILLE",
+     "EMPLOI"
+    ],
+    "need": [
+     "famille",
+     "emploi"
+    ]
+   },
+   "lexicon": [
+    "children",
+    "youth",
+    "students",
+    "school"
+   ],
+   "subdomains": [
+    {
+     "id": "pmi-petite-enfance",
+     "fr": "PMI et petite enfance",
+     "keywords": [
+      "PMI",
+      "protection maternelle",
+      "petite enfance",
+      "crèche"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "scolarite-inclusive",
+     "fr": "Scolarité et inclusion scolaire",
+     "keywords": [
+      "école",
+      "scolarité",
+      "AESH",
+      "décrochage"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "jeunes-insertion",
+     "fr": "Jeunes 16-25 ans : Mission locale, CEJ",
+     "keywords": [
+      "mission locale",
+      "CEJ",
+      "contrat d'engagement jeune",
+      "FAJ"
+     ],
+     "structureTypes": [
+      "Mission locale (jeunes de 16 à 25 ans)"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "etudiants",
+     "fr": "Vie étudiante et précarité étudiante",
+     "keywords": [
+      "étudiant",
+      "CROUS",
+      "bourse"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "famille",
+   "letter": "E",
+   "fr": "Famille et parentalité",
+   "legacy": {
+    "taxonomy": [
+     "famille"
+    ],
+    "situation": [
+     "Famille"
+    ],
+    "orientation": [
+     "FAMILLE"
+    ],
+    "need": [
+     "famille"
+    ]
+   },
+   "lexicon": [
+    "family-benefits",
+    "children",
+    "pregnancy"
+   ],
+   "subdomains": [
+    {
+     "id": "prestations-familiales",
+     "fr": "Prestations familiales",
+     "keywords": [
+      "allocations familiales",
+      "PAJE",
+      "CAF",
+      "complément familial"
+     ],
+     "structureTypes": [
+      "Caf (Caisse d'allocations familiales)"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "grossesse-naissance",
+     "fr": "Grossesse et naissance",
+     "keywords": [
+      "grossesse",
+      "naissance",
+      "maternité"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "parentalite",
+     "fr": "Soutien à la parentalité",
+     "keywords": [
+      "parentalité",
+      "REAAP",
+      "parents"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "famille--soutien-a-la-parentalite-et-a-leducation"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "separation",
+     "fr": "Séparation, médiation familiale, pension alimentaire",
+     "keywords": [
+      "séparation",
+      "divorce",
+      "médiation familiale",
+      "pension alimentaire"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "famille--surmonter-conflits-separation-violence"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "famille-monoparentale",
+     "fr": "Familles monoparentales",
+     "keywords": [
+      "parent isolé",
+      "famille monoparentale",
+      "ASF"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "garde-enfants",
+     "fr": "Garde d'enfants",
+     "keywords": [
+      "garde d'enfant",
+      "assistante maternelle",
+      "crèche"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "famille--garde-denfants"
+     ],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "handicap",
+   "letter": "F",
+   "fr": "Handicap et inclusion",
+   "legacy": {
+    "taxonomy": [
+     "handicap"
+    ],
+    "situation": [
+     "Handicap"
+    ],
+    "orientation": [
+     "HANDICAP"
+    ],
+    "need": [
+     "handicap"
+    ]
+   },
+   "lexicon": [
+    "disability"
+   ],
+   "subdomains": [
+    {
+     "id": "mdph-droits",
+     "fr": "MDPH et droits (AAH, PCH, AEEH, RQTH, CMI)",
+     "keywords": [
+      "MDPH",
+      "AAH",
+      "PCH",
+      "AEEH",
+      "RQTH",
+      "CMI"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "enfants-handicap",
+     "fr": "Enfants : CAMSP, SESSAD, IME, ITEP",
+     "keywords": [
+      "CAMSP",
+      "SESSAD",
+      "IME",
+      "ITEP"
+     ],
+     "structureTypes": [
+      "Institut médico-éducatif (IME)",
+      "Service d’éducation spéciale et de soins à domicile (SESSAD)"
+     ],
+     "casf": [
+      2,
+      3
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "adultes-hebergement",
+     "fr": "Adultes : foyers, FAM, MAS",
+     "keywords": [
+      "foyer de vie",
+      "FAM",
+      "MAS",
+      "foyer d'hébergement"
+     ],
+     "structureTypes": [
+      "Foyer d’hébergement pour adultes handicapés",
+      "Foyer de vie pour adultes handicapés",
+      "Foyer d’accueil médicalisé pour adultes handicapés (FAM)",
+      "Maison d’accueil spécialisée (MAS)"
+     ],
+     "casf": [
+      7
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "vie-sociale",
+     "fr": "Accompagnement à domicile : SAVS, SAMSAH",
+     "keywords": [
+      "SAVS",
+      "SAMSAH"
+     ],
+     "structureTypes": [
+      "Service d’accompagnement à la vie sociale (SAVS)"
+     ],
+     "casf": [
+      7
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "travail-handicap",
+     "fr": "Travail : ESAT, Cap emploi, maintien",
+     "keywords": [
+      "ESAT",
+      "Cap emploi",
+      "travailleur handicapé"
+     ],
+     "structureTypes": [
+      "Établissement et service d’aide par le travail (ESAT)"
+     ],
+     "casf": [
+      5
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "accessibilite-mobilite",
+     "fr": "Accessibilité et transport adapté",
+     "keywords": [
+      "transport adapté",
+      "accessibilité",
+      "PAM"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "autonomie",
+   "letter": "G",
+   "fr": "Grand âge, dépendance et autonomie",
+   "legacy": {
+    "taxonomy": [
+     "personnes-agees"
+    ],
+    "situation": [
+     "Senior"
+    ],
+    "orientation": [
+     "AUTONOMIE"
+    ],
+    "need": [
+     "handicap"
+    ]
+   },
+   "lexicon": [
+    "elderly"
+   ],
+   "subdomains": [
+    {
+     "id": "apa-aspa",
+     "fr": "APA, ASPA, ASH",
+     "keywords": [
+      "APA",
+      "ASPA",
+      "ASH",
+      "allocation personnalisée d'autonomie"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "aide-domicile",
+     "fr": "Aide et soins à domicile",
+     "keywords": [
+      "aide à domicile",
+      "SSIAD",
+      "service autonomie"
+     ],
+     "structureTypes": [
+      "Service autonomie à domicile (aide)",
+      "Service de soins infirmiers à domicile (SSIAD)"
+     ],
+     "casf": [
+      6,
+      7
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "ehpad-residences",
+     "fr": "EHPAD et résidences autonomie",
+     "keywords": [
+      "EHPAD",
+      "résidence autonomie"
+     ],
+     "structureTypes": [
+      "Établissement d’hébergement pour personnes âgées dépendantes (EHPAD)",
+      "Résidence autonomie"
+     ],
+     "casf": [
+      6
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "information-seniors",
+     "fr": "Information des personnes âgées",
+     "keywords": [
+      "point d'information",
+      "CLIC",
+      "seniors"
+     ],
+     "structureTypes": [
+      "Point d’information pour les personnes âgées"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "maltraitance-ages",
+     "fr": "Maltraitance des personnes âgées ou handicapées",
+     "keywords": [
+      "maltraitance",
+      "3133"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "3133"
+     ]
+    },
+    {
+     "id": "fin-de-vie",
+     "fr": "Fin de vie et soins palliatifs",
+     "keywords": [
+      "soins palliatifs",
+      "fin de vie",
+      "deuil"
+     ],
+     "structureTypes": [],
+     "casf": [
+      18
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "sante",
+   "letter": "H",
+   "fr": "Santé et accès aux soins",
+   "legacy": {
+    "taxonomy": [
+     "social-sante"
+    ],
+    "situation": [
+     "Santé"
+    ],
+    "orientation": [
+     "SANTE"
+    ],
+    "need": [
+     "acces_droits"
+    ]
+   },
+   "lexicon": [
+    "health",
+    "health-insurance"
+   ],
+   "subdomains": [
+    {
+     "id": "couverture-sante",
+     "fr": "Couverture santé (CSS, AME, Carte Vitale)",
+     "keywords": [
+      "CSS",
+      "complémentaire santé solidaire",
+      "AME",
+      "Carte Vitale",
+      "assurance maladie"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "centres-sante",
+     "fr": "Centres et maisons de santé",
+     "keywords": [
+      "centre de santé",
+      "maison de santé"
+     ],
+     "structureTypes": [
+      "Centre de santé",
+      "Maison de santé"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "pass",
+     "fr": "Soins pour personnes sans couverture (PASS)",
+     "keywords": [
+      "PASS",
+      "permanence d'accès aux soins"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "sante-sexuelle",
+     "fr": "Santé sexuelle et reproductive",
+     "keywords": [
+      "contraception",
+      "IVG",
+      "dépistage",
+      "CeGIDD"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "sante-mentale",
+   "letter": "I",
+   "fr": "Santé mentale et addictions",
+   "legacy": {
+    "taxonomy": [
+     "social-sante"
+    ],
+    "situation": [
+     "Santé"
+    ],
+    "orientation": [
+     "SANTE"
+    ],
+    "need": [
+     "sante_mentale"
+    ]
+   },
+   "lexicon": [
+    "mental-health"
+   ],
+   "subdomains": [
+    {
+     "id": "psy",
+     "fr": "Soins et soutien psychologique (CMP)",
+     "keywords": [
+      "CMP",
+      "psychologue",
+      "santé mentale"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "crise-suicide",
+     "fr": "Crise et prévention du suicide",
+     "keywords": [
+      "suicide",
+      "3114",
+      "détresse"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "3114",
+      "15"
+     ]
+    },
+    {
+     "id": "addictions",
+     "fr": "Addictions : CSAPA, CAARUD",
+     "keywords": [
+      "addiction",
+      "CSAPA",
+      "CAARUD",
+      "alcool",
+      "drogue"
+     ],
+     "structureTypes": [
+      "Centre de soins, d’accompagnement et de prévention en addictologie (CSAPA)"
+     ],
+     "casf": [
+      9
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "violences",
+   "letter": "J",
+   "fr": "Violences et protection des victimes",
+   "legacy": {
+    "taxonomy": [
+     "justice"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "violences"
+    ]
+   },
+   "lexicon": [
+    "violence"
+   ],
+   "subdomains": [
+    {
+     "id": "violences-conjugales",
+     "fr": "Violences conjugales et intrafamiliales",
+     "keywords": [
+      "violences conjugales",
+      "3919"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "3919",
+      "17"
+     ]
+    },
+    {
+     "id": "violences-sexuelles",
+     "fr": "Violences sexuelles",
+     "keywords": [
+      "violences sexuelles",
+      "viol"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "0800059595",
+      "17"
+     ]
+    },
+    {
+     "id": "victimes",
+     "fr": "Aide aux victimes",
+     "keywords": [
+      "aide aux victimes",
+      "116 006"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": [
+      "116006"
+     ]
+    },
+    {
+     "id": "traite-exploitation",
+     "fr": "Traite et exploitation",
+     "keywords": [
+      "traite",
+      "exploitation"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "harcelement",
+     "fr": "Harcèlement",
+     "keywords": [
+      "harcèlement",
+      "3018"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "justice",
+   "letter": "K",
+   "fr": "Justice et accès au droit",
+   "legacy": {
+    "taxonomy": [
+     "justice"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "acces_droits"
+    ]
+   },
+   "lexicon": [
+    "legal-aid"
+   ],
+   "subdomains": [
+    {
+     "id": "acces-au-droit",
+     "fr": "Accès au droit et aide juridictionnelle",
+     "keywords": [
+      "aide juridictionnelle",
+      "point-justice",
+      "avocat",
+      "accès au droit"
+     ],
+     "structureTypes": [
+      "Point-justice (accès au droit)"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "pjj-spip",
+     "fr": "PJJ, SPIP et sortie de détention",
+     "keywords": [
+      "PJJ",
+      "SPIP",
+      "sortie de prison",
+      "détention"
+     ],
+     "structureTypes": [],
+     "casf": [
+      4
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "recours",
+     "fr": "Recours administratifs",
+     "keywords": [
+      "recours",
+      "contestation",
+      "médiateur"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "protection-majeurs",
+   "letter": "L",
+   "fr": "Protection juridique des majeurs",
+   "legacy": {
+    "taxonomy": [
+     "justice"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "acces_droits"
+    ]
+   },
+   "lexicon": [],
+   "subdomains": [
+    {
+     "id": "mesures",
+     "fr": "Tutelle, curatelle, sauvegarde de justice",
+     "keywords": [
+      "tutelle",
+      "curatelle",
+      "sauvegarde de justice",
+      "habilitation familiale"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "mjpm",
+     "fr": "Mandataires judiciaires (MJPM)",
+     "keywords": [
+      "mandataire judiciaire",
+      "MJPM"
+     ],
+     "structureTypes": [],
+     "casf": [
+      14,
+      15
+     ],
+     "dataInclusion": [
+      "difficultes-financieres--mettre-en-place-une-mesure-de-protection-financiere"
+     ],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "migration",
+   "letter": "M",
+   "fr": "Migration, asile et intégration",
+   "legacy": {
+    "taxonomy": [
+     "etranger",
+     "papiers-citoyennete"
+    ],
+    "situation": [
+     "Étranger"
+    ],
+    "orientation": [
+     "SEJOUR"
+    ],
+    "need": [
+     "acces_droits"
+    ]
+   },
+   "lexicon": [
+    "residence-permit",
+    "asylum",
+    "temporary-protection",
+    "french-lessons"
+   ],
+   "subdomains": [
+    {
+     "id": "titre-sejour",
+     "fr": "Titre de séjour et démarches en préfecture",
+     "keywords": [
+      "titre de séjour",
+      "préfecture",
+      "ANEF",
+      "visa"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "asile",
+     "fr": "Asile : procédure, CADA, HUDA",
+     "keywords": [
+      "asile",
+      "CADA",
+      "HUDA",
+      "OFII",
+      "réfugié"
+     ],
+     "structureTypes": [],
+     "casf": [
+      13
+     ],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "protection-temporaire",
+     "fr": "Protection temporaire",
+     "keywords": [
+      "protection temporaire"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "integration-langue",
+     "fr": "Intégration et apprentissage du français",
+     "keywords": [
+      "apprendre le français",
+      "FLE",
+      "contrat d'intégration"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "lecture-ecriture-calcul--maitriser-le-francais"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "droits-sans-titre",
+     "fr": "Droits des personnes sans titre de séjour",
+     "keywords": [
+      "AME",
+      "sans papiers"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "emploi",
+   "letter": "N",
+   "fr": "Emploi, insertion et formation",
+   "legacy": {
+    "taxonomy": [
+     "travail-formation"
+    ],
+    "situation": [
+     "Travail"
+    ],
+    "orientation": [
+     "EMPLOI"
+    ],
+    "need": [
+     "emploi"
+    ]
+   },
+   "lexicon": [
+    "employment",
+    "unemployment"
+   ],
+   "subdomains": [
+    {
+     "id": "recherche-emploi",
+     "fr": "Recherche d'emploi et chômage",
+     "keywords": [
+      "France Travail",
+      "chômage",
+      "ARE",
+      "demandeur d'emploi"
+     ],
+     "structureTypes": [
+      "France Travail"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "iae",
+     "fr": "Insertion par l'activité économique (IAE)",
+     "keywords": [
+      "IAE",
+      "chantier d'insertion",
+      "entreprise d'insertion"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "formation",
+     "fr": "Formation et reconversion",
+     "keywords": [
+      "formation",
+      "CPF",
+      "reconversion"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "choisir-un-metier--"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "freins-emploi",
+     "fr": "Freins sociaux à l'emploi",
+     "keywords": [
+      "freins",
+      "garde d'enfant",
+      "mobilité emploi"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "budget",
+   "letter": "O",
+   "fr": "Budget, dettes et inclusion financière",
+   "legacy": {
+    "taxonomy": [
+     "argent"
+    ],
+    "situation": [],
+    "orientation": [
+     "BUDGET"
+    ],
+    "need": [
+     "budget"
+    ]
+   },
+   "lexicon": [
+    "debt",
+    "bank-account",
+    "tax"
+   ],
+   "subdomains": [
+    {
+     "id": "conseil-budget",
+     "fr": "Conseil budgétaire (Points conseil budget)",
+     "keywords": [
+      "point conseil budget",
+      "budget"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "difficultes-financieres--ameliorer-sa-gestion-budgetaire"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "surendettement",
+     "fr": "Surendettement (Banque de France)",
+     "keywords": [
+      "surendettement",
+      "Banque de France",
+      "dettes"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "difficultes-financieres--situation-dendettement-surendettement"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "inclusion-bancaire",
+     "fr": "Compte bancaire et inclusion bancaire",
+     "keywords": [
+      "droit au compte",
+      "compte bancaire"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "impots",
+     "fr": "Impôts et démarches fiscales",
+     "keywords": [
+      "impôts",
+      "déclaration de revenus"
+     ],
+     "structureTypes": [
+      "Service des impôts des particuliers"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "numerique",
+   "letter": "P",
+   "fr": "Médiation numérique et illettrisme",
+   "legacy": {
+    "taxonomy": [
+     "papiers-citoyennete"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "numerique"
+    ]
+   },
+   "lexicon": [],
+   "subdomains": [
+    {
+     "id": "demarches-en-ligne",
+     "fr": "Aide aux démarches en ligne",
+     "keywords": [
+      "France services",
+      "démarches en ligne",
+      "conseiller numérique"
+     ],
+     "structureTypes": [
+      "Espace France Services"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "illettrisme",
+     "fr": "Lecture, écriture et illectronisme",
+     "keywords": [
+      "illettrisme",
+      "illectronisme",
+      "apprendre à lire"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "lecture-ecriture-calcul--"
+     ],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "mobilite",
+   "letter": "Q",
+   "fr": "Mobilité inclusive",
+   "legacy": {
+    "taxonomy": [
+     "transports"
+    ],
+    "situation": [],
+    "orientation": [
+     "MOBILITE"
+    ],
+    "need": [
+     "mobilite"
+    ]
+   },
+   "lexicon": [
+    "transport"
+   ],
+   "subdomains": [
+    {
+     "id": "tarifs-solidaires",
+     "fr": "Tarifs solidaires de transport",
+     "keywords": [
+      "tarif solidaire",
+      "Carte Solidaire",
+      "CTS",
+      "transport"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "transport-adapte",
+     "fr": "Transport adapté",
+     "keywords": [
+      "transport adapté",
+      "PAM"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "mobilite-emploi",
+     "fr": "Mobilité vers l'emploi",
+     "keywords": [
+      "permis",
+      "plateforme mobilité"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "mobilite--"
+     ],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "discrimination",
+   "letter": "R",
+   "fr": "Discrimination et droits fondamentaux",
+   "legacy": {
+    "taxonomy": [
+     "justice",
+     "lgbtqi-plus"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "violences"
+    ]
+   },
+   "lexicon": [
+    "violence"
+   ],
+   "subdomains": [
+    {
+     "id": "defenseur-droits",
+     "fr": "Défenseur des droits et recours",
+     "keywords": [
+      "discrimination",
+      "Défenseur des droits"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "lgbtqi",
+     "fr": "Personnes LGBTQI+",
+     "keywords": [
+      "LGBT",
+      "homophobie",
+      "transphobie"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "lien-social",
+   "letter": "S",
+   "fr": "Aidants, isolement et lien social",
+   "legacy": {
+    "taxonomy": [
+     "loisirs"
+    ],
+    "situation": [],
+    "orientation": [
+     "LIEN_SOCIAL"
+    ],
+    "need": [
+     "isolement"
+    ]
+   },
+   "lexicon": [],
+   "subdomains": [
+    {
+     "id": "aidants",
+     "fr": "Aidants familiaux",
+     "keywords": [
+      "aidant",
+      "répit",
+      "proche aidant"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [
+      "famille--soutien-aidants"
+     ],
+     "emergency": []
+    },
+    {
+     "id": "isolement",
+     "fr": "Isolement et lien social",
+     "keywords": [
+      "isolement",
+      "solitude",
+      "centre social"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "culture-loisirs",
+     "fr": "Culture, sport et loisirs",
+     "keywords": [
+      "culture",
+      "sport",
+      "loisirs",
+      "vacances"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  },
+  {
+   "id": "transversal",
+   "letter": "T",
+   "fr": "Situations transversales et coordination",
+   "legacy": {
+    "taxonomy": [
+     "social-sante"
+    ],
+    "situation": [],
+    "orientation": [
+     "DROITS"
+    ],
+    "need": [
+     "acces_droits"
+    ]
+   },
+   "lexicon": [],
+   "subdomains": [
+    {
+     "id": "deces-deuil",
+     "fr": "Décès et deuil : démarches et droits",
+     "keywords": [
+      "décès",
+      "deuil",
+      "obsèques",
+      "capital décès"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "institutions-locales",
+     "fr": "Institutions locales (mairies, CCAS, Maisons des solidarités)",
+     "keywords": [
+      "mairie",
+      "CCAS",
+      "maison des solidarités"
+     ],
+     "structureTypes": [
+      "Mairie",
+      "CCAS (centre communal d'action sociale)",
+      "Maison des solidarités (Espace Solidarités)"
+     ],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    },
+    {
+     "id": "coordination-pro",
+     "fr": "Coordination des professionnels",
+     "keywords": [
+      "coordination",
+      "référent de parcours"
+     ],
+     "structureTypes": [],
+     "casf": [],
+     "dataInclusion": [],
+     "emergency": []
+    }
+   ]
+  }
+ ]
+}

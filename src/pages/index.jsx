@@ -1,6 +1,7 @@
 import { Suspense, lazy, Component } from "react";
 import { BrowserRouter, MemoryRouter, Route, Routes, useLocation, Navigate, useParams } from 'react-router-dom';
 import ScrollToTop from '@/components/navigation/ScrollToTop';
+import RouteFocus from '@/components/navigation/RouteFocus';
 import { m, LazyMotion, domAnimation, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { frontendEnv } from "@/config/env";
 import { isBetaRestrictedPath } from "@/lib/publicBeta";
@@ -632,6 +633,7 @@ export default function Pages(/** @type {{ url: unknown }} */ { url }) {
     return (
         <BrowserRouter>
             <ScrollToTop />
+            <RouteFocus />
             <PagesContent />
         </BrowserRouter>
     );

@@ -3,6 +3,7 @@ import type { AidCardProps } from "@/components/molecules/AidCard";
 import EmptyState from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { useT } from "@/i18n";
 
 export interface AidGridProps {
     items: AidCardProps[];
@@ -15,16 +16,17 @@ export default function AidGrid({
     hasActiveFilters,
     onReset,
 }: AidGridProps) {
+    const { t } = useT("aides");
     if (items.length === 0 && hasActiveFilters) {
         return (
             <EmptyState
-                title="Aucune aide trouvée"
-                description="Essayez d'élargir votre recherche ou réinitialisez les filtres."
+                title={t("aides:empty.filtered_title", "Aucune aide trouvée")}
+                description={t("aides:empty.filtered_text", "Essayez d'élargir votre recherche ou réinitialisez les filtres.")}
                 icon={<Search className="h-6 w-6" />}
                 actions={
                     onReset ? (
                         <Button type="button" variant="outline" onClick={onReset} data-testid="empty-reset">
-                            Réinitialiser les filtres
+                            {t("aides:filters.reset_all", "Réinitialiser les filtres")}
                         </Button>
                     ) : undefined
                 }
@@ -35,7 +37,7 @@ export default function AidGrid({
     if (items.length === 0) {
         return (
             <p className="py-8 text-center text-sm text-muted-foreground">
-                Chargement des aides…
+                {t("aides:grid.loading", "Chargement des aides…")}
             </p>
         );
     }

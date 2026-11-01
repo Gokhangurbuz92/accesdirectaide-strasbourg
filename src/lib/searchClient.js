@@ -1,4 +1,5 @@
 // @ts-nocheck
+import i18n from '@/i18n';
 import { ensureCsrfHeaders, getCsrfHeaders } from './csrf';
 
 const SEARCH_API_PATH = '/api/search';
@@ -248,6 +249,7 @@ export async function searchAides(params = {}) {
   const payload = {
     query: normalizedQuery,
     limit: clampLimit(limit),
+    lang: i18n.language || 'fr',   // R32: lets the server read a query typed in the interface language (cross-language search)
   };
 
   const normalizedCategory = normalizeSearchCategory(category);

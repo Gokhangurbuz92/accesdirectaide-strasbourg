@@ -173,9 +173,9 @@ describe('R27 word search', () => {
 
 describe('R27 cards', () => {
   it('aide, démarche and lieu cards share the provenance line and the action strip', () => {
-    expect(read('src/components/molecules/AidCard.tsx')).toMatch(/<CardActionStrip label="Voir l’aide" \/>/);
-    expect(read('src/components/cards/DemarcheCard.jsx')).toMatch(/<CardActionStrip label="Voir la démarche" \/>/);
-    expect(read('src/components/cards/StructureCard.jsx')).toMatch(/<CardActionStrip label="Voir le lieu" \/>/);
+    expect(read('src/components/molecules/AidCard.tsx')).toMatch(/<CardActionStrip label=\{t\("aides:card\.view", "Voir l’aide"\)\} \/>/);   // R32: translated label, French default
+    expect(read('src/components/cards/DemarcheCard.jsx')).toMatch(/<CardActionStrip label=\{t\('demarches:card\.view', 'Voir la démarche'\)\} \/>/);   // R32: translated label, French default
+    expect(read('src/components/cards/StructureCard.jsx')).toMatch(/<CardActionStrip label=\{t\('structures:card\.view', 'Voir le lieu'\)\} \/>/);
     for (const f of ['src/components/molecules/AidCard.tsx', 'src/components/cards/DemarcheCard.jsx', 'src/components/cards/StructureCard.jsx']) expect(read(f), f).toMatch(/<RecordProvenance /);
     expect(read('src/components/cards/StructureCard.jsx')).not.toMatch(/Vérifié: \{verifiedAt\}/);
   });
@@ -189,7 +189,7 @@ describe('R27 cards', () => {
   });
   it('the aide page header gives the verification date, not the fetch date', () => {
     const d = read('src/pages/AideDetail.jsx');
-    expect(d).toMatch(/Vérifié le \{verifiedAtLabel\}/);
+    expect(d).toMatch(/t\('aides:detail\.verified_on', 'Vérifié le \{\{date\}\}', \{ date: verifiedAtLabel \}\)/);   // R32: translated, French default
     expect(d).not.toMatch(/Mise à jour : \{fetchedAtLabel\}/);
   });
 });

@@ -4,14 +4,17 @@
  * 
  * Reusable loading skeleton for list pages.
  * Provides consistent loading experience across Aides, Demarches, Annuaire, Actualites.
+ * R32: its words are in the interface language (namespace « news »: the news list is its only user today).
  */
 
 import { Loader2 } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * Card-based skeleton (for grid layouts)
  */
 export function CardSkeleton({ count = 6, columns = 3 }) {
+  const { t } = useT('news');
   const gridClass = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-2 lg:grid-cols-3',
@@ -19,7 +22,7 @@ export function CardSkeleton({ count = 6, columns = 3 }) {
   }[columns] || 'md:grid-cols-2 lg:grid-cols-3';
 
   return (
-    <div className={`grid ${gridClass} gap-6`} role="status" aria-label="Chargement en cours">
+    <div className={`grid ${gridClass} gap-6`} role="status" aria-label={t('news:skeleton.label', 'Chargement en cours')}>
       {[...Array(count)].map((_, i) => (
         <div
           key={i}
@@ -27,7 +30,7 @@ export function CardSkeleton({ count = 6, columns = 3 }) {
           aria-hidden="true"
         />
       ))}
-      <span className="sr-only">Chargement des résultats...</span>
+      <span className="sr-only">{t('news:skeleton.results', 'Chargement des résultats...')}</span>
     </div>
   );
 }
@@ -35,7 +38,8 @@ export function CardSkeleton({ count = 6, columns = 3 }) {
 /**
  * Centered spinner (for simple loading states)
  */
-export function CenteredSpinner({ message = "Chargement..." }) {
+export function CenteredSpinner({ message }) {
+  const { t } = useT('news');
   return (
     <div
       className="flex flex-col items-center justify-center py-20"
@@ -43,7 +47,7 @@ export function CenteredSpinner({ message = "Chargement..." }) {
       aria-live="polite"
     >
       <Loader2 className="h-10 w-10 animate-spin text-blue-600 mb-4" aria-hidden="true" />
-      <p className="text-slate-500">{message}</p>
+      <p className="text-slate-500">{message === undefined ? t('news:skeleton.loading', 'Chargement...') : message}</p>
     </div>
   );
 }
@@ -52,8 +56,9 @@ export function CenteredSpinner({ message = "Chargement..." }) {
  * List skeleton (for list layouts)
  */
 export function ListItemSkeleton({ count = 5 }) {
+  const { t } = useT('news');
   return (
-    <div className="space-y-4" role="status" aria-label="Chargement en cours">
+    <div className="space-y-4" role="status" aria-label={t('news:skeleton.label', 'Chargement en cours')}>
       {[...Array(count)].map((_, i) => (
         <div
           key={i}
@@ -61,7 +66,7 @@ export function ListItemSkeleton({ count = 5 }) {
           aria-hidden="true"
         />
       ))}
-      <span className="sr-only">Chargement des résultats...</span>
+      <span className="sr-only">{t('news:skeleton.results', 'Chargement des résultats...')}</span>
     </div>
   );
 }

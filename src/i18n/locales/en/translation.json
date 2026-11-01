@@ -1,0 +1,13 @@
+{
+ "status.loading": "Looking for a translation…",
+ "status.auto_checked": "Machine translation, checked by automatic tests. It has not been reviewed by a person: the French text and the official source are the reference.",
+ "status.partial": "Machine translation, checked by automatic tests and not reviewed by a person. Passages that did not pass the tests are shown in French. The French text and the official source are the reference.",
+ "status.human_reviewed": "Translation reviewed by a person. The French text and the official source are the reference.",
+ "status.outdated": "The French text has changed since it was translated: the translation is withdrawn until it is redone and checked. The text is shown in French.",
+ "status.withheld": "The machine translation of this content did not pass the checks: the text is shown in French.",
+ "status.unavailable": "This content is not yet translated into your language: it is shown in French.",
+ "meta.reviewed": "Reviewed on {{date}}.",
+ "meta.machine": "Translated on {{date}} by a translation engine installed on the publisher's computer (no personal text is translated).",
+ "action.back": "Back to the translation",
+ "action.original": "See the original French text"
+}

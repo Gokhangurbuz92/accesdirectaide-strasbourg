@@ -1,0 +1,13 @@
+{
+ "status.loading": "Çeviri aranıyor…",
+ "status.auto_checked": "Otomatik testlerle kontrol edilmiş makine çevirisi. Bir kişi tarafından gözden geçirilmedi: Fransızca metin ve resmi kaynak esastır.",
+ "status.partial": "Otomatik testlerle kontrol edilmiş, bir kişi tarafından gözden geçirilmemiş makine çevirisi. Testleri geçemeyen bölümler Fransızca gösterilir. Fransızca metin ve resmi kaynak esastır.",
+ "status.human_reviewed": "Bir kişi tarafından gözden geçirilmiş çeviri. Fransızca metin ve resmi kaynak esastır.",
+ "status.outdated": "Fransızca metin çeviriden sonra değişti: çeviri yeniden yapılıp kontrol edilene kadar kaldırıldı. Metin Fransızca gösteriliyor.",
+ "status.withheld": "Bu içeriğin makine çevirisi kontrollerden geçemedi: metin Fransızca gösteriliyor.",
+ "status.unavailable": "Bu içerik henüz dilinize çevrilmedi: Fransızca gösteriliyor.",
+ "meta.reviewed": "{{date}} tarihinde gözden geçirildi.",
+ "meta.machine": "{{date}} tarihinde, yayıncının bilgisayarında kurulu bir çeviri motoruyla çevrildi (hiçbir kişisel metin çevrilmez).",
+ "action.back": "Çeviriye dön",
+ "action.original": "Fransızca orijinal metni göster"
+}

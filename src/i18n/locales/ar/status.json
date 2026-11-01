@@ -1,0 +1,20 @@
+{
+ "emergency": "في حالة الطوارئ، اتصل بالرقم 112 (الطوارئ) أو 15 (SAMU، الإسعاف الطبي) أو 115 (SAMU social، خط الإيواء الطارئ): هذه الأرقام لا تتبع AccesDirectAide.",
+ "error": "يتعذّر التحقق من حالة الخدمة في الوقت الحالي. ربما لا يستجيب الموقع أو اتصالك.",
+ "last-checked": "آخر تحقق: {{date}}",
+ "live.failed": "تعذّر التحقق.",
+ "live.updated": "تم تحديث الحالة.",
+ "refresh": "تحديث",
+ "section.assistant": "المساعد",
+ "section.comptes": "الحسابات والمواعيد",
+ "section.donnees": "معلومات عن المساعدات",
+ "section.emails": "البريد الإلكتروني",
+ "seo.description": "الحالة العامة لخدمات AccesDirectAide: الحسابات، والمواعيد، والبريد الإلكتروني، والمساعد، والمعلومات عن المساعدات.",
+ "seo.title": "حالة الخدمة — AccesDirectAide",
+ "state.degraded": "يعمل جزئيًا",
+ "state.info": "للعلم",
+ "state.operational": "يعمل",
+ "state.unavailable": "غير متاح",
+ "title": "حالة الخدمة",
+ "unchecked": "لم يتم التحقق."
+}

@@ -48,7 +48,8 @@ describe('a guide leads to where to act', () => {
   });
   it('the guide page uses the shared page header and shows the next steps', () => {
     const src = fs.readFileSync('src/pages/GuideDetail.jsx', 'utf8');
-    expect(src).toMatch(/<PageHeader title=\{guide\.titre\}/);
+    // R32: the title goes through the content translation hook (French marked lang="fr" until a verified translation exists)
+    expect(src).toMatch(/<PageHeader title=\{<span \{\.\.\.tr\.attrs\('titre'\)\}>\{tr\.value\('titre'\)\}<\/span>\}/);
     expect(src).toMatch(/data-testid="guide-next-steps"/);
     expect(src).not.toMatch(/<h1 className/);
   });
@@ -66,7 +67,7 @@ describe('news names its publisher and its licence', () => {
   it('the list and detail pages use the shared card parts and the attribution', () => {
     const list = fs.readFileSync('src/pages/Actualites.jsx', 'utf8');
     expect(list).toMatch(/<RecordProvenance verifiedAt=\{verifiedAt\} sourceHost=\{sourceLabel\}/);
-    expect(list).toMatch(/<CardActionStrip label="Lire l’actualité" \/>/);
+    expect(list).toMatch(/<CardActionStrip label=\{t\('news:card\.action', 'Lire l’actualité'\)\} \/>/);   // R32: the French label is the key's default
     expect(fs.readFileSync('src/pages/ActualiteDetail.jsx', 'utf8')).toMatch(/data-testid="news-attribution"/);
     expect(fs.readFileSync('api/_handlers/actualites.js', 'utf8')).toMatch(/verifiedAt: newsVerifiedAt\(row\)/);
   });
@@ -143,7 +144,8 @@ describe('beta: no button that always fails', () => {
   it('PDF prints, on-demand simplification says there is none yet, the report opens an e-mail', () => {
     for (const f of ['src/pages/AideDetail.jsx', 'src/pages/DemarcheDetail.jsx']) {
       const src = fs.readFileSync(f, 'utf8');
-      expect(src, f).toMatch(/frontendEnv\.flags\.publicBeta \? 'Imprimer ou enregistrer en PDF' : 'Télécharger en PDF'/);
+      // R32: each label may be the French default of its t('ns:key', …) call
+      expect(src, f).toMatch(/frontendEnv\.flags\.publicBeta \? (?:t\('[a-z]+:[\w.-]+', )?'Imprimer ou enregistrer en PDF'\)? : (?:t\('[a-z]+:[\w.-]+', )?'Télécharger en PDF'/);
       expect(src, f).toMatch(/data-testid="falc-not-available"/);
       expect(src, f).toMatch(/&& !frontendEnv\.flags\.publicBeta && \(\s*<button/);
     }

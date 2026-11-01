@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/providers/ThemeProvider';
+import { useT } from '@/i18n';
 
 /**
  * DarkModeToggle — Toggles between light and dark mode.
@@ -11,6 +12,7 @@ import { useTheme } from '@/components/providers/ThemeProvider';
  * between SSR/Prerender and the initial client render.
  */
 export default function DarkModeToggle({ className = '' }) {
+    const { t } = useT('layout');
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -33,7 +35,7 @@ export default function DarkModeToggle({ className = '' }) {
                 aria-hidden="true"
                 disabled
             >
-                <span className="sr-only">Chargement du thème...</span>
+                <span className="sr-only">{t('layout:theme.loading', 'Chargement du thème...')}</span>
             </Button>
         );
     }
@@ -44,8 +46,8 @@ export default function DarkModeToggle({ className = '' }) {
             size="sm"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
             className={`h-8 w-8 p-0 ${className}`}
-            aria-label={isDark ? 'Activer le mode clair' : 'Activer le mode sombre'}
-            title={isDark ? 'Activer le mode clair' : 'Activer le mode sombre'}
+            aria-label={isDark ? t('layout:theme.light', 'Activer le mode clair') : t('layout:theme.dark', 'Activer le mode sombre')}
+            title={isDark ? t('layout:theme.light', 'Activer le mode clair') : t('layout:theme.dark', 'Activer le mode sombre')}
         >
             {isDark ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
         </Button>

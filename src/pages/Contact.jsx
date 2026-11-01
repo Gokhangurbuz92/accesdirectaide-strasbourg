@@ -10,15 +10,20 @@ import { useState } from 'react';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
-const SUJETS = [
-  { value: 'question', label: 'J\'ai une question' },
-  { value: 'signalement_erreur', label: 'Je signale une erreur ou une info obsolète' },
-  { value: 'suggestion', label: 'J\'ai une suggestion' },
-  { value: 'partenariat', label: 'Proposition de partenariat' },
-  { value: 'autre', label: 'Autre' },
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
+
+/** the subjects of the form: the value is what the server receives (its allow-list), the label is shown in the interface language (R32) */
+const subjects = (/** @type {(k: string, d: string) => string} */ t) => [
+  { value: 'question', label: t('contact:subject.question', 'J\'ai une question') },
+  { value: 'signalement_erreur', label: t('contact:subject.error', 'Je signale une erreur ou une info obsolète') },
+  { value: 'suggestion', label: t('contact:subject.suggestion', 'J\'ai une suggestion') },
+  { value: 'partenariat', label: t('contact:subject.partnership', 'Proposition de partenariat') },
+  { value: 'autre', label: t('contact:subject.other', 'Autre') },
 ];
 
 export default function Contact() {
+  const { t } = useT('contact');
   const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
 
   const [form, setForm] = useState({
@@ -38,7 +43,7 @@ export default function Contact() {
     setError('');
 
     if (!form.email || !form.sujet || !form.message) {
-      setError('Veuillez remplir tous les champs obligatoires.');
+      setError(t('contact:error.required', 'Veuillez remplir tous les champs obligatoires.'));
       return;
     }
 
@@ -55,14 +60,14 @@ export default function Contact() {
       if (res.ok && data?.delivered === true) {
         setIsSubmitted(true);
       } else if (res.status === 429) {
-        setError('Trop de messages envoyés depuis cette connexion. Réessayez dans une heure ou écrivez-nous à contact@accesdirectaide.fr.');
+        setError(t('contact:error.rate_limited', 'Trop de messages envoyés depuis cette connexion. Réessayez dans une heure ou écrivez-nous à contact@accesdirectaide.fr.'));
       } else if (res.status === 400 && data?.error) {
-        setError(`${data.error}`);
+        setError(`${data.error}`);   // the server's own wording (French)
       } else {
-        setError("Votre message n'a pas pu être transmis. Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr.");
+        setError(t('contact:error.not_delivered', "Votre message n'a pas pu être transmis. Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
       }
     } catch (err) {
-      setError("Votre message n'a pas pu être transmis (connexion impossible). Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr.");
+      setError(t('contact:error.network', "Votre message n'a pas pu être transmis (connexion impossible). Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
     } finally {
       setIsSubmitting(false);
     }
@@ -77,13 +82,13 @@ export default function Contact() {
               <CheckCircle2 className="h-10 w-10 text-green-600" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900">
-              Message transmis
+              {t('contact:sent.title', 'Message transmis')}
             </h1>
             <p className="text-slate-600 leading-relaxed" data-testid="contact-sent">
-              Merci pour votre message. Il a bien été transmis à l&apos;équipe, qui vous répondra dès que possible à l&apos;adresse indiquée.
+              {t('contact:sent.text', "Merci pour votre message. Il a bien été transmis à l'équipe, qui vous répondra dès que possible à l'adresse indiquée.")}
             </p>
             <Button onClick={() => window.location.href = '/'} className="w-full mt-4 bg-slate-900 hover:bg-slate-800">
-              Retour à l'accueil
+              {t('contact:sent.home', "Retour à l'accueil")}
             </Button>
           </CardContent>
         </Card>
@@ -94,8 +99,8 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       <SEO
-        title="Contact & Signaler une erreur"
-        description="Une question, une suggestion ou une erreur à signaler ? Écrivez à l’équipe d’Accès Direct Aide."
+        title={t('contact:seo_title', 'Contact & Signaler une erreur')}
+        description={t('contact:seo_description', 'Une question, une suggestion ou une erreur à signaler ? Écrivez à l’équipe d’Accès Direct Aide.')}
         path="/contact"
       />
 
@@ -105,9 +110,9 @@ export default function Contact() {
           <div className="inline-flex justify-center items-center w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-400 mb-6 ring-1 ring-blue-500/30">
             <LifeBuoy className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-slate-50">Nous contacter</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-slate-50">{t('contact:title', 'Nous contacter')}</h1>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Une question, une suggestion de partenariat, ou une erreur à nous signaler ? Notre équipe vous répond avec bienveillance.
+            {t('contact:intro', 'Une question, une suggestion de partenariat, ou une erreur à nous signaler ? Notre équipe vous répond avec bienveillance.')}
           </p>
         </div>
       </div>
@@ -116,7 +121,7 @@ export default function Contact() {
         <Card className="border-slate-200 shadow-xl overflow-hidden">
           <div className="bg-blue-50 border-b border-blue-100 p-4 sm:px-8 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-blue-600 shrink-0" />
-            <p className="text-sm text-blue-800 font-medium">Chaque message est lu par l&apos;équipe, qui vous répond dès que possible.</p>
+            <p className="text-sm text-blue-800 font-medium">{t('contact:read_by_team', "Chaque message est lu par l'équipe, qui vous répond dès que possible.")}</p>
           </div>
           <CardContent className="p-6 md:p-8 bg-white">
 
@@ -124,8 +129,8 @@ export default function Contact() {
             <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
               <div className="text-sm text-amber-800">
-                <strong className="block mb-1">Sécurité de vos données</strong>
-                Ne transmettez jamais votre Numéro de Sécurité Sociale, coordonnées bancaires ou mots de passe via ce formulaire. Accès Direct Aide ne vous les demandera jamais ici.
+                <strong className="block mb-1">{t('contact:warning.title', 'Sécurité de vos données')}</strong>
+                {t('contact:warning.text', 'Ne transmettez jamais votre Numéro de Sécurité Sociale, coordonnées bancaires ou mots de passe via ce formulaire. Accès Direct Aide ne vous les demandera jamais ici.')}
               </div>
             </div>
 
@@ -134,11 +139,11 @@ export default function Contact() {
               <div className="grid sm:grid-cols-2 gap-6">
                 {/* Nom */}
                 <div className="space-y-2">
-                  <Label htmlFor="nom" className="font-semibold text-slate-700">Votre nom (facultatif)</Label>
+                  <Label htmlFor="nom" className="font-semibold text-slate-700">{t('contact:form.name', 'Votre nom (facultatif)')}</Label>
                   <Input
                     id="nom"
                     type="text"
-                    placeholder="Jean Dupont"
+                    placeholder={t('contact:form.name_placeholder', 'Jean Dupont')}
                     value={form.nom}
                     onChange={(e) => setForm(prev => ({ ...prev, nom: e.target.value }))}
                     className="bg-slate-50"
@@ -148,7 +153,7 @@ export default function Contact() {
                 {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="font-semibold text-slate-700">
-                    Votre email <span className="text-red-500">*</span>
+                    {t('contact:form.email', 'Votre email')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="email"
@@ -165,18 +170,18 @@ export default function Contact() {
               {/* Sujet */}
               <div className="space-y-2">
                 <Label htmlFor="sujet" className="font-semibold text-slate-700">
-                  Sujet de votre demande <span className="text-red-500">*</span>
+                  {t('contact:form.subject', 'Sujet de votre demande')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={form.sujet}
                   onValueChange={(value) => setForm(prev => ({ ...prev, sujet: value }))}
                   required
                 >
-                  <SelectTrigger aria-label="Sujet du message" className="bg-slate-50 relative z-20">
-                    <SelectValue placeholder="Sélectionnez le sujet de votre message" />
+                  <SelectTrigger aria-label={t('contact:form.subject_label', 'Sujet du message')} className="bg-slate-50 relative z-20">
+                    <SelectValue placeholder={t('contact:form.subject_placeholder', 'Sélectionnez le sujet de votre message')} />
                   </SelectTrigger>
                   <SelectContent className="relative z-50">
-                    {SUJETS.map((sujet) => (
+                    {subjects(t).map((sujet) => (
                       <SelectItem key={sujet.value} value={sujet.value}>
                         {sujet.label}
                       </SelectItem>
@@ -188,11 +193,11 @@ export default function Contact() {
               {/* Page concernée (si signalement) */}
               {form.sujet === 'signalement_erreur' && (
                 <div className="space-y-2 bg-slate-50 p-4 border border-slate-100 rounded-lg animate-in fade-in zoom-in-95">
-                  <Label htmlFor="page" className="font-semibold text-slate-700">Lien ou nom de la page concernée (facultatif mais très utile)</Label>
+                  <Label htmlFor="page" className="font-semibold text-slate-700">{t('contact:form.page', 'Lien ou nom de la page concernée (facultatif mais très utile)')}</Label>
                   <Input
                     id="page"
                     type="text"
-                    placeholder="Ex: https://accesdirectaide.fr/aides/apl ou 'Fiche APL'"
+                    placeholder={t('contact:form.page_placeholder', "Ex: https://accesdirectaide.fr/aides/apl ou 'Fiche APL'")}
                     value={form.page_concernee}
                     onChange={(e) => setForm(prev => ({ ...prev, page_concernee: e.target.value }))}
                     className="bg-white"
@@ -201,19 +206,19 @@ export default function Contact() {
               )}
 
               {/* Honeypot: invisible and unreachable for people (off-screen, not in the tab order, hidden from assistive technologies) */}
-              <div aria-hidden="true" className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden">
-                <label htmlFor="site_web">Ne pas remplir ce champ</label>
+              <div aria-hidden="true" className="absolute -start-[10000px] top-auto h-px w-px overflow-hidden">
+                <label htmlFor="site_web">{t('contact:form.honeypot', 'Ne pas remplir ce champ')}</label>
                 <input id="site_web" name="site_web" type="text" tabIndex={-1} autoComplete="off" value={form.site_web} onChange={(e) => setForm(prev => ({ ...prev, site_web: e.target.value }))} />
               </div>
 
               {/* Message */}
               <div className="space-y-2">
                 <Label htmlFor="message" className="font-semibold text-slate-700">
-                  Votre message <span className="text-red-500">*</span>
+                  {t('contact:form.message', 'Votre message')} <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   id="message"
-                  placeholder="Décrivez votre question, remarque ou l'erreur identifiée..."
+                  placeholder={t('contact:form.message_placeholder', "Décrivez votre question, remarque ou l'erreur identifiée...")}
                   rows={6}
                   value={form.message}
                   onChange={(e) => setForm(prev => ({ ...prev, message: e.target.value }))}
@@ -239,20 +244,22 @@ export default function Contact() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Envoi sécurisé en cours...
+                      <Loader2 className="me-2 h-5 w-5 animate-spin" />
+                      {t('contact:form.sending', 'Envoi sécurisé en cours...')}
                     </>
                   ) : (
                     <>
-                      <Send className="mr-2 h-5 w-5" />
-                      Envoyer mon message
+                      <Send className="me-2 h-5 w-5 rtl-flip" />
+                      {t('contact:form.send', 'Envoyer mon message')}
                     </>
                   )}
                 </Button>
               </div>
 
               <p className="text-xs text-slate-500 mt-6 md:text-center px-4">
-                Vos coordonnées et votre message servent uniquement à vous répondre. Ils sont transmis par e-mail à l&apos;équipe et ne sont pas enregistrés sur la plateforme. Pas de publicité. Consultez notre <a href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>.
+                <Trans i18n={i18n} i18nKey="contact:form.privacy"
+                  defaults="Vos coordonnées et votre message servent uniquement à vous répondre. Ils sont transmis par e-mail à l'équipe et ne sont pas enregistrés sur la plateforme. Pas de publicité. Consultez notre <0>politique de confidentialité</0>."
+                  components={[<a key="privacy" href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>]} />
               </p>
             </form>
           </CardContent>
@@ -263,7 +270,7 @@ export default function Contact() {
           <Card className="bg-transparent border-slate-200 shadow-none hover:bg-white hover:shadow-sm transition-all">
             <CardContent className="p-6 text-center">
               <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-slate-900 mb-1">Par email direct</h3>
+              <h3 className="font-semibold text-slate-900 mb-1">{t('contact:other.email', 'Par email direct')}</h3>
               <a href="mailto:contact@accesdirectaide.fr" className="text-blue-600 text-sm font-medium hover:underline">
                 contact@accesdirectaide.fr
               </a>
@@ -272,8 +279,8 @@ export default function Contact() {
           <Card className="bg-transparent border-slate-200 shadow-none hover:bg-white hover:shadow-sm transition-all">
             <CardContent className="p-6 text-center">
               <MessageSquare className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-slate-900 mb-1">Vos données personnelles</h3>
-              <p className="text-slate-600 text-sm mb-1">Pour vos droits RGPD</p>
+              <h3 className="font-semibold text-slate-900 mb-1">{t('contact:other.data', 'Vos données personnelles')}</h3>
+              <p className="text-slate-600 text-sm mb-1">{t('contact:other.gdpr', 'Pour vos droits RGPD')}</p>
               <p className="text-slate-700 text-sm font-medium">
                 {LEGAL_PLACEHOLDERS.dataProtectionContact}
               </p>

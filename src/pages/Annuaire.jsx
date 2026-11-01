@@ -14,6 +14,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import NoResultsHelp from '@/components/search/NoResultsHelp';
 import StructureCard from '@/components/cards/StructureCard';
 import { generateBreadcrumbSchema } from '@/utils/schema';
+import { useT } from '@/i18n';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const StructureMap = React.lazy(() => import('../components/StructureMap'));
@@ -21,6 +22,7 @@ const StructureMap = React.lazy(() => import('../components/StructureMap'));
 const DEFAULT_LIMIT = 12;
 const LIMIT_OPTIONS = [12, 24, 48];
 
+// R32: `label` is the French label; typeLabel() gives it in the interface language (the names of public bodies and the acronyms are not translated)
 const TYPE_STRUCTURES = [
   { value: '', label: 'Tous les types' },
   { value: 'association', label: 'Association' },
@@ -56,6 +58,7 @@ function parseLimit(value) {
 }
 
 export default function Annuaire() {
+  const { t } = useT('structures');
   const [searchParams, setSearchParams] = useSearchParams();
   // PKG-11 / P28: a link that arrives with a location filter (e.g. from /territoire) shows it, so the person knows the list is filtered
   const [isFiltersOpen, setIsFiltersOpen] = useState(() => ['city', 'departement', 'territory', 'geo'].some((k) => (searchParams.get(k) || '').trim() !== ''));
@@ -105,12 +108,24 @@ export default function Annuaire() {
   const pagination = data?.pagination || {};
 
   const liveMessage = useMemo(() => {
-    if (isLoading || isFetching) return "Chargement de l'annuaire...";
-    if (error) return "Erreur lors du chargement de l'annuaire.";
-    if (!structures.length) return 'Aucune structure trouvée.';
+    if (isLoading || isFetching) return t('structures:list.live.loading', "Chargement de l'annuaire...");
+    if (error) return t('structures:list.live.error', "Erreur lors du chargement de l'annuaire.");
+    if (!structures.length) return t('structures:list.live.empty', 'Aucune structure trouvée.');
     const total = typeof pagination.total === 'number' ? pagination.total : structures.length;
-    return `${total} structure${total > 1 ? 's' : ''} trouvée${total > 1 ? 's' : ''}.`;
-  }, [isLoading, isFetching, error, structures.length, pagination.total]);
+    return t('structures:list.count', { count: total, defaultValue_one: '{{count}} structure trouvée.', defaultValue_other: '{{count}} structures trouvées.' });
+  }, [isLoading, isFetching, error, structures.length, pagination.total, t]);
+
+  /** a type of structure in the interface language @param {{ value: string, label: string }} opt */
+  const typeLabel = (opt) => {
+    switch (opt.value) {
+      case '': return t('structures:types.all', 'Tous les types');
+      case 'association': return t('structures:types.association', 'Association');
+      case 'service_public': return t('structures:types.service_public', 'Service public');
+      case 'etablissement_sante': return t('structures:types.etablissement_sante', 'Établissement de santé');
+      case 'mairie': return t('structures:types.mairie', 'Mairie');
+      default: return opt.label;   // CAF, MDPH, France Travail, CPAM, CCAS, EHPAD, France Services, CARSAT, Mission Locale, PMI
+    }
+  };
 
   /**
    * @param {string} key
@@ -149,11 +164,11 @@ export default function Annuaire() {
   const schema = useMemo(() => {
     return [
       generateBreadcrumbSchema([
-        { name: 'Accueil', url: '/' },
-        { name: 'Annuaire', url: '/annuaire' },
+        { name: t('structures:breadcrumb.home', 'Accueil'), url: '/' },
+        { name: t('structures:breadcrumb.directory', 'Annuaire'), url: '/annuaire' },
       ]),
     ].filter(Boolean);
-  }, []);
+  }, [t]);
 
   const hasNext = Boolean(pagination.hasNext);
   const totalPages = pagination.totalPages || 1;
@@ -161,8 +176,8 @@ export default function Annuaire() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO
-        title="Annuaire"
-        description="Trouvez des structures (associations, services publics) et leurs coordonnées."
+        title={t('structures:seo.title', 'Annuaire')}
+        description={t('structures:seo.description', 'Trouvez des structures (associations, services publics) et leurs coordonnées.')}
         path="/structures"
         schema={schema}
       />
@@ -177,13 +192,13 @@ export default function Annuaire() {
         style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
+          <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Annuaire</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{t('structures:list.title', 'Annuaire')}</h1>
           <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
-            Recherchez une structure et filtrez par type ou localisation.
+            {t('structures:list.intro', 'Recherchez une structure et filtrez par type ou localisation.')}
           </p>
         </div>
       </div>
@@ -196,12 +211,12 @@ export default function Annuaire() {
               <button role="tab" aria-selected={viewMode === 'list'}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-gray-100'}`}
                 onClick={() => setViewMode('list')}>
-                Liste
+                {t('structures:view.list', 'Liste')}
               </button>
               <button role="tab" aria-selected={viewMode === 'map'}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium ${viewMode === 'map' ? 'bg-primary text-white' : 'bg-gray-100'}`}
                 onClick={() => setViewMode('map')}>
-                Carte
+                {t('structures:view.map', 'Carte')}
               </button>
             </div>
             <Button
@@ -212,25 +227,25 @@ export default function Annuaire() {
               aria-expanded={isFiltersOpen}
             >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              Filtres
+              {t('structures:filters.toggle', 'Filtres')}
             </Button>
           </div>
 
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
               <Input
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
-                placeholder="Rechercher une structure (ex: médiation numérique, CCAS...)"
-                aria-label="Rechercher une structure"
-                className="pl-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                placeholder={t('structures:search.placeholder', 'Rechercher une structure (ex: médiation numérique, CCAS...)')}
+                aria-label={t('structures:search.label', 'Rechercher une structure')}
+                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
                 data-testid="structures-search-input"
               />
             </div>
             <Button type="submit" className="h-11" data-testid="structures-search-submit">
-              Rechercher
+              {t('structures:search.submit', 'Rechercher')}
             </Button>
           </form>
 
@@ -242,17 +257,17 @@ export default function Annuaire() {
               size="sm"
               onClick={() => handleParamChange('type', '')}
             >
-              Tous
+              {t('structures:filters.all', 'Tous')}
             </Button>
-            {TYPE_STRUCTURES.filter(t => t.value).slice(0, 10).map((t) => (
+            {TYPE_STRUCTURES.filter((opt) => opt.value).slice(0, 10).map((opt) => (
               <Button
-                key={t.value}
+                key={opt.value}
                 type="button"
-                variant={type === t.value ? 'default' : 'outline'}
+                variant={type === opt.value ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => handleParamChange('type', t.value)}
+                onClick={() => handleParamChange('type', opt.value)}
               >
-                {t.label}
+                {typeLabel(opt)}
               </Button>
             ))}
           </div>
@@ -264,7 +279,7 @@ export default function Annuaire() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                   <div>
                     <label htmlFor="structures-type" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Type
+                      {t('structures:filters.type', 'Type')}
                     </label>
                     <select
                       id="structures-type"
@@ -274,7 +289,7 @@ export default function Annuaire() {
                     >
                       {TYPE_STRUCTURES.map((opt) => (
                         <option key={opt.value || 'all'} value={opt.value}>
-                          {opt.label}
+                          {typeLabel(opt)}
                         </option>
                       ))}
                     </select>
@@ -282,33 +297,33 @@ export default function Annuaire() {
 
                   <div>
                     <label htmlFor="structures-city" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Ville
+                      {t('structures:filters.city', 'Ville')}
                     </label>
                     <Input
                       id="structures-city"
                       value={city}
                       onChange={(e) => handleParamChange('city', e.target.value)}
-                      placeholder="Ex: Strasbourg"
+                      placeholder={t('structures:filters.city_placeholder', 'Ex: Strasbourg')}
                       className="h-10 bg-white"
                     />
                   </div>
 
                   <div>
                     <label htmlFor="structures-departement" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Département
+                      {t('structures:filters.departement', 'Département')}
                     </label>
                     <Input
                       id="structures-departement"
                       value={departement}
                       onChange={(e) => handleParamChange('departement', e.target.value)}
-                      placeholder="Ex: 67"
+                      placeholder={t('structures:filters.departement_placeholder', 'Ex: 67')}
                       className="h-10 bg-white"
                     />
                   </div>
 
                   <div>
                     <label htmlFor="structures-sort" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Trier
+                      {t('structures:filters.sort', 'Trier')}
                     </label>
                     <select
                       id="structures-sort"
@@ -316,18 +331,18 @@ export default function Annuaire() {
                       value={sort}
                       onChange={(e) => handleParamChange('sort', e.target.value)}
                     >
-                      <option value="quality">Qualité</option>
-                      <option value="recent">Récents</option>
-                      <option value="alpha">A-Z</option>
+                      <option value="quality">{t('structures:filters.sort_quality', 'Qualité')}</option>
+                      <option value="recent">{t('structures:filters.sort_recent', 'Récents')}</option>
+                      <option value="alpha">{t('structures:filters.sort_alpha', 'A-Z')}</option>
                       <option value="relevance" disabled={!q}>
-                        Pertinence {q ? '' : '(nécessite une recherche)'}
+                        {t('structures:filters.sort_relevance', 'Pertinence')} {q ? '' : t('structures:filters.needs_query', '(nécessite une recherche)')}
                       </option>
                     </select>
                   </div>
 
                   <div>
                     <label htmlFor="structures-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Par page
+                      {t('structures:filters.per_page', 'Par page')}
                     </label>
                     <select
                       id="structures-limit"
@@ -352,15 +367,15 @@ export default function Annuaire() {
                       checked={pmrEnabled}
                       onChange={(e) => handleParamChange('pmr', e.target.checked ? '1' : '')}
                     />
-                    Accessible PMR uniquement
+                    {t('structures:filters.pmr_only', 'Accessible PMR uniquement')}
                   </label>
 
                   <div className="flex flex-wrap gap-2">
                     <Button type="button" variant="ghost" onClick={clearFilters}>
-                      Réinitialiser
+                      {t('structures:filters.reset', 'Réinitialiser')}
                     </Button>
                     <Button type="button" variant="outline" onClick={() => setIsFiltersOpen(false)}>
-                      Fermer
+                      {t('structures:filters.close', 'Fermer')}
                     </Button>
                   </div>
                 </div>
@@ -374,12 +389,14 @@ export default function Annuaire() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {serves && (
           <p className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900" data-testid="annuaire-serves-filter">
-            Lieux dont la zone d&apos;intervention, vérifiée par ADA, couvre {servesName ? `${servesName} (code Insee ${serves})` : `la commune de code Insee ${serves}`}.
-            <button type="button" className="underline underline-offset-2 min-h-11" onClick={() => handleParamChange('serves', '')}>Retirer ce filtre</button>
+            {servesName
+              ? t('structures:serves.named', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre {{commune}} (code Insee {{code}}).", { commune: servesName, code: serves })
+              : t('structures:serves.code', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre la commune de code Insee {{code}}.", { code: serves })}
+            <button type="button" className="underline underline-offset-2 min-h-11" onClick={() => handleParamChange('serves', '')}>{t('structures:serves.remove', 'Retirer ce filtre')}</button>
           </p>
         )}
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="Chargement des résultats">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label={t('structures:list.loading_results', 'Chargement des résultats')}>
             {Array.from({ length: Math.min(limit, 12) }).map((_, idx) => (
               <Card key={idx} className="border-slate-200">
                 <CardContent className="p-6 space-y-3">
@@ -393,11 +410,11 @@ export default function Annuaire() {
           </div>
         ) : error ? (
           <EmptyState
-            title="Impossible de charger l'annuaire"
-            description="Vérifiez votre connexion puis réessayez."
+            title={t('structures:error.title', "Impossible de charger l'annuaire")}
+            description={t('structures:error.description', 'Vérifiez votre connexion puis réessayez.')}
             actions={
               <Button type="button" onClick={() => refetch()}>
-                Réessayer
+                {t('structures:error.retry', 'Réessayer')}
               </Button>
             }
             role="alert"
@@ -408,10 +425,9 @@ export default function Annuaire() {
               <>
                 {/* N11: the map tiles come from OpenStreetMap's servers, only once the visitor chooses « Carte »; the page says so */}
                 <p className="mb-3 text-sm text-slate-600" data-testid="map-provider-notice">
-                  Fonds de carte © OpenStreetMap. En affichant la carte, votre navigateur les charge depuis les serveurs de la fondation OpenStreetMap,
-                  qui reçoivent votre adresse IP. La vue « Liste » n’en charge aucun.
+                  {t('structures:map.provider_notice', 'Fonds de carte © OpenStreetMap. En affichant la carte, votre navigateur les charge depuis les serveurs de la fondation OpenStreetMap, qui reçoivent votre adresse IP. La vue « Liste » n’en charge aucun.')}
                 </p>
-                <React.Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-500">Chargement de la carte…</div>}>
+                <React.Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-500">{t('structures:map.loading', 'Chargement de la carte…')}</div>}>
                   <StructureMap structures={structures} />
                 </React.Suspense>
               </>
@@ -429,27 +445,27 @@ export default function Annuaire() {
                 disabled={page <= 1}
                 onClick={() => handlePageChange(page - 1)}
               >
-                Précédent
+                {t('structures:pagination.previous', 'Précédent')}
               </Button>
               <span className="flex items-center px-4 text-sm font-medium text-slate-700">
-                Page {page} / {totalPages}
+                {t('structures:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
               </span>
               <Button
                 variant="outline"
                 disabled={!hasNext}
                 onClick={() => handlePageChange(page + 1)}
               >
-                Suivant
+                {t('structures:pagination.next', 'Suivant')}
               </Button>
             </div>
           </>
         ) : (
           <EmptyState
-            title="Aucune structure trouvée"
+            title={t('structures:empty.title', 'Aucune structure trouvée')}
             description={serves
-              ? "Aucune structure n'a encore une zone d'intervention vérifiée qui couvre cette commune. Les lieux situés dans la commune restent visibles sans ce filtre."
-              : "Nous n'avons trouvé aucune structure correspondant à vos critères."}
-            actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>Voir toutes les structures</Button>}
+              ? t('structures:empty.description_serves', "Aucune structure n'a encore une zone d'intervention vérifiée qui couvre cette commune. Les lieux situés dans la commune restent visibles sans ce filtre.")
+              : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
+            actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>}
             data-testid="annuaire-empty"
           />
         )}

@@ -6,6 +6,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useT } from "@/i18n"
 
 /** @typedef {import("react").ElementRef<typeof DialogPrimitive.Overlay>} DialogOverlayElement */
 /** @typedef {import("react").ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>} DialogOverlayProps */
@@ -23,6 +24,12 @@ const DialogTrigger = DialogPrimitive.Trigger
 const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
+
+/** R32: the name of the close button, for screen readers, in the interface language (it used to be the English « Close ») */
+function DialogCloseLabel() {
+  const { t } = useT('shared')
+  return <span className="sr-only">{t('shared:dialog.close', 'Fermer')}</span>
+}
 
 const DialogOverlay = React.forwardRef(
   /** @type {import("react").ForwardRefRenderFunction<DialogOverlayElement, DialogOverlayProps>} */
@@ -52,9 +59,9 @@ const DialogContent = React.forwardRef(
         {...props}>
         {children}
         <DialogPrimitive.Close
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          className="absolute end-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+          <DialogCloseLabel />
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
@@ -67,7 +74,7 @@ const DialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-1.5 text-center sm:text-start", className)}
     {...props} />
 )
 DialogHeader.displayName = "DialogHeader"
@@ -77,7 +84,7 @@ const DialogFooter = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 rtl:space-x-reverse", className)}
     {...props} />
 )
 DialogFooter.displayName = "DialogFooter"

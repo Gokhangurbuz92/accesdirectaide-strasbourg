@@ -1,0 +1,20 @@
+{
+ "emergency": "In an emergency, call 112 (emergencies), 15 (SAMU, emergency medical service) or 115 (SAMU social, emergency shelter helpline): these numbers do not depend on AccesDirectAide.",
+ "error": "The state of the service cannot be checked right now. The site or your connection may not be responding.",
+ "last-checked": "Last check: {{date}}",
+ "live.failed": "Check not possible.",
+ "live.updated": "Status updated.",
+ "refresh": "Refresh",
+ "section.assistant": "Assistant",
+ "section.comptes": "Accounts and appointments",
+ "section.donnees": "Information on benefits",
+ "section.emails": "Emails",
+ "seo.description": "Public status of AccesDirectAide’s services: accounts, appointments, emails, assistant and information on benefits.",
+ "seo.title": "Service status — AccesDirectAide",
+ "state.degraded": "Partly working",
+ "state.info": "Good to know",
+ "state.operational": "Working",
+ "state.unavailable": "Unavailable",
+ "title": "Service status",
+ "unchecked": "Not checked."
+}

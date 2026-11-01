@@ -194,6 +194,8 @@ const aidCategoryCodeSchema = z.enum([
 
 export const hybridSearchSchema = z.object({
   query: z.string().trim().min(2).max(500),
+  // R32: the interface language, used only to read the query's words (cross-language search); results stay the French verified records
+  lang: z.enum(['fr', 'en', 'tr', 'ar', 'de', 'uk']).optional(),
   category: aidCategoryCodeSchema.optional(),
   situations: z
     .union([z.string().trim().min(1), z.array(z.string().trim().min(1)).max(20)])

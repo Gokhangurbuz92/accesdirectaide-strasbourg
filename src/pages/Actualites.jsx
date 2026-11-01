@@ -22,6 +22,8 @@ import { newsSourceLabel, shownNewsCategory } from '@/lib/newsSource';
 import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';
+import { formatDate, useT } from '@/i18n';
+import useContentTranslation from '@/hooks/useContentTranslation';
 
 /**
  * @typedef {object} ActualiteListItem
@@ -91,7 +93,96 @@ function getSourceUrl(actu) {
   return actu?.canonical_url || actu?.lien_url || actu?.url || actu?.source_url || '';
 }
 
+/** the kind of a news item, in the interface language (R32: explicit keys, French defaults) @param {string} typeKey @param {(k: string, d: string) => string} t */
+function typeLabel(typeKey, t) {
+  if (typeKey === 'nouveaute') return t('news:type.nouveaute', 'Nouveauté');
+  if (typeKey === 'modification') return t('news:type.modification', 'Modification');
+  if (typeKey === 'alerte') return t('news:type.alerte', 'Alerte');
+  return t('news:type.info', 'Information');
+}
+
+/** one news item of the list — R32: its title and summary are the record's own text (French, marked lang="fr", until a verified translation exists) */
+function NewsCard({ actu, index, isFalcEnabled }) {
+  const { t } = useT('news');
+  const tr = useContentTranslation('actualite', actu);
+  const typeKey = actu.type_actu || 'info';
+  const TypeIcon = TYPE_ICONS[typeKey] || Info;
+  const linkUrl = actu.slug ? `/actualites/${actu.slug}` : `/actualites/view?id=${actu.id}`;
+  const sourceName = getSourceName(actu);
+  const sourceUrl = getSourceUrl(actu);
+  const provenance = getProvenance(actu);
+  const verifiedAt = formatProvenanceDate(provenance.verifiedAt);
+  const sourceLabel = newsSourceLabel(sourceUrl, sourceName);
+  const title = tr.value('titre');
+  const falc = tr.value('summary_falc');
+  const excerpt = htmlToPlainText(falc || tr.value('resume') || '', { maxLength: 220 });
+  const readLabel = t('news:card.read_label', "Lire l'actualité {{title}}", { title });
+
+  return (
+    <AnimatedCard index={index}>
+      <Card
+        className={`group relative flex h-full flex-col overflow-hidden hover:shadow-lg transition-all ${actu.est_important ? 'border-s-4 border-s-blue-500' : ''}`}
+        data-testid="actualite-card"
+      >
+        {/* Overlay Link */}
+        <Link
+          to={linkUrl}
+          className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
+          aria-label={readLabel}
+        >
+          <span className="sr-only">{readLabel}</span>
+        </Link>
+
+        <CardContent className="flex-1 p-6">
+          <div className="flex flex-wrap gap-2 mb-3">
+            <Badge className={TYPE_COLORS[typeKey] || 'bg-slate-100 text-slate-800'}>
+              <TypeIcon className="h-3 w-3 me-1" />
+              {typeLabel(typeKey, t)}
+            </Badge>
+            {shownNewsCategory(actu.categorie) && (
+              <CategoryChip slug={actu.categorie} />
+            )}
+            {actu.est_important && (
+              <Badge className="bg-amber-100 text-amber-800">
+                {t('news:badge.important', 'Important')}
+              </Badge>
+            )}
+          </div>
+
+          <h2 className="text-xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors mb-3" data-testid="actualite-title" {...tr.attrs('titre')}>
+            {title}
+          </h2>
+
+          <p className="text-slate-600 mb-4 leading-relaxed line-clamp-5" {...tr.attrs(falc ? 'summary_falc' : 'resume')}>
+            {isFalcEnabled && falc ? falc : excerpt}
+          </p>
+
+          {/* FALC badge */}
+          {isFalcEnabled && falc && (
+            <div className="mb-4">
+              <Badge className="bg-teal-100 text-teal-700 border-teal-200 flex items-center gap-1 w-fit">
+                <Brain className="h-3 w-3" />
+                {t('news:badge.simplified', 'Simplifié')}
+              </Badge>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
+            <span className="flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+              {t('news:card.published_on', 'Publiée le {{date}}', { date: formatDate(actu.date_publication, { day: 'numeric', month: 'long', year: 'numeric' }) })}
+            </span>
+          </div>
+          <div className="mt-2"><RecordProvenance verifiedAt={verifiedAt} sourceHost={sourceLabel} sourceUrl={sourceUrl || null} /></div>
+        </CardContent>
+        <CardActionStrip label={t('news:card.action', 'Lire l’actualité')} />
+      </Card>
+    </AnimatedCard>
+  );
+}
+
 export default function Actualites() {
+  const { t } = useT('news');
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const { isFalcEnabled } = useFalc();
@@ -149,12 +240,12 @@ export default function Actualites() {
   const pagination = data?.pagination || {};
 
   const liveMessage = useMemo(() => {
-    if (isLoading || isFetching) return 'Chargement des actualités...';
-    if (error) return "Erreur lors du chargement des actualités.";
-    if (!actualites.length) return "Aucune actualité trouvée.";
+    if (isLoading || isFetching) return t('news:list.loading', 'Chargement des actualités...');
+    if (error) return t('news:live.error', "Erreur lors du chargement des actualités.");
+    if (!actualites.length) return t('news:live.none', "Aucune actualité trouvée.");
     const total = typeof pagination.total === 'number' ? pagination.total : actualites.length;
-    return `${total} actualité${total > 1 ? 's' : ''} trouvée${total > 1 ? 's' : ''}.`;
-  }, [isLoading, isFetching, error, actualites.length, pagination.total]);
+    return t('news:live.found', { count: total, defaultValue_one: '{{count}} actualité trouvée.', defaultValue_other: '{{count}} actualités trouvées.' });
+  }, [isLoading, isFetching, error, actualites.length, pagination.total, t]);
 
   /**
    * @param {string} key
@@ -192,23 +283,23 @@ export default function Actualites() {
   const schema = useMemo(() => {
     return [
       generateBreadcrumbSchema([
-        { name: 'Accueil', url: '/' },
-        { name: 'Actualités', url: '/actualites' },
+        { name: t('news:breadcrumb.home', 'Accueil'), url: '/' },
+        { name: t('news:breadcrumb.news', 'Actualités'), url: '/actualites' },
       ]),
     ].filter(Boolean);
-  }, []);
+  }, [t]);
 
   const sourceOptions = useMemo(() => {
     const fromItems = actualites
       .map((a) => getSourceName(a))
       .filter((v) => v);
     const unique = Array.from(new Set(fromItems)).sort((a, b) => a.localeCompare(b, 'fr'));
-    const options = [{ value: '', label: 'Toutes les sources' }, ...unique.map((v) => ({ value: v, label: v }))];
+    const options = [{ value: '', label: t('news:filters.all_sources', 'Toutes les sources') }, ...unique.map((v) => ({ value: v, label: v }))];
     if (source && !unique.includes(source)) {
       options.splice(1, 0, { value: source, label: source });
     }
     return options;
-  }, [actualites, source]);
+  }, [actualites, source, t]);
 
   const hasNext = Boolean(pagination.hasNext);
   const totalPages = pagination.totalPages || 1;
@@ -216,8 +307,8 @@ export default function Actualites() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO
-        title="Actualités"
-        description="Les dernières informations officielles sur les aides et les droits."
+        title={t('news:list.seo_title', 'Actualités')}
+        description={t('news:list.seo_description', 'Les dernières informations officielles sur les aides et les droits.')}
         path="/actualites"
         schema={schema}
       />
@@ -226,7 +317,7 @@ export default function Actualites() {
         {liveMessage}
       </p>
 
-      <PageHeader title="Actualités" description="Les changements utiles sur vos droits et vos démarches, avec leur source officielle." />
+      <PageHeader title={t('news:list.title', 'Actualités')} description={t('news:list.description', 'Les changements utiles sur vos droits et vos démarches, avec leur source officielle.')} />
 
       {/* Header — R26: no search bar over an empty list (nothing published and nothing searched) */}
       {!nothingPublished && (
@@ -241,24 +332,24 @@ export default function Actualites() {
               aria-expanded={isFiltersOpen}
             >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              Filtres
+              {t('news:filters.toggle', 'Filtres')}
             </Button>
           </div>
 
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
               <Input
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
-                placeholder="Rechercher une actualité (ex: APL, RSA, logement...)"
-                aria-label="Rechercher une actualité"
-                className="pl-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                placeholder={t('news:search.placeholder', 'Rechercher une actualité (ex: APL, RSA, logement...)')}
+                aria-label={t('news:search.label', 'Rechercher une actualité')}
+                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
               />
             </div>
             <Button type="submit" className="h-11">
-              Rechercher
+              {t('news:search.submit', 'Rechercher')}
             </Button>
           </form>
 
@@ -269,7 +360,7 @@ export default function Actualites() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   <div>
                     <label htmlFor="actualites-source" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Source
+                      {t('news:filters.source', 'Source')}
                     </label>
                     <select
                       id="actualites-source"
@@ -287,7 +378,7 @@ export default function Actualites() {
 
                   <div>
                     <label htmlFor="actualites-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      Résultats par page
+                      {t('news:filters.per_page', 'Résultats par page')}
                     </label>
                     <select
                       id="actualites-limit"
@@ -304,7 +395,7 @@ export default function Actualites() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <p className="block text-sm font-semibold text-slate-900 mb-2">Catégorie</p>
+                    <p className="block text-sm font-semibold text-slate-900 mb-2">{t('news:filters.category', 'Catégorie')}</p>
                     <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
@@ -312,7 +403,7 @@ export default function Actualites() {
                         size="sm"
                         onClick={() => handleParamChange('categorie', '')}
                       >
-                        Toutes
+                        {t('news:filters.all_categories', 'Toutes')}
                       </Button>
                       {taxonomyCategories.map((cat) => (
                         <Button
@@ -331,7 +422,7 @@ export default function Actualites() {
 
                 <div className="mt-4 flex justify-end">
                   <Button type="button" variant="ghost" onClick={clearFilters}>
-                    Réinitialiser
+                    {t('news:filters.reset', 'Réinitialiser')}
                   </Button>
                 </div>
               </CardContent>
@@ -343,94 +434,21 @@ export default function Actualites() {
 
       <div className={`${nothingPublished ? 'max-w-7xl' : 'max-w-4xl'} mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8`}>
         {isLoading ? (
-          <ListSkeleton layout="list" count={5} message="Chargement des actualités..." />
+          <ListSkeleton layout="list" count={5} message={t('news:list.loading', 'Chargement des actualités...')} />
         ) : error ? (
           <EmptyState
-            title="Impossible de charger les actualités"
-            description="Un problème est survenu lors de la récupération des actualités. Vous pouvez réessayer."
-            actions={<Button type="button" variant="outline" className="min-h-11" onClick={() => refetch()}>Réessayer</Button>}
+            title={t('news:error.title', 'Impossible de charger les actualités')}
+            description={t('news:error.text', 'Un problème est survenu lors de la récupération des actualités. Vous pouvez réessayer.')}
+            actions={<Button type="button" variant="outline" className="min-h-11" onClick={() => refetch()}>{t('news:retry', 'Réessayer')}</Button>}
             role="alert"
             data-testid="actualites-error"
           />
         ) : actualites.length > 0 ? (
           <>
             <div className="space-y-6" data-testid="actualites-results-list">
-              {actualites.map((actu, idx) => {
-                const typeKey = actu.type_actu || 'info';
-                const TypeIcon = TYPE_ICONS[typeKey] || Info;
-                const linkUrl = actu.slug ? `/actualites/${actu.slug}` : `/actualites/view?id=${actu.id}`;
-                const sourceName = getSourceName(actu);
-                const sourceUrl = getSourceUrl(actu);
-                const provenance = getProvenance(actu);
-                const verifiedAt = formatProvenanceDate(provenance.verifiedAt);
-                const sourceLabel = newsSourceLabel(sourceUrl, sourceName);
-                const excerpt = htmlToPlainText(actu.summary_falc || actu.resume || '', { maxLength: 220 });
-
-                return (
-                  <AnimatedCard index={idx} key={actu.id}>
-                    <Card
-                      className={`group relative flex h-full flex-col overflow-hidden hover:shadow-lg transition-all ${actu.est_important ? 'border-l-4 border-l-blue-500' : ''}`}
-                      data-testid="actualite-card"
-                    >
-                      {/* Overlay Link */}
-                      <Link
-                        to={linkUrl}
-                        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
-                        aria-label={`Lire l'actualité ${actu.titre}`}
-                      >
-                        <span className="sr-only">Lire l'actualité {actu.titre}</span>
-                      </Link>
-
-                      <CardContent className="flex-1 p-6">
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className={TYPE_COLORS[typeKey] || 'bg-slate-100 text-slate-800'}>
-                            <TypeIcon className="h-3 w-3 mr-1" />
-                            {typeKey === 'nouveaute' ? 'Nouveauté'
-                              : typeKey === 'modification' ? 'Modification'
-                                : typeKey === 'alerte' ? 'Alerte'
-                                  : 'Information'}
-                          </Badge>
-                          {shownNewsCategory(actu.categorie) && (
-                            <CategoryChip slug={actu.categorie} />
-                          )}
-                          {actu.est_important && (
-                            <Badge className="bg-amber-100 text-amber-800">
-                              Important
-                            </Badge>
-                          )}
-                        </div>
-
-                        <h2 className="text-xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors mb-3" data-testid="actualite-title">
-                          {actu.titre}
-                        </h2>
-
-                        <p className="text-slate-600 mb-4 leading-relaxed line-clamp-5">
-                          {isFalcEnabled && actu.summary_falc ? actu.summary_falc : excerpt}
-                        </p>
-
-                        {/* FALC badge */}
-                        {isFalcEnabled && actu.summary_falc && (
-                          <div className="mb-4">
-                            <Badge className="bg-teal-100 text-teal-700 border-teal-200 flex items-center gap-1 w-fit">
-                              <Brain className="h-3 w-3" />
-                              Simplifié
-                            </Badge>
-                          </div>
-                        )}
-
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
-                          <span className="flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                            Publiée le {new Date(actu.date_publication).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                          </span>
-                        </div>
-                        <div className="mt-2"><RecordProvenance verifiedAt={verifiedAt} sourceHost={sourceLabel} sourceUrl={sourceUrl || null} /></div>
-                      </CardContent>
-                      <CardActionStrip label="Lire l’actualité" />
-                    </Card>
-                  </AnimatedCard>
-                );
-              })}
+              {actualites.map((actu, idx) => (
+                <NewsCard key={actu.id} actu={actu} index={idx} isFalcEnabled={isFalcEnabled} />
+              ))}
             </div>
 
             {totalPages > 1 && (
@@ -440,24 +458,24 @@ export default function Actualites() {
                   disabled={page <= 1}
                   onClick={() => handlePageChange(page - 1)}
                 >
-                  Précédent
+                  {t('news:pagination.previous', 'Précédent')}
                 </Button>
                 <span className="flex items-center px-4 text-sm font-medium">
-                  Page {page} / {totalPages}
+                  {t('news:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
                 </span>
                 <Button
                   variant="outline"
                   disabled={!hasNext}
                   onClick={() => handlePageChange(page + 1)}
                 >
-                  Suivant
+                  {t('news:pagination.next', 'Suivant')}
                 </Button>
               </div>
             )}
           </>
         ) : nothingPublished ? (
-          <EmptyCatalogue title="Aucune actualité n’est encore publiée" testId="actualites-none-published">
-            <p>Chaque actualité est relue avant publication et cite sa source officielle. Aucune n’a encore été publiée pendant la bêta.</p>
+          <EmptyCatalogue title={t('news:none.title', 'Aucune actualité n’est encore publiée')} testId="actualites-none-published">
+            <p>{t('news:none.text', 'Chaque actualité est relue avant publication et cite sa source officielle. Aucune n’a encore été publiée pendant la bêta.')}</p>
           </EmptyCatalogue>
         ) : (
           <NewsFallback />

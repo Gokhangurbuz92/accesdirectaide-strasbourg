@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Trans } from 'react-i18next';
 import {
   Search, MapPin, Filter, ChevronRight, ChevronDown,
   Phone, Calendar, Globe, ArrowRight,
@@ -16,6 +17,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import AnimatedCard from '@/components/ui/AnimatedCard';
 import { useFalc } from '@/contexts/FalcContext';
+import i18n, { useLanguage, useT } from '@/i18n';
+import useContentTranslation from '@/hooks/useContentTranslation';
 
 // ── Icon map ────────────────────────────────────────────────────
 const ICON_MAP = {
@@ -28,14 +31,50 @@ function getIcon(name, fallback = Search) {
   return ICON_MAP[name] || fallback;
 }
 
+// ── Need labels (R32) ──────────────────────────────────────────
+const FR = { lang: 'fr', dir: 'ltr' };
+
+/** the built-in needs (the same slugs and French labels as the taxonomy) in the interface language */
+function builtInNeedLabel(t, slug) {
+  switch (slug) {
+    case 'acces_droits': return t('search:need.acces-droits', 'Accès aux droits');
+    case 'logement': return t('search:need.logement', 'Logement');
+    case 'emploi': return t('search:need.emploi', 'Emploi / Insertion');
+    case 'mobilite': return t('search:need.mobilite', 'Mobilité');
+    case 'famille': return t('search:need.famille', 'Famille / Parentalité');
+    case 'handicap': return t('search:need.handicap', 'Handicap');
+    case 'sante_mentale': return t('search:need.sante-mentale', 'Santé mentale / Addictions');
+    case 'violences': return t('search:need.violences', 'Violences');
+    case 'budget': return t('search:need.budget', 'Budget / Surendettement');
+    case 'urgence': return t('search:need.urgence', 'Urgence sociale');
+    case 'isolement': return t('search:need.isolement', 'Isolement / Lien social');
+    case 'numerique': return t('search:need.numerique', 'Numérique');
+    default: return null;
+  }
+}
+
+/**
+ * The label of a need and the attributes of its element: in French the label received (taxonomy or built-in list), unchanged; in another language
+ * the translated built-in label, or — for a need the interface does not know — the French label, marked as French.
+ * @returns {[string, Record<string, string>]}
+ */
+function needLabel(t, isSource, need) {
+  if (isSource) return [need?.label, {}];
+  const text = builtInNeedLabel(t, need?.slug);
+  return text ? [text, {}] : [need?.label, FR];
+}
+
 // ── Need Selector Grid ─────────────────────────────────────────
 // @ts-ignore
 function NeedSelector({ needs, selected, onToggle }) {
+  const { t } = useT('search');
+  const { isSource } = useLanguage();
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
       {needs.map((need) => {
         const Icon = getIcon(need.icon);
         const isSelected = selected.includes(need.slug);
+        const [label, labelAttrs] = needLabel(t, isSource, need);
         return (
           <button
             key={need.slug}
@@ -58,11 +97,11 @@ function NeedSelector({ needs, selected, onToggle }) {
             `}>
               <Icon className="h-5 w-5" />
             </div>
-            <span className={`text-sm font-medium text-center leading-tight ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>
-              {need.label}
+            <span className={`text-sm font-medium text-center leading-tight ${isSelected ? 'text-blue-700' : 'text-slate-700'}`} {...labelAttrs}>
+              {label}
             </span>
             {isSelected && (
-              <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center">
+              <div className="absolute top-1.5 end-1.5 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -79,10 +118,15 @@ function NeedSelector({ needs, selected, onToggle }) {
 // @ts-ignore
 function ProSearchCard({ structure, index }) {
   const { isFalcEnabled } = useFalc();
+  const { t } = useT('search');
+  const { isSource } = useLanguage();
+  // R32: the place's texts go through the content translation; its name, address and phone number are never translated, only marked French
+  const tr = useContentTranslation('structure', structure);
   const targetUrl = structure.slug ? `/structures/${structure.slug}` : `/structures/view?id=${structure.id}`;
   const rdvUrl = structure.slug ? `/rdv/${structure.slug}` : null;
   const hasRdv = structure.rdv?.isPublished;
   const professionals = structure.professionals || [];
+  const summaryField = isFalcEnabled && tr.value('summary_falc') ? 'summary_falc' : 'description_courte';
 
   return (
     <AnimatedCard index={index}>
@@ -92,34 +136,37 @@ function ProSearchCard({ structure, index }) {
             {/* Type + badges */}
             <div className="flex flex-wrap gap-2 items-start justify-between">
               <div className="flex flex-wrap gap-1.5">
-                {structure.needs?.slice(0, 3).map(n => (
-                  <Badge key={n.slug} className={n.color || 'bg-slate-100 text-slate-700'} variant="secondary">
-                    {n.label}
-                  </Badge>
-                ))}
+                {structure.needs?.slice(0, 3).map(n => {
+                  const [label, labelAttrs] = needLabel(t, isSource, n);
+                  return (
+                    <Badge key={n.slug} className={n.color || 'bg-slate-100 text-slate-700'} variant="secondary" {...labelAttrs}>
+                      {label}
+                    </Badge>
+                  );
+                })}
                 {structure.needs?.length > 3 && (
                   <Badge variant="outline" className="text-slate-500">+{structure.needs.length - 3}</Badge>
                 )}
               </div>
               {hasRdv && (
                 <Badge className="bg-green-100 text-green-700 border-green-300">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  RDV en ligne
+                  <Calendar className="h-3 w-3 me-1" />
+                  {t('search:pro.card.rdv-online', 'RDV en ligne')}
                 </Badge>
               )}
             </div>
 
             {/* Name */}
             <Link to={targetUrl} className="group-hover:text-blue-700 transition-colors">
-              <h3 className="font-semibold text-lg text-slate-900">
+              <h3 className="font-semibold text-lg text-slate-900" {...tr.attrs('nom')}>
                 {structure.nom}
               </h3>
             </Link>
 
             {/* Description */}
-            {(structure.description_courte || (isFalcEnabled && structure.summary_falc)) && (
-              <p className="text-slate-600 text-sm line-clamp-3">
-                {isFalcEnabled && structure.summary_falc ? structure.summary_falc : structure.description_courte}
+            {(tr.value('description_courte') || (isFalcEnabled && tr.value('summary_falc'))) && (
+              <p className="text-slate-600 text-sm line-clamp-3" {...tr.attrs(summaryField)}>
+                {tr.value(summaryField)}
               </p>
             )}
 
@@ -133,7 +180,7 @@ function ProSearchCard({ structure, index }) {
                     </div>
                     <div className="text-xs">
                       <div className="font-medium text-slate-700">{pro.displayName}</div>
-                      {pro.jobTitle && <div className="text-slate-500">{pro.jobTitle}</div>}
+                      {pro.jobTitle && <div className="text-slate-500" {...tr.attrs('professionals')}>{pro.jobTitle}</div>}
                     </div>
                   </div>
                 ))}
@@ -145,27 +192,27 @@ function ProSearchCard({ structure, index }) {
               {structure.adresse && (
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                  <span>{structure.adresse}, {structure.code_postal} {structure.ville}</span>
+                  <span {...tr.attrs('adresse')}>{structure.adresse}, {structure.code_postal} {structure.ville}</span>
                 </div>
               )}
               {structure.telephone && (
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-slate-400" />
-                  <a href={`tel:${structure.telephone}`} className="text-blue-600 hover:underline" onClick={e => e.stopPropagation()}>
+                  <a href={`tel:${structure.telephone}`} className="text-blue-600 hover:underline" onClick={e => e.stopPropagation()} {...tr.attrs('telephone')}>
                     {structure.telephone}
                   </a>
                 </div>
               )}
             </div>
 
-            {/* Modalities */}
+            {/* Modalities (the taxonomy's French labels) */}
             {structure.modalities?.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {structure.modalities.map(m => {
                   const MIcon = getIcon(m.icon, Building2);
                   return (
-                    <Badge key={m.slug} variant="outline" className="text-slate-600 border-slate-300">
-                      <MIcon className="h-3 w-3 mr-1" />
+                    <Badge key={m.slug} variant="outline" className="text-slate-600 border-slate-300" {...tr.attrs('modalities')}>
+                      <MIcon className="h-3 w-3 me-1" />
                       {m.label}
                     </Badge>
                   );
@@ -177,15 +224,15 @@ function ProSearchCard({ structure, index }) {
             <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-slate-100">
               <Link to={targetUrl}>
                 <Button variant="outline" size="sm">
-                  Voir la fiche
-                  <ArrowRight className="h-4 w-4 ml-1" />
+                  {t('search:pro.card.open', 'Voir la fiche')}
+                  <ArrowRight className="rtl-flip h-4 w-4 ms-1" />
                 </Button>
               </Link>
               {hasRdv && rdvUrl && (
                 <Link to={rdvUrl}>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    Prendre RDV
+                    <Calendar className="h-4 w-4 me-1" />
+                    {t('search:pro.card.book', 'Prendre RDV')}
                   </Button>
                 </Link>
               )}
@@ -226,6 +273,8 @@ async function searchProApi(body) {
 
 // ── Main Page ───────────────────────────────────────────────────
 export default function RechercheAide() {
+  const { t } = useT('search');
+  const { isSource } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // State
@@ -240,7 +289,8 @@ export default function RechercheAide() {
   // API data — use static fallback immediately, API can enrich later
   const [facets, setFacets] = useState({ needs: STATIC_NEEDS, audiences: [], modalities: [] });
   const [results, setResults] = useState(null);
-  const [searchError, setSearchError] = useState('');
+  // R32: a flag, put into words at render (the interface language may change)
+  const [searchError, setSearchError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -269,7 +319,7 @@ export default function RechercheAide() {
   const doSearch = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setStep('results');
-    setSearchError('');
+    setSearchError(false);
     try {
       const res = await searchProApi({
         needs: selectedNeeds,
@@ -290,7 +340,7 @@ export default function RechercheAide() {
     } catch (err) {
       // R7: a failed search is not « Aucun résultat » (the error was only written to the console)
       setResults(null);
-      setSearchError('La recherche n’a pas pu aboutir. Ce n’est pas une absence de structure : réessayez dans un instant.');
+      setSearchError(true);
     } finally {
       setLoading(false);
     }
@@ -317,26 +367,26 @@ export default function RechercheAide() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-slate-50">
       <Helmet>
-        <title>Trouver de l'aide — Accès Direct Aide</title>
-        <meta name="description" content="Trouvez un professionnel du social ou médico-social près de chez vous. Exprimez votre besoin et accédez à un accompagnement adapté." />
+        <title>{t('search:pro.meta.title', 'Trouver de l\'aide — Accès Direct Aide')}</title>
+        <meta name="description" content={t('search:pro.meta.description', 'Trouvez un professionnel du social ou médico-social près de chez vous. Exprimez votre besoin et accédez à un accompagnement adapté.')} />
       </Helmet>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
+          <div className="absolute -top-24 -end-24 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -start-24 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-5xl mx-auto px-4 py-12 sm:py-16 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full mb-4">
             <Sparkles className="h-4 w-4 text-yellow-300" />
-            <span className="text-sm font-medium text-blue-100">Nouveau parcours simplifié</span>
+            <span className="text-sm font-medium text-blue-100">{t('search:pro.badge', 'Nouveau parcours simplifié')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-            Trouvez de l'aide<br />près de chez vous
+            <Trans i18n={i18n} i18nKey="search:pro.title" defaults="Trouvez de l'aide<br/>près de chez vous" />
           </h1>
           <p className="text-lg sm:text-xl text-blue-100 max-w-2xl mx-auto">
-            Exprimez votre besoin en quelques clics. Nous vous mettons en relation avec les structures et professionnels qui peuvent vous accompagner.
+            {t('search:pro.intro', 'Exprimez votre besoin en quelques clics. Nous vous mettons en relation avec les structures et professionnels qui peuvent vous accompagner.')}
           </p>
         </div>
       </section>
@@ -355,9 +405,9 @@ export default function RechercheAide() {
             }`}
           >
             <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">1</span>
-            Mon besoin
+            {t('search:pro.step.need', 'Mon besoin')}
           </button>
-          <ChevronRight className="h-4 w-4 text-slate-400" />
+          <ChevronRight className="rtl-flip h-4 w-4 text-slate-400" />
           <button
             onClick={() => selectedNeeds.length > 0 && doSearch()}
             disabled={selectedNeeds.length === 0}
@@ -368,7 +418,7 @@ export default function RechercheAide() {
             }`}
           >
             <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">2</span>
-            Résultats
+            {t('search:pro.step.results', 'Résultats')}
           </button>
         </div>
 
@@ -377,10 +427,10 @@ export default function RechercheAide() {
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold text-slate-900 mb-2">
-                J'ai besoin d'aide pour…
+                {t('search:pro.needs.title', 'J\'ai besoin d\'aide pour…')}
               </h2>
               <p className="text-slate-600">
-                Sélectionnez un ou plusieurs besoins. Nous trouverons les structures adaptées.
+                {t('search:pro.needs.text', 'Sélectionnez un ou plusieurs besoins. Nous trouverons les structures adaptées.')}
               </p>
             </div>
 
@@ -402,13 +452,13 @@ export default function RechercheAide() {
             <div className="bg-white rounded-2xl border p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-2 text-slate-700 font-medium">
                 <MapPin className="h-5 w-5 text-blue-500" />
-                <span>Où habitez-vous ?</span>
-                <span className="text-slate-600 text-sm font-normal">(optionnel)</span>
+                <span>{t('search:pro.where', 'Où habitez-vous ?')}</span>
+                <span className="text-slate-600 text-sm font-normal">{t('search:pro.optional', '(optionnel)')}</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Input
                   type="text"
-                  placeholder="Ville ou n° de département (ex: 75, Lyon)"
+                  placeholder={t('search:pro.territory-placeholder', 'Ville ou n° de département (ex: 75, Lyon)')}
                   value={territory}
                   onChange={e => setTerritory(e.target.value)}
                   className="flex-1"
@@ -416,7 +466,7 @@ export default function RechercheAide() {
                 />
                 <Input
                   type="text"
-                  placeholder="Mot-clé (optionnel)"
+                  placeholder={t('search:pro.keyword-placeholder', 'Mot-clé (optionnel)')}
                   value={freeText}
                   onChange={e => setFreeText(e.target.value)}
                   className="flex-1"
@@ -434,8 +484,8 @@ export default function RechercheAide() {
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
                 id="search-button"
               >
-                <Search className="h-5 w-5 mr-2" />
-                Rechercher ({selectedNeeds.length} besoin{selectedNeeds.length > 1 ? 's' : ''} sélectionné{selectedNeeds.length > 1 ? 's' : ''})
+                <Search className="h-5 w-5 me-2" />
+                {t('search:pro.submit', { count: selectedNeeds.length, defaultValue_one: 'Rechercher ({{count}} besoin sélectionné)', defaultValue_other: 'Rechercher ({{count}} besoins sélectionnés)' })}
               </Button>
             </div>
           </div>
@@ -449,35 +499,36 @@ export default function RechercheAide() {
               <Filter className="h-4 w-4 text-slate-400" />
               {selectedNeeds.map(slug => {
                 const need = facets?.needs?.find(n => n.slug === slug);
+                const [label, labelAttrs] = need ? needLabel(t, isSource, need) : [slug, {}];
                 return (
-                  <Badge key={slug} className="bg-blue-100 text-blue-700 cursor-pointer hover:bg-blue-200" onClick={() => toggleNeed(slug)}>
-                    {need?.label || slug}
-                    <X className="h-3 w-3 ml-1" />
+                  <Badge key={slug} className="bg-blue-100 text-blue-700 cursor-pointer hover:bg-blue-200" onClick={() => toggleNeed(slug)} {...labelAttrs}>
+                    {label || slug}
+                    <X className="h-3 w-3 ms-1" />
                   </Badge>
                 );
               })}
               {territory && (
                 <Badge variant="outline" className="text-slate-600">
-                  <MapPin className="h-3 w-3 mr-1" />
+                  <MapPin className="h-3 w-3 me-1" />
                   {territory}
                 </Badge>
               )}
-              <button onClick={clearFilters} className="text-sm text-slate-500 hover:text-red-600 ml-2 transition-colors">
-                Tout effacer
+              <button onClick={clearFilters} className="text-sm text-slate-500 hover:text-red-600 ms-2 transition-colors">
+                {t('search:pro.clear', 'Tout effacer')}
               </button>
             </div>
 
             {/* Results count */}
             <div className="flex items-center justify-between">
               <p className="text-slate-600">
-                {loading ? 'Recherche en cours…' : searchError ? null : (
+                {loading ? t('search:pro.loading', 'Recherche en cours…') : searchError ? null : (
                   totalResults === 0
-                    ? 'Aucun résultat trouvé'
-                    : <><strong>{totalResults}</strong> structure{totalResults > 1 ? 's' : ''} trouvée{totalResults > 1 ? 's' : ''}</>
+                    ? t('search:pro.none-found', 'Aucun résultat trouvé')
+                    : <Trans i18n={i18n} i18nKey="search:pro.found" count={totalResults} defaults="<0>{{count}}</0> structures trouvées" tOptions={{ defaultValue_one: '<0>{{count}}</0> structure trouvée', defaultValue_other: '<0>{{count}}</0> structures trouvées' }} components={[<strong key="count" />]} />
                 )}
               </p>
               <Button variant="ghost" size="sm" onClick={() => setStep('needs')}>
-                ← Modifier ma recherche
+                {t('search:pro.edit-back', '← Modifier ma recherche')}
               </Button>
             </div>
 
@@ -504,13 +555,13 @@ export default function RechercheAide() {
             {/* Empty state */}
             {!loading && !searchError && results?.needsMatchedBy === 'declared_categories' ? (
               <p className="text-sm text-slate-600" data-testid="search-pro-needs-approx">
-                Le besoin choisi est recherché dans les catégories et les services que les structures déclarent elles-mêmes (sources officielles).
+                {t('search:pro.approx', 'Le besoin choisi est recherché dans les catégories et les services que les structures déclarent elles-mêmes (sources officielles).')}
               </p>
             ) : null}
             {!loading && searchError ? (
               <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800" data-testid="search-pro-error">
-                {searchError}{' '}
-                <button type="button" className="underline font-medium" onClick={() => doSearch(page)} data-testid="search-pro-retry">Réessayer</button>
+                {t('search:pro.error', 'La recherche n’a pas pu aboutir. Ce n’est pas une absence de structure : réessayez dans un instant.')}{' '}
+                <button type="button" className="underline font-medium" onClick={() => doSearch(page)} data-testid="search-pro-retry">{t('search:retry', 'Réessayer')}</button>
               </div>
             ) : null}
             {!loading && !searchError && totalResults === 0 && (
@@ -519,13 +570,13 @@ export default function RechercheAide() {
                   <Search className="h-8 w-8 text-slate-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-700 mb-2">
-                  Aucune structure trouvée
+                  {t('search:pro.empty.title', 'Aucune structure trouvée')}
                 </h3>
                 <p className="text-slate-500 max-w-md mx-auto mb-6">
-                  Essayez de modifier vos critères de recherche ou élargissez la zone géographique.
+                  {t('search:pro.empty.text', 'Essayez de modifier vos critères de recherche ou élargissez la zone géographique.')}
                 </p>
                 <Button variant="outline" onClick={() => setStep('needs')}>
-                  Modifier ma recherche
+                  {t('search:pro.edit', 'Modifier ma recherche')}
                 </Button>
               </div>
             )}
@@ -538,17 +589,17 @@ export default function RechercheAide() {
                   disabled={page <= 1}
                   onClick={() => doSearch(page - 1)}
                 >
-                  Précédent
+                  {t('search:pro.previous', 'Précédent')}
                 </Button>
                 <span className="flex items-center px-4 text-sm text-slate-600">
-                  Page {page} / {results.pagination.totalPages}
+                  {t('search:pro.page', 'Page {{page}} / {{total}}', { page, total: results.pagination.totalPages })}
                 </span>
                 <Button
                   variant="outline"
                   disabled={!results.pagination.hasNext}
                   onClick={() => doSearch(page + 1)}
                 >
-                  Suivant
+                  {t('search:pro.next', 'Suivant')}
                 </Button>
               </div>
             )}

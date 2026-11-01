@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import brand from '@/lib/brand-config';
+import { useT } from '@/i18n';
 import {
     ArrowLeft,
     Home,
@@ -17,13 +18,14 @@ import {
  * Provides back/home actions, security badge, help link.
  */
 export default function ServiceError({ code = 404 }) {
+    const { t } = useT('layout');
     const is404 = code === 404;
 
     return (
         <div className="min-h-screen bg-white flex flex-col" data-testid={is404 ? 'page-not-found' : 'page-error'}>
             <SEO
                 title={`${code} — ${brand.name}`}
-                description={is404 ? 'Page introuvable' : 'Erreur serveur'}
+                description={is404 ? t('layout:notFound.title', 'Page introuvable') : t('layout:error.server', 'Erreur serveur')}
                 noindex
             />
 
@@ -37,7 +39,8 @@ export default function ServiceError({ code = 404 }) {
                     }}
                 >
                     <span>{brand.banner.text}</span>
-                    <span className="opacity-70 hidden sm:inline">
+                    {/* the motto of the Republic stays in French */}
+                    <span className="opacity-70 hidden sm:inline" lang="fr">
                         Liberté, Égalité, Fraternité
                     </span>
                 </div>
@@ -57,25 +60,25 @@ export default function ServiceError({ code = 404 }) {
                 <h1 className="text-6xl font-bold text-slate-900 mb-2">{code}</h1>
 
                 <h2 id="service-error-title" className="text-xl font-bold text-slate-800 uppercase mb-4">
-                    {is404 ? 'Page introuvable' : 'Erreur technique temporaire'}
+                    {is404 ? t('layout:notFound.title', 'Page introuvable') : t('layout:error.temporary', 'Erreur technique temporaire')}
                 </h2>
 
                 <p className="max-w-sm text-sm text-slate-600 mb-8 leading-relaxed">
                     {is404
-                        ? "L\u2019adresse saisie est peut-être incorrecte ou la page a été déplacée."
-                        : "Une erreur technique empêche d\u2019afficher cette page. Réessayez dans quelques instants."}
+                        ? t('layout:error.notFoundText', "L’adresse saisie est peut-être incorrecte ou la page a été déplacée.")
+                        : t('layout:error.temporaryText', "Une erreur technique empêche d’afficher cette page. Réessayez dans quelques instants.")}
                 </p>
 
                 {/* Actions */}
                 <div className="flex gap-3">
                     <Button variant="outline" onClick={() => window.history.back()}>
-                        <ArrowLeft className="mr-1.5 h-4 w-4" />
-                        Retour
+                        <ArrowLeft className="me-1.5 h-4 w-4 rtl-flip" />
+                        {t('layout:error.back', 'Retour')}
                     </Button>
                     <Button asChild>
                         <Link to="/">
-                            <Home className="mr-1.5 h-4 w-4" />
-                            Accueil
+                            <Home className="me-1.5 h-4 w-4" />
+                            {t('layout:nav.home', 'Accueil')}
                         </Link>
                     </Button>
                 </div>
@@ -87,7 +90,7 @@ export default function ServiceError({ code = 404 }) {
                         className="flex items-center gap-1.5 text-indigo-600 font-bold uppercase hover:underline"
                     >
                         <LifeBuoy size={12} />
-                        Centre d&apos;aide
+                        {t('layout:error.help', "Centre d'aide")}
                     </Link>
                 </div>
             </section>

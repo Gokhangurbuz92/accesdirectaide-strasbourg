@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { Trans } from 'react-i18next';
 import SEO from '@/components/SEO';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, BookOpen, ExternalLink } from 'lucide-react';
 import LoadError from '@/components/LoadError';
+import i18n, { useLanguage, useT } from '@/i18n';
 
 const CATEGORIES = [
   { value: '', label: 'Toutes les catégories' },
@@ -33,11 +35,31 @@ const CATEGORY_COLORS = {
   ACCOMPAGNEMENT: 'bg-teal-100 text-teal-800',
 };
 
+/** R32: a glossary category in the interface language (the values sent to the API do not change) */
+function categoryLabel(t, value) {
+  switch (value) {
+    case '': return t('glossary:category.all', 'Toutes les catégories');
+    case 'EMPLOI': return t('glossary:category.emploi', 'Emploi');
+    case 'LOGEMENT': return t('glossary:category.logement', 'Logement');
+    case 'SANTE': return t('glossary:category.sante', 'Santé');
+    case 'FAMILLE': return t('glossary:category.famille', 'Famille');
+    case 'HANDICAP': return t('glossary:category.handicap', 'Handicap');
+    case 'ENERGIE': return t('glossary:category.energie', 'Énergie');
+    case 'ACCESSIBILITE': return t('glossary:category.accessibilite', 'Accessibilité');
+    case 'ACCOMPAGNEMENT': return t('glossary:category.accompagnement', 'Accompagnement');
+    default: return null;
+  }
+}
+
 /**
  * Glossaire — public glossary of social aid terminology.
  * Fetches from GET /api/glossaire with q and categorie filters.
+ * R32: the terms and definitions come from the API and stay in French (marked lang="fr" when the interface is in another language).
  */
 export default function Glossaire() {
+  const { t } = useT('glossary');
+  const { isSource } = useLanguage();
+  const fr = isSource ? {} : { lang: 'fr', dir: 'ltr' };
   const [search, setSearch] = useState('');
   const [categorie, setCategorie] = useState('');
 
@@ -57,8 +79,8 @@ export default function Glossaire() {
   return (
     <div className="min-h-screen bg-slate-50">
       <SEO
-        title="Glossaire des aides sociales | AccesDirectAide"
-        description="Comprendre les sigles et termes des aides sociales françaises : RSA, APL, AAH, CAF, MDPH... Expliqués simplement."
+        title={t('glossary:seo.title', 'Glossaire des aides sociales | AccesDirectAide')}
+        description={t('glossary:seo.description', 'Comprendre les sigles et termes des aides sociales françaises : RSA, APL, AAH, CAF, MDPH... Expliqués simplement.')}
         path="/glossaire"
       />
 
@@ -72,11 +94,11 @@ export default function Glossaire() {
           <div className="flex items-center gap-3 mb-2">
             <BookOpen className="h-8 w-8 text-blue-300" />
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Glossaire
+              {t('glossary:title', 'Glossaire')}
             </h1>
           </div>
           <p className="text-blue-100/80 text-sm sm:text-base">
-            Les termes et acronymes des aides sociales, expliqués simplement.
+            {t('glossary:intro', 'Les termes et acronymes des aides sociales, expliqués simplement.')}
           </p>
         </div>
       </div>
@@ -85,30 +107,30 @@ export default function Glossaire() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher un terme (ex: RSA, APL, CAF...)"
-              aria-label="Rechercher dans le glossaire"
-              className="pl-10 h-11 bg-white"
+              placeholder={t('glossary:search.placeholder', 'Rechercher un terme (ex: RSA, APL, CAF...)')}
+              aria-label={t('glossary:search.label', 'Rechercher dans le glossaire')}
+              className="ps-10 h-11 bg-white"
             />
           </div>
           <select
             value={categorie}
             onChange={(e) => setCategorie(e.target.value)}
             className="h-11 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Filtrer par catégorie"
+            aria-label={t('glossary:filter.label', 'Filtrer par catégorie')}
           >
             {CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>{c.label}</option>
+              <option key={c.value} value={c.value}>{categoryLabel(t, c.value) ?? c.label}</option>
             ))}
           </select>
         </div>
 
         {/* Count */}
         <p className="text-sm text-slate-700" role="status">
-          {isLoading ? 'Chargement...' : isError ? '' : `${termes.length} terme${termes.length > 1 ? 's' : ''} trouvé${termes.length > 1 ? 's' : ''}`}
+          {isLoading ? t('glossary:loading', 'Chargement...') : isError ? '' : t('glossary:count', { count: termes.length, defaultValue_one: '{{count}} terme trouvé', defaultValue_other: '{{count}} termes trouvés' })}
         </p>
 
         {/* Results */}
@@ -123,42 +145,43 @@ export default function Glossaire() {
             ))}
           </div>
         ) : isError ? (
-          <LoadError what="le glossaire" onRetry={() => refetch()} testId="glossaire-error" />
+          <LoadError what={t('glossary:error.what', 'le glossaire')} onRetry={() => refetch()} testId="glossaire-error" />
         ) : termes.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-700">Aucun terme trouvé.</p>
+              <p className="text-slate-700">{t('glossary:empty.title', 'Aucun terme trouvé.')}</p>
               {(search || categorie) && (
-                <p className="text-sm text-slate-700 mt-1">Essayez un autre mot-clé ou catégorie.</p>
+                <p className="text-sm text-slate-700 mt-1">{t('glossary:empty.hint', 'Essayez un autre mot-clé ou catégorie.')}</p>
               )}
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-3">
-            {termes.map((t) => (
-              <Card key={t.terme} id={t.terme} className="hover:shadow-md transition-shadow">
+            {termes.map((item) => (
+              <Card key={item.terme} id={item.terme} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-lg font-bold text-slate-900">
-                          {t.terme}
+                        <h2 className="text-lg font-bold text-slate-900" {...fr}>
+                          {item.terme}
                         </h2>
-                        <Badge className={`border-0 text-xs ${CATEGORY_COLORS[t.categorie] || 'bg-slate-100 text-slate-800'}`}>
-                          {t.categorie}
+                        <Badge className={`border-0 text-xs ${CATEGORY_COLORS[item.categorie] || 'bg-slate-100 text-slate-800'}`}>
+                          {/* French: the category code, as received; another language: its name */}
+                          {isSource || !item.categorie ? item.categorie : (categoryLabel(t, item.categorie) ?? item.categorie)}
                         </Badge>
                       </div>
-                      <p className="mt-1.5 text-slate-700 text-sm leading-relaxed">
-                        {t.definition}
+                      <p className="mt-1.5 text-slate-700 text-sm leading-relaxed" {...fr}>
+                        {item.definition}
                       </p>
                     </div>
-                    {t.lien && (
+                    {item.lien && (
                       <Link
-                        to={t.lien}
+                        to={item.lien}
                         className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap shrink-0"
                       >
-                        Voir <ExternalLink className="h-3.5 w-3.5" />
+                        {t('glossary:see', 'Voir')} <ExternalLink className="h-3.5 w-3.5" />
                       </Link>
                     )}
                   </div>
@@ -170,10 +193,12 @@ export default function Glossaire() {
 
         {/* Help text */}
         <p className="text-center text-sm text-slate-700 pt-4">
-          Vous ne trouvez pas un terme ?{' '}
-          <Link to="/contact" className="text-blue-800 hover:text-blue-900 underline">
-            Contactez-nous
-          </Link>
+          <Trans
+            i18n={i18n}
+            i18nKey="glossary:help"
+            defaults="Vous ne trouvez pas un terme ? <0>Contactez-nous</0>"
+            components={[<Link key="contact" to="/contact" className="text-blue-800 hover:text-blue-900 underline" />]}
+          />
         </p>
       </div>
     </div>

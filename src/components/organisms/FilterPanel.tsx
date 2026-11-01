@@ -1,6 +1,8 @@
 import type { FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n";
+import { categoryLabel } from "@/components/ui/CategoryChip";
 
 export interface FilterState {
     search: string;
@@ -43,21 +45,28 @@ export default function FilterPanel({
     onReset,
     showSearch = true,
 }: FilterPanelProps) {
+    const { t } = useT("aides");
     const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
     };
 
+    // R32: the category names in the interface language — the shared names of the taxonomy (CategoryChip's categoryLabel, fixed codes)
+    const optionLabel = (value: string, fr: string) =>
+        value
+            ? categoryLabel(value, (key: string, fallback: string) => t(key, fallback)) ?? fr
+            : t("aides:filters.category_all", "Toutes les catégories");
+
     return (
-        <aside aria-label="Filtres" className="space-y-6">
+        <aside aria-label={t("aides:filters.title", "Filtres")} className="space-y-6">
             {/* Search */}
             {showSearch && <form onSubmit={handleSearchSubmit}>
                 <label htmlFor="filter-search" className="sr-only">
-                    Rechercher une aide
+                    {t("aides:search.label", "Rechercher une aide")}
                 </label>
                 <Input
                     id="filter-search"
                     type="search"
-                    placeholder="Rechercher…"
+                    placeholder={t("aides:filters.search_placeholder", "Rechercher…")}
                     value={filters.search}
                     onChange={(e) => onChange({ ...filters, search: e.target.value })}
                 />
@@ -69,7 +78,7 @@ export default function FilterPanel({
                     htmlFor="filter-category"
                     className="mb-1 block text-sm font-medium text-foreground"
                 >
-                    Catégorie
+                    {t("aides:filters.category", "Catégorie")}
                 </label>
                 <select
                     id="filter-category"
@@ -79,7 +88,7 @@ export default function FilterPanel({
                 >
                     {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>
-                            {cat.label}
+                            {optionLabel(cat.value, cat.label)}
                         </option>
                     ))}
                 </select>
@@ -88,7 +97,7 @@ export default function FilterPanel({
             {/* Urgency */}
             <fieldset>
                 <legend className="mb-1 text-sm font-medium text-foreground">
-                    Priorité
+                    {t("aides:filters.priority", "Priorité")}
                 </legend>
                 <label
                     htmlFor="filter-urgent"
@@ -103,13 +112,13 @@ export default function FilterPanel({
                         }
                         className="h-4 w-4 rounded border-input text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     />
-                    Urgence uniquement
+                    {t("aides:filters.urgent_only", "Urgence uniquement")}
                 </label>
             </fieldset>
 
             {/* Reset */}
             <Button type="button" variant="outline" className="w-full" onClick={onReset}>
-                Réinitialiser les filtres
+                {t("aides:filters.reset_all", "Réinitialiser les filtres")}
             </Button>
         </aside>
     );

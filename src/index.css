@@ -379,3 +379,9 @@ body.reduce-motion *::after {
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+/* R32: directional icons (arrows, chevrons) point the other way when the interface reads right to left (Arabic) */
+[dir='rtl'] .rtl-flip { transform: scaleX(-1); }
+/* R32: the passage being read aloud, when the visitor turned highlighting on (ReadAloud) */
+.ada-reading { outline: 3px solid #f59e0b; outline-offset: 4px; border-radius: 4px; background-color: rgb(254 243 199 / 0.6); }
+@media (prefers-reduced-motion: no-preference) { .ada-reading { transition: background-color 0.2s ease; } }

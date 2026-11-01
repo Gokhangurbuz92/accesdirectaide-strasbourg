@@ -2,9 +2,11 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getFreshnessStatus, formatDateFR } from "@/lib/freshness";
+import { getFreshnessStatus } from "@/lib/freshness";
 import { RecordProvenance, CardActionStrip } from "@/components/cards/RecordCardParts";
 import { cn } from "@/lib/utils";
+import { formatDate, useT } from "@/i18n";
+import useContentTranslation from "@/hooks/useContentTranslation";
 
 export interface AidCardProps {
     title: string;
@@ -18,14 +20,26 @@ export interface AidCardProps {
     className?: string;
 }
 
+/** R32: the aide's slug — the key of its translation — read back from the card's link (mapAideToCard builds it as /aides/<encoded slug>) */
+function slugFromHref(href: string): string | undefined {
+    const m = /^\/aides\/([^/?#]+)$/.exec(href || "");
+    if (!m) return undefined;
+    try { return decodeURIComponent(m[1]); } catch { return undefined; }
+}
+
 /**
  * R27: the aide card has the démarche card's structure — the whole card is the link, the same provenance line (« Vérifié le … · Source : … ») and the
  * same action strip (« Voir l'aide »). It used to show an uppercase « VÉRIFIÉ LE » pill and no action at all.
  */
 export function AidCard({ title, href, summary, isUrgent, verifiedAt, sourceLabel, sourceUrl, now, className }: AidCardProps) {
+    const { t } = useT("aides");
+    // R32: the card's own record: its title in the interface language when a verified translation may be shown, else in French marked lang="fr".
+    // The summary is the easy-to-read summary or « C'est quoi ? » (the card does not know which): it is shown in French, marked as such.
+    const record = React.useMemo(() => ({ slug: slugFromHref(href), titre: title }), [href, title]);
+    const tr = useContentTranslation("aide", record);
     const status = getFreshnessStatus(verifiedAt, now ?? new Date());
     const date = verifiedAt ? new Date(verifiedAt) : null;
-    const formatted = date && !Number.isNaN(date.getTime()) && status !== "unknown" ? formatDateFR(date) : undefined;
+    const formatted = date && !Number.isNaN(date.getTime()) && status !== "unknown" ? formatDate(date, { day: "2-digit", month: "2-digit", year: "numeric" }) : undefined;
     return (
         <Card className={cn("group relative flex h-full flex-col overflow-hidden border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-md", className)} data-testid="aide-card">
             <CardContent className="flex h-full flex-col p-0">
@@ -37,19 +51,19 @@ export function AidCard({ title, href, summary, isUrgent, verifiedAt, sourceLabe
                                 data-testid="aide-card-link"
                                 className="rounded-sm after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                             >
-                                <span data-testid="aide-title">{title}</span>
+                                <span data-testid="aide-title" {...tr.attrs("titre")}>{tr.value("titre")}</span>
                             </Link>
                         </h3>
                         {isUrgent && (
-                            <Badge variant="destructive" className="pointer-events-none shrink-0">Urgent</Badge>
+                            <Badge variant="destructive" className="pointer-events-none shrink-0">{t("aides:card.urgent", "Urgent")}</Badge>
                         )}
                     </div>
-                    {summary && <p className="line-clamp-3 text-sm text-slate-600">{summary}</p>}
+                    {summary && <p className="line-clamp-3 text-sm text-slate-600" {...tr.attrs("summary")}>{summary}</p>}
                     <div className="mt-auto pt-2" data-testid="aide-freshness-badge">
                         <RecordProvenance verifiedAt={formatted} sourceHost={sourceLabel} sourceUrl={sourceUrl} stale={status === "stale"} />
                     </div>
                 </div>
-                <CardActionStrip label="Voir l’aide" />
+                <CardActionStrip label={t("aides:card.view", "Voir l’aide")} />
             </CardContent>
         </Card>
     );

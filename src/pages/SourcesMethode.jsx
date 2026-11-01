@@ -4,42 +4,46 @@ import PageHeader from '@/components/layout/PageHeader';
 import { Database, Search, Sparkles, BookOpenCheck, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
 
 export default function SourcesMethode() {
+  const { t } = useT('about');
+  // the names are the official names of the services (kept as they are); the notes are ours
   const sources = [
     {
       id: 'aides-territoires',
       name: 'Aides-Territoires (Beta.gouv.fr)',
       url: 'https://aides-territoires.beta.gouv.fr',
-      notes: 'Base de données nationale et locale des aides publiques',
+      notes: t('about:sources.list.aides_territoires', 'Base de données nationale et locale des aides publiques'),
       trust_level: 'officiel'
     },
     {
       id: 'annuaire',
       name: "Annuaire de l'administration (Service-Public)",
       url: 'https://lannuaire.service-public.gouv.fr',
-      notes: "Adresses, horaires et contacts des services publics (lieux d'accueil)",
+      notes: t('about:sources.list.annuaire', "Adresses, horaires et contacts des services publics (lieux d'accueil)"),
       trust_level: 'officiel'
     },
     {
       id: 'sirene',
       name: 'Annuaire des entreprises (répertoire SIRENE)',
       url: 'https://annuaire-entreprises.data.gouv.fr',
-      notes: "Existence, adresse et activité des associations et organismes (établissement ouvert ou fermé)",
+      notes: t('about:sources.list.sirene', "Existence, adresse et activité des associations et organismes (établissement ouvert ou fermé)"),
       trust_level: 'officiel'
     },
     {
       id: 'service-public',
       name: 'Service-Public.fr',
       url: 'https://www.service-public.fr',
-      notes: 'Informations administratives et droits',
+      notes: t('about:sources.list.service_public', 'Informations administratives et droits'),
       trust_level: 'officiel'
     },
     {
       id: 'data-gouv',
       name: 'Data.gouv.fr',
       url: 'https://www.data.gouv.fr',
-      notes: 'Plateforme ouverte des données publiques',
+      notes: t('about:sources.list.data_gouv', 'Plateforme ouverte des données publiques'),
       trust_level: 'officiel'
     }
   ];
@@ -47,13 +51,13 @@ export default function SourcesMethode() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       <SEO
-        title="Sources et Méthode FALC"
-        description="Comment nous trouvons et simplifions l'information sur les aides avec l'Open Data et l'IA (FALC)."
+        title={t('about:sources.seo_title', 'Sources et Méthode FALC')}
+        description={t('about:sources.seo_description', "Comment nous trouvons et simplifions l'information sur les aides avec l'Open Data et l'IA (FALC).")}
         path="/sourcesmethode"
       />
 
       {/* Hero Section */}
-      <PageHeader width="reading" title={<>Sources et méthode</>} description={<>La transparence est la base de la confiance. Découvrez l'exigence avec laquelle nous récoltons et vulgarisons l'information.</>} />
+      <PageHeader width="reading" title={t('about:sources.title', 'Sources et méthode')} description={t('about:sources.description', "La transparence est la base de la confiance. Découvrez l'exigence avec laquelle nous récoltons et vulgarisons l'information.")} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
@@ -66,18 +70,18 @@ export default function SourcesMethode() {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-teal-900 mb-3">
-                  Le rôle de l'IA ? Aider à simplifier, jamais décider.
+                  {t('about:sources.ai.title', "Le rôle de l'IA ? Aider à simplifier, jamais décider.")}
                 </h2>
                 {/* PKG-11 audit pass 2: no « closed and audited LLM » exists; FALC texts are drafts (a model run on our own machines, or an automatic summary) reviewed by a person */}
                 <div className="space-y-3 text-teal-900/80 leading-relaxed text-sm">
                   <p>
-                    Les textes en <strong>FALC (Facile À Lire et à Comprendre)</strong> sont d&apos;abord des brouillons, préparés par un modèle d&apos;IA installé sur nos propres machines ou par un résumé automatique.
+                    <Trans i18n={i18n} i18nKey="about:sources.ai.drafts" defaults="Les textes en <0>FALC (Facile À Lire et à Comprendre)</0> sont d'abord des brouillons, préparés par un modèle d'IA installé sur nos propres machines ou par un résumé automatique." components={[<strong key="falc" />]} />
                   </p>
                   <p>
-                    Chaque texte est contrôlé automatiquement contre la source officielle avant sa publication (aucun nombre inventé, aucune condition contredite) et la fiche indique qu&apos;il a été contrôlé automatiquement ; un texte n&apos;est présenté comme relu par une personne que si une personne l&apos;a réellement relu.
+                    {t('about:sources.ai.checked', "Chaque texte est contrôlé automatiquement contre la source officielle avant sa publication (aucun nombre inventé, aucune condition contredite) et la fiche indique qu'il a été contrôlé automatiquement ; un texte n'est présenté comme relu par une personne que si une personne l'a réellement relu.")}
                   </p>
                   <div className="bg-white/60 p-3 rounded-lg border border-teal-200 font-medium">
-                    L&apos;IA ne fixe ni conditions ni montants : ils viennent uniquement des sources officielles citées sur chaque fiche.
+                    {t('about:sources.ai.no_rules', "L'IA ne fixe ni conditions ni montants : ils viennent uniquement des sources officielles citées sur chaque fiche.")}
                   </div>
                 </div>
               </div>
@@ -93,11 +97,11 @@ export default function SourcesMethode() {
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <Database className="w-5 h-5 text-blue-600" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-900">Origine Gouvernementale</h2>
+                <h2 className="text-xl font-bold text-slate-900">{t('about:sources.origin.title', 'Origine Gouvernementale')}</h2>
               </div>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2">
                 <p>
-                  Une vérification automatique relit chaque fiche sur sa source officielle (données publiques ouvertes de l'État) : une fiche n'est publiée que si sa source la confirme, et elle est retirée ou mise en attente quand la source change ou disparaît.
+                  {t('about:sources.origin.text', "Une vérification automatique relit chaque fiche sur sa source officielle (données publiques ouvertes de l'État) : une fiche n'est publiée que si sa source la confirme, et elle est retirée ou mise en attente quand la source change ou disparaît.")}
                 </p>
                 <div className="grid gap-3 mt-4">
                   {sources.map((source) => (
@@ -109,7 +113,7 @@ export default function SourcesMethode() {
                         <h3 className="font-semibold text-slate-900 flex items-center gap-2">
                           {source.name}
                           <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 hidden sm:inline-flex">
-                            {source.trust_level === 'officiel' ? 'Fiabilité État' : 'Vérifié'}
+                            {source.trust_level === 'officiel' ? t('about:sources.badge.official', 'Fiabilité État') : t('about:sources.badge.verified', 'Vérifié')}
                           </Badge>
                         </h3>
                         <p className="text-sm text-slate-500 mt-1">{source.notes}</p>
@@ -119,8 +123,8 @@ export default function SourcesMethode() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 hover:bg-slate-200 rounded-full text-slate-400 hover:text-slate-700 transition"
-                        title={`Visiter ${source.url}`}
-                        aria-label={`Visiter le site de ${source.name} (nouvel onglet)`}
+                        title={t('about:sources.visit_title', 'Visiter {{url}}', { url: source.url })}
+                        aria-label={t('about:sources.visit_label', 'Visiter le site de {{name}} (nouvel onglet)', { name: source.name })}
                         data-testid="source-link"
                       >
                         <ExternalLink className="w-5 h-5" aria-hidden="true" />
@@ -136,21 +140,21 @@ export default function SourcesMethode() {
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <ShieldCheck className="w-5 h-5 text-blue-600" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-900">Notre charte qualité des données</h2>
+                <h2 className="text-xl font-bold text-slate-900">{t('about:sources.charter.title', 'Notre charte qualité des données')}</h2>
               </div>
               <div className="space-y-4 px-2">
                 <div className="flex gap-3">
                   <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-slate-900">Mises à jour régulières</h4>
-                    <p className="text-sm text-slate-600">Notre connecteur se synchronise aux bases gouvernementales pour assurer la fraîcheur des dispositifs. Les fiches obsolètes sont passées en "Archivé".</p>
+                    <h4 className="font-semibold text-slate-900">{t('about:sources.charter.updates.title', 'Mises à jour régulières')}</h4>
+                    <p className="text-sm text-slate-600">{t('about:sources.charter.updates.text', 'Notre connecteur se synchronise aux bases gouvernementales pour assurer la fraîcheur des dispositifs. Les fiches obsolètes sont passées en "Archivé".')}</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
                   <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-slate-900">Traçabilité complète</h4>
-                    <p className="text-sm text-slate-600">Chaque fiche vérifiée indique sa source officielle et la date de la dernière vérification, avec un lien « Consulter la source » vers le site officiel.</p>
+                    <h4 className="font-semibold text-slate-900">{t('about:sources.charter.trace.title', 'Traçabilité complète')}</h4>
+                    <p className="text-sm text-slate-600">{t('about:sources.charter.trace.text', 'Chaque fiche vérifiée indique sa source officielle et la date de la dernière vérification, avec un lien « Consulter la source » vers le site officiel.')}</p>
                   </div>
                 </div>
               </div>
@@ -160,12 +164,12 @@ export default function SourcesMethode() {
             <div className="p-6 bg-red-50/50 border border-red-100 rounded-xl space-y-4">
               <h2 className="text-lg font-bold text-red-900 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-red-600" />
-                Lignes rouges absolues
+                {t('about:sources.red_lines.title', 'Lignes rouges absolues')}
               </h2>
               <ul className="space-y-2 text-sm text-red-800">
-                <li className="flex items-center gap-2"><span className="font-bold">❌</span> Scraper des blogs ou forums non-sourcés</li>
-                <li className="flex items-center gap-2"><span className="font-bold">❌</span> Affirmer l'éligibilité formelle d'un usager (seuls les simulateurs officiels comme mes-droits-sociaux.gouv.fr font foi)</li>
-                <li className="flex items-center gap-2"><span className="font-bold">❌</span> Proposer des numéros payants "surtaxés" pour joindre les administrations</li>
+                <li className="flex items-center gap-2"><span className="font-bold">❌</span> {t('about:sources.red_lines.scraping', 'Scraper des blogs ou forums non-sourcés')}</li>
+                <li className="flex items-center gap-2"><span className="font-bold">❌</span> {t('about:sources.red_lines.eligibility', "Affirmer l'éligibilité formelle d'un usager (seuls les simulateurs officiels comme mes-droits-sociaux.gouv.fr font foi)")}</li>
+                <li className="flex items-center gap-2"><span className="font-bold">❌</span> {t('about:sources.red_lines.premium_numbers', 'Proposer des numéros payants "surtaxés" pour joindre les administrations')}</li>
               </ul>
             </div>
 
@@ -174,14 +178,14 @@ export default function SourcesMethode() {
                 <div className="p-2 bg-slate-100 rounded-lg">
                   <RefreshCw className="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-900">Boucle d'amélioration humaine</h2>
+                <h2 className="text-xl font-bold text-slate-900">{t('about:sources.loop.title', "Boucle d'amélioration humaine")}</h2>
               </div>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2">
                 <p>
-                  Les institutions et les citoyens peuvent à tout moment corriger une aide qui comporterait une coquille via le bouton de <strong>Signalement</strong>. L&apos;équipe lit chaque signalement et corrige la fiche si nécessaire ; aucun délai n&apos;est garanti pour l&apos;instant.
+                  <Trans i18n={i18n} i18nKey="about:sources.loop.text" defaults="Les institutions et les citoyens peuvent à tout moment corriger une aide qui comporterait une coquille via le bouton de <0>Signalement</0>. L'équipe lit chaque signalement et corrige la fiche si nécessaire ; aucun délai n'est garanti pour l'instant." components={[<strong key="report" />]} />
                 </p>
                 <a href="/contact?sujet=signalement_erreur" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium hover:underline mt-2">
-                  Signaler une erreur sur la base de données
+                  {t('about:sources.loop.report', 'Signaler une erreur sur la base de données')}
                 </a>
               </div>
             </section>

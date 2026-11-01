@@ -12,7 +12,8 @@ const EXACT = new Set([
   // read by the shell on every page: answers « not signed in » and creates nothing
   'auth/me',
 ]);
-const PREFIX = ['aides', 'aids', 'structures', 'demarches', 'actualites', 'guides', 'tools', 'dispositifs', 'ressources'];
+// R32: « translations » serves the checked translations of the same public records (read-only, same D-5 rule)
+const PREFIX = ['aides', 'aids', 'structures', 'demarches', 'actualites', 'guides', 'tools', 'dispositifs', 'ressources', 'translations'];
 const READ_METHODS = new Set(['GET', 'HEAD']);
 // the two citizen searches take their query in a POST body; they read and write nothing (no account, no history)
 const READ_ONLY_POST = new Set(['search', 'search-pro']);

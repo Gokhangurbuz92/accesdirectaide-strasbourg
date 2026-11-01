@@ -1,0 +1,20 @@
+{
+ "emergency": "Acil bir durumda 112'yi (acil durumlar), 15'i (SAMU, acil tıbbi yardım) veya 115'i (SAMU social, acil barınma hattı) arayın: bu numaralar AccesDirectAide'e bağlı değildir.",
+ "error": "Hizmetin durumu şu anda doğrulanamıyor. Site veya bağlantınız yanıt vermiyor olabilir.",
+ "last-checked": "Son kontrol: {{date}}",
+ "live.failed": "Kontrol yapılamadı.",
+ "live.updated": "Durum güncellendi.",
+ "refresh": "Yenile",
+ "section.assistant": "Asistan",
+ "section.comptes": "Hesaplar ve randevular",
+ "section.donnees": "Yardımlar hakkında bilgiler",
+ "section.emails": "E-postalar",
+ "seo.description": "AccesDirectAide hizmetlerinin herkese açık durumu: hesaplar, randevular, e-postalar, asistan ve yardımlar hakkında bilgiler.",
+ "seo.title": "Hizmet durumu — AccesDirectAide",
+ "state.degraded": "Kısmen çalışıyor",
+ "state.info": "Bilinmesi gerekenler",
+ "state.operational": "Çalışıyor",
+ "state.unavailable": "Kullanılamıyor",
+ "title": "Hizmet durumu",
+ "unchecked": "Doğrulanmadı."
+}

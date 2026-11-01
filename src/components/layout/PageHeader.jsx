@@ -12,7 +12,7 @@ export default function PageHeader({ title, description, eyebrow = null, childre
       data-testid="page-header"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
+        <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
       <div className={`relative z-10 mx-auto px-4 sm:px-6 lg:px-8 ${width === 'reading' ? 'max-w-4xl' : 'max-w-7xl'}`}>

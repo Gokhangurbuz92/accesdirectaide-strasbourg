@@ -127,6 +127,7 @@ export const routes = [
     { path: 'demarches', match: 'prefix', handler: () => import('./_handlers/demarches.js') },
     { path: 'actualites', match: 'prefix', handler: () => import('./_handlers/actualites.js') },
     { path: 'guides', match: 'prefix', handler: () => import('./_handlers/guides.js') },
+    { path: 'translations', match: 'prefix', handler: () => import('./_handlers/translations.js') },   // R32: verified-content translations (read-only)
     { path: 'tools', match: 'prefix', handler: () => import('./_handlers/tools.js') },
     { path: 'dispositifs', match: 'prefix', handler: () => import('./_handlers/dispositifs/index.js') },
     { path: 'ressources', match: 'prefix', handler: () => import('./_handlers/ressources.js') },

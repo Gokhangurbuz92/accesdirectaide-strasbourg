@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
+import { useT } from "@/i18n";
 
 export interface HeroSearchProps {
     /** Main heading text */
@@ -13,12 +14,17 @@ export interface HeroSearchProps {
 }
 
 export default function HeroSearch({
-    title = "Trouvez une aide rapidement.",
-    subtitle = "Aides, démarches, structures\u00a0— informations sourcées.",
-    placeholder = "Logement, santé, handicap\u2026",
+    title,
+    subtitle,
+    placeholder,
 }: HeroSearchProps) {
+    const { t } = useT("home");
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
+    // R32: without a prop, the texts are in the interface language (French stays the default)
+    const shownTitle = title ?? t("home:hero.title", "Trouvez une aide rapidement.");
+    const shownSubtitle = subtitle ?? t("home:hero.subtitle", "Aides, démarches, structures — informations sourcées.");
+    const shownPlaceholder = placeholder ?? t("home:hero.placeholder", "Logement, santé, handicap…");
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -38,13 +44,14 @@ export default function HeroSearch({
             {/* Decorative orbs for depth */}
             <div className="pointer-events-none absolute inset-0" aria-hidden="true">
                 <div
-                    className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-20"
+                    className="absolute -top-24 -end-24 w-96 h-96 rounded-full opacity-20"
                     style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }}
                 />
                 <div
-                    className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full opacity-15"
+                    className="absolute -bottom-32 -start-32 w-[500px] h-[500px] rounded-full opacity-15"
                     style={{ background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)' }}
                 />
+                {/* centred with a translation: the same in both reading directions */}
                 <div
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-10"
                     style={{ background: 'radial-gradient(ellipse, #a5b4fc 0%, transparent 60%)' }}
@@ -56,11 +63,11 @@ export default function HeroSearch({
 
             <div className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6">
                 <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl drop-shadow-lg">
-                    {title}
+                    {shownTitle}
                 </h1>
 
                 <p className="mt-4 text-base text-blue-100/80 sm:text-lg">
-                    {subtitle}
+                    {shownSubtitle}
                 </p>
 
                 <form
@@ -70,10 +77,10 @@ export default function HeroSearch({
                 >
                     <div className="relative flex-1">
                         <label className="sr-only" htmlFor="hero-search">
-                            Rechercher une aide
+                            {t("home:hero.label", "Rechercher une aide")}
                         </label>
                         <Search
-                            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
                             aria-hidden="true"
                         />
                         <input
@@ -81,8 +88,8 @@ export default function HeroSearch({
                             type="search"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder={placeholder}
-                            className="w-full rounded-xl border border-white/20 bg-white/95 py-3.5 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 outline-none transition shadow-lg backdrop-blur-sm focus:border-white/40 focus:ring-2 focus:ring-white/30 focus:bg-white"
+                            placeholder={shownPlaceholder}
+                            className="w-full rounded-xl border border-white/20 bg-white/95 py-3.5 ps-11 pe-4 text-slate-900 placeholder:text-slate-400 outline-none transition shadow-lg backdrop-blur-sm focus:border-white/40 focus:ring-2 focus:ring-white/30 focus:bg-white"
                         />
                     </div>
                     <button
@@ -90,7 +97,7 @@ export default function HeroSearch({
                         className="inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2"
                         style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7c3aed 100%)' }}
                     >
-                        Rechercher
+                        {t("home:hero.submit", "Rechercher")}
                     </button>
                 </form>
             </div>

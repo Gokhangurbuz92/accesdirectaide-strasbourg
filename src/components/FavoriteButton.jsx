@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { citizenApi } from '@/lib/citizenApi';
 import { rdvMessagingClient } from '@/api/rdv-messaging-client';
+import { useT } from '@/i18n';
 
 /**
  * PKG-2 / C10 — "Ajouter à mes favoris" on a published record (aide, démarche, structure) for a signed-in person; also records the opt-in history entry (the server ignores
@@ -11,6 +12,7 @@ import { rdvMessagingClient } from '@/api/rdv-messaging-client';
  * @param {{ entityType: 'aide' | 'demarche' | 'structure', entityId: string, label: string }} props
  */
 export default function FavoriteButton({ entityType, entityId, label }) {
+  const { t } = useT('shared');
   const auth = useQuery({ queryKey: ['header-auth-check'], queryFn: () => rdvMessagingClient.authMe(), staleTime: 60_000, retry: false, refetchOnWindowFocus: false });
   const isUser = auth.data?.session?.kind === 'user';
   const [state, setState] = useState({ ready: false, signedIn: false, saved: false, busy: false, error: '' });
@@ -38,7 +40,7 @@ export default function FavoriteButton({ entityType, entityId, label }) {
   return (
     <div>
       <Button type="button" variant="outline" size="sm" data-testid="favorite-toggle" aria-pressed={state.saved} disabled={state.busy} onClick={toggle}>
-        {state.saved ? 'Retirer de mes favoris' : 'Ajouter à mes favoris'}
+        {state.saved ? t('shared:favorite.remove', 'Retirer de mes favoris') : t('shared:favorite.add', 'Ajouter à mes favoris')}
       </Button>
       {state.error ? <p role="alert" className="mt-1 text-xs text-red-800">{state.error}</p> : null}
     </div>
