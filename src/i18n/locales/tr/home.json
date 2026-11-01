@@ -47,5 +47,15 @@
  "verify.source.title": "Resmi bir kaynak",
  "verify.title": "Kaynaklı ve tarihli bilgiler",
  "verify.withdrawn.text": "Kaynak ortadan kalkarsa veya bilgiyi artık doğrulamazsa, bilgi kartı bir sonraki doğrulamaya kadar kaldırılır.",
- "verify.withdrawn.title": "Kaynak değişirse kaldırma"
+ "verify.withdrawn.title": "Kaynak değişirse kaldırma",
+ "assistant.badge": "AccesDirect'e özel",
+ "assistant.title": "Aramayı bırakın, size yol gösterelim.",
+ "assistant.text": "Asistanımız, sizi en uygun yardımlara ve işlemlere yönlendirmek için birkaç basit soru sorar.",
+ "assistant.start": "Anketi başlat",
+ "assistant.more": "Daha fazla bilgi",
+ "assistant.bubble1": "Merhaba, durumunuzu netleştirmenize yardımcı olabilirim.",
+ "assistant.bubble2": "Konut için yardım arıyorum.",
+ "assistant.bubble3": "İnceleniyor…",
+ "news.title": "Resmi haberler",
+ "news.all": "Tüm haberleri gör"
 }

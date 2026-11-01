@@ -113,5 +113,6 @@
  "account.personalAccount": "Bireysel hesap",
  "account.personalAccount.text": "Olası haklarımı hesaplama, randevu alma",
  "account.proAccount": "Kuruluş / profesyonel hesabı",
- "account.proAccount.text": "Kullanıcılara destek olma"
+ "account.proAccount.text": "Kullanıcılara destek olma",
+ "footer.needs": "İhtiyaca göre yardım bul"
 }

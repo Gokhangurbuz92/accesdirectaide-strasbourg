@@ -113,5 +113,6 @@
  "account.personalAccount": "Обліковий запис приватної особи",
  "account.personalAccount.text": "Оцінити можливі допомоги, записатися на прийом",
  "account.proAccount": "Обліковий запис організації / фахівця",
- "account.proAccount.text": "Супровід користувачів послуг"
+ "account.proAccount.text": "Супровід користувачів послуг",
+ "footer.needs": "Знайти допомогу за потребою"
 }

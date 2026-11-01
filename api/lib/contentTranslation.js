@@ -137,7 +137,7 @@ const times = (s) => String(s).replace(/(?<!\d)0?(\d{1,2})\s*[h:]\s*(\d{2})(?!\d
 const digits = (s) => (times(s).match(/\d+(?:[\u00a0\u202f ]\d{3}(?!\d))*(?:[.,]\d+)*/g) || []).map((x) => x.replace(/\D/g, '')).sort();
 const links = (s) => (String(s).match(/https?:\/\/[^\s)»"]+|[\w.+-]+@[\w-]+\.[\w.]+/g) || []).map((x) => x.replace(/[.,;]$/, '')).sort();
 const FR_NEGATION = /(?<![\p{L}])(ne|n['’]|pas|jamais|aucun(e|s)?|sans|ni|non|rien|personne ne|nulle?)(?![\p{L}])/giu;
-const FR_UNCERTAIN = /(?<![\p{L}])(peut|peuvent|pouvez|pourrait|pourriez|pourraient|peut-être|éventuellement|possible(ment)?|selon|sous (certaines )?conditions?|le cas échéant)(?![\p{L}])/giu;
+const FR_UNCERTAIN = /(?<![\p{L}])(peut|peuvent|pouvez|pourrait|pourriez|pourraient|peut-être|éventuellement|possible(ment)?|selon|sous (certaines )?conditions?|le cas échéant|en fonction de|suivant|dépend(ent|ant)?|il se peut)(?![\p{L}])/giu;
 /** assertions of entitlement, which the French source never makes (« vous avez droit si » is refused upstream) */
 export const ENTITLEMENT = {
   en: /\byou (are|will be) (automatically )?entitled\b|\byou have (a|the) right to (receive|get|obtain)\b/i,

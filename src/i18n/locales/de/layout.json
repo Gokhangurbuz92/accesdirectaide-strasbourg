@@ -113,5 +113,6 @@
  "account.personalAccount": "Konto für Privatpersonen",
  "account.personalAccount.text": "Mögliche Leistungen berechnen, Termine vereinbaren",
  "account.proAccount": "Konto für Einrichtungen / Fachkräfte",
- "account.proAccount.text": "Menschen begleiten und unterstützen"
+ "account.proAccount.text": "Menschen begleiten und unterstützen",
+ "footer.needs": "Hilfe nach Bedarf finden"
 }

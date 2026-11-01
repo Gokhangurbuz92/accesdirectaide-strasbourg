@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Bot } from 'lucide-react';
+import { useT } from '@/i18n';
 
 export default function AssistantFeatureSection() {
+  const { t } = useT('home');
   return (
     <section
       className="relative isolate overflow-hidden py-16 text-white"
@@ -25,11 +27,11 @@ export default function AssistantFeatureSection() {
       <div className="relative z-10 mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
         <div>
           <p className="inline-flex rounded-full border border-indigo-300/30 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-200 backdrop-blur-sm">
-            Exclusivité AccesDirect
+            {t('home:assistant.badge', 'Exclusivité AccesDirect')}
           </p>
-          <h2 className="mt-4 text-3xl font-bold drop-shadow-md">Ne cherchez plus, laissez-vous guider.</h2>
+          <h2 className="mt-4 text-3xl font-bold drop-shadow-md">{t('home:assistant.title', 'Ne cherchez plus, laissez-vous guider.')}</h2>
           <p className="mt-4 text-blue-100/80">
-            Notre assistant vous pose quelques questions simples pour vous orienter vers les aides et démarches les plus pertinentes.
+            {t('home:assistant.text', 'Notre assistant vous pose quelques questions simples pour vous orienter vers les aides et démarches les plus pertinentes.')}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -37,13 +39,13 @@ export default function AssistantFeatureSection() {
               className="rounded-xl px-5 py-3 text-sm font-bold text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7c3aed 100%)' }}
             >
-              Lancer le diagnostic
+              {t('home:assistant.start', 'Lancer le diagnostic')}
             </Link>
             <Link
               to="/orientation"
               className="rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 hover:border-white/40"
             >
-              En savoir plus
+              {t('home:assistant.more', 'En savoir plus')}
             </Link>
           </div>
         </div>
@@ -54,16 +56,16 @@ export default function AssistantFeatureSection() {
           </div>
           <div className="space-y-3 text-sm">
             <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-white/15 px-4 py-3 text-blue-50 backdrop-blur-sm">
-              Bonjour, je peux vous aider à clarifier votre situation.
+              {t('home:assistant.bubble1', 'Bonjour, je peux vous aider à clarifier votre situation.')}
             </div>
             <div
-              className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm px-4 py-3 text-white shadow-md"
+              className="ms-auto max-w-[85%] rounded-2xl rounded-br-sm px-4 py-3 text-white shadow-md"
               style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7c3aed 100%)' }}
             >
-              Je cherche des aides pour le logement.
+              {t('home:assistant.bubble2', 'Je cherche des aides pour le logement.')}
             </div>
             <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-white/15 px-4 py-3 text-blue-50 backdrop-blur-sm">
-              Analyse en cours…
+              {t('home:assistant.bubble3', 'Analyse en cours…')}
             </div>
           </div>
         </div>

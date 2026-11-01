@@ -1,0 +1,311 @@
+{
+ "schema": "ada-orientation-scenarios/1",
+ "note": "Synthetic descriptions (no real person). Each scenario is run against the public search; 'results' expects at least one returned record whose title or summary contains one expected word; 'abstain' expects no record at all. Scenarios 24-25 are also covered by the browser journeys (language switch, keyboard).",
+ "scenarios": [
+  {
+   "id": 1,
+   "situation": "Jeune de 19 ans sortant de l'ASE, sans logement ni revenu",
+   "lang": "fr",
+   "query": "jeune majeur logement",
+   "expect": "results",
+   "words": [
+    "logement",
+    "jeune",
+    "hébergement",
+    "FAJ"
+   ]
+  },
+  {
+   "id": 2,
+   "situation": "Parent seul menacé d'expulsion et au chômage",
+   "lang": "fr",
+   "query": "expulsion logement chômage",
+   "expect": "results",
+   "words": [
+    "expulsion",
+    "logement",
+    "chômage",
+    "emploi"
+   ]
+  },
+  {
+   "id": 3,
+   "situation": "Réfugié récemment arrivé : logement, langue, santé",
+   "lang": "en",
+   "query": "refugee housing health",
+   "expect": "results",
+   "words": [
+    "asile",
+    "logement",
+    "santé",
+    "réfugié"
+   ]
+  },
+  {
+   "id": 4,
+   "situation": "Personne âgée sortant de l'hôpital, ne peut vivre seule",
+   "lang": "fr",
+   "query": "aide à domicile personne âgée",
+   "expect": "results",
+   "words": [
+    "domicile",
+    "âgée",
+    "autonomie",
+    "APA"
+   ]
+  },
+  {
+   "id": 5,
+   "situation": "Personne handicapée cherchant un emploi et un transport accessible",
+   "lang": "fr",
+   "query": "handicap emploi transport",
+   "expect": "results",
+   "words": [
+    "handicap",
+    "emploi",
+    "ESAT",
+    "transport"
+   ]
+  },
+  {
+   "id": 6,
+   "situation": "Femme victime de violences conjugales, aide discrète",
+   "lang": "fr",
+   "query": "violences conjugales",
+   "expect": "results",
+   "words": [
+    "violence",
+    "3919",
+    "victime"
+   ]
+  },
+  {
+   "id": 7,
+   "situation": "Famille avec un enfant nécessitant un accompagnement médico-social",
+   "lang": "fr",
+   "query": "SESSAD enfant handicap",
+   "expect": "results",
+   "words": [
+    "SESSAD",
+    "IME",
+    "handicap",
+    "enfant"
+   ]
+  },
+  {
+   "id": 8,
+   "situation": "Personne sans abri avec une addiction",
+   "lang": "fr",
+   "query": "sans abri addiction",
+   "expect": "results",
+   "words": [
+    "hébergement",
+    "CSAPA",
+    "addiction",
+    "accueil"
+   ]
+  },
+  {
+   "id": 9,
+   "situation": "Jeune en décrochage scolaire, conflit familial, difficultés financières",
+   "lang": "fr",
+   "query": "mission locale jeune",
+   "expect": "results",
+   "words": [
+    "mission locale",
+    "jeune",
+    "FAJ"
+   ]
+  },
+  {
+   "id": 10,
+   "situation": "Résident étranger : titre de séjour et emploi",
+   "lang": "de",
+   "query": "Aufenthaltstitel Arbeit",
+   "expect": "results",
+   "words": [
+    "séjour",
+    "emploi",
+    "préfecture"
+   ]
+  },
+  {
+   "id": 11,
+   "situation": "Aidant épuisé",
+   "lang": "fr",
+   "query": "aidant répit",
+   "expect": "results",
+   "words": [
+    "aidant",
+    "répit",
+    "domicile"
+   ]
+  },
+  {
+   "id": 12,
+   "situation": "Personne sous mesure de protection cherchant ses droits",
+   "lang": "fr",
+   "query": "curatelle tutelle",
+   "expect": "results",
+   "words": [
+    "tutelle",
+    "curatelle",
+    "protection"
+   ]
+  },
+  {
+   "id": 13,
+   "situation": "Sortie de détention : logement et réinsertion",
+   "lang": "fr",
+   "query": "sortie de prison logement",
+   "expect": "results",
+   "words": [
+    "SPIP",
+    "hébergement",
+    "logement",
+    "réinsertion"
+   ]
+  },
+  {
+   "id": 14,
+   "situation": "Étudiant sans moyens pour le logement et l'alimentation",
+   "lang": "fr",
+   "query": "étudiant logement alimentaire",
+   "expect": "results",
+   "words": [
+    "étudiant",
+    "CROUS",
+    "logement",
+    "alimentaire"
+   ]
+  },
+  {
+   "id": 15,
+   "situation": "Jeune LGBTQI+ rejeté par sa famille, logement précaire",
+   "lang": "fr",
+   "query": "LGBT logement jeune",
+   "expect": "results",
+   "words": [
+    "LGBT",
+    "logement",
+    "jeune"
+   ]
+  },
+  {
+   "id": 16,
+   "situation": "Impayés de loyer, précarité énergétique et dettes",
+   "lang": "fr",
+   "query": "impayés loyer énergie dettes",
+   "expect": "results",
+   "words": [
+    "loyer",
+    "énergie",
+    "dette",
+    "surendettement",
+    "FSL"
+   ]
+  },
+  {
+   "id": 17,
+   "situation": "Trouble psychique, emploi accompagné et soins",
+   "lang": "fr",
+   "query": "santé mentale emploi accompagné",
+   "expect": "results",
+   "words": [
+    "santé mentale",
+    "emploi",
+    "psych",
+    "SAVS"
+   ]
+  },
+  {
+   "id": 18,
+   "situation": "Faible maîtrise du français, ne peut faire une démarche en ligne",
+   "lang": "fr",
+   "query": "aide démarches en ligne",
+   "expect": "results",
+   "words": [
+    "France Services",
+    "démarches",
+    "numérique",
+    "services"
+   ]
+  },
+  {
+   "id": 19,
+   "situation": "Adulte en zone peu desservie sans transport",
+   "lang": "fr",
+   "query": "transport solidaire",
+   "expect": "results",
+   "words": [
+    "transport",
+    "mobilité",
+    "solidaire"
+   ]
+  },
+  {
+   "id": 20,
+   "situation": "Personne vulnérable voulant un accueil en face à face",
+   "lang": "fr",
+   "query": "accueil CCAS",
+   "expect": "results",
+   "words": [
+    "CCAS",
+    "action sociale",
+    "accueil",
+    "solidarités"
+   ]
+  },
+  {
+   "id": 21,
+   "situation": "Besoins multiples, service hors compétence de la commune",
+   "lang": "fr",
+   "query": "FSL Eurométropole",
+   "expect": "results",
+   "words": [
+    "FSL",
+    "logement",
+    "Eurométropole"
+   ]
+  },
+  {
+   "id": 22,
+   "situation": "Droits incertains : abstention honnête attendue",
+   "lang": "fr",
+   "query": "xqzv kplm",
+   "expect": "abstain",
+   "words": []
+  },
+  {
+   "id": 23,
+   "situation": "Requête arabe ou ukrainienne inconnue",
+   "lang": "ar",
+   "query": "مرحبا كيف حالك",
+   "expect": "abstain",
+   "words": []
+  },
+  {
+   "id": 24,
+   "situation": "Changement de langue en cours de parcours (même besoin en ukrainien)",
+   "lang": "uk",
+   "query": "допомога на оренду",
+   "expect": "results",
+   "words": [
+    "loyer",
+    "logement",
+    "APL"
+   ]
+  },
+  {
+   "id": 25,
+   "situation": "Parcours clavier et lecteur d'écran uniquement",
+   "lang": "fr",
+   "query": "logement social",
+   "expect": "results",
+   "words": [
+    "logement",
+    "HLM"
+   ]
+  }
+ ]
+}

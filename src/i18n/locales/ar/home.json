@@ -55,5 +55,15 @@
  "verify.source.title": "مصدر رسمي",
  "verify.title": "معلومات موثّقة المصدر ومؤرَّخة",
  "verify.withdrawn.text": "إذا اختفى المصدر أو لم يعد يؤكد المعلومة، تُسحب البطاقة حتى التحقق التالي.",
- "verify.withdrawn.title": "السحب إذا تغيّر المصدر"
+ "verify.withdrawn.title": "السحب إذا تغيّر المصدر",
+ "assistant.badge": "ميزة من AccesDirect",
+ "assistant.title": "توقّف عن البحث، ودعنا نرشدك.",
+ "assistant.text": "يطرح عليك مساعدنا بعض الأسئلة البسيطة لتوجيهك إلى المساعدات والإجراءات الأنسب.",
+ "assistant.start": "بدء الاستبيان",
+ "assistant.more": "معرفة المزيد",
+ "assistant.bubble1": "مرحبًا، يمكنني مساعدتك على توضيح وضعك.",
+ "assistant.bubble2": "أبحث عن مساعدات للسكن.",
+ "assistant.bubble3": "جارٍ التحليل…",
+ "news.title": "الأخبار الرسمية",
+ "news.all": "عرض كل الأخبار"
 }

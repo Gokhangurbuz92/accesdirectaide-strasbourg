@@ -47,5 +47,15 @@
  "verify.source.title": "An official source",
  "verify.title": "Sourced and dated information",
  "verify.withdrawn.text": "If the source disappears or no longer confirms the information, the record is withdrawn until the next check.",
- "verify.withdrawn.title": "Withdrawal if the source changes"
+ "verify.withdrawn.title": "Withdrawal if the source changes",
+ "assistant.badge": "AccesDirect feature",
+ "assistant.title": "Stop searching — let us guide you.",
+ "assistant.text": "Our assistant asks you a few simple questions to point you to the most relevant benefits and procedures.",
+ "assistant.start": "Start the questionnaire",
+ "assistant.more": "Learn more",
+ "assistant.bubble1": "Hello, I can help you clarify your situation.",
+ "assistant.bubble2": "I am looking for help with housing.",
+ "assistant.bubble3": "Analysing…",
+ "news.title": "Official news",
+ "news.all": "See all news"
 }

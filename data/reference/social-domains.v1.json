@@ -347,7 +347,8 @@
    },
    "lexicon": [
     "children",
-    "violence"
+    "violence",
+    "child-protection"
    ],
    "subdomains": [
     {
@@ -974,7 +975,8 @@
     ]
    },
    "lexicon": [
-    "mental-health"
+    "mental-health",
+    "addiction"
    ],
    "subdomains": [
     {
@@ -1200,7 +1202,9 @@
      "acces_droits"
     ]
    },
-   "lexicon": [],
+   "lexicon": [
+    "adult-protection"
+   ],
    "subdomains": [
     {
      "id": "mesures",
@@ -1509,7 +1513,9 @@
      "numerique"
     ]
    },
-   "lexicon": [],
+   "lexicon": [
+    "digital-help"
+   ],
    "subdomains": [
     {
      "id": "demarches-en-ligne",
@@ -1623,7 +1629,8 @@
     ]
    },
    "lexicon": [
-    "violence"
+    "violence",
+    "discrimination"
    ],
    "subdomains": [
     {
@@ -1671,7 +1678,9 @@
      "isolement"
     ]
    },
-   "lexicon": [],
+   "lexicon": [
+    "carers"
+   ],
    "subdomains": [
     {
      "id": "aidants",
@@ -1733,7 +1742,9 @@
      "acces_droits"
     ]
    },
-   "lexicon": [],
+   "lexicon": [
+    "bereavement"
+   ],
    "subdomains": [
     {
      "id": "deces-deuil",

@@ -1,0 +1,2136 @@
+{
+ "schema": "ada-social-coverage/1",
+ "reference": "2026-11-01.1",
+ "measuredAt": "2026-11-01T07:24:15.033Z",
+ "totals": {
+  "subdomains": 86,
+  "byStatus": {
+   "PARTIALLY_COVERED": 35,
+   "COVERED_VERIFIED": 23,
+   "TAXONOMY_ONLY": 28
+  }
+ },
+ "byDomain": [
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "fr": "Précarité, pauvreté et urgence sociale",
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 4,
+   "TAXONOMY_ONLY": 0
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "fr": "Logement, hébergement et habitat",
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 5,
+   "TAXONOMY_ONLY": 3
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "fr": "Protection de l'enfance et aide sociale à l'enfance",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 3
+  },
+  {
+   "domain": "enfance-jeunesse",
+   "letter": "D",
+   "fr": "Enfance, jeunesse, éducation et vie étudiante",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "fr": "Famille et parentalité",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 4,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "fr": "Handicap et inclusion",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 4,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "fr": "Grand âge, dépendance et autonomie",
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 2
+  },
+  {
+   "domain": "sante",
+   "letter": "H",
+   "fr": "Santé et accès aux soins",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "sante-mentale",
+   "letter": "I",
+   "fr": "Santé mentale et addictions",
+   "COVERED_VERIFIED": 0,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 2
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "fr": "Violences et protection des victimes",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 3
+  },
+  {
+   "domain": "justice",
+   "letter": "K",
+   "fr": "Justice et accès au droit",
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 0,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "protection-majeurs",
+   "letter": "L",
+   "fr": "Protection juridique des majeurs",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 0,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "fr": "Migration, asile et intégration",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 2
+  },
+  {
+   "domain": "emploi",
+   "letter": "N",
+   "fr": "Emploi, insertion et formation",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 2
+  },
+  {
+   "domain": "budget",
+   "letter": "O",
+   "fr": "Budget, dettes et inclusion financière",
+   "COVERED_VERIFIED": 3,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 0
+  },
+  {
+   "domain": "numerique",
+   "letter": "P",
+   "fr": "Médiation numérique et illettrisme",
+   "COVERED_VERIFIED": 0,
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "mobilite",
+   "letter": "Q",
+   "fr": "Mobilité inclusive",
+   "COVERED_VERIFIED": 0,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "discrimination",
+   "letter": "R",
+   "fr": "Discrimination et droits fondamentaux",
+   "COVERED_VERIFIED": 1,
+   "PARTIALLY_COVERED": 0,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "lien-social",
+   "letter": "S",
+   "fr": "Aidants, isolement et lien social",
+   "COVERED_VERIFIED": 0,
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 1
+  },
+  {
+   "domain": "transversal",
+   "letter": "T",
+   "fr": "Situations transversales et coordination",
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 0,
+   "TAXONOMY_ONLY": 1
+  }
+ ],
+ "rows": [
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "aide-alimentaire",
+   "fr": "Alimentation, hygiène, vêtements",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "actualite:colis-importes-l-union-europeenne-instaure-de-nouveaux-frais-de-traitement-des-le-1er-novembre-187812"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "equipement-et-alimentation--"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "urgence-sociale",
+   "fr": "Aide d'urgence et secours",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 179,
+   "placesEurometropole": 42,
+   "placeTypes": [
+    "CCAS (centre communal d'action sociale)"
+   ],
+   "emergency": [
+    "115"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "acces-aux-droits",
+   "fr": "Accès aux droits et non-recours",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+   ],
+   "places": 54,
+   "placesEurometropole": 16,
+   "placeTypes": [
+    "Espace France Services",
+    "Maison des solidarités (Espace Solidarités)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "difficultes-administratives-ou-juridiques--accompagnement-pour-lacces-aux-droits"
+   ],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "accueil-de-jour",
+   "fr": "Accueils de jour et maraudes",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 24,
+   "placesEurometropole": 24,
+   "placeTypes": [
+    "Centre d’accueil"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    8
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "minima-sociaux",
+   "fr": "Revenus minimum et ressources",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 16,
+   "rightsSlugs": [
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
+    "aide:aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
+    "aide:microcredit-personnel",
+    "aide:prime-activite",
+    "aide:rsa",
+    "aide:aeeh",
+    "aide:aide-juridictionnelle",
+    "aide:c2s",
+    "aide:aah",
+    "demarche:demande-hlm-67-68",
+    "demarche:dossier-mdph-67-68"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "precarite",
+   "letter": "A",
+   "subdomain": "energie",
+   "fr": "Précarité énergétique",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "actualite:heures-creuses-les-plages-horaires-evoluent-299a24"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "hebergement-urgence",
+   "fr": "Hébergement d'urgence et SIAO",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
+   ],
+   "places": 24,
+   "placesEurometropole": 24,
+   "placeTypes": [
+    "Centre d’accueil"
+   ],
+   "emergency": [
+    "115"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [
+    8
+   ],
+   "dataInclusion": [
+    "logement-hebergement--rechercher-une-solution-dhebergement-temporaire"
+   ],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "chrs-insertion",
+   "fr": "Hébergement d'insertion (CHRS)",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    8
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "logement-social",
+   "fr": "Demande de logement social",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "aide:als",
+    "demarche:demande-hlm-67-68",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "logement-hebergement--sinformer-sur-les-demarches-liees-a-lacces-au-logement"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "aides-logement",
+   "fr": "Aides au paiement du logement",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 7,
+   "rightsSlugs": [
+    "aide:apl",
+    "aide:als",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "logement-hebergement--louer-un-logement"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "expulsion-impayes",
+   "fr": "Impayés de loyer et prévention des expulsions",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "logement-hebergement--reduire-les-impayes-de-loyer",
+    "logement-hebergement--se-maintenir-dans-le-logement"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "dalo",
+   "fr": "Droit au logement opposable (DALO/DAHO)",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "demarche:demande-hlm-67-68",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "habitat-indigne",
+   "fr": "Logement indigne ou insalubre",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "logement-accompagne",
+   "fr": "Logement accompagné et pensions de famille",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 27,
+   "placesEurometropole": 18,
+   "placeTypes": [
+    "Maison relais – pension de famille",
+    "Résidence sociale"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "logement-jeunes",
+   "fr": "Logement des jeunes",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    10
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "logement",
+   "letter": "B",
+   "subdomain": "adaptation-logement",
+   "fr": "Adaptation du logement (âge, handicap)",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "subdomain": "ase",
+   "fr": "Aide sociale à l'enfance (ASE)",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
+    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
+    "actualite:certains-velos-interdits-dans-les-tgv-et-les-intercites-a-compter-du-13-decembre-da1122"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    1
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "subdomain": "prevention-enfance",
+   "fr": "Prévention et AED/AEMO",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    1,
+    4
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "subdomain": "signalement",
+   "fr": "Enfant en danger : alerter",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "119"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "subdomain": "mna",
+   "fr": "Mineurs non accompagnés",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    17
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "protection-enfance",
+   "letter": "C",
+   "subdomain": "sortie-ase",
+   "fr": "Jeunes majeurs sortant de l'ASE",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    1
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "enfance-jeunesse",
+   "letter": "D",
+   "subdomain": "pmi-petite-enfance",
+   "fr": "PMI et petite enfance",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "enfance-jeunesse",
+   "letter": "D",
+   "subdomain": "scolarite-inclusive",
+   "fr": "Scolarité et inclusion scolaire",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "aide:permis",
+    "guide:duree-de-conservation-des-papiers-f19134"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "enfance-jeunesse",
+   "letter": "D",
+   "subdomain": "jeunes-insertion",
+   "fr": "Jeunes 16-25 ans : Mission locale, CEJ",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "aide:faj-strasbourg",
+    "aide:permis"
+   ],
+   "places": 13,
+   "placesEurometropole": 8,
+   "placeTypes": [
+    "Mission locale (jeunes de 16 à 25 ans)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "enfance-jeunesse",
+   "letter": "D",
+   "subdomain": "etudiants",
+   "fr": "Vie étudiante et précarité étudiante",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 11,
+   "rightsSlugs": [
+    "aide:c2s",
+    "aide:als",
+    "demarche:demande-hlm-67-68",
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+    "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
+    "demarche:demande-c2s",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "actualite:engagement-de-service-public-une-allocation-mensuelle-de-1-200-pour-les-etudiants-en-medecine-b7ead2"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "prestations-familiales",
+   "fr": "Prestations familiales",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 12,
+   "rightsSlugs": [
+    "aide:prime-activite",
+    "aide:ave-avf",
+    "aide:apl",
+    "aide:als",
+    "demarche:prime-activite-caf",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 12,
+   "placesEurometropole": 4,
+   "placeTypes": [
+    "Caf (Caisse d'allocations familiales)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "grossesse-naissance",
+   "fr": "Grossesse et naissance",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 7,
+   "rightsSlugs": [
+    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+    "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
+    "demarche:actualisation-france-travail",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "actualite:securite-sociale-quel-sera-le-plafond-annuel-en-2027-009178"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "parentalite",
+   "fr": "Soutien à la parentalité",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 9,
+   "rightsSlugs": [
+    "aide:prime-activite",
+    "aide:rsa",
+    "aide:ave-avf",
+    "aide:aeeh",
+    "demarche:rdv-titre-sejour-67",
+    "demarche:dossier-mdph-67-68",
+    "demarche:prime-activite-caf",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "famille--soutien-a-la-parentalite-et-a-leducation"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "separation",
+   "fr": "Séparation, médiation familiale, pension alimentaire",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "aide:prime-activite",
+    "demarche:prime-activite-caf",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "famille--surmonter-conflits-separation-violence"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "famille-monoparentale",
+   "fr": "Familles monoparentales",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "demarche:prime-activite-caf"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "famille",
+   "letter": "E",
+   "subdomain": "garde-enfants",
+   "fr": "Garde d'enfants",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "famille--garde-denfants"
+   ],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "mdph-droits",
+   "fr": "MDPH et droits (AAH, PCH, AEEH, RQTH, CMI)",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 7,
+   "rightsSlugs": [
+    "aide:pch",
+    "aide:aeeh",
+    "aide:c2s",
+    "aide:aah",
+    "demarche:dossier-mdph-67-68",
+    "demarche:demande-c2s",
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "enfants-handicap",
+   "fr": "Enfants : CAMSP, SESSAD, IME, ITEP",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 44,
+   "placesEurometropole": 21,
+   "placeTypes": [
+    "Institut médico-éducatif (IME)",
+    "Service d’éducation spéciale et de soins à domicile (SESSAD)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    2,
+    3
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "adultes-hebergement",
+   "fr": "Adultes : foyers, FAM, MAS",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 66,
+   "placesEurometropole": 27,
+   "placeTypes": [
+    "Foyer d’hébergement pour adultes handicapés",
+    "Foyer de vie pour adultes handicapés",
+    "Foyer d’accueil médicalisé pour adultes handicapés (FAM)",
+    "Maison d’accueil spécialisée (MAS)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    7
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "vie-sociale",
+   "fr": "Accompagnement à domicile : SAVS, SAMSAH",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 15,
+   "placesEurometropole": 9,
+   "placeTypes": [
+    "Service d’accompagnement à la vie sociale (SAVS)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    7
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "travail-handicap",
+   "fr": "Travail : ESAT, Cap emploi, maintien",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 24,
+   "placesEurometropole": 9,
+   "placeTypes": [
+    "Établissement et service d’aide par le travail (ESAT)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    5
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "handicap",
+   "letter": "F",
+   "subdomain": "accessibilite-mobilite",
+   "fr": "Accessibilité et transport adapté",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "apa-aspa",
+   "fr": "APA, ASPA, ASH",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "aide:apa-alsace",
+    "aide:c2s",
+    "demarche:demande-c2s"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "aide-domicile",
+   "fr": "Aide et soins à domicile",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 129,
+   "placesEurometropole": 71,
+   "placeTypes": [
+    "Service autonomie à domicile (aide)",
+    "Service de soins infirmiers à domicile (SSIAD)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    6,
+    7
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "ehpad-residences",
+   "fr": "EHPAD et résidences autonomie",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "aide:als"
+   ],
+   "places": 129,
+   "placesEurometropole": 59,
+   "placeTypes": [
+    "Établissement d’hébergement pour personnes âgées dépendantes (EHPAD)",
+    "Résidence autonomie"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    6
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "information-seniors",
+   "fr": "Information des personnes âgées",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 9,
+   "placesEurometropole": 5,
+   "placeTypes": [
+    "Point d’information pour les personnes âgées"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "maltraitance-ages",
+   "fr": "Maltraitance des personnes âgées ou handicapées",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "3133"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "autonomie",
+   "letter": "G",
+   "subdomain": "fin-de-vie",
+   "fr": "Fin de vie et soins palliatifs",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    18
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "sante",
+   "letter": "H",
+   "subdomain": "couverture-sante",
+   "fr": "Couverture santé (CSS, AME, Carte Vitale)",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 8,
+   "rightsSlugs": [
+    "aide:c2s",
+    "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
+    "demarche:demande-c2s",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
+    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "sante",
+   "letter": "H",
+   "subdomain": "centres-sante",
+   "fr": "Centres et maisons de santé",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 78,
+   "placesEurometropole": 41,
+   "placeTypes": [
+    "Centre de santé",
+    "Maison de santé"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "sante",
+   "letter": "H",
+   "subdomain": "pass",
+   "fr": "Soins pour personnes sans couverture (PASS)",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "demarche:pass-culture-jeunes"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "sante",
+   "letter": "H",
+   "subdomain": "sante-sexuelle",
+   "fr": "Santé sexuelle et reproductive",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "sante-mentale",
+   "letter": "I",
+   "subdomain": "psy",
+   "fr": "Soins et soutien psychologique (CMP)",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "sante-mentale",
+   "letter": "I",
+   "subdomain": "crise-suicide",
+   "fr": "Crise et prévention du suicide",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "3114",
+    "15"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "sante-mentale",
+   "letter": "I",
+   "subdomain": "addictions",
+   "fr": "Addictions : CSAPA, CAARUD",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 14,
+   "placesEurometropole": 10,
+   "placeTypes": [
+    "Centre de soins, d’accompagnement et de prévention en addictologie (CSAPA)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    9
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "subdomain": "violences-conjugales",
+   "fr": "Violences conjugales et intrafamiliales",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "3919",
+    "17"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "subdomain": "violences-sexuelles",
+   "fr": "Violences sexuelles",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "0800059595",
+    "17"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "subdomain": "victimes",
+   "fr": "Aide aux victimes",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [
+    "116006"
+   ],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "subdomain": "traite-exploitation",
+   "fr": "Traite et exploitation",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 13,
+   "rightsSlugs": [
+    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
+    "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
+    "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "actualite:colis-importes-l-union-europeenne-instaure-de-nouveaux-frais-de-traitement-des-le-1er-novembre-187812",
+    "actualite:donnez-votre-avis-sur-l-assurance-retraite-103155"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "violences",
+   "letter": "J",
+   "subdomain": "harcelement",
+   "fr": "Harcèlement",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "justice",
+   "letter": "K",
+   "subdomain": "acces-au-droit",
+   "fr": "Accès au droit et aide juridictionnelle",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "aide:aide-juridictionnelle",
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 20,
+   "placesEurometropole": 6,
+   "placeTypes": [
+    "Point-justice (accès au droit)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "justice",
+   "letter": "K",
+   "subdomain": "pjj-spip",
+   "fr": "PJJ, SPIP et sortie de détention",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    4
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "justice",
+   "letter": "K",
+   "subdomain": "recours",
+   "fr": "Recours administratifs",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 6,
+   "rightsSlugs": [
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "protection-majeurs",
+   "letter": "L",
+   "subdomain": "mesures",
+   "fr": "Tutelle, curatelle, sauvegarde de justice",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "protection-majeurs",
+   "letter": "L",
+   "subdomain": "mjpm",
+   "fr": "Mandataires judiciaires (MJPM)",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [
+    14,
+    15
+   ],
+   "dataInclusion": [
+    "difficultes-financieres--mettre-en-place-une-mesure-de-protection-financiere"
+   ],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "titre-sejour",
+   "fr": "Titre de séjour et démarches en préfecture",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 11,
+   "rightsSlugs": [
+    "aide:microcredit-personnel",
+    "aide:pch",
+    "aide:aide-juridictionnelle",
+    "aide:als",
+    "demarche:rdv-titre-sejour-67",
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
+    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "asile",
+   "fr": "Asile : procédure, CADA, HUDA",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    13
+   ],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "protection-temporaire",
+   "fr": "Protection temporaire",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "integration-langue",
+   "fr": "Intégration et apprentissage du français",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "lecture-ecriture-calcul--maitriser-le-francais"
+   ],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "droits-sans-titre",
+   "fr": "Droits des personnes sans titre de séjour",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "emploi",
+   "letter": "N",
+   "subdomain": "recherche-emploi",
+   "fr": "Recherche d'emploi et chômage",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 9,
+   "rightsSlugs": [
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
+    "aide:aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
+    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+    "demarche:actualisation-france-travail",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 11,
+   "placesEurometropole": 7,
+   "placeTypes": [
+    "France Travail"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "emploi",
+   "letter": "N",
+   "subdomain": "iae",
+   "fr": "Insertion par l'activité économique (IAE)",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "emploi",
+   "letter": "N",
+   "subdomain": "formation",
+   "fr": "Formation et reconversion",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 14,
+   "rightsSlugs": [
+    "aide:faj-strasbourg",
+    "aide:permis",
+    "demarche:rdv-titre-sejour-67",
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+    "demarche:actualisation-france-travail",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "choisir-un-metier--"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "emploi",
+   "letter": "N",
+   "subdomain": "freins-emploi",
+   "fr": "Freins sociaux à l'emploi",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "budget",
+   "letter": "O",
+   "subdomain": "conseil-budget",
+   "fr": "Conseil budgétaire (Points conseil budget)",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "difficultes-financieres--ameliorer-sa-gestion-budgetaire"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "budget",
+   "letter": "O",
+   "subdomain": "surendettement",
+   "fr": "Surendettement (Banque de France)",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 5,
+   "rightsSlugs": [
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "actualite:credits-a-la-consommation-les-regles-evoluent-pour-prevenir-le-surendettement-14b2f1"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "difficultes-financieres--situation-dendettement-surendettement"
+   ],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "budget",
+   "letter": "O",
+   "subdomain": "inclusion-bancaire",
+   "fr": "Compte bancaire et inclusion bancaire",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "budget",
+   "letter": "O",
+   "subdomain": "impots",
+   "fr": "Impôts et démarches fiscales",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 9,
+   "placesEurometropole": 3,
+   "placeTypes": [
+    "Service des impôts des particuliers"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "numerique",
+   "letter": "P",
+   "subdomain": "demarches-en-ligne",
+   "fr": "Aide aux démarches en ligne",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 28,
+   "placesEurometropole": 8,
+   "placeTypes": [
+    "Espace France Services"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified rights content"
+  },
+  {
+   "domain": "numerique",
+   "letter": "P",
+   "subdomain": "illettrisme",
+   "fr": "Lecture, écriture et illectronisme",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [
+    "lecture-ecriture-calcul--"
+   ],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "mobilite",
+   "letter": "Q",
+   "subdomain": "tarifs-solidaires",
+   "fr": "Tarifs solidaires de transport",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "actualite:prime-de-transport-versee-au-salarie-le-plafond-d-exoneration-est-revalorise-temporairement-e353e4"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "mobilite",
+   "letter": "Q",
+   "subdomain": "transport-adapte",
+   "fr": "Transport adapté",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "mobilite",
+   "letter": "Q",
+   "subdomain": "mobilite-emploi",
+   "fr": "Mobilité vers l'emploi",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "aide:permis",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
+    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "mobilite--"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "discrimination",
+   "letter": "R",
+   "subdomain": "defenseur-droits",
+   "fr": "Défenseur des droits et recours",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [
+    "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
+   ],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "discrimination",
+   "letter": "R",
+   "subdomain": "lgbtqi",
+   "fr": "Personnes LGBTQI+",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "lien-social",
+   "letter": "S",
+   "subdomain": "aidants",
+   "fr": "Aidants familiaux",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [
+    "famille--soutien-aidants"
+   ],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "lien-social",
+   "letter": "S",
+   "subdomain": "isolement",
+   "fr": "Isolement et lien social",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  },
+  {
+   "domain": "lien-social",
+   "letter": "S",
+   "subdomain": "culture-loisirs",
+   "fr": "Culture, sport et loisirs",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 5,
+   "rightsSlugs": [
+    "aide:ave-avf",
+    "demarche:pass-culture-jeunes",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "actualite:prime-de-transport-versee-au-salarie-le-plafond-d-exoneration-est-revalorise-temporairement-e353e4"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "transversal",
+   "letter": "T",
+   "subdomain": "deces-deuil",
+   "fr": "Décès et deuil : démarches et droits",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:duree-de-conservation-des-papiers-f19134"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "gap": null
+  },
+  {
+   "domain": "transversal",
+   "letter": "T",
+   "subdomain": "institutions-locales",
+   "fr": "Institutions locales (mairies, CCAS, Maisons des solidarités)",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 6,
+   "rightsSlugs": [
+    "aide:permis",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "places": 722,
+   "placesEurometropole": 105,
+   "placeTypes": [
+    "Mairie",
+    "CCAS (centre communal d'action sociale)",
+    "Maison des solidarités (Espace Solidarités)"
+   ],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": null
+  },
+  {
+   "domain": "transversal",
+   "letter": "T",
+   "subdomain": "coordination-pro",
+   "fr": "Coordination des professionnels",
+   "status": "TAXONOMY_ONLY",
+   "rightsContent": 0,
+   "rightsSlugs": [],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": false,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": false,
+   "gap": "missing content and service data"
+  }
+ ],
+ "note": "Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
+ "catalogue": {
+  "aide": 17,
+  "demarche": 13,
+  "guide": 12,
+  "dispositif": 1,
+  "actualite": 10,
+  "structures": 1633
+ }
+}

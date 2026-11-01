@@ -104,6 +104,15 @@ export function check({ srcDir = SRC, localesDir = LOCALES, languages = TARGET_L
       used.set(k.key, prev ? { ...k, defaults: { ...prev.defaults, ...k.defaults }, plural: prev.plural || k.plural } : k);
     }
   }
+  // data-driven keys: the labels of the social-sector reference are rendered with keys built from its ids (src/pages/Besoins.jsx)
+  const refFile = path.join(ROOT, 'data', 'reference', 'social-domains.v1.json');
+  if (fs.existsSync(refFile) && (!namespaces || namespaces.includes('reference'))) {
+    const ref = JSON.parse(fs.readFileSync(refFile, 'utf8'));
+    for (const d of ref.domains) {
+      used.set(`reference:domain.${d.id}`, { key: `reference:domain.${d.id}`, ns: 'reference', id: `domain.${d.id}`, defaults: { '': d.fr }, plural: false, file: 'data/reference/social-domains.v1.json' });
+      for (const s of d.subdomains) used.set(`reference:sub.${s.id}`, { key: `reference:sub.${s.id}`, ns: 'reference', id: `sub.${s.id}`, defaults: { '': s.fr }, plural: false, file: 'data/reference/social-domains.v1.json' });
+    }
+  }
   const languagesOut = {}; const unused = {};
   for (const lang of languages) {
     const res = loadLocale(lang, localesDir);

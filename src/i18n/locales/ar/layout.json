@@ -113,5 +113,6 @@
  "account.personalAccount": "حساب فردي",
  "account.personalAccount.text": "تقدير المساعدات الممكنة، حجز المواعيد",
  "account.proAccount": "حساب هيئة / مهني",
- "account.proAccount.text": "مرافقة المستفيدين"
+ "account.proAccount.text": "مرافقة المستفيدين",
+ "footer.needs": "البحث عن المساعدة حسب الحاجة"
 }

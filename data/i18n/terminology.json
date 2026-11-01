@@ -3,46 +3,441 @@
  "purpose": "R32 — official names kept in French in every translation (never translated by the engine: they are replaced by placeholders before translation and restored after). A short gloss in the target language is added after the first occurrence in a passage, written by the project (AI-drafted, to be reviewed by native speakers), never invented by the engine. Not a source of eligibility rules.",
  "status": "AI-drafted glosses, not yet reviewed by native speakers",
  "terms": [
-  { "fr": "Caisse d'allocations familiales", "match": "Caisses? d['’]allocations familiales", "gloss": { "en": "family benefits office", "tr": "aile yardımları kurumu", "ar": "صندوق الإعانات العائلية", "de": "Familienkasse", "uk": "каса сімейних допомог" } },
-  { "fr": "CAF", "gloss": { "en": "family benefits office", "tr": "aile yardımları kurumu", "ar": "صندوق الإعانات العائلية", "de": "Familienkasse", "uk": "каса сімейних допомог" } },
-  { "fr": "Caisse primaire d'assurance maladie", "match": "Caisses? primaires? d['’]assurance maladie", "gloss": { "en": "local health insurance office", "tr": "yerel sağlık sigortası kurumu", "ar": "الصندوق المحلي للتأمين الصحي", "de": "örtliche Krankenkasse", "uk": "місцева каса медичного страхування" } },
-  { "fr": "CPAM", "gloss": { "en": "local health insurance office", "tr": "yerel sağlık sigortası kurumu", "ar": "الصندوق المحلي للتأمين الصحي", "de": "örtliche Krankenkasse", "uk": "місцева каса медичного страхування" } },
-  { "fr": "Assurance maladie", "match": "Assurance [Mm]aladie", "gloss": { "en": "French public health insurance", "tr": "Fransız kamu sağlık sigortası", "ar": "التأمين الصحي العمومي الفرنسي", "de": "französische gesetzliche Krankenversicherung", "uk": "французьке державне медичне страхування" } },
-  { "fr": "MSA", "gloss": { "en": "farmers' social security fund", "tr": "tarım sosyal güvenlik kurumu", "ar": "صندوق الضمان الاجتماعي الفلاحي", "de": "landwirtschaftliche Sozialversicherung", "uk": "сільськогосподарське соціальне страхування" } },
-  { "fr": "MDPH", "gloss": { "en": "departmental disability centre", "tr": "il engelli bireyler merkezi", "ar": "الدار الإقليمية للأشخاص ذوي الإعاقة", "de": "Behindertenzentrum des Départements", "uk": "департаментський центр у справах осіб з інвалідністю" } },
-  { "fr": "CCAS", "gloss": { "en": "municipal social services centre", "tr": "belediye sosyal hizmet merkezi", "ar": "المركز البلدي للعمل الاجتماعي", "de": "kommunales Sozialzentrum", "uk": "муніципальний центр соціальних послуг" } },
-  { "fr": "CIAS", "gloss": { "en": "intermunicipal social services centre", "tr": "belediyeler arası sosyal hizmet merkezi", "ar": "المركز المشترك بين البلديات للعمل الاجتماعي", "de": "interkommunales Sozialzentrum", "uk": "міжмуніципальний центр соціальних послуг" } },
-  { "fr": "France Travail", "gloss": { "en": "public employment service", "tr": "kamu istihdam kurumu", "ar": "هيئة التشغيل العمومية", "de": "öffentliche Arbeitsverwaltung", "uk": "державна служба зайнятості" } },
-  { "fr": "France Services", "gloss": { "en": "public service help desks", "tr": "kamu hizmetleri danışma noktaları", "ar": "مكاتب الخدمات العمومية", "de": "Bürgerservicestellen", "uk": "пункти державних послуг" } },
-  { "fr": "URSSAF", "match": "URSSAF|Urssaf", "gloss": { "en": "social contributions office", "tr": "sosyal güvenlik primleri kurumu", "ar": "هيئة تحصيل الاشتراكات الاجتماعية", "de": "Beitragseinzugsstelle der Sozialversicherung", "uk": "служба збору соціальних внесків" } },
-  { "fr": "OFII", "gloss": { "en": "French office for immigration and integration", "tr": "Fransa göç ve uyum ofisi", "ar": "المكتب الفرنسي للهجرة والاندماج", "de": "französisches Amt für Einwanderung und Integration", "uk": "французьке бюро з питань імміграції та інтеграції" } },
-  { "fr": "ANTS", "gloss": { "en": "national agency for official documents", "tr": "resmi belgeler ulusal ajansı", "ar": "الوكالة الوطنية للوثائق المؤمّنة", "de": "nationale Agentur für amtliche Dokumente", "uk": "національне агентство офіційних документів" } },
-  { "fr": "CROUS", "match": "CROUS|Crous", "gloss": { "en": "student services", "tr": "öğrenci hizmetleri kurumu", "ar": "خدمات الطلاب", "de": "Studierendenwerk", "uk": "студентська служба" } },
-  { "fr": "Action Logement", "gloss": { "en": "employer-funded housing organisation", "tr": "işveren destekli konut kuruluşu", "ar": "هيئة السكن الممولة من أرباب العمل", "de": "arbeitgeberfinanzierte Wohnungsorganisation", "uk": "житлова організація, що фінансується роботодавцями" } },
-  { "fr": "Eurométropole de Strasbourg", "gloss": { "en": "Strasbourg metropolitan authority", "tr": "Strazburg büyükşehir yönetimi", "ar": "السلطة الحضرية لستراسبورغ الكبرى", "de": "Eurometropole Straßburg", "uk": "Страсбурзька метрополія" } },
-  { "fr": "Service-Public.fr", "match": "[Ss]ervice-[Pp]ublic(?:\\.fr)?", "gloss": { "en": "official French administration website", "tr": "Fransız idaresinin resmi sitesi", "ar": "الموقع الرسمي للإدارة الفرنسية", "de": "offizielle Website der französischen Verwaltung", "uk": "офіційний сайт французької адміністрації" } },
-  { "fr": "RSA", "gloss": { "en": "basic income support", "tr": "asgari gelir desteği", "ar": "دخل التضامن النشط", "de": "Grundsicherungsleistung", "uk": "мінімальний дохід солідарності" } },
-  { "fr": "APL", "gloss": { "en": "personalised housing allowance", "tr": "kişiye özel konut yardımı", "ar": "المساعدة الشخصية للسكن", "de": "personalisierte Wohnbeihilfe", "uk": "персоналізована житлова допомога" } },
-  { "fr": "ALS", "gloss": { "en": "social housing allowance", "tr": "sosyal konut yardımı", "ar": "إعانة السكن الاجتماعية", "de": "soziale Wohnbeihilfe", "uk": "соціальна житлова допомога" } },
-  { "fr": "ALF", "gloss": { "en": "family housing allowance", "tr": "aile konut yardımı", "ar": "إعانة السكن العائلية", "de": "familienbezogene Wohnbeihilfe", "uk": "сімейна житлова допомога" } },
-  { "fr": "AAH", "gloss": { "en": "allowance for disabled adults", "tr": "engelli yetişkin ödeneği", "ar": "إعانة البالغين ذوي الإعاقة", "de": "Beihilfe für Erwachsene mit Behinderung", "uk": "допомога дорослим з інвалідністю" } },
-  { "fr": "PCH", "gloss": { "en": "disability compensation benefit", "tr": "engellilik telafi yardımı", "ar": "إعانة تعويض الإعاقة", "de": "Behinderungsausgleichsleistung", "uk": "компенсаційна допомога з інвалідності" } },
-  { "fr": "AEEH", "gloss": { "en": "allowance for the education of a disabled child", "tr": "engelli çocuk eğitim ödeneği", "ar": "إعانة تعليم الطفل ذي الإعاقة", "de": "Beihilfe für die Erziehung eines Kindes mit Behinderung", "uk": "допомога на виховання дитини з інвалідністю" } },
-  { "fr": "ASPA", "gloss": { "en": "minimum old-age pension", "tr": "asgari yaşlılık aylığı", "ar": "منحة التضامن للمسنين", "de": "Mindestaltersrente", "uk": "мінімальна пенсія за віком" } },
-  { "fr": "CSS", "gloss": { "en": "free or low-cost supplementary health cover", "tr": "ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası", "ar": "التغطية الصحية التكميلية المجانية أو منخفضة التكلفة", "de": "kostenlose oder günstige Zusatzkrankenversicherung", "uk": "безкоштовне або недороге додаткове медичне покриття" } },
-  { "fr": "Complémentaire santé solidaire", "match": "[Cc]omplémentaire [Ss]anté [Ss]olidaire", "gloss": { "en": "free or low-cost supplementary health cover", "tr": "ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası", "ar": "التغطية الصحية التكميلية المجانية أو منخفضة التكلفة", "de": "kostenlose oder günstige Zusatzkrankenversicherung", "uk": "безкоштовне або недороге додаткове медичне покриття" } },
-  { "fr": "AME", "gloss": { "en": "state medical aid", "tr": "devlet sağlık yardımı", "ar": "المساعدة الطبية الحكومية", "de": "staatliche medizinische Hilfe", "uk": "державна медична допомога" } },
-  { "fr": "FSL", "gloss": { "en": "housing solidarity fund", "tr": "konut dayanışma fonu", "ar": "صندوق التضامن للسكن", "de": "Wohnungssolidaritätsfonds", "uk": "фонд житлової солідарності" } },
-  { "fr": "FAJ’EMS", "match": "FAJ['’]EMS", "gloss": { "en": "youth support fund", "tr": "gençlere destek fonu", "ar": "صندوق مساعدة الشباب", "de": "Jugendhilfefonds", "uk": "фонд допомоги молоді" } },
-  { "fr": "FAJ", "gloss": { "en": "youth support fund", "tr": "gençlere destek fonu", "ar": "صندوق مساعدة الشباب", "de": "Jugendhilfefonds", "uk": "фонд допомоги молоді" } },
-  { "fr": "Fonds d’Aide aux Jeunes", "match": "Fonds d['’][Aa]ide aux [Jj]eunes", "gloss": { "en": "youth support fund", "tr": "gençlere destek fonu", "ar": "صندوق مساعدة الشباب", "de": "Jugendhilfefonds", "uk": "фонд допомоги молоді" } },
-  { "fr": "prime d’activité", "match": "[Pp]rime d['’]activité", "gloss": { "en": "top-up for low earnings", "tr": "düşük kazanç tamamlama yardımı", "ar": "منحة النشاط (تكملة للدخل المنخفض)", "de": "Aufstockungsleistung bei geringem Einkommen", "uk": "доплата при низькому заробітку" } },
-  { "fr": "PAJE", "gloss": { "en": "early childhood benefit", "tr": "erken çocukluk yardımı", "ar": "إعانة الطفولة المبكرة", "de": "Leistung für Kleinkinder", "uk": "допомога на дитину раннього віку" } },
-  { "fr": "CMG", "gloss": { "en": "childcare cost supplement", "tr": "çocuk bakım masrafı desteği", "ar": "مكمل اختيار طريقة رعاية الطفل", "de": "Zuschuss zu Kinderbetreuungskosten", "uk": "доплата на догляд за дитиною" } },
-  { "fr": "ARE", "gloss": { "en": "unemployment benefit", "tr": "işsizlik ödeneği", "ar": "إعانة البطالة", "de": "Arbeitslosengeld", "uk": "допомога з безробіття" } },
-  { "fr": "CEJ", "gloss": { "en": "youth commitment contract", "tr": "gençlik taahhüt sözleşmesi", "ar": "عقد التزام الشباب", "de": "Jugendverpflichtungsvertrag", "uk": "контракт залучення молоді" } },
-  { "fr": "Cerfa", "match": "[Cc]erfa|CERFA", "gloss": { "en": "official form", "tr": "resmi form", "ar": "استمارة رسمية", "de": "amtliches Formular", "uk": "офіційна форма" } },
-  { "fr": "titre de séjour", "match": "[Tt]itres? de séjour", "gloss": { "en": "residence permit", "tr": "oturum izni", "ar": "تصريح الإقامة", "de": "Aufenthaltstitel", "uk": "посвідка на проживання" } },
-  { "fr": "préfecture", "match": "[Pp]réfectures?(?: du Bas-Rhin)?", "gloss": { "en": "state administration of the département", "tr": "devletin il idaresi", "ar": "إدارة الدولة في الإقليم", "de": "staatliche Verwaltung des Départements", "uk": "державна адміністрація департаменту" } }
+  {
+   "fr": "Mutualité sociale agricole",
+   "match": "Mutualité [Ss]ociale [Aa]gricole",
+   "gloss": {
+    "en": "farmers' social security fund",
+    "tr": "tarım sosyal güvenlik kurumu",
+    "ar": "صندوق الضمان الاجتماعي الفلاحي",
+    "de": "landwirtschaftliche Sozialversicherung",
+    "uk": "сільськогосподарське соціальне страхування"
+   }
+  },
+  {
+   "fr": "Caisse d'allocations familiales",
+   "match": "Caisses? d['’]allocations familiales",
+   "gloss": {
+    "en": "family benefits office",
+    "tr": "aile yardımları kurumu",
+    "ar": "صندوق الإعانات العائلية",
+    "de": "Familienkasse",
+    "uk": "каса сімейних допомог"
+   }
+  },
+  {
+   "fr": "CAF",
+   "gloss": {
+    "en": "family benefits office",
+    "tr": "aile yardımları kurumu",
+    "ar": "صندوق الإعانات العائلية",
+    "de": "Familienkasse",
+    "uk": "каса сімейних допомог"
+   },
+   "match": "CAF|Caf"
+  },
+  {
+   "fr": "Caisse primaire d'assurance maladie",
+   "match": "Caisses? primaires? d['’]assurance maladie",
+   "gloss": {
+    "en": "local health insurance office",
+    "tr": "yerel sağlık sigortası kurumu",
+    "ar": "الصندوق المحلي للتأمين الصحي",
+    "de": "örtliche Krankenkasse",
+    "uk": "місцева каса медичного страхування"
+   }
+  },
+  {
+   "fr": "CPAM",
+   "gloss": {
+    "en": "local health insurance office",
+    "tr": "yerel sağlık sigortası kurumu",
+    "ar": "الصندوق المحلي للتأمين الصحي",
+    "de": "örtliche Krankenkasse",
+    "uk": "місцева каса медичного страхування"
+   }
+  },
+  {
+   "fr": "Assurance maladie",
+   "match": "Assurance [Mm]aladie",
+   "gloss": {
+    "en": "French public health insurance",
+    "tr": "Fransız kamu sağlık sigortası",
+    "ar": "التأمين الصحي العمومي الفرنسي",
+    "de": "französische gesetzliche Krankenversicherung",
+    "uk": "французьке державне медичне страхування"
+   }
+  },
+  {
+   "fr": "MSA",
+   "gloss": {
+    "en": "farmers' social security fund",
+    "tr": "tarım sosyal güvenlik kurumu",
+    "ar": "صندوق الضمان الاجتماعي الفلاحي",
+    "de": "landwirtschaftliche Sozialversicherung",
+    "uk": "сільськогосподарське соціальне страхування"
+   },
+   "match": "MSA|Msa"
+  },
+  {
+   "fr": "MDPH",
+   "gloss": {
+    "en": "departmental disability centre",
+    "tr": "il engelli bireyler merkezi",
+    "ar": "الدار الإقليمية للأشخاص ذوي الإعاقة",
+    "de": "Behindertenzentrum des Départements",
+    "uk": "департаментський центр у справах осіб з інвалідністю"
+   }
+  },
+  {
+   "fr": "CCAS",
+   "gloss": {
+    "en": "municipal social services centre",
+    "tr": "belediye sosyal hizmet merkezi",
+    "ar": "المركز البلدي للعمل الاجتماعي",
+    "de": "kommunales Sozialzentrum",
+    "uk": "муніципальний центр соціальних послуг"
+   }
+  },
+  {
+   "fr": "CIAS",
+   "gloss": {
+    "en": "intermunicipal social services centre",
+    "tr": "belediyeler arası sosyal hizmet merkezi",
+    "ar": "المركز المشترك بين البلديات للعمل الاجتماعي",
+    "de": "interkommunales Sozialzentrum",
+    "uk": "міжмуніципальний центр соціальних послуг"
+   }
+  },
+  {
+   "fr": "France Travail",
+   "gloss": {
+    "en": "public employment service",
+    "tr": "kamu istihdam kurumu",
+    "ar": "هيئة التشغيل العمومية",
+    "de": "öffentliche Arbeitsverwaltung",
+    "uk": "державна служба зайнятості"
+   }
+  },
+  {
+   "fr": "France Services",
+   "gloss": {
+    "en": "public service help desks",
+    "tr": "kamu hizmetleri danışma noktaları",
+    "ar": "مكاتب الخدمات العمومية",
+    "de": "Bürgerservicestellen",
+    "uk": "пункти державних послуг"
+   }
+  },
+  {
+   "fr": "URSSAF",
+   "match": "URSSAF|Urssaf",
+   "gloss": {
+    "en": "social contributions office",
+    "tr": "sosyal güvenlik primleri kurumu",
+    "ar": "هيئة تحصيل الاشتراكات الاجتماعية",
+    "de": "Beitragseinzugsstelle der Sozialversicherung",
+    "uk": "служба збору соціальних внесків"
+   }
+  },
+  {
+   "fr": "OFII",
+   "gloss": {
+    "en": "French office for immigration and integration",
+    "tr": "Fransa göç ve uyum ofisi",
+    "ar": "المكتب الفرنسي للهجرة والاندماج",
+    "de": "französisches Amt für Einwanderung und Integration",
+    "uk": "французьке бюро з питань імміграції та інтеграції"
+   }
+  },
+  {
+   "fr": "ANTS",
+   "gloss": {
+    "en": "national agency for official documents",
+    "tr": "resmi belgeler ulusal ajansı",
+    "ar": "الوكالة الوطنية للوثائق المؤمّنة",
+    "de": "nationale Agentur für amtliche Dokumente",
+    "uk": "національне агентство офіційних документів"
+   }
+  },
+  {
+   "fr": "CROUS",
+   "match": "CROUS|Crous",
+   "gloss": {
+    "en": "student services",
+    "tr": "öğrenci hizmetleri kurumu",
+    "ar": "خدمات الطلاب",
+    "de": "Studierendenwerk",
+    "uk": "студентська служба"
+   }
+  },
+  {
+   "fr": "Action Logement",
+   "gloss": {
+    "en": "employer-funded housing organisation",
+    "tr": "işveren destekli konut kuruluşu",
+    "ar": "هيئة السكن الممولة من أرباب العمل",
+    "de": "arbeitgeberfinanzierte Wohnungsorganisation",
+    "uk": "житлова організація, що фінансується роботодавцями"
+   }
+  },
+  {
+   "fr": "Eurométropole de Strasbourg",
+   "gloss": {
+    "en": "Strasbourg metropolitan authority",
+    "tr": "Strazburg büyükşehir yönetimi",
+    "ar": "السلطة الحضرية لستراسبورغ الكبرى",
+    "de": "Eurometropole Straßburg",
+    "uk": "Страсбурзька метрополія"
+   }
+  },
+  {
+   "fr": "Service-Public.fr",
+   "match": "[Ss]ervice-[Pp]ublic(?:\\.fr)?",
+   "gloss": {
+    "en": "official French administration website",
+    "tr": "Fransız idaresinin resmi sitesi",
+    "ar": "الموقع الرسمي للإدارة الفرنسية",
+    "de": "offizielle Website der französischen Verwaltung",
+    "uk": "офіційний сайт французької адміністрації"
+   }
+  },
+  {
+   "fr": "RSA",
+   "gloss": {
+    "en": "basic income support",
+    "tr": "asgari gelir desteği",
+    "ar": "دخل التضامن النشط",
+    "de": "Grundsicherungsleistung",
+    "uk": "мінімальний дохід солідарності"
+   }
+  },
+  {
+   "fr": "APL",
+   "gloss": {
+    "en": "personalised housing allowance",
+    "tr": "kişiye özel konut yardımı",
+    "ar": "المساعدة الشخصية للسكن",
+    "de": "personalisierte Wohnbeihilfe",
+    "uk": "персоналізована житлова допомога"
+   }
+  },
+  {
+   "fr": "ALS",
+   "gloss": {
+    "en": "social housing allowance",
+    "tr": "sosyal konut yardımı",
+    "ar": "إعانة السكن الاجتماعية",
+    "de": "soziale Wohnbeihilfe",
+    "uk": "соціальна житлова допомога"
+   }
+  },
+  {
+   "fr": "ALF",
+   "gloss": {
+    "en": "family housing allowance",
+    "tr": "aile konut yardımı",
+    "ar": "إعانة السكن العائلية",
+    "de": "familienbezogene Wohnbeihilfe",
+    "uk": "сімейна житлова допомога"
+   }
+  },
+  {
+   "fr": "AAH",
+   "gloss": {
+    "en": "allowance for disabled adults",
+    "tr": "engelli yetişkin ödeneği",
+    "ar": "إعانة البالغين ذوي الإعاقة",
+    "de": "Beihilfe für Erwachsene mit Behinderung",
+    "uk": "допомога дорослим з інвалідністю"
+   }
+  },
+  {
+   "fr": "PCH",
+   "gloss": {
+    "en": "disability compensation benefit",
+    "tr": "engellilik telafi yardımı",
+    "ar": "إعانة تعويض الإعاقة",
+    "de": "Behinderungsausgleichsleistung",
+    "uk": "компенсаційна допомога з інвалідності"
+   }
+  },
+  {
+   "fr": "AEEH",
+   "gloss": {
+    "en": "allowance for the education of a disabled child",
+    "tr": "engelli çocuk eğitim ödeneği",
+    "ar": "إعانة تعليم الطفل ذي الإعاقة",
+    "de": "Beihilfe für die Erziehung eines Kindes mit Behinderung",
+    "uk": "допомога на виховання дитини з інвалідністю"
+   }
+  },
+  {
+   "fr": "ASPA",
+   "gloss": {
+    "en": "minimum old-age pension",
+    "tr": "asgari yaşlılık aylığı",
+    "ar": "منحة التضامن للمسنين",
+    "de": "Mindestaltersrente",
+    "uk": "мінімальна пенсія за віком"
+   }
+  },
+  {
+   "fr": "CSS",
+   "gloss": {
+    "en": "free or low-cost supplementary health cover",
+    "tr": "ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası",
+    "ar": "التغطية الصحية التكميلية المجانية أو منخفضة التكلفة",
+    "de": "kostenlose oder günstige Zusatzkrankenversicherung",
+    "uk": "безкоштовне або недороге додаткове медичне покриття"
+   }
+  },
+  {
+   "fr": "Complémentaire santé solidaire",
+   "match": "[Cc]omplémentaire [Ss]anté [Ss]olidaire",
+   "gloss": {
+    "en": "free or low-cost supplementary health cover",
+    "tr": "ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası",
+    "ar": "التغطية الصحية التكميلية المجانية أو منخفضة التكلفة",
+    "de": "kostenlose oder günstige Zusatzkrankenversicherung",
+    "uk": "безкоштовне або недороге додаткове медичне покриття"
+   }
+  },
+  {
+   "fr": "AME",
+   "gloss": {
+    "en": "state medical aid",
+    "tr": "devlet sağlık yardımı",
+    "ar": "المساعدة الطبية الحكومية",
+    "de": "staatliche medizinische Hilfe",
+    "uk": "державна медична допомога"
+   }
+  },
+  {
+   "fr": "FSL",
+   "gloss": {
+    "en": "housing solidarity fund",
+    "tr": "konut dayanışma fonu",
+    "ar": "صندوق التضامن للسكن",
+    "de": "Wohnungssolidaritätsfonds",
+    "uk": "фонд житлової солідарності"
+   }
+  },
+  {
+   "fr": "FAJ’EMS",
+   "match": "FAJ['’]EMS",
+   "gloss": {
+    "en": "youth support fund",
+    "tr": "gençlere destek fonu",
+    "ar": "صندوق مساعدة الشباب",
+    "de": "Jugendhilfefonds",
+    "uk": "фонд допомоги молоді"
+   }
+  },
+  {
+   "fr": "FAJ",
+   "gloss": {
+    "en": "youth support fund",
+    "tr": "gençlere destek fonu",
+    "ar": "صندوق مساعدة الشباب",
+    "de": "Jugendhilfefonds",
+    "uk": "фонд допомоги молоді"
+   }
+  },
+  {
+   "fr": "Fonds d’Aide aux Jeunes",
+   "match": "Fonds d['’][Aa]ide aux [Jj]eunes",
+   "gloss": {
+    "en": "youth support fund",
+    "tr": "gençlere destek fonu",
+    "ar": "صندوق مساعدة الشباب",
+    "de": "Jugendhilfefonds",
+    "uk": "фонд допомоги молоді"
+   }
+  },
+  {
+   "fr": "prime d’activité",
+   "match": "[Pp]rime d['’]activité",
+   "gloss": {
+    "en": "top-up for low earnings",
+    "tr": "düşük kazanç tamamlama yardımı",
+    "ar": "منحة النشاط (تكملة للدخل المنخفض)",
+    "de": "Aufstockungsleistung bei geringem Einkommen",
+    "uk": "доплата при низькому заробітку"
+   }
+  },
+  {
+   "fr": "PAJE",
+   "gloss": {
+    "en": "early childhood benefit",
+    "tr": "erken çocukluk yardımı",
+    "ar": "إعانة الطفولة المبكرة",
+    "de": "Leistung für Kleinkinder",
+    "uk": "допомога на дитину раннього віку"
+   }
+  },
+  {
+   "fr": "CMG",
+   "gloss": {
+    "en": "childcare cost supplement",
+    "tr": "çocuk bakım masrafı desteği",
+    "ar": "مكمل اختيار طريقة رعاية الطفل",
+    "de": "Zuschuss zu Kinderbetreuungskosten",
+    "uk": "доплата на догляд за дитиною"
+   }
+  },
+  {
+   "fr": "ARE",
+   "gloss": {
+    "en": "unemployment benefit",
+    "tr": "işsizlik ödeneği",
+    "ar": "إعانة البطالة",
+    "de": "Arbeitslosengeld",
+    "uk": "допомога з безробіття"
+   }
+  },
+  {
+   "fr": "CEJ",
+   "gloss": {
+    "en": "youth commitment contract",
+    "tr": "gençlik taahhüt sözleşmesi",
+    "ar": "عقد التزام الشباب",
+    "de": "Jugendverpflichtungsvertrag",
+    "uk": "контракт залучення молоді"
+   }
+  },
+  {
+   "fr": "Cerfa",
+   "match": "[Cc]erfa|CERFA",
+   "gloss": {
+    "en": "official form",
+    "tr": "resmi form",
+    "ar": "استمارة رسمية",
+    "de": "amtliches Formular",
+    "uk": "офіційна форма"
+   }
+  },
+  {
+   "fr": "titre de séjour",
+   "match": "[Tt]itres? de séjour",
+   "gloss": {
+    "en": "residence permit",
+    "tr": "oturum izni",
+    "ar": "تصريح الإقامة",
+    "de": "Aufenthaltstitel",
+    "uk": "посвідка на проживання"
+   }
+  },
+  {
+   "fr": "préfecture",
+   "match": "[Pp]réfectures?(?: du Bas-Rhin)?",
+   "gloss": {
+    "en": "state administration of the département",
+    "tr": "devletin il idaresi",
+    "ar": "إدارة الدولة في الإقليم",
+    "de": "staatliche Verwaltung des Départements",
+    "uk": "державна адміністрація департаменту"
+   }
+  }
  ]
 }

@@ -69,6 +69,7 @@ const NAV_ITEMS = [
 ];
 
 const FOOTER_RESSOURCES = [
+  { label: 'Trouver par besoin', href: '/besoins' },
   { label: 'Bonnes pratiques', href: '/bonnes-pratiques' },
   { label: 'Outils', href: '/outils' },
   { label: 'Dispositifs', href: '/dispositifs' },
@@ -118,6 +119,7 @@ const LABELS = {
   'Observabilité': (t) => t('layout:nav.admin.observability', 'Observabilité'),
   'Review Queue': (t) => t('layout:nav.admin.review', 'Review Queue'),
   'Admin': (t) => t('layout:nav.admin.admin', 'Admin'),
+  'Trouver par besoin': (t) => t('layout:footer.needs', 'Trouver par besoin'),
   'Bonnes pratiques': (t) => t('layout:footer.guides', 'Bonnes pratiques'),
   'Dispositifs': (t) => t('layout:footer.dispositifs', 'Dispositifs'),
   'À propos': (t) => t('layout:footer.about', 'À propos'),

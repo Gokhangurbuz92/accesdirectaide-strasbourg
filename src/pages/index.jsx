@@ -216,6 +216,7 @@ const SentryTestPage = lazy(() => import("./SentryTestPage.jsx"));
 
 // Glossaire
 const Glossaire = lazy(() => import("./Glossaire.jsx"));
+const Besoins = lazy(() => import("./Besoins.jsx"));   // extension R32: entry by need (social-sector reference)
 
 // Map for _getCurrentPage logic (keeping structure for logic compatibility)
 const PAGES = {
@@ -539,6 +540,7 @@ function PagesContent() {
                                 <Route path="/categories/:slug" element={<Aides />} />
                                 <Route path="/situations/:slug" element={<SituationRedirect />} />
                                 <Route path="/glossaire" element={<Glossaire />} />
+                                <Route path="/besoins" element={<Besoins />} />
 
                                 <Route path="/structures" element={<Annuaire />} />
                                 <Route path="/annuaire" element={<Navigate to="/structures" replace />} />

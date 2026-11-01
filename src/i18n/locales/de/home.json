@@ -47,5 +47,15 @@
  "verify.source.title": "Eine offizielle Quelle",
  "verify.title": "Informationen mit Quelle und Datum",
  "verify.withdrawn.text": "Verschwindet die Quelle oder bestätigt sie die Information nicht mehr, wird der Eintrag bis zur nächsten Prüfung zurückgezogen.",
- "verify.withdrawn.title": "Rückzug, wenn sich die Quelle ändert"
+ "verify.withdrawn.title": "Rückzug, wenn sich die Quelle ändert",
+ "assistant.badge": "Exklusiv bei AccesDirect",
+ "assistant.title": "Nicht mehr suchen – lassen Sie sich leiten.",
+ "assistant.text": "Unser Assistent stellt Ihnen einige einfache Fragen, um Sie zu den passendsten Hilfen und Behördengängen zu führen.",
+ "assistant.start": "Fragebogen starten",
+ "assistant.more": "Mehr erfahren",
+ "assistant.bubble1": "Hallo, ich kann Ihnen helfen, Ihre Situation zu klären.",
+ "assistant.bubble2": "Ich suche Hilfen für die Wohnung.",
+ "assistant.bubble3": "Wird analysiert…",
+ "news.title": "Offizielle Neuigkeiten",
+ "news.all": "Alle Neuigkeiten ansehen"
 }

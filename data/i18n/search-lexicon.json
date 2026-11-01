@@ -984,6 +984,181 @@
    "uk": [
     "єврометропол*"
    ]
+  },
+  {
+   "id": "child-protection",
+   "fr": "protection de l'enfance",
+   "en": [
+    "child protection",
+    "child abuse",
+    "child in danger"
+   ],
+   "tr": [
+    "çocuk koruma*",
+    "çocuk istismar*"
+   ],
+   "ar": [
+    "حمايه الطفل",
+    "حمايه الطفوله"
+   ],
+   "de": [
+    "kinderschutz*",
+    "jugendamt*"
+   ],
+   "uk": [
+    "захист дит*",
+    "захисту дит*"
+   ]
+  },
+  {
+   "id": "adult-protection",
+   "fr": "tutelle",
+   "en": [
+    "guardianship",
+    "legal guardian*",
+    "conservatorship"
+   ],
+   "tr": [
+    "vesayet*",
+    "vasi*"
+   ],
+   "ar": [
+    "وصايه",
+    "الوصايه"
+   ],
+   "de": [
+    "vormund*",
+    "rechtliche betreuung"
+   ],
+   "uk": [
+    "опік*",
+    "опікун*"
+   ]
+  },
+  {
+   "id": "addiction",
+   "fr": "addiction",
+   "en": [
+    "addict*",
+    "alcohol*",
+    "drug*"
+   ],
+   "tr": [
+    "bağımlılık*",
+    "alkol*",
+    "uyuşturucu*"
+   ],
+   "ar": [
+    "ادمان",
+    "مخدرات",
+    "كحول"
+   ],
+   "de": [
+    "sucht*",
+    "alkohol*",
+    "drogen*"
+   ],
+   "uk": [
+    "залежн*",
+    "алкогол*",
+    "наркот*"
+   ]
+  },
+  {
+   "id": "digital-help",
+   "fr": "démarches en ligne",
+   "en": [
+    "online procedure*",
+    "online form*",
+    "internet",
+    "computer help"
+   ],
+   "tr": [
+    "online işlem*",
+    "internet*"
+   ],
+   "ar": [
+    "الانترنت",
+    "اجراءات الكترونيه"
+   ],
+   "de": [
+    "online-antrag*",
+    "internet*"
+   ],
+   "uk": [
+    "онлайн",
+    "інтернет*"
+   ]
+  },
+  {
+   "id": "bereavement",
+   "fr": "décès",
+   "en": [
+    "death",
+    "bereave*",
+    "funeral*"
+   ],
+   "tr": [
+    "ölüm*",
+    "vefat*",
+    "cenaze*"
+   ],
+   "ar": [
+    "وفاه",
+    "جنازه"
+   ],
+   "de": [
+    "todesfall*",
+    "trauer*",
+    "beerdigung*"
+   ],
+   "uk": [
+    "смерт*",
+    "похорон*"
+   ]
+  },
+  {
+   "id": "carers",
+   "fr": "aidant",
+   "en": [
+    "carer*",
+    "caregiver*"
+   ],
+   "tr": [
+    "bakım veren*"
+   ],
+   "ar": [
+    "مقدم الرعايه",
+    "مقدمي الرعايه"
+   ],
+   "de": [
+    "pflegend* angehörig*",
+    "pflegeperson*"
+   ],
+   "uk": [
+    "доглядач*"
+   ]
+  },
+  {
+   "id": "discrimination",
+   "fr": "discrimination",
+   "en": [
+    "discriminat*",
+    "racism"
+   ],
+   "tr": [
+    "ayrımcılık*"
+   ],
+   "ar": [
+    "تمييز"
+   ],
+   "de": [
+    "diskriminier*",
+    "rassismus"
+   ],
+   "uk": [
+    "дискримінац*"
+   ]
   }
  ]
 }
