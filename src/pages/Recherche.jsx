@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight } from 'lucide-react';
+import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -74,6 +74,23 @@ function StructureResult({ s }) {
         {description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" {...tr.attrs('description')}>{description}</p>}
         <span className="inline-flex items-center gap-1 text-green-700 text-sm font-medium mt-2">
           {t('search:link.structure', 'Voir la structure')} <ArrowRight className="rtl-flip h-3 w-3" />
+        </span>
+      </Link>
+    </li>
+  );
+}
+
+/** R33: one official guide (Service-Public sheet), title through the content translation */
+function GuideResult({ g }) {
+  const { t } = useT('search');
+  const tr = useContentTranslation('guide', g);
+  return (
+    <li>
+      <Link to={`/guides/${g.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group">
+        <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
+        {g.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" lang="fr">{g.description}</p>}
+        <span className="inline-flex items-center gap-1 text-blue-800 text-sm font-medium mt-2">
+          {t('search:link.guide', 'Lire la fiche officielle')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
     </li>
@@ -154,6 +171,7 @@ export default function Recherche() {
   const [demarches, setDemarches] = useState([]);
   const [structures, setStructures] = useState([]);
   const [actualites, setActualites] = useState([]);
+  const [guides, setGuides] = useState([]);
   const [meta, setMeta] = useState({ total: 0, totalAll: 0, message: null });
   // R32: what went wrong, put into words at render (the interface language may change): « too-short », or the search library's message
   const [searchError, setSearchError] = useState(/** @type {null | { code?: string, message?: string }} */ (null));
@@ -207,8 +225,9 @@ export default function Recherche() {
         setDemarches(response.demarches || []);
         setStructures(response.structures || []);
         setActualites(response.actualites || []);
+        setGuides(response.guides || []);
         setMeta(response.meta);
-        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0);
+        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
       })
       .catch((error) => {
@@ -431,6 +450,21 @@ export default function Recherche() {
                   <ul className="grid gap-3 md:grid-cols-2">
                     {structures.map((/** @type {{ description: string | number, id: string | number, slug: string | number, title: string | number, ville: string | number }} */ s) => (
                       <StructureResult key={s.id} s={s} />
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* R33: guides */}
+              {guides.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-blue-700" aria-hidden="true" />
+                    {t('search:section.guides', 'Fiches pratiques officielles ({{n}})', { n: guides.length })}
+                  </h2>
+                  <ul className="grid gap-3 md:grid-cols-2">
+                    {guides.map((/** @type {{ description: string, id: string, slug: string, title: string }} */ g) => (
+                      <GuideResult key={g.id} g={g} />
                     ))}
                   </ul>
                 </div>

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // A failing retention step must be VISIBLE (logged, Sentry, in the response, non-200) — it used to be swallowed silently.
 const m = vi.hoisted(() => ({ deleteCalls: 0, failOn: 3, sentry: vi.fn(), errors: [] }));
@@ -26,7 +26,8 @@ import handler from '../../api/_handlers/cron/gdpr-purge.js';
 const res = () => ({ statusCode: 200, body: null, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; } });
 
 describe('gdpr-purge failure visibility and counts', () => {
-  beforeEach(() => { m.deleteCalls = 0; m.failOn = 3; m.sentry.mockClear(); m.errors.length = 0; });
+  beforeEach(() => { m.deleteCalls = 0; m.failOn = 3; m.sentry.mockClear(); m.errors.length = 0; process.env.GDPR_PURGE_ENABLED = 'true'; });   // R33: the purge runs only when enabled
+  afterEach(() => { delete process.env.GDPR_PURGE_ENABLED; });
 
   it('a failing step => 500 partial_failure, named in failed_steps, logged and sent to Sentry; other steps still ran', async () => {
     const r = res(); await handler({ method: 'GET', query: {}, headers: {}, url: '/x' }, r);

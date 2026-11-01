@@ -19,6 +19,8 @@ import { SOURCE_LANGUAGE, languageOf, useLanguage } from '@/i18n';
  */
 const TRANSLATED = new Set(['aide', 'demarche', 'guide', 'actualite', 'dispositif']);
 const SUMMARY = { aide: ['titre', 'description', 'cest_quoi'], demarche: ['titre', 'description_courte'], guide: ['titre'], actualite: ['titre', 'resume'], dispositif: ['titre', 'summary_falc'] };
+// R33: the search result cards carry normalised names (title, description); the translation files keep the record's own field names
+const ALIAS = { aide: { title: 'titre' }, demarche: { title: 'titre', description: 'description_courte' }, actualite: { title: 'titre', description: 'resume' }, guide: { title: 'titre' } };
 const cache = new Map();
 
 function load(url) {
@@ -65,7 +67,8 @@ export default function useContentTranslation(kind, record) {
     const here = { lang: code, dir: /** @type {'ltr'|'rtl'} */ (languageOf(code)?.dir || 'ltr') };
     const fr = { lang: SOURCE_LANGUAGE, dir: /** @type {'ltr'} */ ('ltr') };
     const summary = SUMMARY[kind] || [];
-    const translated = (/** @type {string} */ f) => Object.prototype.hasOwnProperty.call(fields, f);
+    const key = (/** @type {string} */ f) => ALIAS[kind]?.[f] || f;
+    const translated = (/** @type {string} */ f) => Object.prototype.hasOwnProperty.call(fields, key(f));
     return {
       kind,
       language: code,
@@ -76,9 +79,9 @@ export default function useContentTranslation(kind, record) {
       showOriginal,
       setShowOriginal,
       value: (/** @type {string} */ f) => {
-        if (!summary.includes(f)) needFull.current = true;
+        if (!summary.includes(key(f))) needFull.current = true;
         if (!translated(f)) return record?.[f];
-        const v = fields[f]; const orig = record?.[f];
+        const v = fields[key(f)]; const orig = record?.[f];
         return typeof orig === 'string' && typeof v !== 'string' ? JSON.stringify(v) : v;   // a field stored as JSON text stays text
       },
       attrs: (/** @type {string} */ f) => (translated(f) ? here : fr),

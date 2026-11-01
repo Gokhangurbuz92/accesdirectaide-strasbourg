@@ -148,9 +148,10 @@
    "query": "curatelle tutelle",
    "expect": "results",
    "words": [
-    "tutelle",
     "curatelle",
-    "protection"
+    "tutelle",
+    "protection juridique",
+    "majeur protégé"
    ]
   },
   {
@@ -229,7 +230,8 @@
     "démarches",
     "numérique",
     "services"
-   ]
+   ],
+   "expectType": "Espace France Services"
   },
   {
    "id": 19,
@@ -254,7 +256,8 @@
     "action sociale",
     "accueil",
     "solidarités"
-   ]
+   ],
+   "expectType": "CCAS (centre communal d'action sociale)"
   },
   {
    "id": 21,

@@ -78,6 +78,11 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // R33: deletions run only when the operator has explicitly enabled them (retention periods approved). Fail-closed: anything else skips.
+    if (String(process.env.GDPR_PURGE_ENABLED || '').trim().toLowerCase() !== 'true') {
+        return res.status(200).json({ skipped: true, reason: 'GDPR_PURGE_DISABLED', message: 'Purge disabled until GDPR_PURGE_ENABLED=true (retention periods must be approved first). Nothing deleted.' });
+    }
+
     /** Helper: compute a cutoff date N days in the past */
     const daysAgo = (/** @type {number} */ days) => {
         const d = new Date();

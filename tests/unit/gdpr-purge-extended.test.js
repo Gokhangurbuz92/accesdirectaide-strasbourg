@@ -96,4 +96,17 @@ describe('GDPR Purge Handler — Auth & Validation', () => {
       expect.objectContaining({ error: 'CRON_SECRET is not configured' }),
     );
   });
+
+  it('R33: an authorized run deletes nothing unless GDPR_PURGE_ENABLED=true (fail-closed)', async () => {
+    const prev = process.env.GDPR_PURGE_ENABLED;
+    for (const v of [undefined, '', 'false', '1', 'yes']) {
+      if (v === undefined) delete process.env.GDPR_PURGE_ENABLED; else process.env.GDPR_PURGE_ENABLED = v;
+      const res = mockRes();
+      await handler(mockReq({ headers: { 'x-cron-secret': 'test-cron-secret', authorization: 'Bearer test-cron-secret' } }), res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ skipped: true, reason: 'GDPR_PURGE_DISABLED' }));
+    }
+    expect(mocks.deleteFn).not.toHaveBeenCalled();
+    if (prev === undefined) delete process.env.GDPR_PURGE_ENABLED; else process.env.GDPR_PURGE_ENABLED = prev;
+  });
 });

@@ -144,15 +144,17 @@ function normalizeResponse(payload) {
   const demarches = Array.isArray(payload?.demarches) ? payload.demarches : [];
   const structures = Array.isArray(payload?.structures) ? payload.structures : [];
   const actualites = Array.isArray(payload?.actualites) ? payload.actualites : [];
+  const guides = Array.isArray(payload?.guides) ? payload.guides : [];
 
   return {
     results,
     demarches,
     structures,
     actualites,
+    guides,
     meta: {
       total: Number.isFinite(totalFromPayload) ? totalFromPayload : results.length,
-      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length,
+      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length,
       message: typeof payload?.message === 'string' ? payload.message : null,
     },
     error: typeof payload?.error === 'string' ? payload.error : null,

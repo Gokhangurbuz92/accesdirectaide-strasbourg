@@ -9,6 +9,7 @@ import { cachedSearch } from '../lib/search-cache.js';
 import { GLOSSAIRE } from '../lib/glossaire.js';
 import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
+import { structureTypeHint } from '../lib/search-structure-type.js';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
     // word and the démarches and places sections listed their first records as if they matched.
     const cross = crossLanguageQuery(payload.query, payload.lang || 'fr');
     if (cross.changed && !searchWords(cross.query).length) {
-      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] } });
+      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] } });
     }
     const crossLanguage = cross.changed ? { understood: true, query: cross.query, concepts: cross.concepts } : undefined;
     if (cross.changed) payload.query = cross.query;
@@ -108,7 +109,17 @@ export default async function handler(req, res) {
 
       let structures = [];
       try {
-        structures = (await searchStructures({ q: payload.query, page: 1, pageSize: 5 })).items
+        // R33: a query naming a kind of office gets that kind first (Strasbourg first when no place is named), then the ordinary word search
+        const hint = structureTypeHint(payload.query);
+        let found = [];
+        if (hint) {
+          for (const attempt of hint.rest ? [{ q: hint.rest }, {}] : [{ city: 'Strasbourg' }, {}]) {
+            found = (await searchStructures({ ...attempt, type: hint.type, page: 1, pageSize: 5 })).items;
+            if (found.length) break;
+          }
+        }
+        if (!found.length) found = (await searchStructures({ q: payload.query, page: 1, pageSize: 5 })).items;
+        structures = found
           .map((s) => ({ id: s.id, slug: s.slug, nom: s.nom, description_courte: s.description_courte, type_structure: s.type_structure, ville: s.ville, code_postal: s.code_postal }));
       } catch (e) {
         // @ts-ignore
@@ -130,7 +141,23 @@ export default async function handler(req, res) {
         logger.warn('[search] actualites search failed:', e.message); partial.push('actualites');
       }
 
-      const totalResults = aideTotal + demarches.length + structures.length + actualites.length;
+      // R33: the official Service-Public guides (verbatim sheets) answer needs that have no aide or démarche (tutelle, curatelle, violences…)
+      let guides = [];
+      try {
+        const plan = wordPlan(payload.query, ['"titre"', `"contenu_json"->>'intro'`, `array_to_string("contexte", ' ')`, `array_to_string("mots_cles", ' ')`], '"titre"', false);
+        if (plan) {
+          const published = [sql`"statut" = 'publie'`];
+          const best = await bestMatchCondition('Guide', published, plan);
+          const res = await db.execute(sql`SELECT id, slug, titre, categorie, "contenu_json"->>'intro' AS intro FROM "Guide"
+            WHERE ${sql.join([...published, best], sql.raw(' AND '))} ORDER BY ${plan.titleHits} DESC, titre ASC LIMIT 5`);
+          guides = res.rows || res;
+        }
+      } catch (e) {
+        // @ts-ignore
+        logger.warn('[search] guides search failed:', e.message); partial.push('guides');
+      }
+
+      const totalResults = aideTotal + demarches.length + structures.length + actualites.length + guides.length;
 
       // 5. Match Glossaire terms
       const queryLower = payload.query.toLowerCase();
@@ -149,13 +176,14 @@ export default async function handler(req, res) {
           type: 'glossaire',
         }));
 
-      if (totalResults === 0 && glossaireResults.length === 0 && (weakResult && demarches.length === 0 && structures.length === 0 && actualites.length === 0)) {
+      if (totalResults === 0 && glossaireResults.length === 0 && (weakResult && demarches.length === 0 && structures.length === 0 && actualites.length === 0 && guides.length === 0)) {
         return {
           items: [],
           total: 0,
           demarches: [],
           structures: [],
           actualites: [],
+          guides: [],
           glossaire: [],
           message: 'not found',
         };
@@ -190,6 +218,7 @@ export default async function handler(req, res) {
           date: a.date_publication,
           type: 'actualite',
         })),
+        guides: guides.map((g) => ({ id: g.id, slug: g.slug, title: g.titre, description: g.intro, category: g.categorie, type: 'guide' })),
         glossaire: glossaireResults,
         message: partial.length ? 'Une partie de la recherche est momentanément indisponible : les résultats affichés sont incomplets.' : null,
         ...(partial.length ? { partial } : {}),
