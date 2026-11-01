@@ -388,7 +388,7 @@ body.reduce-motion *::after {
 
 /* R33 — WCAG 2.5.8 target size (minimum 24 × 24 px). Block and flex controls get a minimum height; stand-alone inline links (a source, a phone
    number) use .ada-target. Links inside a sentence are exempt by the criterion and are not changed. */
-:where(button, [role='button'], summary, select, a[href]:not(:where(p, dd, td, figcaption, h1, h2, h3, h4) a)) { min-height: 24px; }
+:where(button, [role='button'], summary, select, a[href]:not(:where(p, td, figcaption, h1, h2, h3, h4) a)) { min-height: 24px; }
 .ada-target { display: inline-flex; align-items: center; min-height: 24px; min-width: 24px; }
 
 /* R33 — WCAG 1.4.12 (text spacing) and 1.4.10 (reflow): long words (German compounds, Ukrainian) wrap instead of overflowing at 320 px */

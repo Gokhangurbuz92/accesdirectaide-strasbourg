@@ -60,7 +60,7 @@ export default function Breadcrumbs({ items = [], className = '' }) {
       {/* Visual Breadcrumbs */}
       <nav
         aria-label="Fil d'Ariane"
-        className={`flex items-center space-x-2 text-sm ${className}`}
+        className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-sm ${className}`}
       >
         {breadcrumbItems.map((/** @type {{ label: any; path: any; }} */ item, /** @type {number} */ index) => {
           const isLast = index === breadcrumbItems.length - 1;
@@ -70,14 +70,14 @@ export default function Breadcrumbs({ items = [], className = '' }) {
             <React.Fragment key={index}>
               {index > 0 && (
                 <ChevronRight
-                  className="h-4 w-4 text-slate-400"
+                  className="rtl-flip h-4 w-4 text-slate-400"
                   aria-hidden="true"
                 />
               )}
               
               {isLast ? (
                 <span
-                  className="text-slate-900 font-medium"
+                  className="min-w-0 text-slate-900 font-medium [overflow-wrap:anywhere]"
                   aria-current="page"
                 >
                   {item.label}

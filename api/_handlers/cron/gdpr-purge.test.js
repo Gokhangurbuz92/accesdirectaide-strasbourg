@@ -50,10 +50,12 @@ describe('Cron GDPR Purge Handler', () => {
   const ORIGINAL_CRON_SECRET = process.env.CRON_SECRET;
 
   beforeEach(() => {
+    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled
     vi.clearAllMocks();
   });
 
   afterEach(() => {
+    delete process.env.GDPR_PURGE_ENABLED;
     process.env.CRON_SECRET = ORIGINAL_CRON_SECRET;
   });
 

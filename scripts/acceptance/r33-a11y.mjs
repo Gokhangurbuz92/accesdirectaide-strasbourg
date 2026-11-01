@@ -50,6 +50,7 @@ for (const lang of LANGS) {
     const small = await page.evaluate(() => [...document.querySelectorAll('button, a[href], input, select, [role="button"]')].filter((e) => {
       const r = e.getBoundingClientRect(); if (r.width <= 1 || r.height <= 1) return false;   // visually hidden until focused (skip link)
       if (e.tagName === 'A' && e.closest('p, li') && getComputedStyle(e).display === 'inline') return false;
+      if (/after:inset-0/.test(String(e.className))) return false;   // stretched link: the whole card is the target
       if (e.tagName === 'INPUT' && e.closest('label') && e.closest('label').getBoundingClientRect().height >= 24) return false;   // the label is part of the target
       return r.width < 24 || r.height < 24; }).map((e) => (e.getAttribute('aria-label') || e.textContent || e.tagName).trim().slice(0, 30)));
     rec(lang, route, 'target-size-24', small.length === 0, `${small.length}: ${small.slice(0, 5).join(' | ')}`);
