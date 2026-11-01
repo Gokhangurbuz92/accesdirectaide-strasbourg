@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.722Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:53.669Z",
    "review": null,
    "fields": {
     "titre": {
@@ -79,8 +79,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.728Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:00.093Z",
    "review": null,
    "fields": {
     "titre": {
@@ -152,8 +152,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.734Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:07.754Z",
    "review": null,
    "fields": {
     "titre": {
@@ -191,7 +191,7 @@
         "titre": "كيفية تقديم الطعن الإداري؟"
        },
        {
-        "texte": "تختلف الوضعية حسب ما إذا كان الطعن إلزاميًا أم لا:\nحالة: الطعن غير إلزامي (الطعن بالاستئناف أو الطعن الهرمي)\nإرسال الطعن يؤدي إلى إيقاف المهلة الزمنية المحددة (وهي 2 شهر للداخل، و 3 أشهر للمناطق البعيدة، و 4 أشهر للمقيمين في الخارج) المتاحة لتقديم الطعن إلى المحكمة الإدارية، وذلك بشرط أن يتم إرسال الطعن قبل انتهاء هذه المهلة.\nفي حال رفض الاستئناف، يبدأ العد التنازلي الجديد لمدة 2 شهر (3 أشهر للمناطق البعيدة و 4 أشهر للمقيمين في الخارج) من تاريخ إخطار هذه القرار.\nتُعلمك الإدارة بقرار سلبي في 5 يناير 2026. تقوم بتقديم استئناف إداري في 26 يناير 2026. يتم رفض الاستئناف الإداري في 25 مارس 2026. يمكنك اللجوء إلى القاضي الإداري حتى الساعة 12:00 من 24 مايو 2026.\nلدي الإدارة مهلة مدتها 2 أشهر للرد على طلبكم. إذا لم تتلقوا ردًا خلال هذه المهلة، فسيتم اعتبار طلبكم مرفوضًا. وفي هذه الحالة، يمكنكم رفع دعوى قضائية أمام المحكمة الإدارية.\n→ إلى أين يتم التوجه: المحكمة الإدارية\nحالة: الطعن الإداري المسبق الإلزامي (TAP)\nلدى الإدارة مهلة مدتها شهرين للرد عليكم.\nإرسال \"الرابو\" يؤدي إلى تمديد المدة المتاحة لاتخاذ قرار أمام المحكمة. تبدأ المدة مرة أخرى فقط بعد رفض الاستئناف.\nإذا تم رفض طلب \"الرابو\"، فيجب عليك تقديم شكوى قانونية ضد قرار الرفض، وليس ضد القرار الأصلي.\nيجب على الإدارة أن توضح سبب رفض طلب \"رابو\"، أي يجب أن تشرح الأسباب التي دفعتها لاتخاذ هذا القرار.",
+        "texte": "تختلف الوضعية حسب ما إذا كان الطعن إلزاميًا أم لا:\nحالة: الطعن غير إلزامي (الطعن بالاستئناف أو الطعن الهرمي)\nإرسال الطعن يؤدي إلى إيقاف المهلة الزمنية المحددة (وهي 2 شهر للداخل، و 3 أشهر للمناطق البعيدة، و 4 أشهر للمقيمين في الخارج) المتاحة لتقديم الطعن إلى المحكمة الإدارية، وذلك بشرط أن يتم إرسال الطعن قبل انتهاء هذه المهلة.\nفي حال رفض الاستئناف، يبدأ العد التنازلي الجديد لمدة 2 شهر (3 أشهر للمناطق البعيدة و 4 أشهر للمقيمين في الخارج) من تاريخ إخطار هذه القرار.\nتُعلمك الإدارة بقرار سلبي في 5 يناير 2026. تقوم بتقديم استئناف إداري في 26 يناير 2026. يتم رفض الاستئناف الإداري في 25 مارس 2026. يمكنك اللجوء إلى القاضي الإداري حتى الساعة 12:00 من 24 مايو 2026.\nلدي الإدارة مهلة مدتها 2 أشهر للرد على طلبكم. إذا لم تتلقوا ردًا خلال هذه المهلة، فسيتم اعتبار طلبكم مرفوضًا. وفي هذه الحالة، يمكنكم رفع دعوى قضائية أمام المحكمة الإدارية.\n→ إلى أين يتم التوجه: المحكمة الإدارية\nحالة: الطعن الإداري المسبق الإلزامي (TAP)\nلدي الإدارة مهلة مدتها 2 شهر للرد عليكم.\nإرسال \"الرابو\" يؤدي إلى تمديد المدة المتاحة لاتخاذ قرار أمام المحكمة. تبدأ المدة مرة أخرى فقط بعد رفض الاستئناف.\nإذا تم رفض طلب \"الرابو\"، فيجب عليك تقديم شكوى قانونية ضد قرار الرفض، وليس ضد القرار الأصلي.\nيجب على الإدارة أن توضح سبب رفض طلب \"رابو\"، أي يجب أن تشرح الأسباب التي دفعتها لاتخاذ هذا القرار.",
         "titre": "ما هي آثار الطعن الإداري؟"
        }
       ],
@@ -213,7 +213,7 @@
        "numbers"
       ],
       "warnings": [],
-      "roundtrip": 73,
+      "roundtrip": 72.9,
       "units": 92
      }
     }
@@ -223,8 +223,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.739Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:13.412Z",
    "review": null,
    "fields": {
     "titre": {
@@ -262,7 +262,7 @@
         "titre": "Wie erstelle ich eine administrative Beschwerde?"
        },
        {
-        "texte": "Die Situation hängt davon ab, ob der Rechtsbehelf obligatorisch ist oder nicht:\nFall: Nicht obligatorische Beschwerde (Beschwerde oder Beschwerde nach Aufstieg)\nDie Einreichung des Rechtsbehelfs unterbricht den 2-Monats-Frist (3 Monate für Übersee und 4 Monate für Ausländer), die Ihnen zur Einreichung beim Verwaltungsgericht zusteht, vorausgesetzt, die Klage wird vor Ablauf dieser Frist eingereicht.\nIm Falle eines Ablehnung der Klage beginnt ein neuer Zeitraum von 2 Monaten (3 Monate für Übersee und 4 Monate für Ausländer) ab dem Datum der Mitteilung dieser Entscheidung neu.\nDie Behörde informiert Sie über eine abweisende Entscheidung am 5. Januar 2026. Sie reichen eine administrative Beschwerde am 26. Januar 2026 ein. Ihre administrative Beschwerde wird am 25. März 2026 abgelehnt. Sie können den Verwaltungsrichter bis zum 24. Mai 2026 um Mitternacht anrufen.\nDie Behörde hat zwei Monate Zeit, um auf Ihre Anfrage zu antworten. Wenn Sie innerhalb dieses Zeitraums keine Antwort erhalten, wird Ihr Antrag als abgelehnt betrachtet. In diesem Fall können Sie eine gerichtliche Klage vor dem Verwaltungsgericht einlegen.\n→ An wen: Verwaltungsgericht\nFall: Obligatorische vorherige administrative Klage (VAK)\nDie Behörde hat zwei Monate Zeit, Ihnen zu antworten.\nDie Einreichung des Rapo-Antrags verlängert die Frist für die Einreichung einer Klage vor Gericht. Die Frist beginnt erst dann erneut zu laufen, nachdem der Einspruch abgelehnt wurde.\nWenn die Entscheidung des Rapo abgelehnt wird, müssen Sie eine gerichtliche Beschwerde gegen diese Ablehnung einlegen, und nicht gegen die ursprüngliche Entscheidung.\nDie Behörde muss die Entscheidung zur Ablehnung des Antrags von Rapo begründen, d.h. sie muss die Gründe für diese Entscheidung darlegen.",
+        "texte": "Die Situation hängt davon ab, ob der Rechtsbehelf obligatorisch ist oder nicht:\nFall: Nicht obligatorische Beschwerde (Beschwerde oder Beschwerde nach Aufstieg)\nDie Einreichung des Rechtsbehelfs unterbricht den 2-Monats-Frist (3 Monate für Übersee und 4 Monate für Ausländer), die Ihnen zur Einreichung beim Verwaltungsgericht zusteht, vorausgesetzt, die Klage wird vor Ablauf dieser Frist eingereicht.\nIm Falle eines Ablehnung der Klage beginnt ein neuer Zeitraum von 2 Monaten (3 Monate für Übersee und 4 Monate für Ausländer) ab dem Datum der Mitteilung dieser Entscheidung neu.\nDie Behörde informiert Sie über eine abweisende Entscheidung am 5. Januar 2026. Sie reichen eine administrative Beschwerde am 26. Januar 2026 ein. Ihre administrative Beschwerde wird am 25. März 2026 abgelehnt. Sie können den Verwaltungsrichter bis zum 24. Mai 2026 um Mitternacht anrufen.\nDie Behörde hat einen Zeitraum von 2 Monaten, um auf Ihre Anfrage zu antworten. Wenn Sie innerhalb dieses Zeitraums keine Antwort erhalten, wird Ihr Antrag als abgelehnt betrachtet. In diesem Fall können Sie eine gerichtliche Klage vor dem Verwaltungsgericht einlegen.\n→ An wen: Verwaltungsgericht\nFall: Obligatorische vorherige administrative Klage (VAK)\nDie Behörde hat einen Zeitraum von 2 Monaten, um Ihnen zu antworten.\nDie Einreichung des Rapo-Antrags verlängert die Frist für die Einreichung einer Klage vor Gericht. Die Frist beginnt erst dann erneut zu laufen, nachdem der Einspruch abgelehnt wurde.\nWenn die Entscheidung des Rapo abgelehnt wird, müssen Sie eine gerichtliche Beschwerde gegen diese Ablehnung einlegen, und nicht gegen die ursprüngliche Entscheidung.\nDie Behörde muss die Entscheidung zur Ablehnung des Antrags von Rapo begründen, d.h. sie muss die Gründe für diese Entscheidung darlegen.",
         "titre": "Welche Auswirkungen hat ein administratives Rechtsmittel?"
        }
       ],
@@ -278,15 +278,13 @@
        "importantChangeAt": null
       }
      },
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 71,
+      "roundtrip": 71.1,
       "units": 92
      }
     }
@@ -296,8 +294,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.745Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:18.158Z",
    "review": null,
    "fields": {
     "titre": {

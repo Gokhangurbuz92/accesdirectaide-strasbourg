@@ -1,18 +1,20 @@
 import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigationType } from 'react-router-dom';
 
 /**
  * R32 / Q01 — after an in-app navigation, a screen-reader user must learn that a new page opened. Before, the focus stayed on the link that was
  * pressed (often removed from the page) and nothing was announced. Now, once the new page has drawn its main heading, the focus moves to it (the
  * heading is read, and Tab continues from the top of the content) without scrolling. Nothing happens on the first load (the browser and the screen
- * reader already start at the top), on a change of query string only (filters, result pages) or on an in-page anchor.
+ * reader already start at the top), on a change of query string only (filters, result pages), on an in-page anchor, or on a redirect (R33: a
+ * « replace » navigation such as /confidentialite → /politique-confidentialite moved the focus past the skip link on first load).
  */
 export default function RouteFocus() {
   const { pathname, hash } = useLocation();
+  const navigationType = useNavigationType();
   const first = useRef(true);
   useEffect(() => {
     if (first.current) { first.current = false; return undefined; }
-    if (hash) return undefined;
+    if (hash || navigationType === 'REPLACE') return undefined;
     let tries = 0; let timer;
     const move = () => {
       const main = document.getElementById('main-content');
@@ -25,6 +27,6 @@ export default function RouteFocus() {
     };
     timer = window.setTimeout(move, 50);
     return () => window.clearTimeout(timer);
-  }, [pathname, hash]);
+  }, [pathname, hash, navigationType]);
   return null;
 }

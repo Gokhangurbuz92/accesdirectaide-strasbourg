@@ -176,7 +176,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                   {/* Ensure telephone link is clickable */}
                   <a
                     href={`tel:${structure.telephone}`}
-                    className="text-blue-600 hover:underline relative z-20"
+                    className="ada-target text-blue-600 hover:underline relative z-20"
                     onClick={(e) => e.stopPropagation()}
                     {...tr.attrs('telephone')}
                   >
@@ -214,7 +214,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                   asChild
                   className="relative z-20"
                 >
-                  <a href={structure.site_web} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                  <a href={structure.site_web} target="_blank" rel="noopener noreferrer" className="ada-target" onClick={(e) => e.stopPropagation()}>
                     <Globe className="h-4 w-4 me-1" />
                     {t('structures:card.website', 'Site web')}
                   </a>

@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.787Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:27.048Z",
    "review": null,
    "fields": {
     "titre": {
@@ -35,7 +35,7 @@
         "titre": "Who can contact the mediator of Assurance maladie?"
        },
        {
-        "texte": "You can contact the mediator in one of the following situations:\n- If your claim with your insurance company is unsuccessful,\n- or directly if you believe you have been unfairly denied medical care.\nA healthcare professional refuses to see you or treat you in a disrespectful manner because you are receiving care under the complémentaire santé solidaire (C2S) or the state's medical assistance program (AME: state medical aid).\nA healthcare professional charges you for exceeding the standard fees or asks you to pay upfront for your medical expenses, even though you are entitled to full reimbursement under the C2S or AME schemes.\nHowever, the mediator no longer plays a role in finding a primary care physician.\nTherefore, if you haven't been able to find a primary care physician or if your primary care physician is unavailable, you can contact a geographically-based coordinating organization.\nIn the event of difficulty (for example, if there is no coordinated territorial organization in your area), you can contact your CPAM.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "You can contact the mediator in one of the following situations:\n- After having filed a claim with your Assurance maladie, if that does not resolve the issue,\n- or directly if you believe you have been unfairly denied medical care.\nA healthcare professional refuses to see you or treat you in a disrespectful manner because you are receiving care under the complémentaire santé solidaire (C2S) or the state's medical assistance program (AME: state medical aid).\nA healthcare professional charges you for exceeding the standard fees or asks you to pay upfront for your medical expenses, even though you are entitled to full reimbursement under the C2S or AME schemes.\nHowever, the mediator no longer plays a role in finding a primary care physician.\nTherefore, if you haven't been able to find a primary care physician or if your primary care physician is unavailable, you can contact a geographically-based coordinating organization.\nIn the event of difficulty (for example, if there is no coordinated territorial organization in your area), you can contact your CPAM.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "In what circumstances should you contact the mediator of the Assurance maladie?"
        },
        {
@@ -62,12 +62,11 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers",
        "entitlement"
       ],
       "warnings": [],
-      "roundtrip": 73.7,
+      "roundtrip": 73.8,
       "units": 36
      }
     }
@@ -77,8 +76,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.790Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:40.568Z",
    "review": null,
    "fields": {
     "titre": {
@@ -96,7 +95,7 @@
       "intro": "Eğer bir kullanıcının Assurance maladie (Fransız kamu sağlık sigortası)'deki bankaya yaptığı bir şikayet sonuçlanmazsa, arabulucuyu ücretsiz olarak talep etme imkanı bulunmaktadır.",
       "steps": [
        {
-        "texte": "Sizin durumunuz, genel düzenlemeye tabi olduğunuz için geçerlidir ve Assurance maladie'e bir şikayette bulundunuz mu? Eğer yanıtından memnun kalmadıysanız, arabulucuyu ücretsiz olarak talep etmeniz mümkündür. Bu şikayet, onun yetki alanına girmeli. Size bilmeniz gereken düzenlemeleri açıklıyoruz.",
+        "texte": "Assurance maladie'deki genel düzenlemelere tabi olduğunuzu ve CPAM (yerel sağlık sigortası kurumu)'ye bir talepte bulunduğunuzu belirtir misiniz? Eğer yanıtınız sizi tatmin etmezse, arabulucuyu ücretsiz olarak talep etmeniz mümkündür. Bu talep, onun yetki alanına girmeli. Size bilmeniz gereken düzenlemeleri açıklıyoruz.",
         "titre": null
        },
        {
@@ -104,7 +103,7 @@
         "titre": "Assurance maladie'in arabulucusuyla nasıl iletişime geçebilirim?"
        },
        {
-        "texte": "Aşağıdaki durumlardan birinde arabulucuyu başvurabilirsiniz:\n- Eğer bankanızdaki şikayetiniz sonuç vermezse,\n- veya doğrudan, eğer kendinizi bir sağlık hizmeti reddine uğramış hissediyorsanız.\nBir sağlık profesyoneli, size hizmet etmeyi veya size saygısız bir şekilde davranmayı reddedebilir, çünkü siz complémentaire santé solidaire (C2S) veya devletin tıbbi yardımlarından (AME: devlet sağlık yardımı) yararlanıyorsunuz.\nBir sağlık profesyoneli, size ücret farkı almayı veya sağlık harcamalarınız için ön ödeme yapmanızı istemeyi, ancak siz C2S veya AME kapsamında tam olarak sigorta ödemesi yapma hakkına sahipken, bunu yapmanıza engel olmaya çalışmaktadır.\nAncak, arabulucu artık bir aile hekimi bulma sürecine müdahale etmiyor.\nBu durumda, eğer bir aile hekimi bulmakta veya mevcut hekiminizle iletişim kuramıyorsanız, yerel bir koordinasyon merkezini arayabilirsiniz.\nOlumsuz bir durumda (örneğin, bölgenizde koordineli bir yapı bulunmuyor), CPAM (yerel sağlık sigortası kurumu)'e başvurabilirsiniz.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "Aşağıdaki durumlardan birinde arabulucuyu başvurabilirsiniz:\n- Eğer bankanızdaki Assurance maladie'deki başvurunuz sonuç vermezse,\n- veya doğrudan, eğer kendinizi bir sağlık hizmeti reddine uğramış hissediyorsanız.\nBir sağlık profesyoneli, size hizmet etmeyi veya size saygısız bir şekilde davranmayı reddedebilir, çünkü siz complémentaire santé solidaire (C2S) veya devletin tıbbi yardımlarından (AME: devlet sağlık yardımı) yararlanıyorsunuz.\nBir sağlık profesyoneli, size ücret farkı almayı veya sağlık harcamalarınız için ön ödeme yapmanızı istemeyi, ancak siz C2S veya AME kapsamında tam olarak sigorta ödemesi yapma hakkına sahipken, bunu yapmanıza engel olmaya çalışmaktadır.\nAncak, arabulucu artık bir aile hekimi bulma sürecine müdahale etmiyor.\nBu durumda, eğer bir aile hekimi bulmakta veya mevcut hekiminizle iletişim kuramıyorsanız, yerel bir koordinasyon merkezini arayabilirsiniz.\nOlumsuz bir durumda (örneğin, bölgenizde koordineli bir yapı bulunmuyor), CPAM'e başvurabilirsiniz.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "Hangi durumlarda Assurance maladie'in arabuluculuğunu başvurmak gerekir?"
        },
        {
@@ -112,7 +111,7 @@
         "titre": "Assurance maladie'deki arabulucunun, başvurunun ardından ne yapabileceği?"
        },
        {
-        "texte": "Arabulucuyu aşağıdaki iki yöntemden biriyle iletişime geçebilirsiniz:\n- Ameli hesabınızdan (sadece web sürümü)\n- veya posta yoluyla, Assurance maladie bankanızın adresine gönderilen bir mektup aracılığıyla.\nGönderdiğiniz mektupların teslim alındığını gösteren bir onay belgesi size düzenli olarak gönderilir.\nLütfen unutmayın: Kasa, size arabulucuyu e-posta yoluyla talep etmenizi önerebilir. Ayrıca, telefonla veya randevu alarak iletişime geçme imkanı da sunabilir. Daha fazla bilgi için, lütfen kasanızla iletişime geçin.\nÖrnek: Ameli hesabınızdan (sadece web sürümü)\n→ Çevrimiçi hizmet: Assurance maladie'deki arabulucuyu, Ameli hesabınızdan erişebilirsiniz.\nÖrnek: Posta yoluyla, Assurance maladie bankanızın adresine gönderilen.\nSerbest bir kağıda, verilen mektup şablonunu kullanarak bir mektup yazıyorsunuz.\nBu mektubu, Assurance maladie bankanızın arabulucusu olan kişiye gönderiyorsunuz.\nArabulucu, gerekirse sizi arayacaktır:\n- Diğer olası itiraz yolları\n- Ve, taleplerinize göre belirlenen süreler de sizin için hazır.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "Arabulucuyu aşağıdaki 2 yöntemden biriyle ulaşabilirsiniz:\n- Ameli hesabınızdan (sadece web sürümü)\n- veya posta yoluyla, Assurance maladie bankanızın adresine gönderilen bir mektup aracılığıyla.\nGönderdiğiniz mektupların teslim alındığını gösteren bir onay belgesi size düzenli olarak gönderilir.\nLütfen unutmayın: Kasa, size arabulucuyu e-posta yoluyla talep etmenizi önerebilir. Ayrıca, telefonla veya randevu alarak iletişime geçme imkanı da sunabilir. Daha fazla bilgi için, lütfen kasanızla iletişime geçin.\nÖrnek: Ameli hesabınızdan (sadece web sürümü)\n→ Çevrimiçi hizmet: Assurance maladie'deki arabulucuyu, Ameli hesabınızdan erişebilirsiniz.\nÖrnek: Posta yoluyla, Assurance maladie bankanızın adresine gönderilen.\nSerbest bir kağıda, verilen mektup şablonunu kullanarak bir mektup yazıyorsunuz.\nBu mektubu, Assurance maladie bankanızın arabulucusu olan kişiye gönderiyorsunuz.\nArabulucu, gerekirse sizi arayacaktır:\n- Diğer olası itiraz yolları\n- Ve, taleplerinize göre belirlenen süreler de sizin için hazır.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "Assurance maladie'deki arabulucuyu nasıl bulurum?"
        }
       ],
@@ -131,11 +130,10 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers"
       ],
       "warnings": [],
-      "roundtrip": 68.4,
+      "roundtrip": 67.9,
       "units": 36
      }
     }
@@ -145,8 +143,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.793Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:37:57.261Z",
    "review": null,
    "fields": {
     "titre": {
@@ -172,7 +170,7 @@
         "titre": "من يمكنه التواصل مع الوسيط في Assurance maladie؟"
        },
        {
-        "texte": "يمكنكم اللجوء إلى الوسيط في الحالات التالية:\n- بعد تقديم شكوى إلى مؤسستك المالية، إذا لم تؤد إلى حل،\n- أو مباشرةً، إذا كنت تعتقد أنك ضحية لرفض تقديم الرعاية الطبية.\nقد يرفض الطبيب أو العامل الصحي استقبالك أو تقديم الرعاية لك بطريقة غير محترمة، وذلك بسبب حصولك على التأمين الاجتماعي (C2S) أو المساعدة الطبية الحكومية (T2).\nيقوم أحد العاملين في مجال الرعاية الصحية بتحصيل مبالغ إضافية أو يطلب منك الدفع مقدمًا لتغطية نفقاتك الصحية، في حين أن لديك الحق في الحصول على تغطية كاملة من خلال نظام C2S أو نظام AME (المساعدة الطبية الحكومية).\nومع ذلك، لم يعد الوسيط يتدخل في تحديد الطبيب المعالج.\nلذلك، إذا لم تتمكن من العثور على طبيب عام أو إذا لم يكن طبيبك العام متاحًا، يمكنك الاتصال بمنظمة إدارية على المستوى الإقليمي.\nفي حال وجود صعوبات (على سبيل المثال: لا توجد منظمة إدارية موحدة في منطقتك)، يمكنك الاتصال بـ CPAM.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "يمكنكم اللجوء إلى الوسيط في الحالات التالية:\n- بعد تقديم شكوى إلى مؤسستك المالية Assurance maladie إذا لم تؤد إلى نتيجة،\n- أو مباشرةً، إذا كنت تعتقد أنك ضحية لرفض تقديم الرعاية الطبية.\nقد يرفض أخصائي الرعاية الصحية استقبالك أو علاجه بك بشكل غير محترم، وذلك لأنك تستفيد من complémentaire santé solidaire (C2S) أو المساعدة الطبية الحكومية (AME: المساعدة الطبية الحكومية).\nيقوم أحد العاملين في مجال الرعاية الصحية بتحصيل مبالغ إضافية أو يطلب منك الدفع مقدمًا لتغطية نفقاتك الصحية، في حين أن لديك الحق في الحصول على تغطية كاملة من خلال نظام C2S أو نظام AME.\nومع ذلك، لم يعد الوسيط يتدخل في تحديد الطبيب المعالج.\nلذلك، إذا لم تتمكن من العثور على طبيب عام أو إذا لم يكن طبيبك العام متاحًا، يمكنك الاتصال بمنظمة إدارية على المستوى الإقليمي.\nفي حال وجود صعوبات (على سبيل المثال: لا توجد منظمة إدارية موحدة في منطقتك)، يمكنك الاتصال بـ CPAM.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "في أي الحالات يجب اللجوء إلى الوسيط في Assurance maladie؟"
        },
        {
@@ -199,14 +197,13 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers",
        "entitlement"
       ],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 69,
+      "roundtrip": 69.7,
       "units": 36
      }
     }
@@ -216,8 +213,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.796Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:09.039Z",
    "review": null,
    "fields": {
     "titre": {
@@ -243,7 +240,7 @@
         "titre": "Wer kann den Mediator von Assurance maladie kontaktieren?"
        },
        {
-        "texte": "Sie können einen Mediator in einem der folgenden Fälle beauftragen:\n- Wenn Sie keine Lösung bei Ihrer Bank erhalten, können Sie\n- oder direkt, wenn Sie den Eindruck haben, dass Sie eine medizinische Behandlung verweigert bekommen haben.\nEin Arzt oder anderes Gesundheitspersonal lehnt es ab, Sie zu behandeln oder Ihnen respektlos zu begegnen, weil Sie Anspruch auf die complémentaire santé solidaire (C2S) oder auf staatliche medizinische Unterstützung (AME: staatliche medizinische Hilfe) haben.\nEin Arzt verlangt von Ihnen zusätzliche Kosten oder fordert Vorauszahlungen für Ihre Gesundheitskosten, obwohl Sie Anspruch auf die vollständige Erstattung durch die C2S oder das AME haben.\nAllerdings greift der Mediator nicht mehr in die Suche nach einem Hausarzt ein.\nDaher, wenn Sie keinen Hausarzt gefunden haben oder Ihr Hausarzt nicht erreichbar ist, können Sie sich an eine örtlich koordinierte Organisation wenden.\nIm Falle von Schwierigkeiten (z. B. wenn es keine koordinierte lokale Organisation gibt), können Sie sich an Ihre zuständige Stelle wenden.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "Sie können einen Mediator in einem der folgenden Fälle beauftragen:\n- Nachdem Sie eine Beschwerde bei Ihrer Bank Assurance maladie eingereicht haben und diese nicht erfolgreich war,\n- oder direkt, wenn Sie den Eindruck haben, dass Sie eine medizinische Behandlung verweigert bekommen haben.\nEin Arzt oder anderes Gesundheitspersonal lehnt es ab, Sie zu behandeln oder Ihnen respektlos zu begegnen, weil Sie Anspruch auf die complémentaire santé solidaire (C2S) oder auf staatliche medizinische Unterstützung (AME: staatliche medizinische Hilfe) haben.\nEin Arzt verlangt von Ihnen zusätzliche Kosten oder fordert Vorauszahlungen für Ihre Gesundheitskosten, obwohl Sie Anspruch auf die vollständige Erstattung durch die C2S oder das AME haben.\nAllerdings greift der Mediator nicht mehr in die Suche nach einem Hausarzt ein.\nDaher, wenn Sie keinen Hausarzt gefunden haben oder Ihr Hausarzt nicht erreichbar ist, können Sie sich an eine örtlich koordinierte Organisation wenden.\nIm Falle von Schwierigkeiten (z.B. wenn es keine koordinierte lokale Organisation gibt), können Sie sich an Ihr CPAM wenden.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "In welchen Fällen sollte man den Mediator von Assurance maladie kontaktieren?"
        },
        {
@@ -251,7 +248,7 @@
         "titre": "Welche Maßnahmen kann der Mediator von Assurance maladie nach der Beschwerde ergreifen?"
        },
        {
-        "texte": "Sie können den Mediator über eine der folgenden zwei Möglichkeiten kontaktieren:\n- ab Ihrem AMEL-Konto (nur für die Webversion)\n- oder durch einen Brief, der an Ihre Filiale von Assurance maladie geschickt wird.\nSie erhalten automatisch eine Bestätigung, sobald Ihr Brief empfangen wurde.\nBitte beachten Sie: Ihre Bank kann Ihnen möglicherweise anbieten, den Ombudsmann per E-Mail zu kontaktieren. Sie kann auch eine telefonische Erstberatung oder einen Termin anbieten. Für weitere Informationen wenden Sie sich bitte an Ihre Bank.\nFall: Über Ihr AMEL-Konto (nur Webversion)\n→ Online-Service: Kontaktieren Sie den Mediator von Assurance maladie über Ihr AMEL-Konto.\nBeispiel: Per Post an Ihre Bank Assurance maladie\nSie schreiben einen Brief auf blankem Papier, wobei Sie sich an dem Briefvorlage orientieren.\nSie senden diesen Brief an den Ombudsmann Ihrer Bank.\nDer Mediator wird Sie kontaktieren, falls erforderlich:\n- Weitere mögliche Rechtsmittel\n- Und wir stehen Ihnen weiterhin mit den vereinbarten Fristen zur Verfügung.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "Sie können den Mediator über eine der folgenden zwei Möglichkeiten kontaktieren:\n- ab Ihrem AMEL-Konto (nur für die Webversion)\n- oder durch einen Brief, der an Ihre Filiale von Assurance maladie geschickt wird.\nSie erhalten automatisch eine Bestätigung, sobald Ihr Brief empfangen wurde.\nBitte beachten Sie: Ihre Bank kann Ihnen möglicherweise anbieten, den Ombudsmann per E-Mail zu kontaktieren. Sie kann auch eine telefonische Erstberatung oder einen Termin anbieten. Für weitere Informationen wenden Sie sich bitte an Ihre Bank.\nFall: Über Ihr AMEL-Konto (nur Webversion)\n→ Online-Service: Kontaktieren Sie den Mediator von Assurance maladie über Ihr AMEL-Konto.\nBeispiel: Per Post an Ihre Bank Assurance maladie\nSie schreiben einen Brief auf blankem Papier, wobei Sie sich an dem Briefvorlage orientieren.\nSie senden dieses Schreiben an den Ombudsmann Ihrer Bank, Assurance maladie.\nDer Mediator wird Sie kontaktieren, falls erforderlich:\n- Weitere mögliche Rechtsmittel\n- Und wir stehen Ihnen weiterhin mit den vereinbarten Fristen zur Verfügung.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "Wie kontaktiert man den Mediator von Assurance maladie?"
        }
       ],
@@ -270,12 +267,11 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers",
        "entitlement"
       ],
       "warnings": [],
-      "roundtrip": 71.5,
+      "roundtrip": 72.3,
       "units": 36
      }
     }
@@ -285,8 +281,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.798Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:19.316Z",
    "review": null,
    "fields": {
     "titre": {
@@ -316,11 +312,11 @@
         "titre": "У яких випадках звертатися до посередника Assurance maladie?"
        },
        {
-        "texte": "Необхідно розрізняти, чи належить справа до компетенції посередника.\nВажливо зазначити: Медіатор не має повноважень для прийняття рішень: він надає висновки та пропонує шляхи вирішення конфлікту мирним способом. Він намагається відновити зв'язок між вами та Assurance maladie.\nВипадок: Ця справа підлягає розгляду у медіатора.\nМедиатор бере на себе відповідальність за вирішення справи до її остаточного розв'язання. Мета полягає в тому, щоб досягти компромісного рішення, яке буде прийнятним для обох сторін, з урахуванням необхідних пояснень для забезпечення належного розуміння.\nВипадок: Ця справа не підпадає під юрисдикцію посередника.\nМедиатор направляє справу до відповідного відділу вашої каси, інформує вас про це та забезпечує, щоб вам було надано відповідь.",
+        "texte": "Необхідно розрізняти, чи належить справа до компетенції посередника.\nВажливо зазначити: Медіатор не має повноважень для прийняття рішень: він надає висновки та пропонує шляхи вирішення конфлікту мирним способом. Він намагається відновити зв'язок між вами та Assurance maladie.\nВипадок: Ця справа підлягає розгляду у медіатора.\nМедиатор бере на себе відповідальність за вирішення справи до її остаточного розв'язання. Мета полягає в тому, щоб досягти компромісного рішення, яке буде прийнятним для обох сторін, з урахуванням необхідних пояснень для забезпечення належного розуміння.\nВипадок: Ця справа не підпадає під юрисдикцію посередника.\nМедиатор направляє справу до відповідного відділу вашого банку Assurance maladie, інформує вас про це та забезпечує, щоб вам було надано відповідь.",
         "titre": "Які дії може вжити посередник з Assurance maladie у відповідь на поштову звернення?"
        },
        {
-        "texte": "Ви можете звернутися до посередника одним із двох способів:\n- від вашого облікового запису Ameli (тільки веб-версія)\n- або через поштову кореспонденцію, адресовану до вашого відділення Assurance maladie.\nВи завжди отримуєте підтвердження отримання вашого листа.\nВажливо зазначити: Ваша касса може запропонувати вам надіслати запит до посередника електронною поштою. Також, вона може передбачити можливість телефонної консультації або зустрічі за попереднім записом. Для отримання додаткової інформації, зверніться до вашої каси.\nПриклад: З вашого облікового запису Ameli (тільки веб-версія)\n→ Онлайн-сервіс: Зв'язатися з посередником з Assurance maladie через свій обліковий запис Ameli\nПриклад: Поштою, адресовано до вашого відділення Assurance maladie.\nВи пишете лист на звичайному папері, використовуючи наданий шаблон.\nВи надсилаєте це листування до посередника вашої каси.\nМедиатор зв'яжеться з вами, якщо це буде необхідно:\n- Інші можливі способи оскарження\n- І, звісно, ми готові до співпраці.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)",
+        "texte": "Ви можете звернутися до посередника одним із двох способів:\n- від вашого облікового запису Ameli (тільки веб-версія)\n- або через поштову кореспонденцію, адресовану до вашого відділення Assurance maladie.\nВи завжди отримуєте підтвердження отримання вашого листа.\nВажливо зазначити: Ваша касса може запропонувати вам надіслати запит до посередника електронною поштою. Також, вона може передбачити можливість телефонної консультації або зустрічі за попереднім записом. Для отримання додаткової інформації, зверніться до вашої каси.\nПриклад: З вашого облікового запису Ameli (тільки веб-версія)\n→ Онлайн-сервіс: Зв'язатися з посередником з Assurance maladie через свій обліковий запис Ameli\nПриклад: Поштою, адресовано до вашого відділення Assurance maladie.\nВи пишете лист на звичайному папері, використовуючи наданий шаблон.\nВи надсилаєте це листування до посередника вашої каси Assurance maladie.\nМедиатор зв'яжеться з вами, якщо це буде необхідно:\n- Інші можливі способи оскарження\n- І, звісно, ми готові до співпраці.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)",
         "titre": "Як зв'язатися з посередником у Assurance maladie?"
        }
       ],
@@ -339,13 +335,12 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers"
       ],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 71.3,
+      "roundtrip": 71.5,
       "units": 36
      }
     }

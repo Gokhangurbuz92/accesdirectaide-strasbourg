@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.641Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:53.084Z",
    "review": null,
    "fields": {
     "titre": {
@@ -108,8 +108,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.642Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:54.180Z",
    "review": null,
    "fields": {
     "titre": {
@@ -212,8 +212,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.643Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:57.315Z",
    "review": null,
    "fields": {
     "titre": {
@@ -314,8 +314,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.645Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:58.652Z",
    "review": null,
    "fields": {
     "titre": {
@@ -349,12 +349,10 @@
      }
     },
     "pour_qui": {
-     "text": "- Personen im Alter von 18 Jahren oder darunter\n- Wohnen Sie in Frankreich (metropolitische Zone) oder in einer der französischen Überseegebiete\n- Mit einem französischen Pass oder einem Wohnsitz in Frankreich seit 1 Jahr (wenn nicht französischstämmig)\n- Schüler von der 6. bis zur 12. Klasse\n- Jugendliche (15 bis 17 Jahre) ohne Schulbildung\n- Personen im Alter von 18 Jahren",
-     "status": "withheld",
+     "text": "- Personen im Alter von 18 Jahren oder darunter\n- Wohnen Sie in Frankreich (metropolitische Zone) oder in einer der französischen Überseegebiete\n- Mit einem französischen Pass oder einem Wohnsitz in Frankreich seit 1 Jahr (wenn nicht französischstämmig)\n- Schüler von der 6. bis zur Oberstufe\n- Jugendliche (15 bis 17 Jahre) ohne Schulbildung\n- Personen im Alter von 18 Jahren",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
       "roundtrip": 61.7,
       "units": 6
@@ -416,8 +414,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.646Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:25:00.150Z",
    "review": null,
    "fields": {
     "titre": {

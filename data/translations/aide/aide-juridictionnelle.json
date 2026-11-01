@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.199Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:48.893Z",
    "review": null,
    "fields": {
     "titre": {
@@ -141,8 +141,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.201Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:48.898Z",
    "review": null,
    "fields": {
     "titre": {
@@ -272,8 +272,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.203Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:55.421Z",
    "review": null,
    "fields": {
     "titre": {
@@ -309,14 +309,12 @@
      }
     },
     "pour_qui": {
-     "text": "- أنتم مواطن فرنسي أو مواطن أوروبي (باستثناء الدنمارك).\n- عادةً ما تقيم في فرنسا، حتى لو كانت بطاقة الهوية الخاصة بك غير صالحة.\n- لا تغطي تكاليف التقاضي من خلال وثيقة تأمين أو حماية قانونية.\n- ميزانيتك المالية لا تتجاوز الحدود المحددة للحصول على المساعدة القانونية.",
-     "status": "withheld",
+     "text": "- أنتم مواطن فرنسي أو مواطن أوروبي (باستثناء الدنمارك).\n- عادةً ما تقيم في فرنسا، حتى لو كانت titre de séjour (تصريح الإقامة) غير صالحة.\n- لا تغطي تكاليف التقاضي من خلال وثيقة تأمين أو حماية قانونية.\n- ميزانيتك المالية لا تتجاوز الحدود المحددة للحصول على المساعدة القانونية.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 55.6,
+      "roundtrip": 53.4,
       "units": 4
      }
     },
@@ -345,7 +343,7 @@
        "description": ""
       },
       {
-       "titre": "يرجى ملء النموذج رقم 16146 وإرساله إذا كانت الإجراءات تجري أمام المحكمة الوطنية للحقوق الإنسانية (CNDA).",
+       "titre": "املأ النموذج cerfa (استمارة رسمية) رقم 16146 وأرسله إذا كانت الإجراءات تجري أمام المحكمة الوطنية لحقوق اللاجئين (CNDA).",
        "numero": 3,
        "description": ""
       },
@@ -360,13 +358,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 56.3,
+      "roundtrip": 56.4,
       "units": 5
      }
     },
@@ -409,8 +405,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.205Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:55.424Z",
    "review": null,
    "fields": {
     "titre": {
@@ -538,8 +534,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.208Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:55.427Z",
    "review": null,
    "fields": {
     "titre": {

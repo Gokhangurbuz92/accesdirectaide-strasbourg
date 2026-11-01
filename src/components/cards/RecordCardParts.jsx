@@ -22,7 +22,7 @@ export function RecordProvenance({ verifiedAt, sourceHost, sourceUrl = null, sta
           <Globe className="h-3.5 w-3.5" aria-hidden="true" />
           {t('shared:card.source', 'Source :')}{' '}
           {sourceUrl ? (
-            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="relative z-20 underline underline-offset-2 hover:text-slate-900">
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="ada-target relative z-20 underline underline-offset-2 hover:text-slate-900">
               {sourceHost}<span className="sr-only">{t('shared:newTab', ' (nouvel onglet)')}</span>
             </a>
           ) : sourceHost}

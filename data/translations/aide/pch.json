@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.158Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:20:49.417Z",
    "review": null,
    "fields": {
     "titre": {
@@ -55,14 +55,12 @@
      }
     },
     "ce_que_ca_aide": {
-     "text": "PCH (the grant) is fully funded if annual resources are less than or equal to €31,162.62, or 80% funded if they are greater than this amount. Technical assistance is fully funded up to €13,200 per 10-year period, or 80% funded if the resources are greater than this amount.",
-     "status": "withheld",
+     "text": "The PCH (disability compensation benefit) is covered at 100% if the annual resources are less than or equal to €31,162.62, or at 80% if they are greater. Technical assistance is covered at 100% up to €13,200 per 10-year period, or at 80% if the resources are greater.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 73.5,
+      "roundtrip": 78.5,
       "units": 1
      }
     },
@@ -130,8 +128,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.160Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:20:55.377Z",
    "review": null,
    "fields": {
     "titre": {
@@ -179,14 +177,12 @@
      }
     },
     "ce_que_ca_aide": {
-     "text": "PCH (engellilik telafi yardımı) ], yıllık gelirler 31.162,62 € veya daha düşükse %100, 31.162,62 €'dan yüksekse %80 olarak karşılanır. Teknik yardım, 10 yıllık dönem için 13.200 €'ya kadar %100 olarak veya gelirler yüksekse %80 olarak karşılanır.",
-     "status": "withheld",
+     "text": "PCH (engellilik telafi yardımı), 31.162,62 €'a veya ondan az ise %100 olarak karşılanır, aksi takdirde %80 olarak karşılanır. Teknik destek, 10 yıllık bir dönem için 13.200 €'nun altında ise %100 olarak karşılanır, aksi takdirde %80 olarak karşılanır.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 58.8,
+      "roundtrip": 45.1,
       "units": 1
      }
     },
@@ -254,8 +250,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.161Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:20:57.308Z",
    "review": null,
    "fields": {
     "titre": {
@@ -374,8 +370,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.163Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:20:59.366Z",
    "review": null,
    "fields": {
     "titre": {
@@ -409,14 +405,12 @@
      }
     },
     "pour_qui": {
-     "text": "- Sie haben eine dauerhafte oder voraussichtlich mindestens einjährige Einschränkung der Selbstständigkeit.\n- Sie sind unter 60 Jahre alt (oder Sie arbeiten weiterhin, wenn Sie älter als 60 Jahre sind)\n- Sie verfügen über eine gültige titre de séjour (Aufenthaltstitel), wenn Sie ausländischer Staatsbürger sind.",
-     "status": "withheld",
+     "text": "- Sie haben eine dauerhafte oder voraussichtlich mindestens 1-jährige Einschränkung der Selbstständigkeit.\n- Sie sind unter 60 Jahre alt (oder Sie arbeiten weiterhin, wenn Sie älter als 60 Jahre sind)\n- Sie verfügen über eine gültige titre de séjour (Aufenthaltstitel), wenn Sie ausländischer Staatsbürger sind.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 55.6,
+      "roundtrip": 56.5,
       "units": 3
      }
     },
@@ -496,8 +490,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.165Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:20:59.373Z",
    "review": null,
    "fields": {
     "titre": {

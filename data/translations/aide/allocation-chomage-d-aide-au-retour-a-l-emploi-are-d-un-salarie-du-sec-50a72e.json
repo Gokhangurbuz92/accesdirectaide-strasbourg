@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.104Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:03.060Z",
    "review": null,
    "fields": {
     "titre": {
@@ -106,19 +106,17 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.106Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:09.182Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "Çalışanın özel sektörden işine geri dönmesine yardımcı olacak işsizlik yardımı (ARE: işsizlik ödeneği)",
-     "status": "withheld",
+     "text": "Özel sektör çalışanına yönelik işe geri dönme yardımı (ARE: işsizlik ödeneği) ve işsizlik maaşı, sözleşmesinin 1 Nisan 2025 tarihinde sona ermesiyle çalışan için.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 38.8,
+      "roundtrip": 56.5,
       "units": 1
      }
     },
@@ -172,7 +170,7 @@
        "description": ""
       },
       {
-       "titre": "1 Temmuz 2024 ile 31 Aralık 2024 tarihleri arasında bir işte yeniden çalışmanız gerekmektedir.",
+       "titre": "1 Temmuz ile 31 Aralık 2024 tarihleri arasında bir mesleki faaliyet göstermeniz gerekmektedir.",
        "numero": 2,
        "description": ""
       },
@@ -192,13 +190,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 74.2,
+      "roundtrip": 76.9,
       "units": 5
      }
     }
@@ -208,8 +204,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.109Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:09.190Z",
    "review": null,
    "fields": {
     "titre": {
@@ -306,19 +302,17 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.111Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:12.751Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "Zuweisung von Arbeitslosengeld zur Unterstützung der Rückkehr in den Arbeitsmarkt für einen Arbeitnehmer des privaten Sektors, dessen Arbeitsvertrag am 1. April 2025 endet.",
-     "status": "withheld",
+     "text": "Zuweisung von Arbeitslosengeld zur Unterstützung der Rückkehr in den Arbeitsmarkt (ARE: Arbeitslosengeld)] für einen Arbeitnehmer des privaten Sektors, dessen Arbeitsvertrag am 1. April 2025 endet",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 65.5,
+      "roundtrip": 65.3,
       "units": 1
      }
     },
@@ -406,19 +400,17 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.113Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:18.364Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "Виплата допомоги по безробіттю для підтримки повернення до роботи працівника з приватного сектора, термін контракту якого закінчується з 1 квітня 2025 року.",
-     "status": "withheld",
+     "text": "Виплата допомоги по безробіттю та підтримка у поверненні до праці (ARE: допомога з безробіття) для працівника приватного сектора, чия остання дата укладання трудового договору припадає на 1 квітня 2025 року.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 62.3,
+      "roundtrip": 56.8,
       "units": 1
      }
     },
@@ -482,7 +474,7 @@
        "description": ""
       },
       {
-       "titre": "Вам потрібно чекати завершення семиденного періоду очікування.",
+       "titre": "Вам потрібно чекати завершення 7-денного періоду очікування.",
        "numero": 4,
        "description": ""
       },
@@ -492,13 +484,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 74.9,
+      "roundtrip": 75.6,
       "units": 5
      }
     }

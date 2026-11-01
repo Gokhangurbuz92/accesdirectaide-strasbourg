@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { FIELDS, KINDS, SCHEMA, checkField, fieldStatus, protect, recordStatus, restore, sourceFields, sourceHash, unitsOf } from '../api/lib/contentTranslation.js';
 import { Engine } from './lib/translation-engines.mjs';
 
-export const CHECKS_VERSION = 'r32-checks-3';   // 2: lower-case acronyms and MSA protected, more uncertainty phrasings; 3: mixed-script words
+export const CHECKS_VERSION = 'r33-repair-1';   // 2: lower-case acronyms and MSA protected, more uncertainty phrasings; 3: mixed-script words; r33: per-sentence repair attempts
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'data', 'translations');
 const LIST = { aide: 'aides?limit=50', demarche: 'demarches?limit=50', guide: 'guides', actualite: 'actualites?limit=50', dispositif: 'dispositifs' };
@@ -51,6 +51,9 @@ const fileOf = (kind, slug) => path.join(OUT, kind, `${slug}.json`);
 const readFile = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 
 /** translates one field into one language @returns {Promise<{ text: any, status: string, checks: any }>} */
+const REPAIR_ATTEMPTS = 2;
+const UNIT_CHECKS = new Set(['numbers', 'names', 'links', 'entitlement', 'script']);
+export const repaired = { count: 0 };
 async function translateField(engine, back, lang, kind, field, value, previous) {
   const risk = FIELDS[kind][field];
   const { units, rebuild } = unitsOf(value);
@@ -58,8 +61,17 @@ async function translateField(engine, back, lang, kind, field, value, previous) 
   const glossed = new Set(); const targets = []; const backs = []; const missing = [];
   for (const u of units) {
     const p = protect(u);
-    const raw = await engine.translate('fr', lang, p.text);
-    const r = restore(raw, p.slots, lang, glossed);
+    // R33 targeted repair: a sentence failing a deterministic check (numbers, names, links, entitlement, script) is retried at most twice with an
+    // explicit instruction; the first attempt that passes is kept, otherwise the first one (the field is then withheld by the same checks as before)
+    let r = null;
+    for (let attempt = 0; attempt <= REPAIR_ATTEMPTS; attempt += 1) {
+      const g = new Set(glossed);
+      const cand = restore(await engine.translate('fr', lang, p.text, attempt), p.slots, lang, g);
+      const bad = checkField({ lang, risk, source: u, target: cand.text, missing: cand.missing }).critical.filter((c) => UNIT_CHECKS.has(c));
+      if (!r) r = { ...cand, glossed: g };
+      if (!bad.length) { r = { ...cand, glossed: g }; if (attempt) repaired.count += 1; break; }
+    }
+    for (const x of r.glossed) glossed.add(x);
     missing.push(...r.missing);
     targets.push(r.text);
     if (back) backs.push(await back.translate(lang, 'fr', r.text));
@@ -141,7 +153,7 @@ async function main() {
   report.finishedAt = new Date().toISOString();
   report.engineStats = { forward: engine.stats, back: back && back !== engine ? back.stats : null };
   if (arg('report')) fs.writeFileSync(arg('report'), `${JSON.stringify(report, null, 1)}\n`);
-  console.log(`TRANSLATE_DONE ${JSON.stringify({ engine: engine.id, stats: engine.stats })}`);
+  console.log(`TRANSLATE_DONE ${JSON.stringify({ engine: engine.id, stats: engine.stats, repairedSentences: repaired.count })}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });

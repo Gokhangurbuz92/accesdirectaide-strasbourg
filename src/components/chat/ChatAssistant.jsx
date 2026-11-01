@@ -223,15 +223,18 @@ export default function ChatAssistant({ embedded = false }) {
     inputRef.current?.focus();
   }, []);
 
-  // Auto-focus input when chat opens + restore focus to FAB on close
+  // Auto-focus input when chat opens + restore focus to FAB on close (R33: only after a real close — on page load the focus stays at the top,
+  // otherwise the skip link is no longer the first Tab stop)
+  const wasOpen = useRef(false);
   useEffect(() => {
     if (!embedded) {
       if (isOpen) {
         requestAnimationFrame(() => inputRef.current?.focus());
-      } else {
+      } else if (wasOpen.current) {
         fabRef.current?.focus();
       }
     }
+    wasOpen.current = isOpen;
   }, [isOpen, embedded]);
 
   // Focus trap + Esc handler for floating widget

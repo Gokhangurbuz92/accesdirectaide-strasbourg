@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.183Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:43.417Z",
    "review": null,
    "fields": {
     "titre": {
@@ -130,8 +130,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.184Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:44.917Z",
    "review": null,
    "fields": {
     "titre": {
@@ -222,18 +222,15 @@
     },
     "documents_necessaires": {
      "text": [
-      "Form T1, No: 10544",
+      "Form cerfa (resmi form) numarası 10544",
       "Kaynak ve finansal durumla ilgili belgeler",
       "Tamamen eksik başvuru dosyası"
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 56.6,
+      "roundtrip": 56.5,
       "units": 3
      }
     },
@@ -253,8 +250,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.186Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:47.434Z",
    "review": null,
    "fields": {
     "titre": {
@@ -319,7 +316,7 @@
        "description": ""
       },
       {
-       "titre": "يجب ملء النموذج رقم 10544 وإرساله خلال الشهر التالي لإعلان تخصيص الموارد.",
+       "titre": "يجب ملء النموذج cerfa (استمارة رسمية) رقم 10544 وإرساله خلال الشهر التالي لإعلان الموافقة.",
        "numero": 2,
        "description": ""
       },
@@ -339,13 +336,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 63.1,
+      "roundtrip": 64.1,
       "units": 5
      }
     },
@@ -379,8 +374,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.187Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:47.439Z",
    "review": null,
    "fields": {
     "titre": {
@@ -503,8 +498,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.188Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:48.859Z",
    "review": null,
    "fields": {
     "titre": {
@@ -595,17 +590,15 @@
     },
     "documents_necessaires": {
      "text": [
-      "Форма №10544",
+      "Форма cerfa (офіційна форма) №10544",
       "Документи, що підтверджують наявність ресурсів та фінансовий стан.",
       "Повний комплект документів для заявки"
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 58.5,
+      "roundtrip": 58.3,
       "units": 3
      }
     },

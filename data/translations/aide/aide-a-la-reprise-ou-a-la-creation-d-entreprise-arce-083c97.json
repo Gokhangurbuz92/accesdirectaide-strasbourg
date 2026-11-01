@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.115Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:18.369Z",
    "review": null,
    "fields": {
     "titre": {
@@ -112,8 +112,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.117Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:26.826Z",
    "review": null,
    "fields": {
     "titre": {
@@ -224,8 +224,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.119Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:29.186Z",
    "review": null,
    "fields": {
     "titre": {
@@ -286,18 +286,16 @@
        "description": ""
       },
       {
-       "titre": "إعادة نسخة من وثيقة تثبت إنشاء أو استئناف نشاط تجاري ضمن إطار برنامج \"أكر\".",
+       "titre": "إعادة نسخة من France Travail‏] تثبت إنشاء أو استئناف شركة ضمن إطار برنامج \"أكر\".",
        "numero": 2,
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 58.4,
+      "roundtrip": 62.1,
       "units": 2
      }
     },
@@ -332,8 +330,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.121Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:29.193Z",
    "review": null,
    "fields": {
     "titre": {
@@ -438,8 +436,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.123Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:29.199Z",
    "review": null,
    "fields": {
     "titre": {

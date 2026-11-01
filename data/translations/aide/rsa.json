@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.139Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:29.232Z",
    "review": null,
    "fields": {
     "titre": {
@@ -123,8 +123,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.141Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:36.541Z",
    "review": null,
    "fields": {
     "titre": {
@@ -247,8 +247,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.143Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:52.789Z",
    "review": null,
    "fields": {
     "titre": {
@@ -262,32 +262,26 @@
      }
     },
     "description": {
-     "text": "\"دخل التعويض الاجتماعي النشط\" (T1) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تكوين الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح \"T2\" الحصول على دخل أساسي وخدمات دعم للاندماج في سوق العمل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
-     "status": "withheld",
+     "text": "برنامج \"الدخل التعاوني النشط\" (RSA: دخل التضامن النشط ) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تركيب الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح RSA الحصول على دخل أساسي وخدمات دعم للاندماج المهني. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 65.7,
+      "roundtrip": 72.7,
       "units": 1
      }
     },
     "cest_quoi": {
-     "text": "\"دخل التعويض الاجتماعي النشط\" (T1) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تكوين الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح \"T2\" الحصول على دخل أساسي وخدمات دعم للاندماج في سوق العمل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
-     "status": "withheld",
+     "text": "برنامج \"الدخل التعاوني النشط\" (RSA: دخل التضامن النشط ) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تركيب الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح RSA الحصول على دخل أساسي وخدمات دعم للاندماج المهني. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 65.7,
+      "roundtrip": 72.7,
       "units": 1
      }
     },
@@ -324,7 +318,7 @@
        "description": ""
       },
       {
-       "titre": "يرجى إرسال النماذج رقم 15481 أو 15482 و رقم 14130 عبر البريد إلى عنوان Caf.",
+       "titre": "إرسال النماذج cerfa (استمارة رسمية) رقم 15481 أو رقم 15482 و cerfa رقم 14130 عن طريق البريد إلى عنوان Caf.",
        "numero": 3,
        "description": ""
       },
@@ -334,30 +328,27 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 73.2,
+      "roundtrip": 74.1,
       "units": 4
      }
     },
     "documents_necessaires": {
      "text": [
       "إثباتات المصادر للفترة الثلاثة الأخيرة",
-      "النماذج رقم 15481 (أو 15482 إذا لم يكن الموظف) ورقم 14130.",
+      "النماذج cerfa (استمارة رسمية) رقم 15481 (أو رقم 15482 إذا لم يكن الموظف) و cerfa رقم 14130.",
       "وثائق إثبات الإقامة للأجانب"
      ],
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers"
       ],
       "warnings": [],
-      "roundtrip": 46.4,
+      "roundtrip": 47.9,
       "units": 3
      }
     },
@@ -377,8 +368,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.144Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:22:56.802Z",
    "review": null,
    "fields": {
     "titre": {
@@ -477,15 +468,12 @@
      }
     },
     "ou_demander": {
-     "text": "Je m'enquiere, je benötige weitere Informationen: Caisse d'allocations familiales (Caf: Familienkasse), Dienstleistungen der Gemeinde, Rathaus, Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung), Kontaktieren Sie Ihren Ansprechpartner: per E-Mail, per Telefon und für Menschen mit Hörbehinderung.",
-     "status": "withheld",
+     "text": "Je nach Ihrer Situation: Caisse d'allocations familiales (Caf: Familienkasse), Dienstleistungen des Departements, Rathaus, Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung), Kontaktieren Sie Ihren MSA: per E-Mail, per Telefon und Service für Menschen mit Hörbehinderung.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "modality"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 66.5,
+      "roundtrip": 80.2,
       "units": 1
      }
     }
@@ -495,8 +483,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.146Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:00.288Z",
    "review": null,
    "fields": {
     "titre": {
@@ -566,7 +554,7 @@
        "description": ""
       },
       {
-       "titre": "Надіслати форми №15481 або №15482 та №14130 разом із Caf поштою на вашу адресу.",
+       "titre": "Надіслати форми cerfa (офіційна форма) №15481 або №15482 та cerfa №14130 поштою на адресу вашого Caf.",
        "numero": 3,
        "description": ""
       },
@@ -576,13 +564,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 69,
+      "roundtrip": 72.1,
       "units": 4
      }
     },

@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.663Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:03.362Z",
    "review": null,
    "fields": {
     "titre": {
@@ -43,11 +43,11 @@
         "titre": "How do I request access to the account?"
        },
        {
-        "texte": "Within one working day of receiving the documents, the Banque de France will appoint the bank responsible for opening the account. The Banque de France will inform you (by mail or through your online account) of the designated bank's name and will also notify the relevant bank by mail. The Banque de France's decision to appoint a bank is valid for 6 months.\nWithin the 3 business days following notification of your appointment, the designated bank must provide you with a list of the necessary documents for opening the account and the contact details of the bank branch to which you should address your correspondence, either by mail or another durable medium.\nYou must then contact the designated agency to open the account and provide them with the required documents. You have 6 months (from the date of appointment) to inform the bank.\nOnce the initial contact has been made, a meeting is generally required. On the day of the meeting, your presence is usually essential for the account opening process. You may be asked to provide additional documentation, particularly in relation to anti-money laundering and counter-terrorism efforts.\nThe designated bank must open the account within 3 business days if you have provided all the necessary documents.",
+        "texte": "Within 1 business day of receiving the documents, the Banque de France will appoint the bank responsible for opening the account. The Banque de France will inform you (by mail or on your personal account) of the name of the designated institution and will also notify the relevant bank by mail. The decision to appoint by the Banque de France is valid for 6 months.\nWithin the 3 business days following notification of your appointment, the designated bank must provide you with a list of the necessary documents for opening the account and the contact details of the bank branch to which you should address your correspondence, either by mail or another durable medium.\nYou must then contact the designated agency to open the account and provide them with the required documents. You have 6 months (from the date of appointment) to inform the bank.\nOnce the initial contact has been made, a meeting is generally required. On the day of the meeting, your presence is usually essential for the account opening process. You may be asked to provide additional documentation, particularly in relation to anti-money laundering and counter-terrorism efforts.\nThe designated bank must open the account within 3 business days if you have provided all the necessary documents.",
         "titre": "How is the bank account opened at the designated bank?"
        },
        {
-        "texte": "The account agreement associated with the opening of the deposit account is limited to the following basic banking services:\n- Opening, maintenance, and closing of the account\n- One address change per year\n- Issuance, upon request, of bank account statements\n- Bank transfer address\n- Monthly provision of a record of all transactions made on the account.\n- Processing of checks and bank transfers\n- Payments via SEPA direct debit, SEPA interbank payment order, or SEPA transfer\n- Methods for remotely checking account balances\n- Deposits and withdrawals of cash at the bank's counter, where the account is held.\n- Bank card where each transaction is authorized by the bank\n- Two bank check options per month, or equivalent payment methods, offering the same services.\n- Handling cash transactions",
+        "texte": "The account agreement associated with the opening of the deposit account is limited to the following basic banking services:\n- Opening, maintenance, and closing of the account\n- 1 address change per year\n- Issuance, upon request, of bank account statements\n- Bank transfer address\n- Monthly provision of a record of all transactions made on the account.\n- Processing of checks and bank transfers\n- Payments via SEPA direct debit, SEPA interbank payment order, or SEPA transfer\n- Methods for remotely checking account balances\n- Deposits and withdrawals of cash at the bank's counter, where the account is held.\n- Bank card where each transaction is authorized by the bank\n- 2 bank check forms per month or equivalent payment methods offering the same services\n- Handling cash transactions",
         "titre": "What banking services does the right to a bank account provide access to?"
        },
        {
@@ -79,7 +79,7 @@
       "warnings": [
        "negation"
       ],
-      "roundtrip": 79.7,
+      "roundtrip": 79.9,
       "units": 78
      }
     }
@@ -89,8 +89,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.670Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:10.650Z",
    "review": null,
    "fields": {
     "titre": {
@@ -128,7 +128,7 @@
         "titre": "Banka tarafından belirlenen hesap nasıl açılır?"
        },
        {
-        "texte": "Hesap açılışıyla birlikte oluşturulan hesap sözleşmesi, yalnızca aşağıdaki temel bankacılık hizmetlerine uygulanır:\n- Hesabın açılışı, bakış ve kapanışı\n- Yılda bir adres değişikliği\n- İstenildiği zaman, banka hesap özetlerinin düzenlenmesi ve verilmesi.\n- Banka havalelerinin adresinin belirlenmesi\n- Aylık olarak, hesabınızda gerçekleştirilen işlemlerin detaylı bir raporunun sağlanması.\n- Şahsi çeklerin ve banka havalelerinin tahsil edilmesi\n- SEPA otomatik ödeme, SEPA arası banka transferi veya SEPA havalesi ile ödeme\n- Hesap bakiyesini uzaktan görüntüleme yöntemleri\n- Bankadaki hesap sahibinin hesabına ait nakit para depozitlerinin ve çeklerinin çekim işlemi yapılması.\n- Banka tarafından onaylanan ve her kullanımının izin verilen banka kartı.\n- Ayda 2 adet banka çek veya eşdeğer ödeme yöntemi, aynı hizmetleri sunan\n- Kasa işlemlerinin yürütülmesi",
+        "texte": "Hesap açılışıyla birlikte oluşturulan hesap sözleşmesi, yalnızca aşağıdaki temel bankacılık hizmetlerine uygulanır:\n- Hesabın açılışı, bakış ve kapanışı\n- Yılda 1 adres değişikliği\n- İstenildiği zaman, banka hesap özetlerinin düzenlenmesi ve verilmesi.\n- Banka havalelerinin adresinin belirlenmesi\n- Aylık olarak, hesabınızda gerçekleştirilen işlemlerin detaylı bir raporunun sağlanması.\n- Şahsi çeklerin ve banka havalelerinin tahsil edilmesi\n- SEPA otomatik ödeme, SEPA arası banka transferi veya SEPA havalesi ile ödeme\n- Hesap bakiyesini uzaktan görüntüleme yöntemleri\n- Bankadaki hesap sahibinin hesabına ait nakit para depozitlerinin ve çeklerinin çekim işlemi yapılması.\n- Banka tarafından onaylanan ve her kullanımının izin verilen banka kartı.\n- Ayda 2 adet banka çek veya eşdeğer ödeme yöntemi, aynı hizmetleri sunan\n- Kasa işlemlerinin yürütülmesi",
         "titre": "\"Hesap hakkı, hangi bankacılık hizmetlerine erişim sağlar?\""
        },
        {
@@ -170,8 +170,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.676Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:27.887Z",
    "review": null,
    "fields": {
     "titre": {
@@ -209,7 +209,7 @@
         "titre": "كيف يتم فتح الحساب البنكي في البنك المحدد؟"
        },
        {
-        "texte": "الشرط المصرفي المرتبط بفتح حساب التوفير يقتصر على الخدمات المصرفية الأساسية التالية:\n- فتح الحساب، وإدارته، وإغلاقه\n- تغيير عنوان واحد سنويًا\n- إصدار كشوف الحساب البنكي عند الطلب.\n- توجيه التحويلات المصرفية\n- توفير تقرير شهري عن العمليات التي تم إجراؤها على الحساب.\n- قبول الشيكات وتحويلات البنوك\n- الدفع عن طريق سحب SEPA، أو أمر دفع SEPA بين البنوك، أو تحويل SEPA.\n- وسائل للتحقق عن رصيد الحساب عن بعد\n- إيداع وسحب الأموال في فرع البنك الذي يحتفظ بحساب العميل.\n- بطاقة مصرفية، بحيث يتم السماح باستخدامها من قبل البنك.\n- 2 أنواع من الشيكات البنكية شهريًا، أو وسائل دفع مماثلة، تقدم نفس الخدمات.\n- إجراء عمليات الدفع",
+        "texte": "الشرط المصرفي المرتبط بفتح حساب التوفير يقتصر على الخدمات المصرفية الأساسية التالية:\n- فتح الحساب، وإدارته، وإغلاقه\n- 1 تغيير في عنوان الإقامة سنويًا\n- إصدار كشوف الحساب البنكي عند الطلب.\n- توجيه التحويلات المصرفية\n- توفير تقرير شهري عن العمليات التي تم إجراؤها على الحساب.\n- قبول الشيكات وتحويلات البنوك\n- الدفع عن طريق سحب SEPA، أو أمر دفع SEPA بين البنوك، أو تحويل SEPA.\n- وسائل للتحقق عن رصيد الحساب عن بعد\n- إيداع وسحب الأموال في فرع البنك الذي يحتفظ بحساب العميل.\n- بطاقة مصرفية، بحيث يتم السماح باستخدامها من قبل البنك.\n- 2 أنواع من الشيكات البنكية شهريًا، أو وسائل دفع مماثلة، تقدم نفس الخدمات.\n- إجراء عمليات الدفع",
         "titre": "ما هي الخدمات المصرفية التي يتيح الحق في فتح الحساب الوصول إليها؟"
        },
        {
@@ -239,7 +239,7 @@
        "numbers"
       ],
       "warnings": [],
-      "roundtrip": 77.1,
+      "roundtrip": 77.2,
       "units": 78
      }
     }
@@ -249,8 +249,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.682Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:45.824Z",
    "review": null,
    "fields": {
     "titre": {
@@ -276,7 +276,7 @@
         "titre": "Was bedeutet das Recht auf ein Konto?"
        },
        {
-        "texte": "Um die französische Regelung des Rechts auf ein Konto nutzen zu können, müssen Sie einer der folgenden Bedingungen entsprechen:\n- Wohnsitz in Frankreich, ohne Staatsbürgerschaftspräferenz\n- Französische Staatsbürgerschaft und Wohnsitz im Ausland\n- Ausländische Staatsbürgerschaft und rechtmäßiger Aufenthalt in einem anderen Mitgliedsstaat der Europäischen Union, sowie keine berufliche Tätigkeit.\nBitte beachten Sie: Wenn Sie bereits ein Sparkonto in Frankreich haben, können Sie nicht von dem Recht auf ein Sparkonto profitieren.\nSie haben Anspruch auf ein Konto, auch wenn Sie sich in einer der folgenden Situationen befinden:\n- Bankverbot\n- Eintrag im Verzeichnis für Verbraucherkreditausfälle (FICP)\n- Surendetté\n- Besitzer eines gemeinsamen Kontos.",
+        "texte": "Um die französische Regelung des Rechts auf ein Konto nutzen zu können, müssen Sie einer der folgenden Bedingungen entsprechen:\n- Wohnsitz in Frankreich, ohne Staatsbürgerschaftspräferenz\n- Französische Staatsbürgerschaft und Wohnsitz im Ausland\n- Ausländische Staatsbürgerschaft und rechtmäßiger Aufenthalt in einem anderen Mitgliedsstaat der Europäischen Union, sowie keine berufliche Tätigkeit.\nBitte beachten Sie: Wenn Sie bereits ein Sparkonto in Frankreich haben, können Sie nicht von dem Recht auf ein Sparkonto profitieren.\nSie können das Recht auf ein Konto nutzen, auch wenn Sie sich in einer der folgenden Situationen befinden:\n- Bankverbot\n- Eintrag im Verzeichnis für Verbraucherkreditausfälle (FICP)\n- Surendetté\n- Besitzer eines gemeinsamen Kontos.",
         "titre": "Wer kann von dem Recht auf ein Konto profitieren?"
        },
        {
@@ -284,11 +284,11 @@
         "titre": "Wie kann ich eine Anfrage für den Zugriff auf das Konto stellen?"
        },
        {
-        "texte": "Innerhalb von einem Werktag nach Erhalt der Unterlagen bestimmt die Banque de France die Bank, die für die Eröffnung des Kontos zuständig ist. Die Banque de France informiert Sie (per Post oder über Ihr persönliches Konto) über den ausgewählten Finanzdienstleister und informiert ebenfalls per Post die zuständige Bank. Die Entscheidung der Banque de France zur Benennung ist 6 Monate gültig.\nInnerhalb der drei Werktage nach der Benachrichtigung über die Ernennung muss die benannte Bank Ihnen eine Liste der erforderlichen Dokumente zur Konteneröffnung sowie die Kontaktdaten der zuständigen Bankfiliale zusenden.\nAnschließend müssen Sie Kontakt mit dem dafür benannten Institut aufnehmen, um das Konto zu eröffnen, und ihm die erforderlichen Unterlagen zukommen lassen. Sie haben 6 Monate Zeit (beginnend mit der Entscheidung zur Benennung), um sich bei der Bank zu melden.\nNachdem der Kontakt hergestellt wurde, ist in der Regel ein Termin erforderlich. An dem vereinbarten Termin ist Ihre Anwesenheit in der Regel unerlässlich, um das Konto zu eröffnen. Möglicherweise werden zusätzliche Unterlagen verlangt, insbesondere im Zusammenhang mit der Bekämpfung von Geldwäsche und der Finanzierung von Terrorismus.\nDie ausgewählte Bank muss das Konto innerhalb von 3 Werktagen eröffnen, sofern Sie alle erforderlichen Unterlagen vorgelegt haben.",
+        "texte": "Innerhalb von 1 Werktag nach Erhalt der Unterlagen bestimmt die Banque de France die Bank, die für die Eröffnung des Kontos verantwortlich ist. Die Banque de France informiert Sie (per Post oder über Ihr persönliches Konto) über den Namen der ausgewählten Bank und informiert auch die betroffene Bank per Post. Die Entscheidung der Banque de France zur Benennung ist 6 Monate gültig.\nInnerhalb der nächsten 3 Werktage nach der Benachrichtigung über die Ernennung muss die benannte Bank Ihnen eine Liste der erforderlichen Dokumente zur Konteneröffnung sowie die Kontaktdaten der zuständigen Bankfiliale zusenden.\nAnschließend müssen Sie Kontakt mit dem dafür benannten Institut aufnehmen, um das Konto zu eröffnen, und ihm die erforderlichen Unterlagen zukommen lassen. Sie haben 6 Monate Zeit (beginnend mit der Entscheidung zur Benennung), um sich bei der Bank zu melden.\nNachdem der Kontakt hergestellt wurde, ist in der Regel ein Termin erforderlich. An dem vereinbarten Termin ist Ihre Anwesenheit in der Regel unerlässlich, um das Konto zu eröffnen. Möglicherweise werden zusätzliche Unterlagen verlangt, insbesondere im Zusammenhang mit der Bekämpfung von Geldwäsche und der Finanzierung von Terrorismus.\nDie ausgewählte Bank muss das Konto innerhalb von 3 Werktagen eröffnen, sofern Sie alle erforderlichen Unterlagen vorgelegt haben.",
         "titre": "Wie wird das Bankkonto bei der genannten Bank eröffnet?"
        },
        {
-        "texte": "Die zu dem Eröffnungskonto gehörende Kontovereinbarung beschränkt sich auf die folgenden grundlegenden Bankdienstleistungen:\n- Eröffnung, Führung und Schließung des Kontos\n- Eine Adressänderung pro Jahr\n- Auf Anfrage, die Ausstellung von Kontoauszügen\n- Einrichtung von Banküberweisungen\n- Monatliche Bereitstellung eines Berichts über die durchgeführten Transaktionen auf dem Konto\n- Ausführung von Schecks und Banküberweisungen\n- Zahlungen per SEPA-Lastschrift, SEPA-Interbanken-Zahlungsauftrag oder SEPA-Überweisung\n- Möglichkeiten zur Fernüberwachung des Kontostands\n- Einzahlungen und Auszahlungen von Bargeld am Schalter der Bank, die das Konto verwaltet.\n- Bankkarte, bei der jede Nutzung von der Bank genehmigt wurde.\n- 2 Bankcheques pro Monat oder gleichwertige Zahlungsmethoden, die die gleichen Leistungen bieten.\n- Durchführung von Kassenoperationen",
+        "texte": "Die zu dem Eröffnungskonto gehörende Kontovereinbarung beschränkt sich auf die folgenden grundlegenden Bankdienstleistungen:\n- Eröffnung, Führung und Schließung des Kontos\n- 1 Adressänderung pro Jahr\n- Auf Anfrage, die Ausstellung von Kontoauszügen\n- Einrichtung von Banküberweisungen\n- Monatliche Bereitstellung eines Berichts über die durchgeführten Transaktionen auf dem Konto\n- Ausführung von Schecks und Banküberweisungen\n- Zahlungen per SEPA-Lastschrift, SEPA-Interbanken-Zahlungsauftrag oder SEPA-Überweisung\n- Möglichkeiten zur Fernüberwachung des Kontostands\n- Einzahlungen und Auszahlungen von Bargeld am Schalter der Bank, die das Konto verwaltet.\n- Bankkarte, bei der jede Nutzung von der Bank genehmigt wurde.\n- 2 Bankcheques pro Monat oder gleichwertige Zahlungsmethoden, die die gleichen Leistungen bieten.\n- Durchführung von Kassenoperationen",
         "titre": "Welche Bankdienstleistungen werden durch das Recht auf ein Konto ermöglicht?"
        },
        {
@@ -315,11 +315,10 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "numbers",
-       "entitlement"
+       "numbers"
       ],
       "warnings": [],
-      "roundtrip": 79.1,
+      "roundtrip": 79,
       "units": 78
      }
     }
@@ -329,8 +328,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.689Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:36:53.609Z",
    "review": null,
    "fields": {
     "titre": {
@@ -368,7 +367,7 @@
         "titre": "Як відкрити банківський рахунок у вказаній банку?"
        },
        {
-        "texte": "Угода про обслуговування рахунку, яка відкривається разом із депозитом, обмежується лише наступними базовими банківськими послугами:\n- Відкриття, ведення та закриття рахунку\n- Зміна адреси один раз на рік\n- На вимогу, видача виписок з банківського рахунку\n- Реєстрація банківських переказів\n- Щомісячна надання звіту про операції, здійснені на цьому рахунку.\n- Обробка чеків та банківських переказів\n- Оплата за допомогою SEPA, міжбанківський платіжний ордер SEPA або переказ SEPA\n- Способи дистанційного перегляду балансу рахунку\n- Внесення та зняття готівки в касі банку, де відкритий рахунок.\n- Банківська картка, використання якої схвалено банком\n- 2 банківські чеки на місяць або еквівалентні способи оплати, які надають ті самі послуги.\n- Виконання операцій з касою",
+        "texte": "Угода про обслуговування рахунку, яка відкривається разом із депозитом, обмежується лише наступними базовими банківськими послугами:\n- Відкриття, ведення та закриття рахунку\n- 1 зміна адреси щорічно\n- На вимогу, видача виписок з банківського рахунку\n- Реєстрація банківських переказів\n- Щомісячна надання звіту про операції, здійснені на цьому рахунку.\n- Обробка чеків та банківських переказів\n- Оплата за допомогою SEPA, міжбанківський платіжний ордер SEPA або переказ SEPA\n- Способи дистанційного перегляду балансу рахунку\n- Внесення та зняття готівки в касі банку, де відкритий рахунок.\n- Банківська картка, використання якої схвалено банком\n- 2 банківські чеки на місяць або еквівалентні способи оплати, які надають ті самі послуги.\n- Виконання операцій з касою",
         "titre": "Які банківські послуги надає право на відкриття рахунку?"
        },
        {

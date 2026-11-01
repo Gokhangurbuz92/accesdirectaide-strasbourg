@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.555Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:21.674Z",
    "review": null,
    "fields": {
     "titre": {
@@ -133,8 +133,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.557Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:25.038Z",
    "review": null,
    "fields": {
     "titre": {
@@ -158,15 +158,12 @@
      }
     },
     "contenu_detaille": {
-     "text": "Yabancı öğrenciler, Fransa'da 1 yıl kaldıktan sonra, ikamet hakkını yenileyebilir ve 1 yıllık veya çok yıllık bir ikamet kartı alabilirler. Bunun için, belirli gelir koşullarını karşılamalı ve çevrimiçi bir hizmet aracılığıyla titre de séjour (oturum izni) başvurusunda bulunmalıdırlar. 100 €'luk ücret, onay veya yenileme sırasında ödenmelidir.\n\n100 €, T1 belgesinin geçerliliğinin onaylanması veya yenilenmesi durumunda ödenmesi gereken vergidir. Ayrıca, zamanında başvuru yapılmaması durumunda, düzenleme vizesi için 180 € ödenmesi gerekmektedir.",
-     "status": "withheld",
+     "text": "Yabancı öğrenciler, Fransa'da 1 yıl kaldıktan sonra, ikamet hakkını yenileyebilir ve 1 yıllık veya çok yıllık bir ikamet kartı alabilirler. Bunun için, belirli gelir koşullarını karşılamalı ve çevrimiçi bir hizmet aracılığıyla titre de séjour (oturum izni) başvurusunda bulunmalıdırlar. 100 €'luk ücret, onay veya yenileme sırasında ödenmelidir.\n\n100 €, titre de séjour'in doğrulanması veya yenilenmesi sırasında alınan vergiden; 180 €, gecikmiş başvurularda alınan düzenleme vizesi ücretinden.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 69.2,
+      "roundtrip": 72.4,
       "units": 2
      }
     },
@@ -258,8 +255,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.560Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:30.509Z",
    "review": null,
    "fields": {
     "titre": {
@@ -386,8 +383,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.563Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:38.544Z",
    "review": null,
    "fields": {
     "titre": {
@@ -437,7 +434,7 @@
     "etapes": {
      "text": [
       {
-       "titre": "Ein Visum für einen längeren Aufenthalt (VLS-TS) mit der Bezeichnung „Student“ beantragen, bevor man Frankreich betritt.",
+       "titre": "Ein Visum für einen längeren Aufenthalt beantragen, das als titre de séjour (VLS-TS) für Studenten gilt, bevor man Frankreich betritt.",
        "numero": 1,
        "description": ""
       },
@@ -467,13 +464,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 69.7,
+      "roundtrip": 67.8,
       "units": 6
      }
     },
@@ -516,8 +511,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:40.566Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:41.634Z",
    "review": null,
    "fields": {
     "titre": {
@@ -563,7 +558,7 @@
     "etapes": {
      "text": [
       {
-       "titre": "Подати заявку на отримання візи на тривалий термін (VLS-TS) з позначкою \"студент\" до приїзду до Франції.",
+       "titre": "Подати заявку на візу тривалого перебування, яка має номер titre de séjour (VLS-TS) з позначкою \"студент\", до прибуття у Францію.",
        "numero": 1,
        "description": ""
       },
@@ -593,13 +588,11 @@
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 71.2,
+      "roundtrip": 69.8,
       "units": 6
      }
     },

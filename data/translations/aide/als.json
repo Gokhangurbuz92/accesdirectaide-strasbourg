@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.226Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:03.912Z",
    "review": null,
    "fields": {
     "titre": {
@@ -80,16 +80,14 @@
        "description": ""
       },
       {
-       "titre": "The payment of ALS (social housing allowance) should be made starting from the first day of the month following the processing of the application.",
+       "titre": "Awaiting the payment of the ALS (social housing allowance) starting from the 1st day of the following month, after the dossier has been processed.",
        "numero": 4,
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
       "roundtrip": 67.4,
       "units": 4
@@ -125,8 +123,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.227Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:03.914Z",
    "review": null,
    "fields": {
     "titre": {
@@ -240,20 +238,17 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.229Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:06.936Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "تخصيص سكن اجتماعي (شقة T1)",
-     "status": "withheld",
+     "text": "تخصيص سكن اجتماعي ALS (إعانة السكن الاجتماعية)",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 59.1,
+      "roundtrip": 67,
       "units": 1
      }
     },
@@ -362,8 +357,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.230Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:09.509Z",
    "review": null,
    "fields": {
     "titre": {
@@ -436,18 +431,16 @@
        "description": ""
       },
       {
-       "titre": "Die Auszahlung von ALS (soziale Wohnbeihilfe) ist ab dem ersten Tag des folgenden Monats nach der Bearbeitung des Falls zu erwarten.",
+       "titre": "Warten Sie auf die Auszahlung des ALS (soziale Wohnbeihilfe) ab dem 1. Tag des folgenden Monats, nachdem der Antrag bearbeitet wurde.",
        "numero": 4,
        "description": ""
       }
      ],
-     "status": "withheld",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 61.3,
+      "roundtrip": 61.9,
       "units": 4
      }
     },
@@ -483,8 +476,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.232Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:09.515Z",
    "review": null,
    "fields": {
     "titre": {

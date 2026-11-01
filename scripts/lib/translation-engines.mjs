@@ -14,10 +14,12 @@ const OLLAMA = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
 const CACHE_DIR = process.env.ADA_TRANSLATION_CACHE || path.join(os.homedir(), '.ada-lab', 'translation-cache');
 
 /** prompt per model family (TranslateGemma: the format of its model card; others: an instruction asking for the translation only) */
-function promptFor(model, from, to, text) {
+// R33 repair attempts: the same model, told explicitly what the automatic checks found missing (never a looser check afterwards)
+const STRICT = 'Copy every number, date, amount, percentage, form number, link and placeholder such as [[T1]] exactly as written. Keep every negation and condition. Write every word in the target script.';
+function promptFor(model, from, to, text, attempt = 0) {
   const F = LANGUAGE_NAMES[from]; const T = LANGUAGE_NAMES[to];
   if (/translategemma/i.test(model)) {
-    return `You are a professional ${F} (${from}) to ${T} (${to}) translator. Your goal is to accurately convey the meaning and nuances of the original ${F} text while adhering to ${T} grammar, vocabulary, and cultural sensitivities.\nProduce only the ${T} translation, without any additional explanations or commentary. Please translate the following ${F} text into ${T}:\n\n\n${text}`;
+    return `You are a professional ${F} (${from}) to ${T} (${to}) translator. Your goal is to accurately convey the meaning and nuances of the original ${F} text while adhering to ${T} grammar, vocabulary, and cultural sensitivities.${attempt ? ` ${STRICT}` : ''}\nProduce only the ${T} translation, without any additional explanations or commentary. Please translate the following ${F} text into ${T}:\n\n\n${text}`;
   }
   return `/no_think\nTranslate the following ${F} text into ${T}. Keep every placeholder such as [[T1]] exactly as it is, keep numbers, dates and links exactly, keep the meaning exact (negations, conditions, uncertainty). Output only the ${T} translation, nothing else.\n\n${text}`;
 }
@@ -41,11 +43,12 @@ export class Engine {
     return { id: this.id, digest: this.digest, parameters: r?.details?.parameter_size || null, quantization: r?.details?.quantization_level || null, sizeBytes: m?.size || null, licence: (r?.license || '').split('\n')[0] || null };
   }
   /** @param {string} from @param {string} to @param {string} text */
-  async translate(from, to, text) {
-    const k = crypto.createHash('sha256').update(`${from}>${to}\n${text}`).digest('hex');
+  /** @param {string} from @param {string} to @param {string} text @param {number} [attempt] 0 = normal; 1, 2 = repair attempts (strict instruction) */
+  async translate(from, to, text, attempt = 0) {
+    const k = crypto.createHash('sha256').update(`${from}>${to}${attempt ? `#repair${attempt}` : ''}\n${text}`).digest('hex');
     if (this.cache.has(k)) { this.stats.cached += 1; return this.cache.get(k); }
     const t0 = Date.now();
-    const res = await fetch(`${OLLAMA}/api/generate`, { method: 'POST', body: JSON.stringify({ model: this.model, prompt: promptFor(this.model, from, to, text), stream: false, keep_alive: '2m', options: { temperature: 0, seed: 7, num_predict: Math.min(4096, 200 + text.length * 3) } }) });
+    const res = await fetch(`${OLLAMA}/api/generate`, { method: 'POST', body: JSON.stringify({ model: this.model, prompt: promptFor(this.model, from, to, text, attempt), stream: false, keep_alive: '2m', options: { temperature: 0, seed: 7 + attempt, num_predict: Math.min(4096, 200 + text.length * 3) } }) });
     if (!res.ok) throw new Error(`engine ${this.model} answered ${res.status}`);
     const v = clean((await res.json()).response);
     this.stats.calls += 1; this.stats.ms += Date.now() - t0; this.stats.chars += text.length;

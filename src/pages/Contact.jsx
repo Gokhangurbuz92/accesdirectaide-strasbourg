@@ -271,7 +271,7 @@ export default function Contact() {
             <CardContent className="p-6 text-center">
               <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
               <h3 className="font-semibold text-slate-900 mb-1">{t('contact:other.email', 'Par email direct')}</h3>
-              <a href="mailto:contact@accesdirectaide.fr" className="text-blue-600 text-sm font-medium hover:underline">
+              <a href="mailto:contact@accesdirectaide.fr" className="ada-target text-blue-600 text-sm font-medium hover:underline">
                 contact@accesdirectaide.fr
               </a>
             </CardContent>

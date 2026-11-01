@@ -31,7 +31,7 @@ export default function Besoins() {
           {EMERGENCY_ORDER.map((n) => (
             <li key={n} className="flex items-center gap-2 text-sm">
               <Phone className="h-4 w-4 shrink-0 text-red-800" aria-hidden="true" />
-              <a href={`tel:${n}`} className="font-semibold text-red-900 underline" dir="ltr">{tel(n)}</a>
+              <a href={`tel:${n}`} className="ada-target font-semibold text-red-900 underline" dir="ltr">{tel(n)}</a>
               <span lang="fr">{reference.emergency[n]}</span>
             </li>
           ))}

@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.333Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:15.093Z",
    "review": null,
    "fields": {
     "titre": {
@@ -35,7 +35,7 @@
         "titre": "For a major"
        },
        {
-        "texte": "First, you must report the flight. The process varies depending on where the flight took place:\nCase: The theft occurred in France.\nIt is possible to report the theft of an identity document in two ways:\nCase: On-site\nYou need to go to a police station or a gendarmerie to report the theft.\n→ Where to go: Police Station\n→ Where to go: Local police station\nYou will be given a copy of the complaint filed.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nCase: The theft occurred outside of the country.\nIt is possible to report the theft of an identity document in two ways:\nCase: On-site\nYou must report the theft of your identification document to the local police authorities and the nearest embassy or consulate.\n→ Where to go: French embassy or consulate abroad\nA copy of the police report is provided.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nIf several of the following documents belonging to a minor have been stolen (identity card, passport, driving license, Vitale card), the first step is to apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driver's license or driving permit\n- Vitale Card.",
+        "texte": "First, you must report the flight. The process varies depending on where the flight took place:\nCase: The theft occurred in France.\nIt is possible to report the theft of an identity document in 2 ways:\nCase: On-site\nYou need to go to a police station or a gendarmerie to report the theft.\n→ Where to go: Police Station\n→ Where to go: Local police station\nYou will be given a copy of the complaint filed.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nCase: The theft occurred outside of the country.\nIt is possible to report the theft of an identity document in 2 ways:\nCase: On-site\nYou must report the theft of your identification document to the local police authorities and the nearest embassy or consulate.\n→ Where to go: French embassy or consulate abroad\nA copy of the police report is provided.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nIf several of the following documents belonging to a minor have been stolen (identity card, passport, driving license, Vitale card), the first step is to apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driver's license or driving permit\n- Vitale Card.",
         "titre": "For a minor"
        }
       ],
@@ -67,8 +67,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.336Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:18.656Z",
    "review": null,
    "fields": {
     "titre": {
@@ -126,8 +126,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.339Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:21.854Z",
    "review": null,
    "fields": {
     "titre": {
@@ -185,8 +185,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.342Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:24.913Z",
    "review": null,
    "fields": {
     "titre": {
@@ -244,8 +244,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.344Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:28.645Z",
    "review": null,
    "fields": {
     "titre": {

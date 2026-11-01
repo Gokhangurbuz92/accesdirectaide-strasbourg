@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.149Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:02.876Z",
    "review": null,
    "fields": {
     "titre": {
@@ -116,8 +116,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.150Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:06.479Z",
    "review": null,
    "fields": {
     "titre": {
@@ -151,14 +151,12 @@
      }
     },
     "pour_qui": {
-     "text": "- Aile üyelerine Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından ödenen bir ücret veya tazminatın farkına varmak\n- En azından bir çocuğu bakıma ihtiyacı olan\n- Aile gelirinin 800 € veya daha az olması\n- AVE için bu eğitim, okul tatillerinde gerçekleştirilmelidir.\n- Bu konaklama, en az bir yetişkin ve AVF (Aile ve Çocuk Hizmetleri) kapsamında hak sahibi olan bir çocuk içermelidir.",
-     "status": "withheld",
+     "text": "- Aile üyelerine Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından ödenen bir ücret veya tazminatın farkına varmak\n- En azından 1 çocuğa bakmak\n- Aile gelirinin 800 € veya daha az olması\n- AVE için bu eğitim, okul tatillerinde gerçekleştirilmelidir.\n- Konaklama, en az 1 yetişkin ve AVF (Aile ve Çocuk Hizmetleri) kapsamında hak sahibi olan bir çocuk içermelidir.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 53.5,
+      "roundtrip": 53.6,
       "units": 5
      }
     },
@@ -224,8 +222,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.152Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:19.080Z",
    "review": null,
    "fields": {
     "titre": {
@@ -239,30 +237,26 @@
      }
     },
     "description": {
-     "text": "\"برنامج المساعدة للأنشطة الصيفية للأطفال أو العائلات (AVE أو AVF) هو برنامج مالي يقدمه [التنظيم الأول] أو [التنظيم الثالث] بهدف تخفيف تكاليف الإجازة. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة في حالة المساعدة للأطفال، و 75٪ في حالة المساعدة للعائلات. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل [التنظيم الثاني] أو [التنظيم الرابع].\"",
-     "status": "withheld",
+     "text": "برنامج المساعدة للعطلات للأطفال أو العائلات (AVE) أو (AVF) هو برنامج مالي يقدمه Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي) بهدف تقليل تكاليف العطلات. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة لبرنامج AVE و 75٪ لبرنامج AVF. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل Caf أو MSA.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 59.5,
+      "roundtrip": 62.5,
       "units": 1
      }
     },
     "cest_quoi": {
-     "text": "\"برنامج المساعدة للأنشطة الصيفية للأطفال أو العائلات (AVE أو AVF) هو برنامج مالي يقدمه [التنظيم الأول] أو [التنظيم الثالث] بهدف تخفيف تكاليف الإجازة. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة في حالة المساعدة للأطفال، و 75٪ في حالة المساعدة للعائلات. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل [التنظيم الثاني] أو [التنظيم الرابع].\"",
-     "status": "withheld",
+     "text": "برنامج المساعدة للعطلات للأطفال أو العائلات (AVE) أو (AVF) هو برنامج مالي يقدمه Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي) بهدف تقليل تكاليف العطلات. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة لبرنامج AVE و 75٪ لبرنامج AVF. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل Caf أو MSA.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 59.5,
+      "roundtrip": 62.5,
       "units": 1
      }
     },
@@ -342,8 +336,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.154Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:21.676Z",
    "review": null,
    "fields": {
     "titre": {
@@ -452,8 +446,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.156Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:25.275Z",
    "review": null,
    "fields": {
     "titre": {
@@ -491,7 +485,7 @@
      }
     },
     "pour_qui": {
-     "text": "- Виявити сімейну допомогу, надану Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування).\n- Мати принаймні одну дитину, за якою потрібно доглядати.\n- Мати сімейний дохід, що не перевищує 800 євро.\n- Проживання має відбуватися під час шкільних канікул для отримання статусу AVE.\n- Проживання повинно включати щонайменше одну дорослу особу та дитину, яка має право на отримання компенсації від AVF.",
+     "text": "- Виявити сімейну допомогу, надану Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування).\n- Мати принаймні одну дитину, за якою потрібно доглядати.\n- Мати сімейний дохід, що не перевищує 800 євро.\n- Проживання має відбуватися під час шкільних канікул для отримання статусу AVE.\n- Проживання має включати щонайменше 1 дорослого та одну дитину, яка має право на отримання допомоги.",
      "status": "withheld",
      "checks": {
       "critical": [
@@ -499,7 +493,7 @@
        "negation"
       ],
       "warnings": [],
-      "roundtrip": 58.2,
+      "roundtrip": 57.8,
       "units": 5
      }
     },

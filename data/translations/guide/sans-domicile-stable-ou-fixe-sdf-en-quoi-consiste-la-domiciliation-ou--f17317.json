@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.350Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:34.202Z",
    "review": null,
    "fields": {
     "titre": {
@@ -91,8 +91,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.356Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:48.135Z",
    "review": null,
    "fields": {
     "titre": {
@@ -124,7 +124,7 @@
         "titre": "Bir adres gösterme hizmeti talep etmek için hangi şartlar geçerlidir?"
        },
        {
-        "texte": "Konunun büyüklüğüne (yaşanılan nüfusa göre) bağlı olarak, başvurunuz belediye, belediye başkanlığı veya valilik tarafından yetkilendirilmiş bir kuruluş aracılığıyla yapılabilir veya doğrudan belediyenize iletilebilir.\nÖrnek: 1500'den fazla nüfuslu bir belediye\nEv adresinizi belirleme talebinizi, CCAS (belediye sosyal hizmet merkezi) veya CIAS (belediyeler arası sosyal hizmet merkezi)'ye başvurarak, veya beledyenizdeki valilik tarafından yetkilendirilmiş bir kuruluş aracılığıyla yapabilirsiniz.\nBu merkezlerden veya kuruluşlardan birini bulmak için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS, CIAS veya yetkilendirilmiş bir kuruluşa e-posta veya posta yoluyla gönderilmelidir.\nÖrnek: 1.500'den az nüfuslu bir belediye\nGenel olarak, 1.500'den az nüfusa sahip küçük belediyeler genellikle CCAS'e sahip değildir ve bir CIAS' oluşturmak için bir araya gelir.\nAyrıca, eğer beledyenizde yetkilendirilmiş bir kurum varsa, başvurunuzu bu kuruma da yapabilirsiniz.\nBu bilgiyi öğrenmek için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nEğer belediyenizde CCAS veya CIAS veya yetkilendirilmiş bir kuruluş yoksa, adres kaydını doğrudan belediyenizden talep etmeniz gerekmektedir.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS veya CIAS veya yetkilendirilmiş bir kurum veya belediyenize e-posta veya posta yoluyla gönderilmelidir.",
+        "texte": "Konunun, beledyenizin nüfusuna bağlı olarak, CCAS (belediye sosyal hizmet merkezi), CIAS (belediyeler arası sosyal hizmet merkezi) veya valilik tarafından yetkilendirilmiş bir kurum veya doğrudan belediyeniz aracılığıyla yürütülebilir.\nÖrnek: 1500'den fazla nüfuslu bir belediye\nEv adresinizi belirleme talebinizi, CCAS veya CIAS'ye başvurarak, veya beledyenizdeki valilik tarafından yetkilendirilmiş bir kuruluş aracılığıyla yapabilirsiniz.\nBu merkezlerden veya kuruluşlardan birini bulmak için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS, CIAS veya yetkilendirilmiş bir kuruluşa e-posta veya posta yoluyla gönderilmelidir.\nÖrnek: 1.500'den az nüfuslu bir belediye\nGenel olarak, 1.500'den az nüfusa sahip küçük belediyeler genellikle CCAS'e sahip değildir ve bir CIAS' oluşturmak için bir araya gelir.\nAyrıca, eğer beledyenizde yetkilendirilmiş bir kurum varsa, başvurunuzu bu kuruma da yapabilirsiniz.\nBu bilgiyi öğrenmek için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nEğer belediyenizde CCAS veya CIAS veya yetkilendirilmiş bir kuruluş yoksa, adres kaydını doğrudan belediyenizden talep etmeniz gerekmektedir.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS veya CIAS veya yetkilendirilmiş bir kurum veya belediyenize e-posta veya posta yoluyla gönderilmelidir.",
         "titre": "Ev adresimi kaydettirmek için nasıl bir talepte bulunabilirim?"
        },
        {
@@ -159,13 +159,12 @@
      "status": "withheld",
      "checks": {
       "critical": [
-       "names",
        "numbers"
       ],
       "warnings": [
        "negation"
       ],
-      "roundtrip": 68.7,
+      "roundtrip": 68.9,
       "units": 57
      }
     }
@@ -175,8 +174,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.361Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:28:57.808Z",
    "review": null,
    "fields": {
     "titre": {
@@ -218,7 +217,7 @@
         "titre": "ما هي عملية اتخاذ قرار التسجيل في عنوان معين؟"
        },
        {
-        "texte": "يمنح العنوان لمدة 1 سنة. يمكن تجديد هذه المدة.\nيتم تقديم طلب التجديد بنفس الشروط التي قدمت بها طلبك الأولي (الحفاظ على العلاقة مع البلدية، استخدام نفس نموذج الطلب، إجراء المقابلة، إلخ).\nوهذا يعني: يُفضل تقديم طلب تجديد عنوان الإقامة قبل الموعد النهائي لتجديده بفترة لا تقل عن شهرين، وذلك لتجنب أي مشاكل أو تعقيدات.",
+        "texte": "يمنح العنوان لمدة 1 سنة. يمكن تجديد هذه المدة.\nيتم تقديم طلب التجديد بنفس الشروط التي قدمت بها طلبك الأولي (الحفاظ على العلاقة مع البلدية، استخدام نفس نموذج الطلب، إجراء المقابلة، إلخ).\nوهذا يعني: يُفضل تقديم طلب تجديد عنوان الإقامة قبل الموعد النهائي لتجديده على الأقل بـ 2 أشهر، وذلك لتجنب أي مشاكل أو تعقيدات.",
         "titre": "كم المدة المتاحة لخدمة التسجيل في عنوان؟"
        },
        {
@@ -246,7 +245,7 @@
       "warnings": [
        "negation"
       ],
-      "roundtrip": 70,
+      "roundtrip": 69.9,
       "units": 57
      }
     }
@@ -256,8 +255,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.366Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:29:07.092Z",
    "review": null,
    "fields": {
     "titre": {
@@ -338,8 +337,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:50.371Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:29:15.230Z",
    "review": null,
    "fields": {
     "titre": {

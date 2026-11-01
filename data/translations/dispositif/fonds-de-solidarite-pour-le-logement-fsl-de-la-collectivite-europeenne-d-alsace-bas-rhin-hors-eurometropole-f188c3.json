@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:59.867Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:29.608Z",
    "review": null,
    "fields": {
     "titre": {
@@ -48,31 +48,27 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:59.872Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:36.393Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "Alsa Bölgesi — Bas-Rhin (Eurométropol dışı) için konut dayanışma fonu",
-     "status": "withheld",
+     "text": "Alsa Bölgesel Topluluğu'nun (FSL: konut dayanışma fonu) Konut Dayanışma Fonu – Eurométropol dışı Bas-Rhin",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 53,
+      "roundtrip": 58.7,
       "units": 1
      }
     },
     "summary_falc": {
-     "text": "Bu doküman, zor durumda olan kiracıları nasıl destekleyeceğinizi açıklamaktadır.\nBu, örneğin FSL(konut için dayanışma fonu) ve Action Logement(garanti depozitosu için T1 tarafından sağlanan ödeme) gibi destekleri içerir.\nBu yardımlar, kira ödemenize veya mevcut konutunuzda kalmanıza yardımcı olur.\nAyrıca kira için de garanti alabilirsiniz.",
-     "status": "withheld",
+     "text": "Bu doküman, zor durumda olan kiracıları nasıl destekleyeceğinizi açıklamaktadır.\nBu, örneğin FSL (konut için dayanışma fonu) ve LOCA-PASS (Action Logement (işveren destekli konut kuruluşu) tarafından sağlanan depozito ödemesi) gibi destekleri içerir.\nBu yardımlar, kira ödemenize veya mevcut konutunuzda kalmanıza yardımcı olur.\nAyrıca kira için de garanti alabilirsiniz.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 73.4,
+      "roundtrip": 73.6,
       "units": 4
      }
     },
@@ -92,32 +88,27 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:59.877Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:43.214Z",
    "review": null,
    "fields": {
     "titre": {
-     "text": "صندوق الدعم السكني التابع للمجتمع الأوروبي لألزا – منطقة باسا-رين (باستثناء منطقة إوروميتropole)",
-     "status": "withheld",
+     "text": "صندوق الدعم السكني (FSL: صندوق التضامن للسكن) التابع للمنطقة الأوروبية لألزاث – منطقة باز-رين (باستثناء منطقة إيو-متروبول)",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 56.8,
+      "roundtrip": 54,
       "units": 1
      }
     },
     "summary_falc": {
-     "text": "يوضح هذا المستند كيفية مساعدة المستأجرين الذين يواجهون صعوبات.\nوتشمل هذه المساعدات، على سبيل المثال، برنامج \"T2\" (صندوق الدعم السكني) وبرنامج \"LOCA-PASS\" (تقديم مبلغ التأمين المسبق من قبل \"T1\").\nتساعدك هذه المساعدات في دفع الإيجار أو في البقاء في منزلك.\nيمكنك أيضًا الحصول على ضمان على قيمة الإيجار.",
-     "status": "withheld",
+     "text": "يوضح هذا المستند كيفية مساعدة المستأجرين الذين يواجهون صعوبات.\nوتشمل هذه المساعدات، مثل FSL (صندوق الدعم للمسكن) و LOCA-PASS (دفعة التأمين الإيجاري مقدمة من Action Logement (هيئة السكن الممولة من أرباب العمل)).\nتساعدك هذه المساعدات في دفع الإيجار أو في البقاء في منزلك.\nيمكنك أيضًا الحصول على ضمان على قيمة الإيجار.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 62.9,
+      "roundtrip": 67.1,
       "units": 4
      }
     },
@@ -137,8 +128,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:59.882Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:43.218Z",
    "review": null,
    "fields": {
     "titre": {
@@ -177,8 +168,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:59.885Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:38:47.042Z",
    "review": null,
    "fields": {
     "titre": {
@@ -192,15 +183,12 @@
      }
     },
     "summary_falc": {
-     "text": "Цей документ пояснює, як допомогти орендарям, які опинилися у скрутній ситуації.\nВона пропонує різні види допомоги, зокрема фонд \"T2\" (фонд соціальної підтримки для житла) та LOCA-PASS (попередня оплата за гарантійний внесок від \"T1\").\nЦі допомоги допоможуть вам сплатити оренду або залишитися у своєму житлі.\nВи також можете отримати гарантію щодо сплати орендної плати.",
-     "status": "withheld",
+     "text": "Цей документ пояснює, як допомогти орендарям, які опинилися у скрутній ситуації.\nВона пропонує різні види допомоги, зокрема FSL (фонд соціальної підтримки для житла) та LOCA-PASS (попередня оплата за гарантійний депозит від Action Logement (житлова організація, що фінансується роботодавцями)).\nЦі допомоги допоможуть вам сплатити оренду або залишитися у своєму житлі.\nВи також можете отримати гарантію щодо сплати орендної плати.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 65.1,
+      "roundtrip": 68.2,
       "units": 4
      }
     },

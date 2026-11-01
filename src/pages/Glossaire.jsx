@@ -162,7 +162,7 @@ export default function Glossaire() {
               <Card key={item.terme} id={item.terme} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-lg font-bold text-slate-900" {...fr}>
                           {item.terme}
@@ -179,9 +179,9 @@ export default function Glossaire() {
                     {item.lien && (
                       <Link
                         to={item.lien}
-                        className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap shrink-0"
+                        className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium shrink"
                       >
-                        {t('glossary:see', 'Voir')} <ExternalLink className="h-3.5 w-3.5" />
+                        {t('glossary:see', 'Voir')} <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                       </Link>
                     )}
                   </div>

@@ -101,7 +101,7 @@ export default function FilterPanel({
                 </legend>
                 <label
                     htmlFor="filter-urgent"
-                    className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
+                    className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-foreground"
                 >
                     <input
                         id="filter-urgent"

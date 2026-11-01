@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.209Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:23:57.799Z",
    "review": null,
    "fields": {
     "titre": {
@@ -43,15 +43,12 @@
      }
     },
     "pour_qui": {
-     "text": "- Those who are eligible for the T1, Aspa, Asi, or T2 programs\n- People who are staying for free or who own their own accommodation.\n- Individuals and families eligible for housing assistance\n- People residing in France, regardless of whether they have French nationality or not.",
-     "status": "withheld",
+     "text": "- The beneficiaries of the RSA (basic income support), Aspa, Asi, or AAH (allowance for disabled adults)\n- People who are staying for free or who own their own accommodation.\n- Individuals and families eligible for housing assistance\n- People residing in France, regardless of whether they have French nationality or not.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "names",
-       "numbers"
-      ],
+      "critical": [],
       "warnings": [],
-      "roundtrip": 54.7,
+      "roundtrip": 62.4,
       "units": 4
      }
     },
@@ -112,8 +109,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.211Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:01.281Z",
    "review": null,
    "fields": {
     "titre": {
@@ -157,14 +154,14 @@
      }
     },
     "ce_que_ca_aide": {
-     "text": "C2S, belirli yıllık limitleri aşmayan gelirler için ücretsizdir. Gelirler bu limitlerin içindeyse, C2S ücretlidir. Ödenmesi gereken tutar, gelire ve ailenin büyüklüğüne bağlıdır.",
-     "status": "withheld",
+     "text": "C2S, yıllık olarak belirtilen limitleri aşmayan gelirler için ücretsizdir. Gelirler belirtilen aralıklarda ise ücretlidir. Ödenmesi gereken miktarlar, gelir ve hanedeki kişi sayısına bağlıdır.",
+     "status": "auto_checked",
      "checks": {
-      "critical": [
-       "numbers"
+      "critical": [],
+      "warnings": [
+       "negation"
       ],
-      "warnings": [],
-      "roundtrip": 52,
+      "roundtrip": 55.1,
       "units": 1
      }
     },
@@ -215,8 +212,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.212Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:01.287Z",
    "review": null,
    "fields": {
     "titre": {
@@ -318,8 +315,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.213Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:01.292Z",
    "review": null,
    "fields": {
     "titre": {
@@ -419,8 +416,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-3",
-   "translatedAt": "2026-11-01T12:25:30.215Z",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-01T13:24:01.298Z",
    "review": null,
    "fields": {
     "titre": {
