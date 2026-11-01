@@ -1,0 +1,680 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "apl",
+ "recordId": "6163070d-82d8-436b-abed-a8a8fe03c01f",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:18.786Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Personalized housing assistance (APL: personalised housing allowance)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Personalized housing assistance (APL: personalised housing allowance) is financial aid to reduce your rent or service fees if you live in a residential facility. It is provided by Caf (family benefits office) or MSA (farmers' social security fund) depending on your social security scheme. To apply, you can do so online via an online service or by creating an online account.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Personalized housing assistance (APL: personalised housing allowance) is financial aid to reduce your rent or service fees if you live in a residential facility. It is provided by Caf (family benefits office) or MSA (farmers' social security fund) depending on your social security scheme. To apply, you can do so online via an online service or by creating an online account.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Someone who rents a property\n- Resident at the facility\n- Uphold resource and heritage conditions\n- Provide the necessary documentation",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of APL (personalised housing allowance) depends on the number of dependents, income, assets, and rent or service charges. If there is an increase in rent, this is taken into account starting January 1st of the following year.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check if you are eligible for the APL (personalised housing allowance) program through an online simulator.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Request the APL online if you are already a beneficiary, or create a Caf (family benefits office)/MSA (farmers' social security fund) account if you are not.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Provide the necessary documentation for the calculation of your APL.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Track the progress of your case through your online account.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "In the event of a change in circumstances, please inform your Caf/MSA as soon as possible.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Titre de séjour (residence permit) checks if you are a foreign national.",
+      "Documentation of resources and heritage",
+      "Proof of rent or service charges",
+      "Documents proving family circumstances"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.1,
+      "units": 4
+     }
+    },
+    "ou_demander": {
+     "text": "Based on your situation: Caisse d'allocations familiales (Caf: family benefits office), Mutualité sociale agricole (MSA: farmers' social security fund).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:31.023Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kişiye özel konut yardımı (APL: kişiye özel konut yardımı)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Kişiye özel konut yardımı (APL: kişiye özel konut yardımı), belirli bir kuruma yerleşen kişiler için kira veya aidat miktarını düşürmek amacıyla sağlanan mali yardımdır. Bu yardım, Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından, sosyal güvenlik durumunuza göre ödenir. Bu yardımı talep etmek için, çevrimiçi bir hizmet aracılığıyla veya çevrimiçi bir hesap oluşturarak başvurabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Kişiye özel konut yardımı (APL: kişiye özel konut yardımı), belirli bir kuruma yerleşen kişiler için kira veya aidat miktarını düşürmek amacıyla sağlanan mali yardımdır. Bu yardım, Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından, sosyal güvenlik durumunuza göre ödenir. Bu yardımı talep etmek için, çevrimiçi bir hizmet aracılığıyla veya çevrimiçi bir hesap oluşturarak başvurabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Konaklama yapan kişi\n- Kurumda ikamet eden kişi\n- Kaynak ve mirasın korunması şartlarına uymak\n- Gerekli belgeleri sağlamak",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "APL (kişiye özel konut yardımı)'in miktarı, bakım altında olan kişilerin sayısına, kaynaklara, servete ve kira veya ücret ödemesine bağlıdır. Kira veya ücrette bir artış durumunda, bu artış 1 Ocak'tan itibaren dikkate alınır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Online bir simülatör aracılığıyla APL (kişiye özel konut yardımı)'den faydalanıp faydalanamayacağınızı kontrol edin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Eğer zaten sosyal yardım alıyorsanız, APL'yi çevrimiçi olarak talep edin veya sosyal yardım almamışsanız, Caf (aile yardımları kurumu)/MSA (tarım sosyal güvenlik kurumu)'de bir hesap oluşturun.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "APL hesaplaması için gerekli belgeleri sağlayın.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Davanızın ilerleyişini, çevrimiçi hesabınız üzerinden takip edin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Durumda herhangi bir değişiklik olması durumunda, lütfen Caf/MSA'yi derhal bilgilendirin.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.1,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Titre de séjour (oturum izni) Eğer siz bir yabancıysanız, lütfen doğrulayın.",
+      "Kaynak ve mirasla ilgili belgeler",
+      "Kira veya ücret belgeleri",
+      "Ailevi durumla ilgili belgeler"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.6,
+      "units": 4
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Caisse d'allocations familiales (Caf: aile yardımları kurumu), Mutualité sociale agricole (MSA: tarım sosyal güvenlik kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:42.327Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مساعدة شخصية في الإسكان (APL: المساعدة الشخصية للسكن)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "المساعدة المخصصة للإسكان (APL: المساعدة الشخصية للسكن)] هي مساعدة مالية لتقليل مبلغ الإيجار أو الرسوم إذا كنت مقيمًا في مؤسسة. يتم دفعها من قبل Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي) وفقًا لنظام التأمين الاجتماعي الخاص بك. للحصول عليها، يمكنك القيام بذلك عبر الإنترنت من خلال خدمة عن بُعد أو عن طريق إنشاء حساب عبر الإنترنت.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "المساعدة المخصصة للإسكان (APL: المساعدة الشخصية للسكن)] هي مساعدة مالية لتقليل مبلغ الإيجار أو الرسوم إذا كنت مقيمًا في مؤسسة. يتم دفعها من قبل Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي) وفقًا لنظام التأمين الاجتماعي الخاص بك. للحصول عليها، يمكنك القيام بذلك عبر الإنترنت من خلال خدمة عن بُعد أو عن طريق إنشاء حساب عبر الإنترنت.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- الشخص الذي يستأجر سكنًا\n- شخص مقيم في المؤسسة\n- احترام الشروط المتعلقة بالموارد والممتلكات.\n- توفير المستندات المطلوبة",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.3,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يعتمد مبلغ APL (المساعدة الشخصية للسكن) على عدد الأفراد الذين يعتمدون على الدخل، والموارد، والعقارات، ورسوم الإيجار. وفي حالة زيادة في رسوم الإيجار، يتم احتساب الزيادة اعتبارًا من 1 يناير من العام التالي.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تحقق مما إذا كنت مؤهلاً للحصول على APL (المساعدة الشخصية للسكن) ] من خلال محاكي عبر الإنترنت.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "لطلب APL‏] عبر الإنترنت إذا كنت بالفعل مستفيدًا، أو لإنشاء حساب Caf (صندوق الإعانات العائلية)‏]/MSA (صندوق الضمان الاجتماعي الفلاحي)‏] إذا لم تكن مستفيدًا.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "تزويد المستندات اللازمة لحساب APL.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "متابعة سير معالجة ملفك من خلال حسابك عبر الإنترنت.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "في حال حدوث تغيير في الوضع، يرجى إبلاغ Caf/MSA على الفور.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Titre de séjour (تصريح الإقامة) صحيح إذا كنت أجنبيًا",
+      "وثائق تثبيت الموارد والممتلكات",
+      "إثباتات دفع الإيجار أو الرسوم.",
+      "وثائق تثبت الوضع العائلي"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.4,
+      "units": 4
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: Caisse d'allocations familiales (Caf: صندوق الإعانات العائلية), Mutualité sociale agricole (MSA: صندوق الضمان الاجتماعي الفلاحي).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:53.683Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Individuelle Unterstützung bei der Wohnungssuche (APL: personalisierte Wohnbeihilfe)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die individuelle Wohnungsunterstützung (APL: personalisierte Wohnbeihilfe) ist eine finanzielle Unterstützung, um die Höhe Ihrer Miete oder Ihres Mietzuschusses zu reduzieren, wenn Sie in einer Einrichtung wohnen. Sie wird von der Caf (Familienkasse) oder der MSA (landwirtschaftliche Sozialversicherung) gemäß Ihrem Sozialversicherungssystem ausgezahlt. Um diese zu beantragen, können Sie dies online über einen Fernservice oder durch die Erstellung eines Online-Kontos tun.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die individuelle Wohnungsunterstützung (APL: personalisierte Wohnbeihilfe) ist eine finanzielle Unterstützung, um die Höhe Ihrer Miete oder Ihres Mietzuschusses zu reduzieren, wenn Sie in einer Einrichtung wohnen. Sie wird von der Caf (Familienkasse) oder der MSA (landwirtschaftliche Sozialversicherung) gemäß Ihrem Sozialversicherungssystem ausgezahlt. Um diese zu beantragen, können Sie dies online über einen Fernservice oder durch die Erstellung eines Online-Kontos tun.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Person, die eine Unterkunft mietet\n- Person, die in einer Einrichtung wohnt\n- Die Bedingungen in Bezug auf Ressourcen und Kulturerbe respektieren.\n- Die erforderlichen Nachweise erbringen",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 86,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Höhe von APL (personalisierte Wohnbeihilfe) hängt von der Anzahl der zu versorgenden Personen, den verfügbaren Ressourcen, dem Vermögen und der Miete oder Gebühr ab. Bei einer Erhöhung der Miete wird dieser Anstieg ab dem 1. Januar des Folgejahres berücksichtigt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie, ob Sie über einen Online-Simulator Anspruch auf das APL (personalisierte Wohnbeihilfe) haben.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Fordern Sie das APL online an, wenn Sie bereits Leistungsempfänger sind, oder erstellen Sie ein Konto Caf (Familienkasse)/MSA (landwirtschaftliche Sozialversicherung), wenn Sie dies nicht sind.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bitte stellen Sie die erforderlichen Unterlagen zur Berechnung Ihres APL bereit.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Verfolgen Sie den Fortschritt Ihrer Anfrage über Ihr Online-Konto.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Im Falle einer Änderung der Situation, informieren Sie bitte Ihre Caf/MSA umgehend.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Titre de séjour (Aufenthaltstitel) prüft, ob Sie ausländischer Staatsbürger sind.",
+      "Nachweise für Ressourcen und Kulturerbe",
+      "Nachweise für die Miete oder die Gebühren",
+      "Nachweise über die familiäre Situation"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.6,
+      "units": 4
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen folgende Optionen vor: Caisse d'allocations familiales (Caf: Familienkasse), Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 73.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.069Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Індивідуальна допомога у вирішенні житлових питань (APL: персоналізована житлова допомога)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Персональна допомога у житлі (APL: персоналізована житлова допомога) – це фінансова допомога для зменшення розміру орендної плати або платежу за проживання, якщо ви проживаєте в установі. Її надає Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування) відповідно до вашої системи соціального страхування. Щоб отримати її, ви можете зробити це онлайн через телесервіс або створивши обліковий запис.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Персональна допомога у житлі (APL: персоналізована житлова допомога) – це фінансова допомога для зменшення розміру орендної плати або платежу за проживання, якщо ви проживаєте в установі. Її надає Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування) відповідно до вашої системи соціального страхування. Щоб отримати її, ви можете зробити це онлайн через телесервіс або створивши обліковий запис.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Особа, яка орендує житло\n- Особа, яка проживає в закладі\n- Дотримуватися умов щодо ресурсів та спадщини\n- Надати необхідні документи",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.9,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Розмір APL (персоналізована житлова допомога) залежить від кількості членів сім'ї, наявних ресурсів, майна та орендної плати або платежу. У разі збільшення орендної плати, це збільшення враховується з 1 січня наступного року.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перевірте, чи можете ви скористатися APL (персоналізована житлова допомога) через онлайн-симулятор.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Запросити APL онлайн, якщо ви вже є бенефіціаром, або створити обліковий запис Caf (каса сімейних допомог)/MSA (сільськогосподарське соціальне страхування), якщо ви не є бенефіціаром.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Надати необхідні документи для розрахунку вашого APL.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Відстежуйте обробку вашого випадку через свій онлайн-акаунт.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі зміни ситуації, негайно повідомте про це Caf/MSA.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Titre de séjour (посвідка на проживання) перевіряє, чи ви є іноземцем.",
+      "Документи, що підтверджують наявність ресурсів та культурної спадщини.",
+      "Документи, що підтверджують сплату орендної плати або платежів.",
+      "Документи, що підтверджують сімейний стан"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.3,
+      "units": 4
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Caisse d'allocations familiales (Caf: каса сімейних допомог), Mutualité sociale agricole (MSA: сільськогосподарське соціальне страхування).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 71.9,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:9726d3630e4587e373a997007c26818835201eea6e46444be8ac0ee4743d3836",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Aide personnalisée au logement (APL)",
+   "description": "L’aide personnalisée au logement (APL) est une aide financière pour réduire le montant de votre loyer ou redevance si vous résidez en établissement. Elle est versée par la Caf ou la MSA selon votre régime de sécurité sociale. Pour la demander, vous pouvez le faire en ligne via un téléservice ou en créant un compte en ligne.",
+   "cest_quoi": "L’aide personnalisée au logement (APL) est une aide financière pour réduire le montant de votre loyer ou redevance si vous résidez en établissement. Elle est versée par la Caf ou la MSA selon votre régime de sécurité sociale. Pour la demander, vous pouvez le faire en ligne via un téléservice ou en créant un compte en ligne.",
+   "pour_qui": "- Personne qui loue un logement\n- Personne résidente en établissement\n- Respecter les conditions de ressources et de patrimoine\n- Fournir les justificatifs nécessaires",
+   "ce_que_ca_aide": "Le montant de l’APL dépend du nombre de personnes à charge, des ressources, du patrimoine et du loyer ou redevance. En cas d’augmentation de loyer, la hausse est prise en compte à partir du 1er janvier de l’année suivante.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vérifier si vous pouvez bénéficier de l’APL via un simulateur en ligne."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Demander l’APL en ligne si vous êtes déjà allocataire ou en créant un compte Caf/MSA si vous n’êtes pas allocataire."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Fournir les justificatifs nécessaires pour le calcul de votre APL."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Suivre le traitement de votre dossier via votre compte en ligne."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "En cas de changement de situation, informer votre Caf/MSA rapidement."
+    }
+   ],
+   "documents_necessaires": [
+    "Titre de séjour valide si vous êtes étranger",
+    "Justificatifs de ressources et de patrimoine",
+    "Justificatifs de loyer ou redevance",
+    "Justificatifs de situation familiale"
+   ],
+   "ou_demander": "Selon votre situation : Caisse d'allocations familiales (Caf), Mutualité sociale agricole (MSA).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:03:58.471Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

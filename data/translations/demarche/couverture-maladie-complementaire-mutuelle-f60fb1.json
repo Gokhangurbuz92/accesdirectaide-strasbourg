@@ -1,0 +1,464 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "couverture-maladie-complementaire-mutuelle-f60fb1",
+ "recordId": "f60fb135-9d3e-4c46-b1ab-1ec489dc30ca",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.269Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Supplementary health insurance (mutuelle)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.3,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Supplementary health insurance (mutuelle) covers healthcare costs not covered by the Assurance maladie (French public health insurance). It is available to anyone, including employees and those who are not employed. It reduces your out-of-pocket expenses by covering a portion of the costs. To subscribe, you can choose an individual or group contract.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Supplementary health insurance (mutuelle) covers healthcare costs not covered by the Assurance maladie (French public health insurance). It is available to anyone, including employees and those who are not employed. It reduces your out-of-pocket expenses by covering a portion of the costs. To subscribe, you can choose an individual or group contract.\n\nThe amount reimbursed depends on the policy subscribed to. For example, for doctor's fees, the health insurance covers 30% of the \"modérateur\" fee. For medication, it covers 100% of the reimbursement base set by the social security system. The annual deductible for medication is capped at €70. For simple glasses and frames, the maximum retail price (MRP) is €42.50 per pair of glasses and €30 per frame. For hearing aids, the maximum retail price is €950.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.4,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Anyone can purchase a supplementary health insurance plan on an individual basis.\n- Individuals with low incomes may be eligible for complémentaire santé solidaire (CSS: free or low-cost supplementary health cover) under certain conditions.\n- Employees can subscribe to a collective insurance plan offered by their employer.\n- Family members may be covered by the policy.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.3,
+      "units": 4
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Choose a supplementary health insurance policy on an individual or group basis.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "If you are an employee, check with your employer to see if they offer a group insurance plan.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "To obtain individual coverage, you can contact mutual insurance companies, insurance companies, pension providers, or banks.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Your contract is automatically renewed each year, and you will receive a reminder at least 15 days before the due date.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 4
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.271Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Ek sağlık sigortası (mutuel)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.2,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Sağlık sigortası (mutuelle), Assurance maladie (Fransız kamu sağlık sigortası) tarafından karşılanmayan sağlık giderlerini karşılamayı sağlar. Bu sigorta, hem çalışanlar hem de çalışan olmayan herkes için geçerlidir. Giderlerin bir kısmını karşılayarak, ödemeniz gereken miktarı azaltır. Bu sigortayı almak için, bireysel veya toplu olarak bir sözleşme seçebilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.2,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Sağlık sigortası (mutuelle), Assurance maladie (Fransız kamu sağlık sigortası) tarafından karşılanmayan sağlık giderlerini karşılamayı sağlar. Bu sigorta, hem çalışanlar hem de çalışan olmayan herkes için geçerlidir. Giderlerin bir kısmını karşılayarak, ödemeniz gereken miktarı azaltır. Bu sigortayı almak için, bireysel veya toplu olarak bir sözleşme seçebilirsiniz.\n\nGeri ödenen miktar, alınan poliçe türüne bağlıdır. Örneğin, doktor ücretleri için, sağlık sigortası, moderatör ücretinin %30'unu karşılar. İlaçlar için ise, sosyal güvenlik kurumunun geri ödeme tabanının %100'ünü karşılar. İlaçlar için yıllık muafiyet tutarı 70 € ile sınırlandırılmıştır. Basit gözlük ve çerçeve için satış fiyatı (SPV) 42,50 € (gözlük başına) ve 30 € (çerçeve başına) olarak belirlenmiştir. İşitme cihazları için satış fiyatı limiti 950 €'dur.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Herhangi bir kişi, bireysel olarak sağlık sigortası poliçesi yaptırabilir.\n- Düşük gelirli kişiler, belirli koşullar altında complémentaire santé solidaire (CSS: ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası)'den faydalanabilir.\n- Çalışanlar, işverenlerinin sunduğu toplu bir sigorta poliçesine abone olabilirler.\n- Aile üyeleri, sözleşme kapsamında sigortalı olabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.1,
+      "units": 4
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Hem bireysel hem de toplu olarak sağlık sigortası poliçesi seçin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Eğer siz bir çalışanıysanız, işvereninizden, iş yerinde toplu sağlık sigortası sunup sunmadığını öğrenin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bireysel olarak poliçe almak için, sigorta şirketleri, sağlık sigortası şirketleri, emeklilik kuruluşları veya bankalara başvurabilirsiniz.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Sözleşmeniz her yıl otomatik olarak yenilenir ve vadesi geldiğinde en az 15 gün önceden size bir hatırlatma bildirisi gönderilir.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 4
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.273Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تغطية صحية إضافية (تأمين صحي)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.3,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "تتيح التغطية الصحية (الضمان الاجتماعي) تغطية النفقات الطبية التي لا يتم تغطيتها من قبل Assurance maladie (التأمين الصحي العمومي الفرنسي). وهي متاحة لجميع الأشخاص، بما في ذلك الموظفين وغير الموظفين. فهي تقلل من المبلغ الذي تدفعه، وذلك عن طريق تغطية جزء من النفقات. يمكنك الاشتراك في عقد فردي أو جماعي.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "تتيح التغطية الصحية (الضمان الاجتماعي) تغطية النفقات الطبية التي لا يتم تغطيتها من قبل Assurance maladie (التأمين الصحي العمومي الفرنسي). وهي متاحة لجميع الأشخاص، بما في ذلك الموظفين وغير الموظفين. فهي تقلل من المبلغ الذي تدفعه، وذلك عن طريق تغطية جزء من النفقات. يمكنك الاشتراك في عقد فردي أو جماعي.\n\nيعتمد المبلغ المسترد على نوع التأمين. على سبيل المثال، بالنسبة لرواتب الطبيب، تغطي شركة التأمين 30٪ من المبلغ المحدد. أما بالنسبة للأدوية، فإنها تغطي 100٪ من المبلغ المحدد من قبل مؤسسة الضمان الاجتماعي. الحد الأقصى للدفع الشهري للأدوية هو 70 يورو. أما بالنسبة للنظارات البسيطة والإطارات، فإن السعر الأقصى للبيع هو 42.50 يورو للنظارة الواحدة و 30 يورو للإطار الواحد. بالنسبة للأجهزة السمعية، فإن السعر الأقصى للبيع هو 950 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.3,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- يمكن لأي شخص الاشتراك في تأمين صحي إضافي بشكل فردي.\n- يمكن للأشخاص ذوي الموارد المحدودة الاستفادة من complémentaire santé solidaire (CSS: التغطية الصحية التكميلية المجانية أو منخفضة التكلفة )، وذلك في ظل شروط معينة.\n- يمكن للموظفين الاشتراك في تأمين جماعي يقدمه صاحب العمل.\n- يمكن أن يتم تغطية أفراد الأسرة بموجب العقد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.6,
+      "units": 4
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "اختر وثيقة تأمين صحي فردية أو جماعية.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "إذا كنت موظفًا، يرجى التواصل مع صاحب العمل لمعرفة ما إذا كان يقدم تأمينًا جماعيًا.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "لإبرام التأمين بشكل فردي، يمكنك التواصل مع شركات التأمين، أو المؤسسات التأمينية، أو مؤسسات التخطيط، أو المؤسسات المالية.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "يتم تجديد عقدك تلقائيًا كل عام، وستتلقى إشعارًا بالتجديد قبل موعد الدفع بحد أدنى 15 يومًا.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.4,
+      "units": 4
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.274Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zusätzlicher Krankenversicherungsschutz (Mutuelle)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 87.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Die Zusatzversicherung (Mutuelle) ermöglicht die Deckung von Gesundheitskosten, die nicht von der Assurance maladie (französische gesetzliche Krankenversicherung) übernommen werden. Sie ist für alle Personen verfügbar, einschließlich Angestellte und Selbstständige. Sie reduziert Ihre Eigenbeteiligung, indem sie einen Teil der Ausgaben übernimmt. Sie können einen individuellen oder einen kollektiven Vertrag abschließen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Die Zusatzversicherung (Mutuelle) ermöglicht die Deckung von Gesundheitskosten, die nicht von der Assurance maladie (französische gesetzliche Krankenversicherung) übernommen werden. Sie ist für alle Personen verfügbar, einschließlich Angestellte und Selbstständige. Sie reduziert Ihre Eigenbeteiligung, indem sie einen Teil der Ausgaben übernimmt. Sie können einen individuellen oder einen kollektiven Vertrag abschließen.\n\nDie Höhe der Rückerstattung hängt vom abgeschlossenen Vertrag ab. Beispielsweise erstatten die Krankenkasse 30 % der Kosten für Arztbesuche. Für Medikamente erstattet sie 100 % der Basis der Sozialversicherung. Der jährliche Selbstbehalt für Medikamente beträgt maximal 70 €. Für einfache Brillen und die Brillenfassung beträgt der Verkaufspreis (PLV) 42,50 € pro Brille und 30 € pro Fassung. Für Hörgeräte beträgt der Verkaufspreis 950 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Jeder kann eine zusätzliche Krankenversicherung individuell abschließen.\n- Personen mit geringem Einkommen können von complémentaire santé solidaire (CSS: kostenlose oder günstige Zusatzkrankenversicherung) unter bestimmten Bedingungen profitieren.\n- Die Mitarbeiter können eine von ihrem Arbeitgeber angebotene gemeinsame Krankenversicherung abschließen.\n- Die Familienmitglieder können durch den Vertrag abgedeckt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.7,
+      "units": 4
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Wählen Sie eine Zusatzversicherung entweder individuell oder im Rahmen einer betrieblichen Absicherung.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie Angestellter sind, erkundigen Sie sich bei Ihrem Arbeitgeber, ob er eine betriebliche Krankenversicherung anbietet.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Um eine individuelle Versicherung abzuschließen, können Sie sich an Versicherungsgesellschaften, Versicherungsunternehmen, Vorsorgeeinrichtungen oder Banken wenden.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Ihr Vertrag wird automatisch jedes Jahr verlängert, und Sie erhalten mindestens 15 Tage vor dem Ablaufdatum eine Zahlungsaufforderung.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 4
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.276Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Додаткове медичне страхування (мутуел)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Додаткове медичне страхування (мутуел) дозволяє покрити витрати на медичне обслуговування, які не покриває Assurance maladie (французьке державне медичне страхування). Воно доступне для будь-якої людини, включаючи працівників і непрацівників. Воно зменшує ваші витрати, відшкодовуючи частину витрат. Щоб оформити, ви можете обрати індивідуальну або групову страховку.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Додаткове медичне страхування (мутуел) дозволяє покрити витрати на медичне обслуговування, які не покриває Assurance maladie (французьке державне медичне страхування). Воно доступне для будь-якої людини, включаючи працівників і непрацівників. Воно зменшує ваші витрати, відшкодовуючи частину витрат. Щоб оформити, ви можете обрати індивідуальну або групову страховку.\n\nСума, що повертається, залежить від укладеного договору. Наприклад, для оплати послуг лікаря, медичне страхування покриває 30% вартості, визначеної як \"база\". Для ліків, страхування покриває 100% вартості, визначеної соціальною системою. Максимальний розмір самостійного платежу для ліків становить 70 €. Для окулярів та оправ, максимальна ціна продажу становить 42,50 € за один окуляр та 30 € за оправу. Для слухових апаратів, максимальна ціна продажу становить 950 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.2,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Будь-яка людина може оформити додаткове медичне страхування самостійно.\n- Особи з обмеженими фінансовими можливостями можуть отримати complémentaire santé solidaire (CSS: безкоштовне або недороге додаткове медичне покриття) за певних умов.\n- Працівники можуть оформити колективний страховий поліс, запропонований їхнім роботодавцем.\n- Члени сім'ї можуть бути включені до договору.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 4
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Виберіть поліс додаткового медичного страхування як для окремої особи, так і для групи осіб.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви є працівником, зверніться до свого роботодавця, щоб дізнатися, чи пропонує він колективне страхування.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Для оформлення індивідуального страхування, ви можете звернутися до страхових компаній, медичних страхових товариств, установ соціального страхування або банків.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Ваш контракт автоматично поновлюється щороку, і ви отримуєте повідомлення про термін дії принаймні за 15 днів до дати його закінчення.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.9,
+      "units": 4
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:fae5f6036282efc172d4bb8a62dcbfa838372b8e61d6e425d25c69bd4450a70d",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Couverture maladie complémentaire (mutuelle)",
+   "description_courte": "La complémentaire santé (mutuelle) permet de couvrir les frais de santé non remboursés par l'Assurance maladie. Elle est accessible à toute personne, y compris les salariés et les non-salariés. Elle réduit votre reste à charge en remboursant une partie des dépenses. Pour souscrire, vous pouvez choisir un contrat à titre individuel ou collectif.",
+   "contenu_detaille": "La complémentaire santé (mutuelle) permet de couvrir les frais de santé non remboursés par l'Assurance maladie. Elle est accessible à toute personne, y compris les salariés et les non-salariés. Elle réduit votre reste à charge en remboursant une partie des dépenses. Pour souscrire, vous pouvez choisir un contrat à titre individuel ou collectif.\n\nLe montant remboursé dépend du contrat souscrit. Par exemple, pour les honoraires du médecin, la mutuelle rembourse 30 % du ticket modérateur. Pour les médicaments, elle rembourse 100 % de la base de remboursement de la Sécurité sociale. La franchise annuelle pour les médicaments est plafonnée à 70 €. Pour les verres simples et monture, le prix limite de vente (PLV) est de 42,50 € par verre et 30 € par monture. Pour les aides auditives, le prix limite de vente est de 950 €.",
+   "pour_qui": "- Toute personne peut souscrire une complémentaire santé à titre individuel\n- Les personnes à faibles ressources peuvent bénéficier de la complémentaire santé solidaire (CSS) sous certaines conditions\n- Les salariés peuvent souscrire une assurance collective proposée par leur employeur\n- Les membres de la famille peuvent être couverts par le contrat",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Choisissez un contrat de complémentaire santé à titre individuel ou collectif"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Si vous êtes salarié, renseignez-vous auprès de votre employeur pour savoir s'il propose une assurance collective"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Pour souscrire à titre individuel, vous pouvez vous adresser aux mutuelles, compagnies d'assurance, institutions de prévoyance ou établissements bancaires"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Votre contrat est renouvelé automatiquement chaque année, et vous recevez un avis d'échéance au moins 15 jours avant la date d'échéance"
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_faire": null,
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T23:43:15.575Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F20314",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

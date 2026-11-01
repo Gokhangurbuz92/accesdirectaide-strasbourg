@@ -1,0 +1,678 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "actualisation-france-travail",
+ "recordId": "9422f20b-53cd-4b98-9e4e-d5d5a26432e6",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.396Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Update France Travail (public employment service)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "The monthly update France Travail (public employment service) allows job seekers to renew their registration and report any changes in their situation. This ensures that the return-to-work allowance (ARE: unemployment benefit) is paid and that your rights are updated. You can update your information online, by phone, or in person.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "The monthly update France Travail (public employment service) allows job seekers to renew their registration and report any changes in their situation. This ensures that the return-to-work allowance (ARE: unemployment benefit) is paid and that your rights are updated. You can update your information online, by phone, or in person.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Job seeker\n- Foreign workers\n- Individuals returning to work\n- People in training\n- Mothers on maternity leave\n- People on sick leave",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "You must update your registration each month according to the official schedule of France Travail (public employment service).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Please let France Travail know if you are still actively seeking employment.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Report any changes in your circumstances that may affect your rights to the ARE (unemployment benefit).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "If you have been employed, please send a photocopy of your payslip to your agency.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If you have not received your payslip, please declare the amount you received during your period of employment.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Copy of the payslip",
+      "Documentation to support your professional activity",
+      "Titre de séjour (in case of change)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Depending on your situation: France Travail (public employment service) for job seekers - 3949, France Travail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.2,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Free",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.400Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Güncelleme France Travail (kamu istihdam kurumu)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Aylık güncellemeler (France Travail: kamu istihdam kurumu), iş arayanların kayıtlarını yenilemelerine ve durumlarındaki değişiklikleri bildirmelerine olanak tanır. Bu, işe yeniden başlama yardımı (ARE: işsizlik ödeneği)'nın ödenmesini ve haklarınızın güncellenmesini sağlar. Güncellemeleri çevrimiçi, telefonla veya doğrudan yapabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Aylık güncellemeler (France Travail: kamu istihdam kurumu), iş arayanların kayıtlarını yenilemelerine ve durumlarındaki değişiklikleri bildirmelerine olanak tanır. Bu, işe yeniden başlama yardımı (ARE: işsizlik ödeneği)'nın ödenmesini ve haklarınızın güncellenmesini sağlar. Güncellemeleri çevrimiçi, telefonla veya doğrudan yapabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- İş arayan\n- Yabancı işçiler\n- Faaliyetlerine yeniden başlayan kişiler\n- Eğitime katılan kişiler\n- Doğum izni kullanan kişiler\n- İşten uzaklaştırılan kişiler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Her ay, France Travail (kamu istihdam kurumu)'in resmi takvimine göre kayıtlarınızı güncellemeniz gerekmektedir.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "France Travail'ye, hala iş arayışında olup olmadığını bildirin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "ARE (işsizlik ödeneği)'deki haklarınızı etkileyebilecek tüm değişiklikleri bildirin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Eğer herhangi bir profesyonel faaliyetiniz varsa, lütfen maaş bordunuzun fotokopisini ajansınıza gönderin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Eğer bordro almadığınız durumda, çalıştığınız dönem boyunca elde ettiğiniz geliri belirtin.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.4,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Çalışan maaş bordrosunun fotokopisi",
+      "Profesyonel faaliyetlerinizin kanıtları",
+      "Titre de séjour (eğer değişiklik olursa)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.2,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Durumunuza göre: France Travail (kamu istihdam kurumu) – İş arayanlar için, France Travail.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 59.1,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Ücretsiz",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.403Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تحديث France Travail (هيئة التشغيل العمومية)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "تتيح التحديث الشهري France Travail (هيئة التشغيل العمومية)‏] للباحثين عن عمل فرصة لتجديد تسجيلهم والإبلاغ عن أي تغييرات في وضعهم. وهذا يضمن صرف مبلغ العائد على العمل (ARE (إعانة البطالة)‏) وتحديث حقوقكم. يمكنك التحديث عبر الإنترنت أو الهاتف أو في المكتب.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "تتيح التحديث الشهري France Travail (هيئة التشغيل العمومية)‏] للباحثين عن عمل فرصة لتجديد تسجيلهم والإبلاغ عن أي تغييرات في وضعهم. وهذا يضمن صرف مبلغ العائد على العمل (ARE (إعانة البطالة)‏) وتحديث حقوقكم. يمكنك التحديث عبر الإنترنت أو الهاتف أو في المكتب.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- باحث عن عمل\n- العاملون الأجانب\n- الأشخاص الذين يعودون إلى العمل\n- الأشخاص الذين يتلقون التدريب\n- الأمهات في إجازة الأمومة\n- الأشخاص الذين تم تعليق عملهم",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "يجب عليك تحديث تسجيلك شهريًا وفقًا للجدول الزمني الرسمي لـ France Travail (هيئة التشغيل العمومية).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يرجى إبلاغ France Travail‏] إذا كنت لا تزال تبحث عن وظيفة.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "أبلغ عن أي تغيير في الوضع قد يؤثر على حقوقك في الحصول على ARE (إعانة البطالة).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "إذا كنت قد مارست أي نشاط مهني، يرجى إرسال نسخة من كشف الراتب إلى وكالتك.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا لم تتلق شهادة الراتب، فيرجى الإعلان عن المبلغ الذي تلقيته خلال فترة عملك.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "نسخة من كشف الأجور",
+      "وثائق تثبت نشاطك المهني",
+      "Titre de séjour (في حالة حدوث تغيير)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "بناءً على وضعك: France Travail (هيئة التشغيل العمومية) للمتقدمين للعمل - 3949، France Travail.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "مجاني",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.408Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Aktualisierung France Travail (öffentliche Arbeitsverwaltung)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.6,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Die monatliche Aktualisierung (France Travail: öffentliche Arbeitsverwaltung) ermöglicht es Arbeitsuchenden, ihre Anmeldung zu erneuern und alle Änderungen ihrer Situation zu melden. Dies stellt die Auszahlung der Arbeitslosenhilfe (ARE: Arbeitslosengeld) und die Aktualisierung Ihrer Ansprüche sicher. Sie können dies online, telefonisch oder vor Ort tun.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Die monatliche Aktualisierung (France Travail: öffentliche Arbeitsverwaltung) ermöglicht es Arbeitsuchenden, ihre Anmeldung zu erneuern und alle Änderungen ihrer Situation zu melden. Dies stellt die Auszahlung der Arbeitslosenhilfe (ARE: Arbeitslosengeld) und die Aktualisierung Ihrer Ansprüche sicher. Sie können dies online, telefonisch oder vor Ort tun.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Arbeitsuchender\n- Ausländische Arbeitskräfte\n- Personen, die ihre berufliche Tätigkeit wieder aufnehmen\n- Personen in Ausbildung\n- Mütter im Elternurlaub\n- Personen, die arbeitsunfähig sind",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sie müssen Ihre Anmeldung jeden Monat gemäß dem offiziellen Kalender von France Travail (öffentliche Arbeitsverwaltung) aktualisieren.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Bitte informieren Sie France Travail, ob Sie weiterhin auf eine Arbeitsstelle suchen.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Geben Sie alle Änderungen Ihrer Situation an, die sich auf Ihre Rechte im ARE (Arbeitslosengeld) auswirken könnten, an.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie eine berufliche Tätigkeit ausgeübt haben, senden Sie bitte eine Kopie Ihres Gehaltszettchens an Ihre Agentur.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie Ihre Gehaltsabrechnung nicht erhalten haben, geben Sie bitte den Betrag an, den Sie während Ihrer Beschäftigungszeit erhalten haben.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kopie des Gehaltszettel",
+      "Nachweise Ihrer beruflichen Tätigkeit",
+      "Titre de séjour (im Falle einer Änderung)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.8,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Je recommande: France Travail (öffentliche Arbeitsverwaltung) für Arbeitsuchende – 3949, France Travail.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 59.8,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Kostenlos",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.411Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Оновлення France Travail (державна служба зайнятості)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 50.2,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Щорічний оновлення інформації (France Travail: державна служба зайнятості) дозволяє шукачам роботи оновити свої дані та повідомити про будь-які зміни у своєму становищі. Це забезпечує виплату допомоги на повернення до роботи (ARE: допомога з безробіття) та оновлення ваших прав. Ви можете оновити інформацію онлайн, по телефону або особисто.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.3,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Щорічний оновлення інформації (France Travail: державна служба зайнятості) дозволяє шукачам роботи оновити свої дані та повідомити про будь-які зміни у своєму становищі. Це забезпечує виплату допомоги на повернення до роботи (ARE: допомога з безробіття) та оновлення ваших прав. Ви можете оновити інформацію онлайн, по телефону або особисто.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Особа, яка шукає роботу\n- Іноземні працівники\n- Особи, які повертаються до роботи\n- Особи, які навчаються\n- Особи, які перебувають у відпустці по материнству\n- Особи, які перебувають у стані тимчасової непрацездатності",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.5,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Вам необхідно оновлювати свою реєстрацію щомісяця відповідно до офіційного календаря France Travail (державна служба зайнятості).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Повідомте France Travail, чи ви все ще шукаєте роботу.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Повідомте про будь-які зміни обставин, які можуть вплинути на ваші права щодо отримання ARE (допомога з безробіття).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви займалися професійною діяльністю, будь ласка, надішліть копію вашого розрахункового листка до вашого агентства.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви не отримали відомості про заробітну плату, повідомте суму, яку ви отримали протягом періоду вашої роботи.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 63.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Копія розрахункової відомості",
+      "Документи, що підтверджують вашу професійну діяльність",
+      "Titre de séjour (у разі зміни)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Відповідно до вашої ситуації: France Travail (державна служба зайнятості) для безробітних – 3949, France Travail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Безкоштовно",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:39ed7e541494490267f17357f0e4b502b0eb378149481ea402f2f8e0cc9aa953",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Actualisation France Travail",
+   "description_courte": "L'actualisation mensuelle France Travail permet aux demandeurs d'emploi de renouveler leur inscription et de signaler tout changement de situation. Cela assure le versement de l'allocation de retour à l'emploi (ARE) et la mise à jour de vos droits. Vous pouvez actualiser en ligne, par téléphone ou sur place.",
+   "contenu_detaille": "L'actualisation mensuelle France Travail permet aux demandeurs d'emploi de renouveler leur inscription et de signaler tout changement de situation. Cela assure le versement de l'allocation de retour à l'emploi (ARE) et la mise à jour de vos droits. Vous pouvez actualiser en ligne, par téléphone ou sur place.",
+   "pour_qui": "- Demandeur d'emploi\n- Travailleurs étrangers\n- Personnes en reprise d'activité\n- Personnes en formation\n- Personnes en congé de maternité\n- Personnes en arrêt de travail",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vous devez actualiser votre inscription chaque mois selon le calendrier officiel de France Travail."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Faites savoir à France Travail si vous êtes toujours en recherche d'emploi."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Déclarez tout changement de situation pouvant affecter vos droits à l'ARE."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Si vous avez exercé une activité professionnelle, envoyez la photocopie de votre fiche de paie à votre agence."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Si vous n'avez pas reçu de fiche de paie, déclarez le montant perçu durant votre période d'activité."
+    }
+   ],
+   "documents_necessaires": [
+    "Photocopie de la fiche de paie",
+    "Justificatifs de votre activité professionnelle",
+    "Titre de séjour (en cas de changement)"
+   ],
+   "ou_faire": "Selon votre situation : France Travail pour demandeurs d'emploi - 3949, France Travail.",
+   "cout": "Gratuit",
+   "delai": ""
+  },
+  "verifiedAt": "2026-10-30T01:02:15.441Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1637",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

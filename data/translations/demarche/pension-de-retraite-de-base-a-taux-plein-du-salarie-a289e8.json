@@ -1,0 +1,480 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
+ "recordId": "a289e86d-b3f1-4389-9a73-0f5e33500028",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.253Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Full-pension retirement benefit for the employee",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 33.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "A full basic pension is a pension with no reduction in benefits, awarded to employees in the private sector under specific conditions related to insurance duration or age. It allows you to receive a full pension, consisting of a basic pension and an additional pension. To qualify, you must meet specific criteria based on your date of birth or be in certain specific situations.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "A full basic pension is a pension with no reduction in benefits, awarded to employees in the private sector under specific conditions related to insurance duration or age. It allows you to receive a full pension, consisting of a basic pension and an additional pension. To qualify, you must meet specific criteria based on your date of birth or be in certain specific situations.\n\nThe basic retirement pension is calculated at full rate if the conditions are met. The amount of the supplementary pension may be reduced or increased depending on the age at which it is taken.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Private sector employee\n- You have met one of the eligibility requirements, either in terms of the length of the insurance policy or your age.\n- You are retiring at the age of 67.\n- You have been determined to be unfit for work.\n- You have a permanent, work-related disability of at least 10%.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 57.3,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check your career record on the Info Retraite website to find out how many quarters you have accrued.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Simulate the amount of your retirement income at different ages and under various conditions.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "If you meet the requirements, you can apply for a full pension.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "For specific situations, please contact one of your retirement funds for detailed information.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.9,
+      "units": 4
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.255Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çalışanın tam maaşlı emekli maaşı",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.2,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Tam oranlı emekli maaşı, sigorta süresi veya yaş koşulları altında özel sektör çalışanlarına verilen, indirimli olmayan bir emekli maaşıdır. Bu, tam bir emekli maaşı ile birlikte temel bir emekli maaşı ve ek bir emekli maaşı almayı sağlar. Bu avantajdan yararlanmak için, doğum tarihinize veya belirli özel durumlara bağlı olarak belirli şartları yerine getirmeniz gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Tam oranlı emekli maaşı, sigorta süresi veya yaş koşulları altında özel sektör çalışanlarına verilen, indirimli olmayan bir emekli maaşıdır. Bu, tam bir emekli maaşı ile birlikte temel bir emekli maaşı ve ek bir emekli maaşı almayı sağlar. Bu avantajdan yararlanmak için, doğum tarihinize veya belirli özel durumlara bağlı olarak belirli şartları yerine getirmeniz gerekir.\n\nTemel emekli maaşı, belirli koşullar sağlandığında tam olarak hesaplanır. Ek emekli maaşının miktarı, emeklilik yaşına göre düşürülebilir veya artırılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.8,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Özel sektör çalışanı\n- Sigorta süresi veya yaş koşulunu yerine getirmişsiniz.\n- 67 yaşında emekli olacaksınız.\n- İş için uygunsuz olduğuna karar verilmiştir.\n- Meslekten kaynaklanan ve en az %10 oranında kalıcı bir sakatlığınız var.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 55.6,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Kariyer geçmişinizi Info Retraite web sitesinde görüntüleyerek, emeklilik haklarınızla ilgili bilgileri ve çalışma sürenizi öğrenebilirsiniz.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Farklı yaşlarda ve koşullarda emekli olacağınız miktarı simüle edin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Belirtilen şartları yerine getirmeniz durumunda, tam emekli maaşı alabilirsiniz.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Özel durumlarda, detaylı bilgi almak için emeklilik fonlarınızdan birini iletişime geçin.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 4
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.256Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مبلغ المعاش التقاعدي الأساسي بالكامل للموظف",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "التقاعد الأساسي بمعدل كامل هو تقاعد بدون خصم، ويمنح للموظفين في القطاع الخاص وفقًا لشروط تتعلق بمدة التأمين أو العمر. يسمح هذا التقاعد بالحصول على تقاعد كامل، مع تقاعد أساسي وتقاعد إضافي. للحصول عليه، يجب استيفاء شروط محددة بناءً على تاريخ الميلاد أو في بعض الحالات الخاصة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.3,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "التقاعد الأساسي بمعدل كامل هو تقاعد بدون خصم، ويمنح للموظفين في القطاع الخاص وفقًا لشروط تتعلق بمدة التأمين أو العمر. يسمح هذا التقاعد بالحصول على تقاعد كامل، مع تقاعد أساسي وتقاعد إضافي. للحصول عليه، يجب استيفاء شروط محددة بناءً على تاريخ الميلاد أو في بعض الحالات الخاصة.\n\nيتم حساب مبلغ الضمان الاجتماعي الأساسي بمعدل كامل إذا استوفيت الشروط. يمكن تعديل مبلغ الضمان الاجتماعي الإضافي أو زيادته بناءً على تاريخ التقاعد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- موظف في القطاع الخاص\n- لقد استوفيت شرطًا يتعلق بمدة التأمين أو العمر.\n- ستتقاعد في سن 67.\n- لقد تم تحديد أنك غير مؤهل للعمل.\n- لديك إعاقة دائمة ذات أصل مهني تبلغ نسبة حدها 10% على الأقل.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 56.7,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "راجع سجل مسيرتك المهنية على موقع \"Info Retraite\" لمعرفة عدد الأشهر التي قمت بها.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "قم بإجراء محاكاة لتقدير مبلغ التقاعد الخاص بك في أعمار وظروف مختلفة.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إذا استوفيت الشروط، يمكنك التقدم بطلب للتقاعد مع الحصول على كامل المعاش.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "بالنسبة للحالات الخاصة، يرجى الاتصال بأحد فروع مؤسسة التقاعد الخاصة بك للحصول على معلومات تفصيلية.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75,
+      "units": 4
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.258Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Volle Rente aufgrund von Arbeitszeit",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 28.1,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Eine volle Altersrente ohne Abschläge wird den Arbeitnehmern im privaten Sektor gewährt, wenn bestimmte Bedingungen hinsichtlich der Versicherungsdauer oder des Alters erfüllt sind. Sie ermöglicht den Erhalt einer vollen Rente, bestehend aus einer Grundrente und einer zusätzlichen Rente. Um diese Rente zu erhalten, müssen bestimmte Bedingungen erfüllt sein, die sich nach Ihrem Geburtsdatum oder in bestimmten besonderen Situationen ergeben.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Eine volle Altersrente ohne Abschläge wird den Arbeitnehmern im privaten Sektor gewährt, wenn bestimmte Bedingungen hinsichtlich der Versicherungsdauer oder des Alters erfüllt sind. Sie ermöglicht den Erhalt einer vollen Rente, bestehend aus einer Grundrente und einer zusätzlichen Rente. Um diese Rente zu erhalten, müssen bestimmte Bedingungen erfüllt sein, die sich nach Ihrem Geburtsdatum oder in bestimmten besonderen Situationen ergeben.\n\nDie Grundrente wird in vollem Betrag berechnet, wenn die Voraussetzungen erfüllt sind. Die Zusatzrente kann je nach Rentenbeginn entweder reduziert oder erhöht werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Angestellter im privaten Sektor\n- Sie haben eine bestimmte Versicherungsdauer oder ein bestimmtes Alter erfüllt.\n- Sie werden mit 67 Jahren in den Ruhestand gehen.\n- Es wurde festgestellt, dass Sie nicht in der Lage sind, zu arbeiten.\n- Sie haben eine dauerhafte, durch die Arbeit verursachte Behinderung von mindestens 10 %.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 53.6,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie Ihren Karriereverlauf auf der Webseite Info Retraite, um die Anzahl Ihrer Arbeitsjahre zu ermitteln.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Simulieren Sie den potenziellen Betrag Ihrer Rente für verschiedene Alters- und Konditionsstufen.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie die Voraussetzungen erfüllen, können Sie eine volle Rente beantragen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Für spezielle Fälle wenden Sie sich bitte an eine Ihrer Rentenkassen, um detaillierte Informationen zu erhalten.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.2,
+      "units": 4
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.259Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Базова пенсія за вислугою років у повному розмірі для працівника",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 39.5,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Повна пенсія за базовим планом – це пенсія без знижки, яка надається працівникам приватного сектору за певних умов, таких як тривалість страхування або вік. Вона дозволяє отримати повну пенсію, включаючи базову пенсію та додаткову пенсію. Щоб отримати її, необхідно відповідати певним вимогам, залежно від дати вашого народження або перебувати в певних особливих ситуаціях.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Повна пенсія за базовим планом – це пенсія без знижки, яка надається працівникам приватного сектору за певних умов, таких як тривалість страхування або вік. Вона дозволяє отримати повну пенсію, включаючи базову пенсію та додаткову пенсію. Щоб отримати її, необхідно відповідати певним вимогам, залежно від дати вашого народження або перебувати в певних особливих ситуаціях.\n\nСума базової пенсії розраховується у повній величині, якщо виконані відповідні умови. Сума додаткової пенсії може бути зменшена або збільшена залежно від віку виходу на пенсію.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Працівник приватного сектору\n- Ви задоволили вимоги щодо терміну страхування або віку.\n- Ви плануєте вийти на пенсію у віці 67 років.\n- Вас визнано непридатним для роботи.\n- Ви маєте постійну професійну інвалідність, яка становить щонайменше 10%.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.2,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перегляньте свій облік трудового стажу на веб-сайті Info Retraite, щоб дізнатися, скільки у вас кварталів.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Проведіть моделювання, щоб оцінити, скільки ви зможете отримати на пенсії в різні роки та за різних умов.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви відповідаєте цим вимогам, ви можете подати заявку на повну пенсію.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "У випадку особливих ситуацій, зверніться до однієї з ваших пенсійних фондів для отримання детальної інформації.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72,
+      "units": 4
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:25a8f258970f27841cb217ad36e0ba74236b781293771bdda3fbacdf3f839bad",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Pension de retraite de base à taux plein du salarié",
+   "description_courte": "La pension de retraite de base à taux plein est une retraite sans décote, accordée aux salariés du secteur privé sous conditions de durée d'assurance ou d'âge. Elle permet de bénéficier d'une retraite complète, avec une pension de base et une pension complémentaire. Pour en bénéficier, il faut remplir des conditions spécifiques selon votre date de naissance ou être dans certaines situations particulières.",
+   "contenu_detaille": "La pension de retraite de base à taux plein est une retraite sans décote, accordée aux salariés du secteur privé sous conditions de durée d'assurance ou d'âge. Elle permet de bénéficier d'une retraite complète, avec une pension de base et une pension complémentaire. Pour en bénéficier, il faut remplir des conditions spécifiques selon votre date de naissance ou être dans certaines situations particulières.\n\nLe montant de la pension de retraite de base est calculé à taux plein si les conditions sont remplies. Le montant de la pension complémentaire peut être réduit ou majoré selon l'âge de départ.",
+   "pour_qui": "- Salarié du secteur privé\n- Vous avez rempli une condition de durée d'assurance ou d'âge\n- Vous partez à la retraite à 67 ans\n- Vous êtes reconnu inapte au travail\n- Vous avez une incapacité permanente d'origine professionnelle d'au moins 10 %",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Consultez votre relevé de carrière sur le site Info Retraite pour connaître votre nombre de trimestres."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Faites une simulation du montant de votre retraite à différents âges et conditions."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Si vous remplissez les conditions, vous pouvez demander votre retraite à taux plein."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Pour les situations particulières, contactez l'une de vos caisses de retraite pour obtenir des informations détaillées."
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_faire": null,
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T01:35:30.532Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F14044",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

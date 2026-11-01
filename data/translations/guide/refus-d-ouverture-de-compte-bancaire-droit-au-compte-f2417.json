@@ -1,0 +1,463 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+ "recordId": "189e5b45-f904-446b-be51-9bba1e2b2e01",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:01.407Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Refusal to open a bank account: the right to have one",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The \"right to a bank account\" allows individuals to have a bank account with basic banking services opened at a bank of their choice, as selected by the Banque de France.",
+      "steps": [
+       {
+        "texte": "A bank refuses to open an account for you, and you have no existing bank account in France? In this case, you can contact the Bank of France to utilize the \"right to a bank account\" procedure. The Bank of France will then designate a bank, preferably located near your home or in your chosen location, which must open an account for you with basic banking services. Here is the information you need to know about the right to a bank account.",
+        "titre": null
+       },
+       {
+        "texte": "A bank may refuse to open an account for you.\nIf a bank does not respond to your request to open an account within 15 days, this is considered a rejection. The deadline starts from the date of receipt of your request or from the date it was submitted in person or at the counter.\nThe bank must then provide you with a letter of refusal, specifying the reason for the denial.\nShe should also inform you about the possibility of contacting the Banque de France to utilize the \"right to access\" procedure.\nThe Bank of France then designates a bank that will open an account for you and provide you with access to basic banking services.",
+        "titre": "What is the right to access one's account?"
+       },
+       {
+        "texte": "To be eligible for the \"right to a bank account\" procedure in France, you must meet one of the following criteria:\n- Being a resident in France, without requiring citizenship.\n- Being of French nationality and residing abroad\n- To be a foreign national and legally reside in the territory of another member state of the European Union, and not to be acting for professional purposes.\nPlease note: If you already have a deposit account in France, you will not be eligible for this benefit.\nYou may be entitled to an overdraft facility even if you are in one of the following situations:\n- Bank restriction\n- Listed on the Register of Individual Credit Incidents (FICP)\n- Past due\n- Account holder in a joint account.",
+        "titre": "Who is eligible for the right to a bank account?"
+       },
+       {
+        "texte": "A recognized consumer association, such as your Caf (family benefits office), your local council, or your community or inter-municipal social action center, can assist you with your needs.\nPrepare a file for a claim for rights to the account\nYou need to compile a file containing the following documents:\n- Account access request form\n- Valid French or foreign photo ID\n- Proof of address (e.g., water or telephone bill from the last 3 months, rent receipt from the last 3 months, deed to the primary residence)\n- Bank's letter of refusal, or proof of receipt of the registered letter or proof of in-person delivery of the account opening application, dated more than 15 days ago.\n- Affidavit stating that you do not have any personal or professional bank accounts, and if you do, that you have made the decision to terminate the account agreement.\n- A sworn statement confirming that you legally reside in the territory of another member state of the European Union, if applicable.\nSubmitting the application to the Bank of France\nYou can submit your application to the Bank of France online, at a branch office, or by mail.\nCase: Online\nYou must submit your application by logging in to your personal account on the Banque de France website (you need to access your account or create one using your FranceConnect credentials).\n→ Online service: Request for bank account access (online procedure)\nCase: At the counter\nYou must submit your application at a branch of the Banque de France. An appointment may be required.\n→ Online service: Request for bank account access (individual)\n→ Where to go: Information and welcome desk of the Banque de France\nCase: By mail\nYou must send your application by postal mail to the Banque de France.\n→ Online service: Request for bank account access (individual)\n→ Where to send correspondence: Direct to account: postal address of the Banque de France\nPlease note: You can also ask the bank that refused to open an account for you to forward your application to the Banque de France.",
+        "titre": "How do I request access to the account?"
+       },
+       {
+        "texte": "Within one working day of receiving the documents, the Banque de France will appoint the bank responsible for opening the account. The Banque de France will inform you (by mail or through your online account) of the designated bank's name and will also notify the relevant bank by mail. The Banque de France's decision to appoint a bank is valid for 6 months.\nWithin the 3 business days following notification of your appointment, the designated bank must provide you with a list of the necessary documents for opening the account and the contact details of the bank branch to which you should address your correspondence, either by mail or another durable medium.\nYou must then contact the designated agency to open the account and provide them with the required documents. You have 6 months (from the date of appointment) to inform the bank.\nOnce the initial contact has been made, a meeting is generally required. On the day of the meeting, your presence is usually essential for the account opening process. You may be asked to provide additional documentation, particularly in relation to anti-money laundering and counter-terrorism efforts.\nThe designated bank must open the account within 3 business days if you have provided all the necessary documents.",
+        "titre": "How is the bank account opened at the designated bank?"
+       },
+       {
+        "texte": "The account agreement associated with the opening of the deposit account is limited to the following basic banking services:\n- Opening, maintenance, and closing of the account\n- One address change per year\n- Issuance, upon request, of bank account statements\n- Bank transfer address\n- Monthly provision of a record of all transactions made on the account.\n- Processing of checks and bank transfers\n- Payments via SEPA direct debit, SEPA interbank payment order, or SEPA transfer\n- Methods for remotely checking account balances\n- Deposits and withdrawals of cash at the bank's counter, where the account is held.\n- Bank card where each transaction is authorized by the bank\n- Two bank check options per month, or equivalent payment methods, offering the same services.\n- Handling cash transactions",
+        "titre": "What banking services does the right to a bank account provide access to?"
+       },
+       {
+        "texte": "Opening a bank account and using basic banking services are free under the right to a bank account.\nSpecifically: Fees apply in cases of account irregularities. The bank charges a transaction fee when it executes a payment operation, provided that the balance in the account is insufficient. For account holders with the right to an account, the fees charged are capped at €4 per transaction, up to a maximum of €20 per month.",
+        "titre": "Is there a fee associated with using a bank account as part of the right to a bank account?"
+       },
+       {
+        "texte": "The bank designated by the Banque de France can decide to close your account on its own. To do so, one of the following conditions must be met:\n- You deliberately used the account to carry out illegal activities.\n- You provided inaccurate information.\n- You are no longer meeting the requirements for residency or domicile.\n- You have opened a second savings account in France, which allows you to use basic banking services.\n- You have repeatedly exhibited inappropriate behavior towards the staff of the financial institution.\n- The bank was unable to verify your identity or obtain the necessary information to open or maintain the account.\nIn the event of account closure, the bank must notify you of its decision in writing and inform the Banque de France. You have a 2-month notice period, unless in the following two cases:\n- You deliberately used the account to carry out illegal activities.\n- You provided inaccurate information.\nThe bank must also inform you of the existence, within the Banque de France, of a customer relations service to handle any potential disputes related to this termination. You can contact this service as many times as necessary.",
+        "titre": "Can a bank close an account opened under the right to a bank account?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2417",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2417",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2022-06-10"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 79.7,
+      "units": 78
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:04.161Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Banka hesabı açma talebinin reddedilmesi: hesap açma hakkı",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "\"Hesap hakkı\", Banque de France tarafından seçilen bir bankada açılan ve temel bankacılık hizmetlerine sahip bir hesapla faydalanma imkanı sunar.",
+      "steps": [
+       {
+        "texte": "Bir banka size banka hesabı açma talebinizi reddeder ve Fransa'da herhangi bir hesabınız yoksa, \"hesap hakkı\" prosedüründen yararlanmak için Banque de France'ı (Fransız Merkez Bankası) başvurabilirsiniz. Banque de France, sizin adresinize veya seçtiğiniz yere yakın bir bankayı belirleyerek, temel bankacılık hizmetleri sunan bir hesap açmanız için size yardımcı olacaktır. İşte \"hesap hakkı\" hakkında bilmeniz gereken bilgiler.",
+        "titre": null
+       },
+       {
+        "texte": "Bir banka, hesabınızı açmanıza izin vermeme hakkını saklı tutabilir.\nEğer bir banka, hesabınızı açma talebinize 15 gün içinde yanıt vermezse, bu bir reddedilme olarak kabul edilir. Bu süre, talebinizin alındığı tarihten veya elden veya banka şubesine teslim edildiği tarihten itibaren başlar.\nBanka, bu durumda size bir red mektubu sunmalı ve bu mektupta neden reddettiğini belirtmelidir.\nAyrıca, size, Banka de France'ın, \"hesap hakkı\" prosedüründen yararlanma imkanları hakkında bilgi vermesi gerektiğini de belirtmelidir.\nFransız Merkez Bankası, sizin için bir bankayı belirler ve bu bankanın size temel bankacılık hizmetlerine erişim imkanı sağlayan bir hesap açmasını sağlar.",
+        "titre": "\"Hesap hakkı\" ne anlama geliyor?"
+       },
+       {
+        "texte": "Fransız hukuk sistemindeki \"hesap hakkı\" prosedüründen yararlanabilmek için aşağıdaki şartlardan birini sağlamanız gerekir:\n- Fransa'da ikamet etmek, herhangi bir vatandaşlık şartı olmaksızın\n- Fransız vatandaşı olmak ve yurtdışında ikamet etmek\n- Avrupa Birliği'nin başka bir üye ülkesinde yasal olarak ikamet etmek ve aynı zamanda, kendi mesleki ihtiyaçları için hareket etmemek.\nLütfen dikkat: Eğer Fransa'da zaten bir tasarruf hesabınız varsa, bu hakkın size sağlanması mümkün değildir.\nAşağıdaki durumlardan herhangi birinde olsanız bile, hesap hakkından yararlanabilirsiniz:\n- Bankası tarafından uygulanan kısıtlama\n- Bireysel kredi olayları veri tabanında (FICP) kayıtlı\n- Rezervasyon\n- Bireysel bir hesap sahibi değil, toplu bir hesap kullanıcısı.",
+        "titre": "Bu hakkın kimlere tanınabileceği?"
+       },
+       {
+        "texte": "Yetkilendirilmiş bir tüketici örgütü, örneğin Caf (aile yardımları kurumu), iliniz veya yerel sosyal yardım merkezi, size bu süreçte yardımcı olabilir.\nHesap için talep dosyasını oluşturmak\nAşağıdaki belgeleri içeren bir dosya oluşturmanız gerekmektedir:\n- Hesap hakkı talebi için form\n- Geçerli bir Fransız veya yabancı kimlik belgesi\n- İkamet kanıtı (örneğin, su veya telefon faturası (3 aydan kısa), kira kontratı (3 aydan kısa), ana konutun tapusu)\n- Bankadan gelen reddi içeren mektup, veya gönderilen taahhütlü mektubun veya hesabın açılması talebinin elden teslim edildiğinin kanıtının alındığına dair belge, 15 günden eski\n- Şahsi veya ticari bir hesap açmadığınızı ve eğer varsa, sözleşmenin feshedilmesi kararı ile ilgili yeminli beyan.\n- Eğer bu durumda iseniz, yasal olarak başka bir Avrupa Birliği üye ülkesinin sınırları içinde ikamet ettiğinizi gösteren bir yeminli beyan.\nFransa Merkez Bankası'na başvurunun yapılması\nİsteğinizi, Fransa Merkez Bankası'na çevrimiçi olarak, bir şubedeki veya posta yoluyla iletebilirsiniz.\nÖrnek: Çevrimiçi\nBaşvurunuzu, Banque de France'ın web sitesindeki kişisel hesabınıza giriş yaparak yapmanız gerekmektedir (FranceConnect kimliğinizle hesabınıza erişmeniz veya yeni bir hesap oluşturmanız gerekmektedir).\n→ Çevrimiçi hizmet: Banka hesabı için hak talebi (çevrimiçi başvuru)\nDurum: Kasa önünde\nBaşvurunuzu, Banque de France'ın bir şubesindeki hizmet noktasına teslim etmelisiniz. Gerekli olabilir.\n→ Çevrimiçi hizmet: Banka hesabı üzerindeki hak talebi (fiziksel kişi)\n→ İlgili kuruma başvurmak için: Banque de France'ın resepsiyon ve bilgi ofisi\nDurum: Posta yoluyla\nTalepınızı, Fransız Merkez Bankası'na posta yoluyla göndermeniz gerekmektedir.\n→ Çevrimiçi hizmet: Banka hesabı üzerindeki hak talebi (fiziksel kişi)\n→ İlgili kuruma başvurmak için: Banque de France'ın posta adresi\nLütfen unutmayın: Size hesap açma talebinizi reddeden bankadan, talebinizi Banque de France'a iletmesini isteyebilirsiniz.",
+        "titre": "Hesapta hak talep etmek nasıl yapılır?"
+       },
+       {
+        "texte": "Belgelerin teslim tarihinden itibaren 1 iş günü içinde, Fransa Merkez Bankası, hesabın açılmasını sağlayacak bankayı belirler. Fransa Merkez Bankası, bu bankayı (posta veya kişisel hesabınız üzerinden) bilgilendirir ve aynı zamanda ilgili bankaya da bu kararı yazılı olarak bildirir. Fransa Merkez Bankası'nın belirleme kararı 6 ay geçerlidir.\nBelirtilen görevlendirme bildiriminden itibaren 3 iş günü içinde, banka, gerekli belgelerin ve banka şubesinin iletişim bilgilerinin bir listesini size posta veya başka bir kalıcı ortamda iletmek zorundadır.\nArdından, hesabın açılması için belirlenen kuruma başvurmanız ve gerekli belgeleri iletmeniz gerekmektedir. Bankayla iletişime geçmek için 6 aylık bir süre (belirlenme kararı tarihinden itibaren) bulunmaktadır.\nİletişim kurulduktan sonra, genellikle bir randevu gereklidir. Randevu günü, hesabın açılması için genellikle sizin varlığınızın sağlanması gerekir. Ayrıca, özellikle kara para aklama ve terörizmin finanslaması ile ilgili konular çerçevesinde, ek belgeler talep edilebilir.\nBelirtilen banka, gerekli tüm belgeleri sağladıktan sonra 3 iş günü içinde hesabı açmalıdır.",
+        "titre": "Banka tarafından belirlenen hesap nasıl açılır?"
+       },
+       {
+        "texte": "Hesap açılışıyla birlikte oluşturulan hesap sözleşmesi, yalnızca aşağıdaki temel bankacılık hizmetlerine uygulanır:\n- Hesabın açılışı, bakış ve kapanışı\n- Yılda bir adres değişikliği\n- İstenildiği zaman, banka hesap özetlerinin düzenlenmesi ve verilmesi.\n- Banka havalelerinin adresinin belirlenmesi\n- Aylık olarak, hesabınızda gerçekleştirilen işlemlerin detaylı bir raporunun sağlanması.\n- Şahsi çeklerin ve banka havalelerinin tahsil edilmesi\n- SEPA otomatik ödeme, SEPA arası banka transferi veya SEPA havalesi ile ödeme\n- Hesap bakiyesini uzaktan görüntüleme yöntemleri\n- Bankadaki hesap sahibinin hesabına ait nakit para depozitlerinin ve çeklerinin çekim işlemi yapılması.\n- Banka tarafından onaylanan ve her kullanımının izin verilen banka kartı.\n- Ayda 2 adet banka çek veya eşdeğer ödeme yöntemi, aynı hizmetleri sunan\n- Kasa işlemlerinin yürütülmesi",
+        "titre": "\"Hesap hakkı, hangi bankacılık hizmetlerine erişim sağlar?\""
+       },
+       {
+        "texte": "Hesap açma ve temel bankacılık hizmetlerini kullanma, \"hesap hakkı\" kapsamında ücretsizdir.\nBilgilendirme: Hesapta düzensizlik durumunda ücret uygulanmaktadır. Banka, ödeme işlemi gerçekleştirdiğinde ve hesapta yeterli bakiye bulunmadığında işlem ücreti almaktadır. Hesap hakkına sahip olan kişiler için, alınan ücretler her işlemde 4 € ve ayda 20 € ile sınırlandırılmıştır.",
+        "titre": "Banka hesabının kullanımı, temel bankacılık hizmetleri hakkındaki yasal düzenlemeler kapsamında ücretli mi?"
+       },
+       {
+        "texte": "Belgelerinize sahip olan ve Fransa Merkez Bankası tarafından belirlenen banka, hesabınızı kapatma kararı alabilir. Bunun için aşağıdaki koşullardan biri sağlanmalıdır:\n- Hesabı, kasıtlı olarak yasa dışı faaliyetler için kullanmışsınız.\n- Sağladığınız bilgiler doğru değildi.\n- Artık ev veya ikamet koşullarını sağlamıyor oluyorsunuz.\n- Fransa'da ikinci bir mevduat hesabınızı açtınız ve bu sayede temel bankacılık hizmetlerinden yararlanabilirsiniz.\n- Kurumdaki personelle karşı tekrar tekrar saygısız davranışlarda bulundunuz.\n- Bankanız, hesabınızı açmak veya kullanmak için gerekli bilgileri elde edemedi veya sizi tanımlayamadı.\nHesabın feshedilmesi durumunda, banka size yazılı olarak, gerekçeleriyle birlikte bir karar bildirmeli ve Banque de France'ı da bilgilendirmelidir. Ancak, aşağıdaki durumlarda 2 aylık önceden bildirim süresi uygulanmaz:\n- Hesabı, kasıtlı olarak yasa dışı faaliyetler için kullanmışsınız.\n- Sağladığınız bilgiler doğru değil.\nBankanız, aynı zamanda, Fransız Merkez Bankası içindeki, bu fesihle ilgili olabilecek olası anlaşmazlıkları çözmek için özel olarak kurulmuş müşteri ilişkileri birimi hakkında sizi bilgilendirecektir. Bu birimi, gerektiği kadar kez başvurabilirsiniz.",
+        "titre": "Bank, hesabın, hesap hakkı kapsamında açıldığı duruma göre kapatabilir mi?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2417",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2417",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2022-06-10"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 77.6,
+      "units": 78
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:07.337Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "رفض فتح حساب بنكي: الحق في الحصول على الحساب",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "يمنح الحق في الحساب إمكانية الحصول على حساب يتضمن خدمات مصرفية أساسية، يتم فتحه في بنك يتم اختياره من قبل البنك المركزي الفرنسي.",
+      "steps": [
+       {
+        "texte": "إذا رفضت البنك فتح حساب بنكي لك، ولم يكن لديك أي حساب في فرنسا، يمكنك اللجوء إلى البنك المركزي الفرنسي للاستفادة من إجراء \"حق فتح الحساب\". سيقوم البنك المركزي بتعيين بنك قريب من منزلك أو من المكان الذي تختاره، والذي يجب أن يفتح لك حسابًا مع خدمات مصرفية أساسية. إليك المعلومات التي يجب أن تعرفها حول حق فتح الحساب.",
+        "titre": null
+       },
+       {
+        "texte": "قد ترفض البنك فتح حساب لك.\nإذا لم تستجب البنك لطلب فتح حساب خلال فترة 15 يومًا، فسيتم اعتبار ذلك رفضًا. تبدأ هذه الفترة من تاريخ استلامك إشعارًا بطلبك أو من تاريخ تقديمه شخصيًا أو في المكتب.\nيجب على البنك حينها تزويدك برسالة رفض، مع ذكر سبب الرفض.\nكما يجب أن تخبرك عن إمكانية الاستفادة من إجراء \"الحق في الحساب\" من خلال البنك المركزي الفرنسي.\nوبالتالي، تحدد البنك المركزي الفرنسي بنكًا معينًا لفتح حساب لك وتوفير الخدمات المصرفية الأساسية.",
+        "titre": "ما هو حق الوصول إلى الحساب؟"
+       },
+       {
+        "texte": "للاستفادة من الإجراء المتعلق بحق الوصول إلى الحساب في فرنسا، يجب عليك استيفاء أحد المعايير التالية:\n- الإقامة في فرنسا دون شرط الجنسية.\n- أن تكون من جنسية فرنسية ومقيمًا في الخارج.\n- أن تكون من جنسية أجنبية، وأن تعيش بشكل قانوني في إحدى دول الاتحاد الأوروبي، وعدم القيام بأي عمل يتعلق بالنشاط المهني.\nتنبيه: إذا كان لديك بالفعل حساب ادخاري في فرنسا، فلن تتمكن من الاستفادة من حق فتح حساب جديد.\nيمكنكم الاستفادة من الحق في فتح حساب حتى لو كنتم في إحدى الحالات التالية:\n- حظر مصرفي\n- تم إدراجه في سجل الحوادث المتعلقة بالائتمان للأفراد (FICP)\n- سوريندتيه\n- صاحب حساب جماعي.",
+        "titre": "من يمكنه الاستفادة من الحق في فتح حساب؟"
+       },
+       {
+        "texte": "يمكن لجمعية المستهلكين المعتمدة، مثل Caf (صندوق الإعانات العائلية)، أو قسمك المحلي أو مركزك المجتمعي أو الإقليمي للخدمات الاجتماعية، أن يساعدك في هذه العملية.\nإعداد ملف طلب الحصول على الحق في الحساب.\nيجب أن تقوم بتجميع ملف يحتوي على المستندات التالية:\n- نموذج طلب الحصول على حقوق في الحساب\n- وثيقة هوية فرنسية أو أجنبية سارية المفعول.\n- إثبات الإقامة (مثل فاتورة المياه أو الهاتف التي لم تتجاوز 3 أشهر، أو إيصال إيجار لم يتجاوز 3 أشهر، أو سند ملكية للمنزل الرئيسي)\n- خطاب رفض من البنك الذي تم التواصل معه، أو إشعار باستلام خطاب طلب فتح الحساب، أو إثبات استلام طلب فتح الحساب شخصيًا، والذي يسبق تاريخه بـ 15 يومًا.\n- بيان شخصي يؤكد عدم وجود حساب مصرفي شخصي أو مهني، وفي حال وجود أي حساب، فإن هذا البيان يثبت رغبتي في إلغاء الاتفاقية المصرفية.\n- إقرار رسمي يؤكد أنك مقيم بشكل قانوني في إحدى الدول الأعضاء في الاتحاد الأوروبي، إذا كنت في هذه الحالة.\nتقديم الطلب إلى البنك المركزي الفرنسي\nيمكنكم تقديم طلبكم إلى البنك المركزي الفرنسي عبر الإنترنت أو في فرع البنك أو عن طريق البريد.\nمثال: عبر الإنترنت\nيجب عليك تقديم طلبك عن طريق تسجيل الدخول إلى حسابك الشخصي على موقع البنك المركزي الفرنسي (يجب عليك الوصول إلى حسابك أو إنشاء حساب باستخدام بيانات اعتماد FranceConnect).\n→ خدمة عبر الإنترنت: طلب الحصول على حساب بنكي (إجراء عبر الإنترنت)\nمثال: في المقهى\nيجب عليك تقديم طلبك في أحد فروع البنك الفرنسي. قد يكون من الضروري تحديد موعد.\n→ خدمة عبر الإنترنت: طلب الحصول على حساب بنكي (شخص طبيعي)\n→ إلى أين يتم التوجه: مكتب الاستقبال والمعلومات في البنك الفرنسي\nمثال: عن طريق البريد\nيجب عليك إرسال طلبك عن طريق البريد إلى البنك المركزي الفرنسي.\n→ خدمة عبر الإنترنت: طلب الحصول على حساب بنكي (شخص طبيعي)\n→ إلى أين يتم التوجه: مباشرة إلى الحساب: عنوان البريد الصوتي لبنك فرنسا\nيرجى ملاحظة: يمكنك أيضًا طلب من البنك الذي رفض فتح حساب لك، أن يرسل ملف طلبك إلى البنك المركزي الفرنسي.",
+        "titre": "كيفية تقديم طلب للحصول على حقوق في الحساب؟"
+       },
+       {
+        "texte": "في غضون يوم عمل واحد بدءًا من استلام المستندات، تحدد البنك المركزي الفرنسي البنك المسؤول عن فتح الحساب. سيقوم البنك المركزي الفرنسي بإبلاغك (عن طريق البريد أو من خلال حسابك الشخصي) باسم المؤسسة المحددة، كما سيقوم أيضًا بإبلاغ البنك المعني عبر البريد. قرار البنك المركزي الفرنسي بتحديد البنك يكون ساري المفعول لمدة 6 أشهر.\nخلال الأيام الثلاثة التالية لإخطارك بتعيينك، يجب على البنك المعين إرسال قائمة بالوثائق المطلوبة لفتح الحساب ومعلومات الاتصال بالفرع البنكي الذي يجب عليك الاتصال به، وذلك عن طريق البريد أو أي وسيلة أخرى دائمة.\nبعد ذلك، يجب عليك التواصل مع الوكالة المحددة لفتح الحساب وتقديم المستندات المطلوبة إليها. لديك 6 أشهر (اعتبارًا من قرار التعيين) للتواصل مع البنك.\nبعد إتمام الاتصال، عادةً ما يكون من الضروري تحديد موعد. في يوم الموعد، حضورك ضروري لإتمام عملية فتح الحساب. قد يُطلب منك تقديم مستندات إضافية، خاصة فيما يتعلق بمكافحة غسل الأموال وتمويل الإرهاب.\nيجب على البنك المخصص فتح الحساب في غضون 3 أيام عمل إذا قدمت جميع المستندات المطلوبة.",
+        "titre": "كيف يتم فتح الحساب البنكي في البنك المحدد؟"
+       },
+       {
+        "texte": "الشرط المصرفي المرتبط بفتح حساب التوفير يقتصر على الخدمات المصرفية الأساسية التالية:\n- فتح الحساب، وإدارته، وإغلاقه\n- تغيير عنوان واحد سنويًا\n- إصدار كشوف الحساب البنكي عند الطلب.\n- توجيه التحويلات المصرفية\n- توفير تقرير شهري عن العمليات التي تم إجراؤها على الحساب.\n- قبول الشيكات وتحويلات البنوك\n- الدفع عن طريق سحب SEPA، أو أمر دفع SEPA بين البنوك، أو تحويل SEPA.\n- وسائل للتحقق عن رصيد الحساب عن بعد\n- إيداع وسحب الأموال في فرع البنك الذي يحتفظ بحساب العميل.\n- بطاقة مصرفية، بحيث يتم السماح باستخدامها من قبل البنك.\n- 2 أنواع من الشيكات البنكية شهريًا، أو وسائل دفع مماثلة، تقدم نفس الخدمات.\n- إجراء عمليات الدفع",
+        "titre": "ما هي الخدمات المصرفية التي يتيح الحق في فتح الحساب الوصول إليها؟"
+       },
+       {
+        "texte": "إن فتح حساب بنكي بموجب حق الحصول على الحساب واستخدام الخدمات المصرفية الأساسية مجاني.\nوهذا يعني: يتم تطبيق رسوم في حالة وجود أي خلل في عمل حسابك. تفرض البنك رسومًا على المعاملات عندما تنفذ عملية دفع، وذلك في حالة عدم كفاية المبلغ الموجود في الحساب. أما بالنسبة للمستفيدين من حق الوصول إلى الحساب، فإن الرسوم التي يتم تحصيلها محدودة بـ 4 يورو لكل معاملة، ولا تتجاوز 20 يورو شهريًا.",
+        "titre": "هل استخدام الحساب المصرفي مشروط بدفع رسوم في إطار حق الحصول على حساب؟"
+       },
+       {
+        "texte": "يمكن للبنك الذي عينته البنك المركزي الفرنسي أن يقرر بمفرده إغلاق حسابك. لتحقيق ذلك، يجب استيفاء أحد الشروط التالية:\n- لقد استخدمت الحساب بشكل متعمد لإجراء معاملات غير قانونية.\n- لقد قدمت معلومات غير دقيقة.\n- لم تعد تلتزم بشروط الإقامة أو السكن.\n- لقد فتحت حسابًا إضافيًا في فرنسا، مما يتيح لك استخدام الخدمات المصرفية الأساسية.\n- لقد أظهرت سلوكًا غير لائق ومتكرر تجاه موظفي المؤسسة المالية.\n- لم تتمكن البنك من تحديد هويتك أو جمع المعلومات اللازمة لفتح الحساب أو تشغيله.\nفي حالة إلغاء الحساب، يجب على البنك إرسال قرار الإلغاء مع توضيح الأسباب كتابيًا وإبلاغ البنك المركزي الفرنسي. لديك فترة إشعار مدتها 2 أشهر، إلا في الحالتين التاليتين:\n- لقد استخدمت الحساب بشكل متعمد لإجراء معاملات غير قانونية.\n- لقد قدمت معلومات غير دقيقة.\nيجب على البنك أيضًا إعلامك بوجود خدمة للتعامل مع العملاء داخل البنك المركزي، وهي مخصصة للتعامل مع أي نزاعات محتملة تتعلق بهذا الإنهاء. يمكنك التواصل مع هذه الخدمة في أي وقت ضروري.",
+        "titre": "هل يمكن للبنك إغلاق حساب بنكي تم فتحه بموجب قانون الحق في فتح حساب؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2417",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2417",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2022-06-10"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 77.1,
+      "units": 78
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:10.225Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Verweigerung der Eröffnung eines Bankkontos: Recht auf ein Konto",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Das Recht auf ein Konto ermöglicht es, ein Konto mit grundlegenden Bankdienstleistungen zu eröffnen, das von der Banque de France bei einer von Ihnen gewählten Bank eingerichtet wird.",
+      "steps": [
+       {
+        "texte": "Eine Bank lehnt Ihnen die Eröffnung eines Kontos ab und Sie haben kein bestehendes Konto in Frankreich? In diesem Fall können Sie sich an die Banque de France wenden, um die \"Recht auf ein Konto\"-Verfahren in Anspruch zu nehmen. Die Banque de France weist dann eine Bank zu, die sich in Ihrer Nähe oder an Ihrem gewählten Ort befindet, und die Ihnen ein Konto mit grundlegenden Bankdienstleistungen eröffnen muss. Hier sind die wichtigsten Informationen zum \"Recht auf ein Konto\".",
+        "titre": null
+       },
+       {
+        "texte": "Eine Bank kann die Eröffnung eines Kontos für Sie ablehnen.\nWenn eine Bank Ihre Anfrage zur Kontoeröffnung innerhalb von 15 Tagen nicht bearbeitet, gilt dies als Ablehnung. Der Zeitraum beginnt mit dem Datum des Empfangs Ihrer Anfrage oder dem Datum der persönlichen Abgabe oder Einreichung am Schalter.\nDie Bank muss Ihnen dann ein Ablehnungs-Schreiben zukommen lassen, in dem der Grund für die Ablehnung angegeben wird.\nSie sollte Sie auch über die Möglichkeit informieren, die Banque de France zu kontaktieren, um die Verfahren zur Durchsetzung von Ansprüchen auf Konten zu nutzen.\nDie Banque de France weist dann eine Bank zur Auswahl, die Ihnen ein Konto eröffnen und grundlegende Bankdienstleistungen anbieten muss.",
+        "titre": "Was bedeutet das Recht auf ein Konto?"
+       },
+       {
+        "texte": "Um die französische Regelung des Rechts auf ein Konto nutzen zu können, müssen Sie einer der folgenden Bedingungen entsprechen:\n- Wohnsitz in Frankreich, ohne Staatsbürgerschaftspräferenz\n- Französische Staatsbürgerschaft und Wohnsitz im Ausland\n- Ausländische Staatsbürgerschaft und rechtmäßiger Aufenthalt in einem anderen Mitgliedsstaat der Europäischen Union, sowie keine berufliche Tätigkeit.\nBitte beachten Sie: Wenn Sie bereits ein Sparkonto in Frankreich haben, können Sie nicht von dem Recht auf ein Sparkonto profitieren.\nSie haben Anspruch auf ein Konto, auch wenn Sie sich in einer der folgenden Situationen befinden:\n- Bankverbot\n- Eintrag im Verzeichnis für Verbraucherkreditausfälle (FICP)\n- Surendetté\n- Besitzer eines gemeinsamen Kontos.",
+        "titre": "Wer kann von dem Recht auf ein Konto profitieren?"
+       },
+       {
+        "texte": "Eine von einer Verbraucherorganisation genehmigte Einrichtung, wie Ihre Caf (Familienkasse), Ihre örtliche Behörde oder Ihr kommunales oder interkommunales Sozialzentrum, kann Sie bei Ihren Anliegen unterstützen.\nEin Dossier für die Beantragung von Ansprüchen auf dem Konto erstellen.\nSie müssen eine Unterlagenmappe erstellen, die folgende Dokumente enthält:\n- Antragsformular für die Inanspruchnahme des Kontos\n- Französische oder ausländische Ausweisdokument\n- Nachweis des Wohnsitzes (z. B. Wasser- oder Telefonrechnung der letzten 3 Monate, Mietvertrag der letzten 3 Monate, Eigentumsnachweis der Hauptwohnung)\n- Brief der Bank, in dem die Ablehnung erklärt wird, oder Empfangsbestätigung des eingeschriebenen Briefes oder Nachweis des persönlichen Abgabe der Kontoeröffnungsanfrage, wobei der Brief älter als 15 Tage ist.\n- Erklärung, in der ich bestätige, dass ich kein persönliches oder berufliches Konto bei dieser Bank habe, und falls ich eines habe, dass ich die Entscheidung zur Kündigung des Kontos treffe.\n- Ein auf Ehrlichkeit bestätigendes Schreiben, das besagt, dass Sie legal in einem anderen Mitgliedsstaat der Europäischen Union ansässig sind, falls dies der Fall ist.\nEinreichen des Antrags bei der Banque de France\nSie können Ihre Anfrage entweder online bei der Banque de France, an einer Filiale oder per Post einreichen.\nFall: Online\nSie müssen Ihre Anfrage über die Anmeldung in Ihrem persönlichen Bereich auf der Website der Banque de France stellen (Sie müssen sich anmelden oder ein Konto mit Ihrem FranceConnect-Benutzerkonto erstellen).\n→ Online-Service: Antrag auf Bankkontoverbindung (Online-Verfahren)\nFall: Am Schalter\nSie müssen Ihren Antrag bei einer Filiale der Banque de France einreichen. Es kann erforderlich sein, einen Termin zu vereinbaren.\n→ Online-Service: Antrag auf Bankkontoeröffnung (natürliche Person)\n→ Wo man sich wenden kann: Informations- und Empfangsbüro der Banque de France\nFall: Per Post\nSie müssen Ihren Antrag per Post an die Banque de France senden.\n→ Online-Service: Antrag auf Bankkontoeröffnung (natürliche Person)\n→ An wen: Direkte Kontaktaufnahme: Postanschrift der Banque de France\nBitte beachten Sie: Sie können auch die Bank, die Ihnen die Eröffnung eines Kontos verweigert hat, bitten, Ihr Dossier an die Banque de France weiterzuleiten.",
+        "titre": "Wie kann ich eine Anfrage für den Zugriff auf das Konto stellen?"
+       },
+       {
+        "texte": "Innerhalb von einem Werktag nach Erhalt der Unterlagen bestimmt die Banque de France die Bank, die für die Eröffnung des Kontos zuständig ist. Die Banque de France informiert Sie (per Post oder über Ihr persönliches Konto) über den ausgewählten Finanzdienstleister und informiert ebenfalls per Post die zuständige Bank. Die Entscheidung der Banque de France zur Benennung ist 6 Monate gültig.\nInnerhalb der drei Werktage nach der Benachrichtigung über die Ernennung muss die benannte Bank Ihnen eine Liste der erforderlichen Dokumente zur Konteneröffnung sowie die Kontaktdaten der zuständigen Bankfiliale zusenden.\nAnschließend müssen Sie Kontakt mit dem dafür benannten Institut aufnehmen, um das Konto zu eröffnen, und ihm die erforderlichen Unterlagen zukommen lassen. Sie haben 6 Monate Zeit (beginnend mit der Entscheidung zur Benennung), um sich bei der Bank zu melden.\nNachdem der Kontakt hergestellt wurde, ist in der Regel ein Termin erforderlich. An dem vereinbarten Termin ist Ihre Anwesenheit in der Regel unerlässlich, um das Konto zu eröffnen. Möglicherweise werden zusätzliche Unterlagen verlangt, insbesondere im Zusammenhang mit der Bekämpfung von Geldwäsche und der Finanzierung von Terrorismus.\nDie ausgewählte Bank muss das Konto innerhalb von 3 Werktagen eröffnen, sofern Sie alle erforderlichen Unterlagen vorgelegt haben.",
+        "titre": "Wie wird das Bankkonto bei der genannten Bank eröffnet?"
+       },
+       {
+        "texte": "Die zu dem Eröffnungskonto gehörende Kontovereinbarung beschränkt sich auf die folgenden grundlegenden Bankdienstleistungen:\n- Eröffnung, Führung und Schließung des Kontos\n- Eine Adressänderung pro Jahr\n- Auf Anfrage, die Ausstellung von Kontoauszügen\n- Einrichtung von Banküberweisungen\n- Monatliche Bereitstellung eines Berichts über die durchgeführten Transaktionen auf dem Konto\n- Ausführung von Schecks und Banküberweisungen\n- Zahlungen per SEPA-Lastschrift, SEPA-Interbanken-Zahlungsauftrag oder SEPA-Überweisung\n- Möglichkeiten zur Fernüberwachung des Kontostands\n- Einzahlungen und Auszahlungen von Bargeld am Schalter der Bank, die das Konto verwaltet.\n- Bankkarte, bei der jede Nutzung von der Bank genehmigt wurde.\n- 2 Bankcheques pro Monat oder gleichwertige Zahlungsmethoden, die die gleichen Leistungen bieten.\n- Durchführung von Kassenoperationen",
+        "titre": "Welche Bankdienstleistungen werden durch das Recht auf ein Konto ermöglicht?"
+       },
+       {
+        "texte": "Die Eröffnung eines Bankkontos im Rahmen des Rechts auf ein Bankkonto sowie die Nutzung grundlegender Bankdienstleistungen sind kostenlos.\nKonkret: Es fallen Gebühren an, wenn es zu Problemen bei der Kontoführung kommt. Die Bank erhebt eine Bearbeitungsgebühr, wenn sie eine Zahlung ausführt, während das Guthaben auf dem Konto nicht ausreicht. Für Kontoinhaber gelten folgende Regelungen: Die erhobenen Gebühren sind auf maximal 4 € pro Transaktion begrenzt, wobei die Gesamtsumme pro Monat auf 20 € begrenzt ist.",
+        "titre": "Ist die Nutzung des Bankkontos im Rahmen des Rechts auf ein Konto kostenpflichtig?"
+       },
+       {
+        "texte": "Die von der Banque de France benannte Bank kann allein entscheiden, Ihr Konto zu schließen. Dies setzt voraus, dass eine der folgenden Bedingungen erfüllt ist:\n- Sie haben das Konto absichtlich für illegale Aktivitäten genutzt.\n- Sie haben falsche Informationen gegeben.\n- Sie erfüllen nicht mehr die Voraussetzungen für ein Wohn- oder Aufenthaltsrecht.\n- Sie haben ein zweites Sparkonto in Frankreich eröffnet, das es Ihnen ermöglicht, grundlegende Bankdienstleistungen in Anspruch zu nehmen.\n- Sie haben sich wiederholt unhöflich gegenüber dem Personal der Bank verhalten.\n- Die Bank konnte Sie nicht identifizieren oder die notwendigen Informationen für die Eröffnung oder den Betrieb des Kontos erhalten.\nIm Falle einer Kündigung des Kontos muss die Bank Ihnen schriftlich eine begründete Entscheidung zukommen lassen und die Banque de France informieren. Sie haben einen Frist von 2 Monaten zur Kündigung, es sei denn, in folgenden Fällen:\n- Sie haben das Konto absichtlich für illegale Aktivitäten genutzt.\n- Sie haben falsche Informationen gegeben.\nDie Bank muss Sie außerdem darüber informieren, dass innerhalb der Banque de France ein Kundenservice für die Bearbeitung etwaiger Streitigkeiten im Zusammenhang mit dieser Kündigung eingerichtet ist. Sie können diesen Service beliebig oft kontaktieren.",
+        "titre": "Kann eine Bank ein Konto schließen, das im Rahmen des Rechts auf ein Konto eröffnet wurde?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2417",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2417",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2022-06-10"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "entitlement"
+      ],
+      "warnings": [],
+      "roundtrip": 79.1,
+      "units": 78
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:13.812Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Відмова у відкритті банківського рахунку: право на відкриття рахунку",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Право на рахунок дозволяє отримати рахунок з базовими банківськими послугами, відкритий у обраній банку, яка була вибрана Французькою національною банкою.",
+      "steps": [
+       {
+        "texte": "Банк відмовляється відкрити вам банківський рахунок, і у вас немає жодного рахунку в Франції? У такому разі, ви можете звернутися до Французької національної банку, щоб отримати право на відкриття рахунку. Французька національна банка призначить банк, розташований поблизу вашого дому або за вашим вибором, який повинен відкрити для вас рахунок з базовими банківськими послугами. Ось інформація, яку слід знати про право на відкриття рахунку.",
+        "titre": null
+       },
+       {
+        "texte": "Банк може відмовити вам у відкритті рахунку.\nЯкщо банк не відповідає на вашу заявку про відкриття рахунку протягом 15 днів, це вважається відмовою. Термін починається з дати отримання вашої заявки або з дати її подання особисто або в касі.\nБанк повинен надати вам відповідний лист відмови, в якому буде зазначено причину.\nВона також повинна повідомити вам про можливість звернутися до Французької національної банку для отримання компенсації відповідно до процедури \"право на рахунок\".\nЦентральний банк Франції призначає банк, який повинен відкрити для вас рахунок і надати доступ до базових банківських послуг.",
+        "titre": "Що таке право на рахунок?"
+       },
+       {
+        "texte": "Щоб отримати право на відкриття рахунку у Франції, вам необхідно відповідати одному з наступних критеріїв:\n- Находитися за місцем проживання у Франції, без умов щодо громадянства.\n- Мати французьке громадянство та проживати за кордоном\n- Бути громадянином іншої країни та законно проживати на території іншої країни-члена Європейського Союзу, а також не здійснювати діяльність у професійних цілях.\nУвага: Якщо у вас вже є рахунок у французькій банку, ви не можете скористатися правом на відкриття рахунку.\nВи маєте право на відкриття рахунку, навіть якщо ви перебуваєте в одній із наступних ситуацій:\n- Банківський режим\n- Занесено до реєстру випадків кредитного неплатежу для фізичних осіб (FICP)\n- Заплачено\n- Має спільний рахунок.",
+        "titre": "Хто може отримати право на рахунок?"
+       },
+       {
+        "texte": "Організація споживачів, яка має відповідний статус, наприклад, ваша Caf (каса сімейних допомог), місцева адміністрація або соціальний центр вашого муніципалітету або регіону, може допомогти вам у ваших діях.\nПідготувати пакет документів для подання заявки на право власності на рахунок\nВам необхідно зібрати пакет документів, що включає наступні матеріали:\n- Форма заявки на право доступу до рахунку\n- Французький або іноземний документ, що має термін дії.\n- Документ, що підтверджує місце проживання (наприклад, квитанція про оплату комунальних послуг або телефонних послуг за останні 3 місяці, квитанція про оплату оренди за останні 3 місяці, документ про право власності на основне житло)\n- Лист від банку, в якому відмовлено у відкритті рахунку, або повідомлення про отримання рекомендованого листа або доказ отримання заявки на відкриття рахунку особисто, датований більше ніж 15 днів.\n- Оголошення, яке підтверджує відсутність у вас особистого або професійного рахунку, і якщо такий рахунок є, рішення про розірвання угоди про відкриття рахунку.\n- Офіційний документ, що підтверджує ваше законне проживання на території іншої країни-члена Європейського Союзу, якщо ви перебуваєте в такій ситуації.\nПодати заявку до Французької національної банку\nВи можете подати заявку в Банк Франції онлайн, через відділення банку або поштою.\nПриклад: Онлайн\nВам необхідно подати заявку, увійшовши у свій особистий простір на веб-сайті Французької національної банку (вам потрібно отримати доступ до свого профілю або створити обліковий запис, використовуючи ваш обліковий запис FranceConnect).\n→ Онлайн-сервіс: Запит на отримання коштів на банківський рахунок (процес онлайн)\nВипадок: У касі\nВи повинні подати свою заявку в касі одного з відділень Французької національної банку. Можливо, знадобиться попереднє узгодження.\n→ Онлайн-сервіс: Запит на отримання коштів на банківський рахунок (фізична особа)\n→ Куди звернутися: Офіс прийому та інформації Франківського банку\nПриклад: Поштою\nВи повинні надіслати своє запит поштою до Французької національної банку.\n→ Онлайн-сервіс: Запит на отримання коштів на банківський рахунок (фізична особа)\n→ Куди звертатися: Безпосередньо до банку: поштова адреса Французької національної банку\nВажливо зазначити: Ви також можете попросити банк, який відмовив вам у відкритті рахунку, передати вашу заяву до Французької національної банку.",
+        "titre": "Як подати заявку на отримання права на рахунок?"
+       },
+       {
+        "texte": "Протягом 1 робочого дня після отримання документів, Французька національна банк призначає банк, який буде відкривати рахунок. Французька національна банк повідомить вас (поштою або через особистий обліковий запис) про назву обраного банку, а також повідомить відповідний банк поштою. Рішення про призначення Французькою національною банком є дійсним протягом 6 місяців.\nПротягом 3 робочих днів після отримання повідомлення про призначення, банк, який був призначений, зобов'язаний надіслати вам поштою або іншим довготривалим способом перелік необхідних документів для відкриття рахунку та контактні дані філії банку, з якою слід звертатися.\nПотім вам необхідно зв'язатися з призначеною установою, яка відкриє рахунок, і надати їм необхідні документи. У вас є 6 місяців (з дати призначення) на те, щоб повідомити про це банку.\nПісля встановлення контакту, зазвичай необхідно домовитися про зустріч. У день зустрічі, ваша присутність є обов'язковою для відкриття рахунку. Можуть бути запропоновані додаткові документи, зокрема, пов'язані з боротьбою з відмиванням грошей та фінансуванням тероризму.\nБанк, який було призначено, повинен відкрити рахунок протягом 3 робочих днів, якщо ви надали всі необхідні документи.",
+        "titre": "Як відкрити банківський рахунок у вказаній банку?"
+       },
+       {
+        "texte": "Угода про обслуговування рахунку, яка відкривається разом із депозитом, обмежується лише наступними базовими банківськими послугами:\n- Відкриття, ведення та закриття рахунку\n- Зміна адреси один раз на рік\n- На вимогу, видача виписок з банківського рахунку\n- Реєстрація банківських переказів\n- Щомісячна надання звіту про операції, здійснені на цьому рахунку.\n- Обробка чеків та банківських переказів\n- Оплата за допомогою SEPA, міжбанківський платіжний ордер SEPA або переказ SEPA\n- Способи дистанційного перегляду балансу рахунку\n- Внесення та зняття готівки в касі банку, де відкритий рахунок.\n- Банківська картка, використання якої схвалено банком\n- 2 банківські чеки на місяць або еквівалентні способи оплати, які надають ті самі послуги.\n- Виконання операцій з касою",
+        "titre": "Які банківські послуги надає право на відкриття рахунку?"
+       },
+       {
+        "texte": "Відкриття банківського рахунку відповідно до права на банківський рахунок та використання базових банківських послуг є безкоштовними.\nА саме: За несвоєчасні операції з рахунку стягуються комісії. Банк стягує комісію за здійснення операції оплати, якщо на рахунку недостатньо коштів. Для осіб, які мають право на рахунок, розмір стягуваних комісій обмежено до 4 євро за операцію, але не більше 20 євро на місяць.",
+        "titre": "Чи є плата за використання банківського рахунку в рамках права на банківський рахунок?"
+       },
+       {
+        "texte": "Банк, який було призначено Французькою національною банкою, може самостійно вирішити закрити ваш рахунок. Для цього має бути виконана одна з наступних умов:\n- Ви свідомо використовували цей обліковий запис для здійснення незаконних операцій.\n- Ви надали неточну інформацію.\n- Ви більше не відповідаєте вимогам щодо проживання або місця проживання.\n- Ви відкрили другий рахунок у Франції, який дозволяє вам використовувати базові банківські послуги.\n- Ви неодноразово проявляли неприйнятну поведінку по відношенню до співробітників фінансової установи.\n- Банк не зміг ідентифікувати вас або зібрати необхідну інформацію для відкриття або функціонування рахунку.\nУ разі припинення дії рахунку, банк зобов'язаний повідомити про це рішення письмово, з обґрунтуванням, і направити копію відповідної установи – Французькій національній банку. Ви маєте 2 місяці на повідомлення про намір припинити дію рахунку, за винятком наступних випадків:\n- Ви свідомо використовували цей обліковий запис для здійснення незаконних операцій.\n- Ви надали неточну інформацію.\nБанк також повинен повідомити вам про існування в Банку Франції служби взаємодії з клієнтами, яка займається вирішенням можливих спорів, пов'язаних із цим розірванням угоди. Ви можете звертатися до цієї служби стільки разів, скільки потрібно.",
+        "titre": "Чи може банк закрити рахунок, відкритий відповідно до права на відкриття рахунку?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2417",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2417",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2022-06-10"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 78.6,
+      "units": 78
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:a6d4feb7db1e8e1c356996c14301b832c911c6041e7c718f6e6b4dcd39508d2e",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Refus d'ouverture de compte bancaire : droit au compte",
+   "contenu_json": {
+    "intro": "Le droit au compte permet de bénéficier d'un compte avec des services bancaires de base ouvert dans une banque choisie par la Banque de France.",
+    "steps": [
+     {
+      "texte": "Une banque refuse de vous ouvrir un compte bancaire et vous n’avez aucun compte de dépôt en France ? Dans ce cas, vous pouvez saisir la Banque de France pour bénéficier de la procédure du droit au compte. La Banque de France désigne alors une banque, proche de votre domicile ou du lieu de votre choix, qui doit vous ouvrir un compte avec des services bancaires de base. Voici les informations à connaître sur le droit au compte.",
+      "titre": null
+     },
+     {
+      "texte": "Une banque peut vous refuser l'ouverture d'un compte.\nSi une banque ne répond pas à votre demande d'ouverture de compte dans un délai de 15 jours, cela est considéré comme un refus. Le délai débute à partir de la date de l'avis de réception de votre demande ou de sa date de dépôt en main propre ou au guichet.\nLa banque doit alors vous fournir une lettre de refus en y précisant le motif.\nElle doit aussi vous informer sur la possibilité de saisir la Banque de France pour bénéficier de la procédure de droit au compte.\nLa Banque de France désigne alors une banque qui doit vous ouvrir un compte et vous donner accès à des services bancaires de base.",
+      "titre": "Qu'est-ce que le droit au compte ?"
+     },
+     {
+      "texte": "Pour bénéficier de la procédure du droit au compte en France, vous devez remplir un des critères suivants :\n- Être domicilié en France, sans condition de nationalité\n- Être de nationalité française et résider à l’étranger\n- Être de nationalité étrangère et résider légalement sur le territoire d'un autre État membre de l'Union européenne, et ne pas agir pour des besoins professionnels.\nAttention : Si vous avez déjà un compte de dépôt en France, vous ne pouvez pas bénéficier du droit au compte.\nVous pouvez bénéficier du droit au compte même si vous êtes dans l'une des situations suivantes :\n- Interdit bancaire\n- Inscrit au fichier des incidents de crédit aux particuliers (FICP)\n- Surendetté\n- Titulaire d'un compte collectif.",
+      "titre": "Qui peut bénéficier du droit au compte ?"
+     },
+     {
+      "texte": "Une association de consommateurs agréée, votre Caf, votre département ou votre centre communal ou intercommunal d'action sociale peut vous accompagner dans vos démarches.\nConstituer un dossier de demande de droit au compte\nVous devez constituer un dossier rassemblant les documents suivants :\n- Formulaire de demande de droit au compte\n- Pièce d'identité française ou étrangère en cours de validité\n- Justificatif de domicile (par exemple, facture d'eau ou téléphone de moins de 3 mois, quittance de loyer de moins de 3 mois, titre de propriété de la résidence principale)\n- Lettre de refus de la banque démarchée, ou accusé de réception de la lettre recommandée ou de la preuve du dépôt en main propre de la demande d'ouverture de compte, datant de plus de 15 jours\n- Déclaration sur l'honneur attestant que vous n'avez pas de compte de dépôt personnel ou professionnel, et s'il y en a une, la décision de résiliation de la convention de compte\n- Attestation sur l'honneur que vous résidez légalement sur le territoire d'un autre État membre de l'Union européenne, si vous êtes dans cette situation.\nDéposer la demande à la Banque de France\nVous pouvez déposer votre demande à la Banque de France en ligne ou au guichet d’une succursale ou par courrier.\nCas : En ligne\nVous devez déposer votre demande en vous connectant à votre espace personnel sur le site de la Banque de France (vous devez accéder à votre espace ou créer un compte avec votre identifiant FranceConnect) :\n→ Service en ligne : Demande de droit au compte bancaire (démarche en ligne)\nCas : Au guichet\nVous devez déposer votre demande au guichet d'une succursale de la Banque de France. Un rendez-vous peut être nécessaire.\n→ Service en ligne : Demande de droit au compte bancaire (personne physique)\n→ Où s'adresser : Bureau d'accueil et d'information de la Banque de France\nCas : Par courrier\nVous devez envoyer votre demande par courrier postal à la Banque de France.\n→ Service en ligne : Demande de droit au compte bancaire (personne physique)\n→ Où s'adresser : Droit au compte : adresse postale de la Banque de France\nÀ noter : Vous pouvez aussi demander à la banque qui a refusé de vous ouvrir un compte de transmettre votre dossier à la Banque de France.",
+      "titre": "Comment faire une demande de droit au compte ?"
+     },
+     {
+      "texte": "Dans un délai d'1 jour ouvré à partir de la réception des documents, la Banque de France désigne la banque chargée d'ouvrir le compte. La Banque de France vous informe (par courrier ou sur votre espace personnel) du nom de l’établissement désigné et informe également par courrier la banque concernée. La décision de désignation par la Banque de France est valable 6 mois.\nDans les 3 jours ouvrés qui suivent la notification de sa désignation, la banque désignée doit vous transmettre par courrier ou tout autre support durable une liste des pièces nécessaires à l'ouverture du compte et les coordonnées de l'agence bancaire à qui vous adresser.\nVous devez ensuite prendre contact avec l’agence désignée pour ouvrir le compte et lui transmettre les pièces demandées. Vous avez 6 mois (à compter de la décision de désignation) pour vous manifester auprès de la banque.\nUne fois le contact effectué, un rendez-vous est en principe nécessaire. Le jour du rendez-vous, votre présence est généralement indispensable pour procéder à l’ouverture du compte. Des justificatifs complémentaires peuvent vous être demandés, notamment en matière de lutte contre de blanchiment et le financement du terrorisme.\nLa banque désignée doit ouvrir le compte dans un délai de 3 jours ouvrés si vous avez fourni tous les documents nécessaires.",
+      "titre": "Comment le compte bancaire est-il ouvert dans la banque désignée ?"
+     },
+     {
+      "texte": "La convention de compte associée à l'ouverture du compte de dépôt se limite aux services bancaires élémentaires suivants :\n- Ouverture, tenue et clôture du compte\n- 1 changement d’adresse par an\n- Délivrance, à la demande, de relevés d'identité bancaire\n- Domiciliation de virements bancaires\n- Fourniture mensuelle d'un relevé des opérations effectuées sur le compte\n- Encaissement de chèques et de virements bancaires\n- Paiements par prélèvement SEPA, titre interbancaire de paiement SEPA ou virement SEPA\n- Moyens de consultation à distance du solde du compte\n- Dépôts et retraits d'espèces au guichet de la banque qui tient le compte\n- Carte bancaire dont chaque utilisation est autorisée par la banque\n- 2 formules de chèques de banque par mois ou moyens de paiement équivalents offrant les mêmes services\n- Réalisation des opérations de caisse",
+      "titre": "À quels services bancaires le droit au compte donne t-il accès ?"
+     },
+     {
+      "texte": "L'ouverture d'un compte bancaire dans le cadre du droit au compte et l'utilisation des services bancaires de base sont gratuits.\nÀ savoir : Des frais sont applicables en cas d’irrégularité de fonctionnement du compte. La banque facture une commission d’intervention quand elle exécute une opération de paiement alors que la provision sur le compte est insuffisante. Pour les bénéficiaires du droit au compte, les commissions perçues sont plafonnées à 4 € par opération dans la limite de 20 € par mois.",
+      "titre": "L'utilisation du compte bancaire est-il payant dans le cadre du droit au compte ?"
+     },
+     {
+      "texte": "La banque désignée par la Banque de France peut décider seule de fermer votre compte. Pour cela, une des conditions suivantes doit être remplie :\n- Vous avez délibérément utilisé le compte pour effectuer des opérations illégales\n- Vous avez fourni des informations inexactes\n- Vous ne répondez plus aux conditions de domicile ou de résidence\n- Vous avez ouvert un 2e compte de dépôt en France qui vous permet d'utiliser les services bancaires de base\n- Vous avez fait preuve d'incivilités répétées envers le personnel de l'établissement de crédit\n- La banque n'a pas pu vous identifier ou recueillir les informations nécessaires à l'ouverture ou au fonctionnement du compte.\nEn cas de résiliation du compte, la banque doit vous adresser sa décision motivée par courrier et en informer la Banque de France. Vous disposez d'un délai de 2 mois de préavis sauf dans les 2 cas suivants :\n- Vous avez délibérément utilisé le compte pour effectuer des opérations illégales\n- Vous avez fourni des informations inexactes.\nLa banque doit aussi vous informer de l'existence, au sein de la Banque de France, d'un service de relations avec la clientèle pour traiter les litiges éventuels liés à cette résiliation. Vous pouvez saisir ce service autant de fois que nécessaire.",
+      "titre": "La banque peut-elle fermer un compte bancaire ouvert dans le cadre du droit au compte ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

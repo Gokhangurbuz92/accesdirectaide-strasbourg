@@ -1,0 +1,575 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "c2s",
+ "recordId": "7c36726e-bb37-4097-80a5-c421a9dc2cd9",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.129Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Complémentaire santé solidaire (C2S)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The complémentaire santé solidaire (C2S) is a financial aid program to cover healthcare expenses that are not covered by the Assurance maladie (French public health insurance), for individuals with limited financial resources. It is either free or paid, depending on the level of income. To be eligible, individuals must meet certain income and residency requirements. The application can be submitted online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The complémentaire santé solidaire (C2S) is a financial aid program to cover healthcare expenses that are not covered by the Assurance maladie (French public health insurance), for individuals with limited financial resources. It is either free or paid, depending on the level of income. To be eligible, individuals must meet certain income and residency requirements. The application can be submitted online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Those who are eligible for the T1, Aspa, Asi, or T2 programs\n- People who are staying for free or who own their own accommodation.\n- Individuals and families eligible for housing assistance\n- People residing in France, regardless of whether they have French nationality or not.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 54.7,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "C2S (social security contributions) are free if income does not exceed the specified annual limits. They are paid if income falls within the corresponding ranges. The amount to be paid depends on income and the number of people in the household.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Await the decision of the Assurance maladie (French public health insurance), which is expected within 2 months.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Pay the potential amount of C2S (social security) contributions if the application is approved.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Automatically renew your application if you are eligible for the RSA (basic income support), Aspa, Asi, or AAH (allowance for disabled adults) programs.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "The income earned in the 12 months prior to the application",
+      "The income tax form for investment income",
+      "The amount of housing assistance received",
+      "Information about the household (number of people)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.3,
+      "units": 4
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.131Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Complémentaire santé solidaire (C2S)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "complémentaire santé solidaire(C2S), düşük gelirli kişiler için, Assurance maladie(sağlık sigortası) tarafından karşılanmayan sağlık giderlerini karşılamak için bir yardımdır. Bu yardım, gelire göre ücretsiz veya ücretli olabilir. Bu yardımdan yararlanmak için belirli gelir ve ikamet koşulları yerine getirilmelidir. Başvuru, çevrimiçi veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.8,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "complémentaire santé solidaire(C2S), düşük gelirli kişiler için, Assurance maladie(sağlık sigortası) tarafından karşılanmayan sağlık giderlerini karşılamak için bir yardımdır. Bu yardım, gelire göre ücretsiz veya ücretli olabilir. Bu yardımdan yararlanmak için belirli gelir ve ikamet koşulları yerine getirilmelidir. Başvuru, çevrimiçi veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.8,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- RSA (asgari gelir desteği), Aspa, Asi veya AAH (engelli yetişkin ödeneği)'nin alımcıları\n- Ücretsiz konaklayan veya kendi evlerini kullanan kişiler.\n- Konut yardımı alanlar\n- Fransa'da yaşayan, Fransız veya Fransız olmayan tüm kişiler.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "C2S, belirli yıllık limitleri aşmayan gelirler için ücretsizdir. Gelirler bu limitlerin içindeyse, C2S ücretlidir. Ödenmesi gereken tutar, gelire ve ailenin büyüklüğüne bağlıdır.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 52,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Assurance maladie (Fransız kamu sağlık sigortası)'ın kararını beklemek, bu kararın 2 ay içinde verilmesi gerekiyor.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Eğer talep kabul edilirse, C2S tarafından ödenen tutarın ödenmesi",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Eğer RSA (asgari gelir desteği), Aspa, Asi veya AAH (engelli yetişkin ödeneği)'den faydalanıyorsanız, başvurunuzu otomatik olarak yenileme seçeneğini etkinleştirin.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Talep tarihinden önceki 12 ay içinde elde edilen gelirler",
+      "Yatırım gelirlerinin vergi beyannamesi",
+      "Alınan konut yardımı miktarı",
+      "Aile üyeleriyle ilgili bilgiler (kişi sayısı)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 4
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.133Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Complémentaire santé solidaire (منظمة C2S)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "الـ complémentaire santé solidaire (C2S) هي مساعدة لتغطية النفقات الصحية غير المدعومة من الـ Assurance maladie (التأمين الصحي العمومي الفرنسي)، في حالة محدودية الموارد. وهي مجانية أو مدفوعة حسب مستوى الدخل. للحصول عليها، يجب استيفاء شروط معينة فيما يتعلق بالدخل والمكانة السكنية. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "الـ complémentaire santé solidaire (C2S) هي مساعدة لتغطية النفقات الصحية غير المدعومة من الـ Assurance maladie (التأمين الصحي العمومي الفرنسي)، في حالة محدودية الموارد. وهي مجانية أو مدفوعة حسب مستوى الدخل. للحصول عليها، يجب استيفاء شروط معينة فيما يتعلق بالدخل والمكانة السكنية. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- المستفيدون من برامج RSA (دخل التضامن النشط)، و [Aspa]، و [Asi]، أو AAH (إعانة البالغين ذوي الإعاقة)\n- الأشخاص الذين يقيمون مجاناً أو يمتلكون مسكنهم.\n- المستفيدون من المساعدات في الإسكان\n- الأشخاص المقيمين في فرنسا، سواء كانوا يحملون الجنسية الفرنسية أو لا.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.8,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "تعتبر C2S مجانية إذا لم تتجاوز الدخل الحدود السنوية المحددة. أما إذا كان الدخل ضمن النطاقات المحددة، فإنها تكون مدفوعة. تعتمد المبالغ المستحقة على الدخل وعدد أفراد الأسرة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "انتظار قرار Assurance maladie (التأمين الصحي العمومي الفرنسي)، والذي يجب أن يتم في غضون فترة زمنية مدتها 2 شهر.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "دفع المبلغ المحتمل الخاص بـ \"C2S\" إذا تم قبول الطلب.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إعادة تقديم الطلب تلقائيًا إذا كنت تستفيد من RSA (دخل التضامن النشط) أو AAH (إعانة البالغين ذوي الإعاقة) أو برنامج أسبا أو برنامج أسي.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "الإيرادات التي تم تحصيلها خلال الأشهر الـ 12 التي سبقت الطلب.",
+      "إقرار ضريبة على أرباح الاستثمارات",
+      "مبلغ المساعدة المقدم للإسكان",
+      "معلومات حول الأسرة (عدد الأفراد)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.3,
+      "units": 4
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.134Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Complémentaire santé solidaire (C2S)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.3,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Das complémentaire santé solidaire (C2S) ist eine finanzielle Unterstützung, um Gesundheitskosten zu decken, die nicht von der Assurance maladie (französische gesetzliche Krankenversicherung) übernommen werden, insbesondere für Personen mit geringem Einkommen. Sie ist entweder kostenlos oder kostenpflichtig, je nach Einkommensniveau. Um diese Unterstützung zu erhalten, müssen bestimmte Einkommens- und Wohnsitzbedingungen erfüllt werden. Die Antragstellung kann online oder per Post erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Das complémentaire santé solidaire (C2S) ist eine finanzielle Unterstützung, um Gesundheitskosten zu decken, die nicht von der Assurance maladie (französische gesetzliche Krankenversicherung) übernommen werden, insbesondere für Personen mit geringem Einkommen. Sie ist entweder kostenlos oder kostenpflichtig, je nach Einkommensniveau. Um diese Unterstützung zu erhalten, müssen bestimmte Einkommens- und Wohnsitzbedingungen erfüllt werden. Die Antragstellung kann online oder per Post erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Die Empfänger von RSA (Grundsicherungsleistung), Aspa, Asi oder AAH (Beihilfe für Erwachsene mit Behinderung)\n- Personen, die kostenlos Unterkunft erhalten oder deren Wohnraum sie besitzen.\n- Personen, die eine Wohngeld- oder Mietzuschuss erhalten\n- Personen, die in Frankreich leben, sowohl mit als auch ohne französische Staatsbürgerschaft.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.9,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die C2S ist kostenlos, wenn das Einkommen die angegebenen jährlichen Grenzen nicht überschreitet. Sie ist kostenpflichtig, wenn das Einkommen in den entsprechenden Bereichen liegt. Die zu zahlenden Beträge hängen vom Einkommen und der Anzahl der Personen im Haushalt ab.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Warten auf die Entscheidung des Assurance maladie (französische gesetzliche Krankenversicherung), die innerhalb von 2 Monaten ergehen muss.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Die entsprechende Summe der C2S-Beiträge auszahlen, falls die Anfrage genehmigt wird.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Die Anfrage automatisch erneut einreichen, wenn Sie von RSA (Grundsicherungsleistung), Aspa, Asi oder AAH (Beihilfe für Erwachsene mit Behinderung) profitieren.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Die während der 12 Monate vor der Antragstellung erzielten Einnahmen",
+      "Die Einkommenssteuererklärung für Kapitalerträge",
+      "Der Betrag der erhaltenen Wohnkostenzuschüsse",
+      "Informationen über den Haushalt (Anzahl der Personen)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 4
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.136Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Complémentaire santé solidaire (C2S)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 49.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "complémentaire santé solidaire (C2S) – це допомога для покриття витрат на охорону здоров'я, які не покриваються Assurance maladie (французьке державне медичне страхування), у випадках низьких доходів. Вона є безкоштовною або платна, залежно від рівня доходів. Щоб отримати її, необхідно відповідати певним критеріям доходів та місця проживання. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "complémentaire santé solidaire (C2S) – це допомога для покриття витрат на охорону здоров'я, які не покриваються Assurance maladie (французьке державне медичне страхування), у випадках низьких доходів. Вона є безкоштовною або платна, залежно від рівня доходів. Щоб отримати її, необхідно відповідати певним критеріям доходів та місця проживання. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Одержувачі виплат за програмами RSA (мінімальний дохід солідарності), Aspa, Asi або AAH (допомога дорослим з інвалідністю)\n- Особи, які проживають безкоштовно або є власниками свого житла.\n- Особи, які отримують допомогу у житлі\n- Особи, які проживають у Франції, незалежно від того, чи мають вони французьке громадянство",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 66.1,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "C2S є безкоштовною, якщо доходи не перевищують встановлені щомісячні суми. Вона є платним варіантом, якщо доходи знаходяться в межах зазначених сум. Розмір виплат залежить від доходів та кількості осіб у сім'ї.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Очікувати рішення Assurance maladie (французьке державне медичне страхування), яке має бути прийнято протягом 2 місяців.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Оплатити можливу суму внесків до C2S, якщо заявка буде схвалена.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Автоматично повторювати заявку, якщо ви маєте право на отримання RSA (мінімальний дохід солідарності), AAH (допомога дорослим з інвалідністю), Aspa або Asi.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.8,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Доходи, отримані протягом попередніх 12 місяців, що передували подачі заявки.",
+      "Податкова декларація доходів від інвестицій",
+      "Сума отриманої допомоги на житло",
+      "Інформація про осередок (кількість осіб)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.3,
+      "units": 4
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:0c889a53eceade1775e6c40785cc3a0c874533ee16cd84562c2d1e736b282b43",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Complémentaire santé solidaire (C2S)",
+   "description": "La complémentaire santé solidaire (C2S) est une aide pour couvrir les dépenses de santé non remboursées par l'Assurance maladie, en cas de faibles ressources. Elle est gratuite ou payante selon le niveau des revenus. Pour en bénéficier, il faut remplir des conditions de ressources et de résidence. La demande peut se faire en ligne ou par courrier.",
+   "cest_quoi": "La complémentaire santé solidaire (C2S) est une aide pour couvrir les dépenses de santé non remboursées par l'Assurance maladie, en cas de faibles ressources. Elle est gratuite ou payante selon le niveau des revenus. Pour en bénéficier, il faut remplir des conditions de ressources et de résidence. La demande peut se faire en ligne ou par courrier.",
+   "pour_qui": "- Les bénéficiaires de l'RSA, de l'Aspa, de l'Asi ou de l'AAH\n- Les personnes hébergées gratuitement ou propriétaires de leur logement\n- Les bénéficiaires d'une aide au logement\n- Les personnes résidant en France, avec ou sans nationalité française",
+   "ce_que_ca_aide": "La C2S est gratuite si les revenus ne dépassent pas les plafonds annuels indiqués. Elle est payante si les revenus se situent dans les fourchettes correspondantes. Les montants à payer dépendent des revenus et du nombre de personnes au foyer.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Attendre la décision de l'Assurance maladie, qui doit être donnée dans un délai de 2 mois"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Payer le montant éventuel de la C2S payante si la demande est acceptée"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Renouveler la demande automatiquement si vous bénéficiez de l'RSA, de l'Aspa, de l'Asi ou de l'AAH"
+    }
+   ],
+   "documents_necessaires": [
+    "Les revenus perçus au cours des 12 mois précédant la demande",
+    "L'avis d'imposition des revenus de placements",
+    "Le montant de l'aide au logement perçue",
+    "Les informations sur le foyer (nombre de personnes)"
+   ],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:12:59.960Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

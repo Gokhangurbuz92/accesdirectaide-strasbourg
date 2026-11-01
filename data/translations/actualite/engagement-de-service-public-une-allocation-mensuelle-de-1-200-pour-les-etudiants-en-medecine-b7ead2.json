@@ -1,0 +1,226 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "engagement-de-service-public-une-allocation-mensuelle-de-1-200-pour-les-etudiants-en-medecine-b7ead2",
+ "recordId": "d5d21e39-23e3-4958-8823-fdb989ebe33e",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.733Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Public service commitment: A monthly allowance of €1,200 for medical students",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 84.3,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "As part of the public service contract scheme, students in health-related fields from various specializations have committed to working in an area characterized by a shortage of medical services or difficulties in accessing healthcare after completing their studies. This commitment is in exchange for receiving a monthly allowance during their studies. The terms of this scheme were updated on October 21st.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>As part of the public service contract scheme, students in health-related fields from various specializations have committed to working in an area characterized by a shortage of medical services or difficulties in accessing healthcare after completing their studies. This commitment is in exchange for receiving a monthly allowance during their studies. The terms of this scheme were updated on October 21st.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.734Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kamu hizmeti sözleşmesi: Tıp öğrencileri için aylık 1.200 €'luk bir ödeme",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Kamu hizmet sözleşmesi çerçevesinde, farklı tıp bölümlerinden öğrencilerin, eğitimlerinin sonunda, tıbbi hizmetlerin yetersiz olduğu veya sağlık hizmetlerine erişimde zorluklar yaşanan bir bölgede görev yapmayı taahhüt etmeleri öngörülmektedir. Bu taahhüt karşılığında, öğrencilere eğitimleri boyunca aylık bir ödeme yapılmaktadır. Bu düzenlemenin şartları 21 Ekim tarihinde güncellenmiştir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "\"Kamu hizmet sözleşmesi çerçevesinde, farklı tıp bölümlerinden öğrencilerin, eğitimlerinin sonunda, tıbbi hizmetlerin yetersiz olduğu veya sağlık hizmetlerine erişimde zorluklar yaşanan bir bölgede görev yapmayı taahhüt etmeleri öngörülmektedir. Bu taahhüt karşılığında, öğrencilere eğitimleri boyunca aylık bir ödeme yapılmaktadır. Bu düzenlemenin şartları 21 Ekim tarihinde güncellenmiştir.\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.735Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "دعم للخدمات العامة: مبلغ شهري قدره 1200 يورو للطلاب في مجال الطب.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "في إطار نظام الاتفاق على تقديم الخدمات العامة، يلتزم الطلاب في مجال الصحة من مختلف التخصصات بالعمل، بعد انتهاء دراستهم، في منطقة تتميز بنقص في الخدمات الطبية أو بصعوبات في الحصول على الرعاية الصحية. يتم هذا الالتزام مقابل الحصول على مبلغ شهري خلال فترة الدراسة. تم تحديث شروط هذا النظام في 21 أكتوبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>في إطار نظام الاتفاق على تقديم الخدمات العامة، يتعهد الطلاب في مجال الصحة من مختلف التخصصات بالعمل، بعد انتهاء دراستهم، في منطقة تتميز بنقص في الخدمات الطبية أو صعوبات في الحصول على الرعاية الصحية. يتم هذا العهد مقابل الحصول على مبلغ شهري خلال فترة الدراسة. تم تحديث شروط هذا النظام في 21 أكتوبر.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.736Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Öffentliche Dienstverpflichtung: Eine monatliche Unterstützung von 1.200 € für Medizinstudenten",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Im Rahmen des Programms für den öffentlichen Dienstvertrag verpflichten sich Studierende der Gesundheitsberufe verschiedener Fachrichtungen, nach ihrem Studium in einem Gebiet tätig zu werden, das durch einen unzureichenden medizinischen Versorgungsservice oder Schwierigkeiten beim Zugang zur medizinischen Versorgung gekennzeichnet ist. Diese Verpflichtung steht im Austausch für die Zahlung einer monatlichen Entschädigung während ihres Studiums. Die Modalitäten dieses Programms wurden am 21. Oktober aktualisiert.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.1,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Im Rahmen des Programms für den öffentlichen Dienstvertrag verpflichten sich Studierende der Gesundheitsberufe verschiedener Fachrichtungen, nach ihrem Studium in einem Gebiet zu arbeiten, das durch einen unzureichenden medizinischen Versorgungsservice oder Schwierigkeiten beim Zugang zur medizinischen Versorgung gekennzeichnet ist. Diese Verpflichtung steht im Austausch gegen die Zahlung einer monatlichen Rente während ihres Studiums. Die Modalitäten dieses Programms wurden am 21. Oktober aktualisiert.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.737Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Залучення до державної служби: щомісячна виплата у розмірі 1200 євро для студентів медичних спеціальностей.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "У рамках програми контракту на надання державних послуг, студенти медичних спеціальностей різних напрямів обіцяють працювати після закінчення навчання в районі, де існує недостатня медична допомога або труднощі з доступом до неї. За цю обіцянку вони отримують щомісячну стипендію під час навчання. Умови цієї програми були оновлені 21 жовтня.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.1,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "У рамках програми контракту на надання державних послуг, студенти медичних спеціальностей різних напрямів обіцяють працювати після закінчення навчання в районі, де існує недостатня медична допомога або труднощі з доступом до неї. За це вони отримують щомісячну стипендію під час навчання. Умови цієї програми були оновлені 21 жовтня.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.4,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:c7c54e827eb04511c2f0bd29e578855029489fc44bd969a8dc3448fcf079e37a",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Engagement de service public : une allocation mensuelle de 1 200 € pour les étudiants en médecine",
+   "resume": "Dans le cadre du dispositif de contrat d’engagement de service public, des étudiants en santé de différentes spécialités promettent d’exercer, à l’issue de leurs études, dans une zone caractérisée par une offre médicale insuffisante ou par des difficultés dans l'accès aux soins. Cet engagement est pris en échange du versement d’une allocation mensuelle pendant leurs études. Les modalités de ce dispositif ont été actualisées le 21 octobre.",
+   "contenu": "<p>Dans le cadre du dispositif de contrat d’engagement de service public, des étudiants en santé de différentes spécialités promettent d’exercer, à l’issue de leurs études, dans une zone caractérisée par une offre médicale insuffisante ou par des difficultés dans l'accès aux soins. Cet engagement est pris en échange du versement d’une allocation mensuelle pendant leurs études. Les modalités de ce dispositif ont été actualisées le 21 octobre.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A19107?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

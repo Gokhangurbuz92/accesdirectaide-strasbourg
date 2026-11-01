@@ -1,0 +1,228 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "certains-velos-interdits-dans-les-tgv-et-les-intercites-a-compter-du-13-decembre-da1122",
+ "recordId": "24ddeb80-b863-48fa-97d7-f51c7d9c50d7",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.715Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Certain types of bicycles will be prohibited on high-speed trains (TGV) and regional trains (Intercités) starting on December 13th.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "The regulations regarding bicycles allowed on INOUI and Intercités high-speed trains will change on December 13th. New restrictions will be introduced, specifically regarding the size of bicycles. It will also be prohibited to board these trains with certain types of motorized personal transport devices.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>The regulations regarding bicycles allowed on INOUI and Intercités high-speed trains will change on December 13th. New restrictions will be introduced, relating to the size of bicycles. It will also be prohibited to board these trains with certain types of motorized personal transport devices.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.716Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "13 Aralık tarihinden itibaren, bazı bisikletlerin TGV ve Intercités trenlerinde taşınması yasaklanacak.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "13 Aralık'ta, INOUI ve Intercités trenlerinde taşınabilen bisikletlerle ilgili düzenlemeler değişecek. Bisikletlerin boyutlarına ilişkin yeni kısıtlamalar uygulanacak. Ayrıca, bu trenlerde belirli motorlu kişisel taşıma araçlarının taşınması da yasaklanacak.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.9,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "13 Aralık tarihinde, TGV INOUI ve Intercités trenlerinde taşınabilen bisikletlerle ilgili düzenlemeler değişecek. Bisikletlerin boyutlarına ilişkin yeni kısıtlamalar uygulanacak. Ayrıca, bu trenlerde belirli motorlu kişisel taşıma araçlarının taşınması da yasaklanacak.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.717Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "سيتم منع بعض أنواع الدراجات في قطارات الترانزيت (TGV) وقطارات \"Intercités\" اعتبارًا من 13 ديسمبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "سوف تتغير اللوائح المتعلقة بالدراجات المسموح بها على متن قطارات \"INOUI\" وقطارات \"Intercités\" اعتبارًا من 13 ديسمبر. سيتم تطبيق قيود جديدة تتعلق بأبعاد الدراجات. كما سيتم منع حمل بعض المركبات الشخصية الميكانيكية على متن هذه القطارات.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>سيشهد تطبيق قواعد جديدة بشأن الدراجات المسموح بها على متن قطارات \"INOUI\" وقطارات \"Intercités\" اعتبارًا من 13 ديسمبر. سيتم فرض قيود جديدة تتعلق بأبعاد الدراجات. كما سيتم منع حمل بعض المركبات الشخصية الميكانيكية على متن هذه القطارات.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.718Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Bestimmte Fahrräder sind ab dem 13. Dezember in Hochgeschwindigkeitszügen (TGV) und Regionalzügen nicht mehr erlaubt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 50.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Die Vorschriften bezüglich der auf den TGV INOUI- und Intercités-Zügen mitgenommenen Fahrräder werden am 13. Dezember geändert. Es werden neue Einschränkungen gelten, die sich auf die Größe der Fahrräder beziehen. Darüber hinaus wird es verboten, bestimmte motorisierte Transportmittel auf diesen Zügen mitzunehmen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.8,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Die Vorschriften bezüglich der auf den TGV INOUI- und Intercités-Zügen mitgenommenen Fahrräder werden am 13. Dezember geändert. Es werden neue Einschränkungen gelten, die sich auf die Größe der Fahrräder beziehen. Darüber hinaus wird es verboten, bestimmte motorisierte Transportmittel auf diesen Zügen mitzunehmen.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.719Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Деякі велосипеди заборонені в поїздах TGV та Intercités, починаючи з 13 грудня.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Нормативне регулювання щодо велосипедів, які дозволені на поїздах INOUI та Intercités, зміниться 13 грудня. Будуть введені нові обмеження, що стосуються розмірів велосипедів. Також буде заборонено перевозити на цих поїздах певні персональні транспортні засоби з двигунами.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.8,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Правила щодо велосипедів, які дозволені на поїздах TGV INOUI та Intercités, будуть змінені 13 грудня. Будуть введені нові обмеження, що стосуються розмірів велосипедів. Також буде заборонено перевозити на цих поїздах певні персональні транспортні засоби з двигунами.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54.9,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:ff9ff7d22331a4155041a943af1141f653e550911d598a94bc383869d6051749",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Certains vélos interdits dans les TGV et les Intercités à compter du 13 décembre",
+   "resume": "La réglementation concernant les vélos autorisés à bord des TGV INOUI et des trains Intercités va évoluer le 13 décembre. De nouvelles interdictions seront appliquées, relatives aux dimensions des vélos. Il sera également interdit d’embarquer à bord de ces trains avec certains engins de déplacement personnel motorisés.",
+   "contenu": "<p>La réglementation concernant les vélos autorisés à bord des TGV INOUI et des trains Intercités va évoluer le 13 décembre. De nouvelles interdictions seront appliquées, relatives aux dimensions des vélos. Il sera également interdit d’embarquer à bord de ces trains avec certains engins de déplacement personnel motorisés.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A19110?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

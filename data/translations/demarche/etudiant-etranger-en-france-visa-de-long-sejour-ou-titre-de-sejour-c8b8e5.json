@@ -1,0 +1,712 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+ "recordId": "c8b8e513-5d77-4328-b412-af26ba289682",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.221Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "International student in France: long-stay visa or titre de séjour (residence permit)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "International students can, after spending 1 year in France, renew their right to stay and obtain a 1-year or multi-year residence permit. To do this, they must meet certain financial requirements and apply for a titre de séjour (residence permit) through an online service. The €100 fee is due upon approval or renewal.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "International students can, after spending 1 year in France, renew their right to stay and obtain a 1-year or multi-year residence permit. To do this, they must meet certain financial requirements and apply for a titre de séjour (residence permit) through an online service. The €100 fee is due upon approval or renewal.\n\n€100 for the tax when validating or renewing the titre de séjour. €180 for a regularization visa fee in the event of a late application.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Students who are enrolled or have applied to a higher education or vocational training institution.\n- Students who can demonstrate monthly income of at least €877.5\n- Students who have successfully passed the entrance exam for a higher education institution that has signed a convention with the state.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.1,
+      "units": 3
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Apply for a long-stay visa (VLS-TS) with the \"student\" designation before arriving in France.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Validate the VLS-TS and pay the €100 tax within 3 months of arriving in France.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Request a titre de séjour (residence permit) study visa through the online service at least 4 months and no more than 2 months before the expiry date of the VLS-TS.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Prepare the required documents and submit the application online.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If necessary, go to préfecture (state administration of the département) for fingerprinting.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Await the decision of the préfecture and, if the decision is unfavorable, formulate an appeal.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "A valid long-term visa or a titre de séjour (residence permit)",
+      "Proof of address dated within the last 6 months",
+      "e-photo (code provided by the photographer or authorized studio)",
+      "Registration or pre-registration at an educational institution",
+      "Academic performance records for the previous year",
+      "Most recent degree obtained in France",
+      "Certificate of completion issued by the institution",
+      "Commitment to upholding the principles of the Republic",
+      "Proof of monthly income of at least €877.5",
+      "Proof of sufficient bank balance or scholarship documentation"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Depending on your situation: Préfecture (state administration of the département), préfecture, Préfecture of the Paris Police - Service of titres de séjour (residence permit), Administrative Court.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.224Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Fransız'da bulunan yabancı öğrenci: Uzun süreli vize veya titre de séjour (oturum izni)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Yabancı öğrenciler, Fransa'da 1 yıl kaldıktan sonra, ikamet hakkını yenileyebilir ve 1 yıllık veya çok yıllık bir ikamet kartı alabilirler. Bunun için, belirli gelir koşullarını karşılamalı ve çevrimiçi bir hizmet aracılığıyla titre de séjour (oturum izni) başvurusunda bulunmalıdırlar. 100 €'luk ücret, onay veya yenileme sırasında ödenmelidir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Yabancı öğrenciler, Fransa'da 1 yıl kaldıktan sonra, ikamet hakkını yenileyebilir ve 1 yıllık veya çok yıllık bir ikamet kartı alabilirler. Bunun için, belirli gelir koşullarını karşılamalı ve çevrimiçi bir hizmet aracılığıyla titre de séjour (oturum izni) başvurusunda bulunmalıdırlar. 100 €'luk ücret, onay veya yenileme sırasında ödenmelidir.\n\n100 €, T1 belgesinin geçerliliğinin onaylanması veya yenilenmesi durumunda ödenmesi gereken vergidir. Ayrıca, zamanında başvuru yapılmaması durumunda, düzenleme vizesi için 180 € ödenmesi gerekmektedir.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 69.2,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Üniversitelerde veya meslek eğitim kurumlarında kayıtlı veya kayıt olmak isteyen öğrenciler.\n- Aylık en az 877,5 € gelirini kanıtlayan öğrenciler.\n- Üniversite veya diğer yükseköğretim kurumlarına kabul olan ve devlet ile anlaşma yapmış öğrenciler.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.5,
+      "units": 3
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Fransa'ya gelmeden önce, titre de séjour(VLS-TS) türünde uzun süreli oturum izni başvurusunda bulunmak (öğrenci izni).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "VLS-TS'i doğrulamak ve Fransa'ya yerleşildikten 3 ay içinde 100 €'luk vergiyi ödemek",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "VLS-TS geçerlilik süresinin sonuna kadar olan en geç 4 ay ve en erken 2 ay içinde, çevrimiçi hizmet aracılığıyla titre de séjour (oturum izni) numaralı bir öğrenci başvurusu yapın.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri hazırlayın ve başvurunuzu çevrimiçi olarak gönderin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Gerekirse préfecture (devletin il idaresi)'e giderek parmak izi alımı yapılmasını sağlamak.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "préfecture'nin kararına beklemek ve, gerekirse, itirazda bulunmak",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.5,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Geçerli bir uzun süreli vize veya titre de séjour (oturum izni)",
+      "6 aydan eski, geçerli bir ikametgah belgesi",
+      "e-foto (fotograf tarafından sağlanan veya yetkili fotoğrafçılık merkezinden alınan kod)",
+      "Bir eğitim kurumuna kayıt veya ön kayıt",
+      "Geçen yılın not tutma kayıtları",
+      "Fransa'da elde edilen en son diploma",
+      "Kurum tarafından verilen başarı sertifikası",
+      "Cumhuriyetin ilkelerine bağlı kalma taahhüdü",
+      "Aylık gelir belgeleri, en az 877,5 € tutarında olmalıdır.",
+      "Yeterli kredi bakiyesi banka dekontu veya burs belgeleri"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Durumunuza göre: Préfecture (devletin il idaresi), préfecture, Préfecture numaralı Paris polisinin, titres de séjour (oturum izni) numaralı biriminden, idari mahkemeden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.227Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "طالب أجنبي في فرنسا: تأشيرة إقامة طويلة أو titre de séjour (تصريح الإقامة)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "يمكن للطلاب الأجانب، بعد قضاء سنة واحدة في فرنسا، تجديد حقهم في الإقامة والحصول على بطاقة إقامة لمدة سنة أو أكثر. لتحقيق ذلك، يجب عليهم الالتزام ببعض الشروط المتعلقة بالدخل وتقديم طلب عبر الإنترنت. يجب دفع رسوم قدرها 100 يورو عند الموافقة على الطلب أو تجديده.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 66.5,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "يمكن للطلاب الأجانب، بعد قضاء سنة واحدة في فرنسا، تجديد حقهم في الإقامة والحصول على بطاقة إقامة لمدة سنة أو أكثر. لتحقيق ذلك، يجب عليهم الالتزام ببعض الشروط المتعلقة بالدخل وتقديم طلب عبر الإنترنت. يجب دفع رسوم قدرها 100 يورو عند الموافقة على الطلب أو تجديده.\n\n100 يورو مقابل رسوم الموافقة أو التجديد لـ titre de séjour (تصريح الإقامة). 180 يورو رسوم للحصول على تأشيرة لتصحيح الوضع في حالة تقديم الطلب بعد الموعد المحدد.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- طلاب مسجلون أو مسجلون مسبقًا في مؤسسة تعليمية أو مؤسسة تدريبية.\n- طلاب يمكنهم تقديم إثبات على وجود دخل شهري لا يقل عن 877.5 يورو.\n- طلاب اجتازوا امتحان القبول في مؤسسة تعليمية عليا وقعت اتفاقية مع الدولة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.7,
+      "units": 3
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "يجب التقدم بطلب للحصول على تأشيرة إقامة طويلة (VLS-TS) بقيمة titre de séjour (تصريح الإقامة)، مع تحديد أنك طالب، قبل الوصول إلى فرنسا.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يجب التحقق من صلاحية تصريح العمل (VLS-TS) ودفع ضريبة بقيمة 100 يورو خلال 3 أشهر من الوصول إلى فرنسا.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "يجب طلب titre de séjour من الطلاب عبر الخدمة الإلكترونية قبل 4 أشهر على الأكثر، وألا يقل عن 2 أشهر قبل انتهاء صلاحية برنامج VLS-TS.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "إعداد المستندات المطلوبة وإرسال الطلب عبر الإنترنت.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا لزم الأمر، يجب الذهاب إلى الموقع préfecture (إدارة الدولة في الإقليم) لإجراء عملية أخذ بصمات الأصابع.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "انتظار قرار préfecture‎]، وفي حال الرفض، تقديم طلب استئناف.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.2,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "تصريح إقامة طويل الأجل ساري المفعول، أو titre de séjour (تصريح الإقامة)",
+      "إثبات عنوان ساري المفعول (يجب أن يكون أقل من 6 أشهر).",
+      "صورة إلكترونية (رمز يتم توفيره من قبل المصور أو الاستوديو المعتمد)",
+      "التقديم أو التسجيل المسبق في مؤسسة تعليمية",
+      "نتائج الامتحانات للعام الماضي",
+      "آخر شهادة حصل عليها في فرنسا",
+      "شهادة إتمام الدورة الصادرة من المؤسسة.",
+      "التزام بالالتزام بمبادئ الجمهورية.",
+      "إثباتات على وجود دخل شهري لا يقل عن 877.5 يورو.",
+      "إثبات مصرفي يوضح رصيدًا كافيًا أو مستندات للحصول على المنح."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "بناءً على وضعك: Préfecture (إدارة الدولة في الإقليم)، قسم préfecture، Préfecture ] من الشرطة في باريس - قسم titres de séjour (تصريح الإقامة)، المحكمة الإدارية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.229Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Ausländischer Student in Frankreich: Visum für einen längeren Aufenthalt oder titre de séjour (Aufenthaltstitel)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Ausländische Studenten können, nachdem sie ein Jahr in Frankreich verbracht haben, ihren Aufenthaltstitel erneuern und eine Aufenthaltskarte für 1 Jahr oder länger erhalten. Dazu müssen sie bestimmte Einkommensbedingungen erfüllen und eine titre de séjour (Aufenthaltstitel)-Antrag über einen Online-Service einreichen. Die Gebühr von 100 € ist bei der Genehmigung oder Erneuerung fällig.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 70.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Ausländische Studenten können, nachdem sie ein Jahr in Frankreich verbracht haben, ihren Aufenthaltstitel erneuern und eine Aufenthaltskarte für 1 Jahr oder länger erhalten. Dazu müssen sie bestimmte Einkommensbedingungen erfüllen und eine titre de séjour (Aufenthaltstitel)-Antrag über einen Online-Service einreichen. Die Gebühr von 100 € ist bei der Genehmigung oder Erneuerung fällig.\n\n100 € für die Gebühr bei der Genehmigung oder Verlängerung des titre de séjour. 180 € für eine Gebühr für eine Genehmigungs- oder Verlängerungsgebühr bei verspäteter Antragstellung.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 68.8,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Studierende, die in einer Hochschule oder einer Ausbildungsstätte eingeschrieben oder sich vorab angemeldet haben\n- Studierende, die nachweisen können, dass sie monatlich mindestens 877,5 € verfügen.\n- Studierende, die einen Zulassungstest für eine Hochschule absolviert haben, die eine Vereinbarung mit dem Staat hat",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.1,
+      "units": 3
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Ein Visum für einen längeren Aufenthalt (VLS-TS) mit der Bezeichnung „Student“ beantragen, bevor man Frankreich betritt.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Die VLS-TS-Genehmigung und die Zahlung der Steuer von 100 € müssen innerhalb von 3 Monaten nach der Ankunft in Frankreich erfolgen.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bitte beantragen Sie ein titre de séjour (Aufenthaltstitel)-Studium über den Online-Service mindestens 4 Monate und spätestens 2 Monate vor Ablauf des VLS-TS.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Die erforderlichen Dokumente vorbereiten und den Antrag online einreichen.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Bei Bedarf die préfecture (staatliche Verwaltung des Départements) besuchen, um Fingerabdrücke zu nehmen.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Auf die Entscheidung von préfecture ] warten und, falls diese abgelehnt wird, eine Beschwerde einlegen.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 69.7,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Gültiges Visum für einen längeren Aufenthalt oder ein titre de séjour (Aufenthaltstitel)",
+      "Nachweis des Wohnsitzes, der nicht älter als 6 Monate ist",
+      "e-Foto (Code, der vom Fotografen oder einer zugelassenen Fotoabteilung bereitgestellt wird)",
+      "Anmeldung oder Voranmeldung an einer Bildungseinrichtung",
+      "Notenübersichten für das vergangene Jahr",
+      "Letzter Abschluss, der in Frankreich erworben wurde",
+      "Nachweis des erfolgreichen Abschlusses, ausgestellt von der Bildungseinrichtung",
+      "Verpflichtung, die Prinzipien der Republik zu respektieren",
+      "Nachweise über monatliche Einkünfte, die mindestens 877,5 € betragen.",
+      "Bankauszug, der einen ausreichenden Guthaben bestätigt, oder Stipendiennachweise"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.8,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Je stelle Ihnen die folgenden Optionen zur Verfügung: Préfecture (staatliche Verwaltung des Départements), préfecture, Préfecture – Polizeidienst von Paris – Abteilung titres de séjour (Aufenthaltstitel), Verwaltungsgericht.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 74.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.232Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Іноземний студент у Франції: віза на тривалий термін або titre de séjour (посвідка на проживання)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 88.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Іноземні студенти можуть, після 1 року перебування у Франції, продовжити свій право на перебування та отримати картку перебування на 1 рік або на тривалий термін. Для цього вони повинні відповідати певним вимогам щодо доходів та подати titre de séjour (посвідка на проживання) через онлайн-сервіс. Плата у розмірі 100 євро сплачується під час отримання або продовження картки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Іноземні студенти можуть, після 1 року перебування у Франції, продовжити свій право на перебування та отримати картку перебування на 1 рік або на тривалий термін. Для цього вони повинні відповідати певним вимогам щодо доходів та подати titre de séjour (посвідка на проживання) через онлайн-сервіс. Плата у розмірі 100 євро сплачується під час отримання або продовження картки.\n\n100 євро для сплати податку під час валідації або продовження терміну дії titre de séjour. 180 євро за плату за візовий документ для легалізації у разі подання заявки після встановленого терміну.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Студенти, які зареєстровані або перебувають у процесі реєстрації в вищій освітній установі або навчальному закладі професійної підготовки.\n- Студенти, які можуть довести наявність щомісячного доходу, що не є меншим за 877,5 євро.\n- Студенти, які успішно склали вступний іспит в навчальному закладі, який уклав угоду з державою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.8,
+      "units": 3
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку на отримання візи на тривалий термін (VLS-TS) з позначкою \"студент\" до приїзду до Франції.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Підтвердити реєстрацію VLS-TS та сплатити податок у розмірі 100 євро протягом 3 місяців після прибуття до Франції.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Подати заявку на отримання titre de séjour (посвідка на проживання) студентської картки через онлайн-сервіс не пізніше ніж за 4 місяці та не раніше ніж за 2 місяці до закінчення терміну дії VLS-TS.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Підготувати необхідні документи та надіслати заявку онлайн.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі потреби, необхідно звернутися до préfecture (державна адміністрація департаменту) для отримання відбитків.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Очікувати рішення préfecture та, у разі відмови, подавати апеляцію.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 71.2,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Віза на тривалий термін, яка ще діє, або titre de séjour (посвідка на проживання)",
+      "Документ, що підтверджує місце проживання, виданий не раніше ніж 6 місяців тому.",
+      "е-фото (код, наданий фотографом або акредитованим фотостудією)",
+      "Реєстрація або попередній запис до навчального закладу",
+      "Звіт про результати навчання за минулий рік",
+      "Останній отриманий диплом у Франції",
+      "Сертифікат про успішне завершення навчання, виданий навчальним закладом.",
+      "Обов'язок дотримуватися принципів Республіки",
+      "Документи, що підтверджують щомісячні доходи, які щонайменше становлять 877,5 євро.",
+      "Підтвердження наявності достатньої суми на банківському рахунку або інші документи, що підтверджують наявність стипендії."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.8,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Відповідно до вашої ситуації: Préfecture (державна адміністрація департаменту), Підрозділ préfecture, Préfecture поліції Парижа – Сектор titres de séjour (посвідка на проживання), Адміністративний суд.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.9,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:b6d4ce33a5ec8839b929de6619f7d6941d29729c62dfa290ed0422e351f84af5",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Étudiant étranger en France : visa de long séjour ou titre de séjour",
+   "description_courte": "Les étudiants étrangers peuvent, après 1 an de séjour en France, renouveler leur droit au séjour et obtenir une carte de séjour de 1 an ou pluriannuelle. Pour cela, ils doivent respecter des conditions de ressources et demander un titre de séjour via un service en ligne. La taxe de 100 € est due lors de la validation ou du renouvellement.",
+   "contenu_detaille": "Les étudiants étrangers peuvent, après 1 an de séjour en France, renouveler leur droit au séjour et obtenir une carte de séjour de 1 an ou pluriannuelle. Pour cela, ils doivent respecter des conditions de ressources et demander un titre de séjour via un service en ligne. La taxe de 100 € est due lors de la validation ou du renouvellement.\n\n100 € pour la taxe lors de la validation ou du renouvellement du titre de séjour. 180 € pour un droit de visa de régularisation en cas de demande hors délai.",
+   "pour_qui": "- Étudiants inscrits ou préinscrits dans un établissement d'enseignement supérieur ou de formation initiale\n- Étudiants justifiant de ressources mensuelles au moins égales à 877,5 €\n- Étudiants ayant réussi un concours d'entrée dans un établissement d'enseignement supérieur signataire de convention avec l'État",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Demander un visa de long séjour valant titre de séjour (VLS-TS) mention étudiant avant l'arrivée en France"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Valider le VLS-TS et payer la taxe de 100 € dans les 3 mois suivant l'arrivée en France"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Demander un titre de séjour étudiant via le service en ligne au plus tôt 4 mois et au plus tard 2 mois avant la fin de validité du VLS-TS"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Préparer les documents requis et envoyer la demande en ligne"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Se rendre en préfecture pour la prise d'empreintes si nécessaire"
+    },
+    {
+     "description": "",
+     "numero": 6,
+     "titre": "Attendre la décision de la préfecture et, en cas de refus, formuler un recours"
+    }
+   ],
+   "documents_necessaires": [
+    "Visa de long séjour en cours de validité ou un titre de séjour",
+    "Justificatif de domicile datant de moins de 6 mois",
+    "e-photo (code fourni par le photographe ou la cabine agréée)",
+    "Inscription ou préinscription dans un établissement d'enseignement",
+    "Relevés de notes de l'année écoulée",
+    "Dernier diplôme obtenu en France",
+    "Attestation de réussite délivrée par l'établissement",
+    "Engagement à respecter les principes de la République",
+    "Justificatifs de ressources mensuelles au moins égales à 877,5 €",
+    "Attestation bancaire de solde créditeur suffisant ou justificatifs de bourses"
+   ],
+   "ou_faire": "Selon votre situation : Préfecture, Sous-préfecture, Préfecture de police de Paris - Service des titres de séjour, Tribunal administratif.",
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T23:28:25.908Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2231",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

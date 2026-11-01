@@ -1,0 +1,330 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+ "recordId": "e0973b02-eba4-4700-b73f-e12a3028ee61",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:26.981Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Is it necessary to report a change in circumstances (such as a move, separation, or unemployment) when receiving family benefits?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Anyone receiving family benefits must report any changes to their situation, such as moving, cohabitation, separation, divorce, or marriage.",
+      "steps": [
+       {
+        "texte": "If you receive family benefits, you must report any changes in your personal, family, or professional situation. This could include a move, a cohabitation agreement, the conclusion of a civil partnership, a marriage, a separation, or a divorce. It could also involve the arrival or departure of a child or dependent person from the household.\nThe steps to take vary depending on whether you are subject to the general regime (Caf: family benefits office) or the agricultural regime (MSA: farmers' social security fund):",
+        "titre": null
+       },
+       {
+        "texte": "Case: Change in family circumstances\nIt is important to report your change in circumstances promptly.\nYou can do this directly within your online account:\n→ Online service: Family allowances and benefits - Situation declaration (Caf)\nIf you don't have a Caf account, you can create one. You will need:\n- Your social security number, if you have one (number found on your health insurance card)\n- Your identification document.\nSpecifically: If you enter into a partnership and do not receive family benefits, contact your Caf: your new situation may entitle you to certain rights. For Caf, it is not necessary to be married or in a registered partnership to be considered a couple.\n→ Where to go: Caisse d'allocations familiales (Caf)\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM: local health insurance office)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.\nCase: Change of Address\nYou can notify us of your change of address using the online address change service:\n→ Online service: Change of address notification\nYou can apply for housing assistance again for your new address as soon as you move in, to ensure you don't lose any benefits.\nEven if you already have this benefit, you must make a new request in your My Account area:\nIf you don't have a Caf account, you can create one. You will need:\n- Your social security number, if you have one (number found on your health insurance card)\n- Your identification document.\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.\nCase: Change in professional situation\nYou should, in particular, report the following events:\n- You have found a job\n- You are unemployed after registering with France Travail (formerly Pôle emploi).\n- You are retired\n- You are suffering from a chronic illness, a work-related accident, or are permanently disabled.\n- You are working in France for a foreign employer.\n- You are working abroad.\nIt is important to report your change in circumstances promptly.\nYou can do this directly within your online account:\n→ Online service: Family allowances and benefits - Situation declaration (Caf)\nIf you don't have a Caf account, you can create one. You will need:\n- Your social security number, if you have one (number found on your health insurance card)\n- Your identification document.\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.",
+        "titre": "Caf"
+       },
+       {
+        "texte": "Case: Change in family circumstances\nIt is important to report your change in circumstances promptly.\nThe separation agreement applies to you if you are in a relationship, whether you are married, in a civil partnership, or in an unregistered partnership (e.g., cohabiting).\nYou can report the change directly in your online account:\n→ Online service: MSA - Private area\nSpecifically: If you enter a partnership and no longer receive family benefits, please contact your MSA. Your new situation may entitle you to certain rights.\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.\nCase: Change of Address\nYou can notify us of your change of address using the online address change service:\n→ Online service: Change of address notification\nPlease note: This information allows MSA to adjust your rights. If you do not do so, you risk being in a fraudulent situation, and penalties may be applied. If you change departments, you will automatically be affiliated with your new MSA.\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.\nCase: Change in professional situation\nYou should, in particular, report the following events:\n- You have found a job\n- You are a job seeker.\n- You have retired.\nYou should quickly inform the authorities of your change in circumstances via the internet.\nYou can report the change directly in your online account, under the \"Report a change of circumstances\" section:\n→ Online service: MSA - Private area\nThe Caf acknowledges that it is possible to make honest mistakes in one's statements. This is the right to err.\nContact your Caf as soon as possible to inform them of the error and resolve the situation.\n→ Where to go: Caisse primaire d'assurance maladie (CPAM)\nSpecifically: If you would like more information, you can visit the \"Services Publics +\" website, which lists the most common errors and explains how to correct them.",
+        "titre": "MSA"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F827",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F827",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 78
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:41.325Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Aile yardımı alırken, durumunuzda bir değişiklik (evden taşınma, boşanma, işsizlik vb.) olduğunda bunu bildirmek gerekli midir?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 42.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Aile yardımı alan bir kişinin, durumundaki herhangi bir değişikliği bildirmesi gerekir: taşınma, birlikte yaşam, ayrılık, boşanma, evlilik gibi.",
+      "steps": [
+       {
+        "texte": "Eğer aile yardımı alıyorsanız, kişisel, ailevi veya mesleki durumunuzdaki herhangi bir değişikliği bildirmelisiniz. Bu, taşınma, birlikte yaşam, ortak yaşam sözleşmesi yapma, evlilik, ayrılık veya boşanma gibi durumları içerebilir. Ayrıca, çocuğun veya bakıma muhtaç bir kişinin aile ortamında gelmesi veya ayrılması da bu kapsamda değerlendirilebilir.\nİzlenecek süreç, genel rejime (Caf: aile yardımları kurumu) veya tarım rejimine (MSA: tarım sosyal güvenlik kurumu) bağlı olup olmamaya göre değişiklik gösterir:",
+        "titre": null
+       },
+       {
+        "texte": "Durum: Ailevi durumdaki değişiklik\nDurumunuzdaki değişikliği mümkün olan en kısa sürede bildirmeniz gerekmektedir.\nBunu doğrudan çevrimiçi hesabınız üzerinden yapabilirsiniz:\n→ Çevrimiçi hizmet: Aile yardımları ve ödemeleri - Durum beyanı (Caf)\nEğer Caf ] hesabınız yoksa, yeni bir hesap oluşturabilirsiniz. Bunun için ihtiyacınız olan:\n- Sosyal Güvenlik numaranız (eğer varsa, kartınızda belirtilen numara)\n- Kimliğinizin belgesi.\nÖnemli: Eğer evlenir ve aile yardımı almayı bırakırsanız, lütfen Caf ile iletişime geçin: Yeni durumunuz size bazı haklar sağlayabilir. Caf için, çift olarak yaşamak için evli veya birlikte yaşamış olmak zorunlu değildir.\n→ İlgili kişi/kurum: Caisse d'allocations familiales (Caf)\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM: yerel sağlık sigortası kurumu)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.\nÖrnek: İkamet Adresinin Değiştirilmesi\nAdres değişikliğinizi, çevrimiçi adres değişikliği hizmeti aracılığıyla bildirebilirsiniz:\n→ Çevrimiçi hizmet: Adres değişikliği bildirimi\nYeni adresinize yerleştikten sonra, haklarınızı kaybetmemek için konut yardımı başvurunuzu yeniden yapabilirsiniz.\nHatta, zaten bu hizmetten faydalanıyorsanız, lütfen \"Hesabım\" bölümünde yeni bir başvuru yapın:\nEğer Caf ] hesabınız yoksa, yeni bir hesap oluşturabilirsiniz. Bunun için ihtiyacınız olan:\n- Sosyal Güvenlik numaranız (eğer varsa, kartınızda belirtilen numara)\n- Kimliğinizin belgesi.\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.\nDurum: İş hayatında yaşanan değişiklik\nAşağıdaki olayları özellikle belirtmeniz gerekmektedir:\n- İş buldunuz\n- İşsizlik durumuna France Travail (eski adıyla İş Kurumu) aracılığıyla başvurmuş bulunmaktasınız.\n- Emekli oldunuz\n- Yaşadığınız uzun süreli bir hastalık, iş kazası veya engellilik durumundasınız.\n- Fransa'da, yabancı bir şirkette çalışıyorsunuz.\n- Yabancı bir ülkede çalışıyorsunuz.\nDurumunuzdaki değişikliği mümkün olan en kısa sürede bildirmeniz gerekmektedir.\nBunu doğrudan çevrimiçi hesabınız üzerinden yapabilirsiniz:\n→ Çevrimiçi hizmet: Aile yardımları ve ödemeleri - Durum beyanı (Caf)\nEğer Caf ] hesabınız yoksa, yeni bir hesap oluşturabilirsiniz. Bunun için ihtiyacınız olan:\n- Sosyal Güvenlik numaranız (eğer varsa, kartınızda belirtilen numara)\n- Kimliğinizin belgesi.\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.",
+        "titre": "Caf"
+       },
+       {
+        "texte": "Durum: Ailevi durumdaki değişiklik\nDurumunuzdaki değişikliği mümkün olan en kısa sürede bildirmeniz gerekmektedir.\nAyrılık bildirgesi, eşinizle, evli, ortak yaşam veya serbest ilişki içinde olan kişiler için geçerlidir.\nBu değişikliği doğrudan çevrimiçi hesabınızda bildirebilirsiniz:\n→ Çevrimiçi hizmet: MSA - Özel alan\nÖnemli: Eğer evlenir ve aile yardımları gibi haklardan yararlanmazsanız, lütfen MSA ile iletişime geçin. Yeni durumunuz size bazı haklar sağlayabilir.\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.\nÖrnek: İkamet Adresinin Değiştirilmesi\nAdres değişikliğinizi, çevrimiçi adres değişikliği hizmeti aracılığıyla bildirebilirsiniz:\n→ Çevrimiçi hizmet: Adres değişikliği bildirimi\nLütfen dikkat: Bu bilgi, MSA'in haklarınızı yeniden düzenlemesine olanak tanır. Eğer bunu yapmazsanız, dolandırıcılık durumuna düşme ve cezai yaptırımlarla karşı karşıya kalma riskiniz vardır. Departmanınızı değiştirdiğinizde, otomatik olarak MSA ile ilişkilendirileceksiniz.\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.\nDurum: İş hayatında yaşanan değişiklik\nAşağıdaki olayları özellikle belirtmeniz gerekmektedir:\n- İş buldunuz\n- İş arayan bir adaysınız.\n- Emekliliğinize başladınız.\nDurumunuzdaki değişikliği mümkün olan en kısa sürede internet üzerinden bildirmelisiniz.\nBu değişikliği doğrudan çevrimiçi hesabınızdaki, \"Durum Değişikliğini Bildir\" bölümünde belirtebilirsiniz:\n→ Çevrimiçi hizmet: MSA - Özel alan\nCaf, hatalı veya yanlış beyanlarda bulunmanın, iyi niyetle bile, mümkün olduğunu kabul ediyor. Bu, hataya düşme hakkıdır.\nEn en üst düzeyde Caf ile en kısa sürede iletişime geçerek, hatanızın farkında olup durumunuzu düzeltin.\n→ İlgili kişi/kurum: Caisse primaire d'assurance maladie (CPAM)\nBilindiği gibi: Daha fazla bilgi almak isterseniz, \"Services Publics +\" adlı web sitesini ziyaret edebilirsiniz. Bu site, en sık yapılan hataları listelemekte ve bunları nasıl düzelteceğinizi açıklamaktadır.",
+        "titre": "MSA"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F827",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F827",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 72.3,
+      "units": 78
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:59:56.486Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "هل يجب الإبلاغ عن تغيير في الوضع (مثل الانتقال إلى مكان جديد، أو الطلاق، أو فقدان الوظيفة) عند استلام المزايا العائلية؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "يجب على أي شخص يتلقى إعانات عائلية الإبلاغ عن أي تغييرات في وضعه، مثل الانتقال إلى مكان آخر، أو الزواج، أو الطلاق، أو الانفصال، أو أي تغيير آخر.",
+      "steps": [
+       {
+        "texte": "إذا كنت تتلقى أي نوع من المزايا العائلية، فيجب عليك الإبلاغ عن أي تغيير في وضعك الشخصي أو العائلي أو المهني. يمكن أن يشمل ذلك الانتقال إلى مكان جديد، أو الزواج، أو التعايش، أو عقد اتفاق زواج، أو الطلاق، أو حتى تغيير في وضع الأسرة، مثل انتقال أحد أفراد الأسرة أو مغادرته.\nتختلف الإجراءات المتخذة حسب اعتمادك على النظام العام (Caf: صندوق الإعانات العائلية) أو النظام الزراعي (MSA: صندوق الضمان الاجتماعي الفلاحي):",
+        "titre": null
+       },
+       {
+        "texte": "مثال: تغيير في الوضع العائلي\nيجب عليك الإبلاغ عن تغيير وضعك في أقرب وقت ممكن.\nيمكنك القيام بذلك مباشرةً في حسابك عبر الإنترنت:\n→ خدمة عبر الإنترنت: المعاشات والمزايا العائلية - إقرار الوضع (Caf)\nإذا لم يكن لديك حساب في Caf، يمكنك إنشاء حساب جديد. ستحتاج إلى:\n- رقم الضمان الاجتماعي الخاص بك، إذا كان لديك (الرقم الموجود على بطاقة التأمين الصحي الخاصة بك)\n- هويتك الشخصية.\nبمعنى آخر: إذا تزوجتم أو تشكلتم علاقة رسمية، ولم تكن تستفيدوا من المزايا العائلية، فيرجى التواصل مع Caf: قد تفتح لكم هذه الوضعية الجديدة حقوقًا. أما بالنسبة لـ Caf، فلا يلزم أن تكونوا متزوجين أو في علاقة رسمية لتعتبرون أنكم تعيشون في علاقة.\n→ إلى من يتم الاتصال: Caisse d'allocations familiales (Caf)\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM: الصندوق المحلي للتأمين الصحي)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.\nمثال: تغيير عنوان السكن\nيمكنك إبلاغ عن تغيير عنوانك باستخدام خدمة تغيير العنوان عبر الإنترنت:\n→ خدمة عبر الإنترنت: إخطار بتغيير العنوان\nيمكنك تقديم طلب جديد للحصول على دعم في الإسكان لعنوانك الجديد بمجرد دخولك إلى المكان، وذلك لتجنب فقدان حقوقك.\nحتى إذا كنت قد استفدت بالفعل من هذه الخدمة، يجب عليك تقديم طلب جديد في قسم \"حسابي\":\nإذا لم يكن لديك حساب في Caf، يمكنك إنشاء حساب جديد. ستحتاج إلى:\n- رقم الضمان الاجتماعي الخاص بك، إذا كان لديك (الرقم الموجود على بطاقة التأمين الصحي الخاصة بك)\n- هويتك الشخصية.\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.\nمثال: تغيير في الوضع المهني\nيجب عليك الإبلاغ تحديدًا عن الأحداث التالية:\n- لقد وجدت وظيفة\n- لقد فقدت وظيفتك بعد التسجيل في France Travail (الذي كان يُعرف سابقًا باسم \"مركز التوظيف\").\n- أنت في سن التقاعد.\n- هل تعاني من مرض مزمن، أو حادث عمل، أو إعاقة؟\n- أنت تعمل في فرنسا لصالح صاحب عمل أجنبي.\n- أنت تعمل في الخارج.\nيجب عليك الإبلاغ عن تغيير وضعك في أقرب وقت ممكن.\nيمكنك القيام بذلك مباشرةً في حسابك عبر الإنترنت:\n→ خدمة عبر الإنترنت: المعاشات والمزايا العائلية - إقرار الوضع (Caf)\nإذا لم يكن لديك حساب في Caf، يمكنك إنشاء حساب جديد. ستحتاج إلى:\n- رقم الضمان الاجتماعي الخاص بك، إذا كان لديك (الرقم الموجود على بطاقة التأمين الصحي الخاصة بك)\n- هويتك الشخصية.\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.",
+        "titre": "Caf"
+       },
+       {
+        "texte": "مثال: تغيير في الوضع العائلي\nيجب عليك الإبلاغ عن تغيير وضعك في أقرب وقت ممكن.\nإن إقرار الطلاق يؤثر عليك إذا كنت في علاقة عاطفية، سواء كنت متزوجًا أو حاصلًا على طلاق أو في علاقة غير تقليدية (مثل الزواج أو التعايش).\nيمكنك الإبلاغ عن التغيير مباشرةً في حسابك عبر الإنترنت:\n→ خدمة عبر الإنترنت: MSA - مساحة خاصة\nمع العلم: إذا تزوجتم ولم تتقاضوا أي تعويضات عائلية، فيرجى التواصل مع MSA. قد تفتح لكم هذه الوضعية الجديدة حقوقًا جديدة.\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.\nمثال: تغيير عنوان السكن\nيمكنك إبلاغ عن تغيير عنوانك باستخدام خدمة تغيير العنوان عبر الإنترنت:\n→ خدمة عبر الإنترنت: إخطار بتغيير العنوان\nملاحظة: هذه المعلومات تسمح لـ MSA ] بتعديل حقوقك. إذا لم تفعل ذلك، فقد تتعرض للمساءلة، وقد يتم فرض غرامات عليك. إذا قمت بالانتقال إلى قسم آخر، فستكون تلقائيًا مرتبطًا بـ MSA ] الجديد.\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.\nمثال: تغيير في الوضع المهني\nيجب عليك الإبلاغ تحديدًا عن الأحداث التالية:\n- لقد وجدت وظيفة\n- أنت باحث عن عمل.\n- لقد أصبحت الآن في سن التقاعد.\nيجب عليك الإبلاغ عن تغيير وضعك بسرعة عبر الإنترنت.\nيمكنك الإبلاغ عن التغيير مباشرةً في حسابك عبر الإنترنت، في قسم \"الإبلاغ عن تغيير في الوضع\":\n→ خدمة عبر الإنترنت: MSA - مساحة خاصة\nتدرك Caf‎] أنه من الممكن ارتكاب الأخطاء عن حسن نية في تصريحاتها. وهذا يعني حق الخطأ.\nتواصل مع Caf في أقرب وقت ممكن لإبلاغه بالخطأ الذي ارتكبته وتوضيح وضعك.\n→ إلى من يتم الاتصال: Caisse primaire d'assurance maladie (CPAM)\nوهذا يعني: إذا كنت ترغب في الحصول على مزيد من المعلومات، يمكنك زيارة موقع \"الخدمات العامة +\" الذي يضم قائمة بأكثر الأخطاء شيوعًا، ويشرح لك كيفية تصحيحها.",
+        "titre": "MSA"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F827",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F827",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.1,
+      "units": 78
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:10.513Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Soll eine Veränderung der Lebenssituation (Umzug, Scheidung, Arbeitslosigkeit usw.) gemeldet werden, wenn Leistungen für Familienangehörige beantragt werden?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Eine Person, die Familienleistungen erhält, muss alle Änderungen in ihrer Situation melden: Umzug, Zusammenleben, Trennung, Scheidung, Eheschließung usw.",
+      "steps": [
+       {
+        "texte": "Wenn Sie Familienleistungen beziehen, müssen Sie alle Änderungen in Ihrer persönlichen, familiären oder beruflichen Situation melden. Dies kann beispielsweise ein Umzug, eine Zusammenlebensbeziehung, die Eheschließung, eine Scheidung oder eine Trennung betreffen. Es kann sich auch um den Ein- oder Auszug eines Kindes oder einer unterstützten Person handeln.\nDer zu ergreifende Schritt hängt davon ab, ob Sie sich an die allgemeine Regel (Caf: Familienkasse) oder die landwirtschaftliche Regel (MSA: landwirtschaftliche Sozialversicherung) halten:",
+        "titre": null
+       },
+       {
+        "texte": "Fall: Veränderung der familiären Situation\nEs ist wichtig, Ihren neuen Lebensstatus schnell zu melden.\nSie können dies direkt in Ihrem Online-Konto tun:\n→ Online-Service: Familienleistungen und -bezüge – Angaben zum Familienstand (Caf)\nWenn Sie noch kein Konto bei Caf haben, können Sie eines erstellen. Sie benötigen:\n- Ihre Sozialversicherungsnummer, falls vorhanden (Nummer auf Ihrem Krankenversicherungskarte)\n- Ihr Ausweisdokument.\nKonkret: Wenn Sie eine Partnerschaft eingehen und keine Familienleistungen erhalten, informieren Sie sich bei Ihrem Caf: Ihre neue Situation kann Ihnen Rechte eröffnen. Für Caf ist es nicht erforderlich, verheiratet oder in einer gleichberechtigten Beziehung zu sein, um als Paar betrachtet zu werden.\n→ Wo man sich wenden sollte: Caisse d'allocations familiales (Caf)\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM: örtliche Krankenkasse)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.\nFall: Umzug\nSie können Ihre Adressänderung über den Online-Service zur Adressänderung mitteilen:\n→ Online-Service: Änderung der Adresse melden\nSie können umgehend nach Ihrem Einzug eine neue Antragsstellung für staatliche Wohngeldleistungen für Ihre neue Adresse einreichen, um keine Ansprüche zu verlieren.\nAuch wenn Sie diese Leistung bereits in Anspruch nehmen, müssen Sie einen neuen Antrag im Bereich „Mein Konto“ stellen:\nWenn Sie noch kein Konto bei Caf haben, können Sie eines erstellen. Sie benötigen:\n- Ihre Sozialversicherungsnummer, falls vorhanden (Nummer auf Ihrem Krankenversicherungskarte)\n- Ihr Ausweisdokument.\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.\nFall: Veränderung der beruflichen Situation\nSie müssen insbesondere folgende Ereignisse melden:\n- Sie haben eine Arbeitsstelle gefunden.\n- Sie sind arbeitslos, nachdem Sie sich bei France Travail (ehemals Arbeitsagentur) gemeldet haben.\n- Sie sind im Ruhestand\n- Sie leiden unter einer chronischen Krankheit, einem Arbeitsunfall oder einer Invalidität.\n- Sie arbeiten in Frankreich für einen ausländischen Arbeitgeber.\n- Sie arbeiten im Ausland.\nEs ist wichtig, Ihren neuen Lebensstatus schnell zu melden.\nSie können dies direkt in Ihrem Online-Konto tun:\n→ Online-Service: Familienleistungen und -bezüge – Angaben zum Familienstand (Caf)\nWenn Sie noch kein Konto bei Caf haben, können Sie eines erstellen. Sie benötigen:\n- Ihre Sozialversicherungsnummer, falls vorhanden (Nummer auf Ihrem Krankenversicherungskarte)\n- Ihr Ausweisdokument.\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.",
+        "titre": "Caf"
+       },
+       {
+        "texte": "Fall: Veränderung der familiären Situation\nEs ist wichtig, Ihren neuen Lebensstatus schnell zu melden.\nDie Trennungsanzeige betrifft Sie, wenn Sie in einer Beziehung sind, unabhängig davon, ob Sie verheiratet, in einer Partnerschaft oder in einer gleichberechtigten Lebensgemeinschaft sind.\nSie können die Änderung direkt in Ihrem Online-Konto anzeigen:\n→ Online-Service: MSA ] - Persönlicher Bereich\nDas bedeutet: Wenn Sie eine Partnerschaft eingehen und keine Familienleistungen mehr beziehen, informieren Sie sich bei Ihrem MSA. Ihre neue Situation könnte Ihnen neue Rechte eröffnen.\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.\nFall: Umzug\nSie können Ihre Adressänderung über den Online-Service zur Adressänderung mitteilen:\n→ Online-Service: Änderung der Adresse melden\nBitte beachten: Diese Information ermöglicht es der MSA, um Ihre Rechte neu zu definieren. Wenn Sie dies nicht tun, riskieren Sie, in eine Situation der Betrug zu geraten, und es werden Ihnen Bußgelder auferlegt. Wenn Sie den Bezirk wechseln, werden Sie automatisch der MSA zugeordnet.\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.\nFall: Veränderung der beruflichen Situation\nSie müssen insbesondere folgende Ereignisse melden:\n- Sie haben einen Job gefunden.\n- Sie sind auf der Suche nach einer Arbeitsstelle.\n- Sie sind in den Ruhestand getreten.\nEs ist wichtig, Ihren Statusänderung schnell online zu melden.\nSie können die Änderung direkt in Ihrem Online-Konto, im Bereich \"Änderung der persönlichen Verhältnisse melden\", angeben:\n→ Online-Service: MSA ] - Persönlicher Bereich\nDie Caf räumt ein, dass es möglich ist, in guten Absichten falsche Angaben zu machen. Dies ist das Recht auf Fehler.\nNehmen Sie so schnell wie möglich Kontakt mit Ihrem zuständigen Caf auf, um ihn über den Fehler zu informieren und Ihre Situation zu klären.\n→ Wo man sich wenden sollte: Caisse primaire d'assurance maladie (CPAM)\nKonkret: Wenn Sie weitere Informationen wünschen, können Sie die Website \"Services Publics +\" besuchen. Dort finden Sie eine Liste der häufigsten Fehler und Erklärungen, wie man diese korrigiert.",
+        "titre": "MSA"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F827",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F827",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73,
+      "units": 78
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.273Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Чи потрібно повідомляти про зміни у сімейному стані (переїзд, розлучення, безробіття тощо), коли отримуються виплати?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Особа, яка отримує сімейні виплати, повинна повідомити про будь-які зміни у своєму сімейному стані: переїзд, перебування у відносинах, розірвання шлюбу, розлучення, одруження...",
+      "steps": [
+       {
+        "texte": "Якщо ви отримуєте сімейні виплати, вам необхідно повідомити про будь-які зміни у вашому сімейному, особистому або професійному стані. Це може стосуватися переїзду, перебування у відносинах, укладення шлюбу, розлучення або навіть розірвання шлюбу. Також це може бути пов'язано з появою або відсутністю дитини або іншої особи, яка є на вашому утриманні.\nПроцедура, яку слід дотримуватися, залежить від того, чи ви підпадаєте під загальний режим (Caf (каса сімейних допомог), чи під режим сільського господарства (MSA: сільськогосподарське соціальне страхування).",
+        "titre": null
+       },
+       {
+        "texte": "Випадок: Зміна сімейного положення\nНеобхідно якомога швидше повідомити про зміну свого становища.\nВи можете зробити це безпосередньо у вашому онлайн-акаунті:\n→ Онлайн-сервіс: Виплати та соціальні виплати для сімей – Подання заяви про сімейний стан (Caf)\nЯкщо у вас немає облікового запису Caf, ви можете створити його. Вам знадобиться:\n- Ваш номер соціального страхування, якщо він у вас є (номер, який зазначено на вашому полісі страхування).\n- Ваш документ, що посвідчує особу.\nНаприклад: Якщо ви утворюєте сім'ю, але не отримуєте сімейних виплат, зверніться до вашого Caf: ваша нова ситуація може відкрити вам певні права. Щодо Caf, не потрібно бути одруженим або перебувати в цивільному партнерстві, щоб вважатися, що ви живете у парі.\n→ Куди звернутися: Caisse d'allocations familiales (Caf)\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM: місцева каса медичного страхування)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.\nВипадок: Зміна місця проживання\nВи можете повідомити про зміну свого місця проживання, використовуючи онлайн-сервіс зміни адреси:\n→ Онлайн-сервіс: Повідомлення про зміну адреси\nВи можете подати нову заявку на отримання допомоги з житла для вашої нової адреси одразу після переїзду, щоб не втратити своїх прав.\nНавіть якщо ви вже отримуєте цю послугу, вам необхідно подати новий запит у розділі \"Мій обліковий запис\":\nЯкщо у вас немає облікового запису Caf, ви можете створити його. Вам знадобиться:\n- Ваш номер соціального страхування, якщо він у вас є (номер, який зазначено на вашому полісі страхування).\n- Ваш документ, що посвідчує особу.\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.\nВипадок: Зміна професійної ситуації\nОсобливо необхідно повідомляти про такі події:\n- Ви знайшли роботу\n- Ви перебуваєте у стані безробіття після реєстрації в France Travail (раніше – Центр зайнятості).\n- Ви вийшли на пенсію\n- Ви перебуваєте у стані хронічної хвороби, отримали травму на роботі або маєте інвалідність.\n- Ви працюєте у Франції на роботі для іноземного роботодавця.\n- Ви працюєте за кордоном.\nНеобхідно якомога швидше повідомити про зміну свого становища.\nВи можете зробити це безпосередньо у вашому онлайн-акаунті:\n→ Онлайн-сервіс: Виплати та соціальні виплати для сімей – Подання заяви про сімейний стан (Caf)\nЯкщо у вас немає облікового запису Caf, ви можете створити його. Вам знадобиться:\n- Ваш номер соціального страхування, якщо він у вас є (номер, який зазначено на вашому полісі страхування).\n- Ваш документ, що посвідчує особу.\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.",
+        "titre": "Caf"
+       },
+       {
+        "texte": "Випадок: Зміна сімейного положення\nНеобхідно якомога швидше повідомити про зміну свого становища.\nДекларація про розірвання шлюбу стосується вас, якщо ви перебуваєте у шлюбі, перебуваєте у цивільному партнерстві або у вільному житті.\nВи можете повідомити про зміну безпосередньо у вашому онлайн-акаунті:\n→ Онлайн-сервіс: MSA - Особиста розділ\nНаприклад: Якщо ви одружилися і не отримуєте сімейних виплат, зверніться до свого MSA. Ваша нова ситуація може відкрити вам певні права.\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.\nВипадок: Зміна місця проживання\nВи можете повідомити про зміну свого місця проживання, використовуючи онлайн-сервіс зміни адреси:\n→ Онлайн-сервіс: Повідомлення про зміну адреси\nВажливо зазначити: Ця інформація дозволяє MSA переглянути ваші права. Якщо ви цього не зробите, ви можете опинитися у ситуації шахрайства, і вам буде нараховано штрафи. Якщо ви перейдете до іншого департаменту, ви автоматично станете учасником MSA.\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.\nВипадок: Зміна професійної ситуації\nОсобливо необхідно повідомляти про такі події:\n- Ви знайшли роботу\n- Ви шукаєте роботу\n- Ви вийшли на пенсію.\nНеобхідно якнайшвидше повідомити про зміну свого статусу через інтернет.\nВи можете повідомити про зміну безпосередньо у вашому онлайн-акаунті, у розділі \"Повідомити про зміну ситуації\":\n→ Онлайн-сервіс: MSA - Особиста розділ\nCaf(або інший відповідний термін) визнає, що можливо помилятися у своїх заявах, діючи з найкращих намірів. Це право на помилку.\nЗверніться до відповідного Caf якомога швидше, щоб повідомити про помилку та урегулювати вашу ситуацію.\n→ Куди звернутися: Caisse primaire d'assurance maladie (CPAM)\nНаприклад: Якщо вам потрібна додаткова інформація, ви можете відвідати веб-сайт \"Public Services +\" (Services Publics +), де зібрано найпоширеніші помилки та пояснюється, як їх виправити.",
+        "titre": "MSA"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F827",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F827",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.4,
+      "units": 78
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:c4b5efa140cf40b1f5c4b8fd6a6e5a61bb9e786690c473e204e5a01c58c0027f",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Faut-il signaler un changement de situation (déménagement, séparation, chômage...) quand on perçoit des prestations familiales ?",
+   "contenu_json": {
+    "intro": "Une personne percevant des prestations familiales doit signaler tout changement lié à sa situation : déménagement, concubinage, séparation, divorce, mariage...",
+    "steps": [
+     {
+      "texte": "Si vous percevez des prestations familiales, vous devez signaler tout changement de situation personnelle, familiale ou professionnelle. Cela peut concerner un déménagement, un concubinage, la conclusion d'un Pacs, un mariage, une séparation ou encore un divorce. Il peut aussi s'agir de l'arrivée ou du départ du foyer d'un enfant ou d'une personne à charge.\nLa démarche à suivre varie selon que vous dépendez du régime général (Caf) ou du régime agricole (MSA) :",
+      "titre": null
+     },
+     {
+      "texte": "Cas : Changement de situation familiale\nIl faut déclarer rapidement votre changement de situation.\nVous pouvez le faire directement dans votre compte en ligne :\n→ Service en ligne : Allocations et prestations familiales - Déclaration de situation (Caf)\nSi vous n’avez pas de compte Caf, vous pouvez en créer un. Il vous faut :\n- Votre numéro de Sécurité sociale si vous en possédez un (numéro présent sur votre carte vitale)\n- Votre pièce d'identité.\nÀ savoir : Si vous vous mettez en couple et que vous ne percevez pas de prestations familiales, renseignez-vous auprès de votre Caf : votre nouvelle situation peut vous ouvrir des droits. Pour la Caf, il n’est pas nécessaire d’être marié ou pacsé pour être considéré comme vivant en couple.\n→ Où s'adresser : Caisse d'allocations familiales (Caf)\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.\nCas : Changement de domicile\nVous pouvez signaler votre changement de domicile en utilisant le service de changement d'adresse en ligne :\n→ Service en ligne : Déclaration de changement d'adresse\nVous pouvez faire une nouvelle demande d’aide au logement pour votre nouvelle adresse dès votre entrée dans les lieux pour ne pas perdre de droits.\nMême si vous bénéficiez déjà de cette prestation, vous devez faire une nouvelle demande dans l’Espace Mon Compte :\nSi vous n’avez pas de compte Caf, vous pouvez en créer un. Il vous faut :\n- Votre numéro de Sécurité sociale si vous en possédez un (numéro présent sur votre carte vitale)\n- Votre pièce d'identité.\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.\nCas : Changement de situation professionnelle\nVous devez signaler notamment les événements suivants :\n- Vous avez trouvé du travail\n- Vous êtes au chômage après vous êtes inscrit à France Travail (anciennement Pôle emploi)\n- Vous êtes à la retraite\n- Vous êtes en maladie de longue durée, en accident du travail ou en invalidité\n- Vous travaillez en France pour un employeur étranger\n- Vous travaillez à l'étranger.\nIl faut déclarer rapidement votre changement de situation.\nVous pouvez le faire directement dans votre compte en ligne :\n→ Service en ligne : Allocations et prestations familiales - Déclaration de situation (Caf)\nSi vous n’avez pas de compte Caf, vous pouvez en créer un. Il vous faut :\n- Votre numéro de Sécurité sociale si vous en possédez un (numéro présent sur votre carte vitale)\n- Votre pièce d'identité.\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.",
+      "titre": "Caf"
+     },
+     {
+      "texte": "Cas : Changement de situation familiale\nIl faut déclarer rapidement votre changement de situation.\nLa déclaration de séparation vous concerne si vous êtes en couple que vous soyez marié, pacsé ou en union libre (vie maritale, concubinage).\nVous pouvez signaler le changement directement dans votre compte en ligne :\n→ Service en ligne : MSA - Espace particuliers\nÀ savoir : Si vous vous mettez en couple et que vous ne touchez pas de prestations familiales, renseignez-vous auprès de votre MSA. Votre nouvelle situation peut vous ouvrir des droits.\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.\nCas : Changement de domicile\nVous pouvez signaler votre changement de domicile en utilisant le service de changement d'adresse en ligne :\n→ Service en ligne : Déclaration de changement d'adresse\nÀ noter : Cette information permet à la MSA de réajuster vos droits. Si vous ne le faites pas, vous risquez d’être en situation de fraude et des pénalités vous seront demandées. Si vous changez de département, vous serez automatiquement affilié à votre future MSA.\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.\nCas : Changement de situation professionnelle\nVous devez signaler notamment les événements suivants :\n- Vous avez trouvé un travail\n- Vous êtes demandeur d'emploi\n- Vous avez pris votre retraite.\nIl faut déclarer rapidement votre changement de situation via internet.\nVous pouvez signaler le changement directement dans votre compte en ligne, rubrique Déclarer un changement de situation :\n→ Service en ligne : MSA - Espace particuliers\nLa Caf reconnaît qu'il est possible de se tromper, de bonne foi, dans ses déclarations. C'est le droit à l'erreur.\nContactez le plus rapidement votre Caf pour l’informer de votre erreur et régulariser votre situation.\n→ Où s'adresser : Caisse primaire d'assurance maladie (CPAM)\nÀ savoir : Si vous souhaitez plus d’informations, vous pouvez consulter le site Services Publics + qui recense les erreurs les plus fréquentes et vous explique comment les corriger.",
+      "titre": "MSA"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

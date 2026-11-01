@@ -1,0 +1,660 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "aah",
+ "recordId": "dcdc2c71-ab82-4fa1-a365-f2bcc3e25033",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:07.751Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Allocation for disabled adults (AAH: allowance for disabled adults)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The disability allowance (AAH: allowance for disabled adults) is a financial aid program for people with disabilities who have low incomes. It helps cover daily expenses. To be eligible, applicants must meet certain criteria related to disability, age, residency, and income. The application can be submitted online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The disability allowance (AAH: allowance for disabled adults) is a financial aid program for people with disabilities who have low incomes. It helps cover daily expenses. To be eligible, applicants must meet certain criteria related to disability, age, residency, and income. The application can be submitted online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Having a disability rate of at least 80%, or 50% to 79% with a significant and lasting restriction in employment opportunities.\n- Living in mainland France or any of the overseas territories (Guadeloupe, Guyana, Martinique, Réunion, Saint-Barthélemy, Saint-Martin, Saint-Pierre-et-Miquelon)\n- To be a French citizen or resident in mainland France or overseas territories for more than 3 months (for Europeans)\n- Having limited resources",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.6,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of AAH (allowance for disabled adults) depends on your resources. You can use a simulator to estimate your entitlement to AAH.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit an application online via the MDPH (departmental disability centre) teleservice if available, or by mail using the corresponding form.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Please include all required supporting documents with your application.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Send the application to the MDPH at your place of residence.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Await a decision from the Commission for the Rights and Autonomy of People with Disabilities (CDAPH) within a 4-month timeframe.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "In the event of a refusal, you must file a mandatory prior administrative appeal (Rapo) with the MDPH within 2 months.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Documents required as part of your online request or on the form"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Departmental Association for People with Disabilities (MDPH: departmental disability centre), Caisse d'allocations familiales (Caf: family benefits office), Mutualité sociale agricole (MSA: farmers' social security fund).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:10.470Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Engelli bireyler için ayrılan ödenek (AAH: engelli yetişkin ödeneği)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Engelliler için nakdi ödeme (\\AAH (engelli yetişkin ödeneği)), düşük gelirli engelli bireyler için yönelik bir mali yardımdır. Bu, günlük harcamaları karşılamayı sağlar. Bu yardımdan yararlanmak için, engellilik durumu, yaş, ikamet yeri ve gelir gibi belirli koşulları sağlamak gerekir. Başvuru, çevrimiçi olarak veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Engelliler için nakdi ödeme (\\AAH (engelli yetişkin ödeneği)), düşük gelirli engelli bireyler için yönelik bir mali yardımdır. Bu, günlük harcamaları karşılamayı sağlar. Bu yardımdan yararlanmak için, engellilik durumu, yaş, ikamet yeri ve gelir gibi belirli koşulları sağlamak gerekir. Başvuru, çevrimiçi olarak veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- En az %80 veya %50 ile %79 arasında bir iş gücü yetersizliği oranı, önemli ve uzun süreli bir işe erişim kısıtlaması ile birlikte.\n- Fransız metropolünde veya Fransız Dış Bölgelerinde (Güadeloupe, Guyana, Martinik, Reünyon, Saint-Barthélemy, Saint-Martin, Saint-Pierre-et-Miquelon) ikamet etmek.\n- Fransız vatandaşı olmak veya Fransa'da (metropol veya dış adalar) 3 aydan daha uzun süre ikamet etmek (Avrupa vatandaşları için)\n- Sınırlı kaynaklara sahip olmak",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "AAH (engelli yetişkin ödeneği)'nin miktarı, kaynaklarınıza bağlıdır. AAH'ye sahip olma hakkınızı tahmin etmek için bir simülasyon kullanabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 86.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "MDPH (il engelli bireyler merkezi)'in çevrimiçi hizmeti üzerinden başvuruda bulunmak (eğer mevcutsa), veya ilgili formülle posta yoluyla başvurmak.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri başvurunuzla birlikte ekleyin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "İkamet adresinizdeki MDPH'e başvuruyu gönderebilirsiniz.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Engelliler için Haklar ve Özerklik Komisyonu'nun (CDAPH) kararını 4 ay içinde beklemek.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Reddedilme durumunda, MDPH'e 2 ay içinde zorunlu bir idari itiraz (Rapo) dosyalamanız gerekmektedir.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Online başvurunuz veya formunuzda belirtilen gerekli belgeler."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Bölgesel Engelliler Dairesi (MDPH: il engelli bireyler merkezi), Caisse d'allocations familiales (Caf: aile yardımları kurumu), Mutualité sociale agricole (MSA: tarım sosyal güvenlik kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:13.317Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مخصص للأشخاص ذوي الإعاقة (AAH: إعانة البالغين ذوي الإعاقة)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"مخصص للأشخاص ذوي الإعاقة (AAH: إعانة البالغين ذوي الإعاقة) هو مساعدة مالية مخصصة للأشخاص الذين يعانون من إعاقة ولديهم دخل محدود. تهدف إلى تغطية النفقات اليومية. للحصول على هذه المساعدة، يجب استيفاء شروط تتعلق بالإعاقة، والعمر، والمكانة السكنية، والدخل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"مخصص للأشخاص ذوي الإعاقة (AAH: إعانة البالغين ذوي الإعاقة) هو مساعدة مالية مخصصة للأشخاص الذين يعانون من إعاقة ولديهم دخل محدود. تهدف إلى تغطية النفقات اليومية. للحصول على هذه المساعدة، يجب استيفاء شروط تتعلق بالإعاقة، والعمر، والمكانة السكنية، والدخل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أن يكون لدى الشخص معدل إعاقة لا يقل عن 80٪، أو بين 50٪ و 79٪ مع قيود كبيرة وطويلة الأمد على فرص العمل.\n- الإقامة في فرنسا (البر الرئيسي) أو في الأقاليم الفرنسية (مثل غوادلوب، وغيانا، ومارتينيك، ورينيون، وسانت بارثيلمي، وسانت مارتين، وسانت بيير وميكيلون).\n- أن تكون فرنسيًا أو مقيمًا في فرنسا (بما في ذلك الأراضي الفرنسية في الخارج) لمدة تزيد عن 3 أشهر (للمواطنين الأوروبيين).\n- التعامل مع موارد محدودة",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يعتمد المبلغ المذكور في AAH (إعانة البالغين ذوي الإعاقة) على مواردك. يمكنك استخدام محاكي لتقدير حقك في الحصول على AAH.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم الطلب عبر الإنترنت من خلال خدمة التيسير المتاحة في MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة)، أو عن طريق البريد باستخدام النموذج المناسب.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يرجى إرفاق المستندات المطلوبة مع طلبك.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إرسال الطلب إلى MDPH في مكان إقامتك.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "انتظار قرار لجنة حقوق الأشخاص ذوي الإعاقة والحكم الذاتي (CDAPH) خلال فترة 4 أشهر.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "في حال الرفض، يجب تقديم طلب استئناف إداري رسمي (RAPO) إلى MDPH خلال فترة زمنية لا تتجاوز 2 شهر.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "الوثائق المطلوبة التي تم ذكرها في سياق طلبك عبر الإنترنت أو في النموذج."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: مكتب إقليمي للأشخاص ذوي الإعاقة (MDPH: الدار الإقليمية للأشخاص ذوي الإعاقة), Caisse d'allocations familiales (Caf: صندوق الإعانات العائلية), Mutualité sociale agricole (MSA: صندوق الضمان الاجتماعي الفلاحي).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 82.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:16.894Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zuschüsse für Menschen mit Behinderung (AAH: Beihilfe für Erwachsene mit Behinderung)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die finanzielle Unterstützung für Menschen mit Behinderungen (AAH: Beihilfe für Erwachsene mit Behinderung) ist eine finanzielle Hilfe für Menschen mit Behinderungen, die über geringe finanzielle Mittel verfügen. Sie dient dazu, die täglichen Ausgaben zu decken. Um diese Unterstützung zu erhalten, müssen bestimmte Bedingungen erfüllt werden, die sich auf die Behinderung, das Alter, den Wohnort und die finanziellen Mittel beziehen. Die Anträge können online oder per Post gestellt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die finanzielle Unterstützung für Menschen mit Behinderungen (AAH: Beihilfe für Erwachsene mit Behinderung) ist eine finanzielle Hilfe für Menschen mit Behinderungen, die über geringe finanzielle Mittel verfügen. Sie dient dazu, die täglichen Ausgaben zu decken. Um diese Unterstützung zu erhalten, müssen bestimmte Bedingungen erfüllt werden, die sich auf die Behinderung, das Alter, den Wohnort und die finanziellen Mittel beziehen. Die Anträge können online oder per Post gestellt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Ein Invaliditätsgrad von mindestens 80 %, oder 50 % bis 79 % bei einer erheblichen und dauerhaften Einschränkung der Arbeitsfähigkeit.\n- Wohnen in Frankreich (auf dem Festland oder in den Überseegebieten wie Guadeloupe, Französisch-Guyana, Martinique, Réunion, Saint-Barthélemy, Saint-Martin, Saint-Pierre-et-Miquelon)\n- Französische Staatsbürgerschaft oder Wohnsitz in Frankreich (metropolitisch oder im Überseegebiet) für mehr als 3 Monate (für EU-Bürger)\n- Begrenzte Ressourcen",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.4,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Höhe von AAH (Beihilfe für Erwachsene mit Behinderung) hängt von Ihren Ressourcen ab. Sie können einen Rechner verwenden, um Ihren Anspruch auf AAH zu schätzen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Eine Anfrage über das Online-Portal des MDPH (Behindertenzentrum des Départements) einreichen, falls verfügbar, oder per Post mit dem entsprechenden Formular.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Bitte fügen Sie die erforderlichen Nachweise Ihrer Anfrage bei.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Den Antrag an die MDPH Ihrer Wohnadresse senden.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Auf die Entscheidung der Kommission für die Rechte und Autonomie von Menschen mit Behinderungen (CDAPH) innerhalb von 4 Monaten warten.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Im Falle einer Ablehnung: Ein formelles Beschwerdeverfahren (Rapo) bei der MDPH innerhalb von 2 Monaten einlegen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Dokumente, die im Zusammenhang mit Ihrer Online-Anfrage oder dem Formular angefordert wurden"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen die folgenden Optionen vor:\n* Landesstelle für Menschen mit Behinderung (MDPH: Behindertenzentrum des Départements), Caisse d'allocations familiales (Caf: Familienkasse), Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:19.840Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Виділення коштів для людей з інвалідністю (AAH: допомога дорослим з інвалідністю)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Виплата особам з інвалідністю (AAH: допомога дорослим з інвалідністю) – це фінансова допомога, призначена для людей з інвалідністю, які мають обмежені доходи. Вона дозволяє покрити витрати повсякденного життя. Для отримання цієї виплати необхідно відповідати певним умовам, пов'язаним з інвалідністю, віком, місцем проживання та доходами. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Виплата особам з інвалідністю (AAH: допомога дорослим з інвалідністю) – це фінансова допомога, призначена для людей з інвалідністю, які мають обмежені доходи. Вона дозволяє покрити витрати повсякденного життя. Для отримання цієї виплати необхідно відповідати певним умовам, пов'язаним з інвалідністю, віком, місцем проживання та доходами. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Наявність ступеня інвалідності не менше 80%, або 50-79% з суттєвим і тривалим обмеженням у працевлаштуванні.\n- Проживання у Франції (метрополічній або заморських територіях, таких як Гваделупа, Гвіана, Мартиніка, Реюньйон, Сен-Бартелемі, Сен-Мартен, Сен-П'єр-і-Мікелон)\n- Бути громадянином Франції або проживати у Франції (метрополічній або заморській території) протягом понад 3 місяців (для громадян ЄС).\n- Мати обмежені ресурси",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.5,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума AAH (допомога дорослим з інвалідністю) залежить від ваших ресурсів. Ви можете використовувати калькулятор, щоб оцінити свої права на AAH.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку онлайн через онлайн-сервіс MDPH (якщо він доступний), або поштою, використовуючи відповідний бланк.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Додайте необхідні документи до вашого запиту.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Надіслати заявку до MDPH (департаментський центр у справах осіб з інвалідністю) за місцем проживання.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Очікувати рішення Комісії з прав та автономії людей з інвалідністю (CDAPH) протягом 4 місяців.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі відмови, необхідно подати попередній адміністративний позов (Rapo) до MDPH протягом 2 місяців.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документи, що підтверджують вашу заявку, отриману онлайн або заповнену на бланку."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Департамент соціального захисту людей з інвалідністю (MDPH: департаментський центр у справах осіб з інвалідністю), Caisse d'allocations familiales (Caf: каса сімейних допомог), Mutualité sociale agricole (MSA: сільськогосподарське соціальне страхування).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 83.1,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:aa3d0e2fda9815b0c6734d9528970a1a05a71fff6eec52fff186aa3a9dbfc188",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation aux adultes handicapés (AAH)",
+   "description": "L'allocation aux adultes handicapés (AAH) est une aide financière destinée aux personnes en situation de handicap avec de faibles ressources. Elle permet de couvrir les dépenses du quotidien. Pour en bénéficier, il faut respecter des conditions liées à l'incapacité, à l'âge, à la résidence et aux ressources. La demande peut être faite en ligne ou par courrier.",
+   "cest_quoi": "L'allocation aux adultes handicapés (AAH) est une aide financière destinée aux personnes en situation de handicap avec de faibles ressources. Elle permet de couvrir les dépenses du quotidien. Pour en bénéficier, il faut respecter des conditions liées à l'incapacité, à l'âge, à la résidence et aux ressources. La demande peut être faite en ligne ou par courrier.",
+   "pour_qui": "- Avoir un taux d'incapacité d'au moins 80 %, ou 50 % à 79 % avec une restriction substantielle et durable d'accès à un emploi\n- Résider en France métropolitaine ou en outre-mer (Guadeloupe, Guyane, Martinique, La Réunion, Saint-Barthélemy, Saint-Martin, Saint-Pierre-et-Miquelon)\n- Être français ou résider en France métropolitaine ou en outre-mer depuis plus de 3 mois (pour les Européens)\n- Avoir des ressources limitées",
+   "ce_que_ca_aide": "Le montant de l'AAH dépend de vos ressources. Vous pouvez utiliser un simulateur pour estimer votre droit à l'AAH.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire une demande en ligne via le téléservice de la MDPH si disponible, ou par courrier avec le formulaire correspondant"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Joindre les documents justificatifs requis à votre demande"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Envoyer la demande à la MDPH de votre lieu de résidence"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Attendre la décision de la commission des droits et de l’autonomie des personnes handicapées (CDAPH) dans un délai de 4 mois"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "En cas de refus, déposer un recours administratif préalable obligatoire (Rapo) auprès de la MDPH dans un délai de 2 mois"
+    }
+   ],
+   "documents_necessaires": [
+    "Documents justificatifs mentionnés à l'occasion de votre demande en ligne ou sur le formulaire"
+   ],
+   "ou_demander": "Selon votre situation : Maison départementale des personnes handicapées (MDPH), Caisse d'allocations familiales (Caf), Mutualité sociale agricole (MSA).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:36:31.041Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

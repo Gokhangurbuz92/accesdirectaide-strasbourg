@@ -1,0 +1,682 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "rdv-titre-sejour-67",
+ "recordId": "bf019a55-5c9b-40de-84ea-3ee2b098e638",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.179Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "General information about titre de séjour (residence permit)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "The \"private and family life\" residence permit allows non-European foreign nationals with family ties in France to obtain a titre de séjour (residence permit). It is intended for spouses, parents, or family members of a French or regular resident. It offers the possibility of living and working in France. The application must be made online, at least 4 months before the expiry of the current permit.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 83.4,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "The \"private and family life\" residence permit allows non-European foreign nationals with family ties in France to obtain a titre de séjour (residence permit). It is intended for spouses, parents, or family members of a French or regular resident. It offers the possibility of living and working in France. The application must be made online, at least 4 months before the expiry of the current permit.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 83.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Non-European foreign national with family ties in France\n- Spouse or spouse of a French citizen\n- Parent of a minor French child\n- Member of the family of a foreign national who is staying in France on a regular basis\n- Individual in a precarious situation, under certain conditions",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check if you meet the requirements based on the titre de séjour (residence permit) visa or the visa you hold.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Submit the application online at least 4 months and no later than 2 months before the expiration date of the current document.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Prepare and provide the required documentation in digital format.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Obtain a digital certificate of deposit after submitting the application.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If no response is received within 4 months, consider filing an administrative or legal claim.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Copies of the passport pages showing the visa and entry stamp",
+      "Letter of exemption from visa requirements",
+      "Titre de séjour (residence permit) currently in effect",
+      "Passport or citizenship certificate",
+      "Full copy of birth certificate",
+      "E-photo format ID photos",
+      "Proof of address dated within the last 6 months",
+      "Affidavit of Joint Life Insurance Policy with Spouse",
+      "Complete copy of the marriage certificate",
+      "Proof of French nationality for the spouse"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.7,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Depending on your situation: Local business partner for a local payment, Préfecture (state administration of the département), préfecture, Préfecture of the Paris police - Service titres de séjour (residence permit).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.184Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "titre de séjour (oturum izni) hakkında genel bilgiler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "\"Özel ve ailevi yaşam\" oturum izni, Fransa'da aile bağları olan, Avrupa dışındaki yabancılara, titre de séjour (oturum izni) belgesini almalarını sağlar. Bu belge, Fransız veya düzenli olarak Fransa'da bulunan yabancıların eşleri, ebeveynleri veya aile üyeleri için geçerlidir. Bu belge, Fransa'da yaşama ve çalışma imkanı sunar. Başvuru, mevcut belgenin süresi bitmeden en az 4 ay önce çevrimiçi olarak yapılmalıdır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "\"Özel ve ailevi yaşam\" oturum izni, Fransa'da aile bağları olan, Avrupa dışındaki yabancılara, titre de séjour (oturum izni) belgesini almalarını sağlar. Bu belge, Fransız veya düzenli olarak Fransa'da bulunan yabancıların eşleri, ebeveynleri veya aile üyeleri için geçerlidir. Bu belge, Fransa'da yaşama ve çalışma imkanı sunar. Başvuru, mevcut belgenin süresi bitmeden en az 4 ay önce çevrimiçi olarak yapılmalıdır.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Avrupa olmayan, ancak Fransa'da aile bağlarına sahip bir yabancı\n- Fransız bir vatandaşın eşi veya eşi\n- Fransız uyruklu, çoçuk sahibi bir ebeveyn\n- Fransa'da düzenli olarak bulunan yabancı bir ailenin üyesi\n- Belirsiz durumda olan kişi, belirli koşullar altında",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 58.1,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "titre de séjour (oturum izni) veya sahip olduğunuz vizeye göre, gerekli şartların karşılanıp karşılanmadığını kontrol edin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Mevcut belgenin geçerlilik süresinin sona ermesinden en az 4 ay ve en fazla 2 ay önce, internet üzerinden başvuru yapılması gerekmektedir.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri dijital formatta hazırlamak ve sunmak",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Talep sunulduktan sonra, dijital bir şekilde ödeme kanıtı almak",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Eğer 4 ay içinde yanıt alınamazsa, idari veya hukuki bir başvuru yapmak gerekir.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 61,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Pasaportun vize ve giriş damgasının kopyaları",
+      "Giriş vizesi muafiyet belgesi",
+      "Titre de séjour (oturum izni) geçerli",
+      "Pasaport veya kimlik belgesi",
+      "Doğum belgesinin tam kopyası",
+      "E-foto formatında kimlik fotoğrafları",
+      "6 aydan eski, geçerli bir ikametgah belgesi",
+      "Evlilik ortak yaşam beyanı",
+      "Evlilik cüzdanının tam kopyası",
+      "Eşin veya eşin Fransız vatandaşlığına dair belge"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.6,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Durumunuza göre: Yerel ödeme için ortak çözüm, Préfecture (devletin il idaresi), préfecture, Préfecture numaralı Paris polis departmanına ait sigorta poliçeleri - titres de séjour (oturum izni) numaralı hizmet].",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.189Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "معلومات عامة عن titre de séjour (تصريح الإقامة)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "تتيح \"بطاقة الإقامة الخاصة والعائلية\" للأجانب غير الأوروبيين الذين لديهم روابط عائلية في فرنسا الحصول على titre de séjour (تصريح الإقامة). وهي مخصصة للزوجين أو الأباء أو أفراد الأسرة المقيمين في فرنسا، سواء كانوا مواطنين فرنسيين أو أجانب في إقامة منتظمة. وتوفر هذه البطاقة إمكانية العيش والعمل في فرنسا. يجب تقديم الطلب عبر الإنترنت، قبل 4 أشهر على الأقل من انتهاء صلاحية البطاقة الحالية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "تتيح \"بطاقة الإقامة الخاصة والعائلية\" للأجانب غير الأوروبيين الذين لديهم روابط عائلية في فرنسا الحصول على titre de séjour (تصريح الإقامة). وهي مخصصة للزوجين أو الأباء أو أفراد الأسرة المقيمين في فرنسا، سواء كانوا مواطنين فرنسيين أو أجانب في إقامة منتظمة. وتوفر هذه البطاقة إمكانية العيش والعمل في فرنسا. يجب تقديم الطلب عبر الإنترنت، قبل 4 أشهر على الأقل من انتهاء صلاحية البطاقة الحالية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- شخص أجنبي غير أوروبي لديه روابط عائلية في فرنسا.\n- زوج أو زوجة مواطن فرنسي\n- والد طفل فرنسي قاصر\n- عضو في عائلة شخص أجنبي يقيم بشكل دائم في فرنسا.\n- شخص في وضع غير قانوني، في ظل ظروف معينة.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "التحقق مما إذا كانت الشروط متوفرة بناءً على titre de séjour (تصريح الإقامة) أو التأشيرة الحالية.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقديم الطلب عبر الإنترنت قبل الموعد النهائي للوثيقة الحالية بحد أقصى 4 أشهر و قبل أقصى حد 2 أشهر.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إعداد وتقديم المستندات المطلوبة في شكل رقمي.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "الحصول على شهادة إلكترونية للإقرار بعد تقديم الطلب.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "في حال عدم تلقي رد خلال 4 أشهر، يجب اتخاذ إجراء إداري أو قانوني.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 60.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "نسخة من صفحات جواز السفر مع ختم التأشيرة و ختم الدخول.",
+      "إقرار بالإعفاء من متطلبات التأشيرة عند الدخول",
+      "Titre de séjour (تصريح الإقامة) ساري المفعول حاليًا",
+      "جواز سفر أو شهادة الجنسية",
+      "نسخة كاملة من شهادة الميلاد",
+      "صور شخصية بتنسيق e-photo",
+      "إثبات عنوان ساري المفعول (يجب أن يكون أقل من 6 أشهر).",
+      "بيان بالتعهد بالعيش مع الزوج/الزوجة",
+      "نسخة كاملة من شهادة الزواج",
+      "إثبات جنسية الزوج أو الزوجة الفرنسية."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "بناءً على وضعك: شريك \"بورالايست\" للدفع المحلي، Préfecture (إدارة الدولة في الإقليم)، قسم préfecture، Préfecture ] من الشرطة في باريس - قسم titres de séjour (تصريح الإقامة).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.194Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Allgemeine Informationen über das titre de séjour (Aufenthaltstitel)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Die Aufenthaltskarte „für private und familiäre Zwecke“ ermöglicht es Nicht-Europäern mit familiären Bindungen in Frankreich, ein titre de séjour (Aufenthaltstitel) zu erhalten. Sie richtet sich an Ehepartner, Eltern oder Familienmitglieder von Franzosen oder Personen mit einem regulären Aufenthalt. Sie bietet die Möglichkeit, in Frankreich zu leben und zu arbeiten. Die Beantragung muss online erfolgen, mindestens 4 Monate vor Ablauf des aktuellen Titels.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Die Aufenthaltskarte „für private und familiäre Zwecke“ ermöglicht es Nicht-Europäern mit familiären Bindungen in Frankreich, ein titre de séjour (Aufenthaltstitel) zu erhalten. Sie richtet sich an Ehepartner, Eltern oder Familienmitglieder von Franzosen oder Personen mit einem regulären Aufenthalt. Sie bietet die Möglichkeit, in Frankreich zu leben und zu arbeiten. Die Beantragung muss online erfolgen, mindestens 4 Monate vor Ablauf des aktuellen Titels.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Nicht-europäischer Ausländer mit familiären Bindungen in Frankreich\n- Ehemann oder Ehefrau einer Person französischer Staatsangehörigkeit\n- Elternteil eines minderjährigen französischen Kindes\n- Mitglied einer Familie eines Ausländers, der sich regelmäßig in Frankreich aufhält\n- Person, die sich in einer prekären Situation befindet, unter bestimmten Bedingungen",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.4,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie, ob Sie die Voraussetzungen erfüllen, basierend auf dem titre de séjour (Aufenthaltstitel)-Visum oder dem vorhandenen Visum.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Die Antragsstellung über das Internet muss mindestens 4 Monate und spätestens 2 Monate vor Ablauf der Gültigkeit des aktuellen Dokuments erfolgen.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Vorbereiten und bereitstellen der erforderlichen Dokumente in digitaler Form",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Nach der Einreichung des Antrags erhalten Sie eine elektronische Bestätigung über den Eingang.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Im Falle, dass innerhalb von 4 Monaten keine Antwort erhalten wird, sollte ein administrativer oder gerichtlicher Rechtsbehelf eingeleitet werden.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kopien der Seiten des Reisepasses mit Visum und Einreise-Stempel",
+      "Bescheinigung über die Ausnahmegenehmigung für die Einreise",
+      "Titre de séjour (Aufenthaltstitel) Gültig",
+      "Reisepass oder Staatsbürgerschaftsnachweis",
+      "Vollständige Kopie des Geburtsurkunde",
+      "Identitätsfotos im Format E-Foto",
+      "Nachweis des Wohnsitzes, der nicht älter als 6 Monate ist",
+      "Erklärung über die gemeinsame Lebensführung mit dem Partner",
+      "Vollständige Kopie der Eheschließungsurkunde",
+      "Nachweis der französischen Staatsbürgerschaft des Ehepartners/der Ehepartnerin"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.9,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Je stelle Ihnen verschiedene Optionen zur Auswahl:\n\n*   \"Buraliste\" als Partner für eine lokale Zahlung, Préfecture (staatliche Verwaltung des Départements)\n*   \"Sous-préfecture\" von der Polizei von Paris - Dienst titres de séjour (Aufenthaltstitel)\n*   Préfecture",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 65.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.199Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Загальна інформація про titre de séjour (посвідка на проживання)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.2,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Карта перебування \"для забезпечення приватного та сімейного життя\" дозволяє іноземцям, які не є громадянами Європейського Союзу, та мають сімейні зв'язки у Франції, отримати titre de séjour (посвідка на проживання). Вона призначена для чоловіків, жінок, батьків або членів сім'ї француза або іноземця, який перебуває у Франції на законних підставах. Вона надає можливість проживати та працювати у Франції. Заявку необхідно подати онлайн, не пізніше ніж за 4 місяці до закінчення терміну дії поточної картки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Карта перебування \"для забезпечення приватного та сімейного життя\" дозволяє іноземцям, які не є громадянами Європейського Союзу, та мають сімейні зв'язки у Франції, отримати titre de séjour (посвідка на проживання). Вона призначена для чоловіків, жінок, батьків або членів сім'ї француза або іноземця, який перебуває у Франції на законних підставах. Вона надає можливість проживати та працювати у Франції. Заявку необхідно подати онлайн, не пізніше ніж за 4 місяці до закінчення терміну дії поточної картки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Іноземець, який не є європейцем, але має сімейні зв'язки у Франції.\n- Чоловік або дружина француза\n- Батько або мати дитини, яка є громадянином Франції та перебуває на захищеному режимі\n- Член сім'ї іноземця, який перебуває у Франції на постійній основі.\n- Особа, яка перебуває у неблагополучній ситуації, за певних умов.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 50.2,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перевірити, чи відповідають умови, залежно від titre de séjour (посвідка на проживання) або отриманого віза.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Подати заявку онлайн не пізніше ніж за 4 місяці та не раніше ніж за 2 місяці до закінчення терміну дії поточного документа.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Підготувати та надати необхідні документи в електронному форматі.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Отримати електронний підтвердження про отримання заявки після її подання.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі відсутності відповіді протягом 4 місяців, необхідно подати адміністративний або судовий позов.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Копії сторінок паспорта з візою та штампом про в'їзд",
+      "Документ, що підтверджує відсутність необхідності отримання візи для в'їзду.",
+      "Titre de séjour (посвідка на проживання) дійсний",
+      "Паспорт або свідоцтво про громадянство",
+      "Копія свідоцтва про народження",
+      "Фотографії для документів у форматі e-photo",
+      "Документ, що підтверджує місце проживання, виданий не раніше ніж 6 місяців тому.",
+      "Особиста заява про спільне проживання з партнером",
+      "Повна копія свідоцтва про шлюб",
+      "Документ, що підтверджує французьке громадянство чоловіка або дружини."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.2,
+      "units": 10
+     }
+    },
+    "ou_faire": {
+     "text": "Відповідно до вашої ситуації: \"Buraliste\" – партнер для оплати на місці, Préfecture (державна адміністрація департаменту), \"Sous-préfecture\", Préfecture – поліцейський відділок у Парижі – Відділ titres de séjour (посвідка на проживання).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.8,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:6ee05067790c751e23efc631ac52121c64187200596f6e048df6ac948ded819e",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Information générale sur le titre de séjour",
+   "description_courte": "La carte de séjour 'vie privée et familiale' permet aux étrangers non européens ayant des attaches familiales en France d'obtenir un titre de séjour. Elle est destinée aux époux, parents ou membres de la famille d'un Français ou d'un étranger en séjour régulier. Elle offre la possibilité de vivre et de travailler en France. La demande doit être faite en ligne, au moins 4 mois avant la fin du titre actuel.",
+   "contenu_detaille": "La carte de séjour 'vie privée et familiale' permet aux étrangers non européens ayant des attaches familiales en France d'obtenir un titre de séjour. Elle est destinée aux époux, parents ou membres de la famille d'un Français ou d'un étranger en séjour régulier. Elle offre la possibilité de vivre et de travailler en France. La demande doit être faite en ligne, au moins 4 mois avant la fin du titre actuel.",
+   "pour_qui": "- Étranger non européen avec des attaches familiales en France\n- Époux ou épouse d'un Français\n- Parent d'un enfant français mineur\n- Membre de la famille d'un étranger en séjour régulier en France\n- Personne en situation irrégulière, sous certaines conditions",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vérifier si l'on remplit les conditions en fonction du titre de séjour ou du visa détenu"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Déposer la demande sur internet au moins 4 mois et au plus tard 2 mois avant la fin de validité du document actuel"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Préparer et fournir les documents justificatifs sous forme numérique"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Obtenir une attestation dématérialisée de dépôt après le dépôt de la demande"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "En cas d'absence de réponse dans les 4 mois, former un recours administratif ou contentieux"
+    }
+   ],
+   "documents_necessaires": [
+    "Copie des pages du passeport avec visa et cachet d'entrée",
+    "Attestation de dispense de visa d'entrée",
+    "Titre de séjour en cours de validité",
+    "Passeport ou certificat de nationalité",
+    "Copie intégrale d'acte de naissance",
+    "Photos d'identité en format e-photo",
+    "Justificatif de domicile datant de moins de 6 mois",
+    "Déclaration sur l'honneur de vie commune avec le conjoint",
+    "Copie intégrale de l'acte de mariage",
+    "Justificatif de la nationalité française de l'époux ou épouse"
+   ],
+   "ou_faire": "Selon votre situation : Buraliste partenaire pour un paiement de proximité, Préfecture, Sous-préfecture, Préfecture de police de Paris - Service des titres de séjour.",
+   "cout": "",
+   "delai": ""
+  },
+  "verifiedAt": "2026-10-30T23:45:47.441Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/N110",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,623 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "ave-avf",
+ "recordId": "62f4e59e-6ac3-47e5-9778-3145bedc6667",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:44:42.567Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Assistance for children and families on holiday (AVE/AVF)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Child Holiday Allowance (AVE) or Family Holiday Allowance (AVF) is a financial aid offered by the Caf (family benefits office) or MSA (farmers' social security fund) to help reduce holiday expenses. It is aimed at parents or families with at least one dependent child and a household income of €800 or less. The allowance can cover up to 70% of accommodation costs for the AVE and up to 75% for the AVF. It is automatically awarded at the beginning of the year by the Caf or MSA.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Child Holiday Allowance (AVE) or Family Holiday Allowance (AVF) is a financial aid offered by the Caf (family benefits office) or MSA (farmers' social security fund) to help reduce holiday expenses. It is aimed at parents or families with at least one dependent child and a household income of €800 or less. The allowance can cover up to 70% of accommodation costs for the AVE and up to 75% for the AVF. It is automatically awarded at the beginning of the year by the Caf or MSA.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Recognizing a family benefit payment from either Caf (family benefits office) or MSA (farmers' social security fund)\n- Having at least one child to support\n- Having a family income of €800 or less\n- The stay must take place during the school holidays for the AVE (Accommodation Voucher).\n- The stay must include at least one adult and one child who is eligible for the AVF (Assistance Vie Familiale).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 59.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The AVE (Accommodation Voucher) can cover 40% to 70% of the accommodation costs, while the AVF (Food Voucher) can cover 50% to 75% of the accommodation costs. The total accommodation cost is €900.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "You do not need to take any action to receive the disability certificate (AVE) or the vocational training certificate (AVF). Your Caf (family benefits office) or MSA (farmers' social security fund) will inform you at the beginning of the year by post or email.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Choose a holiday center that is certified by Vacaf, or consult the catalog of your Caf or MSA.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Complete an application form on the website of the chosen holiday center.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Reservations can be made by phone, specifying your subscriber number Caf or MSA.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "One month before your departure, you must pay the remaining balance for your stay.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 5
+     }
+    },
+    "ou_demander": {
+     "text": "Based on your situation: Caisse d'allocations familiales (Caf: family benefits office), Mutualité sociale agricole (MSA: farmers' social security fund).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:45:04.134Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çocuklar ve aileler için tatil yardımı (AVE/AVF)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Çocuklara veya ailelere yönelik tatil yardımı (AVE) veya ailelere yönelik tatil yardımı (AVF), Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından sunulan ve tatil masraflarını azaltmayı amaçlayan bir finansal yardımdır. Bu yardım, en az bir çocuğu olan ve aile gelirinin 800 € veya daha az olan ebeveynlere veya ailelere yöneliktir. Yardım, AVE için konaklama masraflarının %70'ine ve AVF için %75'ine kadar kapsama imkanı sunar. Bu yardım, Caf veya MSA tarafından yılın başında otomatik olarak verilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Çocuklara veya ailelere yönelik tatil yardımı (AVE) veya ailelere yönelik tatil yardımı (AVF), Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından sunulan ve tatil masraflarını azaltmayı amaçlayan bir finansal yardımdır. Bu yardım, en az bir çocuğu olan ve aile gelirinin 800 € veya daha az olan ebeveynlere veya ailelere yöneliktir. Yardım, AVE için konaklama masraflarının %70'ine ve AVF için %75'ine kadar kapsama imkanı sunar. Bu yardım, Caf veya MSA tarafından yılın başında otomatik olarak verilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Aile üyelerine Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) tarafından ödenen bir ücret veya tazminatın farkına varmak\n- En azından bir çocuğu bakıma ihtiyacı olan\n- Aile gelirinin 800 € veya daha az olması\n- AVE için bu eğitim, okul tatillerinde gerçekleştirilmelidir.\n- Bu konaklama, en az bir yetişkin ve AVF (Aile ve Çocuk Hizmetleri) kapsamında hak sahibi olan bir çocuk içermelidir.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 53.5,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "AVE, konaklama maliyetinin %40 ila %70'ini karşılayabilirken, AVF konaklama maliyetinin %50 ila %75'ini karşılayabilir. Konaklama maliyeti 900 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "AVE veya AVF'den faydalanmak için herhangi bir işlem yapmanız gerekmez. Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu), yılın başında posta veya elektronik posta yoluyla size bilgi verecektir.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Vacaf sertifikalı bir tatil merkezi seçin veya Caf veya MSA kataloglarını inceleyin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Seçilen tatil merkezinin internet sitesinde kayıt için gerekli belgeleri doldurun.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Rezervasyon, lütfen Caf veya MSA numaralarınızı belirterek telefonla yapılabilir.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Geziye çıkmadan bir ay önce, kalan ödemeyi yapmanız gerekmektedir.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67,
+      "units": 5
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Caisse d'allocations familiales (Caf: aile yardımları kurumu), Mutualité sociale agricole (MSA: tarım sosyal güvenlik kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:45:26.585Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مساعدة للأطفال والعائلات في إجازاتهم (برنامج المساعدة للأطفال والعائلات)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"برنامج المساعدة للأنشطة الصيفية للأطفال أو العائلات (AVE أو AVF) هو برنامج مالي يقدمه [التنظيم الأول] أو [التنظيم الثالث] بهدف تخفيف تكاليف الإجازة. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة في حالة المساعدة للأطفال، و 75٪ في حالة المساعدة للعائلات. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل [التنظيم الثاني] أو [التنظيم الرابع].\"",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 59.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"برنامج المساعدة للأنشطة الصيفية للأطفال أو العائلات (AVE أو AVF) هو برنامج مالي يقدمه [التنظيم الأول] أو [التنظيم الثالث] بهدف تخفيف تكاليف الإجازة. يستهدف البرنامج الآباء أو العائلات الذين لديهم على الأقل طفل واحد، وذات دخل عائلي لا يتجاوز 800 يورو. يمكن أن يغطي البرنامج ما يصل إلى 70٪ من تكاليف الإقامة في حالة المساعدة للأطفال، و 75٪ في حالة المساعدة للعائلات. يتم تخصيص المساعدة تلقائيًا في بداية العام من قبل [التنظيم الثاني] أو [التنظيم الرابع].\"",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 59.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- التعرف على مبلغ مالي يتم دفعه كـ \"مكافأة عائلية\" من قبل Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي).\n- يجب أن يكون لديك على الأقل طفل واحد تحت رعايتك.\n- أن يكون الدخل العائلي أقل من أو يساوي 800 يورو.\n- يجب أن يتم الإقامة خلال فترة العطل المدرسية لبرنامج \"AVE\".\n- يجب أن يشمل الإقامة على الأقل شخص بالغ وطفل مستحق للحصول على دعم الأهلية.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 62.1,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يمكن لبرنامج \"الأداء\" أن يغطي ما بين 40% و 70% من تكلفة الإقامة، بينما يمكن لبرنامج \"السفر\" أن يغطي ما بين 50% و 75% من تكلفة الإقامة. وتكلفة الإقامة هي 900 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "لا تحتاج إلى اتخاذ أي إجراء للحصول على إذن الإقامة أو إذن العمل. سيتم إعلامك من خلال Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي)‏] في بداية العام عبر البريد أو البريد الإلكتروني.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "اختر مركزًا للراحة يحمل شهادة Vacaf، أو استعرض الكتالوج الخاص بـ Caf أو MSA.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "املأ نموذج التسجيل المتاح على الموقع الإلكتروني للمركز الصيفي الذي اخترته.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "يمكن إجراء الحجز عبر الهاتف، مع تحديد رقم المالك Caf أو MSA.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "قبل يوم واحد من المغادرة، يجب عليك سداد المبلغ المتبقي للإقامة.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.2,
+      "units": 5
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: Caisse d'allocations familiales (Caf: صندوق الإعانات العائلية), Mutualité sociale agricole (MSA: صندوق الضمان الاجتماعي الفلاحي).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 89.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:45:46.790Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Unterstützung für Ferien für Kinder/Familien (AVE/AVF)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die finanzielle Unterstützung für Kinder- oder Familienurlaube (AVE bzw. AVF) wird von der Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung) angeboten, um die Urlaubs-Kosten zu reduzieren. Sie richtet sich an Eltern oder Familien mit mindestens einem Kind und einem Einkommen von höchstens 800 €. Die Unterstützung kann bis zu 70 % der Unterkunftskosten für AVE und bis zu 75 % für AVF decken. Sie wird automatisch am Anfang des Jahres von der Caf oder MSA vergeben.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die finanzielle Unterstützung für Kinder- oder Familienurlaube (AVE bzw. AVF) wird von der Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung) angeboten, um die Urlaubs-Kosten zu reduzieren. Sie richtet sich an Eltern oder Familien mit mindestens einem Kind und einem Einkommen von höchstens 800 €. Die Unterstützung kann bis zu 70 % der Unterkunftskosten für AVE und bis zu 75 % für AVF decken. Sie wird automatisch am Anfang des Jahres von der Caf oder MSA vergeben.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Eine Familienleistung, die von Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung) ausgezahlt wird, erkennen.\n- Mindestens ein Kind, das finanziell unterstützt werden muss\n- Ein Einkommen pro Kopf von 800 € oder weniger\n- Der Aufenthalt muss während der Schulferien für die AVE (Ausbildungs- und Weiterbildung) stattfinden.\n- Die Unterkunft muss mindestens einen Erwachsenen und ein Kind enthalten, das Anspruch auf die AVF (Arbeitslosenversicherung) hat.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 57,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die AVE (Aufenthaltserstattung) kann 40 % bis 70 % der Kosten für den Aufenthalt decken, während die AVF (Aufenthaltsvorabzuschuss) 50 % bis 75 % der Kosten decken kann. Die Gesamtkosten für den Aufenthalt betragen 900 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sie müssen keine Schritte unternehmen, um Anspruch auf eine Schwerbehinderung (Eingangs-) oder eine Behinderung (Ausgangs-) zu erhalten. Ihr Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung) informiert Sie am Anfang des Jahres per Post oder E-Mail.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Wählen Sie ein Ferienzentrum, das vom Vacaf-Label zertifiziert ist, oder konsultieren Sie den Katalog Ihres Caf oder MSA.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Füllen Sie ein Anmeldeformular auf der Webseite des gewählten Ferienzentrums aus.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Die Reservierung kann telefonisch erfolgen, indem Sie Ihre Kundennummer Caf oder MSA angeben.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Ein Monat vor der Abreise müssen Sie den Restbetrag für den Aufenthalt bezahlen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 5
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen folgende Optionen vor: Caisse d'allocations familiales (Caf: Familienkasse), Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 73.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.158Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Допомога дітям та сім'ям у подорожах (AVE/AVF)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Фінансова допомога для відпочинку дітей (ФД) або сімей (ФС) – це фінансова підтримка, яку надають Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування) для зменшення витрат на відпочинок. Вона призначена для батьків або сімей, які мають принаймні одну дитину, яка є на повному утриманні, та сімейний бюджет, що не перевищує 800 євро. Допомога може покривати до 70% витрат на проживання для ФД та до 75% для ФС. Вона автоматично надається на початку року Caf або MSA.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Фінансова допомога для відпочинку дітей (ФД) або сімей (ФС) – це фінансова підтримка, яку надають Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування) для зменшення витрат на відпочинок. Вона призначена для батьків або сімей, які мають принаймні одну дитину, яка є на повному утриманні, та сімейний бюджет, що не перевищує 800 євро. Допомога може покривати до 70% витрат на проживання для ФД та до 75% для ФС. Вона автоматично надається на початку року Caf або MSA.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Виявити сімейну допомогу, надану Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування).\n- Мати принаймні одну дитину, за якою потрібно доглядати.\n- Мати сімейний дохід, що не перевищує 800 євро.\n- Проживання має відбуватися під час шкільних канікул для отримання статусу AVE.\n- Проживання повинно включати щонайменше одну дорослу особу та дитину, яка має право на отримання компенсації від AVF.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 58.2,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Програма AVE може покрити від 40% до 70% вартості проживання, тоді як програма AVF може покрити від 50% до 75% вартості проживання. Вартість проживання становить 900 євро.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Для отримання статусу \"інвалідність\" або \"часткова непрацездатність\" вам не потрібно подавати жодної документів. Ваша Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування) повідомить вас на початку року поштою або електронною поштою.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Виберіть центр відпочинку, що має сертифікат Vacaf, або перегляньте каталог вашого Caf або MSA.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Заповніть форму реєстрації на веб-сайті обраного центру відпочинку.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Бронювання можна здійснити за телефоном, вказавши свій номер отримувача Caf або MSA.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "За місяць до від'їзду необхідно сплатити залишок вартості проживання.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 5
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Caisse d'allocations familiales (Caf: каса сімейних допомог), Mutualité sociale agricole (MSA: сільськогосподарське соціальне страхування).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 71.9,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:07a4db94dc1bf5c96939714976c617d5b3d68b9f93b9203c29bb008083f1e15f",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Aide aux vacances enfants / familles (AVE/AVF)",
+   "description": "L'Aide aux vacances enfants (AVE) ou familles (AVF) est une aide financière proposée par la Caf ou la MSA pour réduire les frais de vacances. Elle s'adresse aux parents ou familles ayant au moins un enfant à charge et un quotient familial inférieur ou égal à 800 €. L'aide peut couvrir jusqu'à 70 % des frais de séjour pour l'AVE et jusqu'à 75 % pour l'AVF. Elle est attribuée automatiquement en début d'année par la Caf ou la MSA.",
+   "cest_quoi": "L'Aide aux vacances enfants (AVE) ou familles (AVF) est une aide financière proposée par la Caf ou la MSA pour réduire les frais de vacances. Elle s'adresse aux parents ou familles ayant au moins un enfant à charge et un quotient familial inférieur ou égal à 800 €. L'aide peut couvrir jusqu'à 70 % des frais de séjour pour l'AVE et jusqu'à 75 % pour l'AVF. Elle est attribuée automatiquement en début d'année par la Caf ou la MSA.",
+   "pour_qui": "- Percevoir une prestation familiale versée par la Caf ou la MSA\n- Avoir au moins 1 enfant à charge\n- Avoir un quotient familial inférieur ou égal à 800 €\n- Le séjour doit se dérouler pendant les vacances scolaires pour l'AVE\n- Le séjour doit inclure au moins 1 adulte et un enfant ayant droit pour l'AVF",
+   "ce_que_ca_aide": "L'AVE peut couvrir 40 % à 70 % du coût du séjour, tandis que l'AVF peut couvrir 50 % à 75 % du coût du séjour. Le coût du séjour est de 900 €.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vous n'avez pas de démarche à faire pour bénéficier de l'AVE ou de l'AVF. Votre Caf ou MSA vous informe en début d'année par courrier postal ou électronique."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Choisissez un centre de vacances labellisé Vacaf ou consultez le catalogue de votre Caf ou MSA."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Remplissez un dossier d'inscription sur le site Internet du centre de vacances choisi."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "La réservation peut s'effectuer par téléphone en précisant votre numéro d'allocataire Caf ou MSA."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Un mois avant le départ, vous devez régler la somme restant à payer pour le séjour."
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_demander": "Selon votre situation : Caisse d'allocations familiales (Caf), Mutualité sociale agricole (MSA).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:06:10.177Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2038",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

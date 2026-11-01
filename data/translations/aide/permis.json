@@ -1,0 +1,660 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "permis",
+ "recordId": "daa4eb3d-8127-42c1-95e1-fb236ec73e04",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.098Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Resources for obtaining a driver's license",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "There are various funding options available to cover the cost of a driving license, particularly for young people, apprentices, the unemployed, people with disabilities, and employees through the CPF (Personalized Training Account). These funds can cover either a portion or the entire cost of training. To apply for financial assistance, you should contact specific organizations such as certified driving schools, local community centers, town halls, or organizations like Agefiph.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "There are various funding options available to cover the cost of a driving license, particularly for young people, apprentices, the unemployed, people with disabilities, and employees through the CPF (Personalized Training Account). These funds can cover either a portion or the entire cost of training. To apply for financial assistance, you should contact specific organizations such as certified driving schools, local community centers, town halls, or organizations like Agefiph.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Individuals aged 15 to 25\n- Apprentices\n- Unemployed people\n- People with disabilities\n- Employees (through the CPF)\n- Volunteers from the National Service program (SNU)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 56.6,
+      "units": 6
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Initial training: €600, €800, €1000, or €1200; Additional training in case of failure: €300",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 93.3,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Contact a certified and state-approved driving school.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Apply for a loan from a partner financial institution after signing the training contract.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Repay the loan in monthly installments of up to €30",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Depending on your situation, you should contact organizations such as local youth centers, the town hall, or Agefiph.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Use the CPF (Continued Professional Development fund) to finance exam preparation if the conditions are met.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.7,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Training contract signed with the driving school"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Accredited driving school (driving school, association), Local youth center, Town hall, Departmental center for people with disabilities (MDPH: departmental disability centre), Agefiph, Microcredit support.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.101Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sürüş ehliyetine başvuru için yardımcı kaynaklar",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Sınav ücretlerini karşılamak için çeşitli destekler mevcuttur, özellikle gençlerin, çıraatçıların, işsizlerin, engelli bireylerin ve çalışanların CPF (Profesyonel Gelişim Fonu) aracılığıyla alabileceği bu destekler, eğitim masraflarının bir kısmını veya tamamını karşılayabilir. Bu destekleri almak için, lisans okulları, yerel yönetimler veya Agefiph gibi belirli kuruluşlara başvurmak gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Sınav ücretlerini karşılamak için çeşitli destekler mevcuttur, özellikle gençlerin, çıraatçıların, işsizlerin, engelli bireylerin ve çalışanların CPF (Profesyonel Gelişim Fonu) aracılığıyla alabileceği bu destekler, eğitim masraflarının bir kısmını veya tamamını karşılayabilir. Bu destekleri almak için, lisans okulları, yerel yönetimler veya Agefiph gibi belirli kuruluşlara başvurmak gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- 15 ila 25 yaş arasındaki gençler\n- Stajyerler\n- İşsizler\n- Engelliler\n- Çalışanlar (CPF aracılığıyla)\n- Evrensel Hizmet (SNU) gönüllüleri",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.9,
+      "units": 6
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Başlangıç eğitimi: 600 €, 800 €, 1.000 € veya 1.200 €; Başarısızlık durumunda ek eğitim: 300 €",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 90.3,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Belgelenmiş ve devlet ile sözleşmeli bir anlaşmaya sahip bir sürücü eğitim okulundan bilgi alın.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Eğitim sözleşmesini imzladıktan sonra, bir ortak finansal kurumdan kredi başvurusunda bulunmak.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Krediyi, maksimum 30 €'luk aylık ödemelerle ödeme",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Duruma göre, yerel yönetimler, belediye veya Agefiph gibi kuruluşlara başvurmak",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "CPF'yi, belirli şartların karşılanması durumunda sınavlara hazırlanma maliyetlerini karşılamak için kullanmak.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.1,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Sürücü kursu ile eğitim sözleşmesi imzalandı."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 90.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Belgelenmiş sürücü eğitimi merkezi (sürücü kursu, dernek), Yerel İş Kurma Merkezi, Belediyeler, Engelliler Dairesi (MDPH: il engelli bireyler merkezi), Agefiph, Mikro kredi desteği.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.104Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مواد مساعدة للحصول على رخصة القيادة",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "توجد مساعدات متاحة لتمويل الحصول على رخصة القيادة، وخاصة للشباب، والمتدربين، والعاطلين عن العمل، والأشخاص ذوي الإعاقة، والموظفين من خلال نظام \"CPF\". يمكن لهذه المساعدات أن تغطي جزءًا أو كاملًا من تكاليف التدريب. للحصول على المساعدة، يجب الاتصال بمؤسسات محددة مثل مدارس القيادة المعتمدة، ومراكز الخدمات المحلية، أو البلديات، أو المؤسسات مثل \"Agefiph\".",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "توجد مساعدات متاحة لتمويل الحصول على رخصة القيادة، وخاصة للشباب، والمتدربين، والعاطلين عن العمل، والأشخاص ذوي الإعاقة، والموظفين من خلال نظام \"CPF\". يمكن لهذه المساعدات أن تغطي جزءًا أو كاملًا من تكاليف التدريب. للحصول على المساعدة، يجب الاتصال بمؤسسات محددة مثل مدارس القيادة المعتمدة، ومراكز الخدمات المحلية، أو البلديات، أو المؤسسات مثل \"Agefiph\".",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أشخاص تتراوح أعمارهم بين 15 و 25 عامًا\n- متدربون\n- عاطلون\n- الأشخاص ذوي الإعاقة\n- الموظفون (عبر نظام التوفير الخاص بالموظفين)\n- متطوعون من الخدمة الوطنية الشاملة (SNU)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 50.6,
+      "units": 6
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "التدريب الأولي: 600 يورو، 800 يورو، 1000 يورو أو 1200 يورو؛ التدريب الإضافي في حالة الفشل: 300 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "الحصول على معلومات من مدرسة تعليم قيادة معتمدة وموقعة مع الدولة.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "طلب القرض من مؤسسة مالية شريكة بعد توقيع عقد التدريب.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "سداد القرض على أقساط شهرية لا تتجاوز 30 يورو.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "يجب على الشخص أن يتوجه إلى منظمات مثل المكتب المحلي، البلدية، أو Agefiph، وذلك حسب وضعه.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "استخدام رصيد التدريب المهني (CPF) لتمويل الاستعداد للامتحانات إذا استوفيت الشروط.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.7,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "تم توقيع عقد تدريب مع مدرسة القيادة."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.6,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "اعتمادًا على وضعك: مدرسة تعليم القيادة المعتمدة (مدرسة تعليم القيادة، جمعية)، مكتب المساعدة، البلدية، مركز الخدمات للأشخاص ذوي الإعاقة (MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة)‎])، Agefiph، دعم القروض الصغيرة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.107Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Hilfen für die Führerscheinprüfung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Es gibt finanzielle Unterstützung für die Kosten der Führerschein-Ausbildung, insbesondere für junge Menschen, Auszubildende, Arbeitslose, Menschen mit Behinderungen und Angestellte über das \"Certificat de Formation Professionnelle\" (CPF). Diese Unterstützung kann einen Teil oder die gesamten Ausbildungskosten decken. Um eine finanzielle Unterstützung zu erhalten, muss man sich an spezifische Organisationen wie zertifizierten Fahrschulen, \"Missions Locales\" (lokale Arbeitsagenturen), Stadtverwaltungen oder Organisationen wie der Agefiph wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Es gibt finanzielle Unterstützung für die Kosten der Führerschein-Ausbildung, insbesondere für junge Menschen, Auszubildende, Arbeitslose, Menschen mit Behinderungen und Angestellte über das \"Certificat de Formation Professionnelle\" (CPF). Diese Unterstützung kann einen Teil oder die gesamten Ausbildungskosten decken. Um eine finanzielle Unterstützung zu erhalten, muss man sich an spezifische Organisationen wie zertifizierten Fahrschulen, \"Missions Locales\" (lokale Arbeitsagenturen), Stadtverwaltungen oder Organisationen wie der Agefiph wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Personen im Alter von 15 bis 25 Jahren\n- Auszubildende\n- Arbeitslose\n- Menschen mit Behinderung\n- Mitarbeiter (über das CPF)\n- Freiwillige im Wehrdienst",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 6
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Ausbildung: 600 €, 800 €, 1.000 € oder 1.200 €; Zusätzliche Ausbildung im Falle eines Scheiterns: 300 €",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Informieren Sie sich bei einer von der Regierung zertifizierten und genehmigten Fahrschule.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Den Kredit bei einer von der Bildungseinrichtung kooperierenden Finanzinstitution beantragen, nachdem der Schulungsvertrag unterzeichnet wurde.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Die Rückzahlung des Kredits in monatlichen Raten von maximal 30 €",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Sich an Organisationen wie der \"Mairie\", der Stadtverwaltung oder der \"Agefiph\" wenden, je nach persönlicher Situation.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Nutzung des CPF (Qualifizierungskonto) zur Finanzierung der Vorbereitung auf Prüfungen, sofern die Voraussetzungen erfüllt sind.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Ausbildungsvertrag mit der Fahrschule abgeschlossen"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 42.9,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Je kann Ihnen je nach Ihrer Situation folgende Optionen anbieten:\n* Eine zertifizierte Fahrschule (Autoschule, Verein)\n* Eine Jugendhilfeorganisation (Mission Locale)\n* Die Stadtverwaltung\n* Das Departementszentrum für Menschen mit Behinderungen (MDPH: Behindertenzentrum des Départements)\n* Accompagnement von Mikrokrediten",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.110Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Допомога у отриманні водійських прав",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Існують різні способи фінансування отримання водійських прав, зокрема для молоді, учнів, безробітних, людей з інвалідністю та працівників через систему CPF (Французька система професійного навчання). Ці програми можуть покривати частину або повну вартість навчання. Щоб отримати фінансову допомогу, необхідно звернутися до конкретних організацій, таких як акредитовані автошколи, місцеві центри зайнятості, муніципалітети або організації, такі як Agefiph.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Існують різні способи фінансування отримання водійських прав, зокрема для молоді, учнів, безробітних, людей з інвалідністю та працівників через систему CPF (Французька система професійного навчання). Ці програми можуть покривати частину або повну вартість навчання. Щоб отримати фінансову допомогу, необхідно звернутися до конкретних організацій, таких як акредитовані автошколи, місцеві центри зайнятості, муніципалітети або організації, такі як Agefiph.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Люди віком від 15 до 25 років\n- Стажиранти\n- Безробітні\n- Особи з обмеженими можливостями\n- Працівники (через систему CPF)\n- Волонтери служби всеосяжного громадянського обов'язку (SNU)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.8,
+      "units": 6
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Початкове навчання: 600 €, 800 €, 1 000 € або 1 200 €; Додаткове навчання у разі невдачі: 300 €",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Дізнатися більше у акредитованій школі водіння, яка має угоду з державою.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Звернутися до фінансової установи-партнера для отримання кредиту після підписання навчального контракту.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Повертати позику щомісячними платежами у розмірі до 30 євро.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Звернутися до таких організацій, як місцеві місії, міська рада або Agefiph, залежно від ситуації.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Використовувати CPF (Систему професійного навчання) для фінансування підготовки до іспитів, якщо виконуються відповідні умови.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.2,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Угода про навчання, укладена зі школою водіння."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Автошкола з сертифікацією, Центр соціальних послуг, Місцева влада, Центр підтримки людей з інвалідністю (MDPH: департаментський центр у справах осіб з інвалідністю), Accompagnement du microcrédit.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:e1c7aec0be978256c07ff134855d17cb250ac036227fd4cccc2769d17cdc76c4",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Aides au permis de conduire",
+   "description": "Des aides existent pour financer le permis de conduire, notamment pour les jeunes, les apprentis, les chômeurs, les personnes en situation de handicap et les salariés via le CPF. Ces aides peuvent couvrir une partie ou la totalité des frais de formation. Pour demander une aide, il faut se tourner vers des organismes spécifiques comme des écoles de conduite labellisées, des missions locales, des mairies ou des organismes comme l'Agefiph.",
+   "cest_quoi": "Des aides existent pour financer le permis de conduire, notamment pour les jeunes, les apprentis, les chômeurs, les personnes en situation de handicap et les salariés via le CPF. Ces aides peuvent couvrir une partie ou la totalité des frais de formation. Pour demander une aide, il faut se tourner vers des organismes spécifiques comme des écoles de conduite labellisées, des missions locales, des mairies ou des organismes comme l'Agefiph.",
+   "pour_qui": "- Jeunes de 15 à 25 ans\n- Apprentis\n- Chômeurs\n- Personnes en situation de handicap\n- Salariés (via le CPF)\n- Volontaires du Service national universel (SNU)",
+   "ce_que_ca_aide": "Formation initiale : 600 €, 800 €, 1 000 € ou 1 200 € ; Formation complémentaire en cas d'échec : 300 €",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Se renseigner auprès d'une école de conduite labellisée et signée convention type avec l'État"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Demander le prêt auprès d'un établissement financier partenaire après avoir signé le contrat de formation"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Rembourser le prêt par mensualités de 30 € maximum"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Se tourner vers des organismes comme la mission locale, la mairie ou l'Agefiph selon sa situation"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Utiliser le CPF pour financer la préparation aux épreuves si les conditions sont remplies"
+    }
+   ],
+   "documents_necessaires": [
+    "Contrat de formation signé avec l'école de conduite"
+   ],
+   "ou_demander": "Selon votre situation : École de conduite labellisée (auto-école, association), Mission locale, Mairie, Maison départementale des personnes handicapées (MDPH), Agefiph, Accompagnement du microcrédit.",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:33:58.448Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13609",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

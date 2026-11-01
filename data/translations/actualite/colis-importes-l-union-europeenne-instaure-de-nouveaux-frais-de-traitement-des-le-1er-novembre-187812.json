@@ -1,0 +1,242 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "colis-importes-l-union-europeenne-instaure-de-nouveaux-frais-de-traitement-des-le-1er-novembre-187812",
+ "recordId": "fab8f732-68cf-46b9-aa1e-6289804463e3",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.689Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Imported goods: The European Union is introducing new processing fees, effective November 1st.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.3,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "New processing fees will come into effect on November 1, 2026, across the entire European Union. These fees apply to all packages, regardless of their value. These processing fees are in addition to the standard customs duty of 3 euros, which has been in effect since July 1, 2026. Service Public explains the details.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 60.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "\"New processing fees will come into effect on November 1, 2026, across the entire European Union. These fees apply to all packages, regardless of their value. These processing fees are in addition to the standard customs duty of 3 euros, which has been in effect since July 1, 2026. <em title=\"Service Public\">Service Public</em> explains.\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 52.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.692Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "İthal edilen paketler için: Avrupa Birliği, 1 Kasım'dan itibaren yeni işlem ücretleri uygulamaya başlıyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Yeni işlem ücretleri, 1 Kasım 2026 tarihinden itibaren Avrupa Birliği genelinde geçerli olacak. Bu ücretler, herhangi bir değer eşiği olmadan gönderilen tüm paketler için uygulanacak. Bu işlem ücretleri, 1 Temmuz 2026'dan itibaren uygulanan 3 Euro'luk sabit gümrük ücretlerine ek olarak alınacak. \"Halk Hizmetleri\" bu durumu açıklıyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 53.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Belirli bir işlem ücreti, 1 Kasım 2026 tarihinden itibaren Avrupa Birliği genelinde geçerli olacaktır. Bu ücret, herhangi bir değer eşiği olmadan gönderilen tüm paketler için uygulanacaktır. Bu işlem ücretleri, 1 Temmuz 2026 tarihinden itibaren uygulanan 3 Euro'luk standart gümrük ücretlerine ek olarak alınacaktır. <em>Kamu Hizmeti</em> bunu açıklamaktadır.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.694Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "حزم واردة: تفرض الاتحاد الأوروبي رسومًا جديدة لمعالجة الشحنات اعتبارًا من 1 نوفمبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "سيبدأ فرض رسوم المعالجة اعتبارًا من 1 نوفمبر 2026 في جميع أنحاء الاتحاد الأوروبي. وهي تنطبق على جميع الطرود بغض النظر عن قيمتها. بالإضافة إلى هذه الرسوم، سيتم فرض رسوم جمركية ثابتة قدرها 3 يورو اعتبارًا من 1 يوليو 2026. خدمة \"الجمهور\" تشرح لكم ذلك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 50.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>سيبدأ فرض رسوم المعالجة اعتبارًا من 1 نوفمبر 2026 في جميع أنحاء الاتحاد الأوروبي. وهي تنطبق على جميع الطرود بغض النظر عن قيمتها. بالإضافة إلى ذلك، ستضاف هذه الرسوم إلى الرسوم الجمركية الثابتة البالغة 3 يورو، والتي تم تطبيقها اعتبارًا من 1 يوليو 2026. \"خدمة عامة\" تشرح لكم ذلك.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 46.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.696Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Importierte Waren: Die Europäische Union führt ab dem 1. November neue Bearbeitungsgebühren ein.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.5,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Neue Gebühren für die Bearbeitung werden ab dem 1. November 2026 in der gesamten Europäischen Union gelten. Sie gelten für alle Sendungen, unabhängig vom Wert. Diese Gebühren werden zusätzlich zu den festen Zöllen von 3 Euro, die seit dem 1. Juli 2026 erhoben werden, erhoben. Service Public erklärt dies.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 57.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Ab dem 1. November 2026 werden Gebühren für die Bearbeitung in der gesamten Europäischen Union erhoben. Diese Gebühren gelten für alle Sendungen, unabhängig vom Wert. Diese zusätzlichen Gebühren werden zusätzlich zu den festen Zöllen von 3 Euro erhoben, die seit dem 1. Juli 2026 erhoben werden. <em Übersetzt: Service Public </em> erklärt.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 54.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.698Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Імпортні вантажі: Європейський Союз запроваджує нові збори за обробку з 1 листопада.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Нові збори за обробку набудуть чинності з 1 листопада 2026 року в усій Європейській спільноті. Вони застосовуються до всіх посилок без обмежень щодо вартості. Ці збори за обробку додаються до фіксованих митних зборів у розмірі 3 євро, які діють з 1 липня 2026 року. \"Публічний сервіс\" пояснює.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "З 1 листопада 2026 року в усій Європейській спільноті вступають у силу нові збори за обробку. Вони застосовуються до всіх посилок, незалежно від їхньої вартості. Ці збори додаються до фіксованої митної вартості в 3 євро, яка застосовується з 1 липня 2026 року. «Сервіс Публік» пояснює.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 47.1,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:e07f0d98ace7a4f216bdef7269ac8759d3add965ab4201e5f0c91385d69d4d03",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Colis importés : l’Union européenne instaure de nouveaux frais de traitement dès le 1er novembre",
+   "resume": "Des frais de traitement entrent en vigueur au 1er novembre 2026 dans l’ensemble de l’Union européenne. Ils sont applicables à l'ensemble des colis sans seuil de valeur. Ces frais de traitement s’ajoutent aux droits de douane forfaitaire de 3 euros appliqués depuis le 1er juillet 2026. Service Public vous explique.",
+   "contenu": "<p>Des frais de traitement entrent en vigueur au 1<sup>er</sup> novembre 2026 dans l’ensemble de l’Union européenne. Ils sont applicables à l'ensemble des colis sans seuil de valeur. Ces frais de traitement s’ajoutent aux droits de douane forfaitaire de 3 euros appliqués depuis le 1<sup>er</sup> juillet 2026. <em>Service Public</em> vous explique.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A19120?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,246 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "donnez-votre-avis-sur-l-assurance-retraite-103155",
+ "recordId": "666099bd-28f0-4fd4-a211-181eef2990ac",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.701Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Share your thoughts on retirement insurance",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.6,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "The pension insurance organization will soon be defining its strategic priorities for the years 2028 to 2032. In order to best meet the needs of its users, the organization invites you to provide your feedback by November 9th.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 57.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "The pension insurance scheme will soon be defining its strategic priorities for the years 2028 to 2032. In order to best meet the needs of users, the organization invites you to provide your feedback by November 9th.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 57.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.702Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Emeklilik sigortası hakkında görüşlerinizi belirtin.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.4,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Emeklilik Sigortası, 2028-2032 yıllarına yönelik stratejik yönelimlerini belirleyecektir. Kullanıcıların beklentilerini en iyi şekilde karşılamak amacıyla, kurum, görüşlerinizi 9 Kasım'a kadar bildirmelerinizi rica etmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 57.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Emeklilik Sigortası, 2028-2032 yıllarına yönelik stratejik yönelimlerini belirleyecektir. Kullanıcıların beklentilerini en iyi şekilde karşılamak amacıyla, bu kurum, görüşlerinizi 9 Kasım'a kadar iletmenizi öneriyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 58.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.703Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "قدموا ملاحظاتكم حول التأمين على التقاعد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 42.4,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "ستحدد مؤسسة التأمين على التقاعد قريبًا توجهاتها الاستراتيجية للسنوات من 2028 إلى 2032. بهدف تلبية احتياجات المستخدمين بأفضل شكل ممكن، تقدم المؤسسة لكم الفرصة لتقديم ملاحظاتكم بحلول 9 نوفمبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 58.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "ستحدد مؤسسة التأمين على التقاعد قريبًا توجهاتها الاستراتيجية للسنوات من 2028 إلى 2032. بهدف تلبية احتياجات المستخدمين بأفضل شكل ممكن، تقدم المؤسسة لكم الفرصة لتقديم ملاحظاتكم بحلول 9 نوفمبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 57.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.705Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Bitte geben Sie Ihre Meinung zum Thema Altersvorsorge ab.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Die Rentenversicherung wird in Kürze ihre strategischen Ausrichtungen für die Jahre 2028 bis 2032 festlegen. Um den Bedürfnissen der Nutzer bestmöglich gerecht zu werden, lädt die Organisation Sie ein, Ihre Meinung bis zum 9. November abzugeben.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 65.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Die Rentenversicherung wird in Kürze ihre strategischen Ausrichtungen für die Jahre 2028 bis 2032 festlegen. Um den Bedürfnissen der Nutzer bestmöglich gerecht zu werden, bietet Ihnen die Organisation an, bis zum 9. November Ihre Meinung zu äußern.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 68.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.706Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Поділіться своїми думками щодо пенсійного страхування.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Страхова компанія незабаром визначить свої стратегічні напрямки на період з 2028 по 2032 рік. Щоб максимально врахувати потреби користувачів, організація запрошує вас висловити свою думку до 9 листопада.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 50.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Страхова компанія незабаром визначить свої стратегічні напрямки на період з 2028 по 2032 рік. Щоб максимально точно відповідати потребам користувачів, організація запрошує вас висловити свою думку до 9 листопада.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 53.3,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:0a696be174f36a38ecb344be5aee5a690e4cf90c8c63a43146414363fe7061cc",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Donnez votre avis sur l’Assurance retraite",
+   "resume": "L'Assurance retraite va bientôt définir ses orientations stratégiques pour les années 2028 à 2032. Afin de répondre le plus justement possible aux attentes des usagers, l’organisme vous propose de donner votre avis jusqu’au 9 novembre.",
+   "contenu": "<p>L'Assurance retraite va bientôt définir ses orientations stratégiques pour les années 2028 à 2032. Afin de répondre le plus justement possible aux attentes des usagers, l’organisme vous propose de donner votre avis jusqu’au 9 novembre.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A19121?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

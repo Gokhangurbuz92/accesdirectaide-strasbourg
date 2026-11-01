@@ -43,7 +43,7 @@ export async function publishedRecords(base, kind) {
   const list = await getJson(base, LIST[kind]);
   const items = Array.isArray(list) ? list : list.items || [];
   const out = [];
-  for (const it of items) { await sleep(700); const d = await getJson(base, DETAIL[kind] + encodeURIComponent(it.slug)); out.push(d.item && typeof d.item === 'object' ? d.item : d); }
+  for (const it of items) { await sleep(700); const d = await getJson(base, DETAIL[kind] + encodeURIComponent(it.slug)); out.push(Array.isArray(d) ? d.find((x) => x?.slug === it.slug) || it : d.item && typeof d.item === 'object' ? d.item : d); }   // the dispositifs detail route answers with an array
   return out;
 }
 

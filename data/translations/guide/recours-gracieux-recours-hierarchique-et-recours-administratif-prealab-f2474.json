@@ -1,0 +1,414 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
+ "recordId": "127a8a0b-60f0-44a6-927e-fec9e7e9f886",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.284Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Exhaustion of administrative remedies, hierarchical appeal, and mandatory prior administrative review (RAPO)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "When the administration makes a decision that is unfavorable to you, you can ask them to review their decision through an administrative appeal.",
+      "steps": [
+       {
+        "texte": "Has an administration made a decision that is against you? Before taking legal action, you can ask the administration to reconsider its decision by filing an administrative appeal. Sometimes, an administrative appeal is required before you can go to court; in this case, it is a mandatory preliminary administrative appeal (Rapo). We provide you with the information you need to know.",
+        "titre": null
+       },
+       {
+        "texte": "An administrative appeal is a claim made to the administration, requesting that it change a decision it has already made.\nThe administration's decision can be explicit or implicit.\nThe decision is explicit when it results from an administrative action (a written decision that is displayed or formally notified).\nThe decision is implied when it results from the administration's failure to respond to your request.",
+        "titre": "What is an administrative appeal?"
+       },
+       {
+        "texte": "There are various administrative remedies available.\nAppeal for clemency\nAn appeal for grace is a formal request sent to the person who made the decision being challenged (mayor, prefect, school inspector, etc.).\nHierarchical appeal\nA hierarchical appeal is a complaint submitted to the author of the decision's superior. For example, the Minister of the Interior, in the case of a decision made by a prefect.\nIt is possible to file a hierarchical appeal without first filing a complaint or without waiting to receive a response to the complaint.\nMandatory prior administrative recourse (PAR)\nA \"Rapo\" is a formal complaint that must be filed before seeking a court order.\nThe RAPO (Regional Action Plan for Employment) is particularly relevant in the following areas:\n- Tax disputes (for example, the tax base)\n- Access to administrative documents\n- Access to regulated professions (e.g., the Medical Council)\n- Military public sector: appeals to the Military Appeals Commission\n- Disputes involving foreign nationals (e.g., visa denials)\n- Labor disputes (e.g., appeals against a decision by the MDPH (departmental disability centre)).\nThe applicable rules vary depending on the specific Rapo.\nThe differences may relate to the following: the time limit for initiating proceedings, the court or tribunal for appeal, and the adversarial procedure.\nPlease note: If a decision made by an administrative body is subject to a review by the relevant authority, this will be indicated in the decision. The decision will also specify the available avenues of appeal and the associated deadlines.",
+        "titre": "What are the different types of administrative remedies?"
+       },
+       {
+        "texte": "The deadline varies depending on whether the appeal is mandatory or not:\nCase: Non-mandatory appeal (appeal to a higher authority or appeal for leniency)\nThe timeframe varies depending on whether it is an administrative appeal or a judicial appeal:\nCase: Appeal for clemency\nThe processing time varies depending on your location:\nCase: You live in a metropolitan area\nThe deadline for filing an appeal is 2 months.\nCase: You also live overseas\nThe deadline for filing an appeal is 3 months.\nCase: You live abroad\nThe deadline for filing an appeal is 4 months.\nCase: Internal appeal\nThe processing time varies depending on your location:\nCase: You live in a metropolitan area\nThe deadline for a hierarchical appeal is 2 months.\nCase: You also live overseas\nThe deadline for filing an internal appeal is 3 months.\nCase: You live abroad\nThe deadline for filing an internal appeal is 4 months.\nCase: Mandatory prior administrative appeal (Rapo)\nThe deadline is specified in the notification of the decision you are challenging.",
+        "titre": "What are the deadlines for filing an administrative appeal?"
+       },
+       {
+        "texte": "The procedure varies depending on whether the appeal is mandatory or not:\nCase: Non-mandatory appeal (appeal to a higher authority or appeal for leniency)\nThe procedure varies depending on whether it is a judicial review or an administrative appeal:\nCase: Appeal for clemency\nYou must submit your appeal to the person who made the decision that you are challenging.\nYour letter must include the following:\n- Your name, first name, and address\n- The subject of your appeal\n- Explanation of the reasons for the appeal\n- The explicit request for a review.\nYou must send your complaint by registered mail (lettre recommandée avec accusé de réception) to have proof of sending.\nYou should also include a copy of the disputed decision, as well as any documents you believe are relevant, with your letter.\nCase: Internal appeal\nYou must submit your appeal to the supervisor of the person who made the decision you are challenging.\nYour letter must include the following:\n- Your name, first name, and address\n- The subject of your appeal\n- Explanation of the reasons for the appeal\n- The explicit request for a review of the decision by the author's supervisor.\nYou must send your appeal by registered mail (lettre recommandée avec accusé de réception) to ensure proof of delivery.\nYou should also include a copy of the disputed decision, as well as any documents you believe are relevant, with your letter.\nCase: Mandatory prior administrative appeal (Rapo)\nDepending on the area in which you are filing the appeal (for example, in the case of parking disputes), it may be possible to file the appeal online (this is specified in the notification of the decision you are challenging).\nAlternatively, you must send your complaint by registered mail (lettre recommandée avec accusé de réception) to ensure proof of delivery.\nYour letter must include the following:\n- Your name, first name, and address\n- The subject of your appeal\n- Explanation of the reasons for the appeal\n- The explicit request to review and revise the previous decision.\nYou should also include a copy of the disputed decision, as well as any documents you believe are relevant, with your letter.",
+        "titre": "How to file an administrative appeal?"
+       },
+       {
+        "texte": "The situation varies depending on whether the appeal is mandatory or not:\nCase: Non-mandatory appeal (appeal to a higher authority or appeal for leniency)\nSubmitting the complaint interrupts the 2-month (3-month for overseas territories and 4-month for foreign countries) deadline for lodging a claim with the administrative court, provided that the claim is submitted before this deadline expires.\nIn the event of a rejection of the appeal, a new period of 2 months (3 months for overseas territories and 4 months for foreign residents) will begin running from the date of notification of this decision.\nThe administration notifies you of an unfavorable decision on January 5, 2026. You file an administrative appeal on January 26, 2026. Your administrative appeal is rejected on March 25, 2026. You can bring the matter before the administrative court by May 24, 2026, at midnight.\nThe administration has 2 months to respond to your request. If you do not receive a response within this timeframe, your request is considered to have been rejected. In this case, you can pursue legal action in the administrative court.\n→ Where to go: Administrative Court\nCase: Mandatory prior administrative appeal (Rapo)\nThe administration has 2 months to respond to your request.\nSending the Rapo effectively extends the time allowed to make a decision in court. The deadline does not restart until the appeal has been dismissed.\nIf the Rapo application is rejected, you must file a legal challenge against the rejection decision, not against the initial decision.\nThe administration must justify its decision to reject the Rapo application, meaning it must explain the reasons for its decision.",
+        "titre": "What are the effects of an administrative appeal?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2474",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73.6,
+      "units": 92
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.292Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "İstisna başvurusu, hiyerarşik başvuru ve zorunlu ön idari başvuru (RAPO)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Bir idari kurum tarafından size karşı çıkan bir karara karşı, bu kararın yeniden gözden geçirilmesini talep etmek için idari bir itiraz yoluna başvurabilirsiniz.",
+      "steps": [
+       {
+        "texte": "Bir idare, size karşı olumsuz bir karar mı verdi? Mahkemeye başvurmadan önce, idareye yönetmelik yoluyla itiraz ederek kararını gözden geçirmesini isteyebilirsiniz. Bazen, mahkemeye başvurmadan önce yönetmelik yoluyla itiraz etmek zorunludur; bu durumda, bu zorunlu bir ön itirazdır (RAPO). Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Yasal itiraz, bir kurumun aldığı kararı değiştirmesini talep etmek amacıyla kuruma yöneltilen bir başvurdur.\nYöneticinin kararı açık veya örtülü olabilir.\nKar, idari bir kurum tarafından alınan ve yazılı bir belgeyle (ilan veya tebliğ) belirlenen bir hukuki eylem sonucunda ortaya çıktığında açık bir karardır.\nKar, yönetime yapılan başvurunuza yanıt alamadığınızda dolaylı olarak anlaşılır.",
+        "titre": "\"Yasal itiraz\" terimi ne anlama gelir?"
+       },
+       {
+        "texte": "Farklı idari itiraz yolları bulunmaktadır.\nYasal af\nİstisna başvurusu, itiraz edilen kararı veren kişinin (belediye başkanı, vali, okul müfettişi vb.) kendisine gönderilen bir başvurudur.\nYatay terfi\nYüksek mahkeme başvurusu, kararı veren kişinin üst amirine gönderilen bir itirazdır. Örneğin, bir valinin aldığı bir karara karşı İçişleri Bakanlığı'ndan yapılan itiraz.\nYüksek makamlara itiraz, önceden bir itiraz dilekçesi sunulmasına veya itiraz dilekçesine verilen yanıtın alınmasına gerek kalmadan yapılabilir.\nZorunlu ön idari başvuru (ZAP)\n\"Rapo\", mahkemeye başvurmadan önce mutlaka yapılması gereken bir süreçtir.\nRAPO, özellikle aşağıdaki alanlarda uygulanır:\n- Vergi anlaşmazlıkları (örneğin, vergi tabanının belirlenmesi)\n- Yönetmeliklere ait belgelerin erişimi\n- Düzenlenmiş mesleklerin (örneğin, Doktorlar Birliği) erişimi\n- Askeri kamu hizmeti: Askeri İdare İnzacı Komisyonuna başvuru\n- Yabancıların davaları (örneğin, vize reddi)\n- Sosyal anlaşmazlıklar (örneğin, MDPH (il engelli bireyler merkezi)'in bir kararına itirazlar).\nUygulanan kurallar, Rapo türüne göre değişiklik gösterir.\nFarklar, aşağıdaki noktalarda bulunabilir: dava açma süresi, itiraz için yetki organı, hukuki süreç.\nÖnemli: Bir idari kararın Rapo (İdari İnceleme) sürecine dahil edilmesi durumunda, bu durum kararname üzerinde belirtilir. Kararname, Rapo başvurusu için izlenecek yolları ve süreleri de gösterir.",
+        "titre": "Yasal süreçlerde hangi farklı türde başvurular mevcuttur?"
+       },
+       {
+        "texte": "Zaman, itirazın zorunlu olup olmamasına bağlı olarak değişir:\nDurum: İsteğe bağlı itiraz (genişletilmiş itiraz veya hiyerarşik itiraz)\nZaman, itirazın türüne (genel veya hiyerarşik) bağlı olarak değişir:\nÖrnek: Affedici itiraz\nSüre, yaşadığınız yere göre değişiklik gösterir:\nDurum: Şehir merkezinde ikamet ediyorsunuz.\nİtiraz için verilen süre 2 aydır.\nDurum: Ayrıca, siz şu anda Fransa'nın dışındaki bir bölgede ikamet ediyorsunuz.\nİtiraz için verilen süre 3 aydır.\nDurum: Yabancıda ikamet ediyorsunuz\nİtiraz için verilen süre 4 aydır.\nDurum: Yüksek mahkemeye başvuru\nSüre, yaşadığınız yere göre değişiklik gösterir:\nDurum: Şehir merkezinde ikamet ediyorsunuz.\nYasal itiraz için süre 2 aydır.\nDurum: Ayrıca, siz şu anda Fransa'nın dışındaki bir bölgede ikamet ediyorsunuz.\nİstinafa başvurmak için 3 ay süre verilmektedir.\nDurum: Yabancıda ikamet ediyorsunuz\nİstinafa başvurmak için 4 ay süre verilmektedir.\nÖrnek: Yasal itirazın önceden yapılması zorunluluğu (Rapo)\nBu süre, itiraz ettiğiniz kararın bildiriminde belirtilmiştir.",
+        "titre": "Yasal itiraz için ne kadar süre vardır?"
+       },
+       {
+        "texte": "Prosedür, başvurunun zorunlu olup olmadığına bağlı olarak değişiklik gösterir:\nDurum: İsteğe bağlı itiraz (genişletilmiş itiraz veya hiyerarşik itiraz)\nProsedür, başvurunun türüne (genel veya hiyerarşik) bağlı olarak değişiklik gösterir:\nÖrnek: Affedici itiraz\nKararı veren kişi veya kuruluşa, kararı itiraz ettiğiniz için başvurunuzu yöneltmelisiniz.\nGönderdiğiniz mektupta aşağıdaki unsurların bulunması gerekmektedir:\n- Adınız, soyadınız ve adresiniz\n- Davanızın konusu\n- Davanın gerekçesinin açıklaması\n- Belirtili olarak yeniden değerlendirilme talebi.\nTalebinizi, gönderim kanıtı olarak saklamak için, resmi posta yoluyla (RAR) göndermeniz gerekmektedir.\nAyrıca, itiraz ettiğiniz kararın bir kopyasını ve kararın gözden geçirilmesine yardımcı olabilecek tüm belgeleri, posta ile gönderirken eklemeniz önemlidir.\nDurum: Yüksek mahkemeye başvuru\nKarara itirazınızı, itiraz ettiğiniz kararın sahibinin üst yönetimine yöneltmelisiniz.\nGönderdiğiniz mektupta aşağıdaki unsurların bulunması gerekmektedir:\n- Adınız, soyadınız ve adresiniz\n- Davanızın konusu\n- Davanın gerekçesinin açıklaması\n- Kararı veren kişinin, üst yönetim tarafından yeniden değerlendirilmesini açıkça talep etmesi.\nTalebinizi, gönderim kanıtı olarak saklamak için, resmi posta yoluyla (RAR) göndermeniz gerekmektedir.\nAyrıca, itiraz ettiğiniz kararın bir kopyasını ve kararın gözden geçirilmesine yardımcı olabilecek tüm belgeleri, posta ile gönderirken eklemeniz önemlidir.\nÖrnek: Yasal itirazın önceden yapılması zorunluluğu (Rapo)\nRapo yaptığınız alana (örneğin, park konusu gibi) bağlı olarak, itirazınızı çevrimiçi olarak da (bu, itiraz ettiğiniz kararın bildiriminde belirtilmiştir) sunabilirsiniz.\nAksi takdirde, itirazınızı, gönderim kanıtı olarak saklamak için, resmi posta yoluyla (RAR) göndermeniz gerekmektedir.\nGönderdiğiniz mektupta aşağıdaki unsurların bulunması gerekmektedir:\n- Adınız, soyadınız ve adresiniz\n- Davanızın konusu\n- Davanın gerekçesinin açıklaması\n- Kararın yeniden gözden geçirilmesini ve istediğiniz düzeltmeleri talep etme hakkınız.\nAyrıca, itiraz ettiğiniz kararın bir kopyasını ve kararın gözden geçirilmesine yardımcı olabilecek tüm belgeleri, posta ile gönderirken eklemeniz önemlidir.",
+        "titre": "Yasal itiraz nasıl yapılır?"
+       },
+       {
+        "texte": "Durum, başvurunun zorunlu olup olmamasına bağlı olarak değişiklik gösterir:\nDurum: İsteğe bağlı itiraz (genişletilmiş itiraz veya hiyerarşik itiraz)\nDava dile getirme süresi, 2 ay (dış bölgeler için 3 ay ve yurt dışı için 4 ay) olarak belirlenmiş olup, bu süre dolmadan dava dilekçesinin gönderilmesi koşuluyla, bu sürenin tamamlanmasına kadar beklemek gerekmektedir.\nEğer itiraz reddedilirse, bu kararın bildirilmesinden itibaren 2 ay (dış bölgeler için 3 ay ve yurt dışı için 4 ay) yeni bir süre başlar.\nYönetim, size 5 Ocak 2026 tarihinde olumsuz bir karar bildirir. 26 Ocak 2026 tarihinde idari bir itiraz dilekçesi sunarsınız. İdari itirazınız 25 Mart 2026 tarihinde reddedilir. İdari mahkemeye başvurmak için son tarih 24 Mayıs 2026 saat 00:00'dır.\nİdare, size yanıt vermesi için 2 ay süreye sahiptir. Bu süre içinde yanıt alamazsanız, başvurunuz reddedilmiş sayılır. Bu durumda, idari mahkemeye karşı hukuki bir mücadele başlatabilirsiniz.\n→ İlgili kurum: İdari Mahkeme\nÖrnek: Yasal itirazın önceden yapılması zorunluluğu (Rapo)\nİdari kurum, size yanıt vermesi için 2 ay süreye sahiptir.\nRapo'nun gönderilmesi, mahkemeye başvurma süresini uzatır. Bu süre, başvurunun reddedilmesinden sonra yeniden başlar.\nEğer Rapo'nun kararı reddedilirse, itirazınızı Rapo'nun kararına değil, ilk karara karşı yapmanız gerekmektedir.\nYönetimin, Rapo'nun başvurusu reddedilme kararını gerekçelendirmesi gerekmektedir; yani, bu kararın neden alındığını açıklaması gerekmektedir.",
+        "titre": "Yasal itirazın etkileri nelerdir?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2474",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.2,
+      "units": 92
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.299Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "الاستئناف بموجب المادة القانونية، والاستئناف الهرمي، والاستئناف الإداري الأولي الإلزامي (RAPO).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "عندما تتخذ الإدارة قرارًا يضر بك، يمكنك طلب مراجعة هذا القرار من خلال الطعن الإداري.",
+      "steps": [
+       {
+        "texte": "هل اتخذت إدارة قرارًا ضدك؟ قبل اللجوء إلى القضاء، يمكنك مطالبة الإدارة بمراجعة قرارها من خلال تقديم استئناف إداري. في بعض الأحيان، يكون الاستئناف الإداري إلزاميًا قبل اللجوء إلى المحكمة: وفي هذه الحالة، يكون الاستئناف الإداري المسبق إلزاميًا (Rapo). نقدم لكم المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "إن الطعن الإداري هو دعوى يتم تقديمها إلى الإدارة، بهدف مطالبة الإدارة بتغيير قرار اتخذته.\nيمكن أن تكون قرار الإدارة صريحًا أو ضمنيًا.\nإن القرار يكون واضحًا عندما ينشأ من إجراء قانوني يتم اتخاذه من قبل الإدارة (قرار مكتوب معلن أو مُرسَل).\nتُعدّ هذه القرار ضمنيًا عندما يكون ذلك نتيجة لعدم استجابة الإدارة لطلبك.",
+        "titre": "ما هو \"الاستئناف الإداري\"؟"
+       },
+       {
+        "texte": "توجد وسائل مختلفة للطعن الإداري.\nالاستئناف بناءً على المراجعة\nإن الطعن الاستنائي هو طلب يتم تقديمه إلى الجهة التي أصدرت القرار المطعون فيه (الرئيس، أو محافظ، أو مفتش أكاديمي، إلخ).\nالاستئناف الهرمي\nإن الطعن الهرمي هو دعوى يتم إرسالها إلى المسؤول الأعلى في التسلسل الهرمي للشخص الذي أصدر القرار. على سبيل المثال، يمكن للمدير العام، في حالة إصدار قرار من قبل عمدة، أن يتقدم بطعن هرمي.\nمن الممكن تقديم استئناف هرمي دون تقديم استئناف شكوى مسبق أو دون انتظار استلام رد على الاستئناف الشكوى.\nالاستئناف الإداري المسبق الإلزامي (Rapo)\n\"الرّapo هو طلب يجب تقديمه قبل اللجوء إلى القاضي.\"\nيُطبق مبدأ \"الراديكالية\" بشكل خاص في المجالات التالية:\n- نزاعات ضريبية (مثل تحديد قاعدة الضرائب)\n- الوصول إلى المستندات الإدارية\n- الوصول إلى المهن التي تخضع للرقابة (مثل نقابة الأطباء)\n- الوظائف العسكرية: الطعن أمام لجنة الاستئناف العسكرية\n- نزاعات تتعلق بالمهاجرين (مثل رفض إصدار تأشيرات)\n- النزاعات الاجتماعية (مثل، الطعون ضد قرار MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة)).\nتختلف القواعد المطبقة باختلاف أنواع \"الرابو\".\nيمكن أن تشمل الاختلافات ما يلي: مدة رفع الدعوى، الجهة القضائية المختصة بالنظر في النزاع، والإجراءات القانونية.\nملاحظة: عندما يتم إرفاق قرار إداري بطلب إعادة النظر، سيتم إعلامك بذلك في القرار. ويحدد القرار أيضًا الطرق والمواعيد المتاحة لتقديم طلب إعادة النظر.",
+        "titre": "ما هي أنواع الإجراءات الإدارية المختلفة؟"
+       },
+       {
+        "texte": "يختلف الإطار الزمني حسب ما إذا كان الطعن إلزاميًا أم لا:\nحالة: الطعن غير إلزامي (الطعن بالاستئناف أو الطعن الهرمي)\nيختلف الإطار الزمني حسب نوع الطعن: سواء كان طعنًا شكليًا أو طعنًا إداريًا.\nحالة: طلب الإعفاء\nيختلف الإطار الزمني حسب مكان إقامتك:\nمثال: أنت مقيم في منطقة حضرية\nالمهلة المتاحة هي 2 أشهر لتقديم طلب استئناف.\nمثال: بالإضافة إلى ذلك، أنت مقيم في منطقة خارج القارة.\nالمهلة الزمنية المتاحة لتقديم الطعن هي 3 أشهر.\nمثال: أنت مقيم في الخارج.\nالمهلة المتاحة لتقديم طلب استئناف هي 4 أشهر.\nحالة: الطعن الهرمي\nيختلف الإطار الزمني حسب مكان إقامتك:\nمثال: أنت مقيم في منطقة حضرية\nالمهلة الزمنية المتاحة للطعن هي 2 أشهر.\nمثال: بالإضافة إلى ذلك، أنت مقيم في منطقة خارج القارة.\nالمهلة الزمنية المتاحة لتقديم استئناف هي 3 أشهر.\nمثال: أنت مقيم في الخارج.\nالمهلة المتاحة لتقديم استئناف هي 4 أشهر.\nحالة: الطعن الإداري المسبق الإلزامي (TAP)\nالوقت المحدد مذكور في إشعار القرار الذي تتحدىه.",
+        "titre": "ما هي المدة الزمنية المتاحة لتقديم الطعن الإداري؟"
+       },
+       {
+        "texte": "تختلف الإجراءات حسب ما إذا كان الطعن إلزاميًا أم لا:\nحالة: الطعن غير إلزامي (الطعن بالاستئناف أو الطعن الهرمي)\nتختلف الإجراءات حسب نوع الطعن، سواء كان طعنًا رسميًا أو طعنًا هرميًا:\nحالة: طلب الإعفاء\nيجب عليك توجيه اعتراضك إلى الشخص المسؤول عن اتخاذ القرار الذي تتهمه، وذلك بهدف الطعن فيه.\nيجب أن يتضمن بريدك الصوتي العناصر التالية:\n- اسمك، واسمك الأول، وعنوانك.\n- الغرض من طلبكم\n- شرح أسباب الطعن\n- طلب إعادة الفحص بشكل صريح.\nيجب عليك إرسال طلب الاستئناف عن طريق البريد المسجل للحفاظ على دليل على الإرسال.\nيجب عليك أيضًا إرفاق نسخة من القرار المطعون به مع رسالتك، بالإضافة إلى جميع المستندات التي تعتقد أنها مفيدة لإعادة النظر في القرار.\nحالة: الطعن الهرمي\nيجب عليك توجيه اعتراضك إلى المسؤول المباشر الذي أصدر القرار الذي تتحدىه.\nيجب أن يتضمن بريدك الصوتي العناصر التالية:\n- اسمك، واسمك الأول، وعنوانك.\n- الغرض من طلبكم\n- شرح أسباب الطعن\n- طلب الموظف بشكل صريح من رئيسه المباشر إجراء مراجعة للقرار.\nيجب عليك إرسال طلب الاستئناف عن طريق البريد المسجل، وذلك للحفاظ على دليل على الإرسال.\nيجب عليك أيضًا إرفاق نسخة من القرار المطعون به مع رسالتك، بالإضافة إلى جميع المستندات التي تعتقد أنها مفيدة لإعادة النظر في القرار.\nحالة: الطعن الإداري المسبق الإلزامي (TAP)\nاعتمادًا على المجال الذي تقوم فيه بالتقديم (على سبيل المثال، في مجال مواقف السيارات)، يمكنك تقديم الاستئناف عبر الإنترنت (وهذا مذكور في إشعار القرار الذي تتحدى).\nإذا لم يكن ذلك ممكنًا، فيجب عليك إرسال طلب الاستئناف عن طريق البريد المسجل، وذلك للحفاظ على دليل على الإرسال.\nيجب أن يتضمن بريدك الصوتي العناصر التالية:\n- اسمك، واسمك الأول، وعنوانك.\n- الغرض من طلبكم\n- شرح أسباب الطعن\n- الطلب الصريح لإعادة النظر في القرار الأصلي، بالإضافة إلى التعديلات التي ترغبون بها.\nيجب عليك أيضًا إرفاق نسخة من القرار المطعون به مع رسالتك، بالإضافة إلى جميع المستندات التي تعتقد أنها مفيدة لإعادة النظر في القرار.",
+        "titre": "كيفية تقديم الطعن الإداري؟"
+       },
+       {
+        "texte": "تختلف الوضعية حسب ما إذا كان الطعن إلزاميًا أم لا:\nحالة: الطعن غير إلزامي (الطعن بالاستئناف أو الطعن الهرمي)\nإرسال الطعن يؤدي إلى إيقاف المهلة الزمنية المحددة (وهي 2 شهر للداخل، و 3 أشهر للمناطق البعيدة، و 4 أشهر للمقيمين في الخارج) المتاحة لتقديم الطعن إلى المحكمة الإدارية، وذلك بشرط أن يتم إرسال الطعن قبل انتهاء هذه المهلة.\nفي حال رفض الاستئناف، يبدأ العد التنازلي الجديد لمدة 2 شهر (3 أشهر للمناطق البعيدة و 4 أشهر للمقيمين في الخارج) من تاريخ إخطار هذه القرار.\nتُعلمك الإدارة بقرار سلبي في 5 يناير 2026. تقوم بتقديم استئناف إداري في 26 يناير 2026. يتم رفض الاستئناف الإداري في 25 مارس 2026. يمكنك اللجوء إلى القاضي الإداري حتى الساعة 12:00 من 24 مايو 2026.\nلدي الإدارة مهلة مدتها 2 أشهر للرد على طلبكم. إذا لم تتلقوا ردًا خلال هذه المهلة، فسيتم اعتبار طلبكم مرفوضًا. وفي هذه الحالة، يمكنكم رفع دعوى قضائية أمام المحكمة الإدارية.\n→ إلى أين يتم التوجه: المحكمة الإدارية\nحالة: الطعن الإداري المسبق الإلزامي (TAP)\nلدى الإدارة مهلة مدتها شهرين للرد عليكم.\nإرسال \"الرابو\" يؤدي إلى تمديد المدة المتاحة لاتخاذ قرار أمام المحكمة. تبدأ المدة مرة أخرى فقط بعد رفض الاستئناف.\nإذا تم رفض طلب \"الرابو\"، فيجب عليك تقديم شكوى قانونية ضد قرار الرفض، وليس ضد القرار الأصلي.\nيجب على الإدارة أن توضح سبب رفض طلب \"رابو\"، أي يجب أن تشرح الأسباب التي دفعتها لاتخاذ هذا القرار.",
+        "titre": "ما هي آثار الطعن الإداري؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2474",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73,
+      "units": 92
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.306Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Günstige Einspruch, hierarchischer Einspruch und obligatorischer vorheriger administrativer Einspruch (VAP)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 95.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn die Behörde eine Entscheidung trifft, die Ihnen nachteilig ist, können Sie diese durch ein Verwaltungsgericht überprüfen lassen.",
+      "steps": [
+       {
+        "texte": "Eine Behörde hat eine Entscheidung getroffen, die Ihnen nicht zugute kommt? Bevor Sie jedoch Klage erheben, können Sie die Behörde auffordern, ihre Entscheidung zu überprüfen, indem Sie einen Widerspruch einlegen. Manchmal ist ein Widerspruch erforderlich, bevor Sie einen Richter um Hilfe bitten: In diesem Fall handelt es sich um einen obligatorischen vorherigen Widerspruch (Vorverfahren). Wir informieren Sie über die relevanten Informationen.",
+        "titre": null
+       },
+       {
+        "texte": "Ein administratives Rechtsmittel ist eine Beschwerde, die an die Behörde gerichtet wird, um eine von ihr getroffene Entscheidung zu ändern.\nDie Entscheidung der Behörde kann explizit oder implizit sein.\nDie Entscheidung ist eindeutig, wenn sie aus einer Rechtsentscheidung resultiert, die von der Behörde erlassen wurde (schriftliche Entscheidung, die veröffentlicht oder zugestellt wird).\nDie Entscheidung ist implizit, wenn sie sich aus dem Schweigen der Behörde ergibt, nachdem Sie eine Anfrage gestellt haben.",
+        "titre": "Was versteht man unter einem Verwaltungsantrag?"
+       },
+       {
+        "texte": "Es gibt verschiedene administrative Rechtsmittel.\nGnadenerlass\nEin förmliches Rechtsmittel ist eine Beschwerde, die an die Person gerichtet wird, die die betreffende Entscheidung getroffen hat (z. B. Bürgermeister, Präfekt, Schulinspektor usw.).\nHierarchische Eskalationsverfahren\nEin formeller Widerspruch ist eine Beschwerde, die an die nächsthöhere Instanz des Beschwerdeführers gerichtet wird. Beispielsweise könnte ein Minister, in diesem Fall der Innenminister, eine Beschwerde gegen eine Entscheidung eines Präfekten behandeln.\nEs ist möglich, einen formellen Rechtsbehelf einzulegen, ohne zuvor eine Beschwerde eingelegt oder auf eine Antwort auf die Beschwerde zu warten.\nPflichtige vorherige administrative Klage (Vorverfahren)\nEin Rapo ist eine Klage, die grundsätzlich vor der Einreichung beim Gericht eingereicht werden muss.\nDas RAPO-Verfahren findet insbesondere in folgenden Bereichen Anwendung:\n- Steuerliche Streitigkeiten (z. B. Bemessungsgrundlage für die Steuer)\n- Zugang zu Verwaltungsdokumenten\n- Zugang zu regulierten Berufen (z. B. Ärztekammer)\n- Militärischer Dienst: Einspruch bei der Militärbeschwerekommission\n- Ausländerrechtliche Streitigkeiten (z. B. Ablehnung von Visa)\n- Sozialrechtliche Streitigkeiten (z. B. Klagen gegen eine Entscheidung des MDPH (Behindertenzentrum des Départements)).\nDie geltenden Regeln variieren je nach Rapo.\nDie Unterschiede können sich auf folgende Punkte beziehen: Fristen für die Einleitung des Rechtsstreits, die zuständige Kollegialinstanz für die Berufung, und der Widerspruchsverfahren.\nBitte beachten: Wenn eine Verwaltungsentscheidung einer Anfechtung durch einen \"Rapo\" unterzogen wird, wird dies in der Entscheidung selbst angeführt. Die Entscheidung enthält Informationen über die möglichen Rechtsmittel und die entsprechenden Fristen.",
+        "titre": "Welche verschiedenen Arten von Verwaltungsbeschwerden gibt es?"
+       },
+       {
+        "texte": "Die Frist hängt davon ab, ob der Rechtsbehelf obligatorisch ist oder nicht:\nFall: Nicht obligatorische Beschwerde (Beschwerde oder Beschwerde nach Aufstieg)\nDie Frist hängt davon ab, ob es sich um eine Beschwerde oder eine formelle Klage handelt:\nFall: Antrag auf Gnade\nDie Dauer variiert je nach Ihrem Wohnort:\nFall: Sie leben in einer Großstadt.\nDie Frist beträgt 2 Monate für die Einlegung eines Rechtsbehelfs.\nFall: Sie leben zusätzlich im Überseegebiet.\nDie Frist beträgt 3 Monate für die Einlegung eines Rechtsbehelfs.\nFall: Sie leben im Ausland\nDie Frist beträgt 4 Monate, um eine Beschwerde einzulegen.\nFall: Einspruch nach der Hierarchie\nDie Dauer variiert je nach Ihrem Wohnort:\nFall: Sie leben in einer Großstadt.\nDie Frist beträgt 2 Monate für eine formelle Beschwerde an eine höhere Instanz.\nFall: Sie leben zusätzlich im Überseegebiet.\nDie Frist beträgt 3 Monate für die Einlegung eines formellen Beschwerdeverfahrens.\nFall: Sie leben im Ausland\nDie Frist für die Einlegung eines formellen Beschwerdeverfahrens beträgt 4 Monate.\nFall: Obligatorische vorherige administrative Klage (VAK)\nDer Zeitraum ist in der Mitteilung über die Entscheidung angegeben, die Sie anfechten.",
+        "titre": "Welche Fristen gelten für die Einlegung eines Verwaltungsantriebs?"
+       },
+       {
+        "texte": "Der Ablauf variiert je nachdem, ob die Klage obligatorisch ist oder nicht:\nFall: Nicht obligatorische Beschwerde (Beschwerde oder Beschwerde nach Aufstieg)\nDie Verfahren unterscheiden sich je nachdem, ob es sich um eine Beschwerde oder eine gerichtliche Instanz handelt:\nFall: Antrag auf Gnade\nSie müssen Ihren Einspruch an die Person richten, die die Entscheidung getroffen hat und gegen die Sie vorgehen.\nIhre Korrespondenz muss folgende Elemente enthalten:\n- Ihr Name, Vorname und Adresse\n- Das Gegenstand Ihrer Klage\n- Die Erklärung der Gründe für die Klage\n- Die explizite Bitte um eine erneute Prüfung.\nSie müssen Ihren Einspruch per Einschreiben mit Rückschein senden, um einen Nachweis über den Versand zu haben.\nSie sollten außerdem eine Kopie der angefochtenen Entscheidung sowie alle Dokumente beifügen, die Sie für eine Überprüfung der Entscheidung als hilfreich erachten.\nFall: Einspruch nach der Hierarchie\nSie müssen Ihren Einspruch an die nächsthöhere Instanz richten, die die Entscheidung desjenigen getroffen hat, gegen die Sie vorgehen.\nIhre Korrespondenz muss folgende Elemente enthalten:\n- Ihr Name, Vorname und Adresse\n- Das Gegenstand Ihrer Klage\n- Die Erklärung der Gründe für die Klage\n- Die explizite Aufforderung des Urteilsausstellers, die Entscheidung von einer höhergestellten Stelle überprüfen zu lassen.\nSie müssen Ihren Einspruch per Einschreiben mit Rückschein senden, um einen Nachweis über den Versand zu haben.\nSie sollten außerdem eine Kopie der angefochtenen Entscheidung sowie alle Dokumente beifügen, die Sie für eine Überprüfung der Entscheidung als hilfreich erachten.\nFall: Obligatorische vorherige administrative Klage (VAK)\nJeżeli Sie der Beschwerde (z.B. im Bereich Parken) zugrunde liegt, ist es möglich, den Widerspruch online einzureichen (dies wird in der Mitteilung über die Entscheidung, die Sie anfechten, erläutert).\nAndernfalls müssen Sie Ihren Einspruch per Einschreiben (mit Rückschein) senden, um einen Nachweis über den Versand zu haben.\nIhre Korrespondenz muss folgende Elemente enthalten:\n- Ihr Name, Vorname und Adresse\n- Das Gegenstand Ihrer Klage\n- Die Erklärung der Gründe für die Klage\n- Die explizite Bitte, die Entscheidung zu überprüfen und gegebenenfalls zu ändern, ist Ihre.\nSie sollten außerdem eine Kopie der angefochtenen Entscheidung sowie alle Dokumente beifügen, die Sie für eine Überprüfung der Entscheidung als hilfreich erachten.",
+        "titre": "Wie erstelle ich eine administrative Beschwerde?"
+       },
+       {
+        "texte": "Die Situation hängt davon ab, ob der Rechtsbehelf obligatorisch ist oder nicht:\nFall: Nicht obligatorische Beschwerde (Beschwerde oder Beschwerde nach Aufstieg)\nDie Einreichung des Rechtsbehelfs unterbricht den 2-Monats-Frist (3 Monate für Übersee und 4 Monate für Ausländer), die Ihnen zur Einreichung beim Verwaltungsgericht zusteht, vorausgesetzt, die Klage wird vor Ablauf dieser Frist eingereicht.\nIm Falle eines Ablehnung der Klage beginnt ein neuer Zeitraum von 2 Monaten (3 Monate für Übersee und 4 Monate für Ausländer) ab dem Datum der Mitteilung dieser Entscheidung neu.\nDie Behörde informiert Sie über eine abweisende Entscheidung am 5. Januar 2026. Sie reichen eine administrative Beschwerde am 26. Januar 2026 ein. Ihre administrative Beschwerde wird am 25. März 2026 abgelehnt. Sie können den Verwaltungsrichter bis zum 24. Mai 2026 um Mitternacht anrufen.\nDie Behörde hat zwei Monate Zeit, um auf Ihre Anfrage zu antworten. Wenn Sie innerhalb dieses Zeitraums keine Antwort erhalten, wird Ihr Antrag als abgelehnt betrachtet. In diesem Fall können Sie eine gerichtliche Klage vor dem Verwaltungsgericht einlegen.\n→ An wen: Verwaltungsgericht\nFall: Obligatorische vorherige administrative Klage (VAK)\nDie Behörde hat zwei Monate Zeit, Ihnen zu antworten.\nDie Einreichung des Rapo-Antrags verlängert die Frist für die Einreichung einer Klage vor Gericht. Die Frist beginnt erst dann erneut zu laufen, nachdem der Einspruch abgelehnt wurde.\nWenn die Entscheidung des Rapo abgelehnt wird, müssen Sie eine gerichtliche Beschwerde gegen diese Ablehnung einlegen, und nicht gegen die ursprüngliche Entscheidung.\nDie Behörde muss die Entscheidung zur Ablehnung des Antrags von Rapo begründen, d.h. sie muss die Gründe für diese Entscheidung darlegen.",
+        "titre": "Welche Auswirkungen hat ein administratives Rechtsmittel?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2474",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71,
+      "units": 92
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:26.313Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Добровільний оскар, оскар через ієрархію та обов'язкова попередня адміністративна процедура (Rapo)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Коли адміністрація приймає рішення, яке є для вас несприятливим, ви маєте право подати апеляцію на це рішення через адміністративний механізм.",
+      "steps": [
+       {
+        "texte": "Управління прийняло рішення, яке вам не вигідно? Перш ніж подавати позов до суду, ви можете попросити управління переглянути своє рішення, подавши адміністративний оскар. Іноді, подання адміністративного оскару є обов'язковим перед зверненням до суду: у такому випадку, це обов'язковий попередній адміністративний оскар (ПОАО). Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Адміністративний позов – це звернення до адміністративних органів з проханням переглянути рішення, яке вони прийняли.\nРішення адміністрації може бути явним або неявним.\nЦе рішення є чітким, коли воно є результатом юридичної дії, прийнятої адміністрацією (письмове рішення, опубліковане або надіслане).\nРішення є неявним, коли воно випливає з відсутності відповіді адміністрації на ваше звернення.",
+        "titre": "Що таке адміністративний оскар?"
+       },
+       {
+        "texte": "Існують різні адміністративні засоби захисту.\nПрохання про помилування\nПодання апеляції – це звернення, яке надсилається до особи, яка прийняла рішення, оскаржуване (мер, губернатор, інспектор академії тощо).\nІєрархічний оскар\nПодання скарги на звернення до вищого за рангом посадової особи, яка прийняла рішення. Наприклад, міністр внутрішніх справ, у випадку рішення, прийнятого префектом.\nМожна подати апеляцію до вищої інстанції, навіть якщо раніше не було подано скаргу або без очікування відповіді на скаргу.\nОбов'язкова попередня адміністративна процедура (ОПАП)\nRapo – це процедура, яка обов'язково має бути завершена до звернення до суду.\nRAPO застосовується, зокрема, у таких сферах:\n- Податкові суперечки (наприклад, база оподаткування)\n- Доступ до адміністративних документів\n- Доступ до регульованих професій (наприклад, до Лікарської колегії)\n- Воєнізована служба: оскарження рішень у Комісії з розгляду скарг військовослужбовців\n- Судові спори щодо іноземців (наприклад, відмови у видачі віз)\n- Соціальні суперечки (наприклад, оскарження рішення MDPH (департаментський центр у справах осіб з інвалідністю)).\nЗастосовні правила відрізняються залежно від конкретного Rapo.\nВідмінності можуть стосуватися наступних аспектів: термінів подання позову, колегіальної інстанції для розгляду справи, процедури, що передбачає протилежні аргументи.\nВажливо зазначити: Якщо адміністративна постанова передається до Районного адміністративного суду, про це зазначено у самій постанові. У постанові вказано можливі шляхи оскарження та строки для подання позову до суду.",
+        "titre": "Які існують різні види адміністративних позовів?"
+       },
+       {
+        "texte": "Термін залежить від того, чи є оскарження обов'язковим або ні:\nВипадок: Необов'язкова апеляція (апеляція на помилку або апеляція до вищої інстанції)\nТермін дії залежить від того, чи це апеляція до вищої інстанції, чи до керівництва:\nВипадок: Запит на помилування\nТермін дії залежить від вашого місця проживання:\nСитуація: Ви проживаєте у великому місті.\nТермін для подання апеляції становить 2 місяці.\nСитуація: Ви також проживаєте за межами Франції.\nТермін для подання апеляції становить 3 місяці.\nСитуація: Ви проживаєте за кордоном\nТермін для подання апеляції становить 4 місяці.\nВипадок: Подання скарги в рамках ієрархічної структури\nТермін дії залежить від вашого місця проживання:\nСитуація: Ви проживаєте у великому місті.\nТермін для подання апеляції до вищої інстанції становить 2 місяці.\nСитуація: Ви також проживаєте за межами Франції.\nТермін для подання апеляції до вищої інстанції становить 3 місяці.\nСитуація: Ви проживаєте за кордоном\nТермін для подання апеляції до вищої інстанції становить 4 місяці.\nПриклад: Обов'язкова адміністративна скарга (ОАС)\nТермін дії вказано у повідомленні про рішення, яке ви оскарблюєте.",
+        "titre": "Які строки дії для подання адміністративного позову?"
+       },
+       {
+        "texte": "Процедура залежить від того, чи є позов обов'язковим, чи ні:\nВипадок: Необов'язкова апеляція (апеляція на помилку або апеляція до вищої інстанції)\nПроцедура залежить від того, чи це апеляція до вищої інстанції, чи до адміністративного органу:\nВипадок: Запит на помилування\nВам необхідно подати апеляцію до особи, яка прийняла рішення, яке ви оскарблюєте.\nВаше листування повинно містити наступні елементи:\n- Ваше ім'я, прізвище та адреса\n- Предмет вашого позову\n- Пояснення причин звернення\n- Виражена вимога щодо повторного розгляду справи.\nВам необхідно надіслати свою скаргу рекомендованим листом з повідомленням про отримання, щоб мати доказ надсилання.\nТакож, до вашого листа необхідно додати копію оскарженої рішення, а також усі документи, які, на вашу думку, можуть бути корисними для перегляду цієї рішення.\nВипадок: Подання скарги в рамках ієрархічної структури\nВи повинні подати апеляцію до вищого керівника, який прийняв рішення, яке ви оскарблюєте.\nВаше листування повинно містити наступні елементи:\n- Ваше ім'я, прізвище та адреса\n- Предмет вашого позову\n- Пояснення причин звернення\n- Виражена вимога щодо повторного розгляду справи вищестоячим посадовою особою, яка ухвалила рішення.\nВам необхідно надіслати свою скаргу рекомендованим листом з повідомленням про отримання, щоб мати доказ надсилання.\nТакож, до вашого листа необхідно додати копію оскарженої рішення, а також усі документи, які, на вашу думку, можуть бути корисними для перегляду цієї рішення.\nПриклад: Обов'язкова адміністративна скарга (ОАС)\nЗалежно від сфери, в якій ви подаєте апеляцію (наприклад, у сфері паркування), можливо подати апеляцію онлайн (це зазначено в повідомленні про рішення, яке ви оскарблюєте).\nАбо, ви повинні надіслати свою скаргу рекомендованим листом з повідомленням про отримання, щоб мати доказ надсилання.\nВаше листування повинно містити наступні елементи:\n- Ваше ім'я, прізвище та адреса\n- Предмет вашого позову\n- Пояснення причин звернення\n- Висловлене прохання щодо перегляду прийнятого рішення та запропонованої зміни.\nТакож, до вашого листа необхідно додати копію оскарженої рішення, а також усі документи, які, на вашу думку, можуть бути корисними для перегляду цієї рішення.",
+        "titre": "Як подати адміністративний позов?"
+       },
+       {
+        "texte": "Ситуація залежить від того, чи є звернення обов'язковим:\nВипадок: Необов'язкова апеляція (апеляція на помилку або апеляція до вищої інстанції)\nНадсилання позову припиняє двомісячний термін (3 місяці для заморських територій та 4 місяці для іноземних країн), протягом якого ви можете звернутися до адміністративного суду, за умови, що позов буде надіслано до закінчення цього терміну.\nУ разі відмови у розгляді позову, починаючи з моменту отримання повідомлення про це рішення, починається новий термін у 2 місяці (3 місяці для території за межами Франції та 4 місяці для іноземних осіб).\nАдміністрація повідомляє вас про несприятливе рішення 5 січня 2026 року. Ви подаєте адміністративний позов 26 січня 2026 року. Ваш адміністративний позов відхиляється 25 березня 2026 року. Ви можете звернутися до адміністративного судді до 24 травня 2026 року до опівночі.\nАдміністрація має 2 місяці на відповідь. Якщо ви не отримаєте відповіді протягом цього періоду, ваш позов буде вважатися відхиленим. У такому разі ви можете подати позов до адміністративного суду.\n→ Куди звернутися: Адміністративний суд\nПриклад: Обов'язкова адміністративна скарга (ОАС)\nАдміністрація має 2 місяці на відповідь.\nНадсилання Rapo призводить до продовження терміну для прийняття рішення судом. Термін починає знову лише після того, як оскарження буде відхилено.\nЯкщо рішення Rapo буде відхилено, вам необхідно подати позов до суду проти цього рішення, а не проти початкового рішення.\nАдміністрація повинна обґрунтувати рішення про відмову в наданні дозволу Rapo, тобто вона повинна вказати причини, які спонукали до цього рішення.",
+        "titre": "Які наслідки адміністративного оскарження?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2474",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.7,
+      "units": 92
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:1d4f24dddff0c76c63244f98c4e1eb68639a59cfafa06e8925b074de4595e1d1",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Recours gracieux, recours hiérarchique et recours administratif préalable obligatoire (Rapo)",
+   "contenu_json": {
+    "intro": "Lorsque l'administration prend une décision qui vous est défavorable, vous pouvez lui demander de revoir sa décision par un recours administratif.",
+    "steps": [
+     {
+      "texte": "Une administration a pris une décision qui vous est défavorable ? Avant d'aller en justice, vous pouvez demander à l'administration de revoir sa position en faisant un recours administratif. Parfois, le recours administratif est obligatoire avant de saisir le juge : il s'agit alors d'un recours administratif préalable obligatoire (Rapo). Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Le recours administratif est une réclamation adressée à l'administration pour lui demander de changer une décision qu'elle a prise.\nLa décision de l'administration peut être explicite ou implicite.\nLa décision est explicite quand elle résulte d'un acte juridique qui est pris par l'administration (décision écrite affichée ou notifiée).\nLa décision est implicite quand elle résulte de l'absence de réponse de l'administration à votre demande.",
+      "titre": "Qu'appelle-t-on recours administratif ?"
+     },
+     {
+      "texte": "Il existe différents recours administratifs.\nRecours gracieux\nLe recours gracieux est une réclamation envoyée à l'auteur de la décision contestée (maire, préfet, inspecteur d'académie, etc.).\nRecours hiérarchique\nLe recours hiérarchique est une réclamation envoyée au supérieur hiérarchique de l'auteur de la décision. Par exemple, le ministre de l'intérieur, pour une décision prise par un préfet.\nIl est possible de déposer un recours hiérarchique sans avoir fait au préalable un recours gracieux ou sans attendre d'avoir reçu la réponse au recours gracieux.\nRecours administratif préalable obligatoire (Rapo)\nLe Rapo est une réclamation qui doit nécessairement être effectuée avant de saisir le juge.\nLe Rapo s'applique notamment dans les domaines suivants :\n- Contentieux fiscal (par exemple, assiette de l'impôt)\n- Accès aux documents administratifs\n- Accès aux professions réglementées (par exemple, Ordre des médecins)\n- Fonction publique militaire : recours devant la Commission de recours des militaires\n- Contentieux des étrangers (par exemple, refus de visas)\n- Contentieux sociaux (par exemple, recours contre une décision de la MDPH).\nLes règles applicables sont différentes selon les Rapo.\nLes différences peuvent porter sur les points suivants : délais de saisine, instance collégiale de recours, procédure contradictoire.\nÀ noter : Lorsqu’une décision administrative est soumise à un Rapo, cela vous est notifié dans la décision. La décision indique les voies et délais de recours pour faire un Rapo.",
+      "titre": "Quelles sont les différentes sortes de recours administratif ?"
+     },
+     {
+      "texte": "Le délai varie selon que le recours est obligatoire ou non :\nCas : Recours non obligatoire (recours gracieux ou recours hiérarchique)\nLe délai varie selon qu’il s’agit d’un recours gracieux ou hiérarchique :\nCas : Recours gracieux\nLe délai varie selon votre lieu de résidence :\nCas : Vous résidez en métropole\nLe délai est de 2 mois pour faire un recours gracieux.\nCas : Vous résidez en outre-mer\nLe délai est de 3 mois pour faire un recours gracieux.\nCas : Vous résidez à l’étranger\nLe délai est de 4 mois pour faire un recours gracieux.\nCas : Recours hiérarchique\nLe délai varie selon votre lieu de résidence :\nCas : Vous résidez en métropole\nLe délai est de 2 mois pour un recours hiérarchique.\nCas : Vous résidez en outre-mer\nLe délai est de 3 mois pour faire un recours hiérarchique.\nCas : Vous résidez à l’étranger\nLe délai est de 4 mois pour faire un recours hiérarchique.\nCas : Recours administratif préalable obligatoire (Rapo)\nLe délai est indiqué dans la notification de la décision que vous contestez.",
+      "titre": "Quels sont les délais pour faire un recours administratif ?"
+     },
+     {
+      "texte": "La procédure varie selon que le recours est obligatoire ou non :\nCas : Recours non obligatoire (recours gracieux ou recours hiérarchique)\nLa procédure varie selon qu’il s’agit d’un recours gracieux ou hiérarchique :\nCas : Recours gracieux\nVous devez adresser votre recours à l'auteur de la décision qui a été prise et que vous contestez.\nVotre courrier doit comporter les éléments suivants :\n- Vos nom, prénoms et adresse\n- L'objet de votre recours\n- L'explication des motifs du recours\n- La demande explicite de réexamen.\nVous devez envoyer votre recours par courrier RAR pour conserver une preuve de l'envoi.\nVous devez également joindre à votre courrier une copie de la décision contestée ainsi que tous les documents que vous jugez utiles pour faire réviser la décision.\nCas : Recours hiérarchique\nVous devez adresser votre recours au supérieur hiérarchique de l'auteur de la décision que vous contestez.\nVotre courrier doit comporter les éléments suivants :\n- Vos nom, prénoms et adresse\n- L'objet de votre recours\n- L'explication des motifs du recours\n- La demande explicite de réexamen par le supérieur hiérarchique de l'auteur de la décision.\nVous devez envoyer votre recours par courrier RAR, pour conserver une preuve de l'envoi.\nVous devez également joindre à votre courrier une copie de la décision contestée ainsi que tous les documents que vous jugez utiles pour faire réviser la décision.\nCas : Recours administratif préalable obligatoire (Rapo)\nSelon le domaine dans lequel vous faites le Rapo (par exemple, en matière de stationnement), il est possible de déposer le recours en ligne (cela est précisé dans la notification de la décision que vous contestez).\nSinon, vous devez envoyer votre recours par courrier RAR, pour conserver une preuve de l'envoi.\nVotre courrier doit comporter les éléments suivants :\n- Vos nom, prénoms et adresse\n- L'objet de votre recours\n- L'explication des motifs du recours\n- La demande explicite de revoir la décision rendue et la révision que vous souhaitez.\nVous devez également joindre à votre courrier une copie de la décision contestée ainsi que tous les documents que vous jugez utiles pour faire réviser la décision.",
+      "titre": "Comment faire le recours administratif ?"
+     },
+     {
+      "texte": "La situation varie selon que le recours est obligatoire ou non :\nCas : Recours non obligatoire (recours gracieux ou recours hiérarchique)\nL'envoi du recours interrompt le délai de 2 mois (3 mois pour l’outre-mer et 4 mois pour l’étranger) dont vous disposez pour saisir le tribunal administratif, à condition que la réclamation soit envoyée avant l'expiration de ce délai.\nEn cas de rejet du recours, un nouveau délai de 2 mois (3 mois pour l’outre-mer et 4 mois pour l’étranger) recommence à courir à partir de la notification de cette décision.\nL'administration vous notifie une décision défavorable le 5 janvier 2026. Vous déposez un recours administratif le 26 janvier 2026. Votre recours administratif est rejeté le 25 mars 2026. Vous pouvez saisir le juge administratif jusqu'au 24 mai 2026 à minuit.\nL'administration a un délai de 2 mois pour vous répondre. Si vous n'obtenez pas de réponse passé ce délai, votre recours est considéré comme rejeté. Dans ce cas, vous pouvez engager un recours contentieux devant le tribunal administratif.\n→ Où s'adresser : Tribunal administratif\nCas : Recours administratif préalable obligatoire (Rapo)\nL’administration a un délai de 2 mois pour vous répondre.\nL'envoi du Rapo a pour effet de prolonger le délai pour porter une décision devant le tribunal. Le délai ne recommence à courir qu'après que le recours ait été rejeté.\nSi le Rapo est rejeté, vous devez faire un recours contentieux contre la décision de rejet du Rapo et non contre la décision initiale.\nL'administration doit motiver la décision de rejet du Rapo, c'est-à-dire qu'elle doit indiquer les raisons pour lesquelles elle l'a prise.",
+      "titre": "Quels sont les effets du recours administratif ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

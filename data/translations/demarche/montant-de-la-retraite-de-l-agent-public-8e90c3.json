@@ -1,0 +1,436 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "montant-de-la-retraite-de-l-agent-public-8e90c3",
+ "recordId": "8e90c365-f874-4711-b676-cab1f76f599d",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.246Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Pension amount for the public servant",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 38.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "The amount of a public sector employee's pension depends on their last salary and the number of quarters of retirement insurance they have accumulated. The pension is calculated based on these factors to determine the pension amount. You can estimate your pension online via the Info-retraite website. The pension is adjusted annually according to changes in prices.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "The amount of a public sector employee's pension depends on their last salary and the number of quarters of retirement insurance they have accumulated. The pension is calculated based on these factors to determine the pension amount. You can estimate your pension online via the Info-retraite website. The pension is adjusted annually according to changes in prices.\n\nThe pension amount is calculated by multiplying the last salary by 75%, and then dividing by the required period of service for a full pension. The guaranteed minimum amount varies depending on the number of years of service.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.2,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Sedentary office worker\n- Active category employee\n- Highly active, but \"unhealthy\" civil servant\n- Contract worker who performed services as an active-status civil servant\n- Person receiving an early retirement benefit due to disability or infirmity",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Log in to your personal retirement account on the Info-retraite website.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Estimate the amount of your retirement income by specifying your age of retirement and any relevant additional information (e.g., number of children, disability status, etc.).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Check the total amount of your retirement pensions, both gross and net (after taxes).",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 3
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.247Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kamu görevlisinin emekli maaşı miktarı",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 36.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Bir kamu görevlisinin emekli maaşı, son ücretlendirme ve emeklilik sigortası süresine bağlı olarak hesaplanır. Bu unsurlardan elde edilen sonuç, emekli maaşının miktarını belirlemek için kullanılır. Tahmini emekli maaşınızı, Info-retraite web sitesi üzerinden çevrimiçi olarak hesaplayabilirsiniz. Emekli maaşı, her yıl fiyatlardaki değişikliklere göre güncellenir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Bir kamu görevlisinin emekli maaşı, son ücretlendirme ve emeklilik sigortası süresine bağlı olarak hesaplanır. Bu unsurlardan elde edilen sonuç, emekli maaşının miktarını belirlemek için kullanılır. Tahmini emekli maaşınızı, Info-retraite web sitesi üzerinden çevrimiçi olarak hesaplayabilirsiniz. Emekli maaşı, her yıl fiyatlardaki değişikliklere göre güncellenir.\n\nEmekli maaşı, son gösterge maaşı ile %75'in çarpımı yoluyla hesaplanır ve ardından tam emekli maaşı almak için gerekli olan sigortalama süresine bölünür. Garanti edilen minimum miktar, tamamlanan hizmet yıl sayısına göre değişir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.4,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Ofis görevlisi (sözleşmeli)\n- Aktif sınıf görevlisi\n- Çok aktif ve \"sağlığını tehlikeye atan\" pozisyonda çalışan bir memur\n- Sözleşmeli olarak çalışan ve aktif memur olarak görev yapmış\n- Engellilik veya sakatlık nedeniyle erken emekliliğe hak kazanan kişi",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.7,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Kişisel emeklilik hesabınıza Info-retraite web sitesinden giriş yapmak.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Çıkış yaşı ve ek bilgileri (çocuklar, engellilik durumu vb.) belirtilerek emekli olacağı miktarı tahmin etmek.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Emekli maaşlarının toplam miktarını, vergi öncesi ve sonrası olarak görüntüleyin.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.1,
+      "units": 3
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.249Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مبلغ المعاش التقاعدي للموظف الحكومي",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "يعتمد مبلغ المعاش التقاعدي للموظف الحكومي على أحدث راتبه الأساسي وعدد فترات التأمين على التقاعد. يتم حسابه بناءً على هذه العناصر لتحديد مبلغ المعاش. يمكنك تقدير المعاش التقاعدي عبر الإنترنت من خلال موقع \"معلومات المعاش\". يتم تعديل المعاش كل عام وفقًا لتغير الأسعار.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "يعتمد مبلغ المعاش التقاعدي للموظف الحكومي على أحدث راتبه الأساسي وعدد فترات التأمين على التقاعد. يتم حسابه بناءً على هذه العناصر لتحديد مبلغ المعاش. يمكنك تقدير المعاش التقاعدي عبر الإنترنت من خلال موقع \"معلومات المعاش\". يتم تعديل المعاش كل عام وفقًا لتغير الأسعار.\n\nيتم حساب مبلغ المعاش عن طريق ضرب آخر راتب إداري في 75٪، ثم قسمة الناتج على المدة المطلوبة من التأمين للحصول على معاش كامل. ويختلف الحد الأدنى المضمون حسب عدد السنوات التي قضاها الموظف في الخدمة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- موظف في وظيفة ثابتة\n- موظف في منصب نشط\n- موظف ذو مستوى عالٍ، يتميز بنشاطه الكبير، ويعمل في بيئة غير صحية.\n- عقد عمل لشخص قام بتقديم خدمات كموظف في فئة نشطة.\n- الشخص الذي يستفيد من التقاعد المبكر بسبب الإعاقة أو المرض.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.9,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تسجيل الدخول إلى حساب التقاعد الشخصي على موقع \"Info-retraite\".",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقدير مبلغ المعاش التقاعدي عن طريق تحديد العمر الذي سيتم فيه التقاعد والمعلومات الإضافية (مثل عدد الأطفال، أو وجود إعاقة، إلخ).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "التحقق من المبلغ الإجمالي للتقاعد، سواء كان صافيًا أو قبل خصم الضرائب.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.9,
+      "units": 3
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.250Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Rentenhöhe des Beamten",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 38.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Die Höhe der Rente eines Beamten hängt von seinem letzten Gehalt und der Anzahl der Rentenjahre ab. Sie wird anhand dieser Faktoren berechnet, um die Höhe der Rente zu ermitteln. Sie können Ihre Rente online über die Website \"Info-Retraite\" abschätzen. Die Rente wird jährlich an die Preisentwicklung angepasst.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Die Höhe der Rente eines Beamten hängt von seinem letzten Gehalt und der Anzahl der Rentenjahre ab. Sie wird anhand dieser Faktoren berechnet, um die Höhe der Rente zu ermitteln. Sie können Ihre Rente online über die Website \"Info-Retraite\" abschätzen. Die Rente wird jährlich an die Preisentwicklung angepasst.\n\nDie Höhe der Rente wird berechnet, indem der letzte Gehaltszettel mit 75 % multipliziert wird, und anschließend durch die erforderliche Versicherungsdauer für eine volle Rente geteilt wird. Der garantierte Mindestbetrag variiert je nach Anzahl der geleisteten Jahre.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Beamter in einer stillen Position\n- Beamter der aktiven Kategorie\n- Aktiv und anspruchsvoller Beamter in einer \"ungesunden\" Position\n- Vertraglich beschäftigter Mitarbeiter, der als Beamter der aktiven Laufbahn tätig war\n- Person, die aufgrund von Behinderung oder Invalidität eine vorzeitige Rente erhält",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.4,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sich bei Ihrem persönlichen Rentenkonto auf der Webseite Info-retraite anmelden.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Den Betrag der Rente schätzen, indem man das Alter des Rentenbeginns und weitere Informationen angibt (Kinder, Behinderungen usw.).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Die Gesamtsumme ihrer Renten, sowohl vor als auch nach Abzug von Steuern, einsehen.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.1,
+      "units": 3
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.251Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Сума пенсії державного службовця",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 26.1,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Сума пенсії державного службовця залежить від його останньої заробітної плати та кількості кварталів страхового стажу. Її розраховують на основі цих даних, щоб визначити розмір пенсії. Ви можете оцінити свою майбутню пенсію онлайн через веб-сайт Info-retraite. Пенсія перераховується щороку відповідно до зміни цін.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.4,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Сума пенсії державного службовця залежить від його останньої заробітної плати та кількості кварталів страхового стажу. Її розраховують на основі цих даних, щоб визначити розмір пенсії. Ви можете оцінити свою майбутню пенсію онлайн через веб-сайт Info-retraite. Пенсія перераховується щороку відповідно до зміни цін.\n\nСума пенсії розраховується шляхом множення останньої окладної зарплати на 75%, а потім ділення на необхідний термін страхового стажу для отримання повної пенсії. Мінімальна гарантована сума пенсії залежить від кількості років, відпрацьованих на роботі.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Співробітник адміністративного рівня, що виконує сидячу роботу.\n- Співробітник активної категорії\n- Активний співробітник категорії, що працює в небезпечних умовах.\n- Контрактний працівник, який виконував функції державного службовця активної категорії.\n- Особа, яка отримує дострокову пенсію через інвалідність або захворювання.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.9,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Увійти до свого особистого рахунку пенсійного забезпечення на веб-сайті Info-retraite.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Оцінити суму пенсії, вказавши вік виходу на пенсію та додаткову інформацію (діти, інвалідність тощо).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Переглянути загальну суму своїх пенсій, включаючи суму до отримання та суму після сплати податків.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 3
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:e68f9ca8a01d124227ccdea4ffe5c4507a967b80069e6e83b34bbadaa29a645e",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Montant de la retraite de l'agent public",
+   "description_courte": "Le montant de la retraite d'un agent public dépend de son dernier traitement indiciaire et du nombre de trimestres d'assurance retraite. Elle est calculée à partir de ces éléments pour déterminer le montant de la pension. Vous pouvez estimer votre retraite en ligne via le site Info-retraite. La retraite est revalorisée chaque année selon l'évolution des prix.",
+   "contenu_detaille": "Le montant de la retraite d'un agent public dépend de son dernier traitement indiciaire et du nombre de trimestres d'assurance retraite. Elle est calculée à partir de ces éléments pour déterminer le montant de la pension. Vous pouvez estimer votre retraite en ligne via le site Info-retraite. La retraite est revalorisée chaque année selon l'évolution des prix.\n\nLe montant de la retraite est calculé en multipliant le dernier traitement indiciaire par 75 %, puis en divisant par la durée d'assurance requise pour une retraite à taux plein. Le minimum garanti varie selon le nombre d'années de services accomplis.",
+   "pour_qui": "- Fonctionnaire de catégorie sédentaire\n- Fonctionnaire de catégorie active\n- Fonctionnaire de catégorie super-active « insalubre »\n- Contractuel ayant accompli des services en tant que fonctionnaire de catégorie active\n- Personne bénéficiant d'une retraite anticipée pour handicap ou infirmité",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Se connecter à son compte retraite personnel sur le site Info-retraite."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Estimer le montant de sa retraite en indiquant son âge de départ et ses informations complémentaires (enfants, handicap, etc.)."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Consulter le montant global de ses pensions de retraite, brut et net avant impôts."
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_faire": null,
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T00:57:47.984Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F21142",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

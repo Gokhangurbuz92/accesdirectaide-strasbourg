@@ -1,0 +1,232 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "heures-creuses-les-plages-horaires-evoluent-299a24",
+ "recordId": "f36f9316-faaf-49bd-ad26-ddca52e4f32c",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.708Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Reduced hours: the operating hours are changing.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 39.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Do you have an electricity contract with off-peak hours? The hours for these discounted rates are gradually changing until the end of 2027 to better align electricity consumption with periods of high energy production. Are you affected by these changes? Service Public provides information.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Do you have an electricity contract with off-peak hours? The hours for these discounted rates are gradually changing until the end of 2027 to better align electricity consumption with periods of high energy production. Are you affected by these changes? <em>Service Public</em> will inform you.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.710Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Esnek çalışma saatleri: çalışma saatleri değişebilir",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.1,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Elektrik sözleşmenizde \"düşük talep saatleri\" seçeneği var mı? Bu saatlerdeki fiyat avantajlı tariflerin saatleri, 2027'ye kadar kademeli olarak değişecektir, böylece elektrik tüketimi, enerji üretimin yoğun olduğu zamanlara daha iyi uyum sağlayacaktır. Bu değişikliklerden etkileniyor musunuz? Kamu Hizmetleri Departmanı sizi bilgilendiriyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Elektrik sözleşmenizde \"düşük talep saatleri\" seçeneği var mı? Bu saatlerdeki fiyat avantajlı tariflerin saatleri, 2027'ye kadar kademeli olarak değişecektir, böylece elektrik tüketimi, enerji üretimin yoğun olduğu zamanlara daha iyi uyum sağlayacaktır. Bu değişikliklerden etkileniyor musunuz? <em style=\"font-style: italic;\">Halk Hizmetleri</em style=\"font-style: italic;\">, sizi bilgilendirmektedir.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.711Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "أوقات العمل المحددة: تتغير فترات العمل.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 34.6,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "هل لديك عقد كهرباء يتضمن خيار الاستهلاك في أوقات الذروة؟ يتم تعديل ساعات هذه الفترات ذات الأسعار المخفضة تدريجيًا حتى نهاية عام 2027، وذلك لتحسين ملاءمة استهلاك الكهرباء مع فترات الإنتاج العالي للطاقة. هل أنت من المتأثرين بهذه التغييرات؟ يقدم \"خدمة عامة\" معلومات حول ذلك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>هل لديك عقد كهرباء يتضمن خيار الاستهلاك في أوقات الذروة؟ يتم تعديل ساعات هذه الفترات ذات الأسعار المخفضة تدريجيًا حتى نهاية عام 2027، وذلك بهدف تحسين ملاءمة استهلاك الكهرباء مع فترات الإنتاج العالي للطاقة. هل أنت من المتأثرين بهذه التغييرات؟ خدمة \"الخدمة العامة\" تقدم لك المزيد من المعلومات.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.712Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Geduldzeiten: Die Zeiten für bestimmte Dienstleistungen können sich ändern.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 22.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Haben Sie einen Stromvertrag mit der Option für \"Günstige Zeiten\"? Die Zeiten für diese Tarife werden schrittweise bis Ende 2027 angepasst, um den Stromverbrauch besser an die Zeiten mit hoher Energieerzeugung anzupassen. Sind Sie von diesen Änderungen betroffen? Das \"Service Public\" informiert Sie darüber.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Haben Sie einen Stromvertrag mit der Option für günstige Tarife zu bestimmten Zeiten? Die Zeiten, in denen diese günstigen Tarife gelten, werden schrittweise bis Ende 2027 angepasst, um den Stromverbrauch besser an die Zeiten mit hoher Energieerzeugung anzupassen. Sind Sie von diesen Änderungen betroffen? <em>Service Public</em> informiert Sie darüber.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.714Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Змінені години роботи: графік роботи змінюється",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 32.6,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Ви маєте контракт на електроенергію з опцією \"час низького споживання\"? Графік цих періодів зі зниженою ціною поступово змінюється до кінця 2027 року, щоб краще узгодити споживання електроенергії з періодами високої виробництва енергії. Чи стосуються ці зміни вас? \"Публічний сервіс\" надає вам інформацію.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.2,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Ви маєте контракт на електроенергію з опцією \"час низького споживання\"? Графік цих періодів зі зниженою ціною поступово змінюється до кінця 2027 року, щоб краще узгодити споживання електроенергії з періодами високої виробництва енергії. Чи стосуються ці зміни вас? <em style=\"font-style: italic;\">Служба публічних послуг</em> надає вам інформацію.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:489320bfece9bfc74b98ec810683e6d64c83e22f47630828972e97dd9f2ab5d7",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Heures creuses : les plages horaires évoluent",
+   "resume": "Vous bénéficiez d’un contrat d’électricité avec l’option heures creuses ? Les horaires de ces périodes à tarif réduit évoluent progressivement jusqu’à fin 2027 afin de mieux adapter la consommation d’électricité aux périodes de forte production d’énergie. Êtes-vous concerné par ces changements ? Service Public vous informe.",
+   "contenu": "<p>Vous bénéficiez d’un contrat d’électricité avec l’option heures creuses ? Les horaires de ces périodes à tarif réduit évoluent progressivement jusqu’à fin 2027 afin de mieux adapter la consommation d’électricité aux périodes de forte production d’énergie. Êtes-vous concerné par ces changements ?<em> Service Public</em> vous informe.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A18476?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

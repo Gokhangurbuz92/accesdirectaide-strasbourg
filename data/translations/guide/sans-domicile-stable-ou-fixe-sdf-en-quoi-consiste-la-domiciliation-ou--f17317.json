@@ -1,0 +1,472 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
+ "recordId": "79a72a66-1208-43d4-893d-bd8f5ffa873c",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.648Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Homeless: What is \"domicile\" (or registering a permanent address)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 24.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Domiciliation (or choosing a residential address) allows you to have proof of address and a physical address to receive mail, even if you do not have a permanent residence.",
+      "steps": [
+       {
+        "texte": "If you do not have a stable address, domicile (also known as registered address) allows you to have proof of address and a postal address if you do not have a stable home. Domicile also allows you to access rights and benefits (for example, an identity card, registration on the electoral roll, and legal aid). We provide you with the information you need.\nIf you are an asylum seeker, a specific accommodation arrangement applies.",
+        "titre": null
+       },
+       {
+        "texte": "You may be eligible for a registered address if you do not have a permanent home.\nThis is the case if, for example, you are in one of the following situations:\n- You are homeless.\n- You live in a mobile home.\n- You are temporarily staying with a third party.\n- You experience a lack of stability and continuity while staying in emergency accommodation centers.\nDomiciliation also applies to your beneficiaries.\nSpecifically: Personal circumstances vary greatly and may fall close to the definition of a stable home. Therefore, it is up to you to determine whether you need to register a permanent address by asking yourself if you have sufficient stability to declare a personal address to an administration.",
+        "titre": "Who can benefit from having a registered address?"
+       },
+       {
+        "texte": "You must have a connection to the municipality (or group of municipalities) in which you are requesting to have your address.\nYou are considered to have a connection if you are in one of the following situations:\n- You must be residing in the municipality at the time you submit your address change request.\n- You are engaged in a professional activity within the municipality.\n- You are receiving or have already started receiving an integration program or social, medical, or professional support service within the municipality (or you have taken steps to access such a service).\n- Do you have family connections to someone who lives in this municipality?\n- You are the legal guardian of your minor child who is enrolled in the local school.",
+        "titre": "What are the requirements for requesting a registered address?"
+       },
+       {
+        "texte": "Depending on the size of your municipality in terms of population, you can initiate the process with a CCAS (municipal social services centre) or CIAS (intermunicipal social services centre), an organization approved by the prefect, or directly with your local council.\nExample: A municipality with a population of over 1,500\nYou can request to have your address registered with a CCAS or CIAS, or with an organization approved by the mayor if one exists in your municipality.\nTo find one of these centers or organizations, you need to contact your local town hall.\n→ Where to go: Town Hall\nYour request must be submitted using a specific form:\n→ Online service: Application and decision regarding the registration of a permanent address (for individuals without a stable home or those experiencing homelessness)\nThis form must be printed and submitted to CCAS, CIAS, or an authorized organization, either by mail or email.\nCase: A municipality with a population of less than 1,500\nGenerally, small communities with fewer than 1,500 inhabitants do not have a CCAS and instead form a CIAS.\nIt is also possible to submit your application to an organization recognized by the mayor if one exists in your area.\nTo obtain this information, you must contact your local council.\n→ Where to go: Town Hall\nIf there is no CCAS or CIAS or recognized organization in your municipality, you must submit your address registration request directly to your local council.\n→ Where to go: Town Hall\nYour request must be submitted using a specific form:\n→ Online service: Application and decision regarding the registration of a permanent address (for individuals without a stable home or those experiencing homelessness)\nThis form must be printed and submitted to CCAS, CIAS, or an authorized organization, or sent by email or paper mail to your local council.",
+        "titre": "How do I make a request for a registered address?"
+       },
+       {
+        "texte": "You are required to have an interview with the organization (CCAS, CIAS, or an approved organization) that registered your residency application (or the local council, if they registered your application).\nThis meeting is to inform you about your rights regarding registered address and the obligations that arise from them (for example, you are required to physically appear or contact the organization responsible for your registered address at least once every 3 months).\nThe interview also serves to make you aware of the importance of regularly collecting your mail, particularly to exercise your rights and receive your benefits.",
+        "titre": "What is the process for establishing a registered office?"
+       },
+       {
+        "texte": "The decision regarding the registered address must be made in writing within 2 months.\nIf your request for a registered address is accepted, you will receive a proof of registered address:\n→ Online service: Proof of address (for individuals without a stable address or those experiencing homelessness)\nIf your request for domicile is refused, you will receive a letter explaining the reasons for the refusal. This letter will also outline the available options and deadlines for appealing the decision if you wish to challenge it.",
+        "titre": "How was the decision to establish a registered office made?"
+       },
+       {
+        "texte": "Domiciliation is granted for a period of 1 year. This period can be renewed.\nThe renewal application must be submitted under the same conditions as your initial application (maintaining the connection with the municipality, using the same application form, and attending an interview, etc.).\nSpecifically: It is recommended that you submit your renewal request at least 2 months before the expiration date of your registered address to avoid any disruption of services.",
+        "titre": "How long is the address service provided for?"
+       },
+       {
+        "texte": "It can be terminated before the end of its validity (the organization can also decide not to renew it) in the following three cases:\n- Or, if you request it (you have found a sustainable housing solution)\n- This could be because you no longer have any connection to the municipality or group of municipalities.\n- This could be because you haven't physically appeared or haven't contacted the organization responsible for your registered address for more than 3 consecutive months. Your registered address will not be terminated if your absence is due to health reasons or imprisonment.",
+        "titre": "How can a company's registered office be closed?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17317",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17317",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.8,
+      "units": 57
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.653Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sabit veya kalıcı bir adres olmaksızın (sokakta yaşayanlar): \"Adres kaydı\" (veya ikamet yeri seçimi) ne anlama gelir?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 27.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "\"Adres gösterme (veya ikamet yeri seçimi), istikrarlı bir ikamet adresi olmaması durumunda, ikamet kanıtı ve posta alabilmek için bir adres sağlamanıza olanak tanır.\"",
+      "steps": [
+       {
+        "texte": "Eğer istikrarlı bir adresiniz yoksa, adres beyannamesi (aynı zamanda adres seçimi olarak da adlandırılır) size bir adres belgesi ve posta alabilmeniz için bir adres sağlayarak, istikrarlı bir adresiniz olmasa bile size yardımcı olur. Ayrıca, adres beyannamesi, belirli haklara ve hizmetlere erişmenizi sağlar (örneğin, kimlik, oy listelerine kayıt, hukuki yardım alma). Size gerekli bilgileri sunuyoruz.\nEğer mülteci statüsüne başvuru yapıyorsanız, belirli bir yerleşim düzeni uygulanır.",
+        "titre": null
+       },
+       {
+        "texte": "Eğer istikrarlı bir adresiniz yoksa, adres hizmetlerinden yararlanabilirsiniz.\nBu durum, örneğin aşağıdaki durumlardan birinde bulunuyorsanız geçerlidir:\n- Sokakta yaşamaktadır\n- Mobil bir yaşam alanında yaşıyorsunuz.\n- Geçici olarak, başka bir kişi tarafından barındırılıyorsunuz.\n- Acil durum barınma merkezlerinde, sürekli bir yaşam sürmüyorsunuz.\nBu hizmet, vasiyetinizdeki hak sahiplerine de uygulanır.\nÖnemli olan: Kişisel durumlar oldukça çeşitlidir ve bazı durumlarda sabit bir adres kavramının sınırlarına yaklaşabilir. Bu nedenle, bir adresi belirli bir kuruma bildirmek için yeterli bir istikrarınız olup olmadığını değerlendirerek, adres kaydı talebinde bulunup bulunmaması gerektiğine karar vermeniz gerekir.",
+        "titre": "Kimler bir adres (domiciliation) hizmetinden faydalanabilir?"
+       },
+       {
+        "texte": "Konutunuzu kaydettirmek istediğiniz belediye ile (veya belediyelerin birleşimiyle oluşturulan) doğrudan bir bağlantınızın olması gerekmektedir.\nAşağıdaki durumlardan herhangi birinde bulunuyorsanız, sizinle bağlantı olduğunu düşünülür:\n- Talep ettiğiniz adresinize yerleşmek için, belirtilen tarihte o belediye sınırları içerisinde ikamet ediyorsunuz.\n- Şu anda belediye sınırları içerisinde bir mesleki faaliyet yürütüyorsunuz.\n- Şehirde (veya bu konuda başvuruda bulunmuş durumda) bir işe yerleştirme programından veya sosyal, sağlık veya mesleki destek hizmetlerinden yararlanıyorsunuz.\n- Aile bağınızda, bu belediye sınırları içinde yaşayan bir kişiyle bağlantınız var mı?\n- Çocuğunuzun, belediyede eğitim gördüğü süreçte, veli olarak üzerinize düşen sorumlulukları yerine getiriyorsunuz.",
+        "titre": "Bir adres gösterme hizmeti talep etmek için hangi şartlar geçerlidir?"
+       },
+       {
+        "texte": "Konunun büyüklüğüne (yaşanılan nüfusa göre) bağlı olarak, başvurunuz belediye, belediye başkanlığı veya valilik tarafından yetkilendirilmiş bir kuruluş aracılığıyla yapılabilir veya doğrudan belediyenize iletilebilir.\nÖrnek: 1500'den fazla nüfuslu bir belediye\nEv adresinizi belirleme talebinizi, CCAS (belediye sosyal hizmet merkezi) veya CIAS (belediyeler arası sosyal hizmet merkezi)'ye başvurarak, veya beledyenizdeki valilik tarafından yetkilendirilmiş bir kuruluş aracılığıyla yapabilirsiniz.\nBu merkezlerden veya kuruluşlardan birini bulmak için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS, CIAS veya yetkilendirilmiş bir kuruluşa e-posta veya posta yoluyla gönderilmelidir.\nÖrnek: 1.500'den az nüfuslu bir belediye\nGenel olarak, 1.500'den az nüfusa sahip küçük belediyeler genellikle CCAS'e sahip değildir ve bir CIAS' oluşturmak için bir araya gelir.\nAyrıca, eğer beledyenizde yetkilendirilmiş bir kurum varsa, başvurunuzu bu kuruma da yapabilirsiniz.\nBu bilgiyi öğrenmek için, lütfen belediyenize başvurun.\n→ İlgili birim: Belediyede\nEğer belediyenizde CCAS veya CIAS veya yetkilendirilmiş bir kuruluş yoksa, adres kaydını doğrudan belediyenizden talep etmeniz gerekmektedir.\n→ İlgili birim: Belediyede\nİsteklerinizi, bir form üzerinden iletmeniz gerekmektedir:\n→ Çevrimiçi hizmet: Ev adresi kaydı talebi ve kararı (sabit bir adresi olmayan veya sokaklarda yaşayan kişiler için)\nBu form, basılı olarak doldurulup teslim edilmeli veya CCAS veya CIAS veya yetkilendirilmiş bir kurum veya belediyenize e-posta veya posta yoluyla gönderilmelidir.",
+        "titre": "Ev adresimi kaydettirmek için nasıl bir talepte bulunabilirim?"
+       },
+       {
+        "texte": "Gerekli bir görüşmeye, adres kaydınızı aldı olan kuruluşla (CCAS, CIAS veya yetkilendirilmiş bir kuruluş) başvurmanız gerekmektedir (veya adres kaydınızı aldı olan belediye, eğer bu belediye ise).\nBu görüşme, adresinizin belirlenmesiyle ilgili haklarınız ve bunlarla birlikte gelen yükümlülükler hakkında sizi bilgilendirmek amacıyla düzenlenmektedir (örneğin, fiziksel olarak kendinizi gösterme veya adresinizi sağlayan kuruluşu en az 3 ayda bir telefonla veya başka bir şekilde iletişime geçme gibi yükümlülükleriniz bulunmaktadır).\nBu görüşme, özellikle haklarınızı kullanmak ve ödemelerinizi almak için düzenli olarak posta kutunuzu boşaltmanın önemini vurgulamak amacıyla, posta kutunuzu düzenli olarak kontrol etmeniz gerektiği konusunda sizi bilgilendirmeye de hizmet ediyor.",
+        "titre": "Ev adresinin beyan edilme süreci nasıl işliyor?"
+       },
+       {
+        "texte": "Yerleşim yeri kararı, 2 ay içinde yazılı olarak bildirilir.\nEğer adres değişikliği talebiniz kabul edilirse, size bir adres beyan belgesi alacaksınız:\n→ Çevrimiçi hizmet: Ev adresi belgesi (sabit bir adresleri olmayan veya sokaklarda yaşayan kişiler için)\nEğer adres değişikliği talebiniz reddedilirse, size reddin nedenlerini belirten bir mektup gönderilir. Bu mektup, karara itiraz etmek istediğiniz takdirde, kullanabileceğiniz yolları ve süreleri de belirtir.",
+        "titre": "Nereden yerleşme kararı alındı?"
+       },
+       {
+        "texte": "Bu hizmet, 1 yıl süreyle sağlanmaktadır. Bu süre yenilenebilir.\nYenileme talebi, ilk talebinizin koşullarına uygun olarak yapılır (belediye ile bağlantının sürdürülmesi, aynı başvuru formu, görüşme vb.).\nÖnemli: Ev adresinizin geçerlilik süresinin sona ermesinden en az 2 ay önce, herhangi bir hak kaybını önlemek için yenileme talebinizi yapmanız önerilir.",
+        "titre": "Ev adresinin belirlenmesi için ne kadar süre veriliyor?"
+       },
+       {
+        "texte": "Bu hizmet, geçerlilik süresinin bitiminden önce sonlandırılabilir (kurum ayrıca bu hizmetin yenilenmemesine karar verebilir). Aşağıdaki durumlarda:\n- Ya da, isteğiniz üzerine (sürdürülebilir bir konut çözümü buldunuz)\n- Ya da belki de artık o belediye veya belediye birimiyle herhangi bir bağınız kalmamış olabilir.\n- Ya da, fiziksel olarak kendinizi tanıtmadığınız veya ev adresinizi sağlayan kuruluşu 3 aydır boyunca iletişime geçmediğiniz için. Sağlık veya hapis gibi geçerli bir sebeple bulunmadığınız takdirde, ev adresiniz iptal edilmez.",
+        "titre": "Evde ikamet etme durumunun nasıl sona erdirileceği?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17317",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17317",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.7,
+      "units": 57
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.659Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "بدون سكن ثابت أو دائم (الأشخاص المشردون): ما هي عملية التسجيل في عنوان (أو تحديد عنوان الإقامة)؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تتيح خدمة التسجيل في عنوان (أو اختيار عنوان) الحصول على دليل إقامة وعنوان لتلقي البريد في حالة عدم وجود عنوان ثابت.",
+      "steps": [
+       {
+        "texte": "إذا لم يكن لديك عنوان ثابت، فإن \"تسجيل العنوان\" (المعروف أيضًا بـ \"اختيار عنوان\") يتيح لك الحصول على إثبات عنوان و عنوان لتلقي البريد إذا لم يكن لديك عنوان ثابت. كما يتيح لك \"تسجيل العنوان\" الوصول إلى حقوق وخدمات (مثل بطاقة الهوية، التسجيل في سجلات الناخبين، الحصول على المساعدة القانونية). نقدم لك المعلومات الضرورية.\nإذا كنت طلبت الحصول على الحماية، فإن هناك نظامًا خاصًا للإقامة.",
+        "titre": null
+       },
+       {
+        "texte": "يمكنك الاستفادة من خدمة التسجيل في عنوان إذا لم يكن لديك عنوان ثابت.\nهذا ينطبق إذا كنت في إحدى الحالات التالية، على سبيل المثال:\n- أنت بلا مأوى\n- أنت تعيش في سكن متنقل.\n- أنت تقيم مؤقتًا في مكان تابع لجهة أخرى.\n- تعيشون في أماكن إقامة مؤقتة، دون استقرار أو تواصل دائم.\nكما ينطبق مبدأ التسجيل في عنوان معين على الأشخاص المخولين بالتعامل نيابة عنك.\nبمعنى آخر: الظروف الشخصية متنوعة للغاية، وقد تتجاوز مفهوم \"المسكن الثابت\". لذلك، الأمر متروك لك لتحديد ما إذا كنت بحاجة إلى تقديم طلب لتحديد عنوانك، وذلك بالتحقق مما إذا كنت تمتلك استقرارًا كافيًا للإعلان عن عنوان شخصي لدى جهة معينة.",
+        "titre": "من يمكن أن يستفيد من خدمة التسجيل في عنوان؟"
+       },
+       {
+        "texte": "يجب أن يكون لديك علاقة مع البلدية (أو مجموعة البلديات) التي تطلب فيها التسجيل في عنوان.\nيُعتبر وجود هذا الارتباط مثبتًا إذا كنت في إحدى الحالات التالية:\n- أنتم مقيمون في هذه المنطقة في تاريخ تقديم طلب التسجيل في عنوانك.\n- أنت تمارس نشاطًا مهنيًا في هذه البلدية.\n- تستفيدون من برنامج إدماج أو من خدمات دعم اجتماعي، أو خدمات طبية واجتماعية، أو خدمات مهنية في البلدية (أو أنتم قد بدأتم في اتخاذ خطوات للحصول على هذه الخدمات).\n- هل لديك علاقات عائلية مع شخص يعيش في هذه البلدية؟\n- أنت تمارس سلطة الوالدين على طفلك القاصر الذي يدرس في البلدية.",
+        "titre": "ما هي الشروط المطلوبة لطلب خدمة التسجيل في عنوان؟"
+       },
+       {
+        "texte": "اعتمادًا على حجم بلدية، عدد السكان، يمكن إجراء هذه العملية مع CCAS (المركز البلدي للعمل الاجتماعي) أو CIAS (المركز المشترك بين البلديات للعمل الاجتماعي)‏، أو أي منظمة معتمدة من قبل عمدة، أو مباشرة مع البلدية.\nمثال: بلدية تضم أكثر من 1500 نسمة\nيمكنك تقديم طلب لتسجيل عنوانك لدى CCAS أو CIAS، أو لدى أي مؤسسة معتمدة من قبل عمدة بلدتك، إذا كانت موجودة.\nللبحث عن أحد هذه المراكز أو المؤسسات، يجب عليك الاتصال بمكتب البلدة.\n→ إلى أين يتم التوجه: البلدية\nيجب أن يتم تقديم طلبك من خلال نموذج معين:\n→ خدمة عبر الإنترنت: طلب وتحديد عنوان الإقامة (لأفراد ليس لديهم سكن ثابت أو الأشخاص المشردين)\nيجب طباعة هذا النموذج وتقديمه إلى CCAS أو CIAS أو أي جهة معتمدة، سواء عن طريق البريد الإلكتروني أو البريد العادي.\nمثال: بلدية تضم أقل من 1500 نسمة\nبشكل عام، فإن القرى الصغيرة التي تقل عن 1500 نسمة لا تمتلك CCAS‏]، وتتحد مع بعضها البعض لتشكيل CIAS‏].\nكما يمكنك تقديم طلبك إلى منظمة معتمدة من قبل عمدة بلدتك، إذا كانت هناك منظمة كهذه في منطقتك.\nللحصول على هذه المعلومات، يجب عليك الاتصال بمكتب البلدية.\n→ إلى أين يتم التوجه: البلدية\nإذا لم يكن هناك CCAS أو CIAS أو أي مؤسسة معتمدة في بلدية، فيجب عليك تقديم طلب التسجيل في عنوانك مباشرة إلى البلدية.\n→ إلى أين يتم التوجه: البلدية\nيجب أن يتم تقديم طلبك من خلال نموذج معين:\n→ خدمة عبر الإنترنت: طلب وتحديد عنوان الإقامة (لأفراد ليس لديهم سكن ثابت أو الأشخاص المشردين)\nيجب طباعة هذا النموذج وتقديمه إلى CCAS أو CIAS أو أي جهة معتمدة، أو إرساله عبر البريد الإلكتروني أو البريد العادي إلى البلدية.",
+        "titre": "كيفية تقديم طلب لتسجيل عنوان؟"
+       },
+       {
+        "texte": "يجب عليك إجراء مقابلة إلزامية مع الجهة (CCAS، CIAS أو أي جهة معتمدة) التي سجلت طلب الإقامة الخاص بك (أو البلدية، إذا كانت هي التي سجلت طلبك).\nتهدف هذه المقابلة إلى إطلاعكم على حقوقكم المتعلقة بتسجيل عنوانكم، والالتزامات التي تنبع منها (على سبيل المثال، يجب عليكم الحضور شخصيًا أو الاتصال بالجهة المسؤولة عن تسجيل عنوانكم مرة واحدة على الأقل كل 3 أشهر).\nكما أن هذا اللقاء يهدف إلى توجيهك حول أهمية استلام رسائلك بانتظام، وخاصةً لكي تمارس حقوقك وتتلقى الخدمات التي تستحقها.",
+        "titre": "ما هي خطوات عملية التسجيل؟"
+       },
+       {
+        "texte": "يتم إصدار قرار التسجيل في العنوان كتابيًا خلال فترة لا تتجاوز 2 شهرًا.\nإذا تمت الموافقة على طلب تسجيل عنوانك، فستتلقى شهادة تثبت عنوانك:\n→ خدمة عبر الإنترنت: شهادة الإقامة (لأصحاب الدخل غير المستقر أو الأشخاص المشردين)\nإذا تم رفض طلب تسجيل عنوانك، فستتلقى رسالة توضح أسباب الرفض. كما ستوضح هذه الرسالة أيضًا الطرق والمهل المتاحة للطعن في هذا القرار إذا كنت ترغب في ذلك.",
+        "titre": "ما هي عملية اتخاذ قرار التسجيل في عنوان معين؟"
+       },
+       {
+        "texte": "يمنح العنوان لمدة 1 سنة. يمكن تجديد هذه المدة.\nيتم تقديم طلب التجديد بنفس الشروط التي قدمت بها طلبك الأولي (الحفاظ على العلاقة مع البلدية، استخدام نفس نموذج الطلب، إجراء المقابلة، إلخ).\nوهذا يعني: يُفضل تقديم طلب تجديد عنوان الإقامة قبل الموعد النهائي لتجديده بفترة لا تقل عن شهرين، وذلك لتجنب أي مشاكل أو تعقيدات.",
+        "titre": "كم المدة المتاحة لخدمة التسجيل في عنوان؟"
+       },
+       {
+        "texte": "يمكن إنهاء تسجيل عنوانك قبل انتهاء صلاحيته (يمكن للمؤسسة أيضًا أن تقرر عدم تجديده) في الحالات التالية:\n- إما بناءً على طلبك (لقد وجدت حلاً للسكن المستدام).\n- سواء كان ذلك بسبب فقدان العلاقة مع البلدية أو مجموعة البلديات.\n- سواء كان ذلك بسبب عدم تقديمك لنفسك شخصيًا أو عدم الاتصال بالجهة المسؤولة عن تسجيل عنوانك لمدة تزيد عن 3 أشهر متتالية. لن يتم إنهاء تسجيل عنوانك إذا كانت غيابك مبررًا بسبب أسباب صحية أو سجن.",
+        "titre": "كيف يمكن إنهاء عملية التسجيل في عنوان معين؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17317",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17317",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70,
+      "units": 57
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.664Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Ohne festen Wohnsitz: Was bedeutet die Anmeldung (oder Angabe des Wohnsitzes)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die Anmeldung (oder die Angabe eines Wohnortes) ermöglicht es, einen Nachweis über den Wohnort zu haben und eine Adresse für den Empfang von Post zu besitzen, auch wenn kein stabiler Wohnort vorhanden ist.",
+      "steps": [
+       {
+        "texte": "Wenn Sie keinen festen Wohnsitz haben, ermöglicht Ihnen die Anmeldung (auch Wohnsitzbestimmung genannt), dass Sie einen Nachweis über Ihren Wohnsitz und eine Adresse für den Briefposten erhalten, falls Sie keinen festen Wohnsitz haben. Die Anmeldung ermöglicht Ihnen auch den Zugang zu bestimmten Rechten und Leistungen (z. B. Personalausweis, Eintrag in die Wahlbehörden, Erlangung von Rechtsbeistand). Wir informieren Sie über die notwendigen Informationen.\nWenn Sie Asylbewerber sind, gilt ein spezifisches Verfahren für die Unterbringung.",
+        "titre": null
+       },
+       {
+        "texte": "Sie können einen Adressservice in Anspruch nehmen, wenn Sie keine feste Wohnadresse haben.\nDies gilt insbesondere, wenn Sie sich beispielsweise in einer der folgenden Situationen befinden:\n- Sie sind obdachlos.\n- Sie leben in einem Wohnmobil.\n- Sie werden vorübergehend von einer dritten Partei untergebracht.\n- Sie verbringen Zeit in Notunterkünften, ohne einen stabilen Wohnort zu haben.\nDie Gewerbeadresse gilt auch für Ihre Erben.\nKonkret: Die persönlichen Situationen sind sehr unterschiedlich und können die Vorstellung eines stabilen Wohnsitzes in Frage stellen. Daher liegt es in Ihrer Verantwortung, zu entscheiden, ob eine Anmeldepflicht besteht. Fragen Sie sich, ob Sie genügend Stabilität haben, um eine persönliche Adresse bei einer Behörde anzugeben.",
+        "titre": "Wer kann von einer Geschäftsadresse profitieren?"
+       },
+       {
+        "texte": "Sie müssen eine Verbindung zur Gemeinde (oder zum Gemeindeverband) haben, in der Sie eine Wohnadresse beantragen.\nSie gelten als in einen Zusammenhang gebracht, wenn Sie sich in einer der folgenden Situationen befinden:\n- Sie wohnen zum Zeitpunkt Ihrer Anmeldeentscheidung in der Gemeinde.\n- Sie sind in einer beruflichen Tätigkeit in dieser Gemeinde tätig.\n- Sie haben Anspruch auf eine Integrationsmaßnahme oder auf eine soziale, medizinische oder berufliche Betreuung innerhalb der Gemeinde (oder Sie haben bereits Schritte unternommen, um diese in Anspruch zu nehmen).\n- Sie haben familiäre Beziehungen zu einer Person, die in dieser Gemeinde lebt.\n- Sie sind die rechtliche Vertretung für Ihr minderjähriges Kind, das in dieser Gemeinde eingeschult ist.",
+        "titre": "Unter welchen Bedingungen kann eine Geschäftsadresse beantragt werden?"
+       },
+       {
+        "texte": "Je nach Größe Ihrer Gemeinde (in Bezug auf die Einwohnerzahl) kann die Anfrage bei einer CCAS (kommunales Sozialzentrum) oder CIAS (interkommunales Sozialzentrum) oder einer von der Behörde zugelassenen Organisation gestellt werden, oder direkt bei Ihrer Gemeinde.\nBeispiel: Gemeinde mit mehr als 1500 Einwohnern\nIhre Anfrage bezüglich der Adressregistrierung kann bei einem CCAS oder CIAS oder bei einer von der Behörde zugelassenen Organisation gestellt werden, falls es in Ihrer Gemeinde eine solche gibt.\nUm einen dieser Zentren oder Organisationen zu finden, müssen Sie sich an Ihre Gemeinde wenden.\n→ An wen: Rathaus\nIhre Anfrage muss über ein Formular erfolgen:\n→ Online-Service: Antrag und Entscheidung über die Feststellung des Wohnsitzes (für Personen ohne festen Wohnsitz oder Obdachlose)\nDieses Formular muss ausgedruckt und entweder persönlich eingereicht oder per E-Mail oder per Post an CCAS, CIAS oder eine von der Behörde zugelassene Stelle geschickt werden.\nFall: Gemeinde mit weniger als 1.500 Einwohnern\nGrundsätzlich haben kleine Gemeinden mit weniger als 1.500 Einwohnern keine CCAS und bilden stattdessen eine CIAS zusammen.\nEs ist auch möglich, Ihren Antrag bei einer von der Behörde zugelassenen Organisation einzureichen, falls es in Ihrer Gemeinde eine solche gibt.\nUm diese Informationen zu erhalten, müssen Sie sich an Ihre Gemeinde wenden.\n→ An wen: Rathaus\nWenn es in Ihrer Gemeinde weder eine CCAS- noch eine CIAS-Organisation oder eine von der Behörde zugelassene Organisation gibt, müssen Sie Ihren Antrag für die Gewerbeanmeldung direkt bei Ihrer Gemeinde einreichen.\n→ An wen: Rathaus\nIhre Anfrage muss über ein Formular erfolgen:\n→ Online-Service: Antrag und Entscheidung über die Feststellung des Wohnsitzes (für Personen ohne festen Wohnsitz oder Obdachlose)\nDieses Formular muss ausgedruckt und entweder persönlich eingereicht oder per E-Mail oder per Post an CCAS, CIAS oder eine von einer Behörde zugelassene Organisation oder an Ihren örtlichen Rathaus geschickt werden.",
+        "titre": "Wie erstelle ich eine Anforderung für eine Adressregistrierung?"
+       },
+       {
+        "texte": "Sie müssen ein obligatorisches Gespräch mit der zuständigen Stelle (CCAS, CIAS oder einer von ihnen zugelassenen Stelle) führen, die Ihre Anmeldeseite für die Ansässigkeit registriert hat (oder mit dem Rathaus, falls dies die Stelle war, die Ihre Anmeldeseite registriert hat).\nDieses Gespräch dient dazu, Sie über Ihre Rechte in Bezug auf die Registrierung und die daraus resultierenden Pflichten zu informieren (z. B. Sie sind verpflichtet, persönlich vorzusprechen oder den Träger Ihrer Registrierung mindestens einmal alle 3 Monate zu kontaktieren, beispielsweise per Telefon).\nDas Gespräch dient auch dazu, Sie auf die Bedeutung aufmerksam zu machen, regelmäßig Ihren Post zu bearbeiten, insbesondere um Ihre Rechte auszuüben und Leistungen zu erhalten.",
+        "titre": "Wie läuft der Prozess der Domizilierung ab?"
+       },
+       {
+        "texte": "Die Entscheidung über den Firmensitz wird schriftlich innerhalb von 2 Monaten getroffen.\nWenn Ihre Anfrage zur Festlegung eines Wohnsitzes genehmigt wird, erhalten Sie ein Nachweisdokument, das Ihren Wohnsitz bestätigt:\n→ Online-Service: Meldebescheinigung (für Personen ohne festen Wohnsitz oder Obdachlose)\nWenn Ihre Anfrage zur Festlegung eines Wohnsitzes abgelehnt wird, erhalten Sie einen Brief, in dem die Gründe für die Ablehnung erläutert werden. Dieser Brief enthält auch Informationen über die Möglichkeiten und Fristen, um gegen diese Entscheidung Berufung einzulegen.",
+        "titre": "Wie wurde die Entscheidung für einen bestimmten Firmensitz getroffen?"
+       },
+       {
+        "texte": "Die Gewerbeanmeldung wird für einen Zeitraum von 1 Jahr gewährt. Diese Frist kann verlängert werden.\nDie Antragstellung für die Verlängerung erfolgt unter den gleichen Bedingungen wie bei Ihrem ursprünglichen Antrag (Einhaltung der Verbindung mit der Gemeinde, gleichartiger Antragsformular, Gespräch usw.).\nKonkret: Es wird empfohlen, Ihren Antrag auf Verlängerung mindestens 2 Monate vor Ablauf Ihres Adressvertrags einzureichen, um jegliche Unterbrechung der Rechte zu vermeiden.",
+        "titre": "Wie lange dauert die Gewerbeanmeldung?"
+       },
+       {
+        "texte": "Die Domiciliation kann vor Ablauf ihrer Gültigkeit beendet werden (die Organisation kann auch beschließen, sie nicht zu verlängern), wenn eine der folgenden Bedingungen erfüllt ist:\n- Entweder auf Ihre Anfrage (Sie haben eine nachhaltige Wohnlösung gefunden)\n- Entweder weil Sie keinen Kontakt mehr zur Gemeinde oder zum Gemeindeverband haben.\n- Entweder, weil Sie sich nicht persönlich gemeldet haben oder den Träger, der Ihre Adressverwaltung übernimmt, über 3 Monate hinweg nicht kontaktiert haben. Ihre Adressverwaltung wird nicht beendet, wenn Ihre Abwesenheit auf gesundheitliche Gründe oder eine Inhaftierung zurückzuführen ist.",
+        "titre": "Wie kann eine Gewerbeanmeldung rückgängig gemacht werden?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17317",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17317",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "entitlement"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.8,
+      "units": 57
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.670Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Без стабільного або постійного місця проживання (бездомні): що таке реєстрація місця проживання (або вибір місця проживання)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 36.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Документальне проживання (або реєстрація місця проживання) дозволяє мати підтвердження місця проживання та адресу для отримання пошти у відсутності стабільного місця проживання.",
+      "steps": [
+       {
+        "texte": "Якщо у вас немає стабільного місця проживання, реєстрація місця проживання (також відома як вибір місця проживання) дозволяє вам мати документ, що підтверджує ваше місце проживання, та адресу для отримання пошти, якщо у вас немає стабільного місця проживання. Реєстрація місця проживання також дає вам можливість отримати певні права та послуги (наприклад, посвідчення особи, реєстрацію в виборчих списках, отримання правової допомоги). Ми надаємо вам необхідну інформацію.\nЯкщо ви є заявником на притулок, діє спеціальна процедура щодо забезпечення житлом.",
+        "titre": null
+       },
+       {
+        "texte": "Ви можете отримати послугу реєстрації за адресою, якщо у вас немає стабільного місця проживання.\nЦе стосується випадків, коли, наприклад, ви перебуваєте в одній із наступних ситуацій:\n- Ви бездомні\n- Ви проживаєте в мобільному житловому комплексі.\n- Ви тимчасово проживаєте у третій особі.\n- Ви проживаєте без стабільності в центрах тимчасового розміщення.\nПоштове адресування також застосовується до ваших спадкових.\nА саме: Особисті обставини дуже різняться і можуть наближатися до поняття стабільного місця проживання. Тому, вам потрібно вирішити, чи потрібно подавати заявку на реєстрацію місця проживання, оцінюючи, чи маєте ви достатню стабільність, щоб вказати особисту адресу в адміністративних документах.",
+        "titre": "Хто може отримати послуги з реєстрації місця проживання?"
+       },
+       {
+        "texte": "Вам необхідно мати зв'язок з муніципалітетом (або групою муніципалітетів), в якому ви подаєте запит на реєстрацію місця проживання.\nВи вважаєтесь, що маєте цей зв'язок, якщо ви перебуваєте в одній із наступних ситуацій:\n- Ви проживаєте в цій муніципалітеті на дату подання заявки на реєстрацію місця проживання.\n- Ви займаєтесь професійною діяльністю на території муніципалітету.\n- Ви маєте можливість отримати допомогу з працевлаштування або соціальну підтримку, медико-соціальну або професійну на місцевому рівні (або ви вже розпочали процедуру для отримання такої допомоги).\n- У вас є сімейні зв'язки з людиною, яка проживає в цій громаді.\n- Ви здійснюєте батьківський контроль над своєю дитиною, яка навчається в цій громаді.",
+        "titre": "Які умови для отримання послуги реєстрації місця проживання?"
+       },
+       {
+        "texte": "Залежно від розміру вашої громади за кількістю мешканців, цю процедуру можна здійснити через CCAS (муніципальний центр соціальних послуг) або CIAS (міжмуніципальний центр соціальних послуг), або через орган, акредитований префектом, або безпосередньо в місцевій раді.\nПриклад: Муніципалітет з населенням понад 1500 осіб\nВи можете подати заявку на реєстрацію місця проживання до CCAS, CIAS або до будь-якої організації, яка має відповідний дозвіл від мерії, якщо така організація діє у вашому районі.\nЩоб знайти один із цих центрів або організацій, вам потрібно звернутися до місцевої адміністрації.\n→ Куди звернутися: Міська управа\nВаше звернення має бути подано за допомогою спеціального форми:\n→ Онлайн-сервіс: Запит та рішення щодо реєстрації місця проживання (особи без стабільного місця проживання або бездомні)\nЦей бланк необхідно роздрукувати та подати або надіслати електронною поштою або поштою до CCAS, CIAS або акредитованої організації.\nПриклад: Муніципалітет з населенням менше 1 500 осіб\nЗазвичай, невеликі комуни з населення менше 1 500 осіб не мають CCAS і об'єднуються, щоб створити CIAS.\nТакож можливо подати заявку до акредитованої організації, яка діє на території вашого муніципалітету, якщо така організація існує.\nЩоб отримати цю інформацію, вам потрібно звернутися до місцевої адміністрації.\n→ Куди звернутися: Міська управа\nЯкщо у вашому населеному пункті немає CCAS, CIAS або акредитованої організації, ви повинні подати заявку на реєстрацію місця проживання безпосередньо до місцевої адміністрації.\n→ Куди звернутися: Міська управа\nВаше звернення має бути подано за допомогою спеціального форми:\n→ Онлайн-сервіс: Запит та рішення щодо реєстрації місця проживання (особи без стабільного місця проживання або бездомні)\nЦей бланк необхідно роздрукувати та подати до CCAS, CIAS або до акредитованої організації, або надіслати електронною поштою або поштою.",
+        "titre": "Як подати заявку на реєстрацію місця проживання?"
+       },
+       {
+        "texte": "Вам необхідно пройти обов'язкове співбесіду з організацією (CCAS, CIAS або акредитованою організацією), яка зареєструвала ваше звернення щодо реєстрації місця проживання (або з мерією, якщо саме вона зареєструвала ваше звернення).\nЦей інтерв'ю має на меті інформувати вас про ваші права щодо реєстрації місця проживання та відповідні обов'язки (наприклад, ви зобов'язані фізично з'явитися або зв'язатися (наприклад, телефоном) з організацією, яка забезпечує вашу реєстрацію, принаймні один раз на 3 місяці).\nЦей візит також має на меті привернути вашу увагу до важливості регулярного отримання пошти, зокрема для реалізації ваших прав та отримання відповідних виплат.",
+        "titre": "Яким чином відбувається процедура реєстрації місця проживання?"
+       },
+       {
+        "texte": "Рішення про реєстрацію місця проживання оформлюється письмово протягом 2 місяців.\nЯкщо ваша заявка на реєстрацію місця проживання буде схвалена, ви отримаєте підтвердження реєстрації місця проживання:\n→ Онлайн-сервіс: Підтвердження місця проживання (для осіб без стабільного місця проживання або бездомних)\nЯкщо ваша заява про реєстрацію місця проживання буде відхилена, ви отримаєте лист, в якому будуть зазначені причини відмови. У цьому листі також буде вказано можливі шляхи оскарження рішення, а також терміни для цього.",
+        "titre": "Яким чином було прийнято рішення про реєстрацію місця проживання?"
+       },
+       {
+        "texte": "Сервіс реєстрації за адресою надається на термін 1 рік. Цей термін може бути продовжений.\nПрохання про продовження терміну дії дозволу подається за тими ж умовами, що й початкове прохання (дотримання зв'язку з муніципалітетом, використання ідентичного бланку, проведення співбесіди тощо).\nА саме: Рекомендується подати заявку на продовження реєстрації не пізніше ніж за 2 місяці до закінчення терміну її дії, щоб уникнути будь-яких проблем.",
+        "titre": "Який термін дії реєстрації за адресою?"
+       },
+       {
+        "texte": "Це можна скасувати до закінчення терміну дії, а також орган може вирішити не продовжити її, у наступних випадках:\n- За вашим запитом (ви знайшли рішення щодо довгострокового житла)\n- Або тому, що ви більше не маєте зв'язку з муніципалітетом або об'єднанням муніципалітетів.\n- Або тому, що ви не з'явилися особисто, або не зв'язалися з організацією, яка забезпечує вашу реєстрацію, протягом понад 3 місяців поспіль. Ваша реєстрація не буде припинена, якщо ваша відсутність є обґрунтованою з медичних або юридичних причин.",
+        "titre": "Як можна припинити реєстрацію місця проживання?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17317",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17317",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.8,
+      "units": 57
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:64ab433085f568741a3ee08132c09e54ce814bc2926feea708d611b29cccd98d",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Sans domicile stable ou fixe (SDF) : en quoi consiste la domiciliation (ou élection de domicile) ?",
+   "contenu_json": {
+    "intro": "La domiciliation (ou élection de domicile) permet d'avoir un justificatif de domicile et une adresse pour recevoir du courrier en l'absence de domicile stable.",
+    "steps": [
+     {
+      "texte": "Si vous n'avez pas de domicile stable, la domiciliation (appelée aussi élection de domicile) vous permet d'avoir un justificatif de domicile et une adresse pour recevoir du courrier si vous n'avez pas de domicile stable. La domiciliation vous permet également d'accéder à des droits et prestations (par exemple, carte d'identité, inscription sur les listes électorales, obtention de l'aide juridictionnelle). Nous vous présentons les informations à connaître.\nSi vous êtes demandeur d'asile, un dispositif de domiciliation spécifique s'applique.",
+      "titre": null
+     },
+     {
+      "texte": "Vous pouvez bénéficier d'une domiciliation si vous êtes sans domicile stable.\nC'est le cas si vous êtes, par exemple, dans l'une des situations suivantes :\n- Vous êtes sans abri\n- Vous vivez dans une résidence mobile\n- Vous êtes hébergé temporairement par un tiers\n- Vous vivez sans continuité dans des centres d'hébergement d'urgence.\nLa domiciliation s'applique également à vos ayants droit.\nÀ savoir : Les situations personnelles sont très variées et peuvent se trouver à la limite de la notion de domicile stable. Par conséquent, c'est à vous de déterminer s'il est nécessaire de faire une demande de domiciliation en vous demandant si vous disposez d'une stabilité suffisante pour déclarer une adresse personnelle à une administration.",
+      "titre": "Qui peut bénéficier d'une domiciliation ?"
+     },
+     {
+      "texte": "Vous devez avoir un lien avec la commune (ou le groupement de communes) dans laquelle vous demandez une domiciliation.\nVous êtes considéré avoir ce lien si vous êtes dans l'une des situations suivantes :\n- Vous séjournez dans la commune à la date de votre demande de domiciliation\n- Vous exercez une activité professionnelle sur la commune\n- Vous bénéficiez d'une action d'insertion ou d'un suivi social, médico-social ou professionnel sur la commune (ou vous avez entrepris des démarches pour en bénéficier)\n- Vous avez des liens familiaux avec une personne qui vit dans la commune\n- Vous exercez l'autorité parentale sur votre enfant mineur scolarisé dans la commune.",
+      "titre": "Quelles sont les conditions pour demander une domiciliation ?"
+     },
+     {
+      "texte": "Selon la taille de votre commune en nombre d'habitants, la démarche peut être faite auprès d'un CCAS ou CIAS ou organisme agréé par le préfet ou directement auprès de votre mairie.\nCas : Commune de plus de 1500 habitants\nVotre demande de domiciliation peut être faite auprès d'un CCAS ou CIAS ou auprès d'un organisme agréé par le préfet s'il y en existe sur votre commune.\nPour rechercher l'un de ces centres ou organismes, vous devez contacter votre mairie.\n→ Où s'adresser : Mairie\nVotre demande doit être faite à partir d'un formulaire :\n→ Service en ligne : Demande et décision d'élection de domicile (personnes sans domicile stable ou SDF)\nCe formulaire doit être imprimé et déposé ou envoyer par courrier électronique ou courrier papier auprès du CCAS, CIAS ou organisme agréé.\nCas : Commune de moins de 1 500 habitants\nEn règle générale, les petites communes de moins de 1 500 habitants n'ont pas de CCAS et se rapprochent pour créer un CIAS.\nIl est également possible de faire votre demande auprès d'un organisme agréé par le préfet s'il y en existe sur votre commune.\nPour en avoir connaissance, vous devez contacter votre mairie.\n→ Où s'adresser : Mairie\nS'il n'y a pas de CCAS ou CIAS ou organisme agréé sur votre commune, vous devez faire votre demande de domiciliation directement auprès de votre mairie.\n→ Où s'adresser : Mairie\nVotre demande doit être faite à partir d'un formulaire :\n→ Service en ligne : Demande et décision d'élection de domicile (personnes sans domicile stable ou SDF)\nCe formulaire doit être imprimé et déposé ou envoyer par courrier électronique ou courrier papier auprès du CCAS ou CIAS ou organisme agréé ou auprès de votre mairie.",
+      "titre": "Comment faire une demande de domiciliation ?"
+     },
+     {
+      "texte": "Vous devez passer un entretien obligatoire avec l'organisme (CCAS, CIAS ou organisme agréé) qui a enregistré votre demande de domiciliation (ou la mairie, si c'est elle qui a enregistré votre demande).\nCet entretien sert à vous informer sur vos droits à la domiciliation et les obligations qui en découlent (par exemple, vous avez l'obligation de vous présenter physiquement ou de contacter (par exemple par téléphone) l'organisme qui assure votre domiciliation au moins 1 fois tous les 3 mois).\nL'entretien sert également à vous sensibiliser sur l'importance de retirer régulièrement votre courrier notamment pour exercer vos droits et recevoir vos prestations.",
+      "titre": "Comment se déroule la procédure de domiciliation ?"
+     },
+     {
+      "texte": "La décision de domiciliation est rendue par écrit dans un délai de 2 mois.\nSi votre demande de domiciliation est acceptée, vous recevez une attestation d'élection de domicile :\n→ Service en ligne : Attestation d'élection de domicile (personnes sans domicile stable ou SDF)\nSi votre demande de domiciliation est refusée, vous recevez un courrier vous précisant les motifs du refus. Ce courrier vous précise également les voies et délais de recours si vous souhaitez contester cette décision.",
+      "titre": "Comment est prise la décision de domiciliation ?"
+     },
+     {
+      "texte": "La domiciliation est accordée pour une durée de 1 an. Cette durée est renouvelable.\nLa demande de renouvellement se fait dans les mêmes conditions que pour votre demande initiale (respect du lien avec la commune, formulaire de demande identique, entretien, ...).\nÀ savoir : Il est recommandé de faire votre demande de renouvellement au moins 2 mois avant la fin de validité de votre domiciliation pour éviter toute rupture de droits.",
+      "titre": "Combien de temps est accordée la domiciliation ?"
+     },
+     {
+      "texte": "Il peut être mis fin à votre domiciliation avant la fin de sa validité (l'organisme peut aussi décider de ne pas la renouveler) dans les 3 cas suivants :\n- Soit à votre demande (vous avez trouvé une solution de logement durable)\n- Soit parce que vous n'avez plus de lien avec la commune ou le groupement de communes\n- Soit parce que vous ne vous êtes pas présenté physiquement ou n'avez pas contacté l'organisme qui assure votre domiciliation pendant plus de 3 mois d'affilée. Il n'est pas mis fin à votre domiciliation si votre absence est justifiée pour des raisons de santé ou incarcération.",
+      "titre": "Comment est-il mis fin à la domiciliation ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

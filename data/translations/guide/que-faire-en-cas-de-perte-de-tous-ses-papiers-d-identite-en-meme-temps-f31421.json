@@ -1,0 +1,284 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
+ "recordId": "885cea89-4b14-45bc-b77d-0102043058d8",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.613Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What should I do if I lose all my identification documents at the same time?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "If you have lost all your documents at the same time, you should first apply for a new identity card or passport.",
+      "steps": [
+       {
+        "texte": "Have you lost your wallet or bag, which contained your documents? We will explain the steps you should take. The process differs depending on whether the documents belong to an adult or a minor.\nCase: Adult\nIf you have lost several of the following documents at the same time (identity card, passport, driving license, vehicle registration document, Vitale card, voter card, or family record), you must first apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driving license\n- Vehicle registration document\n- Vitale Card\n- Voter ID card\n- Family record.\nPlease note: Once your renewal requests have been processed, the documents you have lost will become permanently unusable. If you find them later, please return them to the issuing authority (e.g., préfecture (state administration of the département)). You will no longer be able to use them.\nCase: Minor\nIf several of the following documents belonging to a minor have been lost (identity card, passport, driving license, Vitale card), the first step is to apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driver's license or driving permit\n- Vitale Card.\nPlease note: Once renewal applications have been submitted, lost documents become permanently unusable. If they are found later, they must be returned to the issuing authority (e.g., préfecture). They can no longer be used.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31421",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31421",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.4,
+      "units": 23
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.615Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Tüm kimlik belgelerinizi aynı anda kaybetmeniz durumunda ne yapılmalı?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Eğer tüm belgelerinizi aynı anda kaybetmişseniz, öncelikle yeni bir kimlik veya pasaport başvurusunda bulunmanız gerekir.",
+      "steps": [
+       {
+        "texte": "Cüzdanınızı veya içindeki belgelerinizi kaybetmişsiniz mi? Bu durumda izlemeniz gereken adımları açıklıyoruz. Bu, yetişkinlerin veya çocukların belgeleri için farklılık gösterir.\nDurum: Yabancı\nEğer aynı anda aşağıdaki belgelerden birkaçını kaybetmişseniz (kimlik, pasaport, ehliyet, araç ruhsatı, Vitale kartı, oy kullanma kartı veya aile defteri), öncelikle yeni bir kimlik veya pasaport başvurusunda bulunmanız gerekmektedir.\nAslında, diğer belgelerin talep edilmesi durumunda, geçerli bir kimlik belgesi sunmanız gerekecektir.\nHer bir belgenin değiştirilmesi, bağımsız bir talep gerektirir:\n- Kimlik kartı\n- Pasaport\n- Sürüş yetkisi\n- Araç ruhsatı\n- Vitale kartı\n- Oy kullanma belgesi\n- Aile defteri.\nLütfen dikkat: Başvurularınızın işlenmesinden sonra, kaybolan belgeler artık kullanılamaz hale gelir. Eğer daha sonra bu belgeleri bulursanız, bunları ilgili yetkili kuruma (örneğin préfecture (devletin il idaresi)) iade edin. Bu belgeleri artık kullanamazsınız.\nVaka: Minör\nEğer bir çocuğun aşağıdaki belgelerden bazıları kaybolmuşsa (kimlik, pasaport, ehliyet, Vitale kartı), öncelikle yeni bir kimlik veya pasaport başvurusunda bulunulmalıdır.\nAslında, diğer belgelerin talep edilmesi durumunda, geçerli bir kimlik belgesi sunmanız gerekecektir.\nHer bir belgenin değiştirilmesi, bağımsız bir talep gerektirir:\n- Kimlik kartı\n- Pasaport\n- Sürüş ehliyet veya trafik güvenliği sertifikası\n- Vitale kartı.\nUyarı: Yenileme talepleri tamamlandıktan sonra, kaybolan belgeler artık kullanılamaz hale gelir. Eğer daha sonra bulunurlarsa, bu belgeler ilgili yetkili kuruma (örneğin, préfecture) iade edilmelidir. Bu belgeler artık kullanılamaz.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31421",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31421",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69.1,
+      "units": 23
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.617Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما الذي يجب فعله في حالة فقد جميع الوثائق الشخصية في نفس الوقت؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "إذا فقدت جميع وثائقك في نفس الوقت، فيجب عليك أولاً التقدم بطلب للحصول على بطاقة هوية جديدة أو جواز سفر جديد.",
+      "steps": [
+       {
+        "texte": "هل فقدت محفظتك أو حقيبتك التي تحتوي على أوراقك؟ سنشرح لك الخطوات التي يجب اتباعها. تختلف هذه الخطوات حسب نوع الورق: سواء كانت أوراق شخص بالغ أو شخص قاصر.\nحالة: بالغ\nإذا فقدت عدة من الوثائق التالية في نفس الوقت (بطاقة الهوية، جواز السفر، رخصة القيادة، رخصة السيارة، بطاقة \"فيتال\"، بطاقة الناخب، أو سجل الأسرة)، فيجب عليك أولاً طلب بطاقة هوية جديدة أو جواز سفر جديد.\nبالفعل، لتقديم المستندات الأخرى، سيتعين تقديم وثيقة تعريف شخصية صالحة.\nيجب أن يتم استبدال كل مستند بشكل مستقل، مع تقديم طلب منفصل لذلك.\n- بطاقة الهوية\n- جواز سفر\n- رخصة القيادة\n- رخصة القيادة\n- بطاقة \"فيتال\"\n- بطاقة تسجيل الناخب\n- دفتر العائلة.\nتنبيه: بمجرد تقديم طلبات التجديد، تصبح الوثائق التي فقدتها غير قابلة للاستخدام بشكل دائم. إذا عثرت عليها لاحقًا، يرجى إعادتها إلى الجهة المصدرة (مثل préfecture (إدارة الدولة في الإقليم)). لن تتمكن من استخدامها بعد ذلك.\nحالة: قاصر\nإذا فقدت بعض الوثائق التالية للمراهق (مثل بطاقة الهوية، جواز السفر، رخصة القيادة، بطاقة Vitale)، فيجب أولاً طلب إصدار بطاقة هوية جديدة أو جواز سفر جديد.\nبالفعل، لتقديم المستندات الأخرى، سيتعين تقديم وثيقة تعريف شخصية صالحة.\nيجب أن يتم استبدال كل مستند بشكل مستقل، مع تقديم طلب منفصل لذلك.\n- بطاقة الهوية\n- جواز سفر\n- رخصة قيادة أو شهادة سلامة على الطرق\n- بطاقة \"فيتال\".\nتنبيه: بمجرد تقديم طلبات التجديد، تصبح الوثائق المفقودة غير قابلة للاستخدام بشكل دائم. إذا تم العثور عليها لاحقًا، يجب إعادتها إلى الجهة المصدرة (مثل préfecture). لن تتمكن من استخدامها بعد ذلك.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31421",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31421",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 71.7,
+      "units": 23
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.619Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Was soll man tun, wenn alle persönlichen Dokumente gleichzeitig verloren gehen?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn Sie alle Ihre Dokumente gleichzeitig verloren haben, müssen Sie zunächst eine neue Ausweiskarte oder ein neues Reisepass beantragen.",
+      "steps": [
+       {
+        "texte": "Sie haben Ihr Portemonnaie oder Ihre Tasche verloren, in der sich Ihre Dokumente befanden? Wir erklären Ihnen, welche Schritte Sie unternehmen sollten. Dies hängt davon ab, ob es sich um Dokumente einer volljährigen Person oder einer Minderjährigen handelt.\nFall: Erwachsener\nWenn Sie mehrere der folgenden Dokumente gleichzeitig verloren haben (Personalausweis, Reisepass, Führerschein, Fahrzeugschein, Krankenversicherungskarte, Wählerkarte oder Familienbuch), müssen Sie zunächst einen neuen Personalausweis oder einen neuen Reisepass beantragen.\nInsbesondere ist für die Beantragung weiterer Dokumente ein gültiger Ausweis erforderlich.\nDie Ersetzung jedes Dokuments muss eine eigenständige Anfrage beinhalten:\n- Personalausweis\n- Reisepass\n- Führerschein\n- Fahrzeugausweis\n- Vitale-Karte\n- Wahlschein\n- Familienbuch.\nBitte beachten Sie: Sobald Sie Ihre Anträge auf Erneuerung gestellt haben, sind die Dokumente, die Sie verloren haben, dauerhaft unbrauchbar. Wenn Sie sie später wiederfinden, geben Sie sie an die zuständige Behörde zurück (z. B. préfecture (staatliche Verwaltung des Départements)). Sie dürfen diese nicht mehr verwenden.\nFall: Minderjähriger\nWenn mehrere der folgenden Dokumente eines Minderjährigen verloren gegangen sind (Personalausweis, Reisepass, Führerschein, Vitale-Karte), muss zunächst ein neuer Personalausweis oder ein neuer Reisepass beantragt werden.\nInsbesondere ist für die Beantragung weiterer Dokumente ein gültiger Ausweis erforderlich.\nDie Ersetzung jedes Dokuments muss eine eigenständige Anfrage beinhalten:\n- Personalausweis\n- Reisepass\n- Führerschein oder Führerschein\n- Gesundheitskarte.\nAchtung: Sobald die Anträge auf Erneuerung eingegangen sind, werden die verlorenen Dokumente dauerhaft unbrauchbar. Wenn sie später wiedergefunden werden, müssen sie an die zuständige Behörde zurückgegeben werden (z. B. préfecture). Sie dürfen nicht mehr verwendet werden.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31421",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31421",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.7,
+      "units": 23
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.621Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Що робити, якщо ви одночасно втратили всі свої документи, зокрема посвідчення особи?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 42.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Якщо ви втратили всі свої документи одночасно, вам спочатку потрібно отримати нову ідентифікаційну картку або новий паспорт.",
+      "steps": [
+       {
+        "texte": "Ви втратили гаманець або сумку, в якій були ваші документи? Ми пояснюємо, які кроки потрібно зробити. Процедура залежить від того, чи це документи дорослої особи, чи дитини.\nВипадок: Дорослий\nЯкщо ви одночасно втратили кілька з наступних документів (ідентифікаційну картку, паспорт, водійське посвідчення, реєстраційний документ, карту Vitale, виборчу картку або сімейний паспорт), вам спочатку потрібно отримати нову ідентифікаційну картку або новий паспорт.\nНасправді, для отримання інших документів, необхідно буде пред'явити дійсний документ, що посвідчує особу.\nЗаміна кожного документа повинна бути оформлена окремою заявою:\n- Ідентифікаційний документ\n- Паспорт\n- Водійське посвідчення\n- Технічний паспорт транспортного засобу\n- Карта Vitale\n- Виборча картка\n- Сімейний прапор.\nУвага: Після подання заяв на продовження терміну дії, документи, які ви втратили, стають непридатними для використання. Якщо ви їх знайдете пізніше, поверніть їх до відповідної організації (наприклад, préfecture (державна адміністрація департаменту)). Ви більше не зможете їх використовувати.\nВипадок: Дітина\nЯкщо декілька з наступних документів, що належать дитині (ідентифікаційка, паспорт, водійське посвідчення, карта Vitale), були втрачені, то спочатку необхідно отримати нову ідентифікаційку або новий паспорт.\nНасправді, для отримання інших документів, необхідно буде пред'явити дійсний документ, що посвідчує особу.\nЗаміна кожного документа повинна бути оформлена окремою заявою:\n- Ідентифікаційний документ\n- Паспорт\n- Сертифікат про безпечну експлуатацію транспортного засобу або водійське посвідчення\n- Медична страховка.\nУвага: Після подання заяв на продовження терміну дії, втрачені документи стають непридатними для використання. Якщо їх знайдено пізніше, їх необхідно повернути до відповідної установи (наприклад, préfecture). Їх більше не можна використовувати.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31421",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31421",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71,
+      "units": 23
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:f0474c3e74ed153f646e30ebdff299507138919eb31e8de1e58d054478fe9323",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Que faire en cas de perte de tous ses papiers d'identité en même temps ?",
+   "contenu_json": {
+    "intro": "Si vous avez perdu tous vos papiers en même temps, vous devez d'abord demander une nouvelle carte d'identité ou un nouveau passeport.",
+    "steps": [
+     {
+      "texte": "Vous avez perdu votre portefeuille ou votre sac dans lequel se trouvaient vos papiers ? Nous vous expliquons la démarche à suivre. Elle varie selon qu'il s'agit des papiers d'un majeur ou d'un mineur.\nCas : Majeur\nSi vous avez perdu plusieurs des documents suivants en même temps (carte d'identité, passeport, permis de conduire, carte grise, carte Vitale, carte d'électeur ou livret de famille), vous devez d'abord demander une nouvelle carte d'identité ou un nouveau passeport.\nEn effet, pour la demande des autres documents, il faudra présenter une pièce d'identité valide.\nLe remplacement de chaque document doit faire l'objet d'une demande indépendante :\n- Carte d'identité\n- Passeport\n- Permis de conduire\n- Carte grise\n- Carte Vitale\n- Carte électorale\n- Livret de famille.\nAttention : Une fois vos demandes de renouvellement effectuées, les papiers que vous avez perdus sont rendus définitivement inutilisables. Si vous les retrouvez plus tard, remettez-les à l'autorité de délivrance (par exemple, préfecture). Vous ne pouvez plus les utiliser.\nCas : Mineur\nSi plusieurs des documents suivants d'un mineur ont été perdus (carte d'identité, passeport, permis de conduire, carte Vitale), il faut d'abord demander une nouvelle carte d'identité ou un nouveau passeport.\nEn effet, pour la demande des autres documents, il faudra présenter une pièce d'identité valide.\nLe remplacement de chaque document doit faire l'objet d'une demande indépendante :\n- Carte d'identité\n- Passeport\n- Brevet de sécurité routière ou permis de conduire\n- Carte Vitale.\nAttention : Une fois les demandes de renouvellement effectuées, les papiers perdus sont rendus définitivement inutilisables. S'ils sont retrouvés plus tard, il faut les remettre à l'autorité de délivrance (par exemple, préfecture). Ils ne peuvent plus être utilisés.",
+      "titre": null
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

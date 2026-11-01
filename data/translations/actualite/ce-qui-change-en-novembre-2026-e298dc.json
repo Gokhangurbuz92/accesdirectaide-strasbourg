@@ -1,0 +1,226 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "ce-qui-change-en-novembre-2026-e298dc",
+ "recordId": "510c9a16-cce0-4be7-832d-8a2136835abc",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.737Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What will change in November 2026",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "The Public Service informs you about all the changes that are taking place in November.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p><em>Service Public</em> informs you about all the changes that are taking place in November.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.738Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kasım 2026'da değişenler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Kamu Hizmeti, Kasım ayında meydana gelen tüm değişiklikleri size bildiriyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p><i>Service Public</i>, Kasım ayında meydana gelen tüm değişiklikler hakkında sizi bilgilendirmektedir.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.738Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما الذي يتغير في نوفمبر 2026؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "تقدم خدمة \"الخدمة العامة\" معلومات حول جميع التغييرات التي تطرأ في شهر نوفمبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p><i>خدمة الدولة</i> تقدم لكم معلومات حول جميع التغييرات التي تطرأ في شهر نوفمبر.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.738Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Was sich im November 2026 ändert",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Das öffentliche Dienst informiert Sie über alle Änderungen, die im November stattfinden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p><em>Service Public</em> informiert Sie über alle Änderungen, die im November stattfinden.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.739Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Що зміниться у листопаді 2026 року",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Офіс громадських послуг інформує вас про всі зміни, які відбуваються в листопаді.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "«<em Сестрійський сектор</em>» інформує вас про всі зміни, які відбуваються в листопаді.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.1,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:5bd3a192a327b0cfac78e9c32364356569915648974b7ef14abfef9491ce4691",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Ce qui change en novembre 2026",
+   "resume": "Service Public vous informe sur tous les changements qui interviennent au mois de novembre.",
+   "contenu": "<p><em>Service Public</em> vous informe sur tous les changements qui interviennent au mois de novembre.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A17785?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,564 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
+ "recordId": "50a72e00-3c0b-47be-8194-ef85113592b6",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.183Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Allocation for unemployment benefit and assistance with returning to work (ARE: unemployment benefit) for a private sector employee whose employment contract ends starting on April 1, 2025",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Return to Work Allowance (ARE: unemployment benefit) is a payment made to employees in the private sector whose employment contract ends from April 1, 2025. It helps to compensate for some of the lost income in the event of job loss. The amount depends on your salary and your employment situation. It is paid after a waiting period and for a duration that depends on your length of service and your situation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Return to Work Allowance (ARE: unemployment benefit) is a payment made to employees in the private sector whose employment contract ends from April 1, 2025. It helps to compensate for some of the lost income in the event of job loss. The amount depends on your salary and your employment situation. It is paid after a waiting period and for a duration that depends on your length of service and your situation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Employee of the private sector whose employment contract ends starting April 1, 2025\n- You have worked for at least 6 months in the past 24 months.\n- You have resumed employment between July 1st and December 31st, 2024.\n- You have not exhausted your unemployment benefits entitlement.\n- You meet the eligibility requirements for the ARE (unemployment benefit).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The gross daily amount of ARE (unemployment benefit) includes a fixed amount of €13.18 and a variable amount equal to 40.4% of the reference daily wage (SJR). This amount cannot be less than 57% or more than 70% of the SJR. The net amount cannot be less than €32.13. If you are following a training program prescribed by France Travail (public employment service), the minimum amount is set at €22.99.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "You must have worked for 6 months (equivalent to 130 days or 910 hours) in the past 24 months.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "You must have resumed employment between July 1st and December 31st, 2024.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "You must meet the eligibility criteria for the ARE (unemployment benefit)",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "You must wait for a 7-day waiting period to be completed.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "You can exercise your option between your existing and new rights if you meet the conditions.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 5
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.185Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çalışanın özel sektörden işine geri dönmesine yardımcı olacak işsizlik yardımı (ARE: işsizlik ödeneği)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 38.8,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "İş Yerine Dönme Yardımı ((ARE: işsizlik ödeneği)), 1 Nisan 2025 tarihinden itibaren sözleşmeleri sona eren özel sektör çalışanlarına ödenen bir yardımdır. İş kaybı durumunda kaybedilen gelirlerin bir kısmını telafi etmeyi amaçlar. Bu yardımın miktarı, maaşınıza ve mesleki durumunuza bağlıdır. Belirli bir bekleme süresinden sonra ve eskiyete ve durumunuza bağlı olarak belirli bir süre boyunca ödenir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.8,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "İş Yerine Dönme Yardımı ((ARE: işsizlik ödeneği)), 1 Nisan 2025 tarihinden itibaren sözleşmeleri sona eren özel sektör çalışanlarına ödenen bir yardımdır. İş kaybı durumunda kaybedilen gelirlerin bir kısmını telafi etmeyi amaçlar. Bu yardımın miktarı, maaşınıza ve mesleki durumunuza bağlıdır. Belirli bir bekleme süresinden sonra ve eskiyete ve durumunuza bağlı olarak belirli bir süre boyunca ödenir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.8,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Özel sektör çalışanlarından, sözleşmelerinin 1 Nisan 2025 tarihinden itibaren sona erecek olanlar.\n- En son son 24 ay içinde, en az 6 ay boyunca çalışmış olmanız gerekmektedir.\n- 2024 yılı Temmuz ayının 1'inden 31 Aralık'a kadar arasında bir mesleki faaliyetiniz başladı.\n- Emeklilik sigortası haklarınızın tamamını kullanmadınız.\n- ARE (işsizlik ödeneği) için gerekli şartları yerine getirmişsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "ARE (işsizlik ödeneği)'nin brüt günlük ücreti, 13,18 € sabit bir miktar ve referans günlük ücretin (SJR) %40,4'üne denk değişken bir kısım olmak üzere iki bölümden oluşmaktadır. Bu miktar, SJR'nin %57'sini ve %70'ini aşamaz. Net ücret, en az 32,13 € olmalıdır. Eğer France Travail (kamu istihdam kurumu)' tarafından belirlenen bir eğitim programına katılıyorsanız, minimum ücret 22,99 € olarak belirlenmiştir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 61.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Son 24 ay içinde, 6 ay (yani 130 gün veya 910 saat) boyunca çalışmış olmanız gerekmektedir.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "1 Temmuz 2024 ile 31 Aralık 2024 tarihleri arasında bir işte yeniden çalışmanız gerekmektedir.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "ARE (işsizlik ödeneği)'in verilme koşullarını yerine getirmeniz gerekmektedir.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "7 günlük bir bekleme süresinin sona ermesini beklemelisiniz.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Eğer belirli şartları karşılıyorsanız, eski haklarınız ve yeni haklarınız arasındaki seçme hakkınızı kullanabilirsiniz.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 74.2,
+      "units": 5
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.187Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تخصيص إعانة البطالة لمساعدة الموظف العائد إلى العمل (ARE: إعانة البطالة) من القطاع الخاص، وذلك في حالة انتهاء عقد عمله اعتبارًا من 1 أبريل 2025.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"منحة العودة إلى العمل ((ARE: إعانة البطالة)) هي منحة تُمنح للموظفين في القطاع الخاص، حيث ينتهي عقد عملهم اعتبارًا من 1 أبريل 2025. تهدف هذه المنحة إلى تعويض جزء من الدخل المفقود في حالة فقدان الوظيفة. يعتمد مبلغها على راتبك وظروفك المهنية. يتم دفعها بعد فترة انتظار، ولفترة تحددها مدة خدمتك وظروفك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"منحة العودة إلى العمل ((ARE: إعانة البطالة)) هي منحة تُمنح للموظفين في القطاع الخاص، حيث ينتهي عقد عملهم اعتبارًا من 1 أبريل 2025. تهدف هذه المنحة إلى تعويض جزء من الدخل المفقود في حالة فقدان الوظيفة. يعتمد مبلغها على راتبك وظروفك المهنية. يتم دفعها بعد فترة انتظار، ولفترة تحددها مدة خدمتك وظروفك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- موظف في القطاع الخاص، وعقده الوظيفي ينتهي اعتبارًا من 1 أبريل 2025.\n- لقد عملت لمدة لا تقل عن 6 أشهر خلال الأشهر الـ 24 الماضية.\n- لقد بدأت نشاطًا مهنيًا بين 1 يوليو و 31 ديسمبر 2024.\n- لم تستنفد حقوقك المتعلقة بالتأمين ضد البطالة.\n- أنتم تستوفون الشروط اللازمة للحصول على ARE (إعانة البطالة).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.7,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يشمل المبلغ الإجمالي اليومي للـ ARE (إعانة البطالة) جزءًا ثابتًا قدره 13,18 يورو وجزءًا متغيرًا يمثل 40,4% من الراتب اليومي المرجعي (SJR). يجب ألا يقل هذا المبلغ عن 57% ولا يزيد عن 70% من الراتب المرجعي. يجب ألا يقل المبلغ الصافي عن 32,13 يورو. إذا كنت تخضع لتدريب محدد من قبل France Travail (هيئة التشغيل العمومية)، فإن المبلغ الأدنى المحدد هو 22,99 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 67.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "يجب أن تكون قد عملت لمدة 6 أشهر (أي 130 يومًا أو 910 ساعة) خلال الـ 24 شهرًا الماضية.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يجب أن تكون قد استأنفت نشاطًا مهنيًا بين 1 يوليو و 31 ديسمبر 2024.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "يجب عليك استيفاء شروط الحصول على ARE (إعانة البطالة).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "يجب الانتظار حتى انتهاء فترة انتظار مدتها 7 أيام.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "يمكنكم ممارسة حق الاختيار بين حقوقكم القديمة والجديدة إذا استوفيت الشروط.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.4,
+      "units": 5
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.189Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zuweisung von Arbeitslosengeld zur Unterstützung der Rückkehr in den Arbeitsmarkt für einen Arbeitnehmer des privaten Sektors, dessen Arbeitsvertrag am 1. April 2025 endet.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die \"Arbeitsplatz-Rückkehr-Förderung\" (ARE: Arbeitslosengeld) ist eine Leistung, die an Arbeitnehmer im privaten Sektor gezahlt wird, deren Arbeitsvertrag ab dem 1. April 2025 endet. Sie dient dazu, einen Teil des Einkommensausfalls bei Arbeitslosigkeit auszugleichen. Der Betrag hängt von Ihrem Gehalt und Ihrer beruflichen Situation ab. Die Leistung wird erst nach einer Wartezeit und für eine Dauer gezahlt, die von Ihrer Betriebszugehörigkeit und Ihrer Situation abhängt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die \"Arbeitsplatz-Rückkehr-Förderung\" (ARE: Arbeitslosengeld) ist eine Leistung, die an Arbeitnehmer im privaten Sektor gezahlt wird, deren Arbeitsvertrag ab dem 1. April 2025 endet. Sie dient dazu, einen Teil des Einkommensausfalls bei Arbeitslosigkeit auszugleichen. Der Betrag hängt von Ihrem Gehalt und Ihrer beruflichen Situation ab. Die Leistung wird erst nach einer Wartezeit und für eine Dauer gezahlt, die von Ihrer Betriebszugehörigkeit und Ihrer Situation abhängt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Angestellter im privaten Sektor, dessen Arbeitsvertrag ab dem 1. April 2025 ausläuft.\n- Sie haben mindestens 6 Monate in den letzten 24 Monaten beschäftigt.\n- Sie haben zwischen dem 1. Juli und dem 31. Dezember 2024 eine berufliche Tätigkeit aufgenommen.\n- Sie haben noch nicht alle Ansprüche auf Arbeitslosengeld in Anspruch genommen.\n- Sie erfüllen die Voraussetzungen für die Vergabe von ARE (Arbeitslosengeld).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.7,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Der Bruttotagesatz von ARE (Arbeitslosengeld) umfasst einen festen Betrag von 13,18 € und einen variablen Anteil, der 40,4 % des Referenz-Tageslohns (SJR) entspricht. Diese Summe darf nicht unter 57 % und nicht über 70 % des SJR liegen. Der Nettobetrag darf nicht weniger als 32,13 € betragen. Wenn Sie eine von France Travail (öffentliche Arbeitsverwaltung) vorgeschriebene Schulung absolvieren, beträgt der Mindestbetrag 22,99 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 77,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sie müssen mindestens 6 Monate (entspricht 130 Tagen oder 910 Stunden) in den letzten 24 Monaten beschäftigt gewesen sein.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Sie müssen zwischen dem 1. Juli und dem 31. Dezember 2024 wieder eine berufliche Tätigkeit aufgenommen haben.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Sie müssen die Voraussetzungen für die Vergabe von ARE (Arbeitslosengeld) erfüllen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Sie müssen auf das Ende einer Wartezeit von 7 Tagen warten.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Sie können Ihr Ausübungrecht zwischen Ihren alten und neuen Rechten ausüben, wenn Sie die entsprechenden Bedingungen erfüllen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.8,
+      "units": 5
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.191Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Виплата допомоги по безробіттю для підтримки повернення до роботи працівника з приватного сектора, термін контракту якого закінчується з 1 квітня 2025 року.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Виплата допомоги на повернення до роботи (ARE: допомога з безробіття) – це виплата, яка надається працівникам приватного сектору, чиї трудові контракти закінчуються з 1 квітня 2025 року. Вона дозволяє компенсувати частину втрачених доходів у разі втрати роботи. Її розмір залежить від вашого заробітку та вашої професійної ситуації. Виплата здійснюється після певного періоду очікування та протягом часу, що залежить від вашого стажу та ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Виплата допомоги на повернення до роботи (ARE: допомога з безробіття) – це виплата, яка надається працівникам приватного сектору, чиї трудові контракти закінчуються з 1 квітня 2025 року. Вона дозволяє компенсувати частину втрачених доходів у разі втрати роботи. Її розмір залежить від вашого заробітку та вашої професійної ситуації. Виплата здійснюється після певного періоду очікування та протягом часу, що залежить від вашого стажу та ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Працівник приватного сектору, чий трудовий договір закінчується з 1 квітня 2025 року.\n- Ви працювали принаймні 6 місяців протягом останніх 24 місяців.\n- Ви почали займатися професійною діяльністю між 1 липня та 31 грудня 2024 року.\n- Ви ще не використали всі свої права на отримання допомоги по безробіттю.\n- Ви відповідаєте всім вимогам для отримання ARE (допомога з безробіття).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Добова сума брутного доходу згідно з ARE (допомога з безробіття) включає фіксовану суму 13,18 євро та змінну суму, яка становить 40,4% від базової заробітної плати (БЗП). Ця сума не може бути нижчою за 57% і не може перевищувати 70% від БЗП. Чиста сума не може бути нижчою за 32,13 євро. Якщо ви проходите навчання, рекомендоване France Travail (державна служба зайнятості), мінімальна сума становить 22,99 євро.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 62.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Вам необхідно мати досвід роботи протягом 6 місяців (тобто 130 днів або 910 годин) протягом останніх 24 місяців.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Ви повинні були повернутися до професійної діяльності між 1 липня та 31 грудня 2024 року.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Ви повинні виконати умови надання ARE (допомога з безробіття).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Вам потрібно чекати завершення семиденного періоду очікування.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Ви можете реалізувати своє право на вибір між вашими попередніми та новими правами, якщо ви відповідаєте вимогам.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 74.9,
+      "units": 5
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:49de90e3f37ccdc20f39cb94f893b30d341b1eea1dbc6d55ca78850d1b282e3d",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation chômage d'aide au retour à l'emploi (ARE) d'un salarié du secteur privé dont la fin de contrat de travail intervient à compter du 1er avril 2025",
+   "description": "L'Allocation d'Aide au Retour à l'Emploi (ARE) est une allocation versée aux salariés du secteur privé dont le contrat de travail se termine à partir du 1er avril 2025. Elle permet de compenser une partie des revenus perdus en cas de perte d'emploi. Son montant dépend de votre salaire et de votre situation professionnelle. Elle est versée après un délai d'attente et pendant une durée dépendant de votre ancienneté et de votre situation.",
+   "cest_quoi": "L'Allocation d'Aide au Retour à l'Emploi (ARE) est une allocation versée aux salariés du secteur privé dont le contrat de travail se termine à partir du 1er avril 2025. Elle permet de compenser une partie des revenus perdus en cas de perte d'emploi. Son montant dépend de votre salaire et de votre situation professionnelle. Elle est versée après un délai d'attente et pendant une durée dépendant de votre ancienneté et de votre situation.",
+   "pour_qui": "- Salarié du secteur privé dont le contrat de travail se termine à partir du 1er avril 2025\n- Vous avez travaillé au moins 6 mois dans les 24 derniers mois\n- Vous avez repris une activité professionnelle entre le 1er juillet et le 31 décembre 2024\n- Vous n'avez pas épuisé vos droits à l'assurance chômage\n- Vous remplissez les conditions d'attribution de l'ARE",
+   "ce_que_ca_aide": "Le montant brut journalier de l'ARE comprend une partie fixe de 13,18 € et une partie variable égale à 40,4 % du salaire journalier de référence (SJR). Cette somme ne peut pas être inférieure à 57 % et ne peut pas être supérieure à 70 % du SJR. Le montant net ne peut pas être inférieur à 32,13 €. Si vous suivez une formation prescrite par France Travail, le montant minimum est fixé à 22,99 €.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vous devez avoir travaillé 6 mois (soit 130 jours ou 910 heures) dans les 24 derniers mois"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Vous devez avoir repris une activité professionnelle entre le 1er juillet et le 31 décembre 2024"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Vous devez remplir les conditions d'attribution de l'ARE"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Vous devez attendre la fin d'un délai d'attente de 7 jours"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Vous pouvez exercer votre droit d'option entre vos anciens et nouveaux droits si vous remplissez les conditions"
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T23:15:30.359Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38881",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

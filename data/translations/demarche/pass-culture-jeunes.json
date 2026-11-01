@@ -1,0 +1,568 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "pass-culture-jeunes",
+ "recordId": "6633382e-c020-4545-9d64-f08433199a84",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.432Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Pass Culture Jeunes",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.5,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "The Culture Pass allows individuals aged 18 or younger to access cultural activities through financial assistance. To take advantage of it, you must reside in France and download the dedicated app. The amounts vary depending on age and date of registration. The pass provides access to both online and in-person cultural offerings.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.7,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "The Culture Pass allows individuals aged 18 or younger to access cultural activities through financial assistance. To take advantage of it, you must reside in France and download the dedicated app. The amounts vary depending on age and date of registration. The pass provides access to both online and in-person cultural offerings.\n\nAges 15-16: Free. Age 17: €50. Age 18: €150. The amount can be used until the day before the 21st birthday.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Individuals aged 18 years or younger\n- Resident in mainland France or overseas territories\n- Must have French nationality or have been residing in France for 1 year (if not a French citizen).\n- Students from 6th grade through high school\n- Unskilled individuals aged 15 to 17\n- People aged 18",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Download the app dedicated to the Culture Pass on your smartphone or computer.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "To register, please scan and submit the required documents.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Select cultural activities and outings, and pay for them directly online.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of identity",
+      "Proof of address in your name",
+      "In the event of accommodation: proof of accommodation for the host, a confirmation of accommodation, and the host's identification."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.9,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Within the dedicated app",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.433Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Pass Culture gençler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.6,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "\"Culture Kartı, 18 yaş ve altındaki kişilerin, finansal desteklerle kültürel etkinliklerden yararlanmalarını sağlar. Bu kartı kullanabilmek için Fransa'da ikamet etmek ve ilgili uygulamayı indirmek gerekir. Ücretler, yaş ve kayıt tarihine göre değişiklik gösterir. Bu kart, çevrimiçi veya fiziksel olarak kültürel etkinliklere erişim imkanı sunar.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.2,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "\"Culture Kartı, 18 yaş ve altındaki kişilerin, finansal desteklerle kültürel etkinliklerden yararlanmalarını sağlar. Bu kartı kullanabilmek için Fransa'da ikamet etmek ve ilgili uygulamayı indirmek gerekir. Ücretler, yaş ve kayıt tarihine göre değişiklik gösterir. Bu kart, çevrimiçi veya fiziksel olarak kültürel etkinliklere erişim imkanı sunar.\n\n15 ila 16 yaş: Ücretsiz fırsatlar. 17 yaş: 50 €. 18 yaş: 150 €. Bu miktar, 21 yaşına kadar kullanılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- 18 yaşından küçük veya 18 yaşındaki kişiler\n- Fransız metropolünde veya Fransa'nın dışındaki bölgelerde ikamet eden\n- Fransız vatandaşı veya 1 yıldır Fransa'da ikamet eden (Fransız olmayan)\n- 6. sınıf ile lise son sınıf öğrencileri\n- 15 ile 17 yaş arasındaki okumayan bireyler\n- 18 yaşındaki kişiler",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 59.3,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "\"Kültür Kartı için özel olarak tasarlanmış uygulamayı akıllı telefonunuzda veya bilgisayarınızda indirin\"",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri tarayarak ve ekleyerek başvurunuzu yapın.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Kültürel etkinlikler veya geziler seçmek ve bunları doğrudan çevrimiçi ödeme yapmak.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.7,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kimlik belgesi",
+      "Adınıza ait ikametgah belgesi",
+      "Konaklama durumunda: Konaklayan kişinin ikamet kanıtı, konaklama belgesi ve kimlik belgesi."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.9,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "Uygulamada",
+     "status": "withheld",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 12.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.435Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "برنامج Pass Culture للشباب",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.3,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "يمنح \"بطاقة الثقافة\" الأشخاص الذين تبلغ أعمارهم 18 عامًا أو أقل الحق في المشاركة في الأنشطة الثقافية من خلال الحصول على دعم مالي. للاستفادة من هذه البطاقة، يجب أن يكون الشخص مقيمًا في فرنسا ويقوم بتنزيل التطبيق المخصص. تختلف قيمة البطاقة حسب العمر وتاريخ التسجيل. تسمح البطاقة بالوصول إلى عروض ثقافية عبر الإنترنت أو بشكل مباشر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "يمنح \"بطاقة الثقافة\" الأشخاص الذين تبلغ أعمارهم 18 عامًا أو أقل الحق في المشاركة في الأنشطة الثقافية من خلال الحصول على دعم مالي. للاستفادة من هذه البطاقة، يجب أن يكون الشخص مقيمًا في فرنسا ويقوم بتنزيل التطبيق المخصص. تختلف قيمة البطاقة حسب العمر وتاريخ التسجيل. تسمح البطاقة بالوصول إلى عروض ثقافية عبر الإنترنت أو بشكل مباشر.\n\nمن 15 إلى 16 عامًا: عروض مجانية. عند بلوغ 17 عامًا: 50 يورو. عند بلوغ 18 عامًا: 150 يورو. يمكن استخدام المبلغ حتى الليلة التي تسبق عيد ميلاد الـ 21.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.9,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- أفراد يبلغون من العمر 18 عامًا أو أقل\n- السكن في فرنسا (الجزيرة الرئيسية أو المناطق البعيدة)\n- يجب أن يكون المتقدم يحمل جنسية فرنسية أو يقيم في فرنسا منذ عام واحد، بشرط ألا يكون فرنسيًا.\n- طلاب من الصف السادس إلى الصف الثاني عشر\n- الأشخاص الذين لم يحصلوا على تعليم رسمي في الفئة العمرية بين 15 و 17 عامًا\n- أشخاص تبلغ أعمارهم 18 عامًا",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 62,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تنزيل التطبيق المخصص لبطاقة الثقافة على الهاتف الذكي أو الكمبيوتر.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "للتسجيل، قم بمسح المستندات المطلوبة وإرفاقها.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "اختيار الأنشطة أو الأمسيات الثقافية ودفع ثمنها مباشرة عبر الإنترنت.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "وثيقة تعريف شخصية",
+      "إثبات عنوان السكن باسمك",
+      "في حالة الإقامة: إثبات إقامة الشخص المقيم، شهادة إقامة، ومعلومات التعريف الخاصة بالشخص المقيم."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 39.8,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "في التطبيق المخصص",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.437Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Pass Culture für Jugendliche",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Das \"Culture Pass\" ermöglicht Personen im Alter von 18 Jahren oder darunter, an kulturellen Aktivitäten teilzunehmen, dank finanzieller Unterstützung. Um davon zu profitieren, muss man in Frankreich wohnen und die entsprechende App herunterladen. Die Beträge variieren je nach Alter und dem Zeitpunkt der Anmeldung. Das Pass ermöglicht den Zugang zu kulturellen Angeboten online oder vor Ort.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Das \"Culture Pass\" ermöglicht Personen im Alter von 18 Jahren oder darunter, an kulturellen Aktivitäten teilzunehmen, dank finanzieller Unterstützung. Um davon zu profitieren, muss man in Frankreich wohnen und die entsprechende App herunterladen. Die Beträge variieren je nach Alter und dem Zeitpunkt der Anmeldung. Das Pass ermöglicht den Zugang zu kulturellen Angeboten online oder vor Ort.\n\nAb 15 bis 16 Jahren: kostenlose Angebote. Ab 17 Jahren: 50 €. Ab 18 Jahren: 150 €. Der Betrag kann bis zum Abend vor dem 21. Geburtstag verwendet werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Personen im Alter von 18 Jahren oder darunter\n- Wohnen Sie in Frankreich (metropolitische Zone) oder in einer der französischen Überseegebiete\n- Mit einem französischen Pass oder einem Wohnsitz in Frankreich seit 1 Jahr (wenn nicht französischstämmig)\n- Schüler von der 6. bis zur 12. Klasse\n- Jugendliche (15 bis 17 Jahre) ohne Schulbildung\n- Personen im Alter von 18 Jahren",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 61.7,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Die App zum Kulturpass herunterladen, die auf Smartphones oder Computern verfügbar ist",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Um sich anzumelden, scannen Sie die erforderlichen Dokumente und reichen Sie diese ein.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Auswahl von kulturellen Aktivitäten und Ausflügen sowie direkte Bezahlung online.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Ausweis",
+      "Nachweis Ihres Wohnsitzes, ausgestellt auf Ihren Namen",
+      "Im Falle einer Unterbringung: Nachweis des Wohnsitzes des Unterbringenden, Bestätigung der Unterbringung und Ausweis des Unterbringenden."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "In der entsprechenden App",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:00.439Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Програма Pass Culture для молоді",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.3,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "« Pass Culture» дозволяє особам віком від 18 років отримати доступ до культурних заходів завдяки фінансовій підтримці. Щоб скористатися ним, необхідно проживати у Франції та завантажити відповідний додаток. Суми варіюються залежно від віку та дати реєстрації. «Pass» дає змогу отримати доступ до культурних пропозицій онлайн або офлайн.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.2,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "« Pass Culture» дозволяє особам віком від 18 років отримати доступ до культурних заходів завдяки фінансовій підтримці. Щоб скористатися ним, необхідно проживати у Франції та завантажити відповідний додаток. Суми варіюються залежно від віку та дати реєстрації. «Pass» дає змогу отримати доступ до культурних пропозицій онлайн або офлайн.\n\nВід 15 до 16 років: безкоштовні пропозиції. У 17 років: 50 євро. У 18 років: 150 євро. Суму можна використовувати до дня перед 21 роком.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Особи віком від 18 років і молодше\n- Мешкаючи у Франції (метрополітен) або заморських територіях.\n- Має французьке громадянство або проживає у Франції протягом 1 року (якщо не є громадянином Франції).\n- Учні, які навчаються з 6-го по 11-й клас\n- Особи, які не відвідують школу, у віці від 15 до 17 років\n- Люди віком 18 років",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 6
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Завантажити додаток, призначений для використання пропуску \"Culture\" на смартфоні або комп'ютері.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Щоб зареєструватися, необхідно відсканувати та надіслати необхідні документи.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Вибирати культурні заходи та екскурсії та оплачувати їх безпосередньо онлайн.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 3
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документ, що посвідчує особу",
+      "Документ, що підтверджує ваше місце проживання",
+      "У разі проживання: документ, що підтверджує місце проживання, підтвердження проживання та документ, що посвідчує особу, яка проживає."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 40,
+      "units": 3
+     }
+    },
+    "ou_faire": {
+     "text": "У спеціальному додатку",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.3,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:1cc7af5baad7726152dc913eb674d69683769b7219743bc032aa46de7da0a0ff",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Pass Culture jeunes",
+   "description_courte": "Le pass Culture permet aux personnes de 18 ans ou moins de bénéficier d'activités culturelles grâce à des aides financières. Pour en profiter, il faut résider en France et télécharger l'application dédiée. Les montants varient selon l'âge et la date d'inscription. Le pass permet d'accéder à des offres culturelles en ligne ou en présentiel.",
+   "contenu_detaille": "Le pass Culture permet aux personnes de 18 ans ou moins de bénéficier d'activités culturelles grâce à des aides financières. Pour en profiter, il faut résider en France et télécharger l'application dédiée. Les montants varient selon l'âge et la date d'inscription. Le pass permet d'accéder à des offres culturelles en ligne ou en présentiel.\n\nDe 15 à 16 ans : offres gratuites. À 17 ans : 50 €. À 18 ans : 150 €. La somme peut être utilisée jusqu'à la veille de 21 ans.",
+   "pour_qui": "- Personnes de 18 ans ou moins\n- Résidant en France métropolitaine ou en outre-mer\n- Avec une nationalité française ou résidant en France depuis 1 an si non français\n- Élèves scolarisés de la 6e à la terminale\n- Personnes non scolarisées entre 15 et 17 ans\n- Personnes de 18 ans",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Télécharger l'application dédiée au pass Culture sur smartphone ou ordinateur"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "S'y inscrire en scannant et joignant les documents requis"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Choisir les activités ou sorties culturelles et les payer directement en ligne"
+    }
+   ],
+   "documents_necessaires": [
+    "Pièce d'identité",
+    "Justificatif de domicile à votre nom",
+    "En cas d'hébergement : justificatif de domicile de l'hébergeant, attestation d'hébergement et pièce d'identité de l'hébergeant"
+   ],
+   "ou_faire": "Sur l'application dédiée",
+   "cout": "",
+   "delai": ""
+  },
+  "verifiedAt": "2026-10-30T00:54:33.070Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34959",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

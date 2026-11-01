@@ -1,0 +1,226 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "une-nouvelle-aide-de-100-euros-pour-les-travailleurs-grands-rouleurs-270e46",
+ "recordId": "4475ff32-f04b-482d-b6bb-1a1f1d487c1d",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.727Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "A new €100 payment for \"long-haul\" workers",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "The assistance program for \"large haulers\" has been extended for October, November, and December 2026, and its terms have been updated, as confirmed by a decree issued on October 15, 2026. You can check your eligibility using a simulator, and submit your application starting on October 27.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "The aid program for \"large haulers\" has been extended for October, November, and December 2026, and its terms have been updated, as confirmed by a decree issued on October 15, 2026. You can check your eligibility using a simulator, and submit your application starting on October 27.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.728Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "\"Büyük taşıyıcılar\" olarak sınıflandırılan çalışanlar için 100 Euro'luk yeni bir destek",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.4,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "\"Büyük taşıyıcılar\" için yardım programı, 2026 Ekim, Kasım ve Aralık aylarında yenilenmiş olup, bu programın koşulları da, 15 Ekim 2026 tarihli bir kararla doğrulanmıştır. Uygunluğunuzu bir simülasyon aracılığıyla kontrol edebilir ve başvurunuzu 27 Ekim'den itibaren yapabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "\"Büyük taşıyıcılar\" için yardım programı, 2026 Ekim, Kasım ve Aralık aylarında yenilenmiş olup, bu programın koşulları da 15 Ekim 2026 tarihli bir kararla güncellenmiştir. Uygunluğunuzu bir simülasyon aracılığıyla kontrol edebilir ve başvurunuzu 27 Ekim'den itibaren yapabilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.729Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مساعدة جديدة بقيمة 100 يورو للعاملين في مجال \"النقل على مسافات طويلة\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.3,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "تم تجديد نظام المساعدة للمشاريع الكبيرة، ليشمل شهري أكتوبر ونوفمبر وديسمبر 2026، وتغير شروطه، كما يتضح من مرسوم صدر في 15 أكتوبر 2026. يمكنك التحقق من أهليتك باستخدام محاكي، ويمكنك تقديم طلبك بدءًا من 27 أكتوبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.7,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "تم تمديد برنامج المساعدة للمشاريع الكبيرة لمدة ثلاثة أشهر، وهي أكتوبر ونوفمبر وديسمبر 2026، وتغير شروط البرنامج، كما يتضح من مرسوم صدر في 15 أكتوبر 2026. يمكنك التحقق من أهليتك باستخدام محاكي، ويمكنك تقديم طلبك بدءًا من 27 أكتوبر.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.730Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Eine zusätzliche Unterstützung von 100 Euro für „große Transportfahrer“",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Das Hilfsprogramm für „große Transportunternehmen“ wird für die Monate Oktober, November und Dezember 2026 verlängert, und die Bedingungen werden angepasst, wie ein Dekret vom 15. Oktober 2026 bestätigt. Sie können Ihre Berechtigung mithilfe eines Simulators überprüfen und Ihre Anfrage ab dem 27. Oktober einreichen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Das Förderprogramm für „große Transportunternehmen“ wird für die Monate Oktober, November und Dezember 2026 verlängert, und die Bedingungen werden angepasst, wie ein Dekret vom 15. Oktober 2026 bestätigt. Sie können Ihre Berechtigung mithilfe eines Simulators überprüfen und Ihre Antragstellung ab dem 27. Oktober einreichen.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.731Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Нова допомога у розмірі 100 євро для працівників, які займаються \"масштабуванням\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Система підтримки для \"великих транспортних компаній\" буде продовжена на місяці жовтень, листопад та грудень 2026 року, і її умови будуть змінені, як це підтверджує указ від 15 жовтня 2026 року. Ви можете перевірити свою відповідність критеріям за допомогою симулятора та подати заявку починаючи з 27 жовтня.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Система підтримки для \"великих транспортних компаній\" буде продовжена на жовтень, листопад та грудень 2026 року, і її умови будуть змінені, як це підтверджує указ від 15 жовтня 2026 року. Ви можете перевірити свою відповідність критеріям за допомогою симулятора та подати заявку з 27 жовтня.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:54b31f529968e238348768ba7c43bf710df79bb71bc5bf5bf9adcd1432ab1ac8",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Une nouvelle aide de 100 euros pour les travailleurs « grands rouleurs »",
+   "resume": "Le dispositif d’aide aux « grands rouleurs » est renouvelé pour les mois d’octobre, novembre et décembre 2026, et ses modalités évoluent, comme le confirme un décret du 15 octobre 2026. Vous pouvez vérifier votre éligibilité grâce à un simulateur, et effectuer votre demande à partir du 27 octobre.",
+   "contenu": "<p>Le dispositif d’aide aux « grands rouleurs » est renouvelé pour les mois d’octobre, novembre et décembre 2026, et ses modalités évoluent, comme le confirme un décret du 15 octobre 2026. Vous pouvez vérifier votre éligibilité grâce à un simulateur, et effectuer votre demande à partir du 27 octobre.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A18903?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

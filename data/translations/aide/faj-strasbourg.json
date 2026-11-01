@@ -1,0 +1,292 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "faj-strasbourg",
+ "recordId": "be96ec93-d85b-4562-9823-2d8271567e0e",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.156Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "FAJ'EMS (youth support fund) Strasbourg / Eurométropole",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Fonds d’Aide aux Jeunes (FAJ’EMS: youth support fund)] is a social support program for young people aged 16 to 25 who are facing difficulties and who live in Eurométropole de Strasbourg (Strasbourg metropolitan authority). Its aim is to support their social and professional integration, their independence, and to prevent breakdowns. The assistance is provided on an ad-hoc and supplementary basis, and can be individual or collective, as part of an accompaniment by a professional.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Fonds d’Aide aux Jeunes (FAJ’EMS: youth support fund)] is a social support program for young people aged 16 to 25 who are facing difficulties and who live in Eurométropole de Strasbourg (Strasbourg metropolitan authority). Its aim is to support their social and professional integration, their independence, and to prevent breakdowns. The assistance is provided on an ad-hoc and supplementary basis, and can be individual or collective, as part of an accompaniment by a professional.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Young people aged 16 to 25 who are facing difficulties\n- Living at Eurométropole de Strasbourg (Strasbourg metropolitan authority)\n- In the event of a crisis (housing, employment, financial resources, etc.)\n- Seeking social or professional integration",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 4
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.160Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "FAJ'EMS (gençlere destek fonu) Strasburg / Eurométropol",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Fonds d’Aide aux Jeunes (FAJ’EMS: gençlere destek fonu), 16 ila 25 yaş arasındaki, Eurométropole de Strasbourg (Strazburg büyükşehir yönetimi)'de yaşayan ve zor durumdaki gençlere yönelik bir sosyal yardım programıdır. Amacı, onların sosyal ve mesleki entegrasyonunu, bağımsızlığını desteklemek ve sorunları önlemektir. Bu yardım, diğer programlara ek olarak belirli durumlarda ve profesyonel bir rehberliğin parçası olarak bireysel veya grup şeklinde sağlanabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Fonds d’Aide aux Jeunes (FAJ’EMS: gençlere destek fonu), 16 ila 25 yaş arasındaki, Eurométropole de Strasbourg (Strazburg büyükşehir yönetimi)'de yaşayan ve zor durumdaki gençlere yönelik bir sosyal yardım programıdır. Amacı, onların sosyal ve mesleki entegrasyonunu, bağımsızlığını desteklemek ve sorunları önlemektir. Bu yardım, diğer programlara ek olarak belirli durumlarda ve profesyonel bir rehberliğin parçası olarak bireysel veya grup şeklinde sağlanabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- 16 ila 25 yaşları arasındaki, zor durumdaki gençler\n- Eurométropole de Strasbourg (Strazburg büyükşehir yönetimi)'de ikamet ediyorum\n- Bir kriz durumunda (konut, iş, kaynaklar vb.)\n- Sosyal veya mesleki alım için arayış içinde",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.6,
+      "units": 4
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.163Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "FAJ'EMS (صندوق مساعدة الشباب) سترسبرغ / منطقة أوروبوميتropole",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "برنامج Fonds d’Aide aux Jeunes (FAJ’EMS: صندوق مساعدة الشباب ) هو برنامج دعم اجتماعي مخصص للشباب الذين تتراوح أعمارهم بين 16 و 25 عامًا، والذين يواجهون صعوبات، ويعيشون في Eurométropole de Strasbourg (السلطة الحضرية لستراسبورغ الكبرى). يهدف البرنامج إلى دعم اندماجهم الاجتماعي والمهني، وتعزيز استقلالهم، ومنع الانقطاع. يتم تقديم المساعدة بشكل فردي أو جماعي، وتعتبر إضافة إلى برامج أخرى، ويتم ذلك تحت إشراف متخصص.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "برنامج Fonds d’Aide aux Jeunes (FAJ’EMS: صندوق مساعدة الشباب ) هو برنامج دعم اجتماعي مخصص للشباب الذين تتراوح أعمارهم بين 16 و 25 عامًا، والذين يواجهون صعوبات، ويعيشون في Eurométropole de Strasbourg (السلطة الحضرية لستراسبورغ الكبرى). يهدف البرنامج إلى دعم اندماجهم الاجتماعي والمهني، وتعزيز استقلالهم، ومنع الانقطاع. يتم تقديم المساعدة بشكل فردي أو جماعي، وتعتبر إضافة إلى برامج أخرى، ويتم ذلك تحت إشراف متخصص.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- شباب تتراوح أعمارهم بين 16 و 25 عامًا يعانون من صعوبات\n- السكن في Eurométropole de Strasbourg (السلطة الحضرية لستراسبورغ الكبرى)\n- في حالة حدوث انقطاع (في السكن، أو العمل، أو الموارد…)\n- ببحث عن فرص للاندماج الاجتماعي أو المهني",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57,
+      "units": 4
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.165Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "FAJ'EMS (Jugendhilfefonds) Straßburg / Europäische Metropolregion",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Das Fonds d’Aide aux Jeunes (FAJ’EMS: Jugendhilfefonds)] ist eine soziale Unterstützung für junge Menschen zwischen 16 und 25 Jahren, die in Eurométropole de Strasbourg (Eurometropole Straßburg) leben und Schwierigkeiten haben. Ziel ist es, ihre soziale und berufliche Integration, ihre Selbstständigkeit zu fördern und Rückschläge zu verhindern. Die Unterstützung ist vorübergehend und ergänzt andere Maßnahmen und kann individuell oder in Gruppen erfolgen, im Rahmen einer Betreuung durch einen Fachmann.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Das Fonds d’Aide aux Jeunes (FAJ’EMS: Jugendhilfefonds)] ist eine soziale Unterstützung für junge Menschen zwischen 16 und 25 Jahren, die in Eurométropole de Strasbourg (Eurometropole Straßburg) leben und Schwierigkeiten haben. Ziel ist es, ihre soziale und berufliche Integration, ihre Selbstständigkeit zu fördern und Rückschläge zu verhindern. Die Unterstützung ist vorübergehend und ergänzt andere Maßnahmen und kann individuell oder in Gruppen erfolgen, im Rahmen einer Betreuung durch einen Fachmann.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Jugendliche im Alter von 16 bis 25 Jahren, die in Schwierigkeiten sind\n- Im Eurométropole de Strasbourg (Eurometropole Straßburg) wohnen\n- Im Falle eines Ausfalls (Wohnen, Arbeitsplatz, finanzielle Mittel…)\n- Auf der Suche nach sozialer oder beruflicher Integration",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 4
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.167Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "FAJ'EMS (фонд допомоги молоді) Страсбург / Єврометрополь",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Програма Fonds d’Aide aux Jeunes (FAJ’EMS: фонд допомоги молоді)] – це соціальна допомога, призначена для молоді віком від 16 до 25 років, яка опинилася у складній ситуації та проживає в Eurométropole de Strasbourg (Страсбурзька метрополія). Її метою є підтримка їхньої соціальної та професійної інтеграції, самостійності, а також запобігання розривам. Допомога надається одноразово та є доповненням до інших програм, і може бути індивідуальною або груповою, у рамках супроводу професіоналом.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Програма Fonds d’Aide aux Jeunes (FAJ’EMS: фонд допомоги молоді)] – це соціальна допомога, призначена для молоді віком від 16 до 25 років, яка опинилася у складній ситуації та проживає в Eurométropole de Strasbourg (Страсбурзька метрополія). Її метою є підтримка їхньої соціальної та професійної інтеграції, самостійності, а також запобігання розривам. Допомога надається одноразово та є доповненням до інших програм, і може бути індивідуальною або груповою, у рамках супроводу професіоналом.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Молоді люди віком від 16 до 25 років, які опинилися у складній ситуації.\n- Жити в Eurométropole de Strasbourg (Страсбурзька метрополія)\n- У разі втрати житла, роботи, ресурсів тощо.\n- У пошуках соціальної або професійної інтеграції",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 4
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:642e3434d2a9b47bf70edc2f8889bd3bb3d98f4fcff7694ec4fce5a0a3cee8a5",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "FAJ'EMS Strasbourg / Eurométropole",
+   "description": "Le Fonds d’Aide aux Jeunes (FAJ’EMS) est un dispositif d’aide sociale destiné aux jeunes de 16 à 25 ans en difficulté, habitant l’Eurométropole de Strasbourg. Il vise à soutenir leur insertion sociale et professionnelle, leur autonomie et à prévenir les ruptures. L’aide est ponctuelle et complémentaire à d’autres dispositifs, et peut être individuelle ou collective, dans le cadre d’un accompagnement par un professionnel.",
+   "cest_quoi": "Le Fonds d’Aide aux Jeunes (FAJ’EMS) est un dispositif d’aide sociale destiné aux jeunes de 16 à 25 ans en difficulté, habitant l’Eurométropole de Strasbourg. Il vise à soutenir leur insertion sociale et professionnelle, leur autonomie et à prévenir les ruptures. L’aide est ponctuelle et complémentaire à d’autres dispositifs, et peut être individuelle ou collective, dans le cadre d’un accompagnement par un professionnel.",
+   "pour_qui": "- Jeunes de 16 à 25 ans en difficulté\n- Habitant l’Eurométropole de Strasbourg\n- En situation de rupture (logement, emploi, ressources…)\n- En recherche d’insertion sociale ou professionnelle",
+   "ce_que_ca_aide": null,
+   "etapes": [],
+   "documents_necessaires": [],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T23:40:54.450Z",
+  "sourceUrl": "https://www.strasbourg.eu/fond-aide-jeunes",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

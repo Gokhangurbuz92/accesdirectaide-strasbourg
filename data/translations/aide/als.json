@@ -1,0 +1,657 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "als",
+ "recordId": "7b16cca4-eaf1-4e72-bd8e-0bdc3267cfad",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:26.388Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Social housing allocation (ALS: social housing allowance)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The social housing allowance (ALS: social housing allowance) is a financial aid program for individuals who are unable to claim the APL (personalised housing allowance)) or ALF (family housing allowance)) allowance. It allows you to reduce the amount of your rent or service charge. To apply, you must meet certain income requirements and provide specific documentation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The social housing allowance (ALS: social housing allowance) is a financial aid program for individuals who are unable to claim the APL (personalised housing allowance)) or ALF (family housing allowance)) allowance. It allows you to reduce the amount of your rent or service charge. To apply, you must meet certain income requirements and provide specific documentation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Tenant\n- Tenant under lease from the property owner\n- Foreigner with titre de séjour (residence permit) is valid\n- Student from a non-EU, EEA, or Swiss country, receiving a scholarship based on social criteria, professional experience, or an apprenticeship/vocational training contract.\n- Living in an assisted living facility (e.g., nursing home, residential care facility)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.7,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of ALS (social housing allowance) depends on the scheme to which you are affiliated (Caf (family benefits office) or MSA (farmers' social security fund)).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit an application online through the online service of Caf (family benefits office) or MSA (farmers' social security fund).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Scan the required documents (identification, bank statement, and rental agreement).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Complete the rental or residency confirmation form.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "The payment of ALS (social housing allowance) should be made starting from the first day of the month following the processing of the application.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 67.4,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "A photocopy of the national identity card, passport, or birth certificate.",
+      "Bank account details (IBAN), postal account details (ZIP), or savings account details (BSB)",
+      "Rental agreement form, dated and signed by the landlord"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.4,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Based on your situation: Mutualité sociale agricole (MSA: farmers' social security fund), Caisse d'allocations familiales (Caf: family benefits office).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 83.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:33.312Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sosyal konut tahsisi (ALS: sosyal konut yardımı)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Sosyal konut yardımı (ALS: sosyal konut yardımı), gelir düzeyine uygun olmayan veya APL (kişiye özel konut yardımı) veya ALF (aile konut yardımı)'e başvuramayan kişiler için ödenen bir finansal yardımdır. Bu, kira veya aidat miktarınızı düşürmenize olanak tanır. Bunu talep etmek için, belirli gelir koşullarını karşılamanız ve gerekli belgeleri sunmanız gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Sosyal konut yardımı (ALS: sosyal konut yardımı), gelir düzeyine uygun olmayan veya APL (kişiye özel konut yardımı) veya ALF (aile konut yardımı)'e başvuramayan kişiler için ödenen bir finansal yardımdır. Bu, kira veya aidat miktarınızı düşürmenize olanak tanır. Bunu talep etmek için, belirli gelir koşullarını karşılamanız ve gerekli belgeleri sunmanız gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Kiracı\n- Kiralayan kişiye ait, sözleşmeye göre kiracı\n- Yabancı titre de séjour (oturum izni) ile iletişim kuruldu ve onaylandı.\n- Avrupa Birliği, Avrupa Ekonomik Alanı veya İsviçre dışından, sosyal kriterlere göre burslu, iş deneyimi olan veya çıraklık/mesleki eğitim sözleşmesi olan bir öğrenci.\n- Yaşlı bakım evlerinde, bağımsız yaşam tesislerinde veya benzer kurumlarda ikamet ediyorlar.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.2,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "ALS (sosyal konut yardımı)'deki miktar, hangi sisteme dahil olduğunuza bağlıdır (Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu)).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) hizmetlerinin çevrimiçi portalı üzerinden çevrimiçi olarak başvuru yapın.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri (kimlik, banka hesap dökümü, kira ödeme belgesi) tarayın.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Kira veya ikamet belgesi formunu doldurun.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "ALS (sosyal konut yardımı)'in ödemesinin, dosyanın işleme tarihinden sonraki ayın 1'inci gününde yapılmasını bekleyin.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kimlik kartının, pasaportun veya doğum belgesinin iki yüzlü bir kopyası.",
+      "Banka kimlik belgesi (RIB), posta kimlik belgesi (RIP) veya tasarruf kimlik belgesi (RICE)",
+      "Kira ödeme belgesi, mülk sahibi tarafından doldurulmuş, tarihli ve imzalanmış"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.2,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Mutualité sociale agricole (MSA: tarım sosyal güvenlik kurumu), Caisse d'allocations familiales (Caf: aile yardımları kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:39.699Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تخصيص سكن اجتماعي (شقة T1)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 59.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"مساعدتك الاجتماعية للإسكان (ALS: إعانة السكن الاجتماعية)] هي مساعدة مالية مخصصة للأفراد الذين لا يستوفون شروط الحصول على APL (المساعدة الشخصية للسكن) أو ALF (إعانة السكن العائلية). تتيح لك هذه المساعدة تقليل مبلغ الإيجار أو الرسوم. للحصول عليها، يجب عليك استيفاء شروط معينة وتقديم المستندات المطلوبة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"مساعدتك الاجتماعية للإسكان (ALS: إعانة السكن الاجتماعية)] هي مساعدة مالية مخصصة للأفراد الذين لا يستوفون شروط الحصول على APL (المساعدة الشخصية للسكن) أو ALF (إعانة السكن العائلية). تتيح لك هذه المساعدة تقليل مبلغ الإيجار أو الرسوم. للحصول عليها، يجب عليك استيفاء شروط معينة وتقديم المستندات المطلوبة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- المستأجر\n- مستأجر إضافي تم إعلانه للمالك\n- شخص أجنبي مع titre de séjour (تصريح الإقامة)\n- طالب حاصل على شهادة من دولة خارج الاتحاد الأوروبي أو المنطقة الاقتصادية الأوروبية أو سويسرا، ويحصل على منحة دراسية بناءً على معايير اجتماعية، أو لديه نشاط مهني، أو لديه عقد تدريب/تأهيل مهني.\n- يعيشون في مؤسسة (مثل دار رعاية المسنين، أو دار للمسنين المستقلين، إلخ.)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يعتمد مبلغ ALS (إعانة السكن الاجتماعية) على النظام الذي أنت تابع له (Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي)).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم طلب عبر الإنترنت من خلال خدمة Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "مسح المستندات المطلوبة (بطاقة الهوية، كشف حساب بنكي، إثبات دفع الإيجار).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "املأ نموذج إقرار الإيجار أو الإقامة في سكن.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "يجب الانتظار حتى يتم صرف المبلغ المذكور (ALS: إعانة السكن الاجتماعية) اعتبارًا من اليوم الأول من الشهر التالي لتسوية القضية.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 61.4,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "نسخة مطبوعة من بطاقة الهوية الوطنية، جواز السفر، أو شهادة الميلاد.",
+      "رقم الحساب المصرفي (RIB)، أو رقم البريد (RIPP)، أو رقم الحساب التوفيري (Rice).",
+      "إقرار دفع الإيجار، مع تحديد التاريخ والتوقيع عليه من قبل المالك."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: Mutualité sociale agricole (MSA: صندوق الضمان الاجتماعي الفلاحي), Caisse d'allocations familiales (Caf: صندوق الإعانات العائلية).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 79,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:45.951Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sozialer Wohnungsbau (ALS: soziale Wohnbeihilfe)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die Sozialwohnungszuschuss (ALS: soziale Wohnbeihilfe) ist eine finanzielle Unterstützung für Personen, die keinen Anspruch auf die APL (personalisierte Wohnbeihilfe)) oder die ALF (familienbezogene Wohnbeihilfe)) haben. Er ermöglicht es, die Höhe Ihrer Miete oder Ihres Mietzuschusses zu reduzieren. Um ihn zu erhalten, müssen Sie bestimmte Einkommenskriterien erfüllen und entsprechende Dokumente vorlegen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die Sozialwohnungszuschuss (ALS: soziale Wohnbeihilfe) ist eine finanzielle Unterstützung für Personen, die keinen Anspruch auf die APL (personalisierte Wohnbeihilfe)) oder die ALF (familienbezogene Wohnbeihilfe)) haben. Er ermöglicht es, die Höhe Ihrer Miete oder Ihres Mietzuschusses zu reduzieren. Um ihn zu erhalten, müssen Sie bestimmte Einkommenskriterien erfüllen und entsprechende Dokumente vorlegen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Mieter\n- Mietvertrag mit dem Vermieter wurde abgeschlossen\n- Ausländische Person mit titre de séjour (Aufenthaltstitel)\n- Student aus einem Nicht-EU-, Nicht-EEA- oder Schweizer Land, der ein Stipendium aufgrund sozialer Kriterien, einer beruflichen Tätigkeit oder eines Ausbildungs-/Berufsausbildungsprogramms erhält.\n- Wohnen in einer Einrichtung (z.B. Seniorenheim, Wohngemeinschaft für Selbstständige usw.)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 59.1,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Höhe von ALS (soziale Wohnbeihilfe) hängt davon ab, welchem Regime Sie angehören (Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung)).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.3,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Eine Online-Antragstellung über den Online-Service von Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Die erforderlichen Dokumente scannen (Ausweis, Kontoauszug, Mietvertrag).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Das Formular zur Bestätigung der Miet- oder Wohnkosten ausfüllen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Die Auszahlung von ALS (soziale Wohnbeihilfe) ist ab dem ersten Tag des folgenden Monats nach der Bearbeitung des Falls zu erwarten.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 61.3,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kopie beider Seiten des Personalausweises, Reisepasses oder des Geburtsurkunde",
+      "Bankausweis (Relevé d'identité bancaire), Postausweis (postal (Rip)) oder Sparausweis (Rice)",
+      "Mietvertrag, vollständig ausgefüllt, datiert und vom Vermieter unterschrieben"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.1,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen folgende Optionen vor: Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung), Caisse d'allocations familiales (Caf: Familienkasse).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:52.632Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Виділення житла для соціальних потреб (ALS: соціальна житлова допомога)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Соціальна допомога на житло (ALS: соціальна житлова допомога)] – це фінансова допомога, призначена для осіб, які не мають права на отримання APL (персоналізована житлова допомога) або ALF (сімейна житлова допомога). Вона дозволяє зменшити розмір орендної плати або плати за комунальні послуги. Щоб її отримати, необхідно відповідати певним критеріям доходів і надати відповідні документи.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Соціальна допомога на житло (ALS: соціальна житлова допомога)] – це фінансова допомога, призначена для осіб, які не мають права на отримання APL (персоналізована житлова допомога) або ALF (сімейна житлова допомога). Вона дозволяє зменшити розмір орендної плати або плати за комунальні послуги. Щоб її отримати, необхідно відповідати певним критеріям доходів і надати відповідні документи.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Орендар\n- Орендодавець має знати про особу, яка орендує приміщення.\n- Іноземець з titre de séjour (посвідка на проживання) – це дійсний документ.\n- Студент, який є громадянином країни, що не входить до ЄС, ЄСА або Швейцарії, та отримує стипендію на основі соціальних критеріїв, професійну діяльність або контракт на навчання/професійну підготовку.\n- Проживають у спеціалізованому закладі (наприклад, в будинку для літніх людей, будинку самостійного проживання тощо)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 56.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума ALS (соціальна житлова допомога) залежить від того, до якого режиму ви підпадаєте (Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування)).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку онлайн через онлайн-сервіс Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Сканувати необхідні документи (ідентифікаційний документ, виписку з банку, підтвердження оплати оренди).",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Заповнити форму заявки про сплату орендної плати або проживання в родині.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Очікувати отримання ALS (соціальна житлова допомога) з 1-го дня наступного місяця після розгляду справи.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Копія обох сторін національного посвідчення особи, паспорта або витягу з свідоцтва про народження.",
+      "Банківський рахунок (IBAN), поштовий рахунок (RPA) або рахунок заощадження (RCA)",
+      "Документ про сплату орендної плати, заповнений, датований та підписаний власником."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.6,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Mutualité sociale agricole (MSA: сільськогосподарське соціальне страхування), Caisse d'allocations familiales (Caf: каса сімейних допомог).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 82.5,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:d14dc5be6e68e9912741bc1010797d41e4b26970b1136653a86dffe01e00028a",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation de logement sociale (ALS)",
+   "description": "L'Allocation de logement sociale (ALS) est une aide financière destinée aux personnes ne pouvant pas prétendre à l'APL ou à l'ALF. Elle permet de réduire le montant de votre loyer ou de votre redevance. Pour la demander, vous devez remplir des conditions de ressources et fournir des documents précis.",
+   "cest_quoi": "L'Allocation de logement sociale (ALS) est une aide financière destinée aux personnes ne pouvant pas prétendre à l'APL ou à l'ALF. Elle permet de réduire le montant de votre loyer ou de votre redevance. Pour la demander, vous devez remplir des conditions de ressources et fournir des documents précis.",
+   "pour_qui": "- Locataire\n- Sous-locataire déclaré au propriétaire\n- Étranger avec titre de séjour valide\n- Étudiant ressortissant d'un pays hors UE, EEE ou Suisse, avec bourse sur critères sociaux, activité professionnelle ou contrat d'apprentissage/professionnalisation\n- Résident en établissement (Ehpad, résidence autonomie, etc.)",
+   "ce_que_ca_aide": "Le montant de l'ALS dépend du régime auquel vous êtes rattaché (Caf ou MSA).",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire une demande en ligne via le service en ligne de la Caf ou de la MSA."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Scanner les documents requis (pièce d'identité, relevé bancaire, attestation de loyer)."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Remplir le formulaire d'attestation de loyer ou résidence en foyer."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Attendre le versement de l'ALS à partir du 1er jour du mois suivant la traitement du dossier."
+    }
+   ],
+   "documents_necessaires": [
+    "Copie recto-verso de la carte nationale d'identité, passeport ou extrait d'acte de naissance",
+    "Relevé d'identité bancaire (Rib), postal (Rip) ou d'épargne (Rice)",
+    "Attestation de loyer complétée, datée et signée par le propriétaire"
+   ],
+   "ou_demander": "Selon votre situation : Mutualité sociale agricole (MSA), Caisse d'allocations familiales (Caf).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:08:17.233Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1280",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

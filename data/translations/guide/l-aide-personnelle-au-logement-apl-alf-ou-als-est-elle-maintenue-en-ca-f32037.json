@@ -1,0 +1,451 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+ "recordId": "204d00f6-6a6d-4952-819c-fd4c44e2a9db",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:53:53.671Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Is personal housing assistance (APL (personalised housing allowance), ALF (family housing allowance), or ALS (social housing allowance)) continued in cases of unpaid rent?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "In the event of unpaid rent, personal housing assistance (APL (personalised housing allowance), ALF (family housing allowance), and ALS (social housing allowance)) can be maintained to alleviate a rent debt and prevent eviction.",
+      "steps": [
+       {
+        "texte": "In cases of unpaid rent, personal housing assistance (APL, ALS, and ALF) can be maintained to alleviate a rent debt and prevent eviction. The situation varies depending on whether the assistance is paid to the landlord or the tenant.",
+        "titre": null
+       },
+       {
+        "texte": "There is unpaid rent when the tenant owes an amount at least equal to twice the monthly net rent and charges.\nThe net monthly rent amount corresponds to the rent specified in the lease agreement, minus the amount of the housing allowance.",
+        "titre": "What is the minimum amount of rent that must be unpaid for there to be a default?"
+       },
+       {
+        "texte": "Once the unpaid rent is established, the landlord has 2 months to notify the relevant authority (either Caf (family benefits office) or MSA (farmers' social security fund)).\nThe notification should be made preferably by registered mail with acknowledgment of receipt. It should include the tenant's name and address, the amount and period of the rent arrears.\n→ Where to go: Caisse d'allocations familiales (Caf)\n→ Where to go: Mutualité sociale agricole (MSA)\nPlease note: the landlord is at risk of a fine of €8,010.00 if they do not report the unpaid rent to Caf (or MSA).\nThe Caf (or MSA) can also initiate proceedings if it becomes aware of unpaid rent that has not been reported to it.",
+        "titre": "What is the deadline for reporting a missed rent payment?"
+       },
+       {
+        "texte": "Once the landlord has reported the unpaid rent, the Caf (or MSA) requests that the landlord establish a repayment plan. This plan is a schedule for repaying the debt that the landlord agrees to with the tenant.\nIf the landlord fails to fulfill their obligation to create a repayment plan, the Caf (or MSA) will request the Solidarity Fund for Housing (FSL: housing solidarity fund) to create a repayment plan for the debt.\nCase: In the event of a repayment plan being proposed by the lender\nThe debt repayment plan must be implemented within a maximum period of 6 months.\nThis plan is a document that sets out the conditions for the repayment of unpaid rent (amount, deadline, etc.).\nThe housing assistance payment is then maintained if the following two conditions are met:\n- The repayment plan has been agreed upon and accepted by Caf (or MSA).\n- The tenant has resumed paying the current rent.\nWithout receiving the repayment plan within the specified timeframe and after a formal request from the landlord, Caf (or MSA) must contact FSL. Then, FSL has 3 months to establish a repayment plan.\nIf the FSL fails to meet the 3-month deadline, then Caf (or MSA) will implement its own debt repayment plan.\nCase: In the event of a FSL liquidation plan\nThe Caf (or MSA) can directly obtain information from FSL by requesting them to provide a repayment plan within 6 months.\nOnce the repayment plan has been received, either Caf or MSA will continue to provide housing assistance payments, provided the tenant resumes paying the current rent.\nIn the event of a failure to implement the repayment plan or non-payment of the current rent, the Caf (or MSA) will suspend the payment of housing assistance.\nWhen the FSL fails to provide its repayment plan within the specified timeframe, the Caf (or MSA) will formally request that the tenant resume paying the current rent.\nThe tenant is also required to repay the full amount of their debt. They must pay the landlord 1/36th of the debt each month for 3 years, starting from the month following the demand for payment.\nWithout a resumption of payments or in the event of a failure to implement the plan, Caf (or MSA) will suspend the provision of housing assistance.",
+        "titre": "What is the process for implementing a debt repayment plan in the event of unpaid rent?"
+       },
+       {
+        "texte": "There is unpaid rent when the tenant owes an amount at least equal to twice the monthly gross rent and charges.\nThe gross monthly rent corresponds to the rent specified in the lease agreement.",
+        "titre": "What is the minimum amount of rent that must be unpaid for there to be a default?"
+       },
+       {
+        "texte": "Once the unpaid rent is established, the landlord has 2 months to notify the relevant authority (either Caf or MSA).\nThe notification should be made preferably by registered mail with acknowledgment of receipt. It should include the tenant's name and address, the amount and period of the rent arrears.\n→ Where to go: Caisse d'allocations familiales (Caf)\n→ Where to go: Mutualité sociale agricole (MSA)\nPlease note: the landlord is at risk of a fine of €8,010 if they fail to notify Caf (or MSA) of the unpaid rent.\nThe Caf (or MSA) can also initiate proceedings if it becomes aware of unpaid rent that has not been reported to it. It can suspend or continue the payment of housing assistance.",
+        "titre": "What is the deadline for reporting a missed rent payment?"
+       },
+       {
+        "texte": "Once the landlord has reported the unpaid rent, the Caf (or MSA) requests that the landlord establish a repayment plan. This plan is a schedule for repaying the debt that the landlord agrees to with the tenant.\nIf the landlord fails to fulfill their obligation to create a repayment plan, the Caf (or MSA) will request the Solidarity Fund for Housing (FSL) to create a repayment plan for the debt.\nThe Caf (or MSA) must require the landlord to obtain payment from a third party (i.e., on behalf of the tenant). The landlord has 2 months to respond. If they fail to do so, their silence will be considered a rejection.\nCase: In the event of a repayment plan being proposed by the lender\nThe Caf (or MSA) can request the landlord to establish a debt repayment plan within a maximum period of 6 months (2 months if the landlord has refused to accept a third-party payment).\nThis plan is a document that sets out the conditions for the repayment of unpaid rent (amount, deadline, etc.).\nThe housing assistance payment is then maintained if the following two conditions are met:\n- The remediation plan has been implemented and approved by Caf (or MSA).\n- The tenant has resumed paying the current rent.\nWithout receiving the repayment plan within the specified timeframe and after a formal request from the landlord, Caf (or MSA) will initiate legal proceedings against FSL.\nThe FSL then has a 3-month period to develop a repayment plan.\nIf the FSL fails to meet the 3-month deadline, then Caf (or MSA) will implement its own debt repayment plan.\nCase: In the event of a FSL liquidation plan\nThe Caf (or MSA) can directly obtain information from FSL by requesting them to provide a repayment plan within 6 months.\nOnce the repayment plan has been received, either Caf or MSA will continue to provide housing assistance payments, provided the tenant resumes paying the current rent.\nIn the event of a failure to implement the repayment plan or non-payment of the current rent, the Caf (or MSA) will suspend the payment of housing assistance.\nWhen the FSL fails to provide its repayment plan within the specified timeframe, the Caf (or MSA) will formally request that the tenant resume paying the current rent.\nThe tenant is also required to repay the full amount of their debt. They must pay the landlord 1/36th of the debt each month for 3 years, starting from the month following the demand for payment.\nWithout a resumption of payments or in the event of a failure to implement the plan, Caf (or MSA) will suspend the provision of housing assistance.",
+        "titre": "What is the process for implementing a debt repayment plan in the event of unpaid rent?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.1,
+      "units": 60
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:55:01.344Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Konut için kişisel yardım (APL (kişiye özel konut yardımı), ALF (aile konut yardımı) veya ALS (sosyal konut yardımı)), kira ödemelerinin gecikmesi durumunda geçerli midir?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Ödeme yapılmayan kira ödemeleri durumunda, konut yardımı (APL (kişiye özel konut yardımı), ALF (aile konut yardımı) ve ALS (sosyal konut yardımı)) başvurusu, kira borcunu hafifletmek ve tahliyenin önüne geçmek amacıyla kullanılabilir.",
+      "steps": [
+       {
+        "texte": "Ödeme yapılmayan kira ödemeleri durumunda, konut yardımı (APL, ALS ve ALF) ödeme yükünü hafifletmek ve tahliyenin önüne geçmek amacıyla kullanılabilir. Bu yardımın, kiracıya veya kiraya veren kişiye ödenip ödenmediği, durumun seyrini değiştirebilir.",
+        "titre": null
+       },
+       {
+        "texte": "Kira ödemesinde gecikme, kiracının kira ve diğer giderlerin aylık net tutarının en az iki katına denk gelen bir borcu olduğunda söz konusu olabilir.\nAylık net kira tutarı, kira sözleşmesinde belirtilen kira miktarından, konut yardımı tutarından düşülerek belirlenir.",
+        "titre": "Kira ödemelerinde gecikme oluşması için minimum tutar ne kadar?"
+       },
+       {
+        "texte": "Borç ödenmediği tespit edildikten sonra, kiracı 2 ay içinde bu durumu Caf (aile yardımları kurumu)'e (veya MSA (tarım sosyal güvenlik kurumu)'ye) bildirmek zorundadır.\nBildirim, mümkünse taahhütlü posta yoluyla yapılmalıdır. Bildirimde, kiracının adı, adresi, kira borcunun miktarı ve süresi belirtilmelidir.\n→ İlgili kişi/kurum: Caisse d'allocations familiales (Caf)\n→ İlgili kişi/kurum: Mutualité sociale agricole (MSA)\nUyarı: Kira sahibi, ödenmeyen kira miktarını Caf (veya MSA)'ye bildirmemesi durumunda 8.010,00 € ceza riskiyle karşı karşıya kalır.\nCaf(veya MSA) aynı zamanda, kir ücretlerinin ödenmemesi durumunu bildirilmemişse, kendi kendine tahakkuk oluşturabilir.",
+        "titre": "Kira ödemesini geciktirmek durumunda ne kadar süre içinde haber vermeliyim?"
+       },
+       {
+        "texte": "Bunun ardından, kiracıya ait ödenmemiş miktar, Caf (veya MSA) tarafından kiraya verenle paylaşılır ve kiraya veren, bu borcun ödenmesi için bir ödeme planı oluşturmasını talep eder. Bu plan, kiraya veren ve kiracı arasında belirlenen bir ödeme takvimi içerir.\nEğer kiracı, ödeme planını uygulamakla yükümlü değilse, Caf (veya MSA), konut fonunu (FSL: konut dayanışma fonu) devreye sokarak, borcun ödenmesi için bir plan oluşturmasını talep eder.\nDurum: Eğer kiracı ile anlaşma yoluyla kira sözleşmesinin feshedilmesi söz konusuysa\nBorçların ödenmesi planı, en fazla 6 ay içinde uygulanmalıdır.\nBu plan, ödenmemiş kira bedellerinin iadesine ilişkin koşulları belirleyen bir belgedir (maliyet, süre...).\nKonut yardımı ödemesi, aşağıdaki iki koşulun karşılanması durumunda devam ettirilir:\n- Ödeme planı uygulanmakta ve Caf (veya MSA) tarafından onaylanmaktadır.\n- Kira ödemeleri, mevcut durumda, kiracı tarafından yeniden başlatılmıştır.\nPlanın belirlenen süre içinde ve emre dayalı olarak teslim edilmemesi durumunda, Caf (veya MSA) ilgili yetkili FSL'e başvurmalıdır. Bu durumda FSL, 3 ay içinde bir ödeme planı oluşturmalıdır.\nEğer FSL, 3 aylık süreyi tamamlamazsa, Caf(veya MSA) kendi bir ödeme planını oluşturur.\nDurum: Eğer FSL'in kapanış planı uygulanırsa\nCaf(veya MSA), doğrudan FSL'dan, 6 ay içinde ödeme planını bildirmesini isteyerek, borcunu ödeme sürecine başlayabilir.\nPlanın ödeme planı alındıktan sonra, Caf (veya MSA) kiracının kira ödemesini yeniden başlatması koşuluyla, konut yardımı ödemesini devam ettirir.\nEğer ödeme planının uygulanmasındaki sorun veya kira ödemelerinin gecikmesi durumunda, Caf (veya MSA) konut yardımı ödemesini durdurur.\nFSL, kira ödemelerini zamanında bildirmesi durumunda, Caf(veya MSA), kiracıyı mevcut kira ödemelerini yeniden başlatmaya çağırır.\nKira sözleşmesi olan kişi, tüm borcunu ödemekle yükümlüdür. Borcunun 1/36'sını, talep tarihinden sonraki ayın başından itibaren 3 yıl boyunca, kira sahibine her ay ödemelidir.\nÖdeme planının yeniden başlatılmaması veya planın uygulanmaması durumunda, Caf (veya MSA) konut yardımı ödemesini durdurur.",
+        "titre": "Kira ödemesinde gecikme durumunda, borcun ödenmesi planı nasıl uygulanır?"
+       },
+       {
+        "texte": "Kira ödemesinde gecikme, kiracının kira ve diğer giderlerin aylık brüt tutarının en az iki katına denk gelen bir borcu olduğunda söz konusu olabilir.\nKira tutarı, kira sözleşmesinde belirtilen kira tutarını ifade eder.",
+        "titre": "Kira ödemelerinde gecikme oluşması için minimum tutar ne kadar?"
+       },
+       {
+        "texte": "Borç ödenmediği tespit edildikten sonra, kiracı 2 ay içinde bu durumu Caf'e (veya MSA'ye) bildirmek zorundadır.\nBildirim, mümkünse taahhütlü posta yoluyla yapılmalıdır. Bildirimde, kiracının adı, adresi, kira borcunun miktarı ve süresi belirtilmelidir.\n→ İlgili kişi/kurum: Caisse d'allocations familiales (Caf)\n→ İlgili kişi/kurum: Mutualité sociale agricole (MSA)\nUyarı: Kira sahibi, kira ödemelerinin gecikmesi durumunda Caf (veya MSA)'ye bu durumu bildirmemesi halinde 8.010,00 € ceza riskiyle karşı karşıya kalır.\nCaf(veya MSA) aynı zamanda, kir ücretlerinin ödenmemiş olması ancak kendisine bildirilmemiş olması durumunda, kendiliğinden tahakkuk oluşturabilir. Ayrıca, konut yardımı ödemelerini durdurabilir veya devam ettirebilir.",
+        "titre": "Kira ödemesini geciktirmek durumunda ne kadar süre içinde haber vermeliyim?"
+       },
+       {
+        "texte": "Bunun ardından, kiracıya ait ödenmemiş miktar, Caf (veya MSA) tarafından kiraya verenle paylaşılır ve kiraya veren, bu borcun ödenmesi için bir ödeme planı oluşturmasını talep eder. Bu plan, kiraya veren ve kiracı arasında belirlenen bir ödeme takvimi içerir.\nEğer kiracı, ödeme planını uygulamakla yükümlü değilse, Caf (veya MSA), konut fonunu (FSL) devreye sokarak, borcun ödenmesi için bir plan oluşturmasını talep eder.\nCaf (veya MSA) sahibi, kira bedelinin üçüncü bir tarafın ödemesi (yani kiracın yerine) şeklinde ödenmesini talep etmelidir. Sahibi, bu talebe yanıt vermek için 2 ayda sahiptir. Bu süre içinde yanıt vermemesi, talebin reddedilmesine yol açacaktır.\nDurum: Eğer kiracı ile anlaşma yoluyla kira sözleşmesinin feshedilmesi söz konusuysa\nCaf(veya MSA) kiraya veren, borcun ödenmesi için maksimum 6 ay (kiraya veren üçüncü bir tarafın ödeme yapmayı reddettiği durumda 2 ay) içinde bir ödeme planı talep edebilir.\nBu plan, ödenmemiş kira bedellerinin iadesine ilişkin koşulları belirleyen bir belgedir (maliyet, süre...).\nKonut yardımı ödemesi, aşağıdaki iki koşulun karşılanması durumunda devam ettirilir:\n- Ödeme planı uygulanmış ve Caf (veya MSA) tarafından onaylanmıştır.\n- Kira ödemeleri, mevcut durumda, kiracı tarafından yeniden başlatılmıştır.\nPlanın belirlenen süre içinde alınmaması ve kiraya veren tarafından gönderilen resmi yazışma sonrası, Caf (veya MSA), FSL'e başvuracaktır.\nBu durumda, FSL, borçları ödeme planı oluşturmak için 3 ay süreye sahip olacaktır.\nEğer FSL, 3 aylık süreyi tamamlamazsa, Caf(veya MSA) kendi bir ödeme planını oluşturur.\nDurum: Eğer FSL'in kapanış planı uygulanırsa\nCaf(veya MSA), doğrudan FSL'dan, 6 ay içinde ödeme planını bildirmesini isteyerek, borcunu ödeme sürecine başlayabilir.\nPlanın ödeme planı alındıktan sonra, Caf (veya MSA) kiracının kira ödemesini yeniden başlatması koşuluyla, konut yardımı ödemesini devam ettirir.\nEğer ödeme planının uygulanmasındaki sorun veya kira ödemelerinin gecikmesi durumunda, Caf (veya MSA) konut yardımı ödemesini durdurur.\nFSL, kira ödemelerini zamanında bildirmesi durumunda, Caf(veya MSA), kiracıyı mevcut kira ödemelerini yeniden başlatmaya çağırır.\nKira sözleşmesi olan kişi, tüm borcunu ödemekle yükümlüdür. Borcunun 1/36'sını, talep tarihinden sonraki ayın başından itibaren 3 yıl boyunca, kira sahibine her ay ödemelidir.\nÖdeme planının yeniden başlatılmaması veya planın uygulanmaması durumunda, Caf (veya MSA) konut yardımı ödemesini durdurur.",
+        "titre": "Kira ödemesinde gecikme durumunda, borcun ödenmesi planı nasıl uygulanır?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 66.6,
+      "units": 60
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:56:08.534Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "هل يتم الحفاظ على المساعدة الشخصية للإسكان (في حالة APL (المساعدة الشخصية للسكن) أو ALF (إعانة السكن العائلية) أو ALS (إعانة السكن الاجتماعية)) في حالة عدم دفع الإيجار؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "في حالة عدم دفع الإيجار، يمكن الاستمرار في تقديم المساعدة الشخصية للإسكان (بما في ذلك APL (المساعدة الشخصية للسكن) و ALF (إعانة السكن العائلية) و ALS (إعانة السكن الاجتماعية)) بهدف تخفيف عبء الديون المتعلقة بالإيجار ومنع الإخلاء.",
+      "steps": [
+       {
+        "texte": "في حالة عدم دفع الإيجار، يمكن الحفاظ على المساعدة الشخصية للإسكان (APL، ALS و ALF ) لتخفيف عبء الديون المتعلقة بالإيجار ومنع الإخلاء. تعتمد الحالة على ما إذا كانت المساعدة تُدفع إلى المالك أو المستأجر.",
+        "titre": null
+       },
+       {
+        "texte": "يُعتبر هناك \"دين غير مستحق\" عندما يكون لدى المستأجر دين يساوي على الأقل ضعف المبلغ الشهري الصافي للإيجار والمصروفات.\nيمثل المبلغ الشهري الصافي للإيجار المبلغ المذكور في عقد الإيجار، بعد خصم مبلغ المساعدة المقدم للإيجار.",
+        "titre": "ما هو الحد الأدنى للمبلغ الذي يعتبر فيه التأخر في دفع الإيجار؟"
+       },
+       {
+        "texte": "بمجرد إثبات التأخر في السداد، يحق للمستأجر إبلاغ الجهة المعنية (Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي)) خلال مدة شهرين.\nيجب إرسال الإشعار بشكل تفضيلي عن طريق البريد المسجل مع إشعار باستلامه. ويجب أن يتضمن الاسم والعنوان الخاص بالمتعهد، ومبلغ وموعد سداد الإيجار.\n→ إلى من يتم الاتصال: Caisse d'allocations familiales (Caf)\n→ إلى من يتم الاتصال: Mutualité sociale agricole (MSA)\nتنبيه: قد يتعرض الملاك لعقوبة قدرها 8,010 يورو إذا لم يبلغ عن التأخر في دفع الإيجار إلى Caf (أو MSA).\nيمكن للـ Caf(أو MSA) أيضًا أن تقوم بفرض الديون بنفسها إذا كانت على علم بوجود تأخير في دفع الإيجار لم يتم إبلاغها عنه.",
+        "titre": "ما هو الإطار الزمني للإبلاغ عن عدم دفع الإيجار؟"
+       },
+       {
+        "texte": "بمجرد إبلاغ المُقرض بالمخالفة، تطلب Caf (أو MSA ) من المُقرض وضع خطة لسداد الدين. هذه الخطة هي جدول زمني لسداد الدين الذي يضع المُقرضه مع المستأجر.\nإذا لم يلتزم الممول بالتزامه بوضع خطة لسداد الديون، فإن Caf (أو MSA ) تطلب من صندوق الدعم السكني (FSL: صندوق التضامن للسكن) وضع خطة لسداد هذه الديون.\nفي حالة وجود خطة لتسوية الديون مع الجهة المانحة.\nيجب وضع خطة لسداد الديون في غضون فترة زمنية لا تتجاوز 6 أشهر.\nهذا الخطة هي وثيقة تحدد شروط استرداد الإيجارات المتأخرة (المبلغ، المدة...).\nيستمر صرف المساعدة في الإسكان إذا تم استيفاء الشروط التالية:\n- تم تنفيذ الخطة المحددة للتعويض والقبول بها من قبل Caf (أو MSA).\n- قام المستأجر باستئناف دفع الإيجار المستحق.\nفي حال عدم استلام الخطة المقترحة للتعويض في الوقت المحدد، وبعد إرسال إنذار رسمي إلى الممول، يجب على Caf (أو MSA ) الاتصال بـ FSL. ثم يكون لدى FSL 3 أشهر لإعداد خطة تعويض.\nإذا لم يتم الالتزام بالمهلة البالغة 3 أشهر من قبل FSL، فإن Caf (أو MSA ) تقوم بوضع خطة لتسوية الأمور بنفسها.\nفي حالة وجود خطة لتصفية الأصول الخاصة بـ FSL\nيمكن للـ Caf(أو MSA)] أن تتواصل مباشرة مع FSL‎] وتطلب منه تقديم خطة لتسوية الأمور خلال فترة 6 أشهر.\nبعد استلام خطة التسوية، ستقوم Caf (أو MSA ) بمواصلة دفع المساعدة السكنية بشرط أن يستمر المستأجر في دفع الإيجار.\nفي حالة عدم تنفيذ خطة سداد الديون أو عدم دفع الإيجار، فإن Caf (أو MSA) ستوقف دفع المساعدة السكنية.\nعندما لا يبلغ FSL‎] خطته الخاصة بالتعويض في الوقت المحدد، فإن Caf‎] (أو MSA‎) تطلب من المستأجر استئناف دفع الإيجار.\nيجب على المستأجر أيضًا سداد كامل المبلغ المستحق. ويجب عليه دفع 1/36 من المبلغ المستحق للمؤجر كل شهر لمدة 3 سنوات، بدءًا من الشهر التالي لإرسال الإنذار.\nفي حال عدم استكمال الدفع أو في حالة عدم تنفيذ الخطة بشكل صحيح، فإن Caf (أو MSA) ستوقف دفع المساعدة السكنية.",
+        "titre": "ما هي آلية تسوية الديون في حالة عدم دفع الإيجار؟"
+       },
+       {
+        "texte": "يُعتبر هناك \"دين غير مستحق\" عندما يكون لدى المستأجر دين يساوي على الأقل ضعف المبلغ الشهري الإجمالي للإيجار والمصروفات.\nيشير المبلغ الشهري الإجمالي للإيجار إلى المبلغ المذكور في عقد الإيجار.",
+        "titre": "ما هو الحد الأدنى للمبلغ الذي يعتبر فيه التأخر في دفع الإيجار؟"
+       },
+       {
+        "texte": "بمجرد إثبات التأخر في السداد، يحق للمستأجر إبلاغ الجهة المعنية (Caf أو MSA) خلال مدة شهرين.\nيجب إرسال الإشعار بشكل تفضيلي عن طريق البريد المسجل مع إشعار باستلامه. ويجب أن يتضمن الاسم والعنوان الخاص بالمتعهد، ومبلغ وموعد سداد الإيجار.\n→ إلى من يتم الاتصال: Caisse d'allocations familiales (Caf)\n→ إلى من يتم الاتصال: Mutualité sociale agricole (MSA)\nتنبيه: قد يتعرض الممول لعقوبة مالية قدرها 8,010 يورو إذا لم يبلغ عن التأخر في دفع الإيجار إلى Caf (أو MSA).\nيمكن لـ Caf(أو MSA)] أيضًا أن تتخذ إجراءً ذاتيًا إذا كانت على علم بوجود تأخير في دفع الإيجار لم يتم إبلاغها عنه. يمكنها أيضًا تعليق أو استمرار دفع المساعدة في الإسكان.",
+        "titre": "ما هو الإطار الزمني للإبلاغ عن عدم دفع الإيجار؟"
+       },
+       {
+        "texte": "بمجرد إبلاغ المُقرض بالمخالفة، تطلب Caf (أو MSA ) من المُقرض وضع خطة لسداد الدين. هذه الخطة هي جدول زمني لسداد الدين الذي يضع المُقرضه مع المستأجر.\nإذا لم يلتزم الممول بالتزامه بوضع خطة لسداد الديون، فإن Caf (أو MSA) تطلب من صندوق الدعم السكني (FSL) وضع خطة لسداد هذه الديون.\nيجب على Caf (أو MSA ) أن تطلب من المالك أن يقوم بدفع المبلغ عن طريق طرف ثالث (أي بدلاً من المستأجر). ويمنح المالك مهلة مدتها شهرين للرد. بعد ذلك، يعتبر عدم الرد بمثابة رفض.\nفي حالة وجود خطة لتسوية الديون مع الجهة المانحة.\nيمكن للـ Caf (أو MSA ) أن تطلب من المالك وضع خطة لسداد الديون خلال فترة زمنية لا تتجاوز 6 أشهر (2 شهر إذا رفض المالك فكرة الدفع من خلال طرف ثالث).\nهذا الخطة هي وثيقة تحدد شروط استرداد الإيجارات المتأخرة (المبلغ، المدة...).\nيستمر صرف المساعدة في الإسكان إذا تم استيفاء الشروط التالية:\n- تم تنفيذ الخطة المحددة للتعويض والموافقة عليها من قبل Caf (أو MSA).\n- قام المستأجر باستئناف دفع الإيجار المستحق.\nفي حال عدم استلام الخطة المتعلقة بالتعويض في الوقت المحدد، وبعد إرسال إنذار رسمي إلى الممول، فإن Caf (أو MSA ) ترفع دعوى قضائية ضد FSL.\nوبالتالي، يتمتع FSL بفترة زمنية مدتها 3 أشهر لإعداد خطة لتصفية الديون.\nإذا لم يتم الالتزام بالمهلة البالغة 3 أشهر من قبل FSL، فإن Caf (أو MSA ) تقوم بوضع خطة لتسوية الأمور بنفسها.\nفي حالة وجود خطة لتصفية الأصول الخاصة بـ FSL\nيمكن للـ Caf(أو MSA)] أن تتواصل مباشرة مع FSL‎] وتطلب منه تقديم خطة لتسوية الأمور خلال فترة 6 أشهر.\nبعد استلام خطة التسوية، ستقوم Caf (أو MSA ) بمواصلة دفع المساعدة السكنية بشرط أن يستمر المستأجر في دفع الإيجار.\nفي حالة عدم تنفيذ خطة سداد الديون أو عدم دفع الإيجار، فإن Caf (أو MSA) ستوقف دفع المساعدة السكنية.\nعندما لا يبلغ FSL‎] خطته الخاصة بالتعويض في الوقت المحدد، فإن Caf‎] (أو MSA‎) تطلب من المستأجر استئناف دفع الإيجار.\nيجب على المستأجر أيضًا سداد كامل المبلغ المستحق. ويجب عليه دفع 1/36 من المبلغ المستحق للمؤجر كل شهر لمدة 3 سنوات، بدءًا من الشهر التالي لإرسال الإنذار.\nفي حال عدم استكمال الدفع أو في حالة عدم تنفيذ الخطة بشكل صحيح، فإن Caf (أو MSA) ستوقف دفع المساعدة السكنية.",
+        "titre": "ما هي آلية تسوية الديون في حالة عدم دفع الإيجار؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.3,
+      "units": 60
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:57:17.032Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Wird die Wohnunterstützung (APL (personalisierte Wohnbeihilfe), ALF (familienbezogene Wohnbeihilfe) oder ALS (soziale Wohnbeihilfe)) beibehalten, wenn Miete nicht bezahlt wird?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 58.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Im Falle nicht bezahlter Mieten kann die persönliche Wohnungsunterstützung (APL (personalisierte Wohnbeihilfe), ALF (familienbezogene Wohnbeihilfe) und ALS (soziale Wohnbeihilfe)) beibehalten werden, um eine Mietrückstand zu reduzieren und eine Kündigung zu vermeiden.",
+      "steps": [
+       {
+        "texte": "Im Falle nicht bezahlter Mieten kann die persönliche Wohnungsunterstützung (APL, ALS und ALF) beibehalten werden, um eine Mietrückstand zu reduzieren und eine Kündigung zu vermeiden. Die Situation hängt davon ab, ob die Unterstützung an den Vermieter oder den Mieter gezahlt wird.",
+        "titre": null
+       },
+       {
+        "texte": "Es gibt eine Mietrückzahlung, wenn der Mieter eine Schuld hat, die mindestens dem doppelten Betrag des monatlichen Netto-Mietpreises und der Nebenkosten entspricht.\nDer monatliche Netto-Mietbetrag entspricht der in dem Mietvertrag angegebenen Miete, abzüglich der Höhe der Mietzuschussleistung.",
+        "titre": "Ab welchem Betrag liegt eine nicht bezahlte Miete an?"
+       },
+       {
+        "texte": "Sobald die Zahlungsunfähigkeit festgestellt wurde, hat der Vermieter 2 Monate Zeit, dies an die Caf (oder MSA (landwirtschaftliche Sozialversicherung)) zu melden.\nDie Meldung sollte vorzugsweise per Einschreiben mit Rückschein erfolgen. Sie muss den Namen, die Adresse des Mieters sowie den Betrag und die Laufzeit der Mietrückstände angeben.\n→ Wo man sich wenden sollte: Caisse d'allocations familiales (Caf: Familienkasse)\n→ Wo man sich wenden sollte: Mutualité sociale agricole (MSA)\nAchtung: Der Vermieter riskiert eine Geldbuße von 8.010,00 €, wenn er den nicht gezahlten Mietbetrag nicht an die Caf (oder MSA) meldet.\nAuch die Caf (oder die MSA) kann sich selbstständig wehren, wenn sie Kenntnis von ausstehenden Mietzahlungen hat, die ihr nicht gemeldet wurden.",
+        "titre": "Innerhalb welcher Frist muss eine nicht gezahlte Miete gemeldet werden?"
+       },
+       {
+        "texte": "Sobald der Vermieter den Zahlungsverzug gemeldet hat, fordert die Caf (oder MSA) den Vermieter auf, einen Plan zur Rückzahlung der Schuld aufzustellen. Dieser Plan ist ein Zahlungsplan, den der Vermieter mit dem Mieter vereinbart.\nWenn der Vermieter seine Verpflichtung, einen Abwicklungskonzept zu erstellen, nicht erfüllt, greift die Caf (oder MSA) auf den Solidaritätsfonds für Wohnen (FSL: Wohnungssolidaritätsfonds) zurück, um ein Abwicklungskonzept für die Schuld zu erstellen.\nFall: Im Falle eines Abfindungsplans für den Vermieter\nDer Plan zur Schuldentilgung muss innerhalb eines maximalen Zeitraums von 6 Monaten umgesetzt werden.\nDieser Plan ist ein Dokument, das die Bedingungen für die Rückzahlung von nicht gezahlten Mieten festlegt (Betrag, Frist...).\nDie Auszahlung der Wohnkostenzuschüsse erfolgt weiterhin, wenn folgende zwei Bedingungen erfüllt sind:\n- Der Abwicklungskonzept wurde eingehalten und von Caf (oder MSA) akzeptiert.\n- Der Mieter hat die laufende Miete wieder beglichen.\nWenn der Zahlungsplan nicht innerhalb des vereinbarten Zeitrahmens und nach erfolglosem Kontakt mit dem Vermieter eingehalten wird, muss die Caf (oder MSA) die FSL kontaktieren. Die FSL hat dann 3 Monate Zeit, einen Zahlungsplan zu erstellen.\nWenn das Unternehmen FSL die Frist von 3 Monaten nicht einhält, setzt Caf (oder MSA) selbst einen Abhilfeprozess ein.\nFall: Im Falle eines Abfindungsplans für FSL\nDas Caf (oder das MSA) kann das FSL direkt kontaktieren und ihm die Bitte erteilen, seinen Abwicklungsprozess innerhalb von 6 Monaten zu erläutern.\nNach Erhalt des Abwicklungsplans wird Caf (oder MSA) die Zahlung der Mietzuschüsse fortsetzen, vorausgesetzt, der Mieter setzt die Zahlung des aktuellen Mietbetrags fort.\nIm Falle einer fehlerhaften Umsetzung des Abzahlungsplans oder bei Nichtzahlung der aktuellen Miete, suspend die Caf (oder die MSA) die Auszahlung der Mietzuschüsse.\nWenn die FSL nicht innerhalb der vereinbarten Frist ihren Abwicklungsvorschlag einreicht, fordert die Caf (oder die MSA) den Mieter auf, die laufende Miete wieder zu zahlen.\nDer Mieter muss auch die gesamte Schuld zurückzahlen. Er muss dem Vermieter monatlich 1/36 seiner Schuld für 3 Jahre ab dem Monat nach der Mahnung überweisen.\nWenn die Zahlung nicht wieder aufgenommen wird oder der Plan nicht erfolgreich umgesetzt wird, wird die Caf (oder die MSA) die Auszahlung der Wohngeldleistung einstellen.",
+        "titre": "Wie wird ein Plan zur Schuldminderung im Falle von Zahlungsverzug bei Miete umgesetzt?"
+       },
+       {
+        "texte": "Es gibt eine Mietrückzahlung, wenn der Mieter eine Schuld hat, die mindestens dem doppelten Betrag der monatlichen Miete und Nebenkosten entspricht.\nDer monatliche Bruttmietzins entspricht dem in dem Mietvertrag angegebenen Mietpreis.",
+        "titre": "Ab welchem Betrag liegt eine nicht bezahlte Miete an?"
+       },
+       {
+        "texte": "Sobald die Zahlungsunfähigkeit festgestellt wurde, hat der Vermieter 2 Monate Zeit, dies an die Caf (oder MSA) zu melden.\nDie Meldung sollte vorzugsweise per Einschreiben mit Rückschein erfolgen. Sie muss den Namen, die Adresse des Mieters sowie den Betrag und die Laufzeit der Mietrückstände angeben.\n→ Wo man sich wenden sollte: Caisse d'allocations familiales (Caf)\n→ Wo man sich wenden sollte: Mutualité sociale agricole (MSA)\nAchtung: Der Vermieter riskiert eine Buße von 8.010,00 €, wenn er die nicht gezahlte Miete nicht an die Caf (oder MSA) meldet.\nAuch die Caf (oder die MSA) kann sich selbstständig um die Angelegenheit kümmern, wenn sie von einer nicht gemeldeten Mietrückzahlung Kenntnis erlangt. Sie kann die Zahlung der Wohngeldhilfe entweder aussetzen oder fortsetzen.",
+        "titre": "Innerhalb welcher Frist muss eine nicht gezahlte Miete gemeldet werden?"
+       },
+       {
+        "texte": "Sobald der Vermieter den Zahlungsverzug gemeldet hat, fordert die Caf (oder MSA) den Vermieter auf, einen Plan zur Rückzahlung der Schuld aufzustellen. Dieser Plan ist ein Zahlungsplan, den der Vermieter mit dem Mieter vereinbart.\nWenn der Vermieter seine Verpflichtung, einen Abwicklungskonzept zu erstellen, nicht erfüllt, greift die Caf (oder MSA), um das Solidaritätsfonds für Wohnen (FSL) zu aktivieren, damit dieser einen Abwicklungskonzept für die Schuld erstellt.\nDas Caf (oder das MSA) muss den Vermieter auffordern, die Zahlung als Dritten zu leisten (d. h. anstelle des Mieters). Der Vermieter hat 2 Monate Zeit, um zu antworten. Nach Ablauf dieser Frist gilt seine Schweigen als Ablehnung.\nFall: Im Falle eines Abfindungsplans für den Vermieter\nDer Mieter (oder der Vermieter) kann vom Vermieter verlangen, dass dieser innerhalb eines maximalen Zeitraums von 6 Monaten einen Plan zur Begleichung der Schuld erstellt (bei einer Ablehnung der Drittschuldnerforderung beträgt dieser Zeitraum 2 Monate).\nDieser Plan ist ein Dokument, das die Bedingungen für die Rückzahlung von nicht gezahlten Mieten festlegt (Betrag, Frist...).\nDie Auszahlung der Wohnkostenzuschüsse erfolgt weiterhin, wenn folgende zwei Bedingungen erfüllt sind:\n- Der Abwicklungskonzept wurde eingehalten und von Caf (oder MSA) genehmigt.\n- Der Mieter hat die laufende Miete wieder beglichen.\nWenn der Plan zur Abwicklung nicht innerhalb des vereinbarten Zeitrahmens eingelegt wird und nach erfolglosem Mahnverfahren, wird Caf (oder MSA) FSL verklagen.\nDas FSL hat dann einen Zeitraum von 3 Monaten, um einen Abwicklungskonzept zu erstellen.\nWenn das Unternehmen FSL die Frist von 3 Monaten nicht einhält, setzt Caf (oder MSA) selbst einen Abhilfeprozess ein.\nFall: Im Falle eines Abfindungsplans für FSL\nDas Caf (oder das MSA) kann das FSL direkt kontaktieren und ihm die Bitte erteilen, seinen Abwicklungsprozess innerhalb von 6 Monaten zu erläutern.\nNach Erhalt des Abwicklungsplans wird Caf (oder MSA) die Zahlung der Mietzuschüsse fortsetzen, vorausgesetzt, der Mieter setzt die Zahlung des aktuellen Mietbetrags fort.\nIm Falle einer fehlerhaften Umsetzung des Abzahlungsplans oder bei Nichtzahlung der aktuellen Miete, suspend die Caf (oder die MSA) die Auszahlung der Mietzuschüsse.\nWenn die FSL nicht innerhalb der vereinbarten Frist ihren Abwicklungsvorschlag einreicht, fordert die Caf (oder die MSA) den Mieter auf, die laufende Miete wieder zu zahlen.\nDer Mieter muss auch die gesamte Schuld zurückzahlen. Er muss dem Vermieter monatlich 1/36 seiner Schuld für 3 Jahre ab dem Monat nach der Mahnung überweisen.\nWenn die Zahlung nicht wieder aufgenommen wird oder der Plan nicht erfolgreich umgesetzt wird, wird die Caf (oder die MSA) die Auszahlung der Wohngeldleistung einstellen.",
+        "titre": "Wie wird ein Plan zur Schuldminderung im Falle von Zahlungsverzug bei Miete umgesetzt?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.5,
+      "units": 60
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:58:25.697Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Чи надається особиста допомога з оплати житла (APL (персоналізована житлова допомога), ALF (сімейна житлова допомога) або ALS (соціальна житлова допомога)), якщо орендна плата не сплачена?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 40.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "У разі несплати орендної плати, особиста допомога у вирішенні житлових питань (згідно з APL (персоналізована житлова допомога), ALF (сімейна житлова допомога) та ALS (соціальна житлова допомога)) може бути продовжена, щоб зменшити борг за оренду та уникнути виселення.",
+      "steps": [
+       {
+        "texte": "У разі несплати орендної плати, особиста допомога у вирішенні житлових питань (APL, ALS та ALF) може бути продовжена, щоб зменшити борг за оренду та уникнути виселення. Ситуація залежить від того, чи отримує допомога власник нерухомості, чи орендар.",
+        "titre": null
+       },
+       {
+        "texte": "Якщо орендар має борг, який становить щонайменше двічі суму щомісячної орендної плати та витрат, то виникає питання про неоплачений оренд.\nМісячний чистий розмір орендної плати відповідає орендній платі, зазначеній у договорі, з урахуванням суми допомоги на житло.",
+        "titre": "З якого розміру починається несплачений оренд?"
+       },
+       {
+        "texte": "Як тільки факт непогано оплаченої оренди підтверджується, орендодавець має 2 місяці, щоб повідомити про це до Caf (або MSA (сільськогосподарське соціальне страхування)).\nПовідомлення має бути надіслано переважно рекомендованим листом з повідомленням про отримання. Воно має містити ім'я, адресу орендаря, суму та період заборгованості за оренду.\n→ Куди звернутися: Caisse d'allocations familiales (Caf: каса сімейних допомог)\n→ Куди звернутися: Mutualité sociale agricole (MSA)\nУвага: орендар може отримати штраф у розмірі 8 010,00 євро, якщо не повідомить про прострочення оплати оренди до Caf (або MSA).\nCaf (або MSA) також може самостійно вимагати сплату, якщо вона знає про невиконання орендних зобов'язань, про які їй не було повідомлено.",
+        "titre": "Який термін для повідомлення про несплату орендної плати?"
+       },
+       {
+        "texte": "Після того, як кредитор повідомив про прострочку, Caf (або MSA) просить кредитора розробити план погашення боргу. Цей план – графік погашення боргу, який кредитор узгоджує з орендарем.\nЯкщо забудовник не виконує свою зобов'язання щодо розробки плану погашення боргу, тоді Caf (або MSA) звертається до Фонду соціального забезпечення для житла (FSL: фонд житлової солідарності) з проханням розробити план погашення боргу.\nВипадок: У разі наявності плану погашення боргу кредитором\nПлан погашення боргу має бути реалізований протягом максимального періоду у 6 місяців.\nЦей план – це документ, який визначає умови повернення непоганих орендних платежів (сума, термін...).\nВиплата допомоги на житло продовжується, якщо виконуються наступні умови:\n- План погашення виконано та прийнято Caf (або MSA).\n- Орендар знову почав сплачувати орендну плату.\nУ разі, якщо план погашення не буде отримано вчасно та після офіційного повідомлення кредитору, Caf (або MSA) має звернутися до FSL. FSL тоді має 3 місяці на розробку плану погашення.\nЯкщо термін у 3 місяці не буде дотриманий FSL, то Caf (або MSA) самостійно розробляє план погашення.\nВипадок: У разі реалізації плану викупу FSL\nCaf (або MSA) може безпосередньо звернутися до FSL і попросити його повідомити про свій план погашення за 6 місяців.\nПісля отримання плану погашення, Caf (або MSA) продовжує здійснювати виплату допомоги на житло, за умови, що орендар знову розпочне виплачувати оренду.\nУ разі неякісного виконання плану погашення боргу або несплати орендної плати, Caf (або MSA) призупиняє виплату допомоги на житло.\nКоли FSL не повідомляє своєчасно про свій план погашення боргів, Caf (або MSA) вимагає від орендаря знову сплачувати орендну плату.\nОрендар також зобов'язаний повернути всю суму боргу. Він повинен щомісяця сплачувати орендодавцю 1/36 від суми боргу протягом 3 років, починаючи з наступного місяця після отримання офіційного повідомлення.\nУ разі відсутності повторного сплати або у разі недобросовісного виконання плану, Caf (або MSA) припиняє виплату допомоги на житло.",
+        "titre": "Яким чином реалізується план погашення боргу у разі несплати орендної плати?"
+       },
+       {
+        "texte": "Якщо орендар має борг, який становить щонайменше двічі більшу суму, ніж щомісячний орендований розмір плюс витрати, то виникає питання про неоплачений оренд.\nМісячний орієнтовний розмір орендної плати відповідає сумі, зазначеній у договорі оренди.",
+        "titre": "З якого розміру починається несплачений оренд?"
+       },
+       {
+        "texte": "Як тільки факт непогано оплаченої оренди підтверджується, орендодавець має 2 місяці, щоб повідомити про це до Caf (або MSA).\nПовідомлення має бути надіслано переважно рекомендованим листом з повідомленням про отримання. Воно має містити ім'я, адресу орендаря, суму та період заборгованості за оренду.\n→ Куди звернутися: Caisse d'allocations familiales (Caf)\n→ Куди звернутися: Mutualité sociale agricole (MSA)\nУвага: орендар може отримати штраф у розмірі 8 010,00 євро, якщо не повідомить про прострочену оплату оренди до Caf (або MSA).\nCaf (або MSA) також може самостійно призупинити виплату, якщо вона має знання про невиплачену орендну плату, про яку не було повідомлено. Вона може призупинити або продовжити виплату допомоги на житло.",
+        "titre": "Який термін для повідомлення про несплату орендної плати?"
+       },
+       {
+        "texte": "Після того, як кредитор повідомив про прострочку, Caf (або MSA) просить кредитора розробити план погашення боргу. Цей план – графік погашення боргу, який кредитор узгоджує з орендарем.\nЯкщо забудовник не виконує свою зобов'язання щодо розробки плану погашення боргу, тоді Caf (або MSA) звертається до Фонду соціального забезпечення для житла (FSL) з проханням розробити план погашення боргу.\nCaf (або MSA) повинна запропонувати орендодавцю отримати виплату від третьої сторони (тобто замість орендаря). Орендодавець має 2 місяці на відповідь. Після цього, його мовчання розглядається як відмова.\nВипадок: У разі наявності плану погашення боргу кредитором\nCaf (або MSA) може попросити орендодавця розробити план погашення боргу протягом максимального періоду 6 місяців (2 місяці, якщо орендодавець відмовився від оплати третьої сторони).\nЦей план – це документ, який визначає умови повернення непоганих орендних платежів (сума, термін...).\nВиплата допомоги на житло продовжується, якщо виконуються наступні умови:\n- План погашення виконано та схвалено Caf (або MSA).\n- Орендар знову почав сплачувати орендну плату.\nУ разі відсутності плану погашення боргів у встановлений термін та після надсилання офіційного запиту кредитором, Caf (або MSA) звертається до FSL.\nТаким чином, компанія FSL має 3 місяці на розробку плану погашення боргів.\nЯкщо термін у 3 місяці не буде дотриманий FSL, то Caf (або MSA) самостійно розробляє план погашення.\nВипадок: У разі реалізації плану викупу FSL\nCaf (або MSA) може безпосередньо звернутися до FSL і попросити його повідомити про свій план погашення за 6 місяців.\nПісля отримання плану погашення, Caf (або MSA) продовжує здійснювати виплату допомоги на житло, за умови, що орендар знову розпочне виплачувати оренду.\nУ разі неякісного виконання плану погашення боргу або несплати орендної плати, Caf (або MSA) призупиняє виплату допомоги на житло.\nКоли FSL не повідомляє своєчасно про свій план погашення боргів, Caf (або MSA) вимагає від орендаря знову сплачувати орендну плату.\nОрендар також зобов'язаний повернути всю суму боргу. Він повинен щомісяця сплачувати орендодавцю 1/36 від суми боргу протягом 3 років, починаючи з наступного місяця після отримання офіційного повідомлення.\nУ разі відсутності повторного сплати або у разі недобросовісного виконання плану, Caf (або MSA) припиняє виплату допомоги на житло.",
+        "titre": "Яким чином реалізується план погашення боргу у разі несплати орендної плати?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69.8,
+      "units": 60
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:2821aeb0f156bfd37d66c1fd16eb4b2e1a050bea569e145dddab62c2461c6193",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "L'aide personnelle au logement (APL, ALF ou ALS) est-elle maintenue en cas de loyers impayés ?",
+   "contenu_json": {
+    "intro": "En cas de loyers impayés, l'aide personnelle au logement (APL, ALF et ALS) peut être maintenue pour alléger une dette de loyer et éviter l'expulsion.",
+    "steps": [
+     {
+      "texte": "En cas de loyers impayés, l'aide personnelle au logement (APL, ALS et ALF) peut être maintenue pour alléger une dette de loyer et éviter l'expulsion. La situation varie selon que l'aide est versée au bailleur ou au locataire.",
+      "titre": null
+     },
+     {
+      "texte": "Il y a impayé de loyer lorsque le locataire a une dette au moins égale à 2 fois le montant mensuel net du loyer et des charges.\nLe montant mensuel net du loyer correspond au loyer figurant sur le bail, déduction faite du montant de l'aide au logement.",
+      "titre": "À partir de quel montant y-a-t-il impayé de loyer ?"
+     },
+     {
+      "texte": "Dès que l'impayé est établi, le bailleur a 2 mois pour le signaler à la Caf (ou la MSA).\nLe signalement doit être fait de préférence par courrier recommandé avec avis de réception. Il doit mentionner le nom, l'adresse du locataire, le montant et la période de la dette de loyer.\n→ Où s'adresser : Caisse d'allocations familiales (Caf)\n→ Où s'adresser : Mutualité sociale agricole (MSA)\nAttention : le bailleur risque une amende de 8 010,00 € s'il ne signale pas l'impayé de loyer à la Caf (ou la MSA).\nLa Caf (ou la MSA) peut également s'auto-saisir si elle a connaissance d'un impayé de loyers qui ne lui a pas été signalé.",
+      "titre": "Dans quel délai signaler l’impayé de loyer ?"
+     },
+     {
+      "texte": "Une fois que le bailleur a signalé l'impayé, la Caf (ou la MSA) demande au bailleur de mettre en place un plan d'apurement de la dette. Ce plan est un échéancier du remboursement de la dette que le bailleur met en place avec le locataire.\nSi le bailleur ne respecte pas son obligation de mettre en place un plan d'apurement, la Caf (ou la MSA) saisit le fonds de solidarité pour le logement (FSL) pour qu'il fasse un plan d'apurement de la dette.\nCas : En cas de plan d'apurement du bailleur\nLe plan d'apurement de la dette doit être mis en place dans un délai maximal de 6 mois.\nCe plan est un document qui consiste à fixer les conditions de remboursement des loyers impayés (montant, délai...).\nLe versement de l'aide au logement est alors maintenu si les 2 conditions suivantes sont remplies :\n- Le plan d'apurement est respecté et accepté par la Caf (ou la MSA)\n- Le locataire a repris le paiement du loyer en cours.\nSans réception du plan d'apurement dans le délai et après mise en demeure du bailleur, la Caf (ou la MSA) doit saisir le FSL. Le FSL a alors 3 mois pour établir un plan d'apurement.\nSi le délai de 3 mois n'est pas respecté par le FSL, la Caf (ou la MSA) met elle-même en place un plan d'apurement.\nCas : En cas de plan d'apurement du FSL\nLa Caf (ou la MSA) peut saisir directement le FSL en lui demandant de faire connaître son plan d'apurement dans un délai de 6 mois.\nAprès réception du plan d'apurement, la Caf (ou la MSA) maintient le versement de l'aide au logement à la condition que le locataire reprenne le paiement du loyer en cours.\nEn cas de mauvaise exécution du plan d'apurement ou de non-paiement du loyer en cours, la Caf (ou la MSA) suspend le versement de l'aide au logement.\nLorsque le FSL ne fait pas connaître dans les délais son plan d'apurement, la Caf (ou la MSA) met en demeure le locataire de reprendre le paiement du loyer en cours.\nLe locataire doit également rembourser l'intégralité de sa dette. Il doit verser chaque mois au bailleur 1/36e de sa dette pendant 3 ans à partir du mois suivant la mise en demeure.\nSans reprise du paiement ou en cas de mauvaise exécution du plan, la Caf (ou la MSA) suspend le versement de l'aide au logement.",
+      "titre": "Comment est mis en place le plan d'apurement de la dette en cas d’impayé de loyer ?"
+     },
+     {
+      "texte": "Il y a impayé de loyer lorsque le locataire a une dette au moins égale à 2 fois le montant mensuel brut du loyer et des charges.\nLe montant mensuel brut du loyer correspond au loyer figurant dans le bail.",
+      "titre": "À partir de quel montant y-a-t-il impayé de loyer ?"
+     },
+     {
+      "texte": "Dès que l'impayé est établi, le bailleur a 2 mois pour le signaler à la Caf (ou la MSA).\nLe signalement doit être fait de préférence par courrier recommandé avec avis de réception. Il doit mentionner le nom, l'adresse du locataire, le montant et la période de la dette de loyer.\n→ Où s'adresser : Caisse d'allocations familiales (Caf)\n→ Où s'adresser : Mutualité sociale agricole (MSA)\nAttention : le bailleur risque une amende de 8 010,00 € s'il omet de signaler l'impayé de loyer à la Caf (ou la MSA).\nLa Caf (ou la MSA) peut également s'auto-saisir si elle a connaissance d'un impayé de loyers qui ne lui a pas été signalé. Elle peut suspendre ou maintenir le paiement de l'aide au logement.",
+      "titre": "Dans quel délai signaler l’impayé de loyer ?"
+     },
+     {
+      "texte": "Une fois que le bailleur a signalé l'impayé, la Caf (ou la MSA) demande au bailleur de mettre en place un plan d'apurement de la dette. Ce plan est un échéancier du remboursement de la dette que le bailleur met en place avec le locataire.\nSi le bailleur ne respecte pas son obligation de mettre en place un plan d'apurement, la Caf (ou MSA) saisit le fonds de solidarité pour le logement (FSL) pour qu'il fasse un plan d'apurement de la dette.\nLa Caf (ou la MSA) doit proposer au bailleur d'obtenir le versement en tiers-payant (c’est-à-dire à la place du locataire). Le bailleur a 2 mois pour répondre. Au-delà, son silence vaut refus.\nCas : En cas de plan d'apurement du bailleur\nLa Caf (ou la MSA) peut demander au bailleur qu'il établisse un plan d'apurement de la dette dans un délai maximal de 6 mois (2 mois si le bailleur a refusé le tiers-payant).\nCe plan est un document qui consiste à fixer les conditions de remboursement des loyers impayés (montant, délai...).\nLe versement de l'aide au logement est alors maintenu si les 2 conditions suivantes sont remplies :\n- Le plan d'apurement est respecté et approuvé par la Caf (ou la MSA)\n- Le locataire a repris le paiement du loyer en cours.\nSans réception du plan d'apurement dans le délai et après mise en demeure du bailleur, la Caf (ou la MSA) saisit le FSL.\nLe FSL dispose alors d'un délai de 3 mois pour établir un plan d'apurement.\nSi le délai de 3 mois n'est pas respecté par le FSL, la Caf (ou la MSA) met elle-même en place un plan d'apurement.\nCas : En cas de plan d'apurement du FSL\nLa Caf (ou la MSA) peut saisir directement le FSL en lui demandant de faire connaître son plan d'apurement dans un délai de 6 mois.\nAprès réception du plan d'apurement, la Caf (ou la MSA) maintient le versement de l'aide au logement à la condition que le locataire reprenne le paiement du loyer en cours.\nEn cas de mauvaise exécution du plan d'apurement ou de non-paiement du loyer en cours, la Caf (ou la MSA) suspend le versement de l'aide au logement.\nLorsque le FSL ne fait pas connaître dans les délais son plan d'apurement, la Caf (ou la MSA) met en demeure le locataire de reprendre le paiement du loyer en cours.\nLe locataire doit également rembourser l'intégralité de sa dette. Il doit verser chaque mois au bailleur 1/36e de sa dette pendant 3 ans à partir du mois suivant la mise en demeure.\nSans reprise du paiement ou en cas de mauvaise exécution du plan, la Caf (ou la MSA) suspend le versement de l'aide au logement.",
+      "titre": "Comment est mis en place le plan d'apurement de la dette en cas d’impayé de loyer ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,621 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+ "recordId": "c02687fc-c700-42be-9dfd-1b123e6da12b",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.171Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Allocation for unemployment benefit and assistance with returning to work (ARE: unemployment benefit) for a public sector employee whose employment contract ends before April 1, 2025",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Return to Work Allowance (ARE: unemployment benefit) is a unemployment benefit designed for public sector employees whose employment contract ends before April 1, 2025. It allows recipients to receive a replacement income in the event of job loss. It is calculated based on age and the end date of the contract, and includes a minimum amount.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Return to Work Allowance (ARE: unemployment benefit) is a unemployment benefit designed for public sector employees whose employment contract ends before April 1, 2025. It allows recipients to receive a replacement income in the event of job loss. It is calculated based on age and the end date of the contract, and includes a minimum amount.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- You are under 53 years old\n- Your employment contract ends before April 1, 2025.\n- You have worked for at least 6 months (130 days or 910 hours) in the past 24 months.\n- You have not received any payments related to a previous contract.\n- You have not engaged in any self-employment activity during your period of suspension.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The gross daily amount of ARE (unemployment benefit) includes a fixed component of €13.18 and a variable component of 40.4% of the reference daily wage (SJR). This amount cannot be less than 57% or more than 75% of the SJR. The net amount cannot be less than €32.13. If you are undertaking a prescribed training course, the minimum amount is €22.99.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 80,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Please check that you meet the age and contract end date requirements.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Make sure you have worked for at least 6 months (130 days or 910 hours) in the past 24 months.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Contact France Travail (public employment service) to submit your request.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Gather the necessary documents to prove your employment status.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.3,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of employment (contracts, pay slips, etc.)",
+      "Proof of training (if applicable)",
+      "Documentation for periods of suspension (if applicable)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.4,
+      "units": 3
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.173Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kamu görevlisinin işten ayrılması, 1 Nisan 2025 tarihinden önce tamamlanacak bir sözleşme süresinden kaynaklanması durumunda, işe yeniden başlamasına yönelik destek ve işsizlik yardımı için ayrılan miktar.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 54.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"İş Yerine Dönme Yardımı (T1)\", 1 Nisan 2025 tarihinden önce sona eren kamu çalışanları için ödenen, işsizlik yardımıdır. İş kaybı durumunda, çalışanların gelirlerini korumalarına olanak tanır. Bu yardım, yaş ve sözleşme bitiş tarihine göre belirlenir. Hesaplaması, günlük ortalama maaşın üzerine göre yapılır ve belirli bir minimum tutar içerir.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"İş Yerine Dönme Yardımı (T1)\", 1 Nisan 2025 tarihinden önce sona eren kamu çalışanları için ödenen, işsizlik yardımıdır. İş kaybı durumunda, çalışanların gelirlerini korumalarına olanak tanır. Bu yardım, yaş ve sözleşme bitiş tarihine göre belirlenir. Hesaplaması, günlük ortalama maaşın üzerine göre yapılır ve belirli bir minimum tutar içerir.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- 53 yaşın altında\n- İş sözleşmenizin geçerlilik süresi 1 Nisan 2025 tarihinden önce sona eriyor.\n- En son önceki 24 ay içinde, en az 6 ay (130 gün veya 910 saat) boyunca çalışmış olmanız gerekmektedir.\n- Önceki bir sözleşmeyle bağlantılı herhangi bir ödeme veya tazminat almadınız.\n- Belirtilen süre boyunca ücretli bir işte çalışmadınız.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "ARE (işsizlik ödeneği)'in brüt günlük ücreti, 13,18 € sabit bir miktar ve günlük referans ücretinin (%40,4) değişken bir kısmından oluşmaktadır. Bu miktar, günlük referans ücretinin (%SJR) en az %57 ve en fazla %75'ine eşit olmalıdır. Net ücret, en az 32,13 € olmalıdır. Eğer belirlenen bir eğitim programına katılıyorsanız, minimum ücret 22,99 €'dur.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation",
+       "modality"
+      ],
+      "roundtrip": 55.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Yaş ve sözleşme süresinin bitiş tarihine uygun olup olmadığını kontrol edin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "En son üzerinde, en son son 24 ay içinde en az 6 ay (130 gün veya 910 saat) boyunca çalışmış olduğunuzdan emin olun.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "France Travail (kamu istihdam kurumu)'i arayarak veya iletişime geçerek başvurunuzu yapabilirsiniz.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Çalışma durumunuzu kanıtlamak için gerekli belgeleri hazırlayın.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.7,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Çalışma belgeleri (iş sözleşmeleri, maaş bordroları, vb.)",
+      "Eğitim belgeleri (uygun durumlarda)",
+      "İlgili dönemlerdeki askıya alma nedenlerinin kanıtları (uygunsa)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.9,
+      "units": 3
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.176Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تخصيص إعانة البطالة لمساعدة الموظف العام على العودة إلى العمل، وذلك في حالة انتهاء عقد عمله قبل 1 أبريل 2025.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"منحة العائد إلى العمل ((ARE: إعانة البطالة)) هي منحة للعاطلين مخصصة للموظفين الحكوميين الذين ينتهي عقد عملهم قبل 1 أبريل 2025. تتيح هذه المنحة الحصول على دخل بديل في حالة فقدان الوظيفة. يتم تحديد مبلغ المنحة بناءً على العمر وتاريخ انتهاء العقد. يتم حسابها بناءً على الراتب اليومي المرجعي، ويشمل مبلغًا أدنى.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"منحة العائد إلى العمل ((ARE: إعانة البطالة)) هي منحة للعاطلين مخصصة للموظفين الحكوميين الذين ينتهي عقد عملهم قبل 1 أبريل 2025. تتيح هذه المنحة الحصول على دخل بديل في حالة فقدان الوظيفة. يتم تحديد مبلغ المنحة بناءً على العمر وتاريخ انتهاء العقد. يتم حسابها بناءً على الراتب اليومي المرجعي، ويشمل مبلغًا أدنى.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أنت أقل من 53 عامًا\n- ينتهي عقد عملك قبل 1 أبريل 2025.\n- لقد عملت لمدة لا تقل عن 6 أشهر (130 يومًا أو 910 ساعة) خلال الأشهر الـ 24 الماضية.\n- لم تتلق أي مستحقات مرتبطة بعقد سابق.\n- لم تزاول أي نشاط مهني غير مرتبط بالعمل خلال فترة الإيقاف.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يشمل المبلغ الإجمالي اليومي للـ ARE (إعانة البطالة) جزء ثابت قدره 13,18 يورو وجزء متغير يمثل 40,4% من الراتب اليومي المرجعي (SJR). يجب ألا يقل هذا المبلغ عن 57% ولا يزيد عن 75% من الراتب اليومي المرجعي. يجب ألا يقل المبلغ الصافي عن 32,13 يورو. إذا كنت تخضع لتدريب محدد، فإن المبلغ الأدنى هو 22,99 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 69.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تأكد من استيفائك لشروط العمر وتاريخ انتهاء العقد.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تأكد من أنك عملت لمدة لا تقل عن 6 أشهر (130 يومًا أو 910 ساعة) خلال الـ 24 شهرًا الماضية.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "لتقديم طلبك، يرجى الاتصال بـ France Travail (هيئة التشغيل العمومية).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "جهز المستندات اللازمة لإثبات وضعك الوظيفي.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "وثائق العمل (عقود، كشوفات الرواتب، إلخ)",
+      "وثائق إثبات التدريب (إذا كانت ذات صلة)",
+      "وثائق تثبت فترات التعليق (إذا كانت ذات صلة)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.2,
+      "units": 3
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.178Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zuweisung von Arbeitslosengeld zur Unterstützung der Rückkehr an den Arbeitsplatz für eine öffentliche Angestellte, deren Arbeitsvertrag vor dem 1. April 2025 endet.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 68.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die \"Arbeitsplatz-Rückkehr-Zuschuss\" (ARE: Arbeitslosengeld) ist eine Arbeitslosenzuschuss, die für Beamte bestimmt ist, deren Arbeitsvertrag vor dem 1. April 2025 endet. Sie ermöglicht es, ein Einkommen zu erhalten, falls der Arbeitsplatz verloren geht. Die Höhe des Zuschusses richtet sich nach dem Alter und dem Vertragsende. Sie wird auf der Grundlage des durchschnittlichen Tageslohns berechnet und beinhaltet einen Mindestbetrag.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die \"Arbeitsplatz-Rückkehr-Zuschuss\" (ARE: Arbeitslosengeld) ist eine Arbeitslosenzuschuss, die für Beamte bestimmt ist, deren Arbeitsvertrag vor dem 1. April 2025 endet. Sie ermöglicht es, ein Einkommen zu erhalten, falls der Arbeitsplatz verloren geht. Die Höhe des Zuschusses richtet sich nach dem Alter und dem Vertragsende. Sie wird auf der Grundlage des durchschnittlichen Tageslohns berechnet und beinhaltet einen Mindestbetrag.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Sie sind unter 53 Jahre alt\n- Ihr Arbeitsvertrag endet vor dem 1. April 2025.\n- Sie müssen mindestens 6 Monate (130 Tage oder 910 Stunden) in den letzten 24 Monaten beschäftigt gewesen sein.\n- Sie haben keine Leistungen im Zusammenhang mit einem vorherigen Vertrag erhalten.\n- Sie haben während der Auszeit keine selbstständige Tätigkeit ausgeübt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Das Brutto-Tagesgehalt umfasst einen festen Betrag von 13,18 € und einen variablen Anteil von 40,4 % des Referenz-Tagesgehalts (SJR). Diese Summe darf nicht unter 57 % und darf nicht über 75 % des SJR liegen. Das Netto-Gehalt darf nicht weniger als 32,13 € betragen. Wenn Sie an einem vorgeschriebenen Kurs teilnehmen, beträgt das Mindestgehalt 22,99 €.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 70.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie, ob Sie die erforderlichen Alters- und Vertragsende-Bedingungen erfüllen.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Stellen Sie sicher, dass Sie mindestens 6 Monate (130 Tage oder 910 Stunden) in den letzten 24 Monaten gearbeitet haben.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Kontaktieren Sie France Travail (öffentliche Arbeitsverwaltung), um Ihre Anfrage einzureichen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Bereiten Sie die erforderlichen Dokumente vor, um Ihre Arbeitsverhältnisse nachzuweisen.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.1,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Arbeitsnachweise (Verträge, Gehaltsabrechnungen usw.)",
+      "Nachweise über die Ausbildung (falls zutreffend)",
+      "Nachweise für die Dauer von Aussetzungen (falls zutreffend)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.5,
+      "units": 3
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.180Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Визначення розміру допомоги при поверненні до праці для державних службовців, термін контракту яких закінчується до 1 квітня 2025 року.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 51.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Виплата допомоги на повернення до роботи (ARE: допомога з безробіття) – це виплата, призначена для державних службовців, чиї трудові контракти закінчуються до 1 квітня 2025 року. Вона дозволяє отримувати дохід у разі втрати роботи. Виплата розраховується на основі середньої заробітної плати та має мінімальний розмір.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Виплата допомоги на повернення до роботи (ARE: допомога з безробіття) – це виплата, призначена для державних службовців, чиї трудові контракти закінчуються до 1 квітня 2025 року. Вона дозволяє отримувати дохід у разі втрати роботи. Виплата розраховується на основі середньої заробітної плати та має мінімальний розмір.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Вас не було більше 53 років\n- Ваш трудовий договір закінчується до 1 квітня 2025 року.\n- Ви працювали принаймні 6 місяців (130 днів або 910 годин) протягом останніх 24 місяців.\n- Ви не отримували виплати, пов'язані з попереднім контрактом.\n- Ви не займалися будь-якою неплатнією професійною діяльністю протягом періоду призупинення",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Добова сума брутного заробітку, що включає фіксовану частину в розмірі 13,18 євро та змінну частину у розмірі 40,4% від базової заробітної плати (БЗП), не може бути нижчою за 57% і не може перевищувати 75% від БЗП. Чиста сума не може бути нижчою за 32,13 євро. Якщо ви проходите затверджене навчання, мінімальна сума становить 22,99 євро.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перевірте, чи відповідаєте ви вимогам щодо віку та терміну дії контракту.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Переконайтеся, що ви працювали принаймні 6 місяців (130 днів або 910 годин) протягом останніх 24 місяців.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Зверніться до France Travail (державна служба зайнятості) для подання вашого запиту.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Підготуйте необхідні документи, які підтверджують вашу трудову ситуацію.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.5,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документи, що підтверджують трудовий стаж (контракти, виплати, тощо)",
+      "Документи, що підтверджують навчання (за наявності)",
+      "Документи, що підтверджують період призупинення (за наявності)."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.9,
+      "units": 3
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:64b9f63380287198162495f8e131b68eb92d1ba9cfb84945b40c1489a0f34f50",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation chômage d'aide au retour à l'emploi (ARE) d'un agent public dont la fin de contrat de travail intervient avant le 1er avril 2025",
+   "description": "L'Allocation d'Aide au Retour à l'Emploi (ARE) est une allocation chômage destinée aux agents publics dont le contrat de travail se termine avant le 1er avril 2025. Elle permet de bénéficier d'un revenu de remplacement en cas de perte d'emploi. Elle s'applique selon l'âge et la date de fin de contrat. Elle est calculée en fonction du salaire journalier de référence et comporte un montant minimum.",
+   "cest_quoi": "L'Allocation d'Aide au Retour à l'Emploi (ARE) est une allocation chômage destinée aux agents publics dont le contrat de travail se termine avant le 1er avril 2025. Elle permet de bénéficier d'un revenu de remplacement en cas de perte d'emploi. Elle s'applique selon l'âge et la date de fin de contrat. Elle est calculée en fonction du salaire journalier de référence et comporte un montant minimum.",
+   "pour_qui": "- Vous avez moins de 53 ans\n- Votre contrat de travail se termine avant le 1er avril 2025\n- Vous avez travaillé au moins 6 mois (130 jours ou 910 heures) dans les 24 derniers mois\n- Vous n'avez pas perçu d'allocations en relation avec un contrat antérieur\n- Vous n'avez pas exercé une activité professionnelle non salariée pendant une période de suspension",
+   "ce_que_ca_aide": "Le montant brut journalier de l'ARE comprend une partie fixe de 13,18 € et une partie variable de 40,4 % du salaire journalier de référence (SJR). Cette somme ne peut pas être inférieure à 57 % et ne peut pas être supérieure à 75 % du SJR. Le montant net ne peut pas être inférieur à 32,13 €. Si vous suivez une formation prescrite, le montant minimum est de 22,99 €.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vérifiez si vous remplissez les conditions d'âge et de date de fin de contrat."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Assurez-vous d'avoir travaillé au moins 6 mois (130 jours ou 910 heures) dans les 24 derniers mois."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Contactez France Travail pour déposer votre demande."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Préparez les documents nécessaires pour justifier votre situation de travail."
+    }
+   ],
+   "documents_necessaires": [
+    "Justificatifs de travail (contrats, bulletins de salaire, etc.)",
+    "Justificatifs de formations (si applicable)",
+    "Justificatifs de périodes de suspension (si applicable)"
+   ],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:27:15.140Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12386",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,515 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "prime-activite",
+ "recordId": "eb108656-0157-442f-bdab-c16af66e519a",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:47.549Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Prime d'activité (top-up for low earnings)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "prime d'activité (top-up for low earnings) is a financial aid program for workers (employees or self-employed) with modest incomes, designed to encourage them to engage in or return to employment and to support their purchasing power. It is available to people aged 18 and over. To apply for the grant, you must visit the website of Caf (family benefits office).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "prime d'activité (top-up for low earnings) is a financial aid program for workers (employees or self-employed) with modest incomes, designed to encourage them to engage in or return to employment and to support their purchasing power. It is available to people aged 18 and over. To apply for the grant, you must visit the website of Caf (family benefits office).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Low-income workers (both employed and self-employed)\n- Individuals aged 18 and over\n- Apartments for individuals or couples\n- People with dependent children\n- Single parents (those who are widowed, divorced, separated, or have never been married) with dependent children or those who are pregnant.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.3,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The basic flat-rate is €638.28. The amounts vary depending on whether you live alone or with a partner, and on the number of children or dependents. For each additional child or dependent, the flat-rate increases by €255.31.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check if you meet the requirements to receive the prime d'activité (top-up for low earnings).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Estimate the amount of prime d'activité using the online simulator",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Request the prime d'activité ] online through the online service of Caf (family benefits office).",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.8,
+      "units": 3
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:55.839Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Prime d'activité (düşük kazanç tamamlama yardımı)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "length"
+      ],
+      "roundtrip": 35.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "prime d'activité (düşük kazanç tamamlama yardımı), çalışanlar (memur veya serbest çalışan) için, özellikle düşük gelirli bireyleri, iş hayatına devam etmeye veya yeniden işe girmeye teşvik etmek ve satın alma gücünü desteklemek amacıyla sağlanan mali yardımdır. Bu yardım 18 yaş ve üstü bireylere açıktır. Bu yardımı almak için, Caf (aile yardımları kurumu)'nin internet sitesine başvurulmalıdır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "prime d'activité (düşük kazanç tamamlama yardımı), çalışanlar (memur veya serbest çalışan) için, özellikle düşük gelirli bireyleri, iş hayatına devam etmeye veya yeniden işe girmeye teşvik etmek ve satın alma gücünü desteklemek amacıyla sağlanan mali yardımdır. Bu yardım 18 yaş ve üstü bireylere açıktır. Bu yardımı almak için, Caf (aile yardımları kurumu)'nin internet sitesine başvurulmalıdır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Düşük gelirli çalışanlar (memur veya serbest çalışan)\n- 18 yaş ve üstündeki kişiler\n- Yalnız yaşayan veya çift olarak oturan kişiler\n- Çocukları olan bireyler\n- Yalnız ebeveynler (tek ebeveynli, boşanmış, ayrılmış, dul) çocukları olan veya hamile olan kişiler.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 55.5,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Temel sabit ücret 638,28 €'dir. Ücretler, kişinin tek başına mı yoksa bir çift olarak mı yaşadığına, çocuk veya bakıma muhtaç diğer kişilerin sayısına göre değişiklik göstermektedir. Her ek çocuk veya bakıma muhtaç kişi için, sabit ücret 255,31 € artmaktadır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "prime d'activité (düşük kazanç tamamlama yardımı)'i alabilmek için gerekli şartların karşılanıp karşılanmadığını kontrol edin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Çevrimiçi simülatör aracılığıyla prime d'activité'in miktarını tahmin edin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "prime d'activité'yi Caf (aile yardımları kurumu)'nin çevrimiçi hizmeti aracılığıyla internet üzerinden talep etmek",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 3
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:03.724Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Prime d'activité (منحة النشاط (تكملة للدخل المنخفض))",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "length"
+      ],
+      "roundtrip": 44.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"prime d'activité (منحة النشاط (تكملة للدخل المنخفض)) هي مساعدة مالية موجهة للعاملين (الموظفين أو غير الموظفين) ذوي الدخل المحدود، بهدف تشجيعهم على ممارسة أو استئناف نشاط مهني ودعم قدرتهم الشرائية. وهي متاحة للأشخاص الذين تزيد أعمارهم عن 18 عامًا. للحصول على هذه المكافأة، يجب زيارة الموقع الإلكتروني لـ Caf (صندوق الإعانات العائلية).\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"prime d'activité (منحة النشاط (تكملة للدخل المنخفض)) هي مساعدة مالية موجهة للعاملين (الموظفين أو غير الموظفين) ذوي الدخل المحدود، بهدف تشجيعهم على ممارسة أو استئناف نشاط مهني ودعم قدرتهم الشرائية. وهي متاحة للأشخاص الذين تزيد أعمارهم عن 18 عامًا. للحصول على هذه المكافأة، يجب زيارة الموقع الإلكتروني لـ Caf (صندوق الإعانات العائلية).\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- العاملون (سواء كانوا موظفين أو مستقلين) ذوي الدخل المحدود.\n- الأشخاص الذين تزيد أعمارهم عن 18 عامًا\n- المنازل التي يسكنها شخص واحد أو زوجان\n- الأشخاص الذين لديهم أطفال يحتاجون إلى رعاية\n- الأهل الذين يعيشون بمفردهم (أولياء، مطلقان، منفصلون، أرامل) لديهم أطفال أو حاملات،",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "المبلغ الأساسي الثابت هو 638.28 يورو. تختلف هذه المبالغ حسب ما إذا كان الشخص يعيش بمفرده أو مع شريك حياته، ووفقًا لعدد الأطفال أو الأفراد الذين يحتاج إلى رعاية. بالنسبة لكل طفل أو فرد إضافي، يزداد المبلغ الأساسي بمقدار 255.31 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تحقق مما إذا كنت تستوفي الشروط للحصول على prime d'activité (منحة النشاط (تكملة للدخل المنخفض)).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقدير قيمة prime d'activité باستخدام المحاكي عبر الإنترنت.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "طلب prime d'activité عبر الإنترنت من خلال خدمة Caf (صندوق الإعانات العائلية)",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.4,
+      "units": 3
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:12.170Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Prime d'activité (Aufstockungsleistung bei geringem Einkommen)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "length"
+      ],
+      "roundtrip": 49,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Das prime d'activité (Aufstockungsleistung bei geringem Einkommen) ist eine finanzielle Unterstützung für Arbeitnehmer (Angestellte oder Selbstständige) mit geringem Einkommen, um sie zu ermutigen, eine berufliche Tätigkeit auszuüben oder wieder aufzunehmen, und ihren Kaufkraft zu stärken. Sie ist für Personen ab 18 Jahren verfügbar. Um die finanzielle Unterstützung zu beantragen, muss man die Webseite von Caf (Familienkasse) besuchen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Das prime d'activité (Aufstockungsleistung bei geringem Einkommen) ist eine finanzielle Unterstützung für Arbeitnehmer (Angestellte oder Selbstständige) mit geringem Einkommen, um sie zu ermutigen, eine berufliche Tätigkeit auszuüben oder wieder aufzunehmen, und ihren Kaufkraft zu stärken. Sie ist für Personen ab 18 Jahren verfügbar. Um die finanzielle Unterstützung zu beantragen, muss man die Webseite von Caf (Familienkasse) besuchen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Arbeitskräfte (angestellte oder selbstständige) mit geringem Einkommen\n- Personen ab 18 Jahren\n- Wohnungen für Einzelpersonen oder Paare\n- Personen mit minderjährigen Kindern\n- Alleinerziehende Eltern (ledig, geschieden, getrennt lebend, verwitwet) mit Kindern oder Schwangeren",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 57.6,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Grundpauschale beträgt 638,28 €. Die Höhe der Pauschale variiert je nach Wohnsituation (allein oder als Paar) und der Anzahl der Kinder oder zu versorgenden Personen. Für jedes zusätzliche Kind oder jede zusätzliche zu versorgende Person erhöht sich die Grundpauschale um 255,31 €.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie, ob Sie die Voraussetzungen erfüllen, um die prime d'activité (Aufstockungsleistung bei geringem Einkommen) zu erhalten.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Den Betrag von prime d'activité mithilfe des Online-Simulators abschätzen",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Die prime d'activité-Anträge über das Internet über den Online-Service von Caf (Familienkasse) beantragen.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.7,
+      "units": 3
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:20.390Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Prime d'activité (доплата при низькому заробітку)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "length",
+       "roundtrip_low"
+      ],
+      "roundtrip": 30.3,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "prime d'activité (доплата при низькому заробітку) – це фінансова допомога, призначена для працівників (найнятих або самозайнятих) з низьким рівнем доходу, щоб заохотити їх до продовження або відновлення професійної діяльності та підтримати їх купівельну спроможність. Доступна особам віком від 18 років. Щоб отримати цю допомогу, необхідно відвідати веб-сайт Caf (каса сімейних допомог).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "prime d'activité (доплата при низькому заробітку) – це фінансова допомога, призначена для працівників (найнятих або самозайнятих) з низьким рівнем доходу, щоб заохотити їх до продовження або відновлення професійної діяльності та підтримати їх купівельну спроможність. Доступна особам віком від 18 років. Щоб отримати цю допомогу, необхідно відвідати веб-сайт Caf (каса сімейних допомог).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Працівники (оплачувані або неоплачувані), з обмеженими доходами\n- Особи віком понад 18 років\n- Квартири для людей, які живуть самостійно або у парі.\n- Особи, які мають дітей, за якими потрібно доглядати\n- Самотні батьки (одинаки, розлучені, розділені, вдові/вдові) з дітьми, які перебувають на їхньому утриманні, або вагітні жінки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.4,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Базова фіксована сума становить 638,28 євро. Суми варіюються залежно від того, чи проживаєте ви самостійно, у парі, та від кількості дітей або інших осіб, за якими потрібно доглядати. За кожну додаткову дитину або особу, за якою потрібно доглядати, фіксована сума збільшується на 255,31 євро.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перевірити, чи відповідають ви вимогам для отримання prime d'activité (доплата при низькому заробітку).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Оцінити суму prime d'activité за допомогою онлайн-симулятора",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Замовити prime d'activité в інтернеті через онлайн-сервіс Caf (каса сімейних допомог)",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 3
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:4e2330a251e24d6986c006e8d54ca3657589b04373f14e6221259fa9095cc133",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Prime d'activité",
+   "description": "La prime d'activité est une aide financière destinée aux travailleurs (salariés ou non salariés) aux ressources modestes, pour les encourager à exercer ou reprendre une activité professionnelle et soutenir leur pouvoir d'achat. Elle est accessible aux personnes de plus de 18 ans. Pour demander la prime, il faut se rendre sur le site internet de la Caf.",
+   "cest_quoi": "La prime d'activité est une aide financière destinée aux travailleurs (salariés ou non salariés) aux ressources modestes, pour les encourager à exercer ou reprendre une activité professionnelle et soutenir leur pouvoir d'achat. Elle est accessible aux personnes de plus de 18 ans. Pour demander la prime, il faut se rendre sur le site internet de la Caf.",
+   "pour_qui": "- Travailleurs (salariés ou non salariés) aux ressources modestes\n- Personnes de plus de 18 ans\n- Foyers vivant seul ou en couple\n- Personnes ayant des enfants à charge\n- Parents isolés (célibataires, divorcés, séparés, veufs) avec des enfants à charge ou enceintes",
+   "ce_que_ca_aide": "Le montant forfaitaire de base est de 638,28 €. Les montants varient selon que l'on vit seul ou en couple et selon le nombre d'enfants ou de personnes à charge. Par enfant ou personne à charge supplémentaire, le montant forfaitaire augmente de 255,31 €.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vérifier si l'on remplit les conditions pour percevoir la prime d'activité"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Estimer le montant de la prime d'activité via le simulateur en ligne"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Demander la prime d'activité sur internet via le service en ligne de la Caf"
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:40:11.212Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/N31477",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

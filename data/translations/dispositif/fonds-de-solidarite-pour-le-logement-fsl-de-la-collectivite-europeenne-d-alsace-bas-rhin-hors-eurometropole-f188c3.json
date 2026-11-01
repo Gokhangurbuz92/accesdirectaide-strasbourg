@@ -1,0 +1,238 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "dispositif",
+ "slug": "fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3",
+ "recordId": "61c91a0a-f0db-456b-85a0-726b7b3cbe97",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:01:32.593Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Solidarity fund for housing (FSL: housing solidarity fund) of the European Alsace – Bas-Rhin outside the Euro-metropolis",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.2,
+      "units": 1
+     }
+    },
+    "summary_falc": {
+     "text": "The document explains how to assist tenants who are facing difficulties.\nIt offers assistance such as the FSL(housing solidarity fund) and the LOCA-PASS (advance on the deposit by Action Logement (employer-funded housing organisation)).\nThese grants help you pay your rent or stay in your current home.\nYou can also obtain a guarantee for the rent.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73,
+      "units": 4
+     }
+    },
+    "description_falc": {
+     "text": "The document explains how to facilitate access to and maintain housing in the event of financial difficulties or rent arrears. It outlines several schemes, such as FSL (housing solidarity fund), LOCA-PASS, FASTT, and VISALE, which allow tenants to obtain financial assistance or a guarantee. It also explains how tenants can find out about their rights and obligations, and how to find a guarantor. Tenants living in substandard housing can also obtain information on the criteria for decent housing.\n\nFor whom:\n- Tenants struggling to pay rent or utility bills\n- Individuals with outstanding rent debts or unpaid bills\n- People under the age of 30\n- Employees of a private, non-agricultural business\n- Employees who are starting or ending their employment contracts\n- Tenants in a private estate with outstanding rent\n\nHow to:\n- Contact your local Solidarity Space to receive support and assess your needs.\n- Ensure that you do not meet the eligibility criteria for other assistance programs such as LOCA-PASS, FASTT, or VISALE.\n- Contact your local Caisse d’allocations familiales (CAF: family benefits office)], or the agricultural social security office, to find out about any potential housing assistance you may be eligible for.\n- Submit the CCAPEX application by completing the form available for download and sending it to the appropriate address.\n- Find out about your rights and obligations as a tenant through the ADIL (Agence Départementale d'Information sur le Logement - Departmental Agency for Housing Information).\n- If you need a guarantee, contact Action logement and ask about the Visale guarantee.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.7,
+      "units": 15
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:02:12.443Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Alsa Bölgesi — Bas-Rhin (Eurométropol dışı) için konut dayanışma fonu",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 53,
+      "units": 1
+     }
+    },
+    "summary_falc": {
+     "text": "Bu doküman, zor durumda olan kiracıları nasıl destekleyeceğinizi açıklamaktadır.\nBu, örneğin FSL(konut için dayanışma fonu) ve Action Logement(garanti depozitosu için T1 tarafından sağlanan ödeme) gibi destekleri içerir.\nBu yardımlar, kira ödemenize veya mevcut konutunuzda kalmanıza yardımcı olur.\nAyrıca kira için de garanti alabilirsiniz.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.4,
+      "units": 4
+     }
+    },
+    "description_falc": {
+     "text": "Bu doküman, finansal zorluklar veya kira borçları durumunda konut edinmeyi ve elde tutmayı kolaylaştırmak için çeşitli yöntemleri açıklamaktadır. Bu yöntemler arasında FSL (konut dayanışma fonu), LOCA-PASS, FASTT ve VISALE gibi, finansal destek veya teminat sağlayan çeşitli programlar yer almaktadır. Ayrıca, kiracı olarak sahip olunan haklar ve sorumluluklar hakkında bilgi edinmenin yanı sıra, teminat sağlamanın yolları da belirtilmektedir. Uygun olmayan bir konutta yaşayan kiracılar, uygunluk kriterleri hakkında da bilgi edinebilirler.\n\nKim için:\n- Kira veya diğer giderleri ödemekte zorlanan kiracılar\n- Konut kredisi veya ödenmemiş faturaları olan kişiler\n- 30 yaşın altında olanlar\n- Bir tarım dışı özel sektör şirketinin çalışanları\n- Çalışanlar, iş sözleşmelerine yeni başlamış veya bitirme aşamasında olanlar.\n- Kiralayanlar, özel bir parkta ve kira borcu olan\n\nNasıl yapılır:\n- İhtiyaçlarınızı belirlemek ve destek almak için bulunduğunuz bölgedeki Dayanışma Alanı ile iletişime geçin.\n- LOCA-PASS, FASTT veya VISALE gibi diğer yardımların kriterlerine girmemeye dikkat etmek.\n- Konut yardımlarına ilişkin olası haklarınızı öğrenmek için Caisse d’allocations familiales (CAF: aile yardımları kurumu)] veya Tarım Sigortası Fonu ile iletişime geçin.\n- CCAPEX'e başvurmak için, indirilere ekli formu doldurun ve ilgili adrese gönderin.\n- ADIL aracılığıyla, kiracı olarak sahip olduğunuz haklar ve sorumluluklar hakkında bilgi edinmek\n- Eğer bir teminat (guarantee) ihtiyacınız varsa, Action logement firmasından Visale teminatını talep edebilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 15
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:02:54.764Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "صندوق الدعم السكني التابع للمجتمع الأوروبي لألزا – منطقة باسا-رين (باستثناء منطقة إوروميتropole)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 56.8,
+      "units": 1
+     }
+    },
+    "summary_falc": {
+     "text": "يوضح هذا المستند كيفية مساعدة المستأجرين الذين يواجهون صعوبات.\nوتشمل هذه المساعدات، على سبيل المثال، برنامج \"T2\" (صندوق الدعم السكني) وبرنامج \"LOCA-PASS\" (تقديم مبلغ التأمين المسبق من قبل \"T1\").\nتساعدك هذه المساعدات في دفع الإيجار أو في البقاء في منزلك.\nيمكنك أيضًا الحصول على ضمان على قيمة الإيجار.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 62.9,
+      "units": 4
+     }
+    },
+    "description_falc": {
+     "text": "تشرح هذه الوثيقة كيفية تسهيل الوصول إلى السكن والحفاظ عليه في حالة وجود صعوبات مالية أو ديون إيجارية. وتتناول مجموعة من الإجراءات مثل FSL (صندوق التضامن للسكن) و LOCA-PASS و FASTT و VISALE، والتي تسمح بالحصول على دعم مالي أو ضمان. كما تشرح كيفية الحصول على معلومات حول حقوق ومسؤوليات المستأجر، وكيفية العثور على شخص يضمن الدفع. يمكن للمستأجرين الذين يعيشون في سكن غير ملائم أيضًا الحصول على معلومات حول معايير الكرامة.\n\nلمن؟\n- أصحاب العقارات الذين يواجهون صعوبات في دفع الإيجار أو فواتير الخدمات.\n- الأشخاص الذين لديهم ديون إيجارية أو فواتير مستحقة.\n- أفراد في الفئة العمرية دون 30 عامًا\n- موظفو شركة في القطاع الخاص غير الزراعي\n- موظفين بدأوا للتو أو انتهوا من عقد عملهم.\n- مستأجرون في منطقة سكنية خاصة، مع وجود مستحقات إيجار متراكمة.\n\nالطريقة:\n- للحصول على الدعم وتقييم احتياجاتك، يرجى الاتصال بمكان الدعم في منطقتك.\n- التأكد من عدم استيفاء معايير برامج دعم أخرى مثل برنامج LOCA-PASS أو FASTT أو برنامج VISALE.\n- للمزيد من المعلومات حول حقوقك المحتملة في الحصول على دعم سكني، يرجى الاتصال بـ Caisse d’allocations familiales (CAF: صندوق الإعانات العائلية)‏) أو بالصندوق الوطني للضمان الاجتماعي الزراعي.\n- لتقديم طلب، يرجى ملء النموذج المتاح للتنزيل وإرساله إلى العنوان المحدد.\n- الحصول على معلومات حول الحقوق والالتزامات كمستأجر من خلال مراكز الإسكان المحلية (ADIL).\n- إذا كنت بحاجة إلى ضمان، يمكنك الاتصال بشركة \"Action logement\" للحصول على ضمان \"Visale\".",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.1,
+      "units": 15
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:03:35.367Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Fonds für Solidarität im Wohnungsbau (FSL: Wohnungssolidaritätsfonds) der Europäischen Gemeinschaft für Alsace – Bas-Rhin (außer dem Euro-Metropolitanraum)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.3,
+      "units": 1
+     }
+    },
+    "summary_falc": {
+     "text": "Das Dokument erklärt, wie man Mieter in Not unterstützen kann.\nSie bietet verschiedene Unterstützungsleistungen an, wie zum Beispiel das FSL (ein Fonds für Wohnungsbau) und den LOCA-PASS (eine Vorauszahlung für die Mietkaution durch Action Logement (arbeitgeberfinanzierte Wohnungsorganisation)).\nDiese Leistungen helfen Ihnen, die Miete zu bezahlen oder in Ihrer Wohnung zu bleiben.\nSie können auch eine Garantie für die Miete vereinbaren.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.7,
+      "units": 4
+     }
+    },
+    "description_falc": {
+     "text": "Das Dokument erklärt, wie der Zugang zu und die Aufrechterhaltung einer Wohnung in schwierigen finanziellen oder Mietverhältnissen erleichtert werden kann. Es stellt verschiedene Maßnahmen vor, wie z. B. das FSL (Wohnungssolidaritätsfonds) ], LOCA-PASS, FASTT und VISALE, die finanzielle Unterstützung oder eine Bürgschaft ermöglichen. Es gibt auch Auskunft darüber, wie Mieter ihre Rechte und Pflichten kennen und eine Bürgschaft erhalten können. Mieter, die in einer unzumutbaren Wohnsituation leben, können auch Informationen über die Kriterien für angemessene Wohnbedingungen erhalten.\n\nFür wen:\n- Mieter, die Schwierigkeiten haben, die Miete oder Nebenkosten zu bezahlen\n- Personen mit Mietrückständen oder ausstehenden Rechnungen\n- Personen unter 30 Jahren\n- Angestellte eines privaten, nicht-landwirtschaftlichen Unternehmens\n- Mitarbeiter, die neu in ihrem Arbeitsverhältnis sind oder gerade erst angefangen haben\n- Mieter in einem privaten Park mit ausstehender Miete\n\nSo geht's:\n- Nehmen Sie Kontakt mit dem lokalen Unterstützungszentrum auf, um Unterstützung zu erhalten und Ihre Bedürfnisse zu bewerten.\n- Sicherstellen, dass man nicht die Kriterien für andere Förderprogramme erfüllt, wie z. B. LOCA-PASS, FASTT oder VISALE.\n- Kontaktieren Sie die Caisse d’allocations familiales (CAF: Familienkasse)] oder die Agrarsicherung, um Ihre möglichen Ansprüche auf Wohnungsbeihilfe zu klären.\n- Die CCAPEX kontaktieren Sie, indem Sie das entsprechende Formular herunterladen und an die angegebene Adresse senden.\n- Informationen über die Rechte und Pflichten als Mieter über die ADIL (Agenturen für Wohnraum und Mieten) einholen.\n- Wenn Sie eine Bürgschaft benötigen, wenden Sie sich bitte an Action logement, um die Visale-Bürgschaft zu erhalten.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.5,
+      "units": 15
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:04:18.442Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Фонд соціальної підтримки житла (FSL: фонд житлової солідарності) Європейської спільноти Альзасу – Нижній Рейн (за межами Єврометрополісу)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.8,
+      "units": 1
+     }
+    },
+    "summary_falc": {
+     "text": "Цей документ пояснює, як допомогти орендарям, які опинилися у скрутній ситуації.\nВона пропонує різні види допомоги, зокрема фонд \"T2\" (фонд соціальної підтримки для житла) та LOCA-PASS (попередня оплата за гарантійний внесок від \"T1\").\nЦі допомоги допоможуть вам сплатити оренду або залишитися у своєму житлі.\nВи також можете отримати гарантію щодо сплати орендної плати.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 65.1,
+      "units": 4
+     }
+    },
+    "description_falc": {
+     "text": "Цей документ пояснює, як полегшити доступ до житла та його утримання у разі фінансових труднощів або заборгованості за оренду. Він описує різні механізми, такі як FSL (фонд житлової солідарності), LOCA-PASS, FASTT та VISALE, які дозволяють отримати фінансову допомогу або гарантію. Він також вказує, як отримати інформацію про свої права та обов'язки як орендаря, а також як знайти поручителя. Орендарі, які проживають у невідповідному житлі, також можуть отримати інформацію про критерії належного житла.\n\nДля кого:\n- Орендарі, які мають труднощі з оплатою оренди або комунальних платежів.\n- Особи, які мають борги за оренду або неоплачені рахунки.\n- Люди віком до 30 років\n- Працівники приватного підприємства, що не займається сільським господарством.\n- Працівники, які починають або завершують свій трудовий договір.\n- Орендарі в приватному парку з заборгованою орендною платою.\n\nЯк це зробити:\n- Зверніться до місцевого центру підтримки, щоб отримати консультацію та оцінити свої потреби.\n- Переконатися, що ви не відповідаєте критеріям інших програм, таких як LOCA-PASS, FASTT або VISALE.\n- Зверніться до Caisse d’allocations familiales (CAF: каса сімейних допомог)] або до Державної служби сільського страхування, щоб дізнатися про можливі права на отримання допомоги з житла.\n- Зверніться до CCAPEX, заповнивши форму, доступну для завантаження, та надішліть її за вказаною адресою.\n- Отримати інформацію про права та обов'язки як орендаря через ADIL\n- Зверніться до компанії Action logement, щоб отримати гарантію Visale, якщо вам це потрібно.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.1,
+      "units": 15
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:fea03997d166451ba94132205fdd770033fb233f047c417595a2fefa249e9df4",
+  "fields": [
+   "titre",
+   "summary_falc",
+   "description_falc"
+  ],
+  "values": {
+   "titre": "Fonds de solidarité pour le logement (FSL) de la Collectivité européenne d’Alsace — Bas-Rhin hors Eurométropole",
+   "summary_falc": "La fiche explique comment aider les locataires en difficulté.\nElle présente des aides comme le FSL (fonds de solidarité pour le logement) et le LOCA-PASS (avance du dépôt de garantie par Action Logement).\nCes aides vous aident à payer le loyer ou à rester dans votre logement.\nVous pouvez aussi obtenir une garantie pour le loyer.",
+   "description_falc": "La fiche explique comment faciliter l'accès et le maintien dans un logement en cas de difficultés financières ou de dettes locatives. Elle présente plusieurs dispositifs comme le FSL, le LOCA-PASS, le FASTT et la VISALE, qui permettent d'obtenir des aides financières ou une garantie. Elle indique également comment se renseigner sur ses droits et obligations en tant que locataire et comment trouver une caution. Les locataires vivant dans un logement indigne peuvent également obtenir des informations sur les critères de décence.\n\nPour qui :\n- Locataires en difficulté pour payer le loyer ou les charges\n- Personnes ayant des dettes locatives ou des factures impayées\n- Jeunes de moins de 30 ans\n- Salariés d’une entreprise du secteur privé non agricole\n- Salariés qui vont ou viennent de commencer leur contrat de travail\n- Locataires dans le parc privé avec une dette de loyer\n\nComment faire :\n- Contacter l'Espace Solidarité de votre secteur pour obtenir un accompagnement et évaluer vos besoins\n- S’assurer de ne pas entrer dans les critères d’autres aides comme le LOCA-PASS, le FASTT ou la VISALE\n- Contacter la Caisse d’allocations familiales (CAF) ou la Sécurité sociale agricole pour connaître vos droits éventuels aux aides au logement\n- Saisir la CCAPEX en remplissant le formulaire disponible en téléchargement et le transmettre à l’adresse correspondante\n- Se renseigner sur les droits et obligations en tant que locataire via les ADIL\n- Demander à Action logement la garantie Visale si vous avez besoin d’une caution"
+  },
+  "verifiedAt": "2026-10-31T00:57:09.273Z",
+  "sourceUrl": "https://www.alsace.eu/aides-et-services/habitat/vous-rencontrez-difficultes-avec-votre-logement/",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

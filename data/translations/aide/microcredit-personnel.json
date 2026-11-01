@@ -1,0 +1,576 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "microcredit-personnel",
+ "recordId": "c8583e02-b641-42dc-adb4-fc149116ce0f",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.204Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Personal microcredit",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Personal microcredit is a small loan intended for individuals who are having difficulty accessing traditional bank credit. It allows financing a specific project aimed at improving their social or professional situation. This loan is available to people with low incomes, job seekers, and recipients of social assistance. To apply, you must go through a social support organization.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Personal microcredit is a small loan intended for individuals who are having difficulty accessing traditional bank credit. It allows financing a specific project aimed at improving their social or professional situation. This loan is available to people with low incomes, job seekers, and recipients of social assistance. To apply, you must go through a social support organization.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- low-income individuals\n- job seekers\n- recipients of social benefits",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.9,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The loan amount cannot exceed €8,000.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Contacting a social support network",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Present your application",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Assessment of your ability to repay",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Contract signature",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If you wish to do so, use the cooling-off period.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "To be supported throughout the project's implementation",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.7,
+      "units": 6
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.205Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kişisel mikro kredi",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Kişisel mikro kredi, geleneksel bankacılık kredilerine erişimde zorlanan kişilere yönelik, düşük tutarlı bir kredidir. Bu kredi, kişinin sosyal veya mesleki durumunu iyileştirmeyi amaçlayan belirli bir projeyi finanse etmek için kullanılabilir. Bu kredi, düşük gelirli bireyler, iş arayanlar ve sosyal yardım alanlara yönelik olarak sunulmaktadır. Bu krediyi almak için, bir sosyal destek kuruluşu aracılığıyla başvurmak gerekmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Kişisel mikro kredi, geleneksel bankacılık kredilerine erişimde zorlanan kişilere yönelik, düşük tutarlı bir kredidir. Bu kredi, kişinin sosyal veya mesleki durumunu iyileştirmeyi amaçlayan belirli bir projeyi finanse etmek için kullanılabilir. Bu kredi, düşük gelirli bireyler, iş arayanlar ve sosyal yardım alanlara yönelik olarak sunulmaktadır. Bu krediyi almak için, bir sosyal destek kuruluşu aracılığıyla başvurmak gerekmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- düşük gelirli kişiler\n- iş arayanlar\n- sosyal yardımlardan yararlananlar",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.8,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Kredinin miktarı 8.000 €'u aşamaz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sosyal destek ağına ulaşmak",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Dosyanızı sunun",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Ödeme yeteneğinizin değerlendirilmesi",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Kontratın imzası",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "İsterseniz, bu süre içinde geri çekilme hakkınızı kullanabilirsiniz.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Proje takibi sırasında rehberlik hizmeti almak",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.3,
+      "units": 6
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.206Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "قروض صغيرة للأفراد",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 48.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "يمثل القرض المصغر الشخصي قرضًا بمبلغ صغير مخصص للأفراد الذين يواجهون صعوبات في الحصول على القروض المصرفية التقليدية. ويسمح هذا القرض بتمويل مشروع محدد يهدف إلى تحسين الوضع الاجتماعي أو المهني. ويمكن الحصول على هذا القرض للأفراد ذوي الدخل المحدود، والباحثين عن عمل، والمستفيدين من المساعدات الاجتماعية. للحصول عليه، يجب المرور عبر مؤسسة دعم اجتماعي.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "يمثل القرض المصغر الشخصي قرضًا بمبلغ صغير مخصص للأفراد الذين يواجهون صعوبات في الحصول على القروض المصرفية التقليدية. ويسمح هذا القرض بتمويل مشروع محدد يهدف إلى تحسين الوضع الاجتماعي أو المهني. ويمكن الحصول على هذا القرض للأفراد ذوي الدخل المحدود، والباحثين عن عمل، والمستفيدين من المساعدات الاجتماعية. للحصول عليه، يجب المرور عبر مؤسسة دعم اجتماعي.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- الأشخاص ذوي الدخل المحدود\n- باحثو وظائف\n- المستفيدون من الحد الأدنى للرعاية الاجتماعية",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.6,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "لا يمكن أن يتجاوز مبلغ القرض 8000 يورو.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "التواصل مع شبكة دعم اجتماعي",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقديم ملفك",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "تقييم قدرتك على السداد",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "توقيع العقد",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا كنت ترغب في ذلك، يمكنك الاستفادة من فترة الانسحاب.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "الحصول على دعم وتوجيه خلال تنفيذ المشروع.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.2,
+      "units": 6
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.207Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Persönlicher Mikrokredit",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Mikrokredite sind kleine Kredite, die Personen gewährt werden, die Schwierigkeiten haben, einen traditionellen Bankkredit zu erhalten. Sie dienen dazu, ein bestimmtes Projekt zu finanzieren, das darauf abzielt, die soziale oder berufliche Situation zu verbessern. Diese Kredite sind für Personen mit geringem Einkommen, Arbeitsuchende und Leistungsempfänger zugänglich. Um einen solchen Kredit zu beantragen, muss man sich an eine soziale Beratungsstelle wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Mikrokredite sind kleine Kredite, die Personen gewährt werden, die Schwierigkeiten haben, einen traditionellen Bankkredit zu erhalten. Sie dienen dazu, ein bestimmtes Projekt zu finanzieren, das darauf abzielt, die soziale oder berufliche Situation zu verbessern. Diese Kredite sind für Personen mit geringem Einkommen, Arbeitsuchende und Leistungsempfänger zugänglich. Um einen solchen Kredit zu beantragen, muss man sich an eine soziale Beratungsstelle wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Personen mit geringem Einkommen\n- Arbeitsuchende\n- Personen, die staatliche Sozialleistungen beziehen",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.1,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Der Kreditbetrag darf 8.000 € nicht übersteigen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 87.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Kontaktiere ein soziales Unterstützungsnetzwerk",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Ihre Unterlagen vorlegen",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bewertung Ihrer Rückzahlungsfähigkeit",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Unterschrift im Vertrag",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie dies wünschen, können Sie die Widerrufsfrist nutzen.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Unterstützung im Rahmen der Projektüberwachung",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 6
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.208Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Мікрокредит для фізичних осіб",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Мікрокредит для фізичних осіб – це невеликий кредит, призначений для людей, які мають труднощі з отриманням звичайного банківського кредиту. Він дозволяє фінансувати конкретний проєкт, спрямований на покращення соціального або професійного становища. Цей кредит доступний для людей з низьким рівнем доходу, шукачів роботи та отримувачів соціальних виплат. Щоб отримати його, необхідно звернутися до соціальної підтримки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Мікрокредит для фізичних осіб – це невеликий кредит, призначений для людей, які мають труднощі з отриманням звичайного банківського кредиту. Він дозволяє фінансувати конкретний проєкт, спрямований на покращення соціального або професійного становища. Цей кредит доступний для людей з низьким рівнем доходу, шукачів роботи та отримувачів соціальних виплат. Щоб отримати його, необхідно звернутися до соціальної підтримки.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- люди з низьким рівнем доходу\n- працівники, які шукають роботу\n- одержувачі мінімальних соціальних виплат",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.4,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума кредиту не може перевищувати 8 000 євро.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Звернутися до соціальної підтримки",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Представте свої документи",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Оцінка вашої здатності до погашення кредиту",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Підписання контракту",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви бажаєте, скористайтеся правом відмови",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Отримання підтримки та консультацій під час реалізації проєкту",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.8,
+      "units": 6
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:9f17596c28b8f9006b76bbb9606e0f37c7a81e2cdaf7d8034d2fcba4880ac08d",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Microcrédit personnel",
+   "description": "Le microcrédit personnel est un prêt de faible montant destiné aux personnes rencontrant des difficultés d'accès au crédit bancaire classique. Il permet de financer un projet précis visant à améliorer la situation sociale ou professionnelle. Ce prêt est accessible aux personnes à faibles revenus, aux demandeurs d'emploi et aux bénéficiaires de minima sociaux. Pour le demander, il faut passer par un organisme d'accompagnement social.",
+   "cest_quoi": "Le microcrédit personnel est un prêt de faible montant destiné aux personnes rencontrant des difficultés d'accès au crédit bancaire classique. Il permet de financer un projet précis visant à améliorer la situation sociale ou professionnelle. Ce prêt est accessible aux personnes à faibles revenus, aux demandeurs d'emploi et aux bénéficiaires de minima sociaux. Pour le demander, il faut passer par un organisme d'accompagnement social.",
+   "pour_qui": "- personnes à faibles revenus\n- demandeurs d'emploi\n- bénéficiaires de minima sociaux",
+   "ce_que_ca_aide": "Le montant du prêt ne peut pas dépasser 8 000 €.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Contacter un réseau d’accompagnement social"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Présenter votre dossier"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Évaluation de votre capacité de remboursement"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Signature du contrat"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Si vous le souhaitez, utiliser le délai de rétractation"
+    },
+    {
+     "description": "",
+     "numero": 6,
+     "titre": "Être accompagné dans le cadre d’un suivi du projet"
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_demander": null,
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:30:14.212Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F21375",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

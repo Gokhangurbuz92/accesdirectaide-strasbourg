@@ -1,0 +1,436 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
+ "recordId": "5219e936-7585-4aae-a2a6-3564bb83f4d6",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.261Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Private sector employee's retirement amount",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.1,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "The amount of your pension depends on the number of quarters you have contributed and your average salary. You can estimate your pension online through the Info-Retraite website. This estimate provides an overview of basic and supplementary pension amounts, gross and net, before taxes.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "The amount of your pension depends on the number of quarters you have contributed and your average salary. You can estimate your pension online through the Info-Retraite website. This estimate provides an overview of basic and supplementary pension amounts, gross and net, before taxes.\n\nThe amount of your pension depends on the number of quarters you have worked and an average salary calculated based on your 25, 24, or 23 best years, depending on your circumstances. The pension rate is 50% if you are entitled to a full pension. If you retire before the age of 67 without having the required number of quarters, the rate is reduced by 0.625% per quarter short. The maximum pension amount cannot exceed 50% of the applicable social security ceiling in the year you retire.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "entitlement"
+      ],
+      "warnings": [],
+      "roundtrip": 79.6,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Private sector employee\n- Individual who has contributed to the retirement insurance scheme\n- Individual with completed periods of employment under presumptive conditions\n- Individuals who have benefited from periods equivalent to three months\n- Individuals who have completed a certain number of quarters of contributions with other pension funds",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.3,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check your career record on the Info-Retraite website to find out your retirement coverage period.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Use the \"My Retirement Estimate\" service on the Info-Retraite website to estimate your retirement income.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Modify your information as needed (start age, missing periods, etc.) to obtain a personalized estimate.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.5,
+      "units": 3
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.263Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Özel sektör çalışanının emekli maaşı miktarı",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Emekli olacağınız miktar, katkıda bulunduğunuz dönem sayısına ve ortalama maaşınıza bağlıdır. Emekli olacağınız miktarı, Info-Retraite web sitesi üzerinden çevrimiçi olarak tahmin edebilirsiniz. Bu tahmin, temel ve ek emekli maaşlarının, vergiden düşülmeden brüt ve net değerlerini gösterir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.4,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Emekli olacağınız miktar, katkıda bulunduğunuz dönem sayısına ve ortalama maaşınıza bağlıdır. Emekli olacağınız miktarı, Info-Retraite web sitesi üzerinden çevrimiçi olarak tahmin edebilirsiniz. Bu tahmin, temel ve ek emekli maaşlarının, vergiden düşülmeden brüt ve net değerlerini gösterir.\n\nEmekli maaşınız, çalışma sürenize ve durumunuza göre hesaplanan ortalama maaşınıza bağlıdır. Bu ortalama maaş, 25, 24 veya 23 yılın en yüksek gelirlerine göre belirlenir. Tam emekli maaşınız için oran %50'dir. 67 yaşından önce gerekli çalışma süresine sahip olmasanız bile, her eksik üç aylık dönemde oran %0,625 düşer. Emekli maaşınızın maksimum miktarı, emekli olduğunuz yılın geçerli sosyal güvenlik tavanının %50'sini aşamaz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Özel sektör çalışanı\n- Emeklilik sigortasına katkıda bulunan kişi\n- Belirli bir dönem için geçerli olan ve kanıtlanmış bir geçmişe sahip kişi\n- Belirli bir dönem boyunca, örneğin üç aylık bir dönem gibi, belirli bir avantajdan faydalanan kişi.\n- Diğer emeklilik fonlarından geçerli dönemlere sahip kişi",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.2,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Çalışma geçmişinizi Info-Retraite web sitesinde görüntüleyerek, emeklilik sigortanızın süresini öğrenin.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "\"Info-Retraite\" web sitesindeki \"Emeklilik Tahminim\" hizmetini kullanarak, emekli olacağınız miktarı tahmin edebilirsiniz.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Gerekirse bilgilerinizi güncelleyin (başlangıç yaşı, eksik dönemler vb.) ve kişiselleştirilmiş bir tahmin elde edin.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71,
+      "units": 3
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.264Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مبلغ المعاش التقاعدي للموظف في القطاع الخاص",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "يعتمد مبلغ المعاش التقاعدي الخاص بك على عدد الفترات التي قمت بالمساهم فيها، وعلى متوسط راتبك. يمكنك تقدير المعاش التقاعدي الخاص بك عبر الإنترنت من خلال موقع \"Info-Retraite\". هذا التقدير يعطيك فكرة عن المعاشات الأساسية والإضافية، بالإضافة إلى صافي الراتب قبل الضرائب.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.7,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "يعتمد مبلغ المعاش التقاعدي الخاص بك على عدد الفترات التي قمت بالمساهم فيها، وعلى متوسط راتبك. يمكنك تقدير المعاش التقاعدي الخاص بك عبر الإنترنت من خلال موقع \"Info-Retraite\". هذا التقدير يعطيك فكرة عن المعاشات الأساسية والإضافية، بالإضافة إلى صافي الراتب قبل الضرائب.\n\nيعتمد مبلغ المعاش التقاعدي الخاص بك على عدد الشهور التي قضيتها في العمل، بالإضافة إلى متوسط الراتب الذي تم حسابه على مدى 25 أو 24 أو 23 سنة من أفضل سنوات عملك، وذلك وفقًا لظروفك. أما بالنسبة للمعاشات التي تمنح بمعدل 50%، فإنه يتم صرفها إذا كنت مؤهلاً للحصول عليها. أما إذا تقاعدت قبل سن 67 دون استيفاء عدد الشهور المطلوب، فإن المعدل يتم تخفيضه بمقدار 0.625% لكل شهر مفقود. ولا يمكن أن يتجاوز مبلغ المعاش التقاعدي 50% من الحد الأقصى للضمان الاجتماعي المعمول به في سنة التقاعد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.8,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- موظف في القطاع الخاص\n- شخص قام بالاشتراك في نظام التقاعد.\n- شخص لديه سجل إنجازات لمدة ثلاثة أشهر مثبتة.\n- الشخص الذي استفاد من فترات تعتبر مكافئة لفترات ثلاثة أشهر.\n- شخص لديه فترات عمل سابقة مع صناديق التقاعد الأخرى.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "راجع سجل مسيرتك المهنية على موقع \"Info-Retraite\" لمعرفة مدة تأمينك للتقاعد.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "استخدم خدمة \"تقدير المعاش التقاعدي\" المتاحة على موقع \"Info-Retraite\" لتقدير المعاش التقاعدي الخاص بك.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "قم بتعديل معلوماتك إذا لزم الأمر (العمر الأولي، الفترات المفقودة، إلخ) للحصول على تقدير مخصص.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.3,
+      "units": 3
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.266Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Betrag der Rente des Arbeitnehmers im privaten Sektor",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Die Höhe Ihrer Rente hängt von der Anzahl der geleisteten Quartalsbeiträge und Ihrem durchschnittlichen Gehalt ab. Sie können Ihre Rente online über die Webseite \"Info-Retraite\" abschätzen. Diese Schätzung gibt Ihnen einen Überblick über die Grund- und Zusatzrenten, sowohl vor als auch nach Steuern.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Die Höhe Ihrer Rente hängt von der Anzahl der geleisteten Quartalsbeiträge und Ihrem durchschnittlichen Gehalt ab. Sie können Ihre Rente online über die Webseite \"Info-Retraite\" abschätzen. Diese Schätzung gibt Ihnen einen Überblick über die Grund- und Zusatzrenten, sowohl vor als auch nach Steuern.\n\nDie Höhe Ihrer Rente hängt von der Anzahl Ihrer Arbeitstage und einem durchschnittlichen Gehalt ab, das auf Ihren besten 25, 24 oder 23 Jahren basiert, je nach Ihrer Situation. Der Rentenwert beträgt 50 %, wenn Sie Anspruch auf eine volle Rente haben. Wenn Sie vor dem 67. Lebensjahr in Rente gehen und nicht die erforderliche Anzahl von Arbeitstagen haben, wird der Wert um 0,625 % pro fehlendem Tag reduziert. Die maximale Höhe der Rente darf nicht höher als 50 % des maximalen Rentenanspruchs des jeweiligen Sozialversicherungssystems im Jahr Ihres Ruhestandsbetritts liegen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Angestellter im privaten Sektor\n- Person, die Beiträge zur Rentenversicherung geleistet hat\n- Personen mit nachgewiesenen Qualifikationen\n- Personen, die eine Zeit hatten, die einer bestimmten Zeitspanne (z. B. einem Quartal) entspricht\n- Personen mit bereits abgeschlossenen Quartalen bei anderen Rentenkassen",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Konsultieren Sie Ihren Karriere-Überblick auf der Webseite Info-Retraite, um die Dauer Ihrer Rentenversicherung zu erfahren.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Nutzen Sie den Service \"Meine Rentenberechnung\" auf der Webseite Info-Retraite, um Ihre Rente zu schätzen.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Passen Sie Ihre Angaben bei Bedarf an (Startalter, fehlende Zeiträume usw.), um eine individuelle Schätzung zu erhalten.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.9,
+      "units": 3
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.267Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Сума пенсії працівника з приватного сектора",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Сума вашої пенсії залежить від кількості відпрацьованих кварталів та вашого середнього заробітку. Ви можете оцінити свою майбутню пенсію онлайн через веб-сайт Info-Retraite. Ця оцінка дає уявлення про базові та додаткові пенсії, їх розмір до та після сплати податків.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Сума вашої пенсії залежить від кількості відпрацьованих кварталів та вашого середнього заробітку. Ви можете оцінити свою майбутню пенсію онлайн через веб-сайт Info-Retraite. Ця оцінка дає уявлення про базові та додаткові пенсії, їх розмір до та після сплати податків.\n\nСума вашої пенсії залежить від кількості ваших робочих періодів та середньої заробітної плати, розрахованої на ваші 25, 24 або 23 найкращі роки, відповідно до вашої ситуації. Ставка пенсії становить 50%, якщо ви маєте право на повну пенсію. Якщо ви виходите на пенсію до 67 років, не маючи необхідної кількості робочих періодів, ставка зменшується на 0,625% за кожен пропущений період. Максимальна сума пенсії не може перевищувати 50% від максимального розміру соціального страхування, який діє у рік вашого виходу на пенсію.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Працівник приватного сектору\n- Особа, яка сплачувала внески до пенсійного страхування\n- Особа, яка має підтверджені квартали, що базуються на припущенні.\n- Особа, яка отримала виплати, що відповідають тримісячному періоду.\n- Особа, яка має підтверджені тримісячні внески в інші пенсійні фонди.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перегляньте свій кар'єрний звіт на веб-сайті Info-Retraite, щоб дізнатися про тривалість вашої пенсійної страховки.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Використовуйте сервіс «Моя оцінка пенсії» на веб-сайті Info-Retraite, щоб оцінити свої майбутні пенсійні виплати.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "За потреби змініть свої дані (вік початку, відсутні періоди тощо), щоб отримати персоналізовану оцінку.",
+       "numero": 3,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81,
+      "units": 3
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:e0e5b4ccdf2a46e1c1f3cca19e0ee6f8653fc8ae6a844f79e27214e75ec8c51b",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Montant de la retraite du salarié du secteur privé",
+   "description_courte": "Le montant de votre retraite dépend du nombre de trimestres cotisés et de votre salaire moyen. Vous pouvez estimer votre retraite en ligne via le site Info-Retraite. Cette estimation vous donne un aperçu des pensions de retraite de base et complémentaires, brut et net avant impôts.",
+   "contenu_detaille": "Le montant de votre retraite dépend du nombre de trimestres cotisés et de votre salaire moyen. Vous pouvez estimer votre retraite en ligne via le site Info-Retraite. Cette estimation vous donne un aperçu des pensions de retraite de base et complémentaires, brut et net avant impôts.\n\nLe montant de votre retraite dépend de votre nombre de trimestres et d’un salaire moyen calculé sur vos 25, 24 ou 23 meilleures années selon votre situation. Le taux de la pension est de 50 % si vous avez droit à une retraite à taux plein. Si vous partez à la retraite avant 67 ans sans avoir le nombre de trimestres requis, le taux est réduit de 0,625 % par trimestre manquant. Le montant maximum de la retraite ne peut pas dépasser 50 % du plafond de la Sécurité sociale applicable l'année de votre départ à la retraite.",
+   "pour_qui": "- Salarié du secteur privé\n- Personne ayant cotisé à l'Assurance retraite\n- Personne ayant des trimestres validés par présomption\n- Personne ayant bénéficié de périodes assimilées à des trimestres\n- Personne ayant des trimestres validés auprès d'autres caisses de retraite",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Consultez votre relevé de carrière sur le site Info-Retraite pour connaître votre durée d'assurance retraite."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Utilisez le service 'Mon estimation retraite' sur le site Info-Retraite pour estimer votre retraite."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Modifiez vos informations si nécessaire (âge de départ, périodes manquantes, etc.) pour obtenir une estimation personnalisée."
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_faire": null,
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T23:21:24.302Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F21552",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,404 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+ "recordId": "19777108-56d0-4212-8e9e-2a0242258883",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:29.928Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Dispute with the administration: contact the Defender of Rights",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 84.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "If you have a dispute with an administration and are unable to reach a friendly resolution, you can contact the Defender of Rights.",
+      "steps": [
+       {
+        "texte": "Are you in dispute with a government agency or public service? If you are unable to reach a friendly resolution, you can contact the Ombudsman. The Ombudsman can help you resolve the dispute in some cases. We provide you with the information you need to know.",
+        "titre": null
+       },
+       {
+        "texte": "The Defender of Rights is responsible for protecting your rights and freedoms, in the context of your dealings with a public service or an organization that carries out a public service function.\nThe Defender of Rights can intervene if you have a dispute with:\n- A state administration (préfecture (state administration of the département), tax authority, ministry...)\n- A local authority (municipality, department council, regional council...)\n- A hospital\n- An organization responsible for managing a public service (e.g., family allowance fund - Caf (family benefits office), CPAM (local health insurance office), France Travail (public employment service), energy suppliers such as EDF, GDF…).\nBefore contacting the Defender of Rights, you should first try to resolve the dispute amicably with the public service or the relevant organization. For example, you could file a complaint with the service or initiate an administrative appeal against the disputed decision.\nPlease note: The Defender of Rights cannot intervene in disputes between the administration and its employees. However, it can intervene when the dispute concerns discrimination. It also cannot intervene in commercial contracts. If your dispute concerns the performance of a contract with a public company (price, quantity, invoicing, termination, etc.), it is then a private dispute of a commercial nature, and you should contact the relevant mediator.\nYou can check if the Defender of Rights is the appropriate body to handle your complaint using this online service:\n→ Online service: Find out if the Defender of Rights is the appropriate body to handle your issue",
+        "titre": "In what types of disputes can the Defender of Rights be contacted?"
+       },
+       {
+        "texte": "The Defender of Rights can be approached by:\n- Any individual who believes their rights and freedoms have been violated by the operation of a state administration, a local authority, a public institution, or an organization responsible for a public service\n- Her \"heirs\" (spouses, children, parents, etc.)\n- An association or a company\n- A French Member of Parliament or a French Member of the European Parliament\n- An external institution with the same functions as the Defender of Rights.\nThe Defender of Rights can also take action on its own initiative when it believes that its intervention is necessary.\nReminder: Before contacting the Defender of Rights, you should first try to resolve the dispute amicably with the public service or the relevant organization. For example, you can file a complaint with the service or initiate an administrative appeal against the disputed decision.",
+        "titre": "Who can contact the Defender of Rights?"
+       },
+       {
+        "texte": "You can contact the Defender of Rights (or their representatives) online, in person, or by mail:\nYou can complete the process online, at the office, or by mail:\nCase: Online\nYou can contact the Defender of Rights using this online service:\n→ Online service: Submit a complaint to the Defender of Rights online\nCase: On-site\nYou can make an appointment with a representative from the Office of the Ombudsman.\n→ Where to contact: Regional representative of the Defender of Rights\nSpecifically: The legal aid representatives can provide you with local support regarding your rights and, if necessary, direct you to an organization that can better assist you. You can find them in various locations, such as préfectures(under préfectures), justice houses, and legal centers.\nCase: By mail\nYou can contact the Defender of Rights or one of his representatives by mail.\n→ Where to go: Office of the Ombudsman\n→ Where to contact: Regional representative of the Defender of Rights\nPlease note: Contacting the Defender of Rights does not interrupt or suspend the deadlines for filing a lawsuit.",
+        "titre": "How to contact the Defender of Rights?"
+       },
+       {
+        "texte": "The services provided by the Defender of Rights are free.",
+        "titre": "Is it necessary to pay to contact the Defender of Rights?"
+       },
+       {
+        "texte": "First, the Defender of Rights will check to ensure that your request falls within their area of jurisdiction.\nIf this is not the case, he will inform you of the reasons why he cannot process your application and will direct you to the individuals or organizations that can assist you.\nIf the Defender of Rights believes that your request falls within their jurisdiction, they will initiate an investigation to gather the information necessary to understand the situation before making a decision.\nBroad investigative powers\nRequest for clarification\nThe investigation process involves presenting the views of both the claimant (the person making the complaint to the Defender of Rights) and the person being accused (the person against whom the complaint is made). This is the principle of due process.\nThe Defender of Rights can request explanations from any individual or legal entity that is brought before him.\nThose who are being accused must ensure that her mission is carried out successfully.\nThey are required to allow their agents and staff to respond to requests from the Defender of Rights. Agents must respond to any explanations requested by the Defender of Rights.\nSummoning for a hearing\nThe Defender of Rights can summon officials.\nThe summons must specify the subject of the hearing.\nSpecifically: Individuals who are asked by the Defender for Human Rights to provide explanations can be represented by the legal advisor of their choice (for example, a lawyer). A record of the hearing is prepared and provided to the person who was heard.\nOn-site inspections\nThe Defender of Rights can also conduct on-site inspections of public service facilities or organizations, as well as places, premises, and means of transport accessible to the public, and professional premises exclusively used for this purpose.\nDuring on-site investigations, the Defender of Rights can interview anyone who may have relevant information.\nA procès-verbal is prepared by the legal staff of the Defender of Rights.\nFormal demand for cooperation in case of refusal\nIf the Defender of Rights does not receive a response to its request for information, it can formally request that the relevant parties provide a response within a timeframe it specifies.\nWhen a demand for information is not responded to, the party can apply to the court for an order to take any necessary steps to obtain the information.\nProcedure for amicable resolution of claims\nAn amicable resolution is preferred when claims indicate, for example, a procedural error, misunderstanding, or failure by an administration. In this case, the Defender of Rights intervenes by facilitating dialogue between all the parties involved. It proposes a suitable solution to avoid legal action.\nInformal agreements or mediation can take various forms.\nInformal agreement\nSimple exchanges of letters or emails can sometimes resolve the situation in a straightforward and efficient manner.\nMediation\nThe Defender of Rights can also attempt to resolve the dispute by organizing mediation between the public service in question and you.\nPlease note: Mediation is governed by law. It ensures, for example, the confidentiality of communications between the person involved and you.\nRecommendations\nThe Defender of Rights can make any recommendation necessary to ensure the respect of your rights and freedoms, and to resolve any issues brought before him, or to prevent their recurrence.\nThe public service informs the Defender of Rights, within the timeframe he specifies, of the actions taken in response to his recommendations.\nIf the public service fails to provide information within the specified timeframe, or if the Ombudsman believes, based on the information received, that the recommendation has not been implemented, it can order the service to take specific measures within a defined period. For example, issue a permit that had previously been denied.\nWhen its request for information was not complied with, the Defender of Rights issued a special report. This report is communicated to the public and made available for review.\nThe Defender of Rights may also decide to publish the response from the public service.\nRequest for sanctions\nIf the Defender of Rights finds, during their investigation, that there are facts that warrant disciplinary action, they can request the relevant authority to initiate disciplinary proceedings against the perpetrators. For example, the unjustified refusal by an employee to process requests submitted by users.\nThe relevant authority must inform the Ombudsman of any decisions made in response to their request, and, if no disciplinary procedure has been initiated, provide them with the reasons for this decision.\nIf the relevant authority fails to provide information within the specified timeframe, or if the Defender for Human Rights believes, based on the information received, that the request has not been properly addressed, it can issue a special report. This report is then communicated to the relevant authority.\nThe Defender of Rights may decide to publish this special report, and, if necessary, the response from the relevant authority.\nObservations before the judge\nThe Defender of Rights cannot challenge a judicial decision, but it can submit written or oral observations at the request of civil, administrative, or criminal courts, or at the request of the parties involved.",
+        "titre": "How does the Defender of Rights review the application?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F13158",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13158",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.4,
+      "units": 81
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:33.662Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Yönetmelikle anlaşmazlık: Hak Savunucusu'na başvur",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Eğer bir kurumla anlaşmazlığınız varsa ve aranızda karşılıklı bir çözüm bulamıyorsanız, Hak Savunucusu'na başvurabilirsiniz.",
+      "steps": [
+       {
+        "texte": "Bir iddia durumunuz mu var ve bu iddiayı bir kamu kurumu veya hizmetle çözemiyor musunuz? Eğer barışçıl bir çözüm bulamıyorsanız, \"Hak Savunucusu\"na başvurabilirsiniz. Hak Savunucusu, bazı durumlarda sizin için bu iddiayı çözmenize yardımcı olabilir. İşte bilmeniz gereken bilgiler:",
+        "titre": null
+       },
+       {
+        "texte": "Hak Savunucusu, kamu hizmeti veya kamu hizmeti görevini üstlenen bir kurumla olan ilişkileriniz çerçevesinde, hak ve özgürlüklerinizi koruma ve savunma görevini üstlenmektedir.\nHak Savunucusu, aşağıdaki durumlarda müdahale edebilir:\n- Devletin bir kurumu (préfecture (devletin il idaresi), vergi merkezi, bakanlık vb.))\n- Yerel bir yönetim (belediye, ilçe meclisi, bölgesel konseyl...)\n- Bir hastane\n- Bir kamu hizmeti sağlayan kurum (aile yardımları kasası - Caf (aile yardımları kurumu), CPAM (yerel sağlık sigortası kurumu), France Travail (kamu istihdam kurumu), enerji sağlayıcıları gibi EDF, GDF vb.).\nHak savunuculuğuna başvurmadan önce, öncelikle kamu hizmeti veya ilgili kurumla anlaşmazlığı barışçıl bir şekilde çözmeye çalışmalısınız. Örneğin, bir şikayette bulunabilir veya itiraz edilen karara karşı idari bir başvuru yapabilirsiniz.\nLütfen dikkat: Savunma Bakanlığı, idare ile çalışanları arasındaki anlaşmazlıklara müdahale edemez. Ancak, ayrımcılıkla ilgili anlaşmazlıklarda müdahale edebilir. Ayrıca, ticari sözleşmelerle ilgili anlaşmazlıklara müdahale edemez. Eğer anlaşmazlığınız, bir kamu kuruluşuyla (fiyat, miktar, faturalandırma, fesih vb.) yapılan bir sözleşmenin uygulanmasıyla ilgiliyse, bu bir ticari nitelikteki özel bir anlaşmazlıktır ve ilgili arabulucuya başvurmanız gerekir.\nBu çevrimiçi hizmet aracılığıyla, İnsan Hakları Savcısının başvurunuzu değerlendirme yetkisine sahip olup olmadığını kontrol edebilirsiniz:\n→ Çevrimiçi hizmet: Savoir si \"Hak Savunucusu\" kurumunuzun sorununuza çözüm üretebilir",
+        "titre": "Hangi tür anlaşmazlıklarda İnsan Hakları Savcılığına başvurulabilir?"
+       },
+       {
+        "texte": "Hak savunucusu, aşağıdaki durumlarda başvurabilir:\n- Herhangi bir gerçek kişi, devlet, yerel yönetim, kamu kurumu veya kamu hizmeti sağlayan bir kuruluşun faaliyetlerinden dolayı hak ve özgürlüklerinin ihlal edildiğini düşünüyorsa\n- \"Vasiyetnameye göre hak sahipleri\" (eş, çocuklar, anne-babalar...)\n- Bir dernek veya şirket\n- Bir Fransız milletvekili veya Avrupa Parlamentosu'ndan bir Fransız seçmen\n- Bir yabancı kurum, Savunma Bakanlığı'nın aynı işlevlerini yerine getiren bir kuruluş.\nSavunma Ajanı, gerektiğine karar verdiğinde, ayrıca kendi yetkisi dahilinde de harekete geçebilir.\nHatırlatma: Hak Savunucusu'na başvurmadan önce, öncelikle anlaşmazlığı kamu hizmeti veya ilgili kurumla arabuluculuk yoluyla çözmeye çalışmalısınız. Örneğin, bir şikayette bulunabilir veya itiraz edilen karara karşı idari bir başvuru yapabilirsiniz.",
+        "titre": "\"İnsan Hakları Savcılığı'na kim başvurabilir?\""
+       },
+       {
+        "texte": "İnsan Hakları Savcısının (veya temsilcilerinin) web sitesi üzerinden, doğrudan veya posta yoluyla iletişime geçebilirsiniz:\nBu işlemi çevrimiçi olarak, doğrudan veya posta yoluyla gerçekleştirebilirsiniz:\nÖrnek: Çevrimiçi\nBu çevrimiçi hizmet aracılığıyla, hak savunuculuğunuza başvurabilirsiniz:\n→ Çevrimiçi hizmet: Hakkari Savunucusunu çevrimiçi olarak belirtin\nÖrnek: Yerinde\nHak savunucusu kurumundan bir yetkili ile randevu alabilirsiniz.\n→ İlgili kişi: Bölgesel İnsan Hakları Savunucusu Temsilcisi\nBilmeniz gerekenler: İnsan Hakları Savunuculuğundan gelen temsilciler, haklarınız konusunda yakından destek almanızı sağlar ve gerektiğinde, size daha iyi yardımcı olabilecek bir yapıya yönlendirmenizi sağlar. Bu temsilcileri, hukuk bürolarında (préfectures, préfectures gibi), adliye binalarında ve mahkemelerde bulabilirsiniz.\nDurum: Posta yoluyla\nSiz, İnsan Hakları Savcılığı'nı veya onun yetkililerinden birini posta yoluyla iletişime geçebilirsiniz.\n→ İlgili kuruma başvuru: İnsan Hakları Savunucusu\n→ İlgili kişi: Bölgesel İnsan Hakları Savunucusu Temsilcisi\nLütfen dikkat: Hak Savunucusu'na başvurmak, hukuki süreçlerin süresini durdurmaz veya askıya almaz.",
+        "titre": "\"Hak savunucusu ile nasıl iletişime geçebilirim?\""
+       },
+       {
+        "texte": "Savunma Bakanlığı'nın hak savunuculuğu hizmetleri ücretsizdir.",
+        "titre": "Savunma ve Haklar Daire'ni bilgilendirmek için ücret ödeme zorunlu mudur?"
+       },
+       {
+        "texte": "Savunma Bakanlığı, öncelikle başvurunuzun yetki alanına girip girmediğini kontrol eder.\nEğer bu mümkün değilse, size neden başvurunuzu değerlendiremediğini ve size yardımcı olabilecek kişiler veya kuruluşlara yönlendirme yapacaktır.\nEğer İnsan Hakları Savcısı, başvurunuzun kendi yetki alanına girip girmediğini düşünürse, durumu daha iyi anlamak için gerekli bilgileri toplamak amacıyla bir soruşturma başlatır ve ardından karar verir.\nGeniş soruşturma yetkileri\nAçıklama talebi\nSoruşturma süreci, şikayet eden (Hukuk Savunucusu'na başvuran kişi) ve şikayetin konusu olan kişi arasındaki görüşlerin karşılaştırılmasıyla yürütülür. Bu, karşılıklı savunma ilkesidir.\nSavunma, kendisine karşı başvuruda bulunan herhangi bir kişi veya kuruluşa açıklama talep edebilir.\nİlgili kişiler, görevinin yerine getirilmesine yardımcı olmalıdır.\nOnlardan, kendi temsilcilerini ve yetkililerini, Savunma Bakanlığı'nın taleplerine yanıt vermeye yetkilendirmeleri gerekmektedir. Temsilciler, bu bakanlık tarafından gönderilen açıklama taleplerine yanıt vermek zorundadır.\nBir dinleme oturumuna çağrı\nHak savunucusu, yetkilileri çağırabilir.\nÇağrıda, dinleme konusunun açıkça belirtilmesi gerekmektedir.\nBilindiği üzere: Savunma ve Haklar Daire'si, açıklamalar talep ettiği kişilerden, tercih ettikleri bir danışmanın (örneğin, bir avukatın) da katılımıyla dinleme yapabilir. Dinleme sırasında hazırlanan bir tutanak, dinlenen kişiye verilmektedir.\nYerinde kontroller\nHak Savunucusu, kamu hizmeti sağlayan veya kamu hizmeti görevine sahip olan kuruluşların tesislerinde, kamuya açık ulaşım olan yerlerde (örneğin, ulaşım araçları ve kamuya açık binalar) ve yalnızca bu amaçla kullanılan profesyonel alanlarda da saha denetimleri gerçekleştirebilir.\nYerinde yapılan incelemelerde, İnsan Hakları Savcısı, bilgi sağlayabilecek herkesi dinleyebilir.\nBir rapor, Savunma Bakanlığı'nın hukuk uzmanları tarafından hazırlanır.\nİşbirliğine yanaşmama durumunda yasal işlem başlatma\nEğitim ve Araştırma Bakanlığı, talep edilen bilgilere yanıt alamadığında, yanıt vermelerini talep ettiği ilgili kişilerden belirli bir süre içinde yanıt almasını isteyebilir.\nEyleme çağrının sonuç vermemesi durumunda, istenen bilgilerin elde edilmesini sağlamak için gerekli tüm önlemlerin alınmasını talep etmek amacıyla, mahkemeye başvurarak bir önleyici tedbir kararı talep edebilir.\nUyuşmazlıkların arabuluculuk yoluyla çözümü\nUyumlu çözüm yolu, özellikle iddialarda, bir işlem hatası, yanlış anlaşılma veya bir kurumun başarısızlığı gibi durumlar söz konusu olduğunda tercih edilir. Bu durumda, Hak Savunucusu, ilgili tüm taraflar arasında iletişimi kolaylaştırarak devreye girer. Amacı, mahkemeye gitmeyi önlemek için uygun bir çözüm sunmaktır.\nUyumlu çözüm, farklı şekillerde olabilir (resmi veya arabuluculuk yoluyla).\nResmi olmayan düzenleme\nBasit mektup veya e-posta alışverişleri, bazen durumu basit ve hızlı bir şekilde çözmek için kullanılabilir.\nArabuluculuk\nSavunma Ajanı, aynı zamanda, anlaşmazlığı çözmek için, iddia edilen kamu hizmeti ile sizin arasında bir arabuluculuk düzenlemeyi deneyebilir.\nÖnemli: Arabuluculuk, yasal düzenlemeler çerçevesinde yürütülmektedir. Bu süreç, taraflar arasındaki iletişimin gizliliğini sağlamanıza olanak tanır.\nÖneriler\nHak Savunucusu, haklarınızın ve özgürlüğünüzün korunmasını sağlamak, size sunulan sorunları çözmek veya bu tür sorunların tekrar yaşanmasını önlemek amacıyla her türlü tavsiyede bulunabilir.\nKamu hizmeti, belirlediği süre içinde, savunucunun yaptığı önerilere verilen yanıtları, ilgili kurumlara bildirir.\nEğer kamu hizmeti, gerekli sürede bilgi sağlamazsa veya İnsan Hakları Savcısı, aldığı bilgilere dayanarak, önerinin uygulanmadığını düşünürse, bu konuda belirli bir süre içinde belirli önlemler almasını emredebilir. Örneğin, daha önce reddedilen bir izinname düzenleyebilir.\nTalimatına yanıt verilmediğinde, İnsan Hakları Savcısı özel bir rapor hazırladı. Bu rapor, kamuoyuna iletilir ve yayınlanır.\nHak Savunucusu, kamu hizmetlerinden gelen yanıtın da yayınlanmasını kararlaştırabilir.\nYaptırım talebi\nEğitimci, soruşturması sırasında, disiplin cezası gerektiren durumları tespit ederse, bu durumun sorumlulara karşı disiplin cezası uygulanmasını talep edebilir. Örneğin, bir memurun, kullanıcıların sunduğu talepleri yerine getirmemesini.\nYetkili kurum, talebi üzerine hak savunucusuna durumu bildirmeli ve, disiplin soruşturması başlatmamışsa, bu kararın gerekçelerini kendisine iletmelidir.\nEğer yetkili kurum, belirlenen süre içinde bilgi sağlamazsa veya İnsan Hakları Savcısı, aldığı bilgilere dayanarak talebin gerekli önlemlerle sonuçlanmadığına karar verirse, özel bir rapor düzenleyebilir. Bu rapor, yetkili kuruma iletilir.\nHak Savunucusu, bu özel raporu yayınlama kararı alabilir ve gerekirse, ilgili otoritenin yanıtını da yayınlayabilir.\nMahkeme huzurunda yapılan gözlemler\nSavunma Ajanı, bir mahkeme kararını etkileme yetkisine sahip değildir, ancak sivil, idari veya ceza mahkemelerinin talebi üzerine veya tarafların talebi üzerine yazılı veya sözlü görüşler sunabilir.",
+        "titre": "Savunma Bakanlığı, başvuruyu nasıl değerlendiriyor?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F13158",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13158",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 72.6,
+      "units": 81
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:37.513Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "نزاع مع الإدارة: اللجوء إلى هيئة الدفاع عن حقوق الإنسان",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "إذا كنت تواجه نزاعًا مع جهة إدارية ولم تتمكن من التوصل إلى حل ودي، يمكنك اللجوء إلى \"مكتب حقوق الإنسان\".",
+      "steps": [
+       {
+        "texte": "هل لديك نزاع مع إدارة أو مؤسسة عامة؟ إذا لم تتمكن من إيجاد حل ودي، يمكنك اللجوء إلى \"مفوضية حقوق الإنسان\". يمكن لمفوضية حقوق الإنسان مساعدتك في حل النزاع في بعض الحالات. نقدم لك المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "مهمة \"مدافع الحقوق\" هي الدفاع عن حقوقك وحرياتك، في إطار علاقاتك مع مؤسسة عامة أو منظمة مكلفة بتقديم خدمات عامة.\nيمكن للمفوض السامي لحقوق الإنسان التدخل في حال وجود نزاع بينك وبين:\n- هيئة حكومية (مثل: préfecture (إدارة الدولة في الإقليم)، مركز الضرائب، وزارة...)\n- كيان محلي (بلدية، مجلس إقليمي، مجلس مقاطعة...)\n- مستشفى\n- منظمة مسؤولة عن إدارة خدمة عامة (مثل صندوق المعاشات التقاعدية - Caf (صندوق الإعانات العائلية), CPAM (الصندوق المحلي للتأمين الصحي), France Travail (هيئة التشغيل العمومية)، وموردي الطاقة مثل EDF، GDF...).\nقبل اللجوء إلى مكتب حقوق الإنسان، يجب عليك أولاً محاولة حل النزاع بشكل ودي مع الجهة الحكومية المعنية أو المؤسسة المعنية. على سبيل المثال، يمكنك تقديم شكوى إلى الجهة أو تقديم دعوى إدارية ضد القرار المطعون فيه.\nهام: لا يمكن للمفوضية لحقوق الإنسان التدخل في النزاعات بين الإدارة وموظفيها. ومع ذلك، يمكنها التدخل عندما يتعلق الأمر بالتمييز. كما لا يمكنها التدخل في الحالات المتعلقة بالعقود التجارية. إذا كان نزاعك يتعلق بتنفيذ عقد مع شركة عامة (مثل الأسعار، الكميات، الفواتير، إلخ)، فإن هذا يعتبر نزاعًا خاصًا من الطبيعة التجارية، ويجب عليك الاتصال بالمفوض المعني.\nيمكنك التحقق مما إذا كان \"مفوض حقوق الإنسان\" مؤهلاً للتحقيق في طلبك باستخدام هذا الخدمة عبر الإنترنت:\n→ خدمة عبر الإنترنت: معرفة ما إذا كان \"مفوض حقوق الإنسان\" مؤهل للتعامل مع مشكلتك.",
+        "titre": "ما هي أنواع النزاعات التي يمكن اللجوء فيها إلى \"مفوض حقوق الإنسان\"؟"
+       },
+       {
+        "texte": "يمكن أن يتلقى \"مدافع الحقوق\" طلبات من:\n- أي شخص طبيعي يشعر بأنه تعرض لضرر في حقوقه وحرياته بسبب عمل إدارة حكومية أو كيان إداري محلي أو مؤسسة عامة أو منظمة مكلفة بمهمة خدمة عامة.\n- \"الأشخاص الذين يحق لهم الاستفادة\" (الزوج، الأطفال، الوالدين...)\n- منظمة أو شركة\n- برلماني فرنسي أو ناخب فرنسي في البرلمان الأوروبي.\n- مؤسسة أجنبية لها نفس المهام التي يقوم بها \"مفوض حقوق الإنسان\".\nيمكن للمفوض السامي لحقوق الإنسان أيضاً أن يتخذ إجراءً بشكل استباقي عندما يرى أن تدخلاته ضرورية.\nتذكير: قبل اللجوء إلى مكتب حقوق الإنسان، يجب عليك أولاً محاولة حل النزاع بشكل ودي مع الجهة الحكومية المعنية أو المؤسسة المعنية. على سبيل المثال، يمكنك تقديم شكوى إلى الجهة أو تقديم دعوى إدارية ضد القرار المطعون فيه.",
+        "titre": "من يمكنه التواصل مع \"مفوض حقوق الإنسان\"؟"
+       },
+       {
+        "texte": "يمكنكم التواصل مع \"مكتب المدعي العام\" (أو ممثليه) عبر الإنترنت، أو في مقرهم، أو عن طريق البريد.\nيمكنكم القيام بذلك عبر الإنترنت، أو في الموقع، أو عن طريق البريد:\nمثال: عبر الإنترنت\nيمكنكم التواصل مع \"مكتب حقوق الإنسان\" باستخدام هذا الخدمة عبر الإنترنت:\n→ خدمة عبر الإنترنت: إدخال طلب إلى مكتب حقوق الإنسان عبر الإنترنت\nمثال: في الموقع\nيمكنكم تحديد موعد مع أحد ممثلي هيئة الدفاع عن حقوق الإنسان.\n→ إلى من يتم التواصل: الممثل الإقليمي للمحامي العام\nوهذا يعني: يمكن لممثل الدفاع عن حقوق الإنسان أن يوفر لك الدعم والمساعدة فيما يتعلق بحقوقك، وإذا لزم الأمر، يمكنه توجيهك إلى منظمة يمكنها تقديم المزيد من المساعدة. يمكنك العثور عليهم في أماكن تقديم الخدمات (مثل préfectures، ومكاتب préfectures، ومراكز العدل والقانون...).\nمثال: عن طريق البريد\nيمكنكم التواصل مع مكتب الدفاع عن حقوق الإنسان أو أحد ممثلي المكتب عن طريق البريد.\n→ إلى من يتم الاتصال: هيئة الدفاع عن حقوق الإنسان\n→ إلى من يتم التواصل: الممثل الإقليمي للمحامي العام\nهام: تقديم طلب إلى مكتب حقوق الإنسان لا يؤدي إلى إيقاف أو تعليق المواعيد النهائية لتقديم الدعوى القضائية.",
+        "titre": "كيفية التواصل مع \"مفوضية حقوق الإنسان\"؟"
+       },
+       {
+        "texte": "خدمات مكتب المدعي العام للدفاع عن حقوق الإنسان مجانية.",
+        "titre": "هل يجب دفع رسوم للاستعانة بمكتب المدعي العام؟"
+       },
+       {
+        "texte": "يقوم \"مفوض حقوق الإنسان\" أولاً بالتحقق مما إذا كانت طلباتكم تقع ضمن نطاق اختصاصه.\nإذا لم يكن الأمر كذلك، فسيخبرك بالأسباب التي تمنعه من معالجة طلبك، وسيوجهك إلى الأشخاص أو المؤسسات التي يمكنها مساعدتك.\nإذا اعتقد \"مفوض حقوق الإنسان\" أن طلبك يقع ضمن نطاق اختصاصه، فإنه يبدأ تحقيقًا لجمع المعلومات اللازمة لفهم الوضع، قبل اتخاذ قرار.\nصلاحيات تحقيق واسعة\nطلب توضيح\nتتم عملية التحقيق من خلال مقارنة وجهات نظر المدعي (الشخص الذي يقدم شكوى إلى هيئة الدفاع عن حقوق الإنسان) والشخص المعني (الشخص الذي تتعلق به الشكوى). وهذا يعكس مبدأ \"المعارضة\".\nيمكن للمفوض السامي لحقوق الإنسان أن يطلب توضيحات من أي شخص طبيعي أو اعتباري يتم اتهامه أمامه.\nيجب على الأشخاص المشمولين إلى تسهيل مهمته.\nيجب عليهم السماح لموظفيهم ومسؤوليهم بالرد على طلبات \"مكتب المدعي العام\". ويجب على الموظفين الرد على الطلبات التي يوجهها \"مكتب المدعي العام\" للحصول على توضيحات.\nدعوة لحضور جلسة استماع\nيمكن للمفوض السامي لحقوق الإنسان أن يستدعي المسؤولين.\nيجب أن تذكر الدعوات الغرض من الاستماع.\nوهذا يعني: يمكن للأشخاص الذين يطلب منهم \"مفوضية حقوق الإنسان\" تقديم تفسيرات أن يتم الاستعانة بمستشارهم المفضل (مثل محام). يتم إعداد تقرير عن الجلسة وتسليمه للشخص الذي تم الاستماع إليه.\nفحوصات ميدانية\nيمكن للمفوض السامي لحقوق الإنسان أيضًا إجراء عمليات تدقيق في مواقع المؤسسات الحكومية أو المنظمات التي تقوم بتقديم خدمات عامة، بالإضافة إلى الأماكن والمرافق والنقل المتاحة للجمهور، والمواقع المهنية المخصصة حصريًا لهذا الغرض.\nخلال عمليات التحقق الميداني، يمكن للمفوض السامي للحقوق الاستماع إلى أي شخص يمكنه تقديم معلومات له.\nيتم إعداد مذكرة رسمية من قبل المحامين التابعين لمكتب المدعي العام.\nإرسال إشعار قانوني في حالة عدم التعاون\nإذا لم يتلق \"مدافع الحقوق\" ردًا على طلبه للحصول على معلومات، فيمكنه أن يطلب من الأطراف المعنية الرد عليه خلال المدة التي يحددها.\nعندما لا تؤدي إرسال الإنذار إلى نتيجة، يمكنه اللجوء إلى قاضي الإجراءات العاجلة لطلب منه اتخاذ أي إجراء مفيد للحصول على المعلومات المطلوبة.\nتسوية المنازعات وديًا\nيُفضل الحل الودي عندما تشير المطالبات إلى وجود خطأ في الإجراءات، أو سوء فهم، أو فشل في عمل إحدى الجهات. في هذه الحالة، يتدخل \"مفوض حقوق الإنسان\" من خلال تسهيل الحوار بين جميع الأطراف المعنية. ويقترح حلاً مناسبًا لتجنب اللجوء إلى المحاكم.\nيمكن أن يتخذ التسوية بشكل ودي أشكالًا مختلفة (تسوية غير رسمية أو الوساطة).\nاتفاق غير رسمي\nقد تسمح بعض الرسائل المتبادلة أو الرسائل الإلكترونية بحل المشكلة بطريقة بسيطة وسريعة.\nوساطة\nيمكن للمفوض الأول لحقوق الإنسان أيضًا محاولة حل النزاع من خلال تنظيم جلسة تسوية بين الجهة الحكومية المعنية وأنت.\nملاحظة: عملية الوساطة تخضع للقانون. وتتيح ذلك، على وجه الخصوص، ضمان سرية المحادثات بين الطرف المتهم وأنت.\nالتوصيات\nيمكن للمفوض المعني بحقوق الإنسان تقديم أي توصيات تهدف إلى ضمان احترام حقوقك وحرياتك، وحل المشكلات التي يطرحها أمامه، أو منع تكرارها.\nيقوم الجهاز الحكومي بإبلاغ \"مفوض حقوق الإنسان\" بالنتائج التي توصل إليها بشأن توصياته، وذلك خلال الإطار الزمني الذي يحدده.\nإذا لم يقدم القطاع العام المعلومات في الوقت المحدد، أو إذا رأى \"مفوض حقوق الإنسان\" أن التوصية لم يتم تطبيقها بناءً على المعلومات التي تلقاها، فيمكنه أن يطلب منه اتخاذ إجراءات محددة في إطار زمني محدد. على سبيل المثال، إصدار إذن تم رفضه سابقًا.\nعندما لم يتم الرد على طلبه، أصدر \"مفوض حقوق الإنسان\" تقريرًا خاصًا. يتم تسليم هذا التقرير إلى الجهات المعنية ونشره.\nيمكن للمفوض السامي لحقوق الإنسان أن يقرر أيضًا نشر رد الخدمة العامة.\nطلب فرض عقوبات\nإذا لاحظت هيئة حماية حقوق الإنسان في تحقيقاتها وجود أمور تستدعي فرض عقوبات تأديبية، فيمكنها أن تطلب من السلطة المختصة فتح إجراءات تأديبية ضد المخالفين. على سبيل المثال، رفض غير مبرر من أحد الموظفين لتلقي الطلبات المقدمة من المستخدمين.\nيجب على السلطة المختصة إبلاغ ممثل المجتمع المدني بالنتائج التي توصلت إليها بناءً على طلبه، وفي حال عدم فتح إجراء تأديبي، يجب عليها إبلاغه بالأسباب التي أدت إلى هذا القرار.\nإذا لم تقدم السلطة المختصة المعلومات في الوقت المحدد، أو إذا رأى ممثل حقوق الإنسان، بناءً على المعلومات التي تلقاها، أن طلبه لم يتم تنفيذه بالتدابير اللازمة، فيمكنه إعداد تقرير خاص. يتم تسليم هذا التقرير إلى السلطة المختصة.\nيمكن للمفوض السامي لحقوق الإنسان أن يقرر نشر هذا التقرير الخاص، وإذا لزم الأمر، فإن رد السلطة المعنية.\nالملاحظات أمام القاضي\nلا يمكن للمفوض السامي للدفاع عن حقوق الإنسان أن يعترض على قرار قضائي، ولكنه يمكنه تقديم ملاحظات مكتوبة أو شفهية بناءً على طلب المحاكم المدنية أو الإدارية أو الجنائية، أو بناءً على طلب الأطراف المعنية.",
+        "titre": "كيف يفحص \"مدافع الحقوق\" الطلب؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F13158",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13158",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.7,
+      "units": 81
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:41.643Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Streit mit der Verwaltung: Antrag auf Unterstützung durch den Ombudsmann",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn Sie eine Auseinandersetzung mit einer Behörde haben und keine einvernehmliche Lösung finden können, können Sie sich an den Ombudsmann wenden.",
+      "steps": [
+       {
+        "texte": "Haben Sie eine Auseinandersetzung mit einer Behörde oder einer öffentlichen Einrichtung? Wenn Sie keine einvernehmliche Lösung finden, können Sie sich an den Ombudsmann wenden. Der Ombudsmann kann Ihnen in bestimmten Fällen bei der Lösung des Konflikts helfen. Wir informieren Sie über die relevanten Informationen.",
+        "titre": null
+       },
+       {
+        "texte": "Der Ombudsmann hat die Aufgabe, Ihre Rechte und Freiheiten zu schützen, insbesondere im Rahmen Ihrer Beziehungen zu einer öffentlichen Einrichtung oder einer Organisation, die eine öffentliche Aufgabe wahrnimmt.\nDer Ombudsmann kann eingreifen, wenn Sie eine Streitigkeit mit folgenden Parteien haben:\n- Eine staatliche Behörde (préfecture (staatliche Verwaltung des Départements), Steuerzentrale, Ministerium...)\n- Eine lokale Behörde (Gemeinde, Departementsrat, Regionalrat...)\n- Ein Krankenhaus\n- Eine Organisation, die für die Verwaltung eines öffentlichen Dienstes zuständig ist (z. B. eine Familienleistungenstelle – Caf (Familienkasse), CPAM (örtliche Krankenkasse), France Travail (öffentliche Arbeitsverwaltung), Energieversorger wie EDF, GDF usw.).\nBevor Sie sich an den Ombudsmann wenden, sollten Sie zunächst versuchen, den Streit außergerichtlich mit der zuständigen Behörde oder Organisation zu lösen. Beispielsweise können Sie eine Beschwerde bei der Behörde einreichen oder eine administrative Klage gegen die angefochtene Entscheidung einlegen.\nBitte beachten Sie: Der Ombudsmann kann nicht in Konflikten zwischen der Verwaltung und ihren Mitarbeitern eingreifen. Er kann jedoch eingreifen, wenn der Konflikt eine Diskriminierung betrifft. Er kann auch nicht in Fällen eingreifen, in denen es sich um einen Geschäftsvertrag handelt. Wenn Ihr Streit sich auf die Ausführung eines Vertrags mit einem öffentlichen Unternehmen (Preis, Menge, Rechnungsstellung, Kündigung usw.) bezieht, handelt es sich um einen privaten Streit von kommerzieller Natur, und Sie sollten sich an den zuständigen Schiedsmann wenden.\nSie können überprüfen, ob der Ombudsmann für Ihre Anfrage zuständig ist, mithilfe dieses Online-Dienstes:\n→ Online-Service: Überprüfen, ob der Ombudsmann für Ihre Angelegenheit zuständig ist",
+        "titre": "In welchen Fällen kann man sich an den Ombudsmann wenden?"
+       },
+       {
+        "texte": "Der Ombudsmann kann von folgenden Stellen angerufen werden:\n- Jeder Einzelperson, die sich in ihren Rechten und Freiheiten durch die Tätigkeit einer staatlichen Behörde, einer regionalen Behörde, einer öffentlichen Einrichtung oder einer Organisation verletzt fühlt, die eine öffentliche Aufgabe wahrnimmt,\n- Ihre \"Erben\" (Ehepartner, Kinder, Eltern usw.)\n- Eine Vereinigung oder ein Unternehmen\n- Ein Mitglied des französischen Parlaments oder ein gewähltes Mitglied des Europäischen Parlaments.\n- Eine ausländische Institution, die die gleichen Funktionen wie der Ombudsmann hat.\nDer Ombudsmann kann auch selbstständig tätig werden, wenn er der Ansicht ist, dass seine Intervention erforderlich ist.\nHinweis: Bevor Sie sich an den Ombudsmann wenden, sollten Sie zunächst versuchen, den Streit mit der zuständigen Behörde oder Organisation im Rahmen einer außergerichtlichen Einigung zu lösen. Beispielsweise können Sie eine Beschwerde bei der Behörde einreichen oder eine administrative Klage gegen die angefochtene Entscheidung einlegen.",
+        "titre": "Wer kann sich an den Ombudsmann wenden?"
+       },
+       {
+        "texte": "Sie können den Ombudsmann (oder seine Vertreter) online, vor Ort oder per Post kontaktieren:\nSie können den Antrag online, vor Ort oder per Post stellen:\nFall: Online\nSie können den Ombudsmann über diesen Online-Dienst kontaktieren:\n→ Online-Service: Online-Kontakt zum Ombudsmann\nFall: Vor Ort\nSie können einen Vertreter der Rechtsbehelfsstelle kontaktieren, um einen Termin zu vereinbaren.\n→ An wen: Regionaler Ombudsmann\nKonkret: Die Ansprechpartner des Ombudsman bieten Ihnen die Möglichkeit, Unterstützung in Bezug auf Ihre Rechte zu erhalten und, falls erforderlich, an eine Organisation zu verweisen, die Ihnen besser helfen kann. Sie finden diese Ansprechpartner in Beratungsstellen (préfectures, Unterabteilungen préfectures, Justiz- und Rechtszentren usw.).\nFall: Per Post\nSie können den Ombudsmann oder einen seiner Mitarbeiter per Post kontaktieren.\n→ An wen wenden: Verteidiger der Rechte\n→ An wen: Regionaler Ombudsmann\nBitte beachten: Die Einholung der Hilfe eines Ombudsmanns führt nicht dazu, dass die Fristen für die Einreichung eines Rechtsbehelfs unterbrochen oder ausgesetzt werden.",
+        "titre": "Wie kontaktiere ich die Beaufsichtigungsstelle für Menschenrechte?"
+       },
+       {
+        "texte": "Die Dienstleistungen des Ombudsmanns sind kostenlos.",
+        "titre": "Ist eine Gebühr für die Beauftragung eines Rechtsbeistands erforderlich?"
+       },
+       {
+        "texte": "Der Ombudsmann prüft zunächst, ob Ihr Anliegen in seine Zuständigkeit fällt.\nWenn dies nicht der Fall ist, informiert er Sie über die Gründe, warum er Ihren Antrag nicht bearbeiten kann, und vermittelt Ihnen an die entsprechenden Personen oder Organisationen, die Ihnen weiterhelfen können.\nWenn der Ombudsmann der Ansicht ist, dass Ihr Anliegen in seine Zuständigkeit fällt, leitet er eine Untersuchung ein, um die notwendigen Informationen zu sammeln und die Situation zu verstehen, bevor er eine Entscheidung trifft.\nUmfassende Ermittlungsbefugnisse\nBitte um Erläuterungen\nDer Ermittlungsverfahren besteht darin, die Standpunkte des Klägers (der Person, die eine Beschwerde beim Rechtsbeistand einreicht) und des Beklagten (der Person, gegen die die Beschwerde erhoben wird), gegeneinander abzuwägen. Dies entspricht dem Grundsatz der Gegenseitigkeit.\nDer Ombudsmann kann von jeder natürlichen oder juristischen Person, die ihm vorgelegt wird, Erklärungen verlangen.\nDie Personen, die angeklagt sind, müssen die Erfüllung ihrer Aufgabe ermöglichen.\nSie sind verpflichtet, ihre Mitarbeiter und Beaufsichtiger dazu zu befähigen, Anfragen des Rechtsbeistands zu beantworten. Die Mitarbeiter müssen auf Anfragen des Rechtsbeistands eingehen.\nEinladung zu einer Anhörung\nDer Ombudsmann kann die Beamten vorladen.\nDie Einladungen müssen den Zweck der Anhörung angeben.\nKonkret bedeutet dies: Die Personen, von denen der Ombudsmann Erklärungen verlangt, können sich von einem von ihnen gewählten Berater unterstützen lassen (z. B. von einem Anwalt). Es wird ein Protokoll der Anhörung erstellt und an die angehörte Person ausgehändigt.\nVor-Ort-Prüfungen\nDer Ombudsmann kann auch vor Ort Kontrollen in den Einrichtungen öffentlicher Dienststellen oder von Organisationen durchführen, die eine öffentliche Aufgabe erfüllen, sowie in öffentlichen Einrichtungen, Verkehrsmitteln und in professionellen Räumen, die ausschließlich für diesen Zweck genutzt werden.\nWährend der Vor-Ort-Prüfungen kann der Ombudsmann alle Personen anhören, die ihm relevante Informationen liefern können.\nEin Protokoll wird von den Rechtsberatern der Rechtsanwaltschaft erstellt.\nMahnung im Falle einer fehlenden Kooperationsbereitschaft\nWenn der Ombudsmann keine Antwort auf seine Anfrage erhält, kann er die beteiligten Parteien auffordern, innerhalb einer von ihm festgelegten Frist zu antworten.\nWenn eine Aufforderung zur Zahlung nicht Wirkung zeigt, kann er sich an einen Richter für einstweilige Verfügungen wenden und ihn bitten, alle geeigneten Maßnahmen zu ergreifen, um die geforderten Informationen zu erhalten.\nEinigung über die Streitbeilegung\nEine einvernehmliche Lösung wird bevorzugt, wenn die Ansprüche beispielsweise auf einen Verfahrensfehler, Missverständnisse oder eine Versäumnis einer Behörde zurückzuführen sind. In diesem Fall greift der Ombudsmann, indem er den Dialog zwischen allen Beteiligten erleichtert. Er schlägt eine geeignete Lösung vor, um eine gerichtliche Auseinandersetzung zu vermeiden.\nEine einvernehmliche Lösung kann verschiedene Formen annehmen (informelle Einigung oder Mediation).\nInformelle Regel\nEinfache Korrespondenz per Brief oder E-Mail kann manchmal dazu beitragen, eine Situation schnell und unkompliziert zu lösen.\nMediation\nDer Ombudsmann kann auch versuchen, den Streit durch die Organisation einer Mediation zwischen der betreffenden öffentlichen Stelle und Ihnen beizulegen.\nWichtig: Die Mediation wird durch Gesetze geregelt. Sie ermöglicht insbesondere, die Vertraulichkeit der Gespräche zwischen der betreffenden Person und Ihnen zu gewährleisten.\nEmpfehlungen\nDer Ombudsmann kann alle Empfehlungen aussprechen, die dazu dienen, Ihre Rechte und Freiheiten zu gewährleisten und die von ihm behandelten Probleme zu lösen oder zu verhindern, dass sie erneut auftreten.\nDie öffentliche Verwaltung informiert den Ombudsmann über die Maßnahmen, die sie aufgrund seiner Empfehlungen ergriffen hat, innerhalb der von ihm festgelegten Frist.\nWenn die öffentliche Verwaltung die Informationen nicht innerhalb des vorgegebenen Zeitrahmens bereitstellt oder der Ombudsmann, basierend auf den erhaltenen Informationen, feststellt, dass die Empfehlung nicht umgesetzt wurde, kann er die Behörde anweisen, spezifische Maßnahmen innerhalb eines bestimmten Zeitrahmens zu ergreifen. Zum Beispiel, eine zuvor abgelehntes Genehmigung zu erteilen.\nWenn seine Anordnung nicht umgesetzt wurde, erstellt der Ombudsmann einen Sonderbericht. Dieser Bericht wird an die zuständigen Behörden weitergeleitet und veröffentlicht.\nDer Ombudsmann kann auch entscheiden, die Antwort der öffentlichen Verwaltung zu veröffentlichen.\nAnträge auf Sanktionen\nWenn der Ombudsmann bei seiner Untersuchung Tatsachen feststellt, die eine disziplinarische Sanktion rechtfertigen, kann er die zuständige Behörde auffordern, disziplinarische Maßnahmen gegen die Verantwortlichen zu ergreifen. Beispielsweise der von einem Beamten unberechtigte Verweigerung, Bürgeranfragen zu bearbeiten.\nDie zuständige Behörde muss den Rechtsbeistand über die ergriffenen Maßnahmen informieren, wenn dieser dies beantragt hat, und ihm gegebenenfalls die Gründe für diese Entscheidung mitteilen, falls keine disziplinarischen Maßnahmen eingeleitet wurden.\nWenn die zuständige Behörde innerhalb der Frist keine Auskunft erteilt oder der Ombudsmann, nach den erhaltenen Informationen, feststellt, dass seine Anfrage nicht durch die erforderlichen Maßnahmen beantwortet wurde, kann er einen Sonderbericht erstellen. Dieser Bericht wird an die zuständige Behörde weitergeleitet.\nDer Ombudsmann kann entscheiden, diesen Sonderbericht zu veröffentlichen und, falls erforderlich, auch die Antwort der zuständigen Behörde.\nBeobachtungen vor dem Richter\nDer Ombudsmann kann eine gerichtliche Entscheidung nicht aufheben, aber er kann den Zivil-, Verwaltungs- oder Strafgerichten sowie den Parteien schriftliche oder mündliche Stellungnahmen vorlegen.",
+        "titre": "Wie prüft der Ombudsmann die Beschwerde?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F13158",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13158",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.8,
+      "units": 81
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:45.894Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Суперечка з адміністрацією: звернення до захисника прав",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Якщо у вас виникли суперечки з адміністрацією і ви не можете знайти мирне рішення, ви можете звернутися до захисника прав.",
+      "steps": [
+       {
+        "texte": "У вас виникла суперечка з адміністрацією або державним органом? Якщо ви не можете знайти мирне рішення, ви можете звернутися до Омбудсмена. Омбудсмен може допомогти вам у вирішенні суперечки в певних випадках. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Офіс захисту прав має на меті захищати ваші права та свободи, у рамках ваших відносин з державним органом або організацією, яка виконує державні функції.\nОфіс захисника прав може втрутитися, якщо у вас виникли суперечки з:\n- Державна адміністрація (préfecture (державна адміністрація департаменту), податкова служба, міністерство...)\n- Місцева адміністрація (муніципалітет, департамент, регіон...)\n- Лікарня\n- Організація, що відповідає за управління державним послугою (наприклад, фонд сімейних виплат - Caf (каса сімейних допомог), CPAM (місцева каса медичного страхування), France Travail (державна служба зайнятості), постачальники енергії, такі як EDF, GDF…).\nПерш ніж звертатися до захисника прав, вам слід спочатку спробувати вирішити спір мирним шляхом із відповідним державним органом або організацією. Наприклад, ви можете подати скаргу до органу або подати адміністративний позов проти оскарженого рішення.\nУвага: Офіс захисника прав не може втручатися у конфлікти між адміністрацією та її співробітниками. Однак, він може втрутитися, якщо конфлікт стосується дискримінації. Він також не може втрутитися у випадки, пов'язані з комерційними угодами. Якщо ваш спір стосується виконання контракту з державним підприємством (ціна, кількість, оплата, розірвання…), то це буде приватний спір комерційної природи, і вам слід звернутися до відповідного арбітра.\nВи можете перевірити, чи компетентний Офіс захисту прав, щоб розглянути вашу заяву, за допомогою цього онлайн-сервісу:\n→ Онлайн-сервіс: Дізнатися, чи компетентний \"Захисник прав\" у вирішенні вашої проблеми.",
+        "titre": "У яких випадках можна звернутися до захисника прав?"
+       },
+       {
+        "texte": "Орган захисту прав може бути звернений до:\n- Будь-яка фізична особа, яка вважає, що її права та свободи були порушені діяльністю державного органу, місцевої влади, публічної установи або організації, що здійснює діяльність у сфері надання послуг.\n- Його \"нащадки\" (партнери, діти, батьки...)\n- Організація або підприємство\n- Французький депутат або обраний представник Франції в Європейському парламенті.\n- Це іноземна установа, яка виконує ті ж функції, що й Омбудсмен.\nОфіційний представник також може втрутитися за власною ініціативою, якщо вважатиме, що його дії необхідні.\nНагадування: Перш ніж звертатися до захисника прав, вам необхідно спочатку спробувати вирішити спір мирним шляхом із відповідним державним органом або організацією. Наприклад, ви можете подати скаргу до органу або подати адміністративний позов проти оскарженого рішення.",
+        "titre": "Хто може звернутися до захисника прав?"
+       },
+       {
+        "texte": "Ви можете звернутися до Омбудсмена (або його представників) онлайн, на місці або поштою:\nВи можете подати заявку онлайн, на місці або поштою:\nПриклад: Онлайн\nВи можете звернутися до Омбудсмена, використовуючи цей онлайн-сервіс:\n→ Онлайн-сервіс: Заповнення форми \"Захисник прав людини\" онлайн\nПриклад: На місці\nВи можете домовитися про зустріч з представником Омбудсмена.\n→ Куди звернутися: Місцевий представник Омбудсмена\nА саме: Представники Омбудсмена надають вам можливість отримати підтримку та консультації щодо ваших прав, а також, за потреби, направляють вас до відповідної організації, яка зможе надати вам більш ефективну допомогу. Ви можете знайти їх у місцях, де вони надають консультації (préfectures, підрозділи préfectures, будинки юстиції та права...).\nПриклад: Поштою\nВи можете звернутися до Омбудсмена або до одного з його представників поштою.\n→ Куди звернутися: Офіс захисту прав\n→ Куди звернутися: Місцевий представник Омбудсмена\nУвага: Звернення до захисника прав не припиняє та не відтермінує строки для подання позову.",
+        "titre": "Як звернутися до Омбудсмена?"
+       },
+       {
+        "texte": "Послуги захисника прав безкоштовні.",
+        "titre": "Чи потрібно платити за звернення до захисника прав?"
+       },
+       {
+        "texte": "Офіс захисника прав перевіряє спочатку, чи підпадає ваша заява під юрисдикцію цього органу.\nЯкщо це не так, він повідомляє вам причини, через які не може розглянути вашу справу, і направляє вас до осіб або організацій, які можуть вам допомогти.\nЯкщо Омбудсмен вважає, що ваша заява підпадає під його юрисдикцію, він розпочинає розслідування, щоб зібрати інформацію, необхідну для розуміння ситуації, і лише після цього приймає рішення.\nШирокі повноваження щодо розслідувань\nЗапит на пояснення\nПроцедура розслідування полягає у порівнянні позицій заявника (особи, яка подає скаргу до Омбудсмена) та особи, на яку спрямована скарга. Це принцип забезпечення права на опір.\nОмбудсмен може вимагати пояснень від будь-якої фізичної або юридичної особи, щодо якої він розглядає скаргу.\nОсоби, щодо яких висловлюються звинувачення, повинні сприяти виконанню її завдання.\nВони зобов'язані дозволити своїм представникам та співробітникам відповідати на запити, що надходять від Омбудсмена. Представники повинні відповідати на запити про роз'яснення, які надсилає Омбудсмен.\nЗапрошення на допит\nОмбудсмен може викликати представників.\nУ запрошеннях має бути зазначено предмет розгляду.\nА саме: Особи, до яких Омбудсмен вимагає пояснень, можуть мати підтримку від обраного ними консультанта (наприклад, від адвоката). Протокол прослуховування складається та передається особі, яка була допитана.\nПеревірки на місці\nОфіс захисника прав також може проводити перевірки на місцях у приміщеннях державних установ або організацій, які здійснюють діяльність у сфері обслуговування, а також у місцях, приміщеннях, транспортних засобах, доступних для громадськості, та у приміщеннях, що виключно призначені для цього.\nПід час перевірок на місці, Омбудсмен може заслухати будь-яку особу, яка може надати йому інформацію.\nПротокол складається юристами, які працюють у відділі захисту прав.\nОголошення про притягнення до відповідальності у разі відмови від співпраці\nЯкщо Захисник прав не отримує відповіді на свій запит, він може зобов'язати відповідних осіб надати йому відповідь протягом встановленого ним терміну.\nКоли офіційне письмове звернення не дає результатів, він може звернутися до судді для отримання наказу про вжиття будь-яких необхідних заходів для отримання потрібної інформації.\nМирне врегулювання спорів\nМировий спосіб вирішення суперечок є переважним, коли претензії вказують, наприклад, на помилку в процедурі, непорозуміння або нездатність адміністрації. У такому випадку, представник прав людини втручається, полегшуючи діалог між усіма зацікавленими сторонами. Він пропонує відповідне рішення, щоб уникнути судового розгляду.\nМирне врегулювання може мати різні форми (неформальне врегулювання або посередництво).\nНеофіційний протокол\nПрості листування або електронні листи іноді дозволяють вирішити ситуацію просто та швидко.\nМедиація\nОфіс захисника прав також може спробувати вирішити суперечку, організовуючи посередництво між відповідним державним органом та вами.\nВажливо зазначити: Медіація регулюється законом. Вона, зокрема, забезпечує конфіденційність обговорень між особою, щодо якої виступаєте, та вами.\nРекомендації\nОмбудсмен може давати будь-які рекомендації, які забезпечують захист ваших прав і свобод, а також вирішують питання, які були порушені, або запобігають їх повторному виникненню.\nОфіс громадських служб повідомляє Омбудсмена про результати розгляду його рекомендацій у встановлений ним термін.\nЯкщо державний орган не надає інформацію вчасно або якщо Омбудсмен вважає, що на основі отриманої інформації рекомендація не була виконана, він може вимагати від нього вжити конкретні заходи протягом визначеного терміну. Наприклад, видати дозвіл, який раніше було відмовлено.\nКоли його звернення не було розглянуто, Захисник прав встановив спеціальний звіт. Цей звіт передається до громадського сектору та публікується.\nОмбудсмен може вирішити також опублікувати відповідь відповідного органу державної влади.\nПропозиція щодо застосування санкцій\nЯкщо Омбудсмен виявляє під час свого розслідування факти, які заслуговують на дисциплінарне покарання, він може звернутися до відповідного органу з проханням розпочати дисциплінарне провадження проти винних. Наприклад, несправедливий відмову представника у розгляді звернень, поданих користувачами.\nКомпетентний орган повинен повідомити захисника прав про будь-які дії, вжиті на його прохання, і, якщо дисциплінарне провадження не було розпочато, надати йому обґрунтування цього рішення.\nЯкщо компетентний орган не надає інформацію вчасно або якщо Захисник прав вважає, що на основі отриманої інформації його запит не був належним чином розглянутий, він може скласти спеціальний звіт. Цей звіт передається компетентному органу.\nОмбудсмен може вирішити опублікувати цей спеціальний звіт, а також відповідь відповідної установи, якщо це необхідно.\nСпостереження перед судом\nОфіс захисника прав не може оскаржувати рішення суду, але він може подавати письмові або усні коментарі за запитом цивільних, адміністративних або кримінальних судів, або за запитом сторін.",
+        "titre": "Як орган захисту прав людини розглядає цю заяву?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F13158",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13158",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 75.1,
+      "units": 81
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:e65811598d805dae5aca6524fc25d3aab3197b4e1d050d7a4bb3071c1dd09bcf",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Litige avec l'administration : saisir le Défenseur des droits",
+   "contenu_json": {
+    "intro": "Si vous avez un litige avec une administration et que vous n'arrivez pas à trouver une solution amiable, vous pouvez saisir le Défenseur des droits.",
+    "steps": [
+     {
+      "texte": "Vous avez un litige avec une administration ou un service public ? Si vous n'arrivez pas à trouver une solution amiable, vous pouvez saisir le Défenseur des droits. Le Défenseur des droits peut vous aider dans certains cas à régler le litige. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Le Défenseur des droits a pour mission de défendre vos droits et libertés, dans le cadre de vos relations avec un service public ou un organisme chargé d'une mission de service public.\nLe Défenseur des droits peut intervenir si vous avez un litige avec :\n- Une administration de l’État (préfecture, centre des impôts, ministère...)\n- Une collectivité locale (mairie, conseil départemental, conseil régional...)\n- Un établissement hospitalier\n- Un organisme chargé de la gestion d’un service public (caisse d'allocations familiales - Caf, CPAM, France Travail, fournisseurs d'énergie tels qu’EDF, GDF…).\nAvant de saisir le Défenseur des droits, vous devez d'abord essayer de résoudre le litige à l'amiable avec le service public ou l'organisme concerné. Par exemple, vous pouvez faire une réclamation auprès du service ou introduire un recours administratif contre la décision contestée.\nAttention : Le Défenseur des droits ne peut pas intervenir dans les conflits entre l’administration et ses agents. Toutefois, il peut intervenir lorsque le conflit concerne une discrimination. Il ne peut pas non plus intervenir lorsqu’il s’agit d’un contrat commercial. Si votre litige porte sur l'exécution d'un contrat avec une entreprise publique (prix, quantité, facturation, résiliation…), il s'agit alors d'un litige privé de nature commerciale et vous devez vous adresser au Médiateur concerné.\nVous pouvez vérifier si le Défenseur des droits est compétent pour examiner votre demande à l’aide de ce service en ligne :\n→ Service en ligne : Savoir si le Défenseur des droits est compétent pour votre problème",
+      "titre": "Pour quels litiges peut-on saisir le Défenseur des droits ?"
+     },
+     {
+      "texte": "Le Défenseur des droits peut être saisi par :\n- Toute personne physique qui s'estime lésée dans ses droits et libertés par le fonctionnement d'une administration de l'État, d'une collectivité territoriale, d'un établissement public ou d'un organisme chargé d'une mission de service public\n- Ses « ayants droit » (époux, enfants, parents...)\n- Une association ou une entreprise\n- Un parlementaire français ou un élu français du Parlement européen\n- Une institution étrangère qui a les mêmes fonctions que le Défenseur des droits.\nLe Défenseur des droits peut également se saisir d'office lorsqu'il estime que son intervention est nécessaire.\nRappel : Avant de saisir le Défenseur des droits, vous devez d'abord essayer de résoudre le litige à l'amiable avec le service public ou l'organisme concerné. Par exemple, vous pouvez faire une réclamation auprès du service ou introduire un recours administratif contre la décision contestée.",
+      "titre": "Qui peut saisir le Défenseur des droits ?"
+     },
+     {
+      "texte": "Vous pouvez saisir le Défenseur des droits (ou ses délégués) en ligne, sur place ou par courrier :\nVous pouvez faire la démarche en ligne, sur place ou par courrier :\nCas : En ligne\nVous pouvez saisir le Défenseur des droits en utilisant ce service en ligne :\n→ Service en ligne : Saisir en ligne le Défenseur des droits\nCas : Sur place\nVous pouvez prendre rendez-vous avec un délégué du Défenseur des droits.\n→ Où s'adresser : Délégué territorial du Défenseur des droits\nÀ savoir : Les délégués du Défenseur des droits vous permettent d'accéder à un accompagnement de proximité sur vos droits et si nécessaire, vous orientent vers une structure qui pourra mieux vous aider. Vous pouvez les retrouver dans des lieux de permanences (préfectures, sous-préfectures, maisons de justice et du droit...).\nCas : Par courrier\nVous pouvez saisir le Défenseur des droits ou l’un de ses délégués par courrier.\n→ Où s'adresser : Défenseur des droits\n→ Où s'adresser : Délégué territorial du Défenseur des droits\nAttention : Le fait de saisir le Défenseur des droits n'interrompt pas et ne suspend pas les délais de recours pour engager une action en justice.",
+      "titre": "Comment saisir le Défenseur des droits ?"
+     },
+     {
+      "texte": "Les services du Défenseur des droits sont gratuits.",
+      "titre": "Doit-on payer pour saisir le Défenseur des droits ?"
+     },
+     {
+      "texte": "Le Défenseur des droits vérifie tout d'abord que votre demande relève de sa compétence.\nSi ce n'est pas le cas, il vous communique les motifs pour lesquels il ne peut pas traiter votre dossier et vous oriente vers les personnes ou les organismes qui peuvent vous aider.\nSi le Défenseur des droits estime que votre demande relève de sa compétence, il ouvre une enquête pour recueillir les informations lui permettant de connaître la situation, avant de prendre une décision.\nPouvoirs d’investigation larges\nDemande d’explications\nLa procédure d'enquête se déroule en confrontant les points de vue du réclamant (la personne qui fait une réclamation au Défenseur des droits) et de la personne mise en cause (la personne visée par la réclamation). Il s’agit du principe du contradictoire.\nLe Défenseur des droits peut demander des explications à toute personne physique ou morale mise en cause devant lui.\nLes personnes mises en cause doivent faciliter l'accomplissement de sa mission.\nElles sont tenues d'autoriser leurs agents et préposés à répondre aux demandes du Défenseur des droits. Les agents doivent répondre aux demandes d'explications adressées par celui-ci.\nConvocation à une audition\nLe Défenseur des droits peut convoquer les agents.\nLes convocations doivent mentionner l'objet de l'audition.\nÀ savoir : Les personnes auxquelles le Défenseur des droits demande des explications peuvent se faire assister du conseil de leur choix (par exemple, par un avocat). Un procès-verbal de l'audition est rédigé et remis à la personne entendue.\nVérifications sur place\nLe Défenseur des droits peut aussi effectuer des vérifications sur place dans les locaux des services publics ou des organismes chargés d'une mission de service public, ainsi que dans les lieux, locaux, moyens de transports accessibles au public et dans les locaux professionnels exclusivement consacrés à cet usage.\nLors des vérifications sur place, le Défenseur des droits peut entendre toute personne pouvant lui fournir des informations.\nUn procès-verbal est établi par les juristes du Défenseur des droits.\nMise en demeure en cas de refus de coopérer\nSi le Défenseur des droits n’obtient pas de réponse à sa demande d’informations, il peut mettre en demeure les personnes intéressées de lui répondre dans un délai qu'il fixe.\nLorsque la mise en demeure n'est pas suivie d'effet, il peut saisir le juge des référés pour lui demander d'ordonner toute mesure utile à l'obtention des informations demandées.\nRèglement amiable des réclamations\nLe règlement amiable est privilégié lorsque les réclamations indiquent, par exemple, une erreur de procédure, une incompréhension, une défaillance d'une administration. Dans ce cas, le Défenseur des droits intervient en facilitant le dialogue entre toutes les personnes concernées. Il propose une solution adaptée afin d'éviter une action en justice.\nLe règlement amiable peut prendre différentes formes (règlement informel ou médiation).\nRèglement informel\nDe simples échanges de courriers ou de courriels permettent parfois de régler la situation de façon simple et rapide.\nMédiation\nLe Défenseur des droits peut aussi essayer de régler le litige en organisant une médiation entre le service public mis en cause et vous.\nÀ noter : La médiation est encadrée par la loi. Elle permet notamment de garantir la confidentialité des échanges entre la personne mise en cause et vous.\nRecommandations\nLe Défenseur des droits peut faire toute recommandation permettant de garantir le respect de vos droits et libertés et de résoudre les problèmes soulevés devant lui, ou d’en prévenir le renouvellement.\nLe service public informe le Défenseur des droits, dans le délai qu'il fixe, des suites données à ses recommandations.\nSi le service public ne donne pas d'information dans le délai ou si le Défenseur des droits estime, au vu des informations reçues, que la recommandation n'a pas été appliquée, il peut lui donner l'ordre de prendre des mesures précises dans un délai déterminé. Par exemple, délivrer une autorisation qui avait été refusée.\nLorsqu'il n'a pas été donné suite à son injonction, le Défenseur des droits établit un rapport spécial. Ce rapport est communiqué au service public et publié.\nLe Défenseur des droits peut décider de publier aussi la réponse du service public.\nDemande de sanctions\nSi le Défenseur des droits constate dans son enquête des faits qui méritent une sanction disciplinaire, il peut demander à l'autorité compétente d'engager des poursuites disciplinaires à l’encontre des auteurs. Par exemple, le refus injustifié par un agent de traiter les demandes déposées par les usagers.\nL’autorité compétente doit informer le Défenseur des droits des suites données à sa demande et, s’il n’a pas engagé de procédure disciplinaire, lui transmettre les motifs de cette décision.\nSi l'autorité compétente ne donne pas d'information dans le délai ou si le Défenseur des droits estime, au vu des informations reçues, que sa demande n’a pas été suivie des mesures nécessaires, il peut établir un rapport spécial. Ce rapport est communiqué à l'autorité compétente.\nLe Défenseur des droits peut décider de publier ce rapport spécial et, si l'estime nécessaire, la réponse de l'autorité.\nObservations devant le juge\nLe Défenseur des droits ne peut pas remettre en cause une décision de justice, mais il peut présenter des observations écrites ou orales à la demande des juridictions civiles, administratives ou pénales ou à la demande des parties.",
+      "titre": "Comment le Défenseur des droits examine la demande ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

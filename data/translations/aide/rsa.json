@@ -1,0 +1,671 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "rsa",
+ "recordId": "ab12177c-3383-415b-be99-4909ff9b2e5a",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:31.730Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Active solidarity income (RSA: basic income support)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 87.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Active Solidarity Income (RSA: basic income support) is a minimum income for people with no resources, the amount of which varies depending on the composition of the household. It is available to people aged 25 or older, as well as young workers aged 18 to 24, subject to certain conditions. RSA) provides a minimum income and support for professional integration. Applications can be made online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Active Solidarity Income (RSA: basic income support) is a minimum income for people with no resources, the amount of which varies depending on the composition of the household. It is available to people aged 25 or older, as well as young workers aged 18 to 24, subject to certain conditions. RSA) provides a minimum income and support for professional integration. Applications can be made online or by mail.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Individuals aged 25 or older\n- Young adults aged 18 to 24, single parents, or those with a certain period of professional experience.\n- Individuals residing in France in a stable and effective manner\n- French or foreign nationals residing in France, subject to meeting certain residency requirements",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.4,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of RSA (basic income support) varies depending on the composition of the household: €651.69 for a single person, €977.54 for a couple without children, and additional amounts for each child or dependent person.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 91.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Contact your Caf (family benefits office) or MSA (farmers' social security fund) to check if you meet the requirements.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Submit an application online through the online service: Application for RSA (Caf) or (MSA)",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Please send forms cerfa (official form) number 15481 or 15482 and cerfa number 14130 by mail to your Caf.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Use the calculator simulator to estimate your entitlements before submitting a claim.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.1,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of resources for the past 3 months",
+      "Forms cerfa (official form) No. 15481 (or No. 15482 if not employed) and cerfa No. 14130",
+      "Proof of residency for non-nationals"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.9,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Caisse d'allocations familiales (Caf: family benefits office), Departmental Services, Town Hall, Mutualité sociale agricole (MSA: farmers' social security fund), Contact your MSA: by email, by phone, and a service for people who are deaf or hard of hearing.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 84.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:47.081Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Aktif dayanışma geliri (RSA: asgari gelir desteği)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 87.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Aktif Dayanışma Geliri (RSA: asgari gelir desteği), gelir desteği, gelir eşiğine düşen bireyler için belirlenmiş bir minimum gelirdir ve aile yapısına göre değişiklik gösterir. 25 yaş ve üzeri bireyler, belirli koşullar altında 18-24 yaş arasındaki genç çalışanlar da bu gelirden faydalanabilir. RSA, minimum gelirin yanı sıra, işe yerleştirme konusunda destek de sağlar. Başvuru, çevrimiçi hizmet aracılığıyla veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Aktif Dayanışma Geliri (RSA: asgari gelir desteği), gelir desteği, gelir eşiğine düşen bireyler için belirlenmiş bir minimum gelirdir ve aile yapısına göre değişiklik gösterir. 25 yaş ve üzeri bireyler, belirli koşullar altında 18-24 yaş arasındaki genç çalışanlar da bu gelirden faydalanabilir. RSA, minimum gelirin yanı sıra, işe yerleştirme konusunda destek de sağlar. Başvuru, çevrimiçi hizmet aracılığıyla veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 63,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- 25 yaşından büyük kişiler\n- 18 ila 24 yaşları arasındaki genç çalışanlar, yalnız ebeveynler veya belirli bir süre boyunca iş hayatına devam etmiş kişiler.\n- Fransa'da istikrarlı ve etkili bir şekilde yaşayan kişiler\n- Fransız veya Fransa'da yaşayan yabancılar, belirli ikamet koşullarını yerine getirdikleri takdirde.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.3,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "RSA (asgari gelir desteği)'deki miktar, ailenin yapısına göre değişir: tek başınalar için 651,69 €, çocuksuz çiftler için 977,54 € ve her çocuk veya bakıma muhtaç kişi için ek miktarlar.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.3,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Lütfen Caf (aile yardımları kurumu) veya MSA (tarım sosyal güvenlik kurumu) ile iletişime geçerek, uygunluk koşullarını sağladığınızdan emin olun.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Çevrimiçi hizmet aracılığıyla çevrimiçi başvuru yapmak: RSA (asgari gelir desteği) başvurusu (Caf) veya (MSA)",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Formları cerfa (resmi form) numaralı 15481 veya 15482 ve cerfa numaralı 14130 posta yoluyla Caf adresine gönderin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Hesaplama simülatörünü kullanarak, başvurunuzdan önce haklarınızı tahmin edin.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "3 aylık kaynak belgeleri",
+      "Formlar cerfa(n°15481) ve cerfa(n°14130)",
+      "Yabancılar için ikamet kanıtları"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 43.7,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Caisse d'allocations familiales (Caf: aile yardımları kurumu), Bölge Daireleri, Belediyeniz, Mutualité sociale agricole (MSA: tarım sosyal güvenlik kurumu), İlgili birini (örneğin, yetkili bir kişi) arayın: e-posta, telefon ve işitme engelli veya işitme sorunları olan kişiler için özel bir hizmet aracılığıyla.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 57.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:43:58.889Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "دخل الرفاه الاجتماعي النشط (RSA: دخل التضامن النشط)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"دخل التعويض الاجتماعي النشط\" (T1) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تكوين الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح \"T2\" الحصول على دخل أساسي وخدمات دعم للاندماج في سوق العمل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 65.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"دخل التعويض الاجتماعي النشط\" (T1) هو دخل أساسي مخصص للأشخاص ذوي الدخل المحدود، ويختلف المبلغ حسب تكوين الأسرة. وهو متاح للأشخاص الذين تبلغ أعمارهم 25 عامًا أو أكثر، بالإضافة إلى الشباب العاملين الذين تتراوح أعمارهم بين 18 و 24 عامًا، وذلك وفقًا لبعض الشروط. يتيح \"T2\" الحصول على دخل أساسي وخدمات دعم للاندماج في سوق العمل. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 65.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أشخاص تبلغ أعمارهم 25 عامًا أو أكثر\n- شباب نشط في الفئة العمرية بين 18 و 24 عامًا، أو آباء يعيشون بمفردهم أو لديهم تاريخ عمل محدد.\n- الأشخاص المقيمين في فرنسا بشكل مستقر وفعال\n- فرنسيون أو أجانب مقيمون في فرنسا، مع استيفاء شروط الإقامة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.4,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يختلف مبلغ RSA (دخل التضامن النشط)‏] حسب تركيب الأسرة: 651.69 يورو لشخص واحد، و 977.54 يورو للزوجين بدون أطفال، بالإضافة إلى مبالغ إضافية لكل طفل أو فرد معتمد.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "اتصل بـ Caf (صندوق الإعانات العائلية) أو MSA (صندوق الضمان الاجتماعي الفلاحي) للتحقق مما إذا كنت تستوفي الشروط.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقديم طلب عبر الإنترنت من خلال الخدمة الإلكترونية: طلب RSA (Caf) أو (MSA)",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "يرجى إرسال النماذج رقم 15481 أو 15482 و رقم 14130 عبر البريد إلى عنوان Caf.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "استخدم محاكي الحساب لتقدير حقوقك قبل تقديم الطلب.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 73.2,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "إثباتات المصادر للفترة الثلاثة الأخيرة",
+      "النماذج رقم 15481 (أو 15482 إذا لم يكن الموظف) ورقم 14130.",
+      "وثائق إثبات الإقامة للأجانب"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 46.4,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: Caisse d'allocations familiales (Caf (صندوق الإعانات العائلية)‎])، خدمات القسم، البلدية، Mutualité sociale agricole (MSA (صندوق الضمان الاجتماعي الفلاحي)‎])، للتواصل مع MSA‎]: عبر البريد الإلكتروني، أو الهاتف، وخدمة مخصصة للأشخاص الصم أو ذوي الإعاقة السمعية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:44:10.417Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Aktiver Solidaritätszuschuss (RSA: Grundsicherungsleistung)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Das „Aktives Solidaritäts-Einkommen“ (RSA: Grundsicherungsleistung)] ist ein Mindestgehalt für Menschen ohne Einkommen, dessen Höhe je nach Zusammensetzung des Haushalts variiert. Es steht Personen ab 25 Jahren sowie jungen Erwerbstätigen im Alter von 18 bis 24 Jahren unter bestimmten Bedingungen zur Verfügung. Das RSA ermöglicht den Erhalt eines Mindestgehalts und Unterstützung bei der beruflichen Integration. Die Antragstellung kann über den Online-Service oder per Post erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Das „Aktives Solidaritäts-Einkommen“ (RSA: Grundsicherungsleistung)] ist ein Mindestgehalt für Menschen ohne Einkommen, dessen Höhe je nach Zusammensetzung des Haushalts variiert. Es steht Personen ab 25 Jahren sowie jungen Erwerbstätigen im Alter von 18 bis 24 Jahren unter bestimmten Bedingungen zur Verfügung. Das RSA ermöglicht den Erhalt eines Mindestgehalts und Unterstützung bei der beruflichen Integration. Die Antragstellung kann über den Online-Service oder per Post erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Personen ab 25 Jahren\n- Junge Berufstätige im Alter von 18 bis 24 Jahren, Alleinerziehende oder Personen, die eine bestimmte Berufstätigkeit nachweisen können.\n- Personen, die in Frankreich auf stabile und effektive Weise leben\n- Französische oder ausländische Einwohner in Frankreich, vorbehaltlich der Erfüllung bestimmter Aufenthaltsbedingungen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.9,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Höhe von RSA (Grundsicherungsleistung) variiert je nach Zusammensetzung des Haushalts: 651,69 € für eine Einzelperson, 977,54 € für ein Paar ohne Kinder und zusätzliche Beträge für jedes Kind oder für Personen, die finanziell unterstützt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Kontaktieren Sie Ihr Caf (Familienkasse) oder MSA (landwirtschaftliche Sozialversicherung), um zu überprüfen, ob Sie die Voraussetzungen erfüllen.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Antrag online über den Online-Service stellen: Antrag auf RSA (Caf) oder (MSA)",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bitte senden Sie die Formulare cerfa (amtliches Formular) Nr. 15481 oder Nr. 15482 und cerfa Nr. 14130 per Post an Ihre Caf.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Nutzen Sie den Rechner, um Ihre Ansprüche vor der Antragstellung zu schätzen.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.4,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Nachweise für die Ressourcen der letzten 3 Monate",
+      "Formulare cerfa (amtliches Formular) Nr. 15481 (oder Nr. 15482, falls nicht angestellt) und cerfa Nr. 14130",
+      "Nachweise über den Aufenthalt für Ausländer"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.1,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Je m'enquiere, je benötige weitere Informationen: Caisse d'allocations familiales (Caf: Familienkasse), Dienstleistungen der Gemeinde, Rathaus, Mutualité sociale agricole (MSA: landwirtschaftliche Sozialversicherung), Kontaktieren Sie Ihren Ansprechpartner: per E-Mail, per Telefon und für Menschen mit Hörbehinderung.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 66.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:44:21.944Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Активна солідарна допомога (RSA: мінімальний дохід солідарності)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"Активна солідарна допомога\" (RSA: мінімальний дохід солідарності) – це мінімальна сума допомоги, призначена для осіб без фінансових можливостей, розмір якої залежить від складу сім'ї. Вона доступна особам віком від 25 років, а також молодим працівникам у віці від 18 до 24 років за певних умов. \"RSA\" дозволяє отримати мінімальну суму допомоги та підтримку у працевлаштуванні. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"Активна солідарна допомога\" (RSA: мінімальний дохід солідарності) – це мінімальна сума допомоги, призначена для осіб без фінансових можливостей, розмір якої залежить від складу сім'ї. Вона доступна особам віком від 25 років, а також молодим працівникам у віці від 18 до 24 років за певних умов. \"RSA\" дозволяє отримати мінімальну суму допомоги та підтримку у працевлаштуванні. Заявку можна подати онлайн або поштою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Особи віком не менше 25 років\n- Молоді активні люди віком від 18 до 24 років, самотні батьки або ті, хто може надати докази певної тривалості професійної діяльності.\n- Особи, які проживають у Франції стабільно та ефективно\n- Французи або іноземці, які проживають у Франції, за умови задоволення певних умов проживання.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.8,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума RSA (мінімальний дохід солідарності) ] залежить від складу сім'ї: 651,69 євро для однієї особи, 977,54 євро для пари без дітей, а також додаткові суми для кожної дитини або особи, яка є на поїті.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Зв'яжіться зі своїм Caf (каса сімейних допомог) або MSA (сільськогосподарське соціальне страхування), щоб перевірити, чи відповідаєте ви вимогам.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Подати заявку онлайн через онлайн-сервіс: Заявка на RSA (Caf) або (MSA)",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Надіслати форми №15481 або №15482 та №14130 разом із Caf поштою на вашу адресу.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Використовуйте калькулятор для оцінки ваших прав перед поданням заявки.",
+       "numero": 4,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 4
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документи, що підтверджують наявність ресурсів за останні 3 місяці",
+      "Форми cerfa (офіційна форма) №15481 (або №15482, якщо особа не є працівником) та cerfa №14130",
+      "Документи, що підтверджують перебування іноземців"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.1,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Caisse d'allocations familiales (Caf: каса сімейних допомог), Спеціальні служби, Місцева адміністрація, Mutualité sociale agricole (MSA: сільськогосподарське соціальне страхування), Зв'яжіться з вашим MSA: електронною поштою, телефоном та сервісом для людей з вадами слуху.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:4e102f39e734ac29458674c6e892880f79e405b0a5a78091e6ff5f1b1aa930c8",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Revenu de solidarité active (RSA)",
+   "description": "Le Revenu de Solidarité Active (RSA) est un revenu minimum destiné aux personnes sans ressources, qui varie selon la composition du foyer. Il est ouvert aux personnes de 25 ans ou plus, ainsi qu'aux jeunes actifs de 18 à 24 ans sous certaines conditions. Le RSA permet de bénéficier d’un revenu minimum et d’un accompagnement à l’insertion professionnelle. La demande peut se faire via le service en ligne ou par courrier.",
+   "cest_quoi": "Le Revenu de Solidarité Active (RSA) est un revenu minimum destiné aux personnes sans ressources, qui varie selon la composition du foyer. Il est ouvert aux personnes de 25 ans ou plus, ainsi qu'aux jeunes actifs de 18 à 24 ans sous certaines conditions. Le RSA permet de bénéficier d’un revenu minimum et d’un accompagnement à l’insertion professionnelle. La demande peut se faire via le service en ligne ou par courrier.",
+   "pour_qui": "- Personnes d'au moins 25 ans\n- Jeunes actifs de 18 à 24 ans, parents isolés ou justifiant d'une certaine durée d'activité professionnelle\n- Personnes résidant en France de manière stable et effective\n- Français ou étrangers résidant en France, sous réserve de remplir des conditions de séjour",
+   "ce_que_ca_aide": "Le montant du RSA varie selon la composition du foyer : 651,69 € pour une personne seule, 977,54 € pour un couple sans enfant, et des montants supplémentaires pour chaque enfant ou personne à charge.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Contacter votre Caf ou MSA pour vérifier si vous remplissez les conditions"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Faire une demande en ligne via le service en ligne : Demande de RSA (Caf) ou (MSA)"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Envoyer les formulaires cerfa n°15481 ou n°15482 et cerfa n°14130 par courrier à votre Caf"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Utiliser le simulateur de calcul pour estimer vos droits avant la demande"
+    }
+   ],
+   "documents_necessaires": [
+    "Justificatifs de ressources des 3 derniers mois",
+    "Formulaires cerfa n°15481 (ou n°15482 si non salarié) et cerfa n°14130",
+    "Justificatifs de séjour pour les étrangers"
+   ],
+   "ou_demander": "Selon votre situation : Caisse d'allocations familiales (Caf), Services du département, Mairie, Mutualité sociale agricole (MSA), Contacter votre MSA : par mail, par téléphone et service pour les personnes sourdes ou malentendantes.",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:15:21.726Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/N19775",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

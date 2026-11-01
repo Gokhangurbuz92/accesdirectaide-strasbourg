@@ -1,0 +1,226 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "securite-sociale-quel-sera-le-plafond-annuel-en-2027-009178",
+ "recordId": "4abb2a40-8dec-4bb4-aeb4-9b10f5a4c1ed",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.744Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Social security: what will be the annual limit in 2027?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "The Social Security ceiling serves as the basis for calculating the maximum daily benefit amounts for sickness, work-related accidents, or maternity, disability pensions, retirement benefits, etc. It is updated annually on January 1st. The level of the annual ceiling for 2027 has been published on the official website of the Social Security Bulletin. Service Public informs you.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.9,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "The Social Security ceiling serves as the basis for calculating the maximum daily benefit amounts for sickness, work-related accidents, or maternity, disability pensions, retirement benefits, etc. It is reviewed annually on January 1st. The level of the annual ceiling for 2027 has recently been published on the website of the Official Gazette of Social Security. <em>Service Public</em> informs you.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.745Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sosyal Güvenlik: 2027 yılı için yıllık limit ne olacak?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 90.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Sosyal Güvenlik Fonu'nun belirlenmiş limiti, hastalık, iş kazası veya doğum gibi durumlarda ödenen günlük tazminatların, engellilik maaşlarının, emekli maaşlarının vb. için maksimum tutarı hesaplamak için temel oluşturur. Bu limit her yıl 1 Ocak'ta yeniden belirlenir. 2027 yılı için belirlenmiş limit, Sosyal Güvenlik Fonu'nun resmi yayınlarında yayınlanmıştır. Kamu Hizmeti, sizi bilgilendirmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Sosyal Güvenlik Fonu'nun belirlenmiş limiti, hastalık, iş kazası veya doğum gibi durumlarda ödenen günlük tazminatların, engellilik maaşlarının, emekli maaşlarının vb. için maksimum tutarı hesaplamak için temel oluşturur. Bu limit her yıl 1 Ocak tarihinde yeniden belirlenir. 2027 yılı için belirlenmiş limit, Sosyal Güvenlik Fonu'nun resmi yayınında yayınlanmıştır. <em>Kamu Hizmeti</em> sizi bilgilendirir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.746Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "التأمين الاجتماعي: ما هو الحد الأقصى السنوي في عام 2027؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "يعمل سقف التأمين الاجتماعي كنقطة أساسية لحساب الحد الأقصى لمبالغ التعويضات اليومية المتعلقة بالمرض أو الحوادث المهنية أو الإجازة المرضية، بالإضافة إلى المعاشات التقاعدية، وما إلى ذلك. يتم تحديثه سنويًا في 1 يناير. وقد تم نشر مستوى السقف السنوي لعام 2027 على موقع \"المنشور الرسمي للتأمين الاجتماعي\". يرجى الاطلاع على المعلومات المقدمة من \"خدمة الجمهور\".",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>يعمل \"السقف\" الخاص بالتأمين الاجتماعي كنقطة انطلاق لحساب الحد الأقصى لمبالغ التعويضات اليومية المتعلقة بالمرض أو الحوادث المهنية أو الإجازة المرضية، بالإضافة إلى المعاشات التقاعدية، وما إلى ذلك. يتم تحديث هذا السقف سنويًا في 1 يناير. وقد تم نشر مستوى السقف السنوي لعام 2027 على موقع \"المنشور الرسمي للتأمين الاجتماعي\". <em>خدمة عامة</em> تقدم لكم هذه المعلومة.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.747Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sozialversicherung: Wie hoch wird die jährliche Obergrenze im Jahr 2027 sein?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Die Höhe der Leistungen der Sozialversicherung dient als Grundlage für die Berechnung des maximalen Betrags der täglichen Leistungen bei Krankheit, Arbeitsunfall oder Mutterschaft, der Invalidenrenten, der Renten usw. Sie wird jährlich zum 1. Januar überprüft. Die Höhe des jährlichen Obergrenzwerts für 2027 wurde auf der Webseite des offiziellen Amtsblatts der Sozialversicherung veröffentlicht. Das öffentliche Dienst informiert.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Die Grundlage für die Berechnung des maximalen Betrags der täglichen Leistungen bei Krankheit, Arbeitsunfall oder Mutterschaft, der Invalidenrenten und Renten usw. ist der Sozialversicherungssatz. Dieser wird jährlich zum 1. Januar neu festgelegt. Der für das Jahr 2027 geltende Satz wurde auf der Webseite des offiziellen Amtsblatts der Sozialversicherung veröffentlicht. <em>Service Public</em> informiert Sie.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.748Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Соціальне страхування: який буде річний ліміт у 2027 році?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.9,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Ліміт соціального страхування є основою для розрахунку максимальної суми щоденних виплат у разі хвороби, нещасного випадку на роботі або вагітності, пенсій по інвалідності, пенсій тощо. Він переглядається щороку 1 січня. Рівень ліміту на 2027 рік було опубліковано на сайті Офіційного видання соціального страхування. \"Публічний сервіс\" інформує вас.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Верхня межа системи соціального страхування слугує основою для розрахунку максимальної суми щоденних виплат у разі хвороби, нещасного випадку на роботі або вагітності, пенсій по інвалідності, пенсій тощо. Вона переглядається щороку 1 січня. Рівень верхньої межі на 2027 рік було опубліковано на веб-сайті Офіційного бюлетену системи соціального страхування. <em>Public Service</em> інформує.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.5,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:4b95a3b69fa7a7e73d795af6770a6ea9a7fa2f02f5aabf567c55426feda6154f",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Sécurité sociale : quel sera le plafond annuel en 2027 ?",
+   "resume": "Le plafond de la Sécurité sociale sert de base pour calculer le montant maximal des indemnités journalières pour maladie, accident du travail ou maternité, les pensions d'invalidité, les retraites, etc. Il est réévalué chaque année au 1er janvier. Le niveau du plafond annuel pour 2027 vient d’être publié sur le site du Bulletin officiel de la Sécurité sociale. Service Public vous informe.",
+   "contenu": "<p>Le plafond de la Sécurité sociale sert de base pour calculer le montant maximal des indemnités journalières pour maladie, accident du travail ou maternité, les pensions d'invalidité, les retraites, etc. Il est réévalué chaque année au 1<sup>er</sup> janvier. Le niveau du plafond annuel pour 2027 vient d’être publié sur le site du Bulletin officiel de la Sécurité sociale. <em>Service Public</em> vous informe.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A15386?xtor=RSS-112",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

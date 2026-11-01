@@ -1,0 +1,234 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "prime-de-transport-versee-au-salarie-le-plafond-d-exoneration-est-revalorise-temporairement-e353e4",
+ "recordId": "ffbc6800-2b38-48e1-967e-7b3d432794f6",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.740Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Transport allowance paid to the employee: the exemption ceiling is temporarily increased",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "To help employees cope with rising fuel prices, the government announced in September an increase in the maximum amount of the \"fuel allowance\" subsidy. Two decrees published on October 21, 2026, confirm the temporary increase in the limit of exemptions for transport allowances that employees can receive. The \"Service Public\" website provides an update on the matter.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "To help employees cope with rising fuel prices, the government announced in September an increase in the maximum amount of the \"fuel allowance\" subsidy. Two decrees published on October 21, 2026, confirm the temporary increase in the limit on the amount of transport allowances that employees can receive. <em>Service Public</em> provides an update.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.741Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çalışana ödenen taşıma ücreti: muafiyet limiti geçici olarak artırılmıştır",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Çalışanların yakıt fiyatlarındaki artışla başa çıkmasına yardımcı olmak amacıyla, hükümet Eylül ayında yakıt yardımı için üst limiti artırma kararı açıklamıştı. 21 Ekim 2026 tarihli iki decreto, çalışanların alabileceği taşıma ücretlerinden muafiyetin geçici olarak artırıldığını teyit ediyor. Kamu Hizmetleri, durumu değerlendiriyor.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 55.2,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "\"Çalışanların, yakıt fiyatlarındaki artışa karşı desteklenmesi amacıyla, hükümet Eylül ayında yakıt yardımı için üst limiti artırma kararı almıştı. 21 Ekim 2026 tarihinde yayınlanan iki decreto, çalışanların alabileceği taşıma ücreti muafiyetinin geçici olarak yükseltilmesini onaylıyor. <em>Halk Hizmeti</em> durumu değerlendiriyor.\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.741Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مكافأة النقل المدفوعة للموظف: تم رفع حد الإعفاء مؤقتًا.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.5,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "لمساعدة الموظفين على مواجهة ارتفاع أسعار الوقود، أعلن الحكومة في شهر سبتمبر عن زيادة حد \"مكافأة الوقود\". وقد أكدت مرسوما صدر في 21 أكتوبر 2026 رفع الحد المؤقت للإعفاء من مستحقات النقل التي يمكن للموظفين الاستفادة منها. يقدم \"خدمة عامة\" ملخصًا.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>للمساعدة على مواجهة ارتفاع أسعار الوقود، أعلن الحكومة في شهر سبتمبر عن زيادة حد \"مكافأة الوقود\". وقد أكدت مرسوما صدر في 21 أكتوبر 2026، رفع الحد المؤقت للإعفاء من مستحقات النقل التي يمكن أن يستفيد منها الموظفون. <em>(خدمة عامة)</em> تقدم ملخصًا.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.742Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Transportzuschuss für den Arbeitnehmer: Die Freibetrag-Grenze wird vorübergehend erhöht",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 39.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Um die Arbeitnehmer bei der steigenden Benzinpreise zu unterstützen, hatte die Regierung im September eine Erhöhung der Obergrenze für die \"Benzin-Prämie\" angekündigt. Zwei Dekrete vom 21. Oktober 2026 bestätigen die vorübergehende Erhöhung der Grenze für die Beförderungskosten, die Arbeitnehmer in Anspruch nehmen können. \"Service Public\" fasst die Situation zusammen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Um die Arbeitnehmer bei der steigenden Benzinpreise zu unterstützen, hatte die Regierung im September eine Erhöhung des Höchstbetrags der \"Benzin-Prämie\" angekündigt. Zwei Dekrete vom 21. Oktober 2026 bestätigen die vorübergehende Erhöhung der Grenze für die Freistellung von Fahrtkosten, die Arbeitnehmer in Anspruch nehmen können. <em>Service Public</em> fasst die Situation zusammen.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 56.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.743Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Компенсація транспортних витрат, що виплачується працівнику: встановлено тимчасове підвищення ліміту звільнення від податку",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.8,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Щоб допомогти працівникам у зв'язку зі зростанням цін на пальне, увечері вересня уряд оголосив про підвищення верхньої межі «доплати за пальне». Два укази, опубліковані 21 жовтня 2026 року, підтверджують тимчасове підвищення ліміту на звільнення від витрат на транспорт, які можуть отримати працівники. \"Публічний сектор\" надає огляд ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 56.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Щоб допомогти працівникам у зв'язку зі зростанням цін на пальне, увечері вересня уряд оголосив про підвищення верхньої межі «доплати за пальне». Два укази, опубліковані 21 жовтня 2026 року, підтверджують тимчасове підвищення ліміту на звільнення від витрат на транспорт, які можуть отримати працівники. «Service Public» надає огляд ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:f1cec17b650b2f2280055569fa13e0ef062a6f92bcbf751de4ddd41876ea2f1d",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Prime de transport versée au salarié : le plafond d’exonération est revalorisé temporairement",
+   "resume": "Pour aider les salariés face à l’augmentation des prix des carburants, le Gouvernement avait annoncé au mois de septembre une hausse du plafond de la « prime carburant ». Deux décrets parus le 21 octobre 2026 confirment le relèvement temporaire de la limite d’exonération des indemnités de transport dont peuvent bénéficier les salariés. Service Public fait le point.",
+   "contenu": "<p>Pour aider les salariés face à l’augmentation des prix des carburants, le Gouvernement avait annoncé au mois de septembre une hausse du plafond de la « prime carburant ». Deux décrets parus le 21 octobre 2026 confirment le relèvement temporaire de la limite d’exonération des indemnités de transport dont peuvent bénéficier les salariés. <em>Service Public</em> fait le point.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A18926?xtor=RSS-112",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

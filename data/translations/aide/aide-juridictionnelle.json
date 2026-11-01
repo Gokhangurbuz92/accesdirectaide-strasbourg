@@ -1,0 +1,736 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "aide-juridictionnelle",
+ "recordId": "39cc324b-92bb-4e0d-bfc2-354c2c2341e3",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.114Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Legal assistance",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 34.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Legal aid allows anyone residing in France to receive financial assistance for court fees and a lawyer's fees, provided they meet the eligibility criteria. It is intended for those who do not have sufficient financial resources to represent themselves in court. To apply, you must meet certain deadlines and provide specific documentation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Legal aid allows anyone residing in France to receive financial assistance for court fees and a lawyer's fees, provided they meet the eligibility criteria. It is intended for those who do not have sufficient financial resources to represent themselves in court. To apply, you must meet certain deadlines and provide specific documentation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- You must be a French national or an EU citizen (except for Denmark).\n- You usually reside in France, even if your titre de séjour (residence permit) is not valid.\n- Legal fees are not covered by legal insurance or a legal defense fund.\n- Your financial resources do not exceed the eligibility limits for legal aid.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.1,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of legal aid varies depending on the reference income and the number of people in the household.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 63.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit the request before the start of the process and until the end of the case.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Submit the application along with supporting documents to the court's legal aid office.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Please complete and submit form cerfa (official form) no. 16146 if the process is before the National Asylum Court (CNDA).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Forward the request to the court's legal aid office in the relevant jurisdiction.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Pay close attention to the specific deadlines set by the CNPA (15 days after the Ofpra decision)",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.1,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of address dated less than 3 months",
+      "Up-to-date family record (or equivalent document if a foreign national)",
+      "Copy of both sides of the identification document",
+      "Confirmation of non-coverage by the insurer",
+      "Most recent tax assessment",
+      "Proof of income from the last 6 months",
+      "Document proving the value of non-primary residences",
+      "Proof of savings amount",
+      "Summons to appear in court or any equivalent document",
+      "Documents that provide evidence of a crime of extreme severity (murder, assault, terrorism, etc.)"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 55.6,
+      "units": 10
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Court of Justice, Legal Aid Office of the Court of Cassation, Court of Cassation, Legal Aid Office of the Council of State, National Asylum Court (CNDA), Bar Association, Administrative Court, Court of Appeal, Administrative Court of Appeal.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.118Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Hukuki yardım",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Yasal yardım, Fransa'da yaşayan herhangi bir kişinin, belirli şartları yerine getirmesi durumunda, mahkeme masrafları ve avukat ücretleri için mali destek almasına olanak tanır. Bu, yeterli maddi imkanları olmayan ve mahkemede kendilerini savunmakta zorlanan kişiler için tasarlanmıştır. Bu yardımı almak için, belirli zaman dilimlerine uymak ve gerekli belgeleri sunmak gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Yasal yardım, Fransa'da yaşayan herhangi bir kişinin, belirli şartları yerine getirmesi durumunda, mahkeme masrafları ve avukat ücretleri için mali destek almasına olanak tanır. Bu, yeterli maddi imkanları olmayan ve mahkemede kendilerini savunmakta zorlanan kişiler için tasarlanmıştır. Bu yardımı almak için, belirli zaman dilimlerine uymak ve gerekli belgeleri sunmak gerekir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Fransız veya Avrupa Birliği vatandaşı (Danimarka hari) olmanız gerekmektedir.\n- Genellikle Fransa'da ikamet edersiniz, ancak titre de séjour (oturum izni) belgeniz geçerli olmasa bile.\n- Hukuki masraflar, bir hukuki danışmanlık veya sigorta kapsamında değildir.\n- Finansal kaynaklarınız, hukuki yardımın kabul kriterlerini aşmaktadır.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 66.5,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Yasal yardımın miktarı, vergi geliri ve vergi mükellefinin bulunduğu ailenin büyüklüğüne göre değişiklik göstermektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 43.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "İşlemin başlangıcında ve davanın sonuna kadar başvuruyu yapmak.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "İlgili belgelerle birlikte başvuruyu, mahkeme tarafından sağlanan hukuki yardım ofisine göndermek",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Eğer süreç Ulusal Göçmenlik Mahkemesi (CNDA) önünde devam ediyorsa, form cerfa (resmi form) numaralı 16146 formunu doldurarak göndermelisiniz.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "İlgili davaya ait talebi, yerel mahkemenin adli yardım ofisine iletmek.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "CNDA'nın (Ofpra'nın kararı sonrası) belirlediği belirli zaman dilimlerine dikkat etmek (kararın ardından 15 gün).",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.3,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "3 aydan daha eski bir ikametgah kanıtı",
+      "Güncel aile sicili (veya yabancıysa eşdeğer bir belge)",
+      "Kimlik kartının ön ve arka yüzlerinin kopyası",
+      "Sigorta şirketinden gelen, hizmetin sağlanmadığını gösteren belge",
+      "En son gün yayınlanan vergi beyannamesi",
+      "Geçmiş 6 ayın vergiye tabi gelir belgeleri",
+      "Gayrimenkul değerinin kanıtı (ana ikamet dışı)",
+      "Tasarruf miktarının kanıtı",
+      "Mahkemeye çağrı veya buna eşdeğer herhangi bir belge",
+      "Bu belgeler, son derece ciddi bir suçun (cinayet, tecavüz, terörizm vb.) varlığını kanıtlamaktadır."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55,
+      "units": 10
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Yargı Mahkemesi, Yüksek Mahkeme'nin Hukuki Yardım Ofisi, Yüksek Mahkeme, Devlet Konseyi'nin BAJ Ofisi, Ulusal Göçmenlik Mahkemesi (CNDA), Avukatlar Birliği, İdari Mahkeme, Bölge İdari Mahkemesi.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.121Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "المساعدة القانونية",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 34.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "تتيح المساعدة القانونية لأي شخص مقيم في فرنسا الحصول على دعم مالي لتغطية تكاليف المحكمة ورسوم المحامي، شريطة استيفاء الشروط المطلوبة. وهي موجهة للأشخاص الذين لا يملكون الموارد المالية الكافية للدفاع عن أنفسهم في المحكمة. للحصول عليها، يجب الالتزام ببعض المواعيد وتقديم المستندات المطلوبة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "تتيح المساعدة القانونية لأي شخص مقيم في فرنسا الحصول على دعم مالي لتغطية تكاليف المحكمة ورسوم المحامي، شريطة استيفاء الشروط المطلوبة. وهي موجهة للأشخاص الذين لا يملكون الموارد المالية الكافية للدفاع عن أنفسهم في المحكمة. للحصول عليها، يجب الالتزام ببعض المواعيد وتقديم المستندات المطلوبة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أنتم مواطن فرنسي أو مواطن أوروبي (باستثناء الدنمارك).\n- عادةً ما تقيم في فرنسا، حتى لو كانت بطاقة الهوية الخاصة بك غير صالحة.\n- لا تغطي تكاليف التقاضي من خلال وثيقة تأمين أو حماية قانونية.\n- ميزانيتك المالية لا تتجاوز الحدود المحددة للحصول على المساعدة القانونية.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 55.6,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "تختلف قيمة المساعدة القانونية حسب الدخل الضريبي المرجعي وعدد أفراد الأسرة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 45.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم الطلب قبل بدء الإجراءات وحتى انتهاء القضية.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "إرسال الطلب مع المستندات المطلوبة إلى مكتب المساعدة القانونية التابع للمحكمة.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "يرجى ملء النموذج رقم 16146 وإرساله إذا كانت الإجراءات تجري أمام المحكمة الوطنية للحقوق الإنسانية (CNDA).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "إرسال الطلب إلى مكتب المساعدة القانونية التابع لمحكمة الاستئناف في مكان وقوع القضية.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "يجب الانتباه إلى المواعيد النهائية المحددة أمام الهيئة الوطنية للدفاع عن الحقوق (CNDA)، وهي 15 يومًا بعد قرار مكتب مراقبة الأسواق (Ofpra).",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 56.3,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "إثبات إقامة لا يقل عن 3 أشهر",
+      "سجل عائلي حديث (أو وثيقة مماثلة إذا كان الشخص من جنسية أخرى)",
+      "نسخة من الوثيقة الرسمية (بطاقة الهوية) على الوجهين.",
+      "إقرار بعدم تحمل شركة التأمين للمسؤولية",
+      "آخر قرار ضريبي",
+      "إثبات دخل قابل للضريبة للفترة الستة أشهر الأخيرة",
+      "وثيقة تثبت قيمة العقارات (باستثناء العقار الرئيسي).",
+      "إثبات المبلغ المحفوظ",
+      "دعوة لحضور الجلسة أو أي وثيقة مكافئة.",
+      "وثائق تثبت ارتكاب جريمة خطيرة للغاية (قتل، اعتداء جنسي، إرهاب، إلخ)."
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 54.8,
+      "units": 10
+     }
+    },
+    "ou_demander": {
+     "text": "اعتمادًا على وضعك: المحكمة القضائية، مكتب المساعدة القانونية لمحكمة الاستئناف، محكمة الاستئناف، مكتب المساعدة القانونية لمجلس الدولة، المحكمة الوطنية لحقوق اللاجئين (CNDA)، نقابة المحامين، المحكمة الإدارية، محكمة الاستئناف الإدارية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.124Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Rechtsberatung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 29.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die Rechtsbeistellung ermöglicht es jeder Person, die in Frankreich lebt, finanzielle Unterstützung für Gerichts- und Anwaltskosten zu erhalten, sofern sie die Voraussetzungen erfüllt. Sie richtet sich an Personen, die nicht über die finanziellen Mittel verfügen, um sich vor Gericht zu vertreten. Um diese in Anspruch zu nehmen, müssen bestimmte Fristen eingehalten und entsprechende Nachweise vorgelegt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die Rechtsbeistellung ermöglicht es jeder Person, die in Frankreich lebt, finanzielle Unterstützung für Gerichts- und Anwaltskosten zu erhalten, sofern sie die Voraussetzungen erfüllt. Sie richtet sich an Personen, die nicht über die finanziellen Mittel verfügen, um sich vor Gericht zu vertreten. Um diese in Anspruch zu nehmen, müssen bestimmte Fristen eingehalten und entsprechende Nachweise vorgelegt werden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Sie sind französischer Staatsbürger oder gehören zu einer europäischen Nationalität (mit Ausnahme Dänemarks).\n- Sie wohnen normalerweise in Frankreich, auch wenn Ihr titre de séjour (Aufenthaltstitel) ungültig ist.\n- Gerichts- und Anwaltskosten sind nicht durch eine Rechtsversicherung oder eine Haftpflichtversicherung abgedeckt.\n- Ihre finanziellen Mittel dürfen die für die Rechtsbeihilfe festgelegten Höchstgrenzen nicht überschreiten.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.5,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Höhe der staatlichen Unterstützung hängt vom Einkommen und der Anzahl der Personen im Haushalt ab.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Die Anfrage muss vor Beginn des Verfahrens und bis zum Abschluss des Falls gestellt werden.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Die Anfrage zusammen mit den entsprechenden Nachweisen an das zuständige Rechtsbehelflicherbüro des Gerichts senden.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Bitte das Formular cerfa (amtliches Formular) mit der Nummer 16146 ausfüllen und senden, falls der Antrag vor dem nationalen Asylgericht (CNDA) verhandelt wird.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Die Anfrage an die zuständige Rechtsbeistandsstelle des zuständigen Gerichts weiterleiten.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Achten Sie auf die spezifischen Fristen, die durch die CNDA (15 Tage nach der Entscheidung der Ofpra) festgelegt sind.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Nachweis des Wohnsitzes, der älter als 3 Monate ist",
+      "Aktuelles Familienbuch (oder ein entsprechendes Dokument, falls die Person ausländischer Staatsangehörigkeit ist)",
+      "Kopie beider Seiten des Ausweisdokuments",
+      "Bestätigung, dass die Versicherung die Kosten nicht übernimmt",
+      "Neueste Steuererklärung",
+      "Nachweis über steuerpflichtige Einkünfte der letzten 6 Monate",
+      "Nachweis des Wertes von Immobilien (außer dem Hauptwohnsitz)",
+      "Nachweis des Sparbetrags",
+      "Einladung zu einer Verhandlung oder ein gleichwertiges Dokument",
+      "Dokumente, die von einer äußerst schwerwiegenden Straftat (Mord, Vergewaltigung, Terrorismus usw.) zeugen"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58,
+      "units": 10
+     }
+    },
+    "ou_demander": {
+     "text": "Je kann Ihnen je nach Ihrer Situation folgende Optionen anbieten:\n* Gericht\n* Rechtsberatungsstelle des Obersten Gerichtshofs\n* Oberster Gerichtshof\n* BAJ (Bundesverwaltungsgericht)\n* Nationale Asylgericht (CNDA)\n* Anwaltskammer\n* Verwaltungsgericht\n* Berufungsgericht\n* Verwaltungsberufungsgericht",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.126Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Юридична допомога",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 34.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Юридична допомога дозволяє будь-якій особі, яка проживає у Франції, отримати фінансову підтримку для оплати судових витрат та послуг адвоката, за умови, що вона відповідає певним вимогам. Вона призначена для тих, хто не має достатніх фінансових ресурсів для захисту своїх прав у суді. Щоб отримати її, необхідно дотримуватися встановлених термінів і надати конкретні докази.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Юридична допомога дозволяє будь-якій особі, яка проживає у Франції, отримати фінансову підтримку для оплати судових витрат та послуг адвоката, за умови, що вона відповідає певним вимогам. Вона призначена для тих, хто не має достатніх фінансових ресурсів для захисту своїх прав у суді. Щоб отримати її, необхідно дотримуватися встановлених термінів і надати конкретні докази.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Ви є громадянином Франції або європейського громадянином (крім Данії).\n- Ви зазвичай проживаєте у Франції, навіть якщо ваш titre de séjour (посвідка на проживання) не є дійсним.\n- Витрати на судові процеси не покриваються страховкою або юридичною захистом.\n- Ваші фінансові можливості не перевищують встановлені межі для отримання правової допомоги.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 4
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Розмір фінансової допомоги, наданої судом, залежить від доходу, що використовується для розрахунку, та кількості осіб у складі сімейного бюджету.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку до початку процедури та до завершення розгляду справи.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Надіслати заявку разом із відповідними документами до відділу юридичної допомоги суду.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Заповнити та надіслати форму №16146 cerfa (офіційна форма), якщо процедура розглядається в Національному суді з питань асиль (CNDA).",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Надіслати запит до відділу юридичної допомоги суду, що розглядає справу.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Звертати увагу на конкретні терміни, встановлені CNDA (15 днів після рішення Ofpra)",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документ, що підтверджує місце проживання, виданий не пізніше 3 місяців тому.",
+      "Актуальний сімейний паспорт (або документ, що відповідає йому, якщо особа є іноземцем)",
+      "Копія обох сторін документу, що посвідчує особу",
+      "Підтвердження від страхової компанії про відсутність покриття",
+      "Остання інформація про податок",
+      "Документ, що підтверджує доходи за останні 6 місяців.",
+      "Документ, що підтверджує вартість нерухомості (крім основного житла)",
+      "Документ, що підтверджує суму заощаджень",
+      "Повідомлення про виклик на судову сесію або будь-який еквівалентний документ.",
+      "Документи, що свідчать про скоєння надзвичайно серйозного злочину (вбивство, сексуальне насильство, тероризм тощо)"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 56.1,
+      "units": 10
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Суд, Адвокатська колегія, Вища судова палата, Адвокатська колегія при Раді Держав, Національний суд з питань асиль, Адвокатська колегія, Адміністративний суд, Вищий адміністративний суд.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 49.8,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:fcdc3b0d5ed610a6462604155248a44703b19102685b74c8d1aaa18ed72b6a6f",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Aide juridictionnelle",
+   "description": "L’aide juridictionnelle permet à toute personne résidant en France de bénéficier d’un soutien financier pour les frais de justice et les honoraires d’un avocat, si elle remplit les conditions d’admission. Elle s’adresse à ceux qui n’ont pas les ressources financières suffisantes pour se défendre en justice. Pour la demander, il faut respecter des délais et fournir des justificatifs précis.",
+   "cest_quoi": "L’aide juridictionnelle permet à toute personne résidant en France de bénéficier d’un soutien financier pour les frais de justice et les honoraires d’un avocat, si elle remplit les conditions d’admission. Elle s’adresse à ceux qui n’ont pas les ressources financières suffisantes pour se défendre en justice. Pour la demander, il faut respecter des délais et fournir des justificatifs précis.",
+   "pour_qui": "- Vous êtes de nationalité française ou ressortissant européen (sauf le Danemark)\n- Vous résidez habituellement en France, même si votre titre de séjour n’est pas valide\n- Les frais de justice ne sont pas couverts par une protection juridique ou une assurance\n- Vos ressources financières ne dépassent pas les plafonds d’admission de l’aide juridictionnelle",
+   "ce_que_ca_aide": "Le montant de l’aide juridictionnelle varie selon le revenu fiscal de référence et le nombre de personnes dans le foyer fiscal.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire la demande avant le début de la procédure et jusqu’à la fin de l’affaire"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Envoyer la demande accompagnée de justificatifs au bureau d’aide juridictionnelle du tribunal judiciaire"
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Remplir et envoyer le formulaire cerfa n°16146 si la procédure est devant la Cour nationale du droit d’asile (CNDA)"
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Transmettre la demande au bureau d’aide juridictionnelle du tribunal judiciaire du lieu de l’affaire"
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Faire attention aux délais spécifiques devant la CNDA (15 jours après la décision de l’Ofpra)"
+    }
+   ],
+   "documents_necessaires": [
+    "Justificatif de domicile de moins de 3 mois",
+    "Livret de famille à jour (ou document équivalent si étranger)",
+    "Copie recto-verso de la pièce d’identité",
+    "Attestation de non-prise en charge par l’assureur",
+    "Avis d’imposition le plus récent",
+    "Justificatif de revenus imposables des 6 derniers mois",
+    "Justificatif de la valeur des biens immobiliers (hors résidence principale)",
+    "Justificatif du montant de l’épargne",
+    "Convocation à l’audience ou tout document équivalent",
+    "Documents attestant d’un crime d’une extrême gravité (meurtre, viol, terrorisme, etc.)"
+   ],
+   "ou_demander": "Selon votre situation : Tribunal judiciaire, Bureau d'aide juridictionnelle de la Cour de cassation, Cour de cassation, BAJ du Conseil d'État, Cour nationale du droit d'asile (CNDA), Barreau des avocats, Tribunal administratif, Cour d'appel, Cour administrative d'appel.",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-29T23:51:04.591Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F18074",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

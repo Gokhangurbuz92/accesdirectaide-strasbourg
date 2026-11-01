@@ -1,0 +1,586 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
+ "recordId": "083c97a7-1702-459b-8f14-5a7eb4a24d16",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.194Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Assistance with starting or restarting a business (Arce)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The \"Arce\" program provides financial assistance to entrepreneurs or business buyers, funded by France Travail (public employment service). It represents 60% of the remaining eligible funds from the \"Return to Employment Assistance\" (ARE: unemployment benefit) scheme, in the form of capital. This allows individuals to combine non-salaried income with a portion of the ARE or to opt for the Arce program. To be eligible, individuals must create or acquire a business in France after the end of an employment contract and have the right to ARE.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.1,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The \"Arce\" program provides financial assistance to entrepreneurs or business buyers, funded by France Travail (public employment service). It represents 60% of the remaining eligible funds from the \"Return to Employment Assistance\" (ARE: unemployment benefit) scheme, in the form of capital. This allows individuals to combine non-salaried income with a portion of the ARE or to opt for the Arce program. To be eligible, individuals must create or acquire a business in France after the end of an employment contract and have the right to ARE.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Person who has registered with France Travail (public employment service) as a job seeker\n- Recipient of the unemployment benefit (ARE: unemployment benefit) at the time of starting or establishing a business.\n- An employee who loses their job and then starts or takes over a business after the end of their employment contract.\n- Having ended a reassignment leave or a mobility leave\n- Accessing support for entrepreneurs and business buyers (Acre)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The amount of the Arce is equal to 60% of the remaining capital of the unemployment benefit rights (ARE: unemployment benefit). A deduction of 3% is applied to the capital amount to cover supplementary pension funding.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Complete an Arce application form at France Travail (public employment service)",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Provide France Travail with documentation confirming the creation or resumption of a business within the framework of the Acre scheme.",
+       "numero": 2,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.1,
+      "units": 2
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of registration in the National Business Register (RNE)",
+      "Use K or K-bis if the company engages in commercial activities."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.9,
+      "units": 2
+     }
+    },
+    "ou_demander": {
+     "text": "Based on your situation: France Travail (public employment service).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.196Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Şirketlerin yeniden başlamasına veya kurulmasına yardımcı olma (Arce)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 43.3,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"Arce (Şirket Kurma veya Yeniden Kurma Desteği) programı, France Travail (kamu istihdam kurumu) tarafından şirket kuran veya yeniden kuran girişimcilere ödenen mali bir yardımdır. Bu, kalan işe yeniden başlamaya yönelik destek ödemelerinin %60'ına, sermaye şeklinde karşılık gelmektedir. Bu, çalışan dışı gelirlerle ARE (işsizlik ödeneği) veya Arce'yi seçme imkanı sunar. Bu yardımdan yararlanmak için, bir iş sözleşmesinin sona ermesinden sonra Fransa'da bir şirket kurmak veya yeniden kurmak ve ARE hakkına sahip olmak gerekmektedir.\"",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 62,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"Arce (Şirket Kurma veya Yeniden Kurma Desteği) programı, France Travail (kamu istihdam kurumu) tarafından şirket kuran veya yeniden kuran girişimcilere ödenen mali bir yardımdır. Bu, kalan işe yeniden başlamaya yönelik destek ödemelerinin %60'ına, sermaye şeklinde karşılık gelmektedir. Bu, çalışan dışı gelirlerle ARE (işsizlik ödeneği) veya Arce'yi seçme imkanı sunar. Bu yardımdan yararlanmak için, bir iş sözleşmesinin sona ermesinden sonra Fransa'da bir şirket kurmak veya yeniden kurmak ve ARE hakkına sahip olmak gerekmektedir.\"",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 62,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- France Travail (kamu istihdam kurumu)'e kayıtlı ve iş arayan kişi\n- İş gücüne yeniden başlamada veya şirket kurmada yararlanacak olan, (ARE: işsizlik ödeneği) yardım ödemesi alan kişi.\n- İşten çıkarılan bir çalışan, iş sözleşmesi sona erdikten sonra kendi işini kuran veya yeniden başlatan kişi.\n- Bir yeniden görevlendirme veya hareketlilik izinini sona erdirmek\n- Şirket kurucularına ve girişimcilerine yönelik destek programlarından (Acre) yararlanma",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.5,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Arce'nin miktarı, geri kalan işe yerleştirme yardımı hakkının sermayesinin %60'ıdır (ARE: işsizlik ödeneği). Sermayeden, ek emeklilik finansmanı için %3'lük bir kesinti uygulanmaktadır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 50.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "France Travail (kamu istihdam kurumu) adresinden bir Arce başvuru formunu doldurun.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "France Travail'e, bir şirketin kurulması veya yeniden başlamasıyla ilgili belgeleri Acre programı kapsamında sunmak",
+       "numero": 2,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.7,
+      "units": 2
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Şirketlerin Ulusal Kayıt Sicili (RNE) siciline kaydolma belgesi",
+      "Eğer şirket ticari faaliyet gösteriyorsa, K veya K-bis matrahından vergilendirilir."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 2
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: France Travail (kamu istihdam kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.198Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مساعدة في إعادة تأسيس أو إنشاء شركة (Arce)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 88,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"برنامج المساعدة في إعادة تأسيس أو إنشاء شركة (Arce) هو برنامج مالي يقدمه France Travail (هيئة التشغيل العمومية) ] للشركات الناشئة أو الشركات التي تم الاستحواذ عليها. يمثل 60٪ من المبلغ المتبقي من المساعدة في العودة إلى العمل (ARE: إعانة البطالة)، ويتم تقديمه على شكل رأس مال. يسمح هذا البرنامج بجمع الدخل غير المتعلق بالعمل مع جزء من ARE، أو اختيار برنامج Arce. للحصول على هذه المساعدة، يجب إنشاء أو الاستحواذ على شركة في فرنسا بعد انتهاء عقد العمل، ولابد من وجود حق في الحصول على ARE.\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.1,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"برنامج المساعدة في إعادة تأسيس أو إنشاء شركة (Arce) هو برنامج مالي يقدمه France Travail (هيئة التشغيل العمومية) ] للشركات الناشئة أو الشركات التي تم الاستحواذ عليها. يمثل 60٪ من المبلغ المتبقي من المساعدة في العودة إلى العمل (ARE: إعانة البطالة)، ويتم تقديمه على شكل رأس مال. يسمح هذا البرنامج بجمع الدخل غير المتعلق بالعمل مع جزء من ARE، أو اختيار برنامج Arce. للحصول على هذه المساعدة، يجب إنشاء أو الاستحواذ على شركة في فرنسا بعد انتهاء عقد العمل، ولابد من وجود حق في الحصول على ARE.\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- شخص مسجل في France Travail (هيئة التشغيل العمومية) كـ \"باحث عن عمل\"\n- الشخص المستفيد من مبلغ المساعدة للعودة إلى العمل (ARE: إعانة البطالة) في وقت إعادة تأسيس أو إنشاء الشركة.\n- موظف فقد وظيفته ويؤسس شركة جديدة أو يستعيد شركة قائمة بعد انتهاء عقد عمله.\n- إنهاء إجازة إعادة التوزيع أو إجازة النقل\n- الحصول على الدعم للمبدعين ورواد الأعمال",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يساوي مبلغ Arce 60٪ من رأس المال المتبقي للحق في الحصول على إعانة العودة إلى العمل (ARE: إعانة البطالة). ويتم خصم 3٪ لتمويل المعاشات التقاعدية الإضافية من المبلغ.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "ملء نموذج طلب Arce لدى France Travail (هيئة التشغيل العمومية)",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "إعادة نسخة من وثيقة تثبت إنشاء أو استئناف نشاط تجاري ضمن إطار برنامج \"أكر\".",
+       "numero": 2,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 58.4,
+      "units": 2
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "إثبات التسجيل في السجل الوطني للشركات (RNE)",
+      "يُستخرج رقم التعريف الضريبي (K) أو رقم التعريف الضريبي للشركات (K-bis) إذا كانت الشركة تمارس نشاطًا تجاريًا."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 2
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: France Travail (هيئة التشغيل العمومية).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "untranslated"
+      ],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.200Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Unterstützung bei der Wiedergründung oder Gründung eines Unternehmens (Arce)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 93.6,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die Unterstützung bei der Wiederaufnahme oder Gründung eines Unternehmens (Arce) ist eine finanzielle Unterstützung, die von France Travail (öffentliche Arbeitsverwaltung) an Gründer oder Erwerber von Unternehmen gewährt wird. Sie entspricht 60 % der verbleibenden Ansprüche auf Arbeitslosenunterstützung (ARE: Arbeitslosengeld), in Form von Kapital. Sie ermöglicht es, neben Einkommen aus nicht-angestellten Tätigkeiten einen Teil von ARE zu erhalten oder die Arce in Anspruch zu nehmen. Um davon zu profitieren, muss ein Unternehmen in Frankreich nach Beendigung eines Arbeitsvertrags gegründet oder übernommen werden und ein Anspruch auf ARE bestehen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die Unterstützung bei der Wiederaufnahme oder Gründung eines Unternehmens (Arce) ist eine finanzielle Unterstützung, die von France Travail (öffentliche Arbeitsverwaltung) an Gründer oder Erwerber von Unternehmen gewährt wird. Sie entspricht 60 % der verbleibenden Ansprüche auf Arbeitslosenunterstützung (ARE: Arbeitslosengeld), in Form von Kapital. Sie ermöglicht es, neben Einkommen aus nicht-angestellten Tätigkeiten einen Teil von ARE zu erhalten oder die Arce in Anspruch zu nehmen. Um davon zu profitieren, muss ein Unternehmen in Frankreich nach Beendigung eines Arbeitsvertrags gegründet oder übernommen werden und ein Anspruch auf ARE bestehen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Person, die als Arbeitssuchender bei France Travail (öffentliche Arbeitsverwaltung) registriert ist\n- Person, die Anspruch auf die Unterstützungsgeld für die Rückkehr an den Arbeitsplatz (ARE: Arbeitslosengeld) hat, wenn ein Unternehmen gegründet oder wieder aufgenommen wird.\n- Angestellter, der seinen Arbeitsvertrag beendet und anschließend ein Unternehmen gründet oder übernimmt.\n- Ein Umverteilungsurlaub oder ein Mobilitätsprogramm beendet haben\n- Nutzung der Unterstützung für Gründer und Unternehmensübernehmer (Acre)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.8,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Der Betrag des Arce entspricht 60 % des verbleibenden Kapitals der Arbeitslosenversicherung (ARE: Arbeitslosengeld). Eine Abzug von 3 % für die Finanzierung von zusätzlichen Renten wird auf den Kapitalbetrag angewendet.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Ein Arce-Antrag ausfüllen bei France Travail (öffentliche Arbeitsverwaltung)",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "An France Travail einen Nachweis über die Gründung oder den Wiederaufbau eines Unternehmens im Rahmen des Acre-Programms vorlegen",
+       "numero": 2,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 2
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Nachweis der Eintragung im nationalen Unternehmensregister (RNE)",
+      "Auszug K oder K-bis, falls das Unternehmen eine kommerzielle Tätigkeit ausübt."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.6,
+      "units": 2
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen folgende Optionen vor: France Travail (öffentliche Arbeitsverwaltung).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 45.6,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:42:38.202Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Допомога у відновленні або створенні бізнесу (Arce)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 93.6,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Фінансова допомога для відновлення або створення підприємства (Arce) – це фінансова підтримка, яку надає France Travail (державна служба зайнятості) підприємцям або особам, які беруть підприємство в оренду. Вона становить 60% від залишку коштів, що належать для отримання допомоги у поверненні до роботи (ARE: допомога з безробіття), у формі капіталу. Це дозволяє отримувати дохід від неробочої діяльності, а також частину ARE або обрати Arce. Щоб отримати цю допомогу, необхідно створити або взяти в оренду підприємство у Франції після завершення трудового договору та мати право на ARE.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Фінансова допомога для відновлення або створення підприємства (Arce) – це фінансова підтримка, яку надає France Travail (державна служба зайнятості) підприємцям або особам, які беруть підприємство в оренду. Вона становить 60% від залишку коштів, що належать для отримання допомоги у поверненні до роботи (ARE: допомога з безробіття), у формі капіталу. Це дозволяє отримувати дохід від неробочої діяльності, а також частину ARE або обрати Arce. Щоб отримати цю допомогу, необхідно створити або взяти в оренду підприємство у Франції після завершення трудового договору та мати право на ARE.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Особа, зареєстрована в France Travail (державна служба зайнятості) як шукач роботи.\n- Одержувач виплати на підтримку повернення до праці (ARE: допомога з безробіття) на момент відновлення або створення підприємства.\n- Працівник, який втратив роботу, але потім створює або відновлює бізнес після закінчення трудового договору.\n- Припинити період перекваліфікації або період переведення на іншу посаду\n- Отримання підтримки для підприємців та власників бізнесу (Acre)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.3,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума Arce становить 60% від залишкової вартості прав на отримання допомоги при поверненні на роботу (ARE: допомога з безробіття). З цієї суми відраховується 3% для фінансування додаткових пенсій.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Заповнити заявку Arce у France Travail (державна служба зайнятості)",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Надати France Travail документ, що підтверджує створення або відновлення підприємства в рамках програми Acre.",
+       "numero": 2,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.4,
+      "units": 2
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документ про реєстрацію в національному реєстрі підприємств (НРП)",
+      "Витяг K або K-bis, якщо компанія здійснює комерційну діяльність."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.8,
+      "units": 2
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: France Travail (державна служба зайнятості).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:9170ae8a597a41063f65570c55567de3a4d7d6f8b252c9808f6f3e0bf63425e1",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Aide à la reprise ou à la création d'entreprise (Arce)",
+   "description": "L’aide à la reprise ou à la création d’entreprise (Arce) est une aide financière versée par France Travail aux créateurs ou repreneurs d’entreprise. Elle correspond à 60 % des droits à l’allocation d’aide au retour à l’emploi (ARE) restants, sous forme de capital. Elle permet de cumuler des revenus non salariés avec une partie de l’ARE ou de choisir l’Arce. Pour en bénéficier, il faut créer ou reprendre une entreprise en France après la fin d’un contrat de travail et avoir un droit à l’ARE.",
+   "cest_quoi": "L’aide à la reprise ou à la création d’entreprise (Arce) est une aide financière versée par France Travail aux créateurs ou repreneurs d’entreprise. Elle correspond à 60 % des droits à l’allocation d’aide au retour à l’emploi (ARE) restants, sous forme de capital. Elle permet de cumuler des revenus non salariés avec une partie de l’ARE ou de choisir l’Arce. Pour en bénéficier, il faut créer ou reprendre une entreprise en France après la fin d’un contrat de travail et avoir un droit à l’ARE.",
+   "pour_qui": "- Personne inscrite à France Travail en tant que demandeur d’emploi\n- Bénéficiaire de l’allocation d’aide au retour à l’emploi (ARE) au moment de la reprise ou la création d’entreprise\n- Salarié privé d’emploi qui crée ou reprend une entreprise après la fin de son contrat de travail\n- Avoir mis fin à un congé de reclassement ou à un congé de mobilité\n- Bénéficier de l’aide aux créateurs et repreneurs d’entreprise (Acre)",
+   "ce_que_ca_aide": "Le montant de l’Arce est égal à 60 % du capital restant des droits à l’allocation d’aide au retour à l’emploi (ARE). Une déduction de 3 % pour le financement des retraites complémentaires est appliquée sur le montant du capital.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Remplir une demande d’Arce auprès de France Travail"
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Remettre à France Travail un justificatif attestant de la création ou de la reprise d’une entreprise dans le cadre du dispositif Acre"
+    }
+   ],
+   "documents_necessaires": [
+    "Justificatif d’immatriculation au registre national des entreprises (RNE)",
+    "Extrait K ou K-bis si l’entreprise exerce une activité commerciale"
+   ],
+   "ou_demander": "Selon votre situation : France Travail.",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-29T23:48:38.741Z",
+  "sourceUrl": "https://entreprendre.service-public.gouv.fr/vosdroits/F15252",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

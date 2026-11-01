@@ -1,0 +1,685 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "apa-alsace",
+ "recordId": "4e63e3c3-51a6-492e-93c1-aecae5094ee1",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.077Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Personalized autonomy allocation (PAA)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 92.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Personalized Independence Allowance (Apa) allows for the full or partial coverage of expenses related to living at home or the residential care rate of a facility. It is intended for individuals aged 60 or older, depending on their level of functional impairment. The application is made through the department or the care facility, depending on the situation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.2,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Personalized Independence Allowance (Apa) allows for the full or partial coverage of expenses related to living at home or the residential care rate of a facility. It is intended for individuals aged 60 or older, depending on their level of functional impairment. The application is made through the department or the care facility, depending on the situation.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.2,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- be at least 60 years old\n- losing independence\n- living at home or in a residential care facility",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54.5,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The home care allowance varies depending on the Gir (1 to 4): €2,080.33, €1,682.30, €1,215.99, and €811.52. The home care allowance covers a portion of the dependency allowance, depending on income and marital status (single or as a couple).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 57.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit the application to the relevant department or institution, depending on the situation.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Please complete and submit form cerfa (official form) number 10544 within one month of the decision to award the contract.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Awaiting the decision from the department, within 2 months.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Notify the relevant authority of any changes in circumstances.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Request a review of the amount if necessary.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.2,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Form cerfa (official form) No. 10544",
+      "Documentation regarding resources and financial status",
+      "Complete application package"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.4,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Departmental services, Administrative Court, Paris - Social Action Centre of the City of Paris (CASVP).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 85.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.081Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kişiye özel özerklik tahsisi (KÖT)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Kişiye Özel Bağımsızlık Payı (Apa), kişinin evde yaşamla ilgili veya bir kuruma ait bakım ücretlerini tamamen veya kısmen karşılamayı sağlar. Bu ödeme, 60 yaş ve üzeri, bağımsızlık düzeylerine göre belirlenen kişiler için geçerlidir. Başvuru, ilgili département veya bakım kurumu aracılığıyla yapılır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Kişiye Özel Bağımsızlık Payı (Apa), kişinin evde yaşamla ilgili veya bir kuruma ait bakım ücretlerini tamamen veya kısmen karşılamayı sağlar. Bu ödeme, 60 yaş ve üzeri, bağımsızlık düzeylerine göre belirlenen kişiler için geçerlidir. Başvuru, ilgili département veya bakım kurumu aracılığıyla yapılır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- en az 60 yaşında olmak\n- özgürlükten mahrum olmak, bağımsızlığını kaybetmek\n- Evde veya bir sağlık hizmeti kuruluşunda yaşamak",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.8,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Evde bakım hizmeti, Gir (1 ila 4) değerine göre değişiklik gösterir: 2.080,33 €, 1.682,30 €, 1.215,99 €, 811,52 €. Kurumda verilen bakım hizmeti, kaynaklara ve statüye (tek başına veya eşiyle birlikte) bağlı olarak, bağımlılık hizmetinin bir kısmını karşılar.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "İlgili departmana veya kuruluşa başvurunuzu, durumunuza göre yapın.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "cerfa (resmi form) numaralı 10544 formunu, başvuru kararı tarihinden itibaren bir ay içinde doldurarak göndermeniz gerekmektedir.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "İlgili departmanların kararını 2 ay içinde beklemek.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Herhangi bir durum değişikliğini ilgili kuruma bildirin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Gerekirse, ödeme miktarının yeniden değerlendirilmesini talep edin.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.4,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Form T1, No: 10544",
+      "Kaynak ve finansal durumla ilgili belgeler",
+      "Tamamen eksik başvuru dosyası"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 56.6,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Bölge ofisleri, Adli İdare Mahkemesi, Paris - Paris Belediyesi Sosyal Yardım Merkezi (CASVP).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.085Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تخصيص ذاتي للحرية (APA)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 31.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "تتيح \"المخصص الشخصي للتعويض عن الاعتماد\" (Apa) تغطية كاملة أو جزئية للنفقات المتعلقة بالحياة في المنزل أو رسوم الاعتماد في مؤسسة. وهي موجهة للأشخاص الذين تزيد أعمارهم عن 60 عامًا، وذلك بناءً على مستوى فقدانهم للقدرة على الاعتماد. يتم تقديم الطلب من خلال المقاطعة أو المؤسسة التي يقيم فيها الشخص، حسب الحالة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "تتيح \"المخصص الشخصي للتعويض عن الاعتماد\" (Apa) تغطية كاملة أو جزئية للنفقات المتعلقة بالحياة في المنزل أو رسوم الاعتماد في مؤسسة. وهي موجهة للأشخاص الذين تزيد أعمارهم عن 60 عامًا، وذلك بناءً على مستوى فقدانهم للقدرة على الاعتماد. يتم تقديم الطلب من خلال المقاطعة أو المؤسسة التي يقيم فيها الشخص، حسب الحالة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.6,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أن يكون عمر المتقدم لا يقل عن 60 عامًا\n- فقدان القدرة على الاعتماد على النفس\n- الإقامة في المنزل أو في مؤسسة رعاية صحية.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.2,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "تختلف قيمة الدعم المالي المخصص للأشخاص في منازلهم (Apa) حسب نوع التأمين (1 إلى 4): 2080.33 يورو، 1682.30 يورو، 1215.99 يورو، 811.52 يورو. أما الدعم المالي المقدم في المؤسسات، فيغطي جزئيًا تكلفة الاعتماد، وذلك حسب الموارد والوضع الاجتماعي (سواء كان الشخص بمفرده أو مع شريك حياته).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 54.2,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم الطلب إلى القسم أو المؤسسة المضيفة، حسب الحالة.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يجب ملء النموذج رقم 10544 وإرساله خلال الشهر التالي لإعلان تخصيص الموارد.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "انتظار قرار من قسم الإدارة، خلال مدة لا تتجاوز 2 شهر.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "إبلاغ أي تغيير في الوضع إلى الجهة المختصة.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا لزم الأمر، يرجى طلب مراجعة المبلغ.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 63.1,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "النموذج رقم 10544، النموذج cerfa (استمارة رسمية)",
+      "وثائق تثبت الموارد والوضع المالي.",
+      "ملف طلب كامل"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.6,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: خدمات القسم، المحكمة الإدارية، باريس - مركز الخدمات الاجتماعية لمدينة باريس (CASVP).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.7,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.090Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Individuelle Autonomie (APA)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 33.4,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die individuell angepasste Autonomie-Zulage (Apa) ermöglicht die vollständige oder teilweise Deckung der Kosten für den Lebensunterhalt zu Hause oder die Pflegekosten in einer Einrichtung. Sie richtet sich an Personen ab 60 Jahren, abhängig von ihrem Grad der Selbstständigkeit. Die Antragstellung erfolgt über den zuständigen Landkreis oder die Pflegeeinrichtung, je nach Fall.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die individuell angepasste Autonomie-Zulage (Apa) ermöglicht die vollständige oder teilweise Deckung der Kosten für den Lebensunterhalt zu Hause oder die Pflegekosten in einer Einrichtung. Sie richtet sich an Personen ab 60 Jahren, abhängig von ihrem Grad der Selbstständigkeit. Die Antragstellung erfolgt über den zuständigen Landkreis oder die Pflegeeinrichtung, je nach Fall.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- mindestens 60 Jahre alt sein\n- verlust der Selbstständigkeit\n- Wohnen im eigenen Zuhause oder in einer Pflegeeinrichtung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54.8,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die häusliche Pflege (APA) variiert je nach Einkommen (1 bis 4): 2.080,33 €, 1.682,30 €, 1.215,99 €, 811,52 €. Die APA in einer Einrichtung deckt teilweise die Kosten für die Pflege ab, abhängig von den finanziellen Mitteln und dem Familienstand (allein oder als Paar).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 62.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Bei Bedarf die entsprechende Abteilung oder Einrichtung kontaktieren.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Bitte das Formular cerfa (amtliches Formular) mit der Nummer 10544 innerhalb eines Monats nach der Entscheidung über die Vergabe ausfüllen und versenden.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Warten Sie auf die Entscheidung der zuständigen Behörden, innerhalb von 2 Monaten.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Alle Änderungen der Situation unverzüglich an die zuständige Stelle melden.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Bei Bedarf den Betrag überprüfen und gegebenenfalls anpassen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Formular cerfa (amtliches Formular) Nr. 10544",
+      "Nachweise über Ressourcen und finanzielle Situation",
+      "Vollständiges Antragsdokument"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.1,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen je nach Ihrer Situation folgende Optionen vor: Dienstleistungen des Departements, Verwaltungsgericht, Paris – Sozialzentrum der Stadt Paris (CASVP).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:47:05.093Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Персоналізоване надання автономії (ПНА)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Персональна допомога в самостійному житті (Apa) дозволяє повністю або частково покрити витрати, пов'язані з проживанням вдома або оплату послуг догляду в закладі. Вона призначена для осіб віком 60 років і старше, залежно від ступеня втрати самостійності. Запит подається через відповідний департамент або заклад, залежно від ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Персональна допомога в самостійному житті (Apa) дозволяє повністю або частково покрити витрати, пов'язані з проживанням вдома або оплату послуг догляду в закладі. Вона призначена для осіб віком 60 років і старше, залежно від ступеня втрати самостійності. Запит подається через відповідний департамент або заклад, залежно від ситуації.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- мати не менше 60 років\n- втрата самостійності\n- проживання вдома або в медичному закладі",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Сума щомісячної допомоги залежить від групи (1-4): 2 080,33 євро, 1 682,30 євро, 1 215,99 євро, 811,52 євро. Допомога, що надається в установі, частково покриває витрати на догляд, залежно від доходів та статусу (один або у парі).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Звернутися до відповідного відділу або установи, залежно від ситуації.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Заповнити та надіслати форму №10544 cerfa (офіційна форма) протягом місяця після прийняття рішення.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Очікувати рішення відповідних департаментів протягом 2 місяців.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Повідомити будь-які зміни ситуації до відповідної організації.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "За потреби, попросити переглянути суму.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.2,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Форма №10544",
+      "Документи, що підтверджують наявність ресурсів та фінансовий стан.",
+      "Повний комплект документів для заявки"
+     ],
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 58.5,
+      "units": 3
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Відділи місцевої влади, адміністративний суд, Париж – Центр соціальної допомоги міста Парижа (CASVP).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.3,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:09f81984a7ba9dc6e011933cf110e901b879ea282fc83a3f053280d9e5e69c37",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation personnalisée d'autonomie (APA)",
+   "description": "L’Allocation personnalisée d’autonomie (Apa) permet de couvrir en totalité ou en partie les frais liés à la vie à domicile ou le tarif dépendance d’un établissement. Elle s’adresse aux personnes âgées de 60 ans ou plus, en fonction de leur perte d’autonomie. La demande se fait via le département ou l’établissement d’accueil, selon le cas.",
+   "cest_quoi": "L’Allocation personnalisée d’autonomie (Apa) permet de couvrir en totalité ou en partie les frais liés à la vie à domicile ou le tarif dépendance d’un établissement. Elle s’adresse aux personnes âgées de 60 ans ou plus, en fonction de leur perte d’autonomie. La demande se fait via le département ou l’établissement d’accueil, selon le cas.",
+   "pour_qui": "- être âgé d’au moins 60 ans\n- avoir une perte d’autonomie\n- résider à domicile ou dans un établissement médico-social",
+   "ce_que_ca_aide": "L’Apa à domicile varie selon le Gir (1 à 4) : 2 080,33 €, 1 682,30 €, 1 215,99 €, 811,52 €. L’Apa en établissement couvre partiellement le tarif dépendance, selon les ressources et le statut (seul ou en couple).",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire la demande auprès du département ou de l’établissement d’accueil, selon le cas."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Remplir et envoyer le formulaire cerfa n°10544 dans le mois suivant la décision d’attribution."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Attendre la décision des services du département, dans les 2 mois."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Signaler toute modification de situation à l’organisme compétent."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Demander une révision du montant si nécessaire."
+    }
+   ],
+   "documents_necessaires": [
+    "Formulaire cerfa n°10544",
+    "Justificatifs de ressources et de situation financière",
+    "Dossier complet de demande"
+   ],
+   "ou_demander": "Selon votre situation : Services du département, Tribunal administratif, Paris - Centre d'action sociale de la ville de Paris (CASVP).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-29T23:53:23.985Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10009",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

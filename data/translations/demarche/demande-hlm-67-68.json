@@ -1,0 +1,758 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "demande-hlm-67-68",
+ "recordId": "f1e3be29-9a8e-4fdc-8a2b-eb178eb9cc63",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.204Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Application for social housing - Bas-Rhin",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.6,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "To obtain social housing, you must submit your application online or in person. If your application is accepted, you will receive a registration certificate that proves that your application has been considered. The waiting time for housing depends on the location and your individual circumstances. You can assert your right to housing if the waiting time is unusually long.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.3,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "To obtain social housing, you must submit your application online or in person. If your application is accepted, you will receive a registration certificate that proves that your application has been considered. The waiting time for housing depends on the location and your individual circumstances. You can assert your right to housing if the waiting time is unusually long.\n\nThe total annual income of individuals applying for accommodation should not exceed a maximum amount, which varies depending on the municipality where the property is located.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.1,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- You (the applicant)\n- Your legal representative: spouse, civil partner, cohabiting partner, or a family member who is not financially dependent on you.\n- Children under 21 years old, students under 25 years old, people with disabilities, or children with the right to visit and stay\n- Individuals listed on your tax return or that of your co-filer\n- Roommates (family members or non-family members)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.5,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit a request for social housing online or in person (at the counter).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Provide proof of identification.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Please provide the names of all individuals who will be living in the social housing unit.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Awaiting a response regarding the acceptance or rejection of your application.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If your application is accepted, you will receive the registration certificate.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Renew your application within the 11 months following the date of registration.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.9,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Proof of identity",
+      "Proof of income, such as a tax assessment or equivalent document",
+      "Proof of certification from another competent authority or your employer if you are unable to provide the tax assessment notice",
+      "Proof of income received over the past 12 months, or since arriving in France (if you have recently arrived in France)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 4
+     }
+    },
+    "ou_faire": {
+     "text": "Based on your situation: Applying for social housing online: getting the help you need.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.3,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Free",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "delai": {
+     "text": "Several months",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.208Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sosyal konut başvurusu - Bas-Rhin",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Sosyal konut elde etmek için başvurunuzu çevrimiçi olarak veya doğrudan yapmanız gerekmektedir. Başvurunuz kabul edilirse, başvurunuzun değerlendirildiğini gösteren bir kayıt belgesi alırsınız. Konut elde etme süresi, yerinize ve kişisel durumunuza bağlıdır. Eğer süre normalden çok uzun sürüyorsa, konut hakkınızı ileri sürebilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Sosyal konut elde etmek için başvurunuzu çevrimiçi olarak veya doğrudan yapmanız gerekmektedir. Başvurunuz kabul edilirse, başvurunuzun değerlendirildiğini gösteren bir kayıt belgesi alırsınız. Konut elde etme süresi, yerinize ve kişisel durumunuza bağlıdır. Eğer süre normalden çok uzun sürüyorsa, konut hakkınızı ileri sürebilirsiniz.\n\nKonaklama amaçlı kullanılan bir mülkün yıllık gelirlerinin toplamı, talep edilen mülkün bulunduğu belediyeye göre belirlenen bir maksimum miktarı aşmamalıdır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Siz (talep sahibi)\n- Birlikte yaşadığınız kişi: eş, ortak, Pacs ortağı, sevgili veya sizinle aynı evi paylaşan aile üyesi\n- 21 yaşından küçük çocuklar, 25 yaşından küçük öğrenciler, engelli bireyler veya ziyaret ve konaklama hakkına sahip çocuklar.\n- Vergi beyannamesinde veya ortak talep sahibinizin beyannamesinde yer alan kişiler\n- Ortak yaşam alanında bulunan kişiler (aile üyeleriniz veya olmayan kişiler)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.1,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Sosyal konut için çevrimiçi olarak veya doğrudan (büroda) başvuru yapmak.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Kimlik belgesinin ibrazı.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Konutun içinde yaşayacak tüm kişilerin isimlerini belirtin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Döneminizi kabul edilip edilmeyeceği veya reddedilip edilmeyeceği konusunda yanıtı bekleyin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Eğer başvurunuz kabul edilirse, kayıt belgesini alacaksınız.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Başvurunuzu, kayıt tarihinden itibaren 11 ay içinde yenileyin.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.2,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Kimlik belgesi",
+      "Gelirler için vergi beyanı veya buna eşdeğer bir belge",
+      "Başka yetkili bir kurumdan veya işvereninizden, vergi beyannamesini sunamamanız durumunda, ilgili bir belge (örneğin, vergi beyannamesi)",
+      "Son 12 aylık içindeki veya Fransa'ya giriş tarihindeki (son zamanlarda Fransa'ya yerleşmişseniz) elde edilen gelirlerin kanıtları"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.9,
+      "units": 4
+     }
+    },
+    "ou_faire": {
+     "text": "Durumunuza göre: Sosyal konut başvurusu yapmak için çevrimiçi platformları kullanmak: Yardım almak.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.5,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Ücretsiz",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "delai": {
+     "text": "Birden fazla ay",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.211Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "طلب سكن اجتماعي - منطقة باس-رين",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "للحصول على سكن اجتماعي، يجب عليك تقديم طلبك عبر الإنترنت أو في المكتب المختص. إذا تم قبول طلبك، فستتلقى شهادة تسجيل تثبت أن طلبك قد تم قبوله. يعتمد وقت الانتظار للحصول على السكن على الموقع وظروفك. يمكنك المطالبة بحقك في الحصول على السكن إذا كان وقت الانتظار غير طبيعي.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.6,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "للحصول على سكن اجتماعي، يجب عليك تقديم طلبك عبر الإنترنت أو في المكتب المختص. إذا تم قبول طلبك، فستتلقى شهادة تسجيل تثبت أن طلبك قد تم قبوله. يعتمد وقت الانتظار للحصول على السكن على الموقع وظروفك. يمكنك المطالبة بحقك في الحصول على السكن إذا كان وقت الانتظار غير طبيعي.\n\nيجب ألا يتجاوز إجمالي الدخل السنوي للأشخاص المقيمين حدًا أقصى، وهذا الحد يعتمد على البلدية التي يقع فيها السكن المطلوب.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.8,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- أنت (المتقدم).\n- الشخص الذي يشاركك في المسؤولية: زوج، شريك في اتفاق الزواج، شريك في العلاقة، أو أحد أفراد عائلتك غير الذين تعتني بهم.\n- الأطفال الذين تقل أعمارهم عن 21 عامًا، والطلاب الذين تقل أعمارهم عن 25 عامًا، والأشخاص ذوي الإعاقة، والأطفال الذين يحق لهم زيارة وإقامة.\n- الأشخاص المذكورين في إقراركم الضريبي أو في إقرار شريكك في الدعوى.\n- مشتركي السكن (أفراد من عائلتك أو غيرهم)",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 54.5,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم طلب للحصول على سكن اجتماعي عبر الإنترنت أو في المكتب.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "تقديم إثبات الهوية.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "اذكر جميع الأشخاص الذين سيسكنون في السكن الاجتماعي.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "انتظروا الرد بشأن قبول أو رفض طلبكم.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا تمت الموافقة على طلبك، فستتلقى شهادة التسجيل.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "قم بتجديد طلبك خلال الأشهر الـ 11 التي تلي تاريخ التسجيل.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "إثبات هوية",
+      "إقرار الضريبة أو أي وثيقة مماثلة للإيرادات.",
+      "إرفاق شهادة من جهة حكومية أخرى أو من صاحب العمل، إذا لم تتمكن من تقديم إقرار الضريبة.",
+      "إثباتات الدخل التي تم تحصيلها خلال الأشهر الـ 12 الماضية أو منذ دخولك إلى فرنسا (إذا كنت قد وصلت حديثًا إلى فرنسا)."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 4
+     }
+    },
+    "ou_faire": {
+     "text": "بناءً على وضعك: تقديم طلب للحصول على سكن اجتماعي عبر الإنترنت: الحصول على المساعدة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "مجاني",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "delai": {
+     "text": "عدة أشهر",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.214Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Antrag auf bezahlbaren Wohnraum – Bas-Rhin",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.8,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Um eine Sozialwohnung zu erhalten, müssen Sie Ihren Antrag online oder vor Ort stellen. Wenn Ihr Antrag angenommen wird, erhalten Sie ein Anmeldebescheinigung, die belegt, dass Ihr Antrag berücksichtigt wurde. Die Wartezeit für eine Wohnung hängt vom Standort und Ihrer persönlichen Situation ab. Sie können Ihr Recht auf eine Wohnung geltend machen, wenn die Wartezeit ungewöhnlich lang ist.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 79.2,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Um eine Sozialwohnung zu erhalten, müssen Sie Ihren Antrag online oder vor Ort stellen. Wenn Ihr Antrag angenommen wird, erhalten Sie ein Anmeldebescheinigung, die belegt, dass Ihr Antrag berücksichtigt wurde. Die Wartezeit für eine Wohnung hängt vom Standort und Ihrer persönlichen Situation ab. Sie können Ihr Recht auf eine Wohnung geltend machen, wenn die Wartezeit ungewöhnlich lang ist.\n\nDie gesamten jährlichen Einkünfte der Personen, die eine Unterkunft suchen, dürfen einen bestimmten Höchstbetrag nicht überschreiten, der von der Gemeinde abhängt, in der sich die gewünschte Unterkunft befindet.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Sie (Antragsteller)\n- Ihr Begleitperson: Ehepartner, Lebenspartner im Rahmen einer PACS-Vereinbarung, Lebenspartner oder ein Familienmitglied, das nicht von Ihnen finanziell unterstützt wird.\n- Personen unter 21 Jahren, Studenten unter 25 Jahren, Menschen mit Behinderung oder Kinder, die das Recht auf Besuch und Unterkunft haben\n- Personen, die in Ihrer Steuererklärung oder in der Steuererklärung Ihres Mitstreitenden aufgeführt sind\n- Mitbewohner (Familienmitglieder oder andere Personen)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Eine Wohnungsbewerbung online oder vor Ort (am Schalter) stellen.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Vorlage eines Ausweisdokuments.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Nennen Sie alle Personen, die in der Sozialwohnung wohnen werden.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Warten Sie auf die Antwort bezüglich der Annahme oder Ablehnung Ihres Antrags.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Ihre Anfrage genehmigt wird, erhalten Sie das Registrierungszertifikat.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Reichen Sie Ihre Anfrage innerhalb der 11 Monate nach dem Datum der Anmeldung erneut ein.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.5,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Ein Ausweisdokument",
+      "Ein Steuerbescheid oder ein gleichwertiges Dokument für Einkünfte",
+      "Nachweis durch eine andere zuständige Behörde oder Ihren Arbeitgeber, falls Sie den Steuerbescheid nicht vorlegen können.",
+      "Nachweise über die Einkünfte der letzten 12 Monate oder seit dem Einzug in Frankreich (falls Sie kürzlich in Frankreich angekommen sind)"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.2,
+      "units": 4
+     }
+    },
+    "ou_faire": {
+     "text": "Je m'adapte an Ihre Situation: Antrag auf Sozialwohnung online stellen: Unterstützung erhalten.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 71.6,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Kostenlos",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "delai": {
+     "text": "Mehrere Monate",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.217Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Запит на соціальне житло – Нижній Рейн",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Щоб отримати соціальне житло, вам потрібно подати заявку онлайн або особисто. Якщо ваша заявка буде схвалена, ви отримаєте підтвердження про реєстрацію, яке підтверджує, що ваша заявка була розглянута. Час очікування отримання житла залежить від місця та вашої ситуації. Ви можете заявити про своє право на житло, якщо час очікування є надмірно тривалим.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Щоб отримати соціальне житло, вам потрібно подати заявку онлайн або особисто. Якщо ваша заявка буде схвалена, ви отримаєте підтвердження про реєстрацію, яке підтверджує, що ваша заявка була розглянута. Час очікування отримання житла залежить від місця та вашої ситуації. Ви можете заявити про своє право на житло, якщо час очікування є надмірно тривалим.\n\nЗагальний річний дохід осіб, які проживають у цьому житлі, не повинен перевищувати певну максимальну суму, яка залежить від місцевості, де розташоване житло.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Ви (заявник)\n- Ваш супутник: чоловік, партнер за контрактом, співмешканець або член вашої родини, який не перебуває на вашому утриманні.\n- Діти віком до 21 року, студенти віком до 25 років, особи з обмеженими можливостями, або діти, які мають право на відвідування та проживання.\n- Особи, зазначені у вашому податковому декларації або декларації вашого спільного заявника.\n- Сусідські жителі (члени вашої родини або інші особи)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку на отримання соціального житла онлайн або особисто (в касі).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Надати документ, що підтверджує особу.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Вказати всіх осіб, які будуть проживати в цьому соціальному житлі.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Чекати відповіді щодо прийняття або відмови у розгляді вашої заявки.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ваша заявка буде схвалена, ви отримаєте документ про реєстрацію.",
+       "numero": 5,
+       "description": ""
+      },
+      {
+       "titre": "Подайте заявку повторно протягом 11 місяців після дати реєстрації.",
+       "numero": 6,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.8,
+      "units": 6
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документ, що підтверджує особу",
+      "Декларація про податок або документ, що відповідає їй, щодо доходу",
+      "Підтвердження іншою компетентною адміністрацією або вашим роботодавцем, якщо ви не можете надати податкову декларацію.",
+      "Документи, що підтверджують отриманий дохід за останні 12 місяців або з моменту прибуття до Франції (якщо ви нещодавно прибули до Франції)."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67,
+      "units": 4
+     }
+    },
+    "ou_faire": {
+     "text": "Відповідно до вашої ситуації: подати заявку на отримання соціального житла онлайн: отримати допомогу.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.8,
+      "units": 1
+     }
+    },
+    "cout": {
+     "text": "Безкоштовно",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "delai": {
+     "text": "Кілька місяців",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:5229d3a4b74feaf2ba38d973661e03be58343c2b7ed56d3bea07b523305de4bf",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Demande de logement social - Bas-Rhin",
+   "description_courte": "Pour obtenir un logement social, vous devez faire votre demande en ligne ou sur place. Si votre dossier est accepté, vous recevez une attestation d'enregistrement qui prouve que votre demande a été prise en compte. Le délai d'attente pour obtenir un logement dépend du lieu et de votre situation. Vous pouvez faire valoir votre droit au logement opposable si le délai est anormalement long.",
+   "contenu_detaille": "Pour obtenir un logement social, vous devez faire votre demande en ligne ou sur place. Si votre dossier est accepté, vous recevez une attestation d'enregistrement qui prouve que votre demande a été prise en compte. Le délai d'attente pour obtenir un logement dépend du lieu et de votre situation. Vous pouvez faire valoir votre droit au logement opposable si le délai est anormalement long.\n\nLe total des revenus annuels des personnes à loger ne doit pas dépasser un montant maximum, qui dépend de la commune où se situe le logement demandé.",
+   "pour_qui": "- Vous-même (demandeur)\n- Votre codemandeur : époux, partenaire de Pacs, concubin ou membre de votre famille non à votre charge\n- Enfants de moins de 21 ans, étudiants de moins de 25 ans, personnes en situation de handicap, ou enfants en droit de visite et d'hébergement\n- Personnes figurant sur votre avis d'imposition ou celui de votre codemandeur\n- Colocataires (membres de votre famille ou non)",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire une demande de logement social en ligne ou sur place (au guichet)."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Fournir un justificatif d'identité."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Indiquer toutes les personnes qui vont vivre dans le logement social."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Attendre la réponse sur l'acceptation ou le rejet de votre dossier."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Si votre demande est acceptée, recevoir l'attestation d'enregistrement."
+    },
+    {
+     "description": "",
+     "numero": 6,
+     "titre": "Renouveler votre demande dans les 11 mois qui suivent la date d'enregistrement."
+    }
+   ],
+   "documents_necessaires": [
+    "Un justificatif d'identité",
+    "L'avis d'imposition ou un document équivalent pour les revenus",
+    "Attestation d'une autre administration compétente ou de votre employeur si vous ne pouvez pas fournir l'avis d'imposition",
+    "Justificatifs des revenus perçus depuis les 12 derniers mois ou depuis l'entrée en France (si vous êtes récemment arrivé en France)"
+   ],
+   "ou_faire": "Selon votre situation : Faire une demande de logement social en ligne : obtenir de l'aide.",
+   "cout": "Gratuit",
+   "delai": "Plusieurs mois"
+  },
+  "verifiedAt": "2026-10-30T01:47:58.666Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10007",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,336 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
+ "recordId": "9cd6ebe7-82f8-4aaf-b34f-884717e9df02",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.627Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What should I do if all of my identification documents are stolen at the same time?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "If all of your identification documents were stolen at the same time, you should first apply for a new identification card or passport.",
+      "steps": [
+       {
+        "texte": "Have you been the victim of a handbag theft, luggage theft, or burglary, and have all your documents been stolen? We will explain the steps you should take. The process differs depending on whether the documents belong to an adult or a minor.",
+        "titre": null
+       },
+       {
+        "texte": "First, you must report the flight. The process varies depending on where the flight took place:\nCase: The theft occurred in France.\nYou can report the theft of your identity document in two ways:\nCase: On-site\nYou must report the theft of your identity document to a police station or gendarmerie.\n→ Where to go: Police Station\n→ Where to go: Local police station\nYou will be given a copy of the complaint filed.\nCase: Online\nYou can file a complaint online:\n→ Online service: Online complaint form\nCase: The theft occurred outside of the country.\nYou can report the theft of your identity document in two ways:\nCase: On-site\nYou must report the theft of your identification document to the local police authorities and the nearest embassy or consulate.\n→ Where to go: French embassy or consulate abroad\nA copy of the theft report is being given to you.\nCase: Online\nYou can file a complaint online:\n→ Online service: Online complaint form\nIf several of the following documents were stolen at the same time (identity card, passport, driving license, vehicle registration document, Vitale card, or electoral card/family record), you should first apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driving license\n- Vehicle registration document\n- Vitale Card\n- Voter ID card\n- Family record.\nIf other items have been stolen, additional steps need to be taken:\n- If your keys are stolen and you know the thieves' address, change the locks.\n- Take steps to report the theft to your mobile phone operator.\n- File a claim with the insurance company.",
+        "titre": "For a major"
+       },
+       {
+        "texte": "First, you must report the flight. The process varies depending on where the flight took place:\nCase: The theft occurred in France.\nIt is possible to report the theft of an identity document in two ways:\nCase: On-site\nYou need to go to a police station or a gendarmerie to report the theft.\n→ Where to go: Police Station\n→ Where to go: Local police station\nYou will be given a copy of the complaint filed.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nCase: The theft occurred outside of the country.\nIt is possible to report the theft of an identity document in two ways:\nCase: On-site\nYou must report the theft of your identification document to the local police authorities and the nearest embassy or consulate.\n→ Where to go: French embassy or consulate abroad\nA copy of the police report is provided.\nCase: Online\nIt is possible to file a complaint online:\n→ Online service: Online complaint form\nIf several of the following documents belonging to a minor have been stolen (identity card, passport, driving license, Vitale card), the first step is to apply for a new identity card or passport.\nIndeed, when requesting other documents, you will need to provide a valid form of identification.\nEach document replacement must be the subject of a separate request:\n- Identity card\n- Passport\n- Driver's license or driving permit\n- Vitale Card.",
+        "titre": "For a minor"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F10774",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10774",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73,
+      "units": 65
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.630Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Tüm kimlik belgelerinin aynı anda çalınması durumunda ne yapılmalı?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Eğer tüm kimlik belgeleriniz aynı anda çalınmışsa, öncelikle yeni bir kimlik kartı veya yeni bir pasaport başvurusunda bulunmanız gerekir.",
+      "steps": [
+       {
+        "texte": "Eğer çantanızın, bagajlarınızın çalındığı veya evinizin basıldığını ve tüm belgelerinizin çalındığını fark ederseniz, size izlenecek adımları açıklıyoruz. Bu adımlar, yetişkin veya çocuk olduğu durumuna göre değişiklik gösterir.",
+        "titre": null
+       },
+       {
+        "texte": "İlk olarak, uçuşu bildirmek zorundasınız. Bu işlem, uçuşun gerçekleştiği yere göre değişiklik gösterir:\nDurum: Uçak Fransa'da gerçekleşti.\nKimliğinizin kaybolması veya çalınması durumunda, durumu bildirmek için iki farklı yöntem bulunmaktadır:\nÖrnek: Yerinde\nKimliğinizin çalınması durumunda, bu durumu bir polis karakoluna veya jandarma karakoluna bildirmelisiniz.\n→ İlgili birim: Polis Şube\n→ İlgili birim: Jandarma Karakolu\nSize şikayetinizi içeren bir dilekçe örneği verilmiştir.\nÖrnek: Çevrimiçi\nŞikayetinizi çevrimiçi olarak bildirebilirsiniz:\n→ Çevrimiçi hizmet: Çevrimiçi şikayet\nDurum: Uçak, yurt dışında gerçekleşti.\nKimliğinizin kaybolması veya çalınması durumunda, durumu bildirmek için iki farklı yöntem bulunmaktadır:\nÖrnek: Yerinde\nKimliğinizin çalınması durumunda, durumu yerel polis yetkililerine ve en yakın konsolosluğa veya büyükelçiliğe bildirmelisiniz.\n→ Nereye başvurulmalı: Fransa'nın yabancı ülkelerdeki büyükelçiliği veya konsolosluğu\nSize hırsızlık tutanağının bir kopyası verilmiştir.\nÖrnek: Çevrimiçi\nŞikayetinizi çevrimiçi olarak bildirebilirsiniz:\n→ Çevrimiçi hizmet: Çevrimiçi şikayet\nEğer yukarıdaki belgelerden bazıları aynı anda çalınmışsa (kimlik, pasaport, ehliyet, araç ruhsatı, Vitale kartı, oy pusulası veya aile sicili), öncelikle yeni bir kimlik veya pasaport başvurusunda bulunmanız gerekmektedir.\nAslında, diğer belgelerin talep edilmesi durumunda, geçerli bir kimlik belgesi sunmanız gerekecektir.\nHer bir belgenin değiştirilmesi, bağımsız bir talep gerektirir:\n- Kimlik kartı\n- Pasaport\n- Sürüş yetkisi\n- Araç ruhsatı\n- Vitale kartı\n- Oy kullanma belgesi\n- Aile defteri.\nEğer başka eşyalar da çalınmışsa, ek önlemler alınmalıdır:\n- Anahtarların çalınması durumunda, suçluların adresini bildiğiniz takdirde, kilitleri değiştirmek önemlidir.\n- Cep telefonunun çalınması durumunda, operatöre başvurarak gerekli işlemleri yapmak.\n- Sigorta şirketine bildirimde bulunmak.",
+        "titre": "Büyük bir kişi için"
+       },
+       {
+        "texte": "İlk olarak, uçuşu bildirmek gerekir. Bu işlem, uçuşun gerçekleştiği yere göre değişiklik gösterir:\nDurum: Uçak Fransa'da gerçekleşti.\nKimlik belgesinin kaybolması veya çalınması durumunda, bu durumu bildirmek için iki farklı yol bulunmaktadır:\nÖrnek: Yerinde\nHırsızlık durumunda, polise veya jandarmaya başvurarak şikayette bulunulmalıdır.\n→ İlgili birim: Polis Şube\n→ İlgili birim: Jandarma Karakolu\nSize şikayetinizi içeren bir dilekçe örneği verilmiştir.\nÖrnek: Çevrimiçi\nİstediğiniz konuda çevrimiçi olarak şikayette bulunmak mümkündür:\n→ Çevrimiçi hizmet: Çevrimiçi şikayet\nDurum: Uçak, yurt dışında gerçekleşti.\nKimlik belgesinin kaybolması veya çalınması durumunda, bu durumu bildirmek için iki farklı yol bulunmaktadır:\nÖrnek: Yerinde\nKimlik belgesinin çalınması durumunda, ilgili polis yetkililerine ve en yakın konsolosluğa veya büyükelçiliğe bildirimde bulunmak zorundasınız.\n→ Nereye başvurulmalı: Fransa'nın yabancı ülkelerdeki büyükelçiliği veya konsolosluğu\nHırsızlık tutanağı örneği teslim edildi.\nÖrnek: Çevrimiçi\nİstediğiniz konuda çevrimiçi olarak şikayette bulunmak mümkündür:\n→ Çevrimiçi hizmet: Çevrimiçi şikayet\nEğer bir çocuğun aşağıdaki belgelerinden bazıları çalınmışsa (kimlik, pasaport, ehliyet, Vitale kartı), öncelikle yeni bir kimlik veya pasaport başvurusunda bulunulmalıdır.\nAslında, diğer belgelerin talep edilmesi durumunda, geçerli bir kimlik belgesi sunmanız gerekecektir.\nHer bir belgenin değiştirilmesi, bağımsız bir talep gerektirir:\n- Kimlik kartı\n- Pasaport\n- Sürüş ehliyet veya trafik güvenliği sertifikası\n- Vitale kartı.",
+        "titre": "Minör için"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F10774",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10774",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 65
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.634Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما الذي يجب فعله في حالة سرقة جميع أوراق الهوية الخاصة به في نفس الوقت؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "إذا تم سرقة جميع وثائق هويتك في نفس الوقت، فيجب عليك أولاً طلب إصدار بطاقة هوية جديدة أو جواز سفر جديد.",
+      "steps": [
+       {
+        "texte": "هل تعرضت لسرقة حقيبة يد، أو سرقة متعلقاتك، أو عملية اقتحام، ونتيجة لذلك، تم سرقة جميع وثائقك؟ نشرح لك الخطوات التي يجب اتخاذها. تختلف هذه الخطوات حسب نوع الوثائق: سواء كانت وثائق شخص بالغ أو وثائق قاصر.",
+        "titre": null
+       },
+       {
+        "texte": "يجب عليك أولاً الإبلاغ عن الحادث. تختلف الإجراءات حسب مكان وقوع الحادث:\nالحالة: وقع الحادث في فرنسا.\nيمكنك الإبلاغ عن سرقة بطاقة الهوية الخاصة بك بطريقتين:\nمثال: في الموقع\nيجب عليك الإبلاغ عن فقدان أو سرقة بطاقة الهوية الخاصة بك في قسم الشرطة أو مركز الشرطة.\n→ إلى أين يتم التوجه: قسم الشرطة\n→ إلى أين يتم التوجه: فرقة الشرطة\nتم تسليم نسخة من إشعار تقديم الشكوى إليكم.\nمثال: عبر الإنترنت\nيمكنك تقديم شكوى عبر الإنترنت:\n→ خدمة عبر الإنترنت: تقديم شكوى عبر الإنترنت\nمثال: وقع الحادث في الخارج.\nيمكنك الإبلاغ عن سرقة بطاقة الهوية الخاصة بك بطريقتين:\nمثال: في الموقع\nيجب عليك الإبلاغ عن فقدان أو سرقة بطاقة الهوية الخاصة بك إلى السلطات الشرطية المحلية والسفارة أو القنصلية الأقرب.\n→ إلى أين يتم التوجه: السفارة أو القنصلية الفرنسية في الخارج\nسيتم تسليم نسخة من بلاغ السرقة إليكم.\nمثال: عبر الإنترنت\nيمكنك تقديم شكوى عبر الإنترنت:\n→ خدمة عبر الإنترنت: تقديم شكوى عبر الإنترنت\nإذا تم سرقة عدة من الوثائق التالية في نفس الوقت (بطاقة الهوية، جواز السفر، رخصة القيادة، رخصة السيارة، بطاقة \"فيتال\"، بطاقة الناخب، أو سجل الأسرة)، فيجب عليك أولاً طلب بطاقة هوية جديدة أو جواز سفر جديد.\nبالفعل، لتقديم المستندات الأخرى، سيتعين تقديم وثيقة تعريف شخصية صالحة.\nيجب أن يتم استبدال كل مستند بشكل مستقل، مع تقديم طلب منفصل لذلك.\n- بطاقة الهوية\n- جواز سفر\n- رخصة القيادة\n- رخصة القيادة\n- بطاقة \"فيتال\"\n- بطاقة تسجيل الناخب\n- دفتر العائلة.\nإذا تم سرقة أشياء أخرى، فيجب اتخاذ إجراءات إضافية:\n- في حال فقدان المفاتيح، يجب تغيير الأقفال إذا كانت عنوان منزلك معروفًا للمجرمين.\n- اتخاذ الإجراءات اللازمة مع مشغل الهاتف في حالة سرقة الهاتف المحمول.\n- تقديم إشعار إلى شركة التأمين.",
+        "titre": "للحجم الكبير"
+       },
+       {
+        "texte": "في البداية، يجب الإبلاغ عن الحادث. تختلف الإجراءات حسب مكان وقوع الحادث:\nالحالة: وقع الحادث في فرنسا.\nمن الممكن الإبلاغ عن فقدان أو سرقة بطاقة الهوية بطريقتين:\nمثال: في الموقع\nيجب الذهاب إلى مركز الشرطة أو مركز الشرطة المحلية للإبلاغ عن السرقة.\n→ إلى أين يتم التوجه: قسم الشرطة\n→ إلى أين يتم التوجه: فرقة الشرطة\nتم تسليم نسخة من إشعار تقديم الشكوى إليكم.\nمثال: عبر الإنترنت\nمن الممكن تقديم شكوى عبر الإنترنت:\n→ خدمة عبر الإنترنت: تقديم شكوى عبر الإنترنت\nمثال: وقع الحادث في الخارج.\nمن الممكن الإبلاغ عن فقدان أو سرقة بطاقة الهوية بطريقتين:\nمثال: في الموقع\nيجب الإبلاغ عن فقدان الهوية إلى السلطات الشرطية المحلية والسفارة أو القنصلية الأقرب.\n→ إلى أين يتم التوجه: السفارة أو القنصلية الفرنسية في الخارج\nيتم تسليم نسخة من بلاغ السرقة.\nمثال: عبر الإنترنت\nمن الممكن تقديم شكوى عبر الإنترنت:\n→ خدمة عبر الإنترنت: تقديم شكوى عبر الإنترنت\nإذا تم سرقة عدة من الوثائق التالية لطفل (بطاقة الهوية، جواز السفر، رخصة القيادة، بطاقة Vitale)، فيجب أولاً طلب إصدار بطاقة هوية جديدة أو جواز سفر جديد.\nبالفعل، لتقديم المستندات الأخرى، سيتعين تقديم وثيقة تعريف شخصية صالحة.\nيجب أن يتم استبدال كل مستند بشكل مستقل، مع تقديم طلب منفصل لذلك.\n- بطاقة الهوية\n- جواز سفر\n- رخصة قيادة أو شهادة سلامة على الطرق\n- بطاقة \"فيتال\".",
+        "titre": "للمراهق/ة"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F10774",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10774",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 70.2,
+      "units": 65
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.637Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Was soll man tun, wenn alle seine Ausweisdokumente gleichzeitig gestohlen werden?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn alle Ihre Ausweisdokumente gleichzeitig gestohlen wurden, müssen Sie zunächst eine neue Ausweiskarte oder ein neues Reisepass beantragen.",
+      "steps": [
+       {
+        "texte": "Sie wurden Opfer eines Diebstahls Ihrer Handtasche, des Diebstahls Ihrer Gepäckstücke oder eines Einbruchs, und dabei wurden auch Ihre Dokumente gestohlen? Wir erklären Ihnen, welche Schritte Sie unternehmen sollten. Die Vorgehensweise hängt davon ab, ob es sich um Dokumente einer volljährigen Person oder einer Minderjährigen handelt.",
+        "titre": null
+       },
+       {
+        "texte": "Zunächst müssen Sie den Flug melden. Die Vorgehensweise hängt davon ab, wo der Flug stattgefunden hat:\nFall: Der Diebstahl ereignete sich in Frankreich.\nSie können den Diebstahl Ihres Ausweises auf zwei Arten melden:\nFall: Vor Ort\nSie müssen den Diebstahl Ihres Ausweises bei der Polizei oder der Gendarmerie melden.\n→ An wen: Polizeistation\n→ An wen wenden: Gendarmerie-Einheit\nSie erhalten eine Bestätigung über die Einreichung Ihrer Beschwerde.\nFall: Online\nSie können eine Beschwerde online einreichen:\n→ Online-Service: Online-Beschwerde\nFall: Der Diebstahl ereignete sich im Ausland.\nSie können den Diebstahl Ihres Ausweises auf zwei Arten melden:\nFall: Vor Ort\nSie müssen den Diebstahl Ihres Ausweises den örtlichen Polizeibehörden sowie der nächstgelegenen Botschaft oder dem Konsulat melden.\n→ Wo man sich wenden sollte: Französische Botschaft oder Konsulat im Ausland\nEine Kopie des Polizeiberichts wird Ihnen ausgehändigt.\nFall: Online\nSie können eine Beschwerde online einreichen:\n→ Online-Service: Online-Beschwerde\nWenn mehrere der folgenden Dokumente gleichzeitig gestohlen wurden (Personalausweis, Reisepass, Führerschein, Fahrzeugschein, Krankenversicherungskarte, Wählerkarte oder Familienbuch), müssen Sie zunächst einen neuen Personalausweis oder einen neuen Reisepass beantragen.\nInsbesondere ist für die Beantragung weiterer Dokumente ein gültiger Ausweis erforderlich.\nDie Ersetzung jedes Dokuments muss eine eigenständige Anfrage beinhalten:\n- Personalausweis\n- Reisepass\n- Führerschein\n- Fahrzeugausweis\n- Vitale-Karte\n- Wahlschein\n- Familienbuch.\nWenn weitere Gegenstände gestohlen wurden, sind zusätzliche Schritte erforderlich:\n- Wenn Ihre Adresse bekannt ist und die Schlüssel gestohlen wurden, sollten Sie die Schlösser austauschen.\n- Bei Diebstahl des Mobiltelefons: Schritte bei dem Mobilfunkbetreiber einleiten\n- Eine Schadensmeldung an die Versicherung einreichen.",
+        "titre": "Für eine Person"
+       },
+       {
+        "texte": "Zunächst muss der Flug gemeldet werden. Die Vorgehensweise hängt davon ab, wo der Flug stattgefunden hat:\nFall: Der Diebstahl ereignete sich in Frankreich.\nEs gibt zwei Möglichkeiten, den Diebstahl des Ausweises zu melden:\nFall: Vor Ort\nUm den Diebstahl zu melden, muss man sich bei der Polizei oder der Gendarmerie melden.\n→ An wen: Polizeistation\n→ An wen wenden: Gendarmerie-Einheit\nSie erhalten eine Bestätigung über die Einreichung Ihrer Beschwerde.\nFall: Online\nEs ist möglich, eine Beschwerde online einzureichen:\n→ Online-Service: Online-Beschwerde\nFall: Der Diebstahl ereignete sich im Ausland.\nEs gibt zwei Möglichkeiten, den Diebstahl des Ausweises zu melden:\nFall: Vor Ort\nEs ist erforderlich, den Diebstahl des Ausweises den örtlichen Polizeibehörden sowie der nächstgelegenen Botschaft oder dem Konsulat zu melden.\n→ Wo man sich wenden sollte: Französische Botschaft oder Konsulat im Ausland\nEine Kopie des Polizeiberichts wird ausgehändigt.\nFall: Online\nEs ist möglich, eine Beschwerde online einzureichen:\n→ Online-Service: Online-Beschwerde\nWenn mehrere der folgenden Dokumente eines Minderjährigen gestohlen wurden (Personalausweis, Reisepass, Führerschein, Vitale-Karte), muss zunächst ein neuer Personalausweis oder ein neuer Reisepass beantragt werden.\nInsbesondere ist für die Beantragung weiterer Dokumente ein gültiger Ausweis erforderlich.\nDie Ersetzung jedes Dokuments muss eine eigenständige Anfrage beinhalten:\n- Personalausweis\n- Reisepass\n- Führerschein oder Führerschein\n- Gesundheitskarte.",
+        "titre": "Für Minderjährige"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F10774",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10774",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 65
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:49:37.641Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Що робити, якщо всі ваші документи були викрадені одночасно?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Якщо всі ваші документи, зокрема посвідчення особи або паспорт, були викрадені одночасно, вам необхідно спочатку отримати нову картку особи або новий паспорт.",
+      "steps": [
+       {
+        "texte": "Ви стали жертвою крадіжки сумочки, крадіжки вашого багажу або пограбування, і всі ваші документи були вкрадені? Ми розповімо вам, які кроки потрібно зробити. Процедура залежить від того, чи йдеться про документи дорослої особи, чи дитини.",
+        "titre": null
+       },
+       {
+        "texte": "Спочатку необхідно повідомити про інцидент. Процедура залежить від місця, де стався інцидент:\nВипадок: Пограбування сталося у Франції.\nВи можете повідомити про крадіжку вашого документа, наприклад, паспорта, двома способами:\nПриклад: На місці\nВи повинні повідомити про крадіжку вашого документа, звернувшись до поліцейського відділку або місцевої поліцейської дільниці.\n→ Куди звернутися: Поліцейський відділок\n→ Куди звернутися: Відділення міліції\nВам видається документ про реєстрацію скарги.\nПриклад: Онлайн\nВи можете подати скаргу онлайн:\n→ Онлайн-сервіс: Онлайн-повідомлення\nВипадок: Пограбування сталося за кордоном.\nВи можете повідомити про крадіжку вашого документа, наприклад, паспорта, двома способами:\nПриклад: На місці\nВам необхідно повідомити про втрату вашого документа, звернувшись до місцевих правоохоронних органів та посольства або консульства найближчого представництва.\n→ Куди звернутися: Французька посольство або консульство за кордоном\nВам надається копія заяви про крадіжку.\nПриклад: Онлайн\nВи можете подати скаргу онлайн:\n→ Онлайн-сервіс: Онлайн-повідомлення\nЯкщо декілька з наступних документів були викрадені одночасно (ідентифікаційка, паспорт, водійське посвідчення, реєстраційний документ, карта Vitale, виборча картка або сімейний паспорт), то спочатку вам потрібно отримати нову ідентифікаційку або новий паспорт.\nНасправді, для отримання інших документів, необхідно буде пред'явити дійсний документ, що посвідчує особу.\nЗаміна кожного документа повинна бути оформлена окремою заявою:\n- Ідентифікаційний документ\n- Паспорт\n- Водійське посвідчення\n- Технічний паспорт транспортного засобу\n- Карта Vitale\n- Виборча картка\n- Сімейний прапор.\nЯкщо були викрадені інші речі, необхідно вжити додаткових заходів:\n- Замінити замки у раз, якщо ключі були викрадені, якщо ваші особисті дані відомі злочинцям.\n- Звернутися до оператора мобільного зв'язку у разі крадіжки мобільного телефону.\n- Подати заяву страховій компанії.",
+        "titre": "Для великого"
+       },
+       {
+        "texte": "Спочатку необхідно повідомити про інцидент. Процедура залежить від місця, де стався інцидент:\nВипадок: Пограбування сталося у Франції.\nІснує два способи заявити про втрату або крадіжку документа, що посвідчує особу:\nПриклад: На місці\nНеобхідно звернутися до поліцейського відділку або місцевої поліції, щоб повідомити про крадіжку.\n→ Куди звернутися: Поліцейський відділок\n→ Куди звернутися: Відділення міліції\nВам видається документ про реєстрацію скарги.\nПриклад: Онлайн\nМожна подати скаргу онлайн:\n→ Онлайн-сервіс: Онлайн-повідомлення\nВипадок: Пограбування сталося за кордоном.\nІснує два способи заявити про втрату або крадіжку документа, що посвідчує особу:\nПриклад: На місці\nНеобхідно повідомити про втрату документа до місцевої поліції та посольства або консульства, що знаходиться найближче.\n→ Куди звернутися: Французька посольство або консульство за кордоном\nКопія заяви про крадіжку надається.\nПриклад: Онлайн\nМожна подати скаргу онлайн:\n→ Онлайн-сервіс: Онлайн-повідомлення\nЯкщо декілька з наступних документів, що належать неповнолітній особі (ідентифікаційка, паспорт, водійське посвідчення, карта Vitale), були викрадені, то спочатку необхідно отримати нову ідентифікаційку або новий паспорт.\nНасправді, для отримання інших документів, необхідно буде пред'явити дійсний документ, що посвідчує особу.\nЗаміна кожного документа повинна бути оформлена окремою заявою:\n- Ідентифікаційний документ\n- Паспорт\n- Сертифікат про безпечну експлуатацію транспортного засобу або водійське посвідчення\n- Медична страховка.",
+        "titre": "Для неповнолітньої особи"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F10774",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-10-31T02:07:26.748Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10774",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-10-30T02:38:26",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 69.7,
+      "units": 65
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:5f673ab0bf160a28a8ea0e48cd71dcfe1a6ddacf173bc6e5bef0ee379e7fb138",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Que faire en cas de vol de tous ses papiers d'identité en même temps ?",
+   "contenu_json": {
+    "intro": "Si tous vos papiers d'identité ont été volés en même temps, vous devez d'abord demander une nouvelle carte d'identité ou un nouveau passeport.",
+    "steps": [
+     {
+      "texte": "Vous êtes victime d'un vol de sac à main, du vol de vos bagages ou d'un cambriolage et tous vos papiers ont été volés ? Nous vous expliquons la démarche à suivre. Elle varie selon qu'il s'agit des papiers d'un majeur ou d'un mineur.",
+      "titre": null
+     },
+     {
+      "texte": "Vous devez dans un premier temps déclarer le vol. La démarche varie selon le lieu où le vol s'est produit :\nCas : Le vol a eu lieu en France\nVous pouvez déclarer le vol de votre titre d’identité de 2 façons :\nCas : Sur place\nVous devez déclarer le vol de votre titre d’identité dans un commissariat de police ou une gendarmerie.\n→ Où s'adresser : Commissariat\n→ Où s'adresser : Brigade de gendarmerie\nUn récépissé de dépôt de plainte vous est remis.\nCas : En ligne\nVous pouvez déposer une plainte en ligne :\n→ Service en ligne : Plainte en ligne\nCas : Le vol a eu lieu à l'étranger\nVous pouvez déclarer le vol de votre titre d’identité de 2 façons :\nCas : Sur place\nVous devez déclarer le vol de votre titre d’identité aux autorités de police locales et à l’ambassade ou au consulat le plus proche.\n→ Où s'adresser : Ambassade ou consulat français à l'étranger\nUn exemplaire de la déclaration de vol vous est remis.\nCas : En ligne\nVous pouvez déposer une plainte en ligne :\n→ Service en ligne : Plainte en ligne\nSi plusieurs des documents suivants ont été volés en même temps (carte d'identité, passeport, permis de conduire, carte grise, carte Vitale, carte d'électeur ou livret de famille), vous devez d'abord demander une nouvelle carte d'identité ou un nouveau passeport.\nEn effet, pour la demande des autres documents, il faudra présenter une pièce d'identité valide.\nLe remplacement de chaque document doit faire l'objet d'une demande indépendante :\n- Carte d'identité\n- Passeport\n- Permis de conduire\n- Carte grise\n- Carte Vitale\n- Carte électorale\n- Livret de famille.\nSi d'autres objets ont été volés, il faut faire des démarches supplémentaires :\n- Changer les serrures en cas de vol de clés si votre adresse est connue des auteurs du vol\n- Réaliser des démarches auprès de l'opérateur téléphonique en cas de vol de téléphone portable\n- Faire une déclaration auprès de l'assurance.",
+      "titre": "Pour un majeur"
+     },
+     {
+      "texte": "Il faut dans un premier temps déclarer le vol. La démarche varie selon le lieu où le vol s'est produit :\nCas : Le vol a eu lieu en France\nIl est possible de déclarer le vol du titre d’identité de 2 façons :\nCas : Sur place\nIl faut se rendre dans un commissariat de police ou une gendarmerie pour déclarer le vol.\n→ Où s'adresser : Commissariat\n→ Où s'adresser : Brigade de gendarmerie\nUn récépissé de dépôt de plainte vous est remis.\nCas : En ligne\nIl est possible de déposer une plainte en ligne :\n→ Service en ligne : Plainte en ligne\nCas : Le vol a eu lieu à l'étranger\nIl est possible de déclarer le vol du titre d’identité de 2 façons :\nCas : Sur place\nIl faut déclarer le vol du titre d’identité aux autorités de police locales et à l’ambassade ou au consulat le plus proche.\n→ Où s'adresser : Ambassade ou consulat français à l'étranger\nUn exemplaire de la déclaration de vol est remis.\nCas : En ligne\nIl est possible de déposer une plainte en ligne :\n→ Service en ligne : Plainte en ligne\nSi plusieurs des documents suivants d'un mineur ont été volés (carte d'identité, passeport, permis de conduire, carte Vitale), il faut d'abord demander une nouvelle carte d'identité ou un nouveau passeport.\nEn effet, pour la demande des autres documents, il faudra présenter une pièce d'identité valide.\nLe remplacement de chaque document doit faire l'objet d'une demande indépendante :\n- Carte d'identité\n- Passeport\n- Brevet de sécurité routière ou permis de conduire\n- Carte Vitale.",
+      "titre": "Pour un mineur"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

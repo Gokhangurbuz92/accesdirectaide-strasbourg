@@ -1,0 +1,546 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "demarche",
+ "slug": "retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+ "recordId": "4c374c89-877d-412e-aacf-f5f2ea9aef8c",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.235Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Early retirement option for employees seeking a long career",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.7,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Early retirement for long careers allows you to retire before the legal retirement age if you started working at a young age and have sufficient qualifying contributions. It is aimed at employees who began their careers before the ages of 16, 18, 20, or 21. To qualify, you must meet specific conditions related to your age of starting work and the length of your contributions. You can apply for this retirement through an online service or by contacting your pension fund.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Early retirement for long careers allows you to retire before the legal retirement age if you started working at a young age and have sufficient qualifying contributions. It is aimed at employees who began their careers before the ages of 16, 18, 20, or 21. To qualify, you must meet specific conditions related to your age of starting work and the length of your contributions. You can apply for this retirement through an online service or by contacting your pension fund.\n\nThe amount of the pension is calculated in the same way as any retirement benefit paid to an employee.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.3,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Having started working before the age of 16, 18, 20, or 21\n- To qualify for 5 consecutive quarters of activity (or 4 if the period of activity began between October 1st and December 31st)\n- Having contributed for a certain number of quarters, regardless of the type of pension scheme.\n- The periods covered by contributions include military service, unemployment, maternity leave, etc.\n- The premium escalation amounts allocated within the professional prevention account are taken into account.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.3,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Check your career record on lassuranceretraite.fr to confirm your contributions.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Use the online calculator to find out about the conditions for early retirement with a long career.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "If you meet the requirements, download your early retirement certificate through the \"Get My Retirement Age\" service.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "5 months before your planned departure date, use the \"Request Retirement\" service to submit your application.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "If you do not have internet access, please contact your pension fund to submit your request.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.5,
+      "units": 5
+     }
+    },
+    "ou_faire": {
+     "text": "Depending on your situation: Occupational pension and health insurance fund (Carsat).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.5,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.238Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çalışanın, uzun vadeli kariyer hedeflerine ulaşabilmesi için erken emeklilik",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 47.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Erken emeklilik, uzun süreli çalışma için, yasal emeklilik yaşına ulaşmadan, erken emekli olmanızı sağlar. Bu, genç yaşta çalışmaya başlamış ve yeterli sayıda prim ödeme süresine sahip olan çalışanlar için geçerlidir. Bu avantajdan yararlanmak için, 16, 18, 20 veya 21 yaşından önce kariyerine başlamış olmanız ve prim ödeme sürenizin belirli koşulları sağlamanız gerekir. Bu emekli maaşını, çevrimiçi bir hizmet aracılığıyla veya emekli sandığınıza başvurarak talep edebilirsiniz.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Erken emeklilik, uzun süreli çalışma için, yasal emeklilik yaşına ulaşmadan, erken emekli olmanızı sağlar. Bu, genç yaşta çalışmaya başlamış ve yeterli sayıda prim ödeme süresine sahip olan çalışanlar için geçerlidir. Bu avantajdan yararlanmak için, 16, 18, 20 veya 21 yaşından önce kariyerine başlamış olmanız ve prim ödeme sürenizin belirli koşulları sağlamanız gerekir. Bu emekli maaşını, çevrimiçi bir hizmet aracılığıyla veya emekli sandığınıza başvurarak talep edebilirsiniz.\n\nEmekli maaşı, bir çalışana ödenen tüm emekli maaşları gibi aynı koşullarda hesaplanır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- 16, 18, 20 veya 21 yaşından önce çalışmaya başlamış olmak\n- Toplamda 5 çeyrek boyunca faaliyet göstermeyi (veya 1 Ekim ile 31 Aralık tarihleri arasında doğmuşsanız 4 çeyrek) kanıtlamak.\n- Belirli sayıda çeyrekte tüm emeklilik sistemlerine katkıda bulunmuş olmak.\n- Prim katkı dönemleri, askerlik, işsizlik, doğum izni gibi durumları içerir.\n- Profesyonel önleyici hesap kapsamında verilen prim artışları, üç aylık dönemlerde dikkate alınır.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.4,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Kariyer geçmişinizi lassuranceretraite.fr adresinden kontrol ederek katkılarınızı doğrulayabilirsiniz.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Uzun süreli çalışma için erken emeklilik koşullarını öğrenmek üzere çevrimiçi simülatörü kullanın.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli şartları yerine getirmeniz durumunda, \"Emeklilik Öncesi Yaşımı Belirle\" hizmetinden, erken emeklilik belgenizi indirin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Yolculuğunuzun 5 ay öncesinde, \"Emeklilik Talebi\" hizmetini kullanarak talebinizi iletin.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Eğer internet bağlantınız yoksa, emekli maaşınızı almak için ilgili kurumla iletişime geçin.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 5
+     }
+    },
+    "ou_faire": {
+     "text": "Durumunuza göre: İşçi Emeklilik ve Sağlık Sigortası Fonu (Carsat).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.240Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تقاعد مبكر لضمان مستقبل مهني طويل للموظف",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.3,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "تتيح التقاعد المبكر للعمل الطويل المغادرة للتقاعد قبل سن المعاش القانوني إذا بدأت العمل في سن مبكرة ولديك فترة تأمين كافية. وهي مخصصة للموظفين الذين بدأوا مسيرتهم المهنية قبل سن 16 أو 18 أو 20 أو 21 عامًا. للحصول على هذه التقاعد، يجب عليك استيفاء شروط محددة تتعلق بسن بدء نشاطك ومدة التأمين الخاص بك. يمكنك طلب هذه التقاعد من خلال خدمة عبر الإنترنت أو عن طريق الاتصال بمؤسسة التقاعد الخاصة بك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.9,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "تتيح التقاعد المبكر للعمل الطويل المغادرة للتقاعد قبل سن المعاش القانوني إذا بدأت العمل في سن مبكرة ولديك فترة تأمين كافية. وهي مخصصة للموظفين الذين بدأوا مسيرتهم المهنية قبل سن 16 أو 18 أو 20 أو 21 عامًا. للحصول على هذه التقاعد، يجب عليك استيفاء شروط محددة تتعلق بسن بدء نشاطك ومدة التأمين الخاص بك. يمكنك طلب هذه التقاعد من خلال خدمة عبر الإنترنت أو عن طريق الاتصال بمؤسسة التقاعد الخاصة بك.\n\nيتم حساب مبلغ المعاش بنفس الشروط التي يتم بها حساب أي معاش يتم تقديمه لموظف.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- بدء العمل قبل سن 16 أو 18 أو 20 أو 21 سنة.\n- إثبات وجود نشاط تجاري لمدة 5 فصول (أو 4 فصول إذا بدأ النشاط بين 1 أكتوبر و 31 ديسمبر).\n- أن تكون قد ساهمت لفترة زمنية معينة، بغض النظر عن نوع التأمين.\n- تشمل فترات المساهمات الخدمة العسكرية، والبطالة، والإجازة المرضية، وما إلى ذلك.\n- يتم أخذ المبالغ المخصصة للتأمين الاحترازي، والتي يتم تحديدها على أساس الحساب الاحترازي، في الاعتبار.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.5,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تحقق من سجل مسارك على موقع lassuranceretraite.fr للتحقق من مساهماتك.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "استخدم المحاكي عبر الإنترنت لمعرفة شروط التقاعد المبكر للعمال ذوي الخبرة الطويلة.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إذا كنت تستوفي الشروط، فيرجى تنزيل شهادة التقاعد المبكر من خلال الخدمة \"الحصول على تاريخ التقاعد المبكر\".",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "قبل 5 أشهر من تاريخ مغادرتك، استخدم خدمة \"طلب التقاعد\" لإرسال طلبك.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "إذا لم يكن لديك اتصال بالإنترنت، يرجى الاتصال بمؤسسة التقاعد الخاصة بك لتقديم طلبك.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 5
+     }
+    },
+    "ou_faire": {
+     "text": "بناءً على وضعك: صندوق التأمين على التقاعد والرعاية الصحية في العمل (Carsat).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.242Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Frühzeitiger Ruhestand zur Förderung einer langen Arbeitskarriere",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Ein vorzeitiger Ruhestand aufgrund einer langen Berufskarriere ermöglicht es, vor dem regulären Rentenalter in Rente zu gehen, wenn Sie in jungen Jahren begonnen haben zu arbeiten und über eine ausreichende Anzahl von Beitragsjahren verfügen. Diese Option richtet sich an Arbeitnehmer, die ihre Karriere vor dem 16., 18., 20. oder 21. Lebensjahr begonnen haben. Um diese Möglichkeit in Anspruch zu nehmen, müssen Sie bestimmte Bedingungen erfüllen, die sich auf Ihr Alter und die Dauer Ihrer Beiträge beziehen. Sie können diese Rente über einen Online-Service oder indem Sie sich an Ihre Rentenkasse wenden, beantragen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.1,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Ein vorzeitiger Ruhestand aufgrund einer langen Berufskarriere ermöglicht es, vor dem regulären Rentenalter in Rente zu gehen, wenn Sie in jungen Jahren begonnen haben zu arbeiten und über eine ausreichende Anzahl von Beitragsjahren verfügen. Diese Option richtet sich an Arbeitnehmer, die ihre Karriere vor dem 16., 18., 20. oder 21. Lebensjahr begonnen haben. Um diese Möglichkeit in Anspruch zu nehmen, müssen Sie bestimmte Bedingungen erfüllen, die sich auf Ihr Alter und die Dauer Ihrer Beiträge beziehen. Sie können diese Rente über einen Online-Service oder indem Sie sich an Ihre Rentenkasse wenden, beantragen.\n\nDie Höhe der Rente wird unter den gleichen Bedingungen wie bei jeder anderen Rente für Arbeitnehmer berechnet.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.4,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Mit 16, 18, 20 oder 21 Jahren bereits eine Arbeitserfahrung zu haben\n- Um die Förderung für 5 Quartale zu erhalten (oder 4 Quartale, wenn der Beginn der Tätigkeit zwischen dem 1. Oktober und dem 31. Dezember liegt)\n- Eine bestimmte Anzahl von Quartalen, unabhängig vom jeweiligen Rentensystem, wurden gezahlt.\n- Die Beitragsperioden umfassen den Wehrdienst, Arbeitslosigkeit, Mutterschaft usw.\n- Die im Rahmen des Präventionskontos gewährten Versicherungszuschüsse werden berücksichtigt.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.7,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Überprüfen Sie Ihren Karrierebericht auf lassuranceretraite.fr, um Ihre Beiträge zu bestätigen.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Nutzen Sie den Online-Rechner, um die Bedingungen für einen vorgebörderten Ruhestand bei einer langen Karriere zu erfahren.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie die Voraussetzungen erfüllen, können Sie Ihr Nachweis über den vorzeitigen Ruhestand über den Dienst „Mein Ruhestandsalter ermitteln“ herunterladen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "5 Monate vor Ihrem Ausscheiden, nutzen Sie den Service „Antrag auf Rente stellen“, um Ihren Antrag einzureichen.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Wenn Sie keinen Internetzugang haben, wenden Sie sich bitte an Ihre Rentenkasse, um Ihre Anfrage zu stellen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 80.4,
+      "units": 5
+     }
+    },
+    "ou_faire": {
+     "text": "Je stelle Ihnen die passende Lösung vor: Ihre betriebliche Alters- und Krankenversicherung (Carsat).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:48:03.244Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Рання пенсія для продовження кар'єри працівника",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 1
+     }
+    },
+    "description_courte": {
+     "text": "Рання пенсія за тривалу кар'єру дозволяє піти на пенсію раніше, ніж зазвичай, якщо ви розпочали працювати в молодому віці та маєте достатній стаж страхового внеску. Вона призначена для працівників, які розпочали свою кар'єру у віці 16, 18, 20 або 21 року. Щоб отримати цю пенсію, вам потрібно відповідати певним умовам, пов'язаним з вашим віком початку роботи та тривалістю внесків. Ви можете подати заявку на отримання цієї пенсії онлайн або зв'язавшись зі своєю пенсійною системою.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.2,
+      "units": 1
+     }
+    },
+    "contenu_detaille": {
+     "text": "Рання пенсія за тривалу кар'єру дозволяє піти на пенсію раніше, ніж зазвичай, якщо ви розпочали працювати в молодому віці та маєте достатній стаж страхового внеску. Вона призначена для працівників, які розпочали свою кар'єру у віці 16, 18, 20 або 21 року. Щоб отримати цю пенсію, вам потрібно відповідати певним умовам, пов'язаним з вашим віком початку роботи та тривалістю внесків. Ви можете подати заявку на отримання цієї пенсії онлайн або зв'язавшись зі своєю пенсійною системою.\n\nРозмір пенсії розраховується за такими ж правилами, як і будь-яка пенсія, що виплачується працівнику.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66,
+      "units": 2
+     }
+    },
+    "pour_qui": {
+     "text": "- Почати працювати до 16, 18, 20 або 21 року.\n- Отримати підтримку протягом 5 кварталів з початку діяльності (або 4, якщо почати діяльність між 1 жовтня та 31 грудня)\n- Мати внесене внески протягом певної кількості кварталів, незалежно від типу пенсійного страхування.\n- Періоди сплати включають військовий обов'язок, безробіття, відпуск по материнству тощо.\n- Коефіцієнти збільшення страхових внесків, що надаються в рамках професійного рахунку попередження, враховуються.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 5
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Перевірте свій звіт про кар'єру на сайті lassuranceretraite.fr, щоб підтвердити свої внески.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Використовуйте онлайн-калькулятор, щоб дізнатися про умови виходу на пенсію задовго після досягнення пенсійного віку.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Якщо ви відповідаєте цим вимогам, завантажте свій сертифікат про дострокову пенсію через сервіс «Отримати свій вік для дострокової пенсії».",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "За 5 місяців до дати вашого виходу, скористайтеся сервісом «Подати заявку на пенсію», щоб подати відповідну заяву.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Якщо у вас немає доступу до інтернету, зверніться до вашого фонду соціального страхування, щоб подати заявку.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77,
+      "units": 5
+     }
+    },
+    "ou_faire": {
+     "text": "Відповідно до вашої ситуації: Фонд соціального страхування та охорони здоров'я на виробництві (Carsat).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.9,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:4ed07fc44d7c4705d2a792560d30990e6f7ecf2890f464ed076a5b901205ace2",
+  "fields": [
+   "titre",
+   "description_courte",
+   "contenu_detaille",
+   "pour_qui",
+   "etapes",
+   "documents_necessaires",
+   "ou_faire",
+   "cout",
+   "delai"
+  ],
+  "values": {
+   "titre": "Retraite anticipée pour carrière longue du salarié",
+   "description_courte": "La retraite anticipée pour carrière longue permet de partir à la retraite avant l’âge légal si vous avez commencé à travailler jeune et justifiez d’une durée d’assurance cotisée suffisante. Elle s’adresse aux salariés ayant débuté leur carrière avant 16, 18, 20 ou 21 ans. Pour en bénéficier, vous devez remplir des conditions spécifiques liées à votre âge de début d’activité et à votre durée cotisée. Vous pouvez demander cette retraite via un service en ligne ou en contactant votre caisse de retraite.",
+   "contenu_detaille": "La retraite anticipée pour carrière longue permet de partir à la retraite avant l’âge légal si vous avez commencé à travailler jeune et justifiez d’une durée d’assurance cotisée suffisante. Elle s’adresse aux salariés ayant débuté leur carrière avant 16, 18, 20 ou 21 ans. Pour en bénéficier, vous devez remplir des conditions spécifiques liées à votre âge de début d’activité et à votre durée cotisée. Vous pouvez demander cette retraite via un service en ligne ou en contactant votre caisse de retraite.\n\nLe montant de la pension est calculé dans les mêmes conditions que toute retraite accordée à un salarié.",
+   "pour_qui": "- Avoir commencé à travailler avant 16, 18, 20 ou 21 ans\n- Justifier de 5 trimestres en tout début d’activité (ou 4 si né entre le 1er octobre et le 31 décembre)\n- Avoir cotisé un certain nombre de trimestres tous régimes confondus\n- Les périodes de cotisation incluent le service militaire, le chômage, la maternité, etc.\n- Les trimestres de majoration d’assurance attribués dans le cadre du compte professionnel de prévention sont pris en compte",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Vérifiez votre relevé de carrière sur lassuranceretraite.fr pour confirmer vos cotisations."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Consultez le simulateur en ligne pour connaître les conditions de départ en retraite anticipée pour carrière longue."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Si vous remplissez les conditions, téléchargez votre attestation de départ à la retraite anticipée via le service « Obtenir mon âge de départ à la retraite »."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "5 mois avant votre date de départ, utilisez le service « Demander ma retraite » pour transmettre votre demande."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "Si vous n’avez pas internet, contactez votre caisse de retraite pour faire votre demande."
+    }
+   ],
+   "documents_necessaires": [],
+   "ou_faire": "Selon votre situation : Caisse d'assurance retraite et de la santé au travail (Carsat).",
+   "cout": null,
+   "delai": null
+  },
+  "verifiedAt": "2026-10-30T00:43:00.566Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13845",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

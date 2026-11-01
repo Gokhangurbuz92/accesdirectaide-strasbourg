@@ -1,0 +1,674 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "pch",
+ "recordId": "af2822e6-1809-4021-afd1-2d95625bbe96",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.166Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Disability compensation payment (PCH: disability compensation benefit)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.7,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The compensation for disability (PCH: disability compensation benefit) is a financial aid provided to individuals with disabilities, to cover expenses related to their loss of independence. It can be paid for life if the individual's health does not improve, or for a maximum of 10 years. To apply, you need to contact the MDPH (departmental disability centre) in your place of residence.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The compensation for disability (PCH: disability compensation benefit) is a financial aid provided to individuals with disabilities, to cover expenses related to their loss of independence. It can be paid for life if the individual's health does not improve, or for a maximum of 10 years. To apply, you need to contact the MDPH (departmental disability centre) in your place of residence.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- You have a permanent or predictable loss of independence of at least 1 year.\n- You are under 60 years old (or you continue to work if you are over 60 years old)\n- You have a valid titre de séjour (residence permit) if you are a non-resident.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 78.9,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "PCH (the grant) is fully funded if annual resources are less than or equal to €31,162.62, or 80% funded if they are greater than this amount. Technical assistance is fully funded up to €13,200 per 10-year period, or 80% funded if the resources are greater than this amount.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit an application online via the MDPH (departmental disability centre) teleservice or by mail using the form available online.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Please include all the necessary supporting documents with your application.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Send the application to the MDPH at your place of residence.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Await a decision from the Commission for the Rights and Autonomy of People with Disabilities (CDAPH) within a 4-month timeframe.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "In the event of a refusal, you must first file an obligatory administrative appeal (Rapo) with the MDPH within 2 months.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 78.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Documents required as part of the online application or on the form"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.8,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Departmental Association for People with Disabilities (MDPH: departmental disability centre), Caisse primaire d'assurance maladie (CPAM: local health insurance office).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 86.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.172Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Engellilik durumuna yönelik tazminat ödemesi (PCH: engellilik telafi yardımı)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Engellilik için ödeme desteği (PCH: engellilik telafi yardımı), engelli bireyler için ayrılan mali yardımdır ve bu yardımlar, bağımsızlıklarını kaybetmeleriyle ilgili giderleri karşılamak amacıyla kullanılır. Bu ödeme, sağlık durumlarının iyileşmemesi durumunda ömür boyu veya en fazla 10 yıl boyunca yapılabilir. Bu desteği almak için, ikamet ettiğiniz yerdeki MDPH (il engelli bireyler merkezi) ile iletişime geçmeniz gerekmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 63.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Engellilik için ödeme desteği (PCH: engellilik telafi yardımı), engelli bireyler için ayrılan mali yardımdır ve bu yardımlar, bağımsızlıklarını kaybetmeleriyle ilgili giderleri karşılamak amacıyla kullanılır. Bu ödeme, sağlık durumlarının iyileşmemesi durumunda ömür boyu veya en fazla 10 yıl boyunca yapılabilir. Bu desteği almak için, ikamet ettiğiniz yerdeki MDPH (il engelli bireyler merkezi) ile iletişime geçmeniz gerekmektedir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 63.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Yaşadığınız durum, en az 1 yıl boyunca bağımsızlığınızın kalıcı veya öngörülebilir bir şekilde azalması anlamına gelir.\n- 60 yaşın altında (veya 60 yaşını aşmışsanız hala çalışmaya devam ediyorsanız)\n- Eğer siz bir yabancısınızsanız, geçerli bir titre de séjour (oturum izni)'niz var.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.6,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "PCH (engellilik telafi yardımı) ], yıllık gelirler 31.162,62 € veya daha düşükse %100, 31.162,62 €'dan yüksekse %80 olarak karşılanır. Teknik yardım, 10 yıllık dönem için 13.200 €'ya kadar %100 olarak veya gelirler yüksekse %80 olarak karşılanır.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 58.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "MDPH (il engelli bireyler merkezi)'in çevrimiçi hizmet aracılığıyla veya çevrimiçi olarak bulunan formu kullanarak posta yoluyla çevrimiçi başvuru yapın.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Talep süreciniz için gerekli belgeleri ekleyin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "İkamet yerinizdeki MDPH'e başvuruyu gönderin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Engelliler için Haklar ve Özerklik Komisyonu'nun (CDAPH) kararını 4 ay içinde beklemek.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Reddedilme durumunda, MDPH'e 2 ay içinde zorunlu bir idari itiraz (Rapo) başvurusu yapılması gerekmektedir.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Çevrimiçi başvuru veya formda belirtilen belgeler"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Bölgesel Engelliler Dairesi (MDPH: il engelli bireyler merkezi), Caisse primaire d'assurance maladie (CPAM: yerel sağlık sigortası kurumu).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.177Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تقديم تعويض عن الإعاقة (PCH: إعانة تعويض الإعاقة)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 48.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "إن مبلغ التعويض عن الإعاقة (PCH: إعانة تعويض الإعاقة) هو مساعدة مالية مخصصة للأشخاص ذوي الإعاقة، وذلك لتغطية النفقات المتعلقة بفقدان استقلالهم. يمكن صرف هذا المبلغ مدى الحياة إذا لم يتحسن الوضع الصحي، أو لمدة 10 سنوات كحد أقصى. للحصول عليه، يجب الاتصال بـ MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة) في مكان إقامتك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "إن مبلغ التعويض عن الإعاقة (PCH: إعانة تعويض الإعاقة) هو مساعدة مالية مخصصة للأشخاص ذوي الإعاقة، وذلك لتغطية النفقات المتعلقة بفقدان استقلالهم. يمكن صرف هذا المبلغ مدى الحياة إذا لم يتحسن الوضع الصحي، أو لمدة 10 سنوات كحد أقصى. للحصول عليه، يجب الاتصال بـ MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة) في مكان إقامتك.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- لديك فقدان دائم أو متوقع للقدرة على الاعتماد على الذات لمدة لا تقل عن سنة واحدة.\n- أنت أقل من 60 عامًا (أو إذا كنت تبلغ من العمر أكثر من 60 عامًا، فاستمر في العمل).\n- إذا كنت أجنبيًا، فلديك titre de séjour (تصريح الإقامة) ] صالح.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "يتم تغطية PCH (إعانة تعويض الإعاقة) ] بنسبة 100% إذا كانت الموارد السنوية أقل من أو تساوي 31,162.62 يورو، أو بنسبة 80% إذا كانت أعلى. يتم تغطية المساعدة الفنية بنسبة 100%، مع حد أقصى قدره 13,200 يورو لفترة 10 سنوات، أو بنسبة 80% إذا كانت الموارد أعلى.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 59.5,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم طلب عبر الإنترنت من خلال خدمة التيسير عبر الإنترنت التابعة لـ MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة)، أو عن طريق البريد باستخدام النموذج المتاح عبر الإنترنت.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "يرجى إرفاق المستندات المطلوبة لدعم طلبك.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إرسال الطلب إلى MDPH في مكان إقامتك.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "انتظار قرار لجنة حقوق الأشخاص ذوي الإعاقة والحكم الذاتي (CDAPH) خلال فترة 4 أشهر.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "في حال الرفض، يجب ممارسة الإجراء الإداري المسبق الإلزامي (Rapo) لدى MDPH خلال فترة مدتها 2 شهر.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.2,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "الوثائق المطلوبة المذكورة في الطلب عبر الإنترنت أو في النموذج."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: مكتب إقليمي للأشخاص ذوي الإعاقة (MDPH: الدار الإقليمية للأشخاص ذوي الإعاقة), Caisse primaire d'assurance maladie (CPAM: الصندوق المحلي للتأمين الصحي).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 86.9,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.182Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Entschädigung für Behinderung (PCH: Behinderungsausgleichsleistung)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die finanzielle Entschädigung für Behinderungen (PCH: Behinderungsausgleichsleistung)] ist eine finanzielle Unterstützung für Menschen mit Behinderungen, die dazu dient, Ausgaben im Zusammenhang mit dem Verlust der Selbstständigkeit zu decken. Sie kann lebenslang gewährt werden, wenn sich der Gesundheitszustand nicht verbessert, oder maximal 10 Jahre. Um diese zu beantragen, muss man sich an die MDPH (Behindertenzentrum des Départements) in seinem Wohnort wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die finanzielle Entschädigung für Behinderungen (PCH: Behinderungsausgleichsleistung)] ist eine finanzielle Unterstützung für Menschen mit Behinderungen, die dazu dient, Ausgaben im Zusammenhang mit dem Verlust der Selbstständigkeit zu decken. Sie kann lebenslang gewährt werden, wenn sich der Gesundheitszustand nicht verbessert, oder maximal 10 Jahre. Um diese zu beantragen, muss man sich an die MDPH (Behindertenzentrum des Départements) in seinem Wohnort wenden.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Sie haben eine dauerhafte oder voraussichtlich mindestens einjährige Einschränkung der Selbstständigkeit.\n- Sie sind unter 60 Jahre alt (oder Sie arbeiten weiterhin, wenn Sie älter als 60 Jahre sind)\n- Sie verfügen über eine gültige titre de séjour (Aufenthaltstitel), wenn Sie ausländischer Staatsbürger sind.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 55.6,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die PCH (Behinderungsausgleichsleistung) wird zu 100 % finanziert, wenn die jährlichen Mittel unter 31.162,62 € liegen oder gleich sind, oder zu 80 %, wenn sie höher sind. Die technische Unterstützung wird zu 100 % finanziert, bis zu einem Betrag von 13.200 € über einen Zeitraum von 10 Jahren, oder zu 80 %, wenn die Mittel höher sind.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.1,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Eine Anfrage über das Online-Serviceangebot von MDPH (Behindertenzentrum des Départements) oder per Post unter Verwendung des auf der Webseite verfügbaren Formulars stellen.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Fügen Sie die erforderlichen Nachweise für Ihre Anfrage bei.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Den Antrag an die MDPH Ihrer Wohnadresse senden.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Auf die Entscheidung der Kommission für die Rechte und Autonomie von Menschen mit Behinderungen (CDAPH) innerhalb von 4 Monaten warten.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Im Falle eines Ablehnungsgeschehens ist ein obligatorischer administrativer Rechtsbehelf (Rapo) bei der MDPH innerhalb von 2 Monaten einzulegen.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.7,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Dokumente, die bei der Online-Antragstellung oder auf dem Formular angefordert wurden"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.9,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen die folgenden Optionen vor:\n* Landesstelle für Menschen mit Behinderungen (MDPH: Behindertenzentrum des Départements), Caisse primaire d'assurance maladie (CPAM: örtliche Krankenkasse).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 69.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.186Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Виплата компенсації за інвалідність (PCH: компенсаційна допомога з інвалідності)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Компенсація за інвалідність (PCH: компенсаційна допомога з інвалідності) – це фінансова допомога, призначена для людей з інвалідністю, щоб покрити витрати, пов'язані з втратою самостійності. Її можна отримувати безстроково, якщо стан здоров'я не покращується, або протягом 10 років. Щоб отримати її, необхідно звернутися до MDPH (департаментський центр у справах осіб з інвалідністю) у вашому місці проживання.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Компенсація за інвалідність (PCH: компенсаційна допомога з інвалідності) – це фінансова допомога, призначена для людей з інвалідністю, щоб покрити витрати, пов'язані з втратою самостійності. Її можна отримувати безстроково, якщо стан здоров'я не покращується, або протягом 10 років. Щоб отримати її, необхідно звернутися до MDPH (департаментський центр у справах осіб з інвалідністю) у вашому місці проживання.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Ви маєте постійну або передбачувану втрату самостійності на термін не менше 1 року.\n- Вас не повинно бути старше 60 років (або ви повинні продовжувати працювати, якщо вам більше 60 років)\n- У вас є дійсний titre de séjour (посвідка на проживання), якщо ви є іноземцем.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 64.2,
+      "units": 3
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "PCH(субсидія) покривається на 100%, якщо річні доходи становлять 31 162,62 євро або менше, або на 80%, якщо вони перевищують цю суму. Технічна допомога покривається на 100%, до 13 200 євро протягом 10 років, або на 80%, якщо доходи перевищують цю суму.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку онлайн через онлайн-сервіс MDPH (департаментський центр у справах осіб з інвалідністю) або поштою, використовуючи форму, доступну в Інтернеті.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Додайте всі необхідні документи, що підтверджують вашу заявку.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Надіслати заявку до MDPH за місцем вашого проживання.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Очікувати рішення Комісії з прав та автономії людей з інвалідністю (CDAPH) протягом 4 місяців.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі відмови, необхідно подати адміністративний позов (Rapo) до MDPH протягом 2 місяців.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документи, що згадуються під час онлайн-заявки або на бланку."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 84,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Департамент соціального захисту людей з інвалідністю (MDPH: департаментський центр у справах осіб з інвалідністю), Caisse primaire d'assurance maladie (CPAM: місцева каса медичного страхування).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 82.5,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:dc20a10a8c29c766a0e01c1a3bdf0226179c6fb56cf7ff1e225c7084a47140a6",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Prestation de compensation du handicap (PCH)",
+   "description": "La prestation de compensation du handicap (PCH) est une aide financière destinée aux personnes en situation de handicap, pour couvrir des dépenses liées à leur perte d'autonomie. Elle peut être versée à vie si l'état de santé ne s'améliore pas, ou pendant 10 ans maximum. Pour la demander, il faut s'adresser à la MDPH de votre lieu de résidence.",
+   "cest_quoi": "La prestation de compensation du handicap (PCH) est une aide financière destinée aux personnes en situation de handicap, pour couvrir des dépenses liées à leur perte d'autonomie. Elle peut être versée à vie si l'état de santé ne s'améliore pas, ou pendant 10 ans maximum. Pour la demander, il faut s'adresser à la MDPH de votre lieu de résidence.",
+   "pour_qui": "- Vous avez une perte d'autonomie définitive ou prévisible d'au moins 1 an\n- Vous avez moins de 60 ans (ou continuez à travailler si vous êtes au-delà de 60 ans)\n- Vous avez un titre de séjour valide si vous êtes étranger",
+   "ce_que_ca_aide": "La PCH est prise en charge à 100 % si les ressources annuelles sont inférieures ou égales à 31 162,62 €, ou à 80 % si elles sont supérieures. L'aide technique est prise en charge à 100 % dans la limite de 13 200 € par période de 10 ans, ou à 80 % si les ressources sont supérieures.",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire une demande en ligne via le téléservice de la MDPH ou par courrier en utilisant le formulaire disponible en ligne."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Joindre les documents justificatifs nécessaires à votre demande."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Envoyer la demande à la MDPH de votre lieu de résidence."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "Attendre la décision de la commission des droits et de l’autonomie des personnes handicapées (CDAPH) dans un délai de 4 mois."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "En cas de refus, exercer un recours administratif préalable obligatoire (Rapo) auprès de la MDPH dans un délai de 2 mois."
+    }
+   ],
+   "documents_necessaires": [
+    "Documents justificatifs mentionnés lors de la demande en ligne ou sur le formulaire"
+   ],
+   "ou_demander": "Selon votre situation : Maison départementale des personnes handicapées (MDPH), Caisse primaire d'assurance maladie (CPAM).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:18:32.009Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F14202",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

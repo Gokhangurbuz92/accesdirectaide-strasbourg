@@ -1,0 +1,226 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "actualite",
+ "slug": "credits-a-la-consommation-les-regles-evoluent-pour-prevenir-le-surendettement-14b2f1",
+ "recordId": "e6a8ca25-389f-4f98-94e9-b7b5e535213e",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.721Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Consumer loans: rules are changing to prevent over-indebtedness",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.7,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Three texts adopted in 2025 and 2026 strengthen the regulation of consumer credit. The new measures, which extend existing rules to certain low-value, short-term, or online loans, will come into effect on November 20, 2026. The aim is to better protect consumers and prevent over-indebtedness.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Three texts adopted in 2025 and 2026 strengthen the regulation of consumer credit. The new measures, which extend existing rules to certain low-value, short-term, or online loans, will come into effect on November 20, 2026. The aim is to better protect consumers and prevent over-indebtedness.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 75.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.722Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Tüketim kredileri: Kredi borçlarının artmasını önlemek için kurallar değişiyor",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 48.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "2025 ve 2026 yıllarında kabul edilen üç düzenleme, tüketici kredilerini daha sıkı bir şekilde düzenlemeyi amaçlamaktadır. Bu yeni düzenlemeler, özellikle düşük tutarlı, kısa vadeli veya çevrimiçi olarak alınan bazı krediler için mevcut kuralları genişletecek ve 20 Kasım 2026 tarihinden itibaren uygulanmaya başlayacaktır. Amaç, tüketicileri daha iyi korumak ve aşırı borçlanmayı önlemektir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.6,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "2025 ve 2026 yıllarında kabul edilen üç düzenleme, tüketici kredilerini daha sıkı bir şekilde düzenlemeyi amaçlamaktadır. Bu yeni önlemler, özellikle düşük tutarlı, kısa vadeli veya çevrimiçi olarak alınan bazı krediler için mevcut kuralları genişletecek ve 20 Kasım 2026 tarihinden itibaren uygulanmaya başlayacaktır. Amaç, tüketicileri daha iyi korumak ve aşırı borçlanmayı önlemektir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.724Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "قروض الاستهلاك: تتغير القواعد لمنع الإفراط في الاقتراض",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 48.1,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "تم اعتماد ثلاثة نصوص في عامي 2025 و 2026، مما يعزز الإطار التنظيمي للقروض الاستهلاكية. وتشمل هذه الإجراءات الجديدة، التي تمتد بشكل خاص إلى القواعد الحالية لبعض القروض ذات المبالغ الصغيرة أو المدة القصيرة أو التي يتم الحصول عليها عبر الإنترنت، وتطبيقها اعتبارًا من 20 نوفمبر 2026. والهدف هو حماية المستهلكين بشكل أفضل ومنع الإفراط في الاقتراض.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.9,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>تم اعتماد ثلاثة نصوص في عامي 2025 و 2026، مما يعزز الإطار التنظيمي للقروض الاستهلاكية. وتشمل هذه الإجراءات الجديدة، والتي تمتد بشكل خاص إلى القواعد الحالية لبعض القروض ذات المبالغ الصغيرة أو المدة القصيرة أو التي يتم الحصول عليها عبر الإنترنت، تطبيقها ابتداءً من 20 نوفمبر 2026. والهدف هو حماية المستهلكين بشكل أفضل ومنع الإفراط في الاقتراض.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.725Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Konsumentenkredite: Die Regeln ändern sich, um eine übermäßige Verschuldung zu verhindern.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.3,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Drei Texte, die 2025 und 2026 verabschiedet wurden, verstärken die Regulierung von Konsumentenkrediten. Die neuen Maßnahmen, die insbesondere die bestehenden Regeln auf bestimmte Kredite mit geringem Wert, kurzer Laufzeit oder die online beantragten Kredite ausweiten, werden ab dem 20. November 2026 in Kraft treten. Ziel ist es, Verbraucher besser zu schützen und die Verschuldung zu verhindern.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "<p>Drei neue Regelungen, die 2025 und 2026 verabschiedet wurden, verstärken die Vorschriften für Konsumentenkredite. Die neuen Maßnahmen, die insbesondere die bestehenden Regeln auf bestimmte Kredite mit geringem Wert, kurzer Laufzeit oder die online beantragten Kredite ausweiten, werden ab dem 20. November 2026 in Kraft treten. Ziel ist es, Verbraucher besser zu schützen und die Verschuldung zu verhindern.</p>",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.1,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T12:00:54.726Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Кредити для споживання: правила змінюються, щоб запобігти надмірному кредитуванню",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 54.2,
+      "units": 1
+     }
+    },
+    "resume": {
+     "text": "Три документи, прийняті у 2025 та 2026 роках, посилюють регулювання кредитування споживачам. Нові правила, які, зокрема, поширюють існуючі вимоги на певні кредити невеликої суми, з коротким терміном або отримані онлайн, набудуть чинності з 20 листопада 2026 року. Мета – краще захистити споживачів та запобігти надмірному кредитуванню.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.4,
+      "units": 1
+     }
+    },
+    "contenu": {
+     "text": "Три документи, прийняті у 2025 та 2026 роках, посилюють регулювання кредитування споживачам. Нові правила, які, зокрема, поширюють існуючі вимоги на певні кредити невеликої суми, з коротким терміном або отримані онлайн, набудуть чинності з 20 листопада 2026 року. Мета – краще захистити споживачів та запобігти надмірному кредитуванню.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.4,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:ce2e1e0b0f59c87fddc800cfdc65622c9f52f99d488d0fbd7bc3208c040c7833",
+  "fields": [
+   "titre",
+   "resume",
+   "contenu"
+  ],
+  "values": {
+   "titre": "Crédits à la consommation : les règles évoluent pour prévenir le surendettement",
+   "resume": "Trois textes adoptés en 2025 et 2026 renforcent l'encadrement du crédit à la consommation. Les nouvelles mesures, qui étendent notamment les règles existantes à certains crédits de faible montant, de courte durée ou souscrits en ligne, seront applicables à partir du 20 novembre 2026. L’objectif est de mieux protéger les consommateurs et de prévenir le surendettement.",
+   "contenu": "<p>Trois textes adoptés en 2025 et 2026 renforcent l'encadrement du crédit à la consommation. Les nouvelles mesures, qui étendent notamment les règles existantes à certains crédits de faible montant, de courte durée ou souscrits en ligne, seront applicables à partir du 20 novembre 2026. L’objectif est de mieux protéger les consommateurs et de prévenir le surendettement.</p>"
+  },
+  "verifiedAt": "2026-10-31T02:23:53.544Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/actualites/A18451?xtor=RSS-111",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

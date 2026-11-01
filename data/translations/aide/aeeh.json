@@ -1,0 +1,672 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "aide",
+ "slug": "aeeh",
+ "recordId": "54fc6cb9-d802-47dc-a7a3-a9fe0fae8fa1",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.191Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Education funding for children with disabilities (AEEH: allowance for the education of a disabled child)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.6,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "The Child Disability Allowance (AEEH: allowance for the education of a disabled child) is a financial grant provided to the parents of a child under 20 years old who has a disability. It helps to cover expenses related to the disability, such as hiring a person or reducing working hours. The application can be submitted online or by mail to MDPH (departmental disability centre).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "The Child Disability Allowance (AEEH: allowance for the education of a disabled child) is a financial grant provided to the parents of a child under 20 years old who has a disability. It helps to cover expenses related to the disability, such as hiring a person or reducing working hours. The application can be submitted online or by mail to MDPH (departmental disability centre).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Under 20 years old\n- A disability rate of at least 80%\n- Professional income less than €1,026.86\n- Permanent residency in France\n- Not in a dormitory with full accommodation and expenses covered.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.1,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "The basic amount is €153.01. Additional payments vary depending on the situation (employment, reduced hours, monthly expenses) and the disability category (from 1 to 6).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 74.3,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Submit the application online via the online service of MDPH (departmental disability centre) if available.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Or, complete the form and send it by mail to MDPH at your place of residence.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Please include all required supporting documents.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "The CDAPH (French social security agency) processes the application within 4 months.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "In the event of a refusal, an initial administrative appeal can be filed within 2 months.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.3,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Documents required as part of the online application or on the form"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.8,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Depending on your situation: Departmental Association for People with Disabilities (MDPH: departmental disability centre).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 68.2,
+      "units": 1
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.193Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Engelli çocuğa ayrılan eğitim bütçesi (AEEH: engelli çocuk eğitim ödeneği)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.2,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Çocukların özel ihtiyaçlarına yönelik eğitim yardımı (AEEH: engelli çocuk eğitim ödeneği), ailelerine, 20 yaşından küçük, engelli bir çocuğun velilerine yönelik mali bir yardımdır. Bu, engellilikle ilgili giderleri karşılamayı sağlar, örneğin bir kişinin işe alınması veya iş hayatında azalma gibi. Başvuru, MDPH (il engelli bireyler merkezi) aracılığıyla çevrimiçi veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Çocukların özel ihtiyaçlarına yönelik eğitim yardımı (AEEH: engelli çocuk eğitim ödeneği), ailelerine, 20 yaşından küçük, engelli bir çocuğun velilerine yönelik mali bir yardımdır. Bu, engellilikle ilgili giderleri karşılamayı sağlar, örneğin bir kişinin işe alınması veya iş hayatında azalma gibi. Başvuru, MDPH (il engelli bireyler merkezi) aracılığıyla çevrimiçi veya posta yoluyla yapılabilir.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- 20 yaşından küçük\n- En az %80 oranında iş göremezlik\n- Profesyonel gelirler 1.026,86 €'dan az\n- Fransa'da kalıcı ikamet\n- Okulda pansiyon seçeneği, tüm harcamaların karşılanmasıyla birlikte.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "negation"
+      ],
+      "warnings": [],
+      "roundtrip": 71.2,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Temel ücret 153,01 €'dir. Ek ödemeler, durum (işe alınma, çalışma saatlerinin azaltılması, aylık giderler) ve engellilik kategorisine (1'den 6'ya kadar) göre değişiklik göstermektedir.",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 82.8,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Mümkünse, MDPH (il engelli bireyler merkezi)'in çevrimiçi hizmet aracılığıyla başvurunuzu yapın.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Veya formu doldurun ve posta yoluyla MDPH numaralı adresinize gönderin.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Gerekli belgeleri bir araya getirin.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "CDAPH, başvuruyu 4 ay içinde değerlendirir.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Reddedilme durumunda, 2 ay içinde öncelikle idari bir itirazda bulunulabilir.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.4,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Çevrimiçi başvuru veya formda belirtilen belgeler"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 56.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Durumunuza göre: Bölgesel Engelliler Dairesi (MDPH: il engelli bireyler merkezi).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.196Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "تخصيص موارد تعليمية للأطفال ذوي الإعاقة (AEEH: إعانة تعليم الطفل ذي الإعاقة)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.9,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "\"منحة تعليم الطفل ذي الإعاقة (AEEH: إعانة تعليم الطفل ذي الإعاقة)] هي مساعدة مالية تُمنح للوالدين لطفل دون سن 20 عامًا يعاني من إعاقة. تهدف هذه المنحة إلى تغطية النفقات المتعلقة بالإعاقة، مثل توظيف شخص أو تقليل النشاط المهني. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد إلى MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة).\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "\"منحة تعليم الطفل ذي الإعاقة (AEEH: إعانة تعليم الطفل ذي الإعاقة)] هي مساعدة مالية تُمنح للوالدين لطفل دون سن 20 عامًا يعاني من إعاقة. تهدف هذه المنحة إلى تغطية النفقات المتعلقة بالإعاقة، مثل توظيف شخص أو تقليل النشاط المهني. يمكن تقديم الطلب عبر الإنترنت أو عن طريق البريد إلى MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة).\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- أقل من 20 عامًا\n- يجب أن يكون معدل الإعاقة 80٪ على الأقل.\n- دخل مهني أقل من 1026.86 يورو.\n- الإقامة الدائمة في فرنسا\n- لا، ليس في السكن الجامعي مع تغطية كاملة للنفقات.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.7,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "تبدأ القيمة الأساسية بـ 153.01 يورو. تختلف المبالغ الإضافية حسب الظروف (التوظيف، تقليل ساعات العمل، النفقات الشهرية) والفئة التي ينتمي إليها الشخص (من 1 إلى 6).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [
+       "modality"
+      ],
+      "roundtrip": 60.9,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "تقديم الطلب عبر الإنترنت من خلال خدمة التيسير المتاحة في MDPH (الدار الإقليمية للأشخاص ذوي الإعاقة).",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "أو املأ النموذج وأرسله بالبريد إلى العنوان التالي: MDPH، في موقع إقامتك.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "إرفاق المستندات المطلوبة.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "تقوم الوكالة الوطنية للضمان الاجتماعي بالنظر في الطلب خلال فترة زمنية لا تتجاوز 4 أشهر.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "في حال الرفض، يمكن تقديم استئناف إداري في غضون فترة زمنية مدتها 2 شهر.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.9,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "الوثائق المطلوبة المذكورة في الطلب عبر الإنترنت أو في النموذج."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "بناءً على وضعك: مكتب المحافظة للأشخاص ذوي الإعاقة (MDPH: الدار الإقليمية للأشخاص ذوي الإعاقة).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 1
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.199Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zuweisung von Bildung für behinderte Kinder (AEEH: Beihilfe für die Erziehung eines Kindes mit Behinderung)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.1,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Die Bildungsförderung für behinderte Kinder (AEEH: Beihilfe für die Erziehung eines Kindes mit Behinderung) ist eine finanzielle Unterstützung, die an Eltern eines Kindes unter 20 Jahren mit Behinderung gewährt wird. Sie dient dazu, die Kosten im Zusammenhang mit der Behinderung zu decken, wie z. B. die Einstellung einer Person oder die Reduzierung der Arbeitszeit. Die Antragstellung kann online oder per Post bei MDPH (Behindertenzentrum des Départements) erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Die Bildungsförderung für behinderte Kinder (AEEH: Beihilfe für die Erziehung eines Kindes mit Behinderung) ist eine finanzielle Unterstützung, die an Eltern eines Kindes unter 20 Jahren mit Behinderung gewährt wird. Sie dient dazu, die Kosten im Zusammenhang mit der Behinderung zu decken, wie z. B. die Einstellung einer Person oder die Reduzierung der Arbeitszeit. Die Antragstellung kann online oder per Post bei MDPH (Behindertenzentrum des Départements) erfolgen.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Personen unter 20 Jahren\n- Mindestens 80 % Beeinträchtigung\n- Einkommen aus berufstätiger Tätigkeit unter 1.026,86 €\n- Daueraufenthalt in Frankreich\n- Nicht im Internat mit vollständiger Kostenübernahme",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.6,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Die Grundversorgung beträgt 153,01 €. Die zusätzlichen Leistungen variieren je nach Situation (Einstellung, Arbeitszeitreduzierung, monatliche Ausgaben) und der Art der Behinderung (von 1 bis 6).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 77.7,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Beantragen Sie den Antrag online über den Online-Service von MDPH (Behindertenzentrum des Départements), falls verfügbar.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Oder füllen Sie das Formular aus und senden Sie es per Post an die MDPH Ihrer Wohnadresse.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Alle erforderlichen Nachweise zusammenfügen.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "Die CDAPH bearbeitet die Anfrage innerhalb von 4 Monaten.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "Im Falle eines Ablehnung kann ein formelles Beschwerdeverfahren innerhalb von 2 Monaten eingeleitet werden.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.7,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Dokumente, die bei der Online-Antragstellung oder auf dem Formular angefordert wurden"
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.9,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Je stelle Ihnen die Landesstelle für Menschen mit Behinderungen vor (MDPH: Behindertenzentrum des Départements).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "modality"
+      ],
+      "warnings": [],
+      "roundtrip": 54.8,
+      "units": 1
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r32-checks-2",
+   "translatedAt": "2026-11-01T11:46:08.201Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Виділення коштів на освіту дитини з інвалідністю (AEEH: допомога на виховання дитини з інвалідністю)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.5,
+      "units": 1
+     }
+    },
+    "description": {
+     "text": "Виплата на освіту дитини з інвалідністю (AEEH: допомога на виховання дитини з інвалідністю) – це фінансова допомога, що надається батькам дитини віком до 20 років, яка має інвалідність. Вона дозволяє покрити витрати, пов'язані з інвалідністю, такі як наймання особи або зменшення робочого часу. Заявку можна подати онлайн або поштою до MDPH (департаментський центр у справах осіб з інвалідністю).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.5,
+      "units": 1
+     }
+    },
+    "cest_quoi": {
+     "text": "Виплата на освіту дитини з інвалідністю (AEEH: допомога на виховання дитини з інвалідністю) – це фінансова допомога, що надається батькам дитини віком до 20 років, яка має інвалідність. Вона дозволяє покрити витрати, пов'язані з інвалідністю, такі як наймання особи або зменшення робочого часу. Заявку можна подати онлайн або поштою до MDPH (департаментський центр у справах осіб з інвалідністю).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69.5,
+      "units": 1
+     }
+    },
+    "pour_qui": {
+     "text": "- Діти віком до 20 років\n- Рівень інвалідності не менше 80 відсотків\n- Професійний дохід менше 1 026,86 євро\n- Постійне проживання у Франції\n- Не в гуртожитку з повним покриттям витрат.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 66.2,
+      "units": 5
+     }
+    },
+    "ce_que_ca_aide": {
+     "text": "Базова сума становить 153,01 євро. Додаткові витрати залежать від ситуації (наймання, скорочення робочого часу, щомісячні витрати) та категорії інвалідності (від 1 до 6).",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names"
+      ],
+      "warnings": [],
+      "roundtrip": 72.4,
+      "units": 1
+     }
+    },
+    "etapes": {
+     "text": [
+      {
+       "titre": "Подати заявку онлайн через онлайн-сервіс MDPH (департаментський центр у справах осіб з інвалідністю), якщо він доступний.",
+       "numero": 1,
+       "description": ""
+      },
+      {
+       "titre": "Або заповнити форму та надіслати її поштою за адресою MDPH вашого місця проживання.",
+       "numero": 2,
+       "description": ""
+      },
+      {
+       "titre": "Об'єднати всі необхідні документи.",
+       "numero": 3,
+       "description": ""
+      },
+      {
+       "titre": "CDAPH розглядає заявку протягом 4 місяців.",
+       "numero": 4,
+       "description": ""
+      },
+      {
+       "titre": "У разі відмови, можна подати адміністративний позов протягом 2 місяців.",
+       "numero": 5,
+       "description": ""
+      }
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.8,
+      "units": 5
+     }
+    },
+    "documents_necessaires": {
+     "text": [
+      "Документи, що згадуються під час онлайн-заявки або на бланку."
+     ],
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 84,
+      "units": 1
+     }
+    },
+    "ou_demander": {
+     "text": "Відповідно до вашої ситуації: Департамент соціального захисту людей з інвалідністю (MDPH: департаментський центр у справах осіб з інвалідністю).",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 69,
+      "units": 1
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:ae336714d9a2d29af4b63d056a03de473260a8e83d247a321cd17d8be8bab110",
+  "fields": [
+   "titre",
+   "description",
+   "cest_quoi",
+   "pour_qui",
+   "ce_que_ca_aide",
+   "etapes",
+   "documents_necessaires",
+   "ou_demander",
+   "delai_indicatif"
+  ],
+  "values": {
+   "titre": "Allocation d'éducation de l'enfant handicapé (AEEH)",
+   "description": "L’Allocation d’éducation de l’enfant handicapé (AEEH) est une aide financière versée aux parents d’un enfant de moins de 20 ans en situation de handicap. Elle permet de couvrir les dépenses liées au handicap, comme l’embauche d’une personne ou la réduction d’activité professionnelle. La demande peut être faite en ligne ou par courrier auprès de la MDPH.",
+   "cest_quoi": "L’Allocation d’éducation de l’enfant handicapé (AEEH) est une aide financière versée aux parents d’un enfant de moins de 20 ans en situation de handicap. Elle permet de couvrir les dépenses liées au handicap, comme l’embauche d’une personne ou la réduction d’activité professionnelle. La demande peut être faite en ligne ou par courrier auprès de la MDPH.",
+   "pour_qui": "- Enfant de moins de 20 ans\n- Taux d’incapacité d’au moins 80 %\n- Revenus professionnels inférieurs à 1 026,86 €\n- Résidence permanente en France\n- Pas en internat avec prise en charge intégrale des frais",
+   "ce_que_ca_aide": "L’AEEH de base est de 153,01 €. Les compléments varient selon la situation (embauche, réduction de travail, dépenses mensuelles) et la catégorie de handicap (de 1 à 6).",
+   "etapes": [
+    {
+     "description": "",
+     "numero": 1,
+     "titre": "Faire la demande en ligne via le téléservice de la MDPH si disponible."
+    },
+    {
+     "description": "",
+     "numero": 2,
+     "titre": "Ou remplir le formulaire et le faire parvenir par courrier à la MDPH de votre lieu de résidence."
+    },
+    {
+     "description": "",
+     "numero": 3,
+     "titre": "Joindre les documents justificatifs requis."
+    },
+    {
+     "description": "",
+     "numero": 4,
+     "titre": "La CDAPH instruit la demande dans un délai de 4 mois."
+    },
+    {
+     "description": "",
+     "numero": 5,
+     "titre": "En cas de refus, un recours administratif préalable peut être déposé dans un délai de 2 mois."
+    }
+   ],
+   "documents_necessaires": [
+    "Documents justificatifs mentionnés lors de la demande en ligne ou sur le formulaire"
+   ],
+   "ou_demander": "Selon votre situation : Maison départementale des personnes handicapées (MDPH).",
+   "delai_indicatif": null
+  },
+  "verifiedAt": "2026-10-30T00:00:01.760Z",
+  "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F14809",
+  "licence": null,
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}
