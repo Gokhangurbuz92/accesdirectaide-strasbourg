@@ -15,7 +15,7 @@ for (const s of set.scenarios) {
   await new Promise((r) => setTimeout(r, 2500));
   const r = await fetch(`${base}/api/search`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie, origin: base }, body: JSON.stringify({ query: s.query, lang: s.lang }) });
   const body = await r.json().catch(() => ({}));
-  const all = ['items', 'demarches', 'structures', 'actualites'].flatMap((k) => (Array.isArray(body[k]) ? body[k].map((x) => ({ k, title: x.titre || x.nom || x.title || '', text: `${x.titre || x.nom || ''} ${x.description_courte || x.cest_quoi || x.resume || x.type_structure || ''}`, slug: x.slug })) : []));
+  const all = ['items', 'demarches', 'structures', 'actualites'].flatMap((k) => (Array.isArray(body[k]) ? body[k].map((x) => ({ k, title: x.titre || x.nom || x.title || '', text: `${x.titre || x.nom || x.title || ''} ${x.description_courte || x.cest_quoi || x.resume || x.description || ''} ${x.type_structure || ''}`, slug: x.slug })) : []));
   const relevant = all.filter((x) => s.words.some((w) => fold(x.text).includes(fold(w))));
   const pass = s.expect === 'abstain' ? all.length === 0 : relevant.length > 0;
   rows.push({ id: s.id, query: s.query, lang: s.lang, http: r.status, expect: s.expect, returned: all.length, relevant: relevant.length, crossLanguage: body.crossLanguage || null, sample: relevant.slice(0, 3).map((x) => `${x.k}:${x.slug}`), pass });
