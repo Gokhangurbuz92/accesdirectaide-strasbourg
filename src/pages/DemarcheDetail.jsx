@@ -218,12 +218,12 @@ export default function DemarcheDetail() {
       {/* Fil d'Ariane */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-          <nav className="flex items-center gap-2 text-sm text-slate-600">
+          <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
             <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('demarches:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
             <Link to={createPageUrl('Demarches')} className="hover:text-blue-600">{t('demarches:breadcrumb.demarches', 'Démarches')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
-            <span className="text-slate-900" {...tr.attrs('titre')}>{title}</span>
+            <span className="min-w-0 text-slate-900 [overflow-wrap:anywhere]" {...tr.attrs('titre')}>{title}</span>
           </nav>
         </div>
       </div>
