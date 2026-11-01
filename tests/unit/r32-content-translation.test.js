@@ -53,6 +53,8 @@ describe('automatic checks', () => {
     expect(ok('Vous pouvez peut-être en bénéficier.', 'يحق لك الحصول عليها.', 'ar')).toEqual(['entitlement']);
     expect(ok('Les aides de la CAF pour les jeunes de 16 à 25 ans.', 'Les aides de la CAF pour les jeunes de 16 à 25 ans.', 'ar')).toEqual(['untranslated']);
     expect(checkField({ lang: 'en', risk: 'normal', source: 'a', target: 'b', missing: ['[[T1]]'] }).critical).toContain('names');
+    expect(ok('FAJ Strasbourg / Eurométropole', 'صندوق مساعدة الشباب سترسبرغ / منطقة أوروبوميتropole', 'ar')).toEqual(['script']);
+    expect(ok('Aide de la CAF à Strasbourg', 'مساعدة CAF في ستراسبورغ', 'ar')).toEqual([]);   // a Latin acronym as its own word is fine
   });
   it('use the back-translation to catch a lost negation or uncertainty: blocking for high-risk fields, a warning otherwise', () => {
     const high = checkField({ lang: 'en', risk: 'high', source: 'Ce n’est pas automatique.', target: 'It is automatic.', back: 'C’est automatique.' });

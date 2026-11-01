@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { FIELDS, KINDS, SCHEMA, checkField, fieldStatus, protect, recordStatus, restore, sourceFields, sourceHash, unitsOf } from '../api/lib/contentTranslation.js';
 import { Engine } from './lib/translation-engines.mjs';
 
-export const CHECKS_VERSION = 'r32-checks-2';   // 2: lower-case acronyms and MSA protected, more uncertainty phrasings
+export const CHECKS_VERSION = 'r32-checks-3';   // 2: lower-case acronyms and MSA protected, more uncertainty phrasings; 3: mixed-script words
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'data', 'translations');
 const LIST = { aide: 'aides?limit=50', demarche: 'demarches?limit=50', guide: 'guides', actualite: 'actualites?limit=50', dispositif: 'dispositifs' };

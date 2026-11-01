@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:44:42.567Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:30.149Z",
    "review": null,
    "fields": {
     "titre": {
@@ -116,8 +116,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:45:04.134Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:30.150Z",
    "review": null,
    "fields": {
     "titre": {
@@ -224,8 +224,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:45:26.585Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:30.152Z",
    "review": null,
    "fields": {
     "titre": {
@@ -342,8 +342,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:45:46.790Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:30.154Z",
    "review": null,
    "fields": {
     "titre": {
@@ -452,8 +452,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:46:08.158Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:30.156Z",
    "review": null,
    "fields": {
     "titre": {

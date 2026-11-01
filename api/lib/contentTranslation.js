@@ -180,6 +180,8 @@ export function checkField({ lang, risk, source, target, back = null, missing = 
   if (['ar', 'uk'].includes(lang)) {
     const all = letters(plain); const own = all.filter((c) => (lang === 'ar' ? /\p{Script=Arabic}/u : /\p{Script=Cyrillic}/u).test(c));
     if (all.length > 20 && own.length / all.length < 0.5) critical.push('untranslated');
+    // one word mixing the target script with Latin letters is a broken word (« أوروبوميتropole »), never a deliberate name
+    if ((plain.match(/\p{L}+/gu) || []).some((w) => /\p{Script=Latin}/u.test(w) && /[\p{Script=Arabic}\p{Script=Cyrillic}]/u.test(w))) critical.push('script');
   } else if (count(FR_WORDS, plain) >= Math.max(4, Math.round(plain.split(/\s+/).length * 0.12))) critical.push('untranslated');
   const ratio = String(target).length / Math.max(1, String(source).length);
   if (ratio < 0.4 || ratio > 3) warnings.push('length');

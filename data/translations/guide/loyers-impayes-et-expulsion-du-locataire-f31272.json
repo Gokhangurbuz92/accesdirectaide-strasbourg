@@ -8,8 +8,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:50:09.516Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:50.403Z",
    "review": null,
    "fields": {
     "titre": {
@@ -113,8 +113,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:50:49.544Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:50.433Z",
    "review": null,
    "fields": {
     "titre": {
@@ -218,8 +218,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:51:30.180Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:50.464Z",
    "review": null,
    "fields": {
     "titre": {
@@ -309,7 +309,8 @@
      "checks": {
       "critical": [
        "names",
-       "numbers"
+       "numbers",
+       "script"
       ],
       "warnings": [
        "negation"
@@ -324,8 +325,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:52:09.516Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:50.492Z",
    "review": null,
    "fields": {
     "titre": {
@@ -429,8 +430,8 @@
    "engine": "ollama:translategemma:4b",
    "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
    "backEngine": "ollama:translategemma:4b",
-   "checksVersion": "r32-checks-2",
-   "translatedAt": "2026-11-01T11:52:51.961Z",
+   "checksVersion": "r32-checks-3",
+   "translatedAt": "2026-11-01T12:25:50.523Z",
    "review": null,
    "fields": {
     "titre": {
