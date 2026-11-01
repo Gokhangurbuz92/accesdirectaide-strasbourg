@@ -7,12 +7,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { FIELDS, SCHEMA, STATUSES, checkField, sourceHash, unitsOf } from '../../api/lib/contentTranslation.js';
+import { FIELDS, SCHEMA, STATUSES, checkField, sourceHash } from '../../api/lib/contentTranslation.js';
 import { TARGET_LANGUAGES } from '../../src/i18n/languages.js';
 
 const ROOT = path.join(process.cwd(), 'data', 'translations');
 const files = fs.existsSync(ROOT) ? fs.readdirSync(ROOT).flatMap((k) => fs.readdirSync(path.join(ROOT, k)).filter((f) => f.endsWith('.json')).map((f) => path.join(ROOT, k, f))) : [];
-const flat = (v) => unitsOf(v).units.join('\n');
+// every string of a field value, in order (the French segmenter would skip lines without Latin letters, e.g. Arabic)
+const flat = (v) => (typeof v === 'string' ? v : Array.isArray(v) ? v.map(flat).join('\n') : v && typeof v === 'object' ? Object.entries(v).filter(([k]) => k !== 'provenance').map(([, x]) => flat(x)).join('\n') : '');
 
 describe('committed content translations', () => {
   it('exist for the published catalogue (or the gate is vacuous on purpose)', () => { expect(Array.isArray(files)).toBe(true); });
