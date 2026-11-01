@@ -32,7 +32,7 @@ describe('Q08 release script and CI workflow', () => {
     expect(sh).toMatch(/\$VERCEL rollback "\$PREV" --yes/);
   });
   it('the CI workflow never deploys and has read-only permissions', () => {
-    const ci = fs.readFileSync('ops/github-actions/ci.yml', 'utf8');
+    const ci = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
     expect(ci).toMatch(/permissions:\n {2}contents: read/);
     expect(ci).not.toMatch(/vercel|secrets\./i);
     expect(ci).toMatch(/node scripts\/unit-gate\.mjs/);

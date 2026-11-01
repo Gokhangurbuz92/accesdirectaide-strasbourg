@@ -55,8 +55,8 @@ transformerait en test de la limite, et il consomme du crédit. Il demande l'acc
 ## 6. Déployer et revenir en arrière
 
 - Déploiement : `scripts/release-production.sh <sha>` depuis un clone propre de `main` lié au projet Vercel. Le script vérifie que le commit
-  est la pointe poussée de `origin/main`, exige le succès de la CI GitHub quand le workflow existe (`ops/github-actions/ci.yml`, à installer
-  avec un jeton GitHub ayant le droit « workflow »), lance la porte locale (installation propre, lint, typecheck, `scripts/unit-gate.mjs`,
+  est la pointe poussée de `origin/main`, exige le succès de la CI GitHub (`.github/workflows/ci.yml`, installée le 01/11/2026 ;
+  elle ne déploie jamais), lance la porte locale (installation propre, lint, typecheck, `scripts/unit-gate.mjs`,
   audit des dépendances de production), déploie (le build lance `scripts/release-preflight.mjs` et s'arrête sur un FAIL), puis essaie
   l'adresse publique (en-tête `x-release-sha`, disponibilité, une liste, l'accueil) et revient automatiquement au déploiement précédent si
   l'essai échoue. Voir aussi `operating-model-and-costs.md`.

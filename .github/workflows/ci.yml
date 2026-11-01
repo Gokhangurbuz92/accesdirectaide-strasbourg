@@ -1,6 +1,6 @@
 # Q08 — continuous integration for every push and pull request on main: lint, typecheck, the unit gate, the dependency audit and the build.
 # It never deploys (production releases are made with scripts/release-production.sh, which requires this workflow to have succeeded).
-# To install: copy to .github/workflows/ci.yml (pushing a workflow needs a GitHub token with the « workflow » scope).
+# Installed on 01/11/2026 (the owner's GitHub token received the « workflow » scope).
 name: CI
 on:
   push:
