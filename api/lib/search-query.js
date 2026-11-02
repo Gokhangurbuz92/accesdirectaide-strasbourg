@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { decide, visibleSql } from './publicVisibility.js';
+import { EXCLUSION_CLAUSE, withoutExclusions } from './finess-labels.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
 import { expandQueryWithSynonyms, normalizeSearchTerm } from './search-utils.js';
@@ -637,13 +638,13 @@ export async function searchStructures(params) {
   // PKG-11 / E04: what a structure DECLARES it does (catalogue `services`) and the services it offers for booking on ADA (active, published booking only) feed the
   // search — before, a search for « aide administrative » found only names and short descriptions. Shown as « why shown », never as a promise of suitability.
   const like = q ? '%' + q + '%' : null;
-  const serviceMatch = q ? sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE declared.x ILIKE ${like})
+  const serviceMatch = q ? sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE regexp_replace(declared.x, ${EXCLUSION_CLAUSE}, '', 'gi') ILIKE ${like})
       OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true AND bookable.name ILIKE ${like})))` : null;
   // R27: word search over the name, description, commune, postal code and type, plus the declared services; applied below once every other filter is
   // known (best match level): « CCAS Strasbourg » = a CCAS in Strasbourg
   // R34: and the services data·inclusion attributes to the place (Structure.services_externes: the schema's service name and themes, never free text) — 478
   // services on 269 public places that no search read: « aide aux aidants » found nothing, « apprendre le français » found « Croix-Rouge française »
-  const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(declared.x), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})
+  const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(regexp_replace(declared.x, ${EXCLUSION_CLAUSE}, '', 'gi')), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})
     OR EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("Structure"."services_externes"->'services') = 'array' THEN "Structure"."services_externes"->'services' ELSE '[]'::jsonb END) AS ext(x)
       WHERE translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''') LIKE ${`%${t}%`})
     OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true
@@ -813,7 +814,7 @@ export async function searchStructures(params) {
     if (q) {
       const needle = String(q).toLowerCase();
       for (const f of fullItems) {
-        const declared = (Array.isArray(f.services) ? f.services : []).filter((/** @type {unknown} */ x) => typeof x === 'string' && x.toLowerCase().includes(needle));
+        const declared = (Array.isArray(f.services) ? f.services : []).filter((/** @type {unknown} */ x) => typeof x === 'string' && withoutExclusions(x).toLowerCase().includes(needle));
         if (declared.length) whyShown.set(f.id, declared.slice(0, 3));
       }
       const bookable = (await db.execute(sql`SELECT b."structureId" AS sid, b.name FROM "ProRdvService" b JOIN "Structure" s ON s.id = b."structureId"

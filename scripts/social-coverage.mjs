@@ -17,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { publishedRecords } from './translate-content.mjs';
 import TERMS from '../api/_services/verification/datainclusion-terms.js';
+import { withoutExclusions } from '../api/lib/finess-labels.js';   // R37: « (non compris …) » clauses never match
 
 /** R36: the kind of answer each need calls for (data/reference/service-response-types.v1.json) */
 const RESPONSES = JSON.parse(fs.readFileSync(new URL('../data/reference/service-response-types.v1.json', import.meta.url), 'utf8')).subdomains;
@@ -72,7 +73,7 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
       // R35: on a record made from FINESS, « services » are the activities the register records as authorized and exercised (an official authorization)
       // (the activity is read with the establishment's official FINESS category: « SESSAD » is the category, « Éducation générale et soins spécialisés… » the
       // authorized activity; a category with no active authorized activity counts for nothing)
-      ...(Array.isArray(p.services) ? p.services : []).filter((x) => s.keywords.some((kw) => matchKeyword(finessRecord(p) ? `${p.type_structure} ${x}` : String(x), kw)))
+      ...(Array.isArray(p.services) ? p.services : []).filter((x) => s.keywords.some((kw) => matchKeyword(finessRecord(p) ? `${p.type_structure} ${withoutExclusions(x)}` : String(x), kw)))
         .map(() => ({ authority: finessRecord(p) ? 'AUTORISATION_FINESS' : 'STRUCTURE', updatedAt: p.date_verification })),
       ...((p.services_externes && p.services_externes.services) || []).filter((x) => (x.themes || []).some(themeOk) || s.keywords.some((kw) => matchKeyword(`${x.nom} ${(x.themes || []).join(' ')}`, kw))),
       // R36: where the place IS the public service (a mairie, a CCAS, a health centre: placeIsService), its official directory record — Annuaire de

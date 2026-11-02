@@ -35,6 +35,9 @@ describe('PKG-11 / E04 structure services feed the directory search (real DB)', 
     await mk('inactive', { pro: true }); await service('inactive', `Ancien ${WORD}`, false);
     await mk('unpublished', { pro: false }); await service('unpublished', `Brouillon ${WORD}`);
     await mk('unverified', { services: [`${WORD} non vérifiée`], verified: false });
+    // R37: FINESS activity labels state what they do not cover; those words must not match
+    await mk('excludes', { services: [`Aide à Domicile (prestations sur le lieu de vie (non compris zqplac${TS} placement)) — personnes âgées`] });
+    await mk('covers', { services: [`Accueil zqplac${TS} placement — enfants`] });
   }, 90000);
   afterAll(async () => {
     if (savedMode === undefined) delete process.env.ADA_PUBLIC_CONTENT_MODE; else process.env.ADA_PUBLIC_CONTENT_MODE = savedMode;
@@ -50,6 +53,14 @@ describe('PKG-11 / E04 structure services feed the directory search (real DB)', 
     expect(Object.keys(byId).sort()).toEqual([`${tag}-bookable`, `${tag}-declared`]);
     expect(byId[`${tag}-declared`].whyShown).toEqual({ services: [`Atelier ${WORD} familiale`] });
     expect(byId[`${tag}-bookable`].whyShown).toEqual({ services: [`Rendez-vous ${WORD}`] });
+  });
+
+  it('R37: words inside a « (non compris …) » clause of a label never match; the same words stated as an activity do', async () => {
+    const res = await get(`/api/structures?q=${encodeURIComponent(`zqplac${TS} placement`)}&sort=relevance`);
+    const ids = res.body.items.map((i) => i.id);
+    expect(ids).toContain(`${tag}-covers`);
+    expect(ids).not.toContain(`${tag}-excludes`);
+    expect(res.body.items.find((i) => i.id === `${tag}-covers`).whyShown).toEqual({ services: [`Accueil zqplac${TS} placement — enfants`] });
   });
 
   it('never surfaces an inactive bookable service, an unpublished booking or an unverified structure', async () => {
