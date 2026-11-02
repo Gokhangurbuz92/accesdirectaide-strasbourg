@@ -20,3 +20,6 @@ ALTER TABLE "ProAppointment" DROP COLUMN IF EXISTS "guestMailConsentAt";
 ALTER TABLE "ProAppointment" DROP COLUMN IF EXISTS "guestPhone";
 ALTER TABLE "ProAppointment" DROP COLUMN IF EXISTS "guestEmailHash";
 ALTER TABLE "ProAppointment" DROP COLUMN IF EXISTS "guestEmail";
+-- R39: forget the migration too (its journal row, by the journal's « when » of 0043), otherwise a later `migrate` believes 0043 is applied and silently
+-- skips it (found in the R39 LAB rehearsal: after rollback + migrate, the 12 guest columns were missing).
+DELETE FROM drizzle.__drizzle_migrations WHERE created_at = 1793650324179;

@@ -36,6 +36,13 @@ npx drizzle-kit studio     # UI pour explorer la DB
 4. `npx drizzle-kit migrate` (`npm run db:migrate`) en local comme dans les environnements déployés
 5. Commiter le fichier de migration
 
+### Retour arrière (`drizzle/rollback/NNNN_down.sql`)
+Un fichier de retour arrière défait le schéma d'une migration ; il doit aussi supprimer la ligne de cette migration dans `drizzle.__drizzle_migrations`
+(`created_at` = le `when` du journal `drizzle/meta/_journal.json`), sinon un `migrate` ultérieur croit la migration appliquée et l'ignore sans rien dire
+(constaté lors de la répétition R39 de 0043). Les fichiers à partir de 0043 le font (test `tests/unit/r39-rollback-journal.test.js`) ; pour 0025 à 0042,
+exécuter après le fichier : `DELETE FROM drizzle.__drizzle_migrations WHERE created_at = <when de la migration>;`. Toujours après une sauvegarde chiffrée
+(`scripts/db-backup.mjs`) et avec le code de la version précédente.
+
 ## Backup
 Voir [docs/disaster-recovery.md](disaster-recovery.md).
 
