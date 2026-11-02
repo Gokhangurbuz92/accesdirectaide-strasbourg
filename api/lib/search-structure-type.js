@@ -22,6 +22,9 @@ const TYPES = [
   [/(?<!\p{L})(cada)(?!\p{L})/u, 'Centre d’accueil de demandeurs d’asile (CADA)'],
   [/(?<!\p{L})(adil)(?!\p{L})/u, 'ADIL (information logement)'],
   [/(?<!\p{L})(points? d'accueil numerique)(?!\p{L})/u, 'Point d’accueil numérique'],
+  // R34: a need whose public office is fixed by its label — France services is the State's label for help with the administrative procedures of every
+  // administration, online included (France Travail, which also lists « démarches en ligne », covers only its own procedures)
+  [/(?<!\p{L})((?:aide|aider|accompagnement)? ?(?:aux |pour (?:mes |les )?|a faire (?:mes |les )?|mes )?demarches? (?:en ligne|administratives?|sur internet))(?!\p{L})/u, 'Espace France Services'],
 ];
 /** words that only say « where you are received », not what you need */
 const FILLER = /(?<!\p{L})(accueil|adresse|ou|trouver|le|la|les|un|une|du|de|des|d|au|aux|pres|proche|de chez moi)(?!\p{L})/gu;

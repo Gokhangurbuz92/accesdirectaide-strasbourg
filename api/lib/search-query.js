@@ -624,8 +624,14 @@ export async function searchStructures(params) {
       OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true AND bookable.name ILIKE ${like})))` : null;
   // R27: word search over the name, description, commune, postal code and type, plus the declared services; applied below once every other filter is
   // known (best match level): « CCAS Strasbourg » = a CCAS in Strasbourg
-  const declared = (t) => sql`EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(declared.x), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})`;
+  // R34: and the services data·inclusion attributes to the place (Structure.services_externes: the schema's service name and themes, never free text) — 478
+  // services on 269 public places that no search read: « aide aux aidants » found nothing, « apprendre le français » found « Croix-Rouge française »
+  const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(declared.x), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})
+    OR EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("Structure"."services_externes"->'services') = 'array' THEN "Structure"."services_externes"->'services' ELSE '[]'::jsonb END) AS ext(x)
+      WHERE translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''') LIKE ${`%${t}%`}))`;
   const plan = q ? wordPlan(q, ['"nom"', '"description_courte"', '"ville"', '"code_postal"', '"type_structure"'], '"nom"', sv, declared) : null;
+  // the words of the query found in what the place DOES (its services), ranked above words found only in its name
+  const serviceHits = plan ? sql`(${sql.join(plan.words.map((w) => sql`(CASE WHEN (${sql.join(wordTerms(w).map((t) => declared(t)), sql.raw(' OR '))}) THEN 1 ELSE 0 END)`), sql.raw(' + '))})` : null;
 
   // Phase 9: StructureServiceArea Filtering (FR-010)
   if (params.territoryFilter && params.territoryFilter.userTerritoryIds && params.territoryFilter.userTerritoryIds.length > 0) {
@@ -701,7 +707,7 @@ export async function searchStructures(params) {
   };
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
-    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
+    selectRank = plan ? sql`, (${serviceHits} * 2 + ${plan.titleHits}) as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
     orderBy = sql`ORDER BY rank DESC, quality_score DESC, nom ASC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to quality.

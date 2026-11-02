@@ -65,5 +65,7 @@
   "amenager": ["adaptation", "amenagement"],
   "agee": ["autonomie", "personnes agees"],
   "agees": ["autonomie", "personnes agees"],
-  "avortement": ["ivg", "interruption volontaire de grossesse"]
+  "avortement": ["ivg", "interruption volontaire de grossesse"],
+  "alimentaire": ["alimentation"],
+  "colis": ["alimentaire", "alimentation"]
 }

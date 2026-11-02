@@ -21,14 +21,23 @@ describe('service coverage ladder', () => {
     expect(r.evidence.verifiedSpecificService).toBe(false);
     expect(r.serviceStatus).toBe('SERVICE_PARTIAL');
   });
-  it('a declared service in the Eurométropole with contact and hours is a verified service', () => {
+  it('a service the place declares itself is a DECLARED service, not a verified one', () => {
     const r = row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['Information sur la curatelle'] })] });
-    expect(r.evidence.verifiedSpecificService && r.evidence.territorialEligibility && r.evidence.accessModality && r.evidence.currentAvailability).toBe(true);
-    expect(r.serviceStatus).toBe('SERVICE_VERIFIED');
+    expect(r.evidence.declaredSpecificService && r.evidence.territorialEligibility && r.evidence.accessModality).toBe(true);
+    expect(r.evidence.verifiedSpecificService).toBe(false);
+    expect(r.serviceStatus).toBe('SERVICE_DECLARED');
   });
-  it('the same service outside the Eurométropole, or without hours, is not', () => {
+  it('a service a public operator lists for a place of the Eurométropole is a verified service', () => {
+    const ext = { services: [{ nom: 'Accompagnement curatelle', themes: [], authority: 'OPERATEUR_PUBLIC', updatedAt: new Date().toISOString() }] };
+    const r = row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ type_structure: 'Association', services_externes: ext })] });
+    expect(r.evidence.verifiedSpecificService && r.evidence.currentAvailability).toBe(true);
+    expect(r.serviceStatus).toBe('SERVICE_VERIFIED');
+    const declared = { services: [{ ...ext.services[0], authority: 'PLATEFORME_DECLARATIVE' }] };
+    expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services_externes: declared })] }).serviceStatus).toBe('SERVICE_DECLARED');
+  });
+  it('the same service outside the Eurométropole, or with no way to contact the place, is not', () => {
     expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['curatelle'], ville: 'Sarrewerden', code_postal: '67260' })] }).serviceStatus).toBe('SERVICE_PARTIAL');
-    expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['curatelle'], horaires: null })] }).serviceStatus).toBe('SERVICE_PARTIAL');
+    expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['curatelle'], telephone: null })] }).serviceStatus).toBe('SERVICE_PARTIAL');
   });
   it('a need served remotely by nature counts through its official channel', () => {
     const r = row({ guide: [{ slug: 'g', titre: 'La curatelle' }] }, { emergency: ['3919'] });

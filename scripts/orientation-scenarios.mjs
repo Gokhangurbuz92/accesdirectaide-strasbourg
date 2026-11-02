@@ -22,7 +22,10 @@ for (const s of set.scenarios) {
   // R34: expectSafety — the emergency number the search must show first (false: no emergency block at all)
   const nums = body.safety?.numbers || [];
   const safetyOk = s.expectSafety === undefined ? true : s.expectSafety === false ? nums.length === 0 : nums.includes(s.expectSafety);
-  const pass = safetyOk && (s.expect === 'any' ? true : s.expect === 'abstain' ? all.length === 0 : typed ? typed.length > 0 : relevant.length > 0);
+  // R34: places — at least minStructures of them, and none of rejectTypes among the first 3 (a place whose NAME merely contains the word)
+  const places = all.filter((x) => x.k === 'structures');
+  const placesOk = (!s.minStructures || places.length >= s.minStructures) && !(s.rejectTypes || []).some((t) => places.slice(0, 3).some((x) => x.type === t));
+  const pass = safetyOk && placesOk && (s.expect === 'any' ? true : s.expect === 'abstain' ? all.length === 0 : typed ? typed.length > 0 : relevant.length > 0);
   rows.push({ id: s.id, query: s.query, lang: s.lang, http: r.status, expect: s.expect, expectType: s.expectType || null, typed: typed ? typed.length : null, safety: nums, returned: all.length, relevant: relevant.length, crossLanguage: body.crossLanguage || null, sample: relevant.slice(0, 3).map((x) => `${x.k}:${x.slug}`), pass });
   console.log(`${pass ? 'PASS' : 'FAIL'} #${s.id} ${s.lang} « ${s.query} » → ${all.length} returned, ${relevant.length} relevant`);
 }

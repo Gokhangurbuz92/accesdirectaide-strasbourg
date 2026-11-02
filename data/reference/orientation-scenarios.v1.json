@@ -1,6 +1,6 @@
 {
  "schema": "ada-orientation-scenarios/1",
- "note": "Synthetic descriptions (no real person). Each scenario is run against the public search; 'results' expects at least one returned record whose title or summary contains one expected word; 'abstain' expects no record at all. Scenarios 24-25 are also covered by the browser journeys (language switch, keyboard). Since R34, 'expectSafety' names an emergency number the search must show first (false: it must show none), and 'any' accepts any result list when only the safety signal is scored.",
+ "note": "Synthetic descriptions (no real person). Each scenario is run against the public search; 'results' expects at least one returned record whose title or summary contains one expected word; 'abstain' expects no record at all. Scenarios 24-25 are also covered by the browser journeys (language switch, keyboard). Since R34, 'expectSafety' names an emergency number the search must show first (false: it must show none), and 'any' accepts any result list when only the safety signal is scored. Since R34 (services), 'rejectTypes' lists kinds of place that must not appear among the first 3 places (a name that merely contains the word), and 'minStructures' requires places in the answer.",
  "scenarios": [
   {
    "id": 1,
@@ -407,6 +407,52 @@
    "expect": "any",
    "words": [],
    "expectSafety": false
+  },
+  {
+   "id": 35,
+   "situation": "Apprendre le français (cours, ateliers) — pas un lieu dont seul le nom contient « française »",
+   "lang": "fr",
+   "query": "apprendre le français",
+   "expect": "any",
+   "words": [],
+   "minStructures": 1,
+   "rejectTypes": [
+    "Centre de santé",
+    "Service de soins infirmiers à domicile (SSIAD)"
+   ]
+  },
+  {
+   "id": 36,
+   "situation": "Aidant d'un proche âgé ou malade",
+   "lang": "fr",
+   "query": "aide aux aidants",
+   "expect": "any",
+   "words": [],
+   "minStructures": 1
+  },
+  {
+   "id": 37,
+   "situation": "Financer le permis de conduire pour un emploi",
+   "lang": "fr",
+   "query": "permis de conduire aide mobilité",
+   "expect": "any",
+   "words": [],
+   "minStructures": 1,
+   "rejectTypes": [
+    "Mairie"
+   ]
+  },
+  {
+   "id": 38,
+   "situation": "Trouver une location",
+   "lang": "fr",
+   "query": "louer un logement",
+   "expect": "any",
+   "words": [],
+   "minStructures": 1,
+   "rejectTypes": [
+    "Point-justice (accès au droit)"
+   ]
   }
  ]
 }

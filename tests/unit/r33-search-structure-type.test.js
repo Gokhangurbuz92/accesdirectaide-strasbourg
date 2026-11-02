@@ -19,4 +19,9 @@ describe('structureTypeHint', () => {
     expect(structureTypeHint('aide au logement')).toBeNull();
     expect(structureTypeHint('curatelle tutelle')).toBeNull();
   });
+  it('R34: help with administrative or online procedures asks for France services, the State label for it', () => {
+    expect(structureTypeHint('aide démarches en ligne')).toEqual({ type: 'Espace France Services', rest: '' });
+    expect(structureTypeHint('aide aux démarches administratives Schiltigheim')).toEqual({ type: 'Espace France Services', rest: 'schiltigheim' });
+    expect(structureTypeHint('démarches logement')).toBeNull();
+  });
 });

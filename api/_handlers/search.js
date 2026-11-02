@@ -136,7 +136,7 @@ export default async function handler(req, res) {
           }
           found = found.slice(0, 5);
         }
-        if (!found.length) found = (await searchStructures({ q: payload.query, page: 1, pageSize: 5 })).items;
+        if (!found.length) found = (await searchStructures({ q: payload.query, sort: 'pertinence', page: 1, pageSize: 5 })).items;
         structures = found
           .map((s) => ({ id: s.id, slug: s.slug, nom: s.nom, description_courte: s.description_courte, type_structure: s.type_structure, ville: s.ville, code_postal: s.code_postal }));
       } catch (e) {

@@ -1,7 +1,7 @@
 {
  "schema": "ada-social-coverage/1",
  "reference": "2026-11-02.1",
- "measuredAt": "2026-11-02T01:11:17.729Z",
+ "measuredAt": "2026-11-02T01:16:26.901Z",
  "totals": {
   "subdomains": 86,
   "byStatus": {
@@ -10,9 +10,10 @@
    "TAXONOMY_ONLY": 9
   },
   "byServiceStatus": {
-   "NO_VERIFIED_SERVICE": 48,
-   "SERVICE_PARTIAL": 23,
-   "SERVICE_VERIFIED": 15
+   "SERVICE_PARTIAL": 26,
+   "NO_VERIFIED_SERVICE": 35,
+   "SERVICE_VERIFIED": 18,
+   "SERVICE_DECLARED": 7
   },
   "evidence": {
    "taxonomy": 86,
@@ -21,10 +22,11 @@
    "verifiedRightsByTitle": 38,
    "verifiedProcedure": 34,
    "verifiedEstablishment": 21,
-   "verifiedSpecificService": 0,
-   "territorialEligibility": 24,
-   "accessModality": 19,
-   "currentAvailability": 0,
+   "declaredSpecificService": 31,
+   "verifiedSpecificService": 13,
+   "territorialEligibility": 50,
+   "accessModality": 37,
+   "currentAvailability": 18,
    "orientationTested": 51
   }
  },
@@ -222,16 +224,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 180,
+   "servicesEurometropole": 43,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "centre-communal-d-action-sociale-ccas-mundolsheim-12aec22a",
+    "centre-communal-d-action-sociale-ccas-eckbolsheim-10afeeaa"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -264,6 +276,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -274,6 +287,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -308,18 +323,28 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": true,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_VERIFIED",
    "titledSlugs": [
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 198,
+   "servicesEurometropole": 57,
+   "servicesOfficial": 12,
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "agence-france-travail-strasbourg-hautepierre-f67dd3a5",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "centre-communal-d-action-sociale-ccas-mundolsheim-12aec22a"
+   ],
    "gap": null
   },
   {
@@ -349,6 +374,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -359,6 +385,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -397,6 +425,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -409,8 +438,12 @@
     "aide:rsa",
     "demarche:prime-activite-caf"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "cidff67-37a86c83"
+   ],
    "gap": null
   },
   {
@@ -441,6 +474,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -451,6 +485,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -488,16 +524,24 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "verifiedSpecificService": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 4,
+   "servicesEurometropole": 4,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "agence-action-logement-7611f9b4",
+    "arsea-70f8f237",
+    "horizon-amitie-6d48b1b3"
+   ],
    "gap": null
   },
   {
@@ -525,6 +569,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -535,6 +580,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -569,19 +616,29 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "aide:als",
     "demarche:demande-hlm-67-68"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 183,
+   "servicesEurometropole": 46,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "centre-communal-d-action-sociale-ccas-mundolsheim-12aec22a",
+    "centre-communal-d-action-sociale-ccas-eckbolsheim-10afeeaa"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -621,13 +678,14 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "aide:apl",
     "aide:als",
@@ -635,8 +693,13 @@
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
     "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "agence-action-logement-7611f9b4"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -671,19 +734,26 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 3,
+   "servicesEurometropole": 3,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "agence-action-logement-7611f9b4",
+    "ergos-strasbourg-61e755a7"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -712,6 +782,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": false,
@@ -722,6 +793,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -750,6 +823,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -760,6 +834,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -788,6 +864,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -798,6 +875,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -827,6 +906,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -839,6 +919,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -866,8 +948,9 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": true
@@ -876,8 +959,12 @@
    "titledSlugs": [
     "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "agence-action-logement-7611f9b4"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -918,6 +1005,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -928,6 +1016,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -956,6 +1046,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -966,6 +1057,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -1001,6 +1094,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -1014,6 +1108,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1043,6 +1139,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1055,6 +1152,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -1082,6 +1181,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1092,6 +1192,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -1119,16 +1221,21 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "par-enchantement-071d1765"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -1161,16 +1268,21 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "wimoov-bas-rhin-3ce207fb"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -1203,18 +1315,24 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "aide:faj-strasbourg"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 3,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "mission-locale-pour-l-emploi-89e0e6bd",
+    "mission-locale-alsace-du-nord-6d591fbd"
+   ],
    "gap": null
   },
   {
@@ -1253,18 +1371,23 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "region-grand-est-6c0e61d7"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -1305,6 +1428,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": false,
@@ -1315,6 +1439,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1353,6 +1479,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1365,6 +1492,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -1405,16 +1534,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 29,
+   "servicesEurometropole": 6,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "mairie-geispolsheim-cef34247",
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "cidff67-37a86c83",
+    "association-contact-et-promotion-c8989dee",
+    "centre-socioculturel-de-la-meinau-87c68b75",
+    "ass-centre-socio-culturel-d-obernai-7b6bf1c7"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -1454,6 +1593,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1466,6 +1606,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -1494,6 +1636,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1504,6 +1647,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -1533,16 +1678,22 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "cidff67-37a86c83",
+    "par-enchantement-071d1765"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -1579,6 +1730,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -1593,8 +1745,10 @@
     "demarche:dossier-mdph-67-68",
     "guide:carte-mobilite-inclusion-cmi-f34049"
    ],
-   "services": 0,
+   "services": 1,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1626,6 +1780,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1636,6 +1791,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -1668,6 +1825,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1678,6 +1836,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -1707,6 +1867,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1717,6 +1878,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -1749,6 +1912,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1759,6 +1923,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1786,6 +1952,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1796,6 +1963,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -1826,6 +1995,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -1838,6 +2008,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1872,6 +2044,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1882,6 +2055,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1919,6 +2094,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1929,6 +2105,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -1956,6 +2134,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -1966,6 +2145,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified rights content"
   },
   {
@@ -1996,6 +2177,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2009,6 +2191,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2040,6 +2224,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2054,6 +2239,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2092,6 +2279,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2106,6 +2294,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2138,6 +2328,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2148,6 +2339,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2176,8 +2369,9 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
@@ -2186,8 +2380,12 @@
    "titledSlugs": [
     "demarche:pass-culture-jeunes"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "agence-action-logement-7611f9b4"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -2216,6 +2414,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2229,6 +2428,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2259,6 +2460,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2271,6 +2473,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2299,6 +2503,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2309,6 +2514,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -2340,6 +2547,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2350,6 +2558,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2380,6 +2590,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2392,6 +2603,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2428,6 +2641,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2440,6 +2654,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2470,6 +2686,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2480,6 +2697,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2518,6 +2737,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2533,6 +2753,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2563,6 +2785,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2576,6 +2799,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2616,6 +2841,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2628,6 +2854,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2659,6 +2887,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2669,6 +2898,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2707,6 +2938,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2720,6 +2952,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2754,6 +2988,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -2770,6 +3005,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2803,6 +3040,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -2813,6 +3051,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -2851,7 +3091,8 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
@@ -2863,8 +3104,12 @@
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
     "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 1,
+   "servicePlaces": [
+    "agence-action-logement-7611f9b4"
+   ],
    "gap": null
   },
   {
@@ -2897,16 +3142,22 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "kodiko-ebf348af",
+    "ass-migration-solidarite-echange-devel-d6b8bfea"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -2936,6 +3187,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": false,
@@ -2946,6 +3198,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -2975,8 +3229,9 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
@@ -2985,8 +3240,17 @@
    "titledSlugs": [
     "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 11,
+   "servicesEurometropole": 9,
+   "servicesOfficial": 3,
+   "servicePlaces": [
+    "ass-migration-solidarite-echange-devel-d6b8bfea",
+    "association-contact-et-promotion-c8989dee",
+    "sistra-8c1be298",
+    "centre-socioculturel-de-la-meinau-87c68b75",
+    "genius-7fab9bff",
+    "ass-centre-socio-culturel-d-obernai-7b6bf1c7"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3016,6 +3280,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3026,6 +3291,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing verified local service data"
   },
   {
@@ -3066,21 +3333,31 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": true,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_VERIFIED",
    "titledSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
     "demarche:actualisation-france-travail",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 11,
+   "servicesEurometropole": 7,
+   "servicesOfficial": 11,
+   "servicePlaces": [
+    "agence-france-travail-strasbourg-hautepierre-f67dd3a5",
+    "france-travail-schiltigheim-1605ee9d",
+    "agence-france-travail-haguenau-dc0d12d2",
+    "france-travail-strasbourg-danube-2ebf907c",
+    "france-travail-lingolsheim-8c3a0770",
+    "agence-france-travail-strasbourg-meinau-62599713"
+   ],
    "gap": null
   },
   {
@@ -3108,8 +3385,9 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
@@ -3118,8 +3396,13 @@
    "titledSlugs": [
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "savoir-et-competences-emploi-atlas-b3ae7a8d",
+    "arsea-chantier-insertion-ile-aux-epis-dir-gale-arsea-arsea-6aed699c"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3160,18 +3443,28 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_VERIFIED",
    "titledSlugs": [
     "demarche:rdv-titre-sejour-67"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 45,
+   "servicesEurometropole": 35,
+   "servicesOfficial": 12,
+   "servicePlaces": [
+    "agence-france-travail-strasbourg-hautepierre-f67dd3a5",
+    "france-travail-schiltigheim-1605ee9d",
+    "agence-france-travail-haguenau-dc0d12d2",
+    "france-travail-strasbourg-danube-2ebf907c",
+    "france-travail-lingolsheim-8c3a0770",
+    "agence-france-travail-strasbourg-meinau-62599713"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3199,16 +3492,23 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 3,
+   "servicesEurometropole": 3,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "cidff67-37a86c83",
+    "par-enchantement-071d1765",
+    "wimoov-bas-rhin-3ce207fb"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3244,16 +3544,25 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 5,
+   "servicesEurometropole": 5,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "adie-strasbourg-association-pour-le-droit-a-l-initiativ-d5f565b8",
+    "sistra-8c1be298",
+    "horizon-amitie-6d48b1b3",
+    "banque-de-france-du-bas-rhin-457791a0"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3289,6 +3598,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -3299,8 +3609,13 @@
    "titledSlugs": [
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 2,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "banque-de-france-du-bas-rhin-457791a0"
+   ],
    "gap": null
   },
   {
@@ -3330,6 +3645,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -3342,6 +3658,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -3376,6 +3694,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": false,
@@ -3386,6 +3705,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -3413,16 +3734,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 11,
+   "servicesEurometropole": 7,
+   "servicesOfficial": 11,
+   "servicePlaces": [
+    "agence-france-travail-strasbourg-hautepierre-f67dd3a5",
+    "france-travail-schiltigheim-1605ee9d",
+    "agence-france-travail-haguenau-dc0d12d2",
+    "france-travail-strasbourg-danube-2ebf907c",
+    "france-travail-lingolsheim-8c3a0770",
+    "agence-france-travail-strasbourg-meinau-62599713"
+   ],
    "gap": "missing verified rights content"
   },
   {
@@ -3450,16 +3781,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 11,
+   "servicesEurometropole": 9,
+   "servicesOfficial": 3,
+   "servicePlaces": [
+    "ass-migration-solidarite-echange-devel-d6b8bfea",
+    "association-contact-et-promotion-c8989dee",
+    "sistra-8c1be298",
+    "centre-socioculturel-de-la-meinau-87c68b75",
+    "genius-7fab9bff",
+    "ass-centre-socio-culturel-d-obernai-7b6bf1c7"
+   ],
    "gap": "missing content and service data"
   },
   {
@@ -3490,16 +3831,21 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "region-grand-est-6c0e61d7"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3525,6 +3871,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3535,6 +3882,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -3567,18 +3916,27 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "aide:permis"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 6,
+   "servicesEurometropole": 5,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "region-grand-est-6c0e61d7",
+    "adie-strasbourg-association-pour-le-droit-a-l-initiativ-d5f565b8",
+    "genius-7fab9bff",
+    "ergos-strasbourg-61e755a7",
+    "wimoov-bas-rhin-3ce207fb"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3611,6 +3969,7 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": true,
@@ -3623,6 +3982,8 @@
    ],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -3648,6 +4009,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3658,6 +4020,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -3688,16 +4052,21 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 2,
+   "servicesEurometropole": 1,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3723,6 +4092,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3733,6 +4103,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   },
   {
@@ -3768,19 +4140,26 @@
     "verifiedRightsByTitle": true,
     "verifiedProcedure": true,
     "verifiedEstablishment": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_DECLARED",
    "titledSlugs": [
     "aide:ave-avf",
     "demarche:pass-culture-jeunes"
    ],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 23,
+   "servicesEurometropole": 3,
+   "servicesOfficial": 0,
+   "servicePlaces": [
+    "mairie-geispolsheim-cef34247",
+    "ass-centre-socio-culturel-d-obernai-7b6bf1c7",
+    "tunaweza-7810e430"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -3817,6 +4196,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": true,
     "accessModality": false,
@@ -3827,6 +4207,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -3866,6 +4248,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3876,6 +4259,8 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": null
   },
   {
@@ -3901,6 +4286,7 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
+    "declaredSpecificService": false,
     "verifiedSpecificService": false,
     "territorialEligibility": false,
     "accessModality": false,
@@ -3911,10 +4297,12 @@
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
+   "servicesOfficial": 0,
+   "servicePlaces": [],
    "gap": "missing content and service data"
   }
  ],
- "note": "Two measurements. status = content coverage (keyword anywhere in published rights content, or places of the type). serviceStatus = stricter service coverage (official title naming the need, and a reachable channel: the national one for remote needs, a verified local SERVICE — not a building — with contact and hours otherwise). Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
+ "note": "Two measurements. status = content coverage (keyword anywhere in published rights content, or places of the type). serviceStatus = stricter service coverage (official title naming the need, and a reachable channel: the national one for remote needs, a local SERVICE — not a building — with a contact channel otherwise: SERVICE_VERIFIED when a public operator or the managing body lists it, SERVICE_DECLARED when it is only self-declared on a platform). Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
  "catalogue": {
   "aide": 17,
   "demarche": 13,
