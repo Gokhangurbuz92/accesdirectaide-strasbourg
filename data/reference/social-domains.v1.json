@@ -137,7 +137,8 @@
       "énergie",
       "chèque énergie",
       "électricité",
-      "chauffage"
+      "chauffage",
+      "trêve hivernale"
      ],
      "structureTypes": [],
      "casf": [],
@@ -927,7 +928,9 @@
       "Maison de santé"
      ],
      "casf": [],
-     "dataInclusion": [],
+     "dataInclusion": [
+      "sante--acces-aux-soins"
+     ],
      "emergency": []
     },
     {
@@ -1086,7 +1089,8 @@
      "fr": "Aide aux victimes",
      "keywords": [
       "aide aux victimes",
-      "116 006"
+      "116 006",
+      "victime d'infraction"
      ],
      "structureTypes": [],
      "casf": [],
@@ -1170,7 +1174,9 @@
      "casf": [
       4
      ],
-     "dataInclusion": [],
+     "dataInclusion": [
+      "difficultes-administratives-ou-juridiques--prendre-en-compte-une-problematique-judiciaire"
+     ],
      "emergency": []
     },
     {
@@ -1302,7 +1308,8 @@
      "id": "protection-temporaire",
      "fr": "Protection temporaire",
      "keywords": [
-      "protection temporaire"
+      "protection temporaire",
+      "protection subsidiaire ou temporaire"
      ],
      "structureTypes": [],
      "casf": [],
@@ -1659,7 +1666,9 @@
      ],
      "structureTypes": [],
      "casf": [],
-     "dataInclusion": [],
+     "dataInclusion": [
+      "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
+     ],
      "emergency": []
     }
    ]
@@ -1709,7 +1718,9 @@
      ],
      "structureTypes": [],
      "casf": [],
-     "dataInclusion": [],
+     "dataInclusion": [
+      "remobilisation--lien-social"
+     ],
      "emergency": []
     },
     {
@@ -1755,7 +1766,8 @@
       "décès",
       "deuil",
       "obsèques",
-      "capital décès"
+      "capital décès",
+      "décédé"
      ],
      "structureTypes": [],
      "casf": [],

@@ -18,6 +18,10 @@ import path from 'node:path';
 import { publishedRecords } from './translate-content.mjs';
 import TERMS from '../api/_services/verification/datainclusion-terms.js';
 
+/** R36: the kind of answer each need calls for (data/reference/service-response-types.v1.json) */
+const RESPONSES = JSON.parse(fs.readFileSync(new URL('../data/reference/service-response-types.v1.json', import.meta.url), 'utf8')).subdomains;
+const annuaireRecord = (p) => String(p.source_url || '').startsWith('https://lannuaire.service-public.gouv.fr/');
+
 const arg = (n, d = null) => { const i = process.argv.indexOf(`--${n}`); return i > 0 && process.argv[i + 1] ? process.argv[i + 1] : d; };
 const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’']/g, "'");
 const text = (v) => (typeof v === 'string' ? v : Array.isArray(v) ? v.map(text).join(' ') : v && typeof v === 'object' ? Object.values(v).map(text).join(' ') : '');
@@ -40,7 +44,7 @@ export function matchKeyword(haystack, kw) {
 }
 
 /** @param {any} ref @param {any} data @param {Set<string>} lexiconIds @param {Map<string, number>} [scenarioHits] passing orientation scenarios per subdomain */
-export function coverage(ref, data, lexiconIds, scenarioHits = new Map()) {
+export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), responses = RESPONSES) {
   const rows = [];
   for (const d of ref.domains) for (const s of d.subdomains) {
     const rights = [];
@@ -52,7 +56,9 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map()) {
     }
     const places = (data.structures || []).filter((p) => s.structureTypes.includes(p.type_structure));
     const inEms = places.filter(isEms);
-    const remote = REMOTE.has(s.id) || s.emergency.length > 0;
+    const answer = responses[s.id] || null;
+    // R36: a need served by an official national channel (hotline, benefit, national procedure) is remote by nature, as the R32 list already said for others
+    const remote = REMOTE.has(s.id) || s.emergency.length > 0 || answer?.national === true;
     const status = rights.length && (places.length || remote) ? 'COVERED_VERIFIED' : rights.length || places.length ? 'PARTIALLY_COVERED' : 'TAXONOMY_ONLY';
     // R34: the stricter evidence ladder. A keyword in a long text, or a building of the right type, is not proof that a service exists for this need.
     const titled = []; const procedures = [];
@@ -69,11 +75,14 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map()) {
       ...(Array.isArray(p.services) ? p.services : []).filter((x) => s.keywords.some((kw) => matchKeyword(finessRecord(p) ? `${p.type_structure} ${x}` : String(x), kw)))
         .map(() => ({ authority: finessRecord(p) ? 'AUTORISATION_FINESS' : 'STRUCTURE', updatedAt: p.date_verification })),
       ...((p.services_externes && p.services_externes.services) || []).filter((x) => (x.themes || []).some(themeOk) || s.keywords.some((kw) => matchKeyword(`${x.nom} ${(x.themes || []).join(' ')}`, kw))),
+      // R36: where the place IS the public service (a mairie, a CCAS, a health centre: placeIsService), its official directory record — Annuaire de
+      // l'administration or FINESS — is the service; a place of another kind, or from another source, is still only a building
+      ...(answer?.placeIsService && s.structureTypes.includes(p.type_structure) && (annuaireRecord(p) || finessRecord(p)) ? [{ authority: 'LIEU_SERVICE_PUBLIC', updatedAt: p.date_verification }] : []),
     ];
     const services = (data.structures || []).map((p) => ({ p, list: matching(p) })).filter((x) => x.list.length);
     const servicesEms = services.filter((x) => isEms(x.p));
     const contact = (p) => Boolean(p.telephone || p.email || p.site_web);
-    const official = (x) => x.list.some((v) => v.authority === 'OPERATEUR_PUBLIC' || v.authority === 'ORGANISME_GESTIONNAIRE' || v.authority === 'AUTORISATION_FINESS');
+    const official = (x) => x.list.some((v) => ['OPERATEUR_PUBLIC', 'ORGANISME_GESTIONNAIRE', 'AUTORISATION_FINESS', 'LIEU_SERVICE_PUBLIC'].includes(v.authority));
     const fresh = (x) => x.p.date_verification && Date.now() - Date.parse(x.p.date_verification) < 90 * 86400e3 && x.list.some((v) => v.updatedAt && Date.now() - Date.parse(v.updatedAt) < 365 * 86400e3);
     const evidence = {
       taxonomy: true,
@@ -99,7 +108,7 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map()) {
     rows.push({ domain: d.id, letter: d.letter, subdomain: s.id, fr: s.fr, status,
       rightsContent: rights.length, rightsSlugs: rights.slice(0, 12), places: places.length, placesEurometropole: inEms.length, placeTypes: s.structureTypes,
       emergency: s.emergency, crossLanguageSearch: d.lexicon.some((c) => lexiconIds.has(c)), casf: s.casf, dataInclusion: s.dataInclusion,
-      remoteByNature: remote, evidence, serviceStatus, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : 'missing content and service data' });
+      remoteByNature: remote, responseTypes: answer?.types || null, nationalChannel: answer?.channel || null, insufficient: answer?.insufficient || null, evidence, serviceStatus, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : 'missing content and service data' });
   }
   const count = (k) => rows.reduce((a, r) => ({ ...a, [r[k]]: (a[r[k]] || 0) + 1 }), {});
   return { schema: 'ada-social-coverage/1', reference: ref.version, measuredAt: new Date().toISOString(), totals: { subdomains: rows.length, byStatus: count('status'), byServiceStatus: count('serviceStatus'),

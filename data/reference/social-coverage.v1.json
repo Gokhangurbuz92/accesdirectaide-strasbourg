@@ -1,18 +1,18 @@
 {
  "schema": "ada-social-coverage/1",
  "reference": "2026-11-02.1",
- "measuredAt": "2026-11-02T01:16:26.901Z",
+ "measuredAt": "2026-11-02T14:26:26.678Z",
  "totals": {
   "subdomains": 86,
   "byStatus": {
-   "PARTIALLY_COVERED": 44,
-   "COVERED_VERIFIED": 33,
+   "PARTIALLY_COVERED": 41,
+   "COVERED_VERIFIED": 36,
    "TAXONOMY_ONLY": 9
   },
   "byServiceStatus": {
-   "SERVICE_PARTIAL": 26,
-   "NO_VERIFIED_SERVICE": 35,
+   "SERVICE_PARTIAL": 34,
    "SERVICE_VERIFIED": 18,
+   "NO_VERIFIED_SERVICE": 27,
    "SERVICE_DECLARED": 7
   },
   "evidence": {
@@ -22,12 +22,12 @@
    "verifiedRightsByTitle": 38,
    "verifiedProcedure": 34,
    "verifiedEstablishment": 21,
-   "declaredSpecificService": 31,
-   "verifiedSpecificService": 13,
-   "territorialEligibility": 50,
-   "accessModality": 37,
-   "currentAvailability": 18,
-   "orientationTested": 51
+   "declaredSpecificService": 39,
+   "verifiedSpecificService": 19,
+   "territorialEligibility": 58,
+   "accessModality": 42,
+   "currentAvailability": 23,
+   "orientationTested": 52
   }
  },
  "byDomain": [
@@ -35,8 +35,8 @@
    "domain": "precarite",
    "letter": "A",
    "fr": "Précarité, pauvreté et urgence sociale",
-   "COVERED_VERIFIED": 3,
-   "PARTIALLY_COVERED": 3,
+   "COVERED_VERIFIED": 4,
+   "PARTIALLY_COVERED": 2,
    "TAXONOMY_ONLY": 0
   },
   {
@@ -67,8 +67,8 @@
    "domain": "famille",
    "letter": "E",
    "fr": "Famille et parentalité",
-   "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 5,
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 4,
    "TAXONOMY_ONLY": 0
   },
   {
@@ -131,8 +131,8 @@
    "domain": "migration",
    "letter": "M",
    "fr": "Migration, asile et intégration",
-   "COVERED_VERIFIED": 2,
-   "PARTIALLY_COVERED": 3,
+   "COVERED_VERIFIED": 3,
+   "PARTIALLY_COVERED": 2,
    "TAXONOMY_ONLY": 0
   },
   {
@@ -217,6 +217,9 @@
     "equipement-et-alimentation--"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -269,6 +272,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "national-hotline",
+    "public-authority"
+   ],
+   "nationalChannel": "115",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -276,19 +285,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 179,
+   "servicesEurometropole": 42,
+   "servicesOfficial": 179,
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "centre-communal-d-action-sociale-ccas-mundolsheim-12aec22a",
+    "centre-communal-d-action-sociale-ccas-eckbolsheim-10afeeaa"
+   ],
    "gap": null
   },
   {
@@ -316,6 +332,9 @@
     "difficultes-administratives-ou-juridiques--accompagnement-pour-lacces-aux-droits"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -367,6 +386,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -418,6 +440,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -451,9 +476,10 @@
    "letter": "A",
    "subdomain": "energie",
    "fr": "Précarité énergétique",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 4,
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 5,
    "rightsSlugs": [
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
     "guide:duree-de-conservation-des-papiers-f19134",
@@ -466,7 +492,14 @@
    "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
-   "remoteByNature": false,
+   "remoteByNature": true,
+   "responseTypes": [
+    "social-benefit",
+    "administrative-procedure",
+    "territorial-referral"
+   ],
+   "nationalChannel": "chèque énergie (Agence de services et de paiement) ; trêve hivernale",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -476,7 +509,7 @@
     "verifiedEstablishment": false,
     "declaredSpecificService": false,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": true
@@ -487,7 +520,7 @@
    "servicesEurometropole": 0,
    "servicesOfficial": 0,
    "servicePlaces": [],
-   "gap": "missing verified local service data"
+   "gap": null
   },
   {
    "domain": "logement",
@@ -517,6 +550,9 @@
     "logement-hebergement--rechercher-une-solution-dhebergement-temporaire"
    ],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -562,6 +598,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -609,6 +648,9 @@
     "logement-hebergement--sinformer-sur-les-demarches-liees-a-lacces-au-logement"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -671,6 +713,9 @@
     "logement-hebergement--louer-un-logement"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -727,6 +772,9 @@
     "logement-hebergement--se-maintenir-dans-le-logement"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -775,6 +823,11 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "administrative-procedure"
+   ],
+   "nationalChannel": "recours amiable devant la commission de médiation du département",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -816,6 +869,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "administrative-procedure"
+   ],
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -857,6 +916,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -899,6 +961,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -941,6 +1006,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -998,6 +1066,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1039,6 +1110,13 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "national-hotline",
+    "specialised-association"
+   ],
+   "nationalChannel": "119",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1087,6 +1165,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1132,6 +1213,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1174,6 +1258,12 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "territorial-referral"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no national official sheet on the contrat jeune majeur: the conditions are set by the département; AccesDirectAide must not state them",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1214,6 +1304,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1261,6 +1354,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1308,6 +1404,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1364,6 +1463,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1421,6 +1523,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "social-benefit",
+    "online-service"
+   ],
+   "nationalChannel": "caf.fr",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1428,19 +1536,24 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 12,
+   "servicesEurometropole": 4,
+   "servicesOfficial": 12,
+   "servicePlaces": [
+    "caisse-d-allocations-familiales-caf-du-bas-rhin-accueil-de-strasbourg--a11651e7",
+    "caisse-d-allocations-familiales-caf-du-bas-rhin-accueil-de-haguenau-4031c116",
+    "caisse-d-allocations-familiales-caf-du-bas-rhin-accueil-de-schiltighei-3d124a43",
+    "caisse-d-allocations-familiales-du-bas-rhin-caf-67-78fe9a7b"
+   ],
    "gap": null
   },
   {
@@ -1472,6 +1585,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1527,6 +1643,9 @@
     "famille--soutien-a-la-parentalite-et-a-leducation"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1586,6 +1705,9 @@
     "famille--surmonter-conflits-separation-violence"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1615,7 +1737,7 @@
    "letter": "E",
    "subdomain": "famille-monoparentale",
    "fr": "Familles monoparentales",
-   "status": "PARTIALLY_COVERED",
+   "status": "COVERED_VERIFIED",
    "rightsContent": 2,
    "rightsSlugs": [
     "demarche:prime-activite-caf",
@@ -1628,7 +1750,13 @@
    "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
-   "remoteByNature": false,
+   "remoteByNature": true,
+   "responseTypes": [
+    "social-benefit",
+    "online-service"
+   ],
+   "nationalChannel": "caf.fr",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1638,7 +1766,7 @@
     "verifiedEstablishment": false,
     "declaredSpecificService": false,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
@@ -1649,7 +1777,7 @@
    "servicesEurometropole": 0,
    "servicesOfficial": 0,
    "servicePlaces": [],
-   "gap": "missing verified local service data"
+   "gap": null
   },
   {
    "domain": "famille",
@@ -1671,6 +1799,9 @@
     "famille--garde-denfants"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1723,6 +1854,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -1773,6 +1907,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1818,6 +1955,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1860,6 +2000,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1905,6 +2048,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1945,6 +2091,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "territorial-referral"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no official open dataset of the adapted-transport service was found: not listed as a service",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -1988,6 +2140,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2037,6 +2192,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2087,6 +2245,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2127,6 +2288,13 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "territorial-referral",
+    "online-service",
+    "physical-service"
+   ],
+   "nationalChannel": "pour-les-personnes-agees.gouv.fr",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2134,19 +2302,25 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 9,
+   "servicesEurometropole": 5,
+   "servicesOfficial": 9,
+   "servicePlaces": [
+    "point-d-information-local-dedie-aux-personnes-agees-strasbourg-23eb8463",
+    "point-d-information-local-dedie-aux-personnes-agees-bischheim-1c6db743",
+    "point-d-information-local-dedie-aux-personnes-agees-strasbourg-1bae155e",
+    "point-d-information-local-dedie-aux-personnes-agees-strasbourg-ec87b9cc",
+    "point-d-information-local-dedie-aux-personnes-agees-lingolsheim-aed6cd5c"
+   ],
    "gap": "missing verified rights content"
   },
   {
@@ -2170,6 +2344,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2217,6 +2394,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2272,6 +2452,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2319,8 +2502,15 @@
    "emergency": [],
    "crossLanguageSearch": true,
    "casf": [],
-   "dataInclusion": [],
+   "dataInclusion": [
+    "sante--acces-aux-soins"
+   ],
    "remoteByNature": false,
+   "responseTypes": [
+    "physical-service"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no DILA sheet about health centres: the places are listed, the right to care is covered by the couverture-santé sheets",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2328,19 +2518,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 80,
+   "servicesEurometropole": 43,
+   "servicesOfficial": 78,
+   "servicePlaces": [
+    "collectivite-europeenne-d-alsace-ad3a45f3",
+    "centre-de-sante-dentaire-eliteeth-a591ac22",
+    "centre-de-sante-dentaire-de-haguenau-eb00e974",
+    "centre-de-sante-dentaire-dentego-9cc9fe86",
+    "centre-de-sante-acces-vision-strasbourg-97e0e2bb",
+    "maison-de-sante-de-hautepierre-9082030d"
+   ],
    "gap": null
   },
   {
@@ -2362,6 +2559,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2407,6 +2607,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2453,6 +2656,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2496,6 +2702,11 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "national-hotline"
+   ],
+   "nationalChannel": "3114 ; 15",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2540,6 +2751,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2583,6 +2797,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2634,6 +2851,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2679,6 +2899,13 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "national-hotline",
+    "specialised-association",
+    "administrative-procedure"
+   ],
+   "nationalChannel": "116 006",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2730,6 +2957,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2778,6 +3008,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2834,6 +3067,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2878,8 +3114,15 @@
    "casf": [
     4
    ],
-   "dataInclusion": [],
+   "dataInclusion": [
+    "difficultes-administratives-ou-juridiques--prendre-en-compte-une-problematique-judiciaire"
+   ],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority"
+   ],
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -2887,19 +3130,21 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
-    "declaredSpecificService": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 1,
+   "servicesEurometropole": 1,
    "servicesOfficial": 0,
-   "servicePlaces": [],
+   "servicePlaces": [
+    "cidff67-37a86c83"
+   ],
    "gap": "missing verified local service data"
   },
   {
@@ -2931,6 +3176,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -2981,6 +3229,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3033,6 +3284,12 @@
     "difficultes-financieres--mettre-en-place-une-mesure-de-protection-financiere"
    ],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "specialised-association"
+   ],
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3084,6 +3341,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3135,6 +3395,9 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3180,6 +3443,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "public-authority",
+    "administrative-procedure"
+   ],
+   "nationalChannel": "préfecture du Bas-Rhin (titre de séjour)",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3222,6 +3491,9 @@
     "lecture-ecriture-calcul--maitriser-le-francais"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3234,7 +3506,7 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": true
    },
    "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [
@@ -3258,7 +3530,7 @@
    "letter": "M",
    "subdomain": "droits-sans-titre",
    "fr": "Droits des personnes sans titre de séjour",
-   "status": "PARTIALLY_COVERED",
+   "status": "COVERED_VERIFIED",
    "rightsContent": 3,
    "rightsSlugs": [
     "guide:interruption-volontaire-de-grossesse-ivg-f1551",
@@ -3272,7 +3544,13 @@
    "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
-   "remoteByNature": false,
+   "remoteByNature": true,
+   "responseTypes": [
+    "social-benefit",
+    "specialised-association"
+   ],
+   "nationalChannel": "aide médicale de l'État (caisse d'assurance maladie)",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3282,7 +3560,7 @@
     "verifiedEstablishment": false,
     "declaredSpecificService": false,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
+    "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
@@ -3293,7 +3571,7 @@
    "servicesEurometropole": 0,
    "servicesOfficial": 0,
    "servicePlaces": [],
-   "gap": "missing verified local service data"
+   "gap": null
   },
   {
    "domain": "emploi",
@@ -3326,6 +3604,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3378,6 +3659,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3436,6 +3720,9 @@
     "choisir-un-metier--"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3485,6 +3772,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3537,6 +3827,9 @@
     "difficultes-financieres--ameliorer-sa-gestion-budgetaire"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3591,6 +3884,9 @@
     "difficultes-financieres--situation-dendettement-surendettement"
    ],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3638,6 +3934,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3687,6 +3986,13 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "administrative-procedure",
+    "online-service",
+    "public-authority"
+   ],
+   "nationalChannel": "impots.gouv.fr",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3694,19 +4000,23 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 9,
+   "servicesEurometropole": 3,
+   "servicesOfficial": 9,
+   "servicePlaces": [
+    "service-des-impots-des-particuliers-sip-strasbourg-eurometropole-0aee94e1",
+    "service-des-impots-des-particuliers-sip-strasbourg-f1856a8e",
+    "service-des-impots-des-particuliers-sip-antenne-haguenau-69d5af13"
+   ],
    "gap": null
   },
   {
@@ -3727,6 +4037,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3774,6 +4087,9 @@
     "lecture-ecriture-calcul--"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3824,6 +4140,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3864,6 +4183,12 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority",
+    "territorial-referral"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no official open dataset of the adapted-transport service was found",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -3909,6 +4234,9 @@
     "mobilite--"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -3962,6 +4290,9 @@
     "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
    ],
    "remoteByNature": true,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -4000,8 +4331,16 @@
    "emergency": [],
    "crossLanguageSearch": true,
    "casf": [],
-   "dataInclusion": [],
+   "dataInclusion": [
+    "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
+   ],
    "remoteByNature": false,
+   "responseTypes": [
+    "specialised-association",
+    "administrative-procedure"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no official local service directory; associations are listed only when a public platform attributes the service to them",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -4045,6 +4384,9 @@
     "famille--soutien-aidants"
    ],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -4083,8 +4425,16 @@
    "emergency": [],
    "crossLanguageSearch": true,
    "casf": [],
-   "dataInclusion": [],
+   "dataInclusion": [
+    "remobilisation--lien-social"
+   ],
    "remoteByNature": false,
+   "responseTypes": [
+    "specialised-association",
+    "territorial-referral"
+   ],
+   "nationalChannel": null,
+   "insufficient": "no DILA sheet; services come from data·inclusion (theme « Lien social »)",
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -4092,19 +4442,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": false,
-    "declaredSpecificService": false,
+    "declaredSpecificService": true,
     "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": false
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
+   "services": 184,
+   "servicesEurometropole": 46,
    "servicesOfficial": 0,
-   "servicePlaces": [],
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "centre-communal-d-action-sociale-ccas-mundolsheim-12aec22a",
+    "centre-communal-d-action-sociale-ccas-eckbolsheim-10afeeaa"
+   ],
    "gap": "missing content and service data"
   },
   {
@@ -4133,6 +4490,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": true,
@@ -4168,7 +4528,7 @@
    "subdomain": "deces-deuil",
    "fr": "Décès et deuil : démarches et droits",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 10,
+   "rightsContent": 11,
    "rightsSlugs": [
     "guide:accompagnement-et-soins-palliatifs-f39676",
     "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
@@ -4178,6 +4538,7 @@
     "guide:habilitation-familiale-f33367",
     "guide:mandat-de-protection-future-f16670",
     "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789",
     "guide:enfant-victime-de-maltraitance-f952",
     "guide:duree-de-conservation-des-papiers-f19134"
    ],
@@ -4189,6 +4550,11 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "responseTypes": [
+    "administrative-procedure"
+   ],
+   "nationalChannel": "démarches après un décès (service-public.gouv.fr)",
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -4241,6 +4607,11 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": [
+    "public-authority"
+   ],
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,
@@ -4248,19 +4619,26 @@
     "verifiedRightsByTitle": false,
     "verifiedProcedure": false,
     "verifiedEstablishment": true,
-    "declaredSpecificService": false,
-    "verifiedSpecificService": false,
-    "territorialEligibility": false,
-    "accessModality": false,
-    "currentAvailability": false,
+    "declaredSpecificService": true,
+    "verifiedSpecificService": true,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": true,
     "orientationTested": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_PARTIAL",
    "titledSlugs": [],
-   "services": 0,
-   "servicesEurometropole": 0,
-   "servicesOfficial": 0,
-   "servicePlaces": [],
+   "services": 722,
+   "servicesEurometropole": 105,
+   "servicesOfficial": 722,
+   "servicePlaces": [
+    "centre-communal-d-action-sociale-ccas-la-wantzenau-34139a7a",
+    "centre-communal-d-action-sociale-ccas-batzendorf-290f9587",
+    "centre-communal-d-action-sociale-ccas-offendorf-21b335ee",
+    "mairie-ichtratzheim-20f18039",
+    "centre-communal-d-action-sociale-ccas-obernai-2007f927",
+    "mairie-fegersheim-1adb3562"
+   ],
    "gap": null
   },
   {
@@ -4279,6 +4657,9 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "responseTypes": null,
+   "nationalChannel": null,
+   "insufficient": null,
    "evidence": {
     "taxonomy": true,
     "officialTopicSource": false,

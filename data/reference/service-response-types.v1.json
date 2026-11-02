@@ -1,0 +1,40 @@
+{
+ "schema": "ada-service-response-types/1",
+ "version": "2026-11-02",
+ "note": "R36 — what kind of answer each need calls for, for the 23 subdomains without a verified service in R35. A national hotline or a tax procedure is not a missing local establishment. national=true: served by an official national channel (the coverage counts it as remote by nature). placeIsService: an official directory record of one of the subdomain's place types IS the public service (a mairie, a CCAS, a health centre), not just a building. Local routes marked verified=false are referral hints for reviewers, never shown as facts.",
+ "types": {
+  "national-hotline": "Numéro national officiel",
+  "public-authority": "Administration ou collectivité compétente",
+  "social-benefit": "Prestation sociale",
+  "administrative-procedure": "Démarche administrative",
+  "online-service": "Service public en ligne",
+  "physical-service": "Lieu qui rend le service",
+  "specialised-association": "Association spécialisée",
+  "territorial-referral": "Orientation par un service du territoire"
+ },
+ "subdomains": {
+  "urgence-sociale": { "types": ["national-hotline", "public-authority"], "national": true, "channel": "115", "placeIsService": true, "local": { "route": "CCAS de la commune", "verified": true }, "officialSheets": ["F33954", "F2003"] },
+  "energie": { "types": ["social-benefit", "administrative-procedure", "territorial-referral"], "national": true, "channel": "chèque énergie (Agence de services et de paiement) ; trêve hivernale", "local": { "route": "Fonds de solidarité pour le logement du Bas-Rhin (volet énergie)", "verified": false }, "officialSheets": ["F34736", "F1334"], "pending": "F33667 « Chèque énergie » still describes the 2025 campaign: not proposed until DILA updates it" },
+  "dalo": { "types": ["administrative-procedure"], "national": true, "channel": "recours amiable devant la commission de médiation du département", "officialSheets": ["F18005", "F20343"] },
+  "habitat-indigne": { "types": ["public-authority", "administrative-procedure"], "national": false, "local": { "route": "service communal d'hygiène et de santé de la mairie, ou Agence régionale de santé", "verified": false }, "officialSheets": ["F16158"] },
+  "prevention-enfance": { "types": ["public-authority", "national-hotline", "specialised-association"], "national": false, "channel": "119", "local": { "route": "Collectivité européenne d'Alsace (aide sociale à l'enfance), Maisons des solidarités", "verified": false }, "officialSheets": ["F970", "F39128"] },
+  "sortie-ase": { "types": ["public-authority", "territorial-referral"], "national": false, "local": { "route": "Collectivité européenne d'Alsace (aide sociale à l'enfance)", "verified": false }, "officialSheets": ["F937"], "insufficient": "no national official sheet on the contrat jeune majeur: the conditions are set by the département; AccesDirectAide must not state them" },
+  "prestations-familiales": { "types": ["social-benefit", "online-service"], "national": true, "channel": "caf.fr", "placeIsService": true, "officialSheets": ["F815", "F38245"] },
+  "famille-monoparentale": { "types": ["social-benefit", "online-service"], "national": true, "channel": "caf.fr", "officialSheets": ["F815", "F38245"] },
+  "accessibilite-mobilite": { "types": ["public-authority", "territorial-referral"], "national": false, "local": { "route": "MDPH / Maison de l'autonomie (carte mobilité inclusion) ; service de transport adapté de l'Eurométropole", "verified": false }, "officialSheets": ["F34049"], "insufficient": "no official open dataset of the adapted-transport service was found: not listed as a service" },
+  "information-seniors": { "types": ["territorial-referral", "online-service", "physical-service"], "national": false, "placeIsService": true, "channel": "pour-les-personnes-agees.gouv.fr", "officialSheets": ["F32057"] },
+  "centres-sante": { "types": ["physical-service"], "national": false, "placeIsService": true, "local": { "route": "centres et maisons de santé du répertoire FINESS", "verified": true }, "insufficient": "no DILA sheet about health centres: the places are listed, the right to care is covered by the couverture-santé sheets" },
+  "crise-suicide": { "types": ["national-hotline"], "national": true, "channel": "3114 ; 15", "officialSheets": ["F33954"] },
+  "victimes": { "types": ["national-hotline", "specialised-association", "administrative-procedure"], "national": true, "channel": "116 006", "officialSheets": ["F2313", "F33954"] },
+  "pjj-spip": { "types": ["public-authority"], "national": false, "local": { "route": "service pénitentiaire d'insertion et de probation du Bas-Rhin ; protection judiciaire de la jeunesse", "verified": false }, "officialSheets": ["F32584"] },
+  "mjpm": { "types": ["public-authority", "specialised-association"], "national": false, "local": { "route": "services mandataires judiciaires du répertoire FINESS ; juge des contentieux de la protection", "verified": false }, "officialSheets": ["F1336", "F3165"] },
+  "protection-temporaire": { "types": ["public-authority", "administrative-procedure"], "national": true, "channel": "préfecture du Bas-Rhin (titre de séjour)", "officialSheets": ["F299"] },
+  "droits-sans-titre": { "types": ["social-benefit", "specialised-association"], "national": true, "channel": "aide médicale de l'État (caisse d'assurance maladie)", "officialSheets": ["F3079"] },
+  "impots": { "types": ["administrative-procedure", "online-service", "public-authority"], "national": true, "channel": "impots.gouv.fr", "placeIsService": true, "officialSheets": ["F358"] },
+  "transport-adapte": { "types": ["public-authority", "territorial-referral"], "national": false, "local": { "route": "service de transport adapté de l'Eurométropole", "verified": false }, "insufficient": "no official open dataset of the adapted-transport service was found" },
+  "lgbtqi": { "types": ["specialised-association", "administrative-procedure"], "national": false, "officialSheets": ["F35456", "F34826"], "insufficient": "no official local service directory; associations are listed only when a public platform attributes the service to them" },
+  "isolement": { "types": ["specialised-association", "territorial-referral"], "national": false, "local": { "route": "centres sociaux, CCAS", "verified": false }, "insufficient": "no DILA sheet; services come from data·inclusion (theme « Lien social »)" },
+  "deces-deuil": { "types": ["administrative-procedure"], "national": true, "channel": "démarches après un décès (service-public.gouv.fr)", "officialSheets": ["F16507"] },
+  "institutions-locales": { "types": ["public-authority"], "national": false, "placeIsService": true, "local": { "route": "mairies, CCAS et Maisons des solidarités de l'Annuaire de l'administration", "verified": true } }
+ }
+}
