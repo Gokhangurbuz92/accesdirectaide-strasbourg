@@ -34,6 +34,7 @@ import { calendarAttachment, formatParis, noticeCitizen, noticeStructure, record
 import { locationOf, locationText, offeredModes } from '../lib/appointment-modes.js';
 import { publicVideoStatus } from '../lib/video-provider.js';
 import { encrypt } from '../lib/crypto.js';
+import { kv } from '../_utils/kv.js';
 import {
   GUEST_CODE_MAX_ATTEMPTS, GUEST_HOLD_MINUTES, checkGuestCode, checkManageToken, guestBookingEnabled, guestCodeHash, guestEmailHash, holdExpired, holdExpiry,
   mailReallySent, maskEmail, newGuestCode, newManageToken, readGuestIdentity, readReminderConsent, sameDigest, manageTokenHash,
@@ -199,7 +200,25 @@ async function alreadyBooked(res, { structure, service, startAt, endAt, email, r
   const now = new Date();
   const decoy = withLoadedRelations({ id: crypto.randomUUID(), status: 'requested', startAt, endAt, guestHoldExpiresAt: holdExpiry(now),
     guestReminderConsentAt: reminderConsent ? now : null, rescheduleCount: 0, cancelledAt: null }, structure, service);
+  // R39: the decoy lives like a real hold for its confirm (wrong code → attempts left, locked after the maximum, expired after the hold time) so that
+  // calling confirm cannot tell « this address already has a booking here » from « wrong code »; it is forgotten after a day, like a purged hold
+  await kv.set(decoyKey(decoy.id), { attempts: 0, expiresAt: decoy.guestHoldExpiresAt.getTime() }, { ex: 86400 }).catch(() => {});
   return res.status(202).json({ hold: guestView(decoy, { expiresAt: iso(decoy.guestHoldExpiresAt) }), emailMasked: maskEmail(email) });
+}
+const decoyKey = (id) => `rdv-guest:decoy:${id}`;
+/** the confirm answer for a decoy hold, step by step the same as for a real one; null when the id is not a decoy either @param {string} holdId */
+async function decoyConfirm(holdId) {
+  const d = await kv.get(decoyKey(holdId)).catch(() => null);
+  if (!d || typeof d !== 'object') return null;
+  if (d.locked) return { status: 409, body: { error: 'HOLD_NOT_ACTIVE', code: 'HOLD_NOT_ACTIVE' } };
+  if (Date.now() > Number(d.expiresAt)) return { status: 409, body: { error: 'HOLD_EXPIRED', code: 'HOLD_EXPIRED' } };
+  const attempts = Number(d.attempts || 0) + 1;
+  if (attempts >= GUEST_CODE_MAX_ATTEMPTS) {
+    await kv.set(decoyKey(holdId), { ...d, attempts: GUEST_CODE_MAX_ATTEMPTS, locked: true }, { ex: 86400 }).catch(() => {});
+    return { status: 409, body: { error: 'HOLD_LOCKED', code: 'HOLD_LOCKED', attemptsLeft: 0 } };
+  }
+  await kv.set(decoyKey(holdId), { ...d, attempts }, { ex: 86400 }).catch(() => {});
+  return { status: 400, body: { error: 'CODE_INVALID', code: 'CODE_INVALID', attemptsLeft: GUEST_CODE_MAX_ATTEMPTS - attempts } };
 }
 
 // ── POST rdv/guest/hold ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -295,6 +314,7 @@ async function confirm(req, res) {
   const holdId = str(req.body?.holdId); const code = str(req.body?.code);
   if (!holdId || !/^\d{6}$/.test(code)) return res.status(400).json({ error: 'CODE_INVALID', code: 'CODE_INVALID' });
   const current = await loadAppointmentWithRelations(holdId);
+  if (!current) { const d = await decoyConfirm(holdId); if (d) return res.status(d.status).json(d.body); }
   if (!current || !current.guestEmailHash) return res.status(404).json(MANAGE_NOT_FOUND);
   if (current.status === 'confirmed' && !current.guestHoldExpiresAt) return res.status(409).json({ error: 'HOLD_ALREADY_CONFIRMED', code: 'HOLD_ALREADY_CONFIRMED' });
 

@@ -311,11 +311,14 @@ describe.skipIf(!hasDatabase)('R39 account-free J-1 reminder and one active book
     expect(told[0].text).toMatch(/lien personnel reçu dans l'e-mail de confirmation/);
     expect(told[0].text).not.toMatch(/(?<!\d)\d{6}(?!\d)|manage=|http/);   // no 6-digit code (the structure's test name carries a 13-digit stamp), no link
     expect(outbox(X.email, /code de confirmation/)).toEqual([]);
-    // a later confirm with that id: the « unknown hold » answer
-    const fake = await call('POST', 'guest/confirm', { body: { holdId: second.body.hold.id, code: '123456' } });
+    // R39: a later confirm with that id answers EXACTLY like a real hold with a wrong code, step by step (attempts left, locked at the maximum, then
+    // no longer active) — calling confirm cannot tell « this address already has a booking here » from « wrong code »
+    const seq = async (id) => { const out = []; for (let i = 0; i < 6; i += 1) { const r = await call('POST', 'guest/confirm', { body: { holdId: id, code: '000001' } }); out.push([r.statusCode, r.body]); } return out; };
+    const decoySeq = await seq(second.body.hold.id); const realSeq = await seq(fresh.body.hold.id);
+    expect(decoySeq).toEqual(realSeq);
+    expect(decoySeq.map(([st, b]) => `${st} ${b.code}`)).toEqual(['400 CODE_INVALID', '400 CODE_INVALID', '400 CODE_INVALID', '400 CODE_INVALID', '409 HOLD_LOCKED', '409 HOLD_NOT_ACTIVE']);
     const unknown = await call('POST', 'guest/confirm', { body: { holdId: crypto.randomUUID(), code: '123456' } });
-    expect([fake.statusCode, fake.body]).toEqual([unknown.statusCode, unknown.body]);
-    expect(fake.statusCode).toBe(404);
+    expect(unknown.statusCode).toBe(404);
     // the SAME request retried (same key) keeps its R38 behaviour: the same booking, no e-mail
     const replay = await hold(slots[5], X);
     expect([replay.statusCode, replay.body.hold.id]).toEqual([200, first.id]);
