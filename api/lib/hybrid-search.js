@@ -2,6 +2,10 @@
 import { visibleSql } from './publicVisibility.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
+import { searchWords } from './search-query.js';
+
+/** R36: French stems present in (nearly) every aide record: as a query word they rank nothing, they only add noise */
+export const GENERIC_STEMS = Object.freeze(['aid', 'an', 'besoin', 'person']);
 
 const RRF_K = 60;
 const LEXICAL_CANDIDATE_MULTIPLIER = 5;
@@ -201,9 +205,11 @@ export async function searchAidesHybrid(params) {
   // description: a natural question (« aide pour payer mon loyer ») found nothing — recall@5 0.19 on the evaluation set.
   const docText = sql`concat_ws(' ', a.titre, a.cest_quoi, a.pour_qui, a.ce_que_ca_aide, a.summary_falc, array_to_string(a.mots_cles, ' '))`;
   const computedVector = capabilities.hasUnaccentExtension ? sql`to_tsvector('french', unaccent(${docText}))` : sql`to_tsvector('french', ${docText})`;
-  const anyWordQuery = capabilities.hasUnaccentExtension
-    ? sql`NULLIF(replace(plainto_tsquery('french', unaccent(${query}))::text, ' & ', ' | '), '')::tsquery`
-    : sql`NULLIF(replace(plainto_tsquery('french', ${query})::text, ' & ', ' | '), '')::tsquery`;
+  // R36: the OR query is built from the meaningful words only (search-query.js STOPWORDS), and without the few French stems that every aide carries:
+  // « aidant » stems to « aid » like « aide », « 18 ans » to « an », so « aidant épuisé… » ranked the ARCE first and « je sors de l'ASE à 18 ans » too
+  const meaningful = searchWords(query).join(' ') || String(query || '');
+  const lexemes = capabilities.hasUnaccentExtension ? sql`to_tsvector('french', unaccent(${meaningful}))` : sql`to_tsvector('french', ${meaningful})`;
+  const anyWordQuery = sql`(SELECT NULLIF(string_agg(quote_literal(x.lexeme), ' | '), '')::tsquery FROM unnest(${lexemes}) AS x WHERE x.lexeme <> ALL (${sql.raw(`ARRAY[${GENERIC_STEMS.map((s) => `'${s}'`).join(', ')}]::text[]`)}))`;
   const storedVector = canUseTsContent && canUseSearchVector
     ? sql`(COALESCE(a."ts_content", to_tsvector('french', '')) || COALESCE(a."search_vector", to_tsvector('french', '')))`
     : canUseTsContent
