@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, RefreshCw, Database, Mail, Bot, Globe } from 'lucide-react';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useT } from '@/i18n';
 
-/** @param {unknown} value */
-function formatOk(value) {
+/** @param {unknown} value @param {any} t */
+function formatOk(value, t) {
   if (value === true) return 'OK';
-  if (value === false) return 'En échec';
-  if (value === 'skipped') return 'Non configuré';
+  if (value === false) return t('admin:observability.failed', 'En échec');
+  if (value === 'skipped') return t('admin:observability.not_configured', 'Non configuré');
   return '-';
 }
 
@@ -42,6 +43,7 @@ function freshnessBadgeClass(state) {
 }
 
 export default function AdminObservability() {
+  const { t } = useT('admin');
   const [cronRuns, setCronRuns] = useState(/** @type {any[]} */ ([]));
   const [healthPublic, setHealthPublic] = useState(/** @type {any} */ (null));
   const [healthDeep, setHealthDeep] = useState(/** @type {any} */ (null));
@@ -68,19 +70,19 @@ export default function AdminObservability() {
     if (publicRes.status === 'fulfilled') {
       setHealthPublic(publicRes.value);
     } else {
-      nextError = nextError || 'Le contrôle de l’API publique n’a pas pu être lu.';
+      nextError = nextError || t('admin:observability.error.public', 'Le contrôle de l’API publique n’a pas pu être lu.');
     }
 
     if (deepRes.status === 'fulfilled') {
       setHealthDeep(deepRes.value);
     } else {
-      nextError = nextError || 'Le contrôle détaillé (base, cache, stockage) n’a pas pu être lu.';
+      nextError = nextError || t('admin:observability.error.deep', 'Le contrôle détaillé (base, cache, stockage) n’a pas pu être lu.');
     }
 
     if (runsRes.status === 'fulfilled') {
       setCronRuns(runsRes.value?.items || []);
     } else {
-      nextError = nextError || 'L’historique des tâches planifiées n’a pas pu être lu.';
+      nextError = nextError || t('admin:observability.error.runs', 'L’historique des tâches planifiées n’a pas pu être lu.');
     }
 
     if (statsRes.status === 'fulfilled' && statsRes.value?.data) {
@@ -88,9 +90,9 @@ export default function AdminObservability() {
     }
 
     setError(nextError);
-    setLiveMessage('Données mises à jour à ' + format(new Date(), 'HH:mm:ss', { locale: fr }));
+    setLiveMessage(t('admin:observability.updated_at', 'Données mises à jour à {{time}}', { time: format(new Date(), 'HH:mm:ss', { locale: fr }) }));
     setLoading(false);
-  }, [selectedCron]);
+  }, [selectedCron, t]);
 
   useEffect(() => {
     load();
@@ -106,17 +108,17 @@ export default function AdminObservability() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
-      <SEO title="Observabilité" description="État technique : API, base, cache, stockage, tâches planifiées." noindex={true} />
+      <SEO title={t('admin:observability.title', 'Observabilité')} description={t('admin:observability.seo_description', 'État technique : API, base, cache, stockage, tâches planifiées.')} noindex={true} />
 
       <p className="sr-only" aria-live="polite">
         {liveMessage}
       </p>
 
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold">Observabilité</h1>
+        <h1 className="text-3xl font-bold">{t('admin:observability.title', 'Observabilité')}</h1>
         <Button onClick={load} disabled={loading} className="gap-2">
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-          Actualiser
+          {t('admin:observability.refresh', 'Actualiser')}
         </Button>
       </div>
 
@@ -129,19 +131,19 @@ export default function AdminObservability() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>API publique</CardTitle>
+            <CardTitle>{t('admin:observability.public_api', 'API publique')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span>Répond</span>
-              <Badge className={badgeClassForOk(Boolean(healthPublic?.ok))}>{healthPublic?.ok ? 'Oui' : 'Non'}</Badge>
+              <span>{t('admin:observability.responds', 'Répond')}</span>
+              <Badge className={badgeClassForOk(Boolean(healthPublic?.ok))}>{healthPublic?.ok ? t('admin:observability.yes', 'Oui') : t('admin:observability.no', 'Non')}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span>Environnement</span>
+              <span>{t('admin:observability.environment', 'Environnement')}</span>
               <span className="font-mono">{healthPublic?.vercelEnv || '-'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Version</span>
+              <span>{t('admin:observability.version', 'Version')}</span>
               <span className="font-mono">{healthPublic?.release ? String(healthPublic.release).slice(0, 8) : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
@@ -153,32 +155,32 @@ export default function AdminObservability() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Base, cache et stockage</CardTitle>
+            <CardTitle>{t('admin:observability.deep_title', 'Base, cache et stockage')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span>Ensemble</span>
-              <Badge className={badgeClassForOk(healthDeep ? Boolean(healthDeep.ok) : undefined)}>{healthDeep ? (healthDeep.ok ? 'OK' : 'En échec') : 'Non lu'}</Badge>
+              <span>{t('admin:observability.overall', 'Ensemble')}</span>
+              <Badge className={badgeClassForOk(healthDeep ? Boolean(healthDeep.ok) : undefined)}>{healthDeep ? (healthDeep.ok ? 'OK' : t('admin:observability.failed', 'En échec')) : t('admin:observability.not_read', 'Non lu')}</Badge>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span>Base de données</span>
+                <span>{t('admin:observability.database', 'Base de données')}</span>
                 <div className="flex items-center gap-2">
-                  <Badge className={badgeClassForOk(db?.ok)}>{formatOk(db?.ok)}</Badge>
+                  <Badge className={badgeClassForOk(db?.ok)}>{formatOk(db?.ok, t)}</Badge>
                   <span className="font-mono text-xs text-slate-700">{typeof db?.durationMs === 'number' ? `${db.durationMs}ms` : ''}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span>Cache partagé (KV)</span>
+                <span>{t('admin:observability.kv', 'Cache partagé (KV)')}</span>
                 <div className="flex items-center gap-2">
-                  <Badge className={badgeClassForOk(kv?.ok)}>{formatOk(kv?.ok)}</Badge>
+                  <Badge className={badgeClassForOk(kv?.ok)}>{formatOk(kv?.ok, t)}</Badge>
                   <span className="font-mono text-xs text-slate-700">{typeof kv?.durationMs === 'number' ? `${kv.durationMs}ms` : ''}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span>Stockage des documents</span>
+                <span>{t('admin:observability.storage', 'Stockage des documents')}</span>
                 <div className="flex items-center gap-2">
-                  <Badge className={badgeClassForOk(storage?.ok)}>{formatOk(storage?.ok)}</Badge>
+                  <Badge className={badgeClassForOk(storage?.ok)}>{formatOk(storage?.ok, t)}</Badge>
                   <span className="font-mono text-xs text-slate-700">{typeof storage?.durationMs === 'number' ? `${storage.durationMs}ms` : ''}</span>
                 </div>
               </div>
@@ -192,26 +194,26 @@ export default function AdminObservability() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Suivi des erreurs (Sentry)</CardTitle>
+            <CardTitle>{t('admin:observability.sentry', 'Suivi des erreurs (Sentry)')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span>Configuré</span>
-              <Badge className={badgeClassForOk(sentry?.dsnPresent ? true : 'skipped')}>{sentry?.dsnPresent ? 'Oui' : 'Non : aucune erreur n’est envoyée à un service externe'}</Badge>
+              <span>{t('admin:observability.configured', 'Configuré')}</span>
+              <Badge className={badgeClassForOk(sentry?.dsnPresent ? true : 'skipped')}>{sentry?.dsnPresent ? t('admin:observability.yes', 'Oui') : t('admin:observability.sentry_off', 'Non : aucune erreur n’est envoyée à un service externe')}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span>Environnement</span>
+              <span>{t('admin:observability.environment', 'Environnement')}</span>
               <span className="font-mono">{sentry?.environment || '-'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Version</span>
+              <span>{t('admin:observability.version', 'Version')}</span>
               <span className="font-mono">{sentry?.release ? String(sentry.release).slice(0, 8) : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Clé d’IA cloud (Gemini)</span>
+              <span>{t('admin:observability.gemini_key', 'Clé d’IA cloud (Gemini)')}</span>
               {/* launch-readiness item 57: a cloud AI key is not approved (DPIA / DPA) — present is a problem, not a green light */}
               <Badge className={badgeClassForOk(healthDeep?.deps?.geminiKeyPresent ? false : true)}>
-                {healthDeep?.deps?.geminiKeyPresent ? 'Présente : à supprimer (fournisseur non approuvé)' : 'Absente : aucun appel au fournisseur cloud'}
+                {healthDeep?.deps?.geminiKeyPresent ? t('admin:observability.gemini_present', 'Présente : à supprimer (fournisseur non approuvé)') : t('admin:observability.gemini_absent', 'Absente : aucun appel au fournisseur cloud')}
               </Badge>
             </div>
           </CardContent>
@@ -220,31 +222,31 @@ export default function AdminObservability() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Fraîcheur des actualités (tâche planifiée)</CardTitle>
+          <CardTitle>{t('admin:observability.freshness', 'Fraîcheur des actualités (tâche planifiée)')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
-            <span>État</span>
+            <span>{t('admin:observability.state', 'État')}</span>
             <Badge className={freshnessBadgeClass(cronFreshness?.state)}>
-              {(/** @type {Record<string, string>} */ ({ fresh: 'À jour', stale: 'En retard', error: 'En échec' }))[String(cronFreshness?.state)] || 'Aucune exécution (aucune tâche planifiée dans le LAB local)'}
+              {(/** @type {Record<string, string>} */ ({ fresh: t('admin:observability.fresh', 'À jour'), stale: t('admin:observability.stale', 'En retard'), error: t('admin:observability.failed', 'En échec') }))[String(cronFreshness?.state)] || t('admin:observability.no_run_local', 'Aucune exécution (aucune tâche planifiée dans le LAB local)')}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
-            <span>Dernier succès</span>
+            <span>{t('admin:observability.last_success', 'Dernier succès')}</span>
             <span className="font-mono text-xs">{formatDateTime(cronFreshness?.lastSuccessAt)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Dernière exécution</span>
+            <span>{t('admin:observability.last_run', 'Dernière exécution')}</span>
             <span className="font-mono text-xs">{formatDateTime(cronFreshness?.lastRunAt)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Ancienneté (minutes)</span>
+            <span>{t('admin:observability.age', 'Ancienneté (minutes)')}</span>
             <span className="font-mono text-xs">
               {typeof cronFreshness?.ageMinutes === 'number' ? cronFreshness.ageMinutes : '-'}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Seuils retard / échec (minutes)</span>
+            <span>{t('admin:observability.thresholds', 'Seuils retard / échec (minutes)')}</span>
             <span className="font-mono text-xs">
               {typeof cronFreshness?.thresholds?.staleMinutes === 'number'
                 ? `${cronFreshness.thresholds.staleMinutes}/${cronFreshness.thresholds.failMinutes}`
@@ -260,31 +262,31 @@ export default function AdminObservability() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="h-4 w-4" />
-              Inventaire des données
+              {t('admin:observability.inventory', 'Inventaire des données')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Aides', count: adminStats.counts?.aides, warn: 10 },
-                { label: 'Démarches', count: adminStats.counts?.demarches, warn: 5 },
-                { label: 'Structures', count: adminStats.counts?.structures || 0, warn: 10 },
-                { label: 'Citoyens', count: adminStats.counts?.citizens, warn: 0 },
+                { label: t('admin:observability.inv.aides', 'Aides'), count: adminStats.counts?.aides, warn: 10 },
+                { label: t('admin:observability.inv.demarches', 'Démarches'), count: adminStats.counts?.demarches, warn: 5 },
+                { label: t('admin:observability.inv.structures', 'Structures'), count: adminStats.counts?.structures || 0, warn: 10 },
+                { label: t('admin:observability.inv.citizens', 'Citoyens'), count: adminStats.counts?.citizens, warn: 0 },
               ].map(({ label, count: val, warn }) => (
                 <div key={label} className="rounded-xl border p-4 text-center">
                   <p className="text-xs font-bold uppercase text-slate-600 mb-1">{label}</p>
                   <p className={`text-2xl font-black ${
                     val === 0 ? 'text-red-500' : val < warn ? 'text-amber-500' : 'text-slate-900'
                   }`}>{val?.toLocaleString() ?? '—'}</p>
-                  {val === 0 && <Badge className="mt-1 border-red-200 bg-red-50 text-red-700">VIDE</Badge>}
+                  {val === 0 && <Badge className="mt-1 border-red-200 bg-red-50 text-red-700">{t('admin:observability.empty', 'VIDE')}</Badge>}
                 </div>
               ))}
             </div>
             {adminStats.rag && (
               <div className="mt-4 flex items-center gap-4 text-xs">
-                <span className="text-slate-700">Index de recherche :</span>
+                <span className="text-slate-700">{t('admin:observability.search_index', 'Index de recherche :')}</span>
                 <Badge className={adminStats.rag.missing > 0 ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}>
-                  {adminStats.rag.indexed}/{adminStats.rag.total} aides avec un vecteur ({adminStats.rag.missing} sans)
+                  {t('admin:observability.rag', '{{indexed}}/{{total}} aides avec un vecteur ({{missing}} sans)', { indexed: adminStats.rag.indexed, total: adminStats.rag.total, missing: adminStats.rag.missing })}
                 </Badge>
               </div>
             )}
@@ -297,23 +299,23 @@ export default function AdminObservability() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
-            E-mails
+            {t('admin:observability.emails', 'E-mails')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
-            <span>Fournisseur</span>
+            <span>{t('admin:observability.provider', 'Fournisseur')}</span>
             <Badge className={healthDeep?.deps?.mailer?.provider && healthDeep.deps.mailer.provider !== 'noop'
               ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
               : 'border-amber-200 bg-amber-50 text-amber-900'
             }>
-              {healthDeep?.deps?.mailer?.provider && healthDeep.deps.mailer.provider !== 'noop' ? healthDeep.deps.mailer.provider : 'Aucun : aucun e-mail n’est envoyé'}
+              {healthDeep?.deps?.mailer?.provider && healthDeep.deps.mailer.provider !== 'noop' ? healthDeep.deps.mailer.provider : t('admin:observability.no_mailer', 'Aucun : aucun e-mail n’est envoyé')}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
-            <span>Adresse d’expédition configurée</span>
+            <span>{t('admin:observability.from_address', 'Adresse d’expédition configurée')}</span>
             <Badge className={badgeClassForOk(Boolean(healthDeep?.deps?.mailer?.fromPresent))}>
-              {healthDeep?.deps?.mailer?.fromPresent ? 'OUI' : 'NON'}
+              {healthDeep?.deps?.mailer?.fromPresent ? t('admin:observability.yes_caps', 'OUI') : t('admin:observability.no_caps', 'NON')}
             </Badge>
           </div>
         </CardContent>
@@ -321,7 +323,7 @@ export default function AdminObservability() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Historique des tâches planifiées</CardTitle>
+          <CardTitle>{t('admin:observability.history', 'Historique des tâches planifiées')}</CardTitle>
           <div className="flex gap-1">
             {CRON_JOBS.map(job => (
               <Button
@@ -340,19 +342,19 @@ export default function AdminObservability() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Déclencheur</TableHead>
-                <TableHead>Raison</TableHead>
-                <TableHead>Durée</TableHead>
-                <TableHead>Mesures</TableHead>
+                <TableHead>{t('admin:observability.col.date', 'Date')}</TableHead>
+                <TableHead>{t('admin:observability.col.status', 'Statut')}</TableHead>
+                <TableHead>{t('admin:observability.col.trigger', 'Déclencheur')}</TableHead>
+                <TableHead>{t('admin:observability.col.reason', 'Raison')}</TableHead>
+                <TableHead>{t('admin:observability.col.duration', 'Durée')}</TableHead>
+                <TableHead>{t('admin:observability.col.metrics', 'Mesures')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cronRuns.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-sm text-slate-600">
-                    Aucune exécution (normal dans le LAB local : aucune tâche n’y est planifiée).
+                    {t('admin:observability.no_runs', 'Aucune exécution (normal dans le LAB local : aucune tâche n’y est planifiée).')}
                   </TableCell>
                 </TableRow>
               ) : (

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { proRdvClient } from '@/api/pro-rdv-client';
+import { useT } from '@/i18n';
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
@@ -43,6 +44,7 @@ function formatSlot(value) {
 }
 
 export default function ProRdvNew() {
+  const { t } = useT('pro');
   const navigate = useNavigate();
   const [loadingServices, setLoadingServices] = useState(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -79,7 +81,7 @@ export default function ProRdvNew() {
       })
       .catch(() => {
         if (!mounted) return;
-        setError('Impossible de charger les services.');
+        setError(t('pro:rdv_new.load_services_failed', 'Impossible de charger les services.'));
       })
       .finally(() => {
         if (mounted) setLoadingServices(false);
@@ -88,7 +90,7 @@ export default function ProRdvNew() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; the message follows the language at load time
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === form.serviceId) || null,
@@ -100,18 +102,18 @@ export default function ProRdvNew() {
     setSuccessMessage('');
     setSelectedSlot(null);
     if (!form.serviceId) {
-      setError('Selectionnez un service.');
+      setError(t('pro:rdv_new.select_service', 'Selectionnez un service.'));
       return;
     }
     if (!form.fromDate || !form.toDate) {
-      setError('Selectionnez une periode de recherche.');
+      setError(t('pro:rdv_new.select_period', 'Selectionnez une periode de recherche.'));
       return;
     }
 
     const from = toDayIso(form.fromDate, 'start');
     const to = toDayIso(form.toDate, 'end');
     if (!from || !to) {
-      setError('Periode invalide.');
+      setError(t('pro:rdv_new.invalid_period', 'Periode invalide.'));
       return;
     }
 
@@ -126,11 +128,11 @@ export default function ProRdvNew() {
       const nextSlots = Array.isArray(response?.slots) ? response.slots : [];
       setSlots(nextSlots);
       if (nextSlots.length === 0) {
-        setError('Aucun creneau disponible sur cette periode.');
+        setError(t('pro:rdv_new.no_slots', 'Aucun creneau disponible sur cette periode.'));
       }
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
-      setError(status === 400 ? 'Parametres invalides pour la recherche de creneaux.' : 'Impossible de charger les creneaux.');
+      setError(status === 400 ? t('pro:rdv_new.invalid_params', 'Parametres invalides pour la recherche de creneaux.') : t('pro:rdv_new.load_slots_failed', 'Impossible de charger les creneaux.'));
     } finally {
       setLoadingSlots(false);
     }
@@ -141,15 +143,15 @@ export default function ProRdvNew() {
     setSuccessMessage('');
 
     if (!selectedSlot) {
-      setError('Selectionnez un creneau.');
+      setError(t('pro:rdv_new.select_slot', 'Selectionnez un creneau.'));
       return;
     }
     if (!form.beneficiaryName.trim()) {
-      setError('Le nom du beneficiaire est requis.');
+      setError(t('pro:rdv_new.name_required', 'Le nom du beneficiaire est requis.'));
       return;
     }
     if (!form.personConsent) {
-      setError('Confirmez que la personne est d’accord pour ce rendez-vous et pour l’enregistrement de ses coordonnées.');
+      setError(t('pro:rdv_new.confirm_consent', 'Confirmez que la personne est d’accord pour ce rendez-vous et pour l’enregistrement de ses coordonnées.'));
       return;
     }
 
@@ -164,14 +166,14 @@ export default function ProRdvNew() {
         mode: form.mode,
         personConsent: true,
       });
-      setSuccessMessage('Rendez-vous cree avec succes.');
+      setSuccessMessage(t('pro:rdv_new.created', 'Rendez-vous cree avec succes.'));
       setTimeout(() => navigate('/pro/rdv/agenda'), 500);
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
       if (status === 409) {
-        setError("Ce creneau n'est plus disponible. Rechargez les creneaux.");
+        setError(t('pro:rdv_new.slot_taken', "Ce creneau n'est plus disponible. Rechargez les creneaux."));
       } else {
-        setError('Impossible de creer le rendez-vous.');
+        setError(t('pro:rdv_new.create_failed', 'Impossible de creer le rendez-vous.'));
       }
     } finally {
       setSaving(false);
@@ -182,28 +184,28 @@ export default function ProRdvNew() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Nouveau rendez-vous</CardTitle>
+          <CardTitle>{t('pro:rdv_new.title', 'Nouveau rendez-vous')}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <label className="space-y-1">
-            <span className="text-sm font-medium text-slate-700">Service</span>
+            <span className="text-sm font-medium text-slate-700">{t('pro:rdv_new.service', 'Service')}</span>
             <select
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={form.serviceId}
               onChange={(event) => setForm((prev) => ({ ...prev, serviceId: event.target.value }))}
               disabled={loadingServices}
             >
-              <option value="">Selectionner</option>
+              <option value="">{t('pro:rdv_new.select', 'Selectionner')}</option>
               {services.map((service) => (
                 <option key={service.id} value={service.id}>
-                  {service.name} ({service.durationMinutes} min)
+                  {t('pro:rdv_new.service_option', '{{name}} ({{minutes}} min)', { name: service.name, minutes: service.durationMinutes })}
                 </option>
               ))}
             </select>
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm font-medium text-slate-700">Date de debut</span>
+            <span className="text-sm font-medium text-slate-700">{t('pro:rdv_new.start_date', 'Date de debut')}</span>
             <Input
               type="date"
               value={form.fromDate}
@@ -212,7 +214,7 @@ export default function ProRdvNew() {
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm font-medium text-slate-700">Date de fin</span>
+            <span className="text-sm font-medium text-slate-700">{t('pro:rdv_new.end_date', 'Date de fin')}</span>
             <Input
               type="date"
               value={form.toDate}
@@ -223,7 +225,7 @@ export default function ProRdvNew() {
           <div className="flex items-end">
             <Button type="button" onClick={handleLoadSlots} disabled={loadingServices || loadingSlots || !form.serviceId}>
               {loadingSlots ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Charger les creneaux
+              {t('pro:rdv_new.load_slots', 'Charger les creneaux')}
             </Button>
           </div>
         </CardContent>
@@ -231,13 +233,13 @@ export default function ProRdvNew() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Creneaux disponibles</CardTitle>
+          <CardTitle>{t('pro:rdv_new.available_slots', 'Creneaux disponibles')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {loadingSlots ? (
             <ListSkeleton count={4} title={false} />
           ) : slots.length === 0 ? (
-            <p className="text-sm text-slate-600">Aucun creneau charge.</p>
+            <p className="text-sm text-slate-600">{t('pro:rdv_new.no_slot_loaded', 'Aucun creneau charge.')}</p>
           ) : (
             <div className="grid gap-2 md:grid-cols-2">
               {slots.map((slot) => {
@@ -251,7 +253,7 @@ export default function ProRdvNew() {
                       }`}
                   >
                     <div className="font-medium">{formatSlot(slot.startAt)}</div>
-                    <div className="text-xs text-slate-700">Fin: {formatSlot(slot.endAt)}</div>
+                    <div className="text-xs text-slate-700">{t('pro:rdv_new.slot_end', 'Fin: {{end}}', { end: formatSlot(slot.endAt) })}</div>
                   </button>
                 );
               })}
@@ -262,12 +264,12 @@ export default function ProRdvNew() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Informations beneficiaire</CardTitle>
+          <CardTitle>{t('pro:rdv_new.beneficiary_info', 'Informations beneficiaire')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1">
-              <Label htmlFor="beneficiary-name">Nom</Label>
+              <Label htmlFor="beneficiary-name">{t('pro:rdv_new.name', 'Nom')}</Label>
               <Input
                 id="beneficiary-name"
                 value={form.beneficiaryName}
@@ -276,7 +278,7 @@ export default function ProRdvNew() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="beneficiary-phone">Telephone (optionnel)</Label>
+              <Label htmlFor="beneficiary-phone">{t('pro:rdv_new.phone', 'Telephone (optionnel)')}</Label>
               <Input
                 id="beneficiary-phone"
                 value={form.beneficiaryPhone}
@@ -286,7 +288,7 @@ export default function ProRdvNew() {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="beneficiary-notes">Notes (optionnel)</Label>
+            <Label htmlFor="beneficiary-notes">{t('pro:rdv_new.notes', 'Notes (optionnel)')}</Label>
             <Textarea
               id="beneficiary-notes"
               value={form.notes}
@@ -296,24 +298,24 @@ export default function ProRdvNew() {
 
           {selectedService ? (
             <p className="text-xs text-slate-700">
-              Service selectionne: {selectedService.name} ({selectedService.durationMinutes} min)
+              {t('pro:rdv_new.selected_service', 'Service selectionne: {{name}} ({{minutes}} min)', { name: selectedService.name, minutes: selectedService.durationMinutes })}
             </p>
           ) : null}
 
           {selectedService ? (
             <fieldset className="space-y-1 text-sm" data-testid="pro-new-mode">
-              <legend className="font-medium text-slate-800">Modalité</legend>
+              <legend className="font-medium text-slate-800">{t('pro:rdv_new.mode', 'Modalité')}</legend>
               {(Array.isArray(selectedService.modes) && selectedService.modes.length ? selectedService.modes : ['IN_PERSON']).map((m) => (
                 <label key={m} className="mr-4 inline-flex items-center gap-2">
                   <input type="radio" name="pro-new-mode" value={m} data-testid={`pro-new-mode-${m}`} checked={form.mode === m} onChange={() => { setForm((prev) => ({ ...prev, mode: m })); setSlots([]); setSelectedSlot(null); }} />
-                  {m === 'VIDEO' ? 'À distance (visio)' : 'En présentiel'}
+                  {m === 'VIDEO' ? t('pro:rdv_new.mode_video', 'À distance (visio)') : t('pro:rdv_new.mode_in_person', 'En présentiel')}
                 </label>
               ))}
             </fieldset>
           ) : null}
           <label className="flex items-start gap-2 text-sm text-slate-800">
             <input type="checkbox" data-testid="pro-new-consent" checked={form.personConsent} onChange={(event) => setForm((prev) => ({ ...prev, personConsent: event.target.checked }))} />
-            <span>La personne est d’accord pour ce rendez-vous et pour que son nom et son téléphone soient enregistrés pour ce rendez-vous.</span>
+            <span>{t('pro:rdv_new.consent', 'La personne est d’accord pour ce rendez-vous et pour que son nom et son téléphone soient enregistrés pour ce rendez-vous.')}</span>
           </label>
 
           {error ? <p className="text-sm text-rose-700">{error}</p> : null}
@@ -321,7 +323,7 @@ export default function ProRdvNew() {
 
           <Button type="button" onClick={handleCreateAppointment} disabled={saving || !selectedSlot}>
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Confirmer le rendez-vous
+            {t('pro:rdv_new.confirm', 'Confirmer le rendez-vous')}
           </Button>
         </CardContent>
       </Card>

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { hasPermission, SIDEBAR_PERMISSIONS } from '@/lib/rbac';
 import ServiceUnavailable from '@/components/ServiceUnavailable';
+import { useT } from '@/i18n';
 
 
 /**
@@ -121,8 +122,59 @@ const SIDEBAR_SECTIONS = [
     },
 ];
 
+/** the visible name of a menu entry or section — the French label stays the identifier (permissions, React keys); literal keys for the extractor */
+function navLabel(t, label) {
+    const labels = {
+        'À traiter': t('admin:layout.nav.to_handle', 'À traiter'),
+        'Veille automatique': t('admin:layout.nav.veille', 'Veille automatique'),
+        'Contrôles manuels (facultatifs)': t('admin:layout.nav.manual_checks', 'Contrôles manuels (facultatifs)'),
+        'Fiches du lancement (WS2)': t('admin:layout.nav.ws2', 'Fiches du lancement (WS2)'),
+        'Organisations': t('admin:layout.nav.organizations', 'Organisations'),
+        'Registre des doublons': t('admin:layout.nav.duplicates', 'Registre des doublons'),
+        'Propositions de fiches': t('admin:layout.nav.proposals', 'Propositions de fiches'),
+        'Textes faciles à lire (FALC)': t('admin:layout.nav.falc', 'Textes faciles à lire (FALC)'),
+        'Signalements et suggestions': t('admin:layout.nav.reports', 'Signalements et suggestions'),
+        'File qualité des données': t('admin:layout.nav.review_queue', 'File qualité des données'),
+        'Contrôle humain de l’IA': t('admin:layout.nav.ai_oversight', 'Contrôle humain de l’IA'),
+        'Catalogue': t('admin:layout.nav.catalogue', 'Catalogue'),
+        'Aides': t('admin:layout.nav.aides', 'Aides'),
+        'Démarches': t('admin:layout.nav.demarches', 'Démarches'),
+        'Structures': t('admin:layout.nav.structures', 'Structures'),
+        'Dispositifs': t('admin:layout.nav.dispositifs', 'Dispositifs'),
+        'Guides': t('admin:layout.nav.guides', 'Guides'),
+        'Actualités à relire': t('admin:layout.nav.inbox', 'Actualités à relire'),
+        'Sources officielles acceptées': t('admin:layout.nav.sources', 'Sources officielles acceptées'),
+        'Versions des fiches': t('admin:layout.nav.versions', 'Versions des fiches'),
+        'Qualité des données': t('admin:layout.nav.data_quality', 'Qualité des données'),
+        'Personnes et données': t('admin:layout.nav.people_data', 'Personnes et données'),
+        'Protection des données': t('admin:layout.nav.privacy', 'Protection des données'),
+        'Demandes d’aide': t('admin:layout.nav.support', 'Demandes d’aide'),
+        'Plateforme': t('admin:layout.nav.platform', 'Plateforme'),
+        'Opérations et journal d’audit': t('admin:layout.nav.operations', 'Opérations et journal d’audit'),
+        'Partenaires institutionnels': t('admin:layout.nav.institutions', 'Partenaires institutionnels'),
+        'Dossiers de financement': t('admin:layout.nav.funding', 'Dossiers de financement'),
+        'Mesures du pilote': t('admin:layout.nav.pilot', 'Mesures du pilote'),
+        'IA et fonctionnalités': t('admin:layout.nav.ai_features', 'IA et fonctionnalités'),
+        'Fonctionnalités': t('admin:layout.nav.features', 'Fonctionnalités'),
+        'Métriques IA': t('admin:layout.nav.ai_metrics', 'Métriques IA'),
+        'Conversations de l’assistant': t('admin:layout.nav.conversations', 'Conversations de l’assistant'),
+        'Orchestrateur de collecte': t('admin:layout.nav.orchestrator', 'Orchestrateur de collecte'),
+        'Tableau national': t('admin:layout.nav.national', 'Tableau national'),
+        'Technique': t('admin:layout.nav.technical', 'Technique'),
+        'Synchronisations': t('admin:layout.nav.sync', 'Synchronisations'),
+        'État technique': t('admin:layout.nav.health', 'État technique'),
+        'Observabilité': t('admin:layout.nav.observability', 'Observabilité'),
+        'Exécutions': t('admin:layout.nav.runs', 'Exécutions'),
+        'Journaux techniques': t('admin:layout.nav.logs', 'Journaux techniques'),
+        'Mur des améliorations': t('admin:layout.nav.audit', 'Mur des améliorations'),
+        'Paramètres': t('admin:layout.nav.settings', 'Paramètres'),
+    };
+    return labels[label] || label;
+}
+
 // @ts-ignore
 function SidebarSection({ section, isActive }) {
+    const { t } = useT('admin');
     const [open, setOpen] = useState(isActive);
     const SectionIcon = section.icon;
 
@@ -144,7 +196,7 @@ function SidebarSection({ section, isActive }) {
                 className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-700 hover:text-slate-700 transition-colors"
             >
                 <SectionIcon className="h-3.5 w-3.5" />
-                <span className="flex-1 text-left">{section.label}</span>
+                <span className="flex-1 text-left">{navLabel(t, section.label)}</span>
                 {open
                     ? <ChevronDown className="h-3 w-3" />
                     : <ChevronRight className="h-3 w-3" />
@@ -162,6 +214,7 @@ function SidebarSection({ section, isActive }) {
 }
 
 function NavItem({ item }) {
+    const { t } = useT('admin');
     const location = useLocation();
     const isActive = location.pathname === item.to ||
         (item.to !== '/admin/dashboard' && location.pathname.startsWith(item.to + '/'));
@@ -177,7 +230,7 @@ function NavItem({ item }) {
             }`}
         >
             <Icon className="h-4 w-4 flex-shrink-0" />
-            <span>{item.label}</span>
+            <span>{navLabel(t, item.label)}</span>
         </Link>
     );
 }
@@ -189,6 +242,7 @@ const PageLoader = () => (
 );
 
 export default function AdminLayout() {
+    const { t } = useT('admin');
     const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
@@ -224,7 +278,7 @@ export default function AdminLayout() {
     }
 
     if (loading) return <PageLoader />;
-    if (unavailable) return <ServiceUnavailable area="L’administration" />;
+    if (unavailable) return <ServiceUnavailable area={t('admin:layout.area', 'L’administration')} />;
     if (!allowed) return <Navigate to="/admin/login" replace />;
 
     // the server ends the session (ADM-10: every session of this administrator); dropping the local token alone left a copied token valid for 8 hours
@@ -235,7 +289,7 @@ export default function AdminLayout() {
             {/* Header */}
             <div className="p-5 border-b border-slate-200 flex items-center justify-between">
                 <Link to="/admin/dashboard" className="font-bold text-lg text-blue-800">
-                    Admin ADA
+                    {t('admin:layout.brand', 'Admin ADA')}
                 </Link>
                 <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -277,11 +331,11 @@ export default function AdminLayout() {
                     <p className="text-xs text-slate-700 flex items-center gap-1.5">
                         <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" aria-hidden="true" />
                         {/* the label states the server role exactly: a plain administrator is not shown as a super-administrator */}
-                        {user?.role === 'superadmin' || user?.role === 'super_admin' ? 'Super-administrateur' :
-                         user?.role === 'admin' ? 'Administrateur' :
-                         user?.role === 'editor' ? 'Éditeur' :
-                         user?.role === 'moderator' ? 'Modérateur' :
-                         user?.role === 'viewer' ? 'Auditeur' :
+                        {user?.role === 'superadmin' || user?.role === 'super_admin' ? t('admin:layout.role.superadmin', 'Super-administrateur') :
+                         user?.role === 'admin' ? t('admin:layout.role.admin', 'Administrateur') :
+                         user?.role === 'editor' ? t('admin:layout.role.editor', 'Éditeur') :
+                         user?.role === 'moderator' ? t('admin:layout.role.moderator', 'Modérateur') :
+                         user?.role === 'viewer' ? t('admin:layout.role.viewer', 'Auditeur') :
                          user?.role || 'admin'}
                     </p>
                 </div>
@@ -290,7 +344,7 @@ export default function AdminLayout() {
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-slate-600 border border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors"
                 >
                     <LogOut className="h-4 w-4" />
-                    Déconnexion
+                    {t('admin:layout.logout', 'Déconnexion')}
                 </button>
             </div>
         </>
@@ -302,7 +356,7 @@ export default function AdminLayout() {
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
             >
-                Aller au contenu principal
+                {t('admin:layout.skip_link', 'Aller au contenu principal')}
             </a>
             <Helmet>
                 <meta name="robots" content="noindex, nofollow" />
@@ -320,7 +374,7 @@ export default function AdminLayout() {
                         className="absolute inset-0 bg-black/50"
                         role="button"
                         tabIndex={0}
-                        aria-label="Fermer le menu"
+                        aria-label={t('admin:layout.close_menu', 'Fermer le menu')}
                         onClick={() => setMobileMenuOpen(false)}
                         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') setMobileMenuOpen(false); }}
                     />
@@ -338,17 +392,17 @@ export default function AdminLayout() {
                     <button
                         type="button"
                         onClick={() => setMobileMenuOpen(true)}
-                        aria-label="Ouvrir le menu d'administration"
+                        aria-label={t('admin:layout.open_menu', "Ouvrir le menu d'administration")}
                         aria-expanded={mobileMenuOpen}
                         className="inline-flex min-h-11 min-w-11 items-center justify-center rounded hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                     >
                         <Menu className="h-6 w-6" aria-hidden="true" />
                     </button>
-                    <p className="font-bold text-lg text-blue-800">Admin ADA</p>
+                    <p className="font-bold text-lg text-blue-800">{t('admin:layout.brand', 'Admin ADA')}</p>
                     <button
                         type="button"
                         onClick={handleLogout}
-                        aria-label="Se déconnecter"
+                        aria-label={t('admin:layout.sign_out', 'Se déconnecter')}
                         className="inline-flex min-h-11 min-w-11 items-center justify-center rounded hover:bg-slate-100 text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                     >
                         <LogOut className="h-5 w-5" aria-hidden="true" />

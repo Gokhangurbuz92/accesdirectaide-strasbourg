@@ -6,16 +6,18 @@ import { AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchProRdvReadiness } from '@/api/pro-rdv-client';
 import ProRdvErrorBoundary from './ProRdvErrorBoundary';
+import { useT } from '@/i18n';
 
-const RDV_LINKS = [
-  { to: '/pro/rdv/agenda', label: 'Agenda' },
-  { to: '/pro/rdv/services', label: 'Services' },
-  { to: '/pro/rdv/disponibilites', label: 'Disponibilités' },
-  { to: '/pro/rdv/new', label: 'Créer un RDV' },
-  { to: '/pro/rdv/absences', label: 'Absences' },
+const rdvLinks = (t) => [
+  { to: '/pro/rdv/agenda', label: t('pro:rdv_layout.nav_agenda', 'Agenda') },
+  { to: '/pro/rdv/services', label: t('pro:rdv_layout.nav_services', 'Services') },
+  { to: '/pro/rdv/disponibilites', label: t('pro:rdv_layout.nav_availability', 'Disponibilités') },
+  { to: '/pro/rdv/new', label: t('pro:rdv_layout.nav_new', 'Créer un RDV') },
+  { to: '/pro/rdv/absences', label: t('pro:rdv_layout.nav_absences', 'Absences') },
 ];
 
 export default function ProRdvLayout() {
+  const { t } = useT('pro');
   const parentContext = useOutletContext() || {};
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -47,12 +49,12 @@ export default function ProRdvLayout() {
     <div className="space-y-6" data-testid="pro-rdv-layout">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Rendez-vous</h1>
-          <p className="text-sm text-slate-600">Gestion des motifs, disponibilités, absences et agenda.</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t('pro:rdv_layout.title', 'Rendez-vous')}</h1>
+          <p className="text-sm text-slate-600">{t('pro:rdv_layout.subtitle', 'Gestion des motifs, disponibilités, absences et agenda.')}</p>
         </div>
         <Button variant="outline" className="gap-2" onClick={loadReadiness} disabled={loading}>
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-          Vérifier l’état
+          {t('pro:rdv_layout.check', 'Vérifier l’état')}
         </Button>
       </div>
 
@@ -69,19 +71,19 @@ export default function ProRdvLayout() {
             <div className="space-y-1">
               {missingTables.length > 0 ? (
                 <>
-                  <p className="font-medium">Les rendez-vous ne sont pas encore disponibles sur ce serveur : son installation n’est pas terminée. Prévenez l’équipe d’ADA.</p>
-                  <p className="text-xs">Détail technique pour ADA : tables manquantes ({missingTables.join(', ')}).</p>
+                  <p className="font-medium">{t('pro:rdv_layout.not_installed', 'Les rendez-vous ne sont pas encore disponibles sur ce serveur : son installation n’est pas terminée. Prévenez l’équipe d’ADA.')}</p>
+                  <p className="text-xs">{t('pro:rdv_layout.missing_tables', 'Détail technique pour ADA : tables manquantes ({{tables}}).', { tables: missingTables.join(', ') })}</p>
                 </>
               ) : (
-                <p className="font-medium">L’état des rendez-vous n’a pas pu être vérifié. Réessayez avec « Vérifier l’état ».</p>
+                <p className="font-medium">{t('pro:rdv_layout.check_failed', 'L’état des rendez-vous n’a pas pu être vérifié. Réessayez avec « Vérifier l’état ».')}</p>
               )}
             </div>
           </div>
         </div>
       )}
 
-      <nav className="flex flex-wrap gap-2" aria-label="Navigation RDV Pro">
-        {RDV_LINKS.map((link) => {
+      <nav className="flex flex-wrap gap-2" aria-label={t('pro:rdv_layout.nav_label', 'Navigation RDV Pro')}>
+        {rdvLinks(t).map((link) => {
           const active = location.pathname.startsWith(link.to);
           return (
             <Link

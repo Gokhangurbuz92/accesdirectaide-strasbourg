@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { useT } from '@/i18n';
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_FILTERS = {
@@ -95,6 +96,7 @@ function extractDetailHighlights(details) {
 }
 
 export default function AdminReviewQueue() {
+  const { t } = useT('admin');
   const [items, setItems] = useState(/** @type {any[]} */([]));
   const [pagination, setPagination] = useState({ nextCursor: null, limit: DEFAULT_LIMIT });
   const [loading, setLoading] = useState(false);
@@ -138,13 +140,13 @@ export default function AdminReviewQueue() {
       setPagination(response?.pagination || { nextCursor: null, limit: DEFAULT_LIMIT });
       setAiAvailable(response?.aiSuggestions?.available === true);
       setRequestId(response?.requestId || '');
-      setLiveMessage('Review queue mise a jour');
+      setLiveMessage(t('admin:review_queue.live.loaded', 'Review queue mise a jour'));
     } catch {
-      setError('Impossible de charger la review queue.');
+      setError(t('admin:review_queue.error.load', 'Impossible de charger la review queue.'));
     } finally {
       setLoading(false);
     }
-  }, [filters.status, filters.entityType, filters.reason]);
+  }, [filters.status, filters.entityType, filters.reason, t]);
 
   const handleScan = useCallback(async () => {
     setScanning(true);
@@ -153,14 +155,14 @@ export default function AdminReviewQueue() {
     try {
       const scanResult = await apiClient.admin.scanReviewQueue();
       setSummary(scanResult || null);
-      setLiveMessage('Analyse de la qualité des données terminée');
+      setLiveMessage(t('admin:review_queue.live.scanned', 'Analyse de la qualité des données terminée'));
       await loadItems();
     } catch {
-      setError('L’analyse de la qualité des données a échoué.');
+      setError(t('admin:review_queue.error.scan', 'L’analyse de la qualité des données a échoué.'));
     } finally {
       setScanning(false);
     }
-  }, [loadItems]);
+  }, [loadItems, t]);
 
   const handleStatusChange = useCallback(
     /**
@@ -173,16 +175,16 @@ export default function AdminReviewQueue() {
 
       try {
         await apiClient.admin.updateReviewQueueStatus(id, status, decisionReason.trim());
-        setLiveMessage('Statut mis à jour');
+        setLiveMessage(t('admin:review_queue.live.status', 'Statut mis à jour'));
         await loadItems();
       } catch (e) {
         // owner LAB audit: the server's own reason (e.g. a decision on an AI suggestion needs a motive) instead of a generic failure
-        setError(e?.payload?.message || 'Impossible de mettre à jour le statut.');
+        setError(e?.payload?.message || t('admin:review_queue.error.status', 'Impossible de mettre à jour le statut.'));
       } finally {
         setSavingId('');
       }
     },
-    [loadItems, decisionReason],
+    [loadItems, decisionReason, t],
   );
 
   const filteredItems = useMemo(() => {
@@ -254,17 +256,17 @@ export default function AdminReviewQueue() {
         const response = await apiClient.admin.bulkUpdateReviewQueue(selectedIds, nextStatus, decisionReason.trim());
         const result = response?.result || {};
         setLiveMessage(
-          `Action de masse terminée (${result.updated || 0} mis a jour, ${result.skipped || 0} ignores, ${result.notFound || 0} introuvables)`,
+          t('admin:review_queue.live.bulk', 'Action de masse terminée ({{updated}} mis a jour, {{skipped}} ignores, {{notFound}} introuvables)', { updated: result.updated || 0, skipped: result.skipped || 0, notFound: result.notFound || 0 }),
         );
         setSelectedIds([]);
         await loadItems();
       } catch (e) {
-        setError(e?.payload?.message || "Impossible d'exécuter l'action de masse.");
+        setError(e?.payload?.message || t('admin:review_queue.error.bulk', "Impossible d'exécuter l'action de masse."));
       } finally {
         setBulkSaving('');
       }
     },
-    [selectedIds, loadItems, decisionReason],
+    [selectedIds, loadItems, decisionReason, t],
   );
 
   const handleAIRepair = useCallback(
@@ -274,15 +276,15 @@ export default function AdminReviewQueue() {
       setError('');
       try {
         await apiClient.admin.hiveRepair(id);
-        setLiveMessage('Suggestion IA générée');
+        setLiveMessage(t('admin:review_queue.live.ai', 'Suggestion IA générée'));
         await loadItems();
       } catch (e) {
-        setError(e?.payload?.message || 'Échec de la suggestion IA.');   // owner LAB audit: the server says why (policy, human-only question, switched off)
+        setError(e?.payload?.message || t('admin:review_queue.error.ai', 'Échec de la suggestion IA.'));   // owner LAB audit: the server says why (policy, human-only question, switched off)
       } finally {
         setRepairingId('');
       }
     },
-    [loadItems],
+    [loadItems, t],
   );
 
   const handleBulkRepairAI = useCallback(async () => {
@@ -292,22 +294,22 @@ export default function AdminReviewQueue() {
     try {
       const result = await apiClient.admin.bulkRepairAI('P0', 10);
       setBulkRepairResult(result);
-      setLiveMessage(`Suggestions en masse : ${result?.count || 0} élément(s) traité(s)`);
+      setLiveMessage(t('admin:review_queue.live.bulk_ai', 'Suggestions en masse : {{n}} élément(s) traité(s)', { n: result?.count || 0 }));
       await loadItems();
     } catch (e) {
-      setError(e?.payload?.message || 'Échec des suggestions en masse.');
+      setError(e?.payload?.message || t('admin:review_queue.error.bulk_ai', 'Échec des suggestions en masse.'));
     } finally {
       setBulkRepairing(false);
     }
-  }, [loadItems]);
+  }, [loadItems, t]);
 
   const resetFilters = useCallback(() => {
     setFilters({ ...DEFAULT_FILTERS });
     setSelectedIds([]);
     setExpandedDetailsIds([]);
     setBulkRepairResult(null);
-    setLiveMessage('Filtres réinitialisés');
-  }, []);
+    setLiveMessage(t('admin:review_queue.live.reset', 'Filtres réinitialisés'));
+  }, [t]);
 
   useEffect(() => {
     loadItems();
@@ -321,20 +323,20 @@ export default function AdminReviewQueue() {
 
   return (
     <div className="container mx-auto space-y-6 py-8">
-      <SEO title="File d’attente qualité" description="File d’attente de la qualité des données." noindex={true} />
+      <SEO title={t('admin:review_queue.seo_title', 'File d’attente qualité')} description={t('admin:review_queue.seo_description', 'File d’attente de la qualité des données.')} noindex={true} />
 
       <p className="sr-only" aria-live="polite">{liveMessage}</p>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold">File d’attente qualité des données</h1>
+        <h1 className="text-3xl font-bold">{t('admin:review_queue.title', 'File d’attente qualité des données')}</h1>
         <div className="flex items-center gap-2">
           <Button onClick={() => loadItems()} disabled={loading} className="gap-2" variant="outline">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            Actualiser
+            {t('admin:review_queue.refresh', 'Actualiser')}
           </Button>
           <Button onClick={handleScan} disabled={scanning} className="gap-2">
             {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            Analyser maintenant
+            {t('admin:review_queue.scan', 'Analyser maintenant')}
           </Button>
           {aiAvailable ? (
           <Button
@@ -343,7 +345,7 @@ export default function AdminReviewQueue() {
             className="gap-2 bg-teal-700 hover:bg-teal-800 text-white"
           >
             {bulkRepairing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wrench className="h-4 w-4" />}
-            Suggestions IA (P0)
+            {t('admin:review_queue.bulk_ai', 'Suggestions IA (P0)')}
           </Button>
           ) : null}
         </div>
@@ -357,11 +359,11 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Filtres</CardTitle>
+          <CardTitle>{t('admin:review_queue.filters', 'Filtres')}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-6">
           <label className="text-sm">
-            <span className="mb-1 block text-slate-700">État</span>
+            <span className="mb-1 block text-slate-700">{t('admin:review_queue.filter.status', 'État')}</span>
             <select
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
               value={filters.status}
@@ -375,13 +377,13 @@ export default function AdminReviewQueue() {
           </label>
 
           <label className="text-sm">
-            <span className="mb-1 block text-slate-700">Type de fiche</span>
+            <span className="mb-1 block text-slate-700">{t('admin:review_queue.filter.type', 'Type de fiche')}</span>
             <select
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
               value={filters.entityType}
               onChange={(event) => setFilters((prev) => ({ ...prev, entityType: event.target.value }))}
             >
-              <option value="">all</option>
+              <option value="">{t('admin:review_queue.filter.all', 'all')}</option>
               <option value="aide">aide</option>
               <option value="demarche">demarche</option>
               <option value="structure">structure</option>
@@ -390,13 +392,13 @@ export default function AdminReviewQueue() {
           </label>
 
           <label className="text-sm">
-            <span className="mb-1 block text-slate-700">Motif</span>
+            <span className="mb-1 block text-slate-700">{t('admin:review_queue.filter.reason', 'Motif')}</span>
             <select
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
               value={filters.reason}
               onChange={(event) => setFilters((prev) => ({ ...prev, reason: event.target.value }))}
             >
-              <option value="">all</option>
+              <option value="">{t('admin:review_queue.filter.all', 'all')}</option>
               {reasonOptions.map((reason) => (
                 <option key={reason} value={reason}>{reason}</option>
               ))}
@@ -404,13 +406,13 @@ export default function AdminReviewQueue() {
           </label>
 
           <label className="text-sm">
-            <span className="mb-1 block text-slate-700">Gravité</span>
+            <span className="mb-1 block text-slate-700">{t('admin:review_queue.filter.severity', 'Gravité')}</span>
             <select
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
               value={filters.severity}
               onChange={(event) => setFilters((prev) => ({ ...prev, severity: event.target.value }))}
             >
-              <option value="">all</option>
+              <option value="">{t('admin:review_queue.filter.all', 'all')}</option>
               <option value="P0">P0</option>
               <option value="P1">P1</option>
               <option value="P2">P2</option>
@@ -418,22 +420,22 @@ export default function AdminReviewQueue() {
           </label>
 
           <label className="text-sm md:col-span-2">
-            <span className="mb-1 block text-slate-700">Recherche</span>
+            <span className="mb-1 block text-slate-700">{t('admin:review_queue.filter.search', 'Recherche')}</span>
             <input
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
               value={filters.search}
               onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
-              placeholder="titre, identifiant, motif"
+              placeholder={t('admin:review_queue.filter.search_placeholder', 'titre, identifiant, motif')}
               data-testid="rq-search-input"
             />
           </label>
 
           <div className="md:col-span-3">
-            <Button className="w-full" onClick={() => loadItems()} disabled={loading}>Appliquer</Button>
+            <Button className="w-full" onClick={() => loadItems()} disabled={loading}>{t('admin:review_queue.apply', 'Appliquer')}</Button>
           </div>
           <div className="md:col-span-3">
             <Button className="w-full" variant="outline" onClick={resetFilters} disabled={loading}>
-              Réinitialiser les filtres
+              {t('admin:review_queue.reset', 'Réinitialiser les filtres')}
             </Button>
           </div>
         </CardContent>
@@ -442,7 +444,7 @@ export default function AdminReviewQueue() {
       <Card>
         <CardContent className="space-y-1 py-4">
           {/* owner LAB audit: the server requires the reviewer's reason (10 characters or more) for any decision on an AI suggestion; it is kept in the journal */}
-          <label htmlFor="rq-decision-reason" className="block text-sm font-medium">Motif de votre décision (conservé dans le journal ; obligatoire pour une suggestion de l’IA, 10 caractères minimum)</label>
+          <label htmlFor="rq-decision-reason" className="block text-sm font-medium">{t('admin:review_queue.decision_reason', 'Motif de votre décision (conservé dans le journal ; obligatoire pour une suggestion de l’IA, 10 caractères minimum)')}</label>
           <textarea id="rq-decision-reason" data-testid="rq-decision-reason" className="w-full rounded border p-2 text-sm" rows={2} value={decisionReason} onChange={(event) => setDecisionReason(event.target.value)} />
         </CardContent>
       </Card>
@@ -451,7 +453,7 @@ export default function AdminReviewQueue() {
         <Card>
           <CardContent className="flex flex-wrap items-center gap-2 py-4">
             <span className="text-sm text-slate-700">
-              {selectedIds.length} élément(s) sélectionné(s)
+              {t('admin:review_queue.selected', '{{n}} élément(s) sélectionné(s)', { n: selectedIds.length })}
             </span>
             <Button
               size="sm"
@@ -459,7 +461,7 @@ export default function AdminReviewQueue() {
               disabled={bulkSaving !== '' || loading}
               data-testid="rq-bulk-resolve"
             >
-              Marquer résolus
+              {t('admin:review_queue.bulk_resolve', 'Marquer résolus')}
             </Button>
             <Button
               size="sm"
@@ -468,7 +470,7 @@ export default function AdminReviewQueue() {
               disabled={bulkSaving !== '' || loading}
               data-testid="rq-bulk-ignore"
             >
-              Ignorer la sélection
+              {t('admin:review_queue.bulk_ignore', 'Ignorer la sélection')}
             </Button>
           </CardContent>
         </Card>
@@ -477,29 +479,29 @@ export default function AdminReviewQueue() {
       {summary && (
         <Card>
           <CardHeader>
-            <CardTitle>Dernière analyse</CardTitle>
+            <CardTitle>{t('admin:review_queue.last_scan', 'Dernière analyse')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-xs text-slate-700">Créés</p>
+                <p className="text-xs text-slate-700">{t('admin:review_queue.summary.created', 'Créés')}</p>
                 <p className="text-xl font-semibold">{summary.created || 0}</p>
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-xs text-slate-700">Mis à jour</p>
+                <p className="text-xs text-slate-700">{t('admin:review_queue.summary.updated', 'Mis à jour')}</p>
                 <p className="text-xl font-semibold">{summary.updated || 0}</p>
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-xs text-slate-700">Ouverts (total)</p>
+                <p className="text-xs text-slate-700">{t('admin:review_queue.summary.open_total', 'Ouverts (total)')}</p>
                 <p className="text-xl font-semibold">{summary.openTotal || 0}</p>
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-xs text-slate-700">Limite par type</p>
+                <p className="text-xs text-slate-700">{t('admin:review_queue.summary.limit_per_type', 'Limite par type')}</p>
                 <p className="text-xl font-semibold">{summary.limitPerType || '-'}</p>
               </div>
             </div>
             <p className="text-xs text-slate-700">
-              Analysés : aides={summary?.scanned?.aides || 0}, demarches={summary?.scanned?.demarches || 0}, structures={summary?.scanned?.structures || 0}, actualites={summary?.scanned?.actualites || 0}
+              {t('admin:review_queue.summary.scanned', 'Analysés : aides={{aides}}, demarches={{demarches}}, structures={{structures}}, actualites={{actualites}}', { aides: summary?.scanned?.aides || 0, demarches: summary?.scanned?.demarches || 0, structures: summary?.scanned?.structures || 0, actualites: summary?.scanned?.actualites || 0 })}
             </p>
           </CardContent>
         </Card>
@@ -509,7 +511,7 @@ export default function AdminReviewQueue() {
         <Card>
           <CardContent className="py-4">
             <p className="text-sm font-semibold text-teal-800">
-              🤖 Réparation IA terminée : {bulkRepairResult.count || 0}/{bulkRepairResult.total || 0} items réparés
+              {t('admin:review_queue.bulk_ai_done', '🤖 Réparation IA terminée : {{done}}/{{total}} items réparés', { done: bulkRepairResult.count || 0, total: bulkRepairResult.total || 0 })}
             </p>
           </CardContent>
         </Card>
@@ -517,7 +519,7 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Items ({filteredItems.length})</CardTitle>
+          <CardTitle>{t('admin:review_queue.items', 'Items ({{n}})', { n: filteredItems.length })}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -526,31 +528,31 @@ export default function AdminReviewQueue() {
                 <TableHead className="w-[40px]">
                   <input
                     type="checkbox"
-                    aria-label="Sélectionner tous les éléments affichés"
+                    aria-label={t('admin:review_queue.select_all', 'Sélectionner tous les éléments affichés')}
                     checked={allVisibleSelected}
                     onChange={toggleSelectAllVisible}
                     disabled={filteredItems.length === 0}
                     data-testid="rq-select-all"
                   />
                 </TableHead>
-                <TableHead>Créé le</TableHead>
-                <TableHead>Fiche</TableHead>
-                <TableHead>Titre</TableHead>
-                <TableHead>Motif</TableHead>
-                <TableHead>Gravité</TableHead>
-                <TableHead>État</TableHead>
-                <TableHead>Lien</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('admin:review_queue.col.created', 'Créé le')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.record', 'Fiche')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.title', 'Titre')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.reason', 'Motif')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.severity', 'Gravité')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.status', 'État')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.link', 'Lien')}</TableHead>
+                <TableHead>{t('admin:review_queue.col.actions', 'Actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-sm text-slate-600">Chargement...</TableCell>
+                  <TableCell colSpan={9} className="text-sm text-slate-600">{t('admin:review_queue.loading', 'Chargement...')}</TableCell>
                 </TableRow>
               ) : filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-sm text-slate-600">Aucun item.</TableCell>
+                  <TableCell colSpan={9} className="text-sm text-slate-600">{t('admin:review_queue.empty', 'Aucun item.')}</TableCell>
                 </TableRow>
               ) : (
                 filteredItems.map((item) => {
@@ -564,7 +566,7 @@ export default function AdminReviewQueue() {
                         <TableCell>
                           <input
                             type="checkbox"
-                            aria-label={`Sélectionner l’élément ${item.id}`}
+                            aria-label={t('admin:review_queue.select_one', 'Sélectionner l’élément {{id}}', { id: item.id })}
                             checked={selectedSet.has(item.id)}
                             onChange={() => toggleSelected(item.id)}
                             data-testid={`rq-select-${item.id}`}
@@ -583,7 +585,7 @@ export default function AdminReviewQueue() {
                         <TableCell>
                           {publicLink ? (
                             <Link className="text-sm font-medium text-blue-700 hover:text-blue-800 hover:underline" to={publicLink} target="_blank" rel="noreferrer">
-                              Ouvrir
+                              {t('admin:review_queue.open', 'Ouvrir')}
                             </Link>
                           ) : (
                             <span className="text-xs text-slate-700">-</span>
@@ -599,7 +601,7 @@ export default function AdminReviewQueue() {
                                   disabled={savingId === item.id}
                                   onClick={() => handleStatusChange(item.id, 'resolved')}
                                 >
-                                  Résolu
+                                  {t('admin:review_queue.resolve', 'Résolu')}
                                 </Button>
                                 <Button
                                   size="sm"
@@ -607,7 +609,7 @@ export default function AdminReviewQueue() {
                                   disabled={savingId === item.id}
                                   onClick={() => handleStatusChange(item.id, 'ignored')}
                                 >
-                                  Ignorer
+                                  {t('admin:review_queue.ignore', 'Ignorer')}
                                 </Button>
                                 {aiAvailable ? (
                                 <Button
@@ -617,7 +619,7 @@ export default function AdminReviewQueue() {
                                   onClick={() => handleAIRepair(item.id)}
                                 >
                                   {repairingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wrench className="h-3 w-3" />}
-                                  Suggestion IA
+                                  {t('admin:review_queue.ai_suggest', 'Suggestion IA')}
                                 </Button>
                                 ) : null}
                               </>
@@ -628,7 +630,7 @@ export default function AdminReviewQueue() {
                               onClick={() => toggleDetails(item.id)}
                               data-testid={`rq-details-toggle-${item.id}`}
                             >
-                              {detailsOpen ? 'Masquer le détail' : 'Détail'}
+                              {detailsOpen ? t('admin:review_queue.hide_details', 'Masquer le détail') : t('admin:review_queue.details', 'Détail')}
                             </Button>
                           </div>
                         </TableCell>
@@ -648,12 +650,12 @@ export default function AdminReviewQueue() {
                               )}
                               {(item.details?.ai_suggestion || item.details?.ai_fix) && (
                                 <div className="rounded-lg border-2 border-teal-200 bg-teal-50 p-3">
-                                  <p className="mb-1 text-xs font-bold text-teal-800">🤖 Suggestion IA</p>
+                                  <p className="mb-1 text-xs font-bold text-teal-800">{t('admin:review_queue.ai_suggestion', '🤖 Suggestion IA')}</p>
                                   <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all rounded bg-teal-900 p-3 text-xs text-teal-100">
                                     {JSON.stringify(item.details.ai_suggestion || item.details.ai_fix, null, 2)}
                                   </pre>
                                   {item.details?.repaired_at && (
-                                    <p className="mt-1 text-[10px] text-teal-600">Réparé le {formatDate(item.details.repaired_at)}</p>
+                                    <p className="mt-1 text-[10px] text-teal-600">{t('admin:review_queue.repaired_at', 'Réparé le {{date}}', { date: formatDate(item.details.repaired_at) })}</p>
                                   )}
                                 </div>
                               )}
@@ -673,12 +675,12 @@ export default function AdminReviewQueue() {
 
           {pagination?.nextCursor && !loading && (
             <div className="mt-4">
-              <Button variant="outline" onClick={() => loadItems(pagination.nextCursor)}>Page suivante</Button>
+              <Button variant="outline" onClick={() => loadItems(pagination.nextCursor)}>{t('admin:review_queue.next_page', 'Page suivante')}</Button>
             </div>
           )}
 
-          <p className="mt-4 text-xs text-slate-700">Identifiant de requête : {requestId || '-'}</p>
-          {!aiAvailable ? <p className="mt-1 text-xs text-slate-700" data-testid="rq-ai-unavailable">Suggestions automatiques indisponibles : la politique IA bloque le fournisseur en nuage et aucune source officielle locale ne permet de les fonder.</p> : null}
+          <p className="mt-4 text-xs text-slate-700">{t('admin:review_queue.request_id', 'Identifiant de requête : {{id}}', { id: requestId || '-' })}</p>
+          {!aiAvailable ? <p className="mt-1 text-xs text-slate-700" data-testid="rq-ai-unavailable">{t('admin:review_queue.ai_unavailable', 'Suggestions automatiques indisponibles : la politique IA bloque le fournisseur en nuage et aucune source officielle locale ne permet de les fonder.')}</p> : null}
         </CardContent>
       </Card>
     </div>

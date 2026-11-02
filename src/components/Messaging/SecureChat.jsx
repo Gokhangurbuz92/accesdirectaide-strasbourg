@@ -5,6 +5,7 @@ import { cryptoE2EE } from '@/lib/crypto-messaging.js';
 import { Button } from '@/components/ui/button';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 /**
  * SecureChat
  * Messagerie asynchrone chiffrée côté navigateur.
@@ -20,6 +21,7 @@ import { getCsrfHeaders } from '@/lib/csrf';
  * @param {string} shareId - Identifiant du dossier (dérivation de clé ; connu du serveur)
  */
 export default function SecureChat({ shareId, senderId, receiverId, authToken }) {
+    const { t } = useT('messaging');
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -48,7 +50,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                             content: await cryptoE2EE.decrypt(msg.encryptedContent, shareId),
                         };
                     } catch {
-                        return { ...msg, content: '🔒 [Erreur de déchiffrement]' };
+                        return { ...msg, content: t('messaging:secure_chat.decrypt_error', '🔒 [Erreur de déchiffrement]') };
                     }
                 })
             );
@@ -57,7 +59,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
         } catch (err) {
             if (import.meta.env.DEV) console.error('[SecureChat] Erreur:', err.message);
         }
-    }, [shareId, authToken]);
+    }, [shareId, authToken]);   // eslint-disable-line react-hooks/exhaustive-deps -- the label follows the language at load time
 
     useEffect(() => {
         if (!shareId) return;
@@ -94,12 +96,12 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                 }),
             });
 
-            if (!res.ok) throw new Error("Échec de l'envoi au serveur.");
+            if (!res.ok) throw new Error(t('messaging:secure_chat.send_failed', 'Échec de l\'envoi au serveur.'));
 
             setNewMessage('');
             fetchMessages();
         } catch (err) {
-            setError('Erreur : ' + err.message);
+            setError(t('messaging:secure_chat.error', 'Erreur : {{message}}', { message: err.message }));
         } finally {
             setIsProcessing(false);
         }
@@ -116,10 +118,10 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                     </div>
                     <div>
                         <h3 className="font-bold text-sm leading-tight">
-                            Conversation Souveraine
+                            {t('messaging:secure_chat.title', 'Conversation Souveraine')}
                         </h3>
                         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                            Messages chiffrés
+                            {t('messaging:secure_chat.subtitle', 'Messages chiffrés')}
                         </p>
                     </div>
                 </div>
@@ -131,7 +133,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 scroll-smooth z-0 relative"
                 role="log"
-                aria-label="Messages de la conversation sécurisée"
+                aria-label={t('messaging:secure_chat.log_label', 'Messages de la conversation sécurisée')}
                 aria-live="polite"
             >
                 {messages.length === 0 ? (
@@ -140,11 +142,10 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                             <Lock size={24} className="opacity-20" />
                         </div>
                         <p className="text-sm font-medium">
-                            Aucun message pour l&apos;instant.
+                            {t('messaging:secure_chat.empty', 'Aucun message pour l\'instant.')}
                         </p>
                         <p className="text-[11px] mt-2 leading-relaxed">
-                            Les messages sont chiffrés avant l&apos;envoi et stockés sous forme chiffrée.
-                            Ce n&apos;est pas encore un chiffrement de bout en bout.
+                            {t('messaging:secure_chat.empty_note', 'Les messages sont chiffrés avant l\'envoi et stockés sous forme chiffrée. Ce n\'est pas encore un chiffrement de bout en bout.')}
                         </p>
                     </div>
                 ) : (
@@ -198,7 +199,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                 className="p-3 sm:p-4 bg-white border-t border-slate-100 flex gap-2 sm:gap-3 z-10 shrink-0"
             >
                 <label htmlFor="secure-chat-input" className="sr-only">
-                    Votre message protégé
+                    {t('messaging:secure_chat.input_label', 'Votre message protégé')}
                 </label>
                 <textarea
                     id="secure-chat-input"
@@ -210,7 +211,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                             handleSendMessage(e);
                         }
                     }}
-                    placeholder="Votre message protégé..."
+                    placeholder={t('messaging:secure_chat.placeholder', 'Votre message protégé...')}
                     disabled={isProcessing}
                     rows={1}
                     className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 pt-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:opacity-50 resize-none min-h-[40px] max-h-[120px]"
@@ -219,7 +220,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                     type="submit"
                     disabled={isProcessing || !newMessage.trim()}
                     className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-30 flex items-center justify-center min-w-[45px] self-end h-[44px]"
-                    aria-label="Envoyer le message"
+                    aria-label={t('messaging:secure_chat.send_label', 'Envoyer le message')}
                 >
                     {isProcessing ? (
                         <Loader2 size={18} className="animate-spin" />

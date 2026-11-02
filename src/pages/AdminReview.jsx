@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { useT } from '@/i18n';
 
 export default function AdminReview() {
+    const { t } = useT('admin');
     const queryClient = useQueryClient();
 
     // Fetch items with status 'en_revue' (or 'brouillon' too?)
@@ -30,7 +32,7 @@ export default function AdminReview() {
             return apiClient.entities[type].update(id, { statut: 'publie' });
         },
         onSuccess: () => {
-            toast.success("Contenu publié !");
+            toast.success(t('admin:review.published', 'Contenu publié !'));
             queryClient.invalidateQueries({ queryKey: ['admin-review-aides'] });
         }
     });
@@ -40,7 +42,7 @@ export default function AdminReview() {
             return apiClient.entities[type].update(id, { statut: 'brouillon' }); // Or 'refuse'
         },
         onSuccess: () => {
-            toast.success("Contenu renvoyé en brouillon.");
+            toast.success(t('admin:review.back_to_draft', 'Contenu renvoyé en brouillon.'));
             queryClient.invalidateQueries({ queryKey: ['admin-review-aides'] });
         }
     });
@@ -49,10 +51,10 @@ export default function AdminReview() {
 
     return (
         <div className="container mx-auto p-4 space-y-6">
-            <h1 className="text-3xl font-bold">File de révision</h1>
+            <h1 className="text-3xl font-bold">{t('admin:review.title', 'File de révision')}</h1>
 
             {aides?.length === 0 && (
-                <p className="text-muted-foreground">Aucun contenu en attente de validation.</p>
+                <p className="text-muted-foreground">{t('admin:review.empty', 'Aucun contenu en attente de validation.')}</p>
             )}
 
             <div className="grid gap-4">
@@ -65,9 +67,9 @@ export default function AdminReview() {
                             <Badge variant="secondary">{item.categorie}</Badge>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-gray-500 mb-2">ID: {item.id}</p>
+                            <p className="text-sm text-gray-500 mb-2">{t('admin:review.id', 'ID: {{id}}', { id: item.id })}</p>
                             <div className="prose max-w-none text-sm line-clamp-3">
-                                {item.description_courte || item.cest_quoi || "Pas de description"}
+                                {item.description_courte || item.cest_quoi || t('admin:review.no_description', 'Pas de description')}
                             </div>
                         </CardContent>
                         <CardFooter className="justify-end gap-2">
@@ -78,7 +80,7 @@ export default function AdminReview() {
                                 onClick={() => rejectMutation.mutate({ id: item.id, type: 'Aide' })}
                             >
                                 <XCircle className="w-4 h-4 mr-2" />
-                                Rejeter (Brouillon)
+                                {t('admin:review.reject', 'Rejeter (Brouillon)')}
                             </Button>
                             <Button
                                 size="sm"
@@ -86,7 +88,7 @@ export default function AdminReview() {
                                 onClick={() => approveMutation.mutate({ id: item.id, type: 'Aide' })}
                             >
                                 <CheckCircle className="w-4 h-4 mr-2" />
-                                Publier
+                                {t('admin:review.publish', 'Publier')}
                             </Button>
                         </CardFooter>
                     </Card>

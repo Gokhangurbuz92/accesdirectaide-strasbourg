@@ -12,6 +12,8 @@ import {
     Loader2,
     AlertCircle,
 } from 'lucide-react';
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
 
 /**
  * AdminFeatures
@@ -22,6 +24,7 @@ import {
  * Les flags sont en lecture seule (pilotés par variables d'environnement).
  */
 export default function AdminFeatures() {
+    const { t } = useT('admin');
     const { data, isLoading, error } = useQuery({
         queryKey: ['admin-features'],
         // R7: the handler answers { success, data: { flags, note } } — read the inner data (the page used to show 0/0 whatever the flags)
@@ -41,7 +44,7 @@ export default function AdminFeatures() {
                 <Card>
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-                        <p className="text-slate-600" role="alert" data-testid="admin-features-problem">Erreur de chargement des fonctionnalités</p>
+                        <p className="text-slate-600" role="alert" data-testid="admin-features-problem">{t('admin:features.load_error', 'Erreur de chargement des fonctionnalités')}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -60,10 +63,10 @@ export default function AdminFeatures() {
                         <Shield className="text-indigo-600" size={28} />
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900">
-                                Pilotage des Fonctionnalités
+                                {t('admin:features.title', 'Pilotage des Fonctionnalités')}
                             </h1>
                             <p className="text-slate-600 text-sm" data-testid="admin-features-count">
-                                {enabledCount}/{flags.length} fonctionnalités actives
+                                {t('admin:features.count', '{{enabled}}/{{total}} fonctionnalités actives', { enabled: enabledCount, total: flags.length })}
                             </p>
                         </div>
                     </div>
@@ -95,12 +98,12 @@ export default function AdminFeatures() {
                                     {flag.enabled ? (
                                         <Badge className="bg-emerald-100 text-emerald-800 border-0 gap-1">
                                             <CheckCircle className="h-3 w-3" />
-                                            Actif
+                                            {t('admin:features.active', 'Actif')}
                                         </Badge>
                                     ) : (
                                         <Badge className="bg-slate-100 text-slate-700 border-0 gap-1">
                                             <XCircle className="h-3 w-3" />
-                                            Inactif
+                                            {t('admin:features.inactive', 'Inactif')}
                                         </Badge>
                                     )}
                                 </div>
@@ -113,17 +116,15 @@ export default function AdminFeatures() {
                 <div className="flex gap-3 p-4 bg-amber-50 rounded-xl border border-amber-100">
                     <Info className="text-amber-600 shrink-0 mt-0.5" size={18} />
                     <p className="text-xs text-amber-800 leading-relaxed">
-                        <strong>Note :</strong> Les feature flags sont pilotés par les variables
-                        d&apos;environnement de production. Pour modifier un flag de manière persistante,
-                        mettez à jour le fichier <code className="bg-amber-100 px-1 rounded">.env.production</code> et
-                        redémarrez l&apos;API.
+                        <Trans i18n={i18n} i18nKey="admin:features.note" defaults="<0>Note :</0> Les feature flags sont pilotés par les variables d'environnement de production. Pour modifier un flag de manière persistante, mettez à jour le fichier <1>.env.production</1> et redémarrez l'API."
+                            components={[<strong key="n" />, <code key="c" className="bg-amber-100 px-1 rounded" />]} />
                     </p>
                 </div>
 
                 {/* Env var reference */}
                 <Card>
                     <CardContent className="p-4">
-                        <h3 className="font-bold text-slate-800 mb-3">Variables d&apos;environnement</h3>
+                        <h3 className="font-bold text-slate-800 mb-3">{t('admin:features.env_vars', 'Variables d\'environnement')}</h3>
                         <div className="bg-slate-900 rounded-lg p-4 text-sm font-mono text-slate-300 space-y-1">
                             {flags.map((/** @type {{ enabled: string | number, id: string | number, label: string | number }} */ flag) => (
                                 <div key={flag.id}>

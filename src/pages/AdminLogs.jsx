@@ -10,13 +10,14 @@ import {
     ScrollText, AlertCircle, RefreshCw,
     Info, AlertTriangle, XCircle, Bug,
 } from 'lucide-react';
+import { useT } from '@/i18n';
 
-const LEVEL_OPTIONS = [
-    { value: '', label: 'Tous les niveaux' },
-    { value: 'error', label: 'Erreurs', color: 'text-red-600' },
-    { value: 'warn', label: 'Warnings', color: 'text-amber-600' },
-    { value: 'info', label: 'Info', color: 'text-blue-600' },
-    { value: 'debug', label: 'Debug', color: 'text-slate-500' },
+const levelOptions = (t) => [
+    { value: '', label: t('admin:logs.level_all', 'Tous les niveaux') },
+    { value: 'error', label: t('admin:logs.level_error', 'Erreurs'), color: 'text-red-600' },
+    { value: 'warn', label: t('admin:logs.level_warn', 'Warnings'), color: 'text-amber-600' },
+    { value: 'info', label: t('admin:logs.level_info', 'Info'), color: 'text-blue-600' },
+    { value: 'debug', label: t('admin:logs.level_debug', 'Debug'), color: 'text-slate-500' },
 ];
 
 const LEVEL_ICONS = {
@@ -40,6 +41,7 @@ const LEVEL_BADGE_CLASS = {
  * Filter by level (error, warn, info, debug).
  */
 export default function AdminLogs() {
+    const { t } = useT('admin');
     const [level, setLevel] = useState('');
     const [count] = useState(100);
 
@@ -55,18 +57,18 @@ export default function AdminLogs() {
     // the page keeps its title while it loads or fails (a heading for screen readers and the route checks; a rate-limited or failed request is not a blank page)
     if (isLoading) {
         return (
-            <div className="w-full p-4"><h1 className="text-2xl font-bold text-slate-900 mb-4">Logs Système</h1><SkeletonList count={5} variant="card" /></div>
+            <div className="w-full p-4"><h1 className="text-2xl font-bold text-slate-900 mb-4">{t('admin:logs.title', 'Logs Système')}</h1><SkeletonList count={5} variant="card" /></div>
         );
     }
 
     if (error) {
         return (
             <div className="p-6">
-                <h1 className="text-2xl font-bold text-slate-900 mb-4">Logs Système</h1>
+                <h1 className="text-2xl font-bold text-slate-900 mb-4">{t('admin:logs.title', 'Logs Système')}</h1>
                 <Card>
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-                        <p className="text-slate-600">{(error?.status ?? error?.response?.status) === 429 ? 'Trop de demandes en peu de temps : la page se rechargera d’elle-même dans une minute.' : 'Erreur de chargement des logs'}</p>
+                        <p className="text-slate-600">{(error?.status ?? error?.response?.status) === 429 ? t('admin:logs.error_429', 'Trop de demandes en peu de temps : la page se rechargera d’elle-même dans une minute.') : t('admin:logs.load_error', 'Erreur de chargement des logs')}</p>
                         <p className="text-sm text-slate-400 mt-1">{error.message}</p>
                     </CardContent>
                 </Card>
@@ -86,10 +88,10 @@ export default function AdminLogs() {
                     <div className="flex justify-between items-center">
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 mb-1">
-                                Logs Système
+                                {t('admin:logs.title', 'Logs Système')}
                             </h1>
                             <p className="text-slate-500 text-sm">
-                                {logs.length} entrée{logs.length > 1 ? 's' : ''} — rafraîchissement auto 15s
+                                {t('admin:logs.entries', { count: logs.length, n: logs.length, defaultValue_one: '{{n}} entrée — rafraîchissement auto 15s', defaultValue_other: '{{n}} entrées — rafraîchissement auto 15s' })}
                             </p>
                         </div>
                         <Button
@@ -99,7 +101,7 @@ export default function AdminLogs() {
                             className="gap-2"
                         >
                             <RefreshCw className="h-4 w-4" />
-                            Actualiser
+                            {t('admin:logs.refresh', 'Actualiser')}
                         </Button>
                     </div>
                 </div>
@@ -108,7 +110,7 @@ export default function AdminLogs() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-4">
                 {/* Level Filter */}
                 <div className="flex flex-wrap gap-2">
-                    {LEVEL_OPTIONS.map((opt) => (
+                    {levelOptions(t).map((opt) => (
                         <Button
                             key={opt.value}
                             variant={level === opt.value ? 'default' : 'outline'}
@@ -127,11 +129,11 @@ export default function AdminLogs() {
                             <div className="p-8 text-center">
                                 <ScrollText className="h-10 w-10 text-slate-300 mx-auto mb-3" />
                                 {inner.stored === false ? (
-                                    <p className="text-slate-700" data-testid="admin-logs-not-collected">Les journaux centralisés ne sont pas collectés sur cet environnement (aucun stockage configuré) : la liste vide ne veut pas dire qu’il ne s’est rien passé.</p>
-                                ) : <p className="text-slate-500" data-testid="admin-logs-empty">Aucun log trouvé</p>}
+                                    <p className="text-slate-700" data-testid="admin-logs-not-collected">{t('admin:logs.not_collected', 'Les journaux centralisés ne sont pas collectés sur cet environnement (aucun stockage configuré) : la liste vide ne veut pas dire qu’il ne s’est rien passé.')}</p>
+                                ) : <p className="text-slate-500" data-testid="admin-logs-empty">{t('admin:logs.empty', 'Aucun log trouvé')}</p>}
                                 {level && (
                                     <p className="text-sm text-slate-400 mt-1">
-                                        Essayez un filtre différent
+                                        {t('admin:logs.try_filter', 'Essayez un filtre différent')}
                                     </p>
                                 )}
                             </div>
@@ -140,9 +142,9 @@ export default function AdminLogs() {
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="bg-slate-50 text-left">
-                                            <th className="px-4 py-3 font-semibold text-slate-600 w-10">Niv.</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600 w-44">Date</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600">Message</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 w-10">{t('admin:logs.col_level', 'Niv.')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 w-44">{t('admin:logs.col_date', 'Date')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600">{t('admin:logs.col_message', 'Message')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">

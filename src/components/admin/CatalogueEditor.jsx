@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import EntityHistory from '@/components/admin/EntityHistory';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import { explain } from '@/pages/admin/k5/helpers.js';
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
 
 /**
  * PKG-11 / A02 — administrator editor of one catalogue record through /api/admin/content (before: it wrote to read-only public endpoints and used field names
@@ -30,12 +32,13 @@ const fromForm = (fields, form) => Object.fromEntries(fields.map((f) => [f.name,
 
 /** Repeated groups (steps, links): one fieldset, each item named by its position, add / remove buttons. */
 function RepeatedField({ f, items, onChange }) {
-  const parts = f.type === 'steps' ? [['titre', 'Titre de l’étape', 'input'], ['texte', 'Texte de l’étape', 'textarea']] : [['nom', 'Nom du lien', 'input'], ['url', 'Adresse (https://…)', 'input']];
+  const { t } = useT('admin');
+  const parts = f.type === 'steps' ? [['titre', t('admin:catalogue_editor.step_title', 'Titre de l’étape'), 'input'], ['texte', t('admin:catalogue_editor.step_text', 'Texte de l’étape'), 'textarea']] : [['nom', t('admin:catalogue_editor.link_name', 'Nom du lien'), 'input'], ['url', t('admin:catalogue_editor.link_url', 'Adresse (https://…)'), 'input']];
   const set = (i, key, value) => onChange(items.map((x, j) => (j === i ? { ...x, [key]: value } : x)));
   return (
     <fieldset className="space-y-3 rounded border border-slate-300 p-3" data-testid={`admin-editor-${f.name}`}>
       <legend className="px-1 text-sm font-medium text-slate-900">{f.label}</legend>
-      {items.length === 0 ? <p className="text-sm text-slate-700">Aucun élément.</p> : null}
+      {items.length === 0 ? <p className="text-sm text-slate-700">{t('admin:catalogue_editor.no_item', 'Aucun élément.')}</p> : null}
       {items.map((x, i) => (
         <div key={i} className="space-y-2 rounded border border-slate-200 p-2" data-testid={`admin-editor-${f.name}-item`}>
           {parts.map(([key, label, kind]) => (
@@ -46,18 +49,19 @@ function RepeatedField({ f, items, onChange }) {
                 : <Input id={`f-${f.name}-${i}-${key}`} value={x[key] || ''} onChange={(e) => set(i, key, e.target.value)} />}
             </div>
           ))}
-          {x.image ? <p className="text-xs text-slate-700">Image conservée : {x.image}</p> : null}
-          <Button type="button" variant="outline" size="sm" className="min-h-11" onClick={() => onChange(items.filter((_, j) => j !== i))}>Retirer {f.type === 'steps' ? 'l’étape' : 'le lien'} {i + 1}</Button>
+          {x.image ? <p className="text-xs text-slate-700">{t('admin:catalogue_editor.image_kept', 'Image conservée : {{image}}', { image: x.image })}</p> : null}
+          <Button type="button" variant="outline" size="sm" className="min-h-11" onClick={() => onChange(items.filter((_, j) => j !== i))}>{f.type === 'steps' ? t('admin:catalogue_editor.remove_step', 'Retirer l’étape {{n}}', { n: i + 1 }) : t('admin:catalogue_editor.remove_link', 'Retirer le lien {{n}}', { n: i + 1 })}</Button>
         </div>
       ))}
       <Button type="button" variant="outline" size="sm" className="min-h-11" onClick={() => onChange([...items, f.type === 'steps' ? { titre: '', texte: '' } : { nom: '', url: '' }])}>
-        {f.type === 'steps' ? 'Ajouter une étape' : 'Ajouter un lien'}
+        {f.type === 'steps' ? t('admin:catalogue_editor.add_step', 'Ajouter une étape') : t('admin:catalogue_editor.add_link', 'Ajouter un lien')}
       </Button>
     </fieldset>
   );
 }
 
 export default function CatalogueEditor({ kind, title, fields, listPath }) {
+  const { t } = useT('admin');
   const { id: routeId } = useParams(); const id = routeId && routeId !== 'new' ? routeId : null;
   const navigate = useNavigate();
   const [form, setForm] = useState(() => toForm(fields, null)); const [loaded, setLoaded] = useState(!id); const [meta, setMeta] = useState(null);
@@ -77,30 +81,30 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
       if (id) {
         // owner LAB audit: the save carries the version loaded; a record changed by someone else in between is refused (409) instead of being overwritten
         const r = await apiClient.admin.content.update(kind, id, { ...body, ...(meta?.editVersion ? { expectedVersion: meta.editVersion } : {}) });
-        setMsg(r.heldForReverification ? 'Enregistré. La fiche était vérifiée : elle est mise en attente de revérification.' : (r.changed || []).length ? 'Enregistré.' : 'Aucun changement.');
+        setMsg(r.heldForReverification ? t('admin:catalogue_editor.saved_held', 'Enregistré. La fiche était vérifiée : elle est mise en attente de revérification.') : (r.changed || []).length ? t('admin:catalogue_editor.saved', 'Enregistré.') : t('admin:catalogue_editor.no_change', 'Aucun changement.'));
         setSaves((n) => n + 1); setAttempt((n) => n + 1);   // reload: the next save is bound to the new version
       } else {
         const r = await apiClient.admin.content.create(kind, body);
-        navigate(`${listPath}/${r.item.id}`, { replace: true }); setMsg('Brouillon créé.');
+        navigate(`${listPath}/${r.item.id}`, { replace: true }); setMsg(t('admin:catalogue_editor.draft_created', 'Brouillon créé.'));
       }
     } catch (err) { setProblem(explain(err)); } finally { setBusy(false); }
   };
-  if (!loaded) return <p role="status" className="p-6">Chargement…</p>;
+  if (!loaded) return <p role="status" className="p-6">{t('admin:catalogue_editor.loading', 'Chargement…')}</p>;
   if (id && loadFailure) {
     return (
       <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6" data-testid={`admin-editor-${kind}-unavailable`}>
-        <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">Retour à la liste</Link>
-        <h1 className="text-2xl font-bold text-slate-900">{loadFailure === 'missing' ? 'Fiche introuvable' : 'Impossible de charger la fiche'}</h1>
-        <p role="alert" data-testid="admin-editor-problem" className="text-sm text-rose-800">{loadFailure === 'missing' ? 'Aucune fiche ne porte cet identifiant (elle a pu être supprimée ou l’adresse est incomplète).' : problem}</p>
-        {loadFailure === 'error' ? <Button type="button" variant="outline" className="min-h-11" onClick={() => { setLoaded(false); setAttempt((n) => n + 1); }}>Réessayer</Button> : null}
+        <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">{t('admin:catalogue_editor.back', 'Retour à la liste')}</Link>
+        <h1 className="text-2xl font-bold text-slate-900">{loadFailure === 'missing' ? t('admin:catalogue_editor.not_found', 'Fiche introuvable') : t('admin:catalogue_editor.load_failed', 'Impossible de charger la fiche')}</h1>
+        <p role="alert" data-testid="admin-editor-problem" className="text-sm text-rose-800">{loadFailure === 'missing' ? t('admin:catalogue_editor.not_found_detail', 'Aucune fiche ne porte cet identifiant (elle a pu être supprimée ou l’adresse est incomplète).') : problem}</p>
+        {loadFailure === 'error' ? <Button type="button" variant="outline" className="min-h-11" onClick={() => { setLoaded(false); setAttempt((n) => n + 1); }}>{t('admin:catalogue_editor.retry', 'Réessayer')}</Button> : null}
       </div>
     );
   }
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6" data-testid={`admin-editor-${kind}`}>
-      <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">Retour à la liste</Link>
-      <h1 className="text-2xl font-bold text-slate-900">{id ? `Modifier : ${meta?.titre || meta?.nom || ''}` : `Nouvelle fiche — ${title}`}</h1>
-      {meta ? <p className="text-sm text-slate-700" data-testid="admin-editor-meta">Statut : {meta.statut}{meta.verifiable ? ` — ${meta.publication_hold ? 'en attente de revérification' : meta.verification_status === 'VERIFIED' ? 'vérifiée' : 'non vérifiée'}` : ' — contenu éditorial (sans registre de vérification)'}</p> : null}
+      <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">{t('admin:catalogue_editor.back', 'Retour à la liste')}</Link>
+      <h1 className="text-2xl font-bold text-slate-900">{id ? t('admin:catalogue_editor.edit_title', 'Modifier : {{name}}', { name: meta?.titre || meta?.nom || '' }) : t('admin:catalogue_editor.new_title', 'Nouvelle fiche — {{kind}}', { kind: title })}</h1>
+      {meta ? <p className="text-sm text-slate-700" data-testid="admin-editor-meta">{t('admin:catalogue_editor.status', 'Statut : {{status}}', { status: meta.statut })}{meta.verifiable ? ` — ${meta.publication_hold ? t('admin:catalogue_editor.meta.hold', 'en attente de revérification') : meta.verification_status === 'VERIFIED' ? t('admin:catalogue_editor.meta.verified', 'vérifiée') : t('admin:catalogue_editor.meta.not_verified', 'non vérifiée')}` : t('admin:catalogue_editor.meta.editorial', ' — contenu éditorial (sans registre de vérification)')}</p> : null}
       <form onSubmit={save} className="space-y-4">
         {fields.map((f) => (
           <div key={f.name} className="space-y-1">
@@ -110,7 +114,7 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
               <RepeatedField f={f} items={form[f.name]} onChange={(items) => setForm({ ...form, [f.name]: items })} />
             ) : (
               <>
-                <label htmlFor={`f-${f.name}`} className="block text-sm font-medium text-slate-900">{f.label}{f.required ? ' *' : ''}{f.type === 'list' ? ' (une valeur par ligne)' : ''}</label>
+                <label htmlFor={`f-${f.name}`} className="block text-sm font-medium text-slate-900">{f.label}{f.required ? ' *' : ''}{f.type === 'list' ? t('admin:catalogue_editor.one_per_line', ' (une valeur par ligne)') : ''}</label>
                 {f.type === 'select'
                   ? <select id={`f-${f.name}`} className="min-h-11 w-full rounded border border-slate-400 bg-white p-2" value={form[f.name]} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
                     <option value="">—</option>{[...new Set([...(f.options || []), form[f.name]].filter(Boolean))].map((o) => <option key={o} value={o}>{o}</option>)}
@@ -122,16 +126,16 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
             )}
           </div>
         ))}
-        <Button type="submit" disabled={busy} className="min-h-11">{id ? 'Enregistrer' : 'Créer le brouillon'}</Button>
+        <Button type="submit" disabled={busy} className="min-h-11">{id ? t('admin:catalogue_editor.save', 'Enregistrer') : t('admin:catalogue_editor.create_draft', 'Créer le brouillon')}</Button>
       </form>
       <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{msg}</p>
       {problem ? <p role="alert" data-testid="admin-editor-problem" className="text-sm text-rose-800">{problem}</p> : null}
-      {id && ['aide', 'demarche', 'structure'].includes(kind) ? <p className="text-sm text-slate-700">Les textes faciles à lire se relisent et se signent dans <Link className="text-blue-800 underline" to={`/admin/falc?type=${kind}&id=${encodeURIComponent(id)}`}>Textes faciles à lire</Link>.</p> : null}
+      {id && ['aide', 'demarche', 'structure'].includes(kind) ? <p className="text-sm text-slate-700"><Trans i18n={i18n} i18nKey="admin:catalogue_editor.falc_hint" defaults="Les textes faciles à lire se relisent et se signent dans <0>Textes faciles à lire</0>." components={[<Link key="falc" className="text-blue-800 underline" to={`/admin/falc?type=${kind}&id=${encodeURIComponent(id)}`} />]} /></p> : null}
       {id && meta?.verifiable && ['aide', 'demarche', 'structure', 'dispositif'].includes(kind) ? (
         // owner LAB audit: any record can be verified (the WS2 page covers only the 49 launch records), with the same version-bound form
         <details className="rounded border p-3" data-testid="admin-editor-verification" onToggle={(e) => setVerifyOpen(e.currentTarget.open)}>
-          <summary className="cursor-pointer font-semibold text-blue-800">Vérification par une personne (en plus de la vérification automatique D-5 v2)</summary>
-          <p className="mt-1 text-sm text-slate-700">Enregistrez d’abord vos modifications : la vérification porte sur le contenu enregistré, lu ici en entier.</p>
+          <summary className="cursor-pointer font-semibold text-blue-800">{t('admin:catalogue_editor.human_verification', 'Vérification par une personne (en plus de la vérification automatique D-5 v2)')}</summary>
+          <p className="mt-1 text-sm text-slate-700">{t('admin:catalogue_editor.save_first', 'Enregistrez d’abord vos modifications : la vérification porte sur le contenu enregistré, lu ici en entier.')}</p>
           {verifyOpen ? <VerificationPanel key={saves} entityType={kind} entityId={id} testIdPrefix="admin-editor" onDone={(m) => { setProblem(''); setMsg(m); setSaves((n) => n + 1); setAttempt((n) => n + 1); }} onProblem={setProblem} /> : null}
         </details>
       ) : null}

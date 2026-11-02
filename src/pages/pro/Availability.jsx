@@ -8,26 +8,30 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { proRdvClient } from '@/api/pro-rdv-client';
 import { findInvalidRange } from '@/lib/availabilityRanges';
+import i18n, { useT } from '@/i18n';
+import { Trans } from 'react-i18next';
 
-const DAYS = [
-  { key: 'mon', label: 'Lundi' },
-  { key: 'tue', label: 'Mardi' },
-  { key: 'wed', label: 'Mercredi' },
-  { key: 'thu', label: 'Jeudi' },
-  { key: 'fri', label: 'Vendredi' },
-  { key: 'sat', label: 'Samedi' },
-  { key: 'sun', label: 'Dimanche' },
+const daysOf = (t) => [
+  { key: 'mon', label: t('pro:availability.day_mon', 'Lundi') },
+  { key: 'tue', label: t('pro:availability.day_tue', 'Mardi') },
+  { key: 'wed', label: t('pro:availability.day_wed', 'Mercredi') },
+  { key: 'thu', label: t('pro:availability.day_thu', 'Jeudi') },
+  { key: 'fri', label: t('pro:availability.day_fri', 'Vendredi') },
+  { key: 'sat', label: t('pro:availability.day_sat', 'Samedi') },
+  { key: 'sun', label: t('pro:availability.day_sun', 'Dimanche') },
 ];
 
 /** The message the professional should read: the server's own sentence when it sent one, a neutral one otherwise. */
-function messageOf(err, fallback) {
+function messageOf(t, err, fallback) {
   const fromServer = err && err.payload && typeof err.payload.error === 'string' ? err.payload.error : '';
-  if (err && err.status === 401) return 'Votre session a expiré. Reconnectez-vous puis réessayez.';
-  if (err && err.status === 429) return 'Trop de demandes. Patientez un instant puis réessayez.';
+  if (err && err.status === 401) return t('pro:availability.session_expired', 'Votre session a expiré. Reconnectez-vous puis réessayez.');
+  if (err && err.status === 429) return t('pro:availability.too_many', 'Trop de demandes. Patientez un instant puis réessayez.');
   return fromServer && err.status && err.status < 500 ? fromServer : fallback;
 }
 
 export default function ProAvailability() {
+  const { t } = useT('pro');
+  const DAYS = daysOf(t);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -50,7 +54,7 @@ export default function ProAvailability() {
       })
       .catch((err) => {
         if (!mounted) return;
-        setLoadError(messageOf(err, 'Impossible de charger les disponibilités.'));
+        setLoadError(messageOf(t, err, t('pro:availability.load_failed', 'Impossible de charger les disponibilités.')));
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -58,7 +62,7 @@ export default function ProAvailability() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
 
   useEffect(() => load(), [load]);
 
@@ -120,7 +124,7 @@ export default function ProAvailability() {
       if (response?.slots_json && typeof response.slots_json === 'object') setSlots(response.slots_json);
       setSaved(true);
     } catch (err) {
-      setError(messageOf(err, "Impossible d'enregistrer les disponibilités."));
+      setError(messageOf(t, err, t('pro:availability.save_failed', 'Impossible d\'enregistrer les disponibilités.')));
     } finally {
       setSaving(false);
     }
@@ -133,9 +137,9 @@ export default function ProAvailability() {
   if (loadError) {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-900">Disponibilités</h2>
+        <h2 className="text-xl font-bold text-slate-900">{t('pro:availability.title', 'Disponibilités')}</h2>
         <div role="alert" data-testid="availability-load-error" className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{loadError}</div>
-        <Button type="button" onClick={load} data-testid="availability-retry">Réessayer</Button>
+        <Button type="button" onClick={load} data-testid="availability-retry">{t('pro:availability.retry', 'Réessayer')}</Button>
       </div>
     );
   }
@@ -143,27 +147,27 @@ export default function ProAvailability() {
   return (
     <div className="space-y-6" data-testid="availability-screen">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-bold text-slate-900">Disponibilités</h2>
+        <h2 className="text-xl font-bold text-slate-900">{t('pro:availability.title', 'Disponibilités')}</h2>
         {canEdit ? (
           <Button onClick={handleSave} disabled={saving} data-testid="availability-save">
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Enregistrer
+            {t('pro:availability.save', 'Enregistrer')}
           </Button>
         ) : null}
       </div>
 
       {canEdit ? null : (
         <p className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800" data-testid="availability-readonly">
-          Horaires d’ouverture de la structure, en lecture seule : seuls l’administrateur ou un membre qu’il a désigné pour gérer le planning peuvent les modifier. Vous pouvez déclarer vos propres absences dans l’onglet Absences.
+          {t('pro:availability.readonly', 'Horaires d’ouverture de la structure, en lecture seule : seuls l’administrateur ou un membre qu’il a désigné pour gérer le planning peuvent les modifier. Vous pouvez déclarer vos propres absences dans l’onglet Absences.')}
         </p>
       )}
 
       <p className="text-sm text-slate-600">
-        Format attendu : <code>HH:MM-HH:MM</code> (par exemple <code>09:00-12:00</code>). Les fermetures de la structure (onglet Absences) bloquent les créneaux ; l’absence d’un seul membre ne ferme pas la structure.
+        <Trans i18n={i18n} i18nKey="pro:availability.format_hint" defaults="Format attendu : <0>HH:MM-HH:MM</0> (par exemple <1>09:00-12:00</1>). Les fermetures de la structure (onglet Absences) bloquent les créneaux ; l’absence d’un seul membre ne ferme pas la structure." components={[<code key="0" />, <code key="1" />]} />
       </p>
 
       <div aria-live="polite" role="status" data-testid="availability-status">
-        {saved ? <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">Disponibilités enregistrées.</p> : null}
+        {saved ? <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">{t('pro:availability.saved', 'Disponibilités enregistrées.')}</p> : null}
       </div>
 
       {error ? (
@@ -184,23 +188,23 @@ export default function ProAvailability() {
                       readOnly={!canEdit}
                       onChange={(event) => updateSlot(day.key, idx, event.target.value)}
                       className="max-w-[200px]"
-                      aria-label={`${day.label}, plage ${idx + 1} (HH:MM-HH:MM)`}
+                      aria-label={t('pro:availability.slot_label', '{{day}}, plage {{n}} (HH:MM-HH:MM)', { day: day.label, n: idx + 1 })}
                       inputMode="numeric"
                       autoComplete="off"
                     />
-                    {canEdit ? <Button type="button" variant="ghost" size="icon" onClick={() => removeSlot(day.key, idx)} aria-label={`Supprimer la plage ${idx + 1} du ${day.label.toLowerCase()}`}>
+                    {canEdit ? <Button type="button" variant="ghost" size="icon" onClick={() => removeSlot(day.key, idx)} aria-label={t('pro:availability.slot_remove', 'Supprimer la plage {{n}} du {{day}}', { n: idx + 1, day: day.label.toLowerCase() })}>
                       <Trash2 className="h-4 w-4 text-slate-600" aria-hidden="true" />
                     </Button> : null}
                   </div>
                 ))}
                 {(!slots[day.key] || slots[day.key].length === 0) && (
-                  <p className="text-sm italic text-slate-600">Fermé</p>
+                  <p className="text-sm italic text-slate-600">{t('pro:availability.closed', 'Fermé')}</p>
                 )}
               </div>
               {canEdit ? (
-                <Button type="button" variant="outline" size="sm" onClick={() => addSlot(day.key)} aria-label={`Ajouter une plage le ${day.label.toLowerCase()}`}>
+                <Button type="button" variant="outline" size="sm" onClick={() => addSlot(day.key)} aria-label={t('pro:availability.slot_add', 'Ajouter une plage le {{day}}', { day: day.label.toLowerCase() })}>
                   <Plus className="mr-1 h-4 w-4" aria-hidden="true" />
-                  Ajouter
+                  {t('pro:availability.add', 'Ajouter')}
                 </Button>
               ) : null}
             </CardContent>

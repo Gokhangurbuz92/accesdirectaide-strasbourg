@@ -1,14 +1,15 @@
 // @ts-nocheck
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/api/client';
+import i18n from '@/i18n';
 
 /** PKG-5 batch 2 — shared state for the K5 administrator pages: load a resource, run an action, show the outcome in French (never a raw status code). */
 export function explain(e) {
-  if (e?.status === 401) return 'Session expirée : reconnectez-vous.';
+  if (e?.status === 401) return i18n.t('admin:k5.helpers.session_expired', 'Session expirée : reconnectez-vous.');
   const p = e?.payload || {};
-  if (p.error === 'ELEVATION_REQUIRED') return 'Opération de plateforme : demandez d’abord une élévation temporaire (page Opérations).';
-  if (e?.status === 403 && !p.message) return 'Refusé : cette action demande une session administrateur nominative avec MFA.';
-  return p.message || p.error || 'Action impossible.';
+  if (p.error === 'ELEVATION_REQUIRED') return i18n.t('admin:k5.helpers.elevation_required', 'Opération de plateforme : demandez d’abord une élévation temporaire (page Opérations).');
+  if (e?.status === 403 && !p.message) return i18n.t('admin:k5.helpers.refused_mfa', 'Refusé : cette action demande une session administrateur nominative avec MFA.');
+  return p.message || p.error || i18n.t('admin:k5.helpers.action_impossible', 'Action impossible.');
 }
 
 export function useK5(path) {

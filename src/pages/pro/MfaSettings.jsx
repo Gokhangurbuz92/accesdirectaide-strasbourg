@@ -22,7 +22,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { MFA_ERROR } from '@/lib/proLabels.js';
+import { useT } from '@/i18n';
 /**
  * MfaSettings — TOTP setup / disable page
  *
@@ -40,6 +40,14 @@ function getAuthHeaders() {
 }
 
 export default function MfaSettings() {
+    const { t } = useT('pro');
+    // the server error codes, in the interface language (unknown codes stay as sent)
+    const mfaError = (c) => ({
+        MFA_ALREADY_ENABLED: t('pro:mfa.error.already_enabled', 'La double authentification est déjà activée sur votre compte.'),
+        MFA_NOT_ENABLED: t('pro:mfa.error.not_enabled', 'La double authentification n’est pas activée.'),
+        INVALID_CODE: t('pro:mfa.error.invalid_code', 'Code incorrect ou expiré.'),
+        MFA_UNAVAILABLE: t('pro:mfa.error.unavailable', 'La double authentification est momentanément indisponible.'),
+    })[c];
     const mfaRequired = useLocation().state?.mfaRequired === true;   // R34: sent here because ADA Pro requires the second factor
     const [step, setStep] = useState(0); // 0 = loading, 1 = intro, 2 = secret, 3 = verify, 4 = success
     const [secret, setSecret] = useState('');
@@ -75,7 +83,7 @@ export default function MfaSettings() {
         try {
             const res = await fetch('/api/pro/mfa-setup', { headers: getAuthHeaders() });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message || MFA_ERROR[data.error] || data.error || 'Erreur serveur');
+            if (!res.ok) throw new Error(data.message || mfaError(data.error) || data.error || t('pro:mfa.error.server', 'Erreur serveur'));
             setSecret(data.secret);
             setOtpauthUrl(data.otpauthUrl);
             setStep(2);
@@ -84,7 +92,7 @@ export default function MfaSettings() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
     const verifyAndEnable = useCallback(async () => {
         setLoading(true);
@@ -96,7 +104,7 @@ export default function MfaSettings() {
                 body: JSON.stringify({ code }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message || MFA_ERROR[data.error] || data.error || 'Code incorrect');
+            if (!res.ok) throw new Error(data.message || mfaError(data.error) || data.error || t('pro:mfa.error.code', 'Code incorrect'));
             // R34: the server hands a session that passed the second factor: the dossiers open without signing in again
             if (data.token) localStorage.setItem('pro_token', data.token);
             setMfaEnabled(true);
@@ -106,7 +114,7 @@ export default function MfaSettings() {
         } finally {
             setLoading(false);
         }
-    }, [code]);
+    }, [code]);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
     const disableMfa = useCallback(async () => {
         setLoading(true);
@@ -118,7 +126,7 @@ export default function MfaSettings() {
                 body: JSON.stringify({ code }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Erreur');
+            if (!res.ok) throw new Error(data.error || t('pro:mfa.error.generic', 'Erreur'));
             setMfaEnabled(false);
             setCode('');
             setStep(1);
@@ -127,7 +135,7 @@ export default function MfaSettings() {
         } finally {
             setLoading(false);
         }
-    }, [code]);
+    }, [code]);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
     const copySecret = useCallback(() => {
         navigator.clipboard?.writeText(secret);
@@ -143,7 +151,7 @@ export default function MfaSettings() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <SEO title="Double Authentification — AccesDirectAide" noindex />
+            <SEO title={t('pro:mfa.seo_title', 'Double Authentification — AccesDirectAide')} noindex />
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
                     <div className="mx-auto mb-3 p-3 bg-teal-50 rounded-xl w-fit">
@@ -153,17 +161,17 @@ export default function MfaSettings() {
                             <ShieldCheck className="text-teal-600" size={28} />
                         )}
                     </div>
-                    <CardTitle as="h1">Double Authentification</CardTitle>
+                    <CardTitle as="h1">{t('pro:mfa.title', 'Double Authentification')}</CardTitle>
                     <CardDescription>
                         {step === 4
-                            ? 'MFA activé avec succès'
+                            ? t('pro:mfa.subtitle.success', 'MFA activé avec succès')
                             : mfaEnabled
-                                ? 'MFA est actuellement actif sur votre compte'
-                                : 'Protégez votre compte avec un code temporaire'}
+                                ? t('pro:mfa.subtitle.active', 'MFA est actuellement actif sur votre compte')
+                                : t('pro:mfa.subtitle.intro', 'Protégez votre compte avec un code temporaire')}
                     </CardDescription>
                     {mfaRequired && step !== 4 && (
                         <p role="status" data-testid="mfa-required-notice" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-left text-sm text-amber-900">
-                            La double authentification est obligatoire pour accéder aux dossiers et aux messages d’ADA Pro. Activez-la pour continuer.
+                            {t('pro:mfa.required_notice', 'La double authentification est obligatoire pour accéder aux dossiers et aux messages d’ADA Pro. Activez-la pour continuer.')}
                         </p>
                     )}
                 </CardHeader>
@@ -182,16 +190,16 @@ export default function MfaSettings() {
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-lg text-sm text-slate-600">
                                     <Smartphone className="text-teal-600 shrink-0" size={16} />
-                                    Google Authenticator, Authy ou FreeOTP
+                                    {t('pro:mfa.apps', 'Google Authenticator, Authy ou FreeOTP')}
                                 </div>
                                 <div className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-lg text-sm text-slate-600">
                                     <Lock className="text-teal-600 shrink-0" size={16} />
-                                    Code unique toutes les 30 secondes
+                                    {t('pro:mfa.code_every_30s', 'Code unique toutes les 30 secondes')}
                                 </div>
                             </div>
                             <Button onClick={startSetup} disabled={loading} className="w-full">
                                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
-                                Configurer le MFA
+                                {t('pro:mfa.configure', 'Configurer le MFA')}
                             </Button>
                         </>
                     )}
@@ -202,11 +210,11 @@ export default function MfaSettings() {
                             <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100 text-center">
                                 <CheckCircle2 className="text-emerald-700 mx-auto mb-2" size={20} />
                                 <p className="text-sm font-medium text-emerald-800">
-                                    La double authentification est active.
+                                    {t('pro:mfa.is_active', 'La double authentification est active.')}
                                 </p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="disable-code">Pour désactiver, entrez votre code actuel</Label>
+                                <Label htmlFor="disable-code">{t('pro:mfa.disable_label', 'Pour désactiver, entrez votre code actuel')}</Label>
                                 <Input
                                     id="disable-code"
                                     type="text"
@@ -225,7 +233,7 @@ export default function MfaSettings() {
                                 className="w-full"
                             >
                                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldOff className="mr-2 h-4 w-4" />}
-                                Désactiver le MFA
+                                {t('pro:mfa.disable', 'Désactiver le MFA')}
                             </Button>
                         </>
                     )}
@@ -234,7 +242,7 @@ export default function MfaSettings() {
                     {step === 2 && (
                         <>
                             <p className="text-sm text-slate-600 text-center">
-                                Copiez ce secret dans votre application d&apos;authentification :
+                                {t('pro:mfa.copy_secret_intro', 'Copiez ce secret dans votre application d\'authentification :')}
                             </p>
                             <div className="relative">
                                 <code className="block w-full p-3 bg-slate-100 rounded-lg text-center font-mono text-sm tracking-wider break-all select-all">
@@ -244,25 +252,25 @@ export default function MfaSettings() {
                                     type="button"
                                     onClick={copySecret}
                                     className="absolute top-2 right-2 p-1.5 rounded-md bg-white border border-slate-200 text-slate-600 hover:text-slate-700"
-                                    title="Copier"
+                                    title={t('pro:mfa.copy', 'Copier')}
                                 >
                                     {copied ? <CheckCircle2 size={14} className="text-emerald-500" /> : <Copy size={14} />}
                                 </button>
                             </div>
                             <details className="text-xs text-slate-600">
-                                <summary className="cursor-pointer hover:text-slate-600">URL otpauth (avancé)</summary>
+                                <summary className="cursor-pointer hover:text-slate-600">{t('pro:mfa.otpauth_url', 'URL otpauth (avancé)')}</summary>
                                 <code className="block mt-1 p-2 bg-slate-50 rounded text-[10px] break-all">{otpauthUrl}</code>
                             </details>
                             <Button onClick={() => setStep(3)} className="w-full">
                                 <ArrowRight className="mr-2 h-4 w-4" />
-                                J&apos;ai ajouté le secret
+                                {t('pro:mfa.secret_added', 'J\'ai ajouté le secret')}
                             </Button>
                             <button
                                 type="button"
                                 onClick={() => setStep(1)}
                                 className="w-full text-sm text-slate-700 hover:text-slate-700 flex items-center justify-center gap-1"
                             >
-                                <ArrowLeft size={14} /> Annuler
+                                <ArrowLeft size={14} /> {t('pro:mfa.cancel', 'Annuler')}
                             </button>
                         </>
                     )}
@@ -271,10 +279,10 @@ export default function MfaSettings() {
                     {step === 3 && (
                         <>
                             <p className="text-sm text-slate-600 text-center">
-                                Entrez le code à 6 chiffres affiché dans votre application :
+                                {t('pro:mfa.enter_code_intro', 'Entrez le code à 6 chiffres affiché dans votre application :')}
                             </p>
                             <div className="space-y-2">
-                                <Label htmlFor="verify-code">Code de vérification</Label>
+                                <Label htmlFor="verify-code">{t('pro:mfa.verify_label', 'Code de vérification')}</Label>
                                 <Input
                                     id="verify-code"
                                     type="text"
@@ -289,14 +297,14 @@ export default function MfaSettings() {
                             </div>
                             <Button onClick={verifyAndEnable} disabled={loading || code.length !== 6} className="w-full">
                                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4" />}
-                                Activer le MFA
+                                {t('pro:mfa.enable', 'Activer le MFA')}
                             </Button>
                             <button
                                 type="button"
                                 onClick={() => { setStep(2); setCode(''); }}
                                 className="w-full text-sm text-slate-700 hover:text-slate-700 flex items-center justify-center gap-1"
                             >
-                                <ArrowLeft size={14} /> Revoir le secret
+                                <ArrowLeft size={14} /> {t('pro:mfa.review_secret', 'Revoir le secret')}
                             </button>
                         </>
                     )}
@@ -306,11 +314,11 @@ export default function MfaSettings() {
                         <>
                             <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100 text-center">
                                 <p className="text-sm font-medium text-emerald-800">
-                                    Votre compte est protégé par la double authentification.
+                                    {t('pro:mfa.protected', 'Votre compte est protégé par la double authentification.')}
                                 </p>
                             </div>
                             <a href="/pro/dashboard">
-                                <Button className="w-full">Retour au tableau de bord</Button>
+                                <Button className="w-full">{t('pro:mfa.back_dashboard', 'Retour au tableau de bord')}</Button>
                             </a>
                         </>
                     )}

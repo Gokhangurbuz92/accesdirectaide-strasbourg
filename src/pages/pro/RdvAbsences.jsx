@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { proRdvClient } from '@/api/pro-rdv-client';
+import { formatDate, useT } from '@/i18n';
 
 function toDateTimeLocalValue(raw) {
   if (!raw) return '';
@@ -30,14 +31,16 @@ function formatDateTime(raw) {
   if (!raw) return '-';
   const date = new Date(String(raw));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
+  // in the interface language (French: unchanged), Paris time
+  return formatDate(date, {
     dateStyle: 'short',
     timeStyle: 'short',
     timeZone: 'Europe/Paris',
-  });
+  }) || '-';
 }
 
 export default function ProRdvAbsences() {
+  const { t } = useT('pro');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [items, setItems] = useState([]);
@@ -63,11 +66,11 @@ export default function ProRdvAbsences() {
       setCanManageOthers(response?.canManageOthers === true);
       setMembers(Array.isArray(response?.members) ? response.members : []);
     } catch {
-      setError('Impossible de charger les absences.');
+      setError(t('pro:rdv_absences.load_error', 'Impossible de charger les absences.'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
   useEffect(() => {
     loadItems();
@@ -86,7 +89,7 @@ export default function ProRdvAbsences() {
     // R7: an empty or inverted range is said as such before any request (it read « Impossible de sauvegarder » because the conversion threw without a status)
     const startMs = Date.parse(form.startAt); const endMs = Date.parse(form.endAt);
     if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
-      setError('Intervalle invalide : la fin doit être après le début.'); setSaving(false); return;
+      setError(t('pro:rdv_absences.range_inverted', 'Intervalle invalide : la fin doit être après le début.')); setSaving(false); return;
     }
     const payload = {
       startAt: toIsoFromDateTimeLocal(form.startAt),
@@ -109,9 +112,9 @@ export default function ProRdvAbsences() {
       await loadItems();
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
-      setError(status === 400 ? 'Intervalle invalide.'
-        : status === 403 ? 'Seuls l’administrateur ou un membre désigné pour gérer le planning peuvent fermer la structure ou modifier l’absence d’un collègue.'
-        : 'Impossible de sauvegarder l\'absence.');
+      setError(status === 400 ? t('pro:rdv_absences.range_invalid', 'Intervalle invalide.')
+        : status === 403 ? t('pro:rdv_absences.forbidden', 'Seuls l’administrateur ou un membre désigné pour gérer le planning peuvent fermer la structure ou modifier l’absence d’un collègue.')
+        : t('pro:rdv_absences.save_error', 'Impossible de sauvegarder l\'absence.'));
     } finally {
       setSaving(false);
     }
@@ -127,13 +130,13 @@ export default function ProRdvAbsences() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer cette absence ?')) return;
+    if (!window.confirm(t('pro:rdv_absences.confirm_delete', 'Supprimer cette absence ?'))) return;
     setError('');
     try {
       await proRdvClient.timeoff.remove(id);
       await loadItems();
     } catch {
-      setError('Impossible de supprimer cette absence.');
+      setError(t('pro:rdv_absences.delete_error', 'Impossible de supprimer cette absence.'));
     }
   };
 
@@ -141,27 +144,27 @@ export default function ProRdvAbsences() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? 'Modifier une absence' : 'Ajouter une absence'}</CardTitle>
+          <CardTitle>{editingId ? t('pro:rdv_absences.edit_title', 'Modifier une absence') : t('pro:rdv_absences.add_title', 'Ajouter une absence')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="mb-4 text-sm text-slate-600" data-testid="pro-timeoff-scope-help">
             {canManageOthers
-              ? 'Vous gérez le planning de la structure : une fermeture de la structure retire les créneaux proposés au public ; l’absence d’un membre ne ferme pas la structure.'
-              : 'Vous déclarez ici votre propre absence. Seuls l’administrateur ou un membre désigné ferment la structure ou modifient l’absence d’un collègue.'}
+              ? t('pro:rdv_absences.help_manager', 'Vous gérez le planning de la structure : une fermeture de la structure retire les créneaux proposés au public ; l’absence d’un membre ne ferme pas la structure.')
+              : t('pro:rdv_absences.help_member', 'Vous déclarez ici votre propre absence. Seuls l’administrateur ou un membre désigné ferment la structure ou modifient l’absence d’un collègue.')}
           </p>
           <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
             {canManageOthers && !editingId ? (
               <div className="space-y-1 md:col-span-2">
-                <Label htmlFor="timeoff-target">Concerne</Label>
+                <Label htmlFor="timeoff-target">{t('pro:rdv_absences.target', 'Concerne')}</Label>
                 <select id="timeoff-target" data-testid="pro-timeoff-target" className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm" value={target} onChange={(event) => setTarget(event.target.value)}>
-                  <option value="structure">Toute la structure (fermeture : plus de créneaux en ligne)</option>
-                  <option value="self">Moi-même</option>
+                  <option value="structure">{t('pro:rdv_absences.target_structure', 'Toute la structure (fermeture : plus de créneaux en ligne)')}</option>
+                  <option value="self">{t('pro:rdv_absences.target_self', 'Moi-même')}</option>
                   {members.map((m) => <option key={m.id} value={m.id}>{m.email}</option>)}
                 </select>
               </div>
             ) : null}
             <label className="space-y-1">
-              <span className="text-sm font-medium text-slate-700">Début</span>
+              <span className="text-sm font-medium text-slate-700">{t('pro:rdv_absences.start', 'Début')}</span>
               <Input
                 type="datetime-local"
                 value={form.startAt}
@@ -170,7 +173,7 @@ export default function ProRdvAbsences() {
             </label>
 
             <label className="space-y-1">
-              <span className="text-sm font-medium text-slate-700">Fin</span>
+              <span className="text-sm font-medium text-slate-700">{t('pro:rdv_absences.end', 'Fin')}</span>
               <Input
                 type="datetime-local"
                 value={form.endAt}
@@ -179,7 +182,7 @@ export default function ProRdvAbsences() {
             </label>
 
             <div className="space-y-1 md:col-span-2">
-              <Label htmlFor="timeoff-reason">Raison (optionnel)</Label>
+              <Label htmlFor="timeoff-reason">{t('pro:rdv_absences.reason', 'Raison (optionnel)')}</Label>
               <Input
                 id="timeoff-reason"
                 value={form.reason}
@@ -190,11 +193,11 @@ export default function ProRdvAbsences() {
             <div className="flex flex-wrap gap-2 md:col-span-2">
               <Button type="submit" disabled={saving}>
                 {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {editingId ? 'Mettre à jour' : 'Ajouter'}
+                {editingId ? t('pro:rdv_absences.update', 'Mettre à jour') : t('pro:rdv_absences.add', 'Ajouter')}
               </Button>
               {editingId ? (
                 <Button type="button" variant="outline" onClick={resetForm}>
-                  Annuler
+                  {t('pro:rdv_absences.cancel', 'Annuler')}
                 </Button>
               ) : null}
             </div>
@@ -203,8 +206,8 @@ export default function ProRdvAbsences() {
           {error ? <p className="mt-3 text-sm text-rose-700" role="alert" data-testid="pro-timeoff-error">{error}</p> : null}
           {overlap.length ? (
             <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" role="status" data-testid="pro-timeoff-overlap">
-              <p>{overlap.length} rendez-vous déjà pris pendant cette absence {overlap.length > 1 ? 'restent' : 'reste'} maintenu{overlap.length > 1 ? 's' : ''} : annulez-les ou déplacez-les depuis l’agenda (la personne sera prévenue).</p>
-              <ul className="mt-1 list-disc pl-5">{overlap.map((a) => <li key={a.id}>{new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', dateStyle: 'full', timeStyle: 'short' }).format(new Date(a.startAt))}</li>)}</ul>
+              <p>{t('pro:rdv_absences.overlap', { count: overlap.length, defaultValue_one: '{{count}} rendez-vous déjà pris pendant cette absence reste maintenu : annulez-les ou déplacez-les depuis l’agenda (la personne sera prévenue).', defaultValue_other: '{{count}} rendez-vous déjà pris pendant cette absence restent maintenus : annulez-les ou déplacez-les depuis l’agenda (la personne sera prévenue).' })}</p>
+              <ul className="mt-1 list-disc pl-5">{overlap.map((a) => <li key={a.id}>{formatDate(new Date(a.startAt), { timeZone: 'Europe/Paris', dateStyle: 'full', timeStyle: 'short' })}</li>)}</ul>
             </div>
           ) : null}
         </CardContent>
@@ -212,7 +215,7 @@ export default function ProRdvAbsences() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Absences configurées</CardTitle>
+          <CardTitle>{t('pro:rdv_absences.list_title', 'Absences configurées')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -221,10 +224,10 @@ export default function ProRdvAbsences() {
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <Pencil className="h-10 w-10 text-slate-300 mb-3" />
               <p className="text-sm font-medium text-slate-600">
-                Aucune absence configurée.
+                {t('pro:rdv_absences.empty', 'Aucune absence configurée.')}
               </p>
               <p className="text-xs text-slate-600 mt-1">
-                Utilisez le formulaire ci-dessus pour déclarer vos indisponibilités.
+                {t('pro:rdv_absences.empty_hint', 'Utilisez le formulaire ci-dessus pour déclarer vos indisponibilités.')}
               </p>
             </div>
           ) : (
@@ -235,19 +238,19 @@ export default function ProRdvAbsences() {
                     <p className="font-medium text-slate-900">
                       {formatDateTime(item.startAt)} - {formatDateTime(item.endAt)}
                     </p>
-                    <p className="text-slate-600">{item.reason || 'Sans raison précisée'}</p>
+                    <p className="text-slate-600">{item.reason || t('pro:rdv_absences.no_reason', 'Sans raison précisée')}</p>
                     <p className="text-xs text-slate-700" data-testid="pro-timeoff-owner">
-                      {item.scope === 'structure' ? 'Fermeture de toute la structure' : item.mine ? 'Mon absence' : `Absence de ${item.memberEmail || 'un membre'}`}
+                      {item.scope === 'structure' ? t('pro:rdv_absences.owner_structure', 'Fermeture de toute la structure') : item.mine ? t('pro:rdv_absences.owner_mine', 'Mon absence') : t('pro:rdv_absences.owner_member', 'Absence de {{who}}', { who: item.memberEmail || t('pro:rdv_absences.a_member', 'un membre') })}
                     </p>
                   </div>
                   {item.canEdit === false ? null : <div className="flex gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => startEdit(item)}>
                       <Pencil className="mr-1 h-4 w-4" />
-                      Modifier
+                      {t('pro:rdv_absences.edit', 'Modifier')}
                     </Button>
                     <Button type="button" variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
                       <Trash2 className="mr-1 h-4 w-4" />
-                      Supprimer
+                      {t('pro:rdv_absences.delete', 'Supprimer')}
                     </Button>
                   </div>}
                 </div>

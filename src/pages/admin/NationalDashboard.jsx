@@ -14,6 +14,7 @@ import {
     AlertCircle,
     ChevronRight,
 } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * NationalDashboard
@@ -27,6 +28,7 @@ import {
  * - Hive review queue status (pending, approved, rejected)
  */
 export default function NationalDashboard() {
+    const { t } = useT('admin');
     const { data, isLoading, error } = useQuery({
         queryKey: ['admin-national-stats'],
         queryFn: () => client.get('/api/admin/national-stats').then(r => r.data?.data || r.data),   // PKG-11 audit pass 2: the API nests its payload under data (the page always showed « — »)
@@ -45,7 +47,7 @@ export default function NationalDashboard() {
                 <Card>
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-                        <p className="text-slate-600">Erreur de chargement des statistiques nationales</p>
+                        <p className="text-slate-600">{t('admin:national.load_error', 'Erreur de chargement des statistiques nationales')}</p>
                         <p className="text-sm text-slate-600 mt-1">{error.message}</p>
                     </CardContent>
                 </Card>
@@ -67,14 +69,14 @@ export default function NationalDashboard() {
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 mb-1 flex items-center gap-2">
                                 <Globe className="h-6 w-6 text-teal-600" />
-                                Pilotage National
+                                {t('admin:national.title', 'Pilotage National')}
                             </h1>
                             <p className="text-slate-700 text-sm">
-                                Supervision territoriale — données actualisées chaque minute
+                                {t('admin:national.subtitle', 'Supervision territoriale — données actualisées chaque minute')}
                             </p>
                         </div>
                         <Badge className="bg-slate-100 text-slate-700 border-0 gap-1" data-testid="national-timestamp">
-                            {data?.timestamp ? `Données du ${new Date(data.timestamp).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}` : 'Données en attente'}
+                            {data?.timestamp ? t('admin:national.data_of', 'Données du {{date}}', { date: new Date(data.timestamp).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }) }) : t('admin:national.data_pending', 'Données en attente')}
                         </Badge>
                     </div>
                 </div>
@@ -83,10 +85,10 @@ export default function NationalDashboard() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard icon={<Database className="text-blue-600" />} label="Aides indexées" value={summary.totalAids} />
-                    <StatCard icon={<Map className="text-indigo-600" />} label="Structures actives" value={summary.activeStructures} />
-                    <StatCard icon={<TrendingUp className="text-amber-800" />} label="Diagnostics partagés" value={summary.sharedDiagnostics} />
-                    <StatCard icon={<Users className="text-teal-600" />} label="Agents Pro actifs" value={summary.activeAgents} />
+                    <StatCard icon={<Database className="text-blue-600" />} label={t('admin:national.stat.aids', 'Aides indexées')} value={summary.totalAids} />
+                    <StatCard icon={<Map className="text-indigo-600" />} label={t('admin:national.stat.structures', 'Structures actives')} value={summary.activeStructures} />
+                    <StatCard icon={<TrendingUp className="text-amber-800" />} label={t('admin:national.stat.diagnostics', 'Diagnostics partagés')} value={summary.sharedDiagnostics} />
+                    <StatCard icon={<Users className="text-teal-600" />} label={t('admin:national.stat.agents', 'Agents Pro actifs')} value={summary.activeAgents} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -95,10 +97,10 @@ export default function NationalDashboard() {
                         <Card>
                             <CardContent className="p-6">
                                 <h3 className="font-bold text-slate-800 mb-4">
-                                    File de modération (Ruche IA)
+                                    {t('admin:national.hive_title', 'File de modération (Ruche IA)')}
                                 </h3>
                                 {hive.length === 0 ? (
-                                    <p className="text-sm text-slate-600">Aucun élément dans la file de modération</p>
+                                    <p className="text-sm text-slate-600">{t('admin:national.hive_empty', 'Aucun élément dans la file de modération')}</p>
                                 ) : (
                                     <div className="space-y-4">
                                         {hive.map(item => {
@@ -133,10 +135,10 @@ export default function NationalDashboard() {
                     <Card className="bg-slate-900 text-white border-0">
                         <CardContent className="p-6">
                             <h3 className="font-bold text-teal-400 text-xs uppercase tracking-wider mb-6">
-                                Maillage Territorial
+                                {t('admin:national.territorial', 'Maillage Territorial')}
                             </h3>
                             {territorial.length === 0 ? (
-                                <p className="text-sm text-slate-300">Aucune donnée territoriale</p>
+                                <p className="text-sm text-slate-300">{t('admin:national.territorial_empty', 'Aucune donnée territoriale')}</p>
                             ) : (
                                 <div className="space-y-4">
                                     {territorial.map(scope => (

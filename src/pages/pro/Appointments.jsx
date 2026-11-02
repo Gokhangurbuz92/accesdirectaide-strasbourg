@@ -9,16 +9,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { buildProAuthHeaders, getProToken, proRdvClient } from '@/api/pro-rdv-client';
+import { formatDate, useT } from '@/i18n';
 
 function formatDateTime(raw) {
   if (!raw) return '-';
   const date = new Date(String(raw));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
+  // in the interface language (French: unchanged), Paris time
+  return formatDate(date, {
     dateStyle: 'short',
     timeStyle: 'short',
     timeZone: 'Europe/Paris',
-  });
+  }) || '-';
 }
 
 function toDateIso(dateValue, kind) {
@@ -29,7 +31,11 @@ function toDateIso(dateValue, kind) {
 }
 
 // owner usefulness pass (2026-10-25): statuses in French (they showed the raw codes), and every status the agenda really holds (citizen bookings are 'confirmed')
-const STATUS_LABEL = { booked: 'Réservé par la structure', confirmed: 'Confirmé', requested: 'Demandé', pending: 'En attente', cancelled: 'Annulé', done: 'Venu', no_show: 'Absent' };
+const statusLabels = (t) => ({
+  booked: t('pro:appointments.status.booked', 'Réservé par la structure'), confirmed: t('pro:appointments.status.confirmed', 'Confirmé'),
+  requested: t('pro:appointments.status.requested', 'Demandé'), pending: t('pro:appointments.status.pending', 'En attente'),
+  cancelled: t('pro:appointments.status.cancelled', 'Annulé'), done: t('pro:appointments.status.done', 'Venu'), no_show: t('pro:appointments.status.no_show', 'Absent'),
+});
 const STATUS_STYLES = {
   booked: 'border-blue-200 bg-blue-50 text-blue-800',
   confirmed: 'border-blue-200 bg-blue-50 text-blue-800',
@@ -39,6 +45,8 @@ const STATUS_STYLES = {
 };
 
 export default function ProAppointments() {
+  const { t } = useT('pro');
+  const STATUS_LABEL = statusLabels(t);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState('');
   const [error, setError] = useState('');
@@ -79,11 +87,11 @@ export default function ProAppointments() {
           : items;
       setAppointments(filteredByService);
     } catch {
-      setError('Impossible de charger l\'agenda.');
+      setError(t('pro:appointments.load_error', 'Impossible de charger l\'agenda.'));
     } finally {
       setLoading(false);
     }
-  }, [filters.fromDate, filters.toDate, filters.status, filters.serviceId]);
+  }, [filters.fromDate, filters.toDate, filters.status, filters.serviceId]);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
   useEffect(() => {
     loadData();
@@ -94,7 +102,7 @@ export default function ProAppointments() {
   }, [services]);
 
   const updateStatus = async (id, status) => {
-    if (status === 'cancelled' && !window.confirm('Annuler ce rendez-vous ? La personne en sera prévenue.')) return;
+    if (status === 'cancelled' && !window.confirm(t('pro:appointments.confirm_cancel', 'Annuler ce rendez-vous ? La personne en sera prévenue.'))) return;
     setUpdatingId(id);
     setError('');
     try {
@@ -106,7 +114,7 @@ export default function ProAppointments() {
       await loadData();
     } catch (e) {
       // the server's own reason (French) when there is one; it used to be replaced by a generic sentence
-      setError(e?.payload?.message || e?.payload?.error || (typeof e?.message === 'string' && e.message) || 'Impossible de mettre à jour ce rendez-vous.');
+      setError(e?.payload?.message || e?.payload?.error || (typeof e?.message === 'string' && e.message) || t('pro:appointments.update_error', 'Impossible de mettre à jour ce rendez-vous.'));
     } finally {
       setUpdatingId('');
     }
@@ -115,41 +123,41 @@ export default function ProAppointments() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-bold text-slate-900">Agenda</h2>
+        <h2 className="text-xl font-bold text-slate-900">{t('pro:appointments.title', 'Agenda')}</h2>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={loadData}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Actualiser
+            {t('pro:appointments.refresh', 'Actualiser')}
           </Button>
           <Button variant="outline" data-testid="pro-agenda-ics" onClick={async () => {
             // PKG-3 / B10: authenticated .ics download of the agenda (no subscription URL, no token in a link)
             const res = await fetch('/api/pro/appointments/ics', { headers: buildProAuthHeaders(getProToken()) }).catch(() => null);
             // R7: a failed export says so (nothing happened before)
-            if (!res || !res.ok) { setError(res && res.status === 401 ? 'Votre session a expiré : reconnectez-vous.' : 'L’export de l’agenda n’a pas pu être préparé. Réessayez.'); return; }
+            if (!res || !res.ok) { setError(res && res.status === 401 ? t('pro:appointments.session_expired', 'Votre session a expiré : reconnectez-vous.') : t('pro:appointments.export_error', 'L’export de l’agenda n’a pas pu être préparé. Réessayez.')); return; }
             const url = URL.createObjectURL(await res.blob()); const link = document.createElement('a');
             link.href = url; link.download = 'agenda-acces-direct-aide.ics'; link.click(); URL.revokeObjectURL(url);
           }}>
-            Exporter l’agenda (.ics)
+            {t('pro:appointments.export_ics', 'Exporter l’agenda (.ics)')}
           </Button>
           <Button asChild>
-            <Link to="/pro/rdv/new">Creer un RDV</Link>
+            <Link to="/pro/rdv/new">{t('pro:appointments.create', 'Creer un RDV')}</Link>
           </Button>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Filtres</CardTitle>
+          <CardTitle>{t('pro:appointments.filters', 'Filtres')}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-4">
           <label className="space-y-1 text-sm">
-            <span className="text-slate-700">Service</span>
+            <span className="text-slate-700">{t('pro:appointments.filter_service', 'Service')}</span>
             <select
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={filters.serviceId}
               onChange={(event) => setFilters((prev) => ({ ...prev, serviceId: event.target.value }))}
             >
-              <option value="">Tous</option>
+              <option value="">{t('pro:appointments.all', 'Tous')}</option>
               {serviceOptions.map((service) => (
                 <option key={service.id} value={service.id}>
                   {service.name}
@@ -159,23 +167,23 @@ export default function ProAppointments() {
           </label>
 
           <label className="space-y-1 text-sm">
-            <span className="text-slate-700">Statut</span>
+            <span className="text-slate-700">{t('pro:appointments.filter_status', 'Statut')}</span>
             <select
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={filters.status}
               onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
             >
-              <option value="">Tous</option>
-              <option value="confirmed">Confirmé</option>
-              <option value="booked">Réservé par la structure</option>
-              <option value="done">Venu</option>
-              <option value="no_show">Absent</option>
-              <option value="cancelled">Annulé</option>
+              <option value="">{t('pro:appointments.all', 'Tous')}</option>
+              <option value="confirmed">{STATUS_LABEL.confirmed}</option>
+              <option value="booked">{STATUS_LABEL.booked}</option>
+              <option value="done">{STATUS_LABEL.done}</option>
+              <option value="no_show">{STATUS_LABEL.no_show}</option>
+              <option value="cancelled">{STATUS_LABEL.cancelled}</option>
             </select>
           </label>
 
           <label className="space-y-1 text-sm">
-            <span className="text-slate-700">Du</span>
+            <span className="text-slate-700">{t('pro:appointments.filter_from', 'Du')}</span>
             <Input
               type="date"
               value={filters.fromDate}
@@ -184,7 +192,7 @@ export default function ProAppointments() {
           </label>
 
           <label className="space-y-1 text-sm">
-            <span className="text-slate-700">Au</span>
+            <span className="text-slate-700">{t('pro:appointments.filter_to', 'Au')}</span>
             <Input
               type="date"
               value={filters.toDate}
@@ -205,10 +213,10 @@ export default function ProAppointments() {
           <CardContent className="flex flex-col items-center gap-2 py-12 text-center">
             <Calendar className="h-12 w-12 text-slate-300 mb-2" />
             <p className="text-sm font-medium text-slate-600">
-              Aucun rendez-vous sur cette période.
+              {t('pro:appointments.empty', 'Aucun rendez-vous sur cette période.')}
             </p>
             <p className="text-xs text-slate-600 max-w-xs">
-              Configurez vos disponibilités pour recevoir des demandes de rendez-vous.
+              {t('pro:appointments.empty_hint', 'Configurez vos disponibilités pour recevoir des demandes de rendez-vous.')}
             </p>
             <Button
               size="sm"
@@ -217,7 +225,7 @@ export default function ProAppointments() {
               asChild
             >
               <Link to="/pro/rdv/disponibilites">
-                <Plus className="mr-2 h-3 w-3" /> Définir mes disponibilités
+                <Plus className="mr-2 h-3 w-3" /> {t('pro:appointments.set_availability', 'Définir mes disponibilités')}
               </Link>
             </Button>
           </CardContent>
@@ -233,28 +241,28 @@ export default function ProAppointments() {
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-semibold text-slate-900">{formatDateTime(appointment.startAt || appointment.start_at)}</p>
                       <Badge className={statusClass}>{STATUS_LABEL[appointment.status] || appointment.status}</Badge>
-                      <Badge className="border-indigo-200 bg-indigo-50 text-indigo-800" data-testid="pro-agenda-mode">{appointment.mode === 'VIDEO' ? 'À distance (visio)' : 'En présentiel'}</Badge>
-                      {appointment.rescheduleCount ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-rescheduled">Déplacé par la personne ({appointment.rescheduleCount})</Badge> : null}
-                      {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">Visio à valider</Badge> : null}
+                      <Badge className="border-indigo-200 bg-indigo-50 text-indigo-800" data-testid="pro-agenda-mode">{appointment.mode === 'VIDEO' ? t('pro:appointments.mode_video', 'À distance (visio)') : t('pro:appointments.mode_onsite', 'En présentiel')}</Badge>
+                      {appointment.rescheduleCount ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-rescheduled">{t('pro:appointments.rescheduled', 'Déplacé par la personne ({{n}})', { n: appointment.rescheduleCount })}</Badge> : null}
+                      {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">{t('pro:appointments.video_pending', 'Visio à valider')}</Badge> : null}
                     </div>
                     <p className="text-sm text-slate-700">
-                      {appointment.serviceName || 'Service'}
+                      {appointment.serviceName || t('pro:appointments.service_fallback', 'Service')}
                       {' - '}
-                      {appointment.beneficiaryName || 'Beneficiaire'}
+                      {appointment.beneficiaryName || t('pro:appointments.beneficiary_fallback', 'Beneficiaire')}
                     </p>
                     {appointment.notes ? <p className="text-xs text-slate-700">{appointment.notes}</p> : null}
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Button asChild size="sm" variant="outline"><Link to={`/pro/appointments/${encodeURIComponent(appointment.id)}`} data-testid="pro-agenda-detail">Détails</Link></Button>
+                    <Button asChild size="sm" variant="outline"><Link to={`/pro/appointments/${encodeURIComponent(appointment.id)}`} data-testid="pro-agenda-detail">{t('pro:appointments.details', 'Détails')}</Link></Button>
                     {/* PKG-4 / B09: attendance only once the appointment has started (the API refuses earlier) */}
                     {!['done', 'no_show', 'cancelled'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() <= Date.now() ? (
                       <>
                         <Button size="sm" variant="outline" data-testid="pro-agenda-attended" onClick={() => updateStatus(appointment.id, 'done')} disabled={updatingId === appointment.id}>
                           {updatingId === appointment.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-1 h-4 w-4" />}
-                          Présent·e
+                          {t('pro:appointments.attended', 'Présent·e')}
                         </Button>
-                        <Button size="sm" variant="outline" data-testid="pro-agenda-no-show" onClick={() => updateStatus(appointment.id, 'no_show')} disabled={updatingId === appointment.id}>Absent·e</Button>
+                        <Button size="sm" variant="outline" data-testid="pro-agenda-no-show" onClick={() => updateStatus(appointment.id, 'no_show')} disabled={updatingId === appointment.id}>{t('pro:appointments.no_show', 'Absent·e')}</Button>
                       </>
                     ) : null}
 
@@ -267,7 +275,7 @@ export default function ProAppointments() {
                         disabled={updatingId === appointment.id}
                       >
                         {updatingId === appointment.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <XCircle className="mr-1 h-4 w-4" />}
-                        Annuler
+                        {t('pro:appointments.cancel', 'Annuler')}
                       </Button>
                     ) : null}
                   </div>

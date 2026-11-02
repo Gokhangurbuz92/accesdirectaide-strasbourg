@@ -4,6 +4,7 @@
  * encrypts the file and lets only the two parties of the conversation read it; this component only prepares the upload and offers the download.
  */
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
+import i18n, { useT } from '@/i18n';
 
 export const ATTACHMENT_ACCEPT = 'application/pdf,image/png,image/jpeg';
 export const ATTACHMENT_MAX_BYTES = 3 * 1024 * 1024;   // R34: equal to the server's limit (api/_services/message-attachments.js)
@@ -11,35 +12,37 @@ export const ATTACHMENT_MAX_BYTES = 3 * 1024 * 1024;   // R34: equal to the serv
 export function readAttachment(file) {
   return new Promise((resolve, reject) => {
     if (!file) return resolve(null);
-    if (file.size > ATTACHMENT_MAX_BYTES) return reject(new Error('La pièce jointe dépasse 3 Mo.'));
-    if (!ATTACHMENT_ACCEPT.split(',').includes(file.type)) return reject(new Error('Seuls les fichiers PDF, PNG et JPEG sont acceptés.'));
+    if (file.size > ATTACHMENT_MAX_BYTES) return reject(new Error(i18n.t('messaging:attachments.too_large', 'La pièce jointe dépasse 3 Mo.')));
+    if (!ATTACHMENT_ACCEPT.split(',').includes(file.type)) return reject(new Error(i18n.t('messaging:attachments.bad_type', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.')));
     const reader = new FileReader();
     reader.onload = () => resolve({ filename: file.name, mimeType: file.type, contentBase64: String(reader.result).split(',')[1] || '' });
-    reader.onerror = () => reject(new Error('Fichier illisible.'));
+    reader.onerror = () => reject(new Error(i18n.t('messaging:attachments.unreadable', 'Fichier illisible.')));
     reader.readAsDataURL(file);
   });
 }
 
 export function AttachmentPicker({ id, file, onChange, disabled }) {
+  const { t } = useT('messaging');
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">Pièce jointe (facultatif : PDF, PNG ou JPEG, 3 Mo max)</label>
+      <label htmlFor={id} className="block text-sm font-medium text-slate-700">{t('messaging:attachments.picker_label', 'Pièce jointe (facultatif : PDF, PNG ou JPEG, 3 Mo max)')}</label>
       <input id={id} data-testid={`${id}-input`} type="file" accept={ATTACHMENT_ACCEPT} disabled={disabled} className="block w-full text-sm"
         onChange={(e) => onChange(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
       <HealthDocumentNotice testid={`${id}-health-notice`} />
-      {file ? <p className="text-xs text-slate-600" data-testid={`${id}-selected`}>Fichier choisi : {file.name}</p> : null}
+      {file ? <p className="text-xs text-slate-600" data-testid={`${id}-selected`}>{t('messaging:attachments.selected', 'Fichier choisi : {{name}}', { name: file.name })}</p> : null}
     </div>
   );
 }
 
 export function AttachmentList({ attachments, onDownload, testid = 'message-attachment' }) {
+  const { t } = useT('messaging');
   if (!Array.isArray(attachments) || !attachments.length) return null;
   return (
     <ul className="mt-2 space-y-1">
       {attachments.map((a) => (
         <li key={a.id}>
           <button type="button" data-testid={testid} className="text-sm text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-700" onClick={() => onDownload(a)}>
-            Télécharger « {a.name} » ({Math.max(1, Math.round((a.byteLength || 0) / 1024))} Ko)
+            {t('messaging:attachments.download', 'Télécharger « {{name}} » ({{size}} Ko)', { name: a.name, size: Math.max(1, Math.round((a.byteLength || 0) / 1024)) })}
           </button>
         </li>
       ))}

@@ -31,6 +31,8 @@ import {
     Pie,
     Cell,
 } from 'recharts';
+import i18n, { useT } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -44,6 +46,7 @@ const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
  * les financements sans compromettre la vie privée.
  */
 export default function ImpactReports() {
+    const { t } = useT('pro');
     useOutletContext();
 
     const [period, setPeriod] = useState('month');
@@ -64,14 +67,14 @@ export default function ImpactReports() {
                 setData(await res.json());
             } else {
                 setData(null);
-                setLoadProblem(res.status === 403 ? 'Les indicateurs de la structure sont réservés à ses administrateurs.' : res.status === 401 ? 'Votre session a expiré : reconnectez-vous.' : 'Les indicateurs n’ont pas pu être calculés.');
+                setLoadProblem(res.status === 403 ? t('pro:impact.admins_only', 'Les indicateurs de la structure sont réservés à ses administrateurs.') : res.status === 401 ? t('pro:impact.session_expired', 'Votre session a expiré : reconnectez-vous.') : t('pro:impact.not_computed', 'Les indicateurs n’ont pas pu être calculés.'));
             }
         } catch {
-            setData(null); setLoadProblem('Les indicateurs n’ont pas pu être calculés.');
+            setData(null); setLoadProblem(t('pro:impact.not_computed', 'Les indicateurs n’ont pas pu être calculés.'));
         } finally {
             setLoading(false);
         }
-    }, [period, token]);
+    }, [period, token]);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
 
     useEffect(() => {
         fetchReport();
@@ -91,7 +94,7 @@ export default function ImpactReports() {
             document.body.appendChild(link); link.click(); link.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         } catch {
-            setExportError('Export impossible. Réessayez.');
+            setExportError(t('pro:impact.export_failed', 'Export impossible. Réessayez.'));
         }
     };
 
@@ -104,10 +107,10 @@ export default function ImpactReports() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
                         <BarChart3 size={22} className="text-indigo-600" />
-                        Mesure d&apos;Impact Social
+                        {t('pro:impact.title', "Mesure d'Impact Social")}
                     </h1>
                     <p className="text-sm text-slate-700">
-                        Indicateurs mesurés de votre structure (aucune estimation, petits effectifs masqués)
+                        {t('pro:impact.subtitle', 'Indicateurs mesurés de votre structure (aucune estimation, petits effectifs masqués)')}
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -121,7 +124,7 @@ export default function ImpactReports() {
                                     : 'text-slate-700 hover:text-slate-700'
                                     }`}
                             >
-                                {p === 'month' ? 'Mois' : p === 'quarter' ? 'Trimestre' : 'Année'}
+                                {p === 'month' ? t('pro:impact.period_month', 'Mois') : p === 'quarter' ? t('pro:impact.period_quarter', 'Trimestre') : t('pro:impact.period_year', 'Année')}
                             </button>
                         ))}
                     </div>
@@ -135,7 +138,7 @@ export default function ImpactReports() {
             {loadProblem && !loading ? (
                 <div role="alert" data-testid="pro-report-problem" className="rounded-md border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
                     <p>{loadProblem}</p>
-                    <Button variant="outline" size="sm" className="mt-2" data-testid="pro-report-retry" onClick={fetchReport}>Réessayer</Button>
+                    <Button variant="outline" size="sm" className="mt-2" data-testid="pro-report-retry" onClick={fetchReport}>{t('pro:impact.retry', 'Réessayer')}</Button>
                 </div>
             ) : null}
             {loadProblem && !loading ? null : loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : (
@@ -143,28 +146,28 @@ export default function ImpactReports() {
                     {/* KPI Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <KpiCard
-                            label="Rendez-vous honorés"
+                            label={t('pro:impact.kpi_completed', 'Rendez-vous honorés')}
                             value={kpis.completedAppointments ?? 0}
                             icon={<Users size={16} className="text-indigo-600" />}
-                            sub={`${kpis.completionRate ?? 0} % des rendez-vous passés non annulés`}
+                            sub={t('pro:impact.kpi_completed_sub', '{{rate}} % des rendez-vous passés non annulés', { rate: kpis.completionRate ?? 0 })}
                         />
                         <KpiCard
-                            label="Conversations"
+                            label={t('pro:impact.kpi_conversations', 'Conversations')}
                             value={kpis.conversations ?? 0}
                             icon={<MessageCircle size={16} className="text-emerald-700" />}
-                            sub="Échanges par la messagerie"
+                            sub={t('pro:impact.kpi_conversations_sub', 'Échanges par la messagerie')}
                         />
                         <KpiCard
-                            label="Diagnostics partagés"
+                            label={t('pro:impact.kpi_shared', 'Diagnostics partagés')}
                             value={kpis.diagnosticsShared ?? 0}
                             icon={<FileText size={16} className="text-amber-800" />}
-                            sub="Dossiers transmis"
+                            sub={t('pro:impact.kpi_shared_sub', 'Dossiers transmis')}
                         />
                         <KpiCard
-                            label="Équipe active"
+                            label={t('pro:impact.kpi_team', 'Équipe active')}
                             value={kpis.teamSize ?? 0}
                             icon={<Users size={16} className="text-purple-600" />}
-                            sub={`${kpis.cancelledAppointments ?? 0} RDV annulés`}
+                            sub={t('pro:impact.kpi_team_sub', '{{cancelled}} RDV annulés', { cancelled: kpis.cancelledAppointments ?? 0 })}
                         />
                     </div>
 
@@ -172,22 +175,22 @@ export default function ImpactReports() {
                     {/* Phase 3 — SMS Impact + Boussole Sociale */}
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                         <KpiCard
-                            label="Rappels SMS acceptés par l’opérateur"
+                            label={t('pro:impact.kpi_sms', 'Rappels SMS acceptés par l’opérateur')}
                             value={kpis.smsNotifications ?? 0}
                             icon={<MessageSquare size={16} className="text-teal-600" />}
-                            sub="Accepté par l’opérateur ne veut pas dire reçu"
+                            sub={t('pro:impact.kpi_sms_sub', 'Accepté par l’opérateur ne veut pas dire reçu')}
                         />
                         <KpiCard
-                            label="Absences constatées"
+                            label={t('pro:impact.kpi_no_show', 'Absences constatées')}
                             value={kpis.noShowCount ?? 0}
                             icon={<TrendingUp size={16} className="text-teal-600" />}
-                            sub="RDV marqués « absent·e » par l’équipe"
+                            sub={t('pro:impact.kpi_no_show_sub', 'RDV marqués « absent·e » par l’équipe')}
                         />
                         <KpiCard
-                            label="Orientations"
+                            label={t('pro:impact.kpi_referrals', 'Orientations')}
                             value={kpis.referralsSent ?? 0}
                             icon={<Compass size={16} className="text-indigo-600" />}
-                            sub={`envoyées · ${kpis.referralsReceived ?? 0} reçues · ${kpis.casesClosed ?? 0} dossiers clôturés${kpis.casesClosedPartial ? ' (hors résultats de moins de 5 dossiers)' : ''}`}
+                            sub={`${t('pro:impact.kpi_referrals_sub', 'envoyées · {{received}} reçues · {{closed}} dossiers clôturés', { received: kpis.referralsReceived ?? 0, closed: kpis.casesClosed ?? 0 })}${kpis.casesClosedPartial ? t('pro:impact.kpi_referrals_partial', ' (hors résultats de moins de 5 dossiers)') : ''}`}
                         />
                     </div>
 
@@ -198,13 +201,13 @@ export default function ImpactReports() {
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-bold flex items-center gap-2">
                                     <Calendar size={14} className="text-indigo-500" />
-                                    Activité quotidienne
+                                    {t('pro:impact.daily_activity', 'Activité quotidienne')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {(data?.dailyActivity || []).length === 0 ? (
                                     <div className="h-[250px] flex items-center justify-center text-sm text-slate-600">
-                                        Aucune donnée pour cette période
+                                        {t('pro:impact.no_data', 'Aucune donnée pour cette période')}
                                     </div>
                                 ) : (
                                     <div className="h-[250px]">
@@ -242,7 +245,7 @@ export default function ImpactReports() {
                                                         })
                                                     }
                                                 />
-                                                <Bar dataKey="count" name="RDV" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                                                <Bar dataKey="count" name={t('pro:impact.appointments_series', 'RDV')} fill="#4f46e5" radius={[4, 4, 0, 0]} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -255,13 +258,13 @@ export default function ImpactReports() {
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-bold flex items-center gap-2">
                                     <TrendingUp size={14} className="text-indigo-500" />
-                                    Répartition par service
+                                    {t('pro:impact.by_service', 'Répartition par service')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {(data?.themes || []).length === 0 ? (
                                     <div className="h-[250px] flex items-center justify-center text-sm text-slate-600">
-                                        Aucune donnée pour cette période
+                                        {t('pro:impact.no_data', 'Aucune donnée pour cette période')}
                                     </div>
                                 ) : (
                                     <div className="h-[250px] flex items-center">
@@ -320,7 +323,7 @@ export default function ImpactReports() {
                     {/* Status breakdown */}
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold">Répartition par statut</CardTitle>
+                            <CardTitle className="text-sm font-bold">{t('pro:impact.by_status', 'Répartition par statut')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-3">
@@ -349,9 +352,7 @@ export default function ImpactReports() {
                     <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
                         <ShieldCheck className="text-emerald-700 shrink-0" size={16} />
                         <p className="text-xs text-emerald-700">
-                            <strong>Statistiques agrégées :</strong> ces rapports ne contiennent que des
-                            compteurs, les petits effectifs sont masqués, et aucun contenu privé (nom,
-                            diagnostic, message) n&apos;y figure.
+                            <Trans i18n={i18n} i18nKey="pro:impact.aggregated_notice" defaults="<0>Statistiques agrégées :</0> ces rapports ne contiennent que des compteurs, les petits effectifs sont masqués, et aucun contenu privé (nom, diagnostic, message) n'y figure." components={[<strong key="s" />]} />
                         </p>
                     </div>
                 </>

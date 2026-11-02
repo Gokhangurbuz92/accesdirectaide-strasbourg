@@ -33,6 +33,7 @@ import {
     Eye,
     TrendingUp,
 } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * SharedDossier — Vue Pro d'un diagnostic partagé
@@ -45,6 +46,7 @@ import {
  * - Intègre le SecureChat existant (chiffré à l'enregistrement, pas de bout en bout) pour communiquer avec l'usager
  */
 export default function SharedDossier() {
+    const { t } = useT('pro');
     const { shareId } = useParams();
     const navigate = useNavigate();
     const { user } = useOutletContext();
@@ -88,8 +90,8 @@ export default function SharedDossier() {
                 if (!grant.ok) {
                     const gb = await grant.json().catch(() => ({}));
                     setError(grant.status === 410
-                        ? (gb.error === 'invite_expired' ? 'Cette invitation a expiré. Demandez une nouvelle invitation à l\'usager.' : 'Ce dossier a expiré.')
-                        : 'Accès non accordé. L\'invitation est invalide, déjà utilisée, destinée à une autre structure, ou votre compte n\'est plus actif dans cette structure.');
+                        ? (gb.error === 'invite_expired' ? t('pro:shared_dossier.invite_expired', 'Cette invitation a expiré. Demandez une nouvelle invitation à l\'usager.') : t('pro:shared_dossier.dossier_expired', 'Ce dossier a expiré.'))
+                        : t('pro:shared_dossier.access_refused', 'Accès non accordé. L\'invitation est invalide, déjà utilisée, destinée à une autre structure, ou votre compte n\'est plus actif dans cette structure.'));
                     return;
                 }
                 redeemedRef.current = true;
@@ -101,7 +103,7 @@ export default function SharedDossier() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.error || data.message || 'Dossier introuvable.');
+                setError(data.error || data.message || t('pro:shared_dossier.not_found', 'Dossier introuvable.'));
                 return;
             }
 
@@ -111,11 +113,11 @@ export default function SharedDossier() {
             const savedStatus = data.dossier?.results?._followUp?.status;
             if (savedStatus) setFollowUp(savedStatus);
         } catch {
-            setError('Impossible de charger le dossier.');
+            setError(t('pro:shared_dossier.load_failed', 'Impossible de charger le dossier.'));
         } finally {
             setLoading(false);
         }
-    }, [shareId, token, credential]);
+    }, [shareId, token, credential]);   // eslint-disable-line react-hooks/exhaustive-deps -- not reloaded on a language change (each load is a logged consultation)
 
     useEffect(() => {
         fetchDossier();
@@ -143,11 +145,11 @@ export default function SharedDossier() {
                 setTimeout(() => setUpdateSuccess(false), 3000);
             } else {
                 // R7: a refused update is said (it was silent: the person believed the status saved)
-                setUpdateProblem(res.status === 401 ? 'Votre session a expiré : reconnectez-vous.' : res.status === 403 || res.status === 404
-                    ? 'Ce dossier n’est plus partagé avec votre structure : le statut n’a pas été modifié.' : 'Le statut n’a pas pu être enregistré. Réessayez.');
+                setUpdateProblem(res.status === 401 ? t('pro:shared_dossier.session_expired', 'Votre session a expiré : reconnectez-vous.') : res.status === 403 || res.status === 404
+                    ? t('pro:shared_dossier.no_longer_shared', 'Ce dossier n’est plus partagé avec votre structure : le statut n’a pas été modifié.') : t('pro:shared_dossier.status_not_saved', 'Le statut n’a pas pu être enregistré. Réessayez.'));
             }
         } catch {
-            setUpdateProblem('Le service est momentanément injoignable : le statut n’a pas été enregistré.');
+            setUpdateProblem(t('pro:shared_dossier.service_unreachable', 'Le service est momentanément injoignable : le statut n’a pas été enregistré.'));
         } finally {
             setUpdating(false);
         }
@@ -159,7 +161,7 @@ export default function SharedDossier() {
             <div className="flex flex-col items-center justify-center py-20">
                 <SkeletonList count={3} variant="card" />
                 <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                    Chargement sécurisé...
+                    {t('pro:shared_dossier.loading', 'Chargement sécurisé...')}
                 </p>
             </div>
         );
@@ -172,13 +174,13 @@ export default function SharedDossier() {
                 <Card className="border-red-200">
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="text-red-400 mx-auto mb-4" size={36} />
-                        <h1 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-700">Dossier partagé</h1>{/* Q10: the page heading; the state below keeps its h2 */}
+                        <h1 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-700">{t('pro:shared_dossier.heading', 'Dossier partagé')}</h1>{/* Q10: the page heading; the state below keeps its h2 */}
                         <h2 className="text-lg font-bold text-slate-900 mb-2">
-                            Dossier inaccessible
+                            {t('pro:shared_dossier.inaccessible', 'Dossier inaccessible')}
                         </h2>
                         <p className="text-sm text-slate-700 mb-6">{error}</p>
                         <Button variant="outline" onClick={() => navigate('/pro/dashboard')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Retour au tableau de bord
+                            <ArrowLeft className="mr-2 h-4 w-4" /> {t('pro:shared_dossier.back_dashboard', 'Retour au tableau de bord')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -198,26 +200,26 @@ export default function SharedDossier() {
                         variant="ghost"
                         size="icon"
                         onClick={() => navigate(-1)}
-                        aria-label="Retour"
+                        aria-label={t('pro:shared_dossier.back', 'Retour')}
                     >
                         <ArrowLeft size={18} aria-hidden="true" />
                     </Button>
                     <div>
                         <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <FileText size={18} className="text-indigo-600" />
-                            Dossier #{shareId?.slice(0, 8)}
+                            {t('pro:shared_dossier.title', 'Dossier #{{id}}', { id: shareId?.slice(0, 8) ?? '' })}
                         </h1>
                         <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1">
-                            <ShieldCheck size={10} aria-hidden="true" /> Accès journalisé
+                            <ShieldCheck size={10} aria-hidden="true" /> {t('pro:shared_dossier.access_logged', 'Accès journalisé')}
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-600">
                     <Eye size={12} />
-                    {dossier?.viewCount || 0} consultation(s)
+                    {t('pro:shared_dossier.views', { count: dossier?.viewCount || 0, defaultValue_one: '{{count}} consultation(s)', defaultValue_other: '{{count}} consultation(s)' })}
                     <span className="mx-1">•</span>
                     <Clock size={12} />
-                    Expire le{' '}
+                    {t('pro:shared_dossier.expires', 'Expire le')}{' '}
                     {dossier?.expiresAt
                         ? new Date(dossier.expiresAt).toLocaleDateString('fr-FR')
                         : '--'}
@@ -233,21 +235,21 @@ export default function SharedDossier() {
                         <CardHeader className="pb-3">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <User size={14} className="text-indigo-500" />
-                                Situation de l&apos;usager
+                                {t('pro:shared_dossier.situation', "Situation de l'usager")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <InfoField
-                                    label="Localisation"
+                                    label={t('pro:shared_dossier.location', 'Localisation')}
                                     value={situation.zipCode || situation.commune || '--'}
                                 />
                                 <InfoField
-                                    label="Logement"
+                                    label={t('pro:shared_dossier.housing', 'Logement')}
                                     value={situation.housingStatus || situation.statut_logement || '--'}
                                 />
                                 <InfoField
-                                    label="Revenus mensuels"
+                                    label={t('pro:shared_dossier.monthly_income', 'Revenus mensuels')}
                                     value={
                                         situation.salary || situation.revenu_mensuel
                                             ? `${situation.salary || situation.revenu_mensuel} €`
@@ -255,15 +257,15 @@ export default function SharedDossier() {
                                     }
                                 />
                                 <InfoField
-                                    label="Composition"
+                                    label={t('pro:shared_dossier.household', 'Composition')}
                                     value={situation.familyStatus || situation.composition || '--'}
                                 />
                                 <InfoField
-                                    label="Statut professionnel"
+                                    label={t('pro:shared_dossier.employment', 'Statut professionnel')}
                                     value={situation.employmentStatus || situation.statut_emploi || '--'}
                                 />
                                 <InfoField
-                                    label="Date diagnostic"
+                                    label={t('pro:shared_dossier.diagnostic_date', 'Date diagnostic')}
                                     value={
                                         dossier?.createdAt
                                             ? new Date(dossier.createdAt).toLocaleDateString('fr-FR')
@@ -279,13 +281,13 @@ export default function SharedDossier() {
                         <CardHeader className="pb-3">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <ClipboardList size={14} className="text-indigo-500" />
-                                Pistes d&apos;orientation du diagnostic
+                                {t('pro:shared_dossier.orientation_leads', "Pistes d'orientation du diagnostic")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {results.legacyRightsOmitted && (
                                 <p data-testid="legacy-results-note" className="text-sm text-slate-700">
-                                    Ancien partage : le détail des résultats n&apos;est plus repris (aucun montant ni éligibilité n&apos;est affiché).
+                                    {t('pro:shared_dossier.legacy_note', "Ancien partage : le détail des résultats n'est plus repris (aucun montant ni éligibilité n'est affiché).")}
                                 </p>
                             )}
                             <AssessmentView results={results} headingLevel={3} />
@@ -301,7 +303,7 @@ export default function SharedDossier() {
                         <CardHeader className="pb-3">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <TrendingUp size={14} />
-                                Suivi administratif
+                                {t('pro:shared_dossier.follow_up', 'Suivi administratif')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -310,7 +312,7 @@ export default function SharedDossier() {
                                     htmlFor="dossier-status"
                                     className="text-[10px] font-bold text-slate-300 uppercase mb-1.5 block"
                                 >
-                                    État actuel
+                                    {t('pro:shared_dossier.current_state', 'État actuel')}
                                 </label>
                                 <Select value={followUp} onValueChange={setFollowUp}>
                                     <SelectTrigger
@@ -320,15 +322,15 @@ export default function SharedDossier() {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="À traiter">À traiter</SelectItem>
+                                        <SelectItem value="À traiter">{t('pro:shared_dossier.status_to_handle', 'À traiter')}</SelectItem>
                                         <SelectItem value="En cours d'instruction">
-                                            En cours d&apos;instruction
+                                            {t('pro:shared_dossier.status_in_review', "En cours d'instruction")}
                                         </SelectItem>
                                         <SelectItem value="Besoin de pièces">
-                                            Besoin de pièces
+                                            {t('pro:shared_dossier.status_needs_documents', 'Besoin de pièces')}
                                         </SelectItem>
                                         <SelectItem value="Dossier validé">
-                                            Dossier validé
+                                            {t('pro:shared_dossier.status_validated', 'Dossier validé')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -344,13 +346,13 @@ export default function SharedDossier() {
                                 ) : (
                                     <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
                                 )}
-                                Mettre à jour
+                                {t('pro:shared_dossier.update', 'Mettre à jour')}
                             </Button>
 
                             {updateProblem ? <p role="alert" className="text-xs text-red-300" data-testid="dossier-status-problem">{updateProblem}</p> : null}
                             {updateSuccess && (
                                 <p className="text-[10px] text-emerald-400 flex items-center gap-1">
-                                    <CheckCircle2 size={10} /> Statut mis à jour
+                                    <CheckCircle2 size={10} /> {t('pro:shared_dossier.status_updated', 'Statut mis à jour')}
                                 </p>
                             )}
                         </CardContent>
@@ -361,7 +363,7 @@ export default function SharedDossier() {
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <Lock size={14} className="text-emerald-700" />
-                                Messagerie chiffrée à l’enregistrement
+                                {t('pro:shared_dossier.chat_title', 'Messagerie chiffrée à l’enregistrement')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
@@ -387,13 +389,11 @@ export default function SharedDossier() {
                         <div className="flex items-center gap-2 mb-1.5">
                             <ShieldCheck className="text-emerald-700" size={14} />
                             <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
-                                Audit RGPD
+                                {t('pro:shared_dossier.gdpr_audit', 'Audit RGPD')}
                             </span>
                         </div>
                         <p className="text-[11px] text-emerald-700 leading-relaxed">
-                            Chaque accès à ce dossier est enregistré. Les messages sont
-                            chiffrés à l&apos;enregistrement. Ce n&apos;est pas un chiffrement
-                            de bout en bout.
+                            {t('pro:shared_dossier.gdpr_notice', "Chaque accès à ce dossier est enregistré. Les messages sont chiffrés à l'enregistrement. Ce n'est pas un chiffrement de bout en bout.")}
                         </p>
                     </div>
                 </div>

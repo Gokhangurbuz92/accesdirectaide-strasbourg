@@ -12,7 +12,9 @@ import VisioTrigger from '@/components/pro/VisioTrigger';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { noticeLine } from '@/lib/proLabels.js';
+import { useT } from '@/i18n';
 export default function ProAppointmentDetail() {
+    const { t } = useT('pro');
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -45,9 +47,9 @@ export default function ProAppointmentDetail() {
                     setAppointment(data[0]);
                 }
             })
-            .catch(e => { setLoadError(e?.status === 401 ? 'Votre session a expiré : reconnectez-vous.' : e?.status === 429 ? 'Trop de demandes : réessayez dans un instant.' : 'Le rendez-vous n’a pas pu être chargé.'); if (import.meta.env.DEV) console.error(e); })
+            .catch(e => { setLoadError(e?.status === 401 ? t('pro:appointment_detail.session_expired', 'Votre session a expiré : reconnectez-vous.') : e?.status === 429 ? t('pro:appointment_detail.too_many', 'Trop de demandes : réessayez dans un instant.') : t('pro:appointment_detail.load_failed', 'Le rendez-vous n’a pas pu être chargé.')); if (import.meta.env.DEV) console.error(e); })
             .finally(() => setLoadingAppt(false));
-    }, [id, token, reloadKey]);
+    }, [id, token, reloadKey]);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
 
     const fetchMessages = useCallback(() => {
         setLoadingMsgs(true); setMsgError(null);
@@ -56,9 +58,9 @@ export default function ProAppointmentDetail() {
         })
             .then(async (res) => { if (!res.ok) throw new Error('messages'); return res.json(); })
             .then(data => setMessages(data.messages || []))
-            .catch(e => { setMsgError('Les messages n’ont pas pu être chargés.'); if (import.meta.env.DEV) console.error(e); })
+            .catch(e => { setMsgError(t('pro:appointment_detail.messages_failed', 'Les messages n’ont pas pu être chargés.')); if (import.meta.env.DEV) console.error(e); })
             .finally(() => setLoadingMsgs(false));
-    }, [id, token]);
+    }, [id, token]);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
 
     // Fetch Messages when tab active (PKG-3: declared after fetchMessages — the effect read it before its initialisation and the page crashed on every load)
     useEffect(() => {
@@ -84,10 +86,10 @@ export default function ProAppointmentDetail() {
                 fetchMessages();
             } else {
                 const body = await res.json().catch(() => ({}));
-                setSendError(body?.code === 'NO_CITIZEN_ACCOUNT' ? 'Cette personne n’a pas de compte : aucun message ne peut lui être envoyé ici.' : (body?.message || 'Le message n’a pas été envoyé.'));
+                setSendError(body?.code === 'NO_CITIZEN_ACCOUNT' ? t('pro:appointment_detail.no_account', 'Cette personne n’a pas de compte : aucun message ne peut lui être envoyé ici.') : (body?.message || t('pro:appointment_detail.not_sent', 'Le message n’a pas été envoyé.')));
             }
         } catch {
-            setSendError('Le message n’a pas été envoyé (réseau).');
+            setSendError(t('pro:appointment_detail.not_sent_network', 'Le message n’a pas été envoyé (réseau).'));
         }
     };
 
@@ -98,18 +100,18 @@ export default function ProAppointmentDetail() {
     if (loadError) return (
         <div role="alert" data-testid="pro-appointment-load-error" className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-900">
             <p className="font-semibold">{loadError}</p>
-            <Button className="mt-4" variant="outline" onClick={() => { setLoadingAppt(true); setReloadKey((k) => k + 1); }}>Réessayer</Button>
+            <Button className="mt-4" variant="outline" onClick={() => { setLoadingAppt(true); setReloadKey((k) => k + 1); }}>{t('pro:appointment_detail.retry', 'Réessayer')}</Button>
         </div>
     );
-    if (!appointment) return <div className="text-center p-10"><h1 className="text-xl font-bold text-slate-900">Rendez-vous introuvable</h1></div>;
+    if (!appointment) return <div className="text-center p-10"><h1 className="text-xl font-bold text-slate-900">{t('pro:appointment_detail.not_found', 'Rendez-vous introuvable')}</h1></div>;
 
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" asChild>
-                    <Link to="/pro/rdv/agenda"><ArrowLeft className="mr-2 h-4 w-4" /> Retour</Link>
+                    <Link to="/pro/rdv/agenda"><ArrowLeft className="mr-2 h-4 w-4" /> {t('pro:appointment_detail.back', 'Retour')}</Link>
                 </Button>
-                <h1 className="text-xl font-bold">Rendez-vous avec {appointment.beneficiary.firstName}</h1>
+                <h1 className="text-xl font-bold">{t('pro:appointment_detail.title', 'Rendez-vous avec {{name}}', { name: appointment.beneficiary.firstName })}</h1>
             </div>
 
             {/* Tabs */}
@@ -118,13 +120,13 @@ export default function ProAppointmentDetail() {
                     onClick={() => setActiveTab('details')}
                     className={`pb-2 px-4 font-medium ${activeTab === 'details' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-700'}`}
                 >
-                    Détails
+                    {t('pro:appointment_detail.tab_details', 'Détails')}
                 </button>
                 <button
                     onClick={() => setActiveTab('messages')}
                     className={`pb-2 px-4 font-medium ${activeTab === 'messages' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-700'}`}
                 >
-                    Messages
+                    {t('pro:appointment_detail.tab_messages', 'Messages')}
                 </button>
             </div>
 
@@ -132,11 +134,11 @@ export default function ProAppointmentDetail() {
                 <div className="bg-white p-6 rounded-lg shadow border border-slate-200 space-y-4">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                            <h3 className="font-semibold text-slate-900 mb-2">Informations</h3>
+                            <h3 className="font-semibold text-slate-900 mb-2">{t('pro:appointment_detail.info', 'Informations')}</h3>
                             <div className="space-y-2 text-sm">
                                 <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-700" /> {format(new Date(appointment.start_at), 'PPP à HH:mm', { locale: fr })}</div>
                                 <div className="flex items-center gap-2"><Video className="h-4 w-4 text-slate-700" /> <span data-testid="pro-appt-mode">{appointment.modeLabel || appointment.mode}</span></div>
-                                {appointment.rescheduleCount ? <div className="text-sm text-amber-900" data-testid="pro-appt-rescheduled">Déplacé {appointment.rescheduleCount} fois par la personne{appointment.rescheduledAt ? ` (dernière fois le ${format(new Date(appointment.rescheduledAt), 'PPP à HH:mm', { locale: fr })})` : ''}</div> : null}
+                                {appointment.rescheduleCount ? <div className="text-sm text-amber-900" data-testid="pro-appt-rescheduled">{t('pro:appointment_detail.rescheduled', 'Déplacé {{n}} fois par la personne', { n: appointment.rescheduleCount })}{appointment.rescheduledAt ? ` (${t('pro:appointment_detail.rescheduled_last', 'dernière fois le {{date}}', { date: format(new Date(appointment.rescheduledAt), 'PPP à HH:mm', { locale: fr }) })})` : ''}</div> : null}
                                 {Array.isArray(appointment.notices) && appointment.notices.length ? (
                                     <ul className="text-xs text-slate-600" data-testid="pro-appt-notices">{appointment.notices.map((n, i) => <li key={i}>{noticeLine(n)}</li>)}</ul>
                                 ) : null}
@@ -144,10 +146,10 @@ export default function ProAppointmentDetail() {
                             </div>
                         </div>
                         <div>
-                            <h3 className="font-semibold text-slate-900 mb-2">Bénéficiaire</h3>
+                            <h3 className="font-semibold text-slate-900 mb-2">{t('pro:appointment_detail.beneficiary', 'Bénéficiaire')}</h3>
                             <div className="space-y-2 text-sm">
-                                <p>Nom : {appointment.beneficiary.firstName || 'Masqué'}</p>
-                                <p>Contact : {appointment.beneficiary.contactMasked}</p>
+                                <p>{t('pro:appointment_detail.name_label', 'Nom :')} {appointment.beneficiary.firstName || t('pro:appointment_detail.masked', 'Masqué')}</p>
+                                <p>{t('pro:appointment_detail.contact_label', 'Contact :')} {appointment.beneficiary.contactMasked}</p>
                             </div>
                         </div>
                     </div>
@@ -155,7 +157,7 @@ export default function ProAppointmentDetail() {
                     {/* Visio */}
                     {appointment.status !== 'cancelled' && appointment.mode === 'VIDEO' && (
                         <div className="border-t border-slate-200 pt-4">
-                            <h3 className="font-semibold text-slate-900 mb-3">Visioconférence</h3>
+                            <h3 className="font-semibold text-slate-900 mb-3">{t('pro:appointment_detail.visio', 'Visioconférence')}</h3>
                             <VisioTrigger appointment={appointment} onChange={() => setReloadKey((k) => k + 1)} />
                         </div>
                     )}
@@ -165,7 +167,7 @@ export default function ProAppointmentDetail() {
             {activeTab === 'messages' && (msgError || sendError) && (
                 <div role="alert" data-testid="pro-appointment-messages-error" className="flex items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
                     <span>{msgError || sendError}</span>
-                    {msgError && <Button size="sm" variant="outline" onClick={fetchMessages}>Réessayer</Button>}
+                    {msgError && <Button size="sm" variant="outline" onClick={fetchMessages}>{t('pro:appointment_detail.retry', 'Réessayer')}</Button>}
                 </div>
             )}
             {activeTab === 'messages' && !msgError && (

@@ -15,6 +15,7 @@ import {
     Clock,
     Sparkles,
 } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * AdminAudit
@@ -23,6 +24,7 @@ import {
  * so admins can identify gaps in the RAG knowledge base.
  */
 export default function AdminAudit() {
+    const { t } = useT('admin');
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['admin-audit'],
         queryFn: () =>
@@ -50,16 +52,16 @@ export default function AdminAudit() {
                                 <div className="rounded-xl bg-red-100 p-2 text-red-600">
                                     <AlertCircle className="h-5 w-5" />
                                 </div>
-                                Mur des Améliorations
+                                {t('admin:audit.title', 'Mur des Améliorations')}
                             </h1>
                             <p className="text-sm text-slate-700">
-                                Retours négatifs des usagers — priorités de correction RAG
+                                {t('admin:audit.subtitle', 'Retours négatifs des usagers — priorités de correction RAG')}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5">
                                 <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-                                Actualiser
+                                {t('admin:audit.refresh', 'Actualiser')}
                             </Button>
                         </div>
                     </div>
@@ -75,7 +77,7 @@ export default function AdminAudit() {
                                 <ThumbsDown className="h-4 w-4 text-red-500" />
                             </div>
                             <p className="text-2xl font-bold text-red-600">{negativeCount}</p>
-                            <p className="text-sm text-slate-700">Insatisfactions</p>
+                            <p className="text-sm text-slate-700">{t('admin:audit.negative', 'Insatisfactions')}</p>
                         </CardContent>
                     </Card>
                     <Card>
@@ -84,7 +86,7 @@ export default function AdminAudit() {
                                 <ThumbsUp className="h-4 w-4 text-emerald-500" />
                             </div>
                             <p className="text-2xl font-bold text-emerald-700">{positiveCount}</p>
-                            <p className="text-sm text-slate-700">Satisfactions</p>
+                            <p className="text-sm text-slate-700">{t('admin:audit.positive', 'Satisfactions')}</p>
                         </CardContent>
                     </Card>
                     <Card>
@@ -95,7 +97,7 @@ export default function AdminAudit() {
                             <p className={`text-2xl font-bold ${satisfactionRate >= 80 ? 'text-emerald-700' : satisfactionRate >= 50 ? 'text-amber-800' : 'text-red-600'}`}>
                                 {satisfactionRate}%
                             </p>
-                            <p className="text-sm text-slate-700">Satisfaction</p>
+                            <p className="text-sm text-slate-700">{t('admin:audit.satisfaction', 'Satisfaction')}</p>
                         </CardContent>
                     </Card>
                     <Card>
@@ -104,7 +106,7 @@ export default function AdminAudit() {
                                 <MessageCircle className="h-4 w-4 text-slate-400" />
                             </div>
                             <p className="text-2xl font-bold text-slate-800">{total}</p>
-                            <p className="text-sm text-slate-700">Total feedbacks</p>
+                            <p className="text-sm text-slate-700">{t('admin:audit.total', 'Total feedbacks')}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -114,7 +116,7 @@ export default function AdminAudit() {
                     <Card>
                         <CardContent className="p-8 text-center">
                             <AlertCircle className="mx-auto mb-3 h-10 w-10 text-red-400" />
-                            <p className="text-slate-600">Erreur de chargement</p>
+                            <p className="text-slate-600">{t('admin:audit.load_error', 'Erreur de chargement')}</p>
                             <p className="mt-1 text-sm text-slate-400">{error.message}</p>
                         </CardContent>
                     </Card>
@@ -124,16 +126,16 @@ export default function AdminAudit() {
                             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-500">
                                 <ThumbsUp className="h-8 w-8" />
                             </div>
-                            <h3 className="mb-1 text-xl font-bold text-emerald-800">Qualité Optimale !</h3>
+                            <h3 className="mb-1 text-xl font-bold text-emerald-800">{t('admin:audit.optimal', 'Qualité Optimale !')}</h3>
                             <p className="text-sm text-emerald-700">
-                                Aucun retour négatif récent. Le RAG fonctionne bien.
+                                {t('admin:audit.no_negative', 'Aucun retour négatif récent. Le RAG fonctionne bien.')}
                             </p>
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="space-y-4">
                         <h3 className="px-1 text-sm font-semibold text-red-600">
-                            ⚠️ {logs.length} réponse{logs.length > 1 ? 's' : ''} à améliorer
+                            {t('admin:audit.to_improve', { count: logs.length, n: logs.length, defaultValue_one: '⚠️ {{n}} réponse à améliorer', defaultValue_other: '⚠️ {{n}} réponses à améliorer' })}
                         </h3>
                         {logs.map((/** @type {{ createdAt: string | number, id: string | number, message: string | number, searchMode: string | number, userComment: string | number }} */ log) => (
                             <Card key={log.id} className="group transition-all hover:border-red-200 hover:shadow-md">
@@ -145,7 +147,7 @@ export default function AdminAudit() {
                                             </div>
                                             <div>
                                                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                                                    Échec de pertinence
+                                                    {t('admin:audit.relevance_failure', 'Échec de pertinence')}
                                                 </p>
                                                 <p className="flex items-center gap-1 text-xs text-slate-400">
                                                     <Clock className="h-3 w-3" />
@@ -163,7 +165,7 @@ export default function AdminAudit() {
                                     {/* User question */}
                                     <div className="mb-3">
                                         <p className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-indigo-400">
-                                            <MessageCircle className="h-3 w-3" /> Question de l&#39;usager
+                                            <MessageCircle className="h-3 w-3" /> {t('admin:audit.user_question', "Question de l'usager")}
                                         </p>
                                         <p className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-semibold italic leading-relaxed text-slate-800">
                                             &ldquo;{log.message}&rdquo;
@@ -174,7 +176,7 @@ export default function AdminAudit() {
                                     {log.userComment && (
                                         <div className="rounded-2xl border-l-4 border-red-400 bg-red-50/50 p-4">
                                             <p className="mb-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-red-500">
-                                                <AlertCircle className="h-3 w-3" /> Raison du mécontentement
+                                                <AlertCircle className="h-3 w-3" /> {t('admin:audit.reason', 'Raison du mécontentement')}
                                             </p>
                                             <p className="text-sm font-medium italic leading-relaxed text-slate-700">
                                                 &ldquo;{log.userComment}&rdquo;

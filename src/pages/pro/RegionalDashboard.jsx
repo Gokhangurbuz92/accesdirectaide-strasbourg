@@ -25,6 +25,7 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
+import { useT } from '@/i18n';
 
 /**
  * RegionalDashboard — Multi-structure observatory
@@ -35,6 +36,7 @@ import {
  * for territorial decision-makers.
  */
 export default function RegionalDashboard() {
+    const { t } = useT('pro');
     const [search, setSearch] = useState('');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -88,11 +90,11 @@ export default function RegionalDashboard() {
     if (refused && !data) {
         return (
             <div className="min-h-screen bg-slate-50 py-8 px-4">
-                <SEO title="Observatoire Régional — ADA" noindex />
+                <SEO title={t('pro:regional.seo_title', 'Observatoire Régional — ADA')} noindex />
                 <div className="max-w-6xl mx-auto space-y-4">
-                    <h1 className="text-xl font-bold text-slate-900">Observatoire Régional ADA</h1>
+                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire Régional ADA')}</h1>
                     <p role="note" className="p-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-700" data-testid="regional-refused">
-                        L’observatoire est réservé aux structures actives vérifiées par ADA. Il s’ouvrira quand ADA aura activé votre structure.
+                        {t('pro:regional.refused', 'L’observatoire est réservé aux structures actives vérifiées par ADA. Il s’ouvrira quand ADA aura activé votre structure.')}
                     </p>
                 </div>
             </div>
@@ -103,12 +105,12 @@ export default function RegionalDashboard() {
     if (failed && !data) {
         return (
             <div className="min-h-screen bg-slate-50 py-8 px-4">
-                <SEO title="Observatoire Régional — ADA" noindex />
+                <SEO title={t('pro:regional.seo_title', 'Observatoire Régional — ADA')} noindex />
                 <div className="max-w-6xl mx-auto space-y-4">
-                    <h1 className="text-xl font-bold text-slate-900">Observatoire Régional ADA</h1>
+                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire Régional ADA')}</h1>
                     <div role="alert" className="p-3 rounded-xl border border-red-200 bg-red-50 text-sm text-red-800" data-testid="regional-error">
-                        <p>Les statistiques n’ont pas pu être chargées : aucun chiffre n’est affiché.</p>
-                        <button type="button" className="mt-2 rounded border border-red-300 px-3 py-1 text-sm underline" data-testid="regional-retry" onClick={fetchStats}>Réessayer</button>
+                        <p>{t('pro:regional.load_failed', 'Les statistiques n’ont pas pu être chargées : aucun chiffre n’est affiché.')}</p>
+                        <button type="button" className="mt-2 rounded border border-red-300 px-3 py-1 text-sm underline" data-testid="regional-retry" onClick={fetchStats}>{t('pro:regional.retry', 'Réessayer')}</button>
                     </div>
                 </div>
             </div>
@@ -117,12 +119,12 @@ export default function RegionalDashboard() {
 
     return (
         <div className="min-h-screen bg-slate-50 py-8 px-4">
-            <SEO title="Observatoire Régional — ADA" noindex />
+            <SEO title={t('pro:regional.seo_title', 'Observatoire Régional — ADA')} noindex />
             <div className="max-w-6xl mx-auto space-y-6">
                 {failed && (
                     <div role="alert" className="p-3 rounded-xl border border-red-200 bg-red-50 text-sm text-red-800" data-testid="regional-error">
-                        <p>Les statistiques n’ont pas pu être mises à jour : les chiffres ci-dessous sont ceux du dernier chargement.</p>
-                        <button type="button" className="mt-2 rounded border border-red-300 px-3 py-1 text-sm underline" data-testid="regional-retry" onClick={fetchStats}>Réessayer</button>
+                        <p>{t('pro:regional.refresh_failed', 'Les statistiques n’ont pas pu être mises à jour : les chiffres ci-dessous sont ceux du dernier chargement.')}</p>
+                        <button type="button" className="mt-2 rounded border border-red-300 px-3 py-1 text-sm underline" data-testid="regional-retry" onClick={fetchStats}>{t('pro:regional.retry', 'Réessayer')}</button>
                     </div>
                 )}
                 {/* Header */}
@@ -133,10 +135,10 @@ export default function RegionalDashboard() {
                         </div>
                         <div>
                             <h1 className="text-xl font-bold text-slate-900">
-                                Observatoire Régional ADA
+                                {t('pro:regional.title', 'Observatoire Régional ADA')}
                             </h1>
                             <p className="text-xs text-slate-700">
-                                Agrégats mesurés des structures vérifiées · commune affichée à partir de 3 structures · valeurs inférieures à 5 masquées
+                                {t('pro:regional.subtitle', 'Agrégats mesurés des structures vérifiées · commune affichée à partir de 3 structures · valeurs inférieures à 5 masquées')}
                             </p>
                         </div>
                     </div>
@@ -145,22 +147,22 @@ export default function RegionalDashboard() {
                 {/* KPIs */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <KpiCard
-                        label="Citoyens aidés"
+                        label={t('pro:regional.kpi_citizens', 'Citoyens aidés')}
                         value={stats.totalCitizensHelped ?? '< 5'}
                         icon={<Users size={14} className="text-indigo-500" />}
                     />
                     <KpiCard
-                        label="Structures"
+                        label={t('pro:regional.kpi_structures', 'Structures')}
                         value={stats.activeStructures ?? 0}
                         icon={<Building2 size={14} className="text-emerald-500" />}
                     />
                     <KpiCard
-                        label="Agents"
+                        label={t('pro:regional.kpi_agents', 'Agents')}
                         value={stats.totalAgents ?? '< 5'}
                         icon={<ShieldCheck size={14} className="text-amber-500" />}
                     />
                     <KpiCard
-                        label="RDV ce mois"
+                        label={t('pro:regional.kpi_month', 'RDV ce mois')}
                         value={stats.appointmentsThisMonth ?? '< 5'}
                         icon={<Calendar size={14} className="text-blue-500" />}
                     />
@@ -176,10 +178,10 @@ export default function RegionalDashboard() {
                             />
                             <input
                                 type="text"
-                                placeholder="Rechercher une structure..."
+                                placeholder={t('pro:regional.search_placeholder', 'Rechercher une structure...')}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                aria-label="Rechercher une structure"
+                                aria-label={t('pro:regional.search_label', 'Rechercher une structure')}
                                 className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                             />
                         </div>
@@ -187,7 +189,7 @@ export default function RegionalDashboard() {
                         {filtered.length === 0 ? (
                             <Card>
                                 <CardContent className="p-6 text-center text-sm text-slate-600">
-                                    Aucune structure trouvée
+                                    {t('pro:regional.none_found', 'Aucune structure trouvée')}
                                 </CardContent>
                             </Card>
                         ) : (
@@ -204,7 +206,7 @@ export default function RegionalDashboard() {
                         <CardHeader className="pb-1">
                             <CardTitle className="text-xs font-bold flex items-center gap-2">
                                 <Activity size={12} className="text-indigo-500" />
-                                Rendez-vous des 7 derniers jours (valeurs inférieures à 5 masquées)
+                                {t('pro:regional.trend_title', 'Rendez-vous des 7 derniers jours (valeurs inférieures à 5 masquées)')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -231,14 +233,14 @@ export default function RegionalDashboard() {
                                             stroke="#4f46e5"
                                             fill="url(#rdvGrad)"
                                             strokeWidth={2}
-                                            name="RDV"
+                                            name={t('pro:regional.appointments', 'RDV')}
                                         />
                                     </AreaChart>
                                 </ResponsiveContainer>
                             </div>
                             <div className="flex justify-between text-[9px] text-slate-600 font-bold uppercase mt-2">
                                 <span className="flex items-center gap-1">
-                                    <span className="w-2 h-2 rounded-full bg-indigo-500" /> RDV
+                                    <span className="w-2 h-2 rounded-full bg-indigo-500" /> {t('pro:regional.appointments', 'RDV')}
                                 </span>
                             </div>
                         </CardContent>
@@ -251,16 +253,15 @@ export default function RegionalDashboard() {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <h2 className="text-sm font-bold uppercase tracking-wider mb-1">
-                                    Interopérabilité Territoriale
+                                    {t('pro:regional.interop_title', 'Interopérabilité Territoriale')}
                                 </h2>
                                 <p className="text-xs text-slate-300">
-                                    Données agrégées : aucun accès aux dossiers nominatifs, et les
-                                    valeurs inférieures à 5 sont masquées.
+                                    {t('pro:regional.interop_text', 'Données agrégées : aucun accès aux dossiers nominatifs, et les valeurs inférieures à 5 sont masquées.')}
                                 </p>
                             </div>
                             <div className="flex gap-2">
                                 <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-md text-[9px] font-bold uppercase">
-                                    Agrégats uniquement
+                                    {t('pro:regional.aggregates_only', 'Agrégats uniquement')}
                                 </span>
                             </div>
                         </div>
@@ -290,6 +291,7 @@ function KpiCard({ label, value, icon }) {
 }
 
 function StructureCard({ city }) {
+    const { t } = useT('pro');
     const isActive = city.status === 'optimal';
     return (
         <Card className="hover:shadow-md transition-shadow">
@@ -312,16 +314,16 @@ function StructureCard({ city }) {
                             : 'bg-slate-100 text-slate-600'
                             }`}
                     >
-                        {isActive ? 'actif' : 'inactif'}
+                        {isActive ? t('pro:regional.active', 'actif') : t('pro:regional.inactive', 'inactif')}
                     </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                     <div className="bg-slate-50 rounded-lg p-2 text-center">
-                        <p className="text-[9px] text-slate-600 font-bold uppercase">Agents</p>
+                        <p className="text-[9px] text-slate-600 font-bold uppercase">{t('pro:regional.kpi_agents', 'Agents')}</p>
                         <p className="text-sm font-bold text-slate-900">{city.agents ?? '< 5'}</p>
                     </div>
                     <div className="bg-slate-50 rounded-lg p-2 text-center">
-                        <p className="text-[9px] text-slate-600 font-bold uppercase">RDV</p>
+                        <p className="text-[9px] text-slate-600 font-bold uppercase">{t('pro:regional.appointments', 'RDV')}</p>
                         <p className="text-sm font-bold text-slate-900">{city.rdv ?? '< 5'}</p>
                     </div>
                 </div>

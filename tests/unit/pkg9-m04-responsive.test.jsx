@@ -56,7 +56,7 @@ describe('PKG-9 / M04 shared pieces', () => {
   });
   it('admin header buttons are named 44 px targets; toasts are anchored on phones; profile scroll box contains its hidden texts', () => {
     const admin = fs.readFileSync('src/pages/admin/AdminLayout.jsx', 'utf8');
-    expect(admin).toMatch(/aria-label="Ouvrir le menu d'administration"/); expect(admin).toMatch(/aria-label="Se déconnecter"/); expect(admin).not.toMatch(/className="p-1 rounded hover:bg-slate-100/);
+    expect(admin).toMatch(/aria-label=\{t\('admin:layout\.open_menu', "Ouvrir le menu d'administration"\)\}/); expect(admin).toMatch(/aria-label=\{t\('admin:layout\.sign_out', 'Se déconnecter'\)\}/); expect(admin).not.toMatch(/className="p-1 rounded hover:bg-slate-100/);
     // the EMPTY toast area covered the phone header and swallowed taps on the menu button (DTA-B49 dev run): it ignores the pointer, the toasts keep it
     expect(fs.readFileSync('src/components/ui/toast.jsx', 'utf8')).toMatch(/pointer-events-none fixed left-0 top-0 .* sm:left-auto/);
     expect(fs.readFileSync('src/components/ui/toast.jsx', 'utf8')).toMatch(/"group pointer-events-auto relative/);
@@ -67,7 +67,7 @@ describe('PKG-9 / M04 shared pieces', () => {
     expect(src).not.toMatch(/api\/pro\/ai\/assist|Gemini|Résumé psychologique|aiConsent|Autoriser l'analyse/);
   });
   it('the audit filter select and the notification checkboxes are named / 24 px targets', () => {
-    expect(fs.readFileSync('src/pages/pro/AuditLog.jsx', 'utf8')).toMatch(/aria-label="Filtrer le journal par action"/);
+    expect(fs.readFileSync('src/pages/pro/AuditLog.jsx', 'utf8')).toMatch(/aria-label=(?:"Filtrer le journal par action"|\{t\('pro:audit_log\.[\w.]+', 'Filtrer le journal par action'\)\})/);   // R37: the name is translated (French default unchanged)
     expect((fs.readFileSync('src/pages/CompteProfil.jsx', 'utf8').match(/type="checkbox" className="h-6 w-6 shrink-0"/g) || []).length).toBe(2);
   });
 });

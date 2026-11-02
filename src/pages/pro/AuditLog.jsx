@@ -2,6 +2,7 @@
 import { SkeletonList } from '@/components/ui/skeleton';
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { Trans } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,16 +25,17 @@ import {
     Download,
     Loader2,
 } from 'lucide-react';
+import i18n, { formatDate, useT } from '@/i18n';
 
-const ACTION_LABELS = {
-    DOSSIER_VIEWED: { label: 'Dossier consulté', icon: Eye, color: 'text-amber-800 bg-amber-50' },
-    DOSSIER_STATUS_UPDATED: { label: 'Statut mis à jour', icon: FileText, color: 'text-blue-600 bg-blue-50' },
-    REGISTER_VIA_INVITE: { label: 'Inscription via invite', icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
-    INVITATION_SENT: { label: 'Invitation envoyée', icon: UserPlus, color: 'text-indigo-600 bg-indigo-50' },
-    LOGIN_SUCCESS: { label: 'Connexion', icon: LogIn, color: 'text-slate-600 bg-slate-100' },
-    USER_DISABLED: { label: 'Membre désactivé', icon: UserX, color: 'text-red-600 bg-red-50' },
-    REGISTER_SUCCESS: { label: 'Inscription structure', icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
-};
+const actionLabels = (t) => ({
+    DOSSIER_VIEWED: { label: t('pro:audit_log.action.dossier_viewed', 'Dossier consulté'), icon: Eye, color: 'text-amber-800 bg-amber-50' },
+    DOSSIER_STATUS_UPDATED: { label: t('pro:audit_log.action.status_updated', 'Statut mis à jour'), icon: FileText, color: 'text-blue-600 bg-blue-50' },
+    REGISTER_VIA_INVITE: { label: t('pro:audit_log.action.register_via_invite', 'Inscription via invite'), icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
+    INVITATION_SENT: { label: t('pro:audit_log.action.invitation_sent', 'Invitation envoyée'), icon: UserPlus, color: 'text-indigo-600 bg-indigo-50' },
+    LOGIN_SUCCESS: { label: t('pro:audit_log.action.login', 'Connexion'), icon: LogIn, color: 'text-slate-600 bg-slate-100' },
+    USER_DISABLED: { label: t('pro:audit_log.action.user_disabled', 'Membre désactivé'), icon: UserX, color: 'text-red-600 bg-red-50' },
+    REGISTER_SUCCESS: { label: t('pro:audit_log.action.register_structure', 'Inscription structure'), icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
+});
 
 /**
  * ProAuditLog — Journal d'audit RGPD
@@ -43,6 +45,8 @@ const ACTION_LABELS = {
  */
 export default function ProAuditLog() {
     useOutletContext();
+    const { t } = useT('pro');
+    const ACTION_LABELS = actionLabels(t);
 
     const [entries, setEntries] = useState([]);
 
@@ -72,19 +76,19 @@ export default function ProAuditLog() {
             // R7: a refusal or an outage is said — it showed « Aucune entrée trouvée », as if the journal were empty
             if (!res.ok) {
                 setEntries([]);
-                setLoadProblem(res.status === 403 ? 'Le journal d’audit est réservé aux administrateurs de la structure.' : res.status === 401
-                    ? 'Votre session a expiré : reconnectez-vous.' : 'Le journal n’a pas pu être chargé. Ce n’est pas un journal vide : réessayez.');
+                setLoadProblem(res.status === 403 ? t('pro:audit_log.forbidden', 'Le journal d’audit est réservé aux administrateurs de la structure.') : res.status === 401
+                    ? t('pro:audit_log.session_expired', 'Votre session a expiré : reconnectez-vous.') : t('pro:audit_log.load_error', 'Le journal n’a pas pu être chargé. Ce n’est pas un journal vide : réessayez.'));
                 return;
             }
             const data = await res.json();
             setEntries(data.entries || []);
             setPagination(data.pagination || { page: 1, totalPages: 1, totalCount: 0 });
         } catch {
-            setLoadProblem('Le service est momentanément injoignable : le journal n’a pas pu être chargé.');
+            setLoadProblem(t('pro:audit_log.unreachable', 'Le service est momentanément injoignable : le journal n’a pas pu être chargé.'));
         } finally {
             setLoading(false);
         }
-    }, [currentPage, actionFilter, token]);
+    }, [currentPage, actionFilter, token]);   // eslint-disable-line react-hooks/exhaustive-deps -- t only changes the message language
 
     useEffect(() => {
         fetchLogs();
@@ -116,30 +120,30 @@ export default function ProAuditLog() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
                         <Shield size={22} className="text-indigo-600" />
-                        Journal d&apos;Audit
+                        {t('pro:audit_log.title', 'Journal d\'Audit')}
                     </h1>
                     <p className="text-sm text-slate-700">
-                        Traçabilité des accès — Conformité RGPD
+                        {t('pro:audit_log.subtitle', 'Traçabilité des accès — Conformité RGPD')}
                     </p>
                 </div>
                 <div className="flex gap-2">
                     <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-[180px]" aria-label="Filtrer le journal par action">
-                            <SelectValue placeholder="Filtrer par action" />
+                        <SelectTrigger className="w-[180px]" aria-label={t('pro:audit_log.filter_label', 'Filtrer le journal par action')}>
+                            <SelectValue placeholder={t('pro:audit_log.filter_placeholder', 'Filtrer par action')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Toutes les actions</SelectItem>
-                            <SelectItem value="DOSSIER_VIEWED">Dossier consulté</SelectItem>
-                            <SelectItem value="DOSSIER_STATUS_UPDATED">Statut mis à jour</SelectItem>
-                            <SelectItem value="REGISTER_VIA_INVITE">Inscription invite</SelectItem>
-                            <SelectItem value="INVITATION_SENT">Invitation envoyée</SelectItem>
-                            <SelectItem value="LOGIN_SUCCESS">Connexion</SelectItem>
-                            <SelectItem value="USER_DISABLED">Membre désactivé</SelectItem>
+                            <SelectItem value="all">{t('pro:audit_log.filter_all', 'Toutes les actions')}</SelectItem>
+                            <SelectItem value="DOSSIER_VIEWED">{ACTION_LABELS.DOSSIER_VIEWED.label}</SelectItem>
+                            <SelectItem value="DOSSIER_STATUS_UPDATED">{ACTION_LABELS.DOSSIER_STATUS_UPDATED.label}</SelectItem>
+                            <SelectItem value="REGISTER_VIA_INVITE">{t('pro:audit_log.filter_register_invite', 'Inscription invite')}</SelectItem>
+                            <SelectItem value="INVITATION_SENT">{ACTION_LABELS.INVITATION_SENT.label}</SelectItem>
+                            <SelectItem value="LOGIN_SUCCESS">{ACTION_LABELS.LOGIN_SUCCESS.label}</SelectItem>
+                            <SelectItem value="USER_DISABLED">{ACTION_LABELS.USER_DISABLED.label}</SelectItem>
                         </SelectContent>
                     </Select>
                     <Button variant="outline" onClick={handleExport}>
                         <Download className="mr-2 h-4 w-4" />
-                        Export CSV
+                        {t('pro:audit_log.export_csv', 'Export CSV')}
                     </Button>
                 </div>
             </div>
@@ -148,14 +152,14 @@ export default function ProAuditLog() {
             <Card className="bg-slate-50 border-slate-200">
                 <CardContent className="py-3 px-4 flex items-center justify-between">
                     <p className="text-xs text-slate-700">
-                        <span className="font-bold text-slate-700">{pagination.totalCount}</span> entrées
+                        <Trans i18n={i18n} i18nKey="pro:audit_log.entries" count={pagination.totalCount} defaults="<0>{{count}}</0> entrées" components={[<span key="n" className="font-bold text-slate-700" />]} />
                         {actionFilter !== 'all' && (
-                            <span> · Filtre: <span className="font-medium">{ACTION_LABELS[actionFilter]?.label || actionFilter}</span></span>
+                            <span> · {t('pro:audit_log.filter_prefix', 'Filtre:')} <span className="font-medium">{ACTION_LABELS[actionFilter]?.label || actionFilter}</span></span>
                         )}
                     </p>
                     <div className="flex items-center gap-1 text-xs text-emerald-700">
                         <Shield size={12} />
-                        <span className="font-bold">Audit trail actif</span>
+                        <span className="font-bold">{t('pro:audit_log.trail_active', 'Audit trail actif')}</span>
                     </div>
                 </CardContent>
             </Card>
@@ -166,7 +170,7 @@ export default function ProAuditLog() {
                 <Card>
                     <CardContent className="py-12 text-center text-slate-600">
                         <Shield size={32} className="mx-auto mb-3 opacity-20" />
-                        <p className="text-sm">Aucune entrée trouvée</p>
+                        <p className="text-sm">{t('pro:audit_log.empty', 'Aucune entrée trouvée')}</p>
                     </CardContent>
                 </Card>
             ) : (
@@ -190,9 +194,9 @@ export default function ProAuditLog() {
                                             {meta.label}
                                         </p>
                                         <p className="text-xs text-slate-700 truncate">
-                                            {entry.actorEmail || entry.actorId?.slice(0, 8) || 'Système'}
+                                            {entry.actorEmail || entry.actorId?.slice(0, 8) || t('pro:audit_log.system', 'Système')}
                                             {entry.details?.shareId && (
-                                                <> · Dossier #{entry.details.shareId.slice(0, 8)}</>
+                                                <> · {t('pro:audit_log.dossier_ref', 'Dossier #{{id}}', { id: entry.details.shareId.slice(0, 8) })}</>
                                             )}
                                             {entry.details?.email && (
                                                 <> · {entry.details.email}</>
@@ -202,16 +206,17 @@ export default function ProAuditLog() {
                                     <div className="text-right shrink-0">
                                         <p className="text-[10px] text-slate-600 flex items-center gap-1">
                                             <Clock size={10} />
-                                            {new Date(entry.timestamp).toLocaleString('fr-FR', {
+                                            {formatDate(new Date(entry.timestamp), {
                                                 day: '2-digit',
                                                 month: '2-digit',
                                                 hour: '2-digit',
                                                 minute: '2-digit',
+                                                timeZone: undefined,   // the viewer's own time zone, as before
                                             })}
                                         </p>
                                         {entry.ipHash && (
                                             <p className="text-[9px] text-slate-600 mt-0.5">
-                                                IP: {entry.ipHash.slice(0, 8)}...
+                                                {t('pro:audit_log.ip', 'IP: {{hash}}...', { hash: entry.ipHash.slice(0, 8) })}
                                             </p>
                                         )}
                                     </div>
@@ -234,7 +239,7 @@ export default function ProAuditLog() {
                         <ChevronLeft size={14} />
                     </Button>
                     <span className="text-xs text-slate-700">
-                        Page {currentPage} / {pagination.totalPages}
+                        {t('pro:audit_log.page', 'Page {{page}} / {{total}}', { page: currentPage, total: pagination.totalPages })}
                     </span>
                     <Button
                         variant="outline"

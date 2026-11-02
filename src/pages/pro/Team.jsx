@@ -40,6 +40,8 @@ import {
 import { toast } from 'sonner';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+import { Trans } from 'react-i18next';
+import i18n, { useT } from '@/i18n';
 /**
  * ProTeam — Page enrichie de gestion d'équipe
  *
@@ -49,6 +51,7 @@ import { getCsrfHeaders } from '@/lib/csrf';
  * Accessible uniquement aux STRUCTURE_ADMIN et SUPERADMIN.
  */
 export default function ProTeam() {
+    const { t } = useT('pro');
     const { user } = useOutletContext();
     const [data, setData] = useState({ users: [], invitations: [] });
     const [stats, setStats] = useState(null);
@@ -81,14 +84,14 @@ export default function ProTeam() {
             } else {
                 const st = teamRes.status === 'fulfilled' ? teamRes.value.status : 0;
                 setData({ users: [], invitations: [] });
-                setLoadProblem(st === 403 ? 'La gestion de l’équipe est réservée aux administrateurs de la structure.' : st === 401 ? 'Votre session a expiré : reconnectez-vous.' : 'L’équipe n’a pas pu être chargée.');
+                setLoadProblem(st === 403 ? t('pro:team.load_forbidden', 'La gestion de l’équipe est réservée aux administrateurs de la structure.') : st === 401 ? t('pro:team.load_expired', 'Votre session a expiré : reconnectez-vous.') : t('pro:team.load_failed', 'L’équipe n’a pas pu être chargée.'));
             }
             if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
                 setStats(await statsRes.value.json());
             }
         } catch (e) {
             if (import.meta.env.DEV) console.error('[ProTeam] Erreur:', e);
-            setLoadProblem('L’équipe n’a pas pu être chargée.');
+            setLoadProblem(t('pro:team.load_failed', 'L’équipe n’a pas pu être chargée.'));
         } finally {
             setLoading(false);
         }
@@ -115,17 +118,17 @@ export default function ProTeam() {
             if (res.ok) {
                 const out = await res.json().catch(() => ({}));
                 // PKG-11 audit: « envoyée » only when a provider accepted the e-mail (or the LAB test outbox recorded it)
-                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(`Invitation transmise à ${inviteEmail}`);
-                else toast.warning(`Invitation créée pour ${inviteEmail}, mais l’e-mail n’a pas pu être envoyé : renvoyez-la plus tard.`);
+                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(t('pro:team.invite_sent', 'Invitation transmise à {{email}}', { email: inviteEmail }));
+                else toast.warning(t('pro:team.invite_not_mailed', 'Invitation créée pour {{email}}, mais l’e-mail n’a pas pu être envoyé : renvoyez-la plus tard.', { email: inviteEmail }));
                 fetchTeam();
                 setIsInviteOpen(false);
                 setInviteEmail('');
             } else {
                 const err = await res.json();
-                toast.error(err.error || 'Erreur lors de l\'envoi');
+                toast.error(err.error || t('pro:team.invite_error', 'Erreur lors de l\'envoi'));
             }
         } catch {
-            toast.error('Erreur réseau. Veuillez réessayer.');
+            toast.error(t('pro:team.network_retry', 'Erreur réseau. Veuillez réessayer.'));
         } finally {
             setInviting(false);
         }
@@ -140,13 +143,13 @@ export default function ProTeam() {
             });
             if (res.ok) {
                 const out = await res.json().catch(() => ({}));
-                toast.success(out?.movedCases ? `Collaborateur désactivé. ${out.movedCases} dossier(s) ${successorId ? 'confiés au successeur' : 'remis dans la file de l’équipe'}.` : 'Collaborateur désactivé.');
+                toast.success(out?.movedCases ? (successorId ? t('pro:team.disabled_moved_successor', 'Collaborateur désactivé. {{n}} dossier(s) confiés au successeur.', { n: out.movedCases }) : t('pro:team.disabled_moved_queue', 'Collaborateur désactivé. {{n}} dossier(s) remis dans la file de l’équipe.', { n: out.movedCases })) : t('pro:team.disabled', 'Collaborateur désactivé.'));
                 fetchTeam();
             } else {
-                toast.error((await res.json().catch(() => ({}))).error || 'Erreur lors de la désactivation.');   // R8: the server's reason (successor rule, unknown member)
+                toast.error((await res.json().catch(() => ({}))).error || t('pro:team.disable_error', 'Erreur lors de la désactivation.'));   // R8: the server's reason (successor rule, unknown member)
             }
         } catch {
-            toast.error('Erreur réseau.');
+            toast.error(t('pro:team.network_error', 'Erreur réseau.'));
         } finally {
             setDisablingId(null);
             setConfirmDisable(null);
@@ -164,9 +167,9 @@ export default function ProTeam() {
                 body: JSON.stringify({ targetUserId: member.id, ...body }),
             });
             if (res.ok) { toast.success(done); fetchTeam(); }
-            else toast.error((await res.json().catch(() => ({}))).error || 'La modification a échoué.');
+            else toast.error((await res.json().catch(() => ({}))).error || t('pro:team.patch_error', 'La modification a échoué.'));
         } catch {
-            toast.error('Erreur réseau.');
+            toast.error(t('pro:team.network_error', 'Erreur réseau.'));
         } finally {
             setChangingId(null);
         }
@@ -182,14 +185,14 @@ export default function ProTeam() {
             });
             if (res.ok) {
                 const out = await res.json().catch(() => ({}));
-                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(`Nouveau lien transmis à ${email}`);
-                else toast.warning(`Nouveau lien créé pour ${email}, mais l’e-mail n’a pas pu être envoyé.`);
+                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(t('pro:team.resend_sent', 'Nouveau lien transmis à {{email}}', { email }));
+                else toast.warning(t('pro:team.resend_not_mailed', 'Nouveau lien créé pour {{email}}, mais l’e-mail n’a pas pu être envoyé.', { email }));
             } else {
                 const err = await res.json();
-                toast.error(err.error || 'Erreur lors de la relance');
+                toast.error(err.error || t('pro:team.resend_error', 'Erreur lors de la relance'));
             }
         } catch {
-            toast.error('Erreur réseau.');
+            toast.error(t('pro:team.network_error', 'Erreur réseau.'));
         } finally {
             setResendingId(null);
         }
@@ -204,13 +207,13 @@ export default function ProTeam() {
                 headers,
             });
             if (res.ok) {
-                toast.success(`Invitation annulée pour ${email}`);
+                toast.success(t('pro:team.invite_cancelled', 'Invitation annulée pour {{email}}', { email }));
                 fetchTeam();
             } else {
-                toast.error((await res.json().catch(() => ({}))).error || 'Erreur lors de l\'annulation.');
+                toast.error((await res.json().catch(() => ({}))).error || t('pro:team.cancel_error', 'Erreur lors de l\'annulation.'));
             }
         } catch {
-            toast.error('Erreur réseau.');
+            toast.error(t('pro:team.network_error', 'Erreur réseau.'));
         } finally {
             setCancellingId(null);
         }
@@ -237,21 +240,21 @@ export default function ProTeam() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Mon Équipe</h1>
+                    <h1 className="text-2xl font-bold text-slate-900">{t('pro:team.title', 'Mon Équipe')}</h1>
                     <p className="text-sm text-slate-700">
-                        Gestion et pilotage de votre structure
+                        {t('pro:team.subtitle', 'Gestion et pilotage de votre structure')}
                     </p>
                 </div>
                 <Button onClick={() => setIsInviteOpen(true)}>
                     <UserPlus className="mr-2 h-4 w-4" />
-                    Inviter un collaborateur
+                    {t('pro:team.invite_button', 'Inviter un collaborateur')}
                 </Button>
             </div>
 
             {loadProblem ? (
                 <div role="alert" data-testid="pro-team-problem" className="rounded-md border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
                     <p>{loadProblem}</p>
-                    <Button variant="outline" size="sm" className="mt-2" data-testid="pro-team-retry" onClick={fetchTeam}>Réessayer</Button>
+                    <Button variant="outline" size="sm" className="mt-2" data-testid="pro-team-retry" onClick={fetchTeam}>{t('pro:team.retry', 'Réessayer')}</Button>
                 </div>
             ) : null}
             {loadProblem ? null : <>
@@ -259,22 +262,22 @@ export default function ProTeam() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard
                     icon={<Users className="text-indigo-500" size={18} />}
-                    label="Membres actifs"
+                    label={t('pro:team.stat_active_members', 'Membres actifs')}
                     value={activeMemberCount}
                 />
                 <StatCard
                     icon={<Calendar className="text-emerald-500" size={18} />}
-                    label="RDV aujourd'hui"
+                    label={t('pro:team.stat_today', 'RDV aujourd\'hui')}
                     value={globalStats.appointmentsToday ?? '--'}
                 />
                 <StatCard
                     icon={<TrendingUp className="text-amber-500" size={18} />}
-                    label="RDV à venir"
+                    label={t('pro:team.stat_upcoming', 'RDV à venir')}
                     value={globalStats.appointmentsUpcoming ?? '--'}
                 />
                 <StatCard
                     icon={<MessageCircle className="text-purple-500" size={18} />}
-                    label="Conversations actives"
+                    label={t('pro:team.stat_conversations', 'Conversations actives')}
                     value={globalStats.conversationsActive ?? '--'}
                 />
             </div>
@@ -283,9 +286,7 @@ export default function ProTeam() {
             <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
                 <ShieldCheck className="text-emerald-700 shrink-0" size={18} />
                 <p className="text-xs text-emerald-700">
-                    <strong>Confidentialité :</strong> les messages entre agents et usagers
-                    sont chiffrés au stockage (pas de bout en bout) et accessibles aux
-                    membres habilités de la structure concernée.
+                    <Trans i18n={i18n} i18nKey="pro:team.privacy_notice" defaults="<0>Confidentialité :</0> les messages entre agents et usagers sont chiffrés au stockage (pas de bout en bout) et accessibles aux membres habilités de la structure concernée." components={[<strong key="0" />]} />
                 </p>
             </div>
 
@@ -293,7 +294,7 @@ export default function ProTeam() {
             <div>
                 <h2 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                     <BarChart3 size={16} className="text-indigo-500" />
-                    Membres et Performance
+                    {t('pro:team.members_heading', 'Membres et Performance')}
                 </h2>
                 <div className="space-y-3">
                     {data.users.map((u) => (
@@ -329,7 +330,7 @@ export default function ProTeam() {
                                                         : 'text-slate-600'
                                                 }
                                             >
-                                                {u.status === 'active' ? 'Actif' : u.status}
+                                                {u.status === 'active' ? t('pro:team.status_active', 'Actif') : u.status}
                                             </span>
                                         </div>
                                     </div>
@@ -342,22 +343,22 @@ export default function ProTeam() {
                                         <span className="font-semibold text-slate-700">
                                             {memberCountMap[u.id] ?? 0}
                                         </span>
-                                        <span>RDV</span>
+                                        <span>{t('pro:team.appointments_short', 'RDV')}</span>
                                     </div>
 
                                     {/* Actions */}
                                     {u.id !== user?.id && u.status === 'active' && (u.role === 'PRO' || u.role === 'STRUCTURE_ADMIN') && (
                                         <label className="flex items-center gap-1 text-xs text-slate-700">
-                                            <span className="sr-only">Rôle de {u.email}</span>
+                                            <span className="sr-only">{t('pro:team.role_of', 'Rôle de {{email}}', { email: u.email })}</span>
                                             <select
                                                 className="rounded border border-slate-300 bg-white px-2 py-1 text-xs"
                                                 value={u.role}
                                                 disabled={changingId === u.id}
-                                                onChange={(e) => patchMember(u, { role: e.target.value }, `Rôle de ${u.email} modifié.`)}
+                                                onChange={(e) => patchMember(u, { role: e.target.value }, t('pro:team.role_changed', 'Rôle de {{email}} modifié.', { email: u.email }))}
                                                 data-testid={`team-role-${u.id}`}
                                             >
-                                                <option value="PRO">Professionnel</option>
-                                                <option value="STRUCTURE_ADMIN">Administrateur</option>
+                                                <option value="PRO">{t('pro:team.role_pro', 'Professionnel')}</option>
+                                                <option value="STRUCTURE_ADMIN">{t('pro:team.role_admin', 'Administrateur')}</option>
                                             </select>
                                         </label>
                                     )}
@@ -368,15 +369,15 @@ export default function ProTeam() {
                                                 type="checkbox"
                                                 checked={u.canManageSchedule === true}
                                                 disabled={changingId === u.id}
-                                                onChange={(e) => patchMember(u, { canManageSchedule: e.target.checked }, e.target.checked ? `${u.email} gère désormais le planning.` : `${u.email} ne gère plus le planning.`)}
+                                                onChange={(e) => patchMember(u, { canManageSchedule: e.target.checked }, e.target.checked ? t('pro:team.schedule_on', '{{email}} gère désormais le planning.', { email: u.email }) : t('pro:team.schedule_off', '{{email}} ne gère plus le planning.', { email: u.email }))}
                                                 data-testid={`team-schedule-${u.id}`}
                                             />
-                                            <span>Gère le planning<span className="sr-only"> (horaires et absences de l’équipe) : {u.email}</span></span>
+                                            <span>{t('pro:team.manages_schedule', 'Gère le planning')}<span className="sr-only">{t('pro:team.manages_schedule_sr', ' (horaires et absences de l’équipe) : {{email}}', { email: u.email })}</span></span>
                                         </label>
                                     )}
                                     {u.id !== user?.id && u.status === 'disabled' && (
-                                        <Button variant="outline" size="sm" onClick={() => patchMember(u, { reactivate: true }, `${u.email} est de nouveau actif.`)} disabled={changingId === u.id} data-testid={`team-reactivate-${u.id}`}>
-                                            Réactiver
+                                        <Button variant="outline" size="sm" onClick={() => patchMember(u, { reactivate: true }, t('pro:team.reactivated', '{{email}} est de nouveau actif.', { email: u.email }))} disabled={changingId === u.id} data-testid={`team-reactivate-${u.id}`}>
+                                            {t('pro:team.reactivate', 'Réactiver')}
                                         </Button>
                                     )}
                                     {u.id !== user?.id && u.status !== 'disabled' && (
@@ -392,7 +393,7 @@ export default function ProTeam() {
                                             ) : (
                                                 <UserX className="mr-1 h-3.5 w-3.5" />
                                             )}
-                                            Désactiver
+                                            {t('pro:team.disable', 'Désactiver')}
                                         </Button>
                                     )}
                                 </div>
@@ -401,10 +402,10 @@ export default function ProTeam() {
                     ))}
                 </div>
                 {(data.pagination?.totalPages || 1) > 1 && (
-                    <nav className="mt-4 flex items-center justify-between text-sm" aria-label="Pages de l’équipe">
-                        <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Page précédente</Button>
-                        <span>Page {page} sur {data.pagination.totalPages} ({data.pagination.total} comptes)</span>
-                        <Button variant="outline" size="sm" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>Page suivante</Button>
+                    <nav className="mt-4 flex items-center justify-between text-sm" aria-label={t('pro:team.pages_label', 'Pages de l’équipe')}>
+                        <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>{t('pro:team.page_prev', 'Page précédente')}</Button>
+                        <span>{t('pro:team.page_of', 'Page {{page}} sur {{pages}} ({{total}} comptes)', { page, pages: data.pagination.totalPages, total: data.pagination.total })}</span>
+                        <Button variant="outline" size="sm" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>{t('pro:team.page_next', 'Page suivante')}</Button>
                     </nav>
                 )}
             </div>
@@ -414,7 +415,7 @@ export default function ProTeam() {
                 <div>
                     <h2 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <Mail size={16} className="text-indigo-500" />
-                        Invitations en attente
+                        {t('pro:team.pending_heading', 'Invitations en attente')}
                     </h2>
                     <div className="space-y-2">
                         {data.invitations.map((inv) => (
@@ -424,11 +425,11 @@ export default function ProTeam() {
                                         <p className="font-medium text-sm">{inv.email}</p>
                                         <div className="flex items-center gap-2 mt-1">
                                             <RoleBadge role={inv.role} />
-                                            <span className="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold">En attente</span>
+                                            <span className="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold">{t('pro:team.pending', 'En attente')}</span>
                                         </div>
                                         {inv.senderRevoked ? (
                                             <p className="mt-1 text-xs text-red-700" data-testid={`team-invitation-sender-revoked-${inv.id}`}>
-                                                Plus utilisable : la personne qui l’a envoyée n’est plus administratrice. « Relancer » envoie un nouveau lien en votre nom.
+                                                {t('pro:team.sender_revoked', 'Plus utilisable : la personne qui l’a envoyée n’est plus administratrice. « Relancer » envoie un nouveau lien en votre nom.')}
                                             </p>
                                         ) : null}
                                     </div>
@@ -444,7 +445,7 @@ export default function ProTeam() {
                                             ) : (
                                                 <RefreshCw className="mr-1 h-3.5 w-3.5" />
                                             )}
-                                            Relancer
+                                            {t('pro:team.resend', 'Relancer')}
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -458,7 +459,7 @@ export default function ProTeam() {
                                             ) : (
                                                 <Trash2 className="mr-1 h-3.5 w-3.5" />
                                             )}
-                                            Annuler
+                                            {t('pro:team.cancel', 'Annuler')}
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -472,11 +473,11 @@ export default function ProTeam() {
             <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Inviter un membre</DialogTitle>
+                        <DialogTitle>{t('pro:team.invite_dialog_title', 'Inviter un membre')}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleInvite} className="space-y-4">
                         <div>
-                            <Label htmlFor="invite-email">Email</Label>
+                            <Label htmlFor="invite-email">{t('pro:team.email', 'Email')}</Label>
                             <Input
                                 id="invite-email"
                                 type="email"
@@ -486,17 +487,17 @@ export default function ProTeam() {
                             />
                         </div>
                         <div>
-                            <Label htmlFor="invite-role">Rôle</Label>
+                            <Label htmlFor="invite-role">{t('pro:team.role', 'Rôle')}</Label>
                             <Select value={inviteRole} onValueChange={setInviteRole}>
                                 <SelectTrigger id="invite-role">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="PRO">
-                                        Professionnel (Lecture seule équipe)
+                                        {t('pro:team.invite_role_pro', 'Professionnel (Lecture seule équipe)')}
                                     </SelectItem>
                                     <SelectItem value="STRUCTURE_ADMIN">
-                                        Administrateur (Gestion équipe/services)
+                                        {t('pro:team.invite_role_admin', 'Administrateur (Gestion équipe/services)')}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -508,7 +509,7 @@ export default function ProTeam() {
                                 ) : (
                                     <UserPlus className="mr-2 h-4 w-4" />
                                 )}
-                                {inviting ? 'Envoi...' : 'Inviter'}
+                                {inviting ? t('pro:team.sending', 'Envoi...') : t('pro:team.invite', 'Inviter')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -521,23 +522,22 @@ export default function ProTeam() {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <AlertTriangle className="h-5 w-5 text-red-500" />
-                            Désactiver ce collaborateur ?
+                            {t('pro:team.disable_confirm_title', 'Désactiver ce collaborateur ?')}
                         </DialogTitle>
                     </DialogHeader>
                     <p className="text-sm text-slate-600">
-                        Le compte de <strong>{confirmDisable?.email}</strong> sera désactivé.
-                        Il ne pourra plus accéder à l&apos;Espace Pro et ses sessions ouvertes prennent fin.
+                        <Trans i18n={i18n} i18nKey="pro:team.disable_confirm_text" defaults="Le compte de <0>{{email}}</0> sera désactivé. Il ne pourra plus accéder à l'Espace Pro et ses sessions ouvertes prennent fin." values={{ email: confirmDisable?.email }} components={[<strong key="0" />]} />
                     </p>
                     <label className="block space-y-1 text-sm text-slate-700">
-                        <span>Ses dossiers ouverts vont à :</span>
+                        <span>{t('pro:team.successor_label', 'Ses dossiers ouverts vont à :')}</span>
                         <select className="w-full rounded border border-slate-300 bg-white px-2 py-1.5" value={successorId} onChange={(e) => setSuccessorId(e.target.value)} data-testid="team-successor">
-                            <option value="">la file de l’équipe (non attribués)</option>
+                            <option value="">{t('pro:team.successor_queue', 'la file de l’équipe (non attribués)')}</option>
                             {data.users.filter((m) => m.status === 'active' && m.id !== confirmDisable?.id).map((m) => <option key={m.id} value={m.id}>{m.email}</option>)}
                         </select>
                     </label>
                     <DialogFooter className="gap-2">
                         <Button variant="outline" onClick={() => setConfirmDisable(null)}>
-                            Annuler
+                            {t('pro:team.cancel', 'Annuler')}
                         </Button>
                         <Button
                             variant="destructive"
@@ -549,7 +549,7 @@ export default function ProTeam() {
                             ) : (
                                 <UserX className="mr-2 h-4 w-4" />
                             )}
-                            Confirmer la désactivation
+                            {t('pro:team.disable_confirm', 'Confirmer la désactivation')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -577,18 +577,19 @@ function StatCard({ icon, label, value }) {
 }
 
 function RoleBadge(/** @type {{ role: string | number | boolean | null | undefined }} */ { role }) {
+    const { t } = useT('pro');
     if (role === 'STRUCTURE_ADMIN' || role === 'SUPERADMIN') {
         return (
             <span className="inline-flex items-center gap-1 text-amber-800">
                 <Crown size={10} />
-                {role === 'SUPERADMIN' ? 'Super Admin' : 'Responsable'}
+                {role === 'SUPERADMIN' ? t('pro:team.badge_superadmin', 'Super Admin') : t('pro:team.badge_admin', 'Responsable')}
             </span>
         );
     }
     return (
         <span className="inline-flex items-center gap-1">
             <UserCog size={10} />
-            Agent
+            {t('pro:team.badge_agent', 'Agent')}
         </span>
     );
 }

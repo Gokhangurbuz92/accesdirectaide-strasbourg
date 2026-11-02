@@ -17,6 +17,7 @@ import {
     Clock,
     Shield,
 } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * AdminDashboard — « À traiter » (owner LAB audit, 2026-10-25).
@@ -27,6 +28,7 @@ import {
  */
 /** the last automatic verification, in one line (the detail is on /admin/veille): what the system did by itself */
 function VeilleSummary() {
+    const { t } = useT('admin');
     const { data } = useQuery({ queryKey: ['admin-veille'], queryFn: () => apiClient.admin.getVeille(7), refetchInterval: 60_000 });
     if (!data) return null;
     // the last run that did something (a run put off by a QA campaign or by the pause is not one), and only the alerts that matter
@@ -37,15 +39,16 @@ function VeilleSummary() {
     return (
         <Card data-testid="admin-veille-summary"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
             <p className="text-slate-800">
-                <strong>Veille automatique</strong> — {data.status?.paused?.paused ? 'en pause. ' : ''}{last ? `dernière le ${new Date(last.startedAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Paris' })} : ${n(/:PUBLISHED$/) + n(/:CREATED$/)} publiées ou ajoutées, ${n(/:(UPDATED|CORRECTED)$/)} mises à jour, ${n(/:WITHDRAWN$/)} retirées.` : 'pas encore de veille : la première a lieu cette nuit à 3 h 17.'}
-                {' '}Les fiches se vérifient seules ; vous n’avez rien à valider.{alerts.length ? ` ${alerts.length} alerte(s) à lire.` : ''}
+                <strong>{t('admin:dashboard.veille.title', 'Veille automatique')}</strong> — {data.status?.paused?.paused ? t('admin:dashboard.veille.paused', 'en pause. ') : ''}{last ? t('admin:dashboard.veille.last', 'dernière le {{date}} : {{added}} publiées ou ajoutées, {{updated}} mises à jour, {{withdrawn}} retirées.', { date: new Date(last.startedAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Paris' }), added: n(/:PUBLISHED$/) + n(/:CREATED$/), updated: n(/:(UPDATED|CORRECTED)$/), withdrawn: n(/:WITHDRAWN$/) }) : t('admin:dashboard.veille.none', 'pas encore de veille : la première a lieu cette nuit à 3 h 17.')}
+                {' '}{t('admin:dashboard.veille.self_check', 'Les fiches se vérifient seules ; vous n’avez rien à valider.')}{alerts.length ? ` ${t('admin:dashboard.veille.alerts', '{{n}} alerte(s) à lire.', { n: alerts.length })}` : ''}
             </p>
-            <Link to="/admin/veille" className="text-sm font-medium text-blue-700 underline underline-offset-2">Voir ce que le système a fait</Link>
+            <Link to="/admin/veille" className="text-sm font-medium text-blue-700 underline underline-offset-2">{t('admin:dashboard.veille.link', 'Voir ce que le système a fait')}</Link>
         </CardContent></Card>
     );
 }
 
 export default function AdminDashboard() {
+    const { t } = useT('admin');
     const { data: rawData, isLoading, error, dataUpdatedAt } = useQuery({
         queryKey: ['admin-stats'],
         queryFn: () => client.get('/api/admin/stats').then(r => r.data),
@@ -64,7 +67,7 @@ export default function AdminDashboard() {
                 <Card>
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-                        <p className="text-slate-600">Erreur de chargement des statistiques</p>
+                        <p className="text-slate-600">{t('admin:dashboard.load_error', 'Erreur de chargement des statistiques')}</p>
                         <p className="text-sm text-slate-600 mt-1">{error.message}</p>
                     </CardContent>
                 </Card>
@@ -89,28 +92,28 @@ export default function AdminDashboard() {
     const orgs = tasks.organizations;
     const cards = [
         {
-            key: 'ws2', title: 'Fiches du lancement (WS2)', to: '/admin/ws2', count: ws2 ? n(ws2.pending) : null, unit: 'jamais examinée(s)',
-            detail: ws2 ? `${ws2.onHold} en attente · ${ws2.rejected} refusée(s) · ${ws2.humanVerified} vérifiée(s) sur ${ws2.records}` : null,
-            todo: 'Vérifier une fiche demande la source officielle ouverte, la relecture complète et la confirmation du territoire. Les fiches en attente reviennent ici après correction.',
+            key: 'ws2', title: t('admin:dashboard.card.ws2.title', 'Fiches du lancement (WS2)'), to: '/admin/ws2', count: ws2 ? n(ws2.pending) : null, unit: t('admin:dashboard.card.ws2.unit', 'jamais examinée(s)'),
+            detail: ws2 ? t('admin:dashboard.card.ws2.detail', '{{onHold}} en attente · {{rejected}} refusée(s) · {{verified}} vérifiée(s) sur {{total}}', { onHold: ws2.onHold, rejected: ws2.rejected, verified: ws2.humanVerified, total: ws2.records }) : null,
+            todo: t('admin:dashboard.card.ws2.todo', 'Vérifier une fiche demande la source officielle ouverte, la relecture complète et la confirmation du territoire. Les fiches en attente reviennent ici après correction.'),
         },
         {
-            key: 'orgs', title: 'Organisations', to: '/admin/organizations', count: orgs ? n(orgs.never) : null, unit: 'sans décision',
-            detail: orgs ? `${orgs.onHold} en attente · ${orgs.rejected} refusée(s) · ${orgs.verified} vérifiée(s) sur ${orgs.total}` : null,
-            todo: 'Vérifier l’identité d’une organisation sur un registre officiel, séparément de son activité.',
+            key: 'orgs', title: t('admin:dashboard.card.orgs.title', 'Organisations'), to: '/admin/organizations', count: orgs ? n(orgs.never) : null, unit: t('admin:dashboard.card.orgs.unit', 'sans décision'),
+            detail: orgs ? t('admin:dashboard.card.orgs.detail', '{{onHold}} en attente · {{rejected}} refusée(s) · {{verified}} vérifiée(s) sur {{total}}', { onHold: orgs.onHold, rejected: orgs.rejected, verified: orgs.verified, total: orgs.total }) : null,
+            todo: t('admin:dashboard.card.orgs.todo', 'Vérifier l’identité d’une organisation sur un registre officiel, séparément de son activité.'),
         },
-        { key: 'dup', title: 'Doublons proposés', to: '/admin/doublons', count: n(tasks.duplicates), unit: 'paire(s)', todo: 'Comparer les deux fiches et décider sur une source officielle ; rien n’est fusionné automatiquement.' },
-        { key: 'prop', title: 'Propositions de fiches', to: '/admin/structure-proposals', count: n(tasks.proposals), unit: 'en attente', todo: 'Accepter avec une source officielle ou refuser avec un motif.' },
-        { key: 'falc', title: 'Textes faciles à lire (FALC)', to: '/admin/falc', count: n(tasks.falc), unit: 'brouillon(s)', todo: 'Relire chaque brouillon avant de l’approuver ; un brouillon n’est jamais publié seul.' },
-        { key: 'rep', title: 'Signalements et suggestions', to: '/admin/signalements', count: n(tasks.reports), unit: 'nouveau(x) ou en cours', todo: 'Traiter chaque signalement du public et noter la décision.' },
-        { key: 'quality', title: 'File qualité des données', to: '/admin/review-queue', count: n(tasks.quality), unit: 'élément(s) ouvert(s)', todo: 'Résoudre ou écarter chaque élément avec votre motif.' },
-        { key: 'ai', title: 'Suggestions de l’IA', to: '/admin/ai-oversight', count: n(tasks.aiSuggestions), unit: 'à examiner', todo: 'Une suggestion ne s’applique jamais seule : acceptez-la ou rejetez-la avec une note.' },
+        { key: 'dup', title: t('admin:dashboard.card.dup.title', 'Doublons proposés'), to: '/admin/doublons', count: n(tasks.duplicates), unit: t('admin:dashboard.card.dup.unit', 'paire(s)'), todo: t('admin:dashboard.card.dup.todo', 'Comparer les deux fiches et décider sur une source officielle ; rien n’est fusionné automatiquement.') },
+        { key: 'prop', title: t('admin:dashboard.card.prop.title', 'Propositions de fiches'), to: '/admin/structure-proposals', count: n(tasks.proposals), unit: t('admin:dashboard.card.prop.unit', 'en attente'), todo: t('admin:dashboard.card.prop.todo', 'Accepter avec une source officielle ou refuser avec un motif.') },
+        { key: 'falc', title: t('admin:dashboard.card.falc.title', 'Textes faciles à lire (FALC)'), to: '/admin/falc', count: n(tasks.falc), unit: t('admin:dashboard.card.falc.unit', 'brouillon(s)'), todo: t('admin:dashboard.card.falc.todo', 'Relire chaque brouillon avant de l’approuver ; un brouillon n’est jamais publié seul.') },
+        { key: 'rep', title: t('admin:dashboard.card.rep.title', 'Signalements et suggestions'), to: '/admin/signalements', count: n(tasks.reports), unit: t('admin:dashboard.card.rep.unit', 'nouveau(x) ou en cours'), todo: t('admin:dashboard.card.rep.todo', 'Traiter chaque signalement du public et noter la décision.') },
+        { key: 'quality', title: t('admin:dashboard.card.quality.title', 'File qualité des données'), to: '/admin/review-queue', count: n(tasks.quality), unit: t('admin:dashboard.card.quality.unit', 'élément(s) ouvert(s)'), todo: t('admin:dashboard.card.quality.todo', 'Résoudre ou écarter chaque élément avec votre motif.') },
+        { key: 'ai', title: t('admin:dashboard.card.ai.title', 'Suggestions de l’IA'), to: '/admin/ai-oversight', count: n(tasks.aiSuggestions), unit: t('admin:dashboard.card.ai.unit', 'à examiner'), todo: t('admin:dashboard.card.ai.todo', 'Une suggestion ne s’applique jamais seule : acceptez-la ou rejetez-la avec une note.') },
         {
-            key: 'privacy', title: 'Protection des données', to: '/admin/privacy', count: sum(tasks.accessRequests, tasks.erasures, tasks.closures), unit: 'demande(s) en cours',
-            detail: tasks.accessRequests == null ? null : `${tasks.accessRequests} accès · ${tasks.erasures} effacement(s) · ${tasks.closures} fermeture(s)`,
-            todo: 'Deux personnes : l’une propose, une autre confirme après sa propre lecture journalisée.',
+            key: 'privacy', title: t('admin:dashboard.card.privacy.title', 'Protection des données'), to: '/admin/privacy', count: sum(tasks.accessRequests, tasks.erasures, tasks.closures), unit: t('admin:dashboard.card.privacy.unit', 'demande(s) en cours'),
+            detail: tasks.accessRequests == null ? null : t('admin:dashboard.card.privacy.detail', '{{access}} accès · {{erasures}} effacement(s) · {{closures}} fermeture(s)', { access: tasks.accessRequests, erasures: tasks.erasures, closures: tasks.closures }),
+            todo: t('admin:dashboard.card.privacy.todo', 'Deux personnes : l’une propose, une autre confirme après sa propre lecture journalisée.'),
         },
-        { key: 'support', title: 'Demandes d’aide', to: '/admin/support', count: n(tasks.support), unit: 'ouverte(s)', todo: 'Répondre ou orienter ; les demandes liées aux données vont à la protection des données.' },
-        { key: 'bg', title: 'Accès d’urgence à examiner', to: '/admin/operations', count: n(tasks.breakGlass), unit: 'à examiner', todo: 'Un accès d’urgence est examiné ensuite par une autre personne, avec les actions faites pendant la fenêtre.' },
+        { key: 'support', title: t('admin:dashboard.card.support.title', 'Demandes d’aide'), to: '/admin/support', count: n(tasks.support), unit: t('admin:dashboard.card.support.unit', 'ouverte(s)'), todo: t('admin:dashboard.card.support.todo', 'Répondre ou orienter ; les demandes liées aux données vont à la protection des données.') },
+        { key: 'bg', title: t('admin:dashboard.card.bg.title', 'Accès d’urgence à examiner'), to: '/admin/operations', count: n(tasks.breakGlass), unit: t('admin:dashboard.card.bg.unit', 'à examiner'), todo: t('admin:dashboard.card.bg.todo', 'Un accès d’urgence est examiné ensuite par une autre personne, avec les actions faites pendant la fenêtre.') },
     ];
     const waiting = cards.filter((c) => c.count > 0);
 
@@ -122,17 +125,17 @@ export default function AdminDashboard() {
                     <div className="flex flex-wrap justify-between items-center gap-3">
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 mb-1">
-                                À traiter
+                                {t('admin:dashboard.title', 'À traiter')}
                             </h1>
                             <p className="text-slate-700 text-sm">
-                                Ce qui attend la décision d’une personne. Chaque carte mène à l’écran où décider.
-                                {waiting.length ? ` ${waiting.length} écran(s) ont des éléments en attente.` : ' Rien n’est en attente.'}
+                                {t('admin:dashboard.intro', 'Ce qui attend la décision d’une personne. Chaque carte mène à l’écran où décider.')}
+                                {waiting.length ? ` ${t('admin:dashboard.waiting', '{{n}} écran(s) ont des éléments en attente.', { n: waiting.length })}` : ` ${t('admin:dashboard.nothing_waiting', 'Rien n’est en attente.')}`}
                             </p>
                         </div>
                         {/* owner LAB audit: the badge states only what is known — when the figures were read */}
                         <Badge className="bg-slate-100 text-slate-800 border-0 gap-1" data-testid="admin-dashboard-loaded-at">
                             <Zap className="h-3 w-3" />
-                            Chiffres lus à {loadedAt}
+                            {t('admin:dashboard.loaded_at', 'Chiffres lus à {{time}}', { time: loadedAt })}
                         </Badge>
                     </div>
                 </div>
@@ -147,28 +150,28 @@ export default function AdminDashboard() {
                             <div className="flex items-start justify-between gap-3">
                                 <h2 className="font-semibold text-slate-900">{c.title}</h2>
                                 <span className={`shrink-0 rounded px-2 py-0.5 text-sm font-semibold ${c.count == null ? 'bg-slate-100 text-slate-800' : c.count > 0 ? 'bg-amber-100 text-amber-900' : 'bg-emerald-50 text-emerald-800'}`} data-testid="admin-task-count">
-                                    {c.count == null ? 'indisponible' : c.count > 0 ? `${c.count} ${c.unit}` : 'Rien en attente'}
+                                    {c.count == null ? t('admin:dashboard.count_unavailable', 'indisponible') : c.count > 0 ? `${c.count} ${c.unit}` : t('admin:dashboard.count_none', 'Rien en attente')}
                                 </span>
                             </div>
                             {c.detail ? <p className="mt-1 text-xs text-slate-700">{c.detail}</p> : null}
                             <p className="mt-2 text-sm text-slate-700">{c.todo}</p>
                             <Link to={c.to} className="mt-3 inline-flex min-h-11 items-center rounded border border-slate-300 px-3 text-sm font-medium text-blue-800 hover:bg-slate-50">
-                                Ouvrir « {c.title} »
+                                {t('admin:dashboard.open', 'Ouvrir « {{title}} »', { title: c.title })}
                             </Link>
                         </li>
                     ))}
                 </ul>
 
                 <details className="rounded-lg border border-slate-200 bg-white" data-testid="admin-dashboard-technical">
-                    <summary className="cursor-pointer p-4 font-semibold text-slate-800">Vue technique : compteurs, index de recherche, tâches planifiées, fonctionnalités</summary>
+                    <summary className="cursor-pointer p-4 font-semibold text-slate-800">{t('admin:dashboard.technical', 'Vue technique : compteurs, index de recherche, tâches planifiées, fonctionnalités')}</summary>
                     <div className="space-y-6 p-4 pt-0">
                         {/* Stats Cards */}
                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                            <StatCard icon={<FileText className="text-indigo-600" />} label="Aides" value={stats.aides} />
-                            <StatCard icon={<FileText className="text-purple-600" />} label="Démarches" value={stats.demarches} />
-                            <StatCard icon={<Shield className="text-blue-600" />} label="Administrateurs" value={stats.admins} />
-                            <StatCard icon={<Users className="text-emerald-700" />} label="Comptes citoyens" value={stats.citizens} />
-                            <StatCard icon={<Activity className="text-orange-600" />} label="Exécutions planifiées" value={stats.cronRuns} />
+                            <StatCard icon={<FileText className="text-indigo-600" />} label={t('admin:dashboard.stat.aides', 'Aides')} value={stats.aides} />
+                            <StatCard icon={<FileText className="text-purple-600" />} label={t('admin:dashboard.stat.demarches', 'Démarches')} value={stats.demarches} />
+                            <StatCard icon={<Shield className="text-blue-600" />} label={t('admin:dashboard.stat.admins', 'Administrateurs')} value={stats.admins} />
+                            <StatCard icon={<Users className="text-emerald-700" />} label={t('admin:dashboard.stat.citizens', 'Comptes citoyens')} value={stats.citizens} />
+                            <StatCard icon={<Activity className="text-orange-600" />} label={t('admin:dashboard.stat.cron_runs', 'Exécutions planifiées')} value={stats.cronRuns} />
                         </div>
 
                         {/* RAG Health Card */}
@@ -177,16 +180,16 @@ export default function AdminDashboard() {
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className="font-bold text-slate-800 flex items-center gap-2">
                                         <Cpu className="h-4 w-4 text-indigo-500" />
-                                        Index de recherche{rag.dimensions ? ` (vecteurs ${rag.dimensions} dimensions)` : ''}
+                                        {t('admin:dashboard.rag.title', 'Index de recherche')}{rag.dimensions ? ` ${t('admin:dashboard.rag.dimensions', '(vecteurs {{n}} dimensions)', { n: rag.dimensions })}` : ''}
                                     </h3>
                                     <Badge className={rag.missing === 0 && !rag.stale ? 'bg-emerald-100 text-emerald-700 border-0' : 'bg-amber-100 text-amber-700 border-0'}>
-                                        {rag.missing === 0 && !rag.stale ? 'À jour' : [rag.missing ? `${rag.missing} sans vecteur` : '', rag.stale ? `${rag.stale} à recalculer` : ''].filter(Boolean).join(', ')}
+                                        {rag.missing === 0 && !rag.stale ? t('admin:dashboard.rag.up_to_date', 'À jour') : [rag.missing ? t('admin:dashboard.rag.missing', '{{n}} sans vecteur', { n: rag.missing }) : '', rag.stale ? t('admin:dashboard.rag.stale', '{{n}} à recalculer', { n: rag.stale }) : ''].filter(Boolean).join(', ')}
                                     </Badge>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="flex-1">
                                         <div className="flex justify-between text-sm mb-1">
-                                            <span className="text-slate-700">{rag.indexed} / {rag.total} aides avec un vecteur{rag.stale ? ` (dont ${rag.stale} calculé${rag.stale > 1 ? 's' : ''} avant la dernière modification de la fiche)` : ''}</span>
+                                            <span className="text-slate-700">{t('admin:dashboard.rag.with_vector', '{{indexed}} / {{total}} aides avec un vecteur', { indexed: rag.indexed, total: rag.total })}{rag.stale ? ` ${t('admin:dashboard.rag.stale_detail', { count: rag.stale, defaultValue_one: '(dont {{count}} calculé avant la dernière modification de la fiche)', defaultValue_other: '(dont {{count}} calculés avant la dernière modification de la fiche)' })}` : ''}</span>
                                             <span className="font-bold text-slate-800">
                                                 {rag.total > 0 ? Math.round((rag.indexed / rag.total) * 100) : 0}%
                                             </span>
@@ -209,12 +212,12 @@ export default function AdminDashboard() {
                                         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                                             <h3 className="font-bold text-slate-800 flex items-center gap-2">
                                                 <Clock className="h-4 w-4 text-slate-600" />
-                                                Dernières exécutions planifiées
+                                                {t('admin:dashboard.recent_crons', 'Dernières exécutions planifiées')}
                                             </h3>
                                         </div>
                                         <div className="divide-y divide-slate-100">
                                             {(activity.recentCrons || []).length === 0 ? (
-                                                <p className="p-4 text-sm text-slate-600">Aucune exécution planifiée (normal dans le LAB local : aucune tâche n’y est programmée).</p>
+                                                <p className="p-4 text-sm text-slate-600">{t('admin:dashboard.no_crons', 'Aucune exécution planifiée (normal dans le LAB local : aucune tâche n’y est programmée).')}</p>
                                             ) : (
                                                 (activity.recentCrons || []).map((cron) => (
                                                     <div key={cron.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
@@ -227,7 +230,7 @@ export default function AdminDashboard() {
                                                             <div>
                                                                 <p className="text-sm font-semibold text-slate-800">{cron.jobName}</p>
                                                                 <p className="text-xs text-slate-600">
-                                                                    {cron.itemsProcessed != null && `${cron.itemsProcessed} éléments • `}
+                                                                    {cron.itemsProcessed != null && t('admin:dashboard.cron_items', '{{n}} éléments • ', { n: cron.itemsProcessed })}
                                                                     {cron.durationMs != null && `${(cron.durationMs / 1000).toFixed(1)} s`}
                                                                 </p>
                                                             </div>
@@ -247,12 +250,12 @@ export default function AdminDashboard() {
                                         <div className="p-4 border-b border-slate-100">
                                             <h3 className="font-bold text-slate-800 flex items-center gap-2">
                                                 <Database className="h-4 w-4 text-slate-600" />
-                                                Derniers imports
+                                                {t('admin:dashboard.recent_imports', 'Derniers imports')}
                                             </h3>
                                         </div>
                                         <div className="divide-y divide-slate-100">
                                             {(activity.recentImports || []).length === 0 ? (
-                                                <p className="p-4 text-sm text-slate-600">Aucun import récent.</p>
+                                                <p className="p-4 text-sm text-slate-600">{t('admin:dashboard.no_imports', 'Aucun import récent.')}</p>
                                             ) : (
                                                 (activity.recentImports || []).map((log) => (
                                                     <div key={log.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
@@ -265,8 +268,8 @@ export default function AdminDashboard() {
                                                             <div>
                                                                 <p className="text-sm font-semibold text-slate-800">{log.sourceName}</p>
                                                                 <p className="text-xs text-slate-600">
-                                                                    {log.itemsCreated != null && `+${log.itemsCreated} créées`}
-                                                                    {log.itemsUpdated != null && ` / ${log.itemsUpdated} mises à jour`}
+                                                                    {log.itemsCreated != null && t('admin:dashboard.import_created', '+{{n}} créées', { n: log.itemsCreated })}
+                                                                    {log.itemsUpdated != null && ` / ${t('admin:dashboard.import_updated', '{{n}} mises à jour', { n: log.itemsUpdated })}`}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -286,34 +289,34 @@ export default function AdminDashboard() {
                                     <CardContent className="p-4">
                                         <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
                                             <Shield className="h-4 w-4 text-slate-600" />
-                                            Fonctionnalités activées
+                                            {t('admin:dashboard.features', 'Fonctionnalités activées')}
                                         </h3>
                                         <div className="space-y-3">
-                                            <FlagRow label="Agent IA" code="AI_AGENT" enabled={features.AI_AGENT} />
+                                            <FlagRow label={t('admin:dashboard.flag.ai_agent', 'Agent IA')} code="AI_AGENT" enabled={features.AI_AGENT} />
                                             <FlagRow label="RAG" code="RAG" enabled={features.RAG} />
                                             <FlagRow label="OpenFisca" code="OPENFISCA" enabled={features.OPENFISCA} />
-                                            <FlagRow label="Cache" code="CACHE" enabled={features.CACHE} />
-                                            <FlagRow label="Maintenance" code="MAINTENANCE" enabled={features.MAINTENANCE} warning />
-                                            <FlagRow label="Audit RGPD" code="AUDIT_LOG" enabled={features.AUDIT_LOG} />
+                                            <FlagRow label={t('admin:dashboard.flag.cache', 'Cache')} code="CACHE" enabled={features.CACHE} />
+                                            <FlagRow label={t('admin:dashboard.flag.maintenance', 'Maintenance')} code="MAINTENANCE" enabled={features.MAINTENANCE} warning />
+                                            <FlagRow label={t('admin:dashboard.flag.audit', 'Audit RGPD')} code="AUDIT_LOG" enabled={features.AUDIT_LOG} />
                                         </div>
                                     </CardContent>
                                 </Card>
 
                                 <Card>
                                     <CardContent className="p-4">
-                                        <h3 className="font-bold text-slate-800 mb-4">Infrastructure</h3>
+                                        <h3 className="font-bold text-slate-800 mb-4">{t('admin:dashboard.infra.title', 'Infrastructure')}</h3>
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="text-slate-700">Environnement</span>
+                                                <span className="text-slate-700">{t('admin:dashboard.infra.env', 'Environnement')}</span>
                                                 <Badge variant="outline">{infra.nodeEnv}</Badge>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-slate-700">Cache</span>
+                                                <span className="text-slate-700">{t('admin:dashboard.infra.cache', 'Cache')}</span>
                                                 <Badge variant="outline">{infra.cache?.backend || '—'}</Badge>
                                             </div>
                                             {infra.cache?.memorySize != null && (
                                                 <div className="flex justify-between">
-                                                    <span className="text-slate-700">Entrées en cache</span>
+                                                    <span className="text-slate-700">{t('admin:dashboard.infra.cache_entries', 'Entrées en cache')}</span>
                                                     <span className="text-slate-800 font-medium">{infra.cache.memorySize}</span>
                                                 </div>
                                             )}

@@ -20,6 +20,7 @@ import {
     BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useT } from '@/i18n';
 
 const MODE_CONFIG = {
     rag: { label: 'RAG 3072d', icon: Cpu, className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
@@ -34,6 +35,8 @@ const MODE_CONFIG = {
  * Shows RAG efficiency, top intents, mode breakdown, CSV export, and log list.
  */
 export default function AdminConversations() {
+    const { t } = useT('admin');
+    const modeLabel = (mode) => ({ rag: t('admin:conversations.mode_rag', 'RAG 3072d'), lexical: t('admin:conversations.mode_lexical', 'Lexical'), static: t('admin:conversations.mode_static', 'Static') }[mode]);
     const [filter, setFilter] = useState('all');
 
     const { data, isLoading, error } = useQuery({
@@ -64,11 +67,11 @@ export default function AdminConversations() {
         try {
             const token = sessionStorage.getItem('access_token');
             const r = await fetch(`/api/admin/conversations?format=csv${modeParam}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-            if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? 'Session expirée : reconnectez-vous.' : 'L’export n’a pas pu être préparé. Réessayez.');
+            if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? t('admin:conversations.session_expired', 'Session expirée : reconnectez-vous.') : t('admin:conversations.export_failed_retry', 'L’export n’a pas pu être préparé. Réessayez.'));
             const url = URL.createObjectURL(await r.blob());
             const a = document.createElement('a'); a.href = url; a.download = 'echanges.csv'; document.body.appendChild(a); a.click(); a.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
-        } catch (e) { setExportProblem(e instanceof Error ? e.message : 'L’export n’a pas pu être préparé.'); }
+        } catch (e) { setExportProblem(e instanceof Error ? e.message : t('admin:conversations.export_failed', 'L’export n’a pas pu être préparé.')); }
     };
 
     if (error) {
@@ -77,8 +80,8 @@ export default function AdminConversations() {
                 <Card>
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-                        <p className="text-slate-600">Erreur de chargement des logs</p>
-                        <p className="text-sm text-slate-600 mt-1" role="alert" data-testid="admin-conversations-problem">{error?.status === 503 || /503/.test(String(error?.message)) ? 'Le journal des échanges est momentanément indisponible.' : error?.status === 401 ? 'Session expirée : reconnectez-vous.' : 'Le journal n’a pas pu être chargé. Réessayez.'}</p>
+                        <p className="text-slate-600">{t('admin:conversations.load_error', 'Erreur de chargement des logs')}</p>
+                        <p className="text-sm text-slate-600 mt-1" role="alert" data-testid="admin-conversations-problem">{error?.status === 503 || /503/.test(String(error?.message)) ? t('admin:conversations.log_unavailable', 'Le journal des échanges est momentanément indisponible.') : error?.status === 401 ? t('admin:conversations.session_expired', 'Session expirée : reconnectez-vous.') : t('admin:conversations.log_failed', 'Le journal n’a pas pu être chargé. Réessayez.')}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -94,21 +97,21 @@ export default function AdminConversations() {
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 mb-1 flex items-center gap-2">
                                 <MessageSquare className="h-6 w-6 text-indigo-500" />
-                                Journal des Échanges
+                                {t('admin:conversations.title', 'Journal des Échanges')}
                             </h1>
                             <p className="text-slate-500 text-sm">
-                                Performance RAG et analyse des requêtes usagers
+                                {t('admin:conversations.subtitle', 'Performance RAG et analyse des requêtes usagers')}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-1.5" data-testid="admin-conversations-export">
                                 <Download className="h-3.5 w-3.5" />
-                                Export CSV
+                                {t('admin:conversations.export_csv', 'Export CSV')}
                             </Button>
                             {exportProblem ? <p role="alert" className="text-sm text-red-800" data-testid="admin-conversations-export-problem">{exportProblem}</p> : null}
                             <Badge className="bg-indigo-100 text-indigo-700 border-0 gap-1">
                                 <Sparkles className="h-3 w-3" />
-                                {stats.total} échanges
+                                {t('admin:conversations.total_badge', '{{n}} échanges', { n: stats.total })}
                             </Badge>
                         </div>
                     </div>
@@ -118,10 +121,10 @@ export default function AdminConversations() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
                 {/* Analytics Row */}
                 <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                    <StatsCard label="Total" value={stats.total} icon={<MessageSquare className="text-indigo-600" />} />
-                    <StatsCard label="RAG (3072d)" value={stats.rag} icon={<CheckCircle className="text-emerald-600" />} />
-                    <StatsCard label="Lexical" value={stats.lexical} icon={<Search className="text-amber-600" />} />
-                    <StatsCard label="Static" value={stats.static} icon={<AlertCircle className="text-red-500" />} />
+                    <StatsCard label={t('admin:conversations.stat_total', 'Total')} value={stats.total} icon={<MessageSquare className="text-indigo-600" />} />
+                    <StatsCard label={t('admin:conversations.stat_rag', 'RAG (3072d)')} value={stats.rag} icon={<CheckCircle className="text-emerald-600" />} />
+                    <StatsCard label={t('admin:conversations.mode_lexical', 'Lexical')} value={stats.lexical} icon={<Search className="text-amber-600" />} />
+                    <StatsCard label={t('admin:conversations.mode_static', 'Static')} value={stats.static} icon={<AlertCircle className="text-red-500" />} />
                     {/* RAG Efficiency Gauge */}
                     <Card className="col-span-2 lg:col-span-1">
                         <CardContent className="p-4">
@@ -133,8 +136,8 @@ export default function AdminConversations() {
                             <p className={`text-2xl font-bold ${ragEfficiency >= 80 ? 'text-emerald-700' : ragEfficiency >= 50 ? 'text-amber-700' : 'text-red-600'}`}>
                                 {analyticsFailed ? '—' : `${ragEfficiency}%`}
                             </p>
-                            {analyticsFailed ? <p className="text-xs text-red-700" role="alert" data-testid="admin-conversations-analytics-problem">Statistiques indisponibles</p> : null}
-                            <p className="text-sm text-slate-500">Efficacité RAG</p>
+                            {analyticsFailed ? <p className="text-xs text-red-700" role="alert" data-testid="admin-conversations-analytics-problem">{t('admin:conversations.stats_unavailable', 'Statistiques indisponibles')}</p> : null}
+                            <p className="text-sm text-slate-500">{t('admin:conversations.rag_efficiency', 'Efficacité RAG')}</p>
                             <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all ${ragEfficiency >= 80 ? 'bg-emerald-500' : ragEfficiency >= 50 ? 'bg-amber-500' : 'bg-red-500'}`}
@@ -152,7 +155,7 @@ export default function AdminConversations() {
                         <CardContent className="p-4">
                             <h3 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
                                 <BarChart3 className="h-4 w-4 text-indigo-500" />
-                                Top Intentions Détectées
+                                {t('admin:conversations.top_intents', 'Top Intentions Détectées')}
                             </h3>
                             {topIntents.length > 0 ? (
                                 <div className="space-y-2">
@@ -173,7 +176,7 @@ export default function AdminConversations() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-slate-400 italic">Aucune intention détectée pour l&#39;instant.</p>
+                                <p className="text-sm text-slate-400 italic">{t('admin:conversations.no_intent', 'Aucune intention détectée pour l\'instant.')}</p>
                             )}
                         </CardContent>
                     </Card>
@@ -181,7 +184,7 @@ export default function AdminConversations() {
                     {/* Filter Toolbar */}
                     <Card>
                         <CardContent className="p-4">
-                            <h3 className="font-bold text-slate-800 text-sm mb-3">Filtrer par mode</h3>
+                            <h3 className="font-bold text-slate-800 text-sm mb-3">{t('admin:conversations.filter_mode', 'Filtrer par mode')}</h3>
                             <div className="flex flex-col gap-2">
                                 {['all', 'rag', 'lexical', 'static'].map(mode => (
                                     <Button
@@ -191,7 +194,7 @@ export default function AdminConversations() {
                                         onClick={() => setFilter(mode)}
                                         className="text-xs font-bold uppercase justify-start"
                                     >
-                                        {mode === 'all' ? 'Tous les modes' : MODE_CONFIG[mode]?.label || mode}
+                                        {mode === 'all' ? t('admin:conversations.all_modes', 'Tous les modes') : modeLabel(mode) || mode}
                                     </Button>
                                 ))}
                             </div>
@@ -223,7 +226,7 @@ export default function AdminConversations() {
                                                 <div className="flex flex-wrap gap-3 text-xs text-slate-500">
                                                     <span className="flex items-center gap-1">
                                                         <Zap className="h-3 w-3 text-amber-500" />
-                                                        {log.sourceCount} aide{log.sourceCount !== 1 ? 's' : ''} trouvée{log.sourceCount !== 1 ? 's' : ''}
+                                                        {log.sourceCount === 0 ? t('admin:conversations.sources_zero', '{{n}} aides trouvées', { n: 0 }) : t('admin:conversations.sources', { count: log.sourceCount, n: log.sourceCount, defaultValue_one: '{{n}} aide trouvée', defaultValue_other: '{{n}} aides trouvées' })}
                                                     </span>
                                                     <span className="flex items-center gap-1">
                                                         <Clock className="h-3 w-3" />
@@ -234,7 +237,7 @@ export default function AdminConversations() {
                                             <div className="flex-shrink-0">
                                                 <Badge className={`${modeConf.className} border gap-1 text-[10px] font-bold`}>
                                                     <ModeIcon className="h-3 w-3" />
-                                                    {modeConf.label}
+                                                    {modeLabel(log.searchMode) || modeLabel('static')}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -247,9 +250,9 @@ export default function AdminConversations() {
                     <Card>
                         <CardContent className="p-12 text-center">
                             <MessageSquare className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                            <p className="text-slate-600">Aucun échange enregistré</p>
+                            <p className="text-slate-600">{t('admin:conversations.empty', 'Aucun échange enregistré')}</p>
                             <p className="text-sm text-slate-400 mt-1">
-                                Les logs apparaîtront ici après les premières conversations.
+                                {t('admin:conversations.empty_hint', 'Les logs apparaîtront ici après les premières conversations.')}
                             </p>
                         </CardContent>
                     </Card>
@@ -263,10 +266,10 @@ export default function AdminConversations() {
                                 <AlertCircle className="h-5 w-5 text-amber-400 flex-shrink-0" />
                                 <div>
                                     <p className="font-bold text-sm">
-                                        {stats.static} réponse{stats.static > 1 ? 's' : ''} en mode statique détectée{stats.static > 1 ? 's' : ''}
+                                        {t('admin:conversations.static_detected', { count: stats.static, n: stats.static, defaultValue_one: '{{n}} réponse en mode statique détectée', defaultValue_other: '{{n}} réponses en mode statique détectées' })}
                                     </p>
                                     <p className="text-slate-400 text-xs mt-1">
-                                        Le mode statique signifie que le modèle local était indisponible : la réponse a été construite à partir des fiches, sans IA.
+                                        {t('admin:conversations.static_hint', 'Le mode statique signifie que le modèle local était indisponible : la réponse a été construite à partir des fiches, sans IA.')}
                                     </p>
                                 </div>
                             </div>
