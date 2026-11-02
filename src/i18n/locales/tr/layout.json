@@ -114,5 +114,7 @@
  "account.personalAccount.text": "Olası haklarımı hesaplama, randevu alma",
  "account.proAccount": "Kuruluş / profesyonel hesabı",
  "account.proAccount.text": "Kullanıcılara destek olma",
- "footer.needs": "İhtiyaca göre yardım bul"
+ "footer.needs": "İhtiyaca göre yardım bul",
+ "footer.emergency": "Acil durumda veya tehlike anında",
+ "footer.emergency.all": "Tüm acil numaralar"
 }

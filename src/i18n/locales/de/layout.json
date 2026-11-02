@@ -114,5 +114,7 @@
  "account.personalAccount.text": "Mögliche Leistungen berechnen, Termine vereinbaren",
  "account.proAccount": "Konto für Einrichtungen / Fachkräfte",
  "account.proAccount.text": "Menschen begleiten und unterstützen",
- "footer.needs": "Hilfe nach Bedarf finden"
+ "footer.needs": "Hilfe nach Bedarf finden",
+ "footer.emergency": "Im Notfall oder bei Gefahr",
+ "footer.emergency.all": "Alle Notrufnummern"
 }

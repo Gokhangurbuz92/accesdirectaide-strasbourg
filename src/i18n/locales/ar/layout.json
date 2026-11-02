@@ -114,5 +114,7 @@
  "account.personalAccount.text": "تقدير المساعدات الممكنة، حجز المواعيد",
  "account.proAccount": "حساب هيئة / مهني",
  "account.proAccount.text": "مرافقة المستفيدين",
- "footer.needs": "البحث عن المساعدة حسب الحاجة"
+ "footer.needs": "البحث عن المساعدة حسب الحاجة",
+ "footer.emergency": "في حالة الطوارئ أو الخطر",
+ "footer.emergency.all": "جميع أرقام الطوارئ"
 }

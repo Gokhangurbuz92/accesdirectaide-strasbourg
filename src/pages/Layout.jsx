@@ -34,6 +34,9 @@ import LanguageSuggestion from '@/components/i18n/LanguageSuggestion';
 import ReadAloud from '@/components/a11y/ReadAloud';   // the accessibility modes (an inline style element before Q04: CSP style-src)
 import { Trans } from 'react-i18next';
 import i18n, { useLanguage, useT } from '@/i18n';
+import socialReference from '../../data/reference/social-domains.v1.json';
+/** R34: the numbers shown in the footer (labels from the reference file, as on /besoins) */
+const FOOTER_EMERGENCY = ['112', '15', '17', '115', '119', '3919', '3114'];
 
 // Lazy-load non-critical components to reduce first-paint bundle
 const AccessibilityPanel = lazy(() => import('@/components/ui/AccessibilityPanel'));
@@ -383,6 +386,19 @@ export default function Layout({ children }) {   // R26: the active menu entry c
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12">
+          {/* R34: the official emergency numbers on every page (they were only on « Trouver de l'aide par besoin ») */}
+          <section aria-labelledby="footer-emergency" className="mb-8 rounded-lg border border-white/20 bg-white/5 p-4" data-testid="footer-emergency">
+            <h2 id="footer-emergency" className="text-base font-semibold text-white">{t('layout:footer.emergency', 'En cas d’urgence ou de danger')}</h2>
+            <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+              {FOOTER_EMERGENCY.map((n) => (
+                <li key={n} className="flex items-center gap-1.5">
+                  <a href={`tel:${n}`} className="ada-target font-bold text-white underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded" dir="ltr">{n}</a>
+                  <span lang="fr" className="text-white/80">{socialReference.emergency[n]}</span>
+                </li>
+              ))}
+              <li><Link to="/besoins" className="ada-target text-white/90 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">{t('layout:footer.emergency.all', 'Tous les numéros d’urgence')}</Link></li>
+            </ul>
+          </section>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {/* Logo et description */}
             <div>

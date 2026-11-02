@@ -114,5 +114,7 @@
  "account.personalAccount.text": "Оцінити можливі допомоги, записатися на прийом",
  "account.proAccount": "Обліковий запис організації / фахівця",
  "account.proAccount.text": "Супровід користувачів послуг",
- "footer.needs": "Знайти допомогу за потребою"
+ "footer.needs": "Знайти допомогу за потребою",
+ "footer.emergency": "У разі надзвичайної ситуації або небезпеки",
+ "footer.emergency.all": "Усі екстрені номери"
 }

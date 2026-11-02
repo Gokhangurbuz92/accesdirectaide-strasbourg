@@ -114,5 +114,7 @@
  "account.personalAccount.text": "Estimate my possible benefits, book appointments",
  "account.proAccount": "Organisation / professional account",
  "account.proAccount.text": "Support the people you help",
- "footer.needs": "Find help by need"
+ "footer.needs": "Find help by need",
+ "footer.emergency": "In an emergency or if you are in danger",
+ "footer.emergency.all": "All emergency numbers"
 }
