@@ -10,7 +10,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { useT } from '@/i18n';
 export default function AuthResetPassword() {
+  const { t } = useT('account');
   const [searchParams] = useSearchParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,7 +34,7 @@ export default function AuthResetPassword() {
     setMessage('');
 
     if (!token) {
-      setError('Lien invalide ou expiré.');
+      setError(t('account:reset.invalid_link', 'Lien invalide ou expiré.'));
       return;
     }
     if (passwordProblems(password).length) {   // R18: the sign-up rule (the server applies it to the reset too)
@@ -40,7 +42,7 @@ export default function AuthResetPassword() {
       return;
     }
     if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('account:reset.mismatch', 'Les mots de passe ne correspondent pas.'));
       return;
     }
 
@@ -56,12 +58,12 @@ export default function AuthResetPassword() {
       const payload = await response.json().catch(() => null);
       if (!response.ok) {
         // R18: the French sentence of the server, never its English code (« Invalid or expired token »)
-        throw new Error(payload?.message || (response.status === 429 ? 'Trop de tentatives : réessayez dans quelques minutes.' : response.status === 403 ? 'La page a expiré : rechargez-la puis recommencez.' : 'Lien invalide ou expiré.'));
+        throw new Error(payload?.message || (response.status === 429 ? t('account:errors.too_many_attempts', 'Trop de tentatives : réessayez dans quelques minutes.') : response.status === 403 ? t('account:errors.expired', 'La page a expiré : rechargez-la puis recommencez.') : t('account:reset.invalid_link', 'Lien invalide ou expiré.')));
       }
 
-      setMessage('Mot de passe mis à jour. Vous pouvez maintenant vous connecter.');
+      setMessage(t('account:reset.done', 'Mot de passe mis à jour. Vous pouvez maintenant vous connecter.'));
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : 'Une erreur est survenue.');
+      setError(submitError instanceof Error ? submitError.message : t('account:errors.generic', 'Une erreur est survenue.'));
     } finally {
       setLoading(false);
     }
@@ -70,17 +72,17 @@ export default function AuthResetPassword() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <SEO
-        title="Nouveau mot de passe"
-        description="Définissez un nouveau mot de passe pour votre compte Particulier."
+        title={t('account:reset.seo_title', 'Nouveau mot de passe')}
+        description={t('account:reset.seo_description', 'Définissez un nouveau mot de passe pour votre compte Particulier.')}
         path="/auth/reset"
         noindex={true}
       />
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle as="h1">{choosing ? 'Choisissez votre mot de passe' : 'Réinitialiser mon mot de passe'}</CardTitle>
+          <CardTitle as="h1">{choosing ? t('account:reset.choose_title', 'Choisissez votre mot de passe') : t('account:reset.title', 'Réinitialiser mon mot de passe')}</CardTitle>
           <CardDescription>{choosing
-            ? 'Votre adresse est confirmée. Choisissez maintenant le mot de passe de votre compte (le lien reçu par e-mail ne sert qu’une fois).'
-            : 'Choisissez un nouveau mot de passe sécurisé.'}</CardDescription>
+            ? t('account:reset.choose_intro', 'Votre adresse est confirmée. Choisissez maintenant le mot de passe de votre compte (le lien reçu par e-mail ne sert qu’une fois).')
+            : t('account:reset.intro', 'Choisissez un nouveau mot de passe sécurisé.')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {message ? (
@@ -96,7 +98,7 @@ export default function AuthResetPassword() {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="reset-password">Nouveau mot de passe</Label>
+              <Label htmlFor="reset-password">{t('account:fields.new_password', 'Nouveau mot de passe')}</Label>
               <Input
                 id="reset-password"
                 type="password"
@@ -111,7 +113,7 @@ export default function AuthResetPassword() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="reset-password-confirm">Confirmer le mot de passe</Label>
+              <Label htmlFor="reset-password-confirm">{t('account:fields.confirm_password', 'Confirmer le mot de passe')}</Label>
               <Input
                 id="reset-password-confirm"
                 type="password"
@@ -124,16 +126,16 @@ export default function AuthResetPassword() {
             </div>
 
             <Button type="submit" disabled={loading}>
-              {loading ? 'Enregistrement...' : 'Mettre à jour'}
+              {loading ? t('account:reset.saving', 'Enregistrement…') : t('account:reset.submit', 'Mettre à jour')}
             </Button>
           </form>
 
           <div className="flex flex-wrap gap-3 text-sm">
             <Link className="text-blue-700 hover:underline" to={appendNext('/auth/login', next)}>
-              Retour à la connexion
+              {t('account:nav.back_login', 'Retour à la connexion')}
             </Link>
             <Link className="text-slate-600 hover:underline" to={next}>
-              Retour au parcours
+              {t('account:nav.back_journey', 'Retour au parcours')}
             </Link>
           </div>
         </CardContent>

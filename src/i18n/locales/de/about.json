@@ -154,5 +154,22 @@
  "partners.join.title": "Ihre Einrichtung vorschlagen",
  "partners.join.text": "Ihr Pro-Bereich ist ab der Registrierung geöffnet. Ihre Seite erscheint erst nach der Prüfung durch ADA im öffentlichen Verzeichnis und kann erst dann Akten empfangen.",
  "partners.join.create": "Meinen Pro-Bereich erstellen",
- "partners.join.discuss": "Über eine Partnerschaft sprechen"
+ "partners.join.discuss": "Über eine Partnerschaft sprechen",
+ "sourcespage.ameli": "Ameli.fr (Krankenversicherung)",
+ "sourcespage.annuaire": "Verzeichnis der Verwaltung (Adressen und Öffnungszeiten der öffentlichen Dienste)",
+ "sourcespage.entreprises": "Unternehmensverzeichnis (Vereine und Organisationen)",
+ "sourcespage.seo_title": "Unsere Quellen",
+ "sourcespage.seo_description": "Liste der offiziellen Quellen, die wir verwenden.",
+ "sourcespage.title": "Unsere Quellen",
+ "sourcespage.description": "Die offiziellen Websites, aus denen die auf AccesDirectAide veröffentlichten Informationen stammen.",
+ "sourcespage.principle.title": "Grundsatz der Zuverlässigkeit",
+ "sourcespage.principle.text": "Wir verwenden nur Informationen, die vom Staat oder von anerkannten Stellen stammen.",
+ "sourcespage.used": "Was wir verwenden:",
+ "sourcespage.refused": "Was wir NICHT verwenden:",
+ "sourcespage.refused.forums": "Diskussionsforen (persönliche Meinungen).",
+ "sourcespage.refused.social": "Soziale Netzwerke (außer zertifizierte offizielle Konten).",
+ "sourcespage.refused.blogs": "Blogs ohne erkennbaren fachkundigen Autor.",
+ "sourcespage.refused.rumours": "Gerüchte und Hörensagen.",
+ "sourcespage.important": "Wichtig:",
+ "sourcespage.notice": "Wir sind nicht die Verwaltung. Wir bemühen uns sehr, keine Fehler zu machen, aber prüfen Sie Ihre persönliche Akte immer bei der zuständigen offiziellen Stelle. Jeder geprüfte Eintrag nennt seine offizielle Quelle (« Consulter la source ») und das Datum der letzten Prüfung."
 }

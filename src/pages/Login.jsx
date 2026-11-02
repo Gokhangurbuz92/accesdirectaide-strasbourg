@@ -2,6 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { User, Briefcase, UserPlus } from 'lucide-react';
+import { useT } from '@/i18n';
 
 /**
  * Page de sélection de connexion
@@ -11,6 +12,7 @@ import { User, Briefcase, UserPlus } from 'lucide-react';
  * L'admin accède directement via /admin/login.
  */
 export default function Login() {
+    const { t } = useT('account');
     const [searchParams] = useSearchParams();
     const next = normalizeNextPath(searchParams.get('next'), '');
     const mode = String(searchParams.get('mode') || '').trim().toLowerCase();
@@ -21,20 +23,20 @@ export default function Login() {
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
             <SEO
-                title="Connexion"
-                description="AccesDirectAide — Connectez-vous à votre espace personnel ou professionnel"
+                title={t('account:login.seo_title', 'Connexion')}
+                description={t('account:login.seo_description', 'AccesDirectAide — Connectez-vous à votre espace personnel ou professionnel')}
                 path="/login"
                 noindex={true}
             />
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-                <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">Connexion</h1>
+                <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">{t('account:login.title', 'Connexion')}</h1>
                 <p className="text-center text-gray-500 mb-8">
-                    Choisissez votre espace pour continuer
+                    {t('account:login.choose', 'Choisissez votre espace pour continuer')}
                 </p>
 
                 {mode === 'pro' && (
                     <div className="rounded-md border border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-900 mb-6">
-                        Une connexion est requise pour accéder au parcours rendez-vous.
+                        {t('account:login.required_rdv', 'Une connexion est requise pour accéder au parcours rendez-vous.')}
                     </div>
                 )}
 
@@ -42,11 +44,11 @@ export default function Login() {
                     <Link to={citizenLoginPath} className="group block">
                         <div className="flex items-center p-4 border-2 border-transparent bg-gray-50 rounded-xl hover:border-indigo-500 hover:bg-white transition-all duration-200 shadow-sm">
                             <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                <User className="w-6 h-6" />
+                                <User className="w-6 h-6" aria-hidden="true" />
                             </div>
                             <div className="ml-4 text-left">
-                                <h3 className="font-semibold text-lg text-gray-900">Particulier</h3>
-                                <p className="text-sm text-gray-500">Gérer mes aides et mes rendez-vous</p>
+                                <h3 className="font-semibold text-lg text-gray-900">{t('account:login.citizen', 'Particulier')}</h3>
+                                <p className="text-sm text-gray-500">{t('account:login.citizen_hint', 'Gérer mes aides et mes rendez-vous')}</p>
                             </div>
                         </div>
                     </Link>
@@ -54,27 +56,27 @@ export default function Login() {
                     <Link to={proLoginPath} className="group block">
                         <div className="flex items-center p-4 border-2 border-transparent bg-gray-50 rounded-xl hover:border-emerald-500 hover:bg-white transition-all duration-200 shadow-sm">
                             <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <Briefcase className="w-6 h-6" />
+                                <Briefcase className="w-6 h-6" aria-hidden="true" />
                             </div>
                             <div className="ml-4 text-left">
-                                <h3 className="font-semibold text-lg text-gray-900">Professionnel</h3>
-                                <p className="text-sm text-gray-500">Accéder à mon espace structure</p>
+                                <h3 className="font-semibold text-lg text-gray-900">{t('account:login.pro', 'Professionnel')}</h3>
+                                <p className="text-sm text-gray-500">{t('account:login.pro_hint', 'Accéder à mon espace structure')}</p>
                             </div>
                         </div>
                     </Link>
                 </div>
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    Pas encore de compte ?{' '}
+                    {t('account:login.no_account', 'Pas encore de compte ?')}{' '}
                     <Link to={signupPath} className="text-indigo-600 font-semibold hover:underline">
-                        Créer un compte
+                        {t('account:login.signup', 'Créer un compte')}
                     </Link>
                 </div>
 
                 {/* Accès admin discret — invisible pour le grand public */}
                 <div className="mt-12 flex justify-center">
                     <Link to="/admin/login" className="text-xs text-gray-300 hover:text-gray-400 transition-colors">
-                        Accès restreint
+                        {t('account:login.restricted', 'Accès restreint')}
                     </Link>
                 </div>
             </div>

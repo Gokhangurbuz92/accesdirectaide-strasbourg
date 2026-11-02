@@ -154,5 +154,22 @@
  "partners.join.title": "اقترح هيئتك",
  "partners.join.text": "تُفتح مساحتك المهنية فور التسجيل. ولا تظهر صفحتك في الدليل العام، ولا يمكنها استقبال الملفات، إلا بعد أن تتحقق منها ADA.",
  "partners.join.create": "إنشاء مساحتي المهنية",
- "partners.join.discuss": "مناقشة شراكة"
+ "partners.join.discuss": "مناقشة شراكة",
+ "sourcespage.ameli": "Ameli.fr (التأمين الصحي)",
+ "sourcespage.annuaire": "دليل الإدارة (عناوين الخدمات العامة ومواعيد عملها)",
+ "sourcespage.entreprises": "دليل المؤسسات (الجمعيات والهيئات)",
+ "sourcespage.seo_title": "مصادرنا",
+ "sourcespage.seo_description": "قائمة المصادر الرسمية التي نستخدمها.",
+ "sourcespage.title": "مصادرنا",
+ "sourcespage.description": "المواقع الرسمية التي تأتي منها المعلومات المنشورة على AccesDirectAide.",
+ "sourcespage.principle.title": "مبدأ الموثوقية",
+ "sourcespage.principle.text": "نستخدم فقط المعلومات الصادرة عن الدولة أو عن هيئات معترف بها.",
+ "sourcespage.used": "ما نستخدمه:",
+ "sourcespage.refused": "ما نرفض استخدامه:",
+ "sourcespage.refused.forums": "منتديات النقاش (آراء شخصية).",
+ "sourcespage.refused.social": "شبكات التواصل الاجتماعي (باستثناء الحسابات الرسمية الموثّقة).",
+ "sourcespage.refused.blogs": "المدونات التي لا يُعرف كاتبها كخبير.",
+ "sourcespage.refused.rumours": "الشائعات والأقاويل.",
+ "sourcespage.important": "مهم:",
+ "sourcespage.notice": "نحن لسنا الإدارة. نبذل جهدنا لتجنّب الأخطاء، لكن تحقّق دائمًا لدى الجهة الرسمية بشأن ملفك الشخصي. تُظهر كل بطاقة تم التحقق منها مصدرها الرسمي (« Consulter la source ») وتاريخ آخر تحقق."
 }

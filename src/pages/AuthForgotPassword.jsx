@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 export default function AuthForgotPassword() {
+  const { t } = useT('account');
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -38,13 +40,13 @@ export default function AuthForgotPassword() {
       const payload = await response.json().catch(() => null);
       if (!response.ok) {
         // R18: a French sentence whatever the refusal (the screen showed « Too many attempts », « Forbidden », « Internal error »)
-        throw new Error(payload?.message || (response.status === 429 ? 'Trop de demandes : réessayez dans quelques minutes.' : response.status === 403 ? 'La page a expiré : rechargez-la puis recommencez.' : 'La demande n’a pas pu être envoyée : réessayez dans quelques minutes.'));
+        throw new Error(payload?.message || (response.status === 429 ? t('account:errors.too_many', 'Trop de demandes : réessayez dans quelques minutes.') : response.status === 403 ? t('account:errors.expired', 'La page a expiré : rechargez-la puis recommencez.') : t('account:errors.not_sent', 'La demande n’a pas pu être envoyée : réessayez dans quelques minutes.')));
       }
 
       // R12 (C01): the service says when no e-mail can leave it at all (same answer for every address)
-      setMessage(payload?.emailDelivery === 'UNAVAILABLE' ? payload.message : "Si l'email est valide, un lien de réinitialisation vient d'être envoyé.");
+      setMessage(payload?.emailDelivery === 'UNAVAILABLE' ? payload.message : t('account:forgot.sent', "Si l'adresse est valide, un lien de réinitialisation vient d'être envoyé."));
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : 'Une erreur est survenue.');
+      setError(submitError instanceof Error ? submitError.message : t('account:errors.generic', 'Une erreur est survenue.'));
     } finally {
       setLoading(false);
     }
@@ -53,16 +55,16 @@ export default function AuthForgotPassword() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <SEO
-        title="Mot de passe oublié"
-        description="Réinitialisez le mot de passe de votre compte Particulier."
+        title={t('account:forgot.title', 'Mot de passe oublié')}
+        description={t('account:forgot.seo_description', 'Réinitialisez le mot de passe de votre compte Particulier.')}
         path="/auth/forgot"
         noindex={true}
       />
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle as="h1">Mot de passe oublié</CardTitle>
+          <CardTitle as="h1">{t('account:forgot.title', 'Mot de passe oublié')}</CardTitle>
           <CardDescription>
-            Entrez votre adresse email pour recevoir un lien de reinitialisation.
+            {t('account:forgot.intro', 'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -79,7 +81,7 @@ export default function AuthForgotPassword() {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="forgot-email">Email</Label>
+              <Label htmlFor="forgot-email">{t('account:fields.email', 'Adresse e-mail')}</Label>
               <Input
                 id="forgot-email"
                 type="email"
@@ -91,16 +93,16 @@ export default function AuthForgotPassword() {
             </div>
 
             <Button type="submit" disabled={loading}>
-              {loading ? 'Envoi...' : 'Envoyer le lien'}
+              {loading ? t('account:forgot.sending', 'Envoi…') : t('account:forgot.send', 'Envoyer le lien')}
             </Button>
           </form>
 
           <div className="flex flex-wrap gap-3 text-sm">
             <Link className="text-blue-700 hover:underline" to={appendNext('/auth/login', next)}>
-              Retour a la connexion
+              {t('account:nav.back_login', 'Retour à la connexion')}
             </Link>
             <Link className="text-slate-600 hover:underline" to={next}>
-              Retour au parcours
+              {t('account:nav.back_journey', 'Retour au parcours')}
             </Link>
           </div>
         </CardContent>

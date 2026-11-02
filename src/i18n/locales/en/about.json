@@ -154,5 +154,22 @@
  "partners.join.title": "Propose your organisation",
  "partners.join.text": "Your Pro area opens as soon as you register. Your page appears in the public directory, and can receive files, only after ADA has checked it.",
  "partners.join.create": "Create my Pro area",
- "partners.join.discuss": "Discuss a partnership"
+ "partners.join.discuss": "Discuss a partnership",
+ "sourcespage.ameli": "Ameli.fr (Health Insurance)",
+ "sourcespage.annuaire": "Directory of the administration (addresses and opening hours of public services)",
+ "sourcespage.entreprises": "Business directory (associations and organisations)",
+ "sourcespage.seo_title": "Our sources",
+ "sourcespage.seo_description": "List of the official sources we use.",
+ "sourcespage.title": "Our sources",
+ "sourcespage.description": "The official websites the information published on AccesDirectAide comes from.",
+ "sourcespage.principle.title": "Reliability principle",
+ "sourcespage.principle.text": "We only use information that comes from the State or from recognised organisations.",
+ "sourcespage.used": "What we use:",
+ "sourcespage.refused": "What we REFUSE to use:",
+ "sourcespage.refused.forums": "Discussion forums (personal opinions).",
+ "sourcespage.refused.social": "Social networks (except certified official accounts).",
+ "sourcespage.refused.blogs": "Blogs without an identified expert author.",
+ "sourcespage.refused.rumours": "Rumours or hearsay.",
+ "sourcespage.important": "Important:",
+ "sourcespage.notice": "We are not the administration. We work hard not to make mistakes, but always check with the official body for your own file. Each verified record shows its official source (« Consulter la source ») and the date it was last checked."
 }

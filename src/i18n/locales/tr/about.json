@@ -154,5 +154,22 @@
  "partners.join.title": "Kuruluşunuzu önerin",
  "partners.join.text": "Profesyonel Alanınız kayıt olur olmaz açılır. Sayfanız ancak ADA tarafından doğrulandıktan sonra herkese açık rehberde görünür ve dosya alabilir.",
  "partners.join.create": "Profesyonel Alanımı oluştur",
- "partners.join.discuss": "Bir ortaklığı görüşelim"
+ "partners.join.discuss": "Bir ortaklığı görüşelim",
+ "sourcespage.ameli": "Ameli.fr (Sağlık Sigortası)",
+ "sourcespage.annuaire": "İdare rehberi (kamu hizmetlerinin adresleri ve çalışma saatleri)",
+ "sourcespage.entreprises": "Şirketler rehberi (dernekler ve kuruluşlar)",
+ "sourcespage.seo_title": "Kaynaklarımız",
+ "sourcespage.seo_description": "Kullandığımız resmî kaynakların listesi.",
+ "sourcespage.title": "Kaynaklarımız",
+ "sourcespage.description": "AccesDirectAide'de yayımlanan bilgilerin geldiği resmî siteler.",
+ "sourcespage.principle.title": "Güvenilirlik ilkesi",
+ "sourcespage.principle.text": "Yalnızca Devletten veya tanınmış kuruluşlardan gelen bilgileri kullanıyoruz.",
+ "sourcespage.used": "Kullandıklarımız:",
+ "sourcespage.refused": "Kullanmayı REDDETTİKLERİMİZ:",
+ "sourcespage.refused.forums": "Tartışma forumları (kişisel görüşler).",
+ "sourcespage.refused.social": "Sosyal ağlar (onaylı resmî hesaplar hariç).",
+ "sourcespage.refused.blogs": "Yazarı belirli bir uzman olmayan bloglar.",
+ "sourcespage.refused.rumours": "Söylentiler ve dedikodular.",
+ "sourcespage.important": "Önemli:",
+ "sourcespage.notice": "Biz idare değiliz. Hata yapmamak için çok çalışıyoruz, ancak kendi dosyanız için her zaman resmî kurumla teyit edin. Doğrulanmış her kayıt resmî kaynağını (« Consulter la source ») ve son kontrol tarihini gösterir."
 }
