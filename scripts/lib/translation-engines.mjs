@@ -48,7 +48,15 @@ export class Engine {
     const k = crypto.createHash('sha256').update(`${from}>${to}${attempt ? `#repair${attempt}` : ''}\n${text}`).digest('hex');
     if (this.cache.has(k)) { this.stats.cached += 1; return this.cache.get(k); }
     const t0 = Date.now();
-    const res = await fetch(`${OLLAMA}/api/generate`, { method: 'POST', body: JSON.stringify({ model: this.model, prompt: promptFor(this.model, from, to, text, attempt), stream: false, keep_alive: '2m', options: { temperature: 0, seed: 7 + attempt, num_predict: Math.min(4096, 200 + text.length * 3) } }) });
+    const body = JSON.stringify({ model: this.model, prompt: promptFor(this.model, from, to, text, attempt), stream: false, keep_alive: '2m', options: { temperature: 0, seed: 7 + attempt, num_predict: Math.min(4096, 200 + text.length * 3) } });
+    // R34: a single transient server error (Ollama answered 500 once after 41 minutes) ended a multi-hour run; retry a 5xx up to 3 times, same request
+    let res;
+    for (let i = 0; i < 4; i += 1) {
+      res = await fetch(`${OLLAMA}/api/generate`, { method: 'POST', body });
+      if (res.ok || res.status < 500 || i === 3) break;
+      this.stats.retries = (this.stats.retries || 0) + 1;
+      await new Promise((r) => setTimeout(r, 5000 * (i + 1)));
+    }
     if (!res.ok) throw new Error(`engine ${this.model} answered ${res.status}`);
     const v = clean((await res.json()).response);
     this.stats.calls += 1; this.stats.ms += Date.now() - t0; this.stats.chars += text.length;
