@@ -15,7 +15,8 @@ const MAX_EXPORT = 5000;
 const day = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : null);
 function where(f) {
   const parts = [sql`TRUE`];
-  if (f.action) parts.push(sql`action LIKE ${String(f.action).replace(/[%_]/g, '') + '%'}`);
+  // R35 (LAB journeys): « _ » and « % » are escaped, not deleted — every action name contains « _ », so a full name never matched (REVIEW_QUEUE_DECISION became REVIEWQUEUEDECISION%)
+  if (f.action) parts.push(sql`action LIKE ${String(f.action).replace(/[\\%_]/g, (c) => `\\${c}`) + '%'} ESCAPE '\\'`);
   if (f.actor) parts.push(sql`(actor = ${String(f.actor)} OR actor_id = ${String(f.actor)})`);
   if (f.entity) parts.push(sql`entity = ${String(f.entity)}`);
   if (f.entityId) parts.push(sql`entity_id = ${String(f.entityId)}`);
