@@ -18,7 +18,9 @@ vi.mock('../../src/db/index.js', () => ({
       Aide: { findMany: vi.fn() },
       Demarche: { findMany: vi.fn() },
       Structure: { findMany: vi.fn() },
-      Dispositif: { findMany: vi.fn() }
+      Dispositif: { findMany: vi.fn() },
+      Guide: { findMany: vi.fn() },   // R29: the sitemap also lists the published official guides and news items
+      Actualite: { findMany: vi.fn() }
     }
   }
 }));
@@ -30,6 +32,8 @@ describe('URL Canonical Consistency', () => {
     db.query.Demarche.findMany.mockResolvedValue([{ slug: 'test-demarche-slug', updated_at: new Date() }]);
     db.query.Structure.findMany.mockResolvedValue([{ slug: 'test-structure-slug', updated_at: new Date() }]);
     db.query.Dispositif.findMany.mockResolvedValue([]);
+    db.query.Guide.findMany.mockResolvedValue([{ slug: 'test-guide-slug', updatedAt: new Date() }]);
+    db.query.Actualite.findMany.mockResolvedValue([]);
 
     const res = {
       writeHead: vi.fn(),
@@ -56,5 +60,6 @@ describe('URL Canonical Consistency', () => {
     expect(output).toContain('<loc>https://preview-accesdirectaide.vercel.app/demarches/test-demarche-slug</loc>');
     // P22: the canonical address of a place is /structures/<slug> (/annuaire/<slug> answers 301 to it)
     expect(output).toContain('<loc>https://preview-accesdirectaide.vercel.app/structures/test-structure-slug</loc>');
+    expect(output).toContain('<loc>https://preview-accesdirectaide.vercel.app/bonnes-pratiques/test-guide-slug</loc>');
   });
 });

@@ -273,8 +273,10 @@ export async function upsertActualiteFromFeedItem(input) {
   const { id: _id, createdAt: _createdAt, slug: _slug, ...refresh } = insertData;
   const humanFinal = ['rejected', 'archive', 'archived'].includes(String(existing?.statut || ''));
   const { statut: _statut, auto_publish: _auto, published_at: _pub, ...refreshKeepingDecision } = refresh;
-  // R28/R29: a refresh never changes a decision (a published, rejected or archived item keeps its status); a changed draft is checked again by the verification
-  const updateData = humanFinal || String(existing?.statut || '') === 'publie' ? refreshKeepingDecision : refresh;
+  // R28/R29: a refresh never overrides a rejection or an archiving. R34: an item reaches this point only when its source text CHANGED (an unchanged one is
+  // skipped above), so a published item goes back to a draft and the automatic verification checks the new words again — before, the changed text stayed
+  // published without any check (the verification had read the old words)
+  const updateData = humanFinal ? refreshKeepingDecision : refresh;
 
 
   await db.insert(Actualite).values(insertData).onConflictDoUpdate({

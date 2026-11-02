@@ -110,7 +110,8 @@ describe.skipIf(!hasDatabase)('owner LAB review integrity (real DB)', () => {
     expect(pending.actions.map((a) => a.action)).toContain('ORGANIZATION_SUSPENDED');
     await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details, "timestamp") VALUES (${crypto.randomUUID()}, 'BREAK_GLASS_OPENED', ${actor}, ${actor}, 'AdminElevation', ${ID.bgOld}, '{}'::jsonb, NOW() - interval '400 days')`);
     await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details, "timestamp") VALUES (${crypto.randomUUID()}, 'ADMIN_API_WRITE', ${actor}, ${actor}, 'Aide', ${ID.old}, '{}'::jsonb, NOW() - interval '400 days')`);
-    const res = mk(); await purge({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, res);
+    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
+    const res = mk(); await purge({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, res).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
     expect(res.statusCode, JSON.stringify(res.body)).toBe(200);
     expect((await one(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE entity_id = ${ID.bgOld}`)).n, 'unreviewed break-glass kept').toBe(1);
     expect((await one(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE entity_id = ${ID.old}`)).n, 'an ordinary old entry purged').toBe(0);

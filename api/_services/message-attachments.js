@@ -19,6 +19,7 @@ import { sniffType } from './mon-espace.js';
 // 4.5 MB, so 5 MB (6.7 MB encoded) failed on the hosting before reaching this check
 export const MAX_ATTACHMENT_BYTES = 3 * 1024 * 1024;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
+const TOO_LARGE = Symbol('too-large');
 const ctxOf = (conversationId, id) => `rdvatt:${conversationId}:${id}`;
 
 function decode(value) {
@@ -26,7 +27,8 @@ function decode(value) {
   let raw = value.trim(); const comma = raw.indexOf(',');
   if (/^data:/i.test(raw) && comma >= 0) raw = raw.slice(comma + 1);
   raw = raw.replace(/\s+/g, '');
-  if (!raw || raw.length > Math.ceil(MAX_ATTACHMENT_BYTES * 4 / 3) + 16 || !/^[A-Za-z0-9+/]+={0,2}$/.test(raw) || raw.length % 4 === 1) return null;
+  if (raw.length > Math.ceil(MAX_ATTACHMENT_BYTES * 4 / 3) + 16) return TOO_LARGE;   // said as such, not as an unreadable file
+  if (!raw || !/^[A-Za-z0-9+/]+={0,2}$/.test(raw) || raw.length % 4 === 1) return null;
   try { return Buffer.from(raw, 'base64'); } catch { return null; }
 }
 
@@ -35,8 +37,8 @@ export function prepareAttachment(input) {
   if (input === undefined || input === null) return { ok: true, file: null };
   if (typeof input !== 'object') return bad('INVALID_ATTACHMENT', 'Pièce jointe invalide.');
   const buf = decode(input.contentBase64);
-  if (!buf || !buf.length) return bad('INVALID_ATTACHMENT', 'Pièce jointe illisible.');
-  if (buf.length > MAX_ATTACHMENT_BYTES) return bad('ATTACHMENT_TOO_LARGE', 'La pièce jointe dépasse 3 Mo.', 413);
+  if (buf !== TOO_LARGE && (!buf || !buf.length)) return bad('INVALID_ATTACHMENT', 'Pièce jointe illisible.');
+  if (buf === TOO_LARGE || buf.length > MAX_ATTACHMENT_BYTES) return bad('ATTACHMENT_TOO_LARGE', 'La pièce jointe dépasse 3 Mo.', 413);
   const mimeType = sniffType(buf);
   if (!mimeType) return bad('UNSUPPORTED_TYPE', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.', 415);
   if (input.mimeType && String(input.mimeType) !== mimeType) return bad('TYPE_MISMATCH', 'Le contenu du fichier ne correspond pas à son type.', 415);

@@ -33,9 +33,9 @@ const VIDEO_KEYS = Object.keys(VIDEO_ON).concat(['VIDEO_PRODUCTION_APPROVED']);
 describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Outlook (real DB)', () => {
   let db, rdv, proAppts, proVisio, proCancel, proIcs, outlook, callback, cron, userAuth, auth, mailer, citizen;
   const cookie = (u) => userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: u.id, email: u.email })).split(';')[0];
-  const bearer = (p, structureId = ST, role = 'STRUCTURE_ADMIN') => `Bearer ${auth.signProToken({ id: p.id, email: p.email, structureId, role })}`;
+  const bearer = (p, structureId = ST, role = 'STRUCTURE_ADMIN', mfa = false) => `Bearer ${auth.signProToken({ id: p.id, email: p.email, structureId, role }, { mfa })}`;
   const callRdv = async ({ method = 'GET', path, query = {}, body, as }) => { const r = mk(); await rdv({ method, url: `/api/rdv/${path}`, query, body, headers: { host: 'localhost:3000', 'x-forwarded-proto': 'http', ...(as ? { cookie: cookie(as) } : {}) } }, r); return r; };
-  const callPro = async (h, { method = 'GET', url = '/api/pro/x', query = {}, body, as = PRO, structureId = ST }) => { const r = mk(); await h({ method, url, query, body, headers: { host: 'localhost', authorization: bearer(as, structureId) } }, r); return r; };
+  const callPro = async (h, { method = 'GET', url = '/api/pro/x', query = {}, body, as = PRO, structureId = ST, mfa = false }) => { const r = mk(); await h({ method, url, query, body, headers: { host: 'localhost', authorization: bearer(as, structureId, 'STRUCTURE_ADMIN', mfa) } }, r); return r; };
   const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
   const slots = async (serviceId, mode, as = C) => callRdv({ path: `structures/${SLUG}/slots`, query: { serviceId, from: day(3), to: day(6), ...(mode ? { mode } : {}) }, as });
   const book = (serviceId, startAt, extra = {}, as = C) => callRdv({ method: 'POST', path: 'appointments', as, body: { structureSlug: SLUG, serviceId, startAt, idempotencyKey: crypto.randomUUID(), ...extra } });
@@ -281,7 +281,11 @@ describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Out
       await db.execute(sql`UPDATE "ProOutlookToken" SET "accessTokenEnc" = 'legacy-plain' WHERE "userId" = ${PRO_B.id}`);
       expect((await callPro(outlook, { as: PRO_B, url: '/api/pro/outlook?action=status' })).body.status, 'a legacy-format row is not trusted').toBe('reconnect_required');
       expect((await callPro(outlook, { method: 'POST', as: PRO_B, url: '/api/pro/outlook?action=disconnect' })).body.status).toBe('disconnected');
-      setEnv({ VERCEL_ENV: 'production' }); expect((await callPro(outlook, { as: PRO_B, url: '/api/pro/outlook?action=status' })).body.reason).toBe('PRODUCTION_ACTIVATION_PENDING');
+      setEnv({ VERCEL_ENV: 'production' });
+      // R34: in production an ADA Pro session needs its second factor first (password-only refused), then Outlook still says it is not activated there
+      const noFactor = await callPro(outlook, { as: PRO_B, url: '/api/pro/outlook?action=status' });
+      expect([noFactor.statusCode, noFactor.body.code]).toEqual([403, 'PRO_MFA_REQUIRED']);
+      expect((await callPro(outlook, { as: PRO_B, url: '/api/pro/outlook?action=status', mfa: true })).body.reason).toBe('PRODUCTION_ACTIVATION_PENDING');
     } finally {
       globalThis.fetch = realFetch;
       for (const k of ['OUTLOOK_ENABLED', 'OUTLOOK_CLIENT_ID', 'OUTLOOK_CLIENT_SECRET', 'OUTLOOK_REDIRECT_URI', 'OUTLOOK_TOKEN_ENCRYPTION_KEY', 'OUTLOOK_AUTHORITY_URL', 'VERCEL_ENV']) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k]; }

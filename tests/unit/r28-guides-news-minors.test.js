@@ -41,11 +41,15 @@ describe('official guides', () => {
 
 describe('news: drafts and human publication', () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token'); });
-  it('ingestion never publishes by itself, and a refresh never changes a decision', () => {
+  it('ingestion never publishes by itself; a refresh never overrides a rejection, and a changed published text goes back to the verification (R34)', () => {
     const src = fs.readFileSync('api/_handlers/cron/ingest-actualites-rss.js', 'utf8');
     expect(src).toMatch(/const autoPublish = false;/);
     expect(src).toMatch(/statut: autoPublish \? 'publie' : 'brouillon'/);
-    expect(src).toMatch(/humanFinal \|\| String\(existing\?\.statut \|\| ''\) === 'publie' \? refreshKeepingDecision : refresh/);
+    // R34: only a rejection or an archiving survives a refresh; the refresh path is reached only when the source text changed (an unchanged item is skipped),
+    // and a published item must not keep words the verification never read (integration: pkg11-p10-actualites-moderation-db)
+    expect(src).toMatch(/const updateData = humanFinal \? refreshKeepingDecision : refresh;/);
+    expect(src).toMatch(/if \(unchanged \|\| env\.ingestion\.dryRun\) \{\s*return \{ action: 'skipped' \};/);
+    expect(src).not.toMatch(/=== 'publie' \? refreshKeepingDecision/);
     expect(fs.readFileSync('scripts/news-ingest.mjs', 'utf8')).toMatch(/verifyNewsDrafts/);
     expect(fs.readFileSync('api/_handlers/cron/actualites.js', 'utf8')).toMatch(/await verifyNewsDrafts\(/);
   });

@@ -95,7 +95,8 @@ describe.skipIf(!hasDatabase)('PKG-11 / C21 restriction of processing (real DB)'
     const kept = await newShare(); const unowned = await newShare();
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "ownerCitizenId" = NULL WHERE id = ${unowned.id}`);
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "expiresAt" = NOW() - interval '1 day' WHERE id IN (${kept.id}, ${unowned.id})`);
-    const p = await invoke(H.purge, { url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': process.env.CRON_SECRET, authorization: `Bearer ${process.env.CRON_SECRET}` } });
+    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
+    const p = await invoke(H.purge, { url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': process.env.CRON_SECRET, authorization: `Bearer ${process.env.CRON_SECRET}` } }).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
     expect(p.statusCode).toBe(200);
     const left = (await db.execute(sql`SELECT id FROM "SharedDiagnostic" WHERE id IN (${kept.id}, ${unowned.id})`)).rows.map((r) => r.id);
     expect(left).toEqual([kept.id]);   // the restricted person's expired dossier is kept; another expired dossier is purged

@@ -48,8 +48,17 @@ describe.skipIf(!hasDatabase)('gdpr-purge (real DB)', () => {
     expect(n).toBe(1);
   });
 
-  it('applies retention: expired/old rows removed, current rows kept, old appointments anonymised, and the summary reports real counts', async () => {
+  it('R33: an authorized run deletes nothing while GDPR_PURGE_ENABLED is not true (fail-closed)', async () => {
+    delete process.env.GDPR_PURGE_ENABLED;
     const res = await run();
+    expect([res.statusCode, res.body.skipped, res.body.reason]).toEqual([200, true, 'GDPR_PURGE_DISABLED']);
+    expect((await db.execute(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = ${'GP_OLD_' + TS}`)).rows[0].n).toBe(1);
+    expect((await db.execute(sql`SELECT count(*)::int AS n FROM "SharedDiagnostic" WHERE id = ${'gp-sd-exp-' + TS}`)).rows[0].n).toBe(1);
+  });
+
+  it('applies retention: expired/old rows removed, current rows kept, old appointments anonymised, and the summary reports real counts', async () => {
+    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
+    const res = await run().finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('success');
     const q = async (t, where) => (await db.execute(sql.raw(`SELECT count(*)::int AS n FROM "${t}" WHERE ${where}`))).rows[0].n;

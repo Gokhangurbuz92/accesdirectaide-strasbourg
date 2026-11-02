@@ -628,7 +628,9 @@ export async function searchStructures(params) {
   // services on 269 public places that no search read: « aide aux aidants » found nothing, « apprendre le français » found « Croix-Rouge française »
   const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(declared.x), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})
     OR EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("Structure"."services_externes"->'services') = 'array' THEN "Structure"."services_externes"->'services' ELSE '[]'::jsonb END) AS ext(x)
-      WHERE translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''') LIKE ${`%${t}%`}))`;
+      WHERE translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''') LIKE ${`%${t}%`})
+    OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true
+      AND translate(lower(bookable.name), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})))`;   // R34: E04's bookable services, lost when R27 moved to the word plan
   const plan = q ? wordPlan(q, ['"nom"', '"description_courte"', '"ville"', '"code_postal"', '"type_structure"'], '"nom"', sv, declared) : null;
   // the words of the query found in what the place DOES (its services), ranked above words found only in its name
   const serviceHits = plan ? sql`(${sql.join(plan.words.map((w) => sql`(CASE WHEN (${sql.join(wordTerms(w).map((t) => declared(t)), sql.raw(' OR '))}) THEN 1 ELSE 0 END)`), sql.raw(' + '))})` : null;

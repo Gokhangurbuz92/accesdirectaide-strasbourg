@@ -3,7 +3,7 @@
  *  - an item from a non-official source is a draft, invisible to the public; a named MFA administrator publishes it and the public feed shows it
  *    (before: PUBLISH wrote 'actif', which no public read ever showed);
  *  - a refresh keeps the row's identity (id, slug — before: a new id at every change) and never overrides a human decision (a rejected item stays
- *    rejected); a changed non-official item returns to review; an official item stays published;
+ *    rejected); a changed item returns to review — R34: published ones too, so the automatic verification (R29) reads the new words;
  *  - only an item linking to its source over https can be published; the audit row names the administrator.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -57,17 +57,21 @@ describe.skipIf(!hasDatabase)('PKG-11 / P10 actualités moderation (real DB)', (
       .toBe('Source officielle consultée : information exacte.');
   });
 
-  it('a refresh keeps id and slug; a changed non-official item returns to review; an official one stays published', async () => {
+  it('a refresh keeps id and slug; a changed item returns to review, a published one included, so the verification reads the new words', async () => {
     const before = await row(URLS.draft);
     expect((await upsert(URLS.draft, 'Texte modifié par la source.')).action).toBe('updated');
     const after = await row(URLS.draft);
     expect([after.id, after.slug]).toEqual([before.id, before.slug]);
     expect([after.statut, after.published_at]).toEqual(['brouillon', null]);
+    // R29 (owner decision 31/10/2026): the ingestion never publishes, even an official item — the automatic verification does (api/_services/news-verification.js).
+    // R34: a published item whose source text changes goes back to a draft, so the verification reads the new words; its id and slug stay.
     await upsert(URLS.official, 'Officiel v1.', true);
     const o1 = await row(URLS.official);
+    expect(o1.statut).toBe('brouillon');
+    await db.execute(sql`UPDATE "Actualite" SET statut = 'publie', published_at = NOW() WHERE id = ${o1.id}`);   // as the verification does when every check passes
     await upsert(URLS.official, 'Officiel v2.', true);
     const o2 = await row(URLS.official);
-    expect([o2.id, o2.statut]).toEqual([o1.id, 'publie']);
+    expect([o2.id, o2.slug, o2.statut, o2.published_at]).toEqual([o1.id, o1.slug, 'brouillon', null]);
   });
 
   it('a rejected item stays rejected after a refresh; an item without an https source link cannot be published', async () => {

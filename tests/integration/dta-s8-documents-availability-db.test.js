@@ -195,7 +195,8 @@ describe.skipIf(!hasDatabase)('DTA S8 secure documents, erasure and opening hour
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "expiresAt" = now() - interval '1 day' WHERE id = ${dead.id}`);
     const secret = process.env.CRON_SECRET;
     expect(secret, 'CRON_SECRET must be provided by the integration environment (same as gdpr-purge-db.test.js)').toBeTruthy();
-    const r = await invoke(H.purge, { method: 'GET', url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': secret } });
+    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
+    const r = await invoke(H.purge, { method: 'GET', url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': secret } }).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
     expect(r.statusCode, JSON.stringify(r.body)).toBe(200);
     expect((await db.execute(sql`SELECT count(*)::int AS n FROM "SharedDiagnostic" WHERE id = ${dead.id}`)).rows[0].n).toBe(0);
     for (const k of deadKeys) expect(STORE.blobs.has(k), 'expired blob ' + k).toBe(false);
