@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { numbersIn, canonicalNumber, quotesIn, assessItems } from '../../scripts/d11-source-assert.mjs';
+import { numbersIn, canonicalNumber, quotesIn, assessItems, splitCitations } from '../../scripts/d11-source-assert.mjs';
 import { validatedRight } from '../../api/lib/validatedRules.js';
 
 // R35 (§8, D11): the rule-source assertion harness checks numbers, quotes, fiche dates and legal bases against official texts — and decides nothing.
@@ -8,13 +8,14 @@ const register = (conditions, consultedAt = '2026-10-21') => ({
   consultedAt, rights: [{ id: 'aah', status: 'RESEARCHED_UNVALIDATED', expertReview: null, referenceCases: [], sources: [{ url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F1234', consultedAt }], conditions }],
 });
 const legal = (etat = 'VIGUEUR', dateFin = '2999-01-01') => ({ references: [{ right: 'aah', resolved: [{ code: 'CSS', num: 'L821-1', etat, dateDebut: '2020-01-01', dateFin }] }] });
-const run = ({ body = 'Plafond annuel : 12 499 € pour une personne seule. Vous devez avoir au moins 20 ans.', changed, conditions, cases = [], form, redirections = new Map(), fiches, legalData = legal() } = {}) => assessItems({
+const run = ({ body = 'Plafond annuel : 12 499 € pour une personne seule. Vous devez avoir au moins 20 ans.', changed, conditions, cases = [], form, redirections = new Map(), fiches, legalData = legal() , livePages = null} = {}) => assessItems({
   register: register(conditions || [{ fact: 'resources', text: 'plafond 12 499 € sans enfant', source: 'F1234', draftCheck: { kind: 'max', max: 12499 } }]),
   cases: { cases },
   legal: legalData,
   form: form || [{ right: 'aah', item_type: 'condition', item_id: 'resources', text: '' }],
   archive: { fiches: fiches || new Map([['F1234', fiche('F1234', body, changed)]]), redirections },
   referenceDate: '2026-11-02',
+  livePages,
 });
 
 describe('R35 D11 number reading', () => {
@@ -57,6 +58,26 @@ describe('R35 D11 source assertions', () => {
     expect(run({ legalData: legal('ABROGE_DIFF', '2222-02-22') }).legalBasis.aah).toMatchObject({ inForce: 1, repealScheduled: ['CSS L821-1 (repeal scheduled 2222-02-22)'] });
     expect(run({ legalData: legal('ABROGE') }).legalBasis.aah.inForce).toBe(0);
     expect(run({ legalData: legal('VIGUEUR', '2026-06-01') }).legalBasis.aah.notInForce).toHaveLength(1);
+  });
+
+  it('R35: a cited legal text is checked against the legal basis, not read as thresholds', () => {
+    expect(splitCitations('barème : arrêté du 27 septembre 2019, non reproduit').citations).toEqual(['arrêté du 27 septembre 2019']);
+    const withOrder = { references: [{ right: 'aah', basis: 'Arrêté du 27 septembre 2019', resolved: [{ code: '', num: 'Arrêté du 27 septembre 2019 relatif au calcul', etat: 'VIGUEUR', dateDebut: '2019-10-01', dateFin: '2999-01-01' }] }] };
+    const cond = [{ fact: 'resources', text: 'plafond 12 499 € (barème : arrêté du 27 septembre 2019)', source: 'F1234' }];
+    const ok = run({ conditions: cond, legalData: withOrder });
+    expect(ok.rows[0].verdict).toBe('TEXT_CONFIRMED');
+    expect(ok.rows[0].checks.map((c) => c.check)).not.toContain('number 2019');
+    expect(run({ conditions: cond }).rows[0].verdict).toBe('CITATION_NOT_IN_LEGI');
+  });
+
+  it('R35 --live: a source outside the archive is checked on the page read once (hash and date only)', () => {
+    const page = { url: 'https://www.strasbourg.eu/x', fetchedAt: '2026-11-02T11:00:00Z', sha256: 'a'.repeat(64), flat: 'le fonds s’adresse aux jeunes de 16 à 25 ans'.replace('’', "'"), numbers: numbersIn('16 à 25 ans') };
+    const conditions = [{ fact: 'age', text: '16 à 25 ans', source: 'strasbourg.eu' }];
+    const cases = [{ id: 'f', basis: 'strasbourg.eu « 16 à 25 ans »' }, { id: 'g', basis: 'strasbourg.eu « 18 à 30 ans »' }];
+    const form = [{ right: 'aah', item_type: 'condition', item_id: 'age', text: '' }, { right: 'aah', item_type: 'case', item_id: 'f', text: '' }, { right: 'aah', item_type: 'case', item_id: 'g', text: '' }];
+    const r = run({ conditions, cases, form, livePages: new Map([['aah', page]]) });
+    expect(r.rows.map((x) => x.verdict)).toEqual(['LIVE_PAGE_CONFIRMED', 'LIVE_PAGE_CONFIRMED', 'QUOTE_NOT_FOUND']);
+    expect(run({ conditions, cases, form }).rows.map((x) => x.verdict)).toEqual(['NO_ARCHIVE_SOURCE', 'NOT_MACHINE_CHECKABLE', 'NOT_MACHINE_CHECKABLE']);
   });
 
   it('an all-confirmed report validates nothing: the expert gate stays closed', () => {

@@ -164,8 +164,8 @@ Cas de référence proposés (3) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
-| apa-age-59 | {ageRange: [59, 59]} | {age: NOT_MET} | {age: NOT_MET} | F10009 « 60 ans ou plus » | ☐ accepter ☐ corriger ☐ rejeter |
-| apa-age-60 | {ageRange: [60, 60]} | {age: MET} | {age: MET} | F10009 « 60 ans ou plus » | ☐ accepter ☐ corriger ☐ rejeter |
+| apa-age-59 | {ageRange: [59, 59]} | {age: NOT_MET} | {age: NOT_MET} | F10009 « Vous devez être âgé d’au moins 60 ans » | ☐ accepter ☐ corriger ☐ rejeter |
+| apa-age-60 | {ageRange: [60, 60]} | {age: MET} | {age: MET} | F10009 « Vous devez être âgé d’au moins 60 ans » | ☐ accepter ☐ corriger ☐ rejeter |
 | apa-band-60plus | {ageRange: [60, 130]} | {age: MET, dependency: UNKNOWN} | {age: MET, dependency: UNKNOWN} | GIR 1 à 4 : évaluation par l'équipe médico-sociale du Département, jamais lisible par ADA | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED

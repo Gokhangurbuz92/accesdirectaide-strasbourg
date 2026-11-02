@@ -8,14 +8,14 @@
  *   - the legal basis articles (LEGI subset) are in force at the reference date.
  * It never decides an item, never writes the register and never sets a status: a report full of TEXT_CONFIRMED leaves every right
  * RESEARCHED_UNVALIDATED (the expert gate api/lib/validatedRules.js is separate). The archive's SHA-256 is recorded so a run can be reproduced.
- *   node scripts/d11-source-assert.mjs <vosdroits.zip> [--reference-date YYYY-MM-DD] [--out report.json]
+ *   node scripts/d11-source-assert.mjs <vosdroits.zip> [--reference-date YYYY-MM-DD] [--out report.json] [--live]
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadArchive, parseFiche, resolveId, ficheMeta } from '../api/_services/verification/dila.js';
 
-export const VERDICTS = ['FICHE_MISSING', 'NUMBER_NOT_FOUND', 'QUOTE_NOT_FOUND', 'SOURCE_REVISED', 'FICHE_REDIRECTED', 'TEXT_CONFIRMED', 'METADATA_UNCHANGED', 'NO_ARCHIVE_SOURCE', 'NOT_MACHINE_CHECKABLE'];
+export const VERDICTS = ['FICHE_MISSING', 'NUMBER_NOT_FOUND', 'QUOTE_NOT_FOUND', 'CITATION_NOT_IN_LEGI', 'SOURCE_REVISED', 'FICHE_REDIRECTED', 'TEXT_CONFIRMED', 'LIVE_PAGE_CONFIRMED', 'METADATA_UNCHANGED', 'NO_ARCHIVE_SOURCE', 'NOT_MACHINE_CHECKABLE'];
 
 /** digits only, thousands separators (space, NBSP, narrow NBSP, dot) removed, decimal comma kept, a zero decimal part dropped ("12 499,00" -> "12499") */
 export function canonicalNumber(raw) {
@@ -39,6 +39,17 @@ export function draftCheckNumbers(v, acc = new Set()) {
   return acc;
 }
 
+/**
+ * R35: the legal texts a condition cites (« arrêté du 27 septembre 2019 », « décret n°2025-293 du 29 mars 2025 », « article L262-2 »). Their day and year
+ * are not thresholds: they are checked against the right's legal basis in the LEGI subset instead of the fiche's numbers.
+ */
+const CITATION = /(?:arr[êe]t[ée]|d[ée]cret|loi|ordonnance|circulaire)(?:\s+n°\s*[\d-]+)?\s+du\s+\d{1,2}(?:er)?\s+\p{L}+\s+\d{4}|(?:article\s+)?\b[LRD]\.?\s?\d{3,4}-\d+(?:-\d+)*/giu;
+/** @param {string} text @returns {{ citations: string[], rest: string }} */
+export function splitCitations(text) {
+  const citations = [...String(text || '').matchAll(CITATION)].map((m) => m[0]);
+  return { citations, rest: String(text || '').replace(CITATION, ' ') };
+}
+
 const squashText = (s) => String(s || '').normalize('NFC').replace(/[  ]/g, ' ').replace(/[’]/g, "'").replace(/\s+/g, ' ').toLowerCase();
 
 /** phrases quoted « … » in a case basis @param {string} basis */
@@ -46,9 +57,11 @@ export const quotesIn = (basis) => [...String(basis || '').matchAll(/«\s*([^»]
 
 /**
  * @param {{ register: any, cases: any, legal: any, form: { right: string, item_type: string, item_id: string, text: string }[],
- *   archive: { fiches: Map<string, string>, redirections: Map<string, string> }, referenceDate: string }} input
+ *   archive: { fiches: Map<string, string>, redirections: Map<string, string> }, referenceDate: string,
+ *   livePages?: Map<string, { url: string, fetchedAt: string, sha256: string, flat: string, numbers: Set<string> }> | null }} input
+ * livePages (R35, --live): the pages of rights whose source is outside the DILA archive (FAJ: strasbourg.eu), read once; only a hash and the date are kept
  */
-export function assessItems({ register, cases, legal, form, archive, referenceDate }) {
+export function assessItems({ register, cases, legal, form, archive, referenceDate, livePages = null }) {
   const rights = new Map(register.rights.map((/** @type {any} */ r) => [r.id, r]));
   const caseById = new Map(cases.cases.map((/** @type {any} */ c) => [c.id, c]));
   /** @type {Map<string, any>} */
@@ -87,18 +100,37 @@ export function assessItems({ register, cases, legal, form, archive, referenceDa
     if (item.item_type === 'condition') {
       const cond = right.conditions.find((/** @type {any} */ c) => c.fact === item.item_id);
       const src = String(cond?.source || '');
-      if (!/^[FN]\d+$/.test(src)) { row.tier = 'B'; row.verdict = 'NO_ARCHIVE_SOURCE'; row.checks.push({ check: 'source', result: 'NO_ARCHIVE_SOURCE', detail: `${src}: not in the DILA archive (no date on page)` }); rows.push(row); continue; }
+      if (!/^[FN]\d+$/.test(src)) {
+        row.tier = 'B'; row.verdict = 'NO_ARCHIVE_SOURCE'; row.checks.push({ check: 'source', result: 'NO_ARCHIVE_SOURCE', detail: `${src}: not in the DILA archive (no date on page)` });
+        const live = livePages?.get(item.right);
+        if (live) {
+          const nums = [...numbersIn(cond?.text)];
+          for (const n of nums) row.checks.push({ check: `number ${n} (live page)`, result: live.numbers.has(n) ? 'FOUND' : 'NUMBER_NOT_FOUND', detail: `${live.url} read ${live.fetchedAt}, sha256 ${live.sha256.slice(0, 12)}` });
+          if (nums.length) row.verdict = row.checks.some((c) => c.result === 'NUMBER_NOT_FOUND') ? 'NUMBER_NOT_FOUND' : 'LIVE_PAGE_CONFIRMED';
+        }
+        rows.push(row); continue;
+      }
       const f = fiche(src);
       if (!f) { row.tier = 'B'; row.verdict = 'FICHE_MISSING'; row.checks.push({ check: 'fiche', result: 'FICHE_MISSING', detail: src }); rows.push(row); continue; }
-      const nums = new Set([...numbersIn(cond.text), ...draftCheckNumbers(cond.draftCheck)]);
-      row.tier = nums.size ? 'A' : 'B';
+      const { citations, rest } = splitCitations(cond.text);
+      const nums = new Set([...numbersIn(rest), ...draftCheckNumbers(cond.draftCheck)]);
+      row.tier = nums.size || citations.length ? 'A' : 'B';
       for (const n of nums) row.checks.push({ check: `number ${n}`, result: f.numbers.has(n) ? 'FOUND' : 'NUMBER_NOT_FOUND' });
+      const bases = (legal.references || []).filter((/** @type {any} */ r) => r.right === item.right).flatMap((/** @type {any} */ r) => [r.basis, ...(r.resolved || []).map((/** @type {any} */ a) => `${a.code || ''} ${a.num || ''} ${a.title || ''}`)]).map(squashText);
+      for (const c of citations) row.checks.push({ check: `citation « ${c} »`, result: bases.some((b) => b.includes(squashText(c).replace(/^article\s+/, ''))) ? 'FOUND' : 'CITATION_NOT_IN_LEGI', detail: 'checked against the legal basis (LEGI subset), not the fiche' });
       row.checks.push(...metaChecks(right, src, f));
       row.verdict = verdictOf(row.checks, nums.size ? 'TEXT_CONFIRMED' : 'METADATA_UNCHANGED');
     } else if (item.item_type === 'case') {
       const c = caseById.get(item.item_id);
       const quotes = quotesIn(c?.basis);
       const src = (String(c?.basis || '').match(/\b([FN]\d{2,6})\b/) || [])[1];
+      const live = !src && /strasbourg\.eu/.test(String(c?.basis || '')) ? livePages?.get(item.right) : null;
+      if (quotes.length && live) {
+        row.tier = 'A';
+        for (const q of quotes) row.checks.push({ check: `quote « ${q} » (live page)`, result: live.flat.includes(squashText(q)) ? 'FOUND' : 'QUOTE_NOT_FOUND', detail: `${live.url} read ${live.fetchedAt}, sha256 ${live.sha256.slice(0, 12)}` });
+        row.verdict = row.checks.some((x) => x.result === 'QUOTE_NOT_FOUND') ? 'QUOTE_NOT_FOUND' : 'LIVE_PAGE_CONFIRMED';
+        rows.push(row); continue;
+      }
       if (!quotes.length || !src) { row.tier = 'C'; row.verdict = 'NOT_MACHINE_CHECKABLE'; row.checks.push({ check: 'internal_consistency', result: 'TESTED_ELSEWHERE', detail: 'expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)' }); rows.push(row); continue; }
       const f = fiche(src);
       if (!f) { row.tier = 'A'; row.verdict = 'FICHE_MISSING'; row.checks.push({ check: 'fiche', result: 'FICHE_MISSING', detail: src }); rows.push(row); continue; }
@@ -157,11 +189,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const archive = loadArchive(new Uint8Array(bytes));
   if (!archive.fiches.size) { process.stderr.write('empty archive: nothing checked (fail closed)\n'); process.exit(1); }
   const referenceDate = arg('--reference-date') || new Date().toISOString().slice(0, 10);
+  // --live: read the sources outside the archive (their text is not stored: strasbourg.eu forbids reproduction; a hash and the date prove the reading)
+  let livePages = null;
+  if (process.argv.includes('--live')) {
+    livePages = new Map();
+    const reg = read('data/rules/rights-rules.v1.json');
+    for (const r of reg.rights) for (const s of r.sources) {
+      if (/service-public\.gouv\.fr/.test(s.url)) continue;
+      const res = await fetch(s.url, { headers: { 'user-agent': 'AccesDirectAide-verification (https://www.accesdirectaide.fr)' } });
+      const html = await res.text();
+      const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/g, ' ').replace(/&#039;|&rsquo;/g, "'");
+      livePages.set(r.id, { url: s.url, status: res.status, fetchedAt: new Date().toISOString(), sha256: crypto.createHash('sha256').update(html).digest('hex'), flat: squashText(text), numbers: numbersIn(text) });
+    }
+  }
   const report = {
     tool: 'scripts/d11-source-assert.mjs', ranAt: new Date().toISOString(), archive: { file: path.basename(zip), sha256: crypto.createHash('sha256').update(bytes).digest('hex'), fiches: archive.fiches.size },
     statement: 'Machine checks only. Nothing here validates a rule: the D11 decision stays with an expert reviewer (scripts/d11-review.mjs, api/lib/validatedRules.js).',
     ...assessItems({ register: read('data/rules/rights-rules.v1.json'), cases: read('data/rules/reference-cases.proposed.v1.json'), legal: read('data/rules/legal-articles.v1.json'),
-      form: parseFormCsv(fs.readFileSync(path.join(root, 'docs/rules/D11_REVIEW_FORM.csv'), 'utf8')), archive, referenceDate }),
+      form: parseFormCsv(fs.readFileSync(path.join(root, 'docs/rules/D11_REVIEW_FORM.csv'), 'utf8')), archive, referenceDate, livePages }),
+    livePages: livePages ? [...livePages.entries()].map(([right, p]) => ({ right, url: p.url, status: p.status, fetchedAt: p.fetchedAt, sha256: p.sha256 })) : null,
   };
   if (arg('--out')) fs.writeFileSync(String(arg('--out')), `${JSON.stringify(report, null, 1)}\n`);
   process.stdout.write(`D11_SOURCE_ASSERT ${JSON.stringify({ items: report.items, summary: report.summary, archive: report.archive.sha256.slice(0, 12) })}\n`);

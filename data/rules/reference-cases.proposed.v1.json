@@ -221,7 +221,7 @@
       "expected": {
         "age": "NOT_MET"
       },
-      "basis": "F10009 « 60 ans ou plus »",
+      "basis": "F10009 « Vous devez être âgé d’au moins 60 ans »",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -236,7 +236,7 @@
       "expected": {
         "age": "MET"
       },
-      "basis": "F10009 « 60 ans ou plus »",
+      "basis": "F10009 « Vous devez être âgé d’au moins 60 ans »",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
