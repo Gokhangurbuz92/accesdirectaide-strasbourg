@@ -21,6 +21,14 @@ const builtOpen = () => {
   return v.split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(SCREEN_SURFACES, x));
 };
 
+/**
+ * R36 (header): the account entry points (« Se connecter », « Créer un compte ») are offered only when accounts can really be used: outside the beta, or
+ * when this build opens the accounts surface. @param {boolean} beta @param {string[]} [open]
+ */
+export function accountEntriesShown(beta, open = builtOpen()) {
+  return !beta || open.includes('accounts');
+}
+
 /** @param {string} pathname @param {string[]} [open] surfaces opened in this build */
 export function isBetaRestrictedPath(pathname, open = builtOpen()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';

@@ -123,7 +123,7 @@ export default function AccessibilityPanel() {
             aria-label={t('layout:a11y.options', "Options d'accessibilité")}
           >
             <Eye className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden md:inline xl:hidden 2xl:inline">{t('layout:a11y.button', 'Accessibilité')}</span>{/* PKG-11 / P01: no room beside the full desktop menu from 1280 to 1535 px (the button keeps its name) */}
+            <span className="hidden md:inline">{t('layout:a11y.button', 'Accessibilité')}</span>{/* R36: the utility row has room for the name from 768 px (it shared the menu row before) */}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[280px] p-4 bg-white border border-slate-200 shadow-xl rounded-xl" align="end" sideOffset={8}>

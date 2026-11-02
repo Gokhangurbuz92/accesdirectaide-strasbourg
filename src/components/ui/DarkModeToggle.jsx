@@ -31,7 +31,7 @@ export default function DarkModeToggle({ className = '' }) {
             <Button
                 variant="ghost"
                 size="sm"
-                className={`h-8 w-8 p-0 opacity-0 ${className}`}
+                className={`h-8 w-8 !px-0 !py-0 opacity-0 ${className}`}
                 aria-hidden="true"
                 disabled
             >
@@ -45,11 +45,11 @@ export default function DarkModeToggle({ className = '' }) {
             variant="ghost"
             size="sm"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className={`h-8 w-8 p-0 ${className}`}
+            className={`h-8 w-8 !px-0 !py-0 ${className}`}
             aria-label={isDark ? t('layout:theme.light', 'Activer le mode clair') : t('layout:theme.dark', 'Activer le mode sombre')}
             title={isDark ? t('layout:theme.light', 'Activer le mode clair') : t('layout:theme.dark', 'Activer le mode sombre')}
         >
-            {isDark ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
+            {isDark ? <Sun size={16} className="shrink-0 text-amber-400" aria-hidden="true" /> : <Moon size={16} className="shrink-0 text-slate-600" aria-hidden="true" />}
         </Button>
     );
 }

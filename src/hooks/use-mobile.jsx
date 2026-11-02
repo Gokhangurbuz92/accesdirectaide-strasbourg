@@ -17,3 +17,18 @@ export function useIsMobile() {
 
   return !!isMobile
 }
+
+/** R36 (header): below Tailwind's `sm` (640 px) the header shows its utility controls beside the menu button instead of in their own row */
+export function useIsPhone() {
+  const query = '(max-width: 639px)'
+  const [phone, setPhone] = React.useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(query).matches)
+  React.useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined
+    const mql = window.matchMedia(query)
+    const onChange = () => setPhone(mql.matches)
+    mql.addEventListener('change', onChange)
+    onChange()
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
+  return phone
+}

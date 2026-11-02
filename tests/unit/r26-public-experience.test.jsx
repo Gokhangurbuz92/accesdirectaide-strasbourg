@@ -29,8 +29,10 @@ describe('main menu', () => {
   });
   it('in the beta, no « Se connecter » / « S’inscrire » and no assistant button; « Outils » replaces the empty « Actualités »', () => {
     const layout = read('src/pages/Layout.jsx');
-    expect(layout).toMatch(/!frontendEnv\.flags\.publicBeta && <AuthHeaderActions \/>/);
-    expect(layout).toMatch(/!frontendEnv\.flags\.publicBeta && <AuthMobileActions/);
+    // R36: the account entry points follow the accounts surface of the build (closed in the beta unless that surface is opened) — see r36-header.test.jsx
+    expect(layout).toMatch(/const accountsOpen = accountEntriesShown\(frontendEnv\.flags\.publicBeta\)/);
+    expect(layout).toMatch(/\{accountsOpen && \(\s*<div className="hidden items-center gap-2 xl:flex">\s*<AuthHeaderActions \/>/);
+    expect(layout).toMatch(/\{accountsOpen && <AuthMobileActions/);
     expect(layout).toMatch(/\{ label: 'Outils', page: 'Tools'/);
     expect(layout).toMatch(/\{ label: 'Actualités', page: 'Actualites', icon: Newspaper \}/);   // R29: back once verified news is published
     expect(layout).not.toMatch(/currentPageName === item\.page/);

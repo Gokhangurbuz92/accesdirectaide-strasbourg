@@ -27,11 +27,13 @@ import { adminClient as client } from '@/api/client';
 import PropTypes from 'prop-types';
 import brand from '@/lib/brand-config';
 import { frontendEnv } from '@/config/env';
-import { openLinks } from '@/lib/publicBeta';
+import { accountEntriesShown, openLinks } from '@/lib/publicBeta';
 import '@/styles/layout-accessibility.css';
 import LanguageSelector from '@/components/i18n/LanguageSelector';
 import LanguageSuggestion from '@/components/i18n/LanguageSuggestion';
-import ReadAloud from '@/components/a11y/ReadAloud';   // the accessibility modes (an inline style element before Q04: CSP style-src)
+import { ReadAloudPanel, ReadAloudToggle } from '@/components/a11y/ReadAloud';
+import useReadAloud from '@/hooks/useReadAloud';
+import { useIsPhone } from '@/hooks/use-mobile';
 import { Trans } from 'react-i18next';
 import i18n, { useLanguage, useT } from '@/i18n';
 import socialReference from '../../data/reference/social-domains.v1.json';
@@ -149,6 +151,10 @@ export default function Layout({ children }) {   // R26: the active menu entry c
   const label = (item) => labelOf(t, item);
   const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const reader = useReadAloud();   // R36: one reader shared by the header toggle and the controls under the header
+  const [readOpen, setReadOpen] = useState(false);
+  const accountsOpen = accountEntriesShown(frontendEnv.flags.publicBeta);
+  const phone = useIsPhone();
   const menuButtonRef = React.useRef(null);
   // Q01: Escape closes the phone menu and gives the focus back to its button; a new page closes it
   React.useEffect(() => {
@@ -193,6 +199,20 @@ export default function Layout({ children }) {   // R26: the active menu entry c
       {/* Header */}
       <LanguageSuggestion />
       <header role="banner" className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        {/* R36: the utility row — language, text size, accessibility settings, theme and « Écouter la page » — one compact line above the menu (from 640 px);
+            on a phone the same controls sit as icons beside the menu button. The reader's controls open under the header (ReadAloudPanel in <main>). */}
+        {!phone && (
+          <div className="hidden sm:block border-b border-slate-100 bg-slate-50/80" data-testid="header-utilities">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 py-0.5">
+              <LanguageSelector compact />
+              <Suspense fallback={null}>
+                <AccessibilityPanel />
+              </Suspense>
+              <DarkModeToggle className="h-11 w-11" />
+              <ReadAloudToggle reader={reader} open={readOpen} setOpen={setReadOpen} />
+            </div>
+          </div>
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Logo */}
@@ -275,20 +295,24 @@ export default function Layout({ children }) {   // R26: the active menu entry c
               ))}
             </nav>
 
-            {/* Auth links — desktop */}
-            <div className="hidden items-center gap-2 xl:flex">
-              {/* public beta: no account can be created or opened, so the menu does not offer it (the screens are closed server-side) */}
-              {!frontendEnv.flags.publicBeta && <AuthHeaderActions />}
-            </div>
+            {/* Account entry points — only when accounts can really be used (outside the beta, or the accounts surface opened in this build) */}
+            {accountsOpen && (
+              <div className="hidden items-center gap-2 xl:flex">
+                <AuthHeaderActions />
+              </div>
+            )}
 
-            {/* Actions */}
-            <div className="flex items-center gap-2">
-              <LanguageSelector compact className="hidden sm:flex" />
-              <DarkModeToggle />
-              <Suspense fallback={null}>
-                <AccessibilityPanel />
-              </Suspense>
-
+            {/* Phone: the utility controls as icons (the language choice is in the menu) */}
+            <div className="flex items-center gap-1.5 xl:gap-2">
+              {phone && (
+                <div className="flex items-center gap-1.5" data-testid="header-utilities-phone">
+                  <ReadAloudToggle reader={reader} open={readOpen} setOpen={setReadOpen} compact />
+                  <Suspense fallback={null}>
+                    <AccessibilityPanel />
+                  </Suspense>
+                  <DarkModeToggle className="h-11 w-11" />
+                </div>
+              )}
               {/* Menu mobile */}
               <Button
                 variant="ghost"
@@ -359,7 +383,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
               {/* Auth links — mobile */}
               <hr className="my-2 border-border" />
-              {!frontendEnv.flags.publicBeta && <AuthMobileActions onNavigate={() => setMobileMenuOpen(false)} />}
+              {accountsOpen && <AuthMobileActions onNavigate={() => setMobileMenuOpen(false)} />}
             </nav>
           </div>
         )}
@@ -367,7 +391,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
       {/* Main content */}
       <main id="main-content" className="flex-grow" tabIndex={-1}>
-        <ReadAloud />
+        <ReadAloudPanel reader={reader} open={readOpen} />
         {children}
       </main>
 
