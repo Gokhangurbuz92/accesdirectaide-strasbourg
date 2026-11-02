@@ -196,13 +196,13 @@ export default function StructureDetail() {
                   <ul className="space-y-1" data-testid="structure-phones" {...tr.attrs('verification_auto')}>
                     {structure.verification_auto.phones.map((ph, i) => (
                       <li key={i}>
-                        <a href={`tel:${String(ph.numero).replace(/\s/g, '')}`} className="text-blue-700 underline underline-offset-2 hover:text-blue-900">{ph.numero}</a>
+                        <a href={`tel:${String(ph.numero).replace(/\s/g, '')}`} className="inline-block min-h-6 py-0.5 text-blue-700 underline underline-offset-2 hover:text-blue-900">{ph.numero}</a>
                         {ph.precision ? <span className="block text-sm text-slate-600">{ph.precision}</span> : null}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <a href={`tel:${structure.telephone}`} className="text-blue-600 hover:underline" {...tr.attrs('telephone')}>{tr.value('telephone')}</a>
+                  <a href={`tel:${structure.telephone}`} className="inline-block min-h-6 py-0.5 text-blue-600 hover:underline" {...tr.attrs('telephone')}>{tr.value('telephone')}</a>
                 )}
                 {structure.verification_auto?.accessiblePhone?.length > 0 && (
                   <a href={structure.verification_auto.accessiblePhone[0].url} target="_blank" rel="noopener noreferrer" data-testid="structure-accessible-phone"
@@ -231,7 +231,7 @@ export default function StructureDetail() {
                 <p className="font-medium text-slate-900">{t('structures:detail.email', 'Email')}</p>
                 <a
                   href={`mailto:${structure.email}`}
-                  className="text-blue-600 hover:underline"
+                  className="inline-block min-h-6 py-0.5 break-all text-blue-600 hover:underline"
                   {...tr.attrs('email')}
                 >
                   {tr.value('email')}
@@ -288,7 +288,7 @@ export default function StructureDetail() {
           <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
             <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('structures:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
-            <Link to="/structures" className="hover:text-blue-600">{t('structures:breadcrumb.directory', 'Annuaire')}</Link>
+            <Link to="/structures" className="inline-block min-h-6 py-0.5 hover:text-blue-600">{t('structures:breadcrumb.directory', 'Annuaire')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
             <span className="min-w-0 text-slate-900 [overflow-wrap:anywhere]" {...tr.attrs('nom')}>{name}</span>
           </nav>

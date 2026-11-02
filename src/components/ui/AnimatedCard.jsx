@@ -12,15 +12,16 @@ export default function AnimatedCard({ children, index = 0, className = '' }) {
     const shouldReduceMotion = useReducedMotion();
 
     const variants = {
+        // R37: with reduced motion nothing fades (the cards were transparent during the stagger and failed the contrast check)
         hidden: {
-            opacity: 0,
+            opacity: shouldReduceMotion ? 1 : 0,
             y: shouldReduceMotion ? 0 : 20,
         },
         visible: {
             opacity: 1,
             y: 0,
             transition: {
-                delay: index * 0.05,
+                delay: Math.min(index, 8) * 0.05,   // R37: capped — with 75 guides the last cards waited 3.7 s, half transparent
                 duration: 0.4,
                 ease: 'easeOut',
             },

@@ -26,6 +26,7 @@ describe('everyday expressions', () => {
   });
   it('colloquial synonyms', () => {
     expect(wordTerms('gay')).toEqual(expect.arrayContaining(['homophobie']));
-    expect(wordTerms('soigner')).toEqual(expect.arrayContaining(['soins']));
+    expect(wordTerms('soigner')).not.toContain('soins');   // « soins » pulled the palliative-care sheets above « traitement de la toxicomanie »
+    expect(wordTerms('drogue')).toEqual(expect.arrayContaining(['toxicomanie']));
   });
 });

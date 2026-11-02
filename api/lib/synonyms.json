@@ -69,7 +69,6 @@
   "alimentaire": ["alimentation"],
   "colis": ["alimentaire", "alimentation"],
   "gay": ["homosexuel", "homophobie", "lgbt"],
-  "soigner": ["soins"],
   "paie": ["payer", "frais"],
   "drogue": ["toxicomanie", "stupéfiants", "addiction"]
 }
