@@ -1,17 +1,17 @@
 // @ts-nocheck
 /**
- * PKG-4 / R14 — attach ONE file (PDF, PNG, JPEG, 5 Mo max) to a message and download the files of a conversation. The server checks the type from the content,
+ * PKG-4 / R14 — attach ONE file (PDF, PNG, JPEG, 3 Mo max) to a message and download the files of a conversation. The server checks the type from the content,
  * encrypts the file and lets only the two parties of the conversation read it; this component only prepares the upload and offers the download.
  */
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
 
 export const ATTACHMENT_ACCEPT = 'application/pdf,image/png,image/jpeg';
-export const ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024;
+export const ATTACHMENT_MAX_BYTES = 3 * 1024 * 1024;   // R34: equal to the server's limit (api/_services/message-attachments.js)
 
 export function readAttachment(file) {
   return new Promise((resolve, reject) => {
     if (!file) return resolve(null);
-    if (file.size > ATTACHMENT_MAX_BYTES) return reject(new Error('La pièce jointe dépasse 5 Mo.'));
+    if (file.size > ATTACHMENT_MAX_BYTES) return reject(new Error('La pièce jointe dépasse 3 Mo.'));
     if (!ATTACHMENT_ACCEPT.split(',').includes(file.type)) return reject(new Error('Seuls les fichiers PDF, PNG et JPEG sont acceptés.'));
     const reader = new FileReader();
     reader.onload = () => resolve({ filename: file.name, mimeType: file.type, contentBase64: String(reader.result).split(',')[1] || '' });
@@ -23,7 +23,7 @@ export function readAttachment(file) {
 export function AttachmentPicker({ id, file, onChange, disabled }) {
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">Pièce jointe (facultatif : PDF, PNG ou JPEG, 5 Mo max)</label>
+      <label htmlFor={id} className="block text-sm font-medium text-slate-700">Pièce jointe (facultatif : PDF, PNG ou JPEG, 3 Mo max)</label>
       <input id={id} data-testid={`${id}-input`} type="file" accept={ATTACHMENT_ACCEPT} disabled={disabled} className="block w-full text-sm"
         onChange={(e) => onChange(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
       <HealthDocumentNotice testid={`${id}-health-notice`} />

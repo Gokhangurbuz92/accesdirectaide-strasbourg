@@ -15,7 +15,9 @@ import { storage as defaultStorage } from '../lib/storage.js';
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { sniffType } from './mon-espace.js';
 
-export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+// R34 (R33 audit G5): 3 MB, as the Coffre (src/lib/fileVaultLimits.js) — the file travels as base64 JSON (+33 %) and a serverless request body is capped near
+// 4.5 MB, so 5 MB (6.7 MB encoded) failed on the hosting before reaching this check
+export const MAX_ATTACHMENT_BYTES = 3 * 1024 * 1024;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const ctxOf = (conversationId, id) => `rdvatt:${conversationId}:${id}`;
 
@@ -34,7 +36,7 @@ export function prepareAttachment(input) {
   if (typeof input !== 'object') return bad('INVALID_ATTACHMENT', 'Pièce jointe invalide.');
   const buf = decode(input.contentBase64);
   if (!buf || !buf.length) return bad('INVALID_ATTACHMENT', 'Pièce jointe illisible.');
-  if (buf.length > MAX_ATTACHMENT_BYTES) return bad('ATTACHMENT_TOO_LARGE', 'La pièce jointe dépasse 5 Mo.', 413);
+  if (buf.length > MAX_ATTACHMENT_BYTES) return bad('ATTACHMENT_TOO_LARGE', 'La pièce jointe dépasse 3 Mo.', 413);
   const mimeType = sniffType(buf);
   if (!mimeType) return bad('UNSUPPORTED_TYPE', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.', 415);
   if (input.mimeType && String(input.mimeType) !== mimeType) return bad('TYPE_MISMATCH', 'Le contenu du fichier ne correspond pas à son type.', 415);
