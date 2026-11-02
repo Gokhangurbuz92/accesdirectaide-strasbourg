@@ -391,6 +391,8 @@ function PagesContent() {
                                     <Route path="logs" element={<AdminLogs />} />
                                     <Route path="parametres" element={<AdminParametres />} />
                                 </Route>
+                                {/* R37: an unknown /admin page was blank (no catch-all in this block); the friendly 404, outside the guarded layout */}
+                                <Route path="*" element={<ServiceError code={404} />} />
                             </Routes>
                         </m.div>
                     </AnimatePresence>
@@ -459,6 +461,8 @@ function PagesContent() {
                                     <Route path="mfa-settings" element={<ProGuard><ProMfaSettings /></ProGuard>} />
                                     <Route path="parametres" element={<ProGuard><ProParametres /></ProGuard>} />
                                 </Route>
+                                {/* R37: an unknown /pro page was blank (no catch-all in this block) */}
+                                <Route path="*" element={<ServiceError code={404} />} />
                             </Routes>
                         </m.div>
                     </AnimatePresence>
