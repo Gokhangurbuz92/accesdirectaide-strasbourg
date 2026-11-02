@@ -1,5 +1,7 @@
 // R38 — the personal link of an account-free booking (/rdv/:slug/sans-compte/gerer?appointment=<id>#manage=<token>): date, time, place and service only;
 // cancel; move to another free slot of the same service. The token is read from the fragment once, removed from the address bar, and sent in POST bodies only.
+// R39: the optional J-1 reminder e-mail — its current state, and one button to turn it on or off; the new state is announced (role="status") and the
+// focus stays on the button (its label says the next action).
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
@@ -26,6 +28,7 @@ export default function GuestManage() {
   const [moving, setMoving] = useState(false);
   const [slots, setSlots] = useState({ loading: false, list: [], error: '' });
   const [slot, setSlot] = useState(null);
+  const [reminderError, setReminderError] = useState('');
   const statusRef = useRef(null);
 
   useEffect(() => {
@@ -56,6 +59,13 @@ export default function GuestManage() {
     else setInfo(message(r.body.code));
   };
 
+  const toggleReminder = async () => {
+    setBusy(true); setReminderError('');
+    const r = await guestPost('manage/reminder', { ...capRef.current, consent: !a.reminderConsent }); setBusy(false);
+    if (r.ok) setState((s) => ({ ...s, appointment: r.body.appointment }));
+    else setReminderError(message(r.body.code));
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 py-8" id="main-content">
       <SEO title={t('booking:manage.seo', 'Mon rendez-vous')} description={t('booking:manage.seo', 'Mon rendez-vous')} path={`/rdv/${structureSlug}/sans-compte/gerer`} noindex={true} />
@@ -81,6 +91,18 @@ export default function GuestManage() {
               {a.rescheduleBlocked === 'RESCHEDULE_LIMIT' ? <p className="w-full text-slate-700" data-testid="guest-move-limit">{t('booking:manage.moveLimit', 'Ce rendez-vous a déjà été déplacé le nombre de fois permis : contactez la structure.')}</p> : null}
               {a.canCancel && !confirmCancel ? <button type="button" className={secondary} onClick={() => setConfirmCancel(true)}>{t('booking:manage.cancel', 'Annuler le rendez-vous')}</button> : null}
             </div>
+            {a.reminderChangeable || a.reminderConsent ? (
+              <div role="group" aria-labelledby="guest-reminder-title" className="rounded-md border border-slate-200 bg-slate-50 p-3" data-testid="guest-manage-reminder">
+                <h2 id="guest-reminder-title" className="font-medium text-slate-900">{t('booking:manage.reminderTitle', 'Rappel par e-mail la veille (facultatif)')}</h2>
+                <p id="guest-reminder-state" role="status" className="mt-1 text-slate-800" data-testid="guest-reminder-state">{a.reminderConsent
+                  ? t('booking:manage.reminderOn', 'Rappel activé : vous recevrez un e-mail la veille du rendez-vous.')
+                  : t('booking:manage.reminderOff', 'Rappel désactivé : aucun e-mail de rappel ne sera envoyé.')}</p>
+                {reminderError ? <p role="alert" className="mt-1 text-red-800">{reminderError}</p> : null}
+                <button type="button" className={`${secondary} mt-2`} disabled={busy} aria-describedby="guest-reminder-state" onClick={toggleReminder}>{a.reminderConsent
+                  ? t('booking:manage.reminderTurnOff', 'Ne plus recevoir de rappel')
+                  : t('booking:manage.reminderTurnOn', 'Recevoir un rappel la veille')}</button>
+              </div>
+            ) : null}
             {confirmCancel ? (
               <div role="group" aria-labelledby="guest-cancel-q" className="rounded-md border border-red-300 bg-red-50 p-3">
                 <p id="guest-cancel-q">{t('booking:manage.cancelConfirm', 'Confirmer l’annulation ? Le créneau sera libéré.')}</p>

@@ -1065,9 +1065,11 @@ export function bookingLockKeyOf(structureId, startAt) {
  * (the shared « still active » rule: an expired guest hold no longer blocks) -> closure re-check -> insert. Nothing is answered or e-mailed from inside;
  * the caller replies after COMMIT. Returns { kind: 'created', appointment } | { kind: 'replay', appointment } | { kind: 'conflict' } | { kind: 'duplicate' }
  * (unique violation: the caller looks the row up) | { kind: 'error' }. A failed transaction throws.
- * @param {{ structure: any, service: any, startAt: Date, endAt: Date, replay: (tx: any) => Promise<any>, values: Record<string, any> }} input
+ * R39: an optional `guard(tx)` runs last, under the same locks, just before the insert (after the slot checks, so a refused slot answers exactly as for
+ * anyone else); a non-null result is returned as is and nothing is inserted (the account-free « one active booking per structure and address » rule).
+ * @param {{ structure: any, service: any, startAt: Date, endAt: Date, replay: (tx: any) => Promise<any>, values: Record<string, any>, guard?: (tx: any) => Promise<any> }} input
  */
-export async function bookSlot({ structure, service, startAt, endAt, replay, values }) {
+export async function bookSlot({ structure, service, startAt, endAt, replay, values, guard }) {
   const bookingLockKey = bookingLockKeyOf(structure.id, startAt);   // R12: the Paris day of the slot (was the UTC day)
   return withBookingCollisionLock(bookingLockKey, async () => db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${bookingLockKey}, 0))`);
@@ -1125,6 +1127,12 @@ export async function bookSlot({ structure, service, startAt, endAt, replay, val
           ),
         );
       if (Number(timeOffCount.value) > 0) return { kind: 'conflict' };
+
+      // R39: the caller's last check under the locks (nothing is inserted when it refuses)
+      if (typeof guard === 'function') {
+        const refused = await guard(tx);
+        if (refused) return refused;
+      }
 
       // 3. Insert (the unique indexes on the identity + idempotency key catch races)
       const [createdAppointment] = await tx.insert(schema.ProAppointment).values(values).returning();

@@ -761,6 +761,9 @@ export const ProAppointment = pgTable('ProAppointment', {
 	guestConfirmedAt: timestamp('guestConfirmedAt', { precision: 3 }),
 	guestManageTokenHash: text('guestManageTokenHash'),
 	guestManageExpiresAt: timestamp('guestManageExpiresAt', { precision: 3 }),
+	// R39 — the OPTIONAL J-1 reminder of an account-free booking: set only when the person ticked the separate box (never pre-ticked), cleared when they
+	// withdraw it from their personal link; independent of guestMailConsentAt (the booking mails). Cleared by gdpr-purge step 13 with the other guest data.
+	guestReminderConsentAt: timestamp('guestReminderConsentAt', { precision: 3 }),
 }, (ProAppointment) => ({
 	'ProAppointment_createdByProUser_fkey': foreignKey({
 		name: 'ProAppointment_createdByProUser_fkey',

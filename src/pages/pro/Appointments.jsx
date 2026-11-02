@@ -253,6 +253,8 @@ export default function ProAppointments() {
                     </p>
                     {appointment.notes ? <p className="text-xs text-slate-700">{appointment.notes}</p> : null}
                     {appointment.guest ? <p className="text-xs text-slate-700" data-testid="pro-agenda-guest-contact">{[appointment.guest.emailMasked, appointment.guest.phone].filter(Boolean).join(' · ')}</p> : null}
+                    {/* R39: whether the person (without an account) asked for the optional J-1 reminder e-mail — yes / no only */}
+                    {appointment.guest ? <p className="text-xs text-slate-700" data-testid="pro-agenda-guest-reminder">{appointment.guest.reminderConsent ? t('booking:pro.reminderYes', 'Rappel par e-mail la veille : demandé') : t('booking:pro.reminderNo', 'Rappel par e-mail la veille : non demandé')}</p> : null}
                   </div>
 
                   <div className="flex flex-wrap gap-2">

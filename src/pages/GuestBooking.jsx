@@ -1,6 +1,8 @@
 // R38 — « Prendre rendez-vous sans compte »: an OPTIONAL account-free booking, offered only when the structure opted in and the server switch is on
 // (the API answers 404 / 503 otherwise and this page says so). Steps: service -> slot -> minimal identity + consent -> 6-digit code -> confirmed.
 // Accessibility: each step's heading takes the focus, errors are announced (role="alert"), every control is labelled, targets are at least 44 px.
+// R39: a SEPARATE, optional box for the J-1 reminder e-mail — never pre-ticked, not required, independent of the booking-mails consent; its help text is
+// linked with aria-describedby; the box itself is 24×24 px inside a 44 px label.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
@@ -32,7 +34,7 @@ export default function GuestBooking() {
   const [step, setStep] = useState('choose');   // choose -> identity -> code -> done
   const leftFirstStep = useRef(false);   // the first step's heading takes the focus only when the visitor comes back to it
   useEffect(() => { if (step !== 'choose') leftFirstStep.current = true; }, [step]);
-  const [form, setForm] = useState({ name: '', email: '', phone: '', note: '', consent: false });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', note: '', consent: false, reminderConsent: false });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -63,7 +65,7 @@ export default function GuestBooking() {
 
   const days = useMemo(() => slotsByParisDay(slots.list), [slots.list]);
   const service = state.services.find((s) => s.id === serviceId) || null;
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'consent' ? e.target.checked : e.target.value }));
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'consent' || k === 'reminderConsent' ? e.target.checked : e.target.value }));
 
   const submitHold = async (e) => {
     e.preventDefault(); setFormError(''); setErrors({});
@@ -73,7 +75,7 @@ export default function GuestBooking() {
     if (!form.consent) local.consent = message('CONSENT_REQUIRED');
     if (Object.keys(local).length) { setErrors(local); setFormError(t('booking:form.fix', 'Corrigez les champs signalés.')); return; }
     setBusy(true);
-    const r = await guestPost('hold', { structureSlug, serviceId, startAt: slot.startAt, idempotencyKey: keyRef.current, ...form, consent: form.consent === true });
+    const r = await guestPost('hold', { structureSlug, serviceId, startAt: slot.startAt, idempotencyKey: keyRef.current, ...form, consent: form.consent === true, reminderConsent: form.reminderConsent === true });
     setBusy(false);
     if (r.ok) { setHold(r.body); setStep('code'); return; }
     if (r.body.field) setErrors({ [r.body.field]: message(r.body.code) });
@@ -89,8 +91,10 @@ export default function GuestBooking() {
     setBusy(false);
     if (r.ok) { setDone(r.body); setStep('done'); return; }
     const left = typeof r.body.attemptsLeft === 'number' && r.body.attemptsLeft > 0 ? ` ${t('booking:code.left', 'Essais restants : {{n}}.', { n: r.body.attemptsLeft })}` : '';
-    setFormError(message(r.body.code) + left);
-    if (['HOLD_EXPIRED', 'HOLD_LOCKED', 'HOLD_NOT_ACTIVE'].includes(r.body.code)) { keyRef.current = newIdempotencyKey(); setHold(null); setCode(''); setStep('choose'); setSlot(null); setServiceId((s) => s); }
+    // R39: an unknown hold at this step (e.g. the address already had a booking with this structure: no hold was taken) reads as a request no longer active
+    const refusal = r.body.code === 'APPOINTMENT_NOT_FOUND' ? 'HOLD_NOT_ACTIVE' : r.body.code;
+    setFormError(message(refusal) + left);
+    if (['HOLD_EXPIRED', 'HOLD_LOCKED', 'HOLD_NOT_ACTIVE'].includes(refusal)) { keyRef.current = newIdempotencyKey(); setHold(null); setCode(''); setStep('choose'); setSlot(null); setServiceId((s) => s); }
   };
 
   return (
@@ -190,6 +194,13 @@ export default function GuestBooking() {
               </label>
               {errors.consent ? <p id="guest-consent-error" className="mt-1 text-red-800">{errors.consent}</p> : null}
             </div>
+            <div>
+              <label htmlFor="guest-reminder" className="flex min-h-[44px] cursor-pointer items-start gap-3">
+                <input id="guest-reminder" type="checkbox" className="mt-0.5 h-6 w-6 shrink-0" checked={form.reminderConsent} onChange={set('reminderConsent')} aria-describedby="guest-reminder-help" />
+                <span>{t('booking:form.reminder', 'Recevoir aussi un rappel par e-mail la veille du rendez-vous (facultatif)')}</span>
+              </label>
+              <p id="guest-reminder-help" className="mt-1 text-sm text-slate-700">{t('booking:form.reminderHelp', 'Un seul e-mail, la veille. Vous pourrez l’arrêter à tout moment avec votre lien personnel.')}</p>
+            </div>
             <div className="flex flex-wrap gap-3">
               <button type="submit" className={primary} disabled={busy}>{busy ? t('booking:sending', 'Envoi…') : t('booking:form.submit', 'Recevoir le code')}</button>
               <button type="button" className={secondary} onClick={() => setStep('choose')}>{t('booking:back', 'Retour')}</button>
@@ -201,6 +212,7 @@ export default function GuestBooking() {
           <form onSubmit={submitCode} noValidate aria-labelledby="guest-step-code" className="mt-6 space-y-4 rounded-lg border border-slate-200 bg-white p-4 sm:p-6">
             <StepHeading id="guest-step-code">{t('booking:step.code', '3. Code de confirmation')}</StepHeading>
             <p role="status" className="text-slate-800">{t('booking:code.sent', 'Un code à 6 chiffres a été envoyé à {{email}}. Le créneau est réservé 20 minutes.', { email: hold.emailMasked || '' })}</p>
+            <p className="text-sm text-slate-700">{t('booking:code.alreadyHint', 'Si vous avez déjà un rendez-vous avec cette structure, vous recevez à la place un e-mail qui vous l’indique : aucun nouveau rendez-vous n’est pris.')}</p>
             {formError ? <p role="alert" className="text-red-800">{formError}</p> : null}
             <div>
               <label htmlFor="guest-code" className="font-medium">{t('booking:code.label', 'Code reçu par e-mail')}</label>
@@ -218,6 +230,7 @@ export default function GuestBooking() {
             <p className="text-sm text-slate-700">{done.mail?.status === 'PROVIDER_ACCEPTED' || done.mail?.status === 'TEST_RECORDED'
               ? t('booking:done.mailSent', 'La confirmation et votre lien personnel ont été envoyés par e-mail.')
               : t('booking:done.mailNotSent', 'L’e-mail de confirmation n’a pas pu partir : gardez le lien ci-dessous.')}</p>
+            {done.appointment.reminderConsent ? <p className="text-sm text-slate-700" data-testid="guest-reminder-on">{t('booking:done.reminderOn', 'Un rappel vous sera envoyé par e-mail la veille du rendez-vous.')}</p> : null}
             <a className={secondary} href={`/rdv/${encodeURIComponent(structureSlug)}/sans-compte/gerer?${new URLSearchParams({ appointment: done.appointment.id })}#${new URLSearchParams({ manage: done.manage.token })}`}>{t('booking:done.manage', 'Voir, déplacer ou annuler ce rendez-vous')}</a>
           </section>
         ) : null}

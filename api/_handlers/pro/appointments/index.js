@@ -89,7 +89,9 @@ function serialize(appointment) {
     modeLabel: modeLabel(appointment.mode),
     origin: appointment.citizenUserId ? 'CITIZEN' : appointment.guestEmail ? 'GUEST' : 'STRUCTURE',
     // R38: booked without an account (« sans compte »): the structure sees the name, the phone and a masked e-mail to reach the person
-    guest: appointment.guestEmail ? { withoutAccount: true, emailMasked: maskEmail(open(appointment.guestEmail)), phone: open(appointment.guestPhone) || null, confirmedAt: appointment.guestConfirmedAt || null } : null,
+    // R39: whether the person asked for the optional J-1 reminder e-mail (yes / no only — never the address, never the consent's date)
+    guest: appointment.guestEmail ? { withoutAccount: true, emailMasked: maskEmail(open(appointment.guestEmail)), phone: open(appointment.guestPhone) || null, confirmedAt: appointment.guestConfirmedAt || null,
+      reminderConsent: Boolean(appointment.guestReminderConsentAt) } : null,
     rescheduleCount: Number(appointment.rescheduleCount || 0),
     rescheduledAt: appointment.rescheduledAt || null,
     beneficiaryConsentAt: appointment.beneficiaryConsentAt || null,
