@@ -43,7 +43,7 @@ export function factsFromAnswers(answers = {}, referenceDate = null) {
 
 /**
  * Readings for the rights that pass the gate (an empty object today).
- * @returns {Record<string, { rule: string, source: string, verifiedAt: string, met: string[], notMet: string[], unknown: string[] }>}
+ * @returns {Record<string, { rule: string, source: string, verifiedAt: string, label: string, decidedBy: string | null, met: string[], notMet: string[], unknown: string[] }>}
  */
 export function validatedReadings(register, answers = {}, referenceDate = null) {
   const out = {};
@@ -56,6 +56,7 @@ export function validatedReadings(register, answers = {}, referenceDate = null) 
       rule: `règle « ${right.label} » du registre ADA (${register.builtAt}), relue par ${right.expertReview.role} le ${right.expertReview.date.split('-').reverse().join('/')}`,
       source: `${page.url}${page.pageVerifiedOn ? ` (page vérifiée le ${page.pageVerifiedOn.split('-').reverse().join('/')})` : ''}`,
       verifiedAt: right.expertReview.date,
+      label: right.label, decidedBy: right.decidedBy || null,
       met: by(RESULTS.MET), notMet: by(RESULTS.NOT_MET), unknown: by(RESULTS.UNKNOWN),
     };
   }

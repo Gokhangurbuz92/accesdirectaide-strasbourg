@@ -43,6 +43,8 @@ const NEEDS = Object.freeze({
 });
 // Who to ask: ONLY organism types already named by the existing engine/UI strings (LocalRulesEngine explain texts: "La CAF doit vérifier", "Un professionnel peut vérifier").
 const WHO_TO_ASK = Object.freeze({ rsa: 'votre CAF', apl: 'votre CAF', 'faj-strasbourg': 'un professionnel (travailleur social ou structure d\'accompagnement)' });
+// R34 / D20: the other rights of the register (data/rules/rights-rules.v1.json « decidedBy »), reached only through an expert-validated reading
+const WHO_DECIDES = Object.freeze({ 'prime-activite': 'votre CAF ou votre MSA', aah: 'la MDPH', apa: 'la Collectivité européenne d\'Alsace (le Département)', are: 'France Travail', c2s: 'votre CPAM' });
 
 // Labels of the facts (kept equal to src/lib/assessmentLabels.js MISSING_FACT_LABELS by tests/unit/pkg6-d20-why.test.js; this module stays import-free beyond its two data modules).
 const FACT_LABELS = Object.freeze({ birthDate: 'date de naissance ou tranche d\'âge', householdSize: 'composition du foyer', income: 'revenus', 'housing.status': "statut d'occupation du logement", 'housing.rent': 'loyer', territory: 'commune ou code postal' });
@@ -190,7 +192,15 @@ export function buildAssessment({ simulation, answers = {}, leadsEnabled: leadsI
       provenance: { ...local, ...(inArea ? { territory: `Territoire : ${scope.territory_scope} (déclaré par le catalogue, non vérifié ; commune à vérifier)` } : {}), rule: leadsEnabled && hit ? `${hit.calculation_basis || 'HEURISTIC_LOCAL'} (repère local non légal)` : null },
     }));
   }
-  for (const u of unsupportedRights) items.push(item(String(u.code), String(u.label), STATES.UNSUPPORTED, { provenance: { ...local, rule: u.reason ?? null } }));
+  // R34 / D20: every right of the register whose rule passed the expert gate shows its reading — before, only rsa, apl and faj-strasbourg could; prime
+  // d'activité, AAH and C2S produced no item and ARE / APA kept « Aucune règle vérifiée dans ADA », which a validated rule would have made false
+  const readingOf = (code) => (ruleReadings && Object.prototype.hasOwnProperty.call(ruleReadings, code) ? ruleReadings[code] : null);
+  for (const [code, reading] of Object.entries(ruleReadings || {})) {
+    if (Object.prototype.hasOwnProperty.call(NEEDS, code) || !reading) continue;
+    const who = WHO_DECIDES[code] || 'l\'organisme qui décide';
+    items.push(readingItem(code, String(reading.label || code), who, FACT_KEYS.filter((f) => hasFact(answers, f)), reading, local));
+  }
+  for (const u of unsupportedRights) if (!readingOf(String(u.code))) items.push(item(String(u.code), String(u.label), STATES.UNSUPPORTED, { provenance: { ...local, rule: u.reason ?? null } }));
   items.forEach(assertAssessmentItem);
   return {
     contract: 'ADA_ASSESSMENT_CONTRACT_V1',
