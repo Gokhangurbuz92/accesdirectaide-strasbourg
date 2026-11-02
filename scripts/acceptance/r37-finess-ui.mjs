@@ -25,6 +25,7 @@ const withActs = finess.filter((s) => Array.isArray(s.services) && s.services.le
 const counts = { structures: all.length, finess: finess.length, withActivities: withActs.length, labels: withActs.reduce((n, s) => n + s.services.length, 0), nonFinessWithServices: all.filter((s) => !finess.includes(s) && s.services?.length).length };
 console.log(`COUNTS ${JSON.stringify(counts)}`);
 
+await sl(60000);   // let the per-address rate limit window pass after paging the list
 const picks = FAMILIES.map(([family, re]) => [family, withActs.find((s) => re.test(s.type_structure) || s.services.some((x) => re.test(x)))]).filter(([, s]) => s);
 const rows = [];
 const { chromium } = await import('playwright');
@@ -35,8 +36,12 @@ for (const lang of LANGS) {
   await ctx.addInitScript((l) => { try { localStorage.setItem('ada_lang', l); localStorage.setItem('ada_onboarding_done', '1'); } catch { /* */ } }, lang);
   const page = await ctx.newPage();
   for (const [family, s] of picks) {
-    const resp = await page.goto(`${base}/structures/${s.slug}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForSelector('[data-testid="finess-activities"]', { timeout: 20000 }).catch(() => {});
+    // the public API is rate-limited per address: a page that could not load its record (429) is retried once after a pause, never counted as a pass
+    let resp = await page.goto(`${base}/structures/${s.slug}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    if (!(await page.waitForSelector('[data-testid="finess-activities"]', { timeout: 20000 }).catch(() => null))) {
+      await sl(30000); resp = await page.goto(`${base}/structures/${s.slug}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      await page.waitForSelector('[data-testid="finess-activities"]', { timeout: 20000 }).catch(() => {});
+    }
     const v = await page.evaluate(() => {
       const box = document.querySelector('[data-testid="finess-activities"]'); const card = box?.parentElement;
       return { heading: card?.querySelector('h2')?.textContent?.trim() || '', notice: Boolean(document.querySelector('[data-testid="finess-activities-notice"]')),

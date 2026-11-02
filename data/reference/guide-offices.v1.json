@@ -1,7 +1,7 @@
 {
  "schema": "ada-guide-offices/1",
  "source": "DILA vosdroits (Licence Ouverte 2.0), OuSAdresser/PivotLocal",
- "archiveBuiltAt": "2026-11-01T10:13:40",
+ "archiveBuiltAt": "2026-11-02T02:37:59",
  "sheets": {
   "F17317": {
    "pivots": [
@@ -144,6 +144,211 @@
    "types": [
     "Maison des solidarités (Espace Solidarités)",
     "MDPH (maison des personnes handicapées)"
+   ]
+  },
+  "F2003": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F33954": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F38589": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F1334": {
+   "pivots": [
+    "cg",
+    "caf",
+    "msa",
+    "mairie"
+   ],
+   "types": [
+    "Maison des solidarités (Espace Solidarités)",
+    "Caf (Caisse d'allocations familiales)",
+    "Mairie"
+   ]
+  },
+  "F20343": {
+   "pivots": [
+    "mairie",
+    "prefecture"
+   ],
+   "types": [
+    "Mairie",
+    "Préfecture",
+    "Sous-préfecture"
+   ]
+  },
+  "F16158": {
+   "pivots": [
+    "prefecture"
+   ],
+   "types": [
+    "Préfecture",
+    "Sous-préfecture"
+   ]
+  },
+  "F2444": {
+   "pivots": [
+    "mairie",
+    "cg",
+    "ta"
+   ],
+   "types": [
+    "Mairie",
+    "Maison des solidarités (Espace Solidarités)"
+   ]
+  },
+  "F245": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F246": {
+   "pivots": [
+    "cpam"
+   ],
+   "types": [
+    "CPAM (caisse primaire d'assurance maladie)"
+   ]
+  },
+  "F959": {
+   "pivots": [
+    "mairie",
+    "cg"
+   ],
+   "types": [
+    "Mairie",
+    "Maison des solidarités (Espace Solidarités)"
+   ]
+  },
+  "F970": {
+   "pivots": [
+    "cg",
+    "mairie"
+   ],
+   "types": [
+    "Maison des solidarités (Espace Solidarités)",
+    "Mairie"
+   ]
+  },
+  "F815": {
+   "pivots": [
+    "caf",
+    "msa"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)"
+   ]
+  },
+  "F38245": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F3079": {
+   "pivots": [
+    "cpam",
+    "france_services",
+    "mairie",
+    "ta"
+   ],
+   "types": [
+    "CPAM (caisse primaire d'assurance maladie)",
+    "Espace France Services",
+    "Mairie"
+   ]
+  },
+  "F358": {
+   "pivots": [
+    "sip",
+    "france_services",
+    "mairie"
+   ],
+   "types": [
+    "Service des impôts des particuliers",
+    "Espace France Services",
+    "Mairie"
+   ]
+  },
+  "F16507": {
+   "pivots": [
+    "mairie",
+    "cour_appel",
+    "sip"
+   ],
+   "types": [
+    "Mairie",
+    "Service des impôts des particuliers"
+   ]
+  },
+  "F20055": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F12006": {
+   "pivots": [
+    "caf",
+    "msa"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)"
+   ]
+  },
+  "F1280": {
+   "pivots": [
+    "msa",
+    "caf"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)"
+   ]
+  },
+  "F19778": {
+   "pivots": [
+    "caf",
+    "cg",
+    "mairie",
+    "msa"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)",
+    "Maison des solidarités (Espace Solidarités)",
+    "Mairie"
+   ]
+  },
+  "F16920": {
+   "pivots": [
+    "caf",
+    "msa"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)"
    ]
   }
  }
