@@ -8,18 +8,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { AttachmentList, AttachmentPicker, readAttachment, saveDownload } from '@/components/Messaging/MessageAttachments';
+import { formatDate as formatInLanguage, useT } from '@/i18n';
 
 function formatDate(value) {
   const date = new Date(String(value || ''));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-    timeZone: 'Europe/Paris',
-  });
+  return formatInLanguage(date, { dateStyle: 'short', timeStyle: 'short' });
 }
 
 export default function ProMessageThread() {
+  const { t } = useT('pro');
   const { conversationId } = useParams();
   const queryClient = useQueryClient();
   const [body, setBody] = useState('');
@@ -28,7 +26,7 @@ export default function ProMessageThread() {
   const [fileKey, setFileKey] = useState(0);
   const download = async (a) => {
     try { const r = await rdvMessagingClient.pro.downloadAttachment(String(conversationId || ''), a.id); if (!r.ok) throw new Error(String(r.status)); await saveDownload(r, a.name); }
-    catch { setStatusText('Téléchargement impossible.'); }
+    catch { setStatusText(t('pro:thread.download_failed', 'Téléchargement impossible.')); }
   };
 
   const conversationQuery = useQuery({
@@ -41,12 +39,12 @@ export default function ProMessageThread() {
     mutationFn: async (value) => rdvMessagingClient.pro.sendMessage(String(conversationId || ''), value.text, await readAttachment(value.file)),
     onSuccess: async () => {
       setBody(''); setFile(null); setFileKey((k) => k + 1);
-      setStatusText('Message envoye.');
+      setStatusText(t('pro:thread.sent', 'Message envoye.'));
       await queryClient.invalidateQueries({ queryKey: ['pro-message-thread', conversationId] });
       await queryClient.invalidateQueries({ queryKey: ['pro-messages-conversations'] });
     },
     onError: (error) => {
-      setStatusText(messagingErrorText(error, "Impossible d'envoyer le message."));
+      setStatusText(messagingErrorText(error, t('pro:thread.send_failed', 'Impossible d\'envoyer le message.')));
     },
   });
 
@@ -56,14 +54,14 @@ export default function ProMessageThread() {
   return (
     <div className="space-y-4" data-testid="pro-message-thread-page">
       <Link to="/pro/messages" className="inline-flex text-sm font-medium text-primary underline">
-        Retour aux conversations
+        {t('pro:thread.retour_aux_conversations', 'Retour aux conversations')}
       </Link>
 
       <Card>
         <CardHeader>
-          <CardTitle as="h1">Conversation usager</CardTitle>
+          <CardTitle as="h1">{t('pro:thread.conversation_usager', 'Conversation usager')}</CardTitle>
           <CardDescription>
-            {item?.structure?.name || 'Structure'} - {formatDate(item?.appointment?.startsAt)}
+            {item?.structure?.name || t('pro:thread.structure', 'Structure')} - {formatDate(item?.appointment?.startsAt)}
           </CardDescription>
         </CardHeader>
 
@@ -74,15 +72,15 @@ export default function ProMessageThread() {
 
           {conversationQuery.error ? (
             <p className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-              {messagingErrorText(conversationQuery.error, 'Conversation introuvable.')}
+              {messagingErrorText(conversationQuery.error, t('pro:thread.not_found', 'Conversation introuvable.'))}
             </p>
           ) : null}
 
           {!conversationQuery.isLoading && !conversationQuery.error ? (
-            <div className="space-y-3" role="list" aria-label="Messages de la conversation pro">
+            <div className="space-y-3" role="list" aria-label={t('pro:thread.messages_conversation_pro', 'Messages de la conversation pro')}>
               {messages.length === 0 ? (
                 <p className="rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-700">
-                  Aucun message pour le moment.
+                  {t('pro:thread.aucun_message_pour_moment', 'Aucun message pour le moment.')}
                 </p>
               ) : (
                 messages.map((message) => {
@@ -94,7 +92,7 @@ export default function ProMessageThread() {
                       className={`rounded-md border p-3 text-sm ${mine ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-white'}`}
                     >
                       <p className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-700">
-                        {mine ? 'Structure' : 'Usager'} - {formatDate(message.createdAt)}
+                        {mine ? t('pro:thread.structure', 'Structure') : t('pro:thread.user', 'Usager')} - {formatDate(message.createdAt)}
                       </p>
                       <p className="whitespace-pre-wrap text-slate-800">{message.body}</p>
                       <AttachmentList attachments={message.attachments} onDownload={download} testid="pro-attachment" />
@@ -115,7 +113,7 @@ export default function ProMessageThread() {
             }}
           >
             <label htmlFor="pro-message-body" className="block text-sm font-medium text-slate-700">
-              Nouveau message
+              {t('pro:thread.nouveau_message', 'Nouveau message')}
             </label>
             <textarea
               id="pro-message-body"
@@ -124,12 +122,12 @@ export default function ProMessageThread() {
               rows={4}
               maxLength={2000}
               className="w-full rounded-md border border-slate-300 bg-white p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              placeholder="Ecrivez votre message..."
+              placeholder={t('pro:thread.ecrivez_votre_message', 'Ecrivez votre message...')}
             />
             <AttachmentPicker key={fileKey} id="pro-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />
             <div className="flex items-center gap-3">
               <Button type="submit" disabled={sendMutation.isPending || (!String(body || '').trim() && !file)}>
-                {sendMutation.isPending ? 'Envoi...' : 'Envoyer'}
+                {sendMutation.isPending ? t('pro:thread.sending', 'Envoi...') : t('pro:thread.send', 'Envoyer')}
               </Button>
               <span className="text-xs text-slate-700">{String(body || '').length}/2000</span>
             </div>

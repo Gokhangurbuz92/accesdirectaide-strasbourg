@@ -10,7 +10,9 @@ import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 export default function ForgotPassword() {
+    const { t } = useT('pro');
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState({ type: '', message: '' });
     const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ export default function ForgotPassword() {
 
             if (!res.ok) {
                 // Rate limit or other error
-                throw new Error(data.error || "Une erreur est survenue.");
+                throw new Error(data.error || t('pro:forgot.error', 'Une erreur est survenue.'));
             }
 
             setStatus({
@@ -47,11 +49,11 @@ export default function ForgotPassword() {
 
     return (
         <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <SEO title="Mot de passe oublié - Pro" noindex={true} />
+            <SEO title={t('pro:forgot.mot_passe_oublie_pro', 'Mot de passe oublié - Pro')} noindex={true} />
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle as="h1">Mot de passe oublié</CardTitle>
-                    <CardDescription>Recevez un lien de réinitialisation.</CardDescription>
+                    <CardTitle as="h1">{t('pro:forgot.mot_passe_oublie', 'Mot de passe oublié')}</CardTitle>
+                    <CardDescription>{t('pro:forgot.recevez_lien_reinitialisation', 'Recevez un lien de réinitialisation.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {status.message && (
@@ -63,7 +65,7 @@ export default function ForgotPassword() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">{t('pro:forgot.email', 'Email')}</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -73,10 +75,10 @@ export default function ForgotPassword() {
                             />
                         </div>
                         <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? <Loader2 className="animate-spin h-4 w-4" /> : "Envoyer le lien"}
+                            {loading ? <Loader2 className="animate-spin h-4 w-4" /> : t('pro:forgot.send', 'Envoyer le lien')}
                         </Button>
                         <div className="text-center text-sm">
-                            <Link to="/pro/login" className="text-blue-600 hover:underline">Retour à la connexion</Link>
+                            <Link to="/pro/login" className="text-blue-600 hover:underline">{t('pro:forgot.retour_connexion', 'Retour à la connexion')}</Link>
                         </div>
                     </form>
                 </CardContent>

@@ -20,6 +20,7 @@ import {
     Loader2,
 } from 'lucide-react';
 import { proRole } from '@/lib/proLabels.js';
+import { formatDate, useT } from '@/i18n';
 
 /**
  * ProDashboard — Hub central de l'Espace Professionnel
@@ -31,6 +32,7 @@ import { proRole } from '@/lib/proLabels.js';
  * - Bouton synchronisation Outlook
  */
 export default function ProDashboard() {
+    const { t } = useT('pro');
     const { user } = useOutletContext();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -55,9 +57,9 @@ export default function ProDashboard() {
             })
             .catch((e) => alive && setQueue((q) => ({ ...q, loading: false,
                 // R18: an organization not (or no longer) activated by ADA has no work queue yet — said as such, not as an outage
-                error: e?.status === 403 ? 'La file de travail s’ouvrira quand ADA aura activé votre structure (voir « Ma structure »).' : 'File de travail indisponible.' })));
+                error: e?.status === 403 ? t('pro:dashboard.queue_inactive', 'La file de travail s’ouvrira quand ADA aura activé votre structure (voir « Ma structure »).') : t('pro:dashboard.queue_unavailable', 'File de travail indisponible.') })));
         return () => { alive = false; };
-    }, []);
+    }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; the message follows the language at load time
 
     useEffect(() => {
         let alive = true;
@@ -113,9 +115,9 @@ export default function ProDashboard() {
         try {
             const d = await proRdvRequest('/api/pro/outlook', { query: { action: 'authorize' } });
             if (d?.authUrl) { window.location.href = d.authUrl; return; }
-            alert(d?.message || 'Outlook n’est pas encore activé.');
+            alert(d?.message || t('pro:dashboard.outlook_off', 'Outlook n’est pas encore activé.'));
         } catch {
-            alert('Outlook est indisponible pour le moment.');
+            alert(t('pro:dashboard.outlook_unavailable', 'Outlook est indisponible pour le moment.'));
         }
     };
 
@@ -128,10 +130,10 @@ export default function ProDashboard() {
         <div className="space-y-8">
             {/* PKG-4 / R03: work queue */}
             <section aria-labelledby="pro-queue-title" data-testid="pro-dashboard-queue" className="order-first">
-                <h2 id="pro-queue-title" className="sr-only">File de travail</h2>
+                <h2 id="pro-queue-title" className="sr-only">{t('pro:dashboard.file_travail', 'File de travail')}</h2>
                 {queue.error ? <p role="alert" className="text-sm text-red-800">{queue.error}</p> : (
                     <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                        {[['mine', 'Mes dossiers', '/pro/dossiers'], ['unassigned', 'Dossiers à attribuer', '/pro/dossiers'], ['toHandle', 'Orientations à traiter', '/pro/orientations'], ['overdue', 'Orientations en retard', '/pro/orientations']].map(([k, label, to]) => (
+                        {[['mine', t('pro:dashboard.q_mine', 'Mes dossiers'), '/pro/dossiers'], ['unassigned', t('pro:dashboard.q_unassigned', 'Dossiers à attribuer'), '/pro/dossiers'], ['toHandle', t('pro:dashboard.q_to_handle', 'Orientations à traiter'), '/pro/orientations'], ['overdue', t('pro:dashboard.q_overdue', 'Orientations en retard'), '/pro/orientations']].map(([k, label, to]) => (
                             <li key={k}><Link to={to} data-testid={`pro-queue-${k}`} className="block rounded-lg border border-slate-200 bg-white p-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-600">
                                 <span className="block text-xs text-slate-600">{label}</span>
                                 <span className="text-2xl font-bold text-slate-900" data-testid={`pro-queue-${k}-value`}>{queue.loading ? '…' : queue[k]}</span>
@@ -144,10 +146,10 @@ export default function ProDashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                        Tableau de Bord
+                        {t('pro:dashboard.tableau_bord', 'Tableau de Bord')}
                     </h1>
                     <p className="text-sm text-slate-700">
-                        Bienvenue, {user?.email}
+                        {t('pro:dashboard.welcome', 'Bienvenue, {{email}}', { email: user?.email })}
                     </p>
                 </div>
                 <div className="flex gap-3">
@@ -156,17 +158,17 @@ export default function ProDashboard() {
                         size="sm"
                         onClick={() => navigate('/pro/rdv/new')}
                     >
-                        <Plus className="mr-2 h-4 w-4" /> Nouveau rendez-vous
+                        <Plus className="mr-2 h-4 w-4" /> {t('pro:dashboard.nouveau_rendez_vous', 'Nouveau rendez-vous')}
                     </Button>
                     <Button
                         size="sm"
                         onClick={handleOutlookSync}
                         disabled={outlookOff || outlookConnected}
-                        title={outlookOff ? 'Outlook n’est pas encore activé sur ADA.' : undefined}
+                        title={outlookOff ? t('pro:dashboard.outlook_off_ada', 'Outlook n’est pas encore activé sur ADA.') : undefined}
                         className="bg-indigo-600 hover:bg-indigo-700"
                     >
                         <Calendar className="mr-2 h-4 w-4" />
-                        {outlookConnected ? 'Outlook connecté' : outlookOff ? 'Outlook (pas encore activé)' : 'Connecter Outlook'}
+                        {outlookConnected ? t('pro:dashboard.outlook_connected', 'Outlook connecté') : outlookOff ? t('pro:dashboard.outlook_pending', 'Outlook (pas encore activé)') : t('pro:dashboard.outlook_connect', 'Connecter Outlook')}
                     </Button>
                 </div>
             </div>
@@ -176,7 +178,7 @@ export default function ProDashboard() {
                 <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800" role="status">
                     <CheckCircle2 size={20} aria-hidden="true" />
                     <p className="text-sm font-medium">
-                        Votre agenda Outlook est connecté.
+                        {t('pro:dashboard.votre_agenda_outlook_est', 'Votre agenda Outlook est connecté.')}
                     </p>
                 </div>
             )}
@@ -185,40 +187,40 @@ export default function ProDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Rendez-vous</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.rendez_vous', 'Rendez-vous')}</CardTitle>
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{appointments.length}</div>
-                        <p className="text-xs text-muted-foreground">À venir</p>
+                        <p className="text-xs text-muted-foreground">{t('pro:dashboard.venir', 'À venir')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Équipe</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.equipe', 'Équipe')}</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{teamAccess === 'ok' ? teamMembers.length : '—'}</div>
-                        <p className="text-xs text-muted-foreground">Membres actifs</p>
+                        <p className="text-xs text-muted-foreground">{t('pro:dashboard.membres_actifs', 'Membres actifs')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Structure</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.structure', 'Structure')}</CardTitle>
                         <Building2 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         {/* owner usefulness pass: the real state of the record and of ADA's verification, with the next step */}
-                        <div className="text-lg font-bold" data-testid="pro-dashboard-structure-state">{!structure ? '—' : structure.statut === 'actif' ? 'Fiche active' : structure.statut === 'suspendu' ? 'Fiche suspendue' : 'Fiche en attente d’activation'}</div>
-                        <p className="text-xs text-muted-foreground">{!structure ? '' : structure.verification_status === 'VERIFIED' ? `Vérifiée par ADA${structure.date_verification ? ` le ${new Date(structure.date_verification).toLocaleDateString('fr-FR')}` : ''}` : 'Pas encore vérifiée par ADA : elle n’apparaît pas dans l’annuaire public'}</p>
-                        <Link to="/pro/structure" className="mt-1 inline-block text-xs font-medium text-indigo-700 underline">Voir ma structure</Link>
+                        <div className="text-lg font-bold" data-testid="pro-dashboard-structure-state">{!structure ? '—' : structure.statut === 'actif' ? t('pro:dashboard.record_active', 'Fiche active') : structure.statut === 'suspendu' ? t('pro:dashboard.record_suspended', 'Fiche suspendue') : t('pro:dashboard.record_pending', 'Fiche en attente d’activation')}</div>
+                        <p className="text-xs text-muted-foreground">{!structure ? '' : structure.verification_status === 'VERIFIED' ? (structure.date_verification ? t('pro:dashboard.verified_on', 'Vérifiée par ADA le {{date}}', { date: formatDate(structure.date_verification, { dateStyle: 'short' }) }) : t('pro:dashboard.verified', 'Vérifiée par ADA')) : t('pro:dashboard.not_verified', 'Pas encore vérifiée par ADA : elle n’apparaît pas dans l’annuaire public')}</p>
+                        <Link to="/pro/structure" className="mt-1 inline-block text-xs font-medium text-indigo-700 underline">{t('pro:dashboard.voir_structure', 'Voir ma structure')}</Link>
                     </CardContent>
                 </Card>
                 <Card className="border-indigo-200 bg-indigo-50/30">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-indigo-700">
-                            Visioconférence
+                            {t('pro:dashboard.visioconference', 'Visioconférence')}
                         </CardTitle>
                         <Video className="h-4 w-4 text-indigo-500" />
                     </CardHeader>
@@ -229,7 +231,7 @@ export default function ProDashboard() {
                             className="mt-1 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
                             onClick={() => navigate('/pro/visio')}
                         >
-                            <Video className="mr-2 h-3 w-3" /> Comment fonctionne la visio
+                            <Video className="mr-2 h-3 w-3" /> {t('pro:dashboard.comment_fonctionne_visio', 'Comment fonctionne la visio')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -242,13 +244,13 @@ export default function ProDashboard() {
                     <div className="flex items-center justify-between">
                         <h2 className="font-bold text-slate-800 flex items-center gap-2 text-sm">
                             <Clock className="text-indigo-500" size={16} />
-                            Prochaines Consultations
+                            {t('pro:dashboard.prochaines_consultations', 'Prochaines Consultations')}
                         </h2>
                         <Link
                             to="/pro/rdv/agenda"
                             className="text-xs text-indigo-600 hover:underline flex items-center gap-1"
                         >
-                            Voir tout <ExternalLink size={12} />
+                            {t('pro:dashboard.voir_tout', 'Voir tout')} <ExternalLink size={12} />
                         </Link>
                     </div>
 
@@ -257,10 +259,10 @@ export default function ProDashboard() {
                             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                                 <Calendar className="text-slate-300 mb-4" size={40} />
                                 <p className="text-sm font-medium text-slate-700">
-                                    Aucun rendez-vous à venir
+                                    {t('pro:dashboard.aucun_rendez_vous_venir', 'Aucun rendez-vous à venir')}
                                 </p>
                                 <p className="text-xs text-slate-600 mt-1">
-                                    Pour recevoir des rendez-vous : un service, puis vos disponibilités
+                                    {t('pro:dashboard.pour_recevoir_des_rendez', 'Pour recevoir des rendez-vous : un service, puis vos disponibilités')}
                                 </p>
                                 <Button
                                     size="sm"
@@ -268,7 +270,7 @@ export default function ProDashboard() {
                                     className="mt-4"
                                     onClick={() => navigate('/pro/rdv/disponibilites')}
                                 >
-                                    <Plus className="mr-2 h-3 w-3" /> Définir mes disponibilités
+                                    <Plus className="mr-2 h-3 w-3" /> {t('pro:dashboard.definir_mes_disponibilites', 'Définir mes disponibilités')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -286,11 +288,11 @@ export default function ProDashboard() {
                                             </div>
                                             <div>
                                                 <p className="font-semibold text-slate-900 text-sm">
-                                                    {rdv.beneficiaryName || 'Bénéficiaire'}
+                                                    {rdv.beneficiaryName || t('pro:dashboard.beneficiary', 'Bénéficiaire')}
                                                 </p>
                                                 <p className="text-xs text-slate-600">
                                                     {rdv.startAt
-                                                        ? new Date(rdv.startAt).toLocaleDateString('fr-FR', {
+                                                        ? formatDate(rdv.startAt, {
                                                             weekday: 'short',
                                                             day: 'numeric',
                                                             month: 'short',
@@ -308,8 +310,8 @@ export default function ProDashboard() {
                                                 variant="ghost"
                                                 className="text-indigo-600 hover:bg-indigo-50"
                                                 onClick={() => handleLaunchVisio(rdv.id)}
-                                                title="Ouvrir le rendez-vous en visio"
-                                                aria-label="Ouvrir le rendez-vous en visio"
+                                                title={t('pro:dashboard.ouvrir_rendez_vous_visio', 'Ouvrir le rendez-vous en visio')}
+                                                aria-label={t('pro:dashboard.ouvrir_rendez_vous_visio', 'Ouvrir le rendez-vous en visio')}
                                             >
                                                 <Video size={16} />
                                             </Button>
@@ -321,7 +323,7 @@ export default function ProDashboard() {
                                                     navigate(`/pro/appointments/${rdv.id}`)
                                                 }
                                             >
-                                                Dossier <ChevronRight className="ml-1" size={14} />
+                                                {t('pro:dashboard.dossier', 'Dossier')} <ChevronRight className="ml-1" size={14} />
                                             </Button>
                                         </div>
                                     </CardContent>
@@ -339,24 +341,24 @@ export default function ProDashboard() {
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-sm font-medium flex items-center gap-2">
                                     <Users className="text-indigo-500" size={14} />
-                                    Équipe
+                                    {t('pro:dashboard.equipe', 'Équipe')}
                                 </CardTitle>
                                 <Link
                                     to="/pro/team"
                                     className="text-xs text-indigo-600 hover:underline"
                                 >
-                                    Gérer
+                                    {t('pro:dashboard.gerer', 'Gérer')}
                                 </Link>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             {teamAccess === 'admins' ? (
-                                <p className="text-xs text-slate-600" data-testid="dashboard-team-admins-only">L’équipe est gérée par les administrateurs de la structure.</p>
+                                <p className="text-xs text-slate-600" data-testid="dashboard-team-admins-only">{t('pro:dashboard.equipe_est_geree_par', 'L’équipe est gérée par les administrateurs de la structure.')}</p>
                             ) : teamAccess === 'error' ? (
-                                <p className="text-xs text-red-800" role="alert">L’équipe n’a pas pu être chargée.</p>
+                                <p className="text-xs text-red-800" role="alert">{t('pro:dashboard.equipe_pas_etre_chargee', 'L’équipe n’a pas pu être chargée.')}</p>
                             ) : teamMembers.length === 0 ? (
                                 <p className="text-xs text-slate-600">
-                                    Aucun membre trouvé
+                                    {t('pro:dashboard.aucun_membre_trouve', 'Aucun membre trouvé')}
                                 </p>
                             ) : (
                                 teamMembers.slice(0, 4).map((m) => (
@@ -392,10 +394,10 @@ export default function ProDashboard() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-slate-800">
-                                    Messagerie sécurisée
+                                    {t('pro:dashboard.messagerie_securisee', 'Messagerie sécurisée')}
                                 </p>
                                 <p className="text-xs text-slate-600">
-                                    Messages chiffrés à l’enregistrement
+                                    {t('pro:dashboard.messages_chiffres_enregistrement', 'Messages chiffrés à l’enregistrement')}
                                 </p>
                             </div>
                             <ChevronRight className="ml-auto text-slate-300" size={16} />
@@ -407,12 +409,11 @@ export default function ProDashboard() {
                         <div className="flex items-center gap-2 mb-2">
                             <ShieldCheck className="text-emerald-700" size={18} aria-hidden="true" />
                             <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
-                                Protection des échanges
+                                {t('pro:dashboard.protection_des_echanges', 'Protection des échanges')}
                             </h4>
                         </div>
                         <p className="text-xs text-emerald-800 leading-relaxed">
-                            Messages, notes et documents sont chiffrés à l&apos;enregistrement et chaque accès est journalisé.
-                            Ce n&apos;est pas un chiffrement de bout en bout : nos serveurs détiennent les clés.
+                            {t('pro:dashboard.messages_notes_documents_sont', 'Messages, notes et documents sont chiffrés à l\'enregistrement et chaque accès est journalisé. Ce n\'est pas un chiffrement de bout en bout : nos serveurs détiennent les clés.')}
                         </p>
                     </div>
                 </div>

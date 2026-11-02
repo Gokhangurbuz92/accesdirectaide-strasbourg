@@ -9,6 +9,7 @@ import SmsToggle from '@/components/SmsToggle';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { OWNER_HEADER, resolveOwnerSecret, forgetOwnerSecret } from '@/lib/shareOwner';
 import CitizenSharingPanel from '@/components/sharing/CitizenSharingPanel';
+import { formatDate, useT } from '@/i18n';
 import {
     ShieldCheck,
     Calendar,
@@ -38,6 +39,7 @@ import {
  * - Revoke all access (RGPD right to be forgotten)
  */
 export default function UserPassport() {
+    const { t } = useT('compte');
     const { shareId } = useParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ export default function UserPassport() {
     const fetchPassport = useCallback(async () => {
         setLoading(true);
         if (!ownerSecret) {
-            setError('Lien privé requis : ouvrez le lien « passeport » fourni lors de la création du partage.');
+            setError(t('compte:passport.private_link_required', 'Lien privé requis : ouvrez le lien « passeport » fourni lors de la création du partage.'));
             setLoading(false);
             return;
         }
@@ -60,16 +62,16 @@ export default function UserPassport() {
             );
             if (!res.ok) {
                 const d = await res.json().catch(() => ({}));
-                setError(d.error || 'Dossier introuvable.');
+                setError(d.error || t('compte:passport.not_found', 'Dossier introuvable.'));
                 return;
             }
             setData(await res.json());
         } catch {
-            setError('Impossible de charger votre passeport.');
+            setError(t('compte:passport.load_failed', 'Impossible de charger votre passeport.'));
         } finally {
             setLoading(false);
         }
-    }, [shareId, ownerSecret]);
+    }, [shareId, ownerSecret]);   // eslint-disable-line react-hooks/exhaustive-deps -- t: the messages follow the language at load time
 
     useEffect(() => {
         fetchPassport();
@@ -79,21 +81,20 @@ export default function UserPassport() {
     if (revokeStep === 'done') {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                <SEO title="Données supprimées — ADA" noindex />
+                <SEO title={t('compte:passport.donnees_supprimees_ada', 'Données supprimées — ADA')} noindex />
                 <Card className="max-w-sm w-full text-center">
                     <CardContent className="p-8">
                         <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Trash2 size={24} />
                         </div>
                         <h1 className="text-lg font-bold text-slate-900 mb-2" data-testid="passport-erased">
-                            Données supprimées
+                            {t('compte:passport.donnees_supprimees', 'Données supprimées')}
                         </h1>
                         <p className="text-sm text-slate-500 mb-6">
-                            Conformément à vos droits RGPD, votre dossier partagé a été supprimé
-                            et plus aucune structure n&apos;y a accès. Certaines traces techniques peuvent être conservées pour respecter la loi.
+                            {t('compte:passport.erased_text', 'Conformément à vos droits RGPD, votre dossier partagé a été supprimé et plus aucune structure n\'y a accès. Certaines traces techniques peuvent être conservées pour respecter la loi.')}
                         </p>
                         <Button asChild className="w-full">
-                            <Link to="/">Retour à l&apos;accueil</Link>
+                            <Link to="/">{t('compte:passport.back_home', 'Retour à l\'accueil')}</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -115,15 +116,15 @@ export default function UserPassport() {
                 <Card className="max-w-sm w-full text-center">
                     <CardContent className="p-8">
                         <AlertTriangle className="text-amber-500 mx-auto mb-4" size={28} />
-                        <h1 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-700">Dossier partagé</h1>{/* Q10: the page heading; the state below keeps its h2 */}
+                        <h1 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-700">{t('compte:passport.dossier_partage', 'Dossier partagé')}</h1>{/* Q10: the page heading; the state below keeps its h2 */}
                         <h2 className="text-lg font-bold text-slate-900 mb-2">
-                            Dossier inaccessible
+                            {t('compte:passport.dossier_inaccessible', 'Dossier inaccessible')}
                         </h2>
                         <p className="text-sm text-slate-500 mb-4">{error}</p>
                         <Button variant="outline" asChild>
                             <Link to="/">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Accueil
+                                {t('compte:passport.accueil', 'Accueil')}
                             </Link>
                         </Button>
                     </CardContent>
@@ -139,7 +140,7 @@ export default function UserPassport() {
         <div className="min-h-screen bg-slate-50 py-8 px-4">
             <
 // @ts-ignore
-            SEO title="Mon Passeport — ADA" noindex />
+            SEO title={t('compte:passport.mon_passeport_ada', 'Mon Passeport — ADA')} noindex />
             <div className="max-w-xl mx-auto space-y-5">
                 {/* Header */}
                 <div className="flex items-center gap-3">
@@ -148,10 +149,10 @@ export default function UserPassport() {
                     </div>
                     <div>
                         <h1 className="text-lg font-bold text-slate-900">
-                            Mon Passeport ADA
+                            {t('compte:passport.mon_passeport_ada_2', 'Mon Passeport ADA')}
                         </h1>
                         <p className="text-xs text-emerald-800 font-semibold flex items-center gap-1">
-                            <ShieldCheck size={12} aria-hidden="true" /> Connexion chiffrée (HTTPS)
+                            <ShieldCheck size={12} aria-hidden="true" /> {t('compte:passport.connexion_chiffree_https', 'Connexion chiffrée (HTTPS)')}
                         </p>
                     </div>
                 </div>
@@ -161,13 +162,13 @@ export default function UserPassport() {
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-[10px] font-bold text-slate-600 uppercase mb-1">
-                                Statut
+                                {t('compte:passport.statut', 'Statut')}
                             </p>
                             <p className="text-sm font-bold flex items-center gap-1.5">
                                 {passport.isExpired ? (
-                                    <><Clock size={12} className="text-red-500" /> Expiré</>
+                                    <><Clock size={12} className="text-red-500" /> {t('compte:passport.expire', 'Expiré')}</>
                                 ) : (
-                                    <><CheckCircle2 size={12} className="text-emerald-500" /> Actif</>
+                                    <><CheckCircle2 size={12} className="text-emerald-500" /> {t('compte:passport.actif', 'Actif')}</>
                                 )}
                             </p>
                         </CardContent>
@@ -175,11 +176,11 @@ export default function UserPassport() {
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-[10px] font-bold text-slate-600 uppercase mb-1">
-                                Expire le
+                                {t('compte:passport.expire_2', 'Expire le')}
                             </p>
                             <p className="text-sm font-bold text-slate-900">
                                 {passport.expiresAt
-                                    ? new Date(passport.expiresAt).toLocaleDateString('fr-FR')
+                                    ? formatDate(passport.expiresAt, { dateStyle: 'short' })
                                     : '--'}
                             </p>
                         </CardContent>
@@ -187,13 +188,13 @@ export default function UserPassport() {
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-[10px] font-bold text-slate-600 uppercase mb-1">
-                                Consentement
+                                {t('compte:passport.consentement', 'Consentement')}
                             </p>
                             <p className="text-sm font-bold flex items-center gap-1.5">
                                 {passport.hasConsent ? (
-                                    <><CheckCircle2 size={12} className="text-emerald-500" /> Signé</>
+                                    <><CheckCircle2 size={12} className="text-emerald-500" /> {t('compte:passport.signe', 'Signé')}</>
                                 ) : (
-                                    <><Clock size={12} className="text-amber-500" /> En attente</>
+                                    <><Clock size={12} className="text-amber-500" /> {t('compte:passport.attente', 'En attente')}</>
                                 )}
                             </p>
                         </CardContent>
@@ -201,11 +202,11 @@ export default function UserPassport() {
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-[10px] font-bold text-slate-600 uppercase mb-1">
-                                Justificatifs
+                                {t('compte:passport.justificatifs', 'Justificatifs')}
                             </p>
                             <p className="text-sm font-bold flex items-center gap-1.5">
                                 <File size={12} className="text-indigo-500" />
-                                {passport.filesCount || 0} fichier(s)
+                                {t('compte:passport.files_count', '{{n}} fichier(s)', { n: passport.filesCount || 0 })}
                             </p>
                         </CardContent>
                     </Card>
@@ -216,13 +217,13 @@ export default function UserPassport() {
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-bold flex items-center gap-2">
                             <Calendar size={14} className="text-indigo-500" />
-                            Vos rendez-vous
+                            {t('compte:passport.vos_rendez_vous', 'Vos rendez-vous')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {appointments.length === 0 ? (
                             <p className="text-sm text-slate-600 py-4 text-center">
-                                Aucun rendez-vous à venir
+                                {t('compte:passport.aucun_rendez_vous_venir', 'Aucun rendez-vous à venir')}
                             </p>
                         ) : (
                             <div className="space-y-3">
@@ -243,7 +244,7 @@ export default function UserPassport() {
                                                 {apt.service}
                                             </p>
                                             <p className="text-[10px] text-slate-600">
-                                                {new Date(apt.date).toLocaleDateString('fr-FR', {
+                                                {formatDate(apt.date, {
                                                     weekday: 'short',
                                                     day: 'numeric',
                                                     month: 'short',
@@ -271,7 +272,7 @@ export default function UserPassport() {
                 {/* Footer */}
                 {/* PKG-11 audit pass 2: the dossier's situation and results are stored as plain JSON; only documents and messages are encrypted at rest */}
                 <p className="text-center text-xs text-slate-600 py-2">
-                    Connexion chiffrée (HTTPS). Vos justificatifs et vos messages sont chiffrés à l’enregistrement ; le résumé de votre situation ne l’est pas.
+                    {t('compte:passport.connexion_chiffree_https_vos', 'Connexion chiffrée (HTTPS). Vos justificatifs et vos messages sont chiffrés à l’enregistrement ; le résumé de votre situation ne l’est pas.')}
                 </p>
             </div>
         </div>

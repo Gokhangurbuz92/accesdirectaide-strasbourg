@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import SEO from '@/components/SEO';
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 import {
     Loader2,
     ShieldCheck,
@@ -28,6 +29,7 @@ import {
  * 3. Crée le compte (POST) et redirige vers le dashboard
  */
 export default function RegisterPro() {
+    const { t } = useT('pro');
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token') || '';
@@ -45,7 +47,7 @@ export default function RegisterPro() {
     // 1. Validate token on mount
     useEffect(() => {
         if (!token) {
-            setError('Aucun token d\'invitation fourni.');
+            setError(t('pro:register_pro.no_token', 'Aucun token d\'invitation fourni.'));
             setLoading(false);
             return;
         }
@@ -58,20 +60,20 @@ export default function RegisterPro() {
                 const data = await res.json();
 
                 if (!res.ok) {
-                    setError(data.error || 'Invitation invalide.');
+                    setError(data.error || t('pro:register_pro.invalid', 'Invitation invalide.'));
                     return;
                 }
 
                 setInvitation(data);
             } catch {
-                setError('Impossible de valider l\'invitation.');
+                setError(t('pro:register_pro.cannot_validate', 'Impossible de valider l\'invitation.'));
             } finally {
                 setLoading(false);
             }
         };
 
         validate();
-    }, [token]);
+    }, [token]);   // eslint-disable-line react-hooks/exhaustive-deps -- validated once per token; the message follows the language at load time
 
     // 2. Submit registration
     const handleSubmit = async (/** @type {{ preventDefault: () => void; }} */ e) => {
@@ -85,7 +87,7 @@ export default function RegisterPro() {
         }
 
         if (password !== confirmPassword) {
-            setError('Les mots de passe ne correspondent pas.');
+            setError(t('pro:register_pro.mismatch', 'Les mots de passe ne correspondent pas.'));
             return;
         }
 
@@ -101,7 +103,7 @@ export default function RegisterPro() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.error || 'Erreur lors de l\'inscription.');
+                setError(data.error || t('pro:register_pro.error', 'Erreur lors de l\'inscription.'));
                 return;
             }
 
@@ -113,7 +115,7 @@ export default function RegisterPro() {
                 navigate('/pro/dashboard');
             }, 1500);
         } catch {
-            setError('Erreur réseau. Veuillez réessayer.');
+            setError(t('pro:register_pro.network', 'Erreur réseau. Veuillez réessayer.'));
         } finally {
             setSubmitting(false);
         }
@@ -124,11 +126,11 @@ export default function RegisterPro() {
         return (
             <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
                 <SEO
-                    title="Inscription Professionnelle"
-                    description="Rejoignez votre structure sur ADA"
+                    title={t('pro:register_pro.inscription_professionnelle', 'Inscription Professionnelle')}
+                    description={t('pro:register_pro.rejoignez_votre_structure_sur', 'Rejoignez votre structure sur ADA')}
                     noindex
                 />
-                <div className="w-full max-w-md space-y-4" role="status" aria-label="Vérification de l'invitation">
+                <div className="w-full max-w-md space-y-4" role="status" aria-label={t('pro:register_pro.verification_invitation', 'Vérification de l\'invitation')}>
                     <div className="animate-pulse space-y-4">
                         <div className="flex justify-center">
                             <div className="h-14 w-14 rounded-2xl bg-indigo-100" />
@@ -141,7 +143,7 @@ export default function RegisterPro() {
                             <div className="h-10 w-full bg-slate-100 rounded-lg" />
                         </div>
                     </div>
-                    <span className="sr-only">Vérification de votre invitation en cours…</span>
+                    <span className="sr-only">{t('pro:register_pro.verification_votre_invitation_cours', 'Vérification de votre invitation en cours…')}</span>
                 </div>
             </main>
         );
@@ -151,21 +153,21 @@ export default function RegisterPro() {
     if (error && !invitation) {
         return (
             <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-                <SEO title="Invitation invalide" noindex />
+                <SEO title={t('pro:register_pro.invitation_invalide', 'Invitation invalide')} noindex />
                 <Card className="w-full max-w-md">
                     <CardContent className="p-8 text-center">
                         <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                             <AlertCircle className="text-red-500" size={28} />
                         </div>
                         <h1 className="text-xl font-bold text-slate-900 mb-2">
-                            Invitation invalide
+                            {t('pro:register_pro.invitation_invalide', 'Invitation invalide')}
                         </h1>
                         <p className="text-sm text-slate-700 mb-6">{error}</p>
                         <Link
                             to="/pro/login"
                             className="text-indigo-600 font-medium text-sm hover:underline"
                         >
-                            Se connecter à un compte existant
+                            {t('pro:register_pro.connecter_compte_existant', 'Se connecter à un compte existant')}
                         </Link>
                     </CardContent>
                 </Card>
@@ -179,17 +181,17 @@ export default function RegisterPro() {
             <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
                 <
 // @ts-ignore
-                SEO title="Inscription réussie" noindex />
+                SEO title={t('pro:register_pro.inscription_reussie', 'Inscription réussie')} noindex />
                 <Card className="w-full max-w-md">
                     <CardContent className="p-8 text-center">
                         <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
                             <CheckCircle2 className="text-emerald-700" size={28} />
                         </div>
                         <h1 className="text-xl font-bold text-slate-900 mb-2">
-                            Bienvenue dans l&apos;équipe !
+                            {t('pro:register_pro.bienvenue_dans_equipe', 'Bienvenue dans l\'équipe !')}
                         </h1>
                         <p className="text-sm text-slate-700">
-                            Redirection vers votre espace professionnel...
+                            {t('pro:register_pro.redirection_vers_votre_espace', 'Redirection vers votre espace professionnel...')}
                         </p>
                     </CardContent>
                 </Card>
@@ -201,8 +203,8 @@ export default function RegisterPro() {
     return (
         <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
             <SEO
-                title="Inscription Professionnelle - ADA"
-                description="Rejoignez votre structure sur AccesDirectAide"
+                title={t('pro:register_pro.inscription_professionnelle_ada', 'Inscription Professionnelle - ADA')}
+                description={t('pro:register_pro.rejoignez_votre_structure_sur_2', 'Rejoignez votre structure sur AccesDirectAide')}
                 noindex
             />
 
@@ -213,10 +215,10 @@ export default function RegisterPro() {
                         <Building2 className="text-indigo-600" size={28} />
                     </div>
                     <h1 className="text-2xl font-bold text-slate-900">
-                        Rejoindre l&apos;équipe
+                        {t('pro:register_pro.rejoindre_equipe', 'Rejoindre l\'équipe')}
                     </h1>
                     <p className="text-slate-700 mt-1 text-sm">
-                        Vous êtes invité(e) à rejoindre
+                        {t('pro:register_pro.vous_etes_invite_rejoindre', 'Vous êtes invité(e) à rejoindre')}
                     </p>
                 </div>
 
@@ -230,15 +232,15 @@ export default function RegisterPro() {
                             </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
-                            <span>Email :</span>
+                            <span>{t('pro:register_pro.email', 'Email :')}</span>
                             <span className="font-medium">{invitation?.email}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
-                            <span>Rôle :</span>
+                            <span>{t('pro:register_pro.role', 'Rôle :')}</span>
                             <span className="font-medium">
                                 {invitation?.role === 'STRUCTURE_ADMIN'
-                                    ? 'Administrateur'
-                                    : 'Professionnel'}
+                                    ? t('pro:register_pro.role_admin', 'Administrateur')
+                                    : t('pro:register_pro.role_pro', 'Professionnel')}
                             </span>
                         </div>
                     </CardContent>
@@ -247,12 +249,12 @@ export default function RegisterPro() {
                 {/* Registration form */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">Créer votre accès</CardTitle>
+                        <CardTitle className="text-lg">{t('pro:register_pro.creer_votre_acces', 'Créer votre accès')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="reg-password">Mot de passe</Label>
+                                <Label htmlFor="reg-password">{t('pro:register_pro.mot_passe', 'Mot de passe')}</Label>
                                 <div className="relative">
                                     <Input
                                         id="reg-password"
@@ -267,7 +269,7 @@ export default function RegisterPro() {
                                         type="button"
                                         onClick={() => setShowPassword((v) => !v)}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-600"
-                                        aria-label={showPassword ? 'Masquer' : 'Afficher'}
+                                        aria-label={showPassword ? t('pro:register_pro.hide', 'Masquer') : t('pro:register_pro.show', 'Afficher')}
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
@@ -276,13 +278,13 @@ export default function RegisterPro() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="reg-confirm">Confirmer le mot de passe</Label>
+                                <Label htmlFor="reg-confirm">{t('pro:register_pro.confirmer_mot_passe', 'Confirmer le mot de passe')}</Label>
                                 <Input
                                     id="reg-confirm"
                                     type="password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Retapez le mot de passe"
+                                    placeholder={t('pro:register_pro.retapez_mot_passe', 'Retapez le mot de passe')}
                                     required
                                     autoComplete="new-password"
                                 />
@@ -307,7 +309,7 @@ export default function RegisterPro() {
                                 ) : (
                                     <CheckCircle2 className="mr-2 h-4 w-4" />
                                 )}
-                                {submitting ? 'Création en cours...' : 'Créer mon accès'}
+                                {submitting ? t('pro:register_pro.creating', 'Création en cours...') : t('pro:register_pro.create', 'Créer mon accès')}
                             </Button>
                         </form>
                     </CardContent>
@@ -317,8 +319,7 @@ export default function RegisterPro() {
                 <div className="flex items-center gap-2 text-xs text-emerald-800 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
                     <ShieldCheck size={14} className="shrink-0" aria-hidden="true" />
                     <span>
-                        Votre mot de passe n&apos;est jamais conservé en clair (empreinte). Messages et documents
-                        échangés sont chiffrés à l&apos;enregistrement, sur une connexion chiffrée (HTTPS).
+                        {t('pro:register_pro.votre_mot_passe_est', 'Votre mot de passe n\'est jamais conservé en clair (empreinte). Messages et documents échangés sont chiffrés à l\'enregistrement, sur une connexion chiffrée (HTTPS).')}
                     </span>
                 </div>
             </div>

@@ -11,7 +11,9 @@ import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 export default function ResetPassword() {
+    const { t } = useT('pro');
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
     const navigate = useNavigate();
@@ -24,10 +26,10 @@ export default function ResetPassword() {
     if (!token) {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
-                <h1 className="text-xl font-bold text-slate-900">Nouveau mot de passe</h1>
+                <h1 className="text-xl font-bold text-slate-900">{t('pro:reset.nouveau_mot_passe', 'Nouveau mot de passe')}</h1>
                 <Alert variant="destructive" className="max-w-md">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>Lien invalide ou manquant. <Link className="underline" to="/pro/forgot-password">Demander un nouveau lien</Link></AlertDescription>
+                    <AlertDescription>{t('pro:reset.lien_invalide_manquant', 'Lien invalide ou manquant.')} <Link className="underline" to="/pro/forgot-password">{t('pro:reset.demander_nouveau_lien', 'Demander un nouveau lien')}</Link></AlertDescription>
                 </Alert>
             </main>
         );
@@ -36,7 +38,7 @@ export default function ResetPassword() {
     const handleSubmit = async (/** @type {{ preventDefault: () => void; }} */ e) => {
         e.preventDefault();
         if (password !== confirm) {
-            setStatus({ type: 'error', message: "Les mots de passe ne correspondent pas." });
+            setStatus({ type: 'error', message: t('pro:reset.mismatch', 'Les mots de passe ne correspondent pas.') });
             return;
         }
         const problems = passwordProblems(password);   // R21: the shared rule, the same sentence as the server
@@ -58,9 +60,9 @@ export default function ResetPassword() {
             const data = await res.json().catch(() => ({}));
 
             // the server's French messages (link invalid / expired, password too short); a French fallback for anything else
-            if (!res.ok) throw new Error(res.status === 400 && /[éèà]|Lien|mot de passe/.test(String(data.error || '')) ? data.error : res.status === 429 ? 'Trop de tentatives : patientez quelques minutes.' : 'La modification a échoué. Réessayez.');
+            if (!res.ok) throw new Error(res.status === 400 && /[éèà]|Lien|mot de passe/.test(String(data.error || '')) ? data.error : res.status === 429 ? t('pro:reset.too_many', 'Trop de tentatives : patientez quelques minutes.') : t('pro:reset.failed', 'La modification a échoué. Réessayez.'));
 
-            setStatus({ type: 'success', message: "Mot de passe modifié !" });
+            setStatus({ type: 'success', message: t('pro:reset.done', 'Mot de passe modifié !') });
             setTimeout(() => navigate('/pro/login'), 2000);
 
         } catch (err) {
@@ -72,10 +74,10 @@ export default function ResetPassword() {
 
     return (
         <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <SEO title="Nouveau mot de passe" noindex={true} />
+            <SEO title={t('pro:reset.nouveau_mot_passe', 'Nouveau mot de passe')} noindex={true} />
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle as="h1">Nouveau mot de passe</CardTitle>
+                    <CardTitle as="h1">{t('pro:reset.nouveau_mot_passe', 'Nouveau mot de passe')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                      {status.message && (
@@ -87,7 +89,7 @@ export default function ResetPassword() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="pass">Mot de passe</Label>
+                            <Label htmlFor="pass">{t('pro:reset.mot_passe', 'Mot de passe')}</Label>
                             <Input
                                 id="pass"
                                 type="password"
@@ -97,7 +99,7 @@ export default function ResetPassword() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="confirm">Confirmation</Label>
+                            <Label htmlFor="confirm">{t('pro:reset.confirmation', 'Confirmation')}</Label>
                             <Input
                                 id="confirm"
                                 type="password"
@@ -107,7 +109,7 @@ export default function ResetPassword() {
                             />
                         </div>
                         <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? <Loader2 className="animate-spin h-4 w-4" /> : "Valider"}
+                            {loading ? <Loader2 className="animate-spin h-4 w-4" /> : t('pro:reset.submit', 'Valider')}
                         </Button>
                     </form>
                 </CardContent>

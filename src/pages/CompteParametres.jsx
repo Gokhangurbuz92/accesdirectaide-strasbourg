@@ -35,6 +35,7 @@ import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { csrfFetch } from '@/lib/csrf';
 import { logoutOnServer } from '@/lib/citizenSession';
 import { applyDeviceAccessibility } from '@/lib/accountAccessibility';
+import { formatDate, useT } from '@/i18n';
 
 // ─── Local Preferences helpers ────────────────────────────────
 const PREFS_KEY = 'ada_citizen_prefs';
@@ -55,6 +56,7 @@ function savePrefs(/** @type {Record<string, string | number | boolean | null | 
 
 /** Launch-readiness item 66: change the e-mail address (password + confirmation link to the new address) and the phone number. */
 function ContactChange({ user }) {
+    const { t } = useT('compte');
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState(user?.phone || '');
@@ -64,34 +66,34 @@ function ContactChange({ user }) {
     const submitEmail = async (e) => {
         e.preventDefault(); setBusy(true); setEmailMsg({ ok: true, text: '' });
         try { const r = await citizenApi.requestEmailChange({ newEmail, password }); setEmailMsg({ ok: r.linkSent !== false, text: r.message }); setPassword(''); }
-        catch (err) { setEmailMsg({ ok: false, text: err instanceof Error ? err.message : 'Une erreur est survenue.' }); }
+        catch (err) { setEmailMsg({ ok: false, text: err instanceof Error ? err.message : t('compte:settings.error_generic', 'Une erreur est survenue.') }); }
         finally { setBusy(false); }
     };
     const submitPhone = async (e, remove = false) => {
         e.preventDefault(); setBusy(true); setPhoneMsg({ ok: true, text: '' });
-        try { await citizenApi.setPhone(remove ? null : phone); if (remove) setPhone(''); setPhoneMsg({ ok: true, text: remove ? 'Numéro supprimé.' : 'Numéro enregistré (non vérifié : aucun SMS ne vous est envoyé).' }); }
-        catch (err) { setPhoneMsg({ ok: false, text: err instanceof Error ? err.message : 'Une erreur est survenue.' }); }
+        try { await citizenApi.setPhone(remove ? null : phone); if (remove) setPhone(''); setPhoneMsg({ ok: true, text: remove ? t('compte:settings.phone_removed', 'Numéro supprimé.') : t('compte:settings.phone_saved', 'Numéro enregistré (non vérifié : aucun SMS ne vous est envoyé).') }); }
+        catch (err) { setPhoneMsg({ ok: false, text: err instanceof Error ? err.message : t('compte:settings.error_generic', 'Une erreur est survenue.') }); }
         finally { setBusy(false); }
     };
     return (
         <div className="space-y-4" data-testid="contact-change">
             <form onSubmit={submitEmail} className="space-y-2 rounded-lg border bg-white p-4">
-                <p className="text-sm font-medium text-slate-900">Changer d’adresse e-mail</p>
-                <Label htmlFor="cc-new-email">Nouvelle adresse</Label>
+                <p className="text-sm font-medium text-slate-900">{t('compte:settings.changer_adresse_mail', 'Changer d’adresse e-mail')}</p>
+                <Label htmlFor="cc-new-email">{t('compte:settings.nouvelle_adresse', 'Nouvelle adresse')}</Label>
                 <Input id="cc-new-email" type="email" autoComplete="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-                <Label htmlFor="cc-password">Mot de passe actuel</Label>
+                <Label htmlFor="cc-password">{t('compte:settings.mot_passe_actuel', 'Mot de passe actuel')}</Label>
                 <Input id="cc-password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-                <p className="text-xs text-slate-700">Un lien de confirmation est envoyé à la nouvelle adresse (valable 30 minutes) ; votre adresse actuelle est prévenue. Après la confirmation, reconnectez-vous.</p>
-                <Button type="submit" disabled={busy} data-testid="cc-email-submit">Envoyer le lien de confirmation</Button>
+                <p className="text-xs text-slate-700">{t('compte:settings.lien_confirmation_est_envoye', 'Un lien de confirmation est envoyé à la nouvelle adresse (valable 30 minutes) ; votre adresse actuelle est prévenue. Après la confirmation, reconnectez-vous.')}</p>
+                <Button type="submit" disabled={busy} data-testid="cc-email-submit">{t('compte:settings.envoyer_lien_confirmation', 'Envoyer le lien de confirmation')}</Button>
                 {emailMsg.text ? <p role="status" data-testid="cc-email-status" className={emailMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{emailMsg.text}</p> : null}
             </form>
             <form onSubmit={(e) => submitPhone(e)} className="space-y-2 rounded-lg border bg-white p-4">
-                <p className="text-sm font-medium text-slate-900">Mon numéro de téléphone</p>
-                <Label htmlFor="cc-phone">Numéro (facultatif)</Label>
+                <p className="text-sm font-medium text-slate-900">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
+                <Label htmlFor="cc-phone">{t('compte:settings.numero_facultatif', 'Numéro (facultatif)')}</Label>
                 <Input id="cc-phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 12 34 56 78" />
                 <div className="flex flex-wrap gap-2">
-                    <Button type="submit" disabled={busy} data-testid="cc-phone-submit">Enregistrer le numéro</Button>
-                    {user?.phone ? <Button type="button" variant="outline" disabled={busy} onClick={(e) => submitPhone(e, true)} data-testid="cc-phone-remove">Supprimer le numéro</Button> : null}
+                    <Button type="submit" disabled={busy} data-testid="cc-phone-submit">{t('compte:settings.enregistrer_numero', 'Enregistrer le numéro')}</Button>
+                    {user?.phone ? <Button type="button" variant="outline" disabled={busy} onClick={(e) => submitPhone(e, true)} data-testid="cc-phone-remove">{t('compte:settings.supprimer_numero', 'Supprimer le numéro')}</Button> : null}
                 </div>
                 {phoneMsg.text ? <p role="status" data-testid="cc-phone-status" className={phoneMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{phoneMsg.text}</p> : null}
             </form>
@@ -100,27 +102,28 @@ function ContactChange({ user }) {
 }
 
 function ProfilTab({ user }) {
+    const { t } = useT('compte');
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">Informations du compte</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.informations_compte', 'Informations du compte')}</h3>
                 <div className="space-y-4">
                     {/* Email */}
                     <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
                         <Mail className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium text-slate-500">Adresse email</span>
+                            <span className="text-sm font-medium text-slate-500">{t('compte:settings.adresse_email', 'Adresse email')}</span>
                             <p className="text-sm font-semibold text-slate-900 break-all">{user?.email || '-'}</p>
                             <div className="flex items-center gap-1.5 mt-1">
                                 {user?.emailVerifiedAt ? (
                                     <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
                                         <CheckCircle className="h-3 w-3" />
-                                        Vérifié
+                                        {t('compte:settings.verifie', 'Vérifié')}
                                     </span>
                                 ) : (
                                     <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                                         <XCircle className="h-3 w-3" />
-                                        Non vérifié
+                                        {t('compte:settings.non_verifie', 'Non vérifié')}
                                     </span>
                                 )}
                             </div>
@@ -131,22 +134,22 @@ function ProfilTab({ user }) {
                     <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
                         <Phone className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
-                            <span className="text-sm font-medium text-slate-500">Téléphone</span>
+                            <span className="text-sm font-medium text-slate-500">{t('compte:settings.telephone', 'Téléphone')}</span>
                             <p className="text-sm font-semibold text-slate-900">
-                                {user?.phone || <span className="text-slate-600 font-normal italic">Non renseigné</span>}
+                                {user?.phone || <span className="text-slate-600 font-normal italic">{t('compte:settings.non_renseigne', 'Non renseigné')}</span>}
                             </p>
                         </div>
                     </div>
 
                     {/* Account dates */}
                     <div className="p-4 rounded-lg border bg-slate-50 text-sm text-slate-600 space-y-1">
-                        <p>Compte créé le : <span className="font-medium">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '-'}</span></p>
+                        <p>{t('compte:settings.compte_cree', 'Compte créé le :')} <span className="font-medium">{user?.createdAt ? formatDate(user.createdAt, { dateStyle: 'short' }) : '-'}</span></p>
                     </div>
                 </div>
             </div>
 
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
-                <p className="font-medium mb-1"><Link to="/compte/profil" className="underline" data-testid="link-compte-profil">Gérer mon profil, mon foyer, mes notifications et mes dossiers partagés</Link></p>
+                <p className="font-medium mb-1"><Link to="/compte/profil" className="underline" data-testid="link-compte-profil">{t('compte:settings.gerer_mon_profil_mon', 'Gérer mon profil, mon foyer, mes notifications et mes dossiers partagés')}</Link></p>
             </div>
 
             <ContactChange user={user} />
@@ -155,47 +158,48 @@ function ProfilTab({ user }) {
 }
 
 function NotificationsTab() {
+    const { t } = useT('compte');
     // PKG-11 audit: these switches used to be saved only in this browser (switching e-mails off stopped nothing; switching SMS or the newsletter on recorded no
     // consent). The real, server-side preferences — with the consent they need — are on the profile page.
     return (
         <div className="space-y-4" data-testid="compte-notifications-pointer">
-            <h3 className="text-lg font-semibold">Préférences de notification</h3>
+            <h3 className="text-lg font-semibold">{t('compte:settings.preferences_notification', 'Préférences de notification')}</h3>
             <p className="text-sm text-slate-700">
-                Vos choix de notification (e-mail, SMS, rappels) sont enregistrés sur votre compte, avec votre consentement quand il est nécessaire.
-                Ils se règlent sur la page de votre profil.
+                {t('compte:settings.vos_choix_notification_mail', 'Vos choix de notification (e-mail, SMS, rappels) sont enregistrés sur votre compte, avec votre consentement quand il est nécessaire. Ils se règlent sur la page de votre profil.')}
             </p>
             <Link to="/compte/profil" className="inline-flex min-h-[44px] items-center rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 underline">
-                Gérer mes notifications
+                {t('compte:settings.gerer_mes_notifications', 'Gérer mes notifications')}
             </Link>
         </div>
     );
 }
 
 function SecurityTab({ user }) {
+    const { t } = useT('compte');
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">Sécurité du compte</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.securite_compte', 'Sécurité du compte')}</h3>
                 <div className="space-y-4">
                     {/* Email verification */}
                     <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
                         <Mail className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
-                            <span className="text-sm font-medium">Email vérifié</span>
+                            <span className="text-sm font-medium">{t('compte:settings.email_verifie', 'Email vérifié')}</span>
                             <div className="mt-1">
                                 {user?.emailVerifiedAt ? (
                                     <span className="inline-flex items-center gap-1.5 text-sm text-green-700">
                                         <CheckCircle className="h-4 w-4" />
-                                        Vérifié le {new Date(user.emailVerifiedAt).toLocaleDateString('fr-FR')}
+                                        {t('compte:settings.verified_on', 'Vérifié le {{date}}', { date: formatDate(user.emailVerifiedAt, { dateStyle: 'short' }) })}
                                     </span>
                                 ) : (
                                     <div className="space-y-2">
                                         <span className="inline-flex items-center gap-1.5 text-sm text-amber-700">
                                             <AlertTriangle className="h-4 w-4" />
-                                            Non vérifié
+                                            {t('compte:settings.non_verifie', 'Non vérifié')}
                                         </span>
                                         <p className="text-xs text-slate-500">
-                                            Vérifiez votre boîte mail pour le lien de confirmation.
+                                            {t('compte:settings.verifiez_votre_boite_mail', 'Vérifiez votre boîte mail pour le lien de confirmation.')}
                                         </p>
                                     </div>
                                 )}
@@ -208,14 +212,14 @@ function SecurityTab({ user }) {
                         <div className="flex items-start gap-4">
                             <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div>
-                                <span className="text-sm font-medium">Mot de passe</span>
-                                <p className="text-xs text-slate-500 mt-0.5">Modifiez votre mot de passe régulièrement</p>
+                                <span className="text-sm font-medium">{t('compte:settings.mot_passe', 'Mot de passe')}</span>
+                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.modifiez_votre_mot_passe', 'Modifiez votre mot de passe régulièrement')}</p>
                             </div>
                         </div>
                         <Button variant="outline" size="sm" asChild>
                             <Link to="/auth/forgot">
                                 <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                                Modifier
+                                {t('compte:settings.modifier', 'Modifier')}
                             </Link>
                         </Button>
                     </div>
@@ -225,14 +229,14 @@ function SecurityTab({ user }) {
                         <div className="flex items-start gap-4 mb-3">
                             <Eye className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium">Sessions</span>
+                                <span className="text-sm font-medium">{t('compte:settings.sessions', 'Sessions')}</span>
                                 {/* R18: the panel claimed to list the connected devices but only showed this browser; what the server really does is said instead */}
-                                <p className="text-xs text-slate-700 mt-0.5">Se déconnecter met fin à votre session sur <strong>tous</strong> les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).</p>
+                                <p className="text-xs text-slate-700 mt-0.5">{t('compte:settings.logout_all_before', 'Se déconnecter met fin à votre session sur')} <strong>{t('compte:settings.logout_all_strong', 'tous')}</strong> {t('compte:settings.logout_all_after', 'les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).')}</p>
                             </div>
                         </div>
                         <div className="ml-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
-                            <span>Cet appareil — {typeof navigator !== 'undefined' ? navigator.userAgent.split('(')[1]?.split(')')[0] || 'Navigateur' : 'Navigateur'}</span>
-                            <Button type="button" variant="outline" size="sm" className="min-h-11" data-testid="compte-logout-everywhere" onClick={async () => { if (await logoutOnServer()) window.location.assign('/auth/login'); }}>Me déconnecter partout</Button>
+                            <span>{t('compte:settings.cet_appareil', 'Cet appareil —')} {typeof navigator !== 'undefined' ? navigator.userAgent.split('(')[1]?.split(')')[0] || t('compte:settings.browser', 'Navigateur') : t('compte:settings.browser', 'Navigateur')}</span>
+                            <Button type="button" variant="outline" size="sm" className="min-h-11" data-testid="compte-logout-everywhere" onClick={async () => { if (await logoutOnServer()) window.location.assign('/auth/login'); }}>{t('compte:settings.deconnecter_partout', 'Me déconnecter partout')}</Button>
                         </div>
                     </div>
                 </div>
@@ -242,6 +246,7 @@ function SecurityTab({ user }) {
 }
 
 function AccessibilityTab() {
+    const { t } = useT('compte');
     const [prefs, setPrefs] = useState(() => {
         const saved = loadPrefs();
         return {
@@ -275,15 +280,15 @@ function AccessibilityTab() {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">Préférences d'accessibilité</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.preferences_accessibilite', 'Préférences d\'accessibilité')}</h3>
                 <div className="space-y-4">
                     {/* Font Size */}
                     <div className="p-4 rounded-lg border bg-white">
                         <div className="flex items-center gap-4 mb-3">
                             <Type className="h-5 w-5 text-blue-500 flex-shrink-0" />
                             <div>
-                                <span className="text-sm font-medium">Taille du texte</span>
-                                <p className="text-xs text-slate-500 mt-0.5">Ajuster la taille de l'interface ({prefs.fontSize}%)</p>
+                                <span className="text-sm font-medium">{t('compte:settings.taille_texte', 'Taille du texte')}</span>
+                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.font_size_hint', 'Ajuster la taille de l’interface ({{size}} %)', { size: prefs.fontSize })}</p>
                             </div>
                         </div>
                         <div className="ml-9 flex items-center gap-3">
@@ -317,8 +322,8 @@ function AccessibilityTab() {
                         <div className="flex items-start gap-4">
                             <Minus className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div>
-                                <Label htmlFor="sw-reduce-motion" className="text-sm font-medium">Réduire les animations</Label>
-                                <p className="text-xs text-slate-500 mt-0.5">Désactiver les transitions et effets visuels</p>
+                                <Label htmlFor="sw-reduce-motion" className="text-sm font-medium">{t('compte:settings.reduire_les_animations', 'Réduire les animations')}</Label>
+                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.desactiver_les_transitions_effets', 'Désactiver les transitions et effets visuels')}</p>
                             </div>
                         </div>
                         <Switch
@@ -333,8 +338,8 @@ function AccessibilityTab() {
                         <div className="flex items-start gap-4">
                             <Sun className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div>
-                                <Label htmlFor="sw-high-contrast" className="text-sm font-medium">Contraste élevé</Label>
-                                <p className="text-xs text-slate-500 mt-0.5">Augmenter le contraste des couleurs</p>
+                                <Label htmlFor="sw-high-contrast" className="text-sm font-medium">{t('compte:settings.contraste_eleve', 'Contraste élevé')}</Label>
+                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.augmenter_contraste_des_couleurs', 'Augmenter le contraste des couleurs')}</p>
                             </div>
                         </div>
                         <Switch
@@ -347,20 +352,21 @@ function AccessibilityTab() {
             </div>
 
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
-                <p>💡 Vous pouvez aussi utiliser le <strong>panneau d'accessibilité</strong> dans le header (bouton « Accessibilité ») pour des contrôles rapides.</p>
+                <p>{t('compte:settings.a11y_panel_before', '💡 Vous pouvez aussi utiliser le')} <strong>{t('compte:settings.a11y_panel_strong', 'panneau d\'accessibilité')}</strong> {t('compte:settings.a11y_panel_after', 'dans le header (bouton « Accessibilité ») pour des contrôles rapides.')}</p>
             </div>
         </div>
     );
 }
 
 /** PKG-11 / C21 — restriction of processing (RGPD art. 18): applies at once; the person lifts it whenever they want; ADA informs them before lifting it. */
-const RESTRICTION_GROUNDS = [
-    ['ACCURACY_CONTESTED', 'Je conteste l’exactitude de mes données (le temps de vérifier)'],
-    ['UNLAWFUL_PROCESSING', 'Le traitement me semble illicite, mais je ne veux pas que mes données soient effacées'],
-    ['LEGAL_CLAIMS', 'J’ai besoin que mes données soient conservées pour faire valoir un droit en justice'],
-    ['OBJECTION_PENDING', 'Je me suis opposé·e au traitement et j’attends la réponse'],
+const restrictionGrounds = (t) => [
+    ['ACCURACY_CONTESTED', t('compte:settings.ground.accuracy', 'Je conteste l’exactitude de mes données (le temps de vérifier)')],
+    ['UNLAWFUL_PROCESSING', t('compte:settings.ground.unlawful', 'Le traitement me semble illicite, mais je ne veux pas que mes données soient effacées')],
+    ['LEGAL_CLAIMS', t('compte:settings.ground.legal_claims', 'J’ai besoin que mes données soient conservées pour faire valoir un droit en justice')],
+    ['OBJECTION_PENDING', t('compte:settings.ground.objection', 'Je me suis opposé·e au traitement et j’attends la réponse')],
 ];
 function RestrictionPanel() {
+    const { t } = useT('compte');
     const [state, setState] = useState(null); const [ground, setGround] = useState(''); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
     // R18: an unreadable state is said and nothing is offered on top of it (the request form showed as if no restriction were active)
     const [loadFailed, setLoadFailed] = useState(false);
@@ -372,37 +378,37 @@ function RestrictionPanel() {
         try {
             const res = await csrfFetch('/api/citizen/restriction', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const d = await res.json().catch(() => ({}));
-            if (!res.ok) { setProblem(d.message || 'La demande n’a pas pu être enregistrée.'); return; }
+            if (!res.ok) { setProblem(d.message || t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.')); return; }
             setMsg(ok); await load();
-        } catch { setProblem('La demande n’a pas pu être envoyée.'); } finally { setBusy(false); }
+        } catch { setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.')); } finally { setBusy(false); }
     };
     const active = state?.restriction;
     return (
         <div className="p-4 rounded-lg border border-slate-300" data-testid="compte-restriction">
-            <span className="text-sm font-medium text-slate-900">Limiter l’utilisation de mes données (RGPD, article 18)</span>
-            <p className="text-xs text-slate-700 mt-1">Vos données sont alors seulement conservées : aucune structure ne peut ouvrir vos dossiers, rien n’est partagé, vous ne recevez plus de notification et rien n’est effacé automatiquement. Vous gardez vos droits (consulter, exporter, demander l’effacement).</p>
+            <span className="text-sm font-medium text-slate-900">{t('compte:settings.limiter_utilisation_mes_donnees', 'Limiter l’utilisation de mes données (RGPD, article 18)')}</span>
+            <p className="text-xs text-slate-700 mt-1">{t('compte:settings.vos_donnees_sont_alors', 'Vos données sont alors seulement conservées : aucune structure ne peut ouvrir vos dossiers, rien n’est partagé, vous ne recevez plus de notification et rien n’est effacé automatiquement. Vous gardez vos droits (consulter, exporter, demander l’effacement).')}</p>
             <p role="status" aria-live="polite" data-testid="compte-restriction-status" className="text-xs text-slate-900 mt-2">{msg}</p>
             {problem ? <p role="alert" className="text-xs text-red-800 mt-1">{problem}</p> : null}
             {loadFailed ? (
                 <div className="mt-2" role="alert" data-testid="compte-restriction-load-error">
-                    <p className="text-sm text-red-800">L’état de la limitation n’a pas pu être lu.</p>
-                    <Button type="button" variant="outline" size="sm" className="mt-1 min-h-11" onClick={load}>Réessayer</Button>
+                    <p className="text-sm text-red-800">{t('compte:settings.etat_limitation_pas_etre', 'L’état de la limitation n’a pas pu être lu.')}</p>
+                    <Button type="button" variant="outline" size="sm" className="mt-1 min-h-11" onClick={load}>{t('compte:settings.reessayer', 'Réessayer')}</Button>
                 </div>
             ) : active ? (
                 <div className="mt-2 space-y-2">
-                    <p className="text-sm text-slate-900" data-testid="compte-restriction-active">Limitation en cours depuis le {new Date(active.since).toLocaleDateString('fr-FR')}.</p>
-                    <Button type="button" variant="outline" size="sm" className="min-h-11" disabled={busy} onClick={() => act({ action: 'lift' }, 'Limitation levée : les structures auxquelles vous aviez donné accès retrouvent cet accès.')}>Lever la limitation</Button>
+                    <p className="text-sm text-slate-900" data-testid="compte-restriction-active">{t('compte:settings.restriction_since', 'Limitation en cours depuis le {{date}}.', { date: formatDate(active.since, { dateStyle: 'short' }) })}</p>
+                    <Button type="button" variant="outline" size="sm" className="min-h-11" disabled={busy} onClick={() => act({ action: 'lift' }, t('compte:settings.restriction_lifted', 'Limitation levée : les structures auxquelles vous aviez donné accès retrouvent cet accès.'))}>{t('compte:settings.lever_limitation', 'Lever la limitation')}</Button>
                 </div>
             ) : (
                 <fieldset className="mt-2 space-y-2">
-                    <legend className="text-sm text-slate-900">Pourquoi demandez-vous la limitation ?</legend>
-                    {RESTRICTION_GROUNDS.map(([code, label]) => (
+                    <legend className="text-sm text-slate-900">{t('compte:settings.pourquoi_demandez_vous_limitation', 'Pourquoi demandez-vous la limitation ?')}</legend>
+                    {restrictionGrounds(t).map(([code, label]) => (
                         <label key={code} className="flex min-h-11 items-start gap-2 text-sm text-slate-900">
                             <input type="radio" name="restriction-ground" value={code} checked={ground === code} onChange={() => setGround(code)} className="mt-1 h-5 w-5" />{label}
                         </label>
                     ))}
-                    {state?.lastLifted ? <p className="text-xs text-slate-700">Dernière limitation levée le {new Date(state.lastLifted.at).toLocaleDateString('fr-FR')} par {state.lastLifted.by}{state.lastLifted.reason ? ` : « ${state.lastLifted.reason} »` : ''}.</p> : null}
-                    <Button type="button" size="sm" className="min-h-11" disabled={busy || !ground} onClick={() => act({ action: 'request', ground }, 'Limitation en place : vos données sont seulement conservées.')}>Demander la limitation</Button>
+                    {state?.lastLifted ? <p className="text-xs text-slate-700">{t('compte:settings.last_lifted', 'Dernière limitation levée le {{date}} par {{by}}', { date: formatDate(state.lastLifted.at, { dateStyle: 'short' }), by: state.lastLifted.by })}{state.lastLifted.reason ? ` : « ${state.lastLifted.reason} »` : ''}.</p> : null}
+                    <Button type="button" size="sm" className="min-h-11" disabled={busy || !ground} onClick={() => act({ action: 'request', ground }, t('compte:settings.restriction_active', 'Limitation en place : vos données sont seulement conservées.'))}>{t('compte:settings.demander_limitation', 'Demander la limitation')}</Button>
                 </fieldset>
             )}
         </div>
@@ -410,6 +416,7 @@ function RestrictionPanel() {
 }
 
 function DataTab({ user }) {
+    const { t } = useT('compte');
     const [deletionRequest, setDeletionRequest] = useState(null);
     // PKG-11 / C21: the state of the latest erasure request is read from the server (in review, refused with its reason, blocked by a legal hold)
     useEffect(() => {
@@ -438,10 +445,10 @@ function DataTab({ user }) {
             document.body.removeChild(a);
             setTimeout(() => URL.revokeObjectURL(url), 1000);
             setExportNote(exportData?.exportInfo?.completeness === 'PARTIALLY_COMPLETED'
-                ? 'Export téléchargé. Une partie de votre demande reste ouverte : des notes internes de structures vous concernant doivent être examinées par une personne habilitée avant toute communication.'
-                : 'Export téléchargé.');
+                ? t('compte:settings.export_partial', 'Export téléchargé. Une partie de votre demande reste ouverte : des notes internes de structures vous concernant doivent être examinées par une personne habilitée avant toute communication.')
+                : t('compte:settings.export_done', 'Export téléchargé.'));
         } catch {
-            setExportNote('L’export n’a pas pu être réalisé. Réessayez plus tard.');
+            setExportNote(t('compte:settings.export_failed', 'L’export n’a pas pu être réalisé. Réessayez plus tard.'));
         } finally {
             setExporting(false);
         }
@@ -450,16 +457,16 @@ function DataTab({ user }) {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">Mes données personnelles</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.mes_donnees_personnelles', 'Mes données personnelles')}</h3>
                 <div className="space-y-4">
                     {/* Export */}
                     <div className="p-4 rounded-lg border bg-white">
                         <div className="flex items-start gap-4">
                             <Download className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium">Exporter mes données</span>
+                                <span className="text-sm font-medium">{t('compte:settings.exporter_mes_donnees', 'Exporter mes données')}</span>
                                 <p className="text-xs text-slate-500 mt-1">
-                                    Téléchargez une copie des données personnelles de votre compte (droit d’accès et portabilité, RGPD art. 15 et 20).
+                                    {t('compte:settings.telechargez_une_copie_des', 'Téléchargez une copie des données personnelles de votre compte (droit d’accès et portabilité, RGPD art. 15 et 20).')}
                                 </p>
                                 <Button
                                     variant="outline"
@@ -469,7 +476,7 @@ function DataTab({ user }) {
                                     className="mt-3"
                                 >
                                     <Download className="h-3.5 w-3.5 mr-1.5" />
-                                    {exporting ? 'Export en cours...' : 'Télécharger (JSON)'}
+                                    {exporting ? t('compte:settings.exporting', 'Export en cours...') : t('compte:settings.download_json', 'Télécharger (JSON)')}
                                 </Button>
                                 <p role="status" aria-live="polite" data-testid="compte-export-status" className="text-xs text-slate-700 mt-2">{exportNote}</p>
                             </div>
@@ -483,22 +490,22 @@ function DataTab({ user }) {
                         <div className="flex items-start gap-4">
                             <Trash2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium text-red-800">Supprimer mon compte</span>
+                                <span className="text-sm font-medium text-red-800">{t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}</span>
                                 <p className="text-xs text-red-700 mt-1">
-                                    Votre demande est enregistrée puis traitée par notre équipe : vos données personnelles, rendez-vous et messages sont alors supprimés, sauf ce que la loi oblige à conserver.
+                                    {t('compte:settings.votre_demande_est_enregistree', 'Votre demande est enregistrée puis traitée par notre équipe : vos données personnelles, rendez-vous et messages sont alors supprimés, sauf ce que la loi oblige à conserver.')}
                                 </p>
                                 {deletionRequest && deletionRequest.status === 'REJECTED' ? (
                                     <p role="status" data-testid="deletion-rejected" className="mt-3 rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900">
-                                        Votre demande de suppression (référence {deletionRequest.requestId}) n’a pas pu être exécutée{deletionRequest.reason ? ` : ${deletionRequest.reason}` : '.'} Vous pouvez nous écrire ou refaire une demande.
+                                        {t('compte:settings.deletion_rejected', 'Votre demande de suppression (référence {{ref}}) n’a pas pu être exécutée', { ref: deletionRequest.requestId })}{deletionRequest.reason ? ` : ${deletionRequest.reason}` : '.'} {t('compte:settings.vous_pouvez_nous_ecrire', 'Vous pouvez nous écrire ou refaire une demande.')}
                                     </p>
                                 ) : deletionRequest && deletionRequest.status === 'BLOCKED' ? (
                                     <p role="status" data-testid="deletion-blocked" className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-                                        Votre demande de suppression (référence {deletionRequest.requestId}) est suspendue : une obligation légale de conservation s’applique à certaines de vos données. L’effacement reprendra quand elle prendra fin.
+                                        {t('compte:settings.deletion_blocked', 'Votre demande de suppression (référence {{ref}}) est suspendue : une obligation légale de conservation s’applique à certaines de vos données. L’effacement reprendra quand elle prendra fin.', { ref: deletionRequest.requestId })}
                                     </p>
                                 ) : deletionRequest && deletionRequest.status !== 'COMPLETED' ? (
                                     <p role="status" data-testid="deletion-requested" className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-                                        Demande de suppression enregistrée (référence {deletionRequest.requestId}). Votre compte reste actif jusqu’à son traitement.
-                                        {deletionRequest.dueAt ? ` Nous devons vous répondre au plus tard le ${new Date(deletionRequest.dueAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' })}.` : ''}
+                                        {t('compte:settings.deletion_requested', 'Demande de suppression enregistrée (référence {{ref}}). Votre compte reste actif jusqu’à son traitement.', { ref: deletionRequest.requestId })}
+                                        {deletionRequest.dueAt ? ` ${t('compte:settings.deletion_due', 'Nous devons vous répondre au plus tard le {{date}}.', { date: formatDate(deletionRequest.dueAt) })}` : ''}
                                     </p>
                                 ) : null}
 
@@ -506,18 +513,18 @@ function DataTab({ user }) {
                                     <AlertDialogTrigger asChild>
                                         <Button variant="destructive" size="sm" className="mt-3">
                                             <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                                            Supprimer mon compte
+                                            {t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}
                                         </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
-                                            <AlertDialogTitle>Supprimer votre compte ?</AlertDialogTitle>
+                                            <AlertDialogTitle>{t('compte:settings.supprimer_votre_compte', 'Supprimer votre compte ?')}</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                Votre demande sera examinée puis exécutée : vos données personnelles, rendez-vous et conversations seront alors définitivement supprimés, sauf obligation légale de conservation. Une fois exécutée, la suppression est irréversible.
+                                                {t('compte:settings.votre_demande_sera_examinee', 'Votre demande sera examinée puis exécutée : vos données personnelles, rendez-vous et conversations seront alors définitivement supprimés, sauf obligation légale de conservation. Une fois exécutée, la suppression est irréversible.')}
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                            <AlertDialogCancel>{t('compte:settings.annuler', 'Annuler')}</AlertDialogCancel>
                                             <AlertDialogAction
                                                 className="bg-red-600 hover:bg-red-700"
                                                 onClick={async () => {
@@ -530,7 +537,7 @@ function DataTab({ user }) {
                                                         });
                                                         if (!res.ok) {
                                                             const data = await res.json().catch(() => ({}));
-                                                            throw new Error(data.error || 'Erreur lors de la suppression');
+                                                            throw new Error(data.error || t('compte:settings.deletion_error', 'Erreur lors de la suppression'));
                                                         }
                                                         setDeletionRequest(await res.json().catch(() => ({ requestId: '—' })));
                                                     } catch (err) {
@@ -538,7 +545,7 @@ function DataTab({ user }) {
                                                     }
                                                 }}
                                             >
-                                                Demander la suppression
+                                                {t('compte:settings.demander_suppression', 'Demander la suppression')}
                                             </AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
@@ -551,9 +558,7 @@ function DataTab({ user }) {
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
                 <p>
-                    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.
-                    Pour toute demande, contactez-nous via la <Link to="/contact" className="underline">page contact</Link> ou 
-                    consultez notre <Link to="/securite-et-rgpd" className="underline">politique de confidentialité</Link>.
+                    {t('compte:settings.gdpr_before', 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour toute demande, contactez-nous via la')} <Link to="/contact" className="underline">{t('compte:settings.gdpr_contact', 'page contact')}</Link> {t('compte:settings.gdpr_or', 'ou consultez notre')} <Link to="/securite-et-rgpd" className="underline">{t('compte:settings.politique_confidentialite', 'politique de confidentialité')}</Link>.
                 </p>
             </div>
         </div>
@@ -563,6 +568,7 @@ function DataTab({ user }) {
 // ─── Main Page ────────────────────────────────────────────────
 
 export default function CompteParametres() {
+    const { t } = useT('compte');
     const location = useLocation();
     const safeNext = useMemo(
         () => normalizeNextPath(location.pathname + location.search, '/compte/parametres'),
@@ -591,8 +597,8 @@ export default function CompteParametres() {
     return (
         <div className="min-h-screen bg-slate-50 py-8">
             <SEO
-                title="Paramètres du compte"
-                description="Gérez vos paramètres, notifications et données personnelles."
+                title={t('compte:settings.parametres_compte', 'Paramètres du compte')}
+                description={t('compte:settings.gerez_vos_parametres_notifications', 'Gérez vos paramètres, notifications et données personnelles.')}
                 path="/compte/parametres"
                 noindex={true}
             />
@@ -600,8 +606,8 @@ export default function CompteParametres() {
             <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
                 {/* Header */}
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-slate-900">Paramètres</h1>
-                    <p className="text-sm text-slate-500 mt-1">Gérez votre compte et vos préférences</p>
+                    <h1 className="text-2xl font-bold text-slate-900">{t('compte:settings.parametres', 'Paramètres')}</h1>
+                    <p className="text-sm text-slate-500 mt-1">{t('compte:settings.gerez_votre_compte_vos', 'Gérez votre compte et vos préférences')}</p>
                 </div>
 
                 {/* Tabs */}
@@ -609,23 +615,23 @@ export default function CompteParametres() {
                     <TabsList className="grid w-full grid-cols-5 h-auto p-1">
                         <TabsTrigger value="profil" className="text-xs sm:text-sm gap-1.5 py-2.5">
                             <User className="h-4 w-4 hidden sm:block" />
-                            Profil
+                            {t('compte:settings.profil', 'Profil')}
                         </TabsTrigger>
                         <TabsTrigger value="notifications" className="text-xs sm:text-sm gap-1.5 py-2.5">
                             <Bell className="h-4 w-4 hidden sm:block" />
-                            Notifs
+                            {t('compte:settings.notifs', 'Notifs')}
                         </TabsTrigger>
                         <TabsTrigger value="security" className="text-xs sm:text-sm gap-1.5 py-2.5">
                             <Shield className="h-4 w-4 hidden sm:block" />
-                            Sécurité
+                            {t('compte:settings.securite', 'Sécurité')}
                         </TabsTrigger>
                         <TabsTrigger value="accessibility" className="text-xs sm:text-sm gap-1.5 py-2.5">
                             <Accessibility className="h-4 w-4 hidden sm:block" />
-                            Accès
+                            {t('compte:settings.acces', 'Accès')}
                         </TabsTrigger>
                         <TabsTrigger value="data" className="text-xs sm:text-sm gap-1.5 py-2.5">
                             <Database className="h-4 w-4 hidden sm:block" />
-                            Données
+                            {t('compte:settings.donnees', 'Données')}
                         </TabsTrigger>
                     </TabsList>
 
@@ -653,7 +659,7 @@ export default function CompteParametres() {
                 {/* Back to messages */}
                 <div className="mt-6 text-center">
                     <Link to="/compte/messages" className="text-sm text-blue-600 hover:underline">
-                        ← Retour à mes messages
+                        {t('compte:settings.retour_mes_messages', '← Retour à mes messages')}
                     </Link>
                 </div>
             </div>

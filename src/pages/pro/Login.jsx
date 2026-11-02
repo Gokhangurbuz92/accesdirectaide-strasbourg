@@ -11,11 +11,13 @@ import { AlertCircle, Loader2, ShieldCheck, Building2, Lock, Mail, ArrowRight } 
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 /**
  * ProLogin — Page de connexion Espace Professionnel
  * Design avancé avec support MFA.
  */
 export default function ProLogin() {
+    const { t } = useT('pro');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -52,16 +54,16 @@ export default function ProLogin() {
 
             if (res.status === 409 && data.code === 'ORGANIZATION_CHOICE_REQUIRED') {
                 setOrganizations(Array.isArray(data.organizations) ? data.organizations : []);
-                setError(data.message || 'Choisissez votre organisation.');
+                setError(data.message || t('pro:login.choose_org', 'Choisissez votre organisation.'));
                 return;
             }
             if (!res.ok) {
                 // the French message, never the API's English code
                 // R31: only the server's « Account disabled » means a disabled account; any other 403 (security check of the request) used to read « compte désactivé »
-                throw new Error(res.status === 401 ? 'Adresse ou mot de passe incorrect.' : res.status === 403 && data.error === 'Account disabled' ? 'Ce compte est désactivé : contactez l’administrateur de votre structure.'
-                    : res.status === 403 ? 'La connexion a été refusée par une vérification de sécurité. Rechargez la page, puis réessayez.'
+                throw new Error(res.status === 401 ? t('pro:login.bad_credentials', 'Adresse ou mot de passe incorrect.') : res.status === 403 && data.error === 'Account disabled' ? t('pro:login.disabled', 'Ce compte est désactivé : contactez l’administrateur de votre structure.')
+                    : res.status === 403 ? t('pro:login.security_refused', 'La connexion a été refusée par une vérification de sécurité. Rechargez la page, puis réessayez.')
                     : res.status === 503 && data.error === 'PUBLIC_BETA_RESTRICTED' ? data.message
-                    : res.status === 429 ? 'Trop de tentatives : patientez quelques minutes.' : 'La connexion a échoué. Réessayez.');
+                    : res.status === 429 ? t('pro:login.too_many', 'Trop de tentatives : patientez quelques minutes.') : t('pro:login.failed', 'La connexion a échoué. Réessayez.'));
             }
 
             // MFA required — switch to code input
@@ -96,8 +98,8 @@ export default function ProLogin() {
 
             if (!res.ok) {
                 // the French message, never the API's English code
-                throw new Error(res.status === 401 || res.status === 400 ? 'Code incorrect ou expiré : saisissez le code affiché maintenant par votre application.'
-                    : res.status === 429 ? 'Trop de tentatives : patientez quelques minutes.' : 'La vérification a échoué. Réessayez.');
+                throw new Error(res.status === 401 || res.status === 400 ? t('pro:login.bad_code', 'Code incorrect ou expiré : saisissez le code affiché maintenant par votre application.')
+                    : res.status === 429 ? t('pro:login.too_many', 'Trop de tentatives : patientez quelques minutes.') : t('pro:login.verify_failed', 'La vérification a échoué. Réessayez.'));
             }
 
             localStorage.setItem('pro_token', data.token);
@@ -112,7 +114,7 @@ export default function ProLogin() {
 
     return (
         <main className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
-            <SEO title="Espace Pro" description="Connexion à votre espace professionnel" path="/pro/login" noindex={true} />
+            <SEO title={t('pro:login.espace_pro', 'Espace Pro')} description={t('pro:login.connexion_votre_espace_professionnel', 'Connexion à votre espace professionnel')} path="/pro/login" noindex={true} />
 
             <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                 <div className="p-8 md:p-12">
@@ -124,15 +126,15 @@ export default function ProLogin() {
                                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
                             </div>
                         </div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight">Espace Pro</h1>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tight">{t('pro:login.espace_pro', 'Espace Pro')}</h1>
                         <p className="text-slate-700 mt-3 font-medium text-lg">
-                            {isMfaStep ? 'Vérification en deux étapes' : 'Accès réservé aux structures'}
+                            {isMfaStep ? t('pro:login.mfa_title', 'Vérification en deux étapes') : t('pro:login.restricted', 'Accès réservé aux structures')}
                         </p>
                     </div>
 
                     {sessionEnded && !error ? (
                         <p role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm font-semibold text-amber-900" data-testid="pro-session-ended">
-                            Votre session a pris fin (déconnexion, nouveau mot de passe, changement dans votre équipe ou durée écoulée). Reconnectez-vous pour continuer.
+                            {t('pro:login.votre_session_pris_fin', 'Votre session a pris fin (déconnexion, nouveau mot de passe, changement dans votre équipe ou durée écoulée). Reconnectez-vous pour continuer.')}
                         </p>
                     ) : null}
                     {/* Error */}
@@ -148,11 +150,11 @@ export default function ProLogin() {
                         <form onSubmit={handleMfaVerify} className="space-y-6">
                             <div className="flex items-center justify-center gap-2 text-sm text-slate-600 mb-2">
                                 <ShieldCheck className="h-4 w-4 text-teal-600" />
-                                Entrez le code de votre application d&apos;authentification
+                                {t('pro:login.entrez_code_votre_application', 'Entrez le code de votre application d\'authentification')}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="mfa-code" className="text-slate-700 font-bold text-xs uppercase tracking-widest">
-                                    Code à 6 chiffres
+                                    {t('pro:login.code_6_chiffres', 'Code à 6 chiffres')}
                                 </Label>
                                 <Input
                                     id="mfa-code"
@@ -172,7 +174,7 @@ export default function ProLogin() {
                                 className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white font-black text-lg rounded-[1.25rem] shadow-xl"
                                 disabled={loading || mfaCode.length !== 6}
                             >
-                                {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : 'Vérifier'}
+                                {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('pro:login.verify', 'Vérifier')}
                             </Button>
                             <button
                                 type="button"
@@ -183,7 +185,7 @@ export default function ProLogin() {
                                 }}
                                 className="w-full text-sm text-slate-700 hover:text-slate-700 transition-colors"
                             >
-                                ← Retour à la connexion
+                                {t('pro:login.retour_connexion', '← Retour à la connexion')}
                             </button>
                         </form>
                     ) : (
@@ -191,7 +193,7 @@ export default function ProLogin() {
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-slate-700 font-bold text-xs uppercase tracking-widest ml-1">
-                                    Identifiant professionnel
+                                    {t('pro:login.identifiant_professionnel', 'Identifiant professionnel')}
                                 </Label>
                                 <div className="relative group">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 w-5 h-5 group-focus-within:text-emerald-500 transition-colors" />
@@ -210,10 +212,10 @@ export default function ProLogin() {
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center px-1">
                                     <Label htmlFor="password" className="text-slate-700 font-bold text-xs uppercase tracking-widest">
-                                        Mot de passe
+                                        {t('pro:login.mot_passe', 'Mot de passe')}
                                     </Label>
                                     <Link to={forgotPath} className="text-xs font-bold text-emerald-700 hover:underline uppercase tracking-tight">
-                                        Oublié ?
+                                        {t('pro:login.oublie', 'Oublié ?')}
                                     </Link>
                                 </div>
                                 <div className="relative group">
@@ -232,9 +234,9 @@ export default function ProLogin() {
 
                             {organizations.length > 1 && (
                                 <div className="space-y-2" data-testid="pro-login-organizations">
-                                    <Label htmlFor="pro-login-org" className="text-slate-700 font-bold text-xs uppercase tracking-widest">Organisation</Label>
+                                    <Label htmlFor="pro-login-org" className="text-slate-700 font-bold text-xs uppercase tracking-widest">{t('pro:login.organisation', 'Organisation')}</Label>
                                     <select id="pro-login-org" className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base" value={structureId} onChange={(e) => setStructureId(e.target.value)} required>
-                                        <option value="">Choisissez l&apos;organisation</option>
+                                        <option value="">{t('pro:login.choisissez_organisation', 'Choisissez l\'organisation')}</option>
                                         {organizations.map((o) => <option key={o.structureId} value={o.structureId}>{o.name}</option>)}
                                     </select>
                                 </div>
@@ -249,15 +251,15 @@ export default function ProLogin() {
                                     <Loader2 className="w-6 h-6 animate-spin" />
                                 ) : (
                                     <span className="flex items-center gap-2">
-                                        Se connecter <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        {t('pro:login.connecter', 'Se connecter')} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 )}
                             </Button>
 
                             <div className="text-center text-sm text-slate-600 mt-4">
-                                Pas encore de compte ?{' '}
+                                {t('pro:login.pas_encore_compte', 'Pas encore de compte ?')}{' '}
                                 <Link to={registerPath} className="text-emerald-700 font-bold hover:underline">
-                                    Créer ma structure
+                                    {t('pro:login.creer_structure', 'Créer ma structure')}
                                 </Link>
                             </div>
                         </form>
@@ -267,16 +269,16 @@ export default function ProLogin() {
                     {!isMfaStep && (
                         <p className="text-center text-[9px] text-slate-600 uppercase tracking-[0.25em] font-black flex items-center justify-center gap-2 pt-8">
                             <ShieldCheck size={14} className="text-emerald-500" />
-                            Connexion protégée · MFA · Messages chiffrés sur nos serveurs
+                            {t('pro:login.connexion_protegee_mfa_messages', 'Connexion protégée · MFA · Messages chiffrés sur nos serveurs')}
                         </p>
                     )}
                 </div>
             </div>
 
             <p className="mt-8 text-slate-600 text-sm font-medium">
-                Besoin d&apos;aide ?{' '}
+                {t('pro:login.besoin_aide', 'Besoin d\'aide ?')}{' '}
                 <a href="/contact" className="text-indigo-600 hover:underline">
-                    Contacter le support
+                    {t('pro:login.contacter_support', 'Contacter le support')}
                 </a>
             </p>
         </main>

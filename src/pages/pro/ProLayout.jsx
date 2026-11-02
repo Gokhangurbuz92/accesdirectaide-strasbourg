@@ -14,8 +14,10 @@ import { getCsrfHeaders } from '@/lib/csrf';
 import ServiceUnavailable from '@/components/ServiceUnavailable';
 import { proRole } from '@/lib/proLabels.js';
 import ProSessionExpiry from '@/components/pro/ProSessionExpiry';
+import { useT } from '@/i18n';
 
 export default function ProLayout() {
+    const { t } = useT('pro');
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(true);
@@ -103,7 +105,7 @@ export default function ProLayout() {
     if (['/pro/login', '/pro/register', '/pro/register-invite', '/pro/forgot-password', '/pro/reset-password'].includes(location.pathname)) {
         return <Outlet />;
     }
-    if (unavailable) return <ServiceUnavailable area="L’espace professionnel" />;
+    if (unavailable) return <ServiceUnavailable area={t('pro:layout.area', 'L’espace professionnel')} />;
 
     return (
         <div className="min-h-screen bg-slate-100 flex">
@@ -111,11 +113,11 @@ export default function ProLayout() {
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
             >
-                Aller au contenu principal
+                {t('pro:layout.aller_contenu_principal', 'Aller au contenu principal')}
             </a>
             <SEO
-                title="AccesDirect Pro"
-                description="Espace professionnel."
+                title={t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}
+                description={t('pro:layout.espace_professionnel', 'Espace professionnel.')}
                 noindex={true}
             />
             {/* Onboarding Tour */}
@@ -125,10 +127,10 @@ export default function ProLayout() {
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col">
                 <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-                    <p className="font-bold text-xl text-blue-800">AccesDirect Pro</p>{/* Q10: the brand is not the page heading — each page has its own h1 */}
+                    <p className="font-bold text-xl text-blue-800">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</p>{/* Q10: the brand is not the page heading — each page has its own h1 */}
                     {user && <NotificationCenter proId={user.id} />}
                 </div>
-                <nav className="flex-1 p-4 space-y-1" aria-label="Navigation de l'espace pro">
+                <nav className="flex-1 p-4 space-y-1" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')}>
                     <ProNavItems role={user?.role} />
                 </nav>
                 <div className="p-4 border-t border-slate-200">
@@ -138,7 +140,7 @@ export default function ProLayout() {
                     </div>
                     <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
-                        Déconnexion
+                        {t('pro:layout.deconnexion', 'Déconnexion')}
                     </Button>
                 </div>
             </aside>
@@ -156,18 +158,18 @@ export default function ProLayout() {
                         className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                     >
                         {menuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
-                        <span className="sr-only">{menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}</span>
+                        <span className="sr-only">{menuOpen ? t('pro:layout.close_menu', 'Fermer le menu') : t('pro:layout.open_menu', 'Ouvrir le menu')}</span>
                     </button>
-                    <p className="font-bold text-lg text-blue-800">AccesDirect Pro</p>
+                    <p className="font-bold text-lg text-blue-800">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</p>
                     <div className="flex items-center gap-1">
                         {user && <NotificationCenter />}
-                        <button type="button" onClick={handleLogout} aria-label="Se déconnecter" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <button type="button" onClick={handleLogout} aria-label={t('pro:layout.deconnecter', 'Se déconnecter')} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
                             <LogOut className="h-5 w-5" aria-hidden="true" />
                         </button>
                     </div>
                 </header>
                 {menuOpen && (
-                    <nav id="pro-mobile-nav" aria-label="Navigation de l'espace pro" className="md:hidden border-b border-slate-200 bg-white p-3 space-y-1" data-testid="pro-mobile-nav">
+                    <nav id="pro-mobile-nav" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')} className="md:hidden border-b border-slate-200 bg-white p-3 space-y-1" data-testid="pro-mobile-nav">
                         <ProNavItems role={user?.role} />
                     </nav>
                 )}
@@ -182,32 +184,33 @@ export default function ProLayout() {
 
 /** The navigation entries, shared by the desktop sidebar and the phone menu. */
 function ProNavItems({ role }) {
+    const { t } = useT('pro');
     return (
         <>
-            <NavLink to="/pro/dashboard" icon={LayoutDashboard}>Tableau de bord</NavLink>
-            <NavLink to="/pro/dossiers" icon={FileText}>Dossiers suivis</NavLink>
+            <NavLink to="/pro/dashboard" icon={LayoutDashboard}>{t('pro:layout.tableau_bord', 'Tableau de bord')}</NavLink>
+            <NavLink to="/pro/dossiers" icon={FileText}>{t('pro:layout.dossiers_suivis', 'Dossiers suivis')}</NavLink>
             {/* R18 (R31): working baskets of verified aides, démarches and lieux */}
-            <NavLink to="/pro/selections" icon={ListChecks}>Sélections d’orientation</NavLink>
-            <NavLink to="/pro/orientations" icon={Users}>Orientations</NavLink>
-            <NavLink to="/pro/rdv/agenda" icon={CalendarDays}>Agenda RDV</NavLink>
-            <NavLink to="/pro/rdv/new" icon={FileText}>Nouveau RDV</NavLink>
-            <NavLink to="/pro/rdv/services" icon={FileText}>Services RDV</NavLink>
-            <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>Disponibilités</NavLink>
-            <NavLink to="/pro/rdv/absences" icon={Clock3}>Absences</NavLink>
-            <NavLink to="/pro/messages" icon={MessageCircle}>Messages</NavLink>
+            <NavLink to="/pro/selections" icon={ListChecks}>{t('pro:layout.selections_orientation', 'Sélections d’orientation')}</NavLink>
+            <NavLink to="/pro/orientations" icon={Users}>{t('pro:layout.orientations', 'Orientations')}</NavLink>
+            <NavLink to="/pro/rdv/agenda" icon={CalendarDays}>{t('pro:layout.agenda_rdv', 'Agenda RDV')}</NavLink>
+            <NavLink to="/pro/rdv/new" icon={FileText}>{t('pro:layout.nouveau_rdv', 'Nouveau RDV')}</NavLink>
+            <NavLink to="/pro/rdv/services" icon={FileText}>{t('pro:layout.services_rdv', 'Services RDV')}</NavLink>
+            <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>{t('pro:layout.disponibilites', 'Disponibilités')}</NavLink>
+            <NavLink to="/pro/rdv/absences" icon={Clock3}>{t('pro:layout.absences', 'Absences')}</NavLink>
+            <NavLink to="/pro/messages" icon={MessageCircle}>{t('pro:layout.messages', 'Messages')}</NavLink>
             {/* R20: the territorial observatory (k-anonymous aggregates over verified organizations, ANONYMITY_REVIEW) was reachable only by its address */}
-            <NavLink to="/pro/regional" icon={Globe}>Observatoire territorial</NavLink>
+            <NavLink to="/pro/regional" icon={Globe}>{t('pro:layout.observatoire_territorial', 'Observatoire territorial')}</NavLink>
             {/* owner usefulness pass (2026-10-25): the video room opens from each video appointment (its page); /pro/visio was a « bientôt disponible » page */}
             {role === 'STRUCTURE_ADMIN' || role === 'SUPERADMIN' ? (
                 <>
-                    <NavLink to="/pro/team" icon={Users}>Mon équipe</NavLink>
-                    <NavLink to="/pro/audit" icon={Shield}>Journal d&apos;audit</NavLink>
-                    <NavLink to="/pro/reports" icon={BarChart3}>Impact</NavLink>
-                    <NavLink to="/pro/structure" icon={Building2}>Ma structure</NavLink>
+                    <NavLink to="/pro/team" icon={Users}>{t('pro:layout.mon_equipe', 'Mon équipe')}</NavLink>
+                    <NavLink to="/pro/audit" icon={Shield}>{t('pro:layout.journal_audit', 'Journal d\'audit')}</NavLink>
+                    <NavLink to="/pro/reports" icon={BarChart3}>{t('pro:layout.impact', 'Impact')}</NavLink>
+                    <NavLink to="/pro/structure" icon={Building2}>{t('pro:layout.structure', 'Ma structure')}</NavLink>
                 </>
             ) : null}
             {/* Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer */}
-            <NavLink to="/pro/parametres" icon={Settings}>Paramètres</NavLink>
+            <NavLink to="/pro/parametres" icon={Settings}>{t('pro:layout.parametres', 'Paramètres')}</NavLink>
         </>
     );
 }

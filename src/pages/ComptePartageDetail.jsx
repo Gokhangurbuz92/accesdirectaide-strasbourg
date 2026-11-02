@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import CitizenSharingPanel from '@/components/sharing/CitizenSharingPanel';
 import DossierTransparency from '@/components/sharing/DossierTransparency';
+import { useT } from '@/i18n';
 
 /**
  * PKG-1 / K0 — manage a dossier that is attached to the signed-in account (/compte/partages/:shareId).
@@ -12,15 +13,16 @@ import DossierTransparency from '@/components/sharing/DossierTransparency';
  * If the dossier is not attached to this account the server answers the same uniform "not found" as for an unknown dossier.
  */
 export default function ComptePartageDetail() {
+  const { t } = useT('compte');
   const { shareId } = useParams();
   const [erased, setErased] = useState(false);
   return (
     <div className="container mx-auto max-w-3xl space-y-4 px-4 py-8" data-testid="compte-partage-detail">
-      <SEO title="Gérer un dossier partagé" noindex />
-      <Button asChild variant="outline" size="sm"><Link to="/compte/profil">← Mon profil</Link></Button>
-      <h1 className="text-2xl font-bold text-slate-900">Gérer ce dossier</h1>
+      <SEO title={t('compte:share.gerer_dossier_partage', 'Gérer un dossier partagé')} noindex />
+      <Button asChild variant="outline" size="sm"><Link to="/compte/profil">{t('compte:share.mon_profil', '← Mon profil')}</Link></Button>
+      <h1 className="text-2xl font-bold text-slate-900">{t('compte:share.gerer_dossier', 'Gérer ce dossier')}</h1>
       {erased ? (
-        <p role="status" data-testid="partage-erased" className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">Le dossier a été supprimé. Certaines traces techniques peuvent être conservées pour respecter la loi.</p>
+        <p role="status" data-testid="partage-erased" className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{t('compte:share.dossier_ete_supprime_certaines', 'Le dossier a été supprimé. Certaines traces techniques peuvent être conservées pour respecter la loi.')}</p>
       ) : (
         <>
           <CitizenSharingPanel shareId={shareId} ownerSecret="" onErased={() => setErased(true)} />

@@ -12,7 +12,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
+import { useT } from '@/i18n';
 export default function ProRegister() {
+    const { t } = useT('pro');
     const [structureName, setStructureName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,7 +41,7 @@ export default function ProRegister() {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.error || 'Erreur lors de l\'inscription');
+                throw new Error(data.error || t('pro:register.error', 'Erreur lors de l\'inscription'));
             }
 
             localStorage.setItem('pro_token', data.token);
@@ -54,15 +56,15 @@ export default function ProRegister() {
     return (
         <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
             <SEO
-                title="Créer un compte Pro"
-                description="Inscription à l'espace professionnel AccesDirect"
+                title={t('pro:register.creer_compte_pro', 'Créer un compte Pro')}
+                description={t('pro:register.inscription_espace_professionnel_accesdirect', 'Inscription à l\'espace professionnel AccesDirect')}
                 path="/pro/register"
                 noindex={true}
             />
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle as="h1" className="text-2xl text-center">Créer un compte Pro</CardTitle>
-                    <CardDescription className="text-center">Rejoignez AccesDirect pour gérer votre structure</CardDescription>
+                    <CardTitle as="h1" className="text-2xl text-center">{t('pro:register.creer_compte_pro', 'Créer un compte Pro')}</CardTitle>
+                    <CardDescription className="text-center">{t('pro:register.rejoignez_accesdirect_pour_gerer', 'Rejoignez AccesDirect pour gérer votre structure')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleRegister} className="space-y-4">
@@ -73,18 +75,18 @@ export default function ProRegister() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="structureName">Nom de la structure</Label>
+                            <Label htmlFor="structureName">{t('pro:register.nom_structure', 'Nom de la structure')}</Label>
                             <Input
                                 id="structureName"
                                 type="text"
-                                placeholder="Ex: CCAS de Paris, Association Espoir..."
+                                placeholder={t('pro:register.ccas_paris_association_espoir', 'Ex: CCAS de Paris, Association Espoir...')}
                                 value={structureName}
                                 onChange={e => setStructureName(e.target.value)}
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email professionnel</Label>
+                            <Label htmlFor="email">{t('pro:register.email_professionnel', 'Email professionnel')}</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -94,7 +96,7 @@ export default function ProRegister() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Mot de passe</Label>
+                            <Label htmlFor="password">{t('pro:register.mot_passe', 'Mot de passe')}</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -110,7 +112,7 @@ export default function ProRegister() {
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "S'inscrire"}
                         </Button>
                         <div className="text-center text-sm text-slate-600 mt-4">
-                            Déjà un compte ? <Link to={loginPath} className="text-blue-600 underline underline-offset-2 hover:text-blue-800">Se connecter</Link>
+                            {t('pro:register.deja_compte', 'Déjà un compte ?')} <Link to={loginPath} className="text-blue-600 underline underline-offset-2 hover:text-blue-800">{t('pro:register.connecter', 'Se connecter')}</Link>
                         </div>
                     </form>
                 </CardContent>

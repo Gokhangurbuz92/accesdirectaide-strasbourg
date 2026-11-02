@@ -9,18 +9,16 @@ import SEO from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
+import { formatDate as formatInLanguage, useT } from '@/i18n';
 
 function formatDate(/** @type {string | number | null | undefined} */ value) {
   const date = new Date(String(value || ''));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-    timeZone: 'Europe/Paris',
-  });
+  return formatInLanguage(date, { dateStyle: 'short', timeStyle: 'short' });
 }
 
 export default function CompteMessages() {
+  const { t } = useT('compte');
   const location = useLocation();
   const safeNext = useMemo(
     () => normalizeNextPath(location.pathname + location.search, '/compte/messages'),
@@ -56,8 +54,8 @@ export default function CompteMessages() {
   return (
     <div className="min-h-screen bg-slate-50 py-8">
       <SEO
-        title="Mes messages"
-        description="Conversation rendez-vous avec votre structure"
+        title={t('compte:messages.mes_messages', 'Mes messages')}
+        description={t('compte:messages.conversation_rendez_vous_avec', 'Conversation rendez-vous avec votre structure')}
         path="/compte/messages"
         noindex={true}
       />
@@ -67,38 +65,38 @@ export default function CompteMessages() {
           <CardHeader>
             <CardTitle as="h1" className="flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-primary" aria-hidden="true" />
-              Mes messages
+              {t('compte:messages.mes_messages', 'Mes messages')}
             </CardTitle>
             <CardDescription>
-              Retrouvez vos conversations liées à vos rendez-vous.
+              {t('compte:messages.retrouvez_vos_conversations_liees', 'Retrouvez vos conversations liées à vos rendez-vous.')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {conversationsQuery.isLoading ? (
               <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Loader2 className="h-4 w-4 animate-spin" /> Chargement des conversations...
+                <Loader2 className="h-4 w-4 animate-spin" /> {t('compte:messages.chargement_des_conversations', 'Chargement des conversations...')}
               </div>
             ) : null}
 
             {conversationsQuery.error ? (
               <p className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-                {messagingErrorText(conversationsQuery.error, 'Impossible de charger vos messages.')}
+                {messagingErrorText(conversationsQuery.error, t('compte:messages.load_failed', 'Impossible de charger vos messages.'))}
               </p>
             ) : null}
 
             {!conversationsQuery.isLoading && !conversationsQuery.error && items.length === 0 ? (
               <div className="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-700">
-                Aucune conversation pour le moment.
+                {t('compte:messages.aucune_conversation_pour_moment', 'Aucune conversation pour le moment.')}
                 <div className="mt-3">
                   <Link to="/annuaire" className="font-medium text-primary underline">
-                    Revenir a l'annuaire
+                    {t('compte:messages.revenir_annuaire', 'Revenir a l\'annuaire')}
                   </Link>
                 </div>
               </div>
             ) : null}
 
             {items.length > 0 ? (
-              <ul className="space-y-3" aria-label="Conversations rendez-vous">
+              <ul className="space-y-3" aria-label={t('compte:messages.conversations_rendez_vous', 'Conversations rendez-vous')}>
                 {items.map((/** @type {{
                     id: string;
                     structure?: { name?: string };
@@ -109,19 +107,19 @@ export default function CompteMessages() {
                   <li key={item.id} className="rounded-md border border-slate-200 bg-white p-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-900">{item.structure?.name || 'Structure'}</p>
+                        <p className="text-sm font-semibold text-slate-900">{item.structure?.name || t('compte:messages.structure', 'Structure')}</p>
                         <p className="text-xs text-slate-600">
-                          RDV: {item.appointment?.serviceName || 'Service'} - {formatDate(item.appointment?.startsAt)}
+                          {t('compte:messages.appointment_line', 'RDV: {{service}} - {{when}}', { service: item.appointment?.serviceName || t('compte:messages.service', 'Service'), when: formatDate(item.appointment?.startsAt) })}
                         </p>
-                        <p className="text-sm text-slate-700">{item.lastMessagePreview || 'Aucun message'}</p>
+                        <p className="text-sm text-slate-700">{item.lastMessagePreview || t('compte:messages.no_message', 'Aucun message')}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-slate-500">Dernier message: {formatDate(item.lastMessageAt)}</p>
+                        <p className="text-xs text-slate-500">{t('compte:messages.dernier_message', 'Dernier message:')} {formatDate(item.lastMessageAt)}</p>
                         <Link
                           to={`/compte/messages/${encodeURIComponent(item.id)}`}
                           className="mt-2 inline-flex rounded-md border border-input px-3 py-1.5 text-sm font-medium hover:bg-slate-100"
                         >
-                          Ouvrir
+                          {t('compte:messages.ouvrir', 'Ouvrir')}
                         </Link>
                       </div>
                     </div>

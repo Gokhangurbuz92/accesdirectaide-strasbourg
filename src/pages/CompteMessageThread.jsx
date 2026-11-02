@@ -11,18 +11,16 @@ import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { AttachmentList, AttachmentPicker, readAttachment, saveDownload } from '@/components/Messaging/MessageAttachments';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
+import { formatDate as formatInLanguage, useT } from '@/i18n';
 
 function formatDate(/** @type {number} */ value) {
   const date = new Date(String(value || ''));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-    timeZone: 'Europe/Paris',
-  });
+  return formatInLanguage(date, { dateStyle: 'short', timeStyle: 'short' });
 }
 
 export default function CompteMessageThread() {
+  const { t } = useT('compte');
   const { conversationId } = useParams();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -32,7 +30,7 @@ export default function CompteMessageThread() {
   const [fileKey, setFileKey] = useState(0);
   const download = async (/** @type {{ id: string, name: string }} */ a) => {
     try { const r = await rdvMessagingClient.user.downloadAttachment(String(conversationId || ''), a.id); if (!r.ok) throw new Error(String(r.status)); await saveDownload(r, a.name); }
-    catch { setStatusText('Téléchargement impossible.'); }
+    catch { setStatusText(t('compte:thread.download_failed', 'Téléchargement impossible.')); }
   };
 
   const safeNext = useMemo(
@@ -59,12 +57,12 @@ const sendMutation = useMutation({
     mutationFn: async (value) => rdvMessagingClient.user.sendMessage(String(conversationId || ''), value.text, await readAttachment(value.file)),
     onSuccess: async () => {
       setBody(''); setFile(null); setFileKey((k) => k + 1);
-      setStatusText('Message envoye.');
+      setStatusText(t('compte:thread.sent', 'Message envoye.'));
       await queryClient.invalidateQueries({ queryKey: ['compte-message-thread', conversationId] });
       await queryClient.invalidateQueries({ queryKey: ['compte-messages-conversations'] });
     },
     onError: (error) => {
-      setStatusText(messagingErrorText(error, "Impossible d'envoyer votre message."));
+      setStatusText(messagingErrorText(error, t('compte:thread.send_failed', 'Impossible d\'envoyer votre message.')));
     },
   });
 
@@ -84,43 +82,43 @@ const sendMutation = useMutation({
   return (
     <div className="min-h-screen bg-slate-50 py-8">
       <SEO
-        title="Conversation RDV"
-        description="Echangez avec la structure au sujet de votre rendez-vous"
+        title={t('compte:thread.conversation_rdv', 'Conversation RDV')}
+        description={t('compte:thread.echangez_avec_structure_sujet', 'Echangez avec la structure au sujet de votre rendez-vous')}
         path={`/compte/messages/${encodeURIComponent(String(conversationId || ''))}`}
         noindex={true}
       />
 
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 space-y-4">
         <Link to="/compte/messages" className="inline-flex text-sm font-medium text-primary underline">
-          Retour aux conversations
+          {t('compte:thread.retour_aux_conversations', 'Retour aux conversations')}
         </Link>
 
         <Card>
           <CardHeader>
-            <CardTitle as="h1">Conversation rendez-vous</CardTitle>
+            <CardTitle as="h1">{t('compte:thread.conversation_rendez_vous', 'Conversation rendez-vous')}</CardTitle>
             <CardDescription>
-              {item?.structure?.name || 'Structure'} - {formatDate(item?.appointment?.startsAt)}
+              {item?.structure?.name || t('compte:thread.structure', 'Structure')} - {formatDate(item?.appointment?.startsAt)}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {conversationQuery.isLoading ? (
               <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Loader2 className="h-4 w-4 animate-spin" /> Chargement...
+                <Loader2 className="h-4 w-4 animate-spin" /> {t('compte:thread.chargement', 'Chargement...')}
               </div>
             ) : null}
 
             {conversationQuery.error ? (
               <p className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-                {messagingErrorText(conversationQuery.error, 'Conversation introuvable.')}
+                {messagingErrorText(conversationQuery.error, t('compte:thread.not_found', 'Conversation introuvable.'))}
               </p>
             ) : null}
 
             {!conversationQuery.isLoading && !conversationQuery.error ? (
-              <div className="space-y-3" role="list" aria-label="Messages de la conversation">
+              <div className="space-y-3" role="list" aria-label={t('compte:thread.messages_conversation', 'Messages de la conversation')}>
                 {messages.length === 0 ? (
                   <p className="rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-700">
-                    Aucun message pour le moment.
+                    {t('compte:thread.aucun_message_pour_moment', 'Aucun message pour le moment.')}
                   </p>
                 ) : (
                   messages.map((/** @type {{ senderType: string; id: any; createdAt: number; body: any; attachments?: any[] }} */ message) => {
@@ -132,7 +130,7 @@ const sendMutation = useMutation({
                         className={`rounded-md border p-3 text-sm ${mine ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-white'}`}
                       >
                         <p className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-700">
-                          {mine ? 'Vous' : 'Structure'} - {formatDate(message.createdAt)}
+                          {mine ? t('compte:thread.you', 'Vous') : t('compte:thread.structure', 'Structure')} - {formatDate(message.createdAt)}
                         </p>
                         <p className="whitespace-pre-wrap text-slate-800">{message.body}</p>
                       <AttachmentList attachments={message.attachments} onDownload={download} testid="citizen-attachment" />
@@ -153,7 +151,7 @@ const sendMutation = useMutation({
               }}
             >
               <label htmlFor="message-body" className="block text-sm font-medium text-slate-700">
-                Nouveau message
+                {t('compte:thread.nouveau_message', 'Nouveau message')}
               </label>
               <textarea
                 id="message-body"
@@ -162,12 +160,12 @@ const sendMutation = useMutation({
                 rows={4}
                 maxLength={2000}
                 className="w-full rounded-md border border-slate-300 bg-white p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="Ecrivez votre message..."
+                placeholder={t('compte:thread.ecrivez_votre_message', 'Ecrivez votre message...')}
               />
               <AttachmentPicker key={fileKey} id="citizen-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />
               <div className="flex items-center gap-3">
                 <Button type="submit" disabled={sendMutation.isPending || (!String(body || '').trim() && !file)}>
-                  {sendMutation.isPending ? 'Envoi...' : 'Envoyer'}
+                  {sendMutation.isPending ? t('compte:thread.sending', 'Envoi...') : t('compte:thread.send', 'Envoyer')}
                 </Button>
                 <span className="text-xs text-slate-700">{String(body || '').length}/2000</span>
               </div>
