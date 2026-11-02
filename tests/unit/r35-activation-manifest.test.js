@@ -32,7 +32,7 @@ describe('R35 activation manifest', () => {
 
   it('names only variables the manifest defines, and aliases point at a defined variable', () => {
     for (const m of manifest.modules) {
-      for (const n of [...(m.requires || []), ...(m.optional || []), ...(m.approval ? [m.approval] : [])]) expect(manifest.variables[n], `${m.id}: ${n}`).toBeTruthy();
+      for (const n of [...(m.requires || []).flatMap((x) => x.split('|')), ...(m.optional || []), ...(m.approval ? [m.approval] : [])]) expect(manifest.variables[n], `${m.id}: ${n}`).toBeTruthy();   // R36: « A|B » = either
       for (const d of m.requires_module || []) expect(manifest.modules.some((x) => x.id === d), `${m.id} -> ${d}`).toBe(true);
     }
     for (const [n, v] of Object.entries(manifest.variables)) if (v.class === 'alias') expect(manifest.variables[v.canonical], n).toBeTruthy();

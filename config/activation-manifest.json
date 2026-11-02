@@ -296,6 +296,15 @@
       "provider": "alert-channel",
       "format": "^https://"
     },
+    "ALERT_EMAIL": {
+      "class": "required_outside_beta",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$",
+      "note": "R36: the address that receives operational alerts by e-mail through the site's mail provider; ALERT_WEBHOOK_URL or ALERT_EMAIL is enough"
+    },
     "WEBHOOK_URL": {
       "class": "alias",
       "nature": "secret",
@@ -1669,7 +1678,7 @@
         "admin/elevation"
       ],
       "requires": [
-        "ALERT_WEBHOOK_URL"
+        "ALERT_WEBHOOK_URL|ALERT_EMAIL"
       ],
       "optional": [
         "ALERT_VEILLE_STALE_HOURS"

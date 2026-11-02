@@ -95,7 +95,13 @@ export function evaluateReadiness({ root, manifest, source, testsReport }) {
       const p = path.join(root, g.file);
       return !fs.existsSync(p) || !new RegExp(g.fixed_when, 'i').test(fs.readFileSync(p, 'utf8'));
     }).map((/** @type {any} */ g) => g.id);
-    const vars = (m.requires || []).map((/** @type {string} */ n) => ({ name: n, state: presence(source, n, manifest.variables[n]), provider: manifest.variables[n]?.provider, account: Boolean(manifest.variables[n]?.account) }));
+    // R36: « A|B » in requires = either variable is enough (an alert channel: a webhook or an e-mail address)
+    const one = (/** @type {string} */ n) => ({ name: n, state: presence(source, n, manifest.variables[n]), provider: manifest.variables[n]?.provider, account: Boolean(manifest.variables[n]?.account) });
+    const vars = (m.requires || []).map((/** @type {string} */ n) => {
+      if (!n.includes('|')) return one(n);
+      const alts = n.split('|').map(one); const ok = alts.find((v) => v.state === 'present');
+      return ok ? { ...ok, name: n } : { name: n, state: alts[0].state, provider: alts.map((v) => v.provider).filter(Boolean).join(' or '), account: alts.every((v) => v.account) };
+    });
     const missingVars = vars.filter((/** @type {any} */ v) => v.state !== 'present');
     const providerMissing = missingVars.filter((/** @type {any} */ v) => v.account);
     const approval = m.approval ? has(m.approval) && (source.mode === 'names' || String(source.env[m.approval]).trim() === 'true') : null;

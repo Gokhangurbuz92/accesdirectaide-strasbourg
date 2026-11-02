@@ -56,7 +56,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
   add('db.tls_verified', get('DATABASE_SSL_VERIFY') === 'true' ? 'PASS' : 'FAIL', 'DATABASE_SSL_VERIFY=true: the database certificate is verified');
   if (!needs(['jobs'])) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
-  else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https): operational alerts must reach a person, not only the logs');
+  // R36: an e-mail to ALERT_EMAIL through the site's mail provider is an alert channel too (no Discord / Slack needed)
+  else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');
   add('share.legacy_off', get('ADA_LEGACY_SHARE_READ') === '1' ? 'FAIL' : 'PASS', 'ADA_LEGACY_SHARE_READ stays off (a bare link would open a dossier)');
   add('ai.no_unapproved_provider_key', get('GEMINI_API_KEY') || get('GOOGLE_API_KEY') ? 'FAIL' : 'PASS', 'GEMINI_API_KEY / GOOGLE_API_KEY must not exist until an AI provider is approved (DPIA, DPA)');

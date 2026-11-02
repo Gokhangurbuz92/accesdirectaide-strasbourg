@@ -1,4 +1,5 @@
 // @ts-nocheck
+import crypto from 'node:crypto';
 import { env } from './env.js';
 import logger from './logger.js';
 
@@ -16,6 +17,22 @@ import logger from './logger.js';
 const testOutbox = [];
 /** Upper bound for provider HTTP calls so a hung provider cannot stall callers. */
 const MAILER_HTTP_TIMEOUT_MS = 10_000;
+
+/**
+ * R36: a provider that answers 429 (rate limit) has not taken the message: it is sent again after the delay it asks for (Retry-After, at most 5 s), at most
+ * twice. With an idempotency key (Resend) a 5xx or a network error is retried too — the provider then ignores a copy it already accepted; without one
+ * (Mailjet) only the 429 is, so a message is never sent twice. @param {string} url @param {RequestInit} init @param {{ idempotent: boolean, sleep?: (ms: number) => Promise<void> }} o
+ */
+export async function postWithRetry(url, init, { idempotent, sleep = (ms) => new Promise((r) => setTimeout(r, ms)) }) {
+  for (let attempt = 0; ; attempt += 1) {
+    let res = null; let error = null;
+    try { res = await fetch(url, { ...init, signal: AbortSignal.timeout(MAILER_HTTP_TIMEOUT_MS) }); } catch (e) { error = e; }
+    const retryable = res ? res.status === 429 || (idempotent && res.status >= 500) : idempotent;
+    if (!retryable || attempt >= 2) { if (error) throw error; return res; }
+    const header = res?.headers?.get?.('retry-after'); const after = header === null || header === undefined || header === '' ? NaN : Number(header);
+    await sleep(Number.isFinite(after) && after >= 0 ? Math.min(after * 1000, 5000) : 500 * 2 ** attempt);
+  }
+}
 const warnedProviders = new Set();
 
 /**
@@ -175,15 +192,14 @@ async function sendMailRaw(payload) {
         }],
       };
 
-      const mjResponse = await fetch('https://api.mailjet.com/v3.1/send', {
+      const mjResponse = await postWithRetry('https://api.mailjet.com/v3.1/send', {
         method: 'POST',
-        signal: AbortSignal.timeout(MAILER_HTTP_TIMEOUT_MS),
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Basic ${credentials}`,
         },
         body: JSON.stringify(mjPayload),
-      });
+      }, { idempotent: false });
 
       if (!mjResponse.ok) {
         const errBody = await mjResponse.text().catch(() => '');
@@ -210,12 +226,12 @@ async function sendMailRaw(payload) {
       return { accepted: true, delivered: false, provider };
     }
     try {
-      const resendResponse = await fetch('https://api.resend.com/emails', {
+      const resendResponse = await postWithRetry('https://api.resend.com/emails', {
         method: 'POST',
-        signal: AbortSignal.timeout(MAILER_HTTP_TIMEOUT_MS),
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${apiKey}`,
+          'Idempotency-Key': crypto.randomUUID(),   // one key per message: a retried copy is not sent twice
         },
         body: JSON.stringify({
           from,
@@ -225,7 +241,7 @@ async function sendMailRaw(payload) {
           ...(payload.html ? { html: payload.html } : {}),
           ...(payload.attachments?.length ? { attachments: providerAttachments(payload.attachments).map((f) => ({ filename: f.filename, content: f.base64, content_type: f.contentType })) } : {}),
         }),
-      });
+      }, { idempotent: true });
       if (!resendResponse.ok) {
         const errBody = await resendResponse.text().catch(() => '');
         logger.error(`[mailer] Resend error (${resendResponse.status}): ${errBody}`);

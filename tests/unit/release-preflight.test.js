@@ -35,6 +35,13 @@ describe('release preflight (synthetic env, values never printed)', () => {
     expect(by(run({ ...GOOD, ADA_LOCAL_STORAGE_DIR: '/tmp/x' }), 'storage.no_local_dir')).toBe('FAIL');
     expect(by(run({ ...GOOD, ADA_LOCAL_STORAGE_DIR: '/tmp/x', ADA_PUBLIC_BETA_RESTRICTED: 'true' }), 'storage.no_local_dir')).toBe('WARN');
   });
+  it('R36: an alert e-mail through a real mail provider is an alert channel; with no real provider it is not', () => {
+    const { ALERT_WEBHOOK_URL: _hook, ...noHook } = GOOD;
+    expect(by(run(noHook), 'alerts.webhook')).toBe('FAIL');
+    expect(by(run({ ...noHook, ALERT_EMAIL: 'contact@example.test' }), 'alerts.webhook')).toBe('PASS');
+    expect(by(run({ ...noHook, ALERT_EMAIL: 'contact@example.test', MAILER_PROVIDER: 'noop' }), 'alerts.webhook')).toBe('FAIL');
+    expect(by(run({ ...noHook, ALERT_EMAIL: 'pas une adresse' }), 'alerts.webhook')).toBe('FAIL');
+  });
   it('never echoes secret values', () => {
     const planted = { ...GOOD, AUTH_SECRET: 'PLANTED-SECRET-VALUE-1234567890-ABCDEFGH', ADMIN_TOKEN: 'PLANTED-ADMIN', DATABASE_URL: 'postgresql://user:PLANTED-PW@db.example.test/x', MAILER_API_KEY: 'PLANTED-KEY' };
     const text = JSON.stringify(run(planted));

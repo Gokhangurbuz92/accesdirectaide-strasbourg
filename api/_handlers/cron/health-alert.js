@@ -1,5 +1,6 @@
 // @ts-nocheck
 import logger from '../../_utils/logger.js';
+import { sendMail } from '../../_utils/mailer.js';
 import { getCronAuth, getHeader } from '../../_utils/cronAuth.js';
 import { env } from '../../_utils/env.js';
 import { kv } from '../../_utils/kv.js';
@@ -19,7 +20,7 @@ import { randomUUID } from 'crypto';
  *
  * Alert delivery:
  *   - Sentry (via console.error → Sentry captures)
- *   - Optional webhook (ALERT_WEBHOOK_URL env var)
+ *   - Optional webhook (ALERT_WEBHOOK_URL env var) and/or e-mail to ALERT_EMAIL through the site's mail provider (R36)
  *   - Alert log in KV for admin dashboard
  *
  * Anti-spam: same alert type suppressed for 1 hour via KV.
@@ -87,6 +88,16 @@ async function fireAlert(name, message, details = {}) {
             // R12: not delivered — the cooldown is given back so the next check (5 minutes later) tries again instead of staying silent for an hour
             logger.warn({ err: err?.message }, '[HEALTH-ALERT] Webhook delivery failed');
             try { await bounded(kv.del(alertKey)); } catch { /* KV down: no cooldown was taken either */ }
+        }
+    }
+
+    // 2b. R36: or by e-mail through the site's own mail provider (ALERT_EMAIL, e.g. the team mailbox): no extra service (Discord, Slack) needed
+    const alertEmail = String(process.env.ALERT_EMAIL || '').trim();
+    if (alertEmail) {
+        const r = await sendMail({ to: alertEmail, subject: `[AccesDirectAide] Alerte : ${name}`, text: `${message}\n\n${JSON.stringify(details, null, 2)}\n\n${alert.timestamp}`, category: 'ops-alert' }).catch(() => null);
+        if (!r || r.outcome !== 'PROVIDER_ACCEPTED') {
+            logger.warn({ outcome: r?.outcome || 'ERROR' }, '[HEALTH-ALERT] e-mail alert not accepted by the provider');
+            if (!webhookUrl) { try { await bounded(kv.del(alertKey)); } catch { /* KV down: no cooldown was taken either */ } }
         }
     }
 
