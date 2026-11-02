@@ -44,6 +44,8 @@ const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des d
  * Only equivalences of meaning, never a route to one record.
  */
 export const EVERYDAY_PHRASES = [
+  // R39: suicide prevention is the national listening line of the official sheet « numéros d'urgence et d'écoute » (F33954, the 3114), not a psychologist
+  [/\b(prevention du suicide|idees suicidaires|pensees suicidaires|envie de me suicider)\b/g, 'numero ecoute suicide'],
   // R38 (D16): paying for a care home is what the sheet calls « aide sociale à l'hébergement » (F2444), not the list of care homes (F255) — before « ehpad »
   [/\b(payer|financer|regler) (la |une |l')?(maisons? de retraite|ehpad)\b/g, 'aide sociale hebergement agee'],
   // R38 (D16): parents who « entrust » their child to child protection: the sheet « Placement volontaire d'un enfant par ses parents » (F959)

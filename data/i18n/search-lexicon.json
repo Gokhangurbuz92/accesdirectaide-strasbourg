@@ -8,7 +8,6 @@
    "fr": "loyer",
    "en": [
     "rent*",
-    "housing benefit",
     "rent help",
     "rent assistance"
    ],
@@ -806,8 +805,7 @@
     "konto*"
    ],
    "uk": [
-    "банківськ* рахун*",
-    "рахун*"
+    "банківськ* рахун*"
    ]
   },
   {
@@ -1158,6 +1156,72 @@
    ],
    "uk": [
     "дискримінац*"
+   ]
+  },
+  {
+   "id": "housing-aid",
+   "fr": "allocation logement",
+   "en": [
+    "housing benefit*",
+    "housing allowance*"
+   ],
+   "tr": [
+    "konut yardım*"
+   ],
+   "ar": [
+    "اعانه سكن*"
+   ],
+   "de": [
+    "wohnbeihilfe*"
+   ],
+   "uk": [
+    "житлов* субсиді*"
+   ]
+  },
+  {
+   "id": "abortion",
+   "fr": "IVG",
+   "en": [
+    "abortion*",
+    "termination of pregnancy"
+   ],
+   "tr": [
+    "kürtaj*",
+    "gebelik sonlandırma*"
+   ],
+   "ar": [
+    "اجهاض*"
+   ],
+   "de": [
+    "abtreibung*",
+    "schwangerschaftsabbruch*"
+   ],
+   "uk": [
+    "аборт*",
+    "переривання вагітності"
+   ]
+  },
+  {
+   "id": "suicide-prevention",
+   "fr": "numéro écoute suicide",
+   "en": [
+    "suicid*",
+    "suicide prevention",
+    "crisis line*"
+   ],
+   "tr": [
+    "intihar*"
+   ],
+   "ar": [
+    "انتحار*"
+   ],
+   "de": [
+    "suizid*",
+    "selbstmord*"
+   ],
+   "uk": [
+    "самогубств*",
+    "суїцид*"
    ]
   }
  ]
