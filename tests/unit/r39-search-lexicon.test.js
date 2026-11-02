@@ -19,3 +19,15 @@ describe('R39 lexicon', () => {
     expect(searchWords('prévention du suicide')).toEqual(['numero', 'ecoute', 'suicide']);
   });
 });
+
+describe('R39 — the crisis signal', async () => {
+  const { safetySignal } = await import('../../api/lib/search-safety.js');
+  it('a crisis still shows 3114 first; the topic for another language finds the listening line and the psychologist', () => {
+    expect(safetySignal('I want to kill myself')).toMatchObject({ kind: 'suicide', numbers: ['3114', '15', '112'], topic: 'numéro écoute psychologue' });
+    expect(safetySignal('suicide prevention helpline', 'numéro écoute suicide helpline')?.kind).toBe('suicide');
+  });
+  it('a question about the law of end of life is not a crisis', () => {
+    for (const q of ['suicide assisté loi', 'aide à mourir', 'euthanasie et suicide assisté']) expect(safetySignal(q), q).toBeNull();
+  });
+  it('« pay » is a function word of an English query', () => { expect(crossLanguageQuery('housing benefit to pay my rent', 'en').query).toBe('allocation logement loyer'); });
+});
