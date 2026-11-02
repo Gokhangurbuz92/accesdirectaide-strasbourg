@@ -58,6 +58,10 @@ try {
   await page.getByLabel('Nom ou initiales').fill('C. D.');
   await page.getByLabel('Adresse e-mail').fill(email);
   await page.getByLabel(/J’accepte de recevoir par e-mail/).check();
+  // R39: the optional J-1 reminder is a separate, unticked box
+  const reminderBox = page.getByLabel(/Recevoir aussi un rappel par e-mail la veille/);
+  check('R39: the J-1 reminder box exists and is unticked by default', (await reminderBox.count()) === 1 && !(await reminderBox.isChecked()));
+  await reminderBox.check();
   await page.getByRole('button', { name: 'Recevoir le code' }).click();
   await page.getByLabel('Code reçu par e-mail').waitFor({ timeout: 20000 });
   const mail1 = await outbox(email); const code = (/\b(\d{6})\b/.exec(mail1.map((m) => m.text).join('\n')) || [])[1];
@@ -87,6 +91,11 @@ try {
     const shown = await box.innerText().catch(() => '');
     check('the page masks the e-mail address', !shown.includes(email) && /\*/.test(shown), shown.slice(0, 160));
     await audit(page, 'personal link');
+    // R39: the reminder chosen at booking is shown, and can be withdrawn here (the new state is announced)
+    const state = page.getByTestId('guest-reminder-state');
+    check('R39: the personal link shows the reminder as on', /Rappel activé/.test(await state.innerText().catch(() => '')));
+    await page.getByTestId('guest-manage-reminder').getByRole('button').click();
+    check('R39: the reminder is withdrawn from the personal link', await page.getByText(/Rappel désactivé/).waitFor({ timeout: 15000 }).then(() => true, () => false));
     await page.getByRole('button', { name: 'Déplacer' }).click();
     const moveSlots = page.getByRole('group', { name: 'Créneau (heure de Paris)' }).getByRole('radio');
     await moveSlots.first().waitFor({ timeout: 15000 });
