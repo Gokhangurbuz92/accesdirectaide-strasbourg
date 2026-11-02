@@ -3,7 +3,7 @@
  * D11 → D20 → P13 (R31) — the ONLY gate through which a rule of the research register (data/rules/rights-rules.v1.json) may reach a person's result.
  *
  * A right passes the gate only when ALL of these hold:
- *   - status EXPERT_VALIDATED, set by scripts/d11-apply-review.mjs from a completed expert review form;
+ *   - status EXPERT_VALIDATED, set by scripts/d11-review.mjs (applyForm) from a completed expert review form; scripts/d11-source-assert.mjs (R35) only checks texts and never sets it;
  *   - expertReview names the reviewer's name, role and date;
  *   - at least one expert-accepted reference case is recorded, and every recorded case gives its expected result with readConditions (re-checked on every
  *     call, so a later edit of a condition that breaks a validated case closes the gate again).
