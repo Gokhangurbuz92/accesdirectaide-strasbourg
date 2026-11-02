@@ -6,7 +6,7 @@
  * model, so nothing generated is published. Each guide keeps its provenance (sheet id, address, DILA's date of last important change, the archive date
  * and the date of this check) and is republished, updated or withdrawn when the sheet changes or disappears from the archive.
  *
- *   node scripts/official-guides.mjs <archive.zip> [--only r33 --insert-only]                → dry run (with DATABASE_URL: the exact diff, read-only)
+ *   node scripts/official-guides.mjs <archive.zip> [--only r33|r36 --insert-only]                → dry run (with DATABASE_URL: the exact diff, read-only)
  *   DATABASE_URL=… node scripts/official-guides.mjs <archive.zip> --only r33 --insert-only --expect-published <n> --evidence f.json --apply
  * Since R34 --apply is bounded only: the unbounded R28 run (update and withdraw every curated guide) is no longer reachable from the command line.
  */
@@ -54,6 +54,40 @@ export const OFFICIAL_GUIDES = [
   { id: 'F17048', categorie: 'étrangers', publics: ['étrangers'], contexte: ['intégration', 'français'] },
   { id: 'F2284', categorie: 'emploi', publics: ['demandeurs d’emploi'], contexte: ['insertion'] },
   { id: 'F34049', categorie: 'handicap', publics: ['personnes handicapées', 'personnes âgées'], contexte: ['mobilité'] },
+  // R36 — sheets for the service gaps of the social reference (manifest evidence/r36/guides; owner-authorised publication only: --only r36)
+  { id: 'F2003', categorie: 'logement', publics: ['personnes sans domicile'], contexte: ['hébergement', 'urgence'] },
+  { id: 'F33954', categorie: 'santé', publics: ['tous publics'], contexte: ['urgence', 'écoute', 'suicide'] },
+  { id: 'F38589', categorie: 'budget', publics: ['tous publics'], contexte: ['factures', 'énergie', 'budget'] },
+  { id: 'F34736', categorie: 'logement', publics: ['locataires'], contexte: ['trêve hivernale', 'énergie', 'expulsion'] },
+  { id: 'F1334', categorie: 'logement', publics: ['locataires', 'tous publics'], contexte: ['FSL', 'énergie', 'loyer'] },
+  { id: 'F18005', categorie: 'logement', publics: ['tous publics'], contexte: ['dalo', 'logement social', 'recours'] },
+  { id: 'F20343', categorie: 'logement', publics: ['personnes sans domicile'], contexte: ['daho', 'hébergement', 'recours'] },
+  { id: 'F16158', categorie: 'logement', publics: ['locataires', 'propriétaires occupants'], contexte: ['logement insalubre', 'habitat indigne'] },
+  { id: 'F763', categorie: 'autonomie', publics: ['personnes âgées', 'aidants'], contexte: ['ehpad', 'hébergement'] },
+  { id: 'F255', categorie: 'autonomie', publics: ['personnes âgées', 'aidants'], contexte: ['ehpad', 'résidence autonomie', 'hébergement'] },
+  { id: 'F2444', categorie: 'autonomie', publics: ['personnes âgées', 'aidants'], contexte: ['ASH', 'hébergement', 'aide sociale'] },
+  { id: 'F245', categorie: 'autonomie', publics: ['personnes âgées', 'aidants'], contexte: ['aide à domicile', 'aide ménagère'] },
+  { id: 'F246', categorie: 'autonomie', publics: ['personnes âgées', 'personnes handicapées'], contexte: ['soins à domicile', 'SSIAD'] },
+  { id: 'F32057', categorie: 'autonomie', publics: ['personnes âgées'], contexte: ['précarité', 'aides'] },
+  { id: 'F740', categorie: 'santé', publics: ['personnes concernées', 'familles'], contexte: ['addictions', 'drogues', 'CSAPA'] },
+  { id: 'F15814', categorie: 'santé', publics: ['personnes concernées', 'familles'], contexte: ['addictions', 'jeux d’argent'] },
+  { id: 'F959', categorie: 'protection de l’enfance', publics: ['parents', 'familles'], contexte: ['ASE', 'placement', 'accueil provisoire'] },
+  { id: 'F3140', categorie: 'protection de l’enfance', publics: ['parents', 'enfants'], contexte: ['ASE', 'placement', 'juge des enfants'] },
+  { id: 'F970', categorie: 'protection de l’enfance', publics: ['parents', 'familles'], contexte: ['AED', 'prévention'] },
+  { id: 'F39128', categorie: 'protection de l’enfance', publics: ['parents', 'enfants'], contexte: ['AEMO', 'assistance éducative'] },
+  { id: 'F937', categorie: 'protection de l’enfance', publics: ['parents', 'jeunes majeurs'], contexte: ['parrainage', 'soutien', 'jeunes majeurs'] },
+  { id: 'F815', categorie: 'famille', publics: ['parents isolés'], contexte: ['ASF', 'pension alimentaire', 'séparation'] },
+  { id: 'F38245', categorie: 'famille', publics: ['parents isolés'], contexte: ['famille monoparentale', 'aides'] },
+  { id: 'F1336', categorie: 'protection juridique', publics: ['majeurs vulnérables'], contexte: ['MASP', 'MAJ', 'budget'] },
+  { id: 'F3165', categorie: 'protection juridique', publics: ['majeurs vulnérables', 'familles'], contexte: ['mandataire judiciaire', 'coût', 'tutelle'] },
+  { id: 'F3079', categorie: 'santé', publics: ['étrangers'], contexte: ['AME', 'soins'] },
+  { id: 'F299', categorie: 'étrangers', publics: ['étrangers'], contexte: ['protection temporaire', 'asile', 'réfugié'] },
+  { id: 'F2313', categorie: 'violences', publics: ['victimes'], contexte: ['indemnisation', 'CIVI', 'FGTI'] },
+  { id: 'F32584', categorie: 'justice', publics: ['personnes sortant de détention', 'familles'], contexte: ['sortie de prison', 'SPIP'] },
+  { id: 'F358', categorie: 'budget', publics: ['tous publics'], contexte: ['impôt', 'déclaration de revenus'] },
+  { id: 'F35456', categorie: 'discrimination', publics: ['personnes LGBTQI+'], contexte: ['homophobie', 'discrimination'] },
+  { id: 'F34826', categorie: 'papiers', publics: ['personnes trans'], contexte: ['état civil', 'mention du sexe'] },
+  { id: 'F16507', categorie: 'démarches', publics: ['familles'], contexte: ['décès', 'démarches'] },
 ];
 
 const slugify = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70);
@@ -105,6 +139,9 @@ export function guideFromSheet(entry, archive, now = new Date()) {
 export const R33_ADDITIONS = ['F10424', 'F2094', 'F2120', 'F2075', 'F33367', 'F16670', 'F12544', 'F20789', 'F1043', 'F2354', 'F952', 'F861', 'F32010',
   'F39676', 'F706', 'F707', 'F1551', 'F34917', 'F2018', 'F37501', 'F38243', 'F31037', 'F17048', 'F2284', 'F34049'];
 
+/** R36: the second batch (33 sheets; F33667 « Chèque énergie » left out: it still describes the 2025 campaign) — published only by the owner's bounded run */
+export const R36_ADDITIONS = ['F2003', 'F33954', 'F38589', 'F34736', 'F1334', 'F18005', 'F20343', 'F16158', 'F763', 'F255', 'F2444', 'F245', 'F246', 'F32057', 'F740', 'F15814', 'F959', 'F3140', 'F970', 'F39128', 'F937', 'F815', 'F38245', 'F1336', 'F3165', 'F3079', 'F299', 'F2313', 'F32584', 'F358', 'F35456', 'F34826', 'F16507'];
+
 const sha = (v) => crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex').slice(0, 16);
 /** the guide row of one sheet id: its slug ends with « -<id> » (never a longer number such as -f1706 for F706) */
 export const rowOf = (rows, id) => rows.find((r) => String(r.slug).endsWith(`-${id.toLowerCase()}`));
@@ -148,7 +185,7 @@ async function main() {
   const [zip] = process.argv.slice(2).filter((a, i, all) => !a.startsWith('--') && !(i > 0 && /^--(only|expect-published|evidence)$/.test(all[i - 1])));
   const apply = process.argv.includes('--apply');
   const onlyArg = argOf('only');
-  const allow = onlyArg ? [...new Set(onlyArg.split(',').map((x) => x.trim().toUpperCase()).filter(Boolean).flatMap((x) => (x === 'R33' ? R33_ADDITIONS : [x])))] : null;
+  const allow = onlyArg ? [...new Set(onlyArg.split(',').map((x) => x.trim().toUpperCase()).filter(Boolean).flatMap((x) => (x === 'R33' ? R33_ADDITIONS : x === 'R36' ? R36_ADDITIONS : [x])))] : null;
   const insertOnly = process.argv.includes('--insert-only');
   const expectPublished = argOf('expect-published');
   const evidenceFile = argOf('evidence');

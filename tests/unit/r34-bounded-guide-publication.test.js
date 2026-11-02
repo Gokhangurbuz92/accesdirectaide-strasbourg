@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
-import { OFFICIAL_GUIDES, R33_ADDITIONS, planGuides, rowOf } from '../../scripts/official-guides.mjs';
+import { OFFICIAL_GUIDES, R33_ADDITIONS, R36_ADDITIONS, planGuides, rowOf } from '../../scripts/official-guides.mjs';
 
 const g = (id, steps = [{ titre: 'A', texte: 'x' }]) => ({ slug: `titre-${id.toLowerCase()}`, titre: `Titre ${id}`, contenu_json: { steps } });
 const row = (id, extra = {}) => ({ id: `row-${id}`, slug: `titre-${id.toLowerCase()}`, titre: `Titre ${id}`, statut: 'publie', contenu_json: { steps: [{ titre: 'A', texte: 'x' }] }, ...extra });
@@ -14,7 +14,14 @@ describe('bounded guide publication', () => {
   it('the allowlist is exactly the 25 R33 additions of the curated list', () => {
     expect(R33_ADDITIONS).toHaveLength(25);
     expect(new Set(R33_ADDITIONS).size).toBe(25);
-    expect(OFFICIAL_GUIDES.slice(12).map((e) => e.id)).toEqual(R33_ADDITIONS);
+    expect(OFFICIAL_GUIDES.slice(12, 37).map((e) => e.id)).toEqual(R33_ADDITIONS);
+  });
+  it('R36: the second batch is exactly the 33 sheets after them, none published before, the outdated « Chèque énergie » sheet left out', () => {
+    expect(R36_ADDITIONS).toHaveLength(33);
+    expect(new Set(R36_ADDITIONS).size).toBe(33);
+    expect(OFFICIAL_GUIDES.slice(37).map((e) => e.id)).toEqual(R36_ADDITIONS);
+    expect(R36_ADDITIONS.filter((id) => R33_ADDITIONS.includes(id) || OFFICIAL_GUIDES.slice(0, 12).some((e) => e.id === id))).toEqual([]);
+    expect(R36_ADDITIONS).not.toContain('F33667');
   });
 
   it('only allowlisted sheets enter the plan; an existing row is skipped, never updated, in insert-only mode', () => {
