@@ -12,6 +12,7 @@ import { computeContentHash } from '../../_utils/contentHash.js';
 import { ensureSlugOrNull } from '../../_utils/slug.js';
 import { upsertSourceDocument } from '../../_utils/sourceDocument.js';
 import { StructureIngestSchema } from '../../lib/ingestion/validators.js';
+import { nominativeEmail } from '../../_services/verification/contacts.js';
 
 const DATASETS = [
     {
@@ -25,6 +26,29 @@ const DATASETS = [
 
 const PAGE_SIZE = 100;
 const MAX_PAGES = 20;
+/** R39: one page may take at most 15 s; a temporary error (network, 429, 5xx) is tried once more; the whole run stops starting new work after 240 s
+ *  (the function has 300 s): an interrupted run is a PARTIAL fetch — nothing is soft-removed and the next run resumes from the source */
+export const FETCH_TIMEOUT_MS = 15000;
+export const RUN_BUDGET_MS = 240000;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** @param {string} url @param {{ fetchImpl?: typeof fetch, timeoutMs?: number, retryDelayMs?: number }} [o] */
+export async function fetchPage(url, { fetchImpl = fetch, timeoutMs = FETCH_TIMEOUT_MS, retryDelayMs = 2000 } = {}) {
+    for (let attempt = 1; ; attempt += 1) {
+        try {
+            const r = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs), headers: { Accept: 'application/json' } });
+            if ((r.status === 429 || r.status >= 500) && attempt < 2) {
+                const wait = r.status === 429 ? Math.min(30000, (Number(r.headers?.get?.('retry-after')) || 2) * 1000) : retryDelayMs;
+                await sleep(wait); continue;
+            }
+            return r;
+        } catch (err) {
+            if (attempt < 2) { await sleep(retryDelayMs); continue; }
+            throw err;
+        }
+    }
+}
+/** R39: the public listing shows a service's contact, never a person's own e-mail address (same rule as the veille: verification/contacts.js) */
+export const publicContactEmail = (email) => (email && !nominativeEmail(email) ? email : null);
 
 /** D14: the structure of this dataset with the same identity (SIRET, else name + postal code). @param {string} datasetId @param {Record<string, any>} v */
 async function findByIdentity(datasetId, v) {
@@ -105,8 +129,9 @@ export async function runIngestStructures({ limit, runId }) {
         for (let page = 0; page < MAX_PAGES; page += 1) {
             const pageUrl = `${dataset.url}&offset=${page * PAGE_SIZE}`;
             let response;
+            if (Date.now() - startTotal > RUN_BUDGET_MS) { stats.errors.push(`${dataset.id}: time budget reached before page ${page + 1} — partial fetch`); fetchFailed = true; break; }
             try {
-                response = await fetch(pageUrl);
+                response = await fetchPage(pageUrl);
             } catch (fetchErr) {
                 stats.errors.push(`${dataset.id}: Fetch failed - ${getErrorMessage(fetchErr)}`);
                 logger.error(`[STRUCTURES] Fetch Error: ${getErrorMessage(fetchErr)}`);
@@ -140,7 +165,9 @@ export async function runIngestStructures({ limit, runId }) {
         /** @type {Set<string>} ids of the structures of this dataset present in this fetch */
         const seen = new Set();
         const startProcess = Date.now();
+        let interrupted = false;
         for (const item of items) {
+            if (Date.now() - startTotal > RUN_BUDGET_MS) { interrupted = true; stats.errors.push(`${dataset.id}: time budget reached after ${stats.processed} records — partial run`); break; }
             stats.processed++;
             try {
                 // Determine fields based on API version (v2.1 has direct fields, v1 had 'fields' wrapper)
@@ -150,17 +177,18 @@ export async function runIngestStructures({ limit, runId }) {
                 let fullAdresse = [f.adresse_num, f.adresse_lib, f.adresse_cplt].filter(Boolean).join(' ');
                 if (!fullAdresse && f.adresse) fullAdresse = f.adresse;
 
-                const ville = f.commune || f.ville || "Strasbourg";
+                // R39: never invented — a record without its town or address is refused by the validation below (it used to become « Strasbourg » / « Inconnue »)
+                const ville = f.commune || f.ville || '';
                 const cp = (f.code_postal || f.cp || "").toString();
 
                 // Zod Validation Shield
                 const validationTarget = {
                     nom: nom?.trim(),
-                    adresse: fullAdresse?.trim() || "Inconnue", // Ensure an address exists or fallback safely
+                    adresse: fullAdresse?.trim() || '',
                     ville: ville?.trim(),
                     code_postal: cp?.trim(),
                     telephone: f.tel || f.telephone || null,
-                    email: f.mail || f.email || null,
+                    email: publicContactEmail(f.mail || f.email || null),
                     site_web: f.url || f.site_internet || null,
                     siret: f.siret ? String(f.siret).replace(/\s+/g, '') : null,
                     source_id: dataset.id,
@@ -265,13 +293,7 @@ export async function runIngestStructures({ limit, runId }) {
                         await db.update(Structure).set({ geoloc_status: "failed", quality_score: 40 }).where(eq(Structure.id, newStructure.id));
                     }
 
-                    // Valve 3: Publish
-                    if (dataset.trust_level === "OFFICIAL") {
-                        const updated = await db.query.Structure.findFirst({ where: eq(Structure.id, newStructure.id) });
-                        if (updated && updated.quality_score >= 80) {
-                            await db.update(Structure).set({ statut: "actif", published_at: new Date() }).where(eq(Structure.id, newStructure.id));
-                        }
-                    }
+                    // R39: a new record stays a draft until the verification chain verifies it (D-5): no « actif » before any verification
 
                     stats.created++;
                 }
@@ -282,7 +304,7 @@ export async function runIngestStructures({ limit, runId }) {
         }
 
         // D14 / FR-029: a record absent from a COMPLETE fetch is soft-removed (kept, flagged); a verified one goes to review. A partial or empty fetch removes nothing.
-        if (complete) {
+        if (complete && !interrupted) {
             const previous = await db.select({ id: Structure.id, nom: Structure.nom, slug: Structure.slug, verification_status: Structure.verification_status })
                 .from(Structure).where(and(eq(Structure.source_id, dataset.id), eq(Structure.import_status, 'active')));
             for (const gone of previous.filter((r) => !seen.has(r.id))) {

@@ -200,6 +200,65 @@ describe.skipIf(!hasDatabase)('PKG-4 cases and referrals (real DB, four organiza
     expect(await grantActive(S.D)).toBe(0);
   });
 
+  it('R39: a notice that could not be stored is retried on the next run (bounded), never sent twice; two runs at once → one notice', async () => {
+    const { runReferralTimeouts, NOTICE_MAX_ATTEMPTS } = await import('../../api/_services/referrals.js');
+    const freeReceiver = () => db.execute(sql`UPDATE "Referral" SET status = 'CANCELLED', "closedAt" = NOW() WHERE "toStructureId" = ${S.D} AND status NOT IN ('EXPIRED', 'CANCELLED', 'CLOSED', 'COMPLETED', 'DECLINED')`);
+    await freeReceiver();
+    const p = await ref(P.pro1, { action: 'propose', caseId, toStructureId: S.D, reasonCode: 'LEGAL' });
+    await cit(H.citRefs, { method: 'POST', body: { id: p.body.referral.id, decision: 'accept' } });
+    const id = p.body.referral.id;
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() - interval '1 day', "overdueNotifiedAt" = NULL WHERE id = ${id}`);
+    const failing = async () => ({ inApp: 0, email: { PROVIDER_ACCEPTED: 0, TEST_RECORDED: 0, NOT_DELIVERED: 1, OFF_BY_PREFERENCE: 0, NOT_EMAILABLE: 0, FAILED: 0 } });   // a member, nothing stored
+    let sent = 0; const working = async () => { sent += 1; return { inApp: 1, email: { PROVIDER_ACCEPTED: 0, TEST_RECORDED: 0, NOT_DELIVERED: 0, OFF_BY_PREFERENCE: 1, NOT_EMAILABLE: 0, FAILED: 0 } }; };
+    const s1 = await runReferralTimeouts({ notifyImpl: failing });
+    expect(s1.overdueRetry).toBeGreaterThanOrEqual(1);
+    expect((await db.execute(sql`SELECT "overdueNotifiedAt" AS t FROM "Referral" WHERE id = ${id}`)).rows[0].t, 'the claim is given back').toBeNull();
+    // two runs at once: one holds the run lock, the other skips — one notice in all
+    const both = await Promise.all([runReferralTimeouts({ notifyImpl: working }), runReferralTimeouts({ notifyImpl: working })]);
+    expect(both.filter((x) => x.skipped === 'ALREADY_RUNNING').length + both.filter((x) => !x.skipped).length).toBe(2);
+    expect(sent, 'one notice for this referral').toBe(1);
+    expect((await db.execute(sql`SELECT "overdueNotifiedAt" AS t FROM "Referral" WHERE id = ${id}`)).rows[0].t).not.toBeNull();
+    expect((await runReferralTimeouts({ notifyImpl: working })).overdueNotified, 'never again').toBe(0);
+    const audit = (await db.execute(sql`SELECT details->>'outcome' AS o FROM "AuditLog" WHERE action = 'REFERRAL_TIMEOUT_NOTICE' AND entity_id = ${id} ORDER BY timestamp`)).rows.map((r) => r.o);
+    expect(audit).toEqual(['FAILED', 'DELIVERED']);
+    expect(JSON.stringify(audit)).not.toMatch(/@/);
+    // the bound: after NOTICE_MAX_ATTEMPTS failures the flag is kept (given up, logged), no endless retries
+    await freeReceiver();
+    const q = await ref(P.pro1, { action: 'propose', caseId, toStructureId: S.D, reasonCode: 'OTHER' });
+    await cit(H.citRefs, { method: 'POST', body: { id: q.body.referral.id, decision: 'accept' } });
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() - interval '1 day' WHERE id = ${q.body.referral.id}`);
+    let last = null; for (let i = 0; i < NOTICE_MAX_ATTEMPTS + 1; i += 1) last = await runReferralTimeouts({ notifyImpl: failing });
+    expect(last.overdueRetry + last.overdueAbandoned).toBe(0);
+    expect((await db.execute(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'REFERRAL_TIMEOUT_NOTICE' AND entity_id = ${q.body.referral.id}`)).rows[0].n).toBe(NOTICE_MAX_ATTEMPTS);
+  });
+
+  it('R39: expiry, its ledger entry and the access revocation are one transaction; a failed expiry notice is retried', async () => {
+    const { runReferralTimeouts } = await import('../../api/_services/referrals.js');
+    await db.execute(sql`UPDATE "Referral" SET status = 'CANCELLED', "closedAt" = NOW() WHERE "toStructureId" = ${S.D} AND status NOT IN ('EXPIRED', 'CANCELLED', 'CLOSED', 'COMPLETED', 'DECLINED')`);
+    const p = await ref(P.pro1, { action: 'propose', caseId, toStructureId: S.D, reasonCode: 'HOUSING' });
+    await cit(H.citRefs, { method: 'POST', body: { id: p.body.referral.id, decision: 'accept' } });
+    const id = p.body.referral.id;
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() - interval '15 days', "overdueNotifiedAt" = NOW() WHERE id = ${id}`);
+    // the revocation fails inside the transaction → nothing changes (the referral is not « expired » while the access stays)
+    await db.execute(sql`CREATE OR REPLACE FUNCTION r39_refuse_revoke() RETURNS trigger AS $$ BEGIN RAISE EXCEPTION 'r39 refused'; END $$ LANGUAGE plpgsql`);
+    await db.execute(sql`CREATE TRIGGER r39_refuse_revoke BEFORE UPDATE ON "SharedDossierGrant" FOR EACH ROW EXECUTE FUNCTION r39_refuse_revoke()`);
+    try {
+      await expect(runReferralTimeouts({ notifyImpl: async () => ({ inApp: 1, email: {} }) })).rejects.toThrow();
+      expect((await db.execute(sql`SELECT status FROM "Referral" WHERE id = ${id}`)).rows[0].status, 'rolled back').not.toBe('EXPIRED');
+      expect((await db.execute(sql`SELECT count(*)::int AS n FROM "ReferralEvent" WHERE "referralId" = ${id} AND "toStatus" = 'EXPIRED'`)).rows[0].n).toBe(0);
+    } finally {
+      await db.execute(sql`DROP TRIGGER IF EXISTS r39_refuse_revoke ON "SharedDossierGrant"`); await db.execute(sql`DROP FUNCTION IF EXISTS r39_refuse_revoke()`);
+    }
+    let calls = 0;
+    const s1 = await runReferralTimeouts({ notifyImpl: async () => { calls += 1; return { inApp: 0, email: { NOT_DELIVERED: 1 } }; } });
+    expect(s1.expired).toBeGreaterThanOrEqual(1); expect(s1.expiredNoticeFailed).toBeGreaterThanOrEqual(1);
+    expect(await grantActive(S.D)).toBe(0);
+    const s2 = await runReferralTimeouts({ notifyImpl: async () => { calls += 1; return { inApp: 1, email: {} }; } });
+    expect(s2.expiredNoticeRetried).toBeGreaterThanOrEqual(1);
+    const s3 = await runReferralTimeouts({ notifyImpl: async () => { calls += 1; return { inApp: 1, email: {} }; } });
+    expect(s3.expiredNoticeRetried, 'not after it was stored').toBe(0);
+  });
+
   it('departure: the leaving member loses access at once and their open cases go to the successor; the database refuses bad states', async () => {
     await caseAct(P.admin, { action: 'assign', id: caseId, userId: P.pro2.id });
     const out = await pro(H.team, P.admin, { method: 'DELETE', query: { userId: P.pro2.id, successorUserId: P.pro1.id }, url: `/api/pro/team?userId=${P.pro2.id}&successorUserId=${P.pro1.id}` });

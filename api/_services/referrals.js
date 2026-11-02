@@ -14,7 +14,7 @@
 import crypto from 'node:crypto';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
+import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
 import { activeGrantExists, activeMemberSql, caseAccessSql } from '../_utils/share-access.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
@@ -22,6 +22,7 @@ import { sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { canNotify } from './citizen-account.js';
 import { isDossierRestricted } from './processing-restriction.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
+import { logger } from '../lib/logger.js';
 
 export const REASONS = ['SPECIALISED_SUPPORT', 'ACCESS_TO_RIGHTS', 'HOUSING', 'EMPLOYMENT', 'HEALTH', 'FOOD_AID', 'DIGITAL_SUPPORT', 'LEGAL', 'OTHER'];
 export const RESPONSES = ['OUT_OF_SCOPE', 'NO_CAPACITY', 'ALREADY_SUPPORTED', 'NEEDS_MORE_INFORMATION', 'OTHER'];
@@ -268,14 +269,84 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
 }
 
 /** Cron: notify the sender once when the receiver has not answered by the due date; expire (and revoke the referral grant) EXPIRE_AFTER_DUE_DAYS later. */
-export async function runReferralTimeouts({ now = new Date() } = {}, db = defaultDb) {
-  const summary = { overdueNotified: 0, expired: 0 };
-  const overdue = await db.update(Referral).set({ overdueNotifiedAt: now })
-    .where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED']), sql`${Referral.dueAt} < ${now}`, sql`${Referral.overdueNotifiedAt} IS NULL`)).returning();
-  for (const r of overdue) { summary.overdueNotified += 1; await notifyOrg(db, r.fromStructureId, 'referral_overdue', 'Orientation sans réponse', 'Une orientation n’a pas reçu de réponse dans le délai prévu.', { referralId: r.id }); }
-  const limit = new Date(now.getTime() - EXPIRE_AFTER_DUE_DAYS * day);
-  const expired = await db.update(Referral).set({ status: 'EXPIRED', closedAt: now })
-    .where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO']), sql`${Referral.dueAt} < ${limit}`)).returning();
-  for (const r of expired) { summary.expired += 1; await record(db, r, 'SYSTEM', null, null, 'EXPIRED'); await revokeReferralGrant(db, r); await notifyOrg(db, r.fromStructureId, 'referral_expired', 'Orientation expirée', 'Une orientation a expiré sans réponse ; l’accès de la structure destinataire est retiré.', { referralId: r.id }); }
-  return summary;
+/** R39: how often an organization notice of a timeout is tried before it is given up (one try per daily run) */
+export const NOTICE_MAX_ATTEMPTS = 5;
+const NOTICE_TEXT = {
+  overdue: ['referral_overdue', 'Orientation sans réponse', 'Une orientation n’a pas reçu de réponse dans le délai prévu.'],
+  expired: ['referral_expired', 'Orientation expirée', 'Une orientation a expiré sans réponse ; l’accès de la structure destinataire est retiré.'],
+};
+/**
+ * R39 — one organization notice, classified: DELIVERED (at least one member's in-app notice stored), NO_RECIPIENT (no active member: permanent, never
+ * retried), FAILED (members exist but nothing was stored: retryable). E-mail stays per member preference (pro-notifications); « accepted » by a noop mailer
+ * is never counted here — the in-app notice is the delivery. Each try is written to AuditLog (no personal data: the referral id, the kind, the outcome).
+ */
+async function deliverTimeoutNotice(db, r, kind, notifyImpl) {
+  const [type, title, message] = NOTICE_TEXT[kind];
+  let sum = null;
+  try { sum = await notifyImpl({ structureId: r.fromStructureId, to: 'members', type, title, message, metadata: { referralId: r.id } }); } catch { sum = null; }
+  const recipients = sum ? Object.values(sum.email || {}).reduce((a, b) => a + Number(b || 0), 0) : null;
+  const outcome = sum && sum.inApp > 0 ? 'DELIVERED' : sum && recipients === 0 ? 'NO_RECIPIENT' : 'FAILED';
+  const [{ n }] = (await db.execute(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'REFERRAL_TIMEOUT_NOTICE' AND entity_id = ${r.id} AND details->>'kind' = ${kind}`)).rows;
+  const attempt = Number(n || 0) + 1;
+  await db.insert(AuditLog).values({ action: 'REFERRAL_TIMEOUT_NOTICE', actor: 'cron', entity: 'Referral', entity_id: r.id, details: { kind, outcome, attempt } }).catch(() => {});
+  return { outcome, attempt };
+}
+
+/**
+ * Referral acknowledgement timeouts (cron). R39: one run at a time (a Postgres advisory lock held for the run), the sender is told when a referral is
+ * overdue — the flag is set by a claim and given back when the notice could not be stored, so a later run tries again (at most NOTICE_MAX_ATTEMPTS, then the
+ * failure is logged and the flag kept); the expiry, its ledger entry and the revocation of the receiver's access are ONE transaction (a referral can no longer
+ * be « expired » while the receiving organization keeps the dossier); a failed expiry notice is retried on the next runs within the same bound.
+ */
+export async function runReferralTimeouts({ now = new Date(), notifyImpl = null } = {}, db = defaultDb) {
+  const notify = notifyImpl || (async (args) => (await import('./pro-notifications.js')).notify(args));
+  const summary = { overdueNotified: 0, overdueNoRecipient: 0, overdueRetry: 0, overdueAbandoned: 0, expired: 0, expiredNoticeFailed: 0, expiredNoticeRetried: 0 };
+  return db.transaction(async (lockTx) => {
+    const [lock] = (await lockTx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext('ada:referral-timeouts')) AS ok`)).rows;
+    if (!lock?.ok) return { ...summary, skipped: 'ALREADY_RUNNING' };
+    // 1. overdue: claim, notify, give the claim back when the notice could not be stored
+    const due = await db.select().from(Referral)
+      .where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED']), sql`${Referral.dueAt} < ${now}`, sql`${Referral.overdueNotifiedAt} IS NULL`));
+    for (const c of due) {
+      const [r] = await db.update(Referral).set({ overdueNotifiedAt: now }).where(and(eq(Referral.id, c.id), sql`${Referral.overdueNotifiedAt} IS NULL`)).returning();
+      if (!r) continue;
+      const { outcome, attempt } = await deliverTimeoutNotice(db, r, 'overdue', notify);
+      if (outcome === 'DELIVERED') summary.overdueNotified += 1;
+      else if (outcome === 'NO_RECIPIENT') summary.overdueNoRecipient += 1;
+      else if (attempt < NOTICE_MAX_ATTEMPTS) {
+        await db.update(Referral).set({ overdueNotifiedAt: null }).where(and(eq(Referral.id, r.id), eq(Referral.overdueNotifiedAt, now)));
+        summary.overdueRetry += 1;
+      } else { summary.overdueAbandoned += 1; logger.error({ referralId: r.id, attempts: attempt }, '[referrals] overdue notice given up'); }
+    }
+    // 2. expiry: status, ledger and access revocation together
+    const limit = new Date(now.getTime() - EXPIRE_AFTER_DUE_DAYS * day);
+    const failedNow = new Set();
+    const stale = await db.select({ id: Referral.id }).from(Referral).where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO']), sql`${Referral.dueAt} < ${limit}`));
+    for (const { id } of stale) {
+      const r = await db.transaction(async (tx) => {
+        const row = await transition(tx, id, ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO'], { status: 'EXPIRED', closedAt: now }, sql`${Referral.dueAt} < ${limit}`);
+        if (!row) return null;
+        await record(tx, row, 'SYSTEM', null, null, 'EXPIRED');
+        await revokeReferralGrant(tx, row);
+        return row;
+      });
+      if (!r) continue;
+      summary.expired += 1;
+      const { outcome } = await deliverTimeoutNotice(db, r, 'expired', notify);
+      if (outcome === 'FAILED') { summary.expiredNoticeFailed += 1; failedNow.add(r.id); }
+    }
+    // 3. expiry notices that failed before: tried again (same bound), never once one was stored or there was no recipient
+    const pending = (await db.execute(sql`SELECT r.id FROM "Referral" r WHERE r.status = 'EXPIRED'
+      AND EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired' AND a.details->>'outcome' = 'FAILED')
+      AND NOT EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired' AND a.details->>'outcome' IN ('DELIVERED', 'NO_RECIPIENT'))
+      AND (SELECT count(*) FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired') < ${NOTICE_MAX_ATTEMPTS}`)).rows;
+    for (const { id } of pending) {
+      if (failedNow.has(id)) continue;   // just tried in step 2 of this run: the next run tries again
+      const [r] = await db.select().from(Referral).where(eq(Referral.id, id)).limit(1);
+      if (!r) continue;
+      await deliverTimeoutNotice(db, r, 'expired', notify);
+      summary.expiredNoticeRetried += 1;
+    }
+    return summary;
+  });
 }
