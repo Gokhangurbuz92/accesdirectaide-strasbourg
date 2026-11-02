@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { isAllowedInPublicBeta, isPublicBetaRestricted, PUBLIC_BETA_MESSAGE } from '../../api/_utils/public-beta.js';
+import { isAllowedInPublicBeta, isPublicBetaRestricted, PUBLIC_BETA_MESSAGE, surfaceOf, openSurfaces } from '../../api/_utils/public-beta.js';
 import { evaluateReleasePreflight } from '../../scripts/release-preflight.mjs';
 import { isBetaRestrictedPath, openLinks } from '../../src/lib/publicBeta.js';
 import { PublicBetaBanner, PublicBetaUnavailable } from '../../src/components/beta/PublicBeta.jsx';
@@ -218,5 +218,52 @@ describe('search engines (audit of 31/10/2026)', () => {
     for (const t of [html, manifest]) { expect(t).not.toMatch(/rendez-vous/i); expect(t).not.toMatch(/lumière sur vos démarches/i); }
     expect(html).toMatch(/<noscript>[\s\S]*href="\/sitemap\.xml"[\s\S]*<\/noscript>/);
     expect(html.match(/<noscript>[\s\S]*<\/noscript>/)[0]).not.toMatch(/style=|<h1/);   // no inline style (CSP), no second h1 on a record page
+  });
+});
+
+describe('R35 per-surface opening during the beta (ADA_BETA_OPEN_SURFACES)', () => {
+  it('opens only the named surface, for every method of its routes; everything else stays closed', () => {
+    const env = { ADA_BETA_OPEN_SURFACES: 'appointments' };
+    expect(isAllowedInPublicBeta('POST', 'rdv', env)).toBe(true);
+    expect(isAllowedInPublicBeta('GET', 'pro/slots', env)).toBe(true);
+    for (const p of ['auth/signup', 'citizen/coffre', 'pro/dossier', 'admin/login', 'cron/gdpr-purge', 'pro/appointments/visio', 'contact'])
+      expect(isAllowedInPublicBeta('POST', p, env), p).toBe(false);
+  });
+  it('a route belongs to one surface, the longest prefix wins (video inside appointments, the Coffre inside accounts)', () => {
+    expect(surfaceOf('pro/appointments/visio')).toBe('video');
+    expect(surfaceOf('pro/appointments/cancel')).toBe('appointments');
+    expect(surfaceOf('citizen/coffre')).toBe('documents');
+    expect(surfaceOf('citizen/profile')).toBe('accounts');
+    expect(surfaceOf('auth/callback/outlook')).toBe('appointments');
+    expect(isAllowedInPublicBeta('POST', 'citizen/coffre', { ADA_BETA_OPEN_SURFACES: 'accounts' })).toBe(false);
+    expect(isAllowedInPublicBeta('POST', 'pro/appointments/visio', { ADA_BETA_OPEN_SURFACES: 'appointments' })).toBe(false);
+  });
+  it('is fail-closed: unset, unknown names, a wildcard or odd spacing open nothing more', () => {
+    for (const v of [undefined, '', '*', 'all', 'everything', 'admin2', ' , ']) expect(isAllowedInPublicBeta('POST', 'auth/signup', { ADA_BETA_OPEN_SURFACES: v }), String(v)).toBe(false);
+    expect(openSurfaces({ ADA_BETA_OPEN_SURFACES: ' Accounts , foo,JOBS ' })).toEqual(new Set(['accounts', 'jobs']));
+  });
+  it('the browser shows the screens of the surfaces named in the build, and only those', () => {
+    expect(isBetaRestrictedPath('/rdv/abc', ['appointments'])).toBe(false);
+    expect(isBetaRestrictedPath('/login', ['appointments'])).toBe(true);
+    expect(isBetaRestrictedPath('/admin', [])).toBe(true);
+    expect(isBetaRestrictedPath('/aides', [])).toBe(false);
+  });
+});
+
+describe('R35 release gate follows the opened surfaces', () => {
+  const base = { ADA_PUBLIC_BETA_RESTRICTED: '1', MAILER_PROVIDER: 'noop' };
+  const status = (env, id) => evaluateReleasePreflight(env, { legalText: 'ok' }).find((c) => c.id === id)?.status;
+  it('with no surface opened, e-mail, storage and alerts are not required and the mailer must stay noop', () => {
+    expect(status(base, 'mail.deliverable')).toBe('PASS');
+    expect(status(base, 'storage.configured')).toBe('PASS');
+    expect(status(base, 'beta.mailer_noop')).toBe('PASS');
+    expect(status(base, 'beta.open_surfaces')).toBe('PASS');
+  });
+  it('opening accounts requires a deliverable mailer; documents require storage; jobs require the alert webhook', () => {
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'accounts' }, 'mail.deliverable')).toBe('FAIL');
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'accounts' }, 'beta.mailer_noop')).toBeUndefined();
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'documents' }, 'storage.configured')).toBe('FAIL');
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'alerts.webhook')).toBe('FAIL');
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'beta.open_surfaces')).toBe('WARN');
   });
 });

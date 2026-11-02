@@ -77,10 +77,16 @@ describe.skipIf(!hasDatabase)('PKG-1 account core (real DB)', () => {
       expect((await call(H.profile, { as: B })).body.account.profile.displayName).toBeNull();
     });
     it('rejects unknown age bands, bad départements and unsupported languages without changing anything', async () => {
-      for (const body of [{ ageBand: '12-17' }, { departement: '999999' }, { preferredLanguage: 'de' }, { displayName: '' }]) {
+      for (const body of [{ ageBand: '12-17' }, { departement: '999999' }, { preferredLanguage: 'es' }, { preferredLanguage: 'FR ' }, { displayName: '' }]) {
         expect((await call(H.profile, { method: 'PUT', as: A, body })).statusCode, JSON.stringify(body)).toBe(400);
       }
       expect((await call(H.profile, { as: A })).body.account.profile.ageBand).toBe('25-59');
+    });
+    it('R35 (C04): the account language is one of the six interface languages and is returned as saved', async () => {
+      for (const code of ['de', 'ar', 'uk', 'fr']) {
+        expect((await call(H.profile, { method: 'PUT', as: A, body: { preferredLanguage: code } })).statusCode).toBe(200);
+        expect((await call(H.profile, { as: A })).body.account.profile.preferredLanguage).toBe(code);
+      }
     });
     it('household: add / list / remove, owner-scoped, capped at 12', async () => {
       const add = await call(H.household, { method: 'POST', as: A, body: { relation: 'child', ageBand: 'moins-de-18', label: 'Enfant' } });

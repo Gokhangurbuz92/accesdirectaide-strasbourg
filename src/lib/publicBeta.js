@@ -6,9 +6,26 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   '/contact', '/demande-aide', '/proposer-une-structure', '/orientation', '/diagnostic', '/assistant', '/mon-assistant',
   '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches', '/sentry-test', '/__sentry_test'];
 
-/** @param {string} pathname */
-export function isBetaRestrictedPath(pathname) {
+/**
+ * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
+ * same surface in VITE_PUBLIC_BETA_OPEN_SURFACES (public, no secret). The server stays the only real protection.
+ */
+export const SCREEN_SURFACES = {
+  accounts: ['/login', '/auth', '/compte'], pro: ['/pro'], institution: ['/institution'], appointments: ['/appointments', '/rdv', '/r'],
+  communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport'],
+  diagnostic: ['/diagnostic', '/assistant', '/mon-assistant', '/orientation'], admin: ['/admin', '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches'],
+};
+const builtOpen = () => {
+  let v = '';
+  try { v = String(import.meta.env?.VITE_PUBLIC_BETA_OPEN_SURFACES || ''); } catch { v = ''; }
+  return v.split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(SCREEN_SURFACES, x));
+};
+
+/** @param {string} pathname @param {string[]} [open] surfaces opened in this build */
+export function isBetaRestrictedPath(pathname, open = builtOpen()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  const opened = open.flatMap((name) => SCREEN_SURFACES[name] || []);
+  if (opened.some((x) => p === x || p.startsWith(`${x}/`))) return false;
   return RESTRICTED.some((x) => p === x || p.startsWith(`${x}/`));
 }
 

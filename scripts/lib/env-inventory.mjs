@@ -16,6 +16,8 @@ const PATTERNS = [
   /process\.env\.([A-Z][A-Z0-9_]+)/g,
   /process\.env\[\s*['"`]([A-Z][A-Z0-9_]+)['"`]\s*\]/g,
   /import\.meta\.env\.([A-Z][A-Z0-9_]+)/g,
+  /import\.meta\.env\?\.([A-Z][A-Z0-9_]+)/g,
+  /\benvVars\.([A-Z][A-Z0-9_]{2,})\b/g,
   /\b(?:getEnv|requireEnv|get|has|hasEnv|envFlag|readEnv)\(\s*['"]([A-Z][A-Z0-9_]{2,})['"]/g,
   /\baliases:\s*\[([^\]]+)\]/g,
   /\benvAliases\(([^)]+)\)/g,

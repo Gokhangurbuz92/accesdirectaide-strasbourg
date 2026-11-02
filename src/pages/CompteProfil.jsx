@@ -9,6 +9,7 @@ import GuardianLinks from '@/components/account/GuardianLinks';
 import { AGE_BANDS } from '@/lib/ageBandOptions';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import DevicePush from '@/components/DevicePush';
+import { LANGUAGES, setLanguage, useLanguage } from '@/i18n';
 
 // launch-readiness item 59 / R11 (N04): no « push » column in the table — notifications on this device have their own card (DevicePush: the browser's permission and subscription)
 // R12 (C20): no « Dans l’application » column — no in-app inbox exists for citizens, so that choice did nothing
@@ -28,7 +29,8 @@ export default function CompteProfil() {
   const [shares, setShares] = useState([]);
   const [message, setMessage] = useState('');
   const [problem, setProblem] = useState('');
-  const [form, setForm] = useState({ displayName: '', ageBand: '', departement: '', prefillConsent: false, falc: false, highContrast: false, textScale: 'normal' });
+  const { code: uiLanguage } = useLanguage();
+  const [form, setForm] = useState({ displayName: '', preferredLanguage: 'fr', ageBand: '', departement: '', prefillConsent: false, falc: false, highContrast: false, textScale: 'normal' });
   const [member, setMember] = useState({ relation: 'partner', ageBand: '', label: '' });
   const [claim, setClaim] = useState({ shareId: '', ownerSecret: '' });
   const [consents, setConsents] = useState({});
@@ -42,12 +44,14 @@ export default function CompteProfil() {
       setShares(owned.shares || []);
       const p = account.profile;
       applyAccountAccessibility(p.accessibilityPrefs);   // K0 / C04: the saved preferences apply to the whole site, not only to this form
-      setForm({ displayName: p.displayName || '', ageBand: p.ageBand || '', departement: p.departement || '', prefillConsent: Boolean(p.prefillConsent), falc: Boolean(p.accessibilityPrefs?.falc), highContrast: Boolean(p.accessibilityPrefs?.highContrast), textScale: p.accessibilityPrefs?.textScale || 'normal' });
+      // R35 (C04): the account's language applies to the interface on every device the person signs in on
+      if (p.preferredLanguage && p.preferredLanguage !== uiLanguage) void setLanguage(p.preferredLanguage);
+      setForm({ displayName: p.displayName || '', preferredLanguage: p.preferredLanguage || 'fr', ageBand: p.ageBand || '', departement: p.departement || '', prefillConsent: Boolean(p.prefillConsent), falc: Boolean(p.accessibilityPrefs?.falc), highContrast: Boolean(p.accessibilityPrefs?.highContrast), textScale: p.accessibilityPrefs?.textScale || 'normal' });
       setState({ loading: false, error: '', account });
     } catch (err) {
       setState({ loading: false, error: err.status === 401 ? 'Connectez-vous pour accéder à votre profil.' : err.message, account: null });
     }
-  }, []);
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- the account language is applied once per load, not on every interface change
   useEffect(() => { load(); }, [load]);
 
   const run = async (fn, okMessage) => {
@@ -58,7 +62,7 @@ export default function CompteProfil() {
   const saveProfile = (e) => {
     e.preventDefault();
     return run(() => citizenApi.saveProfile({
-      displayName: form.displayName.trim() || null, ageBand: form.ageBand || null, departement: form.departement.trim() || null, prefillConsent: form.prefillConsent,
+      displayName: form.displayName.trim() || null, preferredLanguage: form.preferredLanguage, ageBand: form.ageBand || null, departement: form.departement.trim() || null, prefillConsent: form.prefillConsent,
       accessibilityPrefs: { falc: form.falc, highContrast: form.highContrast, textScale: form.textScale },
     }), 'Profil enregistré.');
   };
@@ -103,6 +107,13 @@ export default function CompteProfil() {
             <div>
               <label htmlFor="pf-name" className="block text-sm font-medium text-slate-800">Nom affiché (facultatif)</label>
               <input id="pf-name" data-testid="pf-name" className="mt-1 w-full rounded-md border border-slate-300 p-2" maxLength={60} value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="pf-lang" className="block text-sm font-medium text-slate-800">Langue du compte · Language</label>
+              <select id="pf-lang" data-testid="pf-lang" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={form.preferredLanguage} onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value })}>
+                {LANGUAGES.map((l) => <option key={l.code} value={l.code} lang={l.code} dir={l.dir}>{l.name}</option>)}
+              </select>
+              <p className="mt-1 text-xs text-slate-600">Les informations vérifiées restent rédigées en français ; les autres langues sont des traductions automatiques signalées.</p>
             </div>
             <div>
               <label htmlFor="pf-band" className="block text-sm font-medium text-slate-800">Tranche d’âge (déclarative, facultative)</label>

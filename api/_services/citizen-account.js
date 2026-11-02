@@ -9,6 +9,7 @@ import { isRestricted, SHARE_SEAL } from './processing-restriction.js';
 import { db as defaultDb } from '../../src/db/index.js';
 import { CitizenProfile, CitizenUser, ConsentLog, GuardianRelationship, HouseholdMember, NotificationPreference, SharedDiagnostic } from '../../src/db/schema.js';
 import { AGE_BAND_KEYS } from '../lib/ageBands.js';
+import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { evaluateAge } from '../lib/agePolicy.js';
 import { holdsOwnerSecret, isExpired } from '../_utils/share-access.js';
 import { pushConfig, removeSubscriptions } from './web-push.js';
@@ -93,7 +94,8 @@ export async function saveProfile(userId, input, db = defaultDb) {
     if (v !== null && (v.length < 1 || v.length > 60)) return bad('INVALID_DISPLAY_NAME', 'Le nom affiché doit contenir 1 à 60 caractères.');
     patch.displayName = v;
   }
-  if ('preferredLanguage' in b) { if (b.preferredLanguage !== 'fr') return bad('UNSUPPORTED_LANGUAGE', 'Seul le français est disponible pour le moment.'); patch.preferredLanguage = 'fr'; }
+  // R35 (C04): the six interface languages (src/i18n/languages.js); the verified content stays French-authoritative whatever the account's language
+  if ('preferredLanguage' in b) { if (!LANGUAGE_CODES.includes(b.preferredLanguage)) return bad('UNSUPPORTED_LANGUAGE', 'Langue non disponible : français, English, Türkçe, العربية, Deutsch ou Українська.'); patch.preferredLanguage = b.preferredLanguage; }
   if ('ageBand' in b) {
     if (b.ageBand !== null && !AGE_BAND_KEYS.includes(b.ageBand)) return bad('INVALID_AGE_BAND', 'Tranche d’âge inconnue.');
     patch.ageBand = b.ageBand;

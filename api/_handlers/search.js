@@ -10,6 +10,7 @@ import { GLOSSAIRE } from '../lib/glossaire.js';
 import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
 import { structureTypeHint } from '../lib/search-structure-type.js';
+import { offTopicIntent } from '../lib/search-off-topic.js';
 import { safetySignal } from '../lib/search-safety.js';
 import { guideOffices } from '../lib/official-offices.js';
 import { sql } from 'drizzle-orm';
@@ -57,6 +58,11 @@ export default async function handler(req, res) {
     // no searchable word of its own (only « finir »)
     if (safety && (cross.changed || (payload.lang && payload.lang !== 'fr'))) { cross.query = safety.topic; cross.changed = true; }
     else if (safety) payload.query = `${safety.topic} ${payload.query}`;
+    // R35 (D16): a purchase of luxury or consumer goods, or a leisure request, with no social marker is not a need this site answers: no result rather
+    // than places that share one word with it (« acheter une voiture de luxe » listed Action Logement and Mobilex)
+    if (!safety && offTopicIntent(payload.query, cross.changed ? cross.query : '')) {
+      return res.status(200).json({ items: [], total: 0, demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, offTopic: true, message: 'not found' });
+    }
     if (cross.changed && !searchWords(cross.query).length) {
       return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe });
     }

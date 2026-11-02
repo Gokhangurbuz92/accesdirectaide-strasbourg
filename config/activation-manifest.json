@@ -219,6 +219,22 @@
         "production"
       ]
     },
+    "ADA_BETA_OPEN_SURFACES": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "note": "R35: comma list of surfaces opened during the beta (accounts, pro, institution, appointments, video, communications, documents, diagnostic, admin, jobs); unset = none; the release gate then requires their services"
+    },
+    "VITE_PUBLIC_BETA_OPEN_SURFACES": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "R35: the same list for the browser screens (rebuild); must match ADA_BETA_OPEN_SURFACES"
+    },
     "MAINTENANCE_MODE": {
       "class": "optional",
       "nature": "config",

@@ -1,3 +1,4 @@
+import { isAllowedInPublicBeta } from '../../api/_utils/public-beta.js';
 /**
  * C05 (R30) — the minor ↔ legal guardian link, on synthetic accounts. Nothing decides how a guardianship is proven: by default no strong method
  * is allowed, so no link can reach VERIFIED_STRONG and the minor's sensitive account features stay off; public information never depends on it.
@@ -117,6 +118,10 @@ describe('C05 guardian link on synthetic accounts', () => {
   });
   it('the route exists for accounts only (closed in the public beta like every account route)', () => {
     expect(fs.readFileSync('api/routes.js', 'utf8')).toMatch(/path: 'citizen\/guardians'/);
-    expect(fs.readFileSync('api/_utils/public-beta.js', 'utf8')).not.toMatch(/'citizen/);
+    // R35: public-beta.js now names the citizen routes in its per-surface map (closed unless a surface is opened); the allowlist itself still has none
+    const src = fs.readFileSync('api/_utils/public-beta.js', 'utf8');
+    const allowlist = src.slice(src.indexOf('const EXACT'), src.indexOf('const READ_METHODS'));
+    expect(allowlist).not.toMatch(/'citizen/);
+    for (const m of ['GET', 'POST', 'DELETE']) expect(isAllowedInPublicBeta(m, 'citizen/guardians', {}), m).toBe(false);
   });
 });

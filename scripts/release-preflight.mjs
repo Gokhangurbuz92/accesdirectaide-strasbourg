@@ -8,6 +8,7 @@
  */
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
+import { openSurfaces } from '../api/_utils/public-beta.js';
 
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string }} [opts] legalText: the legal-pages source (tests pass their own) */
 export function evaluateReleasePreflight(env, opts = {}) {
@@ -18,10 +19,15 @@ export function evaluateReleasePreflight(env, opts = {}) {
 
   // Restricted public beta (owner directive 29/10/2026): the API refuses every account, upload and cron route server-side (api/_utils/public-beta.js),
   // so the services that only those routes use are not required; every other check is unchanged.
-  const beta = ['1', 'true'].includes(get('ADA_PUBLIC_BETA_RESTRICTED').toLowerCase());
+  const betaOn = ['1', 'true'].includes(get('ADA_PUBLIC_BETA_RESTRICTED').toLowerCase());
+  // R35: a surface opened during the beta (ADA_BETA_OPEN_SURFACES) needs the services its routes use, as if the beta were off for it
+  const opened = openSurfaces(env);
+  const needs = (/** @type {string[]} */ names) => !betaOn || names.some((n) => opened.has(n));
+  const mailNeeded = needs(['accounts', 'pro', 'institution', 'communications', 'appointments']);
+  const beta = betaOn;
   const notUsed = (/** @type {string} */ what) => `not used: restricted public beta (${what} refused server-side)`;
   const mail = evaluateMailerConfig({ provider: get('MAILER_PROVIDER'), from: get('MAILER_FROM'), apiKey: get('MAILER_API_KEY') });
-  if (beta) add('mail.deliverable', 'PASS', notUsed('accounts, password resets and notifications'));
+  if (!mailNeeded) add('mail.deliverable', 'PASS', notUsed('accounts, password resets and notifications'));
   else add('mail.deliverable', mail.deliverable ? 'PASS' : 'FAIL', `${mail.provider}: ${mail.reason}`);
 
   add('auth.mode_jwt', get('AUTH_MODE').toLowerCase() === 'jwt' ? 'PASS' : 'FAIL', 'AUTH_MODE must be "jwt" (default "token" hands out the static admin token as session)');
@@ -44,12 +50,12 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const vault = get('ADA_VAULT_KEY') || get('OUTLOOK_TOKEN_ENCRYPTION_KEY');
   add('crypto.vault_key', (/^[0-9a-fA-F]{64}$/.test(vault) || vault.length >= 32) && vault !== get('ADA_ENCRYPTION_KEY') ? 'PASS' : 'FAIL', 'ADA_VAULT_KEY (MFA secrets): 64 hex chars or >= 32 chars, distinct from ADA_ENCRYPTION_KEY');
   add('kv.configured', (get('KV_REST_API_URL') || get('UPSTASH_KV_REST_API_URL')) && (get('KV_REST_API_TOKEN') || get('UPSTASH_KV_REST_API_TOKEN')) ? 'PASS' : 'FAIL', 'Upstash KV: sign-in, sign-up, booking, contact and administration fail closed without it');
-  if (beta) add('storage.configured', 'PASS', notUsed('the Coffre and attachments'));
+  if (!needs(['documents', 'communications'])) add('storage.configured', 'PASS', notUsed('the Coffre and attachments'));
   else add('storage.configured', ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k)) ? 'PASS' : 'FAIL', 'object storage (Coffre, attachments): an EU bucket under a DPA');
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
   add('db.tls_verified', get('DATABASE_SSL_VERIFY') === 'true' ? 'PASS' : 'FAIL', 'DATABASE_SSL_VERIFY=true: the database certificate is verified');
-  if (beta) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
+  if (!needs(['jobs'])) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
   else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https): operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');
   add('share.legacy_off', get('ADA_LEGACY_SHARE_READ') === '1' ? 'FAIL' : 'PASS', 'ADA_LEGACY_SHARE_READ stays off (a bare link would open a dossier)');
@@ -61,7 +67,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
   add('ops.maintenance_off', ['1', 'true'].includes(String(get('MAINTENANCE_MODE') || '')) ? 'WARN' : 'PASS', 'MAINTENANCE_MODE=1 serves the maintenance page to every visitor');
   const legal = opts.legalText !== undefined ? opts.legalText : JSON.stringify(LEGAL_PLACEHOLDERS);
   add('legal.publisher_complete', legal && !/\[À COMPLÉTER/.test(legal.normalize('NFC')) ? 'PASS' : 'FAIL', 'legal pages: the publisher identity is complete (no « [À COMPLÉTER] »: registered association, publication director, host, contacts)');
-  if (beta) add('beta.mailer_noop', ['', 'noop'].includes(get('MAILER_PROVIDER').toLowerCase()) ? 'PASS' : 'FAIL', 'MAILER_PROVIDER stays noop in the restricted beta (no real e-mail)');
+  if (beta && !mailNeeded) add('beta.mailer_noop', ['', 'noop'].includes(get('MAILER_PROVIDER').toLowerCase()) ? 'PASS' : 'FAIL', 'MAILER_PROVIDER stays noop in the restricted beta (no real e-mail)');
+  if (beta) add('beta.open_surfaces', opened.size ? 'WARN' : 'PASS', opened.size ? `surfaces opened during the beta: ${[...opened].sort().join(', ')} (their services are required above)` : 'no surface opened: only public read-only routes');
   return out;
 }
 
