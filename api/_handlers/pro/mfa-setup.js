@@ -1,7 +1,7 @@
 import { db } from '../../../src/db/index.js';
 import { ProUser } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { requireProAuth } from '../../_utils/auth.js';
+import { requireProAuth, proMfaRequired, signProToken } from '../../_utils/auth.js';
 import { logProAudit } from '../../_utils/auth.js';
 import { generateSecret, matchCodeStep, buildOtpauthUrl } from '../../lib/totp.js';
 import { claimProStep, isVaultReady, openMfaSecret, sealMfaSecret } from '../../_utils/totp-guard.js';
@@ -57,11 +57,15 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 
         await logProAudit('MFA_ENABLED', userId, structureId, {}, null);
 
-        return res.status(200).json({ ok: true, message: 'MFA activé avec succès' });
+        // R34: the code just proved the second factor — the session continues with it (no second sign-in needed to reach the dossiers)
+        return res.status(200).json({ ok: true, message: 'MFA activé avec succès', token: signProToken({ id: userId, email, structureId, role: user.role }, { mfa: true }) });
     }
 
     // --- DELETE: Disable MFA (requires valid code) ---
     if (req.method === 'DELETE') {
+        // R34: where the second factor is required (production), it cannot be switched off. Open item: no recovery path exists yet for a lost device (an
+        // audited administrator reset must be built before ADA Pro opens)
+        if (proMfaRequired()) return res.status(403).json({ error: 'MFA_REQUIRED', message: 'La double authentification est obligatoire pour ADA Pro : elle ne peut pas être désactivée.' });
         const { code } = req.body || {};
         if (!code || String(code).length !== 6) {
             return res.status(400).json({ error: 'Code à 6 chiffres requis pour désactiver le MFA' });

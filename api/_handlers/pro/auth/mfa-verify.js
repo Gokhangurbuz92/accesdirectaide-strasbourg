@@ -75,8 +75,8 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
             return res.status(401).json({ error: 'Invalid verification code' });
         }
 
-        // Issue the real pro token
-        const token = signProToken(user);
+        // Issue the real pro token — it records that the second factor was passed (R34: required for ADA Pro routes in production)
+        const token = signProToken(user, { mfa: true });
 
         await logProAudit('LOGIN_SUCCESS', user.id, user.structureId, { mfa: true }, ip);
 

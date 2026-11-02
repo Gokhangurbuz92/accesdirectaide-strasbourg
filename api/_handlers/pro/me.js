@@ -1,5 +1,5 @@
 import logger from '../../_utils/logger.js';
-import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
+import { requireProAuth, requireProStructureContext, proMfaRequired } from '../../_utils/auth.js';
 import { db } from '../../../src/db/index.js';
 import { ProUser } from '../../../src/db/schema.js';
 import { eq, and } from 'drizzle-orm';
@@ -35,7 +35,9 @@ async function handler(req, res) {
 
         return res.status(200).json({
             user: safeUser,
-            structure: user.structure
+            structure: user.structure,
+            // R34: whether this session passed the second factor, and whether ADA Pro requires it here (production) — the screens send the person to set it up
+            session: { mfa: req.user?.mfa === true, mfaRequired: proMfaRequired() },
         });
 
     } catch (e) {

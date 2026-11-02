@@ -52,6 +52,11 @@ export default function ProLayout() {
             })
             .then(data => {
                 setUser(data.user);
+                // R34: where ADA Pro requires the second factor (production), a password-only session can only set it up — every other route refuses it
+                if (data.session?.mfaRequired && !data.session.mfa && location.pathname !== '/pro/mfa-settings') {
+                    navigate('/pro/mfa-settings', { replace: true, state: { mfaRequired: true } });
+                    return;
+                }
                 // Show onboarding on first login
                 if (!localStorage.getItem('ada_onboarding_done')) {
                     setShowOnboarding(true);

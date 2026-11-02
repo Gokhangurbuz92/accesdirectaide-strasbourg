@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { SkeletonList } from '@/components/ui/skeleton';
 import { useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,7 @@ function getAuthHeaders() {
 }
 
 export default function MfaSettings() {
+    const mfaRequired = useLocation().state?.mfaRequired === true;   // R34: sent here because ADA Pro requires the second factor
     const [step, setStep] = useState(0); // 0 = loading, 1 = intro, 2 = secret, 3 = verify, 4 = success
     const [secret, setSecret] = useState('');
     const [otpauthUrl, setOtpauthUrl] = useState('');
@@ -95,6 +97,8 @@ export default function MfaSettings() {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || MFA_ERROR[data.error] || data.error || 'Code incorrect');
+            // R34: the server hands a session that passed the second factor: the dossiers open without signing in again
+            if (data.token) localStorage.setItem('pro_token', data.token);
             setMfaEnabled(true);
             setStep(4);
         } catch (err) {
@@ -157,6 +161,11 @@ export default function MfaSettings() {
                                 ? 'MFA est actuellement actif sur votre compte'
                                 : 'Protégez votre compte avec un code temporaire'}
                     </CardDescription>
+                    {mfaRequired && step !== 4 && (
+                        <p role="status" data-testid="mfa-required-notice" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-left text-sm text-amber-900">
+                            La double authentification est obligatoire pour accéder aux dossiers et aux messages d’ADA Pro. Activez-la pour continuer.
+                        </p>
+                    )}
                 </CardHeader>
 
                 <CardContent className="space-y-4">

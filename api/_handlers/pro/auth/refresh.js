@@ -61,7 +61,7 @@ export default async function handler(req, res) {
                 email: validClaims.email,
                 structureId: validClaims.structureId,
                 role: m.role,
-            });
+            }, { mfa: validClaims.mfa === true });   // R34: a refresh keeps, never adds, the second factor
 
             await logProAudit('TOKEN_REFRESH', validClaims.userId, validClaims.structureId, { method: 'valid' }, ip);
 
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
             email: typeof decoded.email === 'string' ? decoded.email : undefined,
             structureId,
             role: m.role,
-        });
+        }, { mfa: decoded.mfa === true });   // R34: a refresh keeps, never adds, the second factor
 
         await logProAudit('TOKEN_REFRESH', userId, structureId, { method: 'grace_period' }, ip);
 

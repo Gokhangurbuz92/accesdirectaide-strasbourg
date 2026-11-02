@@ -48,7 +48,8 @@ export function verifyJwt(token, secret, options = {}) {
 /**
 * @param {{ id: any; email?: any; structureId?: any; role: any; }} user
 */
-export function signProToken(user) {
+/** @param {any} user @param {{ mfa?: boolean }} [opts] mfa: the session passed the second factor (set by mfa-verify / mfa-setup, kept by refresh) */
+export function signProToken(user, opts = {}) {
     const JWT_SECRET = getJwtSecret();
     if (!JWT_SECRET) {
         throw new Error("JWT_SECRET is missing");
@@ -64,6 +65,7 @@ export function signProToken(user) {
             role: user.role,
             scope: 'pro',
             jti,
+            ...(opts.mfa === true ? { mfa: true } : {}),
         },
         JWT_SECRET,
         {
@@ -121,7 +123,23 @@ function validateProClaims(/** @type {string | number | boolean | null | undefin
         role: roleRaw,
         scope: scope || undefined,
         iat: typeof payload.iat === 'number' ? payload.iat : undefined,   // issue time: a session revoked after it is refused (sessionsValidAfter)
+        mfa: payload.mfa === true,
     };
+}
+
+/**
+ * R34 (R33 audit G4): professionals read social and possibly health data, so in PRODUCTION every ADA Pro route needs a session that passed the second factor —
+ * deny by default; only signing in, the account summary and setting up the second factor are open to a password-only session. Outside production it is
+ * opt-in (PRO_MFA_REQUIRED=true), so LAB journeys and tests keep their password-only sessions. There is no switch to turn it off in production.
+ */
+export const PRO_MFA_OPEN_ROUTES = Object.freeze([/^\/api\/pro\/auth\//, /^\/api\/pro\/mfa-setup\/?$/, /^\/api\/pro\/me\/?$/]);
+export function proMfaRequired() {
+    return process.env.VERCEL_ENV === 'production' || process.env.PRO_MFA_REQUIRED === 'true';
+}
+/** @param {string} url */
+export function proRouteNeedsMfa(url) {
+    const p = String(url || '').split('?')[0];
+    return !PRO_MFA_OPEN_ROUTES.some((re) => re.test(p));
 }
 
 export async function checkRateLimit(/** @type {string | number | boolean | null | undefined} */ identifier) {
@@ -414,6 +432,7 @@ export async function resolveAuthContext(/** @type {unknown} */ req) {
       userId: String(/** @type {any} */(proClaims).userId || ''),
       structureId: String(/** @type {any} */(proClaims).structureId || ''),
       iat: /** @type {any} */ (proClaims).iat,
+      mfa: /** @type {any} */ (proClaims).mfa === true,
     };
   }
 
@@ -614,6 +633,9 @@ export function requireProAuth(handler) {
     if (membership && proSessionRevoked(/** @type {any} */ (auth).iat, membership)) {
       return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
     }
+    if (proMfaRequired() && /** @type {any} */ (auth).mfa !== true && proRouteNeedsMfa(req.url)) {
+      return res.status(403).json({ error: 'Double authentification requise', code: 'PRO_MFA_REQUIRED', message: 'Activez la double authentification puis reconnectez-vous pour accéder aux dossiers.' });
+    }
     let currentRole = role;
     let scopedStructureId = structureId;
     if (membership) {
@@ -637,6 +659,7 @@ export function requireProAuth(handler) {
       role: currentRole,
       structureId: scopedStructureId,
       email: auth.email || null,
+      mfa: /** @type {any} */ (auth).mfa === true,
     };
 
     return handler(req, res);
