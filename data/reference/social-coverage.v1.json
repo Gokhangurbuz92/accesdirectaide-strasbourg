@@ -1,13 +1,31 @@
 {
  "schema": "ada-social-coverage/1",
- "reference": "2026-11-01.1",
- "measuredAt": "2026-11-01T07:24:15.033Z",
+ "reference": "2026-11-02.1",
+ "measuredAt": "2026-11-02T01:11:17.729Z",
  "totals": {
   "subdomains": 86,
   "byStatus": {
-   "PARTIALLY_COVERED": 35,
-   "COVERED_VERIFIED": 23,
-   "TAXONOMY_ONLY": 28
+   "PARTIALLY_COVERED": 44,
+   "COVERED_VERIFIED": 33,
+   "TAXONOMY_ONLY": 9
+  },
+  "byServiceStatus": {
+   "NO_VERIFIED_SERVICE": 48,
+   "SERVICE_PARTIAL": 23,
+   "SERVICE_VERIFIED": 15
+  },
+  "evidence": {
+   "taxonomy": 86,
+   "officialTopicSource": 42,
+   "verifiedRightsContent": 70,
+   "verifiedRightsByTitle": 38,
+   "verifiedProcedure": 34,
+   "verifiedEstablishment": 21,
+   "verifiedSpecificService": 0,
+   "territorialEligibility": 24,
+   "accessModality": 19,
+   "currentAvailability": 0,
+   "orientationTested": 51
   }
  },
  "byDomain": [
@@ -15,8 +33,8 @@
    "domain": "precarite",
    "letter": "A",
    "fr": "Précarité, pauvreté et urgence sociale",
-   "COVERED_VERIFIED": 2,
-   "PARTIALLY_COVERED": 4,
+   "COVERED_VERIFIED": 3,
+   "PARTIALLY_COVERED": 3,
    "TAXONOMY_ONLY": 0
   },
   {
@@ -24,104 +42,104 @@
    "letter": "B",
    "fr": "Logement, hébergement et habitat",
    "COVERED_VERIFIED": 2,
-   "PARTIALLY_COVERED": 5,
-   "TAXONOMY_ONLY": 3
+   "PARTIALLY_COVERED": 7,
+   "TAXONOMY_ONLY": 1
   },
   {
    "domain": "protection-enfance",
    "letter": "C",
    "fr": "Protection de l'enfance et aide sociale à l'enfance",
    "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 1,
-   "TAXONOMY_ONLY": 3
+   "PARTIALLY_COVERED": 2,
+   "TAXONOMY_ONLY": 2
   },
   {
    "domain": "enfance-jeunesse",
    "letter": "D",
    "fr": "Enfance, jeunesse, éducation et vie étudiante",
    "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 2,
-   "TAXONOMY_ONLY": 1
+   "PARTIALLY_COVERED": 3,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "famille",
    "letter": "E",
    "fr": "Famille et parentalité",
    "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 4,
-   "TAXONOMY_ONLY": 1
+   "PARTIALLY_COVERED": 5,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "handicap",
    "letter": "F",
    "fr": "Handicap et inclusion",
-   "COVERED_VERIFIED": 1,
+   "COVERED_VERIFIED": 2,
    "PARTIALLY_COVERED": 4,
-   "TAXONOMY_ONLY": 1
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "autonomie",
    "letter": "G",
    "fr": "Grand âge, dépendance et autonomie",
-   "COVERED_VERIFIED": 2,
+   "COVERED_VERIFIED": 4,
    "PARTIALLY_COVERED": 2,
-   "TAXONOMY_ONLY": 2
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "sante",
    "letter": "H",
    "fr": "Santé et accès aux soins",
-   "COVERED_VERIFIED": 1,
+   "COVERED_VERIFIED": 2,
    "PARTIALLY_COVERED": 2,
-   "TAXONOMY_ONLY": 1
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "sante-mentale",
    "letter": "I",
    "fr": "Santé mentale et addictions",
-   "COVERED_VERIFIED": 0,
+   "COVERED_VERIFIED": 1,
    "PARTIALLY_COVERED": 1,
-   "TAXONOMY_ONLY": 2
+   "TAXONOMY_ONLY": 1
   },
   {
    "domain": "violences",
    "letter": "J",
    "fr": "Violences et protection des victimes",
-   "COVERED_VERIFIED": 1,
+   "COVERED_VERIFIED": 4,
    "PARTIALLY_COVERED": 1,
-   "TAXONOMY_ONLY": 3
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "justice",
    "letter": "K",
    "fr": "Justice et accès au droit",
    "COVERED_VERIFIED": 2,
-   "PARTIALLY_COVERED": 0,
-   "TAXONOMY_ONLY": 1
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "protection-majeurs",
    "letter": "L",
    "fr": "Protection juridique des majeurs",
    "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 0,
-   "TAXONOMY_ONLY": 1
+   "PARTIALLY_COVERED": 1,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "migration",
    "letter": "M",
    "fr": "Migration, asile et intégration",
-   "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 2,
-   "TAXONOMY_ONLY": 2
+   "COVERED_VERIFIED": 2,
+   "PARTIALLY_COVERED": 3,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "emploi",
    "letter": "N",
    "fr": "Emploi, insertion et formation",
    "COVERED_VERIFIED": 1,
-   "PARTIALLY_COVERED": 1,
-   "TAXONOMY_ONLY": 2
+   "PARTIALLY_COVERED": 3,
+   "TAXONOMY_ONLY": 0
   },
   {
    "domain": "budget",
@@ -179,8 +197,11 @@
    "subdomain": "aide-alimentaire",
    "fr": "Alimentation, hygiène, vêtements",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 2,
+   "rightsContent": 5,
    "rightsSlugs": [
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "actualite:colis-importes-l-union-europeenne-instaure-de-nouveaux-frais-de-traitement-des-le-1er-novembre-187812"
    ],
@@ -194,6 +215,23 @@
     "equipement-et-alimentation--"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -201,9 +239,12 @@
    "letter": "A",
    "subdomain": "urgence-sociale",
    "fr": "Aide d'urgence et secours",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952"
+   ],
    "places": 179,
    "placesEurometropole": 42,
    "placeTypes": [
@@ -216,7 +257,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing verified rights content"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "precarite",
@@ -224,8 +282,9 @@
    "subdomain": "acces-aux-droits",
    "fr": "Accès aux droits et non-recours",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 2,
+   "rightsContent": 3,
    "rightsSlugs": [
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
    ],
@@ -242,6 +301,25 @@
     "difficultes-administratives-ou-juridiques--accompagnement-pour-lacces-aux-droits"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -264,6 +342,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -272,7 +367,7 @@
    "subdomain": "minima-sociaux",
    "fr": "Revenus minimum et ressources",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 16,
+   "rightsContent": 25,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
@@ -295,6 +390,27 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "aide:prime-activite",
+    "aide:rsa",
+    "demarche:prime-activite-caf"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -305,9 +421,9 @@
    "status": "PARTIALLY_COVERED",
    "rightsContent": 4,
    "rightsSlugs": [
-    "guide:duree-de-conservation-des-papiers-f19134",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:duree-de-conservation-des-papiers-f19134",
     "actualite:heures-creuses-les-plages-horaires-evoluent-299a24"
    ],
    "places": 0,
@@ -318,6 +434,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -326,8 +459,9 @@
    "subdomain": "hebergement-urgence",
    "fr": "Hébergement d'urgence et SIAO",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 2,
+   "rightsContent": 3,
    "rightsSlugs": [
+    "guide:violences-conjugales-f12544",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
    ],
@@ -347,6 +481,23 @@
     "logement-hebergement--rechercher-une-solution-dhebergement-temporaire"
    ],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -367,6 +518,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -375,10 +543,12 @@
    "subdomain": "logement-social",
    "fr": "Demande de logement social",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 4,
+   "rightsContent": 6,
    "rightsSlugs": [
     "aide:als",
     "demarche:demande-hlm-67-68",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:violences-conjugales-f12544",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
    ],
@@ -392,6 +562,26 @@
     "logement-hebergement--sinformer-sur-les-demarches-liees-a-lacces-au-logement"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:als",
+    "demarche:demande-hlm-67-68"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -400,15 +590,19 @@
    "subdomain": "aides-logement",
    "fr": "Aides au paiement du logement",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 7,
+   "rightsContent": 11,
    "rightsSlugs": [
     "aide:apl",
     "aide:als",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:violences-conjugales-f12544",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -420,6 +614,29 @@
     "logement-hebergement--louer-un-logement"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:apl",
+    "aide:als",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -428,11 +645,13 @@
    "subdomain": "expulsion-impayes",
    "fr": "Impayés de loyer et prévention des expulsions",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 3,
+   "rightsContent": 5,
    "rightsSlugs": [
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -445,6 +664,26 @@
     "logement-hebergement--se-maintenir-dans-le-logement"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
+    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -466,6 +705,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -474,9 +730,10 @@
    "subdomain": "habitat-indigne",
    "fr": "Logement indigne ou insalubre",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 2,
    "rightsSlugs": [
-    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3"
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -486,6 +743,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -507,6 +781,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -514,9 +805,11 @@
    "letter": "B",
    "subdomain": "logement-jeunes",
    "fr": "Logement des jeunes",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -527,16 +820,37 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "logement",
    "letter": "B",
    "subdomain": "adaptation-logement",
    "fr": "Adaptation du logement (âge, handicap)",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -545,7 +859,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "protection-enfance",
@@ -553,12 +886,20 @@
    "subdomain": "ase",
    "fr": "Aide sociale à l'enfance (ASE)",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 4,
+   "rightsContent": 16,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
-    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
-    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
-    "actualite:certains-velos-interdits-dans-les-tgv-et-les-intercites-a-compter-du-13-decembre-da1122"
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -570,6 +911,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -591,6 +949,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -599,8 +974,14 @@
    "subdomain": "signalement",
    "fr": "Enfant en danger : alerter",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 7,
    "rightsSlugs": [
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:violences-conjugales-f12544",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037"
    ],
    "places": 0,
@@ -613,6 +994,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -620,9 +1021,11 @@
    "letter": "C",
    "subdomain": "mna",
    "fr": "Mineurs non accompagnés",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -633,7 +1036,26 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "protection-enfance",
@@ -653,6 +1075,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -660,9 +1099,11 @@
    "letter": "D",
    "subdomain": "pmi-petite-enfance",
    "fr": "PMI et petite enfance",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:vous-avez-trouve-un-mode-de-garde-pour-votre-enfant-aides-financieres-f38243"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -671,7 +1112,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "enfance-jeunesse",
@@ -679,9 +1137,13 @@
    "subdomain": "scolarite-inclusive",
    "fr": "Scolarité et inclusion scolaire",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 2,
+   "rightsContent": 6,
    "rightsSlugs": [
     "aide:permis",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:enfant-victime-de-maltraitance-f952",
     "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 0,
@@ -692,6 +1154,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -700,10 +1179,12 @@
    "subdomain": "jeunes-insertion",
    "fr": "Jeunes 16-25 ans : Mission locale, CEJ",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 2,
+   "rightsContent": 4,
    "rightsSlugs": [
     "aide:faj-strasbourg",
-    "aide:permis"
+    "aide:permis",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
    ],
    "places": 13,
    "placesEurometropole": 8,
@@ -715,6 +1196,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:faj-strasbourg"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -723,7 +1223,7 @@
    "subdomain": "etudiants",
    "fr": "Vie étudiante et précarité étudiante",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 11,
+   "rightsContent": 19,
    "rightsSlugs": [
     "aide:c2s",
     "aide:als",
@@ -731,11 +1231,12 @@
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
     "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
     "demarche:demande-c2s",
-    "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "actualite:engagement-de-service-public-une-allocation-mensuelle-de-1-200-pour-les-etudiants-en-medecine-b7ead2"
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -745,6 +1246,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -753,20 +1273,20 @@
    "subdomain": "prestations-familiales",
    "fr": "Prestations familiales",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 12,
+   "rightsContent": 15,
    "rightsSlugs": [
     "aide:prime-activite",
     "aide:ave-avf",
     "aide:apl",
     "aide:als",
     "demarche:prime-activite-caf",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:violences-conjugales-f12544",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
-    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
    ],
    "places": 12,
    "placesEurometropole": 4,
@@ -778,6 +1298,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -786,15 +1323,20 @@
    "subdomain": "grossesse-naissance",
    "fr": "Grossesse et naissance",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 7,
+   "rightsContent": 25,
    "rightsSlugs": [
     "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
     "demarche:actualisation-france-travail",
-    "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
-    "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
-    "actualite:securite-sociale-quel-sera-le-plafond-annuel-en-2027-009178"
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:curatelle-d-une-personne-majeure-f2094"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -804,6 +1346,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -812,7 +1373,7 @@
    "subdomain": "parentalite",
    "fr": "Soutien à la parentalité",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 9,
+   "rightsContent": 17,
    "rightsSlugs": [
     "aide:prime-activite",
     "aide:rsa",
@@ -821,8 +1382,11 @@
     "demarche:rdv-titre-sejour-67",
     "demarche:dossier-mdph-67-68",
     "demarche:prime-activite-caf",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:mandat-de-protection-future-f16670"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -834,6 +1398,23 @@
     "famille--soutien-a-la-parentalite-et-a-leducation"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -842,12 +1423,19 @@
    "subdomain": "separation",
    "fr": "Séparation, médiation familiale, pension alimentaire",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 4,
+   "rightsContent": 11,
    "rightsSlugs": [
     "aide:prime-activite",
     "demarche:prime-activite-caf",
-    "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367",
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
+    "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -859,6 +1447,25 @@
     "famille--surmonter-conflits-separation-violence"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -867,9 +1474,10 @@
    "subdomain": "famille-monoparentale",
    "fr": "Familles monoparentales",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 2,
    "rightsSlugs": [
-    "demarche:prime-activite-caf"
+    "demarche:prime-activite-caf",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -879,6 +1487,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -886,9 +1511,11 @@
    "letter": "E",
    "subdomain": "garde-enfants",
    "fr": "Garde d'enfants",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:vous-avez-trouve-un-mode-de-garde-pour-votre-enfant-aides-financieres-f38243"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -899,7 +1526,24 @@
     "famille--garde-denfants"
    ],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "handicap",
@@ -907,7 +1551,7 @@
    "subdomain": "mdph-droits",
    "fr": "MDPH et droits (AAH, PCH, AEEH, RQTH, CMI)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 7,
+   "rightsContent": 10,
    "rightsSlugs": [
     "aide:pch",
     "aide:aeeh",
@@ -915,6 +1559,9 @@
     "aide:aah",
     "demarche:dossier-mdph-67-68",
     "demarche:demande-c2s",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474"
    ],
    "places": 0,
@@ -925,6 +1572,29 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "aide:pch",
+    "aide:aeeh",
+    "aide:aah",
+    "demarche:dossier-mdph-67-68",
+    "guide:carte-mobilite-inclusion-cmi-f34049"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -949,6 +1619,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -974,6 +1661,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -996,6 +1700,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -1003,9 +1724,12 @@
    "letter": "F",
    "subdomain": "travail-handicap",
    "fr": "Travail : ESAT, Cap emploi, maintien",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
+   ],
    "places": 24,
    "placesEurometropole": 9,
    "placeTypes": [
@@ -1018,16 +1742,35 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing verified rights content"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "handicap",
    "letter": "F",
    "subdomain": "accessibilite-mobilite",
    "fr": "Accessibilité et transport adapté",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1036,7 +1779,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "autonomie",
@@ -1044,11 +1804,12 @@
    "subdomain": "apa-aspa",
    "fr": "APA, ASPA, ASH",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 3,
+   "rightsContent": 4,
    "rightsSlugs": [
     "aide:apa-alsace",
     "aide:c2s",
-    "demarche:demande-c2s"
+    "demarche:demande-c2s",
+    "guide:carte-mobilite-inclusion-cmi-f34049"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1058,6 +1819,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "aide:apa-alsace"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1065,9 +1845,12 @@
    "letter": "G",
    "subdomain": "aide-domicile",
    "fr": "Aide et soins à domicile",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120"
+   ],
    "places": 129,
    "placesEurometropole": 71,
    "placeTypes": [
@@ -1082,7 +1865,24 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing verified rights content"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "autonomie",
@@ -1090,9 +1890,14 @@
    "subdomain": "ehpad-residences",
    "fr": "EHPAD et résidences autonomie",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 6,
    "rightsSlugs": [
-    "aide:als"
+    "aide:als",
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:habilitation-familiale-f33367",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861"
    ],
    "places": 129,
    "placesEurometropole": 59,
@@ -1107,6 +1912,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1127,6 +1949,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -1134,9 +1973,12 @@
    "letter": "G",
    "subdomain": "maltraitance-ages",
    "fr": "Maltraitance des personnes âgées ou handicapées",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1147,16 +1989,40 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "autonomie",
    "letter": "G",
    "subdomain": "fin-de-vie",
    "fr": "Fin de vie et soins palliatifs",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1167,7 +2033,28 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "sante",
@@ -1175,12 +2062,16 @@
    "subdomain": "couverture-sante",
    "fr": "Couverture santé (CSS, AME, Carte Vitale)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 8,
+   "rightsContent": 13,
    "rightsSlugs": [
     "aide:c2s",
     "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
     "demarche:demande-c2s",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
     "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
     "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
@@ -1194,6 +2085,27 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "aide:c2s",
+    "demarche:demande-c2s",
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1201,9 +2113,13 @@
    "letter": "H",
    "subdomain": "centres-sante",
    "fr": "Centres et maisons de santé",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917"
+   ],
    "places": 78,
    "placesEurometropole": 41,
    "placeTypes": [
@@ -1215,7 +2131,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing verified rights content"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "sante",
@@ -1223,9 +2156,10 @@
    "subdomain": "pass",
    "fr": "Soins pour personnes sans couverture (PASS)",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 2,
    "rightsSlugs": [
-    "demarche:pass-culture-jeunes"
+    "demarche:pass-culture-jeunes",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1235,6 +2169,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "demarche:pass-culture-jeunes"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1242,9 +2195,12 @@
    "letter": "H",
    "subdomain": "sante-sexuelle",
    "fr": "Santé sexuelle et reproductive",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1253,16 +2209,41 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "sante-mentale",
    "letter": "I",
    "subdomain": "psy",
    "fr": "Soins et soutien psychologique (CMP)",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1271,7 +2252,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "sante-mentale",
@@ -1292,6 +2292,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -1299,9 +2316,11 @@
    "letter": "I",
    "subdomain": "addictions",
    "fr": "Addictions : CSAPA, CAARUD",
-   "status": "PARTIALLY_COVERED",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917"
+   ],
    "places": 14,
    "placesEurometropole": 10,
    "placeTypes": [
@@ -1314,16 +2333,35 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing verified rights content"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "violences",
    "letter": "J",
    "subdomain": "violences-conjugales",
    "fr": "Violences conjugales et intrafamiliales",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:violences-conjugales-f12544"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1335,7 +2373,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:violences-conjugales-f12544"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "violences",
@@ -1343,8 +2400,14 @@
    "subdomain": "violences-sexuelles",
    "fr": "Violences sexuelles",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 7,
    "rightsSlugs": [
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
    ],
    "places": 0,
@@ -1358,6 +2421,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:violences-conjugales-f12544"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1365,9 +2447,12 @@
    "letter": "J",
    "subdomain": "victimes",
    "fr": "Aide aux victimes",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1378,7 +2463,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "violences",
@@ -1386,20 +2488,20 @@
    "subdomain": "traite-exploitation",
    "fr": "Traite et exploitation",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 13,
+   "rightsContent": 24,
    "rightsSlugs": [
     "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
     "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
     "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
-    "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
-    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
-    "actualite:colis-importes-l-union-europeenne-instaure-de-nouveaux-frais-de-traitement-des-le-1er-novembre-187812",
-    "actualite:donnez-votre-avis-sur-l-assurance-retraite-103155"
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789",
+    "guide:harcelement-sexuel-ou-sexiste-f1043"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1409,6 +2511,28 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
+    "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
+    "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1416,9 +2540,14 @@
    "letter": "J",
    "subdomain": "harcelement",
    "fr": "Harcèlement",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 4,
+   "rightsSlugs": [
+    "guide:violences-conjugales-f12544",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
+    "guide:enfant-victime-de-maltraitance-f952"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1427,7 +2556,27 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "justice",
@@ -1435,12 +2584,20 @@
    "subdomain": "acces-au-droit",
    "fr": "Accès au droit et aide juridictionnelle",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 4,
+   "rightsContent": 13,
    "rightsSlugs": [
     "aide:aide-juridictionnelle",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367",
+    "guide:mandat-de-protection-future-f16670",
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
    ],
    "places": 20,
    "placesEurometropole": 6,
@@ -1452,6 +2609,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:aide-juridictionnelle"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1459,9 +2635,13 @@
    "letter": "K",
    "subdomain": "pjj-spip",
    "fr": "PJJ, SPIP et sortie de détention",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1472,7 +2652,24 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "justice",
@@ -1480,14 +2677,20 @@
    "subdomain": "recours",
    "fr": "Recours administratifs",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 6,
+   "rightsContent": 16,
    "rightsSlugs": [
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367",
+    "guide:mandat-de-protection-future-f16670",
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789",
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
-    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1497,6 +2700,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
+    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1505,62 +2728,16 @@
    "subdomain": "mesures",
    "fr": "Tutelle, curatelle, sauvegarde de justice",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 8,
    "rightsSlugs": [
+    "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367",
+    "guide:mandat-de-protection-future-f16670",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
-   ],
-   "places": 0,
-   "placesEurometropole": 0,
-   "placeTypes": [],
-   "emergency": [],
-   "crossLanguageSearch": false,
-   "casf": [],
-   "dataInclusion": [],
-   "remoteByNature": true,
-   "gap": null
-  },
-  {
-   "domain": "protection-majeurs",
-   "letter": "L",
-   "subdomain": "mjpm",
-   "fr": "Mandataires judiciaires (MJPM)",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
-   "places": 0,
-   "placesEurometropole": 0,
-   "placeTypes": [],
-   "emergency": [],
-   "crossLanguageSearch": false,
-   "casf": [
-    14,
-    15
-   ],
-   "dataInclusion": [
-    "difficultes-financieres--mettre-en-place-une-mesure-de-protection-financiere"
-   ],
-   "remoteByNature": false,
-   "gap": "missing content and service data"
-  },
-  {
-   "domain": "migration",
-   "letter": "M",
-   "subdomain": "titre-sejour",
-   "fr": "Titre de séjour et démarches en préfecture",
-   "status": "COVERED_VERIFIED",
-   "rightsContent": 11,
-   "rightsSlugs": [
-    "aide:microcredit-personnel",
-    "aide:pch",
-    "aide:aide-juridictionnelle",
-    "aide:als",
-    "demarche:rdv-titre-sejour-67",
-    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
-    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
-    "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1570,6 +2747,124 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
+  },
+  {
+   "domain": "protection-majeurs",
+   "letter": "L",
+   "subdomain": "mjpm",
+   "fr": "Mandataires judiciaires (MJPM)",
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 2,
+   "rightsSlugs": [
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [
+    14,
+    15
+   ],
+   "dataInclusion": [
+    "difficultes-financieres--mettre-en-place-une-mesure-de-protection-financiere"
+   ],
+   "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
+  },
+  {
+   "domain": "migration",
+   "letter": "M",
+   "subdomain": "titre-sejour",
+   "fr": "Titre de séjour et démarches en préfecture",
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 21,
+   "rightsSlugs": [
+    "aide:microcredit-personnel",
+    "aide:pch",
+    "aide:aide-juridictionnelle",
+    "aide:als",
+    "demarche:rdv-titre-sejour-67",
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:contraception-f707",
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:curatelle-d-une-personne-majeure-f2094"
+   ],
+   "places": 0,
+   "placesEurometropole": 0,
+   "placeTypes": [],
+   "emergency": [],
+   "crossLanguageSearch": true,
+   "casf": [],
+   "dataInclusion": [],
+   "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "demarche:rdv-titre-sejour-67",
+    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
+    "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1578,8 +2873,11 @@
    "subdomain": "asile",
    "fr": "Asile : procédure, CADA, HUDA",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 4,
    "rightsSlugs": [
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317"
    ],
    "places": 0,
@@ -1592,6 +2890,23 @@
    ],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1599,9 +2914,13 @@
    "letter": "M",
    "subdomain": "protection-temporaire",
    "fr": "Protection temporaire",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "COVERED_VERIFIED",
+   "rightsContent": 3,
+   "rightsSlugs": [
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1610,16 +2929,35 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": null
   },
   {
    "domain": "migration",
    "letter": "M",
    "subdomain": "integration-langue",
    "fr": "Intégration et apprentissage du français",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1630,7 +2968,26 @@
     "lecture-ecriture-calcul--maitriser-le-francais"
    ],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "migration",
@@ -1638,8 +2995,10 @@
    "subdomain": "droits-sans-titre",
    "fr": "Droits des personnes sans titre de séjour",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 3,
    "rightsSlugs": [
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
     "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
    ],
    "places": 0,
@@ -1650,6 +3009,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1658,14 +3034,17 @@
    "subdomain": "recherche-emploi",
    "fr": "Recherche d'emploi et chômage",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 9,
+   "rightsContent": 13,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
     "aide:aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
     "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:actualisation-france-travail",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+    "guide:violences-conjugales-f12544",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
@@ -1680,6 +3059,28 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
+    "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
+    "demarche:actualisation-france-travail",
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1687,9 +3088,11 @@
    "letter": "N",
    "subdomain": "iae",
    "fr": "Insertion par l'activité économique (IAE)",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1698,7 +3101,26 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "emploi",
@@ -1706,20 +3128,20 @@
    "subdomain": "formation",
    "fr": "Formation et reconversion",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 14,
+   "rightsContent": 38,
    "rightsSlugs": [
     "aide:faj-strasbourg",
     "aide:permis",
     "demarche:rdv-titre-sejour-67",
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
     "demarche:actualisation-france-travail",
-    "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
-    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
-    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474"
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:contraception-f707",
+    "guide:interruption-volontaire-de-grossesse-ivg-f1551",
+    "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1731,6 +3153,25 @@
     "choisir-un-metier--"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "demarche:rdv-titre-sejour-67"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1738,9 +3179,11 @@
    "letter": "N",
    "subdomain": "freins-emploi",
    "fr": "Freins sociaux à l'emploi",
-   "status": "TAXONOMY_ONLY",
-   "rightsContent": 0,
-   "rightsSlugs": [],
+   "status": "PARTIALLY_COVERED",
+   "rightsContent": 1,
+   "rightsSlugs": [
+    "guide:vous-avez-trouve-un-mode-de-garde-pour-votre-enfant-aides-financieres-f38243"
+   ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
@@ -1749,7 +3192,24 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
-   "gap": "missing content and service data"
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
+   "gap": "missing verified local service data"
   },
   {
    "domain": "budget",
@@ -1757,8 +3217,11 @@
    "subdomain": "conseil-budget",
    "fr": "Conseil budgétaire (Points conseil budget)",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 4,
+   "rightsContent": 7,
    "rightsSlugs": [
+    "guide:tutelle-curatelle-sauvegarde-de-justice-d-un-majeur-quelles-difference-f10424",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:enfant-victime-de-maltraitance-f952",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
@@ -1774,6 +3237,23 @@
     "difficultes-financieres--ameliorer-sa-gestion-budgetaire"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1782,12 +3262,14 @@
    "subdomain": "surendettement",
    "fr": "Surendettement (Banque de France)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 5,
+   "rightsContent": 7,
    "rightsSlugs": [
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:tutelle-d-un-majeur-f2120",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
+    "guide:duree-de-conservation-des-papiers-f19134",
+    "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3",
     "actualite:credits-a-la-consommation-les-regles-evoluent-pour-prevenir-le-surendettement-14b2f1"
    ],
    "places": 0,
@@ -1800,6 +3282,25 @@
     "difficultes-financieres--situation-dendettement-surendettement"
    ],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1808,8 +3309,10 @@
    "subdomain": "inclusion-bancaire",
    "fr": "Compte bancaire et inclusion bancaire",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 3,
    "rightsSlugs": [
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:habilitation-familiale-f33367",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
    ],
    "places": 0,
@@ -1820,6 +3323,25 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1828,12 +3350,14 @@
    "subdomain": "impots",
    "fr": "Impôts et démarches fiscales",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 4,
+   "rightsContent": 6,
    "rightsSlugs": [
     "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:mandat-de-protection-future-f16670",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 9,
    "placesEurometropole": 3,
@@ -1845,6 +3369,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1861,10 +3402,27 @@
     "Espace France Services"
    ],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified rights content"
   },
   {
@@ -1879,12 +3437,29 @@
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [
     "lecture-ecriture-calcul--"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -1893,10 +3468,11 @@
    "subdomain": "tarifs-solidaires",
    "fr": "Tarifs solidaires de transport",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 3,
+   "rightsContent": 4,
    "rightsSlugs": [
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:duree-de-conservation-des-papiers-f19134",
     "actualite:prime-de-transport-versee-au-salarie-le-plafond-d-exoneration-est-revalorise-temporairement-e353e4"
    ],
    "places": 0,
@@ -1907,6 +3483,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1925,6 +3518,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -1936,9 +3546,9 @@
    "rightsContent": 4,
    "rightsSlugs": [
     "aide:permis",
-    "guide:duree-de-conservation-des-papiers-f19134",
     "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
-    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774"
+    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
+    "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1950,6 +3560,25 @@
     "mobilite--"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:permis"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -1958,8 +3587,11 @@
    "subdomain": "defenseur-droits",
    "fr": "Défenseur des droits et recours",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 4,
    "rightsSlugs": [
+    "guide:harcelement-sexuel-ou-sexiste-f1043",
+    "guide:harcelement-moral-f2354",
+    "guide:enfant-victime-de-maltraitance-f952",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
    ],
    "places": 0,
@@ -1972,6 +3604,25 @@
     "difficultes-administratives-ou-juridiques--connaitre-ses-droits-face-a-une-discrimination"
    ],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": true,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "SERVICE_VERIFIED",
+   "titledSlugs": [
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -1990,6 +3641,23 @@
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -1998,20 +3666,38 @@
    "subdomain": "aidants",
    "fr": "Aidants familiaux",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 1,
+   "rightsContent": 2,
    "rightsSlugs": [
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
     "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
    ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [
     "famille--soutien-aidants"
    ],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -2026,10 +3712,27 @@
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   },
   {
@@ -2038,22 +3741,46 @@
    "subdomain": "culture-loisirs",
    "fr": "Culture, sport et loisirs",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 5,
+   "rightsContent": 9,
    "rightsSlugs": [
     "aide:ave-avf",
     "demarche:pass-culture-jeunes",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+    "guide:mandat-de-protection-future-f16670",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:duree-de-conservation-des-papiers-f19134",
     "actualite:prime-de-transport-versee-au-salarie-le-plafond-d-exoneration-est-revalorise-temporairement-e353e4"
    ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": true,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "SERVICE_PARTIAL",
+   "titledSlugs": [
+    "aide:ave-avf",
+    "demarche:pass-culture-jeunes"
+   ],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing verified local service data"
   },
   {
@@ -2062,18 +3789,44 @@
    "subdomain": "deces-deuil",
    "fr": "Décès et deuil : démarches et droits",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 1,
+   "rightsContent": 10,
    "rightsSlugs": [
+    "guide:accompagnement-et-soins-palliatifs-f39676",
+    "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+    "guide:curatelle-d-une-personne-majeure-f2094",
+    "guide:tutelle-d-un-majeur-f2120",
+    "guide:sauvegarde-de-justice-d-un-majeur-f2075",
+    "guide:habilitation-familiale-f33367",
+    "guide:mandat-de-protection-future-f16670",
+    "guide:violences-conjugales-f12544",
+    "guide:enfant-victime-de-maltraitance-f952",
     "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 0,
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": true,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": true,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -2082,14 +3835,17 @@
    "subdomain": "institutions-locales",
    "fr": "Institutions locales (mairies, CCAS, Maisons des solidarités)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 6,
+   "rightsContent": 9,
    "rightsSlugs": [
     "aide:permis",
-    "guide:duree-de-conservation-des-papiers-f19134",
+    "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+    "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
+    "guide:duree-de-conservation-des-papiers-f19134"
    ],
    "places": 722,
    "placesEurometropole": 105,
@@ -2099,10 +3855,27 @@
     "Maison des solidarités (Espace Solidarités)"
    ],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": true,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": true,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": true
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": null
   },
   {
@@ -2117,18 +3890,35 @@
    "placesEurometropole": 0,
    "placeTypes": [],
    "emergency": [],
-   "crossLanguageSearch": false,
+   "crossLanguageSearch": true,
    "casf": [],
    "dataInclusion": [],
    "remoteByNature": false,
+   "evidence": {
+    "taxonomy": true,
+    "officialTopicSource": false,
+    "verifiedRightsContent": false,
+    "verifiedRightsByTitle": false,
+    "verifiedProcedure": false,
+    "verifiedEstablishment": false,
+    "verifiedSpecificService": false,
+    "territorialEligibility": false,
+    "accessModality": false,
+    "currentAvailability": false,
+    "orientationTested": false
+   },
+   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "titledSlugs": [],
+   "services": 0,
+   "servicesEurometropole": 0,
    "gap": "missing content and service data"
   }
  ],
- "note": "Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
+ "note": "Two measurements. status = content coverage (keyword anywhere in published rights content, or places of the type). serviceStatus = stricter service coverage (official title naming the need, and a reachable channel: the national one for remote needs, a verified local SERVICE — not a building — with contact and hours otherwise). Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
  "catalogue": {
   "aide": 17,
   "demarche": 13,
-  "guide": 12,
+  "guide": 37,
   "dispositif": 1,
   "actualite": 10,
   "structures": 1633

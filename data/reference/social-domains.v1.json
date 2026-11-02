@@ -1,12 +1,13 @@
 {
  "schema": "ada-social-reference/1",
- "version": "2026-11-01.1",
+ "version": "2026-11-02.1",
  "status": "AI-drafted engineering reference from official classifications — to be reviewed by a social-sector expert; a category here is NOT evidence of coverage",
  "sources": {
   "casf": "CASF L312-1 I, 1° to 18° (LEGIARTI000054137518, in force 28/05/2026)",
   "finess": "FINESS nomenclature TRE-R397 (ANS, Licence Ouverte 2.0)",
   "dataInclusion": "data·inclusion schema v1.0.10 thématiques (Licence Ouverte 2.0)",
   "emergency": "official numbers verified 01/11/2026 (3977 replaced by 3133 on 01/03/2026)",
+  "changes": "2026-11-02.1: « mineur étranger isolé » added to mna — the term the official Service-Public sheet F31037 and the CESEDA still use for the same public (R34)",
   "research": "STRASBOURG_FULL_PRODUCT_PLAN/R32_EXTERNAL_PACKAGES/research-social-reference.md"
  },
  "emergency": {
@@ -403,7 +404,8 @@
      "fr": "Mineurs non accompagnés",
      "keywords": [
       "mineur non accompagné",
-      "MNA"
+      "MNA",
+      "mineur étranger isolé"
      ],
      "structureTypes": [],
      "casf": [
