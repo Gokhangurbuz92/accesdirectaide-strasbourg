@@ -1,0 +1,454 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
+ "recordId": "7b9fce24-d741-4d19-9b7a-18ff25bb89d1",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:56:17.382Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "\"MaPrimeAdapt\": Funding for adapting homes for people with reduced mobility",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The MaPrimeAdapt grant covers the costs of adapting a home to accommodate a loss of independence.",
+      "steps": [
+       {
+        "texte": "Are you looking to make adaptations to your home due to a loss of independence (for example, replacing a bathtub with a shower)? You may be eligible for the MaPrimeAdapt' scheme, which provides financial assistance for adaptation works, subject to certain conditions (including income). This scheme can cover 50% or 70% of the cost of your adaptation works. We provide you with the information you need to know.",
+        "titre": null
+       },
+       {
+        "texte": "In order to be eligible for MaPrimeAdapt', you must meet certain requirements.\nHousing-related conditions\nYou may be eligible for MaPrimeAdapt if you are the owner-occupier or tenant of the private estate.\nThe work to be carried out must relate to your main residence. This residence must be located in the metropolitan area or in the overseas departments and regions (DROM).\nSpecifically: Co-ownership buildings can benefit from MaPrimeAdapt to finance works that improve accessibility and relate to common areas and shared equipment. All works that contribute to the accessibility of common areas are eligible. The Anah (French state agency) covers 50% of the cost of the works, up to a maximum of €20,000 per accessible entrance.\nCase: You are a tenant\nTo be eligible for MaPrimeAdapt', you must meet one of the following conditions:\n- You or a member of your household is 70 years or older, without any condition related to loss of independence.\n- You or a member of your household are between 60 and 69 years old, and are classified in a specific resource group (GIR).\n- You or a member of your household have a disability rating of at least 50%, recognized by the Commission for the Rights of Persons with Disabilities (CDAPH) or the departmental office of the National Office for Veterans and War Victims (ONACVG), or you are eligible for the disability compensation allowance (PCH: disability compensation benefit), the allowance for the disabled child (AEEH: allowance for the education of a disabled child), or the allowance for the disabled adult (AAH: allowance for disabled adults). The MaPrimeAdapt' aid can be combined with the PCH - aid for home adaptation.\nScenario: You are a tenant\nTo be eligible for MaPrimeAdapt', you must meet the following conditions:\n- You are renting a property that is part of a private estate.\n- You have obtained your landlord's approval to carry out modifications to the property to accommodate your reduced mobility.\nFurthermore, you must also meet one of the following conditions:\n- You or a member of your household is 70 years or older, without any condition related to loss of independence.\n- You or a member of your household are between 60 and 69 years old, and are classified in a specific resource group (GIR).\n- You or a member of your household have a disability rating of at least 50%, recognized by the Commission for the Rights of Persons with Disabilities (CDAPH) or the departmental office of the National Office for Veterans and War Victims (ONACVG), or you are eligible for the disability compensation allowance (PCH), the allowance for the disabled child (AEEH), or the allowance for the disabled adult (AAH). The MaPrimeAdapt' aid can be combined with the PCH - aid for home adaptation.\nConditions related to resources\nTo be eligible for the MaPrimeAdapt' aid, your income must not exceed the thresholds for low or very low incomes (whether you are a homeowner or a tenant).\nThe income used for reference is the \"reference tax income\" (RFR), which is stated on your tax assessment for the previous year, when you applied for assistance.\nThe income limits that must be met vary depending on whether your property is located outside the Île-de-France region or within it.\nCase: Outside the Île-de-France region\nTable: Maximum resource limits not to be exceeded outside of the Île-de-France region to be eligible for MaPrimeAdapt'\nNumber of people in the household (taxable household) | Households with very low income | Households with low income\n1 | Up to €17,363 | Up to €22,259\n2 | Up to €25,393 | Up to €32,553\n3 | Up to €30,540 | Up to €39,148\n4 | Up to €35,676 | Up to €45,735\n5 | Up to €40,835 | Up to €52,348\nPer person | + €5 151 | + €6 598\nYou can use the online simulator on the France Rénov website to get an estimate of the amount of financial assistance you may be eligible for:\n→ Online service: Estimate financial assistance for home renovation\nCase Study: In the Île-de-France region\nTable: Maximum resource limits to be observed in the Île-de-France region to qualify for MaPrimeAdapt'\nNumber of people in the household (taxable household) | Households with very low income | Households with low income\n1 | Up to €24,031 | Up to €29,253\n2 | Up to €35,270 | Up to €42,933\n3 | Up to €42,357 | Up to €51,564\n4 | Up to €49,455 | Up to €60,208\n5 | Up to €56,580 | Up to €68,877\nPer person | + €7,116 | + €8,663\nYou can use the online simulator on the France Rénov website to get an estimate of the amount of financial assistance you may be eligible for:\n→ Online service: Estimate financial assistance for home renovation",
+        "titre": "Check the eligibility criteria for MaPrimeAdapt'"
+       },
+       {
+        "texte": "The adaptation works, which are funded by the MaPrimeAdapt' grant, cover your entire home and external access areas. Some examples of works that can be financed include:\nInterior work\nThe interior work may include, for example:\n- Electric staircase\n- Bathroom renovation (grab bar installation, replacing a bathtub with a shower, etc.)\n- Raised toilet and grab bar\n- Kitchen renovation\n- Motion-activated lighting\n- Widening of corridors.\nExterior work\nExterior work may include, for example:\n- Access ramp to your home's entrance\n- Parking space for disabled persons\n- Installing roller shutters\n- Doorway enlargement.",
+        "titre": "Determine the nature of the work funded by MaPrimeAdapt"
+       },
+       {
+        "texte": "The amount of funding available for your project will depend on your resources (which are likely to be very limited or modest).\nCase: Very modest\nYou can receive a 70% subsidy of the cost of your work, up to a maximum of €22,000 excluding taxes.\nCase: Simple\nYou can receive a 50% reimbursement of your expenses, up to a maximum of €22,000 excluding taxes.\nSpecifically: MaPrimeAdapt' can be combined with local grants, the PCH scheme, and energy-saving renovation grants. It is recommended to contact your local council to learn more about local grants.\n→ Where to go: Town Hall",
+        "titre": "Find out the amount of funding for the work provided by MaPrimeAdapt'"
+       },
+       {
+        "texte": "With MaPrimeAdapt', you receive support to help you develop and implement your renovation project.\nThis support is provided by a qualified or authorized project management assistant (AMO) appointed by the Anah (French state agency for housing).\nIts goal is to simplify your MaPrimeAdapt' process, from developing your adaptation project (e.g., conducting a home adaptation and autonomy diagnostic to determine your needs, connecting with tradespeople, etc.) to receiving the MaPrimeAdapt' grant.\nIf you don't already know an accredited home improvement operator (AMO), a list of AMOs located near your home will be provided to you when you create your MaPrimeAdapt' application.\nFor all information about the MaPrimeAdapt aid, you can visit the France Rénov website.\nYou can also contact a France Rénov' advisor:\n→ Where to go: Specialists in home renovation (France Rénov')",
+        "titre": "Developing the construction project"
+       },
+       {
+        "texte": "You must submit your application for assistance online on the monprojetanah website:\n→ Online service: Application for financial assistance from the Anah (MaPrimeAdapt', etc.)\nYou need to create a personal account on this website.\nPlease note: If you are a tenant, you must submit your MaPrimeAdapt application from the \"I am a tenant\" section.",
+        "titre": "Submit your application to receive MaPrimeAdapt"
+       },
+       {
+        "texte": "You must wait to receive the approval from the Anah (French state agency) granting you the MaPrimeAdapt grant to carry out the work.\nAMO will assist you in monitoring the work carried out by the selected contractors.",
+        "titre": "To have the work carried out"
+       },
+       {
+        "texte": "Once the work is completed, you must submit the invoice from the contractors who carried out the work to the Anah (French National Agency for Housing and the Environment) to request the payment of the grant.\nYour insurance company will assist you in preparing this payment request. The work carried out must comply with the estimate.\nOnce the payment has been made, you must settle the accounts with the contractors who carried out the work.",
+        "titre": "Receive MyPrimeAdapt"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F37501",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F37501",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.8,
+      "units": 91
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:59:14.783Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "MaPrimeAdapt: Yaşlılar veya engelli bireyler için konutun uyumlaştırılması çalışmaları",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 46.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "MaPrimeAdapt, konutun bağımsız yaşam ihtiyaçlarına uyum sağlamak için yapılan çalışmalar için verilen bir yardımdır.",
+      "steps": [
+       {
+        "texte": "Yaşadığınız yaşam alanınızı, bağımsızlık kaybı nedeniyle (örneğin, duşu bataryalı bir banyoya dönüştürmek gibi) uyarlamak istiyor musunuz? Belirli koşulların (özellikle gelir koşullarının) karşılanması durumunda, MaPrimeAdapt'tan faydalanabilirsiniz. Bu program, uyarlama çalışmalarınızın %50'sini veya %70'ini finanse etmenize olanak tanır. Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "\"MaPrimeAdapt' programından yararlanabilmek için belirli şartları yerine getirmeniz gerekmektedir.\"\nKonutla ilgili koşullar\nEğer özel bir mülkün sahibi veya kiracısınız, MaPrimeAdapt'dan faydalanabilirsiniz.\nYapılması gereken çalışmalar, ana ikamet adresinizle ilgili olmalıdır. Bu adres, metropol bölgesinde veya Drom (dış ticaret bölgeleri) bölgelerindeki departmanlarda veya bölgelerde bulunmalıdır.\nBilindiği üzere: Kooperatifler, binanın erişilebilirliğini artırmaya yönelik ve ortak alanlara ve ortak tesislere yönelik işleri finanse etmek için MaPrimeAdapt'ten faydalanabilir. Ortak alanların erişilebilirliğine katkıda bulunan tüm çalışmaların karşılanması mümkündür. Anah, ortak alanların erişilebilirliğine katkıda bulunan işlerin maliyetinin %50'sini, her bir erişilebilir alan için maksimum 20.000 €'ya kadar karşılar.\nDurum: Siz, kiracı olarak mülkün sahibi konumundasınız.\nMaPrimeAdapt' programından yararlanabilmek için aşağıdaki şartlardan birini yerine getirmeniz gerekmektedir:\n- Ya siz veya evinizdeki bir aile üyesinin 70 yaşını veya daha fazla doldurmuş olması, bağımsız yaşamını sürdürme konusunda herhangi bir zorluğu yaşamaması gerekmektedir.\n- Yaşınız 60 ile 69 arasında ve evinizde yaşayan siz veya bir aile üyeniz, belirli bir gelir düzeyine (GIR) sahipsiniz.\n- Veya sizin veya ailenizden bir üyesinin, Engelliler İçin Otomasyon Komisyonu (CDAPH) veya Bölgesel Askeri ve Savaş Kurbanları Ofisi (ONACVG) tarafından belirlenen en az %50'lik bir engellilik oranı olması, veya aşağıdaki ödemelerden birine hak kazanmanız gerekmektedir: (PCH (engellilik telafi yardımı) - Engellilik tazminatı), (AEEH (engelli çocuk eğitim ödeneği) - Engelli çocuğun eğitim yardımı) veya (AAH (engelli yetişkin ödeneği) - Engelli yetişkinin yardımı). MaPrimeAdapt yardımı, PCH - konut düzenleme yardımı ile birlikte alınabilir.\nDurum: Siz kiracısınız\nMaPrimeAdapt' programından yararlanabilmek için aşağıdaki şartları yerine getirmeniz gerekmektedir:\n- Kiraladığınız konaklama, özel bir mülk kompleksinin bir parçasıdır.\n- Kiraladığınız mülk için bağımsızlık kaybınız nedeniyle gerekli olan yaşam alanını uyarlamak için, kiralayanınızın onayını aldınız.\nAyrıca, aşağıdaki şartlardan birini de sağlamanız gerekmektedir:\n- Ya siz veya evinizdeki bir aile üyesinin 70 yaşını veya daha fazla doldurmuş olması, bağımsız yaşamını sürdürme konusunda herhangi bir zorluğu yaşamaması gerekmektedir.\n- Yaşınız 60 ile 69 arasında ve evinizde yaşayan siz veya bir aile üyeniz, belirli bir gelir düzeyine (GIR) sahipsiniz.\n- Veya sizin veya ailenizden bir üyesinin, Engelliler İçin Otomasyon Komisyonu (CDAPH) veya Bölgesel Askeri ve Savaş Kurbanları Ofisi (ONACVG) tarafından belirlenen en az %50'lik bir engellilik oranı olması, veya aşağıdaki ödemelerden birine hak kazanmanız gerekmektedir: (PCH - Engellilik tazminatı), (AEEH - Engelli çocuğun eğitim yardımı) veya (AAH - Engelli yetişkinin yardımı). MaPrimeAdapt yardımı, PCH - konut düzenleme yardımı ile birlikte alınabilir.\nKaynaklarla ilgili koşullar\nMaPrimeAdapt' yardımı alabilmek için, geliriniz, orta veya çok düşük gelir düzeyinde olmalıdır (hem ev sahibi hem de kiracı olsanız da).\nHesaplanacak vergi geliri, \"referans vergi geliri\" (RFR) olup, önceki yılın beyanında belirtilen bilgilerden elde edilir.\nKabul edilecek kaynak limitleri, konutunuzun Île-de-France bölgesinde mi yoksa dışında mı olduğuna bağlı olarak değişir.\nÖrnek: Ile-de-France dışındaki bölgeler\nTablo: Fransa dışındaki bölgelerde MaPrimeAdapt'den yararlanmak için aşılması gereken kaynak limitleri\nEvde yaşayan kişi sayısı (vergi mükellefi birite) | Düşük gelirli aileler | Orta gelirli aileler\n1 | 17.363 €'ya kadar | 22.259 €'ya kadar\n2 | 25.393 €'ye kadar | 32.553 €'ye kadar\n3 | 30.540 €'ya kadar | 39.148 €'ya kadar\n4 | 35.676 €'ye kadar | 45.735 €'ye kadar\n| 5 | 40.835 €'a kadar | 52.348 €'a kadar\nEk kişi için | + 5.151 € | + 6.598 €\nFrance Rénov web sitesindeki simülatörü kullanarak, yardımınızın miktarını tahmin edebilirsiniz:\n→ Çevrimiçi hizmet: Konut yenileme için finansal yardımları tahmin etme\nÖrnek: Yüksek Patoz Bölgesi\nTablo: Île-de-France bölgesinde MaPrimeAdapt'dan yararlanmak için aşılması gereken kaynak limitleri\nEvde yaşayan kişi sayısı (vergi mükellefi birite) | Düşük gelirli aileler | Orta gelirli aileler\n1 | 24.031 €'ye kadar | 29.253 €'ye kadar\n2 | 35.270 €'ye kadar | 42.933 €'ye kadar\n3 | 42.357 €'ye kadar | 51.564 €'ye kadar\n| Maksimum 49.455 € | Maksimum 60.208 €\n5 | 56.580 €'ye kadar | 68.877 €'ye kadar\nEk kişi için | + 7.116 € | + 8.663 €\nFrance Rénov web sitesindeki simülatörü kullanarak, yardımınızın miktarını tahmin edebilirsiniz:\n→ Çevrimiçi hizmet: Konut yenileme için finansal yardımları tahmin etme",
+        "titre": "MaPrimeAdapt'in başvuru koşullarını kontrol edin"
+       },
+       {
+        "texte": "MaPrimeAdapt' kapsamında finanse edilen tadilat çalışmaları, tüm konutunuz ve dış erişim noktalarını kapsar. Finanse edilebilecek bazı örnekler şunlardır:\nİç işler\nİç işler, özellikle şunları içerebilir:\n- Elektrikli merdiven\n- Banyo düzenlemesi (destek çubuğu, duş için küvetin değiştirilmesi, vb.)\n- Yüksekte yer alan tuvalet ve destek çubuğu\n- Mutfak düzenlemesi\n- Hareket algılayan aydınlatma\n- Koridorların genişletilmesi.\nDış saha çalışmaları\nDış çalışmalar şunları içerebilir:\n- Evinizin girişine giden rampa\n- Engellilere yönelik park yeri\n- Rulolu pencerelerin kurulumu\n- Giriş kapısının genişletilmesi.",
+        "titre": "MaPrimeAdapt ile finanse edilen çalışmaların niteliğini belirlemek."
+       },
+       {
+        "texte": "Çalışmalarınızın karşılanacak mali tutarı, kaynaklarınıza (çok sınırlı veya sınırlı) bağlı olarak değişecektir.\nÖrnek: Çok mütevazı\nÇalışmanızın maliyetinin %70'ini karşılamak mümkün, ancak bu, vergi öncesi 22.000 €'luk bir üst sınıra kadar olacaktır.\nÖrnek: Basit\nÇalışmalarınızın %50'si için ödeme desteği alabilirsiniz; bu destek, vergi hariç 22.000 €'luk bir üst limiteye kadar geçerlidir.\nBilindiği gibi: MaPrimeAdapt, yerel yardımlarla, PCH ve enerji verimliliği yardımlarıyla birleştirilebilir. Yerel yardımlar hakkında daha fazla bilgi almak için belediyenizi bilgilendirmek tavsiye edilir.\n→ İlgili birim: Belediyede",
+        "titre": "MaPrimeAdapt tarafından yapılacak işlerin maliyetinin ne kadar olduğunu öğrenmek."
+       },
+       {
+        "texte": "MaPrimeAdapt ile, projenizi planlama ve yürütme konusunda size destek sağlayarak, ihtiyaçlarınızı karşılamanıza yardımcı oluyoruz.\nBu destek, Anah tarafından yetkilendirilmiş veya onaylanmış, lisanslı bir proje yöneticisi (AMO) tarafından sağlanmaktadır.\nAmaç, MaPrimeAdapt' uygulamanızın sürecini basitleştirmektir. Bu, adaptasyon projenizin (konut adaptasyonu için bağımsızlık değerlendirmesi, ihtiyaçların belirlenmesi, zanaatkarlar ile bağlantı kurma vb.) oluşturulmasından başlayarak, MaPrimeAdapt' yardımı ödemesine kadar olan tüm adımları kapsar.\nEğer size yakınlardaki bir \"Aménageur de Logement\" (AMO) ile tanışmamışsanız, MaPrimeAdapt' uygulamanızı oluştururken size bu konuda yardımcı olacak bir liste sunulacaktır.\nMaPrimeAdapt' yardımı hakkında tüm bilgileri, France Rénov'un web sitesinden alabilirsiniz.\nAyrıca, France Rénov' dan bir danışmanla iletişime geçebilirsiniz:\n→ İlgili kuruluşlar: Konut yenileme konusunda uzman danışmanlar (France Rénov')",
+        "titre": "Projenin planını oluşturmak"
+       },
+       {
+        "texte": "Destek başvurunuzu, monprojetanah web sitesi üzerinden çevrimiçi olarak yapmanız gerekmektedir:\n→ Çevrimiçi hizmet: Anah'ın (MaPrimeAdapt, vb.) mali yardım talebi\nBu sitede kişisel bir hesap oluşturmanız gerekmektedir.\nLütfen dikkat: Eğer kiracıysanız, \"Ben ev sahibiyim\" bölümünden MaPrimeAdapt başvurusunu yapmanız gerekmektedir.",
+        "titre": "MaPrimeAdapt'den yararlanmak için başvurunuzu yapın."
+       },
+       {
+        "texte": "Çalışmaları gerçekleştirmek için, Anah'ın size MaPrimeAdapt yardımı sağlayacağını onayladığını alana kadar beklemelisiniz.\nAMO, seçilen zanaatkarlar tarafından gerçekleştirilen işlerin takibinde size yardımcı olur.",
+        "titre": "İşlerin tamamlanmasını sağlamak"
+       },
+       {
+        "texte": "İşlerin tamamlanmasının ardından, işleri yapan zanaatkarların faturalarını Anah'a ileterek, yardımı talep etmeniz gerekmektedir.\nAmme, size bu ödeme talebini oluşturma sürecinde yardımcı olacaktır. Yapılan işler, teklif ile uyumlu olmalıdır.\nYardım ödenmesinden sonra, işleri yapan zanaatkarlara ödeme yapmanız gerekmektedir.",
+        "titre": "MaPrimeAdapt' alım"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F37501",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F37501",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 72.6,
+      "units": 91
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:02:12.114Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "\"ما بريم أدابت\": أعمال تكييف السكن لتلبية احتياجات الأشخاص ذوي الإعاقة.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 26.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تشمل مساعدة \"MaPrimeAdapt\" أعمال التكييف والإعداد للمنزل لتلبية احتياجات الأشخاص الذين فقدوا جزءًا من استقلالهم.",
+      "steps": [
+       {
+        "texte": "هل ترغب في إجراء أعمال تعديل في منزلك بسبب فقدان القدرة على الاعتماد على الذات (مثل استبدال حوض الاستحمام بدش)؟ يمكنك الاستفادة من برنامج \"MaPrimeAdapt\" (بشروط معينة، بما في ذلك وجود دخل)، والذي يتيح لك تمويل 50% أو 70% من تكاليف أعمال التعديل. نقدم لك المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "لتحقيق الاستفادة من برنامج \"MaPrimeAdapt\"، يجب استيفاء بعض الشروط.\nالشروط المتعلقة بالإسكان\nيمكنكم الاستفادة من برنامج \"MaPrimeAdapt\" إذا كنتم مالكين أو مستأجرين في العقار الخاص.\nيجب أن تشمل الأعمال التي سيتم تنفيذها على منزلك الرئيسي. ويجب أن يكون هذا المنزل في المدينة أو في المقاطعات والمناطق الفرنسية في الخارج (Drom).\nوهذا يعني: يمكن للمساكن المشتركة الاستفادة من برنامج \"MaPrimeAdapt\" لتمويل أعمال تحسين إمكانية الوصول إلى المبنى، والتي تشمل المناطق المشتركة والمرافق المشتركة. جميع الأعمال التي تساهم في تحسين إمكانية الوصول إلى المناطق المشتركة مؤهلة. تتولى وكالة \"Anah\" تغطية 50٪ من تكلفة الأعمال، مع تحديد حد أقصى قدره 20,000 يورو لكل منطقة يتم تحسين إمكانية الوصول إليها.\nمثال: أنت المالك المستأجر.\nللاستفادة من برنامج \"MaPrimeAdapt\"، يجب عليك استيفاء أحد الشروط التالية:\n- أنت أو أحد أفراد أسرتك يبلغ من العمر 70 عامًا أو أكثر، دون أي شروط تتعلق بفقدان القدرة على الاعتماد على الذات.\n- أنت أو أحد أفراد أسرتك تبلغ من العمر بين 60 و 69 عامًا، وتندرج ضمن مجموعة ذات احتياجات مماثلة (GIR).\n- أنت أو أحد أفراد أسرتك تعاني من إعاقة بنسبة لا تقل عن 50٪، وقد تم الاعتراف بذلك من قبل لجنة حقوق الأشخاص ذوي الإعاقة أو الخدمة الإقليمية لمكتب الأبطال القدامى والضحايا من الحرب (ONACVG)، أو أنت مؤهل للحصول على مبلغ التعويض عن الإعاقة (PCH: إعانة تعويض الإعاقة) أو مبلغ التعليم للطفل المعاق (AEEH: إعانة تعليم الطفل ذي الإعاقة) أو مبلغ للبالغ المعاق (AAH: إعانة البالغين ذوي الإعاقة). يمكن الجمع بين المساعدة \"MaPrimeAdapt'\" والمساعدة (PCH) - مساعدة في تجهيز السكن.\nمثال: أنت المستأجر.\nلتحقيق استفادة من برنامج \"MaPrimeAdapt\"، يجب عليك الالتزام بالشروط التالية:\n- أنت تستأجر مسكنًا يقع ضمن مجمع سكني خاص.\n- لقد حصلت على موافقة مالك العقار لإجراء أعمال تعديل في السكن لتلبية احتياجاتك بسبب فقدان استقلالك.\nعلاوة على ذلك، يجب عليك أيضًا الالتزام بأحد الشروط التالية:\n- أنت أو أحد أفراد أسرتك يبلغ من العمر 70 عامًا أو أكثر، دون أي شروط تتعلق بفقدان القدرة على الاعتماد على الذات.\n- أنت أو أحد أفراد أسرتك تبلغ من العمر بين 60 و 69 عامًا، وتندرج ضمن مجموعة ذات احتياجات مماثلة (GIR).\n- أنت أو أحد أفراد أسرتك تعاني من إعاقة بنسبة لا تقل عن 50٪، وقد تم الاعتراف بذلك من قبل لجنة حقوق الأشخاص ذوي الإعاقة أو الخدمة الإقليمية لمكتب الأبطال القدامى والضحايا من الحرب (ONACVG)، أو أنت مؤهل للحصول على مبلغ التعويض عن الإعاقة (PCH) أو مبلغ التعليم للطفل المعاق (AEEH) أو مبلغ للبالغ المعاق (AAH). يمكن الجمع بين المساعدة \"MaPrimeAdapt'\" والمساعدة (PCH) - مساعدة في تجهيز السكن.\nالشروط المتعلقة بالموارد\nللحصول على دعم \"ما بريم أداپت\"، يجب ألا تتجاوز مواردك الحدود المحددة للدخل المحدود أو المتواضع (سواء كنت مالكًا أو مستأجرًا).\nالرقم المرجعي للضريبة (RFR) هو الرقم الذي يتم استخدامه. وهو مذكور في إقرارك الضريبي للسنة التي تسبق طلب المساعدة.\nتختلف حدود الموارد التي يجب الالتزام بها، اعتمادًا على ما إذا كان مكان إقامتك خارج منطقة \"إيل دو فرانس\" أو داخلها.\nمثال: خارج منطقة إيل دو فرانس\nجدول: حدود الموارد التي يجب عدم تجاوزها خارج منطقة إيل دو فرانس للاستفادة من برنامج \"ما بريمادابت\"\nعدد أفراد الأسرة (الوحدة الضريبية) | الأسر ذات الدخل المنخفض للغاية | الأسر ذات الدخل المنخفض\n1 | يصل إلى 17363 يورو | يصل إلى 22259 يورو\n2 | يصل إلى 25,393 يورو | يصل إلى 32,553 يورو\n3 | يصل إلى 30,540 يورو | يصل إلى 39,148 يورو\n4 | يصل إلى 35,676 يورو | يصل إلى 45,735 يورو\n5 | يصل إلى 40,835 يورو | يصل إلى 52,348 يورو\nبشخص إضافي | + 5,151 يورو | + 6,598 يورو\nيمكنك استخدام المحاكي الموجود على موقع \"France Rénov\" للحصول على تقدير للمبلغ الذي ستحصل عليه من المساعدة.\n→ خدمة عبر الإنترنت: تقدير المساعدات المالية لإعادة تأهيل المساكن\nمثال: في منطقة إيل دو فرانس\nجدول: حدود الموارد التي يجب عدم تجاوزها في منطقة إيل دو فرانس للاستفادة من برنامج \"MaPrimeAdapt'\".\nعدد أفراد الأسرة (الوحدة الضريبية) | الأسر ذات الدخل المنخفض للغاية | الأسر ذات الدخل المنخفض\n1 | يصل إلى 24,031 يورو | يصل إلى 29,253 يورو\n2 | يصل إلى 35,270 يورو | يصل إلى 42,933 يورو\n3 | يصل إلى 42,357 يورو | يصل إلى 51,564 يورو\n4 | يصل إلى 49,455 يورو | يصل إلى 60,208 يورو\n5 | يصل إلى 56,580 يورو | يصل إلى 68,877 يورو\nبشخص إضافي | + 7,116 يورو | + 8,663 يورو\nيمكنك استخدام المحاكي الموجود على موقع \"France Rénov\" للحصول على تقدير للمبلغ الذي ستحصل عليه من المساعدة.\n→ خدمة عبر الإنترنت: تقدير المساعدات المالية لإعادة تأهيل المساكن",
+        "titre": "التحقق من شروط الحصول على \"ما بريم أداپت\""
+       },
+       {
+        "texte": "تشمل الأعمال المتعلقة بالتعديل التي يتم تمويلها من خلال برنامج \"MaPrimeAdapt'\" جميع جوانب منزلك، بما في ذلك المداخل الخارجية. ومن بين الأعمال التي يمكن تمويلها، إليكم بعض الأمثلة:\nالعمل على الأجزاء الداخلية\nيمكن أن تشمل الأعمال الداخلية، على سبيل المثال، ما يلي:\n- سلم كهربائي\n- تجهيز الحمام (تركيب قضيب دعم، استبدال حوض الاستحمام بدش، إلخ.)\n- حوض غسيل مرتفع ومسند يد\n- تصميم مطبخ\n- إضاءة تعتمد على كشف الحركة\n- توسيع الممرات.\nالعمل في الخارج\nيمكن أن تشمل الأعمال الخارجية، على سبيل المثال، ما يلي:\n- درج الوصول إلى مدخل منزلك\n- موقف مخصص للأشخاص ذوي الإعاقة\n- تركيب الستائر الرول\n- توسيع مدخل الباب.",
+        "titre": "تحديد طبيعة الأعمال التي يتم تمويلها من خلال برنامج \"MaPrimeAdapt\""
+       },
+       {
+        "texte": "يعتمد مبلغ المساعدة التي نقدمها لعملكم على مواردكم (التي تكون محدودة للغاية أو محدودة).\nمثال: بسيط جدًا\nيمكنكم الحصول على دعم بنسبة 70٪ من تكاليف أعمالكم، مع تحديد حد أقصى يبلغ 22000 يورو (باستثناء الضرائب).\nمثال: بسيط\nيمكنكم الحصول على دعم بنسبة 50٪ من تكاليف عملكم، وذلك ضمن حد أقصى يبلغ 22000 يورو (باستثناء الضرائب).\nوهذا يعني: يمكن تجميع \"ما بريم أداپت\" مع المساعدات المحلية، و PCH، ومساعدات ترميم الطاقة. يوصى بالتواصل مع البلدية للحصول على مزيد من المعلومات حول المساعدات المحلية.\n→ إلى أين يتم التوجه: البلدية",
+        "titre": "معرفة مبلغ المساعدة المالية المقدم من \"MaPrimeAdapt\" لتغطية تكاليف الأعمال."
+       },
+       {
+        "texte": "مع برنامج \"MaPrimeAdapt\"، ستحصل على دعم لمساعدتك في إعداد وتنفيذ مشروع أعمالك.\nيتم تنفيذ هذا الدعم من قبل مُشرف مشروع معتمد أو مُجاز من قبل \"Anah\".\nيهدف إلى تبسيط عملية الحصول على \"ما بريم أدافت\"، بدءًا من إعداد مشروع التكييف الخاص بك (مثل إجراء تقييم للاحتياجات السكنية والاستقلالية لتحديد احتياجاتك، والتواصل مع الفنيين، وما إلى ذلك)، وصولًا إلى استلام مبلغ المساعدة \"ما بريم أدافت\".\nإذا لم تكن تعرف أيًا من مزودي الخدمات، فسيتم تقديم قائمة بالمزودين القريبين منك عند إنشاء ملفك الخاص بـ \"MaPrimeAdapt\".\nللحصول على جميع المعلومات حول برنامج \"MaPrimeAdapt\"، يمكنكم زيارة موقع \"France Rénov\".\nيمكنك أيضًا التواصل مع مستشار من France Rénov':\n→ إلى من يتم الاتصال: مستشارون متخصصون في أعمال تجديد المساكن (فرانس رينوف')",
+        "titre": "إعداد مشروع أعمال البناء"
+       },
+       {
+        "texte": "يجب عليك تقديم طلب المساعدة عبر الإنترنت على موقع \"monprojetanah\":\n→ خدمة عبر الإنترنت: طلب المساعدة المالية من \"Anah\" (مثل \"MaPrimeAdapt\")\nيجب عليك إنشاء حساب شخصي على هذا الموقع.\nتنبيه: إذا كنت مستأجرًا، فيجب عليك تقديم طلب الحصول على دعم \"MaPrimeAdapt\" من خلال القسم المخصص للمستأجرين.",
+        "titre": "تقديم الطلب للحصول على \"ما بريم أداپت\""
+       },
+       {
+        "texte": "يجب الانتظار حتى يتم استلام الموافقة من \"Anah\" التي تمنحكم دعم \"MaPrimeAdapt\" لإجراء الأعمال.\nتساعدكم مؤسسة \"الأم أو\" في متابعة الأعمال التي يقوم بها الحرفيون الذين تم اختيارهم.",
+        "titre": "إنجاز الأعمال"
+       },
+       {
+        "texte": "في نهاية أعمال البناء، يجب عليك تسليم فاتورة الحرفيين الذين قاموا بالأعمال إلى هيئة التمويل العقاري (Anah) لطلب صرف مبلغ المساعدة.\nستساعدكم شركة التأمين في إعداد هذه المطالبة. يجب أن تكون الأعمال التي تم تنفيذها متوافقة مع العقد.\nبعد إعطاء المساعدة، يجب عليك سداد مستحقات الحرفيين الذين قاموا بالأعمال.",
+        "titre": "استلام \"ما بريم أداپت\""
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F37501",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F37501",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 72.5,
+      "units": 91
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:05:00.211Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "MaPrimeAdapt: Finanzierung von Maßnahmen zur Anpassung der Wohnung an die veränderte Lebenssituation",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 41.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die \"MaPrimeAdapt\"-Förderung dient dazu, die Anpassung von Wohnungen an die veränderte Lebenssituation aufgrund von eingeschränkter Selbstständigkeit zu finanzieren.",
+      "steps": [
+       {
+        "texte": "Sie möchten Ihr Zuhause anpassen, um die Selbstständigkeit aufgrund von Einschränkungen zu verbessern (z. B. den Austausch einer Badewanne durch eine Dusche)? Sie können unter bestimmten Bedingungen (insbesondere in Bezug auf Einkommen) von der staatlichen Förderung „MaPrimeAdapt“ profitieren. Dieses Programm ermöglicht die Finanzierung von 50 % oder 70 % der Kosten für Ihre Anpassungsarbeiten. Wir informieren Sie über die relevanten Informationen.",
+        "titre": null
+       },
+       {
+        "texte": "Um von MaPrimeAdapt' profitieren zu können, müssen Sie bestimmte Voraussetzungen erfüllen.\nBedingungen im Zusammenhang mit der Unterkunft\nSie können von MaPrimeAdapt profitieren, wenn Sie Mieter oder Eigentümer des privaten Grundstücks sind.\nDie durchzuführenden Arbeiten müssen sich auf Ihr Hauptwohnsitz beziehen. Dieser muss sich entweder in der Metropole oder in den Departements und Regionen im Übersee (Drom) befinden.\nKonkret: Mehrfamilienhäuser können von MaPrimeAdapt profitieren, um Bauarbeiten zu finanzieren, die die Zugänglichkeit des Gebäudes verbessern und sich auf Gemeinschaftsbereiche und Gemeinschaftsanlagen beziehen. Alle Arbeiten, die die Zugänglichkeit von Gemeinschaftsbereichen verbessern, sind antragsfähig. Die Anah übernimmt 50 % der Kosten der Arbeiten, bis zu einem Maximum von 20.000 € pro zugänglichem Bereich.\nFall: Sie sind Mieter mit Wohnrecht\nUm von MaPrimeAdapt' zu profitieren, müssen Sie eine der folgenden Bedingungen erfüllen:\n- Sie oder ein Familienmitglied sind 70 Jahre alt oder älter, ohne dass dies mit einem Verlust der Selbstständigkeit zusammenhängt.\n- Sie oder ein Familienmitglied sind zwischen 60 und 69 Jahren alt und gehören zu einer Gruppe mit gleichwertigen Ressourcen (GIR).\n- Sie oder ein Familienmitglied haben eine Behinderung von mindestens 50 %, die von der Commission des droits pour l'autonomie des personnes handicapées (CDAPH) oder dem regionalen Büro des nationalen Verbands der Veteranen und Kriegsopfer (ONACVG) anerkannt wurde, und sind daher für die Leistung zur Entschädigung von Behinderungen (PCH: Behinderungsausgleichsleistung), die Unterstützung für die Bildung des behinderten Kindes (AEEH: Beihilfe für die Erziehung eines Kindes mit Behinderung) oder die Unterstützung für behinderte Erwachsene (AAH: Beihilfe für Erwachsene mit Behinderung) berechtigt. Die Unterstützung \"MaPrimeAdapt\" kann mit der PCH – Unterstützung für die Anpassung des Wohnraums – kombiniert werden.\nFall: Sie sind Mieter\nUm von MaPrimeAdapt' zu profitieren, müssen Sie die folgenden Bedingungen erfüllen:\n- Sie mieten eine Unterkunft, die Teil eines privaten Wohnparks ist.\n- Sie haben die Zustimmung Ihres Vermieters erhalten, um die Wohnung an Ihre veränderten Bedürfnisse anzupassen.\nDarüber hinaus müssen Sie auch eine der folgenden Bedingungen erfüllen:\n- Sie oder ein Familienmitglied sind 70 Jahre alt oder älter, ohne dass dies mit einem Verlust der Selbstständigkeit zusammenhängt.\n- Sie oder ein Familienmitglied sind zwischen 60 und 69 Jahren alt und gehören zu einer Gruppe mit gleichwertigen Ressourcen (GIR).\n- Sie oder ein Familienmitglied haben eine Behinderung von mindestens 50 %, die von der Commission des droits pour l'autonomie des personnes handicapées (CDAPH) oder dem regionalen Büro des nationalen Verbands der Veteranen und Kriegsopfer (ONACVG) anerkannt wurde, und sind daher für die Leistung zur Entschädigung von Behinderungen (PCH), die Unterstützung für die Bildung des behinderten Kindes (AEEH) oder die Unterstützung für behinderte Erwachsene (AAH) berechtigt. Die Unterstützung \"MaPrimeAdapt\" kann mit der PCH – Unterstützung für die Anpassung des Wohnraums – kombiniert werden.\nBedingungen im Zusammenhang mit Ressourcen\nUm von der Unterstützung durch MaPrimeAdapt zu profitieren, dürfen Ihre finanziellen Mittel nicht die für geringe oder sehr geringe Einkommen festgelegten Grenzen überschreiten (unabhängig davon, ob Sie Mieter oder Eigentümer sind).\nEs wird der Einkommenssteuergrundlage (EStG) berücksichtigt, der auf Ihrem Steuerbescheid des Vorjahres angegeben ist, auf den Ihre Antragsunterlagen bezogen sind.\nDie zulässigen Mietkosten variieren je nachdem, ob sich Ihre Wohnung außerhalb des Ile-de-France oder innerhalb des Ile-de-France befindet.\nFall: Außerhalb des Île-de-France\nTabelle: Maximale Ressourcen, die außerhalb des Ile-de-France-Gebiets nicht überschritten werden dürfen, um von MaPrimeAdapt zu profitieren.\nAnzahl der Personen im Haushalt (Steuerhaushalt) | Haushalte mit sehr geringem Einkommen | Haushalte mit geringem Einkommen\n1 | Bis zu 17.363 € | Bis zu 22.259 €\n2 | Bis zu 25.393 € | Bis zu 32.553 €\n3 | Bis zu 30.540 € | Bis zu 39.148 €\n4 | Bis zu 35.676 € | Bis zu 45.735 €\n5 | Bis zu 40.835 € | Bis zu 52.348 €\nDurch zusätzliche Person | + 5.151 € | + 6.598 €\nSie können den Simulator auf der Website France Rénov verwenden, um eine Schätzung der Höhe Ihrer finanziellen Unterstützung zu erhalten:\n→ Online-Service: Berechnung von finanziellen Zuschüssen für die Sanierung von Wohnraum\nFall: In der Île-de-France\nTabelle: Maximale Ressourcenbudgets, die in Île-de-France eingehalten werden müssen, um von MaPrimeAdapt zu profitieren.\nAnzahl der Personen im Haushalt (Steuerhaushalt) | Haushalte mit sehr geringem Einkommen | Haushalte mit geringem Einkommen\n1 | Bis zu 24.031 € | Bis zu 29.253 €\n2 | Bis zu 35.270 € | Bis zu 42.933 €\n3 | Bis zu 42.357 € | Bis zu 51.564 €\n4 | Bis zu 49.455 € | Bis zu 60.208 €\n5 | Bis zu 56.580 € | Bis zu 68.877 €\nDurch zusätzliche Person | + 7.116 € | + 8.663 €\nSie können den Simulator auf der Website France Rénov verwenden, um eine Schätzung der Höhe Ihrer finanziellen Unterstützung zu erhalten:\n→ Online-Service: Berechnung von finanziellen Zuschüssen für die Sanierung von Wohnraum",
+        "titre": "Überprüfen Sie die Voraussetzungen für die Gewährung von MaPrimeAdapt"
+       },
+       {
+        "texte": "Die durch die \"MaPrimeAdapt'\"-Förderung finanzierten Anpassungsarbeiten betreffen Ihr gesamtes Wohnhaus sowie die Außenbereiche. Zu den förderfähigen Arbeiten gehören unter anderem:\nInnenarbeiten\nDie Innenarbeiten können beispielsweise umfassen:\n- Elektrische Treppe\n- Badezimmerrenovierung (Hilfsstange, Austausch einer Badewanne durch eine Dusche usw.)\n- Toilettens mit erhöhter Sitzfläche und Haltegriff\n- Küche einrichten\n- Bewegungssensorbasierte Beleuchtung\n- Ausbau der Gänge.\nAußenarbeiten\nDie Arbeiten im Außenbereich können beispielsweise umfassen:\n- Rampe zum Eingang Ihres Hauses\n- Parkplatz für Menschen mit eingeschränkter Mobilität\n- Installation von Rollläden\n- Erweiterung des Hauseingangs.",
+        "titre": "Die Art der durch MaPrimeAdapt finanzierten Arbeiten bestimmen."
+       },
+       {
+        "texte": "Die Höhe der Unterstützung für Ihre Arbeiten hängt von Ihren finanziellen Möglichkeiten ab (sehr gering oder gering).\nBeispiel: Sehr bescheidene\nSie können eine Förderung von 70 % der Kosten für Ihre Arbeiten erhalten, wobei ein Höchstbetrag von 22.000 € (vor Steuern) gilt.\nFall: Modest\nSie können eine Förderung von 50 % für Ihre Arbeiten erhalten, wobei ein Höchstbetrag von 22.000 € (vor Steuern) gilt.\nKonkret: MaPrimeAdapt kann mit lokalen Zuschüssen, dem PCH und Energieeffizienz-Förderungen kombiniert werden. Es wird empfohlen, sich bei Ihrer Gemeinde zu erkundigen, um mehr über die lokalen Förderprogramme zu erfahren.\n→ An wen: Rathaus",
+        "titre": "Die Höhe der Zuschüsse für die Bauarbeiten durch MaPrimeAdapt erfahren."
+       },
+       {
+        "texte": "Mit MaPrimeAdapt erhalten Sie Unterstützung, um Ihr Bauprojekt zu planen und umzusetzen.\nDiese Betreuung wird von einem von der Anah zugelassenen oder autorisierten Projektmanagement-Assistenten (AMO) durchgeführt.\nZiel ist es, Ihren Prozess bei der Beantragung von MaPrimeAdapt' zu vereinfachen, von der Erstellung Ihres Anpassungsprojekts (z. B. Wohnungsdiagnose zur Ermittlung Ihrer Bedürfnisse, Kontaktaufnahme mit Handwerkern usw.) bis hin zur Auszahlung der MaPrimeAdapt'-Förderung.\nWenn Sie keinen zugelassenen Akteur (AMO) kennen, wird Ihnen bei der Erstellung Ihres MaPrimeAdapt'-Profils eine Liste von AMO in Ihrer Nähe vorgeschlagen.\nFür alle Informationen über die Förderung „MaPrimeAdapt“ können Sie die Website von France Rénov besuchen.\nSie können sich auch an einen Berater von France Rénov wenden:\n→ An wen wenden: Spezialisierte Berater für Wohnungsrenovierungen (France Rénov')",
+        "titre": "Das Projekt für die Bauarbeiten erstellen"
+       },
+       {
+        "texte": "Sie müssen Ihren Antrag auf finanzielle Unterstützung online auf der Webseite monprojetanah einreichen:\n→ Online-Service: Antrag auf finanzielle Unterstützung von der Anah (MaPrimeAdapt', usw.)\nSie müssen sich ein persönliches Konto auf dieser Webseite erstellen.\nBitte beachten Sie: Wenn Sie Mieter sind, müssen Sie Ihren Antrag auf die staatliche Unterstützung „MaPrimeAdapt“ über den Bereich „Ich bin Mieter“ einreichen.",
+        "titre": "Einreichen des Antrags, um von MaPrimeAdapt zu profitieren"
+       },
+       {
+        "texte": "Sie müssen warten, bis Sie die Genehmigung des Anah erhalten haben, die Ihnen die Unterstützung „MaPrimeAdapt“ für die Durchführung der Arbeiten gewährt.\nDie AMO unterstützt Sie bei der Überwachung der von den ausgewählten Handwerkern durchgeführten Arbeiten.",
+        "titre": "Die Arbeiten durchführen lassen"
+       },
+       {
+        "texte": "Am Ende der Arbeiten müssen Sie die Rechnung der Handwerker, die die Arbeiten für Sie durchgeführt haben, an das ANAH (Agence Nationale de l'Habitat) senden, um die Auszahlung der Förderung zu beantragen.\nIhr Versicherungsunternehmen unterstützt Sie bei der Erstellung dieses Zahlungsantrags. Die durchgeführten Arbeiten müssen den Angaben im Angebot entsprechen.\nNachdem die Mittel ausgezahlt wurden, müssen Sie die Handwerker bezahlen, die die Arbeiten durchgeführt haben.",
+        "titre": "Meine \"MaPrimeAdapt\" erhalten"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F37501",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F37501",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.8,
+      "units": 91
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:00.244Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "\"MaPrimeAdapt\": фінансування робіт з адаптації житла для людей з обмеженими можливостями",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Допомога MaPrimeAdapt стосується робіт з адаптації житла для людей з обмеженими можливостями.",
+      "steps": [
+       {
+        "texte": "Ви бажаєте здійснити адаптацію вашого житла через втрату самостійності (наприклад, замінити ванну на душ)? Ви можете отримати допомогу у вигляді \"MaPrimeAdapt\", за певних умов (зокрема, наявності певних доходів). Ця програма дозволяє фінансувати 50% або 70% вартості ваших робіт з адаптації. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Щоб отримати доступ до програми MaPrimeAdapt', необхідно відповідати певним вимогам.\nУмови, пов'язані з житлом\nВи можете отримати вигоду від програми MaPrimeAdapt, якщо ви є власником житла або орендарем у приватному комплексі.\nРоботи повинні бути виконані у вашому основному житлі. Воно має знаходитися у межах метрополісу або в департаментах та регіонах заморських територій (DROM).\nА саме: Кооперативні будинки можуть отримати \"MaPrimeAdapt\" для фінансування робіт, спрямованих на покращення доступності будівлі та робіт, що виконуються в спільних зонах та на спільних об'єктах. Усі роботи, що сприяють доступності спільних зон, є підходящими. \"Anah\" покриває 50% вартості робіт, але не більше 20 000 євро на кожну доступну зону.\nСитуація: Ви є орендарем, який також є власником.\nЩоб отримати MaPrimeAdapt', вам необхідно відповідати одній із наступних умов:\n- Ви або один із членів вашої родини досягли 70 років або більше, без умов, пов'язаних з втратою самостійності.\n- Ви або один із членів вашої родини має вік від 60 до 69 років і належить до групи з однаковими ресурсами (GIR).\n- Ви або член вашої родини маєте рівень інвалідності не менше 50%, який визнано комісією з прав для самостійного життя людей з інвалідністю (CDAPH) або місцевим відділенням Національного офісу ветеранів та жертв війни (ONACVG), або ви маєте право на отримання компенсації за інвалідність (PCH: компенсаційна допомога з інвалідності), на дитячу допомогу для дитини з інвалідністю (AEEH: допомога на виховання дитини з інвалідністю) або на допомогу для дорослого з інвалідністю (AAH: допомога дорослим з інвалідністю). Допомога MaPrimeAdapt' може бути поєднана з PCH – допомогою на облаштування житла.\nСитуація: Ви є орендарем.\nЩоб отримати MaPrimeAdapt', вам необхідно дотримуватися наступних умов:\n- Ви орендуєте житло, яке є частиною приватного комплексу.\n- Ви отримали згоду від вашого орендодавця на проведення робіт з адаптації житла відповідно до ваших потреб, пов'язаних з втратою самостійності.\nКрім того, ви також повинні відповідати одній із наступних умов:\n- Ви або один із членів вашої родини досягли 70 років або більше, без умов, пов'язаних з втратою самостійності.\n- Ви або один із членів вашої родини має вік від 60 до 69 років і належить до групи з однаковими ресурсами (GIR).\n- Ви або член вашої родини маєте рівень інвалідності не менше 50%, який визнано комісією з прав для самостійного життя людей з інвалідністю (CDAPH) або місцевим відділенням Національного офісу ветеранів та жертв війни (ONACVG), або ви маєте право на отримання компенсації за інвалідність (PCH), на дитячу допомогу для дитини з інвалідністю (AEEH) або на допомогу для дорослого з інвалідністю (AAH). Допомога MaPrimeAdapt' може бути поєднана з PCH – допомогою на облаштування житла.\nУмови, пов'язані з ресурсами\nЩоб отримати допомогу MaPrimeAdapt', ваші доходи не повинні перевищувати встановлені межі для малозабезпечених або дуже малозабезпечених осіб (якщо ви є власником або орендарем).\nВраховується сума податку, зазначена у вашому податковому повідомленні за попередній рік, коли ви подавали заявку на отримання допомоги.\nОбмеження щодо витрат, які необхідно дотримуватися, залежать від того, де розташоване ваше житло: на території Іль-де-Франс або за її межами.\nПриклад: За межами регіону Іль-де-Франс\nТаблиця: Максимальні обсяги ресурсів, які не можна перевищувати за межами регіону Іль-де-Франс, щоб отримати вигоду від програми MaPrimeAdapt'\nКількість осіб у домоводстві (податковий сімейний бюджет) | Домоводства з дуже скромними доходами | Домоводства зі скромними доходами\n1 | До 17 363 євро | До 22 259 євро\n2 | До 25 393 євро | До 32 553 євро\n3 | До 30 540 євро | До 39 148 євро\n4 | До 35 676 євро | До 45 735 євро\n5 | До 40 835 євро | До 52 348 євро\nЗа додаткову особу | + 5 151 євро | + 6 598 євро\nВи можете скористатися онлайн-симулятором від France Rénov, щоб отримати приблизну оцінку суми допомоги, на яку ви можете розраховувати:\n→ Онлайн-сервіс: Оцінка фінансової допомоги для реконструкції житла\nПриклад: У регіоні Іль-де-Франс\nТаблиця: Максимальні обсяги ресурсів, які не можна перевищувати у регіоні Іль-де-Франс, щоб отримати вигоду від програми MaPrimeAdapt'\nКількість осіб у домоводстві (податковий сімейний бюджет) | Домоводства з дуже скромними доходами | Домоводства зі скромними доходами\n1 | До 24 031 євро | До 29 253 євро\n2 | До 35 270 євро | До 42 933 євро\n3 | До 42 357 євро | До 51 564 євро\n4 | До 49 455 євро | До 60 208 євро\n5 | До 56 580 євро | До 68 877 євро\nЗа додаткову особу | + 7 116 євро | + 8 663 євро\nВи можете скористатися онлайн-симулятором від France Rénov, щоб отримати приблизну оцінку суми допомоги, на яку ви можете розраховувати:\n→ Онлайн-сервіс: Оцінка фінансової допомоги для реконструкції житла",
+        "titre": "Перевірити умови отримання MaPrimeAdapt"
+       },
+       {
+        "texte": "Роботи з адаптації, що фінансуються за допомогою програми MaPrimeAdapt', охоплюють весь ваш житловий об'єкт та зовнішні входи. Серед робіт, які можна фінансувати, наводяться такі приклади:\nВнутрішні роботи\nРоботи з внутрішнього оздоблення можуть включати, зокрема:\n- Електричний ліфт\n- Ремонт ванної кімнати (установка поручня, заміна ванни на душову кабіну, ...)\n- Підняті унітази та поручні\n- Оздоблення кухні\n- Освітлення, що реагує на рух\n- Розширення проходів.\nРоботи на території\nРоботи на зовнішніх спорудах можуть включати, зокрема:\n- Сходи, що ведуть до входу у ваш будинок\n- Місце паркування для осіб з обмеженими можливостями\n- Установка жалюзі\n- Розширення вхідної двері.",
+        "titre": "Визначити характер робіт, які фінансуються програмою MaPrimeAdapt'"
+       },
+       {
+        "texte": "Розмір фінансування ваших робіт залежить від ваших ресурсів (дуже обмежених або обмежених).\nПриклад: Дуже скромні\nВи можете отримати 70% фінансування вартості ваших робіт, але не більше 22 000 євро (без урахування податків).\nПриклад: Невеликі\nВи можете отримати 50% фінансування своїх проєктів, але не більше 22 000 євро (без урахування податків).\nА саме: \"MaPrimeAdapt\" може бути використана разом з місцевими субсидіями, PCH та субсидіями на енергоефективність. Рекомендується звернутися до вашої місцевої адміністрації, щоб отримати більше інформації про місцеві субсидії.\n→ Куди звернутися: Міська управа",
+        "titre": "Дізнатися суму компенсації витрат на ремонт, яку ви можете отримати за програмою MaPrimeAdapt'"
+       },
+       {
+        "texte": "За допомогою програми MaPrimeAdapt' ви отримуєте підтримку, яка допоможе вам розробити та реалізувати свій проєкт ремонтних робіт.\nЦей супровід здійснюється акредитованим або уповноваженим АНО (організацією, що здійснює авторський нагляд), затвердженим Anah.\nЙого мета – спростити ваш процес отримання субсидії MaPrimeAdapt’, починаючи від розробки вашого проєкту адаптації (діагностика житлових умов та автономії для визначення ваших потреб, встановлення зв'язку з майстрами тощо) і закінчуючи виплатою субсидії MaPrimeAdapt'.\nЯкщо ви не знаєте, які організації, що надають послуги з адаптації, працюють у вашому районі, вам буде запропоновано список таких організацій під час створення вашого облікового запису MaPrimeAdapt’.\nДля отримання всієї інформації про програму \"MaPrimeAdapt\", ви можете відвідати веб-сайт France Rénov'.\nВи також можете звернутися до консультанта компанії France Rénov':\n→ Куди звернутися: Спеціалізовані консультанти з ремонту житла (France Rénov')",
+        "titre": "Розробити проєкт робіт"
+       },
+       {
+        "texte": "Ви повинні подати свою заявку на отримання допомоги онлайн на веб-сайті monprojetanah:\n→ Онлайн-сервіс: Запит на фінансову допомогу від Anah (MaPrimeAdapt', тощо)\nВам необхідно створити особистий обліковий запис на цьому сайті.\nУвага: Якщо ви є орендарем, вам необхідно подати заявку на отримання допомоги MaPrimeAdapt через розділ «Я є орендарем».",
+        "titre": "Подати заявку для отримання субсидії MaPrimeAdapt'"
+       },
+       {
+        "texte": "Вам необхідно дочекатися отримання дозволу від Anah, який надає вам допомогу MaPrimeAdapt для виконання робіт.\nAMO супроводжує вас у процесі моніторингу робіт, які виконують обрані ремісники.",
+        "titre": "Організувати та здійснити роботи"
+       },
+       {
+        "texte": "Після завершення робіт, вам необхідно передати в Anah рахунок від майстрів, які виконали роботи, щоб отримати виплату субсидії.\nВаш страховий агент допоможе вам у складанні цієї заявки на виплату. Роботи, які були виконані, повинні відповідати кошторису.\nПісля надання допомоги, необхідно оплатити майстрів, які виконували роботи.",
+        "titre": "Отримати субсидію MaPrimeAdapt"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F37501",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F37501",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-01-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 76.1,
+      "units": 91
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:342a35921284e6f09526ec7446e5041e2d5e84422a2dd0e9b0cbd32e770c31e6",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "MaPrimeAdapt' : travaux d'adaptation du logement à la perte d'autonomie",
+   "contenu_json": {
+    "intro": "L'aide MaPrimeAdapt' concerne les travaux d'adaptation du logement à la perte d'autonomie.",
+    "steps": [
+     {
+      "texte": "Vous souhaitez réaliser des travaux d’adaptation de votre logement du fait d’une perte d’autonomie (par exemple, remplacer une baignoire par une douche) ? Vous pouvez bénéficier, sous conditions (notamment de ressources), de l'aide MaPrimeAdapt'. Ce dispositif permet de financer 50 % ou 70 % de vos travaux d’adaptation. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Pour pouvoir bénéficier de MaPrimeAdapt', vous devez remplir certaines conditions.\nConditions liées au logement\nVous pouvez bénéficier de MaPrimeAdapt' si vous êtes propriétaire occupant ou locataire du parc privé.\nLes travaux à réaliser doivent concerner votre résidence principale. Celle-ci doit être située en métropole ou dans les départements et régions d’outre-mer (Drom).\nÀ savoir : Les copropriétés peuvent bénéficier de MaPrimeAdapt’ pour financer des travaux améliorant l’accessibilité de l’immeuble et portant sur les parties communes et équipements communs. Tous les travaux contribuant à l’accessibilité des parties communes sont éligibles. L’Anah prend en charge 50 % du montant des travaux, dans la limite de 20 000 € maximum par hall rendu accessible.\nCas : Vous êtes propriétaire occupant\nPour bénéficier de MaPrimeAdapt', vous devez respecter l'une des conditions suivantes :\n- Vous ou un membre de votre foyer avez 70 ans ou plus, sans condition liée à la perte d'autonomie\n- Vous ou un membre de votre foyer avez entre 60 et 69 ans, et êtes classé dans un groupe iso-ressources (GIR)\n- Vous ou un membre de votre foyer avez un taux d’incapacité d’au moins 50 %, reconnu par la commission des droits pour l'autonomie des personnes handicapées (CDAPH) ou le service départemental de l’office national des anciens combattants et victimes de guerre (ONACVG) vous ou êtes éligible à la prestation de compensation du handicap (PCH) ou à l'allocation d'éducation de l'enfant handicapé (AEEH) ou à l'allocation adulte handicapé (AAH). L'aide MaPrimeAdapt' peut se cumuler avec la PCH - aide à l’aménagement du logement.\nCas : Vous êtes locataire\nPour bénéficier de MaPrimeAdapt', vous devez respecter les conditions suivantes :\n- Vous louez un logement qui fait partie du parc privé\n- Vous avez obtenu l'accord de votre bailleur pour réaliser des travaux d'adaptation du logement à votre perte d'autonomie\nPar ailleurs, vous devez également respecter l'une des conditions suivantes :\n- Vous ou un membre de votre foyer avez 70 ans ou plus, sans condition liée à la perte d'autonomie\n- Vous ou un membre de votre foyer avez entre 60 et 69 ans, et êtes classé dans un groupe iso-ressources (GIR)\n- Vous ou un membre de votre foyer avez un taux d’incapacité d’au moins 50 %, reconnu par la commission des droits pour l'autonomie des personnes handicapées (CDAPH) ou le service départemental de l’office national des anciens combattants et victimes de guerre (ONACVG) vous ou êtes éligible à la prestation de compensation du handicap (PCH) ou à l'allocation d'éducation de l'enfant handicapé (AEEH) ou à l'allocation adulte handicapé (AAH). L'aide MaPrimeAdapt' peut se cumuler avec la PCH - aide à l’aménagement du logement.\nConditions liées aux ressources\nPour bénéficier de l'aide MaPrimeAdapt', vos ressources ne doivent pas dépasser les plafonds des revenus modestes ou très modestes (que vous soyez propriétaire occupant ou locataire).\nC'est le revenu fiscal de référence (RFR) qui est pris en compte. Il est indiqué sur votre avis d'imposition de l'année précédant votre demande d'aide.\nLes plafonds de ressources à respecter diffèrent selon que votre logement est situé hors Île-de-Franceou en Île-de-France.\nCas : Hors Île-de-France\nTableau : Plafonds de ressources à ne pas dépasser hors Île-de-France pour bénéficier de MaPrimeAdapt'\nNombre de personnes composant le ménage (foyer fiscal) | Ménages aux ressources très modestes | Ménages aux ressources modestes\n1 | Jusqu'à 17 363 € | Jusqu'à 22 259 €\n2 | Jusqu'à 25 393 € | Jusqu'à 32 553 €\n3 | Jusqu'à 30 540 € | Jusqu'à 39 148 €\n4 | Jusqu'à 35 676 € | Jusqu'à 45 735 €\n5 | Jusqu'à 40 835 € | Jusqu'à 52 348 €\nPar personne supplémentaire | + 5 151 € | + 6 598 €\nVous pouvez utiliser le simulateur du site internet France Rénov' pour avoir une estimation du montant de votre aide :\n→ Service en ligne : Estimer les aides financières pour la rénovation de l’habitat\nCas : En Île-de-France\nTableau : Plafonds de ressources à ne pas dépasser en Île-de-France pour bénéficier de MaPrimeAdapt'\nNombre de personnes composant le ménage (foyer fiscal) | Ménages aux ressources très modestes | Ménages aux ressources modestes\n1 | Jusqu'à 24 031 € | Jusqu'à 29 253 €\n2 | Jusqu'à 35 270 € | Jusqu'à 42 933 €\n3 | Jusqu'à 42 357 € | Jusqu'à 51 564 €\n4 | Jusqu'à 49 455 € | Jusqu'à 60 208 €\n5 | Jusqu'à 56 580 € | Jusqu'à 68 877 €\nPar personne supplémentaire | + 7 116 € | + 8 663 €\nVous pouvez utiliser le simulateur du site internet France Rénov' pour avoir une estimation du montant de votre aide :\n→ Service en ligne : Estimer les aides financières pour la rénovation de l’habitat",
+      "titre": "Vérifier les conditions d'attribution de MaPrimeAdapt'"
+     },
+     {
+      "texte": "Les travaux d'adaptation financés par l'aide MaPrimeAdapt' concernent l'ensemble de votre logement et les accès extérieurs. Parmi les travaux finançables, voici quelques exemples :\nTravaux intérieurs\nLes travaux intérieurs peuvent porter, notamment, sur :\n- Monte-escalier électrique\n- Aménagement salle de bain (barre d'appui, remplacement d'une baignoire par une douche, ...)\n- WC surélevés et barre d'appui\n- Aménagement de la cuisine\n- Éclairage à détection de mouvement\n- Élargissement des couloirs.\nTravaux extérieurs\nLes travaux extérieurs peuvent porter, notamment, sur :\n- Rampe d'accès vers l'entrée de votre maison\n- Place de parking pour personne à mobilité réduite\n- Installation de volets roulants\n- Élargissement de la porte d'entrée.",
+      "titre": "Déterminer la nature des travaux financés par MaPrimeAdapt'"
+     },
+     {
+      "texte": "Le montant de la prise en charge de vos travaux dépend de vos ressources (très modestes ou modestes).\nCas : Très modestes\nVous pouvez bénéficier d'une prise en charge de 70 % du montant de vos travaux, dans la limite d'un plafond de 22 000 € hors taxes.\nCas : Modestes\nVous pouvez bénéficier d'une prise en charge de 50 % de vos travaux, dans la limite d'un plafond de 22 000 € hors taxes.\nÀ savoir : MaPrimeAdapt' est cumulable avec les aides locales, la PCH et les aides à la rénovation énergétique. Il est recommandé de contacter votre mairie pour en savoir plus sur les aides locales.\n→ Où s'adresser : Mairie",
+      "titre": "Connaître le montant de la prise en charge des travaux par MaPrimeAdapt'"
+     },
+     {
+      "texte": "Avec MaPrimeAdapt', vous bénéficiez d'un accompagnement pour vous aider à élaborer et conduire votre projet de travaux.\nCet accompagnement est réalisé par un assistant à maîtrise d'ouvrage (AMO) agréé ou habilité par l’Anah.\nIl vise à simplifier votre parcours MaPrimeAdapt’, depuis l’élaboration de votre projet d’adaptation (diagnostic logement autonomie pour déterminer vos besoins, mise en relation avec les artisans, etc.) jusqu’au versement de l'aide MaPrimeAdapt'.\nSi vous ne connaissez pas d’AMO, une liste d’AMO proche de chez vous, vous sera proposée lors de la création de votre dossier MaPrimeAdapt’.\nPour toutes informations sur l'aide MaPrimeAdapt’, vous pouvez consulter le site internet France Rénov’.\nVous pouvez également prendre contact avec un conseiller France Rénov' :\n→ Où s'adresser : Conseillers spécialisés en travaux de rénovation de l'habitat (France Rénov')",
+      "titre": "Construire le projet de travaux"
+     },
+     {
+      "texte": "Vous devez déposer votre demande d'aide en ligne sur le site monprojetanah :\n→ Service en ligne : Demande d'aide financière de l'Anah (MaPrimeAdapt', etc.)\nVous devez vous créer un compte personnel sur ce site.\nAttention : Si vous êtes locataire, vous devez faire votre demande d'aide MaPrimeAdapt' depuis l'entrée « Je suis propriétaire occupant ».",
+      "titre": "Déposer le dossier pour bénéficier de MaPrimeAdapt'"
+     },
+     {
+      "texte": "Vous devez attendre de recevoir l'accord de l'Anah vous attribuant l’aide MaPrimeAdapt' pour réaliser les travaux.\nL'AMO vous accompagne dans le suivi des travaux réalisés par les artisans sélectionnés.",
+      "titre": "Faire réaliser les travaux"
+     },
+     {
+      "texte": "À la fin des travaux, vous devez transmettre à l'Anah la facture des artisans qui ont réalisé vos travaux pour demander le versement de l'aide.\nVotre AMO vous accompagne dans la constitution de cette demande de paiement. Les travaux réalisés doivent être conformes au devis.\nUne fois l’aide versée, vous devez régler les artisans ayant réalisé les travaux.",
+      "titre": "Recevoir MaPrimeAdapt'"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

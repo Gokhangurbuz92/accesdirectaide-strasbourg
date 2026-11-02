@@ -1,0 +1,493 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048",
+ "recordId": "aadb82c3-65cf-4b27-8d54-b78a1fc35b6a",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:17:59.375Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What is the Republican Integration Contract (CIR)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 81.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The Republican Integration Contract (CIR) is a contract concluded between the French state and a foreign national who wishes to settle permanently in France, with certain exceptions.",
+      "steps": [
+       {
+        "texte": "The Republican Integration Contract (CIR) is part of the personalized Republican Integration pathway for non-European foreign nationals who are granted residency in France and who wish to settle there permanently. This agreement is concluded between the French state and the foreign signatory, who agrees to undergo the training prescribed for them in order to facilitate their integration into French society. The CIR (Citizenship Integration Course) includes both language training and civic education, allowing foreign nationals to meet the language requirements and pass the mandatory civic exam. From January 1, 2026, those who wish to obtain a residence permit or a multi-year stay permit will need to do so. We are providing you with the necessary information.",
+        "titre": null
+       },
+       {
+        "texte": "This applies to you if you hold a temporary or long-term residence permit. However, there are exceptions.\nTable: Requirement to sign the Republican Integration Contract (CIR) as per titre de séjour (residence permit)\nTitre de séjour | CIR Signature\nPrivate and family residence permit | Foreign national born in France with continuous residence in France for at least 8 years + at least 5 years of schooling after the age of 10 in a French establishment | Not applicable\nAwarded for health reasons | No\nAnother case | Yes\nAlgerian residency certificate | No\nLong-term visa for titre de séjour employees | Yes\nVisitor's permit – No\nStudent visa – No\nTemporary Stay Permit – Au Pair | | No\nResidence permit for practicing a commercial, industrial, or artisanal profession | Yes\nStudent visa application – No\nTemporary Work Permit Card | No\nTalent/Talent (Family) Residence Permit – No\nSeasonal worker permit – No\nICT/detached worker card (employee)/ICT detached worker card (family)/mobile ICT detached worker card/mobile ICT detached worker card (family) | Not applicable\nResidence permit for foreign nationals benefiting from international protection | Refugee - Family member of a refugee | Yes\nSecondary protection – Family member of a beneficiary of secondary protection | Yes\nStateless – Member of the family of a stateless person | Yes\nYou are exempt from the CIR if you fall into one of the following situations:\n- Completed secondary education in a French secondary school for at least 3 academic years\n- Advanced studies undertaken in France for at least one academic year\n- Must be between 16 and 18 years old, and have the possibility of obtaining a 10-year residency permit.\nPlease note: This procedure does not apply to non-European citizens, nor to their family members who reside in France with them.",
+        "titre": "Who is required to enter into a republican integration contract?"
+       },
+       {
+        "texte": "The CIR (Certificate of Long-Term Residence) is signed when you are first admitted to a stay in France and you wish to establish a permanent residence there.\nThe CIR (Contract for International Recruitment) is prepared by the Ofii according to a standard template. The contract is presented to you with a translation into a language you understand.\nAt the end of the interview with an Ofii auditor, you must sign the contract (and your legal representative if you are a minor).\nYou agree to participate in the mandatory civic education program and, if applicable, the language training program.\nThe contract has also been signed, on behalf of the French state, by the prefect.\nIf you did not sign a Certificate of Registration when you entered French territory, you can voluntarily request to have one signed. You should contact the territorial office of the Ofii (French Office for Immigration and Integration) in your place of residence.\n→ Where to go: French Office for Immigration and Integration (Ofii)",
+        "titre": "When would a republican integration contract be signed?"
+       },
+       {
+        "texte": "During the personalized interview, Ofii will present you with the republican integration contract, along with its translation into a language you understand.\nMeeting with an Ofii advisor allows you to receive information and be directed towards local services that can meet your specific needs and circumstances.\nYou will also be required to take a French language proficiency test (written and oral) to assess your level.\nIf you achieve results below the A2 level, you can enroll in language training provided by Ofii as part of the republican integration contract.",
+        "titre": "What does the individual and personalized interview process look like within the framework of a republican integration contract?"
+       },
+       {
+        "texte": "The Republican Integration Contract (CIR) has been concluded, for a period of 1 year, between the French State and you. It can be extended in certain cases for a maximum of 1 year. It is based on mutual commitments.\nBy signing this, you agree to\n- Attend and complete all prescribed training courses diligently and seriously.\n- Responding to summons from the Ofii\n- Carry out the procedures specified by the Ofii and respond to inquiries from various operators (regarding employment or other matters).\n- Notify the Ofii of any changes in your situation or contact information.\n- If you are a parent: ensure that your child receives an education that respects the principles of the Republic and support them in their integration process.\nThe CIR (Centre d'Accueil et d'Intégration) is the first step in your integration process in France, which includes the following activities:\n- Civic education covering the values, principles, and institutions of the Republic, as well as the rights and responsibilities associated with living in France, and the organization of French society, its history, and culture.\n- Language training\n- Career counseling and support services designed to help you find employment.\n- Support tailored to your needs to facilitate your accommodation and integration process.",
+        "titre": "What commitments are made when signing a Republican integration contract?"
+       },
+       {
+        "texte": "The Republican integration contract includes 2 training courses: the language training and the civic training.\nLanguage training\nAn assessment of your written and oral comprehension and expression skills will be conducted during your initial interview at Ofii.\nLanguage training is offered to you if you have achieved results below the A2 level of the Common European Framework of Reference for Languages (CEFR) in the written and oral comprehension and expression test.\nThe language training program lasts 600 hours. You can also complete this training on an online learning platform.\nIf you accept it, this training will be mentioned in the CIR (Continuing Professional Development scheme) and will therefore become mandatory.\nPlease note: You are exempt from the skills assessment if you hold one of the following language qualifications or tests: Certificate demonstrating a level of French language proficiency at least equivalent to the A2 level of the Common European Framework of Reference for Languages (CEFR)\nCertificate issued by a French authority, either in France or abroad, certifying a level at least equal to the 3rd level of the national framework for professional certifications, as well as the national diploma of the Brevet (a standardized test).\nSecure language test or certificate issued within the last 2 years by a recognized certification body at the national or international level, which confirms and validates the mastery of written and oral skills at least at the A2 level of the CEFR.\nAt the end of the training, the training provider will issue you with a certificate of attendance, which will specify the number of hours completed and the results achieved on the initial and final assessment tests.\nIf you are a non-native speaker employee who has signed a CIR (Contract for Integration Support):\n- Your employer may offer you training as part of the skills development plan, which would enable you to achieve level A2 of the Common European Framework of Reference for Languages (CEFR). This training would be considered as equivalent to actual working hours (with continued payment) up to a maximum of 80 hours.\n- You can also obtain permission to be absent from work to attend training courses on your personal training account (CPF) that will enable you to achieve level A2 of the Common European Framework of Reference for Languages (CEFR).\nPlease note: From January 1, 2026, foreign nationals applying for a first titre de séjour multi-year permit or a first residence permit must demonstrate proficiency in the French language, at level B1 for residence permits and level A2 for multi-year permits.\nCivic education and civic exam\nCivic education is mandatory and consists of 4 sessions, totaling 24 hours.\nIt covers the following topics:\n- Principles and values of the Republic: motto, secularism, and symbols\n- The institutional and political system of France\n- Rights and responsibilities related to living in France\n- History, geography, and culture of France\n- Life in French society.\nA civic exam consisting of 40 multiple-choice questions must be completed. Successfully passing this civic exam requires a score of at least 80%, which means answering at least 32 questions correctly.\nPlease note: In Guadeloupe, French Guiana, Martinique, Réunion, Mayotte, and Saint-Pierre and Miquelon, civic education includes a component related to the history and geography of the department and overseas region of your residence. In Mayotte, civic education consists of 2 sessions totaling 12 hours.\nPlease note: From January 1, 2026, passing this civic exam will be required for obtaining a multi-year residence permit or a residency card.",
+        "titre": "What are the training requirements of the Republican integration program?"
+       },
+       {
+        "texte": "Initial contract\nThe CIR (Contract for Industrial Research) is for a period of 1 year.\nThe contract is fulfilled if the following two conditions are met:\n- Regularly and diligently attend and complete all training courses as prescribed.\n- There is no evidence of rejection of the essential values of French society and the Republic.\nExtension\nThe contract can be extended for a maximum of 1 year by the prefect for a legitimate and recognized reason, and upon the proposal of the Ofii, if the required civic and language training courses are in progress at the end of the contract and if you are residing legally.\nThe terms and duration of the extension are specified in the contract.",
+        "titre": "What is the duration of a Republican integration contract?"
+       },
+       {
+        "texte": "Within 6 months of the start of the training program, the Ofii will invite you to a follow-up interview to review the training you have completed.\nThe Ofii agent will provide you with new information about local services that could help you continue your integration process.\nHe can direct you to France Travail (formerly Pôle emploi) or a local employment agency to receive an in-depth career counseling session and support that will help you find employment.\nPlease note: If you have complied with the CIR (Certificate of Integration) and the essential values of French society and the Republic, have passed the civic exam \"CSP\", and can demonstrate your knowledge of French at level A2, the prefect may, during the renewal of your temporary titre de séjour permit (valid for 1 year), issue you a multi-year card (valid for 2 to 4 years). If you do not wish to receive professional guidance or support aimed at facilitating your professional integration, you must request an exemption.",
+        "titre": "Is a final interview part of a Republican integration contract required?"
+       },
+       {
+        "texte": "The prefect can terminate the contract upon the proposal of the Ofii if it determines that you fall into one of the following situations:\n- Failure to attend a required training course, and without a valid reason.\n- Failure to meet the commitments made under the CIR (Circular Economy Regulation).\nThe prefect must inform you of their intention to terminate the contract. They must state the reasons for the intended termination and specify the consequences for the issuance of the multi-year residence permit.\nClosing your CIR (Citizenship Integration Programme) due to non-compliance with obligations can have consequences on your right to reside in the country.\n- Renewal of your annual titre de séjour: you will not be able to obtain a multi-year titre de séjour and will be subject to the limit of 3 renewals for your title.\n- Access to a multi-year title: you will not be able to obtain a titre de séjour title after the expiration of your temporary card.",
+        "titre": "What are the consequences of failing to comply with a republican integration contract?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17048",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17048",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-06-26"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 79.7,
+      "units": 105
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:22:17.874Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "\"Cumhuriyetçi Entegrasyon Sözleşmesi (CES) nedir?\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "\"Cumhuriyetçi Entegrasyon Sözleşmesi (CES), Fransa hükümeti ile, Fransa'da kalıcı olarak yerleşmek isteyen yabancı kişiler arasında imzalanır. Ancak, bazı istisnalar söz konusudur.\"",
+      "steps": [
+       {
+        "texte": "\"Cumhuriyetçi Entegrasyon Sözleşmesi (CES), Fransa'ya kabul edilen ve kalıcı olarak orada yaşamayı hedefleyen, Avrupa olmayan bir yabancı uyruğun, cumhuriyetçi bir entegrasyon sürecinde yer almasına yönelik kişiselleştirilmiş bir programın parçasıdır.\" Bu anlaşma, Fransa hükümeti ile anlaşmaya dahil olan yabancı taraf arasında imzalanır. Yabancı taraf, Fransız toplumuna entegrasyonunu sağlamak amacıyla kendisine önerilen eğitimleri almayı taahhüt eder. CIR, dil eğitimi ve sivilce eğitimi içerir. Bu eğitimler, yabancının 1 Ocak 2026'dan itibaren, ikamet kartı veya çok yıllık ikamet kartı almayı hedefliyorsa, dil yeterliliğini ve zorunlu sivilce sınavını karşılamasına olanak tanır. Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Bu düzenlemeler, geçici veya uzun süreli ikamet kartına sahip olan kişiler için geçerlidir. Ancak bazı istisnalar bulunmaktadır.\nTablo: Cumhuriyetçi Entegrasyon Sözleşmesi (CES) imzalama zorunluluğu, titre de séjour (oturum izni)'e göre.\nTitre de séjour | CIR'in imzası\nÖzel yaşam ve aile yaşamı için ikamet kartı | Fransa doğumlu ve en az 8 yıl boyunca Fransa'da sürekli ikamet eden + 10 yaşından itibaren en az 5 yıl boyunca Fransız bir okulda eğitim alan yabancı | Geçerli değil\nSağlık nedenleriyle elde edilen diploma | Hayır\nBaşka bir örnek | Evet\nAljeryalıya ait ikamet belgesi | Yok\nUzun süreli vize, titre de séjour maaşlı çalışan için geçerli | Evet\nZiyaretçi vize kartı | Geçici ikamet izni yok\nÖğrenci ikamet kartı | Geçerli değil\nGeçici ikamet kartı | | Hayır\nTicari, endüstriyel veya el sanatları alanında çalışma izni için oturum kartı | Evet\nStajyerlik izni kartı | Geçerli değil\nGeçici işçi ikamet kartı | Geçerli değil\nYetenek kartı/aile yetenek kartı | Yok\nMevsimlik işçi ikamet kartı | Geçerli değil\nÇalışanların geçici görevle ilgili ICT/Çalışanların geçici görevle ilgili ICT (aile)/Çalışanların mobil geçici görevle ilgili ICT/Çalışanların mobil geçici görevle ilgili ICT (aile) için ikamet kartı | Yok\nYabancıların uluslararası koruma kapsamında sahip oldukları oturum izni kartı | Sığınmacı - Sığınmacının ailesi üyesi | Evet\nYardımcı koruma – Yardımcı koruma alanında bir başvuru sahibinin ailesi üyesi | Evet\nGöçmen – Bir göçmen ailenin üyesi | Evet\nEğer aşağıdaki durumlardan birinde bulunuyorsanız, vergi indiriminden (CIR) muaf olursunuz:\n- En az 3 yıl boyunca, bir Fransız ortaöğretim okulunda eğitim görmüş olmak.\n- Fransa'da en az 1 akademik yıl süren yüksek lisans veya doktora eğitimi\n- 16 ile 18 yaşları arasında olmak ve 10 yıl süreyle ikamet kartı alabilme imkanı.\nLütfen dikkat: Bu prosedür, Avrupa Birliği'ne üye bir ülkeden gelen yabancıların veya Fransa'da onlarla birlikte yaşayan aile üyelerinin durumuyla ilgili değildir.",
+        "titre": "Kim, cumhuriyetçi bir entegrasyon sözleşmesini imzalamakla yükümlüdür?"
+       },
+       {
+        "texte": "CIR, Fransa'daki ikametiniz için ilk kez kabul edildiğinizde ve kalıcı olarak burada yaşamak istediğinizde imzalanır.\nCIR, Ofii tarafından tip bir modele göre hazırlanır. Sözleşme, anlaşılabilir bir dilde, ayrıca çevirisiyle size sunulur.\nOfii'nin bir danışmanıyla görüşmenin sonunda, sözleşmeyi (ve eğer siz bir çocuğsanız, yasal temsilcinizi) imzalamanız gerekmektedir.\nSiz, zorunlu sivil eğitim programına ve isteğe bağlı olarak dil eğitimine katılmayı kabul edersiniz.\nAnlaşma ayrıca, Fransa adına valinin imzaladığı sözleşme olarak da düzenlenmiştir.\nEğer Fransa'ya girişiniz sırasında bir CIR (Çalışma İzni Başvurusu) imzalamamışsanız, bunu gönüllü olarak imzalamak için başvurabilirsiniz. Başvurunuzu, ikamet ettiğiniz yerdeki Ofii (Fransız İşçi Ofisi) bölge şefliğine iletmeniz gerekmektedir.\n→ İlgili kurum: Fransız Göç ve Entegrasyon Ofisi (Ofii)",
+        "titre": "Bir cumhuriyetçi entegrasyon sözleşmesi ne zaman imzalanır?"
+       },
+       {
+        "texte": "Kişisel görüşme sırasında, Ofii size cumhuriyetçi entegrasyon sözleşmesini, anlaşabileceğiniz bir dilde çevirisiyle birlikte sunacaktır.\nOfii'nin bir danışmanıyla görüşmek, size uygun olan ve ihtiyaçlarınızı karşılayabilecek yerel hizmetler hakkında bilgi edinmenizi ve yönlendirilmenizi sağlar.\nAyrıca, Fransızca bilgilerinizi (yazılı ve sözlü) ölçmek amacıyla bir dil yeterlilik testi de uygulanacaktır.\nEğer A2 seviyesine denk olmayan sonuçlar elde ederseniz, cumhuriyet entegrasyon sözleşmesinin bir parçası olarak önerilen Ofii'den bir dil eğitimi alabilirsiniz.",
+        "titre": "Bir cumhuriyet entegrasyon sözleşmesi çerçevesinde, bireysel ve kişiselleştirilmiş görüşmeler nasıl yapılır?"
+       },
+       {
+        "texte": "\"Cumhuriyetçi Entegrasyon Sözleşmesi (CIR), Fransa hükümeti ile sizin arasında 1 yıl süreyle imzalanmıştır. Bazı durumlarda, bu sözleşme 1 yıl daha uzatılabilir. Sözleşme, karşılıklı taahhütlere dayanmaktadır.\"\nBu sözleşmeyi imzalamak, aşağıdaki taahhütte bulunmanıza neden olur:\n- Belirtilen eğitimleri düzenli ve dikkatli bir şekilde takip etmek\n- Ofii'nin davetlerine yanıt vermek\n- Ofii tarafından belirtilen adımları uygulamak ve farklı operatörlerin (iş veya diğer) taleplerine yanıt vermek.\n- Ofii'ye tüm değişiklikleri ve iletişim bilgilerini bildirin.\n- Eğer siz bir ebeveynseniz: çocuğunuzun, cumhuriyetin ilkelerine uygun bir eğitim almasını sağlamak ve entegrasyon sürecinde ona destek olmak.\nCIR, Fransa'ya entegrasyon sürecinizin ilk adımıdır ve aşağıdaki faaliyetleri içerir:\n- Cumhuriyetin değerleri, ilkeleri ve kurumları, Fransa'da yaşamla ilgili haklar ve sorumluluklar ve Fransız toplumunun örgütlenmesi, tarihi ve kültürü hakkında eğitim.\n- Dil eğitimi\n- Profesyonel yönlendirme danışmanlığı ve, kariyer yolculuğunuzda size yardımcı olacak destek hizmetleri.\n- İhtiyaçlarınıza uygun, konaklama ve entegrasyon sürecinizi kolaylaştırmak için özel olarak tasarlanmış destek.",
+        "titre": "Bir cumhuriyetçi entegrasyon sözleşmesi imzalamak, hangi taahhütleri içerir?"
+       },
+       {
+        "texte": "Cumhuriyetçi entegrasyon sözleşmesi, 2 eğitim içerir: dil eğitimi ve sivil eğitim.\nDil eğitimi\nYazılı ve sözlü iletişim becerilerinizin değerlendirilmesi, Ofii'ye geldiğinizde gerçekleştirilir.\nBu dil eğitimi, Avrupa Ortak Referans Çerçevesi (A2 seviyesinin altında) puanı almanız durumunda, yazılı ve sözlü anlama ve ifade testlerinde elde ettiğiniz sonuçlara göre size sunulmaktadır.\nDil eğitimi, 600 saatlik bir süreyi kapsar. Ayrıca, bu eğitimi internet tabanlı bir öğrenme platformu üzerinden de alabilirsiniz.\nEğer bunu kabul ederseniz, bu eğitim, CIR (Çalışan İzcilik ve Eğitim Programı) kapsamında yer alacak ve dolayısıyla zorunlu hale gelecektir.\nLütfen dikkat edin: Aşağıdaki sertifikalardan veya dil yeterlilik testlerinden herhangi birine sahipseniz, yetenek değerlendirmesinden muaftasınız: Fransızca bilgisi konusunda en az A2 seviyesine denk bir seviyeye işaret eden diploma. Bu diploma, Fransa içinde veya dışında, bir Fransız yetkili tarafından verilmelidir ve en az 3 seviyesine denk bir seviyeyi, aynı zamanda ulusal sertifikasyon çerçevesindeki diploma ile de onaylamalıdır. Ayrıca, ulusal veya uluslararası düzeyde tanınmış bir sertifikasyon kuruluşu tarafından, en az A2 seviyesine denk yazılı ve sözlü becerilerin hakimiyetini doğrulayan ve onaylayan, daha önce verilmemiş (2 yıldan kısa süreli) bir dil yeterlilik belgesi veya test.\nEğitim sonunda, eğitim veren kurum, katılım belgesi düzenleyerek, tamamlanan saat sayısını ve başlangıç ve son değerlendirme testlerindeki sonuçları belirtir.\nEğer siz, farklı bir dil konuşan ve bir CIR (Çalışan İskelesi Programı) sözleşmesi imzalayan bir çalışanıysanız:\n- İşvereniniz, beceri geliştirme planı kapsamında, sizi Avrupa Ortak Referans Çerçevesi (A2 seviyesine) ulaşmanızı sağlayacak eğitimler sunabilir. Bu eğitimler, ücretli çalışma süresine denk gelecek şekilde (ücretin korunmasıyla birlikte) en fazla 80 saatlik bir süre olarak değerlendirilebilir.\n- Ayrıca, kişisel eğitim hesabınızda (CPF) yer alan ve CEFR'nin A2 seviyesine ulaşmanızı sağlayacak eğitimleri takip etmek için izin alabilirsiniz.\nUyarı: 1 Ocak 2026 tarihinden itibaren, uzun süreli (1 yıl veya daha fazla) oturum izni veya ilk oturum kartı başvuran yabancı vatandaşlar, oturum kartı için B1 seviyesinde, uzun süreli oturum izni için ise A2 seviyesinde Fransızca dilini bilmediklerini kanıtlamak zorundadır.\nSivil eğitim ve sivil bilgi testi\nSivil eğitim, zorunlu olup, toplam 24 saat süren 4 oturumdan oluşmaktadır.\nKonuları şunları içerir:\n- Cumhuriyetin ilkeleri ve değerleri: Milli sembol, laiklik\n- Fransızın kurumsal ve siyasi sistemi\n- Fransız yaşamında geçerli olan haklar ve sorumluluklar\n- Fransa'nın tarihi, coğrafyası ve kültürü\n- Fransız toplumunda yaşam.\n40 adet çoktan seçmeli sorudan oluşan bir vatandaşlık sınavına girilmesi gerekmektedir. Bu vatandaşlık sınavından başarılı olmak için en az %80, yani 32 doğru cevap verilmesi gerekmektedir.\nÖnemli: Guadeloupe, Guyana, Martinik, Reünion, Mayotte ve Saint-Pierre ve Miquelon'da, sivil eğitim programı, yerleşim yerinizin departmanının ve deniz aşırı bölgesi olan bölgenin tarihi ve coğrafyası ile ilgili bir bölüm içermektedir. Mayotte'da, sivil eğitim programı toplam 12 saat süren 2 oturumdan oluşmaktadır.\nLütfen dikkat: 1 Ocak 2026 tarihinden itibaren, bu sivil usul sınavından başarılı olmak, çok yıllık oturum izni veya ikamet kartı alabilmek için gereklidir.",
+        "titre": "Cumhuriyetçi Entegrasyon Sözleşmesinin eğitimleri nelerdir?"
+       },
+       {
+        "texte": "Başlangıç sözleşmesi\nBu sözleşme 1 yıl süreyle geçerlidir.\nAnlaşma, aşağıdaki iki koşulun yerine getirilmesi durumunda geçerli olacaktır:\n- Belirlenen eğitimlere düzenli ve dikkatli bir şekilde katılmak.\n- Fransız toplumunun ve cumhuriyetin temel değerlerine yönelik hiçbir ret belirtisi yok.\nUzatma\nBu sözleşme, valinin, geçerli ve meşru bir nedene dayanarak ve Ofii'nin önerisiyle, sözleşmenin sonunda gerekli ve tamamlanmış vatandaşlık ve dil eğitimlerinin yapıldığını ve düzenli olarak ikamet ettiğinizi gösteren koşullar altında, en fazla 1 yıl daha uzatılabilir.\nUzatmanın nedeni ve süresi sözleşmede belirtilmiştir.",
+        "titre": "Bir cumhuriyetçi entegrasyon sözleşmesinin süresi nedir?"
+       },
+       {
+        "texte": "Eğitimlerin başlamasından 6 ay sonra, Ofii sizinle eğitimlerin sonuçlarını değerlendirmek amacıyla bir değerlendirme görüşmesi için sizi davet edecektir.\nOfii'den gelen temsilci, entegrasyon sürecinizin devamı için size yardımcı olabilecek, yerel hizmetler hakkında yeni bir bilgi sunmaktadır.\nBununla birlikte, size France Travail (eski adıyla İş Arama Merkezi) veya yerel bir kuruluş aracılığıyla, kapsamlı bir kariyer danışmanlığı hizmeti ve iş hayatına yerleşmenize yardımcı olacak destek almanız için yönlendirme yapabilir.\nLütfen dikkat: Eğer Fransız toplumunun ve cumhuriyetin temel değerlerine ve CIR (Çalışma İzni) şartlarına uyduysanız, \"CSP\" sınavını başarıyla tamamladıysanız ve Fransızca dilbilgisi konusunda A2 seviyesinde yeterli olduğunuzu kanıtlayabiliyorsanız, valiniz, geçici titre de séjour çalışma izininizin 1 yıllık yenilenmesi sırasında, size 2 ila 4 yıl geçerli olacak çok yıllık bir kimlik kartı düzenleyebilir. Profesyonel rehberlik hizmetlerinden veya iş hayatınıza entegrasyonunuzu desteklemek amacıyla sağlanan desteklerden yararlanmak istemiyorsanız, bir muafiyet talep etmeniz gerekmektedir.",
+        "titre": "Bir cumhuriyet entegrasyon sözleşmesinin sonunda bir görüşme yapılması gerekli midir?"
+       },
+       {
+        "texte": "Vali, Ofii'nin sizi aşağıdaki durumlardan birinde bulundurduğuna dair bir tespit yapması durumunda sözleşmeyi feshedebilir:\n- Belirtilen bir eğitime katılmamak ve bunun için geçerli bir nedeniniz olmaması\n- CIR kapsamında yapılan taahhütlerin ihlali.\nVali, sözleşmeyi feshetme niyetini size bildirmelidir. Fesih nedenlerini belirtmeli ve çok yıllık ikamet kartının verilmesi üzerindeki sonuçları açıkça belirtmelidir.\nÇalışma ve İştirak Programınızın (CIR) iptal edilmesi, yükümlülüklerinizi yerine getirmediğinizde, ikamet hakkınız üzerinde sonuçlara yol açabilir.\n- Yıllık titre de séjour abonementinizin yenilenmesi: artık çok yıllık (titre de séjour) bir abonelik alamayacak ve abonelik hakkınızın 3 kez yenilenme sınırına tabi olacaksınız.\n- Çok yıllık bir lisans elde etme imkanı: Geçici kartınızın süresi dolduğunda, titre de séjour adlı çok yıllık lisansı alamayacaksınız.",
+        "titre": "Bir cumhuriyet entegrasyon sözleşmesinin ihlal edilmesi durumunda ortaya çıkan sonuçlar nelerdir?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17048",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17048",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-06-26"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 75.9,
+      "units": 105
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:27:07.796Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما هو \"اتفاقية الاندماج الجمهوري\" (CIR)؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 57.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "يتفق العقد الموحد للاندماج الجمهوري (CIR) بين الدولة الفرنسية وشخص أجنبي يرغب في الاستقرار بشكل دائم في فرنسا، مع وجود بعض الاستثناءات.",
+      "steps": [
+       {
+        "texte": "يتماشى \"اتفاقية التكامل الجمهوري\" (CIR) مع المسار المخصص للتكامل الجمهوري للمواطن الأجنبي غير الأوروبي الذي يتم استقباله في فرنسا ويود الاستقرار فيها بشكل دائم. يتم إبرامه بين الدولة الفرنسية والطرف الأجنبي الموقع، والذي يتعهد بالالتزام بالتدريبات الموصوفة له بهدف تسهيل اندماجه في المجتمع الفرنسي. يتضمن برنامج CIR تدريبًا لغويًا وتدريبًا على المواطنة، مما يمكّن المهاجر من تحقيق المستوى المطلوب في اللغة واجتياز الاختبار المدني الإلزامي، ابتداءً من 1 يناير 2026، إذا كان يرغب في الحصول على بطاقة إقامة أو بطاقة إقامة متعددة السنوات. نحن نقدم لكم المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "تُعتبر هذه القواعد ذات صلة بك إذا كنت تحمل بطاقة إقامة مؤقتة أو طويلة الأمد. ومع ذلك، هناك بعض الاستثناءات.\nجدول: التزام بتوقيع عقد التكامل الجمهوري (CIR) وفقًا لـ titre de séjour (تصريح الإقامة)\nTitre de séjour | توقيع اتفاقية التعاون بين المؤسسة والجامعة\nبطاقة إقامة: للحياة الخاصة والعائلية | شخص أجنبي ولد في فرنسا ويقيم فيها بشكل مستمر لمدة لا تقل عن 8 سنوات + التحاق بالمدارس لمدة لا تقل عن 5 سنوات بعد سن 10 سنوات في مؤسسة فرنسية | غير متاح\nالحصول على الشهادة لأسباب صحية | لا\nحالة أخرى | نعم\nشهادة إقامة لمواطن جزائري | لا\nتصريح إقامة طويلة الأمد، يغطي titre de séjour موظف | نعم\nبطاقة الزائر | غير مخصصة للسكن\nبطاقة إقامة طالب | غير متوفرة\nبطاقة إقامة مؤقتة: عاملة منزلية شابة | | لا\nبطاقة إقامة لممارسة مهنة تجارية أو صناعية أو حرفية | نعم\nبطاقة إقامة المتدرب | غير متوفرة\nبطاقة إقامة عامل مؤقت | لا\nبطاقة الإقامة الخاصة بالمهارات/المهارات (للعائلة) | لا\nبطاقة إقامة عامل موسمية | غير متوفرة\nبطاقة إقامة موظف يعمل في مجال تكنولوجيا المعلومات (ICT) / بطاقة إقامة موظف (عائلة) يعمل في مجال تكنولوجيا المعلومات (ICT) / بطاقة إقامة موظف مؤقت يعمل في مجال تكنولوجيا المعلومات (ICT) / بطاقة إقامة موظف مؤقت (عائلة) يعمل في مجال تكنولوجيا المعلومات (ICT) | غير متوفرة\nبطاقة إقامة للأجانب المستفيدين من الحماية الدولية | لاجئ - أحد أفراد عائلة لاجئ | نعم\nالحماية التكميلية - أحد أفراد أسرة المستفيد من الحماية التكميلية | نعم\nبلا جنسية - عضو في عائلة شخص بلا جنسية | نعم\nلا يُشترط دفع ضريبة الكربون إذا كنت في إحدى الحالات التالية:\n- إكمال التعليم في مؤسسة تعليمية ثانوية فرنسية لمدة لا تقل عن 3 سنوات دراسية.\n- دراسات عليا تم إكمالها في فرنسا لمدة لا تقل عن سنة أكاديمية.\n- أن يكون عمر المتقدم بين 16 و 18 عامًا، مع إمكانية الحصول على بطاقة إقامة لمدة 10 سنوات.\nملاحظة: هذه الإجراء لا ينطبق على شخص أجنبي من دولة أوروبية، ولا على أفراد عائلته المقيمين في فرنسا معه.",
+        "titre": "من هو الطرف الذي يجب أن يوقع على عقد اندماج جمهوري؟"
+       },
+       {
+        "texte": "يتم توقيع \"اتفاقية الإقامة\" عندما يتم قبولك للمرة الأولى للإقامة في فرنسا، وعندما ترغب في الاستقرار فيها بشكل دائم.\nيتم إعداد اتفاقية CIR من قبل \"Ofii\" وفقًا لنموذج قياسي. سيتم تقديم الاتفاقية إليك مع ترجمتها إلى لغة تفهمها.\nفي نهاية المقابلة مع أحد موظفي مكتب التحقيق، يجب عليك التوقيع على العقد (ووكيلك القانوني إذا كنت قاصراً).\nأنت ملتزم بالمشاركة في التدريب المدني الإلزامي، وربما أيضًا في التدريب اللغوي.\nوقد تم توقيع العقد أيضًا، نيابة عن الدولة الفرنسية، من قبل محافظ المنطقة.\nإذا لم تكن قد وقعت على نموذج CIR عند دخولك إلى الأراضي الفرنسية، يمكنك طلب توقيعه بشكل طوعي. يجب عليك الاتصال بمديرية Ofii في منطقتك.\n→ الجهة التي يجب الاتصال بها: مكتب الهجرة والاندماج الفرنسي (Ofii)",
+        "titre": "متى يتم توقيع عقد للانضمام إلى الجمهورية؟"
+       },
+       {
+        "texte": "خلال المقابلة الشخصية، سيعرض عليك \"Ofii\" عقد الاندماج الجمهوري مع ترجمته إلى لغة تفهمها.\nيتيح التحدث مع أحد المستشارين في مكتب التحقيق، \"Ofii\"، تزويدك بالمعلومات وتوجيهك نحو الخدمات المحلية المناسبة التي يمكن أن تلبي احتياجاتك وظروفك.\nكما أنك مطالب بإجراء اختبار لتقييم معرفتك باللغة الفرنسية (كتابي وشفوي).\nإذا حصلت على نتائج أقل من المستوى A2، يمكنك التسجيل في دورة لغوية معتمدة من \"Ofii\" كجزء من برنامج الاندماج الجمهوري.",
+        "titre": "كيف يتم إجراء المقابلة الفردية والمخصصة كجزء من اتفاقية الاندماج الجمهوري؟"
+       },
+       {
+        "texte": "تم توقيع اتفاقية التكامل الجمهوري (CIR) بين الدولة الفرنسية و[اسم المستفيد]، لمدة سنة واحدة. يمكن تمديد هذه الاتفاقية في بعض الحالات لمدة سنة واحدة إضافية. تعتمد هذه الاتفاقية على التزامات متبادلة.\nمن خلال توقيعه، فإنك تلتزم بـ\n- الالتزام بحضور الدورات التدريبية الموصى بها بجدية واهتمام.\n- الاستجابة لدعوات مكتب التحقيق في جرائم الفساد.\n- إنجاز الإجراءات المحددة من قبل \"Ofii\" والرد على طلبات مختلف المشغلين (في مجال التوظيف أو غيره).\n- إبلاغ مكتب التحقيق في جرائم الفساد (Ofii) عن أي تغيير في الظروف أو المعلومات.\n- إذا كنت والدًا: تأكد من حصول طفلك على تعليم يحترم مبادئ الجمهورية، وساعده في عملية الاندماج.\nيمثل برنامج CIR المرحلة الأولى من عملية الاندماج في فرنسا، والذي يتضمن الإجراءات التالية:\n- تدريب على المواضيع المتعلقة بالقيم والمبادئ والمؤسسات الجمهورية، وحقوق وواجبات الحياة في فرنسا، بالإضافة إلى تنظيم المجتمع الفرنسي، وتاريخه وثقافته.\n- تدريب لغوي\n- خدمات استشارية في مجال التوجيه المهني، بالإضافة إلى دعم مخصص يهدف إلى تسهيل اندماجك في سوق العمل.\n- دعم مخصص يلبي احتياجاتكم لتسهيل عملية الاستقبال والاندماج.",
+        "titre": "ما هي الالتزامات التي يتم اتخاذها عند توقيع عقد للانضمام إلى الجمهورية؟"
+       },
+       {
+        "texte": "يتضمن عقد الاندماج الجمهوري تدريبين: التدريب اللغوي والتدريب المدني.\nتدريب لغوي\nسيتم تقييم مهاراتك في الفهم والتعبير الكتابي والشفوي خلال مرحلة التقديم في Ofii.\nيتم تقديم هذه الدورة التدريبية اللغوية لك إذا لم تحقق نتائج تفي بمستوى A2 في إطار المرجعي الأوروبي المشترك للغات (CECRL) في اختبار الفهم والتعبير المكتوب والكتابي.\nتستغرق مدة التدريب اللغوي 600 ساعة. يمكنك أيضًا حضور هذا التدريب عبر منصة تعليمية على الإنترنت.\nإذا قبلتم ذلك، فإن هذه الدورة التدريبية مذكورة في برنامج \"التربية والتأهيل المهني\"، وبالتالي تصبح إلزامية.\nيرجى ملاحظة: لا يلزمك إجراء تقييم للمهارات إذا كنت حاصلًا على أحد الشهادات أو الاختبارات اللغوية التالية: شهادة تثبت مستوى معرفة باللغة الفرنسية يوازي على الأقل المستوى A2 في إطار إطار المرجعية الأوروبي للغات (CECRL).\nشهادة صادرة عن جهة فرنسية، سواء داخل فرنسا أو خارجها، تثبت مستوى يوازي على الأقل المستوى 3 في إطار المعايير الوطنية للشهادات المهنية، بالإضافة إلى الشهادة الوطنية للابتدائية.\nاختبار أو شهادة لغوية آمنة، صادرة عن مؤسسة معتمدة على المستوى الوطني أو الدولي، والتي تثبت إتقان المهارات الكتابية والشفوية على الأقل بمستوى A2 في إطار إطار المرجعية الأوروبي للغات (CECRL).\nفي نهاية الدورة التدريبية، سيعمل المركز التدريبي على إصدار شهادة حضور، تحدد عدد الساعات التي تم إكمالها ونتائج الاختبارات التقييمية الأولية والنهائية.\nإذا كنت موظفًا يتحدث لغة أخرى ووقع على اتفاقية الإقامة والعمل:\n- قد يقدم صاحب العمل لكم، كجزء من خطة تطوير المهارات، دورات تدريبية تتيح لكم الوصول إلى المستوى A2 في إطار إطار المرجعية الأوروبي الموحد للغات. يمكن اعتبار هذه الدورات كجزء من ساعات العمل الفعلية (مع الحفاظ على الأجر)، وذلك بحد أقصى 80 ساعة.\n- يمكنك أيضًا الحصول على إذن بالإجازة لمتابعة الدورات التدريبية التي تتيح لك الوصول إلى المستوى A2 في إطار إطار المرجعية الأوروبي للمهارات اللغوية (CECRL) من خلال حسابك الشخصي للتدريب.\nتنبيه: اعتبارًا من 1 يناير 2026، يجب على الأجانب الذين يتقدمون بطلب للحصول على تصريح إقامة لمدة عام واحد أو أول بطاقة إقامة، تقديم دليل على إتقان اللغة الفرنسية، حيث يجب أن يكون مستوى إتقان اللغة هو المستوى B1 لبطاقات الإقامة، ومستوى A2 لبطاقات الإقامة لمدة عام واحد.\nالتثقيف المدني وامتحان المدنية\nإن التدريب المدني إلزامي ويشمل 4 جلسات مدة كل منها 24 ساعة.\nوتشمل المواضيع التالية:\n- المبادئ والقيم الجمهورية: الشعار، اللاأدائية، والرموز.\n- النظام المؤسسي والسياسي في فرنسا\n- الحقوق والواجبات المتعلقة بالحياة في فرنسا\n- تاريخ وفرنسا، جغرافيتها وثقافتها\n- الحياة في المجتمع الفرنسي.\nيجب اجتياز امتحان للمواطنة يتضمن 40 سؤالًا من نوع الاختيار، مع ضرورة الحصول على درجة لا تقل عن 80%، أي 32 إجابة صحيحة.\nملاحظة: في غوادلوب، وغيانا، ومارتينيك، وريونيون، ومايوت، وفي سانت بيير وميكيلون، تتضمن التدريب المدني جزءًا يتعلق بتاريخ و جغرافيا المقاطعة والإقليم الفرنسي البعيد، حيث تقيم. وفي مايوت، يتكون التدريب المدني من جلستين مدة كل منهما 6 ساعات.\nتنبيه: اعتبارًا من 1 يناير 2026، فإن اجتياز هذا الامتحان المدني شرط أساسي للحصول على تصريح إقامة متعدد السنوات أو تصريح إقامة.",
+        "titre": "ما هي التدريبات التي يتضمنها عقد الاندماج الجمهوري؟"
+       },
+       {
+        "texte": "العقد الأولي\nتم توقيع اتفاقية CIR لمدة عام واحد.\nسيتم احترام العقد إذا تم استيفاء الشروط التالية:\n- متابعة الدورات التدريبية الموصى بها بعناية ومسؤولية.\n- لا يوجد أي دليل على رفض القيم الأساسية للمجتمع الفرنسي والدولة الجمهورية.\nتمديد\nيمكن تمديد العقد لمدة سنة واحدة على الأكثر من قبل محافظ المقاطعة، وذلك لأسباب مشروعة ومعترف بها، وبموجب اقتراح من \"Ofii\" إذا كانت الدورات التدريبية المدنية واللغوية المطلوبة والمستمرة في إكمالها في نهاية العقد، وإذا كنت مقيمًا بشكل قانوني.\nتحدد طبيعة ومدته في العقد.",
+        "titre": "ما هي مدة عقد الاندماج الجمهوري؟"
+       },
+       {
+        "texte": "في غضون 6 أشهر بعد بدء الدورات التدريبية، سيقوم \"Ofii\" بدعوتك لإجراء مقابلة متابعة لتقييم مدى استفادتك من الدورات التدريبية التي شاركت فيها.\nيقدم وكيل من منظمة \"Ofii\" معلومات جديدة حول الخدمات المحلية التي يمكن أن تسهل عملية تكيفك وتوطينك.\nيمكنه أن يوجهك إلى France Travail (الذي كان يعرف باسم \"مركز التوظيف\") أو إلى مركز محلي للحصول على مقابلة متعمقة في مجال التوجيه المهني، بالإضافة إلى دعم يساعدك في إيجاد وظيفة.\nيرجى ملاحظة: إذا كنت قد التزمت بـ \"التعليم العام والتربوي\" والقيم الأساسية للمجتمع الفرنسي والدولة، ونجحت في امتحان \"النشاط المدني\"، ولديك دليل على إتقانك للغة الفرنسية بمستوى A2، فيمكن للوالي، عند تجديد تصريح الإقامة المؤقت لمدة عام واحد، إصدار بطاقة صلاحيتها لعدة سنوات (مدة صلاحيتها من 2 إلى 4 سنوات). إذا كنت لا ترغب في الحصول على استشارة مهنية أو دعم يهدف إلى تسهيل انخراطك المهني، فيجب عليك طلب الإعفاء.",
+        "titre": "هل يجب إجراء مقابلة نهائية عند انتهاء عقد تكوين الموظفين في الجمهورية؟"
+       },
+       {
+        "texte": "يمكن للوالي إلغاء العقد بناءً على اقتراح مكتب \"Ofii\" عندما يتبين له أنك في إحدى الحالات التالية:\n- عدم المشاركة في دورة تدريبية محددة، وعدم وجود سبب مشروع لذلك.\n- عدم الالتزام بالالتزامات المتفق عليها في إطار برنامج \"الاستثمار في البحث والتطوير\".\nيجب على المفوض أن يبلغكم بنيته إنهاء العقد. ويجب عليه تحديد أسباب إنهاء العقد، وتوضيح العواقب المترتبة على ذلك فيما يتعلق بإصدار تصريح الإقامة متعدد السنوات.\nإن انتهاء برنامج المساعد الاجتماعي الخاص بكم (CIR) بسبب عدم الالتزام بالالتزامات له آثار على حقكم في الإقامة.\n- تجديد titre de séjour السنوي الخاص بك: لن تتمكن من الحصول على titre de séjour متعدد السنوات، وستكون خاضعًا للحد الأقصى لـ 3 تجديدات لعنوانك.\n- الحصول على رخصة سارية المفعول لسنوات متعددة: لن تتمكن من الحصول على titre de séjour سارية المفعول لسنوات متعددة بعد انتهاء صلاحية بطاقتك المؤقتة.",
+        "titre": "ما هي العواقب في حالة عدم الالتزام بعقد اندماج جمهوري؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17048",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17048",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-06-26"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 77.8,
+      "units": 105
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:31:19.322Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Was ist der republikanische Integrationsvertrag (CIR)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Das Republikanische Integrationsvertrag (CIR) wird zwischen dem französischen Staat und einer ausländischen Person geschlossen, die dauerhaft in Frankreich leben möchte, mit einigen Ausnahmen.",
+      "steps": [
+       {
+        "texte": "Das republikanische Integrationsvertrag (CIR) ist Teil des individuellen Integrationsprogramms für ausländische Staatsbürger, die nicht aus der Europäischen Union stammen und in Frankreich einreisen und dauerhaft dort leben möchten. Dies ist eine Vereinbarung zwischen dem französischen Staat und dem ausländischen Unterzeichneten, der sich verpflichtet, die ihm vorgeschriebenen Schulungen zu absolvieren, um seine Integration in die französische Gesellschaft zu fördern. Das CIR (Centre d'Intégration) bietet eine sprachliche Ausbildung und eine Ausbildung in Bürgerkunde an. Diese ermöglichen es Ausländern, die sprachlichen Anforderungen und die obligatorische Bürgerkundeprüfung zu erfüllen, die ab dem 1. Januar 2026 gelten, falls sie eine Aufenthaltskarte oder eine mehrjährige Aufenthaltskarte beantragen möchten. Wir stellen Ihnen die notwendigen Informationen zur Verfügung.",
+        "titre": null
+       },
+       {
+        "texte": "Sie sind betroffen, wenn Sie eine temporäre oder mehrjährige Aufenthaltskarte besitzen. Es gibt jedoch Ausnahmen.\nTabelle: Verpflichtung zur Unterzeichnung des republikanischen Integrationsvertrags (CIR) gemäß titre de séjour (Aufenthaltstitel)\nTitre de séjour | Unterschrift des CIR\nKarte für den Aufenthalt mit privatem und familiarem Charakter | Ausländer, der in Frankreich geboren wurde und seit mindestens 8 Jahren in Frankreich lebt + mindestens 5 Jahre Schulbesuch nach dem 10. Lebensjahr in einer französischen Schule | Nicht zutreffend\nAus gesundheitlichen Gründen erhalten | Nein\nEin weiteres Beispiel | Ja\nWohnbescheinigung für einen Algerier | Nicht vorhanden\nVisum für längeren Aufenthalt, gültig für titre de séjour Angestellte | Ja\nBesucherausweis | Nein\nStudenten-Aufenthaltstitel | Nicht vorhanden\nVorläufiges Aufenthaltsvisum für Studenten | | Nein\nGenehmigung für die Ausübung einer gewerblichen, industriellen oder handwerklichen Tätigkeit | Ja\nKarte für Praktikanten | Nicht vorhanden\nKarte für vorübergehende Arbeitskräfte | Nicht vorhanden\nAufenthaltstitel für hochqualifizierte Fachkräfte / Aufenthaltstitel für Familien | Nicht vorhanden\nArbeitsgenehmigung für Saisonarbeiter | Nicht vorhanden\nKarte für einen Mitarbeiter im Rahmen einer Verlagerung (ICT/Mitarbeiter im Rahmen einer Verlagerung (Familie)/Mobile Mitarbeiter im Rahmen einer Verlagerung (ICT)/Mobile Mitarbeiter im Rahmen einer Verlagerung (Familie)) | Nicht zutreffend\nAusreisegenehmigung für Ausländer, die internationalen Schutz genießen | Flüchtling – Familienmitglied eines Flüchtlings | Ja\nZusätzliche Schutzleistung – Familienmitglied einer Person, die eine zusätzliche Schutzleistung erhält | Ja\nAsylbewerber – Mitglied einer Familie von Asylbewerbern | Ja\nSie sind von der Pflicht zur Abführung der Sozialversicherungsbeiträge befreit, wenn Sie sich in einer der folgenden Situationen befinden:\n- Mindestens 3 schulische Jahre in einer französischen weiterbildenden Bildungseinrichtung absolviert.\n- Hochschulstudium, das mindestens 1 akademisches Jahr in Frankreich absolviert wurde\n- Mindestens 16 und maximal 18 Jahre alt sein und die Möglichkeit haben, eine Aufenthaltskarte für 10 Jahre zu erhalten.\nBitte beachten Sie: Diese Verfahrensweise gilt nicht für Ausländer, die aus einem europäischen Land stammen, oder für deren Familienmitglieder, die mit ihnen in Frankreich leben.",
+        "titre": "Wer ist verpflichtet, einen republikanischen Integrationsvertrag abzuschließen?"
+       },
+       {
+        "texte": "Das CIR (Carte Internationale d'Étudiant) wird unterzeichnet, wenn Sie zum ersten Mal in Frankreich studieren und die Absicht haben, dort dauerhaft zu leben.\nDas CIR (Konstruktive Insolvenzregelung) wird von der Ofii gemäß einem Standardmodell erstellt. Der Vertrag wird Ihnen zusammen mit seiner Übersetzung in einer für Sie verständlichen Sprache vorgelegt.\nAm Ende des Gesprächs mit einem Mitarbeiter der Ofii müssen Sie den Vertrag (und einen Bevollmächtigten, falls Sie minderjährig sind) unterzeichnen.\nSie verpflichten sich, an der obligatorischen Bürgerbildung teilzunehmen und gegebenenfalls auch an einer Sprachkurs.\nDer Vertrag wurde ebenfalls von dem Präfekten im Namen des französischen Staates unterzeichnet.\nWenn Sie beim Betreten des französischen Territoriums keinen CIR (Carte Internationale de Séjour) unterschrieben haben, können Sie diesen freiwillig beantragen. Sie sollten sich an die zuständige Abteilung des Ofii (Office Français de l'Immigration et de l'Intégration) an Ihrem Wohnort wenden.\n→ An wen wenden Sie sich: Französisches Büro für Einwanderung und Integration (Ofii)",
+        "titre": "Wann wird ein Vertrag über die republikanische Integration unterzeichnet?"
+       },
+       {
+        "texte": "Während des persönlichen Gesprächs stellt Ihnen das Ofii den Staatsintegrationvertrag zusammen mit seiner Übersetzung in eine für Sie verständliche Sprache vor.\nEin Gespräch mit einem Berater der Ofii ermöglicht es Ihnen, Informationen zu erhalten und sich an die geeigneten lokalen Dienstleistungen zu wenden, die auf Ihre Situation und Ihre Bedürfnisse zugeschnitten sind.\nSie müssen auch einen Test zur Überprüfung Ihres Französischkenntnisses (schriftlich und mündlich) absolvieren, um Ihr Sprachniveau zu bestimmen.\nWenn Sie Ergebnisse unter dem Niveau A2 erzielen, können Sie sich für eine Sprachausbildung bei der Ofii anmelden, die im Rahmen des republikanischen Integrationsvertrags vorgeschrieben ist.",
+        "titre": "Wie läuft ein individuelles und personalisiertes Integrationsgespräch im Rahmen eines republikanischen Integrationsvertrags ab?"
+       },
+       {
+        "texte": "Das republikanische Integrationsvertrag (CIR) wurde zwischen Ihnen und dem französischen Staat für eine Dauer von 1 Jahr abgeschlossen. Er kann unter bestimmten Umständen um maximal 1 Jahr verlängert werden. Er basiert auf gegenseitigen Verpflichtungen.\nDurch die Unterzeichnung erklären Sie sich damit einverstanden, dass\n- Die vorgeschriebenen Schulungen sorgfältig und ernsthaft absolvieren.\n- Antworten auf die Aufforderungen der Ofii\n- Die von der Ofii angeforderten Schritte durchführen und die Anfragen verschiedener Anbieter (z. B. Arbeitsangebote oder andere) bearbeiten.\n- Alle Änderungen der Situation und der Kontaktdaten an die Ofii melden.\n- Wenn Sie Eltern sind: Stellen Sie sicher, dass Ihr Kind eine Bildung erhält, die die Prinzipien der Republik respektiert, und unterstützen Sie es bei seinen Integrationsbemühungen.\nDas CIR (Centre d'Accueil) ist der erste Schritt in Ihrem Integrationsprozess in Frankreich, der folgende Maßnahmen umfasst:\n- Grundlagen der Staatsbürgerschaft: Werte, Prinzipien und Institutionen der Republik, Rechte und Pflichten im Zusammenhang mit dem Leben in Frankreich sowie die Organisation der französischen Gesellschaft, die Geschichte und Kultur der französischen Gesellschaft.\n- Sprachliche Ausbildung\n- Beratung zur Berufsorientierung und Unterstützung, um Ihre berufliche Integration zu fördern.\n- Individuelle Betreuung, die auf Ihre Bedürfnisse zugeschnitten ist, um Ihre Unterbringungs- und Integrationsbedingungen zu erleichtern.",
+        "titre": "Welche Verpflichtungen entstehen durch den Abschluss eines Vertrags zur republikanischen Integration?"
+       },
+       {
+        "texte": "Das republikanische Integrationsprogramm umfasst 2 Schulungen: die sprachliche Schulung und die politische Bildung.\nSprachliche Ausbildung\nDie Bewertung Ihrer Fähigkeiten im schriftlichen und mündlichen Ausdruck sowie Ihres Verständnisses erfolgt während Ihres Empfangs bei der Ofii.\nDiese sprachliche Förderung wird Ihnen angeboten, wenn Sie bei der schriftlichen und mündlichen Testprüfung zur Überprüfung des Verständnisses und der Ausdrucksfähigkeit die Kriterien des Gemeinsamen Europäischen Referenzrahmens für Sprachen (GER) auf dem Niveau A2 nicht erfüllt haben.\nDie Sprachausbildung umfasst 600 Unterrichtsstunden. Sie können diese Ausbildung auch auf einer Online-Lernplattform absolvieren.\nWenn Sie dies akzeptieren, wird diese Schulung im CIR erwähnt und ist daher verpflichtend.\nBitte beachten: Sie sind von der Kompetenzprüfung befreit, wenn Sie eines der folgenden Sprachzertifikate oder -prüfungen besitzen: Zeugnis, das einen französischen Sprachkenntnisstand nachweist, der mindestens dem Niveau A2 des Gemeinsamen Europäischen Referenzrahmens (CECRL) entspricht. Das Zeugnis muss von einer französischen Behörde in Frankreich oder im Ausland ausgestellt werden und bestätigt einen Kenntnisstand, der mindestens dem Niveau 3 des nationalen Qualifikationsrahmens entspricht sowie den nationalen Brevet-Abschluss.\n\nAlternativ:\n\nSicherer Sprachtest oder -zeugnis, das weniger als 2 Jahre alt ist und von einer von der nationalen oder internationalen Anerkennung profierenden Zertifizierungsstelle ausgestellt wird, das die Beherrschung der schriftlichen und mündlichen Sprachkenntnisse nach dem Niveau A2 des CECRL bestätigt und validiert.\nAm Ende der Schulung stellt Ihnen die Bildungseinrichtung eine Teilnahmebescheinigung aus, die die Anzahl der absolvierten Stunden sowie die Ergebnisse der ersten und letzten Bewertungstests enthält.\nWenn Sie ein Mitarbeiter mit einer anderen Muttersprache sind, der an einem CIR teilnimmt:\n- Ihr Arbeitgeber kann Ihnen im Rahmen des Weiterbildungsprogramms Schulungen anbieten, die es Ihnen ermöglichen, das Niveau A2 des Gemeinsamen Europäischen Referenzrahmens (CECRL) zu erreichen. Diese Schulungen werden als Arbeitszeit betrachtet (mit Bezahlung), jedoch nicht mehr als 80 Stunden.\n- Sie können auch eine Freistellung für die Teilnahme an Schulungen erhalten, die Sie über Ihr persönliches Weiterbildungskonto (CPF) absolvieren, um das Niveau A2 des Gemeinsamen Europäischen Referenzrahmens (CECRL) zu erreichen.\nBitte beachten: Ab dem 1. Januar 2026 müssen ausländische Antragsteller, die eine erste titre de séjour-Ausnahmegenehmigung oder eine erste Aufenthaltskarte beantragen, nachweisen, dass sie die französische Sprache auf dem Niveau B1 (für Aufenthaltskarten) bzw. A2 (für mehrjährige Aufenthaltsgenehmigungen) beherrschen.\nBürgerbildung und Bürgertest\nDie bürgerliche Bildung ist verpflichtend und umfasst 4 Sitzungen mit einer Gesamtdauer von 24 Stunden.\nEs behandelt folgende Themen:\n- Prinzipien und Werte der Republik: Motto, Neutralität und Symbole\n- Das französische institutionelle und politische System\n- Rechte und Pflichten im Zusammenhang mit dem Leben in Frankreich\n- Geschichte, Geographie und Kultur Frankreichs\n- Leben in der französischen Gesellschaft.\nEs ist eine Bürgertest mit 40 Multiple-Choice-Fragen zu absolvieren. Um diesen Bürgertest erfolgreich zu bestehen, sind mindestens 80 % der Fragen richtig beantwortet werden müssen, also 32 korrekte Antworten.\nWichtig: In Guadeloupe, Französisch-Guayana, Martinique, Réunion, Mayotte und auf Saint-Pierre und Miquelon umfasst die bürgerliche Bildung einen Abschnitt über die Geschichte und Geographie des Departements und der Übersee-Region, in der Sie wohnen. In Mayotte umfasst die bürgerliche Bildung zwei Sitzungen mit einer Gesamtdauer von 12 Stunden.\nBitte beachten Sie: Ab dem 1. Januar 2026 ist der erfolgreiche Abschluss dieser Bürgexamen erforderlich, um eine mehrjährige Aufenthaltskarte oder eine Aufenthaltskarte zu erhalten.",
+        "titre": "Welche Schulungen sind Teil des republikanischen Integrationsvertrags?"
+       },
+       {
+        "texte": "Ursprünglicher Vertrag\nDas CIR (Konstruktive Zusammenarbeit) wird für eine Laufzeit von 1 Jahr abgeschlossen.\nDer Vertrag gilt, wenn die folgenden beiden Bedingungen erfüllt sind:\n- Regelmäßige und sorgfältige Teilnahme an allen vorgeschriebenen Schulungen\n- Keine Anzeichen einer Ablehnung der grundlegenden Werte der französischen Gesellschaft und der Republik.\nVerlängerung\nDas Vertragsverhältnis kann vom Präfekten maximal um 1 Jahr verlängert werden, wenn ein legitimer Grund vorliegt und dies auf Vorschlag der Ofii erfolgt. Dies gilt, wenn die vorgeschriebenen und durchgeführten Sprach- und politische Bildungskurse am Ende des Vertrags noch stattfinden und Sie sich in einer regelmäßigen Aufenthaltssituation befinden.\nDer Grund und die Dauer der Verlängerung sind im Vertrag angegeben.",
+        "titre": "Wie lange dauert ein republikanischer Integrationsvertrag?"
+       },
+       {
+        "texte": "Innerhalb von 6 Monaten nach Beginn der Schulungen wird Ihnen die Ofii eine Nachbesprechung anbieten, um den Überblick über die durchgeführten Schulungen zu geben.\nDer Mitarbeiter des Ofii informiert Sie über neue Informationen zu lokalen Dienstleistungen, die Ihre Integrationsreise erleichtern können.\nEr kann Sie an France Travail (ehemals Arbeitsagentur) oder an eine lokale Beratungsstelle verweisen, um eine umfassende Beratung zur beruflichen Orientierung und Unterstützung bei Ihrer beruflichen Integration zu erhalten.\nBitte beachten: Wenn Sie die CIR-Richtlinien und die grundlegenden Werte der französischen Gesellschaft und der Republik eingehalten haben, den Bürgertest „CSP“ erfolgreich bestanden haben und nachweisen können, dass Sie Französisch auf dem Niveau A2 beherrschen, kann der Präfekt Ihnen bei der Verlängerung Ihres vorläufigen titre de séjour-Aufenthalts von 1 Jahr eine mehrjährige Ausweis (Gültigkeit von 2 bis 4 Jahren) ausstellen. Wenn Sie keine Beratung zur beruflichen Orientierung oder Unterstützung bei Ihrer beruflichen Integration wünschen, müssen Sie eine Ausnahmegenehmigung beantragen.",
+        "titre": "Ist eine Abschlussbefragung im Rahmen eines republikanischen Integrationsprogramms erforderlich?"
+       },
+       {
+        "texte": "Der Präfekt kann den Vertrag auf Vorschlag der Ofii kündigen, wenn diese feststellt, dass Sie sich in einer der folgenden Situationen befinden:\n- Nichtteilnahme an einem vorgeschriebenen Kurs und es liegen keine stichhaltigen Gründe dafür vor.\n- Nichteinhaltung der in dem Rahmen des CIR vereinbarten Verpflichtungen.\nDer Präfekt muss Sie über seine Absicht informieren, den Vertrag zu kündigen. Er muss die Gründe für die geplante Kündigung angeben und die Auswirkungen auf die Ausstellung einer mehrjährigen Aufenthaltserlaubnis erläutern.\nDas Aussetzen Ihres Arbeitslosengeldanspruchs aufgrund von Nichteinhaltung der Pflichten hat Auswirkungen auf Ihr Recht auf Aufenthalt.\n- Erneuerung Ihres jährlichen titre de séjour: Sie können keinen titre de séjour mit mehreren Jahren Gültigkeit erhalten und unterliegen der Beschränkung von 3 Erneuerungen Ihres Titels.\n- Zugang zu einem mehrjährigen Titel: Sie erhalten nach Ablauf Ihrer temporären Karte keinen titre de séjour mehrjährigen Titel.",
+        "titre": "Welche Konsequenzen ergeben sich bei Nichteinhaltung eines republikanischen Integrationsvertrags?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17048",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17048",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-06-26"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 78.1,
+      "units": 105
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:35:55.361Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Що таке контракт на республіканську інтеграцію (КРІ)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Контракт республіканської інтеграції (КРІ) укладається між Французькою державою та іноземцем, який бажає проживати у Франції на постійній основі, за винятком окремих випадків.",
+      "steps": [
+       {
+        "texte": "Контракт республіканської інтеграції (КРІ) є частиною індивідуальної програми республіканської інтеграції для іноземного громадянина, який не є європейцем, який перебуває у Франції та бажає там проживати на постійній основі. Це договір, який укладається між Французькою державою та іноземним громадянином, який підписує його, і який зобов'язується пройти навчання, яке йому призначено, щоб сприяти його інтеграції в французькому суспільстві. CIR передбачає лінгвістичну та громадянську підготовку, які дозволяють іноземцям відповідати вимогам щодо рівня володіння мовою та проходження обов'язкового громадянського екзамену. З 1 січня 2026 року, якщо особа бажає отримати посвідку резидента або багаторічну візу, вона повинна відповідати цим вимогам. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Ви підпадаєте під дію цього правила, якщо у вас є тимчасова або багаторічна карта перебування. Однак, існують певні винятки.\nТаблиця: Обов'язкова підписання контракту про інтеграцію в республіканську систему (КІС) відповідно до titre de séjour (посвідка на проживання)\nTitre de séjour | Підпис представника CIR\nДокумент, що підтверджує право на проживання та сімейний статус. Іноземець, який народився у Франції та проживає у Франції безперервно протягом щонайменше 8 років, а також має досвід навчання у французькому навчальному закладі протягом щонайменше 5 років після 10-річного віку.\nОтримано за медичних показань | Ні\nЩе один випадок | Так\nСертифікат проживання для алжирця | Немає\nВіза на тривалий термін, що еквівалентна titre de séjour місяцям праці | Так\nДовідка для відвідувачів | Немає\nДокумент на право перебування для студентів | Немає\nДокумент на тимчасове проживання: Молодий помічник | | Не застосовується\nДокумент, що дозволяє займатися комерційною, промисловою або ремесловою діяльністю | Так\nДовідка про стажування | Немає\nДокумент на право тимчасової роботи | Ні\nДокумент на право перебування (для талановитих осіб/сім'ї) | Відсутній\nДокумент на право тимчасової роботи | Немає\nДовідка для працівника, який перебуває на тимчасовій відрядженні в сфері ICT/довідка для працівника, який перебуває на тимчасовій відрядженні в сфері ICT (сім'я)/довідка для працівника, який перебуває на тимчасовій відрядженні в сфері ICT (сім'я) | Не застосовується\nДокумент на право перебування для іноземців, які отримують міжнародний захист | Урядовий біженець – Член сім'ї урядового біженця | Так\nСубсидійна допомога – Член сім'ї бенефіціара субсидійної допомоги | Так\nБез громадянства – Член сім'ї безгромадянського | Так\nВи звільнені від сплати податку на прибуток, якщо ви перебуваєте в одній із наступних ситуацій:\n- Отримано середню освіту у французькому закладі освіти протягом щонайменше 3 навчальних років.\n- Вища освіта, здобута у Франції протягом щонайменше 1 навчального року.\n- Мати вік від 16 до 18 років та мати можливість отримати посвідку резидента на 10 років.\nУвага: Ця процедура не стосується іноземця, який є громадянином європейської країни, а також членів його сім'ї, які проживають у Франції разом з ним.",
+        "titre": "Хто має укласти контракт на республіканське членство?"
+       },
+       {
+        "texte": "Документ CIR підписується, коли ви вперше прибуваєте до Франції для проживання та бажаєте там оселитися на постійній основі.\nДокумент CIR розробляється Офісом за типовим шаблоном. У вас буде представлений контракт з його перекладом на мову, яку ви розумієте.\nНаприкінці співбесіди з представником Ofii, ви повинні підписати договір (та свого законного представника, якщо ви є неповнолітнім).\nВи зобов'язуєтесь брати участь у обов'язковому курсі з громадянської освіти, а також, можливо, у курсі вивчення мови.\nУгода також була підписана від імені Французької держави, префектом.\nЯкщо ви не підписали CIR під час свого прибуття на французьку територію, ви можете самостійно попросити його підписати. Вам слід звернутися до місцевого відділення Ofii, де ви проживаєте.\n→ Куди звернутися: Французький офіс імміграції та інтеграції (Ofii)",
+        "titre": "Коли підписується контракт на приєднання до республіканської структури?"
+       },
+       {
+        "texte": "Під час індивідуальної зустрічі, OFII представляє вам контракт на республіканське працевлаштування з його перекладом на мову, яку ви розумієте.\nРозмова з консультантом Офію дозволить вам отримати інформацію та отримати рекомендації щодо відповідних послуг, які можуть допомогти вам у вашій ситуації та задовольнити ваші потреби.\nВи також повинні пройти тест на знання французької мови (письмово та усно), щоб оцінити ваш рівень володіння.\nЯкщо ви отримаєте результати нижчі за рівень A2, ви можете записатися на мовне навчання, яке рекомендується офісом, у рамках контракту на інтеграцію в республіку.",
+        "titre": "Як проходить індивідуальне та персоналізоване консультування в рамках контракту на республіканське працевлаштування?"
+       },
+       {
+        "texte": "Угода про республіканську інтеграцію (УРІ) укладена між Французькою державою та вами на термін 1 рік. Її можна продовжити в певних випадках на термін до 1 року. Вона базується на взаємних зобов'язаннях.\nПідписуючи цей документ, ви зобов'язуєтесь до\n- Регулярно та відповідально відвідувати рекомендовані курси.\n- Відповідати на запрошення Офі\n- Виконати всі дії, зазначені в інструкціях Ofii, та відповідати на запити від різних операторів (наприклад, щодо працевлаштування або інших питань).\n- Повідомити OFII про будь-які зміни у ситуації та контактних даних.\n- Якщо ви є батьком/матір'ю: забезпечте дитині освіту, яка відповідає принципам Республіки, та підтримуйте його в процесі адаптації.\nCIR – це перший етап вашого процесу адаптації у Франції, який включає в себе такі дії:\n- Освітня програма, що охоплює такі теми, як цінності, принципи та інститути Республіки, права та обов'язки, пов'язані з життям у Франції, а також організацію французького суспільства, історію та культуру французького суспільства.\n- Лингвістичне навчання\n- Консультації з питань професійної орієнтації та підтримка, спрямовані на сприяння вашій професійній інтеграції.\n- Персоналізована підтримка, яка допоможе вам адаптуватися та інтегруватися в нове середовище.",
+        "titre": "Які зобов'язання беруться, підписуючи контракт на республіканське членство?"
+       },
+       {
+        "texte": "Контракт республіканської інтеграції включає 2 курси: мовне навчання та навчання з питань громадянства.\nЛингвістичне навчання\nОцінювання ваших навичок розуміння та висловлювання письмово та усно проводиться під час вашого прийому в Ofii.\nНавчання мовою пропонується вам, якщо ви отримали результати нижчі за рівень A2 європейського загального еталонного рівня (CECRL) під час тесту з розуміння та письмової та усного вираження.\nНавчання триватиме 600 годин. Ви також можете пройти це навчання на онлайн-платформі.\nЯкщо ви погодитесь з цим, то ця підготовка буде зазначена в програмі CIR, і, отже, стане обов'язковою.\nВажливо зазначити: Ви звільнені від оцінювання навичок, якщо маєте один із наступних сертифікатів або результатів тестування: Сертифікат, що підтверджує рівень знання французької мови, принаймні рівний рівню A2 відповідно до Європейського каталогу професійних сертифікатів (CECRL). Сертифікат, виданий французькою владою у Франції або за кордоном, який підтверджує рівень, принаймні рівний 3 відповідно до національної системи професійних сертифікатів, а також національний диплом про здатність.\nБезпечний сертифікат або лінгвістичне підтвердження, видане протягом останніх 2 років акредитованою національною або міжнародною організацією, який підтверджує володіння письмовою та уснію мовою на рівні принаймні A2 відповідно до CECRL.\nНа завершення навчання, навчальний заклад видає сертифікат про участь, в якому зазначено кількість пройдених годин та результати, отримані під час початкового та фінального оцінювання.\nЯкщо ви є працівником, який володіє іншою мовою, і підписали угоду про співпрацю з науковим працівником (CIR):\n- Ваш роботодавець може запропонувати вам, в рамках програми розвитку навичок, навчання, яке дозволить досягти рівня A2 за єдиною європейською компетентною рамкою (CECRL). Це навчання можна вважати як ефективну робочу годину (з збереженням заробітної плати) до 80 годин.\n- Ви також можете отримати дозвіл на відсутність, щоб пройти навчання, яке ви зможете відстежувати у вашому особистому навчальному акаунті (НПА), і таким чином досягти рівня A2 за єдиною європейською компетентною рамкою (CECRL).\nУвага: З 1 січня 2026 року, іноземні громадяни, які подають заявку на першу багаторічну карту (T1) або першу карту резидента, повинні довести володіння французькою мовою, а саме рівнем B1 для карт резидента та рівнем A2 для багаторічних карт перебування.\nОсвіта в сфері громадянства та іспит з громадянської освіти\nОбов'язкове навчання з питань громадянства складається з 4 сесій, загальна тривалість яких становить 24 години.\nВона стосується наступних тем:\n- Принципи та цінності Республіки: герб, секуляризм та символи\n- Інституційна та політична система Франції\n- Права та обов'язки, пов'язані з життям у Франції\n- Історія, географія та культура Франції\n- Життя у французькому суспільстві.\nНеобхідно пройти іспит з громадянської освіти, який складається з 40 питань з множинним вибором. Для успішного складання цього іспиту необхідно отримати щонайменше 80% правильних відповідей, тобто 32 правильні відповіді.\nВажливо зазначити: У Гваделупі, Французькій Гвіані, Мартиніці, Реюніоні, Майоті та на Сен-П'єр і Мікелоні, навчання з питань громадянства включає розділ, присвячений історії та географії департаменту та заморської території, де ви проживаєте. У Майоті, навчання з питань громадянства складається з 2 сесій загальною тривалістю 12 годин.\nУвага: З 1 січня 2026 року, успішне складання цього громадянського екзамену є необхідною умовою для отримання багаторічної картки перебування або картки резидента.",
+        "titre": "Які вимоги до підготовки для участі в республіканській програмі?"
+       },
+       {
+        "texte": "Первоначальний контракт\nУгода про співпрацю укладається на термін 1 рік.\nУгода вважається виконаною, якщо виконані наступні умови:\n- Регулярне та відповідальне проходження всіх рекомендованих навчальних курсів.\n- Відсутні прояви відторгнення основних цінностей французького суспільства та Республіки.\nПродовження\nУгоду можна продовжити на 1 рік, якщо мер має обґрунтовану причину, і за пропозицією Офісу, якщо навчання, необхідні для отримання дозволу, та мовні курси, які були заплановані та пройдені, завершуються наприкінці терміну дії угоди, і ви перебуваєте в легальному візовому режимі.\nПричина та тривалість продовження зазначені в договорі.",
+        "titre": "Який термін дії контракту на республіканську службу?"
+       },
+       {
+        "texte": "Через 6 місяців після початку навчання, OFII запрошує вас на зустріч для обговорення результатів навчання.\nПредставник OFII надасть вам нову інформацію про послуги, які можуть полегшити ваш процес адаптації.\nВін може направити вас до France Travail (раніше – Центр зайнятості) або до місцевої служби, щоб ви могли отримати детальну консультацію щодо професійного вибору та підтримки у працевлаштуванні.\nВажливо зазначити: Якщо ви дотрималися вимог CIR (Carte Internationale d'Étudiant) та основних цінностей французького суспільства та Республіки, успішно склали іспит з громадянської освіти «CSP» та можете продемонструвати знання французької мови на рівні A2, мер може, під час продовження вашої тимчасової titre de séjour на 1 рік, видати вам багаторічну карту (термін дії 2-4 роки). Якщо ви не бажаєте отримати консультацію щодо професійного вибору або підтримку, спрямовану на полегшення вашого професійного втручання, вам необхідно подати заяву про відмову.",
+        "titre": "Чи потрібно проходити співбесіду на завершення контракту з республіканською владою?"
+       },
+       {
+        "texte": "Префект може розірвати договір за пропозицією Ofii, якщо він встановить, що ви перебуваєте в одній із наступних ситуацій:\n- Відсутність участі у запланованому навчанні та відсутність обґрунтованих причин.\n- Невиконання зобов'язань, укладених у рамках програми CIR.\nПрефект повинен повідомити вас про свою намір розірвати договір. Він повинен вказати причини, які обґрунтовують розірвання, та чітко пояснити наслідки цього для видачі багаторічної картки перебування.\nЗакриття вашого статусу \"CIR\" через невиконання обов'язків може мати наслідки для вашого права на проживання.\n- Відновлення вашого річного titre de séjour: ви не зможете отримати багаторічний titre de séjour, і ви будете підпадати під обмеження у 3 відновлення вашого посвідчення.\n- Доступ до багаторічного титулу: після закінчення терміну дії вашої тимчасової картки, ви не зможете отримати titre de séjour.",
+        "titre": "Які наслідки у разі невиконання угоди про республіканське об'єднання?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F17048",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F17048",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-06-26"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "names",
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 77,
+      "units": 105
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:6c67c9b529804ee1b49794253d89df5cc7f66d9721e5b1f92e177c7aa571841a",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Qu'est-ce que le contrat d'intégration républicaine (CIR) ?",
+   "contenu_json": {
+    "intro": "Le contrat d'intégration républicaine (CIR) est conclu entre l'État français et un étranger qui souhaite s'installer durablement en France, sauf exceptions.",
+    "steps": [
+     {
+      "texte": "Le contrat d'intégration républicaine (CIR) s’inscrit dans le cadre du parcours personnalisé d’intégration républicaine du ressortissant étranger non européen admis au séjour en France et souhaitant s'y installer durablement. Il est conclu entre l'État français et l’étranger signataire qui s'engage à suivre les formations qui lui sont prescrites pour favoriser son insertion dans la société française. Le CIR comporte une formation linguistique et une formation civique qui permettent à l’étranger de satisfaire au niveau de langue et à l’examen civique obligatoire depuis le 1er janvier 2026 s’il souhaite obtenir une carte de résident ou une carte de séjour pluriannuelle. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Vous êtes concerné si vous possédez une carte de séjour temporaire ou pluriannuelle. Mais il existe des exceptions.\nTableau : Obligation de signature du contrat d'intégration républicaine (CIR) selon le titre de séjour\nTitre de séjour | Signature du CIR\nCarte de séjour vie privée et familiale | Étranger né en France avec résidence continue en France pendant au moins 8 ans + scolarité pendant au moins 5 ans après l'âge de 10 ans dans un établissement français | Non\nTitre obtenu pour raisons de santé | Non\nAutre cas | Oui\nCertificat de résidence pour Algérien | Non\nVisa long séjour valant titre de séjour salarié | Oui\nCarte de séjour visiteur | Non\nCarte de séjour étudiant | Non\nCarte de séjour temporaire Jeune au pair | | Non\nCarte de séjour pour exercer une profession commerciale, industrielle ou artisanale | Oui\nCarte de séjour stagiaire | Non\nCarte de séjour travailleur temporaire | Non\nCarte de séjour talent/talent (famille) | Non\nCarte de séjour travailleur saisonnier | Non\nCarte de séjour salarié détaché ICT/salarié détaché ICT (famille)/salarié détaché mobile ICT/salarié détaché mobile ICT (famille) | Non\nCarte de séjour pour les étrangers bénéficiaires de la protection internationale | Réfugié - Membre de la famille d’un réfugié | Oui\nProtection subsidiaire - Membre de la famille d’un bénéficiaire de la protection subsidiaire | Oui\nApatride - Membre de la famille d’un apatride | Oui\nVous êtes dispensé du CIR si vous êtes dans l'une des situations suivantes :\n- Scolarité effectuée dans un établissement d'enseignement secondaire français pendant au moins 3 années scolaires\n- Études supérieures suivies en France pendant au moins 1 année universitaire\n- Avoir entre 16 et 18 ans révolus et possibilité d'obtenir une carte de résident d'une durée de 10 ans.\nAttention : Cette procédure ne concerne pas un étranger ressortissant d'un pays européen, ni les membres de sa famille vivant en France avec lui.",
+      "titre": "Qui doit conclure un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Le CIR est signé lorsque vous êtes admis pour la 1re fois au séjour en France et que vous souhaitez vous y installer durablement.\nLe CIR est préparé par l’Ofii suivant un modèle type. Le contrat vous est présenté avec sa traduction dans une langue que vous comprenez.\nÀ la fin de l’entretien avec un auditeur de l’Ofii, vous devez signer le contrat (et votre représentant légal si vous êtes mineur).\nVous vous engagez à participer à la formation civique obligatoire et éventuellement à la formation linguistique.\nLe contrat est aussi signé, au nom de l'État français, par le préfet.\nSi vous n’aviez pas signé de CIR lors de votre entrée sur le territoire français, vous pouvez demander à le signer volontairement. Vous devez vous adresser à la direction territoriale de l’Ofii de votre lieu de résidence.\n→ Où s'adresser : Office français de l'immigration et de l'intégration (Ofii)",
+      "titre": "Quand signe-t-on un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Au cours de l’entretien personnalisé, l’Ofii vous présente le contrat d’intégration républicaine avec sa traduction dans une langue que vous comprenez.\nL'entretien avec un auditeur de l'Ofii permet de vous informer et de vous orienter vers les services de proximité adaptés pouvant répondre à votre situation et vos besoins.\nVous êtes également soumis à un test de connaissance du français (écrit et oral) pour évaluer votre niveau.\nSi vous obtenez des résultats inférieurs au niveau A2, vous pouvez vous inscrire à une formation linguistique auprès de l’Ofii prescrite dans le cadre du contrat d’intégration républicaine.",
+      "titre": "Comment se passe l'entretien individuel et personnalisé dans le cadre d’un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Le contrat d'intégration républicaine (CIR) est conclu, pour une durée d'1 an, entre l'État français et vous. Il peut être prolongé dans certains cas d’1 an maximum. Il repose sur des engagements réciproques.\nEn le signant, vous vous engagez à\n- Suivre avec assiduité et sérieux les formations prescrites\n- Répondre aux convocations de l’Ofii\n- Réaliser les démarches indiquées par l’ Ofii et répondre aux sollicitations des différents opérateurs (emploi ou autres).\n- Signaler à l’Ofii tout changement de situation et de coordonnées\n- Si vous êtes parent : assurer à votre enfant une éducation respectant les principes de la République et l’accompagner dans ses démarches d’intégration.\nLe CIR est la 1re étape de votre parcours d'intégration en France qui comprend les actions suivantes :\n- Formation civique sur les valeurs, les principes et les institutions de la République, sur les droits et devoirs liés à la vie en France ainsi que sur l'organisation de la société française, l’histoire et la culture de la société française\n- Formation linguistique\n- Conseil en orientation professionnelle et un accompagnement destiné à favoriser votre insertion professionnelle\n- Accompagnement adapté à vos besoins pour faciliter vos conditions d'accueil et d'intégration.",
+      "titre": "Quels engagements prend-on en signant un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Le contrat d’intégration républicaine comprend 2 formations : la formation linguistique et la formation civique.\nFormation linguistique\nL’évaluation de vos compétences de compréhension et d’expression écrites et orales est réalisée lors de votre accueil à l’Ofii\nLa formation linguistique vous est proposée si vous avez obtenu des résultats inférieurs au niveau A2 du cadre européen commun de référence pour les langues (CECRL) lors du test de compréhension et d’expression écrites et orales.\nLa formation linguistique est d’une durée de 600 heures. Vous pouvez également suivre cette formation sur une plateforme d’apprentissage sur internet.\nSi vous l’acceptez, cette formation est mentionnée dans le CIR et devient donc obligatoire.\nÀ noter : Vous êtes dispensé de l’évaluation des compétences si vous êtes titulaire de l’un des diplômes ou tests linguistiques suivants : Diplôme attestant d’un niveau de connaissance du français au moins équivalent au niveau A2 du CECRLDiplôme délivré par une autorité française, en France ou à l’étranger, sanctionnant un niveau au moins égal au niveau 3 du cadre national des certifications professionnelles ainsi que le diplôme national du brevetTest ou attestation linguistique sécurisé de moins de 2 ans délivré par un organisme certificateur reconnu au niveau national ou international, qui constate et valide la maitrise des compétences écrites et orales au moins du niveau A2 du CECRL.\nÀ la fin de la formation, l'organisme de formation vous remet une attestation de présence mentionnant le nombre d'heures réalisées et les résultats obtenus aux tests d'évaluation initial et final.\nSi vous êtes salarié allophone signataire d'un CIR :\n- Votre employeur peut vous proposer, dans le cadre du plan de développement des compétences, des formations vous permettant d'atteindre le niveau A2 du CECRL. Ces formations sont assimilables à du temps de travail effectif (avec maintien de la rémunération) dans la limite de 80 heures.\n- Vous pouvez également bénéficier d'une autorisation d'absence pour suivre, sur votre compte personnel de formation (CPF), des formations vous permettant d'atteindre le niveau A2 du CECRL.\nAttention : Depuis le 1er janvier 2026, les ressortissants étrangers qui sollicitent un 1er titre de séjour pluriannuel ou une 1re carte de résident doivent justifier d’une maîtrise de la langue française, de niveau B1 pour les cartes de résidents, de niveau A2 pour les cartes de séjour pluriannuelles.\nFormation civique et examen civique\nLa formation civique est obligatoire et comporte 4 sessions d’une durée totale de 24 heures.\nElle porte sur les sujets suivants :\n- Principes et valeurs de la République : devise, laïcité et symboles\n- Système institutionnel et politique de la France\n- Droits et devoirs liés à la vie en France\n- Histoire, géographie et culture de la France\n- Vie dans la société française.\nUn examen civique comportant 40 questions à choix multiples est à passer.La réussite à cet examen civique nécessite un résultat d’au moins 80 %, soit 32 bonnes réponses.\nÀ noter : En Guadeloupe, Guyane, Martinique, La Réunion, Mayotte et à Saint-Pierre et Miquelon, la formation civique comporte un volet relatif à l’histoire et à la géographie du département et de la région d’outre-mer de votre résidence. A Mayotte, la formation civique comporte 2 sessions d’une durée totale de 12 heures.\nAttention : Depuis le 1er janvier 2026, la réussite à cet examen civique est nécessaire pour l’accès à une carte de séjour pluriannuelle ou à une carte de résident.",
+      "titre": "Quelles sont les formations du contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Contrat initial\nLe CIR est conclu pour une durée d'1 an.\nLe contrat est respecté si les 2 conditions suivantes sont remplies :\n- Suivi des formations qui y sont prescrites avec assiduité et sérieux\n- Aucune manifestation de rejet des valeurs essentielles de la société française et de la République.\nProlongation\nLe contrat peut être prolongé d'1 an au maximum par le préfet pour un motif reconnu légitime et sur proposition de l'Ofii si les formations civique et linguistique prescrites et suivies sont en cours de réalisation à la fin du contrat et que vous êtes en séjour régulier.\nLe motif et la durée de la prolongation sont mentionnés dans le contrat.",
+      "titre": "Quelle est la durée d’un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Dans un délai de 6 mois après le début des formations, l'Ofii vous convoque à un entretien de suivi pour faire avec vous le bilan des formations suivies.\nL'agent de l'Ofii vous apporte une nouvelle information sur l'offre de services de proximité pouvant faciliter la suite de votre parcours d'intégration.\nIl peut vous orienter vers France Travail (anciennement Pôle emploi) ou une mission locale pour bénéficier d'un entretien approfondi en orientation professionnelle et d'un accompagnement favorisant votre insertion professionnelle.\nÀ noter : Si vous avez respecté le CIR et les valeurs essentielles de la société française et de la République, avez réussi l’examen civique « CSP » et vous justifiez de votre connaissance du français au niveau A2, le préfet pourra, lors du renouvellement de votre titre de séjour temporaire d'1 an, vous délivrer une carte pluriannuelle (validité de 2 à 4 ans). Si vous ne souhaitez pas bénéficier d’un conseil en orientation professionnelle, ni d’accompagnement destiné à favoriser votre insertion professionnelle, vous devez demander une dispense.",
+      "titre": "Doit-on passer un entretien de fin d’un contrat d'intégration républicaine ?"
+     },
+     {
+      "texte": "Le préfet peut résilier le contrat sur proposition de l'Ofii lorsque celui-ci constate que vous êtes dans l'une des situations suivantes :\n- Non-participation à une formation prescrite et vous n'avez pas de motif légitime\n- Non-respect des engagements souscrits dans le cadre du CIR.\nLe préfet doit vous informer de son intention de résilier le contrat. Il doit indiquer les motifs de la résiliation envisagée et préciser les conséquences sur la délivrance de la carte de séjour pluriannuelle.L\nLa clôture de votre CIR pour non-respect des obligations à des conséquences sur votre droit au séjour\n- Renouvellement de votre titre de séjour annuel : vous ne pourrez pas obtenir un titre de séjour pluriannuel et serez concerné par la limite de 3 renouvellements de votre titre\n- Accès à un titre pluriannuel : vous ne pourrez pas obtenir un titre de séjour pluriannuel à l’expiration de votre carte temporaire.",
+      "titre": "Quelles conséquences en cas de non-respect d’un contrat d'intégration républicaine ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

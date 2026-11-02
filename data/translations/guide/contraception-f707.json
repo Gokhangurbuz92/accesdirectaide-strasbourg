@@ -1,0 +1,370 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "contraception-f707",
+ "recordId": "06f41512-b920-4e35-a94e-c3bcab685f47",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:53:02.734Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Contraception",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Contraception is a method used to prevent pregnancy. Condoms and the pill are the most common methods. Reimbursement depends on several factors.",
+      "steps": [
+       {
+        "texte": "Contraception refers to all methods used to prevent pregnancy. There are various types of contraception available. The most well-known include the contraceptive pill and the condom. These are intended for both women and men. Reimbursement depends, among other factors, on the method chosen. We will now introduce you to the regulations you need to be aware of.",
+        "titre": null
+       },
+       {
+        "texte": "Table: Characteristics of different contraceptive devices for women and men\nDevices | Features\nIntrauterine device (IUD) | A device placed inside the uterus by a doctor or midwife. Effective for 4 to 10 years, depending on the model. There are 2 types: hormonal or copper.\nTablet | Take one tablet daily at a regular time for 21 or 28 days\nPatch | To be applied to the skin once a week and renewed each week for 3 weeks. There is no patch to be applied in the 4th week, which causes menstruation to occur. Allows for protection even during the break.\nImplant | A 4 cm long, cylindrical rod inserted under the skin of the arm, under local anesthesia administered by a doctor or midwife. It can remain in place for up to 3 years.\nVaginal Ring | A flexible ring that can be inserted into the vagina, similar to a tampon. It should be left in place for 3 weeks. At the beginning of the 4th week, the ring should be removed, which will then trigger menstruation. Allows for protection even during the period of abstinence.\nDiaphragm and cervical cap | A silicone cup that is inserted into the vagina by the user. It is used in conjunction with a spermicide. The cap is a silicone dome that covers the cervix. These devices can be inserted at the time of intercourse, but also several hours before, and must be left in place for 8 hours after intercourse.\n\"Male\" external and \"female\" internal condoms | The external condom is placed on the penis before penetration, while the internal condom can be inserted into the vagina or anus several hours before intercourse.\nSpermicides | Gel and suppositories to be inserted into the vagina a few minutes before intercourse, thereby destroying the sperm.\nInjectable progestogens | Intramuscular injection administered every 3 months by a doctor, midwife, or nurse.\nPermanent contraception | Surgical intervention for men (vasectomy) or women (tubal ligation). These methods are considered irreversible.\nYou can obtain information or be prescribed contraception by:\n- A doctor\n- Or, a midwife working in a private practice or a sexual health center.\n→ Where to go: Sexual health centers (e.g., family planning and education centers)",
+        "titre": "What are the different methods of contraception?"
+       },
+       {
+        "texte": "Doctors, midwives, and sexual health centers are authorized to prescribe all forms of contraception.\nA prescription is required for the following contraceptive methods:\n- Intrauterine device (IUD)\n- Pill\n- Patch\n- Implant\n- Vaginal ring\n- Diaphragm and cervical cap (the spermicides used in conjunction with the diaphragm can be purchased at a pharmacy without a prescription)\n- Injectable progestogens.\nParental or legal guardian consent is not required for the prescription, dispensing, or administration of contraceptives to minors.\nSpecifically: The nurse can prescribe condoms and emergency contraception. They can also renew prescriptions for certain oral contraceptive medications that are less than 1 year old, for a maximum period of 6 months, which cannot be renewed.",
+        "titre": "Who is authorized to prescribe a method of contraception?"
+       },
+       {
+        "texte": "This repayment rate may vary depending on age.\nPlease note: Condoms are provided free of charge at sexual health centers and at anonymous, free testing centers (CeGGID).\nExample: You are under 26 years old\nTable: Coverage of contraception devices for individuals under 26 years of age, provided by Assurance maladie (French public health insurance)\nContraceptive devices | Coverage rates\nIntrauterine device (IUD) | 100% effective\nPill | Some pills are fully reimbursed by the Assurance maladie at 100%\nPatch | Not applicable\nImplant | 100%\nVaginal ring | No\nCervical cap | No\nDiaphragm | 100%\nSpermicides | Not applicable\nInjectable progestogens | 100%\nPermanent contraception | 80%\nExternal condom brand: EdenSortez, Be Loved, Sure & Smile, Manix Classic, Eroskin\n100% latex-free external condom brand: Manix Sensitivity | 100% latex-free, no prescription required for anyone over the age of 18 (including those receiving state assistance and EU citizens)\nInternal condom brand: ORMELLE\nSo Sexy & Smile\nBe loved free | 100% without prescription for everyone, regardless of age (including those receiving state assistance and EU citizens)\nThe provision of condoms, fully covered by Assurance maladie, is limited to one box per delivery. Depending on the patient's choice, this could be a box containing 6 to 24 condoms.\nSpecifically: Health insurance (supplementary health coverage) may potentially cover all or part of the costs that are not covered by the Assurance maladie if the contract stipulates it. Please contact your health insurance provider for more information.\nSome contraceptives are free at sexual health centers:\n- For young girls who wish to keep their secret\n- And for adult women who do not have a Assurance maladie.\nThe following costs related to contraception for those under 26 are covered by Assurance maladie, without any advance payment:\n- Follow-up consultation with a doctor or midwife within the first year of accessing contraception\n- Annual consultation, carried out from the 2nd year of access to contraception, by a doctor or midwife, for the prescription of contraception or for relevant biological examinations.\n- Certain medical tests related to contraception (fasting blood glucose, total cholesterol, and triglycerides) should be performed once a year.\n- Actions that require the use, change, or removal of a contraceptive\n- Contraceptive medications that are eligible for reimbursement can be obtained at pharmacies upon presentation of a valid medical prescription.\nPlease note: The Assurance maladie service also covers 100% of long-term sexual health consultations (without requiring any upfront payment). It is available to all young people, both girls and boys, up to the age of 25.\nCase: You are 26 years old or older\nTable: Coverage of various contraceptive devices for individuals aged 26 and over, provided by Assurance maladie\nContraceptive devices | Coverage rates\nIntrauterine device (IUD) | 65%\nPill | Some pills are reimbursed by Assurance maladie at 65%\nPatch | Not applicable\nImplant | 65%\nVaginal ring | No\nCervical cap | No\nDiaphragm | 65%\nExternal condoms from the following brands: EdenSortez, Be Loved, Sure & Smile, Manix Classic, Eroskin. Also, 60% off on Manix Sensitivity external condoms with a prescription.\nInternal condom brand: ORMELLE\nSo Sexy & Smile\nBe loved free | 60% off with prescription\nSpermicides | Not applicable\nInjectable progestogens | 65%\nPermanent contraception | 80%\nSpecifically: Health insurance (supplementary health coverage) may potentially cover all or part of the costs that are not covered by the Assurance maladie if the contract stipulates it. You should contact your health insurance provider to inquire.",
+        "titre": "At what rate are contraceptive devices reimbursed by Assurance maladie?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F707",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F707",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-09-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 76,
+      "units": 77
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:55:57.982Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Doğum kontrolü",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 24,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Doğum kontrol, hamilelikten kaçınmayı sağlayan bir yöntemdir. Kondom ve doğum kontrol hapları en yaygın olanlardır. İade durumu, çeşitli kriterlere bağlıdır.",
+      "steps": [
+       {
+        "texte": "Doğum kontrolü, hamilelikten kaçınmayı amaçlayan yöntemlerin tamamıdır. Farklı doğum kontrol yöntemleri bulunmaktadır. En bilinenleri doğum kontrol hapı ve prezervatiflerdir. Bu yöntemler hem kadınlar hem de erkekler için uygundur. Giderler, seçilen yönteme bağlı olarak değişiklik göstermektedir. Size bilmeniz gereken düzenlemeleri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Tablo: Kadınlar ve erkekler için farklı doğum kontrol yöntemlerinin özellikleri\nCihazlar | Özellikler\nİç doğurganlık cihazı (steril) | Doktor veya doğum uzmanı tarafından rahim içine yerleştirilen cihaz. Etkinliği, modele göre 4 ila 10 yıl arasında değişir. İki türü vardır: hormonlu veya bakır içeren.\nTablet | Günlük olarak, belirli bir saatte 21 veya 28 gün boyunca alınması gereken hap\nYapışkanlı bant | Cildi üzerine bir kez haftada bir kez yapıştırılır ve her hafta yenilenir, 3 hafta boyunca. 4. hafta için yapışkanlı bant bulunmadığı için, adet döngüsü başlar. Bu yöntem, adet döneminde de koruma sağlar.\nİmplante | 4 cm çapında, silindirik bir çubuk, bir doktor veya hemşire tarafından yerel anestezi altında, kolun altına deri altına yerleştirilir. Bu implante 3 yıl boyunca yerinde bırakılabilir.\nVajinal halka | Esnek bir halka, vajinaya yerleştirilmek üzere tasarlanmıştır ve tampon gibi kullanılır. 3 hafta boyunca yerinde tutulmalıdır. 4. haftanın başında, halka çıkarılır ve bu da adet dönemi başlamasına neden olur. Ayrıca, adet görme dönemi boyunca da korunma sağlar.\nDiz ve servikal kap | İçine yerleştirilebilen, silikon malzemeden yapılmış bir kap. Kullanımı, spermicid ürünlerle birlikte yapılır. Kap, rahim ağzını kaplayan bir silikon küredir. Bu cihazlar, cinsel ilişinin sırasında, ancak aynı zamanda ilişiden birkaç saat önce de yerleştirilebilir ve ilişiden sonra 8 saat boyunca korunmalıdır.\n\"Erkek tipi\" dış ve \"kadın tipi\" iç prezervatifler | Dış prezervatif, cinsel ilişiden önce penisin üzerine yerleştirilirken, iç prezervatif vajina veya anüsün içine birkaç saat öncesinde yerleştirilebilir.\nJinekolojik prezervatifler | Bu ürün, cinsel ilişiden önce vajinaya yerleştirilen ve spermleri yok ederek etkili bir doğum kontrol yöntemi sağlar.\nEnjekte edilebilir progestinler | Doktor, doğum uzmanı veya hemşire tarafından her 3 ayda bir kas içine enjekte edilir.\nKalıcı doğum kontrol | Erkekte (ters kesme) veya kadında (fallop tüplerinin bağlanması) cerrahi müdahale. Bu yöntemler, geri dönüşü olmayan olarak kabul edilir.\nİhtiyacınız olan bilgileri veya doğum kontrol yöntemlerini doktorunuzdan talep edebilirsiniz.\n- Bir doktor\n- Veya şehirdeki bir doğum uzmanı veya bir aile sağlığı merkezinde çalışan bir hemşire.\n→ Nereye başvurulabilir: Cinsel sağlık merkezleri (örneğin aile planlama ve eğitim merkezi)",
+        "titre": "Kontrasepsi yöntemleri nelerdir?"
+       },
+       {
+        "texte": "Doktorlar, doğum uzmanları ve cinsel sağlık merkezleri, tüm doğum kontrol yöntemlerini reçete etme yetkisine sahiptir.\nAşağıdaki doğum kontrol yöntemleri için bir doktor reçetesi gereklidir:\n- İç doğurganlık organı (doğum kontrol cihazı)\n- Tablet\n- Düzeltme\n- İmplante\n- Vajinal halka\n- Dizilim ve servikal kap (diizilim kullanımını destekleyen spermicitler eczanelerden reçetesiz olarak temin edilebilir)\n- Enjekte edilebilir progestinler.\nKüçük kızlara yönelik doğum kontrol yöntemlerinin reçete edilmesi, verilmesi veya uygulanması için ebeveynlerin veya yasal temsilcinin onayı gerekli değildir.\nBilindiği üzere: Hemşire, prezervatif ve acil doğum kontrol yöntemleri reçete edebilir. Ayrıca, belirli oral doğum kontrol ilaçlarının [[1]] yıllık veya daha eski reçetelerini, maksimum 6 ay süreyle, yenileme imkanı olmayan şekilde de düzenleyebilir.",
+        "titre": "Kim, doğum kontrol yöntemlerinin reçetesini verebilir?"
+       },
+       {
+        "texte": "Bu geri ödeme oranı, yaşa bağlı olarak değişiklik gösterebilir.\nÖnemli: Cinsel sağlık merkezlerinde ve anonim, ücretsiz test merkezlerinde (CeGGID) kondomlar ücretsiz olarak dağıtılıyor.\nDurum: 26 yaşın altında değilsiniz\nTablo: Assurance maladie (Fransız kamu sağlık sigortası) tarafından 26 yaşın altındaki bireyler için farklı doğum kontrol yöntemlerinin karşılanması.\nKontrasepsiyon cihazları | Tedavi oranları\nİç doğurganlık cihazı (steril) | %100\nTablet | Bazı tabletler, Assurance maladie tarafından %100 oranında karşılanmaktadır.\nGüncelleme | Yok\nİmplante | %100\nVajinal halka | Yok\nServikal bölge | Yok\nMembran | %100\nJinekolojik prezantiflar | Yok\nEnjekte Edilebilir Progestinler | %100\nKesin doğum kontrol yöntemi | %80\nMarkanın dış kondomları: EdenSortez, Be Loved, Sure & Smile, Manix Classic, Eroskin. Manix Sensitivity markasının lateks içermeyen dış kondomları | 100% reçetesiz, tüm bireyler için ve her yaşta (devlet yardımı alıcıları ve Avrupa Birliği vatandaşları dahil) kullanılabilir.\nİç kondom markası: ORMELLE\nSo Sexy & Smile\nÜcretsiz ve reçetesiz | 100% doğal, tüm bireyler için, herhangi bir yaş sınırlaması olmaksızın (devlet yardımı alanlar ve Avrupa Birliği vatandaşları dahil)\nAssurance maladie tarafından sağlanan ve tamamen karşılanan kondomların dağıtımı, her bir dağıtım için tek bir kutuya kadar sınırlıdır. Örneğin, hastanın tercihine bağlı olarak, bu kutu 6 ila 24 adet kondom içerebilir.\nBilindiği gibi: Sağlık sigortaları (ek sağlık hizmetleri), eğer sözleşme bunu öngörüyorlarsa, Assurance maladie tarafından karşılanmayan tüm veya bir kısmını ödeme sorumluluğunu üstlenebilir. Sağlık sigortanızla iletişime geçerek bilgi alın.\nBazı doğum kontrol yöntemleri, sağlık merkezlerinde ücretsiz olarak temin edilebilir:\n- Erken yaşta olan kızlar için, sırlarını koruma konusunda\n- Ve, Assurance maladie'i olmayan yetişkin kadınlar için.\nAşağıdaki 26 yaşın altındaki bireyler için doğum kontrolu ile ilgili maliyetler, Assurance maladie tarafından karşılanacak ve herhangi bir ödeme talep edilmeyecektir:\n- Kontrasepsiyon kullanımına başlandıktan sonraki ilk yıl, bir doktor veya doğum uzmanı tarafından yapılan takip muayenesi.\n- Her yıl, doğum kontrolüne başlandıktan ikinci yıl ve sonrasında, bir doktor veya doğum uzmanı tarafından gerçekleştirilen, doğum kontrolü veya doğumla ilgili biyolojik testler için reçete düzenleme amacıyla yapılan danışma.\n- Bazı tıbbi biyoloji testleri, doğum kontrolü ile ilgili (açlık kan şekeri, toplam kolesterol ve trigliseritler), yılda bir kez\n- Kontraseptil kullanımı, değiştirilmesi veya bırakılmasına neden olan durumlar\n- Reçeteyle eczanede, ödeme kapsamındaki doğum kontrol yöntemlerinin temin edilmesi.\nÖnemli: Assurance maladie, uzun süreli cinsel sağlık danışmanlığı hizmetini (ön ödeme olmaksızın) %100 olarak karşılamaktadır. Bu hizmet, 25 yaş altındaki tüm gençler (hem kızlar hem de erkekler) için kullanılabilir.\nDurum: 26 yaş ve üstündesiniz\nTablo: Assurance maladie tarafından 26 yaş ve üstü bireyler için farklı doğum kontrol yöntemlerinin karşılanması.\nKontrasepsiyon cihazları | Tedavi oranları\nİç doğurganlık cihazı (steril) | %65\nTablet | Bazı tabletler, Assurance maladie tarafından %65 oranında karşılanmaktadır.\nGüncelleme | Yok\nİmplante | %65\nVajinal halka | Yok\nServikal bölge | Yok\nMembran | %65\nMarkanın dış cinsel araçları: EdenSortez, Be Loved, Sure & Smile, Manix Classic, Eroskin. Manix Sensitivity markasının lateks içermeyen dış cinsel araçı | Reçete ile %60 indirim\nİç kondom markası: ORMELLE\nSo Sexy & Smile | 60% indirimli, reçete ile\nJinekolojik prezantiflar | Yok\nEnjekte Edilebilir Progestinler | %65\nKesin doğum kontrol yöntemi | %80\nBilindiği gibi: Sağlık sigortaları (ek sağlık hizmetleri), eğer sözleşme bunu öngörüyorlarsa, Assurance maladie tarafından karşılanmayan tüm veya bir kısmını ödeme sorumluluğunu üstlenebilir. Bu konuda, sağlık sigortanızla iletişime geçmeniz önemlidir.",
+        "titre": "Assurance maladie hangi oranla doğum kontrol cihazlarının karşılanmasını sağlar?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F707",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F707",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-09-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.5,
+      "units": 77
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:59:05.878Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "وسائل منع الحمل",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "الاستخدام الوقائي هو وسيلة لمنع الحمل. يعتبر الواقي الذكري والحبوب من أكثر الطرق شيوعًا. يعتمد الحصول على الدعم المالي على عدة معايير.",
+      "steps": [
+       {
+        "texte": "الاستئصال هو مجموعة من الوسائل التي تهدف إلى منع الحمل. هناك أنواع مختلفة من الاستئصال. من بين الأكثر شيوعًا: حبوب منع الحمل واستخدام الواقي الذكري. هذه الوسائل مخصصة للنساء والرجال. يعتمد استرداد التكاليف بشكل أساسي على الطريقة المختارة. نقدم لكم القواعد والمعلومات التي يجب معرفتها.",
+        "titre": null
+       },
+       {
+        "texte": "جدول: خصائص الأجهزة المختلفة للوقاية من الحمل المخصصة للنساء والرجال\nالأجهزة | المواصفات\nجهاز داخل الرحم (حبوب منع الحمل) | جهاز يتم وضعه داخل الرحم بواسطة طبيب أو ممرضة. فعال لمدة تتراوح بين 4 و 10 سنوات، حسب النوع. هناك نوعان: يحتوي على هرمونات أو يحتوي على النحاس.\nدواء | يجب تناول القرص يوميًا في نفس الوقت لمدة 21 أو 28 يومًا.\nلاصق | يجب لصقه على الجلد مرة واحدة في الأسبوع، ويجب تكراره كل أسبوع لمدة 3 أسابيع. لا يوجد لاصق للاستخدام في الأسبوع الرابع، مما يؤدي إلى ظهور الدورة الشهرية. يسمح بالحماية حتى خلال فترة التوقف.\nالزرعة | عصا سلكية بطول 4 سم يتم إدخالها تحت الجلد في الذراع، تحت تأثير التخدير الموضعي بواسطة طبيب أو ممرضة. يمكن تركها في مكانها لمدة 3 سنوات.\nحلقة مهبلية | حلقة مرنة يمكن وضعها داخل المهبل بنفس الطريقة التي يتم بها استخدام السدادات القطنية. يجب تركها في مكانها لمدة 3 أسابيع. في بداية الأسبوع الرابع، يجب إزالة الحلقة، مما يؤدي إلى بدء الدورة الشهرية. تسمح بالحماية حتى خلال فترة التوقف عن استخدام وسائل منع الحمل.\n\"المنطقة المهبلية والغطاء المخاطي | وعاء من السيليكون يتم وضعه يدويًا داخل المهبل. يُستخدم مع منتج مضاد للحمل. الغطاء هو قبة من السيليكون التي تغطي عنق الرحم. يمكن وضع هذه الأجهزة في وقت العلاقة الحميمة، أو أيضًا قبل عدة ساعات، ويجب الاحتفاظ بها لمدة 8 ساعات بعد العلاقة.\"\n\"واقي ذكري\" و \"واقي أنثوي\" | الواقي الذكري يوضع على القضيب قبل الجماع، بينما يمكن وضع الواقي الأنثوي داخل المهبل أو المستقيم عدة ساعات قبل الجماع.\nمضادات التصريف | جل أو كبسولة يتم وضعها داخل المهبل قبل بضع دقائق من الجماع، مما يدمر الحيوانات المنوية.\nالحبوب الهرمونية القابلة للحقن | يتم حقنها في العضل عن طريق الطبيب أو الممرضة أو الممرضة كل 3 أشهر.\nالوقاية الدائمة | إجراء جراحي للرجال (استئصال الحيوانات المنوية) أو للنساء (ربط الأنابيب). تعتبر هذه الطرق غير قابلة للانعكاس.\nيمكنك الحصول على معلومات أو طلب وصفة طبية لعلاج الحمل من خلال:\n- طبيب\n- أو ممرضة تعمل في عيادة أو في مركز صحي متخصص في الأمراض الجنسية والإنجابية.\n→ إلى أين يتم التوجه: مراكز الصحة الجنسية (مثل مراكز التخطيط والتوعية الأسرية)",
+        "titre": "ما هي طرق منع الحمل؟"
+       },
+       {
+        "texte": "يُمنح الأطباء، ومقدمو الرعاية الصحية، ومراكز الصحة الجنسية صلاحية وصف جميع وسائل منع الحمل.\nيجب الحصول على أمر طبي لاستخدام الأدوية التالية لمنع الحمل:\n- جهاز داخل الرحم (حبّة منع الحمل)\n- حبوب\n- إصلاح\n- زرع\n- حلقة مهبلية\n- المنخر (وهو الجزء الذي يتم وضعه داخل المهبل) والغطاء (وهي المواد التي تستخدم مع المنخر، ويمكن شراؤها من الصيدلية بدون وصفة طبية).\n- حبوب منع الحمل عن طريق الحقن.\nلا يتطلب الحصول على موافقة الوالدين أو ممثلهم القانوني لوصف أو صرف أو تقديم وسائل منع الحمل لفتاة قاصر.\nوهذا يعني: يمكن للممرض وصف الواقي الذكري وأدوية منع الحمل الطارئة. كما يمكنه تجديد وصفات بعض أدوية منع الحمل الفموية التي يصدر لها وصفة طبية، لمدة لا تتجاوز 6 أشهر، مع عدم إمكانية تجديدها.",
+        "titre": "من يمكنه وصف طريقة للوقاية من الحمل؟"
+       },
+       {
+        "texte": "قد يختلف هذا معدل الاسترداد تبعًا للعمر.\nيرجى ملاحظة: يتم توزيع الواقيات بشكل مجاني في مراكز الرعاية الصحية الجنسية وفي مراكز الفحص السري والمجاني (CeGGID).\nمثال: إذا كان عمرك أقل من 26 عامًا\nجدول: تغطية تكاليف وسائل منع الحمل المختلفة للأفراد دون سن 26 عامًا من قبل Assurance maladie (التأمين الصحي العمومي الفرنسي).\nأدوات منع الحمل | معدل الاستجابة\nجهاز داخل الرحم (حبوب منع الحمل) | 100% فعال\nحبوب | بعض الحبوب يتم تغطية تكلفة شرائها بنسبة 100% من قبل Assurance maladie.\nتصحيح | لا\nزرع | 100%\nحلقة مهبلية | لا\nالرقبة | لا\nالمرشح | 100%\nمضادات التصريف | غير متوفر\nحبوب هرمونية للحقن | 100%\nطرق منع الحمل الدائمة | بنسبة 80٪\nواقي ذكري من العلامة التجارية: EdenSortez، Be Loved، Sure & Smile، Manix Classic، Eroskin. واقي ذكري خارجي بدون مادة اللاتكس من العلامة التجارية Manix Sensitivity | 100% بدون وصفة طبية، للاستخدام من قبل الجميع دون حد أدنى للعمر (بما في ذلك المستفيدين من المساعدة الطبية الحكومية والمواطنين الأوروبيين).\nواقي ذكري من العلامة التجارية: ORMELLE\nSo Sexy & Smile\n\"كن محبوبًا مجانًا | 100% بدون وصفة طبية، لجميع الفئات والأعمار، بدون حد أدنى للعمر (بما في ذلك المستفيدين من المساعدة الطبية الحكومية ومواطني الاتحاد الأوروبي)\"\nتوزيع الواقيات، والذي يتم تغطيته بنسبة 100% من قبل Assurance maladie، يقتصر على عبوة واحدة في كل مرة. اعتمادًا على اختيار المريض، يمكن أن تتضمن العبوة ما بين 6 إلى 24 واقيًا.\nوهذا يعني: يمكن لشركات التأمين الصحي (التأمين التكميلي) أن تتحمل جزءًا أو كل التكاليف التي لا تغطيها شركة التأمين الأساسية Assurance maladie، إذا كان ذلك مُحددًا في العقد. يرجى التواصل مع شركة التأمين الخاصة بك للحصول على مزيد من المعلومات.\nتتوفر بعض وسائل منع الحمل مجاناً في مراكز الرعاية الصحية الجنسية:\n- للمراهقات اللاتي يرغبن في الحفاظ على سرّ\n- و بالنسبة للنساء البالغات اللواتي لا يملكن Assurance maladie.\nتشمل التكاليف التالية المتعلقة بالحماية من الحمل للأقل من 26 عامًا، وهي: Assurance maladie، بدون أي دفعة مقدمة.\n- فحص متابعة من قبل طبيب أو ممرضة خلال السنة الأولى من استخدام وسائل منع الحمل.\n- يتم إجراء استشارة سنوية، بدءًا من السنة الثانية بعد بدء استخدام وسائل منع الحمل، من قبل طبيب أو ممرضة، بهدف إصدار وصفة طبية لوسائل منع الحمل أو إجراء فحوصات بيولوجية ذات صلة بالمنع من الحمل.\n- بعض الفحوصات البيولوجية الطبية المتعلقة بالتخطيط الأسري (مستوى السكر في الدم، الكوليسترول الكلي والدهون الثلاثية)، مرة واحدة في السنة.\n- إجراءات تؤدي إلى تركيب أو تغيير أو إزالة وسائل منع الحمل.\n- توفير حبوب منع الحمل المشمولة بالتأمين، في الصيدليات، مع تقديم وصفة طبية.\nملاحظة: Assurance maladie توفر أيضًا خدمة استشارة طبية شاملة تتعلق بالصحة الجنسية بنسبة 100% (بدون أي تكاليف إضافية). وهي متاحة لجميع الشباب، الصبيان والفتيات، حتى سن 25 عامًا.\nالحالة: أنت تبلغ من العمر 26 عامًا أو أكثر.\nجدول: تغطية من قبل Assurance maladie لمختلف وسائل منع الحمل للأشخاص الذين تزيد أعمارهم عن 26 عامًا.\nأدوات منع الحمل | معدل الاستجابة\nجهاز داخل الرحم (لولب) | بنسبة 65٪\nحبوب | بعض الحبوب يتم تغطية تكلفة شرائها بنسبة 65% من قبل Assurance maladie.\nتصحيح | لا\nزرع | 65٪\nحلقة مهبلية | لا\nالرقبة | لا\nالرئة | 65٪\nواقي ذكري من العلامة التجارية: EdenSortez، Be Loved، Sure & Smile، Manix Classic، Eroskin. واقي ذكري خارجي بدون مادة اللاتكس من العلامة التجارية Manix Sensitivity | خصم 60% عند الوصفة الطبية.\nواقي ذكري من العلامة التجارية: ORMELLE\nSo Sexy & Smile\nاحصل على الحب مجاناً | خصم 60% عند الوصفة الطبية\nمضادات التصريف | غير متوفر\nحبوب منع الحمل عن طريق الحقن | بنسبة 65٪\nطرق منع الحمل الدائمة | بنسبة 80٪\nوهذا يعني: يمكن لشركات التأمين الصحي (التأمين التكميلي) أن تتحمل جزءًا أو كل التكاليف التي لا تغطيها شركة التأمين الأساسية Assurance maladie، إذا كان ذلك مُحددًا في العقد. يجب عليك التواصل مع شركة التأمين الخاصة بك للحصول على مزيد من المعلومات.",
+        "titre": "ما هو معدل استرداد الأجهزة المستخدمة للوقاية من الحمل من قبل Assurance maladie؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F707",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F707",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-09-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 70.9,
+      "units": 77
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:01:55.118Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Verhütung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 20.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die Verhütung ist eine Methode, um eine Schwangerschaft zu verhindern. Kondome und die Pille sind die bekanntesten Methoden. Die Kostenübernahme hängt von verschiedenen Kriterien ab.",
+      "steps": [
+       {
+        "texte": "Kontrazeption umfasst alle Maßnahmen, die darauf abzielen, eine Schwangerschaft zu verhindern. Es gibt verschiedene Arten der Verhütung. Die bekanntesten sind die Antibabypille und die Kondome. Diese richten sich sowohl an Frauen als auch an Männer. Die Kosten hängen insbesondere von der gewählten Methode ab. Wir stellen Ihnen die relevanten Vorschriften vor.",
+        "titre": null
+       },
+       {
+        "texte": "Tabelle: Eigenschaften verschiedener Verhütungsmethoden für Frauen und Männer\nGeräte | Eigenschaften\nIntrauteriner Verhütungsmittel (Kugelsystem) | Ein Gerät, das von einem Arzt oder einer Hebamme im Uterus platziert wird. Die Wirksamkeit beträgt je nach Modell 4 bis 10 Jahre. Es gibt zwei Arten: hormonelle oder aus Kupfer.\nTablette | Einmal täglich, zu einer festen Zeit, für 21 oder 28 Tage einnehmen.\nPflaster | Selbst auf die Haut aufzutragen, einmal pro Woche, und jede Woche erneut für 3 Wochen. Es gibt kein Pflaster für die 4. Woche, wodurch der Menstruationszyklus ausgelöst wird. Ermöglicht Schutz auch während der Pause.\nImplant | Ein zylindrischer Stab von 4 cm Länge, der unter die Haut des Arms eingeführt wird, unter lokaler Anästhesie durch einen Arzt oder eine Hebamme. Er kann für 3 Jahre im Körper verbleiben.\nVaginalring | Weicher Ring, der selbst in die Vagina eingeführt wird, ähnlich wie ein Tampon. Er muss für 3 Wochen beibehalten werden. Am Anfang der 4. Woche sollte der Ring entfernt werden, wodurch der Menstruationsbeginn ausgelöst wird. Ermöglicht Schutz auch während der Pause.\nDamm und Zervixschutz | Silikonvorrichtung, die selbst in die Vagina eingeführt wird. Sie wird zusammen mit einem Spermazid verwendet. Der Zervixschutz ist eine Silikonkappe, die die Zervix bedeckt. Diese Geräte können während des Geschlechtsverkehrs, aber auch mehrere Stunden vorher eingeführt werden und müssen für 8 Stunden danach beibehalten werden.\n\"Männlicher\" und \"weiblicher\" Präservativ | Der äußere Präservativ wird vor dem Geschlechtsverkehr auf die Eichel aufgetragen, während der innere Präservativ mehrere Stunden vor dem Geschlechtsverkehr in die Vagina oder den Anus eingeführt werden kann.\nVaginalpessungen | Gel oder Kapseln, die einige Minuten vor dem Geschlechtsverkehr in die Vagina eingeführt werden und so die Spermien zerstören.\nHormonelle Injektionen | Die Injektion wird alle 3 Monate von einem Arzt, einer Hebamme oder einer Krankenschwester intramuskulär verabreicht.\nDefinitiver Verhütung – Chirurgische Eingriffe beim Mann (Vasektomie) oder bei der Frau (Verlegung der Eileiter). Diese Methoden gelten als unwiderruflich.\nSie können Informationen erhalten oder eine Verhütungsmethode verschrieben bekommen bei:\n- Ein Arzt\n- Oder eine Hebamme in einer Arztpraxis oder in einer Sexualgesundheitszentrale.\n→ Wo man Hilfe erhält: Sexuelle Gesundheitszentren (z. B. Familienplanung und -beratungszentren)",
+        "titre": "Welche Verhütungsmethoden gibt es?"
+       },
+       {
+        "texte": "Ärzte, Hebammen und sexuelle Gesundheitszentren sind befugt, alle Verhütungsmethoden zu verschreiben.\nEine ärztliche Verordnung ist für die folgenden Verhütungsmittel erforderlich:\n- Intrauterines Verhütungsmittel (Kugelsystem)\n- Tablette\n- Patch\n- Implantat\n- Vaginalring\n- Darmspiegel und Halskappe (die zur Verwendung des Darmspiegels benötigten Kondome können in der Apotheke ohne Rezept erworben werden)\n- Hormonelle Injektionen.\nDie Zustimmung der Eltern oder eines gesetzlichen Vertreters ist nicht erforderlich, um Verhütungsmittel an minderjährigen Mädchen zu verschreiben, auszugeben oder zu verabreichen.\nDas bedeutet: Der Krankenpfleger kann Kondome und Not-Kondome verschreiben. Er kann auch bestehende Rezepte für bestimmte orale Kontrazeptika, die älter als 1 Jahr sind, für maximal 6 Monate verlängern, wobei eine Verlängerung nicht möglich ist.",
+        "titre": "Wer kann eine Verhütungsmethode verschreiben?"
+       },
+       {
+        "texte": "Diese Rückerstattungsrate kann je nach Alter variieren.\nBitte beachten: Kondome werden kostenlos in Gesundheitszentren und in anonymen, kostenlosen Testzentren (CeGGID) ausgegeben.\nFall: Sie sind unter 26 Jahre alt\nTabelle: Die Assurance maladie (französische gesetzliche Krankenversicherung) übernimmt die Finanzierung verschiedener Verhütungsmittel für Personen unter 26 Jahren.\nVerhütungsmittel | Erfolgsquote\nIntrauterines Verhütungsmittel (Kugelsystem) | 100 %\nTablette | Einige Tabletten werden von der Assurance maladie zu 100 % erstattet.\nPatch | Nicht\nImplant | Vollständig\nVaginalring | Nicht\nZervikale Halskette | Nicht vorhanden\nLuftfilter | 100 %\nVaginalpessungen | Nicht enthalten\nHormonelle Injektionen | 100 %\nDefinitiver Verhütung | Mit 80 % Erfolg\nExterne Kondom der Marke: EdenSortez, Be Loved, Sure & Smile, Manix Classic, Eroskin\nExterne Kondom ohne Latex der Marke Manix Sensitivity | 100 % ohne Rezept für alle, unabhängig vom Alter (einschließlich Personen, die staatliche Unterstützung erhalten oder zur Europäischen Union gehören)\nInterner Kondom der Marke: ORMELLE\nSo Sexy & Smile\nLiebevoll & frei | 100 % ohne Rezept für alle, unabhängig vom Alter (einschließlich Personen, die staatliche Unterstützung erhalten oder zur Europäischen Union gehören)\nDie Ausgabe von Kondomen, die vollständig von Assurance maladie übernommen wird, ist auf eine Packung pro Ausgabe beschränkt. Je nach Wahl des Patienten kann es sich dabei um eine Packung mit 6 bis 24 Kondomen handeln.\nKonkret: Private Krankenversicherungen (Zusatzversicherungen) können möglicherweise die gesamten oder einen Teil der Kosten übernehmen, die von der Assurance maladie nicht übernommen werden, sofern dies im Vertrag vereinbart wurde. Informieren Sie sich bei Ihrer privaten Krankenversicherung.\nEinige Verhütungsmittel sind in sexuellen Gesundheitszentren kostenlos erhältlich:\n- Für minderjährige Mädchen, die ihre Privatsphäre wahren möchten\n- Und für erwachsene Frauen, die kein Assurance maladie besitzen.\nDie folgenden Kosten für Verhütung für Personen unter 26 Jahren werden von Assurance maladie übernommen, ohne Vorauszahlung:\n- Regelmäßige Nachuntersuchung durch einen Arzt oder eine Hebamme im ersten Jahr der Verhütung\n- Jährliche Beratung, die ab dem zweiten Jahr der Verhütung durch einen Arzt oder eine Hebamme durchgeführt wird, um eine Verhütungsmittelverordnung oder biologische Untersuchungen im Zusammenhang mit der Verhütung zu ermöglichen.\n- Einige medizinische Untersuchungen im Zusammenhang mit der Verhütung (Blutzucker, Cholesterinspiegel und Triglyceride), einmal jährlich.\n- Aktionen, die die Anwendung, den Austausch oder die Abgabe einer Verhütungsmittel betreffen\n- Ausgabe von kostengünstigen Verhütungsmitteln in Apotheken, gegen Vorlage eines ärztlichen Rezepts.\nWichtig: Das Assurance maladie übernimmt außerdem zu 100 % die Kosten für umfassende sexuelle Gesundheitsberatung (ohne Selbstbeteiligung). Sie ist für alle jungen Menschen, sowohl Mädchen als auch Jungen, bis zum Alter von 25 Jahren zugänglich.\nFall: Sie sind 26 Jahre alt oder älter\nTabelle: Übernahme der verschiedenen Verhütungsmethoden durch das Assurance maladie für Personen ab 26 Jahren\nVerhütungsmittel | Erfolgsquote\nIntrauterines Verhütungsmittel (Kugelsystem) | 65 %\nTablette | Einige Tabletten werden von der Assurance maladie zu 65 % erstattet.\nPatch | Nicht\nImplant | 65 %\nVaginalring | Nicht\nZervikale Halskette | Nicht vorhanden\nMembran | 65 %\nExterne Kondome der Marke: EdenSortez, CouvertsBe Loved, Sure & Smile, Manix Classic, Eroskin\nExterne Kondome ohne Latex der Marke Manix Sensitivity | 60 % Rabatt bei Rezept\nInterner Kondom der Marke: ORMELLE\nSo Sexy & Smile\nLiebevoll und frei | 60 % Rabatt bei Rezept\nVaginalpessungen | Nicht enthalten\nHormonelle Injektionen | 65 %\nDefinitiver Verhütung | Mit 80 % Erfolg\nDas bedeutet: Private Krankenversicherungen (Zusatzversicherungen) können gegebenenfalls die gesamten oder einen Teil der Kosten übernehmen, die von der Assurance maladie nicht übernommen werden, sofern dies im Vertrag vereinbart wurde. Es ist ratsam, sich bei Ihrer privaten Krankenversicherung zu erkundigen.",
+        "titre": "Welchen Zuschuss erhalten Verhütungsmittel über das Assurance maladie?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F707",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F707",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-09-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.2,
+      "units": 77
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:04:55.187Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Захист від вагітності",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 18,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Контрацепція – це спосіб запобігти вагітності. Презервативи та таблетки є найпоширенішими. Компенсація покривається за кількома критеріями.",
+      "steps": [
+       {
+        "texte": "Контрацепція – це сукупність засобів, спрямованих на запобігання вагітності. Існує різні види контрацепції. Найбільш відомі – це контрацептивна пігулка та презерватив. Вони призначені для жінок і чоловіків. Компенсація залежить, зокрема, від обраного методу. Ми представляємо вам інформацію, яку необхідно знати.",
+        "titre": null
+       },
+       {
+        "texte": "Таблиця: Характеристики різних методів контрацепції, призначених для жінок і чоловіків\nПристрої | Характеристики\nВнутрішньоматкова пристрій (суб'ю) | Пристрій, який вставляється всередину матки лікарем або акушеркою. Ефективний протягом 4-10 років, залежно від моделі. Існує 2 типи: гормональний або з міді.\nТаблетка | Приймати щодня в один і той же час протягом 21 або 28 днів\nПатч | Для самостійного наклеювання на шкіру 1 раз на тиждень і для повторного застосування щотижня протягом 3 тижнів. Немає патчу на 4-й тиждень, що призводить до появи менструації. Дозволяє захиститися навіть під час перерви.\nІмплантат | Цилиндричний стержень завдовжки 4 см, який вводиться під шкіру руки під місцевою анестезією лікарем або акушеркою. Його можна залишити на місці протягом 3 років.\nВульварний кільце | М'яке кільце, яке потрібно самостійно вставити всередину піхви, подібно до тампона. Його потрібно залишити на місці протягом 3 тижнів. На початку 4-го тижня, кільце потрібно зняти, що призведе до появи менструації. Дозволяє захиститися навіть під час періоду припинення вагітності.\nДиафрагма та шийкова губка | Силіковий пристрій, який потрібно самостійно вставити всередину піхви. Використовується у поєднанні з засобом, що запобігає заплідненню. Шийкова губка – це силіконовий купол, який покриває шийку матки. Ці пристрої можна вставити під час статевого акту, але також і за кілька годин до нього, і їх потрібно тримати протягом 8 годин після акту.\nЗовнішній презерватив (\"чоловічий\") та внутрішній презерватив (\"жіночий\") | Зовнішній презерватив надягається на пенис перед статевим контактом, тоді як внутрішній презерватив можна накласти всередину вагіни або анального отвору за кілька годин до статевого акту.\nПрепарати для контрацепції | Гель та таблетки для вставлення у піхву за кілька хвилин до статевого акту, що руйнує сперматозоїди.\nІн'єкційні прогестини | Ін'єкція в м'язи, яку проводить лікар, акушерка або медсестра кожні 3 місяці.\nПостійна контрацепція | Хірургічне втручання у чоловіків (васекція) або у жінок (закупорка матки). Ці методи вважаються незворотними.\nВи можете отримати інформацію або отримати призначення на контрацепцію у:\n- Лікар\n- Або акушерка, яка працює в міському кабінеті або в центрі сексуального здоров'я.\n→ Куди звернутися: Центри сексуального здоров'я (наприклад, центри планування сім'ї та сімейного виховання)",
+        "titre": "Які існують методи контрацепції?"
+       },
+       {
+        "texte": "Лікарі, акушери та центри сексуального здоров'я мають право призначати всі методи контрацепції.\nНеобхідно отримати рецепт для наступних контрацептивних засобів:\n- Внутрішньоматкова пристрій (суб'юте)\n- Таблетка\n- Патч\n- Вживлення\n- Вузол для вагіни\n- Диафрагма та шийний тампон (сперміциди, які використовуються разом із діафрагмою, можна придбати в аптеці без рецепта)\n- Ін'єкційні прогестини.\nПогодження батьків або законного представника не потрібне для призначення, надання або застосування контрацептивних засобів неповнолітнім дівчатам.\nНаприклад: Медсестра може призначати презервативи та засоби екстреної контрацепції. Вона також може повторно призначати певні оральні контрацептивні препарати, рецепти на які були видані менше ніж 1 рік тому, на термін до 6 місяців, але без можливості продовження.",
+        "titre": "Хто може призначити метод контрацепції?"
+       },
+       {
+        "texte": "Цей відсоток повернення може змінюватися в залежності від віку.\nВажливо зазначити: Презервативи безкоштовно надаються в центрах сексуального здоров'я та центрах анонімного та безкоштовного тестування (CeGGID).\nСитуація: Вам менше 26 років\nТаблиця: Забезпечення різними контрацептивними засобами для осіб віком до 26 років, що здійснюється Assurance maladie (французьке державне медичне страхування).\nЗасоби контрацепції | Рівень забезпечення\nВнутрішньоматкова пристрій (суб'ю) | 100%\nТаблетки | Деякі таблетки повністю покриваються страховою компанією Assurance maladie.\nВиправлення | Ні\nІмплантат | 100%\nВузол для влагалища | Не підходить\nШия | Ні\nДиафрагма | У 100%\nПрепарати для контрацепції | Немає\nІн'єкційні прогестини | 100%\nПовне запобігання вагітності | У 80% випадків\nЗовнішній презерватив від торгової марки: EdenSortez, CoveredBe Loved, Sure & Smile, Manix Classic, Eroskin. Зовнішній презерватив без латексу від торгової марки Manix Sensitivity | 100% без рецепта для всіх, незалежно від віку (включаючи осіб, які отримують медичну допомогу та громадян ЄС).\nВнутрішній презерватив торгової марки: ORMELLE\n\"So Sexy & Smile\"\n\"Будьте коханими безкоштовно | 100% без рецепта для всіх, незалежно від віку (включаючи осіб, які отримують медичну допомогу та громадян ЄС)\nНадання презервативів, яке повністю покривається Assurance maladie, обмежене однією упаковкою на раз. Залежно від вибору пацієнта, це може бути упаковка з 6 до 24 презервативів.\nА саме: Медичні страхування (додаткові програми медичного страхування) можуть потенційно покривати всі або частину витрат, які не покриває Assurance maladie, якщо це передбачено умовами контракту. Зверніться до вашої страхової компанії для отримання додаткової інформації.\nДеякі контрацептиви безкоштовно надаються в центрах сексуального здоров'я:\n- Для дівчат, які бажають зберегти конфіденційність\n- А для жінок старше Assurance maladie.\nНаступні витрати, пов'язані з контрацепцією для осіб віком до 26 років, покриваються Assurance maladie без попередньої оплати:\n- Консультація лікаря або акушерки під час першого року використання контрацепції\n- Проведене щорічне консультування, починаючи з 2-го року після початку використання контрацепції, лікарем або акушеркою, для призначення контрацепції або проведення біологічних обстежень, пов'язаних із контрацепцією.\n- Деякі аналізи з біологічної діагностики, пов'язані з контрацепцією (рівень цукру в крові натще, загальний холестерин і тригліцериди), один раз на рік.\n- Дії, які потребують встановлення, заміни або видалення контрацептиву\n- Надання застрахованих контрацептивних засобів у аптеках за наявності рецепта від лікаря.\nВажливо зазначити: Центр Assurance maladie також повністю покриває вартість тривалої консультації з питань сексуального здоров'я (без будь-яких витрат для пацієнта). Він доступний для всіх молодих людей, дівчат та хлопців віком до 25 років.\nПриклад: Вам 26 років або більше.\nТаблиця: Забезпечення різними методами контрацепції для осіб віком від 26 років та старше, що здійснюється Assurance maladie.\nЗасоби контрацепції | Рівень забезпечення\nВнутрішньоматкова контрацепція (суб'ю) | 65%\nТаблетки | Деякі таблетки покриваються страховим відшкодуванням у розмірі 65% від Assurance maladie.\nВиправлення | Ні\nВживлення | 65%\nВузол для влагалища | Не підходить\nШия | Ні\nДиафрагма | 65%\nЗовнішній презерватив від торгової марки: EdenSortez, CoveredBe Loved, Sure & Smile, Manix Classic, Eroskin. Зовнішній презерватив без латексу від торгової марки Manix Sensitivity | Знижка 60% за рецептом\nВнутрішній презерватив від торгової марки: ORMELLE\n\"So Sexy & Smile\"\n\"Будь любими безкоштовно\" | Знижка 60% за рецептом\nПрепарати для контрацепції | Немає\nІн'єкційні прогестини | 65%\nПовне запобігання вагітності | У 80% випадків\nА саме: Медичні страхування (додаткові програми медичного страхування) можуть потенційно покривати всі або частину витрат, які не покриває Assurance maladie, якщо це передбачено умовами контракту. Необхідно звернутися до вашої страхової компанії.",
+        "titre": "Яким відсотком компенсуються засоби контрацепції через Assurance maladie?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F707",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F707",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-09-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73.8,
+      "units": 77
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:c8213a566b3fb38ba53f0736892113c26cb231743d169f7ce9af1fe687a5ddcf",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Contraception",
+   "contenu_json": {
+    "intro": "La contraception est un moyen permettant d'éviter une grossesse. Le préservatif et la pilule sont les plus connus. Le remboursement dépend de plusieurs critères",
+    "steps": [
+     {
+      "texte": "La contraception est l'ensemble des moyens visant à éviter une grossesse. Il existe différents types de contraception. Les plus connus sont la pilule contraceptive et le préservatif. Ils s'adressent aux femmes et aux hommes. Le remboursement dépend notamment du dispositif choisi. Nous vous présentons la réglementation à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Tableau : Caractéristiques des différents dispositifs de contraception destinés aux femmes et aux hommes\nDispositifs | Caractéristiques\nDispositif intra-utérin (stérilet) | Dispositif placé à l'intérieur de l'utérus par un médecin ou une sage-femme. Efficace durant 4 à 10 ans, selon le modèle.Il en existe 2 types : hormonal ou au cuivre.\nPilule | Comprimé à prendre quotidiennement à heure régulière pendant 21 ou 28 jours\nPatch | À coller soi-même sur la peau 1 fois par semaine et à renouveler chaque semaine, pendant 3 semaines.Il n’y a pas de patch à coller la 4e semaine ce qui provoque ainsi l'apparition des règles. Permet d'être protégé même pendant la période d'arrêt.\nImplant | Bâtonnet cylindrique de 4 cm inséré sous la peau du bras, sous anesthésie locale par un médecin ou une sage-femme. Il peut être laissé en place pendant 3 ans.\nAnneau vaginal | Anneau souple à placer soi-même à l’intérieur du vagin, comme un tampon. Il doit être laissé en place pendant 3 semaines. Au début de la 4e semaine, l'anneau doit être enlevé provoquant ainsi l'apparition des règles. Permet d'être protégé même pendant la période d'arrêt.\nDiaphragme et cape cervicale | Coupelle en silicone à placer soi-même à l'intérieur du vagin. Il s'utilise associé à un produit spermicide. La cape est un dôme en silicone qui vient recouvrir le col de l'utérus.Ces dispositifs peuvent être posés au moment du rapport sexuel, mais aussi plusieurs heures avant et doivent être gardés pendant 8 heures après le rapport.\nPréservatif externe « masculin » et interne « féminin » | Le préservatif externe se place sur le pénis avant pénétration, tandis que le préservatif interne peut être mis en place à l'intérieur du vagin ou de l'anus plusieurs heures avant le rapport sexuel\nSpermicides | Gel et ovule à placer à l'intérieur du vagin quelques minutes avant chaque rapport détruisant ainsi les spermatozoïdes\nProgestatifs injectables | Injection intramusculaire réalisée tous les 3 mois par un médecin, une sage-femme ou un infirmer\nContraception définitive | Intervention chirurgicale chez l’homme (vasectomie) ou chez la femme (ligature des trompes). Ces méthodes sont considérées comme irréversibles.\nVous pouvez obtenir des informations ou vous faire prescrire une contraception par :\n- Un médecin\n- Ou une sage-femme en cabinet de ville ou dans un centre de santé sexuelle.\n→ Où s'adresser : Centres de santé sexuelle (ex centre de planification et d’éducation familiale)",
+      "titre": "Quels sont les modes de contraception ?"
+     },
+     {
+      "texte": "Les médecins, sages-femmes et centres de santé sexuelle sont habilités à prescrire tous les modes de contraception.\nUne ordonnance est nécessaire pour les contraceptifs suivants :\n- Dispositif intra-utérin (stérilet)\n- Pilule\n- Patch\n- Implant\n- Anneau vaginal\n- Diaphragme et cape cervicale (les spermicides qui accompagnent l'utilisation du diaphragme s'achètent en pharmacie sans ordonnance)\n- Progestatifs injectables.\nLe consentement des parents ou du représentant légal n'est pas exigé pour la prescription, la délivrance ou l'administration de contraceptifs aux jeunes filles mineures.\nÀ savoir : L’infirmier peut prescrire des préservatifs et des contraceptifs d’urgence. Il peut aussi renouveler des prescriptions, datant de moins d’1 an, de certains médicaments contraceptifs oraux, pour une durée maximale de 6 mois, non renouvelable.",
+      "titre": "Qui peut prescrire un mode de contraception ?"
+     },
+     {
+      "texte": "Ce taux de remboursement peut varier en fonction de l'âge.\nÀ noter : Les préservatifs sont distribués gratuitement dans les centres de santé sexuelle et dans les centres de dépistage anonyme et gratuit (CeGGID).\nCas : Vous avez moins de 26 ans\nTableau : Prise en charge par l'Assurance maladie des différents dispositifs de contraception pour les moins de 26 ans\nDispositifs de contraception | Taux de prise en charge\nDispositif intra-utérin (stérilet) | À 100 %\nPilule | Certaines pilules sont remboursées par l'Assurance maladie à 100 %\nPatch | Non\nImplant | À 100 %\nAnneau vaginal | Non\nCape cervicale | Non\nDiaphragme | À 100 %\nSpermicides | Non\nProgestatifs injectables | À 100 %\nContraception définitive | À 80 %\nPréservatif externe de la marque :EdenSortez couvertsBe LovedSure & SmileManix ClassicEroskinPréservatif externe sans latex de la marque Manix Sensitivity | À 100 % sans prescription pour toute et tous sans minimum d'âge (y compris les bénéficiaires de l'aide médicale d'État et les ressortissants de l’Union européenne)\nPréservatif interne de la marque :ORMELLESo Sexy & SmileBe loved free | À 100 % sans prescription pour toute et tous sans minimum d'âge (y compris les bénéficiaires de l'aide médicale de l'État et les ressortissants de l’Union européenne)\nLa délivrance de préservatifs pris en charge à 100 % par l’Assurance maladie est limitée à une boite par délivrance. En fonction notamment du choix du patient, il peut s’agir d’une boite de 6 à 24 préservatifs.\nÀ savoir : Les mutuelles (complémentaires santé) peuvent éventuellement prendre en charge tout ou partie des frais qui ne sont pas remboursés par l'Assurance maladie si le contrat souscrit le prévoit. Renseignez-vous auprès de votre mutuelle.\nCertains contraceptifs sont gratuits dans les centres de santé sexuelle :\n- Pour les filles mineures souhaitant garder le secret\n- Et pour les femmes majeures n'ayant pas d'Assurance maladie.\nLes frais suivants liés à la contraception pour les moins de 26 ans sont pris en charge par l'Assurance maladie, sans avance de frais :\n- Consultation de suivi par un médecin ou une sage-femme la 1re année d'accès à la contraception\n- Consultation annuelle réalisée, à partir de la 2e année d’accès à la contraception, par un médecin ou une sage-femme, pour une prescription de contraception ou d’examens biologiques en lien avec la contraception\n- Certains examens de biologie médicale liés à la contraception (glycémie à jeun, cholestérol total et triglycérides), une fois par an\n- Actes donnant lieu à la pose, au changement ou au retrait d'un contraceptif\n- Délivrance des contraceptifs remboursables, en pharmacie, sur présentation d'une prescription médicale.\nÀ noter : L'Assurance maladie prend également en charge à 100 % la consultation longue santé sexuelle (sans avance de frais). Elle est accessible pour tous les jeunes, filles et garçons, jusqu'à 25 ans.\nCas : Vous avez 26 ans et plus\nTableau : Prise en charge par l'Assurance maladie des différents dispositifs de contraception pour les 26 ans et plus\nDispositifs de contraception | Taux de prise en charge\nDispositif intra-utérin (stérilet) | À 65 %\nPilule | Certaines pilules sont remboursées par l'Assurance maladie à 65 %\nPatch | Non\nImplant | À 65 %\nAnneau vaginal | Non\nCape cervicale | Non\nDiaphragme | À 65 %\nPréservatif externe de la marque :EdenSortez couvertsBe LovedSure & SmileManix ClassicEroskinPréservatif externe sans latex de la marque Manix Sensitivity | À 60 % sur prescription\nPréservatif interne de la marque :ORMELLESo Sexy & SmileBe loved free | À 60 % sur prescription\nSpermicides | Non\nProgestatifs injectables | À 65 %\nContraception définitive | À 80 %\nÀ savoir : Les mutuelles (complémentaires santé) peuvent éventuellement prendre en charge tout ou partie des frais qui ne sont pas remboursés par l'Assurance maladie si le contrat souscrit le prévoit. Il faut se renseigner auprès de votre mutuelle.",
+      "titre": "À quel taux sont remboursés les dispositifs contraceptifs par l'Assurance maladie ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

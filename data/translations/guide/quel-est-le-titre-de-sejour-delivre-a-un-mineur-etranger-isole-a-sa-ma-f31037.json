@@ -1,0 +1,284 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037",
+ "recordId": "a8b98054-2d00-406a-92f1-0688652a0389",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:09:46.709Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What is the titre de séjour (residence permit) issued to a foreign minor who has reached the age of majority?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "A foreign minor who is separated from their parents can obtain a titre de séjour (residence permit) at the age of majority or between the ages of 16 and 18.",
+      "steps": [
+       {
+        "texte": "If you are a minor (non-European) who has been taken in by the Ase (French agency for the protection of minors) or a trusted third party, or if you are a minor in need of protection, you may be eligible for a residence permit upon reaching the age of majority. You must meet certain conditions. We will inform you, depending on your situation, which type of residence permit you may be eligible for.\nA titre de séjour can be issued to you if you fall into one of the following categories:\nCase: You are arrested before the age of 16\nIf you are a minor foreigner who arrived in France alone and were placed under the care of the Ase (French National Agency for the Protection of Minors) or a trusted third party no later than the age of 16, you may be eligible for a temporary residence permit for private and family life.\nThe prefect is examining your situation in a comprehensive manner. He verifies all of the following conditions:\n- The training must be genuine and thorough.\n- Describe your relationship with the family that remained in the country of origin (the prefect will assess the nature and stability of the ties you have maintained in France, in light of your continued connections with your family in your country of origin)\n- Statement from the placement agency or a trusted third party regarding your integration into French society, which will be taken into account.\nA long-term visa is not required to obtain a residence permit.\nThis card allows you to pursue further education or to engage in the profession of your choice (employment, self-employment, business, etc.).\nYou can apply for the family and personal life card when you turn 18 (or at age 16 if you want to work).\nWhen you submit your application for titre de séjour, you must commit to upholding the principles of the Republic.\nCase: You are between the ages of 16 and 18\nIf you are a minor foreigner who has arrived in France alone and been placed under the care of the Ase or a trusted third party between the ages of 16 and 18, you may be admitted to the accommodation if you have been following a qualifying training program for at least 6 months.\nHowever, this is an exceptional regularization, and not an automatic right.\nDepending on the nature of your training, you may be issued one of the following cards:\n- Employee or temporary worker card if you have been enrolled in a qualifying vocational training program for at least 6 months\n- Student ID card if you are enrolled in secondary or higher education.\nTo accept or refuse to issue the card, the prefect will consider your situation holistically. He will take into account the following factors:\n- The course you are taking (it must be a real and serious one)\n- Nature of your ties with your family who remain in the country of origin (the prefect examines the reality and stability of the ties that have been established within France, taking into account the ties you have maintained in your country of origin)\n- Statement from the placement agency regarding the guarantees provided for your integration into the French society, which will be taken into account.\n- Proficiency in the French language is essential.\nYou must not pose a threat to public order, nor live in a polygamous relationship in France.\nWhen you submit your application for titre de séjour, you must commit to upholding the principles of the Republic.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-03-13"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.7,
+      "units": 26
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:10:48.400Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Bir yabancı, yetişkinliğe ulaştığında, kendisine verilen titre de séjour (oturum izni) belgesi nedir?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 42.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Bir yabancı çocuk, yetişkinliğe ulaştığında veya 16 ila 18 yaşları arasında titre de séjour (oturum izni) belgesini alabilir.",
+      "steps": [
+       {
+        "texte": "Eğer siz, Ase tarafından veya güvenilir bir üçüncü taraf tarafından korunan, olmayan bir yabancı (Avrupa olmayan) veya izole bir çocuksanız, yetişkin olduğunuzda oturum izni alabilirsiniz. Bunun için belirli şartları yerine getirmeniz gerekir. Durumunuza göre, size hangi oturum izninin verilebileceği konusunda size bilgi vereceğiz.\nBir titre de séjour, aşağıdaki durumlardan herhangi birinde size verilebilir:\nDurum: 16 yaşın öncesinde tutuklu bulunursanız\nEğer siz, Fransa'da yalnız olarak bulunan ve Ase veya güvenilir bir üçüncü tarafın 16 yaşını geçene kadar bakımına bırakılmış, yabancı bir çocuğunuzsanız, özel ve ailevi yaşamınız için geçici bir ikamet kartı alabilirsiniz.\nVali, durumunuzu genel olarak değerlendiriyor. Aşağıdaki tüm koşulları kontrol ediyor:\n- Alınan eğitim (gerçek ve ciddi olmalı)\n- Aile üyelerinizle olan bağlarınızın niteliği (Vali, Fransa'daki bölgedeki ve sizin ülkünüzdeki aile üyelerinizle kurduğunuz bağların gerçekliğini ve istikrarını değerlendirir)\n- Barınma kuruluşunun veya güvenilir üçüncü bir tarafın, Fransız toplumuna entegrasyonunuzla ilgili garantilerin değerlendirilmesinde rol oynadığı ve bu konuda sorumluluk taşıdığı bildirim.\nUzun süreli bir oturma izni, oturma kartı alabilmek için gerekli değildir.\nBu kart, eğitim hayatınızı devam ettirmenize veya tercih ettiğiniz bir mesleki faaliyette (işçi veya serbest çalışma, ticaret vb.) çalışmanıza olanak tanır.\n18 yaşınızda (veya 16 yaşınızda çalışmak istiyorsanız) aile ve kişisel yaşam kartınızı talep edebilirsiniz.\ntitre de séjour'e başvurunuzu yaparken, cumhuriyetin ilkelerine uymaya söz vermeniz gerekmektedir.\nDurum: 16 ile 18 yaşları arasında bulunuyorsunuz.\nEğer 16 ile 18 yaşları arasında, Fransa'ya tek başına gelmiş ve Ase veya güvenilir bir üçüncü taraf tarafından yönetilen bir çocuksanız, en az 6 ay boyunca geçerli bir eğitim programına katıldıysanız, barınma programına kabul edilebilirsiniz.\nAncak, bu, olağanüstü bir düzenleme olup, otomatik bir hak anlamına gelmemektedir.\nEğitiminizin türüne bağlı olarak, size aşağıdaki kartlardan bir tanesi verilebilir:\n- Çalışan kimliğine sahip veya belirli bir mesleki eğitim programına en az 6 aydır devam eden geçici çalışan kimliğine sahipseniz.\n- Öğrenci kartı, eğer lise veya üniversite öğrencisiniz ise.\nKartı teslim etme veya reddetme kararı, valinin genel bir değerlendirmesi sonucunda alınır. Bu değerlendirme sırasında aşağıdaki unsurlar dikkate alınır:\n- Alınan eğitim (gerçek ve ciddi bir eğitim olmalı)\n- Aile üyelerinizle (yerleşim ülkesinde kalan) olan bağlarınızın niteliği (Vali, yerleşim ülkesindeki Fransa'daki bağlarınızın niteliğini ve istikrarını, aynı zamanda yerleşim ülkesindeki bağlarınızı göz önünde bulundurarak değerlendirir)\n- Kurumun, Fransız toplumuna entegrasyonunuzla ilgili garantilerle ilgili görüşleri, bu konuda dikkate alınacaktır.\n- Fransızca diline yeterli düzeyde hakimiyet.\nKamu düzenine yönelik bir tehdit oluşturmamalısınız ve Fransa'da çok eşlilik uygulamasına girmemelisiniz.\ntitre de séjour'e başvurunuzu yaparken, cumhuriyetin ilkelerine uymaya söz vermeniz gerekmektedir.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-03-13"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.7,
+      "units": 26
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:11:53.126Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما هو الوثيقة titre de séjour (تصريح الإقامة)‏] التي يتم إصدارها لمراهق أجنبي بعد بلوغه سن الرشد؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 53.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "يمكن لطفل أجنبي يعيش بمفرده الحصول على titre de séjour (تصريح الإقامة) عند بلوغه سن الرشد أو بين سن 16 و 18 عامًا.",
+      "steps": [
+       {
+        "texte": "إذا كنت قاصراً غير أوروبي (غير إوروبي) تم استقباله من قبل \"Ase\" أو طرف موثوق به، أو إذا كنت قاصراً معزولاً، يمكنك الحصول على بطاقة إقامة بمجرد بلوغك سن الرشد. يجب عليك استيفاء بعض الشروط. بناءً على وضعك، سنوضح لك أي نوع من بطاقات الإقامة يمكنك الحصول عليها.\nيمكنك الحصول على titre de séjour‏] إذا كنت من الفئة التالية:\nمثال: يتم القبض عليك قبل بلوغك سن 16 عامًا.\nإذا كنت قاصراً أجنبياً وصل إلى فرنسا بمفردك، وتم تكليفك إلى مؤسسة Ase أو إلى جهة موثوقة، وذلك قبل بلوغك سن 16 عامًا، يمكنك الحصول على تصريح إقامة مؤقت يتيح لك ممارسة الحياة الخاصة والعائلية.\nيقوم محافظ المنطقة بدراسة وضعك بشكل شامل. ويتحقق من جميع الشروط التالية:\n- يجب أن تكون التدريبية حقيقية وذات جودة عالية.\n- طبيعة علاقاتك مع العائلة التي بقيت في البلد الأصلي (يقوم المفوض بتفحص طبيعة العلاقات ومدى استقرارها في الأراضي الفرنسية، مع الأخذ في الاعتبار العلاقات التي تحافظ عليها في بلدك الأصلي).\n- بيان من المؤسسة التي تقدم خدمات الإيواء أو من جهة موثوقة أخرى، يوضح الضمانات المتعلقة بدموك في المجتمع الفرنسي، والتي سيتم أخذها في الاعتبار.\nلا يتطلب الحصول على بطاقة الإقامة الحصول على تأشيرة إقامة طويلة الأمد.\nتتيح لك هذه البطاقة مواصلة دراستك أو ممارسة المهنة التي تختارها (وظيفة في شركة أو عمل حر، أو التجارة، إلخ).\nيمكنك طلب بطاقة الحماية الاجتماعية والبطاقة العائلية في سن 18 عامًا (أو في سن 16 عامًا إذا كنت ترغب في العمل).\nعند تقديم طلبك الخاص بـ titre de séjour، يجب عليك الالتزام بمبادئ الجمهورية.\nمثال: أنت تتلقى العلاج بين سن 16 و 18\nإذا كنت قاصراً أجنبياً وصل إلى فرنسا بمفردك، وتم تكليفك إلى مؤسسة Ase أو إلى طرف ثالث موثوق به بين سن 16 و 18 عاماً، فقد يتم قبولك في السكن إذا كنت قد أكملت تدريباً مؤهلاً لمدة لا تقل عن 6 أشهر.\nلكن هذا يتعلق بتسجيل استثنائي، وليس بحق تلقائي.\nاعتمادًا على طبيعة تدريبك، قد يتم منحك إحدى البطاقات التالية:\n- بطاقة موظف أو عامل مؤقت إذا كنت تتابع دورة تدريبية مهنية معتمدة لمدة لا تقل عن 6 أشهر.\n- بطاقة طالب إذا كنت تدرس في المرحلة الثانوية أو الجامعية.\nلتقييم ما إذا كان سيتم إصدار البطاقة أم لا، يقوم محافظ المقاطعة بتقييم وضعك بشكل شامل. ويأخذ في الاعتبار العوامل التالية:\n- الدورة التدريبية التي تشارك فيها (يجب أن تكون حقيقية وذات مستوى عالٍ)\n- طبيعة علاقاتك مع عائلتك التي بقيت في بلد الأصل (يقوم المفوض بتفحص طبيعة وعمق العلاقات التي تم تطويرها على الأراضي الفرنسية، مع الأخذ في الاعتبار العلاقات التي لا تزال قائمة مع عائلتك في بلدك الأصلي).\n- بيان المنظمة المسؤولة بشأن الضمانات المتعلقة بدموك في المجتمع الفرنسي، وسيتم أخذ ذلك في الاعتبار.\n- إتقان اللغة الفرنسية بشكل كافٍ.\nيجب ألا تشكل تهديدًا للنظام العام، ولا يجب أن تعيش في حالة تعدد الزوجات في فرنسا.\nعند تقديم طلبك الخاص بـ titre de séjour، يجب عليك الالتزام بمبادئ الجمهورية.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-03-13"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73,
+      "units": 26
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:12:59.986Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Welche titre de séjour (Aufenthaltstitel)-Bescheinigung wird einem ausländischen Minderjährigen, der das 18. Lebensjahr erreicht hat, ausgestellt?",
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 61.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Ein ausländisches minderjähriges Kind kann ein titre de séjour (Aufenthaltstitel) erhalten, entweder bei Erreichen der Volljährigkeit oder zwischen 16 und 18 Jahren.",
+      "steps": [
+       {
+        "texte": "Wenn Sie ein ausländisches Minderjähriges (nicht-europäischer Staatsbürger) sind, das von der Ase oder einer vertrauenswürdigen dritten Partei betreut wird, oder wenn Sie ein isoliertes Minderjähriges sind, können Sie nach Erreichen der Volljährigkeit eine Aufenthaltskarte erhalten. Sie müssen bestimmte Voraussetzungen erfüllen. Wir informieren Sie, je nach Ihrer Situation, welche Art von Aufenthaltskarte Ihnen gewährt werden kann.\nEin titre de séjour kann Ihnen ausgestellt werden, wenn Sie einer der folgenden Bedingungen entsprechen:\nFall: Sie werden vor dem 16. Lebensjahr in Gewahrsam genommen.\nWenn Sie ein minderjähriger Ausländer sind, der in Frankreich allein aufgetreten ist und bis zum 16. Lebensjahr dem Ase (Agent für Ausländerangelegenheiten) oder einer anderen vertrauenswürdigen Person übergeben wurde, können Sie eine vorübergehende Aufenthaltserlaubnis für den privaten und familiären Bereich beantragen.\nDer Präfekt untersucht Ihre Situation umfassend. Dabei werden folgende Aspekte geprüft:\n- Notwendige Schulung (diese muss real und ernsthaft sein)\n- Art der Beziehungen zu der Familie, die im Heimatland geblieben ist (Der Präfekt prüft die Realität und Stabilität der Beziehungen, die im französischen Territorium entstanden sind, unter Berücksichtigung Ihrer Beziehungen, die Sie in Ihrem Heimatland gepflegt haben).\n- Aussage der Betreuungseinrichtung oder einer vertrauenswürdigen dritten Partei über die Sicherstellung Ihrer Integration in die französische Gesellschaft, die bei der Bewertung berücksichtigt wird.\nFür die Erlangung der Aufenthaltskarte ist kein Visum für einen längeren Aufenthalt erforderlich.\nDiese Karte ermöglicht es Ihnen, ein Studium zu absolvieren oder die von Ihnen gewählte berufliche Tätigkeit auszuüben (Angestelltentätigkeit oder Selbstständigkeit, Handel usw.).\nSie können sich ab Ihrem 18. Lebensjahr (oder bereits mit 16 Jahren, falls Sie arbeiten möchten) eine Familien- und Privatleben-Karte beantragen.\nBei der Einreichung Ihres Antrags auf titre de séjour müssen Sie sich verpflichten, die Prinzipien der Republik zu respektieren.\nFall: Sie sind zwischen 16 und 18 Jahren betroffen.\nWenn Sie ein minderjähriger Ausländer sind, der sich in Frankreich isoliert aufgehalten hat und dem Ase (Agent für Schutz von Minderjährigen) oder einem anderen beauftragten Dritten zwischen 16 und 18 Jahren anvertraut wurde, können Sie möglicherweise in ein Unterbringungszentrum aufgenommen werden, wenn Sie seit mindestens 6 Monaten eine qualifizierende Ausbildung absolviert haben.\nEs handelt sich jedoch um eine außergewöhnliche Sonderregelung, und nicht um einen automatischen Anspruch.\nJe nach Art Ihrer Ausbildung können Sie eine der folgenden Karten erhalten:\n- Arbeitskarte für Angestellte oder für Personen mit einem vorübergehenden Arbeitsvertrag, wenn Sie seit mindestens 6 Monaten eine qualifizierende berufliche Ausbildung absolvieren.\n- Studentenkarte, falls Sie eine weiterführende oder Hochschulausbildung besuchen.\nUm die Erteilung oder den Verzicht auf die Ausstellung der Karte zu genehmigen oder abzulehnen, prüft der Präfekt Ihre Situation umfassend. Dabei berücksichtigt er folgende Aspekte:\n- Das von Ihnen belegte Kurs (er muss echt und ernst sein)\n- Art der Beziehungen zu Ihrer Familie, die im Heimatland geblieben ist (Der Präfekt prüft die Realität und Stabilität der Beziehungen, die Sie in Frankreich gepflegt haben, unter Berücksichtigung der Beziehungen, die Sie in Ihrem Heimatland unterhalten).\n- Aussage der Betreuungseinrichtung bezüglich der Garantien für Ihre Integration in die französische Gesellschaft, die bei der Bewertung berücksichtigt werden.\n- Ausreichende Kenntnisse der französischen Sprache sind erforderlich.\nSie dürfen weder eine Bedrohung für die öffentliche Ordnung darstellen, noch in Frankreich eine polygame Lebensweise führen.\nBei der Einreichung Ihres Antrags auf titre de séjour müssen Sie sich verpflichten, die Prinzipien der Republik zu respektieren.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-03-13"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 74.6,
+      "units": 26
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:14:10.874Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Який документ titre de séjour (посвідка на проживання) видається особі, яка досягла повноліття, але перебуває у зоні конфлікту?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Дитина, яка перебуває за кордоном, може отримати titre de séjour (посвідка на проживання) після досягнення повноліття або у віці від 16 до 18 років.",
+      "steps": [
+       {
+        "texte": "Якщо ви є немешканцем (не європейцем), якого прийняла Асе, або третьою особою, довіреною організацією, або якщо ви є самотнім неповнолітнім, ви можете отримати посвідку на проживання після досягнення повноліття. Для цього необхідно відповідати певним вимогам. Ми надамо вам інформацію про те, яка посвідка може бути вам видана, залежно від вашої ситуації.\nДокумент titre de séjour може бути виданий вам, якщо ви відповідаєте одному з наступних випадків:\nСитуація: Ви перебуваєте під опікою до 16 років.\nЯкщо ви є немешканцем, який перебуває у Франції самостійно та довірений АСЕ або іншій надійній особі не пізніше 16 років, ви можете отримати тимчасову картку перебування для проживання та підтримки сім'ї.\nПрефект комплексно вивчає вашу ситуацію. Він перевіряє всі наступні умови:\n- Навчання (воно має бути реальним і серйозним)\n- Характер ваших зв'язків з родиною, яка залишилася в країні походження (Префект аналізує реальність і стабільність встановлених зв'язків на території Франції, враховуючи ті зв'язки, які ви підтримуєте у своїй країні походження).\n- Опис організації, що надає послуги підтримки, або іншої довіреної сторони щодо гарантій вашого успішного інтеграції у французькому суспільстві, які будуть враховані.\nДля отримання посвідки на проживання не потрібен віза на тривалий термін.\nЦя карта дозволяє вам продовжити навчання або займатися обраною професійною діяльністю (робота за контрактом або самостійно, підприємницька діяльність тощо).\nВи можете отримати карту приватного та сімейного життя у віці 18 років (або вже у віці 16 років, якщо ви плануєте працювати).\nПід час подання вашої заявки на titre de séjour, ви повинні зобов'язатися дотримуватися принципів Республіки.\nСитуація: Ви перебуваєте в інтернат від 16 до 18 років.\nЯкщо ви є немешканцем, який перебуває у Франції самостійно та до якого вдалося дотриматися умов захисту, а також вам було надано захисного опікуна (Ase) або іншої довіреної особи у віці від 16 до 18 років, ви можете бути прийняти до притулку, якщо протягом щонайменше 6 місяців ви проходили відповідну підготовку.\nОднак, це є винятковий випадок, а не автоматичне право.\nЗалежно від вашого рівня освіти, вам може бути видана одна з наступних карт:\n- Карта працівника або тимчасового робітника, якщо ви проходите професійне навчання, яке дає право на отримання кваліфікації, протягом щонайменше 6 місяців.\n- Карта студента, якщо ви навчаєтесь у середній або вищій школі.\nЩоб прийняти або відмовити у видачі картки, мер має розглянути вашу ситуацію в цілому. Він враховує такі фактори:\n- Навчання, яке ви проходите (воно має бути реальним і серйозним)\n- Характер ваших зв'язків з родиною, яка залишилася в країні походження (Префект оцінює реальність та стабільність встановлених зв'язків на території Франції, враховуючи ті, які ви зберегли у своїй країні).\n- Повідомлення установи, що надає підтримку, щодо гарантій вашого успішного інтеграції у французькому суспільстві, які будуть враховані.\n- Необхідне володіння французькою мовою, яке має бути достатнім.\nВи не повинні становити загрозу для громадського порядку, а також не повинні проживати у багатошлюбній родині у Франції.\nПід час подання вашої заявки на titre de séjour, ви повинні зобов'язатися дотримуватися принципів Республіки.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F31037",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31037",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-03-13"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.8,
+      "units": 26
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:9a5a05fd648065dad2da2a458503a902c1fb16644ac2e71db395c7f69a6976b7",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Quel est le titre de séjour délivré à un mineur étranger isolé à sa majorité ?",
+   "contenu_json": {
+    "intro": "Un mineur étranger isolé peut obtenir un titre de séjour à sa majorité ou entre 16 et 18 ans.",
+    "steps": [
+     {
+      "texte": "Si vous êtes un mineur étranger (non européen) recueilli par l'Ase ou un tiers digne de confiance ou si vous êtes mineur isolé, vous pouvez obtenir une carte de séjour à votre majorité. Vous devez remplir certaines conditions. Nous vous indiquons, en fonction de votre situation, quelle carte peut vous être délivrée.\nUn titre de séjour peut vous être délivré si vous êtes dans l'un des cas suivants :\nCas : Vous êtes recueilli avant l'âge de 16 ans\nSi vous êtes mineur étranger entré isolé en France et confié à l'Ase ou à un tiers digne de confiance au plus tard à l'âge de 16 ans, vous pouvez obtenir une carte de séjour temporaire vie privée et familiale.\nLe préfet étudie de façon globale votre situation. Il vérifie l'ensemble des conditions suivantes :\n- Formation suivie (elle doit être réelle et sérieuse)\n- Nature de vos liens avec la famille restée dans le pays d'origine (le préfet examine la réalité et la stabilité des liens développés sur le territoire français, au regard de vos liens que vous avez conservés dans votre pays d'origine)\n- Avis de la structure d'accueil ou du tiers digne de confiance sur les garanties de votre insertion dans la société française, dont il sera tenu compte.\nUn visa de long séjour n'est pas exigé pour obtenir la carte de séjour.\nCette carte vous permet de poursuivre des études ou d'exercer l'activité professionnelle de votre choix (travail salarié ou indépendant, commerce, etc.).\nVous pouvez demander la carte vie privée et familiale à vos 18 ans (ou dès l'âge de 16 ans si vous souhaitez travailler).\nLors du dépôt de votre demande de titre de séjour, vous devez vous engager à respecter les principes de la République.\nCas : Vous êtes recueilli entre 16 et 18 ans\nSi vous êtes mineur étranger entré isolé en France et confié à l'Ase ou à un tiers de confiance entre 16 et 18 ans, vous pouvez être admis au séjour si vous suivez depuis au moins 6 mois une formation qualifiante.\nMais il s'agit d'une régularisation exceptionnelle, et non d'un droit automatique.\nSuivant la nature de votre formation, il peut vous être délivré l'une des cartes suivantes :\n- Carte salarié ou travailleur temporaire si vous suivez une formation professionnelle qualifiante depuis au moins 6 mois\n- Carte étudiant si vous suivez des études secondaires ou universitaires.\nPour accepter ou refuser de délivrer la carte, le préfet examine de façon globale votre situation. Il prend en compte les éléments suivants :\n- Formation que vous suivez (elle doit être réelle et sérieuse)\n- Nature de vos liens avec votre famille restée dans le pays d'origine (le préfet examine la réalité et la stabilité des liens développés sur le territoire français, au regard des liens que vous avez conservés dans votre pays d'origine)\n- Avis de la structure d'accueil sur les garanties de votre insertion dans la société française, dont il sera tenu compte\n- Maîtrise de la langue française qui doit être suffisante.\nVous ne devez pas représenter une menace pour l'ordre public, ni vivre en situation de polygamie en France.\nLors du dépôt de votre demande de titre de séjour, vous devez vous engager à respecter les principes de la République.",
+      "titre": null
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

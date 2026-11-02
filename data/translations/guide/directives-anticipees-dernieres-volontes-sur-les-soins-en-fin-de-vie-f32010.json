@@ -1,0 +1,487 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
+ "recordId": "56e0b64d-b109-4af8-807f-91edbf6b2237",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:18:39.996Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Advance Directives: Latest wishes regarding end-of-life care",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Any adult person can create advance directives to express their wishes regarding the end of their life.",
+      "steps": [
+       {
+        "texte": "What are advance directives? They are written statements that you prepare to express your wishes regarding the end of your life. You clearly state your desire to continue, limit, refuse, or stop medical treatments or procedures. This document helps doctors make decisions about your care if you are unable to express your wishes (for example, due to a serious illness). We will discuss the relevant regulations.",
+        "titre": null
+       },
+       {
+        "texte": "Advance directives allow you to express your wishes regarding your end-of-life care in advance, in the event that you are unable to do so yourself. For example, this could include situations such as being in a coma, experiencing significant cognitive impairment, suffering an accident, or developing a serious illness, or being in old age.\nThese advance directives are not intended to be used if you are capable of expressing your wishes.\nThey express your wishes regarding the conditions for continuing, limiting, stopping, or refusing treatment or medical procedures.\nYou indicate whether you accept or refuse:\n- Cardiopulmonary resuscitation (including the use of a breathing tube)\n- Connecting your body to a kidney dialysis machine\n- Such as a particular surgical procedure.\nIf you are unable to express your wishes and there are no advance directives in place, the medical team will need to try to determine your wishes, for example, through the testimony of a trusted person.\nIn the absence of a designated trusted person, the medical team will gather statements from your family or close contacts.",
+        "titre": "What do advance directives allow?"
+       },
+       {
+        "texte": "This depends on your specific circumstances:\nCase: General case\nYou must be 18 years of age or older to create your advance directives.\nSpecifically: From the age of 18, your Assurance maladie (French public health insurance) insurance company will periodically inform you of your right to draft, revise, and confirm its pre-determined terms and conditions.\nCase: You are under guardianship\nCase: Able to write\nIf you are able to draft your advance directives yourself, you can do so independently, without any assistance, representation, or prior intervention from the judge.\nCase: Unable to write\nIf you are not intellectually or materially capable of writing them, these guidelines cannot be developed, nor by you and your supervisor.",
+        "titre": "Who can create pre-emptive guidelines?"
+       },
+       {
+        "texte": "The advance directives should be in written form, dated, and signed with:\n- Your first and last names\n- Your date and place of birth.\nThe document is handwritten or typed.\nSome healthcare facilities provide a form.\nTo help you, 2 templates with editable fields are provided, depending on whether you:\n- Are you suffering from a serious illness, and do you believe you are nearing the end of your life (Type A)?\n- Imagine that you are in good health and do not have any serious illness (scenario B).\n→ Online service: Template for advance directives (creation, modification, cancellation)\nThe use of this template is not mandatory. Guidelines can also be written on plain paper.\nHowever, this model ensures that your expression of will meets the validity requirements set by the regulations. It also helps you in a process that can be challenging.\nYour primary care physician should inform you about the possibility and conditions for creating and revising advance directives.\nYou can use 2 witnesses, including someone you trust, to write the statements on your behalf.\nThese individuals must attest that this document, which has been prepared by one of them or by a third party, accurately reflects your wishes.\nThey must include:\n- Their name, first name\n- And the level of your relationship with me (brother, friend, etc.).\nTheir attestation must be attached to the advance directives.",
+        "titre": "How to write advance directives?"
+       },
+       {
+        "texte": "When faced with a patient who is no longer able to express their wishes, doctors must try to determine whether they have prepared advance directives. It is therefore important that these documents are easily accessible.\nPlease note: Regardless of your choice, inform your doctor and loved ones about the existence and location of your advance directives. This way, when the time comes, the doctor who will be with you during your final days will know where to find your directives.\nThere are several ways to make your advance directives known:\nExample: Record instructions in the shared medical record (digital health space)\nWe recommend that you:\n- On how to have your advance directives recorded in My Health Space (shared medical record)\n- And make sure to inform your loved ones (a trusted person or both witnesses if you are unable to write your own instructions) that their names and personal contact information are included there.\nSimilarly, if the shared medical record indicates that someone has access to your advance directives, be sure to inform them that their name and contact information are included in the record.\nThis will make them easily accessible when needed.\nCase: Providing advance directives to your primary care physician (or another physician)\nYou can provide your advance directives to your doctor. He will keep them in the file he has created for you, particularly in the absence of a shared medical record.\nSpecifically: If your advance directives are stored in a medical record, be sure to inform your loved ones (the designated person or the 2 witnesses if you are unable to write them) that their names and personal contact information are included. Similarly, if the medical record indicates that a person has your advance directives, be sure to inform them that their names and contact information are included.\nCase: Entrusting instructions to a family member\nFinally, you can also delegate your instructions to:\n- Your trusted contact\n- Or, someone from your family\n- Or someone close to them.\nIn this case, you can mention their existence, their storage location, and the identity of the person in possession of your instructions in your medical record.\nCase: Providing instructions to the hospital or elderly care facility\nIf you are hospitalized for a serious illness or admitted to a care facility, you can provide your wishes to the hospital or facility.\nHe will include them in your file.\nReminder: If you choose to keep your advance directives in your \"shared medical record\" or in a separate medical record, be sure to inform the relevant individuals (your \"designated contact person\" or witnesses) that their names and personal contact information are included. Similarly, if these records indicate that a person holds your advance directives, be sure to inform them that their names and personal contact information are included.\nCase Study: Keeping guidelines at home\nYou can also keep them at home and/or have a record of where they are stored with you.",
+        "titre": "How can we raise awareness about advance care planning?"
+       },
+       {
+        "texte": "These guidelines apply to physicians for any decision regarding investigation, intervention, or treatment.\nHowever, these rules do not apply in the following two cases:\n- In the event of a life-threatening emergency during the time required for a thorough assessment of the situation (e.g., a patient requiring resuscitation following a sudden medical incident),\n- When advance directives appear manifestly inappropriate or inconsistent with the medical situation, the physician must make a decision within a collegial process. This means that several doctors will discuss the case and reach a consensus. Once a decision is made, it is documented in the patient's medical record. The decision to refuse to follow advance directives is communicated to the designated person or, if that is not possible, to the patient's family or close contacts.",
+        "titre": "Should the doctor take advance directives into account?"
+       },
+       {
+        "texte": "The guidelines are intended to be permanent.",
+        "titre": "What is the validity period for advance directives?"
+       },
+       {
+        "texte": "If multiple directives exist, the most recent ones are given priority, regardless of the medium.",
+        "titre": "What about the situation when multiple advance directives are in place?"
+       },
+       {
+        "texte": "The instructions may be modified or cancelled at any time.\nThe final page of the draft guidelines model is dedicated to making changes or canceling the guidelines:\n→ Online service: Template for advance directives (creation, modification, cancellation)\nIf you wish to modify your pre-defined instructions, you can create new ones.\nTherefore, ask your doctor, the hospital, or the healthcare facility that holds them to remove the previous ones.\nIf they have been recorded in your shared medical record (the digital health space), you can add new ones.\nOnly the most recent document will be considered.\nYou can use 2 witnesses, including someone you trust, to write the statements on your behalf.\nThese individuals must attest that this document, which has been prepared by one of them or by a third party, accurately reflects your wishes.\nThey must include:\n- Their name, first name\n- And the level of your relationship with me (brother, friend, etc.).\nTheir attestation must be attached to the advance directives.",
+        "titre": "Is it possible to modify or cancel pre-agreed directives?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32010",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32010",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-05-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 79,
+      "units": 89
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:22:45.737Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Tahmin edilen talimatlar: yaşamın son evrelerinde bakım ile ilgili son istekler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 40.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Herhangi bir yetişkin, yaşamının sonuna ilişkin isteklerini belirlemek amacıyla önceden talimatlar hazırlayabilir.",
+      "steps": [
+       {
+        "texte": "\"Önceden belirlenmiş talimatlar\" olarak adlandırılanlar, yaşamınızın sonuna ilişkin isteklerinizi belirlemek için yazdığınız yazılı bir belgedir. Bu belge, tedavileri veya tıbbi müdahaleleri devam ettirmek, sınırlamak, durdurmak veya reddetmek gibi isteklerinizi önceden ifade etmenizi sağlar. Bu belge, doktorların, durumunuzun acil olduğunda, sizin isteklerinizi ifade edemediğiniz durumlarda (örneğin, ciddi bir hastalık nedeniyle) hangi tedavileri uygulayacaklarına karar vermelerine yardımcı olur. Ayrıca, düzenlemeler hakkında da bilgi veriyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Önceden belirlenen talimatlar, bir durumda sizin isteğinizi ifade edemediğiniz durumlarda, yaşamınızın sonuna ilişkin tercihlerinizi önceden belirtmenize olanak tanır. Örneğin, koma, ciddi bilişsel bozukluklar, kaza, bir hastalığın ilerlemesi veya yaşlılık.\nBu önceden belirlenmiş talimatlar, isteklerinizi ifade edebildiğiniz durumlarda kullanılmak üzere tasarlanmamıştır.\nBunlar, tedavi, sınırlama, durdurma veya tıbbi bir işlem veya tedavi reddi ile ilgili koşulları belirlemenizi ifade eder.\nİzin vermek veya reddetmek isteyip istemediğinizi belirtin:\n- Kardiyak ve solunum destek tedavisi (solunum tüpü)\n- Vücudunuzu bir diyaliz makinesine bağlama\n- Belirli bir cerrahi müdahale veya herhangi bir cerrahi işlem.\nEğer kendi isteklerinizi ifade edemiyor ve önceden belirlenmiş bir talimatınız yoksa, tıbbi ekibin, özellikle de güvendiğiniz birinin ifadesi aracılığıyla, isteklerinizi anlamaya çalışması gerekecektir.\nGüvenilir bir kişi belirlenemediği durumda, tıbbi ekip, ailenizden veya yakınlarınızdan ifadeler toplayacaktır.",
+        "titre": "Anticipatif yönergeler neler sağlar?"
+       },
+       {
+        "texte": "Bu, sizin durumunuza bağlıdır:\nÖrnek: Genel durum\nÖnceden geçerli olacak talimatlarınızı hazırlamak için 18 yaşını doldurmuş olmanız gerekmektedir.\nBilindiği gibi: 18 yaşınızdan itibaren, Assurance maladie (Fransız kamu sağlık sigortası) adlı kuruluşunuz, önceden belirlenmiş yönergelerinizi düzenleme, güncelleme ve onaylama imkanınızı düzenli olarak size bildirir.\nDurum: Vekil atanmış durumda\nÖrnek: Metin yazma yeteneğine sahip\nEğer önceden talimatlar hazırlama yeteneğiniz varsa, bunu bağımsız olarak, herhangi bir yardım veya temsil olmadan, mahkemenin önceden müdahalesi olmadan gerçekleştirebilirsiniz.\nÖrnek: Yazım yeteneği bulunmamaktadır.\nEğer zihinsel veya fiziksel olarak bu belgeleri hazırlamak için yeterli donanıma sahip değilseniz, bu yönergeler sizin veya eğitmeninizin tarafında oluşturulamaz.",
+        "titre": "Kim önceden yönergeler hazırlayabilir?"
+       },
+       {
+        "texte": "Önceden belirlenmiş yönergeler, tarihli ve imzalı bir yazılı belge şeklinde olmalıdır ve aşağıdaki bilgileri içermelidir:\n- Adlarınız ve soyadlarınız\n- Doğum tarihiniz ve doğum yeriniz.\nLe document est manuscrit ou dactylographié.\nBazı sağlık kuruluşları, gerekli formları temin etmektedir.\nSize yardımcı olmak için, değiştirilebilir alanlara sahip 2 farklı model sunulmaktadır:\n- Ciddi bir hastalığınız var, yaşamınızın sonuna yaklaştığınızı düşünüyorsunuz (Model A)\n- Kendinizi sağlıklı olarak düşünün, herhangi ciddi bir hastalığınız yok (Model B).\n→ Çevrimiçi hizmet: Önceden belirlenmiş yönergeler için örnek (oluşturma, değiştirme, iptal etme)\nBu şablonun kullanımı zorunlu değildir. Önceden hazırlanmış talimatlar, kağıt üzerinde de yazılabilir.\nAncak, bu model, iradenizin ifade edilişinin, düzenlemeler tarafından belirlenen geçerlilik koşullarına uygun olduğunu garanti eder. Ayrıca, bu süreçte size yardımcı olur ve bu süreç bazen zorlayıcı olabilir.\nDoktorunuz, önceden yazılmış ve güncellenebilir talimatların mümkün olup olmadığını ve hangi şartlarda oluşturulabileceğini size bildirmelidir.\nİmza için, güvendiğiniz bir kişiyi de dahil olmak üzere 2 tanık kullanabilirsiniz.\nBu kişiler, bu belgeyi kendilerinden biri veya bir üçüncü taraf tarafından hazırlanmış ve sizin niyetinizi doğru bir şekilde ifade ettiğini doğrulamalıdır.\nBunlar şunları içermelidir:\n- Adları, soyadları\n- Ve sizinle olan ilişkinin seviyesi (kardeş, arkadaş...).\nOnay belgeleri, önceden belirlenmiş talimatlarla birlikte sunulmalıdır.",
+        "titre": "\"Önceden hazırlanmış yönergeler nasıl yazılır?\""
+       },
+       {
+        "texte": "Hasta, isteklerini ifade edemediği durumda, doktorlar hastanın önceden yazılmış talimatları olup olmadığını araştırmalıdır. Bu nedenle, bu talimatların kolayca erişilebilir olması önemlidir.\nLütfen: Seçiminiz ne olursa olsun, yaşam sonu talimatlarınızın varlığını ve saklama yerini doktorunuza ve yakınlarınıza bildirin. Böylece, yaşamınızın sonuna geldiğinizde, sizi bu süreçte destekleyecek doktor, bu talimatları kolayca bulabilecektir.\nÖnceden belirlenmiş talimatlarınızı duyurmanın çeşitli yolları vardır:\nÖrnek: Sağlık dijital ortamında (paylaşılan tıbbi kayıtlar klasörü) talimatları kaydetme.\nÖnerilenler:\n- Önceden belirlediğiniz talimatlarınızı \"Sağlık Alanım\" (ortak tıbbi kayıt) bölümünde kaydettirmek.\n- Ayrıca, yakınlarınıza (güvenilir bir kişi veya siz yazamıyorsanız 2 tanık) bu bilgilerin içinde yer aldığını ve isimlerinin ve kişisel iletişim bilgilerinin de orada bulunduğunu bildirin.\nAyrıca, eğer paylaşım yapılan tıbbi kayıt, bir kişinin sizin önceden belirlenmiş talimatlarınızı bildirdiğini belirtiyorsa, bu bilgilerin kayıtlandığını ona hatırlatmayı unutmayın.\nBu nedenle, gerektiğinde kolayca erişilebilir olacaklardır.\nÖrnek: Önceden belirlenmiş talimatları, kendi doktorunuza (muayeneci veya başka bir doktor) iletmek.\nÖnceden belirlediğiniz talimatları doktorunuza iletebilirsiniz. Doktorunuz, bu talimatları, özellikle ortak bir tıbbi kayıt olmadığında, sizin adına oluşturduğu dosyada saklayacaktır.\nÖnemli: Eğer talimatlarınız tıbbi kayıtlarınızda yer alıyorsa, sevdiklerinize (güvenilir bir kişi veya siz yazı yazamıyorsanız 2 tanık) bu kayıtların içinde kendi adlarının ve kişisel iletişim bilgilerinin yer aldığını hatırlatmayı unutmayın. Ayrıca, tıbbi kayıtlarınızda bir kişinin talimatlarınızı bildiği belirtiliyorsa, bu kişinin kendi adının ve iletişim bilgilerinin kayıtların içinde yer aldığını hatırlatmayı unutmayın.\nÖrnek: Talimatları bir yakına devretmek\nSon olarak, talimatlarınızı aşağıdaki kuruluşlara da iletebilirsiniz:\n- Güvenebileceğiniz kişi\n- Veya, bu konuda bir aile üyeniz\n- Veya bir tanıdık.\nBu durumda, bu ürünlerin varlığı, saklama yeri ve size ait talimatların kim tarafından tutulduğu, tıbbi kayıtlarınızda sizin tarafınızdan belirtilebilir.\nÖrnek: Talimatları hastaneye veya yaşlılar için kuruma devretmek\nEğer ciddi bir hastalığınız için hastaneye yatıyorsanız veya yaşlı bakım merkezine yerleştiriliyorsanız, bu hastaneye veya merkeze talimatlarınızı iletebilirsiniz.\nBunları dosyanıza ekleyecektir.\nHatırlatma: Eğer tercih ettiyseniz, talimatlarınızı \"paylaşılan tıbbi kayıt\" veya bir tıbbi kayıt içinde saklamak istiyorsanız, ilgili kişilere (güvenilir kişi veya tanıklarınız) bu kayıtların içinde kendi adlarının ve kişisel iletişim bilgilerinin yer aldığını bildirmeyi unutmayın. Ayrıca, bu kayıtların, bir kişinin sizin önceden belirlenmiş talimatlarınıza sahip olduğunu belirtmesi durumunda, bu kişinin kendi adlarının ve kişisel iletişim bilgilerinin bu kayıtların içinde yer aldığını da bildirmeyi unutmayın.\nÖrnek: Evde yönergeleri saklamak\nAyrıca, bunları evinizde saklayabilir ve/veya sakladıkları yerin bir işaretine sahip olabilirsiniz.",
+        "titre": "\"Önceden belirlenmiş kuralların varlığını nasıl duyurabiliriz?\""
+       },
+       {
+        "texte": "Bu yönergeler, doktorun herhangi bir teşhis, müdahale veya tedavi kararı alırken uyması gereken kuralları içerir.\nAncak, bu kurallar aşağıdaki iki durumda uygulanmaz:\n- Acil bir durum söz konusu olduğunda, durumun tam olarak değerlendirilmesi için gereken süre içinde (örneğin, ani bir sağlık sorunu sonucu yeniden canlandırılması gereken hasta)\n- Eğer önceden belirlenmiş yönergeler açıkça uygunsuz veya tıbbi durumla uyuşmuyorsa, doktor bu durumu bir ekip halinde değerlendirerek karar vermelidir. Bu karar, birkaç doktorun birlikte değerlendirmesiyle alınır. Karar alındıktan sonra, tıbbi kayıtlar aracılığıyla ilgili kişiye veya ailesine veya yakınlarına iletilir.",
+        "titre": "Doktor, önceden belirlenmiş talimatları dikkate almalı mı?"
+       },
+       {
+        "texte": "Bu önceden belirlenmiş yönergeler, sınırsız bir süreye sahiptir.",
+        "titre": "Anticipatif talimatların geçerlilik süresi nedir?"
+       },
+       {
+        "texte": "Birden fazla önceden belirlenmiş yönerge varsa, en güncel olanlar dikkate alınır, hangi ortamda kullanılırlarsa olsun.",
+        "titre": "Birden fazla önceden belirlenmiş talimat söz konusu olduğunda durum nedir?"
+       },
+       {
+        "texte": "Önceden belirlenen talimatlar, herhangi bir zamanda değiştirilebilir veya iptal edilebilir.\nModeldeki önceden belirlenmiş yönergelerin son sayfası, yönergelerin değiştirilmesi veya iptal edilmesi ile ilgili bölüme ayrılmıştır:\n→ Çevrimiçi hizmet: Önceden belirlenmiş yönergeler için örnek (oluşturma, değiştirme, iptal etme)\nEğer önceden belirlediğiniz yönergeleri değiştirmek istiyorsanız, yeni yönergeler oluşturabilirsiniz.\nBu durumda, mevcut ilaçlarınızı doktorunuza, hastaneye veya bakım merkezine başvurarak eski ilaçlarınızı almalarını isteyin.\nEğer bu kayıtlar, ortak sağlık dosyanızda (sağlık dijital alanı) yer alıyorsa, yeni kayıtlar da ekleyebilirsiniz.\nSadece en son tarihli belge dikkate alınacaktır.\nİmza için, güvendiğiniz bir kişiyi de dahil olmak üzere 2 tanık kullanabilirsiniz.\nBu kişiler, bu belgeyi kendilerinden biri veya bir üçüncü taraf tarafından hazırlanmış ve sizin niyetinizi doğru bir şekilde ifade ettiğini doğrulamalıdır.\nBunlar şunları içermelidir:\n- Adları, soyadları\n- Ve sizinle olan ilişkinin seviyesi (kardeş, arkadaş...).\nOnay belgeleri, önceden belirlenmiş talimatlarla birlikte sunulmalıdır.",
+        "titre": "Önceden belirlenmiş talimatların değiştirilmesi veya iptal edilmesi mümkün mü?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32010",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32010",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-05-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "engine_failed"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.5,
+      "units": 89
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:25:52.674Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "التوجيهات المسبقة: آخر التوجهات بشأن الرعاية في المراحل النهائية من الحياة",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "يمكن لأي شخص بالغ كتابة تعليمات مسبقة للتعبير عن رغباته فيما يتعلق بنهاية حياته.",
+      "steps": [
+       {
+        "texte": "ماذا نسمي \"التوجيهات المسبقة\"؟ إنها وثيقة مكتوبة تكتبها لتوضيح رغباتك المتعلقة بنهاية حياتك. بهذه الطريقة، تعبر عن نيتك مسبقًا لمواصلة العلاج، أو تقليمه، أو إيقافه، أو رفضه. تساعد هذه الوثيقة الأطباء في اتخاذ قرارات بشأن الرعاية إذا لم تتمكن من التعبير عن رغباتك (على سبيل المثال، بسبب مرض خطير). سنناقش أيضًا القوانين واللوائح ذات الصلة.",
+        "titre": null
+       },
+       {
+        "texte": "تسمح لك التوجيهات المسبقة بالتعبير عن رغباتك بشأن نهاية حياتك مسبقًا، في حالة عدم قدرتك على التعبير عن هذه الرغبات. على سبيل المثال، حالة فقدان الوعي، أو اضطرابات معرفية شديدة، أو حادث، أو تطور مرض، أو الشيخوخة.\nالتوجيهات المسبقة ليست مخصصة للاستخدام إذا كنت قادرًا على التعبير عن رغباتك.\nإنها تعبر عن رغبتكم فيما يتعلق بشروط الاستمرار في العلاج، أو تقييده، أو إيقافه، أو رفضه، وكذلك فيما يتعلق بالإجراءات الطبية.\nأنت تحدد ما إذا كنت توافق أو ترفض:\n- إنعاش قلبي وتنفسي (أنبوب للتهوية)\n- توصيل جسمك بجهاز الغسيل الكلوي\n- إجراء جراحي معين، أو إجراء آخر.\nإذا كنت غير قادر على التعبير عن رغباتك، وفي غياب تعليمات مسبقة، فإن الفريق الطبي سيحاول معرفة رغباتك، على وجه الخصوص من خلال شهادة شخص تثق به.\nفي حال عدم وجود شخص موثوق به مُعيّن، ستقوم الفريق الطبي بجمع شهادات من أفراد عائلتك أو الأشخاص المقربين منك.",
+        "titre": "ما هي المزايا التي توفرها التوجيهات المسبقة؟"
+       },
+       {
+        "texte": "يعتمد ذلك على وضعك:\nمثال: حالة عامة\nيجب أن تكون بالغًا لكتابة تعليماتك المسبقة.\nوهذا يعني: بدءًا من سن 18 عامًا، ستتلقى من مؤسستك Assurance maladie (التأمين الصحي العمومي الفرنسي) إشعارات دورية حول إمكانية صياغة وتعديل وتأكيد تعليماتها المسبقة.\nمثال: أنت تحت وصاية.\nمثال: قادر على كتابة\nإذا كنت قادرًا على كتابة تعليماتك المسبقة، فيمكنك القيام بذلك بمفردك، دون مساعدة، وبدون أي تمثيل قانوني أو تدخل مسبق من القاضي.\nمثال: غير قادر على كتابة\nإذا لم تكن لديك القدرة الفكرية أو المادية على كتابتها، فلن تتمكن من وضع هذه الإرشادات، ولا يمكن لطالبك أو معلمك القيام بذلك.",
+        "titre": "من يمكنه صياغة إرشادات مسبقة؟"
+       },
+       {
+        "texte": "يجب أن تتضمن التوجيهات المسبقة وثيقة مكتوبة، وموقعة ومؤرخة، تحتوي على:\n- أسماءكم وأسماء أقربائكم\n- تاريخ ومكان ميلادك.\nيتم كتابة المستند بخط اليد أو باستخدام الآلة الكاتبة.\nتوفر بعض المؤسسات الصحية نموذجًا.\nلمساعدتكم، تم تقديم نموذجين يتضمنان حقولًا قابلة للتعديل، وذلك حسب ما إذا كنت:\n- هل تعاني من مرض خطير، وتشعر بأنك على وشك الموت (نموذج أ)\n- تخيل أنك تتمتع بصحة جيدة، وأنك لست مصابًا بأي مرض خطير (نموذج ب).\n→ خدمة عبر الإنترنت: نموذج لإرشادات مسبقة (الإنشاء، التعديل، الإلغاء)\nلا يشترط استخدام هذا النموذج. يمكن أيضًا كتابة الإرشادات بشكل حر على ورق عادي.\nومع ذلك، فإن هذا النموذج يضمن لك أن التعبير عن إرادتك يتماشى مع الشروط المحددة في اللوائح. كما أنه يساعدك في عملية قد تكون صعبة.\nيجب على طبيبك أن يبلغك بإمكانية وضع وتعديل التوجيهات المسبقة.\nيمكنكم الاستعانة بـ 2 شهود، بما في ذلك شخص تثقون به، لكتابة هذه الوثائق نيابةً عنكم.\nيجب على هؤلاء الأشخاص أن يؤكدوا أن هذا المستند، الذي تم كتابته من قبل أحدهم أو من طرف آخر، يعبر بشكل صحيح عن رغبتكم.\nيجب أن تتضمن:\n- اسمهم، اسمهم\n- و مستوى العلاقة معك (أخ، صديق...).\nيجب إرفاق شهاداتهم مع التعليمات المسبقة.",
+        "titre": "كيفية كتابة الإرشادات المسبقة؟"
+       },
+       {
+        "texte": "في مواجهة مريض لم يعد قادراً على التعبير عن رغباته، يجب على الأطباء البحث لمعرفة ما إذا كان قد كتب تعليمات مسبقة. لذلك، من المهم أن تكون هذه التعليمات متاحة بسهولة.\nملاحظة: بغض النظر عن اختيارك، تأكد من إبلاغ طبيبك وأقربائك بوجود وتحديد مكان حفظ تعليماتك. وبهذه الطريقة، عندما يحين الوقت، سيتمكن الطبيب الذي سيرافقك في نهاية حياتك من معرفة مكان وجود تعليماتك.\nهناك عدة طرق لإعلام الآخرين بقراراتك المستقبلية:\nمثال: تسجيل التعليمات في الملف الطبي المشترك (مساحة رقمية للرعاية الصحية)\nيوصى بشدة:\n- لتسجيل تعليماتك المسبقة في \"موقعي الصحي\" (السجل الطبي المشترك)\n- وإبلاغ أقربائك (الشخص الموثوق به أو الشخصين إذا لم تتمكن من كتابة تعليماتك) بأن أسماءهم ومعلومات الاتصال الخاصة بهم مذكورة فيها.\nوبالمثل، إذا ذكر الملف الطبي المشترك أن شخصًا ما لديه تعليماتك المسبقة، فتأكد من إبلاغه بأن أسمائه ومعلومات الاتصال الخاصة به مسجلة فيه.\nوبالتالي، سيكون من السهل الوصول إليها واستخدامها عند الحاجة.\nمثال: تسليم تعليماتك الطبية المسبقة إلى طبيبك (سواء كان طبيبًا عامًا أو غير ذلك)\nيمكنك أن تطلب من طبيبك الاحتفاظ بتوجيهاتك المسبقة. وسوف يحتفظ بها في الملف الذي أعده لك، خاصة في حالة عدم وجود ملف طبي مشترك.\nوهذا يعني: إذا كانت تعليماتك موجودة في ملف طبي، فتأكد من إبلاغ أحبائك (الشخص الموثوق به أو الشخصين إذا لم تتمكن من كتابة تعليماتك) بأن أسمائهم ومعلومات الاتصال الخاصة بهم مسجلة فيه. وبالمثل، إذا ذكر الملف الطبي أن شخصًا ما يمتلك تعليماتك المسبقة، فتأكد من إبلاغه بأن أسمائه ومعلومات الاتصال الخاصة به مسجلة فيه.\nمثال: تفويض المهام لشخص مقرب\nأخيرًا، يمكنك أيضًا تفويض هذه التعليمات إلى:\n- شخص تثق به\n- أو شخص من عائلتك.\n- أو شخص مقرب.\nفي هذه الحالة، يمكنكم ذكر وجود هذه المستندات، ومكان حفظها، واسم الشخص الذي يمتلكها في ملفكم الطبي.\nمثال: تسليم التعليمات إلى المستشفى أو المؤسسة المخصصة لكبار السن.\nإذا كنت في المستشفى بسبب مرض خطير أو في دار رعاية المسنين، يمكنك أن تترك تعليماتك للمستشفى أو دار الرعاية.\nسيقوم بإضافتها إلى ملفكم.\nتذكير: إذا اخترت الاحتفاظ بتوجيهاتك في \"ملفك الطبي المشترك\" أو في ملف طبي، فتأكد من إبلاغ الأشخاص المعنيين (مثل \"الشخص الموثوق به\" أو الشهود) بأن أسماءهم ومعلومات الاتصال الخاصة بهم مسجلة فيه. وبالمثل، إذا ذكرت هذه الملفات أن شخصًا ما يمتلك توجيهاتك المسبقة، فتأكد من إبلاغه بأن أسماءه ومعلومات الاتصال الخاصة به مسجلة فيه.\nمثال: الحفاظ على الإرشادات في المنزل\nيمكنكم أيضًا الاحتفاظ بها في منزلك/في مكان آمن، و/أو حمل معك دليل يوضح مكان تخزينها.",
+        "titre": "كيف يمكن الترويج لوعي وجود التوجيهات المسبقة؟"
+       },
+       {
+        "texte": "تُلزم هذه الإرشادات الطبيب في جميع القرارات المتعلقة بالتحقيق أو التدخل أو العلاج.\nومع ذلك، لا تنطبق هذه القواعد في الحالتين التاليتين:\n- في حالة الطوارئ الحيوية التي تتطلب تدخلًا فوريًا خلال الفترة اللازمة لإجراء تقييم شامل للوضع (على سبيل المثال: مريض يحتاج إلى إعادة التأهيل بعد حادث طبي مفاجئ)\n- عندما تظهر التوجيهات المسبقة بشكل واضح على أنها غير مناسبة أو غير متوافقة مع الوضع الطبي. في هذه الحالة، يجب على الطبيب اتخاذ قرار في إطار عملية جماعية. وبالتالي، يتم اتخاذ هذا القرار من قبل عدة أطباء يناقشون الحالة. بمجرد اتخاذ القرار، يتم تسجيله في السجل الطبي. يتم إبلاغ الشخص الموثوق به أو، في حالة عدم وجود شخص موثوق به، فإن العائلة أو الأقارب بهذا القرار.",
+        "titre": "هل يجب على الطبيب أن يأخذ في الاعتبار التوجيهات المسبقة؟"
+       },
+       {
+        "texte": "تستمر التوجيهات المسبقة إلى ما لا نهاية.",
+        "titre": "ما هي مدة صلاحية التوجيهات المسبقة؟"
+       },
+       {
+        "texte": "إذا كانت هناك عدة تعليمات سابقة، فسيتم أخذ أحدثها في الاعتبار، بغض النظر عن الوسيلة المستخدمة.",
+        "titre": "ماذا عن الحالات التي تتضمن عدة تعليمات مسبقة؟"
+       },
+       {
+        "texte": "يمكن تعديل أو إلغاء هذه التوجيهات في أي وقت.\nالصفحة الأخيرة من نموذج الإرشادات المسبقة مخصصة لتعديل أو إلغاء الإرشادات:\n→ خدمة عبر الإنترنت: نموذج لإرشادات مسبقة (الإنشاء، التعديل، الإلغاء)\nإذا كنت ترغب في تعديل تعليماتك المسبقة، يمكنك كتابة تعليمات جديدة.\nاطلب من طبيبك، أو من المستشفى، أو من المؤسسة الصحية التي تحتفظ بها، أن يقوموا بإزالتها.\nإذا تم تسجيلها في ملفك الطبي المشترك (المنصة الرقمية للرعاية الصحية)، يمكنك تسجيل معلومات جديدة.\nسيتم أخذ أحدث نسخة من المستند فقط في الاعتبار.\nيمكنكم الاستعانة بـ 2 شهود، بما في ذلك شخص تثقون به، لكتابة هذه الوثائق نيابةً عنكم.\nيجب على هؤلاء الأشخاص أن يؤكدوا أن هذا المستند، الذي تم كتابته من قبل أحدهم أو من طرف آخر، يعبر بشكل صحيح عن رغبتكم.\nيجب أن تتضمن:\n- اسمهم، اسمهم\n- و مستوى العلاقة معك (أخ، صديق...).\nيجب إرفاق شهاداتهم مع التعليمات المسبقة.",
+        "titre": "هل من الممكن تعديل أو إلغاء التوجيهات المسبقة؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32010",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32010",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-05-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.1,
+      "units": 89
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:28:52.516Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Vorab-Anweisungen: Letzte Wünsche bezüglich der Versorgung im Lebensende",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Jeder volljährige Mensch kann vordefinierte Anweisungen erstellen, um seine Wünsche bezüglich seines Lebensendes zu formulieren.",
+      "steps": [
+       {
+        "texte": "Was versteht man unter vorausschauenden Richtlinien? Es handelt sich um eine schriftliche Erklärung, die Sie verfassen, um Ihre Wünsche im Zusammenhang mit Ihrem Lebensende zu präzisieren. Auf diese Weise drücken Sie im Voraus Ihre Absicht aus, Behandlungen oder medizinische Eingriffe fortzusetzen, einzuschränken, abzubrechen oder abzulehnen. Dieses Dokument hilft Ärzten, im Bedarfsfall, Entscheidungen über die zu erbringenden Behandlungen zu treffen, falls Sie Ihre Wünsche nicht mehr äußern können (z. B. aufgrund einer schweren Krankheit). Wir fassen die Rechtslage zusammen.",
+        "titre": null
+       },
+       {
+        "texte": "Durch die voraussichtlichen Anweisungen können Sie im Voraus Ihre Wünsche bezüglich Ihres Lebensendes festlegen, falls Sie diese nicht mehr ausdrücken können. Beispiele hierfür sind: Koma, schwerwiegende kognitive Beeinträchtigungen, Unfälle, Krankheitsverlauf, Alter.\nDiese Richtlinien sind nicht dazu gedacht, verwendet zu werden, wenn Sie in der Lage sind, Ihre Wünsche klar zu formulieren.\nSie drücken Ihre Wünsche bezüglich der Bedingungen für die Fortsetzung, die Einschränkung, die Beendigung oder den Verzicht auf eine Behandlung oder medizinische Maßnahme aus.\nSie bestätigen hiermit Ihre Zustimmung oder lehnen diese ab:\n- Eine Herz- und Atemunterstützung (Ein Atemröhre)\n- Die Verbindung Ihres Körpers mit einer Dialyse-Apparatur\n- Eine bestimmte Operation oder eine andere chirurgische Eingriff.\nWenn Sie nicht in der Lage sind, Ihre Wünsche auszudrücken und keine vorherigen Anweisungen vorliegen, muss das medizinische Team versuchen, Ihre Wünsche herauszufinden, insbesondere durch das Zeugnis einer vertrauten Person.\nWenn kein vertrauenswürdiger Ansprechpartner benannt wurde, wird das medizinische Team die Aussagen Ihrer Familie oder von engen Angehörigen einholen.",
+        "titre": "Was ermöglichen vorausschauende Richtlinien?"
+       },
+       {
+        "texte": "Das hängt von Ihrer spezifischen Situation ab:\nFall: Ein allgemeiner Fall\nSie müssen volljährig sein, um Ihre Vorsorgeanweisungen zu erstellen.\nKonkret: Ab Ihrem 18. Lebensjahr informiert Sie Ihre Assurance maladie (französische gesetzliche Krankenversicherung)-Kasse regelmäßig über die Möglichkeit, ihre voraussichtlichen Richtlinien zu erstellen, zu überarbeiten und zu bestätigen.\nFall: Sie sind unter Vormundschaft\nBeispiel: Fähigkeit, Texte zu verfassen\nWenn Sie in der Lage sind, Ihre eigenen Vorsorgeanweisungen zu erstellen, können Sie dies selbstständig und ohne Unterstützung, ohne Rechtsbeistand und ohne vorherige Einmischung des Richters tun.\nFall: Nicht in der Lage, einen Bericht zu verfassen\nWenn Sie nicht über die intellektuellen oder materiellen Fähigkeiten verfügen, um diese Richtlinien zu erstellen, können weder Sie noch Ihr Betreuer diese nicht entwickeln.",
+        "titre": "Wer kann Richtlinien im Voraus erstellen?"
+       },
+       {
+        "texte": "Die vorausschauenden Richtlinien müssen in Form eines schriftlichen Dokuments vorliegen, das datiert und von den beteiligten Parteien unterzeichnet ist:\n- Ihre Namen und Vornamen\n- Ihr Geburtsdatum und -ort.\nDas Dokument ist handschriftlich oder getippt.\nEinige Gesundheitseinrichtungen stellen ein entsprechendes Formular zur Verfügung.\nUm Ihnen zu helfen, werden 2 Modelle mit veränderbaren Feldern angeboten, je nachdem, ob Sie:\n- Haben Sie eine schwere Krankheit, glauben Sie, dass Ihr Leben kurz bevorsteht (Modell A)?\n- Stellen Sie sich vor, Sie sind gesund und leiden nicht an einer schweren Krankheit (Modell B).\n→ Online-Service: Vorlagen für vordefinierte Anweisungen (Erstellung, Änderung, Löschung)\nDie Verwendung dieses Modells ist nicht obligatorisch. Auch alternative Vorlagen können auf Papier erstellt werden.\nAllerdings stellt dieses Modell sicher, dass Ihre Erklärung Ihrer Wünsche den Anforderungen der geltenden Vorschriften entspricht. Es hilft Ihnen auch bei einer möglicherweise schwierigen Aufgabe.\nIhr behandelnder Arzt sollte Sie über die Möglichkeit und die Bedingungen für die Erstellung und Überprüfung von Vorsorgeanweisungen informieren.\nSie können zwei Zeugen benennen, darunter eine Person Ihrer Wahl, um die Dokumente im Namen von Ihnen zu erstellen.\nDiese Personen müssen bestätigen, dass dieses Dokument, das von einer von ihnen oder von einem Dritten verfasst wurde, Ihre Absicht korrekt widerspiegelt.\nSie müssen Folgendes angeben:\n- Ihr Name, Vorname\n- Und das Verhältnis zu Ihnen (Bruder, Freund...).\nIhre Bestätigung muss zusammen mit den vorbereitenden Anweisungen eingereicht werden.",
+        "titre": "Wie erstellt man Richtlinien im Voraus?"
+       },
+       {
+        "texte": "Wenn ein Patient nicht mehr in der Lage ist, seine Wünsche zu äußern, müssen die Ärzte prüfen, ob er eine vorherige Patientenverfügung erstellt hat. Es ist daher wichtig, dass diese leicht zugänglich ist.\nBitte beachten Sie: Unabhängig von Ihrer Entscheidung, informieren Sie Ihren Arzt und Ihre Angehörigen über die Existenz und den Aufbewahrungsort Ihrer Vorsorgeanweisungen. So wird der Arzt, der Sie im Verlauf Ihres Lebens begleiten wird, wissen, wo er diese Anweisungen finden kann.\nEs gibt verschiedene Möglichkeiten, Ihre Vorsorgeanweisungen bekannt zu machen:\nBeispiel: Anweisungen im gemeinsamen medizinischen Dossier (digitales Gesundheitsportal) speichern\nEs wird empfohlen:\n- Ihre vorausschauenden Anweisungen in Ihrem persönlichen Gesundheitsbereich (gemeinsames medizinisches Dossier) hinterlegen.\n- Und informieren Sie Ihre Angehörigen (eine vertrauenswürdige Person oder beide Zeugen, falls Sie keine eigenen Anweisungen formulieren können), dass ihre Namen und persönlichen Kontaktdaten dort aufgeführt sind.\nEbenso, wenn die gemeinsame Patientenakte darauf hinweist, dass eine Person Ihre Vorsorgeanweisungen hat, vergessen Sie nicht, diese Person darüber zu informieren, dass ihre Namen und Kontaktdaten darin aufgeführt sind.\nDadurch werden sie leicht zugänglich sein, falls erforderlich.\nFall: Vorab-Anweisungen an Ihren Hausarzt (Arzt oder andere) weitergeben\nSie können Ihre vorherigen Anweisungen Ihrem Arzt mitteilen. Er wird diese in seinen Patientenakten aufbewahren, insbesondere wenn es keine gemeinsame Patientenakte gibt.\nKonkret: Wenn Ihre Anweisungen in einem medizinischen Ordner aufbewahrt werden, vergessen Sie nicht, Ihre Angehörigen (die Vertrauensperson oder die beiden Zeugen, falls Sie nicht selbst schreiben können) darüber zu informieren, dass ihre Namen und persönlichen Kontaktdaten darin aufgeführt sind. Ebenso, wenn der medizinische Ordner erwähnt, dass eine Person Ihre Vorsorgeanweisungen besitzt, vergessen Sie nicht, diese Person darüber zu informieren, dass ihre Namen und Kontaktdaten darin aufgeführt sind.\nFall: Anweisungen an eine nahestehende Person weitergeben\nSchließlich können Sie Ihre Anweisungen auch an folgende Stellen weitergeben:\n- Ihre vertrauenswürdige Ansprechperson\n- Oder eine Person aus Ihrer Familie\n- Oder eine nahestehende Person.\nIn diesem Fall können Sie in Ihrem medizinischen Dossier selbst Angaben zu ihrer Existenz, ihrem Aufbewahrungsort und der Person machen, die die entsprechenden Anweisungen besitzt.\nFall: Anweisungen an das Krankenhaus oder den Seniorenheim übergeben\nWenn Sie aufgrund einer schweren Krankheit ins Krankenhaus aufgenommen oder in eine Einrichtung für ältere Menschen eingeliefert werden, können Sie Ihre Anweisungen an dieses Krankenhaus oder diese Einrichtung weitergeben.\nEr wird sie in Ihre Unterlagen einfügen.\nErinnerung: Wenn Sie entscheiden, Ihre Anweisungen in Ihrem „gemeinsamen medizinischen Ordner“ oder in einem separaten medizinischen Ordner zu speichern, vergessen Sie nicht, die betroffenen Angehörigen (Ihre „Vertrauensperson“ oder Zeugen) darüber zu informieren, dass ihre Namen und persönlichen Kontaktdaten dort aufgeführt sind. Ebenso sollten Sie diese Personen informieren, wenn die entsprechenden Ordner angeben, dass eine Person Ihre voraussichtlichen Anweisungen besitzt, und zwar darüber, dass ihre Namen und persönlichen Kontaktdaten dort aufgeführt sind.\nFall: Richtlinien zu Hause aufbewahren\nSie können sie auch zu Hause aufbewahren und/oder eine Angabe über ihren Aufbewahrungsort bei sich tragen.",
+        "titre": "Wie kann man die Existenz von vordefinierten Richtlinien bekannt machen?"
+       },
+       {
+        "texte": "Diese Richtlinien gelten für alle Entscheidungen des Arztes bezüglich Untersuchungen, Interventionen oder Behandlungen.\nAllerdings gelten diese Regeln nicht in folgenden Fällen:\n- Im Falle einer lebensbedrohlichen Situation während der Zeit, die für eine umfassende Bewertung der Situation benötigt wird (z. B. ein Patient, der aufgrund eines plötzlichen Unfalls reanimiert werden muss)\n- Wenn die vorgegebenen Richtlinien offensichtlich unangemessen oder nicht mit der medizinischen Situation vereinbar sind, muss der Arzt seine Entscheidung im Rahmen eines kollegialen Verfahrens treffen. Dies bedeutet, dass mehrere Ärzte den Fall besprechen und eine gemeinsame Entscheidung treffen. Diese Entscheidung wird dann im medizinischen Dossier dokumentiert. Die Entscheidung, die Anwendung der vorgegebenen Richtlinien abzulehnen, wird an die bevollmächtigte Person oder, falls dies nicht möglich ist, an die Familie oder nahestehende Personen mitgeteilt.",
+        "titre": "Soll der Arzt die vordefinierten Anweisungen berücksichtigen?"
+       },
+       {
+        "texte": "Die vorausschauenden Richtlinien haben eine unbegrenzte Gültigkeit.",
+        "titre": "Wie lange sind die vorausschauenden Richtlinien gültig?"
+       },
+       {
+        "texte": "Wenn mehrere vordefinierte Richtlinien existieren, werden die aktuellsten berücksichtigt, unabhängig vom Medium.",
+        "titre": "Was ist zu tun, wenn mehrere vorausschauende Richtlinien vorhanden sind?"
+       },
+       {
+        "texte": "Vorab festgelegte Anweisungen können jederzeit geändert oder aufgehoben werden.\nDie letzte Seite des Vorlagenmodells für vorausschauende Richtlinien ist den Änderungen oder der Aufhebung der Richtlinien gewidmet:\n→ Online-Service: Vorlagen für vordefinierte Anweisungen (Erstellung, Änderung, Löschung)\nWenn Sie Ihre Richtlinien im Voraus ändern möchten, können Sie neue erstellen.\nBitten Sie dann Ihren Arzt, das Krankenhaus oder die Einrichtung, die diese Medikamente verwaltet, diese vorherigen Verschreibungen zu stornieren.\nWenn diese Informationen bereits in Ihrem gemeinsamen medizinischen Dossier (digitalem Gesundheitsbereich) gespeichert sind, können Sie neue Informationen hinzufügen.\nNur das aktuellste Dokument wird berücksichtigt.\nSie können zwei Zeugen benennen, darunter eine Person Ihrer Wahl, um die Dokumente im Namen von Ihnen zu erstellen.\nDiese Personen müssen bestätigen, dass dieses Dokument, das von einer von ihnen oder von einem Dritten verfasst wurde, Ihre Absicht korrekt widerspiegelt.\nSie müssen Folgendes angeben:\n- Ihr Name, Vorname\n- Und das Verhältnis zu Ihnen (Bruder, Freund...).\nIhre Bestätigung muss zusammen mit den vorbereitenden Anweisungen eingereicht werden.",
+        "titre": "Ist es möglich, vorher festgelegte Anweisungen zu ändern oder zu stornieren?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32010",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32010",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-05-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73.3,
+      "units": 89
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:32:46.654Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Прогнозовані вказівки: останні побажання щодо догляду наприкінці життя",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Будь-яка особа повнолітнього віку може скласти вказівки щодо свого бажання, щоб висловити свої побажання щодо кінця свого життя.",
+      "steps": [
+       {
+        "texte": "Що таке \"попередні вказівки\"? Це письмовий документ, який ви складаєте, щоб чітко сформулювати свої побажання щодо кінця свого життя. Таким чином, ви заздалегідь висловлюєте свою волю продовжувати лікування, обмежувати його, припинити або відмовитися від медичних процедур або дій. Цей документ допомагає лікарям у потрібний момент приймати рішення щодо надання вам допомоги, якщо ви вже не можете висловити свої побажання (наприклад, через серйозну хворобу). Ми розглянемо відповідні правила.",
+        "titre": null
+       },
+       {
+        "texte": "Заздалегідь складені вказівки дозволяють вам вказати свої побажання щодо кінця життя у випадку, коли ви не зможете їх висловити самостійно. Наприклад, кома, серйозні когнітивні порушення, нещасний випадок, прогресування хвороби, старість.\nЗаздалегідь розроблені інструкції не призначені для використання, якщо ви маєте можливість чітко висловити свої побажання.\nВони відображають ваше рішення щодо умов продовження, обмеження, припинення або відмови від лікування або медичної процедури.\nВи вказуєте, чи приймаєте ви, чи відмовляєтесь:\n- Серцево-легенева реанімація (трубка для дихання)\n- Підключення вашого тіла до пристрою для діалізу нирок\n- Будь-яка конкретна хірургічна процедура.\nЯкщо ви не можете висловити свою волю та немає попередніх вказівок, медична команда повинна спробувати з'ясувати вашу волю, зокрема, через свідчення вашої довіреної особи.\nУ разі відсутності вказаної вами довіреної особи, медичний персонал зібратиме свідчення від вашої родини або близьких.",
+        "titre": "Які можливості надають попередні інструкції?"
+       },
+       {
+        "texte": "Це залежить від вашої ситуації:\nПриклад: Загальний випадок\nДля складання ваших попередніх вказівок вам необхідно досягти повноліття.\nА саме: Від 18 років ваша каса Assurance maladie (французьке державне медичне страхування) періодично інформує вас про можливість складати, переглядати та підтверджувати її попередні інструкції.\nСитуація: Ви перебуваєте під опікою.\nПриклад: Здатність до написання\nЯкщо ви маєте можливість скласти свої попередні вказівки, ви можете зробити це самостійно, без допомоги, без представництва та без попереднього втручання судді.\nСитуація: Нема можливості скласти\nЯкщо ви не маєте достатньої інтелектуальної або матеріальної здатності для їх написання, то ці вказівки не можуть бути розроблені ні вами, ні вашим науковим керівником.",
+        "titre": "Хто може розробити попередні інструкції?"
+       },
+       {
+        "texte": "Попередні інструкції повинні мати форму письмового документу, з датою та підписом, що містить:\n- Ваші імена та прізвища\n- Ваша дата та місце народження.\nДокумент написаний від руки або надрукований.\nДеякі медичні заклади надають відповідний бланк.\nЩоб допомогти вам, пропонуються 2 шаблони з можливими полями для редагування, залежно від того, чи:\n- Ви хворієте на серйозну хворобу, вважаєте, що перебуваєте на межі смерті (модель A)\n- Уявіть, що ви перебуваєте у хорошому здоров'ї, і у вас немає серйозної хвороби (модель B).\n→ Онлайн-сервіс: Шаблон попередніх вказівок (створення, редагування, скасування)\nВикористання цього шаблону не є обов'язковим. Також можна скласти інструкції на звичайному папері.\nОднак, цей шаблон гарантує, що ваше рішення відповідає вимогам, встановленим нормативними актами. Він також допоможе вам у процесі, який може бути складним.\nВаш сімейний лікар повинен повідомити вам про можливість та умови складання та перегляду інструкцій щодо догляду.\nВи можете залучити 2 свідків, зокрема людину, яку ви довіряєте, щоб вони склали ці пояснення від вашого імені.\nЦі особи повинні підтвердити, що цей документ, складений одним із них або третією стороною, дійсно відображає вашу волю.\nВони повинні містити:\n- Їхнє ім'я та прізвище\n- І рівень ваших відносин (брат, друг...).\nЇхні підтвердження повинні бути додані до попередніх інструкцій.",
+        "titre": "Як скласти попередні інструкції?"
+       },
+       {
+        "texte": "У випадку пацієнта, який більше не здатний виражати свої бажання, лікарі повинні спробувати з'ясувати, чи він склав попередні вказівки. Тому важливо, щоб вони були легко доступними.\nЗверніть увагу: Незалежно від вашого вибору, повідомте свого лікаря та близьких про існування та місце зберігання ваших вказівок. Таким чином, коли настане час, лікар, який буде з вами наприкінці життя, зможе знайти ваші вказівки.\nІснує кілька способів поширити інформацію про ваші вказівки щодо догляду:\nПриклад: Записати інструкції у спільній медичній карті (цифровий простір охорони здоров'я)\nРекомендується:\n- Щоб записати свої вказівки щодо догляду в розділ \"Мій особистий профіль здоров'я\" (спільна медична інформація)\n- Також повідомте своїх близьких (довірену особу або двох свідків, якщо ви не можете самостійно скласти вказівки), що їхні імена та особисті дані там зазначені.\nАналогічно, якщо медична документація, доступна всім, вказує на те, що певна особа має ваші вказівки щодо догляду, не забудьте повідомити їй, що її ім'я та контактні дані внесені до цього документу.\nТаким чином, вони будуть легко доступні у разі потреби.\nПриклад: Надання попередніх вказівок вашому сімейному лікарю (лікарям)\nВи можете надати свої вказівки лікарю заздалегідь. Він збереже їх у медичній картці, яку він створив для вас, зокрема, у разі відсутності спільної медичної картки.\nА саме: Якщо ваші вказівки збережені в медичній картці, не забудьте повідомити своїх близьких (довірену особу або двох свідків, якщо ви не можете самостійно їх написати), що їхні імена та особисті дані там зазначені. Аналогічно, якщо медична картка вказує, що певна особа має ваші попередні вказівки, не забудьте повідомити її, що її імена та контактні дані там зазначені.\nПриклад: Надання інструкцій близькій особі\nЗрештою, ви також можете передати свої інструкції:\n- Ваша довірена особа\n- Або хтось із вашої родини\n- Або хтось із близьких.\nУ такому випадку, інформація про їхнє існування, місце зберігання та особу, яка володіє цими документами, може бути зазначена вами у вашому медичному записі.\nПриклад: Надання інструкцій лікарні або закладу для літніх людей\nЯкщо ви перебуваєте в лікарні через серйозну хворобу або знаходитесь в будинку для літніх людей, ви можете доручити свої вказівки цій лікарні або цьому закладу.\nВін додасть їх до вашого документа.\nНагадування: Якщо ви вирішите зберігати свої вказівки у вашому \"спільному медичному файлі\" або в окремому медичному файлі, не забудьте повідомити близьких осіб (вашу \"довірену особу\" або свідків), що їхні імена та особисті дані там зазначені. Аналогічно, якщо ці файли вказують на те, що певна особа має ваші попередні вказівки, не забудьте повідомити її, що її імена та особисті дані там зазначені.\nПриклад: Зберігання інструкцій вдома\nВи також можете зберігати їх у себе вдома та/або мати при собі інформацію про місце їх зберігання.",
+        "titre": "Як поширити інформацію про директиви про договірні зобов'язання?"
+       },
+       {
+        "texte": "Ці рекомендації є обов'язковими для лікаря у прийнятті будь-яких рішень щодо обстеження, втручання або лікування.\nОднак, вони не застосовуються у наступних двох випадках:\n- У разі надзвичайної ситуації, що потребує негайних дій протягом часу, необхідного для повної оцінки ситуації (наприклад, пацієнт, який потребує невідкладної допомоги після нещасного випадку),\n- Коли попередні вказівки стають очевидно непридатними або не відповідають медичній ситуації, лікар повинен прийняти рішення в рамках колегіальної процедури. Це означає, що рішення приймається кількома лікарями, які обговорюють конкретний випадок. Після прийняття рішення, воно фіксується в медичній карті. Рішення про відмову від застосування попередніх вказівок повідомляється опікуну або, якщо такого немає, родині або близьким.",
+        "titre": "Чи повинен лікар враховувати вказівки, надані пацієнтом заздалегідь?"
+       },
+       {
+        "texte": "Попередні інструкції мають необмежений термін дії.",
+        "titre": "Який термін дії попередніх вказівок?"
+       },
+       {
+        "texte": "Якщо існує декілька попередніх інструкцій, то враховуються найновіші, незалежно від носія інформації.",
+        "titre": "Які наслідки, якщо є декілька попередніх інструкцій?"
+       },
+       {
+        "texte": "Заздалегідь надані інструкції можуть бути змінені або скасовані в будь-який момент.\nОстанній сторінка моделі попередніх вказівок присвячена внесенню змін або скасуванню вказівок:\n→ Онлайн-сервіс: Шаблон попередніх вказівок (створення, редагування, скасування)\nЯкщо ви хочете змінити свої попередні інструкції, ви можете створити нові.\nТому зверніться до свого лікаря, до лікарні або до медичного закладу, де вони зберігаються, щоб вони видалили попередні.\nЯкщо ці записи були внесені до вашої спільної медичної картки (цифрового простору охорони здоров'я), ви можете додати нові.\nВраховуватиметься лише найновіший документ.\nВи можете залучити 2 свідків, зокрема людину, яку ви довіряєте, щоб вони склали ці пояснення від вашого імені.\nЦі особи повинні підтвердити, що цей документ, складений одним із них або третією стороною, дійсно відображає вашу волю.\nВони повинні містити:\n- Їхнє ім'я та прізвище\n- І рівень ваших відносин (брат, друг...).\nЇхні підтвердження повинні бути додані до попередніх інструкцій.",
+        "titre": "Чи можливо змінити або скасувати попередньо встановлені інструкції?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F32010",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32010",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-05-28"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 70.3,
+      "units": 89
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:b36a66d16816d9a5e8a9c0005ab2beb17b84a30ed8db76776b939c89ad43513e",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Directives anticipées : dernières volontés sur les soins en fin de vie",
+   "contenu_json": {
+    "intro": "Toute personne majeure peut rédiger des directives anticipées pour exprimer ses souhaits concernant sa fin de vie.",
+    "steps": [
+     {
+      "texte": "Qu'appelle-t-on les directives anticipées ? C'est une déclaration écrite que vous rédigez pour préciser vos souhaits liés à la fin de votre vie. Vous exprimez ainsi par avance votre volonté de poursuivre, limiter, arrêter ou refuser des traitements ou actes médicaux. Ce document aide les médecins, le moment venu, à prendre leurs décisions sur les soins à donner si vous ne pouvez plus exprimer vos volontés (exemple : du fait d’une maladie grave). Nous faisons un point sur la réglementation.",
+      "titre": null
+     },
+     {
+      "texte": "Les directives anticipées vous permettent de faire connaître par avance vos souhaits sur votre fin de vie dans le cas où vous ne pourriez plus manifester votre volonté. Par exemple, coma, troubles cognitifs profonds, accident, évolution d’une maladie, grand âge.\nLes directives anticipées n'ont pas vocation à être utilisées si vous êtes en capacité d'exprimer vos volontés.\nElles expriment votre volonté portant sur les conditions de la poursuite, de la limitation, de l'arrêt ou du refus de traitement ou d'acte médicaux.\nVous indiquez accepter ou refuser :\n- Une réanimation cardiaque et respiratoire (tube pour respirer)\n- Le branchement de votre corps sur un appareil à dialyse rénale\n- Telle ou telle intervention chirurgicale.\nSi vous êtes dans l’incapacité d’exprimer votre volonté et en l’absence de directives anticipées, l’équipe médicale devra chercher à connaître votre volonté, notamment à travers le témoignage de votre personne de confiance.\nEn l’absence de personne de confiance désignée, l’équipe médicale recueillera les témoignages de votre famille ou des proches.",
+      "titre": "Que permettent les directives anticipées ?"
+     },
+     {
+      "texte": "Cela dépend de votre situation :\nCas : Cas général\nVous devez être majeur pour rédiger vos directives anticipées.\nÀ savoir : À partir de vos 18 ans, votre caisse d’Assurance maladie vous informe périodiquement de la possibilité de rédiger, de réviser et de confirmer ses directives anticipées.\nCas : Vous êtes sous tutelle\nCas : En capacité de rédiger\nSi vous êtes en capacité de rédiger vos directives anticipées, vous pourrez le faire seul, sans assistance, sans représentation possible et sans intervention a priori du juge.\nCas : Pas en capacité de rédiger\nSi vous n’êtes pas apte intellectuellement ou matériellement à les rédiger, ces directives anticipées ne pourront pas être élaborées, ni par vous et par votre tuteur.",
+      "titre": "Qui peut rédiger des directives anticipées ?"
+     },
+     {
+      "texte": "Les directives anticipées doivent prendre la forme d'un document écrit, daté et signé avec :\n- Vos noms et prénoms\n- Votre date et lieu de naissance.\nLe document est manuscrit ou dactylographié.\nCertains établissements de santé fournissent un formulaire.\nPour vous aider, 2 modèles avec des champs modifiables sont proposés, selon que vous :\n- Êtes atteint d’une maladie grave, pensez être proche de la fin de vie (modèle A)\n- Pensez être en bonne santé, n'êtes pas atteint d'une maladie grave (modèle B).\n→ Service en ligne : Modèle de directives anticipées (élaboration, modification, annulation)\nL’utilisation de ce modèle n’est pas obligatoire. Les directives anticipées peuvent également être rédigées sur papier libre.\nCependant, ce modèle vous garantit que l’expression de votre volonté répond aux conditions de validité prévues par la réglementation. Et il vous aide également dans un exercice qui peut être difficile.\nVotre médecin traitant doit vous informer de la possibilité et des conditions de rédaction et de révision des directives anticipées.\nVous pouvez faire appel à 2 témoins, dont votre personne de confiance, pour les rédiger à votre place.\nCes personnes doivent attester que ce document, rédigé par l'un d'entre eux ou par un tiers, exprime bien votre volonté.\nElles doivent indiquer :\n- Leur nom, prénom\n- Et le niveau de relation avec vous (frère, ami...).\nLeur attestation doit être jointe aux directives anticipées.",
+      "titre": "Comment rédiger les directives anticipées ?"
+     },
+     {
+      "texte": "Face à un malade qui n'est plus capable d'exprimer ses volontés, les médecins doivent chercher à savoir s'il a rédigé des directives anticipées. Il est donc important qu'elles soient facilement accessibles.\nAttention : Quel que soit votre choix, informez votre médecin et vos proches de l'existence et du lieu de conservation de vos directives. Ainsi, le jour venu, le médecin qui vous accompagnera lors de la fin de votre vie saura où trouver vos directives.\nIl existe plusieurs façons de faire connaître vos directives anticipées :\nCas : Enregistrer les directives dans le dossier médical partagé (espace numérique de santé)\nIl vous est recommandé :\n- De faire enregistrer vos directives anticipées dans Mon espace santé (dossier médical partagé)\n- Et d'en informer vos proches (la personne de confiance ou les 2 témoins si vous ne pouvez pas écrire vos directives) que leurs noms et coordonnées personnelles y sont inscrits.\nDe même, si le dossier médical partagé mentionne qu'une personne possède vos directives anticipées, n'oubliez pas de l'informer que ses noms et coordonnées y sont inscrits.\nElles seront ainsi facilement consultables en cas de besoin.\nCas : Confier les directives anticipées à votre médecin de ville (traitant ou autre)\nVous pouvez confier vos directives anticipées à votre médecin. Il les conservera dans le dossier qu'il a constitué à votre nom notamment en l'absence de dossier médical partagé.\nÀ savoir : Si vos directives sont conservées dans un dossier médical, n'oubliez pas d'en informer vos proches (la personne de confiance ou les 2 témoins si vous ne pouvez pas écrire vos directives) que leurs noms et coordonnées personnelles y sont inscrits. De même, si le dossier médical mentionne qu'une personne possède vos directives anticipées, n'oubliez pas de l'informer que ses noms et coordonnées y sont inscrits.\nCas : Confier les directives à un proche\nEnfin, vous pouvez également confier vos directives à :\n- Votre personne de confiance\n- Ou une personne de votre famille\n- Ou un proche.\nDans ce cas, leur existence, leur lieu de conservation et l'identification de la personne qui est en possession de vos directives peuvent être mentionnés par vos soins dans votre dossier médical.\nCas : Confier les directives à l'hôpital ou l'établissement pour personnes âgées\nSi vous êtes hospitalisé pour une maladie grave ou admis dans un établissement pour personnes âgées, vous pouvez confier vos directives à cet hôpital ou à cet établissement.\nIl les intégrera dans votre dossier.\nRappel : Si vous choisissez de conserver vos directives dans votre « dossier médical partagé » ou dans un dossier médical, n’oubliez pas d’informer les proches concernés (votre « personne de confiance » ou vos témoins) que leurs noms et coordonnées personnelles y sont inscrits. De même, si ces dossiers mentionnent qu’une personne est détentrice de vos directives anticipées, n’oubliez pas de l’informer que ses noms et coordonnées personnelles y sont inscrits.\nCas : Conserver les directives chez soi\nVous pouvez aussi les conserver chez vous et/ou avoir sur vous une indication du lieu de leur conservation.",
+      "titre": "Comment faire connaître l'existence des directives anticipées ?"
+     },
+     {
+      "texte": "Les directives s'imposent au médecin pour toute décision d'investigation, d'intervention ou de traitement.\nToutefois, elles ne s'imposent pas dans les 2 cas suivants :\n- En cas d'urgence vitale pendant le temps nécessaire à une évaluation complète de la situation (exemple : patient à réanimer suite à un accident de santé brutal)\n- Lorsque les directives anticipées apparaissent manifestement inappropriées ou non conformes à la situation médicale. Dans ce cas, le médecin doit rendre sa décision dans le cadre d'une procédure collégiale. Cette décision est donc prise par plusieurs médecins qui discutent du cas. Une fois prise, cette décision est dans le dossier médical. La décision de refus d'application des directives anticipées est portée à la connaissance de la personne de confiance ou, sinon, de votre famille ou de vos proches.",
+      "titre": "Le médecin doit-il prendre en compte les directives anticipées ?"
+     },
+     {
+      "texte": "Les directives anticipées ont une durée illimitée.",
+      "titre": "Quelle est la durée de validité des directives anticipées ?"
+     },
+     {
+      "texte": "Si plusieurs directives anticipées existent, les plus récentes sont prises en compte, quelque soit le support",
+      "titre": "Qu’en est-il en cas de plusieurs directives anticipées ?"
+     },
+     {
+      "texte": "Les directives anticipées peuvent être à tout moment modifiées ou annulées.\nLa dernière page du modèle des directives anticipées est consacrée aux modifications ou à l'annulation des directives :\n→ Service en ligne : Modèle de directives anticipées (élaboration, modification, annulation)\nSi vous souhaitez modifier vos directives anticipées, vous pouvez en rédiger de nouvelles.\nDemandez alors à votre médecin, à l’hôpital ou à l'établissement médico-social qui les conservent de supprimer les précédentes.\nSi elles ont été enregistrées sur votre dossier médical partagé (espace numérique de santé), vous pouvez en enregistrer de nouvelles.\nSeul le document le plus récent sera pris en compte.\nVous pouvez faire appel à 2 témoins, dont votre personne de confiance, pour les rédiger à votre place.\nCes personnes doivent attester que ce document, rédigé par l'un d'entre eux ou par un tiers, exprime bien votre volonté.\nElles doivent indiquer :\n- Leur nom, prénom\n- Et le niveau de relation avec vous (frère, ami...).\nLeur attestation doit être jointe aux directives anticipées.",
+      "titre": "Est-il possible de modifier ou annuler les directives anticipées ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

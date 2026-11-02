@@ -1,0 +1,796 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706",
+ "recordId": "55dc9511-132c-4b08-aea1-395570d5cce1",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:41:49.294Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Daily allowance for providing care to a person at the end of their life",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 45,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The daily allowance for someone providing end-of-life care allows for the payment of the individual responsible for caring for a loved one who is nearing the end of their life.",
+      "steps": [
+       {
+        "texte": "The daily allowance for supporting a person at the end of their life (AJAP) is paid to the employee who is on a family solidarity leave. An independent worker or someone seeking employment can also receive the AJAP. The conditions for receiving the allowance vary depending on the individual's situation. We provide you with the information you need to know.",
+        "titre": null
+       },
+       {
+        "texte": "An employee can receive the daily allowance for supporting a person at the end of their life:\n- if they are receiving family solidarity leave\n- or if he has converted his family solidarity leave into a part-time working period.\nEnd-of-life care should be provided in the person's home (and not in a hospital). This could involve one of the following locations:\n- The residence of the person being cared for\n- The residence of the caregiver or a third party\n- Nursing home\n- Residential care facility for elderly and dependent individuals.\nSeveral companions can share the allowance if they are accompanying the same person (at the same time or in sequence).",
+        "titre": "What are the conditions for receiving the daily allowance for supporting a person at the end of their life?"
+       },
+       {
+        "texte": "The eligibility criteria for the daily care allowance for a person nearing the end of their life vary depending on whether the application is for a single caregiver or multiple caregivers.\nCase: One accompanying person\nThe applicant must complete the following documents:\n- Form signed by the employer, stating that the employee is on a family solidarity leave (or that they have converted it into a part-time working period)\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.\nCase: Several companions\nThe applicant must complete the following documents:\n- Form signed by the employer, stating that the employee is on a family solidarity leave (or that they have converted it into a part-time working period)\n- A printed form requesting information about other applicants, including their identification details, registration number, and the number of allowances requested by each of them.\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.",
+        "titre": "How to apply for the daily care allowance for a person at the end of their life?"
+       },
+       {
+        "texte": "The daily allowance is set at €64.93.\nThe amount is €32.47 if the employee has converted their family solidarity leave into part-time work.",
+        "titre": "What is the daily allowance for accompanying a person who is terminally ill?"
+       },
+       {
+        "texte": "The payment is made to the employee from the date the request is received by the Cnajap, provided that the conditions are met on that date.",
+        "titre": "When does the daily allowance for a person nearing the end of their life begin to be paid out?"
+       },
+       {
+        "texte": "The payment is made on a daily basis, up to a maximum of 21 days (or 42 days in the case of reduced part-time work), including days that are worked or not worked.\nThe allowance will continue to be paid if the person receiving care at home needs to be hospitalized.\nSeveral carers may be eligible for the allowance if they accompany the same person, either simultaneously or sequentially, while adhering to the daily payment limit.\nTherefore, one person could request to receive 10 days of benefits, while another could request to receive the remaining 11 days.",
+        "titre": "What is the duration for which daily care allowance can be paid to a person in their final stages of life?"
+       },
+       {
+        "texte": "The accompanying person cannot receive the following benefits (if eligible) simultaneously:\n- Compensation for maternity, paternity, or adoption leave\n- Compensation for loss of income or maternity/paternity allowance\n- Compensation for sick leave or work-related accidents (however, this is possible if the compensation is received in connection with part-time work)\n- Shared child education (PreParE).",
+        "titre": "Can the daily care allowance for a person nearing the end of their life be combined with other benefits?"
+       },
+       {
+        "texte": "The allowance is no longer paid at the end of the authorized daily payments. It is also no longer paid from the day following the death of the person being cared for.",
+        "titre": "When does the daily allowance for a person nearing the end of their life cease to be paid?"
+       },
+       {
+        "texte": "An independent worker may receive the daily allowance for a person nearing the end of their life if they have suspended or reduced their professional activity.\nEnd-of-life care should be provided in the person's home (and not in a hospital). This could include, for example:\n- From the residence of the person being cared for,\n- from the residence of the accompanying person or a third party\n- from a nursing home\n- of a residential care facility for elderly people.\nSeveral companions can share the allowance if they are accompanying the same person (at the same time or in sequence).",
+        "titre": "What are the conditions for receiving the daily allowance for supporting a person at the end of their life?"
+       },
+       {
+        "texte": "The eligibility criteria for the daily care allowance for a person nearing the end of their life vary depending on whether the application is for a single caregiver or multiple caregivers.\nCase: One accompanying person\nThe applicant must complete the following documents:\n- Affidavit stating that the applicant has suspended or reduced their professional activity to provide in-home care for a person at the end of their life.\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.\nCase: Several companions\nThe applicant must complete the following documents:\n- Affidavit stating that the applicant has suspended or reduced their professional activity to provide in-home care for a person at the end of their life.\n- A printed form requesting information about other applicants, including their identification details, registration number, and the number of allowances requested by each of them.\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.",
+        "titre": "How to apply for the daily care allowance for a person at the end of their life?"
+       },
+       {
+        "texte": "The daily allowance is set at €64.93.\nThe amount is €32.47 if the self-employed individual has reduced their professional activity to part-time.",
+        "titre": "What is the daily allowance for accompanying a person who is terminally ill?"
+       },
+       {
+        "texte": "The payment is made from the date the request is received by the Cnajap, provided that the conditions are met on that date.",
+        "titre": "When does the daily allowance for a person nearing the end of their life begin to be paid out?"
+       },
+       {
+        "texte": "The payment is made on a daily basis, up to a maximum of 21 days (or 42 days in the case of reduced part-time work), including days that are worked or not worked.\nThe allowance will continue to be paid if the person receiving care at home needs to be hospitalized.\nSeveral carers may be eligible for the allowance if they accompany the same person, either simultaneously or sequentially, while adhering to the daily payment limit.\nOne person may request to receive 10 days' worth of benefits, while another may request to receive the remaining 11 days' worth of benefits.",
+        "titre": "What is the duration for which daily care allowance can be paid to a person in their final stages of life?"
+       },
+       {
+        "texte": "The accompanying person cannot receive the following benefits (if eligible) simultaneously:\n- Compensation for maternity, paternity, or adoption leave\n- Compensation for loss of income or maternity/paternity allowance\n- Compensation for sick leave or work-related accidents (however, this is possible if the compensation is received in connection with part-time work)\n- Shared child education (PreParE).",
+        "titre": "Can the daily care allowance for a person nearing the end of their life be combined with other benefits?"
+       },
+       {
+        "texte": "The allowance is no longer paid at the end of the authorized daily payments. It is also no longer paid from the day following the death of the person being cared for.",
+        "titre": "When does the daily allowance for a person nearing the end of their life cease to be paid?"
+       },
+       {
+        "texte": "The job seeker may receive the daily home care allowance for a person at the end of their life, under the following conditions:\n- to be a relative, a family member, a sibling, a parent, or a trusted friend of the person being cared for\n- or to share a residence with this person.\nEnd-of-life care should be provided in the person's home (and not in a hospital). This could include, for example:\n- From the residence of the person being cared for,\n- from the residence of the accompanying person or a third party\n- from a nursing home\n- of a residential care facility for elderly people.\nSeveral companions can share the allowance if they are accompanying the same person (at the same time or in sequence).",
+        "titre": "What are the conditions for receiving the daily allowance for supporting a person at the end of their life?"
+       },
+       {
+        "texte": "The eligibility criteria for the daily care allowance for a person nearing the end of their life vary depending on whether the application is for a single caregiver or multiple caregivers.\nCase: One accompanying person\nThe applicant must complete the following documents:\n- Statement of intent to cease active job searching to provide in-home care for a person at the end of their life.\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.\nCase: Several companions\nThe applicant must complete the following documents:\n- Statement of intent to cease active job searching to provide in-home care for a person at the end of their life.\n- A printed form requesting information about other applicants, including their identification details, registration number, and the number of allowances requested by each of them.\n- Application for a daily allowance to support a person at the end of their life who requires in-home care.\n→ Online service: Application for daily home care allowance for a person in their final stages of life\nThese documents must be sent by mail to the National Centre for Managing Applications for Daily Allowance for Individuals at the End of Life (Cnajap).\n→ Where to turn: Individuals at the end of their lives - National Centre for Social Security Claims (Cnajap)\nThe silence maintained by the Cnajap for more than 7 days from the date it receives the application constitutes approval.",
+        "titre": "How to apply for the daily care allowance for a person at the end of their life?"
+       },
+       {
+        "texte": "The daily allowance is set at €64.93.",
+        "titre": "What is the daily allowance for accompanying a person who is terminally ill?"
+       },
+       {
+        "texte": "The payment is made from the date the request is received by the Cnajap, provided that the conditions are met on that date.",
+        "titre": "When does the daily allowance for a person nearing the end of their life begin to be paid out?"
+       },
+       {
+        "texte": "The payment is made on a daily basis, up to a maximum of 21 working days.\nThe allowance will continue to be paid if the person receiving care at home needs to be hospitalized.\nSeveral carers may be eligible for the allowance if they accompany the same person, either simultaneously or sequentially, while adhering to the daily payment limit.\nOne person may request to receive 10 days' worth of benefits, while another may request to receive the remaining 11 days' worth of benefits.",
+        "titre": "What is the duration for which daily care allowance can be paid to a person in their final stages of life?"
+       },
+       {
+        "texte": "The accompanying person cannot receive the following benefits (if eligible) simultaneously:\n- Benefits paid by France Travail (formerly Pôle emploi)\n- Shared child education (PreParE).\nThese services are suspended until the allowance is paid.",
+        "titre": "Can the daily care allowance for a person nearing the end of their life be combined with other benefits?"
+       },
+       {
+        "texte": "The payment is no longer made at the end of the authorized daily payments.\nIt is also no longer payable from the day following the death of the person being cared for.",
+        "titre": "When does the daily allowance for a person nearing the end of their life cease to be paid?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F706",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F706",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-04-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.6,
+      "units": 135
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:44:02.080Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Yaşlı bir kişinin günlük bakım ve destek hizmetlerine ayrılan miktar",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 33.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Yaşlı bir kişinin yanında bulunarak sağlanan günlük destek ödemesi, bu kişinin yanında bulunma sorumluluğunu üstlenen kişinin ücretini ödemeyi sağlar.",
+      "steps": [
+       {
+        "texte": "\"Aile yardımı ile destek ödemesi, yaşamının sonuna yaklaşan bir kişinin düzenli olarak alabileceği ödemedir. Bu ödeme, işten izin alan çalışanlara yapılır. Bağımsız çalışan veya iş arayan bir kişi de bu ödemeyi alabilir. Ödeme koşulları, başvuranın durumuna göre değişiklik gösterir. Bu bilgiler, başvuru sürecinde bilmeniz gerekenleri içerir.\"",
+        "titre": null
+       },
+       {
+        "texte": "Çalışan, yaşamının sonuna yaklaşan bir kişiye yönelik günlük destek ödemesini alabilir:\n- Eğer aile birliği izininden yararlanıyorsa\n- veya, eğer aile destek izinini yarı zamanlı çalışma dönemine çevirmişse.\nYaşlı bir kişinin bakımını, hastanede değil, evinde yapılması gerekmektedir. Bu, örneğin aşağıdaki yerlerden biri olabilir:\n- Bakıma muhtaç kişinin yaşadığı yer\n- Bakıcı kişinin veya üçüncü bir kişinin ikamet adresi\n- Yaşlılar evi\n- Yaşlı ve bakıma muhtaç kişiler için konaklama ve bakım merkezi.\nBirden fazla kişi, aynı kişiyi (aynı anda veya ardışık olarak) yanlarında taşıdıklarında, bu ödemeyi paylaşabilirler.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesi alabilmek için hangi şartlar geçerlidir?"
+       },
+       {
+        "texte": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük bakım yardımı başvurusunun koşulları, başvurunun tek bir veya birden fazla bakım sağlayıcıyı kapsayıp kapsamadığına bağlı olarak değişiklik gösterir.\nÖrnek: Sadece bir görevli\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- İşveren tarafından doldurulmuş ve çalışanın, ailevi destek izininden (veya bu izinle çalışma dönemine geçişinden) yararlandığını belirten belge.\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.\nÖrnek: Birden fazla yardımcı\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- İşveren tarafından doldurulmuş ve çalışanın, ailevi destek izininden (veya bu izinle çalışma dönemine geçişinden) yararlandığını belirten belge.\n- Başvurunun, diğer başvuranların kimliklerini, kayıt numaralarını ve her birinin talep ettiği toplam alıkoyma miktarının dağılımını gösteren yazılı bir örneği.\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığında, günlük bakım yardımı nasıl talep edebilir?"
+       },
+       {
+        "texte": "Bu ödeme miktarı, günde 64,93 € olarak belirlenmiştir.\nBu miktar, çalışanın aile yardımı iznini yarı zamanlı bir işte çalışmaya dönüştürmesi durumunda 32,47 € olarak belirlenmiştir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük olarak ödenen destek miktarı nedir?"
+       },
+       {
+        "texte": "Bu ödeme, CNajap tarafından talebin alınması tarihinden itibaren, gerekli şartların bu tarihte karşılandığı durumda, çalışana ödenir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığı dönemde, günlük bakım ödemesi ne zaman başlar?"
+       },
+       {
+        "texte": "Bu ödeme, günlük olarak yapılır ve maksimum 21 gün (veya kısmi zamanlı çalışma durumunda 42 gün) olarak belirlenir. Bu günler, tam zamanlı veya kısmi zamanlı çalışma günleri olabilir.\nEvde bakım hizmeti alan kişinin hastaneye yatması gerektiğinde, nakdi ödeme devam ettirilir.\nBirden fazla kişi, aynı kişiyi eş zamanlı veya ardışık olarak, günlük olarak izin verilen ödeme limitini aşmadan destekleyerek, aynı anda veya sırayla, bu ödemeden yararlanabilir.\nBu durumda, bir kişi 10 günlük ücret yardımı talep edebilirken, diğer kişi kalan 11 gün için de ücret yardımı almayı talep edebilir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesinin ödenme süresi nedir?"
+       },
+       {
+        "texte": "Bu hizmetlerden (eğer hak sahibi ise) aynı anda yararlanması mümkün değildir:\n- Anne, baba veya çocuk bakımı için izinlerin tazminatı\n- İş kesintisi ücreti veya doğum veya babalık izni için ikame ödemesi\n- Hastalanma veya iş kazası nedeniyle alınan izinlerin tazminatı (ancak, bu tazminatın kısmi zamanlı bir işte elde edildiği durumlarda birleştirilmesi de mümkündür)\n- Çocuğun eğitimi için ortak hizmet (PreParE).",
+        "titre": "Yaşlı bir kişinin günlük bakım ödemesi ile diğer ödemeleri birleştirme mümkün mü?"
+       },
+       {
+        "texte": "Bu ödeme artık günlük olarak belirlenen ödeme dönemi sonunda verilmiyor. Ayrıca, bakım altında olan kişinin ölümünden sonraki gün itibarıyla da verilmiyor.",
+        "titre": "Bir kişinin yaşamının sonuna geldiğinde, günlük bakım ödemesi ne zaman sona erer?"
+       },
+       {
+        "texte": "Bağımsız çalışan, yaşamının sonuna yaklaşan bir kişinin günlük destek ödemesini, işini geçici olarak durdurmuş veya azaltmışsa alabilir.\nYaşlı bir kişinin bakımını, hastanede değil, evde yapılması gerekmektedir. Bu, örneğin şunları içerebilir:\n- bakıcının bulunduğu kişinin evinden\n- Eşlik eden kişinin veya üçüncü bir kişinin adresinden\n- yaşlılar için bir huzurevinde\n- yaşlı ve bakıma muhtaç kişiler için bir huzurevi kurumundan.\nBirden fazla kişi, aynı kişiyi (aynı anda veya ardışık olarak) yanlarında taşıdıklarında, bu ödemeyi paylaşabilirler.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesi alabilmek için hangi şartlar geçerlidir?"
+       },
+       {
+        "texte": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük bakım yardımı başvurusunun koşulları, başvurunun tek bir veya birden fazla bakım sağlayıcıyı kapsayıp kapsamadığına bağlı olarak değişiklik gösterir.\nÖrnek: Sadece bir görevli\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- İsteğin sahibi, yaşamının sonuna yaklaşan birini evde bakıma almak amacıyla profesyonel faaliyetlerini durdurduğunu veya azalttığını belirten, üzerine imza atılmış bir beyan.\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.\nÖrnek: Birden fazla yardımcı\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- İsteğin sahibi, yaşamının sonuna yaklaşan birini evde bakıma almak amacıyla profesyonel faaliyetlerini durdurduğunu veya azalttığını belirten, üzerine imza atılmış bir beyan.\n- Başvurunun, diğer başvuranların kimliklerini, kayıt numaralarını ve her birinin talep ettiği toplam alıkoyma miktarının dağılımını gösteren yazılı bir örneği.\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığında, günlük bakım yardımı nasıl talep edebilir?"
+       },
+       {
+        "texte": "Bu ödeme miktarı, günde 64,93 € olarak belirlenmiştir.\nBu miktar, bağımsız çalışanın işini yarı zamanlı olarak değiştirmesi durumunda 32,47 € olarak belirlenmiştir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük olarak ödenen destek miktarı nedir?"
+       },
+       {
+        "texte": "Bu ödeme, CNajap tarafından talep başvurunun alınması tarihinden itibaren, bu tarihte gerekli şartların sağlanması durumunda ödenir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığı dönemde, günlük bakım ödemesi ne zaman başlar?"
+       },
+       {
+        "texte": "Bu ödeme, günlük olarak yapılır ve maksimum 21 gün (veya kısmi zamanlı çalışma durumunda 42 gün) olarak belirlenir. Bu günler, tam zamanlı veya kısmi zamanlı çalışma günleri olabilir.\nEvde bakım hizmeti alan kişinin hastaneye yatması gerektiğinde, nakdi ödeme devam ettirilir.\nBirden fazla kişi, aynı kişiyi eş zamanlı veya ardışık olarak, günlük olarak izin verilen ödeme limitini aşmadan destekleyerek, aynı anda veya sırayla, bu ödemeden yararlanabilir.\nBir kişi, 10 günlük ücret yardımı almasını talep edebilirken, diğer kişi kalan 11 gün için de ücret yardımı almayı isteyebilir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesinin ödenme süresi nedir?"
+       },
+       {
+        "texte": "Bu hizmetlerden (eğer hak sahibi ise) aynı anda yararlanması mümkün değildir:\n- Anne, baba veya çocuk bakımı için izinlerin tazminatı\n- İş kesintisi ücreti veya doğum veya babalık izni için ikame ödemesi\n- Hastalanma veya iş kazası nedeniyle alınan izinlerin tazminatı (ancak, bu tazminatın kısmi zamanlı bir işte elde edildiği durumlarda birleştirilmesi de mümkündür)\n- Çocuğun eğitimi için ortak hizmet (PreParE).",
+        "titre": "Yaşlı bir kişinin günlük bakım ödemesi ile diğer ödemeleri birleştirme mümkün mü?"
+       },
+       {
+        "texte": "Bu ödeme artık günlük olarak belirlenen ödeme dönemi sonunda verilmiyor. Ayrıca, bakım altında olan kişinin ölümünden sonraki gün itibarıyla da verilmiyor.",
+        "titre": "Bir kişinin yaşamının sonuna geldiğinde, günlük bakım ödemesi ne zaman sona erer?"
+       },
+       {
+        "texte": "İş arayan kişi, aşağıdaki koşulların altında, yaşamının sonuna yaklaşan bir kişinin evde bakım yardımı almasına yardımcı olabilir:\n- Bu kişi, kişinin akrabası, soyundan birisi, kardeşi veya kız kardeşi, veya kişinin güvendiği bir kişi olmalıdır.\n- veya aynı evde bu kişiyle birlikte yaşamak.\nYaşlı bir kişinin bakımını, hastanede değil, evde yapılması gerekmektedir. Bu, örneğin şunları içerebilir:\n- bakıcının bulunduğu kişinin evinden\n- Eşlik eden kişinin veya üçüncü bir kişinin adresinden\n- yaşlılar için bir huzurevinde\n- yaşlı ve bakıma muhtaç kişiler için bir huzurevi kurumundan.\nBirden fazla kişi, aynı kişiyi (aynı anda veya ardışık olarak) yanlarında taşıdıklarında, bu ödemeyi paylaşabilirler.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesi alabilmek için hangi şartlar geçerlidir?"
+       },
+       {
+        "texte": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük bakım yardımı başvurusunun koşulları, başvurunun tek bir veya birden fazla bakım sağlayıcıyı kapsayıp kapsamadığına bağlı olarak değişiklik gösterir.\nÖrnek: Sadece bir görevli\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- Yaşlı bir bireyin evde bakımını üstlenmek amacıyla aktif iş arama sürecini durdurma beyanı\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.\nÖrnek: Birden fazla yardımcı\nBaşvuran, aşağıdaki belgeleri doldurmalıdır:\n- Yaşlı bir bireyin evde bakımını üstlenmek amacıyla aktif iş arama sürecini durdurma beyanı\n- Başvurunun, diğer başvuranların kimliklerini, kayıt numaralarını ve her birinin talep ettiği toplam alıkoyma miktarının dağılımını gösteren yazılı bir örneği.\n- Yaşlı bir kişinin evde bakım hizmeti için günlük ödeme talebi formu.\n→ Çevrimiçi hizmet: Yaşlı veya hasta bir kişinin evde bakım hizmeti için günlük destek ödemesi başvurusu\nBu belgeler, yaşamının sonuna yaklaşan bir kişinin gündelik yaşam destek ödemelerine başvurusunu değerlendiren Ulusal Gündelik Yaşam Destek Ödemeleri Yönetim Merkezi'ne (Cnajap) posta yoluyla gönderilmelidir.\n→ İlgili kuruma başvuru: Yaşlı veya bakıma muhtaç kişiler - Ulusal Sosyal Yardım Fonları Merkezi (Cnajap)\nCNJAP'ın, talebin alındığı tarihten itibaren 7 günden fazla süre boyunca sessiz kalması, otomatik olarak onay anlamına gelir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığında, günlük bakım yardımı nasıl talep edebilir?"
+       },
+       {
+        "texte": "Bu ödeme miktarı, günde 64,93 € olarak belirlenmiştir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük olarak ödenen destek miktarı nedir?"
+       },
+       {
+        "texte": "Bu ödeme, CNajap tarafından talep başvurunun alınması tarihinden itibaren, bu tarihte gerekli şartların sağlanması durumunda ödenir.",
+        "titre": "Bir kişinin yaşamının sonuna yaklaştığı dönemde, günlük bakım ödemesi ne zaman başlar?"
+       },
+       {
+        "texte": "Bu ödeme, haftalık olarak yapılır ve maksimum 21 iş günü veya izin günü dahil edilerek hesaplanır.\nEvde bakım hizmeti alan kişinin hastaneye yatması gerektiğinde, nakdi ödeme devam ettirilir.\nBirden fazla kişi, aynı kişiyi aynı anda veya ardışık olarak, günlük olarak izin verilen ödeme limitini aşmadan destekleyebiliyorsa, bu kişilerin de ödeme alabilirler.\nBir kişi, 10 günlük ücret yardımı almasını talep edebilirken, diğer kişi kalan 11 gün için de ücret yardımı almayı isteyebilir.",
+        "titre": "Bir kişinin yaşamının sonuna gelmiş olması durumunda, günlük yaşam destek ödemesinin ödenme süresi nedir?"
+       },
+       {
+        "texte": "Bu hizmetlerden (eğer hak sahibi ise) aynı anda yararlanması mümkün değildir:\n- France Travail(eski adıyla İşsizlik Dairesi) tarafından ödenen tazminatlar\n- Çocuğun eğitimi için ortak hizmet (PreParE).\nBu hizmetler, ödeme süresine kadar askıya alınmıştır.",
+        "titre": "Yaşlı bir kişinin günlük bakım ödemesi ile diğer ödemeleri birleştirme mümkün mü?"
+       },
+       {
+        "texte": "Bu ödeme, günlük olarak onaylanan ödemelerin ardından artık yapılmamaktadır.\nAyrıca, kişinin ölümünden sonraki gün itibarıyla da artık bu konuda yetkinlik göstermemektedir.",
+        "titre": "Bir kişinin yaşamının sonuna geldiğinde, günlük bakım ödemesi ne zaman sona erer?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F706",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F706",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-04-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 64.5,
+      "units": 135
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:46:10.390Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مبلغ مالي يومي لتوفير الدعم لشخص في المراحل النهائية من حياته.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 34.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تتيح المعاش اليومي المخصص لتقديم الدعم لشخص في المراحل الأخيرة من حياته، مكافأة الشخص المسؤول عن رعاية أحد الأقارب في هذه المرحلة.",
+      "steps": [
+       {
+        "texte": "يتم دفع مبلغ الدعم اليومي للمساعدة في رعاية شخص في نهاية حياته (AJAP) للموظف الذي يستفيد من إجازة دعم الأسرة. يمكن أيضًا للموظف المستقل أو الشخص الذي يبحث عن عمل الحصول على هذا المبلغ. تختلف شروط دفع المبلغ حسب وضع المستفيد. نقدم لكم المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "يمكن للموظف الحصول على مبلغ المعاش اليومي المخصص لدعم شخص في المراحل الأخيرة من حياته:\n- إذا كان يحصل على إجازة للرعاية العائلية.\n- أو إذا حول إجازته المتعلقة بدعم الأسرة إلى فترة عمل بدوام جزئي.\nيجب أن يتم تقديم الدعم للشخص في نهاية حياته في منزله (وليس في المستشفى). يمكن أن يشمل ذلك أحد الأماكن التالية:\n- مكان إقامة الشخص المحتاج لرعاية\n- مكان إقامة الشخص المرافق أو شخص آخر\n- دار رعاية المسنين\n- مؤسسة إقامة للمسنين المحتاجين.\nيمكن لعدة أشخاص أن يتقاسموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص (في نفس الوقت أو بالتتابع).",
+        "titre": "ما هي الشروط للحصول على مبلغ المعاش اليومي المخصص لدعم شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "تختلف شروط طلب مبلغ الدعم اليومي المقدم لشخص في نهاية حياته، اعتمادًا على ما إذا كانت الطلبات تتعلق بشخص واحد أو عدة أشخاص.\nمثال: شخص واحد فقط كمرافق\nيجب على المتقدم ملء المستندات التالية:\n- شهادة صادرة عن صاحب العمل، تحدد فيها أن الموظف يستحق إجازة دعم عائلية (أو أنه حولها إلى فترة عمل بدوام جزئي).\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.\nمثال: عدة مرافقين\nيجب على المتقدم ملء المستندات التالية:\n- شهادة صادرة عن صاحب العمل، تحدد فيها أن الموظف يستحق إجازة دعم عائلية (أو أنه حولها إلى فترة عمل بدوام جزئي).\n- نموذج طلب مكتوب باليد يوضح أسماء مقدمي الطلبات الآخرين، وأرقام تسجيلهم، وتوزيع عدد المعاشات المطلوبة من كل منهم.\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.",
+        "titre": "كيفية الحصول على مبلغ المعاش اليومي لمساعدة شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "بلغ مبلغ المعاش 64.93 يورو في اليوم.\nيبلغ المبلغ 32.47 يورو إذا حول الموظف إجازته الاجتماعية العائلية إلى عمل بدوام جزئي.",
+        "titre": "ما هو مبلغ الدعم اليومي المقدم لشخص في المراحل النهائية من حياته؟"
+       },
+       {
+        "texte": "يتم دفع مبلغ المعاش للموظف اعتبارًا من تاريخ استلام طلب الحصول عليه من قبل \"CNajap\"، شريطة استيفاء الشروط في هذا التاريخ.",
+        "titre": "متى تبدأ عملية دفع مبلغ المعاش اليومي المصاحب لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "يتم دفع مبلغ المعاش يوميًا، بحد أقصى يبلغ 21 يومًا (أو 42 يومًا في حالة تخفيض ساعات العمل)، مع إمكانية استخدامه في أيام العمل أو العطل.\nسيستمر صرف المعاش في الحالات التي يكون فيها الشخص الذي يتلقى الرعاية في المنزل بحاجة إلى الدخول إلى المستشفى.\nيمكن لعدة أشخاص أن يستلموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص، سواء بشكل متزامن أو متتابع، مع الالتزام بحدود المدفوعات اليومية المسموح بها.\nوبالتالي، يمكن لشخص أن يطلب صرف 10 أيام من المعاش، ويمكن لشخص آخر أن يطلب الحصول على 11 يومًا إضافية من المعاش.",
+        "titre": "ما هي المدة الزمنية التي يتم خلالها صرف مبلغ الدعم اليومي المقدم لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "لا يمكن للشخص المرافق الحصول على هذه المزايا (إذا كان مؤهلاً) في نفس الوقت:\n- تعويض الإجازات الأبوية أو الأمومية أو الإجازة المتعلقة بالتبني\n- مبلغ تعويض عن انقطاع العمل أو مبلغ بديل للإجازة الأمومية أو الأبوية.\n- تعويض الإجازات المرضية أو إجازات الحوادث المهنية (ولكن يمكن الجمع بين هذا التعويض وتعويض آخر إذا كان التعويض يتم استلامه مقابل عمل بدوام جزئي).\n- برنامج التعليم المشترك للطفل (PreParE).",
+        "titre": "هل يمكن الجمع بين مبلغ الدعم اليومي المقدم لشخص في نهاية حياته مع مزايا أخرى؟"
+       },
+       {
+        "texte": "لم تعد هذه المعاشات تُدفع في نهاية المدفوعات اليومية المعتمدة. كما لم تعد تُدفع أيضًا بعد اليوم التالي لوفاة الشخص الذي يتلقى المعاش.",
+        "titre": "متى ينتهي صرف مبلغ المعاش اليومي المخصص لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "يمكن للموظف المستقل الحصول على مبلغ الدعم اليومي المخصص لشخص في المراحل النهائية من حياته، إذا كان قد توقف عن العمل أو قلّ حجم عمله.\nيجب أن يتم تقديم الدعم للشخص في نهاية حياته في منزله (وليس في المستشفى). يمكن أن يشمل ذلك، على سبيل المثال:\n- من مقر إقامة الشخص المرافق.\n- من مقر الشخص المرافق أو من مقر شخص آخر.\n- من دار رعاية المسنين\n- من دار لرعاية كبار السن.\nيمكن لعدة أشخاص أن يتقاسموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص (في نفس الوقت أو بالتتابع).",
+        "titre": "ما هي الشروط للحصول على مبلغ المعاش اليومي المخصص لدعم شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "تختلف شروط طلب مبلغ الدعم اليومي المقدم لشخص في نهاية حياته، اعتمادًا على ما إذا كانت الطلبات تتعلق بشخص واحد أو عدة أشخاص.\nمثال: شخص واحد فقط كمرافق\nيجب على المتقدم ملء المستندات التالية:\n- بيان شخصي يؤكد أن مقدم الطلب قد أوقف أو قلل من نشاطه المهني لمساعدة شخص في نهاية حياته في المنزل.\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.\nمثال: عدة مرافقين\nيجب على المتقدم ملء المستندات التالية:\n- بيان شخصي يؤكد أن مقدم الطلب قد أوقف أو قلل من نشاطه المهني لمساعدة شخص في نهاية حياته في المنزل.\n- نموذج طلب مكتوب باليد يوضح أسماء مقدمي الطلبات الآخرين، وأرقام تسجيلهم، وتوزيع عدد المعاشات المطلوبة من كل منهم.\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.",
+        "titre": "كيفية الحصول على مبلغ المعاش اليومي لمساعدة شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "بلغ مبلغ المعاش 64.93 يورو في اليوم.\nيبلغ المبلغ 32.47 يورو إذا قام العامل المستقل بتقليل نشاطه المهني إلى العمل بدوام جزئي.",
+        "titre": "ما هو مبلغ الدعم اليومي المقدم لشخص في المراحل النهائية من حياته؟"
+       },
+       {
+        "texte": "يتم صرف مبلغ الدعم اعتبارًا من تاريخ استلام طلب الحصول عليه من قبل \"CNajap\"، شريطة استيفاء الشروط في هذا التاريخ.",
+        "titre": "متى تبدأ عملية دفع مبلغ المعاش اليومي المصاحب لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "يتم دفع مبلغ المعاش يوميًا، بحد أقصى يبلغ 21 يومًا (أو 42 يومًا في حالة تخفيض ساعات العمل)، مع إمكانية استخدامه في أيام العمل أو العطل.\nسيستمر صرف المعاش في الحالات التي يكون فيها الشخص الذي يتلقى الرعاية في المنزل بحاجة إلى الدخول إلى المستشفى.\nيمكن لعدة أشخاص أن يستلموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص، سواء بشكل متزامن أو متتابع، مع الالتزام بحدود المدفوعات اليومية المسموح بها.\nيمكن لشخص أن يطلب صرف 10 أيام من المعاش، بينما يمكن لشخص آخر أن يطلب الحصول على 11 يومًا إضافية من المعاش.",
+        "titre": "ما هي المدة الزمنية التي يتم خلالها صرف مبلغ الدعم اليومي المقدم لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "لا يمكن للشخص المرافق الحصول على هذه المزايا (إذا كان مؤهلاً) في نفس الوقت:\n- تعويض الإجازات الأبوية أو الأمومية أو الإجازة المتعلقة بالتبني\n- مبلغ تعويض عن انقطاع العمل أو مبلغ بديل للإجازة الأمومية أو الأبوية.\n- تعويض الإجازات المرضية أو إجازات الحوادث المهنية (ولكن يمكن الجمع بين هذا التعويض وتعويض آخر إذا كان التعويض يتم استلامه مقابل عمل بدوام جزئي).\n- برنامج التعليم المشترك للطفل (PreParE).",
+        "titre": "هل يمكن الجمع بين مبلغ الدعم اليومي المقدم لشخص في نهاية حياته مع مزايا أخرى؟"
+       },
+       {
+        "texte": "لم تعد هذه المعاشات تُدفع في نهاية المدفوعات اليومية المعتمدة. كما لم تعد تُدفع أيضًا بعد اليوم التالي لوفاة الشخص الذي يتلقى المعاش.",
+        "titre": "متى ينتهي صرف مبلغ المعاش اليومي المخصص لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "يمكن للمتقدم للوظيفة الحصول على مبلغ المعاش اليومي المخصص لدعم شخص في نهاية حياته، وذلك في الحالات التالية:\n- أن يكون أحد الأجداد، أو الأحفاد، أو الأخوة أو الأخوات، أو أي شخص موثوق به من الشخص المرافق.\n- أو العيش في نفس المنزل مع هذه الشخص.\nيجب أن يتم تقديم الدعم للشخص في نهاية حياته في منزله (وليس في المستشفى). يمكن أن يشمل ذلك، على سبيل المثال:\n- من مقر إقامة الشخص المرافق.\n- من مقر الشخص المرافق أو من مقر شخص آخر.\n- من دار رعاية المسنين\n- من دار لرعاية كبار السن.\nيمكن لعدة أشخاص أن يتقاسموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص (في نفس الوقت أو بالتتابع).",
+        "titre": "ما هي الشروط للحصول على مبلغ المعاش اليومي المخصص لدعم شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "تختلف شروط طلب مبلغ الدعم اليومي المقدم لشخص في نهاية حياته، اعتمادًا على ما إذا كانت الطلبات تتعلق بشخص واحد أو عدة أشخاص.\nمثال: شخص واحد فقط كمرافق\nيجب على المتقدم ملء المستندات التالية:\n- بيان بالتعهد بعدم البحث بنشاط عن عمل، وذلك بهدف تقديم خدمات رعاية منزلية لشخص في نهاية حياته.\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.\nمثال: عدة مرافقين\nيجب على المتقدم ملء المستندات التالية:\n- بيان بالتعهد بعدم البحث بنشاط عن عمل، وذلك بهدف تقديم خدمات رعاية منزلية لشخص في نهاية حياته.\n- نموذج طلب مكتوب باليد يوضح أسماء مقدمي الطلبات الآخرين، وأرقام تسجيلهم، وتوزيع عدد المعاشات المطلوبة من كل منهم.\n- نموذج طلب الحصول على مبلغ مالي يومي لدعم رعاية شخص في نهاية حياته في المنزل.\n→ خدمة عبر الإنترنت: طلب الحصول على مبلغ مالي يومي لدعم شخص في نهاية حياته في المنزل.\nيجب إرسال هذه المستندات عن طريق البريد إلى المركز الوطني لإدارة طلبات المعاشات اليومية المقدمة للأشخاص في نهاية حياتهم (CNajap).\n→ إلى أين يتم التوجه: الأشخاص في المراحل النهائية من حياتهم - المركز الوطني لطلبات المعاشات (CNajap)\nالهدوء الذي يحافظ عليه مجلس الإشراف على النشاط الاقتصادي (Cnajap) لمدة تزيد عن 7 أيام بدءًا من تاريخ استلامه الطلب يعتبر موافقة.",
+        "titre": "كيفية الحصول على مبلغ المعاش اليومي لمساعدة شخص في نهاية حياته؟"
+       },
+       {
+        "texte": "بلغ مبلغ المعاش 64.93 يورو في اليوم.",
+        "titre": "ما هو مبلغ الدعم اليومي المقدم لشخص في المراحل النهائية من حياته؟"
+       },
+       {
+        "texte": "يتم صرف مبلغ الدعم اعتبارًا من تاريخ استلام طلب الحصول عليه من قبل \"CNajap\"، شريطة استيفاء الشروط في هذا التاريخ.",
+        "titre": "متى تبدأ عملية دفع مبلغ المعاش اليومي المصاحب لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "يتم دفع مبلغ المعاش يوميًا، بحد أقصى يبلغ 21 يومًا، سواء كانت أيام عمل أو غيرها.\nسيستمر صرف المعاش في الحالات التي يكون فيها الشخص الذي يتلقى الرعاية في المنزل بحاجة إلى الدخول إلى المستشفى.\nيمكن لعدة أشخاص أن يستلموا مبلغ الدعم إذا كانوا يرافقون نفس الشخص، سواء بشكل متزامن أو متتابع، مع الالتزام بحدود المدفوعات اليومية المسموح بها.\nيمكن لشخص أن يطلب صرف 10 أيام من المعاش، بينما يمكن لشخص آخر أن يطلب الحصول على 11 يومًا إضافية من المعاش.",
+        "titre": "ما هي المدة الزمنية التي يتم خلالها صرف مبلغ الدعم اليومي المقدم لشخص في نهاية حياته؟"
+       },
+       {
+        "texte": "لا يمكن للشخص المرافق الحصول على هذه المزايا (إذا كان مؤهلاً) في نفس الوقت:\n- مبالغ تعويضية يتم صرفها من قبل France Travail (الذي كان يُعرف سابقًا باسم \"مركز التوظيف\")\n- برنامج التعليم المشترك للطفل (PreParE).\nتُوقف هذه الخدمات مؤقتًا خلال فترة استحقاق المعاش.",
+        "titre": "هل يمكن الجمع بين مبلغ الدعم اليومي المقدم لشخص في نهاية حياته مع مزايا أخرى؟"
+       },
+       {
+        "texte": "لم تعد تُصرف هذه المكافأة بعد إتمام المدفوعات اليومية المعتمدة.\nكما أنها لم تعد سارية المفعول اعتبارًا من اليوم التالي لوفاة الشخص المصاحب.",
+        "titre": "متى ينتهي صرف مبلغ المعاش اليومي المخصص لشخص في نهاية حياته؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F706",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F706",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-04-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 66.2,
+      "units": 135
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:48:16.353Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Tagesweise Unterstützung für eine Person im Lebensendstadium",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die tägliche Betreuungsleistung für eine Person am Lebensende ermöglicht die Entschädigung der Person, die für die Betreuung eines Angehörigen am Lebensende verantwortlich ist.",
+      "steps": [
+       {
+        "texte": "Die tägliche Unterstützungsgeld für eine Person im Lebensend (AJAP) wird dem Arbeitnehmer ausgezahlt, der im Elternzeit-Ausgleich steht. Auch ein selbstständiger Arbeiter oder eine Arbeitslose können dieses Geld erhalten. Die Bedingungen für die Auszahlung variieren je nach Situation des Antragstellers. Wir informieren Sie über die relevanten Informationen.",
+        "titre": null
+       },
+       {
+        "texte": "Der Arbeitnehmer kann eine tägliche Unterstützungsgeld für eine Person am Lebensende erhalten:\n- wenn er einen Elterngeld-Zuschuss erhält\n- oder ob er seinen Elternunterstützungsurlaub in eine Teilzeitbeschäftigung umgewandelt hat.\nDie Betreuung einer Person im Lebensendstadium sollte zu Hause erfolgen (nicht im Krankenhaus). Dies kann beispielsweise einer der folgenden Orte sein:\n- Wohnort der betreuten Person\n- Wohnort der Begleitperson oder einer dritten Person\n- Altersheim\n- Einrichtung zur Betreuung von älteren Menschen mit Pflegebedürftigkeit.\nMehrere Begleitpersonen können eine finanzielle Unterstützung erhalten, wenn sie dieselbe Person begleiten (gleichzeitig oder nacheinander).",
+        "titre": "Unter welchen Voraussetzungen kann eine tägliche Unterstützungsgeld für eine Person am Lebensende erhalten werden?"
+       },
+       {
+        "texte": "Die Voraussetzungen für die Beantragung der täglichen Unterstützung für eine Person im Lebensendstadium variieren je nachdem, ob die Beantragung sich auf eine oder mehrere Begleitpersonen bezieht.\nFall: Nur ein Begleiter\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Bestätigung, die vom Arbeitgeber ausgestellt wird und bestätigt, dass der Arbeitnehmer Anspruch auf eine Familienpflegezeit (oder dass er diese in eine Teilzeitbeschäftigung umgewandelt hat).\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.\nFall: Mehr Begleitpersonen\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Bestätigung, die vom Arbeitgeber ausgestellt wird und bestätigt, dass der Arbeitnehmer Anspruch auf eine Familienpflegezeit (oder dass er diese in eine Teilzeitbeschäftigung umgewandelt hat).\n- Ein ausgedruckter Antrag, der die Identität der anderen Antragsteller, ihre Registrierungsnummern und die Verteilung der beantragten Zahlungen aufzeigt.\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.",
+        "titre": "Wie erhält man die tägliche Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Höhe der Leistung beträgt 64,93 € pro Tag.\nDer Betrag beträgt 32,47 €, wenn der Arbeitnehmer seinen Elternurlaub in eine Teilzeitbeschäftigung umgewandelt hat.",
+        "titre": "Wie hoch ist die tägliche Betreuungsleistung für eine Person, die ihr Leben beenden muss?"
+       },
+       {
+        "texte": "Die Auszahlung erfolgt an den Arbeitnehmer ab dem Zeitpunkt, an dem der Antrag vom Cnajap empfangen wurde, vorausgesetzt, die Voraussetzungen sind zu diesem Zeitpunkt erfüllt.",
+        "titre": "Wann beginnt die Auszahlung der täglichen Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Leistung wird täglich ausgezahlt, wobei die maximale Dauer 21 Tage (oder 42 Tage bei teilweiser Arbeitszeit) beträgt, sowohl für arbeitsfreie als auch für arbeitsrelevante Tage.\nDie Auszahlung der Leistung wird beibehalten, wenn die Person, die zu Hause betreut wird, ins Krankenhaus eingeliefert werden muss.\nMehrere Begleitpersonen können eine Leistung erhalten, wenn sie dieselbe Person gleichzeitig oder nacheinander begleiten, unter Einhaltung der zulässigen täglichen Auszahlungsgrenze.\nDaher kann eine Person eine Auszahlung von 10 Tagen Arbeitslosengeld beantragen, während eine andere Person eine Auszahlung für die verbleibenden 11 Tage beantragen kann.",
+        "titre": "Wie lange wird die tägliche Unterstützungsgeld für eine Person am Lebensende ausgezahlt?"
+       },
+       {
+        "texte": "Die Begleitperson darf nicht gleichzeitig folgende Leistungen (falls sie Anspruch darauf haben) in Anspruch nehmen:\n- Entschädigung für Mutters-, Vaters- oder Adoptivurlaub\n- Entschädigung für Arbeitsausfall oder Ersatzleistungen für Mutterschaft oder Vaterschaft\n- Entschädigung für Krankheits- oder Arbeitsunfallzeiten (eine Kombination ist jedoch möglich, wenn die Entschädigung im Rahmen einer Teilzeitbeschäftigung gezahlt wird)\n- Gemeinsame Betreuung und Bildung des Kindes (PreParE).",
+        "titre": "Ist es möglich, die tägliche Betreuungsleistung für eine Person im Sterben mit anderen Leistungen zu kombinieren?"
+       },
+       {
+        "texte": "Die Leistung wird nicht mehr am Ende der genehmigten täglichen Zahlungen ausgezahlt. Sie wird auch nicht mehr ab dem Tag nach dem Tod der betreuten Person ausgezahlt.",
+        "titre": "Wann endet die Auszahlung der täglichen Unterstützungsleistung für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Ein selbstständiger Arbeitnehmer kann die tägliche Unterstützungsgeld für eine Person am Lebensende erhalten, wenn er seine berufliche Tätigkeit unterbrochen oder reduziert hat.\nDie Betreuung einer Person im Lebensendstadium sollte zu Hause erfolgen (nicht im Krankenhaus). Dies kann beispielsweise beinhalten:\n- die Adresse des betreuten Menschen.\n- am Wohnort der Begleitperson oder einer dritten Person,\n- einer Seniorenresidenz\n- eines betreuten Wohnheims für ältere Menschen.\nMehrere Begleitpersonen können eine finanzielle Unterstützung erhalten, wenn sie dieselbe Person begleiten (gleichzeitig oder nacheinander).",
+        "titre": "Unter welchen Voraussetzungen kann eine tägliche Unterstützungsgeld für eine Person am Lebensende erhalten werden?"
+       },
+       {
+        "texte": "Die Voraussetzungen für die Beantragung der täglichen Unterstützung für eine Person im Lebensendstadium variieren je nachdem, ob die Beantragung sich auf eine oder mehrere Begleitpersonen bezieht.\nFall: Nur ein Begleiter\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Erklärung, in der der Antragsteller erklärt, seine berufliche Tätigkeit entweder eingestellt oder reduziert zu haben, um eine Person im Lebensendstadium zu Hause zu betreuen.\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.\nFall: Mehr Begleitpersonen\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Erklärung, in der der Antragsteller erklärt, seine berufliche Tätigkeit entweder eingestellt oder reduziert zu haben, um eine Person im Lebensendstadium zu Hause zu betreuen.\n- Ein ausgedruckter Antrag, der die Identität der anderen Antragsteller, ihre Registrierungsnummern und die Verteilung der beantragten Zahlungen aufzeigt.\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.",
+        "titre": "Wie erhält man die tägliche Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Höhe der Leistung beträgt 64,93 € pro Tag.\nDer Betrag beträgt 32,47 €, wenn der Selbstständige seine berufliche Tätigkeit auf Teilzeit reduziert hat.",
+        "titre": "Wie hoch ist die tägliche Betreuungsleistung für eine Person, die ihr Leben beenden muss?"
+       },
+       {
+        "texte": "Die Auszahlung erfolgt ab dem Datum des Eingangs des Antrags bei der Cnajap, vorausgesetzt, die Voraussetzungen sind zu diesem Zeitpunkt erfüllt.",
+        "titre": "Wann beginnt die Auszahlung der täglichen Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Leistung wird täglich ausgezahlt, wobei die maximale Dauer 21 Tage (oder 42 Tage bei teilweiser Arbeitszeit) beträgt, sowohl für arbeitsfreie als auch für arbeitsrelevante Tage.\nDie Auszahlung der Leistung wird beibehalten, wenn die Person, die zu Hause betreut wird, ins Krankenhaus eingeliefert werden muss.\nMehrere Begleitpersonen können eine Leistung erhalten, wenn sie dieselbe Person gleichzeitig oder nacheinander begleiten, unter Einhaltung der zulässigen täglichen Auszahlungsgrenze.\nEine Person kann die Auszahlung von 10 Tagen Arbeitslosengeld beantragen, während eine andere die Auszahlung von den weiteren 11 Tagen beantragen kann.",
+        "titre": "Wie lange wird die tägliche Unterstützungsgeld für eine Person am Lebensende ausgezahlt?"
+       },
+       {
+        "texte": "Die Begleitperson darf nicht gleichzeitig folgende Leistungen (falls sie Anspruch darauf haben) in Anspruch nehmen:\n- Entschädigung für Mutters-, Vaters- oder Adoptivurlaub\n- Entschädigung für Arbeitsausfall oder Ersatzleistungen für Mutterschaft oder Vaterschaft\n- Entschädigung für Krankheits- oder Arbeitsunfallzeiten (eine Kombination ist jedoch möglich, wenn die Entschädigung im Rahmen einer Teilzeitbeschäftigung gezahlt wird)\n- Gemeinsame Betreuung und Bildung des Kindes (PreParE).",
+        "titre": "Ist es möglich, die tägliche Betreuungsleistung für eine Person im Sterben mit anderen Leistungen zu kombinieren?"
+       },
+       {
+        "texte": "Die Leistung wird nicht mehr am Ende der genehmigten täglichen Zahlungen ausgezahlt. Sie wird auch nicht mehr ab dem Tag nach dem Tod der betreuten Person ausgezahlt.",
+        "titre": "Wann endet die Auszahlung der täglichen Unterstützungsleistung für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Der Arbeitssuchende kann die tägliche Unterstützungsgeld für eine Person am Lebensende erhalten, unter folgenden Bedingungen:\n- ein Familienmitglied (Elternteil, Kind, Geschwister oder anderes nahestehendes Familienmitglied) oder eine vertrauenswürdige Person, die die betreute Person kennt.\n- oder dass man mit dieser Person das gleiche Zuhause teilt.\nDie Betreuung einer Person im Lebensendstadium sollte zu Hause erfolgen (nicht im Krankenhaus). Dies kann beispielsweise beinhalten:\n- die Adresse des betreuten Menschen.\n- am Wohnort der Begleitperson oder einer dritten Person,\n- einer Seniorenresidenz\n- eines betreuten Wohnheims für ältere Menschen.\nMehrere Begleitpersonen können eine finanzielle Unterstützung erhalten, wenn sie dieselbe Person begleiten (gleichzeitig oder nacheinander).",
+        "titre": "Unter welchen Voraussetzungen kann eine tägliche Unterstützungsgeld für eine Person am Lebensende erhalten werden?"
+       },
+       {
+        "texte": "Die Voraussetzungen für die Beantragung der täglichen Unterstützung für eine Person im Lebensendstadium variieren je nachdem, ob die Beantragung sich auf eine oder mehrere Begleitpersonen bezieht.\nFall: Nur ein Begleiter\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Erklärung zur Selbstverpflichtung, die aktive Jobsuche einzustellen, um eine Person im Lebensendstadium zu betreuen.\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.\nFall: Mehr Begleitpersonen\nDer Antragsteller muss folgende Dokumente ausfüllen:\n- Erklärung zur Selbstverpflichtung, die aktive Jobsuche einzustellen, um eine Person im Lebensendstadium zu betreuen.\n- Ein ausgedruckter Antrag, der die Identität der anderen Antragsteller, ihre Registrierungsnummern und die Verteilung der beantragten Zahlungen aufzeigt.\n- Antragsformular für die beantragung eines Tagesgeldes zur Unterstützung einer Person am Lebensende im häuslichen Umfeld.\n→ Online-Service: Antrag auf Tagesgeld für die häusliche Betreuung einer Person im Sterbeprozess\nDiese Dokumente müssen per Post an das Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap) geschickt werden.\n→ An wen wenden: Personen am Lebensende – Nationales Zentrum für Anträge auf Sozialleistungen (Cnajap)\nDie Schweigepflicht, die das Cnajap für mehr als 7 Tage ab dem Zeitpunkt einhält, an dem es die Anfrage erhält, gilt als Zustimmung.",
+        "titre": "Wie erhält man die tägliche Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Höhe der Leistung beträgt 64,93 € pro Tag.",
+        "titre": "Wie hoch ist die tägliche Betreuungsleistung für eine Person, die ihr Leben beenden muss?"
+       },
+       {
+        "texte": "Die Auszahlung erfolgt ab dem Datum des Eingangs des Antrags bei der Cnajap, vorausgesetzt, die Voraussetzungen sind zu diesem Zeitpunkt erfüllt.",
+        "titre": "Wann beginnt die Auszahlung der täglichen Unterstützungsgeld für eine Person, die ihr Leben beendet?"
+       },
+       {
+        "texte": "Die Leistung wird täglich ausgezahlt, wobei die maximale Dauer von 21 Tagen berücksichtigt wird, sowohl bezahlte als auch unbezahlte.\nDie Auszahlung der Leistung wird beibehalten, wenn die Person, die zu Hause betreut wird, ins Krankenhaus eingeliefert werden muss.\nMehrere Begleitpersonen können eine Leistung erhalten, wenn sie dieselbe Person gleichzeitig oder nacheinander betreuen, unter Einhaltung der zulässigen täglichen Auszahlungsgrenze.\nEine Person kann die Auszahlung von 10 Tagen Arbeitslosengeld beantragen, während eine andere die Auszahlung von den weiteren 11 Tagen beantragen kann.",
+        "titre": "Wie lange wird die tägliche Unterstützungsgeld für eine Person am Lebensende ausgezahlt?"
+       },
+       {
+        "texte": "Die Begleitperson darf nicht gleichzeitig folgende Leistungen (falls sie Anspruch darauf haben) in Anspruch nehmen:\n- Entschädigungen, die von France Travail (ehemals Arbeitsamt) ausgezahlt werden\n- Gemeinsame Betreuung und Bildung des Kindes (PreParE).\nDiese Leistungen werden während der Auszahlung des Zuschusses ausgesetzt.",
+        "titre": "Ist es möglich, die tägliche Betreuungsleistung für eine Person im Sterben mit anderen Leistungen zu kombinieren?"
+       },
+       {
+        "texte": "Die Auszahlung erfolgt nicht mehr unmittelbar nach den genehmigten täglichen Zahlungen.\nSie wird auch nicht mehr ab dem Tag nach dem Tod der betreuten Person ausgezahlt.",
+        "titre": "Wann endet die Auszahlung der täglichen Unterstützungsleistung für eine Person, die ihr Leben beendet?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F706",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F706",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-04-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.4,
+      "units": 135
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:50:29.381Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Щоденна сума коштів на надання супровідних послуг людині, яка перебуває наприкінці життя.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 43.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Щоденна допомога на супроводження людини наприкінці життя дозволяє компенсувати витрати на особу, яка відповідає за догляд за близькою людиною наприкінці її життя.",
+      "steps": [
+       {
+        "texte": "Щоденна допомога для підтримки людини наприкінці життя (ЩДПЛ) виплачується працівнику, який перебуває у відпустці з сімейних причин. Самозайнята особа або особа, яка шукає роботу, також може отримати ЩДПЛ. Умови виплати допомоги залежать від ситуації заявника. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Працівник може отримувати щоденну допомогу для супроводу людини, яка перебуває наприкінці життя:\n- якщо він має право на відпустку за сімейним зв'язком\n- або якщо він перетворив свій період відпустки у зв'язку з сімейною підтримкою на період роботи на неповний день.\nДогляд за людиною наприкінці життя має здійснюватися вдома (а не в лікарні). Це може бути, наприклад, один із таких місць:\n- Місце проживання особи, яка потребує супроводу\n- Місце проживання супроводжуючої особи або третьої особи\n- Догляд для літніх людей\n- Інститут для проживання людей похилого віку, які потребують догляду.\nКілька супроводжуючих осіб можуть поділитись виплатою, якщо вони супроводжують одну й ту саму людину (одночасно або послідовно).",
+        "titre": "Які умови необхідно виконати, щоб отримати щоденну допомогу для людини, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Умови отримання щоденної допомоги для супроводу людини наприкінці життя можуть відрізнятися залежно від того, чи стосується запиту одна особа, чи декілька осіб.\nПриклад: Одна особа, яка супроводжує.\nЗаявник повинен заповнити наступні документи:\n- Документ, заповнений роботодавцем, який підтверджує, що працівник має право на відпустку за сімейними обставинами (або що він перетворив її на період роботи на неповний робочий день).\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.\nПриклад: Кілька супроводжуючих\nЗаявник повинен заповнити наступні документи:\n- Документ, заповнений роботодавцем, який підтверджує, що працівник має право на відпустку за сімейними обставинами (або що він перетворив її на період роботи на неповний робочий день).\n- Форма заявки на папері, в якій вказано ідентифікаційні дані інших заявників, їхні реєстраційні номери та розподіл кількості отриманих виплат між ними.\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.",
+        "titre": "Як отримати щоденну допомогу для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Розмір виплати становить 64,93 євро на день.\nЯкщо працівник перетворив свій період соціальної допомоги на часткову зайнятість, то розмір виплати становить 32,47 євро.",
+        "titre": "Який розмір щоденної допомоги для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється працівнику з моменту отримання заявки організацією Cnajap, за умови, що всі необхідні умови виконуються на цей момент.",
+        "titre": "Коли починається виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється щоденно, але не перевищує 21 день (або 42 дні у разі часткової зайнятості), враховуючи кількість робочих днів.\nВиплата допомоги зберігається, якщо особа, яка проживає вдома, потребує госпіталізації.\nДеякі супроводжуючі особи можуть отримувати виплату, якщо вони супроводжують одну й ту саму людину одночасно або послідовно, дотримуючись обмежень на щоденні виплати.\nТаким чином, одна людина може попросити про виплату 10 днів виплат, а інша – про отримання ще 11 днів виплат.",
+        "titre": "Який термін виплати щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Супутні особи не можуть одночасно отримувати наступні виплати (якщо вони мають право на них):\n- Компенсація за відпустки по материнству, батьківству або усиновленню\n- Компенсація за припинення роботи або виплата замісної допомоги у зв'язку з вагітністю або пологами.\n- Компенсація за відпустку по хворобі або травмі на робочому місці (проте, якщо компенсація отримується за частим графіком роботи, її можна отримати одночасно з іншими виплатами).\n- Спільна освіта дитини (PreParE).",
+        "titre": "Чи можна об'єднати щоденну допомогу для людини, яка перебуває наприкінці життя, з іншими виплатами?"
+       },
+       {
+        "texte": "Виплата більше не здійснюється після завершення встановленого періоду щоденних виплат. Вона також більше не здійснюється з наступного дня після смерті особи, за якою здійснювалися виплати.",
+        "titre": "Коли припиняється виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Самозайнята особа може отримувати щоденну допомогу, призначену для підтримки людини наприкінці життя, якщо вона призупинила або зменшила свою професійну діяльність.\nДогляд за людиною наприкінці життя має здійснюватися вдома (а не в лікарні). Це може включати, наприклад:\n- з місця проживання особи, яку супроводжують.\n- з місця проживання супроводжуючої особи або третьої особи.\n- з будинку для літніх людей\n- від закладу для догляду за людьми похилого віку.\nКілька супроводжуючих осіб можуть поділитись виплатою, якщо вони супроводжують одну й ту саму людину (одночасно або послідовно).",
+        "titre": "Які умови необхідно виконати, щоб отримати щоденну допомогу для людини, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Умови отримання щоденної допомоги для супроводу людини наприкінці життя можуть відрізнятися залежно від того, чи стосується запиту одна особа, чи декілька осіб.\nПриклад: Одна особа, яка супроводжує.\nЗаявник повинен заповнити наступні документи:\n- Офіційне підтвердження, в якому заявник зазначає, що він призупинив або зменшив свою професійну діяльність, щоб доглядати за людиною наприкінці життя вдома.\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.\nПриклад: Кілька супроводжуючих\nЗаявник повинен заповнити наступні документи:\n- Офіційне підтвердження, в якому заявник зазначає, що він призупинив або зменшив свою професійну діяльність, щоб доглядати за людиною наприкінці життя вдома.\n- Форма заявки на папері, в якій вказано ідентифікаційні дані інших заявників, їхні реєстраційні номери та розподіл кількості отриманих виплат між ними.\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.",
+        "titre": "Як отримати щоденну допомогу для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Розмір виплати становить 64,93 євро на день.\nЦе становить 32,47 євро, якщо самозайнята особа зменшила обсяг своєї професійної діяльності до частного графіку.",
+        "titre": "Який розмір щоденної допомоги для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється з дати отримання заявки центральним агентством з управління соціальним забезпеченням (Cnajap), за умови, що всі необхідні умови виконуються на цю дату.",
+        "titre": "Коли починається виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється щоденно, але не перевищує 21 день (або 42 дні у разі часткової зайнятості), враховуючи кількість робочих днів.\nВиплата допомоги зберігається, якщо особа, яка проживає вдома, потребує госпіталізації.\nДеякі супроводжуючі особи можуть отримувати виплату, якщо вони супроводжують одну й ту саму людину одночасно або послідовно, дотримуючись обмежень на щоденні виплати.\nОдин працівник може попросити виплатити 10 днів відпустки, а інший – отримати ще 11 днів відпустки.",
+        "titre": "Який термін виплати щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Супутні особи не можуть одночасно отримувати наступні виплати (якщо вони мають право на них):\n- Компенсація за відпустки по материнству, батьківству або усиновленню\n- Компенсація за припинення роботи або виплата замісної допомоги у зв'язку з вагітністю або пологами.\n- Компенсація за відпустку по хворобі або травмі на робочому місці (проте, якщо компенсація отримується за частим графіком роботи, її можна отримати одночасно з іншими виплатами).\n- Спільна освіта дитини (PreParE).",
+        "titre": "Чи можна об'єднати щоденну допомогу для людини, яка перебуває наприкінці життя, з іншими виплатами?"
+       },
+       {
+        "texte": "Виплата більше не здійснюється після завершення встановленого періоду щоденних виплат. Вона також більше не здійснюється з наступного дня після смерті особи, за якою здійснювалися виплати.",
+        "titre": "Коли припиняється виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Особа, яка шукає роботу, може отримувати щоденну допомогу для догляду за людиною, яка перебуває наприкінці життя, за такими умовами:\n- бути родичем, членом сім'ї, братом, сестрою або довіреною особою, яка супроводжує людину.\n- або проживати в одному домі з цією людиною.\nДогляд за людиною наприкінці життя має здійснюватися вдома (а не в лікарні). Це може включати, наприклад:\n- з місця проживання особи, яку супроводжують.\n- з місця проживання супроводжуючої особи або третьої особи.\n- з будинку для літніх людей\n- від закладу для догляду за людьми похилого віку.\nКілька супроводжуючих осіб можуть поділитись виплатою, якщо вони супроводжують одну й ту саму людину (одночасно або послідовно).",
+        "titre": "Які умови необхідно виконати, щоб отримати щоденну допомогу для людини, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Умови отримання щоденної допомоги для супроводу людини наприкінці життя можуть відрізнятися залежно від того, чи стосується запиту одна особа, чи декілька осіб.\nПриклад: Одна особа, яка супроводжує.\nЗаявник повинен заповнити наступні документи:\n- Офіційне письмове підтвердження припинення активного пошуку роботи з метою надання догляду за особою, яка перебуває наприкінці життя, вдома.\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.\nПриклад: Кілька супроводжуючих\nЗаявник повинен заповнити наступні документи:\n- Офіційне письмове підтвердження припинення активного пошуку роботи з метою надання догляду за особою, яка перебуває наприкінці життя, вдома.\n- Форма заявки на папері, в якій вказано ідентифікаційні дані інших заявників, їхні реєстраційні номери та розподіл кількості отриманих виплат між ними.\n- Форма заявки на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\n→ Онлайн-сервіс: Запит на отримання щоденної допомоги з догляду за особою, яка перебуває наприкінці життя, вдома.\nЦі документи необхідно надсилати поштою до Національного центру управління заявками на щомісячні виплати особам, які перебувають наприкінці життя (Cnajap).\n→ Куди звернутися: Особи наприкінці життя – Національний центр заявок на виплати (Cnajap)\nТиша, яку підтримує CNajap протягом понад 7 днів з моменту отримання запиту, вважається схваленням.",
+        "titre": "Як отримати щоденну допомогу для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Розмір виплати становить 64,93 євро на день.",
+        "titre": "Який розмір щоденної допомоги для супроводу людини наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється з дати отримання заявки центральним агентством з управління соціальним забезпеченням (Cnajap), за умови, що всі необхідні умови виконуються на цю дату.",
+        "titre": "Коли починається виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Виплата здійснюється щоденно, але не більше 21 робочих або неробочих днів.\nВиплата допомоги зберігається, якщо особа, яка проживає вдома, потребує госпіталізації.\nДеякі супроводжуючі особи можуть отримувати виплату, якщо вони супроводжують одну й ту саму людину одночасно або послідовно, дотримуючись обмежень на щоденні виплати.\nОдин працівник може попросити виплатити 10 днів відпустки, а інший – отримати ще 11 днів відпустки.",
+        "titre": "Який термін виплати щоденної допомоги особі, яка перебуває наприкінці життя?"
+       },
+       {
+        "texte": "Супутні особи не можуть одночасно отримувати наступні виплати (якщо вони мають право на них):\n- Виплати, що здійснюються компанією France Travail (раніше – Центр зайнятості)\n- Спільна освіта дитини (PreParE).\nЦі послуги призупиняються на період отримання виплати.",
+        "titre": "Чи можна об'єднати щоденну допомогу для людини, яка перебуває наприкінці життя, з іншими виплатами?"
+       },
+       {
+        "texte": "Виплата більше не здійснюється після щоденних дозволених платежів.\nТакож, виплата припиняється з наступного дня після смерті того, хто її отримував.",
+        "titre": "Коли припиняється виплата щоденної допомоги особі, яка перебуває наприкінці життя?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F706",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F706",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2026-04-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 68.2,
+      "units": 135
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:7eb7ffafbd82429b1ef8200b78fcd9c7861cffd8296e3f53d9c3f18ccb80722e",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Allocation journalière d'accompagnement d'une personne en fin de vie",
+   "contenu_json": {
+    "intro": "L'allocation journalière d'accompagnement d'une personne en fin de vie permet de rémunérer la personne chargée de s'occuper d'un proche en fin de vie.",
+    "steps": [
+     {
+      "texte": "L'allocation journalière d'accompagnement d'une personne en fin de vie (AJAP) est versée au salarié qui est en congé de solidarité familiale. Un travailleur indépendant ou un demandeur d'emploi peut aussi percevoir l'AJAP. Les conditions de versement de l'allocation varie selon la situation du demandeur. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Le salarié peut percevoir l'allocation journalière d'accompagnement d'une personne en fin de vie :\n- s'il bénéficie d'un congé de solidarité familiale\n- ou s'il a transformé son congé de solidarité familiale en période d'activité à temps partiel.\nL'accompagnement de la personne en fin de vie doit être effectué à domicile (et non à l'hôpital). Il peut s'agir par exemple de l'un des lieux suivants :\n- Domicile de la personne accompagnée\n- Domicile de la personne accompagnante ou d'une tierce personne\n- Maison de retraite\n- Établissement d'hébergement pour personnes âgées dépendantes (Ehpad).\nPlusieurs accompagnants peuvent se partager l'allocation s'ils accompagnent la même personne (en même temps ou successivement).",
+      "titre": "Quelles sont les conditions pour percevoir l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Les conditions de demande de l'allocation journalière d'accompagnement d'une personne en fin de vie varient selon que la demande concerne un seul ou plusieurs accompagnants.\nCas : Un seul accompagnant\nLe demandeur doit remplir les documents suivants :\n- Attestation remplie par l'employeur, précisant que le salarié bénéficie d'un congé de solidarité familiale (ou qu'il l'a transformé en période d'activité à temps partiel)\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.\nCas : Plusieurs accompagnants\nLe demandeur doit remplir les documents suivants :\n- Attestation remplie par l'employeur, précisant que le salarié bénéficie d'un congé de solidarité familiale (ou qu'il l'a transformé en période d'activité à temps partiel)\n- Demande sur papier libre indiquant l'identité des autres demandeurs, leur n° d'immatriculation et la répartition du nombre d'allocations demandées par chacun d'eux\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.",
+      "titre": "Comment demander l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Le montant de l'allocation est fixé à 64,93 € par jour.\nIl est fixé à 32,47 € si le salarié a transformé son congé de solidarité familiale en activité à temps partiel.",
+      "titre": "Quel est le montant de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée au salarié à partir de la date de réception de la demande par le Cnajap, dès lors que les conditions sont réunies à cette date.",
+      "titre": "Quand débute le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée de manière journalière, dans la limite maximale de 21 jours (ou 42 jours en cas de réduction de travail à temps partiel), ouvrables ou non.\nLe versement de l'allocation est maintenu lorsque la personne accompagnée à domicile doit être hospitalisée.\nPlusieurs accompagnants peuvent percevoir l'allocation s'ils accompagnent la même personne, concomitamment ou successivement, dans le respect de la limite des versements journaliers autorisés.\nAinsi, une personne peut demander le versement de 10 jours d'allocations et une autre peut demander à bénéficier des 11 autres jours de versement.",
+      "titre": "Quelle est la durée de versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'accompagnant ne peut pas percevoir simultanément les prestations suivantes (lorsqu'il y a droit) :\n- Indemnisation des congés de maternité, de paternité ou d'adoption\n- Indemnité d'interruption d'activité ou l'allocation de remplacement pour maternité ou paternité\n- Indemnisation des congés de maladie ou d'accident du travail (le cumul est toutefois possible si l'indemnisation est perçue au titre d'une activité à temps partiel)\n- Prestation partagée d'éducation de l'enfant (PreParE).",
+      "titre": "Peut-on cumuler l'allocation journalière d'accompagnement d'une personne en fin de vie avec d'autres prestations ?"
+     },
+     {
+      "texte": "L'allocation n'est plus versée à la fin des versements journaliers autorisés. Elle n'est également plus versée à partir du jour suivant le décès de la personne accompagnée.",
+      "titre": "Quand prend fin le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Le travailleur indépendant peut percevoir l'allocation journalière d'accompagnement d'une personne en fin de vie s'il a suspendu ou réduit son activité professionnelle.\nL'accompagnement de la personne en fin de vie doit être effectué à domicile (et non à l'hôpital). Il peut s'agir par exemple :\n- du domicile de la personne accompagnée,\n- du domicile de la personne accompagnante ou d'une tierce personne,\n- d'une maison de retraite,\n- d'un établissement d'hébergement pour personnes âgées dépendantes (Ehpad).\nPlusieurs accompagnants peuvent se partager l'allocation s'ils accompagnent la même personne (en même temps ou successivement).",
+      "titre": "Quelles sont les conditions pour percevoir l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Les conditions de demande de l'allocation journalière d'accompagnement d'une personne en fin de vie varient selon que la demande concerne un seul ou plusieurs accompagnants.\nCas : Un seul accompagnant\nLe demandeur doit remplir les documents suivants :\n- Déclaration sur l'honneur précisant que le demandeur a suspendu ou réduit son activité professionnelle pour accompagner à domicile une personne en fin de vie\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.\nCas : Plusieurs accompagnants\nLe demandeur doit remplir les documents suivants :\n- Déclaration sur l'honneur précisant que le demandeur a suspendu ou réduit son activité professionnelle pour accompagner à domicile une personne en fin de vie\n- Demande sur papier libre indiquant l'identité des autres demandeurs, leur n° d'immatriculation et la répartition du nombre d'allocations demandées par chacun d'eux\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.",
+      "titre": "Comment demander l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Le montant de l'allocation est fixé à 64,93 € par jour.\nIl est fixé à 32,47 € si le travailleur indépendant a réduit son activité professionnelle en temps partiel.",
+      "titre": "Quel est le montant de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée à partir de la date de réception de la demande par le Cnajap, dès lors que les conditions sont réunies à cette date.",
+      "titre": "Quand débute le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée de manière journalière, dans la limite maximale de 21 jours (ou 42 jours en cas de réduction de travail à temps partiel), ouvrables ou non.\nLe versement de l'allocation est maintenu lorsque la personne accompagnée à domicile doit être hospitalisée.\nPlusieurs accompagnants peuvent percevoir l'allocation s'ils accompagnent la même personne, concomitamment ou successivement, dans le respect de la limite des versements journaliers autorisés.\nUne personne peut demander le versement de 10 jours d'allocations, et une autre demander à bénéficier des 11 autres jours de versement.",
+      "titre": "Quelle est la durée de versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'accompagnant ne peut pas percevoir simultanément les prestations suivantes (lorsqu'il y a droit) :\n- Indemnisation des congés de maternité, de paternité ou d'adoption\n- Indemnité d'interruption d'activité ou l'allocation de remplacement pour maternité ou paternité\n- Indemnisation des congés de maladie ou d'accident du travail (le cumul est toutefois possible si l'indemnisation est perçue au titre d'une activité à temps partiel)\n- Prestation partagée d'éducation de l'enfant (PreParE).",
+      "titre": "Peut-on cumuler l'allocation journalière d'accompagnement d'une personne en fin de vie avec d'autres prestations ?"
+     },
+     {
+      "texte": "L'allocation n'est plus versée à la fin des versements journaliers autorisés. Elle n'est également plus versée à partir du jour suivant le décès de la personne accompagnée.",
+      "titre": "Quand prend fin le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Le demandeur d'emploi peut percevoir l'allocation journalière d'accompagnement à domicile d'une personne en fin de vie, dans les conditions suivantes :\n- être un ascendant, un descendant, un frère ou une sœur ou une personne de confiance de la personne accompagnée\n- ou partager le même domicile que cette personne.\nL'accompagnement de la personne en fin de vie doit être effectué à domicile (et non à l'hôpital). Il peut s'agir par exemple :\n- du domicile de la personne accompagnée,\n- du domicile de la personne accompagnante ou d'une tierce personne,\n- d'une maison de retraite,\n- d'un établissement d'hébergement pour personnes âgées dépendantes (Ehpad).\nPlusieurs accompagnants peuvent se partager l'allocation s'ils accompagnent la même personne (en même temps ou successivement).",
+      "titre": "Quelles sont les conditions pour percevoir l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Les conditions de demande de l'allocation journalière d'accompagnement d'une personne en fin de vie varient selon que la demande concerne un seul ou plusieurs accompagnants.\nCas : Un seul accompagnant\nLe demandeur doit remplir les documents suivants :\n- Déclaration sur l'honneur de cessation de recherche active d'emploi pour accompagner à domicile une personne en fin de vie\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.\nCas : Plusieurs accompagnants\nLe demandeur doit remplir les documents suivants :\n- Déclaration sur l'honneur de cessation de recherche active d'emploi pour accompagner à domicile une personne en fin de vie\n- Demande sur papier libre indiquant l'identité des autres demandeurs, leur n° d'immatriculation et la répartition du nombre d'allocations demandées par chacun d'eux\n- Formulaire de demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie.\n→ Service en ligne : Demande d'allocation journalière d'accompagnement à domicile d'une personne en fin de vie\nCes documents doivent être adressés par courrier au Centre national de gestion des demandes d'allocations journalières d'accompagnement d'une personne en fin de vie (Cnajap).\n→ Où s'adresser : Personne en fin de vie - Centre national des demandes d'allocations (Cnajap)\nLe silence gardé par le Cnajap pendant plus de 7 jours à compter de la date à laquelle il reçoit la demande vaut accord.",
+      "titre": "Comment demander l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "Le montant de l'allocation est fixé à 64,93 € par jour.",
+      "titre": "Quel est le montant de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée à partir de la date de réception de la demande par le Cnajap, dès lors que les conditions sont réunies à cette date.",
+      "titre": "Quand débute le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'allocation est versée de manière journalière, dans la limite maximale de 21 jours, ouvrables ou non.\nLe versement de l'allocation est maintenu lorsque la personne accompagnée à domicile doit être hospitalisée.\nPlusieurs accompagnants peuvent percevoir l'allocation s'ils accompagnent la même personne, en même temps ou successivement, dans le respect de la limite des versements journaliers autorisés.\nUne personne peut demander le versement de 10 jours d'allocations, et une autre demander à bénéficier des 11 autres jours de versement.",
+      "titre": "Quelle est la durée de versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     },
+     {
+      "texte": "L'accompagnant ne peut pas percevoir simultanément les prestations suivantes (lorsqu'il y a droit) :\n- Indemnités versées par France Travail (anciennement Pôle emploi)\n- Prestation partagée d'éducation de l'enfant (PreParE).\nCes prestations sont suspendues le temps du versement de l'allocation.",
+      "titre": "Peut-on cumuler l'allocation journalière d'accompagnement d'une personne en fin de vie avec d'autres prestations ?"
+     },
+     {
+      "texte": "L'allocation n'est plus versée à l'issue des versements journaliers autorisés.\nElle n'est également plus versée à partir du jour suivant le décès de la personne accompagnée.",
+      "titre": "Quand prend fin le versement de l'allocation journalière d'accompagnement d'une personne en fin de vie ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

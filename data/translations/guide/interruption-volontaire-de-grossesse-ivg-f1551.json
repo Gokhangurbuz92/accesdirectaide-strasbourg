@@ -1,0 +1,464 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "interruption-volontaire-de-grossesse-ivg-f1551",
+ "recordId": "d6ee3d00-ac92-4788-9ca8-9a29e075c749",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:07:44.140Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Voluntary termination of pregnancy (abortion)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 87.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The practice of abortion is regulated, and several steps must be followed, both before and after the procedure.",
+      "steps": [
+       {
+        "texte": "A pregnant woman, including a minor, who does not wish to continue her pregnancy can request its termination. The practice of abortion is regulated, and several steps must be followed, both before and after the procedure. During a consultation with a doctor or midwife, the pregnant woman must be informed about the available methods of abortion and has the right to choose one freely, depending on the stage of her pregnancy. We provide you with the information you need to know.",
+        "titre": null
+       },
+       {
+        "texte": "There are 2 methods of abortion:\n- Surgical abortion (also known as instrumental abortion) must be performed in a healthcare facility (hospital or authorized gynecology/obstetrics or surgery clinic). Under certain conditions, it may also take place in a health center authorized to perform abortions, provided that it has a contract with an authorized gynecology/obstetrics or surgery clinic.\n- Medical abortion is performed in a healthcare setting (hospital or clinic), a private practice, a sexual health center, or a health center.\nThe abortion technique used depends on your choice and the stage of your pregnancy.\nThis choice can be made with the help of a doctor or a midwife.\nSpecifically: The crime of obstructing an abortion is punishable by a prison sentence of 2 years and a fine of 30,000 €.",
+        "titre": "What are the methods for in-vitro fertilization (IVF)?"
+       },
+       {
+        "texte": "There is no age requirement.\nIf you are a minor, you have the option of requesting consent from your parents or legal guardian, who can accompany you throughout the process of obtaining an abortion.\nHowever, if you wish to keep the procedure confidential, the abortion will be performed solely at your request. In this case, you must have a trusted adult accompany you throughout the process.",
+        "titre": "Is there an age requirement for IVF?"
+       },
+       {
+        "texte": "The turnaround times depend on the method chosen:\n- A surgical intrauterine pregnancy (IVG) can be performed up to the end of the 14th week of pregnancy, which is 16 weeks after the start of the last menstrual period.\n- A medical abortion is performed until the end of the 7th week of pregnancy, which is a maximum of 9 weeks after the start of the last menstrual period.",
+        "titre": "What are the deadlines for seeking an abortion?"
+       },
+       {
+        "texte": "When you are considering having an abortion, you should make an appointment with a doctor (general practitioner or gynecologist) or a midwife who practices in:\n- A healthcare facility (hospital or clinic)\n- A city hall\n- A health center\n- A sexual health center (formerly a family planning and education center).\nYou can request an in-person or remote consultation appointment if your healthcare provider recommends it.\nIf the doctor or midwife does not perform abortions, they must immediately inform you and provide you with the names of other professionals who do.\nAll publicly funded healthcare facilities offering gynecological or obstetric services, or surgical services, are required to provide abortion services.\n→ Where to go: Doctor\n→ Where to go: Independent midwife\n→ Where to go: Sexual health centers (e.g., family planning and education centers)\nSpecifically: Directories listing organizations and professionals who conduct IVF are available by consulting the websites of the ARS (regional health authorities) for each relevant territory.\n→ Where to go: Regional Health Agency (ARS)\nTwo consultations are mandatory before an IVF procedure is undertaken.\nFirst step: information gathering\nDuring this initial phase:\n- You are making your request for an abortion.\n- You will receive verbal information and a guide on abortion, which covers the different methods available, the places where it can be performed, and particularly the choices you have, as well as the potential side effects.\n- The doctor or midwife will offer you a psychosocial assessment (this is mandatory if you are a minor and must be completed before obtaining your consent). This assessment takes place in a dedicated space for affective, relational, and sexual well-being (EVARS), a sexual health center, or an approved organization.\n2nd stage: obtaining consent\nDuring this second stage, you will provide your written consent for the abortion procedure to the doctor or midwife.\nReminder: There is no longer a mandatory waiting period for abortion. If you are an adult and do not wish to undergo a psychosocial assessment, you can choose to complete the information and consent gathering process during a single consultation. If you choose to undergo a psychosocial assessment (required for minors), there is no mandatory minimum time between this assessment and the abortion itself, regardless of whether you are a minor or an adult.",
+        "titre": "What is the process for an in-vitro fertilization (IVF) procedure?"
+       },
+       {
+        "texte": "Surgical IVG instrument\nInstrumental technique (surgical) involves aspirating the egg, preceded by dilation of the cervix. The opening of the cervix can be facilitated by the administration of a medication.\nThe procedure can be performed under local or general anesthesia. You will choose the most appropriate type of anesthesia, in consultation with your healthcare provider, based on your individual needs.\nThe hospital stay typically lasts a few hours, but the procedure itself takes about ten minutes.\nSpecifically: Midwives performing instrumental abortion (surgical abortion) within a healthcare setting must demonstrate their competence. This competence is established through completion of both theoretical and practical training in instrumental abortion (surgical abortion) and in the appropriate course of action in the event of complications arising from the procedure.\nChemical induced abortion\nThe medical technique involves taking two medications: the first to terminate the pregnancy and the second to induce the expulsion of the egg.\nThe two medications are administered by the doctor or midwife during the consultation, or by the pharmacist if you have had a teleconsultation.\nThe first medication can be taken:\n- With the presence of the doctor or midwife during a consultation or teleconsultation at your home.\n- Provided at your home.\nThe administration of the 2nd medication takes place between 24 and 48 hours after the administration of the 1st, either in consultation or at your home.\nTherefore, this method does not require any anesthesia or surgical intervention. You will be prescribed pain medication.\nSpecifically: Within the context of teleconsultation (remote consultations at a hospital or in the community), medications are prescribed by the doctor or midwife and dispensed by a designated pharmacy chosen by the patient. This pharmacy ensures confidentiality.",
+        "titre": "How does an abortion take place?"
+       },
+       {
+        "texte": "For all women covered by social security (adults or minors), abortion and all associated procedures (consultations, ultrasounds, blood tests, etc.) are fully covered by the Assurance maladie (French public health insurance).\nThere are no upfront fees and no possibility of exceeding the agreed-upon honorarium.\nSpecifically: For women residing in France who are in irregular situations and are not eligible for state medical assistance (AME: state medical aid), there is coverage for emergency care (which includes abortion) at the hospital (either through hospitalization or a consultation at a healthcare facility).\nSurgical IVG instrument\nThe cost of a diagnostic imaging procedure is fully reimbursed by Assurance maladie at 100%, based on a fixed fee.\nThis price range is between €579.06 and €830.06, depending on:\n- From a healthcare facility (hospital or clinic)\n- The type of anesthesia (local or general)\n- And also regarding the length of the hospital stay.\nMedication administration in a healthcare setting\nThe cost of a medically supervised IVF treatment, in a healthcare facility (hospital, clinic), is reimbursed by the Assurance maladie at 100% based on a fixed rate of €353.64.\nMedication-induced infertility in outpatient settings\nThe cost of a non-surgical contraception service (at a private clinic, health center, or family planning center) is reimbursed by the Assurance maladie at 100%, with fees set by decree at each stage.",
+        "titre": "What is the cost of an IVF procedure?"
+       },
+       {
+        "texte": "A psychosocial consultation is always offered after an abortion. This allows you to discuss your situation if you feel the need to do so.\nA follow-up visit should take place between the 14th and 21st day after the induced abortion, either by instrument or medication.\nIt ensures that there are no complications and that the pregnancy has been successfully terminated.\nDuring the check-up, the doctor or midwife will ensure that you have access to a suitable form of contraception, if necessary.",
+        "titre": "Is there a follow-up check-up after an abortion?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F1551",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1551",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2024-04-25"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 75.5,
+      "units": 74
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:11:12.639Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "İsteğe bağlı hamilelik sonlandırımı (IVG)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 93.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Gebelik sonlandırılması, belirli kurallara tabi tutulmakta ve hem müdahale öncesinde hem de sonrasında belirli adımların izlenmesi gerekmektedir.",
+      "steps": [
+       {
+        "texte": "Hamile bir kadın, bu durum, özellikle de minoren ise, hamileliğinin devam etmesini istemiyorsa, bunu sonlandırma talebinde bulunabilir. Gebelik sonlandırılması, belirli kurallara tabidir ve bu kurallar, müdahalenin öncesinde ve sonrasında uygulanmalıdır. Bir doktor veya doğum uzmanıyla yapılan görüşmede, hamile kadın, gebeliğin hangi aşamasında olduğuna bağlı olarak, gebelik sonlandırma yöntemleri hakkında bilgilendirilmelidir ve bu yöntemlerden birini serbestçe seçme hakkına sahip olmalıdır. Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "IVF (dondurulmuş yumurta döpü) için 2 farklı yöntem bulunmaktadır:\n- İdrar yolu dondurma işlemi (cerrahi), zorunlu olarak bir sağlık kuruluşunda (doğum ve kadın hastalıkları veya cerrahi alanında yetkilendirilmiş hastane veya klinik) gerçekleştirilir. Belirli koşullar altında, doğum ve kadın hastalıkları veya cerrahi alanında yetkilendirilmiş bir sağlık kuruluşu ile anlaşma yapmış olan bir sağlık merkezinde de gerçekleştirilebilir.\n- İlaçla yapılan rahim boşaltma işlemi, hastane veya klinikte, şehir merkezindeki bir muayenehanede, cinsel sağlık merkezinde veya sağlık merkezinde gerçekleştirilir.\nKullanılan doğum kontrol yöntemi, tercihlerinize ve hamileliğinizin dönemine bağlıdır.\nBu seçim, doktor veya doğum uzmanı tarafından yapılabilir.\nBilindiği üzere: İntihar girişimini engelleme suçu, 2 yıl hapis cezası ve 30.000 € para cezasıyla cezalandırılır.",
+        "titre": "IVF (dondurulmuş yumurta döpü) için hangi yöntemler kullanılabilir?"
+       },
+       {
+        "texte": "Yaş sınırlaması yoktur.\nEğer siz 18 yaşın altında bir bireyseniz, İVİ (İntihar ve Vicdan Hakkı) talebinizi sunarken, ebeveynlerinizden veya yasal temsilcinizden onay almayı seçebilirsiniz. Bu kişi, İVİ talebinizi desteklemek ve size rehberlik etmek için yanınızda olacaktır.\nAncak, eğer gizliliği korumak istiyorsanız, IVG (İntihar Rehberliği) yalnızca sizin isteğiniz üzerine gerçekleştirilir. Bu durumda, sürecinize bir yetişkinin rehberliğinde bulunmanız gerekir.",
+        "titre": "IVF için yaş sınırı var mı?"
+       },
+       {
+        "texte": "Teslimat süreleri, seçilen yönteme bağlı olarak değişir:\n- Bir IVG (doğum öncesi invaziv) prosedürü, hamileliğin 14. haftasına kadar, yani son adet döneminin bitiminden 16 hafta sonra uygulanabilir.\n- İlaçlarla yapılan intravenöz beslenme, hamileliğin 7. haftasına kadar uygulanır, yani son adet döneminin bitiminden itibaren en fazla 9 hafta boyunca.",
+        "titre": "İV (doğum öncesi) tedaviye başvuru için ne kadar süre vardır?"
+       },
+       {
+        "texte": "Eğer bir doğum kontrolü yaptırmak istiyorsanız, bir doktorla (genel pratisyen veya kadın hastalıkları uzmanı) veya doğum uzmanıyla randevu almanız gerekir.\n- Bir sağlık kurumu (hastane veya klinik)\n- Belediye binası\n- Sağlık merkezi\n- Bir cinsel sağlık merkezi (eski aile planlama ve eğitim merkezi).\nSağlık profesyoneliniz, size uygunsa, yüz yüze veya uzaktan danışmanlık randevusu alabilirsiniz.\nEğer doktor veya doğum uzmanı, İVP (isterili doğum) uygulaması yapmıyorsa, bunu size derhal bildirmeli ve İVP uygulayan diğer profesyonellerin isimlerini size vermeli.\nTüm kadın doğum ve doğum hizmeti veren veya cerrahi alanlardaki kamu sağlık kurumları, kürtaj uygulaması yapmalıdır.\n→ Nereye başvurulmalı: Doktor\n→ Nereye başvurulmalı: Özel doğum uzmanı\n→ Nereye başvurulabilir: Cinsel sağlık merkezleri (örneğin aile planlama ve eğitim merkezi)\nBilindiği gibi: Sağlık kuruluşları ve ilgili hizmetleri sunan profesyonellerin listesini içeren rehberler, her bölgedeki ARS (Sağlık Hizmetleri Genel Müdürlüğü) web sitelerinde bulunabilir.\n→ İlgili kuruma başvuru: Bölgesel Sağlık Ajansı (ARS)\nIVG'nin gerçekleştirilmesi için 2 ön hazırlık aşaması gereklidir.\n1. Aşama: Bilgi toplama\nBu ilk aşamada:\n- Avortum talebinizi yapıyorsunuz.\n- Size, İntihar Rehberliği ile ilgili sözlü bilgi ve rehberler sunulacak. Bu rehberler, farklı İntihar yöntemleri, uygulama yerleri ve özellikle size sunulan seçenekler hakkında bilgi içerecek, aynı zamanda olası olumsuz etkiler hakkında da bilgilendirme yapacaktır.\n- Doktor veya doğum uzmanı, size bir psikososyal görüşme teklif ediyor (bu görüşme, sizin bir çocuk veya genç olduğunuz durumda zorunludur ve onayınızın alınmasından önce yapılmalıdır). Bu görüşme, bir EVARS (duygusal, ilişkisel ve cinsel yaşam alanı), bir cinsel sağlık merkezi veya yetkilendirilmiş bir kuruluşta gerçekleştirilir.\n2. aşama: rızanın toplanması\nBu ikinci aşamada, avortum talebinizin yazılı onayını doktorunuza veya doğum uzmanına teslim edersiniz.\nHatırlatma: Emzirme konusunda artık belirlenmiş bir bekleme süresi bulunmamaktadır. Eğer siz 18 yaşın üzerindesiniz ve psikososyal destek almak istemiyorsanız, bilgi verme ve onay alma süreçlerini tek bir görüşmede tamamlayabilirsiniz. Eğer psikososyal destek almayı (minörler için zorunlu) seçerseniz, bu destek ve emzirme işlemleri arasında belirlenmiş bir minimum süre bulunmamaktadır, bu süre hem yetişkinler hem de minörler için geçerlidir.",
+        "titre": "IVG (İntihar) için nasıl bir süreç izlenir?"
+       },
+       {
+        "texte": "IVG aletleri (cerrahi amaçlı)\nİnstrumental teknik (cerrahi yöntem), jinek adının genişletilmesinden sonra, yumurtanın aspire edilmesini içerir. Jinek adının açılması, bir ilaçla uygulanarak kolaylaştırılabilir.\nBu işlem, bölgesel veya genel anestezi altında gerçekleştirilebilir. Sağlık profesyoneli ile birlikte, sizin için en uygun anestezi yöntemini seçebilirsiniz.\nGenellikle hastanede kalış süresi birkaç saat sürer, ancak ameliyatın kendisi yaklaşık 10 dakika sürer.\nBilindiği üzere: Hamilelik sonu işlemlerini (ameliyatlı) bir sağlık kuruluşunda uygulayan doğum uzmanları, bu konuda yeterliliklerini kanıtlamalıdır. Bu yeterlilik, hamilelik sonu işlemlerine (ameliyatlı) ve hamilelik sonu sırasında ortaya çıkabilecek komplikasyonlarla başa çıkma konusunda teorik ve uygulamalı eğitimlerin tamamlanmasıyla doğrulanır.\nIVG (ilaç)\nBu ilaç tedavisi, iki ilacın birlikte kullanılmasıyla uygulanır (ilk ilaç hamileliği sonlandırmak için kullanılırken, ikinci ilaç yumurtanın dışarı atılmasına yardımcı olur).\nİki ilaç, doktor veya doğum uzmanı tarafından muayene sırasında veya, eğer uzaktan muayene yaptınızsa, eczacı tarafından verilmektedir.\nİlk ilaç, aşağıdaki şekillerde alınabilir:\n- Doktor veya doğum uzmanı, evde bir muayene veya telemuayene sırasında sizinle birlikte bulunarak\n- Sadece evinizde.\nİkinci ilacın kullanımı, ilk ilacın alınmasından 24 ila 48 saat sonra, doktorunuzun muayene sırasında veya evinizde uygulanır.\nBu yöntem, dolayısıyla anestezi veya cerrahi müdahale gerektirmez. Size ağrı kesici ilaçlar reçete edilecektir.\nBilindiği üzere: Tele-konsültasyon (hastane veya şehirde yapılan uzaktan muayene) kapsamında, ilaçlar doktor veya doğum uzmanı tarafından reçete edilir ve kadın tarafından seçilen, resmi bir eczaneden temin edilir. Bu eczane, gizliliği garanti eder.",
+        "titre": "IVG (İntihar) nasıl gerçekleştirilir?"
+       },
+       {
+        "texte": "Tüm sosyal güvenlik kapsamındaki kadınlar (büyük veya küçük), tıbbi olarak yapılan düşük ve bununla ilişkili tüm işlemler (muayeneler, ultrason, kan tahlilleri vb.) tamamen Assurance maladie (Fransız kamu sağlık sigortası) tarafından karşılanır.\nHerhangi bir ücret tahakkuku veya ücretlerin ötesine geçme durumu söz konusu değildir.\nŞöyle ki: Fransa'da yasal olmayan durumda bulunan ve devlet yardımı (AME: devlet sağlık yardımı) alamayan kadınlar için, acil sağlık hizmetleri (bu hizmetler arasında gebelik sonlandırılması da yer almaktadır) hastanede (hastane yatışı veya sağlık kuruluşunda muayene) karşılanmaktadır.\nIVG aletleri (cerrahi amaçlı)\nBir IVG (İlaç Tedavisi) maliyeti, sabit bir ücret üzerinden belirlenen standart bir fiyattan dolayı Assurance maladie tarafından %100 olarak karşılanır.\nBu fiyat, aşağıdaki faktörlere bağlı olarak 579,06 € ile 830,06 € arasında değişmektedir:\n- Sağlık kurumu (hastane veya klinik)\n- Kullanılan anestezi türü (yerel veya genel anestezi)\n- Ve hastanede kalış süresine de.\nİlaç tedavisi altında hastanede\nİlaçla yapılan intravenöz (IV) tedavinin, bir sağlık kuruluşunda (hastane, klinik) maliyeti, belirlenen 353,64 €'luk sabit bir fiyata göre, Assurance maladie tarafından %100 olarak karşılanır.\nİlaç tedavisi için kullanılan, şehir ortamında uygulanan yöntem\nŞehirde yapılan ilaçla yapılan doğum kontrol hizmetlerinin maliyeti, Assurance maladie tarafından %100 oranında karşılanmaktadır. Her adımda belirlenen tariflere uygun olarak ücretler belirlenir.",
+        "titre": "IVG'nin maliyeti nedir?"
+       },
+       {
+        "texte": "İntihar sonrası, her zaman bir psikososyal değerlendirme önerilir. Bu değerlendirme, durumunuzla ilgili endişelerinizi veya sorunlarınızı konuşmanıza olanak tanır.\nKontrol muayenesi, yapay inseminasyon veya ilaçla yapılan doğumdan sonra 14. ve 21. gün arasında yapılmalıdır.\nBu, olası komplikasyonların olmadığını ve hamileliğin başarıyla sonlandırıldığını doğrulamayı sağlar.\nKontrol muayenesinde, doktor veya doğum uzmanı, ihtiyaç halinde, sizin için uygun bir doğum kontrol yöntemi olup olmadığını kontrol eder.",
+        "titre": "İntihar girişiminden sonra kontrol muayenesi yapılıyor mu?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F1551",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1551",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2024-04-25"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 72.6,
+      "units": 74
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:14:30.097Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "إنهاء الحمل عن طريق الاختيار",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 31.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تخضع ممارسة الإجهاض للوائح والقواعد، ويجب اتباع عدة خطوات قبل وبعد الإجراء.",
+      "steps": [
+       {
+        "texte": "امرأة حامل، بما في ذلك الفتيات، التي لا ترغب في إتمام الحمل يمكنها طلب إيقافه. يُحكم على إجراء الإجهاض، ويجب اتباع خطوات معينة قبل وبعد الإجراء. خلال استشارة مع طبيب أو ممرضة، يجب إعلام المرأة الحامل بأساليب الإجهاض، ولها الحق في اختيار واحدة بحرية بناءً على مرحلة الحمل. نقدم لكم المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "هناك طريقتان لإجراء الإجهاض:\n- يتم إجراء الإجهاض الجراحي (العملي) إلزاميًا في مؤسسة صحية (مستشفى أو عيادة معتمدة في مجال النساء والتوليد أو الجراحة). في ظل ظروف معينة، يمكن أن يتم في مركز صحي معتمد لديه اتفاق مع مؤسسة صحية معتمدة في مجال النساء والتوليد أو الجراحة.\n- يتم إجراء الإجهاض الدوائي في مؤسسة صحية (مستشفى أو عيادة)، أو في عيادة في المدينة، أو في مركز صحي متخصص في الصحة الجنسية، أو في مركز صحي عام.\nتعتمد تقنية الإجهاض المستخدمة على اختيارك ومرحلة حملك.\nيمكن اتخاذ هذا القرار بمساعدة الطبيب أو الممرضة.\nوهذا يعني: إن تعطيل الإجهاض يعاقب بالسجن لمدة سنتين وغرامة قدرها 30 ألف يورو.",
+        "titre": "ما هي الطرق المتاحة لإجراء الإجهاض؟"
+       },
+       {
+        "texte": "لا توجد أي شروط عمرية يجب الالتزام بها.\nإذا كنت قاصراً، يمكنك اختيار الحصول على موافقة والديك أو ممثلهم القانوني، الذي يمكنه أن يرافقك في عملية الإجهاض.\nومع ذلك، إذا كنت ترغب في الحفاظ على سرية العملية، فإن الإجهاض يتم بناءً على طلبك فقط. وفي هذه الحالة، يجب عليك الحصول على دعم شخص بالغ من اختيارك للمساعدة في هذه العملية.",
+        "titre": "هل هناك شرط سن لإجراء الإخصاب الصناعي؟"
+       },
+       {
+        "texte": "تعتمد المدة الزمنية على الطريقة المختارة:\n- يمكن إجراء عملية زرع البلواتف (الزرع الجراحي) حتى نهاية الأسبوع الرابع عشر من الحمل، أي بعد مرور 16 أسبوعًا من بداية آخر دورة شهرية.\n- يتم إجراء العلاج الهرموني عن طريق الحقن حتى نهاية الأسبوع السابع من الحمل، أي بحد أقصى 9 أسابيع بعد بدء آخر دورة شهرية.",
+        "titre": "ما هي المدة الزمنية المتاحة للالتحاق بالإجهاض؟"
+       },
+       {
+        "texte": "عندما ترغب في اللجوء إلى الإجهاض، يجب عليك تحديد موعد مع طبيب (طبيب عام أو طبيب متخصص في النساء والتوليد) أو ممرضة تعمل في:\n- مؤسسة صحية (مستشفى أو عيادة)\n- مكتب البلدة\n- مركز صحي\n- مركز صحي متخصص في الصحة الجنسية (سابقًا مركز للتخطيط والتوعية العائلية).\nيمكنك طلب موعد للاستشارة سواء كانت حضورية أو عن بعد، إذا اقترح عليك ذلك مقدم الرعاية الصحية.\nإذا لم يمارس الطبيب أو الممرضة إجراء عمليات الإجهاض، فيجب عليه إبلاغك بذلك على الفور، وتزويدك باسم المتخصصين الذين يقومون بإجراء هذه العمليات.\nيجب على جميع المؤسسات الصحية العامة المعتمدة في مجال النساء والتوليد أو الجراحة، أن تقدم خدمة الإجهاض.\n→ إلى من يجب الاتصال: طبيب\n→ إلى من يتم التواصل: ممرضة خاصة\n→ إلى أين يتم التوجه: مراكز الصحة الجنسية (مثل مراكز التخطيط والتوعية الأسرية)\nوهذا يعني: تتوفر قوائم تحتوي على أسماء المؤسسات والمهنيين الذين يقومون بإجراء فحوصات ما قبل الزواج، ويمكن الوصول إليها من خلال مواقع الويب الخاصة بـ \"ARs\" (مراكز الصحة المحلية) في كل منطقة.\n→ إلى أين يتم التوجه: وكالة الصحة الإقليمية\nيجب إتمام مرحلتين قبل إجراء عملية الإخصاب الاصطناعي.\nالخطوة الأولى: استشارة المعلومات\nخلال هذه المرحلة الأولى:\n- تقدمت بطلب الإجهاض.\n- ستتلقى معلومات شفهية وإرشادات حول الإجهاض، والتي تتضمن الطرق المختلفة للإجهاض، وأماكن إجرائه، وخاصة الخيارات المتاحة لك، بالإضافة إلى معلومات حول الآثار الجانبية المحتملة.\n- يقدم الطبيب أو الممرضة لك مقابلة نفسية واجتماعية (وهي إلزامية إذا كنت قاصراً ويجب إجراؤها قبل الحصول على موافقتك). تجرى هذه المقابلة في مركز متخصص (مثل مركز للرعاية الصحية المتعلقة بالجنس) أو في مؤسسة معتمدة.\nالخطوة الثانية: جمع الموافقة\nخلال هذه المرحلة الثانية، ستقوم بتقديم إقرارك الكتابي بطلب الإجهاض إلى الطبيب أو الممرضة.\nتذكير: لم يعد هناك مهلة زمنية محددة فيما يتعلق بالإجهاض. إذا كنتِ بالغًا ولا ترغبين في إجراء استشارة نفسية واجتماعية، يمكنكِ اختيار إجراء استشارة واحدة تجمع بين وقت المعلومات ووقت الحصول على الموافقة. إذا اخترتِ إجراء استشارة نفسية واجتماعية (وهي إلزامية بالنسبة للمراهقات)، فلا توجد مهلة زمنية دنيا إلزامية بين هذه الاستشارة وإجراء الإجهاض، سواء كنتِ بالغًا أو مراهقة.",
+        "titre": "ما هي الخطوات اللازمة لإجراء الإجهاض؟"
+       },
+       {
+        "texte": "أداة جراحية (IVG)\nتتضمن التقنية الجراحية (باستخدام الأدوات) سحب البويضة، وذلك بعد توسيع عنق الرحم. يمكن تسهيل فتح عنق الرحم عن طريق إعطاء دواء.\nيمكن إجراء العملية تحت التخدير الموضعي أو العام. أنت تختار مع المساعدة من الطبيب، الطريقة الأنسب للتخدير التي تناسب حالتك.\nعادةً ما تستغرق مدة الإقامة بضع ساعات، ولكن الإجراء الجراحي نفسه يستغرق حوالي عشر دقائق.\nوهذا يعني: يجب على الأطباء النسائيين الذين يقومون بإجراء عمليات الإجهاض في مؤسسة صحية، أن يثبتوا كفاءتهم. ويتم إثبات هذه الكفاءة من خلال إكمال دورة تدريبية نظرية وعملية في إجراء عمليات الإجهاض، بالإضافة إلى معرفة الإجراءات اللازمة في حالة حدوث مضاعفات مرتبطة بالإجهاض.\nإيقاف الحمل الدوائي\nتتضمن الطريقة الدوائية تناول دواءين (الأول يستخدم لإيقاف الحمل، والثاني لإحداث طرد البويضة).\nيتم إعطاء الدواءين من قبل الطبيب أو الممرضة خلال الزيارة، أو من قبل الصيدلي في حالة إجراء استشارة عن بعد.\nيمكن تناول الدواء الأول في:\n- في وجود الطبيب أو الممرضة خلال استشارة أو استشارة عن بعد في منزلك.\n- في منزلك فقط.\nيتم تناول الدواء الثاني بين 24 و 48 ساعة بعد تناول الدواء الأول، إما في العيادة أو في منزلك.\nلذلك، لا تتطلب هذه الطريقة أي تخدير أو تدخل جراحي. سيتم وصف الأدوية المسكنة لكم.\nوهذا يعني: في إطار الاستشارة عن بعد (عبر الإنترنت في المستشفى أو في المدينة)، يتم وصف الأدوية من قبل الطبيب أو الممرضة، ويتم تسليمها من صيدلية معتمدة تم اختيارها من قبل المريضة. وتضمن هذه الصيدلية الحفاظ على سرية المعلومات.",
+        "titre": "كيف يتم إجراء الإجهاض؟"
+       },
+       {
+        "texte": "بالنسبة لجميع النساء اللاتي يحملن تأمينًا اجتماعيًا (من البالغين أو الأطفال)، فإن الإجهاض وكل الإجراءات المرتبطة به (مثل الاستشارات والفحوصات والتحاليل...) يتم تغطيتها بنسبة 100% من قبل Assurance maladie (التأمين الصحي العمومي الفرنسي).\nلا توجد أي رسوم إضافية، ولا يمكن تجاوز المبلغ المتفق عليه.\nوهذا يعني: بالنسبة للنساء المقيمات في فرنسا في وضع غير قانوني وغير مؤهلات للحصول على المساعدة الطبية الحكومية (AME: المساعدة الطبية الحكومية), هناك توفير للرعاية الطارئة (بما في ذلك الإجهاض) في المستشفى (إقامة أو استشارة في مؤسسة صحية).\nأداة جراحية (IVG)\nيتم استرداد تكلفة الفحص الروتيني عن طريق Assurance maladie بنسبة 100% بناءً على سعر ثابت.\nتتراوح هذه الأسعار بين 579.06 يورو و 830.06 يورو، وذلك اعتمادًا على:\n- من المؤسسة الصحية (مستشفى أو عيادة)\n- نوع التخدير (تخدير موضعي أو تخدير عام)\n- وذلك يشمل مدة الإقامة في المستشفى.\nإعطاء دواء في مؤسسة صحية\nتكلفة العلاج التكويني باستخدام الأدوية، في مؤسسة صحية (مستشفى، عيادة)، يتم تغطيتها من قبل Assurance maladie بنسبة 100% بناءً على سعر ثابت قدره 353.64 يورو.\nإجراء حقن الأنسولين عن طريق الفم في العيادات الطبية\nتكلفة إجراء الإجهاض الدوائي في العيادة (العيادة الطبية، المركز الصحي، المركز الصحي الخاص بالصحة الجنسية، والذي كان يُعرف سابقًا بمركز التخطيط والتعليم الأسري) يتم تغطيتها بالكامل من قبل Assurance maladie‏]، مع تحديد الأسعار لكل مرحلة من قبل قرار رسمي.",
+        "titre": "ما هو سعر الإجازة المرضية؟"
+       },
+       {
+        "texte": "يتم تقديم استشارة نفسية واجتماعية بشكل روتيني بعد الإجهاض. تتيح لك هذه الاستشارة التحدث عن وضعك إذا كنت تشعر بذلك.\nيجب إجراء فحص متابعة بين اليوم 14 و 21 بعد إجراء الإجهاض الصناعي أو الدوائي.\nفهي تضمن عدم وجود أي مضاعفات، وأن الحمل قد توقف بنجاح.\nخلال الفحص، سيقوم الطبيب أو الممرضة بالتأكد من أن لديك وسيلة منع الحمل المناسبة لحالتك، إذا لزم الأمر.",
+        "titre": "هل هناك فحص متابعة بعد الإجهاض؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F1551",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1551",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2024-04-25"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.4,
+      "units": 74
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:17:32.174Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Freiwillige Schwangerschaftsabbrüche",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 26.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die Durchführung einer Abtreibung ist reglementiert, und es müssen mehrere Schritte eingehalten werden, sowohl vor als auch nach dem Eingriff.",
+      "steps": [
+       {
+        "texte": "Eine schwangere Frau, einschließlich Minderjährige, die eine Schwangerschaft nicht fortsetzen möchte, kann eine Schwangerschaftsanulösung beantragen. Die Durchführung von Abtreibungen ist reguliert, und es müssen mehrere Schritte eingehalten werden, sowohl vor als auch nach der Durchführung. Bei einem Beratungsgespräch mit einem Arzt oder einer Hebamme muss die schwangere Frau über die verschiedenen Methoden der Schwangerschaftsanulösung informiert werden und hat das Recht, eine davon frei nach dem Schwangerschaftsverlauf zu wählen. Wir stellen Ihnen die notwendigen Informationen zur Verfügung.",
+        "titre": null
+       },
+       {
+        "texte": "Es gibt 2 Methoden der vorzeitigen Schwangerschaftsabbrüche:\n- Die instrumentelle vorzeitige Ausschabung (chirurgische) muss obligatorisch in einer medizinischen Einrichtung (Krankenhaus oder zugelassene gynäkologisch-geburtshilfliche oder chirurgische Klinik) durchgeführt werden. Unter bestimmten Bedingungen kann sie jedoch auch in einer zugelassenen Gesundheitszentrale stattfinden, die eine Vereinbarung mit einer zugelassenen gynäkologisch-geburtshilflichen oder chirurgischen Klinik geschlossen hat.\n- Die medikamentöseangerschaftsabbrüche werden in einer medizinischen Einrichtung (Krankenhaus oder Klinik), in einer Arztpraxis, in einer sexuellen Gesundheitszentrale oder in einer Gesundheitszentrale durchgeführt.\nDie verwendete Abtreibungstechnik hängt von Ihrer Wahl und dem Schwangerschaftsstadium ab.\nDiese Entscheidung kann in Zusammenarbeit mit dem Arzt oder der Hebamme getroffen werden.\nKonkret: Die Straftat der Behinderung einer Abtreibung wird mit einer Freiheitsstrafe von 2 Jahren und einer Geldstrafe von 30.000 € geahndet.",
+        "titre": "Welche Methoden gibt es für eine künstliche Befruchtung?"
+       },
+       {
+        "texte": "Es gibt keine Altersbeschränkung.\nWenn Sie minderjährig sind, können Sie wählen, die Zustimmung Ihrer Eltern oder Ihres gesetzlichen Vertreters einzuholen, der Sie bei Ihrem Antrag auf eine medizinische Behandlung unterstützen kann.\nAllerdings, wenn Sie den Schweigepflicht wahren möchten, wird die Insemination nur auf Ihre ausdrückliche Anweisung durchgeführt. In diesem Fall müssen Sie eine volljährige Person Ihrer Wahl in den Prozess einbeziehen.",
+        "titre": "Gibt es ein Mindestalter für eine künstliche Befruchtung?"
+       },
+       {
+        "texte": "Die Bearbeitungszeit hängt von der gewählten Methode ab:\n- Eine instrumentale Vaginal-Inspektion (chirurgische Inspektion) kann bis zum Ende der 14. Schwangerschaftswoche durchgeführt werden, also 16 Wochen nach Beginn der letzten Menstruation.\n- Eine medikamentöse IVF wird bis zum Ende der 7. Schwangerschaftswoche durchgeführt, also maximal 9 Wochen nach Beginn der letzten Menstruation.",
+        "titre": "Welche Fristen gelten für die In-vitro-Fertilisation (IVF)?"
+       },
+       {
+        "texte": "Wenn Sie eine Schwangerschaft abbrechen lassen möchten, müssen Sie einen Arzt (Allgemeinmediziner oder Frauenarzt) oder eine Hebamme aufsuchen, die in folgenden Einrichtungen tätig ist:\n- Eine Gesundheitseinrichtung (Krankenhaus oder Klinik)\n- Eine Stadtverwaltung\n- Ein Gesundheitszentrum\n- Eine Gesundheits- und Sexualberatungsstelle (ehemaliges Zentrum für Familienplanung und -bildung).\nSie können einen Termin für eine persönliche oder Fernbehandlung vereinbaren, wenn Ihr Arzt oder Ihre Ärztin dies empfiehlt.\nWenn der Arzt oder die Hebamme keine Schwangerschaftsanforderungen durchführt, muss er oder sie dies unverzüglich mitteilen und Ihnen den Namen von Fachleuten nennen, die Schwangerschaftsanforderungen durchführen.\nAlle staatlichen Gesundheitseinrichtungen, die in der geburtshilflichen Versorgung oder in der Chirurgie tätig sind, sind verpflichtet, die medizinisch notwendige Abtreibung durchzuführen.\n→ An wen: Arzt\n→ An wen wenden: Geburtshelfer (Freie Praxis)\n→ Wo man Hilfe erhält: Sexuelle Gesundheitszentren (z. B. Familienplanung und -beratungszentren)\nKonkret: Verzeichnisse, die Unternehmen und Fachleute auflisten, die IVG (Individuelle Verhandlungen) durchführen, sind über die Websites der ARS (Agence Régionale de Santé) für jeden betroffenen Region verfügbar.\n→ An wen wenden: Regionales Gesundheitsamt (ARS)\nEs sind 2 Schritte erforderlich, bevor eine IVG durchgeführt werden kann.\nErste Phase: Informationsaustausch\nIn dieser ersten Phase:\n- Sie reichen Ihre Schwangerschaftsanullung an.\n- Sie erhalten mündliche Informationen und eine Anleitung zur Schwangerschaftsabbrach, die verschiedene Methoden, die Orte der Durchführung sowie die Ihnen zur Verfügung stehenden Optionen sowie mögliche Nebenwirkungen erläutert.\n- Der Arzt oder die Hebamme bietet Ihnen eine psychosoziale Beratung an (diese ist obligatorisch, wenn Sie minderjährig sind, und muss vor der Einholung Ihrer Zustimmung erfolgen). Diese Beratung findet in einem EVARS (Raum für emotionale, zwischenmenschliche und sexuelle Beziehungen), in einer Sexualgesundheitszentrale oder bei einer anerkannten Einrichtung statt.\n2. Schritt: Einholung der Zustimmung\nWährend dieser zweiten Phase reichen Sie Ihre schriftliche Zustimmung zur Schwangerschaftsbegründung beim Arzt oder der Hebamme ein.\nHinweis: Es gibt keine vorgeschriebene Wartezeit für eine Abtreibung. Wenn Sie volljährig sind und keinen psychologischen oder sozialen Beratungswunsch haben, können Sie wählen, die Informations- und Zustimmungseinholung in einem einzigen Termin durchzuführen. Wenn Sie sich für eine psychologische Beratung (erforderlich für Minderjährige) entscheiden, gibt es keine vorgeschriebene Mindestzeit zwischen dieser Beratung und der Durchführung der Abtreibung, unabhängig davon, ob Sie volljährig oder minderjährig sind.",
+        "titre": "Wie sieht der Ablauf einer IVG (Interne Verrechnung) aus?"
+       },
+       {
+        "texte": "IVG-Instrumente (chirurgisch)\nDie instrumentale Technik (chirurgische Technik) umfasst die Aspiration des Eis, die durch eine Erweiterung des Gebärmutterhalses vorbereitet wird. Die Erweiterung des Gebärmutterhalses kann durch die Verabreichung eines Medikaments erleichtert werden.\nDie Behandlung kann unter örtlicher oder allgemeiner Anästhesie durchgeführt werden. Sie wählen gemeinsam mit dem medizinischen Fachpersonal die für Ihre Situation am besten geeignete Anästhesieform aus.\nDie Behandlung dauert in der Regel einige Stunden, während die eigentliche Operation etwa zehn Minuten dauert.\nKonkret bedeutet dies: Geburtshelfer, die eine instrumentelle (chirurgische) Kaiserschnitt in einer Gesundheitseinrichtung durchführen, müssen ihre Kompetenz nachweisen. Diese Kompetenz wird durch die Teilnahme an einer theoretischen und praktischen Ausbildung in der instrumentellen (chirurgischen) Kaiserschnitt sowie durch die Kenntnis der Vorgehensweise bei Komplikationen im Zusammenhang mit der Kaiserschnitt bestätigt.\nMedikamentenversorgung\nDie medikamentöse Behandlung besteht darin, zwei Medikamente einzunehmen (das erste dient dazu, die Schwangerschaft zu beenden, und das zweite, um die Eizelle auszuscheiden).\nDie beiden Medikamente werden vom Arzt oder der Hebamme während der Konsultation verabreicht oder vom Apotheker, falls eine Fernkonsultation stattgefunden hat.\nDas erste Medikament kann eingenommen werden:\n- In Anwesenheit des Arztes oder der Hebamme während einer Konsultation oder einer Fernkonsultation in Ihrem Zuhause.\n- Nur zu Hause.\nDie Einnahme des zweiten Medikaments erfolgt zwischen 24 und 48 Stunden nach der Einnahme des ersten Medikaments, entweder in der Arztpraxis oder zu Hause.\nDiese Methode erfordert daher weder eine Anästhesie noch eine Operation. Ihnen werden Schmerzmittel verschrieben.\nKonkret: Im Rahmen der Telekonsultation (medizinische Beratung am Krankenhaus oder zu Hause) werden die Medikamente von dem Arzt oder der Hebamme verschrieben und von einer von der Frau ausgewählten Apotheke abgegeben. Diese Apotheke gewährleistet die Vertraulichkeit.",
+        "titre": "Wie läuft eine medizinisch notwendige Abtreibung ab?"
+       },
+       {
+        "texte": "Für alle versicherten Frauen (erwachsene oder minderjährige) werden Abtreibungen sowie alle damit verbundenen Leistungen (Beratungen, Ultraschalluntersuchungen, Blutentnahmen usw.) zu 100 % von der Assurance maladie (französische gesetzliche Krankenversicherung) übernommen.\nEs gibt keine Vorauszahlung und auch keine Möglichkeit, zusätzliche Honorare zu verlangen.\nKonkret: Für Frauen, die in Frankreich in irregulärer Situation leben und keinen Anspruch auf staatliche medizinische Hilfe (AME: staatliche medizinische Hilfe), gibt es eine Übernahme der Kosten für Notfallversorgung (einschließlich Schwangerschaftsabbrüche) im Krankenhaus (Einweisung oder Konsultation in einer Gesundheitseinrichtung).\nIVG-Instrumente (chirurgisch)\nDie Kosten für eine instrumentelle IVG werden von Assurance maladie zu 100 % auf der Grundlage einer Pauschale erstattet.\nDieser Preis liegt zwischen 579,06 € und 830,06 €, abhängig von:\n- Von einer Gesundheitseinrichtung (Krankenhaus oder Klinik)\n- Welche Art von Anästhesie (lokal oder Allgemein-)?\n- Und auch von der Dauer des Krankenhausaufenthalts.\nMedikamentenversorgung in einer Gesundheitseinrichtung\nDie Kosten einer medikamentösen In-Patientenbehandlung in einer Gesundheitseinrichtung (Krankenhaus, Klinik) werden von der Assurance maladie zu 100 % auf der Grundlage eines festen Preises von 353,64 € erstattet.\nMedikamentöse Behandlung in der allgemeinen medizinischen Versorgung\nDie Kosten für eine medikamentöse Verhütung in einer Arztpraxis, einem Gesundheitszentrum oder einem Sexualgesundheitszentrum (ehemals Familienplanung und -bildungszentrum) werden von Assurance maladie zu 100 % erstattet, wobei die Preise durch Verordnungen für jeden Schritt festgelegt werden.",
+        "titre": "Wie hoch sind die Kosten für eine Immobilienkreditvermittlung?"
+       },
+       {
+        "texte": "Nach der Schwangerschaftsabbrach-Beratung wird standardmäßig eine psychosoziale Beratung angeboten. Sie ermöglicht es Ihnen, über Ihre Situation zu sprechen, wenn Sie das Bedürfnis danach haben.\nEine Kontrolluntersuchung sollte zwischen dem 14. und dem 21. Tag nach der instrumentellen oder medikamentösen Ausschabung erfolgen.\nSie ermöglicht es, sicherzustellen, dass es keine Komplikationen gibt und dass die Schwangerschaft tatsächlich beendet wurde.\nWährend der Kontrolluntersuchung stellt der Arzt oder die Hebamme sicher, dass Sie gegebenenfalls eine geeignete Verhütungsmethode erhalten.",
+        "titre": "Gibt es eine Kontrolluntersuchung nach der Ausschabung?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F1551",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1551",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2024-04-25"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 75.5,
+      "units": 74
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:20:47.669Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Добровільне припинення вагітності (ДПВ)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Процедура аборта є регульованою, і необхідно дотримуватися певних етапів, як до, так і після процедури.",
+      "steps": [
+       {
+        "texte": "Жінка, яка перебуває в стані вагітності, включаючи неповнолітню, яка не бажає продовжувати вагітність, має право попросити про її припинення. Процедура абортів регулюється, і перед та після процедури необхідно дотримуватися певних етапів. Під час консультації з лікарем або акушеркою, вагітна жінка повинна отримати інформацію про методи абортів і має право самостійно обрати один із них, залежно від терміну вагітності. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Існують 2 методи пренатальної діагностики:\n- Хірургічне прееклудаційне обстеження (IVG) проводиться обов'язково в медичному закладі (лікарні або клініці, що має ліцензію на гінекологічно-акушерську або хірургічну допомогу). У певних випадках, воно може проводитися в центрі охорони здоров'я, який уклав угоду з ліцензованим гінекологічно-акушерським або хірургічним медичним закладом.\n- Медикаментозне преривання вагітності проводиться в медичному закладі (лікарні або клініці), в амбулаторії, в центрі сексуального здоров'я або в центрі охорони здоров'я.\nМетод аборту, який буде використаний, залежить від вашого вибору та терміну вашої вагітності.\nЦе рішення можна прийняти за допомогою лікаря або акушерки.\nА саме: Нарушення, що полягає в перешкоджанні абортів, карається двома роками позбавлення волі та штрафом у розмірі 30 000 євро.",
+        "titre": "Які методи використовуються для штучної запліднення?"
+       },
+       {
+        "texte": "Немає жодних вікових обмежень.\nЯкщо ви є неповнолітньою, ви маєте право попросити дозволу від своїх батьків або від законного представника, який зможе супроводжувати вас у процесі отримання презерватива.\nОднак, якщо ви бажаєте зберегти конфіденційність, аборт може бути проведений лише за вашою власною ініціативою. У цьому випадку, вам необхідно отримати підтримку від дорослої особи, обраної вами.",
+        "titre": "Чи є певні вікові обмеження для штучного запліднення?"
+       },
+       {
+        "texte": "Терміни залежать від обраного методу:\n- Інструментальна (хірургічна) внутрішньоматкова процедура може бути проведена до кінця 14-го тижня вагітності, тобто через 16 тижнів після початку останньої менструації.\n- Медикаментозна внутрішньоматкова процедура проводиться до кінця 7-го тижня вагітності, тобто не більше ніж через 9 тижнів після початку останньої менструації.",
+        "titre": "Які строки дії інтравеносної гемодіалізу?"
+       },
+       {
+        "texte": "Коли ви вирішите вдатися до аборта, вам необхідно записатися до лікаря (терапевта або гінеколога) або акушерки, яка працює в:\n- Медичний заклад (лікарня або клініка)\n- Міська управа\n- Медичний центр\n- Центр сексуального здоров'я (раніше центр планування та сімейної освіти).\nВи можете записатися на консультацію особисто або дистанційно, якщо ваш лікар рекомендує це.\nЯкщо лікар або акушерка, з якими ви консультувалися, не виконують абортів, вони повинні негайно повідомити вам про це та надати вам інформацію про інших фахівців, які проводять аборт.\nУсі державні медичні заклади, які мають ліцензію на проведення гінекологічних, акушерських або хірургічних процедур, повинні проводити аборт.\n→ Куди звернутися: Лікар\n→ Куди звернутися: Лікарка-акушерка\n→ Куди звернутися: Центри сексуального здоров'я (наприклад, центри планування сім'ї та сімейного виховання)\nА саме: Існують каталоги, що містять інформацію про організації та фахівців, які займаються проведенням індивідуальних консультацій, які можна знайти на веб-сайтах регіональних департаментів охорони здоров'я (ARS) відповідних територій.\n→ Куди звернутися: Регіональна агенція охорони здоров'я (ARS)\nНеобхідно провести 2 консультації перед проведенням індивідуальної терапії.\nПерший етап: отримання інформації\nПід час цього першого етапу:\n- Ви подаєте заявку на аборт.\n- Ви отримуєте усні консультації та інструкцію щодо пренатальної генетичної діагностики, яка містить інформацію про різні методи, місця проведення, а також про можливі побічні ефекти.\n- Лікар або акушер запропонує вам психосоціальну консультацію (вона обов'язкова, якщо ви є неповнолітнім, і повинна бути проведена до отримання вашої згоди). Ця консультація проходить у спеціальному центрі (простір для емоційної, взаємодійної та сексуальної взаємодії), в центрі сексуального здоров'я або в акредитованій організації.\n2-й етап: отримання згоди\nПід час цього другого етапу ви надаєте письмову згоду на проведення аборта лікарю або акушерці.\nНагадуємо: більше не існує встановленого терміну для обмірковування рішення про аборт. Якщо ви досягли повноліття і не бажаєте проходити психосоціальну консультацію, ви можете обрати провести консультацію та отримати інформацію, а також отримати згоду в рамках однієї консультації. Якщо ви вирішите пройти психосоціальну консультацію (обов'язкову для неповнолітніх), не існує мінімального обов'язкового терміну між цією консультацією та проведенням абортів, незалежно від вашого віку.",
+        "titre": "Які кроки необхідно зробити для отримання дозволу на внутрішньоохоронну операцію?"
+       },
+       {
+        "texte": "Інструмент для операцій (IVG)\nІнструментальна техніка (хірургічна) передбачає аспірацію яйця після розширення шийки матки. Відкриття шийки матки може бути спрощено за допомогою введення ліків.\nПроцедура може бути проведена під місцевою або загальною анестезією. Ви обираєте відповідний режим анестезії разом із лікарем, враховуючи ваші індивідуальні потреби.\nЗазвичай перебування в лікарні триває кілька годин, але сама процедура займає близько десяти хвилин.\nА саме: Медсестри, які проводять штучне виношування (хірургічне) в медичному закладі, повинні довести свою компетентність. Ця компетентність підтверджується проходженням теоретичної та практичної підготовки з питань штучного виношування (хірургічного) та дій у разі ускладнень, пов'язаних з ним.\nМедикаментозне лікування\nМетод лікування полягає у прийомі 2 ліків (перший використовується для припинення вагітності, а другий – для виведення яйця).\nОбидва ліки призначаються лікарем або акушеркою під час консультації, або фармацевтом у разі, якщо ви проходили телеконсультацію.\nПерший препарат можна приймати:\n- Під час консультації або телеконсультації, яку проводить лікар або акушер у вашому домі.\n- Тільки у вашому домі.\nПрийом другого препарату відбувається через 24-48 годин після прийому першого, як у лікаря в клініці, так і вдома.\nТаким чином, цей метод не потребує анестезії та хірургічного втручання. Вам будуть призначені знеболювальні препарати.\nА саме: У рамках телеконсультації (огляд лікарем або акушеркою в лікарні або в місті), ліки призначаються лікарем або акушеркою та отримуються з аптеки, обраної жінкою. Ця аптека гарантує конфіденційність.",
+        "titre": "Як проходить процедура пренатальної забою?"
+       },
+       {
+        "texte": "Для всіх жінок, які мають медичне страхування (дорослих або неповнолітніх), аборт та всі пов'язані з ним процедури (консультації, УЗ-дослідження, аналізи тощо) повністю покриваються Assurance maladie (французьке державне медичне страхування).\nНемає жодних витрат, і жодних можливостей для перевищення встановленої суми оплати.\nА саме: Для жінок, які проживають у Франції та перебувають у нелегальному статусі, а також не мають права на державну медичну допомогу (AME: державна медична допомога), існує можливість отримання екстреної медичної допомоги (включаючи аборт), яка надається в лікарні (госпіталізація або консультація в медичному закладі).\nІнструмент для операцій (IVG)\nВартість інструментальної вагітності покривається на 100% за фіксованою ставкою, що надається Assurance maladie.\nЦя ціна варіюється від 579,06 до 830,06 євро, залежно від:\n- Від медичного закладу (лікарні або клініки)\n- Тип анестезії (локальної або загальної)\n- Також, щодо тривалості перебування в лікарні.\nМедикаментозне лікування в медичному закладі\nВартість медичної внутрішньовенної ін'єкції, що проводиться в медичному закладі (лікарні, клініках), покривається Assurance maladie на 100% на основі фіксованої вартості, яка становить 353,64 євро.\nМедикаментозне лікування в амбулаторній практиці\nВартість медичного пренатального консультування в міському медичному кабінеті, центрі охорони здоров'я або центрі сексуальної охорони здоров'я (раніше відомому як центр планування та сімейного виховання) повністю компенсується Assurance maladie на 100%, згідно з затвердженими тарифами на кожному етапі.",
+        "titre": "Яка вартість індивідуального планування сім'ї?"
+       },
+       {
+        "texte": "Після процедури пренатальної забору тканин (IVG) обов'язково пропонується психосоціальна консультація. Це дає вам можливість обговорити свою ситуацію, якщо ви відчуваєте потребу в цьому.\nНеобхідний контроль повинен бути проведений між 14-м і 21-м днем після штучної або медичної інтервенції.\nЦе дозволяє переконатися, що не виникло жодних ускладнень і що вагітність дійсно була припинена.\nПід час консультації, лікар або акушер перевіряє, чи ви маєте відповідний метод контрацепції, враховуючи вашу ситуацію, якщо це необхідно.",
+        "titre": "Чи є обов'язкова перевірка після аборта?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F1551",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1551",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2024-04-25"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73.5,
+      "units": 74
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:5e013180b6e6bdc3639fef663f8949da4278a070c5f37601453b1fc59c5ef522",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Interruption volontaire de grossesse (IVG)",
+   "contenu_json": {
+    "intro": "La pratique de l'avortement est réglementée et plusieurs étapes doivent être respectées, avant et après l'intervention.",
+    "steps": [
+     {
+      "texte": "Une femme enceinte, y compris mineure, qui ne souhaite pas poursuivre une grossesse peut en demander l'interruption. La pratique de l'avortement est réglementée et plusieurs étapes doivent être respectées, avant et après l'intervention. Lors d’une consultation avec un médecin ou une sage-femme, la femme enceinte doit être informée sur les méthodes abortives et a le droit d'en choisir une librement en fonction du terme de la grossesse. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Il existe 2 méthodes d'IVG :\n- L'IVG instrumentale (chirurgicale) est pratiquée obligatoirement en établissement de santé (hôpital ou clinique autorisé en gynécologie obstétrique ou chirurgie). Sous certaines conditions, elle peut avoir lieu dans un centre de santé autorisé ayant établi une convention avec un établissement de santé autorisé en gynécologie obstétrique ou chirurgie.\n- L'IVG médicamenteuse est pratiquée en établissement de santé (hôpital ou clinique), en cabinet de ville, en centre de santé sexuelle ou en centre de santé.\nLa technique d'avortement utilisée dépend de votre choix et du terme de votre grossesse.\nCe choix peut être effectué avec l'aide du médecin ou de la sage-femme.\nÀ savoir : Le délit d'entrave à l'IVG est puni de 2 ans d'emprisonnement et de 30 000 € d'amende.",
+      "titre": "Quelles sont les méthodes pour une IVG ?"
+     },
+     {
+      "texte": "Il n'y a pas de condition d'âge à respecter.\nSi vous êtes mineure, vous pouvez choisir de demander le consentement de vos parents ou de votre représentant légal qui pourra vous accompagner dans votre démarche d'IVG.\nCependant, si vous souhaitez garder le secret, l'IVG est pratiquée à votre seule demande. Dans ce cas, vous devez vous faire accompagner dans votre démarche par une personne majeure de votre choix.",
+      "titre": "Y a-t-il une condition d'âge pour une IVG ?"
+     },
+     {
+      "texte": "Les délais dépendent de la méthode choisie :\n- Une IVG instrumentale (chirurgicale) peut être pratiquée jusqu'à la fin de la 14e semaine de grossesse, soit 16 semaines après le début des dernières règles\n- Une IVG médicamenteuse est pratiquée jusqu'à la fin de la 7e semaine de grossesse, soit au maximum 9 semaines après le début des dernières règles.",
+      "titre": "Quels sont les délais pour recourir à une IVG ?"
+     },
+     {
+      "texte": "Quand vous souhaitez recourir à un avortement, vous devez prendre rendez-vous avec un médecin (généraliste ou gynécologue) ou une sage-femme exerçant dans :\n- Un établissement de santé (hôpital ou clinique)\n- Un cabinet de ville\n- Un centre de santé\n- Un centre de santé sexuelle (ex-centre de planification et d'éducation familiale).\nVous pouvez demander un rendez-vous en consultation en présentiel ou à distance si votre professionnel de santé vous le propose.\nSi le médecin, ou la sage-femme, consulté ne pratique pas les IVG, il ou elle doit vous en informer immédiatement et vous communiquer le nom de professionnels réalisant les avortements.\nTous les établissements de santé publics autorisés en gynécologie-obstétrique ou en chirurgie doivent pratiquer l'IVG.\n→ Où s'adresser : Médecin\n→ Où s'adresser : Sage-femme libérale\n→ Où s'adresser : Centres de santé sexuelle (ex centre de planification et d’éducation familiale)\nÀ savoir : Des annuaires répertoriant les structures et professionnels réalisant des IVG sont accessibles en consultant les sites internet des ARS de chaque territoire concerné.\n→ Où s'adresser : Agence régionale de santé (ARS)\n2 temps sont obligatoires avant la réalisation d'une IVG.\n1er temps : la consultation d'information\nAu cours de ce 1er temps :\n- Vous faites votre demande d'avortement.\n- Vous recevez des informations orales et un guide sur l'IVG qui portent sur les différentes méthodes d’IVG, les lieux de réalisation et notamment le choix dont vous disposez mais aussi sur les effets indésirables possibles.\n- Le médecin ou la sage-femme vous propose un entretien psycho-social (celui-ci est obligatoire si vous êtes mineure et doit être réalisé avant le recueil de votre consentement). Cet entretien a lieu dans un EVARS (espace vie affective, relationnelle et sexuelle), dans un centre de santé sexuelle ou dans un organisme agrée.\n2nd temps : le recueil du consentement\nAu cours de ce 2nd temps, vous remettez votre consentement écrit de demande d'avortement au médecin ou à la sage-femme.\nRappel : Il n'existe plus de délai de réflexion imposé en matière d'avortement. Si vous êtes majeure et ne souhaitez pas réaliser d’entretien psycho-social, vous pouvez choisir de réaliser le temps d’information et le temps de recueil du consentement au cours d’une seule et même consultation. Si vous choisissez de réaliser un entretien psycho-sociale (obligatoire pour les mineures) , il n’y a pas de délai minimal obligatoire entre celui-ci et la réalisation de l’IVG que vous soyez majeure ou mineure.",
+      "titre": "Quelle est la démarche pour une IVG ?"
+     },
+     {
+      "texte": "IVG instrumentale (chirurgicale)\nLa technique instrumentale (chirurgicale) consiste en une aspiration de l'œuf, précédée d'une dilatation du col de l'utérus. L'ouverture du col utérin peut être facilitée par l'administration d'un médicament.\nL'intervention peut être réalisée sous anesthésie locale ou générale. Vous choisissez avec l'aide du professionnel de santé le mode d'anesthésie le mieux adapté à votre situation.\nL'hospitalisation dure en général quelques heures, mais l'intervention en elle-même dure une dizaine de minutes.\nÀ savoir : Les sages-femmes effectuant une IVG instrumentale (chirurgicale) en établissement de santé doivent justifier de leur compétence. Cette compétence est attestée par le suivi d'une formation théorique et pratique à l'IVG instrumentale (chirurgicale) et à la conduite à tenir en cas de complications liées à l'IVG.\nIVG médicamenteuse\nLa technique médicamenteuse consiste à prendre 2 médicaments (le 1er servant à interrompre la grossesse et le 2nd à provoquer l'expulsion de l’œuf).\nLes 2 médicaments sont délivrés par le médecin ou la sage-femme lors de la consultation ou par le pharmacien dans le cas où vous avez effectué une téléconsultation.\nLe 1er médicament peut être pris :\n- En présence du médecin ou de la sage-femme au cours d'une consultation ou d'une téléconsultation à votre domicile\n- Seule à votre domicile.\nLa prise du 2nd médicament a lieu entre 24 et 48 heures après la prise du 1er en consultation ou à votre domicile.\nCette méthode ne nécessite donc ni anesthésie, ni intervention chirurgicale. Des médicaments antalgiques vous seront prescrits.\nÀ savoir : Dans le cadre de la téléconsultation (IVG à l'hôpital ou en ville), les médicaments sont prescrits par le médecin ou la sage-femme et délivrés par une pharmacie d'officine désignée par la femme. Cette pharmacie garantit la confidentialité.",
+      "titre": "Comment se déroule l'IVG ?"
+     },
+     {
+      "texte": "Pour toutes les femmes assurées sociales (majeures ou mineures), l'avortement et tous les actes associés (consultations, échographies, prises de sang...) sont pris en charge à 100 % par l'Assurance maladie.\nIl n'y a aucune avance de frais et aucun dépassement d’honoraire possible.\nÀ savoir : Pour les femmes résidant en France en situation irrégulière et non admises à l'aide médicale de l'État (AME), il existe une prise en charge des soins urgents (dont fait partie l’IVG) à l'hôpital (hospitalisation ou consultation en établissement de santé).\nIVG instrumentale (chirurgicale)\nLe coût d'une IVG instrumentale est remboursé par l'Assurance maladie à 100 % sur la base d'un tarif forfaitaire.\nCe tarif est compris entre 579,06 € et 830,06 € en fonction :\n- De l'établissement de santé (hôpital ou clinique)\n- Du type d'anesthésie (locale ou générale)\n- Et de la durée de l'hospitalisation.\nIVG médicamenteuse en établissement de santé\nLe coût d'une IVG médicamenteuse, en établissement de santé (hôpital, clinique), est remboursé par l'Assurance maladie à 100 % sur la base d'un tarif forfaitaire fixé à 353,64 €.\nIVG médicamenteuse en médecine de ville\nLe coût d'une IVG médicamenteuse de ville (cabinet médical, centre de santé, centre de santé sexuelle appelé avant centre de planification et d'éducation familiale) est remboursé par l'Assurance maladie à 100 %, avec des tarifs fixés par arrêté à chaque étape.",
+      "titre": "Quel est le coût d'une IVG ?"
+     },
+     {
+      "texte": "Une consultation psycho-sociale est systématiquement proposée après l’IVG. Elle vous permet de parler de votre situation si vous en ressentez le besoin.\nUne visite de contrôle doit intervenir entre le 14e et le 21e jour après l'IVG instrumentale ou médicamenteuse.\nElle permet de s'assurer qu'il n'existe pas de complication et que la grossesse a bien été interrompue.\nLors de la consultation de contrôle, le médecin ou la sage-femme s'assure que vous disposez d'un moyen contraceptif adapté à votre situation si nécessaire.",
+      "titre": "Y a-t-il une visite de contrôle après l'IVG ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

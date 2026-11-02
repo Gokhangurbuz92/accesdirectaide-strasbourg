@@ -1,0 +1,514 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
+ "recordId": "5d6f9121-2817-4707-b532-3791d0cc6a90",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:44:00.784Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Youth hostel or \"Accommodation for young people\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Youth housing facilities (FJT) provide accommodation for young people aged 16 to 25 (or up to 30), who are either in the process of integrating into the workforce or are already employed.",
+      "steps": [
+       {
+        "texte": "You are between 16 and 25 years old (or up to 30 in some cases) and are having difficulty finding accommodation? You may be eligible for accommodation in a youth housing project (also known as a youth housing facility or FJT). These projects offer furnished or unfurnished accommodation, as well as shared spaces (such as a cafeteria and laundry facilities). To be accepted into a youth housing project, you must be employed or actively pursuing employment and social integration. We provide you with the information you need.",
+        "titre": null
+       },
+       {
+        "texte": "These residences include both private, furnished (or unfurnished) apartments and common areas used for communal living.\nThe FJT (French Youth Transition Centers) establish and implement a social and educational project, in collaboration with a dedicated team, aimed at providing young people who are housed by the center with access to self-sufficiency and independent living. Within this framework, they provide the following services:\n- Actions related to welcoming, information, and guidance regarding housing\n- Actions in the areas of employment, exercise of citizenship, access to rights and culture, health, education and mobility, sports and leisure\n- Catering can be provided on-site or nearby when the accommodation or facilities provided for communal living do not allow for meal preparation. However, this catering can be arranged by external organizations as part of agreements with the managing body of the residence.",
+        "titre": "What services are offered in a youth employment center (FJT)?"
+       },
+       {
+        "texte": "You must be between the ages of 16 and 25. Some residences accommodate people up to the age of 30.\nThe FJT (French centers for professional training) primarily welcome individuals who are employed (on temporary contracts, permanent contracts, as temporary workers, or seasonally) or who are in the process of integrating into the workforce and society, particularly those who have been supported by the child welfare service (Ase).\nThe FJT (French training centers) welcome, to a lesser extent, job seekers or individuals undergoing training (apprentices, trainees, students...).",
+        "titre": "What are the admission requirements for a youth employment center (FJT)?"
+       },
+       {
+        "texte": "You can contact the care home of your choice directly.\nIf you don't know how to contact them, you can contact your local council to get their contact details.\n→ Where to go: Town Hall",
+        "titre": "What are the steps to take to secure a place in a youth employment housing facility (FJT)?"
+       },
+       {
+        "texte": "The residence manager is required to provide you with a tenancy agreement, which will specify, among other things, the terms of your admission and accommodation.\nThis contract must include the following information:\n- Admission requirements\n- Contract start date\n- Terms and conditions for contract termination\n- Amount of the monthly fee (similar to rent) and the total value of all services included in this amount, as well as any additional services offered with their prices (e.g., laundry).\n- Security deposit amount\n- Description of the private and communal spaces and equipment available to you.\nA set of internal rules should be attached to the contract. It can, for example, specify the conditions for access to the property, safety guidelines, and rules that ensure the respect and tranquility of the residents.\nYou must sign the contract.",
+        "titre": "What type of contract should the youth accommodation manager (FJT) provide?"
+       },
+       {
+        "texte": "Accommodation costs typically include the following:\n- Monthly fee (similar to rent and utilities)\n- Security deposit\n- Individual participation in ancillary services (e.g., laundry, catering, internet access, or use of shared equipment).",
+        "titre": "What are the accommodation costs in a youth housing facility (FJT)?"
+       },
+       {
+        "texte": "Yes. All or part of the accommodation costs may be covered by the personalized housing assistance (APL: personalised housing allowance) or the social housing allowance (ALS: social housing allowance), provided that the household is eligible (most households are).\nIf you are on an apprenticeship or professional training contract in a private, non-agricultural business, you may also be eligible for the MOBILI-JEUNE assistance.\nIt is also possible to request financial assistance from the Solidarity Fund for Housing (FSL: housing solidarity fund), particularly to help you cover the security deposit.",
+        "titre": "Can accommodation costs be covered by a youth employment center (FJT)?"
+       },
+       {
+        "texte": "The contract is for a period of one month.\nIt will be automatically reactivated if you wish to continue your stay.",
+        "titre": "What is the typical length of stay in a youth residential facility?"
+       },
+       {
+        "texte": "Yes. If the house rules permit, you are allowed to temporarily house one or more people in your accommodation.\nThe internal regulations specify the maximum length of stay. This period cannot exceed 3 months for a single individual, and a total of 6 months per year.\nYou must inform the property manager about the arrival of the guests you wish to accommodate, providing them with their identification details in advance.\nThe internal regulations may provide for the payment of a fixed amount corresponding to an additional contribution to cover the extra costs incurred by accommodating one or more people. The applicable tariff provisions are then attached to the internal regulations.\nSpecifically, the internal rules must fully reproduce articles L823-1 to L823-6, L823-9, and L823-10 of the Code of Entry and Stay of Foreigners and the Asylum Law.",
+        "titre": "Can a resident in a youth housing facility (FJT) accommodate another person?"
+       },
+       {
+        "texte": "The contract can be terminated at your initiative or at the initiative of the property manager.\nCase: At your initiative\nYou can terminate the contract at any time. However, you must provide 8 days' notice to the property manager to inform them of your intention to terminate the contract.\nTo do this, you must send a registered letter with acknowledgment of receipt to the property manager.\nThis notice period begins on the day the manager receives the letter and signs the acknowledgment of receipt.\nDuring the 8-day period, you will continue to pay your accommodation costs.\nCase: Initiated by the resident manager\nThe property manager can terminate your contract at any time. However, they must do so by giving you a certain amount of notice to inform you that the contract is being terminated.\nThis notice period is:\n- 1 month in case of failure to meet your contractual obligations (e.g., unpaid fees, serious or repeated violation of the rules). The contract can be terminated for non-payment if you have not paid for 3 consecutive months (including fees) or if you still owe an equivalent of 2 months' fees (including fees), even after partial payments.\n- 3 months if you no longer meet the admission requirements or if the institution closes.\nThe termination of the contract must be communicated to you by one of the following methods:\n- Registered letter with acknowledgment of receipt\n- Court appointed official (formerly bailiff and court-appointed auctioneer)\n- Letter delivered against receipt.\nDuring the notice period, you continue to pay the accommodation costs.",
+        "titre": "How can a contract of residence in a youth accommodation facility (FJT) be terminated?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2018",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2018",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 75.6,
+      "units": 62
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:46:23.940Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Genç çalışanlar için barınma merkezi (Gençler için barınma)",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 28.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Genç çalışan evleri (GCE), 16 ila 25 yaş (hatta 30 yaş) arasındaki, iş hayatına giden veya zaten bir meslek sahibi olan gençlere ev sahipliği yapar.",
+      "steps": [
+       {
+        "texte": "16 ila 25 yaşları arasında (bazı durumlarda 30 yaşın altında) ve konut bulmakta zorluklar yaşıyorsanız, gençlerin barınma evlerinde (Genç İşçilerin Barınma Evleri - FJT veya Gençler için Konut) kalabilirsiniz. FJT'ler, eşyalı veya eşyasız konutlar ve ortak alanlar (örneğin, restoran, çamaşırhane) sunmaktadır. FJT'ye kabul edilmek için, bir mesleki işte çalışmanız veya sosyal ve mesleki hayata entegrasyon sürecinde olmanız gerekmektedir. Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Bu yaşam alanları, hem özel olarak döşenmiş (veya döşenmemiş) alanları hem de ortak alanları içerir ve bunlar kolektif yaşam için ayrılmıştır.\nFJT, özel bir ekiple birlikte, gençlerin yaşadığı yerlerde bağımsız yaşam ve özgürlüklerine erişimlerini hedefleyen bir sosyal ve eğitim projesi geliştirip uygulamaktadır. Bu çerçevede, aşağıdaki hizmetleri sağlamaktadır:\n- Konaklama, bilgi sağlama ve yönlendirme ile ilgili faaliyetler\n- İş, vatandaşlık haklarının kullanımı, sosyal haklara erişim, kültür, sağlık, eğitim, hareketlilik, spor ve boş zaman faaliyetleri alanlarındaki çalışmalar.\n- Yerinde veya yakındaki restoranlarda yemek yeme imkanı, özellikle konaklama veya kolektif yaşam için tahsis edilen yerlerde yemek hazırlama imkanı bulunmadığında sağlanır. Ancak, bu yemek hizmeti, barınak yöneticisi ile yapılan anlaşmalar çerçevesinde, dışarıdan faaliyet gösteren kuruluşlar tarafından da sağlanabilir.",
+        "titre": "Genç çalışanlar için bakım merkezlerinde hangi hizmetler sunulmaktadır?"
+       },
+       {
+        "texte": "Yaşınız 16 ile 25 arasında olmalıdır. Bazı evler, en fazla 30 yaşındaki bireyleri de kabul etmektedir.\nFJT, öncelikle iş hayatında çalışan (geçici, sürekli, sözleşmeli, mevsimlik vb.) veya sosyal ve mesleki hayata yerleşme sürecinde olan, özellikle çocuk refah hizmetleri (Ase) tarafından desteklenen kişilerle ilgilenmektedir.\nFJT, belirli bir düzeyde, iş arayan veya eğitim gören bireyleri (stajyer, çırak, öğrenci vb.) de kabul etmektedir.",
+        "titre": "Genç çalışanlar için barınma tesisine kabul koşulları nelerdir?"
+       },
+       {
+        "texte": "İstediğiniz bakım merkezine doğrudan ulaşabilirsiniz.\nEğer bu konuda bilgi sahibi değilseniz, belediyenize başvurarak iletişim bilgilerini öğrenebilirsiniz.\n→ İlgili birim: Belediyede",
+        "titre": "Genç çalışanlar için barınma merkezine yer bulmak için nasıl bir başvuru yapmalıyım?"
+       },
+       {
+        "texte": "Konut yöneticisi, size, özellikle kabul koşullarınızı ve konaklama şartlarınızı belirten bir ikamet sözleşmesi vermeli.\nBu sözleşmede aşağıdaki bilgiler yer almalıdır:\n- Giriş koşulları\n- Kontratın başlangıç tarihi\n- Sözleşmenin feshedilmesi için yöntemler ve koşullar\n- Aylık ücretin (bir tür kira) ve bu ücretin içinde yer alan tüm hizmetlerin, ayrıca ek hizmetlerin (örneğin, çamaşırhane) fiyatları.\n- Garanti miktarının\n- Kullanıma açık özel alanların ve ortak alanların, tesisin sunduğu özelliklerinin ve ekipmanlarının açıklaması.\nBir iç düzenleme, sözleşmeye ek olarak eklenmelidir. Bu düzenleme, özellikle konutun erişim koşullarını, güvenlik talimatlarını ve sakinlerin refahını ve huzurunu sağlayan kuralları belirleyebilir.\nSözleşmeyi imzalamanız gerekmektedir.",
+        "titre": "Bir gençlik evinin yöneticisi hangi tür sözleşme düzenlemeli?"
+       },
+       {
+        "texte": "Konaklama masrafları genellikle aşağıdaki kalemleri içerir:\n- Aylık ücret (kira ve diğer giderleri içeren bir tür)\n- Garanti para\n- Ek hizmetlere bireysel katılım (örneğin: çamaşırhane, yemekhane, internet erişimi veya belirli ortak ekipmanların sağlanması).",
+        "titre": "Genç çalışanların barınma evlerinden (FJT) ücretler ne kadar?"
+       },
+       {
+        "texte": "Evet. Konaklama masraflarının tamamı veya bir kısmı, aileye özel konaklama yardımı (APL: kişiye özel konut yardımı) veya sosyal konaklama yardımı (ALS: sosyal konut yardımı) ile karşılanabilir. Bu, ailenin anlaşmalı olması durumunda (çoğu ailenin anlaşmalı olduğu) mümkündür.\nEğer özel sektörde, tarım dışı bir şirkette staj veya mesleki eğitim sözleşmesinde bulunuyorsanız, MOBILI-JEUNE'dan da destek alabilirsiniz.\nAyrıca, konut için oluşturulan dayanışma fonundan mali yardım talep etmek de mümkündür (FSL: konut dayanışma fonu), örneğin, depozito ödemenize yardımcı olmak için.",
+        "titre": "Konaklama masrafları, genç işçilerin barında uygulanabilir mi?"
+       },
+       {
+        "texte": "Bu sözleşme, bir ay süre için geçerlidir.\nEğer konaklamaya devam etmek istiyorsanız, otomatik olarak tekrar etkinleştirilir.",
+        "titre": "Genç çalışanların barınma merkezinde (FJT) kalış süresi ne kadar?"
+       },
+       {
+        "texte": "Evet. Eğer ev kuralları bunu izin veriyorsa, konutunuzda geçici olarak bir veya birkaç kişiyi ağırlayabilirsiniz.\nİç düzenlemeye göre, konaklama süresi maksimum olarak belirlenmiştir. Bu süre, aynı kişinin konaklaması için 3 ay, toplamda ise yılda 6 ay olarak sınırlandırılmıştır.\nKonaklamayı istediğiniz kişilerin gelişi hakkında, önceden kimliklerini bildirdikten sonra, ev sahibine mutlaka bilgi vermelisiniz.\nİç düzenleme, bir veya daha fazla kişinin konaklaması nedeniyle ortaya çıkan ek masraflara karşılık olarak belirli bir ücretin ödenmesini öngörebilir. Bu durumda, geçerli fiyatlandırma koşulları iç düzenlemeye eklenir.\nŞöyle ki: İç ve oturum düzenlemesi ile mülteci giriş ve oturum hakkı kanununun 823-1 ila 823-10 arasındaki maddelerini, ayrıca 823-9. maddesini tamamen içerme zorunludur.",
+        "titre": "Bir genç meslek kurumu (FJT) sakini, başka bir kişiyi ağırlayabilir mi?"
+       },
+       {
+        "texte": "Bu sözleşme, sizin veya konut yönetiminin talebi üzerine feshedilebilir.\nÖrnek: Sizin girişiminiz üzerine\nSözleşmeyi istediğiniz zaman sonlandırabilirsiniz. Ancak, sözleşmeyi sonlandırma isteğinizi ev sahibiye bildirmek için 8 gün kalıcı süre boyunca uyulması gereken bir önceden haber verme süresi bulunmaktadır.\nBunun için, konutun yöneticisine, iade kaydı olan taahhütlü bir mektup göndermeniz gerekir.\nBu bildirim süresi, yöneticinin mektubu aldığında ve teslimat belgesini imzaladığı tarihten itibaren başlar.\nBu 8 günlük süre boyunca, konaklama masraflarınızı ödemeye devam edeceksiniz.\nÖrnek: Ev sakinlerinin girişimiyle\nEv yönetimi, sözleşmenizi istediği zaman feshedebilecektir. Ancak, sözleşmeyi feshetmeden önce size önceden haber vermek için belirli bir süre boyunca uyulması gereken bir bildirim süresi vardır.\nBu süre, önceden haber verme süresi olarak şudur:\n- 1 ay içinde, sözleşme yükümlülüklerinizi yerine getirmediğiniz durumda (örneğin, ödeme gecikmesi, iç kuralların ciddi veya tekrar eden şekilde ihlali), sözleşme feshedilebilir. Eğer 3 ay boyunca sürekli olarak (vergiler dahil) ödeme yapmayı veya 2 ayın (vergiler dahil) karşılığında hala aynı miktarda ödeme yapmayı reddettiğiniz durumda, sözleşme feshedilebilir.\n- Eğer kabul koşullarını artık karşılamıyorsanız veya kurum kapanması durumunda, 3 ay boyunca devam etme hakkınız olmayacaktır.\nSözleşmenin feshedilmesi, aşağıdaki yöntemlerden biriyle size bildirilecektir:\n- Resmi posta, iade kaydıyla\n- Adli zabıt (eski adli zabıt ve hacimli zabıt)\n- El yazısıyla yazılmış ve teslim alındı.\nBildirim süresi boyunca, konaklama masraflarınızı ödemeye devam edersiniz.",
+        "titre": "Genç çalışanların barınma merkezindeki (FJT) sözleşmenin nasıl sona erdirileceği?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2018",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2018",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.1,
+      "units": 62
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:48:50.933Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "مأوى للشباب أو \"مأوى للشباب\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 31,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "توفر مراكز الإيواء للشباب فرصًا للشباب الذين تتراوح أعمارهم بين 16 و 25 عامًا (أو حتى 30 عامًا)، سواء كانوا في مرحلة إدماج أو يمارسون نشاطًا مهنيًا.",
+      "steps": [
+       {
+        "texte": "أنت تتراوح أعمارك بين 16 و 25 عامًا (أو حتى 30 عامًا في بعض الحالات)، وتواجه صعوبات في العثور على سكن؟ يمكنك الإقامة في دار شباب (أو \"مأوى للشباب\"). توفر دور شباب سكنًا مجهزًا أو غير مجهز، بالإضافة إلى مساحات مشتركة (مثل مطعم، وغسيل). للالتحاق بدار شباب، يجب أن تكون تعمل أو أن تكون في طريقك نحو الاندماج الاجتماعي والمهني. نقدم لك المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "تتكون هذه الوحدات السكنية من مساحات خاصة مجهزة (أو غير مجهزة) بالإضافة إلى مساحات مشتركة مخصصة للحياة الجماعية.\nتقوم مؤسسة \"الفJT\" بإنشاء وتنفيذ مشروع اجتماعي-تعليمي، مع فريق متخصص، يهدف إلى توفير فرص الحصول على الاستقلالية والإسكان للشباب الذين يقيمون لديهم. وفي هذا الإطار، تقدم المؤسسة الخدمات التالية:\n- إجراءات الترحيب والمعلومات والتوجيه فيما يتعلق بالإسكان.\n- إجراءات في مجالات العمل، وممارسة الحقوق المدنية، والوصول إلى الحقوق والثقافة، والصحة، والتدريب، والتنقل، والرياضة، والترفيه.\n- إمكانية إعداد الطعام في الموقع أو بالقرب منه، عندما لا تسمح المساكن أو المرافق المخصصة للحياة الجماعية بإعداد الطعام. ومع ذلك، يمكن توفير هذه الخدمة من خلال مؤسسات خارجية، وذلك في إطار اتفاقيات تم عقدها مع المسؤول عن السكن.",
+        "titre": "ما هي الخدمات التي تقدمها دور رعاية الشباب (FJT)؟"
+       },
+       {
+        "texte": "يجب أن يكون عمرك بين 16 و 25 عامًا. بعض المراكز تستقبل الأشخاص الذين تتراوح أعمارهم بين 30 عامًا كحد أقصى.\nتستقبل مؤسسة FJT بشكل أساسي الأفراد الذين يمارسون نشاطًا مهنيًا (بشكل مؤقت، أو دائم، أو كعامل مؤقت، أو موسمي،...)، أو الذين يمرون بعملية دمج اجتماعي ومهني، وخاصة بعد تلقيهم الدعم من مؤسسة المساعدة الاجتماعية للأطفال (Ase).\nتقبل مؤسسة الفJT عددًا محدودًا من الباحثين عن عمل أو الأشخاص الذين يتابعون برامج التدريب (مثل المتدربين، أو المشاركين في برامج التدريب المزدوجة، أو الطلاب...).",
+        "titre": "ما هي شروط القبول في دار الشباب؟"
+       },
+       {
+        "texte": "يمكنكم التواصل مباشرة مع دار العجزة التي تفضلونها.\nإذا لم تكن تعرفهم، يمكنك الاتصال بمكتب البلد للحصول على معلومات الاتصال الخاص بهم.\n→ إلى أين يتم التوجه: البلدية",
+        "titre": "ما هي الخطوات اللازمة للحصول على مكان في سكن للشباب العاملين (FJT)؟"
+       },
+       {
+        "texte": "يجب على مسؤول إدارة السكن أن يمنحك عقد إقامة لتوضيح شروط قبولك والإقامة في السكن.\nيجب أن يتضمن هذا العقد المعلومات التالية:\n- شروط القبول\n- تاريخ بدء العقد\n- طرق وشروط إنهاء العقد\n- مبلغ الإيجار الشهري (وهو بمثابة إيجار) بالإضافة إلى جميع الخدمات المشمولة بهذا المبلغ والخدمات الإضافية التي تقدم مع أسعارها (على سبيل المثال، غسيل الملابس).\n- مبلغ مبلغ التأمين\n- وصف للمساحات والمرافق المخصصة للاستخدام الخاص والمساحات المشتركة المتاحة.\nيجب إرفاق لائحة داخلية بالعقد. ويمكن أن تحدد هذه اللائحة بشكل خاص شروط الوصول إلى السكن، وإرشادات السلامة، والقواعد التي تضمن احترام وراحة السكان.\nيجب عليك التوقيع على العقد.",
+        "titre": "ما هو نوع العقد الذي يجب أن يقدمه مدير دار الشباب؟"
+       },
+       {
+        "texte": "عادةً ما تشمل تكاليف الإقامة المبلغ التالي:\n- رسوم شهرية (تشبه الإيجار والمصروفات)\n- ضمان\n- المشاركة الفردية في الخدمات الملحقة (مثل: غسيل الملابس، المطاعم، الوصول إلى الإنترنت أو توفير بعض المعدات المشتركة).",
+        "titre": "ما هي تكاليف الإقامة في سكن للشباب العاملين؟"
+       },
+       {
+        "texte": "نعم. يمكن تغطية جزء أو كامل تكاليف الإقامة من خلال المساعدة المخصصة للإسكان (APL: المساعدة الشخصية للسكن) أو الدعم الإسكان الاجتماعي (ALS: إعانة السكن الاجتماعية)، وذلك إذا كان الأسرة طرفًا في اتفاقية (وهو الحال في معظم الحالات).\nإذا كنت في عقد تدريب أو عقد لتأهيل مهني في شركة خاصة غير زراعية، يمكنك أيضًا الاستفادة من دعم \"MOBILI-JEUNE\".\nكما يمكن طلب المساعدة المالية من صندوق الدعم السكني (FSL: صندوق التضامن للسكن)، على وجه الخصوص للمساعدة في دفع مبلغ التأمين.",
+        "titre": "هل يمكن تغطية تكاليف الإقامة في دار شباب للشباب؟"
+       },
+       {
+        "texte": "تم الاتفاق على مدة العقد لمدة شهر واحد.\nسيتم إعادة تنشيطه تلقائيًا إذا كنت ترغب في الاستمرار في الإقامة.",
+        "titre": "ما هي مدة الإقامة في دار الأيتام للشباب؟"
+       },
+       {
+        "texte": "نعم. إذا سمح النظام الداخلي بذلك، يمكنك استضافة شخص واحد أو أكثر بشكل مؤقت في منزلك.\nيحدد النظام الداخلي المدة القصوى للإقامة. ولا يمكن أن تتجاوز هذه المدة 3 أشهر لشخص واحد، أو حتى 6 أشهر على مدار العام.\nيجب عليك إبلاغ مسؤول السكن بمعرفة وصول الأشخاص الذين ترغب في استضافتهم، وذلك بعد إبلاغه مسبقًا بهويتهم.\nيمكن أن يتضمن النظام الداخلي تحديد مبلغ ثابت يمثل مساهمة في التكاليف الإضافية الناتجة عن إقامة شخص واحد أو أكثر. ويتم إرفاق الشروط السعرية المعمول بها بالنظام الداخلي.\nوهذا يعني: يجب أن يقتبس النظام الداخلي بالكامل من المواد من L823-1 إلى L823-6، و L823-9 و L823-10 من قانون دخول وإقامة الأجانب وحقوق اللاجئين.",
+        "titre": "هل يمكن لشخص يعيش في دار شباب للعمال (FJT) أن يستضيف شخصًا آخر؟"
+       },
+       {
+        "texte": "يمكن إنهاء العقد بناءً على طلبك أو طلب صاحب السكن.\nمثال: ببادرة منكم\nيمكنك إنهاء العقد في أي وقت. ومع ذلك، يجب عليك الالتزام بفترة إشعار مدتها 8 أيام عمل لإخطار المسؤول عن السكن بأنك ترغب في إنهاء العقد.\nللقيام بذلك، يجب عليك إرسال خطاب رسمي مع إشعار باستلامه إلى المسؤول عن السكن.\nتبدأ هذه المدة الزمنية للإخطار في اليوم الذي يتلقى فيه المسؤول الرسالة ويوقع على إقرار الاستلام.\nخلال هذه الفترة التي تمتد لـ 8 أيام، ستواصل دفع تكاليف الإقامة.\nمثال: ببادرة من مسؤول السكن\nيمكن للمدير المسؤول إنهاء عقدك في أي وقت. ومع ذلك، يجب عليه القيام بذلك مع الالتزام بفترة إشعار محددة لإعلامك قبل إنهاء العقد.\nيُحدد هذا الإشعار بـ:\n- 1 شهر في حالة عدم الوفاء بالتزاماتك التعاقدية (على سبيل المثال، التأخر في السداد، أو عدم الامتثال الشديد أو المتكرر للوائح الداخلية). يمكن فسخ العقد بسبب التأخر في السداد إذا لم تسدد لمدة 3 أشهر متتالية من الدفعة (بما في ذلك الرسوم)، أو إذا كان عليك سداد مبلغ يعادل 2 أشهر من الدفعة (بما في ذلك الرسوم)، حتى بعد دفعات جزئية.\n- 3 أشهر إذا لم تلبّ الشروط المطلوبة أو في حالة إغلاق المؤسسة.\nيجب إخطارك بإلغاء العقد من خلال أحد الطرق التالية:\n- رسالة مسجلة مع إشعار بالاستلام\n- محقق قضائي (سابقًا، محقق ومحكم مزاح)\n- رسالة تم تسليمها مع إقرار استلامها.\nخلال فترة الإشعار، يجب عليك الاستمرار في دفع تكاليف الإقامة.",
+        "titre": "ما هي الإجراءات اللازمة لإنهاء عقد الإيجار في سكن الشباب؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2018",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2018",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "script"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 73.1,
+      "units": 62
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:51:08.339Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Jugendherberge oder \"Wohnheim für Jugendliche\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 35.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Jugendarbeitszentren (JAZ) bieten Unterkünfte für junge Menschen zwischen 16 und 25 (oder 30) Jahren, die sich in den Arbeitsmarkt integrieren oder bereits eine berufliche Tätigkeit ausüben.",
+      "steps": [
+       {
+        "texte": "Sie sind zwischen 16 und 25 Jahren (oder in einigen Fällen bis zu 30 Jahren) alt und haben Schwierigkeiten, eine Unterkunft zu finden? Sie können in einer Wohngemeinschaft für junge Menschen (oder einer Jugendwohnung) untergebracht werden. Diese Wohngemeinschaften bieten sowohl möblierte als auch möblierte Wohnungen sowie Gemeinschaftsräume (z. B. eine Kantine, eine Waschküche) an. Um in einer Wohngemeinschaft für junge Menschen aufgenommen zu werden, müssen Sie eine berufliche Tätigkeit ausüben oder sich in den sozialen und beruflichen Bereich integrieren. Wir stellen Ihnen die notwendigen Informationen zur Verfügung.",
+        "titre": null
+       },
+       {
+        "texte": "Diese Wohngruppen umfassen sowohl private, möblierte (oder unmöblierte) Wohnräume sowie Gemeinschaftsräume, die für den gemeinschaftlichen Wohnen genutzt werden.\nDie FJT (Französische Jugendorganisationen) entwickeln und setzen gemeinsam mit einem engagierten Team ein soziales und pädagogisches Projekt um, dessen Ziel es ist, jungen Menschen, die von ihnen betreut werden, den Zugang zu Selbstständigkeit und unabhängigem Wohnen zu ermöglichen. In diesem Rahmen bieten sie folgende Leistungen an:\n- Aktionen zur Betreuung, Information und Beratung im Bereich Wohnen\n- Maßnahmen in den Bereichen Beschäftigung, Ausübung der Bürgerrechte, Zugang zu Rechten und Kultur, Gesundheit, Bildung und Mobilität, Sport und Freizeit\n- Essen vor Ort oder in der Nähe, wenn die angebotene Unterkunft oder die Räumlichkeiten, die für das gemeinschaftliche Leben vorgesehen sind, die Zubereitung von Mahlzeiten nicht ermöglichen. Diese Essensversorgung kann jedoch von externen Organisationen im Rahmen von Verträgen mit dem Betreiber des Wohnheims gewährleistet werden.",
+        "titre": "Welche Leistungen werden in einem Jugendwohngel in einem Arbeitslosenzentrum (FJT) angeboten?"
+       },
+       {
+        "texte": "Sie müssen zwischen 16 und 25 Jahren alt sein. Einige Einrichtungen nehmen Personen bis zu 30 Jahren auf.\nDie FJT (Französische Arbeitsagenturen) betreuen hauptsächlich Personen, die eine berufliche Tätigkeit ausüben (z. B. als Angestellte mit befristeter oder unbefristeter Anstellung, als Aushilfe oder Saisonarbeiter), oder die sich im Prozess der sozialen und beruflichen Integration befinden, insbesondere nach einer Betreuung durch den Dienst für Kinderhilfe (Ase).\nDie FJT (Französische Arbeitsagenturen) nehmen in geringerem Umfang Arbeitsuchende oder Personen, die eine Ausbildung absolvieren (z. B. Auszubildende, Praktikanten, Studenten), auf.",
+        "titre": "Welche Kriterien müssen erfüllt werden, um in einem Jugendwohngruppe (FJT) aufgenommen zu werden?"
+       },
+       {
+        "texte": "Sie können sich direkt an das gewünschte Heim wenden.\nWenn Sie diese Informationen nicht haben, können Sie sich an Ihre Gemeinde wenden, um die entsprechenden Kontaktdaten zu erhalten.\n→ An wen: Rathaus",
+        "titre": "Wie kann man sich für einen Platz in einem Jugendherberge (Jugendarbeitsunterkunft) bewerben?"
+       },
+       {
+        "texte": "Der Wohnungsverwalter muss Ihnen einen Mietvertrag aushändigen, in dem insbesondere die Bedingungen für Ihre Aufnahme und Ihr Wohnen festgelegt sind.\nDieser Vertrag muss folgende Informationen enthalten:\n- Zulassungskriterien\n- Beginndatum des Vertrags\n- Möglichkeiten und Bedingungen für die Kündigung des Vertrags\n- Höhe der monatlichen Gebühr (ähnlich einer Miete) sowie aller Leistungen, die in dieser Gebühr enthalten sind, und zusätzlicher angebotener Leistungen mit ihren Preisen (z. B. Waschsalon)\n- Höhe der Kaution\n- Beschreibung der Räume und Ausstattung, die Ihnen für private und gemeinschaftliche Nutzung zur Verfügung stehen.\nEin Hausordnung muss dem Vertrag beigefügt werden. Sie kann beispielsweise die Bedingungen für den Zugang zum Haus, Sicherheitsbestimmungen und Regeln festlegen, die den Respekt und die Ruhe der Bewohner gewährleisten.\nSie müssen den Vertrag unterzeichnen.",
+        "titre": "Welche Art von Vertrag muss die Leitung einer Jugendwohnung (Jugendherberge) erstellen?"
+       },
+       {
+        "texte": "Die Kosten für die Unterkunft umfassen in der Regel folgende Beträge:\n- Monatliche Gebühr (ähnlich Miete und Nebenkosten)\n- Kaution\n- Teilnahme an zusätzlichen Leistungen (z. B. Wäscherei, Verpflegung, Internetzugang oder die Bereitstellung bestimmter gemeinsamer Einrichtungen).",
+        "titre": "Wie hoch sind die Kosten für eine Unterkunft in einem Jugendherberge (FJT)?"
+       },
+       {
+        "texte": "Ja. Ein Teil oder der gesamte Kosten für die Unterkunft können durch die individuelle Wohnungszuschussleistung (APL: personalisierte Wohnbeihilfe) oder die Sozialwohnungszuschussleistung (ALS: soziale Wohnbeihilfe) übernommen werden, wenn die Familie einen entsprechenden Vertrag hat (dies gilt für die meisten Familien).\nWenn Sie ein Ausbildungs- oder Qualifizierungsvertrag in einem privaten, nicht-landwirtschaftlichen Unternehmen haben, können Sie ebenfalls von der Unterstützung von MOBILI-JEUNE profitieren.\nEs ist auch möglich, finanzielle Unterstützung von der Solidaritätsfonds für Wohnen (FSL: Wohnungssolidaritätsfonds) zu beantragen, insbesondere um beispielsweise die Kaution zu bezahlen.",
+        "titre": "Können die Kosten für Unterkunft von einer Wohngruppe für junge Fachkräfte (FJT) übernommen werden?"
+       },
+       {
+        "texte": "Der Vertrag läuft für einen Zeitraum von einem Monat.\nEs wird automatisch wieder aktiviert, wenn Sie Ihren Aufenthalt fortsetzen möchten.",
+        "titre": "Wie lange dauert ein Aufenthalt in einer Wohngruppe für junge Arbeitsuchende (FJT)?"
+       },
+       {
+        "texte": "Ja. Wenn die Hausordnung dies zulässt, dürfen Sie eine oder mehrere Personen vorübergehend in Ihrer Unterkunft unterbringen.\nDie Hausordnung legt die maximale Aufenthaltsdauer fest. Diese darf für eine einzelne Person nicht länger als 3 Monate betragen und insgesamt nicht mehr als 6 Monate pro Jahr.\nSie müssen den Vermieter über die Ankunft der Personen informieren, die Sie beherbergen möchten, und ihm zuvor ihre Identität mitteilen.\nDie Hausordnung kann die Zahlung einer Pauschale vorsehen, die einer Beteiligung an den zusätzlichen Kosten entspricht, die durch die Unterbringung einer oder mehrerer Personen entstehen. Die geltenden Preisbedingungen sind dann der Hausordnung beigefügt.\nKonkret: Die interne Regelung muss vollständig die Artikel L823-1 bis L823-6, L823-9 und L823-10 des Gesetzes über die Einreise und den Aufenthalt von Ausländern sowie über Asylrecht enthalten.",
+        "titre": "Kann eine Person, die in einem Jugendwohngruppe (FJT) wohnt, eine weitere Person beherbergen?"
+       },
+       {
+        "texte": "Der Vertrag kann von Ihnen oder von dem Vermieter gekündigt werden.\nFall: Auf Ihre Initiative\nSie können den Vertrag jederzeit kündigen. Sie müssen jedoch einen Frist von 8 Kalendertagen einhalten, um den Vermieter über Ihren Wunsch, den Vertrag zu kündigen, zu informieren.\nDazu müssen Sie ein eingeschriebenes Schreiben an den Verwalter des Wohnheims senden.\nDiese Kündigungsfrist beginnt mit dem Tag, an dem der Vermieter den Brief erhält und den Empfangsbestätigung unterschreibt.\nWährend der 8 Tage zahlen Sie weiterhin Ihre Unterkunfts- und Verpflegungskosten.\nFall: Auf Initiative des Wohnungsverwaltungsunternehmens\nDer Vermieter kann den Mietvertrag jederzeit kündigen. Er muss dies jedoch unter Einhaltung einer bestimmten Kündigungsfrist tun, um Sie rechtzeitig über die bevorstehende Vertragsbeendigung zu informieren.\nDiese Kündigungsfrist beträgt:\n- 1 Monat im Falle der Nicherfüllung Ihrer vertraglichen Verpflichtungen (z. B. Zahlungsverzug, schwerwiegende oder wiederholte Verletzung der Hausordnung). Der Vertrag kann aufgrund von Zahlungsverzug gekündigt werden, wenn Sie 3 aufeinanderfolgende Monate der Gebühren (inklusive) nicht bezahlt haben oder wenn Sie auch nach teilweisen Zahlungen noch eine Summe von 2 Monaten Gebühren (inklusive) schulden.\n- 3 Monate, falls Sie die Zulassungsbedingungen nicht mehr erfüllen oder das Institut schließt.\nDie Kündigung des Vertrags muss Ihnen auf eine der folgenden Arten mitgeteilt werden:\n- Geschätzter Brief mit Rückschein\n- Justizbeamter (ehemaliger Schiedsrichter und Zwangsversteigerer)\n- Brief, der gegen eine Entlassung vorgelegt wurde.\nWährend der Kündigungsfrist bleiben die Kosten für die Unterkunft weiterhin bestehen.",
+        "titre": "Wie kann ein Mietvertrag in einem Jugendwohnungsprojekt (FJT) beendet werden?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2018",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2018",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 75,
+      "units": 62
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:53:34.418Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Житловий комплекс для молодих працівників (ЖМП) або \"Житло для молоді\"",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 33.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Центри для молодих працівників (ЦМП) приймають молодь віком від 16 до 25 років (або 30 років), яка перебуває у процесі працевлаштування або вже має професійну діяльність.",
+      "steps": [
+       {
+        "texte": "Ваш вік – від 16 до 25 років (або 30 років у деяких випадках), і ви маєте труднощі з пошуком житла? Ви можете отримати житло в центрі для молоді (або \"Місце проживання для молоді\"). Ці центри пропонують мебльовані або неза мебльовані кімнати, а також спільні простори (наприклад, їдальня, пральня). Щоб отримати доступ до центру для молоді, вам необхідно мати роботу або бути в процесі соціальної та професійної інтеграції. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Ці гуртожитки включають як окремі житлові приміщення з меблями (або без них), так і спільні приміщення, призначені для спільного проживання.\nФТ (організації) розробляють та реалізують проєкт, що має на меті забезпечення молоді, яку вони розміщують, доступом до самостійного проживання та незалежності, за допомогою спеціальної команди. У рамках цього проєкту вони надають наступні послуги:\n- Дії з прийому, інформування та консультування щодо житла\n- Дії у сферах працевлаштування, реалізації громадянських прав, доступу до прав та культури, охорони здоров'я, освіти та мобільності, спорту та відпочинку.\n- Харчування на місці або поблизу, коли надане житло або приміщення, призначені для спільного проживання, не дозволяють готувати їжу. Однак, це харчування може бути забезпечено зовнішніми організаціями в рамках угод, укладених з адміністратором житлового комплексу.",
+        "titre": "Які послуги пропонуються в центрі для молодих робітників (ЦМР)?"
+       },
+       {
+        "texte": "Вам має бути від 16 до 25 років. Деякі заклади приймають осіб віком до 30 років.\nФТЖ (центри соціальної реабілітації) приймають переважно людей, які мають професійну діяльність (на умовах тимчасового, постійного контракту, працевлаштування, сезонної роботи тощо), або тих, хто перебуває у процесі соціальної та професійної інтеграції, зокрема після отримання підтримки від служби соціальної допомоги дітям (Ase).\nФонди сприяння працевлаштуванню (ФСП) приймають також певну кількість безробітних або осіб, які навчаються (навчаються за професійною підготовкою, стажуються, навчаються в навчальних закладах...).",
+        "titre": "Які умови зарахування до юнацького житлового комплексу для працівників (ЮЖП)?"
+       },
+       {
+        "texte": "Ви можете безпосередньо зв'язатися з домом, який вам підходить.\nЯкщо ви не знаєте, як з ними зв'язатися, ви можете звернутися до місцевої адміністрації, щоб отримати їхні контактні дані.\n→ Куди звернутися: Міська управа",
+        "titre": "Які кроки потрібно зробити, щоб отримати місце в юнацькому житловому комплексі (ЮЖ)?"
+       },
+       {
+        "texte": "Керівник житлового комплексу повинен надати вам договір оренди, в якому чітко прописані умови вашого проживання та перебування.\nУ цьому договорі повинні бути зазначені наступні дані:\n- Умови вступу\n- Дата початку дії контракту\n- Умови та порядок розірвання контракту\n- Розмір щомісячної плати (щось на зразок орендної плати) та суми всіх послуг, включених у цю суму, а також додаткових послуг із зазначенням їхньої вартості (наприклад, пральня).\n- Сума застави\n- Опис приміщень та обладнання, призначених для особистого використання, а також спільних просторів, які надаються вам.\nДо контракту має бути додано внутрішній регламент. Він може, зокрема, визначати умови доступу до помешкання, правила безпеки та положення, які гарантують повагу та спокій мешканців.\nВам необхідно підписати договір.",
+        "titre": "Який тип контракту повинен укладати менеджер житлового комплексу для молодих працівників (ЖКМП)?"
+       },
+       {
+        "texte": "Вартість проживання зазвичай включає наступні суми:\n- Щомісячна плата (що включає орендну плату та інші витрати)\n- Застава\n- Індивідуальне отримання додаткових послуг (наприклад: пральня, харчування, доступ до інтернету або надання певних колективних приміщень).",
+        "titre": "Які варті витрати на проживання в юнацькому будинку (FJT)?"
+       },
+       {
+        "texte": "Так. Частина або вся вартість проживання може бути покрита за рахунок індивідуальної допомоги з житла (APL: персоналізована житлова допомога) або соціальної допомоги на житло (ALS (соціальна житлова допомога), якщо сім'я має відповідний договір).\nЯкщо ви перебуваєте на контракті стажування або на контракті професійної підготовки в приватній компанії, що не займається сільським господарством, ви також можете отримати підтримку від програми MOBILI-JEUNE.\nТакож можливо звернутися за фінансовою допомогою до Фонду соціальної підтримки у питаннях житла (FSL: фонд житлової солідарності), зокрема, щоб отримати допомогу у сплаті заставної суми.",
+        "titre": "Чи можуть витрати на проживання покриватися в центрі для молодих працівників (ЦМП)?"
+       },
+       {
+        "texte": "Угода укладається на термін одного місяця.\nВін автоматично повертається, якщо ви бажаєте продовжити перебування.",
+        "titre": "Який термін проживання в будинку для молодих працівників (БМП)?"
+       },
+       {
+        "texte": "Так. Якщо внутрішні правила дозволяють, ви можете тимчасово розмістити одну або декількох осіб у своєму житлі.\nВнутрішні правила передбачають максимальний термін проживання. Цей термін не може перевищувати 3 місяців для однієї особи, яка проживає там, і до 6 місяців протягом року загалом.\nВи повинні повідомити керуючого будинком про прибуття осіб, яких ви плануєте розмістити, попередньо вказавши їхню особу.\nПравила внутрішнього розпорядження можуть передбачати оплату фіксованої суми, що відповідає участі у додаткових витратах, пов'язаних з розміщенням однієї або кількох осіб. У такому разі, відповідні тарифи додаються до правил внутрішнього розпорядження.\nА саме: Внутрішні правила повинні повністю відповідати статтям L823-1 до L823-6, L823-9 та L823-10 Кодексу про в'їзд та перебування іноземців та право на асиль.",
+        "titre": "Чи може мешканець юнацького будинку (FJT) приймати в себе іншу людину?"
+       },
+       {
+        "texte": "Угоду можна розірвати за ініціативою однієї зі сторін – або ви, або управляюча компанія.\nПриклад: За вашою ініціативою\nВи можете розірвати договір у будь-який момент. Однак, вам необхідно повідомити керуючого будинком про своє бажання розірвати договір за 8 календарних днів.\nДля цього вам необхідно надіслати рекомендований лист з повідомленням про отримання до керуючого будинком.\nЦей термін повідомлення починається з дня, коли керівник отримує пошту та підписує квитанцію про отримання.\nПротягом 8 днів ви продовжуєте оплачувати вартість проживання.\nПриклад: За ініціативою керівника гуртожитку\nКерівник житлового комплексу може розірвати ваш договір у будь-який момент. Однак, він повинен зробити це, дотримуючись певного терміну повідомлення, щоб сповістити вас про припинення договору.\nЦей термін повідомлення складає:\n- 1 місяць у разі невиконання ваших контрактних зобов'язань (наприклад, несплачені платежі, серйозне або повторне порушення правил). Контракт може бути розірвано через несплату, якщо ви не здійснили 3 послідовні платежі (включаючи плату за послуги) або якщо вам необхідно сплатити суму, еквівалентну 2 місяцям платежів (включаючи плату за послуги), навіть після часткових платежів.\n- 3 місяці, якщо ви більше не відповідаєте вимогам для вступу або якщо заклад буде закрито.\nРозрив контракту має бути повідомлений вам одним із наступних способами:\n- Лист, відправлений рекомендованим поштою з повідомленням про отримання\n- Комісар з питань правосуддя (раніше судовий пристав та судовий експерт)\n- Лист, що було передано для повернення.\nПід час терміну попередження ви продовжуєте сплачувати вартість проживання.",
+        "titre": "Яким чином можна розірвати договір оренди житла в центрі для молодих робітників (ЦМР)?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2018",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2018",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 74.3,
+      "units": 62
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:fa54975f9b2bf755edc56845b6deac0ab8e3701f2750abc4fc5b5495e654aae7",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Foyer de jeunes travailleurs (FJT) ou \"Habitat jeunes\"",
+   "contenu_json": {
+    "intro": "Les foyers de jeunes travailleurs (FJT) accueillent des jeunes de 16 à 25 ans (voire 30 ans) en voie d'insertion ou exerçant une activité professionnelle.",
+    "steps": [
+     {
+      "texte": "Vous êtes âgé de 16 à 25 ans (voire 30 ans dans certains cas) et avez des difficultés pour trouver un logement ? Vous pouvez être hébergé en foyer de jeunes travailleurs-FJT (ou Habitat jeunes). Les FJT proposent des logements meublés ou non et des espaces communs (par exemple, restaurant, laverie). Pour être admis en FJT, vous devez exercer une activé professionnelle ou être en voie d'insertion sociale et professionnelle. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Ces foyers comportent à la fois des locaux privatifs meublés (ou non) et des locaux communs affectés à la vie collective.\nLes FJT établissent et mettent en œuvre avec une équipe dédiée un projet socio-éducatif ayant pour objet l'accès à l'autonomie et au logement indépendant des jeunes qu'ils logent. Dans ce cadre, ils assurent les prestations suivantes :\n- Actions d'accueil, d'information et d'orientation en matière de logement\n- Actions dans les domaines de l'emploi, de l'exercice de la citoyenneté, de l'accès aux droits et à la culture, de la santé, de la formation et de la mobilité, du sport et des loisirs\n- Restauration sur place ou à proximité, quand le logement proposé ou les locaux affectés à la vie collective ne permettent pas la préparation des repas. Toutefois, cette restauration peut être assurée par des organismes extérieurs dans le cadre de conventions conclues avec le gestionnaire du foyer.",
+      "titre": "Quelles prestations sont proposées en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Vous devez être âgé de 16 à 25 ans. Certains foyers accueillent des personnes âgées d'au maximum 30 ans.\nLes FJT accueillent principalement des personnes qui exercent une activité professionnelle (en CDD, CDI, intérim, saisonnier, ...) ou qui sont en voie d'insertion sociale et professionnelle, notamment à l'issue d'une prise en charge par le service de l'aide sociale à l'enfance (Ase).\nLes FJT accueillent dans une moindre mesure des demandeurs d'emploi ou des personnes en formation (apprenti, alternant, étudiant...).",
+      "titre": "Quelles sont les conditions d'admission en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Vous pouvez contacter directement le foyer de votre choix.\nSi vous n'en connaissez pas, vous pouvez contacter votre mairie pour obtenir leurs coordonnées.\n→ Où s'adresser : Mairie",
+      "titre": "Comment faire la démarche pour avoir une place en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Le gestionnaire du foyer doit vous remettre un contrat d'occupation pour préciser notamment les conditions de votre admission et hébergement.\nCe contrat doit mentionner les informations suivantes :\n- Conditions d'admission\n- Date de début du contrat\n- Modes et conditions de résiliation du contrat\n- Montant de la redevance mensuelle (sorte de loyer) et de l'ensemble des prestations comprises dans ce montant et prestations annexes proposées avec leur prix (par exemple, laverie)\n- Montant du dépôt de garantie\n- Description des locaux et équipements à usage privatif et espaces collectifs mis à votre disposition.\nUn règlement intérieur doit être annexé au contrat. Il peut notamment préciser les conditions d'accès au foyer, les consignes de sécurité et les règles garantissant le respect et la tranquililité des résidents.\nVous devez signer le contrat.",
+      "titre": "Quel type de contrat doit remettre le gestionnaire du foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Les frais d'hébergement comprennent généralement les sommes suivantes :\n- Redevance mensuelle (sorte de loyer et charges)\n- Dépôt de garantie\n- Participation individuelle aux prestations annexes (par exemple : laverie, restauration, accès à internet ou mise à disposition de certains équipements collectifs).",
+      "titre": "Quels sont les frais d'hébergement en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Oui. Tout ou partie des frais d'hébergement peuvent être pris en charge par l'aide personnalisée au logement (APL) ou l'allocation de logement social (ALS) si le foyer est conventionné (la plupart des foyers le sont).\nSi vous êtes en contrat d'apprentissage ou en contrat de professionnalisation dans une entreprise du secteur privé non agricole, vous pouvez également bénéficier de l'aide MOBILI-JEUNE.\nIl est également possible de demander une aide financière au fonds de solidarité pour le logement (FSL) notamment pour vous aider à payer le dépôt de garantie.",
+      "titre": "Les frais d'hébergement peuvent-ils être pris en charge en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Le contrat est conclu pour une durée d'un mois.\nIl est reconduit automatiquement si vous souhaitez poursuivre l'hébergement.",
+      "titre": "Quelle est la durée de l'hébergement en foyer de jeunes travailleurs (FJT) ?"
+     },
+     {
+      "texte": "Oui. Si le règlement intérieur l'autorise, vous pouvez héberger temporairement une ou plusieurs personne(s) dans votre logement.\nLe règlement intérieur prévoit la durée maximum de l'hébergement. Cette durée ne peut pas dépasser 3 mois pour une même personne hébergée et jusqu'à 6 mois par an au total.\nVous devez informer le gestionnaire du foyer de l'arrivée des personnes que vous souhaitez héberger, en lui déclarant préalablement leur identité.\nLe règlement intérieur peut prévoir le paiement d'un montant forfaitaire correspondant à une participation aux charges supplémentaires occasionnées par l'hébergement d'une ou plusieurs personnes. Les dispositions tarifaires applicables sont alors annexées au règlement intérieur.\nÀ savoir : Le règlement intérieur doit reproduire intégralement les articles L823-1 à L823-6, L823-9 et L823-10 du code de l'entrée et de séjour des étrangers et du droit d'asile.",
+      "titre": "Un résident en foyer de jeunes travailleurs (FJT) peut-il héberger une autre personne ?"
+     },
+     {
+      "texte": "Le contrat peut être rompu à votre initiative ou à l'initiative du gestionnaire du foyer.\nCas : À votre initiative\nVous pouvez mettre fin au contrat à tout moment. Vous devez toutefois respecter un délai de préavis de 8 jours calendaires pour avertir le gestionnaire du foyer que vous souhaitez mettre fin au contrat.\nPour cela, vous devez envoyer une lettre recommandée avec avis de réception au gestionnaire du foyer.\nCe délai de préavis commence le jour où le gestionnaire reçoit le courrier et signe l'accusé de réception.\nDurant les 8 jours, vous continuez à payer vos frais d'hébergement.\nCas : À l'initiative du gestionnaire du foyer\nLe gestionnaire du foyer peut résilier à tout moment votre contrat. Il doit toutefois le faire en respectant un certain délai de préavis pour vous avertir qu'il va mettre fin au contrat.\nCe délai de préavis est de :\n- 1 mois en cas d'inexécution de vos obligations contractuelles (par exemple, impayé, non-respect grave ou répété du règlement intérieur). Le contrat peut être résilié pour impayé si vous n'avez pas réglé 3 mois consécutifs de redevance (charges comprises) ou si vous devez encore une somme équivalente à 2 mois de redevance (charges comprises), même après des paiements partiels.\n- 3 mois si vous ne remplissez plus les conditions d'admission ou en cas de fermeture de l'établissement.\nLa résiliation du contrat doit vous être signifiée par l'un des moyens suivants :\n- Lettre recommandée avec avis de réception\n- Commissaire de justice (anciennement huissier de justice et commissaire-priseur judiciaire)\n- Courrier écrit remis contre décharge.\nPendant le délai de préavis, vous continuez à payer les frais d'hébergement.",
+      "titre": "Comment est-il mis fin au contrat d'occupation en foyer de jeunes travailleurs (FJT) ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

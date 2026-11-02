@@ -1,0 +1,278 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "vous-avez-trouve-un-mode-de-garde-pour-votre-enfant-aides-financieres-f38243",
+ "recordId": "dd764e2c-d7c0-4cd7-8779-60d382672db9",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:09.013Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "You have found a childcare arrangement for your child: financial assistance",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 76.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "If you have found a childcare arrangement for your child, you may be eligible for financial assistance, subject to certain conditions.",
+      "steps": [
+       {
+        "texte": "If you have found a childcare arrangement for your child, you may be eligible for financial assistance, subject to certain conditions.\n- You may be eligible for the childcare allowance (CMG: childcare cost supplement) if you use a childcare provider (such as an agency, a small daycare center, or a family childcare provider) or if you employ a nanny or a live-in caregiver.\n- You may also be eligible for a tax credit.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F38243",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38243",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-09-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61,
+      "units": 4
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:18.267Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Çocuğunuz için bakımevi seçimi yaptınız: mali destekler",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Çocuğunuz için bir bakımcı bulduysanız, belirli koşullar altında mali yardımlar alabilirsiniz.",
+      "steps": [
+       {
+        "texte": "Çocuğunuz için bir bakımcı bulduysanız, belirli koşullar altında mali yardımlar alabilirsiniz.\n- Belki de, çocuğunuzu düşündüğünüz bir bakımevinde (kurum, kreş veya aile kreşi) veya kendiniz bir çocuk bakıcısı veya evde bakıcı tutuyorsanız, \"serbest seçim\" bakımevi yardımı (CMG: çocuk bakım masrafı desteği) hakkına sahip olabilirsiniz.\n- Ayrıca vergi indiriminden de yararlanabilirsiniz.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F38243",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38243",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-09-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.5,
+      "units": 4
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:27.494Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "لقد وجدت طريقة لرعاية طفلك: مساعدات مالية",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "إذا وجدت حلاً مناسبًا لرعاية طفلك، يمكنك الحصول على دعم مالي، وذلك وفقًا لبعض الشروط.",
+      "steps": [
+       {
+        "texte": "إذا وجدت حلاً مناسبًا لرعاية طفلك، يمكنك الحصول على دعم مالي، وذلك وفقًا لبعض الشروط.\n- ربما تكون مؤهلاً للحصول على مبلغ إضافي للرعاية الاختيارية (CMG: مكمل اختيار طريقة رعاية الطفل)] إذا كنت تستخدم خدمات رعاية الأطفال من خلال مؤسسة أو مركز رعاية أو من خلال توظيف خادمة أطفال أو مقدم رعاية في المنزل.\n- يمكنك أيضًا الاستفادة من خصم ضريبي.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F38243",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38243",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-09-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 60.4,
+      "units": 4
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:36.864Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Sie haben eine Betreuungslösung für Ihr Kind gefunden: Finanzielle Unterstützung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 73.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn Sie eine Betreuung für Ihr Kind gefunden haben, können Sie möglicherweise finanzielle Unterstützung erhalten, unter bestimmten Voraussetzungen.",
+      "steps": [
+       {
+        "texte": "Wenn Sie eine Betreuung für Ihr Kind gefunden haben, können Sie möglicherweise finanzielle Unterstützung erhalten, unter bestimmten Voraussetzungen.\n- Sie könnten möglicherweise Anspruch auf die Zuschuss für die Wahl des Betreuungsortes (CMG: Zuschuss zu Kinderbetreuungskosten) haben, wenn Sie eine Einrichtung nutzen, um Ihre oder Ihre Kinder zu betreuen (z. B. eine Kindertagesstätte, eine Mini-Kita oder eine familiäre Betreuung), oder wenn Sie eine Tagesmutter oder eine private Betreuungsperson beschäftigen.\n- Sie können auch von einer Steuererleichterung profitieren.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F38243",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38243",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-09-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 70.4,
+      "units": 4
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:08:46.366Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Ви знайшли спосіб догляду за дитиною: фінансову допомогу.",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Якщо ви знайшли спосіб догляду за своєю дитиною, ви можете отримати фінансову допомогу, за певних умов.",
+      "steps": [
+       {
+        "texte": "Якщо ви знайшли спосіб догляду за своєю дитиною, ви можете отримати фінансову допомогу, за певних умов.\n- Ви можете мати право на доплату за вибір дитячого садка (CMG: доплата на догляд за дитиною), якщо ви використовуєте послуги дитячого садка, центру дитячого догляду або сімейної дитячої групи, або якщо наймаєте няню чи опікуна.\n- Ви також можете отримати податкову знижку.",
+        "titre": null
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F38243",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38243",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2025-09-01"
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 67.7,
+      "units": 4
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:eb4f6d87213bbc63fcf49f177ab9857692b80d3eba1666b50db2baac086e7d6a",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Vous avez trouvé un mode de garde pour votre enfant : aides financières",
+   "contenu_json": {
+    "intro": "Si vous avez trouvé un mode de garde pour votre enfant, vous pouvez bénéficier d'aides financières, sous certaines conditions.",
+    "steps": [
+     {
+      "texte": "Si vous avez trouvé un mode de garde pour votre enfant, vous pouvez bénéficier d'aides financières, sous certaines conditions.\n- Vous avez peut-être droit au complément de libre choix du mode de garde (CMG) si vous passez par une structure pour garder votre ou vos enfants (organisme, micro-crèche ou crèche familiale) ou si vous employez vous-même une assistante maternelle ou une garde à domicile.\n- Vous pouvez également bénéficier d'un crédit d'impôt.",
+      "titre": null
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

@@ -1,0 +1,437 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
+ "recordId": "105b90fb-39dd-4b33-b456-3a2407c22448",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:24:39.434Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Consultation with a psychologist or psychiatrist: what kind of care is available?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Consultations with a psychologist or psychiatrist are not reimbursed in the same way.",
+      "steps": [
+       {
+        "texte": "Consultations with a psychologist or psychiatrist are not reimbursed in the same way. This difference arises because one is a medical doctor and the other is not.",
+        "titre": null
+       },
+       {
+        "texte": "There are two main types of \"psychologists\": the psychiatrist (or child psychiatrist) and the psychologist.\nA psychiatrist is a medical doctor who specializes in mental health. Therefore, they are specifically trained to diagnose mental health conditions and prescribe medications, including psychotropic drugs such as antidepressants, anxiolytics, antipsychotics, and sleep aids. Treatment can also involve talking therapy and active listening.\nThe psychologist is a university-educated professional, but not a medical doctor. Therefore, they cannot prescribe medication. There are many specializations in psychology depending on the age group (child psychologist, specialist in age-related disorders), field of activity (work psychologist, school psychologist), etc.\nThe psychoanalyst and psychotherapist can be a psychiatrist or psychologist, but they don't necessarily have to be.",
+        "titre": "Psychologist, psychiatrist, psychoanalyst: what are the differences?"
+       },
+       {
+        "texte": "Psychiatrist\nOutside of the coordinated care network, only individuals aged 16 to 25 can consult a psychiatrist without first seeing their primary care physician and will receive normal reimbursement from the Assurance maladie (French public health insurance).\nIf you are over 25 and have not followed the coordinated care pathway (i.e., you have not been referred by your primary care physician), you can still consult a psychiatrist, but the reimbursement for Assurance maladie will be less significant.\nPsychologist\nYou can consult a psychologist without the approval of your primary care physician.",
+        "titre": "How to find a psychologist or psychiatrist?"
+       },
+       {
+        "texte": "These prices may vary depending on the location where the treatment is provided:\nPlease note: A consultation with a psychiatrist at a medico-psychological center (CMP) is covered by the Assurance maladie.\nCase: In the metropolitan area\nPrices vary depending on your age:\nCase: Over 25 years\nTable: Consultation Fees\nSituation | Psychiatrist | Fee | Reimbursement basis | Amount reimbursed (after deducting the fixed €2 contribution)\nPatient aged 25 or older, with direct access (patients without a primary care physician or who are unavailable within a timeframe compatible with their health condition, emergency situations, nursing homes, or in a correctional facility) | Sector 1 | €55 | €55 | €36.50\nSector 1 (very complex consultation) | €60 | €60 | €40\nAdhering to the OPTAM (Option de Pratique Tarifaire Maitrisée) Sector 2 option: Controlled fee structure with controlled overcharges | €55 | €36.50\nSector 2 | Fee varies | €42.50 | €27.75\nAs part of the treatment plan | Sector 1 | €55 | €55 | €36.50\nSector 1 (complex consultation) | €60 | €60 | €40\nAdhering to the OPTAM (Option de Pratique Tarifaire Maitrisée) Sector 2 option: Fee-based practice with controlled overcharges | €55 | €36.50\nSector 2 | Fee varies | €42.50 | €27.75\nCorresponding physician (for periodic follow-up) | Sector 1 | €67.50 | €67.50 | €45.25\nAdhering to the OPTAM (Option de Pratique Tarifaire Maitrisée) Sector 2 option: Controlled fee structure with controlled overage charges | €67.50 | €45.25\nSector 2 | Fee at discretion | €67.50 | €45.25\nOutside of the treatment area | Sector 1 | Maximum €61 | €50 | €13\nAdhering to the OPTAM (Option de Pratique Tarifaire Maitrisée) Sector 2 option: Controlled fee structure with controlled overcharges | €50 | €13\nSector 2 | Fee varies | €42.50 | €10.75\nCase: Under 25 years old\nTable: Consultation with a specialist: cost, reimbursement basis, amount reimbursed\nDoctor consulted | Fee | Reimbursement basis | Amount reimbursed\nPsychiatrist or child psychiatrist, sector 1 | €75 | €75 | Under 18 years: €52.50 | 18 years and over: €50.50\nPsychiatrist or child psychiatrist, adhering to the access to care contract | Fees with controlled overcharges | 75 € | Under 18 years: 52.50 € 18 years and older: 50.50 €\nPsychiatrist or child psychiatrist, sector 2 | Fee varies | 42.50 € | Under 18 years: 29.75 €; 18 years and over: 27.75 €\nCase Study: In the French Overseas Territories\nExamples: French Guiana, Guadeloupe, Martinique, and Réunion\nThe website of Assurance maladie provides details on consultation reimbursements in French Guiana, Guadeloupe, Martinique, and Réunion.\nCase Study: Mayotte\nThe website of Assurance maladie provides details on consultation reimbursements in Mayotte.",
+        "titre": "What are the consultation fees for seeing a psychiatrist?"
+       },
+       {
+        "texte": "Psychologists involved\nThe psychologist must:\n- Sign a contract with the local Assurance maladie organization at their place of operation.\n- To practice as a private practitioner or to be employed by a coordinated exercise facility (a multi-professional health center or health center).\n- Meet the following requirements: at least 3 years of clinical experience and relevant training to demonstrate a solid background in clinical or forensic psychology.\nThe list of contracted psychologists who meet these criteria is available online:\n→ Online service: Find a contracted psychologist\nSpecifically: The insured is free to choose the contracted psychologist.\nHandling of this consultation\nYou pay the psychologist directly after each session or at the end of a series of sessions (depending on the psychologist's preference):\n- €50 for the first session (assessment interview)\n- €50 for each follow-up session (up to 11 sessions).\nThe Assurance maladie program covers 60% of the cost of the sessions, which amounts to €30.\nYour health insurance or supplementary insurance, as part of the \"responsible health\" contract, covers 40% of the cost of the sessions.\nYou are entitled to mandatory third-party payment, meaning you do not need to pay upfront (and the sessions are fully covered by Assurance maladie), if you fall into one of the following situations:\n- Recipient of the complémentaire santé solidaire (free or low-cost supplementary health cover)\n- Recipient of state medical assistance (AME: state medical aid)\n- Care related to a chronic condition (CC) for a reason other than psychiatric, and psychological support is part of the care protocol within your management of the CC.\n- Care related to pregnancy (from the 6th month of pregnancy)\n- Care related to a work-related accident or occupational illness (Work-Related Accident/Illness).\nPlease note: The social security system also covers sessions with a psychologist provided by the medical-psychological center (CMP).\nConditions for receiving these consultations\nThe situation varies depending on the individual's circumstances: adult, student, or aged 3-17.\nCase: Adult (18 years or older)\nYou must be experiencing psychological distress, particularly if you are suffering from:\n- From mild to moderate anxiety\n- From mild to moderate depressive disorder\n- From misuse of tobacco, alcohol, and/or cannabis (excluding addiction)\n- Of an eating disorder without specific criteria for severity.\nIf you are a patient taking psychotropic medication, or a patient with bipolar disorder or borderline personality disorder taking anti-epileptic drugs, you may benefit from psychological support, particularly to re-evaluate the appropriateness of the prescribed treatments. In this case, a psychiatrist's opinion is required.\nPlease note: An opinion from a psychiatrist is not required for patients who have been taking antidepressants for less than 6 months, or who have been taking hypnotic or benzodiazepine medications for less than one month.\nYou will not be eligible for this coverage if your situation requires specialized care from a psychiatrist from the outset or during the course of treatment.\nExamples:\n- Suicidal risk\n- Severe forms of depressive or anxiety disorders\n- Eating disorder with signs of severity\n- Severe neurodevelopmental disorders\n- Significant psychiatric history within the past 3 years\n- Any situation involving dependence on psychoactive substances.\nFurthermore, you will not be eligible for this coverage if you are in any of the following situations:\n- Individuals who have been diagnosed with a chronic condition or are receiving disability benefits due to a psychiatric condition\n- A work stoppage of more than 6 months due to a psychiatric reason\n- Having experienced one of these situations for less than 2 years.\nCase: Student\nIf you are a student, you may be eligible for a specific program that includes free sessions and does not require any upfront payment.\nCase: Children and adolescents\nThe minor must meet the following two conditions:\n- Must be between the ages of 3 and 17 years of age, inclusive.\n- Describe a situation where someone is experiencing distress or mental anguish that is causing concern among their loved ones.\nEven if a minor meets the eligibility criteria, they cannot receive this support if their situation requires immediate or ongoing specialized care from a psychiatrist.\nExamples:\n- Suicidal risk\n- Severe forms of anxiety or depressive disorders\n- Eating disorder with signs of severity\n- Major situations of withdrawal and inhibition\n- Severe externalized problems\n- Neurodevelopmental disorders\n- Any situation involving dependence on psychoactive substances.\nA minor cannot benefit from this support if they are in any of the following situations:\n- Assessed and treated in child and adolescent psychiatry or general psychiatry\n- Admitted to the Acute Psychiatric Unit (ALU) due to psychiatric reasons.\n- Has been in one of these situations for less than 2 years.\nNumber of sessions\nThis support is limited to 12 sessions per calendar year. However, there is no limit for a child with autism.\nSpecifically: Only one session per day can be performed for the same patient.\nOrganized sessions\nThe first of these sessions will be dedicated to an evaluation interview.\nDuring this interview, the psychologist makes an initial assessment of the patient's needs.\nThe psychologist explains the framework of the psychological support to the patient and proposes a number of sessions, based on their needs, up to a maximum of 12 sessions within a calendar year.\nThe evaluation interview and the final follow-up session will result in a written exchange between the patient and:\n- The psychologist\n- And the patient's primary care physician (or, alternatively, any physician involved in the patient's care).\nThe psychologist, after the initial assessment interview or at any point during the patient's care, informs the patient of the need for psychiatric follow-up, only after obtaining the patient's consent.\nThe psychologist can conduct sessions via video conferencing, except during the initial assessment interview.",
+        "titre": "What are the consultation fees for a psychologist who is contracted with CPAM (local health insurance office)?"
+       },
+       {
+        "texte": "The consultation can be conducted directly, without the need to see a primary care physician first.\nNon-contracted liberal psychologists charge their services at their own discretion, without receiving reimbursement from the Assurance maladie. You can inquire with your health insurance provider to see if they cover these services.\nPlease note: Consultation with a psychologist in a medico-psychological center (CMP) is covered by the Assurance maladie.",
+        "titre": "What are the fees for a private psychologist's consultation?"
+       },
+       {
+        "texte": "You can also consult a psychoanalyst or psychotherapist directly.\nWhen these professionals are neither doctors nor psychologists, they set their own fees, which are not covered by the Assurance maladie.",
+        "titre": "What are the fees for consultations with a psychoanalyst, psychotherapist, or other mental health professional?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F34917",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34917",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers",
+       "entitlement"
+      ],
+      "warnings": [],
+      "roundtrip": 79.4,
+      "units": 128
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:28:54.368Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Psikolog veya psikiyatrist ile görüşme: Hangi tür destek sağlanıyor?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Psikolog veya psikiyatristle yapılan görüşmeler, farklı şekillerde karşılanmayabilir.",
+      "steps": [
+       {
+        "texte": "Psikolog veya psikiyatristle yapılan görüşmeler, aynı şekilde karşılanmamaktadır. Bunun nedeni, birinin doktor olması, diğerinin ise doktor olmamasıdır.",
+        "titre": null
+       },
+       {
+        "texte": "\"Psikolog\" terimi altında iki ana tür bulunmaktadır: psikiyatrist (veya çocuk psikiyatristi) ve psikolog.\nPsikiyatrist, uzmanlaşmış bir doktordur. Bu nedenle, özellikle bir teşhis koymak ve psikotropik ilaçlar (antidepresanlar, anksiyolitikler, nöroleptikler, uyku ilaçları vb.) reçete etmek konusunda eğitimlidir. Tedavi, sözlü iletişim ve dinleme yoluyla da sağlanabilir.\nPsikolog, üniversite mezunudur, ancak doktor değildir. Bu nedenle ilaç reçete edemez. Psikoloji alanında, yaş gruplarına (çocuk psikoloğu, yaşlılık sorunları uzmanı vb.) veya çalışma alanlarına (iş psikoloğu, okul psikoloğu vb.) göre birçok uzmanlaşma bulunmaktadır.\nPsikanalist ve psikoterapist, hem psikiyatrist veya psikolog olabilir, ancak bu zorunlu değildir.",
+        "titre": "Psikolog, psikiyatrist, psikanalist: Aralarındaki farklar nelerdir?"
+       },
+       {
+        "texte": "Psikiyatrist\nKoordineli sağlık hizmeti kapsamı dışındaki durumlarda, yalnızca 16 ila 25 yaş arasındaki sigortalılar, doktorlarına başvurmadan doğrudan bir psikiyatriste gidebilir ve normal ödeme koşullarında Assurance maladie (Fransız kamu sağlık sigortası) tarafından karşılanabilir.\nEğer 25 yaşınızdan büyük olup, koordineli tedavi planına (yani doktorunuz tarafından yönlendirilmeyerek) başvuruyorsanız, yine de bir psikiyatriste başvurabilirsiniz, ancak Assurance maladie'in karşılanması daha az olacaktır.\nPsikolog\nDoktorunuzun onayı olmadan bir psikologdan yardım alabilirsiniz.",
+        "titre": "Bir psikolog veya psikiyatriste nasıl başvurulur?"
+       },
+       {
+        "texte": "Bu fiyatlar, hizmetin sunulduğu yerin özelliklerine bağlı olarak değişiklik gösterebilir:\nÖnemli: Bir psikiyatristin, bir sağlık-psikoloji merkezinde (SMP) muayene edilmesi, Assurance maladie tarafından karşılanır.\nÖrnek: Şehir merkezinde\nFiyatlar, yaşınıza göre değişiklik göstermektedir:\nÖrnek: 25 yıldan fazla\nTablo: Danışmanlık ücretleri\nDurum | Psikiyatrist | Fiyat | İade edilecek miktar | İade edilecek tutar (2 €'luk sabit katkı indirimi uygulanarak)\n25 yaşından büyük, doğrudan erişim (doktoru olmayan veya uygun bir zamanda ulaşılmayan hastalar, acil durum, huzurevi, sağlık hizmeti merkezleri veya cezaevi hastaları) | 1. Bölge | 55 € | 55 € | 36,50 €\n1. Bölge (çok karmaşık görüşme) | 60 € | 60 € | 40 €\nOPTAM (Seçenek 2) kapsamında belirlenen ücretlendirme planına dahil: Kontrollü ücretler | 55 € | 36,50 €\n2. Bölge | Serbest ücretlendirme | 42,50 € | 27,75 €\nTedavi sürecinin bir parçası olarak | 1. Bölüm | 55 € | 55 € | 36,50 €\n1. Bölge (karmaşık görüşme) | 60 € | 60 € | 40 €\nOPTAM (Seçenek 2) kapsamında belirlenen ücretlendirme planına dahil: Kontrollü ücretlendirme | 55 € | 36,50 €\n2. Bölge | Serbest ücretlendirme | 42,50 € | 27,75 €\nİlgili doktor (periyodik takip için) | 1. Bölge | 67,50 € | 67,50 € | 45,25 €\nOPTAM (Seçenek 2) kapsamında belirlenen ücretlendirme planına dahil: Kontrollü ücretler | 67,50 € | 45,25 €\n2. Bölge | Serbest ücretlendirme | 67,50 € | 45,25 €\nPoliklinik dışı | Bölüm 1 | Maksimum 61 € | 50 € | 13 €\nOPTAM (Seçenek 2) kapsamında belirlenen ücretlendirme planına dahil: Kontrollü ücretler | 50 € | 13 €\n2. Bölge | Serbest ücretlendirme | 42,50 € | 10,75 €\nÖrnek: 25 yaşın altında\nTablo: Uzman görüşü: Ücret, geri ödeme standardı, ödenen miktar\nKonsültasyon ücreti | Fiyat | İade edilebilir tutar | İade edilen miktar\nPsikiyatrist veya çocuk psikiyatristi, 1. bölüm | 75 € | 75 € | 18 yaşından küçükler için: 52,50 € | 18 yaş ve üzeri için: 50,50 €\nPsikiyatrist veya çocuk psikiyatristi, sağlık hizmetlerine erişim sözleşmesine katılan kişi | Kontrollü ücretlendirme | 75 € | 18 yaşından küçükler: 52,50 € | 18 yaş ve üzeri: 50,50 €\nPsikiyatrist veya çocuk psikiyatrist, 2. bölüm | Serbest ücret | 42,50 € | 18 yaşından küçükler: 29,75 €; 18 yaş ve üzeri: 27,75 €\nÖrnek: Fransız Guyana'sında\nÖrnek: Fransız Guyanası, Guadeloupe, Martinik ve Reüniyon\nAssurance maladie sitesi, Guyana, Guadeloupe, Martinik ve Reunion'daki muayene ödemeleri hakkında ayrıntılı bilgi sunmaktadır.\nÖrnek: Mayotte\nAssurance maladie sitesi, Mayotte'daki muayene ödemeleri hakkında ayrıntılı bilgi sunmaktadır.",
+        "titre": "Bir psikiyatriste muayene ücretleri ne kadar?"
+       },
+       {
+        "texte": "Psikologlar\nPsikolog, aşağıdaki görevleri yerine getirmelidir:\n- Yerel Assurance maladie kuruluşuyla sözleşme imzalamak\n- Özel sektörde çalışmak veya koordine edilmiş bir egzersiz merkezinin (çok disiplinli sağlık merkezi veya sağlık merkezi) çalışanı olmak.\n- İlgili deneyim ve eğitim şartlarını (en az 3 yıl klinik deneyim) sağlayarak, klinik psikoloji veya psikopatoloji alanında sağlam bir geçmişe sahip olduğunu kanıtlamak.\nBu şartları sağlayan psikologların listesi, çevrimiçi olarak erişilebilir:\n→ Çevrimiçi hizmet: Sigortalı bir psikolog bulma\nBilindiği gibi: Sigortalı, anlaşmalı olan psikologu serbestçe seçebilir.\nBu danışmanın yönetimi\nPsikolog ile her seanstan sonra veya birkaç seanstan sonra doğrudan ödeme yaparsınız (bu, psikologun tercihine bağlıdır):\n- 1. seansta 50 € (değerlendirme görüşmesi)\n- Her takip seansı için 50 € (en fazla 11 seans).\nAssurance maladie, seansların maliyetinin %60'ını karşılar, yani 30 €.\nSağlık sigortanız veya ek sağlık sigortanız, \"sorumlu sağlık sigortası\" sözleşmeleri kapsamında, seansların maliyetinin %40'ını karşılar.\n\"Mandatory third-party payment uygulamasından yararlanıyorsunuz ve bu nedenle ödemeleri kendiniz yapmanız gerekmiyor (Assurance maladie tarafından %100 karşılanacak). Aşağıdaki durumlardan herhangi birindeyseniz:\"\n- complémentaire santé solidaire (ücretsiz veya düşük ücretli tamamlayıcı sağlık sigortası)'in alıcısı\n- Devlet tarafından sağlanan tıbbi yardıma sahip kişi (AME: devlet sağlık yardımı)\n- Uzun süreli bir rahatsızlıkla (USR) ilgili bakım, psikiyatrik bir neden dışındaki sebeplerle ve USR kapsamında sağlanan bakım programının bir parçası olarak psikolojik destek de yer almaktadır.\n- Hamilelik dönemine (6. ay ve sonrasında) yönelik bakım hizmetleri\n- Çalışma kazası veya mesleki hastalıkla ilgili bakım hizmetleri (AT-MP).\nÖnemli: Sosyal Güvenlik, aynı zamanda merkez tarafından sağlanan ve psikolog tarafından verilen seansları da karşılamaktadır.\nBu tür danışmanlık hizmetlerinden yararlanma koşulları\nDurum, yaş ve eğitim durumu (öğrenci, 3-17 yaş aralığındaki çocuk) gibi faktörlere bağlı olarak değişiklik göstermektedir.\nDurum: 18 yaş ve üzeri\nAşağıdaki belirtilerden herhangi birini yaşıyorsanız, psikolojik olarak zor durumda olmanız gerekir:\n- Hafif ila orta düzeyde bir anksiyete bozukluğundan.\n- Hafif ila orta şiddette bir depresif durumdan\n- Sigara, alkol ve/veya esrarın (bağımlılık dışı) kötü kullanımı\n- Yeme alışkanlıklarında belirgin bir şiddet veya komplikasyon olmaksızın ortaya çıkan bir durum.\nEğer psikotrop ilaçlar kullanan bir hastaysanız, bipolar veya borderline sendromu olan ve antiepileptik ilaç kullanan bir hastaysanız, özellikle reçete edilen tedavilerin uygunluğunu yeniden değerlendirmek için psikolojik destek alabilirsiniz. Bu durumda, bir psikiyatristin görüşü gereklidir.\nÖnemli: Antidepresanlar, hipnotikler veya benzodiazepinler kullanılarak tedavi gören hastalar için, bu tedavileri 6 aydan kısa süredir veya 1 aydan kısa süredir kullananlar için bir psikiyatristin görüşü gerekli değildir.\nBu desteği almanız mümkün değildir, çünkü durumunuz, bir psikiyatrist tarafından özel bir değerlendirme gerektiren bir durum söz konusu olduğunda veya zaten böyle bir değerlendirme gerektiren bir durumda.\nÖrnekler:\n- Suicidal davranış riskleri\n- Şiddetli depresif veya anksiyete bozukluklarının biçimleri\n- Yeme bozuklukları, ciddi belirtiler gösteren\n- Ciddi nöro-gelişimsel sorunlar\n- Son 3 yılda ciddi psikiyatrik öykü\n- Herhangi bir madde bağımlılığı durumu, özellikle de psikotrop maddelere bağımlılık.\nAyrıca, aşağıdaki durumlardan herhangi birinde bulunuyorsanız, bu desteğe sahip olamazsınız:\n- Psikiyatrik nedenlerle uzun süreli bir rahatsızlığa veya engelliliğe sahip kişiler\n- Psikolojik bir nedenden dolayı 6 aydan uzun süren işten uzak kalma durumu\n- Bu tür durumlarla en az 2 yıl içinde karşı karşıya kalmış olmak.\nÖrnek: Öğrenci\nEğer öğrenciyseniz, belirli bir programdan yararlanabilir, bu programda ücretsiz dersler ve ön ödeme gerektirmeyen avantajlar bulunmaktadır.\nVaka: Çocuk ve genç\nMinör, aşağıdaki iki koşulu sağlamalıdır:\n- 3 ile 17 yaşları arasında olmak\n- Bir kişinin, çevresindeki insanların endişesini uyandıran, kötü bir ruh hali veya psikolojik acıya işaret etmesini ifade etmek.\nMinör – uygunluk kriterlerini karşılamasına rağmen – eğer durumu, bir psikiyatrist tarafından özel bir değerlendirme gerektiren bir durumdaysa, bu desteğe sahip olamaz.\nÖrnekler:\n- Suicidal davranış riskleri\n- Şiddetli düzeyde anksiyete veya depresif bozukluklar\n- Yeme bozuklukları, ciddi belirtiler gösteren\n- Önemli çekilme ve inhibisyon durumları\n- Çok şiddetli dışsal sorunlar\n- Nöro-gelişimsel sorunlar\n- Herhangi bir madde bağımlılığı durumu, özellikle de psikotrop maddelere bağımlılık.\nBir çocuk, aşağıdaki durumlardan herhangi birinde bu desteğe sahip olamaz:\n- Çocuk psikiyatrisi veya genel psikiyatri alanında tedavi altına alınmış\n- Psikiyatrik nedenlerle ALD (Akıl Hastalığı Bakım ve Tedavi Merkezi) tarafından tedaviye alınmıştır.\n- Bu durumu, yaklaşık 2 yıl içinde bir kez yaşamıştır.\nSeans sayısı\nBu destek, yılda 12 seanstan ibarettir. Ancak, ALD (Otizm Spektrum Bozukluğu) olan çocuklar için bu sınırlama söz konusu değildir.\nÖnemli olan: Aynı hasta için günde yalnızca bir seanstan yapılabilir.\nSeansların düzenlenmesi\nBu seanslardan ilkinde, bir değerlendirme görüşmesi yapılacaktır.\nBu görüşmede, psikolog, hastanın ihtiyaçlarını ilk olarak değerlendirir.\nPsikolog, hastaya psikolojik destek sürecinin çerçevesini sunar ve ihtiyaçlarına göre, bir takvim yılı içinde en fazla 12 seanslık bir program önerir.\nDeğerlendirme görüşmesi ve son takip seansı, hastanın onayıyla birlikte, aşağıdaki kişiler arasında yazılı bir iletişim sürecine yol açar:\n- Psikolog\n- Ve hastanın tedavi eden doktoru (veya, mümkünse, hastanın bakımından sorumlu olan doktor).\nPsikolog, değerlendirme görüşmesinde veya tedavi sürecinin herhangi bir aşamasında, hastanın bir psikiyatrik takipten faydalanması gerektiğine karar verirse, bu durumu hastanın onayıyla ilgili doktora bildirir.\nPsikolog, değerlendirme görüşmesi dışında, video konferans yoluyla seanslar gerçekleştirebilir.",
+        "titre": "CPAM (yerel sağlık sigortası kurumu) ile anlaşmalı bir psikologdan ücret nedir?"
+       },
+       {
+        "texte": "Bu görüşme, bir doktora doğrudan başvurmak yerine, doğrudan yapılabilir.\nAlternatif psikologlar, Assurance maladie tarafından ödenmeyen ve kendi belirledikleri ücretlerle hizmet vermektedir. Sigorta şirketinizden, hizmetlerinin karşılanıp karşılanmayacağına dair bilgi alabilirsiniz.\nÖnemli: Bir psikologla, bir sağlık-psikoloji merkezinde (SMP) yapılan görüşme, Assurance maladie tarafından karşılanır.",
+        "titre": "Bir özel psikologun danışma ücretleri ne kadar?"
+       },
+       {
+        "texte": "Ayrıca, doğrudan bir psikiyatrist veya psikoterapist ile görüşebilirsiniz.\nBu profesyoneller, doktor veya psikolog olmasa da, kendi belirledikleri ücretleri uygular ve bu ücretler Assurance maladie tarafından karşılanmaz.",
+        "titre": "Bir psikiyatrist, psikoterapist veya diğer bir uzmana danışmanın maliyetleri nelerdir?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F34917",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34917",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 74.5,
+      "units": 128
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:33:17.216Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "استشارة أخصائي نفسي أو طبيب نفسي: ما هي الخيارات المتاحة؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 64,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "لا يتم تغطية استشارات الطبيب النفسي أو الطبيب النفسي بنفس الطريقة.",
+      "steps": [
+       {
+        "texte": "لا يتم تغطية استشارات الطبيب النفسي أو الطبيب النفسي بنفس الطريقة. ويرجع ذلك إلى أن أحدهما طبيب والآخر ليس كذلك.",
+        "titre": null
+       },
+       {
+        "texte": "هناك نوعان رئيسيان من \"الأخصائيين النفسيين\": طبيب نفسي (أو طبيب نفسي للأطفال) و أخصائي علم النفس.\nيعمل الطبيب النفسي كطبيب متخصص. لذلك، فهو مدرب خصيصًا لإجراء التشخيص ووصف الأدوية، بما في ذلك الأدوية النفسية (مثل مضادات الاكتئاب، ومضادات القلق، ومضادات الذهان، ومسكنات النوم، إلخ). يمكن أن تشمل العلاجات أيضًا التحدث والاستماع.\nيعمل أخصائي علم النفس كخريج جامعي، ولكنه ليس طبيبًا. لذلك، لا يمكنه وصف الأدوية. هناك العديد من التخصصات في علم النفس، والتي تعتمد على الفئة العمرية (أخصائي علم النفس للأطفال، أو متخصص في اضطرابات الشيخوخة)، أو المجال الذي يعمل فيه (أخصائي علم النفس في العمل، أو أخصائي علم النفس المدرسي)، إلخ.\nيمكن أن يكون الطبيب النفسي أو المعالج النفسي طبيبًا نفسيًا أو أخصائيًا نفسيًا، ولكن هذا ليس شرطًا.",
+        "titre": "عالم نفس، طبيب نفسي، محلل نفسي: ما هي الاختلافات بينهم؟"
+       },
+       {
+        "texte": "طبيب نفسي\nخارج نطاق الرعاية الصحية المنسقة، يمكن فقط للمرضى الذين تتراوح أعمارهم بين 16 و 25 عامًا استشارة طبيب نفسي دون الحاجة إلى المرور عبر الطبيب المعالج، مع الحصول على تعويض طبيعي من قبل Assurance maladie (التأمين الصحي العمومي الفرنسي).\nإذا كان عمرك أكثر من 25 عامًا ولم تتبع مسار العلاج المنسق (أي لم يتم توجيهك من قبل الطبيب المعالج)، يمكنك بالتأكيد استشارة طبيب نفسي، ولكن سيقل مبلغ التعويض عن Assurance maladie.\nأخصائي نفسي\nيمكنك استشارة أخصائي نفسي دون موافقة طبيبك.",
+        "titre": "كيفية استشارة أخصائي نفسي أو طبيب نفسي؟"
+       },
+       {
+        "texte": "قد تختلف هذه الأسعار حسب مكان تقديم الخدمات الطبية.\nملاحظة: استشارة طبيب نفسي في مركز طبي نفسي (CMP) يتم تغطيته من قبل Assurance maladie.\nمثال: في المدينة الكبرى\nتختلف الأسعار بناءً على عمرك:\nمثال: أكثر من 25 عامًا\nجدول: أسعار الاستشارات\n| الحالة | طبيب نفسي | السعر | مبلغ التعويض | المبلغ المسترد (بعد خصم مبلغ التعويض الثابت البالغ 2 يورو)\nمريض يبلغ من العمر أكثر من 25 عامًا، مع إمكانية الوصول المباشر (للمرضى الذين ليس لديهم طبيب معالج أو غير متوفر في الوقت المناسب مع حالتهم الصحية، أو في حالات الطوارئ، أو في دور رعاية المسنين، أو في المؤسسات الاجتماعية الطبية، أو في السجون) | القطاع 1 | 55 يورو | 55 يورو | 36.50 يورو\nالقطاع 1 (استشارة معقدة للغاية) | 60 يورو | 60 يورو | 40 يورو\nالالتزام بخيار التسعير المعتمد (OPTAM) - القطاع 2 | رسوم مع تحديد حد أقصى للدفع | 55 يورو | 36.50 يورو\nالمنطقة 2 | رسوم حرة | 42.50 يورو | 27.75 يورو\nضمن برنامج العلاج | القطاع 1 | 55 يورو | 55 يورو | 36.50 يورو\nالقطاع 1 (استشارة معقدة) | 60 يورو | 60 يورو | 40 يورو\nالالتزام بخيار التسعير المعتمد (OPTAM) - القطاع 2 | رسوم مع تحديد حد أقصى | 55 يورو | 36.50 يورو\nالمنطقة 2 | رسوم حرة | 42.50 يورو | 27.75 يورو\nطبيب مسؤول (للمتابعة الدورية) | المنطقة 1 | 67.50 يورو | 67.50 يورو | 45.25 يورو\nالالتزام بخيار التسعير المعتمد (OPTAM) - القطاع 2 | رسوم مع تحديد حد أقصى للدفع | 67.50 يورو | 45.25 يورو\nالمنطقة 2 | رسوم حرة | 67.50 يورو | 45.25 يورو\nخارج نطاق الخدمات الطبية | المنطقة 1 | الحد الأقصى 61 يورو | 50 يورو | 13 يورو\nالالتزام بخيار التسعير المعتمد (OPTAM) - القطاع 2 | رسوم مع تحديد حد أقصى للدفع | 50 يورو | 13 يورو\nالمنطقة 2 | رسوم حرة | 42.50 يورو | 10.75 يورو\nمثال: أقل من 25 عامًا\nجدول: استشارة متخصص: التكلفة، قاعدة التعويض، المبلغ المسترد\nطبيب استشاري | السعر | أساس الاسترداد | المبلغ المسترد\nطبيب نفسي أو طبيب نفسي للأطفال، القطاع 1 | 75 يورو | 75 يورو | أقل من 18 عامًا: 52.50 يورو | 18 عامًا أو أكثر: 50.50 يورو\nطبيب نفسي أو طبيب نفسي للأطفال، ملتزم بعقد الوصول إلى الخدمات الصحية | أسعار مع تحديد مسبق للتكاليف | 75 يورو | أقل من 18 عامًا: 52.50 يورو | 18 عامًا أو أكثر: 50.50 يورو\nطبيب نفسي أو طبيب نفسي للأطفال، القسم 2 | أسعار حرة | 42.50 يورو | أقل من 18 عامًا: 29.75 يورو | 18 عامًا أو أكثر: 27.75 يورو\nمثال: في منطقة \"الدوما\"\nأمثلة: غويانا، غوادلوب، مارتينيك، وجزر موريشيوس.\nيوفر موقع Assurance maladie تفاصيل حول عمليات الدفع للخدمات الطبية في غويانا وغوادلوب وغرينتش وريونيون.\nحالة: مايوت\nيوفر موقع Assurance maladie تفاصيل حول عمليات الدفع الخاصة بمواعيد الاستشارة في مائوت.",
+        "titre": "ما هي أسعار استشارة الطبيب النفسي؟"
+       },
+       {
+        "texte": "أخصائيون نفسيون\nيجب على المستشار النفسي:\n- التوقيع على اتفاقية مع المنظمة المحلية لـ Assurance maladie في مكان ممارسة العمل\n- ممارسة المهنة بشكل مستقل أو العمل كموظف في مؤسسة طبية منظمة (مثل مركز صحي متعدد التخصصات أو مركز صحي)\n- تحقيق شروط الخبرة (على الأقل 3 سنوات من الخبرة السريرية) والتدريب لإثبات وجود مسار متين في علم النفس السريري أو علم النفس العصبي.\nيمكن الاطلاع على قائمة أخصائيي علم النفس المعتمدين الذين يستوفون هذه الشروط عبر الإنترنت:\n→ خدمة عبر الإنترنت: العثور على معالج نفسي معتمد\nوهذا يعني: يختار المؤمن المعالج النفسي الذي يوافق عليه التأمين بشكل مستقل.\nتغطية هذه الاستشارة\nتدفع مباشرة للمختص بالصحة النفسية بعد كل جلسة، أو في نهاية عدة جلسات (حسب اختيار المختص).\n- 50 يورو للجلسة الأولى (مقابلة التقييم)\n- 50 يورو لكل جلسة متابعة (بحد أقصى 11 جلسة).\nتغطي Assurance maladie 60% من تكلفة الجلسات، أي 30 يورو.\nتغطي مؤسستك التأمينية أو وثيقة التأمين التكميلي، في إطار عقود التأمين الصحي التكميلي، 40% من تكلفة الجلسات.\nتستفيدون من نظام الدفع من خلال طرف ثالث، وبالتالي لا تحتاجون إلى دفع التكاليف مسبقًا (و يتم تغطية جميع التكاليف بنسبة 100% من قبل Assurance maladie)، إذا كنتم في إحدى الحالات التالية:\n- المستفيد من complémentaire santé solidaire (التغطية الصحية التكميلية المجانية أو منخفضة التكلفة)\n- المستفيد من المساعدة الطبية الحكومية (AME: المساعدة الطبية الحكومية)\n- العلاج المتعلق بحالة مزمنة (حالة مزمنة) لأسباب أخرى غير نفسية، ويشمل الدعم النفسي كجزء من البروتوكول العلاجي في إطار رعاية الحالة المزمنة.\n- خدمات متعلق بمستشفى الولادة (بدءًا من الشهر السادس من الحمل)\n- خدمات تتعلق بحادث عمل أو مرض مهني.\nملاحظة: تساهم مؤسسة الضمان الاجتماعي أيضًا في تغطية تكاليف جلسات العلاج النفسي التي يقدمها أخصائي نفسي يعمل في المركز الطبي النفسي (CMP).\nالشروط للحصول على هذه الاستشارات\nتختلف الحالة حسب الفئة العمرية: بالغ، طالب، أو شخص في الفئة العمرية بين 3 و 17 عامًا.\nحالة: بالغ (18 عامًا أو أكثر)\nيجب أن تعاني من ضائقة نفسية، خاصة إذا كنت تعاني من:\n- من اضطراب القلق بدرجة خفيفة إلى متوسطة\n- من اضطراب انفعالي بدرجة خفيفة إلى متوسطة\n- استخدام غير سليم للمدخنة، الكحول، أو الماري (باستثناء حالات الإدمان).\n- يشير إلى اضطراب في السلوك المتعلق بتناول الطعام، ولكنه لا يمتلك معايير محددة لتقييم شدته.\nإذا كنت مريضًا يتلقى علاجًا نفسيًا أو مريضًا يعاني من اضطراب ثنائي أو اضطراب المزاج، ويمكنك الاستفادة من الدعم النفسي، وخاصة لتقييم مدى ملاءمة العلاجات الموصوفة. في هذه الحالة، يجب الحصول على رأي من طبيب نفسي.\nملاحظة: لا يلزم الحصول على رأي طبيب نفسي للمرضى الذين يتلقون علاجًا بالأدوية المضادة للاكتئاب لمدة أقل من 6 أشهر، أو بالأدوية المهدئة أو البنزوديازيبينات لمدة أقل من شهر واحد.\nلا يمكنك الاستفادة من هذه الخدمة إذا كانت حالتك تتطلب بشكل فوري أو أثناء تلقي العلاج، استشارة متخصصة من طبيب نفسي.\nأمثلة:\n- مخاطر الانتحار\n- أشكال شديدة من الاضطرابات الاكتئابية أو القلقية.\n- اضطرابات في السلوك الغذائي مع علامات تدل على خطورة\n- مشاكل عصبية تطورية شديدة\n- وجود تاريخ سابق من الأمراض النفسية الشديدة خلال السنوات الثلاث الماضية.\n- أي حالة إدمان على المواد ذات التأثير النفسي.\nبالإضافة إلى ذلك، لا يمكنك الاستفادة من هذه الدعم إذا كنت في إحدى الحالات التالية:\n- الأشخاص الذين يعانون من حالات صحية مزمنة أو إعاقة بسبب أسباب نفسية.\n- إجازة عمل لمدة تزيد عن 6 أشهر بسبب أسباب نفسية.\n- لقد واجهنا هذه الظروف منذ أقل من سنتين.\nحالة: طالب\nإذا كنت طالبًا، يمكنك الاستفادة من برنامج خاص يتضمن جلسات مجانية دون الحاجة إلى دفع أي رسوم مسبقة.\nحالة: طفل وشاب\nيجب على الطفل استيفاء الشروط التالية:\n- أن يكون العمر بين 3 و 17 عامًا\n- تقديم حالة من عدم الرفاهية أو المعاناة النفسية التي تثير قلق المحيطين به.\n- حتى لو استوفى الطفل المعني جميع المعايير المطلوبة، فإنه لا يمكنه الاستفادة من هذه الخدمة إذا كانت حالته تتطلب بشكل فوري أو أثناء تقدمها، استشارة متخصصة من طبيب نفسي.\nأمثلة:\n- مخاطر الانتحار\n- أشكال خطيرة من اضطرابات القلق أو الاكتئاب.\n- اضطرابات في السلوك الغذائي مع علامات تدل على خطورة\n- ظروف الانسحاب والتقييد الرئيسية\n- اضطرابات خارجية شديدة\n- اضطرابات النمو العصبي\n- أي حالة إدمان على المواد ذات التأثير النفسي.\nلا يمكن للمراهق الاستفادة من هذه الدعم إذا كان في إحدى الحالات التالية:\n- يتم التعامل معه في مجال علم النفس للأطفال أو علم النفس بشكل عام.\n- تم إدخاله إلى برنامج الرعاية النفسية (ALD) بسبب مشكلة نفسية.\n- لقد واجه هذه الظروف منذ أقل من سنتين.\nعدد الجلسات\nتقتصر هذه الدعم على 12 جلسة في السنة. ومع ذلك، لا يوجد حد لعدد الجلسات بالنسبة للأطفال المصابين بمتلازمة \"الاضطراب اللاودي\".\nوهذا يعني: يمكن إجراء جلسة علاجية واحدة فقط لكل مريض في اليوم.\nتنظيم جلسات\nتخصص الجلسة الأولى من هذه الجلسات لإجراء مقابلة تقييم.\nخلال هذا اللقاء، يقوم الطبيب النفسي بتقييم أولي لاحتياجات المريض.\nيقدم الطبيب النفسي للمريض إطارًا لعمل العلاج النفسي ويقترح عددًا من الجلسات، بناءً على احتياجاته، مع الالتزام بحد أقصى يبلغ 12 جلسة يتم تغطيتها خلال سنة واحدة.\nيؤدي المراجعة وتقييم الحالة، بالإضافة إلى الجلسة الأخيرة، إلى تبادل كتابي بين المريض والمهني الصحي بعد الحصول على موافقة المريض، والذي يتضمن:\n- المستشار النفسي\n- و الطبيب المعالج للمريض (أو، إذا أمكن، طبيب آخر متورط في رعاية المريض).\nيقوم الطبيب النفسي بإبلاغ المريض، بعد موافقته، بأنه يوصي بمتابعة علاج نفسي، سواء في نهاية المقابلة أو في أي وقت خلال فترة العلاج.\nيمكن للمختص في علم النفس إجراء الجلسات عن طريق الاتصال المرئي، باستثناء جلسة التقييم.",
+        "titre": "ما هي أسعار استشارة أخصائي نفسي معتمد لدى CPAM (الصندوق المحلي للتأمين الصحي)؟"
+       },
+       {
+        "texte": "يمكن إجراء الاستشارة مباشرة، دون الحاجة إلى استشارة الطبيب المعالج أولاً.\nيتم ممارسة العلاج النفسي من قبل الأخصائيين النفسيين المستقلين، وبأسعار غير محددة ولا يتم تغطيتها من قبل Assurance maladie. يمكنك الاستفسار من شركة التأمين الخاصة بك لمعرفة ما إذا كانت تغطي هذه التكاليف.\nملاحظة: استشارة أخصائي نفسي في مركز طبي نفسي (CMP) يتم تغطيته من قبل Assurance maladie.",
+        "titre": "ما هي أسعار استشارة أخصائي نفسي مستقل؟"
+       },
+       {
+        "texte": "يمكنك أيضًا استشارة أخصائي نفسي أو معالج نفسي مباشرة.\nعندما لا يكون هؤلاء المهنيون طبيبين أو أخصائيين نفسيين، فإنهم يحددون أسعارًا خاصة لا يتم تغطيتها من قبل Assurance maladie.",
+        "titre": "ما هي أسعار الاستشارة لدى طبيب نفسي أو معالج نفسي أو غير ذلك؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F34917",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34917",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.6,
+      "units": 128
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:37:23.297Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Beratung durch einen Psychologen oder Psychiater: Welche Art der Behandlung?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 63.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Beratungen bei einem Psychologen oder Psychiater werden nicht auf die gleiche Weise erstattet.",
+      "steps": [
+       {
+        "texte": "Beratungen bei einem Psychologen oder Psychiater werden nicht auf die gleiche Weise erstattet. Dieser Unterschied ergibt sich daraus, dass einer Arzt ist und der andere nicht.",
+        "titre": null
+       },
+       {
+        "texte": "Es gibt zwei Haupttypen von \"Psychologen\": den Psychiater (oder Kinder- und Jugendpsychiater) und den Psychologen.\nDer Psychiater ist ein Arzt, der sich auf die Behandlung psychischer Erkrankungen spezialisiert hat. Daher ist er speziell darin ausgebildet, Diagnosen zu stellen und Medikamente zu verschreiben, insbesondere psychopharmakologische Mittel (Antidepressiva, Anxiolytika, Neuroleptika, Schlafmittel usw.). Die Behandlung kann auch durch Gespräche und Zuhören erfolgen.\nDer Psychologe ist ein Hochschulabsolvent, aber kein Arzt. Er darf daher keine Medikamente verschreiben. Es gibt zahlreiche Spezialisierungen im Bereich der Psychologie, die sich an verschiedene Altersgruppen (Kinderpsychologe, Spezialist für Altersbedingte Störungen usw.) oder Fachbereiche (Arbeitspsychologe, Schulpsychologe usw.) richten.\nDer Psychoanalytiker und der Psychotherapeut können entweder ein Psychiater oder ein Psychologe sein, aber das ist nicht zwingend erforderlich.",
+        "titre": "Psychologe, Psychiater, Psychoanalytiker: Was sind die Unterschiede?"
+       },
+       {
+        "texte": "Psychiater\nAußerhalb des koordinierten Behandlungsnetzes können nur Personen im Alter von 16 bis 25 Jahren einen Psychiater aufsuchen, ohne vorher einen Hausarzt konsultieren zu müssen, und erhalten eine normale Erstattung durch die Assurance maladie (französische gesetzliche Krankenversicherung).\nWenn Sie älter als 25 Jahre sind und den koordinierten Behandlungsplan (d. h. ohne Überweisung durch Ihren Hausarzt) nicht einhalten, können Sie dennoch einen Psychiater aufsuchen. In diesem Fall wird die Erstattung der Kosten durch die Assurance maladie jedoch geringer sein.\nPsychologe\nSie können einen Psychologen aufsuchen, ohne die Zustimmung Ihres behandelnden Arztes einzuholen.",
+        "titre": "Wie kann man einen Psychologen oder einen Psychiater aufsuchen?"
+       },
+       {
+        "texte": "Diese Preise können je nach Ort der Behandlung variieren:\nBitte beachten: Eine Konsultation bei einem Psychiater in einem medizinisch-psychologischen Zentrum (MPZ) wird von Assurance maladie übernommen.\nFall: In der Stadt\nDie Preise variieren je nach Ihrem Alter:\nFall: Über 25 Jahre\nPreisliste: Honorare\nSituation | Psychiater | Preis | Basis der Erstattung | Erstatteter Betrag (abzüglich der festen Pauschale von 2 €)\nPatient über 25 Jahre, direkter Zugang (Patienten ohne Hausarzt oder dessen Nichtverfügbarkeit innerhalb eines für ihren Gesundheitszustand geeigneten Zeitrahmens, Notfälle, Pflegeheime, Einrichtungen für medizinische und soziale Betreuung oder im Gefängnis) | Sektor 1 | 55 € | 55 € | 36,50 €\nBereich 1 (sehr komplexer Beratung) | 60 € | 60 € | 40 €\nTeilnahme an der Option für kontrollierte Abrechnungsmodelle (OPTAM) – Sektor 2 | Honorare mit kontrollierten Zusatzleistungen | 55 € | 36,50 €\nBereich 2 | Freie Honorare | 42,50 € | 27,75 €\nIm Rahmen des Behandlungsplans | Bereich 1 | 55 € | 55 € | 36,50 €\nBereich 1 (komplexe Beratung) | 60 € | 60 € | 40 €\nTeilnahme an der Option für kontrollierte Abrechnung (OPTAM) – Sektor 2 | Honorare mit kontrollierten Zusatzleistungen | 55 € | 36,50 €\nBereich 2 | Freie Honorare | 42,50 € | 27,75 €\nBeauftragter Arzt (für regelmäßige Nachuntersuchungen) | Bereich 1 | 67,50 € | 67,50 € | 45,25 €\nTeilnahme an der Option für kontrollierte Abrechnungsmodelle (OPTAM) – Sektor 2 | Honorare mit kontrollierten Zusatzleistungen | 67,50 € | 45,25 €\nBereich 2 | Freie Honorare | 67,50 € | 45,25 €\nAußerhalb der Behandlungsstelle | Bereich 1 | Maximal 61 € | 50 € | 13 €\nTeilnahme an der Option für kontrollierte Honorare (OPTAM) – Sektor 2 | Honorare mit kontrollierten Zusatzgebühren | 50 € | 13 €\nBereich 2 | Freie Honorare | 42,50 € | 10,75 €\nFall: Unter 25 Jahre\nTabelle: Beratung durch einen Spezialisten: Preis, Basis für die Erstattung, Höhe der Erstattung\nBehandelnder Arzt | Kosten | Abrechnungsgrundlage | Erstatteter Betrag\nPsychiater oder Kinder- und Jugendpsychiater, Sektor 1 | 75 € | 75 € | Unter 18 Jahren: 52,50 € | Ab 18 Jahren: 50,50 €\nPsychiater oder Kinder- und Jugendpsychiater, der an den Vertrag über den Zugang zu medizinischer Versorgung teilnimmt | Honorar mit kontrollierten Zusatzkosten | 75 € | Unter 18 Jahren: 52,50 €; 18 Jahre und älter: 50,50 €\nPsychiater oder Kinder- und Jugendpsychiater, Bereich 2 | Freie Honorare | 42,50 € | Unter 18 Jahren: 29,75 €; Ab 18 Jahren: 27,75 €\nFall: In den Domänen\nFallbeispiele: Französische Guiana, Guadeloupe, Martinique und Réunion\nDie Webseite von Assurance maladie enthält detaillierte Informationen über die Abrechnungen für Arztbesuche in Französisch-Guayana, Guadeloupe, Martinique und auf Réunion.\nFall: Mayotte\nDie Webseite von Assurance maladie enthält detaillierte Informationen über die Abrechnung von Arztbesuchen auf Mayotte.",
+        "titre": "Wie hoch sind die Kosten für eine Beratung bei einem Psychiater?"
+       },
+       {
+        "texte": "Psychologen, die sich damit beschäftigen\nDer Psychologe muss:\n- Eine Vereinbarung mit der örtlichen Organisation von Assurance maladie in seinem Arbeitsort abschließen.\n- Als freiberuflicher Arzt tätig sein oder als Angestellter in einer koordinierten Praxis arbeiten (z.B. eine Mehrfachpraxis oder eine Gesundheitszentrale)\n- Erfüllung bestimmter Voraussetzungen (mindestens 3 Jahre klinische Erfahrung) sowie eine entsprechende Ausbildung, um einen fundierten Hintergrund in klinischer Psychologie oder psychopathologischer Forschung nachzuweisen.\nDie Liste der zugelassenen Psychologen, die diese Kriterien erfüllen, ist online verfügbar:\n→ Online-Service: Einen von der Krankenkasse zugelassenen Psychologen finden\nDas bedeutet: Der Versicherte wählt selbst den von der Versicherung freigestellten Psychologen.\nOrganisation und Durchführung dieser Beratung\nSie zahlen den Psychologen direkt nach jeder Sitzung oder am Ende einer Reihe von Sitzungen (je nach Wahl des Psychologen):\n- 50 € für die erste Sitzung (Bewertungssitzung)\n- 50 € für jede der Nachbesprechungen (maximal 11).\nDas Assurance maladie übernimmt 60 % der Kosten für die Sitzungen, also 30 €.\nIhre Krankenkasse oder Ihre Zusatzversicherung, im Rahmen der Verträge für ergänzende Gesundheitsleistungen, übernimmt 40 % der Kosten für die Behandlungen.\nSie profitieren vom obligatorischen Drittbezahlungssystem und müssen daher keine Vorauszahlungen leisten (und die Kosten werden zu 100 % von Assurance maladie übernommen), wenn Sie sich in einer der folgenden Situationen befinden:\n- Empfänger von complémentaire santé solidaire (kostenlose oder günstige Zusatzkrankenversicherung)\n- Person, die staatliche medizinische Unterstützung erhält (AME: staatliche medizinische Hilfe)\n- Behandlungen im Zusammenhang mit einer chronischen Erkrankung (CED) aus einem nicht-psychiatrischen Grund, wobei psychologische Unterstützung Teil des Behandlungsplans im Rahmen der Behandlung im Rahmen der CED ist.\n- Behandlungen im Zusammenhang mit einer Schwangerschaft (ab dem 6. Schwangerschaftsmonat)\n- Behandlungen im Zusammenhang mit Arbeitsunfällen oder Berufskrankheiten (Arbeitsunfall- und Berufskrankheitsversorgung).\nWichtig: Die Sozialversicherung übernimmt auch die Kosten für Therapiesitzungen bei einem von der medizinisch-psychologischen Einrichtung (CMP) zugelassenen Psychologen.\nBedingungen für die Teilnahme an diesen Beratungen\nDie Situation hängt von der jeweiligen Person ab: Volljähriger, Student, 3-17 Jahre alt.\nFall: Erwachsener (18 Jahre und älter)\nSie müssen unter psychischen Belastungen leiden, insbesondere wenn Sie unter folgenden Symptomen leiden:\n- Von einer leichten bis mäßig starken Angststörung\n- Von einer leichten bis mäßig starken Depression\n- Von übermäßigem Konsum von Tabak, Alkohol und/oder Cannabis (außer bei Abhängigkeit)\n- Von einer Störung des Essverhaltens ohne spezifische Schweregradkriterien.\nWenn Sie eine psychotrope Behandlung durchführen, eine bipolare oder Borderline-Erkrankung mit Antiepileptika oder eine andere Form der Behandlung durchführen, können Sie von einer psychologischen Begleitung profitieren, insbesondere um die Angemessenheit der verschriebenen Behandlungen zu überprüfen. In diesem Fall ist jedoch die Zustimmung eines Psychiaters erforderlich.\nBitte beachten: Eine ärztliche Bewertung durch einen Psychiater ist nicht erforderlich für Patienten, die seit weniger als 6 Monaten Antidepressiva oder seit weniger als einem Monat Hypnotika oder Benzodiazepine einnehmen.\nSie können diese Unterstützung nicht in Anspruch nehmen, wenn Ihre Situation bereits von Anfang an oder während der Behandlung eine spezialisierte Beratung durch einen Psychiater erfordert.\nBeispiele:\n- Suizidgefährdung\n- Schwere Formen von depressiven oder angstbedingten Störungen\n- Ernährungsprobleme mit schwerwiegenden Anzeichen\n- Schwere neuro-entwicklungliche Probleme\n- Schwere psychiatrische Vorerkrankungen innerhalb der letzten 3 Jahre\n- Jeder Zustand der Abhängigkeit von psychoaktiven Substanzen.\nDarüber hinaus können Sie diese Unterstützung nicht in Anspruch nehmen, wenn Sie sich in einer der folgenden Situationen befinden:\n- Erkannte Behinderungen aufgrund einer chronischen Erkrankung oder aufgrund einer psychischen Invalidität\n- Eine Arbeitsunfähigkeit von mehr als 6 Monaten aufgrund psychischer Gründe\n- Da wir uns in einer dieser Situationen innerhalb der letzten 2 Jahre befinden.\nFall: Student\nWenn Sie Student sind, können Sie von einem speziellen Programm profitieren, das kostenlose Sitzungen und die Möglichkeit zur Bezahlung nach Bedarf beinhaltet.\nFall: Kind und Jugendlicher\nDas Kind muss folgende zwei Bedingungen erfüllen:\n- Das Alter muss zwischen 3 und 17 Jahren liegen.\n- Eine Situation von Unwohlsein oder psychischem Leid, die bei den Angehörigen Besorgnis auslöst.\nEin Minderjähriger – auch wenn er die Voraussetzungen erfüllt – kann diese Unterstützung nicht in Anspruch nehmen, wenn seine Situation von Anfang an oder während der Behandlung eine spezialisierte Beratung durch einen Psychiater erfordert.\nBeispiele:\n- Suizidgefährdung\n- Schwere Formen von Angst- oder Depressionen\n- Ernährungsprobleme mit schwerwiegenden Anzeichen\n- Wichtige Situationen, die zu Rückzug und Zurückhaltung führen\n- Sehr ausgeprägte externe Probleme\n- Neurologische Entwicklungsstörungen\n- Jeder Zustand der Abhängigkeit von psychoaktiven Substanzen.\nEin Minderjähriger kann diese Unterstützung nicht in Anspruch nehmen, wenn er sich in einer der folgenden Situationen befindet:\n- Behandelt in der Kinder- und Jugendpsychiatrie oder der allgemeinen Psychiatrie\n- Einweisung in die Abteilung für psychische Gesundheit (ALD) aufgrund psychischer Probleme\n- Er/Sie befindet sich seit weniger als 2 Jahren in einer ähnlichen Situation.\nAnzahl der Sitzungen\nDiese Unterstützung beschränkt sich auf 12 Sitzungen pro Kalenderjahr. Es gibt jedoch keine Beschränkung für Kinder mit ALD (Autismus-Spektrum-Störung).\nDas bedeutet: Ein einzelner Behandlungsbesuch pro Tag ist für den gleichen Patienten möglich.\nDurchführung von Sitzungen\nDas erste dieser Sitzungen dient einer Bewertung.\nWährend dieses Gesprächs führt der Psychologe eine erste Einschätzung der Bedürfnisse des Patienten durch.\nDer Psychologe stellt dem Patienten den Rahmen der psychologischen Betreuung vor und schlägt eine Anzahl von Sitzungen vor, die auf die Bedürfnisse des Patienten zugeschnitten sind, jedoch auf maximal 12 Sitzungen innerhalb eines Kalenderjahres begrenzt.\nDas Bewertungssgespräch und die letzte Nachbesprechung führen nach Einverständnis des Patienten zu einem schriftlichen Austausch zwischen:\n- Der Psychologe\n- Und der behandelnde Arzt des Patienten (oder gegebenenfalls ein Arzt, der an der Behandlung des Patienten beteiligt ist).\nDer Psychologe teilt dem Patienten, nachdem er die Bewertung abgeschlossen hat oder jederzeit während der Behandlung, mit, dass er eine psychiatrische Betreuung empfiehlt. Dies geschieht nur nach Zustimmung des Patienten.\nDer Psychologe kann Sitzungen per Videokonferenz durchführen, außer während des Bewertungssitzungs.",
+        "titre": "Welche sind die Kosten für eine Beratung bei einem von der CPAM (örtliche Krankenkasse) anerkannten Psychologen?"
+       },
+       {
+        "texte": "Die Untersuchung kann direkt erfolgen, ohne vorher einen Hausarzt konsultieren zu müssen.\nFreie Psychologen, die keine feste Gebühren haben und nicht von der Assurance maladie erstattet werden, berechnen ihre Honorare selbst. Sie können sich bei Ihrer Krankenversicherung erkundigen, ob diese die Kosten übernimmt.\nBitte beachten: Eine Beratung durch einen Psychologen in einem medizinisch-psychologischen Zentrum (MPZ) wird von Assurance maladie übernommen.",
+        "titre": "Wie hoch sind die Kosten für eine Beratung bei einem freiberuflichen Psychologen?"
+       },
+       {
+        "texte": "Sie können auch direkt einen Psychotherapeuten oder Psychoanalytiker konsultieren.\nWenn diese Fachkräfte weder Ärzte noch Psychologen sind, legen sie ihre eigenen Preise fest, die vom Assurance maladie nicht übernommen werden.",
+        "titre": "Wie hoch sind die Kosten für eine Beratung bei einem Psychoanalytiker, Psychotherapeuten oder einer anderen Fachkraft?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F34917",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34917",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 77.9,
+      "units": 128
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T05:41:54.903Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Консультація психолога або психіатра: які варіанти допомоги?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Консультації у психолога або психіатра не оплачуються однаково.",
+      "steps": [
+       {
+        "texte": "Консультації у психолога або психіатра не оплачуються однаково. Різниця полягає в тому, що один є лікарем, а інший – ні.",
+        "titre": null
+       },
+       {
+        "texte": "Існує два основних типи \"психіатрів\": психіатр (або педіатричний психіатр) та психолог.\nПсихіатр – це лікар, який спеціалізується в цій галузі. Тому він має спеціальну підготовку для постановки діагнозу та призначення ліків, зокрема психотропних (антидепресантів, анксіолітиків, нейролептиків, снодійних тощо). Лікування також може включати розмову та слухання пацієнта.\nПсихолог – це фахівець з вищою освітою, але не лікар. Тому він не може призначати ліки. Існує багато спеціалізацій у психології, залежно від вікової групи (психолог для дітей, спеціаліст з проблем старіння тощо), сфери діяльності (психолог у роботі, шкільний психолог тощо).\nПсихоаналітик і психотерапевт можуть бути лікарем-психіатром або психологом, але це не обов'язково.",
+        "titre": "Психолог, психіатр, психоаналітик: в чому відмінності?"
+       },
+       {
+        "texte": "Психіатр\nПоза рамками скоргованої медичної допомоги, лише особи віком від 16 до 25 років можуть звернутися до психіатра безпосередньо, не звертаючись до сімейного лікаря, і отримати належну компенсацію від Assurance maladie (французьке державне медичне страхування).\nЯкщо вам більше 25 років і ви не дотримуєтеся узгодженого плану лікування (тобто, якщо вас не направив сімейний лікар), ви все одно можете звернутися до психіатра, але компенсація за Assurance maladie буде меншою.\nПсихолог\nВи можете звернутися до психолога без дозволу вашого лікаря.",
+        "titre": "Як звернутися до психолога або психіатра?"
+       },
+       {
+        "texte": "Ці ціни можуть залежати від місця, де надаються послуги:\nВажливо зазначити: Консультація з психіатром у медико-психологічному центрі (МПЦ) покривається відповідно до Assurance maladie.\nПриклад: У міському середовищі\nЦіни залежать від вашого віку:\nПриклад: Понад 25 років\nТаблиця: Вартість консультацій\nСитуація | Психіатр | Вартість | Сума, що покривається страховою компанією | Сума, що покривається (після відрахування фіксованої суми 2 євро)\nПацієнт віком понад 25 років, з прямим доступом (пацієнти без сімейного лікаря або без можливості отримати консультацію в термін, що відповідає їхньому стану здоров'я, ситуація надзвичайної потреби, будинок для літніх людей, медично-соціальні установи або в місцях позів) | Сектор 1 | 55 € | 55 € | 36,50 €\nСектор 1 (дуже складні консультації) | 60 € | 60 € | 40 €\nДотримання опції \"Практика з контрольованою ціною\" (OPTAM), Сектор 2 | Плата з контрольованими додатковими витратами | 55 євро | 36,50 євро\nСектор 2 | Вільні тарифи | 42,50 € | 27,75 €\nУ рамках програми лікування | Сектор 1 | 55 євро | 55 євро | 36,50 євро\nСектор 1 (складне консультування) | 60 € | 60 € | 40 €\nДотримання опції \"Практика з контрольованою ціною\" (OPTAM), Сектор 2 | Плата з можливим перевищенням | 55 євро | 36,50 євро\nСектор 2 | Вільні тарифи | 42,50 € | 27,75 €\nМедичний координатор (для періодичного моніторингу) | 1-й сектор | 67,50 € | 67,50 € | 45,25 €\nДотримання опції \"Практика тарифу з контрольованими витратами\" (OPTAM) | Сектор 2 | Тарифи з контрольованими додатковими витратами | 67,50 € | 45,25 €\nСектор 2 | Вільні тарифи | 67,50 € | 45,25 €\nПоза лікувальним маршрутом | Сектор 1 | Максимальна вартість 61 євро | 50 євро | 13 євро\nДотримання опції \"Практика з контрольованою ціною\" (OPTAM), Сектор 2 | Плата з контрольованими додатковими витратами | 50 євро | 13 євро\nСектор 2 | Вільні тарифи | 42,50 € | 10,75 €\nПриклад: Менше 25 років\nТаблиця: Консультація у спеціаліста: вартість, база відшкодування, сума, що відшкодовується\nКонсультація лікаря | Вартість | Сума, що покривається страховою компанією | Сума, що компенсується\nПсихіатр або педіатричний психіатр, 1-й сектор | 75 євро | 75 євро | Діти до 18 років: 52,50 євро, старші 18 років: 50,50 євро\nПсихіатр або педіатричний психіатр, який дотримується угоди про доступ до медичної допомоги | Вартість послуг з обмеженими витратами | 75 євро | Дітям до 18 років: 52,50 євро; Дітям старше 18 років: 50,50 євро\nПсихіатр або педіатричний психіатр, 2-й сектор | Власний тариф | 42,50 € | Діти до 18 років: 29,75 €; Від 18 років: 27,75 €\nВипадок: У Домі\nПриклади: Гвіана, Гваделупа, Мартиніка та Реюньйон\nНа веб-сайті Assurance maladie детально описано порядок виплат за консультації у Гайані, Гваделупі, Мартиніці та на Реюні.\nВипадок: Майота\nНа веб-сайті Assurance maladie детально описано порядок виплат за консультації на Майоті.",
+        "titre": "Які ціни на консультації у психіатра?"
+       },
+       {
+        "texte": "Психологи, залучені\nПсихолог повинен:\n- Укласти угоду з місцевою організацією, що займається Assurance maladie у місці його діяльності.\n- Практикувати як самозайнята особа або працювати як співробітник у структурі, яка координує медичну допомогу (многопрофесійна клініка або медичний центр).\n- Забезпечити відповідні умови досвіду (мінімум 3 роки клінічної практики) та навчання, щоб підтвердити наявність усталеного досвіду в галузі клінічної або психопатологічної психології.\nСписок психологів, які відповідають цим вимогам, можна переглянути онлайн:\n→ Онлайн-сервіс: Знайти лікаря-психолога, який працює за страховим полісом\nТобто: Страховик самостійно обирає психолога, з яким укладено угоду.\nОрганізація та проведення цієї консультації\nВи оплачуєте послуги психолога безпосередньо після кожної сесії або наприкінці кількох сесій (за вибором психолога):\n- 50 євро за першу сеанс (оцінюючий інтерв'ю)\n- 50 євро за кожну сеанс консультації (до 11 сеансів).\nAssurance maladie» покриває 60% вартості сеансів, тобто 30 євро.\nВаша медична страховка або доповняльна страховка, у рамках договорів про відповідальне медичне страхування, покриває 40% вартості сеансів.\nВи маєте право на обов'язкову систему оплати \"третя сторона\", тому вам не потрібно сплачувати витрати (і сеанси повністю покриваються Assurance maladie, якщо ви перебуваєте в одній із наступних ситуацій:\n- Одержувач complémentaire santé solidaire (безкоштовне або недороге додаткове медичне покриття)\n- Одержувач медичної допомоги від держави (AME: державна медична допомога)\n- Догляд, пов'язаний з хронічною хворобою (ЧХ), з метою, відмінною від психіатричної, та психологічна підтримка є частиною протоколу лікування у рамках вашого лікування ЧХ.\n- Догляд, пов'язаний з вагітністю (починаючи з 6-го місяця вагітності)\n- Догляд, пов'язаний з нещасним випадком на робочому місці або професійним захворюванням.\nВажливо зазначити: Соціальна служба також покриває консультації у психолога, які проводяться в центрі медико-психологічної допомоги (CMP).\nУмови отримання цих консультацій\nСитуація залежить від віку та статусу: дорослий, студент, вік від 3 до 17 років.\nВипадок: Особа старше 18 років\nВам необхідно відчувати психологічний дистрес, особливо якщо ви страждаєте від:\n- Від легкого до помірного рівня тривожності.\n- Від легкого до помірного депресивного розладу\n- Від вживання тютюну, алкоголю та/або канабісу (крім випадків залежності)\n- Проблема, що характеризується порушеннями харчової поведінки, але без встановлення ступеня тяжкості.\nЯкщо ви є пацієнтом, який приймає психотропні препарати, або пацієнтом з біполярним або пограничним розладом, який приймає антиконвульсанти, ви можете отримати психологічну підтримку, зокрема для переоцінки ефективності призначених ліків. У такому випадку необхідна консультація психіатра.\nВажливо зазначити: Оцінка лікаря-психіатра не потрібна для пацієнтів, які приймають антидепресанти протягом менше 6 місяців або гіпнотичні препарати або бензодіазепіни протягом менше місяця.\nВи не можете скористатися цією підтримкою, якщо ваша ситуація потребує негайного або поточного консультації спеціаліста – психіатра.\nПриклади:\n- Ризики самогубства\n- Важкі форми депресивних або тривожних розладів\n- Проблеми харчової поведінки з ознаками серйозності\n- Серйозні неврологічні проблеми розвитку\n- Наявність серйозних психічних захворювань протягом останніх 3 років.\n- Будь-яка ситуація, пов'язана з вживанням психоактивних речовин.\nКрім того, ви не зможете скористатися цією підтримкою, якщо ви перебуваєте в одній з наступних ситуацій:\n- Отримані статуси, пов'язані з хронічними захворюваннями або інвалідністю з психіатричної причини.\n- Відпустка по догляду за дитиною, що триває понад 6 місяців, з медичних причин.\n- Оскільки ми опинилися в одній з цих ситуацій протягом менше ніж 2 років.\nПриклад: Студент\nЯкщо ви є студентом, ви можете скористатися спеціальною програмою, яка передбачає безкоштовні заняття та відсутність початкових витрат.\nВипадок: Дитина та підліток\nДітина повинна відповідати наступним двома умовам:\n- Вік від 3 до 17 років включно\n- Описати ситуацію, коли людина відчуває дискомфорт або переживає психологічний біль, що викликає занепокоєння у її близьких.\nДітина – навіть якщо вона відповідає критеріям, – не може отримати цю підтримку, якщо її стан потребує негайного або поточного спеціалізованого медичного обстеження, проведеного психіатром.\nПриклади:\n- Ризики самогубства\n- Важкі форми тривожних або депресивних розладів\n- Проблеми харчової поведінки з ознаками серйозності\n- Серйозні ситуації, що призводять до відмови від дій або пригнічення.\n- Серйозні зовнішні проблеми\n- Нейророзвиткові проблеми\n- Будь-яка ситуація, пов'язана з вживанням психоактивних речовин.\nНедієзна особа не може отримати цю підтримку, якщо вона перебуває в одній з наступних ситуацій:\n- Приймаються в дитячу психіатрію або в загальну психіатрію\n- Розміщено в відділенні психіатричної допомоги за медичними показаннями.\n- Він опинився в одній з цих ситуацій протягом менше ніж 2 років.\nКількість сеансів\nЦя підтримка обмежується 12 сеансами на календарний рік. Однак, для дітей з розладом аутичного спектру (РАС) немає обмежень у кількості сеансів.\nТобто: Одна сеанс на день може бути призначений для одного і того ж пацієнта.\nПроведення сесій\nПерша з цих зустрічей присвячена оцінювальній співбесіді.\nПід час цієї зустрічі, психолог проводить первинну оцінку потреб пацієнта.\nПсихолог представляє пацієнту структуру психологічної підтримки та пропонує певну кількість сеансів, враховуючи його потреби, але не більше 12 сеансів протягом одного календарного року.\nОцінювальна сесія та остання сесія моніторингу, після згоди пацієнта, передбачають письмовий обмін інформацією між:\n- Психолог\n- І лікуючий лікар пацієнта (або, за потреби, лікар, який бере участь у лікуванні пацієнта).\nПсихолог, який наприкінці оціночного інтерв'ю або в будь-який момент під час лікування, визначає, що пацієнт потребує психіатричного супроводу, повідомляє про це лікаря після отримання згоди пацієнта.\nПсихолог може проводити сеанси за допомогою відеозв'язку, за винятком сеансу оцінювання.",
+        "titre": "Які тарифи на консультацію психолога, який співпрацює з CPAM (місцева каса медичного страхування)?"
+       },
+       {
+        "texte": "Консультацію можна отримати безпосередньо, не звертаючись до сімейного лікаря.\nНезалежні психологи, які не працюють у рамках системи Assurance maladie, встановлюють власні тарифи, які не покриваються страховими компаніями. Ви можете звернутися до вашої страхової компанії, щоб дізнатися, чи покриває вона ці послуги.\nВажливо зазначити: Консультація психолога в медико-психологічному центрі (МПЦ) покривається відповідно до Assurance maladie.",
+        "titre": "Які ціни на консультації психолога, який працює за нетрадиційною формою?"
+       },
+       {
+        "texte": "Ви також можете звернутися до психоаналітика або психотерапевта безпосередньо.\nКоли ці фахівці не є лікарями чи психологами, вони встановлюють власні тарифи, які не покриваються Assurance maladie.",
+        "titre": "Які ціни на консультації у психоаналіста, психотерапевта або іншого фахівця?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F34917",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34917",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 77,
+      "units": 128
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:09479796bf5d95eed2fa27800c690bbd7f96eb52722d2a38b1d621b2a0a596ac",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Consultation d'un psychologue ou d'un psychiatre : quelle prise en charge ?",
+   "contenu_json": {
+    "intro": "Les consultations chez un psychologue ou un psychiatre ne sont pas remboursées de la même manière.",
+    "steps": [
+     {
+      "texte": "Les consultations chez un psychologue ou un psychiatre ne sont pas remboursées de la même manière. Cette différence vient du fait que l'un est médecin et l'autre non.",
+      "titre": null
+     },
+     {
+      "texte": "Il existe 2 grands types de \"psy\" : le psychiatre (ou pédopsychiatre) et le psychologue.\nLe psychiatre est un médecin spécialisé. Il est donc spécialement formé à établir un diagnostic et à prescrire des médicaments dont les psychotropes (antidépresseurs, anxiolytiques, neuroleptiques, somnifères, etc.). Les soins peuvent aussi passer par la parole et l'écoute.\nLe psychologue est un diplômé universitaire, mais pas un médecin. Il ne peut donc pas prescrire de médicaments. Il existe de nombreuses spécialisations en psychologie en fonction des tranches d'âge (psychologue pour enfant, spécialiste des troubles du vieillissement...), d'un champ d'activité (psychologue du travail, psychologue scolaire...), etc.\nLe psychanalyste et le psychothérapeute peuvent être psychiatre ou psychologue, mais pas obligatoirement.",
+      "titre": "Psychologue, psychiatre, psychanalyste : quelles différences ?"
+     },
+     {
+      "texte": "Psychiatre\nHors parcours de soins coordonés, seuls les assurés âgés de 16 à 25 ans peuvent consulter un psychiatre sans passer par le médecin traitant et être remboursés normalement par l’Assurance maladie.\nSi vous avez plus de 25 ans et ne respectez pas le parcours de soins coordonné (c’est-à-dire sans avoir été orienté par le médecin traitant) vous pouvez tout de même consulter un psychiatre, le remboursement de l’Assurance maladie sera alors moins important.\nPsychologue\nVous pouvez consulter un psychologue sans l'accord de votre médecin traitant.",
+      "titre": "Comment consulter un psychologue ou un psychiatre ?"
+     },
+     {
+      "texte": "Ces tarifs peuvent dépendre du lieu où sont effectués les soins :\nÀ noter : La consultation d'un psychiatre dans un centre médico-psychologique (CMP) est prise en charge par l'Assurance maladie.\nCas : En métropole\nLes tarifs varient en fonction de votre âge :\nCas : Plus de 25 ans\nTableau : Tarifs des consultations\nSituation | Psychiatre | Tarif | Base du remboursement | Montant remboursé (déduction faite de la participation forfaitaire de 2 €)\nPatient de plus de 25 ans, en accès direct(patients sans médecin traitant ou non disponible dans le délai compatible avec leur état de santé, situation d’urgence, Ehpad, établissements médico-sociaux ou en pénitentiaire) | Secteur 1 | 55 € | 55 € | 36,50 €\nSecteur 1 (consultation très complexe) | 60 € | 60 € | 40 €\nAdhérant à l’option de pratique tarifaire maitrisée (OPTAM) Secteur 2 | Honoraires avec dépassements maîtrisés | 55 € | 36,50 €\nSecteur 2 | Honoraires libres | 42,50 € | 27,75 €\nDans le cadre du parcours de soins | Secteur 1 | 55 € | 55 € | 36,50 €\nSecteur 1 (consultation complexe) | 60 € | 60 € | 40 €\nAdhérant à l’option de pratique tarifaire maitrisée (OPTAM) Secteur 2 | Honoraires avec dépassement maîtrisé | 55 € | 36,50 €\nSecteur 2 | Honoraires libres | 42,50 € | 27,75 €\nMédecin correspondant (pour un suivi ponctuel) | Secteur 1 | 67,50 € | 67,50 € | 45,25 €\nAdhérant à l’option de pratique tarifaire maitrisée (OPTAM) Secteur 2 | Honoraires avec dépassements maîtrisés | 67,50 € | 45,25 €\nSecteur 2 | Honoraires libres | 67,50 € | 45,25 €\nHors parcours de soins | Secteur 1 | 61 € maximum | 50 € | 13 €\nAdhérant à l’option de pratique tarifaire maitrisée (OPTAM) Secteur 2 | Honoraires avec dépassements maîtrisés | 50 € | 13 €\nSecteur 2 | Honoraires libres | 42,50 € | 10,75 €\nCas : Moins de 25 ans\nTableau : Consultation d'un spécialiste : tarif, base de remboursement, montant remboursé\nMédecin consulté | Tarif | Base du remboursement | Montant remboursé\nPsychiatre ou pédopsychiatre, secteur 1 | 75 € | 75 € | Moins de 18 ans :52,50 €18 ans et plus :50,50 €\nPsychiatre ou pédopsychiatre, adhérant au contrat d'accès aux soins | Honoraires avec dépassements maîtrisés | 75 € | Moins de 18 ans :52,50 €18 ans et plus :50,50 €\nPsychiatre ou pédopsychiatre, secteur 2 | Honoraires libres | 42,50 € | Moins de 18 ans :29,75 €18 ans et plus :27,75 €\nCas : Dans les Dom\nCas : Guyane, Guadeloupe, Martinique et à la Réunion\nLe site de l'Assurance maladie détaille les remboursements des consultations en Guyane, Guadeloupe, Martinique et à la Réunion.\nCas : Mayotte\nLe site de l'Assurance maladie détaille les remboursements des consultations à Mayotte.",
+      "titre": "Quels sont les tarifs de consultation chez un psychiatre ?"
+     },
+     {
+      "texte": "Psychologues concernés\nLe psychologue doit :\n- Signer une convention avec l'organisme local d'Assurance maladie de son lieu d'exercice\n- Exercer en libéral ou être salarié d’une structure d’exercice coordonné (maison de santé pluriprofessionnelle ou centre de santé)\n- Remplir des conditions d'expérience (au moins 3 années d'expérience clinique) et de formation pour attester d'un parcours consolidé en psychologie clinique ou psychopathologie.\nLa liste des psychologues conventionnés remplissant ces conditions est consultable en ligne :\n→ Service en ligne : Trouver un psychologue conventionné\nÀ savoir : L'assuré choisit librement le psychologue conventionné.\nPrise en charge de cette consultation\nVous payez directement le psychologue après chaque séance ou à la fin de plusieurs séances (selon le choix du psychologue) :\n- 50 € pour la 1er séance (entretien d'évaluation)\n- 50 € pour chacune des séances de suivi (11 au maximum).\nL'Assurance maladie prend en charge 60 % du coût des séances, c'est-à-dire 30 €.\nVotre mutuelle ou votre assurance complémentaire, dans le cadre des contrats de complémentaire santé responsable, finance à hauteur de 40 % le coût des séances.\nVous bénéficiez du tiers payant obligatoire et vous n'avez donc pas à avancer les frais (et les séances sont prises en charge à 100 % par l'Assurance maladie), si vous êtes dans l'une des situations suivantes :\n- Bénéficiaire de la complémentaire santé solidaire\n- Bénéficiaire de l'aide médicale de l'État (AME)\n- Soins en lien avec une affection de longue durée (ALD) pour un motif autre que psychiatrique et le soutien psychologique fait partie du protocole de soins dans le cadre de votre prise en charge au titre de l’ALD\n- Soins en lien avec une maternité (à partir du 6e mois de grossesse)\n- Soins en lien avec un accident du travail ou une maladie professionnelle (AT-MP).\nÀ noter : La Sécurité sociale prend aussi en charge des séances chez le psychologue assuré par le centre médico-psychologique (CMP).\nConditions pour bénéficier de ces consultations\nLa situation varie en fonction de la situation : majeur, étudiant, 3-17 ans.\nCas : Majeur (18 ans et plus)\nVous devez être en souffrance psychique, notamment si vous souffrez :\n- D’un trouble anxieux d’intensité légère à modérée\n- D’un trouble dépressif d’intensité légère à modérée\n- D’un mésusage de tabac, d’alcool et/ou de cannabis (hors dépendance)\n- D’un trouble du comportement alimentaire sans critères de gravité.\nSi vous êtes un patient sous traitement psychotrope ou un patient bipolaire ou borderline sous antiépileptiques, vous pouvez bénéficier d'un accompagnement psychologique notamment pour réévaluer la pertinence des traitements prescrits. Il faut alors, dans ce cas, un avis d'un psychiatre.\nÀ noter : L'avis d'un psychiatre n'est pas nécessaire pour les patients sous traitement par antidépresseurs depuis moins de 6 mois ou par hypnotiques ou benzodiazépines depuis moins d'un mois.\nVous ne pouvez pas bénéficier de cette prise en charge si votre situation nécessite d'emblée ou en cours de prise en charge un avis spécialisé par un psychiatre.\nExemples :\n- Risques suicidaires\n- Formes sévères de troubles dépressifs ou anxieux\n- Troubles du comportement alimentaire avec signes de gravité\n- Troubles neuro-développementaux sévères\n- Antécédents psychiatriques sévères dans les 3 ans\n- Toute situation de dépendance à des substances psychoactives.\nDe plus, vous ne pouvez pas bénéficier de cette prise en charge si vous êtes dans l'une des situations suivantes :\n- Reconnus atteints d'une affection de longue durée ou en invalidité pour motif psychiatrique\n- En arrêt de travail de plus de 6 mois pour un motif psychiatrique\n- S'étant retrouvés dans l'une de ces situations depuis moins de 2 ans.\nCas : Étudiant\nSi vous êtes étudiant, vous pouvez bénéficier d'un dispositif spécifique incluant des séances gratuites et sans avance de frais.\nCas : Enfant et adolescent\nLe mineur doit répondre aux 2 conditions suivantes :\n- Être âgé de 3 à 17 ans inclus\n- Présenter une situation de mal-être ou de souffrance psychique suscitant l’inquiétude de son entourage.\nLe mineur - même répondant aux critères d'éligibilité - ne peut pas bénéficier de cette prise en charge si sa situation nécessite d'emblée ou en cours de prise en charge un avis spécialisé par un psychiatre.\nExemples :\n- Risques suicidaires\n- Formes sévères de troubles anxieux ou dépressifs\n- Troubles du comportement alimentaire avec signes de gravité\n- Situations de retrait et d'inhibition majeures\n- Troubles externalisés sévères\n- Troubles neuro-développementaux\n- Toute situation de dépendance à des substances psychoactives.\nUn mineur ne peut pas bénéficier de cette prise en charge s'il est dans l'une des situations suivantes :\n- Pris en charge en pédopsychiatrie ou en psychiatrie\n- Pris en charge en ALD pour motif psychiatrique\n- S'est retrouvé dans l'une de ces situations depuis moins de 2 ans.\nNombre de séances\nCette prise en charge se limite à 12 séances par année civile. Toutefois, il n'y a pas de limite pour un enfant en ALD.\nÀ savoir : Une seule séance par jour peut être réalisée pour le même patient.\nDéroulé des séances\nLa 1ère de ces séances est consacrée à un entretien d'évaluation.\nLors de cet entretien, le psychologue procède à une 1ère appréciation des besoins du patient.\nLe psychologue présente au patient le cadre de l'accompagnement psychologique et lui propose un nombre de séances, en fonction de ses besoins, dans la limite de 12 séances prises en charge au cours d'une année civile.\nL'entretien d'évaluation et la dernière séance de suivi donnent lieu après accord du patient à un échange écrit entre :\n- Le psychologue\n- Et le médecin traitant du patient (ou, éventuellement, un médecin impliqué dans la prise en charge du patient).\nLe psychologue qui estime à la fin de l'entretien d'évaluation ou à tout moment de la prise en charge que le patient relève d'un suivi psychiatrique en fait part après accord du patient à ce médecin.\nLe psychologue peut réaliser des séances par vidéotransmission sauf lors de l'entretien d'évaluation.",
+      "titre": "Quels sont les tarifs de consultation d'un psychologue conventionné avec la CPAM ?"
+     },
+     {
+      "texte": "La consultation peut se faire directement sans passer par un médecin traitant.\nLes psychologues libéraux non conventionnés pratiquent des tarifs libres non remboursés par l'Assurance maladie. Vous pouvez vous renseigner auprès de votre mutuelle pour connaitre éventuellement la prise en charge.\nÀ noter : La consultation d'un psychologue dans un centre médico-psychologique (CMP) est prise en charge par l'Assurance maladie.",
+      "titre": "Quels sont les tarifs de consultation d'un psychologue libéral non conventionné ?"
+     },
+     {
+      "texte": "Vous pouvez également consulter un psychanalyste ou psychothérapeute directement.\nLorsque ces professionnels ne sont ni médecins, ni psychologues, ils pratiquent des tarifs libres qui ne sont pas pris en charge par l'Assurance maladie.",
+      "titre": "Quels sont les tarifs de consultation chez un psychanalyste, psychothérapeute ou autre ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

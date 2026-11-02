@@ -1,0 +1,578 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "mandat-de-protection-future-f16670",
+ "recordId": "4613a0e9-8d44-4412-8ac8-b5b66d8a6ce8",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T08:56:20.431Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Future protection mandate",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "If you want to arrange for your own protection in advance to anticipate a possible loss of independence, you can create a future power of attorney.",
+      "steps": [
+       {
+        "texte": "Do you want to plan and organize the protection of yourself and your assets, and designate the person who will be responsible for it? You can, in advance, while you still have the means to do so, establish a contract called a future power of attorney. This can take several forms, resulting in different effects. We will provide you with the information you need.",
+        "titre": null
+       },
+       {
+        "texte": "A future power of attorney is a contract in which a person, known as the principal, arranges for their future care in advance.\nThe principal (or settlor) designates one or more individuals, known as attorneys, to represent them on the occasion when they are no longer able to manage their own affairs due to physical or mental incapacity.\nIt is established without the involvement of the court-appointed guardian.\nThe future protective order can be used to protect a person, their property, or both.\nIt could also relate to a limited portion of the estate.\nThe future protective order does not deprive the person being protected of their rights or legal capacity.",
+        "titre": "What is a future protection order?"
+       },
+       {
+        "texte": "The future guardianship order can be granted to any individual, whether a minor or an emancipated minor, who is not subject to any form of guardianship or parental authority.\nA person under guardianship can enter into a future protection agreement, but only with the consent of their guardian.\nSpecifically: The future guardianship mandate can also be used by parents for their child (minor or adult) who is dependent and suffers from a pre-existing illness or disability. This allows parents to designate one or more individuals in advance to represent their child when they are no longer able to manage their interests (e.g., in old age or upon death).",
+        "titre": "Who can conclude a future guardianship agreement?"
+       },
+       {
+        "texte": "The agent must be a minor who has reached the age of majority or a minor who has been legally emancipated.\nHe must be legally capable, meaning he should not be subject to any legal protection measures.\nThis could be a person, either an individual (such as a family member, close friend, or colleague) chosen by the person being protected.\nIt could also be a legal entity that is registered on the list of judicial representatives for the protection of persons.\nThis list can be accessed through préfecture (state administration of the département).\n→ Where to go: Préfecture\nSpecifically: Throughout the duration of the mandate, the agent must have the legal capacity to act.",
+        "titre": "Who can become an agent?"
+       },
+       {
+        "texte": "The future protection order can be established either through a private signature or through a notarized document.\nCase: Private signature mandate\nA mandate executed by private signature is drawn up and signed by the principal and the agent, without the need for a notary.\nThis can be done on plain paper, with the requirement that a lawyer's signature be affixed.\nAlternatively, it can be drafted using the following form:\n→ Online service: Future protection mandate\nThe mandate should specify who is responsible for overseeing the activities of the representative.\nIn order for the mandate to be valid, it must be registered to provide it with a definite date.\nThe registration is made by mail to the tax authorities at the applicant's address.\nIt is necessary to create as many original copies as there are representatives.\nThe tax office also retains a copy of the original document at the time of registration.\nCopies of the originals must be submitted for each person responsible for overseeing the execution of the mandate.\nSigning the mandate by the agent constitutes acceptance of the agent's role.\n→ Where to go: Land Registry and Registration Department\nCase: Notarized Power of Attorney\nA future power of attorney drafted by a notary is a legally binding document.\nIt is drafted in the presence of both the principal and the agent.\nThe presence of the agent constitutes acceptance of their assignment.\n→ Where to go: Notary",
+        "titre": "How to establish a future power of attorney?"
+       },
+       {
+        "texte": "Depending on the form chosen, the effects of the mandate vary.\nCase: Private signature mandate\nWhen the mandate takes the form of a private document, the management of assets is limited solely to the administration of the estate. This means managing the estate in a typical way, as a guardian can do without the court's approval.\nFor all acts involving the disposal of assets, the representative must obtain the approval of the court-appointed guardian.\nCase: Notarized Power of Attorney\nThis mandate allows the agent to be entrusted with greater powers and full management of the principal's assets.\nThe representative may carry out administrative and property management tasks, such as selling the property or making a donation.",
+        "titre": "What are the effects of a future protective order?"
+       },
+       {
+        "texte": "The protective order will not have any effect until it has been activated.\nThe process for implementing the mandate is the same, regardless of the form of the mandate.\nWhen the principal is no longer capable of managing their own affairs, the agent must obtain a detailed medical certificate from a specialist doctor.\nThis doctor is listed on a registry established by the public prosecutor. This list typically includes psychiatrists, geriatricians, neurologists, and sometimes general practitioners.\nThis medical assessment will determine the extent of the person's cognitive and physical impairment.\nThe principal and the agent must appear in person at the registry office of the adult guardianship service of the relevant court, which is the court responsible for the principal's address.\nThe person being summoned does not have to appear in court if a medical certificate establishes that their presence would be incompatible with their health. In this case, the person will be informed of the execution of the summons by registered mail with acknowledgment of receipt.\n→ Where to go: Court of first instance or local court\nThe documents (referred to as \"pieces\") that must be submitted to the registry are as follows:\n- Original copy of the mandate\n- Detailed medical certificate, dated 2 months ago\n- Identification documents for each party\n- Proof of address from the client or a certificate of usual residence.\nAfter verifying the documents, the clerk signs each page of the document.\nHe mentions at the end of the document that the mandate comes into effect from that date, and then stamps it with his signature.\nThis allows for a firm deadline to be set for the mandate. It involves the certification of the mandate.\nThe agent collects the mandate and the required documents.\nHe must then inform each administration and bank of the implementation of the mandate, providing them with the necessary documentation to act on behalf of the principal.\nPlease note: No copy of the warrant is kept or recorded by the clerk.\nIf the conditions for implementing the mandate are not met, the clerk may refuse to endorse it.\nThe court-appointed guardian will need to be consulted to resolve the dispute.\nThe case was dismissed without a hearing.\nThe judge's decision is not subject to appeal.",
+        "titre": "How to implement the future protection order?"
+       },
+       {
+        "texte": "The agent carries out the tasks assigned to them in accordance with the terms of the mandate and in accordance with the wishes of the principal.\nThe future guardianship mandate could cover the management of both assets and the individual's personal care.\nThe person commissioning the care can specify their wishes regarding their accommodation, health, hobbies, pets, and personal relationships.\nThe guardian can perform all financial transactions that the guardian would normally be authorized to perform on their own.\nRegarding transactions involving assets, the representative must obtain approval from the court-appointed guardian.\nThe agent is obligated to create an inventory of the assets and to ensure that it is kept up to date.\nAs part of a notarial mandate, he must prepare and present annual management accounts to the notary each year.\nHe must make the inventory and the last 5 financial statements available.\nSpecifically: The agent may refuse the assignment if they notify the principal.",
+        "titre": "What are the duties and obligations of the agent who executes a power of attorney for future protection?"
+       },
+       {
+        "texte": "The level of oversight varies depending on the nature of the mandate:\nCase: Private signature mandate\nThe principal must appoint a person to oversee the agent's work.\nThis could be an individual (a family member, a professional, etc.) or a legal entity (for example, a guardianship association).\nThe mandate should specify the procedures for auditing the management accounts.\nIn the event of a problem, the person in charge of supervision, the principal, or a third party can notify the court-appointed guardian in writing. The person in charge of supervision, the principal, or the third party can bring to the guardian's attention any suspicious or non-compliant financial transactions.\nCase: Notarized Power of Attorney\nThe notary verifies the agent's activities by reviewing the inventory, management accounts, and supporting documents.\nThe notary is responsible for maintaining and updating the records.\nIn the event of a problem, the notary can formally notify the court-appointed guardian, citing suspicious, unjustified, or non-compliant financial transactions as grounds for concern.",
+        "titre": "How is the future protection order enforced?"
+       },
+       {
+        "texte": "The agent can be held liable for civil and, in some cases, criminal damages if they commit errors while carrying out their duties, as defined by the mandate.\nThis could be due to negligence, which harms the interests of the client, poor execution, or a fault related to poor account management.\nThe court-appointed guardian and/or the public prosecutor can be formally notified, in writing, by the person requesting the guardianship, their family members, or any other individual, to report these violations.\nIf the agent's actions constitute a criminal offense (such as exploiting a vulnerable person or abusing trust), the public prosecutor can initiate criminal proceedings against them.\nIf the agent is civilly liable for damages (financial loss, poor management, etc.) to the principal, they may be ordered to compensate for the damage, including paying interest.",
+        "titre": "What are the responsibilities of the agent?"
+       },
+       {
+        "texte": "The future protective order can be revoked or modified.\nThe procedure differs depending on whether the mandate is implemented or not:\nCase: The mandate has not been implemented.\nAs long as the mandate has not taken effect, it can be revoked or modified at any time, regardless of whether it is a notarized mandate or one signed privately.\nThe right to revoke or modify the agreement is free.\nIt can be done in writing, on a dated and signed piece of paper, or through a notarial deed.\nThe agent must be informed of these changes.\nNo strict rules are imposed, but it is necessary to be able to provide evidence that the representative was properly informed.\nCase: The mandate has been implemented.\nThe revocation or modification can be requested by the principal, the agent, a close relative, or the public prosecutor.\nThe request for revocation or modification must be submitted in writing to the court-appointed guardian.\n→ Where to go: Court of first instance or local court\nSpecifically: If the agent no longer wishes to fulfill their duties, they must notify the notary and the principal in writing, providing proof that they have been informed.",
+        "titre": "How to revoke or modify a future guardianship order?"
+       },
+       {
+        "texte": "The term of the future protection order will end if any of the following circumstances occur:\n- The person regains their mental faculties. If the guardianship order is still in effect, it is necessary to seek the court's approval to terminate it.\n- The court-appointed guardian is notified of a dispute regarding the implementation or execution of the guardianship order.\n- The court-appointed guardian revokes the guardian's authority.\n- The court-appointed guardian announces the commencement of a guardianship or supervision order.\n- The person dies.",
+        "titre": "When does the future period of protection end?"
+       },
+       {
+        "texte": "The cost of future protection and its implementation varies depending on its form:\nCase: Private signature mandate\nThe preparation of the brief is free of charge.\nLegal fees are due for the counter-signature (fees are set at the discretion of the lawyer).\nThe registration fee with the tax authorities responsible for the applicant's residence is €125.\nFor the implementation of the mandate, the cost of the relevant medical certificate is the responsibility of the party requesting it.\nHowever, no fees are required when the court-appointed guardian's office issues the visa.\nThe representative and the person in charge of oversight perform their duties pro bono, unless the mandate specifies that they are entitled to compensation or reimbursement.\nCase: Notarized Power of Attorney\nFees for the notary, including the drafting of the notarial deed and its registration with the tax revenue service, are due.\nFor the implementation of the mandate, the cost of the comprehensive medical certificate is the responsibility of the party requesting it.\nHowever, no fees are required when the court-appointed guardian's office issues the visa.\nThe representative and the person in charge of oversight carry out their duties pro bono, unless the mandate specifies that they are entitled to compensation or reimbursement.",
+        "titre": "What is the cost of a future guardianship and its implementation?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F16670",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16670",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71,
+      "units": 135
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T09:00:33.872Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Gelecekteki koruma yetkisi",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 71.3,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Eğer, olası bir bağımsızlık kaybını önceden engellemek için kendi korunmanızı önceden planlamak istiyorsanız, gelecekteki bir vasiyetname düzenleyebilirsiniz.",
+      "steps": [
+       {
+        "texte": "Kişisel ve mal varlığınızın korunmasını önceden planlamak ve düzenlemek, bu konuda kimin sorumlu olacağını belirlemek istiyor musunuz? Önceden, hala maddi gücünüzün tam olduğunuz sırada, gelecekteki koruma sözleşmesi adı altında bir sözleşme oluşturabilirsiniz. Bu sözleşme farklı şekillerde düzenlenebilir ve çeşitli sonuçlar doğurabilir. Size gerekli bilgileri sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Gelecekteki koruma sözleşmesi, bir kişinin (mandant) önceden belirlediği bir bağımlılık durumunu düzenleyen bir sözleşmedir.\n\"Müşteri\", kişinin, özellikle fiziksel veya zihinsel yeteneklerini kaybetmesi durumunda, kendi çıkarlarını temsil etmek için görevlendirdiği veya görevlendirdiği bir veya daha fazla kişiyi ifade eder.\nBu, mahkeme tarafından herhangi bir müdahale olmaksızın kurulmuştur.\nGelecekteki koruma emri, kişinin, mülkünün veya ikisinden birinin korunmasına hizmet edebilir.\nBu, aynı zamanda belirli bir miktar üzerinde bir mülk üzerinde de uygulanabilir.\nGelecekteki koruma emri, talep eden kişinin haklarını veya yasal yetkisini ortadan kaldırmaz.",
+        "titre": "\"Gelecekteki koruma yetkisi nedir?\""
+       },
+       {
+        "texte": "Gelecekteki koruma sözleşmesi, hem yetişkin hem de bağımsız durumda olan, aynı zamanda koruma veya aile yetkilendirme kapsamına girmeyen herhangi bir kişi tarafından imzalanabilir.\nBir kişinin, bir vasi tarafından yönetilmesi durumunda, gelecekteki bir koruma sözleşmesi düzenleyebilmesi mümkündür, ancak bunun için vasi tarafından onay alınması gerekir.\nÖnemli olan: Bu koruma yetkisi, ebeveynler tarafından, kronik bir hastalığı olan veya önceden belirlenmiş bir engeli olan (minör veya yetişkin) çocukları için de kullanılabilir. Bu, ebeveynlerin, çocuklarının ihtiyaçlarını kendi adına temsil edecek bir veya birkaç kişiyi önceden belirlemelerine olanak tanır (örneğin, yaşlılık veya ölüm durumunda).",
+        "titre": "Kim, gelecekteki bir koruma görevini üstlenebilir?"
+       },
+       {
+        "texte": "Temsilcinin 18 yaşını doldurmuş veya yasal olarak bağımsız bir çocuk olması gerekmektedir.\nYasal olarak yetkin olması, yani hukuki koruma altında olmaması gerekmektedir.\nBu, koruma altına alınan kişinin seçtiği bir kişi olabilir (aile, yakın veya profesyonel biri...).\nBu, aynı zamanda, \"kişisel hakları koruma görevlisi\" listesinde yer alan ve hukuki bir temsilci olarak kayıtlı bir kuruluşu da içerebilir.\nBu liste, préfecture (devletin il idaresi) adresinden erişilebilir.\n→ İlgili kişi/kurum: Préfecture\nÖnemli olan: Sözleşme süresince, temsilci, yasal yetkiye sahip olmalıdır.",
+        "titre": "Kim bir mümilliğe seçilebilir?"
+       },
+       {
+        "texte": "Gelecekteki koruma sözleşmesi, özel olarak imzalanmış bir belge veya noter tarafından onaylanmış bir belge ile düzenlenebilir.\nÖrnek: Özel imza ile verilen talimat\nÖzel imza ile düzenlenen vekâletname, vekil ile vekilin temsil ettiği kişi arasında, noter aracılığı olmadan düzenlenir ve imzalanır.\nBu, serbest bir kağıda yapılabilir ve bir avukatın imzasıyla onaylanması zorunludur.\nAksi takdirde, aşağıdaki formül kullanılarak hazırlanabilir:\n→ Çevrimiçi hizmet: Gelecek koruma talep formu\nBu yetki, temsilcinin faaliyetlerinin denetlenmesinden sorumlu kişinin belirlenmesini içermelidir.\nBu görev süresinin itiraz edilebilir olmaması için, belirli bir tarihe sahip olması adına kayıt altına alınması gerekir.\nKayıt, talep sahibinin ikamet adresindeki vergi dairesine posta yoluyla yapılacaktır.\nHer temsilcinin sayısı kadar orijinal kopyanın hazırlanması gerekir.\nVergi dairesi, kayıt sırasında da orijinal bir kopyasını saklar.\nHer kişinin, sözleşme kontrolünü üstlenen kişiler için, orijinal belgelerin bir kopyası teslim edilmelidir.\nTemsalcinin sözleşmeyi imzalaması, görevini kabul ettiği anlamına gelir.\n→ İlgili birim: Tapu ve Reklam Departmanı\nÖrnek: Noterde onaylanmış bir vasiyetname\nNotardan düzenlenmiş ve gelecekteki koruma sözleşmesi, resmi bir belge niteliğindedir.\nBu belge, talep eden kişi ve temsilcisi tarafından birlikte düzenlenir.\nTemsilcinin varlığı, görevini üstlendiğini gösterir.\n→ Nereye başvurulmalı: Noter",
+        "titre": "Gelecekteki bir vasiyetname nasıl oluşturulur?"
+       },
+       {
+        "texte": "Seçilen formaya bağlı olarak, mandayın etkileri farklılık gösterir.\nÖrnek: Özel imza ile verilen talimat\nEğer vasiyet, özel bir imza ile yazılmış bir belge şeklinde ise, mülk yönetimi yalnızca mülk yönetimi faaliyetlerine yöneliktir. Bu, bir vasi tarafından, mahkeme tarafından onaylanması gerekmeden, normal bir mülk yönetimi şeklinde yapılmasını ifade eder.\nMülk üzerinde yapılan tüm devir işlemlerinde, temsilci, mahkeme tarafından atanan vasi yetkisini almalıdır.\nÖrnek: Noterde onaylanmış bir vasiyetname\nBu yetki, temsilcinin, temsilcinin varlıklarının tamamen yönetilmesini ve daha geniş yetkilerle görevlendirilmesini sağlar.\nTemsilci, mülk üzerinde yönetim ve tasarruf faaliyetleri gerçekleştirebilir, örneğin gayrimenkulü satabilir veya bağış yapabilir.",
+        "titre": "Koruma emri uygulamasının etkileri nelerdir?"
+       },
+       {
+        "texte": "Koruma talimatı, etkinleştirilene kadar hiçbir etki yaratmaz.\nMandatı uygulamak için izlenen süreç, mandayın şekline bakılmaksızın aynıdır.\nMüşterinin kendi çıkarlarını tek başına yönetemediği durumlarda, temsilci, uzman bir doktor tarafından düzenlenmiş kapsamlı bir tıbbi rapor hazırlatmalıdır.\nBu doktor, Cumhuriyet Savcısı tarafından oluşturulan bir listede yer almaktadır. Bu liste genellikle psikiyatristler, yaşlılık uzmanları, nörologlar veya genel pratisyen hekimlerden oluşmaktadır.\nBu tıbbi uzmanlık, kişinin zihinsel ve fiziksel yeteneklerindeki bozulma düzeyini belirleyecektir.\nİstemci ve temsilcisi, istemcinin ikamet ettiği mahkemenin korunan yetişkinler dairesine ait noter ofisine, yüz yüklü olarak gelmelidir.\nTemsilci, tıbbi raporla kendi sağlığı açısından varlığının mümkün olmadığı tespit edilirse, mahkemeye gelmek zorunda değildir. Bu durumda, temsilci, gönderilen resmi mektup ile sözleşmenin yürütülmesinden haberdar edilecektir.\n→ Nereye başvurulmalı: Mahkeme veya yerel mahkeme\nSunulması gereken belgeler (veya \"belgeler\") şunlardır:\n- Mandatın orijinal kopyası\n- Detaylı ve 2 aylık geçmişe ait tıbbi rapor\n- Her tarafın kimlik belgesi\n- Müşterinin ikametgah belgesi veya ikamet kanıtı.\nBelgelerin incelenmesinden sonra, noter, sözleşmenin her sayfasını imzalar.\nBelgede, sözleşmenin bu tarihten itibaren geçerli olduğunu belirtir ve ardından üzerine bir onay damgası uygular.\nBu, sözleşmenin belirli bir tarihe sahip olmasını sağlar. Sözleşmenin doğruluğunun veya geçerliliğinin kanıtlanması söz konusudur.\nTemsilci, talep edilen belgeyi ve bilgileri elde eder.\nArdından, temsilcinin, mandantın adına hareket etme yetkisini kullanarak, ilgili tüm banka ve finans kuruluşlarına bu yetkinin uygulanması hakkında bilgi vermelidir.\nLütfen dikkat: Mahkeme emrinin bir kopyası, noter tarafından saklanmamış veya kayd altına alınmamıştır.\nEğer görevlendirmenin uygulanması için gerekli şartlar yerine getirilmezse, noter, bu görevi yerine getirmeyi reddedebilir.\nUyuşmazlığı çözmek için, mahkeme tarafından görevlendirilen vasi yetkilisi devreye girmeli.\nDuruşma ertelenmiş durumda.\nMahkeme kararı, itiraz yoluyla düzeltilemez.",
+        "titre": "Gelecekteki koruma emrini nasıl hayata geçireceğiz?"
+       },
+       {
+        "texte": "Temsilci, sözleşmede belirtilen ve talep sahibinin isteğine uygun olarak, kendisine verilen görevleri yerine getirir.\nGelecekteki koruma yetkisi, hem varlıkların yönetimi hem de kişinin korunması üzerine olabilir.\nMüşteri, konut, sağlık, hobileri, evcil hayvanları ve kişisel ilişkileri hakkında isteklerini belirtebilir.\nTemsilci, vasi tarafından tek başına gerçekleştirilebilecek tüm mülkiyetle ilgili işlemleri gerçekleştirebilir.\nVarlık yönetimi ile ilgili işlemler için, temsilci, mahkeme tarafından onay almalıdır.\nTemsilci, mülkün bir listesini oluşturma ve bu listeyi güncel tutma yükümlülüğüne sahiptir.\nNoterli bir görev kapsamında, her yıl mali tablolarını hazırlamalı ve bunları noter'e sunmalıdır.\nBunun, mevcut envanter ve son 5 yönetim raporunun kendisine sunulmasını sağlaması gerekmektedir.\nBilindiği üzere: Vekil, kendisine verilen görevi, ilgili kişiye önceden bildirimde bulunarak geri çekilebilir.",
+        "titre": "Bir gelecekteki koruma sözleşmesini yerine getiren temsilcinin görevleri ve sorumlulukları nelerdir?"
+       },
+       {
+        "texte": "Kontrol, görev türüne bağlı olarak değişiklik gösterir:\nÖrnek: Özel imza ile verilen talimat\nMüşteri, temsilcinin görevlerini denetleyecek bir kişiyi belirlemesi gerekir.\nBu, bir gerçek kişi (yakın bir akrabanın, bir profesyonelin...) veya bir tüzel kişi (örneğin, bir koruyucu kuruluşu...) olabilir.\nBu görevlendirme, yönetim hesaplarının denetlenmesiyle ilgili prosedürlerin belirlenmesini içermelidir.\nOlması durumunda, kontrol sorumlusu, talep eden kişi veya üçüncü bir taraf, yazılı olarak, koruyucu mahkemeye başvurabilir. Kontrol sorumlusu, talep eden kişi veya üçüncü taraf, talep edilen belgelerde belirtilen kurallara uygun olmayan veya şüpheli mali hareketleri mahkemeye bildirebilir.\nÖrnek: Noterde onaylanmış bir vasiyetname\nNoter, temsilcinin faaliyetlerini, malvarlığı listesini, yönetim hesaplarını ve ilgili belgeleri sunarak kontrol eder.\nNoter, belgelerin korunmasını ve güncel kalmasını sağlar.\nOlasa bir durumda, noter, şüpheli, açıklanamayan veya manda tarafından belirlenen faaliyetlerle uyuşmayan mali hareketler nedeniyle, mahkemeye yazılı olarak başvurarak, vasi mahkemesini bilgilendirebilir.",
+        "titre": "Gelecekteki koruma emrini nasıl kontrol ediliyor?"
+       },
+       {
+        "texte": "Temsilci, görevini yerine getirirken yaptığı hatalar nedeniyle, hem sivil hem de bazı durumlarda cezai sorumluluğu üstlenebilir.\nBu, istemcinin çıkarlarını tehlikeye atan bir ihmal, yetersiz bir uygulama veya hesapların kötü yönetimiyle ilgili bir hatadan kaynaklanabilir.\nVakıf mahkemesi hakimi veya Cumhuriyet savcısı, bu tür ihlalleri bildirmek amacıyla, talep eden kişi, yakınları veya herhangi bir kişi tarafından yazılı olarak talep üzerine harekete geçirilebilir.\nEğer temsilcinin eylemi, yasal bir suçu (örneğin, zayıf bir kişiyi istismar etme, güvendiği kişiyi kötüye kullanma gibi) oluşturuyorsa, Cumhuriyet Savcısı onun karşılarında yasal süreç başlatabilir.\nEğer temsilci, müşteriye karşı (finansal kayıp, kötü yönetim vb.) bir zarardan sorumlu ise, tazminat ödemeye, faizleri de içeren, mahkum edilebilir.",
+        "titre": "Temsilcinin sorumluluğu nedir?"
+       },
+       {
+        "texte": "Gelecekteki koruma emri, iptal edilebilir veya değiştirilebilir.\nProsedür, mandayın uygulanıp uygulanmamasına bağlı olarak değişiklik gösterir:\nÖrnek: Sözleşme uygulanmamıştır.\nBu yetki, geçerli olana kadar herhangi bir zamanda geri çekilebilir veya değiştirilebilir. Bu, noter tarafından düzenlenmiş veya özel olarak imzalanmış herhangi bir yetki sözleşmesi olabilir.\nİptal veya değişiklik özgürce yapılabilir.\nBu, yazılı olarak, tarihli ve imzalı bir mektup veya noter tarafından düzenlenmiş bir belge ile yapılabilir.\nTemsilcinin, bu değişikliklerden haberdar olması gerekir.\nHerhangi bir resmi prosedür uygulanmamaktadır, ancak temsilcinin bilgilendirildiğinin kanıtını sunabilme imkanı olmalıdır.\nDurum: Görev yürürlüğe konuldu\nİstemci, vekil, yakın bir aile üyesi veya Cumhuriyet Savcısı tarafından, sözleşmenin feshedilmesi veya değiştirilmesi talep edilebilir.\nİptal veya değişiklik talebi, yazılı olarak, koruyucu mahkemeye iletilmelidir.\n→ Nereye başvurulmalı: Mahkeme veya yerel mahkeme\nBilindiği üzere: Eğer temsilci, görevini daha fazla yapmak istemezse, bu kararı noter ve talep eden kişiye bildirmeli ve bu bildirimin alındığının kanıtını sunmalıdır.",
+        "titre": "Gelecekteki koruma emrini nasıl iptal edebilir veya değiştirebilirim?"
+       },
+       {
+        "texte": "Koruma görevinin sona ermesi için aşağıdaki durumlardan biri gerçekleşmelidir:\n- Birey, zihinsel yeteneklerini yeniden kazanır. Eğer vasiyet yürürlüğe girmişse, bu durumu yargılamaya devredilen kişiden, vasiyetin yürütülmesini durdurması için talepte bulunulmalıdır.\n- Mahkeme, görevlendirilmiş kişinin görevini yerine getirilmesi veya uygulanmasıyla ilgili bir itiraz üzerine harekete geçiyor.\n- Mahkeme, vekalet sahibi kişinin görev süresini sona erdirme kararı veriyor.\n- Mahkeme, koruyucu figürün atanmasını veya koruma altına alınmayı uygun görür.\n- Birey hayatını kaybetti.",
+        "titre": "Koruma süresi ne zaman sona eriyor?"
+       },
+       {
+        "texte": "Gelecekteki koruma sözleşmesinin maliyeti ve uygulanması, sözleşmenin şekline göre değişiklik gösterir:\nÖrnek: Özel imza ile verilen talimat\nMandatın hazırlanması ücretsizdir.\nAvukatlık ücreti, onay için ödenmelidir (ücretler serbest olarak belirlenir).\nMandantın ikamet adresine bağlı vergi dairesine ait kayıt ücreti 125 €'dir.\nBu kararın uygulanması için, gerekli tıbbi raporun maliyeti, talep eden kişinin sorumluluğundadır.\nAncak, mahkeme tarafından görevlendirilen yetkili kişinin vize işlemini gerçekleştirmesi sırasında herhangi bir ücret talep edilmemektedir.\nTemsilci ve kontrol görevini üstlenen kişi, görevlerini ücret karşılığında yapmazlar, ancak sözleşme bu konuda bir ücret veya tazminat öngörüyorsa durum farklı olabilir.\nÖrnek: Noterde onaylanmış bir vasiyetname\nNoter görevli tarafından hazırlanacak ve vergi gelirleri dairesine kaydedilecek olan noter taslağı için gerekli noter ücreti ödenmelidir.\nBu kararın uygulanması için, gerekli tıbbi raporun maliyeti, talep eden kişinin sorumluluğundadır.\nAncak, mahkeme tarafından görevlendirilen yetkili kişinin vize işlemini gerçekleştirmesi sırasında herhangi bir ücret talep edilmemektedir.\nTemsilci ve kontrol görevini üstlenen kişi, görevlerini ücret karşılığında yapmaz, ancak sözleşme bu konuda bir ücret veya tazminat öngörüyorsa durum farklı olabilir.",
+        "titre": "Gelecekteki koruma sözleşmesinin maliyeti ve bu sözleşmenin uygulanması ne kadar?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F16670",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16670",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 67.6,
+      "units": 135
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T09:04:49.920Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "التوجيه الخاص بالحماية المستقبلية",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 61.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "إذا كنت ترغب في تنظيم حماية خاصة لنفسك مسبقًا، وذلك بهدف توقع أي فقدان في الاستقلالية، يمكنك إنشاء وصية حماية مستقبلية.",
+      "steps": [
+       {
+        "texte": "هل ترغب في التخطيط والتنظيم لحماية نفسك وممتلكاتك، وتحديد الشخص المسؤول عن ذلك؟ يمكنك، قبل وقوع أي مشكلة، أثناء امتلاكك لمواردك، إعداد عقد يسمى \"اتفاقية الحماية المستقبلية\". يمكن أن يتخذ هذا الاتفاق عدة أشكال، مما يؤدي إلى تحقيق نتائج مختلفة. نقدم لك المعلومات الضرورية.",
+        "titre": null
+       },
+       {
+        "texte": "إن \"اتفاقية الحماية المستقبلية\" هي عقد يتم من خلاله تنظيم شخص ما، ويُعرف بـ \"المُكلّف\"، ليعتمد على شخص آخر مسبقًا.\nيشير مصطلح \"المند\" إلى شخص واحد أو أكثر، ويُطلق عليهم \"الممثلون\"، لتمثيل مصالحه في حالة عدم قدرته على القيام بذلك بنفسه، وذلك بسبب تدهور في حالته الجسدية أو العقلية.\nيتم إثبات ذلك دون تدخل القاضي المسؤول.\nيمكن أن يخدم قرار الحماية المستقبلي لحماية الشخص، أو ممتلكاته، أو كليهما.\nيمكن أن يشمل أيضًا جزءًا محدودًا من الممتلكات.\nلا يؤثر التوجيه المستقبلي على حقوق الطرف الذي يطلب التوجيه، ولا على قدرته القانونية.",
+        "titre": "ما هو \"المنح أو التوجيهات المستقبلية\"؟"
+       },
+       {
+        "texte": "يمكن أن يتم الاتفاق على وصاية حماية مستقبلية من قبل أي شخص بالغ أو قاصر يتمتع بحقوقه القانونية، ولا يخضع لأي شكل من أشكال الرعاية أو التوصية من قبل الأسرة.\nيمكن للشخص الذي يخضع للإشراف أن يوقع عقدًا لحماية مستقبلية، ولكن فقط مع موافقة المشرف عليه.\nوهذا يعني: يمكن استخدام وصية الحماية المستقبلية أيضًا من قبل الوالدين لأحد أطفالهم (صغير السن أو بالغ)، الذي يعاني من مرض أو لديه إعاقة تم تحديدها بالفعل. وبالتالي، يمكن للوالدين تحديد شخص أو أكثر لتمثيل طفلهما في الوقت الذي لن يكونا فيه قادرين على إدارة مصالحه (مثل في مرحلة الشيخوخة أو بعد الوفاة).",
+        "titre": "من يمكنه تحديد شروط حماية مستقبلية؟"
+       },
+       {
+        "texte": "يجب أن يكون الوكيل بالغًا أو قاصرًا حاصلًا على الإ emancipement.\nيجب أن يكون مؤهلاً قانونيًا، أي أنه لا يخضع لأي إجراء قانوني.\nقد يكون ذلك شخصًا طبيعيًا (مثل فرد من العائلة أو صديق أو زميل عمل) تم اختياره من قبل الشخص الذي يرغب في حمايته.\nقد يكون ذلك أيضًا كيانًا قانونيًا مسجلاً في قائمة الممثلين القضائيين المسؤولين عن حماية الأفراد.\nيمكن الاطلاع على هذه القائمة من خلال préfecture (إدارة الدولة في الإقليم).\n→ إلى أين يتم التوجه: Préfecture\nوهذا يعني: خلال تنفيذ المهمة، يجب أن يتمتع الوكيل بسلطة قانونية.",
+        "titre": "من يمكن أن يصبح وكيلًا؟"
+       },
+       {
+        "texte": "يمكن تحديد التوكيل الخاص لحماية الممتلكات إما من خلال وثيقة موقعة بشكل خاص، أو من خلال وثيقة مصدقة من قبل كاتب عدل.\nمثال: وثيقة تفويض موقعة بخط يد\nيتم إعداد وتوقيع اتفاقية الوكالة من خلال توقيعها بين الطرفين (الموكل والوكيل)، دون الحاجة إلى حضور محامٍ.\nيمكن إعداده على ورقة فارغة، مع اشتراط إرفاق توقيع محامٍ.\nأو، يمكن كتابته باستخدام النموذج التالي:\n→ خدمة عبر الإنترنت: وثيقة حماية مستقبلية\nيجب أن يتضمن التوكيل تحديد الشخص المسؤول عن الإشراف على أنشطة الوكيل.\nلكي يكون المنصب غير قابل للطعن، يجب تسجيله لضمان تحديد تاريخ ساري المفعول.\nيتم التسجيل عن طريق البريد إلى مكاتب الضرائب في مكان إقامة الشخص الذي يطلب التسجيل.\nيجب إعداد عدد من النسخ الأصلية يساوي عدد الممثلين.\nكما يحتفظ قسم الضرائب بنسخة أصلية عند التسجيل.\nيجب إرسال نسخة من المستندات الأصلية لكل شخص مكلف بإجراء فحص على الوثائق.\nإن توقيع الوكيل على الوثيقة يعتبر موافقة على مهمته.\n→ جهة الاتصال: قسم الإعلانات العقارية والتسجيل\nمثال: وثيقة رسم توثيقية\nإن الوثيقة الرسمية لحماية المستقبل، التي يتم إعدادها من قبل محامٍ، تعتبر وثيقة رسمية.\nيتم إعداده بحضور الطرف الذي طلب الخدمة والطرف الذي يمثلها.\nإن وجود الوكيل يعني قبول مهمته.\n→ إلى من يتم الاتصال: محامٍ",
+        "titre": "كيف يتم إنشاء وصية حماية مستقبلية؟"
+       },
+       {
+        "texte": "اعتمادًا على الشكل المختار، فإن تأثير المرسوم يختلف.\nمثال: وثيقة تفويض موقعة بخط يد\nعندما يتخذ التوكيل شكل وثيقة موقعة من قبل الأفراد، فإن إدارة الأصول تقتصر فقط على الإجراءات الإدارية المتعلقة بالملكية. بمعنى آخر، هي إدارة عادية للممتلكات، مثل ما يمكن أن يقوم به الوصي دون الحاجة إلى موافقة قاضي الوصاية.\nفي جميع الحالات المتعلقة بإدارة الممتلكات، يجب على الوكيل الحصول على موافقة قاضي التصفية.\nمثال: وثيقة رسم توثيقية\nيمنح هذا التفويض الوكيل صلاحيات أكبر وإدارة كاملة للممتلكات التي يمتلكها المانح.\nيمكن للممثل أن يقوم بإجراءات الإدارة والإدارة المتعلقة بالملكية، مثل بيع العقار أو التبرع به.",
+        "titre": "ما هي آثار قرار الحماية المستقبلية؟"
+       },
+       {
+        "texte": "لا يكون للمنشأ الصادر لحماية أي تأثير حتى يتم تنشيطه.\nإجراءات تنفيذ القرار هو نفسه، بغض النظر عن شكل القرار.\nعندما يصبح الموكل غير قادر على إدارة شؤونه بمفرده، يجب على الوكيل الحصول على شهادة طبية مفصلة من طبيب متخصص.\nهذا الطبيب مسجل في قائمة تم إعدادها من قبل المدعي العام. وغالبًا ما تتضمن هذه القائمة أطباء الأمراض النفسية، وأطباء الشيخوخة، وأطباء الأعصاب، وأحيانًا أطباء عامين.\nستحدد هذه الخبرة الطبية درجة التدهور في القدرات العقلية والجسدية للشخص.\nيجب على الطرف الذي يعهد (المُعَهد) والطرف الذي تم تعيينه (المُوَكَّل) الحضور شخصيًا إلى مكتب قسم حماية الأفراد في المحكمة القضائية التي يقع بها مقر إقامة الطرف الذي يعهد.\nلا يتعين على الممثل أن يحضر إلى المحكمة إذا أثبتت الشهادة الطبية أنه حضورها يتعارض مع حالته الصحية. وفي هذه الحالة، سيتم إعلام الممثل بتنفيذ الوكالة عن طريق مراسلة مسجلة مع إشعار بالاستلام.\n→ إلى أين يتم التوجه: المحكمة القضائية أو المحكمة المحلية\nالأوراق (التي تسمى \"المستندات\") التي يجب تقديمها إلى المحكمة هي:\n- نسخة من الوصية\n- تقرير طبي مفصل ومؤرخ في شهرين.\n- وثيقة تعريفية لكل من الأطراف.\n- إثبات إقامة العميل أو شهادة إقامة ثابتة.\nبعد التحقق من المستندات، يقوم السكرتير بتوقيع كل صفحة من الوثيقة.\nيذكر في نهاية الوثيقة أن المفعول بالوكالة يبدأ من هذا التاريخ، ثم يضع ختمًا عليه.\nوهذا يتيح تحديد تاريخ نهائي للمهمة. ويشير إلى عملية إصدار شهادة للمهمة.\nيستلم الوكيل الوثائق المطلوبة والمهمة المحددة.\nيجب عليه بعد ذلك إبلاغ كل إدارة ومؤسسة مصرفية بتنفيذ هذا القرار، مع إتاحة إمكانية التصرف نيابة عن صاحب القرار.\nتنبيه: لا يتم الاحتفاظ أو تسجيل نسخة من الوثيقة من قبل المحكمة.\nإذا لم يتم استيفاء شروط تنفيذ المهمة، فيمكن للموظف القضائي رفض توقيعها.\nيجب على القاضي المسؤول عن الرعاية أن يتولى مهمة الفصل في النزاع.\nلا توجد جلسة استماع.\nلا يمكن الطعن في قرار القاضي.",
+        "titre": "كيف يتم تنفيذ أمر الحماية المستقبلي؟"
+       },
+       {
+        "texte": "يقوم الوكيل بتنفيذ المهام الموكلة إليه وفقًا لما هو محدد في الوكالة، وبما يتفق مع رغبة الموكل.\nيمكن أن يغطي التوجيه الوقائي المستقبلي إدارة الأصول والممتلكات، أو إدارة الشخص المعني.\nيمكن للمُكلّف تحديد رغباته فيما يتعلق بمكان إقامته، وصحته، وهواياته، والحيوانات التي يمتلكها، وعلاقاته الشخصية.\nيمكن للممثل أن يقوم بجميع المعاملات المتعلقة بالممتلكات التي يتمتع الوصي بسلطة القيام بها بمفرده.\nفيما يتعلق بإجراءات نقل الملكية، يجب على الوكيل الحصول على موافقة القاضي المسؤول عن الإشراف على حالة الشخص المعين.\nيجب على الوكيل إعداد قائمة بالممتلكات و التأكد من تحديثها.\nبصفتها مهمة رسمية، يجب عليه إعداد وتقديم كشوف الحسابات الإدارية سنويًا إلى المحامي.\nيجب أن يكون متاحًا قائمة المخزون، بالإضافة إلى آخر 5 كشوفات حسابات.\nوهذا يعني: يمكن للممثل أن يرفض المهمة الموكلة إليه، وذلك بإبلاغ الطرف الذي وكل إليه المهمة.",
+        "titre": "ما هي المهام والالتزامات التي يتحملها الوكيل الذي ينفذ وكالة حماية مستقبلية؟"
+       },
+       {
+        "texte": "تختلف عملية المراجعة حسب طبيعة المهمة:\nمثال: وثيقة تفويض موقعة بخط يد\nيجب على الشخص الذي طلب الخدمة أن يحدد شخصًا مسؤولًا عن مراقبة عمل الوكيل.\nقد يكون ذلك شخصًا طبيعيًا (مثل أحد الأقارب أو المهنيين)، أو كيانًا قانونيًا (مثل منظمة حماية).\nيجب أن يتضمن التوجيه تفاصيل إجراءات تدقيق الحسابات.\nفي حال وجود أي مشكلة، يمكن للشخص المسؤول عن الرقابة، أو الشخص الذي طلب التوجيه، أو طرف ثالث، إبلاغ القاضي المسؤول عن التوجيه كتابةً. يمكن للشخص المسؤول عن الرقابة أو الشخص الذي طلب التوجيه أو الطرف الثالث إبلاغ القاضي بأي تحركات مالية مشبوهة أو غير متوافقة مع ما ورد في التوجيه.\nمثال: وثيقة رسم توثيقية\nيقوم المحامي بمراجعة عمل الوكيل من خلال تقديم قائمة الأصول، وبيانات الحسابات، والوثائق الداعمة.\nيتولى المحامي مسؤولية الحفاظ على الوثائق وتحديثها.\nفي حال وجود أي مشكلة، يمكن للمحامِ أن يتقدم إلى قاضي التصفية كتابةً، وذلك بسبب وجود تحركات مالية مشبوهة أو غير مبررة أو لا تتوافق مع الإجراءات المنصوص عليها في الوصية.",
+        "titre": "كيف يتم تحديد وتطبيق أمر الحماية المستقبلي؟"
+       },
+       {
+        "texte": "يمكن للممثل أن يتحمل مسؤولية مدنية، وفي بعض الحالات، جنائية، إذا ارتكب أخطاء أثناء أداء مهمته، كما هو محدد في العقد.\nقد يكون ذلك نتيجة لإهمال، يؤدي إلى الإضرار بمصالح المُكلّف، أو بسبب سوء التنفيذ، أو بسبب خطأ ناتج عن سوء إدارة الحسابات.\nيمكن للقاضي المسؤول عن الرعاية أو النائب العام أن يتم استدعاؤهما، كتابةً، من قبل مقدم الطلب أو أقاربه أو أي شخص آخر، للإبلاغ عن هذه المخالفات.\nإذا كانت تصرفات الوكيل تشكل جريمة (مثل استغلال ضعف الطرف الآخر أو إساءة استخدام الثقة)، فيمكن للمحامي العام أن يرفع دعوى جنائية ضده.\nإذا كان الوكيل مسؤولاً قانونياً عن إلحاق ضرر (خسارة مالية، سوء إدارة...) بالشخص الذي وكل إليه المهمة، فقد يُحكم عليه بتعويض الضرر، وذلك عن طريق دفع تعويضات واهتمام.",
+        "titre": "ما هي مسؤوليات الوكيل؟"
+       },
+       {
+        "texte": "يمكن إلغاء أو تعديل أمر الحماية في أي وقت.\nتختلف الإجراءات حسب ما إذا تم تنفيذ المهمة أم لا:\nمثال: لم يتم تنفيذ القرار.\nطالما لم يتم تنفيذ الوثيقة، يمكن إلغاؤها أو تعديلها في أي وقت، سواء كانت وثيقة مصدقة من قبل كاتب أو وثيقة موقعة بشكل خاص.\nإن إلغاء أو تعديل القرار أمر متاح.\nيمكن أن يتم ذلك كتابةً، على ورقة خالية وموقعة، أو عن طريق وثيقة رسمية مصدقة من محكمة.\nيجب إعلام الوكيل بهذه التغييرات.\nلا يوجد أي متطلبات رسمية، ولكن يجب أن يكون هناك دليل على أن الوكيل قد تم إخطاره بشكل صحيح.\nمثال: تم تنفيذ القرار.\nيمكن طلب سحب أو تعديل الوكالة من قبل الوكيل، أو من قبل ممثل عن الوكيل، أو من قبل أحد الأقارب، أو من قبل محامي الجمهورية.\nيجب تقديم طلب الإلغاء أو التعديل كتابيًا إلى قاضي التصفية.\n→ إلى أين يتم التوجه: المحكمة القضائية أو المحكمة المحلية\nوهذا يعني: إذا أراد الوكيل التوقف عن ممارسة مهامه، فيجب عليه إبلاغ المحامي والطرف الذي عينوه، مع تقديم دليل على أنهم تم إبلاغهم بذلك.",
+        "titre": "كيف يتم إلغاء أو تعديل وصية الحماية المستقبلية؟"
+       },
+       {
+        "texte": "تنتهي مهمة الحماية المستقبلية في إحدى الحالات التالية:\n- يستعيد الشخص قدراته العقلية. إذا كان الموكل لا يزال قيد التنفيذ، فيجب عليه طلب تدخل القاضي المسؤول لإنهائه.\n- تم إبلاغ القاضي المسؤول عن الرقابة بمشكلة تتعلق بتنفيذ أو تطبيق أمر المحكمة.\n- يصدر القاضي المسؤول قرارًا بإلغاء وكيل الحماية.\n- يصدر قاضي الحماية قرارًا بفتح إجراء الإشراف أو الحماية.\n- الشخص يموت.",
+        "titre": "متى تنتهي مدة الحماية المستقبلية؟"
+       },
+       {
+        "texte": "تختلف تكلفة الحصول على حماية مستقبلية وتنفيذها حسب شكلها:\nمثال: وثيقة تفويض موقعة بخط يد\nإن كتابة الوثيقة الرسمية (المندات) مجانية.\nيجب دفع رسوم محامٍ لعمل التوقيع المرفق (رسوم تحددها المحاماة بشكل مستقل).\nتعتبر رسوم التسجيل لدى مكتب الضرائب الذي يتبع له عنوان الموكل 125 يورو.\nلتنفيذ هذا القرار، فإن تكلفة الحصول على الشهادة الطبية اللازمة ستكون على عاتق الشخص الذي طلب ذلك.\nومع ذلك، لا يتم فرض أي رسوم عند إصدار الوثيقة من قبل مكتب المحكمة المختصة.\nيمارس الوكيل والمسؤول عن الرقابة مهمته مجاناً، إلا إذا نصّ الموكل على مكافأته أو تعويضه.\nمثال: وثيقة رسم توثيقية\nيجب دفع رسوم المحكمة، والتي تشمل إعداد الوثيقة الرسمية وتسجيلها لدى دائرة الضرائب.\nلتنفيذ المهمة، فإن تكلفة الشهادة الطبية التفصيلية هي مسؤولية الشخص الذي طلب المهمة.\nومع ذلك، لا يتم فرض أي رسوم عند إصدار الوثيقة من قبل مكتب المحكمة المختصة.\nيقوم الوكيل والشخص المسؤول عن الإشراف على مهمته دون مقابل، إلا إذا نصّ الاتفاق على مكافأته أو تعويضه.",
+        "titre": "ما هو تكلفة الحصول على أمر حماية مستقبلي وتنفيذه؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F16670",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16670",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 69.2,
+      "units": 135
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T09:08:52.284Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Zukünftige Schutzmandat",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 96.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Wenn Sie möchten, sich im Voraus vorzubereiten und eine mögliche Einschränkung Ihrer Selbstständigkeit zu vermeiden, können Sie eine Vollmacht für die zukünftige Betreuung erstellen.",
+      "steps": [
+       {
+        "texte": "Sie möchten die Sicherheit Ihrer Person und Ihrer Vermögenswerte im Voraus planen und organisieren und eine Person bestimmen, die diese Aufgabe übernehmen soll? Sie können, während Sie noch in der Lage sind, einen Vertrag zu erstellen, der als \"Vertrag über zukünftige Vorsorge\" bezeichnet wird. Dieser Vertrag kann verschiedene Formen annehmen und somit unterschiedliche Auswirkungen haben. Wir stellen Ihnen die notwendigen Informationen zur Verfügung.",
+        "titre": null
+       },
+       {
+        "texte": "Das zukünftige Betreuungsvertrag ist ein Vertrag, durch den eine Person, der Mandant, im Voraus seine Abhängigkeit regelt.\nDer Auftraggeber bestimmt eine oder mehrere Personen, die als Bevollmächtigte fungieren, um ihn zu vertreten, wenn er aufgrund einer körperlichen oder geistigen Beeinträchtigung nicht mehr in der Lage ist, seine Interessen selbst zu vertreten.\nEs wird ohne die Einmischung des Betreuungsrichters festgestellt.\nDie zukünftige Schutzanordnung kann dazu dienen, eine Person, ihre Besitztümer oder beides zu schützen.\nDies kann sich auch auf einen begrenzten Teil des Vermögens beziehen.\nDie zukünftige Schutzanordnung entzieht weder dem Auftraggeber seine Rechte noch seine rechtliche Handlungsfähigkeit.",
+        "titre": "Was ist eine zukünftige Schutzanordnung?"
+       },
+       {
+        "texte": "Die zukünftige Schutzvorkaufsvereinbarung kann von jeder Person geschlossen werden, unabhängig vom Alter (erwachsen oder emancipierter Minderjähriger) und ohne, dass eine Vormundschaft oder eine familiäre Betreuung besteht.\nEine Person, die unter Aufsicht steht, kann einen zukünftigen Schutzvertrag abschließen, jedoch nur mit der Zustimmung ihres Betreuers.\nKonkret bedeutet dies: Das zukünftige Schutzmandat kann auch von Eltern für ihr Kind (Minderjähriges oder Erwachsenes) verwendet werden, das an einer Krankheit leidet oder bereits eine Behinderung hat. So können die Eltern im Voraus eine oder mehrere Personen bestimmen, die ihren Kind vertreten, wenn sie nicht mehr in der Lage sind, dessen Interessen zu vertreten (z. B. im Alter oder im Todesfall).",
+        "titre": "Wer kann eine zukünftige Schutzmandat ausstellen?"
+       },
+       {
+        "texte": "Der Vertreter muss volljährig sein oder ein minderjähriger, der bereits emancipiert ist.\nEr muss rechtlich in der Lage sein, das heißt, er darf nicht durch eine rechtliche Schutzmaßnahme geschützt werden.\nDies kann eine natürliche Person (z. B. Familienmitglieder, Freunde oder Kollegen) sein, die von der zu schützenden Person ausgewählt wurde.\nEs kann sich auch um eine juristische Person handeln, die in der Liste der juristischen Vertreter für den Schutz von Personen eingetragen ist.\nDiese Liste ist bei préfecture (staatliche Verwaltung des Départements) verfügbar.\n→ Wo man sich wenden sollte: Préfecture\nDas bedeutet: Während der gesamten Ausführung des Mandats muss der Vertreter die rechtliche Vertretungsfähigkeit besitzen.",
+        "titre": "Wer kann als Vertreter fungieren?"
+       },
+       {
+        "texte": "Die zukünftige Schutzvereinbarung kann entweder durch einen privatrechtlichen Vertrag oder durch einen notariell beglaubigten Vertrag abgeschlossen werden.\nFall: Vollmacht mit privater Unterschrift\nEin Mandat, das schriftlich und unter Privatunterschrift von Auftraggeber und Vertreter ausgefertigt wird, muss nicht notariell beglaubigt werden.\nDies kann schriftlich erfolgen, wobei die Unterschrift eines Rechtsanwalts erforderlich ist.\nAndernfalls kann es mit dem folgenden Formular erstellt werden:\n→ Online-Service: Antrag auf zukünftigen Schutz\nDie Beauftragung muss die Benennung der Person vorsehen, die für die Überwachung der Tätigkeit des Beauftragten verantwortlich ist.\nDamit die Bestellung nicht angefochten werden kann, muss sie registriert werden, um ihr einen bestimmten Zeitpunkt zu geben.\nDie Anmeldung erfolgt per Post an die Steuerbehörden an der Adresse des Auftraggebers.\nEs ist notwendig, so viele Originalexemplare zu erstellen, wie es Mandanten gibt.\nDie Steuerbehörde verwahrt außerdem eine Originalkopie, die zum Zeitpunkt der Registrierung aufbewahrt wird.\nEine Kopie aller Originaldokumente muss für jede Person, die für die Überprüfung des Mandats zuständig ist, eingereicht werden.\nDie Unterzeichnung des Mandats durch den Bevollmächtigten stellt die Annahme der ihm übertragenen Aufgabe dar.\n→ An wen: Dienst für Grundbuch und Eintragung\nFall: Notarielle Vollmacht\nEin zukünftiges Schutzmandat, das von einem Notar erstellt wurde, ist ein rechtsgültiges Dokument.\nEs wird in Anwesenheit des Auftraggebers und des Bevollmächtigten erstellt.\nDie Anwesenheit des Bevollmächtigten gilt als Zustimmung zu seiner Aufgabe.\n→ An wen: Notar",
+        "titre": "Wie erstellt man eine zukünftige Vollmacht?"
+       },
+       {
+        "texte": "Je nach der gewählten Form können die Auswirkungen des Mandats unterschiedlich sein.\nFall: Vollmacht mit privater Unterschrift\nWenn die Beauftragung in Form eines privaten Dokuments erfolgt, beschränkt sich die Verwaltung des Vermögens auf die Verwaltungsakte. Das bedeutet eine allgemeine Vermögensverwaltung, wie sie ein Vormund ohne Zustimmung des Betreuungsrichters durchführen kann.\nFür alle Handlungen im Zusammenhang mit dem Vermögensmanagement muss der Bevollmächtigte die Zustimmung des Betreuungsrichters einholen.\nFall: Notarielle Vollmacht\nDiese Vollmacht ermöglicht es, dem Bevollmächtigten größere Befugnisse und die vollständige Verwaltung des Vermögens des Auftraggebers zu übertragen.\nDer Vertreter kann Verwaltungs- und Vermögensverwaltungsmaßnahmen durchführen, beispielsweise den Verkauf des Immobilienobjekts oder die Verpachtung.",
+        "titre": "Welche Auswirkungen hat eine zukünftige Schutzanordnung?"
+       },
+       {
+        "texte": "Die zukünftige Schutzanordnung hat keine Wirkung, solange sie nicht aktiviert wurde.\nDer Ablauf der Umsetzung des Mandats ist unabhängig von der Form des Mandats gleich.\nWenn der Auftraggeber nicht mehr in der Lage ist, seine eigenen Interessen selbst zu vertreten, muss der Vertreter ein ärztliches Attest erstellen lassen, das von einem Facharzt erstellt wurde.\nDieser Arzt ist in einer von der Staatsanwaltschaft erstellten Liste aufgeführt. Diese Liste umfasst oft Psychiater, Geriatrie-Ärzte, Neurologen und gelegentlich auch Allgemeinmediziner.\nDiese medizinische Expertise wird den Grad der Beeinträchtigung der kognitiven und körperlichen Fähigkeiten der Person feststellen.\nDer Auftraggeber und der Beauftragte müssen persönlich beim zuständigen Amtsgericht für geschützte Personen erscheinen, das dem Wohnort des Auftraggebers zugeordnet ist.\nDer Auftraggeber muss nicht vor Gericht erscheinen, wenn ein ärztliches Attest nachweist, dass seine Anwesenheit aufgrund seines Gesundheitszustands unvereinbar ist. Der Auftraggeber wird dann per Einschreiben mit Rückschein über die Ausführung des Auftrags informiert.\n→ Wo man sich wenden sollte: Amtsgericht oder örtliches Gericht\nDie vorzulegenden Dokumente (die sogenannten \"Akten\") sind:\n- Original des Mandats\n- Detailliertes ärztliches Attest, das vor mindestens 2 Monaten ausgestellt wurde\n- Identitätsnachweis für jede Partei\n- Nachweis des Wohnsitzes des Auftraggebers oder ein Nachweis über den regelmäßigen Wohnsitz.\nNach Prüfung der Dokumente unterschreibt der Sachbearbeiter jede Seite des Dokuments.\nEr erwähnt am Ende des Dokuments, dass der Mandat ab diesem Datum wirksam wird, und unterschreibt es anschließend.\nDies ermöglicht es, dem Mandat einen bestimmten Zeitpunkt zu geben. Es geht um die Zertifizierung des Mandats.\nDer Vertreter erhält die entsprechende Vollmacht und die angeforderten Unterlagen.\nEr muss dann jede Bank und jedes Finanzinstitut über die Ausführung des Mandats informieren und ihnen eine Kopie des Mandats zur Verfügung stellen, damit sie im Namen des Auftraggebers handeln können.\nBitte beachten: Das Gerichtspersonal verwahrt oder dokumentiert keine Kopien des Mandats.\nWenn die Bedingungen für die Ausführung des Mandats nicht erfüllt sind, kann der Beamte die Ausstellung einer Urkunde verweigern.\nDer Betreuer-Richter muss hinzugezogen werden, um den Streit zu schlichten.\nEs gibt keine öffentliche Anhörung.\nDie Entscheidung des Richters ist nicht anfechtbar.",
+        "titre": "Wie kann die zukünftige Schutzanordnung umgesetzt werden?"
+       },
+       {
+        "texte": "Der Vertreter führt die ihm übertragenen Aufgaben gemäß den Bestimmungen des Mandats und nach den Wünschen des Auftraggebers aus.\nDie zukünftige Betreuungsbefugnis kann sich auf die Verwaltung des Vermögens und/oder der persönlichen Angelegenheiten beziehen.\nDer Auftraggeber kann seine Wünsche bezüglich seines Wohnens, seiner Gesundheit, seiner Freizeitaktivitäten, seiner Haustiere und seiner persönlichen Beziehungen angeben.\nDer Vertreter kann alle Vermögensgeschäfte durchführen, die der Erziehungsberechtigte allein durchführen darf.\nFür die Vermögensverfügungen ist die Zustimmung des Betreuungsrichters erforderlich.\nDer Vertreter ist verpflichtet, eine Bestandsaufnahme des Vermögens zu erstellen und diese auf dem neuesten Stand zu halten.\nIm Rahmen einer notariellen Beauftragung ist er verpflichtet, jährlich eine Geschäftsbilanz aufzustellen und diese dem Notar vorzulegen.\nEr muss die Inventarliste und die letzten 5 Finanzberichte zur Verfügung stellen.\nDas bedeutet: Der Vertreter kann die ihm übertragenen Aufgaben ablehnen, indem er den Auftraggeber darüber informiert.",
+        "titre": "Welche Aufgaben und Pflichten hat der Vertreter, der einen Mandat für die zukünftige Vermögensverwaltung ausführt?"
+       },
+       {
+        "texte": "Die Überprüfung unterscheidet sich je nach Art des Mandats:\nFall: Vollmacht mit privater Unterschrift\nDer Auftraggeber muss eine Person benennen, die die Tätigkeit des Beauftragten überwacht.\nEs kann sich um eine natürliche Person (z. B. ein Familienmitglied, ein Fachmann) oder eine juristische Person (z. B. eine Trägerorganisation) handeln.\nDie Beauftragung muss die Modalitäten der Prüfung der Finanzkonten festlegen.\nIm Falle von Problemen kann die Person, die die Überwachung durchführt, der Auftraggeber oder eine dritte Partei den Betreuer über schriftliche Kanäle informieren. Die Person, die die Überwachung durchführt, oder der Auftraggeber oder die dritte Partei können den Betreuer über verdächtige oder nicht den im Auftrag festgelegten Vorgaben entsprechende finanzielle Transaktionen informieren.\nFall: Notarielle Vollmacht\nDer Notar überprüft die Tätigkeit des Bevollmächtigten durch die Überprüfung des Inventars, der Verwaltungsberichte und der entsprechenden Dokumente.\nDer Notar ist für die Aufbewahrung und Aktualisierung verantwortlich.\nIm Falle von Problemen kann der Notar den Betreuer durch schriftliche Mitteilung informieren, insbesondere wenn verdächtige, unbegründete oder nicht den im Mandat festgelegten Vorgaben entsprechende Finanztransaktionen vorliegen.",
+        "titre": "Wie wird die zukünftige Schutzanordnung kontrolliert?"
+       },
+       {
+        "texte": "Der Vertreter kann seine Haftung für Schäden übernehmen und, in bestimmten Fällen, auch strafrechtliche Verantwortung, wenn er Fehler bei der Ausübung seiner Aufgaben, wie sie durch den Vertrag definiert sind, begeht.\nDies kann beispielsweise eine Fahrlässigkeit sein, die die Interessen des Auftraggebers beeinträchtigt, eine mangelhafte Ausführung oder ein Fehler, der auf eine schlechte Verwaltung der Konten zurückzuführen ist.\nDer Betreuer und/oder der Staatsanwalt können schriftlich von dem Auftraggeber, seinen Angehörigen oder einer anderen Person aufgefordert werden, diese Verstöße zu melden.\nWenn die Pflichtverletzung des Bevollmächtigten eine Straftat darstellt (z. B. Ausnutzung einer Schwäche, Missbrauch von Vertrauen), kann der Staatsanwalt Strafanzeigen gegen ihn erheben.\nWenn der Vertreter für einen finanziellen Schaden (Verlust, schlechte Verwaltung usw.) haftet, der dem Auftraggeber entstanden ist, kann er dazu verurteilt werden, den Schaden zu ersetzen, indem er Zinsen und Schadensersatz zahlt.",
+        "titre": "Welche Pflichten hat der Vertreter?"
+       },
+       {
+        "texte": "Die zukünftige Schutzanordnung kann aufgehoben oder geändert werden.\nDie Vorgehensweise unterscheidet sich je nachdem, ob die Anweisung eingehalten wird oder nicht:\nFall: Die Anweisung wurde nicht umgesetzt.\nSolange der Vertrag noch nicht wirksam ist, kann er jederzeit widerrufen oder geändert werden, unabhängig davon, ob es sich um einen notariell beglaubigten Vertrag oder einen privaten Vertrag handelt.\nDie Aufhebung oder Änderung ist freiwillig.\nDies kann schriftlich erfolgen, entweder auf einem eigenhändig unterschriebenen, datierten Papier oder durch eine notarielle Beurkundung.\nDer Vertreter muss über diese Änderungen informiert werden.\nEs gibt keine formellen Vorgaben, aber es muss möglich sein, den Nachweis zu erbringen, dass der Vertreter ordnungsgemäß informiert wurde.\nFall: Die Anordnung wurde umgesetzt.\nDie Rücknahme oder Änderung kann von dem Auftraggeber, dem Beauftragten, einem nahestehenden Familienmitglied oder dem Staatsanwalt beantragt werden.\nDie Bitte um Aufhebung oder Änderung muss schriftlich an den Betreuer gericht werden.\n→ Wo man sich wenden sollte: Amtsgericht oder örtliches Gericht\nDas bedeutet: Wenn der Vertreter seine Tätigkeit nicht mehr ausüben möchte, muss er diese Entscheidung dem Notar und dem Auftraggeber mitteilen und einen Nachweis vorlegen, dass diese informiert wurden.",
+        "titre": "Wie kann eine zukünftige Vormundschaft aufgehoben oder geändert werden?"
+       },
+       {
+        "texte": "Die Schutzanordnung endet in einer der folgenden Situationen:\n- Die Person erlangt ihre geistigen Fähigkeiten zurück. Wenn die Betreuung noch läuft, muss der Betreuer vor Gericht ersucht werden, diese zu beenden.\n- Der Betreuer ist über einen Einspruch informiert, der sich auf die Ausführung oder Umsetzung der Bestellung bezieht.\n- Der Betreuer-Richter erlässt die Aufhebung des Bevollmächtigten.\n- Der Betreuerrichter erlässt eine Anordnung zur Betreuung oder Vormundschaft.\n- Die Person stirbt.",
+        "titre": "Wann endet die zukünftige Schutzperiode?"
+       },
+       {
+        "texte": "Die Kosten für die zukünftige Schutzvereinbarung und deren Ausführung variieren je nach Form:\nFall: Vollmacht mit privater Unterschrift\nDie Erstellung des Mandats ist kostenlos.\nFür die Unterschrift auf dem Originaldokument fallen Anwaltskosten an (die Kosten werden frei vereinbart).\nDie Anmeldegebühren für den zuständigen Finanzamt betragen 125 €.\nFür die Umsetzung der Anordnung ist die Kosten für den entsprechenden ärztlichen Bericht auf die Partei, die die Anordnung erteilt hat, zu Lasten.\nAllerdings entstehen keine Gebühren, wenn das Gericht die Visumausstellung durchführt.\nDer Vertreter und die Person, die für die Überwachung zuständig ist, führen ihre Tätigkeit ehrenamtlich aus, es sei denn, der Auftrag sieht eine Vergütung oder eine Entschädigung für sie vor.\nFall: Notarielle Vollmacht\nEs fallen Notarkosten an, die die Erstellung des notariellen Dokuments sowie dessen Registrierung beim Finanzamt umfassen.\nFür die Umsetzung des Mandats ist die Kosten für den entsprechenden medizinischen Bericht für den Auftraggeber.\nAllerdings entstehen keine Gebühren, wenn das Gericht die Visumausstellung durchführt.\nDer Vertreter und die Person, die für die Überwachung zuständig ist, führen ihre Tätigkeit kostenlos durch, es sei denn, der Auftrag enthält eine Vergütung oder eine Entschädigung für sie.",
+        "titre": "Wie hoch sind die Kosten für eine zukünftige Schutzanordnung und deren Vollzug?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F16670",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16670",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 71.4,
+      "units": 135
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T09:13:16.063Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Запобіжний мандат",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 51.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Якщо ви хочете заздалегідь організувати свою власну захищеність, щоб передбачити можливу втрату самостійності, ви можете оформити довіреність на майбутнє.",
+      "steps": [
+       {
+        "texte": "Ви хочете передбачити та організувати захист себе та своїх майна, а також визначити особу, яка буде відповідати за це? Ви можете зробити це заздалегідь, поки у вас ще є повний контроль над своїми фінансовими можливостями, уклавши договір, який називається \"договір про майбутню захищеність\". Він може мати різні форми, що призводить до різних наслідків. Ми надаємо вам необхідну інформацію.",
+        "titre": null
+       },
+       {
+        "texte": "Майбутній договір про захист – це контракт, за яким особа, яка є замовником, заздалегідь організовує свою залежність.\nЗамовник визначає одну або декілька осіб, яких називають представниками, для того, щоб вони представляли його інтереси у випадках, коли він більше не має можливості самостійно керувати ними, через фізичні або психічні проблеми.\nЦе встановлено без участі судді опікуна.\nМайбутня протекція може бути спрямована на захист особи, її майна або обох.\nЦе також може стосуватися обмеженої частини спадкового майна.\nНовий ордер на захист не позбавляє заявника його прав та юридичної спроможності.",
+        "titre": "Що таке майбутній захисний ордер?"
+       },
+       {
+        "texte": "Угода про захист може бути укладена будь-якою особою, яка досягла повноліття або є опікуном, не перебуваючи під опікою або не маючи сімейного опікуна.\nОсоба, перебуваючи під опікою, може укласти угоду про майбутню опіку лише за згодою її опікуна.\nА саме: Майбутній ордер на захист також може бути використаний батьками для свого дитини (неповнолітнього або дорослого), яка страждає від хвороби або має вже встановлений інвалідність. Це дозволяє батькам заздалегідь призначити одну або декілька осіб, які будуть представляти інтереси їхньої дитини в день, коли вони вже не зможуть самостійно керувати цими інтересами (наприклад, у старості або після смерті).",
+        "titre": "Хто може встановити майбутній захисний ордер?"
+       },
+       {
+        "texte": "Представник повинен бути повнолітньою особою або неповнолітньою, яка має право на самоврядування.\nВін повинен мати юридичну можливість, тобто не перебувати під юридичним захистом.\nЦе може бути фізична особа (член сім'ї, близький друг або колега), обрана особою, яку потрібно захистити.\nЦе також може бути юридична особа, зареєстрована в списку представників, призначених судом для захисту прав та інтересів осіб.\nЦей список можна переглянути в préfecture (державна адміністрація департаменту).\n→ Куди звернутися: Préfecture\nТобто: Під час виконання будь-якої функції, представник повинен мати юридичну дієздатність.",
+        "titre": "Хто може стати представником?"
+       },
+       {
+        "texte": "Майбутній захист може бути оформлений як приватний документ, підписаний сторонами, так і нотаріальним актом.\nПриклад: Доручення, підписане особисто\nДовіреність, складена та підписана сторонами, не потребує нотаріального засвідчення.\nЦе може бути оформлено на звичайному бланку, з обов'язковим зазначенням підпису адвоката.\nАбо ж, можна скласти його за допомогою наступного шаблону:\n→ Онлайн-сервіс: Документ про майбутню захист\nУ договорі має бути передбачено призначення особи, відповідальної за контроль за діяльністю представника.\nЩоб мандат не міг бути оскаржений, його необхідно зареєструвати, щоб встановити його конкретну дату.\nРеєстрація здійснюється поштою до податкових органів за місцем проживання заявника.\nНеобхідно зробити стільки копій оригіналу, скільки є представників.\nОфіс податкової служби також зберігає оригінальний примірник під час реєстрації.\nНеобхідно надіслати копії оригінальних документів для кожної особи, відповідальної за перевірку відповідності.\nПідписання представником договору є підтвердженням його повноважень.\n→ Куди звернутися: Відділ нерухомості та реєстрації\nПриклад: Нотаріальний акт\nДокумент про майбутню захист, підписаний нотаріусом, є офіційним документом.\nВін складається у присутності замовника та представника замовника.\nУчасть представника є підтвердженням його повноважень.\n→ Куди звернутися: Юрист",
+        "titre": "Як встановити майбутній ордер на захист?"
+       },
+       {
+        "texte": "Залежно від обраного способу, ефекти цього розпорядження можуть бути різними.\nПриклад: Доручення, підписане особисто\nКоли договір приймає форму приватного акту, управління майном обмежується лише адміністративними діями щодо управління майном. Тобто, це звичайне управління майном, яке може здійснювати опікун без дозволу судді, який призначає опіку.\nДля всіх дій щодо розпорядження майном, представник повинен отримати схвалення від судді-піклувателя.\nПриклад: Нотаріальний акт\nЦей договір дозволяє передати представнику значно більші повноваження та повний контроль над активами, що належать замовнику.\nПредставник може здійснювати адміністративні та розпорядчі дії щодо майна, наприклад, продавати нерухомість або робити дарування.",
+        "titre": "Які наслідки матиме ордер на захист у майбутньому?"
+       },
+       {
+        "texte": "Новий ордер на захист не має жодного ефекту, поки він не буде активований.\nПроцедура реалізації рішення є однаковою, незалежно від форми, в якій воно було прийнято.\nКоли замовник більше не здатний самостійно керувати своїми інтересами, представник зобов'язаний отримати від лікаря-спеціаліста документ, що підтверджує це.\nЦей лікар включений до списку, створеного прокурором. Зазвичай, це психіатри, гериатри, неврологи, а іноді й загальні лікарі.\nЦя медична експертиза визначить ступінь порушення когнітивних та фізичних здібностей людини.\nЗамовник та виконавець повинні особисто з'явитися до канцелярії служби захисту осіб, які потребують опіки, підпорядкованої до суду, в юрисдикції якого знаходиться місце проживання замовника.\nЗамовник не зобов'язаний з'являтися в суд, якщо медична довідка підтверджує, що його присутність суперечить його стану здоров'я. У такому випадку замовнику буде надіслано повідомлення про виконання доручення рекомендованим листом з повідомленням про отримання.\n→ Куди звернутися: районний суд або місцевий суд\nДокументи (які називаються \"документами\"), які необхідно подати до канцелярії, включають:\n- Копія розпорядження\n- Медична довідка, що містить детальні відомості та датована місяцем, що на 2 місяці тому.\n- Документ, що посвідчує особу кожної сторони.\n- Документ, що підтверджує місце проживання заявника або свідоцтво про постійне проживання.\nПісля перевірки документів, секретар підписує кожну сторінку протоколу.\nВ кінці документа він зазначає, що мандат набуває чинності з цієї дати, а потім ставить на нього свій підпис.\nЦе дозволяє встановити конкретну дату дії мандату. Мова йде про сертифікацію мандату.\nПредставник отримує повноваження та необхідні документи.\nПотім він повинен повідомити кожну адміністрацію та банк, про те, що було надано доручення, та надати їм необхідні документи для здійснення операцій від імені доручителя.\nУвага: Жодна копія ордера не зберігається та не реєструється у канцелярії.\nЯкщо умови реалізації цього розпорядження не виконуються, секретар може відмовитися його виконувати.\nСуддя, відповідальний за опіку, повинен розглянути цю справу, щоб прийняти рішення.\nВін не отримав жодного офіційного рішення.\nРішення судді не може бути оскаржене.",
+        "titre": "Як реалізувати майбутній ордер на захист?"
+       },
+       {
+        "texte": "Представник виконує завдання, які йому доручено, відповідно до умов договору та за бажанням замовника.\nМайбутня опікунська посада може стосуватися управління майном та/або особи.\nЗамовник може вказати свої побажання щодо свого житла, здоров'я, хобі, домашніх тварин та особистих стосунків.\nПредставник може виконувати всі майнові операції, які опікун має право виконувати самостійно.\nЩодо дій щодо розпорядження майном, представник повинен отримати дозвіл від судді-піклувателя.\nПредставник зобов'язаний скласти перелік майна та забезпечити його актуалізацію.\nУ рамках нотаріальної угоди, він зобов'язаний щороку вести облік та представляти його нотаріусу.\nВін повинен надати актуальний перелік та останні 5 фінансових звітів.\nТобто: Представник може відмовитися від доручення, яке йому було надано, шляхом повідомлення про це замовнику.",
+        "titre": "Які завдання та обов'язки має особа, яка виконує довіру щодо захисту майнових прав?"
+       },
+       {
+        "texte": "Контроль відрізняється залежно від характеру посади:\nПриклад: Доручення, підписане особисто\nЗамовник повинен призначити особу, яка буде контролювати діяльність представника.\nЦе може бути фізична особа (наприклад, близька людина, професіонал...) або юридична особа (наприклад, опікунська організація).\nУповноважена особа повинна передбачити порядок проведення перевірки фінансової звітності.\nУ разі виникнення проблем, особа, відповідальна за контроль, замовник або третя особа можуть письмово звернутися до судді опіки. Особа, відповідальна за контроль, замовник або третя особа можуть повідомити суддя про підозрілі або невідповідні фінансові операції, які не відповідають умовам, встановленим у наказі.\nПриклад: Нотаріальний акт\nНотаріус здійснює контроль за діяльністю представника шляхом надання списку активів, бухгалтерських документів та підтверджуючих документів.\nНотаріус відповідає за збереження та оновлення інформації.\nУ разі виникнення проблем, нотарі можуть звернутися до судді опікуна письмово, вказуючи на підозрілі фінансові операції, які не мають обґрунтування або не відповідають умовам, встановленим у наказі.",
+        "titre": "Як здійснюється контроль щодо майбутнього ордера на захист?"
+       },
+       {
+        "texte": "Представник може взяти на себе цивільну та, в певних випадках, кримінальну відповідальність, якщо він допустить помилки під час виконання своїх обов'язків, визначених у договорі.\nЦе може бути результатом недбалості, що завдає шкоди інтересам замовника, неправильного виконання або помилки, пов'язаної з поганим управлінням фінансами.\nСуддя опіки та/або прокурор можуть бути повідомлені письмово заявником, його близькими або будь-якою іншою особою для повідомлення про ці порушення.\nЯкщо дії представника є кримінальним правопорушенням (зловживання владою, зловживання довірою тощо), прокурор може порушити проти нього кримінальну справу.\nЯкщо представник несе цивільну відповідальність за завдану шкоду (фінансові втрати, неправильне управління тощо) від імені замовника, він може бути зобов'язаний відшкодувати цю шкоду, виплативши компенсацію та проценти.",
+        "titre": "Які обов'язки представника?"
+       },
+       {
+        "texte": "Подальше право на захист може бути скасоване або змінене.\nПроцедура відрізняється залежно від того, чи було виконано рішення, чи ні:\nВипадок: Угода не була виконана.\nДоки договір не набув чинності, його можна скасувати або змінити в будь-який момент, незалежно від того, чи це договір, укладений у нотаріальному порядку, чи приватний договір.\nСкасування або внесення змін є вільним.\nЦе може бути у письмовому вигляді, на папері з датою та підписом, або в нотаріальній формі.\nПредставник повинен бути проінформований про ці зміни.\nНемає жодних формальних вимог, але необхідно мати можливість надати докази того, що представник був належним чином повідомлений.\nВипадок: Завдання було виконано.\nСкасування або зміну може запросити замовник, представник, близька особа або прокурор.\nПрохання про скасування або внесення змін має бути подано письмово до судді-піклувателя.\n→ Куди звернутися: районний суд або місцевий суд\nТобто: Якщо представник більше не бажає виконувати свою місію, він повинен повідомити про це нотаріуса та замовника, надавши докази того, що вони були проінформовані.",
+        "titre": "Як скасувати або змінити майбутній ордер на захист?"
+       },
+       {
+        "texte": "Термін захисного ордера закінчується в одній із наступних ситуацій:\n- Людина відновлює свої когнітивні здібності. Якщо призначення виконується, необхідно звернутися до судді-піклувальника, щоб він його припинив.\n- Суд, що здійснює нагляд, отримує скаргу щодо реалізації або виконання розпорядження.\n- Суд, який здійснює нагляд, скасовує призначення представника.\n- Суд, який здійснює нагляд, ухвалює рішення про призначення опіки або сурогатного опікунства.\n- Людина померла.",
+        "titre": "Коли закінчиться термін дії захисту?"
+       },
+       {
+        "texte": "Вартість майбутнього захисного ордера та його виконання варіюється залежно від його форми:\nПриклад: Доручення, підписане особисто\nПідготовка документа про призначення є безкоштовною.\nНеобхідно сплатити витрати на підписання контракту (вартість визначається самостійно).\nВартість реєстрації у податкову службу, до якої належить місце проживання заявника, становить 125 євро.\nДля реалізації цього розпорядження, вартість медичної довідки, підтвердженої документально, несе відповідальність замовник.\nОднак, при отриманні візи, виданої судовим виконавчим органом, плата не стягується.\nПредставник та особа, відповідальна за контроль, виконують свою роботу безкоштовно, за винятком випадків, коли договір передбачає їхню оплату або компенсацію.\nПриклад: Нотаріальний акт\nНеобхідно сплатити нотаріальні витрати, які включають складання нотаріальної довіреності та її реєстрацію в податковій службі.\nДля реалізації цього завдання, вартість отримання необхідного медичного висновку несе відповідальний за його отримання.\nОднак, при отриманні візи, виданої судовим виконавчим органом, плата не стягується.\nПредставник та особа, відповідальна за контроль, виконують свою функцію безкоштовно, за винятком випадків, коли договір передбачає їхню оплату або компенсацію.",
+        "titre": "Яка вартість отримання майбутнього захисного ордера та його виконання?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F16670",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16670",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69,
+      "units": 135
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:4fbcbc297f8400f7de9f24dc03a1aec5b86eb91c68a35ac08a52bad5f844c6c5",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Mandat de protection future",
+   "contenu_json": {
+    "intro": "Si vous voulez organiser à l’avance votre propre protection afin d’anticiper une possible perte d’autonomie, vous pouvez établir un mandat de protection future.",
+    "steps": [
+     {
+      "texte": "Vous voulez anticiper et organiser la protection de votre personne et de vos biens et désigner la personne qui en aura la charge ? ? Vous pouvez, à l’avance, pendant que vous êtes encore en pleine possession de vos moyens, établir un contrat appelé mandat de protection future. Il peut prendre plusieurs formes, produisant ainsi des effets différents. Nous vous présentons les informations à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "Le mandat de protection future est un contrat par lequel une personne, appelée mandant, organise à l’avance sa dépendance.\nLe mandant désigne une ou plusieurs personnes, appelées mandataires, pour le représenter le jour où il n’a plus la capacité de gérer ses intérêts, en raison d’une altération physique ou mentale.\nIl est établi sans l’intervention du juge des tutelles.\nLe mandat de protection future peut servir à protéger la personne, ses biens ou les deux à la fois.\nIl peut porter également sur une part limitée du patrimoine.\nLe mandat de protection future ne fait perdre ni les droits, ni la capacité juridique du mandant.",
+      "titre": "Qu’est-ce que le mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandat de protection future peut être conclu par toute personne, majeure ou mineur émancipé, ne faisant pas l’objet d’une mesure de tutelle ou d’une habilitation familiale.\nUne personne placée sous curatelle peut conclure un mandat de protection future, uniquement avec l’accord de son curateur.\nÀ savoir : Le mandat de protection future peut également être utilisé par les parents pour leur enfant (mineur ou majeur) à charge, qui souffre d'une maladie ou qui a un handicap déjà identifié. Il permet donc aux parents de désigner à l'avance une ou plusieurs personnes pour représenter leur enfant le jour où ils ne seront plus en capacité de gérer ses intérêts (vieillesse, décès par exemple).",
+      "titre": "Qui peut conclure un mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandataire doit être majeur ou mineur émancipé.\nIl doit être capable juridiquement, c’est-à-dire ne pas être sous une mesure de protection juridique.\nIl peut s’agir d’une personne physique (famille, proche ou professionnel...) choisie par la personne à protéger.\nIl peut également s’agir d’une personne morale inscrite sur la liste des mandataires judiciaires à la protection des personnes.\nCette liste est consultable auprès de la préfecture.\n→ Où s'adresser : Préfecture\nÀ savoir : Pendant toute l’exécution du mandat, le mandataire doit avoir la capacité juridique.",
+      "titre": "Qui peut devenir mandataire ?"
+     },
+     {
+      "texte": "Le mandat de protection future peut s’établir soit par acte sous signature privée, soit par acte notarié.\nCas : Mandat sous signature privée\nLe mandat par acte sous signature privée est rédigé et signé entre le mandant et le mandataire, sans passer devant un notaire.\nIl peut se faire sur papier libre, avec l’obligation d’apposer la contresignature d’un avocat.\nSinon, il peut être rédigé à l’aide du formulaire suivant :\n→ Service en ligne : Mandat de protection future\nLe mandat doit prévoir la désignation de la personne en charge du contrôle de l’activité du mandataire.\nPour que le mandat ne soit pas contestable, il doit être enregistré afin de lui donner date certaine.\nL’enregistrement se fait par voie postale auprès des services des impôts du domicile du mandant.\nIl faut établir autant d’exemplaires en original qu’il y a de mandataires.\nLe service des impôts conserve également, un exemplaire original, au moment de l’enregistrement.\nUne copie des originaux devra être transmise pour chaque personne chargée du contrôle du mandat.\nLa signature du mandat par le mandataire vaut acceptation de sa mission.\n→ Où s'adresser : Service de la publicité foncière et de l'enregistrement\nCas : Mandat notarié\nLe mandat de protection future rédigé par un notaire est un acte authentique.\nIl est rédigé en présence du mandant et du mandataire.\nLa présence du mandataire vaut acceptation de sa mission.\n→ Où s'adresser : Notaire",
+      "titre": "Comment établir un mandat de protection future ?"
+     },
+     {
+      "texte": "Selon la forme choisie, les effets du mandat sont différents.\nCas : Mandat sous signature privée\nLorsque le mandat prend la forme d’un acte sous signature privée, la gestion des biens se limite uniquement aux actes d’administration du patrimoine. C’est-à-dire à une gestion courante du patrimoine comme ce qu’un tuteur peut faire sans autorisation du juge des tutelles.\nPour tous les actes de disposition du patrimoine, le mandataire devra obtenir l’accord du juge des tutelles.\nCas : Mandat notarié\nCe mandat permet de confier au mandataire des pouvoirs plus importants et une gestion complète du patrimoine du mandant.\nLe mandataire pourra faire des actes d’administration et de disposition du patrimoine, comme par exemple, vendre le bien immobilier ou faire une donation.",
+      "titre": "Quels sont les effets du mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandat de protection future ne produit aucun effet tant qu’il n’a pas été activé.\nLa procédure de mise en œuvre du mandat est identique peu importe la forme du mandat.\nLorsque le mandant n’est plus en état de gérer seul ses intérêts, le mandataire doit faire établir un certificat médical circonstancié par un médecin spécialisé.\nCe médecin est inscrit sur une liste établie par le procureur de la République. Il s’agit souvent de psychiatres, de gériatres, de neurologues, parfois des médecins généralistes.\nCette expertise médicale va déterminer le degré d’altération des facultés mentales et physiques de la personne.\nLe mandant et le mandataire doivent se présenter, en personne, au greffe du service des majeurs protégés du tribunal judiciaire dont dépend le domicile du mandant.\nLe mandant n’a pas à se rendre au tribunal s’il est établi par le certificat médical que sa présence est incompatible avec son état de santé. Le mandant sera alors informé de la mise en œuvre du mandat par lettre recommandée avec avis de réception.\n→ Où s'adresser : Tribunal judiciaire ou tribunal de proximité\nLes documents (appelés pièces) à présenter au greffe sont les suivants :\n- Original du mandat\n- Certificat médical circonstancié et datant de mois de 2 mois\n- Pièce d’identité pour chacune des parties\n- Justificatif de domicile du mandant ou certificat de résidence habituelle.\nAprès vérification des pièces, le greffier paraphe chaque page du mandat.\nIl mentionne en fin d’acte que le mandat prend effet à compter de ce jour, puis y appose un visa.\nCela permet de donner date certaine au mandat. On parle de certification du mandat.\nLe mandataire récupère le mandat visé et les pièces demandées.\nIl doit ensuite informer chaque administration et établissement bancaire de la mise en œuvre du mandat, en le présentant pour pouvoir agir au nom du mandant.\nAttention : Aucune copie du mandat n’est conservée ou enregistrée par le greffier.\nSi les conditions de mise en œuvre du mandat ne sont pas remplies, le greffier peut refuser de le viser.\nLe juge des tutelles devra être saisi pour trancher le litige.\nIl statue sans audience.\nLa décision du juge ne peut pas faire l’objet d’un recours.",
+      "titre": "Comment mettre en oeuvre le mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandataire exécute les missions qui lui sont confiées conformément à ce qui est prévu dans le mandat et selon la volonté du mandant.\nLe mandat de protection future peut porter sur la gestion du patrimoine et/ou de la personne.\nLe mandant peut indiquer ses souhaits concernant son logement, sa santé, ses loisirs, ses animaux et ses relations personnelles.\nLe mandataire peut accomplir tous les actes patrimoniaux que le tuteur a le pouvoir d’accomplir seul.\nPour les actes de disposition du patrimoine, le mandataire doit obtenir l’autorisation du juge des tutelles.\nLe mandataire a l’obligation de dresser un inventaire du patrimoine et d’en assurer son actualisation.\nDans le cadre d’un mandat notarié, il doit établir chaque année des comptes de gestion et les présenter au notaire.\nIl doit tenir à disposition l’inventaire et les 5 derniers comptes de gestion.\nÀ savoir : Le mandataire peut renoncer à la mission qui lui confiée en le notifiant au mandant.",
+      "titre": "Quelles sont les missions et les obligations du mandataire qui exécute un mandat de protection future ?"
+     },
+     {
+      "texte": "Le contrôle diffère en fonction de la nature du mandat :\nCas : Mandat sous signature privée\nLe mandant doit désigner une personne chargée de contrôler la mission du mandataire.\nIl peut s’agir d’une personne physique (un proche, un professionnel...) ou d’une personne morale (par exemple, association tutélaire).\nLe mandat doit prévoir les modalités du contrôle des comptes de gestion.\nEn cas de problème, la personne chargée du contrôle, le mandant ou un tiers peut saisir, par écrit, le juge des tutelles. La personne chargée du contrôle ou le mandant ou le tiers peut porter à la connaissance du juge des mouvements financiers suspects ou non conformes aux actes prévus par le mandat.\nCas : Mandat notarié\nLe notaire contrôle l’activité du mandataire par la remise de l’inventaire, des comptes de gestion et des pièces justificatives.\nLe notaire en assure la conservation et l’actualisation.\nEn cas de problème, le notaire peut saisir, par écrit le juge des tutelles, pour cause de mouvements financiers suspects, non justifiés ou non conformes aux actes prévus par le mandat.",
+      "titre": "Comment est contrôlé le mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandataire peut engager sa responsabilité civile et dans certains cas, pénale, s’il commet des fautes dans l’exercice de sa mission, définie par le mandat.\nIl peut s’agir d’une négligence, portant atteinte aux intérêts du mandant, d’une mauvaise exécution ou d’une faute liée à une mauvaise gestion des comptes.\nLe juge des tutelles et/ou le procureur de la République peuvent être saisis, par écrit, par le mandant, ses proches ou toute autre personne, pour dénoncer ces manquements.\nSi la faute du mandataire constitue une infraction pénale (abus de faiblesse, abus de confiance...), le procureur de la République pourra engager des poursuites pénales à son encontre.\nSi le mandataire est responsable civilement d’un préjudice (perte financière, mauvaise gestion...) à l’égard du mandant, il peut être condamné à réparer le dommage, en versant des dommages et intérets.",
+      "titre": "Quelle est la responsabilité du mandataire ?"
+     },
+     {
+      "texte": "Le mandat de protection future peut être révoqué ou modifié.\nLa procédure diffère en fonction de la mise en œuvre ou non du mandat :\nCas : Le mandat n’a pas été mis en oeuvre\nTant que le mandat n’a pas pris effet, il est révocable ou modifiable à tout moment, peu importe qu’il s’agisse d’un mandat notarié ou sous signature privée.\nLa révocation ou la modification est libre.\nElle peut se faire par écrit, sur papier libre daté et signé ou par acte notarié.\nLe mandataire doit être informé de ces changements.\nAucun formalisme n’est imposé, mais il faut pouvoir rapporter la preuve que le mandataire a bien été averti.\nCas : Le mandat a été mis en oeuvre\nLa révocation ou la modification peut être demandée par le mandant, le mandataire, un proche ou le procureur de la République.\nLa demande de révocation ou de modification doit être adressée, par écrit, au juge des tutelles.\n→ Où s'adresser : Tribunal judiciaire ou tribunal de proximité\nÀ savoir : Si le mandataire ne souhaite plus exercer sa mission, il doit notifier sa décision au notaire et au mandant, en rapportant la preuve qu’ils ont bien été informés.",
+      "titre": "Comment révoquer ou modifier le mandat de protection future ?"
+     },
+     {
+      "texte": "Le mandat de protection future prend fin dans l’une des situations suivantes :\n- La personne retrouve ses facultés mentales. Si le mandat est en cours d’exécution, il faut saisir le juge des tutelles pour qu’il y mette fin.\n- Le juge des tutelles est saisi d’une contestation portant sur la mise en œuvre ou l’exécution du mandat\n- Le juge des tutelles prononce la révocation du mandataire\n- Le juge des tutelles prononce l’ouverture d’une mesure de curatelle ou de tutelle.\n- La personne décède.",
+      "titre": "Quand prend fin le mandat de protection future ?"
+     },
+     {
+      "texte": "Le coût du mandat de protection future et de son exécution varie selon sa forme :\nCas : Mandat sous signature privée\nLa rédaction du mandat est gratuite.\nDes frais d’avocat sont dus pour la contresignature (honoraires fixés librement).\nLes frais d’enregistrement auprès, du service des impôts dont dépend le domicile du mandant, sont de 125 €.\nPour la mise en oeuvre du mandat, le coût du certificat médical circonstancié est à la charge du mandant.\nToutefois, aucun frais n’est requis lors de l’apposition du visa par le greffe du juge des tutelles.\nLe mandataire et la personne en charge du contrôle, exercent leur mission à titre gratuit, sauf si le mandat prévoit leur rémunération ou leur indemnisation.\nCas : Mandat notarié\nDes frais de notaire incluant la rédaction du mandat notarié et son enregistrement auprès du service des recettes des impôts sont dus.\nPour la mise en œuvre du mandat, le coût du certificat médical circonstancié est à la charge du mandant.\nToutefois, aucun frais n’est requis lors de l’apposition du visa par le greffe du juge des tutelles.\nLe mandataire et la personne en charge du contrôle exercent leur mission à titre gratuit, sauf si le mandat prévoit leur rémunération ou leur indemnisation.",
+      "titre": "Quel est le coût d’un mandat de protection future et de son exécution ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

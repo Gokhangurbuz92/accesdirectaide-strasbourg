@@ -1,0 +1,458 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "enfant-victime-de-maltraitance-f952",
+ "recordId": "32da7f29-ae40-45b4-88e9-df4af2ca410e",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T11:33:05.617Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Child who has been abused",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 52.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "In the event of child abuse, there are measures in place to protect the child, alert authorities, and prosecute the perpetrators.",
+      "steps": [
+       {
+        "texte": "In the event of child abuse, whether it involves physical, psychological, sexual violence or neglect, there are measures in place to protect the child, alert authorities, and prosecute the perpetrators. How to proceed? We provide you with the steps to take and the available resources.",
+        "titre": null
+       },
+       {
+        "texte": "Child abuse encompasses any harm inflicted on a child's physical, psychological, or emotional well-being, as well as their development.\nIt can be practiced by her parents, other members of her family, or by people in her immediate surroundings (neighbor, friend, close acquaintance, etc.).\nThis abuse can be characterized by:\n- physical or sexual violence (biting, burning, strangulation, touching, sexual mutilation...)\n- psychological abuse (intimidation, threats...)\n- or the voluntary denial of care (food, medication, hygiene...).\nSpecifically: Bullying and other instances of violence between students are subject to specific measures.",
+        "titre": "What does child maltreatment refer to?"
+       },
+       {
+        "texte": "Anyone (child or adult) who witnesses an act of abuse against a child, or who suspects that a child is in danger or at risk of being in danger, is required to report the incident. This could be an individual or a professional (social worker, doctor, etc.).\nThe report can be anonymous, and can be made by mail or by phone.\n119\nIf a situation of child abuse is observed, whether as a victim or a witness (directly or indirectly), it is important to call 119.\n→ Where to go: Children in danger - 119\nEmergency services (15, 17, 18)\nIn the event of an emergency, emergency services can be contacted.\nChild welfare services (ASE)\nThe department's services (such as the Child Welfare Services - ASE - or the Child Protection Information Unit - Crip) can also be contacted.\n→ Where to go: Departmental Services\nPublic Prosecutor\nIn cases of extreme severity (such as physical or sexual abuse), it is possible to directly contact the public prosecutor by mail.\n→ Where to go: Court of first instance or local court\nAdvocate for rights\nIt is also possible to contact the Defender of Rights, particularly to report any problems or deficiencies in the care or protection of the child.\n→ Where to go: Office of the Ombudsman\nThe person who made the report will be informed of the actions taken in response to the concerning information about a child in danger, unless this information is contrary to their own interests or the child's interests.\nFailure to report knowledge of a situation involving abuse can result in a sentence of 3 years in prison and a fine of €45,000. When these facts involve a minor under the age of 15, the law considers the situation to be more serious, and the penalties are increased to 5 years in prison and a fine of €75,000.\nIntentionally reporting false information to authorities constitutes defamation. This crime is punishable by a prison sentence of up to 5 years and a fine of €45,000.\nSpecifically: The public prosecutor can also initiate an investigation on his own, following a report.",
+        "titre": "Who should make a report when a child is being abused, and how?"
+       },
+       {
+        "texte": "Even in cases where parents are involved, a victim can file a simple complaint. This allows them to inform the authorities (the public prosecutor and law enforcement officers) about the acts they have suffered (physical or psychological violence, neglect, etc.).\nHowever, if the minor victim wishes for their complaint to lead to legal action and to receive compensation, they will need to formally declare themselves a party to the case. To do this, they will necessarily need to be represented by someone.\n- by a responsible adult (grandparent, guardian, temporary administrator, etc.)\n- or by an association with more than 5 years of experience, whose purpose is to represent the interests of victims. In this case, the procedure should have already been initiated by the public prosecutor or follow a complaint.\nPlease note: The statute of limitations for most offenses committed against minors is 30 years from the victim's majority, in cases of sexual abuse. Therefore, the perpetrator can be prosecuted and convicted even many years after the incident.",
+        "titre": "How can a child who has been abused report the abuse?"
+       },
+       {
+        "texte": "A child who has been abused can receive psychological support through:\n- The services provided by the Ase\n- medical-psychological centers (MPC) or MPCs\n- teenage homes\n- the medico-legal units (UMJ)\n- psychotrauma-focused cells established in each region.\nThese services are free and confidential.",
+        "titre": "How can a child who has experienced abuse benefit from psychological support?"
+       },
+       {
+        "texte": "Following the report, the Child Welfare Services (ASE) can intervene at the child's home to assess their situation.\nIf this assessment concludes that there is a danger or risk of danger to the child, the service can propose various administrative protective measures (such as in-home care, temporary accommodation).\nHowever, accommodation in hotels is prohibited for children placed in foster care with the ASE, except in exceptional circumstances (young people aged 16 or over, for a maximum of 2 months).\nIf the assessment of the situation concludes that the child is at risk, and the parents refuse administrative protective measures or if those measures are not effective, the service can refer the case to the public prosecutor. The public prosecutor can then request a child protection judge to implement measures of educational support (such as monitoring and assistance to the family) or, if the child is in serious danger, to decide to place them temporarily in emergency accommodation (e.g., with a foster family).",
+        "titre": "When does social services intervene in cases of child abuse following a report?"
+       },
+       {
+        "texte": "The child protective services officer can take measures to support and assist the family, as well as make decisions regarding placement.\nMeasures for monitoring and supporting the family\nThe child protective services officer attempts, to the extent possible, to keep the child within their family.\nIt can refer to a qualified individual or a specialized service that assists the family.\nThe qualified individual is responsible for supporting the child and their family on a daily basis. They provide educational guidance, personalized support, and can direct the family to appropriate services.\nThe specialized service must provide the family with social and educational support to ensure the child's health, safety, and education.\nThe child may also benefit from psychological support.\nWhen a child is under the care of a specialized service, they may be accommodated there on an exceptional or periodic basis (for example, 1 week per month).\nThe judge may order the child or their parents to comply with certain obligations, which may include the following:\n- To be enrolled in an educational or healthcare institution, including boarding school.\n- Allowing the child to engage in paid work, if they are old enough to do so.\n- To adhere to a psychological or medical follow-up plan.\nIf the child is being cared for by a specialized service, the intervention can last a maximum of 2 years, and can be extended once.\nIf the child is being cared for by a qualified professional, there is no maximum duration.\nThe judge may also order financial assistance to manage the family budget, with the aim of restoring the family's financial independence, or educational support at home, with the aim of restoring the relationship between parents and the child.\nThe judge can also order family mediation, particularly to encourage communication between parents and children, subject to specific conditions (agreement from both parents, absence of violence). This system aims to reduce tensions and improve the family situation.\nFurthermore, the judge may order an educational investigation as a means of better assessing the family situation before taking more restrictive measures.\nIt can also prohibit the child from leaving the country for a maximum period of 2 years, in addition to providing educational support.\nPlacement measures\nThe child protective services officer may order placement in a foster home in the most serious cases.\nThis measure does not deprive parents of their parental authority.\nThis measure is in place for a maximum period of 2 years, and can be extended once.\nHowever, it is possible that the measures may be ordered for a longer period if the family situation requires it.\nParents can obtain visitation rights.\nThe costs associated with the care of the minor must be paid by the parents, unless the judge makes a different decision.\nIn the event of an emergency placement, the judge can make a quick decision without prior hearing of the parties, but they must be summoned within 15 days to confirm or modify the order.\nThe placement measures are carried out under the responsibility of the Juvenile Justice Protection Agency (PJJ), which is responsible for the minor's educational and social supervision.",
+        "titre": "What protective measures can the justice system take when a child is a victim of abuse?"
+       },
+       {
+        "texte": "The law includes specific penalties to protect minors.\nThe sentences vary depending on the age of the victim and the age of the perpetrator.\nChildren under the age of 15 receive enhanced protection. Any offense against them results in harsher penalties than if the victim were older. Individuals aged 15 and over remain protected, but with sanctions similar to those for adults, unless there are aggravating circumstances.\nThe author's age also plays a crucial role: a minor author is typically subject to educational measures or penalties that are appropriate for their age and level of understanding.\nTable: Key offenses and corresponding penalties, according to the age of the victim and the perpetrator\nType of offense | Victim under 15 years old and minor perpetrator | Victim under 15 years old and adult perpetrator | Victim 15 years or older and minor perpetrator | Victim 15 years or older and adult perpetrator\nPhysical violence | Educational measures or sentences appropriate for the age and level of understanding | Total inability to work (ITT) of less than 8 days: 5 years and €75,000; ITT of more than 8 days: 10 years and €150,000; Permanent loss of function: 20 years; Death: 30 years | Educational measures or sentences appropriate; Possible aggravation if the minor is the victim and the perpetrator is a parent or has authority over the child.\nSexual violence | Appropriate educational measures | Assault: 7 years and €100,000If perpetrator is a parent/authority figure: 10 years and €150,000; Assault: 20 years, 30 years in cases of aggravating circumstances | Appropriate educational measures | Aggravated charges may apply if the perpetrator is a minor and the victim is a child under their care or authority\nNeglect/Endangerment | Appropriate educational measures | Neglect: 7 years and €100,000 If death: 20 years Direct endangerment: 1 year and €15,000 | Appropriate educational measures | Possible aggravation if a minor is the victim\nExploitation / violation of moral principles | Appropriate educational measures | Forced begging: 5 years and €75,000 | Corruption: 7 years and €100,000 | Sex trafficking/exploitation: up to 20 years | Appropriate educational measures | Sentence may be increased if the victim is a minor\nIt is important to note that when we talk about \"ITT,\" we are not referring to a minor's inability to work professionally, but rather to the period during which they are unable to carry out their normal daily activities, such as moving around, eating, going to school, or playing.\nThe main penalties may also be accompanied by supplementary penalties, such as:\n- the removal of parental authority\n- the prohibition of engaging in any activity that involves contact with children\n- or the deprivation of certain civil rights, civil liberties, or family rights.",
+        "titre": "What are the penalties that can be applied in cases of child abuse?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F952",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F952",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 79.1,
+      "units": 93
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T11:37:18.678Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Şiddete maruz kalan çocuk",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 62.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Çocuklara yönelik istismara karşı, çocukları koruma, yetkilileri bilgilendirme ve sorumluları cezalandırma amacıyla çeşitli önlemler bulunmaktadır.",
+      "steps": [
+       {
+        "texte": "Çocuğa yönelik her türlü istismara karşı, fiziksel, psikolojik, cinsel veya ihmal durumlarına karşı, koruma önlemleri, yetkilileri bilgilendirme ve sorumluları cezalandırma gibi yollar bulunmaktadır. Nasıl hareket etmeli? Size izlenecek adımları ve mevcut destek kaynaklarını sunuyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Çocuğa yönelik istismar, çocuğun fiziksel, psikolojik veya duygusal bütünlüğüne, aynı zamanda gelişimine yönelik her türlü zarar veya saldırıyı ifade eder.\nBu sorumluluk, ebeveynleri, diğer aile üyeleri veya çevresindeki kişiler (komşu, arkadaş, yakın…) tarafından üstlenebilir.\nBu tür istismar şu özelliklerle kendini gösterebilir:\n- Fiziksel veya cinsel şiddet (yalama, yanık, boğma, temas, cinsel şiddet...)\n- Psikolojik şiddet (sözlü taciz, tehditler...)\n- veya gönüllü olarak tedaviye (beslenme, ilaç, hijyen vb.) son verme.\nÖnemli olan: Okuldaki taciz ve diğer öğrenciler arasındaki şiddet vakaları, özel bir şekilde ele alınmaktadır.",
+        "titre": "Bir çocuğa yönelik istismar, ne anlama gelir?"
+       },
+       {
+        "texte": "Herhangi bir kişi (çocuk veya yetişkin), bir çocuğa yönelik istismar olayını veya çocuğun tehlikede olduğunu veya tehlikeye düşebileceğini fark eden herkes, durumu bildirmelidir. Bu, özel bir kişi veya profesyonel (sosyal hizmet uzmanı, doktor vb.) olabilir.\nRaporlama anonim olabilir; posta veya telefon yoluyla yapılabilir.\n119\nBir çocuğa yönelik istismar durumunun fark edildiği, ister mağdur olun ister tanık olun (doğrudan veya dolaylı olarak), 119 numaralı acil yardım hattını aramak önemlidir.\n→ Nereye başvurulmalı: Çocukların güvenliği tehlikede - 119\nAcil servisler (15, 17, 18)\nAcil durumlarda, yardım ekipleriyle iletişime geçilebilir.\nÇocuklara yönelik sosyal yardım (ASE)\nBölgeye bağlı sosyal hizmet kuruluşları (çocuk refahı servisi veya endişe verici durumları tespit eden birim) da başvurulabilir.\n→ İlgili birimlerde başvurulacak yer: Departman hizmetleri\nCumhuriyet Savcısı\nOlağan dışı şiddet olayları (fiziksel veya cinsel şiddet gibi durumlarda), doğrudan cumhuriyet savcılığına, posta yoluyla başvurulabilir.\n→ Nereye başvurulmalı: Mahkeme veya yerel mahkeme\nHak savunucusu\nAyrıca, özellikle çocuğun bakımı veya korunmasıyla ilgili sorunları bildirmek için, Çocuk Hakları Savcılığına başvurmak da mümkündür.\n→ İlgili kuruma başvuru: İnsan Hakları Savunucusu\nRaporu gönderen kişi, bir çocuğun güvenliğiyle ilgili endişe verici bir bilgiyi bildirdikten sonra alınan önlemler hakkında bilgilendirilir, ancak bu bilgi kişinin veya çocuğun çıkarlarına aykırıysa bu bilgilendirme yapılmaz.\nBir kişinin bilerek yaşadığı ve rapor etmediği kötü muamele durumunun cezalandırılması, 3 yıl hapis ve 45.000 € para cezasıyla sonuçlanabilir. Bu durum, 15 yaşından küçük bir çocuğa yönelik olduğunda, yasa bu durumu daha ciddi bir suç olarak değerlendirir ve cezaları 5 yıl hapis ve 75.000 € para cezasına yükseltir.\nBilinçli olarak yetkililere yanlış bilgiler vermek, iftira suçuna girme durumuna karşılık gelir. Bu suç, 5 yıl hapis ve 45.000 € para cezası ile cezalandırılır.\nBilindiği gibi: Cumhuriyet savcısı, bir ihbar üzerine de kendi başına bir soruşturma başlatabilir.",
+        "titre": "Kim, bir çocuğun istismara uğraması durumunda, durumu bildirmelidir ve nasıl bildirmelidir?"
+       },
+       {
+        "texte": "Hatta ebeveynlerin de müdahalesinin olduğu durumlarda, mağdur basit bir şikayette bulunarak da hukuka başvurabilir. Bu, mağdurun yaşadığı olayları (fiziksel veya psikolojik şiddet, bakımın reddedilmesi vb.) yetkililere (Cumhuriyet Savcısı, adli kolluk) bildirmesini sağlar.\nAncak, eğer mağdur, şikayetinin yasal işlem başlatılmasına ve tazminat almasına yol açmasını istiyorsa, davada taraf olmak zorundadır. Bunu yapmak için, mutlaka bir avukat veya vekil tarafından temsil edilmesi gerekir:\n- bir yetişkin tarafından (büyük anne/büyük baba, vasi, geçici yönetici vb. kişiler tarafından)\n- veya 5 yıldan uzun süren bir sivil toplum kuruluşundan, özellikle de mağdurların savunulması amacıyla faaliyet gösteren bir kuruluştan; bu durumda, davayı açma süreci zaten savcılı tarafından başlatılmış veya şikayete dayanarak başlamış olmalıdır.\nÖnemli bir not: Çoğu, özellikle de çocuklara yönelik suçlarda uygulanan ceza süresi, mağdurun yetişkinliğe ulaşmasıyla birlikte 30 yıl olarak belirlenir. Bu nedenle, kötü muamele suçunu işleyen kişi, olaydan uzun süre sonra da yargılanabilir ve cezalandırılabilir.",
+        "titre": "Bir çocuğun, kötü muameleye uğradığında, şikayette bulunma yolu nedir?"
+       },
+       {
+        "texte": "Şiddete maruz kalan çocuk, aşağıdaki yollarla psikolojik destek alabilir:\n- Ase'nin hizmetleri\n- tıbbi-psikolojik merkezler (TMP) veya tıbbi-psikolojik tedavi merkezleri\n- gençlerin evleri\n- tıbbi ve hukuki birimler (UMJ),\n- Her bölgede oluşturulan psikotik travma birimler.\nBu tedaviler ücretsiz ve gizlidir.",
+        "titre": "Bir çocuğun, kötü muameleden etkilenmesi durumunda, psikolojik destekten nasıl faydalanabileceği?"
+       },
+       {
+        "texte": "Bildirimin ardından, Çocuk Koruma ve Sosyal Yardım Servisi (ASE), çocuğun durumunu değerlendirmek için çocuğun evine giderek müdahale edebilir.\nEğer bu inceleme, çocuğun güvenliği veya güvenliği açısından bir tehlike veya risk olduğunu tespit ederse, kurum çeşitli idari koruma önlemleri önerebilir (örneğin, evde bakım hizmeti, geçici bakım veya barınma).\nAncak, çocukların ASE'ye yerleştirilmesi durumunda, otel konaklaması kuralı uygulanmamaktadır, ancak bazı istisnalar bulunmaktadır (16 yaş ve üzeri gençler için, maksimum 2 aylık süre).\nEğer durum değerlendirmesi, çocuğun tehlike altında olduğunu belirler ve ebeveynler, yönetmelik kapsamında alınacak koruma önlemlerini reddeder veya bu önlemler etkili olmazsa, ilgili kurum Cumhuriyet Savcılığını bilgilendirebilir. Savcı, çocuk için eğitimsel destek önlemleri (aileye yönelik takip ve yardım) almasını talep edebilir veya çocuğun ciddi bir tehlike altında olduğunu tespit ederse, acil olarak geçici olarak başka bir aileye yerleştirilmesine karar verebilir (örneğin, bir bakımevine).",
+        "titre": "Çocuk istismarı şikayeti üzerine sosyal yardım, ne zaman devreye girer?"
+       },
+       {
+        "texte": "Çocuk mahkemesi, aileye yönelik destek ve gözetim önlemleri, ayrıca yerleştirme kararları alabilir.\nAileye yönelik takip ve destek önlemleri\nÇocuk hakları mahkemesi, mümkün olduğunca, çocuğun ailesinde kalmasını sağlamaya çalışır.\nBu, ailenin ihtiyaçlarını karşılamak için yetkin bir kişiyi veya uzman bir servisi ifade edebilir.\nBu yetkin kişi, çocuğun ve ailesinin günlük yaşamında onlara destek olmaktan sorumludur. Eğitim konusunda tavsiyelerde bulunur, kişiselleştirilmiş destek sağlar ve aileyi uygun hizmetlere yönlendirebilir.\nBu özel hizmet, çocuğun sağlığını, güvenliğini ve eğitimini sağlamak amacıyla, ailenin sosyal ve eğitimsel destek almasını sağlamalıdır.\nÇocuk ayrıca psikolojik destek de alabilir.\nÇocuğun, uzman bir hizmet tarafından takip edilmesi durumunda, olağan dışı veya belirli aralıklarla (örneğin, aylık 1 hafta) kurumda kalması mümkün olabilir.\nMahkeme, çocuğa veya ebeveynlerine belirli yükümlülüklerin yerine getirilmesini emredebilir. Bu yükümlülükler şunlar olabilir:\n- Okulda eğitim almak (bir sağlık veya eğitim kurumuna kaydolmak, bu da pansiyonlarda eğitim almak anlamına gelir)\n- Çocuğun, iş gücü yaşında olduğu durumlarda, bir meslek faaliyeti yürütmesine izin vermek.\n- Psikolojik veya tıbbi takibi takip etmek.\nEğer çocuk, uzman bir hizmet tarafından takip ediliyorsa, bu tedavi süresi maksimum 2 yıl olabilir ve bir kez uzatılabilir.\nEğer çocuğun bir uzman tarafından takip edilmesi söz konusuysa, belirli bir süre sınırı yoktur.\nMahkeme, aynı zamanda aile bütçesinin yönetimi konusunda yardıma karar verebilir. Bu yardımın amacı, ailenin mali bağımsızlığını yeniden sağlamak veya ebeveynler ile çocuğun arasındaki bağı yeniden kurmak amacıyla evde eğitim yardımı sağlamaktır.\nMahkeme, özellikle ebeveynler ve çocuklar arasındaki iletişimi kolaylaştırmak amacıyla aile içi arabuluculuğu da talep edebilir. Bu, belirli koşullar altında (ebeveynlerin onayı, şiddetin olmaması) uygulanır. Bu sistem, gerginliği azaltmayı ve aile ilişkilerini iyileştirmeyi amaçlar.\nAyrıca, hakim, daha sonra daha kısıtlayıcı önlemler almadan önce, aile durumunu daha iyi değerlendirmek amacıyla, eğitim odaklı bir soruşturma tedbiri kararlaştırabilir.\nAyrıca, çocuğun ülkenin sınırlarından çıkışını, eğitim yardımı önlemi ile birlikte en fazla 2 yıl boyunca yasaklayabilir.\nYerleştirme önlemleri\nÇocuk mahkemesi, en ciddi durumlarda yer değiştirme kararı alabilir.\nBu önlem, çocuğun ebeveynlerinin veli yetkisini ortadan kaldırmaz.\nBu önlem, maksimum 2 yıl süreyle uygulanacak ve bir kez uzatılabilir.\nAncak, durum böyle olsa da, aile üyelerinin ihtiyaçlarına göre, önlemlerin daha uzun bir süre boyunca uygulanması da mümkün olabilir.\nEbeveynler, ziyaret hakkı elde edebilir.\nÇocuğun bakım masrafları, mahkeme kararıyla aksi yönde bir karar alınmadıkça, ebeveynler tarafından ödenmelidir.\nAcil bir durum söz konusu olduğunda, hakim, tarafların önceden dinlenmesine gerek kalmadan hızlı bir karar verebilir, ancak bu kararı onaylamak veya değiştirmek için 15 gün içinde tarafları davet etmesi gerekir.\nBu yerleşim düzenlemeleri, gençlerin eğitim ve sosyal refahını sağlayan ve onları takip eden, \"Gençlerin Yasal Koruma Birimi\" (PJJ) tarafından yürütülmektedir.",
+        "titre": "Bir çocuğun istismara uğraması durumunda, mahkeme hangi koruma önlemlerini alabilir?"
+       },
+       {
+        "texte": "Bu yasa, çocukları korumak amacıyla özel yaptırımlar öngörmektedir.\nCe tür cezalar, mağdurun ve suçun failinin yaşlarına göre değişiklik gösterir.\n15 yaşın altındaki çocuklar, daha güçlü bir koruma kapsamına alınmaktadır. Bu yaş grubundaki kişilere yönelik herhangi bir ihlale, mağdurun daha büyük olduğu durumlarda uygulanacak cezaların daha ağır olmasına neden olur. 15 yaş ve üstündeki çocuklar, normal yetişkinler için belirlenen cezaların benzer cezaları alırlar, ancak ağırlaştırılmış durumlarda farklı cezalar uygulanabilir.\nYazarların yaşı da önemli bir rol oynamaktadır: Minör bir yazar genellikle yaşına ve olgunluğuna uygun eğitim önlemlerine veya cezalandırmalara tabi tutulur.\nTablo: Suç türleri ve ilgili cezalar, mağdur ve failin yaşına göre\nSu türü | Kurban 15 yaşın altında ve failin de 15 yaşın altında olması | Kurban 15 yaşın altında ve failin 15 yaşından büyük olması | Kurban 15 yaşın üzerinde ve failin 15 yaşın altında olması | Kurban 15 yaşın üzerinde ve failin 15 yaşından büyük olması\nFiziksel şiddet | Yaşa ve mahremiyet düzeyine uygun eğitim önlemleri veya cezalar | Tam iş göremezlik (TİG) 8 günden az: 5 yıl ve 75.000 €TİG 8 günden fazla: 10 yıl ve 150.000 €Kalıcı yaralanma/işlev kaybı: 20 yılÖlüm: 30 yıl | Uygun eğitim önlemleri veya cezalar | Eğer çocuk bir kurban ve ebeveyn veya çocuğa yetki veren kişi ise, cezaların ağırlaştırılması mümkün\nCinsel şiddet | Uygun eğitim önlemleri | Saldırı: 7 yaş ve 100.000 € (eğer ebeveyn/yetkili kişi ise: 10 yıl ve 150.000 €)\nŞiddet: 20 yıl, ağır koşullarda 30 yıl | Uygun eğitim önlemleri | Eğer çocuk mağdur ve saldırgan ebeveyn veya yetkili kişi ise, durumun ağırlaştırılması mümkün\nBakımdan mahrum edilme / tehlike altında olma | Uygun eğitim önlemleri | Bakımdan mahrum edilme: 7 yıl ve 100.000 € (ölüm durumunda: 20 yıl) | Doğrudan tehlike: 1 yıl ve 15.000 € | Uygun eğitim önlemleri | Eğer çocuk zarar görmüşse, cezalar artırılabilir\nKötüye kullanım / ahlaki değerlere saygısızlık | Uygun eğitim önlemleri | Zorla yalvarma: 5 yıl ve 75.000 €; Yolsuzluk: 7 yıl ve 100.000 €; Cinsel sömürü/ticaret: 20 yıl veya daha fazla | Uygun eğitim önlemleri; Eğer çocuk mağdur ise, cezaların artırılması mümkün.\nÖnemli bir nokta: \"İş Güvenliği Eğitimi\" (ITT) ifadesi, bir çocuğun mesleki olarak çalışamaz hale gelmesiyle ilgili değildir, aksine, normal yaşamını sürdürme yeteneğini kısıtlayan süreyi ifade eder; yani, hareket etme, beslenme, okula gitme veya oyun oynama gibi faaliyetleri yapamaz hale gelme durumunu.\nAna cezalar ayrıca aşağıdaki gibi ek cezalarla da birlikte verilebilir:\n- Ebeveynlerin velayetinin kaldırılması\n- çocuklarla temas halinde herhangi bir faaliyetin yasaklanması\n- veya belirli sivil, hukuki veya aile haklarının elden alınması.",
+        "titre": "Bir çocuğa yönelik istismara karşı uygulanabilecek cezalar nelerdir?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F952",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F952",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 75.9,
+      "units": 93
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T11:41:41.632Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "طفل تعرض للإساءة",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "في حالة تعرض طفل للإساءة، هناك آليات موجودة لحماية الطفل، وإبلاغ السلطات، وملاحقة المسؤولين.",
+      "steps": [
+       {
+        "texte": "في حالة تعرض طفل للإساءة، سواء كانت عن طريق العنف الجسدي أو النفسي أو الجنسي، أو الإهمال، فهناك آليات لحماية الطفل وإبلاغ السلطات وملاحقة المسؤولين. كيف يتم ذلك؟ نقدم لكم الإجراءات التي يجب اتباعها والموارد المتاحة.",
+        "titre": null
+       },
+       {
+        "texte": "يشمل الإساءة للأطفال أي شكل من أشكال الإضرار بصحتهم الجسدية أو النفسية أو العاطفية، وكذلك أي تأثير سلبي على نموهم وتطورهم.\nيمكن أن يتم ذلك من قبل والديها، أو أعضاء آخرين من عائلتها، أو من الأشخاص المقربين منها (جيران، أصدقاء، إلخ).\nيمكن أن تتجلى هذه الإساءة في:\n- العنف الجسدي أو الجنسي (مثل العض، الحرق، الخنق، اللمس، العنف الجنسي...)\n- العنف النفسي (مثل التهديد، الإساءة اللفظية...)\n- أو، الامتناع عن تلقي الرعاية (مثل الغذاء، والأدوية، والنظافة الشخصية).\nوهذا يعني: يتم التعامل مع التنمر في المدارس والحالات الأخرى من العنف بين الطلاب بشكل خاص.",
+        "titre": "ما هي أنواع الإساءة التي يمكن أن يتعرض لها الطفل؟"
+       },
+       {
+        "texte": "أي شخص (طفل أو بالغ) يشهد على تعرض طفل للإساءة أو يشتبه في تعرض طفل للخطر أو احتمال تعرضه للخطر، يجب عليه الإبلاغ عن هذه الحادثة. يمكن أن يكون المبلغ عن الحادث فردًا أو محترفًا (مثل أخصائي اجتماعي أو طبيب...).\nيمكن أن يكون الإبلاغ مجهول الهوية، سواء تم عبر البريد أو الهاتف.\n119\nعندما يتم اكتشاف حالة إساءة معاملة تجاه طفل، سواء كنت أنت الضحية أو الشاهد (سواء بشكل مباشر أو غير مباشر)، يجب الاتصال بالرقم 119.\n→ إلى من يتم الاتصال: \"طفولة في خطر\" - 119\nخدمات الطوارئ (رقم 15، 17، 18)\nفي حالات الطوارئ، يمكن الاتصال بخدمات الإنقاذ.\nمساعدة اجتماعية للأطفال (ASE)\nيمكن أيضًا الاتصال بخدمات القسم (مثل قسم المساعدة الاجتماعية للأطفال أو وحدة جمع المعلومات الهامة)، وذلك في حال وجود أي مخاوف.\n→ إلى أين يتم التوجه: خدمات القسم\nمحامي عام\nفي الحالات التي تتسم بشدة كبيرة (مثل العنف الجسدي أو الجنسي)، يمكن الاتصال مباشرة بالمحامي العام عن طريق البريد.\n→ إلى أين يتم التوجه: المحكمة القضائية أو المحكمة المحلية\nمدافع عن الحقوق\nكما يمكن التوجه إلى \"مفوض حقوق الطفل\" للإبلاغ عن أي مشاكل أو عيوب في تقديم الرعاية أو حماية الطفل.\n→ إلى من يتم الاتصال: هيئة الدفاع عن حقوق الإنسان\nالشخص الذي قام بالإبلاغ سيتم إعلامه بالنتائج التي تم اتخاذها بشأن المعلومات التي تم تقديمها حول طفل في خطر، إلا إذا كانت هذه المعلومات تتعارض مع مصالحه أو مصالح الطفل.\nعدم الإبلاغ عن حالة إساءة معاملة يعرف بها شخص ما يمكن أن يؤدي إلى عقوبة بالسجن لمدة 3 سنوات وغرامة قدرها 45000 يورو. أما عندما يتعلق الأمر بفرد دون سن 15 عامًا، فإن القانون يعتبر هذه الحالة أكثر خطورة، ويفرض عقوبة بالسجن لمدة 5 سنوات وغرامة قدرها 75000 يورو.\nإن إبلاغ السلطات بشكل متعمد بمعلومات غير صحيحة يعتبر نوعًا من التشهير. ويعاقب هذا الفعل بالسجن لمدة تصل إلى 5 سنوات وغرامة مالية قدرها 45000 يورو.\nوهذا يعني: يمكن للمحقق العام أيضًا أن يبدأ تحقيقًا بمفرده بناءً على بلاغ.",
+        "titre": "من المسؤول عن تقديم بلاغ عندما يتعرض طفل للإيذاء، وكيف يتم ذلك؟"
+       },
+       {
+        "texte": "حتى في حالة تورط الوالدين، يمكن للضحية تقديم شكوى بسيطة. هذا الإجراء يسمح للإبلاغ عن الحوادث التي تعرض لها (العنف الجسدي أو النفسي، أو عدم توفير الرعاية...) إلى السلطات القضائية (مثل محامي الدولة أو ضباط الشرطة القضائية).\nولكن، إذا رغبت الضحية القاصر في أن تؤدي شكواها إلى إجراءات قانونية والحصول على تعويض، فيجب عليها أن تصبح مدعية. ولتحقيق ذلك، يجب أن يتم تمثيلها بشكل إلزامي:\n- بواسطة شخص بالغ (جد، أو وصي، أو مدير مؤقت...)\n- أو من خلال جمعية تتمتع بخبرة تزيد عن 5 سنوات، وتهدف إلى حماية الضحايا. في هذه الحالة، يجب أن تكون الإجراءات قد بدأت بالفعل من قبل النائب العام، أو كانت نتيجة لتقديم شكوى.\nملاحظة: يمتد مهلة التقاضي في معظم الجرائم التي ترتكب ضد الأقل سنًا إلى 30 عامًا، وذلك بدءًا من بلوغ الضحية سن الرشد في حالة الاعتداء الجنسي. وبالتالي، يمكن محاكمة الجاني ومحكومته حتى بعد مرور فترة طويلة من وقوع الجريمة.",
+        "titre": "كيف يمكن لطفل تعرض للإساءة أن يقدم شكوى؟"
+       },
+       {
+        "texte": "يمكن للطفل الذي تعرض للإساءة الحصول على دعم نفسي من خلال:\n- خدمات مؤسسة \"Ase\"\n- مراكز الصحة النفسية والطبية (CMP) أو مراكز الصحة النفسية والطبية المتخصصة (CMPP).\n- منازل المراهقين،\n- وحدات الطب والجريمة (UMJ).\n- إنشاء وحدات متخصصة في التعامل مع الصدمات النفسية في كل منطقة.\nهذه الخدمات مجانية وخاضعة للسرية.",
+        "titre": "كيف يمكن لطفل تعرض للإساءة الحصول على دعم نفسي؟"
+       },
+       {
+        "texte": "بعد الإبلاغ، يمكن لخدمة الدعم الاجتماعي للأطفال (ASE) التدخل في منزل الطفل لتقييم وضعه.\nإذا أظهر هذا الفحص وجود خطر أو خطر محتمل على الطفل، فقد يقترح القسم اتخاذ مجموعة متنوعة من التدابير الوقائية الإدارية (مثل توفير المساعدة المنزلية، أو توفير رعاية مؤقتة).\nومع ذلك، يُمنع إقامة الأطفال الذين تم تكليفهم بـ \"ASE\" في الفنادق، باستثناء الحالات الخاصة (الأطفال الذين تزيد أعمارهم عن 16 عامًا، لمدة لا تزيد عن شهرين).\nإذا خلصت دراسة الوضع إلى وجود خطر على الطفل، ورفضت فيه الأهل التدابير الوقائية الإدارية، أو لم تكن فعالة، فيمكن للخدمة اللجوء إلى المدعي العام. يمكن للمدعي العام أن يستشير قاضي الأحداث لوضع تدابير للمساعدة التعليمية (مثل المتابعة وتقديم الدعم للعائلة)، أو، إذا كان الطفل في خطر جسيم، أن يقرر وضعه مؤقتًا في وضع إضافي (مثل وضع العائلة المضيفة).",
+        "titre": "متى تتدخل المؤسسة الاجتماعية للأطفال في حالة تلقي تقرير عن سوء المعاملة؟"
+       },
+       {
+        "texte": "يمكن للقاضي المختص بالأطفال اتخاذ إجراءات للمتابعة وتقديم الدعم للعائلة، بالإضافة إلى اتخاذ إجراءات الإقامة.\nتدابير المتابعة والدعم للعائلة\nيحاول القاضي المختص بالأطفال، قدر الإمكان، الحفاظ على استقرار الطفل في عائلته.\nيمكن أن يشير إلى شخص مؤهل أو إلى خدمة متخصصة لمساعدة الأسرة.\nيتم تكليف الشخص المؤهل بمرافقة الطفل وعائلته بشكل يومي. ويقدم لهم المشورة التعليمية والدعم الشخصي، ويمكنه توجيه العائلة إلى الخدمات المناسبة.\nيجب على الخدمة المتخصصة أن توفر دعمًا اجتماعيًا وتعليميًا للعائلة، وذلك لضمان صحة وسلامة الطفل وتعليمه.\nيمكن للطفل أيضاً الحصول على دعم نفسي.\nعندما يتلقى الطفل رعاية من مؤسسة متخصصة، قد يتم إقامه فيها بشكل استثنائي أو دوري (مثل إقامتة لمدة أسبوع واحد في الشهر).\nيمكن للقاضي أن يطلب من الطفل أو والديه الالتزام ببعض الالتزامات. يمكن أن تكون هذه الالتزامات على سبيل المثال:\n- الالتحاق بمؤسسة تعليمية أو صحية (بما في ذلك الإقامة في سكن الطلاب).\n- السماح للطفل بممارسة نشاط مهني، إذا كان في سن العمل.\n- اتباع تعليمات الطبيب أو المعالج النفسي.\nإذا كان الطفل يخضع لمتابعة من قبل مؤسسة متخصصة، فقد تستمر هذه المتابعة لمدة 2 سنوات على الأكثر، مع إمكانية التجديد مرة واحدة.\nإذا كان الطفل يتلقى الرعاية من شخص مؤهل، فلا توجد مدة زمنية محددة.\nيمكن للقاضي أيضًا أن يطلب تقديم مساعدة في إدارة الميزانية العائلية، والتي تهدف إلى استعادة الاستقلالية المالية للعائلة، أو تقديم مساعدة تعليمية في المنزل، والتي تهدف إلى استعادة الروابط بين الوالدين والطفل.\nيمكن للقاضي أيضًا أن يطلب إجراء تسوية عائلية، وخاصةً لتسهيل التواصل بين الوالدين والأطفال، وذلك في ظل شروط محددة (موافقة الوالدين، عدم وجود عنف). يهدف هذا النظام إلى تخفيف التوترات وتحسين الوضع العائلي.\nعلاوة على ذلك، يمكن للقاضي أن يقرر اتخاذ إجراء قضائي يتعلق بالتحقيق في الوضع الأسري بشكل أفضل، وذلك قبل اتخاذ إجراءات أكثر صرامة.\nيمكنه أيضًا حظر خروج الطفل من الأراضي الوطنية لمدة تصل إلى 2 عامًا، بالإضافة إلى اتخاذ إجراءات للتدخل التعليمي.\nإجراءات التوظيف\nيمكن للقاضي المختص بالأطفال أن يقرر اتخاذ إجراءات احتجاز في الحالات الأكثر خطورة.\nهذه الإجراء لا تلغي سلطة الوالدين على الطفل.\nتم تحديد هذه الإجراء لمدة لا تتجاوز 2 عام، مع إمكانية التجديد مرة واحدة.\nومع ذلك، قد يتم فرض هذه الإجراءات لفترة أطول إذا لزم الأمر بناءً على الظروف الخاصة بالعائلة.\nيمكن للوالدين الحصول على حق الزيارة.\nيجب على الوالدين دفع الرسوم المتعلقة برعاية الطفل، إلا إذا قرر القاضي خلاف ذلك.\nفي حالة الحاجة إلى قرار سريع، يمكن للقاضي اتخاذ قرار دون الحاجة إلى الاستماع إلى الأطراف مسبقًا، ولكنه ملزم بدعوة الأطراف في غضون 15 يومًا لتأكيد أو تعديل هذا القرار.\nيتم تنفيذ إجراءات الإقامة تحت إشراف مكتب حماية القاصر، الذي يتولى مسؤولية الرقابة التعليمية والاجتماعية على القاصر.",
+        "titre": "ما هي التدابير الوقائية التي يمكن أن تتخذها المحكمة عندما يكون الطفل ضحية للإساءة؟"
+       },
+       {
+        "texte": "تتضمن القانون عقوبات محددة لحماية الأطفال.\nتختلف الأحكام وفقًا لعمر الضحية وعمر مرتكب الجريمة.\nيحصل الأطفال دون سن 15 عامًا على حماية إضافية. أي تجاوز للقانون ضدهم يؤدي إلى عقوبات أشد من تلك التي يتم تطبيقها على البالغين. الأطفال الذين تزيد أعمارهم عن 15 عامًا لا يزالون محميين، ولكن العقوبات المطبقة عليهم قريبة من تلك المطبقة على البالغين، إلا في الحالات التي تتضمن ظروفًا إضافية.\nكما أن عمر المؤلف يلعب دورًا حاسمًا: عادةً ما يخضع المؤلف القاصر لقياسات تعليمية أو عقوبات مناسبة لعمره وقدرته على الفهم.\nجدول: أبرز الجرائم والعقوبات المقابلة لها بناءً على عمر الضحية والمجرم.\nنوع الجريمة | ضحية دون 15 عامًا والمجرم دون 15 عامًا | ضحية دون 15 عامًا والمجرم فوق 15 عامًا | ضحية فوق 15 عامًا والمجرم دون 15 عامًا | ضحية فوق 15 عامًا والمجرم فوق 15 عامًا\nالعنف الجسدي | تدابير تعليمية أو عقوبات مناسبة للعمر والقدرة على الفهم | عدم القدرة على العمل لمدة أقل من 8 أيام: 5 سنوات و 75000 يورو\nعدم القدرة على العمل لمدة 8 أيام أو أكثر: 10 سنوات و 150000 يورو\nإصابة/فقدان وظيفة بشكل دائم: 20 سنة\nالوفاة: 30 سنة | تدابير تعليمية أو عقوبات مناسبة\nقد يتم تمديد العقوبة إذا كان الطفل ضحية ووالده أو شخص له سلطة على الطفل\nالعنف الجنسي | تدابير تعليمية مناسبة | الاعتداء: 7 سنوات و 100000 يورو إذا كان الشاهد/الجهة المخولة: 10 سنوات و 150000 يورو | الاعتداء: 20 سنة، 30 سنة في حالة وجود ظروف مشددة | تدابير تعليمية مناسبة | قد يتم تمديد العقوبة إذا كان الطفل ضحية ومُعتدى عليه من قبل شخص بالغ أو شخص ذي سلطة على الطفل.\nالإهمال / التهديد | تدابير تعليمية مناسبة | الإهمال: 7 سنوات و 100 ألف يورو. في حالة الوفاة: 20 سنة. التهديد المباشر: سنة واحدة و 15 ألف يورو | تدابير تعليمية مناسبة. قد يتم تفعيل عقوبات إضافية إذا كان الطفل ضحية.\nالاستغلال / انتهاك الأخلاق | تدابير تعليمية مناسبة | التوسل القسري: 5 سنوات و 75000 يورو\nالفساد: 7 سنوات و 100000 يورو\nالاستغلال الجنسي: حتى 20 سنة | تدابير تعليمية مناسبة | قد يتم تمديد العقوبة إذا كان الطفل ضحية.\nهام: عندما نتحدث عن الإجازة المرضية، فإنها لا تعني عدم القدرة على العمل بشكل احترافي لشخص قاصر، بل هي الفترة التي يتعذر خلالها عليه ممارسة حياته الطبيعية، أي التنقل، وتناول الطعام، والذهاب إلى المدرسة، أو اللعب.\nيمكن أن تشمل العقوبات الرئيسية أيضًا عقوبات إضافية مثل:\n- إلغاء حق الأهلية.\n- حظر ممارسة أي نشاط يتطلب التفاعل مع الأطفال.\n- أو، عدم الحصول على بعض الحقوق المدنية أو المدنية أو العائلية.",
+        "titre": "ما هي العقوبات المطبقة في حالة الاعتداء على طفل؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F952",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F952",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 76.5,
+      "units": 93
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T11:45:32.051Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Kind, das Opfer von Misshandlung ist",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 89.8,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Im Falle von Misshandlung eines Kindes gibt es Mechanismen, um das Kind zu schützen, die Behörden zu informieren und die Täter zur Rechenschaft zu ziehen.",
+      "steps": [
+       {
+        "texte": "Im Falle von Misshandlung eines Kindes, sei es durch physische, psychische, sexuelle Gewalt oder Vernachlässigung, gibt es Maßnahmen, um das Kind zu schützen, die Behörden zu informieren und die Täter zur Rechenschaft zu ziehen. Wie geht man vor? Wir geben Ihnen die notwendigen Schritte und verfügbaren Hilfsangebote.",
+        "titre": null
+       },
+       {
+        "texte": "Misshandlung eines Kindes umfasst jede Form von Verletzung seiner körperlichen, psychischen oder emotionalen Integrität sowie seines Entwicklungsfortschritts.\nDies kann von ihren Eltern, anderen Familienmitgliedern oder Personen aus ihrem Umfeld (Nachbarn, Freunde, Bekannte usw.) übernommen werden.\nDiese Misshandlung kann sich durch folgende Merkmale auszeichnen:\n- körperliche oder sexuelle Gewalt (Biss, Verbrennung, Erstickung, Berührung, sexuelle Gewalt...)\n- psychische Gewalt (Drohungen, Einschüchterungen...)\n- oder die bewusste Verweigerung von medizinischer Versorgung (Ernährung, Medikamente, Hygiene...).\nKonkret: Mobbing und andere Formen von Gewalt zwischen Schülern werden einer besonderen Behandlung unterzogen.",
+        "titre": "Was versteht man unter Misshandlung eines Kindes?"
+       },
+       {
+        "texte": "Jeder Einzelne (Kind oder Erwachsener), der Zeuge von Misshandlungen gegenüber einem Kind ist oder den Verdacht hat, dass ein Kind gefährdet ist oder in Gefahr ist, ist verpflichtet, den Vorfall zu melden. Dies kann eine Privatperson oder ein Fachmann sein (Sozialarbeiter, Arzt usw.).\nDie Meldung kann anonym erfolgen, sei es per Post oder Telefon.\n119\nWenn eine Situation von Misshandlung eines Kindes festgestellt wird, unabhängig davon, ob man selbst Opfer oder Zeuge (direkt oder indirekt) ist, sollte man den Notruf 119 kontaktieren.\n→ An wen wenden: Kinder in Gefahr – 119\nNotrufnummern (15, 17, 18)\nIm Notfall können die Rettungsdienste kontaktiert werden.\nSozialhilfe für Kinder (ASE)\nAuch die Dienste des Departements (z. B. die Sozialdienste für Kinder oder die Abteilung zur Erfassung von besorgniserregenden Informationen) können gerufen werden.\n→ An wen wenden: Dienststellen des Departements\nStaatsanwalt\nIm Falle von außergewöhnlich schwerer Gewalt (z. B. körperlicher oder sexueller Gewalt) ist es möglich, sich direkt per Post an den Staatsanwalt zu wenden.\n→ Wo man sich wenden sollte: Amtsgericht oder örtliches Gericht\nVerteidiger der Rechte\nEs ist auch möglich, sich an den Ombudsmann zu wenden, insbesondere um Funktionsstörungen bei der Betreuung oder dem Schutz des Kindes zu melden.\n→ An wen wenden: Verteidiger der Rechte\nDie Person, die den Hinweis gegeben hat, wird über die Maßnahmen informiert, die im Zusammenhang mit einer besorgniserregenden Meldung über ein Kind in Gefahr ergriffen wurden, es sei denn, diese Information steht im Widerspruch zu ihren Interessen oder denen des Kindes.\nDie Nichtmeldung einer Misshandlungssituation, von der eine Person Kenntnis hat, kann mit einer Freiheitsstrafe von 3 Jahren und einer Geldstrafe von 45.000 € geahndet werden. Wenn diese Fälle sich auf ein minderjähriges Kind unter 15 Jahren beziehen, betrachtet das Gesetz die Situation als besonders schwerwiegend, und die Strafen werden auf fünf Jahre Freiheitsstrafe und eine Geldstrafe von 75.000 € erhöht.\nDas absichtliche Melden falscher Tatsachen an die Behörden stellt eine Rufschädigung dar. Diese Straftat wird mit einer Freiheitsstrafe von bis zu 5 Jahren und einer Geldstrafe von 45.000 € geahndet.\nDas bedeutet: Der Staatsanwalt kann auch, unabhängig von einer Meldung, selbst eine Untersuchung einleiten.",
+        "titre": "Wer muss einen Bericht erstatten, wenn ein Kind Opfer von Misshandlung ist, und wie?"
+       },
+       {
+        "texte": "Auch wenn die Eltern beteiligt sind, kann das Opfer eine einfache Anzeige erstatten. Dies ermöglicht es, die Behörden (Staatsanwalt, Strafverfolgungsbeamte) über die begangenen Taten (körperliche oder psychische Gewalt, Vernachlässigung) zu informieren.\nAllerdings muss das minderjährige Opfer, wenn es eine Klage erheben und eine Entschädigung fordern möchte, sich als Kläger bei Gericht stellen. Dies erfordert, dass es durch einen Rechtsbeistand vertreten wird:\n- durch eine volljährige Person (Großelternteil, Erziehungsberechtigter, ad-hoc-Verwalter usw.)\n- oder durch eine Organisation mit einer mehrjährigen Erfahrung von über 5 Jahren, deren Ziel die Unterstützung von Opfern ist. In diesem Fall muss der Prozess bereits von der Staatsanwaltschaft eingeleitet worden sein oder auf einer Anzeige beruhen.\nWichtig: Die Verjährungsfrist für die meisten Straftaten, die gegen Minderjährige begangen werden, beträgt 30 Jahre, beginnend mit dem Erreichen des Erwachsenenalters des Opfers, im Falle von sexueller Gewalt. Der Täter kann daher auch lange nach den Taten strafrechtlich verfolgt und verurteilt werden.",
+        "titre": "Wie kann ein Kind, das Opfer von Misshandlung ist, eine Beschwerde einreichen?"
+       },
+       {
+        "texte": "Ein Kind, das Misshandlung erfahren hat, kann psychologische Unterstützung erhalten, beispielsweise durch:\n- Die Dienstleistungen des Ase,\n- die medizinisch-psychologischen Zentren (MPZ) oder die spezialisierten medizinisch-psychologischen Zentren (SMPZ),\n- Jugendherbergen\n- die medizinisch-juristischen Einheiten (UMJ)\n- spezifische psychotraumatische Behandlungseinheiten, die in jeder Region eingerichtet wurden.\nDiese Behandlungen sind kostenlos und vertraulich.",
+        "titre": "Wie kann ein Kind, das Misshandlung erfahren hat, von einer psychologischen Betreuung profitieren?"
+       },
+       {
+        "texte": "Im Anschluss an die Meldung kann der Dienst für Kinderhilfe (ASE) das Kind zu Hause besuchen, um seine Situation zu beurteilen.\nWenn diese Untersuchung feststellt, dass ein Kind einem Gefährdungsrisiko ausgesetzt ist, kann der Dienst verschiedene administrative Schutzmaßnahmen anbieten (z. B. Unterstützung im häuslichen Umfeld, vorübergehende Betreuung oder Unterbringung).\nAllerdings ist die Unterbringung in einem Hotel für Kinder, die dem Jugendamt (ASE) anvertraut sind, grundsätzlich untersagt, mit Ausnahme von Jugendlichen über 16 Jahren, die maximal 2 Monate untergebracht werden dürfen.\nWenn die Bewertung der Situation ergibt, dass das Kind gefährdet ist, und die Eltern die staatlichen Schutzmaßnahmen ablehnen oder diese sind nicht wirksam, kann der zuständige Staatsanwalt hinzugezogen werden. Er kann einen Kindesrichter um Unterstützung bitten, um unterstützende Maßnahmen (z. B. Überwachung und Unterstützung der Familie) zu verordnen oder, wenn das Kind einer schweren Gefahr ausgesetzt ist, eine vorübergehende Notaufnahme (z. B. in einer Pflegefamilie) anzuordnen.",
+        "titre": "Wann greift die Kinderhilfe bei einem Bericht über Misshandlung ein?"
+       },
+       {
+        "texte": "Der Kindesrichter kann Maßnahmen zur Überwachung und Unterstützung der Familie sowie Platzierungsmaßnahmen ergreifen.\nMaßnahmen zur Unterstützung und Überwachung der Familie\nDer Kindesrichter bemüht sich, insofern wie möglich, die Aufrechterhaltung der familiären Bindung des Kindes zu gewährleisten.\nDies kann sich auf eine qualifizierte Person oder auf eine spezialisierte Dienstleistung beziehen, die der Familie hilft.\nDie zuständige Person ist dafür verantwortlich, das Kind und seine Familie im Alltag zu unterstützen. Sie bietet pädagogische Beratung, individuelle Betreuung und kann die Familie an geeignete Dienstleistungen vermitteln.\nDie spezialisierte Einrichtung muss ein soziales und pädagogisches Betreuungsangebot für die Familie bereitstellen, um die Gesundheit, Sicherheit und Bildung des Kindes zu gewährleisten.\nDas Kind kann auch psychologische Unterstützung erhalten.\nWenn das Kind von einem spezialisierten Dienst betreut wird, kann es dort außergewöhnlich oder periodisch (z.B. 1 Woche pro Monat) untergebracht werden.\nDer Richter kann das Kind oder seine Eltern verpflichtet, bestimmte Bedingungen zu erfüllen. Diese können beispielsweise sein:\n- Eine Schulbildung absolvieren (Einschreibung in einer Bildungseinrichtung oder einer Gesundheitsinstitution, einschließlich eines Internats)\n- Ermöglichen, dass das Kind eine berufliche Tätigkeit ausübt, wenn es alt genug ist, um zu arbeiten.\n- Eine psychologische oder medizinische Betreuung einhalten.\nWenn das Kind von einem spezialisierten Dienst betreut wird, kann die Maßnahme maximal 2 Jahre dauern und kann einmal verlängert werden.\nWenn ein Kind von einer qualifizierten Fachkraft betreut wird, gibt es keine feste Zeitspanne.\nDer Richter kann auch eine Unterstützung bei der Verwaltung des Familienbudgets anordnen, deren Ziel es ist, die finanzielle Unabhängigkeit der Familie wiederherzustellen, oder eine häusliche Betreuung, deren Ziel es ist, die Beziehungen zwischen Eltern und Kind wiederherzustellen.\nDer Richter kann auch eine Familienmediation anordnen, insbesondere um die Kommunikation zwischen Eltern und Kindern zu fördern, unter bestimmten Bedingungen (Einverständnis der Eltern, Abwesenheit von Gewalt). Dieses Verfahren zielt darauf ab, Spannungen abzubauen und die familiäre Situation zu verbessern.\nDarüber hinaus kann der Richter eine gerichtliche Anordnung zur Durchführung einer pädagogischen Untersuchung erlassen, um die familiäre Situation besser einzuschätzen, bevor er strengere Maßnahmen ergreift.\nEs kann auch die Ausreise des Kindes aus dem Staatsgebiet für eine maximale Dauer von 2 Jahren untersagen, zusätzlich zu einer Bildungsunterstützung.\nPlatzierungsmaßnahmen\nDer Jugendrichter kann in besonders schweren Fällen eine Platzierung in einer betreuten Einrichtung anordnen.\nDiese Maßnahme entzieht den Eltern jedoch nicht die elterliche Sorge.\nDiese Maßnahme gilt für eine maximale Dauer von 2 Jahren und kann einmal verlängert werden.\nAllerdings ist es möglich, dass die Maßnahmen für einen längeren Zeitraum angeordnet werden, wenn die Situation der Familie dies erfordert.\nDie Eltern können ein Besuchsrecht erhalten.\nDie Kosten, die durch die Betreuung des Kindes entstehen, sind in der Regel Sache der Eltern, es sei denn, der Richter entscheidet etwas anderes.\nIm Falle einer dringenden Anordnung kann der Richter eine schnelle Entscheidung treffen, ohne vorherige Anhörung der Parteien, muss aber innerhalb von 15 Tagen die Parteien einladen, um die Maßnahme zu bestätigen oder zu ändern.\nDie Maßnahmen zur Unterbringung werden unter der Verantwortung des Jugendgerichtlichen Schutzes (PJJ) durchgeführt, das für die pädagogische und soziale Betreuung des Minderjährigen zuständig ist.",
+        "titre": "Welche Schutzmaßnahmen können Gerichte ergreifen, wenn ein Kind Opfer von Misshandlung wird?"
+       },
+       {
+        "texte": "Das Gesetz sieht spezifische Sanktionen vor, um Minderjährige zu schützen.\nDie Strafen variieren je nach Alter des Opfers und des Täters.\nKinder unter 15 Jahren genießen einen verstärkten Schutz. Jeder Verstoß gegen sie führt zu härteren Strafen als bei älteren Opfern. Jugendliche ab 15 Jahren sind weiterhin geschützt, jedoch mit Strafen, die denen für Erwachsene ähneln, es sei denn, es liegen besonders schwerwiegende Umstände vor.\nAuch das Alter des Autors spielt eine entscheidende Rolle: Ein minderjähriger Autor wird in der Regel Maßnahmen zur Aufklärung oder Strafen unterzogen, die auf sein Alter und seine Urteilsfähigkeit abgestimmt sind.\nTabelle: Hauptstraftaten und entsprechende Strafen, je nach Alter des Opfers und des Täters\nArt der Straftat | Opfer unter 15 Jahren und minderjähriger Täter | Opfer unter 15 Jahren und volljähriger Täter | Opfer ab 15 Jahren und minderjähriger Täter | Opfer ab 15 Jahren und volljähriger Täter\nKörperliche Gewalt | Alters- und Verstandesangemessene Bildungsmaßnahmen oder Strafen | Vollständige Arbeitsunfähigkeit (VU) von weniger als 8 Tagen: 5 Jahre und 75.000 €; VU von mehr als 8 Tagen: 10 Jahre und 150.000 €; Permanente Behinderung: 20 Jahre; Tod: 30 Jahre | Alters- und Verstandesangemessene Bildungsmaßnahmen oder Strafen | Mögliche Verschärfung, wenn das Kind Opfer und der Täter ein Elternteil oder eine andere Person mit Vormundschaft ist.\nSexuelle Gewalt | Geeignete Bildungsmaßnahmen | Gewalt: 7 Jahre und 100.000 € (bei Erziehungsberechtigten/Autoritäten: 10 Jahre und 150.000 €) Körperverletzung: 20 Jahre, 30 Jahre bei erschwerenden Umständen | Geeignete Bildungsmaßnahmen | Mögliche Verschärfung, wenn das Kind Opfer und Täter ist und ein Erziehungsberechtigter oder eine autoritäre Person die Beziehung zum Kind hat.\nVernachlässigung / Gefährdung | Geeignete Bildungsmaßnahmen | Vernachlässigung: 7 Jahre und 100.000 € (bei Todesfall: 20 Jahre) | Direkte Gefährdung: 1 Jahr und 15.000 € | Geeignete Bildungsmaßnahmen | Mögliche Verschärfung bei minderjährigem Opfer\nAusbeutung / Verstoß gegen die Moral | Geeignete Bildungsmaßnahmen | Zwangsheirat: 5 Jahre und 75.000 € Korruption: 7 Jahre und 100.000 € Sexuelle Ausbeutung: bis zu 20 Jahre | Geeignete Bildungsmaßnahmen | Mögliche Verschärfung bei minderjährigem Opfer\nWichtig zu beachten: Wenn von \"ITT\" (Invaliditätsentscheidung) die Rede ist, handelt es sich dabei nicht um eine Unfähigkeit, beruflich für ein Minderjähriges zu arbeiten, sondern um die Zeit, in der das Kind nicht in der Lage ist, sein normales Leben zu führen, d.h. sich fortzubewegen, zu essen, zur Schule zu gehen oder zu spielen.\nDie Hauptstrafen können auch von zusätzlichen Strafen begleitet werden, wie z. B.:\n- Die Entziehung der elterlichen Rechte\n- die Verbote, eine Tätigkeit auszuüben, die mit Kindern in Verbindung steht\n- oder die Entziehung bestimmter bürgerlicher, zivilrechtlicher oder familiärer Rechte.",
+        "titre": "Welche Strafen können bei Misshandlung eines Kindes verhängt werden?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F952",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F952",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 78.7,
+      "units": 93
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T11:49:52.228Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Дитина, яка зазнала зловживань",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "У разі зловживань щодо дитини, існують механізми для захисту дитини, повідомлення відповідних органів влади та притягнення винних до відповідальності.",
+      "steps": [
+       {
+        "texte": "У разі зловживань щодо дитини, незалежно від того, чи йдеться про фізичне, психологічне, сексуальне насильство або ігнорування, існують механізми для захисту дитини, повідомлення відповідних органів влади та притягнення винних до відповідальності. Як діяти? Ми надаємо вам інструкції та доступні ресурси.",
+        "titre": null
+       },
+       {
+        "texte": "Порушення прав дитини означає будь-яку форму насильства, що завдає шкоди його фізичному, психологічному або емоційному стану, а також його розвитку.\nЦе може бути здійснено її батьками, іншими членами її сім'ї або людьми з її оточення (сусід, друг, близький…).\nТаке зневажливе ставлення може проявлятися у:\n- фізичні або сексуальні насильства (укус, опіки, задушення, дотикання, сексуальні каліцтва...)\n- психологічні насильства (залякування, погрози...)\n- або навмисне відмови від медичної допомоги (харчування, ліків, гігієни...).\nА саме: Булінг у школі та інші випадки насильства між учнями підлягають спеціальній обробці.",
+        "titre": "Що таке зловживання над дитиною?"
+       },
+       {
+        "texte": "Будь-яка особа (дітина або дорослий), яка свідчить про насильство щодо дитини або підозрює, що дитина перебуває в небезпеці або може опинитися в небезпеці, зобов'язана повідомити про це. Це може бути будь-яка людина, або професіонал (соціальний працівник, лікар...).\nПовідомлення може бути анонімним, незалежно від того, чи подається воно поштою або телефоном.\n119\nУ разі виявлення ситуації зловживань щодо дитини, незалежно від того, чи є ви жертвою, чи свідком (прямим або непрямим), необхідно зателефонувати за номером 119.\n→ Куди звертатися: Дитя в небезпеці – 119\nДиспетчерські служби екстреної допомоги (15, 17, 18)\nУ разі надзвичайної ситуації, можна звернутися до служб екстреної допомоги.\nСоціальна допомога дітям (ASE)\nТакож можуть бути звернені до відповідних служб (наприклад, до служби соціальної допомоги дітям – ASE – або до служби збору інформації про потенційні ризики – Crip).\n→ Куди звернутися: Відділ освіти\nПрокурор Республіки\nУ випадках надзвичайної серйозності (наприклад, фізичного або сексуального насильства), можливо звернутися безпосередньо до прокурора, надіславши листа.\n→ Куди звернутися: районний суд або місцевий суд\nЗахисник прав\nТакож можна звернутися до Омбудсмена, зокрема для повідомлення про проблеми у наданні послуг або захисті прав дитини.\n→ Куди звернутися: Офіс захисту прав\nОсоба, яка повідомила про цю ситуацію, отримує інформацію про те, що було зроблено у відповідь на повідомлення про небезпечного дитину, за винятком випадків, коли ця інформація суперечить її інтересам або інтересам дитини.\nНеповідомлення про ситуацію зловживань, про яку людина знає, може каратися трьома роками тюремного ув'язнення та штрафом у розмірі 45 000 євро. У випадках, коли ці факти стосуються неповнолітньої особи віком до 15 років, закон вважає ситуацію більш серйозною, і покарання складають п'ять років ув'язнення та штраф у розмірі 75 000 євро.\nСвідоме повідомлення до компетентних органів про неправдиві факти є формою мовної образу. Цей злочин карається ув'язненням терміном до 5 років та штрафом у розмірі 45 000 євро.\nА саме: Прокурор Республіки також може розпочати розслідування самостійно, після отримання повідомлення.",
+        "titre": "Хто повинен повідомити про випадки зловживань над дитиною та як саме?"
+       },
+       {
+        "texte": "Навіть у разі участі батьків, жертва може подати просту скаргу. Це дозволяє повідомити прокуратурі (прокурору) та правоохоронним органам (поліцейським) про те, що сталося (фізичні або психологічні насильства, відсутність догляду...).\nОднак, якщо потерпіла дитина бажає, щоб її скарга призвела до судового розгляду та отримання компенсації, вона повинна самостійно заявити про свою провину. Для цього їй необхідно мати законного представника:\n- за посередництвом повнолітньої особи (батька, опікуна, тимчасового адміністратора тощо)...\n- або за сприянням організації, яка має досвід роботи не менше 5 років, і яка займається захистом жертв. У такому випадку, процедура вже повинна бути розпочата прокурором або бути результатом подання скарги.\nВажливо зазначити: термін прокуросування у більшості випадків, коли правопорушення скоюються щодо неповнолітніх, становить 30 років з моменту досягнення потерпілою повноліття у випадку зґвалтування. Таким чином, особа, яка вчинила насильство, може бути притягнута до відповідальності та засуджена навіть через багато років після події.",
+        "titre": "Яким чином дитина, яка зазнала насильства, може подати скаргу?"
+       },
+       {
+        "texte": "Дитина, яка зазнала насильства, може отримати психологічну підтримку через:\n- послуги АСЕ,\n- медико-психологічні центри (МПЦ) або медико-психологічні центри для дітей та підлітків\n- будинки для підлітків\n- медико-юридичні підрозділи (МЮ),\n- створені в кожній регіоні центри психологічної допомоги.\nЦі послуги надаються безкоштовно та з дотриманням конфіденційності.",
+        "titre": "Яким чином дитина, яка зазнала насильства, може отримати психологічну підтримку?"
+       },
+       {
+        "texte": "У результаті повідомлення, служба соціальної допомоги дітям (ASE) може прийти до будинку дитини для оцінки її ситуації.\nЯкщо цей огляд виявить наявність небезпеки або ризику небезпеки для дитини, служба може запропонувати різні адміністративні заходи захисту (наприклад, допомогу вдома, тимчасовий догляд або проживання).\nОднак, проживання в готелі заборонено для дітей, які перебувають на опіці АСЕ, за винятком випадків (діти віком понад 16 років, термін перебування не більше 2 місяців).\nЯкщо перевірка ситуації виявить загрозу для дитини, а батьки відмовляться від адміністративних заходів захисту або якщо ці заходи виявляться неефективними, служба може звернутися до прокурора. Прокурор може звернутися до сімейного судді, щоб він впровадив заходи підтримки (наприклад, моніторинг та допомогу сім'ї), або, якщо дитина перебуває у серйозній небезпеці, прийняти рішення про її тимчасове розміщення в опіку (наприклад, у сім'ї прийомних батьків).",
+        "titre": "Коли соціальна служба з питань дитинства вступає в дію після повідомлення про зловживання над дитиною?"
+       },
+       {
+        "texte": "Судді для дітей може вживати заходів щодо моніторингу та підтримки сім'ї, а також заходів щодо розміщення дитини в опіку.\nЗаходи з моніторингу та підтримки сім'ї\nСуддя у справах дітей намагається, у міру можливостей, зберегти дитину в її сім'ї.\nЦе може означати кваліфіковану особу або спеціалізований сервіс, який допомагає сім'ї.\nЦя людина, яка має відповідні кваліфікації, відповідає за супровід дитини та її сім'ї щодня. Вона надає консультації з питань виховання, персональну підтримку та може направити сім'ю до відповідних послуг.\nСпеціалізований сервіс повинен забезпечити сімейну соціальну та освітню підтримку, щоб забезпечити здоров'я, безпеку та освіту дитини.\nДіти також можуть отримати психологічну підтримку.\nКоли дитина перебуває під наглядом спеціалізованої служби, вона може тимчасово або періодично (наприклад, 1 тиждень на місяць) проживати в спеціалізованому закладі.\nСуд може зобов'язати дитину або її батьків дотримуватися певних умов. Це можуть бути, наприклад:\n- Проходити навчання (бути записаним до навчального закладу, зокрема, в пансіоні)\n- Забезпечення дитини можливості займатися професійною діяльністю, якщо вона досягла віку, необхідного для роботи.\n- Дотримуватися рекомендацій щодо психологічного або медичного супроводу.\nЯкщо дитину супроводжує спеціалізований заклад, то такий вид лікування може тривати до 2 років, з можливим одноразовим продовженням.\nЯкщо дитину супроводжує кваліфікований фахівець, немає жодного максимального терміну.\nСуд також може зобов'язати надати допомогу у управлінні сімейним бюджетом, метою якого є відновлення фінансової незалежності сім'ї, або надати освітню допомогу вдома, метою якої є відновлення зв'язку між батьками та дитиною.\nСуд також може зобов'язати сторони пройти сімейне посередництво, зокрема для сприяння спілкуванню між батьками та дітьми, за певних умов (згоди батьків, відсутності насильства). Ця система спрямована на згладжування конфліктів та покращення сімейного життя.\nКрім того, суд може вирішити застосувати заходи судового нагляду, зокрема, щодо освіти, щоб краще оцінити сімейну ситуацію перед прийняттям більш суворих заходів.\nВін також може заборонити дитині покидати батьківську країну на термін до 2 років, поряд із застосуванням заходи з освітньої підтримки.\nЗаходи щодо працевлаштування\nСудді для дітей може вирішити про застосування опіки в найважчих випадках.\nЦя заходи не позбавляє батьків права опіку над дитиною.\nЦя міра встановлюється на термін до 2 років, з можливим продовженням на 1 рік.\nОднак, можливо, що заходи будуть застосовані на більш тривалий період, якщо це буде необхідно для сімейного стану.\nБатьки можуть отримати право відвідувати дитину.\nВартість, пов'язана з опікою над дитиною, має бути сплачена батьками, за винятком рішення суду, яке може бути іншим.\nУ разі термінового призначення опікуна, суд може прийняти рішення швидко, без попереднього розгляду справи, але має повідомити сторони протягом 15 днів, щоб підтвердити або змінити це рішення.\nЗаходи щодо розміщення виконуються під відповідальністю служби захисту прав неповнолітніх (СЗПН), яка забезпечує освітній та соціальний супровід дитини.",
+        "titre": "Які заходи захисту можуть вжити суди, коли дитина стає жертвою зловживань?"
+       },
+       {
+        "texte": "Закон передбачає конкретні санкції для захисту прав неповнолітніх.\nВизначення покарання залежить від віку жертви та особи, яка вчинила правопорушення.\nДітям віком до 15 років надається посилена захист. Будь-який злочин, скоєний ними, передбачає суворіші покарання, ніж у випадку, коли жертва була старшою. Дітям віком від 15 років надається захист, але покарання відповідають тим, що призначаються для дорослих, за відсутності обставин, що посилюють злочин.\nВік автора також відіграє важливу роль: якщо автор є неповнолітнім, то зазвичай застосовуються заходи виховання або покарання, які відповідають його віку та рівню розуміння.\nТаблиця: Основні правопорушення та відповідні покарання, залежно від віку жертви та злочинця.\nТип правопорушення | Жертва віком до 15 років та неповнолітній винуватець | Жертва віком до 15 років та дорослий винуватець | Жертва віком від 15 років та неповнолітній винуватець | Жертва віком від 15 років та дорослий винуватець\nФізичне насильство | Навчальні заходи або покарання, що відповідають віку та рівню розуміння | Повна непрацездатність (ПНП) менше 8 днів: 5 років і 75 000 євро; ПНП більше 8 днів: 10 років і 150 000 євро; Повна втрата функцій: 20 років; Смерть: 30 років | Навчальні заходи або покарання; Можливе посилення покарання, якщо потерпілим є неповнолітній, а винним є батько або особа, яка має владу над дитиною.\nСексуальне насильство | Адаптовані освітні заходи | Насильство: 7 років і 100 000 євро, якщо батьки/опікуни: 10 років і 150 000 євро. Насильство: 20 років, 30 років у разі наявності обставин, що погіршують ситуацію | Адаптовані освітні заходи. Можливе посилення покарання, якщо потерпілий – неповнолітній, а винний – батько або опікун, який має владу над дитиною.\nВідсутність догляду / створення небезпечної ситуації | Адаптовані освітні заходи | Відсутність догляду: 7 років і 100 000 євро; у разі смерті: 20 років.\nСтворення безпосередньої небезпечної ситуації: 1 рік і 15 000 євро | Адаптовані освітні заходи | Можливе посилення покарання, якщо потерпілим є неповнолітній.\nЕксплуатація / порушення моральних норм | Адаптовані освітні заходи | Примусове бідництво: 5 років і 75 000 євро\nКорупція: 7 років і 100 000 євро\nТоргівля/сексуальна експлуатація: до 20 років | Адаптовані освітні заходи | Можливе посилення покарання, якщо потерпілим є неповнолітній\nВажливо зазначити: коли мова йде про \"інвалидність\", це не означає неможливість професійної діяльності для неповнолітнього, а стосується періоду, протягом якого він не може вести звичайне життя, тобто пересуватися, харчуватися, відвідувати школу або гратися.\nОсновні покарання також можуть супроводжуватися додатковими покараннями, такими як:\n- відмова від батьківського суверенітету\n- заборона займатися діяльністю, яка передбачає контакт з дітьми\n- або позбавлення від певних цивільних, громадянських або сімейних прав.",
+        "titre": "Які покарання застосовуються у випадку насильства над дитиною?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F952",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F952",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 77.2,
+      "units": 93
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:b413e6705daec1c618a726b1493607c85fcf6519541cb0bec4c3b20466a876de",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Enfant victime de maltraitance",
+   "contenu_json": {
+    "intro": "En cas de maltraitance envers un enfant, des dispositifs existent pour protéger l’enfant, alerter les autorités et poursuivre les auteurs.",
+    "steps": [
+     {
+      "texte": "En cas de maltraitance envers un enfant, qu’il s’agisse de violences physiques, psychologiques, sexuelles ou de négligences, des dispositifs existent pour protéger l’enfant, alerter les autorités et poursuivre les auteurs. Comment procéder ? Nous vous donnons les démarches à suivre et les aides disponibles.",
+      "titre": null
+     },
+     {
+      "texte": "La maltraitance sur un enfant correspond à toute atteinte portée à son intégrité physique, psychologique ou affective, ainsi qu’à son développement.\nElle peut être exercée par ses parents, par d’autres membres de sa famille, ou par des personnes de son entourage (voisin, ami, proche…).\nCette maltraitance peut être caractérisée par :\n- des violences physiques ou sexuelles (morsure, brûlure, étranglement, attouchement, mutilation sexuelle...)\n- des violences psychologiques (brimades, menaces...)\n- ou la privation volontaire de soins (alimentation, médicaments, hygiène...).\nÀ savoir : Le harcèlement scolaire et les autres cas de violences entre élèves font l'objet d'un traitement spécifique.",
+      "titre": "À quoi correspond la maltraitance sur un enfant ?"
+     },
+     {
+      "texte": "Toute personne (mineure ou majeure) témoin d'un acte de maltraitance envers un enfant ou soupçonnant un enfant en danger ou risquant de l'être doit signaler les faits. Il peut s'agir d'un particulier ou d'un professionnel (assistante sociale, médecin...).\nLe signalement peut être anonyme, qu'il soit fait par courrier ou par téléphone.\n119\nLorsqu'une situation de maltraitance envers un enfant est constatée, que l'on soit victime ou témoin (direct ou indirect), il convient d'appeler le 119.\n→ Où s'adresser : Enfance en danger - 119\nServices d'urgence (15, 17, 18)\nEn cas d'urgence, les services de secours peuvent être sollicités.\nAide sociale à l'enfance (ASE)\nLes services du département (l’aide sociale à l'enfance - ASE - ou la cellule de recueil des informations préoccupantes - Crip) peuvent également être saisis.\n→ Où s'adresser : Services du département\nProcureur de la République\nPour les cas d'une exceptionnelle gravité (violences physiques ou sexuelles par exemple), il est possible de s'adresser directement, par courrier, au procureur de la République.\n→ Où s'adresser : Tribunal judiciaire ou tribunal de proximité\nDéfenseur des droits\nIl est également possible de s'adresser au Défenseur des droits, notamment pour signaler des dysfonctionnements dans la prise en charge ou la protection de l’enfant.\n→ Où s'adresser : Défenseur des droits\nLa personne à l'origine du signalement est informée des suites données à une information préoccupante sur un mineur en danger sauf si cette information est contraire à ses intérêts ou à ceux de l'enfant.\nLa non-dénonciation d'une situation de maltraitance dont une personne a connaissance peut être punie de 3 ans de prison et de 45 000 € d'amende. Lorsque ces faits concernent un mineur de moins de 15 ans, la loi considère la situation comme plus grave et les peines sont portées à cinq ans de prison et 75 000 €d'amende.\nLe fait d'alerter volontairement les autorités sur des faits inexacts relève de la dénonciation calomnieuse. Ce délit est puni par une peine de prison pouvant aller jusqu'à 5 ans et une amende de 45 000 €.\nÀ savoir : Le procureur de la République peut également lancer, de lui-même, une enquête à la suite d'un signalement.",
+      "titre": "Qui doit faire un signalement lorsqu'un enfant est victime de maltraitance et comment ?"
+     },
+     {
+      "texte": "Même en cas d'implication des parents, une plainte simple peut être déposée par la victime. Cet acte permet de signaler à la justice (procureur de la République, officiers de police judiciaire) les faits subis (violences physiques ou psychologiques, privation de soin...).\nMais, si la victime mineure souhaite que sa plainte donne lieu à des poursuites, obtenir une indemnisation, elle devra se constituer partie civile. Pour ce faire, elle devra obligatoirement être représentée :\n- par une personne majeure (grand-parent, tuteur, administrateur ad hoc...),\n- ou par une association de plus de 5 ans d'ancienneté, dont l'objet est la défense des victimes. Dans ce cas, la procédure doit déjà avoir été lancée par le procureur de la République ou faire suite à la plainte.\nÀ noter : Le délai de prescription concernant la plupart des infractions commises sur les mineurs est de 30 ans à compter de la majorité de la victime en cas de viol. L'auteur des maltraitances peut donc être poursuivi et condamné même longtemps après les faits.",
+      "titre": "Comment l'enfant victime de maltraitance peut-il porter plainte ?"
+     },
+     {
+      "texte": "L'enfant victime de maltraitance peut bénéficier d’un soutien psychologique via :\n- les services de l’Ase,\n- les centres médico-psychologiques (CMP) ou CMPP,\n- les maisons des adolescents,\n- les unités médico-judiciaires (UMJ),\n- les cellules de psychotrauma créées dans chaque région.\nCes soins sont gratuits et confidentiels.",
+      "titre": "Comment l'enfant victime de maltraitance peut-il bénéficier d'un accompagnement psychologique ?"
+     },
+     {
+      "texte": "À la suite du signalement, le service de l'aide sociale à l'enfance (ASE) peut intervenir au domicile de l'enfant pour évaluer sa situation.\nSi cet examen conclut à l'existence d'un danger ou d'un risque de danger pour l'enfant, le service peut proposer diverses mesures de protection administratives (par exemple des aides à domicile, un accueil ou hébergement ponctuel).\nToutefois, l’hébergement en hôtel est interdit pour les enfants confiés à l’ASE, sauf exception (jeunes de plus de 16 ans, 2 mois maximum).\nSi l'examen de la situation conclut à un danger pour l'enfant et que les parents refusent les mesures de protection administratives ou qu'elles ne sont pas efficaces, le service peut saisir le procureur de la République. Celui-ci peut s'adresser à un juge des enfants pour qu'il mette en place des mesures d'assistance éducative (mesure de suivi et d'aide à la famille) ou, si l'enfant court un grave danger, décider de le placer temporairement en urgence (dans une famille d'accueil par exemple).",
+      "titre": "Quand intervient l'aide sociale à l'enfance à la suite d’un signalement de maltraitance ?"
+     },
+     {
+      "texte": "Le juge des enfants peut prendre des mesures de suivi et d'aide à la famille et des mesures de placement.\nMesures de suivi et d'aide à la famille\nLe juge des enfants essaie, dans la mesure du possible, de maintenir l'enfant dans sa famille.\nIl peut désigner une personne qualifiée ou un service spécialisé pour aider la famille.\nLa personne qualifiée est chargée d’accompagner l’enfant et sa famille au quotidien. Elle apporte des conseils éducatifs, un soutien personnalisé et peut orienter la famille vers des services adaptés.\nLe service spécialisé doit mettre en place un accompagnement social et éducatif de la famille pour assurer la santé, la sécurité et l'éducation de l'enfant.\nL'enfant peut également bénéficier d'un accompagnement psychologique.\nQuand l'enfant est suivi par un service spécialisé, il peut y être hébergé de façon exceptionnelle ou périodique (1 semaine par mois par exemple).\nLe juge peut soumettre l'enfant ou ses parents au respect de certaines obligations. Elles peuvent être les suivantes :\n- Suivre une scolarité (être inscrit dans un établissement sanitaire ou d'éducation, y compris en internat)\n- Exercer une activité professionnelle par l'enfant, s'il est en âge de travailler\n- Respecter un suivi psychologique ou médical.\nSi l'enfant est suivi par un service spécialisé, la mesure peut durer 2 ans maximum, renouvelable 1 fois.\nSi l'enfant est suivi par une personne qualifiée, il n'y a pas de durée maximale.\nLe juge peut également ordonner une aide à la gestion du budget familial, dont le but est de rétablir l'autonomie financière de la famille ou une aide éducative à domicile dont le but est de restaurer les liens entre les parents et l'enfant.\nLe juge peut également ordonner une médiation familiale, notamment pour favoriser la communication entre parents et enfants, sous conditions spécifiques (accord des parents, absence de violence). Ce dispositif vise à apaiser les tensions et améliorer la situation familiale.\nPar ailleurs, le juge peut décider d'une mesure judiciaire d’investigation éducative pour mieux évaluer la situation familiale avant de prendre des mesures plus contraignantes.\nIl peut aussi interdire la sortie du territoire national de l’enfant pour une durée maximale de 2 ans en complément d’une mesure d’assistance éducative.\nMesures de placement\nLe juge des enfants peut décider d'une mesure de placement dans les cas les plus graves.\nCette mesure ne retire pas l'autorité parentale aux parents de l'enfant.\nCette mesure est fixée pour une durée de 2 ans maximum, renouvelable 1 fois.\nToutefois, il est possible que les mesures soient ordonnées pour une durée supérieure si la situation de la famille l'exige.\nLes parents peuvent obtenir un droit de visite.\nLes frais occasionnés par la prise en charge du mineur doivent être payés par les parents, sauf décision contraire du juge.\nEn cas de placement d'urgence, le juge peut prendre une décision rapide sans audition préalable des parties, mais doit les convoquer dans un délai de 15 jours pour confirmer ou modifier la mesure.\nLes mesures de placement sont exécutées sous la responsabilité de la Protection Judiciaire de la Jeunesse (PJJ), qui assure le suivi éducatif et social du mineur.",
+      "titre": "Quelles mesures de protection peuvent être prises par la justice lorsqu'un enfant est victime de maltraitance ?"
+     },
+     {
+      "texte": "La loi prévoit des sanctions spécifiques pour protéger les mineurs.\nLes peines varient selon l’âge de la victime et celui de l’auteur de l’infraction.\nLes enfants de moins de 15 ans bénéficient d’une protection renforcée. Toute infraction à leur encontre entraîne des peines plus sévères que si la victime était plus âgée. Les mineurs de 15 ans et plus restent protégés mais avec des sanctions proches de celles prévues pour les adultes, sauf circonstances aggravantes.\nL’âge de l’auteur joue également un rôle déterminant : un mineur auteur est généralement soumis à des mesures éducatives ou à des peines adaptées à son âge et à son discernement.\nTableau : Principales infractions et peines correspondantes selon l’âge de la victime et de l’auteur\nType d’infraction | Victime < 15 ans et auteur mineur | Victime < 15 ans et auteur majeur | Victime ≥ 15 ans et auteur mineur | Victime ≥ 15 ans et auteur majeur\nViolences physiques | Mesures éducatives ou peines adaptées à l’âge et au discernement | Incapacité totale de travail (ITT) < 8 jours : 5 ans et 75 000 €ITT > 8 jours : 10 ans et 150 000 €Mutilation/perte fonction permanente : 20 ansDécès : 30 ans | Mesures éducatives ou peines adaptées | Aggravation possible si mineur victime et auteur ascendant ou ayant autorité sur l’enfant\nViolences sexuelles | Mesures éducatives adaptées | Agression : 7 ans et 100 000 €Si ascendant/autorité : 10 ans et 150 000 €Viol : 20 ans, 30 ans en cas de circonstances aggravantes | Mesures éducatives adaptées | Aggravation possible si mineur victime et auteur ascendant ou ayant autorité sur l’enfant\nPrivation de soin / mise en danger | Mesures éducatives adaptées | Privation de soins : 7 ans et 100 000 €Si décès : 20 ansMise en danger directe : 1 an et 15 000 € | Mesures éducatives adaptées | Aggravation possible si mineur victime\nExploitation / atteinte à la moralité | Mesures éducatives adaptées | Mendicité forcée : 5 ans et 75 000 €Corruption : 7 ans et 100 000 €Traite/exploitation sexuelle : jusqu’à 20 ans | Mesures éducatives adaptées | Aggravation possible si mineur victime\nÀ noter : Lorsqu’on parle d’ITT, il ne s’agit pas d’incapacité de travailler professionnellement pour un mineur, mais de la période pendant laquelle il est empêché de mener sa vie normale, c’est-à-dire de se déplacer, de se nourrir, d’aller à l’école ou de jouer.\nLes peines principales peuvent également s’accompagner de peines complémentaires telles que :\n- le retrait de l’autorité parentale,\n- l’interdiction d’exercer une activité en contact avec des enfants\n- ou la privation de certains droits civiques, civils ou familiaux.",
+      "titre": "Quelles sont les peines applicables en cas de maltratitance sur un enfant ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

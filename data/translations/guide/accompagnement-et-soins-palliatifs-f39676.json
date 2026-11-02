@@ -1,0 +1,508 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "accompagnement-et-soins-palliatifs-f39676",
+ "recordId": "82335e01-2939-449d-a601-f2916d5d13bd",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:34:04.504Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Palliative care and support",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 77.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Palliative care and support are provided to anyone who is suffering as a result of one or more serious illnesses with significant consequences.",
+      "steps": [
+       {
+        "texte": "Do you have questions about palliative care and end-of-life care? These services are available to anyone who is seriously ill, regardless of age, as a result of one or more serious illnesses. The consequences can be physical or psychological. They also provide support for the patient's family and friends. This care can be provided in a hospital or at home. We will explain the key aspects to understand.",
+        "titre": null
+       },
+       {
+        "texte": "Palliative care and support services are provided to anyone experiencing severe physical and/or mental distress due to their health condition as a result of a serious illness or illnesses.\nThis may include, for example, individuals who are nearing the end of their lives.",
+        "titre": "Who is eligible for palliative care and support services?"
+       },
+       {
+        "texte": "Palliative care and support aim to ensure that the patient and their loved ones receive comprehensive and personalized care within a timeframe that is appropriate for their health condition.\nThis refers to alleviating suffering.\nThe goal is to ensure that the person's dignity, autonomy, quality of life, and well-being are maintained.\nSpecifically: Palliative care aims to relieve the patient's suffering, while curative care aims to cure the patient.",
+        "titre": "What is the goal of palliative care and support?"
+       },
+       {
+        "texte": "Palliative care can be offered in 2 situations:\n- When a patient is going through a critical period, palliative care complements curative treatment.\n- When curative treatments do not improve the patient's condition, palliative care becomes more important in order to preserve the best possible quality of life for the patient and their family.",
+        "titre": "At what point can palliative care be offered to the patient?"
+       },
+       {
+        "texte": "Palliative care and support are provided at the initiative of doctors. They can also be offered at the patient's request.",
+        "titre": "Who takes the initiative for palliative care and support?"
+       },
+       {
+        "texte": "A booklet providing information about the patient's rights regarding palliative care and support is provided to the patient.\nThis discount can be applied upon admission to the residential care facility.\nThis booklet is accessible to people with visual or hearing impairments and is available in a format that is easy to read and understand.\nThis person is also aware of the possibility:\n- To receive, when their health allows, this support and care in an outpatient or home setting.\n- To record advance directives in a digital health space, or to update them with the help of a healthcare professional, if desired.",
+        "titre": "How is the patient informed about the option of palliative care and support?"
+       },
+       {
+        "texte": "Palliative care and support include:\n- Prevention\n- Comprehensive assessment and management of physical problems\n- Responses to psychological suffering\n- Addressing social and spiritual needs\n- Information and guidance on creating advance directives and appointing a trusted person.\nSpecifically, palliative care and support also provide care for the patient's family and loved ones. This support, particularly psychological support, continues even after the patient's death.",
+        "titre": "What do palliative care and support services include?"
+       },
+       {
+        "texte": "Yes, the right to have visitors is guaranteed if your condition requires support and palliative care.\nThe facility outlines the conditions for these visits to ensure that guidelines for protecting your health and the health of your visitors are followed.",
+        "titre": "Does the right to visitation exist in cases of accompaniment and palliative care?"
+       },
+       {
+        "texte": "Palliative care and support are provided regardless of the person's place of residence or where they receive care (e.g., a palliative care and support home).\nIndeed, the treating physician can decide to provide care at home if the patient wishes and if their health condition allows for it.\nThey can also take place in a setting where freedom is restricted (for example, a detention center).\nA search tool is available:\n→ Online service: Find the contact details of palliative care and end-of-life support organizations",
+        "titre": "Where can one access palliative care and support services?"
+       },
+       {
+        "texte": "In palliative care, there are no out-of-pocket expenses for patients.\nThe Assurance Maladie (French public health insurance) covers the costs of hospitalization, medical care, and any necessary products or equipment for palliative care.",
+        "titre": "What is the support and palliative care coverage?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F39676",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F39676",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 72.8,
+      "units": 43
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:35:32.435Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Destek ve paliatif bakım",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 58.1,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Destek ve paliatif bakım, ciddi hastalıklar ve bunların yol açtığı ciddi sonuçlar nedeniyle acı çeken herkese yöneliktir.",
+      "steps": [
+       {
+        "texte": "Yaşınız ne olursa olsun, bakım ve paliatif tedaviler hakkında sorularınız mı var? Bu hizmetler, ciddi bir veya birden fazla hastalığın ardından, herhangi bir yaşta, rahatsız olan herkese yöneliktir. Sonuçları fiziksel veya psikolojik olabilir. Ayrıca, hasta kişinin çevresinin de bakımını sağlar. Bu hizmetler, bir kurumda veya evde de uygulanabilir. Size bilmeniz gereken kuralları açıklıyoruz.",
+        "titre": null
+       },
+       {
+        "texte": "Destek ve paliatif bakım, kişinin, ciddi bir hastalığın veya hastalıkların sonucunda ortaya çıkan fiziksel ve/veya zihinsel durumundan dolayı, şiddetli bir şekilde acı çeken herkesi kapsamaktadır.\nBunlar, özellikle yaşamlarının sonuna yaklaşan kişiler olabilir.",
+        "titre": "Hangi kişiler, bakım ve paliatif tedavilerden etkilenmektedir?"
+       },
+       {
+        "texte": "Destek ve paliatif bakım, hastanın ve yakınlarının, sağlık durumuna uygun bir süre içinde kapsamlı ve yakın bir şekilde desteklenmesini ve bakılmasını amaçlar.\nBu, acılara cevap vermektir.\nAmaç, bu kişinin onurunu, bağımsızlığını, yaşam kalitesini ve refahını korumaktır.\nÖnemli olan şudur: Palyatif bakım, hastanın acısını hafifletmeyi amaçlarken, tedavi amaçlı bakım ise onu iyileştirmeyi hedefler.",
+        "titre": "Destek ve paliatif bakımın amacı nedir?"
+       },
+       {
+        "texte": "Paliatif bakım, iki farklı durumda sunulabilir:\n- Hasta, kritik bir dönemden geçerken, paliatif bakım, tedavi yöntemlerini tamamlar.\n- Tedavi yöntemleri hastalığın iyileşmesini sağlamadığında, yaşam kalitesini mümkün olduğunca yüksek tutmak amacıyla, paliatif tedavi ön plana çıkar.",
+        "titre": "Hastaya hangi aşamada paliatif bakım hizmetleri sunulabilir?"
+       },
+       {
+        "texte": "Destek ve paliatif bakım, doktorlar tarafından başlatılır. Ayrıca, hastaların talebi üzerine de uygulanabilir.",
+        "titre": "Kim, bakım ve paliatif tedavilerin başlatılmasında ve yürütülmesinde öncülük eder?"
+       },
+       {
+        "texte": "Hastaya, bakım ve paliatif tedavi konularındaki haklarıyla ilgili bir bilgilendirme broşürü verilmektedir.\nBu indirim, huzurevine giriş sırasında uygulanabilir.\nBu broşür, görme veya işitme engelli bireyler için hazırlanmış olup, kolay okunabilir ve anlaşılabilir bir formatta bulunmaktadır.\nBu kişi ayrıca şu olasılıktan da haberdardır:\n- Sa sağlığına uygun olduğunda, bu destek ve tedavi hizmetlerini, poliklinik ortamında veya evde alabilmesi.\n- Önceden belirlenen talimatlarını sağlık dijital platformunda kaydetmek veya, isteğine göre bir sağlık profesyonelinden yardım alarak güncellemek.",
+        "titre": "Hasta, bakım ve paliatif tedavinin nasıl sağlanacağı konusunda nasıl bilgilendirilir?"
+       },
+       {
+        "texte": "Destek ve paliatif bakım, şunları içerir:\n- Önleme\n- Fiziksel sorunların değerlendirilmesi ve kapsamlı çözümü\n- Psikolojik acılara karşı çözüm\n- Sosyal ve manevi ihtiyaçlara cevap\n- Önceden hazırlanacak talimatlar ve güvenilir bir kişi atanması konusunda bilgi ve rehberlik.\nÖnemli olan: Destek ve paliatif bakım, sadece hasta bireyin ihtiyaçlarını karşılamakla kalmaz, aynı zamanda hasta ve ailesinin ihtiyaçlarını da karşılar. Bu destek, özellikle psikolojik destek, hastanın ölümünden sonra da devam eder.",
+        "titre": "\"Destek ve paliatif bakım nedir?\""
+       },
+       {
+        "texte": "Evet, eğer durumunuzun tıbbi bakım ve paliatif tedavi gerektirdiği ve ziyaretlerin sizin için faydalı olacağı belirlenirse, ziyaret hakkınız güvence altına alınır.\nKurum, ziyaretlerin koşullarını belirleyerek, hem sizin hem de ziyaretçilerinizin sağlığını koruma kurallarına uyulmasını sağlamayı amaçlamaktadır.",
+        "titre": "Ziyaret hakkı, bakım ve paliatif tedavi sırasında geçerli midir?"
+       },
+       {
+        "texte": "Destek ve paliatif bakım, hastanın yaşadığı veya tedavi gördüğü yer fark etmeksizin (örneğin, bir destek ve paliatif bakım merkezi) sağlanır.\nGerçekten de, doktor, hastanın bu isteğini ve sağlık durumunun uygunluğunu dikkate alarak, hastanın evde tedavi görmesini uygun bulursa, bu tedaviyi düzenleyebilir.\nBunlar, aynı zamanda özgürlükten mahrum bir yerde de gerçekleşebilir (örneğin, bir tutuklu karakolu).\nArama aracı mevcuttur:\n→ Çevrimiçi hizmet: Yaşamın son evrelerinde bakım ve destek sağlayan kuruluşların iletişim bilgilerini bulma",
+        "titre": "Hangi yerlerde paliatif bakım ve destek hizmetlerinden yararlanılabilir?"
+       },
+       {
+        "texte": "Paliatif bakımda, ücretlerin ödenek sınırları aşılmaz.\nAssurance Maladie (Fransız kamu sağlık sigortası), hastane masraflarını, tıbbi hizmetleri ve paliatif tedavi için gerekli olan ürünleri veya cihazları karşılamaktadır.",
+        "titre": "Destek ve paliatif bakım hizmetleri için nasıl bir finansman sağlanmaktadır?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F39676",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F39676",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 67.3,
+      "units": 43
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:36:59.185Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "الدعم والرعاية التلطيفية",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "roundtrip_low"
+      ],
+      "roundtrip": 33.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تهدف خدمات الدعم والرعاية التلطيفية إلى جميع الأشخاص الذين يعانون من مرض خطير أو أمراض خطيرة، والتي تؤدي إلى عواقب وخيمة.",
+      "steps": [
+       {
+        "texte": "هل لديك أسئلة حول الرعاية التلطيفية والعلاج؟ فهي موجهة إلى أي شخص يعاني من مرض، بغض النظر عن عمره، نتيجة لحالة مرضية واحدة أو أكثر. يمكن أن تكون النتائج جسدية أو نفسية. كما أنها تشمل رعاية الأسرة المصابة. يمكن تقديمها في مؤسسة أو في المنزل. نقدم لكم المعلومات الأساسية التي يجب معرفتها.",
+        "titre": null
+       },
+       {
+        "texte": "يشمل الدعم والرعاية التلطيفية أي شخص يعاني بشدة من المشاكل الجسدية أو/و النفسية بسبب حالته الصحية نتيجة لأمراض خطيرة.\nقد يشمل ذلك على سبيل المثال، الأشخاص الذين يقتربون من نهاية حياتهم.",
+        "titre": "من هم الأشخاص الذين يحتاجون إلى الدعم والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "تهدف الرعاية والخدمات التلطيفية إلى ضمان تقديم رعاية شاملة ومركزة للمريض وأفراد أسرته، وذلك في إطار زمني يتناسب مع حالته الصحية.\nإنها تهدف إلى تخفيف المعاناة.\nالهدف هو الحفاظ على الكرامة والاستقلالية وجودة الحياة والرفاهية لهذا الشخص.\nوهذا يعني: تهدف الرعاية التلطيفية إلى تخفيف معاناة المريض، بينما تهدف الرعاية العلاجية إلى علاجه.",
+        "titre": "ما هو الهدف من الرعاية التلطيفية والعلاج؟"
+       },
+       {
+        "texte": "يمكن تقديم الرعاية التلطيفية في الحالتين التاليتين:\n- عندما يمر المريض بفترة حرجة، فإن الرعاية التلطيفية تهدف إلى إكمال الرعاية العلاجية.\n- عندما لا تحسن العلاجات العلاجية من حالة المريض، تصبح العلاجات التلطيفية أكثر أهمية لضمان أفضل جودة حياة ممكنة للمريض وأسرته.",
+        "titre": "متى يمكن تقديم الرعاية التلطيفية للمريض؟"
+       },
+       {
+        "texte": "يتم توفير الرعاية والدعم في المراحل النهائية من المرض بمبادرة من الأطباء. يمكن أيضًا أن يتم ذلك بناءً على طلب المرضى.",
+        "titre": "من هو المسؤول عن توفير الدعم والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "يتم تسليم كتيب معلومات للمريض يتضمن حقوقه المتعلقة بالرعاية والدعم في المراحل النهائية من المرض.\nيمكن أن يتم هذا العرض عند التسجيل في دار رعاية المسنين.\nهذا الدليل متاح للأشخاص الذين يعانون من إعاقات بصرية أو سمعية، وهو متوفر بتنسيق سهل القراءة والفهم.\nكما أن هذه الشخص على علم بإمكانية:\n- للحصول على هذا الدعم والرعاية، عند إتاحته، سواء كانت على شكل رعاية خارجية أو في المنزل.\n- إما تسجيل تعليماته المسبقة في مساحة رقمية للصحة، أو تحديثها بالاستعانة بمحترف صحي، إذا رغبت في ذلك.",
+        "titre": "كيف يتم إعلام المريض بوجود المرافقة والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "تشمل الدعم والرعاية التلطيفية ما يلي:\n- الوقاية\n- تقييم وإدارة شاملة للمشاكل الجسدية\n- التعامل مع المعاناة النفسية\n- الاستجابة للاحتياجات الاجتماعية والروحية\n- معلومات ومساعدة في كتابة التعليمات المسبقة وتحديد الشخص الموثوق به.\nوهذا يعني: إن الرعاية التلطيفية والخدمات الصحية المقدمة تضمن أيضًا رعاية الأسرة والأقارب للمريض. ويشمل ذلك الدعم النفسي الذي يستمر حتى بعد وفاة المريض.",
+        "titre": "ما الذي يشمله الدعم والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "نعم، الحق في الزيارات مضمون إذا كان حالك يتطلب رعاية وتدابير علاجية تهدف إلى تخفيف الألم.\nيحدد المؤسسة شروط هذه الزيارات لضمان الالتزام بالإرشادات التي تهدف إلى حماية صحتك وصحة زوارك.",
+        "titre": "هل يحق للزيارة في حالات الإشراف والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "تتضمن الدعم والرعاية التلطيفية جميع الخدمات المقدمة، بغض النظر عن مكان إقامة المريض أو تلقي العلاج (مثل: مركز لرعاية المرضى وتوفير الرعاية التلطيفية).\nفي الواقع، يمكن للطبيب المعالج أن يقرر تقديم الرعاية في المنزل إذا رغب المريض في ذلك، وشروط حالته الصحية تسمح بذلك.\nيمكن أن تحدث أيضًا في مكان يفتقر إلى الحماية (مثل: سجن).\nتتوفر أداة للبحث:\n→ خدمة عبر الإنترنت: العثور على معلومات الاتصال بمراكز الرعاية التلطيفية ومراكز الدعم في نهاية الحياة.",
+        "titre": "أين يمكن الحصول على الدعم والرعاية التلطيفية؟"
+       },
+       {
+        "texte": "في الرعاية التلطيفية، لا توجد أي رسوم إضافية.\nتغطي Assurance Maladie (التأمين الصحي العمومي الفرنسي) تكاليف الإقامة، والرعاية الطبية، والمنتجات أو الأجهزة اللازمة للعلاج التلطيفي.",
+        "titre": "ما هي الدعم المتاح لتقديم الرعاية التلطيفية؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F39676",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F39676",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 69.1,
+      "units": 43
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:38:22.845Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Begleitung und palliative Versorgung",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 100,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die Begleitung und die palliative Versorgung richten sich an alle Menschen, die aufgrund einer oder mehrerer schwerer Krankheiten mit schwerwiegenden Folgen leiden.",
+      "steps": [
+       {
+        "texte": "Haben Sie Fragen zu Palliativpflege und Betreuung? Diese richten sich an alle Menschen, die unter einer oder mehreren schweren Erkrankungen leiden, unabhängig von ihrem Alter. Die Folgen können körperlich oder psychisch sein. Sie umfassen auch die Betreuung der Angehörigen der betroffenen Person. Sie können sowohl in einer Einrichtung als auch zu Hause durchgeführt werden. Wir erklären Ihnen die wichtigsten Aspekte.",
+        "titre": null
+       },
+       {
+        "texte": "Die Begleitung und die palliative Versorgung beziehen sich auf jede Person, die aufgrund einer oder mehrerer schweren Erkrankungen in schwerer körperlicher und/oder psychischer Not steht.\nDies kann insbesondere auf Personen zutreffen, die sich im späten Lebensabschnitt befinden.",
+        "titre": "Wer profitiert von der Begleitung und der palliativen Versorgung?"
+       },
+       {
+        "texte": "Die Begleitung und die palliative Versorgung zielen darauf ab, eine umfassende und persönliche Betreuung der kranken Person und ihrer Angehörigen zu gewährleisten, unter Berücksichtigung ihres Gesundheitszustands.\nDies bedeutet, auf das Leid zu reagieren.\nDas Ziel ist, die Würde, die Selbstbestimmung, die Lebensqualität und das Wohlbefinden dieser Person zu erhalten.\nDas bedeutet: Die palliativen Behandlungen zielen darauf ab, den Patienten zu entlasten, während die therapeutischen Behandlungen darauf abzielen, ihn zu heilen.",
+        "titre": "Was ist das Ziel von palliativen Maßnahmen und Betreuung?"
+       },
+       {
+        "texte": "Palliativbehandlungen können in folgenden zwei Situationen angeboten werden:\n- Wenn sich der Patient in einer kritischen Phase befindet, ergänzen die palliativen Behandlungen die konventionellen Behandlungen.\n- Wenn die therapeutischen Maßnahmen den Zustand des Patienten nicht verbessern, gewinnen palliative Maßnahmen an Bedeutung, um dem Patienten und seinen Angehörigen die bestmögliche Lebensqualität zu ermöglichen.",
+        "titre": "In welchem Moment können palliative Behandlungen angeboten werden?"
+       },
+       {
+        "texte": "Die Begleitung und die palliative Versorgung werden von Ärzten initiiert. Sie können aber auch auf Wunsch der Patienten angeboten werden.",
+        "titre": "Wer übernimmt die Initiative für die Begleitung und die palliative Versorgung?"
+       },
+       {
+        "texte": "Dem Patienten wird ein Informationsblatt über seine Rechte im Bereich der Betreuung und palliativen Versorgung ausgehändigt.\nDiese Zahlung kann bei der Aufnahme in ein Seniorenheim erfolgen.\nDieses Heft ist für Menschen mit Seh- oder Hörbehinderung zugänglich und ist in einem Format erhältlich, das leicht lesbar und verständlich ist.\nDiese Person ist auch darüber informiert, dass es möglich ist:\n- Die Möglichkeit, bei Bedarf und unter Berücksichtigung seines Gesundheitszustands, diese Betreuung und Behandlung ambulant oder zu Hause zu erhalten.\n- Ihre Vorsorgeanweisungen in einem digitalen Gesundheitsbereich zu speichern oder diese bei Bedarf mit Hilfe eines medizinischen Fachpersonals zu aktualisieren.",
+        "titre": "Wie wird der Patient über die Begleitung und die palliativen Maßnahmen informiert?"
+       },
+       {
+        "texte": "Die Begleitung und palliative Versorgung umfassen:\n- Prävention\n- Bewertung und umfassende Behandlung von körperlichen Problemen\n- Die Antwort auf psychische Leiden\n- Die Antwort auf soziale und spirituelle Bedürfnisse\n- Informationen und Unterstützung für die Erstellung von Vorsorgeanweisungen sowie für die Benennung einer Vertrauensperson.\nKonkret bedeutet dies: Die Begleitung und palliative Versorgung umfasst auch die Betreuung der Angehörigen der betroffenen Person. Diese Unterstützung, insbesondere psychische, setzt sich auch nach dem Tod der Person fort.",
+        "titre": "Was umfasst die Begleitung und die palliative Versorgung?"
+       },
+       {
+        "texte": "Ja, das Recht auf Besuche ist gewährleistet, wenn Ihr Zustand eine Betreuung und palliative Versorgung erfordert.\nDie Einrichtung legt die Bedingungen für diese Besuche fest, um sicherzustellen, dass die Richtlinien eingehalten werden, die dazu dienen, Ihre Gesundheit und die Ihrer Besucher zu schützen.",
+        "titre": "Gibt es das Recht auf Besuchsrecht im Falle von Begleitung und palliativen Behandlungen?"
+       },
+       {
+        "texte": "Die Begleitung und die palliativen Versorgung werden unabhängig vom Wohnort oder dem Ort der Behandlung des Patienten angeboten (z. B. eine Einrichtung zur palliativen Versorgung).\nIn der Tat kann der behandelnde Arzt entscheiden, dass die Behandlung zu Hause stattfindet, wenn die betroffene Person dies wünscht und wenn ihr Gesundheitszustand dies zulässt.\nSie können auch an Orten stattfinden, an denen die Freiheit eingeschränkt ist (z. B. eine Untersuchungshaftanstalt).\nEs gibt ein Suchwerkzeug:\n→ Online-Service: Ermittlung der Kontaktdaten von Einrichtungen für palliative Versorgung und Begleitung im Lebensend",
+        "titre": "Wo kann man Palliativversorgung und Betreuung erhalten?"
+       },
+       {
+        "texte": "In der Palliativmedizin gibt es keine zusätzlichen Kosten über die vereinbarten Tarife hinaus.\nDas Assurance Maladie (französische gesetzliche Krankenversicherung) übernimmt die Kosten für die stationäre Behandlung, medizinische Versorgung und die notwendigen Produkte oder Geräte für die palliative Versorgung.",
+        "titre": "Wie sieht die Finanzierung für Begleitung und palliative Versorgung aus?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F39676",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F39676",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 74,
+      "units": 43
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T04:39:54.827Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Догляд та паліативна допомога",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.5,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Догляд та паліативна допомога надаються всім хворим людям, які страждають від серйозної хвороби або кількох серйозних захворювань, що мають серйозні наслідки.",
+      "steps": [
+       {
+        "texte": "Ви маєте запитання щодо супровіду та паліативної допомоги? Вони призначені для будь-якої людини, яка страждає – незалежно від віку – після однієї або кількох серйозних захворювань. Наслідки можуть бути фізичними або психологічними. Вони також забезпечують підтримку для близьких людини, яка хворіє. Їх можна надавати як у медичному закладі, так і вдома. Ми розповідаємо про правила, які необхідно знати.",
+        "titre": null
+       },
+       {
+        "texte": "Догляд та паліативна допомога стосуються будь-якої людини, яка перебуває у важкому фізичному та/або психічному стані через стан свого здоров'я, спричинений однією або кількома серйозними хворобами.\nЦе може стосуватися, зокрема, людей, які перебувають на порозі смерті.",
+        "titre": "Хто потребує супровід та паліативні догляди?"
+       },
+       {
+        "texte": "Мета супровідних та паліативних послуг – забезпечити комплексний та індивідуальний догляд для хворого та його близьких, враховуючи його стан здоров'я, в межах часу, що є прийнятним.\nЦе означає полегшення страждань.\nМета полягає в тому, щоб зберегти гідність, самостійність, якість життя та добробут цієї людини.\nА саме: Паліативна допомога спрямована на полегшення стану пацієнта, тоді як лікувальна допомога має на меті його вилікувати.",
+        "titre": "Яка мета супровідних послуг та паліативної допомоги?"
+       },
+       {
+        "texte": "Паліативна допомога може бути запропонована у 2 випадках:\n- Коли пацієнт перебуває у критичному стані, паліативна допомога доповнює лікувальну терапію.\n- Коли лікування не покращує стан пацієнта, лікування, спрямоване на полегшення симптомів, стає більш важливим для забезпечення максимально можливої якості життя для пацієнта та його близьких.",
+        "titre": "У якому моменті можна розпочати лікування у паліативному відділенні для хворого?"
+       },
+       {
+        "texte": "Догляд та паліативна допомога надаються за ініціативою лікарів. Вони також можуть бути запропоновані пацієнтам за їхнім бажанням.",
+        "titre": "Хто ініціює надання супровідних послуг та догляду наприкінці життя?"
+       },
+       {
+        "texte": "Пацієнту надається брошура з інформацією про його права щодо супровідних послуг та паліативної допомоги.\nЦе може бути здійснено під час приїзду до дитячого будинку (Éhpad).\nЦей посібник доступний для людей з вадами зору або слуху, а також має зручний формат для читання та розуміння.\nЦя особа також має знання про можливість:\n- Отримати, за умови дозволу лікаря, цю допомогу та лікування у формі амбулаторних консультацій або лікування вдома.\n- Записати свої вказівки щодо догляду в цифровому просторі охорони здоров'я або оновлювати їх, звертаючись за допомогою до фахівця, якщо це необхідно.",
+        "titre": "Як пацієнт отримує інформацію про супровід та паліативні методи лікування?"
+       },
+       {
+        "texte": "Догляд та паліативна допомога включають:\n- Профілактика\n- Оцінка та комплексне вирішення фізичних проблем\n- Відповідь на психологічні страждання\n- Відповідь на соціальні та духовні потреби\n- Інформація та допомога у складанні попередніх вказівок та виборі відповідальної особи.\nА саме: Догляд та паліативна допомога також передбачають підтримку та піклування про близьких родичів хворого. Ця, зокрема, психологічна підтримка продовжується і після смерті пацієнта.",
+        "titre": "Що включають супровід та паліативні методи лікування?"
+       },
+       {
+        "texte": "Так, право на відвідування гарантується, якщо ваше стан потребує супроводу та паліативної допомоги.\nЗакладом встановлюються умови цих візитів, щоб забезпечити дотримання правил, які спрямовані на захист вашого здоров'я та здоров'я ваших відвідувачів.",
+        "titre": "Чи існує право відвідування у випадках супроводу та паліативної допомоги?"
+       },
+       {
+        "texte": "Догляд та паліативна допомога надаються незалежно від місця проживання або отримання медичної допомоги (наприклад, будинок для паліативної допомоги та догляду).\nНасправді, лікар може вирішити забезпечити догляд вдома, якщо пацієнт цього бажає і якщо його стан здоров'я дозволяє.\nВони також можуть відбуватися в місці, де обмежено свободу (наприклад, в слідчому ізоляторі).\nДоступний інструмент для пошуку:\n→ Онлайн-сервіс: Знайти контакти закладів, що надають допомогу в умовах кінцевих стадій захворювання та підтримки наприкінці життя.",
+        "titre": "Де можна отримати підтримку та паліативні послуги?"
+       },
+       {
+        "texte": "У відділенні паліативної допомоги не передбачаються додаткові платежі.\nAssurance Maladie (французьке державне медичне страхування) включає в себе оплату стаціонарного лікування, медичні послуги та необхідні медичні засоби або обладнання для паліативної допомоги.",
+        "titre": "Які можливості підтримки та паліативної допомоги доступні?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F39676",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F39676",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": null
+      }
+     },
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 69.9,
+      "units": 43
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:1069cbe0ccb5e7423cab9681a9c4086943fc96afd0e66f4fd7fdc5a4fd81d55a",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "Accompagnement et soins palliatifs",
+   "contenu_json": {
+    "intro": "L’accompagnement et les soins palliatifs s’adressent à toute personne souffrante suite à une ou plusieurs maladies graves avec des conséquences graves.",
+    "steps": [
+     {
+      "texte": "Vous vous posez des questions sur l’accompagnement et les soins palliatifs ? Ils s’adressent à toute personne souffrante - quelque soit son âge - à la suite d’une ou plusieurs maladies graves. Les conséquences peuvent être physiques ou psychiques. Ils assurent aussi la prise en charge de l’entourage de la personne malade. Ils peuvent être prodigués au sein d’un établissement ou à domicile. Nous vous exposons les règles à connaître.",
+      "titre": null
+     },
+     {
+      "texte": "L’accompagnement et les soins palliatifs concernent toute personne en grave souffrance physique et/ou mentale en raison de son état de santé à la suite d'une ou de plusieurs maladies graves.\nIl peut s’agir notamment des personnes approchant de la fin de vie.",
+      "titre": "Qui est concerné par l’accompagnement et les soins palliatifs ?"
+     },
+     {
+      "texte": "L’accompagnement et les soins palliatifs ont pour but de garantir une prise en charge globale et de proximité de la personne malade et de ses proches dans un délai compatible avec son état de santé.\nIl s’agit de répondre aux souffrances.\nLe but est que la dignité, l’autonomie, la qualité de vie et le bien-être de cette personne soient préservés.\nÀ savoir : Les soins palliatifs ont pour objectif de soulager le patient alors que les soins curatifs ont pour but de le guérir.",
+      "titre": "Quel est l’objectif de l’accompagnement et des soins palliatifs ?"
+     },
+     {
+      "texte": "Les soins palliatifs peuvent être proposés dans 2 situations :\n- Lorsque le malade traverse une période critique, les soins palliatifs viennent compléter les soins curatifs\n- Lorsque les soins curatifs n’améliorent pas l’état du malade, les soins palliatifs prennent une place plus importante pour sauvegarder la meilleure qualité de vie possible pour le malade et son entourage.",
+      "titre": "À quel moment les soins palliatifs peuvent-ils proposés à la personne malade ?"
+     },
+     {
+      "texte": "L’accompagnement et les soins palliatifs sont mis en oeuvre à l’initiative des médecins. Ils peuvent aussi l’être à la demande des patients.",
+      "titre": "Qui prend l’initiative de l’accompagnement et des soins palliatifs ?"
+     },
+     {
+      "texte": "Un livret d’information sur ses droits en matière d’accompagnement et de soins palliatifs est remis au malade.\nCette remise peut se faire lors de l’entrée en Éhpad.\nCe livret est accessible aux personnes en situation de handicap visuel ou auditif et disponible dans un format facile à lire et à comprendre.\nCette personne est aussi informée de la possibilité :\n- De recevoir, lorsque son état de santé le permet, cet accompagnement et ces soins sous forme ambulatoire ou à domicile\n- D’enregistrer ses directives anticipées dans l’espace numérique de santé ou de les actualiser en se faisant aider, si elle le souhaite, par un professionnel de santé.",
+      "titre": "Comment le malade est-il informé de l’accompagnement et des soins palliatifs ?"
+     },
+     {
+      "texte": "L’accompagnement et les soins palliatifs comprennent :\n- La prévention\n- L’évaluation et la prise en charge globale des problèmes physiques\n- La réponse aux souffrances psychiques\n- La réponse aux besoins sociaux et spirituels\n- Une information et une aide pour la rédaction des directives anticipées et pour la désignation de la personne de confiance.\nÀ savoir : L’accompagnement et les soins palliatifs assurent aussi la prise en charge de l’entourage de la personne malade. Ce soutien notamment psychologique se traduit aussi après le décès de la personne malade.",
+      "titre": "Que comprennent l’accompagnement et les soins palliatifs ?"
+     },
+     {
+      "texte": "Oui, le droit à des visites est garanti si votre état requiert un accompagnement et des soins palliatifs.\nL’établissement définit les conditions de ces visites pour garantir le respect des consignes permettant de protéger votre santé et celle de vos visiteurs.",
+      "titre": "Le droit de visite existe-t-il en cas d’accompagnement et de soins palliatifs ?"
+     },
+     {
+      "texte": "L’accompagnement et les soins palliatifs sont réalisés quel que soit le lieu de résidence ou de soins (exemple : une maison d’accompagnement et de soins palliatifs) de la personne malade.\nEn effet, le médecin traitant peut décider d’une prise en charge à domicile si la personne malade le souhaite et que son état de santé le permet.\nIls peuvent aussi avoir lieu dans un lieu privatif de liberté (exemple : une maison d’arrêt).\nUn outil de recherche est disponible :\n→ Service en ligne : Trouver les coordonnées des structures de soins palliatifs et d’accompagnement de fin de vie",
+      "titre": "Où peut-on bénéficier d’accompagnement et de soins palliatifs ?"
+     },
+     {
+      "texte": "En soins palliatifs, il n’y a pas de dépassements d’honoraires.\nL'Assurance Maladie prend en charge les frais d'hospitalisation, les soins médicaux et les produits ou appareillages nécessaires aux soins palliatifs.",
+      "titre": "Quelle est la prise en charge pour l’accompagnement et les soins palliatifs ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}

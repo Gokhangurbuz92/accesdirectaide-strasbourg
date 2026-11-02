@@ -1,0 +1,434 @@
+{
+ "schema": "ada-content-translation/1",
+ "kind": "guide",
+ "slug": "en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
+ "recordId": "325ccd14-a26f-41e8-946a-86b31ffce256",
+ "translations": {
+  "en": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:38:07.455Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "What does \"insertion through economic activity\" (IAE) entail?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.4,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "The IAE provides support to anyone who is unable or has difficulty accessing the job market due to age-related, health-related, or precarious employment issues.",
+      "steps": [
+       {
+        "texte": "Job insertion through economic activity (IAE) allows unemployed individuals and those facing social and professional difficulties (e.g., those receiving social benefits, long-term job seekers) to benefit from a work contract. IAE can include training activities. We provide you with the information you need to know.\nThe aim of economic integration is primarily social: to provide support and guidance to individuals who need help finding employment.\nThis program combines personalized individual support to allow each person to identify and develop their talents, and to find a professional project that they are passionate about, with daily work that enables them to acquire new skills and gain confidence in their future and their abilities.\nI enjoy my job as a career advisor. This role allows me to interact with a diverse range of people, and my role is to help them understand and achieve their career goals.\nIn my profession, I rely on various prescribers, training programs, and partner companies. France Travail is certainly one of our largest prescribers, and we have implemented various initiatives.\nThis refers to operations specifically designed for individuals involved in legal proceedings, refugees, and people with disabilities.\nI am Johnny, a full-time employee at Eitem, working as a technical support specialist for industrial clients.\nFollowing my release from prison, I started working for Mergos, a recruitment agency. I met a consultant who took care of finding me roles that perfectly matched my skills and experience. I was offered a permanent contract after completing my first assignment.\nFollowing that, I was invited to participate in the training program as an industrial mentor. And today, I have found a profession that suits me and in which I feel very comfortable.\nWithin MTri, I am the Director of Human Resources and Transition. Our transition program lasts between 6 months and 24 months. During this period, employees are trained in the technical skills required for the role of a delivery driver, as well as in cross-functional skills that will be useful for their future career.\nWe believe that work reveals talent, and that everyone is employable. I work as a driver, collector, and sorter. I demonstrate this. In my role here, I've found it easier to be helpful to others. I participate in training sessions for schools on proper environmental practices. I've also become a recycling ambassador, which is a role I wanted to take on for the rest of my career!",
+        "titre": null
+       },
+       {
+        "texte": "You are interested in the IAE.\n- If you have been unemployed for a very long period (24 months or more, which is equivalent to 2 years or more)\n- Or, if you are receiving the RSA (basic income support) or the ASS or the AAH (allowance for disabled adults).\nYou can also access an IAE if you meet several other criteria, known as supplementary criteria. Examples of criteria that make access to an IAE possible:\n- Level of education: 3 years or less\n- More than 50 years\n- Under 26 years old\n- Leaving the child welfare organization (ASE)\n- Long-term unemployed individuals, meaning those who have been unemployed for 12 months (or more).\n- Person with a disability\n- Single parent\n- Person without a permanent address, or someone who is homeless or has a history of homelessness\n- Stateless refugees, beneficiaries of temporary protection, those with subsidiary protection, or asylum seekers\n- Resident in a rural revitalization zone (RRZ)\n- Reside in a priority area for urban development (QPV)\n- Released from prison or someone under judicial supervision.",
+        "titre": "Who are the individuals involved in economic activity-based integration (EABI)?"
+       },
+       {
+        "texte": "It is an organization that can assess whether you meet the criteria to participate in this program.\nThis organization, known as a referral agency, can direct you to specialized organizations that assist with social and professional integration, and which may be able to offer you employment.\nThe list of nationally authorized prescribers is public and accessible by geographic area.\nThese prescribers may include, among others:\n- France Travail (public employment service)\n- Youth center (under 26 years old)\n- Job placement (person with a disability)\n- Departmental services\n- CCAS (municipal social services centre)\n- National Agency for Adult Vocational Training (Afpa)\n- Caf (family benefits office)\n- MSA (farmers' social security fund)\n- Second Chance School (E2C).",
+        "titre": "Who can assess whether a person meets the criteria for economic activity-based integration (EABI)?"
+       },
+       {
+        "texte": "To be eligible for the IAE, you must sign an employment contract with one of these organizations.\nWe are talking about economic activity-based insertion structures (SIAE).\nThere are 4 of them, and they correspond to one or more business sectors.\nTable: Areas of activity and employment contracts covered by employment support structures\nInsertion structures | Sector of activity | Type of contract\nEmployment Agency (EI) | Retail Goods and Services | CDDI\nTemporary employment agency (ETTI) | Sectors covered by temporary employment | Temporary work\nWorkshops and insertion projects (ACI) | All sectors of activity | CDDICUI Trainee in vocational training\nIntermediary organizations (IOs) | Services to individuals (primarily) | CDDICDD for use",
+        "titre": "Which entities can sign an employment contract within the framework of economic activity-based insertion (IAE)?"
+       },
+       {
+        "texte": "There may be specific considerations if the company is a temporary employment agency (ETTI):\nCase: General case\nThe contract requires a minimum of 4.\nIt can be extended, in principle, for a total duration of 24 months (2 years).\nHowever, this contract can be extended to allow for the completion of an ongoing training program.\nAn individual aged 57 or older who is experiencing social and professional difficulties may be eligible for a permanent employment contract.\nCase: ETTI\nThe duration of the contract is determined by the collective agreement. The total duration of these contracts can be 24 months (2 years).\nAn ETTI (Employment Transition Agency) can conclude a permanent employment contract with individuals over 57 who are experiencing social and professional difficulties. This contract can be initiated at least 12 months (one year) after the start of the IAE (Individualized Employment Plan) process.",
+        "titre": "What is the duration of the contract within the framework of economic integration through activity (EIA)?"
+       },
+       {
+        "texte": "An employee hired through an internship program receives enhanced support and guidance, particularly before leaving the program (examples: job search workshops, evaluation, skills assessment).",
+        "titre": "Does an employee hired through the \"insertion par l'activité économique\" (IAE) program receive support or guidance?"
+       },
+       {
+        "texte": "A website allows the applicant and/or their accompanying person (e.g., France Travail) to identify available offers within the IAE program by geographic area:\n→ Online service: Find an inclusive job",
+        "titre": "How can one find the available offers within the framework of economic integration through work (EIE)?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2284",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2284",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2021-08-31"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [
+       "negation"
+      ],
+      "roundtrip": 74.6,
+      "units": 68
+     }
+    }
+   }
+  },
+  "tr": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:40:41.389Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Ekonomik faaliyetler yoluyla entegrasyon (EFE) ne anlama gelir?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 55.2,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "İAE, yaş, sağlık veya geçim sıkıntısı gibi nedenlerle iş piyasasına erişmekte zorlanan veya artık erişemeyen herkese yardımcı oluyor.",
+      "steps": [
+       {
+        "texte": "Ekonomik faaliyetler yoluyla entegrasyon (EFE), işsiz ve sosyal ve mesleki zorluklar yaşayan kişilerin (örneğin, sosyal yardımlar alan, uzun süredir iş arayan kişiler) iş sözleşmesi yapmalarını sağlar. EFE, eğitim faaliyetlerini de içerebilir. Size gerekli bilgileri sunuyoruz.\nEkonomik faaliyetler yoluyla entegrasyon, öncelikle bir sosyal amaç taşır; bu, iş gücüne erişimi ihtiyaç duyan kişilere yönelik destek sağlamaktır.\nBu destek, hem kişiye özel, bireysel bir yaklaşım içerir; böylece her kişinin yeteneklerini ortaya çıkarmasına ve onu heyecanlandıran bir mesleki proje bulmasına olanak tanır, aynı zamanda her gün yeni beceriler edinmesine ve geleceğe ve kendi yeteneklerine olan güvenini artırmasına yardımcı olur.\nMes profesyonel oryantasyon danışmanlığı işini seviyorum. Bu iş, farklı insanlarla tanışma ve onların profesyonel hedeflerini anlamalarına ve gerçekleştirmelerine yardımcı olma fırsatı sunuyor.\nİşimde, farklı danışmanlardan, eğitim araçlarından ve ortak şirketlerden yararlanıyorum. Elbette, Fransa İş (France Travail) da en önemli danışmanlarımızdan biri ve çeşitli projeler üzerinde çalışmalar yürütüyoruz.\nBu, adalet sisteminde çalışanlar, sığınmacılar ve engelli bireyler için gerçekleştirilecek bir operasyondur.\nBen, Eitem firmasında sürekli çalışan bir teknisyenim. Görevi, belirli bir müşteriye (1:13 dakika ve 13 saniye) yönelik endüstriyel destek sağlamak.\nHapishaneden çıktıktan sonra, Mergos adlı şirketteki görevime başladım. Burada, bana tam olarak uygun görevler bulmamda yardımcı olan bir CP (yönetici) ile tanıştım. İlk görevden sonra, bana kalıcı bir iş teklifi sunuldu.\nSonuç olarak, beni bir endüstriyel mentor olarak eğitimleri tamamlayabilmem için tekrar çağırdılar. Ve bugün, bana çok uygun ve kendimi çok iyi hissettiğim bir meslek buldum.\nMTri'de, insan kaynakları ve geçiş departmanının yöneticisiyim. Geçiş programımız genellikle 6 aydan 24 aya kadar sürmektedir. Bu programda, çalışanlar hem toplu taşıma şoförü mesleğinin teknik becerilerine, hem de gelecekteki mesleklerinde kullanacakları genel becerilere eğitim almaktadır.\nBiz, insanların yeteneklerini ortaya çıkarabileceğine ve herkesin istihdam edilebileceğine inanıyoruz. Ben, sürücü, toplama, ayrıştırma görevlerini yapıyorum. Bu yeteneklerimi burada sergiliyorum. Burada yaptığım işlerde, başkalarına yardım edebilmek için daha uygun bir pozisyonda olduğumu fark ettim. Ayrıca, çevre dostu davranışları öğretmek amacıyla okullardan gelen gruplara eğitimlerde yer alıyorum. Bu, \"atık ayrıştırma eğitmeni\" unvanını edinme isteğimin bir parçası!",
+        "titre": null
+       },
+       {
+        "texte": "Siz, IAE ile ilgili konularla ilgileniyorsunuz.\n- Eğer uzun süredir işsizseniz (24 ay veya daha fazla, yani 2 yıl veya daha fazla)\n- Veya eğer RSA (asgari gelir desteği) veya ASS veya AAH (engelli yetişkin ödeneği)'yi alıyorsanız.\nAyrıca, belirli ek kriterleri yerine getirmeniz durumunda, bir IAE'ye de erişebilirsiniz. Bu kriterlerden bazıları şunlardır:\n- Eğitim seviyesi 3 veya daha düşük\n- 50 yıldan fazla\n- 26 yaşından küçük\n- Çocuklara yönelik sosyal yardım programından ayrıldı\n- Uzun süreli iş arayanlar (DELD), yani 12 ay veya daha fazla süre iş arayanlar\n- Engellili çalışan\n- Tek ebeveyn\n- Barınmasız, geçici barınma imkanı olan veya sokaklarda yaşam deneyimi olan kişi\n- Statüye sahip mülteciler, geçici koruma alanlarından yararlananlar, kısmi koruma alanından yararlananlar veya asile başvuranlar\n- Kırsal kalkınma bölgesinde ikamet ediyor.\n- Şehir politikası kapsamında öncelikli bir bölgede ikamet ediyor.\n- Hapishaneden çıktı veya adli makamların gözetiminde bulunan kişi.",
+        "titre": "Ekonomik faaliyetler aracılığıyla entegrasyon (EFA) kapsamında kimler yer almaktadır?"
+       },
+       {
+        "texte": "Bu, belirli bir programa kabul için gerekli şartların karşılandığını değerlendirebilen bir kuruluştur.\nBu kurum, \"danışmanlık\" olarak adlandırılır ve size sosyal ve mesleki hayata yerleşme konusunda uzmanlaşmış kuruluşlara yönlendirebilir. Ayrıca, bu kuruluşlara iş imkanları sunabilirsiniz.\nUlusal düzeyde yetkili olan reçete verenlerin listesi kamuya açık ve coğrafi bölgeye göre erişilebilir.\nBu uzmanlar şunları içerebilir:\n- France Travail (kamu istihdam kurumu)\n- Gençler bölgesi (26 yaşın altında)\n- İş yerinde uyum programı (engelli bireyler için)\n- Departman hizmetleri\n- CCAS (belediye sosyal hizmet merkezi)\n- Büyüklerin mesleki eğitimi için ulusal ajans (Afpa)\n- Caf (aile yardımları kurumu)\n- MSA (tarım sosyal güvenlik kurumu)\n- İkinci Şans Okulu (E2C).",
+        "titre": "Bir kişinin ekonomik faaliyetler yoluyla entegrasyon için gerekli şartları yerine getirdiğini değerlendirebilecek kimdir?"
+       },
+       {
+        "texte": "IAE'den faydalanabilmek için, bu kuruluşlardan birisiyle iş sözleşmesi imzalamak gerekir.\nKonuşuluyor olan konu, ekonomik faaliyetler yoluyla sosyal uyum programları (SIAE) hakkında.\nBunlar 4 tanedir ve bir veya birden fazla iş koluna aittir.\nTablo: İşgüvencesi sağlayan kuruluşlar tarafından kapsanan faaliyet alanları ve iş sözleşmeleri\nEntegrasyon yapıları | Faaliyet alanı | Sözleşme türü\nEntegrasyon şirketi (EI) | Ticari mallar ve hizmetler | CDDI\nGeçici işe yerleştirme şirketi (ETTI) | İşgücü piyasasında kapsanan sektörler | Geçici iş\nİşgücü odaklı atölyeler ve inşaat projeleri (ACI) | Tüm sektörler | CDDICUI – Mesleki eğitim stajyer\nAra kurumlar (AI) | Kişisel hizmetler (özellikle) | CDDICDD kullanımı",
+        "titre": "Hangi kurumlar, ekonomik faaliyetler yoluyla işe yerleştirme (EFA) kapsamında bir iş sözleşmesi imzalayabilir?"
+       },
+       {
+        "texte": "Bazı özel durumlar, özellikle de geçici istihdam ve sosyal uyum şirketlerinde (ETTI) geçerli olabilir:\nÖrnek: Genel durum\nKontrat, minimum 4 üzerinden belirlenir.\nGenel olarak, bu sözleşme 24 ay (2 yıl) içinde yenilenebilir.\nAncak, bu sözleşme, mevcut bir eğitim programının tamamlanması için daha sonra yenilenebilir.\nEn az 57 yaşında, sosyal ve mesleki zorluklar yaşayan bir kişi, tam zamanlı bir iş sözleşmesi yapabilir.\nÖrnek: ETTI\nBu sözleşmenin süresi, toplu iş sözleşmesi tarafından belirlenir. Bu tür sözleşmelerin toplam süresi 24 ay (2 yıl) olabilir.\nBir ETTI (Eğitim ve İş Birliği Kurumu), sosyal ve mesleki zorluklar yaşayan 57 yaş ve üstündeki kişilerle en az 12 ay (bir yıl) süreliğine bir sözleşme yapabilir. Bu sözleşme, İAE programının başlamasından en az 12 ay sonra imzalanabilir.",
+        "titre": "Ekonomik faaliyetler yoluyla işe yerleştirme (IAE) kapsamında sözleşmenin süresi nedir?"
+       },
+       {
+        "texte": "Bir çalışanın, özellikle de IAE (İşgücü Aktif Olma Programı) kapsamında işe alınması durumunda, programdan ayrılmadan önce daha kapsamlı bir destek ve rehberlikten faydalanır (örneğin, iş arama atölyeleri, değerlendirme, beceri değerlendirmesi).",
+        "titre": "Ekonomik faaliyetler yoluyla istihdam edilen çalışan, bir destek programından yararlanıyor mu?"
+       },
+       {
+        "texte": "Bir web sitesi, aday ve/veya onu takip eden kişiye (örneğin: France Travail), İAE kapsamında mevcut olan iş ilanlarını coğrafi bölgeye göre belirleme imkanı sunar:\n→ Çevrimiçi hizmet: Kapsayıcı bir iş bulma",
+        "titre": "Ekonomik faaliyetler yoluyla işe yerleştirme (EFA) kapsamında mevcut fırsatları nasıl bulabiliriz?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2284",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2284",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2021-08-31"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 71.8,
+      "units": 68
+     }
+    }
+   }
+  },
+  "ar": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:43:18.055Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "ما هي عملية الاندماج من خلال النشاط الاقتصادي (IAE)؟",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 44.6,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "تقدم منظمة IAE الدعم لجميع الأفراد الذين يواجهون صعوبات في الوصول إلى سوق العمل بسبب عوامل مثل العمر، أو الصحة، أو الوضع الاجتماعي الضعيف.",
+      "steps": [
+       {
+        "texte": "تتيح عملية الاندماج من خلال النشاط الاقتصادي (IAE) للأفراد العاطلين عن العمل والذين يواجهون صعوبات اجتماعية ومهنية (مثل: الأشخاص الذين يتلقون إعانات اجتماعية، أو الباحثين عن عمل لفترة طويلة)، الحصول على عقد عمل. يمكن أن تشمل IAE أيضًا برامج تدريبية. نقدم لكم المعلومات الضرورية.\nإن دمج الأفراد في سوق العمل من خلال الأنشطة الاقتصادية له أولاً مهمة اجتماعية، وهي القدرة على تقديم الدعم والمساعدة للأفراد الذين يحتاجون إلى ذلك للوصول إلى فرص العمل.\nيعتمد هذا البرنامج على تقديم دعم فردي مخصص، يهدف إلى تمكين كل شخص من استكشاف مواهبه وإيجاد مشروع مهني يثير اهتمامه، بالإضافة إلى توفير عمل يومي يتيح له اكتساب مهارات جديدة وبناء الثقة في المستقبل وقدراته.\nأحب وظيفتي كمستشارة في مجال الإدماج المهني. هذه الوظيفة تتيح لي فرصة للتعامل مع مجموعة واسعة من الأشخاص، ودوري هو مساعدتهم على فهم وتطوير مشاريعهم المهنية.\nفي عملي، أعتمد على مجموعة من الجهات الموصية بها، ومراكز التدريب، والشركات الشريكة. وبالطبع، \"فرانس ترافول\" هي واحدة من أكبر جهات التوصية لدينا، وقد قمنا بتنفيذ العديد من العمليات بالتعاون معها.\nعملية مخصصة للأشخاص الذين يواجهون صعوبات قانونية، وعملية مخصصة للمهاجرين، بالإضافة إلى عملية مخصصة للأشخاص ذوي الإعاقة.\nأنا جونى، وأعمل بدوام كامل في شركة \"إيتيم\" كمرشد فردي لمدة 1 ساعة و 13 دقيقة.\nبعد خروجي من السجن، بدأت عملي في شركة \"ميرجوس\". وقد التقيت بمدير قسم المبيعات الذي اتخذ الإجراءات اللازمة لضمان حصولي على مهام تتناسب تمامًا مع مهاراتي. وقد تم اقتراح عقد عمل بدوام كامل بعد إتمام أول مهمة.\nبعد ذلك، تم استدعائي للمشاركة في دورة التدريب كمرشد صناعي. واليوم، وجدت مهنة تناسبني وأنا أشعر فيها بالراحة والرضا.\nفي إطار MTri، أنا مديرة للموارد البشرية والتحول. يستغرق برنامج التحول ما بين 6 أشهر و 24 شهرًا. خلال هذا البرنامج، يتم تدريب الموظفين على المهارات التقنية اللازمة للعمل كسائق توصيل، بالإضافة إلى المهارات العامة التي ستفيدهم في وظيفتهم المستقبلية.\nفي مكان عملنا، نحن نؤمن بأن العمل يكشف عن القدرات، وأن الجميع يمكن أن يكون لديه وظيفة. أنا سائق، وموظف جمع، وموظف فرز. وهذا ما أظهرته في عملي هنا. لقد وجدنا أنني أستطيع أن أكون مفيدًا للآخرين بسهولة أكبر في هذا الدور. أشارك في تدريب المجموعات المدرسية حول أفضل الممارسات في مجال البيئة. لقد أصبحت سفيرًا في مجال الفرز، وهو منصب كنت أتمنى أن أحصل عليه!",
+        "titre": null
+       },
+       {
+        "texte": "هل أنت مهتم بموضوع الذكاء الاصطناعي؟\n- إذا كنت عاطلًا عن العمل لفترة طويلة (24 شهرًا أو أكثر، أي 2 سنة أو أكثر).\n- أو إذا كنت تعاني من RSA (دخل التضامن النشط)‏] أو التأمين الصحي أو AAH (إعانة البالغين ذوي الإعاقة)‏].\nيمكنك أيضًا الحصول على إجازة مرضية إذا استوفيت معايير أخرى تسمى \"المعايير الإضافية\". أمثلة على المعايير التي تسمح بالحصول على إجازة مرضية:\n- المستوى التعليمي: 3 أو أقل\n- أكثر من 50 عامًا\n- أقل من 26 عامًا\n- بعد الخروج من المؤسسة الاجتماعية للرعاية الصحية للأطفال (ASE)\n- الباحثون عن عمل لفترة طويلة، أي لمدة 12 شهرًا (سنة واحدة) أو أكثر.\n- شخص ذو إعاقة\n- والد/والدة وحيد\n- شخص ليس لديه سكن أو لديه سكن، أو لديه تاريخ من العيش في الشارع.\n- لاجئون يحملون وضعًا قانونيًا، أو يستفيدون من حماية مؤقتة، أو يحصلون على حماية تدعيمية، أو يتقدمون بطلب للحصول على حق اللجوء.\n- يعيشون في منطقة لتطوير المناطق الريفية.\n- يعيش في منطقة ذات أولوية في سياسة المدينة (QPV).\n- شخص تم الإفراج عنه من السجن أو شخص يخضع للإشراف القضائي.",
+        "titre": "من هم الأشخاص الذين يستفيدون من دمجهم في سوق العمل من خلال الأنشطة الاقتصادية؟"
+       },
+       {
+        "texte": "إنه وكالة يمكنها تقييم ما إذا كنت تستوفي الشروط اللازمة للدخول في هذا النظام.\nهذا المنظمة، والتي يُطلق عليها \"جهة الإحالة\"، يمكنها أن توجهك إلى مؤسسات متخصصة في الاندماج الاجتماعي والمهني، والتي يمكنها أن توفر لك فرص عمل.\nقائمة الأطباء المعتمدين على المستوى الوطني متاحة للعامة ويمكن الوصول إليها حسب المنطقة الجغرافية.\nيمكن أن يشمل هؤلاء الموصين على سبيل المثال:\n- France Travail (هيئة التشغيل العمومية)\n- مكتب الشباب (أقل من 26 عامًا)\n- خطة العمل (شخص يعاني من إعاقة)\n- خدمات القسم\n- CCAS (المركز البلدي للعمل الاجتماعي)\n- الوكالة الوطنية للتدريب المهني للبالغين (Afpa)\n- Caf (صندوق الإعانات العائلية)\n- MSA (صندوق الضمان الاجتماعي الفلاحي)\n- مدرسة \"فرصة ثانية\" (E2C).",
+        "titre": "من يمكنه تقييم ما إذا كانت شخص ما يستوفي الشروط اللازمة للاندماج من خلال النشاط الاقتصادي؟"
+       },
+       {
+        "texte": "للاستفادة من برنامج الإعانة، يجب على المتقدم التوقيع على عقد عمل مع إحدى هذه المؤسسات.\nيتحدث الأمر عن هياكل تهدف إلى دمج الأفراد في سوق العمل من خلال الأنشطة الاقتصادية (SIAE).\nيوجد 4 منها، وهي تندرج ضمن قطاع أو أكثر من القطاعات.\nجدول: مجالات النشاط والعقود الوظيفية التي تغطيها مؤسسات إعادة الإدماج.\nهياكل التكامل | القطاع النشط | طبيعة العقد\nمنظمة لدمج العمال | ممتلكات وخدمات تجارية | CDDI\nشركة للتوظيف المؤقت بهدف الاندماج | القطاعات التي تغطيها الوظائف المؤقتة | التوظيف المؤقت\nورش العمل والمواقع المهنية (ACI) | جميع القطاعات | CDDICUI - متدرب في التدريب المهني\nالمنظمات الوسيطة (AI) | خدمات فردية (بشكل أساسي) | CDDICDD للاستخدام",
+        "titre": "ما هي الهياكل التي يمكنها توقيع عقد عمل في إطار \"التوظيف من خلال النشاط الاقتصادي\"؟"
+       },
+       {
+        "texte": "قد توجد بعض التفاصيل الخاصة إذا كانت الشركة عبارة عن مؤسسة للتوظيف المؤقت بهدف الاندماج (ETTI):\nمثال: حالة عامة\nيجب أن يكون السعر 4 دولارات على الأقل.\nيمكن تجديده، بشكل عام، لمدة تصل إلى 24 شهرًا (2 سنة).\nومع ذلك، يمكن تجديد هذا العقد بعد ذلك لإكمال دورة تدريبية قيد التنفيذ.\nيمكن لشخص يبلغ من العمر 57 عامًا أو أكثر، ويواجه صعوبات اجتماعية أو مهنية، أن يوقع عقد عمل بدوام كامل.\nمثال: ETTI\nيحدد مدة العقد وفقًا للاتفاق الجماعي. يمكن أن تكون المدة الإجمالية لهذه العقود 24 شهرًا (2 سنة).\nيمكن لـ \"ETTI\" (مؤسسة التدريب المهني) أن توقع عقد عمل دائم مع الأفراد الذين تزيد أعمارهم عن 57 عامًا، والذين يواجهون صعوبات اجتماعية ومهنية. يمكن توقيع هذا العقد بعد فترة التدريب المهني (IAE) لمدة لا تقل عن 12 شهرًا (سنة واحدة).",
+        "titre": "ما هي مدة العقد في إطار برنامج \"التوظيف من خلال النشاط الاقتصادي\"؟"
+       },
+       {
+        "texte": "يحصل الموظف الذي تم توظيفه بموجب برنامج تدريبي، على دعم إضافي ومتابعة مكثفة، خاصة قبل انتهاء البرنامج، وتشمل هذه الدعم (أمثلة: ورش عمل للبحث عن عمل، تقييم، تقييم المهارات).",
+        "titre": "هل يحصل العامل الذي تم توظيفه في إطار برنامج \"التوظيف من خلال النشاط الاقتصادي\" على دعم أو مساعدة؟"
+       },
+       {
+        "texte": "يسمح الموقع للمتقدم و/أو لشخص يصطحبه (مثال: France Travail) بتحديد فرص العمل المتاحة ضمن إطار برنامج \"التبادل الطلابي الدولي\" حسب المنطقة الجغرافية:\n→ خدمة عبر الإنترنت: البحث عن وظيفة شاملة",
+        "titre": "كيف يمكن العثور على العروض المتاحة في إطار \"التوظيف من خلال النشاط الاقتصادي\"؟"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2284",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2284",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2021-08-31"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 72.1,
+      "units": 68
+     }
+    }
+   }
+  },
+  "de": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:45:42.514Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Was bedeutet die wirtschaftliche Integration (WIE)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 37.7,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "Die IAE unterstützt jeden, der aufgrund von Problemen im Zusammenhang mit Alter, Gesundheit oder prekären Arbeitsverhältnissen keinen oder keinen Zugang mehr zum Arbeitsmarkt findet.",
+      "steps": [
+       {
+        "texte": "Die Beschäftigung durch wirtschaftliche Aktivitäten (BWA) ermöglicht es Personen ohne Arbeit und mit sozialen und beruflichen Schwierigkeiten (z. B. Personen, die Sozialleistungen beziehen oder seit langem arbeitslos sind), einen Arbeitsvertrag zu erhalten. Die BWA kann auch Schulungsmaßnahmen umfassen. Wir stellen Ihnen die relevanten Informationen zur Verfügung.\nDie Integration durch wirtschaftliche Tätigkeit hat zunächst eine soziale Aufgabe: Sie soll Menschen, die Unterstützung benötigen, in den Arbeitsmarkt integrieren.\nDieses Programm basiert sowohl auf einer individuellen Betreuung, die es jeder Person ermöglicht, ihre Talente zu entdecken und ein berufsbezogenes Projekt zu finden, das sie begeistert, als auch auf einer täglichen Tätigkeit, die es ermöglicht, neue Fähigkeiten zu erwerben und gleichzeitig Vertrauen in die Zukunft und in die eigenen Fähigkeiten zu gewinnen.\nIch mag meinen Beruf als Berufsberaterin. Dieser Beruf ermöglicht es mir, mit einer Vielzahl von Menschen in Kontakt zu treten, und meine Aufgabe besteht darin, sie dabei zu unterstützen, ihre beruflichen Ziele zu verstehen und zu erreichen.\nIn meinem Beruf stütze ich mich auf verschiedene Anbieter, Schulungsprogramme und Partnerunternehmen. Natürlich ist France Travail einer unserer größten Auftraggeber, und wir haben verschiedene Projekte gemeinsam durchgeführt.\nEine Operation für Personen, die im Rahmen von Justizverfahren betroffen sind, eine Operation für Flüchtlinge und auch eine Operation für Menschen mit Behinderungen.\nIch bin Johnny, ein festangestellter Mitarbeiter bei Eitem, wo ich seit 1:13 Minuten und 13 Sekunden als Industriearbeiter tätig bin.\nNach meiner Entlassung aus dem Gefängnis begann ich bei Mergos. Dort lernte ich einen CP (Contactperson), der dafür gesorgt hat, dass ich Aufträge finden konnte, die perfekt zu meinen Fähigkeiten passen. Nach der ersten Mission wurde ich mit einem unbefristeten Arbeitsvertrag (CDI) belohnt.\nNachdem dies geschah, wurde ich erneut kontaktiert, um an einem Schulungsprogramm als Industriepraktikant teilnehmen zu können. Und heute habe ich einen Beruf gefunden, der zu mir passt und in dem ich mich sehr wohl fühle.\nInnerhalb von MTri bin ich Leiterin für Personal und Übergang. Unser Übergangs-Programm dauert zwischen 6 Monaten und 24 Monaten. Während dieser Zeit werden die Mitarbeiter auf die technischen Fähigkeiten für den Beruf des LKW-Fahrers sowie auf übergeordnete Fähigkeiten geschult, die sie für ihre nächste Tätigkeit benötigen.\nBei uns sind wir davon überzeugt, dass jeder seine Talente zeigt und dass jeder Arbeitnehmer wertvoll ist. Ich bin Fahrer, Sammler und Sortierer. Ich beweise dies. In meiner Tätigkeit hier habe ich festgestellt, dass es für mich einfacher ist, anderen zu helfen. Ich beteilige mich an der Schulung von Gruppen, die sich mit umweltfreundlichen Praktiken beschäftigen. Ich bin jetzt ein Botschafter für das Mülltrennen, was eine Position ist, die ich mir sehr gewünscht habe!",
+        "titre": null
+       },
+       {
+        "texte": "Sie sind an der IAE interessiert.\n- Wenn Sie seit sehr langer Zeit arbeitslos sind (mindestens 24 Monate, also 2 Jahre oder länger)\n- Oder wenn Sie RSA (Grundsicherungsleistung), ASS oder AAH (Beihilfe für Erwachsene mit Behinderung) erhalten.\nSie können auch Zugang zu einer IAE erhalten, wenn Sie zusätzliche Kriterien erfüllen, die als „zusätzliche Kriterien“ bezeichnet werden. Beispiele für Kriterien, die den Zugang zu einer IAE ermöglichen:\n- Bildungsniveau: 3 oder niedriger\n- Mehr als 50 Jahre\n- Unter 26 Jahre\n- Nach dem Ausstieg aus dem Jugendhilfeprogramm (ASE)\n- Bewerber mit langfristiger Beschäftigung (DELD), also Personen mit einer Beschäftigung von 12 Monaten oder länger.\n- Person mit Behinderung\n- Alleinerziehender Elternteil\n- Personen ohne festen Wohnsitz, Personen mit Übergangsunterkünften oder Personen mit Erfahrung im Straßenleben\n- Statutarisch Schutzberechtigte, Personen mit vorübergehendem Schutz, subsidiär Schutzberechtigte oder Asylbewerber\n- Wohnen in einem ländlichen Revitalisierungsgebiet (LRZ)\n- Wohnen in einem von der Stadtpolitik als \"Prioritätswohngebiet\" ausgewiesenen Gebiet (QPV).\n- Personen, die aus einer Haftstrafe entlassen wurden oder sich unter Hausarrest befinden.",
+        "titre": "Wer sind die Personen, die von der wirtschaftlichen Integration durch Beschäftigung (WIB) profitieren?"
+       },
+       {
+        "texte": "Dies ist eine Organisation, die beurteilen kann, ob Sie die Voraussetzungen erfüllen, um an diesem Programm teilzunehmen.\nDiese Organisation, die als \"Vermittler\" bezeichnet wird, kann Sie an spezialisierte Einrichtungen für soziale und berufliche Integration verweisen, die Ihnen Arbeitsplätze anbieten können.\nDie Liste der autorisierten Leistungserbringer auf nationaler Ebene ist öffentlich und kann nach geografischer Region eingesehen werden.\nDiese Ärzte können beispielsweise sein:\n- France Travail (öffentliche Arbeitsverwaltung)\n- Jugendzentrum (unter 26 Jahre)\n- Arbeitsplan (für eine Person mit Behinderung)\n- Dienstleistungen des Departements\n- CCAS (kommunales Sozialzentrum)\n- Nationale Agentur für die berufliche Weiterbildung von Erwachsenen (Afpa)\n- Caf (Familienkasse)\n- MSA (landwirtschaftliche Sozialversicherung)\n- Schule für die zweite Chance (E2C).",
+        "titre": "Wer kann beurteilen, ob eine Person die Voraussetzungen für die wirtschaftliche Integration (Wirtschaftliche Integration) erfüllt?"
+       },
+       {
+        "texte": "Um von der IAE (Individuelle Arbeitslosenversicherung) zu profitieren, muss man einen Arbeitsvertrag mit einer dieser Organisationen abschließen.\nEs wird über Strukturen zur Arbeitsvermittlung und -integration gesprochen, insbesondere über die sogenannten \"Structures für wirtschaftliche Integration\" (SIAE).\nEs gibt vier davon, und sie entsprechen einem oder mehreren Geschäftsbereichen.\nTabelle: Bereiche der Tätigkeit und Arbeitsverträge, die von den Integrationsstrukturen abgedeckt werden\nEinstiegsstrukturen | Tätigkeitsbereich | Art des Vertrags\nUnterstützungsunternehmen (UE) | Handelsgüter und -dienstleistungen | CDDI\nUnternehmen für befristete Arbeitsvermittlung (ETTI) | Bereiche, die durch befristete Arbeitsvermittlung abgedeckt werden | Zeitarbeit\nArbeits- und Integrationszentren (ACI) | Alle Branchen | CDDICUI – Auszubildender im Berufsbildungswesen\nZwischenorganisationen (AO) | Dienstleistungen für Einzelpersonen (hauptsächlich) | CDDICDD für den privaten Gebrauch",
+        "titre": "Welche Organisationen können einen Arbeitsvertrag im Rahmen der wirtschaftlichen Integration (WIE) unterzeichnen?"
+       },
+       {
+        "texte": "Es können Besonderheiten bestehen, insbesondere wenn es sich um ein Unternehmen für Arbeitsvermittlung handelt (ETTI):\nFall: Ein allgemeiner Fall\nDer Vertrag beinhaltet einen Preis von mindestens 4.\nEs kann grundsätzlich auf eine Gesamtdauer von 24 Monaten (2 Jahren) verlängert werden.\nAllerdings kann dieser Vertrag auch verlängert werden, um eine laufende Schulung erfolgreich abzuschließen.\nEine Person, die mindestens 57 Jahre alt ist und mit sozialen und beruflichen Schwierigkeiten zu kämpfen hat, kann einen unbefristeten Arbeitsvertrag abschließen.\nFall: ETTI\nDie Laufzeit des Vertrags wird durch den geltenden Tarifvertrag festgelegt. Die Gesamtlaufzeit dieser Verträge kann 24 Monate (2 Jahre) betragen.\nEine ETTI (Agentur für Arbeitsvermittlung) kann mit Personen über 57 Jahren, die soziale und berufliche Schwierigkeiten haben, einen unbefristeten Arbeitsvertrag abschließen. Dieser Vertrag kann mindestens 12 Monate (ein Jahr) nach Beginn des IAE-Programms abgeschlossen werden.",
+        "titre": "Wie lange dauert der Vertrag im Rahmen der Arbeitsbezogenen Integration (ABI)?"
+       },
+       {
+        "texte": "Ein Mitarbeiter, der im Rahmen eines IAE-Programms eingestellt wurde, erhält im Rahmen des Programms, insbesondere vor dem Ausscheiden, eine verstärkte Betreuung und Unterstützung (Beispiele: Job-Such-Workshops, Bewertung, Kompetenzanalyse).",
+        "titre": "Erhält ein Arbeitnehmer, der im Rahmen des Programms „Arbeit zur Integration“ (IAE) eingestellt wurde, eine Betreuung?"
+       },
+       {
+        "texte": "Eine Webseite ermöglicht es dem Bewerber und/oder einer Begleitperson (z.B. France Travail), die ihn begleitet, die verfügbaren Stellenangebote im Rahmen des IAE (Interne Ausbildungsprogramme) nach geografischer Region zu finden:\n→ Online-Service: Eine inklusive Arbeitsstelle finden",
+        "titre": "Wie kann man Stellenangebote im Rahmen der wirtschaftlichen Integration (WIE) finden?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2284",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2284",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2021-08-31"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 73.9,
+      "units": 68
+     }
+    }
+   }
+  },
+  "uk": {
+   "engine": "ollama:translategemma:4b",
+   "engineDigest": "c49d986b0764f5881c476eb21435bb62b7abc62347aab3d4a6071e811be510a1",
+   "backEngine": "ollama:translategemma:4b",
+   "checksVersion": "r33-repair-1",
+   "translatedAt": "2026-11-02T06:48:13.962Z",
+   "review": null,
+   "fields": {
+    "titre": {
+     "text": "Що таке інтеграція через економічну діяльність (ІЕД)?",
+     "status": "auto_checked",
+     "checks": {
+      "critical": [],
+      "warnings": [],
+      "roundtrip": 65.9,
+      "units": 1
+     }
+    },
+    "contenu_json": {
+     "text": {
+      "intro": "ІАЕ надає підтримку будь-якій особі, яка має труднощі з працевлаштуванням через вік, стан здоров'я або нестабільне фінансове становище.",
+      "steps": [
+       {
+        "texte": "Професійна реалізація через економічну діяльність (ПРЕД) дозволяє особам, які не мають роботи та стикаються з соціальними та професійними труднощами (наприклад, особам, які отримують мінімальні соціальні виплати або мають тривалий період безробіття), отримати контракт на роботу. ПРЕД може включати навчальні програми. Ми надаємо вам інформацію, яку необхідно знати.\nІнтеграція через економічну діяльність спочатку має соціальну місію – це можливість запропонувати підтримку та допомогу в працевлаштуванні людям, які цього потребують.\nЦей супровід поєднує індивідуальну підтримку, яка дозволяє кожній людині розкрити свій потенціал та знайти професійний проєкт, який її захоплює, а також щоденну роботу, яка дає змогу набувати нові навички та вірити в майбутнє та власні можливості.\nЯ дуже люблю свою роботу консультанта з професійної інтеграції. Ця робота дає мені можливість спілкуватися з широким колом людей, і моя роль полягає в тому, щоб допомогти їм зрозуміти та реалізувати їхні професійні плани.\nУ моїй сфері діяльності я співпрацюю з різними організаціями, що надають послуги, а також з навчальними центрами та партнерами. Звичайно, серед наших найбільших клієнтів є France Travail, і ми реалізували різні проєкти.\nОперація, спрямована на допомогу особам, які перебувають у зоні конфлікту, особам, які стали біженцями, а також особам з обмеженими можливостями.\nЯ – Джонні, працюю в компанії Eitem на постійній основі, як інженер-технік, протягом 1 години та 13 хвилин.\nПісля звільнення з в'язниці, я почав працювати в компанії Mergos. Я познайомився з представником, який допоміг мені знайти роботу, яка повністю відповідає моїм навичкам та потребам. Після першого проєкту, мені було запропоновано постійну роботу.\nПісля цього, мене запросили, щоб я міг пройти навчання як інструктор. І сьогодні я знайшов роботу, яка відповідає моїм потребам і в якій я відчуваю себе дуже комфортно.\nУ рамках MTri я є директором з питань управління персоналом та перекваліфікації. Наш процес перекваліфікації триває від 6 до 24 місяців. Під час цього періоду працівники отримують технічну підготовку для роботи водієм-кур'єром, а також розвивають передові навички, які будуть корисними для їхньої майбутньої професії.\nУ нас ми переконані, що праця відкриває таланти, і що кожен може бути корисним. Я працюю водієм, сортувальником, оператором. Я це демонструю. У своїй роботі я зрозумів, що мені легше бути корисним для інших. Я беру участь у навчанні шкільних груп щодо правильних екологічних практик. Я став амбасадором сортування, що є посадою, яку я хотів би займати!",
+        "titre": null
+       },
+       {
+        "texte": "Ви маєте відношення до IAE\n- Якщо ви перебуваєте безробітником протягом тривалого періоду (24 місяці або більше, тобто 2 роки або більше)\n- Або якщо ви отримуєте RSA (мінімальний дохід солідарності), ASS або AAH (допомога дорослим з інвалідністю).\nВи також можете отримати доступ до ІАЕ, якщо відповідаєте кільком іншим критеріям, які називаються \"додатковими критеріями\". Приклади критеріїв, що дозволяють отримати доступ до ІАЕ:\n- Рівень освіти 3 або нижчий\n- Понад 50 років\n- Менше 26 років\n- Вийшов з організації соціальної допомоги дітям (ASE)\n- Особи, які шукають роботу протягом тривалого періоду (12 місяців і більше).\n- Людина з інвалідністю\n- Одинокий батько\n- Особа, яка не має постійного місця проживання, або яка перебуває в тимчасовому житлі, або має досвід проживання на вулиці.\n- Особи, які отримали статус біженця, отримують тимчасову захист, мають підставу для отримання захисту або є заявниками на отримання статусу біженця.\n- Проживаю в зоні сільського розвитку (ЗСР)\n- Проживаю в районі, який є пріоритетним за міською програмою (QPV).\n- Вийшовши з в'язниці або особа, яка перебуває під вартою.",
+        "titre": "Хто є об'єктами економічної інтеграції через діяльність (ЕІД)?"
+       },
+       {
+        "texte": "Це організація, яка може оцінити, чи відповідаєте ви вимогам для участі в цій програмі.\nЦя організація, яка називається \"посередником\", може направити вас до спеціалізованих установ, що займаються соціальною та професійною реабілітацією, де ви зможете знайти роботу.\nСписок ліцензованих медичних працівників на національному рівні є публічним і доступним за географічним розташуванням.\nЦі лікарі можуть бути, зокрема:\n- France Travail (державна служба зайнятості)\n- Місцезнаходження (для осіб віком до 26 років)\n- План зайнятості (людина з інвалідністю)\n- Служби департаменту\n- CCAS (муніципальний центр соціальних послуг)\n- Національне агентство з професійної підготовки дорослих (Afpa)\n- Caf (каса сімейних допомог)\n- MSA (сільськогосподарське соціальне страхування)\n- Школа другого шансу (E2C).",
+        "titre": "Хто може оцінити, чи відповідає людина вимогам для участі в програмі економічної інтеграції (PEI)?"
+       },
+       {
+        "texte": "Щоб отримати право на участь у програмі IAE, необхідно укласти трудовий договір з однією з цих організацій.\nМова йде про структури, що забезпечують інтеграцію через економічну діяльність (СІАЕ).\nЇх є 4, і вони відповідають одному або декільком секторам діяльності.\nТаблиця: Сфери діяльності та трудові угоди, які охоплюються організаціями, що займаються реінтеграцією.\nСтруктури для працевлаштування | Сфера діяльності | Тип контракту\nОрганізація з працевлаштування (ОП) | Торгові товари та послуги | CDDI\nКомпанія з тимчасової працевлаштування (ETTI) | Сфери, охоплені тимчасовою зайнятістю | Тимчасова робота\nЦентри професійного навчання та реабілітації (CPNR) | Усі галузі діяльності | CDDICUI. Стажер у програмі професійного навчання\nОрганізації посередництва (ОП) | Послуги для осіб (переважно) | CDDICDD для некомерційного використання",
+        "titre": "Які організації можуть укласти трудовий договір у рамках програми економічної інтеграції (IE)?"
+       },
+       {
+        "texte": "Можуть існувати певні особливості, якщо йдеться про компанію з тимчасової трудової реабілітації (ETTI):\nПриклад: Загальний випадок\nУгоду укладають від 4 (чотирьох) одиниць.\nЙого можна продовжити, але загалом, термін дії становить 24 місяці (2 роки).\nОднак, цей контракт може бути продовжений, щоб завершити поточний курс навчання.\nЛюдина віком не менше 57 років, яка стикається з соціальними та професійними труднощами, може укласти угоду про безперервне працевлаштування.\nПриклад: ETTI\nТривалість контракту визначається колективним договором. Загальна тривалість цих контрактів може становити 24 місяці (2 роки).\nОрганізація може укласти угоду про співпрацю з фізичними особами віком понад 57 років, які мають труднощі в соціальній та професійній сфері. Така угода може бути укладена не менше ніж через 12 місяців після початку програми ІАЕ.",
+        "titre": "Який термін дії контракту в рамках програми економічної інтеграції (IE)?"
+       },
+       {
+        "texte": "Працівник, який був найнятий в рамках програми індивідуального навчання та працевлаштування, зокрема, перед виходом з цієї програми, отримує посилене супровід та підтримку (наприклад, тренінги з пошуку роботи, оцінювання, аналіз навичок).",
+        "titre": "Чи отримує працівник, який був працевлаштований в рамках програми \"Інтеграція через економічну діяльність\" (ІЕД), підтримку та супровід?"
+       },
+       {
+        "texte": "Веб-сайт дозволяє кандидату та/або його супроводжуючій особі (наприклад, France Travail) знаходити відповідні вакансії в рамках програми ІАЕ, вибираючи за географічним розташуванням:\n→ Онлайн-сервіс: Знайти роботу, що забезпечує рівні можливості",
+        "titre": "Як можна знайти пропозиції, доступні в рамках програми економічної інтеграції через діяльність (IE)?"
+       }
+      ],
+      "version": "official-sheet-v1",
+      "provenance": {
+       "origin": "DILA",
+       "ficheId": "F2284",
+       "licence": "Licence Ouverte 2.0",
+       "checkedAt": "2026-11-02T00:33:16.013Z",
+       "sourceUrl": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2284",
+       "unchanged": true,
+       "archiveBuiltAt": "2026-11-01T10:13:40",
+       "importantChangeAt": "2021-08-31"
+      }
+     },
+     "status": "withheld",
+     "checks": {
+      "critical": [
+       "numbers"
+      ],
+      "warnings": [],
+      "roundtrip": 71.3,
+      "units": 68
+     }
+    }
+   }
+  }
+ },
+ "source": {
+  "lang": "fr",
+  "hash": "sha256:5e79895a624f5325f9f7541d3a701b359b2e7838818d49d934daf0c56f1e283d",
+  "fields": [
+   "titre",
+   "contenu_json"
+  ],
+  "values": {
+   "titre": "En quoi consiste l'insertion par l'activité économique (IAE) ?",
+   "contenu_json": {
+    "intro": "L’IAE accompagne toute personne qui n’arrive pas ou plus à accéder au marché de l’emploi en raison de difficultés liées à l’âge, à la santé, ou à la précarité.",
+    "steps": [
+     {
+      "texte": "L'insertion par l'activité économique (IAE) permet à des personnes sans emploi et rencontrant des difficultés sociales et professionnelles (exemples : personnes qui perçoivent des minimas sociaux, demandeurs d'emploi de très longue durée) de bénéficier d'un contrat de travail. L'IAE peut comprendre des actions de formation. Nous vous présentons les informations à connaître.\nL'insertion par l'activité économique a d'abord une mission sociale, c'est de pouvoir proposer un accompagnement vers l'emploi à des personnes qui en ont besoin.\nCet accompagnement, il s'appuie à la fois sur un accompagnement individuel personnalisé pour permettre à chaque personne de révéler ses talents et de trouver un projet professionnel qui le passionne et en parallèle d'avoir chaque jour un travail qui va lui permettre d'acquérir de nouvelles compétences et d'avoir confiance aussi dans l'avenir et dans ses capacités.\nJ'aime mon métier de conseillère en insertion professionnelle. Ce métier me donne la possibilité de rencontrer un large public de personnes et mon rôle à moi va être de les accompagner à comprendre et à réaliser leur projet professionnels.\nDans mon métier, je m'appuie sur différents prescripteurs, dispositifs de formation et d'entreprises partenaire. Nous avons bien évidemment France travail qui est l'un de nos plus gros prescripteurs et nous avons mis en place diverses opérations.\nUne opération pour les personnes sous-marin de justice, une opération pour les personnes réfugiées et également une opération pour les personnes en situation de handicap.\nJe suis Johnny en CDI chez Eitem en tant1:131 minute et 13 secondesque tuur industriel.\nSuite à une sortie de prison, j'ai entamé mon parcours chez la boîte d'enter Mergos. J’ai fais la rencontre d'un CP qui a fait le nécessaire pour que je puisse trouver des missions qui me correspondent totalement. On m'a proposé un CDI après la première mission.\nSuite à ça, on m'a rappelé pour que je puisse passer la formation en tant que tuteur industriel. Et aujourd'hui, j'ai trouvé un métier qui me correspond et dans lequel je me sens très bien.\nAu sein de l'MTri, je suis directrice des ressources humaines et de la transition. Notre parcours de transition dure entre 6 mois et 24 mois. Parcours pendant lequel on forme les salariés à des compétences techniques au métier de chauffeur collecteur, mais aussi à des compétences transversales qui leur serviront pour leur prochain métier.\nChez nous, on est convaincu que l'action révèle les talents et que tout le monde est employable. Je suis chauffeur, collecteur, trieur. Je le montre. Dans mes activités ici, on a trouvé que c'était plus facile pour moi d'être utile pour les autres. Je participe à la formation des groupes scolaires qui arrivent pour les bons gestes de l'écologie. Je suis devenu ambassadeur de tri qui est un titre que j'ai souhaité pouvoir faire pour le reste !",
+      "titre": null
+     },
+     {
+      "texte": "Vous êtes concerné par l’IAE\n- Si vous êtes chômeur de très longue durée (24 mois ou plus, c’est-à-dire 2 ans ou plus)\n- Ou si vous percevez le RSA ou l’ASS ou l’AAH.\nVous pouvez aussi accéder à une IAE si vous remplissez plusieurs autres critères appelés critères complémentaires. Exemples de critères rendant possible l’accès à une IAE :\n- Niveau d’étude 3 ou inférieur\n- Plus de 50 ans\n- Moins de 26 ans\n- Sortant de l'aide sociale à l'enfance (ASE)\n- Demandeurs d'emploi de longue durée (DELD), c’est-à-dire 12 mois (un an) et plus\n- Travailleur handicapé\n- Parent isolé\n- Personne sans hébergement ou hébergée ou ayant un parcours de rue\n- Réfugiés statutaires, bénéficiaires d'une protection temporaire, protégés subsidiaires ou demandeurs d'asile\n- Résident en zone de revitalisation rurale (ZRR)\n- Résident dans un quartier prioritaire de la politique de la ville (QPV)\n- Sortant de détention ou personne placée sous main de justice.",
+      "titre": "Quelles sont les personnes concernées par l'insertion par l'activité économique (IAE) ?"
+     },
+     {
+      "texte": "C'est un organisme qui peut évaluer si vous remplissez les conditions pour entrer dans ce dispositif.\nCet organisme, appelé prescripteur, peut vous orienter vers des structures spécialisées en insertion sociale et professionnelle pouvant leur proposer du travail.\nLa liste des prescripteurs habilités au niveau national est publique et accessible par zone géographique.\nCes prescripteurs peuvent être notamment :\n- France Travail\n- Mission locale (moins de 26 ans)\n- Cap emploi (personne en situation de handicap)\n- Services du département\n- CCAS\n- Agence nationale pour la formation professionnelle des adultes (Afpa)\n- Caf\n- MSA\n- École de la 2e chance (E2C).",
+      "titre": "Qui peut évaluer si une personne remplit les conditions pour l'insertion par l'activité économique (IAE) ?"
+     },
+     {
+      "texte": "Pour bénéficier de l'IAE, il faut signer un contrat de travail avec une de ces structures.\nOn parle de structures d'insertion par l'activité économique (SIAE).\nElles sont au nombre de 4 et correspondent à un ou plusieurs secteurs d’activité.\nTableau : Domaines d'activité et contrats de travail couverts par les structures d'insertion\nStructures d'insertion | Secteur d'activité | Nature du contrat\nEntreprise d'insertion (EI) | Biens et services marchands | CDDI\nEntreprise de travail temporaire d'insertion (ETTI) | Secteurs couverts par le travail temporaire | Intérim\nAteliers et chantiers d’insertion (ACI) | Tous secteurs d'activité | CDDICUIStagiaire en formation professionnelle\nAssociations intermédiaires (AI) | Services à la personne (principalement) | CDDICDD d'usage",
+      "titre": "Quelles structures peuvent signer un contrat de travail dans le cadre de l'insertion par l'activité économique (IAE) ?"
+     },
+     {
+      "texte": "Des spécificités peuvent exister s'il s'agit d'une entreprise de travail temporaire d'insertion (ETTI) :\nCas : Cas général\nLe contrat est de 4 moins minimum.\nIl peut être renouvelé dans la limite en principe d'une durée totale de 24 mois (2 ans).\nCependant, ce contrat peut être renouvelé au-delà pour finir une action de formation en cours de réalisation.\nUne personne d'au moins 57 ans rencontrant des difficultés sociales et professionnelles peut conclure un CDI.\nCas : ETTI\nLa durée du contrat est fixée par la convention collective. La durée totale de ces contrats peut être de 24 mois (2 ans).\nUne ETTI peut conclure un CDI avec des personnes de plus de 57 ans rencontrant des difficultés sociales et professionnelles. Ce contrat peut être conclu 12 mois (un an) au moins après le début du parcours d'IAE.",
+      "titre": "Quelle est la durée du contrat dans le cadre de l'insertion par l'activité économique (IAE) ?"
+     },
+     {
+      "texte": "Un salarié embauché dans le cadre d'une IAE bénéficie, notamment avant de sortir du dispositif, d'un suivi et d'un accompagnement renforcés (exemples : ateliers de recherches d'emploi, évaluation, bilan de compétences).",
+      "titre": "Le salarié embauché dans le cadre de l'insertion par l'activité économique (IAE) bénéficie-t-il d'un accompagnement ?"
+     },
+     {
+      "texte": "Un site permet au candidat et/ou à celui qui l'accompagne (exemple : France Travail) de repérer par zone géographique les offres disponibles dans le cadre de l'IAE :\n→ Service en ligne : Rechercher un emploi inclusif",
+      "titre": "Comment peut-on trouver les offres disponibles dans le cadre de l'insertion par l'activité économique (IAE) ?"
+     }
+    ],
+    "version": "official-sheet-v1"
+   }
+  },
+  "verifiedAt": null,
+  "sourceUrl": null,
+  "licence": "Licence Ouverte 2.0",
+  "readFrom": "https://www.accesdirectaide.fr"
+ }
+}
