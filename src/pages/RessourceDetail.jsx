@@ -87,9 +87,9 @@ export default function RessourceDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex items-center gap-2 text-sm text-slate-600">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('resources:breadcrumb.home', 'Accueil')}</Link>
+            <Link to={createPageUrl('Home')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('resources:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="rtl-flip h-4 w-4" />
-            <Link to="/ressources" className="hover:text-blue-600">{t('resources:breadcrumb.resources', 'Ressources')}</Link>
+            <Link to="/ressources" className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('resources:breadcrumb.resources', 'Ressources')}</Link>
             <ChevronRight className="rtl-flip h-4 w-4" />
             <span className="text-slate-900 truncate max-w-[200px]" {...fr}>{ressource.title}</span>
           </nav>

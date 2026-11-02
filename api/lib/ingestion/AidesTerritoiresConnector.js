@@ -139,8 +139,15 @@ export class AidesTerritoiresConnector extends SourceConnector {
     async getDetailUrls() {
         this._cache.clear();
 
-        // Step 1: Authenticate (exchange static token → 24h bearer)
-        await this._authenticate();
+        // Step 1: Authenticate (exchange static token → 24h bearer). R38: no token configured, or no bearer obtained → stop here with a typed error, before
+        // any anonymous call to /api/aids/ (the API refuses it with 401 anyway, and a « 401 » in the run log hid the real cause: the missing credential)
+        const bearer = await this._authenticate();
+        if (!bearer) {
+            const e = new Error(process.env.AIDES_TERRITOIRES_API_KEY ? 'AT_BEARER_MISSING' : 'AT_CREDENTIALS_MISSING');
+            // @ts-ignore
+            e.code = e.message;
+            throw e;
+        }
 
         // Step 2: Paginate through the API using 'next' URL
         let nextUrl = `${API_BASE}?published=true&page_size=${PAGE_SIZE}`;
@@ -160,6 +167,14 @@ export class AidesTerritoiresConnector extends SourceConnector {
                         signal: AbortSignal.timeout(30_000),
                     });
                     if (response.ok) break;
+                    // R38: rate-limited — wait what the API asks (Retry-After, at most 60 s), once, instead of failing the run
+                    if (response.status === 429 && retries < maxRetries) {
+                        retries++;
+                        const wait = Math.min(60, Number(response.headers?.get?.('retry-after')) || 10);
+                        logger.warn(`[AidesTerritoires] Rate-limited, retry ${retries}/${maxRetries} in ${wait}s`);
+                        await new Promise(r => setTimeout(r, wait * 1000));
+                        continue;
+                    }
                     if (response.status >= 500 && retries < maxRetries) {
                         retries++;
                         logger.warn(`[AidesTerritoires] Retry ${retries}/${maxRetries} after ${response.status}`);

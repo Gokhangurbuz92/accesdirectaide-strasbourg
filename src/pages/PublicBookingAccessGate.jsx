@@ -7,6 +7,7 @@ import {
   classifyCitizenBookingAccess,
   citizenBookingLoginUrl,
 } from '@/lib/rdvBookingAccess';
+import { guestBookingPath, guestGet } from '@/lib/guestBooking';
 
 export default function PublicBookingAccessGate() {
   const location = useLocation();
@@ -40,7 +41,11 @@ export default function PublicBookingAccessGate() {
 
         const status = classifyCitizenBookingAccess(response.status, body);
         if (status === 'login') {
-          window.location.replace(citizenBookingLoginUrl(location.pathname, location.search));
+          // R38: no forced login for a structure that takes account-free bookings (the server decides: opt-in of the structure + global switch)
+          const slug = (/^\/rdv\/([^/?#]+)\/booking$/.exec(location.pathname) || [])[1];
+          const guest = slug ? await guestGet(`structures/${slug}/services`) : { ok: false };
+          if (controller.signal.aborted) return;
+          window.location.replace(guest.ok ? guestBookingPath(decodeURIComponent(slug)) : citizenBookingLoginUrl(location.pathname, location.search));
           return;
         }
         setResult({ key, status });

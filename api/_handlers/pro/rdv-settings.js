@@ -72,6 +72,8 @@ function serialize(row) {
     contact_phone: row.contactPhone || null,
     publishedAt: row.publishedAt || null,
     published_at: row.publishedAt || null,
+    // R38: account-free (« sans compte ») booking, opted in by an administrator of the structure (default off)
+    allowGuestBooking: Boolean(row.allowGuestBooking),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -179,7 +181,15 @@ async function handler(req, res) {
     }
   }
 
+  // R38: account-free booking is an explicit opt-in of the structure (admin only, like publishing); a boolean or nothing
+  const hasAllowGuest = typeof body.allowGuestBooking !== 'undefined';
+  if (hasAllowGuest && typeof body.allowGuestBooking !== 'boolean') {
+    return res.status(400).json({ error: 'Invalid allowGuestBooking' });
+  }
+  const nextAllowGuest = hasAllowGuest ? body.allowGuestBooking : Boolean(current.allowGuestBooking);
+
   const noChanges =
+    nextAllowGuest === Boolean(current.allowGuestBooking) &&
     requestedPublished === current.isPublished &&
     nextBookingMode === current.bookingMode &&
     (nextContactEmail || null) === (current.contactEmail || null) &&
@@ -197,6 +207,7 @@ async function handler(req, res) {
       contactEmail: nextContactEmail || null,
       contactPhone: nextContactPhone || null,
       publishedAt: requestedPublished ? current.publishedAt || now : current.publishedAt,
+      allowGuestBooking: nextAllowGuest,
   }).where(eq(StructureRdvSettings.id, current.id)).returning();
 
   await db.update(Structure).set({
@@ -204,6 +215,9 @@ async function handler(req, res) {
   }).where(eq(Structure.id, structureId));
   // R14: publishing or withdrawing the organization's public booking is journaled
   await logProAudit(requestedPublished === Boolean(current.isPublished) ? 'RDV_SETTINGS_UPDATED' : requestedPublished ? 'RDV_BOOKING_PUBLISHED' : 'RDV_BOOKING_UNPUBLISHED', proCtx.userId, structureId, { bookingMode: settings?.bookingMode || null }, clientIp(req));
+  if (nextAllowGuest !== Boolean(current.allowGuestBooking)) {
+    await logProAudit(nextAllowGuest ? 'RDV_GUEST_BOOKING_ENABLED' : 'RDV_GUEST_BOOKING_DISABLED', proCtx.userId, structureId, { allowGuestBooking: nextAllowGuest }, clientIp(req));
+  }
 
   const updated = settings;
 

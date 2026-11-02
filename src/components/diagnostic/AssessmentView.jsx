@@ -4,7 +4,8 @@ import { officialInfoFor } from '@/lib/rightsInfoSources';
 import { legalBasisFor } from '@/lib/legalArticles';
 import { AlertCircle, CircleHelp, ClipboardCheck, CloudOff, SearchCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { GROUPS, PROVENANCE_KEYS, STATE_LABELS, missingFactLabel, readAssessment } from '@/lib/assessmentLabels';
+import { PROVENANCE_KEYS, readAssessment } from '@/lib/assessmentLabels';
+import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 
 const ICONS = {
     MISSING_INFORMATION: CircleHelp,
@@ -21,7 +22,8 @@ const LINKABLE = ['CHECK_REQUIRED', 'POSSIBLE'];
  * `linkAides` adds a navigation link to the aide information page (it never states or implies entitlement).
  */
 export default function AssessmentView({ results, linkAides = false, headingLevel = 2 }) {
-    const { items, rejected, usable, dataStatusBanner } = readAssessment(results);
+    const { items, rejected, usable } = readAssessment(results);
+    const { groups, dataStatusBanner } = useAssessmentLabels();
     const H = `h${headingLevel}`;
     const H3 = `h${Math.min(headingLevel + 1, 6)}`;
 
@@ -45,7 +47,7 @@ export default function AssessmentView({ results, linkAides = false, headingLeve
                 </p>
                 <p data-testid="data-status-banner" className="mt-2 inline-block rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">{dataStatusBanner}</p>
             </div>
-            {GROUPS.map((g) => {
+            {groups.map((g) => {
                 const list = items.filter((i) => g.states.includes(i.state));
                 if (!list.length) return null;
                 return (
@@ -62,6 +64,7 @@ export default function AssessmentView({ results, linkAides = false, headingLeve
 }
 
 function ItemCard({ it, link }) {
+    const { state: STATE_LABELS, missingFactLabel } = useAssessmentLabels();
     const Icon = ICONS[it.state] || AlertCircle;
     return (
         <li data-testid={`assessment-item-${it.code}`} className="rounded-xl border-2 border-slate-200 bg-white p-4">

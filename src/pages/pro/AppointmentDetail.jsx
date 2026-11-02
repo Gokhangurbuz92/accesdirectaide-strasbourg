@@ -11,10 +11,11 @@ import ChatWindow from '@/components/Messaging/ChatWindow';
 import VisioTrigger from '@/components/pro/VisioTrigger';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { noticeLine } from '@/lib/proLabels.js';
+import { useProLabels } from '@/lib/proLabelsI18n';
 import { useT } from '@/i18n';
 export default function ProAppointmentDetail() {
     const { t } = useT('pro');
+    const { noticeLine } = useProLabels();
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [messages, setMessages] = useState([]);

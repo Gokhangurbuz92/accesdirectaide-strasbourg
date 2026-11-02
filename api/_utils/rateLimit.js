@@ -58,6 +58,12 @@ const CONFIG = {
     RESET_PASSWORD: { limit: 3, window: 3600 }, // 3 per hour
     RDV_PUBLIC_READ: { limit: 60, window: 60 }, // 60/min per authenticated user+ip
     RDV_PUBLIC_WRITE: { limit: 10, window: 60 }, // 10/min per authenticated user+ip
+    // R38: account-free booking (no account to key on): per IP, per e-mail blind index, per manage token
+    RDV_GUEST_READ: { limit: 30, window: 60 },
+    RDV_GUEST_WRITE: { limit: 5, window: 60 },
+    RDV_GUEST_EMAIL: { limit: 5, window: 86400 },
+    RDV_GUEST_CONFIRM: { limit: 10, window: 600 },
+    RDV_GUEST_MANAGE: { limit: 20, window: 600 },
     MESSAGE_USER_READ: { limit: 60, window: 60 }, // 60/min per user+ip
     MESSAGE_USER_SEND: { limit: 10, window: 300 }, // 10/5min per user+conversation+ip
     MESSAGE_USER_WRITE: { limit: 20, window: 300 }, // helper actions (create/get conversation)
@@ -106,7 +112,7 @@ const AUTH_OR_SENSITIVE_MUTATION = new Set([
     'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO',
     'REGISTER_INVITE', 'REFRESH_PRO', 'LOGIN_USER', 'SIGNUP_USER', 
     'RESEND_VERIFY', 'FORGOT_USER', 'RESET_USER', 'RESET_PASSWORD',
-    'BOOK', 'CONFIRM', 'FEEDBACK', 'CONTACT_FORM', 'DSR_EXPORT', 'RDV_PUBLIC_WRITE', 
+    'BOOK', 'CONFIRM', 'FEEDBACK', 'CONTACT_FORM', 'DSR_EXPORT', 'RDV_PUBLIC_WRITE', 'RDV_GUEST_WRITE', 'RDV_GUEST_EMAIL', 'RDV_GUEST_CONFIRM', 'RDV_GUEST_MANAGE', 
     'MESSAGE_USER_SEND', 'MESSAGE_USER_WRITE', 'MESSAGE_PRO_SEND', 'ADMIN_API', 'CITIZEN_ACCOUNT_READ', 'CITIZEN_ACCOUNT_WRITE', 'SHARE_CREATE'
 ]);
 

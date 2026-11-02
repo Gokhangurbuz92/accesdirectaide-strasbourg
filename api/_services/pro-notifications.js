@@ -37,6 +37,7 @@ export const CATALOGUE = Object.freeze({
   referral_expired: ev('referrals', 'Orientation expirée'),
   rdv_new: ev('appointments', 'Rendez-vous demain'),
   rdv_booked_by_structure: ev('appointments', 'Rendez-vous créé'),
+  rdv_booked_by_guest: ev('appointments', 'Rendez-vous pris sans compte'),   // R38
   rdv_cancelled_by_citizen: ev('appointments', 'Rendez-vous annulé par la personne'),
   rdv_cancelled_by_structure: ev('appointments', 'Rendez-vous annulé par la structure'),
   rdv_rescheduled: ev('appointments', 'Rendez-vous déplacé'),

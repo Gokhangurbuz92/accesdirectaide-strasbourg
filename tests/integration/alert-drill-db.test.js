@@ -47,4 +47,27 @@ describe.skipIf(!hasDatabase)('alert drill: the health check delivers its alert 
     expect(r2.body.checks.veille.ok).toBe(false);
     expect(received.filter((x) => x.body.name === 'veille.stale'), 'cooldown: not sent again').toHaveLength(1);
   });
+
+  it('R38: the review-queue and stale-aide checks run against the real schema (they always failed before), read-only; the alert channel is reported', async () => {
+    const { db } = await import('../../src/db/index.js'); const { sql } = await import('drizzle-orm');
+    const before = (await db.execute(sql`SELECT count(*)::int AS n FROM "ReviewQueueItem"`)).rows[0].n;
+    const r = res(); await handler({ method: 'GET', headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } }, r);
+    expect(r.body.checks.reviewQueue).toMatchObject({ ok: true, count: expect.any(Number) });
+    expect(r.body.checks.staleEntities).toMatchObject({ ok: true, staleAides: expect.any(Number) });
+    expect((await db.execute(sql`SELECT count(*)::int AS n FROM "ReviewQueueItem"`)).rows[0].n, 'the alert job writes nothing').toBe(before);
+    expect(r.body.checks.alertChannel).toMatchObject({ ok: true, webhook: 'CONFIGURED' });
+  });
+
+  it('R38: with no webhook and mail through the noop provider, the job says no person can be alerted', async () => {
+    const saved2 = { w: process.env.ALERT_WEBHOOK_URL, e: process.env.ALERT_EMAIL, m: process.env.MAILER_PROVIDER };
+    delete process.env.ALERT_WEBHOOK_URL; process.env.ALERT_EMAIL = 'ops@example.org'; process.env.MAILER_PROVIDER = 'noop';
+    try {
+      vi.resetModules(); const { default: h } = await import('../../api/_handlers/cron/health-alert.js');
+      const r = res(); await h({ method: 'GET', headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } }, r);
+      expect(r.body.checks.alertChannel).toMatchObject({ ok: false, email: 'MAIL_PROVIDER_NOT_DELIVERABLE', webhook: 'NOT_CONFIGURED' });
+      expect(r.body.ok).toBe(false);
+    } finally {
+      for (const [k, v] of [['ALERT_WEBHOOK_URL', saved2.w], ['ALERT_EMAIL', saved2.e], ['MAILER_PROVIDER', saved2.m]]) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+    }
+  });
 });

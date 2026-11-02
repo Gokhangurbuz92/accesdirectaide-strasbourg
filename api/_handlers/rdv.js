@@ -3,21 +3,22 @@ import crypto from 'node:crypto';
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, and, inArray, lt, gt, asc, count , sql, isNull } from 'drizzle-orm';
+import { eq, and, lt, gt, asc, count , sql, isNull } from 'drizzle-orm';
 import { buildAppointmentIcs } from '../_utils/ics.js';
 import { calendarAttachment } from '../_services/appointment-notices.js';
 import { sendMail } from '../_utils/mailer.js';
 import { ACTIVE_APPOINTMENT_STATUSES, generateSlots, toBusyWindows, validateDateRange } from '../_utils/pro-rdv.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
+import { activeAppointmentWhere } from '../_utils/rdv-active.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
 import { formatParis, noticeCitizen, noticeStructure } from '../_services/appointment-notices.js';
 import { MODE_LABELS, modeLabel, locationOf, locationText, normalizeMode, offeredModes, rulesFor } from '../lib/appointment-modes.js';
 import { issueJoin, joinRefusal, joinWindow, publicVideoStatus } from '../lib/video-provider.js';
 
-const MAX_RANGE_DAYS = 14;
-const MAX_BOOKING_AHEAD_DAYS = 60;
-const MIN_BOOKING_DELAY_MINUTES = 5;
+export const MAX_RANGE_DAYS = 14;
+export const MAX_BOOKING_AHEAD_DAYS = 60;
+export const MIN_BOOKING_DELAY_MINUTES = 5;
 // PKG-3 / D-2 (owner decision 2026-10-19): an appointment may be moved while it starts at least 24 hours later, at most twice, as an atomic swap under the booking lock.
 export const RESCHEDULE_MIN_NOTICE_HOURS = 24;
 export const MAX_RESCHEDULES = 2;
@@ -310,7 +311,7 @@ function groupSlotsByDay(slots) {
 /**
  * @param {string} slug
  */
-async function loadStructureBySlug(slug) {
+export async function loadStructureBySlug(slug) {
   const structure = await db.query.Structure.findFirst({
     where: (t, { eq, and }) => and(eq(t.slug, slug), eq(t.statut, 'actif')),
     columns: {
@@ -329,6 +330,7 @@ async function loadStructureBySlug(slug) {
         columns: {
           isPublished: true,
           bookingMode: true,
+          allowGuestBooking: true,
         },
       },
     },
@@ -351,6 +353,8 @@ async function loadStructureBySlug(slug) {
     // PKG-5 / E01: NEW bookings (services, slots, booking, a move to a new slot) need an active, identity-verified organization (api/_utils/org-eligibility.js)
     bookable: Boolean(isPublished) && structure.verification_status === 'VERIFIED',
     bookingMode: settings?.bookingMode || 'IN_PERSON',
+    // R38: account-free booking only when the structure explicitly opted in (no settings row = no)
+    allowGuestBooking: Boolean(settings?.allowGuestBooking),
     location: locationOf(structure),
     // raw address fields, so appointment payloads composed in this request carry the same location as reloaded ones
     adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status,
@@ -483,7 +487,7 @@ function serializeAppointment(appointment, options = {}) {
 }
 
 /** LOCATION of the calendar event: the address for an in-person appointment; never a meeting link for a video one (the secure access is in Mes rendez-vous). */
-function icsLocation(appointment) {
+export function icsLocation(appointment) {
   if (appointment.mode === 'VIDEO') return 'À distance (visio) - accès sécurisé depuis Mes rendez-vous';
   const loc = locationOf(appointment.structure);
   return loc ? loc.address : '';
@@ -579,7 +583,7 @@ async function sendAppointmentConfirmationEmail(input) {
  * @param {string} appointmentId
  * @param {{ citizenUserId?: string, idempotencyKey?: string }=} where
  */
-async function loadAppointmentWithRelations(appointmentId, where = {}) {
+export async function loadAppointmentWithRelations(appointmentId, where = {}) {
   if (appointmentId) {
     return db.query.ProAppointment.findFirst({
       where: (a, { eq }) => eq(a.id, appointmentId),
@@ -613,7 +617,7 @@ async function findOverlappingAppointments(dbOrTx, params) {
     .where(
       and(
         eq(schema.ProAppointment.structureId, params.structureId),
-        inArray(schema.ProAppointment.status, params.statuses),
+        activeAppointmentWhere(schema.ProAppointment),   // R38: the shared « still active » rule (params.statuses is ACTIVE_APPOINTMENT_STATUSES)
         lt(schema.ProAppointment.startAt, params.startBefore),
         gt(schema.ProAppointment.endAt, params.endAfter),
       ),
@@ -720,6 +724,54 @@ async function getServices(req, res) {
 }
 
 /**
+ * The bookable slots of one service and modality in a range (rules of that modality, minus the active appointments with their buffers and the closures of the
+ * structure, never inside the minimum delay nor beyond the booking horizon). R38: shared by the citizen and the account-free slot lists.
+ * @param {any} structure @param {any} service @param {string} mode @param {{ from: Date, to: Date }} range
+ */
+export async function computePublicSlots(structure, service, mode, range, { exceptId = null } = {}) {
+  const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
+    where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
+    orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
+  }), mode);
+
+  const appointments = (await findOverlappingAppointments(db, {
+    structureId: structure.id,
+    statuses: ACTIVE_APPOINTMENT_STATUSES,
+    startBefore: range.to,
+    endAfter: range.from,
+  })).filter((a) => a.id !== exceptId);   // a moved appointment does not block its own new slot
+
+  const timeOffs = await findOverlappingTimeOffs(db, {
+    structureId: structure.id,
+    startBefore: range.to,
+    endAfter: range.from,
+  });
+
+  const busyWindows = [
+    ...toBusyWindows(appointments),
+    ...timeOffs.map((timeOff) => ({ start: timeOff.startAt, end: timeOff.endAt })),
+  ];
+
+  const slots = generateSlots({
+    rules,
+    from: range.from,
+    to: range.to,
+    durationMinutes: service.durationMinutes,
+    bufferBeforeMinutes: service.bufferBeforeMinutes,
+    bufferAfterMinutes: service.bufferAfterMinutes,
+    busyWindows,
+    maxSlots: 800,
+  }).filter((slot) => {
+    // PKG-3 / B02: never offer a slot the booking would refuse (already started / within the minimum delay / beyond the booking horizon). Today's past slots used to be
+    // listed, and choosing one failed with "startAt out of allowed range" — found by the first real-browser booking journey (DTA-B26).
+    const t = new Date(slot.startAt).getTime();
+    return t >= Date.now() + MIN_BOOKING_DELAY_MINUTES * 60_000 && t <= addDaysUtc(new Date(), MAX_BOOKING_AHEAD_DAYS).getTime();
+  });
+
+  return { rules, slots };
+}
+
+/**
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
  */
@@ -782,44 +834,7 @@ async function getSlots(req, res) {
     return res.status(409).json({ error: 'MODE_UNAVAILABLE', code: 'MODE_UNAVAILABLE', message: 'Cette modalité n’est pas proposée pour ce service.' });
   }
 
-  const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
-    where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
-    orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
-  }), mode);
-
-  const appointments = await findOverlappingAppointments(db, {
-    structureId: structure.id,
-    statuses: ACTIVE_APPOINTMENT_STATUSES,
-    startBefore: range.to,
-    endAfter: range.from,
-  });
-
-  const timeOffs = await findOverlappingTimeOffs(db, {
-    structureId: structure.id,
-    startBefore: range.to,
-    endAfter: range.from,
-  });
-
-  const busyWindows = [
-    ...toBusyWindows(appointments),
-    ...timeOffs.map((timeOff) => ({ start: timeOff.startAt, end: timeOff.endAt })),
-  ];
-
-  const slots = generateSlots({
-    rules,
-    from: range.from,
-    to: range.to,
-    durationMinutes: service.durationMinutes,
-    bufferBeforeMinutes: service.bufferBeforeMinutes,
-    bufferAfterMinutes: service.bufferAfterMinutes,
-    busyWindows,
-    maxSlots: 800,
-  }).filter((slot) => {
-    // PKG-3 / B02: never offer a slot the booking would refuse (already started / within the minimum delay / beyond the booking horizon). Today's past slots used to be
-    // listed, and choosing one failed with "startAt out of allowed range" — found by the first real-browser booking journey (DTA-B26).
-    const t = new Date(slot.startAt).getTime();
-    return t >= Date.now() + MIN_BOOKING_DELAY_MINUTES * 60_000 && t <= addDaysUtc(new Date(), MAX_BOOKING_AHEAD_DAYS).getTime();
-  });
+  const { rules, slots } = await computePublicSlots(structure, service, mode, range);
 
   return res.status(200).json({
     timezone: rules[0]?.timezone || 'Europe/Paris',
@@ -961,164 +976,167 @@ async function createAppointment(req, res) {
     return res.status(409).json({ error: 'Slot no longer available' });
   }
 
-  const bookingLockKey = `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`;   // R12: the Paris day of the slot (was the UTC day)
-
-  // The confirmation e-mail is sent AFTER the transaction commits: a slow/hung provider must not hold the
-  // per-structure/day advisory lock and a DB connection, and no mail may announce a rolled-back booking.
-  let deferredConfirmationEmail = null;
-  // R12: the answer is sent AFTER the transaction committed (it used to be sent from inside it: a failed COMMIT had already told the person « booked »)
-  const reply = (status, body) => ({ __reply: true, status, body });
+  // R38: the locked part (advisory lock, replay, overlap + closure re-checks, insert) is the shared bookSlot() below, also used by the account-free hold
   let outcome;
   try {
-  outcome = await withBookingCollisionLock(bookingLockKey, async () => {
-    return db.transaction(async (tx) => {
-      await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${bookingLockKey}, 0))`);
-    try {
-      // DTA S8: the idempotency pre-check above runs BEFORE the lock. Two requests with the same key (double click, retry after a timeout, two processes) can both pass it;
-      // the second then finds the first one's COMMITTED appointment as an overlap and would answer 409 for a booking that did succeed. Re-check under the lock: same key => replay.
-      const replayUnderLock = await loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey });
-      if (replayUnderLock) {
-        return reply(200, createConfirmedAppointmentPayload(replayUnderLock, { citizenUserId: auth.user.id }).payload);
-      }
-      // The local-release lock serializes same-structure/day booking mutations.
-      // The unique constraint on (citizenUserId, idempotencyKey) still prevents retry duplicates.
-
-    // 1. Check overlapping appointments
-    const overlaps = await tx
-      .select()
-      .from(schema.ProAppointment)
-      .where(
-        and(
-          eq(schema.ProAppointment.structureId, structure.id),
-          inArray(schema.ProAppointment.status, ACTIVE_APPOINTMENT_STATUSES),
-          lt(schema.ProAppointment.startAt, endAt),
-          gt(schema.ProAppointment.endAt, startAt),
-        ),
-      );
-
-    // Load service buffers for overlap check
-    const overlapsWithService = await Promise.all(
-      overlaps.map(async (appt) => {
-        const svc = appt.serviceId
-          ? await tx
-              .select({
-                bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes,
-                bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes,
-              })
-              .from(schema.ProRdvService)
-              .where(eq(schema.ProRdvService.id, appt.serviceId))
-              .then((rows) => rows[0] || null)
-          : null;
-        return { ...appt, service: svc };
-      }),
-    );
-
-    const overlapBusyWindows = toBusyWindows(overlapsWithService);
-    const candidateBusyStart = new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000);
-    const candidateBusyEnd = new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000);
-    const hasConflict = overlapBusyWindows.some((window) => candidateBusyStart < window.end && window.start < candidateBusyEnd);
-
-    if (hasConflict) {
-      return reply(409, { error: 'Slot no longer available' });
-    }
-
-    // 2. Check time-offs
-    const [timeOffCount] = await tx
-      .select({ value: count() })
-      .from(schema.ProTimeOff)
-      .where(
-        and(
-          eq(schema.ProTimeOff.structureId, structure.id),
-          isNull(schema.ProTimeOff.proUserId),   // R24: closures of the structure only
-          lt(schema.ProTimeOff.startAt, endAt),
-          gt(schema.ProTimeOff.endAt, startAt),
-        ),
-      );
-
-    if (Number(timeOffCount.value) > 0) {
-      return reply(409, { error: 'Slot no longer available' });
-    }
-
-    // 3. Insert appointment (unique constraint on citizenUserId+idempotencyKey catches races)
-    const [createdAppointment] = await tx.insert(schema.ProAppointment).values({
-      structureId: structure.id,
-      serviceId: service.id,
+    outcome = await bookSlot({
+      structure,
+      service,
       startAt,
       endAt,
-      status: 'confirmed',
-      beneficiaryName: 'Particulier',
-      beneficiaryPhone: null,
-      notes: null,
-      citizenUserId: auth.user.id,
-      citizenEmailSnapshot: auth.user.email,
-      idempotencyKey,
-      visioEnabled: false,
-      mode,
-      visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null,
-    }).returning();
-
-      // The new row is not committed yet, so a read through the global pool cannot see it
-      // (it returned undefined, leaving `structure`/`service`/`calendar` null in the 201 payload).
-      // Compose the relations from the rows already loaded in this request instead.
-      const fullAppointment = {
-        ...createdAppointment,
-        structure: { id: structure.id, slug: structure.slug, nom: structure.nom, adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status },
-        service: { id: service.id, name: service.name, durationMinutes: service.durationMinutes },
-      };
-      const appointmentForResponse = fullAppointment || createdAppointment;
-      const confirmed = createConfirmedAppointmentPayload(appointmentForResponse, {
+      // DTA S8: the idempotency pre-check above runs BEFORE the lock. Two requests with the same key (double click, retry after a timeout, two processes) can both pass it;
+      // the second then finds the first one's COMMITTED appointment as an overlap and would answer 409 for a booking that did succeed. Re-check under the lock: same key => replay.
+      replay: () => loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey }),
+      // 3. Insert appointment (unique constraint on citizenUserId+idempotencyKey catches races)
+      values: {
+        structureId: structure.id,
+        serviceId: service.id,
+        startAt,
+        endAt,
+        status: 'confirmed',
+        beneficiaryName: 'Particulier',
+        beneficiaryPhone: null,
+        notes: null,
         citizenUserId: auth.user.id,
-        structureSlug: fullAppointment?.structure?.slug || structure.slug,
-      });
-
-      deferredConfirmationEmail = {
-        appointment: appointmentForResponse,
-        structureName: fullAppointment?.structure?.nom || structure.nom,
-        structureSlug: fullAppointment?.structure?.slug || structure.slug,
-        serviceName: fullAppointment?.service?.name || service.name,
-        toEmail: auth.user.email,
-        confirmationToken: confirmed.confirmation.token,
-      };
-
-      return reply(201, confirmed.payload);
-  } catch (error) {
-    // Drizzle wraps pg errors in error.cause
-    const pgCode = error?.cause?.code || error?.code;
-    if (pgCode === '23505') {
-      const existing = await loadAppointmentWithRelations(null, {
-        citizenUserId: auth.user.id,
+        citizenEmailSnapshot: auth.user.email,
         idempotencyKey,
-      });
-
-      if (existing) {
-        const confirmed = createConfirmedAppointmentPayload(existing, {
-          citizenUserId: auth.user.id,
-        });
-        return reply(200, confirmed.payload);
-      }
-      return reply(409, { error: 'Slot no longer available' });
-    }
-
-      return reply(500, { error: 'Internal Server Error' });
-    }
-
+        visioEnabled: false,
+        mode,
+        visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null,
+      },
     });
-  });
   } catch (error) {
     logger.error({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] booking transaction failed');
-    deferredConfirmationEmail = null;
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 
-  if (deferredConfirmationEmail && outcome?.__reply && outcome.status === 201) {
-    try {
-      await sendAppointmentConfirmationEmail(deferredConfirmationEmail);
-    } catch {
-      // Email is best-effort: booking must stay successful even if provider is unavailable.
-    }
+  // R12: the answer is sent AFTER the transaction committed; a replay answers 200 and sends no second confirmation e-mail
+  if (outcome.kind === 'replay') {
+    return res.status(200).json(createConfirmedAppointmentPayload(outcome.appointment, { citizenUserId: auth.user.id }).payload);
   }
-  if (outcome?.__reply) return res.status(outcome.status).json(outcome.body);
-  return outcome;
+  if (outcome.kind === 'duplicate') {
+    const existing = await loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey });
+    if (existing) return res.status(200).json(createConfirmedAppointmentPayload(existing, { citizenUserId: auth.user.id }).payload);
+    return res.status(409).json({ error: 'Slot no longer available' });
+  }
+  if (outcome.kind === 'conflict') return res.status(409).json({ error: 'Slot no longer available' });
+  if (outcome.kind !== 'created') return res.status(500).json({ error: 'Internal Server Error' });
+
+  // The new row is not committed yet when it is inserted, so the relations are composed from the rows already loaded in this request.
+  const appointmentForResponse = withLoadedRelations(outcome.appointment, structure, service);
+  const confirmed = createConfirmedAppointmentPayload(appointmentForResponse, {
+    citizenUserId: auth.user.id,
+    structureSlug: structure.slug,
+  });
+  // The confirmation e-mail is sent AFTER the transaction commits: a slow/hung provider must not hold the
+  // per-structure/day advisory lock and a DB connection, and no mail may announce a rolled-back booking.
+  try {
+    await sendAppointmentConfirmationEmail({
+      appointment: appointmentForResponse,
+      structureName: structure.nom,
+      structureSlug: structure.slug,
+      serviceName: service.name,
+      toEmail: auth.user.email,
+      confirmationToken: confirmed.confirmation.token,
+    });
+  } catch {
+    // Email is best-effort: booking must stay successful even if provider is unavailable.
+  }
+  return res.status(201).json(confirmed.payload);
+}
+
+/** the appointment row with the structure / service relations loaded in this request (a row inserted in a transaction is not visible to the pool yet) */
+export function withLoadedRelations(row, structure, service) {
+  return {
+    ...row,
+    structure: { id: structure.id, slug: structure.slug, nom: structure.nom, adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status },
+    service: { id: service.id, name: service.name, durationMinutes: service.durationMinutes },
+  };
+}
+
+/** the booking lock key of a slot: the structure and the Paris day of the slot (R12; R14: the same key for the professional booking and the reschedule) */
+export function bookingLockKeyOf(structureId, startAt) {
+  return `${structureId}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`;
+}
+
+/**
+ * R38 — the booking core shared by the citizen booking (POST rdv/appointments) and the account-free hold (POST rdv/guest/hold): under the in-process FIFO lock
+ * AND the PostgreSQL advisory lock of the structure/Paris day, in one transaction: replay check (same identity + same key) -> overlap re-check with buffers
+ * (the shared « still active » rule: an expired guest hold no longer blocks) -> closure re-check -> insert. Nothing is answered or e-mailed from inside;
+ * the caller replies after COMMIT. Returns { kind: 'created', appointment } | { kind: 'replay', appointment } | { kind: 'conflict' } | { kind: 'duplicate' }
+ * (unique violation: the caller looks the row up) | { kind: 'error' }. A failed transaction throws.
+ * @param {{ structure: any, service: any, startAt: Date, endAt: Date, replay: (tx: any) => Promise<any>, values: Record<string, any> }} input
+ */
+export async function bookSlot({ structure, service, startAt, endAt, replay, values }) {
+  const bookingLockKey = bookingLockKeyOf(structure.id, startAt);   // R12: the Paris day of the slot (was the UTC day)
+  return withBookingCollisionLock(bookingLockKey, async () => db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${bookingLockKey}, 0))`);
+    try {
+      const replayUnderLock = await replay(tx);
+      if (replayUnderLock) return { kind: 'replay', appointment: replayUnderLock };
+
+      // 1. Check overlapping appointments
+      const overlaps = await tx
+        .select()
+        .from(schema.ProAppointment)
+        .where(
+          and(
+            eq(schema.ProAppointment.structureId, structure.id),
+            activeAppointmentWhere(schema.ProAppointment),
+            lt(schema.ProAppointment.startAt, endAt),
+            gt(schema.ProAppointment.endAt, startAt),
+          ),
+        );
+
+      // Load service buffers for overlap check
+      const overlapsWithService = await Promise.all(
+        overlaps.map(async (appt) => {
+          const svc = appt.serviceId
+            ? await tx
+                .select({
+                  bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes,
+                  bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes,
+                })
+                .from(schema.ProRdvService)
+                .where(eq(schema.ProRdvService.id, appt.serviceId))
+                .then((rows) => rows[0] || null)
+            : null;
+          return { ...appt, service: svc };
+        }),
+      );
+
+      const overlapBusyWindows = toBusyWindows(overlapsWithService);
+      const candidateBusyStart = new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000);
+      const candidateBusyEnd = new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000);
+      if (overlapBusyWindows.some((window) => candidateBusyStart < window.end && window.start < candidateBusyEnd)) {
+        return { kind: 'conflict' };
+      }
+
+      // 2. Check time-offs
+      const [timeOffCount] = await tx
+        .select({ value: count() })
+        .from(schema.ProTimeOff)
+        .where(
+          and(
+            eq(schema.ProTimeOff.structureId, structure.id),
+            isNull(schema.ProTimeOff.proUserId),   // R24: closures of the structure only
+            lt(schema.ProTimeOff.startAt, endAt),
+            gt(schema.ProTimeOff.endAt, startAt),
+          ),
+        );
+      if (Number(timeOffCount.value) > 0) return { kind: 'conflict' };
+
+      // 3. Insert (the unique indexes on the identity + idempotency key catch races)
+      const [createdAppointment] = await tx.insert(schema.ProAppointment).values(values).returning();
+      return { kind: 'created', appointment: createdAppointment };
+    } catch (error) {
+      // Drizzle wraps pg errors in error.cause
+      const pgCode = error?.cause?.code || error?.code;
+      if (pgCode === '23505') return { kind: 'duplicate' };
+      logger.error({ err: { name: error?.name, code: pgCode } }, '[rdv] booking failed under the lock');
+      return { kind: 'error' };
+    }
+  }));
 }
 
 /**
@@ -1331,6 +1349,50 @@ async function citizenVisio(req, res) {
   return res.status(200).json({ join: issueJoin(appointment, 'citizen') });
 }
 
+/** PKG-3 / D-2: why this appointment can no longer be moved (null = it can) @param {any} row */
+export function rescheduleRefusal(row) {
+  if (!RESCHEDULABLE_STATUSES.includes(String(row.status || '').toLowerCase())) return { status: 409, code: 'APPOINTMENT_NOT_ACTIVE', error: 'Ce rendez-vous ne peut plus être modifié.' };
+  if (new Date(row.startAt).getTime() - Date.now() < RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000) return { status: 409, code: 'RESCHEDULE_TOO_LATE', error: `Un rendez-vous peut être déplacé au plus tard ${RESCHEDULE_MIN_NOTICE_HOURS} heures avant. Contactez la structure.` };
+  if (Number(row.rescheduleCount || 0) >= MAX_RESCHEDULES) return { status: 409, code: 'RESCHEDULE_LIMIT', error: `Ce rendez-vous a déjà été déplacé ${MAX_RESCHEDULES} fois. Contactez la structure.` };
+  return null;
+}
+
+/**
+ * R38 — the atomic move shared by the citizen reschedule and the account-free one: under the booking locks of both Paris days (fixed order: no deadlock), on
+ * the row itself (FOR UPDATE): owner check, policy re-check, overlap re-check with buffers (shared « still active » rule), closure re-check, then a
+ * compare-and-set update on rescheduleCount. Either the appointment moves or nothing changes.
+ * @param {{ appointment: any, structure: any, service: any, startAt: Date, endAt: Date, refuse: (row: any) => any, owns: (row: any) => boolean, set?: Record<string, any> }} input
+ * @returns {Promise<{ moved: any, outcome: { status: number, body: any } }>}
+ */
+export async function moveSlot({ appointment, structure, service, startAt, endAt, refuse, owns, set = {} }) {
+  const keys = [...new Set([`${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(appointment.startAt))}`, `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`])].sort();   // R14: the Paris day, as the booking lock (was the UTC day: two locks for one slot near midnight)
+  const withLocks = (i, task) => (i >= keys.length ? task() : withBookingCollisionLock(keys[i], () => withLocks(i + 1, task)));
+  let moved = null;
+  const outcome = await withLocks(0, () => db.transaction(async (tx) => {
+    for (const k of keys) await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${k}, 0))`);
+    // re-check everything under the locks, on the row itself (FOR UPDATE)
+    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", "citizenUserId", "guestManageTokenHash", "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
+    if (!row || !owns(row)) return { status: 404, body: { error: 'Appointment not found' } };
+    const late = refuse(row);
+    if (late) return { status: late.status, body: { error: late.code, code: late.code, message: late.error } };
+    const overlaps = (await tx.select().from(schema.ProAppointment).where(and(eq(schema.ProAppointment.structureId, structure.id), activeAppointmentWhere(schema.ProAppointment),
+      lt(schema.ProAppointment.startAt, new Date(endAt.getTime() + 24 * 3_600_000)), gt(schema.ProAppointment.endAt, new Date(startAt.getTime() - 24 * 3_600_000))))).filter((a) => a.id !== appointment.id);
+    const withSvc = await Promise.all(overlaps.map(async (a) => ({ ...a, service: a.serviceId ? (await tx.select({ bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes, bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes })
+      .from(schema.ProRdvService).where(eq(schema.ProRdvService.id, a.serviceId)))[0] || null : null })));
+    const busyStart = new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000); const busyEnd = new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000);
+    if (toBusyWindows(withSvc).some((w) => busyStart < w.end && w.start < busyEnd)) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
+    const [off] = await tx.select({ value: count() }).from(schema.ProTimeOff).where(and(eq(schema.ProTimeOff.structureId, structure.id), isNull(schema.ProTimeOff.proUserId), lt(schema.ProTimeOff.startAt, endAt), gt(schema.ProTimeOff.endAt, startAt)));   // R24: closures only
+    if (Number(off.value) > 0) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
+    const [updated] = await tx.update(schema.ProAppointment).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
+      ...set })
+      .where(and(eq(schema.ProAppointment.id, appointment.id), eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)))).returning();
+    if (!updated) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
+    moved = { ...updated, structure: appointment.structure, service: appointment.service };   // structure carries the address fields (loader)
+    return { status: 200, body: null };
+  }));
+  return { moved, outcome };
+}
+
 /**
  * PKG-3 / D-2 — move my appointment to another free slot of the same structure and service.
  * Allowed while the CURRENT appointment starts at least RESCHEDULE_MIN_NOTICE_HOURS later and at most MAX_RESCHEDULES times (also a DB CHECK). The new slot is validated
@@ -1358,12 +1420,7 @@ async function rescheduleAppointment(req, res) {
   // R12: someone else's appointment answers exactly like an unknown one (no existence oracle)
   if (!appointment || appointment.citizenUserId !== auth.user.id) return res.status(404).json({ error: 'Appointment not found' });
 
-  const refuse = (row) => {
-    if (!RESCHEDULABLE_STATUSES.includes(String(row.status || '').toLowerCase())) return { status: 409, code: 'APPOINTMENT_NOT_ACTIVE', error: 'Ce rendez-vous ne peut plus être modifié.' };
-    if (new Date(row.startAt).getTime() - Date.now() < RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000) return { status: 409, code: 'RESCHEDULE_TOO_LATE', error: `Un rendez-vous peut être déplacé au plus tard ${RESCHEDULE_MIN_NOTICE_HOURS} heures avant. Contactez la structure.` };
-    if (Number(row.rescheduleCount || 0) >= MAX_RESCHEDULES) return { status: 409, code: 'RESCHEDULE_LIMIT', error: `Ce rendez-vous a déjà été déplacé ${MAX_RESCHEDULES} fois. Contactez la structure.` };
-    return null;
-  };
+  const refuse = rescheduleRefusal;
   const early = refuse(appointment);
   if (early) return res.status(early.status).json({ error: early.code, code: early.code, message: early.error });
 
@@ -1413,31 +1470,11 @@ async function rescheduleAppointment(req, res) {
     return res.status(409).json({ error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' });
   }
 
-  const keys = [...new Set([`${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(appointment.startAt))}`, `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`])].sort();   // R14: the Paris day, as the booking lock (was the UTC day: two locks for one slot near midnight)
-  const withLocks = (i, task) => (i >= keys.length ? task() : withBookingCollisionLock(keys[i], () => withLocks(i + 1, task)));
-  let moved = null;
-  const outcome = await withLocks(0, () => db.transaction(async (tx) => {
-    for (const k of keys) await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${k}, 0))`);
-    // re-check everything under the locks, on the row itself (FOR UPDATE)
-    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", "citizenUserId", "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
-    if (!row || row.citizenUserId !== auth.user.id) return { status: 404, body: { error: 'Appointment not found' } };
-    const late = refuse(row);
-    if (late) return { status: late.status, body: { error: late.code, code: late.code, message: late.error } };
-    const overlaps = (await tx.select().from(schema.ProAppointment).where(and(eq(schema.ProAppointment.structureId, structure.id), inArray(schema.ProAppointment.status, ACTIVE_APPOINTMENT_STATUSES),
-      lt(schema.ProAppointment.startAt, new Date(endAt.getTime() + 24 * 3_600_000)), gt(schema.ProAppointment.endAt, new Date(startAt.getTime() - 24 * 3_600_000))))).filter((a) => a.id !== appointment.id);
-    const withSvc = await Promise.all(overlaps.map(async (a) => ({ ...a, service: a.serviceId ? (await tx.select({ bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes, bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes })
-      .from(schema.ProRdvService).where(eq(schema.ProRdvService.id, a.serviceId)))[0] || null : null })));
-    const busyStart = new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000); const busyEnd = new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000);
-    if (toBusyWindows(withSvc).some((w) => busyStart < w.end && w.start < busyEnd)) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
-    const [off] = await tx.select({ value: count() }).from(schema.ProTimeOff).where(and(eq(schema.ProTimeOff.structureId, structure.id), isNull(schema.ProTimeOff.proUserId), lt(schema.ProTimeOff.startAt, endAt), gt(schema.ProTimeOff.endAt, startAt)));   // R24: closures only
-    if (Number(off.value) > 0) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
-    const [updated] = await tx.update(schema.ProAppointment).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
-      ...(mode !== currentMode ? { mode, visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false, visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null } : {}) })
-      .where(and(eq(schema.ProAppointment.id, appointment.id), eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)))).returning();
-    if (!updated) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
-    moved = { ...updated, structure: appointment.structure, service: appointment.service };   // structure carries the address fields (loader)
-    return { status: 200, body: null };
-  }));
+  const { moved, outcome } = await moveSlot({
+    appointment, structure, service, startAt, endAt, refuse,
+    owns: (row) => row.citizenUserId === auth.user.id,
+    set: mode !== currentMode ? { mode, visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false, visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null } : {},
+  });
   if (!moved) return res.status(outcome.status).json(outcome.body);
   const confirmed = createConfirmedAppointmentPayload(moved, { citizenUserId: auth.user.id, structureSlug: structure.slug });
   // PKG-3 / B05: the person gets the new time with an UPDATED calendar event (same UID, higher SEQUENCE); the structure is told (old and new time, nothing else)
@@ -1464,6 +1501,12 @@ export default async function handler(req, res) {
   const segments = getPathSegments(req);
 
   try {
+    // R38: account-free booking (rdv/guest/…, same « appointments » beta surface; off unless ADA_GUEST_BOOKING_ENABLED=true) — api/_services/rdv-guest.js
+    if (segments[0] === 'guest') {
+      const { default: guestHandler } = await import('../_services/rdv-guest.js');
+      return await guestHandler(req, res, method, segments.slice(1));
+    }
+
     if (method === 'GET' && segments[0] === 'structures' && segments[2] === 'services') {
       return await getServices(req, res);
     }

@@ -12,6 +12,7 @@ import {
   toBusyWindows,
 } from '../../../_utils/pro-rdv.js';
 import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
+import { activeAppointmentWhere } from '../../../_utils/rdv-active.js';
 import { decrypt, encrypt, isV1Text } from '../../../lib/crypto.js';
 
 // launch-readiness item 61: the name and the notes a professional records for a person are encrypted at rest (v1, covered by the key rotation); rows written
@@ -58,6 +59,13 @@ function maskContact(value) {
   return `${text.slice(0, 2)}***${text.slice(-2)}`;
 }
 
+/** R38: « ma***@exemple.fr » @param {string | null} value */
+function maskEmail(value) {
+  const [local, domain] = String(value || '').split('@');
+  if (!local || !domain) return null;
+  return `${local.slice(0, 2)}***@${domain}`;
+}
+
 /**
  * @param {any} appointment
  * @returns {Record<string, any>}
@@ -79,7 +87,9 @@ function serialize(appointment) {
     // PKG-3: modality, moves and video state (never the room name or any token)
     mode: appointment.mode || 'IN_PERSON',
     modeLabel: modeLabel(appointment.mode),
-    origin: appointment.citizenUserId ? 'CITIZEN' : 'STRUCTURE',
+    origin: appointment.citizenUserId ? 'CITIZEN' : appointment.guestEmail ? 'GUEST' : 'STRUCTURE',
+    // R38: booked without an account (« sans compte »): the structure sees the name, the phone and a masked e-mail to reach the person
+    guest: appointment.guestEmail ? { withoutAccount: true, emailMasked: maskEmail(open(appointment.guestEmail)), phone: open(appointment.guestPhone) || null, confirmedAt: appointment.guestConfirmedAt || null } : null,
     rescheduleCount: Number(appointment.rescheduleCount || 0),
     rescheduledAt: appointment.rescheduledAt || null,
     beneficiaryConsentAt: appointment.beneficiaryConsentAt || null,
@@ -112,13 +122,15 @@ async function handler(req, res) {
     const from = req.query.from ? new Date(String(req.query.from)) : null;
     const to = req.query.to ? new Date(String(req.query.to)) : null;
 
-    const conditions = [eq(ProAppointment.structureId, proCtx.structureId)];
+    // R38: an account-free hold whose e-mail code was not confirmed yet is not a booking: it is not listed (it expires on its own)
+    const conditions = [eq(ProAppointment.structureId, proCtx.structureId), isNull(ProAppointment.guestHoldExpiresAt)];
     if (id) conditions.push(eq(ProAppointment.id, id));
     if (status) conditions.push(eq(ProAppointment.status, status));
     if (from && !Number.isNaN(from.getTime())) conditions.push(gte(ProAppointment.startAt, from));
     if (to && !Number.isNaN(to.getTime())) conditions.push(lte(ProAppointment.startAt, to));
     const whereFilter = and(...conditions);
 
+    // R38: the guest's e-mail blind index and the code / manage-token hashes are never selected
     const [totalRes, appointments] = await Promise.all([
       db.select({ value: count() }).from(ProAppointment).where(whereFilter),
       db.query.ProAppointment.findMany({
@@ -129,6 +141,9 @@ async function handler(req, res) {
         columns: {
           idempotencyKey: false,
           citizenEmailSnapshot: false,
+          guestEmailHash: false,
+          guestCodeHash: false,
+          guestManageTokenHash: false,
           createdByProUserId: false,
           visioRoomId: false,
           visioStartedAt: false,
@@ -210,7 +225,7 @@ async function handler(req, res) {
       const existing = await tx.query.ProAppointment.findMany({
         where: (pa, { and, eq, inArray, lt, gt }) => and(
           eq(pa.structureId, proCtx.structureId),
-          inArray(pa.status, ACTIVE_APPOINTMENT_STATUSES),
+          activeAppointmentWhere(pa),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
           lt(pa.startAt, new Date(endAt.getTime() + 24 * 3_600_000)),
           gt(pa.endAt, new Date(startAt.getTime() - 24 * 3_600_000))
         ),

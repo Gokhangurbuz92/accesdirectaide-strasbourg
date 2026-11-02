@@ -20,7 +20,7 @@ import { useSituation } from '@/hooks/useSituation';
 import { csrfFetch } from '@/lib/csrf';
 import DiagnosticOutcome from '@/components/diagnostic/DiagnosticOutcome';
 import PrivacyNotice from '@/components/diagnostic/PrivacyNotice';
-import { errorMessageFor } from '@/lib/assessmentLabels';
+import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { client } from '@/api/client';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 
@@ -75,6 +75,7 @@ const DEFAULT_SITUATION = {
  */
 export default function DiagnosticPage() {
     const { situation, updateField, resetSituation } = useSituation(DEFAULT_SITUATION);
+    const { errorMessageFor } = useAssessmentLabels();
     const [results, setResults] = useState(null);
     const recordHistory = useCitizenHistory();
     const [loading, setLoading] = useState(false);

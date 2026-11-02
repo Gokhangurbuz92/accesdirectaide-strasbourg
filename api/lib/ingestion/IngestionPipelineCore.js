@@ -283,7 +283,9 @@ export class IngestionPipelineCore {
             }
             
             dbRecordConfig.slug = finalSlug;
-            dbRecordConfig.published_at = new Date();
+            // R38: a record seen for the first time is a DRAFT until the veille verifies it (D-5 already hid it; « publie » with no verification was a
+            // misleading state, and it showed in the LAB's open mode). Existing records keep their statut (applySourceUpdate above).
+            dbRecordConfig.statut = 'brouillon';
             dbRecordConfig.retrieved_at = new Date(); // first sight
             if (data.external_id && 'externalId' in dbRecordConfig) {
                 dbRecordConfig.externalId = data.external_id;

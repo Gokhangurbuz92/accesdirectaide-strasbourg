@@ -23,18 +23,6 @@
       "schedule": "0 2 * * 0"
     },
     {
-      "path": "/api/cron/ingest-demarches",
-      "schedule": "0 4 * * 1"
-    },
-    {
-      "path": "/api/cron/review-queue/scan",
-      "schedule": "30 */6 * * *"
-    },
-    {
-      "path": "/api/cron/ingest-annuaire",
-      "schedule": "0 1 * * 1"
-    },
-    {
       "path": "/api/cron/parcours-reminder",
       "schedule": "0 7 * * *"
     },

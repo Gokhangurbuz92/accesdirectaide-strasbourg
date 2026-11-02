@@ -94,6 +94,9 @@ function enrichDescription(s) {
   };
 }
 
+/** R38: account-free booking switch (fail-closed; unset in Production) */
+const guestBookingOn = () => String(process.env.ADA_GUEST_BOOKING_ENABLED || '').trim().toLowerCase() === 'true';
+
 async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ req, /** @type {import('../_utils/http-types').ApiResponse} */ res) {
   try {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -168,6 +171,9 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
               columns: {
                 isPublished: true,
                 bookingMode: true,
+                // R38: the column exists only after migration 0043 (owner-applied in Production): it is read only when the guest switch is on, so this
+                // public page keeps working on a database without it
+                ...(guestBookingOn() ? { allowGuestBooking: true } : {}),
               },
             },
             sourceDocument: {
@@ -208,6 +214,9 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
         rdv: {
           isPublished: isRdvPublished,
           bookingMode,
+          // R38: « Prendre rendez-vous sans compte » is offered only when the structure opted in, is VERIFIED, AND the server switch is on
+          allowGuestBooking: Boolean(isRdvPublished && rdvSettings?.allowGuestBooking && structureRest.verification_status === 'VERIFIED'
+            && guestBookingOn()),
         },
         provenance: {
           ...buildProvenance({

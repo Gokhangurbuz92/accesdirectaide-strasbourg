@@ -15,7 +15,7 @@ import { buildAppointmentIcs, calendarContentType } from '../_utils/ics.js';
 import { canNotify as defaultCanNotify } from './citizen-account.js';
 import logger from '../_utils/logger.js';
 
-export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED'];
+export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE'];   // R38: the two account-free kinds
 export const formatParis = (d) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(new Date(d));
 /** PKG-11 audit pass 2: the date and the time of an appointment as a person in Strasbourg reads them (the servers run in UTC: « 08:00 » for a 10:00 summer appointment). */
 export const formatParisDate = (d) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(d));
@@ -63,6 +63,18 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, u.email)] : [])];
           const out = await sendMail({ to: u.email, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
+        }
+      }
+    } else if (appointment.guestEmail && appointment.guestConfirmedAt && appointment.guestMailConsentAt) {
+      // R38: an account-free booking — the sealed address it was confirmed with, for 'service' notices only (its booking mails, consented at booking);
+      // no J-1 reminder yet (no reminder consent is collected without an account): REMINDER_J1 stays NO_RECIPIENT
+      if (category === 'service') {
+        const { decrypt, isV1Text } = await import('../lib/crypto.js');
+        const to = isV1Text(appointment.guestEmail) ? decrypt(appointment.guestEmail) : null;
+        if (to) {
+          const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, to)] : [])];
+          const out = await sendMail({ to, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
+          status = mailLedgerStatus(out);
         }
       }
     }

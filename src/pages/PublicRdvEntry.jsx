@@ -13,6 +13,8 @@ import { client } from '@/api/client';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { CsrfBootstrapError, csrfFetch, getCsrfHeaders } from '@/lib/csrf';
+import { guestBookingPath, guestGet } from '@/lib/guestBooking';
+import { useT } from '@/i18n';
 /**
  * @returns {string | null}
  */
@@ -205,6 +207,16 @@ export default function PublicRdvEntry({ view = 'landing' }) {
   const basePath = baseSlug ? `/rdv/${encodeURIComponent(baseSlug)}` : '/annuaire';
 
   const isUserSession = authState?.sessionKind === 'user';
+
+  // R38: a visitor without a citizen session is offered the account-free booking when the server says this structure takes it (opt-in + switch);
+  // otherwise the historical login redirect stays
+  const { t } = useT('booking');
+  const { data: guestOffer, isLoading: guestLoading } = useQuery({
+    queryKey: ['public-rdv-guest', baseSlug],
+    enabled: Boolean(baseSlug && !authLoading && !isUserSession),
+    staleTime: 30 * 1000,
+    queryFn: async () => (await guestGet(`structures/${encodeURIComponent(baseSlug)}/services`)).ok,
+  });
 
   const querySuffix = useMemo(() => {
     const params = new URLSearchParams();
@@ -480,6 +492,36 @@ export default function PublicRdvEntry({ view = 'landing' }) {
               className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
             >
               Signaler un probleme
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!isUserSession && baseSlug && guestLoading) {
+    return (
+      <div className="w-full p-4"><SkeletonList count={3} variant="card" /></div>
+    );
+  }
+
+  if (!isUserSession && guestOffer === true) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <SEO title={t('booking:entry.seo', 'Prendre rendez-vous')} description={t('booking:entry.seo', 'Prendre rendez-vous')} path={safeNext} noindex={true} />
+        <Card className="w-full max-w-xl">
+          <CardHeader>
+            <CardTitle as="h1" data-testid="rdv-guest-choice">{t('booking:entry.title', 'Prendre rendez-vous')}</CardTitle>
+            <CardDescription>{structure.nom}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            <Link to={guestBookingPath(baseSlug)} data-testid="rdv-guest-cta"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90">
+              {t('booking:cta', 'Prendre rendez-vous sans compte')}
+            </Link>
+            <Link to={appendNext('/auth/login', safeNext)}
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground">
+              {t('booking:entry.login', 'Se connecter à mon compte')}
             </Link>
           </CardContent>
         </Card>

@@ -227,6 +227,30 @@
       ],
       "note": "R35: comma list of surfaces opened during the beta (accounts, pro, institution, appointments, video, communications, documents, diagnostic, admin, jobs); unset = none; the release gate then requires their services"
     },
+    "ADA_BETA_OPEN_JOBS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "note": "R38: comma list of scheduled jobs opened ONE AT A TIME during the beta (actualites, health-alert, ingest-structures, ingest-aids; personal-data jobs also need ADA_JOBS_APPROVED; legacy jobs can never be opened by name); unset = none"
+    },
+    "ADA_GUEST_BOOKING_ENABLED": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "note": "R38: account-free booking, off unless true; owner decision after legal/privacy/mail requirements"
+    },
+    "ADA_JOBS_APPROVED": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "note": "R38: the personal-data jobs the owner approved (parcours-reminder, referral-timeouts, rdv-reminder, gdpr-purge): legal basis, retention and a working mail provider recorded first; unset = none"
+    },
     "VITE_PUBLIC_BETA_OPEN_SURFACES": {
       "class": "decision",
       "nature": "public",
@@ -2117,7 +2141,7 @@
       "surfaces": [
         "operations"
       ],
-      "label": "Scheduled public-data crons (news, review queue, link check)",
+      "label": "Scheduled public-data crons (news; Aides-territoires once its token exists), opened one at a time during the beta with ADA_BETA_OPEN_JOBS (R38: the legacy ingestions and the manual review-queue scan have no schedule)",
       "code": [
         "api/_handlers/cron/actualites.js",
         "api/_utils/cronAuth.js"

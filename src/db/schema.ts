@@ -680,7 +680,9 @@ export const ProRdvService = pgTable('ProRdvService', {
 	// PKG-3: the modalities this service is offered in (subset of the structure's bookingMode)
 	modes: text('modes').array().notNull().default(sql`ARRAY['IN_PERSON']::text[]`),
 	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
-	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+	// R38: bookable without an account (in person only), on top of StructureRdvSettings.allowGuestBooking — explicit opt-in, default off
+	guestBookable: boolean('guestBookable').notNull().default(false)
 }, (ProRdvService) => ({
 	'ProRdvService_structure_fkey': foreignKey({
 		name: 'ProRdvService_structure_fkey',
@@ -747,6 +749,18 @@ export const ProAppointment = pgTable('ProAppointment', {
 	visioApprovedAt: timestamp('visioApprovedAt', { precision: 3 }),
 	visioApprovedByProUserId: text('visioApprovedByProUserId'),
 	visioCitizenConsentAt: timestamp('visioCitizenConsentAt', { precision: 3 }),
+	// R38 — account-free (« sans compte ») booking. The name goes to beneficiaryName and the note to notes (both sealed, as a professional-created appointment);
+	// the e-mail and the phone are sealed here; only hashes of the e-mail, of the 6-digit code and of the manage token are kept.
+	guestEmail: text('guestEmail'),
+	guestEmailHash: text('guestEmailHash'),
+	guestPhone: text('guestPhone'),
+	guestMailConsentAt: timestamp('guestMailConsentAt', { precision: 3 }),
+	guestHoldExpiresAt: timestamp('guestHoldExpiresAt', { precision: 3 }),
+	guestCodeHash: text('guestCodeHash'),
+	guestCodeAttempts: integer('guestCodeAttempts').notNull().default(0),
+	guestConfirmedAt: timestamp('guestConfirmedAt', { precision: 3 }),
+	guestManageTokenHash: text('guestManageTokenHash'),
+	guestManageExpiresAt: timestamp('guestManageExpiresAt', { precision: 3 }),
 }, (ProAppointment) => ({
 	'ProAppointment_createdByProUser_fkey': foreignKey({
 		name: 'ProAppointment_createdByProUser_fkey',
@@ -777,7 +791,14 @@ export const ProAppointment = pgTable('ProAppointment', {
 		.onDelete('cascade')
 		.onUpdate('cascade'),
 	'ProAppointment_citizenUserId_idempotencyKey_unique_idx': uniqueIndex('ProAppointment_citizenUserId_idempotencyKey_key')
-		.on(ProAppointment.citizenUserId, ProAppointment.idempotencyKey)
+		.on(ProAppointment.citizenUserId, ProAppointment.idempotencyKey),
+	// R38: idempotency of an account-free booking (citizenUserId is NULL there, so the index above never matches)
+	'ProAppointment_guest_idempotency_unique_idx': uniqueIndex('ProAppointment_guest_idempotency_key')
+		.on(ProAppointment.structureId, ProAppointment.guestEmailHash, ProAppointment.idempotencyKey)
+		.where(sql`"citizenUserId" IS NULL AND "guestEmailHash" IS NOT NULL`),
+	'ProAppointment_guestManageTokenHash_unique_idx': uniqueIndex('ProAppointment_guestManageTokenHash_key').on(ProAppointment.guestManageTokenHash),
+	'ProAppointment_guest_xor_citizen_check': check('ProAppointment_guest_xor_citizen_check', sql`"guestEmailHash" IS NULL OR "citizenUserId" IS NULL`),
+	'ProAppointment_guestCodeAttempts_check': check('ProAppointment_guestCodeAttempts_check', sql`"guestCodeAttempts" BETWEEN 0 AND 5`)
 }));
 
 export const RdvConversation = pgTable('RdvConversation', {
@@ -907,7 +928,9 @@ export const StructureRdvSettings = pgTable('StructureRdvSettings', {
 	contactPhone: text('contactPhone'),
 	publishedAt: timestamp('publishedAt', { precision: 3 }),
 	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
-	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+	// R38: the structure accepts account-free booking (explicit opt-in by an administrator, default off; never inferred from its activities)
+	allowGuestBooking: boolean('allowGuestBooking').notNull().default(false)
 }, (StructureRdvSettings) => ({
 	'StructureRdvSettings_structure_fkey': foreignKey({
 		name: 'StructureRdvSettings_structure_fkey',

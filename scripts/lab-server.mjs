@@ -26,6 +26,15 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store');
     return res.end(JSON.stringify({ lab: true, pid: process.pid, startedAt: STARTED, veilleRunning: veilleRunning() }));
   }
+  // R38: the LAB's in-memory test outbox (MAILER_PROVIDER=test only), for the browser acceptance of the e-mailed booking code: this process only, 127.0.0.1 only,
+  // never deployed; a message is listed only for the exact address asked (?to=), with its subject and text
+  if (u.pathname === '/__lab/outbox') {
+    res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store');
+    if (String(process.env.MAILER_PROVIDER || '') !== 'test' || !u.searchParams.get('to')) { res.statusCode = 404; return res.end('{}'); }
+    const { __getTestOutbox } = await import('../api/_utils/mailer.js');
+    const to = u.searchParams.get('to').toLowerCase();
+    return res.end(JSON.stringify(__getTestOutbox().filter((m) => String(Array.isArray(m.to) ? m.to.join(',') : m.to).toLowerCase().includes(to)).map((m) => ({ subject: m.subject, text: m.text }))));
+  }
   // like a trusted proxy: the client address is the socket's, never a client-supplied X-Forwarded-For (the per-address limits of sign-in, MFA, forms rely on it)
   req.headers['x-forwarded-for'] = req.socket?.remoteAddress || '127.0.0.1';
   res.status = (c) => { res.statusCode = c; return res; };

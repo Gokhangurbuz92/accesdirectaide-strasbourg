@@ -102,6 +102,8 @@ const AppointmentReschedule = lazy(() => import("./AppointmentReschedule.jsx"));
 const LegacyAppointmentLink = lazy(() => import("./LegacyAppointmentLink.jsx"));
 const PublicRdvEntry = lazy(() => import("./PublicRdvEntry.jsx"));
 const PublicBooking = lazy(() => import("./PublicBookingAccessGate.jsx"));
+const GuestBooking = lazy(() => import("./GuestBooking.jsx"));   // R38: account-free booking
+const GuestManage = lazy(() => import("./GuestManage.jsx"));
 const RegisterPro = lazy(() => import("./pro/RegisterPro.jsx"));
 const SharedDossier = lazy(() => import("./pro/SharedDossier.jsx"));
 const ProAuditLog = lazy(() => import("./pro/AuditLog.jsx"));
@@ -524,6 +526,8 @@ function PagesContent() {
                                 <Route path="/rdv/:structureSlug/services" element={<PublicRdvEntry view="services" />} />
                                 <Route path="/rdv/:structureSlug/creneaux" element={<PublicRdvEntry view="creneaux" />} />
                                 <Route path="/rdv/:structureSlug/booking" element={<PublicBooking />} />
+                                <Route path="/rdv/:structureSlug/sans-compte" element={<GuestBooking />} />
+                                <Route path="/rdv/:structureSlug/sans-compte/gerer" element={<GuestManage />} />
 
                                 {/* Legacy Admin Redirects */}
                                 <Route path="/adminaides" element={<Navigate to="/admin/aides" replace />} />

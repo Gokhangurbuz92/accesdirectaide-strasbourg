@@ -29,6 +29,11 @@ function readService(body, current = {}) {
   if (b.bufferBeforeMinutes !== undefined) out.bufferBeforeMinutes = int(b.bufferBeforeMinutes, 0, 0, 240);
   if (b.bufferAfterMinutes !== undefined) out.bufferAfterMinutes = int(b.bufferAfterMinutes, 0, 0, 240);
   if (b.isActive !== undefined) out.isActive = Boolean(b.isActive);
+  // R38: bookable without an account (only when the structure also allows it; in person only) — an explicit boolean, default off
+  if (b.guestBookable !== undefined) {
+    if (typeof b.guestBookable !== 'boolean') return { error: 'guestBookable doit être vrai ou faux.' };
+    out.guestBookable = b.guestBookable;
+  }
   if (b.modes !== undefined) {
     const modes = [...new Set(Array.isArray(b.modes) ? b.modes.map((m) => String(m).toUpperCase()) : [])];
     if (!modes.length || modes.some((m) => !MODES.includes(m))) return { error: 'Choisissez au moins une modalité (présentiel et/ou visio).' };

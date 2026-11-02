@@ -273,10 +273,13 @@ export function buildRegistre({ retention, registry, legalEntity }) {
                 finalite: 'Prise, modification, annulation de rendez-vous avec une structure',
                 base_legale_proposee: 'Art. 6.1.b — à valider',
                 categories_donnees: ['Nom', 'Téléphone', 'E-mail', 'Notes (art. 9 possible)', 'Créneau, mode'],
-                categories_personnes: ['Citoyens', 'Bénéficiaires inscrits par une structure', 'Professionnels'],
+                categories_personnes: ['Citoyens', 'Bénéficiaires inscrits par une structure', 'Professionnels', 'Personnes ayant réservé sans compte (R38, optionnel, désactivé par défaut)'],
                 destinataires: ['La structure et la personne'],
                 sous_traitants: [vercel, neon],
-                conservation: [cron('Rendez-vous (nom, téléphone, e-mail, notes)', 'APPOINTMENT_ANON_DAYS', 'anonymisation après {j} jours')],
+                conservation: [
+                    cron('Rendez-vous (nom, téléphone, e-mail, notes ; sans compte : e-mail et téléphone chiffrés, empreintes du code et du lien de gestion)', 'APPOINTMENT_ANON_DAYS', 'anonymisation après {j} jours'),
+                    cron('Demande sans compte jamais confirmée par le code (R38)', 'GUEST_HOLD_DAYS', 'identité effacée {j} jour après l\'expiration de la réservation de 20 minutes'),
+                ],
                 mesures_securite: 'Contrôle d\'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d\'un rendez-vous créé par une structure chiffrés à l\'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)',
             },
             {

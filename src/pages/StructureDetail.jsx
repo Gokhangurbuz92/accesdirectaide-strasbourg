@@ -28,6 +28,7 @@ import ProvenanceFreshness from '@/components/ProvenanceFreshness';
 import FalcInvite from '@/components/FalcInvite';
 import AutoVerificationNote from '@/components/AutoVerificationNote';
 import ExternalServices from '@/components/ExternalServices';
+import { guestBookingPath } from '@/lib/guestBooking';
 import FalcToggle from '@/components/FalcToggle';
 import FalcContent from '@/components/FalcContent';
 import { getProvenance } from '@/lib/provenance';
@@ -286,9 +287,10 @@ export default function StructureDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('structures:breadcrumb.home', 'Accueil')}</Link>
+            <Link to={createPageUrl('Home')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('structures:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
-            <Link to="/structures" className="inline-block min-h-6 py-0.5 hover:text-blue-600">{t('structures:breadcrumb.directory', 'Annuaire')}</Link>
+            {/* R38: at least 24×24 px in every language (WCAG 2.5.8) — the Arabic « الدليل » was narrower than 24 px */}
+            <Link to="/structures" className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('structures:breadcrumb.directory', 'Annuaire')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
             <span className="min-w-0 text-slate-900 [overflow-wrap:anywhere]" {...tr.attrs('nom')}>{name}</span>
           </nav>
@@ -408,6 +410,12 @@ export default function StructureDetail() {
                           {t('structures:detail.booking.slots', 'Voir les créneaux disponibles')}
                         </Link>
                       </Button>
+                      {structure.rdv?.allowGuestBooking ? (
+                        // R38: the structure takes account-free bookings (its opt-in + the server switch, computed by the API)
+                        <Button variant="outline" className="mt-3 w-full min-h-11" asChild>
+                          <Link to={guestBookingPath(structure.slug)} data-testid="structure-guest-booking">{t('booking:cta', 'Prendre rendez-vous sans compte')}</Link>
+                        </Button>
+                      ) : null}
                     </CardContent>
                   </Card>
                 )}

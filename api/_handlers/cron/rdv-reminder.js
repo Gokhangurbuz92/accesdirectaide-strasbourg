@@ -55,7 +55,10 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     lt(ProAppointment.startAt, tomorrowEnd),
                     // PKG-3 / B06: every ACTIVE status (citizen bookings are 'confirmed', structure-created ones 'booked'; 'pending' kept for older rows)
                     inArray(ProAppointment.status, ['booked', 'requested', 'confirmed', 'pending']),
-                    isNull(ProAppointment.reminder_sent_at)
+                    isNull(ProAppointment.reminder_sent_at),
+                    // R38: an account-free hold whose code was never confirmed is not an appointment (confirmed ones have it NULL). Confirmed account-free
+                    // bookings get no J-1 e-mail yet (noticeCitizen: 'service' notices only without an account) — the structure's reminder still applies
+                    isNull(ProAppointment.guestHoldExpiresAt)
                 ),
                 with: {
                     createdByProUser: {
@@ -152,7 +155,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
                             `,
                             category: 'rdv-reminder',
                         });
-                        if (out?.accepted) { emailsSent++; reached++; }
+                        // R38: « accepted » is also true for MAILER_PROVIDER=noop (nothing leaves): only a real provider's acceptance (or the LAB test outbox)
+                        // counts, otherwise the reminder would be marked sent and never retried once a provider is configured
+                        if (out?.outcome === 'PROVIDER_ACCEPTED' || out?.outcome === 'TEST_RECORDED') { emailsSent++; reached++; }
                         else { sendFailed = true; errors.push({ rdvId: rdv.id, type: 'email', error: 'NOT_ACCEPTED' }); }   // pass 2: a refused mail is a failure
                     } catch (err) {
                         sendFailed = true;
@@ -247,17 +252,16 @@ export default async function handler(/** @type {import('../../_utils/http-types
             // Audit log
             await db.insert(AuditLog).values({
                 action: 'CRON_RDV_REMINDER',
-                entityId: 'system',
-                entityType: 'CRON',
-                details: JSON.stringify({
+                actor: 'cron', entity: 'CRON', entity_id: 'rdv-reminder',   // R38: the AuditLog columns (entityId / entityType / ipHash do not exist)
+                details: ({
                     appointmentsFound: appointments.length,
                     emailsSent,
                     notificationsCreated,
                     skipped,
                     errors: errors.length,
                 }),
-                ipHash: 'CRON',
-            }).catch(() => { });
+                ip_hash: 'CRON',
+            }).catch((e) => logger.warn({ err: e?.message }, '[rdv-reminder] audit log not written'));
 
             logger.info({
                 appointmentsFound: appointments.length,

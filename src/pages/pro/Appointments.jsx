@@ -242,6 +242,7 @@ export default function ProAppointments() {
                       <p className="font-semibold text-slate-900">{formatDateTime(appointment.startAt || appointment.start_at)}</p>
                       <Badge className={statusClass}>{STATUS_LABEL[appointment.status] || appointment.status}</Badge>
                       <Badge className="border-indigo-200 bg-indigo-50 text-indigo-800" data-testid="pro-agenda-mode">{appointment.mode === 'VIDEO' ? t('pro:appointments.mode_video', 'À distance (visio)') : t('pro:appointments.mode_onsite', 'En présentiel')}</Badge>
+                      {appointment.origin === 'GUEST' ? <Badge className="border-slate-300 bg-slate-50 text-slate-900" data-testid="pro-agenda-guest">{t('booking:pro.withoutAccount', 'Sans compte')}</Badge> : null}
                       {appointment.rescheduleCount ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-rescheduled">{t('pro:appointments.rescheduled', 'Déplacé par la personne ({{n}})', { n: appointment.rescheduleCount })}</Badge> : null}
                       {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">{t('pro:appointments.video_pending', 'Visio à valider')}</Badge> : null}
                     </div>
@@ -251,6 +252,7 @@ export default function ProAppointments() {
                       {appointment.beneficiaryName || t('pro:appointments.beneficiary_fallback', 'Beneficiaire')}
                     </p>
                     {appointment.notes ? <p className="text-xs text-slate-700">{appointment.notes}</p> : null}
+                    {appointment.guest ? <p className="text-xs text-slate-700" data-testid="pro-agenda-guest-contact">{[appointment.guest.emailMasked, appointment.guest.phone].filter(Boolean).join(' · ')}</p> : null}
                   </div>
 
                   <div className="flex flex-wrap gap-2">

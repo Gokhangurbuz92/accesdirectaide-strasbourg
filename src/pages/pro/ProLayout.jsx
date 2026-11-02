@@ -12,12 +12,13 @@ import OnboardingTour from '@/components/OnboardingTour';
 import ProBreadcrumb from '@/components/ProBreadcrumb';
 import { getCsrfHeaders } from '@/lib/csrf';
 import ServiceUnavailable from '@/components/ServiceUnavailable';
-import { proRole } from '@/lib/proLabels.js';
+import { useProLabels } from '@/lib/proLabelsI18n';
 import ProSessionExpiry from '@/components/pro/ProSessionExpiry';
 import { useT } from '@/i18n';
 
 export default function ProLayout() {
     const { t } = useT('pro');
+    const { proRole } = useProLabels();
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(true);

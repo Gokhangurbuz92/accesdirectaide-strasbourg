@@ -4,7 +4,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { proRdvRequest } from '@/api/pro-rdv-client';
-import { FOLLOW_UPS, ITEM_KINDS, ORIENTATION_NEEDS, needLabel } from '@/config/orientationNeeds';
+import { ITEM_KINDS } from '@/config/orientationNeeds';
+import { useOrientationLabels } from '@/lib/orientationNeedsI18n';
 import { formatDate, useT } from '@/i18n';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
@@ -12,7 +13,7 @@ const day = (d, t) => (d ? formatDate(new Date(d), { day: '2-digit', month: '2-d
 const API = '/api/pro/selections';
 const host = (u) => { try { return new URL(u).hostname; } catch { return u; } };
 /** same wording as the text the person receives (api/_services/orientation-basket.js personWhy): catalogue facts only, never the working label or reasons */
-const personWhy = (i, needCodes, t) => { const m = (i.needs || []).filter((n) => needCodes.includes(n)); return m.length ? t('pro:selections.why_need', 'En lien avec votre besoin {{needs}}.', { needs: m.map((n) => `« ${needLabel(n)} »`).join(t('pro:selections.why_and', ' et ')) }) : t('pro:selections.why_default', 'Proposé par la personne qui vous accompagne.'); };
+const personWhy = (i, needCodes, t, needLabel) => { const m = (i.needs || []).filter((n) => needCodes.includes(n)); return m.length ? t('pro:selections.why_need', 'En lien avec votre besoin {{needs}}.', { needs: m.map((n) => `« ${needLabel(n)} »`).join(t('pro:selections.why_and', ' et ')) }) : t('pro:selections.why_default', 'Proposé par la personne qui vous accompagne.'); };
 
 /**
  * R18 (R31) — Sélections d'orientation (/pro/selections, /pro/selections/:id): a professional gathers VERIFIED aides, démarches and lieux around a person's
@@ -36,6 +37,7 @@ function Notice() {
 
 function NeedPicker({ value, onChange, idPrefix }) {
   const { t } = useT('pro');
+  const { needs: ORIENTATION_NEEDS } = useOrientationLabels();
   return (
     <fieldset className="space-y-2">
       <legend className="text-sm font-medium text-slate-900">{t('pro:selections.needs_legend', 'Besoins de la personne')}</legend>
@@ -105,6 +107,7 @@ function SelectionList() {
 
 function SelectionDetail({ id }) {
   const { t } = useT('pro');
+  const { needLabel, followUps: FOLLOW_UPS, itemKinds } = useOrientationLabels();
   const [basket, setBasket] = useState(null); const [error, setError] = useState('');
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState({ q: '', kinds: Object.keys(ITEM_KINDS), results: null });
@@ -151,7 +154,7 @@ function SelectionDetail({ id }) {
           <form onSubmit={find} className="flex flex-wrap items-end gap-2" role="search">
             <label className="flex flex-col gap-1 text-sm" htmlFor="sel-q"><span>{t('pro:selections.keywords', 'Mots-clés')}</span>
               <input id="sel-q" type="search" className="min-h-11 rounded-md border border-slate-300 px-3" value={search.q} onChange={(e) => setSearch({ ...search, q: e.target.value })} /></label>
-            {Object.entries(ITEM_KINDS).map(([k, l]) => (
+            {Object.entries(itemKinds).map(([k, l]) => (
               <label key={k} className="flex min-h-11 items-center gap-2 text-sm" htmlFor={`kind-${k}`}>
                 <input id={`kind-${k}`} type="checkbox" className="h-5 w-5" checked={search.kinds.includes(k)} onChange={(e) => setSearch({ ...search, kinds: e.target.checked ? [...search.kinds, k] : search.kinds.filter((x) => x !== k) })} />{l}
               </label>
@@ -164,7 +167,7 @@ function SelectionDetail({ id }) {
                 const key = `${r.kind}:${r.refId}`;
                 return (
                   <li key={key} className="space-y-2 rounded-md border border-slate-200 p-3 text-sm" data-testid="selection-result">
-                    <p><strong>{r.title}</strong> — {ITEM_KINDS[r.kind]}{r.place ? `, ${r.place}` : ''} — {t('pro:selections.verified_on', 'vérifiée le {{date}}', { date: day(r.verifiedAt, t) })}</p>
+                    <p><strong>{r.title}</strong> — {itemKinds[r.kind] || r.kind}{r.place ? `, ${r.place}` : ''} — {t('pro:selections.verified_on', 'vérifiée le {{date}}', { date: day(r.verifiedAt, t) })}</p>
                     {r.summary ? <p className="text-slate-700">{r.summary}</p> : null}
                     {inBasket.has(key) ? <p className="text-emerald-800">{t('pro:selections.already_in', 'Déjà dans la sélection.')}</p> : (
                       <div className="flex flex-wrap items-end gap-2">
@@ -186,7 +189,7 @@ function SelectionDetail({ id }) {
             <ul className="space-y-2">
               {basket.items.map((i) => (
                 <li key={i.key} className={`space-y-2 rounded-md border p-3 text-sm ${i.stillPublic ? 'border-slate-200' : 'border-amber-300 bg-amber-50'}`} data-testid="selection-entry">
-                  <p><strong>{i.title || t('pro:selections.withdrawn', 'Fiche retirée')}</strong> — {i.kindLabel}{i.place ? `, ${i.place}` : ''}</p>
+                  <p><strong>{i.title || t('pro:selections.withdrawn', 'Fiche retirée')}</strong> — {itemKinds[i.kind] || i.kindLabel}{i.place ? `, ${i.place}` : ''}</p>
                   <p data-testid="selection-why">{i.why}</p>
                   {i.stillPublic ? <p>{t('pro:selections.official_source', 'Source officielle :')} {i.sourceUrl ? <a href={i.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-sky-800 underline">{host(i.sourceUrl)}</a> : '—'} — {t('pro:selections.verified_on', 'vérifiée le {{date}}', { date: day(i.verifiedAt, t) })} — <Link to={i.path} className="text-sky-800 underline">{t('pro:selections.see_record', 'voir la fiche')}</Link></p> : null}
                   <div className="flex flex-wrap items-end gap-2">
@@ -222,11 +225,11 @@ function SelectionDetail({ id }) {
 
       <article className="hidden space-y-3 text-sm print:block" data-testid="selection-print">
         <h1 className="text-lg font-bold">{t('pro:selections.print_title', 'Pistes d’orientation préparées pour vous')}</h1>
-        {basket.needs.length ? <p>{t('pro:selections.print_needs', 'Besoins pris en compte : {{needs}}.', { needs: basket.needs.map((n) => n.label).join(', ') })}</p> : null}
+        {basket.needs.length ? <p>{t('pro:selections.print_needs', 'Besoins pris en compte : {{needs}}.', { needs: basket.needs.map((n) => needLabel(n.code) || n.label).join(', ') })}</p> : null}
         <p>{t('pro:selections.print_disclaimer', 'Ces pistes sont une orientation, pas une décision : seul l’organisme concerné décide de vos droits, après examen de votre situation.')}</p>
         <ol className="list-decimal space-y-2 pl-5">
           {shown.map((i) => (
-            <li key={i.key}><strong>{i.title}</strong> ({i.kindLabel}{i.place ? `, ${i.place}` : ''})<br />{t('pro:selections.print_why', 'Pourquoi : {{why}}', { why: personWhy(i, basket.needCodes, t) })}<br />{t('pro:selections.print_source', 'Source officielle : {{url}} (vérifiée le {{date}})', { url: i.sourceUrl, date: day(i.verifiedAt, t) })}</li>
+            <li key={i.key}><strong>{i.title}</strong> ({itemKinds[i.kind] || i.kindLabel}{i.place ? `, ${i.place}` : ''})<br />{t('pro:selections.print_why', 'Pourquoi : {{why}}', { why: personWhy(i, basket.needCodes, t, needLabel) })}<br />{t('pro:selections.print_source', 'Source officielle : {{url}} (vérifiée le {{date}})', { url: i.sourceUrl, date: day(i.verifiedAt, t) })}</li>
           ))}
         </ol>
         <p>{t('pro:selections.printed_on', 'Imprimé le {{date}} depuis AccesDirectAide.', { date: day(new Date(), t) })}</p>

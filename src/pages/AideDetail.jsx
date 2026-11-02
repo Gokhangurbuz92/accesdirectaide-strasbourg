@@ -267,9 +267,9 @@ export default function AideDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600" aria-label={t('aides:detail.breadcrumb', "Fil d'Ariane")} data-testid="aide-breadcrumb">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('aides:breadcrumb.home', 'Accueil')}</Link>
+            <Link to={createPageUrl('Home')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('aides:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
-            <Link to={createPageUrl('Aides')} className="hover:text-blue-600">{t('aides:breadcrumb.aides', 'Aides')}</Link>
+            <Link to={createPageUrl('Aides')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('aides:breadcrumb.aides', 'Aides')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
             <span className="min-w-0 text-slate-900 [overflow-wrap:anywhere]" aria-current="page" {...tr.attrs('titre')}>{tr.value('titre')}</span>
           </nav>

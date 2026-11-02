@@ -1,6 +1,6 @@
 // @ts-nocheck
 import logger from '../../_utils/logger.js';
-import { sendMail } from '../../_utils/mailer.js';
+import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
 import { getCronAuth, getHeader } from '../../_utils/cronAuth.js';
 import { env } from '../../_utils/env.js';
 import { kv } from '../../_utils/kv.js';
@@ -219,9 +219,11 @@ export default async function handler(req, res) {
         checks.veille = { ok: false, error: err?.message };
     }
 
-    // Check 4: ReviewQueue > 100 P1 items (FR-078)
+    // Check 4: ReviewQueue > 100 P1 items (FR-078). R38: the table has « severity » and an « open » status (writers use both spellings), not
+    // « priority » / « PENDING »: the former query always failed, so this check — and the whole job — was never green.
     try {
-        const [{ count }] = await db.select({ count: sql`count(*)` }).from(ReviewQueueItem).where(sql`priority = 'P1' AND status = 'PENDING'`);
+        const [row] = await db.select({ count: sql`count(*)::int` }).from(ReviewQueueItem).where(sql`${ReviewQueueItem.severity} = 'P1' AND lower(${ReviewQueueItem.status}) = 'open'`);
+        const count = Number(row?.count || 0);
         checks.reviewQueue = { ok: count <= 100, count };
         if (count > 100) {
             if (await fireAlert('review.queue.critical', `Review queue exceeded 100 P1 items (${count})`, { count })) {
@@ -233,25 +235,21 @@ export default async function handler(req, res) {
         checks.reviewQueue = { ok: false, error: err?.message };
     }
 
-    // Check 5: Stale entities to ReviewQueue (FR-033)
+    // Check 5: published aides not re-verified for 30 days (FR-033). R38: READ-ONLY — the alert job writes nothing (the former insert named columns the
+    // table does not have and never ran); re-verification and withdrawal belong to the automatic veille, which this job already watches (check 3b).
     try {
         const threshold = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days
-        const staleAides = await db.select({ id: Aide.id }).from(Aide).where(sql`updated_at < ${threshold.toISOString()} AND status = 'PUBLISHED'`).limit(50);
-        for (const aide of staleAides) {
-            await db.insert(ReviewQueueItem).values({
-                id: randomUUID(),
-                type: 'STALE_ENTITY',
-                priority: 'P2',
-                status: 'PENDING',
-                entityId: aide.id,
-                entityType: 'AIDE'
-            }).onConflictDoNothing();
-        }
-        checks.staleEntities = { ok: true, processed: staleAides.length };
+        const [row] = await db.select({ count: sql`count(*)::int` }).from(Aide).where(sql`${Aide.statut} = 'publie' AND COALESCE(${Aide.date_verification}, ${Aide.updatedAt}) < ${threshold.toISOString()}`);
+        checks.staleEntities = { ok: true, staleAides: Number(row?.count || 0) };
     } catch (err) {
         // @ts-ignore
         checks.staleEntities = { ok: false, error: err?.message };
     }
+
+    // R38: say whether a PERSON can receive an alert. Sentry and the logs are not a human channel; an e-mail through MAILER_PROVIDER=noop is not delivered.
+    const mailReady = Boolean(String(process.env.ALERT_EMAIL || '').trim()) && getMailerStatus().deliverable;
+    checks.alertChannel = { ok: mailReady || Boolean(process.env.ALERT_WEBHOOK_URL), email: !String(process.env.ALERT_EMAIL || '').trim() ? 'NOT_CONFIGURED' : mailReady ? 'READY' : 'MAIL_PROVIDER_NOT_DELIVERABLE',
+        webhook: process.env.ALERT_WEBHOOK_URL ? 'CONFIGURED' : 'NOT_CONFIGURED', sentry: Boolean(process.env.SENTRY_DSN) };
 
     const allOk = Object.values(checks).every(c => c.ok);
 

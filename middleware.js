@@ -1,5 +1,5 @@
 import { next } from '@vercel/edge';
-import { PUBLIC_BETA_MESSAGE, openSurfaces } from './api/_utils/public-beta.js';
+import { PUBLIC_BETA_MESSAGE, openSurfaces, isOpenJobPath } from './api/_utils/public-beta.js';
 
 /**
  * Launch-readiness item 56 — MAINTENANCE_MODE=1 (Vercel environment variable): every PAGE answers 503 with this plain page (Retry-After, never cached), so
@@ -29,7 +29,8 @@ export function directFunctionResponse(url) {
   if (/^\/api\/(lib\/|routes(\.js)?$)/.test(p)) return json(404, { error: 'Not Found' });
   const beta = ['1', 'true'].includes(String(process.env.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
   // R35: unless the « jobs » surface is opened (ADA_BETA_OPEN_SURFACES); each job keeps its own switch (GDPR_PURGE_ENABLED…) and CRON_SECRET
-  if (beta && /^\/api\/(cron|monitor)\//.test(p) && !openSurfaces(process.env).has('jobs')) return json(503, { error: 'PUBLIC_BETA_RESTRICTED', message: PUBLIC_BETA_MESSAGE });
+  // R38: or this one job is opened by name (ADA_BETA_OPEN_JOBS, and ADA_JOBS_APPROVED for a personal-data job)
+  if (beta && /^\/api\/(cron|monitor)\//.test(p) && !openSurfaces(process.env).has('jobs') && !isOpenJobPath(p.replace(/^\/api\//, '').replace(/\/$/, ''))) return json(503, { error: 'PUBLIC_BETA_RESTRICTED', message: PUBLIC_BETA_MESSAGE });
   return null;
 }
 

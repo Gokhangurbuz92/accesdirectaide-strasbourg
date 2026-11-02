@@ -4,7 +4,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { proRdvRequest } from '@/api/pro-rdv-client';
-import { PROPOSAL_STATUS_LABELS, STRUCTURE_FIELD_LABELS } from '@/lib/structureFields';
+import { useStructureFieldLabels } from '@/lib/structureFieldsI18n';
 import { formatDate, useT } from '@/i18n';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
@@ -19,6 +19,7 @@ const shown = (field, v, t) => (v === null || v === undefined || v === '' ? '—
 const closureStates = (t) => ({ IN_REVIEW: t('pro:structure.closure.in_review', 'en cours d’examen par l’équipe ADA (deux personnes)'), BLOCKED: t('pro:structure.closure.blocked', 'suspendue : une conservation légale s’applique'), EXECUTING: t('pro:structure.closure.executing', 'en cours d’exécution'), COMPLETED: t('pro:structure.closure.completed', 'exécutée'), REJECTED: t('pro:structure.closure.rejected', 'refusée') });
 export default function ProStructure() {
   const { t } = useT('pro');
+  const { fieldLabels: STRUCTURE_FIELD_LABELS, proposalStatus: PROPOSAL_STATUS_LABELS } = useStructureFieldLabels();
   const CLOSURE_STATE = closureStates(t);
   const [state, setState] = useState({ loading: true, error: '', structure: null, proposals: [], canPropose: false, fields: [] });
   const [field, setField] = useState('horaires'); const [value, setValue] = useState('');

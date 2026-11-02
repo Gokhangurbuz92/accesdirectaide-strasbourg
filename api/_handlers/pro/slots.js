@@ -1,15 +1,15 @@
 import { db } from '../../../src/db/index.js';
 import { ProRdvService, ProAvailabilityRule, ProAppointment, ProTimeOff } from '../../../src/db/schema.js';
-import { eq, inArray, lt, gt, and, or, isNull } from 'drizzle-orm';
+import { eq, lt, gt, and, or, isNull } from 'drizzle-orm';
 import { requireProStructureContext } from '../../_utils/auth.js';
 import { normalizeMode, rulesFor } from '../../lib/appointment-modes.js';
 import {
-  ACTIVE_APPOINTMENT_STATUSES,
   generateSlots,
   toBusyWindows,
   validateDateRange,
 } from '../../_utils/pro-rdv.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
+import { activeAppointmentWhere } from '../../_utils/rdv-active.js';
 
 const MAX_RANGE_DAYS = 31;
 
@@ -59,7 +59,7 @@ async function handler(req, res) {
   const appointments = await db.query.ProAppointment.findMany({
     where: and(
       eq(ProAppointment.structureId, proCtx.structureId),
-      inArray(ProAppointment.status, ACTIVE_APPOINTMENT_STATUSES),
+      activeAppointmentWhere(ProAppointment),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
       lt(ProAppointment.startAt, range.to),
       gt(ProAppointment.endAt, range.from)
     ),

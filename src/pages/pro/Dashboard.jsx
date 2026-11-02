@@ -19,7 +19,7 @@ import {
     CheckCircle2,
     Loader2,
 } from 'lucide-react';
-import { proRole } from '@/lib/proLabels.js';
+import { useProLabels } from '@/lib/proLabelsI18n';
 import { formatDate, useT } from '@/i18n';
 
 /**
@@ -33,6 +33,7 @@ import { formatDate, useT } from '@/i18n';
  */
 export default function ProDashboard() {
     const { t } = useT('pro');
+    const { proRole } = useProLabels();
     const { user } = useOutletContext();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();

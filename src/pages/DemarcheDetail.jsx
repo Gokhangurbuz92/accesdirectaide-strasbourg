@@ -219,9 +219,9 @@ export default function DemarcheDetail() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
-            <Link to={createPageUrl('Home')} className="hover:text-blue-600">{t('demarches:breadcrumb.home', 'Accueil')}</Link>
+            <Link to={createPageUrl('Home')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('demarches:breadcrumb.home', 'Accueil')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
-            <Link to={createPageUrl('Demarches')} className="hover:text-blue-600">{t('demarches:breadcrumb.demarches', 'Démarches')}</Link>
+            <Link to={createPageUrl('Demarches')} className="inline-flex min-h-6 min-w-6 items-center justify-center py-0.5 hover:text-blue-600">{t('demarches:breadcrumb.demarches', 'Démarches')}</Link>
             <ChevronRight className="h-4 w-4 rtl-flip" />
             <span className="min-w-0 text-slate-900 [overflow-wrap:anywhere]" {...tr.attrs('titre')}>{title}</span>
           </nav>

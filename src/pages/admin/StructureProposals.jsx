@@ -2,13 +2,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
-import { PROPOSAL_STATUS_LABELS, STRUCTURE_FIELD_LABELS } from '@/lib/structureFields';
+import { useStructureFieldLabels } from '@/lib/structureFieldsI18n';
 import { useT } from '@/i18n';
 import { explain } from './k5/helpers';   // R7: the server's refusal in French (it showed « API Error: 403 »)
 
 /** PKG-4 / E02 — ADA review of structure profile proposals. Deciding requires an administrator session with MFA (enforced by the API). */
 export default function AdminStructureProposals() {
   const { t } = useT('admin');
+  const { fieldLabels: STRUCTURE_FIELD_LABELS, proposalStatus: PROPOSAL_STATUS_LABELS } = useStructureFieldLabels();
   const [state, setState] = useState({ loading: true, error: '', proposals: [] });
   const [notes, setNotes] = useState({}); const [sources, setSources] = useState({}); const [territory, setTerritory] = useState({}); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {

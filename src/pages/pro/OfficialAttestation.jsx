@@ -5,7 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import brand from '@/lib/brand-config';
-import { readAssessment, STATE_LABELS } from '@/lib/assessmentLabels';
+import { readAssessment } from '@/lib/assessmentLabels';
+import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { Printer, ArrowLeft, Info } from 'lucide-react';
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
@@ -19,6 +20,7 @@ import { Trans } from 'react-i18next';
  */
 export default function OfficialAttestation() {
     const { t } = useT('pro');
+    const { state: STATE_LABELS } = useAssessmentLabels();
     const { shareId } = useParams();
     const navigate = useNavigate();
     const [data, setData] = useState(null);

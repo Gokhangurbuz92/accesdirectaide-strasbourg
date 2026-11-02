@@ -62,6 +62,45 @@ export function openSurfaces(envVars = process.env) {
 }
 
 /**
+ * R38 — scheduled jobs one at a time. The « jobs » surface opens every cron and monitor route at once; ADA_BETA_OPEN_JOBS opens only the named jobs
+ * (e.g. ADA_BETA_OPEN_JOBS=actualites,health-alert) while the surface stays closed. Fail-closed, like the surfaces: unset = none, an unknown name opens
+ * nothing, no wildcard. Each job's own CRON_SECRET check and switches (GDPR_PURGE_ENABLED, INGESTION_DRY_RUN…) still apply.
+ *   category A  public-data or read-only maintenance — opened by ADA_BETA_OPEN_JOBS alone
+ *   category B  needs a provider or more engineering   — opened by ADA_BETA_OPEN_JOBS alone (the job reports what it could not deliver)
+ *   category C  personal data: reminders, deadlines, deletion — ALSO needs the owner's recorded approval of that job in ADA_JOBS_APPROVED (legal basis,
+ *               retention, working mail provider): opening it is an operational switch, approving it is a separate, deliberate one
+ *   category D  legacy, superseded by the automatic veille — can never be opened one at a time (and has no schedule in vercel.json since R38)
+ */
+export const SCHEDULED_JOBS = Object.freeze({
+  actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
+  'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
+  'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
+});
+const listOf = (v) => new Set(String(v || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean));
+
+/** the jobs this environment opens during the beta @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
+export function openJobs(envVars = process.env) {
+  const named = listOf(envVars.ADA_BETA_OPEN_JOBS); const approved = listOf(envVars.ADA_JOBS_APPROVED);
+  return new Set([...named].filter((j) => Object.prototype.hasOwnProperty.call(SCHEDULED_JOBS, j)
+    && (SCHEDULED_JOBS[j] === 'A' || SCHEDULED_JOBS[j] === 'B' || (SCHEDULED_JOBS[j] === 'C' && approved.has(j)))));
+}
+
+/** the state of every scheduled job in this environment (no secret is read, only whether the switches name the job) @param {Record<string, string | undefined>} [envVars] */
+export function jobStates(envVars = process.env) {
+  const restricted = isPublicBetaRestricted(envVars); const all = openSurfaces(envVars).has('jobs'); const open = openJobs(envVars);
+  const named = listOf(envVars.ADA_BETA_OPEN_JOBS); const approved = listOf(envVars.ADA_JOBS_APPROVED);
+  return Object.entries(SCHEDULED_JOBS).map(([job, category]) => ({ job, category,
+    state: !restricted || all ? 'OPEN_ALL_JOBS' : open.has(job) ? 'OPEN' : category === 'D' ? 'LEGACY_CLOSED' : category === 'C' && named.has(job) && !approved.has(job) ? 'AWAITING_APPROVAL' : 'CLOSED',
+    approved: category !== 'C' || approved.has(job) }));
+}
+
+/** is this cron path one of the jobs opened one at a time @param {string} path normalized API path (« cron/actualites ») */
+export function isOpenJobPath(path, envVars = process.env) {
+  const p = String(path || '');
+  return p.startsWith('cron/') && openJobs(envVars).has(p.slice('cron/'.length));
+}
+
+/**
  * @param {string} method
  * @param {string} path normalized API path without the « /api/ » prefix and without leading or trailing slashes
  * @param {Record<string, string | undefined>} [envVars]
@@ -71,6 +110,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   if (String(method || '').toUpperCase() === 'POST' && READ_ONLY_POST.has(p)) return true;
   const surface = surfaceOf(p);
   if (surface && openSurfaces(envVars).has(surface)) return true;
+  if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time
   if (!READ_METHODS.has(String(method || '').toUpperCase())) return false;
   if (EXACT.has(p)) return true;
   return PREFIX.some((x) => p === x || p.startsWith(`${x}/`));

@@ -6,7 +6,7 @@ import {
     AuthToken, AiMetric, ConsentLog, UserConsent, Invitation, EmailChangeRequest,
     ProOutlookToken, ProAuditLog, ProAppointment
 } from '../../../src/db/schema.js';
-import { lt, and, or, ne, isNotNull, eq, sql } from 'drizzle-orm';
+import { lt, and, or, ne, isNotNull, isNull, eq, sql } from 'drizzle-orm';
 import { getCronAuth } from '../../_utils/cronAuth.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
 import * as Sentry from '@sentry/node';
@@ -26,6 +26,7 @@ export const RETENTION = {
     INVITATION_GRACE_DAYS: 30,      // After expiry
     OUTLOOK_TOKEN_GRACE_DAYS: 30,   // After expiry
     APPOINTMENT_ANON_DAYS: 730,     // 2 years then anonymise
+    GUEST_HOLD_DAYS: 1,             // R38: an unconfirmed account-free hold, 1 day after its expiry
 };
 
 /**
@@ -44,7 +45,8 @@ export const RETENTION = {
  *   - Invitation           expired + 30 day grace
  *   - ProOutlookToken      expired + 30 day grace
  *   - ProAuditLog          > 365 days
- *   - ProAppointment       anonymise after 2 years (730 days)
+ *   - ProAppointment       anonymise after 2 years (730 days) — R38: guest e-mail / phone / hashes included
+ *   - ProAppointment       R38: an account-free hold never confirmed, cleared 1 day after its expiry
  *
  * Schedule: every Sunday at 03:00 (vercel.json)
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -105,13 +107,17 @@ export default async function handler(req, res) {
     try {
         logger.info('🧹 Starting GDPR Purge...');
 
-        // 1. Purge Old Entity Versions (90 days)
-        const deletedVersions = await db.delete(EntityVersion).where(lt(EntityVersion.createdAt, daysAgo(RETENTION.ENTITY_VERSION_DAYS)));
-        const deletedVersionsCount = affected(deletedVersions);
+        // 1. Purge Old Entity Versions (90 days) — R38: steps 1 and 2 get the same per-step handling as the others (a failure here aborted every later step)
+        let deletedVersionsCount = 0;
+        try {
+            deletedVersionsCount = affected(await db.delete(EntityVersion).where(lt(EntityVersion.createdAt, daysAgo(RETENTION.ENTITY_VERSION_DAYS))));
+        } catch (stepErr) { recordFailure('deletedVersionsCount', stepErr); }
 
         // 2. Purge Old Update Logs (90 days — operational)
-        const deletedLogs = await db.delete(UpdateLog).where(lt(UpdateLog.ran_at, daysAgo(RETENTION.CONVERSATION_LOG_DAYS)));
-        const deletedLogsCount = affected(deletedLogs);
+        let deletedLogsCount = 0;
+        try {
+            deletedLogsCount = affected(await db.delete(UpdateLog).where(lt(UpdateLog.ran_at, daysAgo(RETENTION.CONVERSATION_LOG_DAYS))));
+        } catch (stepErr) { recordFailure('deletedLogsCount', stepErr); }
 
         // 3. Purge sensitive AuditLog (365 days — legal obligation)
         let deletedAuditCount = 0;
@@ -215,15 +221,34 @@ export default async function handler(req, res) {
                     beneficiaryPhone: null,
                     citizenEmailSnapshot: null,
                     notes: null,
+                    // R38: an account-free booking's sealed e-mail / phone, its e-mail blind index and its code / manage-token hashes go too
+                    guestEmail: null,
+                    guestEmailHash: null,
+                    guestPhone: null,
+                    guestCodeHash: null,
+                    guestManageTokenHash: null,
                 })
                 .where(
                     and(
                         lt(ProAppointment.createdAt, daysAgo(RETENTION.APPOINTMENT_ANON_DAYS)),
-                        ne(ProAppointment.beneficiaryName, '[anonymisé]')
+                        // R38: « <> » is never true for NULL — an appointment without a beneficiary name kept its phone, e-mail and notes
+                        or(isNull(ProAppointment.beneficiaryName), ne(ProAppointment.beneficiaryName, '[anonymisé]'))
                     )
                 );
             anonymisedAppointmentsCount = affected(anonRes);
         } catch (stepErr) { recordFailure('anonymisedAppointmentsCount', stepErr); }
+
+        // 13b. R38: an account-free hold never confirmed is not a booking — one day after its 20-minute expiry its identity is cleared (the row stays,
+        // cancelled, so the structure's history and the notice ledger keep their reference)
+        let clearedGuestHoldsCount = 0;
+        try {
+            const holdRes = await db.update(ProAppointment)
+                .set({ status: 'cancelled', cancelledAt: now, cancelledBy: 'GUEST_HOLD_EXPIRED', beneficiaryName: '[anonymisé]', beneficiaryPhone: null, notes: null,
+                    guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null })
+                .where(and(isNotNull(ProAppointment.guestHoldExpiresAt), lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)),
+                    or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, '[anonymisé]'))));
+            clearedGuestHoldsCount = affected(holdRes);
+        } catch (stepErr) { recordFailure('clearedGuestHoldsCount', stepErr); }
 
         const summary = {
             versions_deleted: deletedVersionsCount,
@@ -240,6 +265,7 @@ export default async function handler(req, res) {
             outlook_tokens_deleted: deletedOutlookTokensCount,
             pro_audit_logs_deleted: deletedProAuditCount,
             appointments_anonymised: anonymisedAppointmentsCount,
+            guest_holds_cleared: clearedGuestHoldsCount,
             status: failedSteps.length === 0 ? 'success' : 'partial_failure',
             ...(failedSteps.length ? { failed_steps: failedSteps } : {}),
         };
@@ -252,6 +278,6 @@ export default async function handler(req, res) {
     } catch (e) {
         logger.error('GDPR Purge Failed:', e);
         Sentry.captureException(e);
-        return res.status(500).json({ error: e.message });
+        return res.status(500).json({ error: 'GDPR_PURGE_FAILED' });   // R38: the raw error stays in the logs and Sentry, not in the response
     }
 }

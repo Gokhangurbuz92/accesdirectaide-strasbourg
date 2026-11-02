@@ -1,11 +1,11 @@
 import crypto from 'node:crypto';
 import { db } from '../../../src/db/index.js';
 import { ProAppointment, ProTimeOff, ProUser } from '../../../src/db/schema.js';
-import { eq, and, gt, lt, asc, inArray } from 'drizzle-orm';
-import { ACTIVE_APPOINTMENT_STATUSES } from '../../_utils/pro-rdv.js';
+import { eq, and, gt, lt, asc } from 'drizzle-orm';
 import { logProAudit, requireProStructureContext } from '../../_utils/auth.js';
 import { clientIp } from '../../_utils/client-ip.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
+import { activeAppointmentWhere } from '../../_utils/rdv-active.js';   // R38: the shared « still active » rule
 import { createTimeOffSchema, updateTimeOffSchema } from '../../../src/db/drizzle-schemas.js';
 import { canManageSchedule, SCHEDULE_MANAGERS_ONLY } from '../../_utils/schedule-permissions.js';
 
@@ -193,7 +193,7 @@ async function handler(req, res) {
  * R24: for a member's absence, the appointments that member created (citizens' bookings belong to the structure, not to a member). */
 /** @param {string} structureId @param {Date} startAt @param {Date} endAt @param {string | null} [proUserId] */
 async function overlappingOf(structureId, startAt, endAt, proUserId = null) {
-  const conds = [eq(ProAppointment.structureId, structureId), inArray(ProAppointment.status, ACTIVE_APPOINTMENT_STATUSES), lt(ProAppointment.startAt, endAt), gt(ProAppointment.endAt, startAt)];
+  const conds = [eq(ProAppointment.structureId, structureId), activeAppointmentWhere(ProAppointment), lt(ProAppointment.startAt, endAt), gt(ProAppointment.endAt, startAt)];
   if (proUserId) conds.push(eq(ProAppointment.createdByProUserId, proUserId));
   const rows = await db.select({ id: ProAppointment.id, startAt: ProAppointment.startAt }).from(ProAppointment)
     .where(and(...conds))

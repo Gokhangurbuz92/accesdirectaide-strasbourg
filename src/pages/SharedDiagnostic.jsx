@@ -19,7 +19,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { CsrfBootstrapError, csrfFetch } from '@/lib/csrf';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
-import { birthDisplay, shareableResults } from '@/lib/assessmentLabels';
+import { shareableResults } from '@/lib/assessmentLabels';
+import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 
 const SHARE_ERRORS = Object.freeze({
     notFound: 'Dossier introuvable ou expiré.',
@@ -55,6 +56,7 @@ const EMPLOYMENT_LABELS = {
  */
 export default function SharedDiagnostic() {
     const { id } = useParams();
+    const { birthDisplay } = useAssessmentLabels();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

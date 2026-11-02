@@ -10,7 +10,7 @@ import NeedRecommendations from './NeedRecommendations';
 import DiagnosticOutcome from '@/components/diagnostic/DiagnosticOutcome';
 import { Button } from '@/components/ui/button';
 import { csrfFetch } from '@/lib/csrf';
-import { errorMessageFor } from '@/lib/assessmentLabels';
+import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { buildWizardDiagnostic, defaultHousehold } from '@/lib/wizardDiagnostic';
 import { client } from '@/api/client';
 
@@ -33,6 +33,7 @@ const NEED_TITLES = { logement: 'logement', sante: 'santé', travail: 'travail',
 const TOTAL_STEPS = 5;
 
 export default function Wizard() {
+    const { errorMessageFor } = useAssessmentLabels();
     // Restore persisted wizard state (step + data) from localStorage
     const savedWizard = useRef(storage.loadWizard());
     const [step, setStep] = useState(savedWizard.current?.step ?? 0);
@@ -83,7 +84,7 @@ export default function Wizard() {
             setPhase('diagnostic-error');
             setError(errorMessageFor(err.status || 0, err.code || null));
         }
-    }, []);
+    }, [errorMessageFor]);
 
     const handleNext = useCallback(
         (/** @type {Record<string, string | number | boolean | null | undefined>} */ stepData) => {
