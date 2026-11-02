@@ -45,7 +45,7 @@ export const RETENTION = {
  *   - Invitation           expired + 30 day grace
  *   - ProOutlookToken      expired + 30 day grace
  *   - ProAuditLog          > 365 days
- *   - ProAppointment       anonymise after 2 years (730 days) — R38: guest e-mail / phone / hashes included
+ *   - ProAppointment       anonymise after 2 years (730 days) — R38: guest e-mail / phone / hashes included; R39: the guest's reminder consent too
  *   - ProAppointment       R38: an account-free hold never confirmed, cleared 1 day after its expiry
  *
  * Schedule: every Sunday at 03:00 (vercel.json)
@@ -227,6 +227,7 @@ export default async function handler(req, res) {
                     guestPhone: null,
                     guestCodeHash: null,
                     guestManageTokenHash: null,
+                    guestReminderConsentAt: null,   // R39: the optional J-1 reminder consent goes with the rest of the booking's guest data
                 })
                 .where(
                     and(
@@ -244,7 +245,7 @@ export default async function handler(req, res) {
         try {
             const holdRes = await db.update(ProAppointment)
                 .set({ status: 'cancelled', cancelledAt: now, cancelledBy: 'GUEST_HOLD_EXPIRED', beneficiaryName: '[anonymisé]', beneficiaryPhone: null, notes: null,
-                    guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null })
+                    guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null, guestReminderConsentAt: null })
                 .where(and(isNotNull(ProAppointment.guestHoldExpiresAt), lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)),
                     or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, '[anonymisé]'))));
             clearedGuestHoldsCount = affected(holdRes);

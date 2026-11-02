@@ -151,6 +151,13 @@ export default function ProAppointmentDetail() {
                             <div className="space-y-2 text-sm">
                                 <p>{t('pro:appointment_detail.name_label', 'Nom :')} {appointment.beneficiary.firstName || t('pro:appointment_detail.masked', 'Masqué')}</p>
                                 <p>{t('pro:appointment_detail.contact_label', 'Contact :')} {appointment.beneficiary.contactMasked}</p>
+                                {/* R38/R39: booked without an account — the masked e-mail only, and whether the optional J-1 reminder e-mail was asked for (yes / no) */}
+                                {appointment.guest ? (
+                                    <>
+                                        <p data-testid="pro-appt-guest">{t('booking:pro.withoutAccount', 'Sans compte')}{appointment.guest.emailMasked ? ` · ${appointment.guest.emailMasked}` : ''}</p>
+                                        <p data-testid="pro-appt-guest-reminder">{appointment.guest.reminderConsent ? t('booking:pro.reminderYes', 'Rappel par e-mail la veille : demandé') : t('booking:pro.reminderNo', 'Rappel par e-mail la veille : non demandé')}</p>
+                                    </>
+                                ) : null}
                             </div>
                         </div>
                     </div>

@@ -82,5 +82,16 @@
  "title": "Einen Termin ohne Konto buchen",
  "withAccount": "Einen Termin mit Konto buchen",
  "manage.moveTooLate": "Dieser Termin liegt zu kurz bevor, um ihn online zu verschieben: Bitte wenden Sie sich an die Einrichtung.",
- "manage.moveLimit": "Dieser Termin wurde bereits so oft wie erlaubt verschoben: Bitte wenden Sie sich an die Einrichtung."
+ "manage.moveLimit": "Dieser Termin wurde bereits so oft wie erlaubt verschoben: Bitte wenden Sie sich an die Einrichtung.",
+ "form.reminder": "Zusätzlich am Vortag des Termins eine Erinnerung per E-Mail erhalten (optional)",
+ "form.reminderHelp": "Eine einzige E-Mail, am Vortag. Sie können sie jederzeit über Ihren persönlichen Link abbestellen.",
+ "done.reminderOn": "Am Vortag des Termins erhalten Sie eine Erinnerung per E-Mail.",
+ "manage.reminderTitle": "Erinnerung per E-Mail am Vortag (optional)",
+ "manage.reminderOn": "Erinnerung aktiviert: Sie erhalten am Vortag des Termins eine E-Mail.",
+ "manage.reminderOff": "Erinnerung deaktiviert: Es wird keine Erinnerungs-E-Mail gesendet.",
+ "manage.reminderTurnOn": "Am Vortag eine Erinnerung erhalten",
+ "manage.reminderTurnOff": "Keine Erinnerung mehr erhalten",
+ "pro.reminderYes": "Erinnerung per E-Mail am Vortag: gewünscht",
+ "pro.reminderNo": "Erinnerung per E-Mail am Vortag: nicht gewünscht",
+ "code.alreadyHint": "Wenn Sie bereits einen Termin bei dieser Einrichtung haben, erhalten Sie stattdessen eine E-Mail, die Sie darauf hinweist: Es wird kein neuer Termin gebucht."
 }

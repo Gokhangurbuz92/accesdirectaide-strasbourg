@@ -2,7 +2,8 @@
 /**
  * PKG-3 / B04-B06 — notices about an appointment, to the person and to the structure, with an honest ledger (AppointmentNotice).
  * The person: an e-mail only to the VERIFIED account e-mail of the appointment, and only through a channel the person allows (canNotify: 'service' for a change they did not
- * make or a confirmation of their own change, 'reminder' for J-1). Without an account there is nobody to write to (NO_RECIPIENT) — a typed phone number is never used here.
+ * make or a confirmation of their own change, 'reminder' for J-1). Without an account there is nobody to write to (NO_RECIPIENT) — a typed phone number is never used here —
+ * except an account-free booking confirmed by its code (R38: 'service'; R39: 'reminder' only with its separate reminder consent, else NO_CONSENT).
  * The structure: an in-app notice to each active member, and an e-mail to those who keep e-mail notifications on. Messages carry the date and the kind of change only —
  * no beneficiary name, no notes. The ledger stores the outcome per recipient/channel, never the text or an address.
  */
@@ -14,6 +15,7 @@ import { env } from '../_utils/env.js';
 import { buildAppointmentIcs, calendarContentType } from '../_utils/ics.js';
 import { canNotify as defaultCanNotify } from './citizen-account.js';
 import logger from '../_utils/logger.js';
+import { guestNoticeDecision } from '../_utils/rdv-guest-core.js';
 
 export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE'];   // R38: the two account-free kinds
 export const formatParis = (d) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(new Date(d));
@@ -65,10 +67,12 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
         }
       }
-    } else if (appointment.guestEmail && appointment.guestConfirmedAt && appointment.guestMailConsentAt) {
-      // R38: an account-free booking — the sealed address it was confirmed with, for 'service' notices only (its booking mails, consented at booking);
-      // no J-1 reminder yet (no reminder consent is collected without an account): REMINDER_J1 stays NO_RECIPIENT
-      if (category === 'service') {
+    } else if (appointment.guestEmail) {
+      // R38: an account-free booking — the sealed address it was confirmed with, for 'service' notices (its booking mails, consented at booking).
+      // R39: the J-1 reminder only with the separate, optional reminder consent as well (guestReminderConsentAt); without it NO_CONSENT
+      const decision = guestNoticeDecision(appointment, category);
+      if (decision === 'NO_CONSENT') status = 'NO_CONSENT';
+      if (decision === 'SEND') {
         const { decrypt, isV1Text } = await import('../lib/crypto.js');
         const to = isV1Text(appointment.guestEmail) ? decrypt(appointment.guestEmail) : null;
         if (to) {

@@ -309,6 +309,13 @@
       "when": 1793650324179,
       "tag": "0043_r38_guest_booking",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793659117545,
+      "tag": "0044_r39_guest_reminder_consent",
+      "breakpoints": true
     }
   ]
 }

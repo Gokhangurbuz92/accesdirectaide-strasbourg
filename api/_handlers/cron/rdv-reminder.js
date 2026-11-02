@@ -4,8 +4,8 @@ import { env } from '../../_utils/env.js';
 // @ts-nocheck
 import { getCronAuth } from '../../_utils/cronAuth.js';
 import { db } from '../../../src/db/index.js';
-import { ProAppointment, ProUser, AuditLog } from '../../../src/db/schema.js';
-import { gte, lt, and, inArray, eq, isNull, or, sql } from 'drizzle-orm';
+import { ProAppointment, ProUser, AuditLog, AppointmentNotice } from '../../../src/db/schema.js';
+import { gte, lt, and, inArray, eq, isNull, or, sql, count } from 'drizzle-orm';
 import { sendMail } from '../../_utils/mailer.js';
 import { createNotification } from '../../_handlers/pro/notifications.js';
 import { withLock } from '../../_utils/pipelineLock.js';
@@ -14,6 +14,15 @@ import { formatParisDate, formatParisTime, noticeCitizen, parisDayWindow, record
 import { MODE_LABELS, modeLabel, locationOf, locationText } from '../../lib/appointment-modes.js';
 import { buildAppUrl } from '../../_utils/user-auth.js';
 import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '../../lib/sms-policy.js';
+import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
+
+/** R39: the person's J-1 e-mails that failed (NOT_DELIVERED / FAILED) since `since` (the start of today's Paris day) — the bound of the retries */
+async function citizenReminderFailuresSince(appointmentId, since) {
+    const [row] = await db.select({ n: count() }).from(AppointmentNotice).where(and(
+        eq(AppointmentNotice.appointmentId, appointmentId), eq(AppointmentNotice.kind, 'REMINDER_J1'), eq(AppointmentNotice.recipient, 'citizen'),
+        eq(AppointmentNotice.channel, 'email'), inArray(AppointmentNotice.status, ['NOT_DELIVERED', 'FAILED']), gte(AppointmentNotice.createdAt, since)));
+    return Number(row?.n || 0);
+}
 
 /**
  * Cron: RDV J-1 Reminder
@@ -31,6 +40,12 @@ import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '
  *   1. Query appointments WHERE date = tomorrow AND reminder_sent_at IS NULL
  *   2. CLAIM each appointment via UPDATE...RETURNING before sending
  *   3. If send fails, release the claim
+ *
+ * R39 — the person's e-mail (account, or an account-free booking WITH its separate reminder consent) counts like the agent's: PROVIDER_ACCEPTED or
+ * TEST_RECORDED reached them; NOT_DELIVERED / FAILED (noop included) is a failure. When every attempt of a pass failed, the claim is released and
+ * reminder_sent_at stays NULL, so a later run of the SAME J-1 day may retry (the selection is tomorrow's Paris day only: never earlier, never on the day
+ * itself), at most REMINDER_MAX_ATTEMPTS_PER_DAY failed e-mails per appointment and per day (counted in the AppointmentNotice ledger), then it is closed.
+ * Two concurrent runs never send twice: besides the pipeline lock, the per-appointment claim is a compare-and-set UPDATE (one winner).
  */
 export default async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'GET' && req.method !== 'POST') {
@@ -48,6 +63,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
         const result = await withLock('rdv-reminder', async () => {
             // Find appointments for tomorrow (J+1) — PKG-11 audit pass 2: « demain » for a person in Strasbourg (Paris calendar day), not the server's UTC day
             const { start: tomorrowStart, end: tomorrowEnd } = parisDayWindow(new Date(), 1);
+            const todayStart = parisDayWindow(new Date(), 0).start;   // R39: the J-1 day of these reminders (bounded retries are counted from here)
 
             const appointments = await db.query.ProAppointment.findMany({
                 where: and(
@@ -56,8 +72,8 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     // PKG-3 / B06: every ACTIVE status (citizen bookings are 'confirmed', structure-created ones 'booked'; 'pending' kept for older rows)
                     inArray(ProAppointment.status, ['booked', 'requested', 'confirmed', 'pending']),
                     isNull(ProAppointment.reminder_sent_at),
-                    // R38: an account-free hold whose code was never confirmed is not an appointment (confirmed ones have it NULL). Confirmed account-free
-                    // bookings get no J-1 e-mail yet (noticeCitizen: 'service' notices only without an account) — the structure's reminder still applies
+                    // R38: an account-free hold whose code was never confirmed is not an appointment (confirmed ones have it NULL). R39: a confirmed
+                    // account-free booking gets the J-1 e-mail only with its separate reminder consent (noticeCitizen), NO_CONSENT otherwise
                     isNull(ProAppointment.guestHoldExpiresAt)
                 ),
                 with: {
@@ -90,29 +106,36 @@ export default async function handler(/** @type {import('../../_utils/http-types
             let skipped = 0;
             const errors = [];
 
-            for (const rdv of appointments) {
+            for (const listed of appointments) {
                 // PKG-3 / B06: an appointment booked by the person has no creating agent; it used to be skipped entirely (no reminder at all). The agent part is now optional.
-                const agent = rdv.createdByProUser || null;
+                const agent = listed.createdByProUser || null;
 
                 // STEP 1: Claim the appointment using a temporary lock
                 const claimed = await db.update(ProAppointment)
                     .set({ reminder_locked_at: new Date() })
                     .where(and(
-                        eq(ProAppointment.id, rdv.id),
+                        eq(ProAppointment.id, listed.id),
                         isNull(ProAppointment.reminder_sent_at),
                         // Claim if not locked OR locked more than 15 minutes ago (stale/abandoned)
                         or(
                             isNull(ProAppointment.reminder_locked_at),
                             sql`${ProAppointment.reminder_locked_at} < NOW() - INTERVAL '15 minutes'`
-                        )
+                        ),
+                        // R39: still the same selection at claim time (not cancelled, not moved out of tomorrow, not an unconfirmed hold)
+                        gte(ProAppointment.startAt, tomorrowStart),
+                        lt(ProAppointment.startAt, tomorrowEnd),
+                        inArray(ProAppointment.status, ['booked', 'requested', 'confirmed', 'pending']),
+                        isNull(ProAppointment.guestHoldExpiresAt)
                     ))
-                    .returning({ id: ProAppointment.id });
+                    .returning();
 
                 if (!claimed || claimed.length === 0) {
                     // Already claimed by another instance — skip
                     skipped++;
                     continue;
                 }
+                // R39: the row as claimed (a reminder consent withdrawn after the selection is honoured), with the relations of the selection
+                const rdv = { ...listed, ...claimed[0] };
 
                 // STEP 2: SEND notifications — PKG-11 audit pass 2: success is counted PER appointment (the run-wide counters used to mark a fully failed
                 // appointment as sent as soon as an earlier one had succeeded), and the date / time are those of Paris
@@ -126,11 +149,18 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 const modeLine = rdv.mode === 'VIDEO'
                     ? `Modalité : ${MODE_LABELS.VIDEO}. Accès sécurisé depuis Mes rendez-vous, 15 minutes avant (aucun lien par e-mail).`
                     : `Modalité : ${MODE_LABELS.IN_PERSON}.\n${locationText(locationOf(rdv.structure))}`;
+                // R39: an account-free booking has no account page: its personal link (only its hash is stored) moves, cancels and turns the reminder off
+                const manageLine = rdv.citizenUserId
+                    ? `Gérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`
+                    : 'Pour déplacer ou annuler ce rendez-vous, ou ne plus recevoir de rappel, utilisez le lien personnel reçu dans l’e-mail de confirmation.\nVous recevez ce rappel parce que vous l’avez demandé.';
                 const citizenStatus = await noticeCitizen(rdv, 'REMINDER_J1', {
                     subject: `Rappel : rendez-vous demain ${dateStr} à ${timeStr}`,
-                    text: `Rappel : vous avez rendez-vous demain ${dateStr} à ${timeStr}${rdv.structure?.nom ? ` avec ${rdv.structure.nom}` : ''}.\n${modeLine}\n\nGérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`,
+                    text: `Rappel : vous avez rendez-vous demain ${dateStr} à ${timeStr}${rdv.structure?.nom ? ` avec ${rdv.structure.nom}` : ''}.\n${modeLine}\n\n${manageLine}`,
                 });
-                if (citizenStatus === 'PROVIDER_ACCEPTED') { emailsSent++; reached++; }   // PKG-5: accepted by the provider (not a confirmed delivery)
+                // PKG-5: accepted by the provider (not a confirmed delivery); R39: the LAB test outbox counts like the agent's, a refused / noop e-mail is a failure
+                const citizenFailed = citizenStatus === 'NOT_DELIVERED' || citizenStatus === 'FAILED';
+                if (citizenStatus === 'PROVIDER_ACCEPTED' || citizenStatus === 'TEST_RECORDED') { emailsSent++; reached++; }
+                else if (citizenFailed) { sendFailed = true; errors.push({ rdvId: rdv.id, type: 'citizen_email', error: 'NOT_ACCEPTED' }); }
 
                 // 1. Send email to agent (if enabled)
                 if (agent && agent.notificationEmailEnabled && agent.email) {
@@ -225,8 +255,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     }
                 }
 
-                // STEP 3: Handle results and finalize state
-                if (sendFailed && reached === 0) {
+                // STEP 3: Handle results and finalize state (R39: bounded — after REMINDER_MAX_ATTEMPTS_PER_DAY failed e-mails today the claim is closed)
+                const citizenFailuresToday = citizenFailed ? await citizenReminderFailuresSince(rdv.id, todayStart).catch(() => 0) : 0;
+                if (reminderClaimOutcome({ sendFailed, reached, citizenFailed, citizenFailuresToday }) === 'release') {
                     // ALL failed -> release the claim so it can be retried
                     try {
                         await db.update(ProAppointment)

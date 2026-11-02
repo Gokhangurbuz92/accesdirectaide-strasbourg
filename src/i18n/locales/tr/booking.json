@@ -82,5 +82,16 @@
  "title": "Hesapsız randevu al",
  "withAccount": "Hesapla randevu al",
  "manage.moveTooLate": "Bu randevu çevrimiçi değiştirilemeyecek kadar yakın: lütfen kurumla iletişime geçin.",
- "manage.moveLimit": "Bu randevu izin verilen sayıda zaten değiştirildi: lütfen kurumla iletişime geçin."
+ "manage.moveLimit": "Bu randevu izin verilen sayıda zaten değiştirildi: lütfen kurumla iletişime geçin.",
+ "form.reminder": "Randevudan bir gün önce e-postayla bir hatırlatma da almak istiyorum (isteğe bağlı)",
+ "form.reminderHelp": "Bir gün önce tek bir e-posta. Kişisel bağlantınızla istediğiniz zaman durdurabilirsiniz.",
+ "done.reminderOn": "Randevudan bir gün önce size e-postayla bir hatırlatma gönderilecek.",
+ "manage.reminderTitle": "Bir gün önce e-postayla hatırlatma (isteğe bağlı)",
+ "manage.reminderOn": "Hatırlatma açık: randevudan bir gün önce bir e-posta alacaksınız.",
+ "manage.reminderOff": "Hatırlatma kapalı: hatırlatma e-postası gönderilmeyecek.",
+ "manage.reminderTurnOn": "Bir gün önce hatırlatma al",
+ "manage.reminderTurnOff": "Hatırlatmayı durdur",
+ "pro.reminderYes": "Bir gün önce e-postayla hatırlatma: istendi",
+ "pro.reminderNo": "Bir gün önce e-postayla hatırlatma: istenmedi",
+ "code.alreadyHint": "Bu kurumla zaten bir randevunuz varsa, bunun yerine bunu bildiren bir e-posta alırsınız: yeni randevu alınmaz."
 }

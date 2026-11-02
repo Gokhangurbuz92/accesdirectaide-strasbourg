@@ -13,10 +13,16 @@
  *   - hold = status 'requested' for 20 minutes with a 6-digit code e-mailed (HMAC stored, 5 attempts); confirm -> 'confirmed' (the engine has no manual
  *     validation mode: bookingMode is the modality), a manage token (only its hash stored, valid until the end of the appointment, for this one appointment);
  *   - manage: date, time, place, service only (no name, no phone, the e-mail masked); cancel; reschedule to another free slot of the same service.
- * Reminders (cron rdv-reminder) do not reach account-free bookings yet: noticeCitizen sends them only 'service' mails (documented in the R38 report).
+ * R39:
+ *   - an OPTIONAL J-1 reminder: a separate box, never pre-ticked, not required (hold body `reminderConsent: true`, stored as guestReminderConsentAt = now);
+ *     the cron rdv-reminder sends it only with that consent (noticeCitizen: NO_CONSENT otherwise); the person turns it on / off from the personal link
+ *     (POST rdv/guest/manage/reminder, same token check, rate limit and CSRF as cancel; an AuditLog entry without personal data);
+ *   - one ACTIVE booking per structure and per address (an unexpired hold, or a confirmed booking not ended / not cancelled — the shared rule of
+ *     api/_utils/rdv-active.js), without enumeration: a second request (another idempotency key) is answered exactly like a created hold (202, the same
+ *     body shape, a fresh random id that no confirm ever finds), nothing is inserted, and the address is told by e-mail that a booking already exists.
  */
 import crypto from 'node:crypto';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, eq, gt, isNotNull, isNull, ne, or, sql } from 'drizzle-orm';
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
@@ -30,8 +36,9 @@ import { publicVideoStatus } from '../lib/video-provider.js';
 import { encrypt } from '../lib/crypto.js';
 import {
   GUEST_CODE_MAX_ATTEMPTS, GUEST_HOLD_MINUTES, checkGuestCode, checkManageToken, guestBookingEnabled, guestCodeHash, guestEmailHash, holdExpired, holdExpiry,
-  mailReallySent, maskEmail, newGuestCode, newManageToken, readGuestIdentity, sameDigest, manageTokenHash,
+  mailReallySent, maskEmail, newGuestCode, newManageToken, readGuestIdentity, readReminderConsent, sameDigest, manageTokenHash,
 } from '../_utils/rdv-guest-core.js';
+import { activeAppointmentWhere } from '../_utils/rdv-active.js';
 import {
   MAX_BOOKING_AHEAD_DAYS, MAX_RANGE_DAYS, MAX_RESCHEDULES, MIN_BOOKING_DELAY_MINUTES, RESCHEDULE_MIN_NOTICE_HOURS,
   bookSlot, bookingLockKeyOf, computePublicSlots, icsLocation, loadAppointmentWithRelations, loadStructureBySlug, moveSlot, rescheduleRefusal,
@@ -42,6 +49,7 @@ const MODE = 'IN_PERSON';
 const NOT_FOUND = { error: 'RDV indisponible', code: 'GUEST_BOOKING_UNAVAILABLE' };
 const MANAGE_NOT_FOUND = { error: 'Appointment not found', code: 'APPOINTMENT_NOT_FOUND' };
 const SLOT_TAKEN = { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' };
+const MAIL_UNAVAILABLE = { error: 'GUEST_BOOKING_MAIL_UNAVAILABLE', code: 'GUEST_BOOKING_MAIL_UNAVAILABLE' };
 const str = (v) => String(v ?? '').trim();
 const utcDay = (d) => ({ from: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), to: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999)) });
 const iso = (d) => (d ? new Date(d).toISOString() : null);
@@ -92,6 +100,9 @@ function guestView(a, extra = {}) {
     // R38: why the move is not offered online (the page says it and points to the structure), never a silent missing button
     rescheduleBlocked: active && !a.guestHoldExpiresAt ? (rescheduleRefusal(a)?.code || null) : null,
     reschedule: startsAt ? { count: Number(a.rescheduleCount || 0), max: MAX_RESCHEDULES, until: new Date(startsAt.getTime() - RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000).toISOString() } : null,
+    // R39: the optional J-1 reminder (a yes / no only, never its date), and whether it can still be turned on from the personal link
+    reminderConsent: Boolean(a.guestReminderConsentAt),
+    reminderChangeable: active && !a.guestHoldExpiresAt && startsAt !== null && startsAt.getTime() > now,
     ...extra,
   };
 }
@@ -150,6 +161,47 @@ async function isFreeSlot(structure, service, startAt, exceptId = null) {
   return list.some((s) => s.startAt === startAt.toISOString() && s.endAt === endAt.toISOString());
 }
 
+/**
+ * R39 — an ACTIVE account-free booking of this address with this structure other than this very request (its idempotency key): an unexpired hold, or a
+ * confirmed booking that has not ended and is not cancelled (the shared « still active » rule). Only its id is read.
+ */
+async function otherActiveBooking(runner, structureId, emailHash, idempotencyKey) {
+  const t = schema.ProAppointment; const now = new Date();
+  const [row] = await runner.select({ id: t.id }).from(t).where(and(
+    eq(t.structureId, structureId), eq(t.guestEmailHash, emailHash), isNull(t.citizenUserId),
+    activeAppointmentWhere(t, now), gt(t.endAt, now),
+    or(isNull(t.idempotencyKey), ne(t.idempotencyKey, idempotencyKey)),
+  )).limit(1);
+  return row || null;
+}
+
+/**
+ * R39 — the answer to a second booking request of an address that already has an active booking with this structure: the same steps and the same answer
+ * as a created hold (one e-mail, then 202 with a hold-shaped body — or 503 when that e-mail did not really leave), nothing inserted, a fresh random id
+ * (a later confirm finds no hold: the « unknown hold » answer). The e-mail goes to the address only: it says a booking exists and how to manage it.
+ */
+async function alreadyBooked(res, { structure, service, startAt, endAt, email, reminderConsent }) {
+  let out = null;
+  try {
+    out = await sendMail({
+      to: email,
+      subject: `Rendez-vous déjà en cours - ${structure.nom}`,
+      text: [`Une demande de rendez-vous vient d'être faite avec votre adresse e-mail auprès de ${structure.nom}.`, '',
+        'Un rendez-vous (ou une demande en cours) existe déjà avec cette structure pour cette adresse : aucun nouveau rendez-vous n\'a été réservé.',
+        'Pour le déplacer ou l\'annuler, utilisez le lien personnel reçu dans l\'e-mail de confirmation de ce rendez-vous.',
+        `Si vous venez de faire une demande sans saisir le code reçu, elle expire au bout de ${GUEST_HOLD_MINUTES} minutes : vous pourrez ensuite recommencer.`, '',
+        "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message."].join('\n'),
+      category: 'appointment_guest_already_booked',   // a « service » message about the person's own booking (never a reminder)
+    });
+  } catch { out = null; }
+  logger.info({ structureId: structure.id, sent: mailReallySent(out) }, '[rdv-guest] second active booking refused (answered as a hold)');
+  if (!mailReallySent(out)) return res.status(503).json(MAIL_UNAVAILABLE);
+  const now = new Date();
+  const decoy = withLoadedRelations({ id: crypto.randomUUID(), status: 'requested', startAt, endAt, guestHoldExpiresAt: holdExpiry(now),
+    guestReminderConsentAt: reminderConsent ? now : null, rescheduleCount: 0, cancelledAt: null }, structure, service);
+  return res.status(202).json({ hold: guestView(decoy, { expiresAt: iso(decoy.guestHoldExpiresAt) }), emailMasked: maskEmail(email) });
+}
+
 // ── POST rdv/guest/hold ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function hold(req, res) {
   if (await limited(res, 'RDV_GUEST_WRITE', getClientIp(req))) return undefined;
@@ -161,8 +213,9 @@ async function hold(req, res) {
   }
   const identity = readGuestIdentity(body);
   if (identity.error) return res.status(400).json({ error: identity.error.code, code: identity.error.code, field: identity.error.field });
+  const reminderConsent = readReminderConsent(body);   // R39: optional, separate, never implied
   // mail truthfulness: no hold at all when nothing could deliver the code
-  if (!getMailerStatus().deliverable) return res.status(503).json({ error: 'GUEST_BOOKING_MAIL_UNAVAILABLE', code: 'GUEST_BOOKING_MAIL_UNAVAILABLE' });
+  if (!getMailerStatus().deliverable) return res.status(503).json(MAIL_UNAVAILABLE);
   const emailHash = guestEmailHash(identity.value.email);
   if (await limited(res, 'RDV_GUEST_EMAIL', emailHash)) return undefined;
 
@@ -188,12 +241,20 @@ async function hold(req, res) {
     outcome = await bookSlot({
       structure, service, startAt, endAt,
       replay: () => findByKey(),
+      // R39: one active booking per structure and address — checked under the slot's day lock AND a lock of this address at this structure (two
+      // requests of one address for two different days serialise here), after the slot checks; the same request (same key) was replayed above
+      guard: async (tx) => {
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`guest-active:${structure.id}:${emailHash}`}, 0))`);
+        const other = await otherActiveBooking(tx, structure.id, emailHash, idempotencyKey);
+        return other ? { kind: 'already_booked' } : null;
+      },
       values: {
         id, structureId: structure.id, serviceId: service.id, startAt, endAt, status: 'requested', mode: MODE, visioEnabled: false,
         beneficiaryName: encrypt(identity.value.name), notes: identity.value.note ? encrypt(identity.value.note) : null, beneficiaryPhone: null,
         citizenUserId: null, citizenEmailSnapshot: null, idempotencyKey,
         guestEmail: encrypt(identity.value.email), guestEmailHash: emailHash, guestPhone: identity.value.phone ? encrypt(identity.value.phone) : null,
         guestMailConsentAt: now, guestHoldExpiresAt: holdExpiry(now), guestCodeHash: guestCodeHash(id, code), guestCodeAttempts: 0,
+        guestReminderConsentAt: reminderConsent ? now : null,
       },
     });
   } catch (error) {
@@ -203,6 +264,7 @@ async function hold(req, res) {
   if (outcome.kind === 'replay') return replyHold(outcome.appointment);
   if (outcome.kind === 'duplicate') { const row = await findByKey(); return row ? replyHold(row) : res.status(409).json(SLOT_TAKEN); }
   if (outcome.kind === 'conflict') return res.status(409).json(SLOT_TAKEN);
+  if (outcome.kind === 'already_booked') return alreadyBooked(res, { structure, service, startAt, endAt, email: identity.value.email, reminderConsent });
   if (outcome.kind !== 'created') return res.status(500).json({ error: 'Internal Server Error' });
 
   // after COMMIT: the code. If it did not really leave, the hold is released at once (nothing blocks the slot, nothing personal is kept) and 503 is answered.
@@ -220,9 +282,9 @@ async function hold(req, res) {
   } catch { out = null; }
   await recordNotice(id, 'GUEST_CODE', 'citizen', 'email', mailLedgerStatus(out));
   if (!mailReallySent(out)) {
-    await db.update(schema.ProAppointment).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'SYSTEM_MAIL_FAILED', guestEmail: null, guestPhone: null, notes: null, guestCodeHash: null, beneficiaryName: '[non confirmé]' })
+    await db.update(schema.ProAppointment).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'SYSTEM_MAIL_FAILED', guestEmail: null, guestPhone: null, notes: null, guestCodeHash: null, beneficiaryName: '[non confirmé]', guestReminderConsentAt: null })
       .where(eq(schema.ProAppointment.id, id));
-    return res.status(503).json({ error: 'GUEST_BOOKING_MAIL_UNAVAILABLE', code: 'GUEST_BOOKING_MAIL_UNAVAILABLE' });
+    return res.status(503).json(MAIL_UNAVAILABLE);
   }
   return replyHold(withLoadedRelations(outcome.appointment, structure, service), 202);
 }
@@ -362,6 +424,31 @@ async function reschedule(req, res) {
   return res.status(200).json({ appointment: guestView(moved) });
 }
 
+// ── POST rdv/guest/manage/reminder { appointmentId, token, consent } ───────────────────────────────────────────────────────────────────────────────────
+// R39: the optional J-1 reminder, turned on or off from the personal link (withdrawing is always possible while the link is valid; turning it on only for a
+// confirmed appointment still to come). Idempotent; the first consent's time is kept; an AuditLog entry without personal data records a change.
+async function reminder(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  if (await limited(res, 'RDV_GUEST_MANAGE', `${getClientIp(req)}:${digest(req.body?.token)}`)) return undefined;
+  const row = await byToken(req);
+  if (!row) return res.status(404).json(MANAGE_NOT_FOUND);
+  const consent = req.body?.consent;
+  if (typeof consent !== 'boolean') return res.status(400).json({ error: 'consent must be true or false', code: 'INVALID_REQUEST' });
+  if (consent && !guestView(row).reminderChangeable) return res.status(409).json({ error: 'APPOINTMENT_NOT_ACTIVE', code: 'APPOINTMENT_NOT_ACTIVE' });
+  const t = schema.ProAppointment;
+  const changed = await db.update(t).set({ guestReminderConsentAt: consent ? new Date() : null })
+    .where(and(eq(t.id, row.id), isNull(t.citizenUserId), eq(t.guestManageTokenHash, row.guestManageTokenHash),
+      consent ? isNull(t.guestReminderConsentAt) : isNotNull(t.guestReminderConsentAt)))
+    .returning({ id: t.id });
+  if (changed.length) {
+    await db.insert(schema.AuditLog).values({ action: consent ? 'RDV_GUEST_REMINDER_CONSENT_GIVEN' : 'RDV_GUEST_REMINDER_CONSENT_WITHDRAWN', actor: 'guest',
+      entity: 'ProAppointment', entity_id: row.id, details: { via: 'manage_link' } })
+      .catch((e) => logger.warn({ err: { name: e?.name, code: e?.cause?.code || e?.code } }, '[rdv-guest] reminder consent audit not written'));
+  }
+  const updated = await loadAppointmentWithRelations(row.id);
+  return res.status(200).json({ appointment: guestView(updated || row) });
+}
+
 /** rdv/guest/<rest> @param {string} method @param {string[]} seg the segments after « guest » */
 export default async function guestHandler(req, res, method, seg) {
   res.setHeader('Cache-Control', 'no-store');
@@ -374,5 +461,6 @@ export default async function guestHandler(req, res, method, seg) {
   if (method === 'POST' && seg.length === 1 && seg[0] === 'manage') return manage(req, res);
   if (method === 'POST' && seg.length === 2 && seg[0] === 'manage' && seg[1] === 'cancel') return cancel(req, res);
   if (method === 'POST' && seg.length === 2 && seg[0] === 'manage' && seg[1] === 'reschedule') return reschedule(req, res);
+  if (method === 'POST' && seg.length === 2 && seg[0] === 'manage' && seg[1] === 'reminder') return reminder(req, res);
   return res.status(404).json({ error: 'Not Found' });
 }

@@ -248,14 +248,15 @@
     {
       "id": "T06",
       "nom": "Rendez-vous",
-      "finalite": "Prise, modification, annulation de rendez-vous avec une structure",
-      "base_legale_proposee": "Art. 6.1.b — à valider",
+      "finalite": "Prise, modification, annulation de rendez-vous avec une structure ; sans compte (R39) : rappel facultatif la veille, par e-mail, seulement si la personne l'a demandé",
+      "base_legale_proposee": "Art. 6.1.b — à valider ; rappel facultatif la veille d'un rendez-vous sans compte (R39) : consentement (art. 6.1.a), case séparée jamais pré-cochée, retirable à tout moment depuis le lien personnel — proposition, à valider par le responsable de traitement",
       "categories_donnees": [
         "Nom",
         "Téléphone",
         "E-mail",
         "Notes (art. 9 possible)",
-        "Créneau, mode"
+        "Créneau, mode",
+        "Sans compte : date de l'accord au rappel facultatif la veille (R39)"
       ],
       "categories_personnes": [
         "Citoyens",
@@ -284,6 +285,13 @@
           "source": "RETENTION.GUEST_HOLD_DAYS",
           "statut": "appliqué",
           "description": "identité effacée 1 jour après l'expiration de la réservation de 20 minutes (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Accord au rappel facultatif la veille, sans compte (R39 — proposition, à valider par le responsable de traitement)",
+          "duree_jours": 730,
+          "source": "RETENTION.APPOINTMENT_ANON_DAYS",
+          "statut": "appliqué",
+          "description": "effacé avec les données du rendez-vous après 730 jours ; effacé aussitôt quand la personne retire son accord (cron gdpr-purge, hebdomadaire)"
         }
       ],
       "mesures_securite": "Contrôle d'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d'un rendez-vous créé par une structure chiffrés à l'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)"

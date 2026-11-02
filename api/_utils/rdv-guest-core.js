@@ -6,6 +6,7 @@
  *   - the 6-digit code (HMAC bound to the hold, never stored in clear), the manage token (32 random bytes, only its SHA-256 stored), constant-time checks;
  *   - the e-mail blind index (HMAC, so a list of hashes cannot be reversed with a dictionary of addresses);
  *   - input validation of the minimal identity, and masking (an address or a phone is never echoed back in clear).
+ * R39: the optional J-1 reminder consent (explicit `true` only), who may be written to for which notice category, and the bounded-retry rule of the cron.
  */
 import crypto from 'node:crypto';
 
@@ -115,4 +116,41 @@ export function readGuestIdentity(body) {
   const note = String(b.note ?? '').trim();
   if (note.length > GUEST_NOTE_MAX) return { error: { code: 'NOTE_TOO_LONG', field: 'note' } };
   return { value: { name, email, phone, note: note || null } };
+}
+
+/**
+ * R39 — the OPTIONAL J-1 reminder of an account-free booking: a separate box, never pre-ticked, not required, independent of the booking-mails consent.
+ * Only an explicit boolean `true` is a consent (« on », « yes », 1 are not). @param {any} body
+ */
+export const readReminderConsent = (body) => Boolean(body && typeof body === 'object' && body.reminderConsent === true);
+
+/**
+ * R39 — may an e-mail of this notice category reach this account-free booking? 'SEND' | 'NO_CONSENT' | 'NO_RECIPIENT'.
+ *   - nobody to write to without a sealed address of a booking confirmed by its code and consented to booking mails: NO_RECIPIENT (R38, unchanged);
+ *   - 'service' (changes, confirmations): SEND (consented at booking);
+ *   - 'reminder' (J-1): SEND only when the separate reminder consent is set too, NO_CONSENT otherwise (never ticked, or withdrawn).
+ * @param {{ guestEmail?: string | null, guestConfirmedAt?: unknown, guestMailConsentAt?: unknown, guestReminderConsentAt?: unknown } | null | undefined} a
+ * @param {'service' | 'reminder' | string} category
+ */
+export function guestNoticeDecision(a, category) {
+  if (!a?.guestEmail || !a.guestConfirmedAt || !a.guestMailConsentAt) return 'NO_RECIPIENT';
+  if (category === 'service') return 'SEND';
+  if (category === 'reminder') return a.guestReminderConsentAt ? 'SEND' : 'NO_CONSENT';
+  return 'NO_RECIPIENT';
+}
+
+/** R39 — at most this many failed J-1 reminder e-mails per appointment and per J-1 (Paris) day; the cron only ever selects tomorrow's appointments */
+export const REMINDER_MAX_ATTEMPTS_PER_DAY = 3;
+
+/**
+ * R39 — what the J-1 reminder cron does with its claim after one pass on an appointment: 'release' (reminder_locked_at back to NULL, reminder_sent_at stays
+ * NULL: a later run of the same J-1 day may retry) or 'close' (reminder_sent_at = now: never sent again).
+ *   - something reached its recipient, or nothing failed (e.g. NO_CONSENT / NO_RECIPIENT only): close;
+ *   - every attempt failed: release — unless the person's e-mail already failed REMINDER_MAX_ATTEMPTS_PER_DAY times today (this one included): close.
+ * @param {{ sendFailed: boolean, reached: number, citizenFailed?: boolean, citizenFailuresToday?: number }} pass
+ */
+export function reminderClaimOutcome({ sendFailed, reached, citizenFailed = false, citizenFailuresToday = 0 }) {
+  if (!sendFailed || reached > 0) return 'close';
+  if (citizenFailed && citizenFailuresToday >= REMINDER_MAX_ATTEMPTS_PER_DAY) return 'close';
+  return 'release';
 }

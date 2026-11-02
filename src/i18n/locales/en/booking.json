@@ -82,5 +82,16 @@
  "title": "Book an appointment without an account",
  "withAccount": "Book an appointment with an account",
  "manage.moveTooLate": "This appointment is too close to be moved online: please contact the organisation.",
- "manage.moveLimit": "This appointment has already been moved the maximum number of times: please contact the organisation."
+ "manage.moveLimit": "This appointment has already been moved the maximum number of times: please contact the organisation.",
+ "form.reminder": "Also receive a reminder by e-mail the day before the appointment (optional)",
+ "form.reminderHelp": "A single e-mail, the day before. You can stop it at any time with your personal link.",
+ "done.reminderOn": "A reminder will be sent to you by e-mail the day before the appointment.",
+ "manage.reminderTitle": "Reminder by e-mail the day before (optional)",
+ "manage.reminderOn": "Reminder on: you will receive an e-mail the day before the appointment.",
+ "manage.reminderOff": "Reminder off: no reminder e-mail will be sent.",
+ "manage.reminderTurnOn": "Receive a reminder the day before",
+ "manage.reminderTurnOff": "Stop the reminder",
+ "pro.reminderYes": "Reminder by e-mail the day before: requested",
+ "pro.reminderNo": "Reminder by e-mail the day before: not requested",
+ "code.alreadyHint": "If you already have an appointment with this organisation, you will receive an e-mail saying so instead: no new appointment is booked."
 }
