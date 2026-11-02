@@ -9,52 +9,78 @@
  * a need without a verified local route points to the ordinary search and to the generic social offices (CCAS, Maison des solidarités, France Services).
  * No remote AI, no personal data kept: the query is read and forgotten.
  */
+/** @param {unknown} s */
 const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’']/g, "'");
+/** @param {string} alts */
 const w = (alts) => new RegExp(`(?<![\\p{L}\\p{N}])(?:${alts})(?![\\p{L}\\p{N}])`, 'u');
+// R38: Arabic words carry attached prefixes (ال, و, ب, ف) and the folded text has lost its hamza (« أوراق » → « اوراق »): matched without the word boundary.
+// (JavaScript's \\w is ASCII only, also with the « u » flag: Cyrillic stems use \\p{L}*.)
+/** @param {...{ test: (q: string) => boolean }} res */
+const either = (...res) => ({ test: (/** @type {string} */ q) => res.some((re) => re.test(q)) });
 
-/** the official sheets this module cites that are not (yet) published on AccesDirectAide; the published ones are resolved to their local page by the caller */
+/** fallback titles of cited sheets (all five are published since the owner's R37 batch of 02/11/2026); the caller resolves every published sheet to its local page */
 export const SHEET_TITLES = {
   F12006: 'Aide personnalisée au logement (APL)', F1280: 'Allocation de logement sociale (ALS)', F19778: 'RSA : demandeur de 25 ans et plus',
   F20055: 'Impayés de factures (gaz, électricité, eau, téléphone, internet) : quelles conséquences ?', F16920: 'Congé de proche aidant',
 };
+/** @param {string} id */
 export const sheetUrl = (id) => `https://www.service-public.gouv.fr/particuliers/vosdroits/${id}`;
 
 // ---------------------------------------------------------------------------------------------------------------- situation markers (not needs by themselves)
-const NO_PERMIT = w("sans (titre de sejour|titre|papiers?)|sans-papiers?|pas de (titre de sejour|papiers?)|en situation irreguliere|irregulier|irreguliere|clandestin|undocumented|no residence permit|kagitsiz|oturum izni yok|ohne aufenthalt\\w*|без документів|بدون أوراق");
+const NO_PERMIT = either(w("sans (titre de sejour|titre|papiers?)|sans-papiers?|pas de (titre de sejour|papiers?)|en situation irreguliere|irregulier|irreguliere|clandestin|undocumented|no residence permit|(no|without) (papers|documents|a residence permit)|kagitsiz|oturum izn\\w* yok|ohne aufenthalt\\w*|keinen? aufenthalts\\w*|ohne papiere|без документів|немає документ\\p{L}*|без посвідки"),
+  /(بدون|بلا|ليس لدي|ليست لدي|ما عندي) (اوراق|وثائق|اقامة)/u);
 const HAS_PERMIT = w("avec (un )?titre de sejour|titre de sejour valable|titre de sejour en cours|carte de resident|j'ai (un|mon) titre de sejour|refugie|refugiee|protection subsidiaire");
-const NO_HOME = w("sans (logement|domicile|abri|toit)|pas de (logement|toit|domicile)|plus de logement|a la rue|dans la rue|dors? dehors|dormir dehors|sans-abri|sdf|nulle part ou dormir|homeless|evsiz|obdachlos|без житла|بلا مأوى");
+const NO_HOME = either(w("sans (logement|domicile|abri|toit)|pas de (logement|toit|domicile)|plus de logement|a la rue|dans la rue|dors? dehors|dormir dehors|sans-abri|sdf|nulle part ou dormir|homeless|nowhere to (sleep|stay|live)|no place to (sleep|stay|live)|evsiz|kalacak yer\\p{L}* yok|sokakta|obdachlos|keine wohnung|без житла|немає (документ\\p{L}* (і|та) )?(житла|де жити|де ночувати)|на вулиці"),
+  /بلا ماوى|(لا|ليس لدي) (مكان|سكن|ماوى)|في الشارع/u,
+  // Ukrainian puts the negation anywhere in the sentence (« і житла теж немає »)
+  { test: (q) => /(?<!\p{L})(немає|нема|без)(?!\p{L})/u.test(q) && /(?<!\p{L})житл\p{L}*/u.test(q) });
+/** @param {string} q */
 const UNDER_25 = (q) => { const m = /(?<!\d)(1[6-9]|2[0-4]) ?ans\b/.exec(q); return Boolean(m) || w('moins de 25 ans|jeune majeur|majeur(e)? depuis peu').test(q); };
 const CHILDREN = w('enfants?|bebes?|fils|filles?|mes petits|children|kids|cocuk\\w*|kinder|діти|أطفال');
 
 /** [id (social-domains subdomain), priority (0 = most urgent), test(folded query) ] — the order of this list is the order shown at equal priority */
+/** @type {[string, number, (q: string) => boolean][]} */
 const NEEDS = [
   ['hebergement-urgence', 1, (q) => NO_HOME.test(q) || w("ou dormir( ce soir)?|hebergement d'urgence|mis(e)? dehors|quitter (le|mon) logement|place en foyer").test(q)],
-  ['energie', 2, (q) => w("electricite|electrique|gaz|chauffage|energie|edf|engie|compteur|courant").test(q) && w("coup\\w*|couper|impaye\\w*|factures?|dettes?|payer|retard|reduit\\w*|reduction|puissance").test(q)],
+  ['energie', 2, (q) => (w("electricite|electrique|gaz|chauffage|energie|edf|engie|compteur|courant|elektri\\w*|dogalgaz").test(q) && w("coup\\w*|couper|impaye\\w*|factures?|dettes?|payer|retard|reduit\\w*|reduction|puissance|kes\\w*|fatura\\w*|borc\\w*").test(q))
+    || (w("eau|telephone|internet|box").test(q) && w("coupee?s?|couper|impaye\\w*|factures? (impayees?|en retard)|dettes?").test(q))
+    || w("factures? impayees?|impayes? de factures?|(payer|regler) (mes|les|nos|ses) factures|factures? en retard|retard de factures?").test(q)],
   ['expulsion-impayes', 2, (q) => w("loyers? impayes?|impayes? de loyer|retard de loyer|dettes? de loyer|arrieres? de loyer|expulsion|expulse\\w*|perdre (mon|le) logement|risque de perdre").test(q)],
-  ['violences-conjugales', 0, (q) => w("violences? conjugales?|mon (mari|conjoint|compagnon|ex) me (frappe|bat|menace)|ma (femme|compagne|conjointe) me (frappe|bat|menace)|violent avec moi").test(q)],
+  // R38: suicidal crisis first of all — the national prevention line 3114 (sheet F33954: free, 24 h/24, 7 j/7, Ministry of Health)
+  ['crise-suicide', 0, (q) => (w("suicid\\w*|me suicider|me tuer|en finir( avec la vie)?|mettre fin a mes jours|plus envie de vivre|envie de mourir|idees noires|suicide|kill myself|end my life|suicidal|intihar\\w*|kendimi oldur\\w*|selbstmord|suizid\\w*|самогубств\\p{L}*|покінчити з собою").test(q) || /انتحار|انتحر|اقتل نفسي/u.test(q))
+    && !w("suicide assiste|aide (active )?a mourir|euthanasie").test(q)],
+  ['violences-conjugales', 0, (q) => w("violences? conjugales?|mon (mari|conjoint|compagnon|ex) me (frappe|bat|menace)|ma (femme|compagne|conjointe) me (frappe|bat|menace)|violent avec moi"
+    + "|domestic violence|my (husband|partner|boyfriend|wife|ex) (hits|beats|threatens) me|kocam (beni )?(dov\\w*|vur\\w*|tehdit\\w*)|esim (beni )?(dov\\w*|vur\\w*)|ev ici siddet|aile ici siddet"
+    + "|mein (mann|partner|freund|ex) (schlagt|bedroht) mich|hausliche gewalt|чоловік (мене )?(б.?є|бʼє|погрожує)|домашн\\p{L}* насильств\\p{L}*").test(q) || /زوجي (يضربني|يهددني)|عنف (اسري|منزلي)/u.test(q)],
   ['sortie-ase', 2, (q) => w("(sors?|sortie|sortir|sorti|sortie) de l'?ase|ase a 18 ans|aide sociale a l'?enfance|jeune majeur|foyer de l'enfance|contrat jeune majeur|placee? (a|par) l'?ase").test(q) && !w('mon enfant|ma fille|mon fils|mes enfants').test(q)],
   ['droits-sans-titre', 3, (q) => NO_PERMIT.test(q)],
   ['surendettement', 4, (q) => w("dettes?|endette\\w*|surendette\\w*|credits? a rembourser|commissaire de justice|huissier").test(q)],
   ['recherche-emploi', 4, (q) => w("chomage|chomeur|chomeuse|sans emploi|sans travail|perdu mon (emploi|travail|boulot)|licencie\\w*|france travail").test(q)],
-  ['aidants', 3, (q) => w("aidant\\w*|je m'occupe de (ma|mon)|epuise\\w*|repit|a bout").test(q) && w("mere|pere|parent|grand.?(mere|pere)|proche|mari|femme|agee?s?|dependan\\w*|malade|handicap\\w*|domicile").test(q)],
+  ['aidants', 3, (q) => w("aidant\\w*|je m'occupe de (ma|mon)|m'occuper de (ma|mon)|aider (ma|mon)|s'occuper de (sa|son)|epuise\\w*|repit|a bout").test(q) && w("mere|pere|parent|grand.?(mere|pere)|proche|mari|femme|agee?s?|dependan\\w*|malade|handicap\\w*|domicile").test(q)],
   ['aide-domicile', 3, (q) => w("(ma|mon) (mere|pere)|grand.?(mere|pere)|personne agee|agee?s?|perte d'autonomie|dependan\\w*").test(q) && w("domicile|aide a domicile|ne peut plus|seule? chez|toilette|repas|autonomie|ehpad|maison de retraite").test(q)],
   ['accessibilite-mobilite', 3, (q) => w("handicap\\w*|fauteuil roulant|mobilite reduite|pmr|malvoyant\\w*|aveugle").test(q) && w("transports?|deplacer|deplacements?|bus|tram|stationn\\w*|mobilite|accessib\\w*").test(q)],
   ['psy', 3, (q) => w("deprime\\w*|depression|depressif|depressive|mal[- ]etre|angoiss\\w*|anxi\\w*|idees noires|burn.?out|psy|psychologue|souffrance psychique").test(q)],
   ['isolement', 5, (q) => w("isolee?s?|isolement|solitude|je ne vois personne|n'ai (plus )?personne|tout(e)? seule?|seule? au monde|personne a qui parler").test(q)
     && !w("parent isole|mere isolee|pere isole|personne isolee (au sens|pour le rsa)").test(q)],
+  // the RSA sheet cited here is the one for 25 and over: under 25 the « under-25-rsa » caution says it, the need is not offered
+  ['minima-sociaux', 4, (q) => !UNDER_25(q) && w("sans (aucunes? )?(ressources?|revenus?)|aucun(e)? (ressources?|revenus?)|pas de (ressources?|revenus?)|plus (d'argent|rien) pour vivre|plus un sou|peu de (ressources?|revenus?)|tres peu de revenus?").test(q)],
+  ['aides-logement', 5, (q) => w("(besoin d'un|cherche (un )?|trouver un|louer un) logement|payer (mon|le) loyer|aide (au|pour le) logement|aides? au logement|apl|als").test(q)],
   ['prestations-familiales', 6, (q) => CHILDREN.test(q) && w("aides?|allocations?|argent|payer|factures?|dettes?|loyers?|impayes?|caf").test(q)],
 ];
 
 /** the content of each need: label, official numbers, next actions, sheets, topic for the ordinary search (French catalogue) */
+/** @type {Record<string, { label: string, numbers: string[], sheets: string[], topic: string, actions: string[], rules?: { text: string, sheet: string, winter?: boolean }[] }>} */
 const CONTENT = {
   'hebergement-urgence': { label: 'Trouver un hébergement', numbers: ['115'], sheets: ['F2003', 'F17317'], topic: 'hébergement urgence',
     actions: ['Appelez le 115 (Samu social, gratuit, 24 h/24) pour une place d’hébergement d’urgence.', 'Sans adresse, un CCAS ou une association agréée peut vous domicilier : vous recevez votre courrier et pouvez faire vos démarches (fiche F17317).'] },
-  energie: { label: 'Électricité, gaz : impayés et coupure', numbers: [], sheets: ['F20055', 'F38589', 'F1334'], topic: 'facture électricité impayée',
+  energie: { label: 'Factures impayées : électricité, gaz, eau', numbers: [], sheets: ['F20055', 'F38589', 'F1334'], topic: 'facture électricité impayée',
     actions: ['Contactez tout de suite votre fournisseur pour demander un délai ou un échéancier : il doit vous écrire avant de réduire ou couper.', 'Le Fonds de solidarité pour le logement (FSL) peut aider à payer des factures d’électricité ou de gaz (fiche F1334).'],
     rules: [{ text: 'Du 1er novembre au 31 mars (trêve hivernale), les coupures d’électricité et de gaz pour impayé sont interdites ; la puissance de l’électricité peut toutefois être réduite.', sheet: 'F20055', winter: true }] },
   'expulsion-impayes': { label: 'Loyer impayé, risque d’expulsion', numbers: [], sheets: ['F31272', 'F34736', 'F1334', 'F32037'], topic: 'loyer impayé expulsion',
     actions: ['En cas d’impayé, l’aide au logement peut être maintenue sous conditions ; le bailleur doit signaler l’impayé à la Caf ou à la MSA (fiche F32037).', 'Le FSL peut aider à payer une dette de loyer (fiche F1334).'],
     rules: [{ text: 'Du 1er novembre au 31 mars (trêve hivernale), l’expulsion d’un locataire est reportée, sauf exceptions (fiche F34736).', sheet: 'F34736', winter: true }] },
+  'crise-suicide': { label: 'Détresse, idées suicidaires', numbers: ['3114', '15'], sheets: ['F33954'], topic: 'prévention du suicide',
+    actions: ['Appelez le 3114, numéro national de prévention du suicide : gratuit, 24 h/24 et 7 j/7, des professionnels répondent ; vous pouvez aussi appeler si vous êtes inquiet pour un proche (fiche F33954).', 'En danger immédiat : appelez le 15 (Samu) ou le 112.'] },
   'violences-conjugales': { label: 'Violences dans le couple', numbers: ['17', '3919'], sheets: ['F12544'], topic: 'violences conjugales',
     actions: ['En danger immédiat : appelez le 17 ou envoyez un SMS au 114.', 'Le 3919 (gratuit, anonyme) écoute et oriente, y compris pour quitter le logement.'] },
   'sortie-ase': { label: 'Sortie de l’aide sociale à l’enfance (18 ans)', numbers: [], sheets: ['F2018'], topic: 'foyer jeunes travailleurs',
@@ -70,16 +96,23 @@ const CONTENT = {
   'aide-domicile': { label: 'Personne âgée : rester à domicile ou être accueillie', numbers: [], sheets: ['F245', 'F246', 'F255', 'F2444'], topic: 'aide à domicile personne âgée',
     actions: ['Le département peut financer une aide à domicile sous conditions de ressources, ou l’Apa pour une personne en perte d’autonomie (fiche F245).', 'Si le maintien à domicile n’est plus possible : les hébergements pour personnes âgées et l’aide sociale à l’hébergement (fiches F255, F2444).'] },
   'accessibilite-mobilite': { label: 'Handicap et déplacements', numbers: [], sheets: ['F34049'], topic: 'MDPH',
-    actions: ['La carte mobilité inclusion (CMI) se demande à la MDPH (fiche F34049).'] },
+    actions: ['La carte mobilité inclusion (CMI) se demande à la MDPH (fiche F34049).',
+      // R38: the operator's own page (CTS, cts-strasbourg.eu, page Mobistras, read 02/11/2026); no phone number here: two official documents give different ones
+      'Dans l’Eurométropole de Strasbourg, Mobistras (exploité par la CTS) transporte de porte à porte les personnes titulaires d’une CMI ou d’une carte d’invalidité, ou reconnues éligibles par la commission médicale de l’Eurométropole ; l’inscription se fait auprès de l’Eurométropole (voir la page Mobistras du site de la CTS).'] },
   psy: { label: 'Souffrance psychique', numbers: ['3114'], sheets: ['F34917'], topic: 'psychologue',
     actions: ['Des séances chez un psychologue peuvent être prises en charge par l’Assurance maladie, sous conditions (fiche F34917) ; votre médecin traitant peut vous orienter.', 'Si vous avez des idées suicidaires, ou pour un proche : le 3114 (gratuit, 24 h/24).'] },
   isolement: { label: 'Isolement', numbers: [], sheets: [], topic: 'isolement lien social',
     actions: ['Les centres sociaux, le CCAS de votre commune et des associations proposent des activités et des visites pour rompre l’isolement.'] },
+  'minima-sociaux': { label: 'Pas ou peu de ressources', numbers: [], sheets: ['F19778'], topic: 'RSA',
+    actions: ['Le RSA se demande en ligne sur le site de la Caf (ou de la MSA), ou sur place auprès de la Caf, des services du département, parfois du CCAS ou d’une association habilitée (fiche F19778).'] },
+  'aides-logement': { label: 'Aide pour payer le loyer', numbers: [], sheets: ['F12006', 'F1280'], topic: 'aide au logement',
+    actions: ['L’APL ou l’ALS aide à payer le loyer d’une résidence principale ; la demande se fait en ligne sur le site de la Caf (ou de la MSA) (fiches F12006, F1280).'] },
   'prestations-familiales': { label: 'Enfants à charge', numbers: [], sheets: ['F38245'], topic: 'allocations familiales',
     actions: ['Vérifiez auprès de la Caf les prestations liées à vos enfants (simulateur sur caf.fr).'] },
 };
 
 /** cautions: a benefit the ordinary search may list, and the condition the person's words put in doubt (the aide titles they apply to, for the result cards) */
+/** @type {{ id: string, when: (q: string) => boolean, aides: RegExp, text: string, sheets: string[] }[]} */
 const CAUTIONS = [
   { id: 'permit-housing-aid', when: (q) => NO_PERMIT.test(q) && !HAS_PERMIT.test(q), aides: /aide personnalis[ée]e au logement|\(apl\)|allocation de logement|\(als\)|\(alf\)/i,
     text: 'L’APL et l’ALS demandent, pour une personne étrangère, un titre de séjour en cours de validité.', sheets: ['F12006', 'F1280'] },
@@ -94,11 +127,13 @@ const CAUTIONS = [
 ];
 
 /** the question that changes the answer, when the words do not say it (offered as two re-searches; nothing is stored) */
+/** @type {{ id: string, when: (q: string) => boolean, text: string, options: [string, string][] }[]} */
 const QUESTIONS = [
   { id: 'permit', when: (q) => w('etranger\\w*|titre de sejour|prefecture|demandeur d.asile|migrant\\w*').test(q) && !NO_PERMIT.test(q) && !HAS_PERMIT.test(q),
     text: 'Avez-vous un titre de séjour en cours de validité ?', options: [['Oui', 'avec titre de séjour'], ['Non', 'sans titre de séjour']] },
 ];
 
+/** @param {Date} d */
 const isWinter = (d) => { const m = d.getUTCMonth() + 1; return m >= 11 || m <= 3; };
 
 /**
@@ -108,6 +143,7 @@ const isWinter = (d) => { const m = d.getUTCMonth() + 1; return m >= 11 || m <= 
  */
 export function analyseNeeds(queries, { now = new Date(), safetyKind = null } = {}) {
   const qs = (Array.isArray(queries) ? queries : [queries]).filter(Boolean).map(fold);
+  /** @param {(q: string) => boolean} t */
   const any = (t) => qs.some((q) => t(q));
   const found = NEEDS.filter(([, , t]) => any(t)).map(([id, priority]) => ({ id, priority }));
   if (safetyKind === 'violence' && !found.some((n) => n.id === 'violences-conjugales')) found.push({ id: 'violences-conjugales', priority: 0 });

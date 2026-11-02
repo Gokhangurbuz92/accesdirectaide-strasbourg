@@ -1235,7 +1235,9 @@
       "mandataire judiciaire",
       "MJPM"
      ],
-     "structureTypes": [],
+     "structureTypes": [
+      "Service mandataire judiciaire à la protection des majeurs"
+     ],
      "casf": [
       14,
       15

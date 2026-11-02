@@ -30,3 +30,27 @@ describe('everyday expressions', () => {
     expect(wordTerms('drogue')).toEqual(expect.arrayContaining(['toxicomanie']));
   });
 });
+
+describe('R38 — helping a dependent relative → « aidant » (congé de proche aidant, F16920)', async () => {
+  const { searchWords } = await import('../../api/lib/search-query.js');
+  it('the everyday words become the official word', () => {
+    expect(searchWords('je dois arrêter de travailler pour aider ma mère dépendante')).toContain('aidant');
+    expect(searchWords('congé pour m’occuper de mon père malade')).toContain('aidant');
+  });
+  it('a plain « aider » or a home-help request is left alone', () => {
+    expect(searchWords('aider ma mère')).not.toContain('aidant');
+    expect(searchWords('aide ménagère pour mon père âgé')).not.toContain('aidant');
+  });
+});
+
+describe('R38 (D16) — paying for a care home, entrusting a child', async () => {
+  const { searchWords } = await import('../../api/lib/search-query.js');
+  it('« payer la maison de retraite » → the words of the ASH sheet (F2444), not only « ehpad »', () => {
+    expect(searchWords('payer la maison de retraite')).toEqual(['sociale', 'hebergement', 'agee']);   // « aide » is a stopword
+    expect(searchWords('maison de retraite pour ma grand-mère')).toContain('ehpad');   // unchanged: looking for a home
+  });
+  it('« confier mon enfant » → the voluntary placement sheet (F959)', () => {
+    expect(searchWords('confier mon enfant ASE')).toEqual(expect.arrayContaining(['placement', 'volontaire', 'enfant']));
+    expect(searchWords('le juge a placé mon enfant')).not.toContain('volontaire');
+  });
+});

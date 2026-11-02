@@ -29,4 +29,6 @@ export const SCOPE = Object.freeze({
   194: ['Institut pour déficients visuels', 'Handicap'], 192: ['Institut d’éducation motrice', 'Handicap'], 188: ['Établissement pour enfants ou adolescents polyhandicapés', 'Handicap'],
   242: ['Service d’activité de jour', 'Handicap'], 198: ['Établissement et service de préorientation', 'Handicap'], 370: ['Établissement expérimental pour personnes handicapées', 'Handicap'],
   377: ['Établissement expérimental pour enfants handicapés', 'Handicap'], 379: ['Établissement expérimental pour adultes handicapés', 'Handicap'],
+  // R38: the institutional services that carry out the legal protection measures the judge orders (curatelle, tutelle — the « mjpm » need had no service)
+  340: ['Service mandataire judiciaire à la protection des majeurs', 'Protection juridique'],
 });

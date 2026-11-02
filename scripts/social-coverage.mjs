@@ -81,6 +81,13 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
       ...(answer?.placeIsService && s.structureTypes.includes(p.type_structure) && (annuaireRecord(p) || finessRecord(p)) ? [{ authority: 'LIEU_SERVICE_PUBLIC', updatedAt: p.date_verification }] : []),
     ];
     const services = (data.structures || []).map((p) => ({ p, list: matching(p) })).filter((x) => x.list.length);
+    // R38: a national hotline (service-response-types « national-hotline ») is a service when a PUBLISHED official Service-Public sheet states its number
+    // for this need: the number (spaces ignored, at least 3 digits — never « 15 » alone) within 300 characters of a keyword of the subdomain. A typed,
+    // separately counted path (serviceEvidence = OFFICIAL_SHEET_HOTLINE): the sheet text is the State's own statement that the channel exists and is reachable.
+    const hotlineSheets = !(answer?.types || []).includes('national-hotline') ? [] : (data.guide || []).filter((g) => /service-public\.(gouv\.)?fr/.test(text(g.sources_urls) + text(g.contenu_json?.provenance))).filter((g) => {
+      const t = fold(RIGHTS_FIELDS.map((f) => text(g[f])).join(' ')).replace(/(\d) (?=\d)/g, '$1');
+      return s.emergency.filter((n) => /^\d{3,}$/.test(n)).some((n) => [...t.matchAll(new RegExp(`(?<!\\d)${n}(?!\\d)`, 'g'))].some((m) => s.keywords.filter((kw) => !/^\d+$/.test(kw)).some((kw) => t.slice(Math.max(0, m.index - 300), m.index + 300).includes(fold(kw)))));
+    }).map((g) => `guide:${g.slug}`);
     const servicesEms = services.filter((x) => isEms(x.p));
     const contact = (p) => Boolean(p.telephone || p.email || p.site_web);
     const official = (x) => x.list.some((v) => ['OPERATEUR_PUBLIC', 'ORGANISME_GESTIONNAIRE', 'AUTORISATION_FINESS', 'LIEU_SERVICE_PUBLIC'].includes(v.authority));
@@ -98,18 +105,20 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
       accessModality: remote ? s.emergency.length > 0 || titled.length > 0 : servicesEms.some((x) => contact(x.p)),
       currentAvailability: !remote && servicesEms.some((x) => contact(x.p) && fresh(x)),
       orientationTested: (scenarioHits.get(s.id) || 0) > 0,
+      officialHotlineInSheet: hotlineSheets.length > 0,
     };
     // SERVICE_VERIFIED: the right is named by an official title AND a person can reach it — by the official national channel for a need served
     // remotely by nature, or by a verified local service of the Eurométropole with a way to contact it and its opening hours
     // SERVICE_DECLARED: the same, but the local service is only self-declared on a platform (attributed to its producer, not verified by the State)
     const localOk = (pred) => servicesEms.some((x) => pred(x) && contact(x.p));
-    const serviceStatus = evidence.verifiedRightsByTitle && (remote ? evidence.accessModality : localOk(official)) ? 'SERVICE_VERIFIED'
+    const byTitle = evidence.verifiedRightsByTitle && (remote ? evidence.accessModality : localOk(official));
+    const serviceStatus = byTitle || (remote && evidence.officialHotlineInSheet) ? 'SERVICE_VERIFIED'
       : evidence.verifiedRightsByTitle && !remote && localOk(() => true) ? 'SERVICE_DECLARED'
         : evidence.verifiedRightsByTitle || evidence.declaredSpecificService ? 'SERVICE_PARTIAL' : 'NO_VERIFIED_SERVICE';
     rows.push({ domain: d.id, letter: d.letter, subdomain: s.id, fr: s.fr, status,
       rightsContent: rights.length, rightsSlugs: rights.slice(0, 12), places: places.length, placesEurometropole: inEms.length, placeTypes: s.structureTypes,
       emergency: s.emergency, crossLanguageSearch: d.lexicon.some((c) => lexiconIds.has(c)), casf: s.casf, dataInclusion: s.dataInclusion,
-      remoteByNature: remote, responseTypes: answer?.types || null, nationalChannel: answer?.channel || null, insufficient: answer?.insufficient || null, evidence, serviceStatus, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : 'missing content and service data' });
+      remoteByNature: remote, responseTypes: answer?.types || null, nationalChannel: answer?.channel || null, insufficient: answer?.insufficient || null, evidence, serviceStatus, serviceEvidence: serviceStatus === 'SERVICE_VERIFIED' ? (byTitle ? 'OFFICIAL_TITLE_AND_CHANNEL' : 'OFFICIAL_SHEET_HOTLINE') : null, hotlineSheets, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : 'missing content and service data' });
   }
   const count = (k) => rows.reduce((a, r) => ({ ...a, [r[k]]: (a[r[k]] || 0) + 1 }), {});
   return { schema: 'ada-social-coverage/1', reference: ref.version, measuredAt: new Date().toISOString(), totals: { subdomains: rows.length, byStatus: count('status'), byServiceStatus: count('serviceStatus'),

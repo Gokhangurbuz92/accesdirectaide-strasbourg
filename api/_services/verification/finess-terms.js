@@ -7,8 +7,8 @@ export default {
    "id": "tre-r397-categorie-entite-geographique-exercice",
    "url": "https://smt.esante.gouv.fr/fhir/CodeSystem/tre-r397-categorie-entite-geographique-exercice",
    "name": "TreR397CategorieEntiteGeographiqueExercice",
-   "version": "20260601120000",
-   "date": "2026-06-01T12:00:00.000+00:00",
+   "version": "20261102120000",
+   "date": "2026-11-02T12:00:00+01:00",
    "codes": {
     "124": "Centre de Santé",
     "156": "Centre Médico-Psychologique (C.M.P.)",
@@ -47,6 +47,7 @@ export default {
     "257": "Foyers de jeunes travailleurs",
     "258": "Maisons Relais - Pensions de Famille",
     "259": "Autres résidences sociales",
+    "340": "Service mandataire judiciaire à la protection des majeurs",
     "347": "Centre d'Examens de Santé",
     "354": "Service de Soins Infirmiers A Domicile (S.S.I.A.D)",
     "370": "Etablissement Expérimental pour personnes handicapées",

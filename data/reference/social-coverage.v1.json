@@ -1,7 +1,7 @@
 {
  "schema": "ada-social-coverage/1",
  "reference": "2026-11-02.1",
- "measuredAt": "2026-11-02T17:41:50.189Z",
+ "measuredAt": "2026-11-02T20:25:36.088Z",
  "totals": {
   "subdomains": 86,
   "byStatus": {
@@ -10,24 +10,25 @@
    "TAXONOMY_ONLY": 3
   },
   "byServiceStatus": {
-   "SERVICE_PARTIAL": 41,
-   "SERVICE_VERIFIED": 32,
+   "SERVICE_PARTIAL": 39,
+   "SERVICE_VERIFIED": 35,
    "SERVICE_DECLARED": 8,
-   "NO_VERIFIED_SERVICE": 5
+   "NO_VERIFIED_SERVICE": 4
   },
   "evidence": {
    "taxonomy": 86,
-   "officialTopicSource": 58,
+   "officialTopicSource": 59,
    "verifiedRightsContent": 80,
-   "verifiedRightsByTitle": 55,
-   "verifiedProcedure": 52,
+   "verifiedRightsByTitle": 56,
+   "verifiedProcedure": 53,
    "verifiedEstablishment": 21,
    "declaredSpecificService": 52,
    "verifiedSpecificService": 35,
    "territorialEligibility": 71,
    "accessModality": 63,
    "currentAvailability": 37,
-   "orientationTested": 52
+   "orientationTested": 52,
+   "officialHotlineInSheet": 3
   }
  },
  "byDomain": [
@@ -199,20 +200,20 @@
    "subdomain": "aide-alimentaire",
    "fr": "Alimentation, hygiène, vêtements",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 15,
+   "rightsContent": 16,
    "rightsSlugs": [
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:service-de-soins-infirmiers-a-domicile-ssiad-f246",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
     "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
-    "guide:enfant-victime-de-maltraitance-f952",
-    "guide:traitement-de-la-toxicomanie-f740"
+    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
+    "guide:enfant-victime-de-maltraitance-f952"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -239,9 +240,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 180,
    "servicesEurometropole": 43,
@@ -300,9 +304,14 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": true
    },
-   "serviceStatus": "SERVICE_PARTIAL",
+   "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_SHEET_HOTLINE",
+   "hotlineSheets": [
+    "guide:quels-sont-les-numeros-en-cas-d-urgence-samu-pompiers-et-les-numeros-d-f33954"
+   ],
    "titledSlugs": [],
    "services": 179,
    "servicesEurometropole": 42,
@@ -323,8 +332,10 @@
    "subdomain": "acces-aux-droits",
    "fr": "Accès aux droits et non-recours",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 4,
+   "rightsContent": 6,
    "rightsSlugs": [
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
     "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
@@ -358,9 +369,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317"
    ],
@@ -414,9 +428,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 128,
    "servicesEurometropole": 57,
@@ -437,7 +454,7 @@
    "subdomain": "minima-sociaux",
    "fr": "Revenus minimum et ressources",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 39,
+   "rightsContent": 37,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
@@ -445,12 +462,12 @@
     "aide:microcredit-personnel",
     "aide:prime-activite",
     "aide:rsa",
-    "aide:aeeh",
     "aide:aide-juridictionnelle",
     "aide:c2s",
-    "aide:aah",
-    "demarche:demande-hlm-67-68",
-    "demarche:dossier-mdph-67-68"
+    "demarche:prime-activite-caf",
+    "demarche:demande-c2s",
+    "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -475,13 +492,17 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:prime-activite",
     "aide:rsa",
     "demarche:prime-activite-caf",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358"
    ],
    "services": 1,
@@ -498,10 +519,11 @@
    "subdomain": "energie",
    "fr": "Précarité énergétique",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 12,
+   "rightsContent": 13,
    "rightsSlugs": [
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
@@ -510,8 +532,7 @@
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:duree-de-conservation-des-papiers-f19134",
-    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
-    "actualite:heures-creuses-les-plages-horaires-evoluent-299a24"
+    "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -540,10 +561,14 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
     "guide:quand-s-applique-la-treve-hivernale-f34736"
    ],
    "services": 0,
@@ -558,8 +583,9 @@
    "subdomain": "hebergement-urgence",
    "fr": "Hébergement d'urgence et SIAO",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 6,
+   "rightsContent": 7,
    "rightsSlugs": [
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:quelles-solutions-d-hebergement-existent-pour-les-personnes-en-situati-f2003",
     "guide:droit-a-l-hebergement-opposable-daho-f20343",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
@@ -598,9 +624,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 24,
    "servicesEurometropole": 24,
@@ -650,9 +679,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 9,
    "servicesEurometropole": 8,
@@ -673,12 +705,14 @@
    "subdomain": "logement-social",
    "fr": "Demande de logement social",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 10,
+   "rightsContent": 12,
    "rightsSlugs": [
     "aide:als",
     "demarche:demande-hlm-67-68",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
     "guide:droit-a-l-hebergement-opposable-daho-f20343",
     "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
@@ -711,12 +745,16 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:als",
-    "demarche:demande-hlm-67-68"
+    "demarche:demande-hlm-67-68",
+    "guide:allocation-de-logement-sociale-als-f1280"
    ],
    "services": 183,
    "servicesEurometropole": 46,
@@ -737,20 +775,20 @@
    "subdomain": "aides-logement",
    "fr": "Aides au paiement du logement",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 21,
+   "rightsContent": 25,
    "rightsSlugs": [
     "aide:apl",
     "aide:als",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
     "guide:un-proche-est-decede-f16507",
-    "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245",
-    "guide:carte-mobilite-inclusion-cmi-f34049",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158"
+    "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -777,12 +815,17 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:apl",
     "aide:als",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:quelle-aide-apporte-le-fonds-de-solidarite-pour-le-logement-fsl-f1334",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
@@ -803,14 +846,15 @@
    "subdomain": "expulsion-impayes",
    "fr": "Impayés de loyer et prévention des expulsions",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 10,
+   "rightsContent": 11,
    "rightsSlugs": [
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
     "guide:quand-s-applique-la-treve-hivernale-f34736",
     "guide:droit-a-l-hebergement-opposable-daho-f20343",
+    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037",
     "guide:interruption-volontaire-de-grossesse-ivg-f1551",
@@ -842,10 +886,14 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:l-aide-personnelle-au-logement-apl-alf-ou-als-est-elle-maintenue-en-ca-f32037"
    ],
@@ -898,9 +946,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
     "guide:droit-a-l-hebergement-opposable-daho-f20343"
@@ -917,12 +968,13 @@
    "subdomain": "habitat-indigne",
    "fr": "Logement indigne ou insalubre",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 6,
+   "rightsContent": 7,
    "rightsSlugs": [
-    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
     "guide:droit-a-l-hebergement-opposable-daho-f20343",
+    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
     "guide:placement-d-un-enfant-sur-decision-judiciaire-f3140",
     "dispositif:fonds-de-solidarite-pour-le-logement-fsl-de-la-collectivite-europeenne-d-alsace-bas-rhin-hors-eurometropole-f188c3"
    ],
@@ -952,9 +1004,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:habitat-insalubre-ou-habitat-indigne-f16158"
    ],
@@ -1001,9 +1056,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 32,
    "servicesEurometropole": 23,
@@ -1054,9 +1112,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018"
    ],
@@ -1107,9 +1168,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501"
    ],
@@ -1127,10 +1191,11 @@
    "subdomain": "ase",
    "fr": "Aide sociale à l'enfance (ASE)",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 25,
+   "rightsContent": 26,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:carte-mobilite-inclusion-cmi-f34049",
@@ -1139,8 +1204,7 @@
     "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
     "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
     "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
-    "guide:placement-volontaire-d-un-enfant-par-ses-parents-f959",
-    "guide:placement-d-un-enfant-sur-decision-judiciaire-f3140"
+    "guide:placement-volontaire-d-un-enfant-par-ses-parents-f959"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1167,9 +1231,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:placement-volontaire-d-un-enfant-par-ses-parents-f959",
     "guide:placement-d-un-enfant-sur-decision-judiciaire-f3140"
@@ -1222,9 +1289,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:qu-est-ce-que-l-aide-educative-a-domicile-aed-pour-les-familles-en-dif-f970",
     "guide:qu-est-ce-que-l-assistance-educative-en-milieu-ouvert-aemo-f39128"
@@ -1281,9 +1351,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:enfant-victime-de-maltraitance-f952"
@@ -1329,9 +1402,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:quel-est-le-titre-de-sejour-delivre-a-un-mineur-etranger-isole-a-sa-ma-f31037"
    ],
@@ -1379,9 +1455,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
@@ -1424,9 +1503,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 1,
    "servicesEurometropole": 1,
@@ -1479,9 +1561,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 1,
    "servicesEurometropole": 1,
@@ -1529,9 +1614,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:faj-strasbourg"
    ],
@@ -1550,20 +1638,20 @@
    "subdomain": "etudiants",
    "fr": "Vie étudiante et précarité étudiante",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 31,
+   "rightsContent": 32,
    "rightsSlugs": [
     "aide:c2s",
-    "aide:als",
-    "demarche:demande-hlm-67-68",
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
     "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
     "demarche:demande-c2s",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
-    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:service-de-soins-infirmiers-a-domicile-ssiad-f246",
+    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:un-proche-est-decede-f16507"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1588,9 +1676,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5"
    ],
@@ -1608,20 +1699,20 @@
    "subdomain": "prestations-familiales",
    "fr": "Prestations familiales",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 23,
+   "rightsContent": 27,
    "rightsSlugs": [
     "aide:prime-activite",
     "aide:ave-avf",
     "aide:apl",
     "aide:als",
     "demarche:prime-activite-caf",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
     "guide:un-proche-est-decede-f16507",
-    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
-    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
-    "guide:allocation-de-soutien-familial-asf-parents-separes-f815"
+    "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
    ],
    "places": 12,
    "placesEurometropole": 4,
@@ -1651,9 +1742,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 12,
    "servicesEurometropole": 4,
@@ -1674,18 +1768,18 @@
    "status": "PARTIALLY_COVERED",
    "rightsContent": 39,
    "rightsSlugs": [
-    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:pension-de-retraite-de-base-a-taux-plein-du-salarie-a289e8",
-    "demarche:actualisation-france-travail",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:qu-est-ce-que-l-homophobie-f35456",
     "guide:un-proche-est-decede-f16507",
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
-    "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245"
+    "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245",
+    "guide:carte-mobilite-inclusion-cmi-f34049",
+    "guide:aide-personnalisee-au-logement-apl-f12006"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1710,9 +1804,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:interruption-volontaire-de-grossesse-ivg-f1551"
    ],
@@ -1730,18 +1827,18 @@
    "status": "PARTIALLY_COVERED",
    "rightsContent": 27,
    "rightsSlugs": [
-    "aide:prime-activite",
-    "aide:rsa",
     "aide:ave-avf",
     "aide:aeeh",
     "demarche:rdv-titre-sejour-67",
     "demarche:dossier-mdph-67-68",
-    "demarche:prime-activite-caf",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:qu-est-ce-que-l-homophobie-f35456",
     "guide:un-proche-est-decede-f16507",
-    "guide:allocation-de-soutien-familial-asf-parents-separes-f815"
+    "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1768,9 +1865,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
     "guide:placement-volontaire-d-un-enfant-par-ses-parents-f959"
@@ -1794,10 +1894,9 @@
    "subdomain": "separation",
    "fr": "Séparation, médiation familiale, pension alimentaire",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 18,
+   "rightsContent": 17,
    "rightsSlugs": [
-    "aide:prime-activite",
-    "demarche:prime-activite-caf",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:un-proche-est-decede-f16507",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
@@ -1807,7 +1906,8 @@
     "guide:duree-de-conservation-des-papiers-f19134",
     "guide:placement-volontaire-d-un-enfant-par-ses-parents-f959",
     "guide:placement-d-un-enfant-sur-decision-judiciaire-f3140",
-    "guide:enfant-victime-de-maltraitance-f952"
+    "guide:enfant-victime-de-maltraitance-f952",
+    "guide:tutelle-d-un-majeur-f2120"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1834,9 +1934,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827"
    ],
@@ -1854,7 +1957,7 @@
    "status": "COVERED_VERIFIED",
    "rightsContent": 5,
    "rightsSlugs": [
-    "demarche:prime-activite-caf",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
@@ -1886,9 +1989,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815"
    ],
@@ -1935,9 +2041,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 2,
    "servicesEurometropole": 2,
@@ -1954,20 +2063,20 @@
    "subdomain": "mdph-droits",
    "fr": "MDPH et droits (AAH, PCH, AEEH, RQTH, CMI)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 13,
+   "rightsContent": 12,
    "rightsSlugs": [
     "aide:pch",
     "aide:aeeh",
-    "aide:c2s",
     "aide:aah",
     "demarche:dossier-mdph-67-68",
-    "demarche:demande-c2s",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:carte-mobilite-inclusion-cmi-f34049",
     "guide:quelle-aide-apporte-le-fonds-de-solidarite-pour-le-logement-fsl-f1334",
     "guide:maprimeadapt-travaux-d-adaptation-du-logement-a-la-perte-d-autonomie-f37501",
-    "guide:quel-est-le-cout-d-une-tutelle-d-une-curatelle-d-une-habilitation-fami-f3165"
+    "guide:quel-est-le-cout-d-une-tutelle-d-une-curatelle-d-une-habilitation-fami-f3165",
+    "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -1992,9 +2101,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:pch",
     "aide:aeeh",
@@ -2045,9 +2157,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 56,
    "servicesEurometropole": 26,
@@ -2100,9 +2215,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 67,
    "servicesEurometropole": 27,
@@ -2152,9 +2270,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 22,
    "servicesEurometropole": 12,
@@ -2207,9 +2328,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 24,
    "servicesEurometropole": 9,
@@ -2260,9 +2384,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
@@ -2276,14 +2403,13 @@
    "subdomain": "apa-aspa",
    "fr": "APA, ASPA, ASH",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 12,
+   "rightsContent": 11,
    "rightsSlugs": [
     "aide:apa-alsace",
-    "aide:c2s",
-    "demarche:demande-c2s",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
     "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:un-proche-est-decede-f16507",
@@ -2314,9 +2440,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:apa-alsace",
     "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444"
@@ -2333,11 +2462,12 @@
    "subdomain": "aide-domicile",
    "fr": "Aide et soins à domicile",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 6,
+   "rightsContent": 7,
    "rightsSlugs": [
+    "guide:conge-de-proche-aidant-f16920",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
-    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:service-de-soins-infirmiers-a-domicile-ssiad-f246",
+    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:qu-est-ce-que-l-aide-educative-a-domicile-aed-pour-les-familles-en-dif-f970",
     "guide:tutelle-d-un-majeur-f2120",
     "guide:curatelle-d-une-personne-majeure-f2094"
@@ -2371,12 +2501,15 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
-    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
-    "guide:service-de-soins-infirmiers-a-domicile-ssiad-f246"
+    "guide:service-de-soins-infirmiers-a-domicile-ssiad-f246",
+    "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245"
    ],
    "services": 138,
    "servicesEurometropole": 79,
@@ -2397,14 +2530,15 @@
    "subdomain": "ehpad-residences",
    "fr": "EHPAD et résidences autonomie",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 11,
+   "rightsContent": 12,
    "rightsSlugs": [
-    "aide:als",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:un-proche-est-decede-f16507",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:quel-est-le-cout-d-une-tutelle-d-une-curatelle-d-une-habilitation-fami-f3165",
     "guide:habilitation-familiale-f33367",
     "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917",
@@ -2439,9 +2573,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255"
@@ -2499,9 +2636,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 9,
    "servicesEurometropole": 5,
@@ -2555,9 +2695,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:enfant-victime-de-maltraitance-f952"
@@ -2607,9 +2750,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:directives-anticipees-dernieres-volontes-sur-les-soins-en-fin-de-vie-f32010",
     "guide:accompagnement-et-soins-palliatifs-f39676",
@@ -2627,20 +2773,20 @@
    "subdomain": "couverture-sante",
    "fr": "Couverture santé (CSS, AME, Carte Vitale)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 19,
+   "rightsContent": 20,
    "rightsSlugs": [
     "aide:c2s",
     "demarche:couverture-maladie-complementaire-mutuelle-f60fb1",
     "demarche:demande-c2s",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
     "guide:modification-de-la-mention-du-sexe-a-l-etat-civil-f34826",
     "guide:duree-de-conservation-des-papiers-f19134",
     "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
-    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774",
-    "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
+    "guide:que-faire-en-cas-de-vol-de-tous-ses-papiers-d-identite-en-meme-temps-f10774"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -2665,9 +2811,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:c2s",
     "demarche:demande-c2s",
@@ -2723,9 +2872,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 80,
    "servicesEurometropole": 43,
@@ -2775,9 +2927,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "demarche:pass-culture-jeunes"
    ],
@@ -2823,9 +2978,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:interruption-volontaire-de-grossesse-ivg-f1551",
     "guide:contraception-f707"
@@ -2876,9 +3034,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:consultation-d-un-psychologue-ou-d-un-psychiatre-quelle-prise-en-charg-f34917"
    ],
@@ -2928,9 +3089,14 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": true
    },
-   "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_SHEET_HOTLINE",
+   "hotlineSheets": [
+    "guide:quels-sont-les-numeros-en-cas-d-urgence-samu-pompiers-et-les-numeros-d-f33954"
+   ],
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
@@ -2977,9 +3143,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 15,
    "servicesEurometropole": 11,
@@ -3031,9 +3200,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:violences-conjugales-f12544"
    ],
@@ -3053,8 +3225,8 @@
    "rightsSlugs": [
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
     "guide:qu-est-ce-que-l-homophobie-f35456",
-    "guide:quelles-solutions-d-hebergement-existent-pour-les-personnes-en-situati-f2003",
     "guide:quand-s-applique-la-treve-hivernale-f34736",
+    "guide:quelles-solutions-d-hebergement-existent-pour-les-personnes-en-situati-f2003",
     "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
     "guide:qu-est-ce-que-l-assistance-educative-en-milieu-ouvert-aemo-f39128",
     "guide:enfant-victime-de-maltraitance-f952",
@@ -3090,9 +3262,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:violences-conjugales-f12544"
    ],
@@ -3143,9 +3318,15 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": true
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [
+    "guide:violences-conjugales-f12544",
+    "guide:que-peut-faire-la-victime-d-une-infraction-penale-f20789"
+   ],
    "titledSlugs": [
     "guide:victime-d-infraction-indemnisation-par-le-fonds-de-garantie-des-victim-f2313"
    ],
@@ -3161,7 +3342,7 @@
    "subdomain": "traite-exploitation",
    "fr": "Traite et exploitation",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 38,
+   "rightsContent": 41,
    "rightsSlugs": [
     "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
@@ -3172,9 +3353,9 @@
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
     "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
-    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417",
-    "guide:qu-est-ce-que-l-homophobie-f35456"
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -3199,9 +3380,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
@@ -3256,9 +3440,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:harcelement-sexuel-ou-sexiste-f1043",
     "guide:harcelement-moral-f2354"
@@ -3315,9 +3502,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:aide-juridictionnelle"
    ],
@@ -3333,10 +3523,11 @@
    "subdomain": "pjj-spip",
    "fr": "PJJ, SPIP et sortie de détention",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 5,
+   "rightsContent": 6,
    "rightsSlugs": [
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:comment-un-detenu-est-il-suivi-apres-sa-sortie-de-prison-f32584",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
     "guide:habitat-insalubre-ou-habitat-indigne-f16158",
     "guide:enfant-victime-de-maltraitance-f952",
     "guide:violences-conjugales-f12544"
@@ -3370,9 +3561,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:comment-un-detenu-est-il-suivi-apres-sa-sortie-de-prison-f32584"
    ],
@@ -3390,20 +3584,20 @@
    "subdomain": "recours",
    "fr": "Recours administratifs",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 27,
+   "rightsContent": 32,
    "rightsSlugs": [
+    "guide:conge-de-proche-aidant-f16920",
     "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:qu-est-ce-que-l-homophobie-f35456",
     "guide:un-proche-est-decede-f16507",
     "guide:carte-mobilite-inclusion-cmi-f34049",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158",
+    "guide:aide-personnalisee-au-logement-apl-f12006",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:droit-au-logement-opposable-dalo-faire-valoir-son-droit-a-un-logement-f18005",
-    "guide:droit-a-l-hebergement-opposable-daho-f20343",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:sans-domicile-stable-ou-fixe-sdf-en-quoi-consiste-la-domiciliation-ou--f17317",
-    "guide:modification-de-la-mention-du-sexe-a-l-etat-civil-f34826",
-    "guide:duree-de-conservation-des-papiers-f19134"
+    "guide:droit-a-l-hebergement-opposable-daho-f20343"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -3428,9 +3622,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:recours-gracieux-recours-hierarchique-et-recours-administratif-prealab-f2474",
     "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849"
@@ -3484,9 +3681,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:quel-est-le-cout-d-une-tutelle-d-une-curatelle-d-une-habilitation-fami-f3165",
     "guide:tutelle-d-un-majeur-f2120",
@@ -3516,7 +3716,9 @@
    ],
    "places": 0,
    "placesEurometropole": 0,
-   "placeTypes": [],
+   "placeTypes": [
+    "Service mandataire judiciaire à la protection des majeurs"
+   ],
    "emergency": [],
    "crossLanguageSearch": true,
    "casf": [
@@ -3545,9 +3747,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
@@ -3561,20 +3766,20 @@
    "subdomain": "titre-sejour",
    "fr": "Titre de séjour et démarches en préfecture",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 37,
+   "rightsContent": 38,
    "rightsSlugs": [
     "aide:microcredit-personnel",
-    "aide:pch",
-    "aide:aide-juridictionnelle",
-    "aide:als",
     "demarche:rdv-titre-sejour-67",
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
-    "demarche:montant-de-la-retraite-de-l-agent-public-8e90c3",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:qu-est-ce-que-l-homophobie-f35456",
-    "guide:un-proche-est-decede-f16507"
+    "guide:un-proche-est-decede-f16507",
+    "guide:carte-mobilite-inclusion-cmi-f34049"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -3599,9 +3804,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "demarche:rdv-titre-sejour-67",
     "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
@@ -3621,8 +3829,9 @@
    "subdomain": "asile",
    "fr": "Asile : procédure, CADA, HUDA",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 8,
+   "rightsContent": 9,
    "rightsSlugs": [
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:droit-a-l-hebergement-opposable-daho-f20343",
     "guide:foyer-de-jeunes-travailleurs-fjt-ou-habitat-jeunes-f2018",
@@ -3657,9 +3866,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:statut-de-refugie-protection-subsidiaire-ou-temporaire-quelles-differe-f299"
    ],
@@ -3715,9 +3927,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:statut-de-refugie-protection-subsidiaire-ou-temporaire-quelles-differe-f299"
    ],
@@ -3762,9 +3977,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:qu-est-ce-que-le-contrat-d-integration-republicaine-cir-f17048"
    ],
@@ -3820,9 +4038,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:qu-est-ce-que-l-aide-medicale-de-l-etat-ame-f3079"
    ],
@@ -3838,20 +4059,20 @@
    "subdomain": "recherche-emploi",
    "fr": "Recherche d'emploi et chômage",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 16,
+   "rightsContent": 17,
    "rightsSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
     "aide:aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97",
-    "demarche:retraite-anticipee-pour-carriere-longue-du-salarie-4c374c",
     "demarche:actualisation-france-travail",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:faut-il-signaler-un-changement-de-situation-demenagement-separation-ch-f827",
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
     "guide:allocation-de-soutien-familial-asf-parents-separes-f815",
-    "guide:loyers-impayes-et-expulsion-du-locataire-f31272",
-    "guide:duree-de-conservation-des-papiers-f19134"
+    "guide:allocation-de-logement-sociale-als-f1280",
+    "guide:loyers-impayes-et-expulsion-du-locataire-f31272"
    ],
    "places": 11,
    "placesEurometropole": 7,
@@ -3878,9 +4099,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-agent-public-d-c02687",
     "aide:allocation-chomage-d-aide-au-retour-a-l-emploi-are-d-un-salarie-du-sec-50a72e",
@@ -3933,9 +4157,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
    ],
@@ -3956,18 +4183,18 @@
    "status": "PARTIALLY_COVERED",
    "rightsContent": 63,
    "rightsSlugs": [
-    "aide:faj-strasbourg",
     "aide:permis",
     "demarche:rdv-titre-sejour-67",
-    "demarche:etudiant-etranger-en-france-visa-de-long-sejour-ou-titre-de-sejour-c8b8e5",
-    "demarche:actualisation-france-travail",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
     "guide:maltraitance-sur-une-personne-agee-comment-l-identifier-et-la-signaler-f861",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
-    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
+    "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
+    "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -3994,9 +4221,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "demarche:rdv-titre-sejour-67"
    ],
@@ -4046,9 +4276,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 3,
    "servicesEurometropole": 3,
@@ -4105,9 +4338,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 5,
    "servicesEurometropole": 5,
@@ -4166,9 +4402,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134"
    ],
@@ -4217,9 +4456,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:refus-d-ouverture-de-compte-bancaire-droit-au-compte-f2417"
    ],
@@ -4235,12 +4477,13 @@
    "subdomain": "impots",
    "fr": "Impôts et démarches fiscales",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 8,
+   "rightsContent": 9,
    "rightsSlugs": [
     "demarche:montant-de-la-retraite-du-salarie-du-secteur-prive-5219e9",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
+    "guide:allocation-de-logement-sociale-als-f1280",
     "guide:duree-de-conservation-des-papiers-f19134",
     "guide:mandat-de-protection-future-f16670",
     "guide:curatelle-d-une-personne-majeure-f2094",
@@ -4275,9 +4518,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358"
    ],
@@ -4327,9 +4573,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 11,
    "servicesEurometropole": 7,
@@ -4377,9 +4626,12 @@
     "territorialEligibility": true,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 11,
    "servicesEurometropole": 9,
@@ -4435,9 +4687,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 1,
    "servicesEurometropole": 1,
@@ -4481,9 +4736,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "NO_VERIFIED_SERVICE",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 0,
    "servicesEurometropole": 0,
@@ -4497,9 +4755,10 @@
    "subdomain": "mobilite-emploi",
    "fr": "Mobilité vers l'emploi",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 6,
+   "rightsContent": 7,
    "rightsSlugs": [
     "aide:permis",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:duree-de-conservation-des-papiers-f19134",
     "guide:que-faire-en-cas-de-perte-de-tous-ses-papiers-d-identite-en-meme-temps-f31421",
@@ -4531,9 +4790,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:permis"
    ],
@@ -4555,8 +4817,9 @@
    "subdomain": "defenseur-droits",
    "fr": "Défenseur des droits et recours",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 5,
+   "rightsContent": 6,
    "rightsSlugs": [
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:qu-est-ce-que-l-homophobie-f35456",
     "guide:enfant-victime-de-maltraitance-f952",
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158",
@@ -4588,9 +4851,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:litige-avec-l-administration-saisir-le-defenseur-des-droits-f13158"
    ],
@@ -4638,9 +4904,12 @@
     "territorialEligibility": false,
     "accessModality": false,
     "currentAvailability": false,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:qu-est-ce-que-l-homophobie-f35456"
    ],
@@ -4656,8 +4925,9 @@
    "subdomain": "aidants",
    "fr": "Aidants familiaux",
    "status": "PARTIALLY_COVERED",
-   "rightsContent": 3,
+   "rightsContent": 4,
    "rightsSlugs": [
+    "guide:conge-de-proche-aidant-f16920",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
     "guide:comment-recourir-au-mediateur-de-l-assurance-maladie-regime-general-f20849",
     "guide:allocation-journaliere-d-accompagnement-d-une-personne-en-fin-de-vie-f706"
@@ -4677,20 +4947,25 @@
    "insufficient": null,
    "evidence": {
     "taxonomy": true,
-    "officialTopicSource": false,
+    "officialTopicSource": true,
     "verifiedRightsContent": true,
-    "verifiedRightsByTitle": false,
-    "verifiedProcedure": false,
+    "verifiedRightsByTitle": true,
+    "verifiedProcedure": true,
     "verifiedEstablishment": false,
     "declaredSpecificService": true,
     "verifiedSpecificService": true,
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
-   "serviceStatus": "SERVICE_PARTIAL",
-   "titledSlugs": [],
+   "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
+   "titledSlugs": [
+    "guide:conge-de-proche-aidant-f16920"
+   ],
    "services": 6,
    "servicesEurometropole": 3,
    "servicesOfficial": 4,
@@ -4741,9 +5016,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 184,
    "servicesEurometropole": 46,
@@ -4802,9 +5080,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_DECLARED",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [
     "aide:ave-avf",
     "demarche:pass-culture-jeunes"
@@ -4825,20 +5106,20 @@
    "subdomain": "deces-deuil",
    "fr": "Décès et deuil : démarches et droits",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 17,
+   "rightsContent": 19,
    "rightsSlugs": [
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
+    "guide:conge-de-proche-aidant-f16920",
     "guide:ehpad-etablissement-d-hebergement-pour-personnes-agees-dependantes-f763",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:un-proche-est-decede-f16507",
     "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245",
     "guide:duree-de-conservation-des-papiers-f19134",
     "guide:enfant-victime-de-maltraitance-f952",
     "guide:tutelle-d-un-majeur-f2120",
     "guide:sauvegarde-de-justice-d-un-majeur-f2075",
-    "guide:mandat-de-protection-future-f16670",
-    "guide:habilitation-familiale-f33367",
-    "guide:curatelle-d-une-personne-majeure-f2094"
+    "guide:mandat-de-protection-future-f16670"
    ],
    "places": 0,
    "placesEurometropole": 0,
@@ -4865,9 +5146,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": false,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_VERIFIED",
+   "serviceEvidence": "OFFICIAL_TITLE_AND_CHANNEL",
+   "hotlineSheets": [],
    "titledSlugs": [
     "guide:un-proche-est-decede-f16507"
    ],
@@ -4883,20 +5167,20 @@
    "subdomain": "institutions-locales",
    "fr": "Institutions locales (mairies, CCAS, Maisons des solidarités)",
    "status": "COVERED_VERIFIED",
-   "rightsContent": 26,
+   "rightsContent": 28,
    "rightsSlugs": [
     "aide:permis",
-    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:quels-sont-les-hebergements-permanents-pour-personnes-agees-ehpad-f255",
+    "guide:aide-sociale-a-l-hebergement-ash-d-une-personne-agee-f2444",
     "guide:quelles-aides-peut-toucher-une-personne-agee-en-situation-de-precarite-f32057",
     "guide:personne-agee-aide-financiere-pour-remunerer-une-aide-a-domicile-f245",
+    "guide:impayes-de-factures-gaz-electricite-eau-telephone-internet-quelles-con-f20055",
+    "guide:rsa-demandeur-de-25-ans-et-plus-f19778",
     "guide:vous-n-arrivez-plus-a-payer-vos-factures-aides-financieres-f38589",
     "guide:impot-sur-le-revenu-declaration-de-revenus-annuelle-f358",
     "guide:deposer-un-dossier-de-surendettement-devant-la-commission-de-surendett-f134",
     "guide:un-proche-est-decede-f16507",
-    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284",
-    "guide:vous-elevez-seul-votre-enfant-ou-vos-enfants-aides-financieres-f38245",
-    "guide:habitat-insalubre-ou-habitat-indigne-f16158"
+    "guide:en-quoi-consiste-l-insertion-par-l-activite-economique-iae-f2284"
    ],
    "places": 722,
    "placesEurometropole": 105,
@@ -4927,9 +5211,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": true
+    "orientationTested": true,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 722,
    "servicesEurometropole": 105,
@@ -4975,9 +5262,12 @@
     "territorialEligibility": true,
     "accessModality": true,
     "currentAvailability": true,
-    "orientationTested": false
+    "orientationTested": false,
+    "officialHotlineInSheet": false
    },
    "serviceStatus": "SERVICE_PARTIAL",
+   "serviceEvidence": null,
+   "hotlineSheets": [],
    "titledSlugs": [],
    "services": 2,
    "servicesEurometropole": 2,
@@ -4989,11 +5279,11 @@
    "gap": "missing content and service data"
   }
  ],
- "note": "Two measurements. status = content coverage (keyword anywhere in published rights content, or places of the type). serviceStatus = stricter service coverage (official title naming the need, and a reachable channel: the national one for remote needs, a local SERVICE — not a building — with a contact channel otherwise: SERVICE_VERIFIED when a public operator or the managing body lists it, SERVICE_DECLARED when it is only self-declared on a platform). Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet).",
+ "note": "Two measurements. status = content coverage (keyword anywhere in published rights content, or places of the type). serviceStatus = stricter service coverage (official title naming the need, and a reachable channel: the national one for remote needs, a local SERVICE — not a building — with a contact channel otherwise: SERVICE_VERIFIED when a public operator or the managing body lists it, SERVICE_DECLARED when it is only self-declared on a platform). Keyword and place-type matches against the published (D-5 verified) catalogue. A match is not a relevance judgement; places are physical establishments, not verified services (the catalogue has no service-level records yet). R38: a national hotline also counts as a verified service when a published official Service-Public sheet states its number for this need (serviceEvidence OFFICIAL_SHEET_HOTLINE; with the R37 rules alone the same catalogue measures 33 / 8 / 40 / 5).",
  "catalogue": {
   "aide": 17,
   "demarche": 13,
-  "guide": 70,
+  "guide": 75,
   "dispositif": 1,
   "actualite": 10,
   "structures": 1633

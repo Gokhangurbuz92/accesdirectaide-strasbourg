@@ -28,8 +28,12 @@ export const CASES = [
   ['accompagnement pour gérer mes prestations sociales', 'F1336'], ['combien coûte une curatelle', 'F3165'], ['numéro d\'urgence et d\'écoute', 'F33954'],
   ['arrêter la drogue se soigner', 'F740'], ['addiction au jeu interdiction de casino', 'F15814'], ['se soigner sans papiers', 'F3079'],
   ['indemnisation victime d\'agression', 'F2313'], ['différence réfugié protection subsidiaire', 'F299'],
+  // R38: the 5 sheets of the R37 batch (published by the owner on 02/11/2026), in everyday words
+  ['on va me couper l\'électricité car je n\'ai pas payé', 'F20055'], ['facture d\'eau impayée que risque-t-on', 'F20055'], ['est-ce que je peux toucher les APL', 'F12006'],
+  ['aide de la CAF pour payer mon loyer', 'F12006'], ['allocation logement sociale', 'F1280'], ['j\'ai plus de 25 ans je suis sans ressources', 'F19778'],
+  ['comment demander le RSA', 'F19778'], ['je dois arrêter de travailler pour aider ma mère dépendante', 'F16920'], ['congé pour m\'occuper de mon père malade', 'F16920'],
   // negative controls
-  ['renouveler carte d\'identité', null, 'F1551'], ['permis de conduire', null, 'F3079'], ['inscription à l\'école', null, 'F3140'], ['bourse étudiante', null, 'F2444'], ['facture électricité impayée', null, 'F2094'], ['ouvrir un compte bancaire', null, 'F12544'],
+  ['renouveler carte d\'identité', null, 'F1551'], ['permis de conduire', null, 'F3079'], ['inscription à l\'école', null, 'F3140'], ['bourse étudiante', null, 'F2444'], ['facture électricité impayée', null, 'F2094'], ['ouvrir un compte bancaire', null, 'F12544'], ['renouveler mon passeport', null, 'F19778'], ['congé maternité', null, 'F20055'],
 ];
 const res = await fetch(`${base}/api/health`); const cookie = (res.headers.getSetCookie?.() || []).map((c) => c.split(';')[0]).join('; '); const token = /__csrf=([^;]+)/.exec(cookie)?.[1];
 const rows = [];

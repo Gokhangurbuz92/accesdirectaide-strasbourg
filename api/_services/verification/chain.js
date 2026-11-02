@@ -179,6 +179,8 @@ export async function runVeille(opts = {}) {
   const ctx = { db, env, runId: acq.id, scope, log, deadline, counts: {}, texts: opts.texts !== false, generate: opts.generate, force: Boolean(opts.force),
     limits: { newOffices: 150, newFiness: 150, newDataInclusion: 100, examineDataInclusion: 150, newFiches: 6, reviewSources: 30, ...(opts.limits || {}) }, only, finessFiles: opts.finessFiles || null, finess: null, finessOk: false,
     dataInclusionFiles: opts.dataInclusionFiles || null, di: null, select: typeof opts.select === 'function' ? opts.select : () => true,
+    // R38: a bounded run may add new FINESS records of these official categories only (e.g. ['340'], the MJPM services); unset = every category in scope
+    categories: Array.isArray(opts.categories) && opts.categories.length ? new Set(opts.categories.map(String)) : null,
     net: { fetchImpl: opts.fetchImpl, env }, hints: loadHints(opts.root || process.cwd()), archive: null, metas: [], offices: [], allOffices: [], officeRows: [], annuaireOk: false,
     trusted: [], registry: [], departement: opts.departement || '67', cacheDir: opts.cacheDir !== undefined ? opts.cacheDir : (env.ADA_VEILLE_CACHE_DIR || null),
     machine, health, lastHealth: null, modelOptions: machine ? modelOptions(env) : {}, modelUsed: false, stop: null, progress: {}, lastBeat: 0,
@@ -1091,7 +1093,8 @@ async function feedFiness(ctx) {
     }
     return null;
   };
-  const fresh = [...ctx.finess.byFiness.values()].filter((e) => e.open && e.scope && !byFiness.has(e.finess) && e.nom && e.code_postal && String(e.insee || e.code_postal).startsWith(ctx.departement));
+  const fresh = [...ctx.finess.byFiness.values()].filter((e) => e.open && e.scope && !byFiness.has(e.finess) && e.nom && e.code_postal && String(e.insee || e.code_postal).startsWith(ctx.departement)
+    && (!ctx.categories || ctx.categories.has(String(e.category))));
   let created = 0; let seen = 0;
   for (const e of fresh) {
     if (created >= ctx.limits.newFiness || ctx.halted() || !(await beat(ctx, { done: created, total: Math.min(fresh.length, ctx.limits.newFiness), current: e.nom }))) break;

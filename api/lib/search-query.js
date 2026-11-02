@@ -44,6 +44,10 @@ const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des d
  * Only equivalences of meaning, never a route to one record.
  */
 export const EVERYDAY_PHRASES = [
+  // R38 (D16): paying for a care home is what the sheet calls « aide sociale à l'hébergement » (F2444), not the list of care homes (F255) — before « ehpad »
+  [/\b(payer|financer|regler) (la |une |l')?(maisons? de retraite|ehpad)\b/g, 'aide sociale hebergement agee'],
+  // R38 (D16): parents who « entrust » their child to child protection: the sheet « Placement volontaire d'un enfant par ses parents » (F959)
+  [/\bconfier (mon|ma|mes|notre|nos) (enfants?|fils|filles?|bebes?) (a l'?\s?)?ase\b/g, 'placement volontaire enfant parents ase'],
   [/\b(sans[\s-]+papiers?|pas de papiers)\b/g, 'irreguliere'],
   [/\bmaisons? de retraite\b/g, 'ehpad'],
   [/\bgrands?[\s-]+(meres?|peres?|parents)\b/g, 'agee'],
@@ -51,6 +55,8 @@ export const EVERYDAY_PHRASES = [
   [/\b(maman|papa|parent|mere|pere)s? (solo|seule?s?|celibataires?)\b/g, 'monoparentale'],
   [/\b(dans la rue|a la rue|sans[\s-]+abris?)\b/g, 'precarite'],
   [/\b(petites? (pension|retraite)s?|petits revenus|faibles revenus|peu de revenus)\b/g, 'precarite'],
+  // R38: helping a dependent relative is what the official sheets call « proche aidant » (congé de proche aidant, F16920)
+  [/\b((arreter|cesser|reduire|quitter) de travailler pour (aider|m'?\s?occuper d[e'])|m'?\s?occuper d[e'] ?(ma|mon) (mere|pere|parent|proche|mari|femme)|aider (ma|mon) (mere|pere|parent|proche) (dependante?|malade|agee?|handicapee?))\b/g, 'aidant'],
 ];
 const everydayToOfficial = (folded) => EVERYDAY_PHRASES.reduce((t, [re, word]) => t.replace(re, ` ${word} `), folded);
 

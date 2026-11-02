@@ -27,7 +27,7 @@
   "crise-suicide": { "types": ["national-hotline"], "national": true, "channel": "3114 ; 15", "officialSheets": ["F33954"] },
   "victimes": { "types": ["national-hotline", "specialised-association", "administrative-procedure"], "national": true, "channel": "116 006", "officialSheets": ["F2313", "F33954"] },
   "pjj-spip": { "types": ["public-authority"], "national": false, "local": { "route": "service pénitentiaire d'insertion et de probation du Bas-Rhin ; protection judiciaire de la jeunesse", "verified": false }, "officialSheets": ["F32584"] },
-  "mjpm": { "types": ["public-authority", "specialised-association"], "national": false, "local": { "route": "services mandataires judiciaires du répertoire FINESS ; juge des contentieux de la protection", "verified": false }, "officialSheets": ["F1336", "F3165"] },
+  "mjpm": { "types": ["public-authority", "specialised-association"], "national": false, "placeIsService": true, "local": { "route": "services mandataires judiciaires du répertoire FINESS (catégorie 340, R38) ; le juge des contentieux de la protection désigne le mandataire", "verified": false }, "officialSheets": ["F1336", "F3165"] },
   "protection-temporaire": { "types": ["public-authority", "administrative-procedure"], "national": true, "channel": "préfecture du Bas-Rhin (titre de séjour)", "officialSheets": ["F299"] },
   "droits-sans-titre": { "types": ["social-benefit", "specialised-association"], "national": true, "channel": "aide médicale de l'État (caisse d'assurance maladie)", "officialSheets": ["F3079"] },
   "impots": { "types": ["administrative-procedure", "online-service", "public-authority"], "national": true, "channel": "impots.gouv.fr", "placeIsService": true, "officialSheets": ["F358"] },
