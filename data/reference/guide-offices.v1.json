@@ -1,0 +1,150 @@
+{
+ "schema": "ada-guide-offices/1",
+ "source": "DILA vosdroits (Licence Ouverte 2.0), OuSAdresser/PivotLocal",
+ "archiveBuiltAt": "2026-11-01T10:13:40",
+ "sheets": {
+  "F17317": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F31272": {
+   "pivots": [
+    "msa",
+    "caf",
+    "mairie",
+    "pcb"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)",
+    "Mairie"
+   ]
+  },
+  "F32037": {
+   "pivots": [
+    "caf",
+    "msa"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)"
+   ]
+  },
+  "F827": {
+   "pivots": [
+    "caf",
+    "cpam"
+   ],
+   "types": [
+    "Caf (Caisse d'allocations familiales)",
+    "CPAM (caisse primaire d'assurance maladie)"
+   ]
+  },
+  "F20849": {
+   "pivots": [
+    "cpam"
+   ],
+   "types": [
+    "CPAM (caisse primaire d'assurance maladie)"
+   ]
+  },
+  "F2094": {
+   "pivots": [
+    "mjd"
+   ],
+   "types": [
+    "Maison de justice et du droit",
+    "Point-justice (accès au droit)"
+   ]
+  },
+  "F16670": {
+   "pivots": [
+    "prefecture",
+    "hypotheque"
+   ],
+   "types": [
+    "Préfecture",
+    "Sous-préfecture"
+   ]
+  },
+  "F12544": {
+   "pivots": [
+    "cidf",
+    "commissariat_police",
+    "gendarmerie"
+   ],
+   "types": [
+    "CIDFF (droits des femmes et des familles)"
+   ]
+  },
+  "F20789": {
+   "pivots": [
+    "commissariat_police",
+    "gendarmerie",
+    "cour_appel",
+    "aav",
+    "permanence_juridique"
+   ],
+   "types": [
+    "Bureau d'aide aux victimes",
+    "Point-justice (accès au droit)"
+   ]
+  },
+  "F952": {
+   "pivots": [
+    "cg"
+   ],
+   "types": [
+    "Maison des solidarités (Espace Solidarités)"
+   ]
+  },
+  "F861": {
+   "pivots": [
+    "cg",
+    "ars",
+    "commissariat_police",
+    "gendarmerie"
+   ],
+   "types": [
+    "Maison des solidarités (Espace Solidarités)"
+   ]
+  },
+  "F2018": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F37501": {
+   "pivots": [
+    "mairie"
+   ],
+   "types": [
+    "Mairie"
+   ]
+  },
+  "F17048": {
+   "pivots": [
+    "ofii"
+   ],
+   "types": [
+    "OFII (Office français de l'immigration et de l'intégration)"
+   ]
+  },
+  "F34049": {
+   "pivots": [
+    "cg",
+    "maison_handicapees",
+    "ta"
+   ],
+   "types": [
+    "Maison des solidarités (Espace Solidarités)",
+    "MDPH (maison des personnes handicapées)"
+   ]
+  }
+ }
+}

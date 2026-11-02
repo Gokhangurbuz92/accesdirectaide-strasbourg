@@ -11,6 +11,7 @@ import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wor
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
 import { structureTypeHint } from '../lib/search-structure-type.js';
 import { safetySignal } from '../lib/search-safety.js';
+import { guideOffices } from '../lib/official-offices.js';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -166,13 +167,37 @@ export default async function handler(req, res) {
         if (plan) {
           const published = [sql`"statut" = 'publie'`];
           const best = await bestMatchCondition('Guide', published, plan);
-          const res = await db.execute(sql`SELECT id, slug, titre, categorie, "contenu_json"->>'intro' AS intro FROM "Guide"
+          const res = await db.execute(sql`SELECT id, slug, titre, categorie, "contenu_json"->>'intro' AS intro, ${plan.titleHits} AS title_hits FROM "Guide"
             WHERE ${sql.join([...published, best], sql.raw(' AND '))} ORDER BY ${plan.titleHits} DESC, titre ASC LIMIT 5`);
           guides = res.rows || res;
         }
       } catch (e) {
         // @ts-ignore
         logger.warn('[search] guides search failed:', e.message); partial.push('guides');
+      }
+
+      // R34 / D16: where the administration says to go. When the best guide's TITLE matches the query, the offices its Service-Public sheet names
+      // (OuSAdresser, data/reference/guide-offices.v1.json) come first, Strasbourg first — « curatelle » offered points d'information seniors before.
+      try {
+        const top = guides[0];
+        const sheet = top && Number(top.title_hits) > 0 && !structureTypeHint(payload.query) && !(safety && safety.structureTypes.length) ? guideOffices()[String(top.slug).split('-').pop().toUpperCase()] : null;
+        if (sheet && !structures.some((x) => sheet.types.includes(x.type_structure))) {
+          const official = [];
+          for (const type of sheet.types) {
+            for (const attempt of [{ city: 'Strasbourg' }, {}]) {
+              const items = (await searchStructures({ ...attempt, type, page: 1, pageSize: 2 })).items;
+              if (items.length) { official.push(...items); break; }
+            }
+            if (official.length >= 3) break;
+          }
+          if (official.length) {
+            structures = [...official.map((x) => ({ id: x.id, slug: x.slug, nom: x.nom, description_courte: x.description_courte, type_structure: x.type_structure, ville: x.ville, code_postal: x.code_postal })),
+              ...structures.filter((x) => !official.some((o) => o.id === x.id))].slice(0, 5);
+          }
+        }
+      } catch (e) {
+        // @ts-ignore
+        logger.warn('[search] official offices failed:', e.message);
       }
 
       const totalResults = aideTotal + demarches.length + structures.length + actualites.length + guides.length;
