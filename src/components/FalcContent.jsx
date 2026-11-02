@@ -210,7 +210,7 @@ function StructureFalcSections({ data }) {
   return (
     <>
       <FalcSection icon="📖" title={t('shared:falc.what', "C'est quoi ?")} note={summaryNote}>{summary}</FalcSection>
-      <FalcListSection icon="🛠️" title={t('shared:falc.services', 'Services proposés')} items={services} />
+      <FalcListSection icon="🛠️" title={data.finess ? t('shared:falc.finess_activities', 'Activités autorisées (répertoire FINESS) : elles ne garantissent pas une place') : t('shared:falc.services', 'Services proposés')} items={services} />
       <FalcSection icon="🕐" title={t('shared:falc.hours', 'Horaires')}>{horaires}</FalcSection>
       <FalcSection icon="📞" title={t('shared:falc.contact', 'Contact')} lang={null}>{contact}</FalcSection>
       <FalcSection icon="📍" title={t('shared:falc.address', 'Adresse')}>{adresse}</FalcSection>

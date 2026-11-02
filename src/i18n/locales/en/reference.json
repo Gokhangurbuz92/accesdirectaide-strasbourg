@@ -113,5 +113,8 @@
  "domain.transversal": "Cross-cutting situations and coordination",
  "sub.deces-deuil": "Death and bereavement: procedures and rights",
  "sub.institutions-locales": "Local institutions (town halls, CCAS, Maisons des solidarités)",
- "sub.coordination-pro": "Coordination between professionals"
+ "sub.coordination-pro": "Coordination between professionals",
+ "situation.label": "Describe your situation in your own words",
+ "situation.hint": "You can write several problems at once, for example: “unpaid rent, my electricity is going to be cut off, I have two children”. What you write is not saved.",
+ "situation.submit": "See the options"
 }

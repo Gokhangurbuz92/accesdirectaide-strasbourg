@@ -131,6 +131,7 @@ function normalizeResultItem(item) {
     lexicalScore: toOptionalNumber(item?.lexicalScore),
     semanticScore: toOptionalNumber(item?.semanticScore),
     citations: Array.isArray(item?.citations) ? item.citations : [],
+    cautions: Array.isArray(item?.cautions) ? item.cautions.map(String) : [],   // R37: ids of the orientation cautions that concern this aide
   };
 }
 
@@ -154,6 +155,8 @@ function normalizeResponse(payload) {
     guides,
     // R34: the danger signal of the server (emergency numbers to show first), or null
     safety: payload?.safety && Array.isArray(payload.safety.numbers) ? { kind: String(payload.safety.kind || ''), numbers: payload.safety.numbers.map(String) } : null,
+    // R37: the multi-need orientation of the server (needs, cautions, question, official sheets), or null
+    orientation: payload?.orientation && Array.isArray(payload.orientation.needs) ? payload.orientation : null,
     meta: {
       total: Number.isFinite(totalFromPayload) ? totalFromPayload : results.length,
       totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length,

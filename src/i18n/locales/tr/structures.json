@@ -115,5 +115,8 @@
  "types.service_public": "Kamu hizmeti",
  "verified_on": "{{date}} tarihinde doğrulandı",
  "view.list": "Liste",
- "view.map": "Harita"
+ "view.map": "Harita",
+ "detail.finess_activities": "İzin verilen faaliyetler",
+ "detail.finess_activities_notice": "Resmî FINESS siciline göre (Sağlık Bakanlığı). İzin verilen bir faaliyet; yer, randevu veya kabul garantisi vermez: kuruluşla iletişime geçin.",
+ "card.why_shown_finess": "Aramanızla eşleşiyor: izin verilen faaliyet <0/> (FINESS sicili)."
 }

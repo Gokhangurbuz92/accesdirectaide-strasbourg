@@ -103,5 +103,19 @@
   "success.count_one": "{{count}} result shown.",
   "success.count_other": "{{count}} results shown.",
   "link.guide": "Read the official sheet",
-  "section.guides": "Official practical sheets ({{n}})"
+  "section.guides": "Official practical sheets ({{n}})",
+  "orientation.new_tab": "(service-public.gouv.fr, new tab)",
+  "orientation.title_many": "Your situation: {{n}} needs, most urgent first",
+  "orientation.title_one": "Your situation",
+  "orientation.intro": "These pointers come from the official Service-Public sheets. They are not a decision on your situation: only the body concerned decides.",
+  "orientation.question_hint": "The answer changes what is suggested to you. Nothing is saved.",
+  "orientation.urgent": "Urgent",
+  "orientation.next": "What to do now",
+  "orientation.rule": "Official rule",
+  "orientation.in_force": "in force now",
+  "orientation.sheets": "Official sheets:",
+  "orientation.search_topic": "Places and aids for this need",
+  "orientation.check": "Check before applying for an aid in the list",
+  "orientation.check_short": "To check:",
+  "orientation.human": "To get support: the CCAS of your town, a Maison des solidarités or a France Services office."
 }

@@ -171,5 +171,6 @@
  "tool.ants.title": "ANTS — identity documents and driving licences",
  "tool.ants.text": "Online procedures for the identity card, passport, driving licence and vehicle registration certificate (carte grise).",
  "tool.annuaire-administration.title": "Annuaire de l’administration (directory of public services)",
- "tool.annuaire-administration.text": "Find the address, phone number and opening hours of a public service."
+ "tool.annuaire-administration.text": "Find the address, phone number and opening hours of a public service.",
+ "falc.finess_activities": "Authorised activities (FINESS register): they do not guarantee a place"
 }

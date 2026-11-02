@@ -9,6 +9,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import AidesSearchForm from '@/components/search/AidesSearchForm';
 import SearchResultsList from '@/components/search/SearchResultsList';
 import SafetyNotice from '@/components/search/SafetyNotice';
+import OrientationPanel from '@/components/search/OrientationPanel';
 import { isAbortError, normalizeSearchCategory, searchAides } from '@/lib/searchClient';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 import { useLanguage, useT } from '@/i18n';
@@ -87,7 +88,7 @@ function GuideResult({ g }) {
   const tr = useContentTranslation('guide', g);
   return (
     <li>
-      <Link to={`/guides/${g.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group">
+      <Link to={`/bonnes-pratiques/${g.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group">
         <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
         {g.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" lang="fr">{g.description}</p>}
         <span className="inline-flex items-center gap-1 text-blue-800 text-sm font-medium mt-2">
@@ -167,6 +168,7 @@ export default function Recherche() {
   const [categoryInput, setCategoryInput] = useState(categoryFromUrl);
   const [limitInput, setLimitInput] = useState(limitFromUrl);
   const [status, setStatus] = useState('idle');
+  const [orientation, setOrientation] = useState(null);
   const [results, setResults] = useState([]);
   const recordHistory = useCitizenHistory();
   const [demarches, setDemarches] = useState([]);
@@ -193,6 +195,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setSafety(null);
+      setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
       setSearchError(null);
       return;
@@ -206,6 +209,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setSafety(null);
+      setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
       setSearchError({ code: 'too-short' });
       return;
@@ -233,6 +237,7 @@ export default function Recherche() {
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
         setSafety(response.safety || null);
+        setOrientation(response.orientation || null);
         setMeta(response.meta);
         const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
@@ -245,6 +250,7 @@ export default function Recherche() {
         setActualites([]);
         setGuides([]);
         setSafety(null);
+        setOrientation(null);
         setMeta({ total: 0, totalAll: 0, message: null });
         setStatus('error');
         setSearchError({ message: error.message || '' });
@@ -402,6 +408,7 @@ export default function Recherche() {
           )}
 
           {(status === 'success' || status === 'empty') && <SafetyNotice safety={safety} />}
+          {(status === 'success' || status === 'empty') && <OrientationPanel orientation={orientation} query={queryFromUrl} />}
 
           {status === 'empty' && (
             <EmptyState
@@ -432,7 +439,7 @@ export default function Recherche() {
                     <Search className="h-5 w-5 text-blue-600" />
                     {t('search:section.aides', 'Aides ({{n}})', { n: results.length })}
                   </h2>
-                  <SearchResultsList results={results} />
+                  <SearchResultsList results={results} cautions={orientation?.cautions} />
                 </div>
               )}
 

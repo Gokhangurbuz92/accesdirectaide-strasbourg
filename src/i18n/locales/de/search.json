@@ -103,5 +103,19 @@
   "success.count_one": "{{count}} Ergebnis angezeigt.",
   "success.count_other": "{{count}} Ergebnisse angezeigt.",
   "link.guide": "Offizielles Merkblatt lesen",
-  "section.guides": "Offizielle Merkblätter ({{n}})"
+  "section.guides": "Offizielle Merkblätter ({{n}})",
+  "orientation.new_tab": "(service-public.gouv.fr, neuer Tab)",
+  "orientation.title_many": "Ihre Situation: {{n}} Anliegen, das dringendste zuerst",
+  "orientation.title_one": "Ihre Situation",
+  "orientation.intro": "Diese Hinweise stammen aus den amtlichen Service-Public-Merkblättern. Sie sagen nicht, dass Ihnen eine Leistung zusteht: Nur die zuständige Stelle entscheidet.",
+  "orientation.question_hint": "Die Antwort ändert, was Ihnen vorgeschlagen wird. Nichts wird gespeichert.",
+  "orientation.urgent": "Dringend",
+  "orientation.next": "Was jetzt zu tun ist",
+  "orientation.rule": "Amtliche Regel",
+  "orientation.in_force": "gilt derzeit",
+  "orientation.sheets": "Amtliche Merkblätter:",
+  "orientation.search_topic": "Stellen und Leistungen für dieses Anliegen",
+  "orientation.check": "Vor einem Antrag auf eine Leistung der Liste prüfen",
+  "orientation.check_short": "Zu prüfen:",
+  "orientation.human": "Für Begleitung: das CCAS Ihrer Gemeinde, eine Maison des solidarités oder ein France-Services-Büro."
 }

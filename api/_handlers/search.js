@@ -6,6 +6,7 @@ import { hybridSearchSchema } from '../_utils/validators.js';
 import { searchAidesHybrid } from '../lib/hybrid-search.js';
 import { generateEmbedding, getActiveEmbeddingModel } from '../lib/EmbeddingProvider.js';
 import { cachedSearch } from '../lib/search-cache.js';
+import { analyseNeeds, annotateAides, SHEET_TITLES, sheetUrl } from '../lib/multi-need.js';
 import { GLOSSAIRE } from '../lib/glossaire.js';
 import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
@@ -22,6 +23,27 @@ import { sql } from 'drizzle-orm';
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
  */
+/**
+ * R37: the orientation of a multi-need query, its official sheets resolved: the local guide page when the sheet is published on AccesDirectAide, else the
+ * sheet on service-public.gouv.fr. An outage of this lookup leaves the sheets as links to Service-Public, it never fails the search.
+ * @param {ReturnType<typeof analyseNeeds>} analysis
+ */
+async function orientationOf(analysis) {
+  if (!analysis) return {};
+  const ids = [...new Set([...analysis.needs.flatMap((n) => [...n.sheets, ...n.rules.map((r) => r.sheet)]), ...analysis.cautions.flatMap((c) => c.sheets)])];
+  /** @type {Record<string, { title: string, url: string, slug: string | null }>} */
+  const sources = Object.fromEntries(ids.map((id) => [id, { title: SHEET_TITLES[id] || id, url: sheetUrl(id), slug: null }]));
+  try {
+    const rows = (await db.execute(sql`SELECT slug, titre FROM "Guide" WHERE statut = 'publie' AND (${sql.join(ids.map((id) => sql`slug LIKE ${`%-${id.toLowerCase()}`}`), sql.raw(' OR '))})`)).rows || [];
+    for (const r of rows) { const id = String(r.slug).split('-').pop().toUpperCase(); if (sources[id]) Object.assign(sources[id], { title: r.titre, slug: r.slug }); }
+  } catch (e) {
+    // @ts-ignore
+    logger.warn('[search] orientation sheets lookup failed:', e.message);
+  }
+  const { cautions, ...rest } = analysis;
+  return { orientation: { ...rest, cautions: cautions.map(({ aides: _pattern, ...c }) => c), sources } };
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
@@ -54,6 +76,9 @@ export default async function handler(req, res) {
     // R34: a query that describes danger gets the official emergency numbers, whatever else is found (api/lib/search-safety.js)
     const safety = safetySignal(payload.query, cross.changed ? cross.query : '');
     const safe = safety ? { safety: { kind: safety.kind, numbers: safety.numbers } } : {};
+    // R37: several needs in one query → the needs, most urgent first, with actions, official sheets and cautions (api/lib/multi-need.js; read before the
+    // query is rewritten for the search, never stored)
+    const analysis = analyseNeeds([payload.query, cross.changed ? cross.query : ''], { safetyKind: safety?.kind || null });
     // a danger searches its French topic too: « my husband hits me » finds the guide on domestic violence and the victim offices; « je veux en finir » has
     // no searchable word of its own (only « finir »)
     if (safety && (cross.changed || (payload.lang && payload.lang !== 'fr'))) { cross.query = safety.topic; cross.changed = true; }
@@ -64,7 +89,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ items: [], total: 0, demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, offTopic: true, message: 'not found' });
     }
     if (cross.changed && !searchWords(cross.query).length) {
-      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe });
+      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe, ...(await orientationOf(analysis)) });
     }
     const crossLanguage = cross.changed ? { understood: true, query: cross.query, concepts: cross.concepts } : undefined;
     if (cross.changed) payload.query = cross.query;
@@ -174,7 +199,7 @@ export default async function handler(req, res) {
           const published = [sql`"statut" = 'publie'`];
           const best = await bestMatchCondition('Guide', published, plan);
           const res = await db.execute(sql`SELECT id, slug, titre, categorie, "contenu_json"->>'intro' AS intro, ${plan.titleHits} AS title_hits FROM "Guide"
-            WHERE ${sql.join([...published, best], sql.raw(' AND '))} ORDER BY ${plan.titleHits} DESC, titre ASC LIMIT 5`);
+            WHERE ${sql.join([...published, best], sql.raw(' AND '))} ORDER BY ${plan.titleHits} DESC, ${plan.matchCount} DESC, titre ASC LIMIT 5`);   // R37: then the words found anywhere, not the alphabet
           guides = res.rows || res;
         }
       } catch (e) {
@@ -274,7 +299,8 @@ export default async function handler(req, res) {
       };
     });
 
-    return res.status(200).json({ ...searchResult, cached, ...(crossLanguage ? { crossLanguage } : {}), ...safe });
+    const oriented = analysis ? { items: annotateAides(searchResult.items, analysis) } : {};
+    return res.status(200).json({ ...searchResult, ...oriented, cached, ...(crossLanguage ? { crossLanguage } : {}), ...safe, ...(await orientationOf(analysis)) });
   } catch (error) {
     logger.error('Search handler error:', error);
     return res.status(500).json({

@@ -119,5 +119,19 @@
   "success.count_zero": "لا توجد نتائج معروضة.",
   "success.count_other": "{{count}} نتيجة معروضة.",
   "link.guide": "اقرأ الصفحة الرسمية",
-  "section.guides": "الصفحات العملية الرسمية ({{n}})"
+  "section.guides": "الصفحات العملية الرسمية ({{n}})",
+  "orientation.new_tab": "(service-public.gouv.fr، علامة تبويب جديدة)",
+  "orientation.title_many": "وضعك: {{n}} احتياجات، من الأكثر إلحاحًا إلى الأقل",
+  "orientation.title_one": "وضعك",
+  "orientation.intro": "تأتي هذه الإرشادات من البطاقات الرسمية لموقع Service-Public. وهي لا تعني أنك تستحق مساعدة: الجهة المعنية وحدها تقرر.",
+  "orientation.question_hint": "تغيّر الإجابة ما يُقترح عليك. لا يُحفظ أي شيء.",
+  "orientation.urgent": "عاجل",
+  "orientation.next": "ماذا تفعل الآن",
+  "orientation.rule": "قاعدة رسمية",
+  "orientation.in_force": "سارية الآن",
+  "orientation.sheets": "البطاقات الرسمية:",
+  "orientation.search_topic": "أماكن ومساعدات لهذا الاحتياج",
+  "orientation.check": "تحقّق قبل طلب مساعدة من القائمة",
+  "orientation.check_short": "للتحقق:",
+  "orientation.human": "للحصول على مرافقة: مركز CCAS في بلديتك، أو Maison des solidarités، أو مكتب France Services."
 }

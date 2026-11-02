@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { isFinessRecord } from '@/lib/structureActivities';
 import { Link } from 'react-router-dom';
 import {
   MapPin,
@@ -143,12 +144,13 @@ export default function StructureCard({ structure, compact = false, index = 0 })
             {/* PKG-11 / E04: why this structure is in the results when it is a service it declares (its own words, not a promise) */}
             {Array.isArray(structure.whyShown?.services) && structure.whyShown.services.length > 0 && (
               <p className="text-sm text-slate-800" data-testid="structure-why-shown">
-                <Trans
-                  i18n={i18n}
-                  i18nKey="structures:card.why_shown"
-                  defaults="Correspond à votre recherche : indique proposer <0/>."
-                  components={[<span key="services" {...tr.attrs('services')}>{structure.whyShown.services.map((x) => `« ${x} »`).join(', ')}</span>]}
-                />
+                {isFinessRecord(structure) ? (
+                  <Trans i18n={i18n} i18nKey="structures:card.why_shown_finess" defaults="Correspond à votre recherche : activité autorisée <0/> (répertoire FINESS)."
+                    components={[<span key="services" {...tr.attrs('services')}>{structure.whyShown.services.map((x) => `« ${x} »`).join(', ')}</span>]} />
+                ) : (
+                  <Trans i18n={i18n} i18nKey="structures:card.why_shown" defaults="Correspond à votre recherche : indique proposer <0/>."
+                    components={[<span key="services" {...tr.attrs('services')}>{structure.whyShown.services.map((x) => `« ${x} »`).join(', ')}</span>]} />
+                )}
               </p>
             )}
             {/* FALC badge */}

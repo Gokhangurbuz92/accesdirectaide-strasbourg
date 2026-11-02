@@ -8,6 +8,9 @@ import { verifyAdmin } from '../_utils/auth.js';
 // PKG-11 audit: draft previews use the platform's administrator session check (named admin; the retired token only where allowed). The former local
 // jwt.verify accepted any admin-role token without MFA (and in guides.js the dev-login flag opened it even in production).
 const isAdmin = (/** @type {any} */ req) => verifyAdmin(req).catch(() => false);
+// R37: the guides are a curated catalogue (70 official sheets on 02/11/2026), listed whole: the former cap of 50 silently hid the 20 oldest guides
+// from /bonnes-pratiques and from the published count. The cap only bounds the query.
+export const GUIDE_LIST_MAX = 1000;
 /**
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
@@ -89,7 +92,7 @@ export default async function handler(req, res) {
             const guides = await db.query.Guide.findMany({
                 where: whereClause,
                 orderBy: (t, { desc }) => [desc(t.published_at)],
-                limit: 50,
+                limit: GUIDE_LIST_MAX,
             });
 
             // Post-filter for array `has` (Drizzle relational API doesn't support it)

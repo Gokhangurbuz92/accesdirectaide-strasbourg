@@ -171,5 +171,6 @@
  "tool.ants.title": "ANTS — Ausweisdokumente und Führerscheine",
  "tool.ants.text": "Online-Verfahren für Personalausweis, Reisepass, Führerschein und Fahrzeugschein (carte grise).",
  "tool.annuaire-administration.title": "Annuaire de l’administration (Behördenverzeichnis)",
- "tool.annuaire-administration.text": "Adresse, Telefonnummer und Öffnungszeiten einer Behörde finden."
+ "tool.annuaire-administration.text": "Adresse, Telefonnummer und Öffnungszeiten einer Behörde finden.",
+ "falc.finess_activities": "Genehmigte Tätigkeiten (FINESS-Verzeichnis): Sie garantieren keinen Platz"
 }

@@ -26,7 +26,7 @@ function categoryLabel(t, value) {
   }
 }
 
-export default function SearchResultCard({ result }) {
+export default function SearchResultCard({ result, cautions }) {
   const { t } = useT('search');
   // R32: the title and summary of the aide go through the content translation (French, marked lang="fr", until a verified translation exists)
   const tr = useContentTranslation('aide', result);
@@ -64,6 +64,13 @@ export default function SearchResultCard({ result }) {
       <p className="mt-2 line-clamp-3 text-sm text-slate-600" {...(summary ? tr.attrs('description') : {})}>
         {summary || t('search:result.no-summary', 'Aucun résumé disponible pour cette aide.')}
       </p>
+
+      {/* R37: what the person's own words put in doubt for this aide (the orientation cautions), said on the aide itself */}
+      {(result.cautions || []).map((id) => (cautions || []).find((c) => c.id === id)).filter(Boolean).map((c) => (
+        <p key={c.id} className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-950" data-testid="search-result-caution">
+          <span className="font-semibold">{t('search:orientation.check_short', 'À vérifier :')} </span><span lang="fr" dir="ltr">{c.text}</span>
+        </p>
+      ))}
 
       <div className="mt-4">
         <Link

@@ -11,7 +11,7 @@ const BASE = (process.argv[2] || 'https://www.accesdirectaide.fr').replace(/\/$/
 const OUT = process.argv[3];
 const axeSrc = fs.readFileSync(new URL('../../node_modules/axe-core/axe.min.js', import.meta.url), 'utf8');
 const LANGS = (process.env.LANGS || 'fr,en,tr,ar,de,uk').split(',');
-const ROUTES = (process.env.ROUTES || '/,/aides,/aides/faj-strasbourg,/demarches,/demarches/demande-c2s,/structures,/besoins,/actualites,/guides,/guides/duree-de-conservation-des-papiers-f19134,/recherche?q=logement,/glossaire,/a-propos,/contact,/accessibilite,/mentions-legales,/confidentialite,/cookies,/plan-du-site').split(',');
+const ROUTES = (process.env.ROUTES || '/,/aides,/aides/faj-strasbourg,/demarches,/demarches/demande-c2s,/structures,/besoins,/actualites,/bonnes-pratiques,/bonnes-pratiques/duree-de-conservation-des-papiers-f19134,/recherche?q=logement,/glossaire,/a-propos,/contact,/accessibilite,/mentions-legales,/confidentialite,/cookies,/plan-du-site').split(',');
 const rows = [];
 const rec = (lang, route, check, pass, detail = '') => { rows.push({ lang, route, check, pass: !!pass, detail: String(detail).slice(0, 300) }); if (!pass) console.log(`FAIL ${lang} ${route} ${check} — ${String(detail).slice(0, 160)}`); };
 const browser = await chromium.launch({ channel: process.env.PW_CHANNEL || 'chrome' });

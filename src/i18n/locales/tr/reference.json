@@ -113,5 +113,8 @@
  "domain.transversal": "Birden çok alanı kapsayan durumlar ve koordinasyon",
  "sub.deces-deuil": "Ölüm ve yas: işlemler ve haklar",
  "sub.institutions-locales": "Yerel kurumlar (belediyeler, CCAS, Maisons des solidarités)",
- "sub.coordination-pro": "Profesyoneller arası koordinasyon"
+ "sub.coordination-pro": "Profesyoneller arası koordinasyon",
+ "situation.label": "Durumunuzu kendi sözlerinizle anlatın",
+ "situation.hint": "Birden fazla sorunu aynı anda yazabilirsiniz, örneğin: “kira ödenmedi, elektriğim kesilecek, iki çocuğum var”. Yazdıklarınız kaydedilmez.",
+ "situation.submit": "Seçenekleri gör"
 }

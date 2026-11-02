@@ -171,5 +171,6 @@
  "tool.ants.title": "ANTS — kimlik belgeleri ve sürücü belgeleri",
  "tool.ants.text": "Kimlik kartı, pasaport, sürücü belgesi ve araç ruhsatı (carte grise) için çevrim içi işlemler.",
  "tool.annuaire-administration.title": "Annuaire de l’administration (kamu hizmetleri rehberi)",
- "tool.annuaire-administration.text": "Bir kamu hizmetinin adresini, telefonunu ve çalışma saatlerini bulun."
+ "tool.annuaire-administration.text": "Bir kamu hizmetinin adresini, telefonunu ve çalışma saatlerini bulun.",
+ "falc.finess_activities": "İzin verilen faaliyetler (FINESS sicili): yer garantisi vermez"
 }

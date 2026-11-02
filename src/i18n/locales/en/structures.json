@@ -115,5 +115,8 @@
  "types.service_public": "Public service",
  "verified_on": "Checked on {{date}}",
  "view.list": "List",
- "view.map": "Map"
+ "view.map": "Map",
+ "detail.finess_activities": "Authorised activities",
+ "detail.finess_activities_notice": "According to the official FINESS register (Ministry of Health). An authorised activity does not guarantee a place, an appointment or admission: contact the establishment.",
+ "card.why_shown_finess": "Matches your search: authorised activity <0/> (FINESS register)."
 }

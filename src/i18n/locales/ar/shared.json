@@ -195,5 +195,6 @@
  "tool.ants.title": "ANTS — وثائق الهوية ورخص القيادة",
  "tool.ants.text": "إجراءات عبر الإنترنت لبطاقة الهوية وجواز السفر ورخصة القيادة وشهادة تسجيل المركبة (carte grise).",
  "tool.annuaire-administration.title": "Annuaire de l’administration (دليل الخدمات العامة)",
- "tool.annuaire-administration.text": "العثور على عنوان خدمة عامة ورقم هاتفها وأوقات عملها."
+ "tool.annuaire-administration.text": "العثور على عنوان خدمة عامة ورقم هاتفها وأوقات عملها.",
+ "falc.finess_activities": "الأنشطة المرخَّص بها (سجل FINESS): لا تضمن مكانًا"
 }

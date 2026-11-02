@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Phone } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
@@ -18,11 +19,25 @@ const tel = (n) => (n.length === 10 && n.startsWith('0') ? `${n.slice(0, 1)} ${n
 
 export default function Besoins() {
   const { t } = useT('reference');
+  const navigate = useNavigate();
+  const [situation, setSituation] = useState('');
   const label = (kind, id, fr) => t(`reference:${kind}.${id}`, fr);   // keys required by scripts/i18n-check.mjs from the reference file
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <SEO title={t('reference:page.title', 'Trouver de l’aide par besoin')} description={t('reference:page.description', 'Les besoins sociaux et médico-sociaux, avec les fiches vérifiées et les lieux d’accueil publiés pour Strasbourg et le Bas-Rhin.')} path="/besoins" />
       <PageHeader title={t('reference:page.title', 'Trouver de l’aide par besoin')} description={t('reference:page.intro', 'Choisissez ce qui vous concerne. Seules les fiches vérifiées et les lieux publiés sont proposés : un besoin sans fiche le dit clairement.')} />
+
+      {/* R37: several problems at once → the search reads every need of the sentence, most urgent first (api/lib/multi-need.js); nothing is stored */}
+      <form role="search" className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm" data-testid="needs-situation-form"
+        onSubmit={(e) => { e.preventDefault(); const q = situation.trim(); if (q.length >= 2) navigate(`/recherche?q=${encodeURIComponent(q)}`); }}>
+        <label htmlFor="needs-situation" className="block text-base font-semibold text-slate-900">{t('reference:situation.label', 'Décrivez votre situation, avec vos mots')}</label>
+        <p id="needs-situation-hint" className="mt-1 text-sm text-slate-700">{t('reference:situation.hint', 'Vous pouvez écrire plusieurs problèmes à la fois, par exemple : « loyer impayé, on va me couper l’électricité, j’ai deux enfants ». Ce que vous écrivez n’est pas enregistré.')}</p>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <textarea id="needs-situation" aria-describedby="needs-situation-hint" rows={2} value={situation} onChange={(e) => setSituation(e.target.value)} maxLength={300}
+            className="min-h-11 flex-1 rounded-md border border-slate-300 p-2 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+          <button type="submit" className="ada-target min-h-11 rounded-md bg-brand-primary px-5 font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2">{t('reference:situation.submit', 'Voir les pistes')}</button>
+        </div>
+      </form>
 
       <section aria-labelledby="urgences" className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4">
         <h2 id="urgences" className="text-lg font-semibold text-red-900">{t('reference:emergency.title', 'En cas d’urgence ou de danger')}</h2>

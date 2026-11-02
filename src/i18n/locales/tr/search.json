@@ -103,5 +103,19 @@
   "success.count_one": "{{count}} sonuç gösteriliyor.",
   "success.count_other": "{{count}} sonuç gösteriliyor.",
   "link.guide": "Resmî bilgi sayfasını okuyun",
-  "section.guides": "Resmî uygulama sayfaları ({{n}})"
+  "section.guides": "Resmî uygulama sayfaları ({{n}})",
+  "orientation.new_tab": "(service-public.gouv.fr, yeni sekme)",
+  "orientation.title_many": "Durumunuz: {{n}} ihtiyaç, en acil olandan başlayarak",
+  "orientation.title_one": "Durumunuz",
+  "orientation.intro": "Bu yönlendirmeler Service-Public resmî bilgi sayfalarından gelir. Size bir yardımın verileceği anlamına gelmez: kararı yalnızca ilgili kurum verir.",
+  "orientation.question_hint": "Cevap, size önerilenleri değiştirir. Hiçbir şey kaydedilmez.",
+  "orientation.urgent": "Acil",
+  "orientation.next": "Şimdi ne yapmalı",
+  "orientation.rule": "Resmî kural",
+  "orientation.in_force": "şu anda geçerli",
+  "orientation.sheets": "Resmî bilgi sayfaları:",
+  "orientation.search_topic": "Bu ihtiyaç için yerler ve yardımlar",
+  "orientation.check": "Listedeki bir yardıma başvurmadan önce kontrol edin",
+  "orientation.check_short": "Kontrol edin:",
+  "orientation.human": "Destek için: belediyenizin CCAS’ı, bir Maison des solidarités veya bir France Services ofisi."
 }

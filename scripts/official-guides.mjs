@@ -88,6 +88,12 @@ export const OFFICIAL_GUIDES = [
   { id: 'F35456', categorie: 'discrimination', publics: ['personnes LGBTQI+'], contexte: ['homophobie', 'discrimination'] },
   { id: 'F34826', categorie: 'papiers', publics: ['personnes trans'], contexte: ['état civil', 'mention du sexe'] },
   { id: 'F16507', categorie: 'démarches', publics: ['familles'], contexte: ['décès', 'démarches'] },
+  // R37: the sheets the multi-need orientation cites for its rules and cautions (api/lib/multi-need.js), not yet published
+  { id: 'F20055', categorie: 'budget', publics: ['tous publics'], contexte: ['électricité', 'gaz', 'coupure', 'impayés', 'factures'] },
+  { id: 'F12006', categorie: 'logement', publics: ['locataires'], contexte: ['APL', 'aide au logement', 'loyer'] },
+  { id: 'F1280', categorie: 'logement', publics: ['locataires'], contexte: ['ALS', 'aide au logement', 'loyer'] },
+  { id: 'F19778', categorie: 'budget', publics: ['tous publics'], contexte: ['RSA', 'revenu minimum'] },
+  { id: 'F16920', categorie: 'autonomie', publics: ['aidants'], contexte: ['proche aidant', 'aidants', 'congé'] },
 ];
 
 const slugify = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70);
@@ -142,6 +148,9 @@ export const R33_ADDITIONS = ['F10424', 'F2094', 'F2120', 'F2075', 'F33367', 'F1
 /** R36: the second batch (33 sheets; F33667 « Chèque énergie » left out: it still describes the 2025 campaign) — published only by the owner's bounded run */
 export const R36_ADDITIONS = ['F2003', 'F33954', 'F38589', 'F34736', 'F1334', 'F18005', 'F20343', 'F16158', 'F763', 'F255', 'F2444', 'F245', 'F246', 'F32057', 'F740', 'F15814', 'F959', 'F3140', 'F970', 'F39128', 'F937', 'F815', 'F38245', 'F1336', 'F3165', 'F3079', 'F299', 'F2313', 'F32584', 'F358', 'F35456', 'F34826', 'F16507'];
 
+/** R37: the third batch — the official sheets the orientation's rules and cautions cite (published only by the owner's bounded run) */
+export const R37_ADDITIONS = ['F20055', 'F12006', 'F1280', 'F19778', 'F16920'];
+
 const sha = (v) => crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex').slice(0, 16);
 /** the guide row of one sheet id: its slug ends with « -<id> » (never a longer number such as -f1706 for F706) */
 export const rowOf = (rows, id) => rows.find((r) => String(r.slug).endsWith(`-${id.toLowerCase()}`));
@@ -185,7 +194,7 @@ async function main() {
   const [zip] = process.argv.slice(2).filter((a, i, all) => !a.startsWith('--') && !(i > 0 && /^--(only|expect-published|evidence)$/.test(all[i - 1])));
   const apply = process.argv.includes('--apply');
   const onlyArg = argOf('only');
-  const allow = onlyArg ? [...new Set(onlyArg.split(',').map((x) => x.trim().toUpperCase()).filter(Boolean).flatMap((x) => (x === 'R33' ? R33_ADDITIONS : x === 'R36' ? R36_ADDITIONS : [x])))] : null;
+  const allow = onlyArg ? [...new Set(onlyArg.split(',').map((x) => x.trim().toUpperCase()).filter(Boolean).flatMap((x) => (x === 'R33' ? R33_ADDITIONS : x === 'R36' ? R36_ADDITIONS : x === 'R37' ? R37_ADDITIONS : [x])))] : null;
   const insertOnly = process.argv.includes('--insert-only');
   const expectPublished = argOf('expect-published');
   const evidenceFile = argOf('evidence');

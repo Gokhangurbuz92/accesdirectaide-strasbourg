@@ -115,5 +115,8 @@
  "types.service_public": "Öffentliche Einrichtung",
  "verified_on": "Geprüft am {{date}}",
  "view.list": "Liste",
- "view.map": "Karte"
+ "view.map": "Karte",
+ "detail.finess_activities": "Genehmigte Tätigkeiten",
+ "detail.finess_activities_notice": "Laut dem amtlichen FINESS-Verzeichnis (Gesundheitsministerium). Eine genehmigte Tätigkeit garantiert weder einen Platz noch einen Termin oder eine Aufnahme: Wenden Sie sich an die Einrichtung.",
+ "card.why_shown_finess": "Passt zu Ihrer Suche: genehmigte Tätigkeit <0/> (FINESS-Verzeichnis)."
 }

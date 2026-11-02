@@ -111,5 +111,19 @@
   "success.count_one": "Показано {{count}} результат.",
   "success.count_other": "Показано {{count}} результату.",
   "link.guide": "Читати офіційну сторінку",
-  "section.guides": "Офіційні практичні сторінки ({{n}})"
+  "section.guides": "Офіційні практичні сторінки ({{n}})",
+  "orientation.new_tab": "(service-public.gouv.fr, нова вкладка)",
+  "orientation.title_many": "Ваша ситуація: {{n}} потреб, від найтерміновішої",
+  "orientation.title_one": "Ваша ситуація",
+  "orientation.intro": "Ці підказки взято з офіційних довідок Service-Public. Вони не означають, що вам належить допомога: рішення ухвалює лише відповідна установа.",
+  "orientation.question_hint": "Відповідь змінює те, що вам пропонують. Нічого не зберігається.",
+  "orientation.urgent": "Терміново",
+  "orientation.next": "Що робити зараз",
+  "orientation.rule": "Офіційне правило",
+  "orientation.in_force": "діє зараз",
+  "orientation.sheets": "Офіційні довідки:",
+  "orientation.search_topic": "Місця та допомога для цієї потреби",
+  "orientation.check": "Перевірте, перш ніж просити допомогу зі списку",
+  "orientation.check_short": "Перевірте:",
+  "orientation.human": "Щоб отримати супровід: CCAS вашої громади, Maison des solidarités або офіс France Services."
 }

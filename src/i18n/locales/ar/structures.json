@@ -123,5 +123,8 @@
  "types.service_public": "مرفق عام",
  "verified_on": "تم التحقق في {{date}}",
  "view.list": "القائمة",
- "view.map": "الخريطة"
+ "view.map": "الخريطة",
+ "detail.finess_activities": "الأنشطة المرخَّص بها",
+ "detail.finess_activities_notice": "وفقًا للسجل الرسمي FINESS (وزارة الصحة). النشاط المرخَّص به لا يضمن مكانًا ولا موعدًا ولا قبولًا: اتصل بالمؤسسة.",
+ "card.why_shown_finess": "يطابق بحثك: نشاط مرخَّص به <0/> (سجل FINESS)."
 }

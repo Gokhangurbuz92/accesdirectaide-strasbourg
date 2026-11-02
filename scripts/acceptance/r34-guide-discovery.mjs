@@ -16,8 +16,20 @@ export const CASES = [
   ['contraception', 'F707'], ['IVG', 'F1551'], ['avortement', 'F1551'], ['psychologue remboursé', 'F34917'], ['foyer jeunes travailleurs', 'F2018'],
   ['adapter logement personne âgée', 'F37501'], ['aide garde enfant', 'F38243'], ['mineur isolé titre de séjour majorité', 'F31037'],
   ['contrat intégration républicaine', 'F17048'], ['insertion par l\'activité économique', 'F2284'], ['carte mobilité inclusion', 'F34049'], ['carte stationnement handicapé', 'F34049'],
+  // R37: the 33 sheets of the R36 batch, in the words a person would use (not the official titles)
+  ['qui paie la maison de retraite si ma mère n\'a pas assez d\'argent', 'F2444'], ['maison de retraite médicalisée', 'F763'], ['maison de retraite pour ma grand-mère', 'F255'],
+  ['retraité avec une petite pension quelles aides', 'F32057'], ['payer une aide ménagère pour mon père âgé', 'F245'], ['infirmière à domicile pour personne âgée', 'F246'],
+  ['je n\'arrive plus à payer mes factures', 'F38589'], ['déclarer mes revenus aux impôts', 'F358'], ['on m\'insulte parce que je suis gay', 'F35456'],
+  ['mon père est mort que faut-il faire', 'F16507'], ['mon ex ne paie pas la pension alimentaire', 'F815'], ['je suis maman solo quelles aides', 'F38245'],
+  ['suivi après la sortie de prison', 'F32584'], ['mon logement est insalubre avec des moisissures', 'F16158'], ['je dors dans la rue où trouver un hébergement', 'F2003'],
+  ['expulsion pendant l\'hiver', 'F34736'], ['fonds de solidarité logement', 'F1334'], ['j\'attends un logement social depuis des années recours', 'F18005'],
+  ['droit à l\'hébergement opposable', 'F20343'], ['changer la mention du sexe à l\'état civil', 'F34826'], ['confier mon enfant à l\'aide sociale à l\'enfance', 'F959'],
+  ['le juge a placé mon enfant', 'F3140'], ['aide éducative à domicile', 'F970'], ['éducateur AEMO juge des enfants', 'F39128'], ['parrainage de proximité enfant', 'F937'],
+  ['accompagnement pour gérer mes prestations sociales', 'F1336'], ['combien coûte une curatelle', 'F3165'], ['numéro d\'urgence et d\'écoute', 'F33954'],
+  ['arrêter la drogue se soigner', 'F740'], ['addiction au jeu interdiction de casino', 'F15814'], ['se soigner sans papiers', 'F3079'],
+  ['indemnisation victime d\'agression', 'F2313'], ['différence réfugié protection subsidiaire', 'F299'],
   // negative controls
-  ['renouveler carte d\'identité', null, 'F1551'], ['facture électricité impayée', null, 'F2094'], ['ouvrir un compte bancaire', null, 'F12544'],
+  ['renouveler carte d\'identité', null, 'F1551'], ['permis de conduire', null, 'F3079'], ['inscription à l\'école', null, 'F3140'], ['bourse étudiante', null, 'F2444'], ['facture électricité impayée', null, 'F2094'], ['ouvrir un compte bancaire', null, 'F12544'],
 ];
 const res = await fetch(`${base}/api/health`); const cookie = (res.headers.getSetCookie?.() || []).map((c) => c.split(';')[0]).join('; '); const token = /__csrf=([^;]+)/.exec(cookie)?.[1];
 const rows = [];

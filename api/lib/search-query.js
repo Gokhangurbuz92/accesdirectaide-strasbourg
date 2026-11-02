@@ -34,11 +34,28 @@ const svOr = (sv, v) => (sv ? sql` OR ("search_vector" @@ plainto_tsquery('frenc
  */
 const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des du elle en est et etre faire il ils j je l la le les leur lui ma me mes moi mon '
   + 'ne nos notre nous on ou par pas pour qu que qui sa se ses son sur ta te tes toi ton tu un une vos votre vous y d n s c m t aide aides aider besoin '
-  + 'cherche chercher trouver obtenir payer avoir droit droits quel quelle quels quelles veux voudrais peux puis faut ai as suis sont ont').split(' '));
+  + 'cherche chercher trouver obtenir payer avoir droit droits quel quelle quels quelles veux voudrais peux puis faut ai as suis sont ont si').split(' '));
+
+/**
+ * R37 — everyday expressions and the administrative word the official texts use for the same thing (whole expressions, accents folded). The official
+ * Service-Public sheets say « situation irrégulière », « Ehpad », « famille monoparentale », « précarité »; a person says « sans papiers », « maison de
+ * retraite », « maman solo », « à la rue ». Production 02/11/2026: « se soigner sans papiers » returned the guides on lost identity papers, not the AME.
+ * Only equivalences of meaning, never a route to one record.
+ */
+export const EVERYDAY_PHRASES = [
+  [/\b(sans[\s-]+papiers?|pas de papiers)\b/g, 'irreguliere'],
+  [/\bmaisons? de retraite\b/g, 'ehpad'],
+  [/\bgrands?[\s-]+(meres?|peres?|parents)\b/g, 'agee'],
+  [/\baide sociale (a|de) l'?\s?enfance\b/g, 'ase'],
+  [/\b(maman|papa|parent|mere|pere)s? (solo|seule?s?|celibataires?)\b/g, 'monoparentale'],
+  [/\b(dans la rue|a la rue|sans[\s-]+abris?)\b/g, 'precarite'],
+  [/\b(petites? (pension|retraite)s?|petits revenus|faibles revenus|peu de revenus)\b/g, 'precarite'],
+];
+const everydayToOfficial = (folded) => EVERYDAY_PHRASES.reduce((t, [re, word]) => t.replace(re, ` ${word} `), folded);
 
 /** the meaningful words of a query, without accents, at most 6 (a 5-digit postal code is a word) @param {string} q */
 export function searchWords(q) {
-  const words = foldAccents(q).replace(/[^a-z0-9\s'’-]/g, ' ').split(/[\s'’-]+/).filter((w) => w && (w.length >= 2 || /\d/.test(w)) && !STOPWORDS.has(w));
+  const words = everydayToOfficial(foldAccents(q).replace(/’/g, "'")).replace(/[^a-z0-9\s'’-]/g, ' ').split(/[\s'’-]+/).filter((w) => w && (w.length >= 2 || /\d/.test(w)) && !STOPWORDS.has(w));
   return [...new Set(words)].slice(0, 6);
 }
 

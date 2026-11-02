@@ -36,6 +36,7 @@ import { departementLabel } from '@/lib/structureFields';
 import FavoriteButton from '@/components/FavoriteButton';
 import { useFalc } from '@/contexts/FalcContext';
 import { formatDate, useT } from '@/i18n';
+import { isFinessRecord } from '@/lib/structureActivities';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 
@@ -156,9 +157,10 @@ export default function StructureDetail() {
   const provenance = getProvenance(structure);
   const rdvPath = buildPublicRdvPath(structure);
   const services = tr.value('services');
+  const finess = isFinessRecord(structure);   // R37: FINESS « activités autorisées », never shown as services offered
   const publics = tr.value('publics_accueillis');
   // the easy-to-read view reads the same record, its descriptions through the content translation
-  const falcView = { ...structure, resume_falc: tr.value('resume_falc'), summary_falc: tr.value('summary_falc'), description_falc: tr.value('description_falc'), description_courte: tr.value('description_courte'), services };
+  const falcView = { ...structure, resume_falc: tr.value('resume_falc'), summary_falc: tr.value('summary_falc'), description_falc: tr.value('description_falc'), description_courte: tr.value('description_courte'), services, finess: isFinessRecord(structure) };
 
   // the contact details are shown in both reading modes (the easy-to-read version replaced them before, and a person reading it could not find how to reach the place)
   const contactCard = (
@@ -370,8 +372,13 @@ export default function StructureDetail() {
                 {structure.services?.length > 0 && (
                   <Card>
                     <CardContent className="p-6">
-                      <h2 className="text-lg font-bold text-slate-900 mb-4">{t('structures:detail.services', 'Services proposés')}</h2>
-                      <div className="flex flex-wrap gap-2">
+                      {finess ? (<>
+                        <h2 className="text-lg font-bold text-slate-900 mb-2">{t('structures:detail.finess_activities', 'Activités autorisées')}</h2>
+                        <p className="text-sm text-slate-700 mb-4" data-testid="finess-activities-notice">{t('structures:detail.finess_activities_notice', 'Selon le répertoire officiel FINESS (ministère de la Santé). Une activité autorisée ne garantit ni une place, ni un rendez-vous, ni une admission : contactez l’établissement.')}</p>
+                      </>) : (
+                        <h2 className="text-lg font-bold text-slate-900 mb-4">{t('structures:detail.services', 'Services proposés')}</h2>
+                      )}
+                      <div className="flex flex-wrap gap-2" data-testid={finess ? 'finess-activities' : 'structure-services'}>
                         {(services || []).map((/** @type {any} */ service, /** @type {any} */ idx) => (
                           <Badge key={idx} variant="secondary" className="bg-slate-100 text-slate-700" {...tr.attrs('services')}>
                             {service}

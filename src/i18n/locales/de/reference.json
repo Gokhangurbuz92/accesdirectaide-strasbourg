@@ -113,5 +113,8 @@
  "domain.transversal": "Übergreifende Situationen und Koordination",
  "sub.deces-deuil": "Todesfall und Trauer: Behördengänge und Rechte",
  "sub.institutions-locales": "Lokale Einrichtungen (Rathäuser, CCAS, Maisons des solidarités)",
- "sub.coordination-pro": "Koordination zwischen Fachkräften"
+ "sub.coordination-pro": "Koordination zwischen Fachkräften",
+ "situation.label": "Beschreiben Sie Ihre Situation mit Ihren Worten",
+ "situation.hint": "Sie können mehrere Probleme auf einmal schreiben, zum Beispiel: „Miete unbezahlt, mir wird der Strom abgestellt, ich habe zwei Kinder“. Was Sie schreiben, wird nicht gespeichert.",
+ "situation.submit": "Möglichkeiten anzeigen"
 }

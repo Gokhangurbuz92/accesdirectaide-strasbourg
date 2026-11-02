@@ -117,5 +117,8 @@
  "domain.transversal": "الحالات المشتركة والتنسيق",
  "sub.deces-deuil": "الوفاة والحداد: الإجراءات والحقوق",
  "sub.institutions-locales": "المؤسسات المحلية (البلديات، CCAS، Maisons des solidarités)",
- "sub.coordination-pro": "التنسيق بين المهنيين"
+ "sub.coordination-pro": "التنسيق بين المهنيين",
+ "situation.label": "صِف وضعك بكلماتك",
+ "situation.hint": "يمكنك كتابة عدة مشكلات معًا، مثلًا: «إيجار غير مدفوع، سيقطعون الكهرباء، لديّ طفلان». ما تكتبه لا يُحفظ.",
+ "situation.submit": "عرض الخيارات"
 }
