@@ -64,6 +64,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/org-closure.js': 'PKG-11 / E08: the organization\'s own closure request and the ADA two-person MFA review (organization name, counts); never public',
   'api/_services/admin-content.js': 'PKG-11 / A02: the administrators\' catalogue editing (only through /api/admin/content: admin session + MFA); found by the R11 table-map detection, never a public read',
   'scripts/q11-multi-instance.mjs': 'R11: Q11 local SIMULATION on a DISPOSABLE local database (refuses another): inserts and deletes its own synthetic rows, never served',
+  'scripts/finess-services-refresh.mjs': 'R35: owner command on the owner machine: counts the FINESS records, then one restricted run of the verification chain (which applies D-5 itself); never served',
   'scripts/transfer-rehearsal.mjs': 'R8: operator rehearsal of the content transfer on a NEW local database it creates (refuses a non-local server); counts and hashes only, never served',
   // maintenance scripts run by an operator, never served
   'scripts/cleanup-test-accounts.js': 'operator script', 'scripts/fix-source-urls.js': 'operator script', 'scripts/measure-phase10-baseline.js': 'operator script', 'scripts/recalculate-quality-scores.js': 'operator script',
