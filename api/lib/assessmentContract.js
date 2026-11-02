@@ -43,7 +43,7 @@ const NEEDS = Object.freeze({
 });
 // Who to ask: ONLY organism types already named by the existing engine/UI strings (LocalRulesEngine explain texts: "La CAF doit vérifier", "Un professionnel peut vérifier").
 const WHO_TO_ASK = Object.freeze({ rsa: 'votre CAF', apl: 'votre CAF', 'faj-strasbourg': 'un professionnel (travailleur social ou structure d\'accompagnement)' });
-// R34 / D20: the other rights of the register (data/rules/rights-rules.v1.json « decidedBy »), reached only through an expert-validated reading
+// R34 / D20: the other rights of the research register (who decides, from its « decidedBy »), reached only through an expert-validated reading
 const WHO_DECIDES = Object.freeze({ 'prime-activite': 'votre CAF ou votre MSA', aah: 'la MDPH', apa: 'la Collectivité européenne d\'Alsace (le Département)', are: 'France Travail', c2s: 'votre CPAM' });
 
 // Labels of the facts (kept equal to src/lib/assessmentLabels.js MISSING_FACT_LABELS by tests/unit/pkg6-d20-why.test.js; this module stays import-free beyond its two data modules).
