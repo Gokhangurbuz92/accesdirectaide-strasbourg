@@ -3,6 +3,8 @@
  * Restricted public beta (owner directive 29/10/2026): the API serves only the public read-only information routes, the release gate drops only the
  * services those refused routes need, and the browser explains the closed screens in French.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { render, screen } from '@testing-library/react';
@@ -31,6 +33,17 @@ describe('server allowlist', () => {
     expect(isAllowedInPublicBeta('POST', 'search')).toBe(true);
     expect(isAllowedInPublicBeta('POST', 'search-pro')).toBe(true);
     expect(isAllowedInPublicBeta('PUT', 'search')).toBe(false);
+  });
+  it('R36: the PDF of a published aide or démarche is public information (GET only); every other document path stays closed', () => {
+    expect(isAllowedInPublicBeta('GET', 'pdf/aides/faj-strasbourg')).toBe(true);
+    expect(isAllowedInPublicBeta('GET', 'pdf/demarches/demande-c2s')).toBe(true);
+    for (const m of ['POST', 'PUT', 'DELETE']) expect(isAllowedInPublicBeta(m, 'pdf/aides/x'), m).toBe(false);
+    for (const p of ['pdf', 'pdf/x', 'pdf/dossier/x', 'pdf/aidesx', 'pdf/structures/x', 'download', 'citizen/coffre']) expect(isAllowedInPublicBeta('GET', p), p).toBe(false);
+    // the handler only reads D-5 visible records and writes nothing
+    const src = readFileSync(resolve(process.cwd(), 'api/_handlers/pdf.js'), 'utf8');
+    expect(src).toMatch(/if \(req\.method !== 'GET'\)/);
+    expect(src).toMatch(/visibleWhere\(t, kind\)/);
+    expect(src).not.toMatch(/\.insert\(|\.update\(|\.delete\(|INSERT INTO|UPDATE "|DELETE FROM/);
   });
   it('is off unless ADA_PUBLIC_BETA_RESTRICTED is 1/true', () => {
     expect(isPublicBetaRestricted({})).toBe(false);

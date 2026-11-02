@@ -489,7 +489,7 @@ export default function DemarcheDetail() {
                     variant="outline"
                     className="w-full"
                     // R29: the PDF service is closed in the public beta — the browser's own print (« Enregistrer en PDF ») makes the same document
-                    onClick={() => (frontendEnv.flags.publicBeta ? window.print() : window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer'))}
+                    onClick={() => window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer')}   // R36: the verified PDF is public in the beta too
                   >
                     <Download className="me-2 h-4 w-4" />
                     {frontendEnv.flags.publicBeta ? t('demarches:detail.pdf_print', 'Imprimer ou enregistrer en PDF') : t('demarches:detail.pdf_download', 'Télécharger en PDF')}

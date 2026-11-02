@@ -13,7 +13,9 @@ const EXACT = new Set([
   'auth/me',
 ]);
 // R32: « translations » serves the checked translations of the same public records (read-only, same D-5 rule)
-const PREFIX = ['aides', 'aids', 'structures', 'demarches', 'actualites', 'guides', 'tools', 'dispositifs', 'ressources', 'translations'];
+// R36: « pdf/aides », « pdf/demarches » = the PDF of a published aide or démarche (api/_handlers/pdf.js: GET only, D-5 visible records only, writes nothing,
+// rate-limited) — the same public information as its page; every other « pdf » or document path stays closed (documents surface)
+const PREFIX = ['aides', 'aids', 'structures', 'demarches', 'actualites', 'guides', 'tools', 'dispositifs', 'ressources', 'translations', 'pdf/aides', 'pdf/demarches'];
 const READ_METHODS = new Set(['GET', 'HEAD']);
 // the two citizen searches take their query in a POST body; they read and write nothing (no account, no history)
 const READ_ONLY_POST = new Set(['search', 'search-pro']);

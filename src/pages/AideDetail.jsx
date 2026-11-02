@@ -559,7 +559,7 @@ export default function AideDetail() {
                     onClick={() => {
                       track('download_aide_pdf', { slug: aide.slug });
                       // R29: the PDF service is closed in the public beta — the browser's own print (« Enregistrer en PDF ») makes the same document
-                      if (frontendEnv.flags.publicBeta) window.print(); else window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer');
+                      window.open(pdfDownloadUrl, '_blank', 'noopener,noreferrer');   // R36: the verified PDF is public in the beta too (api/_utils/public-beta.js)
                     }}
                   >
                     <Download className="me-2 h-4 w-4" aria-hidden="true" />
