@@ -19,7 +19,10 @@ const CONFIG = {
 const IS_PRODUCTION = env.runtime.vercelEnv === 'production';
 
 const LOCAL_STORAGE_DIR = env.storage.localDir;
-const localStorage = LOCAL_STORAGE_DIR
+// R34 (R33 audit G11): the local filesystem store is for the owner's LAB only. In production it would put the Coffre and attachments on the hosting's
+// ephemeral disk, so it is refused there: the object-storage configuration applies (and fails closed when absent)
+if (LOCAL_STORAGE_DIR && IS_PRODUCTION) logger.error('[Storage] ADA_LOCAL_STORAGE_DIR is ignored in production: configure STORAGE_* (object storage)');
+const localStorage = LOCAL_STORAGE_DIR && !IS_PRODUCTION
     ? new LocalFilesystemStorage(LOCAL_STORAGE_DIR)
     : null;
 

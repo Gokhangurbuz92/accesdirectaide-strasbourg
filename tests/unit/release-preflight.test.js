@@ -30,6 +30,11 @@ describe('release preflight (synthetic env, values never printed)', () => {
     expect(by(rs, 'unused.bypass_secret')).toBe('FAIL');
     expect(by(rs, 'mail.deliverable')).toBe('FAIL');
   });
+  it('R34 (G11): the LAB local file store is refused in production — FAIL once storage is used, WARN during the restricted beta', () => {
+    expect(by(run(GOOD), 'storage.no_local_dir')).toBe('PASS');
+    expect(by(run({ ...GOOD, ADA_LOCAL_STORAGE_DIR: '/tmp/x' }), 'storage.no_local_dir')).toBe('FAIL');
+    expect(by(run({ ...GOOD, ADA_LOCAL_STORAGE_DIR: '/tmp/x', ADA_PUBLIC_BETA_RESTRICTED: 'true' }), 'storage.no_local_dir')).toBe('WARN');
+  });
   it('never echoes secret values', () => {
     const planted = { ...GOOD, AUTH_SECRET: 'PLANTED-SECRET-VALUE-1234567890-ABCDEFGH', ADMIN_TOKEN: 'PLANTED-ADMIN', DATABASE_URL: 'postgresql://user:PLANTED-PW@db.example.test/x', MAILER_API_KEY: 'PLANTED-KEY' };
     const text = JSON.stringify(run(planted));

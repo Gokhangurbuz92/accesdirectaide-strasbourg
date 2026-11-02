@@ -2,34 +2,35 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const TEMPLATE_PATH = path.join(process.cwd(), '.env.template');
-const REQUIRED_TARGETS = ['development', 'preview', 'production'];
+/**
+ * R34 (R33 audit): the check read a `.env.template` that no longer exists, and asked for EVERY template variable in every environment — the opposite of
+ * the activation guide (many variables are module-only, LAB-only or forbidden in production). It now lists the variables the production gate
+ * (scripts/release-preflight.mjs) reads and says which of them the chosen Vercel environment has — names only, never a value. A name the gate reads is
+ * not necessarily required (some are WARN or must stay ABSENT): the gate itself decides at build time; this is the owner's checklist.
+ *   npm run vercel:env:check [-- --target production|preview|development]
+ */
+const PREFLIGHT_PATH = path.join(process.cwd(), 'scripts', 'release-preflight.mjs');
+const argTarget = process.argv.includes('--target') ? process.argv[process.argv.indexOf('--target') + 1] : 'production';
+const REQUIRED_TARGETS = [argTarget];
 
 function stderr(line) {
   process.stderr.write(`${line}\n`);
 }
 
+/** the environment variable names the production gate reads (get('NAME') and the arrays of names it checks) @param {string} src */
+export function gateVarNames(src) {
+  const names = new Set();
+  for (const m of src.matchAll(/get\('([A-Z0-9_]+)'\)/g)) names.add(m[1]);
+  for (const m of src.matchAll(/\[((?:\s*'[A-Z0-9_]+',?\s*){2,})\]\.(?:every|filter|some|map)/g)) for (const n of m[1].matchAll(/'([A-Z0-9_]+)'/g)) names.add(n[1]);
+  return [...names].sort();
+}
+
 function readTemplateVarNames() {
-  if (!fs.existsSync(TEMPLATE_PATH)) {
-    stderr(`[vercel-env] Missing ${path.basename(TEMPLATE_PATH)} at repo root.`);
+  if (!fs.existsSync(PREFLIGHT_PATH)) {
+    stderr('[vercel-env] scripts/release-preflight.mjs not found (run from the repository root).');
     process.exit(1);
   }
-
-  const raw = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-  const names = [];
-
-  for (const line of raw.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const name = trimmed.slice(0, eq).trim();
-    if (!/^[A-Z0-9_]+$/.test(name)) continue;
-    names.push(name);
-  }
-
-  return Array.from(new Set(names));
+  return gateVarNames(fs.readFileSync(PREFLIGHT_PATH, 'utf8'));
 }
 
 function runVercelJson() {
@@ -74,24 +75,15 @@ function buildPresenceIndex(vercelList) {
   return index;
 }
 
-const required = readTemplateVarNames();
-const vercelList = runVercelJson();
-const presence = buildPresenceIndex(vercelList);
-
-let hadMissing = false;
-
-for (const target of REQUIRED_TARGETS) {
-  const missing = [];
-  for (const name of required) {
-    const targets = presence.get(name);
-    if (!targets || !targets.has(target)) missing.push(name);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const required = readTemplateVarNames();
+  const vercelList = runVercelJson();
+  const presence = buildPresenceIndex(vercelList);
+  for (const target of REQUIRED_TARGETS) {
+    const has = required.filter((name) => presence.get(name)?.has(target));
+    const absent = required.filter((name) => !presence.get(name)?.has(target));
+    process.stdout.write(`Read by the production gate — present in ${target} (${has.length}):\n${has.join('\n')}\n\nabsent in ${target} (${absent.length}):\n${absent.join('\n')}\n`);
   }
-
-  if (missing.length > 0) {
-    hadMissing = true;
-    process.stdout.write(`Missing (${target}):\n`);
-    for (const name of missing) process.stdout.write(`${name}\n`);
-  }
+  process.stdout.write('\nThe gate decides at build time (FAIL / WARN / must stay absent): see R33_VERCEL_ENV_AND_PROVIDER_ACTIVATION_GUIDE_FR.md.\n');
+  process.exit(0);
 }
-
-process.exit(hadMissing ? 3 : 0);
