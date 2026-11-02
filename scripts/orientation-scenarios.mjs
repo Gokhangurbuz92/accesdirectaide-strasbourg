@@ -19,8 +19,11 @@ for (const s of set.scenarios) {
   const relevant = all.filter((x) => s.words.some((w) => fold(x.text).includes(fold(w))));
   // expectType: the scenario asks for a KIND of office — a place of another kind that merely mentions it does not count
   const typed = s.expectType ? all.filter((x) => x.k === 'structures' && x.type === s.expectType) : null;
-  const pass = s.expect === 'abstain' ? all.length === 0 : typed ? typed.length > 0 : relevant.length > 0;
-  rows.push({ id: s.id, query: s.query, lang: s.lang, http: r.status, expect: s.expect, expectType: s.expectType || null, typed: typed ? typed.length : null, returned: all.length, relevant: relevant.length, crossLanguage: body.crossLanguage || null, sample: relevant.slice(0, 3).map((x) => `${x.k}:${x.slug}`), pass });
+  // R34: expectSafety — the emergency number the search must show first (false: no emergency block at all)
+  const nums = body.safety?.numbers || [];
+  const safetyOk = s.expectSafety === undefined ? true : s.expectSafety === false ? nums.length === 0 : nums.includes(s.expectSafety);
+  const pass = safetyOk && (s.expect === 'any' ? true : s.expect === 'abstain' ? all.length === 0 : typed ? typed.length > 0 : relevant.length > 0);
+  rows.push({ id: s.id, query: s.query, lang: s.lang, http: r.status, expect: s.expect, expectType: s.expectType || null, typed: typed ? typed.length : null, safety: nums, returned: all.length, relevant: relevant.length, crossLanguage: body.crossLanguage || null, sample: relevant.slice(0, 3).map((x) => `${x.k}:${x.slug}`), pass });
   console.log(`${pass ? 'PASS' : 'FAIL'} #${s.id} ${s.lang} « ${s.query} » → ${all.length} returned, ${relevant.length} relevant`);
 }
 console.log(`SCENARIOS ${JSON.stringify({ pass: rows.filter((x) => x.pass).length, total: rows.length })}`);

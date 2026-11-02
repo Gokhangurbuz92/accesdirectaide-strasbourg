@@ -152,6 +152,8 @@ function normalizeResponse(payload) {
     structures,
     actualites,
     guides,
+    // R34: the danger signal of the server (emergency numbers to show first), or null
+    safety: payload?.safety && Array.isArray(payload.safety.numbers) ? { kind: String(payload.safety.kind || ''), numbers: payload.safety.numbers.map(String) } : null,
     meta: {
       total: Number.isFinite(totalFromPayload) ? totalFromPayload : results.length,
       totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length,

@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
 import AidesSearchForm from '@/components/search/AidesSearchForm';
 import SearchResultsList from '@/components/search/SearchResultsList';
+import SafetyNotice from '@/components/search/SafetyNotice';
 import { isAbortError, normalizeSearchCategory, searchAides } from '@/lib/searchClient';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 import { useLanguage, useT } from '@/i18n';
@@ -172,6 +173,7 @@ export default function Recherche() {
   const [structures, setStructures] = useState([]);
   const [actualites, setActualites] = useState([]);
   const [guides, setGuides] = useState([]);
+  const [safety, setSafety] = useState(null);
   const [meta, setMeta] = useState({ total: 0, totalAll: 0, message: null });
   // R32: what went wrong, put into words at render (the interface language may change): « too-short », or the search library's message
   const [searchError, setSearchError] = useState(/** @type {null | { code?: string, message?: string }} */ (null));
@@ -189,6 +191,8 @@ export default function Recherche() {
       setDemarches([]);
       setStructures([]);
       setActualites([]);
+      setGuides([]);
+      setSafety(null);
       setMeta({ total: 0, totalAll: 0, message: null });
       setSearchError(null);
       return;
@@ -200,6 +204,8 @@ export default function Recherche() {
       setDemarches([]);
       setStructures([]);
       setActualites([]);
+      setGuides([]);
+      setSafety(null);
       setMeta({ total: 0, totalAll: 0, message: null });
       setSearchError({ code: 'too-short' });
       return;
@@ -226,6 +232,7 @@ export default function Recherche() {
         setStructures(response.structures || []);
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
+        setSafety(response.safety || null);
         setMeta(response.meta);
         const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
@@ -236,6 +243,8 @@ export default function Recherche() {
         setDemarches([]);
         setStructures([]);
         setActualites([]);
+        setGuides([]);
+        setSafety(null);
         setMeta({ total: 0, totalAll: 0, message: null });
         setStatus('error');
         setSearchError({ message: error.message || '' });
@@ -391,6 +400,8 @@ export default function Recherche() {
               data-testid="search-error-state"
             />
           )}
+
+          {(status === 'success' || status === 'empty') && <SafetyNotice safety={safety} />}
 
           {status === 'empty' && (
             <EmptyState

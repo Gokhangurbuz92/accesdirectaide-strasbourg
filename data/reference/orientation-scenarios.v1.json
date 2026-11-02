@@ -1,6 +1,6 @@
 {
  "schema": "ada-orientation-scenarios/1",
- "note": "Synthetic descriptions (no real person). Each scenario is run against the public search; 'results' expects at least one returned record whose title or summary contains one expected word; 'abstain' expects no record at all. Scenarios 24-25 are also covered by the browser journeys (language switch, keyboard).",
+ "note": "Synthetic descriptions (no real person). Each scenario is run against the public search; 'results' expects at least one returned record whose title or summary contains one expected word; 'abstain' expects no record at all. Scenarios 24-25 are also covered by the browser journeys (language switch, keyboard). Since R34, 'expectSafety' names an emergency number the search must show first (false: it must show none), and 'any' accepts any result list when only the safety signal is scored.",
  "scenarios": [
   {
    "id": 1,
@@ -309,6 +309,104 @@
     "logement",
     "HLM"
    ]
+  },
+  {
+   "id": 26,
+   "situation": "Violences conjugales décrites avec ses mots, sans le nom du dispositif",
+   "lang": "fr",
+   "query": "mon mari me frappe",
+   "expect": "results",
+   "words": [
+    "violences",
+    "victimes",
+    "victime"
+   ],
+   "expectSafety": "3919"
+  },
+  {
+   "id": 27,
+   "situation": "Même situation en anglais",
+   "lang": "en",
+   "query": "my husband hits me",
+   "expect": "results",
+   "words": [
+    "violences",
+    "victimes",
+    "victime"
+   ],
+   "expectSafety": "3919"
+  },
+  {
+   "id": 28,
+   "situation": "Même situation en arabe",
+   "lang": "ar",
+   "query": "زوجي يضربني",
+   "expect": "results",
+   "words": [
+    "violences",
+    "victimes",
+    "victime"
+   ],
+   "expectSafety": "3919"
+  },
+  {
+   "id": 29,
+   "situation": "Idées suicidaires",
+   "lang": "fr",
+   "query": "je veux en finir",
+   "expect": "any",
+   "words": [],
+   "expectSafety": "3114"
+  },
+  {
+   "id": 30,
+   "situation": "Idées suicidaires en ukrainien",
+   "lang": "uk",
+   "query": "хочу покінчити з собою",
+   "expect": "any",
+   "words": [],
+   "expectSafety": "3114"
+  },
+  {
+   "id": 31,
+   "situation": "Enfant en danger",
+   "lang": "fr",
+   "query": "mon enfant est maltraité",
+   "expect": "results",
+   "words": [
+    "maltraitance",
+    "enfant"
+   ],
+   "expectSafety": "119"
+  },
+  {
+   "id": 32,
+   "situation": "Personne à la rue ce soir",
+   "lang": "fr",
+   "query": "je dors dehors ce soir",
+   "expect": "any",
+   "words": [],
+   "expectSafety": "115"
+  },
+  {
+   "id": 33,
+   "situation": "Contrôle négatif : question sur la loi, pas une urgence",
+   "lang": "fr",
+   "query": "loi sur les violences conjugales",
+   "expect": "results",
+   "words": [
+    "violences"
+   ],
+   "expectSafety": false
+  },
+  {
+   "id": 34,
+   "situation": "Contrôle négatif : « coup de pouce » n'est pas une violence",
+   "lang": "fr",
+   "query": "coup de pouce vélo",
+   "expect": "any",
+   "words": [],
+   "expectSafety": false
   }
  ]
 }

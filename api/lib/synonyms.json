@@ -51,5 +51,19 @@
   "energie": ["électricité", "gaz", "chauffage"],
   "mutuelle": ["complémentaire santé", "assurance santé"],
   "creche": ["crèche", "garde enfant", "petite enfance"],
-  "scolarité": ["école", "éducation", "enseignement"]
+  "scolarité": ["école", "éducation", "enseignement"],
+  "frappe": ["violences", "violence"],
+  "frapper": ["violences", "violence"],
+  "coups": ["violences", "violence"],
+  "battue": ["violences", "violence"],
+  "agresse": ["violences", "violence"],
+  "mari": ["conjoint", "couple", "conjugales"],
+  "compagnon": ["conjoint", "couple", "conjugales"],
+  "epoux": ["conjoint", "couple", "conjugales"],
+  "conjoint": ["couple", "conjugales"],
+  "adapter": ["adaptation"],
+  "amenager": ["adaptation", "amenagement"],
+  "agee": ["autonomie", "personnes agees"],
+  "agees": ["autonomie", "personnes agees"],
+  "avortement": ["ivg", "interruption volontaire de grossesse"]
 }

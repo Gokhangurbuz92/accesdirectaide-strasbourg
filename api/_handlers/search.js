@@ -10,6 +10,7 @@ import { GLOSSAIRE } from '../lib/glossaire.js';
 import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
 import { structureTypeHint } from '../lib/search-structure-type.js';
+import { safetySignal } from '../lib/search-safety.js';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -48,8 +49,15 @@ export default async function handler(req, res) {
     // « допомога на оренду » → « loyer »). A query of which no word is understood gets NO result: before, an Arabic or Cyrillic query had no usable
     // word and the démarches and places sections listed their first records as if they matched.
     const cross = crossLanguageQuery(payload.query, payload.lang || 'fr');
+    // R34: a query that describes danger gets the official emergency numbers, whatever else is found (api/lib/search-safety.js)
+    const safety = safetySignal(payload.query, cross.changed ? cross.query : '');
+    const safe = safety ? { safety: { kind: safety.kind, numbers: safety.numbers } } : {};
+    // a danger searches its French topic too: « my husband hits me » finds the guide on domestic violence and the victim offices; « je veux en finir » has
+    // no searchable word of its own (only « finir »)
+    if (safety && (cross.changed || (payload.lang && payload.lang !== 'fr'))) { cross.query = safety.topic; cross.changed = true; }
+    else if (safety) payload.query = `${safety.topic} ${payload.query}`;
     if (cross.changed && !searchWords(cross.query).length) {
-      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] } });
+      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe });
     }
     const crossLanguage = cross.changed ? { understood: true, query: cross.query, concepts: cross.concepts } : undefined;
     if (cross.changed) payload.query = cross.query;
@@ -117,6 +125,16 @@ export default async function handler(req, res) {
             found = (await searchStructures({ ...attempt, type: hint.type, page: 1, pageSize: 5 })).items;
             if (found.length) break;
           }
+        }
+        // R34: danger → the offices that receive victims (Strasbourg first), before any place that merely shares a word with the query
+        if (!hint && safety) {
+          for (const type of safety.structureTypes) {
+            for (const attempt of [{ city: 'Strasbourg' }, {}]) {
+              const items = (await searchStructures({ ...attempt, type, page: 1, pageSize: 3 })).items;
+              if (items.length) { found.push(...items.filter((x) => !found.some((f) => f.id === x.id))); break; }
+            }
+          }
+          found = found.slice(0, 5);
         }
         if (!found.length) found = (await searchStructures({ q: payload.query, page: 1, pageSize: 5 })).items;
         structures = found
@@ -225,7 +243,7 @@ export default async function handler(req, res) {
       };
     });
 
-    return res.status(200).json({ ...searchResult, cached, ...(crossLanguage ? { crossLanguage } : {}) });
+    return res.status(200).json({ ...searchResult, cached, ...(crossLanguage ? { crossLanguage } : {}), ...safe });
   } catch (error) {
     logger.error('Search handler error:', error);
     return res.status(500).json({
