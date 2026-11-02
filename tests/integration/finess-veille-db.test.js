@@ -42,7 +42,7 @@ describe.skipIf(!hasDatabase)('FINESS+ in the automatic verification chain (real
   const list = (xs) => sql`(${sql.join(xs.map((x) => sql`${x}`), sql`, `)})`;
   const mine = (kind, r) => kind !== 'structure' || Object.values(F).includes(r.numero_finess) || r.source_annuaire === ANNUAIRE_ID;
   const run = async (finessFiles, extra = {}) => { const r = await runVeille({ db, fetchImpl: offline, trigger: 'test', only: ['finess', 'structure'], finessFiles, texts: false, ignorePause: true, force: true, select: mine, limits: { newFiness: 50 }, ...extra }); runs.push(r.runId); if (process.env.VEILLE_DEBUG) console.log('RUN', JSON.stringify(r)); return r; };
-  const rec = async (num) => (await db.execute(sql`SELECT id, nom, statut, verification_status, publication_hold, siret, numero_finess, telephone, email, adresse, ville, type_structure, categories_aidees, publics_accueillis, description_courte, summary_falc FROM "Structure" WHERE numero_finess = ${num}`)).rows[0];
+  const rec = async (num) => (await db.execute(sql`SELECT id, nom, statut, verification_status, publication_hold, siret, numero_finess, telephone, email, adresse, ville, type_structure, categories_aidees, publics_accueillis, services, description_courte, summary_falc FROM "Structure" WHERE numero_finess = ${num}`)).rows[0];
   const events = async (id) => (await db.execute(sql`SELECT kind, outcome, summary FROM "VeilleEvent" WHERE entity_id = ${id} ORDER BY created_at`)).rows;
 
   beforeAll(async () => {
@@ -85,7 +85,10 @@ describe.skipIf(!hasDatabase)('FINESS+ in the automatic verification chain (real
     expect(e.nom).toBe(`EHPAD les Tilleuls ${N}`);
     expect(e.publics_accueillis.sort()).toEqual(['Personnes atteintes de la maladie d’Alzheimer ou d’une maladie apparentée', 'Personnes âgées']);   // the inactive activity's public is not shown
     expect(e.email, 'a person\'s own address is never a public contact').toBeNull();
-    expect(e.description_courte).toContain('pas les services qu’il propose ni les conditions pour y être accueilli');
+    // R35: the active authorized activities are the record's services (official labels); the text says what the register does not establish
+    expect(e.services.length).toBeGreaterThan(0);
+    for (const sv of e.services) expect(sv).not.toMatch(/places? (libres|disponibles)|gratuit|€/i);
+    expect(e.description_courte).toContain('ses activités autorisées (listées ci-dessous), pas les places disponibles ni les conditions pour y être accueilli');
     expect(e.summary_falc).toContain('Appelez avant d’y aller.');
     const ledger = (await db.execute(sql`SELECT outcome, "reviewerId", "reviewerRole", "sourceUrl" FROM "ContentVerification" WHERE "entityId" = ${e.id}`)).rows;
     expect(ledger).toEqual([expect.objectContaining({ outcome: 'VERIFIED', reviewerId: 'ada-veille-automatique', reviewerRole: 'system' })]);

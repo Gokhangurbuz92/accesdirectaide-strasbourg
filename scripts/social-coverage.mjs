@@ -28,6 +28,7 @@ const REMOTE = new Set(['signalement', 'crise-suicide', 'violences-conjugales', 
 /** the Eurométropole de Strasbourg: postal codes and towns */
 const EMS_POSTCODE = /^(67000|67100|67200|67300|67380|67400|67450|67540|67800|67810|67118|67201|67202|67203|67204|67205|67206|67207|67210|67460|67500|67550|67610|67640|67720|67770|67830|67840|67850|67870|67880|67960)$/;
 const EMS_TOWN = /strasbourg|schiltigheim|illkirch|lingolsheim|bischheim|hoenheim|ostwald|souffelweyersheim|eckbolsheim|wolfisheim|oberhausbergen|mittelhausbergen|niederhausbergen|reichstett|vendenheim|lampertheim|mundolsheim|la wantzenau|geispolsheim|entzheim|holtzheim|plobsheim|eschau|fegersheim|blaesheim|lipsheim|achenheim|breuschwickersheim|hangenbieten|kolbsheim|oberschaeffolsheim/i;
+const finessRecord = (p) => String(p.source_url || '').startsWith('https://finess.esante.gouv.fr/');
 const isEms = (p) => EMS_POSTCODE.test(String(p.code_postal || '')) || EMS_TOWN.test(fold(p.ville));
 /** data·inclusion thématique label → code (the schema's own vocabulary) */
 const CODE_OF_THEME = new Map(Object.entries(TERMS.lists.thematiques || {}).map(([code, label]) => [label, code]));
@@ -62,13 +63,17 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map()) {
     // each with its producer and authority — a public operator, the managing body, or a self-declaration on a platform)
     const themeOk = (label) => { const code = CODE_OF_THEME.get(label); return Boolean(code) && s.dataInclusion.some((t) => (t.endsWith('--') ? code.startsWith(t) : code === t)); };
     const matching = (p) => [
-      ...(Array.isArray(p.services) ? p.services : []).filter((x) => s.keywords.some((kw) => matchKeyword(String(x), kw))).map(() => ({ authority: 'STRUCTURE', updatedAt: p.date_verification })),
+      // R35: on a record made from FINESS, « services » are the activities the register records as authorized and exercised (an official authorization)
+      // (the activity is read with the establishment's official FINESS category: « SESSAD » is the category, « Éducation générale et soins spécialisés… » the
+      // authorized activity; a category with no active authorized activity counts for nothing)
+      ...(Array.isArray(p.services) ? p.services : []).filter((x) => s.keywords.some((kw) => matchKeyword(finessRecord(p) ? `${p.type_structure} ${x}` : String(x), kw)))
+        .map(() => ({ authority: finessRecord(p) ? 'AUTORISATION_FINESS' : 'STRUCTURE', updatedAt: p.date_verification })),
       ...((p.services_externes && p.services_externes.services) || []).filter((x) => (x.themes || []).some(themeOk) || s.keywords.some((kw) => matchKeyword(`${x.nom} ${(x.themes || []).join(' ')}`, kw))),
     ];
     const services = (data.structures || []).map((p) => ({ p, list: matching(p) })).filter((x) => x.list.length);
     const servicesEms = services.filter((x) => isEms(x.p));
     const contact = (p) => Boolean(p.telephone || p.email || p.site_web);
-    const official = (x) => x.list.some((v) => v.authority === 'OPERATEUR_PUBLIC' || v.authority === 'ORGANISME_GESTIONNAIRE');
+    const official = (x) => x.list.some((v) => v.authority === 'OPERATEUR_PUBLIC' || v.authority === 'ORGANISME_GESTIONNAIRE' || v.authority === 'AUTORISATION_FINESS');
     const fresh = (x) => x.p.date_verification && Date.now() - Date.parse(x.p.date_verification) < 90 * 86400e3 && x.list.some((v) => v.updatedAt && Date.now() - Date.parse(v.updatedAt) < 365 * 86400e3);
     const evidence = {
       taxonomy: true,

@@ -1022,7 +1022,8 @@ const fromFiness = (row) => Boolean(row.numero_finess) && (row.auto_check?.ident
   || String(row.source_url || '').startsWith('https://finess.esante.gouv.fr/'));
 const finessSource = (ctx, e) => ({ kind: 'FINESS', url: e.evidenceUrl, finess: e.finess, category: e.category, categoryLabel: e.categoryLabel, version: ctx.finess.version, updatedAt: e.updatedAt,
   dataset: 'https://www.data.gouv.fr/datasets/finess-structures-1', terms: termsVersion() });
-const finessRecordFields = (e) => ({ type_structure: e.scope[0], categories_aidees: [e.scope[1]], publics_accueillis: e.publics || [] });
+// R35: services = the activities FINESS records as authorized and exercised (finess.js activityServices), official labels only
+const finessRecordFields = (e) => ({ type_structure: e.scope[0], categories_aidees: [e.scope[1]], publics_accueillis: e.publics || [], services: e.services || [] });
 
 /**
  * A record made from FINESS: open in the register (macro-state A, no closing date), of a kind the directory takes, in the département → its facts are the
@@ -1048,6 +1049,7 @@ async function checkFinessRecord(ctx, row) {
   set('nom', e.nom, 'nom'); set('adresse', e.adresse, 'adresse'); set('code_postal', e.code_postal, 'code postal'); set('ville', e.ville, 'commune'); set('telephone', e.telephone, 'téléphone');
   set('latitude', e.latitude); set('longitude', e.longitude);
   const f = finessRecordFields(e); set('type_structure', f.type_structure, 'catégorie'); set('categories_aidees', f.categories_aidees); set('publics_accueillis', f.publics_accueillis, 'publics');
+  if (f.services.length || (row.services || []).length) set('services', f.services, 'activités autorisées');
   if (!row.email && e.email) set('email', e.email, 'courriel');
   if (row.email && nominativeEmail(row.email)) { patch.email = null; corrected.push('adresse électronique personnelle retirée (donnée personnelle)'); }
   const t = finessTexts(e, { updatedDay: frDay(day(e.updatedAt)) }); set('description_courte', t.resume); set('summary_falc', t.falc.join('\n'));
@@ -1101,7 +1103,7 @@ async function feedFiness(ctx) {
     await ctx.db.insert(Structure).values({ id, nom: e.nom, slug: `${slugify(e.nom)}-${id.slice(0, 8)}`, ...finessRecordFields(e), adresse: e.adresse, code_postal: e.code_postal, ville: e.ville,
       ...(siretFree ? { siret: e.siret } : {}), numero_finess: e.finess, departement: ctx.departement, telephone: e.telephone, email: e.email, latitude: e.latitude, longitude: e.longitude,
       source_url: e.evidenceUrl, source_url_exact: e.evidenceUrl, data_origin: 'official', statut: 'brouillon', description_courte: t.resume, summary_falc: t.falc.join('\n'), falc_origin: 'DETERMINISTIC',
-      services: [], insee_codes: e.insee ? [e.insee] : [], department_codes: [ctx.departement], last_checked_at: ctx.now(),
+      insee_codes: e.insee ? [e.insee] : [], department_codes: [ctx.departement], last_checked_at: ctx.now(),
       auto_check: { checkedAt: ctx.now().toISOString(), runId: ctx.runId, identity: 'FINESS', sources: [finessSource(ctx, e)], tier: tier.tier, nextCheckAt: nextAt(ctx, tier) },
       updatedBy: SYSTEM_REVIEWER.id, updatedAt: new Date() });
     if (siretFree) takenSiret.add(e.siret);

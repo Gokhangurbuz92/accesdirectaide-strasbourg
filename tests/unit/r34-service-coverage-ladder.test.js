@@ -39,6 +39,17 @@ describe('service coverage ladder', () => {
     expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['curatelle'], ville: 'Sarrewerden', code_postal: '67260' })] }).serviceStatus).toBe('SERVICE_PARTIAL');
     expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ services: ['curatelle'], telephone: null })] }).serviceStatus).toBe('SERVICE_PARTIAL');
   });
+  it('R35: an activity FINESS records as authorized and exercised is an official service; the category alone is not, nor the same text on another record', () => {
+    const finess = { source_url: 'https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670000000', type_structure: 'Service mandataire judiciaire (MJPM)' };
+    const sub = { keywords: ['curatelle', 'MJPM'] };
+    const r = row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ ...finess, services: ['Protection juridique des majeurs (mesure en milieu ordinaire) — majeurs protégés'] })] }, sub);
+    expect(r.evidence.verifiedSpecificService).toBe(true);     // the official category (MJPM) read with an authorized active activity
+    expect(r.serviceStatus).toBe('SERVICE_VERIFIED');
+    expect(row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ ...finess, services: [] })] }, sub).evidence.verifiedSpecificService).toBe(false);
+    const declared = row({ guide: [{ slug: 'g', titre: 'La curatelle' }], structures: [place({ type_structure: 'MJPM', services: ['Protection juridique des majeurs'] })] }, sub);
+    expect(declared.evidence.declaredSpecificService).toBe(false);   // outside FINESS the category is never read: only the service text counts
+    expect(declared.serviceStatus).toBe('SERVICE_PARTIAL');
+  });
   it('a need served remotely by nature counts through its official channel', () => {
     const r = row({ guide: [{ slug: 'g', titre: 'La curatelle' }] }, { emergency: ['3919'] });
     expect(r.serviceStatus).toBe('SERVICE_VERIFIED');

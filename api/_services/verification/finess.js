@@ -143,7 +143,7 @@ export function establishmentsOf(pm, departement = '67') {
       siret: String(i.siret || '').replace(/\D/g, '') || null, category, categoryLabel: officialLabel('categorie', category), scope: inScope(category) ? SCOPE[category] : null,
       open: g.etatObjet === 'A' && !closedAt, state: g.etatObjet || null, openedAt: i.dateOuverture || null, closedAt, updatedAt: g.dateDerniereMaj || null,
       nom: readableName(i.nomEgeLong || i.nomEgeCourt), adresse: streetOf(a), code_postal: a.codePostal || null, ville: cityOf(a), insee: a.cogCommune || null,
-      latitude: num(geo.directionLatitude), longitude: num(geo.directionLongitude), telephone: phone(contact.telephone), email, evidenceUrl: finessPage(i.numFinessEge), publics: [],
+      latitude: num(geo.directionLatitude), longitude: num(geo.directionLongitude), telephone: phone(contact.telephone), email, evidenceUrl: finessPage(i.numFinessEge), publics: [], services: [],
     };
   }).filter(Boolean);
 }
@@ -159,6 +159,30 @@ export function activityPublics(egeEntry) {
   return [...out];
 }
 
+/**
+ * R35 (owner decision 4: real services, not only establishments): the social and medico-social activities FINESS records as AUTHORIZED and EXERCISED
+ * (active) for one establishment — activity (TRE-R401), operating mode (TRE-R404) and public (TRE-R403), in the official labels, e.g. « Accueil temporaire
+ * pour Personnes Âgées (Hébergement complet ou internat) — personnes âgées ». Only regulated social (ASOCR) and medico-social (AMSR) activities: health
+ * authorizations (AMM, ASDR…) are care equipment, not services a person asks for. Activities whose public is a placement by a judge or the child welfare
+ * (800–805, see publicOf) are left out, like the establishments that only receive on such a decision. No capacity, no availability: FINESS does not say
+ * how many places are free. @returns {string[]}
+ */
+export function activityServices(egeEntry) {
+  const out = new Set();
+  for (const a of egeEntry.activitesExercees || []) {
+    if ((a.caracteristiquesGeneriques || {}).etatObjet !== 'A') continue;
+    const n = a.nature || {}; if (!['AMSR', 'ASOCR'].includes(n.codeNature)) continue;
+    const t = (n.caracteristiquesSpecifiques || {})[n.codeNature === 'AMSR' ? 'typeActiviteAMSR' : 'typeActiviteASOCR'] || {};
+    const pub = Number(t.public);
+    if (pub >= 800 && pub <= 805) continue;
+    const activity = officialLabel('activite', t.activiteSocialeRegulee); if (!activity) continue;
+    const mode = officialLabel('mode', t.modeFonctionnement);
+    const who = publicOf(t.public);
+    out.add(`${activity}${mode ? ` (${mode.charAt(0).toLowerCase()}${mode.slice(1)})` : ''}${who ? ` — ${who.charAt(0).toLowerCase()}${who.slice(1)}` : ''}`);
+  }
+  return [...out].sort().slice(0, 12);
+}
+
 /** the texts of a record made from FINESS: the official kind, place and open state, the publics of its activities — and what FINESS does not say */
 export function finessTexts(e, { updatedDay } = {}) {
   const kind = e.scope ? e.scope[0] : (e.categoryLabel || 'établissement sanitaire ou social');
@@ -166,7 +190,10 @@ export function finessTexts(e, { updatedDay } = {}) {
   const publics = (e.publics || []).slice(0, 4);
   const resume = `${e.nom} est un établissement de type « ${kind} »${e.ville ? ` à ${e.ville}` : ''}. Le répertoire national FINESS (ministère de la Santé, Agence du numérique en santé) l’enregistre comme ouvert${updatedDay ? ` (mise à jour du ${updatedDay})` : ''}.`
     + (publics.length ? ` Publics de ses activités autorisées : ${publics.map((p) => p.charAt(0).toLowerCase() + p.slice(1)).join(' ; ')}.` : '')
-    + ' Ce répertoire confirme l’identité, l’adresse et le téléphone de l’établissement, pas les services qu’il propose ni les conditions pour y être accueilli : contactez-le avant de vous déplacer.';
+    + ((e.services || []).length
+      // R35: the activities FINESS records as authorized and exercised are listed apart (« services »); places free, admission and conditions are not in the register
+      ? ' Ce répertoire indique ses activités autorisées (listées ci-dessous), pas les places disponibles ni les conditions pour y être accueilli : contactez-le avant de vous déplacer.'
+      : ' Ce répertoire confirme l’identité, l’adresse et le téléphone de l’établissement, pas les services qu’il propose ni les conditions pour y être accueilli : contactez-le avant de vous déplacer.');
   const falc = [`${e.nom} est : ${kind}.`, ...(where ? [`L’adresse est : ${where}.`] : []), ...(e.telephone ? [`Le téléphone est le ${e.telephone}.`] : []),
     'L’État confirme que ce lieu est ouvert.', 'Chaque lieu a ses règles pour accueillir.', 'Appelez avant d’y aller.'];
   return { resume, falc };
@@ -229,6 +256,7 @@ export async function readFiness({ structures, activites = null, departement = '
       for (const g of pm.ege || []) {
         const e = byFiness.get(String(g.numFinessEge || '')); if (!e) continue;
         const p = activityPublics(g); if (p.length) { e.publics = [...new Set([...e.publics, ...p])]; withActivities += 1; }
+        const sv = activityServices(g); if (sv.length) e.services = [...new Set([...(e.services || []), ...sv])].sort().slice(0, 12);
       }
     }
   }

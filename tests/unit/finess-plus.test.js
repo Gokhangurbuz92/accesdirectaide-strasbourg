@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
-import { arrayElements, establishmentsOf, publicOf, readableName, finessTexts, latestDaily, fetchFiness, readFiness, SCOPE, officialLabel, termsVersion } from '../../api/_services/verification/finess.js';
+import { arrayElements, establishmentsOf, publicOf, readableName, finessTexts, latestDaily, fetchFiness, readFiness, SCOPE, officialLabel, termsVersion, activityServices } from '../../api/_services/verification/finess.js';
 
 const dirs = [];
 const tmp = () => { const d = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-finess-unit-')); dirs.push(d); return d; };
@@ -68,6 +68,22 @@ describe('an establishment as the directory needs it', () => {
     expect(t.resume).toContain('Publics de ses activités autorisées : personnes âgées.');
     expect(t.falc).toContain('Appelez avant d’y aller.');
     expect(`${t.resume} ${t.falc.join(' ')}`).not.toMatch(/€|gratuit|sans rendez-vous|urgence/i);
+  });
+  it('R35: the authorized and exercised social / medico-social activities, in official labels; health equipment, inactive ones and placements left out', () => {
+    const act = (codeNature, t, etat = 'A') => ({ caracteristiquesGeneriques: { etatObjet: etat }, nature: { codeNature, caracteristiquesSpecifiques: { [codeNature === 'AMSR' ? 'typeActiviteAMSR' : 'typeActiviteASOCR']: t } } });
+    const ege = { activitesExercees: [
+      act('AMSR', { activiteSocialeRegulee: '657', modeFonctionnement: '11', public: '711' }),
+      act('AMSR', { activiteSocialeRegulee: '657', modeFonctionnement: '11', public: '711' }, 'F'),
+      act('ASOCR', { activiteSocialeRegulee: '959', modeFonctionnement: '18', public: '801' }),
+      { caracteristiquesGeneriques: { etatObjet: 'A' }, nature: { codeNature: 'AMM', caracteristiquesSpecifiques: { typeActiviteAMM: { activiteAMM: 'QA014' } } } },
+    ] };
+    const sv = activityServices(ege);
+    expect(sv).toHaveLength(1);
+    expect(sv[0]).toBe(`${officialLabel('activite', '657')} (${officialLabel('mode', '11').charAt(0).toLowerCase()}${officialLabel('mode', '11').slice(1)}) — personnes âgées`);
+    const [e] = establishmentsOf(pm, '67'); e.services = sv;
+    const t = finessTexts(e, { updatedDay: '01/09/2026' });
+    expect(t.resume).toContain('ses activités autorisées (listées ci-dessous), pas les places disponibles ni les conditions pour y être accueilli');
+    expect(`${t.resume} ${t.falc.join(' ')}`).not.toMatch(/€|gratuit|sans rendez-vous|places? libres?/i);
   });
   it('every category in scope has its official label, with the terminology versions', () => {
     for (const code of Object.keys(SCOPE)) expect(officialLabel('categorie', code), code).toBeTruthy();
