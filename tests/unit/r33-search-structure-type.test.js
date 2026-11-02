@@ -24,4 +24,10 @@ describe('structureTypeHint', () => {
     expect(structureTypeHint('aide aux démarches administratives Schiltigheim')).toEqual({ type: 'Espace France Services', rest: 'schiltigheim' });
     expect(structureTypeHint('démarches logement')).toBeNull();
   });
+  it('R35: France Travail (and its former name) is a kind of office; « agence » only says where you are received', () => {
+    expect(structureTypeHint('agence France Travail Strasbourg')).toEqual({ type: 'France Travail', rest: 'strasbourg' });
+    expect(structureTypeHint('Pôle emploi Schiltigheim')).toEqual({ type: 'France Travail', rest: 'schiltigheim' });
+    expect(structureTypeHint('travail saisonnier')).toBeNull();
+    expect(structureTypeHint('foyer de jeunes travailleurs')).toBeNull();
+  });
 });
