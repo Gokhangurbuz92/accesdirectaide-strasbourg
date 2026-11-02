@@ -1,0 +1,2261 @@
+{
+  "$comment": "R35 (P2/P3): canonical module -> configuration dependency manifest. Read by scripts/feature-readiness.mjs (read-only doctor) and checked by tests/unit/r35-activation-manifest.test.js against the environment reads of the code (scripts/lib/env-inventory.mjs) and against the owner guide. Names only, never values. 'gaps' are implementation gaps that close themselves when the 'fixed_when' pattern appears in the file. 'gates' are legal / privacy / owner decisions; the doctor never clears one: a gate is cleared only by its approval variable or by an explicit owner decision recorded here with a date.",
+  "version": 1,
+  "variables": {
+    "DATABASE_URL": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "neon",
+      "format": "^postgres(ql)?://",
+      "injected_by": "neon"
+    },
+    "DATABASE_URL_UNPOOLED": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "neon",
+      "injected_by": "neon"
+    },
+    "POSTGRES_URL_NON_POOLING": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "DATABASE_URL_UNPOOLED",
+      "injected_by": "neon"
+    },
+    "POSTGRES_PRISMA_URL": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "DATABASE_URL",
+      "injected_by": "neon"
+    },
+    "DATABASE_SSL_VERIFY": {
+      "class": "required",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$"
+    },
+    "DATABASE_URL_TEST": {
+      "class": "lab",
+      "nature": "secret"
+    },
+    "TARGET_DATABASE_URL": {
+      "class": "lab",
+      "nature": "secret"
+    },
+    "SOURCE_DATABASE_URL": {
+      "class": "lab",
+      "nature": "secret"
+    },
+    "BACKUP_ENCRYPTION_KEY": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "owner workstation only (backups), never on Vercel"
+    },
+    "JWT_SECRET": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^.{32,}$"
+    },
+    "AUTH_SECRET": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^.{32,}$"
+    },
+    "AUTH_JWT_SECRET": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "AUTH_SECRET"
+    },
+    "SESSION_SECRET": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "RDV_CONFIRMATION_TOKEN_SECRET"
+    },
+    "AUTH_MODE": {
+      "class": "required",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^jwt$"
+    },
+    "AUTH_MAGICLINK_ENABLED": {
+      "class": "dead",
+      "nature": "config"
+    },
+    "ADA_ENCRYPTION_KEY": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^[0-9a-fA-F]{64}$"
+    },
+    "ADA_ENCRYPTION_KEY_PREVIOUS": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "note": "only during a key rotation"
+    },
+    "ADA_VAULT_KEY": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^.{32,}$"
+    },
+    "OUTLOOK_TOKEN_ENCRYPTION_KEY": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "ADA_VAULT_KEY"
+    },
+    "APP_BASE_URL": {
+      "class": "required",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^https://"
+    },
+    "PUBLIC_BASE_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "APP_BASE_URL"
+    },
+    "VITE_BASE_URL": {
+      "class": "alias",
+      "nature": "public",
+      "canonical": "APP_BASE_URL"
+    },
+    "CRON_SECRET": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^.{24,}$"
+    },
+    "KV_REST_API_URL": {
+      "class": "required",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "upstash",
+      "format": "^https://",
+      "injected_by": "upstash"
+    },
+    "KV_REST_API_TOKEN": {
+      "class": "required",
+      "nature": "secret",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "upstash",
+      "injected_by": "upstash"
+    },
+    "UPSTASH_KV_REST_API_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "KV_REST_API_URL"
+    },
+    "UPSTASH_KV_REST_API_TOKEN": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "KV_REST_API_TOKEN"
+    },
+    "UPSTASH_KV_KV_REST_API_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "KV_REST_API_URL"
+    },
+    "UPSTASH_KV_KV_REST_API_TOKEN": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "KV_REST_API_TOKEN"
+    },
+    "UPSTASH_REDIS_REST_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "KV_REST_API_URL"
+    },
+    "UPSTASH_REDIS_REST_TOKEN": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "KV_REST_API_TOKEN"
+    },
+    "ADA_PUBLIC_BETA_RESTRICTED": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(1|true)?$"
+    },
+    "VITE_PUBLIC_BETA": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "MAINTENANCE_MODE": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ]
+    },
+    "ADA_PUBLIC_CONTENT_MODE": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^lab$"
+    },
+    "ADA_LEGACY_SHARE_READ": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^1$"
+    },
+    "VITE_LEGAL_PUBLISHER_IDENTITY": {
+      "class": "required",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_PUBLICATION_DIRECTOR": {
+      "class": "required",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_DATA_PROTECTION_CONTACT": {
+      "class": "required",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_SECURITY_CONTACT": {
+      "class": "required",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_RIGHTS_HOLDER": {
+      "class": "required",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "ALERT_WEBHOOK_URL": {
+      "class": "required_outside_beta",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "alert-channel",
+      "format": "^https://"
+    },
+    "WEBHOOK_URL": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "ALERT_WEBHOOK_URL"
+    },
+    "ALERT_VEILLE_STALE_HOURS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADMIN_SESSION_REGISTRY_STRICT": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "RDV_CONFIRMATION_TOKEN_SECRET": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "format": "^.{32,}$"
+    },
+    "WS7_REQUIRE_DURABLE_RDV_SECRET": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "PRO_MFA_REQUIRED": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "preview"
+      ],
+      "note": "always enforced in production"
+    },
+    "ADMIN_TOKEN": {
+      "class": "forbidden",
+      "nature": "secret"
+    },
+    "ADMIN_PASSWORD": {
+      "class": "forbidden",
+      "nature": "secret"
+    },
+    "ADMIN_PASSWORD_HASH": {
+      "class": "forbidden_warn",
+      "nature": "secret"
+    },
+    "ADMIN_EMAIL": {
+      "class": "forbidden_warn",
+      "nature": "config"
+    },
+    "BYPASS_SECRET": {
+      "class": "forbidden",
+      "nature": "secret"
+    },
+    "ADA_ALLOW_LEGACY_ADMIN_TOKEN": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^1$"
+    },
+    "DEBUG_TOKEN": {
+      "class": "optional",
+      "nature": "secret",
+      "note": "leave empty: empty disables /api/version details"
+    },
+    "USE_MOCKS": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^true$"
+    },
+    "VITE_USE_MOCKS": {
+      "class": "forbidden_value",
+      "nature": "public",
+      "forbidden": "^true$"
+    },
+    "VITE_SKIP_DB": {
+      "class": "forbidden_value",
+      "nature": "public",
+      "forbidden": "^true$"
+    },
+    "VITE_DEV_LOGIN_ENABLED": {
+      "class": "forbidden_value",
+      "nature": "public",
+      "forbidden": "^true$"
+    },
+    "VITE_PUBLIC_DIAGNOSTICS": {
+      "class": "forbidden_value",
+      "nature": "public",
+      "forbidden": "^true$"
+    },
+    "ALLOW_DEV_TOOLS": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^true$"
+    },
+    "ALLOW_CLEAR_REGISTRY": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "CACHE_DEBUG_HEADERS": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_STAGE6_SANDBOX": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "VITE_ENV": {
+      "class": "lab",
+      "nature": "public"
+    },
+    "MAILER_PROVIDER": {
+      "class": "required_outside_beta",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "^(resend|mailjet|noop)?$"
+    },
+    "MAILER_FROM": {
+      "class": "required_outside_beta",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "@"
+    },
+    "MAILER_API_KEY": {
+      "class": "required_outside_beta",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "account": true
+    },
+    "MAILJET_API_KEY": {
+      "class": "dead",
+      "nature": "secret"
+    },
+    "MAILJET_SECRET_KEY": {
+      "class": "dead",
+      "nature": "secret"
+    },
+    "PRO_RDV_RATE_LIMIT_READ_PER_MIN": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "PRO_RDV_RATE_LIMIT_WRITE_PER_MIN": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "PRO_RDV_RATE_LIMIT_WRITE_PER_DAY": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OUTLOOK_ENABLED": {
+      "class": "forbidden_value",
+      "nature": "config",
+      "forbidden": "^true$",
+      "note": "the release gate fails on true until the gate is changed in code"
+    },
+    "OUTLOOK_CLIENT_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "microsoft",
+      "account": true
+    },
+    "OUTLOOK_CLIENT_SECRET": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "microsoft",
+      "account": true
+    },
+    "OUTLOOK_REDIRECT_URI": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "microsoft",
+      "format": "^https://.+/api/auth/callback/outlook$"
+    },
+    "OUTLOOK_AUTHORITY_URL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "CALENDAR_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$"
+    },
+    "VIDEO_PROVIDER": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "format": "^jitsi-jwt$"
+    },
+    "VIDEO_JITSI_DOMAIN": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "jitsi",
+      "account": true
+    },
+    "VIDEO_JITSI_APP_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "jitsi",
+      "account": true
+    },
+    "VIDEO_JITSI_SECRET": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "jitsi",
+      "account": true,
+      "format": "^.{32,}$"
+    },
+    "VIDEO_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$"
+    },
+    "VIDEO_SANDBOX": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "STORAGE_ENDPOINT": {
+      "class": "required_outside_beta",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "account": true,
+      "format": "^https://"
+    },
+    "STORAGE_REGION": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage"
+    },
+    "STORAGE_BUCKET": {
+      "class": "required_outside_beta",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "account": true
+    },
+    "STORAGE_ACCESS_KEY_ID": {
+      "class": "required_outside_beta",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "account": true
+    },
+    "STORAGE_SECRET_ACCESS_KEY": {
+      "class": "required_outside_beta",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "account": true
+    },
+    "STORAGE_PUBLIC_URL": {
+      "class": "lab",
+      "nature": "config",
+      "note": "read by the test runner only"
+    },
+    "ADA_LOCAL_STORAGE_DIR": {
+      "class": "forbidden_warn",
+      "nature": "config",
+      "note": "LAB only; ignored in production"
+    },
+    "R2_ACCESS_KEY_ID": {
+      "class": "alias",
+      "nature": "secret",
+      "canonical": "STORAGE_ACCESS_KEY_ID",
+      "note": "no longer read since R35 (the pro health page reads STORAGE_*)"
+    },
+    "TWILIO_SID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "twilio",
+      "account": true
+    },
+    "TWILIO_AUTH_TOKEN": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "twilio",
+      "account": true
+    },
+    "TWILIO_FROM": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "twilio",
+      "account": true
+    },
+    "SMS_INBOUND_URL": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "twilio"
+    },
+    "WEB_PUSH_VAPID_PUBLIC_KEY": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ]
+    },
+    "WEB_PUSH_VAPID_PRIVATE_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ]
+    },
+    "WEB_PUSH_SUBJECT": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(mailto:|https://)"
+    },
+    "WEB_PUSH_TEST_HOSTS": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "GEMINI_API_KEY": {
+      "class": "forbidden",
+      "nature": "secret"
+    },
+    "GOOGLE_API_KEY": {
+      "class": "forbidden",
+      "nature": "secret"
+    },
+    "ENABLE_AI_AGENT": {
+      "class": "lab",
+      "nature": "config",
+      "note": "opens pro/admin agent routes; must not be 'true' in production (no approved AI provider there)",
+      "forbidden_in_production": "^true$"
+    },
+    "AI_PRIMARY_PROVIDER": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "AI_PRIMARY_MODEL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "AI_FALLBACK_PROVIDER": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "AI_FALLBACK_MODEL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "AI_EMBEDDING_PROVIDER": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OLLAMA_BASE_URL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OLLAMA_MODEL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OLLAMA_EMBED_MODEL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OLLAMA_EMBED_URL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OLLAMA_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "OLLAMA_EMBED_URL"
+    },
+    "OLLAMA_HOST": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "WS2_OLLAMA_URL": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ALLOW_TRUSTED_INTERNAL_OLLAMA": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_TRANSLATION_CACHE": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VEILLE_RUNNER": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE_TEXTS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VEILLE_MAX_MINUTES": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VEILLE_TEXT_FALLBACK": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VEILLE_CACHE_DIR": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VEILLE_RESOURCE_GUARD": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE_MIN_FREE_GB": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE_MAX_SWAP_GB": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE_MIN_MEMORY_PCT": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VEILLE_MODEL_THREADS": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "ADA_VERIFICATION_EXTRA_DOMAINS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VERIFICATION_MIN_GAP_MS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VERIFICATION_MAX_AGE_DAYS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ADA_VERIFICATION_NETWORK": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "AIDES_TERRITOIRES_API_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "aides-territoires",
+      "account": true
+    },
+    "DATA_INCLUSION_API_TOKEN": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "data-inclusion",
+      "account": true
+    },
+    "DS_GRAPHQL_TOKEN": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "demarches-simplifiees",
+      "account": true
+    },
+    "DS_API_URL": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DS_DEMARCHE_IDS": {
+      "class": "conditional",
+      "nature": "config",
+      "provider": "demarches-simplifiees"
+    },
+    "ENABLE_DS_INGESTION": {
+      "class": "conditional",
+      "nature": "config",
+      "format": "^true$"
+    },
+    "OPENFISCA_URL": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "openfisca",
+      "account": true,
+      "format": "^https://"
+    },
+    "OPENFISCA_API_URL": {
+      "class": "alias",
+      "nature": "config",
+      "canonical": "OPENFISCA_URL"
+    },
+    "OPENFISCA_FRANCE_VERSION": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPENFISCA_ENABLE_TRACE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ALLOW_OPENFISCA_PUBLIC_PROTOTYPE": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "SERVICE_PUBLIC_DEMARCHES_DATASET_URL": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SERVICE_PUBLIC_DEMARCHES_MODE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "FINESS_DATASET_URL": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "FINESS_DEPARTMENTS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "RNA_API_BASE_URL": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "RNA_DEPARTMENTS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "COG_BATCH_SIZE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "INGESTION_PARSER_VERSION": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "INGESTION_DRY_RUN": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "INGESTION_MAX_ITEMS_PER_RUN": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SIG_VILLE_API_URL": {
+      "class": "optional",
+      "nature": "config",
+      "provider": "sig-ville"
+    },
+    "SIG_VILLE_API_KEY": {
+      "class": "optional",
+      "nature": "secret",
+      "provider": "sig-ville",
+      "account": true
+    },
+    "SIAO_ENABLED": {
+      "class": "owner_deferred",
+      "nature": "config"
+    },
+    "SIAO_API_URL": {
+      "class": "owner_deferred",
+      "nature": "config"
+    },
+    "SIAO_API_KEY": {
+      "class": "owner_deferred",
+      "nature": "secret"
+    },
+    "GDPR_PURGE_ENABLED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$",
+      "note": "do not create before the retention periods (D4) are approved"
+    },
+    "RETENTION_AUDIT_MONTHS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "RETENTION_SYNC_MONTHS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "RETENTION_USER_YEARS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "LINK_CHECK_ENABLED": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "CRON_ACTUALITES_STALE_MINUTES": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "CRON_ACTUALITES_FAIL_MINUTES": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_AIDES_STALE_DAYS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_DEMARCHES_STALE_DAYS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_STRUCTURES_STALE_DAYS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_REVIEW_SCAN_LIMIT_PER_TYPE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_REVIEW_SCAN_CRON_LIMIT_PER_TYPE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "DATA_REVIEW_SCAN_CRON_ENABLED": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "MONITOR_DQ_OPEN_TOTAL_MAX": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "MONITOR_DQ_OPEN_P0_MAX": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "MONITOR_INGEST_FRESHNESS_MAX_AGE_HOURS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SENTRY_DSN": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "sentry",
+      "account": true,
+      "format": "\\.ingest\\.de\\.sentry\\.io"
+    },
+    "VITE_SENTRY_DSN": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "provider": "sentry",
+      "format": "\\.ingest\\.de\\.sentry\\.io"
+    },
+    "SENTRY_TRACES_SAMPLE_RATE": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SENTRY_AUTH_TOKEN": {
+      "class": "optional",
+      "nature": "secret",
+      "note": "build time only (source maps)"
+    },
+    "SENTRY_ORG": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SENTRY_PROJECT": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "VITE_SENTRY_REPLAY": {
+      "class": "forbidden_value",
+      "nature": "public",
+      "forbidden": "^true$"
+    },
+    "VITE_AUDIENCE_MEASUREMENT": {
+      "class": "decision",
+      "nature": "public"
+    },
+    "VITE_GOOGLE_SITE_VERIFICATION": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_BING_SITE_VERIFICATION": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_API_BASE_URL": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_DEPLOY_ENV": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_VERCEL_ENV": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_GIT_COMMIT_SHA": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "VITE_PUBLIC_ENABLE_LOGGING": {
+      "class": "optional",
+      "nature": "public"
+    },
+    "ENABLE_PRERENDER": {
+      "class": "decision",
+      "nature": "config"
+    },
+    "LOG_LEVEL": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "PUBLIC_FEEDBACK_DISABLED": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "SUPPORT_FORM_DISABLED": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPEN_DATA_EXPORT_ENABLED": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^true$"
+    },
+    "ADA_AGE_POLICY_JSON": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "ENABLE_RAG": {
+      "class": "dead",
+      "nature": "config"
+    },
+    "ENABLE_OPENFISCA": {
+      "class": "dead",
+      "nature": "config"
+    },
+    "ENABLE_CACHE": {
+      "class": "dead",
+      "nature": "config"
+    },
+    "ENABLE_AUDIT_LOG": {
+      "class": "dead",
+      "nature": "config"
+    },
+    "SERVICE_NAME": {
+      "class": "dead",
+      "nature": "config"
+    }
+  },
+  "platform": [
+    "NODE_ENV",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "VERCEL_GIT_COMMIT_SHA",
+    "PORT",
+    "HOME",
+    "PATH",
+    "BUILD_TIME",
+    "PGPASSWORD",
+    "PGSSLMODE",
+    "PG_BIN",
+    "SKIP_DB_SETUP",
+    "LAB_BASE",
+    "LAB_DIST",
+    "LAB_PORT",
+    "LAB_QA_PRIORITY",
+    "LAB_RUN_DIR",
+    "LAB_STOP_GRACE_MS",
+    "LAB_SUPERVISED",
+    "LANGS",
+    "ROUTES",
+    "PW_CHANNEL",
+    "EVAL_PACE_MS",
+    "PROD_URL",
+    "REHEARSAL_ADMIN_URL",
+    "MAX_DESIGN_SYSTEM_VIOLATIONS",
+    "NAME",
+    "VITE_"
+  ],
+  "providers": {
+    "neon": {
+      "label": "Neon PostgreSQL (Vercel Storage integration)",
+      "account": "existing",
+      "cost": "Free plan in use"
+    },
+    "upstash": {
+      "label": "Upstash Redis/KV (Vercel Storage integration)",
+      "account": "existing",
+      "cost": "Free plan in use"
+    },
+    "mail": {
+      "label": "Resend or Mailjet (transactional e-mail)",
+      "account": "to create",
+      "cost": "free tier (Resend 3,000/month; Mailjet 6,000/month)"
+    },
+    "microsoft": {
+      "label": "Microsoft Entra ID app registration (Outlook calendar)",
+      "account": "to create",
+      "cost": "free"
+    },
+    "jitsi": {
+      "label": "self-hosted Jitsi Meet with token auth (EU VPS)",
+      "account": "to create",
+      "cost": "paid VPS"
+    },
+    "object-storage": {
+      "label": "S3-compatible EU object storage (Scaleway, OVHcloud, Cloudflare R2…)",
+      "account": "to create",
+      "cost": "low, pay per use"
+    },
+    "twilio": {
+      "label": "Twilio (SMS)",
+      "account": "to create",
+      "cost": "pay per message"
+    },
+    "alert-channel": {
+      "label": "incoming webhook (Discord, Slack, ntfy…)",
+      "account": "to create",
+      "cost": "free"
+    },
+    "sentry": {
+      "label": "Sentry, EU region",
+      "account": "to create",
+      "cost": "free Developer plan"
+    },
+    "aides-territoires": {
+      "label": "Aides-territoires API (ANCT)",
+      "account": "to create",
+      "cost": "free"
+    },
+    "data-inclusion": {
+      "label": "data·inclusion API",
+      "account": "on request",
+      "cost": "free"
+    },
+    "demarches-simplifiees": {
+      "label": "Démarches Simplifiées API (DINUM)",
+      "account": "instructor account of the démarche",
+      "cost": "free"
+    },
+    "openfisca": {
+      "label": "self-hosted openfisca-france web API",
+      "account": "hosting",
+      "cost": "paid hosting"
+    },
+    "sig-ville": {
+      "label": "SIG Ville (ANCT)",
+      "account": "on request",
+      "cost": "unknown"
+    }
+  },
+  "modules": [
+    {
+      "id": "core",
+      "surfaces": [
+        "all"
+      ],
+      "label": "Socle: boot, sessions, encryption, rate limits",
+      "code": [
+        "api/_utils/env.js",
+        "api/_utils/auth.js",
+        "api/_utils/vault.ts"
+      ],
+      "requires": [
+        "DATABASE_URL",
+        "DATABASE_SSL_VERIFY",
+        "JWT_SECRET",
+        "AUTH_MODE",
+        "ADA_ENCRYPTION_KEY",
+        "ADA_VAULT_KEY",
+        "APP_BASE_URL",
+        "CRON_SECRET",
+        "KV_REST_API_URL",
+        "KV_REST_API_TOKEN"
+      ],
+      "tests": [
+        "release-preflight.test.js",
+        "admin-mfa.test.js"
+      ],
+      "beta_open": true,
+      "live_check": "/api/health/ready",
+      "order": 1
+    },
+    {
+      "id": "legal-identity",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Publisher identity in the legal pages",
+      "code": [
+        "src/config/legal-documents.js"
+      ],
+      "requires": [
+        "VITE_LEGAL_PUBLISHER_IDENTITY",
+        "VITE_LEGAL_PUBLICATION_DIRECTOR",
+        "VITE_LEGAL_DATA_PROTECTION_CONTACT",
+        "VITE_LEGAL_SECURITY_CONTACT",
+        "VITE_LEGAL_RIGHTS_HOLDER"
+      ],
+      "tests": [
+        "legal-pages-honesty.test.js"
+      ],
+      "beta_open": true,
+      "live_check": "/mentions-legales",
+      "order": 1
+    },
+    {
+      "id": "public-content",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Public rights, procedures, guides, places, search (D-5 verified content)",
+      "code": [
+        "api/lib/publicVisibility.js",
+        "api/lib/search-query.js"
+      ],
+      "requires": [
+        "DATABASE_URL"
+      ],
+      "routes": [
+        "aides",
+        "demarches",
+        "guides",
+        "structures",
+        "search"
+      ],
+      "tests": [
+        "pkg1-public-visibility.test.js",
+        "p4-structures-api.test.js"
+      ],
+      "beta_open": true,
+      "live_check": "/api/guides",
+      "order": 1
+    },
+    {
+      "id": "public-feedback",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Content reports and place suggestions",
+      "code": [
+        "api/_services/feature-flags.js"
+      ],
+      "routes": [
+        "feedback",
+        "public/suggest-structure"
+      ],
+      "optional": [
+        "PUBLIC_FEEDBACK_DISABLED"
+      ],
+      "tests": [
+        "r12-tts-feedback-switch.test.js"
+      ],
+      "order": 3
+    },
+    {
+      "id": "contact-support",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Contact and support forms",
+      "code": [
+        "api/_services/feature-flags.js"
+      ],
+      "routes": [
+        "contact",
+        "support"
+      ],
+      "requires_module": [
+        "mail"
+      ],
+      "optional": [
+        "SUPPORT_FORM_DISABLED"
+      ],
+      "tests": [
+        "pkg11-p20-contact-form.test.js"
+      ],
+      "order": 3
+    },
+    {
+      "id": "mail",
+      "surfaces": [
+        "citizen",
+        "pro",
+        "structure",
+        "institution",
+        "admin"
+      ],
+      "label": "Transactional e-mail (verification, reset, invitations, notifications)",
+      "code": [
+        "api/_utils/mailer.js"
+      ],
+      "requires": [
+        "MAILER_PROVIDER",
+        "MAILER_FROM",
+        "MAILER_API_KEY"
+      ],
+      "tests": [
+        "mailer-providers.test.js",
+        "mailer-provider-http-sim.test.js"
+      ],
+      "gates": [
+        {
+          "id": "mail-dpa",
+          "kind": "legal",
+          "text": "DPA with the e-mail provider; entry in the GDPR register"
+        }
+      ],
+      "beta_note": "the release gate requires MAILER_PROVIDER noop while the beta is on",
+      "order": 2
+    },
+    {
+      "id": "citizen-accounts",
+      "surfaces": [
+        "citizen"
+      ],
+      "label": "Citizen sign-up, verification, login, reset, sessions, profile, consent, export, deletion",
+      "code": [
+        "api/_handlers/auth/signup.js"
+      ],
+      "routes": [
+        "auth/signup",
+        "auth/login",
+        "auth/verify-email",
+        "auth/forgot-password",
+        "citizen/profile",
+        "auth/delete-account",
+        "auth/export-data"
+      ],
+      "requires_module": [
+        "core",
+        "mail"
+      ],
+      "tests": [
+        "auth-signup-handler.test.js",
+        "r12-signup-honesty-db.test.js"
+      ],
+      "gates": [
+        {
+          "id": "dpia-citizen",
+          "kind": "privacy",
+          "text": "DPIA and GDPR register for citizen accounts"
+        },
+        {
+          "id": "citizen-mfa-decision",
+          "kind": "owner",
+          "text": "decision: citizen MFA optional or required"
+        }
+      ],
+      "order": 4
+    },
+    {
+      "id": "parcours",
+      "surfaces": [
+        "citizen"
+      ],
+      "label": "Mon Parcours and deadline reminders",
+      "code": [
+        "api/_handlers/cron/parcours-reminder.js"
+      ],
+      "routes": [
+        "citizen/parcours",
+        "cron/parcours-reminder"
+      ],
+      "requires_module": [
+        "citizen-accounts"
+      ],
+      "tests": [
+        "pkg2-batch2-db.test.js"
+      ],
+      "order": 5
+    },
+    {
+      "id": "coffre",
+      "surfaces": [
+        "citizen",
+        "pro"
+      ],
+      "label": "Mon Coffre, message attachments and secure dossier files (object storage)",
+      "code": [
+        "api/_services/mon-espace.js",
+        "api/_services/message-attachments.js",
+        "api/_handlers/pro/dossier/upload-secure.js"
+      ],
+      "routes": [
+        "citizen/coffre",
+        "pro/dossier/upload-secure"
+      ],
+      "requires": [
+        "STORAGE_ENDPOINT",
+        "STORAGE_BUCKET",
+        "STORAGE_ACCESS_KEY_ID",
+        "STORAGE_SECRET_ACCESS_KEY"
+      ],
+      "optional": [
+        "STORAGE_REGION"
+      ],
+      "requires_module": [
+        "citizen-accounts"
+      ],
+      "tests": [
+        "r34-storage-no-local-in-production.test.js",
+        "r34-attachment-limit.test.js",
+        "ws1-local-storage.test.js"
+      ],
+      "gates": [
+        {
+          "id": "hds",
+          "kind": "legal",
+          "text": "HDS hosting assessment (health documents) for storage, database and backups"
+        },
+        {
+          "id": "storage-dpa",
+          "kind": "legal",
+          "text": "EU region and DPA with the storage provider"
+        }
+      ],
+      "order": 6
+    },
+    {
+      "id": "appointments",
+      "surfaces": [
+        "citizen",
+        "pro",
+        "structure"
+      ],
+      "label": "Appointments: booking, cancel/reschedule, ICS, J-1 reminders, staff availability and absences",
+      "code": [
+        "api/_handlers/rdv.js",
+        "api/_handlers/cron/rdv-reminder.js"
+      ],
+      "routes": [
+        "rdv",
+        "pro/slots",
+        "pro/availability",
+        "pro/timeoff",
+        "pro/appointments",
+        "cron/rdv-reminder"
+      ],
+      "optional": [
+        "RDV_CONFIRMATION_TOKEN_SECRET",
+        "PRO_RDV_RATE_LIMIT_READ_PER_MIN",
+        "PRO_RDV_RATE_LIMIT_WRITE_PER_MIN",
+        "PRO_RDV_RATE_LIMIT_WRITE_PER_DAY"
+      ],
+      "requires_module": [
+        "core",
+        "mail"
+      ],
+      "tests": [
+        "rdv-citizen-handler-db.test.js",
+        "rdv-cross-process-db.test.js",
+        "p9d-pro-rdv-readiness-timeoff.test.js"
+      ],
+      "order": 5
+    },
+    {
+      "id": "pro-workspace",
+      "surfaces": [
+        "pro"
+      ],
+      "label": "ADA Pro: MFA, dossiers, cases, referrals, baskets, messages, notes, audit",
+      "code": [
+        "api/_handlers/pro/auth/login.js"
+      ],
+      "routes": [
+        "pro/auth/login",
+        "pro/mfa-setup",
+        "pro/dossier",
+        "pro/cases",
+        "pro/referrals",
+        "pro/selections",
+        "pro/messages",
+        "pro/audit"
+      ],
+      "optional": [
+        "PRO_MFA_REQUIRED"
+      ],
+      "requires_module": [
+        "core",
+        "mail"
+      ],
+      "tests": [
+        "r34-pro-mfa-required.test.js",
+        "pkg4-cases-referrals-db.test.js"
+      ],
+      "gates": [
+        {
+          "id": "pro-mfa-recovery",
+          "kind": "security",
+          "text": "a recovery procedure for a lost second factor"
+        },
+        {
+          "id": "partner-structures",
+          "kind": "owner",
+          "text": "signed partner structures"
+        }
+      ],
+      "order": 7
+    },
+    {
+      "id": "structure-space",
+      "surfaces": [
+        "structure"
+      ],
+      "label": "Espace Structure: profile, services, hours, staff, received referrals",
+      "code": [
+        "api/_handlers/pro/structure.js"
+      ],
+      "routes": [
+        "pro/structure",
+        "pro/services",
+        "pro/team",
+        "pro/invite"
+      ],
+      "requires_module": [
+        "pro-workspace"
+      ],
+      "tests": [
+        "pkg11-d14-structure-sync-db.test.js",
+        "pkg4-structure-proposals-db.test.js"
+      ],
+      "order": 7
+    },
+    {
+      "id": "institution",
+      "surfaces": [
+        "institution"
+      ],
+      "label": "Institution / Territoire: territorial aggregates",
+      "code": [
+        "api/_handlers/institution.js"
+      ],
+      "routes": [
+        "institution/"
+      ],
+      "requires_module": [
+        "core",
+        "mail"
+      ],
+      "tests": [
+        "r21-institution-password-db.test.js",
+        "r24-institution-reset-db.test.js"
+      ],
+      "gates": [
+        {
+          "id": "partner-institution",
+          "kind": "owner",
+          "text": "a signed partner institution"
+        }
+      ],
+      "order": 8
+    },
+    {
+      "id": "admin",
+      "surfaces": [
+        "admin"
+      ],
+      "label": "Administration: named admins with MFA, content, verification, publication, audit log",
+      "code": [
+        "api/_handlers/admin/login.js",
+        "scripts/admin-bootstrap.mjs"
+      ],
+      "routes": [
+        "admin/login",
+        "admin/mfa-setup",
+        "admin/content",
+        "admin/audit-log",
+        "admin/veille"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "admin-mfa.test.js",
+        "pkg11-mfa-single-use-db.test.js"
+      ],
+      "order": 3
+    },
+    {
+      "id": "operations",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Platform operations: alerts, cron runs, backups, key rotation, elevation",
+      "code": [
+        "api/_handlers/cron/health-alert.js",
+        "scripts/db-backup.mjs",
+        "api/_services/key-rotation.js"
+      ],
+      "routes": [
+        "cron/health-alert",
+        "admin/cron-runs",
+        "admin/elevation"
+      ],
+      "requires": [
+        "ALERT_WEBHOOK_URL"
+      ],
+      "optional": [
+        "ALERT_VEILLE_STALE_HOURS"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "db-backup-restore-db.test.js",
+        "key-rotation-v1-db.test.js",
+        "cron-auth.test.js"
+      ],
+      "order": 2
+    },
+    {
+      "id": "gdpr-purge",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Weekly GDPR purge (definitive deletions)",
+      "code": [
+        "api/_handlers/cron/gdpr-purge.js"
+      ],
+      "routes": [
+        "cron/gdpr-purge"
+      ],
+      "requires": [
+        "GDPR_PURGE_ENABLED"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "gdpr-purge-db.test.js",
+        "cron-gdpr-handler.test.js"
+      ],
+      "gates": [
+        {
+          "id": "retention-d4",
+          "kind": "legal",
+          "text": "approved retention periods (decision D4)"
+        }
+      ],
+      "approval": "GDPR_PURGE_ENABLED",
+      "order": 9
+    },
+    {
+      "id": "outlook",
+      "surfaces": [
+        "pro"
+      ],
+      "label": "Outlook calendar connection (busy times)",
+      "code": [
+        "api/_services/calendar-outlook.js",
+        "api/_handlers/pro/outlook.js"
+      ],
+      "routes": [
+        "pro/outlook",
+        "pro/outlook/availability",
+        "auth/callback/outlook"
+      ],
+      "requires": [
+        "OUTLOOK_CLIENT_ID",
+        "OUTLOOK_CLIENT_SECRET",
+        "OUTLOOK_REDIRECT_URI"
+      ],
+      "requires_module": [
+        "pro-workspace"
+      ],
+      "tests": [
+        "outlook-availability-tokens.test.js",
+        "vault-outlook.test.js"
+      ],
+      "approval": "CALENDAR_PRODUCTION_APPROVED",
+      "gates": [
+        {
+          "id": "outlook-dpo",
+          "kind": "privacy",
+          "text": "DPO/security opinion on calendar access"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "preflight-blocks-outlook",
+          "file": "scripts/release-preflight.mjs",
+          "fixed_when": "outlook\\.ready",
+          "text": "the release gate fails on OUTLOOK_ENABLED=true (reason out of date) — needs a reviewed gate change"
+        },
+        {
+          "id": "outlook-status-old-key-name",
+          "file": "api/_services/calendar-outlook.js",
+          "fixed_when": "env\\.ADA_VAULT_KEY \\|\\| env\\.OUTLOOK_TOKEN_ENCRYPTION_KEY",
+          "text": "outlookStatus() requires the old name OUTLOOK_TOKEN_ENCRYPTION_KEY"
+        }
+      ],
+      "order": 10
+    },
+    {
+      "id": "video",
+      "surfaces": [
+        "pro",
+        "citizen"
+      ],
+      "label": "Video appointments (Jitsi with token)",
+      "code": [
+        "api/lib/video-provider.js",
+        "api/_handlers/pro/appointments/visio.js"
+      ],
+      "routes": [
+        "pro/appointments/visio"
+      ],
+      "requires": [
+        "VIDEO_PROVIDER",
+        "VIDEO_JITSI_DOMAIN",
+        "VIDEO_JITSI_APP_ID",
+        "VIDEO_JITSI_SECRET"
+      ],
+      "requires_module": [
+        "appointments"
+      ],
+      "tests": [
+        "pkg3-video-headers.test.js"
+      ],
+      "approval": "VIDEO_PRODUCTION_APPROVED",
+      "gates": [
+        {
+          "id": "video-dpia",
+          "kind": "privacy",
+          "text": "DPA, DPIA, lobby on, recording off on the Jitsi server"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "video-csp",
+          "file": "vercel.json",
+          "fixed_when": "VIDEO_JITSI_DOMAIN|jitsi",
+          "text": "CSP and Permissions-Policy do not allow the Jitsi domain (3 places)"
+        },
+        {
+          "id": "jaas-rs256",
+          "file": "api/lib/video-provider.js",
+          "fixed_when": "RS256",
+          "text": "8x8 JaaS (RS256) not supported: only self-hosted Jitsi HS256"
+        }
+      ],
+      "order": 11
+    },
+    {
+      "id": "sms",
+      "surfaces": [
+        "citizen"
+      ],
+      "label": "SMS reminders with STOP handling",
+      "code": [
+        "api/lib/sms-policy.js",
+        "api/_services/sms-stop.js"
+      ],
+      "routes": [
+        "public/sms-notify"
+      ],
+      "requires": [
+        "TWILIO_SID",
+        "TWILIO_AUTH_TOKEN",
+        "TWILIO_FROM",
+        "SMS_INBOUND_URL"
+      ],
+      "requires_module": [
+        "citizen-accounts"
+      ],
+      "tests": [
+        "pkg11-n02-sms-policy.test.js",
+        "pkg11-n02-sms-stop-db.test.js",
+        "k0-c20-sms-consent-db.test.js"
+      ],
+      "gates": [
+        {
+          "id": "sms-dpa",
+          "kind": "legal",
+          "text": "DPA with Twilio; French sender registration; SMS consent"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "sms-stop-route",
+          "file": "api/lib/sms-policy.js",
+          "fixed_when": "INBOUND_STOP_ROUTED\\s*=\\s*true",
+          "text": "the STOP reply route is not routed (needs a CSRF exemption in the byte-pinned csrf.js: owner decision)"
+        }
+      ],
+      "order": 12
+    },
+    {
+      "id": "web-push",
+      "surfaces": [
+        "citizen"
+      ],
+      "label": "Web Push notifications",
+      "code": [
+        "api/_services/web-push.js",
+        "api/_handlers/citizen/push.js",
+        "scripts/web-push-keys.mjs"
+      ],
+      "routes": [
+        "citizen/push"
+      ],
+      "requires": [
+        "WEB_PUSH_VAPID_PUBLIC_KEY",
+        "WEB_PUSH_VAPID_PRIVATE_KEY",
+        "WEB_PUSH_SUBJECT"
+      ],
+      "requires_module": [
+        "citizen-accounts"
+      ],
+      "tests": [
+        "web-push-db.test.js",
+        "push-unavailable-db.test.js"
+      ],
+      "order": 6
+    },
+    {
+      "id": "assistant-ai",
+      "surfaces": [
+        "public",
+        "pro",
+        "admin"
+      ],
+      "label": "AI assistant, FALC summaries, agents (local Ollama only)",
+      "code": [
+        "api/lib/ai-policy.js",
+        "api/_handlers/assistant/chat.js"
+      ],
+      "routes": [
+        "assistant/chat",
+        "public/falc/summarize",
+        "public/assistant/orient",
+        "pro/agent-discovery"
+      ],
+      "requires": [
+        "AI_PRIMARY_PROVIDER",
+        "OLLAMA_BASE_URL"
+      ],
+      "tests": [
+        "ws4-assistant-local.test.js",
+        "pkg6-assistant-n14.test.js"
+      ],
+      "gates": [
+        {
+          "id": "ai-provider",
+          "kind": "privacy",
+          "text": "an approved AI provider reachable from production (DPIA, DPA); the LAB Ollama must not be exposed to the Internet"
+        }
+      ],
+      "order": 13
+    },
+    {
+      "id": "openfisca",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Rights simulation with OpenFisca (public diagnostic P13)",
+      "code": [
+        "api/lib/openfiscaClient.js",
+        "api/_handlers/diagnostic.js"
+      ],
+      "routes": [
+        "diagnostic"
+      ],
+      "requires": [
+        "OPENFISCA_URL"
+      ],
+      "optional": [
+        "OPENFISCA_FRANCE_VERSION",
+        "OPENFISCA_ENABLE_TRACE"
+      ],
+      "tests": [
+        "pkg1-openfisca-protocol-conformance.test.js",
+        "dta-openfisca-client-privacy.test.js"
+      ],
+      "gates": [
+        {
+          "id": "d11-rules",
+          "kind": "owner",
+          "text": "D11: validation of the 76 rights rules before the diagnostic answers"
+        }
+      ],
+      "order": 13
+    },
+    {
+      "id": "source-aides-territoires",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Aides-territoires import (cron ingest-aids)",
+      "code": [
+        "api/lib/ingestion/AidesTerritoiresConnector.js"
+      ],
+      "routes": [
+        "cron/ingest-aids"
+      ],
+      "requires": [
+        "AIDES_TERRITOIRES_API_KEY"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "r12-aides-territoires-fail-closed.test.js"
+      ],
+      "order": 9
+    },
+    {
+      "id": "source-data-inclusion",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "data·inclusion services (open export; API token optional)",
+      "code": [
+        "api/_services/verification/datainclusion.js"
+      ],
+      "optional": [
+        "DATA_INCLUSION_API_TOKEN"
+      ],
+      "tests": [
+        "datainclusion-veille-db.test.js",
+        "datainclusion.test.js"
+      ],
+      "order": 9
+    },
+    {
+      "id": "source-demarches-simplifiees",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Démarches Simplifiées ingestion",
+      "code": [
+        "api/lib/ingestion/DemarchesSimplifieesConnector.js"
+      ],
+      "requires": [
+        "ENABLE_DS_INGESTION",
+        "DS_GRAPHQL_TOKEN",
+        "DS_DEMARCHE_IDS"
+      ],
+      "optional": [
+        "DS_API_URL"
+      ],
+      "tests": [],
+      "gates": [
+        {
+          "id": "ds-agreement",
+          "kind": "owner",
+          "text": "agreement of the administration that owns the démarche"
+        }
+      ],
+      "order": 14
+    },
+    {
+      "id": "source-open-datasets",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Open datasets: DILA, FINESS, RNA, COG, Annuaire (no key)",
+      "code": [
+        "api/lib/ingestion/FinessConnector.js",
+        "api/lib/ingestion/RnaConnector.js"
+      ],
+      "routes": [
+        "cron/ingest-structures",
+        "cron/ingest-demarches",
+        "cron/ingest-annuaire"
+      ],
+      "optional": [
+        "FINESS_DATASET_URL",
+        "FINESS_DEPARTMENTS",
+        "RNA_API_BASE_URL",
+        "RNA_DEPARTMENTS",
+        "SERVICE_PUBLIC_DEMARCHES_DATASET_URL",
+        "SERVICE_PUBLIC_DEMARCHES_MODE",
+        "COG_BATCH_SIZE"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "finess-veille-db.test.js",
+        "open-data-connectors.test.js"
+      ],
+      "order": 9
+    },
+    {
+      "id": "source-sig-ville",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Priority neighbourhoods (QPV) from SIG Ville",
+      "code": [
+        "api/lib/geography/QPVAdapter.js"
+      ],
+      "optional": [
+        "SIG_VILLE_API_URL",
+        "SIG_VILLE_API_KEY"
+      ],
+      "tests": [
+        "phase9-qpv.test.js"
+      ],
+      "order": 14
+    },
+    {
+      "id": "veille",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "D-5 source verification (veille); run from the LAB",
+      "code": [
+        "api/_handlers/cron/veille.js",
+        "api/_services/verification/chain.js"
+      ],
+      "routes": [
+        "cron/veille",
+        "admin/veille"
+      ],
+      "optional": [
+        "ADA_VEILLE",
+        "ADA_VEILLE_TEXTS",
+        "ADA_VEILLE_MAX_MINUTES",
+        "ADA_VERIFICATION_NETWORK",
+        "ADA_VERIFICATION_MAX_AGE_DAYS"
+      ],
+      "tests": [
+        "veille-chain-db.test.js",
+        "veille-hardening-db.test.js"
+      ],
+      "order": 9
+    },
+    {
+      "id": "crons-public-data",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Scheduled public-data crons (news, review queue, link check)",
+      "code": [
+        "api/_handlers/cron/actualites.js",
+        "api/_utils/cronAuth.js"
+      ],
+      "routes": [
+        "cron/actualites",
+        "cron/review-queue/scan",
+        "cron/link-check"
+      ],
+      "requires": [
+        "CRON_SECRET"
+      ],
+      "optional": [
+        "LINK_CHECK_ENABLED",
+        "DATA_REVIEW_SCAN_CRON_ENABLED"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "p6-cron-actualites.test.js",
+        "p8f-cron-review-queue-scan.test.js",
+        "cron-auth.test.js"
+      ],
+      "order": 9
+    },
+    {
+      "id": "sentry",
+      "surfaces": [
+        "operations"
+      ],
+      "label": "Error tracking (Sentry EU)",
+      "code": [
+        "api/_utils/sentryServer.js",
+        "src/observability/initSentry.js"
+      ],
+      "requires": [
+        "SENTRY_DSN"
+      ],
+      "optional": [
+        "VITE_SENTRY_DSN",
+        "SENTRY_TRACES_SAMPLE_RATE"
+      ],
+      "tests": [
+        "sentry-sampling.test.js",
+        "pkg6-d21-sentry-raw-capture.test.js"
+      ],
+      "gates": [
+        {
+          "id": "sentry-dpa",
+          "kind": "legal",
+          "text": "DPA, EU region; owner directive: no Sentry during the beta"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "sentry-browser-csp",
+          "file": "vercel.json",
+          "fixed_when": "ingest\\.de\\.sentry\\.io",
+          "text": "the browser CSP connect-src does not allow the Sentry host"
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "audience",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Privacy-safe audience measurement (Vercel Web Analytics)",
+      "code": [
+        "src/config/env.js"
+      ],
+      "requires": [
+        "VITE_AUDIENCE_MEASUREMENT"
+      ],
+      "tests": [],
+      "gates": [
+        {
+          "id": "analytics-decision",
+          "kind": "owner",
+          "text": "owner directive: no analytics during the beta"
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "open-data-export",
+      "surfaces": [
+        "institution"
+      ],
+      "label": "Territorial statistics export",
+      "code": [
+        "api/_services/feature-flags.js"
+      ],
+      "requires": [
+        "OPEN_DATA_EXPORT_ENABLED"
+      ],
+      "tests": [],
+      "gates": [
+        {
+          "id": "export-licence",
+          "kind": "owner",
+          "text": "licence of the exported statistics"
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "siao",
+      "surfaces": [
+        "pro"
+      ],
+      "label": "SIAO interoperability",
+      "code": [
+        "api/_handlers/pro/interop-siao.js"
+      ],
+      "routes": [
+        "pro/interop-siao"
+      ],
+      "requires": [
+        "SIAO_ENABLED",
+        "SIAO_API_URL",
+        "SIAO_API_KEY"
+      ],
+      "tests": [
+        "pkg4-siao-purpose.test.js"
+      ],
+      "gates": [
+        {
+          "id": "siao-convention",
+          "kind": "owner",
+          "text": "owner-deferred; operator convention required"
+        }
+      ],
+      "order": 99
+    },
+    {
+      "id": "franceconnect",
+      "surfaces": [
+        "citizen",
+        "pro"
+      ],
+      "label": "FranceConnect / ProConnect",
+      "code": [],
+      "requires": [],
+      "tests": [],
+      "gates": [
+        {
+          "id": "fc-deferred",
+          "kind": "owner",
+          "text": "owner-deferred; no code"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "fc-no-code",
+          "file": "api/routes.js",
+          "fixed_when": "franceconnect",
+          "text": "no implementation"
+        }
+      ],
+      "order": 99
+    }
+  ]
+}

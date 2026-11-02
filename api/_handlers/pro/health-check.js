@@ -77,8 +77,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             {
                 id: 'storage',
                 label: 'Stockage',
-                sub: 'Cloudflare R2',
-                status: process.env.R2_ACCESS_KEY_ID ? 'configured' : 'not_configured',
+                // R35: the object storage the code really uses (STORAGE_*, any S3-compatible EU provider); R2_ACCESS_KEY_ID was read by nothing else
+                sub: 'Stockage objet S3 (UE)',
+                status: env.storage.endpoint && env.storage.bucket && env.storage.accessKeyId && env.storage.secretAccessKey ? 'configured' : 'not_configured',
             },
             {
                 id: 'siao',

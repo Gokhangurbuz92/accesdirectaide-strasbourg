@@ -269,7 +269,7 @@ export async function upsertActualiteFromFeedItem(input) {
   };
 
   // PKG-11 / P10: a refresh keeps the row's identity (id, slug; the table has no createdAt) and never overrides a human decision: a rejected or archived item stays so.
-  // A changed item from a non-official source goes back to review ('brouillon'), as before; an official one stays published.
+  // R34: a changed item goes back to a draft ('brouillon'), official or not, until the automatic verification has read the new words (see below).
   const { id: _id, createdAt: _createdAt, slug: _slug, ...refresh } = insertData;
   const humanFinal = ['rejected', 'archive', 'archived'].includes(String(existing?.statut || ''));
   const { statut: _statut, auto_publish: _auto, published_at: _pub, ...refreshKeepingDecision } = refresh;

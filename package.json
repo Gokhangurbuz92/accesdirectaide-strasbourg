@@ -63,6 +63,8 @@
     "secrets:scan": "npm run security:scan",
     "secrets:scan:git": "npm run security:scan:git",
     "vercel:env:check": "node scripts/vercel-env-sync.mjs",
+    "readiness": "node scripts/feature-readiness.mjs",
+    "readiness:vercel": "node scripts/feature-readiness.mjs --vercel production",
     "preflight": "npm ci && npm run lint && npm run typecheck && npm test && npm run build && npm run secrets:bundle",
     "secrets:bundle": "node scripts/bundle-secret-scan.mjs dist",
     "lint:design-system": "node scripts/lint-design-system.mjs",
