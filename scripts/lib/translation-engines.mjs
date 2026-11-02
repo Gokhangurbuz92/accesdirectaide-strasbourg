@@ -57,7 +57,7 @@ export class Engine {
       this.stats.retries = (this.stats.retries || 0) + 1;
       await new Promise((r) => setTimeout(r, 5000 * (i + 1)));
     }
-    if (!res.ok) throw new Error(`engine ${this.model} answered ${res.status}`);
+    if (!res.ok) throw new Error(`engine ${this.model} answered ${res.status}: ${(await res.text().catch(() => '')).slice(0, 300)} — input ${JSON.stringify(text.slice(0, 160))}`);
     const v = clean((await res.json()).response);
     this.stats.calls += 1; this.stats.ms += Date.now() - t0; this.stats.chars += text.length;
     this.cache.set(k, v);

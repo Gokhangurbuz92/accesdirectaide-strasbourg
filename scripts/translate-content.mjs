@@ -54,11 +54,13 @@ const readFile = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); }
 const REPAIR_ATTEMPTS = 2;
 const UNIT_CHECKS = new Set(['numbers', 'names', 'links', 'entitlement', 'script']);
 export const repaired = { count: 0 };
-async function translateField(engine, back, lang, kind, field, value, previous) {
+/** an engine refusal of ONE unit (degenerate repetition, or a server error left after the engine's own retries) — not a missing engine or network */
+export const isUnitRefusal = (e) => /token repeat limit|answered 5\d\d/.test(String(e?.message || ''));
+export async function translateField(engine, back, lang, kind, field, value, previous) {
   const risk = FIELDS[kind][field];
   const { units, rebuild } = unitsOf(value);
   if (!units.length) return { text: value ?? null, status: 'auto_checked', checks: { critical: [], warnings: [], roundtrip: null, units: 0 } };
-  const glossed = new Set(); const targets = []; const backs = []; const missing = [];
+  const glossed = new Set(); const targets = []; const backs = []; const missing = []; let engineFailed = 0;
   for (const u of units) {
     const p = protect(u);
     // R33 targeted repair: a sentence failing a deterministic check (numbers, names, links, entitlement, script) is retried at most twice with an
@@ -66,11 +68,17 @@ async function translateField(engine, back, lang, kind, field, value, previous) 
     let r = null;
     for (let attempt = 0; attempt <= REPAIR_ATTEMPTS; attempt += 1) {
       const g = new Set(glossed);
-      const cand = restore(await engine.translate('fr', lang, p.text, attempt), p.slots, lang, g);
+      // R34: the engine can refuse a unit (Ollama « token repeat limit reached » on a short sentence, every time at temperature 0): that attempt failed;
+      // the repair attempts change seed and instruction. Any other error still stops the run.
+      let out;
+      try { out = await engine.translate('fr', lang, p.text, attempt); } catch (e) { if (!isUnitRefusal(e)) throw e; continue; }
+      const cand = restore(out, p.slots, lang, g);
       const bad = checkField({ lang, risk, source: u, target: cand.text, missing: cand.missing }).critical.filter((c) => UNIT_CHECKS.has(c));
       if (!r) r = { ...cand, glossed: g };
       if (!bad.length) { r = { ...cand, glossed: g }; if (attempt) repaired.count += 1; break; }
     }
+    // every attempt refused: the French unit keeps its place (no silent gap) and the field is WITHHELD below, so the French text is what is shown
+    if (!r) { engineFailed += 1; targets.push(u); if (back) backs.push(u); continue; }
     for (const x of r.glossed) glossed.add(x);
     missing.push(...r.missing);
     targets.push(r.text);
@@ -78,6 +86,7 @@ async function translateField(engine, back, lang, kind, field, value, previous) 
   }
   const text = rebuild(targets);
   const checks = { ...checkField({ lang, risk, source: units.join('\n'), target: targets.join('\n'), back: back ? backs.join('\n') : null, missing }), units: units.length };
+  if (engineFailed) checks.critical = [...checks.critical, 'engine_failed'];
   const reviewed = Boolean(previous?.review && previous?.text !== undefined && JSON.stringify(previous.text) === JSON.stringify(text));
   return { text, status: fieldStatus(checks, risk, reviewed), checks, ...(reviewed ? { review: previous.review } : {}) };
 }
