@@ -11,15 +11,15 @@ function Skeleton({ className = '', variant = 'line' }) {
         return (
             <div className="rounded-2xl border border-slate-100 p-4 space-y-3 animate-pulse">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-200 rounded-full" />
+                    <div className="w-10 h-10 bg-border rounded-full" />
                     <div className="flex-1 space-y-2">
-                        <div className="h-3.5 bg-slate-200 rounded w-3/4" />
-                        <div className="h-3 bg-slate-100 rounded w-1/2" />
+                        <div className="h-3.5 bg-border rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <div className="h-3 bg-slate-100 rounded w-full" />
-                    <div className="h-3 bg-slate-100 rounded w-5/6" />
+                    <div className="h-3 bg-muted rounded w-full" />
+                    <div className="h-3 bg-muted rounded w-5/6" />
                 </div>
             </div>
         );
@@ -28,17 +28,17 @@ function Skeleton({ className = '', variant = 'line' }) {
     if (variant === 'table-row') {
         return (
             <div className="flex items-center gap-4 py-3 animate-pulse">
-                <div className="h-3.5 bg-slate-200 rounded w-1/4" />
-                <div className="h-3.5 bg-slate-100 rounded w-1/3" />
-                <div className="h-3.5 bg-slate-100 rounded w-1/6" />
-                <div className="h-3.5 bg-slate-100 rounded w-1/6" />
+                <div className="h-3.5 bg-border rounded w-1/4" />
+                <div className="h-3.5 bg-muted rounded w-1/3" />
+                <div className="h-3.5 bg-muted rounded w-1/6" />
+                <div className="h-3.5 bg-muted rounded w-1/6" />
             </div>
         );
     }
 
     return (
         <div
-            className={`bg-slate-200 rounded animate-pulse ${className}`}
+            className={`bg-border rounded animate-pulse ${className}`}
         />
     );
 }
