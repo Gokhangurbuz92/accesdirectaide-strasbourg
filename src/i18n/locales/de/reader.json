@@ -24,5 +24,10 @@
  "error.empty": "Diese Seite enthält keinen Text zum Vorlesen.",
  "error.speech": "Das Vorlesen wurde beendet: Die Sprachausgabe Ihres Geräts hat einen Fehler gemeldet.",
  "state.playing": "Wird vorgelesen.",
- "state.paused": "Vorlesen pausiert."
+ "state.paused": "Vorlesen pausiert.",
+ "voice_button.stop_label": "Vorlesen beenden",
+ "voice_button.play_label": "Text vorlesen",
+ "voice_button.stop": "Stopp",
+ "voice_button.listen": "Anhören",
+ "voice_button.none": "Auf diesem Gerät ist keine Stimme für {{language}} installiert: Dieser Text kann nicht vorgelesen werden."
 }

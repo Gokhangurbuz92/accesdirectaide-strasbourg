@@ -24,5 +24,10 @@
  "error.empty": "Bu sayfada okunacak metin yok.",
  "error.speech": "Okuma durdu: cihazınızın ses sentezi bir hata verdi.",
  "state.playing": "Okunuyor.",
- "state.paused": "Okuma duraklatıldı."
+ "state.paused": "Okuma duraklatıldı.",
+ "voice_button.stop_label": "Sesli okumayı durdur",
+ "voice_button.play_label": "Metni sesli oku",
+ "voice_button.stop": "Durdur",
+ "voice_button.listen": "Dinle",
+ "voice_button.none": "Bu cihazda {{language}} ses yüklü değil: bu metin okunamaz."
 }

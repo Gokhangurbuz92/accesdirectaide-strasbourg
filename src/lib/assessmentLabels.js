@@ -45,7 +45,13 @@ export function isRenderableItem(it) {
   return typeof it.label === 'string' && !!it.label && typeof it.explanation === 'string' && !!it.explanation;
 }
 
-/** @returns {{ items: object[], rejected: number, usable: boolean, dataStatusBanner: string }} */
+/**
+ * An item that passed isRenderableItem: non-authoritative, no amount, five provenance display lines, a label and an explanation (French server texts).
+ * @typedef {{ code: string, label: string, state: string, authoritative: false, amount?: null, explanation: string, explanationFalc?: string | null,
+ *   missingFacts?: string[], basisFacts?: string[], whoToAsk?: string | null, whyFr?: string | null, whyFalc?: string | null,
+ *   provenance: { display: Record<string, string> } }} AssessmentItem
+ */
+/** @returns {{ items: AssessmentItem[], rejected: number, usable: boolean, dataStatusBanner: string }} */
 export function readAssessment(results) {
   const a = results && typeof results === 'object' ? results.assessment : null;
   const raw = a && Array.isArray(a.items) ? a.items : null;

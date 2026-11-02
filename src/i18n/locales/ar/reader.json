@@ -24,5 +24,10 @@
  "error.empty": "لا يوجد في هذه الصفحة نص للقراءة.",
  "error.speech": "توقفت القراءة: أعاد محرك تحويل النص إلى كلام في جهازك خطأً.",
  "state.playing": "جارٍ القراءة.",
- "state.paused": "القراءة متوقفة مؤقتًا."
+ "state.paused": "القراءة متوقفة مؤقتًا.",
+ "voice_button.stop_label": "إيقاف القراءة الصوتية",
+ "voice_button.play_label": "قراءة النص بصوت عالٍ",
+ "voice_button.stop": "إيقاف",
+ "voice_button.listen": "استماع",
+ "voice_button.none": "لا يوجد صوت بلغة {{language}} مثبّت على هذا الجهاز: لا يمكن قراءة هذا النص."
 }

@@ -24,5 +24,10 @@
  "error.empty": "This page has no text to read.",
  "error.speech": "Reading stopped: your device's speech synthesis returned an error.",
  "state.playing": "Reading.",
- "state.paused": "Reading paused."
+ "state.paused": "Reading paused.",
+ "voice_button.stop_label": "Stop reading aloud",
+ "voice_button.play_label": "Read the text aloud",
+ "voice_button.stop": "Stop",
+ "voice_button.listen": "Listen",
+ "voice_button.none": "No {{language}} voice is installed on this device: this text cannot be read."
 }

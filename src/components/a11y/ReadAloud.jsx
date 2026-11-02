@@ -12,12 +12,23 @@ import PropTypes from 'prop-types';
  * the device cannot speak (no dead control). It does not replace a screen reader and does not interfere with one: it announces only the
  * visitor's own actions (polite live region), never the text it reads.
  */
-const btn = 'inline-flex min-h-11 items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50';
+const btn = 'inline-flex min-h-11 items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+
+/** @typedef {import('@/hooks/useReadAloud').ReadAloudController} ReadAloudController */
+
+/**
+ * R39: a control that is not available right now is marked aria-disabled (announced « unavailable », its press does nothing) instead of `disabled`:
+ * « Lire la page », « Pause » and « Arrêter » became disabled under the keyboard focus the moment they were pressed, which threw the focus back
+ * to the top of the document — a keyboard or screen-reader user lost their place at every press.
+ * @param {boolean} unavailable @param {() => void} action
+ */
+const when = (unavailable, action) => ({ 'aria-disabled': unavailable || undefined, onClick: unavailable ? undefined : action });
 
 /**
  * R36 (header): the toggle lives in the header's utility row and the controls open under the header, so the reader no longer takes a row of its own
  * on every page. Both parts share one reader (useReadAloud, called once by the layout); the default export keeps the two together (same behaviour).
  */
+/** @param {{ reader: ReadAloudController, open: boolean, setOpen: (open: boolean) => void, compact?: boolean }} props */
 export function ReadAloudToggle({ reader: r, open, setOpen, compact = false }) {
   const { t } = useT('reader');
   if (!r.supported) return null;
@@ -32,6 +43,7 @@ export function ReadAloudToggle({ reader: r, open, setOpen, compact = false }) {
 }
 ReadAloudToggle.propTypes = { reader: PropTypes.object.isRequired, open: PropTypes.bool.isRequired, setOpen: PropTypes.func.isRequired, compact: PropTypes.bool };
 
+/** @param {{ reader: ReadAloudController, open: boolean }} props */
 export function ReadAloudPanel({ reader: r, open }) {
   const { t } = useT('reader');
   const { code } = useLanguage();
@@ -52,9 +64,9 @@ export function ReadAloudPanel({ reader: r, open }) {
         <div className="flex flex-wrap gap-2">
           {status === 'paused'
             ? <button type="button" className={btn} onClick={r.resume} data-testid="read-resume"><Play className="h-4 w-4" aria-hidden="true" />{t('reader:resume', 'Reprendre')}</button>
-            : <button type="button" className={btn} onClick={() => r.play('page')} disabled={status === 'playing'} data-testid="read-page"><Play className="h-4 w-4" aria-hidden="true" />{t('reader:play.page', 'Lire la page')}</button>}
-          <button type="button" className={btn} onClick={r.pause} disabled={status !== 'playing'} data-testid="read-pause"><Pause className="h-4 w-4" aria-hidden="true" />{t('reader:pause', 'Pause')}</button>
-          <button type="button" className={btn} onClick={r.stop} disabled={status === 'idle'} data-testid="read-stop"><Square className="h-4 w-4" aria-hidden="true" />{t('reader:stop', 'Arrêter')}</button>
+            : <button type="button" className={btn} {...when(status === 'playing', () => r.play('page'))} data-testid="read-page"><Play className="h-4 w-4" aria-hidden="true" />{t('reader:play.page', 'Lire la page')}</button>}
+          <button type="button" className={btn} {...when(status !== 'playing', r.pause)} data-testid="read-pause"><Pause className="h-4 w-4" aria-hidden="true" />{t('reader:pause', 'Pause')}</button>
+          <button type="button" className={btn} {...when(status === 'idle', r.stop)} data-testid="read-stop"><Square className="h-4 w-4" aria-hidden="true" />{t('reader:stop', 'Arrêter')}</button>
           <button type="button" className={btn} onClick={r.previous} data-testid="read-previous"><ChevronLeft className="h-4 w-4 rtl-flip" aria-hidden="true" />{t('reader:previous', 'Section précédente')}</button>
           <button type="button" className={btn} onClick={r.next} data-testid="read-next">{t('reader:next', 'Section suivante')}<ChevronRight className="h-4 w-4 rtl-flip" aria-hidden="true" /></button>
           <button type="button" className={btn} onClick={() => r.play('section')} data-testid="read-section">{t('reader:play.section', 'Lire la section actuelle')}</button>

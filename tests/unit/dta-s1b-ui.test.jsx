@@ -239,7 +239,10 @@ describe('U10 — accessibility (jsdom-level): names, roles, headings, axe serio
     const summaries = container.querySelectorAll('summary');
     expect(summaries.length).toBeGreaterThanOrEqual(4);
     for (const el of container.querySelectorAll('button, a[href], summary')) expect(el.getAttribute('tabindex')).not.toBe('-1');
-    expect(container.querySelector('[tabindex]:not([tabindex="0"])')).toBeNull();
+    // R39 (normative, explained): after the submit the focus moves to the result heading, which therefore carries tabindex="-1" (a programmatic focus
+    // target, as RouteFocus does for every page's h1). No CONTROL leaves the tab order and no positive tabindex exists: that is what stays forbidden.
+    expect(container.querySelector('[tabindex]:not([tabindex="0"]):not(h1[tabindex="-1"], h2[tabindex="-1"], h3[tabindex="-1"])')).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole('heading', { name: /Pistes d.orientation/ }));
   });
   it('assisted access (J-C): the page states that acting remotely for another person is not supported', async () => {
     await run({ status: 200, body: RESPONSE });
