@@ -26,12 +26,5 @@ export async function auditAdminExport(req, what, details = {}) {
   }
 }
 
-/**
- * R40 — one CSV cell: always quoted, and a value a spreadsheet would read as a formula (= + - @, or a leading tab / carriage return) is prefixed with « ' ».
- * @param {unknown} value
- */
-export function csvCell(value) {
-  let s = value === null || value === undefined ? '' : String(value);
-  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
-  return `"${s.replace(/"/g, '""')}"`;
-}
+// R40 — one CSV cell (quoted, formula starters prefixed with « ' »); R41-K F5: the same helper serves the browser exports
+export { csvCell } from '../../src/lib/csv.js';
