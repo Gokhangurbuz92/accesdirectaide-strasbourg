@@ -6,7 +6,7 @@ import { db } from '../../../src/db/index.js';
 import { sql } from 'drizzle-orm';
 import { mailLedgerStatus, sendMail } from '../../_utils/mailer.js';
 import { canNotify } from '../../_services/citizen-account.js';
-import { sendToUser } from '../../_services/web-push.js';
+import { pushLedgerStatus, sendToUser } from '../../_services/web-push.js';
 import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { formatParisDate } from '../../_services/appointment-notices.js';
 
@@ -56,7 +56,7 @@ export async function runParcoursReminders({ now = new Date() } = {}) {
           else if (channel === 'sms') final = (await sendSms(r.phone, withOptOut(`Rappel ADA : ${text}`))) ? 'PROVIDER_ACCEPTED' : 'NOT_DELIVERED';   // PKG-5: accepted, not proven delivered
           else {   // R11 / N04: the push service of the person's browser accepted the encrypted message (not proof it was seen); no subscription / no keys: not delivered
             const out = await sendToUser(r.userId, { title: 'Rappel AccesDirectAide', body: `Une étape de votre parcours arrive à échéance le ${dateStr}.`, url: '/compte/parcours' });
-            final = out.status === 'ACCEPTED' ? 'PROVIDER_ACCEPTED' : out.status === 'FAILED' ? 'FAILED' : 'NOT_DELIVERED';
+            final = pushLedgerStatus(out);   // R40: every subscription ended by the browser (404 / 410) is NOT_DELIVERED, not a provider FAILED
           }
         } catch (e) { logger.error({ err: { name: e?.name } }, '[cron/parcours-reminder] send failed'); }
         await db.execute(sql`UPDATE "ParcoursReminder" SET status = ${final} WHERE "itemId" = ${r.id} AND threshold = ${threshold} AND channel = ${channel}`);

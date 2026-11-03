@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { sendMail } from '../_utils/mailer.js';
+import { mailLedgerStatus, sendMail } from '../_utils/mailer.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import logger from '../_utils/logger.js';
 
@@ -114,7 +114,10 @@ export default async function handler(/** @type {import('../_utils/http-types').
     const result = await sendMail({ to: ADMIN_EMAIL, subject: `[Contact] ${sujetLabel}`, text: textContent, html: htmlContent, category: 'contact-form' });
     logger.info({ sujet, outcome: result.outcome }, '[contact] Form submitted');
 
-    if (!result.delivered) {
+    // R40: `delivered` is also true for the LAB test outbox (nothing left the machine) — the answer follows the ledger status, never « delivered »:
+    // PROVIDER_ACCEPTED (a real provider took it), TEST_RECORDED (LAB outbox), otherwise 503
+    const mailStatus = mailLedgerStatus(result);
+    if (mailStatus !== 'PROVIDER_ACCEPTED' && mailStatus !== 'TEST_RECORDED') {
       return res.status(503).json({ ok: false, delivered: false, code: 'NOT_DELIVERED', error: "Votre message n'a pas pu être transmis. Écrivez-nous directement à contact@accesdirectaide.fr." });
     }
 
@@ -126,7 +129,7 @@ export default async function handler(/** @type {import('../_utils/http-types').
       category: 'contact-confirmation',
     });
 
-    return res.status(200).json({ ok: true, delivered: true });
+    return res.status(200).json({ ok: true, accepted: true, mailStatus });
   } catch (err) {
     logger.error({ msg: '[contact] Error', name: err?.name }, '[contact] Error');
     return res.status(500).json({ error: 'Erreur interne du serveur' });

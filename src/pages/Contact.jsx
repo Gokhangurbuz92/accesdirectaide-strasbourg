@@ -57,7 +57,7 @@ export default function Contact() {
         body: JSON.stringify(form)
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data?.delivered === true) {
+      if (res.ok && data?.accepted === true) {   // R40: handed to the mail provider (or the LAB outbox) — the page never claims more
         setIsSubmitted(true);
       } else if (res.status === 429) {
         setError(t('contact:error.rate_limited', 'Trop de messages envoyés depuis cette connexion. Réessayez dans une heure ou écrivez-nous à contact@accesdirectaide.fr.'));

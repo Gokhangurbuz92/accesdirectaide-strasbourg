@@ -92,9 +92,27 @@ describe.skipIf(!hasDatabase)('web push (real DB, local push-service simulator)'
     expect(received.at(-1).payload.url, 'a link outside the site is never sent').toBe('/');
     expect((await db.execute(sql`SELECT status, "failureCount" AS n FROM "PushSubscription" WHERE "userId" = ${U}`)).rows[0]).toMatchObject({ status: 'ACTIVE', n: 0 });
     answer = 410;
-    expect(await wp.sendToUser(U, { title: 't', body: 'b', url: '/compte' }, { fetchImpl: simulator })).toMatchObject({ expired: 1 });
+    expect(await wp.sendToUser(U, { title: 't', body: 'b', url: '/compte' }, { fetchImpl: simulator })).toMatchObject({ status: 'EXPIRED', accepted: 0, failed: 0, expired: 1 });
     expect(await wp.subscriptionCount(U)).toBe(0);
     expect((await wp.sendToUser(U, { title: 't', body: 'b', url: '/' }, { fetchImpl: simulator })).status).toBe('NO_SUBSCRIPTION');
+  });
+
+  it('R40: the reminder ledger tells a refused push (FAILED) from a subscription the browser ended (NOT_DELIVERED), never DELIVERED', async () => {
+    vi.stubGlobal('fetch', simulator);
+    const due = new Date(Date.now() + 18 * 3600000);
+    const ledger = async (id) => (await db.execute(sql`SELECT status FROM "ParcoursReminder" WHERE "itemId" = ${id} AND channel = 'push'`)).rows[0]?.status;
+    for (const [suffix, code] of [['refused', 503], ['ended', 410]]) {
+      expect(await wp.saveSubscription(U, subscription())).toMatchObject({ ok: true });
+      await db.execute(sql`INSERT INTO "ParcoursItem" (id, "userId", origin, "stepKind", title, "dueDate", "dueSourceUrl", "updatedAt") VALUES (${`${U}-${suffix}`}, ${U}, 'MANUAL', 'custom', 'Étape fictive', ${due}, 'https://www.service-public.fr/particuliers/vosdroits/F1', NOW())`);
+      answer = code;
+      await parcours.runParcoursReminders();
+      await wp.removeSubscriptions(U);
+    }
+    answer = 201;
+    expect(await ledger(`${U}-refused`)).toBe('FAILED');
+    expect(await ledger(`${U}-ended`)).toBe('NOT_DELIVERED');
+    expect(wp.pushLedgerStatus({ status: 'NOT_CONFIGURED' })).toBe('NOT_DELIVERED');
+    expect(wp.pushLedgerStatus({ status: 'ACCEPTED' })).toBe('PROVIDER_ACCEPTED');
   });
 
   it('unsubscribing removes it; deleting the account removes it too', async () => {
