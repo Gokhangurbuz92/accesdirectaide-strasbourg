@@ -56,5 +56,6 @@
  "request.comment_vous_repondre_facultatif": "How to reply to you (optional)",
  "request.adresse_e_mail_ou_telephone": "e-mail address or telephone",
  "request.ne_pas_remplir": "Do not fill in",
- "request.envoyer": "Send"
+ "request.envoyer": "Send",
+ "form.email_placeholder": "jane@example.com"
 }

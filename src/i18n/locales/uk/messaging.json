@@ -120,5 +120,7 @@
  "transparency.send": "Надіслати",
  "transparency.sent": "Документ надіслано обраній організації (бачить лише вона).",
  "transparency.uploaded_by": "завантажено:",
- "transparency.uploaded_on": "{{date}}"
+ "transparency.uploaded_on": "{{date}}",
+ "chat.attachment_size": "{{name}} ({{size}} КБ)",
+ "chat.attachment_remove": "Прибрати файл"
 }

@@ -202,7 +202,7 @@ export default function ProLogin() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="nom@structure.fr"
+                                        placeholder={t('pro:login.email_placeholder', 'nom@structure.fr')}
                                         className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
                                         required
                                     />
@@ -277,7 +277,7 @@ export default function ProLogin() {
 
             <p className="mt-8 text-slate-600 text-sm font-medium">
                 {t('pro:login.besoin_aide', 'Besoin d\'aide ?')}{' '}
-                <a href="/contact" className="text-indigo-600 hover:underline">
+                <a href="/contact" className="text-indigo-700 underline underline-offset-2 hover:text-indigo-900">
                     {t('pro:login.contacter_support', 'Contacter le support')}
                 </a>
             </p>

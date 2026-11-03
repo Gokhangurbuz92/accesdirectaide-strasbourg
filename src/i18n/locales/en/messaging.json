@@ -120,5 +120,7 @@
  "transparency.send": "Send",
  "transparency.sent": "Document sent to the chosen organisation (only it can see it).",
  "transparency.uploaded_by": "uploaded by",
- "transparency.uploaded_on": "on {{date}}"
+ "transparency.uploaded_on": "on {{date}}",
+ "chat.attachment_size": "{{name}} ({{size}} KB)",
+ "chat.attachment_remove": "Remove the file"
 }

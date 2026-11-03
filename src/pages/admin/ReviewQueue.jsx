@@ -359,7 +359,7 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin:review_queue.filters', 'Filtres')}</CardTitle>
+          <CardTitle as="h2">{t('admin:review_queue.filters', 'Filtres')}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-6">
           <label className="text-sm">
@@ -369,10 +369,10 @@ export default function AdminReviewQueue() {
               value={filters.status}
               onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
             >
-              <option value="open">open</option>
-              <option value="resolved">resolved</option>
-              <option value="resolved_by_ai">resolved_by_ai</option>
-              <option value="ignored">ignored</option>
+              <option value="open">{t('admin:review_queue.status.open', 'Ouvert')}</option>
+              <option value="resolved">{t('admin:review_queue.status.resolved', 'Résolu')}</option>
+              <option value="resolved_by_ai">{t('admin:review_queue.status.resolved_by_ai', 'Résolu par l’IA')}</option>
+              <option value="ignored">{t('admin:review_queue.status.ignored', 'Ignoré')}</option>
             </select>
           </label>
 
@@ -384,10 +384,10 @@ export default function AdminReviewQueue() {
               onChange={(event) => setFilters((prev) => ({ ...prev, entityType: event.target.value }))}
             >
               <option value="">{t('admin:review_queue.filter.all', 'all')}</option>
-              <option value="aide">aide</option>
-              <option value="demarche">demarche</option>
-              <option value="structure">structure</option>
-              <option value="actualite">actualite</option>
+              <option value="aide">{t('admin:review_queue.type.aide', 'Aide')}</option>
+              <option value="demarche">{t('admin:review_queue.type.demarche', 'Démarche')}</option>
+              <option value="structure">{t('admin:review_queue.type.structure', 'Structure')}</option>
+              <option value="actualite">{t('admin:review_queue.type.actualite', 'Actualité')}</option>
             </select>
           </label>
 
@@ -479,7 +479,7 @@ export default function AdminReviewQueue() {
       {summary && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin:review_queue.last_scan', 'Dernière analyse')}</CardTitle>
+            <CardTitle as="h2">{t('admin:review_queue.last_scan', 'Dernière analyse')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -519,7 +519,7 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin:review_queue.items', 'Items ({{n}})', { n: filteredItems.length })}</CardTitle>
+          <CardTitle as="h2">{t('admin:review_queue.items', 'Items ({{n}})', { n: filteredItems.length })}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>

@@ -1546,5 +1546,13 @@
  "proposal_status_labels.pending": "Очікує перевірки ADA",
  "proposal_status_labels.accepted": "Прийнято й опубліковано",
  "proposal_status_labels.rejected": "Відхилено",
- "proposal_status_labels.withdrawn": "Відкликано"
+ "proposal_status_labels.withdrawn": "Відкликано",
+ "review_queue.status.open": "Відкрито",
+ "review_queue.status.resolved": "Вирішено",
+ "review_queue.status.resolved_by_ai": "Вирішено ШІ",
+ "review_queue.status.ignored": "Проігноровано",
+ "review_queue.type.aide": "Допомога",
+ "review_queue.type.demarche": "Процедура",
+ "review_queue.type.structure": "Організація",
+ "review_queue.type.actualite": "Новина"
 }

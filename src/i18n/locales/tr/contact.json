@@ -56,5 +56,6 @@
  "request.comment_vous_repondre_facultatif": "Size nasıl cevap verelim (isteğe bağlı)",
  "request.adresse_e_mail_ou_telephone": "e-posta adresi veya telefon",
  "request.ne_pas_remplir": "Doldurmayın",
- "request.envoyer": "Gönder"
+ "request.envoyer": "Gönder",
+ "form.email_placeholder": "ayse@ornek.com"
 }

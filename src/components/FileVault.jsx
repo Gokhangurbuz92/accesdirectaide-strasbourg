@@ -18,21 +18,23 @@ import {
 
 import { ALLOWED_TYPES, MAX_SIZE } from '@/lib/fileVaultLimits';
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
+import { useT, formatNumber } from '@/i18n';
 
-const STATUS_MESSAGES = {
-    401: 'Votre session a expiré. Reconnectez-vous puis réessayez.',
-    403: 'Vous n’avez pas l’autorisation d’ajouter un document à ce dossier.',
-    404: 'Ce dossier n’est plus accessible à votre structure (partage retiré ou introuvable).',
-    410: 'Ce dossier a expiré.',
-    413: 'Fichier trop volumineux ou vide.',
-    415: 'Format non accepté. Utilisez PDF, JPG ou PNG.',
-    429: 'Trop de demandes. Patientez un instant puis réessayez.',
-};
+/** R41: the messages of the upload statuses, in the interface language (namespace `pro`) @param {(k: string, d: string) => string} t */
+const statusMessages = (t) => ({
+    401: t('pro:file_vault.error.401', 'Votre session a expiré. Reconnectez-vous puis réessayez.'),
+    403: t('pro:file_vault.error.403', 'Vous n’avez pas l’autorisation d’ajouter un document à ce dossier.'),
+    404: t('pro:file_vault.error.404', 'Ce dossier n’est plus accessible à votre structure (partage retiré ou introuvable).'),
+    410: t('pro:file_vault.error.410', 'Ce dossier a expiré.'),
+    413: t('pro:file_vault.error.413', 'Fichier trop volumineux ou vide.'),
+    415: t('pro:file_vault.error.415', 'Format non accepté. Utilisez PDF, JPG ou PNG.'),
+    429: t('pro:file_vault.error.429', 'Trop de demandes. Patientez un instant puis réessayez.'),
+});
 
-function readAsBase64(file) {
+function readAsBase64(file, unreadable) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onerror = () => reject(new Error('Lecture du fichier impossible.'));
+        reader.onerror = () => reject(new Error(unreadable));
         reader.onload = () => {
             const result = String(reader.result || '');
             const comma = result.indexOf(',');
@@ -42,9 +44,12 @@ function readAsBase64(file) {
     });
 }
 
-function formatSize(bytes) {
-    if (!bytes) return '0 Ko';
-    return bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} Mo` : `${Math.max(1, Math.round(bytes / 1024))} Ko`;
+/** a file size in the interface language (« 1,5 Mo », « 1.5 MB »…) @param {number} bytes @param {(k: string, d: string, o?: object) => string} t */
+function formatSize(bytes, t) {
+    if (!bytes) return t('pro:file_vault.size_kb', '{{size}} Ko', { size: formatNumber(0) });
+    return bytes >= 1024 * 1024
+        ? t('pro:file_vault.size_mb', '{{size}} Mo', { size: formatNumber(bytes / 1024 / 1024, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) })
+        : t('pro:file_vault.size_kb', '{{size}} Ko', { size: formatNumber(Math.max(1, Math.round(bytes / 1024))) });
 }
 
 /**
@@ -66,19 +71,21 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
     const [downloadError, setDownloadError] = useState('');
     const [downloading, setDownloading] = useState('');
     const inputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
+    const { t } = useT('pro');
+    const STATUS_MESSAGES = statusMessages(t);
 
     const handleFileChange = (e) => {
         const selected = e.target.files?.[0];
         if (!selected) return;
 
         if (selected.size <= 0 || selected.size > MAX_SIZE) {
-            setErrorMsg('Fichier vide ou trop volumineux (max 3 Mo).');
+            setErrorMsg(t('pro:file_vault.too_large', 'Fichier vide ou trop volumineux (max 3 Mo).'));
             setFile(null);
             return;
         }
 
         if (!ALLOWED_TYPES.includes(selected.type)) {
-            setErrorMsg('Format non accepté. Utilisez PDF, JPG ou PNG.');
+            setErrorMsg(t('pro:file_vault.error.415', 'Format non accepté. Utilisez PDF, JPG ou PNG.'));
             setFile(null);
             return;
         }
@@ -95,7 +102,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
             setStatus('uploading');
             setErrorMsg('');
             const token = localStorage.getItem('pro_token');
-            const fileBase64 = await readAsBase64(file);
+            const fileBase64 = await readAsBase64(file, t('pro:file_vault.unreadable', 'Lecture du fichier impossible.'));
             const res = await fetch('/api/pro/dossier/upload-secure', {
                 method: 'POST',
                 headers: {
@@ -108,7 +115,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
-                throw new Error(STATUS_MESSAGES[res.status] || data.error || 'Échec de l’envoi.');
+                throw new Error(STATUS_MESSAGES[res.status] || data.error || t('pro:file_vault.upload_failed', 'Échec de l’envoi.'));
             }
 
             setStatus('success');
@@ -119,7 +126,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                 onUploadSuccess?.();
             }, 1200);
         } catch (err) {
-            setErrorMsg(err.message || 'Échec de l’envoi.');
+            setErrorMsg(err.message || t('pro:file_vault.upload_failed', 'Échec de l’envoi.'));
             setStatus('error');
         }
     };
@@ -134,7 +141,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                 body: JSON.stringify({ token: doc.downloadToken }),
             });
             if (!res.ok) {
-                throw new Error(res.status === 404 ? 'Ce document n’est plus accessible (partage retiré ou document supprimé).' : res.status === 410 ? 'Ce dossier a expiré.' : 'Téléchargement impossible.');
+                throw new Error(res.status === 404 ? t('pro:file_vault.download_gone', 'Ce document n’est plus accessible (partage retiré ou document supprimé).') : res.status === 410 ? t('pro:file_vault.error.410', 'Ce dossier a expiré.') : t('pro:file_vault.download_failed', 'Téléchargement impossible.'));
             }
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
@@ -146,7 +153,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
             link.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         } catch (err) {
-            setDownloadError(err.message || 'Téléchargement impossible.');
+            setDownloadError(err.message || t('pro:file_vault.download_failed', 'Téléchargement impossible.'));
         } finally {
             setDownloading('');
         }
@@ -164,12 +171,12 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
     return (
         <Card data-testid="file-vault">
             <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                     <ShieldCheck size={14} className="text-indigo-600" />
-                    Coffre-fort justificatifs
+                    {t('pro:file_vault.title', 'Coffre-fort justificatifs')}
                 </CardTitle>
                 <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1">
-                    <Lock size={9} /> Fichiers chiffrés sur le serveur
+                    <Lock size={9} aria-hidden="true" /> {t('pro:file_vault.encrypted_server', 'Fichiers chiffrés sur le serveur')}
                 </p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -185,17 +192,17 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                     <label className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-indigo-400 hover:bg-indigo-50/30 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-indigo-500">
                         <Upload className="text-slate-400" size={24} />
                         <span className="text-xs font-medium text-slate-600">
-                            Ajouter un document
+                            {t('pro:file_vault.add', 'Ajouter un document')}
                         </span>
                         <span className="text-[10px] text-slate-500">
-                            PDF, JPG, PNG · Max 3 Mo
+                            {t('pro:file_vault.formats', 'PDF, JPG, PNG · Max 3 Mo')}
                         </span>
                         <input
                             ref={inputRef}
                             type="file"
                             data-testid="file-vault-input"
                             className="sr-only"
-                            aria-label="Choisir un document (PDF, JPG ou PNG, 3 Mo maximum)"
+                            aria-label={t('pro:file_vault.choose', 'Choisir un document (PDF, JPG ou PNG, 3 Mo maximum)')}
                             accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                             onChange={handleFileChange}
                         />
@@ -204,11 +211,11 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-3">
                         <File className="text-indigo-600 shrink-0" size={18} />
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-slate-800 truncate">
+                            <p className="text-xs font-semibold text-slate-800 truncate" dir="auto">
                                 {file.name}
                             </p>
                             <p className="text-[10px] text-slate-500">
-                                {formatSize(file.size)}
+                                {formatSize(file.size, t)}
                             </p>
                         </div>
                         {!isProcessing && status !== 'success' && (
@@ -216,7 +223,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                                 type="button"
                                 onClick={clearFile}
                                 className="p-1 text-slate-500 hover:text-red-700"
-                                aria-label="Retirer le fichier"
+                                aria-label={t('pro:file_vault.remove', 'Retirer le fichier')}
                             >
                                 <X size={14} />
                             </button>
@@ -233,27 +240,27 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                     >
                         {status === 'uploading' && (
                             <>
-                                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                                Envoi sécurisé...
+                                <Loader2 className="me-2 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                                {t('pro:file_vault.sending', 'Envoi sécurisé...')}
                             </>
                         )}
                         {status === 'success' && (
                             <>
-                                <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
-                                Document enregistré
+                                <CheckCircle2 className="me-2 h-3.5 w-3.5" aria-hidden="true" />
+                                {t('pro:file_vault.saved', 'Document enregistré')}
                             </>
                         )}
                         {(status === 'idle' || status === 'error') && (
                             <>
-                                <ShieldCheck className="mr-2 h-3.5 w-3.5" />
-                                Envoyer le document
+                                <ShieldCheck className="me-2 h-3.5 w-3.5" aria-hidden="true" />
+                                {t('pro:file_vault.send', 'Envoyer le document')}
                             </>
                         )}
                     </Button>
                 )}
 
                 <div>
-                    <h3 className="text-xs font-bold text-slate-700 mb-2">Documents de votre structure</h3>
+                    <h3 className="text-xs font-bold text-slate-700 mb-2">{t('pro:file_vault.list_title', 'Documents de votre structure')}</h3>
                     {downloadError && (
                         <div role="alert" data-testid="file-vault-download-error" className="flex items-center gap-2 p-2 mb-2 bg-red-50 text-red-800 rounded-lg text-xs">
                             <AlertCircle size={12} />
@@ -261,25 +268,25 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                         </div>
                     )}
                     {documents.length === 0 ? (
-                        <p data-testid="file-vault-empty" className="text-xs text-slate-500">Aucun document pour l’instant.</p>
+                        <p data-testid="file-vault-empty" className="text-xs text-slate-500">{t('pro:file_vault.empty', 'Aucun document pour l’instant.')}</p>
                     ) : (
                         <ul className="space-y-2" data-testid="file-vault-list">
                             {documents.map((doc) => (
                                 <li key={doc.id} data-testid="file-vault-item" className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
                                     <FileText className="text-indigo-600 shrink-0" size={16} />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-semibold text-slate-800 truncate" data-testid="file-vault-item-name">{doc.name}</p>
-                                        <p className="text-[10px] text-slate-500">{formatSize(doc.byteLength)}</p>
+                                        <p className="text-xs font-semibold text-slate-800 truncate" data-testid="file-vault-item-name" dir="auto">{doc.name}</p>
+                                        <p className="text-[10px] text-slate-500">{formatSize(doc.byteLength, t)}</p>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => handleDownload(doc)}
                                         disabled={downloading === doc.id}
                                         className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                        aria-label={`Télécharger ${doc.name}`}
+                                        aria-label={t('pro:file_vault.download_named', 'Télécharger {{name}}', { name: doc.name })}
                                     >
-                                        <Download size={12} />
-                                        Télécharger
+                                        <Download size={12} aria-hidden="true" />
+                                        {t('pro:file_vault.download', 'Télécharger')}
                                     </button>
                                 </li>
                             ))}
@@ -288,8 +295,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                 </div>
 
                 <p className="text-[10px] text-slate-500 leading-relaxed">
-                    Le fichier est chiffré sur le serveur et lié à ce dossier. Seules les structures auxquelles l’usager a donné accès peuvent le télécharger ;
-                    si l’usager retire son partage, le téléchargement s’arrête. Ce n’est pas un chiffrement de bout en bout.
+                    {t('pro:file_vault.protection_notice', 'Le fichier est chiffré sur le serveur et lié à ce dossier. Seules les structures auxquelles l’usager a donné accès peuvent le télécharger ; si l’usager retire son partage, le téléchargement s’arrête. Ce n’est pas un chiffrement de bout en bout.')}
                 </p>
             </CardContent>
         </Card>

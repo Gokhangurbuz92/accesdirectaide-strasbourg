@@ -171,5 +171,6 @@
  "suggest.continue": "Devam",
  "suggest.pro_title": "Bu kuruluşta mı çalışıyorsunuz?",
  "suggest.pro_text": "Bu kaydın yönetimini almak için bize yazın (pro hesap oluşturmak yeni bir kuruluş açar).",
- "suggest.contact_us": "Bize ulaşın"
+ "suggest.contact_us": "Bize ulaşın",
+ "suggest.website_placeholder": "https://www.kurulusum.fr"
 }

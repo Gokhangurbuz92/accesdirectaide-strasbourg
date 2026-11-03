@@ -203,7 +203,7 @@ export default function SuggestStructure() {
                                 >
                                     {isCompleted ? <CheckCircle2 size={20} /> : <Icon size={20} />}
                                 </div>
-                                <span className={cn('text-xs font-bold uppercase tracking-widest', isActive ? 'text-indigo-600' : 'text-slate-400')}>
+                                <span className={cn('text-xs font-bold uppercase tracking-widest', isActive ? 'text-indigo-600' : 'text-slate-600')}>
                                     {STEP_TITLES[step.id]}
                                 </span>
                             </div>
@@ -375,7 +375,7 @@ export default function SuggestStructure() {
                                                 id="website"
                                                 value={formData.website}
                                                 onChange={(e) => updateField('website', e.target.value)}
-                                                placeholder="https://www.ma-structure.fr"
+                                                placeholder={t('structures:suggest.website_placeholder', 'https://www.ma-structure.fr')}
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                             />
                                         </div>

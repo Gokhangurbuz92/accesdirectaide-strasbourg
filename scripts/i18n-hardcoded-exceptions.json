@@ -1,0 +1,515 @@
+{
+ "_doc": "R41-C: approved exceptions of scripts/i18n-hardcoded-scan.mjs. file + exact text (or « * » for a whole unmounted / Storybook / developer-only file). Categories: unmounted (valid only while no mounted file imports it: the scan fails otherwise), storybook, developer-only, proper-name, french-term, french-legal, lang-fr, unit, technical-id, example-value, trans-component, source-branch.",
+ "exceptions": [
+  {
+   "file": "src/components/ConsentPad.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere. Its text states a 30-day consultation period and a « SHA-256 infalsifiable » signature that no current flow backs: it must be reviewed (and its claims verified) before it is mounted, not translated as is."
+  },
+  {
+   "file": "src/components/ReportContentButton.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere (content reports go through /contact?sujet=signalement_erreur, already translated)."
+  },
+  {
+   "file": "src/components/SentryTest.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; developer test component."
+  },
+  {
+   "file": "src/components/SkipToContent.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; the mounted skip link is in src/pages/Layout.jsx (translated)."
+  },
+  {
+   "file": "src/components/UserNotRegisteredError.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere (Base44 legacy screen, English placeholder text)."
+  },
+  {
+   "file": "src/components/assistant/DiagnosticResults.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; the mounted diagnostic is src/pages/DiagnosticPage.jsx (translated). Contains a « valide 7 jours » statement that must be checked before any reuse."
+  },
+  {
+   "file": "src/components/assistant/DiagnosticTraceModal.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only imported by the unmounted DiagnosticResults.jsx."
+  },
+  {
+   "file": "src/components/assistant/RecommendationCard.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only imported by the unmounted ResultPanel.jsx."
+  },
+  {
+   "file": "src/components/assistant/ResultPanel.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere (legacy assistant panel)."
+  },
+  {
+   "file": "src/components/cards/AideCard.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; the mounted aid cards are translated."
+  },
+  {
+   "file": "src/components/features/falc/FalcToggle.tsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only used by Storybook stories; the application uses src/components/FalcToggle.jsx (translated)."
+  },
+  {
+   "file": "src/components/feedback/PublicListSkeleton.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere."
+  },
+  {
+   "file": "src/components/foundation/TokenSwatches.tsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Design-token swatches for Storybook only (developer documentation)."
+  },
+  {
+   "file": "src/components/home/Hero.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere (legacy home hero)."
+  },
+  {
+   "file": "src/components/home/HeroSection.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere (legacy home hero)."
+  },
+  {
+   "file": "src/components/home/QuickAccessCards.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere."
+  },
+  {
+   "file": "src/components/home/TrustBand.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere."
+  },
+  {
+   "file": "src/components/layout/Header.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; the mounted header is in src/pages/Layout.jsx (translated)."
+  },
+  {
+   "file": "src/components/molecules/FreshnessTag.tsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only used by the unmounted AidDetailLayout.tsx and its Storybook stories."
+  },
+  {
+   "file": "src/components/navigation/Breadcrumbs.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere."
+  },
+  {
+   "file": "src/components/organisms/AidDetailLayout.tsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only used by Storybook stories; the aid page is src/pages/AideDetail.jsx (translated)."
+  },
+  {
+   "file": "src/components/organisms/ProvenancePanel.tsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Only used by Storybook stories."
+  },
+  {
+   "file": "src/components/search/SearchBar.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere; the mounted search UI is translated (R41-D owns search)."
+  },
+  {
+   "file": "src/components/ui/SourceProof.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Not imported anywhere."
+  },
+  {
+   "file": "src/components/ui/breadcrumb.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "shadcn primitive not imported by any mounted screen."
+  },
+  {
+   "file": "src/components/ui/carousel.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "shadcn primitive not imported by any mounted screen."
+  },
+  {
+   "file": "src/components/ui/pagination.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "shadcn primitive not imported by any mounted screen."
+  },
+  {
+   "file": "src/components/ui/sheet.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "shadcn primitive not imported by any mounted screen (only by the unmounted sidebar.jsx)."
+  },
+  {
+   "file": "src/components/ui/sidebar.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "shadcn primitive not imported by any mounted screen."
+  },
+  {
+   "file": "src/pages/pro/StorybookExplorer.jsx",
+   "text": "*",
+   "category": "unmounted",
+   "reason": "Route removed (src/pages/index.jsx « Orphan routes removed (V2) »); not imported."
+  },
+  {
+   "file": "src/components/organisms/AidDetailLayout.stories.tsx",
+   "text": "*",
+   "category": "storybook",
+   "reason": "Storybook fixture data (sample APL card), never shipped in the application bundle."
+  },
+  {
+   "file": "src/components/organisms/AidGrid.stories.tsx",
+   "text": "*",
+   "category": "storybook",
+   "reason": "Storybook fixture."
+  },
+  {
+   "file": "src/components/ui/AnimatedCard.stories.jsx",
+   "text": "*",
+   "category": "storybook",
+   "reason": "Storybook fixture."
+  },
+  {
+   "file": "src/components/ui/empty-state.stories.tsx",
+   "text": "*",
+   "category": "storybook",
+   "reason": "Storybook fixture."
+  },
+  {
+   "file": "src/components/ErrorBoundary.jsx",
+   "text": "Erreur (dev only):",
+   "category": "developer-only",
+   "reason": "Rendered only when frontendEnv.runtime.isDev (isDevelopment): developer diagnostics, never shown in a production build."
+  },
+  {
+   "file": "src/components/ErrorBoundary.jsx",
+   "text": "Stack trace",
+   "category": "developer-only",
+   "reason": "Rendered only in development builds (isDevelopment)."
+  },
+  {
+   "file": "src/pages/SentryTestPage.jsx",
+   "text": "*",
+   "category": "developer-only",
+   "reason": "Route /__sentry_test is mounted only when VITE_PUBLIC_DIAGNOSTICS is set (staging diagnostics, src/pages/index.jsx); developer page."
+  },
+  {
+   "file": "src/components/ExternalServices.jsx",
+   "text": "data·inclusion",
+   "category": "proper-name",
+   "reason": "Name of the national open-data platform (data.inclusion.beta.gouv.fr)."
+  },
+  {
+   "file": "src/components/FalcSummary.jsx",
+   "text": "FALC",
+   "category": "french-term",
+   "reason": "« Facile à lire et à comprendre », the French easy-read standard; the summary below is French (lang=\"fr\") and the heading explains it in each language. The badge carries lang=\"fr\"."
+  },
+  {
+   "file": "src/components/chat/ChatAssistant.jsx",
+   "text": "Boussole Sociale",
+   "category": "proper-name",
+   "reason": "Name of the assistant; kept as « La Boussole Sociale » in every locale (shared:chat.*). Carries lang=\"fr\"."
+  },
+  {
+   "file": "src/components/i18n/ContentTranslationNotice.jsx",
+   "text": "Afficher tout le site en français",
+   "category": "lang-fr",
+   "reason": "Deliberately in French with lang=\"fr\": the way back to French is written in French, as language-switch links are (WCAG 3.1.2 language of parts)."
+  },
+  {
+   "file": "src/pages/ServiceError.jsx",
+   "text": "Liberté, Égalité, Fraternité",
+   "category": "lang-fr",
+   "reason": "Motto of the French Republic, quoted in French with lang=\"fr\"."
+  },
+  {
+   "file": "src/pages/DiagnosticPage.jsx",
+   "text": "Cette simulation est indicative et non-opposable. Seule une instruction officielle par l'organisme compétent (CAF, CPAM, Département) a valeur légale.",
+   "category": "french-legal",
+   "reason": "Legal notice kept in French (lang=\"fr\" dir=\"ltr\"); in the other languages a translated summary follows (diagnostic:page.legal_summary)."
+  },
+  {
+   "file": "src/pages/Accessibilite.jsx",
+   "text": "CSS",
+   "category": "proper-name",
+   "reason": "Technology name in the RGAA « technologies utilisées » list."
+  },
+  {
+   "file": "src/pages/Accessibilite.jsx",
+   "text": "JavaScript",
+   "category": "proper-name",
+   "reason": "Technology name in the RGAA « technologies utilisées » list."
+  },
+  {
+   "file": "src/pages/Accessibilite.jsx",
+   "text": "React",
+   "category": "proper-name",
+   "reason": "Technology name in the RGAA « technologies utilisées » list."
+  },
+  {
+   "file": "src/pages/Accessibilite.jsx",
+   "text": "contact@accesdirectaide.fr",
+   "category": "proper-name",
+   "reason": "E-mail address."
+  },
+  {
+   "file": "src/pages/CGU.jsx",
+   "text": "contact@accesdirectaide.fr",
+   "category": "proper-name",
+   "reason": "E-mail address."
+  },
+  {
+   "file": "src/pages/Contact.jsx",
+   "text": "contact@accesdirectaide.fr",
+   "category": "proper-name",
+   "reason": "E-mail address."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "contact@accesdirectaide.fr",
+   "category": "proper-name",
+   "reason": "E-mail address."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "AccesDirectAide (accesdirectaide.fr)",
+   "category": "proper-name",
+   "reason": "Brand / service name, never translated."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "Vercel Inc. —",
+   "category": "proper-name",
+   "reason": "Company name (host); the label and the description around it are translated."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "Sentry —",
+   "category": "proper-name",
+   "reason": "Company/service name; the label and the description around it are translated."
+  },
+  {
+   "file": "src/pages/AppointmentCancel.jsx",
+   "text": "AccesDirectAide",
+   "category": "proper-name",
+   "reason": "Brand / service name, never translated."
+  },
+  {
+   "file": "src/pages/AppointmentReschedule.jsx",
+   "text": "AccesDirectAide",
+   "category": "proper-name",
+   "reason": "Brand / service name, never translated."
+  },
+  {
+   "file": "src/pages/Layout.jsx",
+   "text": "AccesDirectAide",
+   "category": "proper-name",
+   "reason": "Brand / service name, never translated."
+  },
+  {
+   "file": "src/pages/AdminAiMetrics.jsx",
+   "text": "ms",
+   "category": "unit",
+   "reason": "SI unit symbol (milliseconds) in an admin latency table."
+  },
+  {
+   "file": "src/pages/AdminDashboard.jsx",
+   "text": "RAG",
+   "category": "technical-id",
+   "reason": "Feature-flag name (code RAG) on the admin dashboard."
+  },
+  {
+   "file": "src/pages/AdminDashboard.jsx",
+   "text": "OpenFisca",
+   "category": "proper-name",
+   "reason": "Name of the OpenFisca engine (feature flag OPENFISCA)."
+  },
+  {
+   "file": "src/pages/AdminFeatures.jsx",
+   "text": "ENABLE_",
+   "category": "technical-id",
+   "reason": "Prefix of an environment-variable name shown to administrators."
+  },
+  {
+   "file": "src/pages/admin/Observability.jsx",
+   "text": "RequestId",
+   "category": "technical-id",
+   "reason": "Name of the request-id field the admin copies into a log search."
+  },
+  {
+   "file": "src/pages/pro/ImpactReports.jsx",
+   "text": "CSV",
+   "category": "technical-id",
+   "reason": "File format name on the export button."
+  },
+  {
+   "file": "src/pages/CompteProfil.jsx",
+   "text": "#owner=",
+   "category": "technical-id",
+   "reason": "Literal URL fragment the person must look for in their link (in <code>)."
+  },
+  {
+   "file": "src/pages/Aides.jsx",
+   "text": "Aides Territoires",
+   "category": "proper-name",
+   "reason": "Name of a data source / public body / region in the source filter."
+  },
+  {
+   "file": "src/pages/Aides.jsx",
+   "text": "DREES",
+   "category": "proper-name",
+   "reason": "Name of a data source / public body / region in the source filter."
+  },
+  {
+   "file": "src/pages/Aides.jsx",
+   "text": "Grand Est",
+   "category": "proper-name",
+   "reason": "Name of a data source / public body / region in the source filter."
+  },
+  {
+   "file": "src/pages/Aides.jsx",
+   "text": "Agefiph",
+   "category": "proper-name",
+   "reason": "Name of a data source / public body / region in the source filter."
+  },
+  {
+   "file": "src/pages/Demarches.jsx",
+   "text": "Service-Public",
+   "category": "proper-name",
+   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
+  },
+  {
+   "file": "src/pages/Demarches.jsx",
+   "text": "Démarches Simplifiées",
+   "category": "proper-name",
+   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
+  },
+  {
+   "file": "src/pages/Demarches.jsx",
+   "text": "Aides Territoires",
+   "category": "proper-name",
+   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
+  },
+  {
+   "file": "src/pages/Demarches.jsx",
+   "text": "Grand Est",
+   "category": "proper-name",
+   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
+  },
+  {
+   "file": "src/pages/Dispositifs.jsx",
+   "text": "Bas-Rhin (67)",
+   "category": "proper-name",
+   "reason": "Name and number of a French département."
+  },
+  {
+   "file": "src/pages/Dispositifs.jsx",
+   "text": "Haut-Rhin (68)",
+   "category": "proper-name",
+   "reason": "Name and number of a French département."
+  },
+  {
+   "file": "src/pages/Confidentialite.jsx",
+   "text": "Cookies",
+   "category": "trans-component",
+   "reason": "Element passed in components={[cookiesLink]} of a <Trans>: its text is replaced by the translated <0>…</0> content."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "politique de confidentialité",
+   "category": "trans-component",
+   "reason": "Element passed in components={[privacyLink]} of a <Trans>: its text is replaced by the translated <0>…</0> content."
+  },
+  {
+   "file": "src/pages/Security.jsx",
+   "text": "politique de confidentialité",
+   "category": "trans-component",
+   "reason": "Element passed in components of a <Trans>: its text is replaced by the translated <0>…</0> content."
+  },
+  {
+   "file": "src/pages/Confidentialite.jsx",
+   "text": "Politique de confidentialité",
+   "category": "source-branch",
+   "reason": "Rendered only when the interface language is French (isSource); the other languages render t('legal:privacy.title')."
+  },
+  {
+   "file": "src/pages/Cookies.jsx",
+   "text": "Cookies",
+   "category": "source-branch",
+   "reason": "Rendered only when the interface language is French (isSource); the other languages render t('legal:cookies.title')."
+  },
+  {
+   "file": "src/pages/MentionsLegales.jsx",
+   "text": "Mentions légales",
+   "category": "source-branch",
+   "reason": "Rendered only when the interface language is French (isSource); the other languages render t('legal:mentions.title')."
+  },
+  {
+   "file": "src/components/admin/VerificationPanel.jsx",
+   "text": "https://…",
+   "category": "example-value",
+   "reason": "URL format hint, language-neutral."
+  },
+  {
+   "file": "src/pages/admin/k5/Duplicates.jsx",
+   "text": "https://…",
+   "category": "example-value",
+   "reason": "URL format hint, language-neutral."
+  },
+  {
+   "file": "src/pages/CompteParcours.jsx",
+   "text": "https://www.service-public.fr/…",
+   "category": "example-value",
+   "reason": "Example of an official French URL (service-public.fr), language-neutral."
+  },
+  {
+   "file": "src/pages/SuggestStructure.jsx",
+   "text": "Paris",
+   "category": "example-value",
+   "reason": "Example city name (proper name)."
+  },
+  {
+   "file": "src/pages/SuggestStructure.jsx",
+   "text": "contact@structure.fr",
+   "category": "example-value",
+   "reason": "Example e-mail address with no French word specific to French (« contact », « structure »)."
+  },
+  {
+   "file": "src/pages/SuggestStructure.jsx",
+   "text": "04 XX XX XX XX",
+   "category": "example-value",
+   "reason": "French telephone number format (the structures are in France)."
+  }
+ ]
+}

@@ -20,7 +20,7 @@ export default function FalcSummary({
     >
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-base font-semibold">{heading}</h2>
-        <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700">
+        <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700" lang="fr">
           FALC
         </span>
       </div>

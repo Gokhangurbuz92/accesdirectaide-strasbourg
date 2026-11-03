@@ -1536,5 +1536,13 @@
  "proposal_status_labels.pending": "Awaiting ADA verification",
  "proposal_status_labels.accepted": "Accepted and published",
  "proposal_status_labels.rejected": "Rejected",
- "proposal_status_labels.withdrawn": "Withdrawn"
+ "proposal_status_labels.withdrawn": "Withdrawn",
+ "review_queue.status.open": "Open",
+ "review_queue.status.resolved": "Resolved",
+ "review_queue.status.resolved_by_ai": "Resolved by AI",
+ "review_queue.status.ignored": "Ignored",
+ "review_queue.type.aide": "Aid",
+ "review_queue.type.demarche": "Procedure",
+ "review_queue.type.structure": "Organisation",
+ "review_queue.type.actualite": "News item"
 }

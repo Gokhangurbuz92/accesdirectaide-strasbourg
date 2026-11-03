@@ -33,7 +33,7 @@ import {
     Eye,
     TrendingUp,
 } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useT, formatDate } from '@/i18n';
 
 /**
  * SharedDossier — Vue Pro d'un diagnostic partagé
@@ -45,6 +45,9 @@ import { useT } from '@/i18n';
  * - Permet de changer le statut de suivi (PATCH)
  * - Intègre le SecureChat existant (chiffré à l'enregistrement, pas de bout en bout) pour communiquer avec l'usager
  */
+/** R41: dates in the interface language (« 03/11/2026 » in French, as before) */
+const NUMERIC_DATE = /** @type {Intl.DateTimeFormatOptions} */ ({ day: '2-digit', month: '2-digit', year: 'numeric' });
+
 export default function SharedDossier() {
     const { t } = useT('pro');
     const { shareId } = useParams();
@@ -180,7 +183,7 @@ export default function SharedDossier() {
                         </h2>
                         <p className="text-sm text-slate-700 mb-6">{error}</p>
                         <Button variant="outline" onClick={() => navigate('/pro/dashboard')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> {t('pro:shared_dossier.back_dashboard', 'Retour au tableau de bord')}
+                            <ArrowLeft className="me-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" /> {t('pro:shared_dossier.back_dashboard', 'Retour au tableau de bord')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -202,7 +205,7 @@ export default function SharedDossier() {
                         onClick={() => navigate(-1)}
                         aria-label={t('pro:shared_dossier.back', 'Retour')}
                     >
-                        <ArrowLeft size={18} aria-hidden="true" />
+                        <ArrowLeft size={18} aria-hidden="true" className="rtl:-scale-x-100" />
                     </Button>
                     <div>
                         <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -221,7 +224,7 @@ export default function SharedDossier() {
                     <Clock size={12} />
                     {t('pro:shared_dossier.expires', 'Expire le')}{' '}
                     {dossier?.expiresAt
-                        ? new Date(dossier.expiresAt).toLocaleDateString('fr-FR')
+                        ? formatDate(dossier.expiresAt, NUMERIC_DATE)
                         : '--'}
                 </div>
             </div>
@@ -233,7 +236,7 @@ export default function SharedDossier() {
                     {/* Situation */}
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                                 <User size={14} className="text-indigo-500" />
                                 {t('pro:shared_dossier.situation', "Situation de l'usager")}
                             </CardTitle>
@@ -268,7 +271,7 @@ export default function SharedDossier() {
                                     label={t('pro:shared_dossier.diagnostic_date', 'Date diagnostic')}
                                     value={
                                         dossier?.createdAt
-                                            ? new Date(dossier.createdAt).toLocaleDateString('fr-FR')
+                                            ? formatDate(dossier.createdAt, NUMERIC_DATE)
                                             : '--'
                                     }
                                 />
@@ -279,7 +282,7 @@ export default function SharedDossier() {
                     {/* AI Results */}
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                                 <ClipboardList size={14} className="text-indigo-500" />
                                 {t('pro:shared_dossier.orientation_leads', "Pistes d'orientation du diagnostic")}
                             </CardTitle>
@@ -301,7 +304,7 @@ export default function SharedDossier() {
                     {/* Follow-up status */}
                     <Card className="bg-slate-900 text-white border-slate-800">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                                 <TrendingUp size={14} />
                                 {t('pro:shared_dossier.follow_up', 'Suivi administratif')}
                             </CardTitle>
@@ -342,9 +345,9 @@ export default function SharedDossier() {
                                 className="w-full bg-indigo-600 hover:bg-indigo-700"
                             >
                                 {updating ? (
-                                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                                    <Loader2 className="me-2 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                                 ) : (
-                                    <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                                    <CheckCircle2 className="me-2 h-3.5 w-3.5" aria-hidden="true" />
                                 )}
                                 {t('pro:shared_dossier.update', 'Mettre à jour')}
                             </Button>
@@ -361,13 +364,13 @@ export default function SharedDossier() {
                     {/* Secure chat */}
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                                 <Lock size={14} className="text-emerald-700" />
                                 {t('pro:shared_dossier.chat_title', 'Messagerie chiffrée à l’enregistrement')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <div className="h-[350px]">
+                            <div className="h-[500px]">{/* R41: SecureChat has min-h-[500px]; a 350 px box let it overlap the vault below */}
                                 <SecureChat
                                     shareId={shareId}
                                     authToken={token}

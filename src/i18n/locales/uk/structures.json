@@ -175,5 +175,6 @@
  "suggest.continue": "Продовжити",
  "suggest.pro_title": "Ви працюєте в цій організації?",
  "suggest.pro_text": "Напишіть нам, щоб отримати керування цим записом (створення облікового запису Pro відкрило б нову організацію).",
- "suggest.contact_us": "Зв’язатися з нами"
+ "suggest.contact_us": "Зв’язатися з нами",
+ "suggest.website_placeholder": "https://www.my-organisation.fr"
 }
