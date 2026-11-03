@@ -49,10 +49,27 @@ export function slotsByParisDay(slots) {
   return [...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([date, list]) => ({ date, slots: list }));
 }
 
-/** @param {Response} res */
+/**
+ * R41: a 2xx answer that is not the API's JSON (an HTML fallback page of a static host or dev server, a proxy or captive-portal page) is not a success:
+ * it used to count as one, so such a page was read as « this structure takes account-free bookings » and the sign-in path was skipped.
+ * @param {Response} res
+ */
 async function json(res) {
   const body = await res.json().catch(() => null);
-  return { ok: res.ok, status: res.status, body: body || {} };
+  const parsed = typeof body === 'object' && body !== null;
+  return { ok: res.ok && parsed, status: res.status, body: parsed ? body : {} };
+}
+
+/**
+ * R41 — the server offers account-free booking for this structure: its services answer is the API's JSON naming the structure with its list of
+ * services (possibly empty: the guest page then says that no service is offered without an account). Anything else (503 GUEST_BOOKING_DISABLED, 404,
+ * a network failure, an answer of another shape) keeps the historical path: sign in, or the « not published » screen.
+ * @param {{ ok: boolean, body?: unknown }} r @returns {boolean}
+ */
+export function offersGuestBooking(r) {
+  if (!r.ok) return false;
+  const b = r.body;
+  return typeof b === 'object' && b !== null && 'structure' in b && 'items' in b && typeof b.structure === 'object' && b.structure !== null && Array.isArray(b.items);
 }
 
 /** @param {string} path */

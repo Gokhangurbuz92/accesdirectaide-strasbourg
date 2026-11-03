@@ -13,7 +13,7 @@ import { client } from '@/api/client';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { CsrfBootstrapError, csrfFetch, getCsrfHeaders } from '@/lib/csrf';
-import { guestBookingPath, guestGet } from '@/lib/guestBooking';
+import { guestBookingPath, guestGet, offersGuestBooking } from '@/lib/guestBooking';
 import i18n, { formatDate, useT } from '@/i18n';
 import { Trans } from 'react-i18next';
 /**
@@ -212,7 +212,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
     queryKey: ['public-rdv-guest', baseSlug],
     enabled: Boolean(baseSlug && !authLoading && !isUserSession),
     staleTime: 30 * 1000,
-    queryFn: async () => (await guestGet(`structures/${encodeURIComponent(baseSlug)}/services`)).ok,
+    queryFn: async () => offersGuestBooking(await guestGet(`structures/${encodeURIComponent(baseSlug)}/services`)),   // R41: the API's answer, not any 2xx page
   });
 
   const querySuffix = useMemo(() => {

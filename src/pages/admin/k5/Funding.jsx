@@ -87,8 +87,17 @@ function FundingDetail({ id }) {
   const d = k.data?.dossier; const [exportProblem, setExportProblem] = useState('');
   const lists = useK5('funding');
   useEffect(() => { if (d) setDraft({ title: d.title, funderName: d.funderName || '', programmeName: d.programmeName || '', programmeUrl: d.programmeUrl || '', deadline: d.deadline ? String(d.deadline).slice(0, 10) : '', content: d.content }); }, [d]);
-  if (k.error) return <div className="p-4"><Status problem={k.error} id="admin-funding-detail" /></div>;
-  if (!d || !draft) return <p className="p-4" role="status">{t('admin:k5.funding.loading', 'Chargement…')}</p>;
+  // R41 (DTA-B69): an unknown dossier, a refusal or an outage is still a real page — its level-1 heading, what happened and the way back to the list
+  // (it used to be a lone alert, or « Chargement… », with no heading)
+  if (k.error || !d || !draft) {
+    return (
+      <div className="space-y-4 p-4" data-testid="admin-funding-detail-state">
+        <p><Link to="/admin/financement" className="text-sm text-sky-800 underline">{t('admin:k5.funding.all', '← Tous les dossiers')}</Link></p>
+        <h1 className="text-2xl font-bold">{t('admin:k5.funding.title', 'Dossiers de financement')}</h1>
+        {k.error ? <Status problem={k.error} id="admin-funding-detail" /> : <p role="status">{t('admin:k5.funding.loading', 'Chargement…')}</p>}
+      </div>
+    );
+  }
   const v = lists.data?.vocab || {};
   const c = draft.content; const setC = (patch) => setDraft((s) => ({ ...s, content: { ...s.content, ...patch } }));
   const closed = ['ACCORDE', 'REFUSE', 'ABANDONNE'].includes(d.status);

@@ -7,7 +7,7 @@ import {
   classifyCitizenBookingAccess,
   citizenBookingLoginUrl,
 } from '@/lib/rdvBookingAccess';
-import { guestBookingPath, guestGet } from '@/lib/guestBooking';
+import { guestBookingPath, guestGet, offersGuestBooking } from '@/lib/guestBooking';
 import { useT } from '@/i18n';
 
 export default function PublicBookingAccessGate() {
@@ -47,7 +47,7 @@ export default function PublicBookingAccessGate() {
           const slug = (/^\/rdv\/([^/?#]+)\/booking$/.exec(location.pathname) || [])[1];
           const guest = slug ? await guestGet(`structures/${slug}/services`) : { ok: false };
           if (controller.signal.aborted) return;
-          window.location.replace(guest.ok ? guestBookingPath(decodeURIComponent(slug)) : citizenBookingLoginUrl(location.pathname, location.search));
+          window.location.replace(offersGuestBooking(guest) ? guestBookingPath(decodeURIComponent(slug)) : citizenBookingLoginUrl(location.pathname, location.search));
           return;
         }
         setResult({ key, status });

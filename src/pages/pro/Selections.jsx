@@ -130,8 +130,17 @@ function SelectionDetail({ id }) {
     try { const out = await proRdvRequest(API, { query: { q: search.q, kinds: search.kinds.join(','), needs: (basket?.needCodes || []).join(',') } }); setSearch((s) => ({ ...s, results: out.results || [] })); }
     catch (err) { setProblem(msgOf(err, t('pro:selections.search_error', 'Recherche impossible.'))); }
   };
-  if (error) return <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{error}</p>;
-  if (!basket) return <p role="status">{t('pro:selections.loading', 'Chargement…')}</p>;
+  // R41 (DTA-B69): an unknown or closed selection, or an outage, is still a real page — its level-1 heading, what happened and the way back to the list
+  // (it used to be a lone alert, or « Chargement… », with no heading)
+  if (error || !basket) {
+    return (
+      <div className="space-y-4" data-testid="pro-selection-detail-state">
+        <p><Link to="/pro/selections" className="text-sm text-sky-800 underline">{t('pro:selections.back', '← Toutes les sélections')}</Link></p>
+        <h1 className="text-xl font-bold text-slate-900">{t('pro:selections.title', 'Sélections d’orientation')}</h1>
+        {error ? <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{error}</p> : <p role="status">{t('pro:selections.loading', 'Chargement…')}</p>}
+      </div>
+    );
+  }
   const inBasket = new Set(basket.items.map((i) => `${i.kind}:${i.refId}`));
   const shown = basket.items.filter((i) => i.stillPublic && i.followUp !== 'SANS_SUITE');
   return (
