@@ -2,7 +2,7 @@
 /* global document, window, Node, NodeFilter */
 /**
  * R40 — the orientation wizard (components/assistant/*), the assistant panel (chat/ChatAssistant) and the structure proposal form (pages/SuggestStructure)
- * in the interface language: French is the former text; in Arabic and English no French sentence is left outside a lang="fr" fragment (the assistant
+ * and the booking-side forms (DemandeAide, AuthRdvAccess) in the interface language: French is the former text; in Arabic and English no French sentence is left outside a lang="fr" fragment (the assistant
  * works in French: its example questions, answers and sources stay French and are marked so). jsdom: no layout. No JSX in the body.
  */
 import '@testing-library/jest-dom/vitest';
@@ -15,6 +15,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import Wizard from '../../src/components/assistant/Wizard.jsx';
 import ChatAssistant from '../../src/components/chat/ChatAssistant.jsx';
 import SuggestStructure from '../../src/pages/SuggestStructure.jsx';
+import DemandeAide from '../../src/pages/DemandeAide.jsx';
+import AuthRdvAccess from '../../src/pages/AuthRdvAccess.jsx';
 import { setLanguage } from '../../src/i18n/index.js';
 
 beforeEach(() => { window.localStorage.clear(); window.HTMLElement.prototype.scrollIntoView = () => {}; });
@@ -80,5 +82,13 @@ describe.each([
     await lang(code);
     const { container } = render(wrap(h(SuggestStructure)));
     expect(outsideFrench(container)).not.toMatch(FRENCH_WORDS);
+  });
+  it('the help request and the appointment sign-in forms are translated', async () => {
+    await lang(code);
+    for (const page of [DemandeAide, AuthRdvAccess]) {
+      const { container, unmount } = render(wrap(h(page)));
+      expect(outsideFrench(container)).not.toMatch(FRENCH_WORDS);
+      unmount();
+    }
   });
 });
