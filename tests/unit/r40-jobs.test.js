@@ -134,8 +134,10 @@ describe('G8 / G9 — source pins', () => {
     expect(src).toMatch(/checks\.veille = \{ ok: true, skipped: 'JOB_NOT_OPENED' \}/);
     expect(src).toMatch(/'actualites', 'ingest-structures'\)/);
   });
-  it('the RSS seed never re-enables a feed an administrator disabled (current AND manifest)', () => {
-    expect(fs.readFileSync('api/_handlers/cron/ingest-actualites-rss.js', 'utf8')).toMatch(/enabled: sql`\$\{RssSource\.enabled\} AND \$\{enabled\}`/);
+  it('the RSS seed never re-enables a feed an administrator disabled (it writes enabled only to switch a feed off)', () => {
+    const src = fs.readFileSync('api/_handlers/cron/ingest-actualites-rss.js', 'utf8');
+    expect(src).toMatch(/\.\.\.\(enabled \? \{\} : \{ enabled: false \}\)/);
+    expect(src).not.toMatch(/onConflictDoUpdate\([^)]*set: \{[^}]*enabled: (true|enabled)\b/s);
   });
 });
 

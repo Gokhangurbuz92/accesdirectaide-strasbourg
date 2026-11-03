@@ -378,8 +378,8 @@ export async function runIngestActualitesRss({ limit, runId } = {}) {
       }).onConflictDoUpdate({
         target: [RssSource.feed_url],
         // R40 / G9: an administrator's choice is kept — a feed disabled in the database stays disabled. The manifest can only turn a feed OFF (a feed
-        // disabled there has no reuse right or is out of scope): enabled = (current value) AND (manifest value), never re-enabled by a run.
-        set: { name, domain, trust_level: trustLevel, enabled: sql`${RssSource.enabled} AND ${enabled}`, updatedAt: new Date() },
+        // disabled there has no reuse right or is out of scope): a manifest-disabled feed is written false, otherwise the stored value is left as it is.
+        set: { name, domain, trust_level: trustLevel, ...(enabled ? {} : { enabled: false }), updatedAt: new Date() },
       });
     } catch (e) {
       stats.errors.push(`${name}: seed failed - ${getErrorMessage(e)}`);

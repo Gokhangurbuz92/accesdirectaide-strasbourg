@@ -11,6 +11,9 @@ const mocks = vi.hoisted(() => {
       // step 13 (anonymise old appointments) uses db.update(...).set(...).where(...); without this mock the step threw and
       // was silently swallowed, which the handler now reports as partial_failure.
       update: vi.fn(() => ({ set: vi.fn(() => ({ where: vi.fn().mockResolvedValue({ rowCount: 0 }) })) })),
+      // R40: the run holds an advisory lock in a transaction and reads which guest columns exist (none here: a 0042 schema)
+      execute: vi.fn().mockResolvedValue({ rows: [] }),
+      transaction: vi.fn(async (/** @type {(tx: any) => unknown} */ fn) => fn({ execute: vi.fn().mockResolvedValue({ rows: [{ ok: true }] }) })),
     },
   };
 });
