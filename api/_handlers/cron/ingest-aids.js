@@ -1,5 +1,7 @@
 // @ts-nocheck
-import { getCronAuth } from '../../_utils/cronAuth.js';
+import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
+import { db } from '../../../src/db/index.js';
+import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import crypto from 'crypto';
 import { logger } from '../../lib/logger.js';
 import * as Sentry from '@sentry/node';
@@ -10,6 +12,16 @@ import { AidesTerritoiresConnector } from '../../lib/ingestion/AidesTerritoiresC
 import { DreesConnector } from '../../lib/ingestion/DreesConnector.js';
 import { IngestionPipelineCore } from '../../lib/ingestion/IngestionPipelineCore.js';
 import { AidIngestSchema } from '../../lib/ingestion/validators.js';
+
+/**
+ * R40 / G3 — the sources this job may read. Reading a publisher's content into the catalogue is a reuse of it: only a source whose reuse is authorised runs.
+ *   aides-territoires  public API of the State (beta.gouv.fr), account + token; the only Aides-territoires path
+ *   Grand Est          grandest.fr — reuse « authorisation-required » (news-verification.js, legal notice read 31/10/2026): NOT authorised
+ *   AGEFIPH            agefiph.fr — scraping of the association's pages, no reuse licence recorded: NOT authorised
+ *   drees              a curated local file (api/data/drees-aides.json) whose licence and provenance are not recorded: NOT authorised until they are
+ * A source becomes authorised by changing this list in a reviewed commit (with the written authorisation or the licence), never by a request parameter.
+ */
+export const AUTHORISED_AID_SOURCES = Object.freeze(['aides-territoires']);
 
 /**
  * @param {{ limit?: number, runId?: string, source?: string }} params
@@ -30,12 +42,18 @@ export async function runIngestAids({ limit, runId, source } = {}) {
         new DreesConnector(),
     ];
 
-    let targetConnectors = allConnectors;
+    // R40 / G3: « all » means every AUTHORISED source; naming a source that is not authorised is refused (nothing is fetched)
+    const authorised = allConnectors.filter((c) => AUTHORISED_AID_SOURCES.includes(c.name));
+    let targetConnectors = authorised;
     if (source && source !== 'all') {
-        targetConnectors = allConnectors.filter(c => c.name === source);
-        if (targetConnectors.length === 0) {
+        if (!allConnectors.some((c) => c.name === source)) {
             logger.warn(`INGEST_AIDS_UNKNOWN_SOURCE`, { runId, source });
             return { error: `Unknown source: ${source}` };
+        }
+        targetConnectors = authorised.filter(c => c.name === source);
+        if (targetConnectors.length === 0) {
+            logger.warn('INGEST_AIDS_SOURCE_NOT_AUTHORISED', { runId, source });
+            return { error: 'SOURCE_NOT_AUTHORISED', source, authorised: [...AUTHORISED_AID_SOURCES] };
         }
     }
 
@@ -102,9 +120,26 @@ export default async function handler(req, res) {
 
     try {
         const stats = await withLock('ingest-aids', async () => {
-            return runIngestAids({ limit, runId, source });
+            // R40 / G4: a CronRun row like the other jobs (health-alert's ingestion freshness reads only CronRun)
+            const startedAtMs = Date.now();
+            const cronRunId = await startCronRun(db, 'ingest-aids', { trigger: scheduledByVercel(req) ? 'vercel-cron' : 'manual', metrics: { runId, source, limit: limit ?? null } });
+            try {
+                const out = await runIngestAids({ limit, runId, source });
+                const per = Object.values(out?.results || {});
+                const errorCount = per.reduce((n, r) => n + (Array.isArray(r?.errors) ? r.errors.length : 0), 0);
+                // failed: refused, or no source could be read at all (e.g. AT_CREDENTIALS_MISSING); partial: some items or sources failed
+                const allFatal = per.length > 0 && per.every((r) => Array.isArray(r?.errors) && r.errors.some((e) => String(e).startsWith('FATAL')) && !r.created && !r.updated && !r.skippedExisting);
+                const refused = Boolean(out?.error) || allFatal;
+                await finishCronRun(db, cronRunId, { status: refused ? 'failed' : errorCount > 0 || per.some((r) => r?.status === 'SKIPPED_DUE_TO_TIMEOUT') ? 'partial' : 'success', startedAtMs,
+                    error: out?.error || (allFatal ? per.flatMap((r) => r.errors || []).find((e) => String(e).startsWith('FATAL')) : null), metrics: { runId, source, sources: Object.keys(out?.results || {}),
+                        created: per.reduce((n, r) => n + (r?.created || 0), 0), updated: per.reduce((n, r) => n + (r?.updated || 0), 0), errorCount } });
+                return out;
+            } catch (err) {
+                await finishCronRun(db, cronRunId, { status: 'failed', startedAtMs, error: err?.message || String(err), metrics: { runId, source } });
+                throw err;
+            }
         }, { ttl: 900 });
-        return res.status(200).json(stats);
+        return res.status(stats?.error === 'SOURCE_NOT_AUTHORISED' ? 403 : 200).json(stats);
     } catch (error) {
         // @ts-ignore
         if (error.message?.includes('already running')) {
