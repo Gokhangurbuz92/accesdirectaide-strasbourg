@@ -120,7 +120,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                         <h3 className="font-bold text-sm leading-tight">
                             {t('messaging:secure_chat.title', 'Conversation Souveraine')}
                         </h3>
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                        <p className="text-[10px] text-slate-300 font-medium uppercase tracking-wider">
                             {t('messaging:secure_chat.subtitle', 'Messages chiffrés')}
                         </p>
                     </div>

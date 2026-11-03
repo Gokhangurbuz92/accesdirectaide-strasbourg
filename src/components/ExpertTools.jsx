@@ -68,7 +68,7 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
             {/* AI Synthesis */}
             <Card data-testid="pro-synthesis">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                         <Sparkles size={14} className="text-indigo-500" aria-hidden="true" />
                         {t('pro:expert_tools.synthesis_title', 'Synthèse IA (brouillon à relire)')}
                     </CardTitle>
@@ -91,7 +91,7 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
                         {drafts.map((d) => (
                             <li key={d.id} className="space-y-2 rounded-lg border border-slate-200 p-2.5" data-testid="pro-synthesis-draft">
                                 <p className="text-xs font-semibold text-slate-900">{t('pro:expert_tools.draft_heading', '{{status}} · IA ({{model}})', { status: STATUS[d.status] || d.status, model: d.model })}</p>
-                                <ol className="list-decimal space-y-1 ps-5 text-xs text-slate-900">{(d.points || []).map((p, i) => <li key={i}>{p}</li>)}</ol>
+                                <ol className="list-decimal space-y-1 ps-5 text-xs text-slate-900" lang="fr" dir="auto">{/* the local model writes its points in French */}{(d.points || []).map((p, i) => <li key={i}>{p}</li>)}</ol>
                                 {d.sourceChanged && <p className="text-xs font-medium text-amber-800">{t('pro:expert_tools.source_changed', 'Le dossier a changé depuis ce brouillon : il ne peut plus être approuvé.')}</p>}
                                 {d.status === 'PENDING' ? (
                                     <div className="space-y-1">
@@ -113,7 +113,7 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
                 exists in the product (it needs a qualified trust service and an identity check), so the card only opens the printable, explicitly UNSIGNED recap. */}
             <Card className="bg-slate-50 border-slate-200" data-testid="recap-card">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2 text-slate-900">
+                    <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2 text-slate-900">
                         <FileText size={14} className="text-slate-600" aria-hidden="true" />
                         {t('pro:expert_tools.recap_title', 'Récapitulatif imprimable')}
                     </CardTitle>

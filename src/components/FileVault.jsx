@@ -171,7 +171,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
     return (
         <Card data-testid="file-vault">
             <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
                     <ShieldCheck size={14} className="text-indigo-600" />
                     {t('pro:file_vault.title', 'Coffre-fort justificatifs')}
                 </CardTitle>
@@ -211,7 +211,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-3">
                         <File className="text-indigo-600 shrink-0" size={18} />
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-slate-800 truncate">
+                            <p className="text-xs font-semibold text-slate-800 truncate" dir="auto">
                                 {file.name}
                             </p>
                             <p className="text-[10px] text-slate-500">
@@ -275,7 +275,7 @@ export default function FileVault({ shareId, documents = [], onUploadSuccess }) 
                                 <li key={doc.id} data-testid="file-vault-item" className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
                                     <FileText className="text-indigo-600 shrink-0" size={16} />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-semibold text-slate-800 truncate" data-testid="file-vault-item-name">{doc.name}</p>
+                                        <p className="text-xs font-semibold text-slate-800 truncate" data-testid="file-vault-item-name" dir="auto">{doc.name}</p>
                                         <p className="text-[10px] text-slate-500">{formatSize(doc.byteLength, t)}</p>
                                     </div>
                                     <button

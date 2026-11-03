@@ -270,7 +270,7 @@ export default function Contact() {
           <Card className="bg-transparent border-slate-200 shadow-none hover:bg-white hover:shadow-sm transition-all">
             <CardContent className="p-6 text-center">
               <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-slate-900 mb-1">{t('contact:other.email', 'Par email direct')}</h3>
+              <h2 className="font-semibold text-slate-900 mb-1">{t('contact:other.email', 'Par email direct')}</h2>
               <a href="mailto:contact@accesdirectaide.fr" className="ada-target text-blue-600 text-sm font-medium hover:underline">
                 contact@accesdirectaide.fr
               </a>
@@ -279,9 +279,9 @@ export default function Contact() {
           <Card className="bg-transparent border-slate-200 shadow-none hover:bg-white hover:shadow-sm transition-all">
             <CardContent className="p-6 text-center">
               <MessageSquare className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-slate-900 mb-1">{t('contact:other.data', 'Vos données personnelles')}</h3>
+              <h2 className="font-semibold text-slate-900 mb-1">{t('contact:other.data', 'Vos données personnelles')}</h2>
               <p className="text-slate-600 text-sm mb-1">{t('contact:other.gdpr', 'Pour vos droits RGPD')}</p>
-              <p className="text-slate-700 text-sm font-medium">
+              <p className="text-slate-700 text-sm font-medium" lang="fr" dir="ltr">{/* R41: an address or the French « [À COMPLÉTER …] » placeholder */}
                 {LEGAL_PLACEHOLDERS.dataProtectionContact}
               </p>
             </CardContent>

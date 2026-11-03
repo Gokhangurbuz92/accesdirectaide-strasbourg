@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
-import { useT, formatNumber } from '@/i18n';
+import { useT, formatNumber, formatDate } from '@/i18n';
 
 // Simplified FALC-compatible Chat Window
 // @ts-ignore
@@ -87,9 +87,7 @@ export default function ChatWindow({ messages, onSendMessage, onUploadFile, load
                                     </div>
                                 )}
                                 <div className={`text-xs mt-1 ${isMe ? 'text-blue-100' : 'text-gray-500'}`}>
-                                    {new Date(msg.createdAt).toLocaleString('fr-FR', {
-                                        day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
-                                    })}
+                                    {formatDate(msg.createdAt, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </div>
                         </div>

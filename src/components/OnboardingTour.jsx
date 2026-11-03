@@ -163,12 +163,12 @@ export default function OnboardingTour({ onComplete }) {
 
                 {/* Skip footer */}
                 <div className="bg-slate-50 px-8 py-3 border-t border-slate-100 flex justify-between items-center">
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-600">
                         {t('pro:onboarding.step', 'Étape {{step}} / {{total}}', { step: step + 1, total: STEPS.length })}
                     </span>
                     <button
                         onClick={finish}
-                        className="text-[10px] font-medium text-slate-400 hover:text-slate-600"
+                        className="text-[10px] font-medium text-slate-600 hover:text-slate-900"
                     >
                         {t('pro:onboarding.skip', 'Passer le guide')}
                     </button>

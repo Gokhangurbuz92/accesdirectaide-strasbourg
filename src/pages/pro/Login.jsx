@@ -277,7 +277,7 @@ export default function ProLogin() {
 
             <p className="mt-8 text-slate-600 text-sm font-medium">
                 {t('pro:login.besoin_aide', 'Besoin d\'aide ?')}{' '}
-                <a href="/contact" className="text-indigo-600 hover:underline">
+                <a href="/contact" className="text-indigo-700 underline underline-offset-2 hover:text-indigo-900">
                     {t('pro:login.contacter_support', 'Contacter le support')}
                 </a>
             </p>

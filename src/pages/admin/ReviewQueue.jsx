@@ -359,7 +359,7 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin:review_queue.filters', 'Filtres')}</CardTitle>
+          <CardTitle as="h2">{t('admin:review_queue.filters', 'Filtres')}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-6">
           <label className="text-sm">
@@ -479,7 +479,7 @@ export default function AdminReviewQueue() {
       {summary && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin:review_queue.last_scan', 'Dernière analyse')}</CardTitle>
+            <CardTitle as="h2">{t('admin:review_queue.last_scan', 'Dernière analyse')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -519,7 +519,7 @@ export default function AdminReviewQueue() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin:review_queue.items', 'Items ({{n}})', { n: filteredItems.length })}</CardTitle>
+          <CardTitle as="h2">{t('admin:review_queue.items', 'Items ({{n}})', { n: filteredItems.length })}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
