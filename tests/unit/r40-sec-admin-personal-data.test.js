@@ -6,19 +6,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const saved = { ...process.env };
-const state = { audits: [], failInsert: false, logs: [] };
+const state = { audits: [], failInsert: false, logs: [], reportQueries: [] };
 const chain = (rows) => { const c = { from: () => c, where: () => c, limit: async () => rows, groupBy: async () => rows, orderBy: () => c, then: (ok) => ok(rows) }; return c; };
 const mk = () => ({ statusCode: 200, body: null, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; }, send(b) { this.body = b; return this; }, end() { return this; }, on() {} });
 
 beforeEach(() => {
   vi.resetModules();
   Object.assign(process.env, { JWT_SECRET: 'j'.repeat(40), AUTH_SECRET: 'a'.repeat(40), NODE_ENV: 'development', ENABLE_AI_AGENT: 'true' });
-  Object.assign(state, { audits: [], failInsert: false, logs: [{ createdAt: '2026-11-01T00:00:00Z', message: '=HYPERLINK("http://x.test")', intent: '+cmd', searchMode: 'rag', sourceCount: 1, rating: 1, userComment: '@SUM(A1)' }] });
+  Object.assign(state, { reportQueries: [], audits: [], failInsert: false, logs: [{ createdAt: '2026-11-01T00:00:00Z', message: '=HYPERLINK("http://x.test")', intent: '+cmd', searchMode: 'rag', sourceCount: 1, rating: 1, userComment: '@SUM(A1)' }] });
   vi.doMock('../../src/db/index.js', () => ({ db: {
-    select: () => chain([]),
+    select: (fields) => chain(state.reportQueries.length && fields && Object.keys(fields).join() === 'count' ? [{ count: 1 }] : []),
     insert: () => ({ values: (v) => { if (state.failInsert) return Promise.reject(new Error('down')); state.audits.push(v); return Promise.resolve(); } }),
-    query: { ConversationLog: { findMany: async () => state.logs } },
-    execute: async () => ({ rows: [] }),
+    query: {
+      ConversationLog: { findMany: async () => state.logs },
+      PartnershipRequest: { findMany: async () => [{ id: 'p1', email: 'submitter@example.test', message: 'hello' }] },
+      ContentReport: { findMany: async (q) => { state.reportQueries.push(q); return [{ id: 'r1', reporterEmail: 'reporter@example.test', message: 'x' }]; } },
+    },
+    execute: async (q) => ({ rows: JSON.stringify(q?.queryChunks || '').includes('InstitutionAccount') ? [{ id: 'i1', email: 'staff@example.test' }] : [] }),
   } }));
   vi.doMock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: async () => ({ allowed: true }), getClientIp: () => '203.0.113.9', getRateLimitStatus: () => 429 }));
   vi.doMock('../../api/lib/log-store.js', () => ({ getLogs: async () => [{ level: 'error', msg: 'synthetic error for a@example.test' }], logStoreConfigured: () => true }));
@@ -70,6 +74,33 @@ describe('administrator personal-data reads', () => {
     expect(r.statusCode).toBe(500);
     expect(JSON.stringify(r.body)).not.toContain('/srv/secret');
     expect(state.audits).toEqual([expect.objectContaining({ action: 'ADMIN_ORCHESTRATOR_RUN', actor: 'admin@example.test', details: { dryRun: false, outcome: 'failed' } })]);
+  });
+});
+
+describe('R41-K F2: three more administrator reads of personal data need MFA', () => {
+  const routes = [
+    ['../../api/_handlers/admin/partnerships.js', '/api/admin/partnerships', 'submitter@example.test'],
+    ['../../api/_handlers/reports.js', '/api/reports?status=NEW', 'reporter@example.test'],
+    ['../../api/_handlers/admin/institutions.js', '/api/admin/institutions', 'staff@example.test'],
+  ];
+  it.each(routes)('%s: a password-only session gets 403 and no rows; an MFA session gets 200', async (mod, url, email) => {
+    const plain = await call(mod, { url, mfa: false });
+    expect(plain.statusCode).toBe(403);
+    expect(JSON.stringify(plain.body)).not.toContain(email);
+    expect(JSON.stringify(plain.body)).toMatch(/ADMIN_MFA_REQUIRED|HUMAN_MFA_SESSION_REQUIRED/);
+    const strong = await call(mod, { url, mfa: true });
+    expect(strong.statusCode).toBe(200);
+    expect(JSON.stringify(strong.body)).toContain(email);
+  });
+  it('the reports list caps its page size at 100 (and at least 1)', async () => {
+    const big = await call('../../api/_handlers/reports.js', { url: '/api/reports?limit=100000', mfa: true });
+    expect(big.body.pagination.limit).toBe(100);
+    expect(state.reportQueries.at(-1).limit).toBe(100);
+    const odd = await call('../../api/_handlers/reports.js', { url: '/api/reports?limit=-5&page=-2', mfa: true });
+    expect(state.reportQueries.at(-1)).toMatchObject({ limit: 1, offset: 0 });
+    expect(odd.body.pagination.page).toBe(1);
+    await call('../../api/_handlers/reports.js', { url: '/api/reports?limit=abc', mfa: true });
+    expect(state.reportQueries.at(-1).limit).toBe(50);
   });
 });
 

@@ -5,6 +5,7 @@ import { db } from '../../../src/db/index.js';
 import { AuditLog, PartnershipRequest } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { getAuthenticatedUser, verifyAdmin } from '../../_utils/auth.js';
+import { refuseWithoutAdminMfa } from '../../_utils/admin-personal-data.js';
 
 const STATUSES = ['pending', 'contacted', 'accepted', 'rejected', 'archived'];
 
@@ -22,6 +23,10 @@ export default async function handler(req, res) {
 
     if (!(await verifyAdmin(req))) {
         return res.status(401).json({ error: "Unauthorized" });
+    }
+    // R41-K F2: the requests carry the submitter's e-mail and message (public « proposer une structure » form) — personal data, MFA session only
+    if (!(await verifyAdmin(req, { personalData: true }))) {
+        return refuseWithoutAdminMfa(res);
     }
 
     const { method } = req;

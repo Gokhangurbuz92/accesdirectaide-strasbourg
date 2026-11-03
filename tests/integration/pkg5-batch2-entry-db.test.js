@@ -165,7 +165,9 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
 
   it('P19: an admin session can triage public reports (it never could); a change needs MFA', async () => {
     const r = await call('POST', '/api/reports', { anon: true, body: { contentType: 'AIDE', contentId: 'k5-y', reason: 'AUTRE' } }); const id = r.body.reportId;
-    expect((await call('GET', '/api/reports?status=NEW', { bearer: auth.signAdminSessionToken({ email: A.adm, role: 'admin', mfa_verified: false }) })).statusCode).toBe(200);
+    // R41-K F2: reports carry the reporter's e-mail and message — reading them needs MFA too
+    expect((await call('GET', '/api/reports?status=NEW', { bearer: auth.signAdminSessionToken({ email: A.adm, role: 'admin', mfa_verified: false }) })).statusCode).toBe(403);
+    expect((await call('GET', '/api/reports?status=NEW', { bearer: mfaToken(A.adm, 'admin') })).statusCode).toBe(200);
     expect((await call('PUT', `/api/reports?id=${id}`, { bearer: auth.signAdminSessionToken({ email: A.adm, role: 'admin', mfa_verified: false }), body: { status: 'FIXED' } })).statusCode).toBe(403);
     expect((await call('PUT', `/api/reports?id=${id}`, { bearer: mfaToken(A.adm, 'admin'), body: { status: 'FIXED' } })).statusCode).toBe(200);
     await db.execute(sql`DELETE FROM "ContentReport" WHERE id = ${id}`);
