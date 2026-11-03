@@ -7,6 +7,7 @@ import { db } from '../../src/db/index.js';
 import { AdminUser, AuditLog, AuthToken } from '../../src/db/schema.js';
 import { checkRateLimit as checkRateLimitUtil } from './rateLimit.js';
 import { eq, and, sql } from 'drizzle-orm';
+import { isNonCanonicalPath, resolvedPathname } from './request-path.js';
 
 const ADMIN_SESSION_ISSUER = 'accesdirectaide';
 const ADMIN_SESSION_AUDIENCE = 'accesdirectaide-admin';
@@ -138,7 +139,9 @@ export function proMfaRequired() {
 }
 /** @param {string} url */
 export function proRouteNeedsMfa(url) {
-    const p = String(url || '').split('?')[0];
+    // R40: decide on the path the router serves (dot segments resolved); an alias path is never one of the open routes
+    if (!url || isNonCanonicalPath(url)) return true;
+    const p = resolvedPathname(url);
     return !PRO_MFA_OPEN_ROUTES.some((re) => re.test(p));
 }
 
@@ -389,6 +392,8 @@ export function isProRole(role) {
 }
 
 export async function resolveAuthContext(/** @type {unknown} */ req) {
+  // R40: a request whose raw path is not canonical (the router would serve another route) carries no session (see request-path.js)
+  if (isNonCanonicalPath(/** @type {any} */ (req)?.url)) return null;
   const token = getBearerToken(req);
   if (!token) return null;
 
