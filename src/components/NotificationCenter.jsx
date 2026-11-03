@@ -285,10 +285,7 @@ function getIconBg(/** @type {string | number | boolean | null | undefined} */ t
     }
 }
 
-/**
- * @param {string | number | Date} ts
- */
-/** @param {string | number} ts @param {(key: string, fr: string, values?: Record<string, unknown>) => string} t */
+/** @param {string | number} ts @param {import('i18next').TFunction} t */
 function formatTime(ts, t) {
     const date = new Date(ts);
     const diff = Date.now() - date.getTime();

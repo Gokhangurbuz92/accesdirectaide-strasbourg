@@ -47,6 +47,7 @@ const STEPS = [
 
 export default function SuggestStructure() {
     const { t } = useT('structures');
+    /** @type {Record<string, string>} */
     const STEP_TITLES = { identity: t('structures:suggest.step_identity', 'Identité'), location: t('structures:suggest.step_contact', 'Contact'), details: t('structures:suggest.step_missions', 'Missions') };
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
