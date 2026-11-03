@@ -133,7 +133,7 @@ export function referralGrantLapsedSql(alias = 'g', now = new Date()) {
 /** SQL predicate "ctx holds an active grant on dossier Y AND is an active member (AND may open the case)" - usable inside UPDATE ... WHERE (revocation / departure / expiry / reassignment cannot be raced). @param {string} dossierId @param {ProCtx} ctx */
 export function activeGrantExists(dossierId, ctx) {
   // PKG-11 / C21: a dossier whose owner restricted processing (RGPD art. 18) is closed to every organization, like a revoked access
-  return sql`(EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')}) AND NOT ${restrictedDossierSql(dossierId)} AND ${activeMemberSql(ctx)} AND ${caseAccessSql(dossierId, ctx)})`;
+  return sql`(EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND NOT ${referralGrantLapsedSql('g')} AND g."revokedAt" IS NULL) AND NOT ${restrictedDossierSql(dossierId)} AND ${activeMemberSql(ctx)} AND ${caseAccessSql(dossierId, ctx)})`;
 }
 
 /** @param {ProCtx} ctx */
