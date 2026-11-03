@@ -3,7 +3,8 @@ import logger from '../../_utils/logger.js';
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
 import { ImportLog, ReviewQueueItem, Aide, Demarche, Structure, ProAppointment } from '../../../src/db/schema.js';
-import { sql, eq, desc, gte } from 'drizzle-orm';
+import { sql, eq, desc, gte, and } from 'drizzle-orm';
+import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { env } from '../../_utils/env.js';
 import { requireProRole } from '../../_utils/auth.js';
 /**
@@ -53,7 +54,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         // 5. Appointments this month
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const appCountRes = await db.select({ count: sql`count(*)` }).from(ProAppointment).where(gte(ProAppointment.startAt, startOfMonth));
+        const appCountRes = await db.select({ count: sql`count(*)` }).from(ProAppointment).where(and(gte(ProAppointment.startAt, startOfMonth), notGuestDecoy(ProAppointment)));
         const appointmentsThisMonth = Number(appCountRes[0].count);
 
         // 6. Service status inference

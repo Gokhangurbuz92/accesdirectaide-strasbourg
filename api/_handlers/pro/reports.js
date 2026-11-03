@@ -6,6 +6,7 @@ import { ProAppointment, ProRdvService, RdvConversation, SharedDossierGrant, Pro
 import { eq, and, gte, ne, not, inArray, count, desc, asc, sql } from 'drizzle-orm';
 import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../_utils/auth.js';
 import { reportCsv } from '../../_services/org-stats.js';
+import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 
 /**
  * Impact Reports API
@@ -58,7 +59,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         const totalAppointmentsRes = await db.select({ count: count() }).from(ProAppointment).where(
             and(
                 eq(ProAppointment.structureId, structureId),
-                gte(ProAppointment.startAt, startDate)
+                gte(ProAppointment.startAt, startDate),
+                notGuestDecoy(ProAppointment)
             )
         );
         const totalAppointments = totalAppointmentsRes[0].count;
@@ -70,7 +72,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         }).from(ProAppointment).where(
             and(
                 eq(ProAppointment.structureId, structureId),
-                gte(ProAppointment.startAt, startDate)
+                gte(ProAppointment.startAt, startDate),
+                notGuestDecoy(ProAppointment)
             )
         ).groupBy(ProAppointment.status);
 
@@ -79,6 +82,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             where: and(
                 eq(ProAppointment.structureId, structureId),
                 gte(ProAppointment.startAt, startDate),
+                notGuestDecoy(ProAppointment),
                 not(eq(ProAppointment.status, 'cancelled')) // Handle status not cancelled properly
             ),
             columns: { startAt: true },
@@ -105,6 +109,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             and(
                 eq(ProAppointment.structureId, structureId),
                 gte(ProAppointment.startAt, startDate),
+                notGuestDecoy(ProAppointment),
                 not(eq(ProAppointment.status, 'cancelled'))
             )
         ).groupBy(ProAppointment.serviceId);

@@ -12,6 +12,7 @@ import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.
 import * as Sentry from '@sentry/node';
 import { restrictedDossierSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
+import { GUEST_DECOY_NAME } from '../../_utils/rdv-guest-decoy.js';
 
 /**
  * Per-table RGPD retention constants.
@@ -47,7 +48,7 @@ export const RETENTION = {
  *   - ProOutlookToken      expired + 30 day grace
  *   - ProAuditLog          > 365 days
  *   - ProAppointment       anonymise after 2 years (730 days) — R38: guest e-mail / phone / hashes included; R39: the guest's reminder consent too
- *   - ProAppointment       R38: an account-free hold never confirmed, cleared 1 day after its expiry
+ *   - ProAppointment       R38: an account-free hold never confirmed, cleared 1 day after its expiry; R41-B: a decoy hold (no personal data) deleted then
  *
  * Schedule: every Sunday at 03:00 (vercel.json)
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -295,14 +296,21 @@ export default async function handler(req, res) {
         // 13b. R38: an account-free hold never confirmed is not a booking — one day after its 20-minute expiry its identity is cleared (the row stays,
         // cancelled, so the structure's history and the notice ledger keep their reference)
         let clearedGuestHoldsCount = 0;
+        let deletedGuestDecoysCount = 0;
         if (!guestSchema.guestBooking) skippedSteps.push('clearedGuestHoldsCount');   // R40 / G10: before migration 0043 no account-free hold can exist
         else try {
+            // R41-B: a decoy hold (the « already booked » answer: no personal data, never confirmable) is deleted at the same moment a real hold is cleared —
+            // after that, confirm answers both exactly like an id that never existed; nothing of it is kept (no history, no statistic)
+            const decoyRes = await db.delete(ProAppointment)
+                .where(and(eq(ProAppointment.beneficiaryName, GUEST_DECOY_NAME), isNotNull(ProAppointment.guestHoldExpiresAt),
+                    lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)), sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`));
+            deletedGuestDecoysCount = affected(decoyRes);
             const holdRes = await db.update(ProAppointment)
                 .set({ status: 'cancelled', cancelledAt: now, cancelledBy: 'GUEST_HOLD_EXPIRED', beneficiaryName: '[anonymisé]', beneficiaryPhone: null, notes: null,
                     guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null,
                     ...(guestSchema.guestReminderConsent ? { guestReminderConsentAt: null } : {}) })
                 .where(and(isNotNull(ProAppointment.guestHoldExpiresAt), lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)),
-                    or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, '[anonymisé]')),
+                    or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, '[anonymisé]')), ne(ProAppointment.beneficiaryName, GUEST_DECOY_NAME),
                     sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`));   // R40 / G7
             clearedGuestHoldsCount = affected(holdRes);
         } catch (stepErr) { recordFailure('clearedGuestHoldsCount', stepErr); }
@@ -323,6 +331,7 @@ export default async function handler(req, res) {
             pro_audit_logs_deleted: deletedProAuditCount,
             appointments_anonymised: anonymisedAppointmentsCount,
             guest_holds_cleared: clearedGuestHoldsCount,
+            guest_decoy_holds_deleted: deletedGuestDecoysCount,
             status: failedSteps.length === 0 ? 'success' : 'partial_failure',
             ...(failedSteps.length ? { failed_steps: failedSteps } : {}),
             ...(skippedSteps.length ? { skipped_steps: skippedSteps } : {}),
