@@ -16,6 +16,8 @@ const PRO_SESSION_AUDIENCE = 'accesdirectaide-pro';
 const PRO_MFA_PENDING_AUDIENCE = 'accesdirectaide-pro-mfa';
 /** R40: a professional session can be refreshed for at most this long after the sign-in (auth_time), whatever the number of refreshes */
 export const PRO_SESSION_MAX_AGE_SECONDS = 12 * 3600;
+/** Lifetime of one professional access token (capped by PRO_SESSION_MAX_AGE_SECONDS after the sign-in) */
+const PRO_ACCESS_TOKEN_SECONDS = 8 * 3600;
 
 export const AUTH_ROLE = {
   ADMIN: 'admin',
@@ -61,7 +63,10 @@ export function signProToken(user, opts = {}) {
 
     const jti = crypto.randomUUID();
     // R40: the sign-in time travels through every refresh (auth_time), so a session has a maximum age (PRO_SESSION_MAX_AGE_SECONDS)
-    const authTime = Number.isFinite(user.authTime) ? Math.floor(user.authTime) : Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / 1000);
+    const authTime = Number.isFinite(user.authTime) ? Math.floor(user.authTime) : now;
+    // R41-K F1: the token never outlives the session maximum (a refresh at 11 h 59 used to give 8 more hours)
+    const exp = Math.min(now + PRO_ACCESS_TOKEN_SECONDS, authTime + PRO_SESSION_MAX_AGE_SECONDS);
 
     return jwt.sign(
         {
@@ -72,11 +77,11 @@ export function signProToken(user, opts = {}) {
             scope: 'pro',
             jti,
             auth_time: authTime,
+            exp,
             ...(opts.mfa === true ? { mfa: true } : {}),
         },
         JWT_SECRET,
         {
-            expiresIn: '8h',
             issuer: PRO_SESSION_ISSUER,
             audience: PRO_SESSION_AUDIENCE,
             algorithm: 'HS256',
@@ -678,6 +683,10 @@ export function requireProAuth(handler) {
     }
     if (membership && proSessionRevoked(/** @type {any} */ (auth).iat, membership)) {
       return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
+    }
+    // R41-K F1: the 12 h maximum holds at access time too, not only at refresh (tokens issued before the cap; older tokens fall back to iat)
+    if (proSessionTooOld(/** @type {any} */ (auth).authTime)) {
+      return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_MAX_AGE' });
     }
     if (proMfaRequired() && /** @type {any} */ (auth).mfa !== true && proRouteNeedsMfa(req.url)) {
       return res.status(403).json({ error: 'Double authentification requise', code: 'PRO_MFA_REQUIRED', message: 'Activez la double authentification puis reconnectez-vous pour accéder aux dossiers.' });
