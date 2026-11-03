@@ -1,11 +1,10 @@
 import logger from '../../../_utils/logger.js';
 import { db } from '../../../../src/db/index.js';
 import { eq } from 'drizzle-orm';
-import { signProToken, logProAudit } from '../../../_utils/auth.js';
+import { signProToken, logProAudit, verifyProMfaPendingToken } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp } from '../../../_utils/rateLimit.js';
 import { matchCodeStep } from '../../../lib/totp.js';
 import { claimProStep, openMfaSecret } from '../../../_utils/totp-guard.js';
-import { verifyJwt } from '../../../_utils/auth.js';
 import { env } from '../../../_utils/env.js';
 
 /**
@@ -17,6 +16,9 @@ import { env } from '../../../_utils/env.js';
  * The mfa_token is a short-lived JWT (5min) issued by login.js
  * when the user has MFA enabled. This handler verifies the TOTP
  * code and issues the real pro JWT on success.
+ *
+ * R40: the pending token is checked with its issuer and audience (signProMfaPendingToken); codes are limited per address, per ACCOUNT (shared with
+ * enrolment, 5 per 15 min) and per pending token (3), so rotating addresses or re-using one token does not multiply the guesses.
  */
 export default async function handler(/** @type {import('../../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'POST') {
@@ -47,15 +49,17 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
             return res.status(500).json({ error: 'Server configuration error' });
         }
 
-        let payload;
-        try {
-            payload = verifyJwt(mfa_token, jwtSecret, { algorithms: ['HS256'] });
-        } catch {
+        const payload = verifyProMfaPendingToken(mfa_token);
+        if (!payload) {
             return res.status(401).json({ error: 'MFA token expired or invalid. Please login again.' });
         }
 
-        if (payload?.scope !== 'mfa_pending') {
-            return res.status(401).json({ error: 'Invalid token scope' });
+        for (const [action, key] of [['MFA_VERIFY_PRO_TOKEN', `jti:${payload.jti}`], ['MFA_VERIFY_PRO_USER', `user:${payload.userId}`]]) {
+            const scoped = await checkRateLimit(action, key);
+            if (!scoped.allowed) {
+                if (action === 'MFA_VERIFY_PRO_USER') await logProAudit('MFA_LOCKED', payload.userId, null, {}, ip);
+                return res.status(429).json(scoped.error || { error: 'Too many attempts. Try again later.' });
+            }
         }
 
         // Load user with MFA secret
