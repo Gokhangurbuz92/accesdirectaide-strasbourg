@@ -7,11 +7,15 @@ import { db } from '../../src/db/index.js';
 import { AdminUser, AuditLog, AuthToken } from '../../src/db/schema.js';
 import { checkRateLimit as checkRateLimitUtil } from './rateLimit.js';
 import { eq, and, sql } from 'drizzle-orm';
+import { isNonCanonicalPath, resolvedPathname } from './request-path.js';
 
 const ADMIN_SESSION_ISSUER = 'accesdirectaide';
 const ADMIN_SESSION_AUDIENCE = 'accesdirectaide-admin';
 const PRO_SESSION_ISSUER = 'accesdirectaide';
 const PRO_SESSION_AUDIENCE = 'accesdirectaide-pro';
+const PRO_MFA_PENDING_AUDIENCE = 'accesdirectaide-pro-mfa';
+/** R40: a professional session can be refreshed for at most this long after the sign-in (auth_time), whatever the number of refreshes */
+export const PRO_SESSION_MAX_AGE_SECONDS = 12 * 3600;
 
 export const AUTH_ROLE = {
   ADMIN: 'admin',
@@ -56,6 +60,8 @@ export function signProToken(user, opts = {}) {
     }
 
     const jti = crypto.randomUUID();
+    // R40: the sign-in time travels through every refresh (auth_time), so a session has a maximum age (PRO_SESSION_MAX_AGE_SECONDS)
+    const authTime = Number.isFinite(user.authTime) ? Math.floor(user.authTime) : Math.floor(Date.now() / 1000);
 
     return jwt.sign(
         {
@@ -65,6 +71,7 @@ export function signProToken(user, opts = {}) {
             role: user.role,
             scope: 'pro',
             jti,
+            auth_time: authTime,
             ...(opts.mfa === true ? { mfa: true } : {}),
         },
         JWT_SECRET,
@@ -84,6 +91,8 @@ export function verifyProToken(token) {
     const JWT_SECRET = getJwtSecret();
     if (!JWT_SECRET) return null;
 
+    // R40: issuer and audience are required (the fallback that accepted any HS256 token signed with the secret is gone; every live session is signed by
+    // signProToken with both, and the refresh grace path already required them)
     try {
         const strictDecoded = jwt.verify(token, JWT_SECRET, {
             algorithms: ['HS256'],
@@ -92,15 +101,42 @@ export function verifyProToken(token) {
         });
         return validateProClaims(strictDecoded);
     } catch {
-        try {
-            const legacyDecoded = jwt.verify(token, JWT_SECRET, {
-                algorithms: ['HS256'],
-            });
-            return validateProClaims(legacyDecoded);
-        } catch {
-            return null;
-        }
+        return null;
     }
+}
+
+/**
+ * R40: the short-lived token between the password and the second factor (5 min). Its own audience (never a session, and a session is never one), and a
+ * jti so the number of codes tried with one token is bounded (mfa-verify).
+ * @param {{ id: string, email?: string, structureId?: string }} user
+ */
+export function signProMfaPendingToken(user) {
+    const JWT_SECRET = getJwtSecret();
+    if (!JWT_SECRET) throw new Error('JWT_SECRET is missing');
+    return jwt.sign(
+        { userId: user.id, email: user.email, structureId: user.structureId, scope: 'mfa_pending', jti: crypto.randomUUID() },
+        JWT_SECRET,
+        { expiresIn: '5m', algorithm: 'HS256', issuer: PRO_SESSION_ISSUER, audience: PRO_MFA_PENDING_AUDIENCE },
+    );
+}
+
+/** @param {unknown} token @returns {{ userId: string, jti: string } | null} */
+export function verifyProMfaPendingToken(token) {
+    const JWT_SECRET = getJwtSecret();
+    if (!JWT_SECRET || typeof token !== 'string' || !token) return null;
+    try {
+        const d = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'], issuer: PRO_SESSION_ISSUER, audience: PRO_MFA_PENDING_AUDIENCE });
+        if (!d || typeof d !== 'object' || d.scope !== 'mfa_pending' || !d.userId || !d.jti) return null;
+        return { userId: String(d.userId), jti: String(d.jti) };
+    } catch {
+        return null;
+    }
+}
+
+/** R40: true when the sign-in behind a session is older than PRO_SESSION_MAX_AGE_SECONDS (a session without a sign-in time is too old). @param {unknown} authTime */
+export function proSessionTooOld(authTime, now = Date.now()) {
+    if (typeof authTime !== 'number' || !Number.isFinite(authTime)) return true;
+    return Math.floor(now / 1000) - authTime > PRO_SESSION_MAX_AGE_SECONDS;
 }
 
 function validateProClaims(/** @type {string | number | boolean | null | undefined} */ decoded) {
@@ -123,6 +159,7 @@ function validateProClaims(/** @type {string | number | boolean | null | undefin
         role: roleRaw,
         scope: scope || undefined,
         iat: typeof payload.iat === 'number' ? payload.iat : undefined,   // issue time: a session revoked after it is refused (sessionsValidAfter)
+        authTime: typeof payload.auth_time === 'number' ? payload.auth_time : (typeof payload.iat === 'number' ? payload.iat : undefined),   // R40: sign-in time (older tokens: their issue time)
         mfa: payload.mfa === true,
     };
 }
@@ -138,7 +175,9 @@ export function proMfaRequired() {
 }
 /** @param {string} url */
 export function proRouteNeedsMfa(url) {
-    const p = String(url || '').split('?')[0];
+    // R40: decide on the path the router serves (dot segments resolved); an alias path is never one of the open routes
+    if (!url || isNonCanonicalPath(url)) return true;
+    const p = resolvedPathname(url);
     return !PRO_MFA_OPEN_ROUTES.some((re) => re.test(p));
 }
 
@@ -389,6 +428,8 @@ export function isProRole(role) {
 }
 
 export async function resolveAuthContext(/** @type {unknown} */ req) {
+  // R40: a request whose raw path is not canonical (the router would serve another route) carries no session (see request-path.js)
+  if (isNonCanonicalPath(/** @type {any} */ (req)?.url)) return null;
   const token = getBearerToken(req);
   if (!token) return null;
 
@@ -432,6 +473,7 @@ export async function resolveAuthContext(/** @type {unknown} */ req) {
       userId: String(/** @type {any} */(proClaims).userId || ''),
       structureId: String(/** @type {any} */(proClaims).structureId || ''),
       iat: /** @type {any} */ (proClaims).iat,
+      authTime: /** @type {any} */ (proClaims).authTime,
       mfa: /** @type {any} */ (proClaims).mfa === true,
     };
   }
@@ -441,18 +483,22 @@ export async function resolveAuthContext(/** @type {unknown} */ req) {
 
 /**
 * @param {unknown} req
+* @param {{ personalData?: boolean }} [opts] personalData (R40): the read returns personal data (conversation logs, application logs, administrator sessions),
+*   so it needs a named administrator session that passed MFA, like a write — the retired shared token only inside the frozen test suites
 */
-export async function verifyAdmin(req) {
+export async function verifyAdmin(req, opts = {}) {
   // PKG-5 / A01 A16: an ADMIN session (named administrator, admin_jwt) — never a professional token, even one claiming SUPERADMIN (separate security model);
   // and any state-changing request needs that session's MFA. (The retired legacy token is only accepted where legacyAdminTokenAllowed().)
   const auth = await resolveAuthContext(req);
   if (!auth || !isAdminRole(auth.role)) return false;
+  // R40: the resolved administrator is kept on the request (audit rows name who read or exported), unless a wrapper already set it
+  if (req && typeof req === 'object' && !(/** @type {any} */ (req).auth)) /** @type {any} */ (req).auth = auth;
   const method = String(/** @type {any} */ (req)?.method || 'GET').toUpperCase();
   const reading = ['GET', 'HEAD', 'OPTIONS'].includes(method);
   // R12 (A01): outside the frozen test suites the legacy token (a shared secret, no MFA) may only READ — the non-production opt-in never writes
-  if (auth.authType === 'admin_token') return reading || process.env.NODE_ENV === 'test';
+  if (auth.authType === 'admin_token') return (reading && opts.personalData !== true) || process.env.NODE_ENV === 'test';
   if (auth.authType !== 'admin_jwt') return false;
-  return reading || auth.mfa_verified === true;
+  return (reading && opts.personalData !== true) || auth.mfa_verified === true;
 }
 
 /**
@@ -574,8 +620,8 @@ export function requireAdminMfa(/** @type {(...args: unknown[]) => unknown} */ h
 export async function currentProMembership(userId) {
   // a database handle without raw SQL (isolated unit-test doubles of src/db) cannot answer: membership UNKNOWN, the token's claims stay authoritative there
   if (typeof db.execute !== 'function') return undefined;
-  const rows = (await db.execute(sql`SELECT role, status, "structureId", "sessionsValidAfter" FROM "ProUser" WHERE id = ${String(userId)} LIMIT 1`)).rows;
-  return rows[0] ? { role: String(rows[0].role || ''), status: String(rows[0].status || ''), structureId: String(rows[0].structureId || ''), sessionsValidAfter: rows[0].sessionsValidAfter || null } : null;
+  const rows = (await db.execute(sql`SELECT role, status, "structureId", "sessionsValidAfter", mfa_enabled FROM "ProUser" WHERE id = ${String(userId)} LIMIT 1`)).rows;
+  return rows[0] ? { role: String(rows[0].role || ''), status: String(rows[0].status || ''), structureId: String(rows[0].structureId || ''), sessionsValidAfter: rows[0].sessionsValidAfter || null, mfaEnabled: rows[0].mfa_enabled === true } : null;
 }
 
 /**

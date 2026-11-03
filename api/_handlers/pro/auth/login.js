@@ -1,8 +1,7 @@
 // @ts-nocheck
 import logger from '../../../_utils/logger.js';
 import { verifyPassword } from '../../../_utils/user-auth.js';
-import jwt from 'jsonwebtoken';
-import { signProToken, logProAudit } from '../../../_utils/auth.js';
+import { signProToken, signProMfaPendingToken, logProAudit } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils/rateLimit.js';
 import { db } from '../../../../src/db/index.js';
 import { eq, sql } from 'drizzle-orm';
@@ -89,17 +88,8 @@ export default async function handler(req, res) {
                 return res.status(500).json({ error: 'Server configuration error' });
             }
 
-            // Issue a short-lived token that can ONLY be used for MFA verification
-            const mfaToken = jwt.sign(
-                {
-                    userId: targetUser.id,
-                    email: targetUser.email,
-                    structureId: targetUser.structureId,
-                    scope: 'mfa_pending',
-                },
-                jwtSecret,
-                { expiresIn: '5m', algorithm: 'HS256' }
-            );
+            // Issue a short-lived token that can ONLY be used for MFA verification (R40: own issuer/audience and a jti — signProMfaPendingToken)
+            const mfaToken = signProMfaPendingToken(targetUser);
 
             await logProAudit('MFA_CHALLENGE', targetUser.id, targetUser.structureId, {}, ip);
 

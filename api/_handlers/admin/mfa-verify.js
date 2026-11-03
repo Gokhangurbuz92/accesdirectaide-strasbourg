@@ -77,7 +77,8 @@ async function verifyHandler(/** @type {import('../../_utils/http-types').ApiReq
         // 4. First-time activation
         await audit(admin.mfaEnabled ? 'ADMIN_MFA_VERIFIED' : 'ADMIN_MFA_ENROLLED', adminEmail);
         if (!admin.mfaEnabled) {
-            await db.update(AdminUser).set({ mfaEnabled: true }).where(eq(AdminUser.id, admin.id));
+            // R40: enrolment ends every earlier (password-only) session of this administrator; the token issued below is newer, so it stays valid
+            await db.update(AdminUser).set({ mfaEnabled: true, sessionsValidAfter: new Date() }).where(eq(AdminUser.id, admin.id));
             logger.info(
                 { msg: 'admin.mfa.activated', email: adminEmail },
                 '[Admin MFA] MFA activated for admin',

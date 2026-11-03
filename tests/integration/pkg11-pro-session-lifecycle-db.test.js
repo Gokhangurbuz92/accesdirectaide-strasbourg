@@ -72,6 +72,7 @@ describe.skipIf(!hasDatabase)('pro session lifecycle (real API entry, real DB)',
     mailer.__clearTestOutbox();
     const res = await call('POST', '/api/pro/auth/forgot-password', { body: { email: U.email.toLowerCase() } });
     expect(res.statusCode).toBe(200);
+    await vi.waitFor(() => expect(mailer.__getTestOutbox().length).toBe(1), { timeout: 5000 });   // R40: the link is sent after the answer
     const mails = mailer.__getTestOutbox(); expect(mails.length).toBe(1); expect(mails[0].to).toBe(U.email);
     const link = String(mails[0].text).match(/https?:\/\/\S+\/pro\/reset-password\?token=([0-9a-f]{64})/); expect(link).toBeTruthy();
     expect(String(mails[0].html)).toContain(`/pro/reset-password?token=${link[1]}`);
@@ -79,7 +80,7 @@ describe.skipIf(!hasDatabase)('pro session lifecycle (real API entry, real DB)',
     expect(await kv.get(`reset:pro:${crypto.createHash('sha256').update(link[1]).digest('hex')}`)).toMatchObject({ userId: U.id });
     for (const email of [`nobody-${TS}@example.test`, OFF.email]) {
       mailer.__clearTestOutbox(); const r = await call('POST', '/api/pro/auth/forgot-password', { body: { email } });
-      expect(r.statusCode).toBe(200); expect(r.body).toEqual(res.body); expect(mailer.__getTestOutbox()).toEqual([]);
+      expect(r.statusCode).toBe(200); expect(r.body).toEqual(res.body); await new Promise((ok) => setTimeout(ok, 300)); expect(mailer.__getTestOutbox()).toEqual([]);
     }
     U.token = link[1];
   });

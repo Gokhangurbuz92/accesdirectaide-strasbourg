@@ -141,6 +141,7 @@ describe.skipIf(!hasDatabase)('PKG-11 slice 10 (real DB)', () => {
     mailer.__clearTestOutbox();
     await db.execute(sql`UPDATE "ProUser" SET status = 'active' WHERE id = ${ID.p2}`);
     expect((await post(forgot, { email: PRO })).statusCode).toBe(200);
+    await vi.waitFor(() => expect(mailer.__getTestOutbox().filter((m) => m.to === PRO).length).toBe(2), { timeout: 5000 });   // R40: the links are sent after the answer
     const mails = mailer.__getTestOutbox().filter((m) => m.to === PRO);
     expect(mails).toHaveLength(2); expect(mails.map((m) => m.subject).join(' | ')).toContain(`Organisation ${ID.o1}`); expect(mails.map((m) => m.subject).join(' | ')).toContain(`Organisation ${ID.o2}`);
   });

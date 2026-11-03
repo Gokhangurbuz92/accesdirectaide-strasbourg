@@ -6,6 +6,7 @@
  */
 import { verifyAdmin } from '../../_utils/auth.js';
 import { getLogs, logStoreConfigured } from '../../lib/log-store.js';
+import { refuseWithoutAdminMfa } from '../../_utils/admin-personal-data.js';
 
 export default async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -17,6 +18,8 @@ export default async function handler(/** @type {import('../../_utils/http-types
   if (!(await verifyAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+  // R40: application logs can hold personal data — MFA session only
+  if (!(await verifyAdmin(req, { personalData: true }))) return refuseWithoutAdminMfa(res);
 
   const count = Math.min(parseInt(req.query?.count, 10) || 50, 500);
   const level = req.query?.level; // optional filter: 'error', 'warn', etc.
@@ -35,6 +38,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
       logs,
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to fetch logs', detail: err.message });
+    void err;   // R40: no internal error text in the answer
+    return res.status(500).json({ error: 'Failed to fetch logs' });
   }
 }

@@ -23,7 +23,7 @@ describe.skipIf(!hasDatabase)('one-time codes are used once; professional seeds 
   let db, auth, otp, vault, guard, jwt, adminSecret, supSecret;
   const at = (secret, ahead = 0) => otp.generateSync({ secret, epoch: Math.floor(Date.now() / 1000) + 30 * ahead });
   const adminReq = (email, role, body) => ({ method: 'POST', url: '/api/admin/mfa-verify', query: {}, body, headers: { host: 'localhost', authorization: `Bearer ${auth.signAdminSessionToken({ email, role, mfa_verified: false })}` } });
-  const pendingPro = () => jwt.sign({ userId: PRO.id, email: PRO.email, structureId: ST, scope: 'mfa_pending' }, process.env.JWT_SECRET, { expiresIn: '5m', algorithm: 'HS256' });
+  const pendingPro = () => auth.signProMfaPendingToken({ id: PRO.id, email: PRO.email, structureId: ST });   // R40: the pending token has its own issuer/audience
   const proVerify = async (code) => { const h = (await import('../../api/_handlers/pro/auth/mfa-verify.js')).default; const r = mk();
     await h({ method: 'POST', url: '/api/pro/auth/mfa-verify', query: {}, body: { mfa_token: pendingPro(), code }, headers: { host: 'localhost' } }, r); return r; };
 
@@ -71,12 +71,18 @@ describe.skipIf(!hasDatabase)('one-time codes are used once; professional seeds 
 
   it('professional: the seed is stored sealed; the enrolment code does not sign in again; the next step’s code does; a clear seed stored before still works; switching off needs an unused code', async () => {
     const setup = (await import('../../api/_handlers/pro/mfa-setup.js')).default;
-    const tok = auth.signProToken({ id: PRO.id, email: PRO.email, structureId: ST, role: 'PRO' });
+    let tok = auth.signProToken({ id: PRO.id, email: PRO.email, structureId: ST, role: 'PRO' });
     const req = (method, body) => ({ method, url: '/api/pro/mfa-setup', query: {}, body, headers: { host: 'localhost', authorization: `Bearer ${tok}` } });
     let r = mk(); await setup(req('GET'), r); expect(r.statusCode).toBe(200); const secret = r.body.secret;
     const stored = (await db.execute(sql`SELECT mfa_secret FROM "ProUser" WHERE id = ${PRO.id}`)).rows[0].mfa_secret;
     expect(stored.startsWith('v1:')).toBe(true); expect(stored).not.toContain(secret); expect(guard.openMfaSecret(stored)).toBe(secret);
+    await new Promise((ok) => setTimeout(ok, 1100));   // revocation has one-second granularity: the earlier session must be from an earlier second
     const enrol = at(secret); r = mk(); await setup(req('POST', { code: enrol }), r); expect(r.statusCode).toBe(200);
+    // R40: enrolment ends the earlier password-only session and returns a fresh one with the second factor
+    const before = tok; tok = r.body.token; expect(auth.verifyProToken(tok).mfa).toBe(true);
+    { const me = (await import('../../api/_utils/auth.js')).requireProAuth(async (_q, w) => w.status(200).json({})); const w1 = mk();
+      await me({ method: 'GET', url: '/api/pro/me', query: {}, headers: { host: 'localhost', authorization: `Bearer ${before}` } }, w1); expect(w1.statusCode, 'the pre-enrolment session').toBe(401); }
+    r = mk(); await setup(req('POST', { code: at(secret, 1) }), r); expect(r.statusCode, 'enrolment again while MFA is on').toBe(409);
     expect((await proVerify(enrol)).statusCode, 'the enrolment code does not sign in').toBe(401);
     const next = at(secret, 1);
     const ok = await proVerify(next); expect(ok.statusCode).toBe(200); expect(ok.body.token).toBeTruthy();

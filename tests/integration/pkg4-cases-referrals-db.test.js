@@ -200,6 +200,29 @@ describe.skipIf(!hasDatabase)('PKG-4 cases and referrals (real DB, four organiza
     expect(await grantActive(S.D)).toBe(0);
   });
 
+  it('R40: a referral past its expiry closes the receiver\'s access without waiting for the cron', async () => {
+    const share = await import('../../api/_utils/share-access.js');
+    await db.execute(sql`UPDATE "Referral" SET status = 'CANCELLED', "closedAt" = NOW() WHERE "toStructureId" = ${S.D} AND status NOT IN ('EXPIRED', 'CANCELLED', 'CLOSED', 'COMPLETED', 'DECLINED')`);
+    const p = await ref(P.pro1, { action: 'propose', caseId, toStructureId: S.D, reasonCode: 'HEALTH' });
+    await cit(H.citRefs, { method: 'POST', body: { id: p.body.referral.id, decision: 'accept' } });
+    const ctxD = { structureId: S.D, userId: P.d.id, role: 'PRO' };
+    expect((await dossierGet(P.d)).statusCode, 'open while the referral is live').toBe(200);
+    const inQueue = async () => ((await cases(P.d, { scope: 'unassigned' })).body.cases || []).filter((c) => c.dossierId === DOSSIER).length;
+    expect(await inQueue(), 'in the receiver queue while live').toBe(1);
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() - interval '13 days' WHERE id = ${p.body.referral.id}`);
+    expect(await share.findActiveGrant(DOSSIER, ctxD), 'overdue but not yet expired').not.toBeNull();
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() - interval '15 days' WHERE id = ${p.body.referral.id}`);
+    expect(await grantActive(S.D), 'no cron ran: the row is not revoked yet').toBe(1);
+    expect(await share.findActiveGrant(DOSSIER, ctxD)).toBeNull();
+    expect((await db.execute(sql`SELECT 1 AS ok WHERE ${share.activeGrantExists(DOSSIER, ctxD)}`)).rows).toHaveLength(0);
+    expect((await dossierGet(P.d)).statusCode).toBe(404);
+    expect(await inQueue(), 'not in the receiver queue').toBe(0);
+    expect((await dossierGet(P.pro1)).statusCode, 'the sender keeps its own invite grant').toBe(200);
+    await db.execute(sql`UPDATE "Referral" SET "dueAt" = NOW() + interval '1 day' WHERE id = ${p.body.referral.id}`);
+    expect(await share.findActiveGrant(DOSSIER, ctxD), 'the rule reads the due date, nothing was written').not.toBeNull();
+    expect((await ref(P.pro1, { action: 'cancel', id: p.body.referral.id })).statusCode).toBe(200);
+  });
+
   it('R39: a notice that could not be stored is retried on the next run (bounded), never sent twice; two runs at once → one notice', async () => {
     const { runReferralTimeouts, NOTICE_MAX_ATTEMPTS } = await import('../../api/_services/referrals.js');
     const freeReceiver = () => db.execute(sql`UPDATE "Referral" SET status = 'CANCELLED', "closedAt" = NOW() WHERE "toStructureId" = ${S.D} AND status NOT IN ('EXPIRED', 'CANCELLED', 'CLOSED', 'COMPLETED', 'DECLINED')`);

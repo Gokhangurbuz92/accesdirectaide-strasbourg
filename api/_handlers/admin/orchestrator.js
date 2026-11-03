@@ -2,6 +2,8 @@
 import { runOrchestrator } from '../../lib/agent-orchestrator.js';
 import { verifyAdmin } from '../../_utils/auth.js';
 import logger from '../../_utils/logger.js';
+import { db } from '../../../src/db/index.js';
+import { AuditLog } from '../../../src/db/schema.js';
 
 /**
  * POST /api/admin/orchestrator
@@ -27,9 +29,13 @@ export default async function handler(/** @type {import('../../_utils/http-types
     }
 
     const dryRun = req.query?.dryRun === 'true' || req.body?.dryRun === true;
+    // R40: a platform run leaves an AuditLog row (who, dry run or not, outcome) once answered
+    const actor = req.auth?.email || null;
+    const audit = (/** @type {string} */ outcome) => db.insert(AuditLog).values({ action: 'ADMIN_ORCHESTRATOR_RUN', actor, actor_id: actor, entity: 'AdminRoute', entity_id: 'admin/orchestrator', details: { dryRun, outcome } }).catch(() => {});
 
     try {
         const results = await runOrchestrator({ dryRun });
+        await audit('ok');
 
         return res.status(200).json({
             ok: true,
@@ -38,7 +44,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
         });
     } catch (error) {
         logger.error({ msg: 'orchestrator.handler.error', error: error.message });
-        // @ts-ignore
-        return res.status(500).json({ error: 'Orchestrator failed', message: error.message });
+        await audit('failed');
+        return res.status(500).json({ error: 'Orchestrator failed' });   // R40: the error text stays in the server log
     }
 }

@@ -26,6 +26,9 @@ export const JIT_MINUTES = 15;
 export const BREAK_GLASS_MINUTES = 30;
 const MAX_FAILED = 5; const LOCK_MS = 15 * 60 * 1000;
 const bad = (status, code, message) => ({ ok: false, status, code, message });
+/** R40: a fixed scrypt hash (of a value nobody types): an unknown, disabled or locked account costs the same password work as a real check */
+const DUMMY_HASH = 'scrypt:00000000000000000000000000000000:' + '0'.repeat(128);
+const dummyCheck = (p) => verifyPassword(p, DUMMY_HASH).catch(() => false);
 const audit = (db, action, actor, details = {}, entityId = null) => db.insert(AuditLog).values({ action, actor, actor_id: actor, entity: 'AdminSession', entity_id: entityId, details }).catch(() => {});
 
 export async function adminLogin({ email, password }, { db = defaultDb } = {}) {
@@ -33,8 +36,9 @@ export async function adminLogin({ email, password }, { db = defaultDb } = {}) {
   if (!e || !p) return bad(400, 'invalid_input', 'Email et mot de passe requis.');
   const [admin] = await db.select().from(AdminUser).where(eq(AdminUser.email, e)).limit(1);
   if (admin) {
-    if (admin.disabledAt) { await audit(db, 'ADMIN_LOGIN_DISABLED', e); return bad(401, 'invalid_credentials', 'Identifiants invalides.'); }   // ADM-10: same answer as a wrong password
-    if (admin.lockoutUntil && new Date(admin.lockoutUntil) > new Date()) { await audit(db, 'ADMIN_LOGIN_LOCKED', e); return bad(423, 'locked', 'Compte temporairement verrouillé.'); }
+    if (admin.disabledAt) { await dummyCheck(p); await audit(db, 'ADMIN_LOGIN_DISABLED', e); return bad(401, 'invalid_credentials', 'Identifiants invalides.'); }   // ADM-10: same answer as a wrong password
+    // R40: a locked account answers like a wrong password (same status, same work) — the lock is recorded in the audit trail, not told to the caller
+    if (admin.lockoutUntil && new Date(admin.lockoutUntil) > new Date()) { await dummyCheck(p); await audit(db, 'ADMIN_LOGIN_LOCKED', e); return bad(401, 'invalid_credentials', 'Identifiants invalides.'); }
     const ok = await verifyPassword(p, admin.password).catch(() => false);
     if (!ok) {
       // R12 / Q11: atomic increment (concurrent failures on several instances all count)
@@ -52,7 +56,9 @@ export async function adminLogin({ email, password }, { db = defaultDb } = {}) {
   // administrator is a named account with MFA, the first one created by scripts/admin-bootstrap.mjs
   const production = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
   const envEmail = production ? '' : String(env.secrets.adminEmail || '').toLowerCase(); const hash = production ? null : env.secrets.adminPasswordHash;
-  if (envEmail && e === envEmail && hash && await verifyPassword(p, hash).catch(() => false)) {
+  const envMatch = Boolean(envEmail && e === envEmail && hash);
+  if (!envMatch) await dummyCheck(p);   // R40: an unknown e-mail costs the same password work as a known one
+  if (envMatch && await verifyPassword(p, hash).catch(() => false)) {
     await audit(db, 'ADMIN_LOGIN_SUCCEEDED', e, { identity: 'env', mfaAvailable: false });
     return { ok: true, token: signAdminSessionToken({ email: e, role: 'admin', mfa_verified: false }), user: { email: e, role: 'admin' }, mfa_required: false, mfa_setup_required: true, readOnly: true };
   }

@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { requireProAuth, proMfaRequired, signProToken } from '../../_utils/auth.js';
 import { logProAudit } from '../../_utils/auth.js';
 import { generateSecret, matchCodeStep, buildOtpauthUrl } from '../../lib/totp.js';
+import { checkRateLimit, getClientIp } from '../../_utils/rateLimit.js';
 import { claimProStep, isVaultReady, openMfaSecret, sealMfaSecret } from '../../_utils/totp-guard.js';
 
 /**
@@ -11,7 +12,8 @@ import { claimProStep, isVaultReady, openMfaSecret, sealMfaSecret } from '../../
  *
  * GET  → Generate secret + otpauth URL (does NOT enable MFA yet); refused while MFA is ON (PKG-11 audit: a bare GET used to switch MFA off and hand a new
  *        secret to whoever held the session — turning MFA off needs DELETE with a valid code)
- * POST → Verify initial code → enable MFA
+ * POST → Verify initial code → enable MFA. R40: refused while MFA is ON (409); the codes count against the same per-account limit as the sign-in codes;
+ *        enabling it ends every earlier session of the account (they were password-only) and returns a fresh one with the second factor
  * DELETE → Disable MFA (requires valid code as confirmation)
  */
 async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
@@ -44,21 +46,33 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         }
 
         const user = await db.query.ProUser.findFirst({ where: eq(ProUser.id, userId) });
+        if (user?.mfa_enabled) {
+            return res.status(409).json({ error: 'MFA_ALREADY_ENABLED', message: 'La double authentification est déjà active.' });
+        }
         if (!user?.mfa_secret) {
             return res.status(400).json({ error: 'Aucun secret MFA configuré. Lancez d\'abord GET /api/pro/mfa-setup.' });
         }
 
+        const ip = getClientIp(req);
+        const limit = await checkRateLimit('MFA_VERIFY_PRO_USER', `user:${userId}`);
+        if (!limit.allowed) {
+            await logProAudit('MFA_LOCKED', userId, structureId, { step: 'enrolment' }, ip);
+            return res.status(429).json(limit.error || { error: 'Trop de tentatives. Réessayez plus tard.' });
+        }
+
         const step = matchCodeStep(openMfaSecret(user.mfa_secret) || '', String(code));
         if (step === null || !(await claimProStep(db, userId, step))) {
+            await logProAudit('MFA_ENROL_FAILED', userId, structureId, {}, ip);
             return res.status(400).json({ error: 'Code de vérification incorrect' });
         }
 
-        await db.update(ProUser).set({ mfa_enabled: true }).where(eq(ProUser.id, userId));
+        // R40: every session issued before now ends (sessionsValidAfter); the token returned below is issued after it, so it stays valid
+        await db.update(ProUser).set({ mfa_enabled: true, sessionsValidAfter: new Date() }).where(eq(ProUser.id, userId));
 
         await logProAudit('MFA_ENABLED', userId, structureId, {}, null);
 
         // R34: the code just proved the second factor — the session continues with it (no second sign-in needed to reach the dossiers)
-        return res.status(200).json({ ok: true, message: 'MFA activé avec succès', token: signProToken({ id: userId, email, structureId, role: user.role }, { mfa: true }) });
+        return res.status(200).json({ ok: true, message: 'MFA activé avec succès', token: signProToken({ id: userId, email, structureId, role: user.role, authTime: req.auth?.authTime }, { mfa: true }) });
     }
 
     // --- DELETE: Disable MFA (requires valid code) ---

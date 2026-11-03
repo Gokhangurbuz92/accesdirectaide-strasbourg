@@ -14,7 +14,8 @@ export default async function handler(req, res) {
   const auth = await resolveAuthContext(req);
   if (!auth || auth.authType !== 'admin_jwt' || !isAdminRole(auth.role)) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    if (req.method === 'GET') return res.status(200).json(await sessionOverview());
+    // R40: the administrators and their session events are personal data — MFA session only (ending my own sessions stays open)
+    if (req.method === 'GET') return auth.mfa_verified === true ? res.status(200).json(await sessionOverview()) : res.status(403).json({ error: 'MFA required', mfa_required: true, code: 'ADMIN_MFA_REQUIRED' });
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     const b = req.body && typeof req.body === 'object' ? req.body : {};
     const out = b.action === 'logout' ? await logoutAll(auth)

@@ -48,6 +48,10 @@ const CONFIG = {
     LOGIN_PRO: { limit: 5, window: 900 },   // 5 per 15 min
     REGISTER_PRO: { limit: 5, window: 3600 },  // 5 per hour
     MFA_VERIFY_PRO: { limit: 5, window: 900 }, // 5 per 15 min
+    // R40: the second factor of ONE professional account (sign-in codes and enrolment codes share it; the IP limit above alone let addresses be rotated),
+    // and the codes tried with ONE pending sign-in token
+    MFA_VERIFY_PRO_USER: { limit: 5, window: 900 },
+    MFA_VERIFY_PRO_TOKEN: { limit: 3, window: 300 },
     REGISTER_INVITE: { limit: 5, window: 3600 }, // 5 per hour
     REFRESH_PRO: { limit: 10, window: 900 },  // 10 per 15 min
     LOGIN_USER: { limit: 8, window: 900 },  // 8 per 15 min
@@ -109,7 +113,7 @@ const PUBLIC_READ_ACTIONS = new Set([
 ]);
 
 const AUTH_OR_SENSITIVE_MUTATION = new Set([
-    'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO',
+    'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO', 'MFA_VERIFY_PRO_USER', 'MFA_VERIFY_PRO_TOKEN',
     'REGISTER_INVITE', 'REFRESH_PRO', 'LOGIN_USER', 'SIGNUP_USER', 
     'RESEND_VERIFY', 'FORGOT_USER', 'RESET_USER', 'RESET_PASSWORD',
     'BOOK', 'CONFIRM', 'FEEDBACK', 'CONTACT_FORM', 'DSR_EXPORT', 'RDV_PUBLIC_WRITE', 'RDV_GUEST_WRITE', 'RDV_GUEST_EMAIL', 'RDV_GUEST_CONFIRM', 'RDV_GUEST_MANAGE', 

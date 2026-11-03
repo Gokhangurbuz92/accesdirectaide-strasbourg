@@ -9,6 +9,31 @@ import { env } from '../../../_utils/env.js';
 import { sendMail, getMailerStatus } from '../../../_utils/mailer.js';
 import { templates } from '../../../lib/email-service.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { waitUntil } from '@vercel/functions';
+
+/**
+ * One reset link per account (stored hashed, single use, 1 hour), sent by e-mail and audited. R40: run AFTER the answer (waitUntil) so the response time
+ * does not tell whether the address has an account.
+ * @param {Array<{ id: string, email: string, status: string, structureId: string, nom: string | null }>} users @param {string | null} ip
+ */
+async function sendResetLinks(users, ip) {
+    for (const user of users) {
+        // PKG-11 audit: before, the link was only LOGGED (« [MOCK EMAIL] ») and never sent, while the person was told it had been sent. Now: a real
+        // e-mail through the configured provider (honest delivery status in the mail ledger), and the token is stored HASHED (the raw value exists
+        // only in the e-mail), single use, 1 hour.
+        const token = crypto.randomBytes(32).toString('hex');
+        const key = `reset:pro:${crypto.createHash('sha256').update(token).digest('hex')}`;
+        await kv.set(key, { userId: user.id }, { ex: 3600 });
+
+        const baseUrl = env.runtime.appBaseUrl || 'http://localhost:3000';
+        const resetLink = `${baseUrl}/pro/reset-password?token=${encodeURIComponent(token)}`;
+        const t = templates.resetPassword(user.email.split('@')[0], resetLink, '1 heure');   // the professional link lives 1 hour (KV ex 3600)
+        const org = users.length > 1 ? ` — compte de l'organisation « ${String(user.nom || 'Organisation').replace(/[\r\n]+/g, ' ')} »` : '';
+        await sendMail({ to: user.email, subject: `${t.subject}${org}`, text: `Lien de réinitialisation (valable 1 heure)${org} : ${resetLink}`, html: t.html, category: 'password_reset' });
+
+        await logProAudit('RESET_REQUESTED', user.id, user.structureId, { accounts: users.length }, ip);
+    }
+}
 /**
  * @param {import('../../../_utils/http-types').ApiRequest} req
  * @param {import('../../../_utils/http-types').ApiResponse} res
@@ -39,23 +64,9 @@ export default async function handler(req, res) {
         const users = /** @type {Array<{ id: string, email: string, status: string, structureId: string, nom: string | null }>} */ ((await db.execute(sql`SELECT u.id, u.email, u.status, u."structureId", s.nom
           FROM "ProUser" u LEFT JOIN "Structure" s ON s.id = u."structureId" WHERE lower(u.email) = ${normalized} AND u.status IN ('active', 'pending') ORDER BY u."createdAt" LIMIT 5`)).rows);
 
-        // Same answer whether or not an account exists (no enumeration); a disabled account never receives a reset link
-        for (const user of users) {
-            // PKG-11 audit: before, the link was only LOGGED (« [MOCK EMAIL] ») and never sent, while the person was told it had been sent. Now: a real
-            // e-mail through the configured provider (honest delivery status in the mail ledger), and the token is stored HASHED (the raw value exists
-            // only in the e-mail), single use, 1 hour.
-            const token = crypto.randomBytes(32).toString('hex');
-            const key = `reset:pro:${crypto.createHash('sha256').update(token).digest('hex')}`;
-            await kv.set(key, { userId: user.id }, { ex: 3600 });
-
-            const baseUrl = env.runtime.appBaseUrl || 'http://localhost:3000';
-            const resetLink = `${baseUrl}/pro/reset-password?token=${encodeURIComponent(token)}`;
-            const t = templates.resetPassword(user.email.split('@')[0], resetLink, '1 heure');   // the professional link lives 1 hour (KV ex 3600)
-            const org = users.length > 1 ? ` — compte de l'organisation « ${String(user.nom || 'Organisation').replace(/[\r\n]+/g, ' ')} »` : '';
-            await sendMail({ to: user.email, subject: `${t.subject}${org}`, text: `Lien de réinitialisation (valable 1 heure)${org} : ${resetLink}`, html: t.html, category: 'password_reset' });
-
-            await logProAudit('RESET_REQUESTED', user.id, user.structureId, { accounts: users.length }, ip);
-        }
+        // Same answer whether or not an account exists (no enumeration); a disabled account never receives a reset link. R40: the links are sent after
+        // the answer, so an existing account does not make the request slower
+        waitUntil(sendResetLinks(users, ip).catch((err) => logger.error({ err: { name: err?.name } }, 'Forgot Password delivery error')));
 
         // R12 (C01): « a link was sent » only when this service can send e-mail at all (configuration only: the same answer for every address)
         return res.status(200).json(getMailerStatus().deliverable ? { message: "Si cet email existe, un lien a été envoyé.", emailDelivery: 'SENT_IF_VALID' }

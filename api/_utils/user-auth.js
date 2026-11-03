@@ -7,6 +7,7 @@ import { signJwt, verifyJwt } from '../_utils/auth.js';
 import { env } from './env.js';
 import { hashPassword, hashPasswordSync, verifyPassword } from './password-hash.js';
 import { clientIp } from './client-ip.js';
+import { isNonCanonicalPath } from './request-path.js';
 
 export const USER_SESSION_COOKIE_NAME = 'ada_user_session';
 
@@ -186,6 +187,8 @@ export function parseCookies(req) {
  * @returns {string | null}
  */
 export function getUserSessionTokenFromRequest(req) {
+  // R40: no cookie session on a non-canonical path — the double-submit exemptions are matched on the raw path, the route on the resolved one
+  if (isNonCanonicalPath(req?.url)) return null;
   const cookies = parseCookies(req);
   const value = String(cookies[USER_SESSION_COOKIE_NAME] || '').trim();
   return value || null;

@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
-import { activeGrantExists, activeMemberSql, caseAccessSql } from '../_utils/share-access.js';
+import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
 import { sendMail as defaultSendMail } from '../_utils/mailer.js';
@@ -27,7 +27,7 @@ import { logger } from '../lib/logger.js';
 export const REASONS = ['SPECIALISED_SUPPORT', 'ACCESS_TO_RIGHTS', 'HOUSING', 'EMPLOYMENT', 'HEALTH', 'FOOD_AID', 'DIGITAL_SUPPORT', 'LEGAL', 'OTHER'];
 export const RESPONSES = ['OUT_OF_SCOPE', 'NO_CAPACITY', 'ALREADY_SUPPORTED', 'NEEDS_MORE_INFORMATION', 'OTHER'];
 export const ACK_DAYS = 5;
-export const EXPIRE_AFTER_DUE_DAYS = 14;
+export const EXPIRE_AFTER_DUE_DAYS = REFERRAL_EXPIRE_AFTER_DUE_DAYS;   // R40: one value, also applied by the access checks (share-access.js)
 const LIVE = ['DRAFT', 'PENDING_CITIZEN', 'SENT', 'ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'IN_PROGRESS'];
 const day = 86400000;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });

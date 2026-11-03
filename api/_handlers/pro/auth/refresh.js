@@ -1,7 +1,7 @@
 // @ts-nocheck
 import logger from '../../../_utils/logger.js';
 import jwt from 'jsonwebtoken';
-import { signProToken, verifyProToken, logProAudit, currentProMembership, PRO_SESSION_STATUSES, proSessionRevoked } from '../../../_utils/auth.js';
+import { signProToken, verifyProToken, logProAudit, currentProMembership, PRO_SESSION_STATUSES, proSessionRevoked, proSessionTooOld } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils/rateLimit.js';
 import { env } from '../../../_utils/env.js';
 
@@ -12,10 +12,22 @@ import { env } from '../../../_utils/env.js';
  * ou récemment expiré (grâce de 1h max).
  *
  * Garantit la continuité de service pour les agents Pro (Requirement H).
+ * R40: never beyond PRO_SESSION_MAX_AGE_SECONDS after the sign-in (auth_time is carried through), and a password-only session of an account that has
+ * the second factor enabled is not extended.
  *
  * @param {import('../../../_utils/http-types').ApiRequest} req
  * @param {import('../../../_utils/http-types').ApiResponse} res
  */
+/**
+ * R40: why a session that is otherwise valid cannot be extended — its sign-in is too old, or it is password-only while the account has the second factor.
+ * @param {unknown} authTime @param {boolean} mfa @param {{ mfaEnabled?: boolean }} membership
+ */
+function refreshRefusal(authTime, mfa, membership) {
+    if (proSessionTooOld(authTime)) return { error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_MAX_AGE' };
+    if (membership?.mfaEnabled === true && !mfa) return { error: 'Session expirée. Veuillez vous reconnecter.', code: 'MFA_SESSION_REQUIRED' };
+    return null;
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -56,11 +68,14 @@ export default async function handler(req, res) {
             }
             // PKG-11 audit: a session ended by logout or password reset cannot be extended
             if (proSessionRevoked(validClaims.iat, m)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
+            const refused = refreshRefusal(validClaims.authTime, validClaims.mfa === true, m);
+            if (refused) return res.status(401).json(refused);
             const newToken = signProToken({
                 id: validClaims.userId,
                 email: validClaims.email,
                 structureId: validClaims.structureId,
                 role: m.role,
+                authTime: validClaims.authTime,
             }, { mfa: validClaims.mfa === true });   // R34: a refresh keeps, never adds, the second factor
 
             await logProAudit('TOKEN_REFRESH', validClaims.userId, validClaims.structureId, { method: 'valid' }, ip);
@@ -122,11 +137,15 @@ export default async function handler(req, res) {
         }
         if (proSessionRevoked(typeof decoded.iat === 'number' ? decoded.iat : undefined, m)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
         void role;
+        const authTime = typeof decoded.auth_time === 'number' ? decoded.auth_time : decoded.iat;
+        const refused = refreshRefusal(authTime, decoded.mfa === true, m);
+        if (refused) return res.status(401).json(refused);
         const newToken = signProToken({
             id: userId,
             email: typeof decoded.email === 'string' ? decoded.email : undefined,
             structureId,
             role: m.role,
+            authTime,
         }, { mfa: decoded.mfa === true });   // R34: a refresh keeps, never adds, the second factor
 
         await logProAudit('TOKEN_REFRESH', userId, structureId, { method: 'grace_period' }, ip);
