@@ -19,6 +19,10 @@ vi.mock('../../src/db/index.js', () => ({
       };
     },
     update: () => ({ set: () => ({ where: async () => ({ rowCount: 1 }) }) }),
+    // R40: the run holds an advisory lock in a transaction and reads which guest columns exist (here: all of them, migration 0044)
+    transaction: async (fn) => fn({ execute: async () => ({ rows: [{ ok: true }] }) }),
+    execute: async () => ({ rows: ['guestEmail', 'guestEmailHash', 'guestPhone', 'guestMailConsentAt', 'guestHoldExpiresAt', 'guestCodeHash', 'guestCodeAttempts',
+      'guestConfirmedAt', 'guestManageTokenHash', 'guestManageExpiresAt', 'guestReminderConsentAt'].map((column_name) => ({ column_name })) }),
   },
 }));
 
