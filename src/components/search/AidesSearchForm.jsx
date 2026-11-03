@@ -6,7 +6,10 @@ import { useT } from '@/i18n';
 
 const LIMIT_OPTIONS = [5, 10, 20];
 
-/** R32: a search category in the interface language (the option values sent to the API do not change) */
+/**
+ * R32: a search category in the interface language (the option values sent to the API do not change)
+ * @param {ReturnType<typeof useT>['t']} t @param {string} value @returns {string | null}
+ */
 function categoryLabel(t, value) {
   switch (value) {
     case 'papiers-citoyennete': return t('search:category.papiers-citoyennete', 'Papiers - Citoyenneté');

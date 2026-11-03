@@ -16,9 +16,15 @@ export const PIVOT_TYPES = {
   prefecture: ['Préfecture', 'Sous-préfecture'], france_services: ['Espace France Services'], sip: ['Service des impôts des particuliers'],
 };
 
+/** @type {Record<string, { pivots: string[], types: string[] }> | null} */
 let cache = null;
 /** the offices per guide sheet ID, read once (an unreadable file means none: the search simply does not add official offices) @returns {Record<string, { pivots: string[], types: string[] }>} */
 export function guideOffices(file = path.join(process.cwd(), 'data/reference/guide-offices.v1.json')) {
-  if (!cache) { try { cache = JSON.parse(fs.readFileSync(file, 'utf8')).sheets || {}; } catch { cache = {}; } }
+  if (!cache) {
+    /** @type {Record<string, { pivots: string[], types: string[] }>} */
+    let sheets = {};
+    try { sheets = JSON.parse(fs.readFileSync(file, 'utf8')).sheets || {}; } catch { sheets = {}; }
+    cache = sheets;
+  }
   return cache;
 }

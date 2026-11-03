@@ -4,9 +4,10 @@
  * structureTypeHint() returns the exact catalogue type (Structure.type_structure, Annuaire de l'administration labels) and the words left once the
  * office name is removed; the search then asks for that type first and falls back to the ordinary word search when the catalogue has none.
  */
+/** @param {unknown} s @returns {string} */
 const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’']/g, "'");
 
-/** [pattern on the folded query, exact type_structure] — names and acronyms as people write them */
+/** [pattern on the folded query, exact type_structure] — names and acronyms as people write them @type {[RegExp, string][]} */
 const TYPES = [
   [/(?<!\p{L})(ccas|centre communal d'action sociale)(?!\p{L})/u, "CCAS (centre communal d'action sociale)"],
   [/(?<!\p{L})(france services?|maison france services?)(?!\p{L})/u, 'Espace France Services'],
