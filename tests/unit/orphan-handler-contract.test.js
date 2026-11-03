@@ -9,7 +9,8 @@ import { describe, expect, it } from 'vitest';
 
 const KNOWN_ORPHANS = new Set([
   // admin tooling without a route (admin UI "versions" is referenced by the frontend and is in the route-contract allowlist)
-  '_handlers/admin/export.js', '_handlers/admin/import.js', '_handlers/admin/mark-fresh.js', '_handlers/admin/override-reputation.js', '_handlers/admin/rollback.js',
+  '_handlers/admin/import.js',   // R41-K F4: '_handlers/admin/export.js' (any table, no MFA, no formula escaping) deleted
+  '_handlers/admin/mark-fresh.js', '_handlers/admin/override-reputation.js', '_handlers/admin/rollback.js',
   '_handlers/admin/source-trigger.js', '_handlers/admin/sources.js', '_handlers/admin/versions.js',
   // diagnostics / test endpoints
   '_handlers/blocked.js', '_handlers/ratelimit-test.js', '_handlers/sentry-test.js', '_handlers/version.js', '_handlers/categories.js',

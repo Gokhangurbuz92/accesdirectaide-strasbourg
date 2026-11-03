@@ -96,13 +96,17 @@ export default async function handler(req, res) {
         // GET - List reports (admin only)
         if (req.method === 'GET') {
             // PKG-5 / P19: triage is for named administrator sessions (req.user was never set: triage always answered 401)
-            if (!(await adminGate(req, res))) return;
+            // R41-K F2: a report carries the reporter's e-mail and free-text message — personal data, MFA session only (like a write)
+            if (!(await adminGate(req, res, { write: true }))) return;
 
             const url = new URL(req.url, `https://${req.headers.host}`);
             const status = url.searchParams.get('status');
             const contentType = url.searchParams.get('contentType');
-            const page = parseInt(url.searchParams.get('page') || '1', 10);
-            const limit = parseInt(url.searchParams.get('limit') || '50', 10);
+            // R41-K F2: bounded pages (the page size was uncapped)
+            const pageRaw = parseInt(url.searchParams.get('page') || '1', 10);
+            const limitRaw = parseInt(url.searchParams.get('limit') || '50', 10);
+            const page = Number.isFinite(pageRaw) ? Math.max(pageRaw, 1) : 1;
+            const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 100) : 50;
 
             // Build filters
             const where = {};

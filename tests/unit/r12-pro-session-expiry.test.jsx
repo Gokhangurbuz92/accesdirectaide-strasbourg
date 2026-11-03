@@ -47,4 +47,11 @@ describe('professional session expiry notice', () => {
     await act(async () => { vi.advanceTimersByTime(6 * 60_000); });
     expect(onExpired).toHaveBeenCalled();
   });
+  it('R41-K F1: an extension capped at the 12 h session maximum (same expiry) says the session could not be extended', async () => {
+    const end = Date.now() + 5 * 60_000; globalThis.localStorage.setItem('pro_token', tokenExpiring(end));
+    render(createElement(ProSessionExpiry, { onExpired: () => {} }));
+    F.reply = { ok: true, json: async () => ({ token: tokenExpiring(end) }) };
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Prolonger la session' })); });
+    expect(screen.getByRole('alert')).toHaveTextContent(/n’a pas pu être prolongée/);
+  });
 });

@@ -236,9 +236,9 @@ function NavItem({ item }) {
 }
 
 const PageLoader = () => (
-    <div className="flex items-center justify-center min-h-[50vh]">
+    <main id="main-content" aria-busy="true" className="flex items-center justify-center min-h-[50vh]">{/* R41-K A6: a landmark while the session is checked */}
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600" />
-    </div>
+    </main>
 );
 
 export default function AdminLayout() {

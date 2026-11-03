@@ -10,12 +10,13 @@ import { useT } from '@/i18n';
 export default function ServiceUnavailable({ area }) {
   const { t } = useT('common');
   return (
-    <div className="flex min-h-[60vh] items-center justify-center p-6" role="alert" data-testid="service-unavailable">
+    // R41-K A6: rendered outside any page shell — it is the main landmark; only the sentence is announced (not the heading and the button)
+    <main id="main-content" tabIndex={-1} className="flex min-h-[60vh] items-center justify-center p-6 outline-none" data-testid="service-unavailable">
       <div className="max-w-md space-y-4 text-center">
         <h1 className="text-2xl font-bold text-slate-900">{t('common:unavailable.title', '{{area}} est momentanément indisponible', { area: area || t('common:unavailable.default_area', 'Ce service') })}</h1>
-        <p className="text-slate-700">{t('common:unavailable.text', "Le serveur n'a pas répondu. Votre session est conservée : réessayez dans un instant.")}</p>
+        <p role="alert" className="text-slate-700">{t('common:unavailable.text', "Le serveur n'a pas répondu. Votre session est conservée : réessayez dans un instant.")}</p>
         <Button type="button" className="min-h-11" onClick={() => window.location.reload()}>{t('common:unavailable.retry', 'Réessayer')}</Button>
       </div>
-    </div>
+    </main>
   );
 }

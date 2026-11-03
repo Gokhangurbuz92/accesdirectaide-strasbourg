@@ -113,7 +113,12 @@ export default function ProLogin() {
 
 
     return (
-        <main className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
+        <>
+        {/* R41-K A6: the sign-in page renders outside ProLayout's shell — its own skip link and #main-content (RouteFocus target) */}
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700">
+            {t('pro:layout.aller_contenu_principal', 'Aller au contenu principal')}
+        </a>
+        <main id="main-content" tabIndex={-1} className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4 outline-none">
             <SEO title={t('pro:login.espace_pro', 'Espace Pro')} description={t('pro:login.connexion_votre_espace_professionnel', 'Connexion à votre espace professionnel')} path="/pro/login" noindex={true} />
 
             <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
@@ -256,12 +261,12 @@ export default function ProLogin() {
                                 )}
                             </Button>
 
-                            <div className="text-center text-sm text-slate-600 mt-4">
+                            <p className="text-center text-sm text-slate-600 mt-4">{/* R41-K: a sentence with an inline link (WCAG 2.5.8 inline exception) */}
                                 {t('pro:login.pas_encore_compte', 'Pas encore de compte ?')}{' '}
-                                <Link to={registerPath} className="text-emerald-700 font-bold hover:underline">
+                                <Link to={registerPath} className="text-emerald-700 font-bold underline underline-offset-2">
                                     {t('pro:login.creer_structure', 'Créer ma structure')}
                                 </Link>
-                            </div>
+                            </p>
                         </form>
                     )}
 
@@ -282,5 +287,6 @@ export default function ProLogin() {
                 </a>
             </p>
         </main>
+        </>
     );
 }

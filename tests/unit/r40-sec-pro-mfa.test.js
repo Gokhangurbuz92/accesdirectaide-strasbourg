@@ -19,7 +19,7 @@ beforeEach(() => {
   Object.assign(process.env, { JWT_SECRET: SECRET });
   Object.assign(state, { user: null, membership: null, updates: [], limits: [], refuse: new Set(), audits: [] });
   vi.doMock('../../src/db/index.js', () => ({ db: {
-    query: { ProUser: { findFirst: async () => state.user } },
+    query: { ProUser: { findFirst: async () => state.user }, AuthToken: { findFirst: async () => null } },
     update: () => ({ set: (v) => ({ where: async () => { state.updates.push(v); } }) }),
     insert: () => ({ values: async (v) => { state.audits.push(v.action); } }),
     execute: async () => ({ rows: state.membership ? [state.membership] : [] }),
@@ -122,5 +122,55 @@ describe('pro session tokens and refresh', () => {
     const plain = await refreshCall(auth.signProToken(PRO));
     expect([plain.statusCode, plain.body.code]).toEqual([401, 'MFA_SESSION_REQUIRED']);
     expect((await refreshCall(auth.signProToken(PRO, { mfa: true }))).statusCode).toBe(200);
+  });
+});
+
+describe('R41-K F1: the 12 h maximum also holds at access time', () => {
+  const T0 = Date.UTC(2026, 10, 3, 8, 0, 0);
+  const H = 3600 * 1000;
+  const refreshCall = async (token) => { const h = (await import('../../api/_handlers/pro/auth/refresh.js')).default; const r = mk(); await h({ method: 'POST', url: '/api/pro/auth/refresh', headers: { authorization: `Bearer ${token}` }, query: {}, body: {} }, r); return r; };
+  const proCall = async (token) => {
+    const auth = await import('../../api/_utils/auth.js');
+    const ran = vi.fn(async (_req, res) => res.status(200).json({ ok: true }));
+    const r = mk();
+    await auth.requireProAuth(ran)({ method: 'GET', url: '/api/pro/cases', headers: { authorization: `Bearer ${token}` }, query: {} }, r);
+    return { r, ran };
+  };
+  beforeEach(() => { vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(T0); state.membership = { role: 'PRO', status: 'active', structureId: 's1', sessionsValidAfter: null, mfa_enabled: false }; });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('a refresh at 11 h 59 gives a token that expires no later than sign-in + 12 h', async () => {
+    const auth = await import('../../api/_utils/auth.js');
+    const first = auth.signProToken(PRO);
+    expect(jwt.decode(first).auth_time).toBe(T0 / 1000);
+    vi.setSystemTime(T0 + 7 * H);
+    const second = await refreshCall(first);
+    expect(second.statusCode).toBe(200);
+    vi.setSystemTime(T0 + 11 * H + 59 * 60 * 1000);
+    const r = await refreshCall(second.body.token);
+    expect(r.statusCode).toBe(200);
+    const exp = jwt.decode(r.body.token).exp;
+    expect(exp).toBeLessThanOrEqual(T0 / 1000 + auth.PRO_SESSION_MAX_AGE_SECONDS);
+    vi.setSystemTime(T0 + 12 * H + 60 * 1000);
+    const late = await proCall(r.body.token);
+    expect(late.r.statusCode).toBe(401);
+    expect(late.ran).not.toHaveBeenCalled();
+  });
+  it('a fresh session keeps its 8 h lifetime', async () => {
+    const auth = await import('../../api/_utils/auth.js');
+    const d = jwt.decode(auth.signProToken(PRO));
+    expect(d.exp - d.iat).toBe(8 * 3600);
+  });
+  it('requireProAuth answers 401 SESSION_MAX_AGE at 12 h 01 to a still-unexpired token, and the handler does not run', async () => {
+    const auth = await import('../../api/_utils/auth.js');
+    // a token issued before R41 (8 h from a refresh at 11 h 59, not capped)
+    vi.setSystemTime(T0 + 11 * H + 59 * 60 * 1000);
+    const uncapped = jwt.sign({ userId: 'u1', email: PRO.email, structureId: 's1', role: 'PRO', scope: 'pro', jti: 'j1', auth_time: T0 / 1000 }, SECRET, { expiresIn: '8h', issuer: 'accesdirectaide', audience: 'accesdirectaide-pro', algorithm: 'HS256' });
+    expect((await proCall(uncapped)).r.statusCode).toBe(200);
+    vi.setSystemTime(T0 + 12 * H + 60 * 1000);
+    expect(auth.verifyProToken(uncapped)).not.toBeNull();
+    const { r, ran } = await proCall(uncapped);
+    expect([r.statusCode, r.body.code]).toEqual([401, 'SESSION_MAX_AGE']);
+    expect(ran).not.toHaveBeenCalled();
   });
 });

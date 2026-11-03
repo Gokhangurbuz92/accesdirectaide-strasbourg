@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useT } from '@/i18n';
 import {
     ChevronRight,
@@ -89,14 +90,15 @@ export default function OnboardingTour({ onComplete }) {
         onComplete?.();
     };
 
+    // R41-K A3: the Radix Dialog gives the initial focus, the focus trap, an inert background and Escape (= « Passer le guide »); an outside click does
+    // not end the guide by accident
     return (
-        <div
-            className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('pro:onboarding.label', 'Guide de bienvenue')}
-        >
-            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+        <Dialog open onOpenChange={(open) => { if (!open) finish(); }}>
+            <DialogContent
+                aria-label={t('pro:onboarding.label', 'Guide de bienvenue')}
+                onInteractOutside={(e) => e.preventDefault()}
+                className="w-[calc(100%-2rem)] max-w-md gap-0 p-0 bg-white rounded-2xl shadow-2xl overflow-hidden"
+            >
                 {/* Progress bar */}
                 <div className="flex h-1 bg-slate-100">
                     {STEPS.map((_, i) => (
@@ -120,13 +122,13 @@ export default function OnboardingTour({ onComplete }) {
                         />
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900 mb-3">
+                    <DialogTitle className="text-lg font-bold text-slate-900 mb-3">
                         {text.title}
-                    </h2>
+                    </DialogTitle>
 
-                    <p className="text-sm text-slate-500 leading-relaxed mb-8">
+                    <DialogDescription className="text-sm text-slate-600 leading-relaxed mb-8">
                         {text.description}
-                    </p>
+                    </DialogDescription>
 
                     {/* Navigation */}
                     <div className="flex items-center justify-between">
@@ -167,13 +169,14 @@ export default function OnboardingTour({ onComplete }) {
                         {t('pro:onboarding.step', 'Étape {{step}} / {{total}}', { step: step + 1, total: STEPS.length })}
                     </span>
                     <button
+                        type="button"
                         onClick={finish}
                         className="text-[10px] font-medium text-slate-600 hover:text-slate-900"
                     >
                         {t('pro:onboarding.skip', 'Passer le guide')}
                     </button>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }

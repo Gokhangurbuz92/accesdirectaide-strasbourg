@@ -12,7 +12,8 @@ import { observatoire } from '../../_services/territorial-stats.js';
 export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
-      const auth = await adminGate(req, res); if (!auth) return;
+      // R41-K F2: the list names institutional staff (e-mail, last sign-in) — personal data, MFA session only (like a write)
+      const auth = await adminGate(req, res, { write: true }); if (!auth) return;
       return res.status(200).json({ ...(await listAll()), observatoire: req.query?.view === 'observatoire' ? await observatoire() : undefined });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

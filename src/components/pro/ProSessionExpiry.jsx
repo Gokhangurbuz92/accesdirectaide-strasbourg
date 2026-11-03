@@ -36,8 +36,10 @@ export default function ProSessionExpiry({ onExpired }) {
       const data = res.ok ? await res.json().catch(() => null) : null;
       if (!data?.token) { setState('failed'); return; }
       window.localStorage.setItem('pro_token', data.token);
-      setExpiresAt(proTokenExpiry(data.token));
-      setState('idle');
+      const next = proTokenExpiry(data.token);
+      setExpiresAt(next);
+      // R41-K F1: past 4 h before the 12 h session maximum, a refresh cannot move the end any later — say so instead of hiding the notice
+      setState(next && expiresAt && next <= expiresAt ? 'failed' : 'idle');
     } catch { setState('failed'); }
   };
 

@@ -5,6 +5,7 @@ import { useOutletContext } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { csvLine } from '@/lib/csv';
 import {
     Select,
     SelectContent,
@@ -95,13 +96,10 @@ export default function ProAuditLog() {
     }, [fetchLogs]);
 
     const handleExport = () => {
+        // R41-K F5: every cell through csvLine — a value starting with = + - @ (an RFC-valid e-mail can) is not read as a formula
         const csv = [
             'Date,Action,Acteur,IP Hash,Détails',
-            ...entries.map((e) => {
-                const date = new Date(e.timestamp).toLocaleString('fr-FR');
-                const details = JSON.stringify(e.details || {}).replace(/"/g, "'");
-                return `"${date}","${e.action}","${e.actorEmail || e.actorId}","${e.ipHash || ''}","${details}"`;
-            }),
+            ...entries.map((e) => csvLine([new Date(e.timestamp).toLocaleString('fr-FR'), e.action, e.actorEmail || e.actorId, e.ipHash || '', JSON.stringify(e.details || {})])),
         ].join('\n');
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
