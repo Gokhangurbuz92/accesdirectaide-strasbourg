@@ -36,6 +36,7 @@ fi
 npm ci --no-audit --no-fund --loglevel=error
 npm run -s lint
 npm run -s typecheck
+npm run -s typecheck:strict:baseline
 node scripts/unit-gate.mjs
 npm audit --omit=dev --audit-level=high
 say "gate PASS"
