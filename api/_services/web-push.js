@@ -22,10 +22,12 @@ export const MAX_SUBSCRIPTIONS = 10;
 const FAILING_AFTER = 3;
 const b64u = (buf) => Buffer.from(buf).toString('base64url');
 const unb64u = (s) => Buffer.from(String(s || ''), 'base64url');
+/** the 32-byte VAPID private scalar: some generators (Node's ECDH.getPrivateKey, about 1 key in 300) drop a leading zero byte */
+const vapidPrivate = (s) => { const k = unb64u(s); return k.length > 0 && k.length < 32 ? Buffer.concat([Buffer.alloc(32 - k.length), k]) : k; };
 
 /** the deployment's push configuration: { ok, publicKey } or { ok: false, reason } (never the private key) */
 export function pushConfig(env = process.env) {
-  const pub = unb64u(env.WEB_PUSH_VAPID_PUBLIC_KEY); const priv = unb64u(env.WEB_PUSH_VAPID_PRIVATE_KEY); const subject = String(env.WEB_PUSH_SUBJECT || '');
+  const pub = unb64u(env.WEB_PUSH_VAPID_PUBLIC_KEY); const priv = vapidPrivate(env.WEB_PUSH_VAPID_PRIVATE_KEY); const subject = String(env.WEB_PUSH_SUBJECT || '');
   if (!env.WEB_PUSH_VAPID_PUBLIC_KEY || !env.WEB_PUSH_VAPID_PRIVATE_KEY || !subject) return { ok: false, reason: 'NOT_CONFIGURED' };
   if (pub.length !== 65 || pub[0] !== 4 || priv.length !== 32) return { ok: false, reason: 'INVALID_KEYS' };
   if (!/^(mailto:[^@\s]+@[^@\s]+|https:\/\/\S+)$/.test(subject)) return { ok: false, reason: 'INVALID_SUBJECT' };
@@ -91,7 +93,7 @@ export function decryptPayload(message, { privateKey, p256dh, auth }) {
 /** the VAPID Authorization header for an endpoint (RFC 8292: ES256 JWT, audience = the push service's origin, at most 24 h) */
 export function vapidHeader(endpoint, env = process.env, now = Date.now()) {
   const pub = unb64u(env.WEB_PUSH_VAPID_PUBLIC_KEY);
-  const key = crypto.createPrivateKey({ key: { kty: 'EC', crv: 'P-256', d: env.WEB_PUSH_VAPID_PRIVATE_KEY, x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) }, format: 'jwk' });
+  const key = crypto.createPrivateKey({ key: { kty: 'EC', crv: 'P-256', d: b64u(vapidPrivate(env.WEB_PUSH_VAPID_PRIVATE_KEY)), x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) }, format: 'jwk' });
   const head = b64u(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
   const claims = b64u(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(now / 1000) + 12 * 3600, sub: env.WEB_PUSH_SUBJECT }));
   const sig = crypto.sign('sha256', Buffer.from(`${head}.${claims}`), { key, dsaEncoding: 'ieee-p1363' });
