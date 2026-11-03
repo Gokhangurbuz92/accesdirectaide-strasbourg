@@ -10,6 +10,7 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
  * same surface in VITE_PUBLIC_BETA_OPEN_SURFACES (public, no secret). The server stays the only real protection.
  */
+/** @type {Record<string, string[]>} */
 export const SCREEN_SURFACES = {
   accounts: ['/login', '/auth', '/compte'], pro: ['/pro'], institution: ['/institution'], appointments: ['/appointments', '/rdv', '/r'],
   communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport'],

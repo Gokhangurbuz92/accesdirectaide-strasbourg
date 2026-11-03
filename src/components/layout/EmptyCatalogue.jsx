@@ -5,6 +5,7 @@ import { useT } from '@/i18n';
 /**
  * An empty catalogue said plainly (R26): why nothing is published yet, then what the visitor can use instead — never decorative filters over nothing.
  * R32: `title` and `children` come translated from the page.
+ * @param {{ title: string, children?: import('react').ReactNode, testId?: string, exclude?: string[] }} props
  */
 export default function EmptyCatalogue({ title, children, testId, exclude = [] }) {
   const { t } = useT('shared');

@@ -15,6 +15,7 @@ const items = [
 export default function QuickAccessSection() {
   const { t } = useT('home');
   // R32: the labels in the interface language (the French label above stays the default)
+  /** @type {Record<string, string>} */
   const labels = {
     aides: t('home:quick.aides', 'Toutes les aides'),
     demarches: t('home:quick.demarches', 'Démarches'),

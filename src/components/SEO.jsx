@@ -22,7 +22,7 @@ const OG_LOCALES = { fr: 'fr_FR', en: 'en_GB', tr: 'tr_TR', ar: 'ar_AR', de: 'de
  * @typedef {object | object[] | null | undefined} SchemaValue
  * @typedef {Object} SEOProps
  * @property {string} title
- * @property {string} description
+ * @property {string=} description   the page's own description; the site's default sentence when absent
  * @property {string=} path
  * @property {string=} image
  * @property {string=} imageAlt

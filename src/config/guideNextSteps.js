@@ -5,9 +5,11 @@
  * R32: the labels stay in French here — they are the defaults of their interface keys. The page passes its `t` to `guideNextSteps(guide, t)` to get
  * them in the interface language; without it (tests, scripts) every step is the French one, as in `GUIDE_NEXT_STEPS`.
  */
+/** @typedef {{ to: string, label: string, text: string }} NextStep */
+
 const french = (/** @type {string} */ _key, /** @type {string} */ text) => text;
 
-/** @param {(key: string, french: string) => string} t */
+/** @param {(key: string, french: string) => string} t @returns {{ byCategory: Record<string, NextStep[]>, fallback: NextStep[], health: NextStep }} */
 function nextSteps(t) {
   const FRANCE_SERVICES = { to: '/structures?q=France%20Services', label: t('guides:next.france_services.label', 'Un Espace France Services près de chez vous'), text: t('guides:next.france_services.text', 'Des agents vous aident gratuitement pour vos démarches administratives.') };
   const DEMARCHES = { to: '/demarches', label: t('guides:next.demarches.label', 'Les démarches pas à pas'), text: t('guides:next.demarches.text', 'Les étapes et les documents pour faire une demande.') };
@@ -46,6 +48,6 @@ export const GUIDE_NEXT_STEPS = FRENCH.byCategory;
  */
 export function guideNextSteps(guide, t = french) {
   const all = t === french ? FRENCH : nextSteps(t);
-  const base = all.byCategory[guide?.categorie] || all.fallback;
+  const base = (guide?.categorie ? all.byCategory[guide.categorie] : null) || all.fallback;
   return (guide?.contexte || []).includes('santé') ? [all.health, ...base].slice(0, 3) : base;
 }

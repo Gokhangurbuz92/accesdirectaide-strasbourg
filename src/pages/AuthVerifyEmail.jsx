@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
 /**
- * @param {string} status
+ * @param {string} status @param {(key: string, fallback: string) => string} t
  */
 function getStatusCopy(status, t) {
   switch (status) {

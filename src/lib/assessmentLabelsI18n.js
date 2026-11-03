@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useT } from '@/i18n';
 import { AGE_BAND_LABELS, GROUPS, MISSING_FACT_LABELS, STATE_LABELS } from '@/lib/assessmentLabels';
 
-/** keeps the French map's keys and order; a key without a translation keeps its French label */
+/** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
 
 export function useAssessmentLabels() {
@@ -30,18 +30,22 @@ export function useAssessmentLabels() {
       'moins-de-18': t('shared:assessment.age_band.under_18', 'Moins de 18 ans'), '18-24': t('shared:assessment.age_band.18_24', '18 à 24 ans'),
       '25-59': t('shared:assessment.age_band.25_59', '25 à 59 ans'), '60-et-plus': t('shared:assessment.age_band.60_plus', '60 ans et plus'),
     });
+    /** @type {Record<string, string>} */
     const groupTitles = {
       check: t('shared:assessment.group.check', "À faire vérifier auprès de l'organisme"), missing: t('shared:assessment.group.missing', 'Informations manquantes'),
       unsupported: t('shared:assessment.group.unsupported', 'ADA ne sait pas encore évaluer'), engine: t('shared:assessment.group.engine', 'Service indisponible'),
     };
     const groups = Object.freeze(GROUPS.map((g) => Object.freeze({ ...g, title: groupTitles[g.id] || g.title })));
-    const missingFactLabel = (k) => missingFact[k] || t('shared:assessment.fact.other', 'information à préciser');
+    const missingFactLabel = (/** @type {string} */ k) => missingFact[k] || t('shared:assessment.fact.other', 'information à préciser');
     /** same as assessmentLabels.birthDisplay: the exact date, else the declared band, else "Non précisée" */
-    const birthDisplay = (situation) => (situation && situation.birthDate)
-      || (situation && AGE_BAND_LABELS[situation.ageBand] ? t('shared:assessment.age_band.display', 'Tranche d\'âge : {{band}}', { band: ageBand[situation.ageBand] }) : t('shared:assessment.birth_unspecified', 'Non précisée'));
+    const birthDisplay = (/** @type {{ birthDate?: string | null, ageBand?: string | null } | null | undefined} */ situation) => {
+      const band = situation && situation.ageBand ? ageBand[situation.ageBand] : '';   // same keys as AGE_BAND_LABELS
+      return (situation && situation.birthDate)
+        || (band ? t('shared:assessment.age_band.display', 'Tranche d\'âge : {{band}}', { band }) : t('shared:assessment.birth_unspecified', 'Non précisée'));
+    };
     const dataStatusBanner = t('shared:assessment.data_status_banner', 'Données en cours de vérification.');
     /** same codes and texts as assessmentLabels.errorMessageFor: keyed on the error code, never on server-supplied free text */
-    const errorMessageFor = (status, code) => {
+    const errorMessageFor = (/** @type {number} */ status, /** @type {string | null | undefined} */ code) => {
       if (code === 'invalid_json' || code === 'invalid_body' || code === 'validation_error') return t('shared:assessment.error.invalid_input', 'Vérifiez les informations saisies (date de naissance, montants) puis réessayez.');
       if (status === 429 || code === 'rate_limit_exceeded') return t('shared:assessment.error.rate_limited', 'Trop de demandes en peu de temps. Patientez un instant avant de réessayer.');
       if (status === 503 || code === 'OPENFISCA_UNAVAILABLE') return t('shared:assessment.error.engine_unavailable', 'Le service est momentanément indisponible. Aucun résultat de remplacement n\'est affiché. Réessayez plus tard.');

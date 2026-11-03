@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useT } from '@/i18n';
 import { CASE_EVENT_LABELS, CASE_STATUS_LABELS, OUTCOME_LABELS, REASON_LABELS, REFERRAL_STATUS_LABELS, RESPONSE_LABELS } from '@/lib/caseLabels';
 
-/** keeps the French map's keys and order; a key without a translation keeps its French label */
+/** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
 
 export function useCaseLabels() {

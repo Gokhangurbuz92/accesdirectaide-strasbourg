@@ -5,6 +5,7 @@ import { useT } from '@/i18n';
 /**
  * R27 card harmonisation: the same provenance line and the same action strip on the aide, démarche and lieu cards (they used three wordings —
  * « VÉRIFIÉ LE » pill, « Vérifié le », « Vérifié: » — two source styles and three actions, one of them missing).
+ * @param {{ verifiedAt?: string | null, sourceHost?: string | null, sourceUrl?: string | null, stale?: boolean }} props
  */
 export function RecordProvenance({ verifiedAt, sourceHost, sourceUrl = null, stale = false }) {
   const { t } = useT('shared');
@@ -33,7 +34,7 @@ export function RecordProvenance({ verifiedAt, sourceHost, sourceUrl = null, sta
 }
 RecordProvenance.propTypes = { verifiedAt: PropTypes.string, sourceHost: PropTypes.string, sourceUrl: PropTypes.string, stale: PropTypes.bool };
 
-/** the bottom strip of a card: its action, written the same way on every kind of record (the whole card is the link); `label` comes translated from the card */
+/** the bottom strip of a card: its action, written the same way on every kind of record (the whole card is the link); `label` comes translated from the card @param {{ label: string }} props */
 export function CardActionStrip({ label }) {
   return (
     <div className="mt-auto border-t border-slate-100 bg-slate-50 px-6 py-3" aria-hidden="true">

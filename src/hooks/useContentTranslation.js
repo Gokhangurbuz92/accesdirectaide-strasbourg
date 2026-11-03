@@ -14,27 +14,37 @@ import { SOURCE_LANGUAGE, languageOf, useLanguage } from '@/i18n';
  * (GET /api/translations) decides what may be shown: only fields that passed the automatic checks (or a recorded human review) and only while
  * the French text is the one that was translated. Lists load one light request per kind (titles and summaries); the full text of a record is
  * loaded only when the page displays more than its title and summary. Structures (lieux) are never translated (names, addresses).
- *
- * @param {'aide' | 'demarche' | 'guide' | 'actualite' | 'dispositif' | 'structure'} kind @param {Record<string, any> | null | undefined} record
  */
 const TRANSLATED = new Set(['aide', 'demarche', 'guide', 'actualite', 'dispositif']);
+/** @type {Partial<Record<string, string[]>>} */
 const SUMMARY = { aide: ['titre', 'description', 'cest_quoi'], demarche: ['titre', 'description_courte'], guide: ['titre'], actualite: ['titre', 'resume'], dispositif: ['titre', 'summary_falc'] };
 // R33: the search result cards carry normalised names (title, description); the translation files keep the record's own field names
+/** @type {Partial<Record<string, Record<string, string>>>} */
 const ALIAS = { aide: { title: 'titre' }, demarche: { title: 'titre', description: 'description_courte' }, actualite: { title: 'titre', description: 'resume' }, guide: { title: 'titre' } };
+/**
+ * What GET /api/translations answers (api/_handlers/translations.js): `items` by slug for a kind, or the fields of one record.
+ * @typedef {{ status: string, fields: Record<string, unknown>, fieldStatus?: Record<string, string> }} RecordTranslation
+ * @typedef {Partial<RecordTranslation> & { items?: Record<string, RecordTranslation>, engine?: string, translatedAt?: string, review?: unknown, source?: unknown }} TranslationResponse
+ */
+/** @type {Map<string, Promise<TranslationResponse | null>>} */
 const cache = new Map();
 
+/** @param {string} url */
 function load(url) {
-  if (!cache.has(url)) {
-    cache.set(url, fetch(url, { headers: { accept: 'application/json' } })
+  let pending = cache.get(url);
+  if (!pending) {
+    pending = fetch(url, { headers: { accept: 'application/json' } })
       .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null));
+      .catch(() => null);
+    cache.set(url, pending);
   }
-  return cache.get(url);
+  return pending;
 }
 
 /** for tests */
 export function clearTranslationCache() { cache.clear(); }
 
+/** @param {'aide' | 'demarche' | 'guide' | 'actualite' | 'dispositif' | 'structure'} kind @param {Record<string, unknown> | null | undefined} record */
 export default function useContentTranslation(kind, record) {
   const { code } = useLanguage();
   const slug = record?.slug;

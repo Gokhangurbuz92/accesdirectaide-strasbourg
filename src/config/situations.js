@@ -2,11 +2,11 @@
 export const SITUATIONS = [['Étudiant', 'étudiant'], ['Travail', 'emploi'], ['Handicap', 'handicap'], ['Famille', 'famille'], ['Senior', 'personnes âgées'],
   ['Étranger', 'étranger'], ['Logement', 'logement'], ['Santé', 'santé']];
 
-const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const fold = (/** @type {unknown} */ s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 /**
  * R26: the search address for an old /situations/<slug> link (the situation filter has no data, so these links opened an empty list).
- * @param {string} slug @returns {string}
+ * @param {string | null | undefined} slug @returns {string}
  */
 export function situationSearchPath(slug) {
   const s = fold(slug);

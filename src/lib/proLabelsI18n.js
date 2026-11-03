@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useT } from '@/i18n';
 import { MFA_ERROR, NOTICE_CHANNEL, NOTICE_KIND, NOTICE_RECIPIENT, NOTICE_STATUS, PRO_ROLE } from '@/lib/proLabels';
 
-/** keeps the French map's keys and order; a key without a translation keeps its French label */
+/** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
 
 export function useProLabels() {
@@ -39,10 +39,10 @@ export function useProLabels() {
       MFA_UNAVAILABLE: t('pro:mfa_errors.unavailable', 'La double authentification est momentanément indisponible.'),
     });
     /** same text as proLabels.noticeLine in French; unknown codes still fall back to the code itself */
-    const noticeLine = (n) => t('pro:notice_labels.line', '{{kind}} — {{recipient}}, {{channel}} : {{status}}', {
+    const noticeLine = (/** @type {{ kind: string, recipient: string, channel: string, status: string }} */ n) => t('pro:notice_labels.line', '{{kind}} — {{recipient}}, {{channel}} : {{status}}', {
       kind: noticeKind[n.kind] || n.kind, recipient: noticeRecipient[n.recipient] || n.recipient, channel: noticeChannel[n.channel] || n.channel, status: noticeStatus[n.status] || n.status,
     });
-    const proRole = (role) => proRoleLabels[String(role || '').toUpperCase()] || role || '';
+    const proRole = (/** @type {string | null | undefined} */ role) => proRoleLabels[String(role || '').toUpperCase()] || role || '';
     return { noticeKind, noticeRecipient, noticeChannel, noticeStatus, noticeLine, proRoleLabels, proRole, mfaError };
   }, [t, lang]);   // eslint-disable-line react-hooks/exhaustive-deps -- the labels follow the interface language
 }

@@ -1,13 +1,21 @@
 import PropTypes from 'prop-types';
 
 /**
+ * @typedef {{ kind: 'table', caption: string, rows: string[][] }} TableBlock
+ * @typedef {{ kind: 'note', label: string, text: string } | { kind: 'p', text: string } | TableBlock} Block
+ */
+
+/**
  * R28: the text of an official Service-Public sheet as the verification reader stores it — paragraphs, « Tableau : » captions followed by « a | b | c »
  * rows, « Attention : » / « À savoir : » notes, « → Service en ligne : » lines — shown as real paragraphs, accessible tables and notes. The words are
  * never changed: this only gives them their structure back.
- * @param {string} text
+ * @param {string} text @returns {Block[]}
  */
 export function blocksOf(text) {
-  const blocks = []; let table = null;
+  /** @type {Block[]} */
+  const blocks = [];
+  /** @type {TableBlock | null} */
+  let table = null;
   const flush = () => { if (table) { blocks.push(table); table = null; } };
   for (const raw of String(text || '').split('\n')) {
     const line = raw.trim();

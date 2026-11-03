@@ -9,6 +9,7 @@ import { formatNumber, useT } from '@/i18n';
  * What a visitor can use right now, with live counts (R26): shown on the home page and in place of an empty catalogue, so an empty section always
  * leads to real, verified content instead of a dead end. A count that cannot be read is not shown; nothing is estimated.
  * R32: the texts and the counts are in the interface language (`heading` comes translated from the page).
+ * @param {{ heading?: string, exclude?: string[] }} props
  */
 export default function VerifiedCatalogue({ heading = undefined, exclude = [] }) {
   const { t } = useT('shared');

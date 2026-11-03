@@ -6,7 +6,9 @@ import { htmlToPlainText } from '@/lib/htmlText';
 import { formatDate, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
 
-/** one news card: title and summary through the content-translation hook (French marked lang="fr" until a checked translation exists) */
+/** @typedef {{ id: string, slug?: string | null, titre?: string, resume?: string | null, summary_falc?: string | null, date_publication?: string | null, published_at?: string | null }} NewsItem */
+
+/** one news card: title and summary through the content-translation hook (French marked lang="fr" until a checked translation exists) @param {{ item: NewsItem }} props */
 function NewsCard({ item }) {
   const tr = useContentTranslation('actualite', item);
   const summary = htmlToPlainText(item.summary_falc || tr.value('resume') || '', { maxLength: 120 });
@@ -34,6 +36,7 @@ export default function NewsSection() {
     staleTime: 1000 * 60 * 5,
   });
 
+  /** @type {NewsItem[]} */
   const items = Array.isArray(data?.items) ? data.items.slice(0, 3) : [];
 
   if (isLoading || isError || items.length === 0) {
