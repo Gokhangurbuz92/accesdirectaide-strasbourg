@@ -35,7 +35,10 @@ const svOr = (sv, v) => (sv ? sql` OR ("search_vector" @@ plainto_tsquery('frenc
  */
 const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des du elle en est et etre faire il ils j je l la le les leur lui ma me mes moi mon '
   + 'ne nos notre nous on ou par pas pour qu que qui sa se ses son sur ta te tes toi ton tu un une vos votre vous y d n s c m t aide aides aider besoin '
-  + 'cherche chercher trouver obtenir payer avoir droit droits quel quelle quels quelles veux voudrais peux puis faut ai as suis sont ont si').split(' '));
+  + 'cherche chercher trouver obtenir payer avoir droit droits quel quelle quels quelles veux voudrais peux puis faut ai as suis sont ont si '
+  // R40: words that say « a question about the law », not what it is about. « loi » is also the French stem of « loyer » (french_stem: loyer → loi), so
+  // « aide active à mourir loi » ranked the APL and the ALS first; as a substring it matched « emploi » (France Travail, Mission locale)
+  + 'loi lois legislation decret decrets').split(' '));
 
 /**
  * R37 — everyday expressions and the administrative word the official texts use for the same thing (whole expressions, accents folded). The official
@@ -44,6 +47,10 @@ const STOPWORDS = new Set(('a au aux avec ce ces cet cette comment dans de des d
  * Only equivalences of meaning, never a route to one record.
  */
 export const EVERYDAY_PHRASES = [
+  // R40: the end of life as people and the press name it (« aide active à mourir », « suicide assisté », « euthanasie ») is what the official sheets call
+  // « fin de vie » (F32010 directives anticipées, F39676 soins palliatifs, F706 allocation d'accompagnement), searched as ONE expression: its words alone
+  // (« active », « fin », « vie ») found the RSA (« solidarité active ») and the ARE (« fin de contrat »). « _ » joins the words of one expression.
+  [/\b(aide (active )?a mourir|aide medicale a mourir|suicides? assistes?|assistance au suicide|euthanasie|mourir dans la dignite|fin de vie)\b/g, 'fin_de_vie'],
   // R39: suicide prevention is the national listening line of the official sheet « numéros d'urgence et d'écoute » (F33954, the 3114), not a psychologist
   [/\b(prevention du suicide|idees suicidaires|pensees suicidaires|envie de me suicider)\b/g, 'numero ecoute suicide'],
   // R38 (D16): paying for a care home is what the sheet calls « aide sociale à l'hébergement » (F2444), not the list of care homes (F255) — before « ehpad »
@@ -64,15 +71,26 @@ const everydayToOfficial = (folded) => EVERYDAY_PHRASES.reduce((t, [re, word]) =
 
 /** the meaningful words of a query, without accents, at most 6 (a 5-digit postal code is a word) @param {string} q */
 export function searchWords(q) {
-  const words = everydayToOfficial(foldAccents(q).replace(/’/g, "'")).replace(/[^a-z0-9\s'’-]/g, ' ').split(/[\s'’-]+/).filter((w) => w && (w.length >= 2 || /\d/.test(w)) && !STOPWORDS.has(w));
+  const words = everydayToOfficial(foldAccents(q).replace(/’/g, "'")).replace(/[^a-z0-9_\s'’-]/g, ' ').split(/[\s'’-]+/)
+    .map((w) => w.replace(/^_+|_+$/g, '')).filter((w) => w && (w.length >= 2 || /\d/.test(w)) && !STOPWORDS.has(w)).map((w) => w.replace(/_+/g, ' '));
   return [...new Set(words)].slice(0, 6);
 }
 
 /** a word and its synonyms, without accents; a plural « s » / « x » dropped so that « loyers » finds « loyer » @param {string} w */
 export function wordTerms(w) {
+  if (w.includes(' ')) return [w];   // R40: an expression (« fin de vie ») is matched as written: the synonyms of its words are other meanings
   const base = w.length > 4 ? w.replace(/[sx]$/, '') : w;
   return [...new Set([base, ...expandQueryWithSynonyms(w).map(foldAccents)].map((t) => t.trim()).filter((t) => t.length >= 2))].slice(0, 12);
 }
+
+/**
+ * R40: how one term matches a folded text. A term of at most 3 letters is matched as a WHOLE word (PostgreSQL \\m … \\M): as a substring « vie » was
+ * in « envie » and « service », « fin » in « afin » and « financière », « ame » in « amende »; longer terms keep the substring match that finds plurals,
+ * compounds and inflections (« logement » in « logements », « endettement » in « surendettement »).
+ * @param {any} folded the folded column (SQL) @param {string} t a folded term
+ */
+export const isShortTerm = (/** @type {string} */ t) => t.length <= 3 && !t.includes(' ');
+const termMatch = (folded, t) => (isShortTerm(t) ? sql`${folded} ~ ${`\\m${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\M`}` : sql`${folded} LIKE ${`%${t}%`}`);
 
 /**
  * The SQL of a word search over some text columns (fixed identifiers): one group per word (the word OR one of its synonyms in one of the columns, or in
@@ -82,7 +100,7 @@ export function wordTerms(w) {
 export function wordPlan(q, columns, titleColumn, sv, extra) {
   const words = searchWords(q);
   if (!words.length) return null;
-  const group = (w, cols) => sql`(${sql.join(wordTerms(w).flatMap((t) => [...cols.map((c) => sql`${FOLDED(c)} LIKE ${`%${t}%`}`), ...(extra && cols.length > 1 ? [extra(t)] : [])]), sql.raw(' OR '))}${cols.length > 1 ? svOr(sv, w) : sql``})`;
+  const group = (w, cols) => sql`(${sql.join(wordTerms(w).flatMap((t) => [...cols.map((c) => termMatch(FOLDED(c), t)), ...(extra && cols.length > 1 ? [extra(t)] : [])]), sql.raw(' OR '))}${cols.length > 1 ? svOr(sv, w) : sql``})`;
   const count = (cols) => sql.join(words.map((w) => sql`(CASE WHEN ${group(w, cols)} THEN 1 ELSE 0 END)`), sql.raw(' + '));
   return { words, matchCount: sql`(${count(columns)})`, titleHits: sql`(${count([titleColumn])})` };
 }

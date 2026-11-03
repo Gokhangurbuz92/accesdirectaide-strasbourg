@@ -135,7 +135,8 @@
    ],
    "de": [
     "behinder*",
-    "rollstuhl*"
+    "rollstuhl*",
+    "schwerbehindert*"
    ],
    "uk": [
     "інвалідн*",
@@ -215,7 +216,8 @@
    "tr": [
     "oturum*",
     "ikamet*",
-    "vize*"
+    "vize*",
+    "oturma izn*"
    ],
    "ar": [
     "تصريح اقامه",
@@ -547,7 +549,8 @@
     "electricity",
     "heating",
     "gas bill*",
-    "power bill*"
+    "power bill*",
+    "gas"
    ],
    "tr": [
     "enerji*",
@@ -565,13 +568,16 @@
    "de": [
     "energie*",
     "strom*",
-    "heiz*"
+    "heiz*",
+    "gasrechnung*"
    ],
    "uk": [
     "енерг*",
     "електрик*",
     "електроенерг*",
-    "опален*"
+    "опален*",
+    "газ*",
+    "світл*"
    ]
   },
   {
@@ -745,7 +751,8 @@
    ],
    "de": [
     "schulden*",
-    "verschuld*"
+    "verschuld*",
+    "schuldner*"
    ],
    "uk": [
     "борг*",
@@ -802,10 +809,12 @@
    ],
    "de": [
     "bankkonto*",
-    "konto*"
+    "konto*",
+    "bankverbindung*"
    ],
    "uk": [
-    "банківськ* рахун*"
+    "банківськ* рахун*",
+    "банк*"
    ]
   },
   {
@@ -1094,7 +1103,9 @@
    "en": [
     "death",
     "bereave*",
-    "funeral*"
+    "funeral*",
+    "died",
+    "passed away"
    ],
    "tr": [
     "ölüm*",
@@ -1222,6 +1233,127 @@
    "uk": [
     "самогубств*",
     "суїцид*"
+   ]
+  },
+  {
+   "id": "end-of-life",
+   "fr": "fin de vie",
+   "en": [
+    "end of life",
+    "end-of-life",
+    "assisted suicide",
+    "assisted dying",
+    "euthanasia",
+    "palliative care",
+    "palliative*",
+    "advance directive*",
+    "living will*"
+   ],
+   "tr": [
+    "ötanazi*",
+    "yaşamın sonu",
+    "palyatif*",
+    "yardımlı intihar*"
+   ],
+   "ar": [
+    "القتل الرحيم",
+    "نهاية الحياة",
+    "الرعاية التلطيفية",
+    "الموت الرحيم"
+   ],
+   "de": [
+    "sterbehilfe*",
+    "lebensende*",
+    "palliativ*",
+    "patientenverfügung*",
+    "assistierte* suizid*"
+   ],
+   "uk": [
+    "евтаназі*",
+    "кінець життя",
+    "паліатив*",
+    "допомога в помиранні"
+   ]
+  },
+  {
+   "id": "eviction",
+   "fr": "expulsion",
+   "en": [
+    "eviction*",
+    "evicted",
+    "evict*"
+   ],
+   "tr": [
+    "tahliye*",
+    "evden atıl*",
+    "evden çıkarıl*"
+   ],
+   "ar": [
+    "طرد",
+    "اخلاء"
+   ],
+   "de": [
+    "zwangsräum*",
+    "räumungsklage*",
+    "räumung*"
+   ],
+   "uk": [
+    "виселен*",
+    "виселити"
+   ]
+  },
+  {
+   "id": "undocumented",
+   "fr": "sans papiers",
+   "en": [
+    "undocumented",
+    "without papers",
+    "without documents",
+    "no papers"
+   ],
+   "tr": [
+    "kağıtsız*",
+    "belgesiz*"
+   ],
+   "ar": [
+    "بدون اوراق",
+    "بلا اوراق"
+   ],
+   "de": [
+    "ohne papiere",
+    "papierlos*",
+    "ohne aufenthaltstitel"
+   ],
+   "uk": [
+    "без документів"
+   ]
+  },
+  {
+   "id": "single-parent",
+   "fr": "famille monoparentale",
+   "en": [
+    "single parent*",
+    "single mother*",
+    "single father*",
+    "lone parent*"
+   ],
+   "tr": [
+    "tek ebeveyn*",
+    "yalnız anne*",
+    "bekar anne*"
+   ],
+   "ar": [
+    "ام عزباء",
+    "والد وحيد",
+    "ام وحيده"
+   ],
+   "de": [
+    "alleinerziehend*"
+   ],
+   "uk": [
+    "одинока мати",
+    "одинокий батько",
+    "одинок* матер*"
    ]
   }
  ]

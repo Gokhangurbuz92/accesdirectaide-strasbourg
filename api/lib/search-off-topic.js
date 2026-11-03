@@ -5,7 +5,9 @@
  * original words, and steps aside as soon as the query carries a social marker (help, work, debt, disability, addiction, mobility to work…):
  * « acheter une voiture pour aller travailler », « permis de conduire », « jeux d'argent dette » keep their results. Danger always wins (search-safety.js).
  */
+/** @param {unknown} s @returns {string} */
 const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’']/g, "'");
+/** @param {string} alts @returns {RegExp} */
 const w = (alts) => new RegExp(`(?<![\\p{L}\\p{N}])(?:${alts})(?![\\p{L}\\p{N}])`, 'u');
 
 /** luxury or prestige goods: never a social need on their own */
@@ -16,7 +18,7 @@ const GOODS = w("voitures?|auto|telephone|smartphone|iphone|ordinateur portable|
 /** leisure and entertainment requests */
 const LEISURE = w("film|films|serie|series|netflix|streaming|concert|place de concert|match de foot|resultats? (?:du )?foot|ligue des champions|jeu video|jeux video|playstation|horoscope|meteo|blague|recette|recettes|restaurant gastronomique|cocktail|vacances aux|croisiere|club de golf|bitcoin|crypto\\w*|trading|forex|bourse en ligne|casino|movie|recipe|joke|weather|wetter|witz|фільм|погода|وصفة|طقس");
 /** a social marker keeps the ordinary search: the person may need help with exactly this */
-const SOCIAL = w("aide|aides|aider|social\\w*|travail\\w*|emploi|insertion|chomage|rsa|caf|dette\\w*|surendett\\w*|credit|microcredit|pret|handicap\\w*|mdph|pch|addict\\w*|dependan\\w*|jeux? d'argent|pari\\w*|mobilite|permis|transport\\w*|deplac\\w*|garage solidaire|location solidaire|vieillesse|retraite|enfant\\w*|famille|logement|hebergement|sante|malad\\w*|urgence|canicule|grand froid|precarite|pauvrete|budget|reduction|tarif social|gratuit\\w*|association|benevol\\w*|help|work|job|debt|disability|yardim|hilfe|arbeit|допомог\\w*|робот\\w*|مساعدة|عمل");
+const SOCIAL = w("aide|aides|aider|social\\w*|travail\\w*|emploi|insertion|chomage|rsa|caf|dette\\w*|surendett\\w*|credit|microcredit|pret|handicap\\w*|mdph|pch|addict\\w*|interdiction\\w*|interdit\\w*|dependan\\w*|jeux? d'argent|pari\\w*|mobilite|permis|transport\\w*|deplac\\w*|garage solidaire|location solidaire|vieillesse|retraite|enfant\\w*|famille|logement|hebergement|sante|malad\\w*|urgence|canicule|grand froid|precarite|pauvrete|budget|reduction|tarif social|gratuit\\w*|association|benevol\\w*|help|work|job|debt|disability|yardim|hilfe|arbeit|допомог\\w*|робот\\w*|مساعدة|عمل");
 
 /**
  * @param {...string} queries the query as typed and its French translation when there is one

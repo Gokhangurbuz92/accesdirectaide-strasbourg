@@ -7,6 +7,15 @@ import { searchWords } from './search-query.js';
 /** R36: French stems present in (nearly) every aide record: as a query word they rank nothing, they only add noise */
 export const GENERIC_STEMS = Object.freeze(['aid', 'an', 'besoin', 'person']);
 
+/**
+ * R40: the words of the aides' OR query — single words, and the expressions (several words, search-query.js EVERYDAY_PHRASES) searched as phrases
+ * @param {string} query @returns {{ singles: string, phrases: string[] }}
+ */
+export function lexicalTerms(query) {
+  const words = searchWords(query);
+  return { singles: words.filter((w) => !w.includes(' ')).join(' '), phrases: words.filter((w) => w.includes(' ')) };
+}
+
 const RRF_K = 60;
 const LEXICAL_CANDIDATE_MULTIPLIER = 5;
 const SEMANTIC_CANDIDATE_MULTIPLIER = 5;
@@ -207,9 +216,15 @@ export async function searchAidesHybrid(params) {
   const computedVector = capabilities.hasUnaccentExtension ? sql`to_tsvector('french', unaccent(${docText}))` : sql`to_tsvector('french', ${docText})`;
   // R36: the OR query is built from the meaningful words only (search-query.js STOPWORDS), and without the few French stems that every aide carries:
   // « aidant » stems to « aid » like « aide », « 18 ans » to « an », so « aidant épuisé… » ranked the ARCE first and « je sors de l'ASE à 18 ans » too
-  const meaningful = searchWords(query).join(' ') || String(query || '');
-  const lexemes = capabilities.hasUnaccentExtension ? sql`to_tsvector('french', unaccent(${meaningful}))` : sql`to_tsvector('french', ${meaningful})`;
-  const anyWordQuery = sql`(SELECT NULLIF(string_agg(quote_literal(x.lexeme), ' | '), '')::tsquery FROM unnest(${lexemes}) AS x WHERE x.lexeme <> ALL (${sql.raw(`ARRAY[${GENERIC_STEMS.map((s) => `'${s}'`).join(', ')}]::text[]`)}))`;
+  // R40: a query of function words only searches nothing (it used to search the raw query: « loi » alone ranked « loyer », same French stem), and an
+  // expression (« fin de vie ») is one phrase of the OR query, not its separate words (« fin » alone found « fin de contrat » in the ARE)
+  const { singles, phrases } = lexicalTerms(query);
+  const ts = (v) => (capabilities.hasUnaccentExtension ? sql`unaccent(${v})` : sql`${v}`);
+  const singleQuery = singles ? sql`(SELECT NULLIF(string_agg(quote_literal(x.lexeme), ' | '), '')::tsquery FROM unnest(to_tsvector('french', ${ts(singles)})) AS x WHERE x.lexeme <> ALL (${sql.raw(`ARRAY[${GENERIC_STEMS.map((s) => `'${s}'`).join(', ')}]::text[]`)}))` : null;
+  const parts = [...(singleQuery ? [singleQuery] : []), ...phrases.map((p) => sql`phraseto_tsquery('french', ${ts(p)})`)];
+  const anyWordQuery = parts.length
+    ? sql`(SELECT NULLIF(string_agg('(' || q::text || ')', ' | '), '')::tsquery FROM unnest(ARRAY[${sql.join(parts, sql.raw(', '))}]::tsquery[]) AS q WHERE q IS NOT NULL AND q::text <> '')`
+    : sql`NULL::tsquery`;
   const storedVector = canUseTsContent && canUseSearchVector
     ? sql`(COALESCE(a."ts_content", to_tsvector('french', '')) || COALESCE(a."search_vector", to_tsvector('french', '')))`
     : canUseTsContent
