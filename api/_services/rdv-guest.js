@@ -43,6 +43,7 @@ import {
   mailReallySent, maskEmail, newGuestCode, newManageToken, readGuestIdentity, readReminderConsent, sameDigest, manageTokenHash,
 } from '../_utils/rdv-guest-core.js';
 import { activeAppointmentWhere } from '../_utils/rdv-active.js';
+import { requestGuestSchema } from '../_utils/schema-features.js';
 import { GUEST_DECOY_NAME, guestDecoyLookupHash, isGuestDecoy, notGuestDecoy, unusableGuestCodeHash } from '../_utils/rdv-guest-decoy.js';
 import {
   MAX_BOOKING_AHEAD_DAYS, MAX_RANGE_DAYS, MAX_RESCHEDULES, MIN_BOOKING_DELAY_MINUTES, RESCHEDULE_MIN_NOTICE_HOURS,
@@ -55,6 +56,9 @@ const NOT_FOUND = { error: 'RDV indisponible', code: 'GUEST_BOOKING_UNAVAILABLE'
 const MANAGE_NOT_FOUND = { error: 'Appointment not found', code: 'APPOINTMENT_NOT_FOUND' };
 const SLOT_TAKEN = { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' };
 const MAIL_UNAVAILABLE = { error: 'GUEST_BOOKING_MAIL_UNAVAILABLE', code: 'GUEST_BOOKING_MAIL_UNAVAILABLE' };
+const GUEST_CLOSED = { error: 'GUEST_BOOKING_DISABLED', code: 'GUEST_BOOKING_DISABLED' };
+/** R41-B: the database has migrations 0043 and 0044 (the guest columns) */
+const guestSchemaReady = async () => (await requestGuestSchema(db)).guestReminderConsent;
 const str = (v) => String(v ?? '').trim();
 const utcDay = (d) => ({ from: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), to: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999)) });
 const iso = (d) => (d ? new Date(d).toISOString() : null);
@@ -228,6 +232,7 @@ async function hold(req, res) {
   const reminderConsent = readReminderConsent(body);   // R39: optional, separate, never implied
   // mail truthfulness: no hold at all when nothing could deliver the code
   if (!getMailerStatus().deliverable) return res.status(503).json(MAIL_UNAVAILABLE);
+  if (!(await guestSchemaReady())) return res.status(503).json(GUEST_CLOSED);   // R41-B (see guestHandler)
   const emailHash = guestEmailHash(identity.value.email);
   if (await limited(res, 'RDV_GUEST_EMAIL', emailHash)) return undefined;
 
@@ -486,6 +491,9 @@ export default async function guestHandler(req, res, method, seg) {
   res.setHeader('Cache-Control', 'no-store');
   // fail-closed global switch: the owner activates account-free booking deliberately (legal basis, retention, mail provider)
   if (!guestBookingEnabled()) return res.status(503).json({ error: 'GUEST_BOOKING_DISABLED', code: 'GUEST_BOOKING_DISABLED' });
+  // R41-B: also closed while the database lacks migrations 0043 / 0044 (Production 0042), whatever the switch says — the hold checks it right after its
+  // mail check (R38: no lookup at all when no mail can leave), every other route first
+  if (!(method === 'POST' && seg.length === 1 && seg[0] === 'hold') && !(await guestSchemaReady())) return res.status(503).json(GUEST_CLOSED);
   if (method === 'GET' && seg[0] === 'structures' && seg.length === 3 && seg[2] === 'services') return services(req, res, str(seg[1]));
   if (method === 'GET' && seg[0] === 'structures' && seg.length === 3 && seg[2] === 'slots') return slots(req, res, str(seg[1]));
   if (method === 'POST' && seg.length === 1 && seg[0] === 'hold') return hold(req, res);

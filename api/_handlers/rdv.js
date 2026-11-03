@@ -11,6 +11,8 @@ import { ACTIVE_APPOINTMENT_STATUSES, generateSlots, toBusyWindows, validateDate
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
 import { activeAppointmentWhere } from '../_utils/rdv-active.js';
+// R41-B: the account-based surface works on a 0042 database (no guest columns): what the database has, read at most once a minute per process
+import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
 import { formatParis, noticeCitizen, noticeStructure } from '../_services/appointment-notices.js';
 import { MODE_LABELS, modeLabel, locationOf, locationText, normalizeMode, offeredModes, rulesFor } from '../lib/appointment-modes.js';
@@ -312,6 +314,7 @@ function groupSlotsByDay(slots) {
  * @param {string} slug
  */
 export async function loadStructureBySlug(slug) {
+  const guestColumn = (await requestGuestSchema(db)).guestBooking;   // R41-B: allowGuestBooking is a 0043 column
   const structure = await db.query.Structure.findFirst({
     where: (t, { eq, and }) => and(eq(t.slug, slug), eq(t.statut, 'actif')),
     columns: {
@@ -330,7 +333,7 @@ export async function loadStructureBySlug(slug) {
         columns: {
           isPublished: true,
           bookingMode: true,
-          allowGuestBooking: true,
+          ...(guestColumn ? { allowGuestBooking: true } : {}),
         },
       },
     },
@@ -584,8 +587,10 @@ async function sendAppointmentConfirmationEmail(input) {
  * @param {{ citizenUserId?: string, idempotencyKey?: string }=} where
  */
 export async function loadAppointmentWithRelations(appointmentId, where = {}) {
+  const columns = flagsOf(appointmentTable(await requestGuestSchema(db)));   // R41-B: only the columns this database has
   if (appointmentId) {
     return db.query.ProAppointment.findFirst({
+      columns,
       where: (a, { eq }) => eq(a.id, appointmentId),
       with: {
         service: { columns: { id: true, name: true, durationMinutes: true } },
@@ -595,6 +600,7 @@ export async function loadAppointmentWithRelations(appointmentId, where = {}) {
   }
   if (where.citizenUserId && where.idempotencyKey) {
     return db.query.ProAppointment.findFirst({
+      columns,
       where: (a, { eq, and }) => and(eq(a.citizenUserId, where.citizenUserId), eq(a.idempotencyKey, where.idempotencyKey)),
       with: {
         service: { columns: { id: true, name: true, durationMinutes: true } },
@@ -611,13 +617,14 @@ export async function loadAppointmentWithRelations(appointmentId, where = {}) {
  * @param {{ structureId: string, statuses: string[], startBefore: Date, endAfter: Date }} params
  */
 async function findOverlappingAppointments(dbOrTx, params) {
+  const features = await requestGuestSchema(db);
   const rows = await dbOrTx
     .select()
-    .from(schema.ProAppointment)
+    .from(appointmentTable(features))
     .where(
       and(
         eq(schema.ProAppointment.structureId, params.structureId),
-        activeAppointmentWhere(schema.ProAppointment),   // R38: the shared « still active » rule (params.statuses is ACTIVE_APPOINTMENT_STATUSES)
+        activeAppointmentWhere(schema.ProAppointment, new Date(), features),   // R38: the shared « still active » rule (params.statuses is ACTIVE_APPOINTMENT_STATUSES)
         lt(schema.ProAppointment.startAt, params.startBefore),
         gt(schema.ProAppointment.endAt, params.endAfter),
       ),
@@ -1071,6 +1078,8 @@ export function bookingLockKeyOf(structureId, startAt) {
  */
 export async function bookSlot({ structure, service, startAt, endAt, replay, values, guard }) {
   const bookingLockKey = bookingLockKeyOf(structure.id, startAt);   // R12: the Paris day of the slot (was the UTC day)
+  const features = await requestGuestSchema(db);   // R41-B
+  const T = appointmentTable(features);
   return withBookingCollisionLock(bookingLockKey, async () => db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${bookingLockKey}, 0))`);
     try {
@@ -1080,11 +1089,11 @@ export async function bookSlot({ structure, service, startAt, endAt, replay, val
       // 1. Check overlapping appointments
       const overlaps = await tx
         .select()
-        .from(schema.ProAppointment)
+        .from(T)
         .where(
           and(
             eq(schema.ProAppointment.structureId, structure.id),
-            activeAppointmentWhere(schema.ProAppointment),
+            activeAppointmentWhere(schema.ProAppointment, new Date(), features),
             lt(schema.ProAppointment.startAt, endAt),
             gt(schema.ProAppointment.endAt, startAt),
           ),
@@ -1135,7 +1144,7 @@ export async function bookSlot({ structure, service, startAt, endAt, replay, val
       }
 
       // 3. Insert (the unique indexes on the identity + idempotency key catch races)
-      const [createdAppointment] = await tx.insert(schema.ProAppointment).values(values).returning();
+      const [createdAppointment] = await tx.insert(T).values(values).returning();
       return { kind: 'created', appointment: createdAppointment };
     } catch (error) {
       // Drizzle wraps pg errors in error.cause
@@ -1309,6 +1318,7 @@ async function listMyAppointments(req, res) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
   const rows = await db.query.ProAppointment.findMany({
+    columns: flagsOf(appointmentTable(await requestGuestSchema(db))),   // R41-B
     where: (a, { eq }) => eq(a.citizenUserId, auth.user.id),
     orderBy: (a, { desc }) => [desc(a.startAt)],
     limit: 50,
@@ -1376,14 +1386,16 @@ export async function moveSlot({ appointment, structure, service, startAt, endAt
   const keys = [...new Set([`${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(appointment.startAt))}`, `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`])].sort();   // R14: the Paris day, as the booking lock (was the UTC day: two locks for one slot near midnight)
   const withLocks = (i, task) => (i >= keys.length ? task() : withBookingCollisionLock(keys[i], () => withLocks(i + 1, task)));
   let moved = null;
+  const features = await requestGuestSchema(db);   // R41-B: a 0042 database has no guest column (and no account-free booking to move)
+  const T = appointmentTable(features);
   const outcome = await withLocks(0, () => db.transaction(async (tx) => {
     for (const k of keys) await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${k}, 0))`);
     // re-check everything under the locks, on the row itself (FOR UPDATE)
-    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", "citizenUserId", "guestManageTokenHash", "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
+    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", "citizenUserId", ${features.guestBooking ? sql`"guestManageTokenHash"` : sql`NULL AS "guestManageTokenHash"`}, "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
     if (!row || !owns(row)) return { status: 404, body: { error: 'Appointment not found' } };
     const late = refuse(row);
     if (late) return { status: late.status, body: { error: late.code, code: late.code, message: late.error } };
-    const overlaps = (await tx.select().from(schema.ProAppointment).where(and(eq(schema.ProAppointment.structureId, structure.id), activeAppointmentWhere(schema.ProAppointment),
+    const overlaps = (await tx.select().from(T).where(and(eq(schema.ProAppointment.structureId, structure.id), activeAppointmentWhere(schema.ProAppointment, new Date(), features),
       lt(schema.ProAppointment.startAt, new Date(endAt.getTime() + 24 * 3_600_000)), gt(schema.ProAppointment.endAt, new Date(startAt.getTime() - 24 * 3_600_000))))).filter((a) => a.id !== appointment.id);
     const withSvc = await Promise.all(overlaps.map(async (a) => ({ ...a, service: a.serviceId ? (await tx.select({ bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes, bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes })
       .from(schema.ProRdvService).where(eq(schema.ProRdvService.id, a.serviceId)))[0] || null : null })));
@@ -1391,7 +1403,7 @@ export async function moveSlot({ appointment, structure, service, startAt, endAt
     if (toBusyWindows(withSvc).some((w) => busyStart < w.end && w.start < busyEnd)) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
     const [off] = await tx.select({ value: count() }).from(schema.ProTimeOff).where(and(eq(schema.ProTimeOff.structureId, structure.id), isNull(schema.ProTimeOff.proUserId), lt(schema.ProTimeOff.startAt, endAt), gt(schema.ProTimeOff.endAt, startAt)));   // R24: closures only
     if (Number(off.value) > 0) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
-    const [updated] = await tx.update(schema.ProAppointment).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
+    const [updated] = await tx.update(T).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
       ...set })
       .where(and(eq(schema.ProAppointment.id, appointment.id), eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)))).returning();
     if (!updated) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };

@@ -6,6 +6,7 @@ import { AUTH_ROLE, logProAudit, requireProStructureContext } from '../../_utils
 import { clientIp } from '../../_utils/client-ip.js';
 import { getProRdvReadiness } from '../../_utils/pro-rdv-readiness.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
+import { flagsOf, requestGuestSchema, settingsTable } from '../../_utils/schema-features.js';
 
 const BOOKING_MODES = new Set(['IN_PERSON', 'VIDEO', 'BOTH']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -83,7 +84,10 @@ function serialize(row) {
  * @param {string} structureId
  */
 async function getOrCreateSettings(structureId) {
+  // R41-B: before migration 0043 (Production 0042) the table has no allowGuestBooking column: it is never named (select, insert, returning)
+  const T = settingsTable(await requestGuestSchema(db));
   let settings = await db.query.StructureRdvSettings.findFirst({
+    columns: flagsOf(T),
     where: eq(StructureRdvSettings.structureId, structureId),
   });
 
@@ -95,7 +99,7 @@ async function getOrCreateSettings(structureId) {
   });
 
   const initialPublished = Boolean(structure?.is_pro_enabled);
-  const [newSettings] = await db.insert(StructureRdvSettings).values({
+  const [newSettings] = await db.insert(T).values({
       id: crypto.randomUUID(),
       structureId,
       isPublished: initialPublished,
@@ -186,6 +190,11 @@ async function handler(req, res) {
   if (hasAllowGuest && typeof body.allowGuestBooking !== 'boolean') {
     return res.status(400).json({ error: 'Invalid allowGuestBooking' });
   }
+  // R41-B: nothing to store the opt-in in before migration 0043: « no » is already true, « yes » is refused (never silently dropped)
+  const features = await requestGuestSchema(db);
+  if (!features.guestBooking && body.allowGuestBooking === true) {
+    return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
+  }
   const nextAllowGuest = hasAllowGuest ? body.allowGuestBooking : Boolean(current.allowGuestBooking);
 
   const noChanges =
@@ -201,13 +210,13 @@ async function handler(req, res) {
 
   const now = new Date();
   // Sequential operations (neon-http driver doesn't support transactions)
-  const [settings] = await db.update(StructureRdvSettings).set({
+  const [settings] = await db.update(settingsTable(features)).set({
       isPublished: requestedPublished,
       bookingMode: nextBookingMode === 'IN_PERSON' || nextBookingMode === 'VIDEO' || nextBookingMode === 'BOTH' ? nextBookingMode : current.bookingMode,
       contactEmail: nextContactEmail || null,
       contactPhone: nextContactPhone || null,
       publishedAt: requestedPublished ? current.publishedAt || now : current.publishedAt,
-      allowGuestBooking: nextAllowGuest,
+      ...(features.guestBooking ? { allowGuestBooking: nextAllowGuest } : {}),
   }).where(eq(StructureRdvSettings.id, current.id)).returning();
 
   await db.update(Structure).set({

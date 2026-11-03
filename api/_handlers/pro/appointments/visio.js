@@ -2,6 +2,7 @@
 import { and, eq } from 'drizzle-orm';
 import { db } from '../../../../src/db/index.js';
 import { ProAppointment } from '../../../../src/db/schema.js';
+import { appointmentTable, flagsOf, requestGuestSchema } from '../../../_utils/schema-features.js';   // R41-B: only the columns this database has (0042: no guest column)
 import { logProAudit, requireProStructureContext } from '../../../_utils/auth.js';
 import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
 import { issueJoin, joinRefusal, newRoomNonce, publicVideoStatus } from '../../../lib/video-provider.js';
@@ -22,7 +23,8 @@ async function handler(req, res) {
   if (!proCtx) return undefined;
   const appointmentId = String(req.body?.appointmentId || '').trim(); const action = String(req.body?.action || '').trim();
   if (!appointmentId || !['approve', 'revoke', 'join'].includes(action)) return res.status(400).json({ error: 'appointmentId and a valid action are required' });
-  const appointment = await db.query.ProAppointment.findFirst({ where: (pa, { eq: e, and: a }) => a(e(pa.id, appointmentId), e(pa.structureId, proCtx.structureId)) });
+  const T = appointmentTable(await requestGuestSchema(db));
+  const appointment = await db.query.ProAppointment.findFirst({ columns: flagsOf(T), where: (pa, { eq: e, and: a }) => a(e(pa.id, appointmentId), e(pa.structureId, proCtx.structureId)) });
   if (!appointment) return res.status(404).json({ error: 'Rendez-vous introuvable' });
   if (appointment.mode !== 'VIDEO') return res.status(409).json({ error: 'NOT_A_VIDEO_APPOINTMENT', message: 'Ce rendez-vous a lieu en présentiel : la visio ne peut pas y être ajoutée.' });
   if (!['booked', 'requested', 'confirmed'].includes(String(appointment.status || '').toLowerCase())) return res.status(409).json({ error: 'APPOINTMENT_NOT_ACTIVE', message: 'Ce rendez-vous n’est plus actif.' });
@@ -35,14 +37,14 @@ async function handler(req, res) {
   }
   if (action === 'approve') {
     if (!publicVideoStatus().available) return res.status(503).json({ error: 'VIDEO_DISABLED', message: 'La visio n’est pas activée sur ce service pour le moment.' });
-    const [row] = await db.update(ProAppointment).set({ visioApprovedAt: new Date(), visioApprovedByProUserId: proCtx.userId, visioRoomId: newRoomNonce(), visioEnabled: true, visioStartedAt: null })
+    const [row] = await db.update(T).set({ visioApprovedAt: new Date(), visioApprovedByProUserId: proCtx.userId, visioRoomId: newRoomNonce(), visioEnabled: true, visioStartedAt: null })
       .where(and(eq(ProAppointment.id, appointment.id), eq(ProAppointment.structureId, proCtx.structureId))).returning();
     await logProAudit('VISIO_APPROVED', proCtx.userId, proCtx.structureId, { appointmentId: appointment.id }, ip);
     await noticeCitizen(row, 'VISIO_APPROVED', { subject: 'Votre rendez-vous en visio est validé - Accès Direct Aide',
       text: `La structure a validé la visio pour votre rendez-vous du ${formatParis(row.startAt)}.\nL’accès sécurisé se fait depuis Mes rendez-vous, à partir de 15 minutes avant l’heure : ${buildAppUrl('/compte/rendez-vous')}\nAucun lien n’est envoyé par e-mail. Aucun enregistrement.` });
     return res.status(200).json({ ok: true, video: { approved: true } });
   }
-  const [row] = await db.update(ProAppointment).set({ visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false })
+  const [row] = await db.update(T).set({ visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false })
     .where(and(eq(ProAppointment.id, appointment.id), eq(ProAppointment.structureId, proCtx.structureId))).returning();
   await logProAudit('VISIO_REVOKED', proCtx.userId, proCtx.structureId, { appointmentId: appointment.id }, ip);
   await noticeCitizen(row, 'VISIO_REVOKED', { subject: 'Modification de votre rendez-vous en visio - Accès Direct Aide',

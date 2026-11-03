@@ -12,6 +12,7 @@
 import logger from '../../../_utils/logger.js';
 import { db } from '../../../../src/db/index.js';
 import { ProAppointment } from '../../../../src/db/schema.js';
+import { appointmentTable, flagsOf, requestGuestSchema } from '../../../_utils/schema-features.js';   // R41-B: 0042 has no guest column
 import { eq } from 'drizzle-orm';
 import { verifyAttachmentToken } from '../../../lib/crypto.js';
 
@@ -51,6 +52,7 @@ export default async function handler(req, res) {
 
         // Find ProAppointment (System B)
         const appointment = await db.query.ProAppointment.findFirst({
+            columns: flagsOf(appointmentTable(await requestGuestSchema(db))),
             where: eq(ProAppointment.id, appointmentId)
         });
 

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { eq, and, or, sql, desc } from 'drizzle-orm';
+import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import {
@@ -210,6 +211,11 @@ async function safeFindMany(/** @type {{ findMany: unknown }} */ queryApi, /** @
 * @param {any} subjectId
 */
 async function collectSubjectRecords(database, subjectId) {
+    // R41-B: on a database before migration 0043 (Production 0042) the appointment rows are read with the columns that exist (selecting the guest columns
+    // failed there, and safeFindMany turned the failure into an EMPTY list in the person's export); a database double without execute() keeps the full set
+    const appointmentColumns = flagsOf(appointmentTable(typeof database?.execute === 'function'
+        ? await requestGuestSchema(database).catch(() => ({ guestBooking: true, guestReminderConsent: true }))
+        : { guestBooking: true, guestReminderConsent: true }));
     const [
         conversations,
         appointments,
@@ -222,7 +228,7 @@ async function collectSubjectRecords(database, subjectId) {
         guardianRelationships
     ] = await Promise.all([
         safeFindMany(database.query?.ConversationLog, { where: eq(ConversationLog.sessionId, subjectId) }),
-        safeFindMany(database.query?.ProAppointment, { where: eq(ProAppointment.citizenUserId, subjectId) }),
+        safeFindMany(database.query?.ProAppointment, { columns: appointmentColumns, where: eq(ProAppointment.citizenUserId, subjectId) }),
         safeFindMany(database.query?.AuthToken, { where: eq(AuthToken.userId, subjectId) }),
         safeFindMany(database.query?.SharedDiagnostic, { where: eq(SharedDiagnostic.privacySubjectId, subjectId) }),
         safeFindMany(database.query?.ConsentLog, { where: eq(ConsentLog.subject_id, subjectId) }),

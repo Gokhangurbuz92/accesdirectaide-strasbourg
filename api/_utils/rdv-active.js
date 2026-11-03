@@ -16,8 +16,13 @@ export function isAppointmentActive(row, now = new Date()) {
   return true;
 }
 
-/** the same rule as a drizzle condition on the ProAppointment table @param {any} t the ProAppointment table (or the query-builder alias) @param {Date} [now] */
-export function activeAppointmentWhere(t, now = new Date()) {
+/**
+ * the same rule as a drizzle condition on the ProAppointment table @param {any} t the ProAppointment table (or the query-builder alias) @param {Date} [now]
+ * R41-B: @param {{ guestBooking: boolean }} [features] what this database has (api/_utils/schema-features.js requestGuestSchema); before migration 0043 no
+ * account-free hold can exist, so the rule is the status alone and the guest column is never named (it does not exist there)
+ */
+export function activeAppointmentWhere(t, now = new Date(), features = { guestBooking: true }) {
+  if (!features.guestBooking) return inArray(t.status, ACTIVE_APPOINTMENT_STATUSES);
   return and(
     inArray(t.status, ACTIVE_APPOINTMENT_STATUSES),
     or(ne(t.status, 'requested'), isNull(t.guestHoldExpiresAt), gt(t.guestHoldExpiresAt, now)),

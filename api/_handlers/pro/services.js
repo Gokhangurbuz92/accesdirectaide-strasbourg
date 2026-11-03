@@ -8,6 +8,7 @@ import { bumpContentEpoch } from '../../lib/search-cache.js';
 import { clientIp } from '../../_utils/client-ip.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { MODES } from '../../lib/appointment-modes.js';
+import { requestGuestSchema, serviceTable } from '../../_utils/schema-features.js';
 
 /**
  * /api/pro/services — the appointment services (motifs) of the professional's structure.
@@ -47,8 +48,11 @@ async function handler(req, res) {
   if (!proCtx) return undefined;
   const { structureId, role } = proCtx;
   try {
+    // R41-B: before migration 0043 (Production 0042) the table has no guestBookable column: it is never named (insert, select, returning)
+    const features = await requestGuestSchema(db);
+    const T = serviceTable(features);
     if (req.method === 'GET') {
-      const services = await db.query.ProRdvService.findMany({ where: (svc, { eq: e }) => e(svc.structureId, structureId), orderBy: (svc, { asc }) => [asc(svc.name)] });
+      const services = await db.select().from(T).where(eq(ProRdvService.structureId, structureId)).orderBy(ProRdvService.name);
       return res.status(200).json({ items: services, total: services.length });
     }
     if (!['POST', 'PATCH', 'DELETE'].includes(req.method)) return res.status(405).json({ error: 'Method not allowed' });
@@ -61,18 +65,26 @@ async function handler(req, res) {
     if (req.method === 'POST') {
       const parsed = readService(req.body);
       if (parsed.error) return res.status(400).json({ error: parsed.error });
-      const [row] = await db.insert(ProRdvService).values({ structureId, modes: ['IN_PERSON'], ...parsed.value }).returning();
+      if (!features.guestBooking && parsed.value.guestBookable !== undefined) {   // nothing to store it in: « no » is already true, « yes » is refused
+        if (parsed.value.guestBookable) return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
+        delete parsed.value.guestBookable;
+      }
+      const [row] = await db.insert(T).values({ structureId, modes: ['IN_PERSON'], ...parsed.value }).returning();
       await changed('RDV_SERVICE_CREATED', row.id);
       return res.status(201).json({ item: row });
     }
     const id = String(req.query?.id || '').trim();
-    const [current] = id ? await db.select().from(ProRdvService).where(and(eq(ProRdvService.id, id), eq(ProRdvService.structureId, structureId))).limit(1) : [];
+    const [current] = id ? await db.select().from(T).where(and(eq(ProRdvService.id, id), eq(ProRdvService.structureId, structureId))).limit(1) : [];
     if (!current) return res.status(404).json({ error: 'Service not found' });
     if (req.method === 'PATCH') {
       const parsed = readService(req.body, current);
       if (parsed.error) return res.status(400).json({ error: parsed.error });
+      if (!features.guestBooking && parsed.value.guestBookable !== undefined) {   // nothing to store it in: « no » is already true, « yes » is refused
+        if (parsed.value.guestBookable) return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
+        delete parsed.value.guestBookable;
+      }
       if (!Object.keys(parsed.value).length) return res.status(200).json({ item: current });
-      const [row] = await db.update(ProRdvService).set(parsed.value).where(and(eq(ProRdvService.id, id), eq(ProRdvService.structureId, structureId))).returning();
+      const [row] = await db.update(T).set(parsed.value).where(and(eq(ProRdvService.id, id), eq(ProRdvService.structureId, structureId))).returning();
       await changed('RDV_SERVICE_UPDATED', id);
       return res.status(200).json({ item: row });
     }

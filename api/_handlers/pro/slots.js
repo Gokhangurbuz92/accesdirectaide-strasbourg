@@ -10,6 +10,7 @@ import {
 } from '../../_utils/pro-rdv.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { activeAppointmentWhere } from '../../_utils/rdv-active.js';
+import { flagsOf, requestGuestSchema, serviceTable } from '../../_utils/schema-features.js';   // R41-B: only the columns this database has (0042: no guest column)
 
 const MAX_RANGE_DAYS = 31;
 
@@ -39,7 +40,9 @@ async function handler(req, res) {
     return res.status(400).json({ error: error instanceof Error ? error.message : 'Invalid date range' });
   }
 
+  const features = await requestGuestSchema(db);
   const service = await db.query.ProRdvService.findFirst({
+    columns: flagsOf(serviceTable(features)),
     where: eq(ProRdvService.id, serviceId),
   });
   // R12: another organization's service answers exactly like an unknown one (no existence oracle)
@@ -59,7 +62,7 @@ async function handler(req, res) {
   const appointments = await db.query.ProAppointment.findMany({
     where: and(
       eq(ProAppointment.structureId, proCtx.structureId),
-      activeAppointmentWhere(ProAppointment),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
+      activeAppointmentWhere(ProAppointment, new Date(), features),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
       lt(ProAppointment.startAt, range.to),
       gt(ProAppointment.endAt, range.from)
     ),

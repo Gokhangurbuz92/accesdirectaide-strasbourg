@@ -7,6 +7,7 @@ import { clientIp } from '../../_utils/client-ip.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { activeAppointmentWhere } from '../../_utils/rdv-active.js';   // R38: the shared « still active » rule
 import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment to move
+import { requestGuestSchema } from '../../_utils/schema-features.js';
 import { createTimeOffSchema, updateTimeOffSchema } from '../../../src/db/drizzle-schemas.js';
 import { canManageSchedule, SCHEDULE_MANAGERS_ONLY } from '../../_utils/schedule-permissions.js';
 
@@ -194,7 +195,7 @@ async function handler(req, res) {
  * R24: for a member's absence, the appointments that member created (citizens' bookings belong to the structure, not to a member). */
 /** @param {string} structureId @param {Date} startAt @param {Date} endAt @param {string | null} [proUserId] */
 async function overlappingOf(structureId, startAt, endAt, proUserId = null) {
-  const conds = [eq(ProAppointment.structureId, structureId), activeAppointmentWhere(ProAppointment), notGuestDecoy(ProAppointment), lt(ProAppointment.startAt, endAt), gt(ProAppointment.endAt, startAt)];
+  const conds = [eq(ProAppointment.structureId, structureId), activeAppointmentWhere(ProAppointment, new Date(), await requestGuestSchema(db)), notGuestDecoy(ProAppointment), lt(ProAppointment.startAt, endAt), gt(ProAppointment.endAt, startAt)];
   if (proUserId) conds.push(eq(ProAppointment.createdByProUserId, proUserId));
   const rows = await db.select({ id: ProAppointment.id, startAt: ProAppointment.startAt }).from(ProAppointment)
     .where(and(...conds))
