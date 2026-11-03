@@ -114,10 +114,26 @@ export function caseAccessSql(dossierId, ctx) {
   return sql`NOT EXISTS (SELECT 1 FROM "ProCase" c WHERE c."sharedDiagnosticId" = ${dossierId} AND c."structureId" = ${ctx.structureId} AND c."assigneeProUserId" IS NOT NULL AND c."assigneeProUserId" <> ${ctx.userId})`;
 }
 
+/**
+ * R40: an unanswered referral expires EXPIRE_AFTER_DUE_DAYS after its due date, and the cron then revokes the grant it created. Access checks apply the
+ * same rule themselves, so a referral grant past that point is closed even when the cron has not run (the cron stays the writer of the EXPIRED state).
+ */
+export const REFERRAL_EXPIRE_AFTER_DUE_DAYS = 14;
+/** @param {Date} [now] */
+const referralLapseLimit = (now = new Date()) => new Date(now.getTime() - REFERRAL_EXPIRE_AFTER_DUE_DAYS * 86400000);
+/**
+ * SQL: the grant aliased `alias` is a referral grant whose referral is past its expiry (what runReferralTimeouts would revoke). @param {string} alias
+ * @param {Date} [now]
+ */
+export function referralGrantLapsedSql(alias = 'g', now = new Date()) {
+  const g = sql.raw(`"${alias.replace(/[^A-Za-z0-9_]/g, '')}"`);
+  return sql`(${g}."grantedVia" = 'referral' AND EXISTS (SELECT 1 FROM "Referral" lr WHERE lr."grantId" = ${g}.id AND lr.status IN ('SENT', 'ACKNOWLEDGED', 'NEEDS_INFO') AND lr."dueAt" < ${referralLapseLimit(now)}))`;
+}
+
 /** SQL predicate "ctx holds an active grant on dossier Y AND is an active member (AND may open the case)" - usable inside UPDATE ... WHERE (revocation / departure / expiry / reassignment cannot be raced). @param {string} dossierId @param {ProCtx} ctx */
 export function activeGrantExists(dossierId, ctx) {
   // PKG-11 / C21: a dossier whose owner restricted processing (RGPD art. 18) is closed to every organization, like a revoked access
-  return sql`(EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL) AND NOT ${restrictedDossierSql(dossierId)} AND ${activeMemberSql(ctx)} AND ${caseAccessSql(dossierId, ctx)})`;
+  return sql`(EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')}) AND NOT ${restrictedDossierSql(dossierId)} AND ${activeMemberSql(ctx)} AND ${caseAccessSql(dossierId, ctx)})`;
 }
 
 /** @param {ProCtx} ctx */
@@ -137,6 +153,10 @@ export async function findGrant(dossierId, structureId) {
 export async function findActiveGrant(dossierId, ctx) {
   const grant = await findGrant(dossierId, ctx.structureId);
   if (!grant || grant.revokedAt) return null;
+  if (grant.grantedVia === 'referral') {   // R40: an expired referral closes its grant without waiting for the cron
+    const lapsed = await db.execute(sql`SELECT 1 AS ok FROM "SharedDossierGrant" g WHERE g.id = ${grant.id} AND ${referralGrantLapsedSql('g')}`);
+    if (lapsed.rows.length) return null;
+  }
   if (await isDossierRestricted(dossierId)) return null;   // PKG-11 / C21: restriction of processing (art. 18) = no organization access
   if (!(await isActiveMember(ctx))) return null;
   const open = await db.execute(sql`SELECT 1 AS ok WHERE ${caseAccessSql(dossierId, ctx)}`);

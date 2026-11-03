@@ -9,7 +9,7 @@
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { ProCase, ProCaseEvent, ProCaseNote, ProUser } from '../../src/db/schema.js';
-import { activeGrantExists, activeMemberSql } from '../_utils/share-access.js';
+import { activeGrantExists, activeMemberSql, referralGrantLapsedSql } from '../_utils/share-access.js';
 import { restrictedDossierSql } from './processing-restriction.js';
 import { openText, sealText } from '../lib/data-keys.js';
 
@@ -26,7 +26,7 @@ async function event(db, c, ctx, kind, fromValue = null, toValue = null) {
 
 /** Open (or find) the organization's case on a dossier it holds a grant for. Idempotent. */
 export async function ensureCase(dossierId, ctx, db = defaultDb) {
-  const [granted] = (await db.execute(sql`SELECT 1 AS ok WHERE EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL) AND ${activeMemberSql(ctx)}`)).rows;
+  const [granted] = (await db.execute(sql`SELECT 1 AS ok WHERE EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = ${dossierId} AND g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')}) AND ${activeMemberSql(ctx)}`)).rows;
   if (!granted) return null;
   const rows = await db.insert(ProCase).values({ sharedDiagnosticId: dossierId, structureId: ctx.structureId }).onConflictDoNothing({ target: [ProCase.sharedDiagnosticId, ProCase.structureId] }).returning();
   if (rows.length) { await event(db, rows[0], ctx, 'OPENED', null, 'NEW'); return rows[0]; }
@@ -38,7 +38,7 @@ export async function ensureCase(dossierId, ctx, db = defaultDb) {
 export async function syncQueue(ctx, db = defaultDb) {
   const created = (await db.execute(sql`INSERT INTO "ProCase" (id, "sharedDiagnosticId", "structureId", status, "updatedAt")
     SELECT gen_random_uuid()::text, g."sharedDiagnosticId", g."structureId", 'NEW', NOW() FROM "SharedDossierGrant" g
-    WHERE g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "ProCase" c WHERE c."sharedDiagnosticId" = g."sharedDiagnosticId" AND c."structureId" = g."structureId")
+    WHERE g."structureId" = ${ctx.structureId} AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')} AND NOT EXISTS (SELECT 1 FROM "ProCase" c WHERE c."sharedDiagnosticId" = g."sharedDiagnosticId" AND c."structureId" = g."structureId")
     ON CONFLICT DO NOTHING RETURNING id, "structureId"`)).rows;
   for (const r of created) await db.insert(ProCaseEvent).values({ caseId: r.id, structureId: r.structureId, kind: 'OPENED', toValue: 'NEW' });
   return created.length;
@@ -56,11 +56,11 @@ export async function listQueue(ctx, { scope = 'mine' } = {}, db = defaultDb) {
       (SELECT count(*)::int FROM "Referral" r WHERE r."fromCaseId" = c.id AND r.status NOT IN ('CANCELLED', 'CLOSED', 'EXPIRED')) AS "openReferrals"
     FROM "ProCase" c LEFT JOIN "ProUser" u ON u.id = c."assigneeProUserId"
     WHERE c."structureId" = ${ctx.structureId} AND ${scopeSql}
-      AND EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL) AND NOT ${restrictedDossierSql(sql`c."sharedDiagnosticId"`)}
+      AND EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')}) AND NOT ${restrictedDossierSql(sql`c."sharedDiagnosticId"`)}
     ORDER BY (c.status = 'CLOSED'), c."updatedAt" DESC LIMIT 200`)).rows;
   const [{ mine, unassigned }] = (await db.execute(sql`SELECT count(*) FILTER (WHERE c."assigneeProUserId" = ${ctx.userId} AND c.status <> 'CLOSED')::int AS mine,
       count(*) FILTER (WHERE c."assigneeProUserId" IS NULL AND c.status <> 'CLOSED')::int AS unassigned
-    FROM "ProCase" c WHERE c."structureId" = ${ctx.structureId} AND EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL) AND NOT ${restrictedDossierSql(sql`c."sharedDiagnosticId"`)}`)).rows;
+    FROM "ProCase" c WHERE c."structureId" = ${ctx.structureId} AND EXISTS (SELECT 1 FROM "SharedDossierGrant" g WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')}) AND NOT ${restrictedDossierSql(sql`c."sharedDiagnosticId"`)}`)).rows;
   return { ok: true, status: 200, scope: scope === 'all' && !isAdmin(ctx) ? 'mine' : scope, cases: rows, counts: { mine, unassigned } };
 }
 
