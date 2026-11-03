@@ -15,7 +15,9 @@ export default function RouteFocus() {
   useEffect(() => {
     if (first.current) { first.current = false; return undefined; }
     if (hash || navigationType === 'REPLACE') return undefined;
-    let tries = 0; let timer;
+    let tries = 0;
+    /** @type {number | undefined} */
+    let timer;
     const move = () => {
       const main = document.getElementById('main-content');
       const h1 = main?.querySelector('h1');

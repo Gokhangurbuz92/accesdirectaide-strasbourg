@@ -2,6 +2,7 @@
  * Which main-menu entry the current address belongs to. The menu used to compare the LAST segment of the address with a page name, so a record page
  * (/aides/apl), the list of places (/structures) and every page without its own entry fell back to « Accueil » (R26 audit).
  */
+/** @type {Record<string, string[]>} */
 const SECTIONS = {
   Home: ['/'],
   Aides: ['/aides', '/aide', '/categories', '/situations', '/recherche', '/trouver-aide'],

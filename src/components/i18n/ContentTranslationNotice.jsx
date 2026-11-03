@@ -7,13 +7,15 @@ import { formatDate, setLanguage, useT } from '@/i18n';
  * translation checked automatically (never « reviewed » unless a person really reviewed it), or the French text because no translation may be
  * shown (none yet, outdated since the French changed, or stopped by the checks). It always names the French text and the official source as the
  * reference, and offers the French original. Renders nothing in French.
+ * @param {{ translation: ReturnType<typeof import('@/hooks/useContentTranslation').default> | null | undefined, className?: string }} props
  */
 export default function ContentTranslationNotice({ translation, className = '' }) {
   const { t } = useT('translation');
   if (!translation || translation.status === 'source') return null;
   const s = translation.status;
   const date = translation.meta?.review?.at || translation.meta?.translatedAt;
-  const message = {
+  /** @type {Record<string, string>} */
+  const messages = {
     loading: t('translation:status.loading', 'Recherche d’une traduction…'),
     auto_checked: t('translation:status.auto_checked', 'Traduction automatique, vérifiée par des contrôles automatiques. Elle n’a pas été relue par une personne : le texte français et la source officielle font foi.'),
     partial: t('translation:status.partial', 'Traduction automatique, vérifiée par des contrôles automatiques et non relue par une personne. Les passages qui n’ont pas passé les contrôles sont affichés en français. Le texte français et la source officielle font foi.'),
@@ -21,7 +23,8 @@ export default function ContentTranslationNotice({ translation, className = '' }
     outdated: t('translation:status.outdated', 'Le texte français a été modifié depuis la traduction : la traduction est retirée jusqu’à ce qu’elle soit refaite et contrôlée. Le texte est affiché en français.'),
     withheld: t('translation:status.withheld', 'La traduction automatique de ce contenu n’a pas passé les contrôles : le texte est affiché en français.'),
     unavailable: t('translation:status.unavailable', 'Ce contenu n’est pas encore traduit dans votre langue : il est affiché en français.'),
-  }[s] || t('translation:status.unavailable', 'Ce contenu n’est pas encore traduit dans votre langue : il est affiché en français.');
+  };
+  const message = messages[s] || t('translation:status.unavailable', 'Ce contenu n’est pas encore traduit dans votre langue : il est affiché en français.');
   const translated = ['auto_checked', 'partial', 'human_reviewed'].includes(s);
   return (
     <div role="note" className={`rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm text-sky-950 ${className}`} data-testid="content-translation-notice" data-status={s} data-no-read="">

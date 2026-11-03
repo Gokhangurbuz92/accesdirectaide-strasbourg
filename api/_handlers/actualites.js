@@ -13,9 +13,15 @@ import { buildProvenance } from '../_utils/provenance.js';
 
 const MALFORMED_SLUG = Symbol('malformed-slug');
 
-/** R29: an item published by the automatic verification was checked against its original page on that day; any other item has no verification date */
+/**
+ * R29: an item published by the automatic verification was checked against its original page on that day; any other item has no verification date
+ * @param {Pick<typeof schema.Actualite.$inferSelect, 'auto_publish' | 'updatedBy' | 'published_at'> | null | undefined} item
+ */
 const newsVerifiedAt = (item) => (item?.auto_publish && item?.updatedBy === 'verification-automatique' && item?.published_at) || null;
-/** R29: what a visitor receives — never who decided (`updatedBy`, an administrator id) nor the editorial note (it can name a reviewer), nor the raw feed payload */
+/**
+ * R29: what a visitor receives — never who decided (`updatedBy`, an administrator id) nor the editorial note (it can name a reviewer), nor the raw feed payload
+ * @template {{ updatedBy?: unknown, commentaire_statut?: unknown, raw_payload_json?: unknown, ingest_batch?: unknown, raw_data_hash?: unknown }} T @param {T} row
+ */
 export const publicNewsFields = (row) => {
   const { updatedBy: _by, commentaire_statut: _note, raw_payload_json: _raw, ingest_batch: _batch, raw_data_hash: _hash, ...rest } = row;
   return rest;

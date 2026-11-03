@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 /**
  * The page header of the public site (R26 design pass): the Démarches banner — dark blue gradient, left-aligned title and one sentence — shared by
  * every catalogue, information and legal page instead of each page drawing its own (centered dark blocks, icons in tiles, bare titles…).
+ * @param {{ title: import('react').ReactNode, description?: import('react').ReactNode, eyebrow?: import('react').ReactNode, children?: import('react').ReactNode,
+ *   width?: 'wide' | 'reading', titleId?: string }} props
  */
 export default function PageHeader({ title, description, eyebrow = null, children = null, width = 'wide', titleId = undefined }) {
   return (

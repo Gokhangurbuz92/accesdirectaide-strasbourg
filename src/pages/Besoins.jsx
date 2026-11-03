@@ -13,15 +13,16 @@ import coverage from '../../data/reference/social-coverage.v1.json';
  * content or places (data/reference/social-coverage.v1.json, measured), each opening the ordinary search on its words. A need with nothing
  * published says so instead of looking served. Labels are translated (namespace « reference »); the search itself runs on the French catalogue.
  */
+/** @type {(keyof typeof reference.emergency)[]} */
 const EMERGENCY_ORDER = ['112', '15', '17', '115', '119', '3919', '3114', '3133', '114', '116006', '0800059595'];
 const status = Object.fromEntries(coverage.rows.map((r) => [r.subdomain, r]));
-const tel = (n) => (n.length === 10 && n.startsWith('0') ? `${n.slice(0, 1)} ${n.slice(1, 4)} ${n.slice(4, 6)} ${n.slice(6, 8)} ${n.slice(8)}` : n.length === 6 ? `${n.slice(0, 3)} ${n.slice(3)}` : n);
+const tel = (/** @type {string} */ n) => (n.length === 10 && n.startsWith('0') ? `${n.slice(0, 1)} ${n.slice(1, 4)} ${n.slice(4, 6)} ${n.slice(6, 8)} ${n.slice(8)}` : n.length === 6 ? `${n.slice(0, 3)} ${n.slice(3)}` : n);
 
 export default function Besoins() {
   const { t } = useT('reference');
   const navigate = useNavigate();
   const [situation, setSituation] = useState('');
-  const label = (kind, id, fr) => t(`reference:${kind}.${id}`, fr);   // keys required by scripts/i18n-check.mjs from the reference file
+  const label = (/** @type {'domain' | 'sub'} */ kind, /** @type {string} */ id, /** @type {string} */ fr) => t(`reference:${kind}.${id}`, fr);   // keys required by scripts/i18n-check.mjs from the reference file
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <SEO title={t('reference:page.title', 'Trouver de l’aide par besoin')} description={t('reference:page.description', 'Les besoins sociaux et médico-sociaux, avec les fiches vérifiées et les lieux d’accueil publiés pour Strasbourg et le Bas-Rhin.')} path="/besoins" />

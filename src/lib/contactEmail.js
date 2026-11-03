@@ -6,4 +6,4 @@ export function publicContactEmail() {
 }
 
 /** a mailto: link with a subject line (French), never a body: nothing personal is pre-filled */
-export const mailtoWithSubject = (email, subject) => `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+export const mailtoWithSubject = (/** @type {string} */ email, /** @type {string} */ subject) => `mailto:${email}?subject=${encodeURIComponent(subject)}`;

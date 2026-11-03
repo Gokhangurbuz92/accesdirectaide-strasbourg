@@ -4,7 +4,7 @@ import { useT } from '@/i18n';
 
 import { SITUATIONS as categories } from '@/config/situations';   // R18: each situation opens the search on its own words
 
-/** R32: the name of a situation in the interface language. Its search words stay the French ones: the catalogue is searched in French. */
+/** R32: the name of a situation in the interface language. Its search words stay the French ones: the catalogue is searched in French. @param {(key: string, fallback: string) => string} t @param {string} label */
 function situationLabel(t, label) {
   switch (label) {
     case 'Étudiant': return t('home:situations.student', 'Étudiant');
