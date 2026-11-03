@@ -6,14 +6,15 @@ import { getCronAuth } from '../../_utils/cronAuth.js';
 import { db } from '../../../src/db/index.js';
 import { ProAppointment, ProUser, AuditLog, AppointmentNotice } from '../../../src/db/schema.js';
 import { gte, lt, and, inArray, eq, isNull, or, sql, count } from 'drizzle-orm';
-import { sendMail } from '../../_utils/mailer.js';
+import { mailFailure, mailLedgerStatus, sendMail } from '../../_utils/mailer.js';
 import { createNotification } from '../../_handlers/pro/notifications.js';
 import { withLock } from '../../_utils/pipelineLock.js';
 import { canNotify } from '../../_services/citizen-account.js';
 import { formatParisDate, formatParisTime, noticeCitizen, parisDayWindow, recordNotice } from '../../_services/appointment-notices.js';
 import { MODE_LABELS, modeLabel, locationOf, locationText } from '../../lib/appointment-modes.js';
 import { buildAppUrl } from '../../_utils/user-auth.js';
-import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '../../lib/sms-policy.js';
+import { isSmsSendWindow, optOutReady, withOptOut } from '../../lib/sms-policy.js';
+import { sendTwilioSms } from '../../_utils/twilio-sms.js';
 import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
 import { appointmentColumns, appointmentGuestSchema, columnFlags } from '../../_utils/schema-features.js';
 
@@ -23,6 +24,14 @@ async function citizenReminderFailuresSince(appointmentId, since) {
         eq(AppointmentNotice.appointmentId, appointmentId), eq(AppointmentNotice.kind, 'REMINDER_J1'), eq(AppointmentNotice.recipient, 'citizen'),
         eq(AppointmentNotice.channel, 'email'), inArray(AppointmentNotice.status, ['NOT_DELIVERED', 'FAILED']), gte(AppointmentNotice.createdAt, since)));
     return Number(row?.n || 0);
+}
+
+/** R41-E / G6: the recipients / channels of this appointment's J-1 reminder already reached today (a retry pass never writes to them again) */
+async function reachedToday(appointmentId, since) {
+    const rows = await db.select({ recipient: AppointmentNotice.recipient, channel: AppointmentNotice.channel }).from(AppointmentNotice).where(and(
+        eq(AppointmentNotice.appointmentId, appointmentId), eq(AppointmentNotice.kind, 'REMINDER_J1'),
+        inArray(AppointmentNotice.status, ['PROVIDER_ACCEPTED', 'TEST_RECORDED', 'DELIVERED']), gte(AppointmentNotice.createdAt, since)));
+    return new Set(rows.map((r) => `${r.recipient}:${r.channel}`));
 }
 
 /**
@@ -47,6 +56,13 @@ async function citizenReminderFailuresSince(appointmentId, since) {
  * reminder_sent_at stays NULL, so a later run of the SAME J-1 day may retry (the selection is tomorrow's Paris day only: never earlier, never on the day
  * itself), at most REMINDER_MAX_ATTEMPTS_PER_DAY failed e-mails per appointment and per day (counted in the AppointmentNotice ledger), then it is closed.
  * Two concurrent runs never send twice: besides the pipeline lock, the per-appointment claim is a compare-and-set UPDATE (one winner).
+ *
+ * R41-E / G6 — reach is counted PER RECIPIENT: the agent's e-mail or in-app notice no longer closes the claim when the person's e-mail failed for a retryable
+ * reason (provider unreachable, 5xx, 429, no provider yet); a permanent refusal (e.g. an address the provider rejects) closes it. Each outcome is in the
+ * AppointmentNotice ledger (the agent's e-mail and in-app notice as recipient « structure »), and a retry pass skips every recipient / channel already
+ * reached that day — the agent is never written to twice. The person's e-mail carries a stable Idempotency-Key (appointment + start time), so a retry within
+ * the provider's 24 h never delivers a second copy. Twilio goes through sendTwilioSms (timeout). With the single scheduled run (vercel.json 0 8 * * *) a
+ * released claim is retried only by a manual or a second scheduled run that day (owner decision, R41_G5_G6_G11_CLOSURE.md); the next day it is no longer J-1.
  */
 export default async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'GET' && req.method !== 'POST') {
@@ -159,17 +175,23 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 const manageLine = rdv.citizenUserId
                     ? `Gérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`
                     : 'Pour déplacer ou annuler ce rendez-vous, ou ne plus recevoir de rappel, utilisez le lien personnel reçu dans l’e-mail de confirmation.\nVous recevez ce rappel parce que vous l’avez demandé.';
-                const citizenStatus = await noticeCitizen(rdv, 'REMINDER_J1', {
+                const done = await reachedToday(rdv.id, todayStart).catch(() => new Set());   // R41-E / G6: a retry pass skips who was already reached today
+                const startKey = new Date(rdv.startAt).getTime();
+                let citizenMail = null;   // the person's sendMail() result (its failure class decides a retry)
+                const citizenStatus = done.has('citizen:email') ? 'PROVIDER_ACCEPTED' : await noticeCitizen(rdv, 'REMINDER_J1', {
                     subject: `Rappel : rendez-vous demain ${dateStr} à ${timeStr}`,
                     text: `Rappel : vous avez rendez-vous demain ${dateStr} à ${timeStr}${rdv.structure?.nom ? ` avec ${rdv.structure.nom}` : ''}.\n${modeLine}\n\n${manageLine}`,
-                });
+                }, { sendMail: async (payload) => { citizenMail = await sendMail({ ...payload, idempotencyKey: `rdv-reminder-j1/${rdv.id}/${startKey}/citizen` }); return citizenMail; } });
                 // PKG-5: accepted by the provider (not a confirmed delivery); R39: the LAB test outbox counts like the agent's, a refused / noop e-mail is a failure
                 const citizenFailed = citizenStatus === 'NOT_DELIVERED' || citizenStatus === 'FAILED';
+                // R41-E: retryable = provider unreachable / 5xx / 429, no provider yet (R38: retried once one is configured), or an exception; a refusal is final
+                const citizenRetryable = citizenStatus === 'FAILED' || ['retryable', 'not_configured'].includes(mailFailure(citizenMail));
                 if (citizenStatus === 'PROVIDER_ACCEPTED' || citizenStatus === 'TEST_RECORDED') { emailsSent++; reached++; }
-                else if (citizenFailed) { sendFailed = true; errors.push({ rdvId: rdv.id, type: 'citizen_email', error: 'NOT_ACCEPTED' }); }
+                else if (citizenFailed) { sendFailed = true; errors.push({ rdvId: rdv.id, type: 'citizen_email', error: citizenRetryable ? 'NOT_ACCEPTED_RETRYABLE' : 'NOT_ACCEPTED_PERMANENT' }); }
 
-                // 1. Send email to agent (if enabled)
-                if (agent && agent.notificationEmailEnabled && agent.email) {
+                // 1. Send email to agent (if enabled) — R41-E: once a day (ledger « structure / email »)
+                if (agent && agent.notificationEmailEnabled && agent.email && done.has('structure:email')) reached++;
+                else if (agent && agent.notificationEmailEnabled && agent.email) {
                     try {
                         const out = await sendMail({
                             to: agent.email,
@@ -190,19 +212,22 @@ export default async function handler(/** @type {import('../../_utils/http-types
                                 </div>
                             `,
                             category: 'rdv-reminder',
+                            idempotencyKey: `rdv-reminder-j1/${rdv.id}/${startKey}/agent/${agent.id}`,
                         });
+                        await recordNotice(rdv.id, 'REMINDER_J1', 'structure', 'email', mailLedgerStatus(out));
                         // R38: « accepted » is also true for MAILER_PROVIDER=noop (nothing leaves): only a real provider's acceptance (or the LAB test outbox)
                         // counts, otherwise the reminder would be marked sent and never retried once a provider is configured
                         if (out?.outcome === 'PROVIDER_ACCEPTED' || out?.outcome === 'TEST_RECORDED') { emailsSent++; reached++; }
                         else { sendFailed = true; errors.push({ rdvId: rdv.id, type: 'email', error: 'NOT_ACCEPTED' }); }   // pass 2: a refused mail is a failure
                     } catch (err) {
                         sendFailed = true;
-                        errors.push({ rdvId: rdv.id, error: err.message });
+                        errors.push({ rdvId: rdv.id, type: 'email', error: err?.name || 'Error' });   // R41-E: never an error message (it can quote an address)
                     }
                 }
 
-                // 2. Create in-app notification for agent
-                if (agent) try {
+                // 2. Create in-app notification for agent — R41-E: once a day (ledger « structure / in_app »)
+                if (agent && done.has('structure:in_app')) reached++;
+                else if (agent) try {
                     await createNotification({
                         userId: agent.id,
                         structureId: agent.structureId,
@@ -215,10 +240,11 @@ export default async function handler(/** @type {import('../../_utils/http-types
                         },
                     });
                     notificationsCreated++; reached++;
+                    await recordNotice(rdv.id, 'REMINDER_J1', 'structure', 'in_app', 'DELIVERED');
                 } catch (err) {
                     sendFailed = true;
-                    // @ts-ignore
-                    errors.push({ rdvId: rdv.id, type: 'notification', error: err.message });
+                    errors.push({ rdvId: rdv.id, type: 'notification', error: err?.name || 'Error' });
+                    await recordNotice(rdv.id, 'REMINDER_J1', 'structure', 'in_app', 'FAILED');
                 }
 
                 // 3. SMS reminder to the beneficiary — K0/C20: only when the appointment's own citizen account holds a LIVE consent for SMS reminders
@@ -230,48 +256,31 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 // N02: no SMS at all while a « STOP » reply cannot be honoured (channel inactive); recorded honestly
                 const channelReady = optOutReady();
                 if (smsAllowed && inWindow && !channelReady) { smsChannelInactive++; await recordNotice(rdv.id, 'REMINDER_J1', 'citizen', 'sms', 'NOT_DELIVERED'); }
-                if (smsAllowed && inWindow && channelReady && env.twilio.sid && env.twilio.authToken && env.twilio.from) {
-                    try {
-                        const smsBody = withOptOut(`Rappel ADA : Votre RDV est prévu demain ${dateStr} à ${timeStr}. Pour annuler ou reporter, consultez votre email de confirmation.`);
-                        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${env.twilio.sid}/Messages.json`;
-                        const twilioBody = new URLSearchParams({
-                            To: normalizeFrenchPhone(rdv.beneficiaryPhone) || rdv.beneficiaryPhone.replace(/\s/g, ''),   // pass 2: E.164 (+33…)
-                            From: env.twilio.from,
-                            Body: smsBody,
-                        });
-                        const smsRes = await fetch(twilioUrl, {
-                            method: 'POST',
-                            headers: {
-                                Authorization: `Basic ${Buffer.from(`${env.twilio.sid}:${env.twilio.authToken}`).toString('base64')}`,
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: twilioBody.toString(),
-                        });
-                        if (smsRes.ok) {
-                            smsSent++; reached++;
-                            await recordNotice(rdv.id, 'REMINDER_J1', 'citizen', 'sms', 'PROVIDER_ACCEPTED');   // PKG-5: the SMS provider accepted the request
-                        } else {
-                            sendFailed = true;
-                            errors.push({ rdvId: rdv.id, type: 'sms', error: `Twilio ${smsRes.status}` });   // pass 2: never the provider's body (it can carry the number)
-                        }
-                    } catch (err) {
+                if (done.has('citizen:sms')) reached++;   // R41-E: already accepted today (retry pass)
+                else if (smsAllowed && inWindow && channelReady && env.twilio.sid && env.twilio.authToken && env.twilio.from) {
+                    // R41-E / G6: through sendTwilioSms — a 10 s timeout, nothing logged (Twilio's error text quotes the number), only status / numeric code kept
+                    const smsBody = withOptOut(`Rappel ADA : Votre RDV est prévu demain ${dateStr} à ${timeStr}. Pour annuler ou reporter, consultez votre email de confirmation.`);
+                    const sms = await sendTwilioSms({ to: rdv.beneficiaryPhone, body: smsBody }, env.twilio);
+                    if (sms.ok) {
+                        smsSent++; reached++;
+                        await recordNotice(rdv.id, 'REMINDER_J1', 'citizen', 'sms', 'PROVIDER_ACCEPTED');   // PKG-5: the SMS provider accepted the request
+                    } else {
                         sendFailed = true;
-                        // @ts-ignore
-                        errors.push({ rdvId: rdv.id, type: 'sms', error: err.message });
+                        errors.push({ rdvId: rdv.id, type: 'sms', error: `Twilio ${sms.status}${sms.code ? ` code=${sms.code}` : ''}` });   // never the provider's body (it can carry the number)
+                        await recordNotice(rdv.id, 'REMINDER_J1', 'citizen', 'sms', sms.failure === 'retryable' ? 'FAILED' : 'NOT_DELIVERED');
                     }
                 }
 
                 // STEP 3: Handle results and finalize state (R39: bounded — after REMINDER_MAX_ATTEMPTS_PER_DAY failed e-mails today the claim is closed)
                 const citizenFailuresToday = citizenFailed ? await citizenReminderFailuresSince(rdv.id, todayStart).catch(() => 0) : 0;
-                if (reminderClaimOutcome({ sendFailed, reached, citizenFailed, citizenFailuresToday }) === 'release') {
+                if (reminderClaimOutcome({ sendFailed, reached, citizenFailed, citizenRetryable, citizenFailuresToday }) === 'release') {
                     // ALL failed -> release the claim so it can be retried
                     try {
                         await db.update(ProAppointment)
                             .set({ reminder_locked_at: null })
                             .where(eq(ProAppointment.id, rdv.id));
                     } catch (releaseErr) {
-                        // @ts-ignore
-                        logger.error({ rdvId: rdv.id, error: releaseErr.message }, 'Failed to release claim');
+                        logger.error({ rdvId: rdv.id, err: { name: releaseErr?.name, code: releaseErr?.cause?.code || releaseErr?.code } }, 'Failed to release claim');
                     }
                 } else {
                     // At least ONE succeeded -> mark as officially sent
@@ -280,8 +289,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                             .set({ reminder_sent_at: new Date() })
                             .where(eq(ProAppointment.id, rdv.id));
                     } catch (successErr) {
-                        // @ts-ignore
-                        logger.error({ rdvId: rdv.id, error: successErr.message }, 'Failed to record successful send');
+                        logger.error({ rdvId: rdv.id, err: { name: successErr?.name, code: successErr?.cause?.code || successErr?.code } }, 'Failed to record successful send');
                     }
                 }
             }

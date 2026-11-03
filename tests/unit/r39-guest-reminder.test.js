@@ -46,7 +46,11 @@ describe('the claim of the J-1 reminder cron after one pass', () => {
   it('closes when something reached its recipient or nothing failed; releases a fully failed pass (retry the same J-1 day)', () => {
     expect(reminderClaimOutcome({ sendFailed: false, reached: 0 })).toBe('close');   // NO_CONSENT / NO_RECIPIENT only: nothing to retry
     expect(reminderClaimOutcome({ sendFailed: false, reached: 1 })).toBe('close');
-    expect(reminderClaimOutcome({ sendFailed: true, reached: 1, citizenFailed: true, citizenFailuresToday: 1 })).toBe('close');   // the agent was reached
+    // R41-E / G6: the agent reached no longer closes the claim of a person whose e-mail failed (retryable); a permanent refusal does
+    expect(reminderClaimOutcome({ sendFailed: true, reached: 1, citizenFailed: true, citizenFailuresToday: 1 })).toBe('release');
+    expect(reminderClaimOutcome({ sendFailed: true, reached: 1, citizenFailed: true, citizenRetryable: false, citizenFailuresToday: 1 })).toBe('close');
+    expect(reminderClaimOutcome({ sendFailed: true, reached: 0, citizenFailed: true, citizenRetryable: false, citizenFailuresToday: 1 })).toBe('close');
+    expect(reminderClaimOutcome({ sendFailed: true, reached: 1, citizenFailed: true, citizenFailuresToday: REMINDER_MAX_ATTEMPTS_PER_DAY })).toBe('close');
     expect(reminderClaimOutcome({ sendFailed: true, reached: 0, citizenFailed: true, citizenFailuresToday: 1 })).toBe('release');
     expect(reminderClaimOutcome({ sendFailed: true, reached: 0 })).toBe('release');   // agent-only failures: unchanged
   });

@@ -52,7 +52,9 @@ describe('PKG-11 audit pass 2 — source-level guarantees', () => {
     const s = src('api/_handlers/public/sms-notify.js');
     expect(s).toMatch(/isSmsSendWindow\(\) && await canNotify\(appointment\.citizenUserId, 'sms', 'reminder'\)/); expect(s).toMatch(/smsConfigured,/);
     expect(src('src/components/SmsToggle.jsx')).not.toMatch(/Vous recevrez un SMS la veille/);
-    for (const f of ['api/_handlers/public/sms-notify.js', 'api/_handlers/cron/rdv-reminder.js']) expect(src(f), f).toMatch(/normalizeFrenchPhone\(/);
+    for (const f of ['api/_handlers/public/sms-notify.js', 'api/_utils/twilio-sms.js']) expect(src(f), f).toMatch(/normalizeFrenchPhone\(/);
+    // R41-E: the reminder jobs send through the shared Twilio helper (E.164 + timeout)
+    for (const f of ['api/_handlers/cron/rdv-reminder.js', 'api/_handlers/cron/parcours-reminder.js']) expect(src(f), f).toMatch(/sendTwilioSms\(/);
     expect(src('api/_handlers/cron/rdv-reminder.js')).not.toMatch(/errBody/);
   });
   it('restriction: share links sealed while it holds, requests serialised per person', () => {

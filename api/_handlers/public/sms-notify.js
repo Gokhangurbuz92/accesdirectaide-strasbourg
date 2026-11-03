@@ -168,6 +168,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: twilioBody.toString(),
+                    signal: AbortSignal.timeout(10_000),   // R41-E: a hung provider cannot stall the request
                 });
 
                 if (!twilioRes.ok) {
@@ -191,8 +192,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     logger.info(`[SMS] Sent to=${maskPhone(phoneNumber)} sid=${smsResult.sid}`);
                 }
             } catch (twilioErr) {
-                // @ts-ignore
-                logger.error('[SMS] Twilio network error:', twilioErr.message);
+                logger.error({ err: { name: twilioErr?.name } }, '[SMS] Twilio network error');   // R41-E: the name only
                 // Email fallback on network failure
                 await sendEmailFallback(appointment, phoneNumber, message);
             }

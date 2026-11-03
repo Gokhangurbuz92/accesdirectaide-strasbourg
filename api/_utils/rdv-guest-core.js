@@ -145,12 +145,15 @@ export const REMINDER_MAX_ATTEMPTS_PER_DAY = 3;
 /**
  * R39 — what the J-1 reminder cron does with its claim after one pass on an appointment: 'release' (reminder_locked_at back to NULL, reminder_sent_at stays
  * NULL: a later run of the same J-1 day may retry) or 'close' (reminder_sent_at = now: never sent again).
- *   - something reached its recipient, or nothing failed (e.g. NO_CONSENT / NO_RECIPIENT only): close;
- *   - every attempt failed: release — unless the person's e-mail already failed REMINDER_MAX_ATTEMPTS_PER_DAY times today (this one included): close.
- * @param {{ sendFailed: boolean, reached: number, citizenFailed?: boolean, citizenFailuresToday?: number }} pass
+ * R41-E / G6 — the person's reach is counted on its own: another recipient reached (the agent's e-mail or in-app notice) no longer closes the claim of a
+ * person whose e-mail failed for a retryable reason (the cron skips, on the retry, every recipient already reached that day).
+ *   - the person's e-mail failed: release while the failure is retryable and fewer than REMINDER_MAX_ATTEMPTS_PER_DAY failed today (this one included),
+ *     otherwise close (a permanent refusal, or the bound reached);
+ *   - otherwise: something reached its recipient, or nothing failed (e.g. NO_CONSENT / NO_RECIPIENT only): close; every attempt failed: release.
+ * @param {{ sendFailed: boolean, reached: number, citizenFailed?: boolean, citizenRetryable?: boolean, citizenFailuresToday?: number }} pass
  */
-export function reminderClaimOutcome({ sendFailed, reached, citizenFailed = false, citizenFailuresToday = 0 }) {
+export function reminderClaimOutcome({ sendFailed, reached, citizenFailed = false, citizenRetryable = true, citizenFailuresToday = 0 }) {
+  if (citizenFailed) return citizenRetryable && citizenFailuresToday < REMINDER_MAX_ATTEMPTS_PER_DAY ? 'release' : 'close';
   if (!sendFailed || reached > 0) return 'close';
-  if (citizenFailed && citizenFailuresToday >= REMINDER_MAX_ATTEMPTS_PER_DAY) return 'close';
   return 'release';
 }
