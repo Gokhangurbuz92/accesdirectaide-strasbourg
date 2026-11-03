@@ -83,7 +83,7 @@ describe('R40 — cross-language vocabulary', () => {
     ['assisted suicide law', 'en', 'fin de vie'], ['Sterbehilfe Gesetz', 'de', 'fin de vie'], ['ötanazi yasası', 'tr', 'fin de vie'], ['القتل الرحيم', 'ar', 'fin de vie'],
     ['закон про евтаназію', 'uk', 'fin de vie'], ['Zwangsräumung', 'de', 'expulsion'], ['виселення з квартири', 'uk', 'logement expulsion'],
     ['tek ebeveyn yardımı', 'tr', 'famille monoparentale'], ['alleinerziehend', 'de', 'famille monoparentale'], ['Schuldnerberatung', 'de', 'dettes'],
-    ['Schwerbehindertenausweis', 'de', 'handicap'], ['рахунок за газ', 'uk', 'énergie'], ['не можу оплатити рахунок за світло', 'uk', 'énergie'],
+    ['Schwerbehindertenausweis', 'de', 'carte mobilité inclusion'] /* R41: the card, not the disability alone (the CMI sheet F34049) */, ['рахунок за газ', 'uk', 'énergie'], ['не можу оплатити рахунок за світло', 'uk', 'énergie'],
     ['банк відмовив відкрити рахунок', 'uk', 'compte bancaire'], ['oturma izni', 'tr', 'titre de séjour'],
   ])('%s (%s) → %s', (q, l, fr) => expect(crossLanguageQuery(q, l).query).toBe(fr));
   it('« without papers » is the French « sans papiers » (→ the AME sheet\'s « situation irrégulière »)', () => {

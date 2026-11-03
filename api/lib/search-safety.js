@@ -19,7 +19,10 @@ const w = (alts) => new RegExp(`(?<![\\p{L}\\p{N}])(?:${alts})(?![\\p{L}\\p{N}])
 const SUICIDE = w("suicides?|suicider|suicidaires?|idees? noires|me tuer|se tuer|en finir|envie de mourir|plus envie de vivre|veux mourir|"
   + "m'aide\\p{L}* a mourir|aidez[- ]moi a mourir|kill (?:myself|himself|herself|themselves)|end my life|suicidal|want to die|(?:don't|dont|do not) want to live|"
   + "intihar\\p{L}*|kendimi oldur\\p{L}*|olmek istiyorum|selbstmord\\p{L}*|suizid\\p{L}*|mich umbringen|nicht mehr leben|will sterben|"
-  + "суіцид\\p{L}*|самогубств\\p{L}*|покінчити з собою|не хочу жити|انتحار|انتحر|اريد ان اموت");
+  + "суіцид\\p{L}*|самогубств\\p{L}*|покінчити з собою|не хочу жити|"
+  // R41: the Arabic verb in every person (« ينتحر » he, « تنتحر » she / you, « أنتحر » I, « سأنتحر » I will, « منتحر » suicidal) and the noun with its
+  // article (« الانتحار »): « صديقي يريد أن ينتحر » (my friend wants to kill himself) had no signal and, no word being understood, no result at all
+  + "[وفس]?[اينتم]نتحر\\p{L}*|[وف]?(?:ال)?انتحار\\p{L}*|اريد ان اموت");
 /** the end-of-life debate and its law, in the six languages (folded) */
 const END_OF_LIFE = w("suicides? assistes?|assistance au suicide|aide (?:active |medicale )?a mourir|euthanasie|fin de vie|mourir dans la dignite|"
   + "assisted (?:suicide|dying)|euthanasia|end of life|sterbehilfe|assistierte\\p{L}* suizid\\p{L}*|otanazi\\p{L}*|евтаназі\\p{L}*|القتل الرحيم");
@@ -49,7 +52,12 @@ const SIGNALS = [
 /** @param {...string} queries the query as typed, and its French translation when there is one @returns {{ kind: string, numbers: string[], structureTypes: string[], topic: string } | null} */
 export function safetySignal(...queries) {
   const qs = queries.filter(Boolean).map(fold);
+  // R41: the French translation keeps the suicide word but drops what the vocabulary does not know — « статистика самогубств закон » (suicide statistics,
+  // law) became « numéro écoute suicide » and showed the 3114. When the query AS TYPED names suicide as a subject (law, statistics…) without any
+  // first-person or close-person marker, its translation does not override that reading. A query as typed that carries distress keeps the number.
+  const aboutSuicide = qs.length > 1 && SUICIDE.test(qs[0]) && !suicideSignal(qs[0]);
   for (const [kind, test, numbers, structureTypes, topic] of SIGNALS) {
+    if (kind === 'suicide' && aboutSuicide) continue;
     const t = typeof test === 'function' ? test : (/** @type {string} */ q) => test.test(q);
     if (qs.some((q) => t(q))) return { kind, numbers, structureTypes, topic };
   }

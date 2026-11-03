@@ -144,6 +144,42 @@
    ]
   },
   {
+   "id": "disability-card",
+   "fr": "carte mobilité inclusion",
+   "note": "R41: a card or badge for disabled people, asked in another language, finds the French card (Carte mobilité inclusion, F34049). This only FINDS the French sheet: it never says that a foreign card (Schwerbehindertenausweis, Blue Badge, a Turkish or Ukrainian disability certificate) is equivalent to the CMI or recognised in France.",
+   "en": [
+    "disability card*",
+    "disabled card*",
+    "disability badge*",
+    "disabled badge*",
+    "blue badge*",
+    "disabled parking*",
+    "disability parking*"
+   ],
+   "tr": [
+    "engelli kart*",
+    "engelli kimlik kart*",
+    "engelli park*",
+    "özürlü kart*"
+   ],
+   "ar": [
+    "بطاقه اعاقه*",
+    "بطاقه معاق*",
+    "بطاقه ذوي الاعاقه"
+   ],
+   "de": [
+    "schwerbehindertenausweis*",
+    "behindertenausweis*",
+    "behindertenparkausweis*",
+    "parkausweis* für behinderte"
+   ],
+   "uk": [
+    "посвідчен* інвалід*",
+    "посвідчен* особ* з інвалідн*",
+    "картк* інвалід*"
+   ]
+  },
+  {
    "id": "health",
    "fr": "santé",
    "en": [

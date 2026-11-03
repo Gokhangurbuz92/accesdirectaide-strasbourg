@@ -57,6 +57,21 @@ export const EVERYDAY_PHRASES = [
   [/\b(payer|financer|regler) (la |une |l')?(maisons? de retraite|ehpad)\b/g, 'aide sociale hebergement agee'],
   // R38 (D16): parents who « entrust » their child to child protection: the sheet « Placement volontaire d'un enfant par ses parents » (F959)
   [/\bconfier (mon|ma|mes|notre|nos) (enfants?|fils|filles?|bebes?) (a l'?\s?)?ase\b/g, 'placement volontaire enfant parents ase'],
+  // R41: the everyday names of a childminder are what the official sheets call a « mode de garde » (F38243 « Vous avez trouvé un mode de garde pour votre
+  // enfant : aides financières ») or an « assistante maternelle »: « aide pour payer la nounou » had one word, « nounou », found in no record
+  [/\b(nounous?|nourrices?)\b/g, 'mode_de_garde assistante_maternelle'],
+  // R41: « how long to keep » papers is the official « durée de conservation » (F19134); « temps » alone matched « en même temps » in the sheets on
+  // lost and stolen identity papers. Only the question of a duration of keeping, never a place to store documents.
+  [/\b(pendant |pour )?(combien de temps|jusqu'a quand) (faut[\s-]+il |dois[\s-]+je |je dois |on doit |doit[\s-]+on )?(garder|conserver)\b/g, 'duree_de_conservation'],
+  // R41: depression is a matter of « santé mentale » (F34917 « Consultation d'un psychologue ou d'un psychiatre »). Not a crisis by itself: the crisis
+  // signal (search-safety.js) reads the query as typed, so words of distress in the same query still show the 3114.
+  [/\b(depressions?|depressi(f|fs|ve|ves)|deprimee?s?|souffrance psychique)\b/g, 'sante_mentale'],
+  // R41: a cheap complementary health insurance: the public one for modest incomes is the « complémentaire santé solidaire » (C2S: « gratuite ou payante
+  // selon le niveau des revenus », as its published record says; the Assurance maladie decides). « mutuelle » is kept, so the general complementary-insurance démarche is found too.
+  [/\bmutuelles? (pas chere?s?|moins chere?s?|gratuites?|a petit prix|bon marche|economiques?)\b/g, 'mutuelle complementaire_sante_solidaire'],
+  // R41: the name of the French card (F34049), searched as ONE expression — it is also what a card for disabled people asked in another language becomes
+  // (data/i18n/search-lexicon.json « disability-card »); its words alone found the « carte de séjour » démarches
+  [/\bcarte (de )?mobilite inclusion\b/g, 'carte_mobilite_inclusion'],
   [/\b(sans[\s-]+papiers?|pas de papiers)\b/g, 'irreguliere'],
   [/\bmaisons? de retraite\b/g, 'ehpad'],
   [/\bgrands?[\s-]+(meres?|peres?|parents)\b/g, 'agee'],
