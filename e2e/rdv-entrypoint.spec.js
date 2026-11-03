@@ -20,6 +20,8 @@ test.describe('P10-A RDV public entrypoint', () => {
     await expect(page).toHaveURL(/\/auth\/login\?next=%2Frdv%2Fstructure-test/, { timeout: 15000 });
     await expect(page.getByRole('heading', { name: /Connexion Particulier/i })).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('link', { name: /Je n'ai pas de compte/i })).toBeVisible({ timeout: 15000 });
+    // R41: the account-free page is never reached when the server does not offer it (here no API answers the guest endpoint)
+    expect(new URL(page.url()).pathname).not.toContain('/sans-compte');
   });
 
   test('shows rdv unavailable screen when structure has not activated booking', async ({ page }) => {
@@ -58,5 +60,9 @@ test.describe('P10-A RDV public entrypoint', () => {
 
     await expect(page.getByText('Rendez-vous indisponible (non publié)')).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('link', { name: /Demander/i })).toBeVisible({ timeout: 15000 });
+    // R41: closed booking stays closed — no account-free entry is offered on a page that is not the API's own answer (src/lib/guestBooking.js)
+    await expect(page.getByTestId('rdv-unpublished')).toBeVisible();
+    await expect(page.getByTestId('rdv-guest-cta')).toHaveCount(0);
+    await expect(page.locator('a[href*="/sans-compte"]')).toHaveCount(0);
   });
 });

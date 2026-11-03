@@ -40,9 +40,27 @@ test.describe('Accessibility and Keyboard Navigation', () => {
     await expect(skipLink).toBeFocused();
     await expect(skipLink).toBeVisible();
 
-    // 3. Tab to Logo
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('link', { name: /aller.*accueil/i }).first()).toBeFocused();
+    // 3. Tab to the logo. R41: since R32 (language offer, 906587f) and R36 (header utility row, 4623700) the controls ABOVE the logo come first, in the
+    // visual order: the one-line language offer (only when the browser prefers another language) and the utility row (language, text size,
+    // accessibility, theme, page reader). Every stop on the way must be one of those controls, the skip link is never revisited, and the logo is
+    // reached within a bounded number of stops (the visible desktop logo, not the phone one).
+    const logo = page.getByRole('link', { name: /aller.*accueil/i }).filter({ visible: true });
+    await expect(logo).toHaveCount(1);
+    const beforeLogo = [];
+    for (let i = 0; i < 12; i++) {
+      await page.keyboard.press('Tab');
+      if (await logo.evaluate(el => el === document.activeElement)) break;
+      beforeLogo.push(await page.evaluate(() => {
+        const el = document.activeElement;
+        const zone = el?.closest('[data-testid="language-suggestion"]') ? 'language-suggestion' : el?.closest('[data-testid="header-utilities"]') ? 'header-utilities' : 'other';
+        return { zone, tag: el?.tagName || '', name: (el?.getAttribute('aria-label') || el?.textContent || '').trim().slice(0, 40) };
+      }));
+    }
+    await expect(logo).toBeFocused();
+    expect(beforeLogo.filter(s => s.zone === 'other'), 'only the language offer and the header utility row come before the logo').toEqual([]);
+    expect(beforeLogo.map(s => s.zone), 'the language offer (when shown) comes before the utility row, as on screen')
+      .toEqual([...beforeLogo.map(s => s.zone)].sort((a, b) => (a === b ? 0 : a === 'language-suggestion' ? -1 : 1)));
+    expect(beforeLogo.some(s => s.zone === 'header-utilities'), 'the utility row is reachable by keyboard').toBe(true);
 
     // 4. Tab through Nav Items
     await page.keyboard.press('Tab');
