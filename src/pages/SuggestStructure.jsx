@@ -25,24 +25,33 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import i18n, { useT } from '@/i18n';
+import { Trans } from 'react-i18next';
+
+/** French text inside any interface language: the server's own message */
+const FR = { lang: 'fr', dir: 'ltr' };
 
 /**
  * SuggestStructure — Formulaire multi-étapes premium
  * Permet aux citoyens de proposer une structure d'aide sociale.
  * 3 étapes : Identité → Contact → Missions
+ * R40: the screen is in the interface language (namespace `structures`, `suggest.*`); the proposal itself is sent with French field names
+ * (it is read by a French moderator), and a message written by the server is shown as it is (French, lang="fr").
  */
 
 const STEPS = [
-    { id: 'identity', title: 'Identité', icon: Building2 },
-    { id: 'location', title: 'Contact', icon: MapPin },
-    { id: 'details', title: 'Missions', icon: Info },
+    { id: 'identity', icon: Building2 },
+    { id: 'location', icon: MapPin },
+    { id: 'details', icon: Info },
 ];
 
 export default function SuggestStructure() {
+    const { t } = useT('structures');
+    const STEP_TITLES = { identity: t('structures:suggest.step_identity', 'Identité'), location: t('structures:suggest.step_contact', 'Contact'), details: t('structures:suggest.step_missions', 'Missions') };
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(/** @type {string | null} */ (null));
+    const [error, setError] = useState(/** @type {{ text: string, fr?: boolean } | null} */ (null));
 
     const [formData, setFormData] = useState({
         name: '',
@@ -83,8 +92,8 @@ export default function SuggestStructure() {
         // owner usefulness pass (2026-10-25): the form sent « name » and no consent while the server (api/_utils/schemas.js suggestStructureSchema)
         // requires « structureName », « city » and « consent » — every proposal was refused and shown as an outage. The payload now matches the server;
         // the other details travel in « message »; the server's own message is shown.
-        if (!formData.name.trim() || !formData.city.trim()) { setError('Indiquez au moins le nom de la structure et sa ville.'); return; }
-        if (!formData.consent) { setError('Cochez la case d’accord pour envoyer la proposition.'); return; }
+        if (!formData.name.trim() || !formData.city.trim()) { setError({ text: t('structures:suggest.error_required', 'Indiquez au moins le nom de la structure et sa ville.') }); return; }
+        if (!formData.consent) { setError({ text: t('structures:suggest.error_consent', 'Cochez la case d’accord pour envoyer la proposition.') }); return; }
         const website = formData.website.trim() && !/^https?:\/\//i.test(formData.website.trim()) ? `https://${formData.website.trim()}` : formData.website.trim();
         const details = [['SIRET', formData.siret], ['Adresse', formData.address], ['Code postal', formData.zipCode], ['Téléphone', formData.phone],
             ['Missions', formData.description], ['Publics', formData.publics], ['Horaires', formData.openingHours]].filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k} : ${String(v).trim()}`).join('\n');
@@ -100,13 +109,15 @@ export default function SuggestStructure() {
 
             if (!response.ok) {
                 const data = /** @type {{ message?: string }} */ (await response.json().catch(() => ({})));
-                throw new Error(data.message || (response.status === 400 ? 'Certaines informations ne sont pas valides : vérifiez le site web et l’adresse e-mail.' : 'Le service est momentanément indisponible. Veuillez réessayer ultérieurement.'));
+                setError(data.message ? { text: data.message, fr: true } : { text: response.status === 400 ? t('structures:suggest.error_invalid', 'Certaines informations ne sont pas valides : vérifiez le site web et l’adresse e-mail.') : t('structures:suggest.error_unavailable', 'Le service est momentanément indisponible. Veuillez réessayer ultérieurement.') });
+                return;
             }
 
             setSuccess(true);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
-            setError((err instanceof Error && err.message) || 'Le service est momentanément indisponible. Veuillez réessayer ultérieurement.');
+            if (import.meta.env.DEV) console.error('[SuggestStructure]', err);
+            setError({ text: t('structures:suggest.error_unavailable', 'Le service est momentanément indisponible. Veuillez réessayer ultérieurement.') });
         } finally {
             setLoading(false);
         }
@@ -116,25 +127,25 @@ export default function SuggestStructure() {
     if (success) {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-6 bg-slate-50/30">
-                <SEO title="Merci — Structure proposée" description="Votre suggestion a été envoyée" path="/proposer-une-structure" />
+                <SEO title={t('structures:suggest.success_meta_title', 'Merci — Structure proposée')} description={t('structures:suggest.success_meta_description', 'Votre suggestion a été envoyée')} path="/proposer-une-structure" />
                 <div className="max-w-md w-full text-center space-y-8">
                     <div className="relative inline-block">
                         <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-50">
-                            <CheckCircle2 size={48} />
+                            <CheckCircle2 size={48} aria-hidden="true" />
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-white p-2 rounded-full shadow-lg border border-emerald-100">
-                            <ShieldCheck className="text-emerald-500 w-5 h-5" />
+                        <div className="absolute -bottom-2 -end-2 bg-white p-2 rounded-full shadow-lg border border-emerald-100">
+                            <ShieldCheck className="text-emerald-500 w-5 h-5" aria-hidden="true" />
                         </div>
                     </div>
                     <div className="space-y-4">
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight">C&apos;est envoyé&nbsp;!</h1>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tight">{t('structures:suggest.success_title', 'C’est envoyé !')}</h1>
                         <p className="text-lg text-slate-600 leading-relaxed">
-                            Votre contribution est précieuse. Un modérateur va vérifier les informations avant la publication dans l&apos;annuaire.
+                            {t('structures:suggest.success_text', "Votre contribution est précieuse. Un modérateur va vérifier les informations avant la publication dans l'annuaire.")}
                         </p>
                     </div>
                     <div className="pt-4 space-y-3">
                         <Button onClick={() => (window.location.href = '/')} className="w-full h-12 bg-slate-900 rounded-xl font-bold">
-                            Retour à l&apos;accueil
+                            {t('structures:suggest.success_home', "Retour à l'accueil")}
                         </Button>
                         <Button
                             variant="ghost"
@@ -144,7 +155,7 @@ export default function SuggestStructure() {
                             }}
                             className="w-full text-indigo-600"
                         >
-                            Faire une autre suggestion
+                            {t('structures:suggest.success_again', 'Faire une autre suggestion')}
                         </Button>
                     </div>
                 </div>
@@ -155,24 +166,24 @@ export default function SuggestStructure() {
     /* ── Formulaire multi-étapes ────────────────────── */
     return (
         <div className="min-h-screen bg-[#fbfcfd] py-16 px-4">
-            <SEO title="Proposer une structure" description="Aidez les citoyens en référençant un CCAS, une association ou un service public dans l'annuaire." path="/proposer-une-structure" />
+            <SEO title={t('structures:suggest.title', 'Proposer une structure')} description={t('structures:suggest.meta_description', "Aidez les citoyens en référençant un CCAS, une association ou un service public dans l'annuaire.")} path="/proposer-une-structure" />
 
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-12 text-center space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-bold tracking-wide mb-2 uppercase">
-                        <Search size={14} />
-                        <span>Enrichir l&apos;annuaire</span>
+                        <Search size={14} aria-hidden="true" />
+                        <span>{t('structures:suggest.badge', "Enrichir l'annuaire")}</span>
                     </div>
-                    <h1 className="text-5xl font-black text-slate-900 tracking-tight lg:text-6xl">Proposer une structure</h1>
+                    <h1 className="text-5xl font-black text-slate-900 tracking-tight lg:text-6xl">{t('structures:suggest.title', 'Proposer une structure')}</h1>
                     <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-                        Aidez les citoyens à trouver le bon interlocuteur en référençant un CCAS, une association ou un service public.
+                        {t('structures:suggest.intro', 'Aidez les citoyens à trouver le bon interlocuteur en référençant un CCAS, une association ou un service public.')}
                     </p>
                 </div>
 
                 {/* Stepper */}
                 <div className="mb-12 relative flex justify-between max-w-2xl mx-auto">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 z-0" />
+                    <div className="absolute top-1/2 start-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 z-0" />
                     {STEPS.map((step, idx) => {
                         const Icon = step.icon;
                         const isActive = idx === currentStep;
@@ -192,7 +203,7 @@ export default function SuggestStructure() {
                                     {isCompleted ? <CheckCircle2 size={20} /> : <Icon size={20} />}
                                 </div>
                                 <span className={cn('text-xs font-bold uppercase tracking-widest', isActive ? 'text-indigo-600' : 'text-slate-400')}>
-                                    {step.title}
+                                    {STEP_TITLES[step.id]}
                                 </span>
                             </div>
                         );
@@ -202,9 +213,9 @@ export default function SuggestStructure() {
                 {/* Error */}
                 {error && (
                     <Alert variant="destructive" className="mb-8 rounded-2xl bg-red-50 border-red-100">
-                        <AlertCircle className="h-5 w-5" />
-                        <AlertTitle>Erreur d&apos;envoi</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
+                        <AlertCircle className="h-5 w-5" aria-hidden="true" />
+                        <AlertTitle>{t('structures:suggest.error_title', "Erreur d'envoi")}</AlertTitle>
+                        <AlertDescription><span {...(error.fr ? FR : {})}>{error.text}</span></AlertDescription>
                     </Alert>
                 )}
 
@@ -220,28 +231,28 @@ export default function SuggestStructure() {
                                             <Building2 size={24} />
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-bold text-slate-900">Informations de base</h2>
-                                            <p className="text-sm text-slate-500">Identifiez la structure légalement</p>
+                                            <h2 className="text-2xl font-bold text-slate-900">{t('structures:suggest.identity_title', 'Informations de base')}</h2>
+                                            <p className="text-sm text-slate-500">{t('structures:suggest.identity_intro', 'Identifiez la structure légalement')}</p>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-2">
                                             <Label htmlFor="name" className="text-slate-700 font-semibold">
-                                                Nom de la structure *
+                                                {t('structures:suggest.name', 'Nom de la structure *')}
                                             </Label>
                                             <Input
                                                 id="name"
                                                 value={formData.name}
                                                 onChange={(e) => updateField('name', e.target.value)}
-                                                placeholder="ex: CCAS de Lyon"
+                                                placeholder={t('structures:suggest.name_placeholder', 'ex: CCAS de Lyon')}
                                                 required
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="type" className="text-slate-700 font-semibold">
-                                                Type d&apos;établissement
+                                                {t('structures:suggest.type', "Type d'établissement")}
                                             </Label>
                                             <select
                                                 id="type"
@@ -249,20 +260,20 @@ export default function SuggestStructure() {
                                                 onChange={(e) => updateField('type', e.target.value)}
                                                 className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
                                             >
-                                                <option value="public">Public (CCAS, Mairie...)</option>
-                                                <option value="association">Association</option>
-                                                <option value="fondation">Fondation / Autre</option>
+                                                <option value="public">{t('structures:suggest.type_public', 'Public (CCAS, Mairie...)')}</option>
+                                                <option value="association">{t('structures:suggest.type_association', 'Association')}</option>
+                                                <option value="fondation">{t('structures:suggest.type_foundation', 'Fondation / Autre')}</option>
                                             </select>
                                         </div>
                                         <div className="space-y-2 md:col-span-2">
                                             <Label htmlFor="siret" className="text-slate-700 font-semibold">
-                                                Numéro SIRET (optionnel)
+                                                {t('structures:suggest.siret', 'Numéro SIRET (optionnel)')}
                                             </Label>
                                             <Input
                                                 id="siret"
                                                 value={formData.siret}
                                                 onChange={(e) => updateField('siret', e.target.value)}
-                                                placeholder="14 chiffres pour une identification précise"
+                                                placeholder={t('structures:suggest.siret_placeholder', '14 chiffres pour une identification précise')}
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
                                             />
                                         </div>
@@ -278,21 +289,21 @@ export default function SuggestStructure() {
                                             <MapPin size={24} />
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-bold text-slate-900">Contact et Accès</h2>
-                                            <p className="text-sm text-slate-500">Où se situe la structure ?</p>
+                                            <h2 className="text-2xl font-bold text-slate-900">{t('structures:suggest.contact_title', 'Contact et Accès')}</h2>
+                                            <p className="text-sm text-slate-500">{t('structures:suggest.contact_intro', 'Où se situe la structure ?')}</p>
                                         </div>
                                     </div>
 
                                     <div className="space-y-6">
                                         <div className="space-y-2">
                                             <Label htmlFor="address" className="text-slate-700 font-semibold">
-                                                Adresse postale complète *
+                                                {t('structures:suggest.address', 'Adresse postale complète *')}
                                             </Label>
                                             <Input
                                                 id="address"
                                                 value={formData.address}
                                                 onChange={(e) => updateField('address', e.target.value)}
-                                                placeholder="Numéro et nom de rue"
+                                                placeholder={t('structures:suggest.address_placeholder', 'Numéro et nom de rue')}
                                                 required
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                             />
@@ -300,7 +311,7 @@ export default function SuggestStructure() {
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                                 <Label htmlFor="zipCode" className="text-slate-700 font-semibold">
-                                                    Code Postal *
+                                                    {t('structures:suggest.zip', 'Code Postal *')}
                                                 </Label>
                                                 <Input
                                                     id="zipCode"
@@ -313,7 +324,7 @@ export default function SuggestStructure() {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="city" className="text-slate-700 font-semibold">
-                                                    Ville *
+                                                    {t('structures:suggest.city', 'Ville *')}
                                                 </Label>
                                                 <Input
                                                     id="city"
@@ -329,7 +340,7 @@ export default function SuggestStructure() {
                                             <div className="space-y-2">
                                                 <Label htmlFor="email" className="text-slate-700 font-semibold flex items-center gap-2">
                                                     <Mail size={14} className="text-slate-400" />
-                                                    Email
+                                                    {t('structures:suggest.email', 'Email')}
                                                 </Label>
                                                 <Input
                                                     id="email"
@@ -343,7 +354,7 @@ export default function SuggestStructure() {
                                             <div className="space-y-2">
                                                 <Label htmlFor="phone" className="text-slate-700 font-semibold flex items-center gap-2">
                                                     <Phone size={14} className="text-slate-400" />
-                                                    Téléphone
+                                                    {t('structures:suggest.phone', 'Téléphone')}
                                                 </Label>
                                                 <Input
                                                     id="phone"
@@ -357,7 +368,7 @@ export default function SuggestStructure() {
                                         <div className="space-y-2 pt-2">
                                             <Label htmlFor="website" className="text-slate-700 font-semibold flex items-center gap-2">
                                                 <Globe size={14} className="text-slate-400" />
-                                                Site internet
+                                                {t('structures:suggest.website', 'Site internet')}
                                             </Label>
                                             <Input
                                                 id="website"
@@ -379,8 +390,8 @@ export default function SuggestStructure() {
                                             <Info size={24} />
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-bold text-slate-900">Missions et Publics</h2>
-                                            <p className="text-sm text-slate-500">Précisez les domaines d&apos;intervention</p>
+                                            <h2 className="text-2xl font-bold text-slate-900">{t('structures:suggest.missions_title', 'Missions et Publics')}</h2>
+                                            <p className="text-sm text-slate-500">{t('structures:suggest.missions_intro', "Précisez les domaines d'intervention")}</p>
                                         </div>
                                     </div>
 
@@ -388,13 +399,13 @@ export default function SuggestStructure() {
                                         <div className="space-y-2">
                                             <Label htmlFor="description" className="text-slate-700 font-semibold flex items-center gap-2">
                                                 <Clock size={14} className="text-slate-400" />
-                                                Description des missions
+                                                {t('structures:suggest.description', 'Description des missions')}
                                             </Label>
                                             <textarea
                                                 id="description"
                                                 value={formData.description}
                                                 onChange={(e) => updateField('description', e.target.value)}
-                                                placeholder="Quels sont les services proposés par cette structure ?"
+                                                placeholder={t('structures:suggest.description_placeholder', 'Quels sont les services proposés par cette structure ?')}
                                                 className="w-full min-h-[140px] rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
                                             />
                                         </div>
@@ -402,33 +413,33 @@ export default function SuggestStructure() {
                                             <div className="space-y-2">
                                                 <Label htmlFor="publics" className="text-slate-700 font-semibold flex items-center gap-2">
                                                     <Users size={14} className="text-slate-400" />
-                                                    Publics accueillis
+                                                    {t('structures:suggest.publics', 'Publics accueillis')}
                                                 </Label>
                                                 <Input
                                                     id="publics"
                                                     value={formData.publics}
                                                     onChange={(e) => updateField('publics', e.target.value)}
-                                                    placeholder="Seniors, jeunes, familles..."
+                                                    placeholder={t('structures:suggest.publics_placeholder', 'Seniors, jeunes, familles...')}
                                                     className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="openingHours" className="text-slate-700 font-semibold flex items-center gap-2">
                                                     <Clock size={14} className="text-slate-400" />
-                                                    Horaires d&apos;ouverture
+                                                    {t('structures:suggest.hours', "Horaires d'ouverture")}
                                                 </Label>
                                                 <Input
                                                     id="openingHours"
                                                     value={formData.openingHours}
                                                     onChange={(e) => updateField('openingHours', e.target.value)}
-                                                    placeholder="ex: Lun-Ven 9h-17h"
+                                                    placeholder={t('structures:suggest.hours_placeholder', 'ex: Lun-Ven 9h-17h')}
                                                     className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                                 />
                                             </div>
                                         </div>
                                         <label className="flex items-start gap-3 text-sm text-slate-800" data-testid="suggest-consent">
                                             <input type="checkbox" className="mt-1 h-4 w-4" checked={formData.consent} onChange={(e) => setFormData((prev) => ({ ...prev, consent: e.target.checked }))} />
-                                            <span>J’accepte qu’ADA conserve ces informations pour étudier la proposition (voir la <Link className="text-indigo-700 underline" to="/politique-confidentialite">politique de confidentialité</Link>).</span>
+                                            <span><Trans i18n={i18n} i18nKey="structures:suggest.consent" defaults="J’accepte qu’ADA conserve ces informations pour étudier la proposition (voir la <0>politique de confidentialité</0>)." components={[<Link key="privacy" className="text-indigo-700 underline" to="/politique-confidentialite" />]} /></span>
                                         </label>
                                     </div>
                                 </div>
@@ -443,7 +454,7 @@ export default function SuggestStructure() {
                                     disabled={currentStep === 0 || loading}
                                     className="h-12 px-6 rounded-xl text-slate-500 font-bold disabled:opacity-0"
                                 >
-                                    <ArrowLeft className="mr-2 w-4 h-4" /> Retour
+                                    <ArrowLeft className="me-2 w-4 h-4 rtl:-scale-x-100" aria-hidden="true" /> {t('structures:suggest.back', 'Retour')}
                                 </Button>
 
                                 <Button
@@ -459,12 +470,12 @@ export default function SuggestStructure() {
                                     {loading ? (
                                         <div className="flex items-center gap-2">
                                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            Traitement...
+                                            {t('structures:suggest.sending', 'Traitement...')}
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-2">
-                                            <span>{currentStep === STEPS.length - 1 ? 'Soumettre le dossier' : 'Continuer'}</span>
-                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            <span>{currentStep === STEPS.length - 1 ? t('structures:suggest.submit', 'Soumettre le dossier') : t('structures:suggest.continue', 'Continuer')}</span>
+                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform rtl:-scale-x-100 rtl:group-hover:-translate-x-1" aria-hidden="true" />
                                         </div>
                                     )}
                                 </Button>
@@ -479,9 +490,9 @@ export default function SuggestStructure() {
                         <div className="p-3 bg-white/10 rounded-2xl">
                             <Users className="w-6 h-6 text-indigo-300" />
                         </div>
-                        <div className="text-left">
-                            <p className="font-bold">Vous travaillez dans cette structure ?</p>
-                            <p className="text-indigo-200 text-sm">Écrivez-nous pour obtenir la gestion de cette fiche (créer un compte pro ouvrirait une nouvelle structure).</p>
+                        <div className="text-start">
+                            <p className="font-bold">{t('structures:suggest.pro_title', 'Vous travaillez dans cette structure ?')}</p>
+                            <p className="text-indigo-200 text-sm">{t('structures:suggest.pro_text', 'Écrivez-nous pour obtenir la gestion de cette fiche (créer un compte pro ouvrirait une nouvelle structure).')}</p>
                         </div>
                     </div>
                     <Button
@@ -489,7 +500,7 @@ export default function SuggestStructure() {
                         onClick={() => (window.location.href = '/contact?sujet=partenariat')}
                         className="bg-transparent border-white/20 text-white hover:bg-white hover:text-indigo-900 rounded-xl px-6"
                     >
-                        Nous contacter <ExternalLink className="ml-2 w-4 h-4" />
+                        {t('structures:suggest.contact_us', 'Nous contacter')} <ExternalLink className="ms-2 w-4 h-4" aria-hidden="true" />
                     </Button>
                 </div>
             </div>

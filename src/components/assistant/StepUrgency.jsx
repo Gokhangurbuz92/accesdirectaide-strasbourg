@@ -1,21 +1,23 @@
 // @ts-nocheck
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useT } from '@/i18n';
 
-const URGENCIES = [
-    { key: 'today', label: "Aujourd'hui" },
-    { key: '7days', label: 'Dans les 7 jours' },
-    { key: '1month', label: "J'ai le temps (1 mois+)" },
-];
-
-const OPTIONS = [
-    { key: 'handicap', label: 'Situation de handicap' },
-    { key: 'langue', label: 'Besoin de traduction / interprétariat' },
-    { key: 'numerique', label: 'Difficulté avec le numérique' },
-];
+// R40: the labels are in the interface language (namespace `diagnostic`); the keys are the values the wizard stores
+const URGENCIES = ['today', '7days', '1month'];
+const OPTIONS = ['handicap', 'langue', 'numerique'];
 
 // @ts-ignore
 export default function StepUrgency({ onNext, onBack }) {
+    const { t } = useT('diagnostic');
+    const LABELS = {
+        today: t('diagnostic:wizard.urgency.today', "Aujourd'hui"),
+        '7days': t('diagnostic:wizard.urgency.week', 'Dans les 7 jours'),
+        '1month': t('diagnostic:wizard.urgency.month', "J'ai le temps (1 mois+)"),
+        handicap: t('diagnostic:wizard.urgency.disability', 'Situation de handicap'),
+        langue: t('diagnostic:wizard.urgency.language', 'Besoin de traduction / interprétariat'),
+        numerique: t('diagnostic:wizard.urgency.digital', 'Difficulté avec le numérique'),
+    };
     const [urgency, setUrgency] = useState('');
     const [options, setOptions] = useState([]);
 
@@ -27,13 +29,13 @@ export default function StepUrgency({ onNext, onBack }) {
 
     return (
         <div>
-            <h2 className="mb-1 text-lg font-semibold text-slate-900">Niveau d&apos;urgence</h2>
-            <p className="mb-4 text-sm text-slate-600">Pour prioriser les recommandations.</p>
+            <h2 className="mb-1 text-lg font-semibold text-slate-900">{t('diagnostic:wizard.urgency.title', "Niveau d'urgence")}</h2>
+            <p className="mb-4 text-sm text-slate-600">{t('diagnostic:wizard.urgency.intro', 'Pour prioriser les recommandations.')}</p>
 
             <fieldset className="mb-5">
-                <legend className="sr-only">Urgence</legend>
-                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Niveau d'urgence">
-                    {URGENCIES.map(({ key, label }) => (
+                <legend className="sr-only">{t('diagnostic:wizard.urgency.legend', 'Urgence')}</legend>
+                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('diagnostic:wizard.urgency.title', "Niveau d'urgence")}>
+                    {URGENCIES.map((key) => (
                         <button
                             key={key}
                             type="button"
@@ -45,16 +47,16 @@ export default function StepUrgency({ onNext, onBack }) {
                                 : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                                 }`}
                         >
-                            {label}
+                            {LABELS[key]}
                         </button>
                     ))}
                 </div>
             </fieldset>
 
             <fieldset className="mb-5">
-                <legend className="mb-2 text-sm font-medium text-slate-700">Options complémentaires (optionnel)</legend>
+                <legend className="mb-2 text-sm font-medium text-slate-700">{t('diagnostic:wizard.urgency.options', 'Options complémentaires (optionnel)')}</legend>
                 <div className="space-y-2">
-                    {OPTIONS.map(({ key, label }) => (
+                    {OPTIONS.map((key) => (
                         <label
                             key={key}
                             className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
@@ -65,16 +67,16 @@ export default function StepUrgency({ onNext, onBack }) {
                                 onChange={() => toggleOption(key)}
                                 className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
                             />
-                            {label}
+                            {LABELS[key]}
                         </label>
                     ))}
                 </div>
             </fieldset>
 
             <div className="flex items-center gap-3">
-                <Button type="button" variant="outline" size="sm" onClick={onBack}>Retour</Button>
+                <Button type="button" variant="outline" size="sm" onClick={onBack}>{t('diagnostic:wizard.back', 'Retour')}</Button>
                 <Button type="button" size="sm" disabled={!urgency} onClick={() => onNext({ urgency, options })}>
-                    Continuer
+                    {t('diagnostic:wizard.continue', 'Continuer')}
                 </Button>
             </div>
         </div>
