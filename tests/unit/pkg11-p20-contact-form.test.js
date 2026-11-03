@@ -67,7 +67,7 @@ describe('PKG-11 / P20 contact form', () => {
     expect(codes).toEqual([200, 200, 200, 200, 200, 429]);
     const other = resOf(); await contact.default(reqOf(FORM, '203.0.113.11'), other); expect(other.statusCode).toBe(200);
     const page = readFileSync('src/pages/Contact.jsx', 'utf8');
-    expect(page).toMatch(/res\.ok && data\?\.accepted === true/);
+    expect(page).toMatch(/res\.ok && \(data\?\.accepted === true \|\| data\?\.delivered === true\)/);   // R40: « delivered » is the pre-R40 answer shape
     expect(page).not.toMatch(/\.catch\(\(\) => null\)|garantie|48h|chiffrés à l/);
   });
 });
