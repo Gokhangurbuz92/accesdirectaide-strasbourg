@@ -146,7 +146,7 @@ describe('coverage mapping — exact type labels of published records', () => {
   const RT = JSON.parse(fs.readFileSync('data/reference/service-response-types.v1.json', 'utf8'));
   const sub = (id) => REF.domains.flatMap((d) => d.subdomains).find((s) => s.id === id);
   it('psy, sante-sexuelle, pmi-petite-enfance and chrs-insertion name the FINESS / Annuaire labels the records carry (no invented type)', () => {
-    expect(sub('psy').structureTypes).toEqual([SCOPE[156][0], SCOPE[189][0]]);
+    expect(sub('psy').structureTypes).toEqual([SCOPE[156][0], SCOPE[189][0], SCOPE[221][0]]);   // R41-IJ: + BAPU (FINESS 221)
     expect(sub('sante-sexuelle').structureTypes).toEqual([SCOPE[228][0], SCOPE[638][0], SCOPE[231][0]]);
     expect(sub('pmi-petite-enfance').structureTypes).toEqual([SCOPE[223][0], OFFICE_KINDS.pmi.label]);
     expect(sub('chrs-insertion').structureTypes).toEqual([SCOPE[214][0]]);

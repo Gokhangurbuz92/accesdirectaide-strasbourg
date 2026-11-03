@@ -555,7 +555,9 @@
       "allocations familiales",
       "PAJE",
       "CAF",
-      "complément familial"
+      "complément familial",
+      "prestations familiales",
+      "soutien familial"
      ],
      "structureTypes": [
       "Caf (Caisse d'allocations familiales)"
@@ -687,7 +689,9 @@
      ],
      "structureTypes": [
       "Institut médico-éducatif (IME)",
-      "Service d’éducation spéciale et de soins à domicile (SESSAD)"
+      "Service d’éducation spéciale et de soins à domicile (SESSAD)",
+      "Centre d’action médico-sociale précoce (CAMSP)",
+      "Institut thérapeutique, éducatif et pédagogique (ITEP)"
      ],
      "casf": [
       2,
@@ -725,7 +729,8 @@
       "SAMSAH"
      ],
      "structureTypes": [
-      "Service d’accompagnement à la vie sociale (SAVS)"
+      "Service d’accompagnement à la vie sociale (SAVS)",
+      "Service d’accompagnement médico-social pour adultes handicapés (SAMSAH)"
      ],
      "casf": [
       7
@@ -942,8 +947,8 @@
      "id": "pass",
      "fr": "Soins pour personnes sans couverture (PASS)",
      "keywords": [
-      "PASS",
-      "permanence d'accès aux soins"
+      "permanence d'accès aux soins",
+      "permanences d'accès aux soins de santé"
      ],
      "structureTypes": [],
      "casf": [],
@@ -1003,7 +1008,8 @@
      ],
      "structureTypes": [
       "Centre médico-psychologique (CMP)",
-      "Centre médico-psycho-pédagogique (CMPP)"
+      "Centre médico-psycho-pédagogique (CMPP)",
+      "Bureau d’aide psychologique universitaire (BAPU)"
      ],
      "casf": [],
      "dataInclusion": [],
@@ -1033,10 +1039,12 @@
       "CSAPA",
       "CAARUD",
       "alcool",
-      "drogue"
+      "drogue",
+      "toxicomanie"
      ],
      "structureTypes": [
-      "Centre de soins, d’accompagnement et de prévention en addictologie (CSAPA)"
+      "Centre de soins, d’accompagnement et de prévention en addictologie (CSAPA)",
+      "Centre d’accueil et d’accompagnement à la réduction des risques pour usagers de drogues (CAARUD)"
      ],
      "casf": [
       9
