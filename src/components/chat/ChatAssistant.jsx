@@ -371,7 +371,7 @@ function CompassHeader({ onClose, territory }) {
           <Compass className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-sm font-bold">Boussole Sociale</h2>
+          <h2 className="text-sm font-bold" lang="fr">Boussole Sociale</h2>
           <div className="flex items-center gap-1.5">
             <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
             <span className="text-[10px] font-medium text-teal-100">

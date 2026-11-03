@@ -375,7 +375,7 @@ export default function SuggestStructure() {
                                                 id="website"
                                                 value={formData.website}
                                                 onChange={(e) => updateField('website', e.target.value)}
-                                                placeholder="https://www.ma-structure.fr"
+                                                placeholder={t('structures:suggest.website_placeholder', 'https://www.ma-structure.fr')}
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                             />
                                         </div>

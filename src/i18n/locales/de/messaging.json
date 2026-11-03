@@ -120,5 +120,7 @@
  "transparency.send": "Senden",
  "transparency.sent": "Dokument an die gewählte Einrichtung gesendet (nur sie sieht es).",
  "transparency.uploaded_by": "hochgeladen von",
- "transparency.uploaded_on": "am {{date}}"
+ "transparency.uploaded_on": "am {{date}}",
+ "chat.attachment_size": "{{name}} ({{size}} KB)",
+ "chat.attachment_remove": "Datei entfernen"
 }

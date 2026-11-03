@@ -1555,5 +1555,13 @@
  "proposal_status_labels.pending": "في انتظار تحقق ADA",
  "proposal_status_labels.accepted": "مقبول ومنشور",
  "proposal_status_labels.rejected": "مرفوض",
- "proposal_status_labels.withdrawn": "مسحوب"
+ "proposal_status_labels.withdrawn": "مسحوب",
+ "review_queue.status.open": "مفتوح",
+ "review_queue.status.resolved": "تمت معالجته",
+ "review_queue.status.resolved_by_ai": "عالجه الذكاء الاصطناعي",
+ "review_queue.status.ignored": "متجاهَل",
+ "review_queue.type.aide": "مساعدة",
+ "review_queue.type.demarche": "إجراء",
+ "review_queue.type.structure": "جهة",
+ "review_queue.type.actualite": "خبر"
 }

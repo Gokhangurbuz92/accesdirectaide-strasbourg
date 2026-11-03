@@ -120,5 +120,7 @@
  "transparency.send": "إرسال",
  "transparency.sent": "أُرسلت الوثيقة إلى الجهة المختارة (وهي وحدها تراها).",
  "transparency.uploaded_by": "أودعته",
- "transparency.uploaded_on": "بتاريخ {{date}}"
+ "transparency.uploaded_on": "بتاريخ {{date}}",
+ "chat.attachment_size": "{{name}} ({{size}} ك.ب)",
+ "chat.attachment_remove": "إزالة الملف"
 }

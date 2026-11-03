@@ -56,5 +56,6 @@
  "request.comment_vous_repondre_facultatif": "Wie wir Ihnen antworten können (optional)",
  "request.adresse_e_mail_ou_telephone": "E-Mail-Adresse oder Telefon",
  "request.ne_pas_remplir": "Nicht ausfüllen",
- "request.envoyer": "Senden"
+ "request.envoyer": "Senden",
+ "form.email_placeholder": "max@beispiel.de"
 }

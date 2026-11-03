@@ -369,10 +369,10 @@ export default function AdminReviewQueue() {
               value={filters.status}
               onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
             >
-              <option value="open">open</option>
-              <option value="resolved">resolved</option>
-              <option value="resolved_by_ai">resolved_by_ai</option>
-              <option value="ignored">ignored</option>
+              <option value="open">{t('admin:review_queue.status.open', 'Ouvert')}</option>
+              <option value="resolved">{t('admin:review_queue.status.resolved', 'Résolu')}</option>
+              <option value="resolved_by_ai">{t('admin:review_queue.status.resolved_by_ai', 'Résolu par l’IA')}</option>
+              <option value="ignored">{t('admin:review_queue.status.ignored', 'Ignoré')}</option>
             </select>
           </label>
 
@@ -384,10 +384,10 @@ export default function AdminReviewQueue() {
               onChange={(event) => setFilters((prev) => ({ ...prev, entityType: event.target.value }))}
             >
               <option value="">{t('admin:review_queue.filter.all', 'all')}</option>
-              <option value="aide">aide</option>
-              <option value="demarche">demarche</option>
-              <option value="structure">structure</option>
-              <option value="actualite">actualite</option>
+              <option value="aide">{t('admin:review_queue.type.aide', 'Aide')}</option>
+              <option value="demarche">{t('admin:review_queue.type.demarche', 'Démarche')}</option>
+              <option value="structure">{t('admin:review_queue.type.structure', 'Structure')}</option>
+              <option value="actualite">{t('admin:review_queue.type.actualite', 'Actualité')}</option>
             </select>
           </label>
 

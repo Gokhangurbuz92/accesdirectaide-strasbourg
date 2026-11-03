@@ -56,5 +56,6 @@
  "request.comment_vous_repondre_facultatif": "كيف نرد عليك (اختياري)",
  "request.adresse_e_mail_ou_telephone": "عنوان البريد الإلكتروني أو الهاتف",
  "request.ne_pas_remplir": "لا تملأ هذا الحقل",
- "request.envoyer": "إرسال"
+ "request.envoyer": "إرسال",
+ "form.email_placeholder": "name@example.com"
 }

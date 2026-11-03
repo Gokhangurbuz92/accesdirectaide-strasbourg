@@ -202,7 +202,7 @@ export default function ProLogin() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="nom@structure.fr"
+                                        placeholder={t('pro:login.email_placeholder', 'nom@structure.fr')}
                                         className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
                                         required
                                     />

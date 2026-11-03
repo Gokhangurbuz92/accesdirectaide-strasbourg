@@ -180,7 +180,7 @@ export default function SharedDossier() {
                         </h2>
                         <p className="text-sm text-slate-700 mb-6">{error}</p>
                         <Button variant="outline" onClick={() => navigate('/pro/dashboard')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> {t('pro:shared_dossier.back_dashboard', 'Retour au tableau de bord')}
+                            <ArrowLeft className="me-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" /> {t('pro:shared_dossier.back_dashboard', 'Retour au tableau de bord')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -202,7 +202,7 @@ export default function SharedDossier() {
                         onClick={() => navigate(-1)}
                         aria-label={t('pro:shared_dossier.back', 'Retour')}
                     >
-                        <ArrowLeft size={18} aria-hidden="true" />
+                        <ArrowLeft size={18} aria-hidden="true" className="rtl:-scale-x-100" />
                     </Button>
                     <div>
                         <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -342,9 +342,9 @@ export default function SharedDossier() {
                                 className="w-full bg-indigo-600 hover:bg-indigo-700"
                             >
                                 {updating ? (
-                                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                                    <Loader2 className="me-2 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                                 ) : (
-                                    <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                                    <CheckCircle2 className="me-2 h-3.5 w-3.5" aria-hidden="true" />
                                 )}
                                 {t('pro:shared_dossier.update', 'Mettre à jour')}
                             </Button>

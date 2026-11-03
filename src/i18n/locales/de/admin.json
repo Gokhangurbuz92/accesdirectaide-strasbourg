@@ -1536,5 +1536,13 @@
  "proposal_status_labels.pending": "Wartet auf Prüfung durch ADA",
  "proposal_status_labels.accepted": "Angenommen und veröffentlicht",
  "proposal_status_labels.rejected": "Abgelehnt",
- "proposal_status_labels.withdrawn": "Zurückgezogen"
+ "proposal_status_labels.withdrawn": "Zurückgezogen",
+ "review_queue.status.open": "Offen",
+ "review_queue.status.resolved": "Erledigt",
+ "review_queue.status.resolved_by_ai": "Von der KI erledigt",
+ "review_queue.status.ignored": "Ignoriert",
+ "review_queue.type.aide": "Hilfe",
+ "review_queue.type.demarche": "Verfahren",
+ "review_queue.type.structure": "Einrichtung",
+ "review_queue.type.actualite": "Nachricht"
 }

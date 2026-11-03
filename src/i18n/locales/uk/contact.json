@@ -56,5 +56,6 @@
  "request.comment_vous_repondre_facultatif": "Як вам відповісти (необов’язково)",
  "request.adresse_e_mail_ou_telephone": "адреса електронної пошти або телефон",
  "request.ne_pas_remplir": "Не заповнювати",
- "request.envoyer": "Надіслати"
+ "request.envoyer": "Надіслати",
+ "form.email_placeholder": "olena@example.com"
 }

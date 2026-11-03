@@ -1536,5 +1536,13 @@
  "proposal_status_labels.pending": "ADA doğrulaması bekleniyor",
  "proposal_status_labels.accepted": "Kabul edildi ve yayımlandı",
  "proposal_status_labels.rejected": "Reddedildi",
- "proposal_status_labels.withdrawn": "Geri çekildi"
+ "proposal_status_labels.withdrawn": "Geri çekildi",
+ "review_queue.status.open": "Açık",
+ "review_queue.status.resolved": "Çözüldü",
+ "review_queue.status.resolved_by_ai": "Yapay zekâ tarafından çözüldü",
+ "review_queue.status.ignored": "Yok sayıldı",
+ "review_queue.type.aide": "Yardım",
+ "review_queue.type.demarche": "İşlem",
+ "review_queue.type.structure": "Kuruluş",
+ "review_queue.type.actualite": "Haber"
 }

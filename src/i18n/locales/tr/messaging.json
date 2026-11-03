@@ -120,5 +120,7 @@
  "transparency.send": "Gönder",
  "transparency.sent": "Belge seçilen kuruluşa gönderildi (yalnızca o görebilir).",
  "transparency.uploaded_by": "yükleyen:",
- "transparency.uploaded_on": "{{date}} tarihinde"
+ "transparency.uploaded_on": "{{date}} tarihinde",
+ "chat.attachment_size": "{{name}} ({{size}} KB)",
+ "chat.attachment_remove": "Dosyayı kaldır"
 }

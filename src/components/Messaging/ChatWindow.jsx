@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
-import { useT } from '@/i18n';
+import { useT, formatNumber } from '@/i18n';
 
 // Simplified FALC-compatible Chat Window
 // @ts-ignore
@@ -67,7 +67,7 @@ export default function ChatWindow({ messages, onSendMessage, onUploadFile, load
                                 {msg.attachments && msg.attachments.length > 0 && (
                                     <div className="mt-2 border-t border-white/20 pt-2">
                                         {msg.attachments.map(att => (
-                                            <div key={att.id} className="flex items-center space-x-2 bg-black/10 p-1 rounded mb-1">
+                                            <div key={att.id} className="flex items-center gap-2 bg-black/10 p-1 rounded mb-1">
                                                 <span aria-hidden="true">📎</span> <span>{t('messaging:chat.file_received', 'Fichier reçu')}</span>
                                                 <a
                                                     href={`/api/download?id=${att.id}&token=${msg.accessToken || ''}`}
@@ -104,13 +104,13 @@ export default function ChatWindow({ messages, onSendMessage, onUploadFile, load
                     {/* File Preview */}
                     {file && (
                         <div className="flex items-center justify-between bg-blue-50 p-2 rounded">
-                            <span className="truncate font-medium">{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>
-                            <button onClick={() => setFile(null)} className="text-red-500 font-bold px-2">X</button>
+                            <span className="truncate font-medium">{t('messaging:chat.attachment_size', '{{name}} ({{size}} Ko)', { name: file.name, size: formatNumber(file.size / 1024, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) })}</span>
+                            <button type="button" onClick={() => setFile(null)} className="text-red-500 font-bold px-2" aria-label={t('messaging:chat.attachment_remove', 'Retirer le fichier')}>X</button>
                         </div>
                     )}
 
                     {canAttach ? <div className="mb-2"><HealthDocumentNotice testid="chat-health-notice" /></div> : null}
-                    <div className="flex items-end space-x-3">
+                    <div className="flex items-end gap-3">
                         {/* File Button — only when an upload handler is wired */}
                         {canAttach && (
                         <label className="cursor-pointer p-3 text-gray-500 hover:bg-gray-100 rounded-full border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2" aria-label={t('messaging:chat.attach', 'Joindre un fichier')}>

@@ -158,7 +158,7 @@ export default function Contact() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="jean@exemple.fr"
+                    placeholder={t('contact:form.email_placeholder', 'jean@exemple.fr')}
                     value={form.email}
                     onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                     required
