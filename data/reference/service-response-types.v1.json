@@ -1,7 +1,7 @@
 {
  "schema": "ada-service-response-types/1",
  "version": "2026-11-02",
- "note": "R36 — what kind of answer each need calls for, for the 23 subdomains without a verified service in R35. A national hotline or a tax procedure is not a missing local establishment. national=true: served by an official national channel (the coverage counts it as remote by nature). placeIsService: an official directory record of one of the subdomain's place types IS the public service (a mairie, a CCAS, a health centre), not just a building. Local routes marked verified=false are referral hints for reviewers, never shown as facts.",
+ "note": "R36 — what kind of answer each need calls for, for the 23 subdomains without a verified service in R35, and R40: acces-au-droit (its Point-justice records come from the Annuaire de l'administration, so the place IS the public service). A national hotline or a tax procedure is not a missing local establishment. national=true: served by an official national channel (the coverage counts it as remote by nature). placeIsService: an official directory record of one of the subdomain's place types IS the public service (a mairie, a CCAS, a health centre), not just a building. Local routes marked verified=false are referral hints for reviewers, never shown as facts.",
  "types": {
   "national-hotline": "Numéro national officiel",
   "public-authority": "Administration ou collectivité compétente",
@@ -24,6 +24,7 @@
   "accessibilite-mobilite": { "types": ["public-authority", "territorial-referral"], "national": false, "local": { "route": "MDPH / Maison de l'autonomie (carte mobilité inclusion) ; service de transport adapté de l'Eurométropole", "verified": false }, "officialSheets": ["F34049"], "insufficient": "no official open dataset of the adapted-transport service was found: not listed as a service" },
   "information-seniors": { "types": ["territorial-referral", "online-service", "physical-service"], "national": false, "placeIsService": true, "channel": "pour-les-personnes-agees.gouv.fr", "officialSheets": ["F32057"] },
   "centres-sante": { "types": ["physical-service"], "national": false, "placeIsService": true, "local": { "route": "centres et maisons de santé du répertoire FINESS", "verified": true }, "insufficient": "no DILA sheet about health centres: the places are listed, the right to care is covered by the couverture-santé sheets" },
+  "acces-au-droit": { "types": ["physical-service"], "national": false, "placeIsService": true, "local": { "route": "Points-justice (accès au droit) de l'Annuaire de l'administration (DILA)", "verified": true } },
   "crise-suicide": { "types": ["national-hotline"], "national": true, "channel": "3114 ; 15", "officialSheets": ["F33954"] },
   "victimes": { "types": ["national-hotline", "specialised-association", "administrative-procedure"], "national": true, "channel": "116 006", "officialSheets": ["F2313", "F33954"] },
   "pjj-spip": { "types": ["public-authority"], "national": false, "local": { "route": "service pénitentiaire d'insertion et de probation du Bas-Rhin ; protection judiciaire de la jeunesse", "verified": false }, "officialSheets": ["F32584"] },

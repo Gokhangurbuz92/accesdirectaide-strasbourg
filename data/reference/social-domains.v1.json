@@ -201,7 +201,9 @@
       "CHRS",
       "réinsertion sociale"
      ],
-     "structureTypes": [],
+     "structureTypes": [
+      "Centre d’hébergement et de réinsertion sociale (CHRS)"
+     ],
      "casf": [
       8
      ],
@@ -469,7 +471,10 @@
       "petite enfance",
       "crèche"
      ],
-     "structureTypes": [],
+     "structureTypes": [
+      "Protection maternelle et infantile (PMI)",
+      "PMI (protection maternelle et infantile)"
+     ],
      "casf": [],
      "dataInclusion": [],
      "emergency": []
@@ -954,7 +959,11 @@
       "dépistage",
       "CeGIDD"
      ],
-     "structureTypes": [],
+     "structureTypes": [
+      "Centre de santé sexuelle",
+      "Centre gratuit d’information, de dépistage et de diagnostic (CeGIDD)",
+      "Espace de vie affective, relationnelle et sexuelle (EVARS)"
+     ],
      "casf": [],
      "dataInclusion": [],
      "emergency": []
@@ -992,7 +1001,10 @@
       "psychologue",
       "santé mentale"
      ],
-     "structureTypes": [],
+     "structureTypes": [
+      "Centre médico-psychologique (CMP)",
+      "Centre médico-psycho-pédagogique (CMPP)"
+     ],
      "casf": [],
      "dataInclusion": [],
      "emergency": []
