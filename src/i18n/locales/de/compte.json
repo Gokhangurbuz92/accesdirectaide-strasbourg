@@ -542,5 +542,16 @@
  "thread.sending": "Wird gesendet...",
  "thread.sent": "Nachricht gesendet.",
  "thread.structure": "Einrichtung",
- "thread.you": "Sie"
+ "thread.you": "Sie",
+ "push.loading": "Wird geprüft…",
+ "push.unsupported": "Dieser Browser kann keine Benachrichtigungen empfangen. Erinnerungen bleiben per E-Mail verfügbar.",
+ "push.unavailable": "Benachrichtigungen auf dem Gerät werden von diesem Dienst noch nicht angeboten. Erinnerungen bleiben per E-Mail verfügbar.",
+ "push.denied": "Benachrichtigungen sind für diese Website in Ihrem Browser blockiert. Um sie zu erhalten, erlauben Sie sie in den Website-Einstellungen Ihres Browsers und kommen Sie dann hierher zurück.",
+ "push.off": "Erhalten Sie auf diesem Gerät die Erinnerungen an die Schritte in Mon Parcours (Ihr Verlaufsbereich) (ohne persönliche Details in der Benachrichtigung). Sie können jederzeit aufhören.",
+ "push.on": "Dieses Gerät erhält die Erinnerungen von Mon Parcours. Die Website weiß nur, dass der Benachrichtigungsdienst Ihres Browsers die Nachricht erhalten hat, nicht, dass Sie sie gesehen haben.",
+ "push.error": "Die Anfrage war nicht erfolgreich.",
+ "push.title": "Benachrichtigungen auf diesem Gerät",
+ "push.enable": "Ich bin einverstanden, die Erinnerungen auf diesem Gerät zu erhalten",
+ "push.disable": "Benachrichtigungen auf diesem Gerät beenden",
+ "push.retry": "Erneut versuchen"
 }

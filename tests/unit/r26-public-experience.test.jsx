@@ -83,8 +83,8 @@ describe('beta accuracy', () => {
     const banner = read('src/components/beta/PublicBeta.jsx').match(/<strong>Bêta publique<\/strong>[\s\S]*?<\/p>/)[0];
     expect(banner.replace(/\s+/g, ' ').length).toBeLessThan(220);
     const hide = read('src/components/ui/HideScreenButton.jsx');
-    expect(hide).toMatch(/Masquer l’écran<\/span>/);
-    expect(hide).toMatch(/aria-label="Masquer l’écran immédiatement/);
+    expect(hide).toMatch(/'Masquer l’écran'\)\}<\/span>/);   // R40: the visible text and the label are the French defaults of their keys
+    expect(hide).toMatch(/aria-label=\{t\('layout:hide_screen\.label', 'Masquer l’écran immédiatement/);
     expect(hide).not.toMatch(/bg-red-600/);
   });
   it('every information page uses the shared page header (no centered dark block with a card pulled over it)', () => {

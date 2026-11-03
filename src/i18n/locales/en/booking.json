@@ -93,5 +93,11 @@
  "manage.reminderTurnOff": "Stop the reminder",
  "pro.reminderYes": "Reminder by e-mail the day before: requested",
  "pro.reminderNo": "Reminder by e-mail the day before: not requested",
- "code.alreadyHint": "If you already have an appointment with this organisation, you will receive an e-mail saying so instead: no new appointment is booked."
+ "code.alreadyHint": "If you already have an appointment with this organisation, you will receive an e-mail saying so instead: no new appointment is booked.",
+ "gate.checking": "Checking your session...",
+ "gate.verify_email_title": "E-mail address to verify",
+ "gate.verify_email_text": "Verify your e-mail address before booking an appointment.",
+ "gate.unavailable_title": "Booking temporarily unavailable",
+ "gate.unavailable_text": "Your session cannot be verified. Try again without disabling the protections.",
+ "gate.retry": "Try again"
 }

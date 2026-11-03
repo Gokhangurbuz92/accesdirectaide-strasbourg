@@ -8,9 +8,11 @@ import {
   citizenBookingLoginUrl,
 } from '@/lib/rdvBookingAccess';
 import { guestBookingPath, guestGet } from '@/lib/guestBooking';
+import { useT } from '@/i18n';
 
 export default function PublicBookingAccessGate() {
   const location = useLocation();
+  const { t } = useT('booking');
   const key = `${location.pathname}${location.search}`;
   const managementKey = useRef('');
   const [result, setResult] = useState({ key: '', status: 'checking' });
@@ -63,18 +65,18 @@ export default function PublicBookingAccessGate() {
   return (
     <section className="mx-auto max-w-xl px-6 py-16 text-center" aria-live="polite">
       {status === 'checking' ? (
-        <p role="status">Vérification de votre session...</p>
+        <p role="status">{t('booking:gate.checking', 'Vérification de votre session...')}</p>
       ) : status === 'verify-email' ? (
         <>
-          <h1 className="text-xl font-semibold text-slate-900">Adresse e-mail à vérifier</h1>
-          <p className="mt-3 text-slate-700">Vérifiez votre adresse e-mail avant de réserver un rendez-vous.</p>
+          <h1 className="text-xl font-semibold text-slate-900">{t('booking:gate.verify_email_title', 'Adresse e-mail à vérifier')}</h1>
+          <p className="mt-3 text-slate-700">{t('booking:gate.verify_email_text', 'Vérifiez votre adresse e-mail avant de réserver un rendez-vous.')}</p>
         </>
       ) : (
         <>
-          <h1 className="text-xl font-semibold text-slate-900">Réservation temporairement indisponible</h1>
-          <p className="mt-3 text-slate-700">Votre session ne peut pas être vérifiée. Réessayez sans désactiver les protections.</p>
+          <h1 className="text-xl font-semibold text-slate-900">{t('booking:gate.unavailable_title', 'Réservation temporairement indisponible')}</h1>
+          <p className="mt-3 text-slate-700">{t('booking:gate.unavailable_text', 'Votre session ne peut pas être vérifiée. Réessayez sans désactiver les protections.')}</p>
           <button type="button" className="mt-5 rounded bg-slate-900 px-4 py-2 text-white" onClick={() => window.location.reload()}>
-            Réessayer
+            {t('booking:gate.retry', 'Réessayer')}
           </button>
         </>
       )}

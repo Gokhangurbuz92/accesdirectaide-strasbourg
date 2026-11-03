@@ -93,5 +93,11 @@
  "manage.reminderTurnOff": "Keine Erinnerung mehr erhalten",
  "pro.reminderYes": "Erinnerung per E-Mail am Vortag: gewünscht",
  "pro.reminderNo": "Erinnerung per E-Mail am Vortag: nicht gewünscht",
- "code.alreadyHint": "Wenn Sie bereits einen Termin bei dieser Einrichtung haben, erhalten Sie stattdessen eine E-Mail, die Sie darauf hinweist: Es wird kein neuer Termin gebucht."
+ "code.alreadyHint": "Wenn Sie bereits einen Termin bei dieser Einrichtung haben, erhalten Sie stattdessen eine E-Mail, die Sie darauf hinweist: Es wird kein neuer Termin gebucht.",
+ "gate.checking": "Ihre Sitzung wird geprüft...",
+ "gate.verify_email_title": "E-Mail-Adresse bestätigen",
+ "gate.verify_email_text": "Bestätigen Sie Ihre E-Mail-Adresse, bevor Sie einen Termin buchen.",
+ "gate.unavailable_title": "Buchung vorübergehend nicht verfügbar",
+ "gate.unavailable_text": "Ihre Sitzung kann nicht geprüft werden. Versuchen Sie es erneut, ohne die Schutzfunktionen zu deaktivieren.",
+ "gate.retry": "Erneut versuchen"
 }

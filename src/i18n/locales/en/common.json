@@ -2,5 +2,12 @@
  "language.label": "Language",
  "suggestion.text": "This site is also available in {{language}}.",
  "suggestion.switch": "Switch to {{language}}",
- "suggestion.stay": "Stay in French"
+ "suggestion.stay": "Stay in French",
+ "unavailable.title": "{{area}} is temporarily unavailable",
+ "unavailable.default_area": "This service",
+ "unavailable.text": "The server did not respond. Your session is kept: try again in a moment.",
+ "unavailable.retry": "Try again",
+ "route_error.title": "This page could not be loaded",
+ "route_error.text": "An error occurred while loading. Please refresh the page.",
+ "route_error.reload": "Refresh"
 }

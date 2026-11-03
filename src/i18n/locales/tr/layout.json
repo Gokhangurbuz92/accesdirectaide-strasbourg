@@ -116,5 +116,11 @@
  "account.proAccount.text": "Kullanıcılara destek olma",
  "footer.needs": "İhtiyaca göre yardım bul",
  "footer.emergency": "Acil durumda veya tehlike anında",
- "footer.emergency.all": "Tüm acil numaralar"
+ "footer.emergency.all": "Tüm acil numaralar",
+ "hide_screen.hidden_label": "Ekran gizlendi. Ekranı göstermek için herhangi bir yere tıklayın.",
+ "hide_screen.hidden_title": "Güvenlik için ekran gizlendi",
+ "hide_screen.hidden_text": "Kaldığınız yerden devam etmek için ekranda herhangi bir yere tıklayın.",
+ "hide_screen.label": "Ekranı hemen gizle (veya Esc tuşuna üç kez basın)",
+ "hide_screen.title": "Ekranı hemen gizle (üç kez Esc)",
+ "hide_screen.button": "Ekranı gizle"
 }

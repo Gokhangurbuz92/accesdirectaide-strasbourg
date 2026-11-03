@@ -542,5 +542,16 @@
  "thread.sending": "Sending...",
  "thread.sent": "Message sent.",
  "thread.structure": "Organisation",
- "thread.you": "You"
+ "thread.you": "You",
+ "push.loading": "Checking…",
+ "push.unsupported": "This browser cannot receive notifications. Reminders remain available by e-mail.",
+ "push.unavailable": "Device notifications are not offered by this service yet. Reminders remain available by e-mail.",
+ "push.denied": "Notifications are blocked for this site in your browser. To receive them, allow them in your browser's site settings, then come back here.",
+ "push.off": "Receive the reminders of the steps in Mon Parcours (your follow-up space) on this device (no personal details in the notification). You can stop at any time.",
+ "push.on": "This device receives the reminders of Mon Parcours. The site only knows that your browser's notification service received the message, not that you saw it.",
+ "push.error": "The request did not go through.",
+ "push.title": "Notifications on this device",
+ "push.enable": "I agree to receive the reminders on this device",
+ "push.disable": "Stop notifications on this device",
+ "push.retry": "Try again"
 }

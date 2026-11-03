@@ -7,6 +7,7 @@ import { frontendEnv } from "@/config/env";
 import { isBetaRestrictedPath } from "@/lib/publicBeta";
 import { situationSearchPath } from "@/config/situations";
 import { PublicBetaBanner, PublicBetaUnavailable } from "@/components/beta/PublicBeta";
+import i18n from "@/i18n";
 
 /**
  * ErrorBoundary — catches chunk-load or mount errors in lazy-loaded routes.
@@ -29,17 +30,17 @@ class RouteErrorBoundary extends Component {
                 <div className="flex min-h-[50vh] items-center justify-center p-4">
                     <div className="w-full max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center">
                         <h1 className="mb-2 text-xl font-bold text-red-800">
-                            Impossible de charger cette page
+                            {i18n.t('common:route_error.title', 'Impossible de charger cette page')}
                         </h1>
                         <p className="mb-4 text-sm text-red-700">
-                            Une erreur est survenue lors du chargement. Veuillez rafraîchir la page.
+                            {i18n.t('common:route_error.text', 'Une erreur est survenue lors du chargement. Veuillez rafraîchir la page.')}
                         </p>
                         <button
                             type="button"
                             onClick={() => window.location.reload()}
                             className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                         >
-                            Rafraîchir
+                            {i18n.t('common:route_error.reload', 'Rafraîchir')}
                         </button>
                     </div>
                 </div>

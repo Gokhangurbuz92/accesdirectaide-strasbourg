@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { EyeOff } from 'lucide-react';
 import { frontendEnv } from '@/config/env';
+import { useT } from '@/i18n';
 
+// R40: the texts are in the interface language (namespace `layout`)
 export default function HideScreenButton() {
+    const { t } = useT('layout');
     const [isHidden, setIsHidden] = useState(false);
     const [escCount, setEscCount] = useState(0);
 
@@ -56,16 +59,16 @@ export default function HideScreenButton() {
                         triggerShow();
                     }
                 }}
-                aria-label="Écran masqué. Cliquez n'importe où pour afficher l'écran."
+                aria-label={t('layout:hide_screen.hidden_label', "Écran masqué. Cliquez n'importe où pour afficher l'écran.")}
                 role="button"
                 tabIndex={0}
             >
-                <EyeOff className="w-16 h-16 text-slate-400 mb-6" />
+                <EyeOff className="w-16 h-16 text-slate-400 mb-6" aria-hidden="true" />
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">
-                    Écran masqué de sécurité
+                    {t('layout:hide_screen.hidden_title', 'Écran masqué de sécurité')}
                 </h2>
                 <p className="text-slate-300 text-lg sm:text-xl text-center max-w-md">
-                    Cliquez n'importe où sur l'écran pour reprendre votre activité.
+                    {t('layout:hide_screen.hidden_text', "Cliquez n'importe où sur l'écran pour reprendre votre activité.")}
                 </p>
             </div>
         );
@@ -79,12 +82,12 @@ export default function HideScreenButton() {
                 type="button"
                 onClick={triggerHide}
                 className="flex min-h-11 items-center gap-2 rounded-full bg-slate-900 px-3 text-sm font-semibold text-white shadow-lg ring-1 ring-white/20 transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:px-4"
-                aria-label="Masquer l’écran immédiatement (ou appuyez trois fois sur Échap)"
-                title="Masquer l’écran immédiatement (Échap trois fois)"
+                aria-label={t('layout:hide_screen.label', 'Masquer l’écran immédiatement (ou appuyez trois fois sur Échap)')}
+                title={t('layout:hide_screen.title', 'Masquer l’écran immédiatement (Échap trois fois)')}
                 data-testid="hide-screen-button"
             >
                 <EyeOff className="h-5 w-5" aria-hidden="true" />
-                <span className="hidden sm:inline">Masquer l’écran</span>
+                <span className="hidden sm:inline">{t('layout:hide_screen.button', 'Masquer l’écran')}</span>
             </button>
         </div>
     );

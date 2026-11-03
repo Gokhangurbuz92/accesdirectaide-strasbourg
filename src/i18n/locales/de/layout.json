@@ -116,5 +116,11 @@
  "account.proAccount.text": "Menschen begleiten und unterstützen",
  "footer.needs": "Hilfe nach Bedarf finden",
  "footer.emergency": "Im Notfall oder bei Gefahr",
- "footer.emergency.all": "Alle Notrufnummern"
+ "footer.emergency.all": "Alle Notrufnummern",
+ "hide_screen.hidden_label": "Bildschirm ausgeblendet. Klicken Sie irgendwo, um den Bildschirm anzuzeigen.",
+ "hide_screen.hidden_title": "Bildschirm zum Schutz ausgeblendet",
+ "hide_screen.hidden_text": "Klicken Sie irgendwo auf den Bildschirm, um weiterzumachen.",
+ "hide_screen.label": "Bildschirm sofort ausblenden (oder dreimal Esc drücken)",
+ "hide_screen.title": "Bildschirm sofort ausblenden (dreimal Esc)",
+ "hide_screen.button": "Bildschirm ausblenden"
 }

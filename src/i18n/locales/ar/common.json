@@ -2,5 +2,12 @@
  "language.label": "اللغة",
  "suggestion.text": "هذا الموقع متوفر أيضًا باللغة {{language}}.",
  "suggestion.switch": "الانتقال إلى {{language}}",
- "suggestion.stay": "البقاء على الفرنسية"
+ "suggestion.stay": "البقاء على الفرنسية",
+ "unavailable.title": "{{area}}: غير متاح مؤقتًا",
+ "unavailable.default_area": "هذه الخدمة",
+ "unavailable.text": "لم يستجب الخادم. جلستك محفوظة: أعد المحاولة بعد لحظة.",
+ "unavailable.retry": "إعادة المحاولة",
+ "route_error.title": "تعذّر تحميل هذه الصفحة",
+ "route_error.text": "حدث خطأ أثناء التحميل. يرجى تحديث الصفحة.",
+ "route_error.reload": "تحديث"
 }

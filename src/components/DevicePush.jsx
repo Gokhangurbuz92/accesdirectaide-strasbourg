@@ -3,16 +3,19 @@
  * (no service worker / Push API), the service does not offer it (no VAPID keys: the server says so), not asked yet, refused in the browser (how to change it),
  * on (this device receives them), and errors. Switching on asks the person's consent (recorded) BEFORE the browser's permission; switching off removes the
  * subscription on the server and in the browser. Nothing is promised: « reçu par le service de notification du navigateur » is all the site can know.
+ * R40: the texts are in the interface language (namespace `compte`).
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
+import { useT } from '@/i18n';
 
 const fromB64u = (/** @type {string} */ s) => { const p = s.replace(/-/g, '+').replace(/_/g, '/'); const b = atob(p + '='.repeat((4 - (p.length % 4)) % 4)); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
 const supported = () => typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
 export default function DevicePush() {
+  const { t } = useT('compte');
   const [state, setState] = useState(/** @type {{ phase: string, message?: string, server?: any }} */ ({ phase: 'loading' }));
   const [busy, setBusy] = useState(false);
 
@@ -54,22 +57,22 @@ export default function DevicePush() {
   };
 
   const TEXT = {
-    loading: 'Vérification…',
-    unsupported: 'Ce navigateur ne permet pas de recevoir des notifications. Les rappels restent disponibles par e-mail.',
-    unavailable: 'Les notifications sur appareil ne sont pas encore proposées par ce service. Les rappels restent disponibles par e-mail.',
-    denied: 'Les notifications sont bloquées pour ce site dans votre navigateur. Pour les recevoir, autorisez-les dans les réglages du site de votre navigateur, puis revenez ici.',
-    off: 'Recevez sur cet appareil les rappels des étapes de Mon Parcours (sans détail personnel dans la notification). Vous pouvez arrêter à tout moment.',
-    on: 'Cet appareil reçoit les rappels de Mon Parcours. Le site sait seulement que le service de notification de votre navigateur a reçu le message, pas que vous l’avez vu.',
-    error: 'La demande n’a pas abouti.',
+    loading: t('compte:push.loading', 'Vérification…'),
+    unsupported: t('compte:push.unsupported', 'Ce navigateur ne permet pas de recevoir des notifications. Les rappels restent disponibles par e-mail.'),
+    unavailable: t('compte:push.unavailable', 'Les notifications sur appareil ne sont pas encore proposées par ce service. Les rappels restent disponibles par e-mail.'),
+    denied: t('compte:push.denied', 'Les notifications sont bloquées pour ce site dans votre navigateur. Pour les recevoir, autorisez-les dans les réglages du site de votre navigateur, puis revenez ici.'),
+    off: t('compte:push.off', 'Recevez sur cet appareil les rappels des étapes de Mon Parcours (sans détail personnel dans la notification). Vous pouvez arrêter à tout moment.'),
+    on: t('compte:push.on', 'Cet appareil reçoit les rappels de Mon Parcours. Le site sait seulement que le service de notification de votre navigateur a reçu le message, pas que vous l’avez vu.'),
+    error: t('compte:push.error', 'La demande n’a pas abouti.'),
   };
   return (
     <Card>
-      <CardHeader><CardTitle className="text-lg">Notifications sur cet appareil</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-lg">{t('compte:push.title', 'Notifications sur cet appareil')}</CardTitle></CardHeader>
       <CardContent className="space-y-3" data-testid="device-push">
         <p role="status" aria-live="polite" className="text-slate-700">{TEXT[/** @type {keyof typeof TEXT} */ (state.phase)]}{state.phase === 'error' && state.message ? ` ${state.message}` : ''}</p>
-        {state.phase === 'off' && <Button type="button" onClick={enable} disabled={busy}>J’accepte de recevoir les rappels sur cet appareil</Button>}
-        {state.phase === 'on' && <Button type="button" variant="outline" onClick={disable} disabled={busy}>Arrêter les notifications sur cet appareil</Button>}
-        {state.phase === 'error' && <Button type="button" variant="outline" onClick={refresh} disabled={busy}>Réessayer</Button>}
+        {state.phase === 'off' && <Button type="button" onClick={enable} disabled={busy}>{t('compte:push.enable', 'J’accepte de recevoir les rappels sur cet appareil')}</Button>}
+        {state.phase === 'on' && <Button type="button" variant="outline" onClick={disable} disabled={busy}>{t('compte:push.disable', 'Arrêter les notifications sur cet appareil')}</Button>}
+        {state.phase === 'error' && <Button type="button" variant="outline" onClick={refresh} disabled={busy}>{t('compte:push.retry', 'Réessayer')}</Button>}
       </CardContent>
     </Card>
   );

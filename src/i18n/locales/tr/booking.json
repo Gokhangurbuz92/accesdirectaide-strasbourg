@@ -93,5 +93,11 @@
  "manage.reminderTurnOff": "Hatırlatmayı durdur",
  "pro.reminderYes": "Bir gün önce e-postayla hatırlatma: istendi",
  "pro.reminderNo": "Bir gün önce e-postayla hatırlatma: istenmedi",
- "code.alreadyHint": "Bu kurumla zaten bir randevunuz varsa, bunun yerine bunu bildiren bir e-posta alırsınız: yeni randevu alınmaz."
+ "code.alreadyHint": "Bu kurumla zaten bir randevunuz varsa, bunun yerine bunu bildiren bir e-posta alırsınız: yeni randevu alınmaz.",
+ "gate.checking": "Oturumunuz kontrol ediliyor...",
+ "gate.verify_email_title": "Doğrulanacak e-posta adresi",
+ "gate.verify_email_text": "Randevu almadan önce e-posta adresinizi doğrulayın.",
+ "gate.unavailable_title": "Randevu alma geçici olarak kullanılamıyor",
+ "gate.unavailable_text": "Oturumunuz doğrulanamıyor. Korumaları devre dışı bırakmadan tekrar deneyin.",
+ "gate.retry": "Tekrar dene"
 }
