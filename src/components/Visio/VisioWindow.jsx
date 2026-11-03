@@ -14,7 +14,20 @@ export default function VisioWindow({ join, onClose }) {
   const { t } = useT('booking');
   const containerRef = useRef(null);
   const apiRef = useRef(null);
+  const closeRef = useRef(null);
   const [status, setStatus] = useState('loading'); // loading | ready | error
+  const label = t('booking:visio.rendez_vous_en_visio', "Rendez-vous en visio");
+  const labelRef = useRef(label);   // read by the provider setup without restarting the meeting when the language changes
+  labelRef.current = label;
+
+  // R41-K A4: the full-screen dialog takes the focus when it opens (on « Quitter », the one control that is always there), and Escape quits like « Quitter »
+  // (keys typed inside the provider's frame stay in the frame)
+  useEffect(() => { closeRef.current?.focus(); }, []);
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose && onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   useEffect(() => {
     if (!containerRef.current || !join?.domain || !join?.jwt) { setStatus('error'); return undefined; }
@@ -29,6 +42,7 @@ export default function VisioWindow({ join, onClose }) {
           interfaceConfigOverwrite: { SHOW_JITSI_WATERMARK: false, TOOLBAR_BUTTONS: ['microphone', 'camera', 'closedcaptions', 'fullscreen', 'fodeviceselection', 'hangup', 'chat', 'settings', 'raisehand', 'tileview'] },
         });
         apiRef.current = api;
+        api.getIFrame?.()?.setAttribute('title', labelRef.current);   // R41-K A4: the provider's frame has a name
         api.addEventListener('videoConferenceJoined', () => setStatus('ready'));
         api.addEventListener('videoConferenceLeft', () => onClose && onClose());
       } catch { setStatus('error'); }
@@ -51,10 +65,10 @@ export default function VisioWindow({ join, onClose }) {
   }, [join, onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950" role="dialog" aria-modal="true" aria-label={t('booking:visio.rendez_vous_en_visio', "Rendez-vous en visio")} data-testid="visio-window">
+    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950" role="dialog" aria-modal="true" aria-label={label} data-testid="visio-window">
       <header className="flex shrink-0 items-center justify-between bg-slate-900 p-4">
         <h2 className="text-lg font-bold text-white">{t('booking:visio.rendez_vous_en_visio', "Rendez-vous en visio")}</h2>
-        <button type="button" onClick={() => onClose && onClose()} className="rounded-lg border border-slate-600 px-4 py-2 text-white hover:bg-slate-800" data-testid="visio-close">{t('booking:visio.quitter', "Quitter")}</button>
+        <button ref={closeRef} type="button" onClick={() => onClose && onClose()} className="rounded-lg border border-slate-600 px-4 py-2 text-white hover:bg-slate-800" data-testid="visio-close">{t('booking:visio.quitter', "Quitter")}</button>
       </header>
       {join?.sandbox ? <p className="bg-amber-100 p-2 text-center text-sm text-amber-950" data-testid="visio-sandbox">{t('booking:visio.environnement_de_test_la_connexion', "Environnement de test : la connexion au fournisseur de visio n’est pas vérifiée ici.")}</p> : null}
       {status === 'error' ? (
