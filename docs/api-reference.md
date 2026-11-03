@@ -91,7 +91,6 @@ Compte administrateur nominatif avec MFA (`scripts/admin-bootstrap.mjs`) ; `ADMI
 | POST | `/api/admin/validate-publication` | Validation publication |
 | POST | `/api/admin/mfa-setup` | Configuration MFA |
 | POST | `/api/admin/mfa-verify` | Vérification MFA |
-| GET | `/api/admin/export` | Export données |
 | POST | `/api/admin/import` | Import données |
 | GET | `/api/admin/versions` | Versions |
 
