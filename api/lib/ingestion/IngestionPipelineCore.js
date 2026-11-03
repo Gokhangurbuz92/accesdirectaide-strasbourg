@@ -227,14 +227,10 @@ export class IngestionPipelineCore {
             logger.warn(`[PipelineCore] SourceDoc failed for ${url}`, { runId: this.runId, msg: sourceErr.message });
         }
 
-        // 2. Locate existing record to determine created vs updated vs skipped
-        const qOr = [];
-        if (data.external_id && 'externalId' in this.dbTable) qOr.push(eq(this.dbTable.externalId, data.external_id));
-        if (baseSlug) qOr.push(eq(this.dbTable.slug, baseSlug));
-        if (data.source_url && 'source_url_exact' in this.dbTable) qOr.push(eq(this.dbTable.source_url_exact, data.source_url));
-        if (data.source_url && 'source_url' in this.dbTable) qOr.push(eq(this.dbTable.source_url, data.source_url));
-
-        const existing = await db.select().from(this.dbTable).where(or(...qOr)).limit(1).then(r => r[0] || null);
+        // 2. Locate existing record to determine created vs updated vs skipped — R40 / G3e: by IDENTITY only. The provider's stable id first (externalId),
+        // then the exact source URL; a record already carrying ANOTHER provider id is never taken for this one. The slug (« <connector>-<title> ») is
+        // used only when the item has neither (two different aids with the same title — frequent in Aides-territoires — collapsed into one record).
+        const existing = await this._findExisting(data, baseSlug);
 
         const dbRecordConfig = {
             ...normalizedItem,
@@ -246,6 +242,8 @@ export class IngestionPipelineCore {
             last_checked_at: new Date(),
             quality_score: computeQualityScore(normalizedItem).score,
         };
+
+        if (data.external_id && 'externalId' in this.dbTable) dbRecordConfig.externalId = data.external_id;   // R40: backfilled on an URL match too
 
         // Inject provider fields if not specified otherwise
         if (!dbRecordConfig.providerName && !dbRecordConfig.source_api) {
@@ -270,7 +268,8 @@ export class IngestionPipelineCore {
                 if (r.ok && r.held) this.stats.heldForReverification++;
                 this.stats.updated++;
             } else {
-                // Completely unchanged -> Skip DB write
+                // Completely unchanged -> Skip DB write (R40: except the identity of a record found by its URL, kept for the next runs)
+                if (dbRecordConfig.externalId && !existing.externalId) await db.update(this.dbTable).set({ externalId: dbRecordConfig.externalId }).where(eq(this.dbTable.id, existing.id));
                 this.stats.skippedExisting++;
             }
         } else {
@@ -287,13 +286,34 @@ export class IngestionPipelineCore {
             // misleading state, and it showed in the LAB's open mode). Existing records keep their statut (applySourceUpdate above).
             dbRecordConfig.statut = 'brouillon';
             dbRecordConfig.retrieved_at = new Date(); // first sight
-            if (data.external_id && 'externalId' in dbRecordConfig) {
-                dbRecordConfig.externalId = data.external_id;
-            }
+            // (externalId: set above — the former check looked for the key on the record instead of the table, so it was never written)
 
             await db.insert(this.dbTable).values(dbRecordConfig);
             this.stats.created++;
         }
+    }
+
+    /**
+     * R40 / G3e — the existing record of an item, by identity. @param {Record<string, any>} data @param {string | null} baseSlug
+     */
+    async _findExisting(data, baseSlug) {
+        const t = this.dbTable;
+        const first = (where) => db.select().from(t).where(where).limit(1).then((r) => r[0] || null);
+        const extId = data.external_id && 'externalId' in t ? String(data.external_id) : null;
+        if (extId) {
+            const byId = await first(eq(t.externalId, extId));
+            if (byId) return byId;
+        }
+        if (data.source_url) {
+            const urlCols = ['source_url_exact', 'source_url'].filter((c) => c in t).map((c) => eq(t[c], data.source_url));
+            if (urlCols.length) {
+                const rows = await db.select().from(t).where(or(...urlCols)).limit(5);
+                const match = rows.find((r) => !extId || !r.externalId || r.externalId === extId);
+                return match || null;
+            }
+        }
+        if (!extId && baseSlug) return first(eq(t.slug, baseSlug));
+        return null;
     }
 
     _recordItemError(/** @type {string | number | boolean | null | undefined} */ url, /** @type {unknown} */ error) {

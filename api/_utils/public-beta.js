@@ -46,8 +46,12 @@ export const SURFACES = {
   documents: ['citizen/coffre', 'citizen/dossier', 'pro/dossier', 'share', 'public/dossier-revoke', 'public/dossier-grants', 'public/passport', 'download', 'pdf'],
   diagnostic: ['diagnostic', 'drees', 'assistant', 'public/falc', 'public/assistant', 'tts'],
   admin: ['admin'],
+  // R40 / G2: « jobs » classifies the cron and monitor routes but can NOT be opened as a whole (NOT_OPENABLE below): it used to open every cron and monitor
+  // route at once — the legacy importers and hive-scan (a cloud AI provider that is not approved) included. Jobs open one at a time (ADA_BETA_OPEN_JOBS).
   jobs: ['cron', 'monitor'],
 };
+/** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
+export const NOT_OPENABLE = Object.freeze(['jobs']);
 const SURFACE_PREFIXES = Object.entries(SURFACES).flatMap(([name, list]) => list.map((prefix) => ({ name, prefix }))).sort((a, b) => b.prefix.length - a.prefix.length);
 
 /** the surface a route belongs to, or null @param {string} path */
@@ -58,12 +62,13 @@ export function surfaceOf(path) {
 
 /** the surfaces opened during the beta @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function openSurfaces(envVars = process.env) {
-  return new Set(String(envVars.ADA_BETA_OPEN_SURFACES || '').split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(SURFACES, x)));
+  return new Set(String(envVars.ADA_BETA_OPEN_SURFACES || '').split(',').map((x) => x.trim().toLowerCase())
+    .filter((x) => Object.prototype.hasOwnProperty.call(SURFACES, x) && !NOT_OPENABLE.includes(x)));
 }
 
 /**
- * R38 — scheduled jobs one at a time. The « jobs » surface opens every cron and monitor route at once; ADA_BETA_OPEN_JOBS opens only the named jobs
- * (e.g. ADA_BETA_OPEN_JOBS=actualites,health-alert) while the surface stays closed. Fail-closed, like the surfaces: unset = none, an unknown name opens
+ * R38 — scheduled jobs one at a time. ADA_BETA_OPEN_JOBS opens only the named jobs (e.g. ADA_BETA_OPEN_JOBS=actualites,health-alert); since R40 (G2) this
+ * is the ONLY way to open a job during the beta (the « jobs » surface is not openable, and the monitor routes stay closed). Fail-closed, like the surfaces: unset = none, an unknown name opens
  * nothing, no wildcard. Each job's own CRON_SECRET check and switches (GDPR_PURGE_ENABLED, INGESTION_DRY_RUN…) still apply.
  *   category A  public-data or read-only maintenance — opened by ADA_BETA_OPEN_JOBS alone
  *   category B  needs a provider or more engineering   — opened by ADA_BETA_OPEN_JOBS alone (the job reports what it could not deliver)
@@ -73,6 +78,9 @@ export function openSurfaces(envVars = process.env) {
  */
 /** @type {Readonly<Record<string, 'A' | 'B' | 'C' | 'D'>>} */
 export const SCHEDULED_JOBS = Object.freeze({
+  // R40 / G1: the automatic verification (D-5 v2, api/_services/verification/chain.js) — the only path that re-verifies, corrects and withdraws published
+  // records. Public official sources only, no personal data: category A. Known (so it CAN be opened alone later), closed by default, no schedule yet.
+  veille: 'A',
   actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
@@ -89,10 +97,10 @@ export function openJobs(envVars = process.env) {
 
 /** the state of every scheduled job in this environment (no secret is read, only whether the switches name the job) @param {Record<string, string | undefined>} [envVars] */
 export function jobStates(envVars = process.env) {
-  const restricted = isPublicBetaRestricted(envVars); const all = openSurfaces(envVars).has('jobs'); const open = openJobs(envVars);
+  const restricted = isPublicBetaRestricted(envVars); const open = openJobs(envVars);   // R40 / G2: no « all jobs » switch inside the beta any more
   const named = listOf(envVars.ADA_BETA_OPEN_JOBS); const approved = listOf(envVars.ADA_JOBS_APPROVED);
   return Object.entries(SCHEDULED_JOBS).map(([job, category]) => ({ job, category,
-    state: !restricted || all ? 'OPEN_ALL_JOBS' : open.has(job) ? 'OPEN' : category === 'D' ? 'LEGACY_CLOSED' : category === 'C' && named.has(job) && !approved.has(job) ? 'AWAITING_APPROVAL' : 'CLOSED',
+    state: !restricted ? 'OPEN_ALL_JOBS' : open.has(job) ? 'OPEN' : category === 'D' ? 'LEGACY_CLOSED' : category === 'C' && named.has(job) && !approved.has(job) ? 'AWAITING_APPROVAL' : 'CLOSED',
     approved: category !== 'C' || approved.has(job) }));
 }
 

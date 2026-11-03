@@ -15,6 +15,7 @@ import { MODE_LABELS, modeLabel, locationOf, locationText } from '../../lib/appo
 import { buildAppUrl } from '../../_utils/user-auth.js';
 import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
+import { appointmentColumns, appointmentGuestSchema, columnFlags } from '../../_utils/schema-features.js';
 
 /** R39: the person's J-1 e-mails that failed (NOT_DELIVERED / FAILED) since `since` (the start of today's Paris day) — the bound of the retries */
 async function citizenReminderFailuresSince(appointmentId, since) {
@@ -64,6 +65,10 @@ export default async function handler(/** @type {import('../../_utils/http-types
             // Find appointments for tomorrow (J+1) — PKG-11 audit pass 2: « demain » for a person in Strasbourg (Paris calendar day), not the server's UTC day
             const { start: tomorrowStart, end: tomorrowEnd } = parisDayWindow(new Date(), 1);
             const todayStart = parisDayWindow(new Date(), 0).start;   // R39: the J-1 day of these reminders (bounded retries are counted from here)
+            // R40 / G10: the guest columns exist only from migration 0043 (0044 for the reminder consent); read once per run, and on an older database the
+            // guest clauses are left out (no account-free booking can exist there) and only existing columns are selected / returned
+            const guestSchema = await appointmentGuestSchema(db);
+            const notUnconfirmedHold = guestSchema.guestBooking ? isNull(ProAppointment.guestHoldExpiresAt) : undefined;
 
             const appointments = await db.query.ProAppointment.findMany({
                 where: and(
@@ -74,8 +79,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     isNull(ProAppointment.reminder_sent_at),
                     // R38: an account-free hold whose code was never confirmed is not an appointment (confirmed ones have it NULL). R39: a confirmed
                     // account-free booking gets the J-1 e-mail only with its separate reminder consent (noticeCitizen), NO_CONSENT otherwise
-                    isNull(ProAppointment.guestHoldExpiresAt)
+                    notUnconfirmedHold
                 ),
+                columns: columnFlags(guestSchema),
                 with: {
                     createdByProUser: {
                         columns: {
@@ -125,9 +131,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
                         gte(ProAppointment.startAt, tomorrowStart),
                         lt(ProAppointment.startAt, tomorrowEnd),
                         inArray(ProAppointment.status, ['booked', 'requested', 'confirmed', 'pending']),
-                        isNull(ProAppointment.guestHoldExpiresAt)
+                        notUnconfirmedHold
                     ))
-                    .returning();
+                    .returning(appointmentColumns(guestSchema));
 
                 if (!claimed || claimed.length === 0) {
                     // Already claimed by another instance — skip

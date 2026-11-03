@@ -9,6 +9,7 @@ import { sql } from 'drizzle-orm';
 import { CronRun, ReviewQueueItem, Aide } from '../../../src/db/schema.js';
 import * as Sentry from '@sentry/node';
 import { randomUUID } from 'crypto';
+import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -180,7 +181,7 @@ export default async function handler(req, res) {
     try {
         const result = await db.select({
             maxStartedAt: sql`MAX(${CronRun.startedAt})`,
-        }).from(CronRun).where(sql`${CronRun.status} = 'success' AND ${CronRun.job} IN ('INGEST_AIDS', 'ACTUALITES', 'ingest-aids', 'actualites')`);
+        }).from(CronRun).where(sql`${CronRun.status} = 'success' AND ${CronRun.job} IN ('INGEST_AIDS', 'ACTUALITES', 'ingest-aids', 'actualites', 'ingest-structures')`);   // R40 / G4: ingest-structures writes CronRun too
 
         const lastIngestion = result[0]?.maxStartedAt;
         if (lastIngestion) {
@@ -204,7 +205,11 @@ export default async function handler(req, res) {
     // Check 3b (R8): the automatic veille (D-5 v2) — it publishes, corrects and withdraws every public record; a veille that stopped finishing is the first
     // thing the operator must know (the check above only watched the former ingestion jobs). ALERT_VEILLE_STALE_HOURS: the threshold (48 h; an alert drill
     // sets it to 0 to see the whole chain deliver).
-    try {
+    // R40 / G8: only when the veille is meant to run here — the beta is lifted, or the veille is opened as a job (ADA_BETA_OPEN_JOBS=veille). While it is
+    // intentionally closed (Production today) a missing veille is the expected state, not an incident: it used to raise « veille.stale » every hour.
+    const veilleExpected = !isPublicBetaRestricted(process.env) || openJobs(process.env).has('veille');
+    if (!veilleExpected) checks.veille = { ok: true, skipped: 'JOB_NOT_OPENED' };
+    else try {
         const threshold = Number.isFinite(Number(process.env.ALERT_VEILLE_STALE_HOURS)) && process.env.ALERT_VEILLE_STALE_HOURS !== '' ? Number(process.env.ALERT_VEILLE_STALE_HOURS) : FRESHNESS_THRESHOLD_HOURS;
         const [last] = await db.select({ at: sql`MAX(${CronRun.startedAt})` }).from(CronRun).where(sql`${CronRun.job} = 'veille' AND ${CronRun.status} IN ('success', 'partial')`);
         const at = last?.at ? new Date(last.at) : null;

@@ -1,5 +1,6 @@
 import logger from '../../_utils/logger.js';
-import { getCronAuth } from '../../_utils/cronAuth.js';
+import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
+import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { db } from '../../../src/db/index.js';
 import { Structure, ImportLog, SyncRun, ReviewQueueItem } from '../../../src/db/schema.js';
 import { snapshotRow } from '../../_services/content-versions.js';
@@ -356,6 +357,9 @@ export default async function handler(req, res) {
     try {
         // Use distributed lock to prevent concurrent runs
 	        const stats = await withLock('ingest-structures', async () => {
+            // R40 / G4: a CronRun row like the other jobs (health-alert's ingestion freshness reads only CronRun); SyncRun below is unchanged
+            const startedAtMs = Date.now();
+            const cronRunId = await startCronRun(db, 'ingest-structures', { trigger: scheduledByVercel(req) ? 'vercel-cron' : 'manual', metrics: { runId, limit: limit ?? null } });
 	            // Log sync run start
 	            await db.insert(SyncRun).values({
 	                id: runId,
@@ -374,6 +378,8 @@ export default async function handler(req, res) {
                     error: result.errors.length > 0 ? result.errors.join('; ') : null,
                     stats: result
                 }).where(eq(SyncRun.id, runId));
+                await finishCronRun(db, cronRunId, { status: result.errors.length > 0 ? 'partial' : 'success', startedAtMs,
+                    metrics: { runId, created: result.created ?? null, updated: result.updated ?? null, errorCount: result.errors.length } });
 
                 return result;
             } catch (error) {
@@ -383,6 +389,7 @@ export default async function handler(req, res) {
                     ended_at: new Date(),
                     error: getErrorMessage(error)
                 }).where(eq(SyncRun.id, runId));
+                await finishCronRun(db, cronRunId, { status: 'failed', startedAtMs, error: getErrorMessage(error), metrics: { runId } });
                 throw error;
             }
         });

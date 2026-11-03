@@ -64,7 +64,8 @@ describe('the claim of the J-1 reminder cron after one pass', () => {
     expect(src).toMatch(/reminderClaimOutcome\(/);
     // the claim re-checks the selection (and returns the row as claimed: a consent withdrawn after the selection is honoured)
     expect(src).toMatch(/gte\(ProAppointment\.startAt, tomorrowStart\),\s*lt\(ProAppointment\.startAt, tomorrowEnd\)/);
-    expect(src).toMatch(/\.returning\(\);/);
+    // R40 / G10: every column the database has (all of them from migration 0044 on) — still the whole row as claimed
+    expect(src).toMatch(/\.returning\(appointmentColumns\(guestSchema\)\);/);
   });
 });
 

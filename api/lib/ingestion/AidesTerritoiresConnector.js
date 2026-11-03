@@ -7,7 +7,8 @@ const API_BASE = 'https://aides-territoires.beta.gouv.fr/api/aids/';
 const CONNEXION_URL = 'https://aides-territoires.beta.gouv.fr/api/connexion/';
 const PAGE_SIZE = 50;
 const PAGES_PER_RUN = 20; // 50 * 20 = 1000 aides per run (safe within Vercel 300s timeout)
-const KV_CURSOR_KEY = 'at-connector:last-offset';
+// R40 / G3b: the pagination cursor — the API's own « next » URL where the previous run stopped (a new key: the former offset was never written)
+const KV_CURSOR_KEY = 'at-connector:next-url';
 
 /**
  * Connector for the Aides Territoires API v1.8+ (beta.gouv.fr).
@@ -42,10 +43,13 @@ export class AidesTerritoiresConnector extends SourceConnector {
         try {
             const res = await fetch(CONNEXION_URL, {
                 method: 'POST',
+                // R40 / G3d: as documented (aides-territoires.beta.gouv.fr/data/, read 3 Nov 2026): POST, X-AUTH-TOKEN, Content-Type JSON, body « {} »
                 headers: {
                     'X-AUTH-TOKEN': apiKey,
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                 },
+                body: '{}',
                 signal: AbortSignal.timeout(15_000),
             });
 
@@ -93,43 +97,28 @@ export class AidesTerritoiresConnector extends SourceConnector {
      * @returns {Promise<string[]>}
      */
     /**
-     * Load last offset from Upstash KV (or 0 if first run).
-     * @returns {Promise<number>}
+     * R40 / G3b — the « next » URL saved by the previous run, or null (first run, list finished, KV unavailable). Only a URL of this API's aid list is
+     * accepted (never another host or path: the value comes from storage). @returns {Promise<string|null>}
      */
     async _loadCursor() {
         try {
-            const kvUrl = process.env.KV_REST_API_URL;
-            const kvToken = process.env.KV_REST_API_TOKEN;
-            if (!kvUrl || !kvToken) return 0;
-
-            const res = await fetch(`${kvUrl}/get/${KV_CURSOR_KEY}`, {
-                headers: { Authorization: `Bearer ${kvToken}` },
-                signal: AbortSignal.timeout(5_000),
-            });
-            if (!res.ok) return 0;
-            const data = await res.json();
-            const offset = parseInt(data.result, 10);
-            return Number.isFinite(offset) ? offset : 0;
+            const { kv } = await import('../../_utils/kv.js');
+            const v = await kv.get(KV_CURSOR_KEY);
+            return typeof v === 'string' && v.startsWith(`${API_BASE}?`) ? v : null;
         } catch {
-            return 0;
+            return null;
         }
     }
 
     /**
-     * Save offset to Upstash KV for next run.
-     * @param {number} offset
+     * Save where the next run starts: the API's « next » URL, or '' when the list was read to its end (the next run starts again at page 1).
+     * @param {string|null} next
      */
-    async _saveCursor(offset) {
+    async _saveCursor(next) {
         try {
-            const kvUrl = process.env.KV_REST_API_URL;
-            const kvToken = process.env.KV_REST_API_TOKEN;
-            if (!kvUrl || !kvToken) return;
-
-            await fetch(`${kvUrl}/set/${KV_CURSOR_KEY}/${offset}`, {
-                headers: { Authorization: `Bearer ${kvToken}` },
-                signal: AbortSignal.timeout(5_000),
-            });
-            logger.info(`[AidesTerritoires] Cursor saved: offset=${offset}`);
+            const { kv } = await import('../../_utils/kv.js');
+            await kv.set(KV_CURSOR_KEY, next && next.startsWith(`${API_BASE}?`) ? next : '', { ex: 30 * 24 * 3600 });
+            logger.info(`[AidesTerritoires] Cursor saved: ${next ? 'resume next run' : 'list finished, restart at page 1'}`);
         } catch (err) {
             // @ts-ignore
             logger.warn(`[AidesTerritoires] Failed to save cursor: ${err.message}`);
@@ -149,8 +138,8 @@ export class AidesTerritoiresConnector extends SourceConnector {
             throw e;
         }
 
-        // Step 2: Paginate through the API using 'next' URL
-        let nextUrl = `${API_BASE}?published=true&page_size=${PAGE_SIZE}`;
+        // Step 2: Paginate through the API using 'next' URL — R40 / G3b: from where the previous run stopped (every run used to read the same first pages)
+        let nextUrl = (await this._loadCursor()) || `${API_BASE}?published=true&page_size=${PAGE_SIZE}`;
         let pagesProcessed = 0;
         let totalCount = null;
 
@@ -200,6 +189,7 @@ export class AidesTerritoiresConnector extends SourceConnector {
 
             if (results.length === 0) {
                 logger.info(`[AidesTerritoires] No more results on page ${pagesProcessed}`);
+                nextUrl = null;   // R40: the list is finished — the next run starts again at page 1
                 break;
             }
 
@@ -215,6 +205,7 @@ export class AidesTerritoiresConnector extends SourceConnector {
             logger.info(`[AidesTerritoires] Page ${pagesProcessed}/${PAGES_PER_RUN}, total=${totalCount}, cache: ${this._cache.size}, hasNext: ${!!nextUrl}`);
         }
 
+        await this._saveCursor(nextUrl);
         logger.info(`[AidesTerritoires] Total fetched: ${this._cache.size} aides (${pagesProcessed} pages, ${totalCount} available)`);
         return Array.from(this._cache.keys());
     }
@@ -317,6 +308,8 @@ export class AidesTerritoiresConnector extends SourceConnector {
             _echelon_territorial: echelonTerritorial,
             _code_insee_territoire: codeInseeTerritoire,
             _source_donnee: 'Aides-Territoires',
+            // R40 / G3e: the provider's stable id — the record identity (two aids with the same title are two records)
+            external_id: item.id !== undefined && item.id !== null && String(item.id).trim() ? `aides-territoires:${String(item.id).trim()}` : null,
             _lien_demarche: applyUrl,
             _financers: financers || null,
             _targeted_audiences: targetedAudiences,

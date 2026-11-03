@@ -8,7 +8,7 @@
  */
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
-import { openSurfaces } from '../api/_utils/public-beta.js';
+import { openSurfaces, openJobs } from '../api/_utils/public-beta.js';
 
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string }} [opts] legalText: the legal-pages source (tests pass their own) */
 export function evaluateReleasePreflight(env, opts = {}) {
@@ -55,7 +55,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
   add('db.tls_verified', get('DATABASE_SSL_VERIFY') === 'true' ? 'PASS' : 'FAIL', 'DATABASE_SSL_VERIFY=true: the database certificate is verified');
-  if (!needs(['jobs'])) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
+  // R40 / G2: jobs open one at a time (ADA_BETA_OPEN_JOBS), never as a surface — any opened job needs the alert channel
+  if (betaOn && openJobs(env).size === 0) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
   // R36: an e-mail to ALERT_EMAIL through the site's mail provider is an alert channel too (no Discord / Slack needed)
   else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');

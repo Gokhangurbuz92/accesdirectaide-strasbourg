@@ -5,7 +5,7 @@ import path from 'path';
 
 import { db } from '../../../src/db/index.js';
 import { Actualite, RssSource, SourceDocument } from '../../../src/db/schema.js';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { env } from '../../_utils/env.js';
 import { computeContentHash, computeRawContentHash } from '../../_utils/contentHash.js';
 import { ensureSlugOrNull } from '../../_utils/slug.js';
@@ -377,7 +377,9 @@ export async function runIngestActualitesRss({ limit, runId } = {}) {
         updatedAt: new Date(),
       }).onConflictDoUpdate({
         target: [RssSource.feed_url],
-        set: { name, domain, trust_level: trustLevel, enabled, updatedAt: new Date() },
+        // R40 / G9: an administrator's choice is kept — a feed disabled in the database stays disabled. The manifest can only turn a feed OFF (a feed
+        // disabled there has no reuse right or is out of scope): enabled = (current value) AND (manifest value), never re-enabled by a run.
+        set: { name, domain, trust_level: trustLevel, enabled: sql`${RssSource.enabled} AND ${enabled}`, updatedAt: new Date() },
       });
     } catch (e) {
       stats.errors.push(`${name}: seed failed - ${getErrorMessage(e)}`);
