@@ -248,5 +248,11 @@
  "wizard.announce_error": "An error occurred.",
  "wizard.progress": "Diagnostic progress",
  "wizard.loading": "Analysing your situation…",
- "wizard.retry": "Try again"
+ "wizard.retry": "Try again",
+ "orientation.mon_assistant": "My assistant",
+ "orientation.assistant_d_orientation_pour_trouver": "Orientation assistant to find the aids and procedures suited to your situation.",
+ "orientation.repondez_a_quelques_questions_pour": "Answer a few questions to receive personalised recommendations.",
+ "orientation.voir_toutes_les_aides": "See all aids",
+ "orientation.voir_les_demarches": "See the procedures",
+ "orientation.voir_l_annuaire": "See the directory"
 }

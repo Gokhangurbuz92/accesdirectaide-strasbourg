@@ -1099,5 +1099,13 @@
  "onboarding.start": "Почати",
  "onboarding.next": "Далі",
  "onboarding.step": "Крок {{step}} / {{total}}",
- "onboarding.skip": "Пропустити посібник"
+ "onboarding.skip": "Пропустити посібник",
+ "visio.visio_validee_la_personne_est": "Відеозустріч підтверджено. Особу повідомлено (без посилання), вона приєднається зі свого простору.",
+ "visio.validation_de_la_visio_retiree": "Підтвердження відеозустрічі скасовано. Особу повідомлено.",
+ "visio.rendez_vous_en_presentiel_pas": "Особиста зустріч: без відео.",
+ "visio.la_visio_n_est_pas": "Відео для цієї послуги наразі не активоване.",
+ "visio.environnement_de_test_la_connexion": "Тестове середовище: з’єднання з постачальником відео тут не перевіряється.",
+ "visio.valider_la_visio": "Підтвердити відеозустріч",
+ "visio.retirer_la_validation": "Скасувати підтвердження",
+ "visio.rejoindre_la_visio": "Приєднатися до відеозустрічі"
 }

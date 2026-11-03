@@ -1087,5 +1087,13 @@
  "onboarding.start": "Loslegen",
  "onboarding.next": "Weiter",
  "onboarding.step": "Schritt {{step}} / {{total}}",
- "onboarding.skip": "Anleitung überspringen"
+ "onboarding.skip": "Anleitung überspringen",
+ "visio.visio_validee_la_personne_est": "Videotermin freigegeben. Die Person wurde benachrichtigt (ohne Link) und tritt über ihren Bereich bei.",
+ "visio.validation_de_la_visio_retiree": "Freigabe des Videotermins zurückgenommen. Die Person wurde benachrichtigt.",
+ "visio.rendez_vous_en_presentiel_pas": "Termin vor Ort: kein Video.",
+ "visio.la_visio_n_est_pas": "Video ist für diese Leistung derzeit nicht aktiviert.",
+ "visio.environnement_de_test_la_connexion": "Testumgebung: Die Verbindung zum Videoanbieter wird hier nicht geprüft.",
+ "visio.valider_la_visio": "Videotermin freigeben",
+ "visio.retirer_la_validation": "Freigabe zurücknehmen",
+ "visio.rejoindre_la_visio": "Videotermin beitreten"
 }

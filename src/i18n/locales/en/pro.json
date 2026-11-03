@@ -1087,5 +1087,13 @@
  "onboarding.start": "Get started",
  "onboarding.next": "Next",
  "onboarding.step": "Step {{step}} / {{total}}",
- "onboarding.skip": "Skip the guide"
+ "onboarding.skip": "Skip the guide",
+ "visio.visio_validee_la_personne_est": "Video call approved. The person has been notified (without a link) and will join from their space.",
+ "visio.validation_de_la_visio_retiree": "Video call approval withdrawn. The person has been notified.",
+ "visio.rendez_vous_en_presentiel_pas": "In-person appointment: no video call.",
+ "visio.la_visio_n_est_pas": "Video calls are not activated on this service for now.",
+ "visio.environnement_de_test_la_connexion": "Test environment: the connection to the video provider is not checked here.",
+ "visio.valider_la_visio": "Approve the video call",
+ "visio.retirer_la_validation": "Withdraw the approval",
+ "visio.rejoindre_la_visio": "Join the video call"
 }

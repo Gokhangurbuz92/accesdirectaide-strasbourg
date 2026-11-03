@@ -248,5 +248,11 @@
  "wizard.announce_error": "Ein Fehler ist aufgetreten.",
  "wizard.progress": "Fortschritt der Diagnose",
  "wizard.loading": "Ihre Situation wird ausgewertet…",
- "wizard.retry": "Erneut versuchen"
+ "wizard.retry": "Erneut versuchen",
+ "orientation.mon_assistant": "Mein Assistent",
+ "orientation.assistant_d_orientation_pour_trouver": "Orientierungsassistent, um die zu Ihrer Situation passenden Hilfen und Behördengänge zu finden.",
+ "orientation.repondez_a_quelques_questions_pour": "Beantworten Sie einige Fragen, um persönliche Empfehlungen zu erhalten.",
+ "orientation.voir_toutes_les_aides": "Alle Hilfen ansehen",
+ "orientation.voir_les_demarches": "Behördengänge ansehen",
+ "orientation.voir_l_annuaire": "Verzeichnis ansehen"
 }

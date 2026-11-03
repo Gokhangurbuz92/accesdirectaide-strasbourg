@@ -316,5 +316,21 @@
  "auth.une_erreur_est_survenue_2": "An error occurred.",
  "auth.j_ai_deja_un_compte": "I already have an account",
  "auth.je_n_ai_pas_de": "I don't have an account",
- "request.confirmer_le_rendez_vous": "Confirm the appointment"
+ "request.confirmer_le_rendez_vous": "Confirm the appointment",
+ "sms.numero_invalide_format_06_12": "Invalid number. Format: 06 12 34 56 78",
+ "sms.echec_de_l_activation": "Activation failed.",
+ "sms.rappel_sms_enregistre": "SMS reminder saved",
+ "sms.accord_enregistre_sms_pas_encore": "Consent saved — SMS not active yet",
+ "sms.vous_pouvez_retirer_votre_accord": "You can withdraw your consent in your profile.",
+ "sms.rappel_par_sms": "SMS reminder",
+ "sms.numero_de_telephone_pour_le": "Phone number for the SMS reminder",
+ "sms.j_accepte_de_recevoir_un": "I agree to receive an SMS reminder for this appointment",
+ "sms.numero_utilise_uniquement_pour_les": "Number used only for the reminders of this appointment. Your consent is recorded; you can withdraw it at any time in your profile.",
+ "visio.rendez_vous_en_visio": "Video appointment",
+ "visio.quitter": "Leave",
+ "visio.environnement_de_test_la_connexion": "Test environment: the connection to the video provider is not checked here.",
+ "visio.le_service_de_visio_n": "The video service could not be loaded in this environment. Your appointment is not cancelled: contact the structure if needed.",
+ "visio.connexion_au_service_de_visio": "Connecting to the video service…",
+ "public.minutes": "{{minutes}} min",
+ "rdv.minutes": "{{minutes}} min"
 }

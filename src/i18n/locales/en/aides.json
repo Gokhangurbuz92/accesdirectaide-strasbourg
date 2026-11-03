@@ -102,5 +102,14 @@
  "sort.recent": "Most recent",
  "sort.relevance": "Relevance",
  "sort.relevance_needs_query": "Relevance (needs a search)",
- "territory.national": "All of France"
+ "territory.national": "All of France",
+ "legacy.ouverture_de_la_fiche": "Opening the page…",
+ "legacy.recherche_de_la_fiche_demandee": "Looking for the requested page.",
+ "legacy.aide_introuvable_lien_incomplet": "Aid not found: incomplete link",
+ "legacy.cette_adresse_ne_precise_pas": "This address does not say which aid to show.",
+ "legacy.aide_introuvable": "Aid not found",
+ "legacy.aucune_aide_publiee_ne_correspond": "No published aid matches this link: it may have been removed, or the link is incomplete.",
+ "legacy.fiche_momentanement_indisponible": "Page temporarily unavailable",
+ "legacy.la_fiche_n_a_pas": "The page could not be loaded. This does not mean there is no aid: try again in a moment.",
+ "legacy.voir_toutes_les_aides": "See all aids"
 }

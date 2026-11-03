@@ -1087,5 +1087,13 @@
  "onboarding.start": "Başla",
  "onboarding.next": "İleri",
  "onboarding.step": "Adım {{step}} / {{total}}",
- "onboarding.skip": "Rehberi geç"
+ "onboarding.skip": "Rehberi geç",
+ "visio.visio_validee_la_personne_est": "Görüntülü görüşme onaylandı. Kişiye bildirildi (bağlantısız) ve kendi alanından katılacak.",
+ "visio.validation_de_la_visio_retiree": "Görüntülü görüşme onayı geri alındı. Kişiye bildirildi.",
+ "visio.rendez_vous_en_presentiel_pas": "Yüz yüze randevu: görüntülü görüşme yok.",
+ "visio.la_visio_n_est_pas": "Görüntülü görüşme bu hizmette şu anda etkin değil.",
+ "visio.environnement_de_test_la_connexion": "Test ortamı: görüntülü görüşme sağlayıcısına bağlantı burada doğrulanmıyor.",
+ "visio.valider_la_visio": "Görüntülü görüşmeyi onayla",
+ "visio.retirer_la_validation": "Onayı geri al",
+ "visio.rejoindre_la_visio": "Görüntülü görüşmeye katıl"
 }

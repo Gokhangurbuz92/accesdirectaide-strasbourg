@@ -316,5 +316,21 @@
  "auth.une_erreur_est_survenue_2": "Сталася помилка.",
  "auth.j_ai_deja_un_compte": "У мене вже є обліковий запис",
  "auth.je_n_ai_pas_de": "У мене немає облікового запису",
- "request.confirmer_le_rendez_vous": "Підтвердити зустріч"
+ "request.confirmer_le_rendez_vous": "Підтвердити зустріч",
+ "sms.numero_invalide_format_06_12": "Недійсний номер. Формат: 06 12 34 56 78",
+ "sms.echec_de_l_activation": "Не вдалося активувати.",
+ "sms.rappel_sms_enregistre": "SMS-нагадування збережено",
+ "sms.accord_enregistre_sms_pas_encore": "Згоду збережено — SMS ще не активні",
+ "sms.vous_pouvez_retirer_votre_accord": "Ви можете відкликати згоду у своєму профілі.",
+ "sms.rappel_par_sms": "Нагадування SMS",
+ "sms.numero_de_telephone_pour_le": "Номер телефону для SMS-нагадування",
+ "sms.j_accepte_de_recevoir_un": "Я погоджуюся отримати SMS-нагадування про цю зустріч",
+ "sms.numero_utilise_uniquement_pour_les": "Номер використовується лише для нагадувань про цю зустріч. Вашу згоду записано; ви можете відкликати її будь-коли у профілі.",
+ "visio.rendez_vous_en_visio": "Відеозустріч",
+ "visio.quitter": "Вийти",
+ "visio.environnement_de_test_la_connexion": "Тестове середовище: з’єднання з постачальником відео тут не перевіряється.",
+ "visio.le_service_de_visio_n": "Не вдалося завантажити відеосервіс у цьому середовищі. Вашу зустріч не скасовано: за потреби зверніться до організації.",
+ "visio.connexion_au_service_de_visio": "Підключення до відеосервісу…",
+ "public.minutes": "{{minutes}} хв",
+ "rdv.minutes": "{{minutes}} хв"
 }

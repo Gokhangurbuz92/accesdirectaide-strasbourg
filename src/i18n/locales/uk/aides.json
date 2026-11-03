@@ -104,5 +104,14 @@
  "sort.recent": "Найновіші",
  "sort.relevance": "Релевантність",
  "sort.relevance_needs_query": "Релевантність (потрібен пошук)",
- "territory.national": "Уся Франція"
+ "territory.national": "Уся Франція",
+ "legacy.ouverture_de_la_fiche": "Відкриття сторінки…",
+ "legacy.recherche_de_la_fiche_demandee": "Пошук запитаної сторінки.",
+ "legacy.aide_introuvable_lien_incomplet": "Допомогу не знайдено: неповне посилання",
+ "legacy.cette_adresse_ne_precise_pas": "Ця адреса не вказує, яку допомогу показати.",
+ "legacy.aide_introuvable": "Допомогу не знайдено",
+ "legacy.aucune_aide_publiee_ne_correspond": "Жодна опублікована допомога не відповідає цьому посиланню: її могли вилучити, або посилання неповне.",
+ "legacy.fiche_momentanement_indisponible": "Сторінка тимчасово недоступна",
+ "legacy.la_fiche_n_a_pas": "Не вдалося завантажити сторінку. Це не означає, що допомоги немає: спробуйте за мить.",
+ "legacy.voir_toutes_les_aides": "Переглянути всю допомогу"
 }

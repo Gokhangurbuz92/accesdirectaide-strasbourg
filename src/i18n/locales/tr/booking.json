@@ -316,5 +316,21 @@
  "auth.une_erreur_est_survenue_2": "Bir hata oluştu.",
  "auth.j_ai_deja_un_compte": "Zaten bir hesabım var",
  "auth.je_n_ai_pas_de": "Hesabım yok",
- "request.confirmer_le_rendez_vous": "Randevuyu onayla"
+ "request.confirmer_le_rendez_vous": "Randevuyu onayla",
+ "sms.numero_invalide_format_06_12": "Geçersiz numara. Biçim: 06 12 34 56 78",
+ "sms.echec_de_l_activation": "Etkinleştirme başarısız oldu.",
+ "sms.rappel_sms_enregistre": "SMS hatırlatması kaydedildi",
+ "sms.accord_enregistre_sms_pas_encore": "Onay kaydedildi — SMS henüz etkin değil",
+ "sms.vous_pouvez_retirer_votre_accord": "Onayınızı profilinizden geri çekebilirsiniz.",
+ "sms.rappel_par_sms": "SMS ile hatırlatma",
+ "sms.numero_de_telephone_pour_le": "SMS hatırlatması için telefon numarası",
+ "sms.j_accepte_de_recevoir_un": "Bu randevu için SMS hatırlatması almayı kabul ediyorum",
+ "sms.numero_utilise_uniquement_pour_les": "Numara yalnızca bu randevunun hatırlatmaları için kullanılır. Onayınız kaydedilir; istediğiniz zaman profilinizden geri çekebilirsiniz.",
+ "visio.rendez_vous_en_visio": "Görüntülü randevu",
+ "visio.quitter": "Ayrıl",
+ "visio.environnement_de_test_la_connexion": "Test ortamı: görüntülü görüşme sağlayıcısına bağlantı burada doğrulanmıyor.",
+ "visio.le_service_de_visio_n": "Görüntülü görüşme hizmeti bu ortamda yüklenemedi. Randevunuz iptal edilmedi: gerekirse kuruluşla iletişime geçin.",
+ "visio.connexion_au_service_de_visio": "Görüntülü görüşme hizmetine bağlanılıyor…",
+ "public.minutes": "{{minutes}} dk",
+ "rdv.minutes": "{{minutes}} dk"
 }

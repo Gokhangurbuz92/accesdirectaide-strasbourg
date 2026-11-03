@@ -721,7 +721,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                               <p className="font-medium text-slate-900">{service.name}</p>
-                              <p className="text-sm text-slate-600">{t('booking:rdv.duree', "Duree:")} {service.durationMinutes || 30} min</p>
+                              <p className="text-sm text-slate-600">{t('booking:rdv.duree', "Duree:")} {t('booking:rdv.minutes', '{{minutes}} min', { minutes: service.durationMinutes || 30 })}</p>
                             </div>
                             <Button
                               type="button"

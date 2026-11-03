@@ -316,5 +316,21 @@
  "auth.une_erreur_est_survenue_2": "حدث خطأ.",
  "auth.j_ai_deja_un_compte": "لدي حساب بالفعل",
  "auth.je_n_ai_pas_de": "ليس لدي حساب",
- "request.confirmer_le_rendez_vous": "تأكيد الموعد"
+ "request.confirmer_le_rendez_vous": "تأكيد الموعد",
+ "sms.numero_invalide_format_06_12": "رقم غير صالح. الصيغة: 06 12 34 56 78",
+ "sms.echec_de_l_activation": "فشل التفعيل.",
+ "sms.rappel_sms_enregistre": "تم حفظ التذكير عبر الرسائل القصيرة",
+ "sms.accord_enregistre_sms_pas_encore": "تم حفظ الموافقة — الرسائل القصيرة غير مفعّلة بعد",
+ "sms.vous_pouvez_retirer_votre_accord": "يمكنك سحب موافقتك من ملفك الشخصي.",
+ "sms.rappel_par_sms": "تذكير عبر الرسائل القصيرة",
+ "sms.numero_de_telephone_pour_le": "رقم الهاتف للتذكير عبر الرسائل القصيرة",
+ "sms.j_accepte_de_recevoir_un": "أوافق على تلقي تذكير عبر الرسائل القصيرة لهذا الموعد",
+ "sms.numero_utilise_uniquement_pour_les": "يُستخدم الرقم فقط لتذكيرات هذا الموعد. تُسجَّل موافقتك؛ ويمكنك سحبها في أي وقت من ملفك الشخصي.",
+ "visio.rendez_vous_en_visio": "موعد بالفيديو",
+ "visio.quitter": "مغادرة",
+ "visio.environnement_de_test_la_connexion": "بيئة اختبار: لا يُتحقق هنا من الاتصال بمزوّد الفيديو.",
+ "visio.le_service_de_visio_n": "تعذّر تحميل خدمة الفيديو في هذه البيئة. لم يُلغَ موعدك: تواصل مع الجهة عند الحاجة.",
+ "visio.connexion_au_service_de_visio": "جارٍ الاتصال بخدمة الفيديو…",
+ "public.minutes": "{{minutes}} دقيقة",
+ "rdv.minutes": "{{minutes}} دقيقة"
 }

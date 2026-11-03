@@ -102,5 +102,14 @@
  "sort.recent": "Neueste",
  "sort.relevance": "Relevanz",
  "sort.relevance_needs_query": "Relevanz (erfordert eine Suche)",
- "territory.national": "Ganz Frankreich"
+ "territory.national": "Ganz Frankreich",
+ "legacy.ouverture_de_la_fiche": "Seite wird geöffnet…",
+ "legacy.recherche_de_la_fiche_demandee": "Die angeforderte Seite wird gesucht.",
+ "legacy.aide_introuvable_lien_incomplet": "Hilfe nicht gefunden: unvollständiger Link",
+ "legacy.cette_adresse_ne_precise_pas": "Diese Adresse gibt nicht an, welche Hilfe angezeigt werden soll.",
+ "legacy.aide_introuvable": "Hilfe nicht gefunden",
+ "legacy.aucune_aide_publiee_ne_correspond": "Keine veröffentlichte Hilfe passt zu diesem Link: Sie wurde vielleicht entfernt, oder der Link ist unvollständig.",
+ "legacy.fiche_momentanement_indisponible": "Seite vorübergehend nicht verfügbar",
+ "legacy.la_fiche_n_a_pas": "Die Seite konnte nicht geladen werden. Das heißt nicht, dass es keine Hilfe gibt: Versuchen Sie es gleich noch einmal.",
+ "legacy.voir_toutes_les_aides": "Alle Hilfen ansehen"
 }

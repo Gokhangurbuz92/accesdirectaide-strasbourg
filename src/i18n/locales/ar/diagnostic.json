@@ -260,5 +260,11 @@
  "wizard.announce_error": "حدث خطأ.",
  "wizard.progress": "تقدّم التشخيص",
  "wizard.loading": "جارٍ تحليل وضعك…",
- "wizard.retry": "إعادة المحاولة"
+ "wizard.retry": "إعادة المحاولة",
+ "orientation.mon_assistant": "مساعدي",
+ "orientation.assistant_d_orientation_pour_trouver": "مساعد توجيه لإيجاد المساعدات والإجراءات المناسبة لوضعك.",
+ "orientation.repondez_a_quelques_questions_pour": "أجب عن بضعة أسئلة لتلقي توصيات مخصصة.",
+ "orientation.voir_toutes_les_aides": "عرض جميع المساعدات",
+ "orientation.voir_les_demarches": "عرض الإجراءات",
+ "orientation.voir_l_annuaire": "عرض الدليل"
 }

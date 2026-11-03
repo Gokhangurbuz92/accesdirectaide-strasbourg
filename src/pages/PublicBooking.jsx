@@ -368,7 +368,7 @@ export default function PublicBooking() {
                                                 {service.name}
                                             </p>
                                             <p className="text-xs text-slate-600">
-                                                {service.durationMinutes || 30} min
+                                                {t('booking:public.minutes', '{{minutes}} min', { minutes: service.durationMinutes || 30 })}
                                             </p>
                                         </div>
                                     </div>

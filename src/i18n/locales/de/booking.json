@@ -316,5 +316,21 @@
  "auth.une_erreur_est_survenue_2": "Ein Fehler ist aufgetreten.",
  "auth.j_ai_deja_un_compte": "Ich habe bereits ein Konto",
  "auth.je_n_ai_pas_de": "Ich habe kein Konto",
- "request.confirmer_le_rendez_vous": "Termin bestätigen"
+ "request.confirmer_le_rendez_vous": "Termin bestätigen",
+ "sms.numero_invalide_format_06_12": "Ungültige Nummer. Format: 06 12 34 56 78",
+ "sms.echec_de_l_activation": "Aktivierung fehlgeschlagen.",
+ "sms.rappel_sms_enregistre": "SMS-Erinnerung gespeichert",
+ "sms.accord_enregistre_sms_pas_encore": "Einverständnis gespeichert — SMS noch nicht aktiv",
+ "sms.vous_pouvez_retirer_votre_accord": "Sie können Ihr Einverständnis in Ihrem Profil zurückziehen.",
+ "sms.rappel_par_sms": "Erinnerung per SMS",
+ "sms.numero_de_telephone_pour_le": "Telefonnummer für die SMS-Erinnerung",
+ "sms.j_accepte_de_recevoir_un": "Ich bin einverstanden, eine SMS-Erinnerung für diesen Termin zu erhalten",
+ "sms.numero_utilise_uniquement_pour_les": "Die Nummer wird nur für die Erinnerungen an diesen Termin verwendet. Ihr Einverständnis wird gespeichert; Sie können es jederzeit in Ihrem Profil zurückziehen.",
+ "visio.rendez_vous_en_visio": "Videotermin",
+ "visio.quitter": "Verlassen",
+ "visio.environnement_de_test_la_connexion": "Testumgebung: Die Verbindung zum Videoanbieter wird hier nicht geprüft.",
+ "visio.le_service_de_visio_n": "Der Videodienst konnte in dieser Umgebung nicht geladen werden. Ihr Termin ist nicht abgesagt: Wenden Sie sich bei Bedarf an die Einrichtung.",
+ "visio.connexion_au_service_de_visio": "Verbindung zum Videodienst…",
+ "public.minutes": "{{minutes}} Min.",
+ "rdv.minutes": "{{minutes}} Min."
 }

@@ -102,5 +102,14 @@
  "sort.recent": "En yeniler",
  "sort.relevance": "İlgililik",
  "sort.relevance_needs_query": "İlgililik (arama gerektirir)",
- "territory.national": "Tüm Fransa"
+ "territory.national": "Tüm Fransa",
+ "legacy.ouverture_de_la_fiche": "Sayfa açılıyor…",
+ "legacy.recherche_de_la_fiche_demandee": "İstenen sayfa aranıyor.",
+ "legacy.aide_introuvable_lien_incomplet": "Yardım bulunamadı: eksik bağlantı",
+ "legacy.cette_adresse_ne_precise_pas": "Bu adres hangi yardımın gösterileceğini belirtmiyor.",
+ "legacy.aide_introuvable": "Yardım bulunamadı",
+ "legacy.aucune_aide_publiee_ne_correspond": "Bu bağlantıya uyan yayımlanmış bir yardım yok: kaldırılmış olabilir veya bağlantı eksik.",
+ "legacy.fiche_momentanement_indisponible": "Sayfa geçici olarak kullanılamıyor",
+ "legacy.la_fiche_n_a_pas": "Sayfa yüklenemedi. Bu, yardım olmadığı anlamına gelmez: birazdan tekrar deneyin.",
+ "legacy.voir_toutes_les_aides": "Tüm yardımları gör"
 }

@@ -248,5 +248,11 @@
  "wizard.announce_error": "Bir hata oluştu.",
  "wizard.progress": "Değerlendirmenin ilerleyişi",
  "wizard.loading": "Durumunuz analiz ediliyor…",
- "wizard.retry": "Tekrar dene"
+ "wizard.retry": "Tekrar dene",
+ "orientation.mon_assistant": "Asistanım",
+ "orientation.assistant_d_orientation_pour_trouver": "Durumunuza uygun yardımları ve işlemleri bulmak için yönlendirme asistanı.",
+ "orientation.repondez_a_quelques_questions_pour": "Kişiselleştirilmiş öneriler almak için birkaç soruyu yanıtlayın.",
+ "orientation.voir_toutes_les_aides": "Tüm yardımları gör",
+ "orientation.voir_les_demarches": "İşlemleri gör",
+ "orientation.voir_l_annuaire": "Rehberi gör"
 }

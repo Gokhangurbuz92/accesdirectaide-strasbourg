@@ -1111,5 +1111,13 @@
  "onboarding.start": "ابدأ",
  "onboarding.next": "التالي",
  "onboarding.step": "الخطوة {{step}} / {{total}}",
- "onboarding.skip": "تخطي الدليل"
+ "onboarding.skip": "تخطي الدليل",
+ "visio.visio_validee_la_personne_est": "تمت المصادقة على مكالمة الفيديو. أُبلغ الشخص (دون رابط) وسينضم من مساحته.",
+ "visio.validation_de_la_visio_retiree": "سُحبت المصادقة على مكالمة الفيديو. أُبلغ الشخص.",
+ "visio.rendez_vous_en_presentiel_pas": "موعد حضوري: لا فيديو.",
+ "visio.la_visio_n_est_pas": "مكالمات الفيديو غير مفعّلة في هذه الخدمة حاليًا.",
+ "visio.environnement_de_test_la_connexion": "بيئة اختبار: لا يُتحقق هنا من الاتصال بمزوّد الفيديو.",
+ "visio.valider_la_visio": "المصادقة على مكالمة الفيديو",
+ "visio.retirer_la_validation": "سحب المصادقة",
+ "visio.rejoindre_la_visio": "الانضمام إلى مكالمة الفيديو"
 }

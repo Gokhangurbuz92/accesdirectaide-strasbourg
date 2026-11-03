@@ -230,5 +230,6 @@
  "chat.send": "Nachricht senden",
  "chat.assessment_remove": "Entfernen",
  "chat.assessment_attached_one": "Ihr Simulationshinweis ist Ihren Fragen beigefügt, nur zum Lesen. La Boussole erklärt ihn, sie entscheidet nicht.",
- "chat.assessment_attached_other": "Ihre {{count}} Simulationshinweise sind Ihren Fragen beigefügt, nur zum Lesen. La Boussole erklärt sie, sie entscheidet nicht."
+ "chat.assessment_attached_other": "Ihre {{count}} Simulationshinweise sind Ihren Fragen beigefügt, nur zum Lesen. La Boussole erklärt sie, sie entscheidet nicht.",
+ "health_notice.text": "Senden Sie keine medizinischen Dokumente (Attest, Bericht, Rezept, MDPH-Akte – Akte beim Behindertenzentrum – mit Gesundheitsangaben): AccesDirectAide hat noch keinen zugelassenen Hoster für Gesundheitsdaten (HDS, die französische Zertifizierung für das Hosten von Gesundheitsdaten)."
 }

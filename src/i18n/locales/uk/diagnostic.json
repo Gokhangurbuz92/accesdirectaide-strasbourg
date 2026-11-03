@@ -254,5 +254,11 @@
  "wizard.announce_error": "Сталася помилка.",
  "wizard.progress": "Хід діагностики",
  "wizard.loading": "Аналіз вашої ситуації…",
- "wizard.retry": "Спробувати ще раз"
+ "wizard.retry": "Спробувати ще раз",
+ "orientation.mon_assistant": "Мій помічник",
+ "orientation.assistant_d_orientation_pour_trouver": "Помічник з орієнтації для пошуку допомоги та процедур, що відповідають вашій ситуації.",
+ "orientation.repondez_a_quelques_questions_pour": "Дайте відповідь на кілька запитань, щоб отримати персональні рекомендації.",
+ "orientation.voir_toutes_les_aides": "Переглянути всю допомогу",
+ "orientation.voir_les_demarches": "Переглянути процедури",
+ "orientation.voir_l_annuaire": "Переглянути довідник"
 }
