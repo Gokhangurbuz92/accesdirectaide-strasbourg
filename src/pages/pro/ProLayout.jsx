@@ -99,7 +99,7 @@ export default function ProLayout() {
     };
 
     if (loading) {
-        return <div className="p-6"><SkeletonList count={4} variant="card" /></div>;
+        return <main id="main-content" aria-busy="true" className="p-6"><SkeletonList count={4} variant="card" /></main>;   // R41-K A6: a landmark while the session is checked
     }
 
     // If on public auth pages, just render Outlet
