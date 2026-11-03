@@ -28,7 +28,15 @@ test('CP1bis: Zero Results & Tracking', async ({ page }) => {
 
     // Check text content matches specs
     await expect(page.getByRole('heading', { name: "Aucune aide trouvée" })).toBeVisible();
-    await expect(page.getByText("Essayez")).toBeVisible();
+    // R41: since R28 (598f06e, NoResultsHelp) the empty state is followed by « Essayez aussi » — the same words in the other catalogues and in the
+    // global search — so the bare word « Essayez » matches two paragraphs. Both are asserted, each in its own block.
+    await expect(emptyState.getByText("Essayez d'élargir votre recherche ou réinitialisez les filtres.")).toBeVisible();
+    const help = page.getByTestId('no-results-help');
+    await expect(help).toBeVisible();
+    await expect(help.getByText('Essayez aussi', { exact: true })).toBeVisible();
+    await expect(help.getByRole('link', { name: 'Chercher « xyznotfound » dans les démarches' })).toHaveAttribute('href', '/demarches?q=xyznotfound');
+    await expect(help.getByRole('link', { name: 'Chercher « xyznotfound » dans les lieux d’accueil' })).toHaveAttribute('href', '/structures?q=xyznotfound');
+    await expect(help.getByRole('link', { name: 'Chercher « xyznotfound » partout sur le site' })).toHaveAttribute('href', '/recherche?q=xyznotfound');
 
     // 3. Check Reset Button
     const resetButton = page.getByTestId('empty-reset');

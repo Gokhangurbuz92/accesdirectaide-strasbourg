@@ -119,7 +119,16 @@ test.describe('P8-E provenance and freshness UI', () => {
 
   test('shows À vérifier badge when verification is missing', async ({ page }) => {
     await page.goto('/aides/aide-provenance-non-verifie');
-    // Wait for content to render
-    await expect(page.locator('[data-testid="freshness-badge"]')).toBeVisible({ timeout: 10000 });
+    // R41: the title is kept (it is part of the pinned mock inventory) but the expectation is the approved behaviour. A record with no verification
+    // date has NO freshness badge: getFreshnessBadge (src/lib/provenance.js) gives it no label, the product never shows « À vérifier » on a record
+    // (AideCard / DemarcheCard rule), and since R32 (906587f) ProvenanceFreshness no longer renders an EMPTY badge (the pre-R32 test only passed on
+    // that empty, nameless element). The block itself, the collection date and the official source are still shown; no verification date is invented.
+    const block = page.locator('[data-testid="provenance-freshness"]');
+    await expect(block).toBeVisible({ timeout: 10000 });
+    await expect(block.getByText('Dernière collecte')).toBeVisible();
+    await expect(page.getByRole('link', { name: /Voir la source officielle/i })).toHaveAttribute('href', 'https://www.service-public.fr/particuliers/vosdroits/F12006');
+    await expect(page.locator('[data-testid="freshness-badge"]')).toHaveCount(0);
+    await expect(block.getByText('Dernière vérification')).toHaveCount(0);
+    await expect(block).not.toContainText(/À jour|À actualiser|À risque|À vérifier/);
   });
 });
