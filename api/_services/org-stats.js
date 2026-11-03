@@ -11,6 +11,7 @@
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { activeMemberSql } from '../_utils/share-access.js';
+import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 
 export const K_MIN = 5;
 export const K_ORGS = 3;
@@ -22,8 +23,8 @@ export async function teamStats(ctx, db = defaultDb) {
   if (!(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   const s = ctx.structureId;
   const [g] = (await db.execute(sql`SELECT
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND status NOT IN ('cancelled') AND "startAt" >= date_trunc('day', NOW()) AND "startAt" < date_trunc('day', NOW()) + interval '1 day') AS "appointmentsToday",
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND status NOT IN ('cancelled', 'done', 'no_show') AND "startAt" >= NOW()) AS "appointmentsUpcoming",
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled') AND "startAt" >= date_trunc('day', NOW()) AND "startAt" < date_trunc('day', NOW()) + interval '1 day') AS "appointmentsToday",
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled', 'done', 'no_show') AND "startAt" >= NOW()) AS "appointmentsUpcoming",
       (SELECT count(*)::int FROM "RdvConversation" WHERE "structureId" = ${s} AND "lastMessageAt" >= NOW() - interval '30 days') AS "conversationsActive",
       (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status <> 'CLOSED' AND "assigneeProUserId" IS NULL) AS "casesUnassigned"`)).rows;
   const members = (await db.execute(sql`SELECT u.id,
@@ -43,13 +44,13 @@ export async function regionalStats(ctx, db = defaultDb) {
       shown AS (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS})
     SELECT o.commune, count(DISTINCT o.id)::int AS orgs,
       (SELECT count(*)::int FROM "ProUser" u JOIN org o2 ON o2.id = u."structureId" WHERE o2.commune = o.commune AND u.status = 'active') AS agents,
-      (SELECT count(*)::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND a.status <> 'cancelled' AND a."startAt" >= date_trunc('month', NOW())) AS rdv,
+      (SELECT count(*)::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= date_trunc('month', NOW())) AS rdv,
       (SELECT count(DISTINCT a."citizenUserId")::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND a."citizenUserId" IS NOT NULL AND a.status IN ('done', 'booked', 'confirmed')) AS helped
     FROM org o WHERE o.commune IN (SELECT commune FROM shown) GROUP BY o.commune ORDER BY o.commune LIMIT 100`)).rows;
   const [cnt] = (await db.execute(sql`SELECT count(*)::int AS n FROM "Structure" s WHERE ${verified}`)).rows;
   const shownIds = sql`(WITH org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified})
       SELECT id FROM org WHERE commune IN (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS}))`;
-  const trend = (await db.execute(sql`SELECT to_char(d, 'YYYY-MM-DD') AS date, (SELECT count(*)::int FROM "ProAppointment" a WHERE a."structureId" IN ${shownIds} AND a.status <> 'cancelled' AND a."startAt" >= d AND a."startAt" < d + interval '1 day') AS n
+  const trend = (await db.execute(sql`SELECT to_char(d, 'YYYY-MM-DD') AS date, (SELECT count(*)::int FROM "ProAppointment" a WHERE a."structureId" IN ${shownIds} AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= d AND a."startAt" < d + interval '1 day') AS n
     FROM generate_series(date_trunc('day', NOW()) - interval '6 days', date_trunc('day', NOW()), interval '1 day') d ORDER BY d`)).rows;
   const sum = (k) => communes.reduce((n, c) => n + Number(c[k] || 0), 0);
   // PKG-5 batch 2 / I02 (complementary suppression): a total is the sum of the PUBLISHED cells only. A total over every commune minus the published communes
@@ -76,10 +77,10 @@ export async function reportCsv(ctx, period = 'month', db = defaultDb) {
   const span = PERIODS[period] || PERIODS.month; const s = ctx.structureId;
   const since = sql`NOW() - ${span}::interval`;
   const [r] = (await db.execute(sql`SELECT
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND "startAt" >= ${since}) AS appointments,
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND "startAt" >= ${since} AND status = 'cancelled') AS cancelled,
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND "startAt" >= ${since} AND status = 'done') AS attended,
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND "startAt" >= ${since} AND status = 'no_show') AS "noShow",
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since}) AS appointments,
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'cancelled') AS cancelled,
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'done') AS attended,
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'no_show') AS "noShow",
       (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND "openedAt" >= ${since}) AS "casesOpened",
       (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status = 'CLOSED' AND "closedAt" >= ${since}) AS "casesClosed",
       (SELECT count(*)::int FROM "Referral" WHERE "fromStructureId" = ${s} AND "createdAt" >= ${since}) AS "referralsSent",

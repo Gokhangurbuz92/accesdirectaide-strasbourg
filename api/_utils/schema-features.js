@@ -5,8 +5,8 @@
  * consent). A job reads the information schema ONCE per run and leaves out the guest parts the database does not have yet, instead of failing on a missing
  * column. Nothing is cached across runs: applying the migration later is picked up by the next run.
  */
-import { getTableColumns, sql } from 'drizzle-orm';
-import { ProAppointment } from '../../src/db/schema.js';
+import { Table, getTableColumns, sql } from 'drizzle-orm';
+import { ProAppointment, ProRdvService, StructureRdvSettings } from '../../src/db/schema.js';
 
 /** ProAppointment columns added by drizzle/0043_r38_guest_booking.sql (schema keys = column names) */
 export const GUEST_BOOKING_COLUMNS = Object.freeze(['guestEmail', 'guestEmailHash', 'guestPhone', 'guestMailConsentAt', 'guestHoldExpiresAt', 'guestCodeHash',
@@ -46,3 +46,54 @@ export function appointmentColumns(f) {
 export function columnFlags(f) {
   return Object.fromEntries(Object.keys(appointmentColumns(f)).map((k) => [k, true]));
 }
+
+/**
+ * R41-B — the same detection for REQUEST paths (the account-based appointment surface must work on a 0042 database: Production today). Read at most once
+ * per GUEST_SCHEMA_TTL_MS per process (a migration applied later is picked up within that delay); a failed read is not remembered.
+ */
+export const GUEST_SCHEMA_TTL_MS = 60_000;
+const requestCache = new WeakMap();
+/** @param {any} database @returns {Promise<{ guestBooking: boolean, guestReminderConsent: boolean }>} */
+export function requestGuestSchema(database) {
+  const hit = requestCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const value = appointmentGuestSchema(database);
+  requestCache.set(database, { at: Date.now(), value });
+  value.catch(() => { if (requestCache.get(database)?.value === value) requestCache.delete(database); });
+  return value;
+}
+
+/** the 0043 columns of the two other tables (0043 is applied in one transaction: guestBooking true means they exist too) */
+export const GUEST_SERVICE_COLUMN = 'guestBookable';
+export const GUEST_SETTINGS_COLUMN = 'allowGuestBooking';
+/** @param {{ guestBooking: boolean, guestReminderConsent: boolean }} f @returns {string[]} the ProAppointment columns this database does not have */
+const missingAppointmentColumns = (f) => [...(f.guestBooking ? [] : GUEST_BOOKING_COLUMNS), ...(f.guestReminderConsent ? [] : [GUEST_REMINDER_COLUMN])];
+
+const clones = new Map();
+/**
+ * the table object without the given columns, for insert / update / select / returning on a database that does not have them (drizzle lists EVERY column of
+ * the table object in an INSERT and in select() / returning() without fields). Same SQL name, same column objects; cached.
+ * @template T @param {T} table @param {string[]} missing @returns {T}
+ */
+function without(table, missing) {
+  if (!missing.length) return table;
+  const key = `${table[Table.Symbol.Name]}:${missing.join(',')}`;
+  if (clones.has(key)) return clones.get(key);
+  const clone = Object.create(Object.getPrototypeOf(table));
+  for (const k of Reflect.ownKeys(table)) if (!missing.includes(k)) Object.defineProperty(clone, k, Object.getOwnPropertyDescriptor(table, k));
+  clone[Table.Symbol.Columns] = Object.fromEntries(Object.entries(table[Table.Symbol.Columns]).filter(([k]) => !missing.includes(k)));
+  clones.set(key, clone);
+  return clone;
+}
+/** ProAppointment as this database has it @param {{ guestBooking: boolean, guestReminderConsent: boolean }} f @returns {typeof ProAppointment} */
+export const appointmentTable = (f) => without(ProAppointment, missingAppointmentColumns(f));
+/** ProRdvService as this database has it @param {{ guestBooking: boolean }} f @returns {typeof ProRdvService} */
+export const serviceTable = (f) => without(ProRdvService, f.guestBooking ? [] : [GUEST_SERVICE_COLUMN]);
+/** StructureRdvSettings as this database has it @param {{ guestBooking: boolean }} f @returns {typeof StructureRdvSettings} */
+export const settingsTable = (f) => without(StructureRdvSettings, f.guestBooking ? [] : [GUEST_SETTINGS_COLUMN]);
+/**
+ * { key: true } for every column of a table object (the `columns` option of a relational query). Typed with every column of the full table: on a database
+ * without the guest columns those keys are simply absent at run time (read as undefined, like a NULL guest value).
+ * @template {import('drizzle-orm').Table} T @param {T} table @returns {{ [K in keyof T['_']['columns']]: true }}
+ */
+export const flagsOf = (table) => Object.fromEntries(Object.keys(table[Table.Symbol.Columns]).map((k) => [k, true]));

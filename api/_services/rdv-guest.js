@@ -18,8 +18,12 @@
  *     the cron rdv-reminder sends it only with that consent (noticeCitizen: NO_CONSENT otherwise); the person turns it on / off from the personal link
  *     (POST rdv/guest/manage/reminder, same token check, rate limit and CSRF as cancel; an AuditLog entry without personal data);
  *   - one ACTIVE booking per structure and per address (an unexpired hold, or a confirmed booking not ended / not cancelled — the shared rule of
- *     api/_utils/rdv-active.js), without enumeration: a second request (another idempotency key) is answered exactly like a created hold (202, the same
- *     body shape, a fresh random id that no confirm ever finds), nothing is inserted, and the address is told by e-mail that a booking already exists.
+ *     api/_utils/rdv-active.js), without enumeration: a second request (another idempotency key) is answered exactly like a created hold, and the address
+ *     is told by e-mail that a booking already exists.
+ * R41-B: that answer is a DECOY hold — a real hold row without any personal data (api/_utils/rdv-guest-decoy.js), inserted under the same locks after the
+ *   same slot checks, so it holds its slot (the slot leaves the public list, a second hold on it answers 409 SLOT_TAKEN), replays on a retry of the same
+ *   request, counts wrong codes, locks, expires and is purged exactly like a real hold, from the database only (no KV state). It can never be confirmed, and
+ *   it is shown or counted to nobody (no agenda, statistic, notice, reminder or « active booking » of any address).
  */
 import crypto from 'node:crypto';
 import { and, eq, gt, isNotNull, isNull, ne, or, sql } from 'drizzle-orm';
@@ -34,12 +38,13 @@ import { calendarAttachment, formatParis, noticeCitizen, noticeStructure, record
 import { locationOf, locationText, offeredModes } from '../lib/appointment-modes.js';
 import { publicVideoStatus } from '../lib/video-provider.js';
 import { encrypt } from '../lib/crypto.js';
-import { kv } from '../_utils/kv.js';
 import {
   GUEST_CODE_MAX_ATTEMPTS, GUEST_HOLD_MINUTES, checkGuestCode, checkManageToken, guestBookingEnabled, guestCodeHash, guestEmailHash, holdExpired, holdExpiry,
   mailReallySent, maskEmail, newGuestCode, newManageToken, readGuestIdentity, readReminderConsent, sameDigest, manageTokenHash,
 } from '../_utils/rdv-guest-core.js';
 import { activeAppointmentWhere } from '../_utils/rdv-active.js';
+import { requestGuestSchema } from '../_utils/schema-features.js';
+import { GUEST_DECOY_NAME, guestDecoyLookupHash, isGuestDecoy, notGuestDecoy, unusableGuestCodeHash } from '../_utils/rdv-guest-decoy.js';
 import {
   MAX_BOOKING_AHEAD_DAYS, MAX_RANGE_DAYS, MAX_RESCHEDULES, MIN_BOOKING_DELAY_MINUTES, RESCHEDULE_MIN_NOTICE_HOURS,
   bookSlot, bookingLockKeyOf, computePublicSlots, icsLocation, loadAppointmentWithRelations, loadStructureBySlug, moveSlot, rescheduleRefusal,
@@ -51,6 +56,9 @@ const NOT_FOUND = { error: 'RDV indisponible', code: 'GUEST_BOOKING_UNAVAILABLE'
 const MANAGE_NOT_FOUND = { error: 'Appointment not found', code: 'APPOINTMENT_NOT_FOUND' };
 const SLOT_TAKEN = { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' };
 const MAIL_UNAVAILABLE = { error: 'GUEST_BOOKING_MAIL_UNAVAILABLE', code: 'GUEST_BOOKING_MAIL_UNAVAILABLE' };
+const GUEST_CLOSED = { error: 'GUEST_BOOKING_DISABLED', code: 'GUEST_BOOKING_DISABLED' };
+/** R41-B: the database has migrations 0043 and 0044 (the guest columns) */
+const guestSchemaReady = async () => (await requestGuestSchema(db)).guestReminderConsent;
 const str = (v) => String(v ?? '').trim();
 const utcDay = (d) => ({ from: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), to: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999)) });
 const iso = (d) => (d ? new Date(d).toISOString() : null);
@@ -169,7 +177,7 @@ async function isFreeSlot(structure, service, startAt, exceptId = null) {
 async function otherActiveBooking(runner, structureId, emailHash, idempotencyKey) {
   const t = schema.ProAppointment; const now = new Date();
   const [row] = await runner.select({ id: t.id }).from(t).where(and(
-    eq(t.structureId, structureId), eq(t.guestEmailHash, emailHash), isNull(t.citizenUserId),
+    eq(t.structureId, structureId), eq(t.guestEmailHash, emailHash), isNull(t.citizenUserId), notGuestDecoy(t),
     activeAppointmentWhere(t, now), gt(t.endAt, now),
     or(isNull(t.idempotencyKey), ne(t.idempotencyKey, idempotencyKey)),
   )).limit(1);
@@ -177,11 +185,12 @@ async function otherActiveBooking(runner, structureId, emailHash, idempotencyKey
 }
 
 /**
- * R39 — the answer to a second booking request of an address that already has an active booking with this structure: the same steps and the same answer
- * as a created hold (one e-mail, then 202 with a hold-shaped body — or 503 when that e-mail did not really leave), nothing inserted, a fresh random id
- * (a later confirm finds no hold: the « unknown hold » answer). The e-mail goes to the address only: it says a booking exists and how to manage it.
+ * R39 / R41-B — the answer to a second booking request of an address that already has an active booking with this structure, after the decoy row was
+ * committed (see hold()): the same steps and the same answer as a created hold — one e-mail, then 202 with the hold body built from the decoy row by the
+ * same function; when that e-mail did not really leave, the decoy is released like a real hold (cancelled: its slot is free again) and 503 is answered.
+ * The e-mail goes to the address only: it says a booking exists and how to manage it.
  */
-async function alreadyBooked(res, { structure, service, startAt, endAt, email, reminderConsent }) {
+async function alreadyBooked({ structure, email }) {
   let out = null;
   try {
     out = await sendMail({
@@ -196,29 +205,17 @@ async function alreadyBooked(res, { structure, service, startAt, endAt, email, r
     });
   } catch { out = null; }
   logger.info({ structureId: structure.id, sent: mailReallySent(out) }, '[rdv-guest] second active booking refused (answered as a hold)');
-  if (!mailReallySent(out)) return res.status(503).json(MAIL_UNAVAILABLE);
-  const now = new Date();
-  const decoy = withLoadedRelations({ id: crypto.randomUUID(), status: 'requested', startAt, endAt, guestHoldExpiresAt: holdExpiry(now),
-    guestReminderConsentAt: reminderConsent ? now : null, rescheduleCount: 0, cancelledAt: null }, structure, service);
-  // R39: the decoy lives like a real hold for its confirm (wrong code → attempts left, locked after the maximum, expired after the hold time) so that
-  // calling confirm cannot tell « this address already has a booking here » from « wrong code »; it is forgotten after a day, like a purged hold
-  await kv.set(decoyKey(decoy.id), { attempts: 0, expiresAt: decoy.guestHoldExpiresAt.getTime() }, { ex: 86400 }).catch(() => {});
-  return res.status(202).json({ hold: guestView(decoy, { expiresAt: iso(decoy.guestHoldExpiresAt) }), emailMasked: maskEmail(email) });
+  return mailReallySent(out);
 }
-const decoyKey = (id) => `rdv-guest:decoy:${id}`;
-/** the confirm answer for a decoy hold, step by step the same as for a real one; null when the id is not a decoy either @param {string} holdId */
-async function decoyConfirm(holdId) {
-  const d = await kv.get(decoyKey(holdId)).catch(() => null);
-  if (!d || typeof d !== 'object') return null;
-  if (d.locked) return { status: 409, body: { error: 'HOLD_NOT_ACTIVE', code: 'HOLD_NOT_ACTIVE' } };
-  if (Date.now() > Number(d.expiresAt)) return { status: 409, body: { error: 'HOLD_EXPIRED', code: 'HOLD_EXPIRED' } };
-  const attempts = Number(d.attempts || 0) + 1;
-  if (attempts >= GUEST_CODE_MAX_ATTEMPTS) {
-    await kv.set(decoyKey(holdId), { ...d, attempts: GUEST_CODE_MAX_ATTEMPTS, locked: true }, { ex: 86400 }).catch(() => {});
-    return { status: 409, body: { error: 'HOLD_LOCKED', code: 'HOLD_LOCKED', attemptsLeft: 0 } };
-  }
-  await kv.set(decoyKey(holdId), { ...d, attempts }, { ex: 86400 }).catch(() => {});
-  return { status: 400, body: { error: 'CODE_INVALID', code: 'CODE_INVALID', attemptsLeft: GUEST_CODE_MAX_ATTEMPTS - attempts } };
+
+/**
+ * a hold whose e-mail did not really leave is released at once (nothing blocks the slot, nothing personal is kept); a decoy keeps its marker (it has nothing
+ * personal) so that it stays invisible to the structure until the purge deletes it @param {string} id @param {boolean} decoy
+ */
+async function releaseHold(id, decoy) {
+  const personal = decoy ? {} : { guestEmail: null, guestPhone: null, notes: null, beneficiaryName: '[non confirmé]' };
+  await db.update(schema.ProAppointment).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'SYSTEM_MAIL_FAILED', guestCodeHash: null, guestReminderConsentAt: null, ...personal })
+    .where(eq(schema.ProAppointment.id, id));
 }
 
 // ── POST rdv/guest/hold ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -235,6 +232,7 @@ async function hold(req, res) {
   const reminderConsent = readReminderConsent(body);   // R39: optional, separate, never implied
   // mail truthfulness: no hold at all when nothing could deliver the code
   if (!getMailerStatus().deliverable) return res.status(503).json(MAIL_UNAVAILABLE);
+  if (!(await guestSchemaReady())) return res.status(503).json(GUEST_CLOSED);   // R41-B (see guestHandler)
   const emailHash = guestEmailHash(identity.value.email);
   if (await limited(res, 'RDV_GUEST_EMAIL', emailHash)) return undefined;
 
@@ -243,11 +241,14 @@ async function hold(req, res) {
   const service = await guestService(structure, serviceId);
   if (!service) return res.status(404).json({ error: 'Service not found', code: 'SERVICE_NOT_FOUND' });
 
+  // R41-B: a retry of a request answered with a decoy finds that decoy through its per-request lookup value (never the address's blind index)
+  const decoyHash = guestDecoyLookupHash(emailHash, structure.id, idempotencyKey);
   const findByKey = () => db.query.ProAppointment.findFirst({
-    where: (a, { eq: e, and: x, isNull: n }) => x(e(a.structureId, structure.id), e(a.guestEmailHash, emailHash), e(a.idempotencyKey, idempotencyKey), n(a.citizenUserId)),
+    where: (a, { eq: e, and: x, isNull: n, inArray: within }) => x(e(a.structureId, structure.id), within(a.guestEmailHash, [emailHash, decoyHash]), e(a.idempotencyKey, idempotencyKey), n(a.citizenUserId)),
+    orderBy: (a, { desc }) => [desc(a.createdAt)],
     with: { service: { columns: { id: true, name: true, durationMinutes: true } }, structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true } } },
   });
-  // idempotent retry (same address + same key): the same hold, no second code
+  // idempotent retry (same address + same key): the same hold (or the same decoy), no second e-mail
   const replyHold = (row, status = 200) => res.status(status).json({ hold: guestView(row, { expiresAt: iso(row.guestHoldExpiresAt) }), emailMasked: maskEmail(identity.value.email) });
   const before = await findByKey();
   if (before) return replyHold(before);
@@ -261,11 +262,22 @@ async function hold(req, res) {
       structure, service, startAt, endAt,
       replay: () => findByKey(),
       // R39: one active booking per structure and address — checked under the slot's day lock AND a lock of this address at this structure (two
-      // requests of one address for two different days serialise here), after the slot checks; the same request (same key) was replayed above
+      // requests of one address for two different days serialise here), after the slot checks; the same request (same key) was replayed above.
+      // R41-B: refused -> the decoy hold is inserted instead, in this same transaction under the same locks (it takes the slot exactly like a real hold;
+      // the unique index on structure + lookup value + key turns a concurrent retry into the same « duplicate » replay as for a real hold)
       guard: async (tx) => {
         await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`guest-active:${structure.id}:${emailHash}`}, 0))`);
         const other = await otherActiveBooking(tx, structure.id, emailHash, idempotencyKey);
-        return other ? { kind: 'already_booked' } : null;
+        if (!other) return null;
+        const decoyId = crypto.randomUUID();
+        const [decoy] = await tx.insert(schema.ProAppointment).values({
+          id: decoyId, structureId: structure.id, serviceId: service.id, startAt, endAt, status: 'requested', mode: MODE, visioEnabled: false,
+          beneficiaryName: GUEST_DECOY_NAME, notes: null, beneficiaryPhone: null, citizenUserId: null, citizenEmailSnapshot: null, idempotencyKey,
+          guestEmail: null, guestEmailHash: decoyHash, guestPhone: null, guestMailConsentAt: null,
+          guestHoldExpiresAt: holdExpiry(now), guestCodeHash: unusableGuestCodeHash(), guestCodeAttempts: 0,
+          guestReminderConsentAt: reminderConsent ? now : null,   // only so that the answer shows the same yes / no as a real hold; never used (no reminder for a hold)
+        }).returning();
+        return { kind: 'already_booked', appointment: decoy };
       },
       values: {
         id, structureId: structure.id, serviceId: service.id, startAt, endAt, status: 'requested', mode: MODE, visioEnabled: false,
@@ -283,7 +295,13 @@ async function hold(req, res) {
   if (outcome.kind === 'replay') return replyHold(outcome.appointment);
   if (outcome.kind === 'duplicate') { const row = await findByKey(); return row ? replyHold(row) : res.status(409).json(SLOT_TAKEN); }
   if (outcome.kind === 'conflict') return res.status(409).json(SLOT_TAKEN);
-  if (outcome.kind === 'already_booked') return alreadyBooked(res, { structure, service, startAt, endAt, email: identity.value.email, reminderConsent });
+  if (outcome.kind === 'already_booked') {
+    if (!(await alreadyBooked({ structure, email: identity.value.email }))) {
+      await releaseHold(outcome.appointment.id, true);
+      return res.status(503).json(MAIL_UNAVAILABLE);
+    }
+    return replyHold(withLoadedRelations(outcome.appointment, structure, service), 202);
+  }
   if (outcome.kind !== 'created') return res.status(500).json({ error: 'Internal Server Error' });
 
   // after COMMIT: the code. If it did not really leave, the hold is released at once (nothing blocks the slot, nothing personal is kept) and 503 is answered.
@@ -301,8 +319,7 @@ async function hold(req, res) {
   } catch { out = null; }
   await recordNotice(id, 'GUEST_CODE', 'citizen', 'email', mailLedgerStatus(out));
   if (!mailReallySent(out)) {
-    await db.update(schema.ProAppointment).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'SYSTEM_MAIL_FAILED', guestEmail: null, guestPhone: null, notes: null, guestCodeHash: null, beneficiaryName: '[non confirmé]', guestReminderConsentAt: null })
-      .where(eq(schema.ProAppointment.id, id));
+    await releaseHold(id, false);
     return res.status(503).json(MAIL_UNAVAILABLE);
   }
   return replyHold(withLoadedRelations(outcome.appointment, structure, service), 202);
@@ -314,7 +331,6 @@ async function confirm(req, res) {
   const holdId = str(req.body?.holdId); const code = str(req.body?.code);
   if (!holdId || !/^\d{6}$/.test(code)) return res.status(400).json({ error: 'CODE_INVALID', code: 'CODE_INVALID' });
   const current = await loadAppointmentWithRelations(holdId);
-  if (!current) { const d = await decoyConfirm(holdId); if (d) return res.status(d.status).json(d.body); }
   if (!current || !current.guestEmailHash) return res.status(404).json(MANAGE_NOT_FOUND);
   if (current.status === 'confirmed' && !current.guestHoldExpiresAt) return res.status(409).json({ error: 'HOLD_ALREADY_CONFIRMED', code: 'HOLD_ALREADY_CONFIRMED' });
 
@@ -326,7 +342,8 @@ async function confirm(req, res) {
     const [row] = await tx.select().from(schema.ProAppointment).where(eq(schema.ProAppointment.id, holdId)).for('update');
     if (!row || row.status !== 'requested' || !row.guestHoldExpiresAt || !row.guestCodeHash) return { status: 409, body: { error: 'HOLD_NOT_ACTIVE', code: 'HOLD_NOT_ACTIVE' } };
     if (holdExpired(row)) return { status: 409, body: { error: 'HOLD_EXPIRED', code: 'HOLD_EXPIRED' } };
-    if (!checkGuestCode(row.id, code, row.guestCodeHash)) {
+    // R41-B: a decoy goes through the very same steps (attempts, lockout, expiry) and never matches; the code is checked first so both cost the same
+    if (!(checkGuestCode(row.id, code, row.guestCodeHash) && !isGuestDecoy(row))) {
       const attempts = Number(row.guestCodeAttempts || 0) + 1;
       if (attempts >= GUEST_CODE_MAX_ATTEMPTS) {
         await tx.update(schema.ProAppointment).set({ guestCodeAttempts: GUEST_CODE_MAX_ATTEMPTS, status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'GUEST_CODE_LOCKED', guestCodeHash: null })
@@ -474,6 +491,9 @@ export default async function guestHandler(req, res, method, seg) {
   res.setHeader('Cache-Control', 'no-store');
   // fail-closed global switch: the owner activates account-free booking deliberately (legal basis, retention, mail provider)
   if (!guestBookingEnabled()) return res.status(503).json({ error: 'GUEST_BOOKING_DISABLED', code: 'GUEST_BOOKING_DISABLED' });
+  // R41-B: also closed while the database lacks migrations 0043 / 0044 (Production 0042), whatever the switch says — the hold checks it right after its
+  // mail check (R38: no lookup at all when no mail can leave), every other route first
+  if (!(method === 'POST' && seg.length === 1 && seg[0] === 'hold') && !(await guestSchemaReady())) return res.status(503).json(GUEST_CLOSED);
   if (method === 'GET' && seg[0] === 'structures' && seg.length === 3 && seg[2] === 'services') return services(req, res, str(seg[1]));
   if (method === 'GET' && seg[0] === 'structures' && seg.length === 3 && seg[2] === 'slots') return slots(req, res, str(seg[1]));
   if (method === 'POST' && seg.length === 1 && seg[0] === 'hold') return hold(req, res);

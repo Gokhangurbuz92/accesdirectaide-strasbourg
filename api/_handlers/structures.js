@@ -2,6 +2,7 @@
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import { Structure } from '../../src/db/schema.js';
+import { requestGuestSchema } from '../_utils/schema-features.js';
 import { eq } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { searchStructuresSchema } from '../_utils/validators.js';
@@ -147,6 +148,8 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
     if (effectiveParams.id || effectiveParams.slug) {
       let structure;
       try {
+        // R41-B: the switch AND a database that has the 0043 column (Production 0042 has not: with the switch on, the page failed there)
+        const guestOn = guestBookingOn() && (await requestGuestSchema(db)).guestBooking;
         structure = await db.query.Structure.findFirst({
           where: effectiveParams.id ? eq(Structure.id, effectiveParams.id) : eq(Structure.slug, effectiveParams.slug),
           columns: {
@@ -173,7 +176,7 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
                 bookingMode: true,
                 // R38: the column exists only after migration 0043 (owner-applied in Production): it is read only when the guest switch is on, so this
                 // public page keeps working on a database without it
-                ...(guestBookingOn() ? { allowGuestBooking: true } : {}),
+                ...(guestOn ? { allowGuestBooking: true } : {}),
               },
             },
             sourceDocument: {

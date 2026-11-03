@@ -16,6 +16,7 @@ import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { K_MIN, K_ORGS } from './org-stats.js';
+import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 
 export const SCHEMA_VERSION = 'ada.territory-stats.v1';
 export const LICENCE_STATUS = 'PENDING_OWNER_DECISION';   // I03: the open-data licence is the owner's decision; until then the export is for signed partners only
@@ -87,7 +88,7 @@ export async function territoryCsv(period, db = defaultDb, now = new Date()) {
   const w = periodWindow('quarter', now);
   const rows = (await db.execute(sql`WITH ${orgCte}
     SELECT sorg.commune, count(DISTINCT sorg.id)::int AS organisations,
-      (SELECT count(*)::int FROM "ProAppointment" a JOIN sorg s2 ON s2.id = a."structureId" WHERE s2.commune = sorg.commune AND a.status <> 'cancelled' AND a."startAt" >= ${w.start} AND a."startAt" < ${w.end}) AS rendez_vous,
+      (SELECT count(*)::int FROM "ProAppointment" a JOIN sorg s2 ON s2.id = a."structureId" WHERE s2.commune = sorg.commune AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= ${w.start} AND a."startAt" < ${w.end}) AS rendez_vous,
       (SELECT count(*)::int FROM "Referral" r JOIN sorg s2 ON s2.id = r."toStructureId" WHERE s2.commune = sorg.commune AND r."sentAt" >= ${w.start} AND r."sentAt" < ${w.end}) AS orientations_recues,
       (SELECT count(*)::int FROM "Referral" r JOIN sorg s2 ON s2.id = r."toStructureId" WHERE s2.commune = sorg.commune AND r."sentAt" >= ${w.start} AND r."sentAt" < ${w.end} AND r."responseCode" IN ('NO_CAPACITY', 'OUT_OF_SCOPE')) AS besoins_non_couverts
     FROM sorg GROUP BY sorg.commune ORDER BY sorg.commune`)).rows;

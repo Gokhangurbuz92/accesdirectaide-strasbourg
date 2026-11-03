@@ -281,7 +281,7 @@ describe.skipIf(!hasDatabase)('R39 account-free J-1 reminder and one active book
     expect(reminders(H.email).length).toBe(1);
   });
 
-  it('one active booking per structure and address: the second request looks exactly like a created hold, inserts nothing, and the address is told by e-mail', async () => {
+  it('one active booking per structure and address: the second request looks exactly like a created hold, books nothing for the address, and the address is told by e-mail', async () => {
     const X = guest();
     const first = await holdAndConfirm(slots[5], X);
     const otherDay = slots.find((s) => s.startAt.slice(0, 10) !== slots[5].startAt.slice(0, 10));
@@ -300,11 +300,14 @@ describe.skipIf(!hasDatabase)('R39 account-free J-1 reminder and one active book
     expect(second.body.hold.startsAt).toBe(otherDay.startAt);
     expect(second.body.hold.id).toMatch(/^[0-9a-f-]{36}$/); expect(second.body.hold.id).not.toBe(first.id);
     expect(second.body.emailMasked).toMatch(/\*\*\*@example\.test$/);
-    // nothing inserted: one row for this address, none with the answered id; the requested slot stays free
+    // nothing booked for the address: still one row with its blind index. R41-B (was: « no row with the answered id; the requested slot stays free » —
+    // that free slot was the R40 leak): the answered id is a decoy hold WITHOUT personal data that holds the slot exactly like a real hold
     expect(await rowsOf(X.email)).toBe(1);
-    expect(await row(second.body.hold.id)).toBeUndefined();
+    const decoy = await row(second.body.hold.id);
+    expect([decoy.status, decoy.guestEmail, decoy.guestPhone, decoy.notes, decoy.guestMailConsentAt]).toEqual(['requested', null, null, null, null]);
+    expect(decoy.guestEmailHash).not.toBe(core.guestEmailHash(X.email));
     const listed = await call('GET', `guest/structures/${S1}/slots`, { query: { serviceId: SVC, from: otherDay.startAt.slice(0, 10), to: otherDay.startAt.slice(0, 10) } });
-    expect(listed.body.slots.map((s) => s.startAt)).toContain(otherDay.startAt);
+    expect(listed.body.slots.map((s) => s.startAt)).not.toContain(otherDay.startAt);
     // one e-mail to the address: a booking exists, the personal link manages it — no code, no date, no link
     const told = outbox(X.email, /déjà en cours/);
     expect(told.length).toBe(1);
@@ -338,8 +341,9 @@ describe.skipIf(!hasDatabase)('R39 account-free J-1 reminder and one active book
     expect(h2.statusCode).toBe(202);
     expect(await rowsOf(Y.email)).toBe(1);
     expect(outbox(Y.email, /déjà en cours/).length).toBe(1);
-    // the hold expires: no longer active, a new request is a real hold
-    await db.execute(sql`UPDATE "ProAppointment" SET "guestHoldExpiresAt" = (NOW() AT TIME ZONE 'UTC') - INTERVAL '1 minute' WHERE id = ${h1.body.hold.id}`);
+    // the hold expires: no longer active, a new request is a real hold. R41-B: the « already » answer h2 is a decoy hold of the requested slot, which
+    // expires at the same time as any hold of that moment (was: only h1 expired — the decoy held nothing, the R40 leak)
+    await db.execute(sql`UPDATE "ProAppointment" SET "guestHoldExpiresAt" = (NOW() AT TIME ZONE 'UTC') - INTERVAL '1 minute' WHERE id IN (${h1.body.hold.id}, ${h2.body.hold.id})`);
     const h3 = await hold(slots[slots.length - 1], { ...Y, idempotencyKey: `${Y.idempotencyKey}-3` });
     expect(h3.statusCode).toBe(202); expect(await row(h3.body.hold.id)).toBeTruthy();
 

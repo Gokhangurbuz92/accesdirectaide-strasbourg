@@ -13,6 +13,7 @@ import {
 } from '../../../_utils/pro-rdv.js';
 import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
 import { activeAppointmentWhere } from '../../../_utils/rdv-active.js';
+import { appointmentTable, flagsOf, requestGuestSchema, serviceTable } from '../../../_utils/schema-features.js';
 import { decrypt, encrypt, isV1Text } from '../../../lib/crypto.js';
 
 // launch-readiness item 61: the name and the notes a professional records for a person are encrypted at rest (v1, covered by the key rotation); rows written
@@ -113,6 +114,10 @@ function serialize(appointment) {
 async function handler(req, res) {
   const proCtx = requireProStructureContext(req, res);
   if (!proCtx) return;
+  // R41-B: on a database before migration 0043 (Production 0042) no guest column exists: only the columns it has are named, selected or inserted
+  const features = await requestGuestSchema(db);
+  const T = appointmentTable(features);
+  const appointmentColumns = flagsOf(T);
 
   if (req.method === 'GET') {
     const page = Math.max(1, toInt(req.query.page || 1) || 1);
@@ -125,7 +130,7 @@ async function handler(req, res) {
     const to = req.query.to ? new Date(String(req.query.to)) : null;
 
     // R38: an account-free hold whose e-mail code was not confirmed yet is not a booking: it is not listed (it expires on its own)
-    const conditions = [eq(ProAppointment.structureId, proCtx.structureId), isNull(ProAppointment.guestHoldExpiresAt)];
+    const conditions = [eq(ProAppointment.structureId, proCtx.structureId), ...(features.guestBooking ? [isNull(ProAppointment.guestHoldExpiresAt)] : [])];
     if (id) conditions.push(eq(ProAppointment.id, id));
     if (status) conditions.push(eq(ProAppointment.status, status));
     if (from && !Number.isNaN(from.getTime())) conditions.push(gte(ProAppointment.startAt, from));
@@ -141,6 +146,7 @@ async function handler(req, res) {
         limit: pageSize,
         orderBy: (pa, { asc }) => [asc(pa.startAt)],
         columns: {
+          ...appointmentColumns,
           idempotencyKey: false,
           citizenEmailSnapshot: false,
           guestEmailHash: false,
@@ -188,6 +194,7 @@ async function handler(req, res) {
     }
 
     const service = await db.query.ProRdvService.findFirst({
+      columns: flagsOf(serviceTable(features)),
       where: (s, { eq }) => eq(s.id, serviceId),
     });
     // R12: another organization's service answers exactly like an unknown one (no existence oracle)
@@ -225,9 +232,10 @@ async function handler(req, res) {
     const created = await withBookingCollisionLock(lockKey, () => db.transaction(async (tx) => {
       await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`);
       const existing = await tx.query.ProAppointment.findMany({
+        columns: appointmentColumns,
         where: (pa, { and, eq, inArray, lt, gt }) => and(
           eq(pa.structureId, proCtx.structureId),
-          activeAppointmentWhere(pa),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
+          activeAppointmentWhere(pa, new Date(), features),   // R38: the shared « still active » rule (an expired account-free hold no longer blocks)
           lt(pa.startAt, new Date(endAt.getTime() + 24 * 3_600_000)),
           gt(pa.endAt, new Date(startAt.getTime() - 24 * 3_600_000))
         ),
@@ -241,7 +249,7 @@ async function handler(req, res) {
       // R24: a closure of the structure, or the author's own absence
       const [off] = await tx.select({ value: count() }).from(ProTimeOff).where(and(eq(ProTimeOff.structureId, proCtx.structureId), or(isNull(ProTimeOff.proUserId), eq(ProTimeOff.proUserId, proCtx.userId)), lt(ProTimeOff.startAt, endAt), gt(ProTimeOff.endAt, startAt)));
       if (Number(off.value) > 0) return null;
-      const [row] = await tx.insert(ProAppointment).values({
+      const [row] = await tx.insert(T).values({
         structureId: proCtx.structureId,
         serviceId: service.id,
         startAt,
@@ -261,6 +269,7 @@ async function handler(req, res) {
     }
 
     const fullAppointment = await db.query.ProAppointment.findFirst({
+      columns: appointmentColumns,
       where: (pa, { eq }) => eq(pa.id, created.id),
       with: {
         service: {
@@ -298,6 +307,7 @@ async function handler(req, res) {
     if (!id) return res.status(400).json({ error: 'id is required' });
 
     const existing = await db.query.ProAppointment.findFirst({
+      columns: appointmentColumns,
       where: (pa, { eq }) => eq(pa.id, id),
       with: {
         service: { columns: { id: true, name: true } },
@@ -334,6 +344,7 @@ async function handler(req, res) {
     if (!written.length) return res.status(409).json({ error: 'APPOINTMENT_CHANGED', message: 'Ce rendez-vous vient d’être modifié : rechargez la page.' });
 
     const updated = await db.query.ProAppointment.findFirst({
+      columns: appointmentColumns,
       where: (pa, { eq }) => eq(pa.id, id),
       with: {
         service: { columns: { id: true, name: true } },

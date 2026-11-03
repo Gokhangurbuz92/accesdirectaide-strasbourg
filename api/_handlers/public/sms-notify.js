@@ -4,6 +4,7 @@ import { env } from '../../_utils/env.js';
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
 import { ProAppointment, SharedDiagnostic } from '../../../src/db/schema.js';
+import { appointmentTable, flagsOf, requestGuestSchema } from '../../_utils/schema-features.js';   // R41-B: 0042 has no guest column
 import { eq } from 'drizzle-orm';
 import { logProAudit } from '../../_utils/auth.js';
 import { sendMail } from '../../_utils/mailer.js';
@@ -107,6 +108,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
 
     try {
         const appointment = await db.query.ProAppointment.findFirst({
+            columns: flagsOf(appointmentTable(await requestGuestSchema(db))),
             where: eq(ProAppointment.id, appointmentId),
             with: {
                 structure: { columns: { nom: true } },

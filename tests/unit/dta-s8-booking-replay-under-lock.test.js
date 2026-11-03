@@ -15,7 +15,7 @@ describe('booking transaction order', () => {
     const replay = at('replayUnderLock = await replay(tx)', lock);   // R38: the locked part is the shared bookSlot(); the caller passes its replay lookup
     const overlap = at('const overlaps = await tx', replay);
     const timeOff = at('schema.ProTimeOff', overlap);
-    const insert = at('tx.insert(schema.ProAppointment)', timeOff);
+    const insert = at('tx.insert(T)', timeOff);   // R41-B: T = the ProAppointment table as this database has it (schema-features appointmentTable)
     expect([lock, replay, overlap, timeOff, insert]).toEqual([...[lock, replay, overlap, timeOff, insert]].sort((a, b) => a - b));
   });
   it('the replay is keyed by the authenticated citizen AND the key, answers 200, and sends no second confirmation e-mail', () => {

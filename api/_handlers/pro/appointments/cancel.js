@@ -1,6 +1,7 @@
 import { db } from '../../../../src/db/index.js';
 import { ProAppointment } from '../../../../src/db/schema.js';
 import { and, eq, inArray } from 'drizzle-orm';
+import { appointmentTable, flagsOf, requestGuestSchema } from '../../../_utils/schema-features.js';   // R41-B: only the columns this database has (0042: no guest column)
 import { requireProStructureContext } from '../../../_utils/auth.js';
 import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
 import { buildAppUrl } from '../../../_utils/user-auth.js';
@@ -24,7 +25,9 @@ async function handler(req, res) {
   const id = String(req.body?.id || '').trim();
   if (!id) return res.status(400).json({ error: 'Missing appointment ID' });
 
+  const T = appointmentTable(await requestGuestSchema(db));
   const appointment = await db.query.ProAppointment.findFirst({
+    columns: flagsOf(T),
     where: (pa, { eq }) => eq(pa.id, id),
   });
   // R12: another organization's appointment answers exactly like an unknown one (no existence oracle)
@@ -37,7 +40,7 @@ async function handler(req, res) {
   if (!alreadyCancelled && (!ACTIVE.includes(String(appointment.status || '').toLowerCase()) || new Date(appointment.startAt).getTime() <= Date.now())) {
     return res.status(409).json({ error: 'APPOINTMENT_NOT_CANCELLABLE', message: 'Ce rendez-vous est passé ou n’est plus actif : il ne peut pas être annulé.' });
   }
-  const [raced] = alreadyCancelled ? [] : await db.update(ProAppointment).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'PRO' })
+  const [raced] = alreadyCancelled ? [] : await db.update(T).set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy: 'PRO' })
     .where(and(eq(ProAppointment.id, id), inArray(ProAppointment.status, ACTIVE))).returning();
   const updated = alreadyCancelled ? appointment : raced || { ...appointment, status: 'cancelled' };
   const cancelledNow = Boolean(raced);

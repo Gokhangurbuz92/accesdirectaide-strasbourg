@@ -13,6 +13,7 @@
  */
 import { db } from '../../../../src/db/index.js';
 import { ProAppointment, ProRdvService, Structure } from '../../../../src/db/schema.js';
+import { appointmentTable, requestGuestSchema, serviceTable } from '../../../_utils/schema-features.js';   // R41-B: 0042 has no guest column
 import { eq, and, lt, gt, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { createHandler } from '../../../_utils/wrapper.js';
@@ -43,7 +44,7 @@ async function getOrCreateDefaultService(structureId) {
     if (existing) return existing;
 
     // Create a default service
-    const [newService] = await db.insert(ProRdvService).values({
+    const [newService] = await db.insert(serviceTable(await requestGuestSchema(db))).values({
         structureId,
         name: 'Rendez-vous',
         durationMinutes: 60,
@@ -109,6 +110,7 @@ const handler = async (req) => {
             lt(a.startAt, end),
             gt(a.endAt, start),
         ),
+        columns: { id: true },
     });
 
     if (conflict) {
@@ -116,7 +118,7 @@ const handler = async (req) => {
     }
 
     // 6. Insert into ProAppointment (System B)
-    const [appointment] = await db.insert(ProAppointment).values({
+    const [appointment] = await db.insert(appointmentTable(await requestGuestSchema(db))).values({
         structureId,
         serviceId: service.id,
         startAt: start,

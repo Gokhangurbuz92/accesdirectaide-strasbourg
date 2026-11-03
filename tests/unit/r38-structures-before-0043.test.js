@@ -6,7 +6,9 @@ import fs from 'node:fs';
 describe('structures.js before migration 0043', () => {
   const src = fs.readFileSync('api/_handlers/structures.js', 'utf8');
   it('selects allowGuestBooking only behind ADA_GUEST_BOOKING_ENABLED', () => {
-    expect(src).toMatch(/\.\.\.\(guestBookingOn\(\) \? \{ allowGuestBooking: true \} : \{\}\)/);
+    // R41-B: AND only when the database has the column (the switch on a 0042 database used to make this page fail)
+    expect(src).toMatch(/const guestOn = guestBookingOn\(\) && \(await requestGuestSchema\(db\)\)\.guestBooking;/);
+    expect(src).toMatch(/\.\.\.\(guestOn \? \{ allowGuestBooking: true \} : \{\}\)/);
     expect(src).not.toMatch(/^\s*allowGuestBooking: true,\s*$/m);
     expect(src).toMatch(/const guestBookingOn = \(\) => String\(process\.env\.ADA_GUEST_BOOKING_ENABLED \|\| ''\)\.trim\(\)\.toLowerCase\(\) === 'true'/);
   });
