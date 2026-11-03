@@ -89,7 +89,7 @@ export default function Confidentialite() {
                   <li>{t('legal:privacy.summary.minimum', 'Nous traitons seulement les données nécessaires au service. Nous ne les vendons pas et ne faisons pas de publicité.')}</li>
                   <li>{t('legal:privacy.summary.noAccount', 'Vous pouvez lire les fiches sans compte.')}</li>
                   <li>{t('legal:privacy.summary.sharing', 'Vous choisissez avec quelle structure vous partagez votre dossier, et vous pouvez arrêter le partage quand vous voulez.')}</li>
-                  <li>{t('legal:privacy.summary.encryption', "Les échanges avec le site sont chiffrés pendant le transport (HTTPS). Vos messages, notes et documents, les réponses de vos dossiers partagés et le nom et les notes d'un rendez-vous sont en plus chiffrés à l'enregistrement. Ce n'est pas un chiffrement de bout en bout : nos serveurs détiennent les clés. Votre adresse e-mail et le numéro de téléphone d'un rendez-vous ne sont pas chiffrés à l'enregistrement : ils servent à vous reconnaître et à vous joindre. Les administrateurs n'ont pas accès au contenu des dossiers ; un accès d'urgence est limité, enregistré et revu par un autre administrateur.")}</li>
+                  <li>{t('legal:privacy.summary.encryption', "Les échanges avec le site sont chiffrés pendant le transport (HTTPS). Vos messages, notes et documents, les réponses de vos dossiers partagés et le nom et les notes d'un rendez-vous sont en plus chiffrés à l'enregistrement. Ce n'est pas un chiffrement de bout en bout : nos serveurs détiennent les clés. L'adresse e-mail de votre compte et le numéro de téléphone saisi par une structure ne sont pas chiffrés à l'enregistrement : ils servent à vous reconnaître et à vous joindre. Pour un rendez-vous pris sans compte, le nom, l'adresse e-mail, le téléphone et le message sont chiffrés à l'enregistrement. Les administrateurs n'ont pas accès au contenu des dossiers ; un accès d'urgence est limité, enregistré et revu par un autre administrateur.")}</li>
                   <li>{t('legal:privacy.summary.assistant', "L'assistant est un programme informatique (IA), pas une personne. Il ne décide pas de vos droits.")}</li>
                   <li>{t('legal:privacy.summary.rights', 'Vous pouvez télécharger vos données, demander à les corriger ou à les effacer, et vous plaindre à la CNIL.')}</li>
                 </ul>
@@ -205,7 +205,7 @@ export default function Confidentialite() {
             <section className="space-y-4">
               <SectionTitle icon={Database}>{t('legal:privacy.retention.title', 'Durées de conservation')}</SectionTitle>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2 text-sm">
-                <p>{t('legal:privacy.retention.intro', "Ce qui est appliqué automatiquement aujourd'hui (purge hebdomadaire, chaque dimanche à 3 h, heure UTC) :")}</p>
+                <p>{t('legal:privacy.retention.intro', "Durées prévues. Elles seront appliquées par une tâche automatique hebdomadaire (chaque dimanche à 3 h, heure UTC), qui n'est pas encore activée : tant qu'elle ne l'est pas, rien n'est supprimé automatiquement.")}</p>
                 <div className="relative overflow-x-auto">
                   <table className="w-full text-sm text-start border border-slate-200 rounded-lg overflow-hidden">
                     <thead className="bg-slate-50">

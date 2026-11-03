@@ -279,7 +279,7 @@ export function buildRegistre({ retention, registry, legalEntity }) {
                 conservation: [
                     cron('Rendez-vous (nom, téléphone, e-mail, notes ; sans compte : e-mail et téléphone chiffrés, empreintes du code et du lien de gestion)', 'APPOINTMENT_ANON_DAYS', 'anonymisation après {j} jours'),
                     cron('Demande sans compte jamais confirmée par le code (R38)', 'GUEST_HOLD_DAYS', 'identité effacée {j} jour après l\'expiration de la réservation de 20 minutes'),
-                    cron('Accord au rappel facultatif la veille, sans compte (R39 — proposition, à valider par le responsable de traitement)', 'APPOINTMENT_ANON_DAYS', 'effacé avec les données du rendez-vous après {j} jours ; effacé aussitôt quand la personne retire son accord'),
+                    cron('Accord au rappel facultatif la veille, sans compte (R39 — proposition, à valider par le responsable de traitement)', 'APPOINTMENT_ANON_DAYS', 'effacé par le serveur dès que la personne retire son accord ; sinon, effacé avec les données du rendez-vous après {j} jours'),
                 ],
                 mesures_securite: 'Contrôle d\'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d\'un rendez-vous créé par une structure chiffrés à l\'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)',
             },

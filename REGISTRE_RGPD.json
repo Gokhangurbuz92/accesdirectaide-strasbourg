@@ -291,7 +291,7 @@
           "duree_jours": 730,
           "source": "RETENTION.APPOINTMENT_ANON_DAYS",
           "statut": "appliqué",
-          "description": "effacé avec les données du rendez-vous après 730 jours ; effacé aussitôt quand la personne retire son accord (cron gdpr-purge, hebdomadaire)"
+          "description": "effacé par le serveur dès que la personne retire son accord ; sinon, effacé avec les données du rendez-vous après 730 jours (cron gdpr-purge, hebdomadaire)"
         }
       ],
       "mesures_securite": "Contrôle d'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d'un rendez-vous créé par une structure chiffrés à l'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)"
