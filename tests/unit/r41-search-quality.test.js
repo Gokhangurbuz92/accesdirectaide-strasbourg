@@ -5,7 +5,7 @@
  *  - « Schwerbehindertenausweis », « بطاقة الإعاقة »: a disability CARD was translated to « handicap » alone; the CMI sheet (F34049) never says
  *    « handicap », so the carers' leave sheet (F16920) came first.
  *  - « combien de temps garder ses papiers »: « temps » matched « en même temps » in the lost / stolen papers sheets; F19134 says « durée de conservation ».
- *  - « dépression qui consulter »: « dépression » is in no record and « consulter » is not « consultation » (F34917, psychologue / psychiatre).
+ *  - « dépression qui consulter »: « dépression » is in no record (F34917, psychologue / psychiatre, says « santé mentale »).
  *  - « mutuelle pas chère »: the C2S aide never says « mutuelle »; the public complementary insurance for modest incomes is the C2S.
  * The fixes are equivalences of meaning (everyday words → the official expression), never a route to one record, and the crisis signal is unchanged.
  */
@@ -91,10 +91,10 @@ describe('R41 — pr-5: how long to keep papers is the « durée de conservation
 });
 
 describe('R41 — mh-6: depression → which professional, not a crisis', () => {
-  it('« dépression » is « santé mentale », « consulter » finds « consultation »', () => {
+  it('« dépression » is « santé mentale » (« consulter » is left as is: as a synonym « consultation » it also brought family-counselling places (EVARS) into the places section)', () => {
     expect(searchWords('dépression qui consulter')).toEqual(['sante mentale', 'consulter']);
     expect(searchWords('je suis déprimée')).toEqual(['sante mentale']);
-    expect(wordTerms('consulter')).toContain('consultation');
+    expect(wordTerms('consulter')).not.toContain('consultation');
     expect(topGuides('dépression qui consulter')).toEqual(['F34917']);
   });
   it.each(['dépression qui consulter', 'je suis déprimé', 'mon fils est dépressif', 'dépression post-partum', 'depression psychologue remboursé'])('« %s » shows no emergency number', (q) => {
