@@ -33,7 +33,7 @@ describe('mailer providers', () => {
   it('default provider is noop: accepted but NOT delivered (e-mail verification cannot work until a provider is configured)', async () => {
     vi.stubEnv('MAILER_PROVIDER', '');
     const m = await load();
-    expect(await m.sendMail(MAIL)).toEqual({ accepted: true, delivered: false, provider: 'noop', outcome: 'NOT_SENT' });
+    expect(await m.sendMail(MAIL)).toEqual({ accepted: true, delivered: false, provider: 'noop', outcome: 'NOT_SENT', failure: 'not_configured', errorCode: 'not_configured' });   // R41-E: the failure class
   });
 
   it('smtp / postmark / sendgrid / brevo are NOT wired: accepted but not delivered', async () => {
@@ -41,7 +41,7 @@ describe('mailer providers', () => {
     for (const provider of ['smtp', 'postmark', 'sendgrid', 'brevo']) {
       vi.stubEnv('MAILER_PROVIDER', provider);
       const m = await load();
-      expect((await m.sendMail(MAIL))).toEqual({ accepted: true, delivered: false, provider, outcome: 'NOT_DELIVERED' });
+      expect((await m.sendMail(MAIL))).toEqual({ accepted: true, delivered: false, provider, outcome: 'NOT_DELIVERED', failure: 'not_configured', errorCode: 'not_configured' });
     }
     expect(m0).toBeTruthy();
   });
