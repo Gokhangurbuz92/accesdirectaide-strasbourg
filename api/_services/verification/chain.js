@@ -48,6 +48,7 @@ import { probe as probeMachine, allowed, guardEnabled, modelOptions, unloadModel
 import { publicationAudit, WITHDRAW_ON } from './audit.js';
 import { acquireRun, recordSkip, pauseState, stopRequested, clearStop } from './control.js';
 import { SourceError, networkEnabled, hostIn } from './fetcher.js';
+import { isReuseOpen } from './reuse.js';
 
 export { veilleDigest, recordHistory } from './digest.js';
 export { requestStop, setPause, pauseState } from './control.js';
@@ -620,6 +621,9 @@ function textPatch(kind, t, src) {
  * has no usable text.
  */
 export function officialExcerpt(src, origin, url) {
+  // R41-IJ: verbatim words only from a publisher whose reuse is open (Service-Public / DILA, or a host registered « open » in reuse.js). strasbourg.eu and
+  // alsace.eu forbid reproduction without written consent (FAJ'EMS and the FSL of the CeA carried their words); an unknown host is not open either.
+  if (!excerptAllowed(origin, url)) return null;
   const paras = String(src?.text || '').split(/\n+/).map((x) => x.trim()).filter((x) => x && !/^#+\s/.test(x) && x.length > 40);
   let out = '';
   for (const p of paras) { if ((out + ' ' + p).length > 600) break; out = out ? `${out} ${p}` : p; }
@@ -629,6 +633,8 @@ export function officialExcerpt(src, origin, url) {
   const who = origin === 'DILA' ? 'Service-Public.gouv.fr' : host || 'la source officielle';
   return `Extrait de la fiche officielle « ${squash(src.title || '')} » (${who}) : « ${out} »`;
 }
+/** may the words of this source be republished as an excerpt? @param {string} origin @param {string} url */
+export const excerptAllowed = (origin, url) => origin === 'DILA' || isReuseOpen(url);
 /** the fields of a record while it shows the official excerpt: the excerpt as its summary; the texts written from an older version of the source removed */
 export function excerptPatch(kind, excerpt) {
   const cleared = { summary_falc: null, conditions_falc: null, falc_origin: null };
@@ -738,7 +744,7 @@ async function checkContent(ctx, kind, row) {
   const needTexts = !chainTexts || outdated || stale || oldRules;
   const keepable = chainTexts && !outdated && !stale;   // only the rules improved: the texts stay published until they are rewritten
   // R12 (production autonomy): the official excerpt shown while no model can write the texts, still the excerpt of THIS version of the source
-  const excerptCurrent = row.auto_check?.texts?.mode === 'OFFICIAL_EXCERPT' && row.auto_check?.texts?.sourceMark === mark;
+  const excerptCurrent = row.auto_check?.texts?.mode === 'OFFICIAL_EXCERPT' && row.auto_check?.texts?.sourceMark === mark && excerptAllowed(origin, where.url);   // R41-IJ: never kept for a closed source
   let patch = {}; let textsNote = 'textes inchangés (la fiche officielle n’a pas changé)'; let textsMeta = row.auto_check?.texts || null;
   if (needTexts) {
     const may = await textsAllowed(ctx);
@@ -766,7 +772,7 @@ async function checkContent(ctx, kind, row) {
     }
     if (may.ok) {
       ctx.modelUsed = true;
-      const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx) });
+      const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx), reuseOpen: excerptAllowed(origin, where.url) });
       if (!t.ok) {
         count(ctx, 'texts:refused');
         if (!keepable && row.verification_status === 'VERIFIED') await withdraw(ctx, kind, row, 'textes non confirmés par le contrôle automatique');
@@ -1328,7 +1334,7 @@ async function feedFiches(ctx) {
     const src = readSource(meta.id, ctx.archive); if (!src) continue;
     const kind = DISPOSITIF_TITLE.test(meta.title) ? 'dispositif' : AIDE_TITLE.test(meta.title) ? 'aide' : 'demarche';
     ctx.modelUsed = true;
-    const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx) });
+    const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx), reuseOpen: true });   // a DILA fiche (Licence Ouverte 2.0)
     if (!t.ok) { count(ctx, 'texts:refused'); await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'TEXTS', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » pas encore ajoutée : textes refusés par le contrôle automatique.`, details: { reasons: t.reasons } }); continue; }
     const id = crypto.randomUUID(); const table = TABLES[kind];
     const patch = textPatch(kind, t, src);

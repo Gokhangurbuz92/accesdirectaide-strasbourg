@@ -15,6 +15,7 @@
 import { z } from 'zod';
 import { generateBackgroundLocalStructuredContent } from '../../lib/ai-foundation.js';
 import { ENTITLEMENT_CLAIM } from '../../lib/entitlementWording.js';
+import { isReuseOpen } from './reuse.js';
 
 const squash = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, "'");
@@ -345,11 +346,13 @@ const clip = (s, n) => (String(s).length > n ? `${String(s).slice(0, n)}…` : S
  * @param {{ title: string, description?: string, text: string, abbreviations?: Record<string, string>, definitions?: Record<string, string> }} src the official source
  *   (dila.parseFiche or pages.readOfficialPage)
  * deps.modelOptions: options of the local model for this run (resources.js: threads) — never the checks, which are the same at every attempt and every run.
- * @param {{ generate?: Function, signal?: AbortSignal, judge?: boolean, modelOptions?: Record<string, any> }} [deps]
+ * @param {{ generate?: Function, signal?: AbortSignal, judge?: boolean, modelOptions?: Record<string, any>, reuseOpen?: boolean }} [deps] (reuseOpen: R41-IJ, default from src.url)
  */
 export async function writeTexts(src, deps = {}) {
   const generate = deps.generate || generateBackgroundLocalStructuredContent;
   const fullSource = `${src.title || ''}\n${src.description || ''}\n${src.text}`;
+  // R41-IJ: may the source's words be republished? From its address (Service-Public: yes; strasbourg.eu, alsace.eu, an unknown site: no)
+  const reuseOpen = typeof deps.reuseOpen === 'boolean' ? deps.reuseOpen : isReuseOpen(src.url || '');
   const excerpt = sourceExcerpt(src, 9000); const shortExcerpt = sourceExcerpt(src, 5000);
   const explain = explanationsFor(src); const acronyms = Object.keys(explain);
   const started = Date.now(); const reasons = []; let model = null; let attempts = 0;
@@ -374,7 +377,7 @@ export async function writeTexts(src, deps = {}) {
         if (r.error) return { ok: false, reasons: [...reasons, r.error], model, ms: Date.now() - started };
         // R31: a model that has no amount sometimes writes the WORD « null »; it was published as the text « null » (FAJ'EMS, 31/10/2026)
         const n = { resume: squash(r.content.resume), pour_qui: asLines(r.content.pour_qui), montant: blankWord(r.content.montant) ? null : squash(r.content.montant), etapes: asLines(r.content.etapes), documents: asLines(r.content.documents) };
-        const c = checkNormal(n, fullSource);
+        const c = checkNormal(n, fullSource, { reuseOpen });
         if (c.length) { reasons.push(...c.map((p) => `résumé, essai ${i + 1} : ${p}`)); feedback = `${judgeNormal}${refusedBlock(c)}`; } else normal = n;
       }
       if (!normal) return { ok: false, reasons, model, ms: Date.now() - started };
@@ -438,8 +441,33 @@ export function withoutGlossary(sentence, acronyms = ACRONYM_EXPLAINED) {
 }
 
 const refusedBlock = (problems) => `\n\nVotre essai précédent a été refusé par le contrôle automatique :\n- ${problems.join('\n- ')}\nCorrigez ces points.`;
-/** shape and numbers of the normal summary @returns {string[]} problems */
-export function checkNormal(normal, source) {
+/** R41-IJ: shortest shared run that counts as a copied passage (FAJ'EMS carried one of 185 characters; a proper name or a title is far shorter) */
+export const COPY_MIN_CHARS = 60;
+const flat = (s) => norm(s).replace(/[«»"“”]/g, ' ').replace(/[\s\u00a0\u202f]+/g, ' ').trim();
+/**
+ * The passages of `text` that appear word for word in `source` (case, accents, apostrophes and spaces ignored): every run of COPY_MIN_CHARS characters or
+ * more, merged. @param {string} text @param {string} source @param {number} [min] @returns {string[]}
+ */
+export function copiedPassages(text, source, min = COPY_MIN_CHARS) {
+  const t = flat(text); const src = flat(source);
+  if (t.length < min || src.length < min) return [];
+  const grams = new Set(); for (let i = 0; i + min <= src.length; i += 1) grams.add(src.slice(i, i + min));
+  const out = []; let start = -1; let end = -1;
+  for (let i = 0; i + min <= t.length; i += 1) {
+    if (!grams.has(t.slice(i, i + min))) continue;
+    if (start >= 0 && i <= end) end = i + min; else { if (start >= 0) out.push(t.slice(start, end)); start = i; end = i + min; }
+  }
+  if (start >= 0) out.push(t.slice(start, end));
+  return out;
+}
+
+/**
+ * shape and numbers of the normal summary; R41-IJ: no copied passage when the source's words may not be republished (`reuseOpen: false`). The default keeps
+ * the previous behaviour for callers that do not say (writeTexts always says, from the source address).
+ * @param {{ resume: string, pour_qui?: string[], montant?: string | null, etapes?: string[], documents?: string[] }} normal @param {string} source
+ * @param {{ reuseOpen?: boolean }} [opts] @returns {string[]} problems
+ */
+export function checkNormal(normal, source, opts = {}) {
   const problems = [];
   const all = [normal.resume, ...(normal.pour_qui || []), normal.montant || '', ...(normal.etapes || []), ...(normal.documents || [])].join('\n');
   const inv = inventedNumbers(all, source);
@@ -448,6 +476,10 @@ export function checkNormal(normal, source) {
   if (ns.length < 2 || ns.length > 6) problems.push(`Le résumé doit avoir 2 à 6 phrases (il en a ${ns.length}).`);
   if (squash(normal.resume).length < 120 || squash(normal.resume).length > 900) problems.push('Le résumé doit faire entre 120 et 900 caractères.');
   if (/\b(nous|notre|nos)\b/i.test(normal.resume)) problems.push('Pas de « nous » dans le résumé.');
+  if (opts.reuseOpen === false) {
+    const copies = copiedPassages(all, source);
+    if (copies.length) problems.push(`Le résumé recopie un passage de la page officielle, dont l'éditeur interdit la reproduction : « ${clip(copies[0], 120)} ». Réécrivez les faits avec vos propres mots.`);
+  }
   return problems;
 }
 

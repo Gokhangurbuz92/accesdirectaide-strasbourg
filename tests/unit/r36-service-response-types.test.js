@@ -18,7 +18,7 @@ const ANNUAIRE = 'https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/x'
 describe('service response types', () => {
   it('covers exactly the 23 subdomains without a verified service in R35, each with known types; every cited sheet is curated', () => {
     const ids = REF.domains.flatMap((d) => d.subdomains.map((s) => s.id));
-    expect(Object.keys(RT.subdomains)).toHaveLength(24);   // R40: + acces-au-droit (Point-justice records of the Annuaire)
+    expect(Object.keys(RT.subdomains)).toHaveLength(27);   // R40: + acces-au-droit (Point-justice records of the Annuaire); R41-IJ: + psy, sante-sexuelle, hebergement-urgence
     for (const [id, x] of Object.entries(RT.subdomains)) {
       expect(ids).toContain(id);
       expect(x.types.length).toBeGreaterThan(0);

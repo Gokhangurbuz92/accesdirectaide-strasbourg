@@ -15,18 +15,14 @@
  */
 import { officialGet } from './verification/fetcher.js';
 import { parseOfficialPage, decode, frenchDate } from './verification/pages.js';
+import { REUSE_BY_HOST } from './verification/reuse.js';
 
 export const NEWS_RULES_VERSION = 1;
 export const NEWS_MAX_AGE_DAYS = 90;
 export const PUBLISHER = 'verification-automatique';
 
-/** Reuse terms read on each publisher's legal notice (31/10/2026). Only « open » publishers can be republished. */
-export const REUSE_BY_HOST = {
-  'www.service-public.gouv.fr': { status: 'open', publisher: 'Service-Public.fr (DILA)', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.service-public.gouv.fr/P10025', checkedAt: '2026-10-31' },
-  'entreprendre.service-public.gouv.fr': { status: 'open', publisher: 'Service-Public.fr Entreprendre (DILA)', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.service-public.gouv.fr/P10025', checkedAt: '2026-10-31' },
-  'www.grandest.fr': { status: 'authorisation-required', publisher: 'Région Grand Est', evidenceUrl: 'https://www.grandest.fr/mentions-legales/', checkedAt: '2026-10-31' },
-  'www.grand-est.ars.sante.fr': { status: 'authorisation-required', publisher: 'ARS Grand Est', evidenceUrl: 'https://www.grand-est.ars.sante.fr/mentions-legales-9', checkedAt: '2026-10-31' },
-};
+/** Reuse terms read on each publisher's legal notice (31/10/2026; R41: one registry shared with the content chain, api/_services/verification/reuse.js). Only « open » publishers can be republished. */
+export { REUSE_BY_HOST };
 
 /** who the item is written for, from its address */
 export function audienceOf(url) {
