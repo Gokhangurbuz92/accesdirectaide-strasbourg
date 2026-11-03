@@ -13,12 +13,26 @@ import { useGuestMessages } from '@/lib/useGuestMessages';
 const field = 'mt-1 block w-full min-h-[44px] rounded-md border border-slate-400 bg-white px-3 py-2 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700';
 const primary = 'inline-flex min-h-[44px] items-center justify-center rounded-md bg-blue-800 px-5 py-2 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 disabled:opacity-60';
 const secondary = 'inline-flex min-h-[44px] items-center justify-center rounded-md border border-slate-400 bg-white px-5 py-2 text-base font-medium text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-700';
-const isoDay = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
-const when = (v) => formatDate(v, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+/** @typedef {import('@/lib/guestBooking').GuestSlot} GuestSlot */
+/** @typedef {import('@/lib/guestBooking').GuestStructure} GuestStructure */
+/** @typedef {import('@/lib/guestBooking').GuestService} GuestService */
+/** @typedef {import('@/lib/guestBooking').GuestHold} GuestHold */
+/** @typedef {import('@/lib/guestBooking').GuestConfirmation} GuestConfirmation */
+/** @typedef {{ name: string, email: string, phone: string, note: string, consent: boolean, reminderConsent: boolean }} GuestForm */
 
-/** heading that receives the focus when its step appears — not the first step on page load: the skip link stays the first tab stop (WCAG 2.4.1, R38 a11y run) */
+/** formatDate with the full Intl options it forwards (its JSDoc infers only its default's shape) */
+const formatWith = /** @type {(value: string | undefined, options: Intl.DateTimeFormatOptions) => string} */ (formatDate);
+/** @param {number} offset */
+const isoDay = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+/** @param {string | undefined} v */
+const when = (v) => formatWith(v, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+
+/**
+ * heading that receives the focus when its step appears — not the first step on page load: the skip link stays the first tab stop (WCAG 2.4.1, R38 a11y run)
+ * @param {{ children: import('react').ReactNode, id: string, focusOnMount?: boolean }} props
+ */
 function StepHeading({ children, id, focusOnMount = true }) {
-  const ref = useRef(null);
+  const ref = useRef(/** @type {HTMLHeadingElement | null} */ (null));
   useEffect(() => { if (focusOnMount) ref.current?.focus(); }, []);   // eslint-disable-line react-hooks/exhaustive-deps
   return <h2 ref={ref} id={id} tabIndex={-1} className="text-xl font-semibold text-slate-900 focus:outline-none">{children}</h2>;
 }
@@ -27,20 +41,20 @@ export default function GuestBooking() {
   const { t } = useT('booking');
   const message = useGuestMessages();
   const { structureSlug = '' } = useParams();
-  const [state, setState] = useState({ loading: true, error: '', structure: null, services: [] });
+  const [state, setState] = useState(/** @type {{ loading: boolean, error: string, structure: GuestStructure | null, services: GuestService[] }} */ ({ loading: true, error: '', structure: null, services: [] }));
   const [serviceId, setServiceId] = useState('');
-  const [slots, setSlots] = useState({ loading: false, list: [], error: '' });
-  const [slot, setSlot] = useState(null);
+  const [slots, setSlots] = useState(/** @type {{ loading: boolean, list: GuestSlot[], error: string }} */ ({ loading: false, list: [], error: '' }));
+  const [slot, setSlot] = useState(/** @type {GuestSlot | null} */ (null));
   const [step, setStep] = useState('choose');   // choose -> identity -> code -> done
   const leftFirstStep = useRef(false);   // the first step's heading takes the focus only when the visitor comes back to it
   useEffect(() => { if (step !== 'choose') leftFirstStep.current = true; }, [step]);
-  const [form, setForm] = useState({ name: '', email: '', phone: '', note: '', consent: false, reminderConsent: false });
-  const [errors, setErrors] = useState({});
+  const [form, setForm] = useState(/** @type {GuestForm} */ ({ name: '', email: '', phone: '', note: '', consent: false, reminderConsent: false }));
+  const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}));
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [hold, setHold] = useState(null);
+  const [hold, setHold] = useState(/** @type {GuestHold | null} */ (null));
   const [code, setCode] = useState('');
-  const [done, setDone] = useState(null);
+  const [done, setDone] = useState(/** @type {GuestConfirmation | null} */ (null));
   const keyRef = useRef(newIdempotencyKey());
 
   useEffect(() => {
@@ -65,17 +79,20 @@ export default function GuestBooking() {
 
   const days = useMemo(() => slotsByParisDay(slots.list), [slots.list]);
   const service = state.services.find((s) => s.id === serviceId) || null;
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'consent' || k === 'reminderConsent' ? e.target.checked : e.target.value }));
+  /** @param {keyof GuestForm} k @returns {(e: import('react').ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void} */
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'consent' || k === 'reminderConsent' ? /** @type {HTMLInputElement} */ (e.target).checked : e.target.value }));
 
+  /** @param {import('react').FormEvent<HTMLFormElement>} e */
   const submitHold = async (e) => {
     e.preventDefault(); setFormError(''); setErrors({});
+    /** @type {Record<string, string>} */
     const local = {};
     if (!form.name.trim()) local.name = message('INVALID_NAME');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.trim())) local.email = message('INVALID_EMAIL');
     if (!form.consent) local.consent = message('CONSENT_REQUIRED');
     if (Object.keys(local).length) { setErrors(local); setFormError(t('booking:form.fix', 'Corrigez les champs signalés.')); return; }
     setBusy(true);
-    const r = await guestPost('hold', { structureSlug, serviceId, startAt: slot.startAt, idempotencyKey: keyRef.current, ...form, consent: form.consent === true, reminderConsent: form.reminderConsent === true });
+    const r = await guestPost('hold', { structureSlug, serviceId, startAt: /** @type {GuestSlot} */ (slot).startAt, idempotencyKey: keyRef.current, ...form, consent: form.consent === true, reminderConsent: form.reminderConsent === true });
     setBusy(false);
     if (r.ok) { setHold(r.body); setStep('code'); return; }
     if (r.body.field) setErrors({ [r.body.field]: message(r.body.code) });
@@ -83,11 +100,12 @@ export default function GuestBooking() {
     if (r.body.code === 'SLOT_TAKEN') { keyRef.current = newIdempotencyKey(); setStep('choose'); setSlot(null); }
   };
 
+  /** @param {import('react').FormEvent<HTMLFormElement>} e */
   const submitCode = async (e) => {
     e.preventDefault(); setFormError('');
     if (!/^\d{6}$/.test(code)) { setFormError(t('booking:code.format', 'Le code contient 6 chiffres.')); return; }
     setBusy(true);
-    const r = await guestPost('confirm', { holdId: hold.hold.id, code });
+    const r = await guestPost('confirm', { holdId: /** @type {GuestHold} */ (hold).hold.id, code });
     setBusy(false);
     if (r.ok) { setDone(r.body); setStep('done'); return; }
     const left = typeof r.body.attemptsLeft === 'number' && r.body.attemptsLeft > 0 ? ` ${t('booking:code.left', 'Essais restants : {{n}}.', { n: r.body.attemptsLeft })}` : '';
@@ -141,12 +159,12 @@ export default function GuestBooking() {
                 <div className="mt-2 space-y-4">
                   {days.map((d) => (
                     <div key={d.date}>
-                      <p className="font-medium text-slate-800">{formatDate(d.slots[0].startAt, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                      <p className="font-medium text-slate-800">{formatWith(d.slots[0].startAt, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {d.slots.map((s) => (
                           <label key={s.startAt} className={`inline-flex min-h-[44px] min-w-[72px] cursor-pointer items-center justify-center rounded-md border px-3 ${slot?.startAt === s.startAt ? 'border-blue-800 bg-blue-50 font-semibold' : 'border-slate-300 bg-white'}`}>
                             <input type="radio" name="guest-slot" className="sr-only" value={s.startAt} checked={slot?.startAt === s.startAt} onChange={() => setSlot(s)} />
-                            {formatDate(s.startAt, { hour: '2-digit', minute: '2-digit' })}
+                            {formatWith(s.startAt, { hour: '2-digit', minute: '2-digit' })}
                           </label>
                         ))}
                       </div>

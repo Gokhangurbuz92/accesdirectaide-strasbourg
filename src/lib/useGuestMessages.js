@@ -3,7 +3,7 @@ import { useT } from '@/i18n';
 
 export function useGuestMessages() {
   const { t } = useT('booking');
-  return (code) => ({
+  return (/** @type {string} */ code) => (/** @type {Record<string, string>} */ ({
     GUEST_BOOKING_DISABLED: t('booking:error.disabled', 'La prise de rendez-vous sans compte n’est pas ouverte pour le moment.'),
     GUEST_BOOKING_MAIL_UNAVAILABLE: t('booking:error.mailUnavailable', 'Nous ne pouvons pas envoyer d’e-mail pour le moment : aucun créneau n’a été réservé. Réessayez plus tard.'),
     GUEST_BOOKING_UNAVAILABLE: t('booking:error.unavailable', 'Cette structure ne propose pas de rendez-vous sans compte.'),
@@ -23,5 +23,5 @@ export function useGuestMessages() {
     RESCHEDULE_TOO_LATE: t('booking:error.tooLate', 'Il est trop tard pour déplacer ce rendez-vous en ligne : contactez la structure.'),
     RESCHEDULE_LIMIT: t('booking:error.limit', 'Ce rendez-vous a déjà été déplacé deux fois : contactez la structure.'),
     APPOINTMENT_NOT_CANCELLABLE: t('booking:error.notCancellable', 'Ce rendez-vous est passé : il ne peut plus être annulé.'),
-  }[code] || t('booking:error.generic', 'Une erreur est survenue. Réessayez dans un instant.'));
+  })[code] || t('booking:error.generic', 'Une erreur est survenue. Réessayez dans un instant.'));
 }

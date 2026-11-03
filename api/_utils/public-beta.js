@@ -71,11 +71,13 @@ export function openSurfaces(envVars = process.env) {
  *               retention, working mail provider): opening it is an operational switch, approving it is a separate, deliberate one
  *   category D  legacy, superseded by the automatic veille — can never be opened one at a time (and has no schedule in vercel.json since R38)
  */
+/** @type {Readonly<Record<string, 'A' | 'B' | 'C' | 'D'>>} */
 export const SCHEDULED_JOBS = Object.freeze({
   actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
 });
+/** @param {unknown} v */
 const listOf = (v) => new Set(String(v || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean));
 
 /** the jobs this environment opens during the beta @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */

@@ -17,7 +17,27 @@ export function readManageCapability(search, hash) {
   return { appointmentId, token };
 }
 
-/** slots grouped by their Paris calendar day @param {{ startAt: string, endAt: string }[]} slots */
+/** @typedef {{ startAt: string, endAt: string }} GuestSlot a free slot as the slots endpoint lists it */
+/** @typedef {{ name: string }} GuestStructure the structure as the services endpoint describes it */
+/** @typedef {{ id: string, name: string, durationMinutes: number }} GuestService a service open to account-free booking */
+/** @typedef {{ hold: { id: string }, emailMasked?: string }} GuestHold the answer of POST hold */
+/**
+ * @typedef {object} GuestAppointment an account-free appointment as the confirm / manage endpoints return it
+ * @property {string} id
+ * @property {string} [startsAt]
+ * @property {string} [status]
+ * @property {{ name?: string }} [structure]
+ * @property {{ id?: string, name?: string }} [service]
+ * @property {{ address?: string }} [location]
+ * @property {boolean} [canReschedule]
+ * @property {boolean} [canCancel]
+ * @property {string} [rescheduleBlocked]
+ * @property {boolean} [reminderChangeable]
+ * @property {boolean} [reminderConsent]
+ */
+/** @typedef {{ appointment: GuestAppointment, mail?: { status?: string }, manage: { token: string } }} GuestConfirmation the answer of POST confirm */
+
+/** slots grouped by their Paris calendar day @param {GuestSlot[]} slots @returns {{ date: string, slots: GuestSlot[] }[]} */
 export function slotsByParisDay(slots) {
   const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' });
   const map = new Map();
@@ -29,6 +49,7 @@ export function slotsByParisDay(slots) {
   return [...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([date, list]) => ({ date, slots: list }));
 }
 
+/** @param {Response} res */
 async function json(res) {
   const body = await res.json().catch(() => null);
   return { ok: res.ok, status: res.status, body: body || {} };

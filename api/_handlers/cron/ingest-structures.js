@@ -30,6 +30,7 @@ const MAX_PAGES = 20;
  *  (the function has 300 s): an interrupted run is a PARTIAL fetch — nothing is soft-removed and the next run resumes from the source */
 export const FETCH_TIMEOUT_MS = 15000;
 export const RUN_BUDGET_MS = 240000;
+/** @param {number} ms */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /** @param {string} url @param {{ fetchImpl?: typeof fetch, timeoutMs?: number, retryDelayMs?: number }} [o] */
 export async function fetchPage(url, { fetchImpl = fetch, timeoutMs = FETCH_TIMEOUT_MS, retryDelayMs = 2000 } = {}) {
@@ -48,7 +49,7 @@ export async function fetchPage(url, { fetchImpl = fetch, timeoutMs = FETCH_TIME
     }
 }
 /** R39: the public listing shows a service's contact, never a person's own e-mail address (same rule as the veille: verification/contacts.js) */
-export const publicContactEmail = (email) => (email && !nominativeEmail(email) ? email : null);
+export const publicContactEmail = (/** @type {string | null | undefined} */ email) => (email && !nominativeEmail(email) ? email : null);
 
 /** D14: the structure of this dataset with the same identity (SIRET, else name + postal code). @param {string} datasetId @param {Record<string, any>} v */
 async function findByIdentity(datasetId, v) {

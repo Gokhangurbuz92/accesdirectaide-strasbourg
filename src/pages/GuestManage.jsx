@@ -12,30 +12,38 @@ import { useGuestMessages } from '@/lib/useGuestMessages';
 const primary = 'inline-flex min-h-[44px] items-center justify-center rounded-md bg-blue-800 px-5 py-2 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 disabled:opacity-60';
 const secondary = 'inline-flex min-h-[44px] items-center justify-center rounded-md border border-slate-400 bg-white px-5 py-2 text-base font-medium text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-700';
 const danger = 'inline-flex min-h-[44px] items-center justify-center rounded-md bg-red-800 px-5 py-2 text-base font-medium text-white hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 disabled:opacity-60';
+/** @typedef {import('@/lib/guestBooking').GuestSlot} GuestSlot */
+/** @typedef {import('@/lib/guestBooking').GuestAppointment} GuestAppointment */
+/** @typedef {{ appointmentId: string, token: string }} ManageCapability the capability of the e-mailed link (readManageCapability) */
+
+/** formatDate with the full Intl options it forwards (its JSDoc infers only its default's shape) */
+const formatWith = /** @type {(value: string | undefined, options: Intl.DateTimeFormatOptions) => string} */ (formatDate);
+/** @param {number} offset */
 const isoDay = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
-const when = (v) => formatDate(v, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+/** @param {string | undefined} v */
+const when = (v) => formatWith(v, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
 export default function GuestManage() {
   const { t } = useT('booking');
   const message = useGuestMessages();
   const { structureSlug = '' } = useParams();
-  const capRef = useRef(null);
+  const capRef = useRef(/** @type {ManageCapability | false | null} */ (null));   // null: not read yet; false: no valid capability
   if (capRef.current === null && typeof window !== 'undefined') capRef.current = readManageCapability(window.location.search, window.location.hash) || false;
-  const [state, setState] = useState({ loading: true, error: '', appointment: null, emailMasked: null });
+  const [state, setState] = useState(/** @type {{ loading: boolean, error: string, appointment: GuestAppointment | null, emailMasked?: string | null }} */ ({ loading: true, error: '', appointment: null, emailMasked: null }));
   const [info, setInfo] = useState('');
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [moving, setMoving] = useState(false);
-  const [slots, setSlots] = useState({ loading: false, list: [], error: '' });
-  const [slot, setSlot] = useState(null);
+  const [slots, setSlots] = useState(/** @type {{ loading: boolean, list: GuestSlot[], error: string }} */ ({ loading: false, list: [], error: '' }));
+  const [slot, setSlot] = useState(/** @type {GuestSlot | null} */ (null));
   const [reminderError, setReminderError] = useState('');
-  const statusRef = useRef(null);
+  const statusRef = useRef(/** @type {HTMLParagraphElement | null} */ (null));
 
   useEffect(() => {
     // the capability leaves the address bar (history, screenshots, a shared address) as soon as it is read
     if (capRef.current && typeof window !== 'undefined' && window.location.hash) window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
     if (!capRef.current) { setState({ loading: false, error: message('APPOINTMENT_NOT_FOUND'), appointment: null }); return; }
-    guestPost('manage', capRef.current).then((r) => setState(r.ok ? { loading: false, error: '', appointment: r.body.appointment, emailMasked: r.body.emailMasked } : { loading: false, error: message(r.body.code), appointment: null }));
+    guestPost('manage', /** @type {ManageCapability} */ (capRef.current)).then((r) => setState(r.ok ? { loading: false, error: '', appointment: r.body.appointment, emailMasked: r.body.emailMasked } : { loading: false, error: message(r.body.code), appointment: null }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (info) statusRef.current?.focus(); }, [info]);
@@ -45,23 +53,23 @@ export default function GuestManage() {
 
   const loadSlots = async () => {
     setMoving(true); setSlot(null); setSlots({ loading: true, list: [], error: '' });
-    const r = await guestGet(`structures/${encodeURIComponent(structureSlug)}/slots?${new URLSearchParams({ serviceId: a.service?.id || '', from: isoDay(0), to: isoDay(13) })}`);
-    setSlots({ loading: false, list: r.ok ? (r.body.slots || []).filter((s) => s.startAt !== a.startsAt) : [], error: r.ok ? '' : message(r.body.code) });
+    const r = await guestGet(`structures/${encodeURIComponent(structureSlug)}/slots?${new URLSearchParams({ serviceId: /** @type {GuestAppointment} */ (a).service?.id || '', from: isoDay(0), to: isoDay(13) })}`);
+    setSlots({ loading: false, list: r.ok ? (r.body.slots || []).filter((/** @type {GuestSlot} */ s) => s.startAt !== /** @type {GuestAppointment} */ (a).startsAt) : [], error: r.ok ? '' : message(r.body.code) });
   };
   const cancel = async () => {
-    setBusy(true); const r = await guestPost('manage/cancel', capRef.current); setBusy(false); setConfirmCancel(false);
+    setBusy(true); const r = await guestPost('manage/cancel', /** @type {ManageCapability} */ (capRef.current)); setBusy(false); setConfirmCancel(false);
     if (r.ok) { setState((s) => ({ ...s, appointment: r.body.appointment })); setInfo(t('booking:manage.cancelled', 'Le rendez-vous est annulé. Un e-mail de confirmation vous est envoyé.')); }
     else setInfo(message(r.body.code));
   };
   const move = async () => {
-    setBusy(true); const r = await guestPost('manage/reschedule', { ...capRef.current, startAt: slot.startAt }); setBusy(false);
+    setBusy(true); const r = await guestPost('manage/reschedule', { .../** @type {ManageCapability} */ (capRef.current), startAt: /** @type {GuestSlot} */ (slot).startAt }); setBusy(false);
     if (r.ok) { setState((s) => ({ ...s, appointment: r.body.appointment })); setMoving(false); setInfo(t('booking:manage.moved', 'Le rendez-vous est déplacé. Un e-mail avec le nouvel horaire vous est envoyé.')); }
     else setInfo(message(r.body.code));
   };
 
   const toggleReminder = async () => {
     setBusy(true); setReminderError('');
-    const r = await guestPost('manage/reminder', { ...capRef.current, consent: !a.reminderConsent }); setBusy(false);
+    const r = await guestPost('manage/reminder', { .../** @type {ManageCapability} */ (capRef.current), consent: !/** @type {GuestAppointment} */ (a).reminderConsent }); setBusy(false);
     if (r.ok) setState((s) => ({ ...s, appointment: r.body.appointment }));
     else setReminderError(message(r.body.code));
   };
@@ -120,12 +128,12 @@ export default function GuestManage() {
                 {!slots.loading && !slots.error && days.length === 0 ? <p>{t('booking:slot.none', 'Aucun créneau libre dans les 14 prochains jours.')}</p> : null}
                 {days.map((d) => (
                   <div key={d.date}>
-                    <p className="font-medium text-slate-800">{formatDate(d.slots[0].startAt, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                    <p className="font-medium text-slate-800">{formatWith(d.slots[0].startAt, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                     <div className="mt-1 flex flex-wrap gap-2">
                       {d.slots.map((s) => (
                         <label key={s.startAt} className={`inline-flex min-h-[44px] min-w-[72px] cursor-pointer items-center justify-center rounded-md border px-3 ${slot?.startAt === s.startAt ? 'border-blue-800 bg-blue-50 font-semibold' : 'border-slate-300 bg-white'}`}>
                           <input type="radio" name="guest-move-slot" className="sr-only" value={s.startAt} checked={slot?.startAt === s.startAt} onChange={() => setSlot(s)} />
-                          {formatDate(s.startAt, { hour: '2-digit', minute: '2-digit' })}
+                          {formatWith(s.startAt, { hour: '2-digit', minute: '2-digit' })}
                         </label>
                       ))}
                     </div>

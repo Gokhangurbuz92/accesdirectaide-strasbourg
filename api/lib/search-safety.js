@@ -5,10 +5,13 @@
  * « emergency ») and the kinds of office that receive such people. It never hides the ordinary results and it never decides anything for the person.
  * Patterns are deliberately narrow (a person + an act), so « violence » alone in a question about a law is not treated as an emergency.
  */
+/** @param {unknown} s */
 const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’']/g, "'");
+/** @param {string} alts */
 const w = (alts) => new RegExp(`(?<![\\p{L}\\p{N}])(?:${alts})(?![\\p{L}\\p{N}])`, 'u');
 
 /** [kind, test(folded query), numbers, office types, French topic searched for a query typed in another language] — the first matching kind wins; order = gravity */
+/** @type {[string, RegExp | ((q: string) => boolean), string[], string[], string][]} */
 const SIGNALS = [
   // R39: a question about the law of end of life (« suicide assisté », « aide à mourir ») is not a crisis; the topic for another language finds the official
   // listening-line sheet (F33954, the 3114) as well as the psychologist one
@@ -24,7 +27,7 @@ const SIGNALS = [
 export function safetySignal(...queries) {
   const qs = queries.filter(Boolean).map(fold);
   for (const [kind, test, numbers, structureTypes, topic] of SIGNALS) {
-    const t = typeof test === 'function' ? test : (q) => test.test(q);
+    const t = typeof test === 'function' ? test : (/** @type {string} */ q) => test.test(q);
     if (qs.some((q) => t(q))) return { kind, numbers, structureTypes, topic };
   }
   return null;
