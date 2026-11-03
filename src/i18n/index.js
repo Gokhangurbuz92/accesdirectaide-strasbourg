@@ -14,7 +14,7 @@
 import i18next from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { useSyncExternalStore } from 'react';
-import { LANGUAGE_CODES, SOURCE_LANGUAGE, languageOf, matchLanguage } from './languages.js';
+import { LANGUAGES, LANGUAGE_CODES, SOURCE_LANGUAGE, languageOf, matchLanguage } from './languages.js';
 
 export { LANGUAGES, LANGUAGE_CODES, SOURCE_LANGUAGE, TARGET_LANGUAGES, languageOf, matchLanguage } from './languages.js';
 
@@ -44,6 +44,9 @@ i18n.use(initReactI18next).init({
 
 export default i18n;
 
+/** French, the source language, is the first entry: the language used when a code names none of ours */
+const SOURCE_ENTRY = LANGUAGES[0];
+
 const hasWindow = () => typeof window !== 'undefined' && typeof document !== 'undefined';
 
 /** Loads every namespace file of a language (once). French has none: its strings are the defaults in the components. @param {string} code */
@@ -60,7 +63,7 @@ export async function loadLanguage(code) {
 /** <html lang dir> follow the interface language (screen readers pick their voice from it; Arabic reads right to left). @param {string} code */
 export function applyDocumentLanguage(code) {
   if (!hasWindow()) return;
-  const l = languageOf(code) || languageOf(SOURCE_LANGUAGE);
+  const l = languageOf(code) || SOURCE_ENTRY;
   document.documentElement.lang = l.code;
   document.documentElement.dir = l.dir;
 }
@@ -109,8 +112,8 @@ const subscribe = (/** @type {() => void} */ cb) => { i18n.on('languageChanged',
 /** the current interface language, re-rendering on change @returns {{ code: string, dir: 'ltr' | 'rtl', intl: string, name: string, isSource: boolean }} */
 export function useLanguage() {
   const code = useSyncExternalStore(subscribe, () => i18n.language || SOURCE_LANGUAGE, () => SOURCE_LANGUAGE);
-  const l = languageOf(code) || languageOf(SOURCE_LANGUAGE);
-  return { code: l.code, dir: /** @type {'ltr'|'rtl'} */ (l.dir), intl: l.intl, name: l.name, isSource: l.code === SOURCE_LANGUAGE };
+  const l = languageOf(code) || SOURCE_ENTRY;
+  return { code: l.code, dir: l.dir, intl: l.intl, name: l.name, isSource: l.code === SOURCE_LANGUAGE };
 }
 
 /** useTranslation bound to this instance (works in tests and server rendering without a provider) @param {string | string[]} [ns] */
@@ -118,22 +121,26 @@ export function useT(ns = 'common') {
   return useTranslation(ns, { i18n });
 }
 
-const intlOf = (/** @type {string | undefined} */ code) => (languageOf(code || i18n.language) || languageOf(SOURCE_LANGUAGE)).intl;
+const intlOf = (/** @type {string | undefined} */ code) => (languageOf(code || i18n.language) || SOURCE_ENTRY).intl;
 
-/** a date in the interface language (« 12 octobre 2026 », « 12 October 2026 »…); '' for an invalid value */
+/**
+ * a date in the interface language (« 12 octobre 2026 », « 12 October 2026 »…); '' for an invalid value
+ * @param {string | number | Date | null | undefined} value @param {Intl.DateTimeFormatOptions} [options] @param {string} [code]
+ */
 export function formatDate(value, options = { day: 'numeric', month: 'long', year: 'numeric' }, code = undefined) {
+  if (!value) return '';
   const d = value instanceof Date ? value : new Date(value);
-  if (!value || Number.isNaN(d.getTime())) return '';
+  if (Number.isNaN(d.getTime())) return '';
   return new Intl.DateTimeFormat(intlOf(code), { timeZone: 'Europe/Paris', ...options }).format(d);
 }
 
-/** a number in the interface language */
+/** a number in the interface language @param {unknown} value @param {Intl.NumberFormatOptions} [options] @param {string} [code] */
 export function formatNumber(value, options = {}, code = undefined) {
   const n = Number(value);
   return Number.isFinite(n) ? new Intl.NumberFormat(intlOf(code), options).format(n) : '';
 }
 
-/** an amount in euros in the interface language */
+/** an amount in euros in the interface language @param {unknown} value @param {Intl.NumberFormatOptions} [options] @param {string} [code] */
 export function formatEuro(value, options = {}, code = undefined) {
   return formatNumber(value, { style: 'currency', currency: 'EUR', ...options }, code);
 }

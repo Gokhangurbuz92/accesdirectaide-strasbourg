@@ -5,6 +5,9 @@
  */
 export const SOURCE_LANGUAGE = 'fr';
 
+/** @typedef {{ code: string, name: string, english: string, intl: string, dir: 'ltr' | 'rtl' }} Language */
+
+/** @type {readonly Readonly<Language>[]} */
 export const LANGUAGES = Object.freeze([
   Object.freeze({ code: 'fr', name: 'Français', english: 'French', intl: 'fr-FR', dir: 'ltr' }),
   Object.freeze({ code: 'en', name: 'English', english: 'English', intl: 'en-GB', dir: 'ltr' }),
@@ -18,7 +21,7 @@ export const LANGUAGES = Object.freeze([
 export const LANGUAGE_CODES = Object.freeze(LANGUAGES.map((l) => l.code));
 export const TARGET_LANGUAGES = Object.freeze(LANGUAGE_CODES.filter((c) => c !== SOURCE_LANGUAGE));
 
-/** @param {string | null | undefined} code @returns {typeof LANGUAGES[number] | null} */
+/** @param {string | null | undefined} code @returns {Readonly<Language> | null} */
 export function languageOf(code) {
   return LANGUAGES.find((l) => l.code === code) || null;
 }

@@ -27,6 +27,7 @@ const SECTIONS = [
 ];
 
 /** R32: the state words and section titles in the interface language (the French ones above stay the defaults) */
+/** @param {(key: string, fallback: string) => string} t @param {string} state */
 function stateLabel(t, state) {
   switch (state) {
     case 'operational': return t('status:state.operational', 'Fonctionne');
@@ -36,6 +37,7 @@ function stateLabel(t, state) {
     default: return null;
   }
 }
+/** @param {(key: string, fallback: string) => string} t @param {string} id */
 function sectionTitle(t, id) {
   switch (id) {
     case 'comptes': return t('status:section.comptes', 'Comptes et rendez-vous');
