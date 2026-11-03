@@ -16,6 +16,9 @@ describe('safetySignal', () => {
     ['kocam beni dövüyor', 'violence', '3919'], ['чоловік б\'є мене', 'violence', '3919'], ['زوجي يضربني', 'violence', '3919'], ['mein Mann schlägt mich', 'violence', '17'],
     ['mon fils est maltraité', 'enfant', '119'], ['ma grand-mère est maltraitée', 'personne-agee', '3133'],
     ['je veux en finir', 'suicide', '3114'], ['I want to kill myself', 'suicide', '3114'], ['je dors dehors ce soir', 'sans-abri', '115'],
+    // R39 release: inflected forms, and patterns written as the folded query reads them (diacritics removed)
+    ['pensées suicidaires', 'suicide', '3114'], ['j\'ai des idées noires', 'suicide', '3114'], ['ich habe Suizidgedanken', 'suicide', '3114'],
+    ['у мене суїцидальні думки', 'suicide', '3114'], ['intihara meyilliyim', 'suicide', '3114'], ['أنتحر', 'suicide', '3114'], ['أنا بلا مأوى', 'sans-abri', '115'],
   ])('« %s » → %s with %s', (q, kind, number) => {
     const s = safetySignal(q);
     expect(s?.kind).toBe(kind);
