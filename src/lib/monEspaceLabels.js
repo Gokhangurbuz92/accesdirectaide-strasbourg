@@ -5,7 +5,7 @@ import {
   COFFRE_CATEGORY_LABELS, DELEGATION_ROLE_LABELS, DELEGATION_SCOPE_LABELS, DELEGATION_STATUS_LABELS, HISTORY_KIND_LABELS, PARCOURS_STATUS_LABELS,
 } from '@/lib/monEspace';
 
-/** keeps the French map's keys and order; a key without a translation keeps its French label */
+/** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
 
 export function useMonEspaceLabels() {

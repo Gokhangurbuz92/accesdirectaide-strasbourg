@@ -8,6 +8,7 @@ export function useAdminCatalogueFields() {
   const { t, i18n } = useT('admin');
   const lang = i18n.language;
   return useMemo(() => {
+    /** @type {Record<string, string>} */
     const byFrench = {
       Titre: t('admin:catalogue_fields.titre', 'Titre'),
       Catégorie: t('admin:catalogue_fields.categorie', 'Catégorie'),
@@ -57,7 +58,7 @@ export function useAdminCatalogueFields() {
       Situations: t('admin:catalogue_fields.contexte', 'Situations'),
       'Sources (adresses web)': t('admin:catalogue_fields.sources_urls', 'Sources (adresses web)'),
     };
-    const tr = (fields) => Object.freeze(fields.map((f) => Object.freeze({ ...f, label: byFrench[f.label] || f.label })));
+    const tr = /** @template {{ label: string }} F @param {readonly F[]} fields */ (fields) => Object.freeze(fields.map((f) => Object.freeze({ ...f, label: byFrench[f.label] || f.label })));
     return {
       AIDE_FIELDS: tr(AIDE_FIELDS), DEMARCHE_FIELDS: tr(DEMARCHE_FIELDS), STRUCTURE_FIELDS: tr(STRUCTURE_FIELDS),
       DISPOSITIF_FIELDS: tr(DISPOSITIF_FIELDS), GUIDE_FIELDS: tr(GUIDE_FIELDS),

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useT } from '@/i18n';
 import { PROPOSAL_STATUS_LABELS, STRUCTURE_FIELD_LABELS } from '@/lib/structureFields';
 
-/** keeps the French map's keys and order; a key without a translation keeps its French label */
+/** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
 
 export function useStructureFieldLabels() {
