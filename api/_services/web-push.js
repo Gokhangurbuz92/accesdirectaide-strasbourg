@@ -128,7 +128,11 @@ export async function subscriptionCount(userId, { db = defaultDb } = {}) {
 }
 
 /**
- * Sends one message to every subscription of an account: { status: NOT_CONFIGURED | NO_SUBSCRIPTION | ACCEPTED | FAILED, accepted, failed, expired }.
+ * Sends one message to every subscription of an account: { status, accepted, failed, expired }, status one of
+ *   NOT_CONFIGURED   no VAPID keys: nothing attempted          NO_SUBSCRIPTION  no browser of this account subscribed: nothing attempted
+ *   ACCEPTED         at least one push service took it (2xx) — not proof the person saw it
+ *   EXPIRED          R40: every subscription was ended by its push service (404 / 410) and removed: permanent, no device left (not a provider failure)
+ *   FAILED           attempted and refused / unreachable (5xx, 429, network, a subscription that cannot be opened): may succeed later
  * @param {{ title: string, body: string, url: string }} message only generic, non-personal words and a link inside the site
  */
 export async function sendToUser(userId, message, { db = defaultDb, env = process.env, fetchImpl = fetch, ttl = 86400 } = {}) {
@@ -156,5 +160,12 @@ export async function sendToUser(userId, message, { db = defaultDb, env = proces
       await db.update(PushSubscription).set({ failureCount: n, status: n >= FAILING_AFTER ? 'FAILING' : row.status, lastFailureAt: new Date() }).where(eq(PushSubscription.id, row.id));
     }
   }
-  return { status: accepted ? 'ACCEPTED' : 'FAILED', accepted, failed, expired };
+  return { status: accepted ? 'ACCEPTED' : failed ? 'FAILED' : 'EXPIRED', accepted, failed, expired };
 }
+
+/**
+ * R40 — the notice-ledger status of one sendToUser() result (ParcoursReminder and the like): PROVIDER_ACCEPTED (a push service took it; never DELIVERED:
+ * the site cannot know the person saw it), FAILED (attempted, refused or unreachable), NOT_DELIVERED (nothing could be attempted: no keys, no subscription,
+ * every subscription ended by the browser).
+ */
+export const pushLedgerStatus = (out) => (out?.status === 'ACCEPTED' ? 'PROVIDER_ACCEPTED' : out?.status === 'FAILED' ? 'FAILED' : 'NOT_DELIVERED');

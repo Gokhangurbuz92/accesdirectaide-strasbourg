@@ -18,7 +18,7 @@ import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEven
 import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
-import { sendMail as defaultSendMail } from '../_utils/mailer.js';
+import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { canNotify } from './citizen-account.js';
 import { isDossierRestricted } from './processing-restriction.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
@@ -84,16 +84,27 @@ export async function propose(ctx, input, deps = {}) {
   if (!rows.length) return bad('ALREADY_REFERRED', 'Une orientation vers cette structure est déjà en cours pour ce dossier.', 409);
   await record(db, rows[0], 'SENDER', ctx.userId, null, 'PENDING_CITIZEN');
   await db.insert(ProCaseEvent).values({ caseId: c.id, structureId: c.structureId, actorProUserId: ctx.userId, kind: 'REFERRAL', toValue: 'PENDING_CITIZEN' });
-  await tellCitizen(db, c.sharedDiagnosticId, deps.sendMail || defaultSendMail, 'Une proposition d’orientation attend votre accord',
-    `Une structure qui vous accompagne propose de transmettre votre dossier à ${target.name}. Rien n’est transmis sans votre accord.\nDécidez depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`);
+  await tellCitizen(db, rows[0], deps.sendMail || defaultSendMail, 'Une proposition d’orientation attend votre accord',
+    `Une structure qui vous accompagne propose de transmettre votre dossier à ${target.name}. Rien n’est transmis sans votre accord.\nDécidez depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'PENDING_CITIZEN');
   return { ok: true, status: 201, referral: { id, status: 'PENDING_CITIZEN', to: target.name } };
 }
 
-async function tellCitizen(db, dossierId, sendMail, subject, text) {
+/**
+ * The person's e-mail about their referral (best effort: the decision is in Mon Espace anyway). R40: the outcome of each notice is written to AuditLog
+ * (REFERRAL_CITIZEN_NOTICE: the referral id, the kind, the outcome — no address, no text): NO_RECIPIENT (no verified owner account), NO_CONSENT (service
+ * e-mails off, or processing restricted), PROVIDER_ACCEPTED (a real provider took it — not proof it arrived), TEST_RECORDED (the LAB outbox), NOT_DELIVERED
+ * (noop or refused: never counted as sent), FAILED (an error). Before, nothing was recorded and a noop « accepted » looked like a sent notice.
+ */
+export async function tellCitizen(db, referral, sendMail, subject, text, kind) {
+  let outcome = 'FAILED';
   try {
-    const [o] = (await db.execute(sql`SELECT u.id, u.email FROM "SharedDiagnostic" d JOIN "CitizenUser" u ON u.id = d."ownerCitizenId" WHERE d.id = ${dossierId} AND u."emailVerifiedAt" IS NOT NULL`)).rows;
-    if (o && (await canNotify(o.id, 'email', 'service').catch(() => false))) await sendMail({ to: o.email, subject, text, category: 'referral' });
-  } catch { /* best effort */ }
+    const [o] = (await db.execute(sql`SELECT u.id, u.email FROM "SharedDiagnostic" d JOIN "CitizenUser" u ON u.id = d."ownerCitizenId" WHERE d.id = ${referral.sharedDiagnosticId} AND u."emailVerifiedAt" IS NOT NULL`)).rows;
+    if (!o) outcome = 'NO_RECIPIENT';
+    else if (!(await canNotify(o.id, 'email', 'service', db).catch(() => false))) outcome = 'NO_CONSENT';
+    else outcome = mailLedgerStatus(await sendMail({ to: o.email, subject, text, category: 'referral' }));
+  } catch { outcome = 'FAILED'; }
+  await db.insert(AuditLog).values({ action: 'REFERRAL_CITIZEN_NOTICE', actor: 'system', entity: 'Referral', entity_id: referral.id, details: { kind, outcome } }).catch(() => {});
+  return outcome;
 }
 
 /** Citizen: the referrals of the dossiers they own (sender, receiver, status, reason, message, outcome summary). */
@@ -210,7 +221,7 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
     if (out.ok) {
       const c = await ensureCase(r.sharedDiagnosticId, ctx, db);
       await notifyOrg(db, r.fromStructureId, 'referral_accepted', 'Orientation acceptée', 'La structure destinataire a accepté l’orientation.', { referralId: r.id });
-      await tellCitizen(db, r.sharedDiagnosticId, deps.sendMail || defaultSendMail, 'Votre orientation a été acceptée', `La structure destinataire a accepté de vous accompagner. Suivez-la depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`);
+      await tellCitizen(db, r, deps.sendMail || defaultSendMail, 'Votre orientation a été acceptée', `La structure destinataire a accepté de vous accompagner. Suivez-la depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'ACCEPTED');
       out.caseId = c?.id || null;
     }
     return out;
@@ -225,10 +236,10 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
     if (out.ok && to === 'DECLINED') await revokeReferralGrant(db, r);
     if (out.ok) await notifyOrg(db, r.fromStructureId, to === 'DECLINED' ? 'referral_declined' : 'referral_needs_info', to === 'DECLINED' ? 'Orientation déclinée' : 'Informations demandées', to === 'DECLINED' ? 'La structure destinataire a décliné l’orientation.' : 'La structure destinataire demande des précisions.', { referralId: r.id });
     // R12 (R10): the person is told too (before: only the organizations were) — no reason and no message in the e-mail, the detail stays in Mon Espace
-    if (out.ok) await tellCitizen(db, r.sharedDiagnosticId, deps.sendMail || defaultSendMail, to === 'DECLINED' ? 'Votre orientation n’a pas été acceptée' : 'Votre orientation est en cours d’examen',
+    if (out.ok) await tellCitizen(db, r, deps.sendMail || defaultSendMail, to === 'DECLINED' ? 'Votre orientation n’a pas été acceptée' : 'Votre orientation est en cours d’examen',
       to === 'DECLINED'
         ? `La structure proposée ne peut pas vous accompagner ; elle n’a plus accès à votre dossier. La structure qui vous accompagne peut vous proposer une autre orientation. Détails dans Mon Espace : ${buildAppUrl('/compte/orientations')}`
-        : `La structure proposée a demandé des précisions à la structure qui vous accompagne avant de répondre. Suivez votre orientation dans Mon Espace : ${buildAppUrl('/compte/orientations')}`);
+        : `La structure proposée a demandé des précisions à la structure qui vous accompagne avant de répondre. Suivez votre orientation dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, to);
     return out;
   }
   if (receiver && action === 'link_appointment') {
@@ -247,7 +258,7 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
     const out = await go(['ACCEPTED', 'IN_PROGRESS'], { status: 'COMPLETED', outcome, outcomeCitizenSummary: summary || null }, 'RECEIVER', 'COMPLETED', receiverGrant);
     if (out.ok) {
       await notifyOrg(db, r.fromStructureId, 'referral_completed', 'Orientation terminée', 'La structure destinataire a indiqué le résultat de l’accompagnement.', { referralId: r.id });
-      await tellCitizen(db, r.sharedDiagnosticId, deps.sendMail || defaultSendMail, 'Votre accompagnement est terminé', `La structure a indiqué le résultat de votre accompagnement. Consultez-le dans Mon Espace : ${buildAppUrl('/compte/orientations')}`);
+      await tellCitizen(db, r, deps.sendMail || defaultSendMail, 'Votre accompagnement est terminé', `La structure a indiqué le résultat de votre accompagnement. Consultez-le dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'COMPLETED');
     }
     return out;
   }

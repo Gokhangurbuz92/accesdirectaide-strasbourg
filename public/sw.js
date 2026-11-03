@@ -169,7 +169,10 @@ self.addEventListener('notificationclick', (event) => {
   const target = new URL(event.notification.data?.url || '/compte', self.location.origin);
   if (target.origin !== self.location.origin) return;
   event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
-    for (const c of list) if (c.url.startsWith(self.location.origin) && 'focus' in c) { c.navigate?.(target.href); return c.focus(); }
-    return self.clients.openWindow(target.href);
+    const c = list.find((w) => w.url.startsWith(self.location.origin) && 'focus' in w);
+    if (!c) return self.clients.openWindow(target.href);
+    // R40: the open tab goes to the link, then gets the focus; navigate() rejects for a tab this worker does not control (opened before it was installed):
+    // then a new window at the link — before, that rejection was unhandled and the old page was focused without the link
+    return Promise.resolve(typeof c.navigate === 'function' ? c.navigate(target.href) : null).then((w) => (w || c).focus(), () => self.clients.openWindow(target.href));
   }));
 });

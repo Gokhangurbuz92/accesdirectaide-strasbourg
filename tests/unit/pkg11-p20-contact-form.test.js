@@ -38,7 +38,7 @@ describe('PKG-11 / P20 contact form', () => {
     const { mailer, contact } = await load('test');
     const res = resOf();
     await contact.default(reqOf(FORM, '203.0.113.8'), res);
-    expect([res.statusCode, res.body]).toEqual([200, { ok: true, delivered: true }]);
+    expect([res.statusCode, res.body]).toEqual([200, { ok: true, accepted: true, mailStatus: 'TEST_RECORDED' }]);   // R40: the LAB outbox is never « delivered »
     expect(res.headers['Access-Control-Allow-Origin']).toBeUndefined();
     const [team, ack] = mailer.__getTestOutbox();
     expect(team.to).toBe('contact@accesdirectaide.fr');
@@ -67,7 +67,7 @@ describe('PKG-11 / P20 contact form', () => {
     expect(codes).toEqual([200, 200, 200, 200, 200, 429]);
     const other = resOf(); await contact.default(reqOf(FORM, '203.0.113.11'), other); expect(other.statusCode).toBe(200);
     const page = readFileSync('src/pages/Contact.jsx', 'utf8');
-    expect(page).toMatch(/res\.ok && data\?\.delivered === true/);
+    expect(page).toMatch(/res\.ok && data\?\.accepted === true/);
     expect(page).not.toMatch(/\.catch\(\(\) => null\)|garantie|48h|chiffrés à l/);
   });
 });
