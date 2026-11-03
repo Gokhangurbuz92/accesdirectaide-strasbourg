@@ -1,5 +1,5 @@
 // R38 — scheduled jobs one at a time during the beta: ADA_BETA_OPEN_JOBS opens a named job, a personal-data job also needs ADA_JOBS_APPROVED, a legacy job
-// can never be opened by name, and the « jobs » surface stays the all-or-nothing switch. The edge middleware and api/index.js apply the same rule.
+// can never be opened by name. R40 / G2: the « jobs » surface is no longer an all-or-nothing switch (it opens nothing). The edge middleware and api/index.js apply the same rule.
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import fs from 'node:fs';
 import { isAllowedInPublicBeta, openJobs, jobStates, SCHEDULED_JOBS } from '../../api/_utils/public-beta.js';
@@ -10,7 +10,7 @@ afterEach(() => { vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://loca
 describe('per-job opening (fail-closed)', () => {
   it('nothing is open by default, and an unknown name or a wildcard opens nothing', () => {
     for (const j of Object.keys(SCHEDULED_JOBS)) expect(isAllowedInPublicBeta('GET', `cron/${j}`, BETA), j).toBe(false);
-    expect([...openJobs({ ...BETA, ADA_BETA_OPEN_JOBS: '*,all,cron,veille,backup-db' })]).toEqual([]);
+    expect([...openJobs({ ...BETA, ADA_BETA_OPEN_JOBS: '*,all,cron,hive-scan,backup-db,pipeline' })]).toEqual([]);
   });
   it('a public-data job opens alone, every other job and monitor route stays closed', () => {
     const e = { ...BETA, ADA_BETA_OPEN_JOBS: 'actualites' };
@@ -31,7 +31,9 @@ describe('per-job opening (fail-closed)', () => {
   it('jobStates says, per job, why it runs or not', () => {
     const s = Object.fromEntries(jobStates({ ...BETA, ADA_BETA_OPEN_JOBS: 'actualites,rdv-reminder,ingest-demarches' }).map((x) => [x.job, x.state]));
     expect(s).toMatchObject({ actualites: 'OPEN', 'rdv-reminder': 'AWAITING_APPROVAL', 'ingest-demarches': 'LEGACY_CLOSED', 'gdpr-purge': 'CLOSED', 'health-alert': 'CLOSED' });
-    expect(jobStates({ ...BETA, ADA_BETA_OPEN_SURFACES: 'jobs' }).every((x) => x.state === 'OPEN_ALL_JOBS')).toBe(true);
+    // R40 / G2: opening the « jobs » surface opens nothing; only lifting the whole beta serves every route
+    expect(jobStates({ ...BETA, ADA_BETA_OPEN_SURFACES: 'jobs' }).every((x) => x.state === 'CLOSED' || x.state === 'LEGACY_CLOSED')).toBe(true);
+    expect(jobStates({}).every((x) => x.state === 'OPEN_ALL_JOBS')).toBe(true);
   });
 });
 

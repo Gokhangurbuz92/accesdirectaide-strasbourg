@@ -121,6 +121,15 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized', requestId });
     }
 
+    // R40 / G2: this job calls Gemini with Google Search grounding — a cloud AI provider that is not approved (DPIA / DPA). It refuses to run unless the
+    // provider policy explicitly allows it (api/lib/ai-policy.js: Gemini is BLOCKED_PENDING_PROVIDER_REVIEW), before any database write or network call,
+    // whatever ENABLE_AI_AGENT says. Answered as « skipped », not as an outage.
+    const { AIProviderPolicy, PROVIDER, AUDIENCE } = await import('../../lib/ai-policy.js');
+    const providerDecision = AIProviderPolicy.evaluate({ provider: PROVIDER.GEMINI, audience: AUDIENCE.PROFESSIONAL });
+    if (!providerDecision.allowed) {
+        return res.status(200).json({ ok: true, skipped: 'provider_not_approved', reason: providerDecision.reason || 'AI_PROVIDER_NOT_ALLOWED', requestId });
+    }
+
     // Feature flag — agents can be disabled without redeployment. Launch-readiness item 53: a disabled feature is not an outage — it answered 503 on every
     // scheduled run (the monitoring saw a failure each time). The job is no longer scheduled (vercel.json): it uses a cloud AI provider that is not approved
     // (DPIA / DPA), and the automatic veille (D-5 v2) does the source monitoring.

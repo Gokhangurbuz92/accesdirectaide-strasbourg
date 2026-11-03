@@ -253,7 +253,8 @@ describe('R35 per-surface opening during the beta (ADA_BETA_OPEN_SURFACES)', () 
   });
   it('is fail-closed: unset, unknown names, a wildcard or odd spacing open nothing more', () => {
     for (const v of [undefined, '', '*', 'all', 'everything', 'admin2', ' , ']) expect(isAllowedInPublicBeta('POST', 'auth/signup', { ADA_BETA_OPEN_SURFACES: v }), String(v)).toBe(false);
-    expect(openSurfaces({ ADA_BETA_OPEN_SURFACES: ' Accounts , foo,JOBS ' })).toEqual(new Set(['accounts', 'jobs']));
+    // R40 / G2: « jobs » is not an openable surface (jobs open one at a time with ADA_BETA_OPEN_JOBS)
+    expect(openSurfaces({ ADA_BETA_OPEN_SURFACES: ' Accounts , foo,JOBS ' })).toEqual(new Set(['accounts']));
   });
   it('the browser shows the screens of the surfaces named in the build, and only those', () => {
     expect(isBetaRestrictedPath('/rdv/abc', ['appointments'])).toBe(false);
@@ -276,7 +277,9 @@ describe('R35 release gate follows the opened surfaces', () => {
     expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'accounts' }, 'mail.deliverable')).toBe('FAIL');
     expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'accounts' }, 'beta.mailer_noop')).toBeUndefined();
     expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'documents' }, 'storage.configured')).toBe('FAIL');
-    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'alerts.webhook')).toBe('FAIL');
-    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'beta.open_surfaces')).toBe('WARN');
+    // R40 / G2: the « jobs » surface opens nothing; any job opened by name requires the alert channel
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'alerts.webhook')).toBe('WARN');
+    expect(status({ ...base, ADA_BETA_OPEN_SURFACES: 'jobs' }, 'beta.open_surfaces')).toBe('PASS');
+    expect(status({ ...base, ADA_BETA_OPEN_JOBS: 'actualites' }, 'alerts.webhook')).toBe('FAIL');
   });
 });
