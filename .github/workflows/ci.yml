@@ -26,7 +26,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npm run typecheck
-      - name: Strict TypeScript (no regression: the baseline is 0 since R40)
+      - name: "Strict TypeScript (no regression; the baseline is 0 since R40)"
         run: npm run typecheck:strict:baseline
       - name: Unit gate (only the declared known failures may fail)
         run: node scripts/unit-gate.mjs
