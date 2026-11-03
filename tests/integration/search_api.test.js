@@ -31,6 +31,8 @@ vi.mock('../../api/lib/search-query.js', () => ({
     searchStructures: vi.fn().mockResolvedValue({ items: [], total: 0 }),
     wordPlan: vi.fn().mockReturnValue(null),
     bestMatchCondition: vi.fn(),
+    // R40: the handler reads the meaningful words of every query (none → no démarche or place listed)
+    searchWords: vi.fn((q) => String(q || '').toLowerCase().split(/\s+/).filter((w) => w.length > 1)),
 }));
 
 vi.mock('../../src/db/index.js', () => ({

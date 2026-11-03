@@ -113,6 +113,8 @@ export default async function handler(req, res) {
       if (hierarchy && hierarchy.length > 0) territoryFilter = { userTerritoryIds: hierarchy.map((h) => h.id) };
     }
 
+    // R40: a query left with no meaningful word (« loi », « aide ») matches nothing in the word searches; without a plan they listed their first records
+    const hasWords = searchWords(payload.query).length > 0;
     const { data: searchResult, cached } = await cachedSearch(cacheParams, async () => {
       // R14: a section whose query failed is named (it used to be an empty list, « no result », and was cached for 5 minutes)
       const partial = [];
@@ -140,7 +142,7 @@ export default async function handler(req, res) {
       // found no démarche or place (D16, 40 catalogue queries replayed read-only on production data, 31/10/2026: démarches recall@5 0.42 → 0.89, places 0.17 → 0.83).
       let demarches = [];
       try {
-        demarches = (await searchDemarches({ q: payload.query, page: 1, pageSize: 5 })).items
+        demarches = (hasWords ? (await searchDemarches({ q: payload.query, page: 1, pageSize: 5 })).items : [])
           .map((d) => ({ id: d.id, slug: d.slug, titre: d.titre, description_courte: d.description_courte, categorie: d.categorie, summary_falc: d.summary_falc }));
       } catch (e) {
         // @ts-ignore
@@ -168,7 +170,7 @@ export default async function handler(req, res) {
           }
           found = found.slice(0, 5);
         }
-        if (!found.length) found = (await searchStructures({ q: payload.query, sort: 'pertinence', page: 1, pageSize: 5 })).items;
+        if (!found.length && hasWords) found = (await searchStructures({ q: payload.query, sort: 'pertinence', page: 1, pageSize: 5 })).items;
         structures = found
           .map((s) => ({ id: s.id, slug: s.slug, nom: s.nom, description_courte: s.description_courte, type_structure: s.type_structure, ville: s.ville, code_postal: s.code_postal }));
       } catch (e) {

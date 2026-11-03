@@ -15,9 +15,9 @@ import path from 'node:path';
 
 const LATIN_LANGS = ['en', 'tr', 'de'];
 const STOP = {
-  en: 'a an and are as at be can do does for from get help how i in is it me my need of on or pay paying please the to what where which who with you your apply find look looking want allowance allowances benefit benefits assistance aid support renewal renew request form forms office near nearby',
-  tr: 'bir bu da de için ile ne nasıl nerede neden ve veya mı mi mu mü ben benim bana yardım yardımı lütfen almak alınır başvuru başvurmak istiyorum lazım gerek var yok olan ödenek ödeneği destek desteği yakın',
-  de: 'der die das den dem des ein eine einen einer und oder für mit von zu zur zum wie wo was ich mein meine brauche hilfe bitte beantragen bekommen kann ist in im auf an zuschuss unterstützung antrag nähe',
+  en: 'a an and are as at be can do does for from get help how i in is it me my need of on or pay paying please the to what where which who with you your apply find look looking want allowance allowances benefit benefits assistance aid support renewal renew request form forms office near nearby law laws legislation',
+  tr: 'bir bu da de için ile ne nasıl nerede neden ve veya mı mi mu mü ben benim bana yardım yardımı lütfen almak alınır başvuru başvurmak istiyorum lazım gerek var yok olan ödenek ödeneği destek desteği yakın yasa yasası kanun kanunu',
+  de: 'der die das den dem des ein eine einen einer und oder für mit von zu zur zum wie wo was ich mein meine brauche hilfe bitte beantragen bekommen kann ist in im auf an zuschuss unterstützung antrag nähe gesetz gesetze gesetzentwurf',
 };
 const stop = Object.fromEntries(Object.entries(STOP).map(([k, v]) => [k, new Set(v.split(' ').map((w) => fold(w)))]));
 

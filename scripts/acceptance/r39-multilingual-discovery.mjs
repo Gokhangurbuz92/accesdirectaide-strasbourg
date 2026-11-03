@@ -21,10 +21,13 @@ export const CASES = [
 ];
 const sheet = (slug) => String(slug).split('-').pop().toUpperCase();
 const h = await fetch(`${base}/api/health`); const cookie = (h.headers.getSetCookie?.() || []).map((c) => c.split(';')[0]).join('; '); const token = /__csrf=([^;]+)/.exec(cookie)?.[1];
+// R40: a browser on the public origin sends Origin; a loopback LAB server (http) is reached like a server-side client, without one (the CSRF origin
+// allowlist accepts only an https APP_BASE_URL besides the fixed dev ports)
+const originHeader = base.startsWith('https://') ? { origin: base } : {};
 const rows = [];
 for (const [lang, query, want, forbid = null] of CASES) {
   await new Promise((r) => setTimeout(r, 2500));
-  const r = await fetch(`${base}/api/search`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie, origin: base }, body: JSON.stringify({ query, lang }) });
+  const r = await fetch(`${base}/api/search`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie, ...originHeader }, body: JSON.stringify({ query, lang }) });
   const body = await r.json().catch(() => ({}));
   const got = (body.guides || []).map((g) => sheet(g.slug));
   const pass = r.status === 200 && (want ? got.slice(0, 3).includes(want) : true) && (!forbid || !got.includes(forbid));
