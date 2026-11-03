@@ -5,7 +5,7 @@ import { AlertCircle, CircleHelp, ClipboardCheck, CloudOff, SearchCheck } from '
 import { Link } from 'react-router-dom';
 import { PROVENANCE_KEYS, readAssessment } from '@/lib/assessmentLabels';
 import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
-import { useT } from '@/i18n';
+import { formatDate, useT } from '@/i18n';
 
 /** @type {Record<string, import('lucide-react').LucideIcon>} */
 const ICONS = {
@@ -19,6 +19,15 @@ const LINKABLE = ['CHECK_REQUIRED', 'POSSIBLE'];
 const HEADINGS = /** @type {const} */ (['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 /** French text inside any interface language (the server's explanations, legal names, official page names): read with a French voice, left to right */
 const FR = { lang: 'fr', dir: 'ltr' };
+/** R40: the dates of the legal and official sources arrive as « jj/mm/aaaa » (frDate); outside French they are written the way the interface language writes a date */
+const DAY = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+function useDay() {
+    const { i18n } = useT('diagnostic');
+    return (/** @type {string} */ fr) => {
+        const m = DAY.exec(fr || '');
+        return m && i18n.language !== 'fr' ? formatDate(`${m[3]}-${m[2]}-${m[1]}T12:00:00Z`, { day: '2-digit', month: '2-digit', year: 'numeric' }) || fr : fr;
+    };
+}
 
 /** @typedef {import('@/lib/assessmentLabels').AssessmentItem} AssessmentItem */
 /** @typedef {NonNullable<ReturnType<typeof legalBasisFor>>['references'][number]} LegalBasisReference */
@@ -128,6 +137,7 @@ function ItemCard({ it, link }) {
 /** One cited reference: a button opens its list (no nested <details>: the result item is itself a <details>). @param {{ reference: LegalBasisReference }} props */
 function LegalReference({ reference: r }) {
     const { t } = useT('diagnostic');
+    const day = useDay();
     const [open, setOpen] = useState(false);
     const listId = `legal-${r.basis.replace(/[^A-Za-z0-9]+/g, '-')}`;
     const n = r.articles.length;
@@ -147,7 +157,7 @@ function LegalReference({ reference: r }) {
                                 {/* the official name of the text or article, in French (Légifrance) */}
                                 <span {...FR}>{a.kind === 'text' ? a.num : `Article ${a.num}`}</span><span className="sr-only"> {t('diagnostic:legal.new_tab', '(Légifrance, nouvel onglet)')}</span>
                             </a>
-                            {a.since && <span className="text-slate-700"> — {t('diagnostic:legal.since', 'version en vigueur depuis le {{date}}', { date: a.since })}</span>}
+                            {a.since && <span className="text-slate-700"> — {t('diagnostic:legal.since', 'version en vigueur depuis le {{date}}', { date: day(a.since) })}</span>}
                         </li>
                     ))}
                 </ul>
@@ -159,13 +169,14 @@ function LegalReference({ reference: r }) {
 /** R16 / D15: the code articles behind the right (DILA LEGI), with the date each is in force from. An attachment to read, never the basis of the result. @param {{ code: string }} props */
 function LegalTexts({ code }) {
     const { t } = useT('diagnostic');
+    const day = useDay();
     const legal = legalBasisFor(code);
     if (!legal) return null;
     return (
         <div className="mt-2 rounded-lg border border-slate-200 bg-white p-3" data-testid={`legal-texts-${code}`}>
             <p className="font-semibold text-slate-900">
                 {legal.referenceDate
-                    ? t('diagnostic:legal.title_dated', 'Textes officiels (Légifrance), en vigueur au {{date}}', { date: legal.referenceDate })
+                    ? t('diagnostic:legal.title_dated', 'Textes officiels (Légifrance), en vigueur au {{date}}', { date: day(legal.referenceDate) })
                     : t('diagnostic:legal.title', 'Textes officiels (Légifrance)')}
             </p>
             <ul className="mt-1 space-y-1">
@@ -187,6 +198,7 @@ function LegalTexts({ code }) {
 /** PKG-6 / D11: official pages to read (research register). Never the basis of the result above; the rules summary is not expert-validated. @param {{ code: string }} props */
 function OfficialInfo({ code }) {
     const { t } = useT('diagnostic');
+    const day = useDay();
     const info = officialInfoFor(code);
     if (!info) return null;
     return (
@@ -200,7 +212,7 @@ function OfficialInfo({ code }) {
                             <span {...FR}>{p.site}{p.scope ? ` — ${p.scope}` : ''}</span>
                             <span className="sr-only"> {t('diagnostic:official.new_tab', '(nouvel onglet)')}</span>
                         </a>
-                        {p.pageDate && <span className="text-slate-700"> — {t('diagnostic:official.page_date', 'date indiquée sur la page : {{date}}', { date: p.pageDate })}</span>}
+                        {p.pageDate && <span className="text-slate-700"> — {t('diagnostic:official.page_date', 'date indiquée sur la page : {{date}}', { date: day(p.pageDate) })}</span>}
                     </li>
                 ))}
             </ul>

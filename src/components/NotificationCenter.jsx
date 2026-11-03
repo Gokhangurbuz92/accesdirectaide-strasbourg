@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getCsrfHeaders } from '@/lib/csrf';
+import { formatDate, useT } from '@/i18n';
 import {
     Bell,
     MessageSquare,
@@ -20,8 +21,10 @@ import {
  *
  * Props:
  * - className: classes CSS additionnelles
+ * R40: the texts are in the interface language (namespace `pro`), the times are written with Intl in that language.
  */
 export default function NotificationCenter({ className = '' }) {
+    const { t } = useT('pro');
     const [notifications, setNotifications] = useState(/** @type {Array<{ createdAt: string | number, id: string | number, message: string | number, readAt: string | number, title: string | number, type: string | number }>} */ ([]));
     const [unreadCount, setUnreadCount] = useState(0);
     const [unreadMessages, setUnreadMessages] = useState(0);
@@ -146,14 +149,14 @@ export default function NotificationCenter({ className = '' }) {
             <button
                 onClick={() => setIsOpen((v) => !v)}
                 className="relative p-2 rounded-xl hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-label={`Notifications${totalBadge > 0 ? `, ${totalBadge} non lues` : ''}`}
+                aria-label={totalBadge > 0 ? t('pro:notifications.bell_unread', { count: totalBadge, defaultValue_one: 'Notifications, {{count}} non lue', defaultValue_other: 'Notifications, {{count}} non lues' }) : t('pro:notifications.bell', 'Notifications')}
             >
                 <Bell
                     className={totalBadge > 0 ? 'text-indigo-600' : 'text-slate-400'}
                     size={20}
                 />
                 {totalBadge > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white min-w-[18px]">
+                    <span className="absolute -top-0.5 -end-0.5 w-4.5 h-4.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white min-w-[18px]">
                         {totalBadge > 9 ? '9+' : totalBadge}
                     </span>
                 )}
@@ -161,11 +164,11 @@ export default function NotificationCenter({ className = '' }) {
 
             {/* Dropdown */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute end-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden">
                     {/* Header */}
                     <div className="px-4 py-3 bg-slate-900 text-white flex justify-between items-center">
                         <h3 className="text-xs font-bold uppercase tracking-wider">
-                            Alertes
+                            {t('pro:notifications.title', 'Alertes')}
                         </h3>
                         <div className="flex items-center gap-2">
                             {unreadCount > 0 && (
@@ -174,13 +177,13 @@ export default function NotificationCenter({ className = '' }) {
                                     disabled={loading}
                                     className="text-[10px] font-bold text-slate-400 hover:text-white transition-colors disabled:opacity-50"
                                 >
-                                    Tout lire
+                                    {t('pro:notifications.mark_all_read', 'Tout lire')}
                                 </button>
                             )}
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="text-slate-400 hover:text-white transition-colors"
-                                aria-label="Fermer"
+                                aria-label={t('pro:notifications.close', 'Fermer')}
                             >
                                 <X size={14} />
                             </button>
@@ -192,7 +195,7 @@ export default function NotificationCenter({ className = '' }) {
                         {notifications.length === 0 ? (
                             <div className="p-8 text-center text-slate-400">
                                 <Bell size={24} className="mx-auto mb-2 opacity-20" />
-                                <p className="text-xs">Vous êtes à jour ! Aucune nouvelle notification.</p>
+                                <p className="text-xs">{t('pro:notifications.empty', 'Vous êtes à jour ! Aucune nouvelle notification.')}</p>
                             </div>
                         ) : (
                             notifications.map((/** @type {{ createdAt: string | number, id: string | number, message: string | number, readAt: string | number, title: string | number, type: string | number }} */ notif) => {
@@ -201,7 +204,7 @@ export default function NotificationCenter({ className = '' }) {
                                     <button
                                         key={notif.id}
                                         onClick={() => !isRead && markAsRead(notif.id)}
-                                        className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-slate-50 transition-colors ${isRead ? 'opacity-60' : ''
+                                        className={`w-full text-start px-4 py-3 flex gap-3 hover:bg-slate-50 transition-colors ${isRead ? 'opacity-60' : ''
                                             }`}
                                     >
                                         <div
@@ -220,7 +223,7 @@ export default function NotificationCenter({ className = '' }) {
                                             </p>
                                             <p className="text-[9px] text-slate-400 mt-1 flex items-center gap-1">
                                                 <Clock size={8} />
-                                                {formatTime(notif.createdAt)}
+                                                {formatTime(notif.createdAt, t)}
                                             </p>
                                         </div>
                                         {!isRead && (
@@ -285,14 +288,13 @@ function getIconBg(/** @type {string | number | boolean | null | undefined} */ t
 /**
  * @param {string | number | Date} ts
  */
-function formatTime(ts) {
-    if (!ts) return "À l'instant";
+/** @param {string | number} ts @param {(key: string, fr: string, values?: Record<string, unknown>) => string} t */
+function formatTime(ts, t) {
     const date = new Date(ts);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const diff = Date.now() - date.getTime();
 
-    if (diff < 60000) return "À l'instant";
-    if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
-    if (diff < 86400000) return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    if (!ts || diff < 60000) return t('pro:notifications.just_now', "À l'instant");
+    if (diff < 3600000) return t('pro:notifications.minutes_ago', 'Il y a {{minutes}} min', { minutes: Math.floor(diff / 60000) });
+    if (diff < 86400000) return formatDate(date, { hour: '2-digit', minute: '2-digit' });
+    return formatDate(date, { day: 'numeric', month: 'short' });
 }

@@ -2,5 +2,12 @@
  "language.label": "Мова",
  "suggestion.text": "Цей сайт також доступний мовою: {{language}}.",
  "suggestion.switch": "Перейти на {{language}}",
- "suggestion.stay": "Залишитися французькою"
+ "suggestion.stay": "Залишитися французькою",
+ "unavailable.title": "{{area}}: тимчасово недоступно",
+ "unavailable.default_area": "Цей сервіс",
+ "unavailable.text": "Сервер не відповів. Ваш сеанс збережено: спробуйте ще раз за мить.",
+ "unavailable.retry": "Спробувати ще раз",
+ "route_error.title": "Не вдалося завантажити цю сторінку",
+ "route_error.text": "Під час завантаження сталася помилка. Будь ласка, оновіть сторінку.",
+ "route_error.reload": "Оновити"
 }

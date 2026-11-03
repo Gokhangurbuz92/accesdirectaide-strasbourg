@@ -12,10 +12,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { useT } from '@/i18n';
 /**
  * @param {{ mode?: 'login' | 'signup' }} props
  */
 export default function AuthRdvAccess({ mode = 'login' }) {
+  const { t } = useT('booking');
   const isSignupMode = mode === 'signup';
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -32,15 +34,15 @@ export default function AuthRdvAccess({ mode = 'login' }) {
   // owner usefulness pass (2026-10-25): without a « next », a person who signs in lands in their own space (it was the directory)
   const next = normalizeNextPath(searchParams.get('next'), '/compte');
 
-  const pageTitle = isSignupMode ? 'Créer un compte Particulier' : 'Connexion Particulier';
+  const pageTitle = isSignupMode ? t('booking:auth.creer_un_compte_particulier', "Créer un compte Particulier") : t('booking:auth.connexion_particulier', "Connexion Particulier");
   // launch-readiness item 66: the outcome of the confirmation link of an e-mail address change
   /** @type {Record<string, string>} */
   const EMAIL_CHANGE_TEXT = {
-    changed: 'Votre nouvelle adresse e-mail est confirmée. Connectez-vous avec elle.',
-    expired: 'Ce lien de changement d’adresse a expiré ou a déjà servi : votre adresse n’a pas changé. Refaites la demande depuis votre compte.',
-    invalid: 'Ce lien de changement d’adresse n’est pas valable : votre adresse n’a pas changé.',
-    taken: 'Cette adresse est déjà utilisée par un autre compte : votre adresse n’a pas changé.',
-    error: 'Le changement d’adresse n’a pas pu être fait : votre adresse n’a pas changé. Réessayez plus tard.',
+    changed: t('booking:auth.votre_nouvelle_adresse_e_mail', "Votre nouvelle adresse e-mail est confirmée. Connectez-vous avec elle."),
+    expired: t('booking:auth.ce_lien_de_changement_d', "Ce lien de changement d’adresse a expiré ou a déjà servi : votre adresse n’a pas changé. Refaites la demande depuis votre compte."),
+    invalid: t('booking:auth.ce_lien_de_changement_d_2', "Ce lien de changement d’adresse n’est pas valable : votre adresse n’a pas changé."),
+    taken: t('booking:auth.cette_adresse_est_deja_utilisee', "Cette adresse est déjà utilisée par un autre compte : votre adresse n’a pas changé."),
+    error: t('booking:auth.le_changement_d_adresse_n', "Le changement d’adresse n’a pas pu être fait : votre adresse n’a pas changé. Réessayez plus tard."),
   };
   const emailChange = EMAIL_CHANGE_TEXT[String(searchParams.get('email_change') || '')] || '';
   const altPath = isSignupMode ? appendNext('/auth/login', next) : appendNext('/auth/signup', next);
@@ -62,11 +64,11 @@ export default function AuthRdvAccess({ mode = 'login' }) {
     setInfo('');
 
     if (isSignupMode && password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('booking:auth.les_mots_de_passe_ne', "Les mots de passe ne correspondent pas."));
       return;
     }
     if (password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères.');
+      setError(t('booking:auth.le_mot_de_passe_doit', "Le mot de passe doit contenir au moins 8 caractères."));
       return;
     }
     // R18: the sign-up rule is checked here too (the same rule as the server), so a refusal never reaches the person as « Une erreur est survenue »
@@ -89,7 +91,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
 
       if (!response.ok) {
         if (!isSignupMode && response.status === 403 && payload?.code === 'EMAIL_NOT_VERIFIED') {   // older servers
-          setInfo('Votre email doit être vérifié avant la connexion.');
+          setInfo(t('booking:auth.votre_email_doit_etre_verifie', "Votre email doit être vérifié avant la connexion."));
           return;
         }
         if (!isSignupMode && response.status === 401) {
@@ -97,7 +99,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
           try { sessionStorage.setItem('ada_pending_verify_email', email); } catch { /* the resend page will ask for it */ }
           setResendHint(true);
         }
-        throw new Error(payload?.message || (response.status === 401 ? 'Adresse ou mot de passe incorrect.' : 'Une erreur est survenue.'));   // the French message, never the English code
+        throw new Error(payload?.message || (response.status === 401 ? t('booking:auth.adresse_ou_mot_de_passe', "Adresse ou mot de passe incorrect.") : t('booking:auth.une_erreur_est_survenue_2', "Une erreur est survenue.")));   // the French message, never the English code
       }
 
       if (isSignupMode) {
@@ -124,7 +126,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
       }
       navigate(next, { replace: true });
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : 'Une erreur est survenue.');
+      setError(submitError instanceof Error ? submitError.message : t('booking:auth.une_erreur_est_survenue', "Une erreur est survenue."));
     } finally {
       setLoading(false);
     }
@@ -149,10 +151,10 @@ export default function AuthRdvAccess({ mode = 'login' }) {
       const body = res.ok ? await res.json().catch(() => null) : null;
       if (res.ok && body?.emailDelivery === 'UNAVAILABLE') setError("L’envoi d’e-mails n’est pas disponible sur ce service pour le moment : aucun lien n’a pu être envoyé.");
       else if (res.ok) setInfo("Si l'email est valide, un lien de vérification vient d'être renvoyé.");
-      else if (res.status === 429) setError('Trop de demandes : réessayez dans quelques minutes.');
-      else setError('Impossible de renvoyer le lien pour le moment.');
+      else if (res.status === 429) setError(t('booking:auth.trop_de_demandes_reessayez_dans', "Trop de demandes : réessayez dans quelques minutes."));
+      else setError(t('booking:auth.impossible_de_renvoyer_le_lien', "Impossible de renvoyer le lien pour le moment."));
     } catch {
-      setError('Impossible de renvoyer le lien pour le moment.');
+      setError(t('booking:auth.impossible_de_renvoyer_le_lien', "Impossible de renvoyer le lien pour le moment."));
     } finally {
       setResendLoading(false);
     }
@@ -162,7 +164,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">
       <SEO
         title={pageTitle}
-        description="Connexion au compte Particulier pour finaliser une demande de rendez-vous."
+        description={t('booking:auth.connexion_au_compte_particulier_pour', "Connexion au compte Particulier pour finaliser une demande de rendez-vous.")}
         path={isSignupMode ? '/auth/signup' : '/auth/login'}
         noindex={true}
       />
@@ -171,7 +173,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
         <CardHeader>
           <CardTitle as="h1" className="text-2xl">{pageTitle}</CardTitle>
           <CardDescription className="text-slate-700">
-            Connectez-vous pour poursuivre votre demande de rendez-vous.
+            {t('booking:auth.connectez_vous_pour_poursuivre_votre', "Connectez-vous pour poursuivre votre demande de rendez-vous.")}
           </CardDescription>
         </CardHeader>
 
@@ -192,14 +194,14 @@ export default function AuthRdvAccess({ mode = 'login' }) {
           )}
           {resendHint && (
             <p className="text-sm text-slate-700" data-testid="auth-resend-hint">
-              Vous venez de créer votre compte ?{' '}
-              <Link className="text-blue-700 underline underline-offset-2" to={`/auth/verify-email?status=pending&next=${encodeURIComponent(next)}`}>Recevoir un nouveau lien de confirmation</Link>
+              {t('booking:auth.vous_venez_de_creer_votre', "Vous venez de créer votre compte ?")}{' '}
+              <Link className="text-blue-700 underline underline-offset-2" to={`/auth/verify-email?status=pending&next=${encodeURIComponent(next)}`}>{t('booking:auth.recevoir_un_nouveau_lien_de', "Recevoir un nouveau lien de confirmation")}</Link>
             </p>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="auth-email">Email</Label>
+              <Label htmlFor="auth-email">{t('booking:auth.email', "Email")}</Label>
               <Input
                 id="auth-email"
                 type="email"
@@ -211,7 +213,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="auth-password">Mot de passe</Label>
+              <Label htmlFor="auth-password">{t('booking:auth.mot_de_passe', "Mot de passe")}</Label>
               <Input
                 id="auth-password"
                 type="password"
@@ -227,7 +229,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
 
             {isSignupMode && (
               <div className="space-y-2">
-                <Label htmlFor="auth-password-confirm">Confirmer le mot de passe</Label>
+                <Label htmlFor="auth-password-confirm">{t('booking:auth.confirmer_le_mot_de_passe', "Confirmer le mot de passe")}</Label>
                 <Input
                   id="auth-password-confirm"
                   type="password"
@@ -242,14 +244,14 @@ export default function AuthRdvAccess({ mode = 'login' }) {
 
             <Button type="submit" className="w-full" disabled={!canSubmit || loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isSignupMode ? 'Créer mon compte' : 'Se connecter'}
+              {isSignupMode ? t('booking:auth.creer_mon_compte', "Créer mon compte") : t('booking:auth.se_connecter', "Se connecter")}
             </Button>
           </form>
 
           {!isSignupMode && (
             <div className="flex flex-wrap gap-3 text-sm">
               <Link className="text-blue-900 hover:underline" to={forgotPath}>
-                Mot de passe oublié ?
+                {t('booking:auth.mot_de_passe_oublie', "Mot de passe oublié ?")}
               </Link>
               <button
                 type="button"
@@ -257,20 +259,20 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                 disabled={resendLoading}
                 className="text-blue-900 hover:underline disabled:opacity-60"
               >
-                {resendLoading ? 'Envoi...' : 'Renvoyer un email de vérification'}
+                {resendLoading ? t('booking:auth.envoi', 'Envoi...') : t('booking:auth.renvoyer_un_email_de_verification', "Renvoyer un email de vérification")}
               </button>
             </div>
           )}
 
           <div className="flex flex-wrap gap-3 text-sm">
             <Link className="text-blue-900 hover:underline" to={altPath}>
-              {isSignupMode ? "J'ai deja un compte" : "Je n'ai pas de compte"}
+              {isSignupMode ? t('booking:auth.j_ai_deja_un_compte', "J'ai deja un compte") : t('booking:auth.je_n_ai_pas_de', "Je n'ai pas de compte")}
             </Link>
             <Link className="text-slate-700 hover:underline" to={proLoginPath}>
-              Je suis une structure / un pro
+              {t('booking:auth.je_suis_une_structure_un', "Je suis une structure / un pro")}
             </Link>
             <Link className="text-slate-700 hover:underline" to={next}>
-              Retour au parcours
+              {t('booking:auth.retour_au_parcours', "Retour au parcours")}
             </Link>
           </div>
         </CardContent>

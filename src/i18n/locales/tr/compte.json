@@ -542,5 +542,16 @@
  "thread.sending": "Gönderiliyor...",
  "thread.sent": "Mesaj gönderildi.",
  "thread.structure": "Kuruluş",
- "thread.you": "Siz"
+ "thread.you": "Siz",
+ "push.loading": "Kontrol ediliyor…",
+ "push.unsupported": "Bu tarayıcı bildirim alamıyor. Hatırlatmaları e-posta ile almaya devam edebilirsiniz.",
+ "push.unavailable": "Cihaz bildirimleri bu hizmet tarafından henüz sunulmuyor. Hatırlatmaları e-posta ile almaya devam edebilirsiniz.",
+ "push.denied": "Bildirimler tarayıcınızda bu site için engellenmiş. Almak için tarayıcınızın site ayarlarından izin verin, sonra buraya dönün.",
+ "push.off": "Mon Parcours (takip alanınız) adımlarının hatırlatmalarını bu cihazda alın (bildirimde kişisel ayrıntı yok). İstediğiniz zaman durdurabilirsiniz.",
+ "push.on": "Bu cihaz Mon Parcours hatırlatmalarını alıyor. Site yalnızca tarayıcınızın bildirim hizmetinin mesajı aldığını bilir, sizin gördüğünüzü bilmez.",
+ "push.error": "İstek gerçekleştirilemedi.",
+ "push.title": "Bu cihazdaki bildirimler",
+ "push.enable": "Hatırlatmaları bu cihazda almayı kabul ediyorum",
+ "push.disable": "Bu cihazdaki bildirimleri durdur",
+ "push.retry": "Tekrar dene"
 }

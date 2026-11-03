@@ -2,5 +2,12 @@
  "language.label": "Dil",
  "suggestion.text": "Bu site {{language}} olarak da kullanılabilir.",
  "suggestion.switch": "{{language}} diline geç",
- "suggestion.stay": "Fransızca devam et"
+ "suggestion.stay": "Fransızca devam et",
+ "unavailable.title": "{{area}} geçici olarak kullanılamıyor",
+ "unavailable.default_area": "Bu hizmet",
+ "unavailable.text": "Sunucu yanıt vermedi. Oturumunuz korunuyor: birazdan tekrar deneyin.",
+ "unavailable.retry": "Tekrar dene",
+ "route_error.title": "Bu sayfa yüklenemedi",
+ "route_error.text": "Yükleme sırasında bir hata oluştu. Lütfen sayfayı yenileyin.",
+ "route_error.reload": "Yenile"
 }

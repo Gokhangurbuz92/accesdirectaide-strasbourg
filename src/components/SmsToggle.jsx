@@ -12,6 +12,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 
+import { useT } from '@/i18n';
 /**
  * SmsToggle — Opt-in SMS reminder for appointments
  *
@@ -24,6 +25,7 @@ import {
 const FRENCH_PHONE_RE = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.\-]*\d{2}){4}$/;
 
 export default function SmsToggle({ appointmentId, initialPhone = '', shareId, ownerSecret }) {
+    const { t } = useT('booking');
     const [phone, setPhone] = useState(initialPhone);
     const [status, setStatus] = useState('idle'); // idle | loading | done | error
     const [errorMsg, setErrorMsg] = useState('');
@@ -35,7 +37,7 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
 
         if (!FRENCH_PHONE_RE.test(phone)) {
             setStatus('error');
-            setErrorMsg('Numéro invalide. Format : 06 12 34 56 78');
+            setErrorMsg(t('booking:sms.numero_invalide_format_06_12', "Numéro invalide. Format : 06 12 34 56 78"));
             return;
         }
 
@@ -55,7 +57,7 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
             setStatus('done');
         } catch (err) {
             setStatus('error');
-            setErrorMsg(err.message || 'Échec de l\'activation.');
+            setErrorMsg(err.message || t('booking:sms.echec_de_l_activation', "Échec de l'activation."));
         }
     };
 
@@ -65,10 +67,10 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
                 <CardContent className="p-4 text-center">
                     <CheckCircle2 className="text-emerald-600 mx-auto mb-2" size={22} aria-hidden="true" />
                     <p className="text-xs font-semibold text-emerald-800" data-testid="sms-subscribed">
-                        {configured ? 'Rappel SMS enregistré' : 'Accord enregistré — SMS pas encore actifs'}
+                        {configured ? t('booking:sms.rappel_sms_enregistre', "Rappel SMS enregistré") : t('booking:sms.accord_enregistre_sms_pas_encore', "Accord enregistré — SMS pas encore actifs")}
                     </p>
                     <p className="text-xs text-slate-600 mt-1">
-                        {doneMsg} Vous pouvez retirer votre accord dans votre profil.
+                        {doneMsg} {t('booking:sms.vous_pouvez_retirer_votre_accord', "Vous pouvez retirer votre accord dans votre profil.")}
                     </p>
                 </CardContent>
             </Card>
@@ -80,7 +82,7 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
             <CardContent className="p-4 space-y-3">
                 <div className="flex items-center gap-2">
                     <Smartphone size={14} className="text-indigo-500" />
-                    <p className="text-xs font-semibold text-slate-900">Rappel par SMS</p>
+                    <p className="text-xs font-semibold text-slate-900">{t('booking:sms.rappel_par_sms', "Rappel par SMS")}</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -92,14 +94,14 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
                             setPhone(e.target.value);
                             if (status === 'error') setStatus('idle');
                         }}
-                        aria-label="Numéro de téléphone pour le rappel SMS"
+                        aria-label={t('booking:sms.numero_de_telephone_pour_le', "Numéro de téléphone pour le rappel SMS")}
                         className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                     />
                     <Button
                         size="sm"
                         onClick={subscribe}
                         disabled={status === 'loading' || !phone}
-                        aria-label="J'accepte de recevoir un rappel par SMS pour ce rendez-vous"
+                        aria-label={t('booking:sms.j_accepte_de_recevoir_un', "J'accepte de recevoir un rappel par SMS pour ce rendez-vous")}
                         data-testid="sms-subscribe"
                     >
                         {status === 'loading' ? (
@@ -116,7 +118,7 @@ export default function SmsToggle({ appointmentId, initialPhone = '', shareId, o
 
                 <p className="text-xs text-slate-600 flex items-center gap-1">
                     <ShieldCheck size={12} className="shrink-0" aria-hidden="true" />
-                    Numéro utilisé uniquement pour les rappels de ce rendez-vous. Votre accord est enregistré ; vous pouvez le retirer à tout moment dans votre profil.
+                    {t('booking:sms.numero_utilise_uniquement_pour_les', "Numéro utilisé uniquement pour les rappels de ce rendez-vous. Votre accord est enregistré ; vous pouvez le retirer à tout moment dans votre profil.")}
                 </p>
             </CardContent>
         </Card>

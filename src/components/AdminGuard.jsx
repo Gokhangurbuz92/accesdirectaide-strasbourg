@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { apiClient } from "@/api/client";
 import ServiceUnavailable from "@/components/ServiceUnavailable";
+import { useT } from "@/i18n";
 
 /**
  * @param {{ role: string; authType?: string; is_admin: boolean; isAdmin: boolean; roles: string | string[]; permissions: string | string[]; }} user
@@ -33,6 +34,7 @@ const PageLoader = () => (
 );
 
 export default function AdminGuard(/** @type {Record<string, string | number | boolean | null | undefined>} */ { children }) {
+    const { t } = useT('admin');
     const [loading, setLoading] = useState(true);
     const [allowed, setAllowed] = useState(false);
     const [unavailable, setUnavailable] = useState(false);
@@ -59,7 +61,7 @@ export default function AdminGuard(/** @type {Record<string, string | number | b
     }, []);
 
     if (loading) return <PageLoader />;
-    if (unavailable) return <ServiceUnavailable area="L’administration" />;
+    if (unavailable) return <ServiceUnavailable area={t('admin:layout.area', 'L’administration')} />;
     if (!allowed) return <Navigate to="/admin/login" replace />;
 
     return (

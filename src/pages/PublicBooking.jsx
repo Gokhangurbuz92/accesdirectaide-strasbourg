@@ -21,6 +21,7 @@ import SEO from '@/components/SEO';
 
 import { csrfFetch, ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { normalizeNextPath } from '@/lib/rdvRouting';
+import i18n, { formatDate, useT } from '@/i18n';
 /**
  * PublicBooking
  *
@@ -33,6 +34,7 @@ import { normalizeNextPath } from '@/lib/rdvRouting';
  *   - POST /api/rdv/appointments
  */
 export default function PublicBooking() {
+    const { t } = useT('booking');
     const { structureSlug } = useParams();
     const [searchParams] = useSearchParams();
     const nextPath = normalizeNextPath(searchParams.get('next') || '', '');
@@ -83,7 +85,7 @@ export default function PublicBooking() {
             );
             // owner usefulness pass: 404 « RDV indisponible » means this structure takes no booking online — the honest empty state, not a loading error
             if (res.status === 404) { setServices([]); return; }
-            if (!res.ok) throw new Error('Impossible de charger les services.');
+            if (!res.ok) throw new Error(t('booking:public.impossible_de_charger_les_services', "Impossible de charger les services."));
             const data = await res.json();
             setServices(data.items || []);
             // Tracker le début du flow si on a réussi à charger la page structure
@@ -93,7 +95,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [structureSlug]);
+    }, [structureSlug, t]);
 
     // Fetch available slots for selected service
     const fetchSlots = useCallback(async (/** @type {string | number | boolean} */ serviceId) => {
@@ -108,7 +110,7 @@ export default function PublicBooking() {
                 `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}`,
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
             );
-            if (!res.ok) throw new Error('Impossible de charger les créneaux.');
+            if (!res.ok) throw new Error(t('booking:public.impossible_de_charger_les_creneaux', "Impossible de charger les créneaux."));
             const data = await res.json();
 
             // Flatten days → slots
@@ -116,15 +118,9 @@ export default function PublicBooking() {
                 (day.slots || []).map((/** @type {{ startAt: string | number | Date; }} */ s) => ({
                     ...s,
                     date: day.date,
-                    displayTime: new Date(s.startAt).toLocaleTimeString('fr-FR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    }),
-                    displayDate: new Date(s.startAt).toLocaleDateString('fr-FR', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short',
-                    }),
+                    // R40: in the interface language (Intl, Europe/Paris)
+                    displayTime: formatDate(s.startAt, { hour: '2-digit', minute: '2-digit' }),
+                    displayDate: formatDate(s.startAt, { weekday: 'short', day: 'numeric', month: 'short' }),
                 }))
             );
             setSlots(flatSlots);
@@ -133,7 +129,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [structureSlug]);
+    }, [structureSlug, t]);
 
     // Book the appointment
     const confirmBooking = useCallback(async () => {
@@ -168,10 +164,10 @@ export default function PublicBooking() {
                     await fetchSlots(selectedService.id);
                     setStep(2);
                     throw new Error(
-                        errData.message || 'Ce créneau vient d’être réservé. Choisissez un autre horaire.'
+                        errData.message || t('booking:public.ce_creneau_vient_d_etre', "Ce créneau vient d’être réservé. Choisissez un autre horaire.")
                     );
                 }
-                throw new Error(errData.message || 'Impossible de confirmer le rendez-vous.');
+                throw new Error(errData.message || t('booking:public.impossible_de_confirmer_le_rendez', "Impossible de confirmer le rendez-vous."));
             }
 
             const data = await res.json();
@@ -183,7 +179,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots]);
+    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t]);
 
     // Handle service selection
     const handleSelectService = (service) => {
@@ -209,7 +205,7 @@ export default function PublicBooking() {
     useEffect(() => {
         if (!appointmentId || manageCapability === null) return;
         if (!manageCapability) {
-            setError('Lien de gestion du rendez-vous invalide ou incomplet.');
+            setError(t('booking:public.lien_de_gestion_du_rendez', "Lien de gestion du rendez-vous invalide ou incomplet."));
             return;
         }
 
@@ -229,13 +225,13 @@ export default function PublicBooking() {
                     },
                 );
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(data.error || 'Lien de gestion invalide ou expiré.');
+                if (!res.ok) throw new Error(data.error || t('booking:public.lien_de_gestion_invalide_ou', "Lien de gestion invalide ou expiré."));
                 if (!cancelled) {
                     setConfirmation(data);
                     setStep(4);
                 }
             } catch (err) {
-                if (!cancelled) setError(err.message || 'Lien de gestion invalide ou expiré.');
+                if (!cancelled) setError(err.message || t('booking:public.lien_de_gestion_invalide_ou', "Lien de gestion invalide ou expiré."));
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -245,7 +241,7 @@ export default function PublicBooking() {
         return () => {
             cancelled = true;
         };
-    }, [appointmentId, manageCapability]);
+    }, [appointmentId, manageCapability, t]);
 
     const downloadCalendar = useCallback(() => {
         const calendar = confirmation?.calendar;
@@ -268,8 +264,8 @@ export default function PublicBooking() {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4">
             <SEO
-                title="Prendre rendez-vous"
-                description="Réservez un créneau avec un conseiller ADA"
+                title={t('booking:public.prendre_rendez_vous', "Prendre rendez-vous")}
+                description={t('booking:public.reservez_un_creneau_avec_un', "Réservez un créneau avec un conseiller ADA")}
                 noindex
             />
 
@@ -280,22 +276,22 @@ export default function PublicBooking() {
                         <CalendarCheck className="text-indigo-600" size={32} />
                     </div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-                        Prendre rendez-vous
+                        {t('booking:public.prendre_rendez_vous', "Prendre rendez-vous")}
                     </h1>
                     <p className="text-slate-500 mt-2">
-                        Service Accès Direct Aide
+                        {t('booking:public.service_acces_direct_aide', "Service Accès Direct Aide")}
                     </p>
                 </div>
 
                 {/* Progress bar */}
                 <div className="flex justify-between items-center mb-12 px-6">
-                    <StepIndicator current={step} target={1} label="Service" />
+                    <StepIndicator current={step} target={1} label={t('booking:public.service', "Service")} />
                     <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={2} label="Créneau" />
+                    <StepIndicator current={step} target={2} label={t('booking:public.creneau', "Créneau")} />
                     <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={3} label="Mode" />
+                    <StepIndicator current={step} target={3} label={t('booking:public.mode', "Mode")} />
                     <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={4} label="Confirmé" />
+                    <StepIndicator current={step} target={4} label={t('booking:public.confirme', "Confirmé")} />
                 </div>
 
                 {/* Error feedback */}
@@ -312,13 +308,13 @@ export default function PublicBooking() {
                 {step === 1 && (
                     <div className="space-y-4">
                         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4">
-                            Choisissez un service
+                            {t('booking:public.choisissez_un_service', "Choisissez un service")}
                         </h2>
 
                         {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : error ? (
                             <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center" data-testid="booking-services-error">
                                 <p className="text-sm text-slate-700">
-                                    Les services n&apos;ont pas pu être chargés. Ce n&apos;est pas une absence de service : réessayez, ou contactez la structure directement.
+                                    {t('booking:public.les_services_n_ont_pas', "Les services n'ont pas pu être chargés. Ce n'est pas une absence de service : réessayez, ou contactez la structure directement.")}
                                 </p>
                                 <button
                                     type="button"
@@ -326,32 +322,32 @@ export default function PublicBooking() {
                                     onClick={fetchServices}
                                     className="mt-3 inline-block rounded-lg border border-indigo-300 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                                 >
-                                    Réessayer
+                                    {t('booking:public.reessayer', "Réessayer")}
                                 </button>
                                 <Link
                                     to={`/structures/${encodeURIComponent(structureSlug)}`}
                                     className="block text-indigo-600 text-sm font-medium mt-3 hover:underline"
                                 >
-                                    Revenir à la fiche de la structure
+                                    {t('booking:public.revenir_a_la_fiche_de', "Revenir à la fiche de la structure")}
                                 </Link>
                             </div>
                         ) : services.length === 0 ? (
                             <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center" data-testid="booking-services-empty">
                                 <CalendarIcon className="mx-auto text-slate-600 mb-3" size={40} />
                                 <p className="text-sm text-slate-600">
-                                    Aucun service n&apos;est proposé en ligne pour cette structure. Cela ne dit rien de ce qu&apos;elle propose par ailleurs : consultez sa fiche pour ses coordonnées.
+                                    {t('booking:public.aucun_service_n_est_propose', "Aucun service n'est proposé en ligne pour cette structure. Cela ne dit rien de ce qu'elle propose par ailleurs : consultez sa fiche pour ses coordonnées.")}
                                 </p>
                                 <Link
                                     to={`/structures/${encodeURIComponent(structureSlug)}`}
                                     className="block text-indigo-600 text-sm font-medium mt-3 hover:underline"
                                 >
-                                    Revenir à la fiche de la structure
+                                    {t('booking:public.revenir_a_la_fiche_de', "Revenir à la fiche de la structure")}
                                 </Link>
                                 <Link
                                     to="/structures"
                                     className="text-indigo-600 text-sm font-medium mt-3 inline-block hover:underline"
                                 >
-                                    Retour à l&apos;annuaire
+                                    {t('booking:public.retour_a_l_annuaire', "Retour à l'annuaire")}
                                 </Link>
                             </div>
                         ) : (
@@ -372,7 +368,7 @@ export default function PublicBooking() {
                                                 {service.name}
                                             </p>
                                             <p className="text-xs text-slate-600">
-                                                {service.durationMinutes || 30} min
+                                                {t('booking:public.minutes', '{{minutes}} min', { minutes: service.durationMinutes || 30 })}
                                             </p>
                                         </div>
                                     </div>
@@ -391,7 +387,7 @@ export default function PublicBooking() {
                             onClick={() => setStep(1)}
                             className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600 mb-6"
                         >
-                            <ArrowLeft size={14} /> Retour aux services
+                            <ArrowLeft size={14} /> {t('booking:public.retour_aux_services', "Retour aux services")}
                         </button>
 
                         <div className="flex items-center gap-4 mb-6">
@@ -403,19 +399,19 @@ export default function PublicBooking() {
                                     {selectedService?.name}
                                 </p>
                                 <p className="text-[10px] text-emerald-700 font-bold uppercase flex items-center gap-1">
-                                    <ShieldCheck size={10} /> Créneaux en temps réel
+                                    <ShieldCheck size={10} /> {t('booking:public.creneaux_en_temps_reel', "Créneaux en temps réel")}
                                 </p>
                             </div>
                         </div>
 
                         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4">
-                            Créneaux disponibles
+                            {t('booking:public.creneaux_disponibles', "Créneaux disponibles")}
                         </h3>
 
                         {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : slotsError ? (
                             <div className="py-8 text-center" data-testid="booking-slots-error">
                                 <p className="text-sm text-slate-700">
-                                    Les créneaux n&apos;ont pas pu être chargés. Ce n&apos;est pas une absence de créneau.
+                                    {t('booking:public.les_creneaux_n_ont_pas', "Les créneaux n'ont pas pu être chargés. Ce n'est pas une absence de créneau.")}
                                 </p>
                                 <button
                                     type="button"
@@ -423,12 +419,12 @@ export default function PublicBooking() {
                                     onClick={() => fetchSlots(selectedService?.id)}
                                     className="mt-3 rounded-lg border border-indigo-300 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                                 >
-                                    Réessayer
+                                    {t('booking:public.reessayer', "Réessayer")}
                                 </button>
                             </div>
                         ) : slots.length === 0 ? (
                             <p className="text-sm text-slate-600 py-8 text-center" data-testid="booking-slots-empty">
-                                Aucun créneau disponible sur les 14 prochains jours. Choisissez un autre service ou contactez la structure.
+                                {t('booking:public.aucun_creneau_disponible_sur_les', "Aucun créneau disponible sur les 14 prochains jours. Choisissez un autre service ou contactez la structure.")}
                             </p>
                         ) : (
                             <div className="space-y-4 max-h-[400px] overflow-y-auto">
@@ -473,33 +469,33 @@ export default function PublicBooking() {
                             onClick={() => setStep(2)}
                             className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600 mb-6"
                         >
-                            <ArrowLeft size={14} /> Retour
+                            <ArrowLeft size={14} /> {t('booking:public.retour', "Retour")}
                         </button>
 
                         <h2 className="text-xl font-bold text-slate-900 mb-2">
-                            Récapitulatif
+                            {t('booking:public.recapitulatif', "Récapitulatif")}
                         </h2>
                         <p className="text-slate-500 text-sm mb-8">
-                            Vérifiez les informations puis confirmez.
+                            {t('booking:public.verifiez_les_informations_puis_confirmez', "Vérifiez les informations puis confirmez.")}
                         </p>
 
                         {/* Summary */}
                         <div className="space-y-4 mb-8">
                             <SummaryRow
                                 icon={<CalendarIcon className="text-indigo-600" size={18} />}
-                                label="Service"
+                                label={t('booking:public.service', "Service")}
                                 value={selectedService?.name}
                             />
                             <SummaryRow
                                 icon={<Clock className="text-indigo-600" size={18} />}
-                                label="Date et heure"
+                                label={t('booking:public.date_et_heure', "Date et heure")}
                                 value={`${selectedSlot?.displayDate} à ${selectedSlot?.displayTime}`}
                             />
                         </div>
 
                         {/* Mode selector */}
                         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
-                            Type de rendez-vous
+                            {t('booking:public.type_de_rendez_vous', "Type de rendez-vous")}
                         </h3>
                         <div className="grid grid-cols-2 gap-3 mb-8">
                             {offeredModes.includes('VIDEO') ? (
@@ -515,9 +511,9 @@ export default function PublicBooking() {
                                     className={bookingMode === 'VIDEO' ? 'text-indigo-600' : 'text-slate-600'}
                                     size={20}
                                 />
-                                <p className="font-semibold text-sm mt-2">Visioconférence</p>
+                                <p className="font-semibold text-sm mt-2">{t('booking:public.visioconference', "Visioconférence")}</p>
                                 <p className="text-[10px] text-slate-600">
-                                    Depuis chez vous via Jitsi
+                                    {t('booking:public.depuis_chez_vous_via_jitsi', "Depuis chez vous via Jitsi")}
                                 </p>
                             </button>
                             ) : null}
@@ -534,9 +530,9 @@ export default function PublicBooking() {
                                     className={bookingMode === 'IN_PERSON' ? 'text-indigo-600' : 'text-slate-600'}
                                     size={20}
                                 />
-                                <p className="font-semibold text-sm mt-2">Sur place</p>
+                                <p className="font-semibold text-sm mt-2">{t('booking:public.sur_place', "Sur place")}</p>
                                 <p className="text-[10px] text-slate-600">
-                                    En présentiel à la structure
+                                    {t('booking:public.en_presentiel_a_la_structure', "En présentiel à la structure")}
                                 </p>
                             </button>
                             ) : null}
@@ -544,7 +540,7 @@ export default function PublicBooking() {
                         {bookingMode === 'VIDEO' ? (
                             <label className="mb-6 flex items-start gap-2 text-sm text-slate-800" data-testid="booking-video-consent">
                                 <input type="checkbox" className="mt-1" checked={videoConsent} onChange={(e) => setVideoConsent(e.target.checked)} />
-                                <span>J’accepte un rendez-vous en visio : caméra et micro, sans enregistrement.</span>
+                                <span>{t('booking:public.j_accepte_un_rendez_vous', "J’accepte un rendez-vous en visio : caméra et micro, sans enregistrement.")}</span>
                             </label>
                         ) : null}
 
@@ -560,7 +556,7 @@ export default function PublicBooking() {
                             ) : (
                                 <CheckCircle2 size={18} />
                             )}
-                            {loading ? 'Confirmation en cours...' : 'Confirmer le rendez-vous'}
+                            {loading ? t('booking:public.confirmation_en_cours', "Confirmation en cours...") : t('booking:public.confirmer_le_rendez_vous', "Confirmer le rendez-vous")}
                         </button>
                     </div>
                 )}
@@ -574,22 +570,22 @@ export default function PublicBooking() {
                         {/* owner usefulness pass (2026-10-25): the « gérer mon rendez-vous » link of the e-mail opens this view — it said « confirmé » even for a
                             cancelled appointment and spoke of a video room for an in-person one; it now reads the appointment's own status and mode */}
                         <h2 className="text-2xl font-bold text-slate-900 mb-2" data-testid="booking-state">
-                            {String(confirmation?.status || '').startsWith('CANCEL') ? 'Ce rendez-vous est annulé' : 'C’est confirmé !'}
+                            {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.ce_rendez_vous_est_annule_2', "Ce rendez-vous est annulé") : t('booking:public.c_est_confirme', "C’est confirmé !")}
                         </h2>
                         <p className="text-slate-700 mb-6 max-w-md mx-auto">
-                            {String(confirmation?.status || '').startsWith('CANCEL') ? 'Il n’aura pas lieu. Vous pouvez prendre un autre rendez-vous.' : 'Votre rendez-vous est enregistré.'}
+                            {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.il_n_aura_pas_lieu', "Il n’aura pas lieu. Vous pouvez prendre un autre rendez-vous.") : t('booking:public.votre_rendez_vous_est_enregistre', "Votre rendez-vous est enregistré.")}
                             {!String(confirmation?.status || '').startsWith('CANCEL') && (confirmation?.mode || bookingMode) === 'VIDEO' && (
-                                <> Vous pourrez rejoindre la visio directement sur ADA.</>
+                                <> {t('booking:public.vous_pourrez_rejoindre_la_visio', "Vous pourrez rejoindre la visio directement sur ADA.")}</>
                             )}
                         </p>
                         {!String(confirmation?.status || '').startsWith('CANCEL') ? (
-                            <p className="mb-6 text-sm text-slate-700"><Link className="text-indigo-700 underline" to="/compte/rendez-vous" data-testid="booking-manage-link">Annuler ou déplacer ce rendez-vous depuis votre espace</Link></p>
+                            <p className="mb-6 text-sm text-slate-700"><Link className="text-indigo-700 underline" to="/compte/rendez-vous" data-testid="booking-manage-link">{t('booking:public.annuler_ou_deplacer_ce_rendez', "Annuler ou déplacer ce rendez-vous depuis votre espace")}</Link></p>
                         ) : null}
 
                         {confirmation?.id && (
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6 inline-block">
                                 <p className="text-[10px] font-bold uppercase text-slate-600 mb-1">
-                                    Référence
+                                    {t('booking:public.reference', "Référence")}
                                 </p>
                                 <p className="text-lg font-mono font-bold text-slate-900">
                                     {confirmation.id.slice(0, 8).toUpperCase()}
@@ -599,7 +595,7 @@ export default function PublicBooking() {
 
                         {/* R12 (B04): from the e-mail's link, the appointment can be cancelled without an account session (the link's capability, POST body only) */}
                         {manageCapability && confirmation?.id && String(confirmation.status || '').toLowerCase() === 'cancelled' && (
-                            <p role="status" data-testid="booking-cancelled" className="mb-4 text-center font-medium text-slate-900">Ce rendez-vous est annulé.</p>
+                            <p role="status" data-testid="booking-cancelled" className="mb-4 text-center font-medium text-slate-900">{t('booking:public.ce_rendez_vous_est_annule', "Ce rendez-vous est annulé.")}</p>
                         )}
                         {manageCapability && confirmation?.id && String(confirmation.status || '').toLowerCase() !== 'cancelled' && (
                             <div className="mb-4 flex flex-col items-center gap-2">
@@ -615,13 +611,13 @@ export default function PublicBooking() {
                                                     if (!res.ok || !data) { setCancelState('failed'); return; }
                                                     setConfirmation((c) => ({ ...c, ...data })); setCancelState('idle');
                                                 } catch { setCancelState('failed'); }
-                                            }}>Confirmer l’annulation</button>
-                                        <button type="button" onClick={() => setCancelState('idle')} className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium">Garder le rendez-vous</button>
+                                            }}>{t('booking:public.confirmer_l_annulation', "Confirmer l’annulation")}</button>
+                                        <button type="button" onClick={() => setCancelState('idle')} className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium">{t('booking:public.garder_le_rendez_vous', "Garder le rendez-vous")}</button>
                                     </div>
                                 ) : (
-                                    <button type="button" data-testid="booking-cancel" onClick={() => setCancelState('confirm')} className="px-5 py-2.5 border border-red-700 text-red-800 rounded-xl text-sm font-medium hover:bg-red-50">Annuler ce rendez-vous</button>
+                                    <button type="button" data-testid="booking-cancel" onClick={() => setCancelState('confirm')} className="px-5 py-2.5 border border-red-700 text-red-800 rounded-xl text-sm font-medium hover:bg-red-50">{t('booking:public.annuler_ce_rendez_vous', "Annuler ce rendez-vous")}</button>
                                 )}
-                                {cancelState === 'failed' && <p role="alert" className="text-sm text-red-800">L’annulation n’a pas pu être faite. Réessayez, ou contactez la structure.</p>}
+                                {cancelState === 'failed' && <p role="alert" className="text-sm text-red-800">{t('booking:public.l_annulation_n_a_pas', "L’annulation n’a pas pu être faite. Réessayez, ou contactez la structure.")}</p>}
                             </div>
                         )}
                         <div className="flex flex-wrap justify-center gap-3">
@@ -632,14 +628,14 @@ export default function PublicBooking() {
                                     data-testid="booking-download-ics"
                                     className="px-5 py-2.5 bg-emerald-700 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
                                 >
-                                    Ajouter au calendrier (.ics)
+                                    {t('booking:public.ajouter_au_calendrier_ics', "Ajouter au calendrier (.ics)")}
                                 </button>
                             )}
                             <Link
                                 to="/compte/messages"
                                 className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
                             >
-                                Mes messages
+                                {t('booking:public.mes_messages', "Mes messages")}
                             </Link>
                             {nextPath && (
                                 <Link
@@ -647,14 +643,14 @@ export default function PublicBooking() {
                                     data-testid="booking-return-to-journey"
                                     className="px-5 py-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors"
                                 >
-                                    {journeyAideSlug ? 'Retour à l’aide' : 'Reprendre mon parcours'}
+                                    {journeyAideSlug ? t('booking:public.retour_a_l_aide', "Retour à l’aide") : t('booking:public.reprendre_mon_parcours', "Reprendre mon parcours")}
                                 </Link>
                             )}
                             <Link
                                 to="/"
                                 className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-200 transition-colors"
                             >
-                                Retour à l&apos;accueil
+                                {t('booking:public.retour_a_l_accueil', "Retour à l'accueil")}
                             </Link>
                         </div>
                     </div>
@@ -713,7 +709,7 @@ function createIdempotencyKey() {
         return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
     }
 
-    throw new Error('Générateur sécurisé indisponible. Veuillez recharger la page.');
+    throw new Error(i18n.t('booking:public.secure_generator', 'Générateur sécurisé indisponible. Veuillez recharger la page.'));
 }
 
 function getToken() {

@@ -11,6 +11,8 @@
 import { missingFactLabel, readAssessment } from './assessmentLabels.js';
 
 export const PLAN_CONTRACT = 'ADA_ACTION_PLAN_V1';
+/** the organism named when an item has no `whoToAsk` (ADA's own words, translated on screen — src/components/diagnostic/ActionPlan.jsx) */
+export const DEFAULT_WHO = 'un organisme compétent';
 const uniq = (a) => [...new Set(a)];
 const list = (a) => a.join(', ');
 
@@ -34,9 +36,9 @@ export function buildActionPlan(results) {
   }
 
   const checks = items.filter((i) => i.state === 'CHECK_REQUIRED' || i.state === 'POSSIBLE');
-  const whoOrder = uniq(checks.map((i) => i.whoToAsk || 'un organisme compétent'));
+  const whoOrder = uniq(checks.map((i) => i.whoToAsk || DEFAULT_WHO));
   for (const who of whoOrder) {
-    const group = checks.filter((i) => (i.whoToAsk || 'un organisme compétent') === who);
+    const group = checks.filter((i) => (i.whoToAsk || DEFAULT_WHO) === who);
     push({
       kind: 'verify', who, itemCodes: group.map((i) => i.code),
       title: `Faire vérifier votre situation pour ${list(group.map((i) => i.label))} auprès de ${who}`,

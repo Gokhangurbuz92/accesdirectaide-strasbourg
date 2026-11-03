@@ -116,5 +116,11 @@
  "account.proAccount.text": "Support the people you help",
  "footer.needs": "Find help by need",
  "footer.emergency": "In an emergency or if you are in danger",
- "footer.emergency.all": "All emergency numbers"
+ "footer.emergency.all": "All emergency numbers",
+ "hide_screen.hidden_label": "Screen hidden. Click anywhere to show the screen.",
+ "hide_screen.hidden_title": "Safety screen hidden",
+ "hide_screen.hidden_text": "Click anywhere on the screen to resume what you were doing.",
+ "hide_screen.label": "Hide the screen immediately (or press Esc three times)",
+ "hide_screen.title": "Hide the screen immediately (Esc three times)",
+ "hide_screen.button": "Hide the screen"
 }

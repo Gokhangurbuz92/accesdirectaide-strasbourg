@@ -11,11 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ArrowLeft, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { Trans } from 'react-i18next';
+import i18n, { formatDate, useT } from '@/i18n';
 import { client } from '@/api/client';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+// R40: in the interface language (namespace `booking`, `request.*`); the structure's name stays as published (lang="fr"), dates via Intl
 export default function AppointmentRequest() {
+    const { t } = useT('booking');
     const [searchParams] = useSearchParams();
     const structureId = searchParams.get('structure_id');
     const [selectedSlot, setSelectedSlot] = useState(null);
@@ -54,7 +57,7 @@ export default function AppointmentRequest() {
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Booking failed');
+            if (!res.ok) throw new Error(data.error || t('booking:request.booking_failed', 'La réservation a échoué.'));
             return data;
         },
         onSuccess: (data) => {
@@ -73,7 +76,7 @@ export default function AppointmentRequest() {
     };
 
     if (loadingStructure) return <div className="p-6"><SkeletonList count={4} variant="card" /></div>;
-    if (!structure) return <div className="p-12 text-center"><h1 className="text-xl font-bold text-slate-900">Cette structure n&apos;existe pas.</h1></div>;
+    if (!structure) return <div className="p-12 text-center"><h1 className="text-xl font-bold text-slate-900">{t('booking:request.cette_structure_n_existe_pas', "Cette structure n'existe pas.")}</h1></div>;
 
     // Success View
     if (successData) {
@@ -83,16 +86,16 @@ export default function AppointmentRequest() {
                     <div className="flex justify-center mb-4">
                         <CheckCircle className="h-16 w-16 text-green-500" />
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900 mb-2">Rendez-vous confirmé !</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 mb-2">{t('booking:request.rendez_vous_confirme', "Rendez-vous confirmé !")}</h1>
                     <p className="text-slate-600 mb-6">
-                        Votre rendez-vous avec {structure.nom} est validé pour le :<br />
-                        <strong>{format(parseISO(selectedSlot.start), 'PPPP à HH:mm', { locale: fr })}</strong>
+                        <Trans i18n={i18n} i18nKey="booking:request.confirmed_with" defaults="Votre rendez-vous avec <0>{{structure}}</0> est validé pour le :" values={{ structure: structure.nom }} components={[<span key="s" lang="fr" dir="ltr" />]} /><br />
+                        <strong>{formatDate(selectedSlot.start, { dateStyle: 'full', timeStyle: 'short' })}</strong>
                     </p>
                     <p className="text-sm text-slate-500 mb-6">
-                        Un email de confirmation a été envoyé à {formData.email}.
+                        {t('booking:request.email_sent', 'Un email de confirmation a été envoyé à {{email}}.', { email: formData.email })}
                     </p>
                     <Link to={createPageUrl('Home')}>
-                        <Button className="w-full">Retour à l'accueil</Button>
+                        <Button className="w-full">{t('booking:request.retour_a_l_accueil', "Retour à l'accueil")}</Button>
                     </Link>
                 </Card>
             </div>
@@ -112,7 +115,7 @@ export default function AppointmentRequest() {
             <div className="max-w-4xl mx-auto px-4">
                 <Link to={createPageUrl('StructureDetail') + `?id=${structureId}`} className="flex items-center text-slate-600 mb-6 hover:text-blue-600">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Retour à la fiche structure
+                    {t('booking:request.retour_a_la_fiche_structure', "Retour à la fiche structure")}
                 </Link>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -120,18 +123,18 @@ export default function AppointmentRequest() {
                     <div>
                         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
                             <Calendar className="h-5 w-5" />
-                            Choisir un créneau
+                            {t('booking:request.choisir_un_creneau', "Choisir un créneau")}
                         </h2>
                         {loadingSlots ? (
                             <SkeletonList count={3} variant="card" />
 
                         ) : (
                             <div className="space-y-4">
-                                {Object.keys(slotsByDay).length === 0 && <p>Aucun créneau disponible pour le moment.</p>}
+                                {Object.keys(slotsByDay).length === 0 && <p>{t('booking:request.aucun_creneau_disponible_pour_le', "Aucun créneau disponible pour le moment.")}</p>}
                                 {Object.entries(slotsByDay).map(([day, daySlots]) => (
                                     <div key={day} className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
                                         <h3 className="font-semibold text-slate-700 mb-3 capitalize">
-                                            {format(parseISO(day), 'EEEE d MMMM', { locale: fr })}
+                                            {formatDate(`${day}T12:00:00`, { weekday: 'long', day: 'numeric', month: 'long' })}
                                         </h3>
                                         <div className="grid grid-cols-3 gap-2">
                                             {daySlots.map((/** @type {{ start: any; }} */ slot, /** @type {any} */ idx) => (
@@ -155,20 +158,20 @@ export default function AppointmentRequest() {
                     <div>
                         <Card className={!selectedSlot ? 'opacity-50 pointer-events-none' : ''}>
                             <CardHeader>
-                                <CardTitle>Vos informations</CardTitle>
+                                <CardTitle>{t('booking:request.vos_informations', "Vos informations")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-4">
                                     {selectedSlot && (
                                         <div className="bg-blue-50 p-3 rounded-md text-blue-800 text-sm mb-4 flex items-center gap-2">
                                             <Clock className="h-4 w-4" />
-                                            RDV sélectionné : {format(parseISO(selectedSlot.start), 'PPPP à HH:mm', { locale: fr })}
+                                            {t('booking:request.selected', 'RDV sélectionné : {{date}}', { date: formatDate(selectedSlot.start, { dateStyle: 'full', timeStyle: 'short' }) })}
                                         </div>
                                     )}
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="prenom">Prénom</Label>
+                                            <Label htmlFor="prenom">{t('booking:request.prenom', "Prénom")}</Label>
                                             <Input
                                                 id="prenom"
                                                 required
@@ -177,7 +180,7 @@ export default function AppointmentRequest() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="nom">Nom</Label>
+                                            <Label htmlFor="nom">{t('booking:request.nom', "Nom")}</Label>
                                             <Input
                                                 id="nom"
                                                 required
@@ -188,7 +191,7 @@ export default function AppointmentRequest() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="email">Email</Label>
+                                        <Label htmlFor="email">{t('booking:request.email', "Email")}</Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -200,7 +203,7 @@ export default function AppointmentRequest() {
 
                                     {bookMutation.isError && (
                                         <div className="text-red-600 text-sm bg-red-50 p-2 rounded">
-                                            Erreur: {bookMutation.error.message}
+                                            {t('booking:request.erreur', "Erreur:")} {bookMutation.error.message}
                                         </div>
                                     )}
 
@@ -209,7 +212,7 @@ export default function AppointmentRequest() {
                                         className="w-full bg-blue-600 hover:bg-blue-700"
                                         disabled={bookMutation.isPending}
                                     >
-                                        {bookMutation.isPending ? <Loader2 className="animate-spin mr-2" /> : "Confirmer le rendez-vous"}
+                                        {bookMutation.isPending ? <Loader2 className="animate-spin mr-2" /> : t('booking:request.confirmer_le_rendez_vous', "Confirmer le rendez-vous")}
                                     </Button>
                                 </form>
                             </CardContent>

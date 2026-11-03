@@ -4,6 +4,11 @@ import { Compass, Send, X, Loader2, RefreshCw, ExternalLink, MapPin, Sparkles, S
 import FeedbackButtons from '@/components/assistant/FeedbackButtons';
 import { ensureCsrfHeaders } from '@/lib/csrf';
 import { ASSISTANT_OPEN_EVENT } from '@/lib/assistantBridge';
+import i18n, { useLanguage, useT } from '@/i18n';
+import { Trans } from 'react-i18next';
+
+/** French text inside any interface language: the assistant answers, cites and is asked in French (context.lang = 'fr') */
+const FR = { lang: 'fr', dir: 'ltr' };
 
 // PKG-11: the first message of a page that has not called the API yet carried no CSRF token and was refused (403); the token is bootstrapped first
 const csrfHeaders = async () => (await ensureCsrfHeaders().catch(() => null)) || {};
@@ -16,6 +21,8 @@ const csrfHeaders = async () => (await ensureCsrfHeaders().catch(() => null)) ||
  *
  * @param {{ embedded?: boolean }} props
  *   - embedded: if true, renders inline (for Orientation page); default false = floating widget
+ * R40: the frame is in the interface language (namespace `shared`, `chat.*`). The assistant itself works in French: its answers, sources,
+ * suggestions and the example questions (sent as they are) stay French (lang="fr"), and outside French the panel says so.
  */
 
 const INITIAL_PROMPTS = [
@@ -24,23 +31,20 @@ const INITIAL_PROMPTS = [
   "Où trouver une aide alimentaire ?",
 ];
 
-const BOUSSOLE_GREETING = {
-  id: 1,
-  role: 'assistant',
-  content:
-    'Bonjour 👋 Je suis la Boussole Sociale. Je peux vous orienter vers les aides et les structures adaptées à votre situation. Posez-moi votre question !',
-};
+// the greeting is ADA's own text (translated at render); `greeting: true` marks it, everything else the assistant says is French
+const BOUSSOLE_GREETING = { id: 1, role: 'assistant', greeting: true, content: '' };
 
 export default function ChatAssistant({ embedded = false }) {
+  const { t } = useT('shared');
   const [isOpen, setIsOpen] = useState(embedded);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(/** @type {string | null} */(null));
+  const [error, setError] = useState(/** @type {{ text: string, fr?: boolean } | null} */(null));
   const [messages, setMessages] = useState([BOUSSOLE_GREETING]);
   // PKG-11 / P07: the server's canonical territory id is sent back (never a code, which a postal code can collide with), its official name is shown
-  const [territory, setTerritory] = useState(/** @type {string | null} */(null));
-  const [territoryLabel, setTerritoryLabel] = useState(/** @type {string | null} */(null));
-  const [pendingQuestion, setPendingQuestion] = useState(/** @type {string | null} */(null));
+  const [territory, setTerritory] = useState(/** @type {{ text: string, fr?: boolean } | null} */(null));
+  const [territoryLabel, setTerritoryLabel] = useState(/** @type {{ text: string, fr?: boolean } | null} */(null));
+  const [pendingQuestion, setPendingQuestion] = useState(/** @type {{ text: string, fr?: boolean } | null} */(null));
   // R13 (D17): the pistes of the result page, attached on the person's request (read-only on the server, removable here, never stored)
   const [assessment, setAssessment] = useState(/** @type {Array<{ rightId: string, state: string }> | null} */(null));
   const [rgpdDismissed, setRgpdDismissed] = useState(() => typeof window !== 'undefined' && !!localStorage.getItem('ada_chatbot_rgpd_dismissed'));
@@ -57,7 +61,7 @@ export default function ChatAssistant({ embedded = false }) {
 
   // R14: « Retirer » unmounted the focused button and focus fell out of the modal dialog (trap and Escape lost): focus goes back to the input and the removal is announced
   const [removedNotice, setRemovedNotice] = useState('');
-  const removeAssessment = useCallback(() => { setAssessment(null); setRemovedNotice('Pistes retirées : vos prochaines questions ne les contiennent plus.'); requestAnimationFrame(() => inputRef.current?.focus()); }, []);
+  const removeAssessment = useCallback(() => { setAssessment(null); setRemovedNotice(t('shared:chat.assessment_removed', 'Pistes retirées : vos prochaines questions ne les contiennent plus.')); requestAnimationFrame(() => inputRef.current?.focus()); }, [t]);
   useEffect(() => {
     /** @param {CustomEvent} e */
     const onOpen = (e) => {
@@ -115,7 +119,7 @@ export default function ChatAssistant({ embedded = false }) {
         const data = await res.json();
 
         if (!res.ok) {
-          setError(data.message || 'Une erreur est survenue.');
+          setError(data.message ? { text: data.message, fr: true } : { text: t('shared:chat.error', 'Une erreur est survenue.') });
           return;
         }
 
@@ -145,12 +149,12 @@ export default function ChatAssistant({ embedded = false }) {
         ]);
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
-        setError('Une erreur inattendue est survenue. Veuillez réessayer.');
+        setError({ text: t('shared:chat.error_unexpected', 'Une erreur inattendue est survenue. Veuillez réessayer.') });
       } finally {
         setIsLoading(false);
       }
     },
-    [inputValue, isLoading, territory, pendingQuestion, assessment],
+    [inputValue, isLoading, territory, pendingQuestion, assessment, t],
   );
 
   /** Send a pre-defined prompt */
@@ -211,11 +215,11 @@ export default function ChatAssistant({ embedded = false }) {
         })
         .catch((err) => {
           if (err instanceof DOMException && err.name === 'AbortError') return;
-          setError('Erreur de connexion. Réessayez.');
+          setError({ text: t('shared:chat.error_network', 'Erreur de connexion. Réessayez.') });
         })
         .finally(() => setIsLoading(false));
     },
-    [isLoading, territory, pendingQuestion, assessment],
+    [isLoading, territory, pendingQuestion, assessment, t],
   );
 
   const handleRetry = useCallback(() => {
@@ -276,7 +280,7 @@ export default function ChatAssistant({ embedded = false }) {
     return (
       <section
         className="flex h-[520px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-        aria-label="Discussion avec la Boussole Sociale"
+        aria-label={t('shared:chat.region', 'Discussion avec la Boussole Sociale')}
       >
         <CompassHeader />
         <CompassMessages
@@ -310,7 +314,7 @@ export default function ChatAssistant({ embedded = false }) {
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         className="fixed bottom-[calc(1.5rem+var(--cookie-banner-offset,0px))] right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-teal-700 text-white shadow-lg transition-[background-color,transform] hover:bg-teal-800 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 group"
-        aria-label={isOpen ? "Fermer la Boussole Sociale" : "Ouvrir la Boussole Sociale"}
+        aria-label={isOpen ? t('shared:chat.close', 'Fermer la Boussole Sociale') : t('shared:chat.open', 'Ouvrir la Boussole Sociale')}
       >
         {isOpen ? (
           <X className="h-5 w-5" />
@@ -324,7 +328,7 @@ export default function ChatAssistant({ embedded = false }) {
           ref={dialogRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Fenêtre de discussion avec la Boussole Sociale"
+          aria-label={t('shared:chat.dialog', 'Fenêtre de discussion avec la Boussole Sociale')}
           className="fixed bottom-[calc(6rem+var(--cookie-banner-offset,0px))] right-0 z-50 flex h-[540px] w-full max-h-[calc(100dvh-7rem-var(--cookie-banner-offset,0px))] flex-col overflow-hidden border border-slate-200 bg-white shadow-2xl sm:right-6 sm:w-[400px] sm:rounded-2xl safe-area-bottom"
         >
           <CompassHeader onClose={() => setIsOpen(false)} territory={territoryLabel} />
@@ -359,6 +363,7 @@ export default function ChatAssistant({ embedded = false }) {
 
 // @ts-ignore
 function CompassHeader({ onClose, territory }) {
+  const { t } = useT('shared');
   return (
     <header className="flex items-center justify-between border-b border-slate-200 bg-teal-700 px-4 py-3 text-white">
       <div className="flex items-center gap-3">
@@ -373,10 +378,10 @@ function CompassHeader({ onClose, territory }) {
               {territory ? (
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
-                  Territoire {territory}
+                  {t('shared:chat.territory', 'Territoire')} <span {...FR}>{territory}</span>
                 </span>
               ) : (
-                'Assistant (réponses sourcées)'
+                t('shared:chat.subtitle', 'Assistant (réponses sourcées)')
               )}
             </span>
           </div>
@@ -387,7 +392,7 @@ function CompassHeader({ onClose, territory }) {
           type="button"
           onClick={onClose}
           className="rounded-md p-1 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
-          aria-label="Fermer la Boussole Sociale"
+          aria-label={t('shared:chat.close', 'Fermer la Boussole Sociale')}
         >
           <X className="h-4 w-4" />
         </button>
@@ -398,6 +403,8 @@ function CompassHeader({ onClose, territory }) {
 
 // @ts-ignore
 function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, endOfMessagesRef, territory, rgpdDismissed, onDismissRgpd }) {
+  const { t } = useT('shared');
+  const { isSource } = useLanguage();
   const showInitialPrompts = messages.length <= 1 && !isLoading;
 
   return (
@@ -413,7 +420,14 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                 : 'border border-slate-200 bg-white text-slate-700'
               }`}
           >
-            <p className="leading-relaxed">{message.content}</p>
+            {message.greeting ? (
+              <>
+                <p className="leading-relaxed">{t('shared:chat.greeting', 'Bonjour 👋 Je suis la Boussole Sociale. Je peux vous orienter vers les aides et les structures adaptées à votre situation. Posez-moi votre question !')}</p>
+                {isSource ? null : <p className="mt-1 text-xs text-slate-600" data-testid="chat-french-only">{t('shared:chat.french_only', 'La Boussole Sociale répond en français.')}</p>}
+              </>
+            ) : (
+              <p className="leading-relaxed" {...(message.role === 'assistant' ? FR : {})}>{message.content}</p>
+            )}
 
             {/* Smart Links */}
             {message.links && message.links.length > 0 && (
@@ -430,9 +444,9 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                       ) : (
                         <Sparkles className="h-3 w-3 flex-shrink-0" />
                       )}
-                      {link.title}
+                      <span {...FR}>{link.title}</span>
                     </span>
-                    <ExternalLink className="h-3 w-3 flex-shrink-0 ml-1" />
+                    <ExternalLink className="h-3 w-3 flex-shrink-0 ms-1" aria-hidden="true" />
                   </a>
                 ))}
               </div>
@@ -448,7 +462,7 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                     onClick={() => onPromptClick(s)}
                     className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-[11px] font-medium text-teal-700 transition-colors hover:bg-teal-100"
                   >
-                    {s}
+                    <span {...FR}>{s}</span>
                   </button>
                 ))}
               </div>
@@ -468,16 +482,15 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
             <ShieldCheck className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-400" aria-hidden="true" />
             <div className="flex-1">
               <p>
-                Vos messages sont traités par l’assistant local pour produire la réponse et ne sont pas enregistrés dans un journal de conversation.
-                <strong className="text-slate-600"> Ne communiquez aucune donnée personnelle</strong> (n° sécu, IBAN, etc.).
-                {' '}<a href="/confidentialite" className="font-medium text-blue-600 hover:underline">Politique de confidentialité</a>
+                <Trans i18n={i18n} i18nKey="shared:chat.privacy" defaults="Vos messages sont traités par l’assistant local pour produire la réponse et ne sont pas enregistrés dans un journal de conversation.<0> Ne communiquez aucune donnée personnelle</0> (n° sécu, IBAN, etc.)." components={[<strong key="b" className="text-slate-600" />]} />
+                {' '}<a href="/confidentialite" className="font-medium text-blue-600 hover:underline">{t('shared:chat.privacy_link', 'Politique de confidentialité')}</a>
               </p>
             </div>
             <button
               type="button"
               onClick={onDismissRgpd}
-              className="ml-1 mt-0.5 rounded p-0.5 text-slate-400 hover:text-slate-600 hover:bg-blue-100 transition-colors"
-              aria-label="Fermer la notice RGPD"
+              className="ms-1 mt-0.5 rounded p-0.5 text-slate-400 hover:text-slate-600 hover:bg-blue-100 transition-colors"
+              aria-label={t('shared:chat.privacy_close', 'Fermer la notice RGPD')}
             >
               <X className="h-3 w-3" />
             </button>
@@ -489,16 +502,16 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
       {showInitialPrompts && (
         <div className="space-y-2 pt-2">
           <p className="text-center text-xs font-medium text-slate-400">
-            Comment puis-je vous guider ?
+            {t('shared:chat.prompts_title', 'Comment puis-je vous guider ?')}
           </p>
           {INITIAL_PROMPTS.map((prompt, i) => (
             <button
               key={i}
               type="button"
               onClick={() => onPromptClick(prompt)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-3 text-left text-xs font-medium text-slate-600 shadow-sm transition-all hover:border-teal-300 hover:text-teal-700"
+              className="w-full rounded-xl border border-slate-200 bg-white p-3 text-start text-xs font-medium text-slate-600 shadow-sm transition-all hover:border-teal-300 hover:text-teal-700"
             >
-              {prompt}
+              <span {...FR}>{prompt}</span>
             </button>
           ))}
         </div>
@@ -510,7 +523,7 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
             <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-400" />
             <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-500 [animation-delay:0.15s]" />
             <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-600 [animation-delay:0.3s]" />
-            <span className="ml-1">Orientation en cours…</span>
+            <span className="ms-1">{t('shared:chat.loading', 'Orientation en cours…')}</span>
           </div>
         </div>
       )}
@@ -518,14 +531,14 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
       {error && (
         <div className="flex justify-start" data-testid="chat-error">
           <div className="flex max-w-[85%] flex-col gap-2 rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            <p>{error}</p>
+            <p {...(error.fr ? FR : {})}>{error.text}</p>
             <div className="flex flex-wrap gap-2">
-              {error.includes('indisponible') && (
+              {error.fr && error.text.includes('indisponible') && (
                 <a
                   href="/orientation"
                   className="inline-flex items-center gap-1 self-start rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-teal-700"
                 >
-                  Aller au diagnostic
+                  {t('shared:chat.go_diagnostic', 'Aller au diagnostic')}
                 </a>
               )}
               <button
@@ -534,7 +547,7 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                 className="inline-flex items-center gap-1 self-start rounded-md px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
               >
                 <RefreshCw className="h-3 w-3" aria-hidden="true" />
-                Réessayer
+                {t('shared:chat.retry', 'Réessayer')}
               </button>
             </div>
           </div>
@@ -548,6 +561,7 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
 
 // @ts-ignore
 function CompassInput({ inputValue, setInputValue, isLoading, onSubmit, inputRef }) {
+  const { t } = useT('shared');
   return (
     <form onSubmit={onSubmit} className="flex items-center gap-2 border-t border-slate-200 bg-white p-3">
       <input
@@ -555,17 +569,17 @@ function CompassInput({ inputValue, setInputValue, isLoading, onSubmit, inputRef
         type="text"
         value={inputValue}
         onChange={(event) => setInputValue(event.target.value)}
-        placeholder="Décrivez votre situation…"
+        placeholder={t('shared:chat.input_placeholder', 'Décrivez votre situation…')}
         maxLength={800}
         disabled={isLoading}
         className="h-10 flex-1 rounded-lg border border-slate-300 px-3 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-50"
-        aria-label="Message utilisateur"
+        aria-label={t('shared:chat.input_label', 'Message utilisateur')}
       />
       <button
         type="submit"
         disabled={!inputValue.trim() || isLoading}
         className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-teal-700 text-white transition-colors hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
-        aria-label="Envoyer le message"
+        aria-label={t('shared:chat.send', 'Envoyer le message')}
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -579,15 +593,16 @@ function CompassInput({ inputValue, setInputValue, isLoading, onSubmit, inputRef
 
 /** R13 (D17): what the person attached, and how to take it back. */
 function AssessmentAttached({ count, onRemove, notice = '' }) {
+  const { t } = useT('shared');
   if (!count) return notice ? <p role="status" data-testid="assistant-assessment-removed" className="sr-only">{notice}</p> : null;
   return (
     <div data-testid="assistant-assessment-attached" className="flex items-start gap-2 border-t border-teal-100 bg-teal-50 px-4 py-2 text-xs text-teal-900">
       <p className="flex-1">
-        {count === 1 ? 'Votre piste de simulation est jointe' : `Vos ${count} pistes de simulation sont jointes`} à vos questions, en lecture seule. La Boussole les explique, elle ne décide pas.
+        {t('shared:chat.assessment_attached', { count, defaultValue_one: 'Votre piste de simulation est jointe à vos questions, en lecture seule. La Boussole les explique, elle ne décide pas.', defaultValue_other: 'Vos {{count}} pistes de simulation sont jointes à vos questions, en lecture seule. La Boussole les explique, elle ne décide pas.' })}
       </p>
       <button type="button" data-testid="assistant-assessment-remove" onClick={onRemove}
         className="min-h-8 rounded border border-teal-300 bg-white px-2 font-semibold text-teal-900 hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
-        Retirer
+        {t('shared:chat.assessment_remove', 'Retirer')}
       </button>
     </div>
   );

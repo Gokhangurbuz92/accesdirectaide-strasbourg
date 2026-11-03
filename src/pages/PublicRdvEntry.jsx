@@ -14,7 +14,8 @@ import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { CsrfBootstrapError, csrfFetch, getCsrfHeaders } from '@/lib/csrf';
 import { guestBookingPath, guestGet } from '@/lib/guestBooking';
-import { useT } from '@/i18n';
+import i18n, { formatDate, useT } from '@/i18n';
+import { Trans } from 'react-i18next';
 /**
  * @returns {string | null}
  */
@@ -64,11 +65,7 @@ function futureDateInput(days) {
 function formatDateTime(raw) {
   const date = new Date(String(raw || ''));
   if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-    timeZone: 'Europe/Paris',
-  });
+  return formatDate(date, { dateStyle: 'short', timeStyle: 'short' });   // R40: in the interface language (Europe/Paris)
 }
 
 /**
@@ -295,24 +292,24 @@ export default function PublicRdvEntry({ view = 'landing' }) {
     return [
       {
         key: 'landing',
-        label: 'Structure',
-        description: 'Verification du contexte',
+        label: t('booking:rdv.structure', "Structure"),
+        description: t('booking:rdv.verification_du_contexte', "Verification du contexte"),
         href: `${basePath}${querySuffix}`,
       },
       {
         key: 'services',
-        label: 'Service',
-        description: 'Choix du motif',
+        label: t('booking:rdv.service', "Service"),
+        description: t('booking:rdv.choix_du_motif', "Choix du motif"),
         href: `${basePath}/services${querySuffix}`,
       },
       {
         key: 'creneaux',
-        label: 'Creneau',
-        description: 'Selection de la date',
+        label: t('booking:rdv.creneau', "Creneau"),
+        description: t('booking:rdv.selection_de_la_date', "Selection de la date"),
         href: `${basePath}/creneaux${querySuffix}`,
       },
     ];
-  }, [basePath, querySuffix]);
+  }, [basePath, querySuffix, t]);
 
   const updateParams = (/** @type {Record<string, string | number | boolean | null | undefined>} */ patch) => {
     const next = new URLSearchParams(searchParams);
@@ -340,7 +337,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
   const handleBookSlot = async (/** @type {{ startAt: string | number | boolean | null | undefined }} */ slot) => {
     if (!selectedServiceId || !baseSlug || !slot?.startAt || !selectedMode) return;
     if (selectedMode === 'VIDEO' && !videoConsent) {
-      setBookingError('Pour un rendez-vous en visio, cochez d’abord votre accord.');
+      setBookingError(t('booking:rdv.pour_un_rendez_vous_en', "Pour un rendez-vous en visio, cochez d’abord votre accord."));
       return;
     }
 
@@ -370,25 +367,25 @@ export default function PublicRdvEntry({ view = 'landing' }) {
       if (payload?.id) {
         updateParams({ appointment: payload.id });
         setBookingInfo(selectedMode === 'VIDEO'
-          ? 'Rendez-vous en visio confirmé. L’accès sécurisé se fera depuis Mes rendez-vous, après validation par la structure.'
-          : 'Rendez-vous en présentiel confirmé. Un e-mail de confirmation a été préparé.');
+          ? t('booking:rdv.rendez_vous_en_visio_confirme', "Rendez-vous en visio confirmé. L’accès sécurisé se fera depuis Mes rendez-vous, après validation par la structure.")
+          : t('booking:rdv.rendez_vous_en_presentiel_confirme', "Rendez-vous en présentiel confirmé. Un e-mail de confirmation a été préparé."));
         await refetchAppointment();
       }
     } catch (error) {
       // @ts-ignore
       if (error?.status === 409) {
-        setBookingError("Ce creneau n'est plus disponible. Rechargez la liste.");
+        setBookingError(t('booking:rdv.ce_creneau_n_est_plus', "Ce creneau n'est plus disponible. Rechargez la liste."));
         await refetchSlots();
         return;
       }
 
       // @ts-ignore
       if (error?.status === 403 && error?.payload?.code === 'EMAIL_NOT_VERIFIED') {
-        setBookingError('Veuillez verifier votre email avant de confirmer un rendez-vous.');
+        setBookingError(t('booking:rdv.veuillez_verifier_votre_email_avant', "Veuillez verifier votre email avant de confirmer un rendez-vous."));
         return;
       }
 
-      setBookingError(getErrorMessage(error, 'Impossible de confirmer ce rendez-vous.'));
+      setBookingError(getErrorMessage(error, t('booking:rdv.impossible_de_confirmer_ce_rendez', "Impossible de confirmer ce rendez-vous.")));
     } finally {
       setBookingBusy(false);
     }
@@ -407,9 +404,9 @@ export default function PublicRdvEntry({ view = 'landing' }) {
         token,
       });
       await refetchAppointment();
-      setBookingInfo('Rendez-vous annule.');
+      setBookingInfo(t('booking:rdv.rendez_vous_annule', "Rendez-vous annule."));
     } catch (error) {
-      setBookingError(getErrorMessage(error, "Impossible d'annuler ce rendez-vous."));
+      setBookingError(getErrorMessage(error, t('booking:rdv.impossible_d_annuler_ce_rendez', "Impossible d'annuler ce rendez-vous.")));
     } finally {
       setCancelBusy(false);
     }
@@ -436,9 +433,9 @@ export default function PublicRdvEntry({ view = 'landing' }) {
         return;
       }
 
-      setBookingError("Impossible d'ouvrir la conversation.");
+      setBookingError(t('booking:rdv.impossible_d_ouvrir_la_conversation', "Impossible d'ouvrir la conversation."));
     } catch (error) {
-      setBookingError(getErrorMessage(error, 'Impossible d’ouvrir la conversation.'));
+      setBookingError(getErrorMessage(error, t('booking:rdv.impossible_d_ouvrir_la_conversation_2', "Impossible d’ouvrir la conversation.")));
     } finally {
       setOpenConversationBusy(false);
     }
@@ -454,15 +451,15 @@ export default function PublicRdvEntry({ view = 'landing' }) {
   if (!structure && structureFailed) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6" data-testid="rdv-structure-error">
-        <SEO title="Prise de rendez-vous indisponible" description="Prise de rendez-vous" path={safeNext} noindex={true} />
+        <SEO title={t('booking:rdv.prise_de_rendez_vous_indisponible', "Prise de rendez-vous indisponible")} description={t('booking:rdv.prise_de_rendez_vous', "Prise de rendez-vous")} path={safeNext} noindex={true} />
         <Card className="w-full max-w-xl" role="alert">
           <CardHeader>
-            <CardTitle as="h1">Prise de rendez-vous momentanément indisponible</CardTitle>
-            <CardDescription>Le service n&apos;a pas répondu : la structure n&apos;a pas pu être chargée. Réessayez dans un instant.</CardDescription>
+            <CardTitle as="h1">{t('booking:rdv.prise_de_rendez_vous_momentanement', "Prise de rendez-vous momentanément indisponible")}</CardTitle>
+            <CardDescription>{t('booking:rdv.le_service_n_a_pas', "Le service n'a pas répondu : la structure n'a pas pu être chargée. Réessayez dans un instant.")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <Button type="button" variant="outline" className="min-h-11" onClick={() => refetchStructure()}>Réessayer</Button>
-            <Link to="/annuaire" className="inline-flex min-h-11 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent">Retour à l&apos;annuaire</Link>
+            <Button type="button" variant="outline" className="min-h-11" onClick={() => refetchStructure()}>{t('booking:rdv.reessayer', "Réessayer")}</Button>
+            <Link to="/annuaire" className="inline-flex min-h-11 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent">{t('booking:rdv.retour_a_l_annuaire', "Retour à l'annuaire")}</Link>
           </CardContent>
         </Card>
       </div>
@@ -472,12 +469,12 @@ export default function PublicRdvEntry({ view = 'landing' }) {
   if (!structure) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <SEO title="Structure introuvable" description="Prise de rendez-vous" path={safeNext} noindex={true} />
+        <SEO title={t('booking:rdv.structure_introuvable', "Structure introuvable")} description={t('booking:rdv.prise_de_rendez_vous', "Prise de rendez-vous")} path={safeNext} noindex={true} />
         <Card className="w-full max-w-xl">
           <CardHeader>
-            <CardTitle as="h1">Cette structure n&apos;existe pas</CardTitle>
+            <CardTitle as="h1">{t('booking:rdv.cette_structure_n_existe_pas', "Cette structure n'existe pas")}</CardTitle>
             <CardDescription>
-              Vérifiez l&apos;adresse ou revenez à l&apos;annuaire pour choisir une autre structure.
+              {t('booking:rdv.verifiez_l_adresse_ou_revenez', "Vérifiez l'adresse ou revenez à l'annuaire pour choisir une autre structure.")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
@@ -485,13 +482,13 @@ export default function PublicRdvEntry({ view = 'landing' }) {
               to="/annuaire"
               className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
             >
-              Retour à l&apos;annuaire
+              {t('booking:rdv.retour_a_l_annuaire', "Retour à l'annuaire")}
             </Link>
             <Link
               to="/contact"
               className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
             >
-              Signaler un probleme
+              {t('booking:rdv.signaler_un_probleme', "Signaler un probleme")}
             </Link>
           </CardContent>
         </Card>
@@ -537,8 +534,8 @@ export default function PublicRdvEntry({ view = 'landing' }) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <SEO
-          title="RDV indisponible"
-          description="La prise de rendez-vous n'est pas publiee pour cette structure."
+          title={t('booking:rdv.rdv_indisponible', "RDV indisponible")}
+          description={t('booking:rdv.la_prise_de_rendez_vous', "La prise de rendez-vous n'est pas publiee pour cette structure.")}
           path={safeNext}
           noindex={true}
         />
@@ -546,34 +543,34 @@ export default function PublicRdvEntry({ view = 'landing' }) {
           <CardHeader>
             <CardTitle as="h1" className="flex items-center gap-2 text-slate-900" data-testid="rdv-unpublished">
               <ShieldAlert className="h-5 w-5 text-amber-600" aria-hidden="true" />
-              Rendez-vous indisponible (non publié)
+              {t('booking:rdv.rendez_vous_indisponible_non_publie', "Rendez-vous indisponible (non publié)")}
             </CardTitle>
             <CardDescription>
-              La structure <strong>{structure.nom}</strong> n&apos;a pas encore publie la prise de rendez-vous en ligne.
+              <Trans i18n={i18n} i18nKey="booking:entry.unpublished_text" defaults="La structure <0>{{name}}</0> n'a pas encore publie la prise de rendez-vous en ligne." values={{ name: structure.nom }} components={[<strong key="n" lang="fr" dir="ltr" />]} />
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600">
-              Vous pouvez demander a etre rappelle, ou inviter la structure a activer les rendez-vous en ligne.
+              {t('booking:rdv.vous_pouvez_demander_a_etre', "Vous pouvez demander a etre rappelle, ou inviter la structure a activer les rendez-vous en ligne.")}
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/contact"
                 className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
               >
-                Demander &agrave; &ecirc;tre rappel&eacute;
+                {t('booking:rdv.demander_a_etre_rappele', "Demander à être rappelé")}
               </Link>
               <Link
                 to="/proposer-une-structure"
                 className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
               >
-                Inviter la structure
+                {t('booking:rdv.inviter_la_structure', "Inviter la structure")}
               </Link>
               <Link
                 to={structure.slug ? `/structures/${structure.slug}` : '/annuaire'}
                 className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
               >
-                Retour à la structure
+                {t('booking:rdv.retour_a_la_structure', "Retour à la structure")}
               </Link>
             </div>
           </CardContent>
@@ -586,16 +583,16 @@ export default function PublicRdvEntry({ view = 'landing' }) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <SEO
-          title="Connexion necessaire"
-          description="Connectez-vous avec un compte particulier pour prendre rendez-vous."
+          title={t('booking:rdv.connexion_necessaire', "Connexion necessaire")}
+          description={t('booking:rdv.connectez_vous_avec_un_compte', "Connectez-vous avec un compte particulier pour prendre rendez-vous.")}
           path={safeNext}
           noindex={true}
         />
         <Card className="w-full max-w-xl">
           <CardHeader>
-            <CardTitle as="h1" data-testid="rdv-citizen-required">Connexion particulier nécessaire</CardTitle>
+            <CardTitle as="h1" data-testid="rdv-citizen-required">{t('booking:rdv.connexion_particulier_necessaire', "Connexion particulier nécessaire")}</CardTitle>
             <CardDescription>
-              Cette étape est réservée aux comptes particuliers (usagers).
+              {t('booking:rdv.cette_etape_est_reservee_aux', "Cette étape est réservée aux comptes particuliers (usagers).")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
@@ -603,13 +600,13 @@ export default function PublicRdvEntry({ view = 'landing' }) {
               to={appendNext('/auth/login', safeNext)}
               className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
             >
-              Se connecter
+              {t('booking:rdv.se_connecter', "Se connecter")}
             </Link>
             <Link
               to={appendNext('/auth/signup', safeNext)}
               className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
             >
-              Creer un compte
+              {t('booking:rdv.creer_un_compte', "Creer un compte")}
             </Link>
           </CardContent>
         </Card>
@@ -623,7 +620,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
     <div className="min-h-screen bg-slate-50 py-8">
       <SEO
         title={`Prise de RDV - ${structure.nom}`}
-        description="Parcours de rendez-vous en ligne"
+        description={t('booking:rdv.parcours_de_rendez_vous_en', "Parcours de rendez-vous en ligne")}
         path={safeNext}
         noindex={true}
       />
@@ -631,20 +628,20 @@ export default function PublicRdvEntry({ view = 'landing' }) {
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Prise de rendez-vous</h1>
+            <h1 className="text-2xl font-bold text-slate-900">{t('booking:rdv.prise_de_rendez_vous', "Prise de rendez-vous")}</h1>
             <p className="text-slate-600">{structure.nom}</p>
           </div>
           <Link
             to={structure.slug ? `/structures/${structure.slug}` : '/annuaire'}
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
           >
-            Retour à la fiche structure
+            {t('booking:rdv.retour_a_la_fiche_structure', "Retour à la fiche structure")}
           </Link>
         </div>
 
         <Card className="mb-6">
           <CardContent className="p-5">
-            <ol className="grid gap-3 md:grid-cols-3" aria-label="Progression du parcours rendez-vous">
+            <ol className="grid gap-3 md:grid-cols-3" aria-label={t('booking:rdv.progression_du_parcours_rendez_vous', "Progression du parcours rendez-vous")}>
               {steps.map((step) => {
                 const isCurrent = step.key === currentStep;
                 return (
@@ -671,15 +668,15 @@ export default function PublicRdvEntry({ view = 'landing' }) {
           <CardContent className="p-6 space-y-6">
             {currentStep === 'landing' && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-slate-900">Commencer votre demande</h2>
+                <h2 className="text-xl font-semibold text-slate-900">{t('booking:rdv.commencer_votre_demande', "Commencer votre demande")}</h2>
                 <p className="text-slate-700">
-                  Choisissez un service puis un creneau disponible pour obtenir une confirmation immediate.
+                  {t('booking:rdv.choisissez_un_service_puis_un', "Choisissez un service puis un creneau disponible pour obtenir une confirmation immediate.")}
                 </p>
                 <Link
                   to={`${basePath}/services${querySuffix}`}
                   className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
                 >
-                  Choisir un service
+                  {t('booking:rdv.choisir_un_service', "Choisir un service")}
                 </Link>
               </div>
             )}
@@ -687,33 +684,33 @@ export default function PublicRdvEntry({ view = 'landing' }) {
             {currentStep === 'services' && (
               <div className="space-y-4">
                 <fieldset className="space-y-2" data-testid="rdv-mode-choice">
-                  <legend className="text-xl font-semibold text-slate-900">Comment souhaitez-vous être reçu·e ?</legend>
+                  <legend className="text-xl font-semibold text-slate-900">{t('booking:rdv.comment_souhaitez_vous_etre_recu', "Comment souhaitez-vous être reçu·e ?")}</legend>
                   {servicesLoading ? null : offeredModes.length ? (
                     <div className="flex flex-wrap gap-3">
                       {offeredModes.map((/** @type {string} */ m) => (
                         <label key={m} className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 ${selectedMode === m ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-white'}`}>
                           <input type="radio" name="rdv-mode" value={m} data-testid={`rdv-mode-${m}`} checked={selectedMode === m} onChange={() => handleChooseMode(m)} />
-                          {m === 'VIDEO' ? 'À distance (visio)' : 'En présentiel'}
+                          {m === 'VIDEO' ? t('booking:rdv.a_distance_visio', "À distance (visio)") : t('booking:rdv.en_presentiel', "En présentiel")}
                         </label>
                       ))}
                     </div>
-                  ) : <p className="text-slate-600" data-testid="rdv-no-mode">Aucune modalité de rendez-vous n’est proposée en ligne pour le moment.</p>}
+                  ) : <p className="text-slate-600" data-testid="rdv-no-mode">{t('booking:rdv.aucune_modalite_de_rendez_vous', "Aucune modalité de rendez-vous n’est proposée en ligne pour le moment.")}</p>}
                   {videoAnnounced && videoNotice && !videoNotice.available ? (
-                    <p className="text-sm text-slate-700" data-testid="rdv-video-unavailable">Les rendez-vous en visio ne sont pas encore disponibles sur ce service : ils ne sont donc pas proposés.</p>
+                    <p className="text-sm text-slate-700" data-testid="rdv-video-unavailable">{t('booking:rdv.les_rendez_vous_en_visio', "Les rendez-vous en visio ne sont pas encore disponibles sur ce service : ils ne sont donc pas proposés.")}</p>
                   ) : null}
                   {selectedMode === 'VIDEO' && videoNotice?.sandbox ? (
-                    <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900" data-testid="rdv-video-sandbox">Environnement de test : la connexion au fournisseur de visio n’est pas vérifiée ici.</p>
+                    <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900" data-testid="rdv-video-sandbox">{t('booking:rdv.environnement_de_test_la_connexion', "Environnement de test : la connexion au fournisseur de visio n’est pas vérifiée ici.")}</p>
                   ) : null}
                   {selectedMode === 'IN_PERSON' && servicesPayload?.structure?.location ? (
-                    <p className="text-sm text-slate-700" data-testid="rdv-location">Lieu : {servicesPayload.structure.location.address}{servicesPayload.structure.location.verified ? '' : ' (adresse non encore vérifiée : confirmez-la auprès de la structure)'}{servicesPayload.structure.location.stepFreeAccess ? ' — accessible aux personnes à mobilité réduite' : ''}</p>
+                    <p className="text-sm text-slate-700" data-testid="rdv-location">{t('booking:rdv.lieu', "Lieu :")} {servicesPayload.structure.location.address}{servicesPayload.structure.location.verified ? '' : ' (adresse non encore vérifiée : confirmez-la auprès de la structure)'}{servicesPayload.structure.location.stepFreeAccess ? ' — accessible aux personnes à mobilité réduite' : ''}</p>
                   ) : null}
                 </fieldset>
 
-                <h2 className="text-xl font-semibold text-slate-900">Choix du service</h2>
+                <h2 className="text-xl font-semibold text-slate-900">{t('booking:rdv.choix_du_service', "Choix du service")}</h2>
 
                 {servicesLoading ? (
                   <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Chargement des services...
+                    <Loader2 className="h-4 w-4 animate-spin" /> {t('booking:rdv.chargement_des_services', "Chargement des services...")}
                   </div>
                 ) : services.length > 0 ? (
                   <ul className="space-y-2">
@@ -724,7 +721,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                               <p className="font-medium text-slate-900">{service.name}</p>
-                              <p className="text-sm text-slate-600">Duree: {service.durationMinutes || 30} min</p>
+                              <p className="text-sm text-slate-600">{t('booking:rdv.duree', "Duree:")} {t('booking:rdv.minutes', '{{minutes}} min', { minutes: service.durationMinutes || 30 })}</p>
                             </div>
                             <Button
                               type="button"
@@ -732,7 +729,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                               data-testid={`choose-service-${service.id}`}
                               onClick={() => handleChooseService(service.id)}
                             >
-                              {selected ? 'Selectionne' : 'Choisir ce service'}
+                              {selected ? t('booking:rdv.selectionne', "Selectionne") : t('booking:rdv.choisir_ce_service', "Choisir ce service")}
                             </Button>
                           </div>
                         </li>
@@ -740,7 +737,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                     })}
                   </ul>
                 ) : (
-                  <p className="text-slate-600" data-testid="rdv-no-service">{selectedMode ? 'Aucun service n’est proposé dans cette modalité.' : 'Choisissez d’abord comment vous souhaitez être reçu·e.'}</p>
+                  <p className="text-slate-600" data-testid="rdv-no-service">{selectedMode ? t('booking:rdv.aucun_service_n_est_propose', "Aucun service n’est proposé dans cette modalité.") : t('booking:rdv.choisissez_d_abord_comment_vous', "Choisissez d’abord comment vous souhaitez être reçu·e.")}</p>
                 )}
 
                 {servicesError ? (
@@ -751,21 +748,21 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                   to={`${basePath}/creneaux${querySuffix}`}
                   className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
                 >
-                  Voir les creneaux
+                  {t('booking:rdv.voir_les_creneaux', "Voir les creneaux")}
                 </Link>
               </div>
             )}
 
             {currentStep === 'creneaux' && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-slate-900">Choix du creneau</h2>
+                <h2 className="text-xl font-semibold text-slate-900">{t('booking:rdv.choix_du_creneau', "Choix du creneau")}</h2>
 
                 {!selectedServiceId ? (
                   <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                    Selectionnez d&apos;abord un service.
+                    {t('booking:rdv.selectionnez_d_abord_un_service', "Selectionnez d'abord un service.")}
                     <div className="mt-2">
                       <Link to={`${basePath}/services${querySuffix}`} className="underline">
-                        Retour aux services
+                        {t('booking:rdv.retour_aux_services', "Retour aux services")}
                       </Link>
                     </div>
                   </div>
@@ -773,7 +770,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                   <>
                     <div className="grid gap-3 md:grid-cols-3">
                       <label className="space-y-1 text-sm">
-                        <span className="text-slate-700">Du</span>
+                        <span className="text-slate-700">{t('booking:rdv.du', "Du")}</span>
                         <Input
                           type="date"
                           value={fromDate}
@@ -785,7 +782,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                       </label>
 
                       <label className="space-y-1 text-sm">
-                        <span className="text-slate-700">Au</span>
+                        <span className="text-slate-700">{t('booking:rdv.au', "Au")}</span>
                         <Input
                           type="date"
                           value={toDate}
@@ -798,29 +795,29 @@ export default function PublicRdvEntry({ view = 'landing' }) {
 
                       <div className="flex items-end">
                         <Button type="button" variant="outline" onClick={() => refetchSlots()}>
-                          Recharger les creneaux
+                          {t('booking:rdv.recharger_les_creneaux', "Recharger les creneaux")}
                         </Button>
                       </div>
                     </div>
 
                     {selectedService ? (
                       <p className="text-sm text-slate-600" data-testid="rdv-selected">
-                        Service selectionne: <strong>{selectedService.name}</strong> — <strong>{selectedMode === 'VIDEO' ? 'À distance (visio)' : selectedMode === 'IN_PERSON' ? 'En présentiel' : 'modalité à choisir'}</strong>
+                        {t('booking:rdv.service_selectionne', "Service selectionne:")} <strong>{selectedService.name}</strong> — <strong>{selectedMode === 'VIDEO' ? 'À distance (visio)' : selectedMode === 'IN_PERSON' ? 'En présentiel' : 'modalité à choisir'}</strong>
                       </p>
                     ) : null}
                     {!selectedMode ? (
-                      <p className="text-sm text-amber-900" data-testid="rdv-mode-missing">Choisissez d’abord la modalité (présentiel ou visio) à l’étape Service.</p>
+                      <p className="text-sm text-amber-900" data-testid="rdv-mode-missing">{t('booking:rdv.choisissez_d_abord_la_modalite', "Choisissez d’abord la modalité (présentiel ou visio) à l’étape Service.")}</p>
                     ) : null}
                     {selectedMode === 'VIDEO' ? (
                       <label className="flex items-start gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm" data-testid="rdv-video-consent-label">
                         <input type="checkbox" data-testid="rdv-video-consent" checked={videoConsent} onChange={(e) => setVideoConsent(e.target.checked)} />
-                        <span>J’accepte que ce rendez-vous se fasse en visio (caméra et micro, aucun enregistrement). L’accès se fera depuis Mes rendez-vous, après validation par la structure.</span>
+                        <span>{t('booking:rdv.j_accepte_que_ce_rendez', "J’accepte que ce rendez-vous se fasse en visio (caméra et micro, aucun enregistrement). L’accès se fera depuis Mes rendez-vous, après validation par la structure.")}</span>
                       </label>
                     ) : null}
 
                     {slotsLoading ? (
                       <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Loader2 className="h-4 w-4 animate-spin" /> Chargement des creneaux...
+                        <Loader2 className="h-4 w-4 animate-spin" /> {t('booking:rdv.chargement_des_creneaux', "Chargement des creneaux...")}
                       </div>
                     ) : null}
 
@@ -850,7 +847,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
 
                     {!slotsLoading && !slotsError && (!slotsPayload?.days || slotsPayload.days.length === 0) ? (
                       <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                        Aucun creneau disponible sur la periode selectionnee.
+                        {t('booking:rdv.aucun_creneau_disponible_sur_la', "Aucun creneau disponible sur la periode selectionnee.")}
                       </div>
                     ) : null}
 
@@ -875,25 +872,25 @@ export default function PublicRdvEntry({ view = 'landing' }) {
 
                 {appointmentLoading ? (
                   <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Chargement du rendez-vous...
+                    <Loader2 className="h-4 w-4 animate-spin" /> {t('booking:rdv.chargement_du_rendez_vous', "Chargement du rendez-vous...")}
                   </div>
                 ) : null}
 
                 {appointmentError ? (
                   <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-                    {getErrorMessage(appointmentError, 'Impossible de charger le rendez-vous.')}
+                    {getErrorMessage(appointmentError, t('booking:rdv.impossible_de_charger_le_rendez', "Impossible de charger le rendez-vous."))}
                   </div>
                 ) : null}
 
                 {appointment ? (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4 space-y-3" data-testid="rdv-booking-confirmation">
-                    <h3 className="font-semibold text-emerald-900">RDV confirme</h3>
+                    <h3 className="font-semibold text-emerald-900">{t('booking:rdv.rdv_confirme', "RDV confirme")}</h3>
                     <p className="text-sm text-emerald-900">
                       {appointment.service?.name || 'Service'} - {formatDateTime(appointment.startsAt)}
                     </p>
-                    <p className="text-xs text-emerald-900">Statut: {appointment.status}</p>
-                    <p className="text-sm text-emerald-900" data-testid="rdv-confirmation-mode">{appointment.mode === 'VIDEO' ? 'À distance (visio) : l’accès sécurisé se fera depuis Mes rendez-vous, 15 minutes avant, après validation par la structure. Aucun lien n’est envoyé par e-mail.' : `En présentiel${appointment.location ? ` — ${appointment.location.address}${appointment.location.verified ? '' : ' (adresse non encore vérifiée : confirmez-la auprès de la structure)'}` : ''}`}</p>
-                    <Link to="/compte/rendez-vous" className="text-sm text-emerald-900 underline" data-testid="rdv-to-my-appointments">Voir mes rendez-vous</Link>
+                    <p className="text-xs text-emerald-900">{t('booking:rdv.statut', "Statut:")} {appointment.status}</p>
+                    <p className="text-sm text-emerald-900" data-testid="rdv-confirmation-mode">{appointment.mode === 'VIDEO' ? t('booking:rdv.a_distance_visio_l_acces', "À distance (visio) : l’accès sécurisé se fera depuis Mes rendez-vous, 15 minutes avant, après validation par la structure. Aucun lien n’est envoyé par e-mail.") : `${t('booking:rdv.en_presentiel', 'En présentiel')}${appointment.location ? ` — ${appointment.location.address}${appointment.location.verified ? '' : t('booking:rdv.adresse_non_encore_verifiee_confirmez', " (adresse non encore vérifiée : confirmez-la auprès de la structure)")}` : ''}`}</p>
+                    <Link to="/compte/rendez-vous" className="text-sm text-emerald-900 underline" data-testid="rdv-to-my-appointments">{t('booking:rdv.voir_mes_rendez_vous', "Voir mes rendez-vous")}</Link>
 
                     {appointment.status !== 'CANCELLED' ? (
                       <div className="flex flex-wrap gap-2">
@@ -904,7 +901,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                           onClick={handleOpenConversation}
                         >
                           {openConversationBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                          Ecrire un message
+                          {t('booking:rdv.ecrire_un_message', "Ecrire un message")}
                         </Button>
                         <Button
                           type="button"
@@ -913,11 +910,11 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                           onClick={handleCancelAppointment}
                         >
                           {cancelBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}
-                          Annuler mon RDV
+                          {t('booking:rdv.annuler_mon_rdv', "Annuler mon RDV")}
                         </Button>
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-700">Ce rendez-vous est annule.</p>
+                      <p className="text-sm text-slate-700">{t('booking:rdv.ce_rendez_vous_est_annule', "Ce rendez-vous est annule.")}</p>
                     )}
                   </div>
                 ) : null}
@@ -925,7 +922,7 @@ export default function PublicRdvEntry({ view = 'landing' }) {
             )}
 
             <p className="text-xs text-slate-500">
-              Ces informations sont fournies a titre indicatif. La confirmation finale depend de la disponibilite du creneau au moment de la validation.
+              {t('booking:rdv.ces_informations_sont_fournies_a', "Ces informations sont fournies a titre indicatif. La confirmation finale depend de la disponibilite du creneau au moment de la validation.")}
             </p>
           </CardContent>
         </Card>

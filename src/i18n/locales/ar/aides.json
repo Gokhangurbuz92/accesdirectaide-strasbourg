@@ -106,5 +106,14 @@
  "sort.recent": "الأحدث",
  "sort.relevance": "الصلة",
  "sort.relevance_needs_query": "الصلة (تتطلب بحثًا)",
- "territory.national": "كل فرنسا"
+ "territory.national": "كل فرنسا",
+ "legacy.ouverture_de_la_fiche": "جارٍ فتح الصفحة…",
+ "legacy.recherche_de_la_fiche_demandee": "جارٍ البحث عن الصفحة المطلوبة.",
+ "legacy.aide_introuvable_lien_incomplet": "لم يُعثر على المساعدة: رابط غير مكتمل",
+ "legacy.cette_adresse_ne_precise_pas": "لا يحدد هذا العنوان المساعدة التي يجب عرضها.",
+ "legacy.aide_introuvable": "لم يُعثر على المساعدة",
+ "legacy.aucune_aide_publiee_ne_correspond": "لا توجد مساعدة منشورة تطابق هذا الرابط: ربما أُزيلت، أو أن الرابط غير مكتمل.",
+ "legacy.fiche_momentanement_indisponible": "الصفحة غير متاحة مؤقتًا",
+ "legacy.la_fiche_n_a_pas": "تعذّر تحميل الصفحة. هذا لا يعني غياب المساعدة: أعد المحاولة بعد لحظة.",
+ "legacy.voir_toutes_les_aides": "عرض جميع المساعدات"
 }

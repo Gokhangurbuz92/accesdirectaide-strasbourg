@@ -2,5 +2,12 @@
  "language.label": "Sprache",
  "suggestion.text": "Diese Website gibt es auch auf {{language}}.",
  "suggestion.switch": "Zu {{language}} wechseln",
- "suggestion.stay": "Auf Französisch bleiben"
+ "suggestion.stay": "Auf Französisch bleiben",
+ "unavailable.title": "{{area}} ist vorübergehend nicht verfügbar",
+ "unavailable.default_area": "Dieser Dienst",
+ "unavailable.text": "Der Server hat nicht geantwortet. Ihre Sitzung bleibt erhalten: Versuchen Sie es gleich noch einmal.",
+ "unavailable.retry": "Erneut versuchen",
+ "route_error.title": "Diese Seite konnte nicht geladen werden",
+ "route_error.text": "Beim Laden ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu.",
+ "route_error.reload": "Neu laden"
 }

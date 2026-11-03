@@ -116,5 +116,11 @@
  "account.proAccount.text": "مرافقة المستفيدين",
  "footer.needs": "البحث عن المساعدة حسب الحاجة",
  "footer.emergency": "في حالة الطوارئ أو الخطر",
- "footer.emergency.all": "جميع أرقام الطوارئ"
+ "footer.emergency.all": "جميع أرقام الطوارئ",
+ "hide_screen.hidden_label": "الشاشة مخفية. انقر في أي مكان لإظهار الشاشة.",
+ "hide_screen.hidden_title": "تم إخفاء الشاشة للأمان",
+ "hide_screen.hidden_text": "انقر في أي مكان على الشاشة لمتابعة نشاطك.",
+ "hide_screen.label": "إخفاء الشاشة فورًا (أو اضغط على Esc ثلاث مرات)",
+ "hide_screen.title": "إخفاء الشاشة فورًا (Esc ثلاث مرات)",
+ "hide_screen.button": "إخفاء الشاشة"
 }
