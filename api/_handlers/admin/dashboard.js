@@ -22,6 +22,8 @@ export default async function handler(/** @type {import('../../_utils/http-types
   if (!(await verifyAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+  // R40: the recent error log entries can hold personal data — shown to an MFA session only (the counts and health stay readable)
+  const withLogs = await verifyAdmin(req, { personalData: true });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -32,7 +34,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
       getDataCounts(),
       getAiMetrics24h(),
       getCronStatus(),
-      getRecentErrors(),
+      withLogs ? getRecentErrors() : Promise.resolve([]),
     ]);
 
     clearTimeout(timeout);
@@ -46,10 +48,12 @@ export default async function handler(/** @type {import('../../_utils/http-types
       ai,
       crons,
       recentErrors,
+      ...(withLogs ? {} : { recentErrorsWithheld: 'ADMIN_MFA_REQUIRED' }),
     });
   } catch (err) {
     clearTimeout(timeout);
-    return res.status(500).json({ error: 'Dashboard failed', detail: err.message });
+    void err;   // R40: no internal error text in the answer
+    return res.status(500).json({ error: 'Dashboard failed' });
   }
 }
 

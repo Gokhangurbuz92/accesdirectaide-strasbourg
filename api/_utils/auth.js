@@ -483,18 +483,22 @@ export async function resolveAuthContext(/** @type {unknown} */ req) {
 
 /**
 * @param {unknown} req
+* @param {{ personalData?: boolean }} [opts] personalData (R40): the read returns personal data (conversation logs, application logs, administrator sessions),
+*   so it needs a named administrator session that passed MFA, like a write — the retired shared token only inside the frozen test suites
 */
-export async function verifyAdmin(req) {
+export async function verifyAdmin(req, opts = {}) {
   // PKG-5 / A01 A16: an ADMIN session (named administrator, admin_jwt) — never a professional token, even one claiming SUPERADMIN (separate security model);
   // and any state-changing request needs that session's MFA. (The retired legacy token is only accepted where legacyAdminTokenAllowed().)
   const auth = await resolveAuthContext(req);
   if (!auth || !isAdminRole(auth.role)) return false;
+  // R40: the resolved administrator is kept on the request (audit rows name who read or exported), unless a wrapper already set it
+  if (req && typeof req === 'object' && !(/** @type {any} */ (req).auth)) /** @type {any} */ (req).auth = auth;
   const method = String(/** @type {any} */ (req)?.method || 'GET').toUpperCase();
   const reading = ['GET', 'HEAD', 'OPTIONS'].includes(method);
   // R12 (A01): outside the frozen test suites the legacy token (a shared secret, no MFA) may only READ — the non-production opt-in never writes
-  if (auth.authType === 'admin_token') return reading || process.env.NODE_ENV === 'test';
+  if (auth.authType === 'admin_token') return (reading && opts.personalData !== true) || process.env.NODE_ENV === 'test';
   if (auth.authType !== 'admin_jwt') return false;
-  return reading || auth.mfa_verified === true;
+  return (reading && opts.personalData !== true) || auth.mfa_verified === true;
 }
 
 /**

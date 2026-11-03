@@ -6,6 +6,7 @@ import { ConversationLog } from '../../../src/db/schema.js';
 import { eq, desc, and, isNotNull, count } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
 import { parsePaginationParams, buildPaginatedResponse } from '../../lib/geography/CursorPagination.js';
+import { auditAdminExport, csvCell, refuseWithoutAdminMfa } from '../../_utils/admin-personal-data.js';
 
 /**
  * GET /api/admin/conversations
@@ -30,6 +31,11 @@ export default async function handler(req, res) {
 
     if (!(await verifyAdmin(req))) {
         return res.status(401).json({ error: 'Unauthorized: Admin Token Required' });
+    }
+
+    // R40: the exchanges are personal data — a password-only (read-only) administrator session does not read or export them
+    if (!(await verifyAdmin(req, { personalData: true }))) {
+        return refuseWithoutAdminMfa(res);
     }
 
     try {
@@ -57,14 +63,15 @@ export default async function handler(req, res) {
                 limit: limit + (format === 'csv' ? 0 : 1), // fetch extra for cursor
             });
 
+            // R40: the export is audited before it is sent (fail-closed), and every free-text cell is neutralised against spreadsheet formulas
+            if (!(await auditAdminExport(req, 'conversations', { format: 'csv', mode: mode || 'all', rating: ratingParam || null, rows: logs.length }))) {
+                return res.status(503).json({ success: false, error: 'EXPORT_AUDIT_UNAVAILABLE', message: 'L’export est momentanément indisponible.' });
+            }
             const BOM = '\uFEFF'; // UTF-8 BOM for Excel
             const header = 'Date,Message,Intent,Mode,Sources,Rating,Comment\n';
             const rows = logs.map(log => {
                 const date = new Date(log.createdAt).toISOString();
-                const msg = `"${(log.message || '').replace(/"/g, '""')}"`;
-                const intent = log.intent || '';
-                const comment = `"${(log.userComment || '').replace(/"/g, '""')}"`;
-                return `${date},${msg},${intent},${log.searchMode},${log.sourceCount},${log.rating || ''},${comment}`;
+                return [date, csvCell(log.message || ''), csvCell(log.intent || ''), csvCell(log.searchMode), csvCell(log.sourceCount), csvCell(log.rating || ''), csvCell(log.userComment || '')].join(',');
             }).join('\n');
 
             const csv = BOM + header + rows;
