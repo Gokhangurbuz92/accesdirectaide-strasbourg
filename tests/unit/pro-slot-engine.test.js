@@ -66,4 +66,22 @@ describe('pro slot engine', () => {
 
     expect(slots).toEqual([]);
   });
+  it('R39: overlapping rules of one day offer each start once, in time order', () => {
+    const slots = generateSlots({
+      rules: [
+        { weekday: 1, startTime: '10:00', endTime: '12:00', isActive: true },
+        { weekday: 1, startTime: '09:00', endTime: '11:00', isActive: true },
+      ],
+      from: new Date('2026-03-02T00:00:00.000Z'),
+      to: new Date('2026-03-02T23:59:59.000Z'),
+      durationMinutes: 60,
+      busyWindows: [],
+    });
+
+    expect(slots.map((s) => s.startAt)).toEqual([
+      '2026-03-02T09:00:00.000Z',
+      '2026-03-02T10:00:00.000Z',
+      '2026-03-02T11:00:00.000Z',
+    ]);
+  });
 });

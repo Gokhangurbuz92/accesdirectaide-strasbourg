@@ -264,8 +264,10 @@ export function generateSlots(options) {
   if (options.to < options.from) return [];
 
   const slots = [];
+  const seen = new Set();   // overlapping rules of one day (e.g. 09:00–16:00 and 09:00–12:00) must not offer the same start twice
   const from = options.from;
   const to = options.to;
+  const byStart = (/** @type {{ startAt: string }} */ a, /** @type {{ startAt: string }} */ b) => a.startAt.localeCompare(b.startAt);
 
   for (
     let day = toUtcDayStart(from);
@@ -297,13 +299,15 @@ export function generateSlots(options) {
           overlaps(candidateBusyStart, candidateBusyEnd, window.start, window.end),
         );
 
-        if (!hasCollision) {
+        const startAt = slotStart.toISOString();
+        if (!hasCollision && !seen.has(startAt)) {
+          seen.add(startAt);
           slots.push({
-            startAt: slotStart.toISOString(),
+            startAt,
             endAt: slotEnd.toISOString(),
           });
           if (slots.length >= maxSlots) {
-            return slots;
+            return slots.sort(byStart);
           }
         }
 
@@ -312,7 +316,7 @@ export function generateSlots(options) {
     }
   }
 
-  return slots;
+  return slots.sort(byStart);
 }
 
 /**
