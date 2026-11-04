@@ -96,7 +96,7 @@ async function handler(req, res) {
   try {
     await notifyConversationMessage({
       conversationId: convId, messageId: message.id, recipientType: 'USER',
-      recipientEmail: citizen?.email || null,
+      recipientEmail: citizen?.email || null, recipientUserId: appointment.citizenUserId || null,   // R43-MAIL: their e-mail language
       // PKG-11 audit: the single consent question (preference, ledger, restriction of processing) — the bare flag ignored an art. 18 restriction
       recipientEnabled: Boolean(citizen?.emailVerifiedAt && appointment.citizenUserId && await canNotify(appointment.citizenUserId, 'email', 'service').catch(() => false)),
       structureName: appointment.structure?.nom || 'Acces Direct Aide', appointmentStartAt: appointment.startAt || null,

@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { localizedMail } from '../_utils/mail-catalogue.js';
+import { citizenMailLanguage } from '../_services/mail-language.js';
 import crypto from 'node:crypto';
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
@@ -609,10 +611,12 @@ async function sendAppointmentConfirmationEmail(input) {
     "Si vous n'etes pas a l'origine de cette demande, ignorez cet email.",
   ].join('\n');
 
+  // R42: neutral subject (the structure / service can reveal a sensitive context: body only); R43-MAIL: in the person's stored language
+  const mail = localizedMail('appointment_confirmation', await citizenMailLanguage(input.appointment?.citizenUserId), text);
   return sendMail({
     to: input.toEmail,
-    subject: 'Confirmation de votre rendez-vous - Accès Direct Aide',   // R42: neutral subject (the structure / service can reveal a sensitive context: body only)
-    text,
+    subject: mail.subject,
+    text: mail.text,
     category: 'appointment_confirmation',
     attachments: [calendar],
   });
@@ -1767,7 +1771,7 @@ async function rescheduleAppointment(req, res) {
   // PKG-3 / B05: the person gets the new time with an UPDATED calendar event (same UID, higher SEQUENCE); the structure is told (old and new time, nothing else)
   const before = formatParis(appointment.startAt); const after = formatParis(moved.startAt);
   const noticed = await noticeCitizen(moved, 'RESCHEDULED', backToRequest ? {
-    subject: 'Votre demande de déplacement de rendez-vous - Accès Direct Aide',
+    subject: 'Votre demande de déplacement de rendez-vous - Accès Direct Aide', mailKind: 'appointment_request',   // R43-MAIL: a request again
     text: `Votre demande de déplacement du rendez-vous avec ${structure.nom} (${service.name}) est envoyée :\nancien créneau : ${before}\nnouveau créneau demandé : ${after} (Europe/Paris)\n\nLe nouveau créneau n’est pas encore confirmé : la structure doit l’accepter.\n\nSuivre ma demande : ${buildAppUrl('/compte/rendez-vous')}`,
   } : {
     subject: 'Votre rendez-vous est déplacé - Accès Direct Aide',

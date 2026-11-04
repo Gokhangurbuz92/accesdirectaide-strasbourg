@@ -1,4 +1,5 @@
 import logger from '../../_utils/logger.js';
+import { mailText } from '../../_utils/mail-catalogue.js';   // R43-MAIL: the invited person has no account (no stored language): French
 import { db } from '../../../src/db/index.js';
 import { Invitation } from '../../../src/db/schema.js';
 import { eq, and, isNull } from 'drizzle-orm';
@@ -54,7 +55,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             expires_at: newExpiry,
         }).where(eq(Invitation.id, invitationId));
 
-        const mail = await sendMail({ to: invitation.email, subject: 'Invitation à rejoindre une équipe sur Accès Direct Aide', category: 'pro-invitation',
+        const mail = await sendMail({ to: invitation.email, subject: mailText('pro_invitation', 'fr').subject, category: 'pro-invitation',
             text: `Voici un nouveau lien pour rejoindre votre équipe sur Accès Direct Aide (valable 7 jours, utilisable une fois ; l’ancien lien ne fonctionne plus) : ${buildAppUrl(`/pro/register-invite?token=${encodeURIComponent(newToken)}`)}` }).catch(() => ({ accepted: false }));
         logger.info({ accepted: Boolean(mail?.accepted) }, '[ResendInvite] invitation e-mail handed to the mailer');
 

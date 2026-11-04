@@ -214,6 +214,7 @@ async function sendMessage(req, res, proCtx, conversationId) {
       messageId: created.message.id,
       recipientType: 'USER',
       recipientEmail: created.conversation.citizenUser?.email || null,
+      recipientUserId: created.conversation.citizenUser?.id || null,   // R43-MAIL: their e-mail language
       // PKG-11 audit: the single consent question (preference, ledger, restriction of processing)
       recipientEnabled: Boolean(created.conversation.citizenUser?.emailVerifiedAt && created.conversation.citizenUser?.id
         && await canNotify(created.conversation.citizenUser.id, 'email', 'service').catch(() => false)),

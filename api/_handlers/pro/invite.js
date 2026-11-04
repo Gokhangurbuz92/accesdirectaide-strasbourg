@@ -1,4 +1,5 @@
 import logger from '../../_utils/logger.js';
+import { mailText } from '../../_utils/mail-catalogue.js';   // R43-MAIL: the invited person has no account (no stored language): French
 import { db } from '../../../src/db/index.js';
 import { ProUser, Invitation } from '../../../src/db/schema.js';
 import { eq, and, isNull, sql } from 'drizzle-orm';
@@ -93,7 +94,7 @@ async function handler(req, res) {
         }).returning();
 
         // the link travels by the configured mailer only (LAB: in-memory test provider; production provider = owner activation). The token is never logged.
-        const mail = await sendMail({ to: email, subject: 'Invitation à rejoindre une équipe sur Accès Direct Aide', category: 'pro-invitation',
+        const mail = await sendMail({ to: email, subject: mailText('pro_invitation', 'fr').subject, category: 'pro-invitation',
             text: `Vous êtes invité·e à rejoindre une équipe sur Accès Direct Aide.\nCréez votre accès (lien valable 7 jours, utilisable une fois) : ${buildAppUrl(`/pro/register-invite?token=${encodeURIComponent(token)}`)}\n\nSi vous n’attendiez pas cette invitation, ignorez ce message.` }).catch(() => ({ accepted: false }));
         logger.info({ accepted: Boolean(mail?.accepted) }, '[Invite] invitation e-mail handed to the mailer');
 

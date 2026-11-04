@@ -17,6 +17,21 @@ import { buildAppointmentIcs, calendarContentType } from '../_utils/ics.js';
 import { canNotify as defaultCanNotify } from './citizen-account.js';
 import logger from '../_utils/logger.js';
 import { guestNoticeDecision } from '../_utils/rdv-guest-core.js';
+import { NOTICE_MAIL_KINDS, localizedMail } from '../_utils/mail-catalogue.js';
+import { citizenMailLanguage } from './mail-language.js';
+
+/**
+ * R43-MAIL — the subject and opening of a citizen notice in the reader's language (stored preference, French otherwise), from the catalogue: neutral,
+ * never the caller's subject (which could name a structure or a date). `message.mailKind` overrides the kind's default (a reschedule that is a request
+ * again reads as a request). A kind without a catalogue entry (GUEST_CODE) keeps its message as given.
+ * @param {string} kind @param {{ subject: string, text: string, mailKind?: string }} message @param {string} lang
+ */
+export function localizeNotice(kind, message, lang) {
+  const mailKind = message.mailKind || NOTICE_MAIL_KINDS[kind];
+  if (!mailKind) return { subject: message.subject, text: message.text };
+  const out = localizedMail(mailKind, lang, message.text);
+  return { subject: out.subject, text: out.text };
+}
 import { NOTICE_KINDS_0045, noticeLedgerKinds } from '../_utils/schema-features.js';
 
 export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE',   // R38: the two account-free kinds
@@ -89,7 +104,8 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         if (!(await canNotify(appointment.citizenUserId, 'email', category).catch(() => false))) status = 'NO_CONSENT';
         else {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, u.email)] : [])];
-          const out = await sendMail({ to: u.email, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
+          const { subject, text } = localizeNotice(kind, message, deps.lang || await citizenMailLanguage(appointment.citizenUserId, db));
+          const out = await sendMail({ to: u.email, subject, text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
         }
       }
@@ -103,7 +119,9 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         const to = isV1Text(appointment.guestEmail) ? decrypt(appointment.guestEmail) : null;
         if (to) {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, to)] : [])];
-          const out = await sendMail({ to, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
+          // an account-free booking has no stored language: French (R43-MAIL)
+          const { subject, text } = localizeNotice(kind, message, deps.lang || 'fr');
+          const out = await sendMail({ to, subject, text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);
         }
       }
