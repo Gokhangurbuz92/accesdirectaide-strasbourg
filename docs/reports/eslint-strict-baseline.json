@@ -1,9 +1,8 @@
 {
-  "generatedAt": "2026-10-25T15:38:17.487Z",
+  "generatedAt": "2026-11-04T12:10:08.163Z",
   "config": "eslint.strict.config.js",
-  "total": 406,
+  "total": 187,
   "byRule": {
-    "no-unused-vars": 404,
-    "no-useless-escape": 2
+    "no-unused-vars": 187
   }
 }
