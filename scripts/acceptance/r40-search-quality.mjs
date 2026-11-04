@@ -240,7 +240,9 @@ export const CASES = [
   { id: 'ob-6', lang: 'fr', cat: 'official-names', q: 'ARCE', a: ['aide-a-la-reprise-ou-a-la-creation-d-entreprise-arce-083c97'] },
   { id: 'ob-7', lang: 'fr', cat: 'official-names', q: 'DAHO', g: ['F20343'] },
   { id: 'ob-8', lang: 'fr', cat: 'official-names', q: "MaPrimeAdapt'", g: ['F37501'] },
-  { id: 'ob-9', lang: 'fr', cat: 'official-names', q: 'FAJ jeunes Strasbourg', a: ['faj-strasbourg'] },
+  // R42 DEC-R42-05: the faj-strasbourg record is on a publication hold (copied text); until a verified rewrite is published the query must
+  // never show it and must still lead to a real local pathway for young people (the Mission locale place).
+  { id: 'ob-9', lang: 'fr', cat: 'official-names', q: 'FAJ jeunes Strasbourg', s: ['Mission locale (jeunes de 16 à 25 ans)'], notA: ['faj-strasbourg'] },
   // ---------------------------------------------------------------- everyday phrasing and controls
   { id: 'ev-1', lang: 'fr', cat: 'everyday', q: 'avocat gratuit', a: ['aide-juridictionnelle'] },
   { id: 'ev-2', lang: 'fr', cat: 'everyday', q: 'j’ai plus de sous pour manger', note: 'food aid: no aide in the catalogue — no crisis signal' },

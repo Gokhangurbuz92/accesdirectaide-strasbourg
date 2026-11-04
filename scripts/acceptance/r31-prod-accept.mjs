@@ -12,9 +12,14 @@ const slugs = {
   aide: first(await j('aides?limit=1')), demarche: first(await j('demarches?limit=1')), structure: first(await j('structures?limit=1')),
   actualite: first(await j('actualites?limit=1')), guide: first(await j('guides?limit=1')), dispositif: first(await j('dispositifs?limit=1')),
 };
+// R42: a list with no published record (e.g. dispositifs after the DEC-R42-05 publication hold) has no detail page to open: the route is
+// reported as skipped instead of requesting « /<list>/undefined ».
+const SKIPPED = [];
+/** @param {string} base @param {keyof typeof slugs} kind */
+const detail = (base, kind) => { if (slugs[kind]) return [`/${base}/${slugs[kind]}`]; SKIPPED.push(`/${base}/<none published>`); return []; };
 const ROUTES = [
-  '/', '/aides', `/aides/${slugs.aide}`, '/aides/theme/logement', '/demarches', `/demarches/${slugs.demarche}`, '/structures', `/structures/${slugs.structure}`,
-  '/dispositifs', `/dispositifs/${slugs.dispositif}`, '/actualites', `/actualites/${slugs.actualite}`, '/bonnes-pratiques', `/bonnes-pratiques/${slugs.guide}`,
+  '/', '/aides', ...detail('aides', 'aide'), '/aides/theme/logement', '/demarches', ...detail('demarches', 'demarche'), '/structures', ...detail('structures', 'structure'),
+  '/dispositifs', ...detail('dispositifs', 'dispositif'), '/actualites', ...detail('actualites', 'actualite'), '/bonnes-pratiques', ...detail('bonnes-pratiques', 'guide'),
   '/outils', '/ressources', '/glossaire', '/recherche?q=logement%20social', '/categories/logement', '/trouver-aide', '/territoire',
   '/notre-mission', '/notre-methode', '/sources', '/a-propos', '/impact', '/partenaires', '/status', '/accessibilite', '/securite-et-rgpd',
   '/mentions-legales', '/confidentialite', '/cookies', '/cgu', '/contact',
@@ -62,5 +67,5 @@ for (const [label, viewport] of [['desktop', { width: 1280, height: 900 }], ['ph
 }
 await browser.close();
 const issues = results.filter((r) => r.problems.length);
-console.log(`R31_PROD_ACCEPT ${JSON.stringify({ base: BASE, pages: results.length, ok: results.length - issues.length, issues: issues.length, slugs })}`);
+console.log(`R31_PROD_ACCEPT ${JSON.stringify({ base: BASE, pages: results.length, ok: results.length - issues.length, issues: issues.length, skipped: SKIPPED, slugs })}`);
 fs.writeFileSync(OUT, JSON.stringify({ base: BASE, ranAt: new Date().toISOString(), slugs, results }, null, 2));
