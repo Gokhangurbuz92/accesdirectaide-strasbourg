@@ -26,7 +26,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const mailNeeded = needs(['accounts', 'pro', 'institution', 'communications', 'appointments']);
   const beta = betaOn;
   const notUsed = (/** @type {string} */ what) => `not used: restricted public beta (${what} refused server-side)`;
-  const mail = evaluateMailerConfig({ provider: get('MAILER_PROVIDER'), from: get('MAILER_FROM'), apiKey: get('MAILER_API_KEY'),
+  const mail = evaluateMailerConfig({ provider: get('MAILER_PROVIDER'), from: get('MAILER_FROM'), apiKey: get('MAILER_API_KEY'), mailjetSandbox: get('MAILER_MAILJET_SANDBOX'),   // R43-MAIL: a sandbox delivers nothing
     msgraph: { tenantId: get('MAILER_MSGRAPH_TENANT_ID'), clientId: get('MAILER_MSGRAPH_CLIENT_ID'), sender: get('MAILER_MSGRAPH_SENDER'), certPrivateKey: get('MAILER_MSGRAPH_CERT_PRIVATE_KEY'), certPem: get('MAILER_MSGRAPH_CERT_PEM'), clientSecret: get('MAILER_MSGRAPH_CLIENT_SECRET') } });   // R42-MAIL
   if (!mailNeeded) add('mail.deliverable', 'PASS', notUsed('accounts, password resets and notifications'));
   else add('mail.deliverable', mail.deliverable ? 'PASS' : 'FAIL', `${mail.provider}: ${mail.reason}`);

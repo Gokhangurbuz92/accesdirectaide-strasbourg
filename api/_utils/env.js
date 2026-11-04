@@ -292,6 +292,22 @@ export const env = {
     get apiKey() {
       return getEnv('MAILER_API_KEY');
     },
+    // R43-MAIL: Mailjet SandboxMode (validate, deliver nothing), the Reply-To of every message, the delivery-event webhook (flag + basic-auth pair)
+    get mailjetSandbox() {
+      return getEnv('MAILER_MAILJET_SANDBOX');
+    },
+    get replyTo() {
+      return getEnv('MAILER_REPLY_TO');
+    },
+    get eventsEnabled() {
+      return ['1', 'true'].includes(String(getEnv('MAILER_EVENTS_ENABLED') || '').trim().toLowerCase());
+    },
+    get eventsBasicUser() {
+      return getEnv('MAILER_EVENTS_BASIC_USER');
+    },
+    get eventsBasicPassword() {
+      return getEnv('MAILER_EVENTS_BASIC_PASSWORD');
+    },
     // R42-MAIL: Microsoft Graph sendMail (MAILER_PROVIDER=msgraph) — app registration of the tenant, the one mailbox it may send as, its credential
     get msgraph() {
       return {
