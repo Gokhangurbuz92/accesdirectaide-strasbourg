@@ -22,6 +22,7 @@ import { encrypt } from '../lib/crypto.js';
 import { bookingAgeRefusal } from '../_utils/booking-age.js';
 import { bookingMessageRefusal, validateBookingMessage } from '../_utils/rdv-message.js';
 import { confirmationModeFor, readBookingConfig } from '../_services/rdv-booking-config.js';
+import { contentMode } from '../lib/publicVisibility.js';   // R42-CDGG: a synthetic fixture is bookable in LAB mode only
 
 export const MAX_RANGE_DAYS = 14;
 export const MAX_BOOKING_AHEAD_DAYS = 60;
@@ -332,6 +333,7 @@ export async function loadStructureBySlug(slug) {
       ville: true,
       accessibilite_pmr: true,
       verification_status: true,
+      data_origin: true,
     },
     with: {
       rdvSettings: {
@@ -345,6 +347,9 @@ export async function loadStructureBySlug(slug) {
   });
 
   if (!structure) return null;
+  // R42-CDGG (DEC-R42-03): a synthetic fixture (the fictional LAB pilot « CDGG Conseil ») exists for LAB mode only: outside it (strict mode, always in
+  // Production) it is not a structure of the booking either — the same answer as an unknown slug, on every booking route
+  if (structure.data_origin === 'synthetic_fixture' && contentMode() !== 'lab') return null;
 
   // rdvSettings is a `many` relation → array in Drizzle
   const settings = Array.isArray(structure.rdvSettings) ? structure.rdvSettings[0] : structure.rdvSettings;
@@ -365,7 +370,7 @@ export async function loadStructureBySlug(slug) {
     allowGuestBooking: Boolean(settings?.allowGuestBooking),
     location: locationOf(structure),
     // raw address fields, so appointment payloads composed in this request carry the same location as reloaded ones
-    adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status,
+    adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status, data_origin: structure.data_origin,
   };
 }
 
@@ -640,7 +645,7 @@ export async function loadAppointmentWithRelations(appointmentId, where = {}) {
       where: (a, { eq }) => eq(a.id, appointmentId),
       with: {
         service: { columns: { id: true, name: true, durationMinutes: true } },
-        structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true } },
+        structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
       },
     });
   }
@@ -650,7 +655,7 @@ export async function loadAppointmentWithRelations(appointmentId, where = {}) {
       where: (a, { eq, and }) => and(eq(a.citizenUserId, where.citizenUserId), eq(a.idempotencyKey, where.idempotencyKey)),
       with: {
         service: { columns: { id: true, name: true, durationMinutes: true } },
-        structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true } },
+        structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
       },
     });
   }
@@ -1266,7 +1271,7 @@ export async function bookTeamSlot({ structure, service, startAt, endAt, replay,
 export function withLoadedRelations(row, structure, service) {
   return {
     ...row,
-    structure: { id: structure.id, slug: structure.slug, nom: structure.nom, adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status },
+    structure: { id: structure.id, slug: structure.slug, nom: structure.nom, adresse: structure.adresse, code_postal: structure.code_postal, ville: structure.ville, accessibilite_pmr: structure.accessibilite_pmr, verification_status: structure.verification_status, data_origin: structure.data_origin },
     service: { id: service.id, name: service.name, durationMinutes: service.durationMinutes },
   };
 }
@@ -1539,7 +1544,7 @@ async function listMyAppointments(req, res) {
     limit: 50,
     with: {
       service: { columns: { id: true, name: true, durationMinutes: true } },
-      structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true } },
+      structure: { columns: { id: true, slug: true, nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
     },
   });
   const now = Date.now();

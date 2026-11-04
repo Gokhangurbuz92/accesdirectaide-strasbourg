@@ -22,7 +22,7 @@ async function handler(req, res) {
     where: and(eq(ProAppointment.structureId, proCtx.structureId), gte(ProAppointment.startAt, from), lte(ProAppointment.startAt, to)),
     orderBy: (pa, { asc }) => [asc(pa.startAt)], limit: 500,
     columns: { id: true, startAt: true, endAt: true, status: true, mode: true, rescheduleCount: true },
-    with: { service: { columns: { name: true } }, structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true } } },
+    with: { service: { columns: { name: true } }, structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } } },
   });
   // R12 (B10): a cancelled event carries the SAME sequence as the cancellation e-mail (one above the last move) — at the old sequence calendars ignore it
   const ics = buildCalendarIcs(rows.map((a) => ({ appointmentId: a.id, startAt: a.startAt, endAt: a.endAt, serviceName: a.service?.name, structureName: a.structure?.nom,
