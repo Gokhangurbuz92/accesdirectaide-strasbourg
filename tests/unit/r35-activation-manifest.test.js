@@ -17,7 +17,7 @@ function fullEnv() {
   const env = {};
   for (const [n, m] of Object.entries(manifest.variables)) {
     if (['forbidden', 'forbidden_warn', 'forbidden_value', 'dead', 'alias', 'lab'].includes(m.class)) continue;
-    env[n] = m.format === '^[0-9a-fA-F]{64}$' ? 'a'.repeat(64) : m.format?.startsWith('^https') ? `https://x.example/${SECRET}` : m.format === '^true$' ? 'true' : m.format === '^jwt$' ? 'jwt' : m.format?.startsWith('^postgres') ? `postgresql://u@db.example/${SECRET}` : m.format === '^jitsi-jwt$' ? 'jitsi-jwt' : m.format === '^(resend|mailjet|noop)?$' ? 'resend' : m.format === '@' ? 'n@example.org' : m.format?.includes('sentry') ? 'https://k@o1.ingest.de.sentry.io/1' : m.format?.startsWith('^(mailto') ? 'mailto:a@example.org' : m.format === '^(1|true)?$' ? '' : `${SECRET}`;
+    env[n] = m.format === '^[0-9a-fA-F]{64}$' ? 'a'.repeat(64) : m.format?.startsWith('^https') ? `https://x.example/${SECRET}` : m.format === '^true$' ? 'true' : m.format === '^jwt$' ? 'jwt' : m.format?.startsWith('^postgres') ? `postgresql://u@db.example/${SECRET}` : m.format === '^jitsi-jwt$' ? 'jitsi-jwt' : m.format === '^(resend|mailjet|msgraph|noop)?$' ? 'resend' : m.format === '^[0-9a-fA-F-]{36}$' ? '00000000-0000-4000-8000-000000000000' : m.format === '@' ? 'n@example.org' : m.format?.includes('sentry') ? 'https://k@o1.ingest.de.sentry.io/1' : m.format?.startsWith('^(mailto') ? 'mailto:a@example.org' : m.format === '^(1|true)?$' ? '' : `${SECRET}`;
   }
   env.OUTLOOK_REDIRECT_URI = 'https://www.example.org/api/auth/callback/outlook';
   return env;

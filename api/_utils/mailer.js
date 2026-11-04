@@ -2,6 +2,7 @@
 import crypto from 'node:crypto';
 import { env } from './env.js';
 import logger from './logger.js';
+import { evaluateGraphConfig, graphConfig, sendViaGraph } from './mailer-msgraph.js';
 
 /**
  * @typedef {{
@@ -124,12 +125,12 @@ function providerAttachments(attachments) {
  * @returns {{ provider: string, deliverable: boolean, reason: string }}
  */
 export function getMailerStatus() {
-  return evaluateMailerConfig({ provider: getProvider(), from: env.mailer.from, apiKey: env.mailer.apiKey });
+  return evaluateMailerConfig({ provider: getProvider(), from: env.mailer.from, apiKey: env.mailer.apiKey, msgraph: env.mailer.msgraph });
 }
 
 /**
  * Pure rule shared by readiness and the release preflight (no I/O, no env access).
- * @param {{ provider?: string, from?: string, apiKey?: string }} cfg
+ * @param {{ provider?: string, from?: string, apiKey?: string, msgraph?: Record<string, string | undefined> }} cfg
  * @returns {{ provider: string, deliverable: boolean, reason: string }}
  */
 export function evaluateMailerConfig(cfg) {
@@ -139,8 +140,13 @@ export function evaluateMailerConfig(cfg) {
   if (provider === 'test') return { provider, deliverable: true, reason: 'in-memory test outbox' };
   if (provider === 'resend') return apiKey && from ? { provider, deliverable: true, reason: 'ok' } : { provider, deliverable: false, reason: 'MAILER_API_KEY or MAILER_FROM missing' };
   if (provider === 'mailjet') return apiKey.includes(':') && from ? { provider, deliverable: true, reason: 'ok' } : { provider, deliverable: false, reason: 'MAILER_API_KEY (public:secret) or MAILER_FROM missing' };
+  if (provider === 'msgraph') {
+    // R42-MAIL: tenant, application, sender mailbox and one credential (certificate preferred); MAILER_API_KEY is not used
+    const g = evaluateGraphConfig(graphConfig({ ...(cfg.msgraph || {}), from }));
+    return { provider, deliverable: g.ok, reason: g.reason };
+  }
   if (provider === 'noop') return { provider, deliverable: false, reason: 'MAILER_PROVIDER not configured (default noop)' };
-  return { provider, deliverable: false, reason: 'provider not wired (only resend and mailjet send mail)' };
+  return { provider, deliverable: false, reason: 'provider not wired (only resend, mailjet and msgraph send mail)' };
 }
 
 /** Structured, address-free error so undelivered verification/reset mails are visible in logs/Sentry. */
@@ -321,6 +327,20 @@ async function sendMailRaw(payload) {
       logger.error({ msg: 'mailer.provider_unreachable', provider, category, err: { name: err?.name } }, '[mailer] Resend unreachable');
       return { accepted: true, delivered: false, provider, errorCode: err?.name === 'TimeoutError' ? 'timeout' : 'network', failure: 'retryable' };
     }
+  }
+
+  // ── Microsoft Graph sendMail (R42-MAIL) — 202 Accepted at best: PROVIDER_ACCEPTED, never a delivery ──
+  if (provider === 'msgraph') {
+    const out = await sendViaGraph(graphConfig({ ...env.mailer.msgraph, from }), {
+      to: payload.to, subject: payload.subject, text: payload.text, ...(payload.html ? { html: payload.html } : {}),
+      attachments: providerAttachments(payload.attachments), idempotencyKey: normalizeIdempotencyKey(payload.idempotencyKey),
+    });
+    if (out.failure === 'not_configured') warnProviderOnce('msgraph');
+    if (out.failure) {
+      // status and error code only (G11): a Graph error message can quote the recipient or the mailbox
+      logger.error({ msg: 'mailer.provider_error', provider, category, status: out.providerStatus ?? null, errorCode: out.errorCode ?? null, failure: out.failure }, '[mailer] Microsoft Graph did not accept the message');
+    } else logger.info(`[mailer] Microsoft Graph accepted category=${category}${out.deduplicated ? ' (already accepted, not sent again)' : ''}`);
+    return out;
   }
 
   if (['smtp', 'postmark', 'sendgrid', 'brevo'].includes(provider)) {

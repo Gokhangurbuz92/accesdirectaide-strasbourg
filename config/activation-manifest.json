@@ -445,7 +445,7 @@
         "production"
       ],
       "provider": "mail",
-      "format": "^(resend|mailjet|noop)?$"
+      "format": "^(resend|mailjet|msgraph|noop)?$"
     },
     "MAILER_FROM": {
       "class": "required_outside_beta",
@@ -464,6 +464,63 @@
       ],
       "provider": "mail",
       "account": true
+    },
+    "MAILER_MSGRAPH_TENANT_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R42-MAIL: only with MAILER_PROVIDER=msgraph — Microsoft Entra tenant ID (GUID) of the Microsoft 365 organisation"
+    },
+    "MAILER_MSGRAPH_CLIENT_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "^[0-9a-fA-F-]{36}$",
+      "note": "R42-MAIL: Application (client) ID of the app registration; Mail.Send granted ONLY through an Exchange RBAC for Applications assignment scoped to the sender mailbox",
+      "account": true
+    },
+    "MAILER_MSGRAPH_SENDER": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "@",
+      "note": "R42-MAIL: the one mailbox the app sends as (a shared mailbox, no licence); defaults to the address of MAILER_FROM"
+    },
+    "MAILER_MSGRAPH_CERT_PRIVATE_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R42-MAIL: PEM private key of the app certificate (preferred credential)"
+    },
+    "MAILER_MSGRAPH_CERT_PEM": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R42-MAIL: PEM public certificate uploaded to the app registration (its SHA-256 thumbprint is computed)"
+    },
+    "MAILER_MSGRAPH_CLIENT_SECRET": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R42-MAIL: client secret, only if no certificate is used (expires; rotate before its end date)"
     },
     "MAILJET_API_KEY": {
       "class": "dead",
@@ -1197,9 +1254,9 @@
       "cost": "Free plan in use"
     },
     "mail": {
-      "label": "Resend or Mailjet (transactional e-mail)",
+      "label": "Resend, Mailjet or Microsoft Graph (transactional e-mail)",
       "account": "to create",
-      "cost": "free tier (Resend 3,000/month; Mailjet 6,000/month)"
+      "cost": "free tier (Resend 3,000/month; Mailjet 6,000/month); Microsoft Graph: included in the existing Microsoft 365 subscription (shared mailbox, no licence)"
     },
     "microsoft": {
       "label": "Microsoft Entra ID app registration (Outlook calendar)",
@@ -1396,16 +1453,18 @@
       ],
       "label": "Transactional e-mail (verification, reset, invitations, notifications)",
       "code": [
-        "api/_utils/mailer.js"
+        "api/_utils/mailer.js",
+        "api/_utils/mailer-msgraph.js"
       ],
       "requires": [
         "MAILER_PROVIDER",
         "MAILER_FROM",
-        "MAILER_API_KEY"
+        "MAILER_API_KEY|MAILER_MSGRAPH_CLIENT_ID"
       ],
       "tests": [
         "mailer-providers.test.js",
-        "mailer-provider-http-sim.test.js"
+        "mailer-provider-http-sim.test.js",
+        "r42-mailer-msgraph.test.js"
       ],
       "gates": [
         {
@@ -1415,7 +1474,14 @@
         }
       ],
       "beta_note": "the release gate requires MAILER_PROVIDER noop while the beta is on",
-      "order": 2
+      "order": 2,
+      "optional": [
+        "MAILER_MSGRAPH_TENANT_ID",
+        "MAILER_MSGRAPH_SENDER",
+        "MAILER_MSGRAPH_CERT_PRIVATE_KEY",
+        "MAILER_MSGRAPH_CERT_PEM",
+        "MAILER_MSGRAPH_CLIENT_SECRET"
+      ]
     },
     {
       "id": "citizen-accounts",

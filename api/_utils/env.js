@@ -292,6 +292,17 @@ export const env = {
     get apiKey() {
       return getEnv('MAILER_API_KEY');
     },
+    // R42-MAIL: Microsoft Graph sendMail (MAILER_PROVIDER=msgraph) — app registration of the tenant, the one mailbox it may send as, its credential
+    get msgraph() {
+      return {
+        tenantId: getEnv('MAILER_MSGRAPH_TENANT_ID'),
+        clientId: getEnv('MAILER_MSGRAPH_CLIENT_ID'),
+        sender: getEnv('MAILER_MSGRAPH_SENDER'),
+        certPrivateKey: getEnv('MAILER_MSGRAPH_CERT_PRIVATE_KEY'),
+        certPem: getEnv('MAILER_MSGRAPH_CERT_PEM'),
+        clientSecret: getEnv('MAILER_MSGRAPH_CLIENT_SECRET'),
+      };
+    },
   },
 
   mailjet: {

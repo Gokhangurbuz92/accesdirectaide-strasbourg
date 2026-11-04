@@ -4,7 +4,7 @@
  *   GET /api/status → { checkedAt, components: [{ id, label, state, text }] }   state ∈ operational | degraded | unavailable | info
  * Components are real dependencies, each checked here with a short time limit:
  *   - comptes : the database answers (SELECT 1)                      → accounts, appointments, dossier sharing
- *   - emails  : the mail configuration (no message is sent)          → only resend / mailjet with credentials count as real delivery; « test » is said to be a test
+ *   - emails  : the mail configuration (no message is sent)          → only resend / mailjet / msgraph (R42) with credentials count as real delivery; « test » is said to be a test
  *   - assistant : the LOCAL model server answers on loopback (/api/tags, 1.5 s); an external endpoint is never contacted and counts as unavailable (AI policy)
  *   - donnees : the WS2 launch manifest — while launchReady is false the aid records are « en cours de vérification » (never « vérifiées »)
  * Cached 30 s in memory so the page cannot be used to load the database.
@@ -27,7 +27,7 @@ async function database() {
 }
 function emails() {
   const m = getMailerStatus();
-  if (m.deliverable && (m.provider === 'resend' || m.provider === 'mailjet')) return { state: 'operational', text: 'Les e-mails (confirmation, rappels) sont envoyés.' };
+  if (m.deliverable && ['resend', 'mailjet', 'msgraph'].includes(m.provider)) return { state: 'operational', text: 'Les e-mails (confirmation, rappels) sont envoyés.' };
   if (m.provider === 'test') return { state: 'degraded', text: 'Environnement de test : aucun e-mail réel n\'est envoyé.' };
   return { state: 'unavailable', text: 'L\'envoi des e-mails n\'est pas configuré : les confirmations par e-mail ne partent pas.' };
 }

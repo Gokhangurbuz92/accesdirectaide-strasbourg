@@ -26,7 +26,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const mailNeeded = needs(['accounts', 'pro', 'institution', 'communications', 'appointments']);
   const beta = betaOn;
   const notUsed = (/** @type {string} */ what) => `not used: restricted public beta (${what} refused server-side)`;
-  const mail = evaluateMailerConfig({ provider: get('MAILER_PROVIDER'), from: get('MAILER_FROM'), apiKey: get('MAILER_API_KEY') });
+  const mail = evaluateMailerConfig({ provider: get('MAILER_PROVIDER'), from: get('MAILER_FROM'), apiKey: get('MAILER_API_KEY'),
+    msgraph: { tenantId: get('MAILER_MSGRAPH_TENANT_ID'), clientId: get('MAILER_MSGRAPH_CLIENT_ID'), sender: get('MAILER_MSGRAPH_SENDER'), certPrivateKey: get('MAILER_MSGRAPH_CERT_PRIVATE_KEY'), certPem: get('MAILER_MSGRAPH_CERT_PEM'), clientSecret: get('MAILER_MSGRAPH_CLIENT_SECRET') } });   // R42-MAIL
   if (!mailNeeded) add('mail.deliverable', 'PASS', notUsed('accounts, password resets and notifications'));
   else add('mail.deliverable', mail.deliverable ? 'PASS' : 'FAIL', `${mail.provider}: ${mail.reason}`);
 
@@ -58,7 +59,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   // R40 / G2: jobs open one at a time (ADA_BETA_OPEN_JOBS), never as a surface — any opened job needs the alert channel
   if (betaOn && openJobs(env).size === 0) add('alerts.webhook', 'WARN', notUsed('the health-alert cron (no cron in the beta)') + '; Vercel deployment notifications only');
   // R36: an e-mail to ALERT_EMAIL through the site's mail provider is an alert channel too (no Discord / Slack needed)
-  else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
+  else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet', 'msgraph'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');
   add('share.legacy_off', get('ADA_LEGACY_SHARE_READ') === '1' ? 'FAIL' : 'PASS', 'ADA_LEGACY_SHARE_READ stays off (a bare link would open a dossier)');
   add('ai.no_unapproved_provider_key', get('GEMINI_API_KEY') || get('GOOGLE_API_KEY') ? 'FAIL' : 'PASS', 'GEMINI_API_KEY / GOOGLE_API_KEY must not exist until an AI provider is approved (DPIA, DPA)');
