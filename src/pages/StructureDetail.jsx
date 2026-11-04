@@ -28,7 +28,6 @@ import ProvenanceFreshness from '@/components/ProvenanceFreshness';
 import FalcInvite from '@/components/FalcInvite';
 import AutoVerificationNote from '@/components/AutoVerificationNote';
 import ExternalServices from '@/components/ExternalServices';
-import { guestBookingPath } from '@/lib/guestBooking';
 import FalcToggle from '@/components/FalcToggle';
 import FalcContent from '@/components/FalcContent';
 import { getProvenance } from '@/lib/provenance';
@@ -410,12 +409,13 @@ export default function StructureDetail() {
                           {t('structures:detail.booking.slots', 'Voir les créneaux disponibles')}
                         </Link>
                       </Button>
-                      {structure.rdv?.allowGuestBooking ? (
-                        // R38: the structure takes account-free bookings (its opt-in + the server switch, computed by the API)
-                        <Button variant="outline" className="mt-3 w-full min-h-11" asChild>
-                          <Link to={guestBookingPath(structure.slug)} data-testid="structure-guest-booking">{t('booking:cta', 'Prendre rendez-vous sans compte')}</Link>
-                        </Button>
-                      ) : null}
+                      {/* R42 (DEC-R42-01): an account is required to ask for an appointment; the page itself stays open to everyone */}
+                      <p className="mt-3 text-sm text-slate-700" data-testid="structure-booking-account-required">
+                        {t('structures:detail.booking.account_required', 'Un compte particulier est nécessaire pour demander un rendez-vous. Les informations de cette page restent consultables sans compte.')}
+                      </p>
+                      <p className="mt-2 text-xs text-slate-600" data-testid="structure-not-partner">
+                        {t('structures:detail.booking.not_partner', 'La présence de cette structure dans l’annuaire ne signifie pas un partenariat avec AccesDirectAide.')}
+                      </p>
                     </CardContent>
                   </Card>
                 )}

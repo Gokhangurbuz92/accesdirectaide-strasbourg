@@ -97,14 +97,11 @@ const AdminAudit = lazy(() => import("./AdminAudit.jsx"));
 const AdminParametres = lazy(() => import("./admin/AdminParametres.jsx"));
 const ServiceError = lazy(() => import("./ServiceError.jsx"));
 
-const AppointmentRequest = lazy(() => import("./AppointmentRequest.jsx"));
 const AppointmentCancel = lazy(() => import("./AppointmentCancel.jsx"));
 const AppointmentReschedule = lazy(() => import("./AppointmentReschedule.jsx"));
 const LegacyAppointmentLink = lazy(() => import("./LegacyAppointmentLink.jsx"));
 const PublicRdvEntry = lazy(() => import("./PublicRdvEntry.jsx"));
 const PublicBooking = lazy(() => import("./PublicBookingAccessGate.jsx"));
-const GuestBooking = lazy(() => import("./GuestBooking.jsx"));   // R38: account-free booking
-const GuestManage = lazy(() => import("./GuestManage.jsx"));
 const RegisterPro = lazy(() => import("./pro/RegisterPro.jsx"));
 const SharedDossier = lazy(() => import("./pro/SharedDossier.jsx"));
 const ProAuditLog = lazy(() => import("./pro/AuditLog.jsx"));
@@ -229,7 +226,7 @@ const PAGES = {
     AideDetail, Aides, Annuaire, Confidentialite, Contact, Cookies,
     DemarcheDetail, DispositifDetail, Login, Demarches, Home, Orientation,
     MentionsLegales, SourcesMethode, StructureDetail,
-    AdminInbox, AdminRuns, AdminObservability, AdminReviewQueue, AppointmentRequest, AppointmentCancel, AppointmentReschedule, AdminStructures, AdminStructureEdit,
+    AdminInbox, AdminRuns, AdminObservability, AdminReviewQueue, AppointmentCancel, AppointmentReschedule, AdminStructures, AdminStructureEdit,
     AdminDemarches, AdminDemarcheEdit, AdminAppointments, AdminReview, Status, PublicRdvEntry, AuthRdvAccess, AuthVerifyEmail, AuthForgotPassword, AuthResetPassword,
     CompteMessages, CompteMessageThread, ProMessages, ProMessageThread, AdminDashboard, AdminFeatures
 };
@@ -240,6 +237,12 @@ const PageLoader = () => (
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
 );
+
+/** R42: /rdv/<slug>/sans-compte → /rdv/<slug>/booking (no query, no fragment carried over) */
+function RetiredGuestBookingLink() {
+    const { structureSlug } = useParams();
+    return <Navigate to={`/rdv/${encodeURIComponent(String(structureSlug || ""))}/booking`} replace />;
+}
 
 function LegacyAideRedirect() {
     const { slug } = useParams();
@@ -527,8 +530,9 @@ function PagesContent() {
                                 <Route path="/rdv/:structureSlug/services" element={<PublicRdvEntry view="services" />} />
                                 <Route path="/rdv/:structureSlug/creneaux" element={<PublicRdvEntry view="creneaux" />} />
                                 <Route path="/rdv/:structureSlug/booking" element={<PublicBooking />} />
-                                <Route path="/rdv/:structureSlug/sans-compte" element={<GuestBooking />} />
-                                <Route path="/rdv/:structureSlug/sans-compte/gerer" element={<GuestManage />} />
+                                {/* R42 (DEC-R42-01): the account-free booking is retired — an old « sans compte » link opens the account-based journey */}
+                                <Route path="/rdv/:structureSlug/sans-compte" element={<RetiredGuestBookingLink />} />
+                                <Route path="/rdv/:structureSlug/sans-compte/gerer" element={<Navigate to="/compte/rendez-vous" replace />} />
 
                                 {/* Legacy Admin Redirects */}
                                 <Route path="/adminaides" element={<Navigate to="/admin/aides" replace />} />

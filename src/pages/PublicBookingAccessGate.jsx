@@ -7,7 +7,6 @@ import {
   classifyCitizenBookingAccess,
   citizenBookingLoginUrl,
 } from '@/lib/rdvBookingAccess';
-import { guestBookingPath, guestGet, offersGuestBooking } from '@/lib/guestBooking';
 import { useT } from '@/i18n';
 
 export default function PublicBookingAccessGate() {
@@ -43,11 +42,9 @@ export default function PublicBookingAccessGate() {
 
         const status = classifyCitizenBookingAccess(response.status, body);
         if (status === 'login') {
-          // R38: no forced login for a structure that takes account-free bookings (the server decides: opt-in of the structure + global switch)
-          const slug = (/^\/rdv\/([^/?#]+)\/booking$/.exec(location.pathname) || [])[1];
-          const guest = slug ? await guestGet(`structures/${slug}/services`) : { ok: false };
-          if (controller.signal.aborted) return;
-          window.location.replace(offersGuestBooking(guest) ? guestBookingPath(decodeURIComponent(slug)) : citizenBookingLoginUrl(location.pathname, location.search));
+          // R42 (DEC-R42-01): asking for an appointment always needs a citizen account — the booking context (structure, service, professional) is kept in a
+          // safe `next` path and validated again by the server after login
+          window.location.replace(citizenBookingLoginUrl(location.pathname, location.search));
           return;
         }
         setResult({ key, status });

@@ -21,7 +21,7 @@ vi.mock('@/api/client', () => api);
 
 import AdminFunding from '../../src/pages/admin/k5/Funding.jsx';
 import ProSelections from '../../src/pages/pro/Selections.jsx';
-import { guestGet, offersGuestBooking } from '../../src/lib/guestBooking.js';
+import fs from 'node:fs';
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); rdv.proRdvRequest.mockReset(); api.apiClient.admin.k5.mockReset(); });
 
@@ -59,38 +59,11 @@ describe('R41 DTA-B69: a detail page opened with an unknown identifier keeps its
   });
 });
 
-describe('R41 account-free booking is offered only on the API\'s own answer', () => {
-  /** @param {number} status @param {string} contentType @param {string} text */
-  const answer = (status, contentType, text) => vi.stubGlobal('fetch', vi.fn(async () => new Response(text, { status, headers: { 'Content-Type': contentType } })));
-  const services = () => guestGet('structures/structure-test/services');
-
-  it('an HTML page answered 200 (static-host / dev-server fallback, proxy page) is not a success and offers nothing', async () => {
-    answer(200, 'text/html', '<!doctype html><html><body>app</body></html>');
-    const r = await services();
-    expect(r.ok).toBe(false); expect(r.status).toBe(200); expect(r.body).toEqual({});
-    expect(offersGuestBooking(r)).toBe(false);
-  });
-  it('the switched-off service (503 GUEST_BOOKING_DISABLED) and an unknown structure (404) offer nothing', async () => {
-    answer(503, 'application/json', JSON.stringify({ error: 'Guest booking disabled', code: 'GUEST_BOOKING_DISABLED' }));
-    expect(offersGuestBooking(await services())).toBe(false);
-    answer(404, 'application/json', JSON.stringify({ error: 'Not found', code: 'NOT_FOUND' }));
-    expect(offersGuestBooking(await services())).toBe(false);
-  });
-  it('a JSON 2xx of another shape and a network failure offer nothing', async () => {
-    answer(200, 'application/json', JSON.stringify({}));
-    expect(offersGuestBooking(await services())).toBe(false);
-    answer(200, 'application/json', JSON.stringify({ structure: null, items: [] }));
-    expect(offersGuestBooking(await services())).toBe(false);
-    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('network'); }));
-    expect(offersGuestBooking(await services())).toBe(false);
-    expect(offersGuestBooking({ ok: false })).toBe(false);
-  });
-  it('the API\'s services answer offers it (also with no service yet: the guest page then says so)', async () => {
-    const structure = { slug: 'structure-test', name: 'Structure Test', location: null, modes: ['IN_PERSON'] };
-    answer(200, 'application/json', JSON.stringify({ structure, holdMinutes: 20, items: [{ id: 's1', name: 'Accueil', durationMinutes: 30, modes: ['IN_PERSON'] }] }));
-    const r = await services();
-    expect(r.ok).toBe(true); expect(offersGuestBooking(r)).toBe(true);
-    answer(200, 'application/json', JSON.stringify({ structure, holdMinutes: 20, items: [] }));
-    expect(offersGuestBooking(await services())).toBe(true);
+describe('R42 (DEC-R42-01): no account-free booking is offered anywhere in the client', () => {
+  it('the guest booking module and pages are gone; an old « sans compte » link opens the account-based journey', () => {
+    for (const f of ['src/lib/guestBooking.js', 'src/pages/GuestBooking.jsx', 'src/pages/GuestManage.jsx', 'src/pages/AppointmentRequest.jsx']) expect(fs.existsSync(f)).toBe(false);
+    const index = fs.readFileSync('src/pages/index.jsx', 'utf8');
+    expect(index).toMatch(/path="\/rdv\/:structureSlug\/sans-compte" element={<RetiredGuestBookingLink \/>}/);
+    for (const f of ['src/pages/StructureDetail.jsx', 'src/pages/PublicRdvEntry.jsx', 'src/pages/PublicBookingAccessGate.jsx']) expect(fs.readFileSync(f, 'utf8')).not.toMatch(/guestBooking|sans-compte|rendez-vous sans compte/i);
   });
 });

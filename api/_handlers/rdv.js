@@ -762,8 +762,12 @@ async function getServices(req, res) {
     modes: offeredModes(structure.bookingMode, service.modes, video),
   })).filter((service) => service.modes.length && (!wanted || service.modes.includes(wanted)));
   const modes = ['IN_PERSON', 'VIDEO'].filter((m) => services.some((service) => offeredModes(structure.bookingMode, service.modes, video).includes(m)));
+  // R42: how each service's requests are confirmed (Mode A / Mode B) and whether a professional can be chosen (the list itself: GET …/team)
+  const config = await readBookingConfig(structure.id);
+  for (const item of items) item.confirmation = confirmationModeFor(config, item.id);
 
   return res.status(200).json({
+    teamChoice: config.team.enabled,
     structure: {
       slug: structure.slug,
       name: structure.nom,

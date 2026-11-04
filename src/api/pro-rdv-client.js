@@ -271,6 +271,13 @@ export const proRdvClient = {
     update(payload) {
       return proRdvRequest('/api/pro/rdv/settings', { method: 'PUT', body: payload });
     },
+    /**
+     * R42: the booking configuration (confirmation mode per structure / per service, team choice)
+     * @param {{ confirmation?: 'DIRECT' | 'APPROVAL', serviceConfirmation?: Record<string, 'DIRECT' | 'APPROVAL' | null>, team?: { enabled?: boolean, members?: Record<string, { bookable: boolean, selectable: boolean, serviceIds?: string[] } | null> } }} payload
+     */
+    updateBooking(payload) {
+      return proRdvRequest('/api/pro/rdv/settings', { method: 'PATCH', body: payload });
+    },
   },
   availability: {
     get() {
@@ -327,6 +334,13 @@ export const proRdvClient = {
         method: 'PATCH',
         body: { id, ...(payload || {}) },
       });
+    },
+    /**
+     * R42 Mode B: accept or refuse a pending request (journaled on the server)
+     * @param {string} id @param {'ACCEPT' | 'REFUSE'} decision @param {'NOT_SUITABLE' | 'NO_CAPACITY' | 'OTHER'} [reasonCode]
+     */
+    decide(id, decision, reasonCode) {
+      return proRdvRequest('/api/pro/appointments', { method: 'PATCH', query: { id }, body: { id, decision, ...(reasonCode ? { reasonCode } : {}) } });
     },
     cancelLegacy(/** @type {string | number | boolean | null | undefined} */ id) {
       return proRdvRequest('/api/pro/appointments/cancel', {

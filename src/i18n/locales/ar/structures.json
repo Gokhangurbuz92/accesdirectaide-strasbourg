@@ -180,5 +180,7 @@
  "suggest.pro_title": "هل تعمل في هذه الجهة؟",
  "suggest.pro_text": "راسلنا للحصول على إدارة هذه البطاقة (إنشاء حساب Pro سيفتح جهة جديدة).",
  "suggest.contact_us": "اتصل بنا",
- "suggest.website_placeholder": "https://www.my-structure.fr"
+ "suggest.website_placeholder": "https://www.my-structure.fr",
+ "detail.booking.account_required": "يلزم حساب شخصي لطلب موعد. تبقى معلومات هذه الصفحة متاحة بدون حساب.",
+ "detail.booking.not_partner": "إدراج هذه الجهة في الدليل لا يعني أنها شريكة لـ AccesDirectAide."
 }

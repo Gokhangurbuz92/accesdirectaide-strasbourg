@@ -35,6 +35,8 @@ const statusLabels = (t) => ({
   booked: t('pro:appointments.status.booked', 'Réservé par la structure'), confirmed: t('pro:appointments.status.confirmed', 'Confirmé'),
   requested: t('pro:appointments.status.requested', 'Demandé'), pending: t('pro:appointments.status.pending', 'En attente'),
   cancelled: t('pro:appointments.status.cancelled', 'Annulé'), done: t('pro:appointments.status.done', 'Venu'), no_show: t('pro:appointments.status.no_show', 'Absent'),
+  // R42 (Mode B): the request's answer and its expiry
+  refused: t('pro:appointments.status.refused', 'Demande refusée'), expired: t('pro:appointments.status.expired', 'Demande expirée'),
 });
 const STATUS_STYLES = {
   booked: 'border-blue-200 bg-blue-50 text-blue-800',
@@ -42,6 +44,9 @@ const STATUS_STYLES = {
   cancelled: 'border-rose-200 bg-rose-50 text-rose-800',
   done: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   no_show: 'border-amber-200 bg-amber-50 text-amber-900',
+  requested: 'border-amber-300 bg-amber-50 text-amber-900',
+  refused: 'border-slate-300 bg-slate-100 text-slate-800',
+  expired: 'border-slate-300 bg-slate-100 text-slate-800',
 };
 
 export default function ProAppointments() {
@@ -100,6 +105,16 @@ export default function ProAppointments() {
   const serviceOptions = useMemo(() => {
     return services.map((service) => ({ id: service.id, name: service.name }));
   }, [services]);
+
+  // R42 Mode B: accept or refuse a request (the server checks the rights, journals the decision and tells the person)
+  const decide = async (id, decision) => {
+    if (decision === 'REFUSE' && !window.confirm(t('pro:appointments.confirm_refuse', 'Refuser cette demande ? La personne en sera informée et le créneau libéré.'))) return;
+    setUpdatingId(id);
+    setError('');
+    try { await proRdvClient.appointments.decide(id, decision); await loadData(); }
+    catch (e) { setError(e?.payload?.message || t('pro:appointments.update_error', 'Impossible de mettre à jour ce rendez-vous.')); }
+    finally { setUpdatingId(''); }
+  };
 
   const updateStatus = async (id, status) => {
     if (status === 'cancelled' && !window.confirm(t('pro:appointments.confirm_cancel', 'Annuler ce rendez-vous ? La personne en sera prévenue.'))) return;
@@ -242,7 +257,6 @@ export default function ProAppointments() {
                       <p className="font-semibold text-slate-900">{formatDateTime(appointment.startAt || appointment.start_at)}</p>
                       <Badge className={statusClass}>{STATUS_LABEL[appointment.status] || appointment.status}</Badge>
                       <Badge className="border-indigo-200 bg-indigo-50 text-indigo-800" data-testid="pro-agenda-mode">{appointment.mode === 'VIDEO' ? t('pro:appointments.mode_video', 'À distance (visio)') : t('pro:appointments.mode_onsite', 'En présentiel')}</Badge>
-                      {appointment.origin === 'GUEST' ? <Badge className="border-slate-300 bg-slate-50 text-slate-900" data-testid="pro-agenda-guest">{t('booking:pro.withoutAccount', 'Sans compte')}</Badge> : null}
                       {appointment.rescheduleCount ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-rescheduled">{t('pro:appointments.rescheduled', 'Déplacé par la personne ({{n}})', { n: appointment.rescheduleCount })}</Badge> : null}
                       {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">{t('pro:appointments.video_pending', 'Visio à valider')}</Badge> : null}
                     </div>
@@ -251,16 +265,21 @@ export default function ProAppointments() {
                       {' - '}
                       {appointment.beneficiaryName || t('pro:appointments.beneficiary_fallback', 'Beneficiaire')}
                     </p>
-                    {appointment.notes ? <p className="text-xs text-slate-700">{appointment.notes}</p> : null}
-                    {appointment.guest ? <p className="text-xs text-slate-700" data-testid="pro-agenda-guest-contact">{[appointment.guest.emailMasked, appointment.guest.phone].filter(Boolean).join(' · ')}</p> : null}
-                    {/* R39: whether the person (without an account) asked for the optional J-1 reminder e-mail — yes / no only */}
-                    {appointment.guest ? <p className="text-xs text-slate-700" data-testid="pro-agenda-guest-reminder">{appointment.guest.reminderConsent ? t('booking:pro.reminderYes', 'Rappel par e-mail la veille : demandé') : t('booking:pro.reminderNo', 'Rappel par e-mail la veille : non demandé')}</p> : null}
+                    {appointment.citizenMessage ? (
+                      <p className="text-xs text-slate-800" data-testid="pro-agenda-citizen-message"><span className="font-medium">{t('pro:appointments.citizen_message', 'Message de la personne :')}</span>{' '}<span className="whitespace-pre-line">{appointment.citizenMessage}</span></p>
+                    ) : appointment.notes ? <p className="text-xs text-slate-700">{appointment.notes}</p> : null}
                   </div>
 
                   <div className="flex flex-wrap gap-2">
+                    {appointment.awaitingDecision && new Date(appointment.startAt || appointment.start_at).getTime() > Date.now() ? (
+                      <>
+                        <Button size="sm" data-testid="pro-agenda-accept" onClick={() => decide(appointment.id, 'ACCEPT')} disabled={updatingId === appointment.id}>{t('pro:appointments.accept', 'Accepter la demande')}</Button>
+                        <Button size="sm" variant="outline" data-testid="pro-agenda-refuse" onClick={() => decide(appointment.id, 'REFUSE')} disabled={updatingId === appointment.id}>{t('pro:appointments.refuse', 'Refuser la demande')}</Button>
+                      </>
+                    ) : null}
                     <Button asChild size="sm" variant="outline"><Link to={`/pro/appointments/${encodeURIComponent(appointment.id)}`} data-testid="pro-agenda-detail">{t('pro:appointments.details', 'Détails')}</Link></Button>
                     {/* PKG-4 / B09: attendance only once the appointment has started (the API refuses earlier) */}
-                    {!['done', 'no_show', 'cancelled'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() <= Date.now() ? (
+                    {!['done', 'no_show', 'cancelled', 'requested', 'refused', 'expired'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() <= Date.now() ? (
                       <>
                         <Button size="sm" variant="outline" data-testid="pro-agenda-attended" onClick={() => updateStatus(appointment.id, 'done')} disabled={updatingId === appointment.id}>
                           {updatingId === appointment.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-1 h-4 w-4" />}
@@ -271,7 +290,7 @@ export default function ProAppointments() {
                     ) : null}
 
                     {/* a past appointment is marked « venu » / « absent », not cancelled */}
-                    {!['cancelled', 'done', 'no_show'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() > Date.now() ? (
+                    {!['cancelled', 'done', 'no_show', 'refused', 'expired'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() > Date.now() ? (
                       <Button
                         size="sm"
                         variant="destructive"

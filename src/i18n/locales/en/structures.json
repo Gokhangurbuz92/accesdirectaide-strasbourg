@@ -172,5 +172,7 @@
  "suggest.pro_title": "Do you work at this structure?",
  "suggest.pro_text": "Write to us to manage this listing (creating a pro account would open a new structure).",
  "suggest.contact_us": "Contact us",
- "suggest.website_placeholder": "https://www.my-organisation.fr"
+ "suggest.website_placeholder": "https://www.my-organisation.fr",
+ "detail.booking.account_required": "A personal account is needed to request an appointment. The information on this page remains available without an account.",
+ "detail.booking.not_partner": "Being listed in the directory does not mean this organisation is a partner of AccesDirectAide."
 }

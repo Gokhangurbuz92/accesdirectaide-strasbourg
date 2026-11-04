@@ -236,7 +236,8 @@ export default function AppointmentReschedule() {
 
         <div className="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center">
           <p className="text-[10px] text-slate-400">
-            {t('booking:reschedule.un_email_de_confirmation_sera', "Un email de confirmation sera envoyé · AccesDirectAide")}
+            {/* R42: never announce an e-mail before knowing it left (the outcome is reported by the server) */}
+            {t('booking:mail.unknown', 'Retrouvez le détail de votre rendez-vous dans « Mes rendez-vous ».')}
           </p>
         </div>
       </div>
