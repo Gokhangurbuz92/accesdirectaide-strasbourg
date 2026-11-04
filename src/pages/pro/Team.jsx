@@ -139,11 +139,10 @@ export default function ProTeam() {
             } else {
                 const err = await res.json().catch(() => ({}));
                 const why = err.error || t('pro:team.invite_error', 'Erreur lors de l\'envoi');
-                setInviteProblem(why); toast.error(why);
+                setInviteProblem(why);   // said once, inside the dialog (a toast as well made the text appear twice)
             }
         } catch {
             setInviteProblem(t('pro:team.network_retry', 'Erreur réseau. Veuillez réessayer.'));
-            toast.error(t('pro:team.network_retry', 'Erreur réseau. Veuillez réessayer.'));
         } finally {
             setInviting(false);
         }

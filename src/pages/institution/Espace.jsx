@@ -33,14 +33,21 @@ function PasswordForm({ temporary, onChanged }) {
   const [error, setError] = useState(''); const [done, setDone] = useState(''); const [busy, setBusy] = useState(false);
   // R43 (A5): each field says its own problem (the three were one banner); the summary receives the focus; the server's refusal stays a banner
   const pwErr = useFormErrors();
+  // a weak password keeps the R21 contract: the shared rule's message is the alert banner (institution-password-error), the field is marked invalid, keeps
+  // its description « pw-rule » (the rule it fails) and receives the focus
+  const [weak, setWeak] = useState(false);
   const submit = async (e) => {
-    e.preventDefault(); setError(''); setDone('');
+    e.preventDefault(); setError(''); setDone(''); setWeak(false);
     const errs = {};
     if (!cur) errs['pw-cur'] = requiredMessage(t, t('institution:space.mot_passe_actuel', 'Mot de passe actuel'));
     const problems = passwordProblems(next);
     if (!next) errs['pw-new'] = requiredMessage(t, t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe'));
-    else if (problems.length) errs['pw-new'] = passwordMessage(problems);
-    if (!errs['pw-new'] && next !== again) errs['pw-again'] = t('institution:space.pw_mismatch', 'Les deux saisies du nouveau mot de passe sont différentes.');
+    if (!errs['pw-new'] && !errs['pw-cur'] && problems.length) {
+      pwErr.reset(); setWeak(true); setError(passwordMessage(problems));
+      document.getElementById('pw-new')?.focus();
+      return;
+    }
+    if (!errs['pw-new'] && !problems.length && next !== again) errs['pw-again'] = t('institution:space.pw_mismatch', 'Les deux saisies du nouveau mot de passe sont différentes.');
     if (!pwErr.check(errs)) return;
     setBusy(true);
     try {
@@ -58,7 +65,7 @@ function PasswordForm({ temporary, onChanged }) {
       <form onSubmit={submit} className="space-y-3" noValidate aria-busy={busy || undefined}>
         <ErrorSummary ref={pwErr.summaryRef} errors={pwErr.errors} order={['pw-cur', 'pw-new', 'pw-again']} testid="institution-password-errors" />
         <div><label htmlFor="pw-cur" className="block">{t('institution:space.mot_passe_actuel', 'Mot de passe actuel')}</label><input id="pw-cur" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={cur} {...fieldA11y('pw-cur', pwErr.errors)} onChange={(e) => { setCur(e.target.value); pwErr.clear('pw-cur'); }} aria-required="true" /><FieldError field="pw-cur" errors={pwErr.errors} /></div>
-        <div><label htmlFor="pw-new" className="block">{t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="pw-new" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={next} {...fieldA11y('pw-new', pwErr.errors, 'pw-rule')} onChange={(e) => { setNext(e.target.value); pwErr.clear('pw-new'); }} aria-required="true" />
+        <div><label htmlFor="pw-new" className="block">{t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="pw-new" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={next} {...fieldA11y('pw-new', pwErr.errors, 'pw-rule')} {...(weak ? { 'aria-invalid': true } : {})} onChange={(e) => { setNext(e.target.value); pwErr.clear('pw-new'); setWeak(false); }} aria-required="true" />
           <p id="pw-rule" className="text-sm">{PASSWORD_RULE}</p><FieldError field="pw-new" errors={pwErr.errors} /></div>
         <div><label htmlFor="pw-again" className="block">{t('institution:space.confirmer_nouveau_mot_passe', 'Confirmer le nouveau mot de passe')}</label><input id="pw-again" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={again} {...fieldA11y('pw-again', pwErr.errors)} onChange={(e) => { setAgain(e.target.value); pwErr.clear('pw-again'); }} aria-required="true" /><FieldError field="pw-again" errors={pwErr.errors} /></div>
         <Button type="submit" disabled={busy}>{t('institution:space.changer_mot_passe', 'Changer le mot de passe')}</Button>

@@ -29,6 +29,8 @@ vi.mock('@/components/account/GuardianLinks', () => ({ default: () => null }));
 vi.mock('@/components/DevicePush', () => ({ default: () => null }));
 vi.mock('@/components/Messaging/SecureChat', () => ({ default: () => null }));
 vi.mock('@/components/FileVault', () => ({ default: () => null }));
+const sonner = vi.hoisted(() => ({ toast: { success: vi.fn(), warning: vi.fn(), error: vi.fn() }, Toaster: () => null }));
+vi.mock('sonner', () => sonner);
 
 import ProCases from '../../src/pages/pro/Cases.jsx';
 import ExpertTools from '../../src/components/ExpertTools.jsx';
@@ -206,7 +208,7 @@ describe('catalogue editor', () => {
     { name: 'categorie', label: 'Catégorie', type: 'select', options: ['logement'], required: true },
     { name: 'liens', label: 'Liens officiels', type: 'links' },
   ];
-  it('required fields and https links are checked per field before anything is sent; the native required stays for the acceptance check', async () => {
+  it('required fields are checked per field before anything is sent; the native required stays for the acceptance check', async () => {
     render(wrap(h(CatalogueEditor, { kind: 'dispositif', title: 'Dispositif', fields: FIELDS, listPath: '/admin/dispositifs' }), '/admin/dispositifs/new', '/admin/dispositifs/:id'));
     const form = document.querySelector('form');
     expect(form).toHaveAttribute('novalidate');
@@ -217,11 +219,23 @@ describe('catalogue editor', () => {
     expectFieldError('f-titre', /Titre : ce champ est obligatoire/, 'admin-editor-errors');
     expect(describedText(document.getElementById('f-categorie'))).toMatch(/Catégorie : choisissez/);
     expect(describedText(document.getElementById('f-liens-0-nom'))).toMatch(/Nom du lien 1 : ce champ est obligatoire/);
-    expect(describedText(document.getElementById('f-liens-0-url'))).toMatch(/https:\/\//);
-    expect(screen.getByTestId('admin-editor-errors').querySelectorAll('a')).toHaveLength(4);
+    expect(document.getElementById('f-liens-0-url')).not.toHaveAttribute('aria-invalid');   // https is the server's rule (next case)
+    expect(screen.getByTestId('admin-editor-errors').querySelectorAll('a')).toHaveLength(3);
     expect(admin.apiClient.admin.content.create).not.toHaveBeenCalled();
-    fireEvent.change(document.getElementById('f-liens-0-url'), { target: { value: 'https://www.service-public.fr' } });
-    expect(document.getElementById('f-liens-0-url')).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('an address that is not https: the server refusal stays the banner (admin-editor-problem, native QA DTA-B60) and the address field is marked', async () => {
+    admin.apiClient.admin.content.create.mockRejectedValue(Object.assign(new Error('api'), { status: 400, payload: { error: 'INVALID_FIELD', message: 'Valeur invalide pour « liens ».' } }));
+    render(wrap(h(CatalogueEditor, { kind: 'dispositif', title: 'Dispositif', fields: FIELDS, listPath: '/admin/dispositifs' }), '/admin/dispositifs/new', '/admin/dispositifs/:id'));
+    fireEvent.change(document.getElementById('f-titre'), { target: { value: 'Dispositif fictif' } });
+    fireEvent.change(document.getElementById('f-categorie'), { target: { value: 'logement' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter un lien' }));
+    fireEvent.change(document.getElementById('f-liens-0-nom'), { target: { value: 'Service-Public' } });
+    fireEvent.change(document.getElementById('f-liens-0-url'), { target: { value: 'http://example.test/' } });
+    await submitForm(document.querySelector('form'));
+    expect(admin.apiClient.admin.content.create).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('admin-editor-problem')).toHaveTextContent('Valeur invalide pour « liens »');
+    expectFieldError('f-liens-0-url', /https:\/\//, 'admin-editor-errors');
   });
 });
 
@@ -271,6 +285,26 @@ describe('institutional space', () => {
     expectFieldError('pw-again', /Les deux saisies du nouveau mot de passe sont différentes/, 'institution-password-errors');
     expect(fetchSpy.mock.calls.filter(([u]) => u === '/api/institution/password')).toHaveLength(0);
   });
+
+  it('a weak password keeps the R21 contract (native QA DTA-B111): the rule message is the banner, the field is invalid, keeps « pw-rule » and has the focus', async () => {
+    window.sessionStorage.setItem('institution_token', 't');
+    const fetchSpy = vi.fn(async (url) => (url === '/api/institution/me' ? json(200, { organisation: 'QA', territory: '67', temporaryPassword: true }) : json(404, {})));
+    vi.stubGlobal('fetch', fetchSpy);
+    render(wrap(h(InstitutionEspace)));
+    await screen.findByTestId('institution-temporary');
+    fireEvent.change(document.getElementById('pw-cur'), { target: { value: 'Provisoire-1x' } });
+    fireEvent.change(document.getElementById('pw-new'), { target: { value: 'motdepasse' } });
+    fireEvent.change(document.getElementById('pw-again'), { target: { value: 'motdepasse' } });
+    await submitForm(screen.getByRole('button', { name: 'Changer le mot de passe' }).closest('form'));
+    expect(screen.getByTestId('institution-password-error')).toHaveTextContent(/^Mot de passe trop faible : 1 majuscule requise, 1 chiffre requis\.$/);
+    const field = document.getElementById('pw-new');
+    expect(field).toHaveAttribute('aria-describedby', 'pw-rule');
+    expect(field).toHaveAttribute('aria-invalid', 'true');
+    expect(document.activeElement).toBe(field);
+    fireEvent.change(field, { target: { value: 'Choisi-Par-Moi-21' } });
+    expect(field).not.toHaveAttribute('aria-invalid');
+    expect(fetchSpy.mock.calls.filter(([u]) => u === '/api/institution/password')).toHaveLength(0);
+  });
 });
 
 describe('Ma structure', () => {
@@ -304,6 +338,9 @@ describe('team invitation', () => {
     fireEvent.change(email, { target: { value: 'nouveau@example.test' } });
     await submitForm(email.closest('form'));
     expect(await screen.findByTestId('team-invite-problem')).toHaveTextContent('Une invitation est déjà en attente');
+    // said once (native QA DTA-B99: the toast repeated it and getByText found two elements)
+    expect(screen.getAllByText('Une invitation est déjà en attente pour cette adresse.')).toHaveLength(1);
+    expect(sonner.toast.error).not.toHaveBeenCalled();
   });
 });
 

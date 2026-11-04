@@ -46,7 +46,8 @@ function validate(fields, form, t) {
         const nom = String(x.nom || '').trim(); const url = String(x.url || '').trim();
         if (!nom && !url) return;
         if (!nom) errs[`f-${f.name}-${i}-nom`] = requiredMessage(t, `${t('admin:catalogue_editor.link_name', 'Nom du lien')} ${i + 1}`);
-        if (!looksLikeHttpsUrl(url)) errs[`f-${f.name}-${i}-url`] = url ? httpsUrlMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`) : requiredMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`);
+        // an address that is not https is refused by the SERVER (its message stays the banner); the fields are then marked by linkErrors() below
+        if (!url) errs[`f-${f.name}-${i}-url`] = requiredMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`);
       });
       continue;
     }
@@ -55,6 +56,15 @@ function validate(fields, form, t) {
     if (f.required && !text) errs[`f-${f.name}`] = f.type === 'select' ? chooseMessage(t, f.label) : requiredMessage(t, f.label);
     else if (text && f.name === 'email' && !looksLikeEmail(text)) errs[`f-${f.name}`] = emailMessage(t, f.label);
   }
+  return errs;
+}
+/** after the server refused the links (« Valeur invalide pour « liens » »): the addresses that are not https, each on its field */
+function linkErrors(fields, form, t) {
+  const errs = {};
+  for (const f of fields.filter((x) => x.type === 'links')) (form[f.name] || []).forEach((x, i) => {
+    const url = String(x.url || '').trim();
+    if ((String(x.nom || '').trim() || url) && !looksLikeHttpsUrl(url)) errs[`f-${f.name}-${i}-url`] = httpsUrlMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`);
+  });
   return errs;
 }
 const errorOrder = (fields, form) => fields.flatMap((f) => (f.type === 'links' ? (form[f.name] || []).flatMap((_, i) => [`f-${f.name}-${i}-nom`, `f-${f.name}-${i}-url`]) : [`f-${f.name}`]));
@@ -120,7 +130,10 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
         const r = await apiClient.admin.content.create(kind, body);
         navigate(`${listPath}/${r.item.id}`, { replace: true }); setMsg(t('admin:catalogue_editor.draft_created', 'Brouillon créé.'));
       }
-    } catch (err) { setProblem(explain(err)); } finally { setBusy(false); }
+    } catch (err) {
+      const why = explain(err); setProblem(why);   // the server's own text stays the banner (admin-editor-problem)
+      if (/liens/.test(String(why))) fieldErr.check(linkErrors(fields, form, t));
+    } finally { setBusy(false); }
   };
   if (!loaded) return <p role="status" className="p-6">{t('admin:catalogue_editor.loading', 'Chargement…')}</p>;
   if (id && loadFailure) {
