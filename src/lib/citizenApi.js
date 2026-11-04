@@ -93,6 +93,8 @@ export const citizenApi = {
   cancelAppointment: (/** @type {string} */ id) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/cancel`, { method: 'POST', body: {} }),
   rescheduleAppointment: (/** @type {string} */ id, /** @type {string} */ startAt, /** @type {Record<string, unknown>} */ extra = {}) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/reschedule`, { method: 'POST', body: { startAt, ...extra } }),
   appointmentVisio: (/** @type {string} */ id, /** @type {string} */ action) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/visio`, { method: 'POST', body: { action } }),
+  // R43 (E6): the person erases the optional message of their own appointment before it starts
+  withdrawAppointmentMessage: (/** @type {string} */ id) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/message/withdraw`, { method: 'POST', body: {} }),
   bookingServices: (/** @type {string} */ slug) => call(`/api/rdv/structures/${encodeURIComponent(slug)}/services`),
   freeSlots: (/** @type {string} */ slug, /** @type {string} */ serviceId, /** @type {string} */ from, /** @type {string} */ to, /** @type {string} */ mode = 'IN_PERSON') =>
     call(`/api/rdv/structures/${encodeURIComponent(slug)}/slots?serviceId=${encodeURIComponent(serviceId)}&mode=${encodeURIComponent(mode)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),

@@ -11,7 +11,8 @@
  *
  * S1 first contact · S2 existing relationship · S3 wrong structure · S4 no availability · S5 absence / exception · S6 two citizens, one slot ·
  * S7 unauthorized access + anonymous POST on every booking route · S8 390 px in six languages (ar RTL), axe, no horizontal scroll, keyboard ·
- * S9 no mail provider · S10 Mode B request, accept, reschedule (back to REQUESTED), cancel, capacity, audit; plus: the optional message never in a URL,
+ * S9 no mail provider · S10 Mode B request, accept, reschedule (back to REQUESTED), cancel, capacity, audit · S11 (R43) a decision on a moved request,
+ * the notice ledger at this database level, an unanswered request expired, the message withdrawn; plus: the optional message never in a URL,
  * a console line or a GET answer to a non-staff session; a Mode B request is shown as a « demande », never « confirmé ».
  * Results: <out>/r42-cdgg-acceptance[-noop].json and a few screenshots (no secret, no password, no token in them).
  */
@@ -29,7 +30,7 @@ const mailer = opt('mailer', 'test');
 // stream runs on another port (5194): the harness presents the admitted LAB origin on the /api requests of its browser contexts. Everything else stays
 // enforced (CSRF double-submit cookie, session, roles, beta gate).
 const GATE_ORIGIN = opt('gate-origin', 'http://127.0.0.1:5173');
-const only = new Set(String(opt('only', 'S1,S2,S3,S4,S5,S6,S7,S8,S10')).split(','));
+const only = new Set(String(opt('only', 'S1,S2,S3,S4,S5,S6,S7,S8,S10,S11')).split(','));
 const STAMP = Date.now();
 const MSG = `Motif fictif R42 ${STAMP} : aide pour un dossier de recherche d’emploi`;
 
@@ -216,9 +217,21 @@ try {
     await page.getByTestId('booking-message').waitFor({ timeout: 20000 });
     await page.getByTestId('booking-message').locator('textarea').fill(MSG);
     const recap = await page.locator('main').innerText();
-    check('the owner wording of the optional message and its notice', recap.includes('Précisez brièvement le motif de votre rendez-vous (facultatif)') && recap.includes('Ne transmettez pas de diagnostic ni de document médical dans ce champ.'));
+    // R43 (dossier RGPD § 2.1, E6): the label does not invite a health description; an explicit, never pre-ticked consent before the message travels
+    check('R43 wording of the optional message and its notice', recap.includes('Message à la structure (facultatif)') && recap.includes('Inutile de décrire votre santé, un handicap ou un diagnostic'));
+    const consentBox = page.getByTestId('booking-message-consent-checkbox');
+    check('R43: the consent box appears with the message, unticked', await consentBox.isVisible() && !(await consentBox.isChecked()));
+    let posted = 0; const countPost = (r) => { if (r.url().endsWith('/api/rdv/appointments') && r.method() === 'POST') posted += 1; };
+    page.on('request', countPost);
+    await page.getByTestId('booking-confirm').click();
+    await page.getByTestId('booking-message-consent-error').waitFor({ timeout: 10000 });
+    check('R43: without the consent nothing is sent; the error is announced and the box focused', posted === 0 && (await consentBox.getAttribute('aria-invalid')) === 'true' && await consentBox.evaluate((el) => el === document.activeElement));
+    page.off('request', countPost);
+    await audit(page, 'recap with the message, consent error');
+    await consentBox.check();
     await audit(page, 'recap with the message');
     const [resp] = await Promise.all([page.waitForResponse((r) => r.url().endsWith('/api/rdv/appointments') && r.request().method() === 'POST', { timeout: 30000 }), page.getByTestId('booking-confirm').click()]);
+    check('R43: the request carries messageConsent: true', JSON.parse(resp.request().postData() || '{}').messageConsent === true);
     const created = await resp.json().catch(() => ({}));
     S.visitorAppt = created;
     await page.getByTestId('booking-success').waitFor({ timeout: 20000 });
@@ -234,6 +247,8 @@ try {
     if (pgc) {
       const row = (await dbq(`SELECT "createdByProUserId" AS pro, notes FROM "ProAppointment" WHERE id = $1`, [created.id]))[0];
       check('assigned to P1; the message is sealed at rest (no plaintext in the row)', row?.pro === cred.pros.p1.id && typeof row.notes === 'string' && row.notes.startsWith('v1:') && !row.notes.includes(STAMP), row ? `${row.pro} ${String(row.notes).slice(0, 4)}` : 'no row');
+      const consentRows = await dbq(`SELECT decision, proof_level FROM "ConsentLog" WHERE purpose = 'BOOKING_MESSAGE_TRANSMISSION' AND policy_hash LIKE $1`, [`%:${created.id}`]);
+      check('R43: one consent row for this appointment in ConsentLog (no message text)', consentRows.length === 1 && consentRows[0].decision === true && consentRows[0].proof_level === 'EXPLICIT_CHECKBOX', JSON.stringify(consentRows));
     }
     const staff = await papi('admin', 'GET', '/api/pro/appointments');
     const item = (staff.json?.items || staff.json || []).find((a) => a.id === created.id);
@@ -506,6 +521,63 @@ try {
       check('audit rows carry no message, no e-mail address, no token', !dump.includes(MSG) && !/@[a-z-]+\.example\.test/.test(dump) && !/sha256:|eyJ[A-Za-z0-9_-]{10,}/.test(dump));
     }
     await page.close();
+  });
+
+  // R43: lifecycle — expiry of an unanswered request, a decision on a request moved meanwhile, the notice ledger at this database level, the person
+  // withdrawing their optional message
+  await scenario('S11', async () => {
+    const ctx = await ensureClient();
+    const level0045 = pgc ? (await dbq(`SELECT pg_get_constraintdef(oid) AS d FROM pg_constraint WHERE conname = 'AppointmentNotice_kind_check'`))[0].d.includes('REQUEST_RECEIVED') : null;
+    check(`database level: notice ledger ${level0045 ? 'with' : 'without'} migration 0045`, level0045 !== null);
+    // a Mode B request; the person moves it before the team answers; the team's answer for the old time is refused (reload), then it accepts the new time
+    const before = (await slotsApi(ctx, svcB, 'ANY')).json.slots;
+    const first = before[before.length - 2]; const second = before[before.length - 1];
+    const q = await book(ctx, svcB, first.startAt, { professional: 'ANY' });
+    check('Mode B request created', q.status === 201 && q.json.state === 'REQUESTED', `${q.status} ${q.json?.state}`);
+    const mv = await capi(ctx, 'POST', `/api/rdv/appointments/${q.json.id}/reschedule`, { startAt: second.startAt });
+    const stale = await papi('admin', 'PATCH', `/api/pro/appointments?id=${encodeURIComponent(q.json.id)}`, { decision: 'ACCEPT', expectedStartAt: first.startAt });
+    check('a decision for the time the team saw, after the person moved the request: 409 APPOINTMENT_CHANGED (nothing confirmed)', mv.status === 200 && stale.status === 409 && stale.json?.code === 'APPOINTMENT_CHANGED', `${mv.status} ${stale.status} ${stale.json?.code}`);
+    const ok = await papi('admin', 'PATCH', `/api/pro/appointments?id=${encodeURIComponent(q.json.id)}`, { decision: 'ACCEPT', expectedStartAt: second.startAt });
+    check('the decision for the new time is accepted → CONFIRMED', ok.status === 200 && (await capi(ctx, 'GET', `/api/rdv/appointments/${q.json.id}`)).json?.state === 'CONFIRMED');
+    if (pgc) {
+      const kinds = (await dbq(`SELECT DISTINCT kind FROM "AppointmentNotice" WHERE "appointmentId" = $1`, [q.json.id])).map((r) => r.kind).sort();
+      check(level0045 ? 'ledger (0045): REQUEST_RECEIVED and REQUEST_ACCEPTED recorded' : 'ledger (0042): the booking kinds are skipped, the R20 kind RESCHEDULED recorded, nothing mis-labelled',
+        level0045 ? kinds.includes('REQUEST_RECEIVED') && kinds.includes('REQUEST_ACCEPTED') && kinds.includes('RESCHEDULED') : JSON.stringify(kinds) === '["RESCHEDULED"]', kinds.join(','));
+      // an unanswered request whose start passed: written `expired`, shown as expired to the person and to the structure
+      const past = `lab-cdgg-r43-expired-${STAMP}`;
+      await dbq(`INSERT INTO "ProAppointment" (id, "structureId", "serviceId", "startAt", "endAt", status, "beneficiaryName", "citizenUserId", "idempotencyKey", "updatedAt")
+        VALUES ($1, $2, $3, now() - interval '3 hours', now() - interval '2 hours', 'requested', 'Particulier', $4, $5, now())`, [past, cred.structure.id, svcB, cred.citizens.client.id, `r43-exp-${STAMP}`]);
+      const page = await ctx.newPage();
+      await page.goto(`${base}/compte/rendez-vous`, { waitUntil: 'domcontentloaded' });
+      await page.getByTestId('rdv-item').first().waitFor({ timeout: 20000 });
+      check('« Mes rendez-vous » shows the unanswered request as « Demande expirée sans réponse »', /Demande expirée sans réponse/.test(await page.locator('main').innerText()));
+      check('the stored status is now `expired`', (await dbq(`SELECT status FROM "ProAppointment" WHERE id = $1`, [past]))[0].status === 'expired');
+      const agenda = await papi('admin', 'GET', '/api/pro/appointments?pageSize=50');
+      const it = (agenda.json?.items || []).find((a) => a.id === past);
+      check('the structure\'s agenda shows it expired, with no accept / refuse', it?.status === 'expired' && it?.awaitingDecision === false, JSON.stringify(it ? { s: it.status, a: it.awaitingDecision } : null));
+      await page.close();
+      await dbq(`DELETE FROM "ProAppointment" WHERE id = $1`, [past]);
+    }
+    // the visitor withdraws the optional message of their S1 appointment from « Mes rendez-vous »
+    if (S.visitorCtx && S.visitorAppt?.id) {
+      const page = await S.visitorCtx.newPage();
+      await page.goto(`${base}/compte/rendez-vous`, { waitUntil: 'domcontentloaded' });
+      const btn = page.getByTestId('rdv-message-withdraw').first();
+      check('« Mes rendez-vous » offers « Retirer mon message » for the appointment with a message', await btn.waitFor({ timeout: 20000 }).then(() => true, () => false));
+      await btn.click();
+      await page.getByTestId('rdv-message-withdraw-panel').waitFor({ timeout: 10000 });
+      await audit(page, 'message withdrawal question');
+      await page.getByTestId('rdv-message-withdraw-confirm').click();
+      await page.getByTestId('rdv-status').getByText('Votre message a été effacé. La structure ne le voit plus.').waitFor({ timeout: 20000 });
+      const staff = await papi('admin', 'GET', '/api/pro/appointments?pageSize=50');
+      const item = (staff.json?.items || []).find((a) => a.id === S.visitorAppt.id);
+      check('after the withdrawal the structure no longer reads the message', item && item.citizenMessage === null, item ? String(item.citizenMessage) : `${staff.status}`);
+      if (pgc) {
+        check('the message is erased at rest; ConsentLog has the withdrawal (decision false)', (await dbq(`SELECT notes FROM "ProAppointment" WHERE id = $1`, [S.visitorAppt.id]))[0].notes === null
+          && (await dbq(`SELECT decision FROM "ConsentLog" WHERE purpose = 'BOOKING_MESSAGE_TRANSMISSION' AND policy_hash LIKE $1 ORDER BY created_at`, [`%:${S.visitorAppt.id}`])).map((r) => r.decision).join() === 'true,false');
+      }
+      await page.close();
+    } else check('the S1 appointment exists for the withdrawal check', false, 'run S1 with S11');
   });
 
   // the optional message never appears in a URL, a console line or a GET answer to a non-staff session

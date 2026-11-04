@@ -84,6 +84,13 @@ export default function CompteRendezVous() {
       setProblem(t('compte:rdv.conversation_failed', 'La conversation n’a pas pu être ouverte.'));
     } catch (err) { setProblem(err?.message || t('compte:rdv.conversation_failed', 'La conversation n’a pas pu être ouverte.')); } finally { setBusy(false); }
   };
+  // R43 (E6): withdrawing the optional message erases it at once (two steps, like a cancellation: it cannot be undone)
+  const [withdrawing, setWithdrawing] = useState(null);
+  const withdrawMessage = async (a) => {
+    setWithdrawing(null);
+    setBusy(true); setProblem(''); setMessage('');
+    try { await citizenApi.withdrawAppointmentMessage(a.id); setMessage(t('booking:message.withdrawn_r43', 'Votre message a été effacé. La structure ne le voit plus.')); await load(); } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
   const cancel = async (a) => {
     setConfirming(null);
     setBusy(true); setProblem(''); setMessage('');
@@ -142,6 +149,21 @@ export default function CompteRendezVous() {
                       <Button type="button" size="sm" className="bg-red-700 text-white hover:bg-red-800" disabled={busy} data-testid="rdv-cancel-confirm" onClick={() => cancel(a)}>{t('compte:rdv.oui_annuler_rendez_vous', 'Oui, annuler le rendez-vous')}</Button>
                       <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="rdv-cancel-keep" onClick={() => setConfirming(null)}>{t('compte:rdv.non_garder', 'Non, le garder')}</Button>
                     </div>
+                  </div>
+                ) : null}
+                {a.hasMessage ? (
+                  <div className="space-y-2" data-testid="rdv-message">
+                    <p className="text-slate-700">{t('booking:message.kept_r43', 'Votre message est transmis à la structure.')}</p>
+                    {a.canWithdrawMessage ? <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="rdv-message-withdraw" aria-expanded={withdrawing === a.id} onClick={() => setWithdrawing(withdrawing === a.id ? null : a.id)}>{t('booking:message.withdraw_r43', 'Retirer mon message')}</Button> : null}
+                    {withdrawing === a.id ? (
+                      <div className="space-y-2 rounded-md border border-slate-300 bg-slate-50 p-3" role="group" aria-labelledby={`rdv-msg-q-${a.id}`} data-testid="rdv-message-withdraw-panel">
+                        <p id={`rdv-msg-q-${a.id}`} className="font-medium text-slate-900">{t('booking:message.withdraw_question_r43', 'Effacer votre message ? La structure ne pourra plus le lire. Le rendez-vous est conservé.')}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button type="button" size="sm" disabled={busy} data-testid="rdv-message-withdraw-confirm" onClick={() => withdrawMessage(a)}>{t('booking:message.withdraw_confirm_r43', 'Oui, effacer le message')}</Button>
+                          <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => setWithdrawing(null)}>{t('booking:message.withdraw_keep_r43', 'Non, le garder')}</Button>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
                 {a.canCancel && !a.canReschedule ? <p className="text-slate-700" data-testid="rdv-move-unavailable">{a.reschedule && a.reschedule.count >= a.reschedule.max ? t('compte:rdv.moved_twice', 'Ce rendez-vous a déjà été déplacé deux fois.') : t('compte:rdv.less_24h', 'Il reste moins de 24 heures : pour le déplacer, contactez la structure.')}</p> : null}

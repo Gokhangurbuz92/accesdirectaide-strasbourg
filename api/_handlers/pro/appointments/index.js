@@ -124,6 +124,8 @@ async function handler(req, res) {
   const appointmentColumns = flagsOf(T);
 
   if (req.method === 'GET') {
+    // R43 (E4): an unanswered request of this structure whose start passed is written `expired` before the agenda is read
+    await (await import('../../../_services/rdv-requests.js')).expireStaleRequests({ structureId: proCtx.structureId });
     const page = Math.max(1, toInt(req.query.page || 1) || 1);
     const pageSize = Math.min(50, Math.max(1, toInt(req.query.pageSize || req.query.limit || 20) || 20));
     const skip = (page - 1) * pageSize;
@@ -304,7 +306,7 @@ async function handler(req, res) {
       const { clientIp } = await import('../../../_utils/client-ip.js');
       const id = String(req.query.id || req.body.id || '').trim();
       if (!id) return res.status(400).json({ error: 'id is required' });
-      const out = await decideRequest(proCtx, { id, decision: req.body.decision, reasonCode: req.body.reasonCode, ip: clientIp(req) });
+      const out = await decideRequest(proCtx, { id, decision: req.body.decision, reasonCode: req.body.reasonCode, expectedStartAt: req.body.expectedStartAt, ip: clientIp(req) });
       return res.status(out.status).json(out.body);
     }
     const parsed = patchAppointmentSchema.safeParse(req.body);

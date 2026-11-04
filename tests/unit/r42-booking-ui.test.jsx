@@ -39,8 +39,9 @@ const axeOk = async () => { const r = await axe.run(document.body, { rules: { 'c
 describe('journey pieces', () => {
   it('French: the owner wording of the optional message, a bounded field, no health question, the age box unticked', async () => {
     render(pieces());
-    expect(screen.getByText('Précisez brièvement le motif de votre rendez-vous (facultatif)')).toBeInTheDocument();
-    expect(screen.getByText('Indiquez uniquement les informations nécessaires à votre demande. Ne transmettez pas de diagnostic ni de document médical dans ce champ.')).toBeInTheDocument();
+    // R43 (dossier RGPD § 2.1): the label no longer invites a description of the reason; the notice discourages health details
+    expect(screen.getByText('Message à la structure (facultatif)')).toBeInTheDocument();
+    expect(screen.getByText('Inutile de décrire votre santé, un handicap ou un diagnostic : la structure vous posera les questions utiles pendant le rendez-vous. N’envoyez pas de document médical.')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toHaveAttribute('maxlength', '500');
     expect(screen.getByText('3 / 500 caractères')).toBeInTheDocument();
     expect(screen.getByTestId('booking-age-checkbox')).not.toBeChecked();
@@ -53,13 +54,13 @@ describe('journey pieces', () => {
     expect(screen.getByTestId('rdv-mail-outcome')).toHaveTextContent('Aucun e-mail n’a été envoyé');
     await axeOk();
   });
-  for (const [code, label, noMail] of [['en', 'Briefly describe the reason for your appointment (optional)', 'No e-mail was sent'], ['ar', 'اذكر باختصار سبب موعدك (اختياري)', 'لم تُرسل أي رسالة']]) {
+  for (const [code, label, noMail] of [['en', 'Message to the organisation (optional)', 'No e-mail was sent'], ['ar', 'رسالة إلى الجهة (اختياري)', 'لم تُرسل أي رسالة']]) {
     it(`${code}: translated, no French sentence left, axe rules pass`, async () => {
       await lang(code);
       render(pieces());
       expect(screen.getByText(label)).toBeInTheDocument();
       expect(screen.getByTestId('rdv-mail-outcome')).toHaveTextContent(noMail);
-      expect(document.body.textContent).not.toMatch(/Précisez|Pas de préférence|Je déclare|Aucun e-mail/);
+      expect(document.body.textContent).not.toMatch(/Message à la structure|Inutile de décrire|Pas de préférence|Je déclare|Aucun e-mail/);
       await axeOk();
     });
   }
@@ -98,6 +99,16 @@ describe('booking page, Mode B, team choice', () => {
     expect(screen.getByTestId('booking-approval-notice')).toBeInTheDocument();
     const send = screen.getByTestId('booking-confirm');
     expect(send).toHaveTextContent('Envoyer la demande de rendez-vous');
+    // R43 (E6): a written message needs the explicit consent, never pre-ticked; without it nothing is sent and the box is announced in error
+    const box = screen.getByTestId('booking-message-consent-checkbox');
+    expect(box).not.toBeChecked();
+    fireEvent.click(send);
+    expect(await screen.findByTestId('booking-message-consent-error')).toHaveAttribute('role', 'alert');
+    expect(box).toHaveAttribute('aria-invalid', 'true');
+    expect(document.activeElement).toBe(box);
+    expect(bodies).toEqual([]);
+    fireEvent.click(box);
+    expect(screen.queryByTestId('booking-message-consent-error')).toBeNull();
     fireEvent.click(send);
     const state = await screen.findByTestId('booking-state');
     expect(state).toHaveTextContent('Demande envoyée : en attente de la structure');
@@ -105,7 +116,7 @@ describe('booking page, Mode B, team choice', () => {
     expect(screen.getByTestId('booking-requested-note')).toBeInTheDocument();
     expect(screen.queryByTestId('booking-download-ics')).toBeNull();
     expect(screen.getByTestId('rdv-mail-outcome')).toHaveAttribute('data-outcome', 'TEST_RECORDED');
-    expect(bodies[0]).toMatchObject({ structureSlug: 'structure-fictive', serviceId: 's1', professional: 'PREVIOUS', message: 'Dossier logement' });
+    expect(bodies[0]).toMatchObject({ structureSlug: 'structure-fictive', serviceId: 's1', professional: 'PREVIOUS', message: 'Dossier logement', messageConsent: true });
     expect(bodies[0]).not.toHaveProperty('firstContact');   // the suitability answers are never sent
   });
 });

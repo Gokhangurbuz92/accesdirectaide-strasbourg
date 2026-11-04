@@ -354,9 +354,10 @@ export const proRdvClient = {
     /**
      * R42 Mode B: accept or refuse a pending request (journaled on the server)
      * @param {string} id @param {'ACCEPT' | 'REFUSE'} decision @param {'NOT_SUITABLE' | 'NO_CAPACITY' | 'OTHER'} [reasonCode]
+     * @param {string} [expectedStartAt] R43: the start time the team saw (a request moved meanwhile is refused: reload)
      */
-    decide(id, decision, reasonCode) {
-      return proRdvRequest('/api/pro/appointments', { method: 'PATCH', query: { id }, body: { id, decision, ...(reasonCode ? { reasonCode } : {}) } });
+    decide(id, decision, reasonCode, expectedStartAt) {
+      return proRdvRequest('/api/pro/appointments', { method: 'PATCH', query: { id }, body: { id, decision, ...(reasonCode ? { reasonCode } : {}), ...(expectedStartAt ? { expectedStartAt } : {}) } });
     },
     cancelLegacy(/** @type {string | number | boolean | null | undefined} */ id) {
       return proRdvRequest('/api/pro/appointments/cancel', {

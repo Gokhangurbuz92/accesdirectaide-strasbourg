@@ -46,6 +46,11 @@ export default function PublicBooking() {
     const nextPath = normalizeNextPath(searchParams.get('next') || '', '');
     const journeyAideSlug = String(searchParams.get('aide') || '').trim();
     const appointmentId = String(searchParams.get('appointment') || '').trim();
+    // R43: a link that already names the service (e.g. an old /rdv/<slug>/creneaux?serviceId=… link) opens that service's next step; the server
+    // re-validates the id (unknown / another structure's → it is simply not preselected)
+    const presetServiceId = String(searchParams.get('serviceId') || '').trim();
+    const presetMode = String(searchParams.get('mode') || '').trim().toUpperCase();
+    const presetDoneRef = useRef(false);
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -74,6 +79,10 @@ export default function PublicBooking() {
     const [suitability, setSuitability] = useState({ firstContact: '', samePerson: false });
     const [wrongStructure, setWrongStructure] = useState(false);
     const [message, setMessage] = useState('');
+    // R43 (E6): the explicit consent to transmit the message (never pre-ticked; asked only while a message is written)
+    const [messageConsent, setMessageConsent] = useState(false);
+    const [messageConsentError, setMessageConsentError] = useState(false);
+    const messageConsentRef = useRef(null);
     const [confirmationMode, setConfirmationMode] = useState('DIRECT');
     const [ageStep, setAgeStep] = useState('');
     const [manageCapability, setManageCapability] = useState(null);
@@ -152,6 +161,11 @@ export default function PublicBooking() {
     // Book the appointment
     const confirmBooking = useCallback(async () => {
         if (!selectedService || !selectedSlot) return;
+        if (message.trim() && !messageConsent) {
+            setMessageConsentError(true);
+            messageConsentRef.current?.focus();
+            return;
+        }
         setLoading(true);
         setError('');
         try {
@@ -173,7 +187,7 @@ export default function PublicBooking() {
                     mode: bookingMode,
                     ...(bookingMode === 'VIDEO' ? { videoConsent } : {}),
                     ...(teamChoice ? { professional } : {}),
-                    ...(message.trim() ? { message } : {}),
+                    ...(message.trim() ? { message, messageConsent: true } : {}),
                     idempotencyKey,
                 }),
             });
@@ -184,6 +198,7 @@ export default function PublicBooking() {
                 if (errData.code === 'AGE_DECLARATION_REQUIRED') { setAgeStep('declare'); return; }
                 if (errData.code === 'ADULT_ACCOUNT_REQUIRED') { setAgeStep('minor'); throw new Error(errData.message); }
                 if (errData.code === 'PROFESSIONAL_UNAVAILABLE') { setStep(1.5); throw new Error(errData.message); }
+                if (errData.code === 'MESSAGE_CONSENT_REQUIRED') { setMessageConsentError(true); setMessageConsent(false); return; }
                 if (res.status === 409) {
                     await fetchSlots(selectedService.id);
                     setStep(2);
@@ -203,7 +218,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message]);
+    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message, messageConsent]);
 
     // Handle service selection
     const handleSelectService = async (service) => {
@@ -233,6 +248,15 @@ export default function PublicBooking() {
         setSelectedSlot(slot);
         setStep(3);
     };
+
+    useEffect(() => {
+        if (presetDoneRef.current || !presetServiceId || !services.length || step !== 1) return;
+        presetDoneRef.current = true;
+        const preset = services.find((s) => String(s.id) === presetServiceId);
+        if (!preset) return;
+        if ((presetMode === 'IN_PERSON' || presetMode === 'VIDEO') && Array.isArray(preset.modes) && preset.modes.includes(presetMode)) setBookingMode(presetMode);
+        handleSelectService(preset);
+    }, [services]); // eslint-disable-line react-hooks/exhaustive-deps -- once, when the services of the structure are known
 
     // Load services only for a fresh booking, never for a capability manage link.
     useEffect(() => {
@@ -600,7 +624,7 @@ export default function PublicBooking() {
                             </button>
                             ) : null}
                         </div>
-                        <div className="mb-6"><BookingMessageField value={message} onChange={setMessage} disabled={loading} /></div>
+                        <div className="mb-6"><BookingMessageField ref={messageConsentRef} value={message} onChange={(v) => { setMessage(v); if (!v.trim()) { setMessageConsent(false); setMessageConsentError(false); } }} consent={messageConsent} onConsentChange={(v) => { setMessageConsent(v); if (v) setMessageConsentError(false); }} consentError={messageConsentError} disabled={loading} /></div>
                         {confirmationMode === 'APPROVAL' ? (
                             <p className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" data-testid="booking-approval-notice">
                                 {t('booking:journey.approval_notice', 'Cette structure valide chaque demande : votre rendez-vous ne sera confirmé qu’après son accord. Vous serez informé(e) de sa réponse.')}

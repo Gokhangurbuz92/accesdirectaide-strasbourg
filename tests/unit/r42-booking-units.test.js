@@ -20,9 +20,9 @@ describe('age gate of a booking write (api/_utils/booking-age.js over R42-AUTH i
 });
 
 describe('optional message (R42-A06)', () => {
-  it('keeps the owner wording', () => {
-    expect(BOOKING_MESSAGE_LABEL).toBe('Précisez brièvement le motif de votre rendez-vous (facultatif)');
-    expect(BOOKING_MESSAGE_NOTICE).toBe('Indiquez uniquement les informations nécessaires à votre demande. Ne transmettez pas de diagnostic ni de document médical dans ce champ.');
+  it('keeps the wording proposed by the R43 GDPR dossier (§ 2.1: no invitation to describe a health situation)', () => {
+    expect(BOOKING_MESSAGE_LABEL).toBe('Message à la structure (facultatif)');
+    expect(BOOKING_MESSAGE_NOTICE).toBe('Inutile de décrire votre santé, un handicap ou un diagnostic : la structure vous posera les questions utiles pendant le rendez-vous. N’envoyez pas de document médical.');
   });
   it('absent / blank = no message; trimmed plain text accepted; bounded; markup, entities, controls and bidi overrides refused', () => {
     expect(validateBookingMessage(undefined)).toEqual({ ok: true, value: null });

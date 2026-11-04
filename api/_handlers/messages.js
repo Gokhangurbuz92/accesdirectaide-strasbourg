@@ -86,11 +86,13 @@ async function loadConversationById(conversationId, limit) {
           service: { columns: { id: true, name: true } },
         },
       },
+      // R43: the `limit` NEWEST messages (the whole conversation was loaded whatever the limit), shown oldest first
       messages: {
-        orderBy: (msg, { asc }) => [asc(msg.createdAt)],
+        orderBy: (msg, { desc }) => [desc(msg.createdAt)],
+        limit,
       },
     },
-  });
+  }).then((conversation) => (conversation && Array.isArray(conversation.messages) ? { ...conversation, messages: [...conversation.messages].reverse() } : conversation));
 }
 
 /**
@@ -117,8 +119,10 @@ async function getConversations(req, res, user) {
         columns: { id: true, startAt: true, endAt: true, status: true },
         with: { service: { columns: { id: true, name: true } } },
       },
+      // R43: the list shows only the latest message's preview: load that one, not every message of every conversation
       messages: {
         orderBy: (msg, { desc }) => [desc(msg.createdAt)],
+        limit: 1,
       },
     },
   });

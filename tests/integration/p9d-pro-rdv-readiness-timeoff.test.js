@@ -396,6 +396,14 @@ describe('P9-D readiness monitor + pro timeoff contract', () => {
     expect(patch.statusCode).toBe(200);
     expect(patch.body.item.reason).toBe('Conges');
 
+    // R43: one range rule on create (schema) and on update (validateRange): an end before or equal to the start is refused, nothing changes
+    const badCreate = await invokeApi('/api/pro/timeoff', { method: 'POST', headers: { authorization: `Bearer ${tokenA}` }, body: { startAt: '2026-03-05T10:00:00.000Z', endAt: '2026-03-05T09:00:00.000Z' } });
+    expect([badCreate.statusCode, badCreate.body.error]).toEqual([400, 'endAt must be greater than startAt']);
+    const badPatch = await invokeApi('/api/pro/timeoff', { method: 'PATCH', headers: { authorization: `Bearer ${tokenA}` }, body: { id: timeOffId, endAt: '2026-03-04T09:00:00.000Z' } });
+    expect([badPatch.statusCode, badPatch.body.error]).toEqual([400, 'endAt must be greater than startAt']);
+    const kept = await invokeApi('/api/pro/timeoff', { headers: { authorization: `Bearer ${tokenA}` } });
+    expect(new Date(kept.body.items.find((item) => item.id === timeOffId).endAt).toISOString()).toBe('2026-03-04T10:00:00.000Z');
+
     const deleteOwn = await invokeApi(`/api/pro/timeoff?id=${encodeURIComponent(timeOffId)}`, {
       method: 'DELETE',
       headers: { authorization: `Bearer ${tokenA}` },
