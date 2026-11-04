@@ -15,6 +15,7 @@ import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { CsrfBootstrapError, csrfFetch, getCsrfHeaders } from '@/lib/csrf';
 import i18n, { formatDate, useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import AgeDeclarationPrompt from '@/components/rdv/AgeDeclarationPrompt.jsx';
 /**
  * @returns {string | null}
  */
@@ -152,6 +153,8 @@ export default function PublicRdvEntry({ view = 'landing' }) {
   const [bookingBusy, setBookingBusy] = useState(false);
   const [bookingError, setBookingError] = useState('');
   const [bookingInfo, setBookingInfo] = useState('');
+  // R42-A07 (R42-QA): an account without an age statement declares it here, then the SAME slot is requested again (as on /rdv/:slug/booking)
+  const [ageSlot, setAgeSlot] = useState(/** @type {{ startAt: string | number | boolean | null | undefined } | null} */ (null));
   const [cancelBusy, setCancelBusy] = useState(false);
   const [openConversationBusy, setOpenConversationBusy] = useState(false);
   const [videoConsent, setVideoConsent] = useState(false);
@@ -358,12 +361,25 @@ export default function PublicRdvEntry({ view = 'landing' }) {
 
       if (payload?.id) {
         updateParams({ appointment: payload.id });
-        setBookingInfo(selectedMode === 'VIDEO'
+        // R42-A03 (R42-QA): a structure in approval mode answers REQUESTED: never presented as confirmed
+        if (payload.state === 'REQUESTED' || payload.awaitingApproval === true) setBookingInfo(t('booking:journey.requested_title', 'Demande envoyée : en attente de la structure'));
+        else setBookingInfo(selectedMode === 'VIDEO'
           ? t('booking:rdv.rendez_vous_en_visio_confirme', "Rendez-vous en visio confirmé. L’accès sécurisé se fera depuis Mes rendez-vous, après validation par la structure.")
           : t('booking:rdv.rendez_vous_en_presentiel_confirme', "Rendez-vous en présentiel confirmé. Un e-mail de confirmation a été préparé."));
         await refetchAppointment();
       }
     } catch (error) {
+      const refusal = /** @type {{ status?: number, payload?: { code?: string, message?: string } } | null} */ (error);
+      // R42-A07 (R42-QA): not a slot conflict — the account has no age statement yet: ask for it, then book the same slot
+      if (refusal?.status === 409 && refusal.payload?.code === 'AGE_DECLARATION_REQUIRED') {
+        setAgeSlot(slot);
+        return;
+      }
+      // R42-A07: a person who stated they are under 18 gets the server's explanation (with 119 / 112), never a raw code
+      if (refusal?.status === 403 && refusal.payload?.code === 'ADULT_ACCOUNT_REQUIRED') {
+        setBookingError(String(refusal.payload.message || t('booking:rdv.impossible_de_confirmer_ce_rendez', "Impossible de confirmer ce rendez-vous.")));
+        return;
+      }
       // @ts-ignore
       if (error?.status === 409) {
         setBookingError(t('booking:rdv.ce_creneau_n_est_plus', "Ce creneau n'est plus disponible. Rechargez la liste."));
@@ -823,6 +839,8 @@ export default function PublicRdvEntry({ view = 'landing' }) {
                   <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{bookingError}</div>
                 ) : null}
 
+                {ageSlot ? <AgeDeclarationPrompt onDeclared={() => { const again = ageSlot; setAgeSlot(null); handleBookSlot(again); }} /> : null}
+
                 {bookingInfo ? (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
                     <div className="flex items-center gap-2 font-medium">
@@ -846,7 +864,12 @@ export default function PublicRdvEntry({ view = 'landing' }) {
 
                 {appointment ? (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4 space-y-3" data-testid="rdv-booking-confirmation">
-                    <h3 className="font-semibold text-emerald-900">{t('booking:rdv.rdv_confirme', "RDV confirme")}</h3>
+                    <h3 className="font-semibold text-emerald-900" data-testid="rdv-booking-state" data-state={appointment.state || ''}>{appointment.state === 'REQUESTED' || appointment.awaitingApproval === true
+                      ? t('booking:journey.requested_title', 'Demande envoyée : en attente de la structure')
+                      : t('booking:rdv.rdv_confirme', "RDV confirme")}</h3>
+                    {appointment.state === 'REQUESTED' || appointment.awaitingApproval === true ? (
+                      <p className="text-sm text-emerald-900" data-testid="rdv-requested-note">{t('booking:journey.requested_text', 'Ce rendez-vous n’est pas encore confirmé : la structure doit accepter votre demande. Suivez sa réponse dans « Mes rendez-vous ».')}</p>
+                    ) : null}
                     <p className="text-sm text-emerald-900">
                       {appointment.service?.name || 'Service'} - {formatDateTime(appointment.startsAt)}
                     </p>
