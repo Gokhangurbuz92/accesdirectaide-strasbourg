@@ -1560,7 +1560,8 @@ async function listMyAppointments(req, res) {
   if (!rateLimit.allowed) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
-  await (await import('../_services/rdv-requests.js')).expireStaleRequests({ citizenUserId: auth.user.id });   // R43 (E4)
+  const requests = await import('../_services/rdv-requests.js');
+  await requests.expireStaleRequests({ citizenUserId: auth.user.id });   // R43 (E4)
   const rows = await db.query.ProAppointment.findMany({
     columns: flagsOf(appointmentTable(await requestGuestSchema(db))),   // R41-B
     where: (a, { eq }) => eq(a.citizenUserId, auth.user.id),
@@ -1572,13 +1573,16 @@ async function listMyAppointments(req, res) {
     },
   });
   const now = Date.now();
+  // R44: the fixed reason of a refused request (journal row of the decision, same structure only), shown to the person in their language
+  const reasons = await requests.refusalReasonsFor(rows);
   return res.status(200).json({
     appointments: rows.map((a) => {
       const active = RESCHEDULABLE_STATUSES.includes(String(a.status || '').toLowerCase());
       const upcoming = new Date(a.startAt).getTime() > now;
       const inTime = new Date(a.startAt).getTime() - now >= RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000;
       // R12 (C19): an active upcoming appointment carries its calendar file (« Ajouter au calendrier » in Mes rendez-vous)
-      return { ...serializeAppointment(a, { includeCalendar: active && upcoming }), canCancel: active && upcoming, canReschedule: active && inTime && Number(a.rescheduleCount || 0) < MAX_RESCHEDULES };
+      return { ...serializeAppointment(a, { includeCalendar: active && upcoming }), canCancel: active && upcoming, canReschedule: active && inTime && Number(a.rescheduleCount || 0) < MAX_RESCHEDULES,
+        ...(reasons.has(a.id) ? { refusal: { reasonCode: reasons.get(a.id) } } : {}) };
     }),
   });
 }

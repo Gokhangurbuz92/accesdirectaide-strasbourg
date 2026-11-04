@@ -145,3 +145,20 @@ export function localizedMail(kind, lang, frenchText) {
 export function mailCatalogue() {
   return CATALOGUE;
 }
+
+/**
+ * R44 (booking) — the sentence of a refused request's reason in the reader's language (the API's fixed codes, api/_services/rdv-requests.js REFUSAL_REASONS;
+ * French = the source sentence). A body line only, never a subject (non-disclosure rule above). The codes are a proposal awaiting the owner (R43 D-5).
+ * @type {Readonly<Record<string, Readonly<Record<string, string>>>>}
+ */
+export const REFUSAL_REASON_TEXTS = Object.freeze({
+  NOT_SUITABLE: Object.freeze({ fr: 'La structure indique que cette demande ne relève pas de ses services. Vous pouvez chercher une autre structure dans l’annuaire.', en: 'The organisation says this request is not within its services. You can look for another organisation in the directory.', tr: 'Kurum, bu talebin kendi hizmet alanına girmediğini belirtiyor. Rehberde başka bir kurum arayabilirsiniz.', ar: 'تشير الجهة إلى أن هذا الطلب لا يدخل ضمن خدماتها. يمكنك البحث عن جهة أخرى في الدليل.', de: 'Die Einrichtung teilt mit, dass diese Anfrage nicht zu ihren Leistungen gehört. Sie können im Verzeichnis eine andere Einrichtung suchen.', uk: 'Організація повідомляє, що цей запит не належить до її послуг. Ви можете знайти іншу організацію в довіднику.' }),
+  NO_CAPACITY: Object.freeze({ fr: 'La structure ne peut pas recevoir cette demande à ce créneau. Vous pouvez demander un autre créneau.', en: 'The organisation cannot take this request at this time slot. You can ask for another time slot.', tr: 'Kurum bu talebi bu saatte karşılayamıyor. Başka bir saat talep edebilirsiniz.', ar: 'لا تستطيع الجهة استقبال هذا الطلب في هذا الموعد. يمكنك طلب موعد آخر.', de: 'Die Einrichtung kann diese Anfrage zu diesem Termin nicht annehmen. Sie können einen anderen Termin anfragen.', uk: 'Організація не може прийняти цей запит у цей час. Ви можете попросити інший час.' }),
+  OTHER: Object.freeze({ fr: 'La structure ne peut pas donner suite à cette demande. Vous pouvez la contacter pour en savoir plus.', en: 'The organisation cannot follow up on this request. You can contact it to find out more.', tr: 'Kurum bu talebe yanıt veremiyor. Daha fazla bilgi için kurumla iletişime geçebilirsiniz.', ar: 'لا تستطيع الجهة متابعة هذا الطلب. يمكنك التواصل معها لمعرفة المزيد.', de: 'Die Einrichtung kann dieser Anfrage nicht nachkommen. Sie können sie kontaktieren, um mehr zu erfahren.', uk: 'Організація не може задовольнити цей запит. Ви можете звернутися до неї, щоб дізнатися більше.' }),
+});
+
+/** the reason sentence of a code (unknown → OTHER) in a supported language (unknown → French) @param {unknown} code @param {unknown} lang @returns {string} */
+export function refusalReasonMail(code, lang) {
+  const entry = REFUSAL_REASON_TEXTS[typeof code === 'string' && code in REFUSAL_REASON_TEXTS ? code : 'OTHER'];
+  return entry[mailLanguage(lang)] || entry[SOURCE_LANGUAGE];
+}

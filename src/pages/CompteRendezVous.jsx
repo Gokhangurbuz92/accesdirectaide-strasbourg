@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import VisioWindow from '@/components/Visio/VisioWindow';
 import { formatDate, useT } from '@/i18n';
+import { refusalReasonText } from '@/lib/refusalReasons';
 
 const statusLabels = (t) => ({ BOOKED: t('compte:rdv.status.booked', 'Réservé'), CONFIRMED: t('compte:rdv.status.confirmed', 'Confirmé'), REQUESTED: t('compte:rdv.status.requested', 'Demandé'), CANCELLED: t('compte:rdv.status.cancelled', 'Annulé'), LOCKED: t('compte:rdv.status.booked', 'Réservé'), DONE: t('compte:rdv.status.done', 'Passé'), NO_SHOW: t('compte:rdv.status.no_show', 'Absent') });
 // R42: the TRUE state computed by the server (a pending request is never shown as confirmed)
@@ -113,6 +114,8 @@ export default function CompteRendezVous() {
               <CardHeader><CardTitle className="text-lg">{a.structure?.name} — {a.service?.name}</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm text-slate-800">
                 <p><span data-testid="rdv-when">{when(a.startsAt)}</span> — <span data-testid="rdv-state">{STATE[a.state] || STATUS[a.status] || a.status}</span> — <strong data-testid="rdv-mode">{MODE[a.mode || 'IN_PERSON']}</strong></p>
+                {/* R44: the structure's fixed reason (optional for the team; none chosen = the neutral sentence), in the person's language */}
+                {a.state === 'REFUSED' ? <p className="text-slate-800" data-testid="rdv-refusal-reason">{refusalReasonText(t, a.refusal?.reasonCode)}</p> : null}
                 {(a.mode || 'IN_PERSON') === 'IN_PERSON' ? (
                   <p data-testid="rdv-address">{a.location ? `${a.location.address}${a.location.verified ? '' : ` ${t('compte:rdv.address_unverified', '(adresse non encore vérifiée : confirmez-la auprès de la structure)')}`}${a.location.stepFreeAccess ? ` — ${t('compte:rdv.step_free', 'accessible aux personnes à mobilité réduite')}` : ''}` : t('compte:rdv.address_tbc', 'Adresse : à confirmer auprès de la structure.')}</p>
                 ) : null}

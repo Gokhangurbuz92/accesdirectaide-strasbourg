@@ -10,13 +10,20 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
+// R44 (A5): field-level errors (aria-invalid, aria-describedby, focused summary) — the R43 pattern
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
 export default function AuthForgotPassword() {
   const { t } = useT('account');
+  /** R44: the message helpers of src/lib/fieldErrors.js take (key, fallback, options) @type {import('@/lib/fieldErrors').TFn} */
+  const msgT = (key, fallback, options) => String(t(key, { defaultValue: fallback, ...(options || {}) }));
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { errors, check, clear, summaryRef } = useFormErrors();
 
   const next = normalizeNextPath(searchParams.get('next'), '/annuaire');
 
@@ -27,6 +34,8 @@ export default function AuthForgotPassword() {
     event.preventDefault();
     setError('');
     setMessage('');
+    const label = t('account:fields.email', 'Adresse e-mail');
+    if (!check(!email.trim() ? { 'forgot-email': requiredMessage(msgT, label) } : !looksLikeEmail(email) ? { 'forgot-email': emailMessage(msgT, label) } : {})) return;
     setLoading(true);
 
     try {
@@ -78,8 +87,9 @@ export default function AuthForgotPassword() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
+          <ErrorSummary ref={summaryRef} errors={errors} order={['forgot-email']} testid="forgot-error-summary" />
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate aria-busy={loading || undefined}>
             <div className="space-y-2">
               <Label htmlFor="forgot-email">{t('account:fields.email', 'Adresse e-mail')}</Label>
               <Input
@@ -88,8 +98,10 @@ export default function AuthForgotPassword() {
                 autoComplete="email"
                 required
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => { setEmail(event.target.value); clear('forgot-email'); }}
+                {...fieldA11y('forgot-email', errors)}
               />
+              <FieldError field="forgot-email" errors={errors} />
             </div>
 
             <Button type="submit" disabled={loading}>

@@ -10,13 +10,15 @@
  * text, no personal data). The person is told with a neutral subject; an accepted request gets its calendar file. The refusal reason is a fixed code
  * shown with a fixed sentence (no staff free text reaches the person).
  */
-import { and, eq, isNotNull, lte } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, lte, sql } from 'drizzle-orm';
 import logger from '../_utils/logger.js';
 import { db as defaultDb } from '../../src/db/index.js';
-import { ProAppointment } from '../../src/db/schema.js';
+import { AuditLog, ProAppointment } from '../../src/db/schema.js';
 import { AUTH_ROLE, logProAudit } from '../_utils/auth.js';
 import { canManageSchedule } from '../_utils/schedule-permissions.js';
 import { formatParis, noticeCitizen } from './appointment-notices.js';
+import { refusalReasonMail } from '../_utils/mail-catalogue.js';
+import { citizenMailLanguage } from './mail-language.js';
 
 export const DECISIONS = Object.freeze(['ACCEPT', 'REFUSE']);
 export const REFUSAL_REASONS = Object.freeze({
@@ -38,7 +40,9 @@ export async function decideRequest(proCtx, { id, decision, reasonCode, expected
   const database = deps.database ?? defaultDb;
   const now = deps.now ?? new Date();
   if (decision !== 'ACCEPT' && decision !== 'REFUSE') return { status: 400, body: { error: 'INVALID_DECISION', code: 'INVALID_DECISION', message: 'decision doit valoir ACCEPT ou REFUSE.' } };
-  const reason = decision === 'REFUSE' ? (typeof reasonCode === 'string' && reasonCode in REFUSAL_REASONS ? /** @type {keyof typeof REFUSAL_REASONS} */ (reasonCode) : 'OTHER') : null;
+  // R44: the agenda now sends the team's optional choice; none (or an unknown value) is the neutral OTHER, as before. `reasonChosen` tells the two apart in the journal.
+  const reasonChosen = decision === 'REFUSE' && typeof reasonCode === 'string' && reasonCode in REFUSAL_REASONS;
+  const reason = decision === 'REFUSE' ? (reasonChosen ? /** @type {keyof typeof REFUSAL_REASONS} */ (reasonCode) : 'OTHER') : null;
   const [row] = await database.select({ id: ProAppointment.id, structureId: ProAppointment.structureId, status: ProAppointment.status, startAt: ProAppointment.startAt,
     endAt: ProAppointment.endAt, citizenUserId: ProAppointment.citizenUserId, pro: ProAppointment.createdByProUserId, rescheduleCount: ProAppointment.rescheduleCount, mode: ProAppointment.mode })
     .from(ProAppointment).where(eq(ProAppointment.id, id)).limit(1);
@@ -65,7 +69,7 @@ export async function decideRequest(proCtx, { id, decision, reasonCode, expected
   const written = await database.update(ProAppointment).set({ status: next })
     .where(and(eq(ProAppointment.id, row.id), eq(ProAppointment.structureId, proCtx.structureId), eq(ProAppointment.status, 'requested'))).returning({ id: ProAppointment.id });
   if (!written.length) return { status: 409, body: { error: 'APPOINTMENT_CHANGED', code: 'APPOINTMENT_CHANGED', message: 'Cette demande vient d’être modifiée : rechargez l’agenda.' } };
-  await logProAudit(decision === 'ACCEPT' ? 'RDV_REQUEST_ACCEPTED' : 'RDV_REQUEST_REFUSED', proCtx.userId, proCtx.structureId, { appointmentId: row.id, reasonCode: reason }, ip);
+  await logProAudit(decision === 'ACCEPT' ? 'RDV_REQUEST_ACCEPTED' : 'RDV_REQUEST_REFUSED', proCtx.userId, proCtx.structureId, { appointmentId: row.id, reasonCode: reason, ...(decision === 'REFUSE' ? { reasonChosen } : {}) }, ip);
 
   const when = formatParis(row.startAt);
   const appointment = { id: row.id, structureId: row.structureId, citizenUserId: row.citizenUserId };
@@ -75,11 +79,53 @@ export async function decideRequest(proCtx, { id, decision, reasonCode, expected
       text: `Votre demande de rendez-vous du ${when} (Europe/Paris) est acceptée : le rendez-vous est confirmé.\n\nLe détail (lieu, modalité, annulation) est dans Mes rendez-vous.`,
       calendar: { appointmentId: row.id, startAt: row.startAt, endAt: row.endAt, structureName: 'Rendez-vous Accès Direct Aide', serviceName: 'Rendez-vous', sequence: Number(row.rescheduleCount || 0) },
     }, { db: database })
-    : await noticeCitizen(appointment, 'REQUEST_REFUSED', {
-      subject: 'Réponse à votre demande de rendez-vous - Accès Direct Aide',
-      text: `Votre demande de rendez-vous du ${when} (Europe/Paris) n’est pas acceptée. Le créneau est libéré.\n\n${REFUSAL_REASONS[/** @type {keyof typeof REFUSAL_REASONS} */ (reason)]}`,
-    }, { db: database });
+    : await refusalNotice(appointment, when, /** @type {keyof typeof REFUSAL_REASONS} */ (reason), database);
   return { status: 200, body: { ok: true, id: row.id, status: next, notification: { citizenEmail: String(mail) } }, appointmentId: row.id };
+}
+
+/**
+ * R44 — the refusal notice: the French text (unchanged) with the fixed reason sentence; for a reader in another language, the same reason sentence in that
+ * language as well (the catalogue's heading / opening line come first, api/_utils/mail-catalogue.js localizedMail). No team free text, no personal detail.
+ * @param {{ id: string, structureId: string, citizenUserId: string | null }} appointment @param {string} when @param {keyof typeof REFUSAL_REASONS} reason
+ * @param {typeof defaultDb} database
+ */
+async function refusalNotice(appointment, when, reason, database) {
+  const lang = await citizenMailLanguage(appointment.citizenUserId, database);
+  const french = `Votre demande de rendez-vous du ${when} (Europe/Paris) n’est pas acceptée. Le créneau est libéré.\n\n${REFUSAL_REASONS[reason]}`;
+  return noticeCitizen(appointment, 'REQUEST_REFUSED', {
+    subject: 'Réponse à votre demande de rendez-vous - Accès Direct Aide',
+    text: lang === 'fr' ? french : `${french}\n\n${refusalReasonMail(reason, lang)}`,
+  }, { db: database, lang });
+}
+
+/**
+ * R44 — the reason code of each refused request, for the person's own view (« Mes rendez-vous »): read from the journal row the decision wrote
+ * (AuditLog RDV_REQUEST_REFUSED: appointment id, structure id, fixed code — no free text; present on 0042, no migration). A row is used only when its
+ * structure is the appointment's (tenant check); a missing or unreadable row gives no reason (the page then says nothing more than « refused »).
+ * @param {Array<{ id: string, structureId: string, status?: string | null }>} rows @param {{ database?: typeof defaultDb }} [deps]
+ * @returns {Promise<Map<string, string>>} appointment id → NOT_SUITABLE | NO_CAPACITY | OTHER
+ */
+export async function refusalReasonsFor(rows, deps = {}) {
+  const database = deps.database ?? defaultDb;
+  const refused = rows.filter((r) => String(r.status || '').toLowerCase() === 'refused');
+  const out = new Map();
+  if (!refused.length) return out;
+  try {
+    const ids = refused.map((r) => r.id);
+    const found = await database.select({ details: AuditLog.details, at: AuditLog.timestamp }).from(AuditLog)
+      .where(and(eq(AuditLog.action, 'RDV_REQUEST_REFUSED'), inArray(sql`${AuditLog.details}->>'appointmentId'`, ids)))
+      .orderBy(AuditLog.timestamp);
+    const structureOf = new Map(refused.map((r) => [r.id, r.structureId]));
+    for (const f of found) {
+      const d = /** @type {Record<string, unknown> | null} */ (f.details && typeof f.details === 'object' ? f.details : null);
+      const id = typeof d?.appointmentId === 'string' ? d.appointmentId : '';
+      if (!id || structureOf.get(id) !== d?.structureId) continue;
+      if (typeof d?.reasonCode === 'string' && d.reasonCode in REFUSAL_REASONS) out.set(id, d.reasonCode);
+    }
+  } catch (error) {
+    logger.warn({ err: { name: error instanceof Error ? error.name : 'Error' } }, '[rdv-requests] refusal reasons unavailable');
+  }
+  return out;
 }
 
 /**

@@ -29,11 +29,16 @@ import ProfessionalChoice from '@/components/rdv/ProfessionalChoice.jsx';
 import { SuitabilityQuestions, WrongStructure } from '@/components/rdv/SuitabilityCheck.jsx';
 import AgeDeclarationPrompt from '@/components/rdv/AgeDeclarationPrompt.jsx';
 import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
+// R44: the modality is chosen before the slots, with the recorded address and the true video state; unavailable modalities are said as such
+import ModalityChoice, { LocationNote, UnavailableModalities, VideoNote } from '@/components/rdv/ModalityChoice.jsx';
+import { acceptedMode, bookingContextQuery, bookingLocation, bookingRefusal, modalityLabels, modalityOptions, serviceModes } from '@/lib/bookingModalities';
+import { refusalReasonText } from '@/lib/refusalReasons';
 /**
  * PublicBooking
  *
- * Interface de prise de RDV côté usager — Design avancé avec tunnel
- * en 4 étapes : Conseiller → Créneau → Mode → Confirmation.
+ * Interface de prise de RDV côté usager (compte obligatoire) — R44 : Service → (Professionnel) → Modalité → Créneau → Récapitulatif → Confirmation.
+ * La modalité est choisie AVANT les créneaux (les créneaux dépendent de la modalité) ; le lieu enregistré et l'état réel de la visio sont dits avant
+ * l'engagement ; une modalité non réservable ici (visio non activée, téléphone) est affichée comme telle.
  *
  * Se connecte aux API existantes :
  *   - GET  /api/rdv/structures/:slug/services
@@ -66,11 +71,21 @@ export default function PublicBooking() {
     // owner usefulness pass (2026-10-25): in person by default, only the modes the chosen service really offers, and the explicit agreement the server
     // requires for a video appointment. Before, VIDEO was pre-selected and no agreement was sent: a booking with the defaults was always refused
     // (409 MODE_UNAVAILABLE when video is off — the default — or 400 VIDEO_CONSENT_REQUIRED) and the raw code was shown.
-    const [bookingMode, setBookingMode] = useState('IN_PERSON'); // VIDEO or IN_PERSON
+    // R44: no modality is assumed when the service offers two — the person chooses it before the slots (a single-modality service is that modality)
+    const [bookingMode, setBookingMode] = useState('');
     const [videoConsent, setVideoConsent] = useState(false);
-    const offeredKey = (Array.isArray(selectedService?.modes) && selectedService.modes.length ? selectedService.modes : ['IN_PERSON']).join(',');
-    const offeredModes = offeredKey.split(',');
-    useEffect(() => { const modes = offeredKey.split(','); if (!modes.includes(bookingMode)) setBookingMode(modes[0]); }, [offeredKey, bookingMode]);
+    const [videoConsentError, setVideoConsentError] = useState(false);
+    const videoConsentRef = useRef(null);
+    const [modalityError, setModalityError] = useState('');
+    const modalityRef = useRef(null);
+    const [servicesPayload, setServicesPayload] = useState(null);
+    // R44: why the person is back on the slot list (slot taken meanwhile, modality changed) — announced, never a raw server code
+    const [slotNotice, setSlotNotice] = useState('');
+    const pendingModeRef = useRef('');
+    const offeredModes = serviceModes(selectedService);
+    const location = bookingLocation(servicesPayload);
+    const modalities = modalityOptions(servicesPayload, selectedService);
+    const MODALITY = modalityLabels(t);
     const [confirmation, setConfirmation] = useState(null);
     // R42: team choice (only when the structure enabled it), suitability answers (never sent: they only guide the next steps), the optional message,
     // Mode A / Mode B of the chosen service, and the age statement step for an account that has none yet
@@ -115,6 +130,7 @@ export default function PublicBooking() {
             const data = await res.json();
             setServices(data.items || []);
             setTeamChoice(data.teamChoice === true);
+            setServicesPayload({ structure: data.structure || null, video: data.video || null });
             // Tracker le début du flow si on a réussi à charger la page structure
             track('start_booking_flow', { structure: structureSlug });
         } catch (err) {
@@ -125,7 +141,7 @@ export default function PublicBooking() {
     }, [structureSlug, t]);
 
     // Fetch available slots for selected service
-    const fetchSlots = useCallback(async (/** @type {string | number | boolean} */ serviceId, /** @type {string} */ who = 'ANY') => {
+    const fetchSlots = useCallback(async (/** @type {string | number | boolean} */ serviceId, /** @type {string} */ who = 'ANY', /** @type {string} */ mode = 'IN_PERSON') => {
         setLoading(true);
         setSlotsError('');
         try {
@@ -133,7 +149,7 @@ export default function PublicBooking() {
             // R43: 14 PARIS days from today in Paris (the UTC date was the day before after midnight in Paris; R7: the server counts the last day to its end)
             const { from, to } = parisBookingWindow();
             const res = await fetch(
-                `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}${teamChoice ? `&professional=${encodeURIComponent(who)}` : ''}`,
+                `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}&mode=${encodeURIComponent(mode || 'IN_PERSON')}${teamChoice ? `&professional=${encodeURIComponent(who)}` : ''}`,
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
             );
             if (!res.ok) throw new Error(t('booking:public.impossible_de_charger_les_creneaux', "Impossible de charger les créneaux."));
@@ -161,9 +177,13 @@ export default function PublicBooking() {
     // Book the appointment
     const confirmBooking = useCallback(async () => {
         if (!selectedService || !selectedSlot) return;
-        if (message.trim() && !messageConsent) {
-            setMessageConsentError(true);
-            messageConsentRef.current?.focus();
+        // R44 (A5): every missing agreement is said on its field; one error → its field takes the focus (R43 contract), two → the first one does
+        const videoMissing = bookingMode === 'VIDEO' && !videoConsent;
+        const messageMissing = Boolean(message.trim()) && !messageConsent;
+        setVideoConsentError(videoMissing);
+        setMessageConsentError(messageMissing);
+        if (videoMissing || messageMissing) {
+            (videoMissing ? videoConsentRef : messageConsentRef).current?.focus();
             return;
         }
         setLoading(true);
@@ -194,17 +214,31 @@ export default function PublicBooking() {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                const refusal = bookingRefusal(res.status, errData);
+                // R44: the session ended meanwhile — sign in again and come back to the same service and modality (validated same-origin path)
+                if (refusal === 'AUTH') {
+                    window.location.assign(`/auth/login?next=${encodeURIComponent(`/rdv/${encodeURIComponent(structureSlug)}/booking${bookingContextQuery(window.location.search, { serviceId: selectedService.id, mode: bookingMode })}`)}`);
+                    return;
+                }
                 // R42-A07: an account without an age statement declares it here, then the request is sent again
-                if (errData.code === 'AGE_DECLARATION_REQUIRED') { setAgeStep('declare'); return; }
-                if (errData.code === 'ADULT_ACCOUNT_REQUIRED') { setAgeStep('minor'); throw new Error(errData.message); }
-                if (errData.code === 'PROFESSIONAL_UNAVAILABLE') { setStep(1.5); throw new Error(errData.message); }
-                if (errData.code === 'MESSAGE_CONSENT_REQUIRED') { setMessageConsentError(true); setMessageConsent(false); return; }
-                if (res.status === 409) {
-                    await fetchSlots(selectedService.id);
+                if (refusal === 'AGE_DECLARATION') { setAgeStep('declare'); return; }
+                if (refusal === 'MINOR') { setAgeStep('minor'); throw new Error(errData.message); }
+                if (refusal === 'PROFESSIONAL') { setStep(1.5); throw new Error(errData.message); }
+                if (refusal === 'MESSAGE_CONSENT') { setMessageConsentError(true); setMessageConsent(false); messageConsentRef.current?.focus(); return; }
+                if (refusal === 'VIDEO_CONSENT') { setVideoConsentError(true); videoConsentRef.current?.focus(); return; }
+                if (refusal === 'MODE') {
+                    // the modality is no longer offered for this service (e.g. the video was switched off): choose again, nothing was booked
+                    setSelectedSlot(null); setBookingMode(''); setStep(1.75);
+                    setModalityError(t('booking:modality.no_longer', 'Cette modalité n’est plus proposée pour ce service. Choisissez-en une autre : rien n’a été réservé.'));
+                    return;
+                }
+                if (refusal === 'SLOT_TAKEN') {
+                    // R44: a stale slot (taken meanwhile, or no longer offered) — the list is reloaded for the SAME modality and the reason is announced
+                    setSelectedSlot(null);
+                    await fetchSlots(selectedService.id, professional, bookingMode);
                     setStep(2);
-                    throw new Error(
-                        errData.message || t('booking:public.ce_creneau_vient_d_etre', "Ce créneau vient d’être réservé. Choisissez un autre horaire.")
-                    );
+                    setSlotNotice(t('booking:public.ce_creneau_vient_d_etre', "Ce créneau vient d’être réservé. Choisissez un autre horaire."));
+                    return;
                 }
                 throw new Error(errData.message || t('booking:public.impossible_de_confirmer_le_rendez', "Impossible de confirmer le rendez-vous."));
             }
@@ -219,6 +253,46 @@ export default function PublicBooking() {
             setLoading(false);
         }
     }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message, messageConsent]);
+
+    // R44: after the service (and the professional): the modality — chosen by the person when the service offers two, else the only one — then the slots
+    const goToModality = (/** @type {any} */ service, /** @type {string} */ who) => {
+        const modes = serviceModes(service);
+        const wanted = acceptedMode(pendingModeRef.current, service);
+        pendingModeRef.current = '';
+        setModalityError('');
+        setSlotNotice('');
+        setSelectedSlot(null);
+        if (modes.length === 1 || wanted) {
+            const mode = wanted || modes[0];
+            setBookingMode(mode);
+            fetchSlots(service.id, who, mode);
+            setStep(2);
+            return;
+        }
+        setBookingMode((m) => (modes.includes(m) ? m : ''));
+        setStep(1.75);
+    };
+    const continueFromModality = () => {
+        if (!bookingMode) {
+            setModalityError(t('booking:modality.required', 'Modalité du rendez-vous : choisissez comment vous souhaitez être reçu(e).'));
+            modalityRef.current?.focus();
+            return;
+        }
+        setModalityError('');
+        setSlotNotice('');
+        fetchSlots(selectedService.id, professional, bookingMode);
+        setStep(2);
+    };
+    // R44: changing the modality on the recap reloads the slots of that modality (a slot of one modality is not bookable in the other)
+    const switchMode = (/** @type {string} */ mode) => {
+        if (mode === bookingMode) return;
+        setBookingMode(mode);
+        setVideoConsent(false); setVideoConsentError(false);
+        setSelectedSlot(null);
+        fetchSlots(selectedService.id, professional, mode);
+        setStep(2);
+        setSlotNotice(t('booking:modality.changed', 'Les créneaux dépendent de la modalité : choisissez un horaire pour « {{mode}} ».', { mode: MODALITY[mode] || mode }));
+    };
 
     // Handle service selection
     const handleSelectService = async (service) => {
@@ -239,13 +313,13 @@ export default function PublicBooking() {
         }
         setTeam(null);
         setProfessional('ANY');
-        fetchSlots(service.id, 'ANY');
-        setStep(2);
+        goToModality(service, 'ANY');
     };
 
     // Handle slot selection
     const handleSelectSlot = (/** @type {import("react").SetStateAction<null>} */ slot) => {
         setSelectedSlot(slot);
+        setSlotNotice('');
         setStep(3);
     };
 
@@ -254,7 +328,7 @@ export default function PublicBooking() {
         presetDoneRef.current = true;
         const preset = services.find((s) => String(s.id) === presetServiceId);
         if (!preset) return;
-        if ((presetMode === 'IN_PERSON' || presetMode === 'VIDEO') && Array.isArray(preset.modes) && preset.modes.includes(presetMode)) setBookingMode(presetMode);
+        pendingModeRef.current = acceptedMode(presetMode, preset);
         handleSelectService(preset);
     }, [services]); // eslint-disable-line react-hooks/exhaustive-deps -- once, when the services of the structure are known
 
@@ -347,15 +421,14 @@ export default function PublicBooking() {
                 </div>
 
                 {/* Progress bar */}
-                <div className="flex justify-between items-center mb-12 px-6">
-                    <StepIndicator current={step} target={1} label={t('booking:public.service', "Service")} />
-                    <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={2} label={t('booking:public.creneau', "Créneau")} />
-                    <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={3} label={t('booking:public.mode', "Mode")} />
-                    <div className="flex-1 h-px bg-slate-200 mx-3" />
-                    <StepIndicator current={step} target={4} label={t('booking:public.confirme', "Confirmé")} />
-                </div>
+                {/* R44: an ordered list of the steps; the current one carries aria-current="step" */}
+                <ol className="flex justify-between items-start gap-1 mb-12 px-2 sm:px-6" aria-label={t('booking:modality.progress', 'Étapes de la demande de rendez-vous')} data-testid="booking-progress">
+                    <StepIndicator current={step} target={1} until={1.75} n={1} label={t('booking:public.service', "Service")} />
+                    <StepIndicator current={step} target={1.75} until={2} n={2} label={t('booking:modality.step', "Modalité")} />
+                    <StepIndicator current={step} target={2} until={3} n={3} label={t('booking:public.creneau', "Créneau")} />
+                    <StepIndicator current={step} target={3} until={4} n={4} label={t('booking:public.recapitulatif', "Récapitulatif")} />
+                    <StepIndicator current={step} target={4} until={5} n={5} label={t('booking:public.confirme', "Confirmé")} />
+                </ol>
 
                 {/* Error feedback */}
                 {error && (
@@ -437,6 +510,8 @@ export default function PublicBooking() {
                                             </p>
                                             <p className="text-xs text-slate-600">
                                                 {t('booking:public.minutes', '{{minutes}} min', { minutes: service.durationMinutes || 30 })}
+                                                {' · '}
+                                                <span data-testid={`booking-service-modes-${service.id}`}>{serviceModes(service).map((m) => MODALITY[m]).join(' / ')}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -459,7 +534,23 @@ export default function PublicBooking() {
                             <ArrowLeft size={14} /> {t('booking:public.retour_aux_services', "Retour aux services")}
                         </button>
                         <ProfessionalChoice team={team} value={professional} onChange={setProfessional} />
-                        <button type="button" data-testid="booking-professional-continue" onClick={() => { fetchSlots(selectedService.id, professional); setStep(2); }}
+                        <button type="button" data-testid="booking-professional-continue" onClick={() => goToModality(selectedService, professional)}
+                            className="w-full min-h-11 bg-slate-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700">
+                            {t('booking:pro_choice.continue', 'Voir les créneaux disponibles')}
+                        </button>
+                    </div>
+                )}
+
+                {/* R44 Step 1.75: the modality, before the slots */}
+                {step === 1.75 && selectedService && (
+                    <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-lg space-y-6">
+                        <button type="button" onClick={() => setStep(team ? 1.5 : 1)} className="flex min-h-11 items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600">
+                            <ArrowLeft size={14} className="rtl:rotate-180" aria-hidden="true" /> {t('booking:public.retour_aux_services', "Retour aux services")}
+                        </button>
+                        <p className="font-bold text-slate-900">{selectedService.name}</p>
+                        <ModalityChoice ref={modalityRef} options={modalities} value={bookingMode} location={location} error={modalityError}
+                            onChange={(m) => { setBookingMode(m); setModalityError(''); setVideoConsent(false); setVideoConsentError(false); }} />
+                        <button type="button" data-testid="booking-modality-continue" onClick={continueFromModality}
                             className="w-full min-h-11 bg-slate-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700">
                             {t('booking:pro_choice.continue', 'Voir les créneaux disponibles')}
                         </button>
@@ -471,10 +562,10 @@ export default function PublicBooking() {
                     <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg">
                         <button
                             type="button"
-                            onClick={() => setStep(team ? 1.5 : 1)}
-                            className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600 mb-6"
+                            onClick={() => setStep(offeredModes.length > 1 ? 1.75 : team ? 1.5 : 1)}
+                            className="flex min-h-11 items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600 mb-6"
                         >
-                            <ArrowLeft size={14} /> {t('booking:public.retour_aux_services', "Retour aux services")}
+                            <ArrowLeft size={14} className="rtl:rotate-180" aria-hidden="true" /> {offeredModes.length > 1 ? t('booking:modality.back', "Changer de modalité") : t('booking:public.retour_aux_services', "Retour aux services")}
                         </button>
 
                         <div className="flex items-center gap-4 mb-6">
@@ -490,6 +581,13 @@ export default function PublicBooking() {
                                 </p>
                             </div>
                         </div>
+                        {/* R44: the modality of these slots and what it means, before any commitment */}
+                        <div className="mb-6 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3" data-testid="booking-slot-modality">
+                            <p className="text-sm text-slate-900"><span className="font-medium">{t('booking:modality.chosen', 'Modalité :')}</span> <span data-testid="booking-slot-mode">{MODALITY[bookingMode] || ''}</span></p>
+                            {bookingMode === 'VIDEO' ? <VideoNote sandbox={Boolean(servicesPayload?.video?.sandbox)} testid="booking-slot-video" /> : <LocationNote location={location} testid="booking-slot-location" />}
+                            <UnavailableModalities options={modalities} />
+                        </div>
+                        {slotNotice ? <p role="status" className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" data-testid="booking-slot-notice">{slotNotice}</p> : null}
 
                         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4">
                             {t('booking:public.creneaux_disponibles', "Créneaux disponibles")}
@@ -576,8 +674,12 @@ export default function PublicBooking() {
                             <SummaryRow
                                 icon={<Clock className="text-indigo-600" size={18} />}
                                 label={t('booking:public.date_et_heure', "Date et heure")}
-                                value={`${selectedSlot?.displayDate} à ${selectedSlot?.displayTime}`}
+                                value={t('booking:modality.date_at', '{{date}} à {{time}}', { date: selectedSlot?.displayDate, time: selectedSlot?.displayTime })}
                             />
+                            {/* R44: where (or how) the appointment takes place, before the commitment */}
+                            <div className="p-4 bg-slate-50 rounded-xl" data-testid="booking-recap-where">
+                                {bookingMode === 'VIDEO' ? <VideoNote sandbox={Boolean(servicesPayload?.video?.sandbox)} testid="booking-recap-video" /> : <LocationNote location={location} testid="booking-recap-location" />}
+                            </div>
                         </div>
 
                         {/* Mode selector */}
@@ -588,7 +690,9 @@ export default function PublicBooking() {
                             {offeredModes.includes('VIDEO') ? (
                             <button
                                 type="button"
-                                onClick={() => setBookingMode('VIDEO')}
+                                onClick={() => switchMode('VIDEO')}
+                                aria-pressed={bookingMode === 'VIDEO'}
+                                data-testid="booking-mode-VIDEO"
                                 className={`p-4 rounded-xl border-2 text-left transition-all ${bookingMode === 'VIDEO'
                                     ? 'border-indigo-500 bg-indigo-50'
                                     : 'border-slate-200 hover:border-slate-300'
@@ -600,14 +704,16 @@ export default function PublicBooking() {
                                 />
                                 <p className="font-semibold text-sm mt-2">{t('booking:public.visioconference', "Visioconférence")}</p>
                                 <p className="text-[10px] text-slate-600">
-                                    {t('booking:public.depuis_chez_vous_via_jitsi', "Depuis chez vous via Jitsi")}
+                                    {t('booking:modality.video_short', "Depuis « Mes rendez-vous », après validation par la structure")}
                                 </p>
                             </button>
                             ) : null}
                             {offeredModes.includes('IN_PERSON') ? (
                             <button
                                 type="button"
-                                onClick={() => setBookingMode('IN_PERSON')}
+                                onClick={() => switchMode('IN_PERSON')}
+                                aria-pressed={bookingMode === 'IN_PERSON'}
+                                data-testid="booking-mode-IN_PERSON"
                                 className={`p-4 rounded-xl border-2 text-left transition-all ${bookingMode === 'IN_PERSON'
                                     ? 'border-indigo-500 bg-indigo-50'
                                     : 'border-slate-200 hover:border-slate-300'
@@ -632,17 +738,26 @@ export default function PublicBooking() {
                         ) : null}
                         {ageStep === 'declare' ? <div className="mb-6"><AgeDeclarationPrompt onDeclared={() => { setAgeStep(''); confirmBooking(); }} /></div> : null}
                         {bookingMode === 'VIDEO' ? (
-                            <label className="mb-6 flex items-start gap-2 text-sm text-slate-800" data-testid="booking-video-consent">
-                                <input type="checkbox" className="mt-1" checked={videoConsent} onChange={(e) => setVideoConsent(e.target.checked)} />
-                                <span>{t('booking:public.j_accepte_un_rendez_vous', "J’accepte un rendez-vous en visio : caméra et micro, sans enregistrement.")}</span>
-                            </label>
+                            <div className="mb-6 space-y-1">
+                                <label className="flex items-start gap-2 text-sm text-slate-800" data-testid="booking-video-consent">
+                                    <input ref={videoConsentRef} id="booking-video-consent-checkbox" type="checkbox" className="mt-1 h-4 w-4" checked={videoConsent} data-testid="booking-video-consent-checkbox"
+                                        aria-invalid={videoConsentError ? true : undefined} aria-describedby={videoConsentError ? 'booking-video-consent-error' : undefined}
+                                        onChange={(e) => { setVideoConsent(e.target.checked); if (e.target.checked) setVideoConsentError(false); }} />
+                                    <span>{t('booking:public.j_accepte_un_rendez_vous', "J’accepte un rendez-vous en visio : caméra et micro, sans enregistrement.")}</span>
+                                </label>
+                                {videoConsentError ? (
+                                    <p id="booking-video-consent-error" role="alert" className="text-sm font-medium text-red-800" data-testid="booking-video-consent-error">
+                                        {t('booking:modality.video_consent_required', 'Accord pour la visio : cochez la case pour demander un rendez-vous à distance, ou choisissez « Sur place ».')}
+                                    </p>
+                                ) : null}
+                            </div>
                         ) : null}
 
                         <button
                             type="button"
                             onClick={confirmBooking}
                             data-testid="booking-confirm"
-                            disabled={loading || ageStep !== '' || (bookingMode === 'VIDEO' && !videoConsent)}
+                            disabled={loading || ageStep !== ''}
                             className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? (
@@ -676,10 +791,18 @@ export default function PublicBooking() {
                         {confirmation?.notification ? <div className="mb-4 max-w-md mx-auto"><MailOutcomeNote outcome={confirmation.notification.email} /></div> : null}
                         <p className="text-slate-700 mb-6 max-w-md mx-auto" hidden={confirmation?.state === 'REQUESTED'}>
                             {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.il_n_aura_pas_lieu', "Il n’aura pas lieu. Vous pouvez prendre un autre rendez-vous.") : t('booking:public.votre_rendez_vous_est_enregistre', "Votre rendez-vous est enregistré.")}
-                            {!String(confirmation?.status || '').startsWith('CANCEL') && (confirmation?.mode || bookingMode) === 'VIDEO' && (
-                                <> {t('booking:public.vous_pourrez_rejoindre_la_visio', "Vous pourrez rejoindre la visio directement sur ADA.")}</>
-                            )}
                         </p>
+                        {/* R44: the place (recorded address) or the honest video access, once more after the booking */}
+                        {!String(confirmation?.status || '').startsWith('CANCEL') && confirmation?.state !== 'REFUSED' && confirmation?.state !== 'EXPIRED' ? (
+                            <div className="mb-6 max-w-md mx-auto text-start" data-testid="booking-confirmation-where">
+                                {(confirmation?.mode || bookingMode) === 'VIDEO'
+                                    ? <VideoNote sandbox={Boolean(confirmation?.video?.service?.sandbox ?? servicesPayload?.video?.sandbox)} testid="booking-confirmation-video" />
+                                    : <LocationNote location={confirmation?.location !== undefined ? confirmation.location : location} testid="booking-confirmation-location" />}
+                            </div>
+                        ) : null}
+                        {confirmation?.state === 'REFUSED' && confirmation?.refusal?.reasonCode ? (
+                            <p className="mb-6 max-w-md mx-auto text-slate-800" data-testid="booking-refusal-reason">{refusalReasonText(t, confirmation.refusal.reasonCode)}</p>
+                        ) : null}
                         {!String(confirmation?.status || '').startsWith('CANCEL') ? (
                             <p className="mb-6 text-sm text-slate-700"><Link className="text-indigo-700 underline" to="/compte/rendez-vous" data-testid="booking-manage-link">{t('booking:public.annuler_ou_deplacer_ce_rendez', "Annuler ou déplacer ce rendez-vous depuis votre espace")}</Link></p>
                         ) : null}
@@ -762,19 +885,19 @@ export default function PublicBooking() {
     );
 }
 
-function StepIndicator(/** @type {{ current: string | number, label: string | number, target: string | number }} */ { current, target, label }) {
+function StepIndicator(/** @type {{ current: number, label: string, target: number, until: number, n: number }} */ { current, target, until, label, n }) {
     const active = current >= target;
-    const isNow = current === target;
+    const isNow = current >= target && current < until;
 
     return (
-        <div className="flex flex-col items-center gap-1.5">
+        <li className="flex flex-1 flex-col items-center gap-1.5 text-center" aria-current={isNow ? 'step' : undefined}>
             <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${active
                     ? 'bg-indigo-600 text-white'
                     : 'bg-slate-200 text-slate-600'
                     } ${isNow ? 'ring-4 ring-indigo-100' : ''}`}
             >
-                {active && current > target ? <CheckCircle2 size={14} /> : target}
+                {active && !isNow ? <CheckCircle2 size={14} aria-hidden="true" /> : n}
             </div>
             <span
                 className={`text-[10px] font-bold uppercase tracking-wider ${active ? 'text-slate-800' : 'text-slate-600'
@@ -782,7 +905,7 @@ function StepIndicator(/** @type {{ current: string | number, label: string | nu
             >
                 {label}
             </span>
-        </div>
+        </li>
     );
 }
 

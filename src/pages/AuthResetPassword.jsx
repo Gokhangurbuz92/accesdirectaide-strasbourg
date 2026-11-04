@@ -11,14 +11,21 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
 import { useT } from '@/i18n';
+// R44 (A5): field-level errors (aria-invalid, aria-describedby, focused summary) — the R43 pattern
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { fieldA11y, requiredMessage } from '@/lib/fieldErrors';
 export default function AuthResetPassword() {
   const { t } = useT('account');
+  /** R44: the message helpers of src/lib/fieldErrors.js take (key, fallback, options) @type {import('@/lib/fieldErrors').TFn} */
+  const msgT = (key, fallback, options) => String(t(key, { defaultValue: fallback, ...(options || {}) }));
   const [searchParams] = useSearchParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { errors, check, clear, summaryRef } = useFormErrors();
 
   const token = String(searchParams.get('token') || '').trim();
   const next = normalizeNextPath(searchParams.get('next'), '/annuaire');
@@ -37,14 +44,13 @@ export default function AuthResetPassword() {
       setError(t('account:reset.invalid_link', 'Lien invalide ou expiré.'));
       return;
     }
-    if (passwordProblems(password).length) {   // R18: the sign-up rule (the server applies it to the reset too)
-      setError(passwordMessage(passwordProblems(password)));
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(t('account:reset.mismatch', 'Les mots de passe ne correspondent pas.'));
-      return;
-    }
+    /** @type {Record<string, string>} */
+    const errs = {};
+    if (!password) errs['reset-password'] = requiredMessage(msgT, t('account:fields.new_password', 'Nouveau mot de passe'));
+    else if (passwordProblems(password).length) errs['reset-password'] = passwordMessage(passwordProblems(password));   // R18: the sign-up rule (the server applies it to the reset too)
+    if (!confirmPassword) errs['reset-password-confirm'] = requiredMessage(msgT, t('account:fields.confirm_password', 'Confirmer le mot de passe'));
+    else if (password !== confirmPassword) errs['reset-password-confirm'] = t('account:reset.mismatch', 'Les mots de passe ne correspondent pas.');
+    if (!check(errs)) return;
 
     setLoading(true);
     try {
@@ -95,8 +101,9 @@ export default function AuthResetPassword() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
+          <ErrorSummary ref={summaryRef} errors={errors} order={['reset-password', 'reset-password-confirm']} testid="reset-error-summary" />
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate aria-busy={loading || undefined}>
             <div className="space-y-2">
               <Label htmlFor="reset-password">{t('account:fields.new_password', 'Nouveau mot de passe')}</Label>
               <Input
@@ -106,10 +113,11 @@ export default function AuthResetPassword() {
                 required
                 minLength={8}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                aria-describedby="reset-password-rule"
+                onChange={(event) => { setPassword(event.target.value); clear('reset-password'); }}
+                {...fieldA11y('reset-password', errors, 'reset-password-rule')}
               />
               <p id="reset-password-rule" className="text-xs text-slate-700">{PASSWORD_RULE}</p>
+              <FieldError field="reset-password" errors={errors} />
             </div>
 
             <div className="space-y-2">
@@ -121,8 +129,10 @@ export default function AuthResetPassword() {
                 required
                 minLength={8}
                 value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
+                onChange={(event) => { setConfirmPassword(event.target.value); clear('reset-password-confirm'); }}
+                {...fieldA11y('reset-password-confirm', errors)}
               />
+              <FieldError field="reset-password-confirm" errors={errors} />
             </div>
 
             <Button type="submit" disabled={loading}>
