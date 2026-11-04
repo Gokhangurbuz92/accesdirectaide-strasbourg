@@ -1,19 +1,20 @@
 // R42-BOOK — the pure pieces of the account-required booking: age rule, optional message, booking configuration, Outlook free/busy parsing and scope.
 import { describe, expect, it } from 'vitest';
-import { accountAge, bookingAgeRefusal, isAdultAccount } from '../../api/_utils/age-policy.js';
 import { BOOKING_MESSAGE_LABEL, BOOKING_MESSAGE_NOTICE, BOOKING_MESSAGE_MAX_LENGTH, validateBookingMessage } from '../../api/_utils/rdv-message.js';
 import { confirmationModeFor, memberServes, parseBookingConfig } from '../../api/_services/rdv-booking-config.js';
 import { busyFromView } from '../../api/_services/rdv-calendar-busy.js';
 import { OUTLOOK_SCOPES, authorizeUrl } from '../../api/_services/calendar-outlook.js';
 
-describe('age rule (api/_utils/age-policy.js, shared with R42-AUTH)', () => {
-  it('only a declared adult band may book; a minor is refused; no declaration is never inferred as adult', () => {
-    for (const b of ['18-24', '25-59', '60-et-plus']) expect([b, isAdultAccount({ ageBand: b }), bookingAgeRefusal({ ageBand: b })]).toEqual([b, true, null]);
-    expect(accountAge({ ageBand: 'moins-de-18' })).toBe('MINOR');
-    expect(bookingAgeRefusal({ ageBand: 'moins-de-18' })?.body.code).toBe('ADULT_ACCOUNT_REQUIRED');
-    for (const u of [{ ageBand: null }, {}, null, { ageBand: '17' }]) {
-      expect(isAdultAccount(u)).toBe(false);
-      expect(bookingAgeRefusal(u || {})?.body.code).toBe('AGE_DECLARATION_REQUIRED');
+describe('age gate of a booking write (api/_utils/booking-age.js over R42-AUTH isAdultAccount)', () => {
+  it('adult = no refusal; no statement = 409 AGE_DECLARATION_REQUIRED; stated under 18 (or minor band) = 403 ADULT_ACCOUNT_REQUIRED', async () => {
+    const { vi } = await import('vitest');
+    for (const [adult, latest, want] of [[true, true, null], [false, null, [409, 'AGE_DECLARATION_REQUIRED']], [false, false, [403, 'ADULT_ACCOUNT_REQUIRED']], [false, true, [403, 'ADULT_ACCOUNT_REQUIRED']]]) {
+      vi.resetModules();
+      vi.doMock('../../api/_utils/age-policy.js', () => ({ isAdultAccount: async () => adult, latestAgeDeclaration: async () => latest }));
+      const { bookingAgeRefusal } = await import('../../api/_utils/booking-age.js');
+      const r = await bookingAgeRefusal('u1');
+      expect(r ? [r.status, r.body.code] : null).toEqual(want);
+      vi.doUnmock('../../api/_utils/age-policy.js');
     }
   });
 });

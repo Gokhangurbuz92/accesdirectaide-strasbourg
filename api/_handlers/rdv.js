@@ -19,7 +19,7 @@ import { MODE_LABELS, modeLabel, locationOf, locationText, normalizeMode, offere
 import { issueJoin, joinRefusal, joinWindow, publicVideoStatus } from '../lib/video-provider.js';
 import { encrypt } from '../lib/crypto.js';
 // R42: account-required booking — age rule, optional message, structure-controlled confirmation (Mode A / Mode B) and professional choice
-import { bookingAgeRefusal, loadAccountAge } from '../_utils/age-policy.js';
+import { bookingAgeRefusal } from '../_utils/booking-age.js';
 import { bookingMessageRefusal, validateBookingMessage } from '../_utils/rdv-message.js';
 import { confirmationModeFor, readBookingConfig } from '../_services/rdv-booking-config.js';
 
@@ -1016,8 +1016,8 @@ async function createAppointment(req, res) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
 
-  // R42-A07: no appointment for a minor account (the declared age band; nothing is inferred) — api/_utils/age-policy.js, shared with the registration stream
-  const ageRefused = bookingAgeRefusal(await loadAccountAge(auth.user.id));
+  // R42-A07: no appointment for a non-adult account — isAdultAccount() of api/_utils/age-policy.js (the registration stream's single entry point)
+  const ageRefused = await bookingAgeRefusal(auth.user.id);
   if (ageRefused) return res.status(ageRefused.status).json(ageRefused.body);
 
   const body = req.body && typeof req.body === 'object' ? req.body : {};
@@ -1645,6 +1645,9 @@ async function rescheduleAppointment(req, res) {
   if (!rateLimit.allowed) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
+  // R42-A07: moving an appointment is a booking write too (a new slot is taken)
+  const ageRefusedMove = await bookingAgeRefusal(auth.user.id);
+  if (ageRefusedMove) return res.status(ageRefusedMove.status).json(ageRefusedMove.body);
   const startAt = new Date(toTrimmedString(req.body?.startAt));
   if (!appointmentId || Number.isNaN(startAt.getTime())) {
     return res.status(400).json({ error: 'Appointment id and a valid startAt are required' });

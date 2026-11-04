@@ -23,6 +23,7 @@ vi.mock('../../api/_utils/kv.js', () => ({ kv: { incr: async () => 1, expire: as
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -40,7 +41,7 @@ const P3 = pro('3', T.id, 'PRO', { name: 'Sans MFA', mfa: false });
 const PROS = [ADMIN_A, ADMIN_B, ADMIN_T, P1, P2, P3];
 const cit = (k, ageBand) => ({ id: `r42b-c${k}-${TS}`, email: `r42b-c${k}-${TS}@example.test`, ageBand });
 const C = [cit('0', '25-59'), cit('1', '18-24'), cit('2', '60-et-plus'), cit('3', '25-59')];
-const MINOR = cit('m', 'moins-de-18'); const UNDECLARED = cit('u', null);
+const MINOR = cit('m', null); const MINOR_BAND = cit('mb', null); const UNDECLARED = cit('u', null);
 
 describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () => {
   let db, rdv, auth, userAuth, proList, proSettings, proServices, proTimeoff, structures, legacyCreate, mailer, features, calendar, cryptoTok, logger;
@@ -95,10 +96,13 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
       await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, mfa_enabled, "updatedAt", "createdAt") VALUES (${p.id}, ${p.email}, 'x', ${p.sid}, ${p.role}, 'active', ${p.mfa}, NOW(), NOW())`);
       if (p.name) await db.execute(sql`INSERT INTO "ProProfile" (id, "proUserId", "displayName", "jobTitle", "updatedAt") VALUES (${'pp-' + p.id}, ${p.id}, ${p.name}, ${p.job || null}, NOW())`);
     }
-    for (const c of [...C, MINOR, UNDECLARED]) {
+    for (const c of [...C, MINOR, MINOR_BAND, UNDECLARED]) {
       await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${c.id}, ${c.email}, 'x', NOW(), NOW())`);
-      if (c.ageBand) await db.execute(sql`INSERT INTO "CitizenProfile" ("userId", "ageBand", "updatedAt") VALUES (${c.id}, ${c.ageBand}, NOW())`);
     }
+    // R42-A07 (age-policy.js of R42-AUTH): the adult statement in ConsentLog; a person who stated « under 18 », one whose profile says « moins-de-18 », one with no statement
+    for (const c of C) await declareAdult(db, sql, [c.id], { band: c.ageBand });
+    await declareAdult(db, sql, [MINOR.id], { adult: false });
+    await declareAdult(db, sql, [MINOR_BAND.id], { band: 'moins-de-18' });
   }, 60000);
 
   afterAll(async () => {
@@ -120,7 +124,7 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
       await db.execute(sql`DELETE FROM "ProUser" WHERE id = ${p.id}`);
     }
     for (const sid of ids) await db.execute(sql`DELETE FROM "Structure" WHERE id = ${sid}`);
-    for (const c of [...C, MINOR, UNDECLARED]) {
+    for (const c of [...C, MINOR, MINOR_BAND, UNDECLARED]) {
       await db.execute(sql`DELETE FROM "CitizenProfile" WHERE "userId" = ${c.id}`).catch(() => {});
       await db.execute(sql`DELETE FROM "CitizenUser" WHERE id = ${c.id}`).catch(() => {});
     }
@@ -175,6 +179,8 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
     const slot = (await slotsOf(A, C[3]))[0];
     const minor = await book(A, MINOR, slot.startAt);
     expect([minor.statusCode, minor.body.code]).toEqual([403, 'ADULT_ACCOUNT_REQUIRED']);
+    const band = await book(A, MINOR_BAND, slot.startAt);
+    expect([band.statusCode, band.body.code]).toEqual([403, 'ADULT_ACCOUNT_REQUIRED']);
     const none = await book(A, UNDECLARED, slot.startAt);
     expect([none.statusCode, none.body.code]).toEqual([409, 'AGE_DECLARATION_REQUIRED']);
   });
