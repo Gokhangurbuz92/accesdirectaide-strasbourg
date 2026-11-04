@@ -8,7 +8,8 @@ const MAX_AGE_MS = 30 * 60 * 1000;
 /** @param {{ pathname: string, hash: string }} location */
 export function rememberPendingInvite(location) {
   try {
-    if (location.pathname.startsWith('/pro/dossier/') && /^#(invite|token)=/.test(location.hash)) {
+    // R42-A08: also the MFA enrolment invitation (/pro/mfa-settings#invitation=…), which needs the professional signed in first
+    if ((location.pathname.startsWith('/pro/dossier/') && /^#(invite|token)=/.test(location.hash)) || (location.pathname === '/pro/mfa-settings' && /^#invitation=/.test(location.hash))) {
       window.sessionStorage.setItem(KEY, JSON.stringify({ path: location.pathname, hash: location.hash, at: Date.now() }));
     }
   } catch {

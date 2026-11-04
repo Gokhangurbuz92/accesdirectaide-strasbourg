@@ -143,7 +143,9 @@ describe.skipIf(!hasDatabase)('PKG-11 slice 10 (real DB)', () => {
     expect((await post(forgot, { email: PRO })).statusCode).toBe(200);
     await vi.waitFor(() => expect(mailer.__getTestOutbox().filter((m) => m.to === PRO).length).toBe(2), { timeout: 5000 });   // R40: the links are sent after the answer
     const mails = mailer.__getTestOutbox().filter((m) => m.to === PRO);
-    expect(mails).toHaveLength(2); expect(mails.map((m) => m.subject).join(' | ')).toContain(`Organisation ${ID.o1}`); expect(mails.map((m) => m.subject).join(' | ')).toContain(`Organisation ${ID.o2}`);
+    expect(mails).toHaveLength(2);
+    // R42 (mail stream): the subject names no organisation (seen in notifications and inbox lists); each body says which organisation's account the link resets
+    expect(mails.map((m) => m.subject).join(' | ')).not.toMatch(/Organisation /); expect(mails.map((m) => m.text).join(' | ')).toContain(`Organisation ${ID.o1}`); expect(mails.map((m) => m.text).join(' | ')).toContain(`Organisation ${ID.o2}`);
   });
 
   it('N02: with an SMS provider configured, nothing is sent while « STOP » cannot be honoured; the notice says NOT_DELIVERED', async () => {
@@ -176,7 +178,7 @@ describe.skipIf(!hasDatabase)('PKG-11 slice 10 (real DB)', () => {
     const signup = (await import('../../api/_handlers/auth/signup.js')).default; const login = (await import('../../api/_handlers/auth/login.js')).default;
     const post = async (h, body) => { const r = mk(); await h({ method: 'POST', url: '/api/auth/x', query: {}, headers: { host: 'localhost' }, body }, r); return r; };
     const email = `a3-r27-${TS}@example.test`;
-    expect((await post(signup, { email, password: 'Nouveau-Mot-2026x' })).statusCode).toBe(200);
+    expect((await post(signup, { email, password: 'Nouveau-Mot-2026x', adultDeclaration: true })).statusCode).toBe(200);   // R42-A07: adults only
     const fresh = await post(login, { email, password: 'Nouveau-Mot-2026x' });
     const unknown = await post(login, { email: `a3-r27-${TS}-nobody@example.test`, password: 'Nouveau-Mot-2026x' });
     expect([fresh.statusCode, unknown.statusCode]).toEqual([401, 401]); expect(fresh.body).toEqual(unknown.body);

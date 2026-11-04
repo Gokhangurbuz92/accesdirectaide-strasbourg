@@ -109,10 +109,14 @@ export default function RegisterPro() {
 
             // Store JWT and redirect
             localStorage.setItem('pro_token', data.token);
+            // R42-A08: the redeemed invitation is what lets this new account enrol its second factor: the grant goes straight to the enrolment screen
+            if (data.mfaEnrolment?.token) {
+                try { sessionStorage.setItem('ada_pro_mfa_enrolment', data.mfaEnrolment.token); } catch { /* an administrator can send an enrolment invitation */ }
+            }
             setSuccess(true);
 
             setTimeout(() => {
-                navigate('/pro/dashboard');
+                navigate(data.mfaEnrolment?.token ? '/pro/mfa-settings' : '/pro/dashboard');
             }, 1500);
         } catch {
             setError(t('pro:register_pro.network', 'Erreur réseau. Veuillez réessayer.'));

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import SEO from '@/components/SEO';
@@ -13,6 +13,13 @@ import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
 import { useT } from '@/i18n';
+import socialReference from '../../data/reference/social-domains.v1.json';
+
+/** R42-A07: official numbers shown to a minor (verified reference labels, as in the footer) */
+const MINOR_HELP = [
+  { n: '119', label: socialReference.emergency['119'] },
+  { n: '112', label: socialReference.emergency['112'] },
+];
 /**
  * @param {{ mode?: 'login' | 'signup' }} props
  */
@@ -25,6 +32,12 @@ export default function AuthRdvAccess({ mode = 'login' }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [adultDeclaration, setAdultDeclaration] = useState(false);   // R42-A07: never pre-ticked
+  const [siteWeb, setSiteWeb] = useState('');   // R42 bot protection: hidden from people, must stay empty
+  /** A5: the field each error belongs to (aria-invalid / aria-describedby + the error summary that takes the focus) */
+  const [fieldErrors, setFieldErrors] = useState(/** @type {Record<string, string>} */ ({}));
+  const [errorSeq, setErrorSeq] = useState(0);
+  const summaryRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [resendHint, setResendHint] = useState(false);
@@ -49,6 +62,26 @@ export default function AuthRdvAccess({ mode = 'login' }) {
   const forgotPath = appendNext('/auth/forgot', next);
   const proLoginPath = appendNext('/pro/login', next);
 
+  useEffect(() => { if (errorSeq > 0) summaryRef.current?.focus(); }, [errorSeq]);
+
+  /** @param {Record<string, string>} errs */
+  function showFieldErrors(errs) {
+    setFieldErrors(errs);
+    setError(Object.values(errs)[0] || '');
+    setErrorSeq((n) => n + 1);
+  }
+  /** @param {string} message */
+  function showError(message) {
+    setFieldErrors({});
+    setError(message);
+    setErrorSeq((n) => n + 1);
+  }
+  /** @param {string} field @param {string} describedBy */
+  const fieldA11y = (field, describedBy = '') => ({
+    'aria-invalid': fieldErrors[field] ? true : undefined,
+    'aria-describedby': [describedBy, fieldErrors[field] ? `auth-${field}-error` : ''].filter(Boolean).join(' ') || undefined,
+  });
+
   const canSubmit = useMemo(() => {
     if (!email || !password) return false;
     if (!isSignupMode) return true;
@@ -61,19 +94,20 @@ export default function AuthRdvAccess({ mode = 'login' }) {
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
+    setFieldErrors({});
     setInfo('');
 
-    if (isSignupMode && password !== confirmPassword) {
-      setError(t('booking:auth.les_mots_de_passe_ne', "Les mots de passe ne correspondent pas."));
-      return;
-    }
-    if (password.length < 8) {
-      setError(t('booking:auth.le_mot_de_passe_doit', "Le mot de passe doit contenir au moins 8 caractères."));
-      return;
-    }
-    // R18: the sign-up rule is checked here too (the same rule as the server), so a refusal never reaches the person as « Une erreur est survenue »
-    if (isSignupMode && passwordProblems(password).length) {
-      setError(passwordMessage(passwordProblems(password)));
+    if (isSignupMode) {
+      /** @type {Record<string, string>} */
+      const errs = {};
+      // R18: the sign-up rule is checked here too (the same rule as the server), so a refusal never reaches the person as « Une erreur est survenue »
+      if (password.length < 8) errs.password = t('booking:auth.le_mot_de_passe_doit', "Le mot de passe doit contenir au moins 8 caractères.");
+      else if (passwordProblems(password).length) errs.password = passwordMessage(passwordProblems(password));
+      if (password !== confirmPassword) errs.confirm = t('booking:auth.les_mots_de_passe_ne', "Les mots de passe ne correspondent pas.");
+      if (!adultDeclaration) errs.adult = t('booking:auth.adult_required', "Cochez la déclaration « J’ai 18 ans ou plus » pour créer un compte. Si vous avez moins de 18 ans, lisez les informations ci-dessous.");
+      if (Object.keys(errs).length) { showFieldErrors(errs); return; }
+    } else if (password.length < 8) {
+      showFieldErrors({ password: t('booking:auth.le_mot_de_passe_doit', "Le mot de passe doit contenir au moins 8 caractères.") });
       return;
     }
 
@@ -84,12 +118,17 @@ export default function AuthRdvAccess({ mode = 'login' }) {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
-        body: JSON.stringify({ email, password, next }),
+        body: JSON.stringify(isSignupMode ? { email, password, next, adultDeclaration, site_web: siteWeb } : { email, password, next }),
       });
 
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        // R42-A07: the server refuses an account without the adult declaration (the same rule, enforced there)
+        if (isSignupMode && payload?.code === 'ADULT_DECLARATION_REQUIRED') {
+          showFieldErrors({ adult: t('booking:auth.adult_required', "Cochez la déclaration « J’ai 18 ans ou plus » pour créer un compte. Si vous avez moins de 18 ans, lisez les informations ci-dessous.") });
+          return;
+        }
         if (!isSignupMode && response.status === 403 && payload?.code === 'EMAIL_NOT_VERIFIED') {   // older servers
           setInfo(t('booking:auth.votre_email_doit_etre_verifie', "Votre email doit être vérifié avant la connexion."));
           return;
@@ -126,7 +165,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
       }
       navigate(next, { replace: true });
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : t('booking:auth.une_erreur_est_survenue', "Une erreur est survenue."));
+      showError(submitError instanceof Error ? submitError.message : t('booking:auth.une_erreur_est_survenue', "Une erreur est survenue."));
     } finally {
       setLoading(false);
     }
@@ -134,7 +173,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
 
   async function handleResendVerification() {
     if (!email) {
-      setError("Renseignez votre email pour renvoyer le lien de vérification.");
+      showFieldErrors({ email: t('booking:auth.email_required_resend', "Renseignez votre email pour renvoyer le lien de vérification.") });
       return;
     }
     setError('');
@@ -182,10 +221,24 @@ export default function AuthRdvAccess({ mode = 'login' }) {
             <p role="status" data-testid="email-change-outcome" className="rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900">{emailChange}</p>
           ) : null}
           {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+            // A5: one error summary that takes the focus; each entry leads to its field
+            <div ref={summaryRef} tabIndex={-1} id="auth-error-summary" data-testid="auth-error-summary" className="outline-none">
+              <Alert variant="destructive" role="alert">
+                <AlertCircle className="h-4 w-4" aria-hidden="true" />
+                <AlertDescription>
+                  {Object.keys(fieldErrors).length > 1 ? (
+                    <>
+                      <p className="font-semibold">{t('booking:auth.error_summary_title', "Le formulaire contient des erreurs :")}</p>
+                      <ul className="mt-1 list-disc ps-5">
+                        {Object.entries(fieldErrors).map(([field, message]) => (
+                          <li key={field}><a className="underline" href={`#auth-${field === 'confirm' ? 'password-confirm' : field}`}>{message}</a></li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : error}
+                </AlertDescription>
+              </Alert>
+            </div>
           )}
           {info && (
             <Alert>
@@ -209,7 +262,9 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
+                {...fieldA11y('email')}
               />
+              {fieldErrors.email ? <p id="auth-email-error" className="text-sm text-red-800">{fieldErrors.email}</p> : null}
             </div>
 
             <div className="space-y-2">
@@ -222,9 +277,10 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                 onChange={(event) => setPassword(event.target.value)}
                 required
                 minLength={8}
-                aria-describedby={isSignupMode ? 'auth-password-rule' : undefined}
+                {...fieldA11y('password', isSignupMode ? 'auth-password-rule' : '')}
               />
               {isSignupMode ? <p id="auth-password-rule" className="text-xs text-slate-700">{PASSWORD_RULE}</p> : null}
+              {fieldErrors.password ? <p id="auth-password-error" className="text-sm text-red-800">{fieldErrors.password}</p> : null}
             </div>
 
             {isSignupMode && (
@@ -238,8 +294,56 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   required
                   minLength={8}
+                  {...fieldA11y('confirm')}
                 />
+                {fieldErrors.confirm ? <p id="auth-confirm-error" className="text-sm text-red-800">{fieldErrors.confirm}</p> : null}
               </div>
+            )}
+
+            {isSignupMode && (
+              <>
+                {/* R42 bot protection: a field people never see or reach (a bot that fills it gets the ordinary answer and nothing is created) */}
+                <div className="sr-only" aria-hidden="true">
+                  <label htmlFor="auth-site-web">{t('booking:auth.honeypot_label', "Ne remplissez pas ce champ")}</label>
+                  <input id="auth-site-web" name="site_web" type="text" tabIndex={-1} autoComplete="off" value={siteWeb} onChange={(event) => setSiteWeb(event.target.value)} />
+                </div>
+
+                {/* R42-A07: an independent account is for adults; a declaration, never a date of birth */}
+                <div className="space-y-2 rounded-md border border-slate-300 bg-white p-3">
+                  <div className="flex items-start gap-2">
+                    <input
+                      id="auth-adult"
+                      type="checkbox"
+                      className="mt-1 h-4 w-4"
+                      checked={adultDeclaration}
+                      onChange={(event) => setAdultDeclaration(event.target.checked)}
+                      aria-required="true"
+                      data-testid="auth-adult-declaration"
+                      {...fieldA11y('adult', 'auth-adult-hint')}
+                    />
+                    <Label htmlFor="auth-adult" className="font-semibold">{t('booking:auth.adult_label', "J’ai 18 ans ou plus")}</Label>
+                  </div>
+                  <p id="auth-adult-hint" className="text-sm text-slate-700">
+                    {t('booking:auth.adult_hint', "La création d’un compte personnel est réservée aux personnes de 18 ans ou plus. Nous ne demandons ni date de naissance ni pièce d’identité : cette déclaration engage la personne qui crée le compte.")}
+                  </p>
+                  {fieldErrors.adult ? <p id="auth-adult-error" className="text-sm text-red-800">{fieldErrors.adult}</p> : null}
+                </div>
+
+                <section aria-labelledby="auth-minors-title" data-testid="auth-minors-info" className="space-y-2 rounded-md border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800">
+                  <h2 id="auth-minors-title" className="font-semibold text-slate-900">{t('booking:auth.minors_title', "Vous avez moins de 18 ans ?")}</h2>
+                  <p>{t('booking:auth.minors_text', "Vous ne pouvez pas encore créer un compte personnel ni prendre rendez-vous seul·e en ligne. Les informations publiques (aides, démarches, annuaire) restent accessibles sans compte. Un parent, votre représentant légal ou un professionnel peut vous accompagner.")}</p>
+                  <p>{t('booking:auth.minors_help', "Si vous êtes en danger, ou si un enfant est en danger, appelez :")}</p>
+                  <ul className="space-y-1">
+                    {MINOR_HELP.map(({ n, label }) => (
+                      <li key={n} className="flex items-center gap-2">
+                        <a href={`tel:${n}`} className="font-bold text-blue-900 underline" dir="ltr">{n}</a>
+                        <span lang="fr">{label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link className="text-blue-900 underline" to="/besoins">{t('booking:auth.minors_all_numbers', "Tous les numéros d’urgence et d’aide")}</Link>
+                </section>
+              </>
             )}
 
             <Button type="submit" className="w-full" disabled={!canSubmit || loading}>

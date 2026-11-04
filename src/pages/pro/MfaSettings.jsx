@@ -22,6 +22,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
+import { pendingInvitePath, takePendingInvite } from '@/lib/pendingInvite';
 import { useT } from '@/i18n';
 /**
  * MfaSettings — TOTP setup / disable page
@@ -39,6 +40,21 @@ function getAuthHeaders() {
     return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+/**
+ * R42-A08: the enrolment grant (from register-invite, or from redeeming the e-mailed invitation) lives in this tab only; the invitation link carries its
+ * token in the URL FRAGMENT (#invitation=…), never sent to a server and removed from the address bar as soon as it is read.
+ */
+export const MFA_ENROLMENT_KEY = 'ada_pro_mfa_enrolment';
+const readGrant = () => { try { return sessionStorage.getItem(MFA_ENROLMENT_KEY) || ''; } catch { return ''; } };
+const dropGrant = () => { try { sessionStorage.removeItem(MFA_ENROLMENT_KEY); } catch { /* nothing kept */ } };
+function invitationFromLocation() {
+    let hash = typeof window !== 'undefined' ? window.location.hash : '';
+    if (!/^#invitation=/.test(hash) && pendingInvitePath() === '/pro/mfa-settings') hash = takePendingInvite('/pro/mfa-settings');
+    const m = /^#invitation=([^&]+)/.exec(hash || '');
+    if (typeof window !== 'undefined' && /^#invitation=/.test(window.location.hash)) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+}
+
 export default function MfaSettings() {
     const { t } = useT('pro');
     // the server error codes, in the interface language (unknown codes stay as sent)
@@ -47,6 +63,8 @@ export default function MfaSettings() {
         MFA_NOT_ENABLED: t('pro:mfa.error.not_enabled', 'La double authentification n’est pas activée.'),
         INVALID_CODE: t('pro:mfa.error.invalid_code', 'Code incorrect ou expiré.'),
         MFA_UNAVAILABLE: t('pro:mfa.error.unavailable', 'La double authentification est momentanément indisponible.'),
+        MFA_INVITATION_REQUIRED: t('pro:mfa.error.invitation_required', 'La double authentification s’active uniquement avec une invitation envoyée par un administrateur de votre structure. Demandez-lui une invitation, puis ouvrez le lien reçu par e-mail.'),
+        MFA_INVITATION_INVALID: t('pro:mfa.error.invitation_invalid', 'Ce lien d’activation n’est pas valable pour votre compte (déjà utilisé, expiré ou destiné à une autre personne). Demandez une nouvelle invitation à un administrateur de votre structure.'),
     })[c];
     const mfaRequired = useLocation().state?.mfaRequired === true;   // R34: sent here because ADA Pro requires the second factor
     const [step, setStep] = useState(0); // 0 = loading, 1 = intro, 2 = secret, 3 = verify, 4 = success
@@ -57,6 +75,7 @@ export default function MfaSettings() {
     const [error, setError] = useState('');
     const [mfaEnabled, setMfaEnabled] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [hasGrant, setHasGrant] = useState(() => Boolean(readGrant()));
 
     // Check MFA status on mount
     useState(() => {
@@ -67,6 +86,18 @@ export default function MfaSettings() {
                     const data = await res.json();
                     const enabled = data.user?.mfa_enabled ?? false;
                     setMfaEnabled(enabled);
+                    const invitation = invitationFromLocation();
+                    if (!enabled && invitation) {
+                        // R42-A08: the invitation is redeemed by THIS signed-in account only (the server checks structure, e-mail and role)
+                        const r = await fetch('/api/pro/mfa-enrolment', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders(), ...getCsrfHeaders() }, body: JSON.stringify({ token: invitation }) });
+                        const out = await r.json().catch(() => ({}));
+                        if (r.ok && out.enrolmentToken) {
+                            try { sessionStorage.setItem(MFA_ENROLMENT_KEY, out.enrolmentToken); } catch { /* the setup below is refused and says why */ }
+                            setHasGrant(true);
+                        } else {
+                            setError(mfaError(out.error) || out.message || t('pro:mfa.error.server', 'Erreur serveur'));
+                        }
+                    }
                     setStep(1);
                 } else {
                     setStep(1);
@@ -81,7 +112,7 @@ export default function MfaSettings() {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch('/api/pro/mfa-setup', { headers: getAuthHeaders() });
+            const res = await fetch('/api/pro/mfa-setup', { headers: { ...getAuthHeaders(), 'x-ada-mfa-enrolment': readGrant() } });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || mfaError(data.error) || data.error || t('pro:mfa.error.server', 'Erreur serveur'));
             setSecret(data.secret);
@@ -101,12 +132,14 @@ export default function MfaSettings() {
             const res = await fetch('/api/pro/mfa-setup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...getAuthHeaders(), ...getCsrfHeaders() },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ code, enrolmentToken: readGrant() }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || mfaError(data.error) || data.error || t('pro:mfa.error.code', 'Code incorrect'));
             // R34: the server hands a session that passed the second factor: the dossiers open without signing in again
             if (data.token) localStorage.setItem('pro_token', data.token);
+            dropGrant();
+            setHasGrant(false);
             setMfaEnabled(true);
             setStep(4);
         } catch (err) {
@@ -178,7 +211,7 @@ export default function MfaSettings() {
 
                 <CardContent className="space-y-4">
                     {error && (
-                        <Alert variant="destructive">
+                        <Alert variant="destructive" role="alert">
                             <AlertCircle className="h-4 w-4" />
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
@@ -197,10 +230,16 @@ export default function MfaSettings() {
                                     {t('pro:mfa.code_every_30s', 'Code unique toutes les 30 secondes')}
                                 </div>
                             </div>
-                            <Button onClick={startSetup} disabled={loading} className="w-full">
-                                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
-                                {t('pro:mfa.configure', 'Configurer le MFA')}
-                            </Button>
+                            {hasGrant ? (
+                                <Button onClick={startSetup} disabled={loading} className="w-full">
+                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+                                    {t('pro:mfa.configure', 'Configurer le MFA')}
+                                </Button>
+                            ) : (
+                                <p role="status" data-testid="mfa-invitation-required" className="rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-800">
+                                    {t('pro:mfa.invitation_required_notice', 'Pour protéger votre compte, la double authentification s’active uniquement avec une invitation envoyée par un administrateur de votre structure (le mot de passe seul ne suffit pas). Demandez-lui une invitation, puis ouvrez le lien reçu par e-mail en étant connecté·e.')}
+                                </p>
+                            )}
                         </>
                     )}
 

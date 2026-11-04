@@ -19,6 +19,7 @@ import {
   normalizePhone,
   unsetPasswordHash,
 } from '../../_utils/user-auth.js';
+import { ADULT_REQUIRED_REFUSAL, adultDeclarationGiven, recordAgeDeclaration } from '../../_utils/age-policy.js';
 
 const VERIFY_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for stricter security
 
@@ -61,6 +62,12 @@ export default async function handler(req, res) {
     });
   }
 
+  // R42-A07: an independent account is for adults only. The explicit declaration is checked before anything is looked up, so the refusal is the same whatever the
+  // address (no account oracle). No date of birth is asked (api/_utils/age-policy.js).
+  if (!adultDeclarationGiven(req.body?.adultDeclaration)) {
+    return res.status(400).json({ ...ADULT_REQUIRED_REFUSAL });
+  }
+
   const ip = getClientIp(req);
   const ipLimit = await checkRateLimit('SIGNUP_USER', `ip:${ip}`);
   if (!ipLimit.allowed) {
@@ -70,6 +77,13 @@ export default async function handler(req, res) {
   if (!emailLimit.allowed) {
     // @ts-ignore
     return res.status(getRateLimitStatus(emailLimit)).json(emailLimit.error || { error: 'Too many attempts' });
+  }
+
+  // R42 bot protection: a field hidden from people (« site_web », as on the contact form) filled in means an automated submission. It gets the ordinary answer
+  // after the same password work, and nothing is created or sent (a bot learns nothing; the rate limits above still count it).
+  if (String(req.body?.site_web ?? '').trim()) {
+    await hashPassword(password);
+    return res.status(200).json(signupAnswer());
   }
 
   try {
@@ -98,6 +112,9 @@ export default async function handler(req, res) {
       await hashPassword(password);   // PKG-11 audit pass 2: same password work as a new sign-up (an existing verified address answered measurably faster)
       return res.status(200).json(signupAnswer());
     }
+
+    // R42-A07: the declaration of THIS sign-up (append-only ledger); a re-sign-up of an unverified address declares again
+    await recordAgeDeclaration(user.id, { adult: true, channel: 'signup' });
 
     const rawToken = generateAuthToken();
     const tokenHash = hashAuthToken(rawToken);

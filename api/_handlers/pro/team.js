@@ -36,7 +36,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             const [users, totalRes] = await Promise.all([
                 db.query.ProUser.findMany({
                     where: eq(ProUser.structureId, structureId),
-                    columns: { id: true, email: true, role: true, status: true, canManageSchedule: true, createdAt: true },
+                    columns: { id: true, email: true, role: true, status: true, canManageSchedule: true, createdAt: true, mfa_enabled: true },   // R42-A08: who still needs an enrolment invitation (never the seed)
                     orderBy: [desc(ProUser.createdAt)],
                     limit: limit,
                     offset: skip,

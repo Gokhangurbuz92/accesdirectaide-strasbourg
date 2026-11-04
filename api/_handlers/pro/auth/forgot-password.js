@@ -29,7 +29,8 @@ async function sendResetLinks(users, ip) {
         const resetLink = `${baseUrl}/pro/reset-password?token=${encodeURIComponent(token)}`;
         const t = templates.resetPassword(user.email.split('@')[0], resetLink, '1 heure');   // the professional link lives 1 hour (KV ex 3600)
         const org = users.length > 1 ? ` — compte de l'organisation « ${String(user.nom || 'Organisation').replace(/[\r\n]+/g, ' ')} »` : '';
-        await sendMail({ to: user.email, subject: `${t.subject}${org}`, text: `Lien de réinitialisation (valable 1 heure)${org} : ${resetLink}`, html: t.html, category: 'password_reset' });
+        // R42: a neutral subject (no organisation name: the subject line is seen in notifications and inbox lists); the organisation is named in the body only
+        await sendMail({ to: user.email, subject: t.subject, text: `Lien de réinitialisation (valable 1 heure)${org} : ${resetLink}`, html: t.html, category: 'password_reset' });
 
         await logProAudit('RESET_REQUESTED', user.id, user.structureId, { accounts: users.length }, ip);
     }

@@ -22,6 +22,9 @@ export const signupSchema = z.object({
     password: z.string().min(8, 'Mot de passe trop court (min 8 caractères)'),
     phone: z.string().optional(),
     next: z.string().optional(),
+    // R42-A07: checked by the handler (only `true` counts) so the refusal carries its explanation; R42 bot protection: hidden field, must stay empty
+    adultDeclaration: z.unknown().optional(),
+    site_web: z.string().max(500).optional(),
 });
 
 export const forgotPasswordSchema = z.object({

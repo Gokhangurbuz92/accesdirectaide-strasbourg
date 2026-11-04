@@ -10,6 +10,7 @@ import { db } from '../../../../src/db/index.js';
 import { Invitation, ProUser } from '../../../../src/db/schema.js';
 import { eq, and, gt, isNull, sql } from 'drizzle-orm';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { MFA_ENROLMENT_GRANT_SECONDS, signMfaEnrolmentGrant } from '../../../_utils/pro-mfa-enrolment.js';
 
 /**
  * Register via Invitation Token
@@ -116,9 +117,9 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
         });
 
         if (existingUser) {
-            // Mark invitation as used to avoid confusion
-            await db.update(Invitation).set({ used_at: new Date() }).where(eq(Invitation.id, invitation.id));
-            return res.status(409).json({ error: 'Un compte existe déjà avec cet email.' });
+            // R42-A08: an invitation naming an EXISTING member is an MFA enrolment invitation: it is not consumed here (nobody can burn it through this route);
+            // the member redeems it while signed in (POST /api/pro/mfa-enrolment), with their own account only
+            return res.status(409).json({ error: 'Un compte existe déjà avec cet email. Connectez-vous, puis ouvrez de nouveau le lien reçu pour activer la double authentification.', code: 'ACCOUNT_EXISTS' });
         }
 
         // 3. PKG-4 / D8: claim the invitation and create the account in ONE transaction; the claim is conditional (unused, unexpired), so two concurrent
@@ -147,7 +148,11 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
         const ip = clientIp(req);
         await logProAudit('REGISTER_VIA_INVITE', result.id, invitation.structureId, {
             invitationId: invitation.id,
+            mfaEnrolmentBound: true,
         }, ip);
+        // R42-A08: the redeemed invitation is what allows this new account to enrol its second factor (never the password alone). Not completed within
+        // the grant's lifetime → an administrator sends an enrolment invitation (pro/mfa-invitation).
+        const mfaEnrolment = { token: signMfaEnrolmentGrant({ userId: result.id, structureId: invitation.structureId, invitationId: invitation.id }), expiresInSeconds: MFA_ENROLMENT_GRANT_SECONDS };
 
         return res.status(201).json({
             token: jwt,
@@ -158,6 +163,7 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
                 structureId: invitation.structureId,
                 structureName: invitation.structure.nom,
             },
+            mfaEnrolment,
         });
     } catch (error) {
         logger.error('[Register Invite] Erreur:', error.message);

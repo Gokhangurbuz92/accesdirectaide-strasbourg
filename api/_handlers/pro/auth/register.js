@@ -122,7 +122,7 @@ export default async function handler(req, res) {
         const emailTemplate = templates.welcome(structureName, null);   // PKG-11 audit: no verification step here (the former link carried a made-up token)
         await sendMail({
             to: email,
-            subject: `[PRO] Bienvenue sur Accès Direct Aide — ${structureName}`,
+            subject: '[PRO] Bienvenue sur Accès Direct Aide',   // R42: no organisation name in a subject line (body only)
             text: `Bienvenue sur Accès Direct Aide ! Votre espace professionnel pour "${structureName}" est maintenant actif.`,
             html: emailTemplate.html,
             category: 'pro_welcome',

@@ -52,6 +52,9 @@ const CONFIG = {
     // and the codes tried with ONE pending sign-in token
     MFA_VERIFY_PRO_USER: { limit: 5, window: 900 },
     MFA_VERIFY_PRO_TOKEN: { limit: 3, window: 300 },
+    // R42-A08: enrolment secrets generated per account; enrolment invitations redeemed per account and per IP
+    MFA_ENROL_START_PRO: { limit: 10, window: 900 },
+    PRO_MFA_ENROL_REDEEM: { limit: 5, window: 3600 },
     REGISTER_INVITE: { limit: 5, window: 3600 }, // 5 per hour
     REFRESH_PRO: { limit: 10, window: 900 },  // 10 per 15 min
     LOGIN_USER: { limit: 8, window: 900 },  // 8 per 15 min
@@ -113,7 +116,7 @@ const PUBLIC_READ_ACTIONS = new Set([
 ]);
 
 const AUTH_OR_SENSITIVE_MUTATION = new Set([
-    'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO', 'MFA_VERIFY_PRO_USER', 'MFA_VERIFY_PRO_TOKEN',
+    'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO', 'MFA_VERIFY_PRO_USER', 'MFA_VERIFY_PRO_TOKEN', 'MFA_ENROL_START_PRO', 'PRO_MFA_ENROL_REDEEM', 'PRO_INVITE',
     'REGISTER_INVITE', 'REFRESH_PRO', 'LOGIN_USER', 'SIGNUP_USER', 
     'RESEND_VERIFY', 'FORGOT_USER', 'RESET_USER', 'RESET_PASSWORD',
     'BOOK', 'CONFIRM', 'FEEDBACK', 'CONTACT_FORM', 'DSR_EXPORT', 'RDV_PUBLIC_WRITE', 'RDV_GUEST_WRITE', 'RDV_GUEST_EMAIL', 'RDV_GUEST_CONFIRM', 'RDV_GUEST_MANAGE', 
