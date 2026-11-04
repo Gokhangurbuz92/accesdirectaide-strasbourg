@@ -2,7 +2,6 @@
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import { Structure } from '../../src/db/schema.js';
-import { requestGuestSchema } from '../_utils/schema-features.js';
 import { eq } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { searchStructuresSchema } from '../_utils/validators.js';
@@ -96,7 +95,6 @@ function enrichDescription(s) {
 }
 
 /** R38: account-free booking switch (fail-closed; unset in Production) */
-const guestBookingOn = () => String(process.env.ADA_GUEST_BOOKING_ENABLED || '').trim().toLowerCase() === 'true';
 
 async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ req, /** @type {import('../_utils/http-types').ApiResponse} */ res) {
   try {
@@ -148,8 +146,6 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
     if (effectiveParams.id || effectiveParams.slug) {
       let structure;
       try {
-        // R41-B: the switch AND a database that has the 0043 column (Production 0042 has not: with the switch on, the page failed there)
-        const guestOn = guestBookingOn() && (await requestGuestSchema(db)).guestBooking;
         structure = await db.query.Structure.findFirst({
           where: effectiveParams.id ? eq(Structure.id, effectiveParams.id) : eq(Structure.slug, effectiveParams.slug),
           columns: {
@@ -162,6 +158,7 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
             retrieved_at: false,
             last_checked_at: false,
             source_document_id: false,
+            settings_json: false,   // R42: internal configuration (booking confirmation mode, team routing) — never public
           },
           // DTA S4A: the Structure relations are `proRdvServices` (many) and `rdvSettings` (many, unique per structure). The former request for a `proServices` relation named one that does not exist:
           // Drizzle threw before any SQL, the catch below turned it into a 404 and EVERY single-structure read (slug or id) answered "Structure non trouvée" on the real stack (native S3B run 436e5e, DTA-B12).
@@ -174,9 +171,6 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
               columns: {
                 isPublished: true,
                 bookingMode: true,
-                // R38: the column exists only after migration 0043 (owner-applied in Production): it is read only when the guest switch is on, so this
-                // public page keeps working on a database without it
-                ...(guestOn ? { allowGuestBooking: true } : {}),
               },
             },
             sourceDocument: {
@@ -217,9 +211,8 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
         rdv: {
           isPublished: isRdvPublished,
           bookingMode,
-          // R38: « Prendre rendez-vous sans compte » is offered only when the structure opted in, is VERIFIED, AND the server switch is on
-          allowGuestBooking: Boolean(isRdvPublished && rdvSettings?.allowGuestBooking && structureRest.verification_status === 'VERIFIED'
-            && guestBookingOn()),
+          // R42 (DEC-R42-01): asking for an appointment always needs a citizen account (the R38 account-free booking is retired)
+          accountRequired: true,
         },
         provenance: {
           ...buildProvenance({

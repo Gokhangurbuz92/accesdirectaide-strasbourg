@@ -7,6 +7,8 @@ import { clientIp } from '../../_utils/client-ip.js';
 import { getProRdvReadiness } from '../../_utils/pro-rdv-readiness.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { flagsOf, requestGuestSchema, settingsTable } from '../../_utils/schema-features.js';
+import { asConfirmation, parseBookingConfig, readBookingConfig, writeBookingConfig } from '../../_services/rdv-booking-config.js';
+import { sql } from 'drizzle-orm';
 
 const BOOKING_MODES = new Set(['IN_PERSON', 'VIDEO', 'BOTH']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,8 +75,9 @@ function serialize(row) {
     contact_phone: row.contactPhone || null,
     publishedAt: row.publishedAt || null,
     published_at: row.publishedAt || null,
-    // R38: account-free (« sans compte ») booking, opted in by an administrator of the structure (default off)
-    allowGuestBooking: Boolean(row.allowGuestBooking),
+    // R42 (DEC-R42-01): account-free booking is retired — always false; an account is required to ask for an appointment
+    allowGuestBooking: false,
+    accountRequired: true,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -128,7 +131,7 @@ async function handler(req, res) {
 
   if (req.method === 'GET') {
     const settings = await getOrCreateSettings(structureId);
-    return res.status(200).json(serialize(settings));
+    return res.status(200).json({ ...serialize(settings), booking: await bookingView(structureId) });
   }
 
   if (req.method !== 'PUT' && req.method !== 'PATCH') {
@@ -185,17 +188,27 @@ async function handler(req, res) {
     }
   }
 
-  // R38: account-free booking is an explicit opt-in of the structure (admin only, like publishing); a boolean or nothing
+  // R38 account-free booking — R42 (DEC-R42-01): retired. « yes » is refused on every database level (never silently dropped); « no » turns a LAB 0044
+  // opt-in off. The opt-in can no longer re-enable anything (the guest routes answer 410 whatever it says).
   const hasAllowGuest = typeof body.allowGuestBooking !== 'undefined';
   if (hasAllowGuest && typeof body.allowGuestBooking !== 'boolean') {
     return res.status(400).json({ error: 'Invalid allowGuestBooking' });
   }
-  // R41-B: nothing to store the opt-in in before migration 0043: « no » is already true, « yes » is refused (never silently dropped)
-  const features = await requestGuestSchema(db);
-  if (!features.guestBooking && body.allowGuestBooking === true) {
-    return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
+  if (body.allowGuestBooking === true) {
+    return res.status(409).json({ error: 'GUEST_BOOKING_RETIRED', code: 'GUEST_BOOKING_RETIRED', message: 'La réservation sans compte n’existe plus : un compte est nécessaire pour demander un rendez-vous.' });
   }
-  const nextAllowGuest = hasAllowGuest ? body.allowGuestBooking : Boolean(current.allowGuestBooking);
+  const features = await requestGuestSchema(db);
+  const nextAllowGuest = false;
+
+  // R42-A03 / A04: confirmation mode (structure / per service) and team choice — validated against this structure's services and members
+  const booking = await readBookingPatch(structureId, body);
+  if ('error' in booking) return res.status(400).json({ error: booking.error, code: 'INVALID_BOOKING_CONFIG' });
+  if (booking.changed) {
+    const saved = await writeBookingConfig(structureId, booking.config);
+    await logProAudit('RDV_BOOKING_CONFIG_UPDATED', proCtx.userId, structureId, { confirmation: saved.confirmation, serviceOverrides: Object.keys(saved.services).length,
+      teamEnabled: saved.team.enabled, bookableMembers: Object.values(saved.team.members).filter((m) => m.bookable).length,
+      selectableMembers: Object.values(saved.team.members).filter((m) => m.selectable).length }, clientIp(req));
+  }
 
   const noChanges =
     nextAllowGuest === Boolean(current.allowGuestBooking) &&
@@ -205,7 +218,7 @@ async function handler(req, res) {
     (nextContactPhone || null) === (current.contactPhone || null);
 
   if (noChanges) {
-    return res.status(200).json(serialize(current));
+    return res.status(200).json({ ...serialize(current), booking: await bookingView(structureId) });
   }
 
   const now = new Date();
@@ -230,7 +243,85 @@ async function handler(req, res) {
 
   const updated = settings;
 
-  return res.status(200).json(serialize(updated));
+  return res.status(200).json({ ...serialize(updated), booking: await bookingView(structureId) });
+}
+
+/**
+ * R42 — the booking configuration with what an administrator needs to set it: the structure's services and its active members (with whether their
+ * sign-in is verified by MFA and whether they have a public display name — a professional is never shown publicly by e-mail).
+ * @param {string} structureId
+ */
+async function bookingView(structureId) {
+  const config = await readBookingConfig(structureId);
+  const members = await db.execute(sql`SELECT u.id, u.email, u.role, u.mfa_enabled AS "mfaEnabled", p."displayName" AS "displayName", p."jobTitle" AS "jobTitle"
+    FROM "ProUser" u LEFT JOIN "ProProfile" p ON p."proUserId" = u.id WHERE u."structureId" = ${structureId} AND u.status = 'active' ORDER BY u.email`);
+  const services = await db.execute(sql`SELECT id, name FROM "ProRdvService" WHERE "structureId" = ${structureId} ORDER BY name`);
+  return {
+    confirmation: config.confirmation,
+    serviceConfirmation: Object.fromEntries(Object.entries(config.services).map(([id, v]) => [id, v.confirmation])),
+    team: config.team,
+    members: members.rows.map((m) => ({ id: String(m.id), email: String(m.email), role: String(m.role), verified: m.mfaEnabled === true,
+      displayName: typeof m.displayName === 'string' ? m.displayName : null, jobTitle: typeof m.jobTitle === 'string' ? m.jobTitle : null })),
+    services: services.rows.map((r) => ({ id: String(r.id), name: String(r.name) })),
+  };
+}
+
+/**
+ * The next booking configuration from a PUT / PATCH body: `confirmation` ('DIRECT' | 'APPROVAL'), `serviceConfirmation` ({ serviceId: mode | null }),
+ * `team` ({ enabled, members: { proUserId: { bookable, selectable, serviceIds } } }). Only this structure's services and active members are accepted.
+ * @param {string} structureId @param {Record<string, unknown>} body
+ * @returns {Promise<{ error: string } | { changed: boolean, config: import('../../_services/rdv-booking-config.js').BookingConfig }>}
+ */
+async function readBookingPatch(structureId, body) {
+  const touches = ['confirmation', 'serviceConfirmation', 'team'].some((k) => typeof body[k] !== 'undefined');
+  const current = await readBookingConfig(structureId);
+  if (!touches) return { changed: false, config: current };
+  const serviceRows = await db.execute(sql`SELECT id FROM "ProRdvService" WHERE "structureId" = ${structureId}`);
+  const serviceIds = new Set(serviceRows.rows.map((r) => String(r.id)));
+  const memberRows = await db.execute(sql`SELECT id FROM "ProUser" WHERE "structureId" = ${structureId} AND status = 'active'`);
+  const memberIds = new Set(memberRows.rows.map((r) => String(r.id)));
+  const next = parseBookingConfig(current);
+  if (typeof body.confirmation !== 'undefined') {
+    const mode = asConfirmation(body.confirmation);
+    if (!mode) return { error: 'confirmation doit valoir DIRECT ou APPROVAL.' };
+    next.confirmation = mode;
+  }
+  if (typeof body.serviceConfirmation !== 'undefined') {
+    const map = body.serviceConfirmation;
+    if (typeof map !== 'object' || map === null || Array.isArray(map)) return { error: 'serviceConfirmation doit être un objet { service: mode }.' };
+    for (const [id, value] of Object.entries(map)) {
+      if (!serviceIds.has(id)) return { error: 'Service inconnu pour cette structure.' };
+      if (value === null) { delete next.services[id]; continue; }
+      const mode = asConfirmation(value);
+      if (!mode) return { error: 'Le mode de confirmation d’un service doit valoir DIRECT ou APPROVAL.' };
+      next.services[id] = { confirmation: mode };
+    }
+  }
+  if (typeof body.team !== 'undefined') {
+    const team = body.team;
+    if (typeof team !== 'object' || team === null || Array.isArray(team)) return { error: 'team doit être un objet.' };
+    const t = /** @type {Record<string, unknown>} */ (team);
+    if (typeof t.enabled !== 'undefined') {
+      if (typeof t.enabled !== 'boolean') return { error: 'team.enabled doit être vrai ou faux.' };
+      next.team.enabled = t.enabled;
+    }
+    if (typeof t.members !== 'undefined') {
+      if (typeof t.members !== 'object' || t.members === null || Array.isArray(t.members)) return { error: 'team.members doit être un objet.' };
+      for (const [id, value] of Object.entries(t.members)) {
+        if (!memberIds.has(id)) return { error: 'Membre inconnu pour cette structure.' };
+        if (value === null) { delete next.team.members[id]; continue; }
+        if (typeof value !== 'object' || Array.isArray(value)) return { error: 'Réglage de membre invalide.' };
+        const m = /** @type {Record<string, unknown>} */ (value);
+        if ((typeof m.bookable !== 'undefined' && typeof m.bookable !== 'boolean') || (typeof m.selectable !== 'undefined' && typeof m.selectable !== 'boolean')) return { error: 'bookable et selectable doivent être vrai ou faux.' };
+        const ids = typeof m.serviceIds === 'undefined' ? (next.team.members[id]?.serviceIds || []) : m.serviceIds;
+        if (!Array.isArray(ids) || ids.some((x) => typeof x !== 'string' || !serviceIds.has(x))) return { error: 'serviceIds doit lister des services de cette structure.' };
+        const bookable = typeof m.bookable === 'boolean' ? m.bookable : Boolean(next.team.members[id]?.bookable);
+        const selectable = typeof m.selectable === 'boolean' ? m.selectable : Boolean(next.team.members[id]?.selectable);
+        next.team.members[id] = { bookable, selectable: bookable && selectable, serviceIds: ids.map(String) };
+      }
+    }
+  }
+  return { changed: true, config: next };
 }
 
 export default withProRdvHandler('pro.rdv.settings', handler);

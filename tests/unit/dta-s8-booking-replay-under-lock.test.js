@@ -25,7 +25,8 @@ describe('booking transaction order', () => {
     expect(block).not.toMatch(/sendAppointmentConfirmationEmail|sendMail/);
     // the citizen booking passes the authenticated citizen AND the key, answers the replay 200 (after COMMIT) and returns before the confirmation e-mail
     const create = src.slice(at('async function createAppointment'), at('export function withLoadedRelations'));
-    expect(create).toMatch(/replay: \(\) => loadAppointmentWithRelations\(null, \{ citizenUserId: auth\.user\.id, idempotencyKey \}\)/);
+    expect(create).toMatch(/const replay = \(\) => loadAppointmentWithRelations\(null, \{ citizenUserId: auth\.user\.id, idempotencyKey \}\)/);   // R42: shared by bookSlot() and bookTeamSlot()
+    expect(create).toMatch(/bookSlot\(\{ structure, service, startAt, endAt, replay, values \}\)/);
     const replayBranch = create.slice(create.indexOf("if (outcome.kind === 'replay')"), create.indexOf("if (outcome.kind === 'duplicate')"));
     expect(replayBranch).toMatch(/res\.status\(200\)/);
     expect(replayBranch).not.toMatch(/sendAppointmentConfirmationEmail/);

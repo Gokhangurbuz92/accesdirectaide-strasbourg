@@ -137,9 +137,9 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
     expect(left).toEqual([`r41sch-du-${TS}`]);
   });
 
-  it('the account-free endpoints stay closed without the switch (Production 0042): 503, nothing read', async () => {
+  it('the account-free endpoints are retired (R42, DEC-R42-01): 410 ACCOUNT_REQUIRED, nothing read', async () => {
     const r = mk();
     await rdv({ method: 'POST', url: '/api/rdv/guest/hold', query: {}, body: {}, headers: { host: 'localhost' } }, r);
-    expect([r.statusCode, r.body.code]).toEqual([503, 'GUEST_BOOKING_DISABLED']);
+    expect([r.statusCode, r.body.code]).toEqual([410, 'ACCOUNT_REQUIRED']);
   });
 });

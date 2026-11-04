@@ -38,6 +38,8 @@ export const CATALOGUE = Object.freeze({
   rdv_new: ev('appointments', 'Rendez-vous demain'),
   rdv_booked_by_structure: ev('appointments', 'Rendez-vous créé'),
   rdv_booked_by_guest: ev('appointments', 'Rendez-vous pris sans compte'),   // R38
+  rdv_booked_by_citizen: ev('appointments', 'Rendez-vous pris en ligne (compte)'),   // R42: Mode A
+  rdv_request_received: ev('appointments', 'Demande de rendez-vous à valider'),   // R42: Mode B
   rdv_cancelled_by_citizen: ev('appointments', 'Rendez-vous annulé par la personne'),
   rdv_cancelled_by_structure: ev('appointments', 'Rendez-vous annulé par la structure'),
   rdv_rescheduled: ev('appointments', 'Rendez-vous déplacé'),

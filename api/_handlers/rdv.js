@@ -3,10 +3,10 @@ import crypto from 'node:crypto';
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, and, lt, gt, asc, count , sql, isNull } from 'drizzle-orm';
+import { eq, and, lt, gt, asc, count , sql, isNull, inArray } from 'drizzle-orm';
 import { buildAppointmentIcs } from '../_utils/ics.js';
 import { calendarAttachment } from '../_services/appointment-notices.js';
-import { sendMail } from '../_utils/mailer.js';
+import { getMailerStatus, sendMail } from '../_utils/mailer.js';
 import { ACTIVE_APPOINTMENT_STATUSES, generateSlots, toBusyWindows, validateDateRange } from '../_utils/pro-rdv.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
@@ -17,6 +17,11 @@ import { buildAppUrl } from '../_utils/user-auth.js';
 import { formatParis, noticeCitizen, noticeStructure } from '../_services/appointment-notices.js';
 import { MODE_LABELS, modeLabel, locationOf, locationText, normalizeMode, offeredModes, rulesFor } from '../lib/appointment-modes.js';
 import { issueJoin, joinRefusal, joinWindow, publicVideoStatus } from '../lib/video-provider.js';
+import { encrypt } from '../lib/crypto.js';
+// R42: account-required booking — age rule, optional message, structure-controlled confirmation (Mode A / Mode B) and professional choice
+import { bookingAgeRefusal, loadAccountAge } from '../_utils/age-policy.js';
+import { bookingMessageRefusal, validateBookingMessage } from '../_utils/rdv-message.js';
+import { confirmationModeFor, readBookingConfig } from '../_services/rdv-booking-config.js';
 
 export const MAX_RANGE_DAYS = 14;
 export const MAX_BOOKING_AHEAD_DAYS = 60;
@@ -422,7 +427,9 @@ function serializeAppointment(appointment, options = {}) {
   const endsAt = appointment.endAt instanceof Date ? appointment.endAt : null;
   const structureName = appointment?.structure?.nom || '';
   const serviceName = appointment?.service?.name || '';
-  const calendar = options.includeCalendar && startsAt && endsAt && structureName && serviceName
+  const state = appointmentState(appointment);
+  // R42: a pending request is never presented as confirmed — no calendar file until the structure accepts it
+  const calendar = options.includeCalendar && state === 'CONFIRMED' && startsAt && endsAt && structureName && serviceName
     ? {
         filename: `acces-direct-aide-rdv-${appointment.id}.ics`,
         contentType: 'text/calendar; charset=utf-8',
@@ -442,6 +449,10 @@ function serializeAppointment(appointment, options = {}) {
   return {
     id: appointment.id,
     status: String(appointment.status || '').toUpperCase(),
+    // R42: the true state shown to the person (REQUESTED = awaiting the structure's approval; never shown as confirmed)
+    state,
+    awaitingApproval: state === 'REQUESTED',
+    rescheduled: Number(appointment.rescheduleCount || 0) > 0,
     startsAt: startsAt ? startsAt.toISOString() : null,
     endsAt: endsAt ? endsAt.toISOString() : null,
     cancelledAt: appointment.cancelledAt instanceof Date ? appointment.cancelledAt.toISOString() : null,
@@ -487,6 +498,24 @@ function serializeAppointment(appointment, options = {}) {
       : null,
     calendar,
   };
+}
+
+/**
+ * R42 — the state of an appointment as the person sees it, from the stored status (a free-text column on 0042: no new status needs a migration).
+ *   requested -> REQUESTED (Mode B, awaiting the structure) or EXPIRED once its start passed unanswered; booked / confirmed / locked -> CONFIRMED;
+ *   refused -> REFUSED; expired -> EXPIRED; cancelled -> CANCELLED; done -> COMPLETED; no_show -> NO_SHOW. « Rescheduled » is a flag (rescheduleCount).
+ * @param {{ status?: string, startAt?: Date | string }} row @param {number} [now]
+ */
+export function appointmentState(row, now = Date.now()) {
+  const status = String(row?.status || '').toLowerCase();
+  if (status === 'requested') return row?.startAt && new Date(row.startAt).getTime() <= now ? 'EXPIRED' : 'REQUESTED';
+  if (status === 'booked' || status === 'confirmed' || status === 'locked') return 'CONFIRMED';
+  if (status === 'refused') return 'REFUSED';
+  if (status === 'expired') return 'EXPIRED';
+  if (status === 'cancelled') return 'CANCELLED';
+  if (status === 'done') return 'COMPLETED';
+  if (status === 'no_show') return 'NO_SHOW';
+  return 'UNKNOWN';
 }
 
 /** LOCATION of the calendar event: the address for an in-person appointment; never a meeting link for a video one (the secure access is in Mes rendez-vous). */
@@ -572,13 +601,30 @@ async function sendAppointmentConfirmationEmail(input) {
     "Si vous n'etes pas a l'origine de cette demande, ignorez cet email.",
   ].join('\n');
 
-  await sendMail({
+  return sendMail({
     to: input.toEmail,
-    subject: `Confirmation de votre rendez-vous - ${input.structureName}`,
+    subject: 'Confirmation de votre rendez-vous - Accès Direct Aide',   // R42: neutral subject (the structure / service can reveal a sensitive context: body only)
     text,
     category: 'appointment_confirmation',
     attachments: [calendar],
   });
+}
+
+/**
+ * R42 — what the person is told about the e-mail of this action: the REAL outcome, never an assumed delivery.
+ *   ACCEPTED_BY_PROVIDER  a real provider accepted the message (not a proof of delivery)
+ *   TEST_RECORDED         recorded in the test outbox (LAB / tests: nothing left)
+ *   NO_PROVIDER           no e-mail provider is configured: nothing was sent
+ *   NOT_SENT              not sent (provider refusal or failure, no verified address, e-mails switched off by the person)
+ * @param {unknown} out a sendMail() result, or a noticeCitizen() ledger status
+ * @returns {'ACCEPTED_BY_PROVIDER' | 'TEST_RECORDED' | 'NO_PROVIDER' | 'NOT_SENT'}
+ */
+export function mailOutcome(out) {
+  const v = typeof out === 'string' ? out : (out && typeof out === 'object' ? out.outcome : null);
+  if (v === 'PROVIDER_ACCEPTED') return 'ACCEPTED_BY_PROVIDER';
+  if (v === 'TEST_RECORDED') return 'TEST_RECORDED';
+  if (v === 'NOT_SENT' || (typeof out === 'string' && out !== 'PROVIDER_ACCEPTED' && !getMailerStatus().deliverable)) return 'NO_PROVIDER';
+  return 'NOT_SENT';
 }
 
 /**
@@ -768,14 +814,101 @@ export async function computePublicSlots(structure, service, mode, range, { exce
     bufferAfterMinutes: service.bufferAfterMinutes,
     busyWindows,
     maxSlots: 800,
-  }).filter((slot) => {
-    // PKG-3 / B02: never offer a slot the booking would refuse (already started / within the minimum delay / beyond the booking horizon). Today's past slots used to be
-    // listed, and choosing one failed with "startAt out of allowed range" — found by the first real-browser booking journey (DTA-B26).
-    const t = new Date(slot.startAt).getTime();
-    return t >= Date.now() + MIN_BOOKING_DELAY_MINUTES * 60_000 && t <= addDaysUtc(new Date(), MAX_BOOKING_AHEAD_DAYS).getTime();
-  });
+  }).filter(withinBookingWindow);   // PKG-3 / B02 (DTA-B26): a slot the booking would refuse is never listed
 
   return { rules, slots };
+}
+
+/** PKG-3 / B02: never offer a slot the booking would refuse (already started / within the minimum delay / beyond the booking horizon) @param {{ startAt: string }} slot */
+export function withinBookingWindow(slot) {
+  const t = new Date(slot.startAt).getTime();
+  return t >= Date.now() + MIN_BOOKING_DELAY_MINUTES * 60_000 && t <= addDaysUtc(new Date(), MAX_BOOKING_AHEAD_DAYS).getTime();
+}
+
+/**
+ * R42: the bookable slots for a resolved professional choice — the structure's single agenda when it has no team choice (computePublicSlots), else the
+ * union of the chosen professionals' own availability (api/_services/rdv-team.js). Only { startAt, endAt } leaves this function.
+ * @param {any} structure @param {any} service @param {string} mode @param {{ from: Date, to: Date }} range @param {any} choice @param {{ exceptId?: string | null }} [opts]
+ */
+export async function slotsForChoice(structure, service, mode, range, choice, { exceptId = null } = {}) {
+  if (!choice || choice.kind === 'NONE') return computePublicSlots(structure, service, mode, range, { exceptId });
+  const team = await import('../_services/rdv-team.js');
+  const out = await team.teamSlots({ structure, service, mode, range, candidates: choice.candidates, exceptId, accept: withinBookingWindow });
+  return { rules: out.rules, slots: out.slots.map((slot) => ({ startAt: slot.startAt, endAt: slot.endAt })) };
+}
+
+/**
+ * R42 — the structure's public booking profile, WITHOUT an account (discovery stays open): verified structure, its bookable services with their
+ * confirmation mode, whether a professional can be chosen, the first day with a free slot in the next 14 days (no slot list, no names), and that an
+ * account is required to ask for an appointment. GET /api/rdv/structures/:slug/profile
+ * @param {import('../_utils/http-types').ApiRequest} req
+ * @param {import('../_utils/http-types').ApiResponse} res
+ */
+async function getPublicProfile(req, res) {
+  const structureSlug = toTrimmedString(getPathSegments(req)[1]);
+  const rateLimit = await enforcePublicRdvRateLimit(req, 'read', 'profile');
+  if (!rateLimit.allowed) return res.status(rateLimit.status).json(rateLimit.error);
+  const structure = structureSlug ? await loadStructureBySlug(structureSlug) : null;
+  if (!structure || !structure.bookable) return res.status(404).json({ error: 'RDV indisponible' });
+  const services = await db.query.ProRdvService.findMany({
+    where: (s, { eq, and }) => and(eq(s.structureId, structure.id), eq(s.isActive, true)),
+    columns: { id: true, name: true, durationMinutes: true, bufferBeforeMinutes: true, bufferAfterMinutes: true, modes: true },
+    orderBy: (s, { asc }) => [asc(s.name)],
+  });
+  const video = publicVideoStatus();
+  const config = await readBookingConfig(structure.id);
+  const team = await import('../_services/rdv-team.js');
+  const from = startOfUtcDay(new Date()); const to = endOfUtcDay(addDaysUtc(from, MAX_RANGE_DAYS - 1));
+  let nextDay = null; let teamChoice = false;
+  const items = [];
+  for (const service of services) {
+    const modes = offeredModes(structure.bookingMode, service.modes, video);
+    if (!modes.length) continue;
+    const candidates = await team.candidatesFor(structure.id, service.id, config);
+    if (candidates.some((c) => c.selectable)) teamChoice = true;
+    const choice = config.team.enabled ? (candidates.length ? { kind: 'ANY', candidates } : null) : { kind: 'NONE' };
+    if (choice) {
+      const { slots } = await slotsForChoice(structure, service, modes[0], { from, to }, choice);
+      const first = slots[0] ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(slots[0].startAt)) : null;
+      if (first && (!nextDay || first < nextDay)) nextDay = first;
+    }
+    items.push({ id: service.id, name: service.name, durationMinutes: service.durationMinutes, modes, confirmation: confirmationModeFor(config, service.id) });
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  return res.status(200).json({
+    structure: { slug: structure.slug, name: structure.nom, location: structure.location },
+    accountRequired: true,
+    services: items,
+    teamChoice,
+    nextAvailableDay: nextDay,
+    timezone: 'Europe/Paris',
+  });
+}
+
+/**
+ * R42 — the professional choice for one service, for the SIGNED-IN person: no preference, the publicly selectable professionals (opaque handles, display
+ * name, role), and « the person of my previous appointment » only when this account really had one here. GET /api/rdv/structures/:slug/team?serviceId=
+ * @param {import('../_utils/http-types').ApiRequest} req
+ * @param {import('../_utils/http-types').ApiResponse} res
+ */
+async function getTeamChoice(req, res) {
+  const structureSlug = toTrimmedString(getPathSegments(req)[1]);
+  const auth = await requireCitizenUser(req);
+  if (!auth.ok) return res.status(auth.status).json({ error: auth.error, ...(auth.code ? { code: auth.code } : {}) });
+  const rateLimit = await enforcePublicRdvRateLimit(req, 'read', auth.user.id);
+  if (!rateLimit.allowed) return res.status(rateLimit.status).json(rateLimit.error);
+  const structure = structureSlug ? await loadStructureBySlug(structureSlug) : null;
+  if (!structure || !structure.bookable) return res.status(404).json({ error: 'RDV indisponible' });
+  const serviceId = toTrimmedString(req.query?.serviceId);
+  const service = serviceId ? await db.query.ProRdvService.findFirst({
+    where: (s, { eq, and }) => and(eq(s.id, serviceId), eq(s.structureId, structure.id), eq(s.isActive, true)), columns: { id: true },
+  }) : null;
+  if (!service) return res.status(404).json({ error: 'Service not found' });
+  const config = await readBookingConfig(structure.id);
+  const team = await import('../_services/rdv-team.js');
+  const view = await team.teamChoiceView({ structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
+  res.setHeader('Cache-Control', 'no-store');
+  return res.status(200).json({ ...view, confirmation: confirmationModeFor(config, service.id) });
 }
 
 /**
@@ -841,11 +974,17 @@ async function getSlots(req, res) {
     return res.status(409).json({ error: 'MODE_UNAVAILABLE', code: 'MODE_UNAVAILABLE', message: 'Cette modalité n’est pas proposée pour ce service.' });
   }
 
-  const { rules, slots } = await computePublicSlots(structure, service, mode, range);
+  // R42: with team choice, the slots of the chosen professional(s) (?professional= ANY | a public handle | PREVIOUS); the answer never says who is free
+  const config = await readBookingConfig(structure.id);
+  const team = await import('../_services/rdv-team.js');
+  const choice = await team.resolveChoice({ choice: req.query?.professional, structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
+  if (choice.kind === 'UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
+  const { rules, slots } = await slotsForChoice(structure, service, mode, range, choice);
 
   return res.status(200).json({
     timezone: rules[0]?.timezone || 'Europe/Paris',
     mode,
+    confirmation: confirmationModeFor(config, service.id),
     service: {
       id: service.id,
       name: service.name,
@@ -866,6 +1005,7 @@ async function getSlots(req, res) {
  * @param {import('../_utils/http-types').ApiResponse} res
  */
 async function createAppointment(req, res) {
+  // R42 (DEC-R42-01): every appointment request / hold / booking needs a signed-in, verified citizen account — no public account-free booking
   const auth = await requireCitizenUser(req);
   if (!auth.ok) {
     return res.status(auth.status).json({ error: auth.error, ...(auth.code ? { code: auth.code } : {}) });
@@ -876,6 +1016,10 @@ async function createAppointment(req, res) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
 
+  // R42-A07: no appointment for a minor account (the declared age band; nothing is inferred) — api/_utils/age-policy.js, shared with the registration stream
+  const ageRefused = bookingAgeRefusal(await loadAccountAge(auth.user.id));
+  if (ageRefused) return res.status(ageRefused.status).json(ageRefused.body);
+
   const body = req.body && typeof req.body === 'object' ? req.body : {};
   const structureSlug = toTrimmedString(body.structureSlug);
   const serviceId = toTrimmedString(body.serviceId);
@@ -884,6 +1028,12 @@ async function createAppointment(req, res) {
 
   if (!structureSlug || !serviceId || !startAtRaw || !idempotencyKey) {
     return res.status(400).json({ error: 'structureSlug, serviceId, startAt and idempotencyKey are required' });
+  }
+  // R42-A06: the optional short message — plain text, bounded; sealed like the other notes of an appointment; never logged, never in a notice
+  const message = validateBookingMessage(body.message);
+  if (!message.ok) {
+    const refused = bookingMessageRefusal(message.code);
+    return res.status(refused.status).json(refused.body);
   }
 
   const existingByKey = await loadAppointmentWithRelations(null, {
@@ -940,81 +1090,96 @@ async function createAppointment(req, res) {
     return res.status(400).json({ error: 'VIDEO_CONSENT_REQUIRED', code: 'VIDEO_CONSENT_REQUIRED', message: 'Pour un rendez-vous en visio, confirmez votre accord (caméra et micro, sans enregistrement).' });
   }
 
+  // R42-A03 / A04: the structure's confirmation mode for this service (Mode A direct, Mode B approval) and the professional choice
+  const config = await readBookingConfig(structure.id);
+  const confirmation = confirmationModeFor(config, service.id);
+  const team = await import('../_services/rdv-team.js');
+  const choice = await team.resolveChoice({ choice: body.professional, structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
+  if (choice.kind === 'UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
+
   const endAt = new Date(startAt.getTime() + service.durationMinutes * 60_000);
   const dayStart = startOfUtcDay(startAt);
   const dayEnd = endOfUtcDay(startAt);
-
-  const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
-    where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
-    orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
-  }), mode);
-
-  const appointmentsForDay = await findOverlappingAppointments(db, {
+  const values = {
     structureId: structure.id,
-    statuses: ACTIVE_APPOINTMENT_STATUSES,
-    startBefore: dayEnd,
-    endAfter: dayStart,
-  });
+    serviceId: service.id,
+    startAt,
+    endAt,
+    // Mode B: a REQUEST (it holds the slot while the structure decides; shown as « en attente », never as confirmed)
+    status: confirmation === 'APPROVAL' ? 'requested' : 'confirmed',
+    beneficiaryName: 'Particulier',
+    beneficiaryPhone: null,
+    notes: message.value ? encrypt(message.value) : null,
+    citizenUserId: auth.user.id,
+    citizenEmailSnapshot: auth.user.email,
+    idempotencyKey,
+    visioEnabled: false,
+    mode,
+    visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null,
+  };
+  const replay = () => loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey });
 
-  const timeOffs = await findOverlappingTimeOffs(db, {
-    structureId: structure.id,
-    startBefore: dayEnd,
-    endAfter: dayStart,
-  });
-
-  const busyWindows = [
-    ...toBusyWindows(appointmentsForDay),
-    ...timeOffs.map((timeOff) => ({ start: timeOff.startAt, end: timeOff.endAt })),
-  ];
-
-  const availableSlots = generateSlots({
-    rules,
-    from: dayStart,
-    to: dayEnd,
-    durationMinutes: service.durationMinutes,
-    bufferBeforeMinutes: service.bufferBeforeMinutes,
-    bufferAfterMinutes: service.bufferAfterMinutes,
-    busyWindows,
-    maxSlots: 600,
-  });
-
-  const slotExists = availableSlots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString());
-  if (!slotExists) {
-    return res.status(409).json({ error: 'Slot no longer available' });
-  }
-
-  // R38: the locked part (advisory lock, replay, overlap + closure re-checks, insert) is the shared bookSlot() below, also used by the account-free hold
   let outcome;
-  try {
-    outcome = await bookSlot({
-      structure,
-      service,
-      startAt,
-      endAt,
-      // DTA S8: the idempotency pre-check above runs BEFORE the lock. Two requests with the same key (double click, retry after a timeout, two processes) can both pass it;
-      // the second then finds the first one's COMMITTED appointment as an overlap and would answer 409 for a booking that did succeed. Re-check under the lock: same key => replay.
-      replay: () => loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey }),
-      // 3. Insert appointment (unique constraint on citizenUserId+idempotencyKey catches races)
-      values: {
-        structureId: structure.id,
-        serviceId: service.id,
-        startAt,
-        endAt,
-        status: 'confirmed',
-        beneficiaryName: 'Particulier',
-        beneficiaryPhone: null,
-        notes: null,
-        citizenUserId: auth.user.id,
-        citizenEmailSnapshot: auth.user.email,
-        idempotencyKey,
-        visioEnabled: false,
-        mode,
-        visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null,
-      },
+  if (choice.kind === 'NONE') {
+    const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
+      where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
+      orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
+    }), mode);
+
+    const appointmentsForDay = await findOverlappingAppointments(db, {
+      structureId: structure.id,
+      statuses: ACTIVE_APPOINTMENT_STATUSES,
+      startBefore: dayEnd,
+      endAfter: dayStart,
     });
-  } catch (error) {
-    logger.error({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] booking transaction failed');
-    return res.status(500).json({ error: 'Internal Server Error' });
+
+    const timeOffs = await findOverlappingTimeOffs(db, {
+      structureId: structure.id,
+      startBefore: dayEnd,
+      endAfter: dayStart,
+    });
+
+    const busyWindows = [
+      ...toBusyWindows(appointmentsForDay),
+      ...timeOffs.map((timeOff) => ({ start: timeOff.startAt, end: timeOff.endAt })),
+    ];
+
+    const availableSlots = generateSlots({
+      rules,
+      from: dayStart,
+      to: dayEnd,
+      durationMinutes: service.durationMinutes,
+      bufferBeforeMinutes: service.bufferBeforeMinutes,
+      bufferAfterMinutes: service.bufferAfterMinutes,
+      busyWindows,
+      maxSlots: 600,
+    });
+
+    const slotExists = availableSlots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString());
+    if (!slotExists) {
+      return res.status(409).json({ error: 'Slot no longer available' });
+    }
+
+    // R38: the locked part (advisory lock, replay, overlap + closure re-checks, insert) is the shared bookSlot() below
+    try {
+      // DTA S8: the idempotency pre-check above runs BEFORE the lock; bookSlot re-checks it under the lock (same key => replay)
+      outcome = await bookSlot({ structure, service, startAt, endAt, replay, values });
+    } catch (error) {
+      logger.error({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] booking transaction failed');
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  } else {
+    // R42 team choice: the slot must be free for at least one of the chosen professionals (their agenda, absences and, when connected, their calendar)
+    const { slots } = await team.teamSlots({ structure, service, mode, range: { from: dayStart, to: dayEnd }, candidates: choice.candidates });
+    const slot = slots.find((s) => s.startAt === startAt.toISOString() && s.endAt === endAt.toISOString());
+    const free = slot ? await team.calendarFree(choice.candidates.filter((c) => slot.pros.includes(c.id)), service, startAt, endAt) : [];
+    if (!free.length) return res.status(409).json({ error: 'Slot no longer available' });
+    try {
+      outcome = await bookTeamSlot({ structure, service, startAt, endAt, replay, values, candidates: free, leastBookedFirst: choice.kind === 'ANY' });
+    } catch (error) {
+      logger.error({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] team booking transaction failed');
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 
   // R12: the answer is sent AFTER the transaction committed; a replay answers 200 and sends no second confirmation e-mail
@@ -1022,7 +1187,7 @@ async function createAppointment(req, res) {
     return res.status(200).json(createConfirmedAppointmentPayload(outcome.appointment, { citizenUserId: auth.user.id }).payload);
   }
   if (outcome.kind === 'duplicate') {
-    const existing = await loadAppointmentWithRelations(null, { citizenUserId: auth.user.id, idempotencyKey });
+    const existing = await replay();
     if (existing) return res.status(200).json(createConfirmedAppointmentPayload(existing, { citizenUserId: auth.user.id }).payload);
     return res.status(409).json({ error: 'Slot no longer available' });
   }
@@ -1035,10 +1200,22 @@ async function createAppointment(req, res) {
     citizenUserId: auth.user.id,
     structureSlug: structure.slug,
   });
+  const when = formatParis(startAt);
+  if (confirmation === 'APPROVAL') {
+    // Mode B: the person is told it is a REQUEST (no calendar file); the structure is asked to decide. No message content in any notice.
+    const noticed = await noticeCitizen(appointmentForResponse, 'REQUEST_RECEIVED', {
+      subject: 'Votre demande de rendez-vous - Accès Direct Aide',
+      text: `Votre demande de rendez-vous du ${when} (Europe/Paris) avec ${structure.nom} (${service.name}) est envoyée.\n\nElle n’est pas encore confirmée : la structure doit l’accepter. Vous serez informé(e) de sa réponse.\n\nSuivre ma demande : ${buildAppUrl('/compte/rendez-vous')}`,
+    });
+    await noticeStructure(appointmentForResponse, 'REQUEST_RECEIVED', { title: 'Nouvelle demande de rendez-vous à valider', text: `Une demande de rendez-vous pour le ${when} attend votre réponse (accepter ou refuser) dans l’agenda.` });
+    return res.status(201).json({ ...confirmed.payload, notification: { email: mailOutcome(noticed) } });
+  }
   // The confirmation e-mail is sent AFTER the transaction commits: a slow/hung provider must not hold the
   // per-structure/day advisory lock and a DB connection, and no mail may announce a rolled-back booking.
+  // R42: the answer says what really happened to the e-mail (never « an e-mail was sent » by assumption)
+  let mailed = null;
   try {
-    await sendAppointmentConfirmationEmail({
+    mailed = await sendAppointmentConfirmationEmail({
       appointment: appointmentForResponse,
       structureName: structure.nom,
       structureSlug: structure.slug,
@@ -1047,9 +1224,38 @@ async function createAppointment(req, res) {
       confirmationToken: confirmed.confirmation.token,
     });
   } catch {
-    // Email is best-effort: booking must stay successful even if provider is unavailable.
+    // Email is best-effort: booking must stay successful even if provider is unavailable (reported as NOT_SENT).
   }
-  return res.status(201).json(confirmed.payload);
+  await noticeStructure(appointmentForResponse, 'BOOKED_BY_CITIZEN', { title: 'Nouveau rendez-vous', text: `Un rendez-vous a été pris en ligne pour le ${when}.` });
+  return res.status(201).json({ ...confirmed.payload, notification: { email: mailOutcome(mailed) } });
+}
+
+/**
+ * R42 — the team variant of bookSlot(): same in-process FIFO lock and PostgreSQL advisory lock of the structure / Paris day, same transaction shape (replay
+ * under the lock, then the checks, then the insert). The checks are per professional: the first free candidate (least booked that day for a no-preference
+ * request) is assigned (ProAppointment.createdByProUserId); a closure of the structure blocks everyone. Returns the bookSlot() outcomes.
+ * @param {{ structure: any, service: any, startAt: Date, endAt: Date, replay: () => Promise<any>, values: Record<string, any>, candidates: Array<{ id: string }>, leastBookedFirst: boolean }} input
+ */
+export async function bookTeamSlot({ structure, service, startAt, endAt, replay, values, candidates, leastBookedFirst }) {
+  const bookingLockKey = bookingLockKeyOf(structure.id, startAt);
+  const T = appointmentTable(await requestGuestSchema(db));
+  const { pickFreeUnderLock } = await import('../_services/rdv-team.js');
+  return withBookingCollisionLock(bookingLockKey, async () => db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${bookingLockKey}, 0))`);
+    try {
+      const replayUnderLock = await replay(tx);
+      if (replayUnderLock) return { kind: 'replay', appointment: replayUnderLock };
+      const proId = await pickFreeUnderLock(tx, { structureId: structure.id, service, startAt, endAt, candidates, leastBookedFirst });
+      if (!proId) return { kind: 'conflict' };
+      const [createdAppointment] = await tx.insert(T).values({ ...values, createdByProUserId: proId }).returning();
+      return { kind: 'created', appointment: createdAppointment };
+    } catch (error) {
+      const pgCode = error?.cause?.code || error?.code;
+      if (pgCode === '23505') return { kind: 'duplicate' };
+      logger.error({ err: { name: error?.name, code: pgCode } }, '[rdv] team booking failed under the lock');
+      return { kind: 'error' };
+    }
+  }));
 }
 
 /** the appointment row with the structure / service relations loaded in this request (a row inserted in a transaction is not visible to the pool yet) */
@@ -1279,28 +1485,33 @@ async function cancelAppointment(req, res) {
   if (String(appointment.status || '').toLowerCase() === 'cancelled') {
     return res.status(200).json(serializeAppointment(appointment));
   }
+  // R42: only an active appointment (a pending request included) can be cancelled — a refused, expired, attended or missed one keeps its true state
+  if (!RESCHEDULABLE_STATUSES.includes(String(appointment.status || '').toLowerCase()) && String(appointment.status || '').toLowerCase() !== 'locked') {
+    return res.status(409).json({ error: 'APPOINTMENT_NOT_ACTIVE', code: 'APPOINTMENT_NOT_ACTIVE', message: 'Ce rendez-vous n’est plus actif.' });
+  }
 
   const cancelled = await db.update(schema.ProAppointment).set({
     status: 'cancelled',
     cancelledAt: new Date(),
     cancelledBy: 'USER',
-  }).where(and(eq(schema.ProAppointment.id, appointment.id), sql`${schema.ProAppointment.status} <> 'cancelled'`)).returning({ id: schema.ProAppointment.id });
+  }).where(and(eq(schema.ProAppointment.id, appointment.id), inArray(schema.ProAppointment.status, [...RESCHEDULABLE_STATUSES, 'locked']))).returning({ id: schema.ProAppointment.id });
 
   // Reload with relations after update
   const updated = await loadAppointmentWithRelations(appointment.id);
+  let notification = null;
   // PKG-3 / B04: the structure is told, and the person gets a confirmation with a calendar CANCEL (once: only the request that really cancelled it)
   if (cancelled.length && updated) {
     const when = formatParis(updated.startAt);
     const structureName = updated.structure?.nom || 'la structure';
     await noticeStructure(updated, 'CANCELLED_BY_CITIZEN', { title: 'Rendez-vous annulé par la personne', text: `Le rendez-vous du ${when} a été annulé par la personne. Le créneau est de nouveau libre.` });
-    await noticeCitizen(updated, 'CANCELLED_BY_CITIZEN', {
-      subject: `Annulation confirmée - ${structureName}`,
+    notification = { email: mailOutcome(await noticeCitizen(updated, 'CANCELLED_BY_CITIZEN', {
+      subject: 'Annulation de votre rendez-vous - Accès Direct Aide',
       text: `Votre rendez-vous du ${when} (Europe/Paris) avec ${structureName} est annulé.\n\nPour reprendre rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`,
       calendar: { appointmentId: updated.id, startAt: updated.startAt, endAt: updated.endAt, structureName, serviceName: updated.service?.name || 'Rendez-vous', sequence: Number(updated.rescheduleCount || 0) + 1, cancelled: true },
-    });
+    })) };
   }
 
-  return res.status(200).json(serializeAppointment(updated || appointment));
+  return res.status(200).json({ ...serializeAppointment(updated || appointment), ...(notification ? { notification } : {}) });
 }
 
 /**
@@ -1382,7 +1593,7 @@ export function rescheduleRefusal(row) {
  * @param {{ appointment: any, structure: any, service: any, startAt: Date, endAt: Date, refuse: (row: any) => any, owns: (row: any) => boolean, set?: Record<string, any> }} input
  * @returns {Promise<{ moved: any, outcome: { status: number, body: any } }>}
  */
-export async function moveSlot({ appointment, structure, service, startAt, endAt, refuse, owns, set = {} }) {
+export async function moveSlot({ appointment, structure, service, startAt, endAt, refuse, owns, set = {}, counts = () => true, guard = null }) {
   const keys = [...new Set([`${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(appointment.startAt))}`, `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`])].sort();   // R14: the Paris day, as the booking lock (was the UTC day: two locks for one slot near midnight)
   const withLocks = (i, task) => (i >= keys.length ? task() : withBookingCollisionLock(keys[i], () => withLocks(i + 1, task)));
   let moved = null;
@@ -1396,13 +1607,15 @@ export async function moveSlot({ appointment, structure, service, startAt, endAt
     const late = refuse(row);
     if (late) return { status: late.status, body: { error: late.code, code: late.code, message: late.error } };
     const overlaps = (await tx.select().from(T).where(and(eq(schema.ProAppointment.structureId, structure.id), activeAppointmentWhere(schema.ProAppointment, new Date(), features),
-      lt(schema.ProAppointment.startAt, new Date(endAt.getTime() + 24 * 3_600_000)), gt(schema.ProAppointment.endAt, new Date(startAt.getTime() - 24 * 3_600_000))))).filter((a) => a.id !== appointment.id);
+      lt(schema.ProAppointment.startAt, new Date(endAt.getTime() + 24 * 3_600_000)), gt(schema.ProAppointment.endAt, new Date(startAt.getTime() - 24 * 3_600_000))))).filter((a) => a.id !== appointment.id && counts(a));   // R42: `counts` = which appointments block (team: the professional's and the unassigned ones)
     const withSvc = await Promise.all(overlaps.map(async (a) => ({ ...a, service: a.serviceId ? (await tx.select({ bufferBeforeMinutes: schema.ProRdvService.bufferBeforeMinutes, bufferAfterMinutes: schema.ProRdvService.bufferAfterMinutes })
       .from(schema.ProRdvService).where(eq(schema.ProRdvService.id, a.serviceId)))[0] || null : null })));
     const busyStart = new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000); const busyEnd = new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000);
     if (toBusyWindows(withSvc).some((w) => busyStart < w.end && w.start < busyEnd)) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
     const [off] = await tx.select({ value: count() }).from(schema.ProTimeOff).where(and(eq(schema.ProTimeOff.structureId, structure.id), isNull(schema.ProTimeOff.proUserId), lt(schema.ProTimeOff.startAt, endAt), gt(schema.ProTimeOff.endAt, startAt)));   // R24: closures only
     if (Number(off.value) > 0) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
+    // R42: the caller's last check under the same locks (team: the assigned professional is still free, absences included)
+    if (typeof guard === 'function' && !(await guard(tx))) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
     const [updated] = await tx.update(T).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
       ...set })
       .where(and(eq(schema.ProAppointment.id, appointment.id), eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)))).returning();
@@ -1477,35 +1690,60 @@ async function rescheduleAppointment(req, res) {
   const endAt = new Date(startAt.getTime() + service.durationMinutes * 60_000);
   const dayStart = startOfUtcDay(startAt);
   const dayEnd = endOfUtcDay(startAt);
-  const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
-    where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
-    orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
-  }), mode);
-  const others = (await findOverlappingAppointments(db, { structureId: structure.id, statuses: ACTIVE_APPOINTMENT_STATUSES, startBefore: dayEnd, endAfter: dayStart }))
-    .filter((a) => a.id !== appointment.id);   // the appointment being moved does not block its own new slot
-  const timeOffs = await findOverlappingTimeOffs(db, { structureId: structure.id, startBefore: dayEnd, endAfter: dayStart });
-  const slots = generateSlots({ rules, from: dayStart, to: dayEnd, durationMinutes: service.durationMinutes, bufferBeforeMinutes: service.bufferBeforeMinutes,
-    bufferAfterMinutes: service.bufferAfterMinutes, busyWindows: [...toBusyWindows(others), ...timeOffs.map((t) => ({ start: t.startAt, end: t.endAt }))], maxSlots: 600 });
-  if (!slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) {
-    return res.status(409).json({ error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' });
+  const SLOT_TAKEN = { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' };
+  // R42: Mode B — a moved appointment goes back to the structure for approval of the new time (state REQUESTED until it accepts)
+  const config = await readBookingConfig(structure.id);
+  const backToRequest = confirmationModeFor(config, service.id) === 'APPROVAL' && appointmentState(appointment) === 'CONFIRMED';
+  /** @type {{ counts?: (row: any) => boolean, guard?: (tx: any) => Promise<boolean> }} */
+  let teamMove = {};
+  if (config.team.enabled && appointment.createdByProUserId) {
+    // R42 team choice: the appointment keeps its professional; the new slot must be free for that professional (agenda, absences, connected calendar)
+    const team = await import('../_services/rdv-team.js');
+    const assigned = (await team.candidatesFor(structure.id, service.id, config)).filter((c) => c.id === appointment.createdByProUserId);
+    if (!assigned.length) return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
+    const { slots } = await team.teamSlots({ structure, service, mode, range: { from: dayStart, to: dayEnd }, candidates: assigned, exceptId: appointment.id });
+    if (!slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) return res.status(409).json(SLOT_TAKEN);
+    if (!(await team.calendarFree(assigned, service, startAt, endAt)).length) return res.status(409).json(SLOT_TAKEN);
+    teamMove = {
+      counts: (row) => !row.createdByProUserId || row.createdByProUserId === appointment.createdByProUserId,
+      guard: async (tx) => Boolean(await team.pickFreeUnderLock(tx, { structureId: structure.id, service, startAt, endAt, candidates: assigned, leastBookedFirst: false, exceptId: appointment.id })),
+    };
+  } else {
+    const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
+      where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
+      orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
+    }), mode);
+    const others = (await findOverlappingAppointments(db, { structureId: structure.id, statuses: ACTIVE_APPOINTMENT_STATUSES, startBefore: dayEnd, endAfter: dayStart }))
+      .filter((a) => a.id !== appointment.id);   // the appointment being moved does not block its own new slot
+    const timeOffs = await findOverlappingTimeOffs(db, { structureId: structure.id, startBefore: dayEnd, endAfter: dayStart });
+    const slots = generateSlots({ rules, from: dayStart, to: dayEnd, durationMinutes: service.durationMinutes, bufferBeforeMinutes: service.bufferBeforeMinutes,
+      bufferAfterMinutes: service.bufferAfterMinutes, busyWindows: [...toBusyWindows(others), ...timeOffs.map((t) => ({ start: t.startAt, end: t.endAt }))], maxSlots: 600 });
+    if (!slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) {
+      return res.status(409).json(SLOT_TAKEN);
+    }
   }
 
   const { moved, outcome } = await moveSlot({
     appointment, structure, service, startAt, endAt, refuse,
     owns: (row) => row.citizenUserId === auth.user.id,
-    set: mode !== currentMode ? { mode, visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false, visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null } : {},
+    set: { ...(mode !== currentMode ? { mode, visioApprovedAt: null, visioApprovedByProUserId: null, visioRoomId: null, visioEnabled: false, visioCitizenConsentAt: mode === 'VIDEO' ? new Date() : null } : {}),
+      ...(backToRequest ? { status: 'requested' } : {}) },
+    ...teamMove,
   });
   if (!moved) return res.status(outcome.status).json(outcome.body);
   const confirmed = createConfirmedAppointmentPayload(moved, { citizenUserId: auth.user.id, structureSlug: structure.slug });
   // PKG-3 / B05: the person gets the new time with an UPDATED calendar event (same UID, higher SEQUENCE); the structure is told (old and new time, nothing else)
   const before = formatParis(appointment.startAt); const after = formatParis(moved.startAt);
-  await noticeCitizen(moved, 'RESCHEDULED', {
-    subject: `Rendez-vous déplacé - ${structure.nom}`,
+  const noticed = await noticeCitizen(moved, 'RESCHEDULED', backToRequest ? {
+    subject: 'Votre demande de déplacement de rendez-vous - Accès Direct Aide',
+    text: `Votre demande de déplacement du rendez-vous avec ${structure.nom} (${service.name}) est envoyée :\nancien créneau : ${before}\nnouveau créneau demandé : ${after} (Europe/Paris)\n\nLe nouveau créneau n’est pas encore confirmé : la structure doit l’accepter.\n\nSuivre ma demande : ${buildAppUrl('/compte/rendez-vous')}`,
+  } : {
+    subject: 'Votre rendez-vous est déplacé - Accès Direct Aide',
     text: `Votre rendez-vous avec ${structure.nom} (${service.name}) est déplacé :\nancien créneau : ${before}\nnouveau créneau : ${after} (Europe/Paris)\n${modalityText(moved)}\n\nGérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`,
     calendar: { appointmentId: moved.id, startAt: moved.startAt, endAt: moved.endAt, structureName: structure.nom, serviceName: service.name, sequence: Number(moved.rescheduleCount || 0), location: icsLocation(moved) },
   });
   await noticeStructure(moved, 'RESCHEDULED', { title: 'Rendez-vous déplacé par la personne', text: `Un rendez-vous a été déplacé par la personne : du ${before} au ${after} (${modeLabel(moved.mode)}${mode !== currentMode ? ', modalité changée par la personne' : ''}).` });
-  return res.status(200).json(confirmed.payload);
+  return res.status(200).json({ ...confirmed.payload, notification: { email: mailOutcome(noticed) } });
 }
 
 /**
@@ -1521,10 +1759,19 @@ export default async function handler(req, res) {
   const segments = getPathSegments(req);
 
   try {
-    // R38: account-free booking (rdv/guest/…, same « appointments » beta surface; off unless ADA_GUEST_BOOKING_ENABLED=true) — api/_services/rdv-guest.js
+    // R42 (DEC-R42-01): the account-free booking of R38 is RETIRED. Every rdv/guest/… route answers 410 ACCOUNT_REQUIRED, whatever
+    // ADA_GUEST_BOOKING_ENABLED says and whatever the database level — before reading the body or the database (api/_services/rdv-guest.js)
     if (segments[0] === 'guest') {
       const { default: guestHandler } = await import('../_services/rdv-guest.js');
       return await guestHandler(req, res, method, segments.slice(1));
+    }
+
+    if (method === 'GET' && segments[0] === 'structures' && segments[2] === 'profile' && segments.length === 3) {
+      return await getPublicProfile(req, res);
+    }
+
+    if (method === 'GET' && segments[0] === 'structures' && segments[2] === 'team' && segments.length === 3) {
+      return await getTeamChoice(req, res);
     }
 
     if (method === 'GET' && segments[0] === 'structures' && segments[2] === 'services') {

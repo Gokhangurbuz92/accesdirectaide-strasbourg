@@ -20,7 +20,12 @@ import { ProOutlookToken, ProUser } from '../../src/db/schema.js';
 import { decryptToken, encryptToken, envelopeIv } from '../_utils/outlook-token-crypto.js';
 import { env as serverEnv } from '../_utils/env.js';
 
-export const OUTLOOK_SCOPES = 'openid profile email Calendars.ReadWrite offline_access';
+// R42 (owner decision R42-A03, least privilege): only free/busy is used (POST /me/calendar/getSchedule, read by api/_services/rdv-calendar-busy.js and the
+// professional's own api/_handlers/pro/outlook-availability.js); nothing in the code creates, changes or deletes a calendar event (no two-way sync). The
+// least privileged delegated permission of getSchedule is Calendars.ReadBasic (Microsoft Graph v1.0 « calendar: getSchedule », permissions table, checked
+// 04/11/2026; Calendars.Read / Calendars.ReadWrite are listed only as higher privileged). It was Calendars.ReadWrite before R42. Personal Microsoft accounts
+// are not supported by getSchedule: such a connection reads as unavailable and its slots are not offered (fail safe).
+export const OUTLOOK_SCOPES = 'openid profile email offline_access Calendars.ReadBasic';
 const STATE_TTL_MS = 10 * 60_000;
 const authority = (env) => String(env.OUTLOOK_AUTHORITY_URL || 'https://login.microsoftonline.com/common/oauth2/v2.0').replace(/\/+$/, '');
 

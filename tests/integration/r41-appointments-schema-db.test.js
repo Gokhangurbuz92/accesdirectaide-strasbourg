@@ -18,6 +18,7 @@ vi.mock('../../api/_utils/kv.js', () => ({ kv: { incr: async () => 1, expire: as
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -65,6 +66,7 @@ describe.skipIf(!hasDatabase)('R41-B account-based appointments on a 0042 and a 
     await db.execute(sql`INSERT INTO "ProRdvService" (id, "structureId", name, "durationMinutes", "bufferBeforeMinutes", "bufferAfterMinutes", "isActive", "updatedAt") VALUES (${SVC}, ${STR}, 'Accueil', 30, 0, 0, true, NOW())`);
     await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, "updatedAt", "createdAt") VALUES (${ADMIN.id}, ${ADMIN.email}, 'x', ${STR}, ${ADMIN.role}, 'active', NOW(), NOW())`);
     for (const c of CIT) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${c.id}, ${c.email}, 'x', NOW(), NOW())`);
+    await declareAdult(db, sql, CIT.map((c) => c.id));   // R42: booking needs a declared adult age band
   }, 60000);
 
   afterAll(async () => {
@@ -165,9 +167,9 @@ describe.skipIf(!hasDatabase)('R41-B account-based appointments on a 0042 and a 
     expect(l.body.items.map((x) => x.id)).toContain(id);
     const e = await invoke(proServices, { method: 'PATCH', url: `/api/pro/services?id=${id}`, query: { id }, body: { name: 'Service renommé' } });
     expect([e.statusCode, e.body.item?.name], show(e)).toEqual([200, 'Service renommé']);
-    // the account-free opt-in cannot be stored where its column does not exist: said, never silently dropped
+    // R42: the account-free opt-in is retired on every database level: said, never silently dropped
     const g = await invoke(proServices, { method: 'PATCH', url: `/api/pro/services?id=${id}`, query: { id }, body: { guestBookable: true } });
-    expect(g.statusCode, show(g)).toBe(guest ? 200 : 409);
+    expect([g.statusCode, g.body.code], show(g)).toEqual([409, 'GUEST_BOOKING_RETIRED']);
     const d = await invoke(proServices, { method: 'DELETE', url: `/api/pro/services?id=${id}`, query: { id } });
     expect(d.statusCode, show(d)).toBe(200);
     // settings: a structure without a settings row gets one on first read (insert), then an update
@@ -178,21 +180,18 @@ describe.skipIf(!hasDatabase)('R41-B account-based appointments on a 0042 and a 
     const s1 = await invoke(proSettings, { method: 'PUT', url: '/api/pro/rdv-settings', body: { isPublished: true, bookingMode: 'IN_PERSON' } });
     expect([s1.statusCode, s1.body.isPublished], show(s1)).toEqual([200, true]);
     const s2 = await invoke(proSettings, { method: 'PUT', url: '/api/pro/rdv-settings', body: { allowGuestBooking: true } });
-    expect(s2.statusCode, show(s2)).toBe(guest ? 200 : 409);
-    if (guest) {   // back to the fixture state
-      const s3 = await invoke(proSettings, { method: 'PUT', url: '/api/pro/rdv-settings', body: { allowGuestBooking: false } });
-      expect(s3.statusCode).toBe(200);
-    }
+    expect([s2.statusCode, s2.body.code], show(s2)).toEqual([409, 'GUEST_BOOKING_RETIRED']);
+    const s3 = await invoke(proSettings, { method: 'PUT', url: '/api/pro/rdv-settings', body: { allowGuestBooking: false } });
+    expect(s3.statusCode).toBe(200);
   });
 
-  it('the account-free endpoints: fail-closed on 0042 even with the switch on; open on 0044', async () => {
+  it('the account-free endpoints are retired (R42) on both levels, even with the switch on: 410 ACCOUNT_REQUIRED', async () => {
     vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', 'true');
     try {
       const r = await call('GET', `guest/structures/${SLUG}/services`);
-      if (guest) expect(r.statusCode, show(r)).toBe(404);   // this structure did not opt in
-      else expect([r.statusCode, r.body.code], show(r)).toEqual([503, 'GUEST_BOOKING_DISABLED']);
+      expect([r.statusCode, r.body.code], show(r)).toEqual([410, 'ACCOUNT_REQUIRED']);
       const h = await call('POST', 'guest/hold', { body: { structureSlug: SLUG, serviceId: SVC, startAt: slots[8].startAt, idempotencyKey: `g-${TS}`, name: 'A B', email: `r41ap-g-${TS}@example.test`, consent: true } });
-      expect([h.statusCode, h.body.code], show(h)).toEqual(guest ? [404, 'GUEST_BOOKING_UNAVAILABLE'] : [503, 'GUEST_BOOKING_DISABLED']);
+      expect([h.statusCode, h.body.code], show(h)).toEqual([410, 'ACCOUNT_REQUIRED']);
     } finally { vi.unstubAllEnvs(); vi.stubEnv('MAILER_PROVIDER', 'test'); vi.stubEnv('MAILER_FROM', 'noreply@example.test'); }
   });
 });

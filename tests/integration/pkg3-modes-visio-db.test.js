@@ -14,6 +14,7 @@
 import crypto from 'node:crypto';
 import { vi, afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 vi.mock('../../api/_utils/pipelineLock.js', () => ({ withLock: async (_name, fn) => fn() }));   // the cron's distributed lock is infrastructure (KV), not under test here
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
@@ -62,6 +63,7 @@ describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Out
       await db.execute(sql`INSERT INTO "ProAvailabilityRule" (id, "structureId", weekday, "startTime", "endTime", timezone, modes, "updatedAt") VALUES (${`am-${wd}-${TS}`}, ${ST}, ${wd}, '09:00', '11:00', 'Europe/Paris', ARRAY['IN_PERSON'], NOW()), (${`pm-${wd}-${TS}`}, ${ST}, ${wd}, '14:00', '16:00', 'Europe/Paris', ARRAY['VIDEO'], NOW())`);
     }
     for (const u of [C, C2]) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${u.id}, ${u.email}, 'x', NOW(), NOW())`);
+    await declareAdult(db, sql, [C.id, C2.id]);   // R42: booking needs a declared adult age band
     for (const [p, st, mail] of [[PRO, ST, true], [PRO_B, ST, false], [PRO2, ST2, false]]) {
       await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, role, status, "structureId", "notificationEmailEnabled", "updatedAt") VALUES (${p.id}, ${p.email}, 'x', 'STRUCTURE_ADMIN', 'active', ${st}, ${mail}, NOW())`);
     }
@@ -256,7 +258,7 @@ describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Out
     const saved = { ...process.env };
     setEnv({ OUTLOOK_ENABLED: 'true', OUTLOOK_CLIENT_ID: 'qa-client', OUTLOOK_CLIENT_SECRET: 'qa-secret', OUTLOOK_REDIRECT_URI: 'http://localhost:3000/api/auth/callback/outlook', OUTLOOK_TOKEN_ENCRYPTION_KEY: 'o'.repeat(40), OUTLOOK_AUTHORITY_URL: 'https://login.lab.invalid/oauth2/v2.0' });
     const calls = []; const realFetch = globalThis.fetch;
-    globalThis.fetch = async (url, init) => { if (String(url).startsWith('https://login.lab.invalid/')) { calls.push(String(new URLSearchParams(init.body).get('code'))); return new Response(JSON.stringify({ access_token: 'AT-qa', refresh_token: 'RT-qa', expires_in: 3600, scope: 'Calendars.ReadWrite' }), { status: 200 }); } return realFetch(url, init); };
+    globalThis.fetch = async (url, init) => { if (String(url).startsWith('https://login.lab.invalid/')) { calls.push(String(new URLSearchParams(init.body).get('code'))); return new Response(JSON.stringify({ access_token: 'AT-qa', refresh_token: 'RT-qa', expires_in: 3600, scope: 'Calendars.ReadBasic' }), { status: 200 }); } return realFetch(url, init); };
     try {
       const a = await callPro(outlook, { as: PRO_B, url: '/api/pro/outlook?action=authorize' });
       expect(a.body.authUrl, JSON.stringify(a.body)).toBeTruthy();

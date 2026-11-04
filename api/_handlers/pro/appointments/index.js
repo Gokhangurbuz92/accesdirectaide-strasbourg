@@ -82,6 +82,10 @@ function serialize(appointment) {
     start_at: appointment.startAt,
     end_at: appointment.endAt,
     status: appointment.status,
+    // R42: a citizen's request awaiting the structure's answer (Mode B) and the assigned professional (team choice); the citizen's message is `notes`
+    awaitingDecision: appointment.status === 'requested' && !appointment.guestHoldExpiresAt,
+    professionalId: appointment.createdByProUserId || null,
+    citizenMessage: appointment.citizenUserId ? open(appointment.notes) || null : null,
     beneficiaryName: name,
     beneficiaryPhone: appointment.beneficiaryPhone || null,
     notes: open(appointment.notes) || null,
@@ -152,7 +156,6 @@ async function handler(req, res) {
           guestEmailHash: false,
           guestCodeHash: false,
           guestManageTokenHash: false,
-          createdByProUserId: false,
           visioRoomId: false,
           visioStartedAt: false,
         },
@@ -295,6 +298,15 @@ async function handler(req, res) {
   }
 
   if (req.method === 'PATCH') {
+    // R42 Mode B: accept / refuse a pending request (api/_services/rdv-requests.js — journaled, compare-and-set, the person told with a neutral subject)
+    if (req.body && typeof req.body === 'object' && typeof req.body.decision !== 'undefined') {
+      const { decideRequest } = await import('../../../_services/rdv-requests.js');
+      const { clientIp } = await import('../../../_utils/client-ip.js');
+      const id = String(req.query.id || req.body.id || '').trim();
+      if (!id) return res.status(400).json({ error: 'id is required' });
+      const out = await decideRequest(proCtx, { id, decision: req.body.decision, reasonCode: req.body.reasonCode, ip: clientIp(req) });
+      return res.status(out.status).json(out.body);
+    }
     const parsed = patchAppointmentSchema.safeParse(req.body);
     if (!parsed.success) {
       const firstError = parsed.error.issues[0]?.message || 'Invalid input';
@@ -315,6 +327,10 @@ async function handler(req, res) {
     });
     // PKG-4 / D5: another structure's appointment is "not found" (no existence oracle)
     if (!existing || existing.structureId !== proCtx.structureId) return res.status(404).json({ error: 'Appointment not found' });
+    // R42: the notes of a citizen's own booking are the person's optional message: read-only for the team (never overwritten)
+    if (typeof notes !== 'undefined' && existing.citizenUserId && notes !== (open(existing.notes) || '')) {
+      return res.status(409).json({ error: 'CITIZEN_MESSAGE_READ_ONLY', code: 'CITIZEN_MESSAGE_READ_ONLY', message: 'Le message de la personne ne peut pas être modifié.' });
+    }
 
     // PKG-4 / B09: attendance ('done' = attended, 'no_show') is recorded only once the appointment has started, and only on an active appointment; a cancellation goes
     // through the cancellation path (cancelledAt/By, the person's notice with a calendar CANCEL) instead of a silent status write.

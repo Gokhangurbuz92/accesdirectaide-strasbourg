@@ -24,6 +24,7 @@ vi.mock('../../api/_utils/rateLimit.js', () => ({
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -91,6 +92,7 @@ describe.skipIf(!hasDatabase)('RDV citizen handler (real DB)', () => {
       { id: IDS.userB, email: EMAILS.b, passwordHash: 'x', emailVerifiedAt: verifiedAt },
       { id: IDS.userUnverified, email: EMAILS.u, passwordHash: 'x', emailVerifiedAt: null },
     ]);
+    await declareAdult(db, sql, [IDS.userA, IDS.userB, IDS.userUnverified]);   // R42: booking needs a declared adult age band
 
     const day = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
     const next = new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10);
