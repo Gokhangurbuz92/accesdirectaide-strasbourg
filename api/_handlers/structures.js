@@ -158,7 +158,8 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
             retrieved_at: false,
             last_checked_at: false,
             source_document_id: false,
-            settings_json: false,   // R42: internal configuration (booking confirmation mode, team routing) — never public
+            // internal configuration (booking confirmation mode, team routing), never public
+            settings_json: false,
           },
           // DTA S4A: the Structure relations are `proRdvServices` (many) and `rdvSettings` (many, unique per structure). The former request for a `proServices` relation named one that does not exist:
           // Drizzle threw before any SQL, the catch below turned it into a 404 and EVERY single-structure read (slug or id) answered "Structure non trouvée" on the real stack (native S3B run 436e5e, DTA-B12).
