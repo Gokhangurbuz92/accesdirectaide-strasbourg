@@ -40,7 +40,9 @@ describe('CSP (vercel.json)', () => {
 describe('CSP report endpoint', () => {
   const mk = () => ({ statusCode: 0, headers: {}, ended: false, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json() { return this; }, end() { this.ended = true; return this; } });
   it('logs the directive, the blocked origin and the page path only — never a query string or a sample', async () => {
-    const { default: handler } = await import('../../api/_handlers/monitor/csp-report.js');
+    vi.stubEnv('VERCEL_ENV', 'development');   // R42: staged reporting is on in LAB, off in Production unless ADA_CSP_REPORTS=log
+    const { default: handler, resetCspReportState } = await import('../../api/_handlers/monitor/csp-report.js');
+    resetCspReportState();
     warn.mockClear();
     const legacy = { 'csp-report': { 'document-uri': 'https://www.example.test/espace/dossier?email=prenom.nom%40example.test', 'violated-directive': 'img-src',
       'effective-directive': 'img-src', 'blocked-uri': 'https://tracker.example.test/pixel.gif?uid=PLANTED-ID', 'script-sample': 'PLANTED-SAMPLE' } };
@@ -51,6 +53,7 @@ describe('CSP report endpoint', () => {
     await handler({ method: 'POST', headers: {}, body: modern }, mk());
     expect(warn).toHaveBeenLastCalledWith({ msg: 'csp.violation', directive: 'script-src-elem', blocked: 'inline', page: '/aides', disposition: 'report' });
     expect(JSON.stringify(warn.mock.calls)).not.toMatch(/PLANTED|prenom\.nom/);
+    vi.unstubAllEnvs();
   });
   it('ignores garbage and other methods', async () => {
     const { default: handler, summarizeCspReports } = await import('../../api/_handlers/monitor/csp-report.js');

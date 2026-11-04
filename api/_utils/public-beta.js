@@ -4,6 +4,7 @@
  * every cron are refused server-side, so no personal data can be collected while the legal, hosting and operational acceptance is pending.
  * This is an allowlist: a route that is not listed here is refused.
  */
+import { isCspReportRequest } from './csp-reporting.js';
 
 const EXACT = new Set([
   'health', 'health/live', 'health/ready', 'healthz', 'status',
@@ -118,6 +119,9 @@ export function isOpenJobPath(path, envVars = process.env) {
 export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   const p = String(path || '');
   if (String(method || '').toUpperCase() === 'POST' && READ_ONLY_POST.has(p)) return true;
+  // R42 (F8): browser CSP violation reports — POST to that exact path only, when staged reporting is on (LAB by default; Production only with
+  // ADA_CSP_REPORTS=log). The handler stores nothing and logs a minimised summary; no other monitor route and no job is opened by this.
+  if (isCspReportRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
   if (surface && openSurfaces(envVars).has(surface)) return true;
   if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time
