@@ -23,6 +23,7 @@ export default defineConfig({
       // Playwright E2E tests — must be run with `npx playwright test`
       'e2e/**',
       'e2e-r42/**',
+      'e2e-r43/**',   // R43-A11Y: Playwright (playwright.r43-forms.config.js)
       // Playwright a11y tests
       'tests/a11y/**',
       // launch-readiness item 70: tests/components/** used to be excluded here, so no component test ever ran; each such file declares

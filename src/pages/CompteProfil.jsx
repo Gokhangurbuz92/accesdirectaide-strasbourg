@@ -10,6 +10,9 @@ import { AGE_BANDS } from '@/lib/ageBandOptions';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import DevicePush from '@/components/DevicePush';
 import { LANGUAGES, formatDate, setLanguage, useLanguage, useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { fieldA11y, requiredMessage } from '@/lib/fieldErrors';
 
 // launch-readiness item 59 / R11 (N04): no « push » column in the table — notifications on this device have their own card (DevicePush: the browser's permission and subscription)
 // R12 (C20): no « Dans l’application » column — no in-app inbox exists for citizens, so that choice did nothing
@@ -39,6 +42,8 @@ export default function CompteProfil() {
   const [form, setForm] = useState({ displayName: '', preferredLanguage: 'fr', ageBand: '', departement: '', prefillConsent: false, falc: false, highContrast: false, textScale: 'normal' });
   const [member, setMember] = useState({ relation: 'partner', ageBand: '', label: '' });
   const [claim, setClaim] = useState({ shareId: '', ownerSecret: '' });
+  // R43 (A5): the two fields of « rattacher un dossier » say what is missing (the button was disabled without a reason)
+  const claimErr = useFormErrors();
   const [consents, setConsents] = useState({});
   const [pendingPrefs, setPendingPrefs] = useState({});   // { 'sms.service': true } while the server has not answered for that option
 
@@ -246,13 +251,14 @@ export default function CompteProfil() {
               ))}
             </ul>
           )}
-          <form onSubmit={(e) => { e.preventDefault(); run(async () => { await citizenApi.claimShare(claim.shareId.trim(), claim.ownerSecret.trim()); setClaim({ shareId: '', ownerSecret: '' }); }, t('compte:profile.share_claimed', 'Dossier rattaché à votre compte.')); }} className="space-y-2">
+          <form noValidate onSubmit={(e) => { e.preventDefault(); const errs = {}; if (!claim.shareId.trim()) errs['cl-id'] = requiredMessage(t, t('compte:profile.identifiant_dossier', 'Identifiant du dossier')); if (!claim.ownerSecret.trim()) errs['cl-secret'] = requiredMessage(t, t('compte:profile.code_prive_passeport', 'Code privé du passeport')); if (!claimErr.check(errs)) return; run(async () => { await citizenApi.claimShare(claim.shareId.trim(), claim.ownerSecret.trim()); setClaim({ shareId: '', ownerSecret: '' }); }, t('compte:profile.share_claimed', 'Dossier rattaché à votre compte.')); }} className="space-y-2">
             <p className="text-sm text-slate-700">{t('compte:profile.rattacher_dossier_cree_sans', 'Rattacher un dossier créé sans compte : il faut son identifiant et le lien privé « passeport » (le code qui suit')} <code>#owner=</code>).</p>
+            <ErrorSummary ref={claimErr.summaryRef} errors={claimErr.errors} order={['cl-id', 'cl-secret']} testid="claim-errors" />
             <div className="grid gap-3 sm:grid-cols-2">
-              <div><label htmlFor="cl-id" className="block text-sm text-slate-800">{t('compte:profile.identifiant_dossier', 'Identifiant du dossier')}</label><input id="cl-id" data-testid="claim-id" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={claim.shareId} onChange={(e) => setClaim({ ...claim, shareId: e.target.value })} /></div>
-              <div><label htmlFor="cl-secret" className="block text-sm text-slate-800">{t('compte:profile.code_prive_passeport', 'Code privé du passeport')}</label><input id="cl-secret" data-testid="claim-secret" type="password" autoComplete="off" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={claim.ownerSecret} onChange={(e) => setClaim({ ...claim, ownerSecret: e.target.value })} /></div>
+              <div><label htmlFor="cl-id" className="block text-sm text-slate-800">{t('compte:profile.identifiant_dossier', 'Identifiant du dossier')}</label><input id="cl-id" data-testid="claim-id" aria-required="true" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={claim.shareId} {...fieldA11y('cl-id', claimErr.errors)} onChange={(e) => { setClaim({ ...claim, shareId: e.target.value }); claimErr.clear('cl-id'); }} /><FieldError field="cl-id" errors={claimErr.errors} /></div>
+              <div><label htmlFor="cl-secret" className="block text-sm text-slate-800">{t('compte:profile.code_prive_passeport', 'Code privé du passeport')}</label><input id="cl-secret" data-testid="claim-secret" type="password" autoComplete="off" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={claim.ownerSecret} aria-required="true" {...fieldA11y('cl-secret', claimErr.errors)} onChange={(e) => { setClaim({ ...claim, ownerSecret: e.target.value }); claimErr.clear('cl-secret'); }} /><FieldError field="cl-secret" errors={claimErr.errors} /></div>
             </div>
-            <Button type="submit" data-testid="claim-submit" disabled={!claim.shareId.trim() || !claim.ownerSecret.trim()}>{t('compte:profile.rattacher_dossier', 'Rattacher ce dossier')}</Button>
+            <Button type="submit" data-testid="claim-submit">{t('compte:profile.rattacher_dossier', 'Rattacher ce dossier')}</Button>
           </form>
         </CardContent>
       </Card>

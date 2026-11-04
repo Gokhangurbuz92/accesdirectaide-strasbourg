@@ -252,6 +252,7 @@
  "cases.vis_citizen": "Видима для людини",
  "cases.vis_internal": "Внутрішня для команди (ніколи не показується людині чи іншій організації)",
  "cases.visibility": "Видимість",
+ "cases.target_search_first": "Організація-отримувач: знайдіть перевірену організацію, а потім виберіть її у списку.",
  "dashboard.aucun_membre_trouve": "Учасників не знайдено",
  "dashboard.aucun_rendez_vous_venir": "Немає запланованих зустрічей",
  "dashboard.beneficiary": "Отримувач",

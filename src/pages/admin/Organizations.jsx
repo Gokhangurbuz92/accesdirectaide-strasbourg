@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import { publicReason } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
 
 const ID_LABEL = () => ({ VERIFIED: i18n.t('admin:organizations.identity.verified', 'Vérifiée'), UNVERIFIED: i18n.t('admin:organizations.identity.unverified', 'Non vérifiée'), REJECTED: i18n.t('admin:organizations.identity.rejected', 'Refusée') });
 const ACT_LABEL = () => ({ actif: i18n.t('admin:organizations.activity.active', 'Active'), suspendu: i18n.t('admin:organizations.activity.suspended', 'Suspendue'), brouillon: i18n.t('admin:organizations.activity.not_activated', 'Non activée (inscription)') });
@@ -29,6 +32,12 @@ export default function AdminOrganizations() {
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; the message follows the language at load time
   useEffect(() => { load(''); }, [load]);
   const f = (id) => form[id] || {}; const setF = (id, patch) => setForm((x) => ({ ...x, [id]: { ...f(id), ...patch } }));
+  // R43 (A5): the reason is mandatory on the server (5 characters, kept in the audit log); it is checked first, with its own message and a focused summary
+  const reasonErr = useFormErrors();
+  const reasonOk = (id) => {
+    const why = String(f(id).reason || '').trim(); const lbl = t('admin:organizations.reason_label', 'Motif (conservé dans le journal)');
+    return reasonErr.check(why.length >= 5 ? {} : { [`why-${id}`]: why ? minLengthMessage(t, lbl, 5) : requiredMessage(t, lbl) });
+  };
   const run = async (fn, ok) => { setBusy(true); setMsg(''); setProblem(''); try { await fn(); setMsg(ok); await load(q); } catch (e) { setProblem(explain(e)); } finally { setBusy(false); } };
   return (
     <div className="space-y-4 p-4" data-testid="admin-organizations">
@@ -41,7 +50,7 @@ export default function AdminOrganizations() {
       </form>
       {state.error ? <p role="alert" className="text-red-800">{state.error}</p> : null}
       {problem ? <p role="alert" className="text-red-800" data-testid="admin-org-problem">{problem}</p> : null}
-      <div role="status" aria-live="polite" data-testid="admin-org-status">{msg}</div>
+      <div role="status" aria-live="polite" data-testid="admin-org-status">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</div>
       {state.loading ? <p role="status">{t('admin:organizations.loading', 'Chargement…')}</p> : (
         <ul className="space-y-3">
           {state.items.map((o) => (
@@ -65,15 +74,17 @@ export default function AdminOrganizations() {
                     <h2 className="text-base font-semibold">{t('admin:organizations.verification_title', 'Identité et fiche (vérification D-5)')}</h2>
                     {f(o.id).open ? <VerificationPanel entityType="structure" entityId={o.id} testIdPrefix="admin-org" verifyLabel={t('admin:organizations.verify_label', 'Vérifier l’identité et la fiche')} onDone={(m) => { setProblem(''); setMsg(m); load(q); }} onProblem={setProblem} /> : null}
                   </section>
-                  <section aria-label={t('admin:organizations.activity_section', 'Activité de l’organisation')} className="space-y-1">
+                  <section aria-label={t('admin:organizations.activity_section', 'Activité de l’organisation')} className="space-y-1" aria-busy={busy || undefined}>
                     <h2 className="text-base font-semibold">{t('admin:organizations.activity', 'Activité')}</h2>
+                    <ErrorSummary ref={reasonErr.summaryRef} errors={reasonErr.errors} order={[`why-${o.id}`]} testid={`admin-org-errors-${o.id}`} />
                     <label className="block" htmlFor={`why-${o.id}`}>{t('admin:organizations.reason_label', 'Motif (conservé dans le journal)')}</label>
-                    <textarea id={`why-${o.id}`} className="w-full rounded border p-2" rows={2} value={f(o.id).reason || ''} onChange={(e) => setF(o.id, { reason: e.target.value })} />
+                    <textarea id={`why-${o.id}`} aria-required="true" className="w-full rounded border p-2" rows={2} value={f(o.id).reason || ''} {...fieldA11y(`why-${o.id}`, reasonErr.errors)} onChange={(e) => { setF(o.id, { reason: e.target.value }); reasonErr.clear(`why-${o.id}`); }} />
+                    <FieldError field={`why-${o.id}`} errors={reasonErr.errors} />
                   </section>
                   <div className="flex flex-wrap gap-2">
                     {o.statut === 'actif'
-                      ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-suspend" onClick={() => run(() => apiClient.admin.setOrganizationActivity(o.id, 'SUSPEND', f(o.id).reason || ''), t('admin:organizations.done.suspended', 'Organisation suspendue.'))}>{t('admin:organizations.suspend', 'Suspendre')}</Button>
-                      : <Button size="sm" variant="outline" disabled={busy} data-testid="admin-org-reactivate" onClick={() => run(() => apiClient.admin.setOrganizationActivity(o.id, 'REACTIVATE', f(o.id).reason || ''), t('admin:organizations.done.reactivated', 'Organisation réactivée.'))}>{t('admin:organizations.reactivate', 'Réactiver')}</Button>}
+                      ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-suspend" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'SUSPEND', f(o.id).reason || ''), t('admin:organizations.done.suspended', 'Organisation suspendue.'))}>{t('admin:organizations.suspend', 'Suspendre')}</Button>
+                      : <Button size="sm" variant="outline" disabled={busy} data-testid="admin-org-reactivate" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'REACTIVATE', f(o.id).reason || ''), t('admin:organizations.done.reactivated', 'Organisation réactivée.'))}>{t('admin:organizations.reactivate', 'Réactiver')}</Button>}
                   </div>
                 </div>
               </details>

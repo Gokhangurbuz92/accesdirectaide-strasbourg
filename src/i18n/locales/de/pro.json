@@ -248,6 +248,7 @@
  "cases.vis_citizen": "Für die Person sichtbar",
  "cases.vis_internal": "Intern im Team (wird weder der Person noch einer anderen Einrichtung gezeigt)",
  "cases.visibility": "Sichtbarkeit",
+ "cases.target_search_first": "Empfangende Einrichtung: Suchen Sie eine verifizierte Einrichtung und wählen Sie sie dann in der Liste aus.",
  "dashboard.aucun_membre_trouve": "Kein Mitglied gefunden",
  "dashboard.aucun_rendez_vous_venir": "Kein anstehender Termin",
  "dashboard.beneficiary": "Leistungsempfänger/in",

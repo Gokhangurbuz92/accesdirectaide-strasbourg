@@ -12,5 +12,9 @@
  "route_error.reload": "Neu laden",
  "form.errors.summary_title": "Das Formular wurde nicht gesendet. Bitte korrigieren Sie folgende Punkte:",
  "form.errors.required": "{{label}}: Dieses Feld ist erforderlich.",
- "form.errors.email": "{{label}}: Geben Sie eine gültige E-Mail-Adresse ein, zum Beispiel name@beispiel.de."
+ "form.errors.email": "{{label}}: Geben Sie eine gültige E-Mail-Adresse ein, zum Beispiel name@beispiel.de.",
+ "form.errors.min_length": "{{label}}: Geben Sie mindestens {{min}} Zeichen ein.",
+ "form.errors.https_url": "{{label}}: Geben Sie eine vollständige Adresse ein, die mit https:// beginnt, zum Beispiel https://www.service-public.fr.",
+ "form.errors.choose": "{{label}}: Wählen Sie eine Option aus der Liste.",
+ "form.status.saving": "Wird gespeichert…"
 }

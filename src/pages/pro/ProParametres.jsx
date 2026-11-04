@@ -120,7 +120,7 @@ function StructureTab({ structure, user, loadFailed, onRetry }) {
 
 // ─── Tab: Équipe ──────────────────────────────────────────────
 
-function TeamTab({ structure }) {
+function TeamTab() {
     const { t } = useT('pro');
     return (
         <div className="space-y-6">
@@ -216,7 +216,7 @@ function NotificationsProTab() {
     if (state.error) return <div role="alert" data-testid="pro-notif-load-error" className="text-red-800"><p>{state.error}</p><Button variant="outline" size="sm" className="mt-2" data-testid="pro-notif-retry" onClick={load}>{t('pro:parametres.retry', 'Réessayer')}</Button></div>;
     const p = state.preferences;
     return (
-        <div className="space-y-6" data-testid="pro-notif-prefs">
+        <div className="space-y-6" data-testid="pro-notif-prefs" aria-busy={saving || undefined}>
             <div>
                 <h3 className="text-lg font-semibold mb-2">{t('pro:parametres.notif_heading', 'Notifications professionnelles')}</h3>
                 <p className="text-sm text-slate-600 mb-4">{t('pro:parametres.notif_intro', 'Toutes les notifications restent visibles dans l’application. Vous choisissez seulement celles qui vous sont aussi envoyées par e-mail (sans nom ni contenu de dossier).')}</p>
@@ -233,7 +233,7 @@ function NotificationsProTab() {
                     ))}
                 </div>
             </div>
-            <div aria-live="polite" role="status" data-testid="pro-notif-status" className="text-sm">{message}</div>
+            <div aria-live="polite" role="status" data-testid="pro-notif-status" className="text-sm">{saving ? t('common:form.status.saving', 'Enregistrement en cours…') : message}</div>
             {problem ? <p role="alert" data-testid="pro-notif-error" className="text-sm text-red-800">{problem}</p> : null}
         </div>
     );
@@ -368,8 +368,9 @@ export default function ProParametres() {
 
     if (loading) {
         return (
-            <div className="p-8 flex items-center justify-center">
-                <div className="animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full" />
+            <div className="p-8 flex items-center justify-center" role="status" aria-busy="true">
+                <div className="animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full" aria-hidden="true" />
+                <span className="sr-only">{t('pro:parametres.loading', 'Chargement…')}</span>
             </div>
         );
     }
@@ -426,7 +427,7 @@ export default function ProParametres() {
                             <StructureTab structure={structure} user={user} loadFailed={loadFailed} onRetry={() => setAttempt((n) => n + 1)} />
                         </TabsContent>
                         <TabsContent value="team" className="mt-0">
-                            <TeamTab structure={structure} />
+                            <TeamTab />
                         </TabsContent>
                         <TabsContent value="rdv" className="mt-0">
                             <RdvTab />
