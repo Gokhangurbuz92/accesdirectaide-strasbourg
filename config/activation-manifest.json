@@ -1140,6 +1140,24 @@
       "format": "^true$",
       "note": "do not create before the retention periods (D4) are approved"
     },
+    "GDPR_PURGE_POLICY_VERSION": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^[a-z0-9-]+$",
+      "note": "R44 / E16: the retention policy version this deployment was approved for (api/_services/retention-policy.js); the policy itself must be APPROVED in code — do not create before D4"
+    },
+    "GDPR_PURGE_APPROVED_STEPS": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^[A-Za-z]+([ ,]+[A-Za-z]+)*$",
+      "note": "R44 / E16: explicit list of the purge step ids the controller approved (no wildcard); every other step stays a dry run — do not create before D4"
+    },
     "RETENTION_AUDIT_MONTHS": {
       "class": "optional",
       "nature": "config"

@@ -18,6 +18,7 @@ vi.mock('../../api/_utils/kv.js', () => ({ kv: {
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -36,7 +37,7 @@ describe.skipIf(!hasDatabase)('R40 G10 — jobs on a 0042 and a 0044 database (r
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
     ({ default: rdvReminder } = await import('../../api/_handlers/cron/rdv-reminder.js'));
-    ({ default: gdprPurge } = await import('../../api/_handlers/cron/gdpr-purge.js'));
+    gdprPurge = (await import('../../api/_handlers/cron/gdpr-purge.js')).createGdprPurgeHandler({ policy: approvedTestPolicy() });   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
     notices = await import('../../api/_services/appointment-notices.js');
     mailer = await import('../../api/_utils/mailer.js');
     guest = Number((await one(sql`SELECT count(*)::int AS n FROM information_schema.columns WHERE table_name = 'ProAppointment' AND column_name = 'guestHoldExpiresAt'`)).n) === 1;
@@ -92,8 +93,8 @@ describe.skipIf(!hasDatabase)('R40 G10 — jobs on a 0042 and a 0044 database (r
   });
 
   it('gdpr-purge runs on this schema: old appointments anonymised, guest holds cleared only where the columns exist, success status', async () => {
-    process.env.GDPR_PURGE_ENABLED = 'true';
-    const r = await run(gdprPurge, '/api/cron/gdpr-purge').finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS));   // R33 + R44: enabled and approved
+    const r = await run(gdprPurge, '/api/cron/gdpr-purge').finally(restore);
     expect(r.statusCode, JSON.stringify(r.body)).toBe(200);
     expect(r.body.status).toBe('success');
     const old = await one(sql`SELECT "beneficiaryName", "beneficiaryPhone", notes FROM "ProAppointment" WHERE id = ${ID.aptOld}`);

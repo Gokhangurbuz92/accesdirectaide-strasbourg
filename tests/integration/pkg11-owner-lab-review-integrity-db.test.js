@@ -11,6 +11,7 @@
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 
@@ -30,7 +31,7 @@ describe.skipIf(!hasDatabase)('owner LAB review integrity (real DB)', () => {
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
     auth = await import('../../api/_utils/auth.js'); verifyHandler = (await import('../../api/_handlers/admin/content-verification.js')).default;
-    reportsHandler = (await import('../../api/_handlers/reports.js')).default; purge = (await import('../../api/_handlers/cron/gdpr-purge.js')).default;
+    reportsHandler = (await import('../../api/_handlers/reports.js')).default; purge = (await import('../../api/_handlers/cron/gdpr-purge.js')).createGdprPurgeHandler({ policy: approvedTestPolicy() });   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
     proposals = await import('../../api/_services/structure-proposals.js'); restriction = await import('../../api/_services/processing-restriction.js');
     adminContent = await import('../../api/_services/admin-content.js'); ident = await import('../../api/_services/admin-identity.js');
     await db.execute(sql`INSERT INTO "Aide" (id, slug, titre, statut, data_origin, cest_quoi, "updatedAt") VALUES (${ID.aide}, ${ID.aide}, 'Aide relue', 'publie', 'official', 'Une aide pour payer le loyer.', NOW())`);
@@ -110,8 +111,8 @@ describe.skipIf(!hasDatabase)('owner LAB review integrity (real DB)', () => {
     expect(pending.actions.map((a) => a.action)).toContain('ORGANIZATION_SUSPENDED');
     await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details, "timestamp") VALUES (${crypto.randomUUID()}, 'BREAK_GLASS_OPENED', ${actor}, ${actor}, 'AdminElevation', ${ID.bgOld}, '{}'::jsonb, NOW() - interval '400 days')`);
     await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details, "timestamp") VALUES (${crypto.randomUUID()}, 'ADMIN_API_WRITE', ${actor}, ${actor}, 'Aide', ${ID.old}, '{}'::jsonb, NOW() - interval '400 days')`);
-    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
-    const res = mk(); await purge({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, res).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS));   // R33 + R44: the purge runs only when enabled and approved; this test checks what it does when it runs
+    const res = mk(); await purge({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, res).finally(restore);
     expect(res.statusCode, JSON.stringify(res.body)).toBe(200);
     expect((await one(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE entity_id = ${ID.bgOld}`)).n, 'unreviewed break-glass kept').toBe(1);
     expect((await one(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE entity_id = ${ID.old}`)).n, 'an ordinary old entry purged').toBe(0);

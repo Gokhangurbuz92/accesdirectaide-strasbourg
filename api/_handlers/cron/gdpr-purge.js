@@ -1,58 +1,53 @@
 // @ts-nocheck
-import logger from '../../_utils/logger.js';
-import { db } from '../../../src/db/index.js';
+import defaultLogger from '../../_utils/logger.js';
+import { db as defaultDb } from '../../../src/db/index.js';
 import {
     EntityVersion, UpdateLog, AuditLog, ConversationLog, SharedDiagnostic,
     AuthToken, AiMetric, ConsentLog, UserConsent, Invitation, EmailChangeRequest,
-    ProOutlookToken, ProAuditLog, ProAppointment
+    ProOutlookToken, ProAuditLog, ProAppointment,
+    AppointmentNotice, ProNotification, PushSubscription, RdvConversation, RdvMessageAttachment,
+    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser
 } from '../../../src/db/schema.js';
-import { lt, and, or, ne, isNotNull, isNull, eq, sql } from 'drizzle-orm';
+import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
 import { getCronAuth } from '../../_utils/cronAuth.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
 import * as Sentry from '@sentry/node';
-import { restrictedDossierSql } from '../../_services/processing-restriction.js';
+import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
 import { GUEST_DECOY_NAME } from '../../_utils/rdv-guest-decoy.js';
+import { RETENTION_POLICY, executionGate, policyDays, policySummary } from '../../_services/retention-policy.js';
 
 /**
- * Per-table RGPD retention constants.
- * Exported so tests can validate against documentation.
+ * Per-table RGPD retention constants (read by scripts/gdpr-suite.mjs for REGISTRE_RGPD.json, and by tests).
+ * R44: the purge itself takes its durations from the VERSIONED policy (api/_services/retention-policy.js, status PROPOSED — NOT APPROVED); these values are
+ * the same numbers (a unit test keeps them equal). R44 / E13: no value here is a legal obligation — none was identified (R43 dossier § 3).
  */
 export const RETENTION = {
-    AUDIT_LOG_DAYS: 365,            // Legal obligation (Art 6.1.c)
-    PRO_AUDIT_LOG_DAYS: 365,        // Same as AuditLog
+    AUDIT_LOG_DAYS: 365,            // CNIL recommendation 2021-122 (logging: 6 months to 1 year) — not a legal obligation (E13)
+    PRO_AUDIT_LOG_DAYS: 365,        // Same as AuditLog (CNIL recommendation 2021-122)
     CONVERSATION_LOG_DAYS: 90,      // Operational
     AI_METRIC_DAYS: 90,             // Technical hygiene
     ENTITY_VERSION_DAYS: 90,        // Historical snapshots
-    CONSENT_LOG_DAYS: 1095,         // 3 years (legal proof)
+    CONSENT_LOG_DAYS: 1095,         // 3 years — proof that consent can be demonstrated (art. 7(1) fixes no duration): proposal
     INVITATION_GRACE_DAYS: 30,      // After expiry
     OUTLOOK_TOKEN_GRACE_DAYS: 30,   // After expiry
-    APPOINTMENT_ANON_DAYS: 730,     // 2 years then anonymise
+    APPOINTMENT_ANON_DAYS: 730,     // 2 years after the appointment DATE (startAt, R44 / E1), then anonymise
     GUEST_HOLD_DAYS: 1,             // R38: an unconfirmed account-free hold, 1 day after its expiry
 };
 
 /**
- * GDPR Purge Cron
+ * GDPR Purge Cron — R44: policy-driven, step by step, dry run by default.
  *
- * Automatically purges expired/old data to comply with RGPD:
- *   - EntityVersion        > 90 days
- *   - UpdateLog            > 90 days
- *   - AuditLog             > 365 days (legal obligation)
- *   - ConversationLog      > 90 days
- *   - SharedDiagnostic     expired or > 90 days
- *   - AuthToken            where expiresAt < NOW() (and the expired EmailChangeRequest rows)
- *   - AiMetric             > 90 days
- *   - ConsentLog           > 3 years (1095 days)
- *   - UserConsent          where expiresAt < NOW()
- *   - Invitation           expired + 30 day grace
- *   - ProOutlookToken      expired + 30 day grace
- *   - ProAuditLog          > 365 days
- *   - ProAppointment       anonymise after 2 years (730 days) — R38: guest e-mail / phone / hashes included; R39: the guest's reminder consent too
- *   - ProAppointment       R38: an account-free hold never confirmed, cleared 1 day after its expiry; R41-B: a decoy hold (no personal data) deleted then
+ * Every step below has an id, the policy duration it applies, the date it counts from, its gap code (R43 dossier § 3.3) and its kind (delete, anonymise,
+ * redact, or report — a report step never changes anything). A run is a DRY RUN (it counts the rows each step would touch, changes nothing, writes nothing)
+ * unless executionGate() allows execution (GDPR_PURGE_ENABLED, the policy APPROVED for this exact version, the version pinned by the deployment); even then
+ * only the steps listed in GDPR_PURGE_APPROVED_STEPS execute (E16), each in its own transaction (a failing step is rolled back, reported, retried next run).
+ * Safeguards on every step that can touch a person's or an organization's data: an ACTIVE LegalHold on any id the row carries; a processing restriction
+ * (art. 18) or an open access / review request (DSR) of the person; records of the structure the platform must not erase alone (shared-controller flag, E11).
+ * Missing tables or columns (Production is at migration 0042) skip the step, said in skipped_steps. One run at a time (advisory lock). An executing run
+ * leaves one AuditLog row (GDPR_PURGE_RUN: counts only) as evidence.
  *
  * Schedule: every Sunday at 03:00 (vercel.json)
- * @param {import('../../_utils/http-types').ApiRequest} req
- * @param {import('../../_utils/http-types').ApiResponse} res
  */
 
 /**
@@ -65,287 +60,521 @@ export const RETENTION = {
  */
 export const heldSql = (...ids) => sql`EXISTS (SELECT 1 FROM "LegalHold" h WHERE h.status = 'ACTIVE' AND h."recordId" IN (${sql.join(ids, sql`, `)}))`;
 
+/** R44 — DSR interplay: an access / review request of the person still open keeps their data until it is answered (an erasure request does not: it goes the same way). */
+export const OPEN_DSR_STATUSES = Object.freeze(['RECEIVED', 'IDENTITY_OR_AUTHORITY_CHECK', 'IN_REVIEW']);
+export const openNonErasureDsrSql = (subjectExpr) => sql`EXISTS (SELECT 1 FROM "DSRRequest" r WHERE r."subjectId" = ${subjectExpr} AND r."requestType" <> 'DELETE'
+    AND r.status IN (${sql.join(OPEN_DSR_STATUSES.map((s) => sql`${s}`), sql`, `)}))`;
+/** the person (a citizen id expression, possibly NULL) is protected: restricted processing (art. 18) or an open access / review request */
+export const personProtectedSql = (subjectExpr) => sql`(${restrictedSubjectSql(subjectExpr)} OR ${openNonErasureDsrSql(subjectExpr)})`;
+
+/** R44 / E11 — a shared copy followed by an organization (a ProCase or a Referral references it: both CASCADE on its deletion) */
+export const hasFollowUpSql = (dossierExpr) => sql`(EXISTS (SELECT 1 FROM "ProCase" pc WHERE pc."sharedDiagnosticId" = ${dossierExpr})
+    OR EXISTS (SELECT 1 FROM "Referral" rf WHERE rf."sharedDiagnosticId" = ${dossierExpr}))`;
+
 /**
  * R40 / G7 — EntityVersion and rollback. A version is the exact row snapshotted BEFORE a content change (content-versions.js snapshotRow); a rollback
  * (A07, and the content-transfer rollback of docs/runbooks.md § 7) restores from it. Rule (conservative; the 90-day duration is unchanged): a version older
  * than 90 days is deleted only when it is SUPERSEDED — a newer version of the same record exists — and the record is not under a legal hold. The most
  * recent version of every record is kept however old, so the last change of any record can always be undone.
- * @param {any} database @param {Date} before
+ * @param {Date} before
  */
+export const supersededVersionsWhere = (before) => and(
+    lt(EntityVersion.createdAt, before),
+    sql`EXISTS (SELECT 1 FROM "EntityVersion" newer WHERE newer.entity_type = ${EntityVersion.entity_type} AND newer.entity_id = ${EntityVersion.entity_id}
+        AND (newer."createdAt", newer.id) > (${EntityVersion.createdAt}, ${EntityVersion.id}))`,
+    sql`NOT ${heldSql(EntityVersion.entity_id)}`
+);
+/** @param {any} database @param {Date} before */
 export async function purgeSupersededVersions(database, before) {
-    const res = await database.delete(EntityVersion).where(and(
-        lt(EntityVersion.createdAt, before),
-        sql`EXISTS (SELECT 1 FROM "EntityVersion" newer WHERE newer.entity_type = ${EntityVersion.entity_type} AND newer.entity_id = ${EntityVersion.entity_id}
-            AND (newer."createdAt", newer.id) > (${EntityVersion.createdAt}, ${EntityVersion.id}))`,
-        sql`NOT ${heldSql(EntityVersion.entity_id)}`
-    ));
+    const res = await database.delete(EntityVersion).where(supersededVersionsWhere(before));
     return Number(res?.rowCount ?? res?.length ?? 0);
 }
 
 /**
  * PKG-11 / C22 — consent rows older than `before` are deleted only when SUPERSEDED: a newer decision exists for the same subject and purpose. The latest decision
- * of a subject for a purpose proves what applies now and is never deleted, however old. Returns the number of rows deleted.
- * @param {any} database @param {Date} before
+ * of a subject for a purpose proves what applies now and is never deleted by this rule, however old (R44 / E10: see consentLogsAfterErasureDeleted).
+ * @param {Date} before
  */
+export const supersededConsentsWhere = (before) => and(
+    lt(ConsentLog.created_at, before),
+    sql`EXISTS (SELECT 1 FROM "ConsentLog" newer WHERE newer.subject_type = ${ConsentLog.subject_type} AND newer.subject_id = ${ConsentLog.subject_id}
+        AND newer.purpose IS NOT DISTINCT FROM ${ConsentLog.purpose} AND newer.created_at > ${ConsentLog.created_at})`,
+    sql`NOT ${heldSql(ConsentLog.subject_id)}`   // R40 / G7
+);
+/** Returns the number of rows deleted. @param {any} database @param {Date} before */
 export async function purgeSupersededConsents(database, before) {
-    const res = await database.delete(ConsentLog).where(and(
-        lt(ConsentLog.created_at, before),
-        sql`EXISTS (SELECT 1 FROM "ConsentLog" newer WHERE newer.subject_type = ${ConsentLog.subject_type} AND newer.subject_id = ${ConsentLog.subject_id}
-            AND newer.purpose IS NOT DISTINCT FROM ${ConsentLog.purpose} AND newer.created_at > ${ConsentLog.created_at})`,
-        sql`NOT ${heldSql(ConsentLog.subject_id)}`   // R40 / G7
-    ));
+    const res = await database.delete(ConsentLog).where(supersededConsentsWhere(before));
     return Number(res?.rowCount ?? res?.length ?? 0);
 }
 
-export default async function handler(req, res) {
-    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+/** Rows affected by a drizzle delete/update: node-postgres returns a result object (rowCount), not an array. */
+const affected = (/** @type {any} */ r) => Number(r?.rowCount ?? r?.length ?? 0);
+const countWhere = async (db, table, where) => Number((await db.select({ n: sql`count(*)::int` }).from(table).where(where))?.[0]?.n ?? 0);
+const ANON = '[anonymisé]';
 
-    const secret = req.query?.secret ?? req.query?.key;
-    const authReq = { headers: req.headers, query: { secret }, url: req.url };
-    const auth = getCronAuth(authReq);
-    if (!auth.ok) {
-        if (auth.reason === 'missing_secret') {
-            return res.status(500).json({ error: 'CRON_SECRET is not configured' });
-        }
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+// ─── appointment predicates (R44 / E1–E5) ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/** a booking made by a person on the platform (an account, or an account-free guest on a 0043+ LAB database) — as opposed to a record a structure keeps */
+const citizenSide = (ctx) => (ctx.guestSchema.guestBooking
+    ? sql`(${ProAppointment.citizenUserId} IS NOT NULL OR ${ProAppointment.guestEmailHash} IS NOT NULL)`
+    : sql`${ProAppointment.citizenUserId} IS NOT NULL`);
+/** some personal data is still on the row (R38: « <> » is never true for NULL; R44 / E2: a row anonymised before R44 still linked to the account counts) */
+const notAnonymised = (ctx) => sql`(${ProAppointment.beneficiaryName} IS DISTINCT FROM ${ANON} OR ${ProAppointment.citizenUserId} IS NOT NULL
+    OR ${ProAppointment.beneficiaryPhone} IS NOT NULL OR ${ProAppointment.citizenEmailSnapshot} IS NOT NULL OR ${ProAppointment.notes} IS NOT NULL
+    ${ctx.guestSchema.guestBooking ? sql`OR ${ProAppointment.guestEmail} IS NOT NULL OR ${ProAppointment.guestPhone} IS NOT NULL OR ${ProAppointment.guestEmailHash} IS NOT NULL` : sql``})`;
+/** legal hold (the appointment, the person, the organization), restriction / open request of the person; a decoy hold is never an appointment (13b deletes it) */
+const appointmentSafe = () => and(
+    sql`NOT ${heldSql(ProAppointment.id, ProAppointment.citizenUserId, ProAppointment.structureId)}`,
+    sql`NOT ${personProtectedSql(ProAppointment.citizenUserId)}`,
+    sql`${ProAppointment.beneficiaryName} IS DISTINCT FROM ${GUEST_DECOY_NAME}`
+);
+const UNCONFIRMED = ['refused', 'expired'];
+/** E4: a Mode B request still `requested` after its start is an expired request (R42-BOOK § 2) */
+const unconfirmedSql = (now) => or(inArray(ProAppointment.status, UNCONFIRMED), and(eq(ProAppointment.status, 'requested'), lt(ProAppointment.startAt, now)));
+const otherStatusSql = () => sql`${ProAppointment.status} NOT IN ('refused', 'expired', 'requested', 'cancelled')`;
+/** E5: the message counts from the appointment, or from its cancellation when that came first */
+const messageAnchor = sql`CASE WHEN ${ProAppointment.cancelledAt} IS NOT NULL THEN LEAST(${ProAppointment.startAt}, ${ProAppointment.cancelledAt}) ELSE ${ProAppointment.startAt} END`;
+/** the appointment of this id is anonymised (R44: its notices and its conversation follow) */
+const appointmentAnonymisedSql = (idExpr) => sql`EXISTS (SELECT 1 FROM "ProAppointment" a WHERE a.id = ${idExpr} AND a."beneficiaryName" = ${ANON}
+    AND a."citizenUserId" IS NULL AND a."beneficiaryPhone" IS NULL AND a."citizenEmailSnapshot" IS NULL AND a.notes IS NULL)`;
 
-    // R33: deletions run only when the operator has explicitly enabled them (retention periods approved). Fail-closed: anything else skips.
-    if (String(process.env.GDPR_PURGE_ENABLED || '').trim().toLowerCase() !== 'true') {
-        return res.status(200).json({ skipped: true, reason: 'GDPR_PURGE_DISABLED', message: 'Purge disabled until GDPR_PURGE_ENABLED=true (retention periods must be approved first). Nothing deleted.' });
-    }
+/**
+ * @typedef {{ now: Date, policy: any, guestSchema: { guestBooking: boolean, guestReminderConsent: boolean }, cutoff: (key: string) => Date }} PurgeContext
+ * @typedef {{ id: string, summaryKey: string, ecode: string | null, kind: 'delete' | 'anonymise' | 'redact' | 'report', table: string, durationKey: string,
+ *   tables: string[], requiresGuest?: boolean, extraKeys?: string[], dependsOn?: string[], sharedController?: string, count: (db: any, ctx: PurgeContext) => Promise<number>,
+ *   run?: (db: any, ctx: PurgeContext) => Promise<number | { count: number, extra?: Record<string, number>, afterCommit?: () => Promise<string | null> }> }} PurgeStep
+ */
 
-    /** Helper: compute a cutoff date N days in the past */
-    const daysAgo = (/** @type {number} */ days) => {
-        const d = new Date();
-        d.setDate(d.getDate() - days);
-        return d;
+// 13. Anonymise ProAppointments — the set every anonymising appointment step applies (13 / 13a / 13c / 13d / 13e builds below).
+/** @param {PurgeContext} ctx */
+export function anonymisationSet(ctx) {
+    return {
+        beneficiaryName: ANON,
+        beneficiaryPhone: null,
+        citizenEmailSnapshot: null,
+        notes: null,
+        citizenUserId: null,   // R44 / E2: the link to the account goes too (otherwise the appointment stays attached to the person: pseudonymisation only)
+        // R44 / E4: a request still `requested` after its start is written as the expired request it is
+        status: sql`CASE WHEN ${ProAppointment.status} = 'requested' AND ${ProAppointment.startAt} < ${ctx.now} THEN 'expired' ELSE ${ProAppointment.status} END`,
+        ...(ctx.guestSchema.guestBooking ? {
+            guestEmail: null,
+            guestEmailHash: null,
+            guestPhone: null,
+            guestCodeHash: null,
+            guestManageTokenHash: null,
+        } : {}),
+        ...(ctx.guestSchema.guestReminderConsent ? {
+            guestReminderConsentAt: null,   // R39: the optional J-1 reminder consent goes with the rest of the booking's guest data
+        } : {}),
     };
+}
 
-    const now = new Date();
+/** @returns {PurgeStep[]} */
+function appointmentSteps() {
+    /** @param {(ctx: PurgeContext) => any} where */
+    const anonymise = (where) => ({
+        count: (db, ctx) => countWhere(db, ProAppointment, where(ctx)),
+        run: async (db, ctx) => affected(await db.update(ProAppointment).set(anonymisationSet(ctx)).where(where(ctx))),
+    });
+    return [
+        // 13e. R44 / E5 — the optional message of a citizen booking: 30 days after the appointment (or its earlier cancellation). The safe discriminant is the
+        //      account link (citizenUserId IS NOT NULL): `notes` also holds the notes of an appointment a professional created (Q-BOOK-2), never touched here.
+        { id: 'appointmentMessagesErased', summaryKey: 'appointment_messages_erased', ecode: 'E5', kind: 'anonymise', table: 'ProAppointment', durationKey: 'APPOINTMENT_MESSAGE_DAYS',
+            tables: ['ProAppointment', 'LegalHold', 'DSRRequest'],
+            count: (db, ctx) => countWhere(db, ProAppointment, messageWhere(ctx)),
+            run: async (db, ctx) => affected(await db.update(ProAppointment).set({ notes: null }).where(messageWhere(ctx))) },
+        // 13a. R44 / E3 + E4 — unconfirmed requests (refused, expired, or still `requested` after their start): 3 months after the slot
+        { id: 'appointmentsUnconfirmedAnonymised', summaryKey: 'unconfirmed_appointments_anonymised', ecode: 'E3', kind: 'anonymise', table: 'ProAppointment', durationKey: 'APPOINTMENT_UNCONFIRMED_DAYS',
+            tables: ['ProAppointment', 'LegalHold', 'DSRRequest'],
+            ...anonymise((ctx) => and(citizenSide(ctx), unconfirmedSql(ctx.now), lt(ProAppointment.startAt, ctx.cutoff('APPOINTMENT_UNCONFIRMED_DAYS')), notAnonymised(ctx), appointmentSafe())) },
+        // 13c. R44 / E3 — cancelled bookings: 3 months after the cancellation
+        { id: 'appointmentsCancelledAnonymised', summaryKey: 'cancelled_appointments_anonymised', ecode: 'E3', kind: 'anonymise', table: 'ProAppointment', durationKey: 'APPOINTMENT_CANCELLED_DAYS',
+            tables: ['ProAppointment', 'LegalHold', 'DSRRequest'],
+            ...anonymise((ctx) => and(citizenSide(ctx), eq(ProAppointment.status, 'cancelled'),
+                sql`COALESCE(${ProAppointment.cancelledAt}, ${ProAppointment.startAt}) < ${ctx.cutoff('APPOINTMENT_CANCELLED_DAYS')}`, notAnonymised(ctx), appointmentSafe())) },
+        // 13. R44 / E1 + E2 — confirmed, booked, attended or missed bookings (and any other status): 2 years after the appointment DATE (was: after createdAt)
+        { id: 'anonymisedAppointmentsCount', summaryKey: 'appointments_anonymised', ecode: 'E1', kind: 'anonymise', table: 'ProAppointment', durationKey: 'APPOINTMENT_CONFIRMED_DAYS',
+            tables: ['ProAppointment', 'LegalHold', 'DSRRequest'],
+            ...anonymise((ctx) => and(citizenSide(ctx), otherStatusSql(), lt(ProAppointment.startAt, ctx.cutoff('APPOINTMENT_CONFIRMED_DAYS')), notAnonymised(ctx), appointmentSafe())) },
+        // 13d. R44 — an appointment a STRUCTURE recorded without a platform account (citizenUserId NULL, no guest): it is the structure's record; same 2 years
+        //      after its date, but a separate step so the controller and the structure can approve (or refuse) it on its own (shared-controller flag)
+        { id: 'appointmentsStructureRecordAnonymised', summaryKey: 'structure_appointments_anonymised', ecode: 'E1', kind: 'anonymise', table: 'ProAppointment', durationKey: 'APPOINTMENT_CONFIRMED_DAYS',
+            tables: ['ProAppointment', 'LegalHold', 'DSRRequest'], sharedController: 'appointment recorded by the structure (no platform account)',
+            ...anonymise((ctx) => and(sql`NOT ${citizenSide(ctx)}`, lt(ProAppointment.startAt, ctx.cutoff('APPOINTMENT_CONFIRMED_DAYS')), notAnonymised(ctx), appointmentSafe())) },
+    ];
+}
 
-    /** Rows affected by a drizzle delete/update: node-postgres returns a result object (rowCount), not an array. */
-    const affected = (/** @type {any} */ r) => Number(r?.rowCount ?? r?.length ?? 0);
-    /** Retention steps must never fail silently: each failure is logged, reported to Sentry and returned in the summary. */
+/** @param {PurgeContext} ctx */
+function messageWhere(ctx) {
+    return and(isNotNull(ProAppointment.notes), isNotNull(ProAppointment.citizenUserId), sql`${messageAnchor} < ${ctx.cutoff('APPOINTMENT_MESSAGE_DAYS')}`, appointmentSafe());
+}
+
+/** @param {any} table @param {(ctx: PurgeContext) => any} where */
+const deleteStep = (table, where) => ({
+    count: (db, ctx) => countWhere(db, table, where(ctx)),
+    run: async (db, ctx) => affected(await db.delete(table).where(where(ctx))),
+});
+
+// The steps, in dependency order (an appointment is anonymised before its notices and its conversation go; consents of an erased person go before the
+// erasure request that proves the erasure).
+/** @type {PurgeStep[]} */
+export const PURGE_STEPS = [
+    // 1. Old Entity Versions (90 days) — R40 / G7: superseded versions only — the latest version of each record stays (rollback), none of a held record
+    { id: 'deletedVersionsCount', summaryKey: 'versions_deleted', ecode: null, kind: 'delete', table: 'EntityVersion', durationKey: 'ENTITY_VERSION_DAYS', tables: ['EntityVersion', 'LegalHold'],
+        count: (db, ctx) => countWhere(db, EntityVersion, supersededVersionsWhere(ctx.cutoff('ENTITY_VERSION_DAYS'))),
+        run: (db, ctx) => purgeSupersededVersions(db, ctx.cutoff('ENTITY_VERSION_DAYS')) },
+
+    // 2. Old Update Logs (90 days — operational)
+    { id: 'deletedLogsCount', summaryKey: 'update_logs_deleted', ecode: null, kind: 'delete', table: 'UpdateLog', durationKey: 'UPDATE_LOG_DAYS', tables: ['UpdateLog'],
+        ...deleteStep(UpdateLog, (ctx) => lt(UpdateLog.ran_at, ctx.cutoff('UPDATE_LOG_DAYS'))) },
+
+    // 3. AuditLog (365 days — CNIL recommendation 2021-122, not a legal obligation: R44 / E13). owner LAB audit: an emergency access (break-glass) still
+    //    awaiting its review by another administrator is kept until reviewed — the « to review » list is computed from these rows
+    { id: 'deletedAuditCount', summaryKey: 'audit_logs_deleted', ecode: 'E13', kind: 'delete', table: 'AuditLog', durationKey: 'AUDIT_LOG_DAYS', tables: ['AuditLog', 'LegalHold'],
+        ...deleteStep(AuditLog, (ctx) => and(lt(AuditLog.timestamp, ctx.cutoff('AUDIT_LOG_DAYS')),
+            sql`NOT (${AuditLog.action} = 'BREAK_GLASS_OPENED' AND NOT EXISTS (SELECT 1 FROM "AuditLog" r WHERE r.action = 'BREAK_GLASS_REVIEWED' AND r.entity_id = ${AuditLog.entity_id}))`,
+            sql`NOT ${heldSql(AuditLog.entity_id, AuditLog.actor_id, AuditLog.target)}`)) },   // R40 / G7: the trail of a held record is evidence
+
+    // 4. Old Conversation Logs (90 days — the assistant, closed)
+    { id: 'deletedConversationsCount', summaryKey: 'conversation_logs_deleted', ecode: null, kind: 'delete', table: 'ConversationLog', durationKey: 'CONVERSATION_LOG_DAYS', tables: ['ConversationLog'],
+        ...deleteStep(ConversationLog, (ctx) => lt(ConversationLog.createdAt, ctx.cutoff('CONVERSATION_LOG_DAYS'))) },
+
+    // 5. Old/Expired Shared Diagnostics (expired OR > 90 days). R44 / E11: a copy followed by an organization (ProCase / Referral, which CASCADE) is NOT
+    //    deleted here — deleting it erased the organization's follow-up; step 5b redacts its content instead (separate approval)
+    { id: 'deletedDiagnosticsCount', summaryKey: 'diagnostics_deleted', ecode: 'E11', kind: 'delete', table: 'SharedDiagnostic', durationKey: 'SHARED_DIAGNOSTIC_MAX_DAYS',
+        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'DSRRequest'],
+        count: (db, ctx) => countWhere(db, SharedDiagnostic, sharedDiagnosticWhere(ctx, false)),
+        run: async (db, ctx) => {
+            const diagRes = await db.delete(SharedDiagnostic).where(sharedDiagnosticWhere(ctx, false))
+                .returning({ id: SharedDiagnostic.id, results: SharedDiagnostic.results });
+            const keys = (Array.isArray(diagRes) ? diagRes : []).flatMap((row) => storageKeysOf(row?.results));
+            // DTA S8: the encrypted documents of a purged dossier are deleted from object storage too, after the commit (best effort; failures logged by key)
+            return { count: affected(diagRes), afterCommit: async () => ((await purgeDossierFiles(keys)).failed.length > 0 ? 'dossierFilesPurge' : null) };
+        } },
+
+    // 5b. R44 / E11 — the same copies when an organization follows them: the row stays (the organization's ProCase / ProCaseNote / Referral keep their
+    //     reference and are not cascaded), its content is emptied and its encrypted files deleted. Flagged: the follow-up itself is the structure's record.
+    { id: 'diagnosticsRedactedWithFollowUp', summaryKey: 'diagnostics_redacted_with_follow_up', ecode: 'E11', kind: 'redact', table: 'SharedDiagnostic', durationKey: 'SHARED_DIAGNOSTIC_MAX_DAYS',
+        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'DSRRequest'], sharedController: 'ProCase / ProCaseNote / Referral are kept (structure records)',
+        count: (db, ctx) => countWhere(db, SharedDiagnostic, sharedDiagnosticWhere(ctx, true)),
+        run: async (db, ctx) => {
+            const rows = await db.select({ id: SharedDiagnostic.id, results: SharedDiagnostic.results }).from(SharedDiagnostic).where(sharedDiagnosticWhere(ctx, true)).for('update');
+            if (rows.length === 0) return 0;
+            await db.update(SharedDiagnostic).set({ situation: {}, results: { _redacted: 'r44-e11', redactedAt: ctx.now.toISOString() } })
+                .where(inArray(SharedDiagnostic.id, rows.map((r) => r.id)));
+            const keys = rows.flatMap((row) => storageKeysOf(row?.results));
+            return { count: rows.length, afterCommit: async () => ((await purgeDossierFiles(keys)).failed.length > 0 ? 'dossierFilesPurge' : null) };
+        } },
+
+    // 6. Expired Auth Tokens
+    { id: 'deletedTokensCount', summaryKey: 'tokens_deleted', ecode: null, kind: 'delete', table: 'AuthToken', durationKey: null, tables: ['AuthToken'],
+        ...deleteStep(AuthToken, (ctx) => lt(AuthToken.expiresAt, ctx.now)) },
+
+    // 6b. launch-readiness item 66: expired e-mail change requests (an encrypted pending address, single-use link)
+    { id: 'deletedEmailChangeCount', summaryKey: 'email_change_requests_deleted', ecode: null, kind: 'delete', table: 'EmailChangeRequest', durationKey: null, tables: ['EmailChangeRequest'],
+        ...deleteStep(EmailChangeRequest, (ctx) => lt(EmailChangeRequest.expiresAt, ctx.now)) },
+
+    // 7. Old AI Metrics (90 days — non-personal, storage hygiene)
+    { id: 'deletedAiMetricsCount', summaryKey: 'ai_metrics_deleted', ecode: null, kind: 'delete', table: 'AiMetric', durationKey: 'AI_METRIC_DAYS', tables: ['AiMetric'],
+        ...deleteStep(AiMetric, (ctx) => lt(AiMetric.createdAt, ctx.cutoff('AI_METRIC_DAYS'))) },
+
+    // 8. Consent Logs (1095 days / 3 years — proof, proposal). PKG-11 / C22: only SUPERSEDED rows — the latest decision of a subject for a purpose stays
+    { id: 'deletedConsentLogsCount', summaryKey: 'consent_logs_deleted', ecode: 'E10', kind: 'delete', table: 'ConsentLog', durationKey: 'CONSENT_SUPERSEDED_DAYS', tables: ['ConsentLog', 'LegalHold'],
+        count: (db, ctx) => countWhere(db, ConsentLog, supersededConsentsWhere(ctx.cutoff('CONSENT_SUPERSEDED_DAYS'))),
+        run: (db, ctx) => purgeSupersededConsents(db, ctx.cutoff('CONSENT_SUPERSEDED_DAYS')) },
+
+    // 8b. R44 / E10 — every consent row (the latest decision included) of a person whose account was ERASED (DSR DELETE completed, account gone) 12 months ago
+    { id: 'consentLogsAfterErasureDeleted', summaryKey: 'consent_logs_after_erasure_deleted', ecode: 'E10', kind: 'delete', table: 'ConsentLog', durationKey: 'CONSENT_AFTER_ERASURE_DAYS',
+        tables: ['ConsentLog', 'DSRRequest', 'CitizenUser', 'LegalHold'],
+        ...deleteStep(ConsentLog, (ctx) => and(
+            sql`EXISTS (SELECT 1 FROM "DSRRequest" r WHERE r."requestType" = 'DELETE' AND r.status = 'COMPLETED' AND r."subjectId" = ${ConsentLog.subject_id}
+                AND r."completedAt" < ${ctx.cutoff('CONSENT_AFTER_ERASURE_DAYS')})`,
+            sql`NOT EXISTS (SELECT 1 FROM "CitizenUser" u WHERE u.id = ${ConsentLog.subject_id})`,
+            sql`NOT ${heldSql(ConsentLog.subject_id)}`)) },
+
+    // 9. Expired User Consents
+    { id: 'deletedUserConsentsCount', summaryKey: 'user_consents_deleted', ecode: null, kind: 'delete', table: 'UserConsent', durationKey: null, tables: ['UserConsent', 'LegalHold'],
+        ...deleteStep(UserConsent, (ctx) => and(lt(UserConsent.expiresAt, ctx.now), sql`NOT ${heldSql(UserConsent.citizenId, UserConsent.structureId)}`)) },   // R40 / G7
+
+    // 10. Expired Invitations (30-day grace after expiry)
+    { id: 'deletedInvitationsCount', summaryKey: 'invitations_deleted', ecode: null, kind: 'delete', table: 'Invitation', durationKey: 'INVITATION_GRACE_DAYS', tables: ['Invitation', 'LegalHold'],
+        ...deleteStep(Invitation, (ctx) => and(lt(Invitation.expires_at, ctx.cutoff('INVITATION_GRACE_DAYS')), sql`NOT ${heldSql(Invitation.structureId)}`)) },   // R40 / G7
+
+    // 11. Expired ProOutlookTokens (30-day grace after expiry)
+    { id: 'deletedOutlookTokensCount', summaryKey: 'outlook_tokens_deleted', ecode: null, kind: 'delete', table: 'ProOutlookToken', durationKey: 'OUTLOOK_TOKEN_GRACE_DAYS', tables: ['ProOutlookToken'],
+        ...deleteStep(ProOutlookToken, (ctx) => lt(ProOutlookToken.expiresAt, ctx.cutoff('OUTLOOK_TOKEN_GRACE_DAYS'))) },
+
+    // 12. Old Pro Audit Logs (365 days — CNIL recommendation 2021-122, not a legal obligation: R44 / E13)
+    { id: 'deletedProAuditCount', summaryKey: 'pro_audit_logs_deleted', ecode: 'E13', kind: 'delete', table: 'ProAuditLog', durationKey: 'PRO_AUDIT_LOG_DAYS', tables: ['ProAuditLog', 'LegalHold'],
+        ...deleteStep(ProAuditLog, (ctx) => and(lt(ProAuditLog.createdAt, ctx.cutoff('PRO_AUDIT_LOG_DAYS')),
+            sql`NOT ${heldSql(ProAuditLog.entityId, ProAuditLog.proUserId, ProAuditLog.structureId)}`)) },   // R40 / G7
+
+    // 13 / 13a / 13c / 13d / 13e. ProAppointments — R44 replaces the single « 730 days after createdAt, any status, account link kept » rule (E1–E5) by status-specific
+    //     steps counted from the appointment DATE. Real anonymisation (E2): name, phone, e-mail, message AND the link to the account (citizenUserId) go;
+    //     structure, service, date and status stay for statistics. R38 / R39: an account-free booking's sealed e-mail / phone, hashes and reminder consent go too.
+    //     The set below is the one every anonymising step applies (guest columns only where they exist: migration 0043; 0044 for the reminder consent).
+    ...appointmentSteps(),
+
+    // 13b. R38: an account-free hold never confirmed is not a booking — one day after its 20-minute expiry its identity is cleared (the row stays,
+    // cancelled, so the structure's history keeps its reference). R40 / G10: before migration 0043 no account-free hold can exist (skipped_steps).
+    // R44 / E12: kept while LAB databases carry 0043 / 0044; removed with those columns.
+    { id: 'clearedGuestHoldsCount', summaryKey: 'guest_holds_cleared', ecode: 'E12', kind: 'anonymise', table: 'ProAppointment', durationKey: 'GUEST_HOLD_DAYS',
+        tables: ['ProAppointment', 'LegalHold'], requiresGuest: true, extraKeys: ['guest_decoy_holds_deleted'],
+        count: async (db, ctx) => (await countWhere(db, ProAppointment, guestDecoyWhere(ctx))) + (await countWhere(db, ProAppointment, guestHoldWhere(ctx))),
+        run: async (db, ctx) => {
+            // R41-B: a decoy hold (the « already booked » answer: no personal data, never confirmable) is deleted at the same moment a real hold is cleared —
+            // after that, confirm answers both exactly like an id that never existed; nothing of it is kept (no history, no statistic)
+            const decoys = affected(await db.delete(ProAppointment).where(guestDecoyWhere(ctx)));
+            const holds = affected(await db.update(ProAppointment)
+                .set({ status: 'cancelled', cancelledAt: ctx.now, cancelledBy: 'GUEST_HOLD_EXPIRED', beneficiaryName: ANON, beneficiaryPhone: null, notes: null,
+                    guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null,
+                    ...(ctx.guestSchema.guestReminderConsent ? { guestReminderConsentAt: null } : {}) })
+                .where(guestHoldWhere(ctx)));
+            return { count: holds, extra: { guest_decoy_holds_deleted: decoys } };
+        } },
+
+    // 14. R44 / E8 — the notice ledger of an anonymised appointment (kind, recipient role, channel, status: no address, no text) goes with it
+    { id: 'appointmentNoticesDeleted', summaryKey: 'appointment_notices_deleted', ecode: 'E8', kind: 'delete', table: 'AppointmentNotice', durationKey: 'APPOINTMENT_UNCONFIRMED_DAYS',
+        tables: ['AppointmentNotice', 'ProAppointment', 'LegalHold'], dependsOn: ['anonymisedAppointmentsCount', 'appointmentsUnconfirmedAnonymised', 'appointmentsCancelledAnonymised'],
+        ...deleteStep(AppointmentNotice, () => and(appointmentAnonymisedSql(AppointmentNotice.appointmentId), sql`NOT ${heldSql(AppointmentNotice.appointmentId)}`)) },
+
+    // 15. R44 / E9 — appointment conversations: 2 years after the last message, or as soon as the appointment is anonymised. Messages, attachments and
+    //     notification logs cascade; the attachments' encrypted files are deleted after the commit (same path as the DSR erasure).
+    { id: 'rdvConversationsDeleted', summaryKey: 'rdv_conversations_deleted', ecode: 'E9', kind: 'delete', table: 'RdvConversation', durationKey: 'RDV_CONVERSATION_DAYS',
+        tables: ['RdvConversation', 'RdvMessageAttachment', 'ProAppointment', 'LegalHold', 'DSRRequest'], dependsOn: ['anonymisedAppointmentsCount', 'appointmentsUnconfirmedAnonymised', 'appointmentsCancelledAnonymised'],
+        count: (db, ctx) => countWhere(db, RdvConversation, conversationWhere(ctx)),
+        run: async (db, ctx) => {
+            // the conversations are locked first: an attachment added meanwhile waits for this transaction and then fails its foreign key (no orphan file)
+            const ids = (await db.select({ id: RdvConversation.id }).from(RdvConversation).where(conversationWhere(ctx)).for('update')).map((r) => r.id);
+            if (ids.length === 0) return 0;
+            const keys = (await db.select({ k: RdvMessageAttachment.storageKey }).from(RdvMessageAttachment).where(inArray(RdvMessageAttachment.conversationId, ids))).map((r) => r.k);
+            const n = affected(await db.delete(RdvConversation).where(inArray(RdvConversation.id, ids)));
+            return { count: n, afterCommit: async () => ((await purgeDossierFiles(keys)).failed.length > 0 ? 'rdvAttachmentFilesPurge' : null) };
+        } },
+
+    // 16. R44 / E8 — in-app professional notifications, 6 months
+    { id: 'proNotificationsDeleted', summaryKey: 'pro_notifications_deleted', ecode: 'E8', kind: 'delete', table: 'ProNotification', durationKey: 'PRO_NOTIFICATION_DAYS', tables: ['ProNotification', 'LegalHold'],
+        ...deleteStep(ProNotification, (ctx) => and(lt(ProNotification.createdAt, ctx.cutoff('PRO_NOTIFICATION_DAYS')), sql`NOT ${heldSql(ProNotification.userId, ProNotification.structureId)}`)) },
+
+    // 17. R44 / E8 — a device subscription FAILING for 30 days (no success since its last failure); 404 / 410 are already deleted by web-push.js
+    { id: 'pushSubscriptionsFailingDeleted', summaryKey: 'push_subscriptions_failing_deleted', ecode: 'E8', kind: 'delete', table: 'PushSubscription', durationKey: 'PUSH_FAILING_DAYS', tables: ['PushSubscription', 'LegalHold'],
+        ...deleteStep(PushSubscription, (ctx) => and(eq(PushSubscription.status, 'FAILING'), isNotNull(PushSubscription.lastFailureAt), lt(PushSubscription.lastFailureAt, ctx.cutoff('PUSH_FAILING_DAYS')),
+            or(isNull(PushSubscription.lastSuccessAt), sql`${PushSubscription.lastSuccessAt} < ${PushSubscription.lastFailureAt}`), sql`NOT ${heldSql(PushSubscription.userId)}`)) },
+
+    // 18. R44 / E9b — a RELEASED legal hold, 12 months after its release (an ACTIVE one is never touched)
+    { id: 'legalHoldsReleasedDeleted', summaryKey: 'legal_holds_released_deleted', ecode: 'E9b', kind: 'delete', table: 'LegalHold', durationKey: 'LEGAL_HOLD_RELEASED_DAYS', tables: ['LegalHold'],
+        ...deleteStep(LegalHold, (ctx) => and(eq(LegalHold.status, 'RELEASED'), isNotNull(LegalHold.releasedAt), lt(LegalHold.releasedAt, ctx.cutoff('LEGAL_HOLD_RELEASED_DAYS')))) },
+
+    // 19. R44 / E9b — a closed support request, 12 months after closure
+    { id: 'supportRequestsDeleted', summaryKey: 'support_requests_deleted', ecode: 'E9b', kind: 'delete', table: 'SupportRequest', durationKey: 'SUPPORT_REQUEST_DAYS', tables: ['SupportRequest', 'LegalHold'],
+        ...deleteStep(SupportRequest, (ctx) => and(isNotNull(SupportRequest.closedAt), lt(SupportRequest.closedAt, ctx.cutoff('SUPPORT_REQUEST_DAYS')), sql`NOT ${heldSql(SupportRequest.id)}`)) },
+
+    // 20. R44 / E9b — a finished rights request, 3 years after completion (proof of the answer). An erasure request is kept while consent rows of the
+    //     erased person remain (step 8b needs it as the proof of the erasure), and it is the list replayed after a restore (E15, docs/runbooks.md § 4)
+    { id: 'dsrRequestsDeleted', summaryKey: 'dsr_requests_deleted', ecode: 'E9b', kind: 'delete', table: 'DSRRequest', durationKey: 'DSR_REQUEST_DAYS', tables: ['DSRRequest', 'ConsentLog', 'LegalHold'],
+        dependsOn: ['consentLogsAfterErasureDeleted'],
+        ...deleteStep(DSRRequest, (ctx) => and(isNotNull(DSRRequest.completedAt), lt(DSRRequest.completedAt, ctx.cutoff('DSR_REQUEST_DAYS')), ne(DSRRequest.status, 'ACTIVE'),
+            sql`NOT (${DSRRequest.requestType} = 'DELETE' AND EXISTS (SELECT 1 FROM "ConsentLog" c WHERE c.subject_id = ${DSRRequest.subjectId}))`,
+            sql`NOT ${heldSql(DSRRequest.id, DSRRequest.subjectId)}`)) },
+
+    // 21. R44 / E7 — REPORT ONLY: accounts without sign-in for 24 months. Deleting needs the warning e-mail and the 30-day answer window first (not built: mail
+    //     workstream), then the DSR erasure engine — never this job directly.
+    { id: 'inactiveAccountsReport', summaryKey: 'inactive_accounts_eligible', ecode: 'E7', kind: 'report', table: 'CitizenUser', durationKey: 'INACTIVE_ACCOUNT_DAYS', tables: ['CitizenUser'],
+        count: (db, ctx) => countWhere(db, CitizenUser, and(isNotNull(CitizenUser.lastSeenAt), lt(CitizenUser.lastSeenAt, ctx.cutoff('INACTIVE_ACCOUNT_DAYS')))) },
+
+    // 22. R44 / E9b — REPORT ONLY: disabled professional accounts. 0042 records no disabling date (updatedAt moves on any change), and a professional
+    //     account is referenced by the structure's records (cases, notes, appointments): deletion is a shared decision with the structure.
+    { id: 'disabledProUsersReport', summaryKey: 'disabled_pro_users_eligible', ecode: 'E9b', kind: 'report', table: 'ProUser', durationKey: 'PRO_USER_DISABLED_DAYS', tables: ['ProUser'],
+        sharedController: 'professional accounts are referenced by structure records',
+        count: (db, ctx) => countWhere(db, ProUser, and(eq(ProUser.status, 'disabled'), lt(ProUser.updatedAt, ctx.cutoff('PRO_USER_DISABLED_DAYS')))) },
+];
+
+/** @param {PurgeContext} ctx @param {boolean} followed */
+function sharedDiagnosticWhere(ctx, followed) {
+    return and(
+        or(
+            and(isNotNull(SharedDiagnostic.expiresAt), lt(SharedDiagnostic.expiresAt, ctx.now)),
+            lt(SharedDiagnostic.createdAt, ctx.cutoff('SHARED_DIAGNOSTIC_MAX_DAYS'))
+        ),
+        // PKG-5 / A12: a dossier under an ACTIVE legal hold is never purged automatically
+        sql`NOT EXISTS (SELECT 1 FROM "LegalHold" h WHERE h.status = 'ACTIVE' AND h."dataCategory" = 'SharedDiagnostic' AND h."recordId" = ${SharedDiagnostic.id})`,
+        // R40 / G7: nor a dossier whose person is held, nor one followed in a held professional case
+        sql`NOT ${heldSql(SharedDiagnostic.id, SharedDiagnostic.ownerCitizenId, SharedDiagnostic.privacySubjectId)}`,
+        sql`NOT EXISTS (SELECT 1 FROM "LegalHold" h JOIN "ProCase" pc ON pc.id = h."recordId" WHERE h.status = 'ACTIVE' AND pc."sharedDiagnosticId" = ${SharedDiagnostic.id})`,
+        // PKG-11 / C21: a dossier whose owner restricted processing (art. 18) is kept, not deleted automatically (storage only)
+        sql`NOT ${restrictedDossierSql(SharedDiagnostic.id)}`,
+        // R44: nor while the owner's access / review request is open
+        sql`NOT ${openNonErasureDsrSql(SharedDiagnostic.ownerCitizenId)}`,
+        // R44 / E11: followed by an organization => redacted (5b), never deleted with its follow-up
+        followed ? and(hasFollowUpSql(SharedDiagnostic.id), sql`NOT (${SharedDiagnostic.results} ? '_redacted')`) : sql`NOT ${hasFollowUpSql(SharedDiagnostic.id)}`
+    );
+}
+
+/** @param {PurgeContext} ctx */
+function conversationWhere(ctx) {
+    return and(
+        or(sql`COALESCE(${RdvConversation.lastMessageAt}, ${RdvConversation.createdAt}) < ${ctx.cutoff('RDV_CONVERSATION_DAYS')}`, appointmentAnonymisedSql(RdvConversation.appointmentId)),
+        sql`NOT ${heldSql(RdvConversation.id, RdvConversation.citizenUserId, RdvConversation.structureId, RdvConversation.appointmentId)}`,
+        sql`NOT ${personProtectedSql(RdvConversation.citizenUserId)}`
+    );
+}
+
+/** @param {PurgeContext} ctx */
+const guestDecoyWhere = (ctx) => and(eq(ProAppointment.beneficiaryName, GUEST_DECOY_NAME), isNotNull(ProAppointment.guestHoldExpiresAt),
+    lt(ProAppointment.guestHoldExpiresAt, ctx.cutoff('GUEST_HOLD_DAYS')), sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`);
+/** @param {PurgeContext} ctx */
+const guestHoldWhere = (ctx) => and(isNotNull(ProAppointment.guestHoldExpiresAt), lt(ProAppointment.guestHoldExpiresAt, ctx.cutoff('GUEST_HOLD_DAYS')),
+    or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, ANON)), ne(ProAppointment.beneficiaryName, GUEST_DECOY_NAME),
+    sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`);   // R40 / G7
+
+/** The tables this database has (one read per run; Production is at 0042). @param {any} database */
+async function existingTables(database) {
+    const res = await database.execute(sql`SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema()`);
+    return new Set((res?.rows || res || []).map((r) => String(r.table_name)));
+}
+
+/**
+ * One purge run. Dry run unless executionGate() allows execution; then only the approved steps execute. Returns the HTTP status and body.
+ * @param {{ database?: any, policy?: any, env?: Record<string, string | undefined>, now?: Date, dryRunRequested?: boolean, logger?: any, steps?: PurgeStep[] }} [opts]
+ */
+export async function runGdprPurge(opts = {}) {
+    const database = opts.database ?? defaultDb;
+    const policy = opts.policy ?? RETENTION_POLICY;
+    const env = opts.env ?? process.env;
+    const log = opts.logger ?? defaultLogger;
+    const steps = opts.steps ?? PURGE_STEPS;
+    const now = opts.now ?? new Date();
+    const gate = executionGate(policy, env, { dryRunRequested: opts.dryRunRequested === true });
+
     const failedSteps = [];
     const recordFailure = (/** @type {string} */ step, /** @type {any} */ err) => {
         failedSteps.push(step);
-        logger.error({ err, step }, '[gdpr-purge] retention step failed');
+        log.error({ err, step }, '[gdpr-purge] retention step failed');
         Sentry.captureException(err);
     };
 
-    try {
-      // R40 / G7: one purge at a time (two overlapping runs — a manual call during the scheduled one — would double-count and race on the blob deletions).
-      // The lock is held by this transaction for the whole run, the steps themselves run on `db` as before (each commits on its own), like referral-timeouts.
-      return await db.transaction(async (lockTx) => {
-        const [lock] = (await lockTx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext('ada:gdpr-purge')) AS ok`)).rows;
-        if (!lock?.ok) return res.status(409).json({ skipped: true, reason: 'ALREADY_RUNNING', message: 'Another purge is running. Nothing deleted.' });
-        logger.info('🧹 Starting GDPR Purge...');
-
-        // R40 / G10: the account-free booking columns exist only from migration 0043 (0044 for the reminder consent). Read once per run; on an older
-        // database the guest parts are left out (no guest data can exist there) and said in skipped_steps
+    const body = async (/** @type {boolean} */ execute) => {
+        const startedAt = new Date();
+        // R40 / G10: optional columns (guest booking, 0043 / 0044) and R44: the tables themselves — read once per run; missing => the step is skipped and said
+        const skippedSteps = []; const notApproved = []; const blocked = []; const countErrors = [];
+        // a dry run only reads: a failed read is said in count_errors (a warning), never as a failed retention step
+        const detectionFailed = (/** @type {any} */ err) => (execute ? recordFailure('schemaDetection', err)
+            : (countErrors.push('schemaDetection'), log.warn({ err }, '[gdpr-purge] schema detection failed (dry run)')));
         let guestSchema = { guestBooking: false, guestReminderConsent: false };
-        try { guestSchema = await appointmentGuestSchema(db); } catch (stepErr) { recordFailure('schemaDetection', stepErr); }
-        const skippedSteps = [];
+        try { guestSchema = await appointmentGuestSchema(database); } catch (stepErr) { detectionFailed(stepErr); }
+        /** @type {Set<string>} */ let tables = new Set();
+        try { tables = await existingTables(database); } catch (stepErr) { detectionFailed(stepErr); }   // fail-closed: no table known => every step skipped
+        const ctx = { now, policy, guestSchema, cutoff: (/** @type {string} */ key) => new Date(now.getTime() - policyDays(policy, key) * 86_400_000) };
 
-        // 1. Purge Old Entity Versions (90 days) — R38: steps 1 and 2 get the same per-step handling as the others (a failure here aborted every later step)
-        let deletedVersionsCount = 0;
-        try {
-            // R40 / G7: superseded versions only — the latest version of each record stays (rollback), and none of a record under a legal hold
-            deletedVersionsCount = await purgeSupersededVersions(db, daysAgo(RETENTION.ENTITY_VERSION_DAYS));
-        } catch (stepErr) { recordFailure('deletedVersionsCount', stepErr); }
+        /** @type {Record<string, number>} */ const counters = {};
+        const report = [];
+        for (const step of steps) {
+            counters[step.summaryKey] = 0;
+            for (const k of step.extraKeys || []) counters[k] = 0;
+            const line = { id: step.id, ecode: step.ecode, kind: step.kind, table: step.table, durationKey: step.durationKey,
+                days: step.durationKey ? policyDays(policy, step.durationKey) : null, anchor: step.durationKey ? policy.durations[step.durationKey].anchor : 'expiry',
+                ...(step.sharedController ? { sharedController: step.sharedController } : {}), decision: 'dry-run', count: null };
+            report.push(line);
+            if (step.tables.some((t) => !tables.has(t)) || (step.requiresGuest && !guestSchema.guestBooking)) {
+                skippedSteps.push(step.id); line.decision = 'skipped_schema'; continue;
+            }
+            const runIt = execute && step.kind !== 'report' && typeof step.run === 'function' && gate.approvedSteps.has(step.id);
+            if (runIt && (step.dependsOn || []).some((d) => failedSteps.includes(d))) { blocked.push(step.id); line.decision = 'blocked_by_failed_dependency'; continue; }
+            if (runIt) {
+                try {
+                    const out = await database.transaction(async (tx) => step.run(tx, ctx));
+                    const n = typeof out === 'number' ? out : Number(out?.count ?? 0);
+                    counters[step.summaryKey] = n; line.count = n; line.decision = 'executed';
+                    for (const [k, v] of Object.entries(out?.extra || {})) counters[k] = v;
+                    if (out?.afterCommit) { const extraFailure = await out.afterCommit().catch(() => 'filesPurge'); if (extraFailure) failedSteps.push(extraFailure); }
+                } catch (stepErr) { recordFailure(step.id, stepErr); line.decision = 'failed'; }
+                continue;
+            }
+            if (execute && step.kind !== 'report') notApproved.push(step.id);
+            if (step.kind === 'report') line.decision = 'report_only';
+            try { line.count = await step.count(database, ctx); } catch (countErr) { countErrors.push(step.id); log.warn({ err: countErr, step: step.id }, '[gdpr-purge] dry-run count failed'); }
+        }
 
-        // 2. Purge Old Update Logs (90 days — operational)
-        let deletedLogsCount = 0;
-        try {
-            deletedLogsCount = affected(await db.delete(UpdateLog).where(lt(UpdateLog.ran_at, daysAgo(RETENTION.CONVERSATION_LOG_DAYS))));
-        } catch (stepErr) { recordFailure('deletedLogsCount', stepErr); }
-
-        // 3. Purge sensitive AuditLog (365 days — legal obligation)
-        let deletedAuditCount = 0;
-        try {
-            // owner LAB audit: an emergency access (break-glass) still awaiting its review by another administrator is kept until reviewed — the « to review »
-            // list is computed from these rows, and an unreviewed use must never drop off it by age
-            const auditRes = await db.delete(AuditLog).where(and(lt(AuditLog.timestamp, daysAgo(RETENTION.AUDIT_LOG_DAYS)),
-                sql`NOT (${AuditLog.action} = 'BREAK_GLASS_OPENED' AND NOT EXISTS (SELECT 1 FROM "AuditLog" r WHERE r.action = 'BREAK_GLASS_REVIEWED' AND r.entity_id = ${AuditLog.entity_id}))`,
-                sql`NOT ${heldSql(AuditLog.entity_id, AuditLog.actor_id, AuditLog.target)}`));   // R40 / G7: the trail of a held record is evidence
-            deletedAuditCount = affected(auditRes);
-        } catch (stepErr) { recordFailure('deletedAuditCount', stepErr); }
-
-        // 4. Purge Old Conversation Logs (90 days — RGPD citizen data)
-        let deletedConversationsCount = 0;
-        try {
-            const convRes = await db.delete(ConversationLog).where(lt(ConversationLog.createdAt, daysAgo(RETENTION.CONVERSATION_LOG_DAYS)));
-            deletedConversationsCount = affected(convRes);
-        } catch (stepErr) { recordFailure('deletedConversationsCount', stepErr); }
-
-        // 5. Purge Old/Expired Shared Diagnostics (expired OR > 90 days)
-        let deletedDiagnosticsCount = 0;
-        try {
-            const diagRes = await db.delete(SharedDiagnostic).where(
-                and(
-                    or(
-                        and(isNotNull(SharedDiagnostic.expiresAt), lt(SharedDiagnostic.expiresAt, now)),
-                        lt(SharedDiagnostic.createdAt, daysAgo(RETENTION.ENTITY_VERSION_DAYS))
-                    ),
-                    // PKG-5 / A12: a dossier under an ACTIVE legal hold is never purged automatically
-                    sql`NOT EXISTS (SELECT 1 FROM "LegalHold" h WHERE h.status = 'ACTIVE' AND h."dataCategory" = 'SharedDiagnostic' AND h."recordId" = ${SharedDiagnostic.id})`,
-                    // R40 / G7: nor a dossier whose person is held, nor one followed in a held professional case
-                    sql`NOT ${heldSql(SharedDiagnostic.id, SharedDiagnostic.ownerCitizenId, SharedDiagnostic.privacySubjectId)}`,
-                    sql`NOT EXISTS (SELECT 1 FROM "LegalHold" h JOIN "ProCase" pc ON pc.id = h."recordId" WHERE h.status = 'ACTIVE' AND pc."sharedDiagnosticId" = ${SharedDiagnostic.id})`,
-                    // PKG-11 / C21: a dossier whose owner restricted processing (art. 18) is kept, not deleted automatically (storage only)
-                    sql`NOT ${restrictedDossierSql(SharedDiagnostic.id)}`
-                )
-            ).returning({ id: SharedDiagnostic.id, results: SharedDiagnostic.results });
-            deletedDiagnosticsCount = affected(diagRes);
-            // DTA S8: the encrypted documents of a purged dossier are deleted from object storage too (best effort; a blob that cannot be deleted is logged by key).
-            const purgedFiles = await purgeDossierFiles((Array.isArray(diagRes) ? diagRes : []).flatMap((row) => storageKeysOf(row?.results)));
-            if (purgedFiles.failed.length > 0) failedSteps.push('dossierFilesPurge');
-        } catch (stepErr) { recordFailure('deletedDiagnosticsCount', stepErr); }
-
-        // 6. Purge Expired Auth Tokens
-        let deletedTokensCount = 0;
-        try {
-            const tokenRes = await db.delete(AuthToken).where(lt(AuthToken.expiresAt, now));
-            deletedTokensCount = affected(tokenRes);
-        } catch (stepErr) { recordFailure('deletedTokensCount', stepErr); }
-
-        // 6b. launch-readiness item 66: expired e-mail change requests (an encrypted pending address, single-use link)
-        let deletedEmailChangeCount = 0;
-        try {
-            deletedEmailChangeCount = affected(await db.delete(EmailChangeRequest).where(lt(EmailChangeRequest.expiresAt, now)));
-        } catch (stepErr) { recordFailure('deletedEmailChangeCount', stepErr); }
-
-        // 7. Purge Old AI Metrics (90 days — non-personal, storage hygiene)
-        let deletedAiMetricsCount = 0;
-        try {
-            const aiRes = await db.delete(AiMetric).where(lt(AiMetric.createdAt, daysAgo(RETENTION.AI_METRIC_DAYS)));
-            deletedAiMetricsCount = affected(aiRes);
-        } catch (stepErr) { recordFailure('deletedAiMetricsCount', stepErr); }
-
-        // 8. Purge Old Consent Logs (1095 days / 3 years — legal proof). PKG-11 / C22: only SUPERSEDED rows — the latest decision of a subject for a purpose
-        //    proves what applies now and is never deleted, however old (before: every row older than 3 years, current consents included).
-        let deletedConsentLogsCount = 0;
-        try {
-            deletedConsentLogsCount = await purgeSupersededConsents(db, daysAgo(RETENTION.CONSENT_LOG_DAYS));
-        } catch (stepErr) { recordFailure('deletedConsentLogsCount', stepErr); }
-
-        // 9. Purge Expired User Consents
-        let deletedUserConsentsCount = 0;
-        try {
-            const ucRes = await db.delete(UserConsent).where(and(lt(UserConsent.expiresAt, now), sql`NOT ${heldSql(UserConsent.citizenId, UserConsent.structureId)}`));   // R40 / G7
-            deletedUserConsentsCount = affected(ucRes);
-        } catch (stepErr) { recordFailure('deletedUserConsentsCount', stepErr); }
-
-        // 10. Purge Expired Invitations (30-day grace after expiry)
-        let deletedInvitationsCount = 0;
-        try {
-            const invRes = await db.delete(Invitation).where(and(lt(Invitation.expires_at, daysAgo(RETENTION.INVITATION_GRACE_DAYS)), sql`NOT ${heldSql(Invitation.structureId)}`));   // R40 / G7
-            deletedInvitationsCount = affected(invRes);
-        } catch (stepErr) { recordFailure('deletedInvitationsCount', stepErr); }
-
-        // 11. Purge Expired ProOutlookTokens (30-day grace after expiry)
-        let deletedOutlookTokensCount = 0;
-        try {
-            const otRes = await db.delete(ProOutlookToken).where(lt(ProOutlookToken.expiresAt, daysAgo(RETENTION.OUTLOOK_TOKEN_GRACE_DAYS)));
-            deletedOutlookTokensCount = affected(otRes);
-        } catch (stepErr) { recordFailure('deletedOutlookTokensCount', stepErr); }
-
-        // 12. Purge Old Pro Audit Logs (365 days — legal obligation)
-        let deletedProAuditCount = 0;
-        try {
-            const palRes = await db.delete(ProAuditLog).where(and(lt(ProAuditLog.createdAt, daysAgo(RETENTION.PRO_AUDIT_LOG_DAYS)),
-                sql`NOT ${heldSql(ProAuditLog.entityId, ProAuditLog.proUserId, ProAuditLog.structureId)}`));   // R40 / G7
-            deletedProAuditCount = affected(palRes);
-        } catch (stepErr) { recordFailure('deletedProAuditCount', stepErr); }
-
-        // 13. Anonymise Old ProAppointments (730 days / 2 years)
-        let anonymisedAppointmentsCount = 0;
-        try {
-            const anonRes = await db.update(ProAppointment)
-                .set({
-                    beneficiaryName: '[anonymisé]',
-                    beneficiaryPhone: null,
-                    citizenEmailSnapshot: null,
-                    notes: null,
-                    // R38: an account-free booking's sealed e-mail / phone, its e-mail blind index and its code / manage-token hashes go too
-                    // R40 / G10: only where the columns exist (migration 0043; 0044 for the reminder consent)
-                    ...(guestSchema.guestBooking ? {
-                        guestEmail: null,
-                        guestEmailHash: null,
-                        guestPhone: null,
-                        guestCodeHash: null,
-                        guestManageTokenHash: null,
-                    } : {}),
-                    ...(guestSchema.guestReminderConsent ? {
-                        guestReminderConsentAt: null,   // R39: the optional J-1 reminder consent goes with the rest of the booking's guest data
-                    } : {}),
-                })
-                .where(
-                    and(
-                        lt(ProAppointment.createdAt, daysAgo(RETENTION.APPOINTMENT_ANON_DAYS)),
-                        // R38: « <> » is never true for NULL — an appointment without a beneficiary name kept its phone, e-mail and notes
-                        or(isNull(ProAppointment.beneficiaryName), ne(ProAppointment.beneficiaryName, '[anonymisé]')),
-                        // R40 / G7: an appointment of a held person or organization (or itself held) keeps its data
-                        sql`NOT ${heldSql(ProAppointment.id, ProAppointment.citizenUserId, ProAppointment.structureId)}`
-                    )
-                );
-            anonymisedAppointmentsCount = affected(anonRes);
-        } catch (stepErr) { recordFailure('anonymisedAppointmentsCount', stepErr); }
-
-        // 13b. R38: an account-free hold never confirmed is not a booking — one day after its 20-minute expiry its identity is cleared (the row stays,
-        // cancelled, so the structure's history and the notice ledger keep their reference)
-        let clearedGuestHoldsCount = 0;
-        let deletedGuestDecoysCount = 0;
-        if (!guestSchema.guestBooking) skippedSteps.push('clearedGuestHoldsCount');   // R40 / G10: before migration 0043 no account-free hold can exist
-        else try {
-            // R41-B: a decoy hold (the « already booked » answer: no personal data, never confirmable) is deleted at the same moment a real hold is cleared —
-            // after that, confirm answers both exactly like an id that never existed; nothing of it is kept (no history, no statistic)
-            const decoyRes = await db.delete(ProAppointment)
-                .where(and(eq(ProAppointment.beneficiaryName, GUEST_DECOY_NAME), isNotNull(ProAppointment.guestHoldExpiresAt),
-                    lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)), sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`));
-            deletedGuestDecoysCount = affected(decoyRes);
-            const holdRes = await db.update(ProAppointment)
-                .set({ status: 'cancelled', cancelledAt: now, cancelledBy: 'GUEST_HOLD_EXPIRED', beneficiaryName: '[anonymisé]', beneficiaryPhone: null, notes: null,
-                    guestEmail: null, guestEmailHash: null, guestPhone: null, guestCodeHash: null, guestManageTokenHash: null,
-                    ...(guestSchema.guestReminderConsent ? { guestReminderConsentAt: null } : {}) })
-                .where(and(isNotNull(ProAppointment.guestHoldExpiresAt), lt(ProAppointment.guestHoldExpiresAt, daysAgo(RETENTION.GUEST_HOLD_DAYS)),
-                    or(isNotNull(ProAppointment.guestEmail), ne(ProAppointment.beneficiaryName, '[anonymisé]')), ne(ProAppointment.beneficiaryName, GUEST_DECOY_NAME),
-                    sql`NOT ${heldSql(ProAppointment.id, ProAppointment.structureId)}`));   // R40 / G7
-            clearedGuestHoldsCount = affected(holdRes);
-        } catch (stepErr) { recordFailure('clearedGuestHoldsCount', stepErr); }
-
-        const summary = {
-            versions_deleted: deletedVersionsCount,
-            update_logs_deleted: deletedLogsCount,
-            audit_logs_deleted: deletedAuditCount,
-            conversation_logs_deleted: deletedConversationsCount,
-            diagnostics_deleted: deletedDiagnosticsCount,
-            tokens_deleted: deletedTokensCount,
-            email_change_requests_deleted: deletedEmailChangeCount,
-            ai_metrics_deleted: deletedAiMetricsCount,
-            consent_logs_deleted: deletedConsentLogsCount,
-            user_consents_deleted: deletedUserConsentsCount,
-            invitations_deleted: deletedInvitationsCount,
-            outlook_tokens_deleted: deletedOutlookTokensCount,
-            pro_audit_logs_deleted: deletedProAuditCount,
-            appointments_anonymised: anonymisedAppointmentsCount,
-            guest_holds_cleared: clearedGuestHoldsCount,
-            guest_decoy_holds_deleted: deletedGuestDecoysCount,
-            status: failedSteps.length === 0 ? 'success' : 'partial_failure',
+        const out = {
+            mode: execute ? 'execute' : 'dry-run',
+            policy: policySummary(policy),
+            ...(execute ? counters : {}),
+            ...(execute ? { status: failedSteps.length === 0 ? 'success' : 'partial_failure' } : {}),
             ...(failedSteps.length ? { failed_steps: failedSteps } : {}),
             ...(skippedSteps.length ? { skipped_steps: skippedSteps } : {}),
+            ...(notApproved.length ? { not_approved_steps: notApproved } : {}),
+            ...(blocked.length ? { blocked_steps: blocked } : {}),
+            ...(countErrors.length ? { count_errors: countErrors } : {}),
+            steps: report,
         };
-        // launch-readiness item 62: what no job deletes yet, counted (never deleted here: a duration becomes a deletion only by an owner / DPO decision)
-        const retention = await import('../../_services/retention.js').then((m) => m.retentionReport()).catch(() => null);
-        summary.retention_report = retention ? retention.items.map(({ key, durationDays, total, overdue }) => ({ key, durationDays, total, overdue })) : null;
+        if (execute) {
+            // R44: evidence of the run (counts and step ids only — never a value, an address or an identifier of a person)
+            try {
+                await database.insert(AuditLog).values({ action: 'GDPR_PURGE_RUN', actor: 'cron/gdpr-purge', entity: 'RetentionPolicy', entity_id: policy.version,
+                    details: { policyVersion: policy.version, startedAt: startedAt.toISOString(), finishedAt: new Date().toISOString(), status: out.status,
+                        executed: Object.fromEntries(report.filter((l) => l.decision === 'executed').map((l) => [l.id, l.count])),
+                        failed: failedSteps, skipped: skippedSteps, notApproved, blocked } });
+                out.audit_evidence = 'written';
+            } catch (auditErr) { recordFailure('auditEvidence', auditErr); out.audit_evidence = 'failed'; out.status = 'partial_failure'; out.failed_steps = failedSteps; }
+        }
+        // launch-readiness item 62: what no job deletes yet, counted (never deleted here)
+        const retention = await import('../../_services/retention.js').then((m) => m.retentionReport(database)).catch(() => null);
+        out.retention_report = retention ? retention.items.map(({ key, durationDays, total, overdue }) => ({ key, durationDays, total, overdue })) : null;
+        return out;
+    };
 
-        logger.info('✅ GDPR Purge complete:', summary);
-        return res.status(failedSteps.length === 0 ? 200 : 500).json(summary);
-      });
-    } catch (e) {
-        logger.error('GDPR Purge Failed:', e);
-        Sentry.captureException(e);
-        return res.status(500).json({ error: 'GDPR_PURGE_FAILED' });   // R38: the raw error stays in the logs and Sentry, not in the response
+    if (!gate.execute) {
+        // R33 + R44: nothing is changed or written; the counts say what an approved run would do
+        const out = await body(false);
+        const message = gate.reason === 'GDPR_PURGE_DISABLED'
+            ? 'Purge disabled until GDPR_PURGE_ENABLED=true (retention periods must be approved first). Nothing deleted.'
+            : 'Dry run: the retention policy is not approved for execution (or this run asked for a dry run). Nothing deleted.';
+        return { status: 200, body: { skipped: true, reason: gate.reason, message, ...out } };
     }
+
+    // R40 / G7: one purge at a time (two overlapping runs would double-count and race on the blob deletions). The lock is held by this transaction for the whole
+    // run; each step runs in its own transaction on `database` (committed or rolled back on its own: per-step recovery), like referral-timeouts.
+    return database.transaction(async (lockTx) => {
+        const [lock] = (await lockTx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext('ada:gdpr-purge')) AS ok`)).rows;
+        if (!lock?.ok) return { status: 409, body: { skipped: true, reason: 'ALREADY_RUNNING', message: 'Another purge is running. Nothing deleted.' } };
+        log.info(`🧹 Starting GDPR Purge (policy ${policy.version})...`);
+        const out = await body(true);
+        log.info('✅ GDPR Purge complete:', { status: out.status, failed_steps: out.failed_steps, skipped_steps: out.skipped_steps });
+        return { status: failedSteps.length === 0 ? 200 : 500, body: out };
+    });
 }
+
+/**
+ * The HTTP handler for a given policy. Production uses the default export (the frozen PROPOSED policy of api/_services/retention-policy.js); tests build a
+ * handler with a test copy marked approved — no production module calls this factory with another policy (unit-tested source pin).
+ * @param {{ policy?: any }} [deps]
+ */
+export function createGdprPurgeHandler(deps = {}) {
+    /**
+     * @param {import('../../_utils/http-types').ApiRequest} req
+     * @param {import('../../_utils/http-types').ApiResponse} res
+     */
+    return async function gdprPurgeHandler(req, res) {
+        if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+        const secret = req.query?.secret ?? req.query?.key;
+        const authReq = { headers: req.headers, query: { secret }, url: req.url };
+        const auth = getCronAuth(authReq);
+        if (!auth.ok) {
+            if (auth.reason === 'missing_secret') {
+                return res.status(500).json({ error: 'CRON_SECRET is not configured' });
+            }
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        const dryRunRequested = ['1', 'true', 'yes'].includes(String(req.query?.dryRun ?? req.query?.dry_run ?? '').toLowerCase());
+        try {
+            const { status, body } = await runGdprPurge({ policy: deps.policy ?? RETENTION_POLICY, dryRunRequested });
+            return res.status(status).json(body);
+        } catch (e) {
+            defaultLogger.error('GDPR Purge Failed:', e);
+            Sentry.captureException(e);
+            return res.status(500).json({ error: 'GDPR_PURGE_FAILED' });   // R38: the raw error stays in the logs and Sentry, not in the response
+        }
+    };
+}
+
+export default createGdprPurgeHandler();

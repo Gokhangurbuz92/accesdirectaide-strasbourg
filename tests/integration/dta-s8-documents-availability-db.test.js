@@ -22,6 +22,7 @@ vi.mock('../../api/lib/storage.js', () => ({
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -64,7 +65,7 @@ describe.skipIf(!hasDatabase)('DTA S8 secure documents, erasure and opening hour
       dossier: (await import('../../api/_handlers/pro/dossier.js')).default, upload: (await import('../../api/_handlers/pro/dossier/upload-secure.js')).default,
       download: (await import('../../api/_handlers/download.js')).default, grants: (await import('../../api/_handlers/public/dossier-grants.js')).default,
       revoke: (await import('../../api/_handlers/public/dossier-revoke.js')).default, availability: (await import('../../api/_handlers/pro/availability.js')).default,
-      purge: (await import('../../api/_handlers/cron/gdpr-purge.js')).default,
+      purge: await import('../../api/_handlers/cron/gdpr-purge.js').then((m) => m.createGdprPurgeHandler({ policy: approvedTestPolicy() })),   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
     };
     for (const [sid, n] of [[SA, 'A'], [SB, 'B'], [SC, 'C'], [SV, 'V']]) {
       await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt") VALUES (${sid}, ${'CCAS S8 ' + n}, ${'s8d-slug-' + sid}, 'association', '1 rue test', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);   // PKG-4 / E01: receiving organizations are verified
@@ -195,8 +196,8 @@ describe.skipIf(!hasDatabase)('DTA S8 secure documents, erasure and opening hour
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "expiresAt" = now() - interval '1 day' WHERE id = ${dead.id}`);
     const secret = process.env.CRON_SECRET;
     expect(secret, 'CRON_SECRET must be provided by the integration environment (same as gdpr-purge-db.test.js)').toBeTruthy();
-    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
-    const r = await invoke(H.purge, { method: 'GET', url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': secret } }).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS));   // R33 + R44: the purge runs only when enabled and approved; this test checks what it does when it runs
+    const r = await invoke(H.purge, { method: 'GET', url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': secret } }).finally(restore);
     expect(r.statusCode, JSON.stringify(r.body)).toBe(200);
     expect((await db.execute(sql`SELECT count(*)::int AS n FROM "SharedDiagnostic" WHERE id = ${dead.id}`)).rows[0].n).toBe(0);
     for (const k of deadKeys) expect(STORE.blobs.has(k), 'expired blob ' + k).toBe(false);

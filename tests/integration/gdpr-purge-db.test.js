@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 vi.mock('@sentry/node', () => ({ captureException: vi.fn(), default: { captureException: vi.fn() } }));
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -15,17 +16,21 @@ const makeRes = () => ({ statusCode: 200, body: null, headers: {}, status(c) { t
 const ID = { str: `gp-str-${TS}`, svc: `gp-svc-${TS}`, user: `gp-user-${TS}`, aptOld: `gp-apt-old-${TS}`, aptNew: `gp-apt-new-${TS}` };
 
 describe.skipIf(!hasDatabase)('gdpr-purge (real DB)', () => {
-  let db, schema, handler;
-  const run = async (secret = process.env.CRON_SECRET) => { const res = makeRes(); await handler({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: secret ? { 'x-cron-secret': secret } : {} }, res); return res; };
+  let db, schema, handler, approvedHandler, allSteps;
+  const run = async (secret = process.env.CRON_SECRET, h = handler) => { const res = makeRes(); await h({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: secret ? { 'x-cron-secret': secret } : {} }, res); return res; };
 
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js')); schema = await import('../../src/db/schema.js');
     ({ default: handler } = await import('../../api/_handlers/cron/gdpr-purge.js'));
+    // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
+    approvedHandler = (await import('../../api/_handlers/cron/gdpr-purge.js')).createGdprPurgeHandler({ policy: approvedTestPolicy() });
+    allSteps = executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS);
     await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, "updatedAt", "createdAt") VALUES (${ID.str}, 'GP', ${'gp-slug-' + TS}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], NOW(), NOW())`);
     await db.insert(schema.ProRdvService).values({ id: ID.svc, structureId: ID.str, name: 'S', durationMinutes: 30, bufferBeforeMinutes: 0, bufferAfterMinutes: 0, isActive: true });
     await db.insert(schema.CitizenUser).values({ id: ID.user, email: `gp-${TS}@example.test`, passwordHash: 'x' });
-    const apt = (id, created) => ({ id, structureId: ID.str, serviceId: ID.svc, startAt: ago(5), endAt: ago(5), status: 'confirmed', beneficiaryName: 'Jean Dupont', beneficiaryPhone: '0600000000', notes: 'note', citizenEmailSnapshot: `gp-${TS}@example.test`, createdAt: created });
-    await db.insert(schema.ProAppointment).values([apt(ID.aptOld, ago(800)), apt(ID.aptNew, ago(10))]);
+    // R44 / E1: the 2 years count from the appointment DATE (startAt), no longer from its creation — the old appointment took place 800 days ago
+    const apt = (id, created, start = 5) => ({ id, structureId: ID.str, serviceId: ID.svc, startAt: ago(start), endAt: ago(start), status: 'confirmed', beneficiaryName: 'Jean Dupont', beneficiaryPhone: '0600000000', notes: 'note', citizenUserId: ID.user, citizenEmailSnapshot: `gp-${TS}@example.test`, createdAt: created });   // R44: a citizen booking (the account and its e-mail snapshot)
+    await db.insert(schema.ProAppointment).values([apt(ID.aptOld, ago(800), 800), apt(ID.aptNew, ago(10))]);
     await db.insert(schema.AuditLog).values([{ action: `GP_OLD_${TS}`, timestamp: ago(400) }, { action: `GP_NEW_${TS}`, timestamp: ago(2) }]);
     await db.insert(schema.SharedDiagnostic).values([{ id: `gp-sd-exp-${TS}`, expiresAt: ago(1), situation: {}, results: {}, viewCount: 0 }, { id: `gp-sd-ok-${TS}`, expiresAt: new Date(Date.now() + DAY), situation: {}, results: {}, viewCount: 0 }]);
     await db.insert(schema.AuthToken).values([{ userId: ID.user, type: 'EMAIL_VERIFY', tokenHash: `gp-exp-${TS}`, expiresAt: ago(1) }, { userId: ID.user, type: 'EMAIL_VERIFY', tokenHash: `gp-ok-${TS}`, expiresAt: new Date(Date.now() + DAY) }]);
@@ -57,8 +62,8 @@ describe.skipIf(!hasDatabase)('gdpr-purge (real DB)', () => {
   });
 
   it('applies retention: expired/old rows removed, current rows kept, old appointments anonymised, and the summary reports real counts', async () => {
-    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
-    const res = await run().finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(allSteps);   // R33 + R44: the purge runs only when enabled and approved (fail-closed); this test checks what it does when it runs
+    const res = await run(process.env.CRON_SECRET, approvedHandler).finally(restore);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('success');
     const q = async (t, where) => (await db.execute(sql.raw(`SELECT count(*)::int AS n FROM "${t}" WHERE ${where}`))).rows[0].n;
@@ -70,6 +75,7 @@ describe.skipIf(!hasDatabase)('gdpr-purge (real DB)', () => {
     expect(await q('AuthToken', `"tokenHash" = 'gp-ok-${TS}'`)).toBe(1);
     const old = (await db.execute(sql`SELECT "beneficiaryName","beneficiaryPhone","citizenEmailSnapshot",notes FROM "ProAppointment" WHERE id = ${ID.aptOld}`)).rows[0];
     expect(old).toMatchObject({ beneficiaryName: '[anonymisé]', beneficiaryPhone: null, citizenEmailSnapshot: null, notes: null });
+    expect((await db.execute(sql`SELECT "citizenUserId" FROM "ProAppointment" WHERE id = ${ID.aptOld}`)).rows[0].citizenUserId).toBeNull();   // R44 / E2: real anonymisation
     const fresh = (await db.execute(sql`SELECT "beneficiaryName","beneficiaryPhone" FROM "ProAppointment" WHERE id = ${ID.aptNew}`)).rows[0];
     expect(fresh).toMatchObject({ beneficiaryName: 'Jean Dupont', beneficiaryPhone: '0600000000' });
     // the compliance receipt must contain NUMBERS (previously `undefined` with the node-postgres driver)

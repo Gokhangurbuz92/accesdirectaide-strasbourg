@@ -17,6 +17,9 @@
 3. Données corrompues : restauration à un instant donné (PITR) dans la console du fournisseur, vers une **nouvelle** branche ; vérifier ; basculer
    `DATABASE_URL`.
 4. Copie indépendante : restaurer la dernière sauvegarde chiffrée (§ 4) dans une base vide, vérifier, puis basculer.
+5. R44 / E15 — **après toute restauration (PITR ou copie)**, avant la bascule : rejouer les effacements terminés depuis l'instant restauré (§ 4,
+   « Rejeu des effacements »), puis relancer la purge de conservation (ses étapes sont idempotentes ; elle reste un essai à blanc tant que la politique
+   n'est pas approuvée).
 
 ## 3. KV (Upstash) indisponible
 
@@ -31,7 +34,19 @@ Vérifier la page d'état d'Upstash ; si la clé est en cause, la remplacer (Ver
 - **Vérifier** : `node scripts/db-backup.mjs --verify <fichier>` (empreinte, étiquette GCM, archive lisible).
 - **Restaurer** : `TARGET_DATABASE_URL=… node scripts/db-restore.mjs --file <fichier> --confirm-target <hôte>/<base>` — dans une base **vide**
   (sinon `--into-nonempty`, qui remplace les objets de la sauvegarde).
-- **Rotation des fichiers** : `--list <dossier> --keep-days 35` liste ; rien n'est supprimé sans `--prune`.
+- **Rotation des fichiers** (R44 / E15) : `--list <dossier>` liste et calcule le plan de rotation : toutes les sauvegardes des 30 derniers jours, plus la
+  plus récente de chacune des 4 semaines précédentes, et toujours la plus récente. Ces valeurs viennent de la politique de conservation versionnée
+  (`api/_services/retention-policy.js`), aujourd'hui **PROPOSED — NOT APPROVED** : tant qu'elle n'est pas approuvée, `--prune` exige un `--keep-days`
+  explicite (choix de l'opérateur) ; rien n'est supprimé sans `--prune`. Options : `--keep-days N`, `--keep-weekly W`.
+- **Registre des effacements** (R44 / E15) : à chaque sauvegarde, exporter aussi
+  `BACKUP_ENCRYPTION_KEY=… DATABASE_URL=… node scripts/db-erasure-replay.mjs --export --out <dossier>` → `ada_erasures_<date>.json.enc` (chiffré, 0600 :
+  identifiant de la demande, identifiant de la personne, date, domaines — ni nom, ni e-mail, ni contenu). Il se garde et tourne avec les sauvegardes.
+- **Rejeu des effacements après une restauration** (R44 / E15) : avec le registre le plus récent (exporté de la base vivante si elle est lisible,
+  sinon le dernier fichier) et la date de la sauvegarde restaurée :
+  `BACKUP_ENCRYPTION_KEY=… TARGET_DATABASE_URL=… node scripts/db-erasure-replay.mjs --ledger <fichier> --since <date ISO de la sauvegarde> --confirm-target <hôte>/<base>`
+  → essai à blanc : combien de personnes effacées sont revenues ; puis la même commande avec `npx tsx` et `--execute` : effacement par le moteur DSR
+  de l'application (mêmes domaines, refus en cas de gel légal, journal `DSR_DELETE_COMPLETED`) et la demande d'effacement réinscrite (`REPLAYED_AFTER_RESTORE`).
+  Une personne sous gel légal dans la copie restaurée est comptée, pas effacée : décision humaine.
 - L'ancienne tâche `cron/backup-db` (copie JSON en clair) est retirée.
 - Exercice de restauration : au moins une fois avant le lancement, puis après chaque changement de schéma important.
 

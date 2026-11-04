@@ -4,12 +4,16 @@
 
 ## Données collectées
 
+> R44 : « Purge auto ✅ » = une étape existe dans `cron/gdpr-purge` ; elle ne s'exécute pas tant que la politique de conservation
+> versionnée (`api/_services/retention-policy.js`) est « PROPOSED — NOT APPROVED » : le job ne fait qu'un essai à blanc (aucune suppression).
+> Toutes les durées sont des propositions du dossier R43 § 3.1, à valider par le responsable de traitement.
+
 | Donnée | Base légale | Durée conservation | Purge auto |
 |--------|-----------|-------------------|:---:|
 | Email citoyen | Consentement | Jusqu'à suppression | ❌ |
 | Conversations chat | Intérêt légitime | 90 jours | ✅ |
-| Logs d'audit (AuditLog) | Obligation légale (Art 6.1.c) | 365 jours | ✅ |
-| Logs d'audit pro (ProAuditLog) | Obligation légale (Art 6.1.c) | 365 jours | ✅ |
+| Logs d'audit (AuditLog) | À décider (RT) — aucune obligation légale identifiée ; repère : recommandation CNIL 2021-122 (6 mois à 1 an) | 365 jours (proposition) | ✅ |
+| Logs d'audit pro (ProAuditLog) | À décider (RT) — aucune obligation légale identifiée ; repère : recommandation CNIL 2021-122 | 365 jours (proposition) | ✅ |
 | Mesure d'audience Vercel (Web Analytics, Speed Insights — aucun cookie selon l'éditeur, NON VÉRIFIÉ) | Intérêt légitime si l'exemption CNIL est vérifiée | Durée chez Vercel à confirmer | ❌ |
 | Consent log | Preuve légale | 3 ans (1095 jours) | ✅ |
 | User consents | Consentement | Jusqu'à expiration | ✅ |

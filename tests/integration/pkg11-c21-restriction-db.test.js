@@ -8,6 +8,7 @@
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 vi.mock('../../api/_utils/pro-rdv-rate-limit.js', () => ({ enforceProRdvRateLimit: vi.fn().mockResolvedValue({ allowed: true }) }));
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429), rateLimitMiddleware: vi.fn() }));
@@ -44,7 +45,7 @@ describe.skipIf(!hasDatabase)('PKG-11 / C21 restriction of processing (real DB)'
     H = { create: (await import('../../api/_handlers/share/create.js')).default, grants: (await import('../../api/_handlers/public/dossier-grants.js')).default,
       redeem: (await import('../../api/_handlers/pro/dossier/redeem.js')).default, dossier: (await import('../../api/_handlers/pro/dossier.js')).default,
       restriction: (await import('../../api/_handlers/citizen/restriction.js')).default, admin: (await import('../../api/_handlers/admin/processing-restrictions.js')).default,
-      purge: (await import('../../api/_handlers/cron/gdpr-purge.js')).default };
+      purge: await import('../../api/_handlers/cron/gdpr-purge.js').then((m) => m.createGdprPurgeHandler({ policy: approvedTestPolicy() })) };   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
     for (const id of Object.values(S)) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
       VALUES (${id}, ${'Org ' + id}, ${id}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);
     for (const p of Object.values(P)) await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, role, status, "structureId", "notificationEmailEnabled", "updatedAt") VALUES (${p.id}, ${p.id + '@example.test'}, 'x', 'STRUCTURE_ADMIN', 'active', ${p.sid}, false, NOW())`);
@@ -95,8 +96,8 @@ describe.skipIf(!hasDatabase)('PKG-11 / C21 restriction of processing (real DB)'
     const kept = await newShare(); const unowned = await newShare();
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "ownerCitizenId" = NULL WHERE id = ${unowned.id}`);
     await db.execute(sql`UPDATE "SharedDiagnostic" SET "expiresAt" = NOW() - interval '1 day' WHERE id IN (${kept.id}, ${unowned.id})`);
-    process.env.GDPR_PURGE_ENABLED = 'true';   // R33: the purge runs only when explicitly enabled (fail-closed); this test checks what it does when it runs
-    const p = await invoke(H.purge, { url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': process.env.CRON_SECRET, authorization: `Bearer ${process.env.CRON_SECRET}` } }).finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS));   // R33 + R44: the purge runs only when enabled and approved; this test checks what it does when it runs
+    const p = await invoke(H.purge, { url: '/api/cron/gdpr-purge', headers: { 'x-cron-secret': process.env.CRON_SECRET, authorization: `Bearer ${process.env.CRON_SECRET}` } }).finally(restore);
     expect(p.statusCode).toBe(200);
     const left = (await db.execute(sql`SELECT id FROM "SharedDiagnostic" WHERE id IN (${kept.id}, ${unowned.id})`)).rows.map((r) => r.id);
     expect(left).toEqual([kept.id]);   // the restricted person's expired dossier is kept; another expired dossier is purged
