@@ -1195,6 +1195,7 @@
     "LANGS",
     "ROUTES",
     "PW_CHANNEL",
+    "R33_ADMIN_SESSION",
     "EVAL_PACE_MS",
     "PROD_URL",
     "REHEARSAL_ADMIN_URL",
