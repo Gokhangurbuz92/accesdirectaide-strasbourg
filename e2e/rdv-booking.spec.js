@@ -96,7 +96,7 @@ test.describe('P10-D public booking flow', () => {
           endsAt: '2026-03-02T09:30:00.000Z',
           structure: { id: 'struct-1', slug: 'structure-test', name: 'Structure Test' },
           service: { id: 'svc-1', name: 'Accompagnement social', durationMinutes: 30 },
-          manageUrl: 'http://localhost:3000/rdv/structure-test/creneaux?appointment=apt-1',
+          manageUrl: 'http://localhost:3000/rdv/structure-test/booking?appointment=apt-1',
         }),
       });
     });
@@ -112,22 +112,23 @@ test.describe('P10-D public booking flow', () => {
           endsAt: '2026-03-02T09:30:00.000Z',
           structure: { id: 'struct-1', slug: 'structure-test', name: 'Structure Test' },
           service: { id: 'svc-1', name: 'Accompagnement social', durationMinutes: 30 },
-          manageUrl: 'http://localhost:3000/rdv/structure-test/creneaux?appointment=apt-1',
+          manageUrl: 'http://localhost:3000/rdv/structure-test/booking?appointment=apt-1',
         }),
       });
     });
 
+    // R44: the legacy deep link /rdv/<slug>/services now lands on the account journey /rdv/<slug>/booking (same origin, validated slug)
     await page.goto('/rdv/structure-test/services');
+    await page.waitForURL((u) => u.pathname === '/rdv/structure-test/booking');
 
-    await expect(page.getByRole('heading', { name: 'Choix du service' })).toBeVisible();
-    await page.getByTestId('choose-service-svc-1').click();
-    await page.getByRole('link', { name: /Voir les creneaux/i }).click();
+    await expect(page.getByRole('heading', { name: 'Prendre rendez-vous' })).toBeVisible();
+    await page.getByTestId('booking-service-svc-1').click();
 
-    await expect(page.getByRole('heading', { name: 'Choix du creneau' })).toBeVisible();
-    await page.locator('[data-testid^="rdv-slot-"]').first().click();
+    await page.getByTestId('booking-slot').first().click();
+    await page.getByTestId('booking-confirm').click();
 
-    await expect(page.getByTestId('rdv-booking-confirmation')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'RDV confirme' })).toBeVisible();
+    await expect(page.getByTestId('booking-success')).toBeVisible();
+    await expect(page.getByTestId('booking-state')).toHaveText('C’est confirmé !');
   });
 
   test('shows conflict message when selected slot is no longer available', async ({ page }) => {
@@ -141,13 +142,13 @@ test.describe('P10-D public booking flow', () => {
       });
     });
 
-    await page.goto('/rdv/structure-test/services');
+    await page.goto('/rdv/structure-test/creneaux?serviceId=svc-1');
+    await page.waitForURL((u) => u.pathname === '/rdv/structure-test/booking' && u.searchParams.get('serviceId') === 'svc-1');
 
-    await page.getByTestId('choose-service-svc-1').click();
-    await page.getByRole('link', { name: /Voir les creneaux/i }).click();
-
-    await page.locator('[data-testid^="rdv-slot-"]').first().click();
-    await expect(page.getByText(/n'est plus disponible/i)).toBeVisible();
+    await page.getByTestId('booking-slot').first().click();
+    await page.getByTestId('booking-confirm').click();
+    await expect(page.getByTestId('booking-slot-notice')).toContainText('Ce créneau vient d’être réservé');
+    await expect(page.getByTestId('booking-success')).toHaveCount(0);
   });
 
   test('shows verification message when user email is not verified', async ({ page }) => {
@@ -161,12 +162,12 @@ test.describe('P10-D public booking flow', () => {
       });
     });
 
-    await page.goto('/rdv/structure-test/services');
+    await page.goto('/rdv/structure-test/booking');
 
-    await page.getByTestId('choose-service-svc-1').click();
-    await page.getByRole('link', { name: /Voir les creneaux/i }).click();
-
-    await page.locator('[data-testid^="rdv-slot-"]').first().click();
+    await page.getByTestId('booking-service-svc-1').click();
+    await page.getByTestId('booking-slot').first().click();
+    await page.getByTestId('booking-confirm').click();
     await expect(page.getByText(/Veuillez verifier votre email/i)).toBeVisible();
+    await expect(page.getByTestId('booking-success')).toHaveCount(0);
   });
 });
