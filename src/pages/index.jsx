@@ -100,7 +100,8 @@ const ServiceError = lazy(() => import("./ServiceError.jsx"));
 const AppointmentCancel = lazy(() => import("./AppointmentCancel.jsx"));
 const AppointmentReschedule = lazy(() => import("./AppointmentReschedule.jsx"));
 const LegacyAppointmentLink = lazy(() => import("./LegacyAppointmentLink.jsx"));
-const PublicRdvEntry = lazy(() => import("./PublicRdvEntry.jsx"));
+// R44: the legacy screens /rdv/:slug, /services, /creneaux are retired from the routes; they redirect to the account journey /rdv/:slug/booking
+const LegacyCreneauxRedirect = lazy(() => import("./LegacyCreneauxRedirect.jsx"));
 const PublicBooking = lazy(() => import("./PublicBookingAccessGate.jsx"));
 const RegisterPro = lazy(() => import("./pro/RegisterPro.jsx"));
 const SharedDossier = lazy(() => import("./pro/SharedDossier.jsx"));
@@ -226,7 +227,7 @@ const PAGES = {
     DemarcheDetail, DispositifDetail, Login, Demarches, Home, Orientation,
     MentionsLegales, SourcesMethode, StructureDetail,
     AdminInbox, AdminRuns, AdminObservability, AdminReviewQueue, AppointmentCancel, AppointmentReschedule, AdminStructures, AdminStructureEdit,
-    AdminDemarches, AdminDemarcheEdit, AdminAppointments, AdminReview, Status, PublicRdvEntry, AuthRdvAccess, AuthVerifyEmail, AuthForgotPassword, AuthResetPassword,
+    AdminDemarches, AdminDemarcheEdit, AdminAppointments, AdminReview, Status, AuthRdvAccess, AuthVerifyEmail, AuthForgotPassword, AuthResetPassword,
     CompteMessages, CompteMessageThread, ProMessages, ProMessageThread, AdminDashboard, AdminFeatures
 };
 
@@ -525,9 +526,10 @@ function PagesContent() {
                                 <Route path="/passport/:shareId" element={<UserPassport />} />
                                 <Route path="/appointments/reschedule" element={<LegacyAppointmentLink kind="reschedule" />} />
                                 <Route path="/appointments/reschedule/:token" element={<LegacyAppointmentLink kind="reschedule" />} />
-                                <Route path="/rdv/:structureSlug" element={<PublicRdvEntry view="landing" />} />
-                                <Route path="/rdv/:structureSlug/services" element={<PublicRdvEntry view="services" />} />
-                                <Route path="/rdv/:structureSlug/creneaux" element={<PublicRdvEntry view="creneaux" />} />
+                                {/* R44 (§1.2): same-origin redirect from a validated slug (src/lib/rdvRouting.js legacyCreneauxBookingPath); the booking gate then asks for a citizen session */}
+                                <Route path="/rdv/:structureSlug" element={<LegacyCreneauxRedirect />} />
+                                <Route path="/rdv/:structureSlug/services" element={<LegacyCreneauxRedirect />} />
+                                <Route path="/rdv/:structureSlug/creneaux" element={<LegacyCreneauxRedirect />} />
                                 <Route path="/rdv/:structureSlug/booking" element={<PublicBooking />} />
                                 {/* R42 (DEC-R42-01): the account-free booking is retired — an old « sans compte » link opens the account-based journey */}
                                 <Route path="/rdv/:structureSlug/sans-compte" element={<RetiredGuestBookingLink />} />

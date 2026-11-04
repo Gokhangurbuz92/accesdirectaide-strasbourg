@@ -145,3 +145,32 @@ test('video path (fr): the modality in the link goes straight to the VIDEO slots
   evidence.push({ lang: 'fr', viewport: 'desktop', path: 'video', result: 'PASS' });
   await context.close();
 });
+
+test('legacy links (§1.2): /rdv/<slug>, /services, /creneaux land on /booking with the service and modality kept; an appointment link opens « Mes rendez-vous »; a hostile next never leaves the origin; signed out, sign-in first', async ({ browser }) => {
+  const anon = await browser.newContext(); const a = await anon.newPage();
+  await a.goto(`${BASE}/rdv/${SLUG}/creneaux?serviceId=${SVC}&mode=VIDEO&from=2030-01-01`);
+  await a.waitForURL((u) => u.pathname === '/auth/login', { timeout: 30000 });
+  expect(new URL(a.url()).searchParams.get('next')).toBe(`/rdv/${SLUG}/booking?serviceId=${SVC}&mode=VIDEO`);
+  await anon.close();
+  const context = await browser.newContext();
+  await context.addInitScript(() => { try { localStorage.setItem('ada_lang', 'fr'); localStorage.setItem('ada_onboarding_done', '1'); } catch { /* */ } });
+  await signIn(context);
+  const page = await context.newPage();
+  const cases = [
+    [`/rdv/${SLUG}`, `/rdv/${SLUG}/booking`],
+    [`/rdv/${SLUG}/services?serviceId=${SVC}&mode=IN_PERSON`, `/rdv/${SLUG}/booking?serviceId=${SVC}&mode=IN_PERSON`],
+    [`/rdv/${SLUG}/services?next=//evil.example&mode=PHONE`, `/rdv/${SLUG}/booking`],
+    [`/rdv/${SLUG}/creneaux?appointment=apt-1`, '/compte/rendez-vous'],
+    [`/rdv/${encodeURIComponent('bad slug')}/creneaux`, '/structures'],
+  ];
+  for (const [from, to] of cases) {
+    await page.goto(`${BASE}${from}`);
+    await page.waitForURL((u) => `${u.pathname}${u.search}` === to, { timeout: 30000 });
+    expect(new URL(page.url()).origin).toBe(BASE);
+  }
+  await page.goto(`${BASE}/rdv/${SLUG}/services?serviceId=${SVC}&mode=IN_PERSON`);
+  await passProfessionalStep(page);
+  await expect(page.getByTestId('booking-slot-location')).toContainText('Adresse fictive', { timeout: 30000 });
+  evidence.push({ lang: 'fr', viewport: 'desktop', path: 'legacy-links', cases: cases.length, result: 'PASS' });
+  await context.close();
+});

@@ -17,7 +17,8 @@ import '@testing-library/jest-dom/vitest';
 import axe from 'axe-core';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createElement as h } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
+import fs from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@vercel/analytics', () => ({ track: vi.fn() }));
@@ -43,6 +44,7 @@ import CompteRendezVous from '../../src/pages/CompteRendezVous.jsx';
 import AuthRdvAccess from '../../src/pages/AuthRdvAccess.jsx';
 import AuthForgotPassword from '../../src/pages/AuthForgotPassword.jsx';
 import AuthResetPassword from '../../src/pages/AuthResetPassword.jsx';
+import LegacyCreneauxRedirect from '../../src/pages/LegacyCreneauxRedirect.jsx';
 import i18n, { setLanguage } from '../../src/i18n/index.js';
 
 const lang = async (code) => { await act(async () => { await setLanguage(code, { persist: false }); }); };
@@ -91,6 +93,7 @@ describe('modalities (src/lib/bookingModalities.js)', () => {
   });
   it('refusals of a booking map to the journey (the existing 409 codes)', () => {
     expect(bookingRefusal(401, {})).toBe('AUTH');
+    expect(bookingRefusal(403, { code: 'EMAIL_NOT_VERIFIED' })).toBe('EMAIL_NOT_VERIFIED');
     expect(bookingRefusal(409, { code: 'AGE_DECLARATION_REQUIRED' })).toBe('AGE_DECLARATION');
     expect(bookingRefusal(409, { code: 'MODE_UNAVAILABLE' })).toBe('MODE');
     expect(bookingRefusal(409, { error: 'Slot no longer available' })).toBe('SLOT_TAKEN');
@@ -303,7 +306,7 @@ describe('A5 — citizen sign-in, sign-up, forgotten and new password', () => {
   let posts;
   beforeEach(() => {
     posts = [];
-    vi.stubGlobal('fetch', vi.fn(async (url, init = {}) => { posts.push(String(url)); return { ok: false, status: 401, json: async () => ({ message: 'Adresse ou mot de passe incorrect.' }) }; }));
+    vi.stubGlobal('fetch', vi.fn(async (url) => { posts.push(String(url)); return { ok: false, status: 401, json: async () => ({ message: 'Adresse ou mot de passe incorrect.' }) }; }));
   });
   const authPage = (mode) => render(h(MemoryRouter, { initialEntries: [`/auth/${mode}?next=/rdv/cdgg/booking`] }, h('main', null, h(AuthRdvAccess, { mode }))));
 
@@ -405,6 +408,34 @@ describe('A5 — citizen sign-in, sign-up, forgotten and new password', () => {
     expect(screen.getByTestId('reset-password-confirm-error')).toHaveTextContent('Les mots de passe ne correspondent pas.');
     expect(pw).not.toHaveAttribute('aria-invalid');
     expect(posts).toEqual([]);
+  });
+});
+
+describe('§1.2 legacy routes → the account journey (mounted in R44)', () => {
+  it('the router mounts the redirect on /rdv/:slug, /services and /creneaux; the legacy screen is no longer routed', () => {
+    const src = fs.readFileSync('src/pages/index.jsx', 'utf8');
+    for (const path of ['/rdv/:structureSlug', '/rdv/:structureSlug/services', '/rdv/:structureSlug/creneaux']) {
+      expect(src).toContain(`<Route path="${path}" element={<LegacyCreneauxRedirect />} />`);
+    }
+    expect(src).not.toMatch(/PublicRdvEntry/);
+    expect(src).toContain('<Route path="/rdv/:structureSlug/booking" element={<PublicBooking />} />');
+  });
+  const Where = () => { const l = useLocation(); return h('p', { 'data-testid': 'where' }, `${l.pathname}${l.search}${l.hash}`); };
+  const land = async (from, pattern) => {
+    render(h(MemoryRouter, { initialEntries: [from] }, h(Routes, null, h(Route, { path: pattern, element: h(LegacyCreneauxRedirect) }),
+      h(Route, { path: '/rdv/:structureSlug/booking', element: h(Where) }), h(Route, { path: '/compte/rendez-vous', element: h(Where) }), h(Route, { path: '/structures', element: h(Where) }))));
+    return (await screen.findByTestId('where')).textContent;
+  };
+  it('landing and services keep the service and modality; an appointment link opens « Mes rendez-vous »; hostile input never leaves the origin', async () => {
+    expect(await land('/rdv/cdgg-conseil', '/rdv/:structureSlug')).toBe('/rdv/cdgg-conseil/booking');
+    cleanup();
+    expect(await land('/rdv/cdgg-conseil/services?serviceId=s1&mode=VIDEO&structureId=x&from=2030-01-01', '/rdv/:structureSlug/services')).toBe('/rdv/cdgg-conseil/booking?serviceId=s1&mode=VIDEO');
+    cleanup();
+    expect(await land('/rdv/cdgg-conseil/creneaux?appointment=apt-1#token=secret', '/rdv/:structureSlug/creneaux')).toBe('/compte/rendez-vous');
+    cleanup();
+    expect(await land('/rdv/cdgg-conseil/services?next=//evil.example&mode=PHONE', '/rdv/:structureSlug/services')).toBe('/rdv/cdgg-conseil/booking');
+    cleanup();
+    expect(await land(`/rdv/${encodeURIComponent('a b')}`, '/rdv/:structureSlug')).toBe('/structures');
   });
 });
 

@@ -220,6 +220,7 @@ export default function PublicBooking() {
                     window.location.assign(`/auth/login?next=${encodeURIComponent(`/rdv/${encodeURIComponent(structureSlug)}/booking${bookingContextQuery(window.location.search, { serviceId: selectedService.id, mode: bookingMode })}`)}`);
                     return;
                 }
+                if (refusal === 'EMAIL_NOT_VERIFIED') throw new Error(t('booking:rdv.veuillez_verifier_votre_email_avant', "Veuillez verifier votre email avant de confirmer un rendez-vous."));
                 // R42-A07: an account without an age statement declares it here, then the request is sent again
                 if (refusal === 'AGE_DECLARATION') { setAgeStep('declare'); return; }
                 if (refusal === 'MINOR') { setAgeStep('minor'); throw new Error(errData.message); }
@@ -795,6 +796,7 @@ export default function PublicBooking() {
                         {/* R44: the place (recorded address) or the honest video access, once more after the booking */}
                         {!String(confirmation?.status || '').startsWith('CANCEL') && confirmation?.state !== 'REFUSED' && confirmation?.state !== 'EXPIRED' ? (
                             <div className="mb-6 max-w-md mx-auto text-start" data-testid="booking-confirmation-where">
+                                <p className="mb-2 text-sm text-slate-900"><span className="font-medium">{t('booking:modality.chosen', 'Modalité :')}</span> <span data-testid="booking-confirmation-mode">{MODALITY[confirmation?.mode || bookingMode] || ''}</span></p>
                                 {(confirmation?.mode || bookingMode) === 'VIDEO'
                                     ? <VideoNote sandbox={Boolean(confirmation?.video?.service?.sandbox ?? servicesPayload?.video?.sandbox)} testid="booking-confirmation-video" />
                                     : <LocationNote location={confirmation?.location !== undefined ? confirmation.location : location} testid="booking-confirmation-location" />}
