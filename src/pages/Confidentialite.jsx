@@ -105,7 +105,7 @@ export default function Confidentialite() {
             <section className="space-y-4">
               <SectionTitle icon={UserCheck}>{t('legal:privacy.controller.title', 'Qui est responsable de vos données ?')}</SectionTitle>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2 text-sm">
-                <p><strong>{t('legal:privacy.controller.label', 'Responsable de traitement :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</em></p>
+                <p><strong>{t('legal:privacy.controller.label', 'Responsable de traitement :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.controllerIdentity}</em></p>
                 <p><strong>{t('legal:privacy.controller.contactLabel', 'Contact protection des données :')}</strong> {contactValue('contact')}</p>
                 <p>{t('legal:privacy.controller.noDpo', "Nous n'avons pas désigné de délégué à la protection des données à ce jour.")}</p>
                 {/* R42-LEGAL: the structures' role (own controller, joint controller, or other) is not decided (R40 E3; CONTROL/r42/R42_ROLES_RESPONSABLE_TRAITEMENT_FR.md) */}

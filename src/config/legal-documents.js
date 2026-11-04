@@ -39,6 +39,7 @@ function legalValue(name) {
   const fromVite = {
     VITE_LEGAL_DATA_PROTECTION_CONTACT: env.VITE_LEGAL_DATA_PROTECTION_CONTACT,
     VITE_LEGAL_PUBLISHER_IDENTITY: env.VITE_LEGAL_PUBLISHER_IDENTITY,
+    VITE_LEGAL_CONTROLLER_IDENTITY: env.VITE_LEGAL_CONTROLLER_IDENTITY,
     VITE_LEGAL_PUBLICATION_DIRECTOR: env.VITE_LEGAL_PUBLICATION_DIRECTOR,
     VITE_LEGAL_SECURITY_CONTACT: env.VITE_LEGAL_SECURITY_CONTACT,
     VITE_LEGAL_RIGHTS_HOLDER: env.VITE_LEGAL_RIGHTS_HOLDER,
@@ -56,6 +57,11 @@ export const LEGAL_PLACEHOLDERS = Object.freeze({
   // R42-A01: the publisher is a natural person (the project carrier) until a legal person exists — LCEN art. 1-1 I 1° asks a natural person for
   // name and first names, domicile and telephone (or, for a NON-professional publisher only, art. 1-1 II anonymity through the host)
   publisherIdentity: legalValue('VITE_LEGAL_PUBLISHER_IDENTITY') || "[À COMPLÉTER : identité de l'éditeur — nom et prénom de la personne physique porteuse du projet, domicile et téléphone (LCEN, art. 1-1 I 1°) ; aucune association n'est créée]",
+  // R44 (LCEN analysis I-1): the controller shown in the privacy notice (GDPR art. 13(1)(a): identity and contact details) is its own value, so that the
+  // publisher's LCEN identification (domicile, telephone, or the art. 1-1 II anonymity wording) is never copied into the privacy notice. Unset = the
+  // publisher identity, as before (no visible change until the owner sets it).
+  controllerIdentity: legalValue('VITE_LEGAL_CONTROLLER_IDENTITY') || legalValue('VITE_LEGAL_PUBLISHER_IDENTITY')
+    || "[À COMPLÉTER : identité du responsable de traitement — nom et prénom de la personne physique porteuse du projet (RGPD, art. 13-1 a) ; aucune association n'est créée]",
   publicationDirector: legalValue('VITE_LEGAL_PUBLICATION_DIRECTOR') || '[À COMPLÉTER : directeur ou directrice de la publication]',
   // address as published in vercel.com/legal/privacy-policy (read 30/10/2026); Vercel publishes no telephone number, only its help centre
   hostAddress: 'Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis — contact : https://vercel.com/help',
