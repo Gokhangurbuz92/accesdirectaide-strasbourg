@@ -25,6 +25,12 @@ export const PUBLIC_BETA_MESSAGE =
   'Bêta publique : cette fonction n’est pas encore ouverte. Pendant la bêta, Accès Direct Aide permet seulement de consulter les aides, les démarches '
   + 'et les structures vérifiées ; aucun compte, rendez-vous ni document ne peut être créé.';
 
+/** R43-MAIL: the provider's delivery-event webhook, when switched on @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
+export function isMailEventsRequest(method, path, envVars = process.env) {
+  return String(method || '').toUpperCase() === 'POST' && path === 'monitor/mail-events/mailjet'
+    && ['1', 'true'].includes(String(envVars.MAILER_EVENTS_ENABLED || '').trim().toLowerCase());
+}
+
 /** @param {Record<string, string | undefined>} [envVars] */
 export function isPublicBetaRestricted(envVars = process.env) {
   return ['1', 'true'].includes(String(envVars.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
@@ -122,6 +128,8 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   // R42 (F8): browser CSP violation reports — POST to that exact path only, when staged reporting is on (LAB by default; Production only with
   // ADA_CSP_REPORTS=log). The handler stores nothing and logs a minimised summary; no other monitor route and no job is opened by this.
   if (isCspReportRequest(method, p, envVars)) return true;
+  // R43-MAIL: the Mailjet delivery events — POST to that exact path only, and only when MAILER_EVENTS_ENABLED=1 (basic auth is checked by the handler)
+  if (isMailEventsRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
   if (surface && openSurfaces(envVars).has(surface)) return true;
   if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time

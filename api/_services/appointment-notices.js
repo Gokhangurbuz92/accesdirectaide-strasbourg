@@ -7,6 +7,7 @@
  * The structure: an in-app notice to each active member, and an e-mail to those who keep e-mail notifications on. Messages carry the date and the kind of change only —
  * no beneficiary name, no notes. The ledger stores the outcome per recipient/channel, never the text or an address.
  */
+import crypto from 'node:crypto';
 import { and, eq } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AppointmentNotice, CitizenUser } from '../../src/db/schema.js';
@@ -42,9 +43,10 @@ const MAX_STRUCTURE_RECIPIENTS = 25;
  * migration (no schema change in R42): they are skipped here instead of failing the CHECK on every write.
  */
 export const LEDGER_KINDS = Object.freeze(['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE']);
-export async function recordNotice(appointmentId, kind, recipient, channel, status, db = defaultDb) {
+/** R43-MAIL: `id` (optional) = the row id chosen before the e-mail left, sent as its CustomID « appointment-notice/<id> » so a delivery event finds this row */
+export async function recordNotice(appointmentId, kind, recipient, channel, status, db = defaultDb, id = undefined) {
   if (!LEDGER_KINDS.includes(kind)) return;
-  try { await db.insert(AppointmentNotice).values({ appointmentId, kind, recipient, channel, status }); }
+  try { await db.insert(AppointmentNotice).values({ ...(id ? { id } : {}), appointmentId, kind, recipient, channel, status }); }
   catch (err) { logger.warn({ err: { name: err?.name, code: err?.cause?.code || err?.code } }, '[appointment-notices] ledger write failed'); }
 }
 
@@ -63,6 +65,8 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
   const db = deps.db || defaultDb; const sendMail = deps.sendMail || defaultSendMail; const canNotify = deps.canNotify || defaultCanNotify;
   const category = kind === 'REMINDER_J1' ? 'reminder' : 'service';
   let status = 'NO_RECIPIENT';
+  // R43-MAIL: the ledger row id, chosen now: it travels as the message's idempotency key / Mailjet CustomID (api/_services/mail-events.js)
+  const noticeId = crypto.randomUUID(); const idempotencyKey = `appointment-notice/${noticeId}`;
   try {
     if (appointment.citizenUserId) {
       const [u] = await db.select({ email: CitizenUser.email, verified: CitizenUser.emailVerifiedAt }).from(CitizenUser).where(eq(CitizenUser.id, appointment.citizenUserId)).limit(1);
@@ -70,7 +74,7 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         if (!(await canNotify(appointment.citizenUserId, 'email', category).catch(() => false))) status = 'NO_CONSENT';
         else {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, u.email)] : [])];
-          const out = await sendMail({ to: u.email, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
+          const out = await sendMail({ to: u.email, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
         }
       }
@@ -84,7 +88,7 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         const to = isV1Text(appointment.guestEmail) ? decrypt(appointment.guestEmail) : null;
         if (to) {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, to)] : [])];
-          const out = await sendMail({ to, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
+          const out = await sendMail({ to, subject: message.subject, text: message.text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);
         }
       }
@@ -92,7 +96,8 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
   } catch (err) {
     status = 'FAILED'; logger.warn({ err: { name: err?.name } }, '[appointment-notices] citizen notice failed');
   }
-  await recordNotice(appointment.id, kind, 'citizen', 'email', status, db);
+  // the row takes the pre-chosen id only when a real provider took the message: only such a row can receive delivery events
+  await recordNotice(appointment.id, kind, 'citizen', 'email', status, db, status === 'PROVIDER_ACCEPTED' ? noticeId : undefined);
   return status;
 }
 

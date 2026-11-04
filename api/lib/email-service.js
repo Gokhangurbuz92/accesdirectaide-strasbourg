@@ -8,6 +8,7 @@
  */
 
 import { env } from '../_utils/env.js';
+import { mailText } from '../_utils/mail-catalogue.js';
 
 /** @param {string} path */
 function appUrl(path) {
@@ -68,6 +69,30 @@ function ctaButton(text, url) {
   `;
 }
 
+/**
+ * R43-MAIL — a message for a person who reads another language: the subject, heading, opening line and button in that language
+ * (api/_utils/mail-catalogue.js, right-to-left for Arabic), then the French message — the source and authoritative wording — unchanged below.
+ * French (or no language) returns the French message as before.
+ * @param {string} kind @param {unknown} lang @param {string} subject the French subject @param {string} body the French content (not yet wrapped)
+ * @param {string | null} url
+ */
+function localized(kind, lang, subject, body, url) {
+  const t = mailText(kind, lang);
+  if (t.lang === 'fr') return { subject, html: wrapTemplate(body) };
+  return {
+    subject: t.subject,
+    html: wrapTemplate(`
+      <div dir="${t.dir}" lang="${t.lang}">
+        <h2 style="color: #1e293b; font-size: 22px;">${esc(t.heading)}</h2>
+        <p style="color: #475569; line-height: 1.6;">${esc(t.intro)}</p>
+        ${url ? ctaButton(esc(t.cta), url) : ''}
+      </div>
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;">
+      <div dir="ltr" lang="fr">${body}</div>
+    `),
+  };
+}
+
 export const templates = {
   /**
    * Welcome / email verification.
@@ -76,12 +101,12 @@ export const templates = {
    * @param {string} name
    * @param {string | null} verifyUrl the full link built by the handler, or null for a welcome without verification
    * @param {string} [validity]
+   * @param {string} [lang] R43-MAIL: the person's language (fr, en, tr, ar, de, uk); French when absent
    */
-  welcome(name, verifyUrl, validity = '15 minutes') {
+  welcome(name, verifyUrl, validity = '15 minutes', lang = 'fr') {
     const url = /^https?:\/\//.test(String(verifyUrl || '')) ? String(verifyUrl) : null;
-    return {
-      subject: url ? 'Bienvenue sur Accès Direct Aide — Vérifiez votre email' : 'Bienvenue sur Accès Direct Aide',
-      html: wrapTemplate(`
+    const subject = url ? 'Bienvenue sur Accès Direct Aide — Vérifiez votre email' : 'Bienvenue sur Accès Direct Aide';
+    const body = `
         <h2 style="color: #1e293b; font-size: 22px;">Bienvenue, ${esc(name)} !</h2>
         <p style="color: #475569; line-height: 1.6;">
           Merci de vous être inscrit sur Accès Direct Aide.${url ? ` Pour accéder à votre espace personnel
@@ -89,8 +114,8 @@ export const templates = {
         </p>
         ${url ? `${ctaButton('Vérifier mon adresse email', url)}
         <p style="color: #94a3b8; font-size: 12px;">Ce lien expire dans ${esc(validity)}.</p>` : ''}
-      `),
-    };
+      `;
+    return url ? localized('account_verification', lang, subject, body, url) : { subject, html: wrapTemplate(body) };
   },
 
   /**
@@ -98,13 +123,13 @@ export const templates = {
    * @param {string} name
    * @param {string} resetTokenOrUrl the full link (or, legacy callers, the raw citizen token)
    * @param {string} [validity] how long the link works (citizen 15 minutes, professional 1 heure)
+   * @param {string} [lang] R43-MAIL: the person's language; French when absent
    */
-  resetPassword(name, resetTokenOrUrl, validity = '15 minutes') {
+  resetPassword(name, resetTokenOrUrl, validity = '15 minutes', lang = 'fr') {
     // PKG-11 audit: the button linked to /auth/reset-password, a page that does not exist (the citizen page is /auth/reset); callers now pass the full link
     const url = /^https?:\/\//.test(String(resetTokenOrUrl)) ? String(resetTokenOrUrl) : appUrl(`/auth/reset?token=${encodeURIComponent(String(resetTokenOrUrl))}`);
-    return {
-      subject: 'Réinitialisation de votre mot de passe — Accès Direct Aide',
-      html: wrapTemplate(`
+    const subject = 'Réinitialisation de votre mot de passe — Accès Direct Aide';
+    const body = `
         <h2 style="color: #1e293b; font-size: 22px;">Réinitialisation du mot de passe</h2>
         <p style="color: #475569; line-height: 1.6;">
           Bonjour ${esc(name)},<br><br>
@@ -115,8 +140,8 @@ export const templates = {
         <p style="color: #94a3b8; font-size: 12px;">
           Ce lien expire dans ${esc(validity)}. Si vous n'avez pas fait cette demande, ignorez cet email.
         </p>
-      `),
-    };
+      `;
+    return localized('password_reset', lang, subject, body, url);
   },
 
   /**
@@ -160,18 +185,18 @@ export const templates = {
    */
   appointmentConfirmation({ name, service, date, time, mode, reference }) {
     return {
-      subject: `Rendez-vous confirmé — ${service}`,
+      subject: mailText('appointment_confirmation', 'fr').subject,   // R43-MAIL: never the service in a subject (it can reveal a sensitive context)
       html: wrapTemplate(`
         <h2 style="color: #1e293b; font-size: 22px;">Rendez-vous confirmé ✓</h2>
         <p style="color: #475569; line-height: 1.6;">
-          Bonjour ${name}, votre rendez-vous est bien enregistré :
+          Bonjour ${esc(name)}, votre rendez-vous est bien enregistré :
         </p>
         <div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Service</td><td style="padding: 6px 0; font-weight: 600; color: #1e293b;">${service}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Date</td><td style="padding: 6px 0; font-weight: 600; color: #1e293b;">${date} à ${time}</td></tr>
+            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Service</td><td style="padding: 6px 0; font-weight: 600; color: #1e293b;">${esc(service)}</td></tr>
+            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Date</td><td style="padding: 6px 0; font-weight: 600; color: #1e293b;">${esc(date)} à ${esc(time)}</td></tr>
             <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Mode</td><td style="padding: 6px 0; font-weight: 600; color: #1e293b;">${mode === 'VIDEO' ? 'Visioconférence' : 'Sur place'}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Référence</td><td style="padding: 6px 0; font-family: monospace; font-weight: 600; color: #1e293b;">${reference}</td></tr>
+            <tr><td style="padding: 6px 0; color: #94a3b8; font-size: 12px;">Référence</td><td style="padding: 6px 0; font-family: monospace; font-weight: 600; color: #1e293b;">${esc(reference)}</td></tr>
           </table>
         </div>
         ${ctaButton('Voir mes rendez-vous', appUrl('/compte/rdv'))}
@@ -185,13 +210,13 @@ export const templates = {
    */
   appointmentReminder({ name, service, date, time }) {
     return {
-      subject: `Rappel — RDV demain à ${time}`,
+      subject: mailText('appointment_reminder', 'fr').subject,   // R43-MAIL: neutral subject (no service, no time)
       html: wrapTemplate(`
         <h2 style="color: #1e293b; font-size: 22px;">Rappel de rendez-vous</h2>
         <p style="color: #475569; line-height: 1.6;">
-          Bonjour ${name},<br><br>
-          Vous avez un rendez-vous <strong>${service}</strong> prévu demain
-          <strong>${date}</strong> à <strong>${time}</strong>.
+          Bonjour ${esc(name)},<br><br>
+          Vous avez un rendez-vous <strong>${esc(service)}</strong> prévu demain
+          <strong>${esc(date)}</strong> à <strong>${esc(time)}</strong>.
         </p>
         ${ctaButton('Accéder à mon espace', appUrl('/compte/rdv'))}
       `),

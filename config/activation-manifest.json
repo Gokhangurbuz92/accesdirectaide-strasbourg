@@ -539,6 +539,54 @@
       "provider": "mail",
       "note": "R42-MAIL: client secret, only if no certificate is used (expires; rotate before its end date)"
     },
+    "MAILER_MAILJET_SANDBOX": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "^(0|1|true|false)?$",
+      "note": "R43-MAIL: 1 = Mailjet SandboxMode: every message is validated by Mailjet and NONE is delivered (outcome SANDBOX_VALIDATED, ledger TEST_RECORDED); mail stays not deliverable"
+    },
+    "MAILER_REPLY_TO": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "@",
+      "note": "R43-MAIL: Reply-To of every message (e.g. contact@accesdirectaide.fr): replies reach a read mailbox, the sender address needs none"
+    },
+    "MAILER_EVENTS_ENABLED": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "format": "^(0|1|true|false)?$",
+      "note": "R43-MAIL: 1 = the Mailjet delivery-event webhook POST /api/monitor/mail-events/mailjet is on (default off: 404) and hard bounces / complaints suppress the address"
+    },
+    "MAILER_EVENTS_BASIC_USER": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R43-MAIL: only with MAILER_EVENTS_ENABLED=1 — user of the basic-auth pair written in the Mailjet event callback URL"
+    },
+    "MAILER_EVENTS_BASIC_PASSWORD": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "mail",
+      "note": "R43-MAIL: only with MAILER_EVENTS_ENABLED=1 — password (>= 24 random characters) of the Mailjet event callback URL; rotate by changing it in Vercel and in Mailjet"
+    },
     "MAILJET_API_KEY": {
       "class": "dead",
       "nature": "secret"
@@ -1476,7 +1524,10 @@
       "label": "Transactional e-mail (verification, reset, invitations, notifications)",
       "code": [
         "api/_utils/mailer.js",
-        "api/_utils/mailer-msgraph.js"
+        "api/_utils/mailer-msgraph.js",
+        "api/lib/mailjet-events.js",
+        "api/_services/mail-events.js",
+        "api/_handlers/monitor/mail-events-mailjet.js"
       ],
       "requires": [
         "MAILER_PROVIDER",
@@ -1486,7 +1537,9 @@
       "tests": [
         "mailer-providers.test.js",
         "mailer-provider-http-sim.test.js",
-        "r42-mailer-msgraph.test.js"
+        "r42-mailer-msgraph.test.js",
+        "r43-mailer-mailjet.test.js",
+        "r43-mail-events.test.js"
       ],
       "gates": [
         {
@@ -1502,7 +1555,12 @@
         "MAILER_MSGRAPH_SENDER",
         "MAILER_MSGRAPH_CERT_PRIVATE_KEY",
         "MAILER_MSGRAPH_CERT_PEM",
-        "MAILER_MSGRAPH_CLIENT_SECRET"
+        "MAILER_MSGRAPH_CLIENT_SECRET",
+        "MAILER_MAILJET_SANDBOX",
+        "MAILER_REPLY_TO",
+        "MAILER_EVENTS_ENABLED",
+        "MAILER_EVENTS_BASIC_USER",
+        "MAILER_EVENTS_BASIC_PASSWORD"
       ]
     },
     {
