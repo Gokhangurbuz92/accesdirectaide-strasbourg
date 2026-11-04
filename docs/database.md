@@ -43,6 +43,12 @@ Un fichier de retour arrière défait le schéma d'une migration ; il doit aussi
 exécuter après le fichier : `DELETE FROM drizzle.__drizzle_migrations WHERE created_at = <when de la migration>;`. Toujours après une sauvegarde chiffrée
 (`scripts/db-backup.mjs`) et avec le code de la version précédente.
 
+### Production à 0042 : 0043 / 0044 obsolètes, 0045 seule (R43)
+Le migrateur Drizzle applique toute entrée du journal dont le `when` est postérieur à la dernière ligne de `drizzle.__drizzle_migrations` : sur la
+Production (0042) un `migrate` simple appliquerait 0043 et 0044 (réservation sans compte retirée), interdites. `scripts/db-deploy-migrate.mjs` refuse
+donc ce cas (`OBSOLETE_MIGRATION_PENDING`) et applique une seule migration avec `--only <tag>` (`--dry-run` pour le plan). Procédure et retour arrière de
+0045 : `STRASBOURG_FULL_PRODUCT_PLAN/CONTROL/r43/R43_NOTICE_LEDGER_MIGRATION.md`. Ne jamais lancer `npm run db:migrate` sur la Production.
+
 ## Backup
 Voir [docs/disaster-recovery.md](disaster-recovery.md).
 

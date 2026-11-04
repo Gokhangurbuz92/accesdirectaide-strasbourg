@@ -71,7 +71,8 @@ async function enforceRateLimit(req, action, subject) {
 /**
  * @param {string} conversationId
  * @param {string} userId
- * @param {number} limit
+ * @param {number} limit R43: the `limit` NEWEST messages are loaded (the whole conversation was, whatever the limit), returned oldest first;
+ *   the conversation lists load only the latest message (their preview)
  */
 async function loadConversationById(conversationId, limit) {
   return db.query.RdvConversation.findFirst({
@@ -86,7 +87,6 @@ async function loadConversationById(conversationId, limit) {
           service: { columns: { id: true, name: true } },
         },
       },
-      // R43: the `limit` NEWEST messages (the whole conversation was loaded whatever the limit), shown oldest first
       messages: {
         orderBy: (msg, { desc }) => [desc(msg.createdAt)],
         limit,
@@ -119,7 +119,6 @@ async function getConversations(req, res, user) {
         columns: { id: true, startAt: true, endAt: true, status: true },
         with: { service: { columns: { id: true, name: true } } },
       },
-      // R43: the list shows only the latest message's preview: load that one, not every message of every conversation
       messages: {
         orderBy: (msg, { desc }) => [desc(msg.createdAt)],
         limit: 1,
