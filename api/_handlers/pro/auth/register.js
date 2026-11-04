@@ -1,13 +1,13 @@
 import logger from '../../../_utils/logger.js';
 import { passwordMessage, passwordProblems } from '../../../../src/lib/passwordPolicy.js';
-import { hashPassword, buildAppUrl } from '../../../_utils/user-auth.js';
+import { hashPassword } from '../../../_utils/user-auth.js';
 import { signProToken, logProAudit } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp } from '../../../_utils/rateLimit.js';
 import { sendMail } from '../../../_utils/mailer.js';
 import { templates } from '../../../lib/email-service.js';
 import { db } from '../../../../src/db/index.js';
 import { Structure, ProUser } from '../../../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 /**
  * @param {{ toString: () => string; }} text

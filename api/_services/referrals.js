@@ -28,7 +28,6 @@ export const REASONS = ['SPECIALISED_SUPPORT', 'ACCESS_TO_RIGHTS', 'HOUSING', 'E
 export const RESPONSES = ['OUT_OF_SCOPE', 'NO_CAPACITY', 'ALREADY_SUPPORTED', 'NEEDS_MORE_INFORMATION', 'OTHER'];
 export const ACK_DAYS = 5;
 export const EXPIRE_AFTER_DUE_DAYS = REFERRAL_EXPIRE_AFTER_DUE_DAYS;   // R40: one value, also applied by the access checks (share-access.js)
-const LIVE = ['DRAFT', 'PENDING_CITIZEN', 'SENT', 'ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'IN_PROGRESS'];
 const day = 86400000;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('not_found', 'Orientation introuvable.', 404);

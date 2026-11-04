@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
-import { User, Briefcase, UserPlus } from 'lucide-react';
+import { User, Briefcase } from 'lucide-react';
 import { useT } from '@/i18n';
 
 /**

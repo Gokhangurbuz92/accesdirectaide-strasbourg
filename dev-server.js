@@ -50,7 +50,7 @@ const server = http.createServer(async (req, res) => {
         const bodyStr = Buffer.concat(chunks).toString();
         try {
             req.body = JSON.parse(bodyStr);
-        } catch (e) {
+        } catch {
             req.body = {};
         }
     }

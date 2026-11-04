@@ -52,7 +52,7 @@ export function rejectReason(points, input) {
   return null;
 }
 
-async function access(shareId, proCtx, db) {
+async function access(shareId, proCtx) {   // R43: the dossier is resolved by share-access (its own connection); the unused `db` parameter is gone
   const found = await resolveDossierForStructure(shareId, proCtx);
   if (found.status === 'not_found') return { err: bad(404, 'not_found', 'Dossier introuvable.') };
   if (found.status === 'expired') return { err: bad(410, 'expired', 'Ce dossier a expiré.') };
@@ -92,7 +92,7 @@ export async function createDraft(shareId, proCtx, safeResults, { db = defaultDb
 }
 
 export async function listDrafts(shareId, proCtx, { db = defaultDb } = {}) {
-  const a = await access(shareId, proCtx, db); if (a.err) return a.err;
+  const a = await access(shareId, proCtx); if (a.err) return a.err;
   const current = versionOf(minimalInput(a.shared.results));
   const rows = (await db.execute(sql`SELECT id, status, model, "outputText", "sourceTextHash", "createdBy", "createdAt", "reviewedBy", "reviewedAt", "reviewNote" FROM "AiOutputReview"
     WHERE kind = 'DOSSIER_SYNTHESIS' AND "sharedDiagnosticId" = ${String(shareId)} AND "scopeStructureId" = ${String(proCtx.structureId)} ORDER BY "createdAt" DESC LIMIT 20`)).rows;
@@ -104,7 +104,7 @@ export async function listDrafts(shareId, proCtx, { db = defaultDb } = {}) {
 export async function review(shareId, draftId, decision, note, proCtx, { db = defaultDb } = {}) {
   if (!['approve', 'reject'].includes(decision)) return bad(400, 'INVALID_DECISION', 'Décision attendue : approuver ou rejeter.');
   const text = String(note || '').trim(); if (text.length < 5) return bad(400, 'NOTE_REQUIRED', 'Indiquez ce que vous avez vérifié (au moins 5 caractères).');
-  const a = await access(shareId, proCtx, db); if (a.err) return a.err;
+  const a = await access(shareId, proCtx); if (a.err) return a.err;
   const current = versionOf(minimalInput(a.shared.results));
   return db.transaction(async (tx) => {
     const [r] = (await tx.execute(sql`SELECT id, "sourceTextHash" AS h FROM "AiOutputReview" WHERE id = ${String(draftId || '')} AND kind = 'DOSSIER_SYNTHESIS' AND status = 'PENDING'

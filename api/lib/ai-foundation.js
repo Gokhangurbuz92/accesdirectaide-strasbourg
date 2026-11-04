@@ -186,7 +186,7 @@ export async function generateStructuredContent({
         const fallback = providers[fallbackProvider];
         const result = await executeProviderLoop(fallbackProvider, fallback, resFallbackModel, messages, jsonSchema, zodSchema, tools, mappedTools, signal, providerOptions);
         return wrapOutput(result.content, { provider: fallbackProvider, model: resFallbackModel, latency: result.latency, usage: result.usage, toolUsed: result.toolUsed });
-      } catch (fallbackError) {
+      } catch {
          return wrapOutput(null, { provider: fallbackProvider, model: fallbackModel, latency: 0, safeErrorState: "UNAVAILABLE" });
       }
     }

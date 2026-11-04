@@ -100,31 +100,6 @@ function parseReason(raw) {
 }
 
 /**
- * @param {unknown} raw
- * @returns {string[] | null}
- */
-function parseBulkIds(raw) {
-  if (!Array.isArray(raw)) return null;
-  if (raw.length === 0 || raw.length > 200) return null;
-
-  /** @type {string[]} */
-  const out = [];
-  const seen = new Set();
-
-  for (const candidate of raw) {
-    const normalized = String(candidate || '').trim();
-    if (!normalized) continue;
-    if (seen.has(normalized)) continue;
-    seen.add(normalized);
-    out.push(normalized);
-    if (out.length > 200) return null;
-  }
-
-  if (out.length === 0) return null;
-  return out;
-}
-
-/**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
  */
@@ -182,6 +157,9 @@ export default async function handler(req, res) {
       if (status) conditions.push(sql`lower(${ReviewQueueItem.status}) = ${status.toLowerCase()}`);
       if (entityType) conditions.push(eq(ReviewQueueItem.entityType, entityType.toUpperCase()));
       if (reason) conditions.push(eq(ReviewQueueItem.reason, reason));
+      // R43 (strict lint finding: `cursor` was parsed and never used, so « Page suivante » showed the first page again): keyset paging on the same order
+      // (createdAt DESC, id DESC); the cursor is the id of the first item of the next page. An unknown cursor gives an empty page, never the first one.
+      if (cursor) conditions.push(sql`(${ReviewQueueItem.createdAt}, ${ReviewQueueItem.id}) <= (SELECT c."createdAt", c.id FROM "ReviewQueueItem" c WHERE c.id = ${cursor})`);
       let selectQuery = db.select().from(ReviewQueueItem).$dynamic();
       if (conditions.length > 0) {
         selectQuery = selectQuery.where(and(...conditions));

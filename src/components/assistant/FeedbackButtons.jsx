@@ -49,8 +49,8 @@ export default function FeedbackButtons({ logId }) {
 
     if (submitted) {
         return (
-            <div className="mt-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
-                <CheckCircle2 className="h-3 w-3" />
+            <div role="status" className="mt-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
                 {t('shared:chat.feedback_thanks', 'Merci pour votre aide !')}
             </div>
         );
@@ -86,6 +86,7 @@ export default function FeedbackButtons({ logId }) {
                         type="text"
                         className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs outline-none transition-all focus:border-red-400 focus:ring-2 focus:ring-red-400/20"
                         placeholder={t('shared:chat.feedback_comment', "Qu'est-ce qui manquait ? (Optionnel)")}
+                        aria-label={t('shared:chat.feedback_comment', "Qu'est-ce qui manquait ? (Optionnel)")}
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSubmitNegative()}
@@ -100,6 +101,13 @@ export default function FeedbackButtons({ logId }) {
                         <Send className="h-3.5 w-3.5" />
                     </button>
                 </div>
+            ) : null}
+            {/* R43 (strict lint finding: `failed` was set and never shown, so a feedback the server did not record was silent) */}
+            {failed ? (
+                <p role="alert" className="text-xs text-red-800" data-testid="feedback-failed">
+                    {t('shared:chat.feedback_failed', 'Votre avis n’a pas pu être envoyé.')}{' '}
+                    <button type="button" className="underline underline-offset-2" onClick={() => sendFeedback(voted === 1 ? 1 : -1, voted === 1 ? '' : comment)}>{t('shared:chat.feedback_retry', 'Réessayer')}</button>
+                </p>
             ) : null}
         </div>
     );

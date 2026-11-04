@@ -102,7 +102,7 @@ function NotificationsTab() {
 
 // ─── Security Tab ────────────────────────────────────────────
 
-function SecurityTab({ user }) {
+function SecurityTab() {
     const { t } = useT('admin');
     return (
         <div className="space-y-6">

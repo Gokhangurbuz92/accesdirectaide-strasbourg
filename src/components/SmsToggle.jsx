@@ -22,7 +22,7 @@ import { useT } from '@/i18n';
  * - shareId / ownerSecret: the dossier proof of the passport page (the appointment id alone is not a credential)
  */
 
-const FRENCH_PHONE_RE = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.\-]*\d{2}){4}$/;
+const FRENCH_PHONE_RE = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
 export default function SmsToggle({ appointmentId, initialPhone = '', shareId, ownerSecret }) {
     const { t } = useT('booking');

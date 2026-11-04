@@ -23,7 +23,7 @@ function truncate(text, max = 120) {
 }
 
 export default function RecommendationCard({ item }) {
-    const { type, slug, title, excerpt, url, sourceLabel, verifiedAt } = item;
+    const { type, title, excerpt, url, sourceLabel, verifiedAt } = item;
 
     if (!title || !url) return null;
 

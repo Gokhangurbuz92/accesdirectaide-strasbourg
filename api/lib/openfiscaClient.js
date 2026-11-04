@@ -37,10 +37,7 @@ let _circuitBreaker = {
 const CB_THRESHOLD = 5;
 const CB_RESET_TIMEOUT_MS = 30_000; // 30s half-open
 
-/**
- * @param {string} endpoint
- */
-function recordFailure(endpoint) {
+function recordFailure() {
     _circuitBreaker.failures++;
     _circuitBreaker.lastFailureTime = Date.now();
     if (_circuitBreaker.failures >= CB_THRESHOLD && !_circuitBreaker.isOpen) {
@@ -102,7 +99,7 @@ async function post(endpoint, payload) {
             err.code = 'OPENFISCA_HTTP_ERROR';
             err.detail = text.slice(0, 200); // limit logged detail
             
-            if (res.status >= 500) recordFailure(endpoint);
+            if (res.status >= 500) recordFailure();
             throw err;
         }
 
@@ -110,7 +107,7 @@ async function post(endpoint, payload) {
         return await res.json();
     } catch (err) {
         clearTimeout(timer);
-        recordFailure(endpoint);
+        recordFailure();
 
         // Privacy (DTA S1 stage 2a): the raw error is NEVER forwarded — `err.detail` is the first 200 chars of the upstream response body, which may echo the
         // request, and exception messages are not covered by the Sentry key-based scrubber.  Only a closed-vocabulary code and the endpoint name are sent.

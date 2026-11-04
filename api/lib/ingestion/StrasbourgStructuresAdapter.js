@@ -15,19 +15,6 @@ const DEFAULT_REPO_ROOT = path.resolve(
   '../../..',
 );
 
-const DEFAULT_CSV_PATH = path.join(
-  DEFAULT_REPO_ROOT,
-  'data',
-  'structures-alsace.csv',
-);
-
-const DEFAULT_MANIFEST_PATH = path.join(
-  DEFAULT_REPO_ROOT,
-  'data',
-  'strasbourg',
-  'ws2-source-manifest.json',
-);
-
 const POSTAL_CODE_PATTERN = /^\d{5}$/;
 
 function detectDelimiter(/** @type {string} */ headerLine) {

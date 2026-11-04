@@ -4,7 +4,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
-import { Cookie, ShieldCheck, PieChart, Info, Settings2, CheckCircle2, Bug } from 'lucide-react';
+import { ShieldCheck, PieChart, Info, Settings2, CheckCircle2, Bug } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { AUDIENCE_OBJECTION_KEY, hasObjectedToAudience, setAudienceObjection } from '@/lib/audienceObjection';

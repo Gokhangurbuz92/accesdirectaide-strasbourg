@@ -129,7 +129,6 @@ const CompteDelegationVue = lazy(() => import("./CompteDelegationVue.jsx"));
 const CompteRendezVous = lazy(() => import("./CompteRendezVous.jsx"));
 const ComptePartageDetail = lazy(() => import("./ComptePartageDetail.jsx"));
 const Layout = lazy(() => import("./Layout.jsx"));
-const AdminGuard = lazy(() => import("@/components/AdminGuard"));
 const ProGuard = lazy(() => import("@/components/ProGuard"));
 const AdminLayout = lazy(() => import("./admin/AdminLayout.jsx"));
 

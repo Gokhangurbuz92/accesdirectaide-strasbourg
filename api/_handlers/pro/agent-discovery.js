@@ -72,7 +72,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             },
         });
 
-        const breaker = createGeminiBreaker((/** @type {import("../../lib/gemini-types.js").GeminiPrompt} */ p) => model.generateContent(p));
+        const breaker = createGeminiBreaker((/** @type {import("../../lib/gemini-types.js").GeminiPrompt} */ p) => model.generateContent(p), { timeout: AGENT_TIMEOUT_MS });   // R43: the declared per-call limit (was an unused constant; same value as the breaker default)
         const startTime = Date.now();
         const result = await breaker.fire(prompt);
 

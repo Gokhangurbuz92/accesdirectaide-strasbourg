@@ -231,5 +231,7 @@
  "chat.assessment_remove": "Remove",
  "chat.assessment_attached_one": "Your simulation lead is attached to your questions, read only. La Boussole explains it; it does not decide.",
  "chat.assessment_attached_other": "Your {{count}} simulation leads are attached to your questions, read only. La Boussole explains them; it does not decide.",
+ "chat.feedback_failed": "Your feedback could not be sent.",
+ "chat.feedback_retry": "Try again",
  "health_notice.text": "Do not send medical documents (certificate, report, prescription, MDPH file — the disability centre file — containing health information): AccesDirectAide does not yet have an approved health-data host (HDS, the French certification for hosting health data)."
 }

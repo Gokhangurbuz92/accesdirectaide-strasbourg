@@ -115,7 +115,7 @@ export function sourceView(kind, record, code) {
     showOriginal: false,
     setShowOriginal: () => {},
     value: (/** @type {string} */ field) => record?.[field],
-    attrs: (/** @type {string} */ _field) => (isSource ? here : fr),
+    attrs: () => (isSource ? here : fr),
     original: (/** @type {string} */ field) => record?.[field],
   };
 }

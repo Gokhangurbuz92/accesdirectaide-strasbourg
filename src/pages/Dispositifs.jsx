@@ -29,7 +29,7 @@ export default function Dispositifs() {
                 if (!res.ok) throw new Error(`dispositifs ${res.status}`);
                 const data = await res.json();
                 setDispositifs(Array.isArray(data) ? data : []);
-            } catch (err) {
+            } catch {
                 setFailed(true);   // an outage is said as such, never shown as « aucun dispositif »
             } finally {
                 setLoading(false);

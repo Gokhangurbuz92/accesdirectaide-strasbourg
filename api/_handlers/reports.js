@@ -209,7 +209,7 @@ export default async function handler(req, res) {
         try {
            const Sentry = (await import('../_utils/sentry.js')).default;
            Sentry.captureException(error);
-         } catch(_e) { /* Sentry may not be available in all environments */ }
+         } catch { /* Sentry may not be available in all environments */ }
 
         return res.status(500).json({
             error: 'Internal server error',
