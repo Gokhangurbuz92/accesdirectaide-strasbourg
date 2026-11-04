@@ -334,6 +334,13 @@
         "production"
       ]
     },
+    "VITE_LEGAL_CONTROLLER_IDENTITY": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
     "VITE_LEGAL_PUBLICATION_DIRECTOR": {
       "class": "required",
       "nature": "public",
