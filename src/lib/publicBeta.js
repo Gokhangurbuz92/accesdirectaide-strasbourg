@@ -30,12 +30,35 @@ export function accountEntriesShown(beta, open = builtOpen()) {
   return !beta || open.includes('accounts');
 }
 
-/** @param {string} pathname @param {string[]} [open] surfaces opened in this build */
-export function isBetaRestrictedPath(pathname, open = builtOpen()) {
+/**
+ * R43 — the sub-switches of the server (api/_utils/public-beta.js), mirrored for the screens: the build names them in VITE_PUBLIC_BETA_ACCOUNTS_SCOPE
+ * (« full »; anything else = the narrow booking scope) and VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION (« open »; anything else = closed).
+ * @typedef {{ accountsScope: 'booking' | 'full', proSelfRegistration: boolean }} BetaSubSwitches
+ */
+/** @returns {BetaSubSwitches} */
+const builtSub = () => {
+  let scope = ''; let reg = '';
+  try { scope = String(import.meta.env?.VITE_PUBLIC_BETA_ACCOUNTS_SCOPE || ''); reg = String(import.meta.env?.VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION || ''); } catch { scope = ''; reg = ''; }
+  return { accountsScope: scope.trim().toLowerCase() === 'full' ? 'full' : 'booking', proSelfRegistration: reg.trim().toLowerCase() === 'open' };
+};
+/** the account screens of the narrow (booking) scope: sign-in and sign-up, the Mon Espace home, appointments and the account settings (rights) */
+export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres'], exact: ['/compte'] });
+export const PRO_SELF_REGISTRATION_SCREEN = '/pro/register';
+
+/** @param {string} p normalized path @param {string} x screen prefix */
+const under = (p, x) => p === x || p.startsWith(`${x}/`);
+
+/** @param {string} pathname @param {string[]} [open] surfaces opened in this build @param {BetaSubSwitches} [sub] sub-switches of this build */
+export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSub()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';
-  const opened = open.flatMap((name) => SCREEN_SURFACES[name] || []);
-  if (opened.some((x) => p === x || p.startsWith(`${x}/`))) return false;
-  return RESTRICTED.some((x) => p === x || p.startsWith(`${x}/`));
+  // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
+  if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
+  const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
+  if (opened.some((x) => under(p, x))) return false;
+  // R43 (E2): accounts opened in the narrow scope show only its screens
+  if (open.includes('accounts') && sub.accountsScope !== 'full'
+    && (ACCOUNTS_BOOKING_SCREENS.exact.includes(p) || ACCOUNTS_BOOKING_SCREENS.prefixes.some((x) => under(p, x)))) return false;
+  return RESTRICTED.some((x) => under(p, x));
 }
 
 /**

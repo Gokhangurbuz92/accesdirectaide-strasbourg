@@ -8,6 +8,23 @@ import { templates } from '../../../lib/email-service.js';
 import { db } from '../../../../src/db/index.js';
 import { Structure, ProUser } from '../../../../src/db/schema.js';
 import { sql } from 'drizzle-orm';
+import { isPublicBetaRestricted, proSelfRegistrationOpen } from '../../../_utils/public-beta.js';
+
+/**
+ * R43 (E1): public self-registration of a structure is closed in Production and during the restricted beta unless ADA_PRO_SELF_REGISTRATION=open — opening
+ * the `pro` surface for an invited pilot no longer lets anyone create a structure and its STRUCTURE_ADMIN. Structures of the pilot come from the platform
+ * (verified record + the invitation of its first administrator by a SUPERADMIN, scripts/pro-superadmin-bootstrap.mjs for the very first one). LAB and tests
+ * outside the beta keep the open sign-up.
+ * @param {Record<string, string | undefined>} [envVars]
+ */
+export function proSelfRegistrationAllowed(envVars = process.env) {
+    if (proSelfRegistrationOpen(envVars)) return true;
+    return envVars.VERCEL_ENV !== 'production' && !isPublicBetaRestricted(envVars);
+}
+export const PRO_SELF_REGISTRATION_CLOSED = {
+    error: 'PRO_SELF_REGISTRATION_CLOSED',
+    message: "La création libre d'un espace structure n'est pas ouverte. Les structures partenaires sont créées par l'équipe d'Accès Direct Aide, puis leurs membres reçoivent une invitation nominative.",
+};
 
 /**
  * @param {{ toString: () => string; }} text
@@ -28,6 +45,9 @@ function slugify(text) {
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: "Method not allowed" });
+    }
+    if (!proSelfRegistrationAllowed()) {
+        return res.status(403).json(PRO_SELF_REGISTRATION_CLOSED);   // before reading the body: nothing is checked, created or sent
     }
 
     const { password, structureName } = req.body;

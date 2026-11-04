@@ -61,6 +61,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/structure-proposals.js': 'Espace Structure: the organization\'s OWN record (members only) and the ADA MFA review queue; never public',
   'api/lib/retrieval-index.js': 'PKG-11 / D16: index rebuild of the D-5-VISIBLE aides only (visibleSql); writes vectors, no public output',
   'scripts/lab/seed-cdgg-conseil.mjs': 'R42-CDGG: LAB fixture writer of the fictional « CDGG Conseil » (refuses a non-local, non-LAB database and a non-lab mode); writes and removes only its own synthetic_fixture rows, never served',
+  'scripts/pro-superadmin-bootstrap.mjs': 'R43 (E3): one-time owner CLI creating the first platform SUPERADMIN; reads only the id of its own internal draft structure (fixed slug), never served',
   'scripts/search-eval.mjs': 'PKG-11 / D16: LAB measurement on its own synthetic fixtures (refuses a non-local database); no public output',
   'api/_handlers/pro/orientation-baskets.js': 'R18 (R31): reads only the nom of the caller\'s own organization for the summary heading; the catalogue items go through visibleSql (api/_services/orientation-basket.js)',
   'api/_services/link-check.js': 'PKG-11 / A05: link check of the D-5-VISIBLE records only (visibleSql), allow-listed official hosts; no public output',
