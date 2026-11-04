@@ -189,11 +189,11 @@ describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Out
     expect(mailer.__getTestOutbox().filter((m) => m.to === PRO_B.email), 'e-mail notifications off for this member').toEqual([]);
     expect((await db.execute(sql`SELECT count(*)::int n FROM "ProNotification" WHERE "userId" = ${PRO_B.id} AND type = 'rdv_cancelled_by_citizen'`)).rows[0].n).toBeGreaterThan(0);
     const again = await callRdv({ method: 'POST', path: `appointments/${a.id}/cancel`, as: C, body: {} });
-    expect(again.statusCode).toBe(200); expect((await notices(a.id)).length, 'cancelling twice notifies once').toBe(3);
+    expect(again.statusCode).toBe(200); expect((await notices(a.id)).filter((n) => n.kind === 'CANCELLED_BY_CITIZEN').length, 'cancelling twice notifies once').toBe(3);   // R43: from migration 0045 the booking's own BOOKED_BY_CITIZEN rows are in the ledger too
     const b = (await book(SV_IP, ip[6].startAt)).body;
     await citizen.setPreference(C.id, { channel: 'email', category: 'service', enabled: false });
     await callPro(proCancel, { method: 'POST', body: { id: b.id } });
-    expect(await notices(b.id)).toEqual([{ kind: 'CANCELLED_BY_STRUCTURE', recipient: 'citizen', channel: 'email', status: 'NO_CONSENT' }]);
+    expect((await notices(b.id)).filter((n) => n.kind !== 'BOOKED_BY_CITIZEN')).toEqual([{ kind: 'CANCELLED_BY_STRUCTURE', recipient: 'citizen', channel: 'email', status: 'NO_CONSENT' }]);   // R43: BOOKED_BY_CITIZEN rows of the booking itself from 0045
     await citizen.setPreference(C.id, { channel: 'email', category: 'service', enabled: true });
     const c = (await book(SV_IP, ip[7].startAt)).body; mailer.__clearTestOutbox();
     await callPro(proCancel, { method: 'POST', body: { id: c.id } });

@@ -97,3 +97,32 @@ export const settingsTable = (f) => without(StructureRdvSettings, f.guestBooking
  * @template {import('drizzle-orm').Table} T @param {T} table @returns {{ [K in keyof T['_']['columns']]: true }}
  */
 export const flagsOf = (table) => Object.fromEntries(Object.keys(table[Table.Symbol.Columns]).map((k) => [k, true]));
+
+/**
+ * R43-E — the AppointmentNotice kinds the ledger CHECK of THIS database accepts. Migration 0045 widens "AppointmentNotice_kind_check" with the four
+ * booking kinds (NOTICE_KINDS_0045); Production may still be at 0042 when the code is released, so a writer asks before recording one of them (a CHECK
+ * violation would only be logged and lost). Read from pg_constraint at most once per GUEST_SCHEMA_TTL_MS per process; a failed read answers null and is
+ * not remembered (the caller then behaves as before 0045: these kinds are skipped, never recorded under another kind).
+ */
+export const NOTICE_KINDS_0045 = Object.freeze(['BOOKED_BY_CITIZEN', 'REQUEST_RECEIVED', 'REQUEST_ACCEPTED', 'REQUEST_REFUSED']);
+const ledgerCache = new WeakMap();
+/** @param {any} database a drizzle client with execute() @returns {Promise<Set<string> | null>} null = unknown (no CHECK found, or the read failed) */
+async function readLedgerKinds(database) {
+  const res = await database.execute(sql`SELECT pg_get_constraintdef(c.oid) AS def FROM pg_constraint c JOIN pg_class t ON t.oid = c.conrelid
+    WHERE t.relname = 'AppointmentNotice' AND t.relnamespace = current_schema()::regnamespace AND c.conname = 'AppointmentNotice_kind_check'`);
+  const def = String((res?.rows || res || [])[0]?.def || '');
+  if (!def) return null;
+  return new Set([...def.matchAll(/'([A-Z0-9_]+)'/g)].map((m) => m[1]));
+}
+/** @param {any} database @returns {Promise<Set<string> | null>} */
+export function noticeLedgerKinds(database) {
+  if (!database || typeof database.execute !== 'function') return Promise.resolve(null);
+  const hit = ledgerCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const value = readLedgerKinds(database).catch(() => null);
+  ledgerCache.set(database, { at: Date.now(), value });
+  value.then((kinds) => { if (!kinds && ledgerCache.get(database)?.value === value) ledgerCache.delete(database); });
+  return value;
+}
+/** for the tests: forget what was read (a migration applied or rolled back inside one process) */
+export function forgetNoticeLedgerKinds(database) { ledgerCache.delete(database); }

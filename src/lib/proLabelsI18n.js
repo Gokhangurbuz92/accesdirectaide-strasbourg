@@ -15,6 +15,9 @@ export function useProLabels() {
       CANCELLED_BY_STRUCTURE: t('pro:notice_labels.kind.cancelled_by_structure', 'Annulé par la structure'), CANCELLED_BY_CITIZEN: t('pro:notice_labels.kind.cancelled_by_citizen', 'Annulé par la personne'),
       REMINDER_J1: t('pro:notice_labels.kind.reminder_j1', 'Rappel de la veille'), VISIO_APPROVED: t('pro:notice_labels.kind.visio_approved', 'Visio validée'),
       VISIO_REVOKED: t('pro:notice_labels.kind.visio_revoked', 'Visio retirée'),
+      // R43-E: the booking kinds recorded from migration 0045
+      BOOKED_BY_CITIZEN: t('pro:notice_labels.kind.booked_by_citizen', 'Rendez-vous pris en ligne par la personne'), REQUEST_RECEIVED: t('pro:notice_labels.kind.request_received', 'Demande de rendez-vous reçue'),
+      REQUEST_ACCEPTED: t('pro:notice_labels.kind.request_accepted', 'Demande de rendez-vous acceptée'), REQUEST_REFUSED: t('pro:notice_labels.kind.request_refused', 'Demande de rendez-vous refusée'),
     });
     const noticeRecipient = over(NOTICE_RECIPIENT, {
       citizen: t('pro:notice_labels.recipient.citizen', 'la personne'), structure: t('pro:notice_labels.recipient.structure', 'la structure'),
