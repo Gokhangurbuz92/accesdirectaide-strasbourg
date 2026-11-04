@@ -21,6 +21,7 @@ import SEO from '@/components/SEO';
 
 import { csrfFetch, ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { normalizeNextPath } from '@/lib/rdvRouting';
+import { parisBookingWindow } from '@/lib/parisCalendar';
 import i18n, { formatDate, useT } from '@/i18n';
 // R42: account-required journey pieces (suitability, professional choice, optional message, age statement, true e-mail outcome)
 import BookingMessageField from '@/components/rdv/BookingMessageField.jsx';
@@ -129,9 +130,8 @@ export default function PublicBooking() {
         setSlotsError('');
         try {
             const token = getToken();
-            const from = new Date().toISOString().slice(0, 10);
-            // R7: 14 days INCLUDING today (the server counts the last day to its end: today + 14 was 15 days, always refused with 400 — no slot ever loaded)
-            const to = new Date(Date.now() + 13 * 86400000).toISOString().slice(0, 10);
+            // R43: 14 PARIS days from today in Paris (the UTC date was the day before after midnight in Paris; R7: the server counts the last day to its end)
+            const { from, to } = parisBookingWindow();
             const res = await fetch(
                 `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}${teamChoice ? `&professional=${encodeURIComponent(who)}` : ''}`,
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
