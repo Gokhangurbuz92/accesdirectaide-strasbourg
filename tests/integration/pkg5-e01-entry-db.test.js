@@ -53,6 +53,8 @@ describe.skipIf(!hasDatabase)('PKG-5 E01 verified-only choice through the real A
       for (let wd = 0; wd <= 6; wd += 1) await db.execute(sql`INSERT INTO "ProAvailabilityRule" (id, "structureId", weekday, "startTime", "endTime", timezone, "updatedAt") VALUES (${`e01-r-${k}-${wd}-${TS}`}, ${id}, ${wd}, '09:00', '12:00', 'Europe/Paris', NOW())`);
     }
     await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${CIT.id}, ${CIT.email}, 'x', NOW(), NOW())`);
+    // R42-A07: booking needs an adult account; the fixture citizen declares it once (the unverified/suspended refusals below are unchanged)
+    expect((await call('POST', '/api/citizen/age-declaration', { cit: true, body: { adult: true } })).statusCode).toBe(200);
     const created = await call('POST', '/api/share/create', { cit: true, body: { situation: { zipCode: '67000' }, results: { rights: [] } } });
     share = { id: created.body.shareId, owner: created.body.ownerSecret };
   }, 60000);

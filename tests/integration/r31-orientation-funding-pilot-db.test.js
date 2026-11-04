@@ -142,7 +142,9 @@ describe.skipIf(!hasDatabase)('R31 — orientation baskets, funding dossiers, pi
     const out = await funding.createDossier({ title: 'Demande de subvention synthétique', funderName: 'Financeur fictif', deadline: '2099-01-31' }, BY);
     expect(out.ok).toBe(true);
     const d = out.dossier;
-    expect(d.content.sections.presentation).toContain('en cours de constitution');
+    // R42-A01: the project is carried by a natural person; the association is not created (the former « en cours de constitution » is gone)
+    expect(d.content.sections.presentation).toContain('porté par une personne physique');
+    expect(d.content.sections.presentation).not.toContain('en cours de constitution');
     expect(d.content.sections.presentation).toMatch(/\d+ aides, \d+ démarches et \d+ lieux d’accueil vérifiés et publiés/);
     expect(d.content.pieces).toHaveLength(funding.DEFAULT_PIECES.length);
     const codes = d.warnings.map((w) => w.code);
