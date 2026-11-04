@@ -10,6 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { buildProAuthHeaders, getProToken, proRdvClient } from '@/api/pro-rdv-client';
 import { formatDate, useT } from '@/i18n';
+// R44: the refusal carries an optional fixed reason (API contract), and the team sees whether the person was told
+import RefusalPanel from '@/components/rdv/RefusalPanel.jsx';
+import { useProLabels } from '@/lib/proLabelsI18n';
+import { refusalCode } from '@/lib/refusalReasons';
 
 function formatDateTime(raw) {
   if (!raw) return '-';
@@ -55,6 +59,10 @@ export default function ProAppointments() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState('');
   const [error, setError] = useState('');
+  const [refusingId, setRefusingId] = useState('');
+  // R44: the outcome of the last decision, announced (role="status"): decision + whether the person's e-mail notice left (existing notice statuses)
+  const [decisionNote, setDecisionNote] = useState('');
+  const { noticeStatus } = useProLabels();
   const [services, setServices] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [filters, setFilters] = useState({
@@ -107,11 +115,18 @@ export default function ProAppointments() {
   }, [services]);
 
   // R42 Mode B: accept or refuse a request (the server checks the rights, journals the decision and tells the person)
-  const decide = async (id, decision, expectedStartAt) => {
-    if (decision === 'REFUSE' && !window.confirm(t('pro:appointments.confirm_refuse', 'Refuser cette demande ? La personne en sera informée et le créneau libéré.'))) return;
+  // R44: a refusal is confirmed in its own panel (optional fixed reason, the sentence the person will read) — no browser confirm(), no reason lost
+  const decide = async (id, decision, expectedStartAt, reasonCode = '') => {
     setUpdatingId(id);
     setError('');
-    try { await proRdvClient.appointments.decide(id, decision, undefined, expectedStartAt); await loadData(); }
+    setDecisionNote('');
+    try {
+      const out = await proRdvClient.appointments.decide(id, decision, decision === 'REFUSE' ? (refusalCode(reasonCode) || undefined) : undefined, expectedStartAt);
+      const mail = String(out?.notification?.citizenEmail || '');
+      setDecisionNote(`${decision === 'REFUSE' ? t('pro:appointments.refusal.done', 'Demande refusée : le créneau est libéré.') : t('pro:appointments.accepted_done', 'Demande acceptée : le rendez-vous est confirmé.')} ${t('pro:appointments.refusal.notice', 'Information de la personne par e-mail : {{status}}.', { status: noticeStatus[mail] || mail || t('pro:appointments.refusal.notice_unknown', 'inconnue') })}`);
+      setRefusingId('');
+      await loadData();
+    }
     catch (e) { setError(e?.payload?.message || t('pro:appointments.update_error', 'Impossible de mettre à jour ce rendez-vous.')); }
     finally { setUpdatingId(''); }
   };
@@ -218,8 +233,9 @@ export default function ProAppointments() {
       </Card>
 
       {error ? (
-        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</div>
+        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</div>
       ) : null}
+      <p role="status" className={decisionNote ? 'rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900' : 'sr-only'} data-testid="pro-agenda-decision-status">{decisionNote}</p>
 
       {loading ? (
         <ListSkeleton count={4} />
@@ -274,7 +290,11 @@ export default function ProAppointments() {
                     {appointment.awaitingDecision && new Date(appointment.startAt || appointment.start_at).getTime() > Date.now() ? (
                       <>
                         <Button size="sm" data-testid="pro-agenda-accept" onClick={() => decide(appointment.id, 'ACCEPT', appointment.startAt || appointment.start_at)} disabled={updatingId === appointment.id}>{t('pro:appointments.accept', 'Accepter la demande')}</Button>
-                        <Button size="sm" variant="outline" data-testid="pro-agenda-refuse" onClick={() => decide(appointment.id, 'REFUSE', appointment.startAt || appointment.start_at)} disabled={updatingId === appointment.id}>{t('pro:appointments.refuse', 'Refuser la demande')}</Button>
+                        <Button size="sm" variant="outline" data-testid="pro-agenda-refuse" aria-expanded={refusingId === appointment.id} onClick={() => setRefusingId(refusingId === appointment.id ? '' : appointment.id)} disabled={updatingId === appointment.id}>{t('pro:appointments.refuse', 'Refuser la demande')}</Button>
+                        {refusingId === appointment.id ? (
+                          <RefusalPanel busy={updatingId === appointment.id} onCancel={() => setRefusingId('')}
+                            onConfirm={(code) => decide(appointment.id, 'REFUSE', appointment.startAt || appointment.start_at, code)} />
+                        ) : null}
                       </>
                     ) : null}
                     <Button asChild size="sm" variant="outline"><Link to={`/pro/appointments/${encodeURIComponent(appointment.id)}`} data-testid="pro-agenda-detail">{t('pro:appointments.details', 'Détails')}</Link></Button>
