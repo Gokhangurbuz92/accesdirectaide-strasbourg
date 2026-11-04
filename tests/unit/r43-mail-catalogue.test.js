@@ -42,7 +42,7 @@ describe('R43 mail catalogue coverage', () => {
     expect(fr.account_verification.subject).toBe('Bienvenue sur Accès Direct Aide — Vérifiez votre email');
     expect(fr.password_reset.subject).toBe('Réinitialisation de votre mot de passe — Accès Direct Aide');
     expect(fr.appointment_request.subject).toBe('Votre demande de rendez-vous - Accès Direct Aide');
-    expect(fr.appointment_confirmation.subject).toBe('Votre rendez-vous est confirmé - Accès Direct Aide');
+    expect(fr.appointment_confirmation.subject).toBe('Confirmation de votre rendez-vous - Accès Direct Aide');
     expect(fr.appointment_refusal.subject).toBe('Réponse à votre demande de rendez-vous - Accès Direct Aide');
     expect(fr.appointment_cancellation.subject).toBe('Votre rendez-vous a été annulé - Accès Direct Aide');
     expect(fr.appointment_rescheduled.subject).toBe('Votre rendez-vous est déplacé - Accès Direct Aide');
