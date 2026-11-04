@@ -1,7 +1,4 @@
 import crypto from 'crypto';
-import { db } from '../../src/db/index.js';
-import { CitizenUser } from '../../src/db/schema.js';
-import { eq } from 'drizzle-orm';
 import { getSecureCookieOptions } from './security.js';
 import { signJwt, verifyJwt } from '../_utils/auth.js';
 import { env } from './env.js';

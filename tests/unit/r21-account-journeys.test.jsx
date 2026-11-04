@@ -51,7 +51,9 @@ describe('R21 institutional space: password and session', () => {
     fireEvent.change(nouveau, { target: { value: 'Choisi-Par-Moi-21' } });
     fireEvent.change(screen.getByLabelText('Confirmer le nouveau mot de passe'), { target: { value: 'Choisi-Par-Moi-22' } });
     fireEvent.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));
-    expect(await screen.findByText('Les deux saisies du nouveau mot de passe sont différentes.')).toBeInTheDocument();
+    // R43 (A5): the message is now the confirmation field's own (aria-describedby) AND a link of the focused error summary, so it is found twice
+    expect(await screen.findByTestId('pw-again-error')).toHaveTextContent('Les deux saisies du nouveau mot de passe sont différentes.');
+    expect(screen.getByTestId('institution-password-errors')).toHaveTextContent('Les deux saisies du nouveau mot de passe sont différentes.');
     expect(calls()).not.toContain('POST /api/institution/password');
     fireEvent.change(screen.getByLabelText('Confirmer le nouveau mot de passe'), { target: { value: 'Choisi-Par-Moi-21' } });
     fireEvent.click(screen.getByRole('button', { name: 'Changer le mot de passe' }));

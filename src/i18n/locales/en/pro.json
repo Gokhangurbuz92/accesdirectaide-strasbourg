@@ -248,6 +248,7 @@
  "cases.vis_citizen": "Visible to the person",
  "cases.vis_internal": "Internal to the team (never shown to the person or to another organisation)",
  "cases.visibility": "Visibility",
+ "cases.target_search_first": "Receiving organisation: search for a verified organisation, then choose it from the list.",
  "dashboard.aucun_membre_trouve": "No member found",
  "dashboard.aucun_rendez_vous_venir": "No upcoming appointment",
  "dashboard.beneficiary": "Beneficiary",

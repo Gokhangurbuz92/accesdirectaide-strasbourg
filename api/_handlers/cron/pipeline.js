@@ -130,7 +130,7 @@ export default async function handler(req, res) {
             // Phase 9: COG + BANATIC territory ingestion
             // Requires external data files or API access — ENVIRONMENT ACTION REQUIRED
             logger.info('[PIPELINE] Geography ingestion route invoked', { runId });
-            const { ingestRegions, ingestDepartments, ingestEPCIMemberships, processReplacements } = await import('../../lib/geography/COGIngestion.js');
+            await import('../../lib/geography/COGIngestion.js');   // the module loads (its ingest functions need a data source, below)
             // This route requires pre-fetched COG/BANATIC data passed via request body or fetched from official APIs.
             // Production deployment must provide data source configuration.
             // Current: validates route exists and is callable.

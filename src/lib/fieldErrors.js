@@ -32,6 +32,28 @@ export const looksLikeEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(St
 /** errors map without one field (the person fixed it) @param {Record<string, string>} errors @param {string} field */
 export function withoutError(errors, field) {
   if (!errors[field]) return errors;
-  const { [field]: _fixed, ...rest } = errors;
+  const rest = { ...errors };
+  delete rest[field];
   return rest;
 }
+
+/** an address the server accepts as a link: https only (the catalogue refuses anything else) @param {string} value */
+export const looksLikeHttpsUrl = (value) => {
+  try { const u = new URL(String(value || '').trim()); return u.protocol === 'https:' && Boolean(u.hostname); } catch { return false; }
+};
+
+/**
+ * R43 — the messages of the field errors, in the interface language (`t` of any namespace: the keys are in `common`). Each message names its field, so the
+ * summary reads on its own.
+ * @typedef {(key: string, fallback: string, options?: Record<string, unknown>) => string} TFn
+ */
+/** @param {TFn} t @param {string} label */
+export const requiredMessage = (t, label) => t('common:form.errors.required', '{{label}} : ce champ est obligatoire.', { label: plainLabel(label) });
+/** @param {TFn} t @param {string} label @param {number} min */
+export const minLengthMessage = (t, label, min) => t('common:form.errors.min_length', '{{label}} : saisissez au moins {{min}} caractères.', { label: plainLabel(label), min });
+/** @param {TFn} t @param {string} label */
+export const emailMessage = (t, label) => t('common:form.errors.email', '{{label}} : saisissez une adresse e-mail valide, par exemple nom@exemple.fr.', { label: plainLabel(label) });
+/** @param {TFn} t @param {string} label */
+export const httpsUrlMessage = (t, label) => t('common:form.errors.https_url', '{{label}} : saisissez une adresse complète commençant par https://, par exemple https://www.service-public.fr.', { label: plainLabel(label) });
+/** @param {TFn} t @param {string} label */
+export const chooseMessage = (t, label) => t('common:form.errors.choose', '{{label}} : choisissez une option dans la liste.', { label: plainLabel(label) });

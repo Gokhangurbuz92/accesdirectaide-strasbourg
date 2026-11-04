@@ -3,8 +3,8 @@ import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import Sentry from '../_utils/sentryServer.js';
 
 export class ModelProvider {
-  async generateText(/** @type {string | number | boolean | null | undefined} */ options) { throw new Error('Not implemented'); }
-  async generateStructured(options) { throw new Error('Not implemented'); }
+  async generateText() { throw new Error('Not implemented'); }
+  async generateStructured() { throw new Error('Not implemented'); }
   async healthCheck() { throw new Error('Not implemented'); }
 }
 
@@ -86,8 +86,10 @@ export class GeminiProvider extends ModelProvider {
 
           const actualPrompt = prompt || (messages && messages[messages.length - 1].content) || '';
           
-          const result = await Sentry.startSpan({ name: 'gemini.generateContent', op: 'http.client' }, () => 
-            geminiModel.generateContent(actualPrompt)
+          // R43 (strict lint finding: `signal` and `timeoutMs` were accepted and never used, so an external call could hang until the function timed out,
+          // and a caller's abort was ignored): both are passed to the SDK's per-request options
+          const result = await Sentry.startSpan({ name: 'gemini.generateContent', op: 'http.client' }, () =>
+            geminiModel.generateContent(actualPrompt, { timeout: timeoutMs, ...(signal ? { signal } : {}) })
           );
           
           const text = result.response.text();
@@ -214,7 +216,7 @@ export class OllamaProvider extends ModelProvider {
             } else if (data.message.content) {
               try {
                  content = JSON.parse(data.message.content);
-              } catch (e) {
+              } catch {
                  content = { raw: data.message.content };
               }
             }

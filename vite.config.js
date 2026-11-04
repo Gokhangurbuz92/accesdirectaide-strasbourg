@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import fs from "fs";
 import path from "path";
-import { config as dotenvConfig } from "dotenv";
 
 function apiMiddlewarePlugin() {
   return {

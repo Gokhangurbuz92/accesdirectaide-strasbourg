@@ -196,7 +196,7 @@ export const apiClient = {
         adminMfaSetup: function () { return apiRequest('/api/admin/mfa-setup', { method: 'POST', body: {} }); },
         logout: async function () {
             // PKG-11 / ADM-10: the server ends every session of this administrator (best effort: the local token is dropped in any case)
-            try { await apiRequest('/api/admin/sessions', { method: 'POST', body: { action: 'logout' } }); } catch (e) { /* already signed out or offline */ }
+            try { await apiRequest('/api/admin/sessions', { method: 'POST', body: { action: 'logout' } }); } catch { /* already signed out or offline */ }
             sessionStorage.removeItem('access_token');
             if (typeof window !== 'undefined') window.location.href = '/admin/login';
         },

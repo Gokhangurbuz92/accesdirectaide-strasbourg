@@ -356,7 +356,7 @@ export default function RechercheAide() {
       if (territory.trim()) params.set('territoire', territory.trim());
       if (freeText.trim()) params.set('q', freeText.trim());
       setSearchParams(params, { replace: true });
-    } catch (err) {
+    } catch {
       // R7: a failed search is not « Aucun résultat » (the error was only written to the console)
       setResults(null);
       setSearchError(true);

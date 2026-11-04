@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { fieldA11y, minLengthMessage } from '@/lib/fieldErrors';
 import {
     Sparkles,
     FileText,
@@ -38,6 +41,9 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
     const [synthMsg, setSynthMsg] = useState('');
     const { t } = useT('pro');
     const STATUS = statusLabels(t);
+    // R43 (A5): the review note is required by the server (5 characters at least); it is checked here first, with its own message and an error summary
+    const noteErr = useFormErrors();
+    const [deciding, setDeciding] = useState('');
 
     const call = async (/** @type {string} */ method, /** @type {any} */ body) => {
         const res = await fetch(method === 'GET' ? `/api/pro/dossier-synthesis?shareId=${encodeURIComponent(String(shareId))}` : '/api/pro/dossier-synthesis', {
@@ -59,8 +65,13 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
     };
     const decide = async (/** @type {string} */ id, /** @type {'approve'|'reject'} */ decision) => {
         setSynthError(''); setSynthMsg('');
+        const field = `syn-note-${id}`;
+        const text = String(notes[id] || '').trim();
+        if (!noteErr.check(text.length >= 5 ? {} : { [field]: minLengthMessage(t, t('pro:expert_tools.review_note', 'Ce que vous avez vérifié'), 5) })) return;
+        setDeciding(id);
         try { await call('POST', { action: 'review', shareId, id, decision, note: notes[id] || '' }); setSynthMsg(decision === 'approve' ? t('pro:expert_tools.draft_approved', 'Brouillon approuvé.') : t('pro:expert_tools.draft_rejected', 'Brouillon rejeté.')); await load(); }
         catch (err) { setSynthError(err.message || t('pro:expert_tools.action_failed', 'Action impossible.')); }
+        finally { setDeciding(''); }
     };
 
     return (
@@ -87,6 +98,7 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
                     </Button>
                     <div role="status" aria-live="polite" className="text-xs text-slate-800" data-testid="pro-synthesis-status">{synthMsg}</div>
                     {synthError && <p role="alert" className="text-xs text-red-800 font-medium" data-testid="pro-synthesis-problem">{synthError}</p>}
+                    <ErrorSummary ref={noteErr.summaryRef} errors={noteErr.errors} order={drafts.map((d) => `syn-note-${d.id}`)} testid="pro-synthesis-errors" />
                     <ul className="space-y-3">
                         {drafts.map((d) => (
                             <li key={d.id} className="space-y-2 rounded-lg border border-slate-200 p-2.5" data-testid="pro-synthesis-draft">
@@ -94,12 +106,13 @@ export default function ExpertTools(/** @type {Record<string, string | number | 
                                 <ol className="list-decimal space-y-1 ps-5 text-xs text-slate-900" lang="fr" dir="auto">{/* the local model writes its points in French */}{(d.points || []).map((p, i) => <li key={i}>{p}</li>)}</ol>
                                 {d.sourceChanged && <p className="text-xs font-medium text-amber-800">{t('pro:expert_tools.source_changed', 'Le dossier a changé depuis ce brouillon : il ne peut plus être approuvé.')}</p>}
                                 {d.status === 'PENDING' ? (
-                                    <div className="space-y-1">
+                                    <div className="space-y-1" aria-busy={deciding === d.id || undefined}>
                                         <label htmlFor={`syn-note-${d.id}`} className="block text-xs text-slate-800">{t('pro:expert_tools.review_note', 'Ce que vous avez vérifié')}</label>
-                                        <input id={`syn-note-${d.id}`} className="w-full rounded border p-1.5 text-xs" value={notes[d.id] || ''} onChange={(e) => setNotes((n) => ({ ...n, [d.id]: e.target.value }))} />
+                                        <input id={`syn-note-${d.id}`} aria-required="true" className="w-full rounded border p-1.5 text-xs" value={notes[d.id] || ''} {...fieldA11y(`syn-note-${d.id}`, noteErr.errors)} onChange={(e) => { setNotes((n) => ({ ...n, [d.id]: e.target.value })); noteErr.clear(`syn-note-${d.id}`); }} />
+                                        <FieldError field={`syn-note-${d.id}`} errors={noteErr.errors} />
                                         <div className="flex gap-2">
-                                            <Button size="sm" disabled={d.sourceChanged} onClick={() => decide(d.id, 'approve')} data-testid="pro-synthesis-approve">{t('pro:expert_tools.approve', 'Approuver')}</Button>
-                                            <Button size="sm" variant="outline" onClick={() => decide(d.id, 'reject')} data-testid="pro-synthesis-reject">{t('pro:expert_tools.reject', 'Rejeter')}</Button>
+                                            <Button size="sm" disabled={d.sourceChanged || deciding === d.id} onClick={() => decide(d.id, 'approve')} data-testid="pro-synthesis-approve">{t('pro:expert_tools.approve', 'Approuver')}</Button>
+                                            <Button size="sm" variant="outline" disabled={deciding === d.id} onClick={() => decide(d.id, 'reject')} data-testid="pro-synthesis-reject">{t('pro:expert_tools.reject', 'Rejeter')}</Button>
                                         </div>
                                     </div>
                                 ) : <p className="text-xs text-slate-700">{t('pro:expert_tools.reviewed_by', 'Relu par {{name}}', { name: d.reviewedBy })}{d.reviewNote ? ` — ${d.reviewNote}` : ''}</p>}

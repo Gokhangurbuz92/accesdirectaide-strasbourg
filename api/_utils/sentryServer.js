@@ -7,29 +7,6 @@ const dsn = env.sentry.dsn;
 const environment = env.sentry.environment;
 const release = env.sentry.release;
 
-function scrubHeaders(/** @type {string | number | boolean | null | undefined} */ headers) {
-  if (!headers || typeof headers !== 'object') return headers;
-  const out = {};
-  for (const [k, v] of Object.entries(headers)) {
-    const key = String(k || '');
-    const lower = key.toLowerCase();
-    if (
-      lower.includes('authorization') ||
-      lower.includes('cookie') ||
-      lower.includes('token') ||
-      lower.includes('secret') ||
-      lower.includes('password') ||
-      lower.includes('key')
-    ) {
-      out[key] = '[REDACTED]';
-      continue;
-    }
-    // @ts-ignore
-    out[key] = typeof v === 'string' ? String(v).slice(0, 200) : v;
-  }
-  return out;
-}
-
 /**
 * @param {{ category: any; message: any; data: any; }} breadcrumb
 */

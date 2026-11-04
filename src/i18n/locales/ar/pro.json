@@ -256,6 +256,7 @@
  "cases.vis_citizen": "يراها الشخص",
  "cases.vis_internal": "داخلية للفريق (لا تُعرض أبدًا على الشخص ولا على جهة أخرى)",
  "cases.visibility": "الظهور",
+ "cases.target_search_first": "الجهة المستقبِلة: ابحث عن جهة موثَّقة، ثم اخترها من القائمة.",
  "dashboard.aucun_membre_trouve": "لم يتم العثور على أي عضو",
  "dashboard.aucun_rendez_vous_venir": "لا توجد مواعيد قادمة",
  "dashboard.beneficiary": "المستفيد",

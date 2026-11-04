@@ -113,7 +113,7 @@ export class AgefiphConnector extends SourceConnector {
     resolveUrl(href, base) {
         try {
             return new URL(href, base).toString();
-        } catch (e) {
+        } catch {
             return href;
         }
     }

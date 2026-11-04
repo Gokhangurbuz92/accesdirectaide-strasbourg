@@ -231,5 +231,7 @@
  "chat.assessment_remove": "Kaldır",
  "chat.assessment_attached_one": "Simülasyon öneriniz sorularınıza salt okunur olarak eklendi. La Boussole bunu açıklar, karar vermez.",
  "chat.assessment_attached_other": "{{count}} simülasyon öneriniz sorularınıza salt okunur olarak eklendi. La Boussole bunları açıklar, karar vermez.",
+ "chat.feedback_failed": "Görüşünüz gönderilemedi.",
+ "chat.feedback_retry": "Tekrar deneyin",
  "health_notice.text": "Tıbbi belge göndermeyin (rapor, sağlık raporu, reçete, sağlık bilgisi içeren MDPH dosyası — engelli merkezi dosyası): AccesDirectAide henüz sağlık verileri için onaylı bir barındırıcıya sahip değil (HDS, sağlık verilerinin barındırılmasına ilişkin Fransız sertifikası)."
 }

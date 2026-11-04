@@ -248,6 +248,7 @@
  "cases.vis_citizen": "Kişi görebilir",
  "cases.vis_internal": "Ekip içi (kişiye veya başka bir kuruluşa asla gösterilmez)",
  "cases.visibility": "Görünürlük",
+ "cases.target_search_first": "Alıcı kuruluş: doğrulanmış bir kuruluş arayın, ardından listeden seçin.",
  "dashboard.aucun_membre_trouve": "Üye bulunamadı",
  "dashboard.aucun_rendez_vous_venir": "Yaklaşan randevu yok",
  "dashboard.beneficiary": "Hizmet alan kişi",

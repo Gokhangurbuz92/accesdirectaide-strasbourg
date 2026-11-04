@@ -10,6 +10,9 @@ import VerificationPanel from '@/components/admin/VerificationPanel';
 import { explain } from '@/pages/admin/k5/helpers.js';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { chooseMessage, emailMessage, fieldA11y, httpsUrlMessage, looksLikeEmail, looksLikeHttpsUrl, requiredMessage } from '@/lib/fieldErrors';
 
 /**
  * PKG-11 / A02 — administrator editor of one catalogue record through /api/admin/content (before: it wrote to read-only public endpoints and used field names
@@ -30,11 +33,37 @@ const fromForm = (fields, form) => Object.fromEntries(fields.map((f) => [f.name,
         : f.type === 'links' ? form[f.name].filter((x) => String(x.nom || '').trim() || String(x.url || '').trim()).map((x) => ({ nom: String(x.nom || ''), url: String(x.url || '') }))
           : String(form[f.name] ?? '')]));
 
+/**
+ * R43 (A5) — what the server would refuse, said per field before anything is sent: a required field left empty, an e-mail that is not one, a link of a
+ * dispositif whose address is not https (the server refuses the whole list) or that has no name. Returns field id → message, in the order of the form.
+ */
+function validate(fields, form, t) {
+  const errs = {};
+  for (const f of fields) {
+    const v = form[f.name];
+    if (f.type === 'links') {
+      (v || []).forEach((x, i) => {
+        const nom = String(x.nom || '').trim(); const url = String(x.url || '').trim();
+        if (!nom && !url) return;
+        if (!nom) errs[`f-${f.name}-${i}-nom`] = requiredMessage(t, `${t('admin:catalogue_editor.link_name', 'Nom du lien')} ${i + 1}`);
+        if (!looksLikeHttpsUrl(url)) errs[`f-${f.name}-${i}-url`] = url ? httpsUrlMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`) : requiredMessage(t, `${t('admin:catalogue_editor.link_url', 'Adresse (https://…)')} ${i + 1}`);
+      });
+      continue;
+    }
+    if (f.type === 'boolean' || f.type === 'steps') continue;
+    const text = String(v ?? '').trim();
+    if (f.required && !text) errs[`f-${f.name}`] = f.type === 'select' ? chooseMessage(t, f.label) : requiredMessage(t, f.label);
+    else if (text && f.name === 'email' && !looksLikeEmail(text)) errs[`f-${f.name}`] = emailMessage(t, f.label);
+  }
+  return errs;
+}
+const errorOrder = (fields, form) => fields.flatMap((f) => (f.type === 'links' ? (form[f.name] || []).flatMap((_, i) => [`f-${f.name}-${i}-nom`, `f-${f.name}-${i}-url`]) : [`f-${f.name}`]));
+
 /** Repeated groups (steps, links): one fieldset, each item named by its position, add / remove buttons. */
-function RepeatedField({ f, items, onChange }) {
+function RepeatedField({ f, items, onChange, errors = {}, onFix = () => {} }) {
   const { t } = useT('admin');
   const parts = f.type === 'steps' ? [['titre', t('admin:catalogue_editor.step_title', 'Titre de l’étape'), 'input'], ['texte', t('admin:catalogue_editor.step_text', 'Texte de l’étape'), 'textarea']] : [['nom', t('admin:catalogue_editor.link_name', 'Nom du lien'), 'input'], ['url', t('admin:catalogue_editor.link_url', 'Adresse (https://…)'), 'input']];
-  const set = (i, key, value) => onChange(items.map((x, j) => (j === i ? { ...x, [key]: value } : x)));
+  const set = (i, key, value) => { onChange(items.map((x, j) => (j === i ? { ...x, [key]: value } : x))); onFix(`f-${f.name}-${i}-${key}`); };
   return (
     <fieldset className="space-y-3 rounded border border-slate-300 p-3" data-testid={`admin-editor-${f.name}`}>
       <legend className="px-1 text-sm font-medium text-slate-900">{f.label}</legend>
@@ -45,8 +74,9 @@ function RepeatedField({ f, items, onChange }) {
             <div key={key} className="space-y-1">
               <label htmlFor={`f-${f.name}-${i}-${key}`} className="block text-sm text-slate-900">{label} {i + 1}</label>
               {kind === 'textarea'
-                ? <Textarea id={`f-${f.name}-${i}-${key}`} rows={4} value={x[key] || ''} onChange={(e) => set(i, key, e.target.value)} />
-                : <Input id={`f-${f.name}-${i}-${key}`} value={x[key] || ''} onChange={(e) => set(i, key, e.target.value)} />}
+                ? <Textarea id={`f-${f.name}-${i}-${key}`} rows={4} value={x[key] || ''} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />
+                : <Input id={`f-${f.name}-${i}-${key}`} value={x[key] || ''} {...(key === 'url' ? { type: 'url', inputMode: 'url' } : {})} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />}
+              <FieldError field={`f-${f.name}-${i}-${key}`} errors={errors} />
             </div>
           ))}
           {x.image ? <p className="text-xs text-slate-700">{t('admin:catalogue_editor.image_kept', 'Image conservée : {{image}}', { image: x.image })}</p> : null}
@@ -68,6 +98,7 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
   const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false); const [saves, setSaves] = useState(0);
   const [loadFailure, setLoadFailure] = useState(/** @type {null | 'missing' | 'error'} */ (null)); const [attempt, setAttempt] = useState(0);
   const [verifyOpen, setVerifyOpen] = useState(false);
+  const fieldErr = useFormErrors();
   useEffect(() => {
     if (!id) return;
     setLoadFailure(null);
@@ -75,7 +106,9 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
       .catch((e) => { setProblem(explain(e)); setLoadFailure(e?.status === 404 ? 'missing' : 'error'); setLoaded(true); });   // Q10: never an empty editor for a record that did not load
   }, [kind, id, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
   const save = async (e) => {
-    e.preventDefault(); setBusy(true); setMsg(''); setProblem('');
+    e.preventDefault(); setMsg(''); setProblem('');
+    if (!fieldErr.check(validate(fields, form, t))) return;
+    setBusy(true);
     try {
       const body = fromForm(fields, form);
       if (id) {
@@ -105,30 +138,32 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
       <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">{t('admin:catalogue_editor.back', 'Retour à la liste')}</Link>
       <h1 className="text-2xl font-bold text-slate-900">{id ? t('admin:catalogue_editor.edit_title', 'Modifier : {{name}}', { name: meta?.titre || meta?.nom || '' }) : t('admin:catalogue_editor.new_title', 'Nouvelle fiche — {{kind}}', { kind: title })}</h1>
       {meta ? <p className="text-sm text-slate-700" data-testid="admin-editor-meta">{t('admin:catalogue_editor.status', 'Statut : {{status}}', { status: meta.statut })}{meta.verifiable ? ` — ${meta.publication_hold ? t('admin:catalogue_editor.meta.hold', 'en attente de revérification') : meta.verification_status === 'VERIFIED' ? t('admin:catalogue_editor.meta.verified', 'vérifiée') : t('admin:catalogue_editor.meta.not_verified', 'non vérifiée')}` : t('admin:catalogue_editor.meta.editorial', ' — contenu éditorial (sans registre de vérification)')}</p> : null}
-      <form onSubmit={save} className="space-y-4">
+      <form onSubmit={save} className="space-y-4" noValidate aria-busy={busy || undefined}>
+        <ErrorSummary ref={fieldErr.summaryRef} errors={fieldErr.errors} order={errorOrder(fields, form)} testid="admin-editor-errors" />
         {fields.map((f) => (
           <div key={f.name} className="space-y-1">
             {f.type === 'boolean' ? (
               <label className="flex min-h-11 items-center gap-2"><input type="checkbox" className="h-6 w-6" checked={Boolean(form[f.name])} onChange={(e) => setForm({ ...form, [f.name]: e.target.checked })} />{f.label}</label>
             ) : f.type === 'steps' || f.type === 'links' ? (
-              <RepeatedField f={f} items={form[f.name]} onChange={(items) => setForm({ ...form, [f.name]: items })} />
+              <RepeatedField f={f} items={form[f.name]} errors={fieldErr.errors} onFix={fieldErr.clear} onChange={(items) => setForm({ ...form, [f.name]: items })} />
             ) : (
               <>
                 <label htmlFor={`f-${f.name}`} className="block text-sm font-medium text-slate-900">{f.label}{f.required ? ' *' : ''}{f.type === 'list' ? t('admin:catalogue_editor.one_per_line', ' (une valeur par ligne)') : ''}</label>
                 {f.type === 'select'
-                  ? <select id={`f-${f.name}`} className="min-h-11 w-full rounded border border-slate-400 bg-white p-2" value={form[f.name]} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
+                  ? <select id={`f-${f.name}`} className="min-h-11 w-full rounded border border-slate-400 bg-white p-2" value={form[f.name]} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }}>
                     <option value="">—</option>{[...new Set([...(f.options || []), form[f.name]].filter(Boolean))].map((o) => <option key={o} value={o}>{o}</option>)}
                   </select>
                   : f.type === 'textarea' || f.type === 'list'
-                  ? <Textarea id={`f-${f.name}`} rows={f.type === 'list' ? 3 : 4} value={form[f.name]} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })} />
-                  : <Input id={`f-${f.name}`} value={form[f.name]} required={Boolean(f.required)} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })} />}
+                  ? <Textarea id={`f-${f.name}`} rows={f.type === 'list' ? 3 : 4} value={form[f.name]} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />
+                  : <Input id={`f-${f.name}`} value={form[f.name]} required={Boolean(f.required)} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />}
+                <FieldError field={`f-${f.name}`} errors={fieldErr.errors} />
               </>
             )}
           </div>
         ))}
         <Button type="submit" disabled={busy} className="min-h-11">{id ? t('admin:catalogue_editor.save', 'Enregistrer') : t('admin:catalogue_editor.create_draft', 'Créer le brouillon')}</Button>
       </form>
-      <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{msg}</p>
+      <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</p>
       {problem ? <p role="alert" data-testid="admin-editor-problem" className="text-sm text-rose-800">{problem}</p> : null}
       {id && ['aide', 'demarche', 'structure'].includes(kind) ? <p className="text-sm text-slate-700"><Trans i18n={i18n} i18nKey="admin:catalogue_editor.falc_hint" defaults="Les textes faciles à lire se relisent et se signent dans <0>Textes faciles à lire</0>." components={[<Link key="falc" className="text-blue-800 underline" to={`/admin/falc?type=${kind}&id=${encodeURIComponent(id)}`} />]} /></p> : null}
       {id && meta?.verifiable && ['aide', 'demarche', 'structure', 'dispositif'].includes(kind) ? (

@@ -4,7 +4,7 @@ import { verifyPassword } from '../../../_utils/user-auth.js';
 import { signProToken, signProMfaPendingToken, logProAudit } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils/rateLimit.js';
 import { db } from '../../../../src/db/index.js';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { env } from '../../../_utils/env.js';
 
 /** A fixed scrypt hash (of a value nobody types) so that an unknown e-mail costs the same work as a real check. */

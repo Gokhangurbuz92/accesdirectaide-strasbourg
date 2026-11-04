@@ -26,7 +26,7 @@ function index(root) {
   for (const [code, nom] of ref.regions) add('region', code, nom);
   for (const [code, , nom] of ref.departements) add('departement', code, nom);
   for (const [code, nom] of ref.epcis) add('epci', code, nom);
-  for (const [code, dep, nom] of ref.communes) add('commune', code, nom, `${nom} (${code})`);
+  for (const [code, , nom] of ref.communes) add('commune', code, nom, `${nom} (${code})`);
   cache = { byCode, byName, version: ref.cogVersion };
   return cache;
 }

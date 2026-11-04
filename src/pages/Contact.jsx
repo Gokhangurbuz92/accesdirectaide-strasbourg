@@ -82,7 +82,7 @@ export default function Contact() {
       } else {
         setError(t('contact:error.not_delivered', "Votre message n'a pas pu être transmis. Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
       }
-    } catch (err) {
+    } catch {
       setError(t('contact:error.network', "Votre message n'a pas pu être transmis (connexion impossible). Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
     } finally {
       setIsSubmitting(false);

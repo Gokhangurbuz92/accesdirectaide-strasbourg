@@ -30,7 +30,7 @@ function truncateInput(/** @type {string} */ text, maxChars = MAX_INPUT_CHARS) {
   return text.slice(0, maxChars);
 }
 
-async function generateOllamaEmbedding(/** @type {string | number | boolean | null | undefined} */ text, /** @type {string | number | boolean | null | undefined} */ outputDimensionality) {
+async function generateOllamaEmbedding(/** @type {string | number | boolean | null | undefined} */ text) {   // the dimension is checked by generateEmbedding
   const OLLAMA_ENDPOINT = env.ai.ollamaUrl || 'http://127.0.0.1:11434/api/embeddings';
   const OLLAMA_MODEL = env.ai.ollamaModel || 'nomic-embed-text';
 
@@ -91,7 +91,7 @@ export async function generateEmbedding(text, outputDimensionality = CANONICAL_D
   let rawValues = null;
 
   if (env.ai.embeddingProvider === 'ollama') {
-    rawValues = await generateOllamaEmbedding(truncated, outputDimensionality);
+    rawValues = await generateOllamaEmbedding(truncated);
   } else if (env.ai.geminiKey) {
     const policy = AIProviderPolicy.evaluate({ provider: PROVIDER.GEMINI, audience: AUDIENCE.PUBLIC });
     if (!policy.allowed) throw new Error(`AI_PROVIDER_NOT_ALLOWED_FOR_AUDIENCE: ${policy.reason}`);

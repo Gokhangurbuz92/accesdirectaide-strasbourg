@@ -203,7 +203,7 @@ async function handleDiagnosticInner(req, res, track) {
         let engineUp = false;
         try {
             engineUp = await (await openfisca()).isAvailable();
-        } catch (healthCheckErr) {
+        } catch {
             // privacy: never log/forward the original exception (message/detail/stack may carry upstream or request text)
             logger.warn('[Diagnostic] isAvailable() threw', { requestId, code: ERROR_CODES.HEALTHCHECK_FAILED });
             captureSafe(Sentry, ERROR_CODES.HEALTHCHECK_FAILED, { requestId, phase: 'health-check' });

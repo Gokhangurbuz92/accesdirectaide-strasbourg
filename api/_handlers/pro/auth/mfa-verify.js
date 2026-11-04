@@ -1,6 +1,5 @@
 import logger from '../../../_utils/logger.js';
 import { db } from '../../../../src/db/index.js';
-import { eq } from 'drizzle-orm';
 import { signProToken, logProAudit, verifyProMfaPendingToken } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp } from '../../../_utils/rateLimit.js';
 import { matchCodeStep } from '../../../lib/totp.js';

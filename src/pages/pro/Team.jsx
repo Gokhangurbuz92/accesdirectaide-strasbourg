@@ -42,6 +42,9 @@ import { toast } from 'sonner';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
 /**
  * ProTeam — Page enrichie de gestion d'équipe
  *
@@ -107,10 +110,17 @@ export default function ProTeam() {
 
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const [inviteEmail, setInviteEmail] = useState('');
+    // R43 (A5): the address is checked in the dialog (own message, focused summary); a refusal of the server is said in the dialog too (a toast alone
+    // disappears and is outside the dialog the keyboard is trapped in)
+    const inviteErr = useFormErrors();
+    const [inviteProblem, setInviteProblem] = useState('');
     const [inviteRole, setInviteRole] = useState('PRO');
 
     const handleInvite = async (/** @type {{ preventDefault: () => void; }} */ e) => {
         e.preventDefault();
+        setInviteProblem('');
+        const lbl = t('pro:team.email', 'Email');
+        if (!inviteErr.check(!inviteEmail.trim() ? { 'invite-email': requiredMessage(t, lbl) } : looksLikeEmail(inviteEmail) ? {} : { 'invite-email': emailMessage(t, lbl) })) return;
         setInviting(true);
         try {
             const res = await fetch('/api/pro/invite', {
@@ -127,10 +137,12 @@ export default function ProTeam() {
                 setIsInviteOpen(false);
                 setInviteEmail('');
             } else {
-                const err = await res.json();
-                toast.error(err.error || t('pro:team.invite_error', 'Erreur lors de l\'envoi'));
+                const err = await res.json().catch(() => ({}));
+                const why = err.error || t('pro:team.invite_error', 'Erreur lors de l\'envoi');
+                setInviteProblem(why); toast.error(why);
             }
         } catch {
+            setInviteProblem(t('pro:team.network_retry', 'Erreur réseau. Veuillez réessayer.'));
             toast.error(t('pro:team.network_retry', 'Erreur réseau. Veuillez réessayer.'));
         } finally {
             setInviting(false);
@@ -511,21 +523,26 @@ export default function ProTeam() {
             )}
 
             {/* Invite Dialog */}
-            <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+            <Dialog open={isInviteOpen} onOpenChange={(open) => { setIsInviteOpen(open); if (!open) { inviteErr.reset(); setInviteProblem(''); } }}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{t('pro:team.invite_dialog_title', 'Inviter un membre')}</DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleInvite} className="space-y-4">
+                    <form onSubmit={handleInvite} className="space-y-4" noValidate aria-busy={inviting || undefined}>
+                        <ErrorSummary ref={inviteErr.summaryRef} errors={inviteErr.errors} order={['invite-email']} testid="team-invite-errors" />
+                        {inviteProblem ? <p role="alert" data-testid="team-invite-problem" className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">{inviteProblem}</p> : null}
                         <div>
                             <Label htmlFor="invite-email">{t('pro:team.email', 'Email')}</Label>
                             <Input
                                 id="invite-email"
                                 type="email"
+                                autoComplete="off"
                                 value={inviteEmail}
-                                onChange={(e) => setInviteEmail(e.target.value)}
+                                {...fieldA11y('invite-email', inviteErr.errors)}
+                                onChange={(e) => { setInviteEmail(e.target.value); inviteErr.clear('invite-email'); }}
                                 required
                             />
+                            <FieldError field="invite-email" errors={inviteErr.errors} />
                         </div>
                         <div>
                             <Label htmlFor="invite-role">{t('pro:team.role', 'Rôle')}</Label>
@@ -546,9 +563,9 @@ export default function ProTeam() {
                         <DialogFooter>
                             <Button type="submit" disabled={inviting}>
                                 {inviting ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
                                 ) : (
-                                    <UserPlus className="mr-2 h-4 w-4" />
+                                    <UserPlus className="me-2 h-4 w-4" aria-hidden="true" />
                                 )}
                                 {inviting ? t('pro:team.sending', 'Envoi...') : t('pro:team.invite', 'Inviter')}
                             </Button>

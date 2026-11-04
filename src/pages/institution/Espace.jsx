@@ -6,6 +6,9 @@ import { csrfFetch } from '@/lib/csrf';
 import { Button } from '@/components/ui/button';
 import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
 import { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
 
 const KEY = 'institution_token';
 const get = () => { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } };
@@ -28,11 +31,17 @@ function PasswordForm({ temporary, onChanged }) {
   const { t } = useT('institution');
   const [cur, setCur] = useState(''); const [next, setNext] = useState(''); const [again, setAgain] = useState('');
   const [error, setError] = useState(''); const [done, setDone] = useState(''); const [busy, setBusy] = useState(false);
+  // R43 (A5): each field says its own problem (the three were one banner); the summary receives the focus; the server's refusal stays a banner
+  const pwErr = useFormErrors();
   const submit = async (e) => {
     e.preventDefault(); setError(''); setDone('');
+    const errs = {};
+    if (!cur) errs['pw-cur'] = requiredMessage(t, t('institution:space.mot_passe_actuel', 'Mot de passe actuel'));
     const problems = passwordProblems(next);
-    if (problems.length) return setError(passwordMessage(problems));
-    if (next !== again) return setError(t('institution:space.pw_mismatch', 'Les deux saisies du nouveau mot de passe sont différentes.'));
+    if (!next) errs['pw-new'] = requiredMessage(t, t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe'));
+    else if (problems.length) errs['pw-new'] = passwordMessage(problems);
+    if (!errs['pw-new'] && next !== again) errs['pw-again'] = t('institution:space.pw_mismatch', 'Les deux saisies du nouveau mot de passe sont différentes.');
+    if (!pwErr.check(errs)) return;
     setBusy(true);
     try {
       const out = await call('/api/institution/password', { method: 'POST', body: JSON.stringify({ currentPassword: cur, newPassword: next }) });
@@ -45,12 +54,13 @@ function PasswordForm({ temporary, onChanged }) {
       <h2 id="pw-h" className="text-xl font-semibold">{temporary ? t('institution:space.pw_choose', 'Choisissez votre mot de passe') : t('institution:space.pw_mine', 'Mon mot de passe')}</h2>
       {temporary ? <p className="text-sm" data-testid="institution-temporary">{t('institution:space.vous_etes_connecte_avec', 'Vous êtes connecté avec un mot de passe provisoire remis par ADA. Choisissez votre propre mot de passe pour accéder aux statistiques.')}</p> : null}
       {error ? <p role="alert" className="text-red-800" data-testid="institution-password-error">{error}</p> : null}
-      <p role="status" className="text-green-800" data-testid="institution-password-done">{done}</p>
-      <form onSubmit={submit} className="space-y-3" noValidate>
-        <div><label htmlFor="pw-cur" className="block">{t('institution:space.mot_passe_actuel', 'Mot de passe actuel')}</label><input id="pw-cur" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={cur} onChange={(e) => setCur(e.target.value)} required /></div>
-        <div><label htmlFor="pw-new" className="block">{t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="pw-new" type="password" autoComplete="new-password" aria-describedby="pw-rule" className="w-full rounded border p-2" value={next} onChange={(e) => setNext(e.target.value)} required />
-          <p id="pw-rule" className="text-sm">{PASSWORD_RULE}</p></div>
-        <div><label htmlFor="pw-again" className="block">{t('institution:space.confirmer_nouveau_mot_passe', 'Confirmer le nouveau mot de passe')}</label><input id="pw-again" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={again} onChange={(e) => setAgain(e.target.value)} required /></div>
+      <p role="status" className="text-green-800" data-testid="institution-password-done">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : done}</p>
+      <form onSubmit={submit} className="space-y-3" noValidate aria-busy={busy || undefined}>
+        <ErrorSummary ref={pwErr.summaryRef} errors={pwErr.errors} order={['pw-cur', 'pw-new', 'pw-again']} testid="institution-password-errors" />
+        <div><label htmlFor="pw-cur" className="block">{t('institution:space.mot_passe_actuel', 'Mot de passe actuel')}</label><input id="pw-cur" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={cur} {...fieldA11y('pw-cur', pwErr.errors)} onChange={(e) => { setCur(e.target.value); pwErr.clear('pw-cur'); }} aria-required="true" /><FieldError field="pw-cur" errors={pwErr.errors} /></div>
+        <div><label htmlFor="pw-new" className="block">{t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="pw-new" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={next} {...fieldA11y('pw-new', pwErr.errors, 'pw-rule')} onChange={(e) => { setNext(e.target.value); pwErr.clear('pw-new'); }} aria-required="true" />
+          <p id="pw-rule" className="text-sm">{PASSWORD_RULE}</p><FieldError field="pw-new" errors={pwErr.errors} /></div>
+        <div><label htmlFor="pw-again" className="block">{t('institution:space.confirmer_nouveau_mot_passe', 'Confirmer le nouveau mot de passe')}</label><input id="pw-again" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={again} {...fieldA11y('pw-again', pwErr.errors)} onChange={(e) => { setAgain(e.target.value); pwErr.clear('pw-again'); }} aria-required="true" /><FieldError field="pw-again" errors={pwErr.errors} /></div>
         <Button type="submit" disabled={busy}>{t('institution:space.changer_mot_passe', 'Changer le mot de passe')}</Button>
         <p className="text-sm">{t('institution:space.vos_autres_sessions_seront', 'Vos autres sessions seront fermées.')}</p>
       </form>
@@ -69,8 +79,15 @@ export default function InstitutionEspace() {
     catch (e) { if (e.status === 401) ended(); else setProblem(t('institution:space.load_failed', 'Chargement impossible.')); }
   }, [ended]);   // eslint-disable-line react-hooks/exhaustive-deps -- t: the message follows the language when it is shown
   useEffect(() => { if (logged) load(); }, [logged, load]);
+  const loginErr = useFormErrors();
   const login = async (e) => {
     e.preventDefault(); setProblem(''); setNotice('');
+    // R43 (A5): an empty or malformed field is said on the field; a refused sign-in stays one banner (it does not say which field is wrong, on purpose)
+    const errs = {};
+    if (!email.trim()) errs['inst-email'] = requiredMessage(t, t('institution:space.adresse_mail', 'Adresse e-mail'));
+    else if (!looksLikeEmail(email)) errs['inst-email'] = emailMessage(t, t('institution:space.adresse_mail', 'Adresse e-mail'));
+    if (!password) errs['inst-pass'] = requiredMessage(t, t('institution:space.mot_passe', 'Mot de passe'));
+    if (!loginErr.check(errs)) return;
     try { const out = await call('/api/institution/login', { method: 'POST', body: JSON.stringify({ email, password }) }); sessionStorage.setItem(KEY, out.token); setPassword(''); setLogged(true); }
     catch (x) { setProblem(x.body?.message || t('institution:space.login_failed', 'Connexion impossible : vérifiez vos identifiants.')); }
   };
@@ -96,10 +113,11 @@ export default function InstitutionEspace() {
       {problem ? <p role="alert" className="text-red-800" data-testid="institution-problem">{problem}</p> : null}
       <p role="status" data-testid="institution-notice">{notice}</p>
       {!logged ? (
-        <form onSubmit={login} className="max-w-md space-y-3">
+        <form onSubmit={login} className="max-w-md space-y-3" noValidate>
           <p className="text-sm">{t('institution:space.reserve_aux_partenaires_ayant', 'Réservé aux partenaires ayant signé une convention avec Accès Direct Aide. Cet espace montre seulement des statistiques agrégées.')}</p>
-          <div><label htmlFor="inst-email" className="block">{t('institution:space.adresse_mail', 'Adresse e-mail')}</label><input id="inst-email" type="email" autoComplete="username" className="w-full rounded border p-2" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-          <div><label htmlFor="inst-pass" className="block">{t('institution:space.mot_passe', 'Mot de passe')}</label><input id="inst-pass" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
+          <ErrorSummary ref={loginErr.summaryRef} errors={loginErr.errors} order={['inst-email', 'inst-pass']} testid="institution-login-errors" />
+          <div><label htmlFor="inst-email" className="block">{t('institution:space.adresse_mail', 'Adresse e-mail')}</label><input id="inst-email" type="email" autoComplete="username" className="w-full rounded border p-2" value={email} {...fieldA11y('inst-email', loginErr.errors)} onChange={(e) => { setEmail(e.target.value); loginErr.clear('inst-email'); }} aria-required="true" /><FieldError field="inst-email" errors={loginErr.errors} /></div>
+          <div><label htmlFor="inst-pass" className="block">{t('institution:space.mot_passe', 'Mot de passe')}</label><input id="inst-pass" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={password} {...fieldA11y('inst-pass', loginErr.errors)} onChange={(e) => { setPassword(e.target.value); loginErr.clear('inst-pass'); }} aria-required="true" /><FieldError field="inst-pass" errors={loginErr.errors} /></div>
           <Button type="submit">{t('institution:space.connecter', 'Se connecter')}</Button>
           <p className="text-sm" data-testid="institution-forgot">{t('institution:space.mot_passe_oublie_compte', 'Mot de passe oublié ou compte verrouillé ?')} <Link to="/institution/mot-de-passe-oublie" className="underline" data-testid="institution-forgot-link">{t('institution:space.recevoir_lien_par_mail', 'Recevoir un lien par e-mail')}</Link>{t('institution:space.sans_acces_cette_adresse', '. Sans accès à cette adresse, écrivez à l’équipe ADA depuis la page')} <Link to="/contact" className="underline">{t('institution:space.contact', 'Contact')}</Link> {t('institution:space.apres_verification_administrateur_vous', ': après vérification, un administrateur vous remet un mot de passe provisoire par un canal séparé.')}</p>
         </form>

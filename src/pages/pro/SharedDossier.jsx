@@ -143,8 +143,7 @@ export default function SharedDossier() {
                 }
             );
             if (res.ok) {
-                setUpdateSuccess(true);
-                setTimeout(() => setUpdateSuccess(false), 3000);
+                setUpdateSuccess(true);   // R43: kept until the status is changed again (it vanished after 3 s, before some people could read it)
             } else {
                 // R7: a refused update is said (it was silent: the person believed the status saved)
                 setUpdateProblem(res.status === 401 ? t('pro:shared_dossier.session_expired', 'Votre session a expiré : reconnectez-vous.') : res.status === 403 || res.status === 404
@@ -160,9 +159,9 @@ export default function SharedDossier() {
     // Loading state
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20">
+            <div className="flex flex-col items-center justify-center py-20" aria-busy="true">
                 <SkeletonList count={3} variant="card" />
-                <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <p role="status" className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                     {t('pro:shared_dossier.loading', 'Chargement sécurisé...')}
                 </p>
             </div>
@@ -308,7 +307,7 @@ export default function SharedDossier() {
                                 {t('pro:shared_dossier.follow_up', 'Suivi administratif')}
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-4" aria-busy={updating || undefined}>
                             <div>
                                 <label
                                     htmlFor="dossier-status"
@@ -316,7 +315,7 @@ export default function SharedDossier() {
                                 >
                                     {t('pro:shared_dossier.current_state', 'État actuel')}
                                 </label>
-                                <Select value={followUp} onValueChange={setFollowUp}>
+                                <Select value={followUp} onValueChange={(v) => { setFollowUp(v); setUpdateSuccess(false); setUpdateProblem(''); }}>
                                     <SelectTrigger
                                         id="dossier-status"
                                         className="bg-slate-800 border-slate-700 text-white"
@@ -352,11 +351,15 @@ export default function SharedDossier() {
                             </Button>
 
                             {updateProblem ? <p role="alert" className="text-xs text-red-300" data-testid="dossier-status-problem">{updateProblem}</p> : null}
-                            {updateSuccess && (
-                                <p className="text-[10px] text-emerald-400 flex items-center gap-1">
-                                    <CheckCircle2 size={10} /> {t('pro:shared_dossier.status_updated', 'Statut mis à jour')}
-                                </p>
-                            )}
+                            {/* R43 (A5): the result of the save is announced (it was a silent text that disappeared after 3 s) */}
+                            <div role="status" aria-live="polite" data-testid="dossier-status-saved">
+                                {updating ? <span className="sr-only">{t('common:form.status.saving', 'Enregistrement en cours…')}</span> : null}
+                                {updateSuccess && (
+                                    <p className="text-[10px] text-emerald-400 flex items-center gap-1">
+                                        <CheckCircle2 size={10} aria-hidden="true" /> {t('pro:shared_dossier.status_updated', 'Statut mis à jour')}
+                                    </p>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
 

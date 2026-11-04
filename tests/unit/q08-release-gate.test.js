@@ -27,6 +27,8 @@ describe('Q08 release script and CI workflow', () => {
     expect(sh).toMatch(/is not the pushed tip of origin\/main/);
     expect(sh).toMatch(/completed\/success/);
     expect(sh).toMatch(/node scripts\/unit-gate\.mjs/);
+    // R43: the strict TypeScript and strict lint baselines are gates of BOTH the release script and CI (the lint one was in neither)
+    for (const gate of ['typecheck:strict:baseline', 'lint:strict:baseline']) expect(sh).toContain(`npm run -s ${gate}`);
     expect(sh).toMatch(/npm audit --omit=dev --audit-level=high/);
     expect(sh).toMatch(/x-release-sha/);
     expect(sh).toMatch(/\$VERCEL rollback "\$PREV" --yes/);
@@ -36,5 +38,6 @@ describe('Q08 release script and CI workflow', () => {
     expect(ci).toMatch(/permissions:\n {2}contents: read/);
     expect(ci).not.toMatch(/vercel|secrets\./i);
     expect(ci).toMatch(/node scripts\/unit-gate\.mjs/);
+    for (const gate of ['typecheck:strict:baseline', 'lint:strict:baseline']) expect(ci).toContain(`npm run ${gate}`);
   });
 });

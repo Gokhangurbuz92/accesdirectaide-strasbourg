@@ -8,6 +8,9 @@ import { proRdvRequest } from '@/api/pro-rdv-client';
 import { label } from '@/lib/caseLabels';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { chooseMessage, fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
 const when = (d) => (d ? new Date(d).toLocaleString('fr-FR') : '');
@@ -68,6 +71,8 @@ function CaseDetail({ id }) {
   const [referrals, setReferrals] = useState([]);
   const [referralsProblem, setReferralsProblem] = useState(false);   // R18: a failed load of the sent referrals is said (it read as « none sent »)
   const [me, setMe] = useState({});
+  // R43 (A5): each form has its own error summary (focused on a refused submit) and per-field messages; nothing is sent while a field is in error
+  const noteErr = useFormErrors(); const referralErr = useFormErrors(); const closeErr = useFormErrors();
   useEffect(() => { proRdvRequest('/api/pro/me').then((out) => setMe(out?.user || {})).catch(() => setMe({})); }, []);
   const load = useCallback(async () => {
     try {
@@ -88,7 +93,12 @@ function CaseDetail({ id }) {
     catch (e) { setProblem(msgOf(e, t('pro:cases.search_failed', 'Recherche impossible.'))); }
   };
   const propose = async (e) => {
-    e.preventDefault(); setBusy(true); setMessage(''); setProblem('');
+    e.preventDefault();
+    const errs = {};
+    if (!referral.toStructureId) errs[referral.receivers.length ? 'case-referral-target' : 'case-referral-search'] = referral.receivers.length ? chooseMessage(t, t('pro:cases.target', 'Structure destinataire')) : t('pro:cases.target_search_first', 'Structure destinataire : recherchez une structure vérifiée, puis choisissez-la dans la liste.');
+    if (!referral.reasonCode) errs['case-referral-reason'] = chooseMessage(t, t('pro:cases.reason', 'Motif de l’orientation'));
+    if (!referralErr.check(errs)) return;
+    setBusy(true); setMessage(''); setProblem('');
     try {
       await proRdvRequest('/api/pro/referrals', { method: 'POST', body: { action: 'propose', caseId: id, toStructureId: referral.toStructureId, reasonCode: referral.reasonCode, message: referral.message, idempotencyKey: crypto.randomUUID() } });
       setMessage(t('pro:cases.referral_proposed', 'Orientation proposée. Rien n’est transmis avant l’accord de la personne (elle est prévenue).')); setReferral({ q: '', receivers: [], toStructureId: '', reasonCode: '', message: '' }); await load();
@@ -103,7 +113,7 @@ function CaseDetail({ id }) {
       <SEO title={t('pro:cases.detail_title', 'Dossier suivi')} noindex />
       <p><Link className="text-blue-800 underline" to="/pro/dossiers">← {t('pro:cases.title', 'Dossiers suivis')}</Link></p>
       <h1 className="text-xl font-bold text-slate-900">{t('pro:cases.item_title', 'Dossier {{id}}', { id: c.dossierId.slice(0, 8) })} — <span data-testid="pro-case-detail-status">{label(CASE_STATUS_LABELS, c.status)}</span></h1>
-      <div aria-live="polite" role="status" data-testid="pro-case-status-msg">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
+      <div aria-live="polite" role="status" data-testid="pro-case-status-msg">{busy ? <span className="sr-only">{t('common:form.status.saving', 'Enregistrement en cours…')}</span> : null}{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="pro-case-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <Card><CardHeader><CardTitle className="text-lg">{t('pro:cases.card_followup', 'Suivi')}</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">
         <p>{t('pro:cases.followed_by_label', 'Suivi par :')} <strong data-testid="pro-case-assignee">{c.assignee ? c.assignee.email : t('pro:cases.nobody_assigned', 'personne (à attribuer)')}</strong></p>
@@ -137,12 +147,13 @@ function CaseDetail({ id }) {
 
       <Card><CardHeader><CardTitle className="text-lg">{t('pro:cases.card_notes', 'Notes')}</CardTitle></CardHeader><CardContent className="space-y-3">
         {!closed ? (
-          <form className="space-y-2" data-testid="pro-case-note-form" onSubmit={async (e) => { e.preventDefault(); if (await run({ action: 'note', ...note }, note.visibility === 'CITIZEN' ? t('pro:cases.note_citizen_added', 'Note visible par la personne ajoutée.') : t('pro:cases.note_internal_added', 'Note interne ajoutée.'))) setNote({ visibility: 'INTERNAL', body: '', mentions: [] }); }}>
+          <form className="space-y-2" data-testid="pro-case-note-form" noValidate aria-busy={busy || undefined} onSubmit={async (e) => { e.preventDefault(); if (!noteErr.check(note.body.trim().length >= 2 ? {} : { 'case-note-body': note.body.trim() ? minLengthMessage(t, t('pro:cases.note', 'Note'), 2) : requiredMessage(t, t('pro:cases.note', 'Note')) })) return; if (await run({ action: 'note', ...note }, note.visibility === 'CITIZEN' ? t('pro:cases.note_citizen_added', 'Note visible par la personne ajoutée.') : t('pro:cases.note_internal_added', 'Note interne ajoutée.'))) setNote({ visibility: 'INTERNAL', body: '', mentions: [] }); }}>
+            <ErrorSummary ref={noteErr.summaryRef} errors={noteErr.errors} order={['case-note-body']} testid="pro-case-note-errors" />
             <fieldset className="flex flex-wrap gap-4 text-sm"><legend className="sr-only">{t('pro:cases.visibility', 'Visibilité')}</legend>
               <label className="flex items-center gap-1"><input type="radio" name="vis" data-testid="pro-note-internal" checked={note.visibility === 'INTERNAL'} onChange={() => setNote({ ...note, visibility: 'INTERNAL' })} />{t('pro:cases.vis_internal', 'Interne à l’équipe (jamais montrée à la personne ni à une autre structure)')}</label>
               <label className="flex items-center gap-1"><input type="radio" name="vis" data-testid="pro-note-citizen" checked={note.visibility === 'CITIZEN'} onChange={() => setNote({ ...note, visibility: 'CITIZEN', mentions: [] })} />{t('pro:cases.vis_citizen', 'Visible par la personne')}</label>
             </fieldset>
-            <label className="block text-sm">{t('pro:cases.note', 'Note')}<textarea data-testid="pro-note-body" required minLength={2} maxLength={4000} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={note.body} onChange={(e) => setNote({ ...note, body: e.target.value })} /></label>
+            <div className="space-y-1"><label htmlFor="case-note-body" className="block text-sm">{t('pro:cases.note', 'Note')}</label><textarea id="case-note-body" data-testid="pro-note-body" aria-required="true" maxLength={4000} className="w-full rounded-md border border-slate-300 p-2" value={note.body} {...fieldA11y('case-note-body', noteErr.errors)} onChange={(e) => { setNote({ ...note, body: e.target.value }); noteErr.clear('case-note-body'); }} /><FieldError field="case-note-body" errors={noteErr.errors} /></div>
             {note.visibility === 'INTERNAL' && data.members.length > 1 ? (
               <fieldset className="text-sm"><legend>{t('pro:cases.mention', 'Mentionner (notification sans le contenu)')}</legend>
                 {data.members.filter((m) => m.id !== me.id).map((m) => <label key={m.id} className="mr-3 inline-flex items-center gap-1"><input type="checkbox" checked={note.mentions.includes(m.id)} onChange={(e) => setNote({ ...note, mentions: e.target.checked ? [...note.mentions, m.id] : note.mentions.filter((x) => x !== m.id) })} />{m.email}</label>)}
@@ -160,21 +171,25 @@ function CaseDetail({ id }) {
       {!closed ? (
         <Card><CardHeader><CardTitle className="text-lg">{t('pro:cases.card_refer', 'Orienter vers une autre structure')}</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">
           <p>{t('pro:cases.refer_intro', 'La structure destinataire ne reçoit l’accès que si la personne l’accepte. Elle ne voit jamais vos notes internes.')}</p>
-          <form className="space-y-2" data-testid="pro-referral-form" onSubmit={propose}>
+          <form className="space-y-2" data-testid="pro-referral-form" noValidate aria-busy={busy || undefined} onSubmit={propose}>
+            <ErrorSummary ref={referralErr.summaryRef} errors={referralErr.errors} order={['case-referral-search', 'case-referral-target', 'case-referral-reason']} testid="pro-referral-errors" />
             <div className="flex flex-wrap items-end gap-2">
-              <label>{t('pro:cases.structure_search', 'Structure (vérifiées uniquement)')}<input data-testid="pro-referral-search" className="ml-1 rounded-md border border-slate-300 p-1" value={referral.q} onChange={(e) => setReferral({ ...referral, q: e.target.value })} /></label>
+              <label htmlFor="case-referral-search">{t('pro:cases.structure_search', 'Structure (vérifiées uniquement)')}</label><input id="case-referral-search" data-testid="pro-referral-search" className="rounded-md border border-slate-300 p-1" value={referral.q} {...fieldA11y('case-referral-search', referralErr.errors)} onChange={(e) => { setReferral({ ...referral, q: e.target.value }); referralErr.clear('case-referral-search'); }} />
               <Button type="button" size="sm" variant="outline" onClick={searchReceivers} data-testid="pro-referral-search-btn">{t('pro:cases.search', 'Rechercher')}</Button>
             </div>
+            <FieldError field="case-referral-search" errors={referralErr.errors} />
             {referral.receivers.length ? (
-              <select aria-label={t('pro:cases.target', 'Structure destinataire')} data-testid="pro-referral-target" required className="w-full rounded-md border border-slate-300 p-2" value={referral.toStructureId} onChange={(e) => setReferral({ ...referral, toStructureId: e.target.value })}>
+              <select id="case-referral-target" aria-label={t('pro:cases.target', 'Structure destinataire')} data-testid="pro-referral-target" aria-required="true" className="w-full rounded-md border border-slate-300 p-2" value={referral.toStructureId} {...fieldA11y('case-referral-target', referralErr.errors)} onChange={(e) => { setReferral({ ...referral, toStructureId: e.target.value }); referralErr.clear('case-referral-target'); referralErr.clear('case-referral-search'); }}>
                 <option value="">{t('pro:cases.choose_structure', 'Choisir la structure…')}</option>{referral.receivers.map((s) => <option key={s.id} value={s.id}>{s.name}{s.city ? ` (${s.city})` : ''}</option>)}
               </select>
             ) : null}
-            <select aria-label={t('pro:cases.reason', 'Motif de l’orientation')} data-testid="pro-referral-reason" required className="w-full rounded-md border border-slate-300 p-2" value={referral.reasonCode} onChange={(e) => setReferral({ ...referral, reasonCode: e.target.value })}>
+            <FieldError field="case-referral-target" errors={referralErr.errors} />
+            <select id="case-referral-reason" aria-label={t('pro:cases.reason', 'Motif de l’orientation')} data-testid="pro-referral-reason" aria-required="true" className="w-full rounded-md border border-slate-300 p-2" value={referral.reasonCode} {...fieldA11y('case-referral-reason', referralErr.errors)} onChange={(e) => { setReferral({ ...referral, reasonCode: e.target.value }); referralErr.clear('case-referral-reason'); }}>
               <option value="">{t('pro:cases.reason_placeholder', 'Motif…')}</option>{Object.entries(REASON_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
+            <FieldError field="case-referral-reason" errors={referralErr.errors} />
             <label className="block">{t('pro:cases.message_to_structure', 'Message à la structure (la personne pourra le lire)')}<textarea data-testid="pro-referral-message" maxLength={1500} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={referral.message} onChange={(e) => setReferral({ ...referral, message: e.target.value })} /></label>
-            <Button type="submit" size="sm" disabled={busy || !referral.toStructureId || !referral.reasonCode} data-testid="pro-referral-propose">{t('pro:cases.propose', 'Proposer l’orientation')}</Button>
+            <Button type="submit" size="sm" disabled={busy} data-testid="pro-referral-propose">{t('pro:cases.propose', 'Proposer l’orientation')}</Button>
           </form>
           {referralsProblem ? <p role="alert" className="text-sm text-red-800">{t('pro:cases.referrals_failed', 'Les orientations envoyées n’ont pas pu être chargées.')}</p> : null}
           {referrals.length ? <ul className="space-y-1" data-testid="pro-case-referrals">{referrals.map((r) => <li key={r.id}><Link className="text-blue-800 underline" to={`/pro/orientations/${encodeURIComponent(r.id)}`}>{r.toName}</Link> — {label(REFERRAL_STATUS_LABELS, r.status)}</li>)}</ul> : null}
@@ -183,12 +198,14 @@ function CaseDetail({ id }) {
 
       {!closed ? (
         <Card><CardHeader><CardTitle className="text-lg">{t('pro:cases.card_close', 'Clôturer')}</CardTitle></CardHeader><CardContent>
-          <form className="space-y-2 text-sm" data-testid="pro-case-close-form" onSubmit={(e) => { e.preventDefault(); run({ action: 'close', ...closing }, t('pro:cases.closed', 'Dossier clôturé.')); }}>
-            <select aria-label={t('pro:cases.outcome', 'Résultat de l’accompagnement')} data-testid="pro-case-outcome" required className="w-full rounded-md border border-slate-300 p-2" value={closing.outcome} onChange={(e) => setClosing({ ...closing, outcome: e.target.value })}>
+          <form className="space-y-2 text-sm" data-testid="pro-case-close-form" noValidate aria-busy={busy || undefined} onSubmit={(e) => { e.preventDefault(); if (!closeErr.check(closing.outcome ? {} : { 'case-close-outcome': chooseMessage(t, t('pro:cases.outcome', 'Résultat de l’accompagnement')) })) return; run({ action: 'close', ...closing }, t('pro:cases.closed', 'Dossier clôturé.')); }}>
+            <ErrorSummary ref={closeErr.summaryRef} errors={closeErr.errors} order={['case-close-outcome']} testid="pro-case-close-errors" />
+            <select id="case-close-outcome" aria-label={t('pro:cases.outcome', 'Résultat de l’accompagnement')} data-testid="pro-case-outcome" aria-required="true" className="w-full rounded-md border border-slate-300 p-2" value={closing.outcome} {...fieldA11y('case-close-outcome', closeErr.errors)} onChange={(e) => { setClosing({ ...closing, outcome: e.target.value }); closeErr.clear('case-close-outcome'); }}>
               <option value="">{t('pro:cases.outcome_placeholder', 'Résultat de l’accompagnement…')}</option>{Object.entries(OUTCOME_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
+            <FieldError field="case-close-outcome" errors={closeErr.errors} />
             <label className="block">{t('pro:cases.summary', 'Message à la personne (facultatif)')}<textarea data-testid="pro-case-summary" maxLength={1000} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={closing.citizenSummary} onChange={(e) => setClosing({ ...closing, citizenSummary: e.target.value })} /></label>
-            <Button type="submit" size="sm" disabled={busy || !closing.outcome} data-testid="pro-case-close">{t('pro:cases.close', 'Clôturer le dossier')}</Button>
+            <Button type="submit" size="sm" disabled={busy} data-testid="pro-case-close">{t('pro:cases.close', 'Clôturer le dossier')}</Button>
           </form>
         </CardContent></Card>
       ) : null}

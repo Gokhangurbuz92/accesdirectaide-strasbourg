@@ -6,19 +6,18 @@ import { useQuery } from '@tanstack/react-query';
 import {
     User, Bell, Shield, Accessibility, Database,
     Mail, Phone, CheckCircle, XCircle, ExternalLink,
-    Download, Trash2, AlertTriangle, Eye, EyeOff,
-    Sun, Moon, Type, Minus
+    Download, Trash2, AlertTriangle, Eye,
+    Sun, Type, Minus
 } from 'lucide-react';
 
 import SEO from '@/components/SEO';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { citizenApi } from '@/lib/citizenApi';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -415,7 +414,7 @@ function RestrictionPanel() {
     );
 }
 
-function DataTab({ user }) {
+function DataTab() {
     const { t } = useT('compte');
     const [deletionRequest, setDeletionRequest] = useState(null);
     // PKG-11 / C21: the state of the latest erasure request is read from the server (in review, refused with its reason, blocked by a legal hold)

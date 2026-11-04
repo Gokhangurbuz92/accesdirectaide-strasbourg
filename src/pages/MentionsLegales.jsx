@@ -2,7 +2,7 @@ import { Trans } from 'react-i18next';
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
-import { Scale, Building2, Server, FileText, AlertTriangle, ExternalLink, Mail } from 'lucide-react';
+import { Building2, Server, FileText, AlertTriangle, ExternalLink, Mail } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import brand from '@/lib/brand-config';

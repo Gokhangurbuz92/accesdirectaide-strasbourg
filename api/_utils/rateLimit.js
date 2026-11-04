@@ -115,13 +115,7 @@ const PUBLIC_READ_ACTIONS = new Set([
     'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT'
 ]);
 
-const AUTH_OR_SENSITIVE_MUTATION = new Set([
-    'OTP_GEN', 'OTP_VERIFY', 'LOGIN_PRO', 'REGISTER_PRO', 'MFA_VERIFY_PRO', 'MFA_VERIFY_PRO_USER', 'MFA_VERIFY_PRO_TOKEN', 'MFA_ENROL_START_PRO', 'PRO_MFA_ENROL_REDEEM', 'PRO_INVITE',
-    'REGISTER_INVITE', 'REFRESH_PRO', 'LOGIN_USER', 'SIGNUP_USER', 
-    'RESEND_VERIFY', 'FORGOT_USER', 'RESET_USER', 'RESET_PASSWORD',
-    'BOOK', 'CONFIRM', 'FEEDBACK', 'CONTACT_FORM', 'DSR_EXPORT', 'RDV_PUBLIC_WRITE', 'RDV_GUEST_WRITE', 'RDV_GUEST_EMAIL', 'RDV_GUEST_CONFIRM', 'RDV_GUEST_MANAGE', 
-    'MESSAGE_USER_SEND', 'MESSAGE_USER_WRITE', 'MESSAGE_PRO_SEND', 'ADMIN_API', 'CITIZEN_ACCOUNT_READ', 'CITIZEN_ACCOUNT_WRITE', 'SHARE_CREATE'
-]);
+// R43: the former AUTH_OR_SENSITIVE_MUTATION list was never read: shouldFailClosed() fails closed for EVERY action outside PUBLIC_READ_ACTIONS (unknown ones included)
 
 /**
  * @param {string} action
@@ -183,7 +177,7 @@ async function checkRateLimitKV(action, /** @type {string | number | boolean | n
             limiterCache.set(action, actionLimiter);
         }
 
-        const { success, limit, remaining } = await actionLimiter.limit(key);
+        const { success, remaining } = await actionLimiter.limit(key);
 
         if (!success) {
             logger.warn(`[AUDIT] Rate Limit Denied: Backend=${BACKEND_NAME} Action=${action} KeyHash=${hashedKey} Remaining=${remaining}`);

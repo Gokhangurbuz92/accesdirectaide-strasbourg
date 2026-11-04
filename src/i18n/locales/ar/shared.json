@@ -259,5 +259,7 @@
  "chat.assessment_attached_few": "{{count}} مسارات محاكاة مرفقة بأسئلتك، للقراءة فقط. تشرحها La Boussole ولا تقرر.",
  "chat.assessment_attached_many": "{{count}} مسارًا للمحاكاة مرفقة بأسئلتك، للقراءة فقط. تشرحها La Boussole ولا تقرر.",
  "chat.assessment_attached_other": "{{count}} مسار محاكاة مرفقة بأسئلتك، للقراءة فقط. تشرحها La Boussole ولا تقرر.",
+ "chat.feedback_failed": "تعذّر إرسال رأيك.",
+ "chat.feedback_retry": "أعد المحاولة",
  "health_notice.text": "لا ترسل مستندات طبية (شهادة، تقرير، وصفة، ملف MDPH — ملف مركز ذوي الإعاقة — يتضمن معلومات صحية): لا تملك AccesDirectAide بعدُ مستضيفًا معتمدًا للبيانات الصحية (HDS، الشهادة الفرنسية لاستضافة البيانات الصحية)."
 }

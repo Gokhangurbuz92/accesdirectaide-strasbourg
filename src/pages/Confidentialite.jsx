@@ -3,7 +3,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
-import { Lock, EyeOff, UserCheck, ShieldAlert, Database, HelpCircle, Bot, BarChart3 } from 'lucide-react';
+import { EyeOff, UserCheck, ShieldAlert, Database, HelpCircle, Bot, BarChart3 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import ClearDeviceAnswers from '@/components/privacy/ClearDeviceAnswers';

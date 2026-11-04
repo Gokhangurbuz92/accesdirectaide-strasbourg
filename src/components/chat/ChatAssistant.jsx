@@ -402,7 +402,7 @@ function CompassHeader({ onClose, territory }) {
 }
 
 // @ts-ignore
-function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, endOfMessagesRef, territory, rgpdDismissed, onDismissRgpd }) {
+function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, endOfMessagesRef, rgpdDismissed, onDismissRgpd }) {
   const { t } = useT('shared');
   const { isSource } = useLanguage();
   const showInitialPrompts = messages.length <= 1 && !isLoading;

@@ -47,7 +47,7 @@ export async function isSafeUrl(urlString) {
     if (ip.startsWith('169.254.')) return false;
 
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

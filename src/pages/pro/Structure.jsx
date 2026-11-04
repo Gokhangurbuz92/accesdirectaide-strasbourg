@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { useStructureFieldLabels } from '@/lib/structureFieldsI18n';
 import { formatDate, useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { useFormErrors } from '@/components/forms/useFormErrors';
+import { chooseMessage, fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
 const when = (d) => (d ? formatDate(d, { dateStyle: 'short', timeStyle: 'medium' }) : '');
@@ -25,13 +28,18 @@ export default function ProStructure() {
   const [field, setField] = useState('horaires'); const [value, setValue] = useState('');
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const [closeReason, setCloseReason] = useState('');
+  // R43 (A5): per-field messages and a focused error summary on the two forms (proposal, closure request)
+  const proposeErr = useFormErrors(); const closureErr = useFormErrors();
   const load = useCallback(async () => {
     try { const out = await proRdvRequest('/api/pro/structure'); setState({ loading: false, error: '', ...out }); }
     catch (e) { setState({ loading: false, error: msgOf(e, t('pro:structure.load_failed', 'Impossible de charger la fiche de la structure.')), structure: null, proposals: [], canPropose: false, fields: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; the message follows the language at load time
   useEffect(() => { load(); }, [load]);
   const submit = async (e) => {
-    e.preventDefault(); setBusy(true); setMessage(''); setProblem('');
+    e.preventDefault();
+    const lbl = t('pro:structure.nouvelle_valeur', 'Nouvelle valeur');
+    if (!proposeErr.check(String(value).trim() ? {} : { 'structure-value': field === 'accessibilite_pmr' ? chooseMessage(t, lbl) : requiredMessage(t, lbl) })) return;
+    setBusy(true); setMessage(''); setProblem('');
     try { await proRdvRequest('/api/pro/structure', { method: 'POST', body: { action: 'propose', field, value } }); setValue(''); setMessage(t('pro:structure.proposal_sent', 'Proposition envoyée : elle sera publiée après vérification par l’équipe ADA.')); await load(); }
     catch (err) { setProblem(msgOf(err, t('pro:structure.proposal_failed', 'La proposition n’a pas pu être enregistrée.'))); } finally { setBusy(false); }
   };
@@ -42,6 +50,8 @@ export default function ProStructure() {
   };
   const requestClosure = async (e) => {
     e.preventDefault();
+    const why = closeReason.trim(); const lbl = t('pro:structure.raison_fermeture', 'Raison de la fermeture');
+    if (!closureErr.check(why.length >= 10 ? {} : { 'structure-closure-reason': why ? minLengthMessage(t, lbl, 10) : requiredMessage(t, lbl) })) return;
     if (!window.confirm(t('pro:structure.closure_confirm', 'Demander la fermeture de l’espace de la structure ? Après examen par deux personnes d’ADA, les accès aux dossiers, les comptes des membres et les notes internes seront effacés. Les personnes gardent leurs dossiers.'))) return;
     setBusy(true); setMessage(''); setProblem('');
     try { await proRdvRequest('/api/pro/structure', { method: 'POST', body: { action: 'request_closure', reason: closeReason } }); setCloseReason(''); setMessage(t('pro:structure.closure_sent', 'Demande de fermeture envoyée : deux personnes de l’équipe ADA vont l’examiner.')); await load(); }
@@ -64,7 +74,7 @@ export default function ProStructure() {
       <h1 className="text-2xl font-bold text-slate-900">{t('pro:structure.structure', 'Ma structure')}</h1>
       {state.error ? <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{state.error}</p> : null}
       {problem ? <p role="alert" data-testid="structure-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
-      <div aria-live="polite" role="status" data-testid="structure-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
+      <div aria-live="polite" role="status" data-testid="structure-status">{busy ? <span className="sr-only">{t('common:form.status.saving', 'Enregistrement en cours…')}</span> : null}{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {s ? (
         <Card><CardHeader><CardTitle>{s.nom}</CardTitle><CardDescription>{s.verification_status !== 'VERIFIED' ? t('pro:structure.record_unverified', 'Fiche publique telle que vérifiée par ADA (non vérifiée).') : s.date_verification ? t('pro:structure.record_verified_on', 'Fiche publique telle que vérifiée par ADA (vérifiée le {{date}}).', { date: formatDate(s.date_verification, { dateStyle: 'short' }) }) : t('pro:structure.record_verified', 'Fiche publique telle que vérifiée par ADA (vérifiée).')}</CardDescription></CardHeader>
           <CardContent><dl className="grid gap-2 text-sm sm:grid-cols-2" data-testid="structure-record">
@@ -75,16 +85,18 @@ export default function ProStructure() {
       ) : null}
       {state.canPropose ? (
         <Card><CardHeader><CardTitle className="text-lg">{t('pro:structure.proposer_une_modification', 'Proposer une modification')}</CardTitle><CardDescription>{t('pro:structure.rien_est_publie_directement', 'Rien n’est publié directement : l’équipe ADA vérifie chaque proposition avant publication.')}</CardDescription></CardHeader>
-          <CardContent><form onSubmit={submit} className="space-y-3">
+          <CardContent><form onSubmit={submit} className="space-y-3" noValidate aria-busy={busy || undefined}>
+            <ErrorSummary ref={proposeErr.summaryRef} errors={proposeErr.errors} order={['structure-value']} testid="structure-propose-errors" />
             <div><label htmlFor="structure-field" className="block text-sm font-medium">{t('pro:structure.information_modifier', 'Information à modifier')}</label>
-              <select id="structure-field" data-testid="structure-field" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={field} onChange={(e) => { setField(e.target.value); setValue(''); }}>
+              <select id="structure-field" data-testid="structure-field" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={field} onChange={(e) => { setField(e.target.value); setValue(''); proposeErr.reset(); }}>
                 {state.fields.map((f) => <option key={f} value={f}>{STRUCTURE_FIELD_LABELS[f] || f}</option>)}
               </select></div>
             <div><label htmlFor="structure-value" className="block text-sm font-medium">{t('pro:structure.nouvelle_valeur', 'Nouvelle valeur')}</label>
               {field === 'accessibilite_pmr'
-                ? <select id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={value} onChange={(e) => setValue(e.target.value)} required><option value="">{t('pro:structure.choisir', 'Choisir…')}</option><option value="true">{t('pro:structure.oui', 'Oui')}</option><option value="false">{t('pro:structure.non', 'Non')}</option></select>
-                : <textarea id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={field === 'summary_falc' || field === 'horaires' || field === 'service_area' ? 4 : 1} value={value} onChange={(e) => setValue(e.target.value)} required aria-describedby={field === 'service_area' ? 'structure-value-help' : undefined} />}
+                ? <select id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={value} {...fieldA11y('structure-value', proposeErr.errors)} onChange={(e) => { setValue(e.target.value); proposeErr.clear('structure-value'); }} required><option value="">{t('pro:structure.choisir', 'Choisir…')}</option><option value="true">{t('pro:structure.oui', 'Oui')}</option><option value="false">{t('pro:structure.non', 'Non')}</option></select>
+                : <textarea id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={field === 'summary_falc' || field === 'horaires' || field === 'service_area' ? 4 : 1} value={value} onChange={(e) => { setValue(e.target.value); proposeErr.clear('structure-value'); }} required {...fieldA11y('structure-value', proposeErr.errors, field === 'service_area' ? 'structure-value-help' : '')} />}
               {field === 'service_area' ? <p id="structure-value-help" className="mt-1 text-xs text-slate-600">{t('pro:structure.codes_insee_separes_par', 'Codes INSEE séparés par des virgules (ex. 67482 pour Strasbourg).')}</p> : null}
+              <FieldError field="structure-value" errors={proposeErr.errors} />
             </div>
             <Button type="submit" disabled={busy} data-testid="structure-propose">{t('pro:structure.envoyer_proposition', 'Envoyer la proposition')}</Button>
           </form></CardContent></Card>
@@ -106,10 +118,11 @@ export default function ProStructure() {
             {state.closure && ['IN_REVIEW', 'BLOCKED', 'EXECUTING'].includes(state.closure.status)
               ? <p data-testid="structure-closure-state">{t('pro:structure.closure_request', 'Demande du {{date}} : {{state}}.', { date: formatDate(state.closure.createdAt, { dateStyle: 'short' }), state: CLOSURE_STATE[state.closure.status] || state.closure.status })}</p>
               : (
-                <form onSubmit={requestClosure} className="space-y-3">
+                <form onSubmit={requestClosure} className="space-y-3" noValidate aria-busy={busy || undefined}>
+                  <ErrorSummary ref={closureErr.summaryRef} errors={closureErr.errors} order={['structure-closure-reason']} testid="structure-closure-errors" />
                   {state.closure?.status === 'REJECTED' ? <p data-testid="structure-closure-state">{t('pro:structure.derniere_demande_refusee', 'Dernière demande refusée')}{state.closure.reason ? ` : « ${state.closure.reason} »` : ''}.</p> : null}
                   <div><label htmlFor="structure-closure-reason" className="block text-sm font-medium">{t('pro:structure.raison_fermeture', 'Raison de la fermeture')}</label>
-                    <textarea id="structure-closure-reason" data-testid="structure-closure-reason" className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={3} minLength={10} required value={closeReason} onChange={(e) => setCloseReason(e.target.value)} /></div>
+                    <textarea id="structure-closure-reason" data-testid="structure-closure-reason" className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={3} minLength={10} required value={closeReason} {...fieldA11y('structure-closure-reason', closureErr.errors)} onChange={(e) => { setCloseReason(e.target.value); closureErr.clear('structure-closure-reason'); }} /><FieldError field="structure-closure-reason" errors={closureErr.errors} /></div>
                   <Button type="submit" variant="outline" disabled={busy} data-testid="structure-closure-request">{t('pro:structure.demander_fermeture', 'Demander la fermeture')}</Button>
                 </form>
               )}

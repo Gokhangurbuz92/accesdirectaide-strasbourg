@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       thresholds: freshness.thresholds,
       requestId,
     });
-  } catch (error) {
+  } catch {
     return res.status(200).json({
       ok: false,
       job: 'actualites',
