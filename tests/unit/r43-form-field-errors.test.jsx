@@ -292,7 +292,7 @@ describe('Ma structure', () => {
 describe('team invitation', () => {
   it('the address is checked in the dialog; a refusal of the server is said in the dialog, not only in a toast', async () => {
     window.localStorage.setItem('pro_token', 't');
-    vi.stubGlobal('fetch', vi.fn(async (url, o) => (url === '/api/pro/invite' ? json(409, { error: 'Une invitation est déjà en attente pour cette adresse.' }) : url.startsWith('/api/pro/team?') ? json(200, { users: [], invitations: [] }) : json(200, {}))));
+    vi.stubGlobal('fetch', vi.fn(async (url) => (url === '/api/pro/invite' ? json(409, { error: 'Une invitation est déjà en attente pour cette adresse.' }) : url.startsWith('/api/pro/team?') ? json(200, { users: [], invitations: [] }) : json(200, {}))));
     const Ctx = () => h(Outlet, { context: { user: { id: 'u1', role: 'STRUCTURE_ADMIN' } } });
     render(h(HelmetProvider, null, h(MemoryRouter, { initialEntries: ['/pro/team'] }, h(Routes, null, h(Route, { path: '/pro', element: h(Ctx) }, h(Route, { path: 'team', element: h(ProTeam) }))))));
     fireEvent.click(await screen.findByRole('button', { name: /Inviter un collaborateur/ }));
