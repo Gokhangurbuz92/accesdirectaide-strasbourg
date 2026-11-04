@@ -5,7 +5,8 @@
 #
 # 1. the commit is the pushed tip of origin/main and the checkout has no local change;
 # 2. GitHub CI for that commit succeeded (when the CI workflow exists in the repository);
-# 3. local gate on the same checkout: npm ci, lint, typecheck, unit gate (scripts/unit-gate.mjs), production dependency audit;
+# 3. local gate on the same checkout: npm ci, lint, typecheck, strict typecheck and strict lint baselines (R43: the same two as CI), unit gate
+#    (scripts/unit-gate.mjs), production dependency audit;
 # 4. deploy (the Vercel build runs scripts/release-preflight.mjs and stops on a FAIL);
 # 5. smoke test on the public address: release SHA header, readiness, one public list; on any failure, automatic rollback to the previous
 #    production deployment (no rebuild) and exit 4.
@@ -37,6 +38,7 @@ npm ci --no-audit --no-fund --loglevel=error
 npm run -s lint
 npm run -s typecheck
 npm run -s typecheck:strict:baseline
+npm run -s lint:strict:baseline
 node scripts/unit-gate.mjs
 npm audit --omit=dev --audit-level=high
 say "gate PASS"

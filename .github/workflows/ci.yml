@@ -28,6 +28,8 @@ jobs:
       - run: npm run typecheck
       - name: "Strict TypeScript (no regression; the baseline is 0 since R40)"
         run: npm run typecheck:strict:baseline
+      - name: "Strict lint (no regression per rule or in total vs docs/reports/eslint-strict-baseline.json; R43)"
+        run: npm run lint:strict:baseline
       - name: Unit gate (only the declared known failures may fail)
         run: node scripts/unit-gate.mjs
       - name: Production dependency audit
