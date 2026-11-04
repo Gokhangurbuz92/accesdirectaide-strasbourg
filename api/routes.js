@@ -195,6 +195,7 @@ export const routes = [
     { path: 'admin/falc', match: 'exact', handler: () => import('./_handlers/admin/falc.js') },
     { path: 'admin/ai-oversight', match: 'exact', handler: () => import('./_handlers/admin/ai-oversight.js') },
     { path: 'citizen/profile', match: 'exact', handler: () => import('./_handlers/citizen/profile.js') },
+    { path: 'citizen/age-declaration', match: 'exact', handler: () => import('./_handlers/citizen/age-declaration.js') },   // R42-A07: adult statement (no birth date)
     // launch-readiness item 66: rectification of the contact data (e-mail with a confirmation link to the new address, phone)
     { path: 'citizen/email-change', match: 'exact', handler: () => import('./_handlers/citizen/email-change.js') },
     { path: 'citizen/email-change-confirm', match: 'exact', handler: () => import('./_handlers/citizen/email-change-confirm.js') },

@@ -183,6 +183,12 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
     expect([band.statusCode, band.body.code]).toEqual([403, 'ADULT_ACCOUNT_REQUIRED']);
     const none = await book(A, UNDECLARED, slot.startAt);
     expect([none.statusCode, none.body.code]).toEqual([409, 'AGE_DECLARATION_REQUIRED']);
+    // the person states it (R42-AUTH endpoint, the step the booking page shows), then the same request goes through
+    const { default: ageDecl } = await import('../../api/_handlers/citizen/age-declaration.js');
+    const d = mk(); await ageDecl({ method: 'POST', url: '/api/citizen/age-declaration', query: {}, body: { adult: true }, headers: { host: 'localhost:3000', cookie: cookie(UNDECLARED) } }, d);
+    expect([d.statusCode, d.body.adult], show(d)).toEqual([200, true]);
+    const after = await book(A, UNDECLARED, (await slotsOf(A, UNDECLARED))[4].startAt);
+    expect(after.statusCode, show(after)).toBe(201);
   });
 
   it('the optional message: bounded, plain text only, sealed at rest, shown to the structure only, never in a notice or a log line', async () => {
