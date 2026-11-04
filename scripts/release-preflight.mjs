@@ -8,7 +8,29 @@
  */
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
-import { openSurfaces, openJobs } from '../api/_utils/public-beta.js';
+import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '../api/_utils/public-beta.js';
+
+/**
+ * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
+ * @param {Record<string, string | undefined>} env
+ * @param {{ get: (k: string) => string, betaOn: boolean, opened: Set<string> }} ctx
+ * @returns {['PASS' | 'FAIL', string]}
+ */
+export function outlookCheck(env, { get, betaOn, opened }) {
+  if (get('OUTLOOK_ENABLED') !== 'true') return ['PASS', 'Outlook off (OUTLOOK_ENABLED is not "true")'];
+  const missing = [];
+  if (get('CALENDAR_PRODUCTION_APPROVED') !== 'true') missing.push('CALENDAR_PRODUCTION_APPROVED=true (owner approval: Microsoft app registration, DPO, security)');
+  for (const k of ['OUTLOOK_CLIENT_ID', 'OUTLOOK_CLIENT_SECRET']) if (!get(k)) missing.push(k);
+  const base = get('APP_BASE_URL') || get('PUBLIC_BASE_URL');
+  let baseHost = ''; try { baseHost = new URL(base).hostname; } catch { baseHost = ''; }
+  let cb = null; try { cb = new URL(get('OUTLOOK_REDIRECT_URI')); } catch { cb = null; }
+  if (!cb || cb.protocol !== 'https:' || cb.pathname.replace(/\/+$/, '') !== '/api/auth/callback/outlook' || !baseHost || cb.hostname !== baseHost)
+    missing.push('OUTLOOK_REDIRECT_URI = https://<APP_BASE_URL host>/api/auth/callback/outlook');
+  if ((get('ADA_VAULT_KEY') || get('OUTLOOK_TOKEN_ENCRYPTION_KEY')).length < 32) missing.push('ADA_VAULT_KEY (token envelope)');
+  for (const k of ['OUTLOOK_AUTHORITY_URL', 'OUTLOOK_GRAPH_BASE_URL']) if (get(k)) missing.push(`${k} must not be set (sandbox endpoint)`);
+  if (betaOn && !opened.has('appointments')) missing.push('the appointments surface (its routes serve the connection and the callback)');
+  return missing.length ? ['FAIL', `OUTLOOK_ENABLED=true needs: ${missing.join('; ')}`] : ['PASS', 'Outlook free/busy (Calendars.ReadBasic) approved and configured; a real Microsoft sign-in is checked in the release acceptance'];
+}
 
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string }} [opts] legalText: the legal-pages source (tests pass their own) */
 export function evaluateReleasePreflight(env, opts = {}) {
@@ -44,7 +66,11 @@ export function evaluateReleasePreflight(env, opts = {}) {
   add('flags.no_mocks', get('USE_MOCKS') === 'true' || get('VITE_USE_MOCKS') === 'true' || get('VITE_SKIP_DB') === 'true' ? 'FAIL' : 'PASS', 'USE_MOCKS / VITE_USE_MOCKS / VITE_SKIP_DB must not be "true"');
   const devFlags = ['VITE_DEV_LOGIN_ENABLED', 'VITE_PUBLIC_DIAGNOSTICS', 'ALLOW_DEV_TOOLS'].filter((k) => get(k) === 'true').concat(get('ADA_ALLOW_LEGACY_ADMIN_TOKEN') === '1' ? ['ADA_ALLOW_LEGACY_ADMIN_TOKEN'] : []);
   add('flags.no_dev_tools', devFlags.length ? 'FAIL' : 'PASS', devFlags.length ? `development switches on: ${devFlags.join(', ')}` : 'development login, public diagnostics, dev tools and the legacy admin token are off');
-  add('outlook.disabled_until_redesign', get('OUTLOOK_ENABLED') === 'true' ? 'FAIL' : 'PASS', 'Outlook token formats are inconsistent (quarantined)');
+  // R43 (E4): the former blanket FAIL (« token formats are inconsistent ») predates the redesign (PKG-3/B10: one strict AES-256-GCM envelope, signed state bound
+  // to the professional and the browser; R42-A03: Calendars.ReadBasic free/busy only). The check id is kept; it now FAILS on what Outlook really needs in
+  // production: the owner's recorded approval (CALENDAR_PRODUCTION_APPROVED=true: Microsoft app registration, DPO and security sign-off), the app
+  // credentials, an https callback on the public address, the vault key, no sandbox endpoint, and — in the beta — the appointments surface that serves it.
+  add('outlook.disabled_until_redesign', ...outlookCheck(env, { get, betaOn, opened }));
   add('unused.bypass_secret', get('BYPASS_SECRET') ? 'FAIL' : 'PASS', 'BYPASS_SECRET is not used by any handler: delete it');
   const base = get('APP_BASE_URL') || get('PUBLIC_BASE_URL');
   add('app.base_url_https', /^https:\/\/(?!localhost\b|127\.0\.0\.1\b)[^/\s]+/i.test(base) ? 'PASS' : 'FAIL', 'APP_BASE_URL: the public https address (links in e-mails; production refuses to build them without it)');
@@ -71,6 +97,13 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const legal = opts.legalText !== undefined ? opts.legalText : JSON.stringify(LEGAL_PLACEHOLDERS);
   add('legal.publisher_complete', legal && !/\[À COMPLÉTER/.test(legal.normalize('NFC')) ? 'PASS' : 'FAIL', 'legal pages: the publisher identity is complete (no « [À COMPLÉTER] »: registered association, publication director, host, contacts)');
   if (beta && !mailNeeded) add('beta.mailer_noop', ['', 'noop'].includes(get('MAILER_PROVIDER').toLowerCase()) ? 'PASS' : 'FAIL', 'MAILER_PROVIDER stays noop in the restricted beta (no real e-mail)');
+  // R43 (E1, E2): the sub-switches are visible in the gate (WARN when widened; default closed / narrow)
+  if (betaOn) add('beta.pro_self_registration', proSelfRegistrationOpen(env) ? 'WARN' : 'PASS', proSelfRegistrationOpen(env)
+    ? 'ADA_PRO_SELF_REGISTRATION=open: anyone can create a structure and its administrator once « pro » is open'
+    : 'public structure sign-up closed (structures are created by the platform; members join by invitation)');
+  if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
+    ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
+    : 'accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary');
   if (beta) add('beta.open_surfaces', opened.size ? 'WARN' : 'PASS', opened.size ? `surfaces opened during the beta: ${[...opened].sort().join(', ')} (their services are required above)` : 'no surface opened: only public read-only routes');
   return out;
 }

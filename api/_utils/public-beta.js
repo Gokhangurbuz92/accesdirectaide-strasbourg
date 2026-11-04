@@ -68,6 +68,46 @@ export function openSurfaces(envVars = process.env) {
 }
 
 /**
+ * R43 (opening-sequence review E1) — opening `pro` for an invited pilot must not open public self-registration of structures. `pro/auth/register` creates a
+ * Structure AND its STRUCTURE_ADMIN for anyone; during the beta it stays closed even when `pro` is open, unless ADA_PRO_SELF_REGISTRATION=open (exact value,
+ * default closed). The invited path (`pro/auth/register-invite`: an administrator's hashed, expiring invitation) is unaffected. The handler applies the same
+ * switch in Production outside the beta (api/_handlers/pro/auth/register.js), so lifting the beta later does not reopen it silently.
+ * @param {Record<string, string | undefined>} [envVars]
+ */
+export function proSelfRegistrationOpen(envVars = process.env) {
+  return String(envVars.ADA_PRO_SELF_REGISTRATION || '').trim().toLowerCase() === 'open';
+}
+export const PRO_SELF_REGISTRATION_PATH = 'pro/auth/register';
+
+/**
+ * R43 (opening-sequence review E2) — the `accounts` surface opens in a NARROW scope by default: what an adult needs to book with the pilot and to exercise
+ * their rights (sign-up, sign-in, e-mail verification, password reset, sign-out, account deletion, data export, profile, adult statement, contact-data
+ * rectification, e-mail preferences, restriction, the Mon Espace summary). The rest of the citizen space (household C03, guardians C05, Web Push, shares,
+ * Mon Parcours, favourites, history, delegations, referrals) opens only with ADA_BETA_ACCOUNTS_SCOPE=full (exact value). Unknown value = narrow.
+ */
+export const ACCOUNTS_BOOKING_SCOPE = Object.freeze([
+  'auth', 'login-pro-guard',
+  'citizen/profile', 'citizen/age-declaration', 'citizen/email-change', 'citizen/email-change-confirm', 'citizen/phone', 'citizen/preferences',
+  'citizen/restriction', 'citizen/espace',
+]);
+/** @param {Record<string, string | undefined>} [envVars] @returns {'booking' | 'full'} */
+export function accountsScope(envVars = process.env) {
+  return String(envVars.ADA_BETA_ACCOUNTS_SCOPE || '').trim().toLowerCase() === 'full' ? 'full' : 'booking';
+}
+/** is this `accounts` route inside the narrow (booking) scope @param {string} path */
+export function inAccountsBookingScope(path) {
+  const p = String(path || '');
+  return ACCOUNTS_BOOKING_SCOPE.some((x) => p === x || p.startsWith(`${x}/`));
+}
+
+/** may this route of an OPENED surface be served (the R43 sub-switches) @param {string} surface @param {string} path @param {Record<string, string | undefined>} envVars */
+function subSwitchAllows(surface, path, envVars) {
+  if (surface === 'pro' && path === PRO_SELF_REGISTRATION_PATH) return proSelfRegistrationOpen(envVars);
+  if (surface === 'accounts' && accountsScope(envVars) !== 'full') return inAccountsBookingScope(path);
+  return true;
+}
+
+/**
  * R38 — scheduled jobs one at a time. ADA_BETA_OPEN_JOBS opens only the named jobs (e.g. ADA_BETA_OPEN_JOBS=actualites,health-alert); since R40 (G2) this
  * is the ONLY way to open a job during the beta (the « jobs » surface is not openable, and the monitor routes stay closed). Fail-closed, like the surfaces: unset = none, an unknown name opens
  * nothing, no wildcard. Each job's own CRON_SECRET check and switches (GDPR_PURGE_ENABLED, INGESTION_DRY_RUN…) still apply.
@@ -123,7 +163,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   // ADA_CSP_REPORTS=log). The handler stores nothing and logs a minimised summary; no other monitor route and no job is opened by this.
   if (isCspReportRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
-  if (surface && openSurfaces(envVars).has(surface)) return true;
+  if (surface && openSurfaces(envVars).has(surface) && subSwitchAllows(surface, p, envVars)) return true;
   if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time
   if (!READ_METHODS.has(String(method || '').toUpperCase())) return false;
   if (EXACT.has(p)) return true;

@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { openLinks } from '@/lib/publicBeta';
 
 /**
  * PKG-2 / C13 — Mon Espace (/compte): one page that says where the person stands — Mon Parcours, the next deadline and appointment, Mon Coffre, favourites and the dossiers
@@ -78,7 +80,8 @@ export default function MonEspace() {
       </div>
       <nav aria-label={t('compte:space.nav_label', 'Rubriques de Mon Espace')}>
         <ul className="grid gap-4 sm:grid-cols-2">
-          {tiles.map((tile) => (
+          {/* R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered */}
+          {openLinks(tiles, frontendEnv.flags.publicBeta, (tile) => tile.to).map((tile) => (
             <li key={tile.to}>
               <Link to={tile.to} data-testid={tile.testid} className="block rounded-lg border border-slate-200 bg-white p-4 hover:border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
                 <span className="block text-base font-semibold text-slate-900">{tile.title}</span>

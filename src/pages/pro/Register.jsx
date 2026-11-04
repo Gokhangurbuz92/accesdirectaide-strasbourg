@@ -41,6 +41,8 @@ export default function ProRegister() {
             const data = await res.json();
 
             if (!res.ok) {
+                // R43 (E1): the public structure sign-up is closed by default (Production, beta) — said in the interface language
+                if (data.error === 'PRO_SELF_REGISTRATION_CLOSED') throw new Error(t('pro:register.closed', 'La création libre d\'un espace structure n\'est pas ouverte. Les structures partenaires sont créées par l\'équipe d\'Accès Direct Aide, puis leurs membres reçoivent une invitation nominative.'));
                 throw new Error(data.error || t('pro:register.error', 'Erreur lors de l\'inscription'));
             }
 

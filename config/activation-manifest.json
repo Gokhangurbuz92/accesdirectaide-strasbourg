@@ -227,6 +227,24 @@
       ],
       "note": "R35: comma list of surfaces opened during the beta (accounts, pro, institution, appointments, video, communications, documents, diagnostic, admin, jobs); unset = none; the release gate then requires their services"
     },
+    "ADA_PRO_SELF_REGISTRATION": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(open)?$",
+      "note": "R43 (E1): public structure self-registration (POST /api/pro/auth/register creates a Structure + its STRUCTURE_ADMIN). Closed unless « open »: during the beta even when « pro » is open, and in Production outside the beta (handler). Members join by invitation; the first SUPERADMIN comes from scripts/pro-superadmin-bootstrap.mjs"
+    },
+    "ADA_BETA_ACCOUNTS_SCOPE": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(full)?$",
+      "note": "R43 (E2): what the « accounts » surface opens during the beta. Unset = booking scope (auth/*, citizen profile, age-declaration, email-change(-confirm), phone, preferences, restriction, espace); « full » = the whole citizen space (household, guardians, push, shares, parcours, favorites, history, delegations, referrals)"
+    },
     "ADA_BETA_OPEN_JOBS": {
       "class": "decision",
       "nature": "config",
@@ -275,6 +293,22 @@
         "production"
       ],
       "note": "R35: the same list for the browser screens (rebuild); must match ADA_BETA_OPEN_SURFACES"
+    },
+    "VITE_PUBLIC_BETA_ACCOUNTS_SCOPE": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "R43: the same scope for the browser screens (rebuild); must match ADA_BETA_ACCOUNTS_SCOPE"
+    },
+    "VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "R43: shows the /pro/register screen during the beta (rebuild); must match ADA_PRO_SELF_REGISTRATION"
     },
     "MAINTENANCE_MODE": {
       "class": "optional",
