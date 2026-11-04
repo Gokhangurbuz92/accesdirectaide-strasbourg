@@ -36,7 +36,14 @@ export function parisDayWindow(now = new Date(), plusDays = 1) {
 }
 const MAX_STRUCTURE_RECIPIENTS = 25;
 
+/**
+ * R42: the kinds the ledger table accepts (its CHECK constraint, migrations 0020 / 0043). The R42 request kinds (REQUEST_RECEIVED, REQUEST_ACCEPTED,
+ * REQUEST_REFUSED, REQUEST_EXPIRED, BOOKED_BY_CITIZEN) are sent and notified in-app like the others but cannot be recorded in this table without a
+ * migration (no schema change in R42): they are skipped here instead of failing the CHECK on every write.
+ */
+export const LEDGER_KINDS = Object.freeze(['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE']);
 export async function recordNotice(appointmentId, kind, recipient, channel, status, db = defaultDb) {
+  if (!LEDGER_KINDS.includes(kind)) return;
   try { await db.insert(AppointmentNotice).values({ appointmentId, kind, recipient, channel, status }); }
   catch (err) { logger.warn({ err: { name: err?.name, code: err?.cause?.code || err?.code } }, '[appointment-notices] ledger write failed'); }
 }

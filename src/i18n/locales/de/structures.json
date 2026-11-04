@@ -171,5 +171,7 @@
  "suggest.pro_title": "Arbeiten Sie in dieser Einrichtung?",
  "suggest.pro_text": "Schreiben Sie uns, um die Verwaltung dieses Eintrags zu erhalten (ein Pro-Konto würde eine neue Einrichtung anlegen).",
  "suggest.contact_us": "Kontakt aufnehmen",
- "suggest.website_placeholder": "https://www.meine-einrichtung.fr"
+ "suggest.website_placeholder": "https://www.meine-einrichtung.fr",
+ "detail.booking.account_required": "Für eine Terminanfrage ist ein persönliches Konto nötig. Die Informationen dieser Seite bleiben ohne Konto zugänglich.",
+ "detail.booking.not_partner": "Die Aufnahme in das Verzeichnis bedeutet keine Partnerschaft dieser Einrichtung mit AccesDirectAide."
 }

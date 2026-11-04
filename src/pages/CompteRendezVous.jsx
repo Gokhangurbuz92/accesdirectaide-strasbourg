@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import SEO from '@/components/SEO';
+import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
@@ -10,6 +11,10 @@ import VisioWindow from '@/components/Visio/VisioWindow';
 import { formatDate, useT } from '@/i18n';
 
 const statusLabels = (t) => ({ BOOKED: t('compte:rdv.status.booked', 'Réservé'), CONFIRMED: t('compte:rdv.status.confirmed', 'Confirmé'), REQUESTED: t('compte:rdv.status.requested', 'Demandé'), CANCELLED: t('compte:rdv.status.cancelled', 'Annulé'), LOCKED: t('compte:rdv.status.booked', 'Réservé'), DONE: t('compte:rdv.status.done', 'Passé'), NO_SHOW: t('compte:rdv.status.no_show', 'Absent') });
+// R42: the TRUE state computed by the server (a pending request is never shown as confirmed)
+const stateLabels = (t) => ({ REQUESTED: t('booking:state.requested', 'Demande en attente de validation par la structure'), CONFIRMED: t('compte:rdv.status.confirmed', 'Confirmé'),
+  REFUSED: t('booking:state.refused', 'Demande refusée par la structure'), EXPIRED: t('booking:state.expired', 'Demande expirée sans réponse'), CANCELLED: t('compte:rdv.status.cancelled', 'Annulé'),
+  COMPLETED: t('compte:rdv.status.done', 'Passé'), NO_SHOW: t('compte:rdv.status.no_show', 'Absent') });
 const when = (d) => formatDate(d, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 const isoDay = (d) => d.toISOString().slice(0, 10);
 const modeLabels = (t) => ({ IN_PERSON: t('compte:rdv.mode.in_person', 'En présentiel'), VIDEO: t('compte:rdv.mode.video', 'À distance (visio)') });
@@ -20,7 +25,8 @@ const modeLabels = (t) => ({ IN_PERSON: t('compte:rdv.mode.in_person', 'En prés
  */
 export default function CompteRendezVous() {
   const { t } = useT('compte');
-  const STATUS = statusLabels(t); const MODE = modeLabels(t);
+  const STATUS = statusLabels(t); const STATE = stateLabels(t); const MODE = modeLabels(t);
+  const [mailOutcome, setMailOutcome] = useState(null);
   const [state, setState] = useState({ loading: true, error: '', items: [] });
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState('');
   const [moving, setMoving] = useState(null); // { id, days, pick, loading, mode, modes, consent }
@@ -49,9 +55,12 @@ export default function CompteRendezVous() {
     const a = state.items.find((x) => x.id === moving.id);
     const changed = a && moving.mode !== (a.mode || 'IN_PERSON');
     try {
-      if (changed) await citizenApi.rescheduleAppointment(moving.id, moving.pick, { mode: moving.mode, ...(moving.mode === 'VIDEO' ? { videoConsent: moving.consent === true } : {}) });
-      else await citizenApi.rescheduleAppointment(moving.id, moving.pick);
-      setMoving(null); setMessage(changed ? (moving.mode === 'VIDEO' ? t('compte:rdv.moved_video', 'Rendez-vous déplacé, désormais à distance (visio). L’ancien créneau a été libéré.') : t('compte:rdv.moved_in_person', 'Rendez-vous déplacé, désormais en présentiel. L’ancien créneau a été libéré.')) : t('compte:rdv.moved', 'Rendez-vous déplacé. L’ancien créneau a été libéré.')); await load();
+      const out = changed ? await citizenApi.rescheduleAppointment(moving.id, moving.pick, { mode: moving.mode, ...(moving.mode === 'VIDEO' ? { videoConsent: moving.consent === true } : {}) })
+        : await citizenApi.rescheduleAppointment(moving.id, moving.pick);
+      setMailOutcome(out && typeof out === 'object' && out.notification ? out.notification.email : null);   // R42: the real e-mail outcome, never assumed
+      setMoving(null); setMessage(changed ? (moving.mode === 'VIDEO' ? t('compte:rdv.moved_video', 'Rendez-vous déplacé, désormais à distance (visio). L’ancien créneau a été libéré.') : t('compte:rdv.moved_in_person', 'Rendez-vous déplacé, désormais en présentiel. L’ancien créneau a été libéré.')) : t('compte:rdv.moved', 'Rendez-vous déplacé. L’ancien créneau a été libéré.'));
+      if (out && typeof out === 'object' && out.state === 'REQUESTED') setMessage(t('booking:journey.move_requested', 'Demande de déplacement envoyée : le nouveau créneau doit être accepté par la structure. L’ancien créneau a été libéré.'));
+      await load();
     }
     catch (err) { setProblem(err.message); if (err.code === 'SLOT_TAKEN') startMove(a, moving.mode); }
     finally { setBusy(false); }
@@ -88,7 +97,7 @@ export default function CompteRendezVous() {
       <p className="text-sm text-slate-700" data-testid="rdv-policy">{t('compte:rdv.vous_pouvez_deplacer_rendez', 'Vous pouvez déplacer un rendez-vous jusqu’à 24 heures avant, deux fois au plus. Le créneau actuel n’est libéré que lorsque le nouveau est réservé.')}</p>
       {state.error ? <div role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900"><p>{state.error}</p>{state.auth ? <Button asChild variant="outline" className="mt-2"><Link to="/auth/login?next=/compte/rendez-vous">{t('compte:rdv.connecter', 'Se connecter')}</Link></Button> : <Button type="button" variant="outline" className="mt-2" onClick={load}>{t('compte:rdv.reessayer', 'Réessayer')}</Button>}</div> : null}
       {problem ? <p role="alert" data-testid="rdv-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
-      <div aria-live="polite" role="status" data-testid="rdv-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
+      <div aria-live="polite" role="status" data-testid="rdv-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}{message && mailOutcome ? <MailOutcomeNote outcome={mailOutcome} /> : null}</div>
       {!state.error && !state.items.length ? <p className="text-sm text-slate-700" data-testid="rdv-empty">{t('compte:rdv.aucun_rendez_vous', 'Aucun rendez-vous.')}</p> : null}
       <ul className="space-y-3">
         {state.items.map((a) => (
@@ -96,7 +105,7 @@ export default function CompteRendezVous() {
             <Card data-testid="rdv-item">
               <CardHeader><CardTitle className="text-lg">{a.structure?.name} — {a.service?.name}</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm text-slate-800">
-                <p><span data-testid="rdv-when">{when(a.startsAt)}</span> — <span data-testid="rdv-state">{STATUS[a.status] || a.status}</span> — <strong data-testid="rdv-mode">{MODE[a.mode || 'IN_PERSON']}</strong></p>
+                <p><span data-testid="rdv-when">{when(a.startsAt)}</span> — <span data-testid="rdv-state">{STATE[a.state] || STATUS[a.status] || a.status}</span> — <strong data-testid="rdv-mode">{MODE[a.mode || 'IN_PERSON']}</strong></p>
                 {(a.mode || 'IN_PERSON') === 'IN_PERSON' ? (
                   <p data-testid="rdv-address">{a.location ? `${a.location.address}${a.location.verified ? '' : ` ${t('compte:rdv.address_unverified', '(adresse non encore vérifiée : confirmez-la auprès de la structure)')}`}${a.location.stepFreeAccess ? ` — ${t('compte:rdv.step_free', 'accessible aux personnes à mobilité réduite')}` : ''}` : t('compte:rdv.address_tbc', 'Adresse : à confirmer auprès de la structure.')}</p>
                 ) : null}

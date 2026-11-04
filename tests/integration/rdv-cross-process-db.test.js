@@ -26,6 +26,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -101,6 +102,7 @@ describe.skipIf(!hasDatabase)('RDV cross-process collisions (real PostgreSQL, in
     }
     const verifiedAt = new Date();
     await db.insert(schema.CitizenUser).values(Array.from({ length: N }, (_, i) => ({ id: userId(i), email: userEmail(i), passwordHash: 'x', emailVerifiedAt: verifiedAt })));
+    await declareAdult(db, sql, Array.from({ length: N }, (_, i) => userId(i)));   // R42: booking needs a declared adult age band
 
     const from = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
     const to = new Date(Date.now() + 9 * 86400000).toISOString().slice(0, 10);

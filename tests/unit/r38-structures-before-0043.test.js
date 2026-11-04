@@ -1,15 +1,13 @@
-// R38 — the public structure page runs in Production before the owner applies migration 0043: it reads « allowGuestBooking » only when the guest switch is
-// on (verified live in LAB on a database stopped at migration 0042: structure detail, list and search answer 200). This pins the guard in the source.
+// R38 — the public structure page runs in Production at migration 0042. R42 (DEC-R42-01): account-free booking is retired, so the page no longer reads
+// the 0043 column at all, says that an account is required, and never returns the internal booking configuration (settings_json).
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 
-describe('structures.js before migration 0043', () => {
+describe('structures.js on a 0042 database, after the R42 retirement of account-free booking', () => {
   const src = fs.readFileSync('api/_handlers/structures.js', 'utf8');
-  it('selects allowGuestBooking only behind ADA_GUEST_BOOKING_ENABLED', () => {
-    // R41-B: AND only when the database has the column (the switch on a 0042 database used to make this page fail)
-    expect(src).toMatch(/const guestOn = guestBookingOn\(\) && \(await requestGuestSchema\(db\)\)\.guestBooking;/);
-    expect(src).toMatch(/\.\.\.\(guestOn \? \{ allowGuestBooking: true \} : \{\}\)/);
-    expect(src).not.toMatch(/^\s*allowGuestBooking: true,\s*$/m);
-    expect(src).toMatch(/const guestBookingOn = \(\) => String\(process\.env\.ADA_GUEST_BOOKING_ENABLED \|\| ''\)\.trim\(\)\.toLowerCase\(\) === 'true'/);
+  it('never reads allowGuestBooking nor the guest switch; leaves settings_json out; says an account is required', () => {
+    expect(src).not.toMatch(/allowGuestBooking|ADA_GUEST_BOOKING_ENABLED|requestGuestSchema/);
+    expect(src).toMatch(/settings_json: false/);
+    expect(src).toMatch(/accountRequired: true/);
   });
 });

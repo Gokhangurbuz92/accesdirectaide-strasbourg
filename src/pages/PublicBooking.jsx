@@ -22,6 +22,12 @@ import SEO from '@/components/SEO';
 import { csrfFetch, ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { normalizeNextPath } from '@/lib/rdvRouting';
 import i18n, { formatDate, useT } from '@/i18n';
+// R42: account-required journey pieces (suitability, professional choice, optional message, age statement, true e-mail outcome)
+import BookingMessageField from '@/components/rdv/BookingMessageField.jsx';
+import ProfessionalChoice from '@/components/rdv/ProfessionalChoice.jsx';
+import { SuitabilityQuestions, WrongStructure } from '@/components/rdv/SuitabilityCheck.jsx';
+import AgeDeclarationPrompt from '@/components/rdv/AgeDeclarationPrompt.jsx';
+import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
 /**
  * PublicBooking
  *
@@ -60,6 +66,16 @@ export default function PublicBooking() {
     const offeredModes = offeredKey.split(',');
     useEffect(() => { const modes = offeredKey.split(','); if (!modes.includes(bookingMode)) setBookingMode(modes[0]); }, [offeredKey, bookingMode]);
     const [confirmation, setConfirmation] = useState(null);
+    // R42: team choice (only when the structure enabled it), suitability answers (never sent: they only guide the next steps), the optional message,
+    // Mode A / Mode B of the chosen service, and the age statement step for an account that has none yet
+    const [teamChoice, setTeamChoice] = useState(false);
+    const [team, setTeam] = useState(null);
+    const [professional, setProfessional] = useState('ANY');
+    const [suitability, setSuitability] = useState({ firstContact: '', samePerson: false });
+    const [wrongStructure, setWrongStructure] = useState(false);
+    const [message, setMessage] = useState('');
+    const [confirmationMode, setConfirmationMode] = useState('DIRECT');
+    const [ageStep, setAgeStep] = useState('');
     const [manageCapability, setManageCapability] = useState(null);
     const [cancelState, setCancelState] = useState('idle');   // R12 (B04): idle | confirm | sending | failed
     const fragmentResolvedRef = useRef(false);
@@ -88,6 +104,7 @@ export default function PublicBooking() {
             if (!res.ok) throw new Error(t('booking:public.impossible_de_charger_les_services', "Impossible de charger les services."));
             const data = await res.json();
             setServices(data.items || []);
+            setTeamChoice(data.teamChoice === true);
             // Tracker le début du flow si on a réussi à charger la page structure
             track('start_booking_flow', { structure: structureSlug });
         } catch (err) {
@@ -98,7 +115,7 @@ export default function PublicBooking() {
     }, [structureSlug, t]);
 
     // Fetch available slots for selected service
-    const fetchSlots = useCallback(async (/** @type {string | number | boolean} */ serviceId) => {
+    const fetchSlots = useCallback(async (/** @type {string | number | boolean} */ serviceId, /** @type {string} */ who = 'ANY') => {
         setLoading(true);
         setSlotsError('');
         try {
@@ -107,11 +124,12 @@ export default function PublicBooking() {
             // R7: 14 days INCLUDING today (the server counts the last day to its end: today + 14 was 15 days, always refused with 400 — no slot ever loaded)
             const to = new Date(Date.now() + 13 * 86400000).toISOString().slice(0, 10);
             const res = await fetch(
-                `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}`,
+                `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}${teamChoice ? `&professional=${encodeURIComponent(who)}` : ''}`,
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
             );
             if (!res.ok) throw new Error(t('booking:public.impossible_de_charger_les_creneaux', "Impossible de charger les créneaux."));
             const data = await res.json();
+            setConfirmationMode(data.confirmation === 'APPROVAL' ? 'APPROVAL' : 'DIRECT');
 
             // Flatten days → slots
             const flatSlots = (data.days || []).flatMap((day) =>
@@ -129,7 +147,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [structureSlug, t]);
+    }, [structureSlug, t, teamChoice]);
 
     // Book the appointment
     const confirmBooking = useCallback(async () => {
@@ -154,12 +172,18 @@ export default function PublicBooking() {
                     startAt: selectedSlot.startAt,
                     mode: bookingMode,
                     ...(bookingMode === 'VIDEO' ? { videoConsent } : {}),
+                    ...(teamChoice ? { professional } : {}),
+                    ...(message.trim() ? { message } : {}),
                     idempotencyKey,
                 }),
             });
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                // R42-A07: an account without an age statement declares it here, then the request is sent again
+                if (errData.code === 'AGE_DECLARATION_REQUIRED') { setAgeStep('declare'); return; }
+                if (errData.code === 'ADULT_ACCOUNT_REQUIRED') { setAgeStep('minor'); throw new Error(errData.message); }
+                if (errData.code === 'PROFESSIONAL_UNAVAILABLE') { setStep(1.5); throw new Error(errData.message); }
                 if (res.status === 409) {
                     await fetchSlots(selectedService.id);
                     setStep(2);
@@ -179,13 +203,28 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t]);
+    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message]);
 
     // Handle service selection
-    const handleSelectService = (service) => {
-        track('booking_select_service', { structure: structureSlug, service: service.name });
+    const handleSelectService = async (service) => {
+        track('booking_select_service', { structure: structureSlug });
         setSelectedService(service);
-        fetchSlots(service.id);
+        if (teamChoice) {
+            // R42: the professional choice of this service (signed-in only); « same person » preselects the previous professional when this account has one
+            try {
+                const res = await fetch(`/api/rdv/structures/${encodeURIComponent(structureSlug)}/team?serviceId=${encodeURIComponent(service.id)}`, { credentials: 'same-origin' });
+                const data = res.ok ? await res.json() : null;
+                if (data?.choice) {
+                    setTeam(data);
+                    setProfessional(suitability.samePerson && data.previous?.available ? 'PREVIOUS' : 'ANY');
+                    setStep(1.5);
+                    return;
+                }
+            } catch { /* no choice offered: the structure routes the request */ }
+        }
+        setTeam(null);
+        setProfessional('ANY');
+        fetchSlots(service.id, 'ANY');
         setStep(2);
     };
 
@@ -350,8 +389,13 @@ export default function PublicBooking() {
                                     {t('booking:public.retour_a_l_annuaire', "Retour à l'annuaire")}
                                 </Link>
                             </div>
+                        ) : wrongStructure ? (
+                            <WrongStructure structureSlug={structureSlug} onBack={() => setWrongStructure(false)} />
                         ) : (
-                            services.map((/** @type {{ durationMinutes: string | number, id: string | number, name: string | number }} */ service) => (
+                            <>
+                            <p className="text-sm text-slate-700" data-testid="booking-account-note">{t('booking:journey.account_note', 'Vous êtes connecté(e) : votre demande sera suivie dans « Mes rendez-vous ». Choisissez le service qui correspond à votre besoin.')}</p>
+                            <SuitabilityQuestions value={suitability} onChange={setSuitability} teamChoice={teamChoice} />
+                            {services.map((/** @type {{ durationMinutes: string | number, id: string | number, name: string | number }} */ service) => (
                                 <button
                                     type="button"
                                     key={service.id}
@@ -374,8 +418,27 @@ export default function PublicBooking() {
                                     </div>
                                     <ChevronRight className="text-slate-600 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                                 </button>
-                            ))
+                            ))}
+                            <button type="button" data-testid="booking-not-listed" onClick={() => setWrongStructure(true)}
+                                className="min-h-11 text-sm font-medium text-indigo-800 underline">
+                                {t('booking:suitability.not_listed', 'Mon besoin ne figure pas dans cette liste')}
+                            </button>
+                            </>
                         )}
+                    </div>
+                )}
+
+                {/* R42 Step 1.5: who to meet (only when the structure offers the choice) */}
+                {step === 1.5 && team && (
+                    <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg space-y-6">
+                        <button type="button" onClick={() => setStep(1)} className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600">
+                            <ArrowLeft size={14} /> {t('booking:public.retour_aux_services', "Retour aux services")}
+                        </button>
+                        <ProfessionalChoice team={team} value={professional} onChange={setProfessional} />
+                        <button type="button" data-testid="booking-professional-continue" onClick={() => { fetchSlots(selectedService.id, professional); setStep(2); }}
+                            className="w-full min-h-11 bg-slate-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700">
+                            {t('booking:pro_choice.continue', 'Voir les créneaux disponibles')}
+                        </button>
                     </div>
                 )}
 
@@ -384,7 +447,7 @@ export default function PublicBooking() {
                     <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg">
                         <button
                             type="button"
-                            onClick={() => setStep(1)}
+                            onClick={() => setStep(team ? 1.5 : 1)}
                             className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600 mb-6"
                         >
                             <ArrowLeft size={14} /> {t('booking:public.retour_aux_services', "Retour aux services")}
@@ -416,7 +479,7 @@ export default function PublicBooking() {
                                 <button
                                     type="button"
                                     data-testid="booking-slots-retry"
-                                    onClick={() => fetchSlots(selectedService?.id)}
+                                    onClick={() => fetchSlots(selectedService?.id, professional)}
                                     className="mt-3 rounded-lg border border-indigo-300 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                                 >
                                     {t('booking:public.reessayer', "Réessayer")}
@@ -537,6 +600,13 @@ export default function PublicBooking() {
                             </button>
                             ) : null}
                         </div>
+                        <div className="mb-6"><BookingMessageField value={message} onChange={setMessage} disabled={loading} /></div>
+                        {confirmationMode === 'APPROVAL' ? (
+                            <p className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" data-testid="booking-approval-notice">
+                                {t('booking:journey.approval_notice', 'Cette structure valide chaque demande : votre rendez-vous ne sera confirmé qu’après son accord. Vous serez informé(e) de sa réponse.')}
+                            </p>
+                        ) : null}
+                        {ageStep === 'declare' ? <div className="mb-6"><AgeDeclarationPrompt onDeclared={() => { setAgeStep(''); confirmBooking(); }} /></div> : null}
                         {bookingMode === 'VIDEO' ? (
                             <label className="mb-6 flex items-start gap-2 text-sm text-slate-800" data-testid="booking-video-consent">
                                 <input type="checkbox" className="mt-1" checked={videoConsent} onChange={(e) => setVideoConsent(e.target.checked)} />
@@ -548,7 +618,7 @@ export default function PublicBooking() {
                             type="button"
                             onClick={confirmBooking}
                             data-testid="booking-confirm"
-                            disabled={loading || (bookingMode === 'VIDEO' && !videoConsent)}
+                            disabled={loading || ageStep !== '' || (bookingMode === 'VIDEO' && !videoConsent)}
                             className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? (
@@ -556,7 +626,7 @@ export default function PublicBooking() {
                             ) : (
                                 <CheckCircle2 size={18} />
                             )}
-                            {loading ? t('booking:public.confirmation_en_cours', "Confirmation en cours...") : t('booking:public.confirmer_le_rendez_vous', "Confirmer le rendez-vous")}
+                            {loading ? t('booking:public.confirmation_en_cours', "Confirmation en cours...") : confirmationMode === 'APPROVAL' ? t('booking:journey.send_request', 'Envoyer la demande de rendez-vous') : t('booking:public.confirmer_le_rendez_vous', "Confirmer le rendez-vous")}
                         </button>
                     </div>
                 )}
@@ -569,10 +639,18 @@ export default function PublicBooking() {
                         </div>
                         {/* owner usefulness pass (2026-10-25): the « gérer mon rendez-vous » link of the e-mail opens this view — it said « confirmé » even for a
                             cancelled appointment and spoke of a video room for an in-person one; it now reads the appointment's own status and mode */}
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2" data-testid="booking-state">
-                            {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.ce_rendez_vous_est_annule_2', "Ce rendez-vous est annulé") : t('booking:public.c_est_confirme', "C’est confirmé !")}
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2" data-testid="booking-state" data-state={confirmation?.state || ''}>
+                            {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.ce_rendez_vous_est_annule_2', "Ce rendez-vous est annulé")
+                                : confirmation?.state === 'REQUESTED' ? t('booking:journey.requested_title', 'Demande envoyée : en attente de la structure')
+                                : confirmation?.state === 'REFUSED' ? t('booking:state.refused', 'Demande refusée par la structure')
+                                : confirmation?.state === 'EXPIRED' ? t('booking:state.expired', 'Demande expirée sans réponse')
+                                : t('booking:public.c_est_confirme', "C’est confirmé !")}
                         </h2>
-                        <p className="text-slate-700 mb-6 max-w-md mx-auto">
+                        {confirmation?.state === 'REQUESTED' ? (
+                            <p className="text-slate-700 mb-4 max-w-md mx-auto" data-testid="booking-requested-note">{t('booking:journey.requested_text', 'Ce rendez-vous n’est pas encore confirmé : la structure doit accepter votre demande. Suivez sa réponse dans « Mes rendez-vous ».')}</p>
+                        ) : null}
+                        {confirmation?.notification ? <div className="mb-4 max-w-md mx-auto"><MailOutcomeNote outcome={confirmation.notification.email} /></div> : null}
+                        <p className="text-slate-700 mb-6 max-w-md mx-auto" hidden={confirmation?.state === 'REQUESTED'}>
                             {String(confirmation?.status || '').startsWith('CANCEL') ? t('booking:public.il_n_aura_pas_lieu', "Il n’aura pas lieu. Vous pouvez prendre un autre rendez-vous.") : t('booking:public.votre_rendez_vous_est_enregistre', "Votre rendez-vous est enregistré.")}
                             {!String(confirmation?.status || '').startsWith('CANCEL') && (confirmation?.mode || bookingMode) === 'VIDEO' && (
                                 <> {t('booking:public.vous_pourrez_rejoindre_la_visio', "Vous pourrez rejoindre la visio directement sur ADA.")}</>

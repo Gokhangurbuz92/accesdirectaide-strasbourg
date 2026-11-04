@@ -3,6 +3,7 @@
  * of the handler (global switch off; mail not deliverable). The database behaviour is proven in tests/integration/r38-guest-booking-db.test.js.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import fs from 'node:fs';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import {
   GUEST_CODE_MAX_ATTEMPTS, GUEST_HOLD_MINUTES, checkGuestCode, checkManageToken, guestBookingEnabled, guestCodeHash, guestEmailHash, holdExpired, holdExpiry,
@@ -114,26 +115,29 @@ describe('minimal identity and masking', () => {
   });
 });
 
-describe('the 503 gates of rdv/guest/* (before any database access)', () => {
-  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock('../../api/_utils/mailer.js'); vi.doUnmock('../../api/_utils/rateLimit.js'); });
+describe('R42 (DEC-R42-01): every rdv/guest/* route is retired — 410 ACCOUNT_REQUIRED before any database or mailer access', () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock('../../api/_utils/mailer.js'); vi.doUnmock('../../src/db/index.js'); });
   const call = async (handler, method, path, body) => { const res = mkRes(); await handler({ method, url: `/api/rdv/${path}`, query: {}, body, headers: { host: 'localhost' } }, res); return res; };
 
-  it('switch off: every guest route answers 503 GUEST_BOOKING_DISABLED', async () => {
-    vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', '');
-    const { default: handler } = await import('../../api/_handlers/rdv.js');
-    for (const [m, p] of [['GET', 'guest/structures/x/services'], ['GET', 'guest/structures/x/slots'], ['POST', 'guest/hold'], ['POST', 'guest/confirm'], ['POST', 'guest/manage'], ['POST', 'guest/manage/cancel'], ['POST', 'guest/manage/reschedule']]) {
-      const r = await call(handler, m, p, {});
-      expect([p, r.statusCode, r.body.code]).toEqual([p, 503, 'GUEST_BOOKING_DISABLED']);
+  it('switch off or ON (ADA_GUEST_BOOKING_ENABLED can no longer re-enable anything): every guest route, every method', async () => {
+    for (const v of ['', 'true', '1']) {
+      vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', v);
+      vi.doMock('../../api/_utils/mailer.js', async (orig) => ({ ...(await orig()), getMailerStatus: vi.fn(), sendMail: vi.fn() }));
+      const { default: handler } = await import('../../api/_handlers/rdv.js');
+      const mailer = await import('../../api/_utils/mailer.js');
+      for (const [m, p] of [['GET', 'guest/structures/x/services'], ['GET', 'guest/structures/x/slots'], ['POST', 'guest/hold'], ['POST', 'guest/confirm'], ['POST', 'guest/manage'],
+        ['POST', 'guest/manage/cancel'], ['POST', 'guest/manage/reschedule'], ['POST', 'guest/manage/reminder'], ['PUT', 'guest/hold'], ['GET', 'guest']]) {
+        const r = await call(handler, m, p, { structureSlug: 's', serviceId: 'v', startAt: '2030-01-01T09:00:00.000Z', idempotencyKey: 'k', name: 'A B', email: 'a@b.fr', consent: true });
+        expect([v, m, p, r.statusCode, r.body.code]).toEqual([v, m, p, 410, 'ACCOUNT_REQUIRED']);
+      }
+      expect(mailer.sendMail).not.toHaveBeenCalled();
+      expect(mailer.getMailerStatus).not.toHaveBeenCalled();
+      vi.resetModules();
     }
   });
-  it('mail not deliverable: the hold answers 503 GUEST_BOOKING_MAIL_UNAVAILABLE before looking anything up', async () => {
-    vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', 'true');
-    vi.doMock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: () => '127.0.0.1', getRateLimitStatus: () => 429 }));
-    vi.doMock('../../api/_utils/mailer.js', async (orig) => ({ ...(await orig()), getMailerStatus: () => ({ provider: 'noop', deliverable: false, reason: 'noop' }), sendMail: vi.fn() }));
-    const { default: handler } = await import('../../api/_handlers/rdv.js');
-    const mailer = await import('../../api/_utils/mailer.js');
-    const r = await call(handler, 'POST', 'guest/hold', { structureSlug: 's', serviceId: 'v', startAt: '2030-01-01T09:00:00.000Z', idempotencyKey: 'k', ...{ name: 'A B', email: 'a@b.fr', consent: true } });
-    expect([r.statusCode, r.body.code]).toEqual([503, 'GUEST_BOOKING_MAIL_UNAVAILABLE']);
-    expect(mailer.sendMail).not.toHaveBeenCalled();
+  it('the retired service module reads neither the switch nor the database', () => {
+    const src = fs.readFileSync('api/_services/rdv-guest.js', 'utf8');
+    expect(src).not.toMatch(/ADA_GUEST_BOOKING_ENABLED\b.*process\.env|guestBookingEnabled\(|from '..\/..\/src\/db/);
+    expect(src).not.toMatch(/^import /m);
   });
 });

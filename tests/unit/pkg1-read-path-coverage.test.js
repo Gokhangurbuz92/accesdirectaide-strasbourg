@@ -39,6 +39,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/lib/agent-orchestrator.js': 'admin orchestrator (discovery of records to review)', 'api/lib/services/siret-merger.js': 'admin maintenance', 'api/_utils/dataQuality.js': 'data-quality monitor',
   // booking and sharing: governed by the ORGANIZATION's own publication (RDV settings / Pro membership), not by directory content verification; see docs/pkg1-d5-publication-policy-and-structure-model.md (open decision recorded)
   'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 'api/_handlers/public/appointments/create.js': 'booking governed by StructureRdvSettings.isPublished',
+  'api/_services/rdv-booking-config.js': 'R42: the structure\'s own booking configuration (settings_json.rdvBooking), read by the booking engine; never returned publicly',
   'api/_handlers/public/dossier-grants.js': 'sharing targets = Pro organizations with active members', 'api/_utils/share-access.js': 'authorization helper (membership)', 'api/_handlers/auth/outlook-callback.js': 'OAuth callback (writes)',
   // PKG-4: organization NAMES in the person's own DSR export / follow-ups, and in the professional back office (cases of the caller's organization; referral targets limited
   // to statut 'actif' + verification_status 'VERIFIED' organizations with active members). Not a citizen-facing directory read; no unverified fact is published.
@@ -64,7 +65,6 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/org-closure.js': 'PKG-11 / E08: the organization\'s own closure request and the ADA two-person MFA review (organization name, counts); never public',
   'api/_services/admin-content.js': 'PKG-11 / A02: the administrators\' catalogue editing (only through /api/admin/content: admin session + MFA); found by the R11 table-map detection, never a public read',
   'scripts/q11-multi-instance.mjs': 'R11: Q11 local SIMULATION on a DISPOSABLE local database (refuses another): inserts and deletes its own synthetic rows, never served',
-  'scripts/acceptance/r38-guest-booking-browser.mjs': 'R38: LAB acceptance (--fixture refuses a non-local database): sets the operator switches of the LAB structure r31-s1; never served',
   'scripts/finess-add-category.mjs': 'R38: owner command on the owner machine (bounded FINESS category insert): reads only the FINESS numbers already listed and the row count; never served; the records are created and verified by the veille FINESS step (D-5 ledger)',
   'scripts/finess-activities-import.mjs': 'R36: owner command on the owner machine (bounded FINESS activity import): reads the FINESS records for the change set and counts; never served, writes only `services` of published verified records with a VERIFY of its evidence (D-5 ledger)',
   'scripts/lib/finess-activities.mjs': 'R36: the library of that owner command (same scope); never imported by a served handler',

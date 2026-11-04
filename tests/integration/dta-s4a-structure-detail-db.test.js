@@ -40,7 +40,7 @@ describe.skipIf(!hasDatabase)('GET /api/structures?slug|id on the migrated schem
     const r = await get({ slug: 'slug-' + ID.pub });
     expect(r.statusCode, JSON.stringify(r.body).slice(0, 300)).toBe(200);
     expect(r.body.id).toBe(ID.pub); expect(r.body.nom).toBe('S4A Publiée');
-    expect(r.body.rdv).toEqual({ isPublished: true, bookingMode: 'IN_PERSON', allowGuestBooking: false });   // R38: false while ADA_GUEST_BOOKING_ENABLED is off expect(r.body.is_pro_enabled).toBe(true);
+    expect(r.body.rdv).toEqual({ isPublished: true, bookingMode: 'IN_PERSON', accountRequired: true });   // R42: an account is always required (R38 account-free booking retired); expect(r.body.is_pro_enabled).toBe(true);
     expect(r.body.proServices).toEqual([{ id: SVC.on, name: 'Service on', durationMinutes: 30 }]);
   });
   it('id read gives the same structure', async () => {

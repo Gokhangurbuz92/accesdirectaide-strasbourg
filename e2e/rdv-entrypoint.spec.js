@@ -60,7 +60,7 @@ test.describe('P10-A RDV public entrypoint', () => {
 
     await expect(page.getByText('Rendez-vous indisponible (non publié)')).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('link', { name: /Demander/i })).toBeVisible({ timeout: 15000 });
-    // R41: closed booking stays closed — no account-free entry is offered on a page that is not the API's own answer (src/lib/guestBooking.js)
+    // R41: closed booking stays closed — no account-free entry is offered on a page that is not the API's own answer (R42: account-free booking retired, src/lib/guestBooking.js removed)
     await expect(page.getByTestId('rdv-unpublished')).toBeVisible();
     await expect(page.getByTestId('rdv-guest-cta')).toHaveCount(0);
     await expect(page.locator('a[href*="/sans-compte"]')).toHaveCount(0);

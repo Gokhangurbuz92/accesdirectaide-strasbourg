@@ -22,6 +22,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { declareAdult } from './helpers/adult-age.mjs';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -90,6 +91,7 @@ describe.skipIf(!hasDatabase)('PKG-3 D-2 reschedule (real PostgreSQL, in-process
       await db.insert(schema.ProAvailabilityRule).values({ structureId: IDS.structure, weekday, startTime: '09:00', endTime: '12:00', timezone: 'Europe/Paris', isActive: true });
     }
     await db.insert(schema.CitizenUser).values(Array.from({ length: N + 1 }, (_, i) => ({ id: userId(i), email: userEmail(i), passwordHash: 'x', emailVerifiedAt: new Date() })));
+    await declareAdult(db, sql, Array.from({ length: N + 1 }, (_, i) => userId(i)));   // R42: booking needs a declared adult age band
     const from = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
     const to = new Date(Date.now() + 9 * 86400000).toISOString().slice(0, 10);
     const r = await call({ path: `structures/${SLUG}/slots`, query: { serviceId: IDS.svc, from, to }, as: 0 });

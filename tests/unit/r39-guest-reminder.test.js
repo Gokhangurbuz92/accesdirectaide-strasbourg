@@ -106,15 +106,6 @@ describe('noticeCitizen for an account-free booking (injected db / mailer)', () 
 });
 
 describe('the routes and the purge (source pins)', () => {
-  it('POST rdv/guest/manage/reminder is routed, checks the token like cancel, and audits without personal data', () => {
-    const src = fs.readFileSync('api/_services/rdv-guest.js', 'utf8');
-    expect(src).toMatch(/seg\[0\] === 'manage' && seg\[1\] === 'reminder'\) return reminder\(req, res\)/);
-    const body = src.slice(src.indexOf('async function reminder('), src.indexOf('/** rdv/guest/<rest>'));
-    expect(body).toMatch(/limited\(res, 'RDV_GUEST_MANAGE', `\$\{getClientIp\(req\)\}:\$\{digest\(req\.body\?\.token\)\}`\)/);
-    expect(body).toMatch(/await byToken\(req\)/);
-    expect(body).toMatch(/RDV_GUEST_REMINDER_CONSENT_GIVEN/);
-    expect(body).not.toMatch(/openEmail|guestEmail\b|maskEmail|ip_hash/);
-  });
   it('gdpr-purge step 13 (and 13b) clear the reminder consent', () => {
     const src = fs.readFileSync('api/_handlers/cron/gdpr-purge.js', 'utf8');
     const step13 = src.slice(src.indexOf('// 13. Anonymise'), src.indexOf('// 13b.'));
@@ -123,13 +114,15 @@ describe('the routes and the purge (source pins)', () => {
   });
 });
 
-describe('the new route behind the fail-closed switch', () => {
+describe('R42: the account-free routes are retired', () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
-  it('switch off: POST rdv/guest/manage/reminder answers 503 GUEST_BOOKING_DISABLED', async () => {
-    vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', '');
-    const { default: handler } = await import('../../api/_handlers/rdv.js');
-    const res = { statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; } };
-    await handler({ method: 'POST', url: '/api/rdv/guest/manage/reminder', query: {}, body: { appointmentId: 'a', token: 'A'.repeat(43), consent: true }, headers: { host: 'localhost' } }, res);
-    expect([res.statusCode, res.body.code]).toEqual([503, 'GUEST_BOOKING_DISABLED']);
+  it('POST rdv/guest/manage/reminder answers 410 ACCOUNT_REQUIRED, switch on or off', async () => {
+    for (const v of ['', 'true']) {
+      vi.stubEnv('ADA_GUEST_BOOKING_ENABLED', v);
+      const { default: handler } = await import('../../api/_handlers/rdv.js');
+      const res = { statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, val) { this.headers[k] = val; } };
+      await handler({ method: 'POST', url: '/api/rdv/guest/manage/reminder', query: {}, body: { appointmentId: 'a', token: 'A'.repeat(43), consent: true }, headers: { host: 'localhost' } }, res);
+      expect([res.statusCode, res.body.code]).toEqual([410, 'ACCOUNT_REQUIRED']);
+    }
   });
 });

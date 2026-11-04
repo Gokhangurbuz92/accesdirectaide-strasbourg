@@ -596,6 +596,10 @@
       "class": "lab",
       "nature": "config"
     },
+    "OUTLOOK_GRAPH_BASE_URL": {
+      "class": "lab",
+      "nature": "config"
+    },
     "CALENDAR_PRODUCTION_APPROVED": {
       "class": "approval",
       "nature": "config",

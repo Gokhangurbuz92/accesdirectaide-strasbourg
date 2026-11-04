@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { proRdvClient } from '@/api/pro-rdv-client';
+import BookingConfigPanel from '@/components/rdv/BookingConfigPanel.jsx';
 import { useT } from '@/i18n';
 
 function toPositiveInt(value, fallback) {
@@ -54,7 +55,6 @@ export default function ProServices() {
     bookingMode: 'IN_PERSON',
     contactEmail: '',
     contactPhone: '',
-    allowGuestBooking: false,
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
@@ -81,7 +81,6 @@ export default function ProServices() {
       bookingMode: String(payload.bookingMode || payload.booking_mode || 'IN_PERSON'),
       contactEmail: String(payload.contactEmail || payload.contact_email || ''),
       contactPhone: String(payload.contactPhone || payload.contact_phone || ''),
-      allowGuestBooking: payload.allowGuestBooking === true,
     });
   };
 
@@ -129,7 +128,6 @@ export default function ProServices() {
         bookingMode: String(settingsForm.bookingMode || 'IN_PERSON'),
         contactEmail: String(settingsForm.contactEmail || '').trim() || null,
         contactPhone: String(settingsForm.contactPhone || '').trim() || null,
-        allowGuestBooking: settingsForm.allowGuestBooking === true,
       };
 
       const updated = await proRdvClient.settings.update(payload);
@@ -155,7 +153,6 @@ export default function ProServices() {
       bufferAfterMinutes: '0',
       isActive: true,
       modes: ['IN_PERSON'],
-      guestBookable: false,
     });
     setIsDialogOpen(true);
   };
@@ -169,7 +166,6 @@ export default function ProServices() {
       bufferAfterMinutes: String(service.bufferAfterMinutes || 0),
       isActive: Boolean(service.isActive),
       modes: Array.isArray(service.modes) && service.modes.length ? service.modes : ['IN_PERSON'],
-      guestBookable: service.guestBookable === true,
     });
     setIsDialogOpen(true);
   };
@@ -186,7 +182,6 @@ export default function ProServices() {
       bufferAfterMinutes: toNonNegativeInt(formData.bufferAfterMinutes, 0),
       isActive: Boolean(formData.isActive),
       modes: Array.isArray(formData.modes) && formData.modes.length ? formData.modes : ['IN_PERSON'],
-      guestBookable: formData.guestBookable === true,
     };
 
     if (!payload.name) {
@@ -277,21 +272,8 @@ export default function ProServices() {
                 />
                 {t('pro:services.publish_online', 'Publier la prise de RDV en ligne')}
               </label>
-              {/* R38: account-free booking, an explicit opt-in of an administrator (default off; in person only; only the services marked below) */}
-              <div>
-                <label className="flex min-h-[44px] items-center gap-2 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    data-testid="pro-allow-guest-booking"
-                    checked={settingsForm.allowGuestBooking}
-                    disabled={!canEdit}
-                    aria-describedby="pro-allow-guest-booking-hint"
-                    onChange={(event) => setSettingsForm((prev) => ({ ...prev, allowGuestBooking: event.target.checked }))}
-                  />
-                  {t('pro:services.allow_guest_booking', 'Accepter les rendez-vous sans compte')}
-                </label>
-                <p id="pro-allow-guest-booking-hint" className="text-xs text-slate-700">{t('booking:pro.allowHint', 'En présentiel uniquement, pour les services cochés « sans compte ». La personne confirme son adresse e-mail avec un code ; vous voyez son nom, son e-mail masqué et, si elle le donne, son téléphone.')}</p>
-              </div>
+              {/* R42: the R38 account-free opt-in is retired; how requests are confirmed and who can be chosen is set below */}
+              <BookingConfigPanel canEdit={canEdit} />
 
               <div className="grid gap-3 md:grid-cols-3">
                 <label className="space-y-1">
@@ -499,18 +481,6 @@ export default function ProServices() {
               />
               {t('pro:services.is_active', 'Service actif')}
             </label>
-
-            <label className="flex min-h-[44px] items-center gap-2 text-sm text-slate-700">
-              <input
-                type="checkbox"
-                data-testid="pro-service-guest-bookable"
-                checked={formData.guestBookable === true}
-                aria-describedby="pro-service-guest-bookable-hint"
-                onChange={(event) => setFormData((prev) => ({ ...prev, guestBookable: event.target.checked }))}
-              />
-              {t('pro:services.guest_bookable', 'Réservable sans compte')}
-            </label>
-            <p id="pro-service-guest-bookable-hint" className="text-xs text-slate-700">{t('booking:pro.serviceHint', 'Proposé sans compte seulement si la structure accepte les rendez-vous sans compte, et en présentiel.')}</p>
 
             <fieldset className="space-y-1 text-sm text-slate-700" data-testid="pro-service-modes-field">
               <legend className="font-medium">{t('pro:services.modes_legend', 'Modalités proposées (au moins une)')}</legend>

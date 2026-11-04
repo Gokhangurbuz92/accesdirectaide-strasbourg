@@ -30,7 +30,7 @@ function readService(body, current = {}) {
   if (b.bufferBeforeMinutes !== undefined) out.bufferBeforeMinutes = int(b.bufferBeforeMinutes, 0, 0, 240);
   if (b.bufferAfterMinutes !== undefined) out.bufferAfterMinutes = int(b.bufferAfterMinutes, 0, 0, 240);
   if (b.isActive !== undefined) out.isActive = Boolean(b.isActive);
-  // R38: bookable without an account (only when the structure also allows it; in person only) — an explicit boolean, default off
+  // R38: bookable without an account — R42: retired; only « false » is still accepted (an explicit boolean)
   if (b.guestBookable !== undefined) {
     if (typeof b.guestBookable !== 'boolean') return { error: 'guestBookable doit être vrai ou faux.' };
     out.guestBookable = b.guestBookable;
@@ -42,6 +42,8 @@ function readService(body, current = {}) {
   }
   return { value: out };
 }
+
+const GUEST_RETIRED = Object.freeze({ error: 'GUEST_BOOKING_RETIRED', code: 'GUEST_BOOKING_RETIRED', message: 'La réservation sans compte n’existe plus : un compte est nécessaire pour demander un rendez-vous.' });
 
 async function handler(req, res) {
   const proCtx = requireProStructureContext(req, res);
@@ -65,10 +67,9 @@ async function handler(req, res) {
     if (req.method === 'POST') {
       const parsed = readService(req.body);
       if (parsed.error) return res.status(400).json({ error: parsed.error });
-      if (!features.guestBooking && parsed.value.guestBookable !== undefined) {   // nothing to store it in: « no » is already true, « yes » is refused
-        if (parsed.value.guestBookable) return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
-        delete parsed.value.guestBookable;
-      }
+      // R42 (DEC-R42-01): account-free booking is retired — « yes » is refused everywhere; « no » is already true (written only where the 0043 column exists)
+      if (parsed.value.guestBookable === true) return res.status(409).json(GUEST_RETIRED);
+      if (!features.guestBooking) delete parsed.value.guestBookable;
       const [row] = await db.insert(T).values({ structureId, modes: ['IN_PERSON'], ...parsed.value }).returning();
       await changed('RDV_SERVICE_CREATED', row.id);
       return res.status(201).json({ item: row });
@@ -79,10 +80,9 @@ async function handler(req, res) {
     if (req.method === 'PATCH') {
       const parsed = readService(req.body, current);
       if (parsed.error) return res.status(400).json({ error: parsed.error });
-      if (!features.guestBooking && parsed.value.guestBookable !== undefined) {   // nothing to store it in: « no » is already true, « yes » is refused
-        if (parsed.value.guestBookable) return res.status(409).json({ error: 'GUEST_BOOKING_NOT_AVAILABLE', code: 'GUEST_BOOKING_NOT_AVAILABLE', message: 'La réservation sans compte n’est pas disponible sur cette installation.' });
-        delete parsed.value.guestBookable;
-      }
+      // R42 (DEC-R42-01): account-free booking is retired — « yes » is refused everywhere; « no » is already true (written only where the 0043 column exists)
+      if (parsed.value.guestBookable === true) return res.status(409).json(GUEST_RETIRED);
+      if (!features.guestBooking) delete parsed.value.guestBookable;
       if (!Object.keys(parsed.value).length) return res.status(200).json({ item: current });
       const [row] = await db.update(T).set(parsed.value).where(and(eq(ProRdvService.id, id), eq(ProRdvService.structureId, structureId))).returning();
       await changed('RDV_SERVICE_UPDATED', id);

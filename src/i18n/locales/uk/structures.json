@@ -175,5 +175,7 @@
  "suggest.pro_title": "Ви працюєте в цій організації?",
  "suggest.pro_text": "Напишіть нам, щоб отримати керування цим записом (створення облікового запису Pro відкрило б нову організацію).",
  "suggest.contact_us": "Зв’язатися з нами",
- "suggest.website_placeholder": "https://www.my-organisation.fr"
+ "suggest.website_placeholder": "https://www.my-organisation.fr",
+ "detail.booking.account_required": "Щоб подати запит на запис, потрібен особистий обліковий запис. Інформація на цій сторінці залишається доступною без облікового запису.",
+ "detail.booking.not_partner": "Наявність установи в довіднику не означає, що вона є партнером AccesDirectAide."
 }
