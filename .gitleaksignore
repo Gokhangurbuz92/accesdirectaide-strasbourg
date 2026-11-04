@@ -11,7 +11,7 @@
 162d48fe4204b39488405c6305d119f165df0a5a:tests/unit/vault-crypto.test.js:generic-api-key:38
 
 # R40: translation strings whose key names contain « token » / « access » words (no secret value): reviewed 2026-11-03
-src/i18n/locales/de/legal.json:generic-api-key:126
-src/i18n/locales/en/legal.json:generic-api-key:126
+src/i18n/locales/de/legal.json:generic-api-key:129
+src/i18n/locales/en/legal.json:generic-api-key:129
 src/i18n/locales/en/admin.json:generic-api-key:551
 src/i18n/locales/en/admin.json:generic-api-key:640

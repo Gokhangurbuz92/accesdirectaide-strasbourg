@@ -13,6 +13,9 @@ import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
 
+// The reset and MFA flows keep short-lived tokens in KV: this suite uses the process-local KV store, so a placeholder KV URL in the environment
+// (the QA launcher's compat profile sets http://localhost) does not turn every KV write into a network error.
+vi.hoisted(() => { for (const k of ['KV_REST_API_URL', 'KV_REST_API_TOKEN', 'KV_URL', 'UPSTASH_KV_KV_REST_API_URL', 'UPSTASH_KV_KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']) delete process.env[k]; });
 const limits = vi.hoisted(() => ({ real: false }));
 vi.mock('../../api/_utils/rateLimit.js', async (importOriginal) => {
   const actual = await importOriginal();
