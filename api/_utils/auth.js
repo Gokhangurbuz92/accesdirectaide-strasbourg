@@ -14,6 +14,7 @@ const ADMIN_SESSION_AUDIENCE = 'accesdirectaide-admin';
 const PRO_SESSION_ISSUER = 'accesdirectaide';
 const PRO_SESSION_AUDIENCE = 'accesdirectaide-pro';
 const PRO_MFA_PENDING_AUDIENCE = 'accesdirectaide-pro-mfa';
+const PRO_MFA_ENROL_AUDIENCE = 'accesdirectaide-pro-mfa-enrol';
 /** R40: a professional session can be refreshed for at most this long after the sign-in (auth_time), whatever the number of refreshes */
 export const PRO_SESSION_MAX_AGE_SECONDS = 12 * 3600;
 /** Lifetime of one professional access token (capped by PRO_SESSION_MAX_AGE_SECONDS after the sign-in) */
@@ -138,6 +139,33 @@ export function verifyProMfaPendingToken(token) {
     }
 }
 
+/**
+ * R42-A08: the MFA enrolment grant (api/_utils/pro-mfa-enrolment.js) — 30 min, its own audience (never a session, and a session is never one), naming the
+ * account, its structure and the redeemed invitation.
+ * @param {{ userId: string, structureId: string, invitationId: string }} claims @param {number} seconds
+ */
+export function signProMfaEnrolmentToken(claims, seconds) {
+    const JWT_SECRET = getJwtSecret();
+    if (!JWT_SECRET) throw new Error('JWT_SECRET is missing');
+    return jwt.sign(
+        { userId: String(claims.userId), structureId: String(claims.structureId), inv: String(claims.invitationId), scope: 'mfa_enrol', jti: crypto.randomUUID() },
+        JWT_SECRET,
+        { expiresIn: seconds, algorithm: 'HS256', issuer: PRO_SESSION_ISSUER, audience: PRO_MFA_ENROL_AUDIENCE },
+    );
+}
+
+/** @param {unknown} token @returns {Record<string, unknown> | null} the verified claims (shape checked by the caller) */
+export function verifyProMfaEnrolmentToken(token) {
+    const JWT_SECRET = getJwtSecret();
+    if (!JWT_SECRET || typeof token !== 'string' || !token) return null;
+    try {
+        const d = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'], issuer: PRO_SESSION_ISSUER, audience: PRO_MFA_ENROL_AUDIENCE });
+        return d && typeof d === 'object' ? d : null;
+    } catch {
+        return null;
+    }
+}
+
 /** R40: true when the sign-in behind a session is older than PRO_SESSION_MAX_AGE_SECONDS (a session without a sign-in time is too old). @param {unknown} authTime */
 export function proSessionTooOld(authTime, now = Date.now()) {
     if (typeof authTime !== 'number' || !Number.isFinite(authTime)) return true;
@@ -174,7 +202,8 @@ function validateProClaims(/** @type {string | number | boolean | null | undefin
  * deny by default; only signing in, the account summary and setting up the second factor are open to a password-only session. Outside production it is
  * opt-in (PRO_MFA_REQUIRED=true), so LAB journeys and tests keep their password-only sessions. There is no switch to turn it off in production.
  */
-export const PRO_MFA_OPEN_ROUTES = Object.freeze([/^\/api\/pro\/auth\//, /^\/api\/pro\/mfa-setup\/?$/, /^\/api\/pro\/me\/?$/]);
+// R42-A08: redeeming an MFA enrolment invitation is open to the password-only session of the account it names (it is how that account reaches the factor)
+export const PRO_MFA_OPEN_ROUTES = Object.freeze([/^\/api\/pro\/auth\//, /^\/api\/pro\/mfa-setup\/?$/, /^\/api\/pro\/mfa-enrolment\/?$/, /^\/api\/pro\/me\/?$/]);
 export function proMfaRequired() {
     return process.env.VERCEL_ENV === 'production' || process.env.PRO_MFA_REQUIRED === 'true';
 }

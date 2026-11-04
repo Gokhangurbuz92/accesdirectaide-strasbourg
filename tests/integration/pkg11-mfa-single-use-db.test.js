@@ -46,6 +46,7 @@ describe.skipIf(!hasDatabase)('one-time codes are used once; professional seeds 
     if (!db) return;
     await db.execute(sql`DELETE FROM "AuditLog" WHERE actor IN (${ADM}, ${SUP}, ${PRO.id})`).catch(() => {});
     await db.execute(sql`DELETE FROM "AdminUser" WHERE email IN (${ADM}, ${SUP})`).catch(() => {});
+    await db.execute(sql`DELETE FROM "Invitation" WHERE "structureId" = ${ST}`).catch(() => {});
     await db.execute(sql`DELETE FROM "ProUser" WHERE id = ${PRO.id}`).catch(() => {});
     await db.execute(sql`DELETE FROM "Structure" WHERE id = ${ST}`).catch(() => {});
   });
@@ -72,7 +73,11 @@ describe.skipIf(!hasDatabase)('one-time codes are used once; professional seeds 
   it('professional: the seed is stored sealed; the enrolment code does not sign in again; the next step’s code does; a clear seed stored before still works; switching off needs an unused code', async () => {
     const setup = (await import('../../api/_handlers/pro/mfa-setup.js')).default;
     let tok = auth.signProToken({ id: PRO.id, email: PRO.email, structureId: ST, role: 'PRO' });
-    const req = (method, body) => ({ method, url: '/api/pro/mfa-setup', query: {}, body, headers: { host: 'localhost', authorization: `Bearer ${tok}` } });
+    // R42-A08: the enrolment is bound to a redeemed invitation of this account (the binding itself: r42-auth-accounts-mfa-db)
+    const invId = `mfa1-inv-${TS}`;
+    await db.execute(sql`INSERT INTO "Invitation" (id, "structureId", email, role, token, expires_at, used_at) VALUES (${invId}, ${ST}, ${PRO.email}, 'PRO', ${'sha256:' + crypto.randomBytes(32).toString('hex')}, NOW() + interval '1 day', NOW())`);
+    const grant = (await import('../../api/_utils/pro-mfa-enrolment.js')).signMfaEnrolmentGrant({ userId: PRO.id, structureId: ST, invitationId: invId });
+    const req = (method, body) => ({ method, url: '/api/pro/mfa-setup', query: {}, body, headers: { host: 'localhost', authorization: `Bearer ${tok}`, 'x-ada-mfa-enrolment': grant } });
     let r = mk(); await setup(req('GET'), r); expect(r.statusCode).toBe(200); const secret = r.body.secret;
     const stored = (await db.execute(sql`SELECT mfa_secret FROM "ProUser" WHERE id = ${PRO.id}`)).rows[0].mfa_secret;
     expect(stored.startsWith('v1:')).toBe(true); expect(stored).not.toContain(secret); expect(guard.openMfaSecret(stored)).toBe(secret);

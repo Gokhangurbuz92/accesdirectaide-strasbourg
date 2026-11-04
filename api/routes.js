@@ -63,6 +63,8 @@ export const routes = [
     { path: 'pro/auth/logout', match: 'exact', handler: () => import('./_handlers/pro/auth/logout.js') },   // PKG-11 audit: server-side pro logout
     { path: 'pro/me', match: 'exact', handler: () => import('./_handlers/pro/me.js') },
     { path: 'pro/mfa-setup', match: 'exact', handler: () => import('./_handlers/pro/mfa-setup.js') },
+    { path: 'pro/mfa-enrolment', match: 'exact', handler: () => import('./_handlers/pro/mfa-enrolment.js') },   // R42-A08: redeem an MFA enrolment invitation
+    { path: 'pro/mfa-invitation', match: 'exact', handler: () => import('./_handlers/pro/mfa-invitation.js') },   // R42-A08: an administrator issues one
     { path: 'pro/slots', match: 'exact', handler: () => import('./_handlers/pro/slots.js') },
     { path: 'pro/availability', match: 'exact', handler: () => import('./_handlers/pro/availability.js') },
     { path: 'pro/timeoff', match: 'exact', handler: () => import('./_handlers/pro/timeoff.js') },
@@ -195,6 +197,7 @@ export const routes = [
     { path: 'admin/falc', match: 'exact', handler: () => import('./_handlers/admin/falc.js') },
     { path: 'admin/ai-oversight', match: 'exact', handler: () => import('./_handlers/admin/ai-oversight.js') },
     { path: 'citizen/profile', match: 'exact', handler: () => import('./_handlers/citizen/profile.js') },
+    { path: 'citizen/age-declaration', match: 'exact', handler: () => import('./_handlers/citizen/age-declaration.js') },   // R42-A07: adult statement (no birth date)
     // launch-readiness item 66: rectification of the contact data (e-mail with a confirmation link to the new address, phone)
     { path: 'citizen/email-change', match: 'exact', handler: () => import('./_handlers/citizen/email-change.js') },
     { path: 'citizen/email-change-confirm', match: 'exact', handler: () => import('./_handlers/citizen/email-change-confirm.js') },

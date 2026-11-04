@@ -11,6 +11,7 @@ import { CitizenProfile, CitizenUser, ConsentLog, GuardianRelationship, Househol
 import { AGE_BAND_KEYS } from '../lib/ageBands.js';
 import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { evaluateAge } from '../lib/agePolicy.js';
+import { isAdultAccount } from '../_utils/age-policy.js';
 import { holdsOwnerSecret, isExpired } from '../_utils/share-access.js';
 import { pushConfig, removeSubscriptions } from './web-push.js';
 
@@ -83,7 +84,7 @@ export async function getAccount(userId, db = defaultDb) {
   return {
     profile: profile ? { displayName: profile.displayName, preferredLanguage: profile.preferredLanguage, ageBand: profile.ageBand, departement: profile.departement, accessibilityPrefs: profile.accessibilityPrefs, prefillConsent: profile.prefillConsent } : { displayName: null, preferredLanguage: 'fr', ageBand: null, departement: null, accessibilityPrefs: {}, prefillConsent: false },
     household: household.map((h) => ({ id: h.id, relation: h.relation, ageBand: h.ageBand, label: h.label })),
-    preferences, agePolicy: { accountFeatures: gate.accountFeatures, allowed: gate.allowed, status: gate.policyStatus, publicInformation: 'ALL_AGES' },
+    preferences, agePolicy: { accountFeatures: gate.accountFeatures, allowed: gate.allowed, status: gate.policyStatus, publicInformation: 'ALL_AGES', adultAccount: await isAdultAccount(userId, db) },   // R42-A07
   };
 }
 export async function saveProfile(userId, input, db = defaultDb) {

@@ -31,7 +31,7 @@ beforeEach(() => {
   vi.doMock('../../api/_utils/totp-guard.js', () => ({ claimProStep: async () => true, openMfaSecret: (s) => s, sealMfaSecret: (s) => s, isVaultReady: () => true }));
   vi.doMock('../../api/lib/totp.js', () => ({ matchCodeStep: (_s, code) => (code === '123456' ? 1 : null), generateSecret: () => 'S', buildOtpauthUrl: () => 'otpauth://x' }));
 });
-afterEach(() => { process.env = { ...saved }; vi.resetModules(); for (const m of ['../../src/db/index.js', '../../api/_utils/rateLimit.js', '../../api/_utils/totp-guard.js', '../../api/lib/totp.js']) vi.doUnmock(m); });
+afterEach(() => { process.env = { ...saved }; vi.resetModules(); for (const m of ['../../src/db/index.js', '../../api/_utils/rateLimit.js', '../../api/_utils/totp-guard.js', '../../api/lib/totp.js', '../../api/_utils/pro-mfa-enrolment.js']) vi.doUnmock(m); });
 
 const PRO = { id: 'u1', email: 'pro@example.test', structureId: 's1', role: 'PRO' };
 const verifyCall = async (mfa_token, code = '123456') => { const h = (await import('../../api/_handlers/pro/auth/mfa-verify.js')).default; const r = mk(); await h({ method: 'POST', url: '/api/pro/auth/mfa-verify', headers: {}, query: {}, body: { mfa_token, code } }, r); return r; };
@@ -64,12 +64,23 @@ describe('pending sign-in token and mfa-verify', () => {
 });
 
 describe('pro enrolment (POST /api/pro/mfa-setup)', () => {
-  const setupCall = async (code = '123456') => {
+  // R42-A08: the invitation binding itself is proven on PostgreSQL (r42-auth-accounts-mfa-db); here the grant is granted or refused by a double
+  const setupCall = async (code = '123456', grant = true) => {
+    vi.doMock('../../api/_utils/pro-mfa-enrolment.js', () => ({ enrolmentGrantFrom: () => 'g', checkMfaEnrolmentGrant: async () => (grant ? { ok: true, invitationId: 'inv1' } : { ok: false, reason: 'NO_GRANT' }) }));
     const auth = await import('../../api/_utils/auth.js');
     const h = (await import('../../api/_handlers/pro/mfa-setup.js')).default; const r = mk();
     await h({ method: 'POST', url: '/api/pro/mfa-setup', headers: { authorization: `Bearer ${auth.signProToken(PRO)}` }, query: {}, body: { code } }, r);
     return r;
   };
+  it('R42-A08: without an invitation-bound grant the password-only session is refused (403, nothing written, no token)', async () => {
+    state.user = { ...PRO, mfa_enabled: false, mfa_secret: 'S' };
+    const r = await setupCall('123456', false);
+    expect(r.statusCode).toBe(403);
+    expect(r.body.error).toBe('MFA_INVITATION_REQUIRED');
+    expect(r.body.token).toBeUndefined();
+    expect(state.updates).toEqual([]);
+    expect(state.audits).toContain('MFA_ENROL_REFUSED');
+  });
   it('is refused with 409 while MFA is already on (no new token)', async () => {
     state.user = { ...PRO, mfa_enabled: true, mfa_secret: 'S' };
     const r = await setupCall();

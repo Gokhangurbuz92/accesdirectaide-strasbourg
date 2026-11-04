@@ -60,6 +60,9 @@ export default function ProTeam() {
     const [disablingId, setDisablingId] = useState(null);
     const [confirmDisable, setConfirmDisable] = useState(null);
     const [resendingId, setResendingId] = useState(null);
+    // R42-A08: invitation to enrol the second factor (and the lost-device reset, confirmed in a dialog)
+    const [mfaInvitingId, setMfaInvitingId] = useState(null);
+    const [confirmMfaReset, setConfirmMfaReset] = useState(null);
     const [cancellingId, setCancellingId] = useState(null);
     // R18: the team screen offers what the server already supports — paging past the first page, role change, reactivation, a named successor on departure
     const [page, setPage] = useState(1);
@@ -172,6 +175,30 @@ export default function ProTeam() {
             toast.error(t('pro:team.network_error', 'Erreur réseau.'));
         } finally {
             setChangingId(null);
+        }
+    };
+
+    const handleMfaInvitation = async (/** @type {{ id: string, email: string }} */ member, /** @type {boolean} */ lostDevice) => {
+        setMfaInvitingId(member.id);
+        try {
+            const res = await fetch('/api/pro/mfa-invitation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...headers, ...getCsrfHeaders() },
+                body: JSON.stringify({ memberId: member.id, lostDevice }),
+            });
+            const out = await res.json().catch(() => ({}));
+            if (res.ok) {
+                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(t('pro:team.mfa_invite_sent', 'Invitation à la double authentification transmise à {{email}}', { email: member.email }));
+                else toast.warning(t('pro:team.mfa_invite_not_mailed', 'Invitation créée pour {{email}}, mais l’e-mail n’a pas pu être envoyé.', { email: member.email }));
+                setConfirmMfaReset(null);
+                fetchTeam();
+            } else {
+                toast.error(out?.message || out?.error || t('pro:team.mfa_invite_error', 'L’invitation n’a pas pu être créée.'));
+            }
+        } catch {
+            toast.error(t('pro:team.network_error', 'Erreur réseau.'));
+        } finally {
+            setMfaInvitingId(null);
         }
     };
 
@@ -375,6 +402,20 @@ export default function ProTeam() {
                                             <span>{t('pro:team.manages_schedule', 'Gère le planning')}<span className="sr-only">{t('pro:team.manages_schedule_sr', ' (horaires et absences de l’équipe) : {{email}}', { email: u.email })}</span></span>
                                         </label>
                                     )}
+                                    {/* R42-A08: the second factor is enrolled only through an invitation sent by another administrator */}
+                                    {u.id !== user?.id && u.status === 'active' && (
+                                        u.mfa_enabled ? (
+                                            <Button variant="outline" size="sm" onClick={() => setConfirmMfaReset(u)} disabled={mfaInvitingId === u.id} data-testid={`team-mfa-reset-${u.id}`}>
+                                                <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                                                {t('pro:team.mfa_lost_device', 'Appareil perdu')}<span className="sr-only">{t('pro:team.mfa_lost_device_sr', ' : réinitialiser la double authentification de {{email}}', { email: u.email })}</span>
+                                            </Button>
+                                        ) : (
+                                            <Button variant="outline" size="sm" onClick={() => handleMfaInvitation(u, false)} disabled={mfaInvitingId === u.id} data-testid={`team-mfa-invite-${u.id}`}>
+                                                {mfaInvitingId === u.id ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden="true" />}
+                                                {t('pro:team.mfa_invite', 'Inviter à la double authentification')}<span className="sr-only">{t('pro:team.mfa_invite_sr', ' : {{email}}', { email: u.email })}</span>
+                                            </Button>
+                                        )
+                                    )}
                                     {u.id !== user?.id && u.status === 'disabled' && (
                                         <Button variant="outline" size="sm" onClick={() => patchMember(u, { reactivate: true }, t('pro:team.reactivated', '{{email}} est de nouveau actif.', { email: u.email }))} disabled={changingId === u.id} data-testid={`team-reactivate-${u.id}`}>
                                             {t('pro:team.reactivate', 'Réactiver')}
@@ -517,6 +558,28 @@ export default function ProTeam() {
             </Dialog>
 
             {/* Confirm Disable Dialog */}
+            <Dialog open={!!confirmMfaReset} onOpenChange={() => setConfirmMfaReset(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-red-500" aria-hidden="true" />
+                            {t('pro:team.mfa_reset_title', 'Réinitialiser la double authentification ?')}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <p className="text-sm text-slate-700">
+                        {t('pro:team.mfa_reset_text', 'Vérifiez d’abord l’identité de {{email}} par un moyen sûr (en personne ou en rappelant un numéro connu de la structure). Son authentificateur actuel cessera de fonctionner, toutes ses sessions prendront fin et une nouvelle invitation, valable 72 heures, lui sera envoyée.', { email: confirmMfaReset?.email })}
+                    </p>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setConfirmMfaReset(null)}>
+                            {t('pro:team.cancel', 'Annuler')}
+                        </Button>
+                        <Button variant="destructive" onClick={() => confirmMfaReset && handleMfaInvitation(confirmMfaReset, true)} disabled={mfaInvitingId === confirmMfaReset?.id} data-testid="team-mfa-reset-confirm">
+                            {t('pro:team.mfa_reset_confirm', 'Réinitialiser et envoyer l’invitation')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <Dialog open={!!confirmDisable} onOpenChange={() => setConfirmDisable(null)}>
                 <DialogContent>
                     <DialogHeader>

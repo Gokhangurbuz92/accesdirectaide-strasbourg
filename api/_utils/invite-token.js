@@ -37,8 +37,11 @@ export async function invitationsWithRevokedSender(dbh, ids) {
      ORDER BY a.details->>'invitationId', a.timestamp DESC`)).rows;
   const out = new Set();
   for (const r of rows) {
-    const authorized = r.senderId && ['active', 'pending'].includes(String(r.status)) && r.senderStructure === r.invitationStructure
-      && ['STRUCTURE_ADMIN', 'SUPERADMIN'].includes(String(r.role || '').toUpperCase());
+    // R42-A08: the platform role SUPERADMIN may issue an MFA enrolment invitation for a member of ANY structure (the first administrator of a self-registered
+    // structure has nobody else to invite them); a structure administrator only for their own structure
+    const senderRole = String(r.role || '').toUpperCase();
+    const authorized = r.senderId && ['active', 'pending'].includes(String(r.status))
+      && ((r.senderStructure === r.invitationStructure && ['STRUCTURE_ADMIN', 'SUPERADMIN'].includes(senderRole)) || senderRole === 'SUPERADMIN');
     if (!authorized) out.add(String(r.invitationId));
   }
   return out;
