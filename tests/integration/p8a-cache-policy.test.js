@@ -5,8 +5,6 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 import { describe, expect, it } from 'vitest';
 import apiHandler from '../../api/index.js';
 import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 
 /**
  * @param {{

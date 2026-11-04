@@ -1,7 +1,7 @@
 // @ts-nocheck
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
-import { Database, Search, Sparkles, BookOpenCheck, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { Database, Sparkles, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trans } from 'react-i18next';

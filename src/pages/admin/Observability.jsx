@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, RefreshCw, Database, Mail, Bot, Globe } from 'lucide-react';
+import { Loader2, RefreshCw, Database, Mail } from 'lucide-react';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useT } from '@/i18n';

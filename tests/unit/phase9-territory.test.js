@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { resolveQPVFromFixtures, cacheStructureQPV, getCachedStructureQPV, resolveUserQPV } from '../../api/lib/geography/QPVAdapter.js';
+import { describe, it, expect } from 'vitest';
+import { resolveQPVFromFixtures, cacheStructureQPV, getCachedStructureQPV } from '../../api/lib/geography/QPVAdapter.js';
 
 describe('Phase 9 — Territory Model & Ingestion', () => {
 

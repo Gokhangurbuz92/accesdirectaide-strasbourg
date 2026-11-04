@@ -2,7 +2,7 @@
 import { env } from './env.js';
 import { db as defaultDb } from '../../src/db/index.js';
 import { CronRun } from '../../src/db/schema.js';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 /**
  * @param {Date | null | undefined} value

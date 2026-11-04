@@ -18,7 +18,6 @@ vi.mock('@vercel/kv', () => ({
   }
 }));
 
-import { eq, sql } from 'drizzle-orm';
 import crypto from 'crypto';
 
 /**

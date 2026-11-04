@@ -5,10 +5,9 @@ import { createDispatch, createResponse } from './dispatch.js';
 import { getComponent, hasComponent } from './registry.js';
 import {
   BudgetTracker,
-  MAX_MODEL_CALLS_INTERACTIVE,
   GLOBAL_TIMEOUT,
   PER_PROVIDER_TIMEOUT,
-  DETERMINISTIC_ROUTING_CONFIDENCE_THRESHOLD
+  DETERMINISTIC_ROUTING_CONFIDENCE_THRESHOLD,
 } from './budget.js';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';

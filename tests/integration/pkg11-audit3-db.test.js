@@ -10,7 +10,6 @@
  *  - R2-7: a correct password on an unconfirmed address gets the one refusal answer (no account-existence oracle).
  * Synthetic data only; the mailer is the in-memory test provider; skipped without DATABASE_URL; no provider is called.
  */
-import crypto from 'node:crypto';
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
 

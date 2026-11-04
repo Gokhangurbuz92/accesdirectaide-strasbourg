@@ -9,5 +9,8 @@
  "unavailable.retry": "إعادة المحاولة",
  "route_error.title": "تعذّر تحميل هذه الصفحة",
  "route_error.text": "حدث خطأ أثناء التحميل. يرجى تحديث الصفحة.",
- "route_error.reload": "تحديث"
+ "route_error.reload": "تحديث",
+ "form.errors.summary_title": "لم يتم إرسال النموذج. يُرجى تصحيح النقاط التالية:",
+ "form.errors.required": "{{label}}: هذا الحقل إلزامي.",
+ "form.errors.email": "{{label}}: أدخل عنوان بريد إلكتروني صالحًا، مثل name@example.com."
 }

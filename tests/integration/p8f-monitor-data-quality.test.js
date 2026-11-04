@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import apiHandler from '../../api/index.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 import crypto from 'crypto';
 
 /**

@@ -2,7 +2,7 @@
  * 🔒 VAULT CORRUPTION & ROTATION TEST
  * Tests AES-256-GCM encryption resilience.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // We test the encryption logic directly
 import crypto from 'crypto';

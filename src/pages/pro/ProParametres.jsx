@@ -1,10 +1,19 @@
 // @ts-nocheck
-import { useState, useEffect, useMemo } from 'react';
-import { useOutletContext, Link } from 'react-router-dom';
+import { useCallback, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
-    Building2, Users, Calendar, Bell, Shield, Plug,
-    Mail, Phone, MapPin, Clock, CheckCircle, ExternalLink,
-    AlertTriangle, Eye, UserPlus, Trash2, Download
+  Building2,
+  Users,
+  Calendar,
+  Bell,
+  Shield,
+  Plug,
+  Mail,
+  Phone,
+  MapPin,
+  ExternalLink,
+  Eye,
+  UserPlus,
 } from 'lucide-react';
 
 import SEO from '@/components/SEO';
@@ -12,10 +21,8 @@ import { proRdvRequest } from '@/api/pro-rdv-client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
@@ -193,13 +200,13 @@ function NotificationsProTab() {
     // only the e-mail copy can be switched off, globally or per category. SMS reminders and a daily digest do not exist for professionals: not offered.
     const [state, setState] = useState({ loading: true, error: '', preferences: null, categories: {} });
     const [saving, setSaving] = useState(false); const [message, setMessage] = useState(''); const [problem, setProblem] = useState('');
-    const load = () => {
+    const load = useCallback(() => {
         setState((x) => ({ ...x, loading: true, error: '' }));
         proRdvRequest('/api/pro/notifications', { query: { view: 'preferences' } })
             .then((out) => setState({ loading: false, error: '', preferences: out.preferences, categories: out.categories || {} }))
             .catch(() => setState({ loading: false, error: t('pro:parametres.prefs_load_error', 'Impossible de charger vos préférences.'), preferences: null, categories: {} }));
-    };
-    useEffect(() => { load(); }, []);
+    }, [t]);
+    useEffect(() => { load(); }, [load]);
     const save = async (patch) => {
         setSaving(true); setMessage(''); setProblem('');
         try { const out = await proRdvRequest('/api/pro/notifications', { method: 'PATCH', body: { preferences: patch } }); setState((x) => ({ ...x, preferences: out.preferences })); setMessage(t('pro:parametres.prefs_saved', 'Préférences enregistrées.')); }

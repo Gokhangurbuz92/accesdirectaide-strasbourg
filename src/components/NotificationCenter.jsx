@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getCsrfHeaders } from '@/lib/csrf';
 import { formatDate, useT } from '@/i18n';
 import {
     Bell,

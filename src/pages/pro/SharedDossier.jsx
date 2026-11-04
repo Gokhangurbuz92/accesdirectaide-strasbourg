@@ -19,19 +19,18 @@ import { getCsrfHeaders } from '@/lib/csrf';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
 import ActionPlan from '@/components/diagnostic/ActionPlan';
 import {
-    FileText,
-    User,
-    ShieldCheck,
-    ArrowLeft,
-    CheckCircle2,
-    Clock,
-    AlertCircle,
-    ClipboardList,
-    Download,
-    Loader2,
-    Lock,
-    Eye,
-    TrendingUp,
+  FileText,
+  User,
+  ShieldCheck,
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  ClipboardList,
+  Loader2,
+  Lock,
+  Eye,
+  TrendingUp,
 } from 'lucide-react';
 import { useT, formatDate } from '@/i18n';
 

@@ -1,5 +1,6 @@
 import { next } from '@vercel/edge';
 import { PUBLIC_BETA_MESSAGE, openSurfaces, isOpenJobPath } from './api/_utils/public-beta.js';
+import { isCspReportRequest } from './api/_utils/csp-reporting.js';
 
 /**
  * Launch-readiness item 56 — MAINTENANCE_MODE=1 (Vercel environment variable): every PAGE answers 503 with this plain page (Retry-After, never cached), so
@@ -21,21 +22,24 @@ export function maintenanceResponse() {
  * Public beta (owner directive 29/10/2026): every file under api/ is deployed as its own function, so the thin wrappers under api/cron and api/monitor (and
  * any api/lib module) would answer directly, outside api/index.js and its restricted-beta allowlist. The matcher sends those paths here first:
  * api/lib and api/routes are never HTTP endpoints (404); api/cron and api/monitor are refused while the beta is restricted (503), as api/index.js does.
+ * R42 (F8): POST /api/monitor/csp-report passes when staged CSP reporting is on (api/_utils/csp-reporting.js), so api/index.js can apply its own gate.
  * @param {URL} url
+ * @param {string} [method]
  */
-export function directFunctionResponse(url) {
+export function directFunctionResponse(url, method = 'GET') {
   const p = url.pathname;
   const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
   if (/^\/api\/(lib\/|routes(\.js)?$)/.test(p)) return json(404, { error: 'Not Found' });
   const beta = ['1', 'true'].includes(String(process.env.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
   // R35: unless the « jobs » surface is opened (ADA_BETA_OPEN_SURFACES); each job keeps its own switch (GDPR_PURGE_ENABLED…) and CRON_SECRET
   // R38: or this one job is opened by name (ADA_BETA_OPEN_JOBS, and ADA_JOBS_APPROVED for a personal-data job)
+  if (beta && isCspReportRequest(method, p.replace(/^\/api\//, '').replace(/\/$/, ''))) return null;
   if (beta && /^\/api\/(cron|monitor)\//.test(p) && !openSurfaces(process.env).has('jobs') && !isOpenJobPath(p.replace(/^\/api\//, '').replace(/\/$/, ''))) return json(503, { error: 'PUBLIC_BETA_RESTRICTED', message: PUBLIC_BETA_MESSAGE });
   return null;
 }
 
 export default function middleware(request) {
-  const direct = new URL(request.url).pathname.startsWith('/api/') ? directFunctionResponse(new URL(request.url)) : null;
+  const direct = new URL(request.url).pathname.startsWith('/api/') ? directFunctionResponse(new URL(request.url), request.method) : null;
   if (direct) return direct;
   if (new URL(request.url).pathname.startsWith('/api/')) return next();
   if (['1', 'true'].includes(String(process.env.MAINTENANCE_MODE || ''))) return maintenanceResponse();

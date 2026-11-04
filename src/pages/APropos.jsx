@@ -1,6 +1,6 @@
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
-import { Lightbulb, Target, CheckCircle2, History, Globe2, HeartHandshake } from 'lucide-react';
+import { Target, CheckCircle2, History, Globe2, HeartHandshake } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
 import { Trans } from 'react-i18next';

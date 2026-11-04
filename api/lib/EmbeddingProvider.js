@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { env } from '../_utils/env.js';
 import { generateEmbeddings } from './gemini.js';
-import { AIProviderPolicy, PROVIDER, LOCALITY, AUDIENCE } from './ai-policy.js';
+import { AIProviderPolicy, PROVIDER, AUDIENCE } from './ai-policy.js';
 
 export const CANONICAL_DIMENSION = 768;
 export const MAX_INPUT_CHARS = 12000;

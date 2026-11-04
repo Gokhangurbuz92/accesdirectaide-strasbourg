@@ -1,7 +1,7 @@
 import logger from '../../_utils/logger.js';
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
-import { SharedDiagnostic, AuditLog, ProUser, Structure } from '../../../src/db/schema.js';
+import { SharedDiagnostic, AuditLog, ProUser } from '../../../src/db/schema.js';
 import { count } from 'drizzle-orm';
 import { requireProRole } from '../../_utils/auth.js';
 import crypto from 'crypto';

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import crypto from 'node:crypto';
-import { ConnectorContract, SyncRunState } from './ConnectorContract.js';
+import { ConnectorContract } from './ConnectorContract.js';
 
 /**
  * Adapter that wraps existing SourceConnector-based connectors

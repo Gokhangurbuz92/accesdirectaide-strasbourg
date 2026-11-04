@@ -6,18 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import {
-    Calendar,
-    Users,
-    Building2,
-    MessageCircle,
-    Video,
-    Clock,
-    ChevronRight,
-    ShieldCheck,
-    Plus,
-    ExternalLink,
-    CheckCircle2,
-    Loader2,
+  Calendar,
+  Users,
+  Building2,
+  MessageCircle,
+  Video,
+  Clock,
+  ChevronRight,
+  ShieldCheck,
+  Plus,
+  ExternalLink,
+  CheckCircle2,
 } from 'lucide-react';
 import { useProLabels } from '@/lib/proLabelsI18n';
 import { formatDate, useT } from '@/i18n';

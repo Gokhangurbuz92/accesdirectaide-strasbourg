@@ -40,8 +40,6 @@ vi.mock('../../api/lib/search-query.js', () => ({
 
 import { searchAides } from '../../api/lib/search-query.js';
 import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 
 describe('API /aides Integration', () => {
     beforeEach(() => {

@@ -3,8 +3,6 @@ vi.stubEnv("KV_REST_API_URL", "http://localhost");
 vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 
 import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, inArray, and, or, sql } from 'drizzle-orm';
 
 /**
  * Integration Test for API Slug Support

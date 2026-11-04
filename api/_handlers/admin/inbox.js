@@ -5,7 +5,6 @@ import { db } from '../../../src/db/index.js';
 import { Actualite } from '../../../src/db/schema.js';
 import { eq, count, sql } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
-import { parsePaginationParams, buildPaginatedResponse } from '../../lib/geography/CursorPagination.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res

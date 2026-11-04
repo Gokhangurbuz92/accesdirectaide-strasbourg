@@ -3,7 +3,7 @@ import { SkeletonList } from '@/components/ui/skeleton';
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Trans } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { csvLine } from '@/lib/csv';
 import {
@@ -14,17 +14,16 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import {
-    Shield,
-    Clock,
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    UserPlus,
-    Eye,
-    LogIn,
-    UserX,
-    Download,
-    Loader2,
+  Shield,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  UserPlus,
+  Eye,
+  LogIn,
+  UserX,
+  Download,
 } from 'lucide-react';
 import i18n, { formatDate, useT } from '@/i18n';
 

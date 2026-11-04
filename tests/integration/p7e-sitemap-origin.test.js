@@ -5,8 +5,6 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 import { afterEach, describe, expect, it } from 'vitest';
 import sitemapHandler from '../../api/_handlers/sitemap.js';
 import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 
 const ORIGINAL_VERCEL_ENV = process.env.VERCEL_ENV;
 

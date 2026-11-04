@@ -4,7 +4,7 @@
  * Maps the legacy Classifier interface to the new ClassificationService.
  * Drop-in replacement for classifier.js that uses deterministic routing.
  */
-import { classifyIntent, classifyCategories, CATEGORIES } from '../services/classification.js';
+import { classifyIntent, CATEGORIES } from '../services/classification.js';
 
 export class Classifier {
   constructor() {

@@ -5,7 +5,7 @@ import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAtt
 import crypto from 'node:crypto';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, and, desc, asc } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
 import { encrypt } from '../lib/crypto.js';

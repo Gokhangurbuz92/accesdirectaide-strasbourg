@@ -6,7 +6,7 @@
 /* global document */
 import '@testing-library/jest-dom/vitest';
 import axe from 'axe-core';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import { createElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';

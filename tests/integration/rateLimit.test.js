@@ -2,8 +2,8 @@ import { vi } from "vitest";
 vi.stubEnv("KV_REST_API_URL", "http://localhost");
 vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import * as rateLimitUtils from '../../api/_utils/rateLimit.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import '../../api/_utils/rateLimit.js';
 
 // We need to reset modules to test environment variable variations
 // but getting vitest to reload module-level consts is tricky.

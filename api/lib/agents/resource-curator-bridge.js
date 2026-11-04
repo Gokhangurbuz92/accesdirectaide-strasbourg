@@ -1,4 +1,4 @@
-import { isAllowedSource, ALLOWED_DOMAINS, createSourceEnvelope } from '../services/official-sources.js';
+import { isAllowedSource, ALLOWED_DOMAINS } from '../services/official-sources.js';
 
 export class ResourceCurator {
   constructor() {

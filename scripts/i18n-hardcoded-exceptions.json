@@ -2,12 +2,6 @@
  "_doc": "R41-C: approved exceptions of scripts/i18n-hardcoded-scan.mjs. file + exact text (or « * » for a whole unmounted / Storybook / developer-only file). Categories: unmounted (valid only while no mounted file imports it: the scan fails otherwise), storybook, developer-only, proper-name, french-term, french-legal, lang-fr, unit, technical-id, example-value, trans-component, source-branch.",
  "exceptions": [
   {
-   "file": "src/components/ConsentPad.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Not imported anywhere. Its text states a 30-day consultation period and a « SHA-256 infalsifiable » signature that no current flow backs: it must be reviewed (and its claims verified) before it is mounted, not translated as is."
-  },
-  {
    "file": "src/components/ReportContentButton.jsx",
    "text": "*",
    "category": "unmounted",
@@ -30,18 +24,6 @@
    "text": "*",
    "category": "unmounted",
    "reason": "Not imported anywhere (Base44 legacy screen, English placeholder text)."
-  },
-  {
-   "file": "src/components/assistant/DiagnosticResults.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Not imported anywhere; the mounted diagnostic is src/pages/DiagnosticPage.jsx (translated). Contains a « valide 7 jours » statement that must be checked before any reuse."
-  },
-  {
-   "file": "src/components/assistant/DiagnosticTraceModal.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Only imported by the unmounted DiagnosticResults.jsx."
   },
   {
    "file": "src/components/assistant/RecommendationCard.jsx",

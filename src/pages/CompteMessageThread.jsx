@@ -9,7 +9,8 @@ import SEO from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
-import { AttachmentList, AttachmentPicker, readAttachment, saveDownload } from '@/components/Messaging/MessageAttachments';
+import { AttachmentList, AttachmentPicker } from '@/components/Messaging/MessageAttachments';
+import { readAttachment, saveDownload } from '@/lib/messageAttachments';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
 

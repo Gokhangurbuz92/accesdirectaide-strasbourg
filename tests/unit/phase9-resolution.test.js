@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { resolvePostalCode } from '../../api/lib/geography/TerritoryService.js';
 
 describe('Phase 9 — TerritoryService', () => {

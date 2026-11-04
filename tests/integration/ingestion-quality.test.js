@@ -2,10 +2,10 @@ import { vi } from "vitest";
 vi.stubEnv("KV_REST_API_URL", "http://localhost");
 vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql, inArray, and, or } from 'drizzle-orm';
+import { eq, sql, or } from 'drizzle-orm';
 import crypto from 'crypto';
 
 // CI sets SKIP_DB_SETUP=true — no real DB available

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { db as defaultDb } from '../../src/db/index.js';
-import { Aide, Demarche, Structure, Actualite, ReviewQueueItem } from '../../src/db/schema.js';
-import { isNull, isNotNull, asc, desc, eq, and } from 'drizzle-orm';
+import { Aide, Demarche, Structure, ReviewQueueItem } from '../../src/db/schema.js';
+import { isNull, isNotNull, eq, and } from 'drizzle-orm';
 import { env } from './env.js';
 import { randomUUID } from 'crypto';
 

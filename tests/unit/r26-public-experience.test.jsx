@@ -31,7 +31,7 @@ describe('main menu', () => {
     const layout = read('src/pages/Layout.jsx');
     // R36: the account entry points follow the accounts surface of the build (closed in the beta unless that surface is opened) — see r36-header.test.jsx
     expect(layout).toMatch(/const accountsOpen = accountEntriesShown\(frontendEnv\.flags\.publicBeta\)/);
-    expect(layout).toMatch(/\{accountsOpen && \(\s*<div className="hidden items-center gap-2 xl:flex">\s*<AuthHeaderActions \/>/);
+    expect(layout).toMatch(/\{accountsOpen && \(\s*<div className="hidden items-center gap-2 xl:flex[^"]*">\s*<AuthHeaderActions \/>/);
     expect(layout).toMatch(/\{accountsOpen && <AuthMobileActions/);
     expect(layout).toMatch(/\{ label: 'Outils', page: 'Tools'/);
     expect(layout).toMatch(/\{ label: 'Actualités', page: 'Actualites', icon: Newspaper \}/);   // R29: back once verified news is published
@@ -210,7 +210,7 @@ describe('R27 lieu journey', () => {
     expect(read('src/components/cards/StructureCard.jsx')).toMatch(/relative z-20 pointer-events-none \[&_a\]:pointer-events-auto/);
   });
   it('the lieu page links to its place on a map', async () => {
-    const { mapUrl } = await import('../../src/pages/StructureDetail.jsx');
+    const { mapUrl } = await import('../../src/lib/structureMapUrl.js');
     expect(mapUrl({ latitude: 48.58, longitude: 7.75 })).toBe('https://www.openstreetmap.org/?mlat=48.58&mlon=7.75#map=17/48.58/7.75');
     expect(mapUrl({ adresse: '1 parc de l’Étoile', code_postal: '67000', ville: 'Strasbourg' })).toBe(`https://www.openstreetmap.org/search?query=${encodeURIComponent('1 parc de l’Étoile 67000 Strasbourg')}`);
     expect(read('src/pages/StructureDetail.jsx')).toMatch(/data-testid="structure-map-link"/);

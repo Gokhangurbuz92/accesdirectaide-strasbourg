@@ -3,9 +3,9 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
 import { ConversationLog } from '../../../src/db/schema.js';
-import { eq, desc, and, isNotNull, count } from 'drizzle-orm';
+import { eq, and, isNotNull, count } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
-import { parsePaginationParams, buildPaginatedResponse } from '../../lib/geography/CursorPagination.js';
+import { parsePaginationParams } from '../../lib/geography/CursorPagination.js';
 import { auditAdminExport, csvCell, refuseWithoutAdminMfa } from '../../_utils/admin-personal-data.js';
 
 /**

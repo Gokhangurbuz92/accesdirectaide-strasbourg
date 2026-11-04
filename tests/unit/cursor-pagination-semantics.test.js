@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePaginationParams, encodeCursor, decodeCursor, buildPaginatedResponse } from '../../api/lib/geography/CursorPagination.js';
+import { parsePaginationParams, decodeCursor, buildPaginatedResponse } from '../../api/lib/geography/CursorPagination.js';
 
 describe('CursorPagination Semantics', () => {
   it('A. limit > MAX_LIMIT is actually clamped', () => {

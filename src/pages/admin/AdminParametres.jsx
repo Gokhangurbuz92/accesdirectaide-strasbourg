@@ -1,10 +1,14 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { adminClient } from '@/api/client';
 import { useOutletContext, Link } from 'react-router-dom';
 import {
-    User, Bell, Shield, Mail, CheckCircle,
-    AlertTriangle, Eye, ExternalLink
+  User,
+  Bell,
+  Shield,
+  Mail,
+  Eye,
+  ExternalLink,
 } from 'lucide-react';
 
 import SEO from '@/components/SEO';
@@ -179,19 +183,20 @@ function SessionsTab() {
     const { t } = useT('admin');
     const EVENT_LABELS = eventLabels(t);
     const [data, setData] = useState(null); const [msg, setMsg] = useState(''); const [form, setForm] = useState({ email: '', reason: '', action: 'revoke' });
-    const load = () => adminClient.admin.getSessions().then(setData).catch(() => setMsg(t('admin:parametres.sessions_load_failed', 'Les sessions n’ont pas pu être chargées.')));
-    useEffect(() => { load(); }, []);
+    const [refused, setRefused] = useState(false);   // R42 (A5): a refusal is an alert that describes the fields (not aria-invalid: the server may refuse for a reason that is not a field), a success a status
+    const load = useCallback(() => adminClient.admin.getSessions().then(setData).catch(() => setMsg(t('admin:parametres.sessions_load_failed', 'Les sessions n’ont pas pu être chargées.'))), [t]);
+    useEffect(() => { load(); }, [load]);
     const act = async () => {
-        setMsg('');
+        setMsg(''); setRefused(false);
         try { await adminClient.admin.sessions(form); setMsg(t('admin:parametres.action_saved', 'Action enregistrée.')); setForm((f) => ({ ...f, reason: '' })); load(); }
-        catch (e) { setMsg(e?.payload?.message || t('admin:parametres.action_refused', 'Action refusée.')); }   // the server's French message, never « API Error: 400 »
+        catch (e) { setRefused(true); setMsg(e?.payload?.message || t('admin:parametres.action_refused', 'Action refusée.')); }   // the server's French message, never « API Error: 400 »
     };
     return (
         <div className="space-y-6" data-testid="admin-sessions">
             <h3 className="text-lg font-semibold">{t('admin:parametres.sessions_title', 'Sessions administrateur')}</h3>
             <p className="text-sm text-slate-700">{t('admin:parametres.sessions_intro', "Chaque session est vérifiée à chaque requête : un compte désactivé ou une session terminée n'ouvre plus rien.")}</p>
             <Button variant="outline" onClick={() => adminClient.auth.logout()} data-testid="admin-logout-all">{t('admin:parametres.logout_all', 'Terminer toutes mes sessions')}</Button>
-            {msg && <p role="status" className="text-sm text-slate-800">{msg}</p>}
+            {msg && <p id="admin-sessions-message" role={refused ? 'alert' : 'status'} className={refused ? 'text-sm font-medium text-red-700' : 'text-sm text-slate-800'}>{msg}</p>}
             {data && (
                 <>
                     <table className="w-full text-sm" data-testid="admin-session-admins">
@@ -204,13 +209,13 @@ function SessionsTab() {
                     <fieldset className="space-y-2 rounded border p-3">
                         <legend className="text-sm font-medium px-1">{t('admin:parametres.act_legend', 'Agir sur un autre administrateur (super-administrateur avec élévation en cours)')}</legend>
                         <Label htmlFor="sess-email">{t('admin:parametres.admin_address', "Adresse de l'administrateur")}</Label>
-                        <input id="sess-email" className="w-full rounded border p-2" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                        <input id="sess-email" className="w-full rounded border p-2" aria-required="true" {...(refused ? { 'aria-describedby': 'admin-sessions-message' } : {})} value={form.email} onChange={(e) => { setRefused(false); setForm({ ...form, email: e.target.value }); }} />
                         <Label htmlFor="sess-action">{t('admin:parametres.action', 'Action')}</Label>
                         <select id="sess-action" className="w-full rounded border p-2" value={form.action} onChange={(e) => setForm({ ...form, action: e.target.value })}>
                             <option value="revoke">{t('admin:parametres.opt_revoke', 'Terminer ses sessions')}</option><option value="disable">{t('admin:parametres.opt_disable', 'Désactiver le compte')}</option><option value="enable">{t('admin:parametres.opt_enable', 'Réactiver le compte')}</option>
                         </select>
                         <Label htmlFor="sess-reason">{t('admin:parametres.reason', 'Raison (au moins 10 caractères)')}</Label>
-                        <input id="sess-reason" className="w-full rounded border p-2" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} />
+                        <input id="sess-reason" className="w-full rounded border p-2" aria-required="true" {...(refused ? { 'aria-describedby': 'admin-sessions-message' } : {})} value={form.reason} onChange={(e) => { setRefused(false); setForm({ ...form, reason: e.target.value }); }} />
                         <Button onClick={act} disabled={!form.email || form.reason.trim().length < 10}>{t('admin:parametres.apply', 'Appliquer')}</Button>
                     </fieldset>
                     <table className="w-full text-sm" data-testid="admin-session-events">

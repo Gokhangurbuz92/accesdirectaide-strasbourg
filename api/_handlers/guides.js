@@ -1,8 +1,6 @@
 // @ts-nocheck
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
-import { Guide } from '../../src/db/schema.js';
-import { eq, desc } from 'drizzle-orm';
 import { verifyAdmin } from '../_utils/auth.js';
 
 // PKG-11 audit: draft previews use the platform's administrator session check (named admin; the retired token only where allowed). The former local

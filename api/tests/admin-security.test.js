@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 process.env.JWT_SECRET = 'test-jwt-secret';
 process.env.ADMIN_TOKEN = 'test-admin-token';

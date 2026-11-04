@@ -4,7 +4,6 @@
  "subject.suggestion": "Bir önerim var",
  "subject.partnership": "Ortaklık önerisi",
  "subject.other": "Diğer",
- "error.required": "Lütfen tüm zorunlu alanları doldurun.",
  "error.rate_limited": "Bu bağlantıdan çok fazla mesaj gönderildi. Bir saat sonra tekrar deneyin veya bize contact@accesdirectaide.fr adresinden yazın.",
  "error.not_delivered": "Mesajınız iletilemedi. Daha sonra tekrar deneyin veya bize doğrudan contact@accesdirectaide.fr adresinden yazın.",
  "error.network": "Mesajınız iletilemedi (bağlantı kurulamadı). Daha sonra tekrar deneyin veya bize doğrudan contact@accesdirectaide.fr adresinden yazın.",

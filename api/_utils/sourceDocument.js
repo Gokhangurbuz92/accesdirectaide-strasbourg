@@ -2,7 +2,7 @@ import { computeRawContentHash } from './contentHash.js';
 import { env } from './env.js';
 import { db } from '../../src/db/index.js';
 import { SourceDocument } from '../../src/db/schema.js';
-import { and, eq, desc } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 
 /**

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { MAX_ATTACHMENT_BYTES, prepareAttachment } from '../../api/_services/message-attachments.js';
-import { ATTACHMENT_MAX_BYTES } from '../../src/components/Messaging/MessageAttachments.jsx';
+import { ATTACHMENT_MAX_BYTES } from '../../src/lib/messageAttachments.js';
 import { MAX_SIZE } from '../../src/lib/fileVaultLimits.js';
 
 const BODY_CAP = 4.5 * 1024 * 1024;

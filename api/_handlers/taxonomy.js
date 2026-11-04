@@ -2,7 +2,7 @@
 import { visibleWhere } from '../lib/publicVisibility.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql, and, asc, count, inArray } from 'drizzle-orm';
+import { eq, asc, count } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { logger } from '../lib/logger.js';
 import { createRequire } from 'module';

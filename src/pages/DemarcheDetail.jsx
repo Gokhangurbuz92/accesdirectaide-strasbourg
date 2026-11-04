@@ -10,7 +10,6 @@ import { createPageUrl } from '@/utils';
 import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import EmptyState from '@/components/ui/EmptyState';
 import { Card, CardContent } from "@/components/ui/card";
 import {

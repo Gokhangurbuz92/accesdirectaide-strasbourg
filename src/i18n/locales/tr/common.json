@@ -9,5 +9,8 @@
  "unavailable.retry": "Tekrar dene",
  "route_error.title": "Bu sayfa yüklenemedi",
  "route_error.text": "Yükleme sırasında bir hata oluştu. Lütfen sayfayı yenileyin.",
- "route_error.reload": "Yenile"
+ "route_error.reload": "Yenile",
+ "form.errors.summary_title": "Form gönderilmedi. Lütfen şu noktaları düzeltin:",
+ "form.errors.required": "{{label}}: bu alan zorunludur.",
+ "form.errors.email": "{{label}}: geçerli bir e-posta adresi girin, örneğin ad@ornek.com."
 }

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import apiHandler from '../../api/index.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql, inArray, and, or, isNotNull } from 'drizzle-orm';
+import { eq, and, isNotNull } from 'drizzle-orm';
 
 /**
  * @param {{

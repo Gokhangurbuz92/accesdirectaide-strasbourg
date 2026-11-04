@@ -9,7 +9,7 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
  * DB-dependent tests are skipped when SKIP_DB_SETUP is set (CI without real DB)
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import handler from '../../api/_handlers/aides.js';
 import demarchesHandler from '../../api/_handlers/demarches.js';
 import structuresHandler from '../../api/_handlers/structures.js';

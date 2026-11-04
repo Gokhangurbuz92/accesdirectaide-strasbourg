@@ -1,7 +1,7 @@
 // @ts-nocheck
 import * as Sentry from '@sentry/node';
 import { env } from './env.js';
-import { redactValue, redactText, containsIdentifiers } from './redact.js';
+import { redactText, containsIdentifiers } from './redact.js';
 
 const dsn = env.sentry.dsn;
 const environment = env.sentry.environment;

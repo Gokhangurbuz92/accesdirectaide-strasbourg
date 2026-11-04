@@ -1,5 +1,5 @@
 // @ts-nocheck
-import logger from '../_utils/logger.js';
+import '../_utils/logger.js';
 import { createGeminiBreaker } from './gemini-circuit-breaker.js';
 import { recordMetric } from './gemini-metrics.js';
 import { AIProviderPolicy, PROVIDER, AUDIENCE } from './ai-policy.js';

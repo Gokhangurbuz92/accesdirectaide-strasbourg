@@ -6,18 +6,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    MessageSquare,
-    Search,
-    Cpu,
-    Zap,
-    AlertCircle,
-    CheckCircle,
-    Loader2,
-    Clock,
-    Sparkles,
-    Download,
-    TrendingUp,
-    BarChart3,
+  MessageSquare,
+  Search,
+  Cpu,
+  Zap,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Sparkles,
+  Download,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useT } from '@/i18n';

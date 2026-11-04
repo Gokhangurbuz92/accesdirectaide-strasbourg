@@ -5,9 +5,7 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { runIngestAids } from '../../api/_handlers/cron/ingest-aids.js';
-import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
+import '../../src/db/index.js';
 
 // Mock Prisma
 vi.mock('../../api/_utils/prisma.js', () => ({

@@ -25,7 +25,6 @@ const LIST = { aide: 'aides?limit=50', demarche: 'demarches?limit=50', guide: 'g
 const DETAIL = { aide: 'aides/', demarche: 'demarches/', guide: 'guides/', actualite: 'actualites/', dispositif: 'dispositifs/' };
 
 const arg = (n, d = null) => { const i = process.argv.indexOf(`--${n}`); return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : d; };
-const flat = (v) => (typeof v === 'string' ? v : JSON.stringify(v ?? ''));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function getJson(base, p) {

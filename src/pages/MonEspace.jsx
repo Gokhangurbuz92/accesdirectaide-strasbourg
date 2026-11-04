@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -25,12 +25,13 @@ function messagesText(m, t) {
 export default function MonEspace() {
   const { t } = useT('compte');
   const [state, setState] = useState({ loading: true, error: '', summary: null });
-  const load = async () => {
+  // R42: `t` is a dependency (it changes with the language), so the error message is never left in the previous language
+  const load = useCallback(async () => {
     setState((s) => ({ ...s, loading: !s.summary, error: '' }));
     try { setState({ loading: false, error: '', summary: await citizenApi.espace() }); }
     catch (err) { setState({ loading: false, error: err.status === 401 ? t('compte:space.login_required', 'Connectez-vous pour accéder à Mon Espace.') : err.message, summary: null }); }
-  };
-  useEffect(() => { load(); }, []);
+  }, [t]);
+  useEffect(() => { load(); }, [load]);
 
   if (state.loading) return <div className="container mx-auto max-w-4xl px-4 py-8" role="status">{t('compte:space.loading', 'Chargement de Mon Espace…')}</div>;
   if (!state.summary) {

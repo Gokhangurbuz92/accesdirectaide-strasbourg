@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import { db } from '../../src/db/index.js';
 import { sql } from 'drizzle-orm';
 import logger from '../_utils/logger.js';
-import { kv } from '../_utils/kv.js';
-import { env } from '../_utils/env.js';
+import '../_utils/kv.js';
+import '../_utils/env.js';
 import { getMailerStatus } from '../_utils/mailer.js';
 import { isPublicBetaRestricted } from '../_utils/public-beta.js';
 

@@ -29,7 +29,7 @@ describe('official guides', () => {
     expect(src).toMatch(/licence: 'Licence Ouverte 2\.0', unchanged: true/);
   });
   it('the guide page shows official tables as tables and says the text is the official one', async () => {
-    const { blocksOf } = await import('../../src/components/guides/OfficialText.jsx');
+    const { blocksOf } = await import('../../src/lib/officialText.js');
     expect(blocksOf('Tableau : Banque\nType | Durée\nChèque | 1 an\nAttention : gardez la preuve.\nTexte.')).toEqual([
       { kind: 'table', caption: 'Banque', rows: [['Type', 'Durée'], ['Chèque', '1 an']] },
       { kind: 'note', label: 'Attention', text: 'gardez la preuve.' },

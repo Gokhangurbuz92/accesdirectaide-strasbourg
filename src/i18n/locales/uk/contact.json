@@ -4,7 +4,6 @@
  "subject.suggestion": "У мене є пропозиція",
  "subject.partnership": "Пропозиція партнерства",
  "subject.other": "Інше",
- "error.required": "Будь ласка, заповніть усі обов’язкові поля.",
  "error.rate_limited": "З цього з’єднання надіслано забагато повідомлень. Спробуйте ще раз за годину або напишіть нам на contact@accesdirectaide.fr.",
  "error.not_delivered": "Ваше повідомлення не вдалося передати. Спробуйте пізніше або напишіть нам безпосередньо на contact@accesdirectaide.fr.",
  "error.network": "Ваше повідомлення не вдалося передати (немає з’єднання). Спробуйте пізніше або напишіть нам безпосередньо на contact@accesdirectaide.fr.",

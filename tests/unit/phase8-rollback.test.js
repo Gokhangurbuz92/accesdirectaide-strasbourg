@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import handler from '../../api/_handlers/admin/rollback.js';
-import * as auth from '../../api/_utils/auth.js';
+import '../../api/_utils/auth.js';
 
 vi.mock('../../api/_utils/auth.js', () => ({
   requireAdminAuth: (handler) => async (req, res) => {

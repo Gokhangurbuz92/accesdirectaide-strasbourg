@@ -4,7 +4,7 @@
  *  - HEAD refused → one 1-byte GET; redirects followed within the allow-list only; structures are checked too;
  *  - two consecutive BROKEN results open ONE review item; nothing is unpublished; the cron is off unless the owner enables it.
  */
-import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
 
 const hasDatabase = !!process.env.DATABASE_URL;

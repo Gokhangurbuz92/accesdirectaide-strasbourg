@@ -8,8 +8,6 @@ import http from 'http';
 import path from 'path';
 import sitemapHandler from '../../api/_handlers/sitemap.js';
 import { db } from '../../src/db/index.js';
-import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 
 function createMockReq(overrides = {}) {
   return {

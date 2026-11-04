@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { decide, stripReviewFields } from '../lib/publicVisibility.js';
 import { db } from '../../src/db/index.js';
-import { sql, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import * as schema from '../../src/db/schema.js';
 import { searchDemarchesSchema } from '../_utils/validators.js';
 import { searchDemarches } from '../lib/search-query.js';

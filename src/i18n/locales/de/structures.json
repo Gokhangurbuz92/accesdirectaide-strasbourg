@@ -122,7 +122,6 @@
  "suggest.step_identity": "Identität",
  "suggest.step_contact": "Kontakt",
  "suggest.step_missions": "Aufgaben",
- "suggest.error_required": "Geben Sie mindestens den Namen der Einrichtung und ihren Ort an.",
  "suggest.error_consent": "Kreuzen Sie das Einverständnisfeld an, um den Vorschlag zu senden.",
  "suggest.error_invalid": "Einige Angaben sind ungültig: Prüfen Sie die Website und die E-Mail-Adresse.",
  "suggest.error_unavailable": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",

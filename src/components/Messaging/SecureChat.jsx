@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Send, ShieldCheck, Lock, Clock, AlertCircle, Loader2 } from 'lucide-react';
 import { cryptoE2EE } from '@/lib/crypto-messaging.js';
-import { Button } from '@/components/ui/button';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';

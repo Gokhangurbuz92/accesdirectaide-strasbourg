@@ -2,22 +2,16 @@
 import { SkeletonList } from '@/components/ui/skeleton';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import {
-    Globe,
-    TrendingUp,
-    Users,
-    Building2,
-    ChevronRight,
-    Search,
-    ArrowUpRight,
-    ArrowDownRight,
-    ShieldCheck,
-    Activity,
-    Loader2,
-    Calendar,
+  Globe,
+  Users,
+  Building2,
+  Search,
+  ShieldCheck,
+  Activity,
+  Calendar,
 } from 'lucide-react';
 import {
     AreaChart,

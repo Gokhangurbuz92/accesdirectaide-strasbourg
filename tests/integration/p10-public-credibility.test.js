@@ -3,11 +3,11 @@ vi.stubEnv("KV_REST_API_URL", "http://localhost");
 vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 
 import crypto from 'node:crypto';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import demarchesHandler from '../../api/_handlers/demarches.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 function createMockReq({ method = 'GET', url = '/api/demarches', query = {}, headers = {} } = {}) {
   return {

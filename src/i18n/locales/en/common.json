@@ -9,5 +9,8 @@
  "unavailable.retry": "Try again",
  "route_error.title": "This page could not be loaded",
  "route_error.text": "An error occurred while loading. Please refresh the page.",
- "route_error.reload": "Refresh"
+ "route_error.reload": "Refresh",
+ "form.errors.summary_title": "The form was not sent. Please correct the following:",
+ "form.errors.required": "{{label}}: this field is required.",
+ "form.errors.email": "{{label}}: enter a valid e-mail address, for example name@example.com."
 }

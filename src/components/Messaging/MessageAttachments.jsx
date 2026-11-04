@@ -4,22 +4,8 @@
  * encrypts the file and lets only the two parties of the conversation read it; this component only prepares the upload and offers the download.
  */
 import HealthDocumentNotice from '@/components/HealthDocumentNotice';
-import i18n, { useT } from '@/i18n';
-
-export const ATTACHMENT_ACCEPT = 'application/pdf,image/png,image/jpeg';
-export const ATTACHMENT_MAX_BYTES = 3 * 1024 * 1024;   // R34: equal to the server's limit (api/_services/message-attachments.js)
-
-export function readAttachment(file) {
-  return new Promise((resolve, reject) => {
-    if (!file) return resolve(null);
-    if (file.size > ATTACHMENT_MAX_BYTES) return reject(new Error(i18n.t('messaging:attachments.too_large', 'La pièce jointe dépasse 3 Mo.')));
-    if (!ATTACHMENT_ACCEPT.split(',').includes(file.type)) return reject(new Error(i18n.t('messaging:attachments.bad_type', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.')));
-    const reader = new FileReader();
-    reader.onload = () => resolve({ filename: file.name, mimeType: file.type, contentBase64: String(reader.result).split(',')[1] || '' });
-    reader.onerror = () => reject(new Error(i18n.t('messaging:attachments.unreadable', 'Fichier illisible.')));
-    reader.readAsDataURL(file);
-  });
-}
+import { useT } from '@/i18n';
+import { ATTACHMENT_ACCEPT } from '@/lib/messageAttachments';
 
 export function AttachmentPicker({ id, file, onChange, disabled }) {
   const { t } = useT('messaging');
@@ -48,11 +34,4 @@ export function AttachmentList({ attachments, onDownload, testid = 'message-atta
       ))}
     </ul>
   );
-}
-
-export async function saveDownload(response, name) {
-  const url = URL.createObjectURL(await response.blob());
-  const link = document.createElement('a'); link.href = url; link.download = name || 'piece-jointe';
-  document.body.appendChild(link); link.click(); link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

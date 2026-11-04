@@ -4,7 +4,7 @@
  * Proves the canonical tool executor always passes the ZOD-PARSED value
  * to execute(), never the raw model output.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { z } from 'zod';
 import { generateStructuredContent } from '../../api/lib/ai-foundation.js';
 

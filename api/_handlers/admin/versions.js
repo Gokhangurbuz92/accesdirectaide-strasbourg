@@ -6,7 +6,7 @@ import { EntityVersion } from '../../../src/db/schema.js';
 import { eq, and } from 'drizzle-orm';
 import { verifyAdmin, resolveAuthContext } from '../../_utils/auth.js';
 import { restoreVersion } from '../../_utils/snapshot.js';
-import { parsePaginationParams, buildPaginatedResponse } from '../../lib/geography/CursorPagination.js';
+import { parsePaginationParams } from '../../lib/geography/CursorPagination.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res

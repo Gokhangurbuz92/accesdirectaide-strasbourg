@@ -1,19 +1,17 @@
 import { SkeletonList } from '@/components/ui/skeleton';
-import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminClient as client } from '@/api/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    ThumbsDown,
-    ThumbsUp,
-    MessageCircle,
-    AlertCircle,
-    RefreshCw,
-    Loader2,
-    Clock,
-    Sparkles,
+  ThumbsDown,
+  ThumbsUp,
+  MessageCircle,
+  AlertCircle,
+  RefreshCw,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { useT } from '@/i18n';
 

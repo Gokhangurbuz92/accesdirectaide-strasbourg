@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { consumePendingSyncRuns } from '../../api/lib/ingestion/SyncQueueConsumer.js';
 import { db } from '../../src/db/index.js';
 import * as SourceRegistry from '../../api/lib/ingestion/SourceRegistry.js';
-import * as IngestStructures from '../../api/_handlers/cron/ingest-structures.js';
+import '../../api/_handlers/cron/ingest-structures.js';
 
 vi.mock('../../src/db/index.js', () => {
   let jobs = [];
