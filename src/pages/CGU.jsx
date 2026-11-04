@@ -66,6 +66,10 @@ export default function CGU() {
                   <li><Trans i18n={i18n} i18nKey="legal:terms.service.procedures" defaults="Des <strong>fiches démarches</strong> détaillant les procédures administratives." /></li>
                   <li><Trans i18n={i18n} i18nKey="legal:terms.service.pro" defaults="Un <strong>espace professionnel</strong> pour les travailleurs sociaux (gestion de rendez-vous, dossiers)." /></li>
                 </ul>
+                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A02, R42-A07), stated as planned — accounts and appointments are closed */}
+                <p className="mt-3">
+                  {t('legal:terms.service.accountsPlanned', "La création de compte et la prise de rendez-vous ne sont pas encore ouvertes. À leur ouverture, un compte personnel sera nécessaire pour prendre rendez-vous, et seules les personnes majeures pourront créer un compte.")}
+                </p>
                 <p className="mt-3">
                   <Trans i18n={i18n} i18nKey="legal:terms.service.free" defaults="Le Service est <strong>gratuit</strong>, <strong>sans publicité</strong> et <strong>sans revente de données</strong>." />
                 </p>

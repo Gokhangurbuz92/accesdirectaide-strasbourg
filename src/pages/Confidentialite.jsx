@@ -108,7 +108,8 @@ export default function Confidentialite() {
                 <p><strong>{t('legal:privacy.controller.label', 'Responsable de traitement :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</em></p>
                 <p><strong>{t('legal:privacy.controller.contactLabel', 'Contact protection des données :')}</strong> {contactValue('contact')}</p>
                 <p>{t('legal:privacy.controller.noDpo', "Nous n'avons pas désigné de délégué à la protection des données à ce jour.")}</p>
-                <p>{t('legal:privacy.controller.structures', "Les structures (CCAS, associations, professionnels) qui utilisent AccesDirectAide sont responsables de ce qu'elles font des informations que vous leur partagez et de leurs notes de suivi.")}</p>
+                {/* R42-LEGAL: the structures' role (own controller, joint controller, or other) is not decided (R40 E3; CONTROL/r42/R42_ROLES_RESPONSABLE_TRAITEMENT_FR.md) */}
+                <p>{t('legal:privacy.controller.structures', "Le rôle des structures (CCAS, associations, professionnels) qui utiliseront AccesDirectAide n'est pas encore fixé : selon le cas, elles seront responsables de leurs propres traitements ou responsables avec nous. Il sera précisé ici, pour chaque fonction, avant l'ouverture des fonctions qui leur transmettent vos informations.")}</p>
               </div>
             </section>
 
@@ -131,6 +132,10 @@ export default function Confidentialite() {
                 <Item title={t('legal:privacy.data.account.title', '3. Votre compte')}>
                   {t('legal:privacy.data.account.text', "Les contenus sensibles (messages, notes, documents, réponses partagées) sont chiffrés à l'enregistrement (pas de chiffrement de bout en bout). Votre compte est conservé tant que vous l'utilisez. La suppression automatique des comptes inactifs n'est pas encore en place.")}
                 </Item>
+                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A06, R42-A07), stated as planned — the appointments surface is closed */}
+                <Item title={t('legal:privacy.data.appointments.title', '4. Les rendez-vous (pas encore ouverts)')}>
+                  {t('legal:privacy.data.appointments.text', "La prise de rendez-vous n'est pas encore ouverte. Quand elle le sera, il faudra être connecté(e) à son compte : la réservation sans compte, un temps envisagée, n'est plus prévue. Seules les personnes majeures pourront créer un compte. Un court motif facultatif pourra être demandé : n'y indiquez ni diagnostic ni document médical. Les informations demandées, leurs destinataires, la base légale et la durée de conservation seront indiquées ici avant l'ouverture.")}
+                </Item>
               </div>
             </section>
 
@@ -152,7 +157,7 @@ export default function Confidentialite() {
                 </p>
                 <p><Trans i18n={i18n} i18nKey="legal:privacy.measurement.sentry" defaults="<strong>Sentry</strong> (société américaine) : quand une erreur se produit, nous envoyons sa description après avoir retiré votre e-mail, votre adresse IP, les paramètres de l'adresse de la page, les cookies et les en-têtes de connexion. Les traces de performance concernent 10 % des visites. <strong>L'enregistrement des sessions (Session Replay) est désactivé par défaut.</strong>" /></p>
                 {frontendEnv.flags.publicBeta ? (
-                  <p data-testid="beta-processors"><Trans i18n={i18n} i18nKey="legal:privacy.measurement.betaProcessors" defaults="Pendant la bêta publique, la mesure d'audience et Sentry ne sont <strong>pas activés</strong>. Les seuls prestataires sont : Vercel Inc. (hébergement : fonctions exécutées à Francfort, pages publiques distribuées par son réseau mondial), qui adhère au Data Privacy Framework UE–États-Unis et prévoit des clauses contractuelles types ; Neon, LLC (groupe Databricks, base de données hébergée à Francfort), couvert par le Data Privacy Framework ; Upstash, Inc. (limitation de débit, données à Francfort), sous son accord de traitement des données — ses garanties de transfert restent à confirmer. Un accès depuis les États-Unis ne peut pas être exclu. Si vous choisissez la vue « Carte » de l'annuaire, votre navigateur charge aussi des fonds de carte depuis les serveurs de la fondation OpenStreetMap (Royaume-Uni), qui reçoivent votre adresse IP ; la vue « Liste » n'en charge aucun." /></p>
+                  <p data-testid="beta-processors"><Trans i18n={i18n} i18nKey="legal:privacy.measurement.betaProcessors" defaults="Pendant la bêta publique, la mesure d'audience et Sentry ne sont <strong>pas activés</strong>. Les seuls prestataires sont : Vercel Inc. (hébergement : fonctions exécutées à Francfort, pages publiques distribuées par son réseau mondial) ; Neon, LLC (groupe Databricks, base de données hébergée à Francfort) ; Upstash, Inc. (limitation de débit, données à Francfort). Ce sont des sociétés américaines : un accès depuis les États-Unis ne peut pas être exclu. Leurs garanties de transfert (Data Privacy Framework UE–États-Unis ou clauses contractuelles types) et leurs accords de traitement des données sont en cours de vérification. Si vous choisissez la vue « Carte » de l'annuaire, votre navigateur charge aussi des fonds de carte depuis les serveurs de la fondation OpenStreetMap (Royaume-Uni), qui reçoivent votre adresse IP ; la vue « Liste » n'en charge aucun." /></p>
                 ) : (
                   <p><Trans i18n={i18n} i18nKey="legal:privacy.measurement.transfers" defaults="Un accès depuis les États-Unis ne peut pas être exclu. <0>[À COMPLÉTER : garanties de transfert (Data Privacy Framework ou clauses contractuelles types) vérifiées pour chaque prestataire]</0> La vue « Carte » de l'annuaire charge des fonds de carte depuis les serveurs de la fondation OpenStreetMap (Royaume-Uni), qui reçoivent votre adresse IP ; la vue « Liste » n'en charge aucun."
                     components={[<em key="todo" />]} /></p>
@@ -211,7 +216,7 @@ export default function Confidentialite() {
                     <thead className="bg-slate-50">
                       <tr>
                         <th className="px-4 py-2 font-semibold text-slate-900 border-b border-slate-200">{t('legal:privacy.retention.data', 'Données')}</th>
-                        <th className="px-4 py-2 font-semibold text-slate-900 border-b border-slate-200">{t('legal:privacy.retention.duration', 'Durée appliquée')}</th>
+                        <th className="px-4 py-2 font-semibold text-slate-900 border-b border-slate-200">{t('legal:privacy.retention.duration', 'Durée prévue')}</th>
                       </tr>
                     </thead>
                     <tbody className="text-slate-700 divide-y divide-slate-100">
@@ -221,6 +226,7 @@ export default function Confidentialite() {
                     </tbody>
                   </table>
                 </div>
+                <p>{t('legal:privacy.retention.notValidated', "Ces durées sont des valeurs proposées par le code. Elles n'ont pas encore été validées par le responsable de traitement et peuvent changer avant l'ouverture des comptes.")}</p>
                 <p><strong>{t('legal:privacy.retention.notYetLabel', 'Pas encore appliqué automatiquement :')}</strong> {t('legal:privacy.retention.notYet', "suppression des comptes inactifs ; durée des messages et documents du Coffre (conservés jusqu'à leur suppression ou celle du compte) ; dossiers de suivi des structures ; demandes de contact.")}</p>
                 <p>{t('legal:privacy.retention.deletion', 'Pour supprimer votre compte : la demande est enregistrée tout de suite, puis exécutée après une vérification humaine.')}</p>
                 <p><Trans i18n={i18n} i18nKey="legal:privacy.retention.contact" defaults="Contact protection des données : <0/>." components={[contactValue('contact')]} /></p>

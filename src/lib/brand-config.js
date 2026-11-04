@@ -2,9 +2,11 @@
  * brand-config.js
  *
  * Identité visuelle et juridique de AccesDirectAide.
- * Owner decision of 23 October 2026 (STRASBOURG_FULL_PRODUCT_PLAN/OWNER_LEGAL_FORM_DECISION_2026-10-23.md): an association inscrite de droit local
- * d'Alsace-Moselle à but non lucratif, registered office intended in Strasbourg — NOT yet registered. The older « entreprise commerciale (en formation) »
- * assumption is superseded. Nothing here is a legal publisher identification (mentions légales keep their placeholders until registration).
+ * Owner decision of 23 October 2026 (STRASBOURG_FULL_PRODUCT_PLAN/OWNER_LEGAL_FORM_DECISION_2026-10-23.md): the INTENDED legal form is an association
+ * inscrite de droit local d'Alsace-Moselle à but non lucratif, registered office intended in Strasbourg. Owner addendum R42-A01 (04/11/2026,
+ * CONTROL/directives/R42_DIRECTIVE.md) supersedes the wording of 23/10: the association has NOT been created or registered; the project is carried by
+ * one natural person, the project carrier, whose identity is published through VITE_LEGAL_PUBLISHER_IDENTITY (src/config/legal-documents.js).
+ * Nothing here is a legal publisher identification; the future association is never presented as existing.
  *
  * Modifier ce fichier pour rebrander toute l'application.
  */
@@ -48,20 +50,22 @@ const brand = {
 
     // — Contact —
     contact: {
-        phone: '07.78.55.75.25',
+        // R42-LEGAL: the telephone number and postal address formerly written here were unused, of unverified origin, and in a public repository —
+        // removed. The publisher's domicile and telephone (LCEN art. 1-1 I 1°) are a decision of the project carrier (CONTROL/r42), never a constant here.
+        phone: null,
         email: 'contact@accesdirectaide.fr',
-        address: '58 rue Himmerich, 67000 Strasbourg',
+        address: null,
     },
 
     // — Legal —
     legal: {
-        // Owner decision 2026-10-23: the temporary PROJECT wording, approved as such. No registration number, SIREN/SIRET, legal representative or authorization
-        // exists or may be invented; the publisher identification of the legal pages stays a placeholder until the association is registered (P21)
-        projectStatement: 'AccesDirectAide — projet associatif à but non lucratif, en cours de constitution sous le régime du droit local d’Alsace-Moselle.',
-        entity: 'AccesDirectAide — projet associatif à but non lucratif (association de droit local d’Alsace-Moselle en cours de constitution)',
-        // R15 (dossier 27/10, B-009): an association of local law is « inscrite » at the tribunal judiciaire's register (no RNA, no « immatriculation »); this one is not yet
-        legalStatus: 'Projet d’association de droit local d’Alsace-Moselle à but non lucratif — en cours de constitution, pas encore inscrite au registre des associations',
-        intendedRegisteredOffice: 'Strasbourg (prévu)',
+        // R42-A01 (04/11/2026) replaces the project wording of 23/10/2026 (« projet associatif … en cours de constitution »), which could be read as an
+        // association being constituted: none is. No registration number, SIREN/SIRET, legal representative or authorization exists or may be invented.
+        projectStatement: 'AccesDirectAide — projet à but non lucratif porté par une personne physique. L’association de droit local d’Alsace-Moselle envisagée n’est pas encore créée.',
+        entity: 'AccesDirectAide — projet porté par une personne physique (association de droit local d’Alsace-Moselle envisagée, non créée)',
+        // R15 (dossier 27/10, B-009): an association of local law is « inscrite » at the tribunal judiciaire's register (no RNA, no « immatriculation »); none exists
+        legalStatus: 'Projet porté par une personne physique (porteur du projet) — association à but non lucratif de droit local d’Alsace-Moselle envisagée, pas encore créée ni inscrite au registre des associations',
+        intendedRegisteredOffice: 'Strasbourg (envisagé pour la future association)',
         siret: '',
         rgpdContact: 'contact@accesdirectaide.fr',
     },
@@ -70,7 +74,7 @@ const brand = {
     features: {
         showGouvBanner: false,
         showInstitutionBadge: true,
-        isAssociative: true,   // the decided model (owner, 2026-10-23); the association is not yet registered
+        isAssociative: true,   // the INTENDED model (owner, 2026-10-23); no association exists (R42-A01): the operator is a natural person
     },
 };
 

@@ -48,9 +48,9 @@ describe('legal pages use a fixed, versioned date', () => {
   });
 
   it('the label is the fixed draft date', () => {
-    expect(LEGAL_DOCS_VERSION.date).toBe('2026-10-25');
+    expect(LEGAL_DOCS_VERSION.date).toBe('2026-11-04');   // R42-LEGAL: texts changed on 04/11/2026 (version 0.3)
     expect(formatLegalDate('2026-10-21')).toBe('21 octobre 2026');
-    expect(LEGAL_DOCS_LABEL).toBe('Version projet du 25 octobre 2026 — relecture juridique en cours');
+    expect(LEGAL_DOCS_LABEL).toBe('Version projet du 4 novembre 2026 — relecture juridique en cours');
   });
 });
 

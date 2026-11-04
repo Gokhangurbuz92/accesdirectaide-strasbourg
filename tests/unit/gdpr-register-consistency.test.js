@@ -67,7 +67,10 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(fileText).not.toMatch(/"dpo_contact"/);
     expect(registre.dpo).toBeNull();
     expect(registre.contact_protection_donnees).toBe(CONTACT_PROTECTION_DONNEES);
-    expect(registre.organisme.statut).toBe('IN_FORMATION');
+    expect(registre.organisme.statut).toBe('NOT_CREATED');   // R42-A01: no association created
+    expect(registre.organisme.exploitant).toBe('NATURAL_PERSON');
+    expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
+    expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
     for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toBe('inconnu / non signé');
   });
 
@@ -98,10 +101,23 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-10-25');   // launch-readiness campaign: encryption of the shared answers and of the appointment messages
-    expect(REGISTRE_DATE_REVISION).toBe('2026-10-25');
+    expect(registre.date_mise_a_jour).toBe('2026-11-04');   // R42-LEGAL: operator, account-required appointments, guest booking retired, beta statuses
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-04');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
+  });
+
+  it('R42: appointments require an account, the account-free flow is retired, the decoy is a PostgreSQL row without personal data, analytics off by default', () => {
+    const rdv = registre.traitements.find((t) => t.id === 'T06');
+    expect(rdv.statut).toMatch(/un compte est exigé/);
+    expect(rdv.statut).toMatch(/sans compte est retirée/);
+    expect(rdv.base_legale_proposee).toMatch(/^À VALIDER PAR LE RESPONSABLE DE TRAITEMENT/);
+    const decoy = rdv.conservation.find((c) => /Leurre/.test(c.donnee));
+    expect(decoy.donnee).toMatch(/PostgreSQL/);
+    expect(decoy.donnee).toMatch(/sans aucune donnée personnelle/);
+    expect(decoy.donnee).toMatch(/plus aucun stockage KV/);
+    expect(registre.traitements.find((t) => t.id === 'T17').statut).toMatch(/désactivé par défaut/);
+    expect(fileText).not.toMatch(/Personnes ayant réservé sans compte \(R38, optionnel/);
   });
 
   it('the script no longer contains the clear-text export sub-command', () => {

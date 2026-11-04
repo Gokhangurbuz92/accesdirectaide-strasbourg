@@ -22,8 +22,8 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.1';
-export const REGISTRE_DATE_REVISION = '2026-10-25';
+export const REGISTRE_VERSION = '0.2';   // R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_DATE_REVISION = '2026-11-04';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
 const DPA_INCONNU = 'inconnu / non signé';
@@ -103,7 +103,8 @@ export function parseLegalEntity(source, file = SOURCE_FILES.legalEntity) {
         if (!m) throw new Error(`${key} introuvable dans ${file}`);
         return m[1] === 'null' ? null : m[2];
     };
-    return { status: read('status'), legalName: read('legalName'), tradeName: read('tradeName'), siren: read('siren'), registeredOffice: read('registeredOffice'), dpoContact: read('dpoContact') };
+    return { status: read('status'), operatorKind: read('operatorKind'), operatorRole: read('operatorRole'), plannedLegalForm: read('plannedLegalForm'),
+        legalName: read('legalName'), tradeName: read('tradeName'), siren: read('siren'), registeredOffice: read('registeredOffice'), dpoContact: read('dpoContact') };
 }
 
 export function readCodeSources(rootDir = ROOT_DIR) {
@@ -169,8 +170,9 @@ export function buildRegistre({ retention, registry, legalEntity }) {
         description: `à l'expiration du lien (expiresAt) ou au plus tard ${sharedDays} jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)`,
     };
 
-    const vercel = 'Vercel (hébergement, prévu)';
-    const neon = 'Neon (PostgreSQL, prévu)';
+    // R42-LEGAL: Vercel, Neon and Upstash are in service for the restricted public beta (public consultation only; /mentions-legales lists them)
+    const vercel = 'Vercel (hébergement ; en service pour la bêta publique restreinte)';
+    const neon = 'Neon (PostgreSQL ; en service pour la bêta publique restreinte)';
 
     return {
         _avertissement: 'Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.',
@@ -181,10 +183,14 @@ export function buildRegistre({ retention, registry, legalEntity }) {
         organisme: {
             nom_usage: legalEntity.tradeName,
             statut: legalEntity.status,
+            // R42-A01 (owner addendum, 04/11/2026): no association has been created; the project carrier, a natural person, edits the service
+            exploitant: legalEntity.operatorKind,
+            role_exploitant: legalEntity.operatorRole,
+            forme_juridique_envisagee: legalEntity.plannedLegalForm,
             raison_sociale: legalEntity.legalName,
             siren: legalEntity.siren,
             adresse: legalEntity.registeredOffice,
-            responsable_traitement: '[À COMPLÉTER : responsable de traitement — entité en formation]',
+            responsable_traitement: 'Personne physique porteuse du projet (identité publiée sur /mentions-legales par la variable VITE_LEGAL_PUBLISHER_IDENTITY) — qualification à confirmer par le responsable de traitement ; l\'association envisagée n\'est pas créée et n\'est pas présentée comme responsable',
         },
         dpo: null,
         dpo_statut: 'non désigné',
@@ -270,16 +276,18 @@ export function buildRegistre({ retention, registry, legalEntity }) {
             {
                 id: 'T06',
                 nom: 'Rendez-vous',
-                finalite: 'Prise, modification, annulation de rendez-vous avec une structure ; sans compte (R39) : rappel facultatif la veille, par e-mail, seulement si la personne l\'a demandé',
-                base_legale_proposee: 'Art. 6.1.b — à valider ; rappel facultatif la veille d\'un rendez-vous sans compte (R39) : consentement (art. 6.1.a), case séparée jamais pré-cochée, retirable à tout moment depuis le lien personnel — proposition, à valider par le responsable de traitement',
-                categories_donnees: ['Nom', 'Téléphone', 'E-mail', 'Notes (art. 9 possible)', 'Créneau, mode', 'Sans compte : date de l\'accord au rappel facultatif la veille (R39)'],
-                categories_personnes: ['Citoyens', 'Bénéficiaires inscrits par une structure', 'Professionnels', 'Personnes ayant réservé sans compte (R38, optionnel, désactivé par défaut)'],
+                statut: 'fermé en Production (bêta publique restreinte) ; R42 (DEC-R42-01) : un compte est exigé pour tout rendez-vous — la réservation publique sans compte est retirée (refusée par le serveur)',
+                finalite: 'Demande, prise, modification, annulation de rendez-vous avec une structure, par une personne connectée à son compte (personnes majeures seulement, R42-A07) ou par la structure elle-même ; confirmation directe ou après accord de la structure (R42-A03) ; choix facultatif d\'un professionnel (R42-A04) ; motif court facultatif (R42-A06)',
+                base_legale_proposee: 'À VALIDER PAR LE RESPONSABLE DE TRAITEMENT — options : CONTROL/r42/R42_BASES_ET_DUREES_OPTIONS_FR.md ; le rappel facultatif (s\'il est conservé) est une finalité distincte, jamais confondue avec la base du rendez-vous',
+                categories_donnees: ['Nom', 'Téléphone', 'E-mail', 'Notes et motif facultatif (texte libre : art. 9 possible, saisi volontairement)', 'Créneau, mode, professionnel choisi', 'Ancien flux sans compte (retiré) : date de l\'accord au rappel'],
+                categories_personnes: ['Citoyens majeurs titulaires d\'un compte', 'Bénéficiaires inscrits par une structure', 'Professionnels', 'Ancien flux sans compte (R38–R41, retiré en R42 ; colonnes conservées, migrations 0043/0044 non appliquées en Production)'],
                 destinataires: ['La structure et la personne'],
                 sous_traitants: [vercel, neon],
                 conservation: [
                     cron('Rendez-vous (nom, téléphone, e-mail, notes ; sans compte : e-mail et téléphone chiffrés, empreintes du code et du lien de gestion)', 'APPOINTMENT_ANON_DAYS', 'anonymisation après {j} jours'),
-                    cron('Demande sans compte jamais confirmée par le code (R38)', 'GUEST_HOLD_DAYS', 'identité effacée {j} jour après l\'expiration de la réservation de 20 minutes'),
-                    cron('Accord au rappel facultatif la veille, sans compte (R39 — proposition, à valider par le responsable de traitement)', 'APPOINTMENT_ANON_DAYS', 'effacé par le serveur dès que la personne retire son accord ; sinon, effacé avec les données du rendez-vous après {j} jours'),
+                    cron('Ancienne demande sans compte jamais confirmée (R38, flux retiré en R42 — reste purgée là où elle existerait)', 'GUEST_HOLD_DAYS', 'identité effacée {j} jour après l\'expiration de la réservation de 20 minutes'),
+                    cron('Leurre de réservation sans compte (R41-B : ligne ProAppointment dans PostgreSQL, sans aucune donnée personnelle, jamais confirmable ; plus aucun stockage KV — flux retiré en R42)', 'GUEST_HOLD_DAYS', 'ligne supprimée {j} jour après son expiration, en même temps que les demandes réelles'),
+                    cron('Accord au rappel facultatif la veille (ancien flux sans compte, R39 — proposition, à valider par le responsable de traitement)', 'APPOINTMENT_ANON_DAYS', 'effacé par le serveur dès que la personne retire son accord ; sinon, effacé avec les données du rendez-vous après {j} jours'),
                 ],
                 mesures_securite: 'Contrôle d\'accès par structure, limitation de débit, journal pro (ProAuditLog) ; nom et notes d\'un rendez-vous créé par une structure chiffrés à l\'enregistrement ; le téléphone reste en clair (il sert à reconnaître les réponses « STOP » aux SMS, désactivés)',
             },
@@ -430,7 +438,7 @@ export function buildRegistre({ retention, registry, legalEntity }) {
             {
                 id: 'T17',
                 nom: 'Mesure d\'audience et de performance',
-                statut: 'actif dans le bundle (sauf mode mock)',
+                statut: 'désactivé par défaut (ADR-022) : chargé seulement si VITE_AUDIENCE_MEASUREMENT=on, jamais pendant la bêta publique ni en mode mock',
                 finalite: 'Mesurer l\'audience (Vercel Analytics) et la performance (Vercel Speed Insights)',
                 base_legale_proposee: 'Art. 6.1.f, exemption de consentement si les conditions CNIL sont réunies (non vérifié)',
                 categories_donnees: ['Pages vues', 'Métriques de performance', 'Données techniques du navigateur'],
@@ -442,15 +450,17 @@ export function buildRegistre({ retention, registry, legalEntity }) {
             },
         ],
         sous_traitants: [
-            { nom: 'Vercel', role: 'Hébergement front et fonctions serveur, cron', statut: 'prévu', localisation: 'UE — région fra1 (Francfort) pour les fonctions', entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
-            { nom: 'Vercel Analytics + Speed Insights', role: 'Audience et performance', statut: 'activé (bundle, sauf mode mock)', localisation: NON_VERIFIE, entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
-            { nom: 'Neon', role: 'Base de données PostgreSQL', statut: 'prévu', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
-            { nom: 'Upstash', role: 'Limitation de débit (KV/Redis)', statut: 'prévu', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Vercel', role: 'Hébergement front et fonctions serveur, cron', statut: 'en service (bêta publique restreinte ; crons fermés)', localisation: 'UE — région fra1 (Francfort) pour les fonctions', entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Vercel Analytics + Speed Insights', role: 'Audience et performance', statut: 'désactivé par défaut (ADR-022 ; VITE_AUDIENCE_MEASUREMENT)', localisation: NON_VERIFIE, entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Neon', role: 'Base de données PostgreSQL', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort selon /mentions-legales — preuve console à archiver', entite_contractante: 'Neon, LLC (groupe Databricks) selon /mentions-legales — contrat non vérifié', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Upstash', role: 'Limitation de débit (KV/Redis) ; ne contient plus l\'état des leurres de réservation (R41-B)', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort selon /mentions-legales — preuve console à archiver', entite_contractante: 'Upstash, Inc. selon /mentions-legales — contrat non vérifié', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Stockage objet S3/R2 (fournisseur à confirmer)', role: 'Coffre, pièces jointes (fichiers chiffrés par enveloppe)', statut: 'prévu', localisation: 'non choisie', entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Sentry (Functional Software Inc.)', role: 'Erreurs serveur et navigateur, Session Replay (1 % / 10 % en erreur), traces 10 %', statut: 'activé si un DSN est configuré', localisation: NON_VERIFIE, entite_contractante: 'Functional Software Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
-            { nom: 'Mailjet (Sinch)', role: 'E-mails transactionnels', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Microsoft (Outlook, boîte contact@accesdirectaide.fr)', role: 'Réception des messages envoyés à l\'adresse de contact publiée', statut: 'en service (boîte existante, R42-A05)', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Expéditeur des e-mails transactionnels (Microsoft Graph sendMail ou Resend — non choisi, R42-A05)', role: 'E-mails transactionnels', statut: 'non choisi, non configuré : aucun envoi réel', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Mailjet (Sinch)', role: 'E-mails transactionnels (adaptateur codé, non retenu)', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Twilio', role: 'SMS', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
-            { nom: 'Microsoft (Outlook / Graph)', role: 'Agenda des professionnels', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
+            { nom: 'Microsoft (Outlook / Graph)', role: 'Agenda des professionnels (disponibilités libre/occupé quand une structure l\'a configuré, R42-A03)', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
         ],
         services_non_destinataires: [
             { nom: 'Google (Gemini API)', statut: 'bloqué', motif: 'Refusé par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) ; aucune donnée transmise ; pas un destinataire ni un sous-traitant', dpa: 'aucun' },
