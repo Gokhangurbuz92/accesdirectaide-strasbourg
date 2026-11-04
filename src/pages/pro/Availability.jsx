@@ -10,6 +10,7 @@ import { proRdvClient } from '@/api/pro-rdv-client';
 import { findInvalidRange } from '@/lib/availabilityRanges';
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import MemberHoursPanel from '@/components/rdv/MemberHoursPanel.jsx';
 
 const daysOf = (t) => [
   { key: 'mon', label: t('pro:availability.day_mon', 'Lundi') },
@@ -211,6 +212,13 @@ export default function ProAvailability() {
           </Card>
         ))}
       </div>
+
+      {/* R42-CDGG: each professional's own weekly hours and dated exceptions (inside the structure's opening hours) */}
+      <Card>
+        <CardContent className="p-4">
+          <MemberHoursPanel />
+        </CardContent>
+      </Card>
     </div>
   );
 }

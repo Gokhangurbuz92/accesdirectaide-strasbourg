@@ -279,6 +279,22 @@ export const proRdvClient = {
       return proRdvRequest('/api/pro/rdv/settings', { method: 'PATCH', body: payload });
     },
   },
+  // R42-CDGG: a professional's own weekly hours and dated exceptions (an administrator / schedule manager: every member of the structure)
+  hours: {
+    get() {
+      return proRdvRequest('/api/pro/rdv/hours');
+    },
+    /**
+     * @param {{ memberId?: string, weekly: Array<{ weekday: number, startTime: string, endTime: string }> | null, exceptions: Array<{ kind: 'AVAILABLE' | 'UNAVAILABLE', from: string, to: string, startTime?: string | null, endTime?: string | null }> }} payload
+     */
+    save(payload) {
+      return proRdvRequest('/api/pro/rdv/hours', { method: 'PUT', body: payload });
+    },
+    /** @param {string} memberId */
+    clear(memberId) {
+      return proRdvRequest('/api/pro/rdv/hours', { method: 'DELETE', query: { memberId } });
+    },
+  },
   availability: {
     get() {
       return proRdvRequest('/api/pro/availability');

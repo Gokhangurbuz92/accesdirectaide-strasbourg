@@ -69,6 +69,7 @@ export const routes = [
     { path: 'pro/availability', match: 'exact', handler: () => import('./_handlers/pro/availability.js') },
     { path: 'pro/timeoff', match: 'exact', handler: () => import('./_handlers/pro/timeoff.js') },
     { path: 'pro/rdv/settings', match: 'exact', handler: () => import('./_handlers/pro/rdv-settings.js') },
+    { path: 'pro/rdv/hours', match: 'exact', handler: () => import('./_handlers/pro/rdv-hours.js') },   // R42-CDGG: a professional's own working hours and exceptions
     { path: 'pro/outlook/availability', match: 'exact', handler: () => import('./_handlers/pro/outlook-availability.js') },
     { path: 'pro/team', match: 'exact', handler: () => import('./_handlers/pro/team.js') },
     { path: 'pro/team/stats', match: 'exact', handler: () => import('./_handlers/pro/team-stats.js') },
