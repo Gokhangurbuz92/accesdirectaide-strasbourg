@@ -47,7 +47,7 @@ async function sendEmailFallback(appointment, phoneNumber, smsMessage) {
             return;
         }
 
-        await sendMail({
+        const out = await sendMail({
             to: beneficiaryEmail,
             subject: 'Rappel de votre rendez-vous — AccesDirectAide',
             text: `${smsMessage}\n\n(Ce message vous est envoyé car le rappel SMS n'a pas pu être délivré.)`,
@@ -55,7 +55,8 @@ async function sendEmailFallback(appointment, phoneNumber, smsMessage) {
             category: 'sms_fallback',
         });
 
-        logger.info('[SMS-FALLBACK] Email de secours transmis');   // no address in logs
+        // R42-MAIL: the outcome, not « transmis » whatever happened (noop / no provider / a refusal is NOT_SENT / NOT_DELIVERED); no address in logs
+        logger.info({ outcome: out?.outcome || null }, '[SMS-FALLBACK] Email de secours : résultat du fournisseur');
     } catch (emailErr) {
         // Ne jamais crash le handler principal
         // @ts-ignore

@@ -189,7 +189,7 @@ export async function notifyConversationMessage(input) {
   const url = buildAppUrl(destinationPath);
   const appointmentDate = input.appointmentStartAt ? formatParisDate(input.appointmentStartAt) : 'Date non disponible';
 
-  await sendMail({
+  const out = await sendMail({
     to: input.recipientEmail,
     subject: 'Nouveau message concernant votre rendez-vous - Acces Direct Aide',
     text: [
@@ -203,5 +203,7 @@ export async function notifyConversationMessage(input) {
     category: 'appointment_message',
   });
 
-  return { sent: true, skipped: false };
+  // R42-MAIL: « sent » only when a provider accepted it (or the LAB test outbox kept it) — with noop / no provider / a refusal it was NOT sent
+  const accepted = out?.outcome === 'PROVIDER_ACCEPTED' || out?.outcome === 'TEST_RECORDED';
+  return accepted ? { sent: true, skipped: false, outcome: out.outcome } : { sent: false, skipped: false, reason: 'not_accepted', outcome: out?.outcome || 'NOT_DELIVERED' };
 }
