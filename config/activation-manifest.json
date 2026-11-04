@@ -389,6 +389,11 @@
       "class": "optional",
       "nature": "config"
     },
+    "ALERT_MAIL_BOUNCE_BURST": {
+      "class": "optional",
+      "nature": "config",
+      "note": "R44-MAIL: bounces + suppressions (or refused events) per hour reported by the Mailjet delivery events that raise an alert in cron/health-alert (default 10); only read while MAILER_EVENTS_ENABLED=1"
+    },
     "ADMIN_SESSION_REGISTRY_STRICT": {
       "class": "optional",
       "nature": "config"
@@ -1885,7 +1890,8 @@
         "ALERT_WEBHOOK_URL|ALERT_EMAIL"
       ],
       "optional": [
-        "ALERT_VEILLE_STALE_HOURS"
+        "ALERT_VEILLE_STALE_HOURS",
+        "ALERT_MAIL_BOUNCE_BURST"
       ],
       "requires_module": [
         "core"

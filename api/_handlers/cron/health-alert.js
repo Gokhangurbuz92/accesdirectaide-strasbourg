@@ -10,6 +10,8 @@ import { CronRun, ReviewQueueItem, Aide } from '../../../src/db/schema.js';
 import * as Sentry from '@sentry/node';
 import { randomUUID } from 'crypto';
 import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
+import { env } from '../../_utils/env.js';
+import { recentMailEventCounts } from '../../_services/mail-events.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -33,6 +35,8 @@ import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 const ALERT_COOLDOWN_SECONDS = 3600; // 1 hour anti-spam
 const FRESHNESS_THRESHOLD_HOURS = 48;
 const MAX_ALERT_LOG = 50;
+/** R44-MAIL: bounces + suppressions per hour from the delivery events that raise « mail.bounce_burst » */
+const MAIL_BOUNCE_BURST_PER_HOUR = 10;
 /** R8: a KV call never holds the check (an unreachable KV retried for tens of seconds: the 5-minute check, and its alerts, stalled behind it) */
 const KV_TIMEOUT_MS = 3000;
 const bounded = (p) => Promise.race([p, new Promise((_, reject) => setTimeout(() => reject(new Error('KV timeout')), KV_TIMEOUT_MS))]);
@@ -249,6 +253,22 @@ export default async function handler(req, res) {
     } catch (err) {
         // @ts-ignore
         checks.staleEntities = { ok: false, error: err?.message };
+    }
+
+    // Check 6 (R44-MAIL): a burst of bounces / suppressions (or of refused events: forged or replayed calls) reported by the Mailjet delivery events in the
+    // last hour, from the address-free « mail.events_batch » audit rows. Only while the events are on (MAILER_EVENTS_ENABLED=1); off (Production today):
+    // skipped. ALERT_MAIL_BOUNCE_BURST: the threshold per hour (default 10 bounces + suppressions; refused events count separately, same threshold).
+    if (!env.mailer.eventsEnabled) checks.mailEvents = { ok: true, skipped: 'MAIL_EVENTS_OFF' };
+    else try {
+        const raw = process.env.ALERT_MAIL_BOUNCE_BURST;
+        const threshold = raw !== undefined && raw !== '' && Number.isFinite(Number(raw)) && Number(raw) >= 0 ? Number(raw) : MAIL_BOUNCE_BURST_PER_HOUR;
+        const c = await recentMailEventCounts({ hours: 1 });
+        const bounces = c.notDelivered + c.suppressed; const refused = c.unknownOrigin + c.recipientMismatch;
+        checks.mailEvents = { ok: bounces < threshold && refused < threshold, bounces, suppressed: c.suppressed, refused, calls: c.calls, thresholdPerHour: threshold };
+        if (bounces >= threshold && await fireAlert('mail.bounce_burst', `E-mails : ${bounces} rebonds ou suppressions en une heure (seuil ${threshold}). Vérifiez l’envoi et la réputation du domaine avant de continuer.`, { bounces, suppressed: c.suppressed, calls: c.calls, thresholdPerHour: threshold })) alertCount++;
+        if (refused >= threshold && await fireAlert('mail.events_refused', `Webhook Mailjet : ${refused} événements refusés en une heure (origine inconnue ou destinataire différent). Possible rejeu ou mot de passe du webhook divulgué.`, { refused, calls: c.calls, thresholdPerHour: threshold })) alertCount++;
+    } catch (err) {
+        checks.mailEvents = { ok: false, error: err?.name || 'Error' };
     }
 
     // R38: say whether a PERSON can receive an alert. Sentry and the logs are not a human channel; an e-mail through MAILER_PROVIDER=noop is not delivered.

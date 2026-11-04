@@ -12,8 +12,17 @@
  */
 import crypto from 'node:crypto';
 
-/** at most this many events per call are read (Mailjet groups events; a larger body is cut, the rest is acknowledged by the next retry) */
+/** at most this many events per call are read (Mailjet groups events; it documents no maximum group size) — R44: a call with more is refused (413) */
 export const MAX_EVENTS_PER_CALL = 500;
+/** R44-MAIL: the largest body accepted (about 2 KB per event at 500 events); a larger one is refused with 413 before anything is applied */
+export const MAX_BODY_BYTES = 1024 * 1024;
+/**
+ * R44-MAIL — the time window of an event (its `time`, Unix seconds): Mailjet retries a refused call every 30 s for 24 h (dev.mailjet.com/docs/email-api/
+ * webhooks/webhooks-overview, read 4 Nov 2026), so a genuine event is never much older than a day after it happened; 96 h leaves room for a delayed
+ * bounce. Older, or more than 10 minutes in the future (clock skew), it is ignored and counted — a replay of an old captured call changes nothing.
+ */
+export const MAX_EVENT_AGE_SECONDS = 96 * 3600;
+export const MAX_FUTURE_SKEW_SECONDS = 600;
 
 const digest = (/** @type {string} */ s) => crypto.createHash('sha256').update(s, 'utf8').digest();
 
@@ -39,7 +48,8 @@ export function verifyMailjetBasicAuth(authorization, expected) {
 }
 
 /**
- * The events of one call: one object (Group events off) or an array (on); a string or Buffer body is parsed. Anything else → [].
+ * The events of one call: one object (Group events off) or an array (on); a string or Buffer body is parsed. Anything else → []. (The handler checks the
+ * body with inspectMailjetBody() first: an over-long array is refused there, never cut silently.)
  * @param {unknown} body @returns {Array<Record<string, unknown>>}
  */
 export function parseMailjetEvents(body) {
@@ -105,8 +115,84 @@ export function mailjetEventSummary(ev) {
   return { event, kind, messageId, customId, noticeId: noticeIdFromCustomId(customId), noticeStatus, suppress, errorRelatedTo, error };
 }
 
+/**
+ * R44-MAIL — the one normalisation of an address for a suppression key: Unicode NFC, trimmed, lower-cased (as R43, so existing keys stay valid). One
+ * « @ », no space or control character, a dotted domain, at most 254 characters. Plus-tags and dots are KEPT (they can be different mailboxes): two
+ * addresses are never merged by guesswork. Returns null for anything else.
+ * @param {unknown} value @returns {string | null}
+ */
+export function normalizeAddress(value) {
+  if (typeof value !== 'string') return null;
+  const v = value.normalize('NFC').trim().toLowerCase();
+  if (!v || v.length > 254 || /[\s<>()",;]/.test(v) || [...v].some((c) => c.charCodeAt(0) < 0x20 || c.charCodeAt(0) === 0x7f)) return null;
+  const at = v.indexOf('@');
+  if (at < 1 || at !== v.lastIndexOf('@')) return null;
+  const domain = v.slice(at + 1);
+  return /^[^.@]+(\.[^.@]+)+$/.test(domain) && /\.[\p{L}a-z]{2,}$/u.test(domain) ? v : null;
+}
+
 /** the recipient of an event, only for the suppression key (never logged, never stored as such) @param {Record<string, unknown>} ev @returns {string | null} */
 export function eventRecipient(ev) {
-  const v = typeof ev?.email === 'string' ? ev.email.trim().toLowerCase() : '';
-  return v && v.length <= 254 && /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v) ? v : null;
+  return normalizeAddress(ev?.email);
+}
+
+/**
+ * R44-MAIL — the first check of a call's body, before anything is applied: size (413 BODY_TOO_LARGE), JSON (400 INVALID_JSON), shape (400 INVALID_BODY:
+ * one event object or an array of them), count (413 TOO_MANY_EVENTS). Mailjet would retry a refused call, but none of these can come from a genuine
+ * Mailjet call (it sends one JSON object, or an array with « Group events »), so the refusal is the clear answer. `contentLength` is the header value.
+ * @param {unknown} body @param {unknown} contentLength
+ * @returns {{ ok: true, events: Array<Record<string, unknown>> } | { ok: false, status: 400 | 413, code: string }}
+ */
+export function inspectMailjetBody(body, contentLength) {
+  const declared = Number(Array.isArray(contentLength) ? contentLength[0] : contentLength);
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) return { ok: false, status: 413, code: 'BODY_TOO_LARGE' };
+  /** @type {unknown} */
+  let data = body;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(data)) {
+    if (data.length > MAX_BODY_BYTES) return { ok: false, status: 413, code: 'BODY_TOO_LARGE' };
+    data = data.toString('utf8');
+  }
+  if (typeof data === 'string') {
+    if (Buffer.byteLength(data, 'utf8') > MAX_BODY_BYTES) return { ok: false, status: 413, code: 'BODY_TOO_LARGE' };
+    if (!data.trim()) return { ok: true, events: [] };
+    try { data = JSON.parse(data); } catch { return { ok: false, status: 400, code: 'INVALID_JSON' }; }
+  }
+  if (data === undefined || data === null) return { ok: true, events: [] };
+  const list = Array.isArray(data) ? data : typeof data === 'object' ? [data] : null;
+  if (!list) return { ok: false, status: 400, code: 'INVALID_BODY' };
+  if (list.length > MAX_EVENTS_PER_CALL) return { ok: false, status: 413, code: 'TOO_MANY_EVENTS' };
+  /** @type {Array<Record<string, unknown>>} */
+  const events = [];
+  for (const e of list) if (e && typeof e === 'object' && !Array.isArray(e)) events.push(e);
+  return { ok: true, events };
+}
+
+/** the event's `time` (Unix seconds), or null @param {Record<string, unknown>} ev */
+export function eventTime(ev) {
+  const t = typeof ev?.time === 'number' ? ev.time : typeof ev?.time === 'string' && /^\d{9,11}$/.test(ev.time) ? Number(ev.time) : NaN;
+  return Number.isFinite(t) && t > 0 ? Math.floor(t) : null;
+}
+
+/**
+ * Whether an event's time is inside the accepted window (MAX_EVENT_AGE_SECONDS back, MAX_FUTURE_SKEW_SECONDS ahead).
+ * @param {number | null} time @param {number} [nowMs] @returns {'ok' | 'missing' | 'too_old' | 'future'}
+ */
+export function eventTimeVerdict(time, nowMs = Date.now()) {
+  if (time === null) return 'missing';
+  const now = Math.floor(nowMs / 1000);
+  if (time < now - MAX_EVENT_AGE_SECONDS) return 'too_old';
+  if (time > now + MAX_FUTURE_SKEW_SECONDS) return 'future';
+  return 'ok';
+}
+
+/**
+ * R44-MAIL — the identity of one event (to drop a repeat inside a call and to audit transitions without any address): SHA-256 of the event type, the
+ * message ids, our CustomID and the time. Mailjet retries a whole call: the same event comes back with the same identity.
+ * @param {Record<string, unknown>} ev @returns {string}
+ */
+export function eventIdentity(ev) {
+  const s = mailjetEventSummary(ev);
+  const guid = typeof ev?.Message_GUID === 'string' && /^[0-9a-f-]{8,64}$/i.test(ev.Message_GUID) ? ev.Message_GUID.toLowerCase() : '';
+  const parts = ['mailjet', s.event, s.messageId || '', guid, s.customId || '', String(eventTime(ev) ?? ''), s.kind];
+  return crypto.createHash('sha256').update(parts.join('\u0000'), 'utf8').digest('hex');
 }

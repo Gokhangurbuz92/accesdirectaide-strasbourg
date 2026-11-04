@@ -12,7 +12,7 @@ import { evaluateGraphConfig, graphConfig, sendViaGraph } from './mailer-msgraph
  * }} MailAttachment
  */
 
-/** @typedef {{ to: string, subject: string, text: string, html?: string, category?: string, attachments?: MailAttachment[], idempotencyKey?: string, replyTo?: string }} MailPayload */
+/** @typedef {{ to: string, subject: string, text: string, html?: string, category?: string, attachments?: MailAttachment[], idempotencyKey?: string, correlationId?: string, replyTo?: string }} MailPayload */
 
 /** @type {Array<{ to: string, subject: string, text: string, html?: string, sentAt: string, category: string, attachments?: MailAttachment[] }>} */
 const testOutbox = [];
@@ -97,6 +97,15 @@ export function normalizeIdempotencyKey(key) {
   if (!k) return null;
   if (k.length <= 256 && /^[A-Za-z0-9/_:.-]+$/.test(k)) return k;
   return `sha256:${crypto.createHash('sha256').update(k, 'utf8').digest('hex')}`;
+}
+
+/**
+ * R44-MAIL — the Mailjet CustomID of a message: the caller's correlation id (« appointment-notice/<id> »: the ledger row its delivery events update), else
+ * its idempotency key (R43), else the category. Normalised like a key (never an address or free text).
+ * @param {{ correlationId?: unknown, idempotencyKey?: unknown }} payload @param {string} category @returns {string}
+ */
+export function mailjetCustomId(payload, category) {
+  return normalizeIdempotencyKey(payload?.correlationId) || normalizeIdempotencyKey(payload?.idempotencyKey) || category;
 }
 
 /**
@@ -205,7 +214,25 @@ export async function sendMail(payload) {
   const outcome = invalid ? 'INVALID' : provider === 'test' ? 'TEST_RECORDED' : provider === 'noop' ? 'NOT_SENT' : out?.sandbox ? 'SANDBOX_VALIDATED' : out?.delivered ? 'PROVIDER_ACCEPTED' : 'NOT_DELIVERED';
   // R41-E: every failure carries its class (retryable / permanent / not_configured) and, when a provider answered, its HTTP status and error code
   const failure = ['PROVIDER_ACCEPTED', 'TEST_RECORDED', 'SANDBOX_VALIDATED'].includes(outcome) ? undefined : invalid ? 'permanent' : outcome === 'NOT_SENT' ? 'not_configured' : out?.failure || 'permanent';
+  if (outcome === 'PROVIDER_ACCEPTED' && provider === 'mailjet' && out?.providerMessageId) await recordProvenance(payload, out.providerMessageId);
   return { ...out, outcome, ...(failure ? { failure } : {}) };
+}
+
+/**
+ * R44-MAIL — while the Mailjet delivery events are on (MAILER_EVENTS_ENABLED=1), the provenance of an accepted message (its Mailjet id, CustomID,
+ * category and the HMAC of the recipient — api/_services/mail-events.js recordAcceptedMessage): a delivery event is trusted only for a message we sent.
+ * Off (Production today): nothing is written. Fail-open: a write error never changes the result of the send.
+ * @param {MailPayload} payload @param {string} messageId
+ */
+async function recordProvenance(payload, messageId) {
+  if (!env.mailer.eventsEnabled) return;
+  try {
+    const category = String(payload.category || 'transactional').trim() || 'transactional';
+    const { recordAcceptedMessage } = await import('../_services/mail-events.js');
+    await recordAcceptedMessage({ messageId: String(messageId), customId: mailjetCustomId(payload, category), category, to: payload.to });
+  } catch (err) {
+    logger.warn({ msg: 'mailer.provenance_write_failed', err: { name: err?.name } }, '[mailer] provenance of an accepted message not recorded');
+  }
 }
 
 /**
@@ -300,7 +327,8 @@ async function sendMailRaw(payload) {
       // R43-MAIL: CustomID = the caller's idempotency key (e.g. « appointment-notice/<id> »), returned in every delivery event so the webhook finds the ledger
       // row; without one, the category (as before). Mailjet does not deduplicate on it. EventPayload = the category. Open / click tracking off (no pixel,
       // no rewritten links in a social-services e-mail).
-      const key = normalizeIdempotencyKey(payload.idempotencyKey);
+      // R44-MAIL: a caller's `correlationId` wins over its idempotency key (mailjetCustomId): the J-1 reminder replaces the key with its stable retry key,
+      // which used to replace the notice id as well, so the reminder's ledger row never received its delivery events.
       const mjPayload = {
         ...(sandbox ? { SandboxMode: true } : {}),
         Messages: [{
@@ -310,7 +338,7 @@ async function sendMailRaw(payload) {
           Subject: payload.subject,
           TextPart: payload.text,
           ...(payload.html ? { HTMLPart: payload.html } : {}),
-          CustomID: key || category,
+          CustomID: mailjetCustomId(payload, category),
           EventPayload: category,
           TrackOpens: 'disabled',
           TrackClicks: 'disabled',

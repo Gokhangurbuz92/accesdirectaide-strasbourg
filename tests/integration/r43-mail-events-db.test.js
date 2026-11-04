@@ -38,12 +38,14 @@ describe.skipIf(!hasDatabase)('R43 Mailjet events against the 0042 schema (real 
     const status = async () => (await db.execute(sql`SELECT status FROM "AppointmentNotice" WHERE id = ${noticeId}`)).rows[0]?.status;
     expect(await status()).toBe('PROVIDER_ACCEPTED');
 
-    expect(await events.applyMailjetEvents([{ event: 'sent', CustomID: key, email: EMAIL, MessageID: 1 }], { db })).toMatchObject({ delivered: 1 });
+    // R44: every event carries its `time` (Mailjet sends it in every event; without it an event is ignored as outside the replay window)
+    const time = Math.floor(Date.now() / 1000) + 1;
+    expect(await events.applyMailjetEvents([{ event: 'sent', CustomID: key, email: EMAIL, MessageID: 1, time }], { db })).toMatchObject({ delivered: 1 });
     expect(await status()).toBe('DELIVERED');
     // a repeated « sent » changes nothing
-    expect(await events.applyMailjetEvents([{ event: 'sent', CustomID: key, email: EMAIL }], { db })).toMatchObject({ delivered: 0, ignored: 1 });
+    expect(await events.applyMailjetEvents([{ event: 'sent', CustomID: key, email: EMAIL, time }], { db })).toMatchObject({ delivered: 0, ignored: 1 });
 
-    expect(await events.applyMailjetEvents([{ event: 'bounce', hard_bounce: true, error_related_to: 'recipient', error: 'user unknown', CustomID: key, email: EMAIL }], { db }))
+    expect(await events.applyMailjetEvents([{ event: 'bounce', hard_bounce: true, error_related_to: 'recipient', error: 'user unknown', CustomID: key, email: EMAIL, time: time + 1 }], { db }))
       .toMatchObject({ notDelivered: 1, suppressed: 1 });
     expect(await status()).toBe('NOT_DELIVERED');
 

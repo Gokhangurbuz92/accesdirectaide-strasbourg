@@ -34,6 +34,29 @@ function fakeDb(notices = {}) {
   return db;
 }
 
+/**
+ * R44: applyMailjetEvents() goes through a store (api/_services/mail-events.js mailEventStore). This fake keeps the R43 fake database for the ledger
+ * updates and the suppression rows, and adds the R44 provenance: the notices of `notices` were written an hour ago for `recipient`, and `accepted`
+ * lists the Mailjet message ids recorded when Mailjet accepted them (id → recipient address).
+ */
+function fakeStore(db, { recipient = 'person@example.test', accepted = {} } = {}) {
+  return {
+    findNotice: async (id) => (db.notices[id] ? { id, appointmentId: 'appt-1', recipient: 'citizen', createdAt: new Date(Date.now() - 3_600_000), ...db.notices[id] } : null),
+    findAcceptedMessage: async (mid) => (accepted[mid] ? { customId: null, recipientHash: suppressionHash(accepted[mid], VARS), at: new Date(Date.now() - 3_600_000) } : null),
+    noticeRecipientHash: async () => suppressionHash(recipient, VARS),
+    transitionNotice: async (id, _from, to) => {
+      db.nextNotice = id;
+      const r = await db.update().set({ status: to }).where().returning();
+      return r.length > 0;
+    },
+    latestLiftAt: async () => null,
+    recordStatus: async () => true,
+    recordSuppression: (email, reason) => recordSuppression(email, reason, 'mailjet', { db, vars: VARS }),
+    recordBatch: async () => {},
+  };
+}
+const NOW_S = () => Math.floor(Date.now() / 1000);
+
 describe('R43 Mailjet webhook authentication', () => {
   it('accepts only the configured pair; fail-closed without it or with a short password', () => {
     const exp = { user: 'mj-events', password: PASSWORD };
@@ -83,23 +106,27 @@ describe('R43 Mailjet event parsing and meaning', () => {
 describe('R43 applying events (fake database, schema of migration 0042)', () => {
   it('sent: PROVIDER_ACCEPTED → DELIVERED; bounce: → NOT_DELIVERED; a late « sent » never moves a bounced row back; a TEST_RECORDED row is never touched', async () => {
     const db = fakeDb({ [NOTICE]: { channel: 'email', status: 'PROVIDER_ACCEPTED' } });
-    const ev = (e, extra = {}) => ({ event: e, CustomID: `appointment-notice/${NOTICE}`, email: 'person@example.test', ...extra });
+    // R44: every event carries its `time` (Mailjet sends it in every event; an event without it is now ignored as outside the window)
+    const ev = (e, extra = {}) => ({ event: e, CustomID: `appointment-notice/${NOTICE}`, email: 'person@example.test', time: NOW_S(), ...extra });
     db.nextNotice = NOTICE;
-    expect(await applyMailjetEvents([ev('sent')], { db, vars: VARS })).toMatchObject({ delivered: 1, notDelivered: 0 });
+    const store = fakeStore(db);
+    expect(await applyMailjetEvents([ev('sent')], { store, vars: VARS })).toMatchObject({ delivered: 1, notDelivered: 0 });
     expect(db.notices[NOTICE].status).toBe('DELIVERED');
-    expect(await applyMailjetEvents([ev('bounce', { hard_bounce: false })], { db, vars: VARS })).toMatchObject({ notDelivered: 1, suppressed: 0 });
+    expect(await applyMailjetEvents([ev('bounce', { hard_bounce: false })], { store, vars: VARS })).toMatchObject({ notDelivered: 1, suppressed: 0 });
     expect(db.notices[NOTICE].status).toBe('NOT_DELIVERED');
-    expect(await applyMailjetEvents([ev('sent')], { db, vars: VARS })).toMatchObject({ delivered: 0, ignored: 1 });
+    expect(await applyMailjetEvents([ev('sent')], { store, vars: VARS })).toMatchObject({ delivered: 0, ignored: 1 });
     expect(db.notices[NOTICE].status).toBe('NOT_DELIVERED');
     db.notices[NOTICE].status = 'TEST_RECORDED';
-    expect(await applyMailjetEvents([ev('sent')], { db, vars: VARS })).toMatchObject({ delivered: 0, ignored: 1 });
+    expect(await applyMailjetEvents([ev('sent')], { store, vars: VARS })).toMatchObject({ delivered: 0, ignored: 1 });
     expect(db.notices[NOTICE].status).toBe('TEST_RECORDED');
   });
   it('a hard bounce writes ONE suppression row keyed by an HMAC — never the address — and a repeat writes nothing', async () => {
     const db = fakeDb({});
-    const hard = { event: 'bounce', hard_bounce: true, email: 'Person@Example.test', CustomID: 'appointment-reminder_j1' };
-    expect(await applyMailjetEvents([hard], { db, vars: VARS })).toMatchObject({ suppressed: 1, unmatched: 1 });
-    expect(await applyMailjetEvents([hard], { db, vars: VARS })).toMatchObject({ suppressed: 0 });
+    // R44: the message must be one we sent (its Mailjet id recorded when Mailjet accepted it, for that recipient), with its event time
+    const store = fakeStore(db, { accepted: { 4242: 'person@example.test' } });
+    const hard = { event: 'bounce', hard_bounce: true, email: 'Person@Example.test', CustomID: 'appointment-reminder_j1', MessageID: 4242, time: NOW_S() };
+    expect(await applyMailjetEvents([hard], { store, vars: VARS })).toMatchObject({ suppressed: 1, unmatched: 1 });
+    expect(await applyMailjetEvents([hard], { store, vars: VARS })).toMatchObject({ suppressed: 0 });
     expect(db.audit).toHaveLength(1);
     expect(db.audit[0]).toMatchObject({ action: 'mail.suppressed', entity: 'MailSuppression', entity_id: suppressionHash('person@example.test', VARS), details: { reason: 'hard_bounce', provider: 'mailjet' } });
     expect(JSON.stringify(db.audit)).not.toMatch(/example\.test/i);
@@ -121,7 +148,9 @@ describe('R43 applying events (fake database, schema of migration 0042)', () => 
     db.update = () => { throw new Error('db down for person@example.test'); };
     const logger = (await import('../../api/_utils/logger.js')).default;
     const lines = []; for (const k of ['info', 'warn', 'error']) vi.spyOn(logger, k).mockImplementation((...a) => { lines.push(JSON.stringify(a)); });
-    const r = await applyMailjetEvents([{ event: 'sent', CustomID: `appointment-notice/${NOTICE}`, email: 'person@example.test' }, { event: 'spam', email: 'person@example.test' }], { db, vars: VARS });
+    const store = { ...fakeStore(db, { accepted: { 77: 'person@example.test' } }), findNotice: async () => { throw new Error('db down for person@example.test'); } };
+    const r = await applyMailjetEvents([{ event: 'sent', CustomID: `appointment-notice/${NOTICE}`, email: 'person@example.test', time: NOW_S() },
+      { event: 'spam', email: 'person@example.test', MessageID: 77, time: NOW_S() }], { store, vars: VARS });
     expect(r).toMatchObject({ received: 2, errors: 1, suppressed: 1 });
     expect(lines.join('\n')).not.toContain('example.test');
   });
@@ -217,6 +246,8 @@ describe('R43 the notice id travels as the CustomID', () => {
     expect(status).toBe('PROVIDER_ACCEPTED');
     const key = sendMail.mock.calls[0][0].idempotencyKey;
     expect(key).toMatch(/^appointment-notice\/[0-9a-f-]{36}$/);
+    // R44: the inserts also carry the status trail (AuditLog rows « mail.notice_status »): the ledger row is the one with a kind
+    const rows = ledger.filter((v) => v.kind); ledger.length = 0; ledger.push(...rows);
     expect(noticeIdFromCustomId(key)).toBe(ledger[0].id);
     expect(ledger[0]).toMatchObject({ appointmentId: 'appt-1', kind: 'CANCELLED_BY_STRUCTURE', recipient: 'citizen', channel: 'email', status: 'PROVIDER_ACCEPTED' });
     // two notices of the same kind get two keys (Resend would refuse a reused key with another body)

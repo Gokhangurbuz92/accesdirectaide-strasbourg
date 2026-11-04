@@ -85,7 +85,9 @@ describe('noticeCitizen for an account-free booking (injected db / mailer)', () 
     expect(await noticeCitizen(a, 'REMINDER_J1', msg, { db, sendMail })).toBe('TEST_RECORDED');
     expect(sendMail).toHaveBeenCalledTimes(1);
     expect(sendMail.mock.calls[0][0]).toMatchObject({ to: 'guest@example.test', category: 'appointment-reminder_j1' });
-    expect(ledger.at(-1)).toEqual({ appointmentId: a.id, kind: 'REMINDER_J1', recipient: 'citizen', channel: 'email', status: 'TEST_RECORDED' });
+    // R44-MAIL: a row whose e-mail was attempted takes the pre-chosen notice id (its status trail and the message's CustomID name it)
+    expect(ledger.at(-1)).toEqual({ id: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/), appointmentId: a.id, kind: 'REMINDER_J1', recipient: 'citizen', channel: 'email', status: 'TEST_RECORDED' });
+    expect(sendMail.mock.calls[0][0].correlationId).toBe(`appointment-notice/${ledger.at(-1).id}`);
   });
   it('REMINDER_J1 without the reminder consent: nothing sent, NO_CONSENT recorded', async () => {
     const sendMail = out('TEST_RECORDED'); const a = guest();

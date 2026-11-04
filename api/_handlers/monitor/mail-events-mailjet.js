@@ -8,10 +8,20 @@
  *   It sits under /monitor/ because that prefix is the one the byte-pinned CSRF middleware already exempts for server-to-server calls (no cookie, no Origin).
  *   Answer: 200 once the events are applied (Mailjet retries every 30 s for 24 h on anything else), 500 only when NONE could be applied (database down), so
  *   Mailjet tries again. Nothing about an address is logged or answered.
+ *
+ * R44-MAIL (R43 security review, low findings 1 and 2):
+ *   - the body is checked before anything is applied: more than 1 MiB → 413 BODY_TOO_LARGE, more than 500 events → 413 TOO_MANY_EVENTS, not JSON →
+ *     400 INVALID_JSON, not an event object / array → 400 INVALID_BODY. A genuine Mailjet call is never refused this way.
+ *   - each event must be recent, name a message we sent and (for a suppression) its real recipient — api/_services/mail-events.js. An event that fails
+ *     these checks, a duplicate, or an event with nothing to change is ACCEPTED with 200 and counted (a retry would change nothing: answering anything
+ *     else would only make Mailjet send it again every 30 s for 24 h).
+ *   - 500 when at least one event hit an error (database unreachable): applying is idempotent (compare-and-set, idempotent suppression, duplicates
+ *     dropped), so Mailjet's retry of the whole call is safe and is what recovers the failed events.
+ *   - the answer carries the counts only (no address, no id).
  */
 import { env } from '../../_utils/env.js';
 import logger from '../../_utils/logger.js';
-import { parseMailjetEvents, verifyMailjetBasicAuth } from '../../lib/mailjet-events.js';
+import { inspectMailjetBody, verifyMailjetBasicAuth } from '../../lib/mailjet-events.js';
 import { applyMailjetEvents } from '../../_services/mail-events.js';
 
 /**
@@ -37,9 +47,14 @@ export default async function mailjetEventsHandler(req, res, deps = {}) {
     res.setHeader('WWW-Authenticate', 'Basic realm="mail-events", charset="UTF-8"');
     return res.status(401).json({ error: 'UNAUTHORIZED' });
   }
-  const events = parseMailjetEvents(req.body);
+  const checked = inspectMailjetBody(req.body, req.headers?.['content-length']);
+  if (!checked.ok) {
+    logger.warn({ msg: 'mail_events.refused_body', provider: 'mailjet', code: checked.code }, '[mail-events] body refused');
+    return res.status(checked.status).json({ error: checked.code });
+  }
+  const events = checked.events;
   if (!events.length) return res.status(200).json({ ok: true, received: 0 });
   const result = await (deps.apply || applyMailjetEvents)(events);
-  if (result.errors > 0 && result.errors === result.received) return res.status(500).json({ error: 'NOT_APPLIED' });
+  if (result.errors > 0) return res.status(500).json({ error: 'NOT_APPLIED' });
   return res.status(200).json({ ok: true, received: result.received });
 }

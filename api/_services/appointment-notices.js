@@ -19,6 +19,15 @@ import logger from '../_utils/logger.js';
 import { guestNoticeDecision } from '../_utils/rdv-guest-core.js';
 import { NOTICE_MAIL_KINDS, localizedMail } from '../_utils/mail-catalogue.js';
 import { citizenMailLanguage } from './mail-language.js';
+import { mailStatusFromSend } from '../lib/mail-status.js';
+
+/** R44-MAIL: one status-trail row (deps.recordStatus for tests; never throws, never changes what was sent) */
+async function trail(noticeId, status, cause, deps) {
+  try {
+    const write = deps.recordStatus || (await import('./mail-events.js')).recordNoticeStatus;
+    await write(noticeId, status, { cause, source: 'notice_send' }, { db: deps.db || defaultDb });
+  } catch { /* the trail is evidence, not a condition of the notice */ }
+}
 
 /**
  * R43-MAIL — the subject and opening of a citizen notice in the reader's language (stored preference, French otherwise), from the catalogue: neutral,
@@ -96,7 +105,18 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
   const category = kind === 'REMINDER_J1' ? 'reminder' : 'service';
   let status = 'NO_RECIPIENT';
   // R43-MAIL: the ledger row id, chosen now: it travels as the message's idempotency key / Mailjet CustomID (api/_services/mail-events.js)
-  const noticeId = crypto.randomUUID(); const idempotencyKey = `appointment-notice/${noticeId}`;
+  // R44-MAIL: and as its `correlationId`, which a caller cannot replace — the J-1 reminder replaces the idempotency key with its own stable retry key,
+  // and its rows used to miss every delivery event (the CustomID was the reminder key). Each attempt leaves a status trail (api/lib/mail-status.js).
+  const noticeId = crypto.randomUUID(); const idempotencyKey = `appointment-notice/${noticeId}`; const correlationId = idempotencyKey;
+  let attempted = false;
+  const send = async (mail) => {
+    attempted = true;
+    await trail(noticeId, 'queued', null, deps);
+    const out = await sendMail({ ...mail, idempotencyKey, correlationId });
+    const fine = mailStatusFromSend(out);
+    await trail(noticeId, fine.status, fine.cause, deps);
+    return out;
+  };
   try {
     if (appointment.citizenUserId) {
       const [u] = await db.select({ email: CitizenUser.email, verified: CitizenUser.emailVerifiedAt }).from(CitizenUser).where(eq(CitizenUser.id, appointment.citizenUserId)).limit(1);
@@ -105,7 +125,7 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         else {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, u.email)] : [])];
           const { subject, text } = localizeNotice(kind, message, deps.lang || await citizenMailLanguage(appointment.citizenUserId, db));
-          const out = await sendMail({ to: u.email, subject, text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
+          const out = await send({ to: u.email, subject, text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
         }
       }
@@ -121,16 +141,18 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
           const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, to)] : [])];
           // an account-free booking has no stored language: French (R43-MAIL)
           const { subject, text } = localizeNotice(kind, message, deps.lang || 'fr');
-          const out = await sendMail({ to, subject, text, category: `appointment-${kind.toLowerCase()}`, idempotencyKey, ...(attachments.length ? { attachments } : {}) });
+          const out = await send({ to, subject, text, category: `appointment-${kind.toLowerCase()}`, ...(attachments.length ? { attachments } : {}) });
           status = mailLedgerStatus(out);
         }
       }
     }
   } catch (err) {
     status = 'FAILED'; logger.warn({ err: { name: err?.name } }, '[appointment-notices] citizen notice failed');
+    if (attempted) await trail(noticeId, 'failed', 'exception', deps);
   }
-  // the row takes the pre-chosen id only when a real provider took the message: only such a row can receive delivery events
-  await recordNotice(appointment.id, kind, 'citizen', 'email', status, db, status === 'PROVIDER_ACCEPTED' ? noticeId : undefined);
+  // R44-MAIL: the row takes the pre-chosen id whenever an e-mail was attempted (its status trail is keyed by it); only a PROVIDER_ACCEPTED row can
+  // receive delivery events (api/_services/mail-events.js compare-and-set)
+  await recordNotice(appointment.id, kind, 'citizen', 'email', status, db, attempted ? noticeId : undefined);
   return status;
 }
 
