@@ -19,7 +19,8 @@ import { db as defaultDb } from '../../src/db/index.js';
 import { ProOrientationBasket } from '../../src/db/schema.js';
 import { FOLLOW_UPS, ITEM_KINDS, ORIENTATION_NEEDS, needLabel, needsOfCategories } from '../../src/config/orientationNeeds.js';
 import { visibleSql } from '../lib/publicVisibility.js';
-import { activeMemberSql } from '../_utils/share-access.js';
+import { activeMemberSql, referralGrantLapsedSql } from '../_utils/share-access.js';
+import { restrictedDossierSql } from './processing-restriction.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { addNote, isAdmin } from './pro-cases.js';
 
@@ -216,13 +217,17 @@ export async function removeItem(id, ctx, key, db = defaultDb) {
   return write(row, { items: itemsJson(items.filter((i) => i.key !== key)), privateEncrypted: seal(row.id, { ...priv, reasons }) }, ctx, db);
 }
 
-/** Link the basket to a case the caller may open RIGHT NOW (the case's grant, membership and assignment rule: pro-cases / share-access). */
+/**
+ * Link the basket to a case the caller may open RIGHT NOW: the case's grant (not revoked, and not a referral grant past its expiry), no RGPD art. 18
+ * restriction on the dossier, membership and assignment rule — the same predicate as pro-cases listQueue / share-access activeGrantExists (R42, F7).
+ */
 export async function linkCase(id, ctx, caseId, db = defaultDb) {
   const row = await load(id, ctx, db);
   if (!row) return notFound();
   if (!caseId) return write(row, { caseId: null }, ctx, db);
   const [ok] = (await db.execute(sql`SELECT 1 AS ok FROM "ProCase" c WHERE c.id = ${String(caseId)} AND c."structureId" = ${ctx.structureId} AND EXISTS (SELECT 1 FROM "SharedDossierGrant" g
-    WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL)
+    WHERE g."sharedDiagnosticId" = c."sharedDiagnosticId" AND g."structureId" = c."structureId" AND g."revokedAt" IS NULL AND NOT ${referralGrantLapsedSql('g')})
+    AND NOT ${restrictedDossierSql(sql`c."sharedDiagnosticId"`)}
     AND (${isAdmin(ctx)} OR c."assigneeProUserId" IS NULL OR c."assigneeProUserId" = ${ctx.userId})`)).rows;
   if (!ok) return bad('CASE_NOT_AVAILABLE', 'Ce dossier n’est pas ouvert pour vous (partage retiré, ou dossier attribué à quelqu’un d’autre).', 404);
   return write(row, { caseId: String(caseId) }, ctx, db);
