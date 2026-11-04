@@ -28,9 +28,9 @@ const isProduction = vercelEnv === 'production';
 
 console.log(`[vercel-build] start (VERCEL_ENV=${vercelEnv})`);
 
-// Schema migrations are handled separately via the db-migrate-deploy workflow.
-// Do NOT run drizzle-kit push here — it requires interactive confirmation and
-// should never run automatically during builds.
+// Schema migrations are never run by the build (there is no migration workflow): the owner applies them with scripts/db-deploy-migrate.mjs
+// (obsolete 0043/0044 never applied; drizzle-kit migrate / push are refused against a non-local database by drizzle.config.ts).
+// Do NOT run drizzle-kit push or migrate here.
 
 // Step 0 (owner directive 29/10/2026): a production build runs the release gate first; any FAIL stops the build, so nothing is published.
 if (isProduction) run('node scripts/release-preflight.mjs');
