@@ -107,7 +107,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                             notificationEmailEnabled: true,
                         },
                     },
-                    structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true } },
+                    structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
                 },
             });
 

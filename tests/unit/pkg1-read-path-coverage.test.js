@@ -40,6 +40,7 @@ const REVIEWED_NOT_PUBLIC = {
   // booking and sharing: governed by the ORGANIZATION's own publication (RDV settings / Pro membership), not by directory content verification; see docs/pkg1-d5-publication-policy-and-structure-model.md (open decision recorded)
   'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 'api/_handlers/public/appointments/create.js': 'booking governed by StructureRdvSettings.isPublished',
   'api/_services/rdv-booking-config.js': 'R42: the structure\'s own booking configuration (settings_json.rdvBooking), read by the booking engine; never returned publicly',
+  'api/_services/rdv-member-hours.js': 'R42-CDGG: the members\' own working hours (settings_json.rdvMemberHours) of one structure by id, read by the booking engine and the pro hours screen; never returned publicly',
   'api/_handlers/public/dossier-grants.js': 'sharing targets = Pro organizations with active members', 'api/_utils/share-access.js': 'authorization helper (membership)', 'api/_handlers/auth/outlook-callback.js': 'OAuth callback (writes)',
   // PKG-4: organization NAMES in the person's own DSR export / follow-ups, and in the professional back office (cases of the caller's organization; referral targets limited
   // to statut 'actif' + verification_status 'VERIFIED' organizations with active members). Not a citizen-facing directory read; no unverified fact is published.
@@ -59,6 +60,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/org-stats.js': 'organization statistics: own organization, or k-anonymous aggregates over VERIFIED organizations (no organization named); never public',
   'api/_services/structure-proposals.js': 'Espace Structure: the organization\'s OWN record (members only) and the ADA MFA review queue; never public',
   'api/lib/retrieval-index.js': 'PKG-11 / D16: index rebuild of the D-5-VISIBLE aides only (visibleSql); writes vectors, no public output',
+  'scripts/lab/seed-cdgg-conseil.mjs': 'R42-CDGG: LAB fixture writer of the fictional « CDGG Conseil » (refuses a non-local, non-LAB database and a non-lab mode); writes and removes only its own synthetic_fixture rows, never served',
   'scripts/search-eval.mjs': 'PKG-11 / D16: LAB measurement on its own synthetic fixtures (refuses a non-local database); no public output',
   'api/_handlers/pro/orientation-baskets.js': 'R18 (R31): reads only the nom of the caller\'s own organization for the summary heading; the catalogue items go through visibleSql (api/_services/orientation-basket.js)',
   'api/_services/link-check.js': 'PKG-11 / A05: link check of the D-5-VISIBLE records only (visibleSql), allow-listed official hosts; no public output',

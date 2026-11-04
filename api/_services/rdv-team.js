@@ -16,7 +16,8 @@
  * Assignment on the Production schema 0042 (no new column): the professional of an appointment is ProAppointment.createdByProUserId — the column the
  * agenda already reads as « this member's appointment » (pro/timeoff.js member-absence clashes, org-stats per member). For a citizen booking it was NULL.
  *
- * Per-professional availability = the structure's opening rules (there is no per-professional rule table) minus: closures of the structure; the member's
+ * Per-professional availability = the structure's opening rules, narrowed by the member's own weekly hours and dated exceptions when they configured them
+ * (R42-CDGG, api/_services/rdv-member-hours.js: an extra availability stays inside the structure's rules; an unavailability wins), minus: closures of the structure; the member's
  * own absences (ProTimeOff.proUserId); the active appointments assigned to that member AND the unassigned ones (an unassigned appointment blocks
  * everyone: fail safe); the busy intervals of the member's connected Outlook calendar (api/_services/rdv-calendar-busy.js — a required check that cannot
  * be made removes all of that member's slots).
@@ -31,6 +32,7 @@ import { appointmentTable, requestGuestSchema } from '../_utils/schema-features.
 import { rulesFor } from '../lib/appointment-modes.js';
 import { memberServes } from './rdv-booking-config.js';
 import { calendarBusyFor } from './rdv-calendar-busy.js';
+import { allowedBy, memberWindows, readMemberHours } from './rdv-member-hours.js';
 
 const PROCESS_LOCAL_SECRET = crypto.randomBytes(32);
 export const PREVIOUS = 'PREVIOUS';
@@ -182,7 +184,8 @@ export async function teamSlots({ structure, service, mode, range, candidates, e
     where: and(eq(ProAvailabilityRule.structureId, structure.id), eq(ProAvailabilityRule.isActive, true)),
     orderBy: [asc(ProAvailabilityRule.weekday), asc(ProAvailabilityRule.startTime)],
   }), mode);
-  const [appointments, offs] = await Promise.all([activeAppointments(defaultDb, structure.id, range, exceptId), timeOffs(defaultDb, structure.id, candidates.map((c) => c.id), range)]);
+  const [appointments, offs, hours] = await Promise.all([activeAppointments(defaultDb, structure.id, range, exceptId), timeOffs(defaultDb, structure.id, candidates.map((c) => c.id), range),
+    readMemberHours(structure.id, candidates.map((c) => c.id))]);
   /** @type {Map<string, TeamSlot>} */
   const byStart = new Map();
   /** @type {Record<string, string>} */
@@ -192,9 +195,12 @@ export async function teamSlots({ structure, service, mode, range, candidates, e
     const cal = await calendarBusyFor({ id: c.id, email: c.email }, padded, calendar);
     calendarState[c.id] = cal.state === 'UNAVAILABLE' ? `UNAVAILABLE:${cal.reason}` : cal.state;
     if (cal.state === 'UNAVAILABLE') continue;   // a required calendar check that cannot be made: none of this professional's slots is offered (fail safe)
-    const busy = [...busyOf(c.id, appointments, offs), ...(cal.state === 'OK' ? cal.busy : [])];
+    const own = hours.get(c.id);
+    const windows = own ? memberWindows(own, padded) : { allow: null, block: [] };
+    const busy = [...busyOf(c.id, appointments, offs), ...windows.block, ...(cal.state === 'OK' ? cal.busy : [])];
     const slots = generateSlots({ rules, from: range.from, to: range.to, durationMinutes: service.durationMinutes, bufferBeforeMinutes: service.bufferBeforeMinutes,
-      bufferAfterMinutes: service.bufferAfterMinutes, busyWindows: busy, maxSlots: 800 }).filter(accept);
+      bufferAfterMinutes: service.bufferAfterMinutes, busyWindows: busy, maxSlots: 800 })
+      .filter((s) => allowedBy({ allow: windows.allow, block: [] }, new Date(s.startAt), new Date(s.endAt))).filter(accept);
     for (const s of slots) {
       const cur = byStart.get(s.startAt);
       if (cur) cur.pros.push(c.id); else byStart.set(s.startAt, { startAt: s.startAt, endAt: s.endAt, pros: [c.id] });
@@ -211,7 +217,8 @@ export async function teamSlots({ structure, service, mode, range, candidates, e
  */
 export async function pickFreeUnderLock(tx, { structureId, service, startAt, endAt, candidates, leastBookedFirst, exceptId = null }) {
   const day = { from: plusDays(startAt, -1), to: plusDays(endAt, 1) };
-  const [appointments, offs] = await Promise.all([activeAppointments(tx, structureId, day, exceptId), timeOffs(tx, structureId, candidates.map((c) => c.id), { from: startAt, to: endAt })]);
+  const [appointments, offs, hours] = await Promise.all([activeAppointments(tx, structureId, day, exceptId), timeOffs(tx, structureId, candidates.map((c) => c.id), { from: startAt, to: endAt }),
+    readMemberHours(structureId, candidates.map((c) => c.id), tx)]);
   const parisDay = (/** @type {Date} */ d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(d);
   const sameDay = parisDay(startAt);
   const load = (/** @type {string} */ id) => appointments.filter((a) => a.pro === id && parisDay(a.startAt) === sameDay).length;
@@ -219,6 +226,12 @@ export async function pickFreeUnderLock(tx, { structureId, service, startAt, end
   const want = { start: new Date(startAt.getTime() - service.bufferBeforeMinutes * 60_000), end: new Date(endAt.getTime() + service.bufferAfterMinutes * 60_000) };
   for (const c of ordered) {
     if (busyOf(c.id, appointments, offs).some((w) => want.start < w.end && w.start < want.end)) continue;
+    // R42-CDGG: the member's own hours, re-read under the lock (a change of hours between the slot list and the booking is honoured)
+    const own = hours.get(c.id);
+    if (own) {
+      const w = memberWindows(own, day);
+      if (w.block.some((b) => want.start < b.end && b.start < want.end) || !allowedBy({ allow: w.allow, block: [] }, startAt, endAt)) continue;
+    }
     return c.id;
   }
   return null;

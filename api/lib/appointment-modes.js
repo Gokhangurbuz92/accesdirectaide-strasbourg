@@ -21,12 +21,13 @@ export function offeredModes(bookingMode, serviceModes, video) {
 export const rulesFor = (rules, mode) => rules.filter((r) => !Array.isArray(r.modes) || r.modes.includes(mode));
 export const normalizeMode = (value) => (MODES.includes(String(value || '').toUpperCase()) ? String(value).toUpperCase() : null);
 
-/** The physical location shown for an in-person appointment: the address only as recorded; `verified` says whether ADA verified the structure record. */
+/** The physical location shown for an in-person appointment: the address only as recorded; `verified` says whether ADA verified the structure record.
+ * R42-CDGG: a synthetic fixture (the fictional LAB pilot) is never « verified », whatever its eligibility flag says. */
 export function locationOf(structure) {
   if (!structure) return null;
   const line = [structure.adresse, [structure.code_postal, structure.ville].filter(Boolean).join(' ')].filter((x) => x && String(x).trim()).join(', ');
   if (!line) return null;
-  return { address: line, verified: structure.verification_status === 'VERIFIED', stepFreeAccess: Boolean(structure.accessibilite_pmr) };
+  return { address: line, verified: structure.verification_status === 'VERIFIED' && structure.data_origin !== 'synthetic_fixture', stepFreeAccess: Boolean(structure.accessibilite_pmr) };
 }
 export function locationText(location) {
   if (!location) return 'Adresse : à confirmer auprès de la structure.';
