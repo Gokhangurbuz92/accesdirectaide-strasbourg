@@ -14,6 +14,7 @@ vi.mock('../../api/_utils/kv.js', () => ({ kv: { incr: async () => 1, expire: as
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { approvalEnv, approvedTestPolicy, executableStepIds } from '../helpers/gdpr-purge-approval.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -48,7 +49,7 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
     decoyMod = await import('../../api/_utils/rdv-guest-decoy.js');
     ({ default: reports } = await import('../../api/_handlers/pro/reports.js'));
     ({ default: timeoff } = await import('../../api/_handlers/pro/timeoff.js'));
-    ({ default: purge } = await import('../../api/_handlers/cron/gdpr-purge.js'));
+    purge = (await import('../../api/_handlers/cron/gdpr-purge.js')).createGdprPurgeHandler({ policy: approvedTestPolicy() });   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
     ({ default: rdv } = await import('../../api/_handlers/rdv.js'));
     guest = Number((await one(sql`SELECT count(*)::int AS n FROM information_schema.columns WHERE table_name = 'ProAppointment' AND column_name = 'guestHoldExpiresAt'`)).n) === 1;
     const w = territorial.periodWindow('quarter');
@@ -121,7 +122,7 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
   });
 
   it('gdpr-purge: on 0042 the guest step is skipped (said, not hidden) and nothing fails; on 0044 the expired decoy is deleted, the live one kept', async () => {
-    vi.stubEnv('GDPR_PURGE_ENABLED', 'true');
+    for (const [k, v] of Object.entries(approvalEnv(executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS)))) vi.stubEnv(k, v);   // R33 + R44: enabled and approved
     let r;
     try { r = mk(); await purge({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { host: 'x', authorization: `Bearer ${process.env.CRON_SECRET}` } }, r); }
     finally { vi.unstubAllEnvs(); vi.stubEnv('MAILER_PROVIDER', 'test'); vi.stubEnv('MAILER_FROM', 'noreply@example.test'); }

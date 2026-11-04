@@ -6,10 +6,13 @@
  *
  *   BACKUP_ENCRYPTION_KEY=<64 hex> DATABASE_URL=… node scripts/db-backup.mjs --out <directory> [--label lab]
  *   … node scripts/db-backup.mjs --verify <file.dump.enc>          decrypts in memory-backed temp, checks the tag and the archive (pg_restore --list)
- *   … node scripts/db-backup.mjs --list <directory> [--keep-days 35] [--prune]
+ *   … node scripts/db-backup.mjs --list <directory> [--keep-days N] [--keep-weekly W] [--prune]
  *
  * Format: "ADAB1" ‖ iv(12) ‖ AES-256-GCM(pg_dump -Fc) ‖ tag(16). The key never touches the disk here; the file is 0600 with a .sha256 of the ciphertext.
- * Old backups are only LISTED by default; --prune deletes the encrypted files older than --keep-days, and only with that explicit flag.
+ * Old backups are only LISTED by default; --prune deletes, and only with that explicit flag. R44 / E15 rotation (rotationPlan): every backup of the last
+ * --keep-days days is kept, plus the newest backup of each of the --keep-weekly most recent older weeks, and always the newest backup. The defaults are the
+ * retention policy's PROPOSED values (api/_services/retention-policy.js: 30 days, 4 weekly) — while that policy is not approved, --prune also requires an
+ * explicit --keep-days (the operator's own choice), and the output says the policy status. After a restore, replay the erasures: scripts/db-erasure-replay.mjs.
  * Output: names, sizes, counts — never a value of the database, the key or the connection string.
  */
 import crypto from 'node:crypto';
@@ -17,6 +20,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
+import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../api/_services/retention-policy.js';
 
 export const MAGIC = Buffer.from('ADAB1');
 const IV_LEN = 12; const TAG_LEN = 16;
@@ -116,14 +120,43 @@ async function verify() {
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }
 
+/** ISO-like week key (UTC, weeks starting Monday) of a time in ms */
+const weekKey = (/** @type {number} */ t) => { const d = new Date(t); const day = (d.getUTCDay() + 6) % 7; return Math.floor((Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - day * 86400000) / (7 * 86400000)); };
+
+/**
+ * R44 / E15 — which backup files to keep and which to prune (pure). Keeps: every file of the last keepDays days; then the newest file of each of the
+ * keepWeekly most recent older weeks; and always the newest file overall (a rotation never leaves zero backups).
+ * @param {{ f: string, t: number }[]} files name and time (ms) @param {{ keepDays: number, keepWeekly: number, now?: number }} opts
+ * @returns {{ keep: string[], prune: string[] }}
+ */
+export function rotationPlan(files, { keepDays, keepWeekly, now = Date.now() }) {
+  if (!Number.isInteger(keepDays) || keepDays < 1 || !Number.isInteger(keepWeekly) || keepWeekly < 0) throw new Error('invalid rotation parameters');
+  const sorted = [...files].sort((a, b) => b.t - a.t);   // newest first
+  const keep = new Set();
+  if (sorted[0]) keep.add(sorted[0].f);
+  const weeks = new Set();
+  for (const x of sorted) {
+    if (now - x.t <= keepDays * 86400000) { keep.add(x.f); continue; }
+    const w = weekKey(x.t);
+    if (!weeks.has(w) && weeks.size < keepWeekly) { weeks.add(w); keep.add(x.f); }
+  }
+  return { keep: sorted.filter((x) => keep.has(x.f)).map((x) => x.f), prune: sorted.filter((x) => !keep.has(x.f)).map((x) => x.f) };
+}
+
 function listOrPrune() {
   const dir = arg('list') || die('indiquez le dossier.');
-  const keepDays = Number(arg('keep-days', '35'));
+  const approved = isPolicyApproved(RETENTION_POLICY);
   const prune = process.argv.includes('--prune');
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.dump.enc')).map((f) => ({ f, t: fs.statSync(path.join(dir, f)).mtimeMs })).sort((a, b) => a.t - b.t);
-  const old = files.filter((x) => Date.now() - x.t > keepDays * 86400000);
-  if (prune) for (const x of old) { fs.rmSync(path.join(dir, x.f)); fs.rmSync(path.join(dir, `${x.f}.sha256`), { force: true }); }
-  console.log(JSON.stringify({ dir, total: files.length, olderThanKeepDays: old.length, keepDays, pruned: prune ? old.length : 0, newest: files.at(-1)?.f || null }));
+  if (prune && !approved && !arg('keep-days')) die(`la politique de conservation ${RETENTION_POLICY.version} n’est pas approuvée (${RETENTION_POLICY.status}) : indiquez --keep-days explicitement pour --prune.`);
+  const keepDays = Number(arg('keep-days', String(policyDays(RETENTION_POLICY, 'BACKUP_KEEP_DAYS'))));
+  const keepWeekly = Number(arg('keep-weekly', String(policyDays(RETENTION_POLICY, 'BACKUP_KEEP_WEEKLY'))));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.dump.enc')).map((f) => ({ f, t: fs.statSync(path.join(dir, f)).mtimeMs }));
+  let plan;
+  try { plan = rotationPlan(files, { keepDays, keepWeekly }); } catch (e) { return die(e.message); }
+  if (prune) for (const f of plan.prune) { fs.rmSync(path.join(dir, f)); fs.rmSync(path.join(dir, `${f}.sha256`), { force: true }); }
+  const newest = [...files].sort((a, b) => a.t - b.t).at(-1)?.f || null;
+  console.log(JSON.stringify({ dir, total: files.length, keepDays, keepWeekly, kept: plan.keep.length, toPrune: plan.prune.length, olderThanKeepDays: files.filter((x) => Date.now() - x.t > keepDays * 86400000).length,
+    pruned: prune ? plan.prune.length : 0, newest, policy: { version: RETENTION_POLICY.version, status: RETENTION_POLICY.status } }));
 }
 
 if (import.meta.url === new URL(`file://${process.argv[1]}`).href) {

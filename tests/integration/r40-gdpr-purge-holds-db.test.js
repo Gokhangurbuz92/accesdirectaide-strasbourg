@@ -9,6 +9,7 @@ vi.mock('@sentry/node', () => ({ captureException: vi.fn(), default: { captureEx
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import pg from 'pg';
 import { sql } from 'drizzle-orm';
+import { approvedTestPolicy, executableStepIds, setApprovalEnv } from '../helpers/gdpr-purge-approval.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
@@ -18,13 +19,14 @@ const mk = () => ({ statusCode: 200, body: null, status(c) { this.statusCode = c
 const ID = { heldStr: `r40h-str-held-${TS}`, freeStr: `r40h-str-free-${TS}`, heldCit: `r40h-cit-held-${TS}`, freeCit: `r40h-cit-free-${TS}`, pro: `r40h-pro-${TS}` };
 
 describe.skipIf(!hasDatabase)('R40 G7 — gdpr-purge legal holds, versions kept for rollback, one run at a time (real DB)', () => {
-  let db, handler;
+  let db, handler, allSteps;
   const run = async () => { const r = mk(); await handler({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, r); return r; };
   const count = async (q) => Number((await db.execute(q)).rows[0].n);
 
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
-    ({ default: handler } = await import('../../api/_handlers/cron/gdpr-purge.js'));
+    handler = (await import('../../api/_handlers/cron/gdpr-purge.js')).createGdprPurgeHandler({ policy: approvedTestPolicy() });   // R44: what an EXECUTING purge does — a test copy of the policy marked approved (production keeps it PROPOSED — NOT APPROVED), every step approved
+    allSteps = executableStepIds((await import('../../api/_handlers/cron/gdpr-purge.js')).PURGE_STEPS);
     for (const sid of [ID.heldStr, ID.freeStr]) {
       await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, "updatedAt", "createdAt")
         VALUES (${sid}, 'R40 H', ${'slug-' + sid}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], NOW(), NOW())`);
@@ -66,19 +68,19 @@ describe.skipIf(!hasDatabase)('R40 G7 — gdpr-purge legal holds, versions kept 
   });
 
   it('a second run while one holds the lock deletes nothing and answers 409 ALREADY_RUNNING', async () => {
-    process.env.GDPR_PURGE_ENABLED = 'true';
+    const restore = setApprovalEnv(allSteps);
     const other = new pg.Client({ connectionString: process.env.DATABASE_URL }); await other.connect();
     try {
       await other.query('BEGIN'); await other.query(`SELECT pg_advisory_xact_lock(hashtext('ada:gdpr-purge'))`);
       const r = await run();
       expect([r.statusCode, r.body.skipped, r.body.reason]).toEqual([409, true, 'ALREADY_RUNNING']);
       expect(await count(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = ${'R40H_' + TS}`)).toBe(3);
-    } finally { await other.query('ROLLBACK').catch(() => {}); await other.end(); delete process.env.GDPR_PURGE_ENABLED; }
+    } finally { await other.query('ROLLBACK').catch(() => {}); await other.end(); restore(); }
   });
 
   it('holds protect AuditLog, ProAuditLog and ConsentLog rows; free rows of the same age are purged; the run succeeds', async () => {
-    process.env.GDPR_PURGE_ENABLED = 'true';
-    const r = await run().finally(() => { delete process.env.GDPR_PURGE_ENABLED; });
+    const restore = setApprovalEnv(allSteps);
+    const r = await run().finally(restore);
     expect(r.statusCode, JSON.stringify(r.body)).toBe(200);
     expect(r.body.status).toBe('success');
     const ids = async (q) => (await db.execute(q)).rows.map((x) => x.id).sort();
