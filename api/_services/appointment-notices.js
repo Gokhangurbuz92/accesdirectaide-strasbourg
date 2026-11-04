@@ -17,8 +17,10 @@ import { buildAppointmentIcs, calendarContentType } from '../_utils/ics.js';
 import { canNotify as defaultCanNotify } from './citizen-account.js';
 import logger from '../_utils/logger.js';
 import { guestNoticeDecision } from '../_utils/rdv-guest-core.js';
+import { NOTICE_KINDS_0045, noticeLedgerKinds } from '../_utils/schema-features.js';
 
-export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE'];   // R38: the two account-free kinds
+export const NOTICE_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE',   // R38: the two account-free kinds
+  'BOOKED_BY_CITIZEN', 'REQUEST_RECEIVED', 'REQUEST_ACCEPTED', 'REQUEST_REFUSED'];   // R42 booking kinds (ledger from migration 0045)
 export const formatParis = (d) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(new Date(d));
 /** PKG-11 audit pass 2: the date and the time of an appointment as a person in Strasbourg reads them (the servers run in UTC: « 08:00 » for a 10:00 summer appointment). */
 export const formatParisDate = (d) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(d));
@@ -35,17 +37,30 @@ export function parisDayWindow(now = new Date(), plusDays = 1) {
   const p = parisParts(now);
   return { start: parisMidnight(p.year, p.month, p.day + plusDays), end: parisMidnight(p.year, p.month, p.day + plusDays + 1) };
 }
-const MAX_STRUCTURE_RECIPIENTS = 25;
 
 /**
- * R42: the kinds the ledger table accepts (its CHECK constraint, migrations 0020 / 0043). The R42 request kinds (REQUEST_RECEIVED, REQUEST_ACCEPTED,
- * REQUEST_REFUSED, REQUEST_EXPIRED, BOOKED_BY_CITIZEN) are sent and notified in-app like the others but cannot be recorded in this table without a
- * migration (no schema change in R42): they are skipped here instead of failing the CHECK on every write.
+ * R42: the kinds the ledger table accepts on every database level (its CHECK constraint, migrations 0020 / 0043). They are written as before.
+ * R43-E: the four booking kinds (BOOKED_BY_CITIZEN, REQUEST_RECEIVED, REQUEST_ACCEPTED, REQUEST_REFUSED) are accepted only from migration 0045; a writer
+ * asks the database (api/_utils/schema-features.js noticeLedgerKinds) and, where 0045 is not applied (Production 0042 until the owner migrates), SKIPS the
+ * ledger row and counts it (ledgerSkipCounts) — never recorded under another kind, never a failed write. The notice itself (e-mail, in-app) is sent either way.
+ * Any other kind (none today: REQUEST_EXPIRED is a journal action, not a notice) is skipped and counted the same way.
  */
 export const LEDGER_KINDS = Object.freeze(['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_CITIZEN', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'BOOKED_BY_GUEST', 'GUEST_CODE']);
+export const BOOKING_LEDGER_KINDS = NOTICE_KINDS_0045;
+const ledgerSkips = new Map();
+/** how many ledger rows this process skipped, per kind and reason (no personal data) @returns {Record<string, number>} */
+export function ledgerSkipCounts() { return Object.fromEntries(ledgerSkips); }
+function skipLedger(kind, reason) {
+  const key = `${kind}:${reason}`; const n = (ledgerSkips.get(key) || 0) + 1; ledgerSkips.set(key, n);
+  logger.info({ kind, reason, skipped: n }, '[appointment-notices] ledger row skipped');
+}
 /** R43-MAIL: `id` (optional) = the row id chosen before the e-mail left, sent as its CustomID « appointment-notice/<id> » so a delivery event finds this row */
 export async function recordNotice(appointmentId, kind, recipient, channel, status, db = defaultDb, id = undefined) {
-  if (!LEDGER_KINDS.includes(kind)) return;
+  if (!LEDGER_KINDS.includes(kind)) {
+    if (!BOOKING_LEDGER_KINDS.includes(kind)) return skipLedger(kind, 'UNKNOWN_KIND');
+    const accepted = await noticeLedgerKinds(db);
+    if (!accepted || !accepted.has(kind)) return skipLedger(kind, accepted ? 'MIGRATION_0045_NOT_APPLIED' : 'LEDGER_SCHEMA_UNKNOWN');
+  }
   try { await db.insert(AppointmentNotice).values({ ...(id ? { id } : {}), appointmentId, kind, recipient, channel, status }); }
   catch (err) { logger.warn({ err: { name: err?.name, code: err?.cause?.code || err?.code } }, '[appointment-notices] ledger write failed'); }
 }

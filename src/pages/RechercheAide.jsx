@@ -38,6 +38,7 @@ import AnimatedCard from '@/components/ui/AnimatedCard';
 import { useFalc } from '@/contexts/FalcContext';
 import i18n, { useLanguage, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import { buildPublicRdvPath } from '@/lib/rdvRouting';
 
 // ── Icon map ────────────────────────────────────────────────────
 const ICON_MAP = {
@@ -142,7 +143,8 @@ function ProSearchCard({ structure, index }) {
   // R32: the place's texts go through the content translation; its name, address and phone number are never translated, only marked French
   const tr = useContentTranslation('structure', structure);
   const targetUrl = structure.slug ? `/structures/${structure.slug}` : `/structures/view?id=${structure.id}`;
-  const rdvUrl = structure.slug ? `/rdv/${structure.slug}` : null;
+  // R43: the account booking journey (the legacy /rdv/<slug> steps are being retired); the booking page asks for a citizen session itself
+  const rdvUrl = structure.slug ? buildPublicRdvPath(structure) : null;
   const hasRdv = structure.rdv?.isPublished;
   const professionals = structure.professionals || [];
   const summaryField = isFalcEnabled && tr.value('summary_falc') ? 'summary_falc' : 'description_courte';

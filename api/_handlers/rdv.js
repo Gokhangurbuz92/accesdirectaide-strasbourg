@@ -6,7 +6,7 @@ import * as schema from '../../src/db/schema.js';
 import { eq, and, lt, gt, asc, count , sql, isNull, inArray } from 'drizzle-orm';
 import { buildAppointmentIcs } from '../_utils/ics.js';
 import { calendarAttachment } from '../_services/appointment-notices.js';
-import { getMailerStatus, sendMail } from '../_utils/mailer.js';
+import { getMailerStatus, mailLedgerStatus, sendMail } from '../_utils/mailer.js';
 import { ACTIVE_APPOINTMENT_STATUSES, generateSlots, toBusyWindows, validateDateRange } from '../_utils/pro-rdv.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
@@ -14,13 +14,13 @@ import { activeAppointmentWhere } from '../_utils/rdv-active.js';
 // R41-B: the account-based surface works on a 0042 database (no guest columns): what the database has, read at most once a minute per process
 import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
-import { formatParis, noticeCitizen, noticeStructure } from '../_services/appointment-notices.js';
+import { formatParis, noticeCitizen, noticeStructure, recordNotice } from '../_services/appointment-notices.js';
 import { MODE_LABELS, modeLabel, locationOf, locationText, normalizeMode, offeredModes, rulesFor } from '../lib/appointment-modes.js';
 import { issueJoin, joinRefusal, joinWindow, publicVideoStatus } from '../lib/video-provider.js';
 import { encrypt } from '../lib/crypto.js';
 // R42: account-required booking — age rule, optional message, structure-controlled confirmation (Mode A / Mode B) and professional choice
 import { bookingAgeRefusal } from '../_utils/booking-age.js';
-import { bookingMessageRefusal, validateBookingMessage } from '../_utils/rdv-message.js';
+import { MESSAGE_CONSENT_REFUSAL, bookingMessageRefusal, messageConsentGiven, validateBookingMessage } from '../_utils/rdv-message.js';
 import { confirmationModeFor, readBookingConfig } from '../_services/rdv-booking-config.js';
 import { contentMode } from '../lib/publicVisibility.js';   // R42-CDGG: a synthetic fixture is bookable in LAB mode only
 
@@ -458,6 +458,9 @@ function serializeAppointment(appointment, options = {}) {
     state,
     awaitingApproval: state === 'REQUESTED',
     rescheduled: Number(appointment.rescheduleCount || 0) > 0,
+    // R43 (E6): whether the person's own optional message is kept (never its text: the person's JSON does not echo it); withdrawable before the start
+    hasMessage: Boolean(appointment.citizenUserId && appointment.notes),
+    canWithdrawMessage: Boolean(appointment.citizenUserId && appointment.notes && startsAt && startsAt.getTime() > Date.now()),
     startsAt: startsAt ? startsAt.toISOString() : null,
     endsAt: endsAt ? endsAt.toISOString() : null,
     cancelledAt: appointment.cancelledAt instanceof Date ? appointment.cancelledAt.toISOString() : null,
@@ -1044,6 +1047,8 @@ async function createAppointment(req, res) {
     const refused = bookingMessageRefusal(message.code);
     return res.status(refused.status).json(refused.body);
   }
+  // R43 (E6): a non-empty message travels only with the person's explicit, never pre-ticked consent (art. 9(2)(a) proposal) — refused, never dropped
+  if (message.value && !messageConsentGiven(body.messageConsent)) return res.status(MESSAGE_CONSENT_REFUSAL.status).json(MESSAGE_CONSENT_REFUSAL.body);
 
   const existingByKey = await loadAppointmentWithRelations(null, {
     citizenUserId: auth.user.id,
@@ -1203,6 +1208,16 @@ async function createAppointment(req, res) {
   if (outcome.kind === 'conflict') return res.status(409).json({ error: 'Slot no longer available' });
   if (outcome.kind !== 'created') return res.status(500).json({ error: 'Internal Server Error' });
 
+  // R43 (E6): the consent to transmit the message, one ConsentLog row for this appointment; if it cannot be recorded the message is erased (fail closed)
+  if (message.value) {
+    const { recordMessageConsent } = await import('../_services/rdv-message-consent.js');
+    try { await recordMessageConsent(auth.user.id, outcome.appointment.id, true); }
+    catch (error) {
+      logger.warn({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] message consent not recorded: message erased');
+      await db.update(schema.ProAppointment).set({ notes: null }).where(eq(schema.ProAppointment.id, outcome.appointment.id));
+      outcome.appointment.notes = null;
+    }
+  }
   // The new row is not committed yet when it is inserted, so the relations are composed from the rows already loaded in this request.
   const appointmentForResponse = withLoadedRelations(outcome.appointment, structure, service);
   const confirmed = createConfirmedAppointmentPayload(appointmentForResponse, {
@@ -1235,6 +1250,8 @@ async function createAppointment(req, res) {
   } catch {
     // Email is best-effort: booking must stay successful even if provider is unavailable (reported as NOT_SENT).
   }
+  // R43-E: the confirmation e-mail's outcome in the ledger too (kind BOOKED_BY_CITIZEN: recorded from migration 0045, skipped and counted before it)
+  await recordNotice(appointmentForResponse.id, 'BOOKED_BY_CITIZEN', 'citizen', 'email', mailed ? mailLedgerStatus(mailed) : 'FAILED');
   await noticeStructure(appointmentForResponse, 'BOOKED_BY_CITIZEN', { title: 'Nouveau rendez-vous', text: `Un rendez-vous a été pris en ligne pour le ${when}.` });
   return res.status(201).json({ ...confirmed.payload, notification: { email: mailOutcome(mailed) } });
 }
@@ -1441,6 +1458,8 @@ async function getAppointment(req, res) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
 
+  // R43 (E4): this person's unanswered requests whose start passed are written `expired` first (the state already said EXPIRED)
+  await (await import('../_services/rdv-requests.js')).expireStaleRequests({ citizenUserId: auth.user.id });
   const appointment = await loadAppointmentWithRelations(appointmentId);
 
   // R12: someone else's appointment answers exactly like an unknown one (no existence oracle)
@@ -1537,6 +1556,7 @@ async function listMyAppointments(req, res) {
   if (!rateLimit.allowed) {
     return res.status(rateLimit.status).json(rateLimit.error);
   }
+  await (await import('../_services/rdv-requests.js')).expireStaleRequests({ citizenUserId: auth.user.id });   // R43 (E4)
   const rows = await db.query.ProAppointment.findMany({
     columns: flagsOf(appointmentTable(await requestGuestSchema(db))),   // R41-B
     where: (a, { eq }) => eq(a.citizenUserId, auth.user.id),
@@ -1754,8 +1774,27 @@ async function rescheduleAppointment(req, res) {
     text: `Votre rendez-vous avec ${structure.nom} (${service.name}) est déplacé :\nancien créneau : ${before}\nnouveau créneau : ${after} (Europe/Paris)\n${modalityText(moved)}\n\nGérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`,
     calendar: { appointmentId: moved.id, startAt: moved.startAt, endAt: moved.endAt, structureName: structure.nom, serviceName: service.name, sequence: Number(moved.rescheduleCount || 0), location: icsLocation(moved) },
   });
-  await noticeStructure(moved, 'RESCHEDULED', { title: 'Rendez-vous déplacé par la personne', text: `Un rendez-vous a été déplacé par la personne : du ${before} au ${after} (${modeLabel(moved.mode)}${mode !== currentMode ? ', modalité changée par la personne' : ''}).` });
+  // R43: in Mode B the moved appointment is a request again — the structure is told that the new time waits for its answer (it was not)
+  await noticeStructure(moved, 'RESCHEDULED', { title: backToRequest ? 'Rendez-vous déplacé : nouvelle heure à valider' : 'Rendez-vous déplacé par la personne', text: `Un rendez-vous a été déplacé par la personne : du ${before} au ${after} (${modeLabel(moved.mode)}${mode !== currentMode ? ', modalité changée par la personne' : ''}).${backToRequest ? ' La nouvelle heure attend votre réponse (accepter ou refuser) dans l’agenda.' : ''}` });
   return res.status(200).json({ ...confirmed.payload, notification: { email: mailOutcome(noticed) } });
+}
+
+/**
+ * R43 (E6) — POST /api/rdv/appointments/:id/message/withdraw: the person erases the optional message of their own appointment before it starts
+ * (api/_services/rdv-message-consent.js). Session, CSRF (api entry), write rate limit; someone else's appointment = the same 404 as an unknown id.
+ * @param {import('../_utils/http-types').ApiRequest} req
+ * @param {import('../_utils/http-types').ApiResponse} res
+ */
+async function withdrawMessage(req, res) {
+  const appointmentId = toTrimmedString(getPathSegments(req)[1]);
+  const auth = await requireCitizenUser(req);
+  if (!auth.ok) return res.status(auth.status).json({ error: auth.error, ...(auth.code ? { code: auth.code } : {}) });
+  const rateLimit = await enforcePublicRdvRateLimit(req, 'write', auth.user.id);
+  if (!rateLimit.allowed) return res.status(rateLimit.status).json(rateLimit.error);
+  if (!appointmentId) return res.status(404).json({ error: 'Appointment not found' });
+  const { withdrawBookingMessage } = await import('../_services/rdv-message-consent.js');
+  const out = await withdrawBookingMessage(auth.user.id, appointmentId);
+  return res.status(out.status).json(out.body);
 }
 
 /**
@@ -1825,6 +1864,10 @@ export default async function handler(req, res) {
 
     if (method === 'POST' && segments[0] === 'appointments' && segments[2] === 'reschedule' && segments.length === 3) {
       return await rescheduleAppointment(req, res);
+    }
+
+    if (method === 'POST' && segments[0] === 'appointments' && segments[2] === 'message' && segments[3] === 'withdraw' && segments.length === 4) {
+      return await withdrawMessage(req, res);
     }
 
     return res.status(404).json({ error: 'Not Found' });

@@ -6,6 +6,9 @@
 export const NOTICE_KIND = {
   BOOKED_BY_STRUCTURE: 'Rendez-vous pris par la structure', RESCHEDULED: 'Rendez-vous déplacé', CANCELLED_BY_STRUCTURE: 'Annulé par la structure',
   CANCELLED_BY_CITIZEN: 'Annulé par la personne', REMINDER_J1: 'Rappel de la veille', VISIO_APPROVED: 'Visio validée', VISIO_REVOKED: 'Visio retirée',
+  // R43-E: the booking kinds recorded from migration 0045
+  BOOKED_BY_CITIZEN: 'Rendez-vous pris en ligne par la personne', REQUEST_RECEIVED: 'Demande de rendez-vous reçue', REQUEST_ACCEPTED: 'Demande de rendez-vous acceptée',
+  REQUEST_REFUSED: 'Demande de rendez-vous refusée',
 };
 export const NOTICE_RECIPIENT = { citizen: 'la personne', structure: 'la structure' };
 export const NOTICE_CHANNEL = { email: 'e-mail', in_app: 'notification', sms: 'SMS' };

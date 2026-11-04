@@ -148,9 +148,9 @@ async function handler(req, res) {
     const nextStartAt = data.startAt ?? existing.startAt;
     const nextEndAt = data.endAt ?? existing.endAt;
 
-    if (nextEndAt <= nextStartAt) {
-      return res.status(400).json({ error: 'endAt must be greater than startAt' });
-    }
+    // R43: the one range rule (it was duplicated inline and validateRange() was unused); POST gets it from createTimeOffSchema
+    const rangeError = validateRange(nextStartAt, nextEndAt);
+    if (rangeError) return res.status(400).json({ error: rangeError });
 
     const nextReason = typeof data.reason !== 'undefined' ? (data.reason?.trim() || null) : existing.reason;
 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
 import { RdvConversation, RdvConversationMessage } from '../../../src/db/schema.js';
-import { eq, desc, asc } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import { requireProStructureContext } from '../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
@@ -69,7 +69,8 @@ async function enforceRateLimit(req, action, subject) {
 
 /**
  * @param {string} conversationId
- * @param {number} limit
+ * @param {number} limit R43: the `limit` NEWEST messages are loaded (the whole conversation was, whatever the limit), returned oldest first;
+ *   the conversation lists load only the latest message (their preview)
  */
 async function loadConversationForPro(conversationId, limit) {
   return db.query.RdvConversation.findFirst({
@@ -85,13 +86,14 @@ async function loadConversationForPro(conversationId, limit) {
         },
       },
       messages: {
-        orderBy: [asc(RdvConversationMessage.createdAt)],
+        orderBy: [desc(RdvConversationMessage.createdAt)],
+        limit,
       },
       citizenUser: {
         columns: { id: true },
       },
     },
-  });
+  }).then((conversation) => (conversation && Array.isArray(conversation.messages) ? { ...conversation, messages: [...conversation.messages].reverse() } : conversation));
 }
 
 /**
@@ -123,6 +125,7 @@ async function getConversations(req, res, proCtx) {
       },
       messages: {
         orderBy: [desc(RdvConversationMessage.createdAt)],
+        limit: 1,
       },
     },
   });

@@ -107,11 +107,11 @@ export default function ProAppointments() {
   }, [services]);
 
   // R42 Mode B: accept or refuse a request (the server checks the rights, journals the decision and tells the person)
-  const decide = async (id, decision) => {
+  const decide = async (id, decision, expectedStartAt) => {
     if (decision === 'REFUSE' && !window.confirm(t('pro:appointments.confirm_refuse', 'Refuser cette demande ? La personne en sera informée et le créneau libéré.'))) return;
     setUpdatingId(id);
     setError('');
-    try { await proRdvClient.appointments.decide(id, decision); await loadData(); }
+    try { await proRdvClient.appointments.decide(id, decision, undefined, expectedStartAt); await loadData(); }
     catch (e) { setError(e?.payload?.message || t('pro:appointments.update_error', 'Impossible de mettre à jour ce rendez-vous.')); }
     finally { setUpdatingId(''); }
   };
@@ -273,8 +273,8 @@ export default function ProAppointments() {
                   <div className="flex flex-wrap gap-2">
                     {appointment.awaitingDecision && new Date(appointment.startAt || appointment.start_at).getTime() > Date.now() ? (
                       <>
-                        <Button size="sm" data-testid="pro-agenda-accept" onClick={() => decide(appointment.id, 'ACCEPT')} disabled={updatingId === appointment.id}>{t('pro:appointments.accept', 'Accepter la demande')}</Button>
-                        <Button size="sm" variant="outline" data-testid="pro-agenda-refuse" onClick={() => decide(appointment.id, 'REFUSE')} disabled={updatingId === appointment.id}>{t('pro:appointments.refuse', 'Refuser la demande')}</Button>
+                        <Button size="sm" data-testid="pro-agenda-accept" onClick={() => decide(appointment.id, 'ACCEPT', appointment.startAt || appointment.start_at)} disabled={updatingId === appointment.id}>{t('pro:appointments.accept', 'Accepter la demande')}</Button>
+                        <Button size="sm" variant="outline" data-testid="pro-agenda-refuse" onClick={() => decide(appointment.id, 'REFUSE', appointment.startAt || appointment.start_at)} disabled={updatingId === appointment.id}>{t('pro:appointments.refuse', 'Refuser la demande')}</Button>
                       </>
                     ) : null}
                     <Button asChild size="sm" variant="outline"><Link to={`/pro/appointments/${encodeURIComponent(appointment.id)}`} data-testid="pro-agenda-detail">{t('pro:appointments.details', 'Détails')}</Link></Button>

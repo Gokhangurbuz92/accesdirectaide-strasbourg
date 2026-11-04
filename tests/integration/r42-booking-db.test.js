@@ -202,7 +202,10 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
     const spies = ['info', 'warn', 'error', 'debug'].map((k) => vi.spyOn(logger, k));
     const consoleSpies = ['log', 'info', 'warn', 'error'].map((k) => vi.spyOn(console, k));
     mailer.__clearTestOutbox();
-    const ok = await book(A, C[0], slot.startAt, { message: `  ${MSG}  ` });
+    // R43 (dossier RGPD E6): a message travels only with the explicit consent — without it, refused (400) and nothing stored
+    const noConsent = await book(A, C[0], slot.startAt, { message: `  ${MSG}  ` });
+    expect([noConsent.statusCode, noConsent.body.code]).toEqual([400, 'MESSAGE_CONSENT_REQUIRED']);
+    const ok = await book(A, C[0], slot.startAt, { message: `  ${MSG}  `, messageConsent: true });
     expect(ok.statusCode, show(ok)).toBe(201);
     expect(ok.body.state).toBe('CONFIRMED');
     expect(JSON.stringify(ok.body)).not.toContain(MSG);
