@@ -11,7 +11,7 @@ import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { templates } from '../../api/lib/email-service.js';
 
 const REQUIRED = ['account_verification', 'password_reset', 'appointment_request', 'appointment_confirmation', 'appointment_refusal', 'appointment_cancellation',
-  'appointment_rescheduled', 'appointment_reminder', 'pro_invitation'];
+  'appointment_rescheduled', 'appointment_reminder', 'pro_invitation', 'appointment_video', 'appointment_message'];
 
 describe('R43 mail catalogue coverage', () => {
   it('has every required kind in all six languages, with non-empty subject, heading, opening and button', () => {

@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { localizedMail } from './mail-catalogue.js';
+import { citizenMailLanguage } from '../_services/mail-language.js';
 import { db } from '../../src/db/index.js';
 import { RdvNotificationLog } from '../../src/db/schema.js';
 import { sendMail } from './mailer.js';
@@ -153,6 +155,7 @@ export function serializeConversationDetail(conversation) {
  *  messageId: string,
  *  recipientType: 'USER' | 'PRO',
  *  recipientEmail: string | null,
+ *  recipientUserId?: string | null,
  *  recipientEnabled: boolean,
  *  structureName: string,
  *  appointmentStartAt: Date | null,
@@ -189,17 +192,20 @@ export async function notifyConversationMessage(input) {
   const url = buildAppUrl(destinationPath);
   const appointmentDate = input.appointmentStartAt ? formatParisDate(input.appointmentStartAt) : 'Date non disponible';
 
+  // R43-MAIL: neutral subject in the reader's language (a person: their stored preference; a professional: French)
+  const lang = input.recipientType === 'USER' ? await citizenMailLanguage(input.recipientUserId) : 'fr';
+  const mail = localizedMail('appointment_message', lang, [
+    'Vous avez recu un nouveau message concernant votre rendez-vous.',
+    '',
+    `Structure: ${input.structureName || 'Acces Direct Aide'}`,
+    `Date du rendez-vous: ${appointmentDate}`,
+    '',
+    `Voir la conversation: ${url}`,
+  ].join('\n'));
   const out = await sendMail({
     to: input.recipientEmail,
-    subject: 'Nouveau message concernant votre rendez-vous - Acces Direct Aide',
-    text: [
-      'Vous avez recu un nouveau message concernant votre rendez-vous.',
-      '',
-      `Structure: ${input.structureName || 'Acces Direct Aide'}`,
-      `Date du rendez-vous: ${appointmentDate}`,
-      '',
-      `Voir la conversation: ${url}`,
-    ].join('\n'),
+    subject: mail.subject,
+    text: mail.text,
     category: 'appointment_message',
   });
 
