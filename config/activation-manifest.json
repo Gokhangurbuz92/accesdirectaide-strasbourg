@@ -251,6 +251,23 @@
       ],
       "note": "R38: the personal-data jobs the owner approved (parcours-reminder, referral-timeouts, rdv-reminder, gdpr-purge): legal basis, retention and a working mail provider recorded first; unset = none"
     },
+    "ADA_CSP_REPORTS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(log|off)?$",
+      "note": "R42 (F8): CSP violation reports. log = POST /api/monitor/csp-report passes the beta gate and a minimised summary (directive, blocked origin, page path template, disposition) goes to the server log only; off = refused. Unset: on in LAB (VERCEL_ENV development/preview), off in Production"
+    },
+    "ADA_CSP_REPORT_SAMPLE": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "note": "R42 (F8): share of CSP reports kept when ADA_CSP_REPORTS=log, in (0, 1]; unset or invalid = 1"
+    },
     "VITE_PUBLIC_BETA_OPEN_SURFACES": {
       "class": "decision",
       "nature": "public",
