@@ -1,7 +1,7 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.1",
-  "date_mise_a_jour": "2026-10-25",
+  "version": "0.2",
+  "date_mise_a_jour": "2026-11-04",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
     "retention": "api/_handlers/cron/gdpr-purge.js",
@@ -10,11 +10,14 @@
   },
   "organisme": {
     "nom_usage": "AccesDirectAide",
-    "statut": "IN_FORMATION",
+    "statut": "NOT_CREATED",
+    "exploitant": "NATURAL_PERSON",
+    "role_exploitant": "Porteur du projet AccesDirectAide (personne physique)",
+    "forme_juridique_envisagee": "Association à but non lucratif de droit local d’Alsace-Moselle — envisagée, non créée, non inscrite",
     "raison_sociale": null,
     "siren": null,
     "adresse": null,
-    "responsable_traitement": "[À COMPLÉTER : responsable de traitement — entité en formation]"
+    "responsable_traitement": "Personne physique porteuse du projet (identité publiée sur /mentions-legales par la variable VITE_LEGAL_PUBLISHER_IDENTITY) — qualification à confirmer par le responsable de traitement ; l'association envisagée n'est pas créée et n'est pas présentée comme responsable"
   },
   "dpo": null,
   "dpo_statut": "non désigné",
@@ -45,8 +48,8 @@
         "Administrateurs AccesDirectAide pour la seule récupération de compte"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Upstash (limitation de débit, prévu)",
         "Sentry (si DSN configuré)"
       ],
@@ -102,7 +105,7 @@
         "Partage : copie conservée chiffrée au repos (enveloppe, clé détenue par le serveur) dans SharedDiagnostic.situation quand la personne partage son dossier"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon pour la copie partagée (prévu)"
       ],
       "services_refuses": [
@@ -153,8 +156,8 @@
         "Structures choisies par la personne (membres actifs)"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Stockage objet S3/R2 (fournisseur à confirmer, prévu)"
       ],
       "conservation": [
@@ -188,8 +191,8 @@
         "La personne et les membres actifs de la structure concernée"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Stockage objet S3/R2 (prévu)"
       ],
       "conservation": [
@@ -231,8 +234,8 @@
       ],
       "sous_traitants": [
         "Stockage objet S3/R2 (prévu)",
-        "Neon (PostgreSQL, prévu)",
-        "Vercel (hébergement, prévu)"
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -248,28 +251,29 @@
     {
       "id": "T06",
       "nom": "Rendez-vous",
-      "finalite": "Prise, modification, annulation de rendez-vous avec une structure ; sans compte (R39) : rappel facultatif la veille, par e-mail, seulement si la personne l'a demandé",
-      "base_legale_proposee": "Art. 6.1.b — à valider ; rappel facultatif la veille d'un rendez-vous sans compte (R39) : consentement (art. 6.1.a), case séparée jamais pré-cochée, retirable à tout moment depuis le lien personnel — proposition, à valider par le responsable de traitement",
+      "statut": "fermé en Production (bêta publique restreinte) ; R42 (DEC-R42-01) : un compte est exigé pour tout rendez-vous — la réservation publique sans compte est retirée (refusée par le serveur)",
+      "finalite": "Demande, prise, modification, annulation de rendez-vous avec une structure, par une personne connectée à son compte (personnes majeures seulement, R42-A07) ou par la structure elle-même ; confirmation directe ou après accord de la structure (R42-A03) ; choix facultatif d'un professionnel (R42-A04) ; motif court facultatif (R42-A06)",
+      "base_legale_proposee": "À VALIDER PAR LE RESPONSABLE DE TRAITEMENT — options : CONTROL/r42/R42_BASES_ET_DUREES_OPTIONS_FR.md ; le rappel facultatif (s'il est conservé) est une finalité distincte, jamais confondue avec la base du rendez-vous",
       "categories_donnees": [
         "Nom",
         "Téléphone",
         "E-mail",
-        "Notes (art. 9 possible)",
-        "Créneau, mode",
-        "Sans compte : date de l'accord au rappel facultatif la veille (R39)"
+        "Notes et motif facultatif (texte libre : art. 9 possible, saisi volontairement)",
+        "Créneau, mode, professionnel choisi",
+        "Ancien flux sans compte (retiré) : date de l'accord au rappel"
       ],
       "categories_personnes": [
-        "Citoyens",
+        "Citoyens majeurs titulaires d'un compte",
         "Bénéficiaires inscrits par une structure",
         "Professionnels",
-        "Personnes ayant réservé sans compte (R38, optionnel, désactivé par défaut)"
+        "Ancien flux sans compte (R38–R41, retiré en R42 ; colonnes conservées, migrations 0043/0044 non appliquées en Production)"
       ],
       "destinataires": [
         "La structure et la personne"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -280,14 +284,21 @@
           "description": "anonymisation après 730 jours (cron gdpr-purge, hebdomadaire)"
         },
         {
-          "donnee": "Demande sans compte jamais confirmée par le code (R38)",
+          "donnee": "Ancienne demande sans compte jamais confirmée (R38, flux retiré en R42 — reste purgée là où elle existerait)",
           "duree_jours": 1,
           "source": "RETENTION.GUEST_HOLD_DAYS",
           "statut": "appliqué",
           "description": "identité effacée 1 jour après l'expiration de la réservation de 20 minutes (cron gdpr-purge, hebdomadaire)"
         },
         {
-          "donnee": "Accord au rappel facultatif la veille, sans compte (R39 — proposition, à valider par le responsable de traitement)",
+          "donnee": "Leurre de réservation sans compte (R41-B : ligne ProAppointment dans PostgreSQL, sans aucune donnée personnelle, jamais confirmable ; plus aucun stockage KV — flux retiré en R42)",
+          "duree_jours": 1,
+          "source": "RETENTION.GUEST_HOLD_DAYS",
+          "statut": "appliqué",
+          "description": "ligne supprimée 1 jour après son expiration, en même temps que les demandes réelles (cron gdpr-purge, hebdomadaire)"
+        },
+        {
+          "donnee": "Accord au rappel facultatif la veille (ancien flux sans compte, R39 — proposition, à valider par le responsable de traitement)",
           "duree_jours": 730,
           "source": "RETENTION.APPOINTMENT_ANON_DAYS",
           "statut": "appliqué",
@@ -316,8 +327,8 @@
         "Membres actifs de la structure ; structure destinataire d'une orientation sur autorisation de la personne"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -353,8 +364,8 @@
       ],
       "modele_ia": "Ollama local (qwen3:8b, nomic-embed-text), joint uniquement en boucle locale (127.0.0.1)",
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "fournisseurs_bloques": [
         "Google Gemini : BLOQUÉ par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) — pas un destinataire"
@@ -394,8 +405,8 @@
         "Public après validation"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -435,8 +446,8 @@
         "Administrateurs AccesDirectAide"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -464,8 +475,8 @@
         "Comptes institutionnels actifs sous convention signée (aucune aujourd'hui)"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -501,8 +512,8 @@
         "Sentry (sous-traitant, si DSN)"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)",
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Sentry (si DSN configuré)"
       ],
       "conservation": [
@@ -570,8 +581,8 @@
         "Administrateurs habilités"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -620,8 +631,8 @@
         "Administrateurs AccesDirectAide"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -666,8 +677,8 @@
         "Administrateurs AccesDirectAide"
       ],
       "sous_traitants": [
-        "Vercel (hébergement, prévu)",
-        "Neon (PostgreSQL, prévu)"
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
       "conservation": [
         {
@@ -704,7 +715,7 @@
     {
       "id": "T17",
       "nom": "Mesure d'audience et de performance",
-      "statut": "actif dans le bundle (sauf mode mock)",
+      "statut": "désactivé par défaut (ADR-022) : chargé seulement si VITE_AUDIENCE_MEASUREMENT=on, jamais pendant la bêta publique ni en mode mock",
       "finalite": "Mesurer l'audience (Vercel Analytics) et la performance (Vercel Speed Insights)",
       "base_legale_proposee": "Art. 6.1.f, exemption de consentement si les conditions CNIL sont réunies (non vérifié)",
       "categories_donnees": [
@@ -737,7 +748,7 @@
     {
       "nom": "Vercel",
       "role": "Hébergement front et fonctions serveur, cron",
-      "statut": "prévu",
+      "statut": "en service (bêta publique restreinte ; crons fermés)",
       "localisation": "UE — région fra1 (Francfort) pour les fonctions",
       "entite_contractante": "Vercel Inc. (USA)",
       "mecanisme_transfert": "NON VÉRIFIÉ",
@@ -746,7 +757,7 @@
     {
       "nom": "Vercel Analytics + Speed Insights",
       "role": "Audience et performance",
-      "statut": "activé (bundle, sauf mode mock)",
+      "statut": "désactivé par défaut (ADR-022 ; VITE_AUDIENCE_MEASUREMENT)",
       "localisation": "NON VÉRIFIÉ",
       "entite_contractante": "Vercel Inc. (USA)",
       "mecanisme_transfert": "NON VÉRIFIÉ",
@@ -755,18 +766,18 @@
     {
       "nom": "Neon",
       "role": "Base de données PostgreSQL",
-      "statut": "prévu",
-      "localisation": "NON VÉRIFIÉ",
-      "entite_contractante": "NON VÉRIFIÉ",
+      "statut": "en service (bêta publique restreinte)",
+      "localisation": "Francfort selon /mentions-legales — preuve console à archiver",
+      "entite_contractante": "Neon, LLC (groupe Databricks) selon /mentions-legales — contrat non vérifié",
       "mecanisme_transfert": "NON VÉRIFIÉ",
       "dpa": "inconnu / non signé"
     },
     {
       "nom": "Upstash",
-      "role": "Limitation de débit (KV/Redis)",
-      "statut": "prévu",
-      "localisation": "NON VÉRIFIÉ",
-      "entite_contractante": "NON VÉRIFIÉ",
+      "role": "Limitation de débit (KV/Redis) ; ne contient plus l'état des leurres de réservation (R41-B)",
+      "statut": "en service (bêta publique restreinte)",
+      "localisation": "Francfort selon /mentions-legales — preuve console à archiver",
+      "entite_contractante": "Upstash, Inc. selon /mentions-legales — contrat non vérifié",
       "mecanisme_transfert": "NON VÉRIFIÉ",
       "dpa": "inconnu / non signé"
     },
@@ -789,8 +800,25 @@
       "dpa": "inconnu / non signé"
     },
     {
-      "nom": "Mailjet (Sinch)",
+      "nom": "Microsoft (Outlook, boîte contact@accesdirectaide.fr)",
+      "role": "Réception des messages envoyés à l'adresse de contact publiée",
+      "statut": "en service (boîte existante, R42-A05)",
+      "localisation": "NON VÉRIFIÉ",
+      "entite_contractante": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Expéditeur des e-mails transactionnels (Microsoft Graph sendMail ou Resend — non choisi, R42-A05)",
       "role": "E-mails transactionnels",
+      "statut": "non choisi, non configuré : aucun envoi réel",
+      "localisation": "NON VÉRIFIÉ",
+      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "dpa": "inconnu / non signé"
+    },
+    {
+      "nom": "Mailjet (Sinch)",
+      "role": "E-mails transactionnels (adaptateur codé, non retenu)",
       "statut": "non activé",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
@@ -806,7 +834,7 @@
     },
     {
       "nom": "Microsoft (Outlook / Graph)",
-      "role": "Agenda des professionnels",
+      "role": "Agenda des professionnels (disponibilités libre/occupé quand une structure l'a configuré, R42-A03)",
       "statut": "non activé",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",

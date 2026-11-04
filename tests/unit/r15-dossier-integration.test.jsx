@@ -64,7 +64,9 @@ describe('R15: association vocabulary and AI wording', () => {
     expect(legal).not.toMatch(/immatricul/i);
     expect(legal).toContain('inscrite au registre des associations du tribunal judiciaire de Strasbourg');
     expect(brand.legal.legalStatus).not.toMatch(/^Association inscrite|immatricul/i);
-    expect(brand.legal.legalStatus).toMatch(/pas encore inscrite/);
+    expect(brand.legal.legalStatus).toMatch(/pas encore créée ni inscrite/);   // R42-A01: no association created at all
+    expect(brand.legal.projectStatement).not.toMatch(/en cours de constitution/);   // R42-A01 supersedes the 23/10 wording
+    expect(brand.legal.projectStatement).toMatch(/porté par une personne physique/);
   });
 
   it('the AI-synthesis consent text no longer promises a human review that the draft does not yet have', () => {

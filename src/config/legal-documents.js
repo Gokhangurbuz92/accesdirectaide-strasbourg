@@ -8,8 +8,11 @@
  * Status: draft texts — a legal review is still required before any public launch.
  */
 export const LEGAL_DOCS_VERSION = Object.freeze({
-  version: '0.2',   // 2026-10-25: launch-readiness items 46 (automatic verification), 61 (encryption at rest), 63 (device answers), 64 (information banner)
-  date: '2026-10-25',
+  // 0.2 (2026-10-25): launch-readiness items 46 (automatic verification), 61 (encryption at rest), 63 (device answers), 64 (information banner)
+  // 0.3 (2026-11-04, R42-LEGAL): operator = natural-person project carrier, no association created (R42-A01); appointments require an account
+  // (DEC-R42-01); structures' role and retention periods marked as not decided; transfer guarantees no longer asserted without verification
+  version: '0.3',
+  date: '2026-11-04',
   status: 'PROJET — relecture juridique requise',
 });
 
@@ -50,7 +53,9 @@ function legalValue(name) {
  */
 export const LEGAL_PLACEHOLDERS = Object.freeze({
   dataProtectionContact: legalValue('VITE_LEGAL_DATA_PROTECTION_CONTACT') || '[À COMPLÉTER : adresse de contact protection des données]',
-  publisherIdentity: legalValue('VITE_LEGAL_PUBLISHER_IDENTITY') || "[À COMPLÉTER : identité de l'éditeur (dénomination ou nom, forme juridique, adresse, téléphone, numéro d'inscription au registre des associations)]",
+  // R42-A01: the publisher is a natural person (the project carrier) until a legal person exists — LCEN art. 1-1 I 1° asks a natural person for
+  // name and first names, domicile and telephone (or, for a NON-professional publisher only, art. 1-1 II anonymity through the host)
+  publisherIdentity: legalValue('VITE_LEGAL_PUBLISHER_IDENTITY') || "[À COMPLÉTER : identité de l'éditeur — nom et prénom de la personne physique porteuse du projet, domicile et téléphone (LCEN, art. 1-1 I 1°) ; aucune association n'est créée]",
   publicationDirector: legalValue('VITE_LEGAL_PUBLICATION_DIRECTOR') || '[À COMPLÉTER : directeur ou directrice de la publication]',
   // address as published in vercel.com/legal/privacy-policy (read 30/10/2026); Vercel publishes no telephone number, only its help centre
   hostAddress: 'Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis — contact : https://vercel.com/help',
