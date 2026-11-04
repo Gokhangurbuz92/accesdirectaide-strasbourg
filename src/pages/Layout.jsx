@@ -3,7 +3,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { navActive } from '@/lib/navActive';
-import Logo from '@/components/Brand/Logo';
 import { createPageUrl } from '@/utils';
 import {
   Menu,
@@ -13,10 +12,7 @@ import {
   FileText,
   MapPin,
   Wrench,
-  Activity,
-  ListChecks,
-  Info,
-  Calendar,
+  ShieldCheck,
   ChevronDown,
   Newspaper,
 } from 'lucide-react';
@@ -65,13 +61,23 @@ const NAV_ITEMS = [
   // R26: « Outils » (official simulators, real content) in the menu. R29: « Actualités » is back now that verified official news is published
   { label: 'Outils', page: 'Tools', icon: Wrench },
   { label: 'Actualités', page: 'Actualites', icon: Newspaper },
-  { label: 'Rendez-vous', page: 'AdminAppointments', icon: Calendar, adminOnly: true },
-  { label: 'Structures', page: 'AdminStructures', icon: MapPin, adminOnly: true },
-  { label: 'Démarches', page: 'AdminDemarches', icon: FileText, adminOnly: true },
-  { label: 'Observabilité', page: 'AdminObservability', icon: Activity, adminOnly: true },
-  { label: 'Review Queue', page: 'AdminReviewQueue', icon: ListChecks, adminOnly: true },
-  { label: 'Admin', page: 'AdminSync', icon: Info, adminOnly: true },
 ];
+
+// R42 (R41 i18n audit): the six administration entries used to sit in the same single row as the public menu. For a signed-in administrator the row
+// was ~1,060 px wide (English) and pushed the header past the window from 1280 px up to ~1,600 px (horizontal scroll in LTR; the RTL row overflowed
+// towards the unreachable side). They are now ONE « Administration » entry with a submenu (same disclosure pattern as « Aides »): every page stays
+// reachable by keyboard, in the same order, after the public entries; the phone menu shows the same group.
+const ADMIN_NAV_ITEMS = [
+  { label: 'Rendez-vous', page: 'AdminAppointments' },
+  { label: 'Structures', page: 'AdminStructures' },
+  { label: 'Démarches', page: 'AdminDemarches' },
+  { label: 'Observabilité', page: 'AdminObservability' },
+  { label: 'Review Queue', page: 'AdminReviewQueue' },
+  { label: 'Admin', page: 'AdminSync' },
+];
+const ADMIN_NAV_GROUP = { label: 'Administration', page: 'AdminSync', icon: ShieldCheck, submenu: ADMIN_NAV_ITEMS };
+/** the desktop and phone menu entries @param {boolean} isAdmin */
+const navItemsFor = (isAdmin) => (isAdmin ? [...NAV_ITEMS, ADMIN_NAV_GROUP] : NAV_ITEMS);
 
 const FOOTER_RESSOURCES = [
   { label: 'Trouver par besoin', href: '/besoins' },
@@ -124,6 +130,7 @@ const LABELS = {
   'Observabilité': (t) => t('layout:nav.admin.observability', 'Observabilité'),
   'Review Queue': (t) => t('layout:nav.admin.review', 'Review Queue'),
   'Admin': (t) => t('layout:nav.admin.admin', 'Admin'),
+  'Administration': (t) => t('layout:nav.admin.group', 'Administration'),
   'Trouver par besoin': (t) => t('layout:footer.needs', 'Trouver par besoin'),
   'Bonnes pratiques': (t) => t('layout:footer.guides', 'Bonnes pratiques'),
   'Dispositifs': (t) => t('layout:footer.dispositifs', 'Dispositifs'),
@@ -185,7 +192,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
     checkAdmin();
   }, []);
 
-  const filteredNavItems = NAV_ITEMS.filter(item => !item.adminOnly || isAdmin);
+  const filteredNavItems = navItemsFor(isAdmin);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -214,7 +221,10 @@ export default function Layout({ children }) {   // R26: the active menu entry c
           </div>
         )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16 gap-4">
+          {/* R42: the row may wrap (min height instead of a fixed one): when the menu and the account entries do not fit on one line (long
+              labels, an administrator's menu, large text), the account entries move to a second line instead of pushing the page sideways.
+              Nothing is hidden or clipped and the order (logo, menu, accounts, menu button) is the reading and keyboard order. */}
+          <div className="flex flex-wrap items-center justify-between min-h-16 gap-x-4 gap-y-1">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               {/* Mobile: Logo + Short Name */}
@@ -239,7 +249,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
             {/* Navigation desktop */}
             {/* PKG-11 / P01: the full menu needs ~1200 px; below 1280 px the menu button is used (it used to overflow the page from 1024 to 1279 px) */}
-            <nav className="hidden xl:flex items-center gap-1" aria-label={t('layout:nav.main', 'Navigation principale')}>
+            <nav className="hidden xl:flex flex-wrap min-w-0 items-center gap-1" aria-label={t('layout:nav.main', 'Navigation principale')}>
               {filteredNavItems.map((item) => (
                 <div key={item.page} className="relative group">
                   {item.submenu ? (
@@ -297,7 +307,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
             {/* Account entry points — only when accounts can really be used (outside the beta, or the accounts surface opened in this build) */}
             {accountsOpen && (
-              <div className="hidden items-center gap-2 xl:flex">
+              <div className="hidden items-center gap-2 xl:flex ms-auto">
                 <AuthHeaderActions />
               </div>
             )}
@@ -494,7 +504,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
 
           <div className="border-t border-white/15 mt-8 pt-8 text-center text-sm text-white/80">
             {/* R32: in French the statement stays the one of brand-config; the translations were made from that same statement */}
-            <p data-testid="footer-project-statement">© {new Date().getFullYear()} {isSource ? brand.legal.projectStatement : t('layout:footer.project', 'AccesDirectAide — projet associatif à but non lucratif, en cours de constitution sous le régime du droit local d’Alsace-Moselle.')}</p>
+            <p data-testid="footer-project-statement">© {new Date().getFullYear()} {isSource ? brand.legal.projectStatement : t('layout:footer.project', 'AccesDirectAide — projet à but non lucratif porté par une personne physique. L’association de droit local d’Alsace-Moselle envisagée n’est pas encore créée.')}</p>
             {/* PKG-11 / P28: the catalogue has national aides and Strasbourg / Eurométropole information, nothing specific to the Haut-Rhin */}
             <p className="mt-2 text-white/80">
               <Trans

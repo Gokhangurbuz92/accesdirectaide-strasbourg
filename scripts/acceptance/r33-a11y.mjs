@@ -4,6 +4,7 @@
 // Per route × language: axe (wcag2a/aa/21aa/22aa, all impacts), <html lang/dir>, one h1, a skip link that moves focus to main, focus visible on the
 // first 25 tab stops, reflow at 320 px (= 400 % zoom of 1280 px, RGAA 10.11), text spacing / 200 % text without loss (RGAA 10.4 proxy), touch
 // targets of 24×24 px minimum (WCAG 2.5.8), reduced motion honoured (no running CSS animation), no page error.
+// R42: + the header fits the window at 1440, 1280 and 1024 px (13 checks per route and language); R33_ADMIN_SESSION=1 repeats it as an administrator.
 import fs from 'node:fs';
 import { chromium } from 'playwright';
 
@@ -20,6 +21,12 @@ const browser = await chromium.launch({ channel: process.env.PW_CHANNEL || 'chro
 for (const lang of LANGS) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce', locale: lang });
   await ctx.addInitScript((l) => { try { localStorage.setItem('ada_lang', l); localStorage.setItem('ada_onboarding_done', '1'); } catch { /* */ } }, lang);
+  // R42: R33_ADMIN_SESSION=1 renders the public pages as a signed-in administrator (only /api/auth/me is answered locally, nothing is written): the
+  // administrator's menu used to push the header past the window from 1280 px (R41 i18n audit)
+  if (process.env.R33_ADMIN_SESSION === '1') {
+    await ctx.addInitScript(() => { try { sessionStorage.setItem('access_token', 'r33-synthetic-admin'); } catch { /* */ } });
+    await ctx.route('**/api/auth/me', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ user: { id: 'r33-admin', role: 'admin' } }) }));
+  }
   const page = await ctx.newPage(); let errors = [];
   page.on('pageerror', (e) => errors.push(String(e.message).slice(0, 120)));
   for (const route of ROUTES) {
@@ -58,6 +65,18 @@ for (const lang of LANGS) {
     // reduced motion: no running CSS animation
     const anim = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming?.().iterations === Infinity).length);
     rec(lang, route, 'reduced-motion', anim === 0, `${anim} infinite animations`);
+    // R42: the header fits the window on desktop widths — no sideways scroll, and nothing placed on the unreachable side (left in LTR, right in RTL)
+    const wide = [];
+    for (const w of [1440, 1280, 1024]) {
+      await page.setViewportSize({ width: w, height: 900 }); await page.waitForTimeout(250);
+      const o = await page.evaluate(() => {
+        const vw = document.documentElement.clientWidth; const header = document.querySelector('header');
+        const out = [...(header ? header.querySelectorAll('*') : [])].filter((e) => { const b = e.getBoundingClientRect(); return b.width > 1 && b.height > 1 && (b.right > vw + 1 || b.left < -1); });
+        return { scroll: document.documentElement.scrollWidth - vw, out: out.slice(0, 3).map((e) => `${e.tagName}.${String(e.className).slice(0, 40)}`) };
+      });
+      if (o.scroll > 1 || o.out.length) wide.push(`${w}px: +${o.scroll}px ${o.out.join(' | ')}`);
+    }
+    rec(lang, route, 'header-fits-desktop', wide.length === 0, wide.join(' ; '));
     // reflow at 320 px (400 % zoom)
     await page.setViewportSize({ width: 320, height: 800 }); await page.waitForTimeout(400);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
