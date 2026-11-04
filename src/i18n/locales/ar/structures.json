@@ -130,7 +130,6 @@
  "suggest.step_identity": "الهوية",
  "suggest.step_contact": "التواصل",
  "suggest.step_missions": "المهام",
- "suggest.error_required": "أدخل على الأقل اسم الجهة ومدينتها.",
  "suggest.error_consent": "حدّد خانة الموافقة لإرسال الاقتراح.",
  "suggest.error_invalid": "بعض المعلومات غير صالحة: تحقق من الموقع الإلكتروني وعنوان البريد الإلكتروني.",
  "suggest.error_unavailable": "الخدمة غير متاحة مؤقتًا. يرجى إعادة المحاولة لاحقًا.",

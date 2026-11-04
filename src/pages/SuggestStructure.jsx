@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,11 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import i18n, { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { fieldA11y, looksLikeEmail, plainLabel, withoutError } from '@/lib/fieldErrors';
+
+// R42 (A5): the fields checked on each step, in reading order
+const STEP_FIELDS = [['name'], ['address', 'zipCode', 'city', 'email'], ['consent']];
 import { Trans } from 'react-i18next';
 
 /** French text inside any interface language: the server's own message */
@@ -70,9 +75,40 @@ export default function SuggestStructure() {
         consent: false,
     });
 
+    const [fieldErrors, setFieldErrors] = useState(/** @type {Record<string, string>} */ ({}));
+    const [attempt, setAttempt] = useState(0);
+    const summaryRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+    useEffect(() => { if (attempt) summaryRef.current?.focus(); }, [attempt]);
+
     const updateField = (/** @type {string} */ field, /** @type {string} */ value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        setFieldErrors((prev) => withoutError(prev, field));
         if (error) setError(null);
+    };
+
+    /** the errors of one step (R42, A5): one message per field, in the interface language @param {number} step */
+    const stepErrors = (step) => {
+        const required = (/** @type {string} */ label) => t('common:form.errors.required', '{{label}} : ce champ est obligatoire.', { label: plainLabel(label) });
+        /** @type {Record<string, string>} */
+        const errs = {};
+        if (step === 0 && !formData.name.trim()) errs.name = required(t('structures:suggest.name', 'Nom de la structure *'));
+        if (step === 1) {
+            if (!formData.address.trim()) errs.address = required(t('structures:suggest.address', 'Adresse postale complète *'));
+            if (!formData.zipCode.trim()) errs.zipCode = required(t('structures:suggest.zip', 'Code Postal *'));
+            if (!formData.city.trim()) errs.city = required(t('structures:suggest.city', 'Ville *'));
+            if (formData.email.trim() && !looksLikeEmail(formData.email)) errs.email = t('common:form.errors.email', '{{label}} : saisissez une adresse e-mail valide, par exemple nom@exemple.fr.', { label: plainLabel(t('structures:suggest.email', 'Email')) });
+        }
+        if (step === 2 && !formData.consent) errs.consent = t('structures:suggest.error_consent', 'Cochez la case d’accord pour envoyer la proposition.');
+        return errs;
+    };
+    /** check the steps up to `last`; on an error, show that step with its errors and move the focus to the summary @param {number} last */
+    const checkSteps = (last) => {
+        for (let step = 0; step <= last; step += 1) {
+            const errs = stepErrors(step);
+            if (Object.keys(errs).length) { setCurrentStep(step); setFieldErrors(errs); setAttempt((n) => n + 1); return false; }
+        }
+        setFieldErrors({});
+        return true;
     };
 
     const nextStep = () => {
@@ -85,6 +121,7 @@ export default function SuggestStructure() {
 
     const handleSubmit = async (/** @type {{ preventDefault: () => void; }} */ e) => {
         e.preventDefault();
+        if (!checkSteps(currentStep)) return;
         if (currentStep < STEPS.length - 1) {
             nextStep();
             return;
@@ -93,8 +130,7 @@ export default function SuggestStructure() {
         // owner usefulness pass (2026-10-25): the form sent « name » and no consent while the server (api/_utils/schemas.js suggestStructureSchema)
         // requires « structureName », « city » and « consent » — every proposal was refused and shown as an outage. The payload now matches the server;
         // the other details travel in « message »; the server's own message is shown.
-        if (!formData.name.trim() || !formData.city.trim()) { setError({ text: t('structures:suggest.error_required', 'Indiquez au moins le nom de la structure et sa ville.') }); return; }
-        if (!formData.consent) { setError({ text: t('structures:suggest.error_consent', 'Cochez la case d’accord pour envoyer la proposition.') }); return; }
+        if (!checkSteps(STEPS.length - 1)) return;   // R42: every step again (name, city, consent are what the server requires)
         const website = formData.website.trim() && !/^https?:\/\//i.test(formData.website.trim()) ? `https://${formData.website.trim()}` : formData.website.trim();
         const details = [['SIRET', formData.siret], ['Adresse', formData.address], ['Code postal', formData.zipCode], ['Téléphone', formData.phone],
             ['Missions', formData.description], ['Publics', formData.publics], ['Horaires', formData.openingHours]].filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k} : ${String(v).trim()}`).join('\n');
@@ -223,7 +259,8 @@ export default function SuggestStructure() {
                 {/* Form Card */}
                 <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden transition-all duration-500">
                     <div className="p-8 md:p-14">
-                        <form onSubmit={handleSubmit} className="space-y-10">
+                        <form onSubmit={handleSubmit} noValidate className="space-y-10">
+                            <ErrorSummary ref={summaryRef} errors={fieldErrors} order={STEP_FIELDS[currentStep]} testid="suggest-error-summary" />
                             {/* STEP 1 — Identité */}
                             {currentStep === 0 && (
                                 <div className="space-y-8">
@@ -248,8 +285,10 @@ export default function SuggestStructure() {
                                                 onChange={(e) => updateField('name', e.target.value)}
                                                 placeholder={t('structures:suggest.name_placeholder', 'ex: CCAS de Lyon')}
                                                 required
+                                                {...fieldA11y('name', fieldErrors)}
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
                                             />
+                                            <FieldError field="name" errors={fieldErrors} />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="type" className="text-slate-700 font-semibold">
@@ -306,8 +345,10 @@ export default function SuggestStructure() {
                                                 onChange={(e) => updateField('address', e.target.value)}
                                                 placeholder={t('structures:suggest.address_placeholder', 'Numéro et nom de rue')}
                                                 required
+                                                {...fieldA11y('address', fieldErrors)}
                                                 className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                             />
+                                            <FieldError field="address" errors={fieldErrors} />
                                         </div>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-2">
@@ -320,8 +361,10 @@ export default function SuggestStructure() {
                                                     onChange={(e) => updateField('zipCode', e.target.value)}
                                                     placeholder="75001"
                                                     required
+                                                    {...fieldA11y('zipCode', fieldErrors)}
                                                     className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                                 />
+                                                <FieldError field="zipCode" errors={fieldErrors} />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="city" className="text-slate-700 font-semibold">
@@ -333,8 +376,10 @@ export default function SuggestStructure() {
                                                     onChange={(e) => updateField('city', e.target.value)}
                                                     placeholder="Paris"
                                                     required
+                                                    {...fieldA11y('city', fieldErrors)}
                                                     className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                                 />
+                                                <FieldError field="city" errors={fieldErrors} />
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
@@ -349,8 +394,10 @@ export default function SuggestStructure() {
                                                     value={formData.email}
                                                     onChange={(e) => updateField('email', e.target.value)}
                                                     placeholder="contact@structure.fr"
+                                                    {...fieldA11y('email', fieldErrors)}
                                                     className="h-12 rounded-xl bg-slate-50 border-slate-200"
                                                 />
+                                                <FieldError field="email" errors={fieldErrors} />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="phone" className="text-slate-700 font-semibold flex items-center gap-2">
@@ -439,9 +486,10 @@ export default function SuggestStructure() {
                                             </div>
                                         </div>
                                         <label className="flex items-start gap-3 text-sm text-slate-800" data-testid="suggest-consent">
-                                            <input type="checkbox" className="mt-1 h-4 w-4" checked={formData.consent} onChange={(e) => setFormData((prev) => ({ ...prev, consent: e.target.checked }))} />
+                                            <input id="consent" type="checkbox" className="mt-1 h-4 w-4" required {...fieldA11y('consent', fieldErrors)} checked={formData.consent} onChange={(e) => { const checked = e.target.checked; setFormData((prev) => ({ ...prev, consent: checked })); setFieldErrors((prev) => withoutError(prev, 'consent')); }} />
                                             <span><Trans i18n={i18n} i18nKey="structures:suggest.consent" defaults="J’accepte qu’ADA conserve ces informations pour étudier la proposition (voir la <0>politique de confidentialité</0>)." components={[<Link key="privacy" className="text-indigo-700 underline" to="/politique-confidentialite" />]} /></span>
                                         </label>
+                                        <FieldError field="consent" errors={fieldErrors} />
                                     </div>
                                 </div>
                             )}

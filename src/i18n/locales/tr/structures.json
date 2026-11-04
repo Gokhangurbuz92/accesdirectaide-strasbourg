@@ -122,7 +122,6 @@
  "suggest.step_identity": "Kimlik",
  "suggest.step_contact": "İletişim",
  "suggest.step_missions": "Görevler",
- "suggest.error_required": "En azından kuruluşun adını ve şehrini belirtin.",
  "suggest.error_consent": "Öneriyi göndermek için onay kutusunu işaretleyin.",
  "suggest.error_invalid": "Bazı bilgiler geçerli değil: web sitesini ve e-posta adresini kontrol edin.",
  "suggest.error_unavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",

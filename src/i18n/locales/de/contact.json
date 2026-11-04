@@ -4,7 +4,6 @@
  "subject.suggestion": "Ich habe einen Vorschlag",
  "subject.partnership": "Partnerschaftsvorschlag",
  "subject.other": "Sonstiges",
- "error.required": "Bitte füllen Sie alle Pflichtfelder aus.",
  "error.rate_limited": "Von dieser Verbindung wurden zu viele Nachrichten gesendet. Versuchen Sie es in einer Stunde erneut oder schreiben Sie uns an contact@accesdirectaide.fr.",
  "error.not_delivered": "Ihre Nachricht konnte nicht übermittelt werden. Versuchen Sie es später erneut oder schreiben Sie uns direkt an contact@accesdirectaide.fr.",
  "error.network": "Ihre Nachricht konnte nicht übermittelt werden (keine Verbindung möglich). Versuchen Sie es später erneut oder schreiben Sie uns direkt an contact@accesdirectaide.fr.",

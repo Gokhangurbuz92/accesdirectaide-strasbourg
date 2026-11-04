@@ -9,5 +9,8 @@
  "unavailable.retry": "Erneut versuchen",
  "route_error.title": "Diese Seite konnte nicht geladen werden",
  "route_error.text": "Beim Laden ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu.",
- "route_error.reload": "Neu laden"
+ "route_error.reload": "Neu laden",
+ "form.errors.summary_title": "Das Formular wurde nicht gesendet. Bitte korrigieren Sie folgende Punkte:",
+ "form.errors.required": "{{label}}: Dieses Feld ist erforderlich.",
+ "form.errors.email": "{{label}}: Geben Sie eine gültige E-Mail-Adresse ein, zum Beispiel name@beispiel.de."
 }

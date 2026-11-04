@@ -9,5 +9,8 @@
  "unavailable.retry": "Спробувати ще раз",
  "route_error.title": "Не вдалося завантажити цю сторінку",
  "route_error.text": "Під час завантаження сталася помилка. Будь ласка, оновіть сторінку.",
- "route_error.reload": "Оновити"
+ "route_error.reload": "Оновити",
+ "form.errors.summary_title": "Форму не надіслано. Виправте, будь ласка, такі пункти:",
+ "form.errors.required": "{{label}}: це поле обов’язкове.",
+ "form.errors.email": "{{label}}: введіть дійсну адресу електронної пошти, наприклад name@example.com."
 }

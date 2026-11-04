@@ -4,7 +4,6 @@
  "subject.suggestion": "I have a suggestion",
  "subject.partnership": "Partnership proposal",
  "subject.other": "Other",
- "error.required": "Please fill in all the required fields.",
  "error.rate_limited": "Too many messages have been sent from this connection. Try again in an hour or write to us at contact@accesdirectaide.fr.",
  "error.not_delivered": "Your message could not be sent. Try again later or write to us directly at contact@accesdirectaide.fr.",
  "error.network": "Your message could not be sent (no connection). Try again later or write to us directly at contact@accesdirectaide.fr.",

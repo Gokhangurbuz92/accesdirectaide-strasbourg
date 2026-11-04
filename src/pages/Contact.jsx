@@ -6,12 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
+import { fieldA11y, looksLikeEmail, plainLabel, withoutError } from '@/lib/fieldErrors';
+
+const FIELD_ORDER = ['email', 'sujet', 'message'];
 
 /** the subjects of the form: the value is what the server receives (its allow-list), the label is shown in the interface language (R32) */
 const subjects = (/** @type {(k: string, d: string) => string} */ t) => [
@@ -37,15 +41,27 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+  // R42 (A5): one message per field in error, a summary that receives the focus on submit
+  const [fieldErrors, setFieldErrors] = useState(/** @type {Record<string, string>} */ ({}));
+  const [attempt, setAttempt] = useState(0);
+  const summaryRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  useEffect(() => { if (attempt) summaryRef.current?.focus(); }, [attempt]);
+  /** @param {'nom' | 'email' | 'sujet' | 'message' | 'page_concernee' | 'site_web'} field @param {string} value */
+  const update = (field, value) => { setForm((prev) => ({ ...prev, [field]: value })); setFieldErrors((prev) => withoutError(prev, field)); };
+  const required = (/** @type {string} */ label) => t('common:form.errors.required', '{{label}} : ce champ est obligatoire.', { label: plainLabel(label) });
 
   const handleSubmit = async (/** @type {{ preventDefault: () => void; }} */ e) => {
     e.preventDefault();
     setError('');
 
-    if (!form.email || !form.sujet || !form.message) {
-      setError(t('contact:error.required', 'Veuillez remplir tous les champs obligatoires.'));
-      return;
-    }
+    /** @type {Record<string, string>} */
+    const errs = {};
+    if (!form.email.trim()) errs.email = required(t('contact:form.email', 'Votre email'));
+    else if (!looksLikeEmail(form.email)) errs.email = t('common:form.errors.email', '{{label}} : saisissez une adresse e-mail valide, par exemple nom@exemple.fr.', { label: plainLabel(t('contact:form.email', 'Votre email')) });
+    if (!form.sujet) errs.sujet = required(t('contact:form.subject', 'Sujet de votre demande'));
+    if (!form.message.trim()) errs.message = required(t('contact:form.message', 'Votre message'));
+    setFieldErrors(errs);
+    if (Object.keys(errs).length) { setAttempt((n) => n + 1); return; }
 
     setIsSubmitting(true);
 
@@ -134,7 +150,8 @@ export default function Contact() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              <ErrorSummary ref={summaryRef} errors={fieldErrors} order={FIELD_ORDER} testid="contact-error-summary" />
 
               <div className="grid sm:grid-cols-2 gap-6">
                 {/* Nom */}
@@ -145,7 +162,7 @@ export default function Contact() {
                     type="text"
                     placeholder={t('contact:form.name_placeholder', 'Jean Dupont')}
                     value={form.nom}
-                    onChange={(e) => setForm(prev => ({ ...prev, nom: e.target.value }))}
+                    onChange={(e) => update('nom', e.target.value)}
                     className="bg-slate-50"
                   />
                 </div>
@@ -160,10 +177,13 @@ export default function Contact() {
                     type="email"
                     placeholder={t('contact:form.email_placeholder', 'jean@exemple.fr')}
                     value={form.email}
-                    onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) => update('email', e.target.value)}
                     required
+                    autoComplete="email"
+                    {...fieldA11y('email', fieldErrors)}
                     className="bg-slate-50"
                   />
+                  <FieldError field="email" errors={fieldErrors} />
                 </div>
               </div>
 
@@ -174,10 +194,10 @@ export default function Contact() {
                 </Label>
                 <Select
                   value={form.sujet}
-                  onValueChange={(value) => setForm(prev => ({ ...prev, sujet: value }))}
+                  onValueChange={(value) => update('sujet', value)}
                   required
                 >
-                  <SelectTrigger aria-label={t('contact:form.subject_label', 'Sujet du message')} className="bg-slate-50 relative z-20">
+                  <SelectTrigger id="sujet" aria-required="true" {...fieldA11y('sujet', fieldErrors)} aria-label={t('contact:form.subject_label', 'Sujet du message')} className="bg-slate-50 relative z-20">
                     <SelectValue placeholder={t('contact:form.subject_placeholder', 'Sélectionnez le sujet de votre message')} />
                   </SelectTrigger>
                   <SelectContent className="relative z-50">
@@ -188,6 +208,7 @@ export default function Contact() {
                     ))}
                   </SelectContent>
                 </Select>
+                <FieldError field="sujet" errors={fieldErrors} />
               </div>
 
               {/* Page concernée (si signalement) */}
@@ -199,7 +220,7 @@ export default function Contact() {
                     type="text"
                     placeholder={t('contact:form.page_placeholder', "Ex: https://accesdirectaide.fr/aides/apl ou 'Fiche APL'")}
                     value={form.page_concernee}
-                    onChange={(e) => setForm(prev => ({ ...prev, page_concernee: e.target.value }))}
+                    onChange={(e) => update('page_concernee', e.target.value)}
                     className="bg-white"
                   />
                 </div>
@@ -221,10 +242,12 @@ export default function Contact() {
                   placeholder={t('contact:form.message_placeholder', "Décrivez votre question, remarque ou l'erreur identifiée...")}
                   rows={6}
                   value={form.message}
-                  onChange={(e) => setForm(prev => ({ ...prev, message: e.target.value }))}
+                  onChange={(e) => update('message', e.target.value)}
                   required
+                  {...fieldA11y('message', fieldErrors)}
                   className="bg-slate-50 resize-y"
                 />
+                <FieldError field="message" errors={fieldErrors} />
               </div>
 
               {/* Erreur */}

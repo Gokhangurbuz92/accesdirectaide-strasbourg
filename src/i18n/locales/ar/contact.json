@@ -4,7 +4,6 @@
  "subject.suggestion": "لديّ اقتراح",
  "subject.partnership": "اقتراح شراكة",
  "subject.other": "أخرى",
- "error.required": "يرجى ملء جميع الحقول الإلزامية.",
  "error.rate_limited": "أُرسلت رسائل كثيرة جدًا من هذا الاتصال. أعد المحاولة بعد ساعة أو راسلنا على contact@accesdirectaide.fr.",
  "error.not_delivered": "تعذّر إرسال رسالتك. أعد المحاولة لاحقًا أو راسلنا مباشرةً على contact@accesdirectaide.fr.",
  "error.network": "تعذّر إرسال رسالتك (تعذّر الاتصال). أعد المحاولة لاحقًا أو راسلنا مباشرةً على contact@accesdirectaide.fr.",

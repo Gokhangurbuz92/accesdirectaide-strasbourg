@@ -126,7 +126,6 @@
  "suggest.step_identity": "Ідентифікація",
  "suggest.step_contact": "Контакти",
  "suggest.step_missions": "Завдання",
- "suggest.error_required": "Укажіть щонайменше назву організації та її місто.",
  "suggest.error_consent": "Позначте поле згоди, щоб надіслати пропозицію.",
  "suggest.error_invalid": "Деякі відомості недійсні: перевірте вебсайт і адресу електронної пошти.",
  "suggest.error_unavailable": "Сервіс тимчасово недоступний. Будь ласка, спробуйте пізніше.",

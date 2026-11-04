@@ -122,7 +122,6 @@
  "suggest.step_identity": "Identity",
  "suggest.step_contact": "Contact",
  "suggest.step_missions": "Missions",
- "suggest.error_required": "Give at least the name of the structure and its town.",
  "suggest.error_consent": "Tick the consent box to send the proposal.",
  "suggest.error_invalid": "Some information is not valid: check the website and the e-mail address.",
  "suggest.error_unavailable": "The service is temporarily unavailable. Please try again later.",
