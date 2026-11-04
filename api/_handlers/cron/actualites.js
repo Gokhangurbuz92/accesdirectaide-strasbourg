@@ -5,7 +5,7 @@ import { getCronAuth, getHeader, scheduledByVercel } from '../../_utils/cronAuth
 import { withLock } from '../../_utils/pipelineLock.js';
 import { db } from '../../../src/db/index.js';
 import { CronRun, Actualite } from '../../../src/db/schema.js';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { env } from '../../_utils/env.js';
 import Sentry from '../../_utils/sentry.js';
 import { kv } from '../../_utils/kv.js';

@@ -20,7 +20,6 @@ vi.mock('@vercel/kv', () => {
 import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 import health from '../../api/_handlers/health.js';
 import healthDeep from '../../api/_handlers/health-deep.js';
 

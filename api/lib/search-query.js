@@ -3,7 +3,7 @@ import { decide, visibleSql } from './publicVisibility.js';
 import { EXCLUSION_CLAUSE, withoutExclusions } from './finess-labels.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
-import { expandQueryWithSynonyms, normalizeSearchTerm } from './search-utils.js';
+import { expandQueryWithSynonyms } from './search-utils.js';
 import { buildProvenance } from '../_utils/provenance.js';
 
 // DTA S3B: `search_vector` is NOT created by any migration of this repository (drizzle/*.sql, src/db/schema*). PostgreSQL resolves a column at parse time, even inside a CASE branch,

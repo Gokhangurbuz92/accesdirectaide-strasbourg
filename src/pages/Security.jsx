@@ -4,7 +4,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
-import { ShieldCheck, Lock, Trash2, EyeOff, Database, UserCheck, ExternalLink } from 'lucide-react';
+import { Lock, Trash2, EyeOff, Database, UserCheck, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import i18n, { formatDate, useLanguage, useT } from '@/i18n';

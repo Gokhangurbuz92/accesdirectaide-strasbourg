@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import crypto from 'node:crypto';
-import { PURPOSE_REGISTRY, RETENTION_POLICY_REGISTRY, PRIVACY_DATA_DOMAIN_REGISTRY, DSR_EXECUTION_POLICY, GUARDIAN_CAPABILITY_POLICY, createPrivacyRightsService } from '../../api/_services/privacy.js';
+import { PURPOSE_REGISTRY, RETENTION_POLICY_REGISTRY, DSR_EXECUTION_POLICY, GUARDIAN_CAPABILITY_POLICY, createPrivacyRightsService } from '../../api/_services/privacy.js';
 
 describe('Gate 2B-3B: Minors Policy', () => {
     test('Minor public informational access ALLOWED does not require guardian', async () => {

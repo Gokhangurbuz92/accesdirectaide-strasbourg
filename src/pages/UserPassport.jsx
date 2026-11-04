@@ -6,25 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import SmsToggle from '@/components/SmsToggle';
-import { getCsrfHeaders } from '@/lib/csrf';
 import { OWNER_HEADER, resolveOwnerSecret, forgetOwnerSecret } from '@/lib/shareOwner';
 import CitizenSharingPanel from '@/components/sharing/CitizenSharingPanel';
 import { formatDate, useT } from '@/i18n';
 import {
-    ShieldCheck,
-    Calendar,
-    FileText,
-    Trash2,
-    Download,
-    Clock,
-    CheckCircle2,
-    AlertTriangle,
-    User,
-    Lock,
-    Video,
-    MapPin,
-    ArrowLeft,
-    File,
+  ShieldCheck,
+  Calendar,
+  Trash2,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  User,
+  Video,
+  MapPin,
+  ArrowLeft,
+  File,
 } from 'lucide-react';
 
 /**

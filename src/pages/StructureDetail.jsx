@@ -40,6 +40,7 @@ import { formatDate, useT } from '@/i18n';
 import { isFinessRecord } from '@/lib/structureActivities';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
+import { mapUrl } from '@/lib/structureMapUrl';
 
 // R32: the French labels (a badge is shown only for these types); typeLabel() gives them in the interface language — the names of public bodies and the
 // acronyms are not translated
@@ -62,13 +63,6 @@ const TYPE_LABELS = {
 
 /** the verification date as the page has always shown it (« 30/10/2026 »), in the interface language */
 const NUMERIC_DATE = { day: '2-digit', month: '2-digit', year: 'numeric' };
-
-/** the place on OpenStreetMap: its marker when the coordinates are known, otherwise a search of its address @param {any} st */
-export function mapUrl(st) {
-  const lat = Number(st?.latitude); const lon = Number(st?.longitude);
-  if (Number.isFinite(lat) && Number.isFinite(lon) && lat !== 0 && lon !== 0) return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=17/${lat}/${lon}`;
-  return `https://www.openstreetmap.org/search?query=${encodeURIComponent([st?.adresse, st?.code_postal, st?.ville].filter(Boolean).join(' '))}`;
-}
 
 export default function StructureDetail() {
   const { t } = useT('structures');

@@ -6,7 +6,6 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import crypto from 'crypto';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
 
 vi.stubEnv('KV_REST_API_URL', 'mock-url');
 vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
 import { ConflictRecord } from '../../../src/db/schema.js';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 const isMock = () => process.env.USE_MOCKS === 'true' || process.env.VITE_SKIP_DB === 'true';
 const conflictStore = new Map();

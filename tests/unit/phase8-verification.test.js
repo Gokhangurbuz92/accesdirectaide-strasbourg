@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
 
 describe('Phase 8 Verification', () => {
   // T098a: Verify SSRF protection exists

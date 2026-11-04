@@ -5,12 +5,11 @@ import { adminClient as client } from '@/api/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-    Shield,
-    Info,
-    CheckCircle,
-    XCircle,
-    Loader2,
-    AlertCircle,
+  Shield,
+  Info,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
 } from 'lucide-react';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';

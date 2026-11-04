@@ -3,7 +3,7 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
 import { ConversationLog } from '../../../src/db/schema.js';
-import { count, sql, eq, isNotNull, desc, avg } from 'drizzle-orm';
+import { count, sql, isNotNull, desc, avg } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
 
 /**

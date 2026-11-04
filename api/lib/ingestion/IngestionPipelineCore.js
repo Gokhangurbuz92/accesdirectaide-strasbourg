@@ -6,8 +6,8 @@ import { computeContentHash } from '../../_utils/contentHash.js';
 import { ensureSlugOrNull } from '../../_utils/slug.js';
 import { upsertSourceDocument } from '../../_utils/sourceDocument.js';
 import { db } from '../../../src/db/index.js';
-import { Aide, Demarche, Structure, SyncRun, ImportLog, SourceDocument } from '../../../src/db/schema.js';
-import { eq, and, or, count } from 'drizzle-orm';
+import { Aide, Demarche, Structure, SyncRun, ImportLog } from '../../../src/db/schema.js';
+import { eq, or, count } from 'drizzle-orm';
 import { computeQualityScore } from '../quality-score.js';
 import { applySourceUpdate } from '../../_services/source-updates.js';
 

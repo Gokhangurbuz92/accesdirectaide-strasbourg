@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Menu, X, Brain } from "lucide-react";
-import ADALogo from "@/components/Brand/ADALogo";
 import brand from "@/lib/brand-config";
 import { useFalc } from "@/contexts/FalcContext";
 import { AuthHeaderActions, AuthMobileActions } from "@/components/auth/AuthHeaderActions";

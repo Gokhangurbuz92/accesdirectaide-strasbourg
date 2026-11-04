@@ -17,8 +17,8 @@
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
 import { RdvConversation, RdvConversationMessage } from '../../../src/db/schema.js';
-import { eq, desc, count } from 'drizzle-orm';
-import { verifyAttachmentToken, encrypt, decrypt } from '../../lib/crypto.js';
+import { eq, count } from 'drizzle-orm';
+import { verifyAttachmentToken, encrypt } from '../../lib/crypto.js';
 import crypto from 'crypto';
 import { decryptMessageBody } from '../../_utils/rdv-messaging.js';
 

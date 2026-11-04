@@ -1,6 +1,6 @@
 import { db } from '../../src/db/index.js';
 import { AidCategory } from '../../src/db/schema.js';
-import { eq, asc, count } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
 import { verifyAdmin } from '../_utils/auth.js';
 /**
  * @param {import('../_utils/http-types').ApiRequest} req

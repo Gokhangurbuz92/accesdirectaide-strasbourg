@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import CategoryChip, { resolveCategory } from "@/components/ui/CategoryChip";
+import CategoryChip from "@/components/ui/CategoryChip";
 import { formatProvenanceDate, getFreshnessBadge, getProvenance } from '@/lib/provenance';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';

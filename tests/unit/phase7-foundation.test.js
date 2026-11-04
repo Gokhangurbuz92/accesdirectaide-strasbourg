@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import { SourceEnvelope, AgentDispatch, AgentResponse, createDispatch, createResponse } from '../../api/lib/agents/dispatch.js';
+import { SourceEnvelope, AgentDispatch, createDispatch, createResponse } from '../../api/lib/agents/dispatch.js';
 import { MAX_MODEL_CALLS_INTERACTIVE, MAX_TOOL_CALLS, MAX_AGENT_HOPS, GLOBAL_TIMEOUT, PER_PROVIDER_TIMEOUT, MAX_RETRIES, DETERMINISTIC_ROUTING_CONFIDENCE_THRESHOLD, DEFAULT_FRESHNESS_TTL_DAYS, BudgetTracker } from '../../api/lib/agents/budget.js';
 import { registerComponent, getComponent, listComponents, hasComponent, clearRegistry } from '../../api/lib/agents/registry.js';
-import { classifyIntent, classifyCategories, CATEGORIES, INTENTS } from '../../api/lib/services/classification.js';
-import { isAllowedSource, validateUrlSafety, createSourceEnvelope, validateCitations, detectSourceConflicts, ALLOWED_DOMAINS } from '../../api/lib/services/official-sources.js';
+import { classifyIntent, classifyCategories } from '../../api/lib/services/classification.js';
+import { isAllowedSource, validateUrlSafety, createSourceEnvelope, validateCitations, detectSourceConflicts } from '../../api/lib/services/official-sources.js';
 import { evaluateFreshness, batchEvaluateFreshness, getItemsNeedingReview } from '../../api/lib/services/freshness.js';
 
 describe('Phase 7 Foundation Infrastructure Tests', () => {

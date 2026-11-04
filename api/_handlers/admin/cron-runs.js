@@ -3,7 +3,7 @@ import { db } from '../../../src/db/index.js';
 import { CronRun } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
-import { parsePaginationParams, buildPaginatedResponse } from '../../lib/geography/CursorPagination.js';
+import { parsePaginationParams } from '../../lib/geography/CursorPagination.js';
 
 /**
  * @param {string | undefined} url

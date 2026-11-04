@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { resolveQPVFromLiveAPI, resolveUserQPV } from '../../api/lib/geography/QPVAdapter.js';
+import { resolveUserQPV } from '../../api/lib/geography/QPVAdapter.js';
 import logger from '../../api/_utils/logger.js';
 
 vi.mock('../../api/_utils/logger.js', () => ({

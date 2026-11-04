@@ -2,8 +2,8 @@
 import logger from '../../_utils/logger.js';
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
-import { ProAppointment, ProRdvService, RdvConversation, SharedDossierGrant, ProUser, RdvNotificationLog, ConversationLog } from '../../../src/db/schema.js';
-import { eq, and, gte, ne, not, inArray, count, desc, asc, sql } from 'drizzle-orm';
+import { ProAppointment, ProRdvService, RdvConversation, SharedDossierGrant, ProUser } from '../../../src/db/schema.js';
+import { eq, and, gte, not, inArray, count, sql } from 'drizzle-orm';
 import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../_utils/auth.js';
 import { reportCsv } from '../../_services/org-stats.js';
 import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment

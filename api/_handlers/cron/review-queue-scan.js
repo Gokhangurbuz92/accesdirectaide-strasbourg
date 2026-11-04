@@ -1,6 +1,6 @@
 import logger from '../../_utils/logger.js';
 import { randomUUID } from 'crypto';
-import { getCronAuth, getHeader } from '../../_utils/cronAuth.js';
+import { getCronAuth } from '../../_utils/cronAuth.js';
 import { env } from '../../_utils/env.js';
 import { db } from '../../../src/db/index.js';
 import { scanDataQuality } from '../../_utils/dataQuality.js';

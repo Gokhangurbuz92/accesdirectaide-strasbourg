@@ -1,8 +1,8 @@
 // @ts-nocheck
 import logger from '../../_utils/logger.js';
 import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
-import { getCronAuth, getHeader } from '../../_utils/cronAuth.js';
-import { env } from '../../_utils/env.js';
+import { getCronAuth } from '../../_utils/cronAuth.js';
+import '../../_utils/env.js';
 import { kv } from '../../_utils/kv.js';
 import { db } from '../../../src/db/index.js';
 import { sql } from 'drizzle-orm';

@@ -9,12 +9,7 @@ import { verifyAdmin } from '../../_utils/auth.js';
 import { adminGate } from '../../_utils/admin-gate.js';
 import { reviewQueuePatchSchema, reviewQueueBulkPatchSchema } from '../../../src/db/drizzle-schemas.js';
 import { suggestionsAllowed } from '../../_services/repair-suggestions.js';
-import {
-  normalizeEntityType,
-  normalizeReviewStatus,
-  parsePatchStatus,
-  scanDataQuality,
-} from '../../_utils/dataQuality.js';
+import { normalizeEntityType, normalizeReviewStatus, scanDataQuality } from '../../_utils/dataQuality.js';
 
 /**
  * PKG-6 / D22: every human decision on the queue leaves an AuditLog row with the NAMED administrator (MFA session, checked by adminGate before any write),

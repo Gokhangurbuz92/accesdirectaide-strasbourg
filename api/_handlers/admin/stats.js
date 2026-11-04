@@ -2,7 +2,7 @@
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
-import { Aide, Demarche, AdminUser, CitizenUser, CronRun, ImportLog, Structure } from '../../../src/db/schema.js';
+import { Aide, Demarche, AdminUser, CitizenUser, CronRun, Structure } from '../../../src/db/schema.js';
 import { count, sql } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
 import { getAllFlags } from '@ada/shared/features';

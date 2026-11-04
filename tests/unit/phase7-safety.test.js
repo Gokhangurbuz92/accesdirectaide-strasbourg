@@ -3,12 +3,12 @@ import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 import { DOCUMENT_SYSTEM_PROMPT, DOCUMENT_DEFINITION } from '../../api/lib/agents/document.js';
-import { ORIENTATION_SYSTEM_PROMPT, ORIENTATION_DEFINITION } from '../../api/lib/agents/orientation.js';
+import { ORIENTATION_DEFINITION } from '../../api/lib/agents/orientation.js';
 import { ELIGIBILITY_SYSTEM_PROMPT, ELIGIBILITY_DEFINITION, ELIGIBILITY_RESPONSE_SCHEMA } from '../../api/lib/agents/eligibility.js';
 import { PROCEDURE_DEFINITION } from '../../api/lib/agents/procedure.js';
 import { FALC_DEFINITION } from '../../api/lib/agents/falc.js';
 import { validateCitations, detectSourceConflicts } from '../../api/lib/services/official-sources.js';
-import { AgentResponse, createResponse, createDispatch } from '../../api/lib/agents/dispatch.js';
+import { AgentResponse, createDispatch } from '../../api/lib/agents/dispatch.js';
 import { BaseSpecialist } from '../../api/lib/agents/base-specialist.js';
 
 describe('Phase 7: Safety and Security Tests', () => {

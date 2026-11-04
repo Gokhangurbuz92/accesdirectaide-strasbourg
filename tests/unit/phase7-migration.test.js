@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
 import { Classifier, CATEGORIES } from '../../api/lib/agents/classifier-bridge.js';
-import { ResourceCurator, ALLOWED_DOMAINS } from '../../api/lib/agents/resource-curator-bridge.js';
+import { ResourceCurator } from '../../api/lib/agents/resource-curator-bridge.js';
 import { FalcWriter } from '../../api/lib/agents/falc-bridge.js';
-import { Alerter } from '../../api/lib/agents/alerter.js';
+import '../../api/lib/agents/alerter.js';
 
 describe('Phase 7 Migration Regression Tests', () => {
   describe('ClassifierBridge', () => {

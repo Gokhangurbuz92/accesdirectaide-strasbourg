@@ -4,8 +4,8 @@ import fs from 'fs';
 import path from 'path';
 
 import { db } from '../../../src/db/index.js';
-import { Actualite, RssSource, SourceDocument } from '../../../src/db/schema.js';
-import { eq, sql } from 'drizzle-orm';
+import { Actualite, RssSource } from '../../../src/db/schema.js';
+import { eq } from 'drizzle-orm';
 import { env } from '../../_utils/env.js';
 import { computeContentHash, computeRawContentHash } from '../../_utils/contentHash.js';
 import { ensureSlugOrNull } from '../../_utils/slug.js';

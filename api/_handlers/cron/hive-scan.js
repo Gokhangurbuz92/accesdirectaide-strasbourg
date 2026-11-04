@@ -1,7 +1,7 @@
 // @ts-nocheck
 import logger from '../../_utils/logger.js';
 import crypto, { randomUUID } from 'crypto';
-import { getCronAuth, getHeader, scheduledByVercel } from '../../_utils/cronAuth.js';
+import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
 import { env } from '../../_utils/env.js';
 import { createGeminiBreaker } from '../../lib/gemini-circuit-breaker.js';
 import { db } from '../../../src/db/index.js';

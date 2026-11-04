@@ -1,4 +1,4 @@
-import { z } from "zod";
+import "zod";
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { searchDemarches, searchStructures } from '../../api/lib/search-query.js';
 import { db } from '../../src/db/index.js';

@@ -32,7 +32,7 @@ describe('structure and invariants', () => {
   it('N11: no external URL, e-mail, phone number or street address; links are internal ADA routes or in-page anchors only', () => {
     const text = ALL(plan);
     expect(text).not.toMatch(/https?:|www\.|@|\b0\d([ .]?\d{2}){4}\b|\b\d{2}([ .]\d{2}){4}\b|\b\d{1,3},? (rue|avenue|boulevard|place|chemin)\b/i);
-    for (const s of plan.steps) for (const l of (s.links || [])) expect(l.to).toMatch(/^(\/[a-z0-9\-/?=&]*|#[a-z0-9\-]+)$/i);
+    for (const s of plan.steps) for (const l of (s.links || [])) expect(l.to).toMatch(/^(\/[a-z0-9\-/?=&]*|#[a-z0-9-]+)$/i);
   });
   it('no amount, eligibility, refusal, inapplicability or official-verification claim anywhere; "ni un refus"-style negations only', () => {
     const text = ALL(plan);

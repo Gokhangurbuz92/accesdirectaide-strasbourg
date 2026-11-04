@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { db } from '../../../../src/db/index.js';
 import { Aide, Demarche, Actualite } from '../../../../src/db/schema.js';
-import { eq } from 'drizzle-orm';
 import logger from '../../../_utils/logger.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils/rateLimit.js';
 import { decide } from '../../../lib/publicVisibility.js';

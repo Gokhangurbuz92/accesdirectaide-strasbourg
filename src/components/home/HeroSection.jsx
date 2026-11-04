@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import HeroBackground from '@/components/home/HeroBackground';
 
 export default function HeroSection() {
   const navigate = useNavigate();

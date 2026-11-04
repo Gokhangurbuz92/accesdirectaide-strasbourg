@@ -5,14 +5,13 @@ import { adminClient as client } from '@/api/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-    Globe,
-    Database,
-    Map,
-    Users,
-    TrendingUp,
-    Loader2,
-    AlertCircle,
-    ChevronRight,
+  Globe,
+  Database,
+  Map,
+  Users,
+  TrendingUp,
+  AlertCircle,
+  ChevronRight,
 } from 'lucide-react';
 import { useT } from '@/i18n';
 

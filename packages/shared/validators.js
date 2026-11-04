@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { AID_CATEGORIES, CONTENT_TYPES, REPORT_REASONS, TERRITORY_SCOPES } from './constants.js';
+import { CONTENT_TYPES, REPORT_REASONS } from './constants.js';
 
 // ─────────────────────────────────────────────────
 // Utilitaires

@@ -4,11 +4,30 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Trans } from 'react-i18next';
 import {
-  Search, MapPin, Filter, ChevronRight, ChevronDown,
-  Phone, Calendar, Globe, ArrowRight,
-  FileCheck, Home, Briefcase, Car, Users, Accessibility,
-  Brain, ShieldAlert, Wallet, Siren, HeartHandshake, Monitor,
-  Building2, Video, Clock, Sparkles, X,
+  Search,
+  MapPin,
+  Filter,
+  ChevronRight,
+  Phone,
+  Calendar,
+  ArrowRight,
+  FileCheck,
+  Home,
+  Briefcase,
+  Car,
+  Users,
+  Accessibility,
+  Brain,
+  ShieldAlert,
+  Wallet,
+  Siren,
+  HeartHandshake,
+  Monitor,
+  Building2,
+  Video,
+  Clock,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -4,9 +4,7 @@ import {
   FileText,
   Clock,
   CheckCircle2,
-  Calendar,
-  ArrowRight,
-  Brain
+  Brain,
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,10 +39,6 @@ export default function DemarcheCard({ demarche, index = 0 }) {
     : freshness.state === 'to_review' ? t('demarches:card.freshness.to_review', 'À actualiser')
       : freshness.state === 'at_risk' ? t('demarches:card.freshness.at_risk', 'À risque')
         : freshness.label;
-  // No "À vérifier" — show source or verified date only
-  const verificationLabel = verifiedAt
-    ? t('demarches:verified_on', 'Vérifié le {{date}}', { date: verifiedAt })
-    : (sourceHost ? t('demarches:card.source', 'Source : {{host}}', { host: sourceHost }) : null);
   const targetUrl = demarche.slug ? `/demarches/${demarche.slug}` : `/demarches/view?id=${demarche.id}`;
   const title = tr.value('titre');
   // the summary: the easy-to-read one in FALC mode, otherwise the short description (the easy-to-read one when there is none)
