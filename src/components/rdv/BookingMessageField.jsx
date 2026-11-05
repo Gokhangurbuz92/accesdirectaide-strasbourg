@@ -1,7 +1,8 @@
 // R42 (owner decision R42-A06) — the optional short message of a request: plain text, at most 500 characters.
 // R43 (dossier RGPD § 2.1, E6 — proposal to validate): a label that does not invite a health description, and an explicit, never pre-ticked consent box shown
 // only while a message is written; the server refuses a message without it (MESSAGE_CONSENT_REQUIRED). The server validates again (no markup) and keeps
-// the message sealed, visible to the structure's authorised staff only; the person can withdraw it from « Mes rendez-vous » before the appointment.
+// the message sealed, visible to the structure's authorised staff only. R45 (ENG-LR-1, D3 v2 [PROPOSITION]): the person can withdraw it from « Mes rendez-vous »
+// at any time, before or after the appointment (art. 7(3)); the box stays optional, unticked and separate.
 import { forwardRef, useId } from 'react';
 import { useT } from '@/i18n';
 
@@ -34,7 +35,7 @@ const BookingMessageField = forwardRef(/** @param {Props} props @param {import('
               aria-invalid={consentError ? 'true' : undefined} aria-describedby={consentError ? `${id}-consent-error` : undefined}
               data-testid="booking-message-consent-checkbox" onChange={(e) => onConsentChange(e.target.checked)} />
             <label htmlFor={`${id}-consent`} className="text-sm text-slate-900">
-              {t('booking:message.consent_r43', 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux le retirer avant le rendez-vous.')}
+              {t('booking:message.consent_r45', 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux retirer mon accord à tout moment depuis mon espace : le message est alors effacé de la plateforme.')}
             </label>
           </div>
           {consentError ? (

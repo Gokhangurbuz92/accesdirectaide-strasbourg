@@ -149,14 +149,14 @@ describe('optional message consent (dossier RGPD § 2.1, E6)', () => {
     rerender(h(BookingMessageField, { value: '  ', onChange: () => {} }));
     expect(screen.queryByTestId('booking-message-consent')).toBeNull();
     rerender(h(BookingMessageField, { value: 'Bonjour', onChange: () => {}, consent: false, consentError: true }));
-    const box = screen.getByRole('checkbox', { name: 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux le retirer avant le rendez-vous.' });
+    const box = screen.getByRole('checkbox', { name: 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux retirer mon accord à tout moment depuis mon espace : le message est alors effacé de la plateforme.' })   // R45: D3 v2 wording (« à tout moment »);
     expect(box).not.toBeChecked();
     expect(box).toHaveAttribute('aria-invalid', 'true');
     expect(box.getAttribute('aria-describedby')).toBe(screen.getByTestId('booking-message-consent-error').id);
     await axeOk();
   });
-  for (const [code, consent] of [['en', 'I agree that this message is passed on to the team of the chosen organisation. It may contain information about my situation. I can withdraw it before the appointment.'],
-    ['ar', 'أوافق على نقل هذه الرسالة إلى فريق الجهة المختارة. قد تحتوي على معلومات عن وضعي. يمكنني سحبها قبل الموعد.']]) {
+  for (const [code, consent] of [['en', 'I agree that this message is passed on to the team of the chosen organisation. It may contain information about my situation. I can withdraw my agreement at any time from my account: the message is then deleted from the platform.'],
+    ['ar', 'أوافق على نقل هذه الرسالة إلى فريق الجهة المختارة. قد تحتوي على معلومات عن وضعي. يمكنني سحب موافقتي في أي وقت من حسابي: تُحذف الرسالة عندئذٍ من المنصة.']]) {
     it(`${code}: the consent and its error are translated (no French left); axe rules pass`, async () => {
       await lang(code);
       render(h('main', null, h(BookingMessageField, { value: 'x', onChange: () => {}, consentError: true })));

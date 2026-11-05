@@ -46,6 +46,7 @@ export const CATALOGUE = Object.freeze({
   rdv_reminder_j1: ev('appointments', 'Rappel de rendez-vous', false),
   rdv_visio_approved: ev('appointments', 'Visio validée'),
   rdv_visio_revoked: ev('appointments', 'Visio retirée'),
+  rdv_message_withdrawn: ev('appointments', 'Message retiré par la personne', false),   // R45 (ENG-LR-1): in-app only, never the content
   team_role_change: ev('team', 'Votre rôle a changé'),
   structure_proposal_decided: ev('structure', 'Proposition de modification traitée'),
   NEW_AIDE: ev('content', 'Nouvelle aide dans la veille', false),

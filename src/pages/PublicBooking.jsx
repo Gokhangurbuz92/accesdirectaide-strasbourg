@@ -29,6 +29,8 @@ import ProfessionalChoice from '@/components/rdv/ProfessionalChoice.jsx';
 import { SuitabilityQuestions, WrongStructure } from '@/components/rdv/SuitabilityCheck.jsx';
 import AgeDeclarationPrompt from '@/components/rdv/AgeDeclarationPrompt.jsx';
 import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
+// R45 (ENG-LR-2): the separate art. 9 consent (gate open only) and the neutral « contact the structure » notice
+import SensitiveConsentField, { ContactStructureNotice } from '@/components/rdv/SensitiveConsentField.jsx';
 // R44: the modality is chosen before the slots, with the recorded address and the true video state; unavailable modalities are said as such
 import ModalityChoice, { LocationNote, UnavailableModalities, VideoNote } from '@/components/rdv/ModalityChoice.jsx';
 import { acceptedMode, bookingContextQuery, bookingLocation, bookingRefusal, modalityLabels, modalityOptions, serviceModes } from '@/lib/bookingModalities';
@@ -99,6 +101,11 @@ export default function PublicBooking() {
     const [messageConsent, setMessageConsent] = useState(false);
     const [messageConsentError, setMessageConsentError] = useState(false);
     const messageConsentRef = useRef(null);
+    // R45 (ENG-LR-2): a service not bookable online (the person contacts the structure), and the explicit art. 9 consent of a sensitive service (gate open only)
+    const [contactOnly, setContactOnly] = useState(null);
+    const [sensitiveConsent, setSensitiveConsent] = useState(false);
+    const [sensitiveConsentError, setSensitiveConsentError] = useState(false);
+    const sensitiveConsentRef = useRef(null);
     const [confirmationMode, setConfirmationMode] = useState('DIRECT');
     const [ageStep, setAgeStep] = useState('');
     const [manageCapability, setManageCapability] = useState(null);
@@ -180,10 +187,12 @@ export default function PublicBooking() {
         // R44 (A5): every missing agreement is said on its field; one error → its field takes the focus (R43 contract), two → the first one does
         const videoMissing = bookingMode === 'VIDEO' && !videoConsent;
         const messageMissing = Boolean(message.trim()) && !messageConsent;
+        const sensitiveMissing = selectedService.explicitConsent === true && !sensitiveConsent;
         setVideoConsentError(videoMissing);
         setMessageConsentError(messageMissing);
-        if (videoMissing || messageMissing) {
-            (videoMissing ? videoConsentRef : messageConsentRef).current?.focus();
+        setSensitiveConsentError(sensitiveMissing);
+        if (videoMissing || messageMissing || sensitiveMissing) {
+            (sensitiveMissing ? sensitiveConsentRef : videoMissing ? videoConsentRef : messageConsentRef).current?.focus();
             return;
         }
         setLoading(true);
@@ -208,6 +217,7 @@ export default function PublicBooking() {
                     ...(bookingMode === 'VIDEO' ? { videoConsent } : {}),
                     ...(teamChoice ? { professional } : {}),
                     ...(message.trim() ? { message, messageConsent: true } : {}),
+                    ...(selectedService.explicitConsent === true ? { sensitiveConsent: sensitiveConsent === true } : {}),
                     idempotencyKey,
                 }),
             });
@@ -217,7 +227,7 @@ export default function PublicBooking() {
                 const refusal = bookingRefusal(res.status, errData);
                 // R44: the session ended meanwhile — sign in again and come back to the same service and modality (validated same-origin path)
                 if (refusal === 'AUTH') {
-                    window.location.assign(`/auth/login?next=${encodeURIComponent(`/rdv/${encodeURIComponent(structureSlug)}/booking${bookingContextQuery(window.location.search, { serviceId: selectedService.id, mode: bookingMode })}`)}`);
+                    window.location.assign(`/auth/login?next=${encodeURIComponent(`/rdv/${encodeURIComponent(structureSlug)}/booking${bookingContextQuery(window.location.search, selectedService.protectedPrivacy === true ? { mode: bookingMode } : { serviceId: selectedService.id, mode: bookingMode })}`)}`);
                     return;
                 }
                 if (refusal === 'EMAIL_NOT_VERIFIED') throw new Error(t('booking:rdv.veuillez_verifier_votre_email_avant', "Veuillez verifier votre email avant de confirmer un rendez-vous."));
@@ -227,6 +237,8 @@ export default function PublicBooking() {
                 if (refusal === 'PROFESSIONAL') { setStep(1.5); throw new Error(errData.message); }
                 if (refusal === 'MESSAGE_CONSENT') { setMessageConsentError(true); setMessageConsent(false); messageConsentRef.current?.focus(); return; }
                 if (refusal === 'VIDEO_CONSENT') { setVideoConsentError(true); videoConsentRef.current?.focus(); return; }
+                if (refusal === 'SENSITIVE_CONSENT') { setSensitiveConsentError(true); setSensitiveConsent(false); sensitiveConsentRef.current?.focus(); return; }
+                if (refusal === 'CONTACT_STRUCTURE') { setContactOnly(selectedService.id); setSelectedSlot(null); setSelectedService(null); setStep(1); return; }
                 if (refusal === 'MODE') {
                     // the modality is no longer offered for this service (e.g. the video was switched off): choose again, nothing was booked
                     setSelectedSlot(null); setBookingMode(''); setStep(1.75);
@@ -245,7 +257,8 @@ export default function PublicBooking() {
             }
 
             const data = await res.json();
-            track('booking_confirm_success', { structure: structureSlug, mode: bookingMode });
+            // R45: no structure in analytics for a service treated as sensitive (unknown included)
+            track('booking_confirm_success', selectedService.protectedPrivacy === true ? { mode: bookingMode } : { structure: structureSlug, mode: bookingMode });
             setConfirmation(data);
             setStep(4);
         } catch (err) {
@@ -253,7 +266,7 @@ export default function PublicBooking() {
         } finally {
             setLoading(false);
         }
-    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message, messageConsent]);
+    }, [selectedService, selectedSlot, bookingMode, videoConsent, structureSlug, fetchSlots, t, teamChoice, professional, message, messageConsent, sensitiveConsent]);
 
     // R44: after the service (and the professional): the modality — chosen by the person when the service offers two, else the only one — then the slots
     const goToModality = (/** @type {any} */ service, /** @type {string} */ who) => {
@@ -297,7 +310,11 @@ export default function PublicBooking() {
 
     // Handle service selection
     const handleSelectService = async (service) => {
-        track('booking_select_service', { structure: structureSlug });
+        // R45 (ENG-LR-2): not bookable online → the neutral notice, nothing tracked, nothing sent
+        if (service.onlineBooking === 'CONTACT_STRUCTURE') { setContactOnly(service.id); return; }
+        setContactOnly(null);
+        setSensitiveConsent(false); setSensitiveConsentError(false);
+        track('booking_select_service', service.protectedPrivacy === true ? {} : { structure: structureSlug });
         setSelectedService(service);
         if (teamChoice) {
             // R42: the professional choice of this service (signed-in only); « same person » preselects the previous professional when this account has one
@@ -514,11 +531,13 @@ export default function PublicBooking() {
                                                 {' · '}
                                                 <span data-testid={`booking-service-modes-${service.id}`}>{serviceModes(service).map((m) => MODALITY[m]).join(' / ')}</span>
                                             </p>
+                                            {service.onlineBooking === 'CONTACT_STRUCTURE' ? <p className="text-xs text-slate-700" data-testid={`booking-service-contact-${service.id}`}>{t('booking:sensitive.contact_badge_r45', 'Rendez-vous à prendre directement auprès de la structure')}</p> : null}
                                         </div>
                                     </div>
                                     <ChevronRight className="text-slate-600 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                                 </button>
                             ))}
+                            {contactOnly ? <ContactStructureNotice /> : null}
                             <button type="button" data-testid="booking-not-listed" onClick={() => setWrongStructure(true)}
                                 className="min-h-11 text-sm font-medium text-indigo-800 underline">
                                 {t('booking:suitability.not_listed', 'Mon besoin ne figure pas dans cette liste')}
@@ -738,6 +757,10 @@ export default function PublicBooking() {
                             </p>
                         ) : null}
                         {ageStep === 'declare' ? <div className="mb-6"><AgeDeclarationPrompt onDeclared={() => { setAgeStep(''); confirmBooking(); }} /></div> : null}
+                        {selectedService?.explicitConsent === true ? (
+                            <div className="mb-6"><SensitiveConsentField ref={sensitiveConsentRef} checked={sensitiveConsent} disabled={loading}
+                                onChange={(v) => { setSensitiveConsent(v); if (v) setSensitiveConsentError(false); }} error={sensitiveConsentError} /></div>
+                        ) : null}
                         {bookingMode === 'VIDEO' ? (
                             <div className="mb-6 space-y-1">
                                 <label className="flex items-start gap-2 text-sm text-slate-800" data-testid="booking-video-consent">

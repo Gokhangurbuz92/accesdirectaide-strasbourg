@@ -16,10 +16,11 @@
 export const BOOKING_MESSAGE_MAX_LENGTH = 500;
 export const BOOKING_MESSAGE_LABEL = 'Message à la structure (facultatif)';
 export const BOOKING_MESSAGE_NOTICE = 'Inutile de décrire votre santé, un handicap ou un diagnostic : la structure vous posera les questions utiles pendant le rendez-vous. N’envoyez pas de document médical.';
-export const BOOKING_MESSAGE_CONSENT = 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux le retirer avant le rendez-vous.';
+// R45 (ENG-LR-1, D3 v2 [PROPOSITION — À VALIDER PAR LE RESPONSABLE DE TRAITEMENT]): withdrawal at any time (art. 7(3)), before or after the appointment
+export const BOOKING_MESSAGE_CONSENT = 'J’accepte que ce message soit transmis à l’équipe de la structure choisie. Il peut contenir des informations sur ma situation. Je peux retirer mon accord à tout moment depuis mon espace : le message est alors effacé de la plateforme.';
 export const BOOKING_MESSAGE_CONSENT_PURPOSE = 'BOOKING_MESSAGE_TRANSMISSION';
 /** the version of the consent wording (changes when the wording changes) */
-export const BOOKING_MESSAGE_CONSENT_VERSION = 'r43-e6-2026-11-04';
+export const BOOKING_MESSAGE_CONSENT_VERSION = 'r45-d3v2-2026-11-05';   // was r43-e6-2026-11-04 (« avant le rendez-vous »)
 /** only the boolean true is a consent @param {unknown} v */
 export const messageConsentGiven = (v) => v === true;
 export const MESSAGE_CONSENT_REFUSAL = Object.freeze({ status: 400, body: Object.freeze({ error: 'MESSAGE_CONSENT_REQUIRED', code: 'MESSAGE_CONSENT_REQUIRED',

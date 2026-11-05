@@ -70,6 +70,9 @@ export function bookingRefusal(status, body) {
   if (code === 'MESSAGE_CONSENT_REQUIRED') return 'MESSAGE_CONSENT';
   if (code === 'VIDEO_CONSENT_REQUIRED') return 'VIDEO_CONSENT';
   if (code === 'MODE_UNAVAILABLE') return 'MODE';
+  // R45 (ENG-LR-2): the service is not bookable online (art. 9 gate closed / not reviewed): the person is pointed to the structure; the separate art. 9 box
+  if (code === 'SENSITIVE_BOOKING_NOT_OPEN' || code === 'SERVICE_SENSITIVITY_UNREVIEWED') return 'CONTACT_STRUCTURE';
+  if (code === 'SENSITIVE_CONSENT_REQUIRED') return 'SENSITIVE_CONSENT';
   if (status === 409) return 'SLOT_TAKEN';
   return 'OTHER';
 }

@@ -6,7 +6,7 @@
  * Covers: every AppointmentNotice kind — recorded where the database's CHECK accepts it, skipped and counted (never mis-labelled) where it does not, the
  * booking itself unaffected; the four booking kinds through the real flows (Mode A, Mode B request / accept / refuse); an unanswered request past its start
  * written `expired` (person and structure); the explicit consent of the optional message (refused without it, ConsentLog row, withdrawal before the
- * appointment, staff no longer see it); a decision on a request the person moved meanwhile (409); concurrency of two decisions and of two Mode B requests;
+ * appointment and after its start (R45), staff no longer see it); a decision on a request the person moved meanwhile (409); concurrency of two decisions and of two Mode B requests;
  * Europe/Paris autumn DST (2027-10-31) and the Paris-day lock key at both changes; a publicly registered citizen never obtains a professional, structure or
  * administrator role through sign-up, booking or the age statement.
  */
@@ -190,7 +190,7 @@ describe.skipIf(!hasDatabase)('R43-BOOK lifecycle, notice ledger and security (r
     await db.execute(sql`DELETE FROM "ProAppointment" WHERE id IN (${past}, ${pastB}, ${future}, ${anon})`);
   });
 
-  it('the optional message needs the explicit consent; the consent is in ConsentLog; the person withdraws it before the appointment and the staff no longer see it', async () => {
+  it('the optional message needs the explicit consent; the consent is in ConsentLog; the person withdraws it (before and, since R45, after the start) and the staff no longer see it', async () => {
     const slots = await slotsOf(A, C[1], { from: day(3), to: day(9) });
     const MSG = `Message fictif R43 ${TS}`;
     const refused = await book(A, C[1], slots[3].startAt, { message: MSG });
@@ -221,11 +221,13 @@ describe.skipIf(!hasDatabase)('R43-BOOK lifecycle, notice ledger and security (r
     expect([after.length, after[1].decision, after[1].withdrawn_at !== null]).toEqual([2, false, true]);
     expect((await call('POST', `appointments/${ok.body.id}/message/withdraw`, { as: C[1], body: {} })).body.code).toBe('NO_MESSAGE');
     expect((await call('GET', `appointments/${ok.body.id}`, { as: C[1] })).body.hasMessage).toBe(false);
-    // after the start: no longer withdrawable here
+    // R45 (ENG-LR-1, art. 7(3)): after the start the message is STILL withdrawable (R43 pinned MESSAGE_WITHDRAWAL_TOO_LATE here — that refusal was the defect)
     const late = `r43b-late-${TS}`;
     await db.execute(sql`INSERT INTO "ProAppointment" (id, "structureId", "serviceId", "startAt", "endAt", status, "beneficiaryName", "citizenUserId", "idempotencyKey", notes, "updatedAt")
       VALUES (${late}, ${A.id}, ${A.svc}, NOW() - interval '1 hour', NOW() - interval '30 minutes', 'confirmed', 'Particulier', ${C[1].id}, ${'idem-' + late}, 'v1:sealed', NOW())`);
-    expect((await call('POST', `appointments/${late}/message/withdraw`, { as: C[1], body: {} })).body.code).toBe('MESSAGE_WITHDRAWAL_TOO_LATE');
+    const lateW = await call('POST', `appointments/${late}/message/withdraw`, { as: C[1], body: {} });
+    expect([lateW.statusCode, lateW.body.hasMessage], show(lateW)).toEqual([200, false]);
+    expect((await db.execute(sql`SELECT notes FROM "ProAppointment" WHERE id = ${late}`)).rows[0].notes).toBeNull();
     await db.execute(sql`DELETE FROM "ProAppointment" WHERE id = ${late}`);
   });
 

@@ -24,7 +24,10 @@ import { encrypt } from '../lib/crypto.js';
 import { bookingAgeRefusal } from '../_utils/booking-age.js';
 import { MESSAGE_CONSENT_REFUSAL, bookingMessageRefusal, messageConsentGiven, validateBookingMessage } from '../_utils/rdv-message.js';
 import { confirmationModeFor, readBookingConfig } from '../_services/rdv-booking-config.js';
-import { contentMode } from '../lib/publicVisibility.js';   // R42-CDGG: a synthetic fixture is bookable in LAB mode only
+import { contentMode } from '../lib/publicVisibility.js';
+// R45 (ENG-LR-2, GDPR art. 9): the verified sensitivity of a service gates its online booking (sensitive: closed until the art. 9 gate; unknown: refused where review is enforced)
+import { SENSITIVITY_CODES, bookingDecision, sensitivityRefusal, treatAsSensitive } from '../lib/service-sensitivity.js';
+import { readServiceSensitivity, readServiceSensitivityMap } from '../_services/service-sensitivity-review.js';   // R42-CDGG: a synthetic fixture is bookable in LAB mode only
 
 export const MAX_RANGE_DAYS = 14;
 export const MAX_BOOKING_AHEAD_DAYS = 60;
@@ -460,9 +463,10 @@ function serializeAppointment(appointment, options = {}) {
     state,
     awaitingApproval: state === 'REQUESTED',
     rescheduled: Number(appointment.rescheduleCount || 0) > 0,
-    // R43 (E6): whether the person's own optional message is kept (never its text: the person's JSON does not echo it); withdrawable before the start
+    // R43 (E6): whether the person's own optional message is kept (never its text: the person's JSON does not echo it).
+    // R45 (ENG-LR-1, art. 7(3)): withdrawable at any time while it exists — before or after the start, whatever the status
     hasMessage: Boolean(appointment.citizenUserId && appointment.notes),
-    canWithdrawMessage: Boolean(appointment.citizenUserId && appointment.notes && startsAt && startsAt.getTime() > Date.now()),
+    canWithdrawMessage: Boolean(appointment.citizenUserId && appointment.notes),
     startsAt: startsAt ? startsAt.toISOString() : null,
     endsAt: endsAt ? endsAt.toISOString() : null,
     cancelledAt: appointment.cancelledAt instanceof Date ? appointment.cancelledAt.toISOString() : null,
@@ -777,6 +781,16 @@ async function getServices(req, res) {
   // R42: how each service's requests are confirmed (Mode A / Mode B) and whether a professional can be chosen (the list itself: GET …/team)
   const config = await readBookingConfig(structure.id);
   for (const item of items) item.confirmation = confirmationModeFor(config, item.id);
+  // R45 (ENG-LR-2): whether each service is bookable online now. Describes the SERVICE, never the person: OPEN, or CONTACT_STRUCTURE (the person is
+  // pointed to the structure's public channels); explicitConsent = the separate art. 9 box will be asked; protectedPrivacy = no analytics / URL context.
+  const sensitivity = await readServiceSensitivityMap(structure.id);
+  for (const item of items) {
+    const value = sensitivity.get(item.id) || 'unknown';
+    const decision = bookingDecision(value);
+    item.onlineBooking = decision.allowed ? 'OPEN' : 'CONTACT_STRUCTURE';
+    item.explicitConsent = decision.allowed ? decision.requiresConsent : false;
+    item.protectedPrivacy = treatAsSensitive(value);
+  }
 
   return res.status(200).json({
     teamChoice: config.team.enabled,
@@ -984,6 +998,9 @@ async function getSlots(req, res) {
   if (!service) {
     return res.status(404).json({ error: 'Service not found' });
   }
+  // R45 (ENG-LR-2): no slots for a service whose online booking is not open (same neutral refusal as the booking itself)
+  const sensitivityGate = bookingDecision(await readServiceSensitivity(structure.id, service.id));
+  if (!sensitivityGate.allowed) { const refused = sensitivityRefusal(sensitivityGate.code); return res.status(refused.status).json(refused.body); }
   // PKG-3: slots are computed for ONE modality (default in person); a modality the service / structure / video activation does not offer has no slots at all
   const mode = req.query?.mode ? normalizeMode(req.query.mode) : 'IN_PERSON';
   if (!mode || !offeredModes(structure.bookingMode, service.modes, publicVideoStatus()).includes(mode)) {
@@ -1099,6 +1116,16 @@ async function createAppointment(req, res) {
     return res.status(404).json({ error: 'Service not found' });
   }
 
+  // R45 (ENG-LR-2, GDPR art. 9 — D2 P5s [PROPOSITION]): a verified sensitive service is never booked online while the art. 9 gate is closed (every
+  // environment); an unreviewed one is refused where the review is enforced (Production, Preview, restricted beta); with the gate open, a sensitive service
+  // needs the separate, never pre-ticked explicit consent (only the boolean true). Nothing about it is logged or audited; the refusal is neutral.
+  const sensitivityGate = bookingDecision(await readServiceSensitivity(structure.id, service.id));
+  if (!sensitivityGate.allowed) { const refused = sensitivityRefusal(sensitivityGate.code); return res.status(refused.status).json(refused.body); }
+  if (sensitivityGate.requiresConsent && body.sensitiveConsent !== true) {
+    return res.status(400).json({ error: SENSITIVITY_CODES.CONSENT_REQUIRED, code: SENSITIVITY_CODES.CONSENT_REQUIRED,
+      message: 'Pour demander ce rendez-vous en ligne, cochez la case d’accord. Sans cet accord, vous pouvez contacter directement la structure.' });
+  }
+
   // PKG-3: the modality is part of the booking (absent = in person, the historical behaviour). It must be offered now; video needs the person's explicit agreement.
   const mode = body.mode === undefined ? 'IN_PERSON' : normalizeMode(body.mode);
   if (!mode || !offeredModes(structure.bookingMode, service.modes, publicVideoStatus()).includes(mode)) {
@@ -1212,6 +1239,16 @@ async function createAppointment(req, res) {
   if (outcome.kind === 'conflict') return res.status(409).json({ error: 'Slot no longer available' });
   if (outcome.kind !== 'created') return res.status(500).json({ error: 'Internal Server Error' });
 
+  // R45 (ENG-LR-2): the art. 9 consent of a sensitive-service booking, one ConsentLog row; without its proof the booking is not kept (fail closed, before any notice)
+  if (sensitivityGate.requiresConsent) {
+    const { recordSensitiveConsent } = await import('../_services/sensitive-booking-consent.js');
+    try { await recordSensitiveConsent(auth.user.id, outcome.appointment.id, true); }
+    catch (error) {
+      logger.warn({ err: { name: error?.name, code: error?.cause?.code || error?.code } }, '[rdv] booking consent not recorded: booking withdrawn');
+      await db.delete(schema.ProAppointment).where(and(eq(schema.ProAppointment.id, outcome.appointment.id), eq(schema.ProAppointment.citizenUserId, auth.user.id)));
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
   // R43 (E6): the consent to transmit the message, one ConsentLog row for this appointment; if it cannot be recorded the message is erased (fail closed)
   if (message.value) {
     const { recordMessageConsent } = await import('../_services/rdv-message-consent.js');
@@ -1575,6 +1612,10 @@ async function listMyAppointments(req, res) {
   const now = Date.now();
   // R44: the fixed reason of a refused request (journal row of the decision, same structure only), shown to the person in their language
   const reasons = await requests.refusalReasonsFor(rows);
+  // R45 (ENG-LR-2): the appointments with an active art. 9 booking consent (withdrawable here; withdrawal cancels an upcoming one)
+  const { activeSensitiveConsents } = await import('../_services/sensitive-booking-consent.js');
+  let consented = new Set();
+  try { consented = await activeSensitiveConsents(auth.user.id, rows.map((a) => a.id)); } catch { /* shown without the withdrawal button; the route still works */ }
   return res.status(200).json({
     appointments: rows.map((a) => {
       const active = RESCHEDULABLE_STATUSES.includes(String(a.status || '').toLowerCase());
@@ -1582,7 +1623,7 @@ async function listMyAppointments(req, res) {
       const inTime = new Date(a.startAt).getTime() - now >= RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000;
       // R12 (C19): an active upcoming appointment carries its calendar file (« Ajouter au calendrier » in Mes rendez-vous)
       return { ...serializeAppointment(a, { includeCalendar: active && upcoming }), canCancel: active && upcoming, canReschedule: active && inTime && Number(a.rescheduleCount || 0) < MAX_RESCHEDULES,
-        ...(reasons.has(a.id) ? { refusal: { reasonCode: reasons.get(a.id) } } : {}) };
+        ...(reasons.has(a.id) ? { refusal: { reasonCode: reasons.get(a.id) } } : {}), ...(consented.has(a.id) ? { sensitiveConsent: true } : {}) };
     }),
   });
 }
@@ -1788,8 +1829,8 @@ async function rescheduleAppointment(req, res) {
 }
 
 /**
- * R43 (E6) — POST /api/rdv/appointments/:id/message/withdraw: the person erases the optional message of their own appointment before it starts
- * (api/_services/rdv-message-consent.js). Session, CSRF (api entry), write rate limit; someone else's appointment = the same 404 as an unknown id.
+ * R43 (E6) / R45 (ENG-LR-1) — POST /api/rdv/appointments/:id/message/withdraw: the person erases the optional message of their own appointment at any
+ * time, before or after it starts (api/_services/rdv-message-consent.js). Session, CSRF (api entry), write rate limit; someone else's appointment = the same 404 as an unknown id.
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
  */
@@ -1803,6 +1844,33 @@ async function withdrawMessage(req, res) {
   const { withdrawBookingMessage } = await import('../_services/rdv-message-consent.js');
   const out = await withdrawBookingMessage(auth.user.id, appointmentId);
   return res.status(out.status).json(out.body);
+}
+
+/**
+ * R45 (ENG-LR-2, D2 P5s rubric 12) — POST /api/rdv/appointments/:id/sensitive-consent/withdraw: the person withdraws the explicit art. 9 consent of their
+ * own booking, at any time (never gated). A decision false row is appended; an appointment still active is then cancelled by the ordinary cancellation
+ * (« retrait = annulation »; the structure is told « annulé par la personne », never why). Someone else's appointment = the same 404 as an unknown id.
+ * @param {import('../_utils/http-types').ApiRequest} req
+ * @param {import('../_utils/http-types').ApiResponse} res
+ */
+async function withdrawSensitiveConsent(req, res) {
+  const appointmentId = toTrimmedString(getPathSegments(req)[1]);
+  const auth = await requireCitizenUser(req);
+  if (!auth.ok) return res.status(auth.status).json({ error: auth.error, ...(auth.code ? { code: auth.code } : {}) });
+  const rateLimit = await enforcePublicRdvRateLimit(req, 'write', auth.user.id);
+  if (!rateLimit.allowed) return res.status(rateLimit.status).json(rateLimit.error);
+  const [row] = appointmentId ? await db.select({ id: schema.ProAppointment.id, citizenUserId: schema.ProAppointment.citizenUserId, status: schema.ProAppointment.status })
+    .from(schema.ProAppointment).where(eq(schema.ProAppointment.id, appointmentId)).limit(1) : [];
+  if (!row || !row.citizenUserId || row.citizenUserId !== auth.user.id) return res.status(404).json({ error: 'Appointment not found' });
+  const consent = await import('../_services/sensitive-booking-consent.js');
+  if (!(await consent.hasActiveSensitiveConsent(auth.user.id, row.id))) return res.status(409).json({ error: 'NO_CONSENT', code: 'NO_CONSENT', message: 'Aucun accord actif pour ce rendez-vous.' });
+  await consent.recordSensitiveConsent(auth.user.id, row.id, false, db, 'account');
+  const status = String(row.status || '').toLowerCase();
+  if ([...RESCHEDULABLE_STATUSES, 'locked'].includes(status)) {
+    req.body = {};   // the session path of the ordinary cancellation (never a token)
+    return cancelAppointment(req, res);
+  }
+  return res.status(200).json({ ok: true, id: row.id, consentWithdrawn: true, cancelled: false });
 }
 
 /**
@@ -1876,6 +1944,10 @@ export default async function handler(req, res) {
 
     if (method === 'POST' && segments[0] === 'appointments' && segments[2] === 'message' && segments[3] === 'withdraw' && segments.length === 4) {
       return await withdrawMessage(req, res);
+    }
+
+    if (method === 'POST' && segments[0] === 'appointments' && segments[2] === 'sensitive-consent' && segments[3] === 'withdraw' && segments.length === 4) {
+      return await withdrawSensitiveConsent(req, res);
     }
 
     return res.status(404).json({ error: 'Not Found' });

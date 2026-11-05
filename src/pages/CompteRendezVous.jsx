@@ -87,10 +87,19 @@ export default function CompteRendezVous() {
   };
   // R43 (E6): withdrawing the optional message erases it at once (two steps, like a cancellation: it cannot be undone)
   const [withdrawing, setWithdrawing] = useState(null);
+  const [withdrawnNote, setWithdrawnNote] = useState('');   // the status message the scope note belongs to
   const withdrawMessage = async (a) => {
     setWithdrawing(null);
     setBusy(true); setProblem(''); setMessage('');
-    try { await citizenApi.withdrawAppointmentMessage(a.id); setMessage(t('booking:message.withdrawn_r43', 'Votre message a été effacé. La structure ne le voit plus.')); await load(); } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+    // R45 (ENG-LR-1): the platform copy is erased now; what the structure already read or copied is its own responsibility (separate controller) — said, never promised away
+    try { await citizenApi.withdrawAppointmentMessage(a.id); const done = t('booking:message.withdrawn_r43', 'Votre message a été effacé. La structure ne le voit plus.'); setMessage(done); setWithdrawnNote(done); await load(); } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+  // R45 (ENG-LR-2, D2 P5s): withdrawing the explicit consent of a sensitive-service booking cancels an upcoming appointment (two steps)
+  const [withdrawingConsent, setWithdrawingConsent] = useState(null);
+  const withdrawConsent = async (a) => {
+    setWithdrawingConsent(null);
+    setBusy(true); setProblem(''); setMessage('');
+    try { await citizenApi.withdrawSensitiveConsent(a.id); setMessage(t('booking:sensitive.withdrawn_r45', 'Votre accord est retiré. Si le rendez-vous était à venir, il est annulé et la structure est prévenue de l’annulation.')); await load(); } catch (err) { setProblem(err.message); } finally { setBusy(false); }
   };
   const cancel = async (a) => {
     setConfirming(null);
@@ -105,7 +114,7 @@ export default function CompteRendezVous() {
       <p className="text-sm text-slate-700" data-testid="rdv-policy">{t('compte:rdv.vous_pouvez_deplacer_rendez', 'Vous pouvez déplacer un rendez-vous jusqu’à 24 heures avant, deux fois au plus. Le créneau actuel n’est libéré que lorsque le nouveau est réservé.')}</p>
       {state.error ? <div role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900"><p>{state.error}</p>{state.auth ? <Button asChild variant="outline" className="mt-2"><Link to="/auth/login?next=/compte/rendez-vous">{t('compte:rdv.connecter', 'Se connecter')}</Link></Button> : <Button type="button" variant="outline" className="mt-2" onClick={load}>{t('compte:rdv.reessayer', 'Réessayer')}</Button>}</div> : null}
       {problem ? <p role="alert" data-testid="rdv-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
-      <div aria-live="polite" role="status" data-testid="rdv-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}{message && mailOutcome ? <MailOutcomeNote outcome={mailOutcome} /> : null}</div>
+      <div aria-live="polite" role="status" data-testid="rdv-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}{message && withdrawnNote === message ? <p className="mt-2 text-sm text-slate-800" data-testid="rdv-message-withdrawn-scope">{t('booking:message.withdrawn_scope_r45', 'Le message est effacé de la plateforme dès maintenant. Si la structure l’a déjà lu ou l’a reporté dans ses propres dossiers, cette copie relève de sa responsabilité, car elle gère son propre fichier : vous pouvez lui demander directement de l’effacer.')}</p> : null}{message && mailOutcome ? <MailOutcomeNote outcome={mailOutcome} /> : null}</div>
       {!state.error && !state.items.length ? <p className="text-sm text-slate-700" data-testid="rdv-empty">{t('compte:rdv.aucun_rendez_vous', 'Aucun rendez-vous.')}</p> : null}
       <ul className="space-y-3">
         {state.items.map((a) => (
@@ -161,9 +170,25 @@ export default function CompteRendezVous() {
                     {withdrawing === a.id ? (
                       <div className="space-y-2 rounded-md border border-slate-300 bg-slate-50 p-3" role="group" aria-labelledby={`rdv-msg-q-${a.id}`} data-testid="rdv-message-withdraw-panel">
                         <p id={`rdv-msg-q-${a.id}`} className="font-medium text-slate-900">{t('booking:message.withdraw_question_r43', 'Effacer votre message ? La structure ne pourra plus le lire. Le rendez-vous est conservé.')}</p>
+                        <p className="text-slate-800" data-testid="rdv-message-withdraw-scope">{t('booking:message.withdraw_scope_r45', 'Vous pouvez le faire à tout moment, avant ou après le rendez-vous. Le message est effacé de la plateforme ; ce que la structure a déjà lu ou noté dans ses propres dossiers relève de sa responsabilité.')}</p>
                         <div className="flex flex-wrap gap-2">
                           <Button type="button" size="sm" disabled={busy} data-testid="rdv-message-withdraw-confirm" onClick={() => withdrawMessage(a)}>{t('booking:message.withdraw_confirm_r43', 'Oui, effacer le message')}</Button>
                           <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => setWithdrawing(null)}>{t('booking:message.withdraw_keep_r43', 'Non, le garder')}</Button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+                {a.sensitiveConsent ? (
+                  <div className="space-y-2" data-testid="rdv-sensitive-consent">
+                    <p className="text-slate-700">{t('booking:sensitive.kept_r45', 'Vous avez donné votre accord pour que cette demande de rendez-vous soit traitée.')}</p>
+                    <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="rdv-sensitive-consent-withdraw" aria-expanded={withdrawingConsent === a.id} onClick={() => setWithdrawingConsent(withdrawingConsent === a.id ? null : a.id)}>{t('booking:sensitive.withdraw_r45', 'Retirer mon accord')}</Button>
+                    {withdrawingConsent === a.id ? (
+                      <div className="space-y-2 rounded-md border border-slate-300 bg-slate-50 p-3" role="group" aria-labelledby={`rdv-sc-q-${a.id}`} data-testid="rdv-sensitive-consent-panel">
+                        <p id={`rdv-sc-q-${a.id}`} className="font-medium text-slate-900">{t('booking:sensitive.withdraw_question_r45', 'Retirer votre accord ? Si le rendez-vous est à venir, il sera annulé et le créneau libéré.')}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button type="button" size="sm" disabled={busy} data-testid="rdv-sensitive-consent-confirm" onClick={() => withdrawConsent(a)}>{t('booking:sensitive.withdraw_confirm_r45', 'Oui, retirer mon accord')}</Button>
+                          <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => setWithdrawingConsent(null)}>{t('booking:message.withdraw_keep_r43', 'Non, le garder')}</Button>
                         </div>
                       </div>
                     ) : null}

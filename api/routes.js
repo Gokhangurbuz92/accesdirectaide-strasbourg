@@ -183,6 +183,7 @@ export const routes = [
     { path: 'admin/org-closure', match: 'exact', handler: () => import('./_handlers/admin/org-closure.js') },
     { path: 'admin/processing-restrictions', match: 'exact', handler: () => import('./_handlers/admin/processing-restrictions.js') },
     { path: 'admin/mail-suppressions', match: 'exact', handler: () => import('./_handlers/admin/mail-suppressions.js') },   // R44-MAIL: MFA + elevation, reason, audited
+    { path: 'admin/service-sensitivity', match: 'exact', handler: () => import('./_handlers/admin/service-sensitivity.js') },   // R45 ENG-LR-2: MFA + elevation, reason, audited
     { path: 'admin/organizations', match: 'exact', handler: () => import('./_handlers/admin/organizations.js') },
     { path: 'admin/ws2-queue', match: 'exact', handler: () => import('./_handlers/admin/ws2-queue.js') },
     { path: 'admin/login', match: 'exact', handler: () => import('./_handlers/admin/login.js') },
