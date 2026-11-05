@@ -5,7 +5,8 @@
  * this is the second, provider-independent copy, and the LAB's backup before any migration.
  *
  *   BACKUP_ENCRYPTION_KEY=<64 hex> DATABASE_URL=… node scripts/db-backup.mjs --out <directory> [--label lab]
- *   … node scripts/db-backup.mjs --verify <file.dump.enc>          decrypts in memory-backed temp, checks the tag and the archive (pg_restore --list)
+ *   … node scripts/db-backup.mjs --verify <file.dump.enc> [--work-dir <private dir>]   checks the SHA-256 sidecar, the GCM tag, then the archive
+ *                                                                  (pg_restore --list) on a 0600 temporary copy removed at the end
  *   … node scripts/db-backup.mjs --list <directory> [--keep-days N] [--keep-weekly W] [--prune]
  *
  * Format: "ADAB1" ‖ iv(12) ‖ AES-256-GCM(pg_dump -Fc) ‖ tag(16). The key never touches the disk here; the file is 0600 with a .sha256 of the ciphertext.
@@ -27,6 +28,23 @@ const IV_LEN = 12; const TAG_LEN = 16;
 const die = (m) => { console.error(`db-backup : ${m}`); process.exit(1); };
 const arg = (name, dflt = '') => { const i = process.argv.indexOf(`--${name}`); return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : dflt; };
 const pgBin = (tool) => (process.env.PG_BIN ? path.join(process.env.PG_BIN, tool) : tool);
+/**
+ * R45: where a decrypted archive is written while it is checked or restored (0600, removed at the end). Default: the system temporary folder; for a
+ * Production dump the operator passes --work-dir on an encrypted volume (docs/runbooks.md § 4). The folder must exist and not be group/world-writable.
+ */
+export function workDir(dir = arg('work-dir')) {
+  if (!dir) return os.tmpdir();
+  let st; try { st = fs.statSync(dir); } catch { return die('--work-dir introuvable.'); }
+  if (!st.isDirectory()) return die('--work-dir n’est pas un dossier.');
+  if ((st.mode & 0o022) !== 0) return die('--work-dir est modifiable par d’autres utilisateurs : choisissez un dossier privé (0700).');
+  return dir;
+}
+
+/**
+ * R45: a decrypted archive is removed even when the script stops through die() (process.exit skips `finally`): before R45 a failing pg_restore left the
+ * clear archive in the temporary folder. @param {string} dir
+ */
+export function removeOnExit(dir) { process.once('exit', () => { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ } }); }
 
 /** @param {string | undefined} hex */
 export function backupKey(hex = process.env.BACKUP_ENCRYPTION_KEY) {
@@ -84,8 +102,31 @@ export function pgEnv(url) {
   return env;
 }
 
-const sha256File = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+/** SHA-256 of a file, streamed (R45: a Production dump is not read into memory). @param {string} f @returns {Promise<string>} */
+export function sha256OfFile(f) {
+  return new Promise((resolve, reject) => {
+    const h = crypto.createHash('sha256');
+    fs.createReadStream(f).on('error', reject).on('data', (c) => h.update(c)).on('end', () => resolve(h.digest('hex')));
+  });
+}
+/** R45: the .sha256 sidecar check, shared by --verify and db-restore. null = no sidecar; true = same; false = the file changed. @param {string} file */
+export async function sidecarMatches(file) {
+  const side = `${file}.sha256`;
+  if (!fs.existsSync(side)) return null;
+  return fs.readFileSync(side, 'utf8').split(/\s+/)[0] === await sha256OfFile(file);
+}
 const stamp = () => new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
+/**
+ * R45: the time a backup was TAKEN, from its name (ada_<label>_YYYYMMDDTHHMMSSZ.dump.enc, written by this script) — never from the file time, which a copy
+ * changes. Used by db-erasure-replay.mjs --since-backup. @param {string} file @returns {string | null} ISO time, or null when the name carries none
+ */
+export function backupTimeOf(file) {
+  const m = path.basename(String(file || '')).match(/_(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z\.dump\.enc$/);
+  if (!m) return null;
+  const t = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6]));
+  const d = new Date(t);
+  return Number.isFinite(t) && d.getUTCDate() === Number(m[3]) && d.getUTCMonth() === Number(m[2]) - 1 ? d.toISOString() : null;
+}
 
 async function backup() {
   const url = process.env.DATABASE_URL || die('DATABASE_URL absente.');
@@ -100,23 +141,23 @@ async function backup() {
   const { bytes } = await encryptStreamToFile(dump.stdout, file, key);
   const code = await exited;
   if (code !== 0) { fs.rmSync(file, { force: true }); die(`pg_dump a échoué (code ${code})${/password|authentication/i.test(err) ? ' : authentification' : ''}.`); }
-  fs.writeFileSync(`${file}.sha256`, `${sha256File(file)}  ${path.basename(file)}\n`, { mode: 0o600 });
+  fs.writeFileSync(`${file}.sha256`, `${await sha256OfFile(file)}  ${path.basename(file)}\n`, { mode: 0o600 });
   console.log(JSON.stringify({ file, archiveBytes: bytes, encryptedBytes: fs.statSync(file).size }));
 }
 
 async function verify() {
   const file = arg('verify') || die('indiquez le fichier.');
   const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
-  const side = `${file}.sha256`;
-  if (fs.existsSync(side) && fs.readFileSync(side, 'utf8').split(/\s+/)[0] !== sha256File(file)) die('empreinte SHA-256 différente : le fichier a changé.');
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-verify-'));
+  if (await sidecarMatches(file) === false) die('empreinte SHA-256 différente : le fichier a changé.');
+  const tmp = fs.mkdtempSync(path.join(workDir(), 'ada-verify-'));
+  removeOnExit(tmp);
   try {
     const target = path.join(tmp, 'archive.dump');
     try { await decryptFileToFile(file, target, key); } catch { die('déchiffrement refusé (clé différente ou fichier modifié).'); }
     const list = spawnSync(pgBin('pg_restore'), ['--list', target], { encoding: 'utf8' });
     if (list.status !== 0) die('archive illisible par pg_restore.');
     const entries = list.stdout.split('\n').filter((l) => /^\d+;/.test(l));
-    console.log(JSON.stringify({ file, ok: true, tables: entries.filter((l) => / TABLE DATA /.test(l)).length, entries: entries.length }));
+    console.log(JSON.stringify({ file, ok: true, tables: entries.filter((l) => / TABLE DATA /.test(l)).length, entries: entries.length, takenAt: backupTimeOf(file) }));
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }
 

@@ -6,12 +6,21 @@
  *
  *   BACKUP_ENCRYPTION_KEY=<64 hex> DATABASE_URL=<live> node scripts/db-erasure-replay.mjs --export --out <directory>
  *       → ada_erasures_<date>.json.enc (0600): request id, subject id, completion date, domains — no name, no e-mail, no content
- *   BACKUP_ENCRYPTION_KEY=… TARGET_DATABASE_URL=<restored> node scripts/db-erasure-replay.mjs --ledger <file.json.enc> --since <backup time ISO>
+ *   BACKUP_ENCRYPTION_KEY=… TARGET_DATABASE_URL=<restored> node scripts/db-erasure-replay.mjs --ledger <file.json.enc> (--since <backup time ISO> | --since-backup <file.dump.enc>)
  *       --confirm-target <host>/<database>                       DRY RUN (default): which erased people the restored database holds again
  *   … npx tsx scripts/db-erasure-replay.mjs … --execute         replays them through the application's DSR erasure engine (api/_services/privacy.js
  *       deleteDataDomains: same domains, same legal-hold refusal, same audit), then records the erasure request again in the restored database
  * After the replay, run the retention purge again (its steps are idempotent and count from the data, so it re-applies what it had already done).
  * Guards: the target is typed again (--confirm-target), never DATABASE_URL; nothing is changed without --execute. Output: counts only.
+ *
+ * R45 (restore rehearsal, ENG-LR-7) — ledger version 2. A DSR erasure is not the only thing a restore of an OLDER backup undoes:
+ *   - messageWithdrawals: a booking message the person withdrew (ConsentLog BOOKING_MESSAGE_TRANSMISSION decision false — the appointment id is the
+ *     last « : » part of policy_hash, rdv-message-consent.js) comes back with the backup → replayed: notes = NULL on THAT person's appointment, and the
+ *     withdrawal row recorded again (same policy_version / policy_hash, channel « restore-replay »);
+ *   - protections: an ACTIVE legal hold, an ACTIVE restriction (art. 18, DSRRequest RESTRICT) or an open access / review request created after the backup
+ *     is missing from it → reinstated FIRST (before any erasure is replayed and before the purge runs again), so nothing protected is erased or purged.
+ * `--since-backup <file.dump.enc>` takes the backup time from the backup's own name (scripts/db-backup.mjs) instead of a typed date; a ledger exported
+ * BEFORE that time is refused (it cannot know what happened after the backup: export the newest one). Version 1 ledgers are still read (erasures only).
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -19,7 +28,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import pg from 'pg';
-import { backupKey, encryptStreamToFile, decryptFileToFile } from './db-backup.mjs';
+import { backupKey, backupTimeOf, encryptStreamToFile, decryptFileToFile } from './db-backup.mjs';
 
 export const LEDGER_KIND = 'ada-erasure-ledger';
 const die = (m) => { console.error(`db-erasure-replay : ${m}`); process.exit(1); };
@@ -34,8 +43,51 @@ export async function readErasures(client) {
     domains: Array.isArray(r.affectedDomains) ? r.affectedDomains.map(String) : [] }));
 }
 
-/** @param {{ requestId: string, subjectId: string, completedAt: string, domains: string[] }[]} entries @param {Date} [now] */
-export const ledgerOf = (entries, now = new Date()) => ({ kind: LEDGER_KIND, version: 1, exportedAt: now.toISOString(), entries });
+/** the purpose of the booking-message consent (api/_utils/rdv-message.js BOOKING_MESSAGE_CONSENT_PURPOSE; a unit test keeps them equal) */
+export const MESSAGE_PURPOSE = 'BOOKING_MESSAGE_TRANSMISSION';
+/** open non-erasure request statuses (api/_handlers/cron/gdpr-purge.js OPEN_DSR_STATUSES; a unit test keeps them equal) */
+export const OPEN_REQUEST_STATUSES = Object.freeze(['RECEIVED', 'IDENTITY_OR_AUTHORITY_CHECK', 'IN_REVIEW']);
+
+/** R45: the withdrawn booking messages, oldest first (subject, appointment, time — never the message) @param {{ query: Function }} client */
+export async function readMessageWithdrawals(client) {
+  const { rows } = await client.query(`SELECT subject_id, policy_version, policy_hash, COALESCE(withdrawn_at, created_at) AS at FROM "ConsentLog"
+    WHERE purpose = $1 AND decision = false ORDER BY COALESCE(withdrawn_at, created_at), id`, [MESSAGE_PURPOSE]);
+  return rows.map((r) => ({ subjectId: String(r.subject_id), appointmentId: String(r.policy_hash || '').split(':').at(-1) || '', policyVersion: String(r.policy_version),
+    policyHash: String(r.policy_hash), withdrawnAt: new Date(r.at).toISOString() })).filter((w) => w.appointmentId.length > 0);
+}
+
+/** R45: what protects data right now — ACTIVE legal holds; ACTIVE restrictions and open access / review requests @param {{ query: Function }} client */
+export async function readProtections(client) {
+  const holds = (await client.query(`SELECT id, "dataCategory", "recordId", "reasonCode", "createdBy", "createdAt" FROM "LegalHold" WHERE status = 'ACTIVE' ORDER BY "createdAt", id`)).rows;
+  const requests = (await client.query(`SELECT id, "subjectType", "subjectId", "requestType", status, "executionMode", "affectedDomains", "reasonCode", "createdAt" FROM "DSRRequest"
+    WHERE ("requestType" = 'RESTRICT' AND status = 'ACTIVE') OR ("requestType" <> 'DELETE' AND status = ANY($1::text[])) ORDER BY "createdAt", id`, [OPEN_REQUEST_STATUSES])).rows;
+  return {
+    legalHolds: holds.map((h) => ({ id: String(h.id), dataCategory: String(h.dataCategory), recordId: String(h.recordId), reasonCode: String(h.reasonCode), createdBy: String(h.createdBy), createdAt: new Date(h.createdAt).toISOString() })),
+    requests: requests.map((r) => ({ id: String(r.id), subjectType: String(r.subjectType), subjectId: String(r.subjectId), requestType: String(r.requestType), status: String(r.status),
+      executionMode: String(r.executionMode), affectedDomains: Array.isArray(r.affectedDomains) ? r.affectedDomains.map(String) : [], reasonCode: r.reasonCode === null ? null : String(r.reasonCode),
+      createdAt: new Date(r.createdAt).toISOString() })),
+  };
+}
+
+/**
+ * @param {{ requestId: string, subjectId: string, completedAt: string, domains: string[] }[]} entries @param {Date} [now]
+ * @param {{ messageWithdrawals?: any[], protections?: { legalHolds: any[], requests: any[] } }} [extra] R45: ledger v2 sections
+ */
+export const ledgerOf = (entries, now = new Date(), extra = {}) => ({ kind: LEDGER_KIND, version: 2, exportedAt: now.toISOString(), entries,
+  messageWithdrawals: extra.messageWithdrawals ?? [], protections: extra.protections ?? { legalHolds: [], requests: [] } });
+
+/**
+ * R45: everything to replay after restoring a backup taken at `since`: erasures and withdrawals done at or after it; ALL current protections (re-inserting
+ * one already present changes nothing). Refuses a ledger exported before the backup. @param {any} ledger @param {string | Date | null} [since]
+ */
+export function replayPlan(ledger, since = null) {
+  const entries = entriesSince(ledger, since);
+  const t = since ? new Date(since).getTime() : null;
+  if (t !== null && new Date(ledger.exportedAt).getTime() < t) throw new Error('ledger exported before the backup: export the newest ledger');
+  const withdrawals = (Array.isArray(ledger.messageWithdrawals) ? ledger.messageWithdrawals : []).filter((w) => t === null || new Date(w.withdrawnAt).getTime() >= t);
+  const p = ledger.protections && typeof ledger.protections === 'object' ? ledger.protections : {};
+  return { entries, withdrawals, protections: { legalHolds: Array.isArray(p.legalHolds) ? p.legalHolds : [], requests: Array.isArray(p.requests) ? p.requests : [] } };
+}
 
 /** the entries completed at or after the backup time (all when no time is given) @param {any} ledger @param {string | Date | null} [since] */
 export function entriesSince(ledger, since = null) {
@@ -98,6 +150,79 @@ export async function replayErasures({ entries, privacy, recordRequest }) {
   return result;
 }
 
+/** R45: which withdrawn messages the target holds again (the appointment of that person still has a message) @param {{ query: Function }} client @param {any[]} list */
+export async function inspectWithdrawals(client, list) {
+  const out = [];
+  for (const w of list) {
+    const { rows: [r] } = await client.query(`SELECT count(*)::int AS n FROM "ProAppointment" WHERE id = $1 AND "citizenUserId" = $2 AND notes IS NOT NULL`, [w.appointmentId, w.subjectId]);
+    out.push({ ...w, present: Number(r.n) > 0 });
+  }
+  return out;
+}
+
+/** R45: which protections the target lacks (a hold not ACTIVE there, a request missing or in another status) @param {{ query: Function }} client @param {{ legalHolds: any[], requests: any[] }} p */
+export async function inspectProtections(client, p) {
+  const holds = []; const requests = [];
+  for (const h of p.legalHolds) {
+    const { rows: [r] } = await client.query(`SELECT status FROM "LegalHold" WHERE id = $1`, [h.id]);
+    holds.push({ ...h, state: !r ? 'missing' : (r.status === 'ACTIVE' ? 'present' : 'not_active') });
+  }
+  for (const q of p.requests) {
+    const { rows: [r] } = await client.query(`SELECT status FROM "DSRRequest" WHERE id = $1`, [q.id]);
+    requests.push({ ...q, state: !r ? 'missing' : (r.status === q.status ? 'present' : 'other_status') });
+  }
+  return { legalHolds: holds, requests };
+}
+
+export const reinstateHoldSql = `INSERT INTO "LegalHold" (id, "dataCategory", "recordId", "reasonCode", "createdBy", status, "createdAt") VALUES ($1, $2, $3, $4, $5, 'ACTIVE', $6)
+  ON CONFLICT (id) DO NOTHING`;
+export const reinstateRequestSql = `INSERT INTO "DSRRequest" (id, "subjectType", "subjectId", "requestType", status, "executionMode", "affectedDomains", "reasonCode", "createdAt")
+  VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9) ON CONFLICT (id) DO UPDATE SET status = EXCLUDED.status WHERE "DSRRequest".status IN ('RECEIVED', 'IDENTITY_OR_AUTHORITY_CHECK', 'IN_REVIEW', 'APPROVED', 'ACTIVE')`;
+
+/**
+ * R45: reinstates the missing protections. A hold present but not ACTIVE in the restored copy is counted for a human decision (never re-activated blindly:
+ * its release after the backup is not in the ledger, its release before the backup would be overridden). Idempotent.
+ * @param {{ inspected: { legalHolds: any[], requests: any[] }, query: (sql: string, params: any[]) => Promise<{ rowCount?: number | null }> }} deps
+ */
+export async function reinstateProtections({ inspected, query }) {
+  const out = { holdsReinstated: 0, holdsPresent: 0, holdsNotActiveForReview: 0, requestsReinstated: 0, requestsPresent: 0, failed: 0 };
+  for (const h of inspected.legalHolds) {
+    if (h.state === 'present') { out.holdsPresent += 1; continue; }
+    if (h.state === 'not_active') { out.holdsNotActiveForReview += 1; continue; }
+    try { await query(reinstateHoldSql, [h.id, h.dataCategory, h.recordId, h.reasonCode, h.createdBy, h.createdAt]); out.holdsReinstated += 1; } catch { out.failed += 1; }
+  }
+  for (const q of inspected.requests) {
+    if (q.state === 'present') { out.requestsPresent += 1; continue; }
+    try {
+      await query(reinstateRequestSql, [q.id, q.subjectType, q.subjectId, q.requestType, q.status, q.executionMode, JSON.stringify(q.affectedDomains), q.reasonCode, q.createdAt]);
+      out.requestsReinstated += 1;
+    } catch { out.failed += 1; }
+  }
+  return out;
+}
+
+export const eraseMessageSql = `UPDATE "ProAppointment" SET notes = NULL WHERE id = $1 AND "citizenUserId" = $2 AND notes IS NOT NULL`;
+export const recordWithdrawalSql = `INSERT INTO "ConsentLog" (id, policy_version, policy_hash, subject_type, subject_id, purpose, decision, withdrawn_at, created_at, collection_channel, guardian_involved, proof_level)
+  SELECT $1, $2, $3, 'CITIZEN_USER', $4, $5, false, $6, $6, 'restore-replay', false, 'EXPLICIT_CHECKBOX'
+  WHERE NOT EXISTS (SELECT 1 FROM "ConsentLog" c WHERE c.subject_id = $4 AND c.policy_hash = $3 AND c.decision = false)`;
+
+/**
+ * R45: replays the message withdrawals the target holds again: the message erased (same compare-and-set as rdv-message-consent.js), the withdrawal recorded
+ * again. Absent ones are counted. @param {{ inspected: any[], query: (sql: string, params: any[]) => Promise<{ rowCount?: number | null }>, newId?: () => string }} deps
+ */
+export async function replayWithdrawals({ inspected, query, newId = () => crypto.randomUUID() }) {
+  const out = { messagesErased: 0, absent: 0, failed: 0 };
+  for (const w of inspected) {
+    if (!w.present) { out.absent += 1; continue; }
+    try {
+      const r = await query(eraseMessageSql, [w.appointmentId, w.subjectId]);
+      await query(recordWithdrawalSql, [newId(), w.policyVersion, w.policyHash, w.subjectId, MESSAGE_PURPOSE, w.withdrawnAt]);
+      if (Number(r?.rowCount ?? 0) > 0) out.messagesErased += 1; else out.absent += 1;
+    } catch { out.failed += 1; }
+  }
+  return out;
+}
+
 /** the erasure request, recorded again in the restored database (proof of the erasure; the retention purge counts consents from it, E10) */
 export const recordRequestSql = `INSERT INTO "DSRRequest" (id, "subjectType", "subjectId", "requestType", status, "executionMode", "affectedDomains", "createdAt", "completedAt", "reasonCode")
   VALUES ($1, 'CITIZEN_USER', $2, 'DELETE', 'COMPLETED', 'HUMAN_REVIEW_REQUIRED', $3::jsonb, $4, $4, 'REPLAYED_AFTER_RESTORE')
@@ -112,11 +237,11 @@ async function exportMain() {
   const outDir = arg('out') || die('indiquez --out <dossier>.');
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const c = new pg.Client({ connectionString: url }); await c.connect();
-  let entries;
-  try { entries = await readErasures(c); } finally { await c.end(); }
+  let entries; let messageWithdrawals; let protections;
+  try { entries = await readErasures(c); messageWithdrawals = await readMessageWithdrawals(c); protections = await readProtections(c); } finally { await c.end(); }
   const file = path.join(outDir, `ada_erasures_${stamp()}.json.enc`);
-  await writeLedgerFile(ledgerOf(entries), file, key);
-  console.log(JSON.stringify({ file, erasures: entries.length }));
+  await writeLedgerFile(ledgerOf(entries, new Date(), { messageWithdrawals, protections }), file, key);
+  console.log(JSON.stringify({ file, erasures: entries.length, messageWithdrawals: messageWithdrawals.length, legalHolds: protections.legalHolds.length, protectiveRequests: protections.requests.length }));
 }
 
 async function replayMain() {
@@ -125,18 +250,30 @@ async function replayMain() {
   if (String(arg('confirm-target')).toLowerCase() !== want) die(`indiquez --confirm-target ${want} (rien n’est rejoué).`);
   const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
   const ledger = await readLedgerFile(arg('ledger') || die('indiquez --ledger <fichier>.'), key).catch(() => die('registre illisible (clé différente ou fichier modifié).'));
-  const entries = entriesSince(ledger, arg('since') || null);
+  let since = arg('since') || null;
+  if (arg('since-backup')) { since = backupTimeOf(arg('since-backup')); if (!since) die('--since-backup : le nom du fichier ne porte pas la date de la sauvegarde (ada_<label>_AAAAMMJJTHHMMSSZ.dump.enc).'); }
+  let plan;
+  try { plan = replayPlan(ledger, since); } catch (e) { return die(`${/** @type {Error} */ (e).message} (rien n’est rejoué).`); }
+  const { entries } = plan;
   const execute = process.argv.includes('--execute');
   const pool = new pg.Pool({ connectionString: url, max: 2 });
   try {
     const inspected = await inspectTarget(pool, entries);
     const present = inspected.filter((e) => e.present).length;
-    if (!execute) { console.log(JSON.stringify({ mode: 'dry-run', ledgerEntries: entries.length, presentAgain: present })); return; }
+    const prot = await inspectProtections(pool, plan.protections);
+    const withdrawals = await inspectWithdrawals(pool, plan.withdrawals);
+    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, presentAgain: present, withdrawalsSince: withdrawals.length,
+      messagesPresentAgain: withdrawals.filter((w) => w.present).length, holdsMissing: prot.legalHolds.filter((h) => h.state === 'missing').length,
+      holdsNotActive: prot.legalHolds.filter((h) => h.state === 'not_active').length, requestsMissing: prot.requests.filter((q) => q.state !== 'present').length };
+    if (!execute) { console.log(JSON.stringify({ mode: 'dry-run', ...summary })); return; }
+    const query = (/** @type {string} */ q, /** @type {any[]} */ p) => pool.query(q, p);
+    const protections = await reinstateProtections({ inspected: prot, query });   // FIRST: what protects data is back before anything is erased
     const [{ drizzle }, schema, { createPrivacyRightsService }] = await Promise.all([import('drizzle-orm/node-postgres'), import('../src/db/schema.js'), import('../api/_services/privacy.js')]);
     const privacy = createPrivacyRightsService({ db: drizzle(pool, { schema }), cryptoLib: crypto });
     const out = await replayErasures({ entries: inspected, privacy, recordRequest: (e) => pool.query(recordRequestSql, [e.requestId, e.subjectId, JSON.stringify(e.domains), e.completedAt]) });
-    console.log(JSON.stringify({ mode: 'execute', ledgerEntries: entries.length, presentAgain: present, ...out }));
-    if (out.failed > 0) process.exitCode = 1;
+    const messages = await replayWithdrawals({ inspected: withdrawals, query });
+    console.log(JSON.stringify({ mode: 'execute', ...summary, ...out, protections, messages }));
+    if (out.failed > 0 || protections.failed > 0 || messages.failed > 0) process.exitCode = 1;
   } finally { await pool.end(); }
 }
 

@@ -15,7 +15,7 @@ import * as Sentry from '@sentry/node';
 import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
 import { GUEST_DECOY_NAME } from '../../_utils/rdv-guest-decoy.js';
-import { RETENTION_POLICY, executionGate, policyDays, policySummary } from '../../_services/retention-policy.js';
+import { RETENTION_POLICY, executionGate, ownerChoiceOf, policyDays, policySummary, stepApprovalProblem } from '../../_services/retention-policy.js';
 
 /**
  * Per-table RGPD retention constants (read by scripts/gdpr-suite.mjs for REGISTRE_RGPD.json, and by tests).
@@ -31,7 +31,7 @@ export const RETENTION = {
     CONSENT_LOG_DAYS: 1095,         // 3 years — proof that consent can be demonstrated (art. 7(1) fixes no duration): proposal
     INVITATION_GRACE_DAYS: 30,      // After expiry
     OUTLOOK_TOKEN_GRACE_DAYS: 30,   // After expiry
-    APPOINTMENT_ANON_DAYS: 730,     // 2 years after the appointment DATE (startAt, R44 / E1), then anonymise
+    APPOINTMENT_ANON_DAYS: 730,     // R45: the UPPER option of owner choice A7 (365 or 730 days after startAt), shown by the register until the controller chooses; the purge never reads it (policy: no default)
     GUEST_HOLD_DAYS: 1,             // R38: an unconfirmed account-free hold, 1 day after its expiry
 };
 
@@ -67,9 +67,14 @@ export const openNonErasureDsrSql = (subjectExpr) => sql`EXISTS (SELECT 1 FROM "
 /** the person (a citizen id expression, possibly NULL) is protected: restricted processing (art. 18) or an open access / review request */
 export const personProtectedSql = (subjectExpr) => sql`(${restrictedSubjectSql(subjectExpr)} OR ${openNonErasureDsrSql(subjectExpr)})`;
 
-/** R44 / E11 — a shared copy followed by an organization (a ProCase or a Referral references it: both CASCADE on its deletion) */
+/**
+ * R44 / E11 — a shared copy followed by an organization (a ProCase or a Referral references it: both CASCADE on its deletion). R45 / ENG-LR-9: also a
+ * SharedDossierThread — the exchange a structure's professional opened on the copy (its SharedDossierMessage rows CASCADE with it): deleting the copy erased
+ * the structure's correspondence without any basis; such a copy is now redacted (5b), never deleted with its thread.
+ */
 export const hasFollowUpSql = (dossierExpr) => sql`(EXISTS (SELECT 1 FROM "ProCase" pc WHERE pc."sharedDiagnosticId" = ${dossierExpr})
-    OR EXISTS (SELECT 1 FROM "Referral" rf WHERE rf."sharedDiagnosticId" = ${dossierExpr}))`;
+    OR EXISTS (SELECT 1 FROM "Referral" rf WHERE rf."sharedDiagnosticId" = ${dossierExpr})
+    OR EXISTS (SELECT 1 FROM "SharedDossierThread" st WHERE st."sharedDiagnosticId" = ${dossierExpr}))`;
 
 /**
  * R40 / G7 — EntityVersion and rollback. A version is the exact row snapshotted BEFORE a content change (content-versions.js snapshotRow); a rollback
@@ -241,7 +246,7 @@ export const PURGE_STEPS = [
     // 5. Old/Expired Shared Diagnostics (expired OR > 90 days). R44 / E11: a copy followed by an organization (ProCase / Referral, which CASCADE) is NOT
     //    deleted here — deleting it erased the organization's follow-up; step 5b redacts its content instead (separate approval)
     { id: 'deletedDiagnosticsCount', summaryKey: 'diagnostics_deleted', ecode: 'E11', kind: 'delete', table: 'SharedDiagnostic', durationKey: 'SHARED_DIAGNOSTIC_MAX_DAYS',
-        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'DSRRequest'],
+        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'SharedDossierThread', 'DSRRequest'],
         count: (db, ctx) => countWhere(db, SharedDiagnostic, sharedDiagnosticWhere(ctx, false)),
         run: async (db, ctx) => {
             const diagRes = await db.delete(SharedDiagnostic).where(sharedDiagnosticWhere(ctx, false))
@@ -254,7 +259,7 @@ export const PURGE_STEPS = [
     // 5b. R44 / E11 — the same copies when an organization follows them: the row stays (the organization's ProCase / ProCaseNote / Referral keep their
     //     reference and are not cascaded), its content is emptied and its encrypted files deleted. Flagged: the follow-up itself is the structure's record.
     { id: 'diagnosticsRedactedWithFollowUp', summaryKey: 'diagnostics_redacted_with_follow_up', ecode: 'E11', kind: 'redact', table: 'SharedDiagnostic', durationKey: 'SHARED_DIAGNOSTIC_MAX_DAYS',
-        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'DSRRequest'], sharedController: 'ProCase / ProCaseNote / Referral are kept (structure records)',
+        tables: ['SharedDiagnostic', 'LegalHold', 'ProCase', 'Referral', 'SharedDossierThread', 'DSRRequest'], sharedController: 'ProCase / ProCaseNote / Referral / SharedDossierThread are kept (structure records)',
         count: (db, ctx) => countWhere(db, SharedDiagnostic, sharedDiagnosticWhere(ctx, true)),
         run: async (db, ctx) => {
             const rows = await db.select({ id: SharedDiagnostic.id, results: SharedDiagnostic.results }).from(SharedDiagnostic).where(sharedDiagnosticWhere(ctx, true)).for('update');
@@ -341,6 +346,9 @@ export const PURGE_STEPS = [
     //     notification logs cascade; the attachments' encrypted files are deleted after the commit (same path as the DSR erasure).
     { id: 'rdvConversationsDeleted', summaryKey: 'rdv_conversations_deleted', ecode: 'E9', kind: 'delete', table: 'RdvConversation', durationKey: 'RDV_CONVERSATION_DAYS',
         tables: ['RdvConversation', 'RdvMessageAttachment', 'ProAppointment', 'LegalHold', 'DSRRequest'], dependsOn: ['anonymisedAppointmentsCount', 'appointmentsUnconfirmedAnonymised', 'appointmentsCancelledAnonymised'],
+        // R45 / ENG-LR-9: the conversation also holds the STRUCTURE's messages (senderType PRO), attachments and notification logs, all CASCADE: flagged, so
+        // its execution needs the written basis agreed with the structure (approvedSteps[id].sharedControllerBasis), like the other structure-record steps
+        sharedController: 'RdvConversationMessage (structure messages included), RdvMessageAttachment, RdvNotificationLog cascade',
         count: (db, ctx) => countWhere(db, RdvConversation, conversationWhere(ctx)),
         run: async (db, ctx) => {
             // the conversations are locked first: an attachment added meanwhile waits for this transaction and then fails its foreign key (no orphan file)
@@ -455,7 +463,7 @@ export async function runGdprPurge(opts = {}) {
     const body = async (/** @type {boolean} */ execute) => {
         const startedAt = new Date();
         // R40 / G10: optional columns (guest booking, 0043 / 0044) and R44: the tables themselves — read once per run; missing => the step is skipped and said
-        const skippedSteps = []; const notApproved = []; const blocked = []; const countErrors = [];
+        const skippedSteps = []; const notApproved = []; const blocked = []; const countErrors = []; const stepApprovalMissing = []; const ownerChoiceOpen = [];
         // a dry run only reads: a failed read is said in count_errors (a warning), never as a failed retention step
         const detectionFailed = (/** @type {any} */ err) => (execute ? recordFailure('schemaDetection', err)
             : (countErrors.push('schemaDetection'), log.warn({ err }, '[gdpr-purge] schema detection failed (dry run)')));
@@ -470,14 +478,33 @@ export async function runGdprPurge(opts = {}) {
         for (const step of steps) {
             counters[step.summaryKey] = 0;
             for (const k of step.extraKeys || []) counters[k] = 0;
+            // R45: a step whose duration is an owner choice not yet made (A7) has no single cutoff — the dry run counts it once per option
+            const choice = ownerChoiceOf(policy, step.durationKey);
+            let choiceOpen = false;
+            if (choice) { try { policyDays(policy, step.durationKey); } catch { choiceOpen = true; } }
             const line = { id: step.id, ecode: step.ecode, kind: step.kind, table: step.table, durationKey: step.durationKey,
-                days: step.durationKey ? policyDays(policy, step.durationKey) : null, anchor: step.durationKey ? policy.durations[step.durationKey].anchor : 'expiry',
-                ...(step.sharedController ? { sharedController: step.sharedController } : {}), decision: 'dry-run', count: null };
+                days: step.durationKey && !choiceOpen ? policyDays(policy, step.durationKey) : null, anchor: step.durationKey ? policy.durations[step.durationKey].anchor : 'expiry',
+                ...(choice ? { ownerChoice: { id: choice.id, options: choice.options, made: !choiceOpen } } : {}),
+                ...(step.sharedController ? { sharedController: step.sharedController } : {}),
+                // R45: a dry run counts this step BEFORE the steps it depends on run — an execution also removes the rows of what they anonymise in the same run
+                ...(step.dependsOn && !execute ? { countedBeforeDependencies: step.dependsOn } : {}), decision: 'dry-run', count: null };
             report.push(line);
             if (step.tables.some((t) => !tables.has(t)) || (step.requiresGuest && !guestSchema.guestBooking)) {
                 skippedSteps.push(step.id); line.decision = 'skipped_schema'; continue;
             }
-            const runIt = execute && step.kind !== 'report' && typeof step.run === 'function' && gate.approvedSteps.has(step.id);
+            if (choiceOpen) {
+                ownerChoiceOpen.push(step.id); line.decision = 'owner_choice_required'; line.countsByOption = {};
+                for (const option of choice.options) {
+                    const octx = { ...ctx, cutoff: (/** @type {string} */ key) => new Date(now.getTime() - policyDays(policy, key, key === step.durationKey ? { option } : {}) * 86_400_000) };
+                    try { line.countsByOption[String(option)] = await step.count(database, octx); } catch (countErr) { countErrors.push(step.id); log.warn({ err: countErr, step: step.id }, '[gdpr-purge] dry-run count failed'); }
+                }
+                continue;
+            }
+            // R45 / ENG-LR-9: listed by the operator AND approved by the controller in the policy (per step: dry run read, backup verified, written agreement)
+            const listed = gate.approvedSteps.has(step.id);
+            const approvalProblem = execute && listed && step.kind !== 'report' ? stepApprovalProblem(policy, step) : null;
+            if (approvalProblem) { stepApprovalMissing.push({ id: step.id, reason: approvalProblem }); line.decision = 'not_approved_in_policy'; line.approvalProblem = approvalProblem; }
+            const runIt = execute && step.kind !== 'report' && typeof step.run === 'function' && listed && !approvalProblem;
             if (runIt && (step.dependsOn || []).some((d) => failedSteps.includes(d))) { blocked.push(step.id); line.decision = 'blocked_by_failed_dependency'; continue; }
             if (runIt) {
                 try {
@@ -491,6 +518,7 @@ export async function runGdprPurge(opts = {}) {
             }
             if (execute && step.kind !== 'report') notApproved.push(step.id);
             if (step.kind === 'report') line.decision = 'report_only';
+            if (approvalProblem) line.decision = 'not_approved_in_policy';
             try { line.count = await step.count(database, ctx); } catch (countErr) { countErrors.push(step.id); log.warn({ err: countErr, step: step.id }, '[gdpr-purge] dry-run count failed'); }
         }
 
@@ -502,6 +530,8 @@ export async function runGdprPurge(opts = {}) {
             ...(failedSteps.length ? { failed_steps: failedSteps } : {}),
             ...(skippedSteps.length ? { skipped_steps: skippedSteps } : {}),
             ...(notApproved.length ? { not_approved_steps: notApproved } : {}),
+            ...(stepApprovalMissing.length ? { step_approval_missing: stepApprovalMissing } : {}),
+            ...(ownerChoiceOpen.length ? { owner_choice_required_steps: ownerChoiceOpen } : {}),
             ...(blocked.length ? { blocked_steps: blocked } : {}),
             ...(countErrors.length ? { count_errors: countErrors } : {}),
             steps: report,
@@ -512,7 +542,7 @@ export async function runGdprPurge(opts = {}) {
                 await database.insert(AuditLog).values({ action: 'GDPR_PURGE_RUN', actor: 'cron/gdpr-purge', entity: 'RetentionPolicy', entity_id: policy.version,
                     details: { policyVersion: policy.version, startedAt: startedAt.toISOString(), finishedAt: new Date().toISOString(), status: out.status,
                         executed: Object.fromEntries(report.filter((l) => l.decision === 'executed').map((l) => [l.id, l.count])),
-                        failed: failedSteps, skipped: skippedSteps, notApproved, blocked } });
+                        failed: failedSteps, skipped: skippedSteps, notApproved, blocked, stepApprovalMissing: stepApprovalMissing.map((x) => x.id), ownerChoices: policy.approvedChoices ?? null } });
                 out.audit_evidence = 'written';
             } catch (auditErr) { recordFailure('auditEvidence', auditErr); out.audit_evidence = 'failed'; out.status = 'partial_failure'; out.failed_steps = failedSteps; }
         }
@@ -527,7 +557,9 @@ export async function runGdprPurge(opts = {}) {
         const out = await body(false);
         const message = gate.reason === 'GDPR_PURGE_DISABLED'
             ? 'Purge disabled until GDPR_PURGE_ENABLED=true (retention periods must be approved first). Nothing deleted.'
-            : 'Dry run: the retention policy is not approved for execution (or this run asked for a dry run). Nothing deleted.';
+            : gate.reason === 'OWNER_CHOICE_MISSING'
+                ? 'Dry run: an owner choice of the retention policy (A7) is not made, or not named in the approved version. Nothing deleted.'
+                : 'Dry run: the retention policy is not approved for execution (or this run asked for a dry run). Nothing deleted.';
         return { status: 200, body: { skipped: true, reason: gate.reason, message, ...out } };
     }
 
