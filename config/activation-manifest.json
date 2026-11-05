@@ -1624,6 +1624,12 @@
       "nature": "config",
       "format": "^(documented-official-api)?$",
       "note": "R46 (P07): exact value documented-official-api allows the QPV adapter to call the SIG Ville coordinate API — only once an official, documented API and its terms are verified; unset = no call (commune-level QPV answer from the open ANCT list)"
+    },
+    "LAB_LOAD_FORWARDED": {
+      "class": "lab",
+      "nature": "config",
+      "format": "^(1)?$",
+      "note": "R46 (Q05): « 1 » makes scripts/lab-server.mjs keep the client X-Forwarded-For so a local load test sees many clients; refused on port 3000; LAB only, rate limits stay on"
     }
   },
   "platform": [
