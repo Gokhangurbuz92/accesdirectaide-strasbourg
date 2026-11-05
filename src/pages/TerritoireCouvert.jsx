@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Info, MapPin } from 'lucide-react';
 
 import SEO from '@/components/SEO';
+import PostalCodeLookup from '@/components/territory/PostalCodeLookup';
 import { useLanguage, useT } from '@/i18n';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
@@ -47,6 +48,9 @@ export default function TerritoireCouvert() {
           {validated ? t('home:territory.validated', 'Cette liste a été vérifiée par une personne.') : t('home:territory.not-validated', 'Cette liste n\'a pas encore été vérifiée par une personne de l\'équipe.')}
         </p>
       </section>
+
+      {/* R46 / P07: postal code → commune(s), QPV of the commune (official La Poste and ANCT references) */}
+      <PostalCodeLookup />
 
       <section aria-labelledby="territoire-communes">
         <h2 id="territoire-communes" className="mb-3 text-xl font-semibold text-slate-900">{t('home:territory.communes', 'Les communes')}</h2>

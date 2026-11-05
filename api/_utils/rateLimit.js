@@ -86,6 +86,7 @@ const CONFIG = {
     SEARCH_RESSOURCES: { limit: 60, window: 60 }, // 60 per min
     DREES_API: { limit: 30, window: 60 },         // 30 per min
     TAXONOMY: { limit: 60, window: 60 },          // 60 per min
+    TERRITORY_LOOKUP: { limit: 60, window: 60 },  // R46 / P07: postal code → communes / QPV from the committed official references
     // Assistant (AI)
     ASSISTANT_CHAT: { limit: 10, window: 60 },    // 10 per min
     ASSISTANT_RECOS: { limit: 15, window: 60 },   // 15 per min
@@ -112,7 +113,7 @@ function hashKey(/** @type {string} */ key) {
 const PUBLIC_READ_ACTIONS = new Set([
     'SEARCH_AIDES', 'SEARCH_STRUCTURES', 'SEARCH_RESSOURCES', 
     'DREES_API', 'TAXONOMY', 'RDV_PUBLIC_READ', 'MESSAGE_USER_READ', 
-    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT'
+    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT', 'TERRITORY_LOOKUP'
 ]);
 
 // R43: the former AUTH_OR_SENSITIVE_MUTATION list was never read: shouldFailClosed() fails closed for EVERY action outside PUBLIC_READ_ACTIONS (unknown ones included)

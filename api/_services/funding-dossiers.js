@@ -59,8 +59,15 @@ const httpUrl = (v) => { const s = short(v, 500); if (!s) return null; try { con
 
 /** Validate and normalize the editable content. Returns { content } or a refusal naming the first problem in French. */
 export function normalizeContent(input = {}) {
-  const c = { sections: {}, budget: [], financement: [], jalons: [], pieces: [] };
+  const c = { sections: {}, rubriques: [], budget: [], financement: [], jalons: [], pieces: [] };
   for (const [key] of SECTIONS) c.sections[key] = txt(input.sections?.[key]);
+  // R46 / P27: « each funder's own list prevails » — the funder's own headings, beside the Cerfa 12156*06 sections (jsonb content, no schema change)
+  for (const r of (Array.isArray(input.rubriques) ? input.rubriques : []).slice(0, 20)) {
+    const titre = short(r?.titre, 200); const texte = txt(r?.texte);
+    if (!titre && !texte) continue;
+    if (!titre) return bad('RUBRIQUE_TITLE_REQUIRED', 'Une rubrique du financeur doit porter l’intitulé donné par le financeur.');
+    c.rubriques.push({ id: short(r?.id, 12) || rid(), titre, texte, attendue: r?.attendue === true || r?.attendue === 'true' });
+  }
   for (const l of (Array.isArray(input.budget) ? input.budget : []).slice(0, 80)) {
     const montant = money(l.montant);
     if (Number.isNaN(montant)) return bad('INVALID_AMOUNT', `Montant invalide pour « ${short(l.poste, 60) || 'une ligne du budget'} ».`);
@@ -96,6 +103,7 @@ export function warningsOf(d, now = new Date()) {
   const c = d.content || {};
   const w = [];
   for (const [key, label, required] of SECTIONS) if (required && !String(c.sections?.[key] || '').trim()) w.push({ code: 'SECTION_EMPTY', blocking: true, message: `Section « ${label} » à rédiger.` });
+  for (const r of c.rubriques || []) if (r.attendue && !String(r.texte || '').trim()) w.push({ code: 'FUNDER_SECTION_EMPTY', blocking: true, message: `Rubrique du financeur « ${r.titre} » à rédiger.` });
   const charges = (c.budget || []).filter((l) => l.nature === 'CHARGE'); const produits = (c.budget || []).filter((l) => l.nature === 'PRODUIT');
   if (!charges.length) w.push({ code: 'BUDGET_EMPTY', blocking: true, message: 'Le budget ne compte aucune charge.' });
   const noAmount = (c.budget || []).filter((l) => l.montant === null);
@@ -224,6 +232,9 @@ export async function setStatus(id, input, by, db = defaultDb) {
 }
 
 /** A working document in Markdown (any funder's form is filled from it): sections, budget with totals and provisional marks, financing, milestones, documents. */
+/** a Markdown table cell: a pipe or a line break typed in a field must not break (or forge) the table */
+const cell = (x) => String(x ?? '').replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ');
+
 export function exportMarkdown(d) {
   const v = view(d); const c = d.content || {};
   const eur = (n) => (n === null || n === undefined ? 'à renseigner' : `${Number(n).toFixed(2).replace('.', ',')} €`);
@@ -232,10 +243,14 @@ export function exportMarkdown(d) {
   L.push(`- Financeur : ${d.funderName || 'à préciser'}`, `- Programme : ${d.programmeName || 'à préciser'}${d.programmeUrl ? ` (${d.programmeUrl})` : ''}`, `- Date limite : ${day(d.deadline)}`, '');
   if (v.warnings.length) { L.push('## Points à compléter', ''); for (const w of v.warnings) L.push(`- ${w.message}`); L.push(''); }
   for (const [key, label] of SECTIONS) { L.push(`## ${label}`, '', String(c.sections?.[key] || '').trim() || '_À rédiger._', ''); }
+  if ((c.rubriques || []).length) {
+    L.push('## Rubriques demandées par le financeur', '');
+    for (const r of c.rubriques) L.push(`### ${cell(r.titre)}${r.attendue ? ' (attendue)' : ''}`, '', String(r.texte || '').trim() || '_À rédiger._', '');
+  }
   L.push('## Budget prévisionnel', '', '| Poste | Nature | Montant | Statut | Justification |', '|---|---|---|---|---|');
-  for (const l of c.budget || []) L.push(`| ${l.poste} | ${l.nature === 'CHARGE' ? 'Charge' : 'Produit'} | ${eur(l.montant)} | ${BUDGET_STATUSES[l.statut]} | ${l.justification || ''} |`);
+  for (const l of c.budget || []) L.push(`| ${cell(l.poste)} | ${l.nature === 'CHARGE' ? 'Charge' : 'Produit'} | ${eur(l.montant)} | ${BUDGET_STATUSES[l.statut]} | ${cell(l.justification)} |`);
   L.push('', `Total des charges : ${eur(v.totals.charges)} — total des produits : ${eur(v.totals.produits)}.`, '', '## Plan de financement', '');
-  if ((c.financement || []).length) { L.push('| Financeur | Montant | Statut | Décision |', '|---|---|---|---|'); for (const f of c.financement) L.push(`| ${f.financeur} | ${eur(f.montant)} | ${FINANCING_STATUSES[f.statut]} | ${f.reference || ''} |`); }
+  if ((c.financement || []).length) { L.push('| Financeur | Montant | Statut | Décision |', '|---|---|---|---|'); for (const f of c.financement) L.push(`| ${cell(f.financeur)} | ${eur(f.montant)} | ${FINANCING_STATUSES[f.statut]} | ${cell(f.reference)} |`); }
   else L.push('_Aucun financement indiqué._');
   L.push('', '## Calendrier', ''); if ((c.jalons || []).length) for (const j of c.jalons) L.push(`- ${day(j.date)} — ${j.libelle} (${j.statut === 'FAIT' ? 'fait' : 'prévu'})`); else L.push('_Aucun jalon._');
   L.push('', '## Pièces justificatives', ''); for (const p of c.pieces || []) L.push(`- [${p.statut === 'DISPONIBLE' ? 'x' : ' '}] ${p.libelle} — ${PIECE_STATUSES[p.statut]}${p.reference ? ` (${p.reference})` : ''}`);

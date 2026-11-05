@@ -1,12 +1,15 @@
 // @ts-nocheck
 /**
- * Phase 9 — QPV Adapter
- * Implements ANCT SIG Ville live API with local fixture fallback.
- * Live credentials: EXTERNAL ACTION REQUIRED.
+ * Phase 9 — QPV Adapter (legacy, NOT used by any request handler).
+ * R46 / P07: the product's QPV facts now come from the official ANCT 2024 list in data/reference/qpv-2024.v1.json (api/lib/geography/postalReference.js),
+ * which says which communes count a quartier prioritaire and never places an address in one.
+ * The fixtures below are SYNTHETIC test values: they do NOT match the official list (QP067001 is « Quartier Liberté » in the 2015 generation, and the 2024
+ * codes are QN…); never show them to a person. No coordinate API of sig.ville.gouv.fr is documented as a supported public API, so the « live » call below
+ * is refused even when a key is configured (QPV state UNKNOWN) — never call an unverified API as if it were supported.
  */
 import logger from '../../_utils/logger.js';
 
-// Official QPV fixtures for local/test (real ANCT reference codes)
+// SYNTHETIC fixtures for legacy unit tests only (names and codes are NOT the official correspondence)
 const QPV_FIXTURES = new Map([
   ['QP067001', { code: 'QP067001', name: 'Hautepierre', commune: '67482', departement: '67' }],
   ['QP067002', { code: 'QP067002', name: 'Neuhof - Meinau', commune: '67482', departement: '67' }],
@@ -46,6 +49,11 @@ export async function resolveQPVFromLiveAPI(lat, lon) {
     return null;
   }
 
+  // R46: a key alone does not make an undocumented endpoint official — refused, the caller treats the state as UNKNOWN
+  if (process.env.SIG_VILLE_API_VERIFIED !== 'documented-official-api') {
+    logger.warn('[QPV] No documented official coordinate API: QPV state UNKNOWN (use the official address lookup on sig.ville.gouv.fr).');
+    return null;
+  }
   try {
     const url = `${SIG_VILLE_API_BASE}/qpv?lat=${lat}&lon=${lon}`;
     const res = await fetch(url, {

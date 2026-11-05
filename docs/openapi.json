@@ -593,6 +593,49 @@
         "responses": { "200": { "description": "Arbre de taxonomie" } }
       }
     },
+    "/territory/postal": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Code postal → communes (base officielle de La Poste, rapprochée du COG Insee) et quartiers prioritaires 2024 de chaque commune (ANCT)",
+        "parameters": [{ "name": "code", "in": "query", "required": true, "schema": { "type": "string", "pattern": "^\\d{5}$" } }],
+        "responses": {
+          "200": { "description": "status SINGLE | MULTIPLE (toutes les communes, ordre alphabétique : la personne choisit) | UNKNOWN_POSTAL_CODE ; QPV au niveau de la commune seulement (qpvScope COMMUNE_ONLY)" },
+          "400": { "description": "INVALID : 5 chiffres attendus" },
+          "429": { "description": "Trop de demandes" },
+          "503": { "description": "UNAVAILABLE : référence absente" }
+        }
+      }
+    },
+    "/territory/qpv": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Quartiers prioritaires de la politique de la ville 2024 listés pour une commune (ANCT) — jamais l'appartenance d'une adresse",
+        "parameters": [{ "name": "commune", "in": "query", "required": true, "schema": { "type": "string", "pattern": "^[0-9][0-9AB][0-9]{3}$" } }],
+        "responses": {
+          "200": { "description": "status OK, quartiers[], officialLookup https://sig.ville.gouv.fr" },
+          "400": { "description": "INVALID" },
+          "429": { "description": "Trop de demandes" },
+          "503": { "description": "UNAVAILABLE" }
+        }
+      }
+    },
+    "/contact": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "État du canal du formulaire de contact (sans nom de fournisseur)",
+        "responses": { "200": { "description": "channel CONNECTED | TEST (boîte de test du LAB) | NOT_CONNECTED" } }
+      },
+      "post": {
+        "tags": ["Core Data"],
+        "summary": "Message de contact (rien n'est enregistré sur la plateforme)",
+        "responses": {
+          "200": { "description": "accepted, mailStatus PROVIDER_ACCEPTED | TEST_RECORDED" },
+          "400": { "description": "Champ invalide ou anti-spam" },
+          "429": { "description": "5 messages par heure et par adresse IP" },
+          "503": { "description": "NOT_DELIVERED (reason MAIL_NOT_CONNECTED quand aucun fournisseur n'est branché)" }
+        }
+      }
+    },
     "/reports": {
       "get": {
         "tags": ["Core Data"],

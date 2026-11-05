@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { mailLedgerStatus, sendMail } from '../_utils/mailer.js';
+import { getMailerStatus, mailLedgerStatus, sendMail } from '../_utils/mailer.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import logger from '../_utils/logger.js';
 
@@ -15,7 +15,16 @@ import logger from '../_utils/logger.js';
  *  - the « page concernée » is shown as text; it is a link only when it is a path or an https address of accesdirectaide.fr;
  *  - the acknowledgement sent to the given address carries no text from the form (no relay of attacker content to a third party);
  *  - the answer says honestly whether the message was handed to the mail provider, without naming the provider.
+ * R46 / P20 — the provider-disconnected path: GET /api/contact says, BEFORE anyone types, whether the channel can carry a message
+ * (`channel`: CONNECTED = a configured provider; TEST = the LAB outbox, nothing leaves the machine; NOT_CONNECTED = no provider, MAILER_PROVIDER unset /
+ * noop, sandbox or incomplete credentials). It names no provider and reads no value. A POST on a disconnected channel still answers 503 NOT_DELIVERED,
+ * with `reason: 'MAIL_NOT_CONNECTED'` so the page can say why; nothing is stored either way.
  */
+/** @returns {'CONNECTED' | 'TEST' | 'NOT_CONNECTED'} */
+export function contactChannel(status = getMailerStatus()) {
+  if (status.provider === 'test') return 'TEST';
+  return status.deliverable ? 'CONNECTED' : 'NOT_CONNECTED';
+}
 const ADMIN_EMAIL = 'contact@accesdirectaide.fr';
 const SUJET_LABELS = {
   question: 'Question',
@@ -58,6 +67,10 @@ export function validateContact(body) {
 
 export default async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ req, /** @type {import('../_utils/http-types').ApiResponse} */ res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'GET') {
+    res.setHeader?.('Cache-Control', 'no-store');
+    return res.status(200).json({ channel: contactChannel(), directAddress: ADMIN_EMAIL });
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
@@ -118,7 +131,10 @@ export default async function handler(/** @type {import('../_utils/http-types').
     // PROVIDER_ACCEPTED (a real provider took it), TEST_RECORDED (LAB outbox), otherwise 503
     const mailStatus = mailLedgerStatus(result);
     if (mailStatus !== 'PROVIDER_ACCEPTED' && mailStatus !== 'TEST_RECORDED') {
-      return res.status(503).json({ ok: false, delivered: false, code: 'NOT_DELIVERED', error: "Votre message n'a pas pu être transmis. Écrivez-nous directement à contact@accesdirectaide.fr." });
+      return res.status(503).json({
+        ok: false, delivered: false, code: 'NOT_DELIVERED', ...(result?.outcome === 'NOT_SENT' ? { reason: 'MAIL_NOT_CONNECTED' } : {}),
+        error: "Votre message n'a pas pu être transmis. Écrivez-nous directement à contact@accesdirectaide.fr.",
+      });
     }
 
     // Acknowledgement: fixed text only — nothing typed in the form is sent to the given address.

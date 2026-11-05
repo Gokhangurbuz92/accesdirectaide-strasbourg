@@ -233,5 +233,12 @@
  "chat.assessment_attached_other": "Ihre {{count}} Simulationshinweise sind Ihren Fragen beigefügt, nur zum Lesen. La Boussole erklärt sie, sie entscheidet nicht.",
  "chat.feedback_failed": "Ihre Rückmeldung konnte nicht gesendet werden.",
  "chat.feedback_retry": "Erneut versuchen",
- "health_notice.text": "Senden Sie keine medizinischen Dokumente (Attest, Bericht, Rezept, MDPH-Akte – Akte beim Behindertenzentrum – mit Gesundheitsangaben): AccesDirectAide hat noch keinen zugelassenen Hoster für Gesundheitsdaten (HDS, die französische Zertifizierung für das Hosten von Gesundheitsdaten)."
+ "health_notice.text": "Senden Sie keine medizinischen Dokumente (Attest, Bericht, Rezept, MDPH-Akte – Akte beim Behindertenzentrum – mit Gesundheitsangaben): AccesDirectAide hat noch keinen zugelassenen Hoster für Gesundheitsdaten (HDS, die französische Zertifizierung für das Hosten von Gesundheitsdaten).",
+ "chat.rate_limited": "Zu viele Fragen in kurzer Zeit. Warten Sie eine Minute und versuchen Sie es dann erneut.",
+ "chat.closed": "La Boussole Sociale ist noch nicht geöffnet. Mit der Suche der Website können Sie nach einer Leistung, einem Verfahren oder einer Einrichtung suchen.",
+ "chat.go_search": "Zur Suche",
+ "chat.outcome_abstention": "Keine Antwort mit Quelle: Ohne geprüfte Quelle antworte ich nicht.",
+ "chat.outcome_grounded": "Antwort auf Grundlage der unten aufgeführten offiziellen Quellen. Sie ist keine Entscheidung über Ihre Rechte.",
+ "chat.postal_choose": "Gemeinden der Postleitzahl {{code}} (offizielle Datenbank von La Poste): Wählen Sie Ihre aus.",
+ "chat.postal_outside": "(außerhalb des abgedeckten Gebiets)"
 }

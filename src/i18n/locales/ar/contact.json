@@ -56,5 +56,11 @@
  "request.adresse_e_mail_ou_telephone": "عنوان البريد الإلكتروني أو الهاتف",
  "request.ne_pas_remplir": "لا تملأ هذا الحقل",
  "request.envoyer": "إرسال",
- "form.email_placeholder": "name@example.com"
+ "form.email_placeholder": "name@example.com",
+ "error.not_connected": "لم تُرسَل رسالتك: الإرسال عبر هذه الاستمارة ليس في الخدمة بعد. راسلنا مباشرة على contact@accesdirectaide.fr.",
+ "sent.test": "بيئة اختبار: سُجّلت الرسالة في صندوق بريد الاختبار، ولم يُرسَل أي بريد إلكتروني.",
+ "channel.not_connected_title": "الإرسال عبر هذه الاستمارة ليس في الخدمة بعد",
+ "channel.closed": "خلال المرحلة التجريبية العامة لا ترسل هذه الاستمارة شيئًا. لمراسلتنا استخدم العنوان contact@accesdirectaide.fr.",
+ "channel.not_connected": "لا توجد بعد خدمة موصولة لإرسال البريد الإلكتروني: الرسالة المرسلة من هنا لن تُنقَل. لمراسلتنا استخدم العنوان contact@accesdirectaide.fr.",
+ "channel.test": "بيئة اختبار: تُسجَّل الرسائل في صندوق بريد للاختبار ولا يُرسَل أي بريد إلكتروني."
 }

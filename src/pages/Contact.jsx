@@ -40,6 +40,23 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  // R46 / P20: whether the LAB outbox (not a real delivery) recorded the message
+  const [testRecorded, setTestRecorded] = useState(false);
+  // R46 / P20: the channel status said BEFORE anyone types (GET /api/contact): CONNECTED, TEST (LAB outbox), NOT_CONNECTED (no mail provider),
+  // CLOSED (refused by the server during the beta); UNKNOWN when the status cannot be read — the form then behaves as before (the POST answer decides)
+  const [channel, setChannel] = useState(/** @type {'UNKNOWN' | 'CONNECTED' | 'TEST' | 'NOT_CONNECTED' | 'CLOSED'} */ ('UNKNOWN'));
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/contact', { headers: { Accept: 'application/json' } })
+      .then(async (r) => {
+        const d = await r.json().catch(() => ({}));
+        if (!alive) return;
+        if (r.status === 503 && (d?.error === 'PUBLIC_BETA_RESTRICTED' || d?.error === 'CAPABILITY_NOT_OPEN' || d?.code === 'CAPABILITY_NOT_OPEN')) setChannel('CLOSED');
+        else if (r.ok && ['CONNECTED', 'TEST', 'NOT_CONNECTED'].includes(d?.channel)) setChannel(d.channel);
+      })
+      .catch(() => { /* status unreadable: UNKNOWN, the POST answer still decides */ });
+    return () => { alive = false; };
+  }, []);
   const [error, setError] = useState('');
   // R42 (A5): one message per field in error, a summary that receives the focus on submit
   const [fieldErrors, setFieldErrors] = useState(/** @type {Record<string, string>} */ ({}));
@@ -74,11 +91,15 @@ export default function Contact() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && (data?.accepted === true || data?.delivered === true)) {   // R40: handed to the mail provider (or the LAB outbox); « delivered » is the pre-R40 answer — the page never claims more
+        setTestRecorded(data?.mailStatus === 'TEST_RECORDED');
         setIsSubmitted(true);
       } else if (res.status === 429) {
         setError(t('contact:error.rate_limited', 'Trop de messages envoyés depuis cette connexion. Réessayez dans une heure ou écrivez-nous à contact@accesdirectaide.fr.'));
       } else if (res.status === 400 && data?.error) {
         setError(`${data.error}`);   // the server's own wording (French)
+      } else if (data?.reason === 'MAIL_NOT_CONNECTED') {
+        setChannel('NOT_CONNECTED');
+        setError(t('contact:error.not_connected', "Votre message n'a pas été transmis : l'envoi par ce formulaire n'est pas encore en service. Écrivez-nous directement à contact@accesdirectaide.fr."));
       } else {
         setError(t('contact:error.not_delivered', "Votre message n'a pas pu être transmis. Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
       }
@@ -103,6 +124,11 @@ export default function Contact() {
             <p className="text-slate-600 leading-relaxed" data-testid="contact-sent">
               {t('contact:sent.text', "Merci pour votre message. Il a bien été transmis à l'équipe, qui vous répondra dès que possible à l'adresse indiquée.")}
             </p>
+            {testRecorded && (
+              <p className="text-sm text-slate-700" data-testid="contact-sent-test">
+                {t('contact:sent.test', "Environnement de test : le message a été enregistré dans la boîte de test, aucun e-mail n'est parti.")}
+              </p>
+            )}
             <Button onClick={() => window.location.href = '/'} className="w-full mt-4 bg-slate-900 hover:bg-slate-800">
               {t('contact:sent.home', "Retour à l'accueil")}
             </Button>
@@ -149,6 +175,20 @@ export default function Contact() {
                 {t('contact:warning.text', 'Ne transmettez jamais votre Numéro de Sécurité Sociale, coordonnées bancaires ou mots de passe via ce formulaire. Accès Direct Aide ne vous les demandera jamais ici.')}
               </div>
             </div>
+
+            {/* R46 / P20: the provider-status line — honest before the person types */}
+            {channel === 'NOT_CONNECTED' || channel === 'CLOSED' ? (
+              <div role="note" data-testid="contact-channel-status" data-channel={channel} className="mb-6 rounded-lg border border-slate-400 bg-slate-100 p-4 text-sm text-slate-900">
+                <strong className="mb-1 block">{t('contact:channel.not_connected_title', "L'envoi par ce formulaire n'est pas encore en service")}</strong>
+                {channel === 'CLOSED'
+                  ? t('contact:channel.closed', "Pendant la bêta publique, ce formulaire n'envoie rien. Pour nous écrire, utilisez l'adresse contact@accesdirectaide.fr.")
+                  : t('contact:channel.not_connected', "Aucun service d'envoi d'e-mails n'est encore branché : un message envoyé ici ne sera pas transmis. Pour nous écrire, utilisez l'adresse contact@accesdirectaide.fr.")}
+              </div>
+            ) : channel === 'TEST' ? (
+              <div role="note" data-testid="contact-channel-status" data-channel={channel} className="mb-6 rounded-lg border border-slate-400 bg-slate-100 p-4 text-sm text-slate-900">
+                {t('contact:channel.test', "Environnement de test : les messages sont enregistrés dans une boîte de test et aucun e-mail ne part.")}
+              </div>
+            ) : null}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <ErrorSummary ref={summaryRef} errors={fieldErrors} order={FIELD_ORDER} testid="contact-error-summary" />

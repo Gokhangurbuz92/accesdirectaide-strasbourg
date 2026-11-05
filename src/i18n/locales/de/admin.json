@@ -1544,5 +1544,11 @@
  "review_queue.type.aide": "Hilfe",
  "review_queue.type.demarche": "Verfahren",
  "review_queue.type.structure": "Einrichtung",
- "review_queue.type.actualite": "Nachricht"
+ "review_queue.type.actualite": "Nachricht",
+ "k5.funding.rubriques": "Vom Geldgeber verlangte Rubriken",
+ "k5.funding.rubriques_help": "Übernehmen Sie die genauen Überschriften des Antragsformulars des Geldgebers: Sie haben Vorrang vor den Abschnitten des Cerfa.",
+ "k5.funding.rubrique_title": "Überschrift des Geldgebers",
+ "k5.funding.rubrique_text": "Text",
+ "k5.funding.rubrique_required": "Vom Geldgeber verlangte Rubrik",
+ "k5.funding.rubrique_add": "Eine Rubrik des Geldgebers hinzufügen"
 }

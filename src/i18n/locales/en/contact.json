@@ -56,5 +56,11 @@
  "request.adresse_e_mail_ou_telephone": "e-mail address or telephone",
  "request.ne_pas_remplir": "Do not fill in",
  "request.envoyer": "Send",
- "form.email_placeholder": "jane@example.com"
+ "form.email_placeholder": "jane@example.com",
+ "error.not_connected": "Your message was not sent: sending through this form is not in service yet. Write to us directly at contact@accesdirectaide.fr.",
+ "sent.test": "Test environment: the message was recorded in the test mailbox; no e-mail was sent.",
+ "channel.not_connected_title": "Sending through this form is not in service yet",
+ "channel.closed": "During the public beta, this form sends nothing. To write to us, use the address contact@accesdirectaide.fr.",
+ "channel.not_connected": "No e-mail sending service is connected yet: a message sent here will not be passed on. To write to us, use the address contact@accesdirectaide.fr.",
+ "channel.test": "Test environment: messages are recorded in a test mailbox and no e-mail is sent."
 }

@@ -10,6 +10,8 @@ const EXACT = new Set([
   'health', 'health/live', 'health/ready', 'healthz', 'status',
   'robots.txt', 'robots', 'sitemap.xml', 'sitemap',
   'public/page', 'taxonomy', 'search', 'search-pro', 'glossaire',
+  // R46 / P07: official reference lookups (La Poste postal codes, ANCT QPV list) — GET only, no record, nothing written or logged
+  'territory/postal', 'territory/qpv',
   // read by the shell on every page: answers « not signed in » and creates nothing
   'auth/me',
 ]);

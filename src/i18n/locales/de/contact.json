@@ -56,5 +56,11 @@
  "request.adresse_e_mail_ou_telephone": "E-Mail-Adresse oder Telefon",
  "request.ne_pas_remplir": "Nicht ausfüllen",
  "request.envoyer": "Senden",
- "form.email_placeholder": "max@beispiel.de"
+ "form.email_placeholder": "max@beispiel.de",
+ "error.not_connected": "Ihre Nachricht wurde nicht übermittelt: Der Versand über dieses Formular ist noch nicht in Betrieb. Schreiben Sie uns direkt an contact@accesdirectaide.fr.",
+ "sent.test": "Testumgebung: Die Nachricht wurde im Testpostfach gespeichert; es wurde keine E-Mail versendet.",
+ "channel.not_connected_title": "Der Versand über dieses Formular ist noch nicht in Betrieb",
+ "channel.closed": "Während der öffentlichen Beta versendet dieses Formular nichts. Schreiben Sie uns an die Adresse contact@accesdirectaide.fr.",
+ "channel.not_connected": "Es ist noch kein E-Mail-Versanddienst angebunden: Eine hier gesendete Nachricht wird nicht übermittelt. Schreiben Sie uns an die Adresse contact@accesdirectaide.fr.",
+ "channel.test": "Testumgebung: Nachrichten werden in einem Testpostfach gespeichert und es wird keine E-Mail versendet."
 }

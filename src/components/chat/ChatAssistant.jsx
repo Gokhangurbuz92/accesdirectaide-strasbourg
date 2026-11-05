@@ -6,12 +6,28 @@ import { ensureCsrfHeaders } from '@/lib/csrf';
 import { ASSISTANT_OPEN_EVENT } from '@/lib/assistantBridge';
 import i18n, { useLanguage, useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import { assistantMessage, chatFailure } from '@/lib/chatOutcome';
 
 /** French text inside any interface language: the assistant answers, cites and is asked in French (context.lang = 'fr') */
 const FR = { lang: 'fr', dir: 'ltr' };
 
 // PKG-11: the first message of a page that has not called the API yet carried no CSRF token and was refused (403); the token is bootstrapped first
 const csrfHeaders = async () => (await ensureCsrfHeaders().catch(() => null)) || {};
+
+const TERRITORY_REASONS = ['territory_required', 'territory_not_resolved', 'territory_ambiguous', 'territory_historical_only', 'territory_outside_service', 'territory_too_broad', 'territory_postal_code'];
+
+/** the communes of a five-digit postal code (official La Poste reference), or null @param {string} value */
+async function postalChoices(value) {
+  const cp = String(value || '').replace(/\s+/g, '');
+  if (!/^\d{5}$/.test(cp)) return null;
+  try {
+    const r = await fetch(`/api/territory/postal?code=${encodeURIComponent(cp)}`, { headers: { Accept: 'application/json' } });
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (!Array.isArray(d?.candidates) || !d.candidates.length) return null;
+    return { postalCode: cp, candidates: d.candidates.map((/** @type {any} */ c) => ({ code: String(c.code), nom: String(c.nom), inServiceTerritory: c.inServiceTerritory === true })) };
+  } catch { return null; }
+}
 
 /**
  * ChatAssistant v2 — La Boussole Sociale
@@ -80,6 +96,23 @@ export default function ChatAssistant({ embedded = false }) {
     };
   }, []);
 
+  /** R46 / P17: one place reads a 200 answer (territory memory, pending question, grounded / abstention, postal-code choices) */
+  const receive = useCallback(async (/** @type {any} */ data, /** @type {string} */ questionForServer, /** @type {string | null} */ territoryForServer) => {
+    if (data.meta?.territoryId) {
+      setTerritory(data.meta.territoryId);
+      setTerritoryLabel(data.meta.territoryLabel || null);
+      setPendingQuestion(null);
+    } else if (TERRITORY_REASONS.includes(data.meta?.reason)) {
+      setPendingQuestion(questionForServer);
+    }
+    const message = assistantMessage(data);
+    if (data.meta?.reason === 'territory_postal_code') {
+      const choices = await postalChoices(String(territoryForServer || ''));
+      if (choices) Object.assign(message, { postal: choices });
+    }
+    setMessages((prev) => [...prev, message]);
+  }, []);
+
   /** Send a message to the local grounded assistant endpoint */
   const handleSubmit = useCallback(
     async (/** @type {{ preventDefault: () => void; }} */ event) => {
@@ -116,37 +149,13 @@ export default function ChatAssistant({ embedded = false }) {
           signal: controller.signal,
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => null);
 
-        if (!res.ok) {
-          setError(data.message ? { text: data.message, fr: true } : { text: t('shared:chat.error', 'Une erreur est survenue.') });
+        if (!res.ok || !data) {
+          setError(chatFailure(res.status, data, t));
           return;
         }
-
-        // Keep only the canonical territory returned by the local resolver.
-        if (data.meta?.territoryId) {
-          setTerritory(data.meta.territoryId);
-          setTerritoryLabel(data.meta.territoryLabel || null);
-          setPendingQuestion(null);
-        } else if (['territory_required', 'territory_not_resolved', 'territory_ambiguous', 'territory_historical_only', 'territory_outside_service', 'territory_too_broad', 'territory_postal_code'].includes(data.meta?.reason)) {
-          setPendingQuestion(questionForServer);
-        }
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            role: 'assistant',
-            content: data.answer,
-            links: (data.citations || []).map((/** @type {{ entityType: string | number | boolean | null | undefined, sourceId: string | number | boolean | null | undefined, sourceUrl: string | number | boolean | null | undefined, title: string | number | boolean | null | undefined }} */ citation) => ({
-              title: citation.title || citation.sourceId || 'Source officielle',
-              url: citation.sourceUrl,
-              type: citation.entityType || 'source',
-            })).filter((/** @type {{ url: string | number | boolean | null | undefined }} */ link) => link.url),
-            suggestions: [],
-            logId: null,
-          },
-        ]);
+        await receive(data, questionForServer, territoryForServer);
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
         setError({ text: t('shared:chat.error_unexpected', 'Une erreur inattendue est survenue. Veuillez réessayer.') });
@@ -154,7 +163,7 @@ export default function ChatAssistant({ embedded = false }) {
         setIsLoading(false);
       }
     },
-    [inputValue, isLoading, territory, pendingQuestion, assessment, t],
+    [inputValue, isLoading, territory, pendingQuestion, assessment, t, receive],
   );
 
   /** Send a pre-defined prompt */
@@ -185,33 +194,9 @@ export default function ChatAssistant({ embedded = false }) {
           signal: controller.signal,
         }))
         .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.message || 'assistant_error');
-          return data;
-        })
-        .then((data) => {
-          if (data.meta?.territoryId) {
-            setTerritory(data.meta.territoryId);
-            setTerritoryLabel(data.meta.territoryLabel || null);
-            setPendingQuestion(null);
-          } else if (['territory_required', 'territory_not_resolved', 'territory_ambiguous', 'territory_historical_only', 'territory_outside_service', 'territory_too_broad', 'territory_postal_code'].includes(data.meta?.reason)) {
-            setPendingQuestion(questionForServer);
-          }
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now(),
-              role: 'assistant',
-              content: data.answer,
-              links: (data.citations || []).map((/** @type {{ entityType: string | number | boolean | null | undefined, sourceId: string | number | boolean | null | undefined, sourceUrl: string | number | boolean | null | undefined, title: string | number | boolean | null | undefined }} */ citation) => ({
-                title: citation.title || citation.sourceId || 'Source officielle',
-                url: citation.sourceUrl,
-                type: citation.entityType || 'source',
-              })).filter((/** @type {{ url: string | number | boolean | null | undefined }} */ link) => link.url),
-              suggestions: [],
-              logId: null,
-            },
-          ]);
+          const data = await res.json().catch(() => null);
+          if (!res.ok || !data) { setError(chatFailure(res.status, data, t)); return; }
+          await receive(data, questionForServer, territoryForServer);
         })
         .catch((err) => {
           if (err instanceof DOMException && err.name === 'AbortError') return;
@@ -219,7 +204,7 @@ export default function ChatAssistant({ embedded = false }) {
         })
         .finally(() => setIsLoading(false));
     },
-    [isLoading, territory, pendingQuestion, assessment, t],
+    [isLoading, territory, pendingQuestion, assessment, t, receive],
   );
 
   const handleRetry = useCallback(() => {
@@ -426,7 +411,30 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                 {isSource ? null : <p className="mt-1 text-xs text-slate-600" data-testid="chat-french-only">{t('shared:chat.french_only', 'La Boussole Sociale répond en français.')}</p>}
               </>
             ) : (
-              <p className="leading-relaxed" {...(message.role === 'assistant' ? FR : {})}>{message.content}</p>
+              <>
+                {/* R46 / P17: the kind of answer is said, in the interface language */}
+                {message.role === 'assistant' && message.outcome === 'abstention' && (
+                  <p className="mb-1 text-xs font-semibold text-slate-700" data-testid="chat-outcome" data-outcome="abstention">{t('shared:chat.outcome_abstention', 'Pas de réponse sourcée : je ne réponds pas sans source vérifiée.')}</p>
+                )}
+                {message.role === 'assistant' && message.outcome === 'grounded' && (
+                  <p className="mb-1 text-xs font-semibold text-slate-700" data-testid="chat-outcome" data-outcome="grounded">{t('shared:chat.outcome_grounded', 'Réponse fondée sur les sources officielles listées ci-dessous. Ce n\'est pas une décision sur vos droits.')}</p>
+                )}
+                <p className="leading-relaxed" {...(message.role === 'assistant' ? FR : {})}>{message.content}</p>
+                {message.postal && (
+                  <div className="mt-2 border-t border-slate-100 pt-2" data-testid="chat-postal-choices">
+                    <p className="text-xs font-medium text-slate-700">{t('shared:chat.postal_choose', 'Communes du code postal {{code}} (base officielle de La Poste) : choisissez la vôtre.', { code: message.postal.postalCode })}</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {message.postal.candidates.map((/** @type {{ code: string, nom: string, inServiceTerritory: boolean }} */ c) => (
+                        <button key={c.code} type="button" onClick={() => onPromptClick(c.nom)} data-commune={c.code}
+                          className="min-h-9 rounded-full border border-teal-300 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900 hover:bg-teal-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+                          <span {...FR}>{c.nom}</span>
+                          {c.inServiceTerritory ? null : <span className="ms-1 text-slate-700">{t('shared:chat.postal_outside', '(hors territoire couvert)')}</span>}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Smart Links */}
@@ -533,6 +541,11 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
           <div className="flex max-w-[85%] flex-col gap-2 rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
             <p {...(error.fr ? FR : {})}>{error.text}</p>
             <div className="flex flex-wrap gap-2">
+              {error.kind === 'closed' && (
+                <a href="/recherche" className="inline-flex items-center gap-1 self-start rounded-md bg-teal-700 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-teal-800" data-testid="chat-closed-search">
+                  {t('shared:chat.go_search', 'Aller à la recherche')}
+                </a>
+              )}
               {error.fr && error.text.includes('indisponible') && (
                 <a
                   href="/orientation"
