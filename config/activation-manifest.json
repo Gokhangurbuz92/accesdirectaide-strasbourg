@@ -1422,6 +1422,24 @@
     "SERVICE_NAME": {
       "class": "dead",
       "nature": "config"
+    },
+    "ADA_SENSITIVE_BOOKING_APPROVED": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^(art9-explicit-consent-v1)?$",
+      "note": "R45 (ENG-LR-2): exact value art9-explicit-consent-v1 records the controller's approval of the art. 9(2)(a) explicit-consent basis for sensitive-service booking (D2 P5s). With ADA_HDS_BOOKING_ASSESSED=1 it opens sensitive booking; any other value keeps it closed. Unset until counsel review, D2 and the AIPD update"
+    },
+    "ADA_HDS_BOOKING_ASSESSED": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^(1)?$",
+      "note": "R45 (ENG-LR-2): « 1 » records that the HDS assessment of sensitive-service booking is done (CONTROL/r45/R45_HDS_FEATURE_MATRIX_FR.md rows 4–5). A recorded statement, not a verification; unset"
+    },
+    "ADA_SENSITIVITY_REVIEW_ENFORCED": {
+      "class": "lab",
+      "nature": "config",
+      "format": "^(1)?$",
+      "note": "R45 (ENG-LR-2): « 1 » refuses booking of unreviewed services in a LAB / test run. Production, Preview and the restricted beta always refuse them (no value turns it off there)"
     }
   },
   "platform": [

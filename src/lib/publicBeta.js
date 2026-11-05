@@ -18,7 +18,7 @@ export const SCREEN_SURFACES = {
 };
 const builtOpen = () => {
   let v = '';
-  try { v = String(import.meta.env?.VITE_PUBLIC_BETA_OPEN_SURFACES || ''); } catch { v = ''; }
+  try { v = String(import.meta.env.VITE_PUBLIC_BETA_OPEN_SURFACES || ''); } catch { v = ''; }
   return v.split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(SCREEN_SURFACES, x));
 };
 
@@ -38,7 +38,7 @@ export function accountEntriesShown(beta, open = builtOpen()) {
 /** @returns {BetaSubSwitches} */
 const builtSub = () => {
   let scope = ''; let reg = '';
-  try { scope = String(import.meta.env?.VITE_PUBLIC_BETA_ACCOUNTS_SCOPE || ''); reg = String(import.meta.env?.VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION || ''); } catch { scope = ''; reg = ''; }
+  try { scope = String(import.meta.env.VITE_PUBLIC_BETA_ACCOUNTS_SCOPE || ''); reg = String(import.meta.env.VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION || ''); } catch { scope = ''; reg = ''; }
   return { accountsScope: scope.trim().toLowerCase() === 'full' ? 'full' : 'booking', proSelfRegistration: reg.trim().toLowerCase() === 'open' };
 };
 /** the account screens of the narrow (booking) scope: sign-in and sign-up, the Mon Espace home, appointments and the account settings (rights) */
