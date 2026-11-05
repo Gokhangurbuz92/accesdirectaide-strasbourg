@@ -34,6 +34,8 @@ jobs:
         run: node scripts/unit-gate.mjs
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
+      - name: "Legal publisher configuration and draft documents (R45: no domicile without approval, no draft in Production)"
+        run: node scripts/check-legal-publisher.mjs
       - name: Build (public beta)
         run: npx vite build
         env:

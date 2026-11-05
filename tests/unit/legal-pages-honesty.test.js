@@ -13,6 +13,8 @@ const PUBLIC_SURFACES = [
   ...LEGAL_PAGES,
   'src/components/CookieBanner.jsx', 'src/pages/Contact.jsx', 'src/pages/Security.jsx',
   'src/pages/pro/SharedDossier.jsx', 'src/pages/pro/RegionalDashboard.jsx',
+  // R45: the draft legal documents and their renderer
+  'src/config/legal-drafts.js', 'src/pages/LegalDraftDocument.jsx', 'src/components/legal/LegalDraftBanner.jsx',
 ];
 
 const FALSE_CLAIMS = [

@@ -35,6 +35,10 @@ console.log(`[vercel-build] start (VERCEL_ENV=${vercelEnv})`);
 // Step 0 (owner directive 29/10/2026): a production build runs the release gate first; any FAIL stops the build, so nothing is published.
 if (isProduction) run('node scripts/release-preflight.mjs');
 
+// Step 0b (R45, ENG-LR-4/5): the legal publisher configuration and draft documents are checked in EVERY Vercel environment (never prints a value):
+// unknown publisher mode, a domicile without the owner's separate approval, a draft shown in Production or an address in the legal defaults stop the build.
+run('node scripts/check-legal-publisher.mjs');
+
 // Step 1: Build the frontend bundle (always).
 run('npx vite build');
 

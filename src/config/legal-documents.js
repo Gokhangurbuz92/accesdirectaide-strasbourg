@@ -35,15 +35,22 @@ export const LEGAL_DOCS_LABEL = `Version projet du ${formatLegalDate(LEGAL_DOCS_
  */
 function legalValue(name) {
   // STATIC references only: a dynamic import.meta.env[name] makes Vite inline EVERY VITE_* variable of the build (integration URLs, Vercel metadata) into the bundle
-  const env = import.meta.env || {};
-  const fromVite = {
-    VITE_LEGAL_DATA_PROTECTION_CONTACT: env.VITE_LEGAL_DATA_PROTECTION_CONTACT,
-    VITE_LEGAL_PUBLISHER_IDENTITY: env.VITE_LEGAL_PUBLISHER_IDENTITY,
-    VITE_LEGAL_CONTROLLER_IDENTITY: env.VITE_LEGAL_CONTROLLER_IDENTITY,
-    VITE_LEGAL_PUBLICATION_DIRECTOR: env.VITE_LEGAL_PUBLICATION_DIRECTOR,
-    VITE_LEGAL_SECURITY_CONTACT: env.VITE_LEGAL_SECURITY_CONTACT,
-    VITE_LEGAL_RIGHTS_HOLDER: env.VITE_LEGAL_RIGHTS_HOLDER,
-  }[name];
+  // R45: even `import.meta.env || {}` is a bare reference — Vite then inlines the WHOLE env object (every VITE_* of the build) into the bundle
+  // (verified with a sentinel variable in a LAB build, 05/11/2026). Each value is read by its full static name; outside Vite (Node scripts) the
+  // property access throws and the process environment is used.
+  /** @type {Record<string, string | undefined>} */
+  let vite = {};
+  try {
+    vite = {
+      VITE_LEGAL_DATA_PROTECTION_CONTACT: import.meta.env.VITE_LEGAL_DATA_PROTECTION_CONTACT,
+      VITE_LEGAL_PUBLISHER_IDENTITY: import.meta.env.VITE_LEGAL_PUBLISHER_IDENTITY,
+      VITE_LEGAL_CONTROLLER_IDENTITY: import.meta.env.VITE_LEGAL_CONTROLLER_IDENTITY,
+      VITE_LEGAL_PUBLICATION_DIRECTOR: import.meta.env.VITE_LEGAL_PUBLICATION_DIRECTOR,
+      VITE_LEGAL_SECURITY_CONTACT: import.meta.env.VITE_LEGAL_SECURITY_CONTACT,
+      VITE_LEGAL_RIGHTS_HOLDER: import.meta.env.VITE_LEGAL_RIGHTS_HOLDER,
+    };
+  } catch { /* not under Vite */ }
+  const fromVite = vite[name];
   const fromNode = globalThis.process?.env ? globalThis.process.env[name] : undefined;
   return String(fromVite || fromNode || '').trim();
 }

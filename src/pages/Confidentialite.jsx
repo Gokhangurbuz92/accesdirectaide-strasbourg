@@ -3,6 +3,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
 import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
+import LegalDraftLinks from '@/components/legal/LegalDraftLinks';
 import { EyeOff, UserCheck, ShieldAlert, Database, HelpCircle, Bot, BarChart3 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
@@ -74,6 +75,8 @@ export default function Confidentialite() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <LegalTranslationNotice />
+        {/* R45: the R45 documents, only when approved (Production) or in LAB preview; renders nothing otherwise */}
+        <LegalDraftLinks />
         <BetaProcessingNotice />
 
         {/* En bref */}

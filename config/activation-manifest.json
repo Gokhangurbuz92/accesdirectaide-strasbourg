@@ -393,6 +393,62 @@
         "production"
       ]
     },
+    "VITE_LEGAL_PUBLISHER_MODE": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "format": "^(A_I|A_II)?$"
+    },
+    "VITE_LEGAL_A_I_ADDRESS_PUBLICATION_APPROVED": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "format": "^(yes-owner-approved)?$"
+    },
+    "LEGAL_A_I_PUBLISHER_DOMICILE": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ]
+    },
+    "LEGAL_A_I_PUBLISHER_PHONE": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_PUBLICATION_CONTACT_EMAIL": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "format": "@"
+    },
+    "VITE_LEGAL_HOST_PHONE": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_DOCS_APPROVED_VERSION": {
+      "class": "optional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ]
+    },
+    "VITE_LEGAL_DRAFT_PREVIEW": {
+      "class": "lab",
+      "nature": "config"
+    },
     "ALERT_WEBHOOK_URL": {
       "class": "required_outside_beta",
       "nature": "secret",

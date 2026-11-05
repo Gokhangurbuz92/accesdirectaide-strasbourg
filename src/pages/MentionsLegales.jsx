@@ -7,6 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import brand from '@/lib/brand-config';
 import { frontendEnv } from "@/config/env";
+import { currentPublisherConfig, HOST } from '@/config/legal-publisher';
+import { LEGAL_NOTICE_VARIANT_DOCUMENT, currentDraftContext, draftVisibility } from '@/config/legal-drafts';
+import LegalDraftBanner from '@/components/legal/LegalDraftBanner';
 import i18n, { useLanguage, useT } from '@/i18n';
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/01_MENTIONS_LEGALES.md — status: LEGAL_DOCS_VERSION.status.
@@ -24,6 +27,11 @@ export default function MentionsLegales() {
   const errorsLabel = t('legal:mentions.host.errorsLabel', 'Journal des erreurs techniques :');
   const toComplete = t('legal:mentions.host.toComplete', '[À COMPLÉTER : prestataire retenu, adresse et téléphone]');
   const planned = t('legal:mentions.host.planned', 'prévu.');
+  // R45 (ENG-LR-4): A-I / A-II variant of the publisher block. UNSET (Production today) = the block below, unchanged. The variant text is a draft:
+  // it renders only when approved (VITE_LEGAL_DOCS_APPROVED_VERSION) or in LAB preview, otherwise the page keeps the current block (fail-closed).
+  const publisher = currentPublisherConfig();
+  const variantState = draftVisibility(LEGAL_NOTICE_VARIANT_DOCUMENT, currentDraftContext());
+  const mode = variantState === 'HIDDEN' ? 'UNSET' : publisher.mode;
   const privacyLink = <a key="privacy" href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>;
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -50,16 +58,51 @@ export default function MentionsLegales() {
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold text-slate-900">{t('legal:mentions.publisher.title', '1. Éditeur du site')}</h2>
               </div>
-              <div className="space-y-3 text-slate-700 leading-relaxed px-2">
-                <p><strong>{t('legal:mentions.publisher.serviceLabel', 'Nom du service :')}</strong> AccesDirectAide (accesdirectaide.fr)</p>
-                <p><strong>{t('legal:mentions.publisher.natureLabel', 'Nature du service :')}</strong> {t('legal:mentions.publisher.nature', "Service gratuit d'information sur les droits sociaux et d'aide à l'orientation. Ce n'est pas un site de l'administration. Il n'est pas édité par l'État, une collectivité, la CAF ou un autre organisme payeur.")}</p>
-                <p><strong>{t('legal:mentions.publisher.publisherLabel', 'Éditeur :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</em></p>
-                {/* R42-A01 (04/11/2026): the project status, which is NOT the publisher identification — no association has been created; the publisher is the natural-person project carrier */}
-                <p data-testid="legal-project-status"><strong>{t('legal:mentions.publisher.statusLabel', 'État du projet :')}</strong> <span {...fr}>{brand.legal.projectStatement}</span> {t('legal:mentions.publisher.statusNote', "Aucune association n'a été créée à ce jour : le site est édité par une personne physique, porteuse du projet AccesDirectAide. L'association envisagée n'existe pas encore ; si elle est créée puis inscrite au registre des associations du tribunal judiciaire de Strasbourg, ces mentions seront mises à jour.")}</p>
-                <p><strong>{t('legal:mentions.publisher.emailLabel', 'Adresse électronique :')}</strong> contact@accesdirectaide.fr</p>
-                <p><strong>{t('legal:mentions.publisher.directorLabel', 'Directeur ou directrice de la publication :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publicationDirector}</em></p>
-                <p><strong>{t('legal:mentions.publisher.territoryLabel', 'Territoire :')}</strong> {t('legal:mentions.publisher.territory', 'Centré sur Strasbourg et le Bas-Rhin.')}</p>
-              </div>
+              {mode === 'UNSET' ? (
+                <div className="space-y-3 text-slate-700 leading-relaxed px-2">
+                  <p><strong>{t('legal:mentions.publisher.serviceLabel', 'Nom du service :')}</strong> AccesDirectAide (accesdirectaide.fr)</p>
+                  <p><strong>{t('legal:mentions.publisher.natureLabel', 'Nature du service :')}</strong> {t('legal:mentions.publisher.nature', "Service gratuit d'information sur les droits sociaux et d'aide à l'orientation. Ce n'est pas un site de l'administration. Il n'est pas édité par l'État, une collectivité, la CAF ou un autre organisme payeur.")}</p>
+                  <p><strong>{t('legal:mentions.publisher.publisherLabel', 'Éditeur :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</em></p>
+                  {/* R42-A01 (04/11/2026): the project status, which is NOT the publisher identification — no association has been created; the publisher is the natural-person project carrier */}
+                  <p data-testid="legal-project-status"><strong>{t('legal:mentions.publisher.statusLabel', 'État du projet :')}</strong> <span {...fr}>{brand.legal.projectStatement}</span> {t('legal:mentions.publisher.statusNote', "Aucune association n'a été créée à ce jour : le site est édité par une personne physique, porteuse du projet AccesDirectAide. L'association envisagée n'existe pas encore ; si elle est créée puis inscrite au registre des associations du tribunal judiciaire de Strasbourg, ces mentions seront mises à jour.")}</p>
+                  <p><strong>{t('legal:mentions.publisher.emailLabel', 'Adresse électronique :')}</strong> contact@accesdirectaide.fr</p>
+                  <p><strong>{t('legal:mentions.publisher.directorLabel', 'Directeur ou directrice de la publication :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publicationDirector}</em></p>
+                  <p><strong>{t('legal:mentions.publisher.territoryLabel', 'Territoire :')}</strong> {t('legal:mentions.publisher.territory', 'Centré sur Strasbourg et le Bas-Rhin.')}</p>
+                </div>
+              ) : (
+                <div className="space-y-3 text-slate-700 leading-relaxed px-2" data-testid="legal-publisher-variant" data-publisher-mode={mode}>
+                  {variantState === 'PREVIEW' && <LegalDraftBanner version={`${LEGAL_NOTICE_VARIANT_DOCUMENT.id}@${LEGAL_NOTICE_VARIANT_DOCUMENT.version}`} />}
+                  <p><strong>{t('legal:mentions.publisher.serviceLabel', 'Nom du service :')}</strong> AccesDirectAide (accesdirectaide.fr)</p>
+                  <p><strong>{t('legal:mentions.publisher.natureLabel', 'Nature du service :')}</strong> {t('legal:mentions.publisher.nature', "Service gratuit d'information sur les droits sociaux et d'aide à l'orientation. Ce n'est pas un site de l'administration. Il n'est pas édité par l'État, une collectivité, la CAF ou un autre organisme payeur.")}</p>
+                  {mode === 'A_II' ? (
+                    <>
+                      <p><strong>{t('legal:mentions.publisher.publisherLabel', 'Éditeur :')}</strong> {t('legal:mentions.a2.publisher', "AccesDirectAide est édité à titre non professionnel, gratuitement et sans but lucratif, par une personne physique. Aucune association n'a été créée à ce jour.")}</p>
+                      <p data-testid="legal-a2-anonymity">{t('legal:mentions.a2.anonymity', "Conformément à l'article 1-1, II de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur a choisi de ne pas rendre publics ses éléments d'identification personnelle. Il les a communiqués à l'hébergeur indiqué ci-dessous, qui est tenu au secret professionnel, sauf à l'égard de l'autorité judiciaire.")}</p>
+                      <p data-testid="legal-publication-contact"><strong>{t('legal:mentions.a2.contactLabel', 'Contact de la publication :')}</strong> {publisher.publicationContact
+                        ? <span {...fr}>{publisher.publicationContact}</span>
+                        : <em>{t('legal:mentions.a2.contactPending', 'en cours de désignation')}</em>}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p><strong>{t('legal:mentions.publisher.publisherLabel', 'Éditeur :')}</strong> {t('legal:mentions.a1.publisher', "AccesDirectAide est édité par une personne physique, à titre personnel, gratuitement et sans but lucratif. Aucune association n'a été créée à ce jour.")}</p>
+                      <p><strong>{t('legal:mentions.a1.nameLabel', 'Nom et prénoms :')}</strong> <span {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</span></p>
+                      <p data-testid="legal-a1-domicile"><strong>{t('legal:mentions.a1.domicileLabel', 'Domicile :')}</strong> <span {...fr}>{publisher.identification ? publisher.identification.domicile : t('legal:mentions.a1.missing', '[À COMPLÉTER : variable de build manquante]')}</span></p>
+                      <p><strong>{t('legal:mentions.a1.phoneLabel', 'Téléphone :')}</strong> <span {...fr}>{publisher.identification ? publisher.identification.phone : t('legal:mentions.a1.missing', '[À COMPLÉTER : variable de build manquante]')}</span></p>
+                      <p><strong>{t('legal:mentions.publisher.emailLabel', 'Adresse électronique :')}</strong> contact@accesdirectaide.fr</p>
+                      <p><strong>{t('legal:mentions.publisher.directorLabel', 'Directeur ou directrice de la publication :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publicationDirector}</em> — {t('legal:mentions.a1.directorNote', "lorsque le service est fourni par une personne physique, le directeur de la publication est cette personne (loi n° 82-652 du 29 juillet 1982, art. 93-2).")}</p>
+                    </>
+                  )}
+                  <p data-testid="legal-host-lcen"><strong>{t('legal:mentions.hostBlock.label', 'Hébergeur :')}</strong> <span {...fr}>{HOST.name}, {HOST.address}</span> — {t('legal:mentions.hostBlock.phoneLabel', 'téléphone :')} <span {...fr}>{publisher.host.phone}</span></p>
+                  <p className="text-sm text-slate-600">{t('legal:mentions.hostBlock.source', 'Nom et adresse publiés par Vercel (vercel.com/legal/privacy-policy, page lue le 5 novembre 2026).')}</p>
+                  <h3 className="pt-2 text-lg font-semibold text-slate-900">{t('legal:mentions.reply.title', 'Droit de réponse')}</h3>
+                  <p data-testid="legal-right-of-reply">{t('legal:mentions.reply.text', "Toute personne nommée ou désignée sur le site peut demander l'insertion d'une réponse, dans les trois mois qui suivent la mise à la disposition du public du contenu en cause. Indiquez le contenu visé, son adresse web et le texte de la réponse demandée.")}</p>
+                  <p>{mode === 'A_II'
+                    ? t('legal:mentions.reply.a2', "Envoyez la demande à l'adresse de contact de la publication ci-dessus, ou à l'hébergeur : l'éditeur ayant gardé l'anonymat, l'hébergeur transmet sans délai la demande au directeur de la publication.")
+                    : t('legal:mentions.reply.a1', "Envoyez la demande au directeur de la publication, à l'adresse électronique ci-dessus.")}</p>
+                  <p>{t('legal:mentions.reply.delay', 'La réponse est insérée dans les trois jours qui suivent la réception de la demande (loi n° 2004-575 du 21 juin 2004, art. 1-1, III).')}</p>
+                  <p><strong>{t('legal:mentions.publisher.territoryLabel', 'Territoire :')}</strong> {t('legal:mentions.publisher.territory', 'Centré sur Strasbourg et le Bas-Rhin.')}</p>
+                </div>
+              )}
             </section>
 
             <section className="space-y-4">
