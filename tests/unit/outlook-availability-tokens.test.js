@@ -8,6 +8,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.stubEnv('AUTH_SECRET', 'test-auth-secret-outlook');
 vi.stubEnv('OUTLOOK_TOKEN_ENCRYPTION_KEY', 'k'.repeat(40));
 vi.stubEnv('OUTLOOK_CLIENT_ID', 'client-id-test'); vi.stubEnv('OUTLOOK_CLIENT_SECRET', 'client-secret-test');
+// R46: the route now answers « not configured » unless Outlook is switched on with a complete configuration (as /api/pro/outlook does)
+vi.stubEnv('OUTLOOK_ENABLED', 'true'); vi.stubEnv('OUTLOOK_REDIRECT_URI', 'https://lab.invalid/api/auth/callback/outlook');
 
 const state = { row: null, updates: [] };
 vi.mock('../../src/db/index.js', () => ({

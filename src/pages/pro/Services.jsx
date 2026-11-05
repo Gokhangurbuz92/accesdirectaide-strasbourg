@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { proRdvClient } from '@/api/pro-rdv-client';
 import BookingConfigPanel from '@/components/rdv/BookingConfigPanel.jsx';
+import ChannelStatusPanel from '@/components/rdv/ChannelStatusPanel.jsx';
 import { useT } from '@/i18n';
 
 function toPositiveInt(value, fallback) {
@@ -74,8 +75,10 @@ export default function ProServices() {
     return `${window.location.origin}/rdv/${encodeURIComponent(structureSlug)}`;
   }, [structureSlug]);
 
+  const [channels, setChannels] = useState(null);   // R46: the honest state of each notification channel (server-computed, no secret)
   const hydrateSettings = (payload) => {
     if (!payload || typeof payload !== 'object') return;
+    if (Array.isArray(payload.channels)) setChannels(payload.channels);
     setSettingsForm({
       isPublished: Boolean(payload.isPublished ?? payload.is_published),
       bookingMode: String(payload.bookingMode || payload.booking_mode || 'IN_PERSON'),
@@ -347,6 +350,8 @@ export default function ProServices() {
           )}
         </CardContent>
       </Card>
+
+      <ChannelStatusPanel channels={channels} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-bold text-slate-900">{t('pro:services.heading', 'Services')}</h2>

@@ -1764,6 +1764,24 @@ async function rescheduleAppointment(req, res) {
     columns: { id: true, name: true, durationMinutes: true, bufferBeforeMinutes: true, bufferAfterMinutes: true, modes: true },
   }) : null;
   if (!service) return res.status(404).json({ error: 'Service not found' });
+  // R46 (closes the R45 limit « reschedule does not re-check sensitivity »): moving takes a NEW slot of the service, so the booking rule applies again on
+  // the CURRENT verified classification — a service reclassified sensitive while the art. 9 gate is closed, or still unreviewed where the review is
+  // enforced, cannot be moved online (same neutral 409 as a booking; the existing appointment is kept and can be cancelled). With the gate open, a sensitive
+  // service needs an active explicit consent for THIS appointment: the one given at booking, or a new one given now (recorded before the move, fail closed).
+  const moveGate = bookingDecision(await readServiceSensitivity(structure.id, service.id));
+  if (!moveGate.allowed) { const refused = sensitivityRefusal(moveGate.code); return res.status(refused.status).json(refused.body); }
+  if (moveGate.requiresConsent) {
+    const consent = await import('../_services/sensitive-booking-consent.js');
+    if (!(await consent.hasActiveSensitiveConsent(auth.user.id, appointment.id))) {
+      if (req.body?.sensitiveConsent !== true) {
+        return res.status(400).json({ error: SENSITIVITY_CODES.CONSENT_REQUIRED, code: SENSITIVITY_CODES.CONSENT_REQUIRED,
+          message: 'Pour déplacer ce rendez-vous en ligne, cochez la case d’accord. Sans cet accord, vous pouvez contacter directement la structure.' });
+      }
+      try { await consent.recordSensitiveConsent(auth.user.id, appointment.id, true, db, 'reschedule'); } catch {
+        return res.status(503).json({ error: 'CONSENT_NOT_RECORDED', code: 'CONSENT_NOT_RECORDED', message: 'Votre accord n’a pas pu être enregistré. Le rendez-vous n’est pas déplacé : réessayez plus tard.' });
+      }
+    }
+  }
   // PKG-3: the modality is KEPT unless the person explicitly asks for another one that is offered now (video needs their agreement). Changing it withdraws any
   // video approval (the structure validates video again) — it is never changed silently.
   const currentMode = appointment.mode || 'IN_PERSON';

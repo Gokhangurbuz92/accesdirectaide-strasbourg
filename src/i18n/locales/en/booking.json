@@ -317,5 +317,11 @@
  "modality.chosen": "Modality:",
  "modality.date_at": "{{date}} at {{time}}",
  "modality.video_short": "From “My appointments”, after approval by the organisation",
- "modality.video_consent_required": "Agreement for the video call: tick the box to request a remote appointment, or choose “In person”."
+ "modality.video_consent_required": "Agreement for the video call: tick the box to request a remote appointment, or choose “In person”.",
+ "sensitive.move_contact_structure_r46": "This appointment cannot be moved online. To change the time, contact the organisation directly through its usual contact channels. You can also cancel it here.",
+ "public.period_nav_r46": "Period of the slots",
+ "public.period_prev_r46": "‹ Previous 14 days",
+ "public.period_next_r46": "Next 14 days ›",
+ "public.period_label_r46": "From {{from}} to {{to}}",
+ "public.no_slot_period_r46": "No slot available in this period. Try another period, choose another service or contact the organisation."
 }

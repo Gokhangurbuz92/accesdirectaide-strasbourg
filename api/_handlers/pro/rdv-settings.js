@@ -131,7 +131,9 @@ async function handler(req, res) {
 
   if (req.method === 'GET') {
     const settings = await getOrCreateSettings(structureId);
-    return res.status(200).json({ ...serialize(settings), booking: await bookingView(structureId) });
+    // R46: one honest status line per communication channel (e-mail, SMS, video, connected calendar) — states and variable NAMES only, never a secret
+    const { channelStatuses } = await import('../../lib/communication-channels.js');
+    return res.status(200).json({ ...serialize(settings), booking: await bookingView(structureId), channels: channelStatuses() });
   }
 
   if (req.method !== 'PUT' && req.method !== 'PATCH') {

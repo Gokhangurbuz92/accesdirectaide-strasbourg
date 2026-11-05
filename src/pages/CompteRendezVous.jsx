@@ -10,6 +10,7 @@ import { citizenApi } from '@/lib/citizenApi';
 import VisioWindow from '@/components/Visio/VisioWindow';
 import { formatDate, useT } from '@/i18n';
 import { refusalReasonText } from '@/lib/refusalReasons';
+import { BOOKING_WINDOW_DAYS, MAX_WINDOW_OFFSET, parisBookingWindow } from '@/lib/parisCalendar';
 
 const statusLabels = (t) => ({ BOOKED: t('compte:rdv.status.booked', 'Réservé'), CONFIRMED: t('compte:rdv.status.confirmed', 'Confirmé'), REQUESTED: t('compte:rdv.status.requested', 'Demandé'), CANCELLED: t('compte:rdv.status.cancelled', 'Annulé'), LOCKED: t('compte:rdv.status.booked', 'Réservé'), DONE: t('compte:rdv.status.done', 'Passé'), NO_SHOW: t('compte:rdv.status.no_show', 'Absent') });
 // R42: the TRUE state computed by the server (a pending request is never shown as confirmed)
@@ -17,7 +18,6 @@ const stateLabels = (t) => ({ REQUESTED: t('booking:state.requested', 'Demande e
   REFUSED: t('booking:state.refused', 'Demande refusée par la structure'), EXPIRED: t('booking:state.expired', 'Demande expirée sans réponse'), CANCELLED: t('compte:rdv.status.cancelled', 'Annulé'),
   COMPLETED: t('compte:rdv.status.done', 'Passé'), NO_SHOW: t('compte:rdv.status.no_show', 'Absent') });
 const when = (d) => formatDate(d, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-const isoDay = (d) => d.toISOString().slice(0, 10);
 const modeLabels = (t) => ({ IN_PERSON: t('compte:rdv.mode.in_person', 'En présentiel'), VIDEO: t('compte:rdv.mode.video', 'À distance (visio)') });
 
 /**
@@ -38,18 +38,25 @@ export default function CompteRendezVous() {
     catch (err) { setState({ loading: false, error: err.status === 401 ? t('compte:rdv.login_required', 'Connectez-vous pour voir vos rendez-vous.') : err.message, auth: err.status === 401, items: [] }); }   // R18: « Se connecter » only when the session is really missing (401); any other failure offers to try again (it read as « please sign in »)
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
+  /** @param {number} offset */
+  const periodOf = (offset) => { const w = parisBookingWindow(new Date(), offset); return { from: formatDate(`${w.from}T12:00:00Z`, { day: 'numeric', month: 'long' }), to: formatDate(`${w.to}T12:00:00Z`, { day: 'numeric', month: 'long' }) }; };
+  // R46: a move takes a new slot, so the service's online-booking rule applies again (R45 sensitivity gate) — the refusal is shown in the reader's language
+  const moveProblem = (err) => (['SENSITIVE_BOOKING_NOT_OPEN', 'SERVICE_SENSITIVITY_UNREVIEWED', 'SENSITIVE_CONSENT_REQUIRED'].includes(err?.code)
+    ? t('booking:sensitive.move_contact_structure_r46', 'Ce rendez-vous ne peut pas être déplacé en ligne. Pour changer l’heure, contactez directement la structure par ses moyens de contact habituels. Vous pouvez aussi l’annuler ici.')
+    : err?.message);
   // the modality is kept unless the person explicitly picks another one that the service offers now (video needs their agreement)
-  const startMove = async (a, mode = a.mode || 'IN_PERSON') => {
-    setProblem(''); setMessage(''); setMoving({ id: a.id, days: [], pick: '', loading: true, mode, modes: [a.mode || 'IN_PERSON'], consent: false });
+  // R46: `offset` = which fortnight of the 60 bookable days (0 = the next 14 Paris days), so a move can reach every bookable day
+  const startMove = async (a, mode = a.mode || 'IN_PERSON', offset = 0) => {
+    setProblem(''); setMessage(''); setMoving({ id: a.id, days: [], pick: '', loading: true, mode, modes: [a.mode || 'IN_PERSON'], consent: false, offset });
     try {
-      const from = new Date(); const to = new Date(Date.now() + 13 * 86400000);
+      const { from, to } = parisBookingWindow(new Date(), offset);
       const out = mode === (a.mode || 'IN_PERSON')
-        ? await citizenApi.freeSlots(a.structure.slug, a.service.id, isoDay(from), isoDay(to))
-        : await citizenApi.freeSlots(a.structure.slug, a.service.id, isoDay(from), isoDay(to), mode);
+        ? await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to)
+        : await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to, mode);
       let modes = [a.mode || 'IN_PERSON'];
       try { const svc = ((await citizenApi.bookingServices(a.structure.slug)).items || []).find((x) => x.id === a.service.id); if (svc && Array.isArray(svc.modes) && svc.modes.length) modes = [...new Set([a.mode || 'IN_PERSON', ...svc.modes])]; } catch { /* keep the current modality only */ }
-      setMoving({ id: a.id, days: out.days || [], pick: '', loading: false, mode, modes, consent: false });
-    } catch (err) { setMoving(null); setProblem(err.message); }
+      setMoving({ id: a.id, days: out.days || [], pick: '', loading: false, mode, modes, consent: false, offset });
+    } catch (err) { setMoving(null); setProblem(moveProblem(err)); }
   };
   const confirmMove = async () => {
     setBusy(true); setProblem('');
@@ -63,7 +70,7 @@ export default function CompteRendezVous() {
       if (out && typeof out === 'object' && out.state === 'REQUESTED') setMessage(t('booking:journey.move_requested', 'Demande de déplacement envoyée : le nouveau créneau doit être accepté par la structure. L’ancien créneau a été libéré.'));
       await load();
     }
-    catch (err) { setProblem(err.message); if (err.code === 'SLOT_TAKEN') startMove(a, moving.mode); }
+    catch (err) { setProblem(moveProblem(err)); if (err.code === 'SLOT_TAKEN') startMove(a, moving.mode); }
     finally { setBusy(false); }
   };
   const visio = async (a, action) => {
@@ -205,7 +212,7 @@ export default function CompteRendezVous() {
                       </fieldset>
                     ) : null}
                     {moving.loading ? <p role="status">{t('compte:rdv.recherche_des_creneaux_libres', 'Recherche des créneaux libres…')}</p> : moving.days.length ? (
-                      <fieldset><legend className="font-medium">{t('compte:rdv.choisissez_nouveau_creneau_14', 'Choisissez un nouveau créneau (14 prochains jours)')}</legend>
+                      <fieldset><legend className="font-medium">{moving.offset ? t('compte:rdv.choose_slot_period_r46', 'Choisissez un nouveau créneau (du {{from}} au {{to}})', periodOf(moving.offset)) : t('compte:rdv.choisissez_nouveau_creneau_14', 'Choisissez un nouveau créneau (14 prochains jours)')}</legend>
                         {moving.days.map((d) => (
                           <div key={d.date} className="mt-2"><p className="text-slate-700">{formatDate(`${d.date}T12:00:00Z`, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                             <div className="mt-1 flex flex-wrap gap-2">{d.slots.filter((x) => x.startAt !== a.startsAt).map((x) => (
@@ -213,7 +220,13 @@ export default function CompteRendezVous() {
                             ))}</div></div>
                         ))}
                       </fieldset>
-                    ) : <p data-testid="rdv-no-slot">{t('compte:rdv.aucun_autre_creneau_libre', 'Aucun autre créneau libre dans les 14 prochains jours.')}</p>}
+                    ) : <p data-testid="rdv-no-slot">{moving.offset ? t('compte:rdv.no_slot_period_r46', 'Aucun autre créneau libre sur cette période.') : t('compte:rdv.aucun_autre_creneau_libre', 'Aucun autre créneau libre dans les 14 prochains jours.')}</p>}
+                    {!moving.loading ? (
+                      <div className="flex flex-wrap gap-2" data-testid="rdv-move-period">
+                        {moving.offset > 0 ? <Button type="button" size="sm" variant="outline" data-testid="rdv-move-earlier" onClick={() => startMove(a, moving.mode, moving.offset - BOOKING_WINDOW_DAYS)}>{t('compte:rdv.move_earlier_r46', '‹ 14 jours précédents')}</Button> : null}
+                        {(moving.offset || 0) < MAX_WINDOW_OFFSET ? <Button type="button" size="sm" variant="outline" data-testid="rdv-move-later" onClick={() => startMove(a, moving.mode, (moving.offset || 0) + BOOKING_WINDOW_DAYS)}>{t('compte:rdv.move_later_r46', '14 jours suivants ›')}</Button> : null}
+                      </div>
+                    ) : null}
                     <div className="flex gap-2">
                       <Button type="button" size="sm" disabled={!moving.pick || busy || (moving.mode === 'VIDEO' && moving.mode !== (a.mode || 'IN_PERSON') && !moving.consent)} data-testid="rdv-move-confirm" onClick={confirmMove}>{t('compte:rdv.confirmer_deplacement', 'Confirmer le déplacement')}</Button>
                       <Button type="button" size="sm" variant="outline" onClick={() => setMoving(null)}>{t('compte:rdv.garder_rendez_vous', 'Garder ce rendez-vous')}</Button>

@@ -317,5 +317,11 @@
  "modality.chosen": "Yöntem:",
  "modality.date_at": "{{date}}, saat {{time}}",
  "modality.video_short": "Kurumun onayından sonra “Randevularım” sayfasından",
- "modality.video_consent_required": "Görüntülü görüşme onayı: uzaktan randevu talep etmek için kutuyu işaretleyin ya da “Yüz yüze”yi seçin."
+ "modality.video_consent_required": "Görüntülü görüşme onayı: uzaktan randevu talep etmek için kutuyu işaretleyin ya da “Yüz yüze”yi seçin.",
+ "sensitive.move_contact_structure_r46": "Bu randevu çevrimiçi olarak değiştirilemez. Saati değiştirmek için kuruluşla her zamanki iletişim kanallarından doğrudan iletişime geçin. Randevuyu buradan iptal de edebilirsiniz.",
+ "public.period_nav_r46": "Zaman dilimlerinin dönemi",
+ "public.period_prev_r46": "‹ Önceki 14 gün",
+ "public.period_next_r46": "Sonraki 14 gün ›",
+ "public.period_label_r46": "{{from}} – {{to}}",
+ "public.no_slot_period_r46": "Bu dönemde uygun zaman dilimi yok. Başka bir dönem deneyin, başka bir hizmet seçin veya kuruluşla iletişime geçin."
 }
