@@ -112,7 +112,7 @@ test('P20 contact with no mail provider: status line before typing, honest 503, 
   const r = await post;
   expect(r.status()).toBe(503);
   expect(await r.json()).toMatchObject({ delivered: false, code: 'NOT_DELIVERED', reason: 'MAIL_NOT_CONNECTED' });
-  await expect(page.getByTestId('contact-error')).toContainText("n'a pas été transmis", { timeout: 15000 });
+  await expect(page.getByTestId('contact-error')).toContainText("n'a pas pu être transmis", { timeout: 15000 });
   await expect(page.getByTestId('contact-sent')).toHaveCount(0);
   await axeSerious(page, 'contact not connected');
   evidence.push({ test: 'P20', ok: true });

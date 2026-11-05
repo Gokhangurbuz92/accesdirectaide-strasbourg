@@ -101,7 +101,7 @@ export default function Contact() {
         setError(`${data.error}`);   // the server's own wording (French)
       } else if (data?.reason === 'MAIL_NOT_CONNECTED') {
         setChannel('NOT_CONNECTED');
-        setError(t('contact:error.not_connected', "Votre message n'a pas été transmis : l'envoi par ce formulaire n'est pas encore en service. Écrivez-nous directement à contact@accesdirectaide.fr."));
+        setError(t('contact:error.not_connected', "Votre message n'a pas pu être transmis : l'envoi par ce formulaire n'est pas encore en service. Écrivez-nous directement à contact@accesdirectaide.fr."));
       } else {
         setError(t('contact:error.not_delivered', "Votre message n'a pas pu être transmis. Réessayez plus tard ou écrivez-nous directement à contact@accesdirectaide.fr."));
       }
