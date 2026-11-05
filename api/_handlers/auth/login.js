@@ -11,6 +11,7 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { validate } from '../../_utils/validate.js';
 import { loginSchema } from '../../_utils/schemas.js';
+import { recordCitizenLoginFailure } from '../../_services/security-signals.js';
 import {
     buildUserSessionCookie,
     getClientIp,
@@ -147,12 +148,14 @@ async function loginHandler(req, res) {
 
         if (!user) {
             await dummyCheck(password);
+            await recordCitizenLoginFailure(db, { ip, reason: 'unknown' });   // R46 / Q07: counted for the burst alert, no identifier
             return res.status(401).json(INVALID);
         }
 
         // Check if account is locked out (same answer as a wrong password)
         if (user.lockoutUntil && new Date(user.lockoutUntil) > new Date()) {
             await dummyCheck(password);
+            await recordCitizenLoginFailure(db, { ip, reason: 'locked' });
             return res.status(401).json(INVALID);
         }
 
@@ -171,6 +174,7 @@ async function loginHandler(req, res) {
             if ((after?.n || 0) >= MAX_FAILED_ATTEMPTS) {
                 await db.update(CitizenUser).set({ lockoutUntil: new Date(Date.now() + LOCKOUT_DURATION_MS) }).where(eq(CitizenUser.id, user.id));
             }
+            await recordCitizenLoginFailure(db, { ip, reason: 'password' });
 
             return res.status(401).json(INVALID);
         }

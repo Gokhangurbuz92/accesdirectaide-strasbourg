@@ -23,6 +23,7 @@ const subjects = (/** @type {(k: string, d: string) => string} */ t) => [
   { value: 'signalement_erreur', label: t('contact:subject.error', 'Je signale une erreur ou une info obsolète') },
   { value: 'suggestion', label: t('contact:subject.suggestion', 'J\'ai une suggestion') },
   { value: 'partenariat', label: t('contact:subject.partnership', 'Proposition de partenariat') },
+  { value: 'securite', label: t('contact:subject.security', 'Je signale un problème de sécurité (vulnérabilité)') },
   { value: 'autre', label: t('contact:subject.other', 'Autre') },
 ];
 
@@ -251,8 +252,15 @@ export default function Contact() {
                 <FieldError field="sujet" errors={fieldErrors} />
               </div>
 
+              {/* R46 / Q07: security report — what to send and what not to do (the same rules as /.well-known/security.txt) */}
+              {form.sujet === 'securite' && (
+                <p data-testid="contact-security-note" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                  {t('contact:security.note', 'Merci de nous aider à protéger les personnes. Décrivez le problème et comment le reproduire, sans joindre les données personnelles d’autres personnes. N’accédez pas à des données qui ne sont pas les vôtres, ne les modifiez pas, et laissez-nous le temps de corriger avant toute publication. Nous vous répondrons à l’adresse indiquée.')}
+                </p>
+              )}
+
               {/* Page concernée (si signalement) */}
-              {form.sujet === 'signalement_erreur' && (
+              {(form.sujet === 'signalement_erreur' || form.sujet === 'securite') && (
                 <div className="space-y-2 bg-slate-50 p-4 border border-slate-100 rounded-lg animate-in fade-in zoom-in-95">
                   <Label htmlFor="page" className="font-semibold text-slate-700">{t('contact:form.page', 'Lien ou nom de la page concernée (facultatif mais très utile)')}</Label>
                   <Input

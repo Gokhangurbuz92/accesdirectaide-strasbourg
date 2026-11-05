@@ -1,0 +1,8 @@
+# AccesDirectAide - vulnerability disclosure (RFC 9116)
+# Report a security problem through the contact form (subject "Security / vulnerability") or by e-mail.
+# Please do not include personal data of other people, do not access, change or delete data that is not yours, and give us reasonable time to fix.
+Contact: https://accesdirectaide.fr/contact?sujet=securite
+Contact: mailto:contact@accesdirectaide.fr
+Expires: 2027-11-05T00:00:00.000Z
+Preferred-Languages: fr, en
+Canonical: https://accesdirectaide.fr/.well-known/security.txt

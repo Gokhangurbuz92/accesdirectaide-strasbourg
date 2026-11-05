@@ -62,5 +62,7 @@
  "channel.not_connected_title": "Sending through this form is not in service yet",
  "channel.closed": "During the public beta, this form sends nothing. To write to us, use the address contact@accesdirectaide.fr.",
  "channel.not_connected": "No e-mail sending service is connected yet: a message sent here will not be passed on. To write to us, use the address contact@accesdirectaide.fr.",
- "channel.test": "Test environment: messages are recorded in a test mailbox and no e-mail is sent."
+ "channel.test": "Test environment: messages are recorded in a test mailbox and no e-mail is sent.",
+ "subject.security": "I am reporting a security problem (vulnerability)",
+ "security.note": "Thank you for helping us protect people. Describe the problem and how to reproduce it, without attaching other people’s personal data. Do not access or change data that is not yours, and give us time to fix it before any publication. We will reply to the address you gave."
 }

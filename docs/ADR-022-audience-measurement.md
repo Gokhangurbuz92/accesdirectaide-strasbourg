@@ -20,11 +20,14 @@ Accepted (R29, 31/10/2026) as the engineering default. Switching measurement on 
 3. **The public texts follow the flag**: the cookie banner, the cookie page and the privacy page say « nous ne mesurons pas l’audience » while the
    flag is off (three states: beta, off, on). The objection control stays available and is honoured if measurement is switched on later.
 4. **If measurement is ever switched on**: the existing guarantees apply unchanged (cookieless provider, `measuredUrl`, `dropIfObjected`), the cookie
-   page is completed (retention at the provider, transfer safeguards), and the data-protection review is recorded first. The Content Security
-   Policy no longer allows the measurement script host (R29, least privilege): `https://va.vercel-scripts.com` must then be added back to
-   `script-src` in `vercel.json` (both headers), `api/_services/page-head.js` and `api/_utils/security.js`.
+   page is completed (retention at the provider, transfer safeguards), and the data-protection review is recorded first. **No Content Security Policy
+   change is needed** (R46 correction): mounted in `production` mode without a DSN (`src/App.jsx`), both components load their script from the same
+   origin (`/_vercel/insights/script.js`, `/_vercel/speed-insights/script.js`) and report to it (`connect-src 'self'`). `https://va.vercel-scripts.com`
+   serves only the debug scripts (development) or a DSN set-up (hosting outside Vercel): it must NOT be added to `script-src`. Guarded by
+   `tests/unit/r46-a18-audience-csp.test.js`. Activation is therefore configuration only (`VITE_AUDIENCE_MEASUREMENT=on` at build time, outside the beta,
+   Web Analytics enabled in the Vercel project) plus the owner and data-protection decisions above.
 
 ## Consequences
 - Usage figures (visits, people helped) are not available; the Impact page says so and shows only the published catalogue counts.
 - `@vercel/analytics` and `@vercel/speed-insights` stay as dependencies but are not loaded (licence inventory: MPL-2.0, used unmodified).
-- Tests: `tests/unit/r29-adr022-audience.test.jsx`.
+- Tests: `tests/unit/r29-adr022-audience.test.jsx`, `tests/unit/r46-a18-audience-csp.test.js` (activation without CSP change).

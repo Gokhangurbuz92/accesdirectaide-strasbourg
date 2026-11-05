@@ -62,5 +62,7 @@
  "channel.not_connected_title": "Der Versand über dieses Formular ist noch nicht in Betrieb",
  "channel.closed": "Während der öffentlichen Beta versendet dieses Formular nichts. Schreiben Sie uns an die Adresse contact@accesdirectaide.fr.",
  "channel.not_connected": "Es ist noch kein E-Mail-Versanddienst angebunden: Eine hier gesendete Nachricht wird nicht übermittelt. Schreiben Sie uns an die Adresse contact@accesdirectaide.fr.",
- "channel.test": "Testumgebung: Nachrichten werden in einem Testpostfach gespeichert und es wird keine E-Mail versendet."
+ "channel.test": "Testumgebung: Nachrichten werden in einem Testpostfach gespeichert und es wird keine E-Mail versendet.",
+ "subject.security": "Ich melde ein Sicherheitsproblem (Schwachstelle)",
+ "security.note": "Danke, dass Sie uns helfen, Menschen zu schützen. Beschreiben Sie das Problem und wie es sich nachvollziehen lässt, ohne personenbezogene Daten anderer Personen beizufügen. Greifen Sie nicht auf Daten zu, die nicht Ihre sind, ändern Sie sie nicht, und geben Sie uns vor einer Veröffentlichung Zeit zur Behebung. Wir antworten an die angegebene Adresse."
 }
