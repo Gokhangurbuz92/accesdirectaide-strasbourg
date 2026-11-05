@@ -15,3 +15,7 @@ src/i18n/locales/de/legal.json:generic-api-key:129
 src/i18n/locales/en/legal.json:generic-api-key:129
 src/i18n/locales/en/admin.json:generic-api-key:551
 src/i18n/locales/en/admin.json:generic-api-key:640
+
+# R45 (sec): the same reviewed translation strings in the git history (commit 906587f, before they moved to line 129): no secret value, reviewed 2026-11-05
+906587f5c57168bd3583dc7738d39984b2124cef:src/i18n/locales/en/legal.json:generic-api-key:126
+906587f5c57168bd3583dc7738d39984b2124cef:src/i18n/locales/de/legal.json:generic-api-key:126

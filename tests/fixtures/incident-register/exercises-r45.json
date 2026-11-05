@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "register": {
+    "controller": "EXERCICE — responsable de traitement non désigné (placeholder, aucune entité réelle)",
+    "keptBy": "référent incident (rôle)",
+    "updatedAt": "2026-11-05T18:00:00+01:00",
+    "synthetic": true
+  },
+  "entries": [
+    {
+      "id": "EXE-2026-001",
+      "synthetic": true,
+      "status": "closed",
+      "intake": { "channel": "user_report", "receivedAt": "2026-11-02T10:05:00+01:00", "reportedBy": "usager (formulaire de contact)", "alertRef": "EXERCICE-TICKET-001" },
+      "detectedAt": "2026-11-02T10:05:00+01:00",
+      "awarenessAt": "2026-11-02T11:30:00+01:00",
+      "awarenessRationale": "EXERCICE : le signalement est confirmé par le journal d'envoi (notice envoyée à une adresse erronée saisie par le professionnel).",
+      "notificationDeadline": "2026-11-05T10:30:00.000Z",
+      "affectedSystems": ["mail (Mailjet)", "rendez-vous (ProAppointment)"],
+      "natureOfBreach": ["confidentiality"],
+      "origin": "Données personnelles envoyées à un mauvais destinataire",
+      "cause": "internal_accidental",
+      "dataCategories": ["coordonnées (date et lieu d'un rendez-vous, sans nature du service)"],
+      "specialCategories": [],
+      "persons": { "min": 1, "max": 1, "basis": "une seule notice, un seul destinataire erroné (journal d'envoi)", "categories": ["usagers"], "vulnerable": false },
+      "records": { "min": 1, "max": 1 },
+      "risk": {
+        "severity": 1, "likelihood": 2, "level": "unlikely",
+        "factors": {
+          "typeOfBreach": "confidentialité, un message",
+          "natureSensitivityVolume": "contenu minimal (date, lieu), pas de nature de service ni de donnée sensible",
+          "easeOfIdentification": "prénom absent du message ; identification difficile",
+          "severityOfConsequences": "négligeable : aucune information sur la situation de la personne",
+          "specialCharacteristicsOfIndividuals": "public potentiellement vulnérable, mais rien de sensible révélé",
+          "specialCharacteristicsOfController": "plateforme d'orientation sociale (exercice)",
+          "numberOfIndividuals": "une personne"
+        }
+      },
+      "containment": { "actions": [{ "at": "2026-11-02T11:40:00+01:00", "action": "EXERCICE : adresse corrigée, demande de suppression adressée au destinataire erroné" }], "containedAt": "2026-11-02T12:00:00+01:00" },
+      "evidence": { "preserved": true, "location": "EXERCICE : export du journal d'envoi dans le coffre chiffré hors dépôt (aucun chemin réel)" },
+      "legalAssessment": { "at": "2026-11-02T14:00:00+01:00", "by": "référent incident", "isPersonalDataBreach": true, "summary": "EXERCICE : violation de confidentialité avérée mais risque improbable (contenu minimal)." },
+      "processors": [{ "name": "Mailjet", "involved": false }],
+      "controllerDecision": { "at": "2026-11-02T15:00:00+01:00", "by": "responsable de traitement (rôle)", "summary": "EXERCICE : inscription au registre, pas de notification, correction de la saisie." },
+      "cnil": { "decision": "not_notified", "reason": "EXERCICE : risque improbable au sens de l'art. 33(1) — un message au contenu minimal, aucune donnée sensible, destinataire coopératif." },
+      "dataSubjects": { "decision": "not_informed", "ground": "not_high_risk", "reason": "EXERCICE : pas de risque élevé ; la personne est néanmoins prévenue par le professionnel lors du rendez-vous." },
+      "correctiveMeasures": [{ "action": "EXERCICE : double saisie de l'adresse dans le formulaire professionnel", "owner": "équipe produit", "due": "2026-11-30", "doneAt": "2026-11-04T09:00:00+01:00" }],
+      "closure": { "closedAt": "2026-11-04T10:00:00+01:00", "reviewedAt": "2026-11-04T10:00:00+01:00", "reviewedBy": "référent incident", "lessons": "EXERCICE : saisie manuelle des adresses = source principale d'erreur.", "aipdUpdated": false }
+    },
+    {
+      "id": "EXE-2026-002",
+      "synthetic": true,
+      "status": "contained",
+      "intake": { "channel": "health_alert", "receivedAt": "2026-11-03T08:10:00+01:00", "reportedBy": "alerte automatique (ALERT_EMAIL)", "alertRef": "EXERCICE : connexions professionnelles anormales" },
+      "detectedAt": "2026-11-03T08:10:00+01:00",
+      "awarenessAt": "2026-11-03T13:00:00+01:00",
+      "awarenessRationale": "EXERCICE : l'analyse des journaux confirme des sessions professionnelles forgées avec un ancien secret de signature (scénario A9 de l'AIPD).",
+      "notificationDeadline": "2026-11-06T12:00:00.000Z",
+      "breachPeriod": { "start": "2026-11-02T22:00:00+01:00", "end": "2026-11-03T13:20:00+01:00", "ongoing": false },
+      "affectedSystems": ["sessions professionnelles (JWT_SECRET)", "notes de suivi (ProCaseNote)"],
+      "natureOfBreach": ["confidentiality"],
+      "origin": "Piratage : réutilisation d'un secret historique exposé",
+      "cause": "external_malicious",
+      "dataCategories": ["notes de suivi sociales", "état civil", "coordonnées"],
+      "specialCategories": ["health"],
+      "persons": { "min": 30, "max": 45, "basis": "dossiers de la structure fictive ouverts pendant la fenêtre (journal d'accès)", "categories": ["usagers", "personnes vulnérables"], "vulnerable": true },
+      "records": { "min": 60, "max": 120 },
+      "risk": {
+        "severity": 3, "likelihood": 4, "level": "high",
+        "factors": {
+          "typeOfBreach": "confidentialité, accès malveillant",
+          "natureSensitivityVolume": "notes sociales, mention de santé possible (art. 9), quelques dizaines de dossiers",
+          "easeOfIdentification": "dossiers nominatifs : identification directe",
+          "severityOfConsequences": "importante : discrimination, atteinte à la réputation, perte de contrôle",
+          "specialCharacteristicsOfIndividuals": "personnes vulnérables (public d'action sociale)",
+          "specialCharacteristicsOfController": "plateforme d'orientation sociale (exercice)",
+          "numberOfIndividuals": "30 à 45 personnes"
+        }
+      },
+      "containment": {
+        "actions": [
+          { "at": "2026-11-03T13:20:00+01:00", "action": "EXERCICE : rotation de JWT_SECRET, toutes les sessions professionnelles fermées" },
+          { "at": "2026-11-03T14:00:00+01:00", "action": "EXERCICE : comptes concernés suspendus, MFA réinitialisée" }
+        ],
+        "containedAt": "2026-11-03T14:00:00+01:00"
+      },
+      "evidence": { "preserved": true, "location": "EXERCICE : export AuditLog + journaux Vercel dans le coffre chiffré hors dépôt", "sha256": ["0000000000000000000000000000000000000000000000000000000000000000"] },
+      "legalAssessment": { "at": "2026-11-03T15:00:00+01:00", "by": "référent incident + conseil juridique (rôle)", "isPersonalDataBreach": true, "summary": "EXERCICE : violation de confidentialité avec risque élevé (données sociales, personnes vulnérables)." },
+      "processors": [{ "name": "Vercel", "involved": true, "weAskedAt": "2026-11-03T14:30:00+01:00", "reference": "EXERCICE-VERCEL-REF" }, { "name": "Neon", "involved": false }],
+      "controllerDecision": { "at": "2026-11-03T16:00:00+01:00", "by": "responsable de traitement (rôle)", "summary": "EXERCICE : notification initiale à la CNIL et information individuelle des personnes." },
+      "cnil": { "decision": "notified", "type": "initial", "notifiedAt": "2026-11-04T10:00:00+01:00", "receiptReference": "EXERCICE-CNIL-0000" },
+      "dataSubjects": { "decision": "will_inform", "channel": "e-mail individuel et message dans l'espace", "count": 45 },
+      "correctiveMeasures": [
+        { "action": "EXERCICE : rotation de tous les secrets historiques (plan R45)", "owner": "porteur", "due": "2026-11-10" },
+        { "action": "EXERCICE : alerte sur connexions anormales", "owner": "équipe technique", "due": "2026-11-30" }
+      ]
+    },
+    {
+      "id": "EXE-2026-003",
+      "synthetic": true,
+      "status": "closed",
+      "intake": { "channel": "provider_notice", "receivedAt": "2026-11-04T07:00:00+01:00", "reportedBy": "prestataire base de données (notification)", "alertRef": "EXERCICE : indisponibilité régionale" },
+      "detectedAt": "2026-11-04T06:30:00+01:00",
+      "awarenessAt": "2026-11-04T07:15:00+01:00",
+      "awarenessRationale": "EXERCICE : la notification du prestataire confirme une indisponibilité de la base sans perte de données (restauration PITR possible).",
+      "notificationDeadline": "2026-11-07T06:15:00.000Z",
+      "breachPeriod": { "start": "2026-11-04T06:30:00+01:00", "end": "2026-11-04T12:30:00+01:00", "ongoing": false },
+      "affectedSystems": ["base de données (Neon)"],
+      "natureOfBreach": ["availability"],
+      "origin": "Incident du prestataire",
+      "cause": "external_accidental",
+      "dataCategories": ["rendez-vous", "comptes"],
+      "specialCategories": [],
+      "persons": { "min": 0, "max": 200, "basis": "personnes ayant un rendez-vous pendant la fenêtre (estimation haute, bêta restreinte)" },
+      "risk": {
+        "severity": 2, "likelihood": 1, "level": "unlikely",
+        "factors": {
+          "typeOfBreach": "disponibilité temporaire, six heures",
+          "natureSensitivityVolume": "aucune donnée perdue ni exposée",
+          "easeOfIdentification": "sans objet (pas de divulgation)",
+          "severityOfConsequences": "limitée : rendez-vous non consultables pendant la panne",
+          "specialCharacteristicsOfIndividuals": "public vulnérable : message d'indisponibilité affiché",
+          "specialCharacteristicsOfController": "plateforme d'orientation sociale (exercice)",
+          "numberOfIndividuals": "au plus 200"
+        }
+      },
+      "containment": { "actions": [{ "at": "2026-11-04T07:20:00+01:00", "action": "EXERCICE : page d'état, prises de rendez-vous suspendues" }], "containedAt": "2026-11-04T12:30:00+01:00" },
+      "evidence": { "preserved": true, "location": "EXERCICE : notification du prestataire archivée hors dépôt" },
+      "legalAssessment": { "at": "2026-11-04T13:00:00+01:00", "by": "référent incident", "isPersonalDataBreach": true, "summary": "EXERCICE : violation de disponibilité temporaire, sans conséquence durable." },
+      "processors": [{ "name": "Neon", "involved": true, "processorNotifiedUsAt": "2026-11-04T07:00:00+01:00", "reference": "EXERCICE-NEON-REF" }, { "name": "Vercel", "involved": false }],
+      "controllerDecision": { "at": "2026-11-04T14:00:00+01:00", "by": "responsable de traitement (rôle)", "summary": "EXERCICE : inscription au registre, pas de notification, exercice de restauration programmé." },
+      "cnil": { "decision": "not_notified", "reason": "EXERCICE : indisponibilité de six heures sans perte ni divulgation ; risque improbable (EDPB 9/2022, exemples d'indisponibilité courte)." },
+      "dataSubjects": { "decision": "not_informed", "ground": "not_high_risk", "reason": "EXERCICE : pas de risque élevé ; une information générale est affichée sur la page d'état." },
+      "correctiveMeasures": [{ "action": "EXERCICE : exercice de restauration (ENG-LR-7)", "owner": "équipe technique", "due": "2026-11-15", "doneAt": "2026-11-05T09:00:00+01:00" }],
+      "closure": { "closedAt": "2026-11-05T10:00:00+01:00", "reviewedAt": "2026-11-05T10:00:00+01:00", "reviewedBy": "référent incident", "lessons": "EXERCICE : la page d'état doit être prête avant l'ouverture.", "aipdUpdated": true }
+    }
+  ]
+}

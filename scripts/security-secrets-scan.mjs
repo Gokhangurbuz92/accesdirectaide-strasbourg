@@ -58,7 +58,9 @@ try {
   const repoFiles = getRepoFiles();
   copyTrackedFilesToTemp(repoFiles, tempDir);
 
-  const exitCode = run('gitleaks', ['detect', '--no-git', '--redact', '--source', tempDir]);
+  // R45 (sec): scan from INSIDE the copy with a relative source, so finding fingerprints are repository-relative (« src/…:rule:line ») and the reviewed
+  // entries of .gitleaksignore apply; with an absolute temp path every fingerprint carried that random path and the ignore file never matched.
+  const exitCode = run('gitleaks', ['detect', '--no-git', '--redact', '--source', '.'], { cwd: tempDir });
   process.exit(exitCode);
 } catch (err) {
   const message = err instanceof Error ? err.message : String(err);

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accesdirectaide.invalid/schemas/incident-register.v1.json",
+  "title": "AccesDirectAide — personal-data breach register (GDPR art. 33(5)), format v1",
+  "description": "Machine-readable format of the breach register. The REAL register is never kept in this public repository (see CONTROL/r45/R45_REGISTRE_VIOLATIONS_FORMAT_FR.md, § 3). Field names are English, free text is French. Rules the schema cannot express (72 h deadline, risk matrix, decision reasons, ordering, personal-data patterns) are enforced by scripts/incident-register-validate.mjs.",
+  "type": "object",
+  "required": ["schemaVersion", "register", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "register": {
+      "type": "object",
+      "required": ["controller", "keptBy", "updatedAt"],
+      "properties": {
+        "controller": { "type": "string", "description": "Controller designation (placeholder until the owner decides; never invented)." },
+        "keptBy": { "type": "string", "description": "A ROLE, never a person's name (e.g. « référent incident »)." },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "synthetic": { "type": "boolean", "description": "true for exercise files: every entry must then be synthetic." }
+      }
+    },
+    "entries": { "type": "array", "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "iso": { "type": "string", "format": "date-time", "description": "ISO 8601 with an explicit offset (Z or ±hh:mm)." },
+    "role": { "type": "string", "minLength": 2, "maxLength": 80, "description": "A role, never a name." },
+    "entry": {
+      "type": "object",
+      "required": ["id", "status", "intake", "detectedAt", "awarenessAt", "awarenessRationale", "notificationDeadline", "affectedSystems", "natureOfBreach",
+        "dataCategories", "specialCategories", "persons", "risk", "containment", "evidence", "legalAssessment", "processors", "controllerDecision", "cnil",
+        "dataSubjects", "correctiveMeasures"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^(VIO|EXE)-\\d{4}-\\d{3}$", "description": "VIO = real incident, EXE = exercise (synthetic)." },
+        "synthetic": { "type": "boolean" },
+        "status": { "enum": ["open", "contained", "closed"] },
+        "intake": {
+          "type": "object", "required": ["channel", "receivedAt", "reportedBy"],
+          "properties": {
+            "channel": { "enum": ["health_alert", "sentry", "mail_bounce_burst", "mail_events_refused", "provider_notice", "user_report", "structure_report", "staff", "security_researcher", "authority", "other"] },
+            "receivedAt": { "$ref": "#/$defs/iso" },
+            "reportedBy": { "$ref": "#/$defs/role" },
+            "alertRef": { "type": "string", "description": "Alert type or ticket reference — no personal data." }
+          }
+        },
+        "detectedAt": { "$ref": "#/$defs/iso" },
+        "awarenessAt": { "$ref": "#/$defs/iso", "description": "Reasonable degree of certainty that personal data were compromised (EDPB 9/2022 § 31): start of the 72 h." },
+        "awarenessRationale": { "type": "string", "minLength": 20 },
+        "notificationDeadline": { "$ref": "#/$defs/iso", "description": "= awarenessAt + 72 h (checked)." },
+        "breachPeriod": { "type": "object", "properties": { "start": { "$ref": "#/$defs/iso" }, "end": { "$ref": "#/$defs/iso" }, "ongoing": { "type": "boolean" } } },
+        "affectedSystems": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "natureOfBreach": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["confidentiality", "integrity", "availability"] } },
+        "origin": { "type": "string", "description": "CNIL form « origine de l'incident » (free text or list item)." },
+        "cause": { "enum": ["internal_malicious", "internal_accidental", "external_malicious", "external_accidental", "unknown"] },
+        "dataCategories": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "specialCategories": { "type": "array", "items": { "enum": ["health", "racial_ethnic_origin", "political", "religious_philosophical", "trade_union", "sex_life_orientation", "biometric", "genetic", "offences"] } },
+        "persons": {
+          "type": "object", "required": ["min", "max", "basis"],
+          "properties": { "min": { "type": "integer", "minimum": 0 }, "max": { "type": "integer", "minimum": 0 }, "basis": { "type": "string", "minLength": 10 }, "categories": { "type": "array", "items": { "type": "string" } }, "vulnerable": { "type": "boolean" } }
+        },
+        "records": { "type": "object", "properties": { "min": { "type": "integer", "minimum": 0 }, "max": { "type": "integer", "minimum": 0 } } },
+        "risk": {
+          "type": "object", "required": ["severity", "likelihood", "level", "factors"],
+          "properties": {
+            "severity": { "type": "integer", "minimum": 1, "maximum": 4, "description": "1 négligeable · 2 limitée · 3 importante · 4 maximale (CNIL form scale)." },
+            "likelihood": { "type": "integer", "minimum": 1, "maximum": 4, "description": "1 négligeable · 2 limitée · 3 importante · 4 maximale." },
+            "level": { "enum": ["unlikely", "risk", "high"], "description": "EDPB 9/2022 § 39: no (unlikely) risk, risk, high risk." },
+            "overrideReason": { "type": "string", "minLength": 30, "description": "Required when level differs from the matrix." },
+            "factors": { "type": "object", "description": "EDPB 9/2022 §§ 105–118 criteria, one short note each." }
+          }
+        },
+        "containment": { "type": "object", "required": ["actions"], "properties": { "actions": { "type": "array", "items": { "type": "object", "required": ["at", "action"], "properties": { "at": { "$ref": "#/$defs/iso" }, "action": { "type": "string" } } } }, "containedAt": { "$ref": "#/$defs/iso" } } },
+        "evidence": { "type": "object", "required": ["preserved", "location"], "properties": { "preserved": { "type": "boolean" }, "location": { "type": "string", "description": "Where the evidence is kept (outside the repository) — a description, not a URL with secrets." }, "sha256": { "type": "array", "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" } } } },
+        "legalAssessment": { "type": "object", "required": ["at", "by", "isPersonalDataBreach", "summary"], "properties": { "at": { "$ref": "#/$defs/iso" }, "by": { "$ref": "#/$defs/role" }, "isPersonalDataBreach": { "type": "boolean" }, "summary": { "type": "string", "minLength": 20 } } },
+        "processors": { "type": "array", "items": { "type": "object", "required": ["name", "involved"], "properties": { "name": { "enum": ["Vercel", "Neon", "Upstash", "Mailjet", "Sentry", "GitHub", "other"] }, "involved": { "type": "boolean" }, "processorNotifiedUsAt": { "$ref": "#/$defs/iso" }, "weAskedAt": { "$ref": "#/$defs/iso" }, "reference": { "type": "string" } } } },
+        "controllerDecision": { "type": "object", "required": ["at", "by", "summary"], "properties": { "at": { "$ref": "#/$defs/iso" }, "by": { "$ref": "#/$defs/role" }, "summary": { "type": "string", "minLength": 20 } } },
+        "cnil": {
+          "type": "object", "required": ["decision"],
+          "properties": {
+            "decision": { "enum": ["notified", "not_notified", "pending"] },
+            "reason": { "type": "string", "minLength": 30, "description": "Required for not_notified (EDPB 9/2022 § 125)." },
+            "notifiedAt": { "$ref": "#/$defs/iso" },
+            "type": { "enum": ["complete", "initial", "complementary"] },
+            "complementAt": { "$ref": "#/$defs/iso" },
+            "delayReason": { "type": "string", "minLength": 30, "description": "Required when notifiedAt is after the deadline (art. 33(1))." },
+            "receiptReference": { "type": "string" }
+          }
+        },
+        "dataSubjects": {
+          "type": "object", "required": ["decision"],
+          "properties": {
+            "decision": { "enum": ["informed", "will_inform", "not_informed", "pending"] },
+            "ground": { "enum": ["not_high_risk", "art34_3_a_unintelligible", "art34_3_b_subsequent_measures", "art34_3_c_public_communication"] },
+            "reason": { "type": "string", "minLength": 30 },
+            "informedAt": { "$ref": "#/$defs/iso" },
+            "channel": { "type": "string" },
+            "count": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "correctiveMeasures": { "type": "array", "items": { "type": "object", "required": ["action", "owner"], "properties": { "action": { "type": "string" }, "owner": { "$ref": "#/$defs/role" }, "due": { "type": "string" }, "doneAt": { "$ref": "#/$defs/iso" } } } },
+        "closure": { "type": "object", "properties": { "closedAt": { "$ref": "#/$defs/iso" }, "reviewedAt": { "$ref": "#/$defs/iso" }, "reviewedBy": { "$ref": "#/$defs/role" }, "lessons": { "type": "string" }, "aipdUpdated": { "type": "boolean" } } }
+      }
+    }
+  }
+}
