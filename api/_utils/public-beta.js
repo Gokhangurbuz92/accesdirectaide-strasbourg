@@ -103,6 +103,8 @@ export const ACCOUNTS_BOOKING_SCOPE = Object.freeze([
   'auth', 'login-pro-guard',
   'citizen/profile', 'citizen/age-declaration', 'citizen/email-change', 'citizen/email-change-confirm', 'citizen/phone', 'citizen/preferences',
   'citizen/restriction', 'citizen/espace',
+  // R46 (N03): the in-app notification centre of Mon Espace — kind, time and link only; each source is skipped when its capability is closed
+  'citizen/notifications',
 ]);
 /** @param {Record<string, string | undefined>} [envVars] @returns {'booking' | 'full'} */
 export function accountsScope(envVars = process.env) {
