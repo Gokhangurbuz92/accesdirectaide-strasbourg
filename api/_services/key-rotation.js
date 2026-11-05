@@ -28,6 +28,7 @@ import { SITUATION_SEAL } from '../lib/situation-codec.js';
 import { currentKeyId, isPrimaryKeyId, keyIdOf, needsRewrap, rewrapBuffer, rewrapText } from '../lib/data-keys.js';
 import { bufferKeyIndex, isV1Text, reencryptBuffer, reencryptV1, v1KeyIndex } from '../lib/crypto.js';
 import { storage as defaultStorage } from '../lib/storage.js';
+import { appointmentGuestSchema } from '../_utils/schema-features.js';
 
 /** @param {{ apply?: boolean, batch?: number }} [options] */
 export async function rewrapMessages({ apply = false, batch = 200 } = {}) {
@@ -85,6 +86,15 @@ const V1_TEXT_COLUMNS = [
   { table: 'ProAppointment', idCol: 'id', col: 'beneficiaryName' },
   { table: 'ProAppointment', idCol: 'id', col: 'notes' },
 ];
+/**
+ * R45 (sec): the account-free booking contact of drizzle/0043 (ProAppointment.guestEmail / guestPhone, v1-sealed like the other appointment fields) was not
+ * covered: on a database that has those columns, promoting a new key and retiring the old one made them unreadable while the status said « safe to retire ».
+ * They are added ONLY when the database has the 0043 columns (api/_utils/schema-features.js), so the rotation keeps working on a 0042 database (Production).
+ */
+const V1_GUEST_COLUMNS = [
+  { table: 'ProAppointment', idCol: 'id', col: 'guestEmail' },
+  { table: 'ProAppointment', idCol: 'id', col: 'guestPhone' },
+];
 /** @type {{ table: string, purpose: Purpose, ctx: (row: any) => string, select: string }[]} */
 const BLOB_TABLES = [
   { table: 'CitizenDocument', purpose: 'coffre-file', ctx: (r) => `coffre:${r.userId}:${r.id}`, select: '"userId"' },
@@ -126,8 +136,10 @@ export async function rewrapAll({ apply = false, batch = 200, db = defaultDb, st
       }
     }
   }
-  // v1-only text columns
-  for (const c of V1_TEXT_COLUMNS) {
+  // v1-only text columns (+ the 0043 guest contact when this database has it)
+  // fail closed: when the schema cannot be read, the run counts a failure (status never says « safe to retire » on an unknown schema)
+  const guest = await appointmentGuestSchema(db).catch(() => { s.failed += 1; bump(s, 'ProAppointment.guest', 'failed'); return { guestBooking: false }; });
+  for (const c of guest.guestBooking ? [...V1_TEXT_COLUMNS, ...V1_GUEST_COLUMNS] : V1_TEXT_COLUMNS) {
     const kind = `${c.table}.${c.col}`; let last = '';
     for (;;) {
       if (interrupted()) return { ...s, interrupted: true };

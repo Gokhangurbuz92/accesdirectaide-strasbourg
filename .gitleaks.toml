@@ -5,7 +5,8 @@ useDefault = true
 
 [[rules]]
 id = "generic-api-key"
-[rules.allowlist]
+
+[[rules.allowlists]]
 description = "False-positives in CSV"
 paths = [
   "data/demarches-alsace\\.csv$",
@@ -14,3 +15,13 @@ paths = [
   "docs/secrets-rotation\\.md$",
   "docs/observability\\.md$"
 ]
+
+[[rules.allowlists]]
+# R45 (sec): synthetic account passwords typed into test requests (`password: '...'`, `PASSWORD = '...'`), reviewed 2026-11-05.
+# BOTH conditions must hold: a test file AND a match that is exactly a quoted `password` literal. A token, key or any other shape in a test file,
+# and the same shape anywhere else, is still reported.
+description = "Synthetic test passwords (tests only, password literal only)"
+condition = "AND"
+paths = ['''^tests/(unit|integration|e2e)/[^/]+\.test\.(js|jsx|ts|tsx|mjs)$''']
+regexTarget = "match"
+regexes = ['''(?i)^password\s*[:=]\s*'[^'\s]{1,40}'$''']

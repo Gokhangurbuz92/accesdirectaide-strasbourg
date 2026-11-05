@@ -67,6 +67,25 @@ export function suppressionHash(email, vars = process.env) {
   return crypto.createHmac('sha256', key).update(v, 'utf8').digest('hex');
 }
 
+/**
+ * R45 (sec) — the pseudonymous keys of an address under EVERY key of the ring: the primary first, then each ADA_ENCRYPTION_KEY_PREVIOUS key (the decrypt-only
+ * keys of a data-key rotation). A suppression recorded before a rotation stays effective while the old key is kept in the ring, and a delivery event of a
+ * message accepted before it still matches its recipient. Writes always use the primary (suppressionHash). Empty without a primary key.
+ * @param {unknown} email @param {Record<string, string | undefined>} [vars] @returns {string[]}
+ */
+export function suppressionHashes(email, vars = process.env) {
+  const first = suppressionHash(email, vars);
+  if (!first) return [];
+  const v = /** @type {string} */ (normalizeAddress(email));
+  const out = [first];
+  for (const base of String(vars.ADA_ENCRYPTION_KEY_PREVIOUS || '').split(',').map((x) => x.trim()).filter((x) => x.length >= 32)) {
+    const key = crypto.createHmac('sha256', base).update('ada-mail-suppression-v1', 'utf8').digest();
+    const h = crypto.createHmac('sha256', key).update(v, 'utf8').digest('hex');
+    if (!out.includes(h)) out.push(h);
+  }
+  return out;
+}
+
 /** @param {unknown} details @param {string} field */
 const detail = (details, field) => (details && typeof details === 'object' && field in details ? /** @type {Record<string, unknown>} */ (details)[field] : undefined);
 
@@ -77,11 +96,11 @@ const detail = (details, field) => (details && typeof details === 'object' && fi
  */
 export async function suppressionReason(email, deps = {}) {
   const db = deps.db || defaultDb;
-  const hash = suppressionHash(email, deps.vars);
-  if (!hash) return null;
+  const hashes = suppressionHashes(email, deps.vars);   // R45: every key of the ring (a rotation does not forget a suppression)
+  if (!hashes.length) return null;
   /** @type {Array<{ action?: unknown, details: unknown }>} */
   const rows = await db.select({ action: AuditLog.action, details: AuditLog.details }).from(AuditLog)
-    .where(and(inArray(AuditLog.action, [SUPPRESSION_ACTION, LIFT_ACTION]), eq(AuditLog.entity_id, hash))).orderBy(desc(AuditLog.timestamp)).limit(20);
+    .where(and(inArray(AuditLog.action, [SUPPRESSION_ACTION, LIFT_ACTION]), inArray(AuditLog.entity_id, hashes))).orderBy(desc(AuditLog.timestamp)).limit(20);
   /** @type {SuppressionReason | null} */
   let best = null;
   for (const r of rows) {
@@ -178,7 +197,7 @@ export async function noticeStatusTrail(noticeId, deps = {}) {
  *   findAcceptedMessage: (messageId: string) => Promise<AcceptedMessage | null>,
  *   noticeRecipientHash: (notice: NoticeRow) => Promise<string | null>,
  *   transitionNotice: (id: string, from: string[], to: 'DELIVERED' | 'NOT_DELIVERED') => Promise<boolean>,
- *   latestLiftAt: (hash: string) => Promise<Date | null>,
+ *   latestLiftAt: (hash: string | string[]) => Promise<Date | null>,
  *   recordStatus: (noticeId: string, status: string, info: { cause?: string | null, source: string, eventKey?: string }) => Promise<boolean>,
  *   recordSuppression: (email: string, reason: SuppressionReason) => Promise<boolean>,
  *   recordBatch: (counts: Record<string, number>) => Promise<void>,
@@ -227,8 +246,11 @@ export function mailEventStore(db, vars) {
         .returning({ id: AppointmentNotice.id });
       return updated.length > 0;
     },
+    /** @param {string | string[]} hash one hash, or the hashes of one address under every key of the ring (R45) */
     async latestLiftAt(hash) {
-      const [r] = await db.select({ at: AuditLog.timestamp }).from(AuditLog).where(and(eq(AuditLog.action, LIFT_ACTION), eq(AuditLog.entity_id, hash))).orderBy(desc(AuditLog.timestamp)).limit(1);
+      const hashes = (Array.isArray(hash) ? hash : [hash]).filter(Boolean);
+      if (!hashes.length) return null;
+      const [r] = await db.select({ at: AuditLog.timestamp }).from(AuditLog).where(and(eq(AuditLog.action, LIFT_ACTION), inArray(AuditLog.entity_id, hashes))).orderBy(desc(AuditLog.timestamp)).limit(1);
       return r?.at || null;
     },
     recordStatus: (noticeId, status, info) => recordNoticeStatus(noticeId, status, info, { db }),
@@ -275,9 +297,11 @@ export async function applyMailjetEvents(events, deps = {}) {
       // the event's address must be the one that message went to — for a status change as for a suppression (a forged event naming a real message id
       // but another address changes nothing)
       const recipient = eventRecipient(ev);
-      const got = recipient ? suppressionHash(recipient, deps.vars) : null;
+      // R45: under any key of the ring (a message accepted before a key rotation keeps the recipient hash of the previous key)
+      const got = recipient ? suppressionHashes(recipient, deps.vars) : [];
       const expected = accepted?.recipientHash || (notice ? await store.noticeRecipientHash(notice) : null);
-      if (!recipient || !got || !expected || got.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(got), Buffer.from(expected))) { out.recipientMismatch += 1; continue; }
+      const same = (/** @type {string} */ g) => typeof expected === 'string' && g.length === expected.length && crypto.timingSafeEqual(Buffer.from(g), Buffer.from(expected));
+      if (!recipient || !got.length || !expected || !got.some(same)) { out.recipientMismatch += 1; continue; }
 
       if (s.noticeStatus && notice) {
         const to = s.noticeStatus;
