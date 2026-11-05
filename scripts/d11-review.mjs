@@ -4,6 +4,8 @@
  *   node scripts/d11-review.mjs form                    → prints the blank form (CSV, one row per condition, ambiguity and proposed case)
  *   node scripts/d11-review.mjs apply <filled.csv>      → dry run: says, right by right, what the filled form allows and what stays open
  *   node scripts/d11-review.mjs apply <filled.csv> --write → writes data/rules/rights-rules.v1.json accordingly
+ *   node scripts/d11-review.mjs status                  → (R46) the gate, right by right, with its reasons (exit 0; JSON with --json)
+ *   --register <file>  (R46) reads / writes another copy of the register (rehearsal of the workflow on a copy; the default is the committed register)
  *
  * A right is validated only when, in the form, ONE named reviewer (name, role, date) accepted EVERY condition as written, decided EVERY ambiguity, and accepted
  * (or corrected) at least one reference case — and every accepted case gives its expected result with the register's reading (api/lib/rulesDraft.js).
@@ -11,8 +13,10 @@
  * The script records what the reviewer wrote; it never decides in the reviewer's place.
  */
 import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { readConditions } from '../api/lib/rulesDraft.js';
-import { validatedRight } from '../api/lib/validatedRules.js';
+import { gateStatus, validatedRight } from '../api/lib/validatedRules.js';
 
 const REGISTER = new URL('../data/rules/rights-rules.v1.json', import.meta.url);
 const PROPOSED = new URL('../data/rules/reference-cases.proposed.v1.json', import.meta.url);
@@ -55,6 +59,8 @@ export function evaluateForm(register, proposed, rows) {
     if (!mine.length) open.push('aucune ligne remplie');
     if (reviewers.size > 1) open.push('plusieurs relecteurs ou dates : une relecture = une personne, une date');
     if (!name || !role || !/^\d{4}-\d{2}-\d{2}$/.test(date || '')) open.push('nom, fonction ou date (AAAA-MM-JJ) du relecteur manquant');
+    // R46: the reviewer must have read the page as it is now — a page revised after the review date needs a new review
+    else for (const src of r.sources || []) if (/^\d{4}-\d{2}-\d{2}$/.test(String(src.pageVerifiedOn || '')) && src.pageVerifiedOn > date) open.push(`page officielle ${src.url} révisée le ${src.pageVerifiedOn}, après la relecture : relire la page actuelle`);
     for (const c of r.conditions) {
       const row = mine.find((x) => x.item_type === 'condition' && x.item_id === c.fact);
       if (!row || !row.decision) open.push(`condition « ${c.fact} » non décidée`);
@@ -98,17 +104,26 @@ export function applyForm(register, results) {
 }
 
 function main() {
-  const [cmd, file] = process.argv.slice(2);
-  const register = JSON.parse(fs.readFileSync(REGISTER, 'utf8'));
+  const args = process.argv.slice(2);
+  const at = args.indexOf('--register');
+  const target = at >= 0 && args[at + 1] ? pathToFileURL(path.resolve(args[at + 1])) : REGISTER;
+  const [cmd, file] = args.filter((a, i) => !a.startsWith('--') && (at < 0 || (i !== at + 1)));
+  const register = JSON.parse(fs.readFileSync(target, 'utf8'));
   const proposed = JSON.parse(fs.readFileSync(PROPOSED, 'utf8'));
   if (cmd === 'form') { process.stdout.write(renderForm(register, proposed)); return; }
+  if (cmd === 'status') {
+    const gate = register.rights.map((r) => ({ right: r.id, status: r.status, ...gateStatus(register, r.id) }));
+    if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ register: target.pathname.split('/').pop(), validated: gate.filter((g) => g.passes).map((g) => g.right), gate }, null, 1)}\n`);
+    else for (const g of gate) console.log(`${g.right}: ${g.passes ? 'PASSES THE GATE' : `closed (${g.reasons.join(', ')})`}`);
+    return;
+  }
   if (cmd === 'apply' && file) {
     const results = evaluateForm(register, proposed, parseCsv(fs.readFileSync(file, 'utf8')));
     for (const r of results) console.log(`${r.right}: ${r.validated ? 'VALIDABLE' : 'reste non validée'}${r.open.length ? `\n  - ${r.open.join('\n  - ')}` : ''}`);
-    if (process.argv.includes('--write')) { fs.writeFileSync(REGISTER, `${JSON.stringify(applyForm(register, results), null, 2)}\n`); console.log('registre écrit ; relancer node scripts/d11-review-pack.mjs'); }
+    if (args.includes('--write')) { fs.writeFileSync(target, `${JSON.stringify(applyForm(register, results), null, 2)}\n`); console.log('registre écrit ; relancer node scripts/d11-review-pack.mjs'); }
     return;
   }
-  console.error('usage: node scripts/d11-review.mjs form | apply <filled.csv> [--write]');
+  console.error('usage: node scripts/d11-review.mjs form | status [--json] | apply <filled.csv> [--write]  [--register <file>]');
   process.exitCode = 2;
 }
 

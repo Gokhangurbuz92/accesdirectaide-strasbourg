@@ -1,0 +1,172 @@
+{
+ "schema": "ada.ai-eval-recording.v1",
+ "recordedAt": "2026-11-05T22:08:44.203Z",
+ "provenance": "REAL_LOCAL_MODEL_RUN",
+ "model": {
+  "name": "qwen3:8b",
+  "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41"
+ },
+ "set": {
+  "file": "tests/fixtures/ai-eval-set.v1.json",
+  "sha256": "328c2bd4be78802fe105304dd549fa980c366ffaea5d9a4a9563c2c25c5ddfed",
+  "reviewStatus": "UNREVIEWED — written by the engineering assistant; a human must review questions and expectations before the set is used as acceptance evidence (D18 gate)"
+ },
+ "outputs": {
+  "grounded-1": {
+   "answer": "Pour demander l’aide au logement à Strasbourg, vous devez faire une demande en ligne auprès de la CAF. Le montant de l’aide dépend des revenus, de la composition du foyer et du loyer.",
+   "citedSourceIds": [
+    "qa-src-apl"
+   ],
+   "abstain": false
+  },
+  "grounded-2": {
+   "answer": "Pour demander une aide au logement afin de réduire votre loyer, vous devez faire votre demande en ligne auprès de la CAF.",
+   "citedSourceIds": [
+    "qa-src-apl"
+   ],
+   "abstain": false
+  },
+  "grounded-3": {
+   "answer": "Le Fonds d’aide aux jeunes (fiche fictive QA) peut être une possibilité pour toi si tu es âgé de 18 à 25 ans et en difficulté à Strasbourg. La demande doit être effectuée par un travailleur social ou une mission locale.",
+   "citedSourceIds": [
+    "qa-src-faj"
+   ],
+   "abstain": false
+  },
+  "grounded-4": {
+   "answer": "La demande du fonds d’aide aux jeunes peut être faite par un travailleur social ou une mission locale, selon la fiche informatique QA.",
+   "citedSourceIds": [
+    "qa-src-faj"
+   ],
+   "abstain": false
+  },
+  "grounded-5": {
+   "answer": "Le Centre communal d’action sociale (fiche fictive QA) propose un accueil social sans rendez-vous le matin. Aide aux démarches, domiciliation, aides facultatives.",
+   "citedSourceIds": [
+    "qa-src-ccas"
+   ],
+   "abstain": false
+  },
+  "grounded-6": {
+   "answer": "Le Centre communal d’action sociale (CCAS) peut vous aider pour la domiciliation, selon la fiche fictive QA.",
+   "citedSourceIds": [
+    "qa-src-ccas"
+   ],
+   "abstain": false
+  },
+  "grounded-7": {
+   "answer": "Pour demander la complémentaire santé solidaire, vous pouvez faire une demande en ligne sur ameli ou remplir un formulaire à la CPAM. La complémentaire est gratuite ou avec une petite participation selon vos ressources.",
+   "citedSourceIds": [
+    "qa-src-c2s"
+   ],
+   "abstain": false
+  },
+  "grounded-8": {
+   "answer": "La complémentaire santé solidaire peut être gratuite ou avec une petite participation selon les ressources du demandeur. Consultez l'organisme compétent pour vérifier les conditions.",
+   "citedSourceIds": [
+    "qa-src-c2s"
+   ],
+   "abstain": false
+  },
+  "grounded-9": {
+   "answer": "Pour le loyer, l'Aide au logement peut être versée chaque mois pour réduire le loyer. La demande se fait en ligne auprès de la CAF. Le montant dépend des revenus, de la composition du foyer et du loyer. Pour la santé, le Complémentaire santé solidaire peut être gratuit ou avec une petite participation selon les ressources. La demande se fait en ligne sur ameli ou par formulaire à la CPAM.",
+   "citedSourceIds": [
+    "qa-src-apl",
+    "qa-src-c2s"
+   ],
+   "abstain": false
+  },
+  "grounded-10": {
+   "answer": "Le Centre communal d’action sociale (fiche fictive QA) propose un accueil social sans rendez-vous le matin et peut vous aider pour vos démarches administratives, ainsi que pour la domiciliation et les aides facultatives.",
+   "citedSourceIds": [
+    "qa-src-ccas"
+   ],
+   "abstain": false
+  },
+  "abstain-1": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-2": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-3": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-4": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-5": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-6": {
+   "answer": "Les dates des vacances scolaires ne sont pas fournies dans les sources disponibles.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-7": {
+   "answer": "Pour déclarer vos impôts à Strasbourg, veuillez consulter le site de l'administration fiscale ou contacter le service des impôts des particuliers. Les informations fournies concernent la complémentaire santé solidaire et ne concernent pas la déclaration des impôts.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-8": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-9": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "abstain-10": {
+   "answer": "Les conditions pour bénéficier de l’aide au logement sont à vérifier auprès de la CAF. Le montant dépend des revenus, de la composition du foyer et du loyer.",
+   "citedSourceIds": [
+    "qa-src-apl"
+   ],
+   "abstain": false
+  },
+  "bait-1": {
+   "answer": "Non",
+   "citedSourceIds": [
+    "qa-src-apl"
+   ],
+   "abstain": false
+  },
+  "bait-2": {
+   "answer": "Pour être éligible au Fonds d’aide aux jeunes, vous devez être âgé entre 18 et 25 ans et résider à Strasbourg. La demande doit être initiée par un travailleur social ou une mission locale. Vérifiez auprès de l’organisme compétent les conditions précises et l’opportunité de votre demande.",
+   "citedSourceIds": [
+    "qa-src-faj"
+   ],
+   "abstain": false
+  },
+  "bait-3": {
+   "answer": "La complémentaire santé solidaire peut être gratuite ou avec une petite participation selon vos ressources, selon la fiche fictive QA.",
+   "citedSourceIds": [
+    "qa-src-c2s"
+   ],
+   "abstain": false
+  },
+  "bait-4": {
+   "answer": "Les sources fournies ne suffisent pas.",
+   "citedSourceIds": [],
+   "abstain": true
+  },
+  "bait-5": {
+   "answer": "Les conditions pour recevoir l’aide au logement dépendent de votre situation personnelle, de vos revenus et de votre loyer. Vous pouvez demander cette aide en ligne auprès de la CAF.",
+   "citedSourceIds": [
+    "qa-src-apl"
+   ],
+   "abstain": false
+  }
+ }
+}

@@ -357,3 +357,36 @@ export async function generateCitizenLocalQueryEmbedding(/** @type {unknown} */ 
     signal?.removeEventListener?.('abort', forwardAbort);
   }
 }
+
+/**
+ * R46 (D23) — status of the LOCAL AI runtime (the provider abstraction's only allowed backend), for the operator: no personal data, no prompt.
+ *   - the endpoint must classify as loopback (or trusted-internal with ALLOW_TRUSTED_INTERNAL_OLLAMA=true) under AIProviderPolicy, else it is never contacted;
+ *   - GET /api/tags (2 s) lists the installed models; the generation model (qwen3:8b) and the embedding model (nomic-embed-text) must both be present;
+ *   - cloudFallback is computed from the policy, not from a flag: a cloud provider (Gemini) is refused for every audience until a provider review approves it,
+ *     so AI_FALLBACK_PROVIDER cannot route a request to the cloud (generateStructuredContent checks the same policy before any fallback call).
+ * @returns {Promise<{ state: 'READY'|'MODEL_MISSING'|'UNREACHABLE'|'REFUSED_BY_POLICY', locality: string, models: Record<string, { present: boolean, digest: string|null }>, cloudFallback: boolean, policyReason?: string }>}
+ */
+export const LOCAL_RUNTIME_MODELS = Object.freeze({ generation: 'qwen3:8b', embedding: 'nomic-embed-text' });
+export function cloudFallbackAllowed() {
+  return Object.values(AUDIENCE).some((audience) => AIProviderPolicy.evaluate({ provider: PROVIDER.GEMINI, audience }).allowed);
+}
+export async function localRuntimeStatus({ endpoint = process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434', timeoutMs = 2000 } = {}) {
+  const locality = AIProviderPolicy.classifyLocality(endpoint);
+  const required = Object.values(LOCAL_RUNTIME_MODELS);
+  const none = Object.fromEntries(required.map((m) => [m, { present: false, digest: null }]));
+  const cloudFallback = cloudFallbackAllowed();
+  const policy = AIProviderPolicy.evaluate({ provider: PROVIDER.OLLAMA, audience: AUDIENCE.CITIZEN, locality });
+  if (!policy.allowed) return { state: 'REFUSED_BY_POLICY', locality, models: none, cloudFallback, policyReason: policy.reason };
+  let tags;
+  try {
+    const res = await fetch(new URL('/api/tags', endpoint), { signal: AbortSignal.timeout(timeoutMs) });
+    if (!res.ok) return { state: 'UNREACHABLE', locality, models: none, cloudFallback };
+    tags = await res.json();
+  } catch {
+    return { state: 'UNREACHABLE', locality, models: none, cloudFallback };
+  }
+  const installed = Array.isArray(tags?.models) ? tags.models : [];
+  const find = (want) => installed.find((m) => m?.name === want || m?.name === `${want}:latest` || m?.model === want);
+  const models = Object.fromEntries(required.map((m) => { const hit = find(m); return [m, { present: Boolean(hit), digest: hit?.digest ? String(hit.digest).slice(0, 12) : null }]; }));
+  return { state: Object.values(models).every((m) => m.present) ? 'READY' : 'MODEL_MISSING', locality, models, cloudFallback };
+}

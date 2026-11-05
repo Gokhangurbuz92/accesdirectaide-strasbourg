@@ -14,6 +14,7 @@ let openfiscaModule = null;
 const openfisca = async () => (openfiscaModule ??= await import('../lib/openfiscaClient.js'));
 import { buildTestCase, parseResults, getCurrentPeriod } from '../lib/openfiscaMapping.js';
 import { qualifyEstimates, traceQualification } from '../lib/openfiscaEstimate.js';
+import { IDENTITY_FAILURES, cachedEngineHealth } from '../lib/openfiscaEngine.js';
 import { runLocalSimulation } from '../lib/LocalRulesEngine.js';
 import { ageFromBand } from '../lib/ageBands.js';
 import { checkRateLimit } from '../_utils/rateLimit.js';
@@ -201,15 +202,22 @@ async function handleDiagnosticInner(req, res, track) {
 
         // AUTHORITATIVE_MODE remains fail-closed. Never fall back to LocalRulesEngine.
         let engineUp = false;
+        let health = null;
         try {
             engineUp = await (await openfisca()).isAvailable();
+            // R46 (D10): with a pinned OPENFISCA_FRANCE_VERSION, reachable is not enough — the engine must state that version itself (Country-Package-Version).
+            // Without a pin there is nothing to compare: the probe is skipped (one /spec probe, as before) and the version stays « non déclarée ».
+            if (engineUp && (process.env.OPENFISCA_FRANCE_VERSION || '').trim()) {
+                health = await cachedEngineHealth();
+                if (IDENTITY_FAILURES.includes(health.code)) engineUp = false;
+            }
         } catch {
             // privacy: never log/forward the original exception (message/detail/stack may carry upstream or request text)
             logger.warn('[Diagnostic] isAvailable() threw', { requestId, code: ERROR_CODES.HEALTHCHECK_FAILED });
             captureSafe(Sentry, ERROR_CODES.HEALTHCHECK_FAILED, { requestId, phase: 'health-check' });
         }
         if (!engineUp) {
-            logger.warn('[Diagnostic] OpenFisca unavailable (cached health probe)', { requestId });
+            logger.warn('[Diagnostic] OpenFisca unavailable (cached health probe)', { requestId, code: health?.code || ERROR_CODES.HEALTHCHECK_FAILED });
             return res.status(503).json({
                 code: 'OPENFISCA_UNAVAILABLE',
                 error: 'OPENFISCA_UNAVAILABLE',
@@ -230,8 +238,9 @@ async function handleDiagnosticInner(req, res, track) {
         const rights = parseResults(result, period);
         // R15 (D10 / D20): an engine value is shown only as a qualified order of magnitude when the form gave what that right needs; otherwise the right is
         // INSUFFICIENT_INFORMATION and the missing inputs are named. The raw engine values (exact amounts, « eligible » flags) never leave the server.
-        const engineVersion = process.env.OPENFISCA_FRANCE_VERSION || null;
-        const estimates = qualifyEstimates(rights, answers, { period, engineVersion });
+        // R46 (D10): the version is the one the engine states (Country-Package-Version), else the pinned one; D11: each right says whether its rule passed the gate
+        const engineVersion = (health?.ok && health.version) || process.env.OPENFISCA_FRANCE_VERSION || null;
+        const estimates = qualifyEstimates(rights, answers, { period, engineVersion, validatedRules: Object.keys(readings(answers, null)) });
 
         const duration = Date.now() - start;
         logger.info('[Diagnostic]', { requestId, duration_ms: duration, rightsCount: rights.length });

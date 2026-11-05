@@ -17,15 +17,42 @@ import { readConditions, RESULTS } from './rulesDraft.js';
 
 const sameExpected = (reading, expected) => Object.entries(expected || {}).every(([fact, want]) => reading.conditions.find((c) => c.fact === fact)?.result === want);
 
+/**
+ * R46 (D11): the gate, explained — why a right passes or not, in the fixed vocabulary below (the reviewer workflow and the status command show it; nothing
+ * here is shown to a person). A right whose official page was revised AFTER its review lapses: the expert read an earlier text, so the right must be reviewed
+ * again (scripts/d11-source-check.mjs records the page's new « Vérifié le » date in sources[].pageVerifiedOn).
+ */
+export const GATE_REASONS = Object.freeze({
+  UNKNOWN_RIGHT: 'UNKNOWN_RIGHT', NOT_EXPERT_VALIDATED: 'NOT_EXPERT_VALIDATED', REVIEWER_INCOMPLETE: 'REVIEWER_INCOMPLETE', NO_ACCEPTED_CASE: 'NO_ACCEPTED_CASE',
+  CASE_NOT_ACCEPTED: 'CASE_NOT_ACCEPTED', CASE_NO_LONGER_MATCHES: 'CASE_NO_LONGER_MATCHES', SOURCE_REVISED_AFTER_REVIEW: 'SOURCE_REVISED_AFTER_REVIEW', NO_SOURCE: 'NO_SOURCE',
+});
+const ISO = /^\d{4}-\d{2}-\d{2}$/;
+/** @returns {{ code: string, passes: boolean, reasons: string[] }} */
+export function gateStatus(register, code) {
+  const R = GATE_REASONS;
+  const right = (register?.rights || []).find((r) => r.id === code);
+  if (!right) return { code, passes: false, reasons: [R.UNKNOWN_RIGHT] };
+  const reasons = [];
+  if (right.status !== 'EXPERT_VALIDATED') reasons.push(R.NOT_EXPERT_VALIDATED);
+  const rev = right.expertReview;
+  const reviewOk = Boolean(rev && String(rev.name || '').trim() && String(rev.role || '').trim() && ISO.test(String(rev.date || '')));
+  if (right.status === 'EXPERT_VALIDATED' && !reviewOk) reasons.push(R.REVIEWER_INCOMPLETE);
+  const sources = Array.isArray(right.sources) ? right.sources : [];
+  if (!sources.length || !sources[0]?.url) reasons.push(R.NO_SOURCE);
+  if (right.status === 'EXPERT_VALIDATED') {
+    const cases = Array.isArray(right.referenceCases) ? right.referenceCases : [];
+    if (!cases.length) reasons.push(R.NO_ACCEPTED_CASE);
+    if (cases.some((c) => !c.acceptedBy)) reasons.push(R.CASE_NOT_ACCEPTED);
+    if (cases.some((c) => c.acceptedBy && !sameExpected(readConditions(register, code, c.facts), c.expected))) reasons.push(R.CASE_NO_LONGER_MATCHES);
+    if (reviewOk && sources.some((s) => ISO.test(String(s?.pageVerifiedOn || '')) && s.pageVerifiedOn > rev.date)) reasons.push(R.SOURCE_REVISED_AFTER_REVIEW);
+  }
+  return { code, passes: reasons.length === 0, reasons };
+}
+
 /** @returns {any | null} the right when it passes the gate, else null */
 export function validatedRight(register, code) {
-  const right = (register?.rights || []).find((r) => r.id === code);
-  if (!right || right.status !== 'EXPERT_VALIDATED') return null;
-  const rev = right.expertReview;
-  if (!rev || !String(rev.name || '').trim() || !String(rev.role || '').trim() || !/^\d{4}-\d{2}-\d{2}$/.test(String(rev.date || ''))) return null;
-  const cases = Array.isArray(right.referenceCases) ? right.referenceCases : [];
-  if (!cases.length || !cases.every((c) => c.acceptedBy && sameExpected(readConditions(register, code, c.facts), c.expected))) return null;
-  return right;
+  if (!gateStatus(register, code).passes) return null;
+  return (register?.rights || []).find((r) => r.id === code);
 }
 
 /** the facts the register's checks read, from the diagnostic's answers (labels of the answers only ever leave this module, never values) */

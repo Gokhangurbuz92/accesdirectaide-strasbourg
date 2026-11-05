@@ -1,9 +1,12 @@
 // PKG-6 / D18 — evaluation harness of the citizen assistant, run against the LOCAL model only (Ollama on 127.0.0.1; no cloud fallback; no network beyond loopback).
 //   node --import tsx scripts/ai-eval.mjs [--set tests/fixtures/ai-eval-set.v1.json] [--out report.json] [--guards-only]
+//   R46: … --record <file>   also writes the model's raw outputs, bound to the SHA-256 of the set (LAB, real local model)
+//        … --replay <file>   NO model: replays a recording through the same guards, post-validation and scoring (runs in CI; a stale recording is refused)
 // Each item goes through the SAME steps as api/_handlers/assistant/chat.js: the input guards (personal identifiers, injection, legal advice), then the model with the
 // same system instruction and response schema on the item's records, then the same post-validation (citations must be provided ids, URLs only from the records).
 // Scores: guard block rate, abstention recall, grounded answer rate, forbidden-claim rate (eligibility promises), invented-URL rate; thresholds come from the set.
 // The evaluation set must be human-reviewed before its results count as acceptance evidence (the file says whether it was).
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -57,28 +60,72 @@ export function score(set, results) {
   return { metrics: m, views, thresholds: t, checks, pass: Object.values(checks).every(Boolean) };
 }
 
-async function main() {
-  const set = JSON.parse(fs.readFileSync(path.resolve(ROOT, arg('set', 'tests/fixtures/ai-eval-set.v1.json')), 'utf8'));
-  const { evaluationHooks: hooks, ASSISTANT_SYSTEM_INSTRUCTION } = await import('../api/_handlers/assistant/chat.js');
-  const { generateCitizenLocalStructuredContent } = await import('../api/lib/ai-foundation.js');
-  const guardsOnly = process.argv.includes('--guards-only');
-  const results = [];
+export const RECORDING_SCHEMA = 'ada.ai-eval-recording.v1';
+export const setDigest = (text) => crypto.createHash('sha256').update(text).digest('hex');
+
+/** a recording is usable only for the exact set it was recorded on (any edit of a question or of a record makes it stale) */
+export function checkRecording(recording, setText) {
+  if (recording?.schema !== RECORDING_SCHEMA) return 'RECORDING_SCHEMA';
+  if (recording.set?.sha256 !== setDigest(setText)) return 'RECORDING_STALE_FOR_THIS_SET';
+  if (!recording.outputs || typeof recording.outputs !== 'object') return 'RECORDING_NO_OUTPUTS';
+  return null;
+}
+
+/**
+ * The evaluation loop (shared by the live, record and replay modes). getModelOut(item) returns the model's structured output or null (error / timeout).
+ * @returns {Promise<{ results: any[], outputs: Record<string, any> }>}
+ */
+export async function runItems(set, hooks, getModelOut, { log = () => {} } = {}) {
+  const results = []; const outputs = {};
   for (const item of set.items) {
     const pre = decide(item, set, hooks, {});
     let out = null; let latencyMs = 0;
-    if (pre.outcome !== 'BLOCK' && !guardsOnly) {
-      const t0 = Date.now();
+    if (pre.outcome !== 'BLOCK') {
+      const t0 = Date.now(); out = await getModelOut(item); latencyMs = Date.now() - t0; outputs[item.id] = out;
+    }
+    const decision = pre.outcome === 'BLOCK' ? pre : decide(item, set, hooks, out);
+    results.push({ id: item.id, category: item.category, expect: item.expect, mustCite: item.mustCite, decision, latencyMs });
+    log(`${item.id.padEnd(12)} ${decision.outcome}${decision.claim ? ' CLAIM' : ''}${latencyMs ? ` ${latencyMs}ms` : ''}\n`);
+  }
+  return { results, outputs };
+}
+
+async function main() {
+  const setFile = path.resolve(ROOT, arg('set', 'tests/fixtures/ai-eval-set.v1.json'));
+  const setText = fs.readFileSync(setFile, 'utf8');
+  const set = JSON.parse(setText);
+  const { evaluationHooks: hooks, ASSISTANT_SYSTEM_INSTRUCTION } = await import('../api/_handlers/assistant/chat.js');
+  const guardsOnly = process.argv.includes('--guards-only');
+  const replayFile = arg('replay', null); const recordFile = arg('record', null);
+  let getModelOut; let model;
+  if (replayFile) {
+    const recording = JSON.parse(fs.readFileSync(path.resolve(replayFile), 'utf8'));
+    const bad = checkRecording(recording, setText);
+    if (bad) throw new Error(bad);
+    getModelOut = async (item) => (Object.prototype.hasOwnProperty.call(recording.outputs, item.id) ? recording.outputs[item.id] : null);
+    model = `replay of ${recording.model?.name || 'unknown'} recorded ${recording.recordedAt || '?'} (${recording.provenance || 'provenance not stated'})`;
+  } else if (guardsOnly) {
+    getModelOut = async () => ({ abstain: true }); model = 'none (guards only)';
+  } else {
+    const { generateCitizenLocalStructuredContent } = await import('../api/lib/ai-foundation.js');
+    getModelOut = async (item) => {
       const r = await generateCitizenLocalStructuredContent({ prompt: hooks.buildModelPrompt({ query: item.message, territory: { label: 'Strasbourg' }, verifiedRecords: item.records.map((k) => set.records[k]) }),
         systemInstruction: ASSISTANT_SYSTEM_INSTRUCTION, zodSchema: hooks.GroundedResponseSchema, tools: [], timeoutMs: 30000 }).catch(() => null);
-      latencyMs = Date.now() - t0; out = r && !r.safeErrorState ? r.content : null;
-    }
-    const decision = pre.outcome === 'BLOCK' ? pre : decide(item, set, hooks, guardsOnly ? { abstain: true } : out);
-    results.push({ id: item.id, category: item.category, expect: item.expect, mustCite: item.mustCite, decision, latencyMs });
-    process.stdout.write(`${item.id.padEnd(12)} ${decision.outcome}${decision.claim ? ' CLAIM' : ''}${latencyMs ? ` ${latencyMs}ms` : ''}\n`);
+      return r && !r.safeErrorState ? r.content : null;
+    };
+    model = 'qwen3:8b (local Ollama)';
   }
-  const report = { schema: 'ada.ai-eval-report.v1', at: new Date().toISOString(), model: guardsOnly ? 'none (guards only)' : 'qwen3:8b (local Ollama)', set: { reviewStatus: set.reviewStatus, items: set.items.length }, ...score(set, results), results };
+  const { results, outputs } = await runItems(set, hooks, getModelOut, { log: (l) => process.stdout.write(l) });
+  if (recordFile && !replayFile && !guardsOnly) {
+    let digest = null;
+    try { const tags = await (await fetch(new URL('/api/tags', process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434'), { signal: AbortSignal.timeout(2000) })).json(); digest = (tags.models || []).find((m) => m.name === 'qwen3:8b')?.digest || null; } catch { digest = null; }
+    fs.writeFileSync(path.resolve(recordFile), `${JSON.stringify({ schema: RECORDING_SCHEMA, recordedAt: new Date().toISOString(), provenance: 'REAL_LOCAL_MODEL_RUN', model: { name: 'qwen3:8b', digest },
+      set: { file: path.relative(ROOT, setFile), sha256: setDigest(setText), reviewStatus: set.reviewStatus }, outputs }, null, 1)}\n`);
+  }
+  const report = { schema: 'ada.ai-eval-report.v1', at: new Date().toISOString(), model, mode: replayFile ? 'REPLAY' : guardsOnly ? 'GUARDS_ONLY' : 'LIVE', set: { reviewStatus: set.reviewStatus, items: set.items.length }, ...score(set, results), results };
   const outFile = arg('out', null); if (outFile) fs.writeFileSync(outFile, JSON.stringify(report, null, 1));
   process.stdout.write(JSON.stringify({ metrics: report.metrics, checks: report.checks, pass: report.pass }, null, 1) + '\n');
+  if (replayFile && !report.pass) process.exitCode = 1;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch((e) => { process.stderr.write(String(e?.message || e) + '\n'); process.exit(1); });

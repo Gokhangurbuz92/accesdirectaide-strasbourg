@@ -93,18 +93,31 @@ export function missingInputs(answers) {
   return out;
 }
 
+/**
+ * R46 (D10 / D11): the register right (data/rules/rights-rules.v1.json) each engine variable belongs to. An engine value is never authoritative; it can only
+ * say that the rule of its right passed the expert gate (api/lib/validatedRules.js) — today none does, so every item is NOT_EXPERT_VALIDATED.
+ */
+export const REGISTER_RIGHT = Object.freeze({ rsa: 'rsa', prime_activite: 'prime-activite', apl: 'apl', aide_logement: 'apl', aah: 'aah', css: 'c2s' });
+export const RULE_VALIDATION = Object.freeze({ EXPERT_VALIDATED: 'EXPERT_VALIDATED', NOT_EXPERT_VALIDATED: 'NOT_EXPERT_VALIDATED', NOT_IN_REGISTER: 'NOT_IN_REGISTER' });
+const ruleValidation = (code, validated) => {
+  const id = REGISTER_RIGHT[code];
+  if (!id) return RULE_VALIDATION.NOT_IN_REGISTER;
+  return validated.has(id) ? RULE_VALIDATION.EXPERT_VALIDATED : RULE_VALIDATION.NOT_EXPERT_VALIDATED;
+};
+
 const orderOfMagnitude = (x) => (x > 0 ? Math.max(10, Math.round(x / 10) * 10) : 0);
 
 /**
  * @param {Array<{code:string,label:string,category:string,amount:number}>} rights parseResults() output (engine values on the given test case)
  * @param {object} answers the request's answers
- * @param {{ period: string, computedAt?: string, engineVersion?: string|null }} ctx
+ * @param {{ period: string, computedAt?: string, engineVersion?: string|null, validatedRules?: string[] }} ctx validatedRules: register ids passing the D11 gate
  */
 export function qualifyEstimates(rights, answers, ctx) {
   const missing = missingInputs(answers);
+  const validated = new Set(ctx.validatedRules || []);
   const items = (rights || []).map((r) => {
     const gaps = missing[r.code] || ['notSupported'];
-    const base = { code: r.code, label: r.label, category: r.category };
+    const base = { code: r.code, label: r.label, category: r.category, ruleValidation: ruleValidation(r.code, validated) };
     if (gaps.length) {
       return { ...base, status: 'INSUFFICIENT_INFORMATION', monthlyOrderOfMagnitude: null,
         missing: gaps.map((k) => ({ key: k, label: MISSING[k] || 'cette aide n’est pas estimée par AccesDirectAide' })) };
@@ -117,6 +130,8 @@ export function qualifyEstimates(rights, answers, ctx) {
   return {
     contract: ESTIMATE_CONTRACT,
     authoritative: false,
+    // R46 (D11): the AUTHORITATIVE reading of a right needs its rule to pass the expert gate; an engine order of magnitude stays an estimate even then
+    d11Gate: { validatedRules: [...validated].sort(), statement: validated.size ? 'Règles relues par un expert pour les seules aides indiquées ; le montant reste une estimation.' : 'Aucune règle n’est encore validée par un expert des droits sociaux.' },
     period: ctx.period,
     computedAt: ctx.computedAt || new Date().toISOString(),
     engine: { name: 'openfisca-france', version: ctx.engineVersion || null },

@@ -2255,7 +2255,9 @@
       ],
       "tests": [
         "ws4-assistant-local.test.js",
-        "pkg6-assistant-n14.test.js"
+        "pkg6-assistant-n14.test.js",
+        "r46-d18-ai-eval-replay.test.js",
+        "r46-d23-local-runtime.test.js"
       ],
       "gates": [
         {
@@ -2274,6 +2276,7 @@
       "label": "Rights simulation with OpenFisca (public diagnostic P13)",
       "code": [
         "api/lib/openfiscaClient.js",
+        "api/lib/openfiscaEngine.js",
         "api/_handlers/diagnostic.js"
       ],
       "routes": [
@@ -2288,7 +2291,9 @@
       ],
       "tests": [
         "pkg1-openfisca-protocol-conformance.test.js",
-        "dta-openfisca-client-privacy.test.js"
+        "dta-openfisca-client-privacy.test.js",
+        "r15-openfisca-estimate-honesty.test.js",
+        "r46-d10-openfisca-engine.test.js"
       ],
       "gates": [
         {
