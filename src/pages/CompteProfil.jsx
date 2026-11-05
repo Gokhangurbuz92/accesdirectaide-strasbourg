@@ -233,7 +233,7 @@ export default function CompteProfil() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-700" data-testid="prefs-no-inapp">{t('compte:profile.existe_pas_encore_messages', 'Il n’existe pas encore de messages dans l’application : les informations et rappels vous parviennent par e-mail (et par SMS seulement si vous l’activez).')}</p>
+          <p className="text-xs text-slate-700" data-testid="prefs-no-inapp">{t('compte:profile.inapp_center_r46', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les rappels vous parviennent par e-mail (et par SMS seulement si vous l’activez).')}</p>
         </CardContent>
       </Card>
 

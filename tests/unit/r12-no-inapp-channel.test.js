@@ -10,9 +10,10 @@ describe('in-app channel', () => {
     expect(Object.entries(DEFAULT_PREFS).filter(([k, v]) => k.startsWith('inapp.') && v)).toEqual([]);
     expect(unavailableChannels({})).toContain('inapp');
   });
-  it('the profile page has no « Dans l’application » column and says why', () => {
+  it('the profile page has no « Dans l’application » column and says why (R46: the in-app centre N03 needs no setting)', () => {
     const src = readFileSync('src/pages/CompteProfil.jsx', 'utf8');
     expect(src).not.toMatch(/\['inapp', 'Dans l’application'\]/);
     expect(src).toMatch(/data-testid="prefs-no-inapp"/);
+    expect(src).toContain('inapp_center_r46'); expect(src).not.toContain('Il n’existe pas encore de messages dans l’application');
   });
 });

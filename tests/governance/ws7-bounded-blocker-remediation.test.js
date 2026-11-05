@@ -11,7 +11,9 @@ describe('WS7 bounded blocker remediation invariants', () => {
     const upload = read('api/_handlers/pro/dossier/upload-secure.js');
     const download = read('api/_handlers/download.js');
 
-    expect(upload).toContain("import { storage } from '../../../lib/storage.js'");
+    // R46 (C17): the dossier bytes go through the HDS-ready storage boundary, under the same local name (the call sites below are unchanged)
+    expect(upload).toContain("import { protectedStore as storage } from '../../../lib/protected-store/index.js'");
+    expect(read('api/_handlers/download.js')).toContain("import { protectedStore as storage } from '../lib/protected-store/index.js'");
     expect(upload).toContain("sealBuffer(fileBuffer, { purpose: 'dossier-file', context: fileContext })");   // RC5-product: envelope v2 (random per-file data key, AAD = dossier + file)
     expect(upload).toContain('await storage.upload(encryptedBuffer, actualMimeType)');
     expect(upload).toContain("crypto.createHash('sha256').update(fileBuffer)");

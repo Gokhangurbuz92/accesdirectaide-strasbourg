@@ -285,7 +285,6 @@
  "profile.contraste_renforce": "تباين معزَّز",
  "profile.departement_facultatif": "المقاطعة (Département، اختياري)",
  "profile.enregistrer": "حفظ",
- "profile.existe_pas_encore_messages": "لا توجد رسائل داخل التطبيق بعد: تصلك المعلومات والتذكيرات عبر البريد الإلكتروني (وعبر الرسائل النصية فقط إذا فعّلتها).",
  "profile.expired": "منتهي الصلاحية",
  "profile.expires_on": "تنتهي صلاحيته في {{date}}",
  "profile.gerer": "إدارة",
@@ -599,5 +598,6 @@
  "fc.unlink": "إزالة الربط مع FranceConnect",
  "fc.status_not_linked": "يمكنك ربط حسابك بـ FranceConnect لتسجيل الدخول دون كلمة مرور. لا تتلقى ADA سوى معرّف FranceConnect وعنوان بريدك الإلكتروني.",
  "fc.link": "ربط حسابي بـ FranceConnect",
- "fc.linked": "أصبح حسابك الآن مرتبطًا بـ FranceConnect."
+ "fc.linked": "أصبح حسابك الآن مرتبطًا بـ FranceConnect.",
+ "profile.inapp_center_r46": "تظهر المعلومات الجديدة عن حسابك أيضًا في « الإشعارات » ضمن مساحتي، دون أي إعداد: لا تغادر المنصة. تصلك التذكيرات عبر البريد الإلكتروني (وعبر الرسائل القصيرة فقط إذا فعّلتها)."
 }

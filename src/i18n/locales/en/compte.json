@@ -285,7 +285,6 @@
  "profile.contraste_renforce": "Stronger contrast",
  "profile.departement_facultatif": "Département (optional)",
  "profile.enregistrer": "Save",
- "profile.existe_pas_encore_messages": "There are no in-app messages yet: information and reminders reach you by e-mail (and by text message only if you turn it on).",
  "profile.expired": "expired",
  "profile.expires_on": "expires on {{date}}",
  "profile.gerer": "Manage",
@@ -599,5 +598,6 @@
  "fc.unlink": "Remove the link with FranceConnect",
  "fc.status_not_linked": "You can link your account to FranceConnect to sign in without a password. ADA only receives the FranceConnect identifier and your e-mail address.",
  "fc.link": "Link my account to FranceConnect",
- "fc.linked": "Your account is now linked to FranceConnect."
+ "fc.linked": "Your account is now linked to FranceConnect.",
+ "profile.inapp_center_r46": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Reminders reach you by e-mail (and by text message only if you turn it on)."
 }

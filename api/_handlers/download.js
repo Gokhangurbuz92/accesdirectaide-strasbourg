@@ -5,7 +5,8 @@ import { SharedDiagnostic, AuditLog, ProUser } from '../../src/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { verifyAttachmentToken } from '../lib/crypto.js';
 import { openBuffer, openText } from '../lib/data-keys.js';
-import { storage } from '../lib/storage.js';
+// R46 (C17): dossier attachments are read through the HDS-ready storage boundary
+import { protectedStore as storage } from '../lib/protected-store/index.js';
 import { findGrant } from '../_utils/share-access.js';
 import { isDossierRestricted } from '../_services/processing-restriction.js';
 
@@ -113,6 +114,7 @@ export default async function handler(/** @type {import('../_utils/http-types').
         res.setHeader('X-Content-Type-Options', 'nosniff');
         return res.send(fileBuffer);
     } catch (error) {
+        if (error && error.code === 'PROTECTED_STORE_REFUSED') return res.status(503).json({ error: 'PROTECTED_STORE_REFUSED', message: 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.' });
         logger.error({ err: safeDownloadError(error) }, '[Document Download] Error');
         return res.status(500).json({ error: 'Internal Server Error' });
     }

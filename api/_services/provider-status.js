@@ -14,6 +14,7 @@ import { evaluateMailerConfig } from '../_utils/mailer.js';
 import { pushConfig } from './web-push.js';
 import { outlookStatus } from './calendar-outlook.js';
 import { videoStatus } from '../lib/video-provider.js';
+import { franceConnectConfig } from '../lib/franceconnect/oidc-client.js';
 
 export const PROVIDER_STATES = Object.freeze(['CONNECTED', 'SIMULATED', 'NOT_CONFIGURED']);
 /** every reasonCode a row can carry (the page translates them; `reason` is the operator's French detail) */
@@ -92,9 +93,14 @@ export function providerStatuses(env = process.env) {
     reasonCode: has(env, 'AIDES_TERRITOIRES_API_KEY') ? 'COMPLETE' : 'NOT_CONFIGURED',
     reason: has(env, 'AIDES_TERRITOIRES_API_KEY') ? 'clé présente' : 'pas de clé : le connecteur ne lit rien', variables: presence(env, ['AIDES_TERRITOIRES_API_KEY']) });
 
-  // identity federation: no adapter in the product yet (honest: not « simulated », not « connected »)
-  row({ id: 'franceconnect', category: 'identity', label: 'FranceConnect (identité des personnes)', adapter: 'ABSENT', state: 'NOT_CONFIGURED',
-    reasonCode: 'NO_ADAPTER', reason: 'aucun adaptateur dans le produit : la connexion se fait par adresse e-mail et mot de passe', variables: [] });
+  // identity federation — FranceConnect (R46 N08 adapter api/lib/franceconnect/oidc-client.js; a loopback issuer = the LAB mock provider)
+  const fc = franceConnectConfig(env);
+  const fcLoopback = fc.ok && /^http:\/\/(127\.0\.0\.1|localhost|\[::1\])(:|\/|$)/.test(fc.issuer);
+  row({ id: 'franceconnect', category: 'identity', label: 'FranceConnect (identité des personnes)',
+    state: fc.ok ? (fcLoopback ? 'SIMULATED' : 'CONNECTED') : 'NOT_CONFIGURED',
+    reasonCode: fc.ok ? (fcLoopback ? 'SANDBOX' : 'COMPLETE') : fc.reason === 'NOT_CONFIGURED' ? 'NOT_CONFIGURED' : fc.reason === 'PRODUCTION_NOT_APPROVED' ? 'PRODUCTION_ACTIVATION_PENDING' : 'INCOMPLETE_CONFIGURATION',
+    reason: fc.ok ? (fcLoopback ? 'fournisseur de test local (LAB)' : 'configuration complète (habilitation et connexion réelle non vérifiées par cette page)') : 'non configuré : la connexion se fait par adresse e-mail et mot de passe',
+    variables: presence(env, ['FRANCECONNECT_ISSUER', 'FRANCECONNECT_CLIENT_ID', 'FRANCECONNECT_CLIENT_SECRET', 'FRANCECONNECT_REDIRECT_URI', 'FRANCECONNECT_PRODUCTION_APPROVED']) });
   row({ id: 'proconnect', category: 'identity', label: 'ProConnect (identité des professionnels)', adapter: 'ABSENT', state: 'NOT_CONFIGURED',
     reasonCode: 'NO_ADAPTER', reason: 'aucun adaptateur dans le produit : les professionnels se connectent avec leur compte ADA Pro (MFA)', variables: [] });
 

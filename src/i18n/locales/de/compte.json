@@ -285,7 +285,6 @@
  "profile.contraste_renforce": "Verstärkter Kontrast",
  "profile.departement_facultatif": "Département (freiwillig)",
  "profile.enregistrer": "Speichern",
- "profile.existe_pas_encore_messages": "Es gibt noch keine Nachrichten in der Anwendung: Informationen und Erinnerungen erhalten Sie per E-Mail (und per SMS nur, wenn Sie das aktivieren).",
  "profile.expired": "abgelaufen",
  "profile.expires_on": "läuft am {{date}} ab",
  "profile.gerer": "Verwalten",
@@ -599,5 +598,6 @@
  "fc.unlink": "Verknüpfung mit FranceConnect entfernen",
  "fc.status_not_linked": "Sie können Ihr Konto mit FranceConnect verknüpfen, um sich ohne Passwort anzumelden. ADA erhält nur die FranceConnect-Kennung und Ihre E-Mail-Adresse.",
  "fc.link": "Mein Konto mit FranceConnect verknüpfen",
- "fc.linked": "Ihr Konto ist jetzt mit FranceConnect verknüpft."
+ "fc.linked": "Ihr Konto ist jetzt mit FranceConnect verknüpft.",
+ "profile.inapp_center_r46": "Neue Informationen zu Ihrem Konto werden ohne Einstellung auch unter « Benachrichtigungen » in Mein Bereich angezeigt: Sie verlassen die Plattform nicht. Erinnerungen erhalten Sie per E-Mail (und per SMS nur, wenn Sie dies aktivieren)."
 }

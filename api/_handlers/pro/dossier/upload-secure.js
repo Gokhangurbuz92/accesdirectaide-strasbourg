@@ -7,7 +7,8 @@ import { SharedDiagnostic } from '../../../../src/db/schema.js';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext, logProAudit } from '../../../_utils/auth.js';
 import { resolveDossierForStructure, activeGrantExists } from '../../../_utils/share-access.js';
-import { storage } from '../../../lib/storage.js';
+// R46 (C17): dossier files go through the HDS-ready storage boundary (refused in production / preview without a valid certified-host attestation)
+import { protectedStore as storage } from '../../../lib/protected-store/index.js';
 import { generateAttachmentToken } from '../../../lib/crypto.js';
 import { sealBuffer, sealText } from '../../../lib/data-keys.js';
 import { clientIp } from '../../../_utils/client-ip.js';
@@ -178,6 +179,7 @@ async function handler(req, res) {
         if (storageKey && !metadataPersisted) {
             await storage.delete(storageKey).catch(() => { });
         }
+        if (error && error.code === 'PROTECTED_STORE_REFUSED') return res.status(503).json({ error: 'PROTECTED_STORE_REFUSED', message: 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.' });
         logger.error({ err: safeErrorForLog(error) }, '[Upload Secure] Erreur');
         return res.status(500).json({ error: 'Erreur lors de l\'envoi.' });
     }
