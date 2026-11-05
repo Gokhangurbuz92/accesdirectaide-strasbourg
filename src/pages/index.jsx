@@ -157,6 +157,8 @@ const AdminVersions = lazy(() => import("./admin/k5/Versions.jsx"));
 const AdminFalc = lazy(() => import("./admin/k5/Falc.jsx"));
 const AdminDuplicates = lazy(() => import("./admin/k5/Duplicates.jsx"));
 const AdminAiOversight = lazy(() => import("./admin/k5/AiOversight.jsx"));
+const AdminProviders = lazy(() => import("./admin/k5/Providers.jsx"));   // R46 / N10
+const AdminSecurity = lazy(() => import("./admin/k5/Security.jsx"));   // R46 / Q07
 const DemandeAide = lazy(() => import("./DemandeAide.jsx"));
 const InstitutionEspace = lazy(() => import("./institution/Espace.jsx"));
 const InstitutionForgot = lazy(() => import("./institution/Recuperation.jsx").then((m) => ({ default: m.InstitutionForgot })));
@@ -369,6 +371,8 @@ function PagesContent() {
                                     <Route path="veille" element={<AdminVeille />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
+                                    <Route path="fournisseurs" element={<AdminProviders />} />
+                                    <Route path="securite" element={<AdminSecurity />} />
                                     <Route path="privacy" element={<AdminPrivacy />} />
                                     <Route path="support" element={<AdminSupport />} />
                                     <Route path="data-quality" element={<AdminDataQuality />} />

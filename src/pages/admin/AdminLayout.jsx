@@ -92,6 +92,8 @@ const SIDEBAR_SECTIONS = [
         icon: Globe,
         items: [
             { label: 'Opérations et journal d’audit', to: '/admin/operations', icon: Shield },
+            { label: 'Signaux de sécurité', to: '/admin/securite', icon: Shield },
+            { label: 'Fournisseurs et intégrations', to: '/admin/fournisseurs', icon: Globe },
             { label: 'Partenaires institutionnels', to: '/admin/institutions', icon: Globe },
             { label: 'Dossiers de financement', to: '/admin/financement', icon: FileStack },
             { label: 'Mesures du pilote', to: '/admin/pilote', icon: Activity },
@@ -151,6 +153,8 @@ function navLabel(t, label) {
         'Demandes d’aide': t('admin:layout.nav.support', 'Demandes d’aide'),
         'Plateforme': t('admin:layout.nav.platform', 'Plateforme'),
         'Opérations et journal d’audit': t('admin:layout.nav.operations', 'Opérations et journal d’audit'),
+        'Signaux de sécurité': t('admin:layout.nav.security', 'Signaux de sécurité'),
+        'Fournisseurs et intégrations': t('admin:layout.nav.providers', 'Fournisseurs et intégrations'),
         'Partenaires institutionnels': t('admin:layout.nav.institutions', 'Partenaires institutionnels'),
         'Dossiers de financement': t('admin:layout.nav.funding', 'Dossiers de financement'),
         'Mesures du pilote': t('admin:layout.nav.pilot', 'Mesures du pilote'),

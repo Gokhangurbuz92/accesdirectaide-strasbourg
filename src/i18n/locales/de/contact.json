@@ -56,5 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "E-Mail-Adresse oder Telefon",
  "request.ne_pas_remplir": "Nicht ausfüllen",
  "request.envoyer": "Senden",
- "form.email_placeholder": "max@beispiel.de"
+ "form.email_placeholder": "max@beispiel.de",
+ "subject.security": "Ich melde ein Sicherheitsproblem (Schwachstelle)",
+ "security.note": "Danke, dass Sie uns helfen, Menschen zu schützen. Beschreiben Sie das Problem und wie es sich nachvollziehen lässt, ohne personenbezogene Daten anderer Personen beizufügen. Greifen Sie nicht auf Daten zu, die nicht Ihre sind, ändern Sie sie nicht, und geben Sie uns vor einer Veröffentlichung Zeit zur Behebung. Wir antworten an die angegebene Adresse."
 }

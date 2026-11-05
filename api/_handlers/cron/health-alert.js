@@ -12,6 +12,7 @@ import { randomUUID } from 'crypto';
 import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 import { env } from '../../_utils/env.js';
 import { recentMailEventCounts } from '../../_services/mail-events.js';
+import { securitySignalCounts, evaluateSecuritySignals } from '../../_services/security-signals.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -20,6 +21,7 @@ import { recentMailEventCounts } from '../../_services/mail-events.js';
  *   1. DB connectivity (SELECT 1)
  *   2. KV connectivity
  *   3. Last ingestion freshness (< 48h)
+ *   … 7. Security signals (R46): failed sign-in / MFA bursts, unusual exports (api/_services/security-signals.js)
  *
  * Alert delivery:
  *   - Sentry (via console.error → Sentry captures)
@@ -269,6 +271,19 @@ export default async function handler(req, res) {
         if (refused >= threshold && await fireAlert('mail.events_refused', `Webhook Mailjet : ${refused} événements refusés en une heure (origine inconnue ou destinataire différent). Possible rejeu ou mot de passe du webhook divulgué.`, { refused, calls: c.calls, thresholdPerHour: threshold })) alertCount++;
     } catch (err) {
         checks.mailEvents = { ok: false, error: err?.name || 'Error' };
+    }
+
+    // Check 7 (R46 / Q07): security signals from the audit trail — bursts of refused sign-ins (every surface), of refused MFA codes, and unusual exports of
+    // personal or audit data (all actors in one hour, or one actor). Counts only; thresholds ALERT_FAILED_LOGIN_BURST, ALERT_MFA_FAILURE_BURST,
+    // ALERT_EXPORT_BURST, ALERT_EXPORT_PER_ACTOR, ALERT_SECURITY_WINDOW_MINUTES (api/_services/security-signals.js). Read-only.
+    try {
+        const c = await securitySignalCounts({ db });
+        const alerts = evaluateSecuritySignals(c);
+        checks.security = { ok: alerts.length === 0, failedLogins: c.failedLogins.count, mfaFailures: c.mfaFailures.count, exports: c.exports.count, exportsMaxPerActor: c.exports.maxPerActor,
+            windowMinutes: c.thresholds.windowMinutes, thresholds: c.thresholds, raised: alerts.map((a) => a.name) };
+        for (const a of alerts) { if (await fireAlert(a.name, a.message, a.details)) alertCount++; }
+    } catch (err) {
+        checks.security = { ok: false, error: err?.name || 'Error' };
     }
 
     // R38: say whether a PERSON can receive an alert. Sentry and the logs are not a human channel; an e-mail through MAILER_PROVIDER=noop is not delivered.

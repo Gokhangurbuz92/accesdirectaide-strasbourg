@@ -56,5 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "e-posta adresi veya telefon",
  "request.ne_pas_remplir": "Doldurmayın",
  "request.envoyer": "Gönder",
- "form.email_placeholder": "ayse@ornek.com"
+ "form.email_placeholder": "ayse@ornek.com",
+ "subject.security": "Bir güvenlik sorunu (güvenlik açığı) bildiriyorum",
+ "security.note": "İnsanları korumamıza yardım ettiğiniz için teşekkür ederiz. Sorunu ve nasıl yeniden üretileceğini, başka kişilerin kişisel verilerini eklemeden açıklayın. Size ait olmayan verilere erişmeyin, onları değiştirmeyin ve herhangi bir yayından önce düzeltmemiz için bize zaman tanıyın. Belirttiğiniz adrese yanıt vereceğiz."
 }

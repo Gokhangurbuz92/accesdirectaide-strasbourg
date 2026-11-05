@@ -56,5 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "e-mail address or telephone",
  "request.ne_pas_remplir": "Do not fill in",
  "request.envoyer": "Send",
- "form.email_placeholder": "jane@example.com"
+ "form.email_placeholder": "jane@example.com",
+ "subject.security": "I am reporting a security problem (vulnerability)",
+ "security.note": "Thank you for helping us protect people. Describe the problem and how to reproduce it, without attaching other people’s personal data. Do not access or change data that is not yours, and give us time to fix it before any publication. We will reply to the address you gave."
 }

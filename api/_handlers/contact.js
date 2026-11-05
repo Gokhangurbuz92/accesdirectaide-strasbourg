@@ -22,6 +22,7 @@ const SUJET_LABELS = {
   signalement_erreur: "Signalement d'erreur",
   suggestion: 'Suggestion',
   partenariat: 'Proposition de partenariat',
+  securite: 'Sécurité / vulnérabilité',   // R46 / Q07: security reports (see /.well-known/security.txt)
   autre: 'Autre',
 };
 const LIMITS = { nom: 100, email: 254, message: 5000, page: 300 };
@@ -111,7 +112,7 @@ export default async function handler(/** @type {import('../_utils/http-types').
       </div>
     `.trim();
 
-    const result = await sendMail({ to: ADMIN_EMAIL, subject: `[Contact] ${sujetLabel}`, text: textContent, html: htmlContent, category: 'contact-form' });
+    const result = await sendMail({ to: ADMIN_EMAIL, subject: sujet === 'securite' ? `[Sécurité] ${sujetLabel}` : `[Contact] ${sujetLabel}`, text: textContent, html: htmlContent, category: 'contact-form' });
     logger.info({ sujet, outcome: result.outcome }, '[contact] Form submitted');
 
     // R40: `delivered` is also true for the LAB test outbox (nothing left the machine) — the answer follows the ledger status, never « delivered »:

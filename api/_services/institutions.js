@@ -100,13 +100,20 @@ export async function setAccountStatus(id, action, actor, db = defaultDb) {
   return bad(400, 'unknown_action', 'Action inconnue.');
 }
 
+let dummyHash = null;
+const institutionDummyHash = async () => (dummyHash = dummyHash || await hashPassword('timing-equaliser-not-a-password'));
+
 export async function institutionLogin({ email, password }, db = defaultDb) {
   const e = normalizeEmail(email);
   const [a] = (await db.execute(sql`SELECT i.id, i.email, i."passwordHash" AS h, i.status, i."lockoutUntil" AS l, i."failedLoginAttempts" AS f, g.status AS g, g."endedAt" AS ge
     FROM "InstitutionAccount" i LEFT JOIN "PartnerAgreement" g ON g.id = i."agreementId" WHERE i.email = ${e} LIMIT 1`)).rows;
-  if (!a) return bad(401, 'invalid_credentials', 'Identifiants invalides.');
-  if (a.l && new Date(a.l) > new Date()) return bad(423, 'locked', 'Compte temporairement verrouillé.');
+  // R46 / Q07: every refusal leaves an audit row (no e-mail, no password: the account id when one matched) so a burst raises « security.failed_login_burst »;
+  // an unknown address does the same password work as a known one (timing).
+  const refused = async (reason, id = null) => { try { await db.insert(AuditLog).values({ action: 'INSTITUTION_LOGIN_FAILED', actor: null, actor_id: id, entity: 'InstitutionAccount', entity_id: id, details: { reason } }); } catch { /* best effort */ } };
+  if (!a) { await verifyPassword(String(password || ''), await institutionDummyHash()).catch(() => false); await refused('unknown'); return bad(401, 'invalid_credentials', 'Identifiants invalides.'); }
+  if (a.l && new Date(a.l) > new Date()) { await refused('locked', a.id); return bad(423, 'locked', 'Compte temporairement verrouillé.'); }
   if (!(await verifyPassword(String(password || ''), storedHash(a.h)).catch(() => false))) {
+    await refused('password', a.id);
     // R12 / Q11: atomic increment and lockout in one statement (concurrent failures on several instances all count)
     await db.execute(sql`UPDATE "InstitutionAccount" SET "failedLoginAttempts" = COALESCE("failedLoginAttempts", 0) + 1,
       "lockoutUntil" = CASE WHEN COALESCE("failedLoginAttempts", 0) + 1 >= 5 THEN ${new Date(Date.now() + 15 * 60000)} ELSE "lockoutUntil" END WHERE id = ${a.id}`);

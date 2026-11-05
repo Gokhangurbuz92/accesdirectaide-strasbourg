@@ -56,5 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "عنوان البريد الإلكتروني أو الهاتف",
  "request.ne_pas_remplir": "لا تملأ هذا الحقل",
  "request.envoyer": "إرسال",
- "form.email_placeholder": "name@example.com"
+ "form.email_placeholder": "name@example.com",
+ "subject.security": "أبلّغ عن مشكلة أمنية (ثغرة)",
+ "security.note": "شكرًا لمساعدتنا على حماية الناس. صِف المشكلة وطريقة تكرارها دون إرفاق بيانات شخصية لأشخاص آخرين. لا تطّلع على بيانات ليست لك ولا تغيّرها، وامنحنا الوقت لإصلاحها قبل أي نشر. سنردّ على العنوان الذي قدّمته."
 }
