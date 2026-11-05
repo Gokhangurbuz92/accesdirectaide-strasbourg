@@ -248,9 +248,7 @@ function requestPath(req) {
  */
 export function gateRoute(route) {
   const load = route.handler;
-  return /** @type {R} */ ({
-    ...route,
-    handler: async () => {
+  const handler = async () => {
       const mod = await load();
       const inner = mod?.default || mod;
       if (typeof inner !== 'function') return mod;
@@ -263,6 +261,8 @@ export function gateRoute(route) {
         return inner(req, res);
       };
       return { ...mod, default: gated };
-    },
-  });
+  };
+  // R45 integ: route introspection (tests, inventories) reads the loader's source to know which module a route serves — keep it visible
+  handler.toString = () => String(load);
+  return /** @type {R} */ ({ ...route, handler });
 }
