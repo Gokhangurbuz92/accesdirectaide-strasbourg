@@ -30,8 +30,13 @@ export const MINIMAL_PATH = '/compte';
 /** @typedef {'sensitive' | 'ordinary' | 'unknown'} Sensitivity */
 /** @typedef {'minimal' | 'reduced'} PrivacyLevel */
 
-/** R45 safe default until the lead wires api/lib/service-sensitivity.js: nothing is verified ordinary, so every appointment message is minimal. */
+/** the pure fallback (no classification readable): nothing is verified ordinary, so the message is minimal. */
 export const defaultResolveSensitivity = (/** @type {unknown} */ _record) => /** @type {Sensitivity} */ ('unknown');
+
+/** the production resolver (lazy import; any failure → 'unknown') @param {unknown} record */
+const appointmentResolver = async (record) => {
+  try { return (await import('../_services/appointment-sensitivity.js')).resolveAppointmentSensitivity(record); } catch { return defaultResolveSensitivity(record); }
+};
 
 /** @param {unknown} v @returns {Sensitivity} */
 export const normalizeSensitivity = (v) => (typeof v === 'string' && SENSITIVITY_VALUES.includes(v) ? /** @type {Sensitivity} */ (v) : 'unknown');
@@ -45,7 +50,9 @@ export const privacyLevelFor = (sensitivity) => (normalizeSensitivity(sensitivit
  * @returns {Promise<{ sensitivity: Sensitivity, level: PrivacyLevel }>}
  */
 export async function resolveNotificationPrivacy(record, deps = {}) {
-  const resolve = typeof deps?.resolveSensitivity === 'function' ? deps.resolveSensitivity : defaultResolveSensitivity;
+  // R45 integration: without an injected resolver, the real one (verified classification of the appointment's service, api/_services/appointment-sensitivity.js),
+  // loaded lazily so this module stays free of I/O at import time; a load or read failure is 'unknown' → minimal.
+  const resolve = typeof deps?.resolveSensitivity === 'function' ? deps.resolveSensitivity : appointmentResolver;
   /** @type {Sensitivity} */
   let sensitivity = 'unknown';
   try { sensitivity = normalizeSensitivity(await resolve(record)); } catch { sensitivity = 'unknown'; }
