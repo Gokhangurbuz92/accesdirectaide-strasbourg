@@ -1276,5 +1276,7 @@
  "siao.urgent": "Urgency stated",
  "siao.format_note": "Accès Direct Aide’s own format (ada.siao-handover/1), which is not the national format.",
  "siao.download": "Download the sheet (JSON)",
- "siao.print": "Print"
+ "siao.print": "Print",
+ "audit_log.previous_page": "Previous page",
+ "audit_log.next_page": "Next page"
 }

@@ -1304,5 +1304,7 @@
  "siao.urgent": "الاستعجال المصرّح به",
  "siao.format_note": "صيغة خاصة بـ Accès Direct Aide (ada.siao-handover/1)، وليست الصيغة الوطنية.",
  "siao.download": "تنزيل البطاقة (JSON)",
- "siao.print": "طباعة"
+ "siao.print": "طباعة",
+ "audit_log.previous_page": "الصفحة السابقة",
+ "audit_log.next_page": "الصفحة التالية"
 }

@@ -232,8 +232,9 @@ export default function ProAuditLog() {
                         size="sm"
                         disabled={currentPage <= 1}
                         onClick={() => setCurrentPage((p) => p - 1)}
+                        aria-label={t('pro:audit_log.previous_page', 'Page précédente')}
                     >
-                        <ChevronLeft size={14} />
+                        <ChevronLeft size={14} aria-hidden="true" />
                     </Button>
                     <span className="text-xs text-slate-700">
                         {t('pro:audit_log.page', 'Page {{page}} / {{total}}', { page: currentPage, total: pagination.totalPages })}
@@ -243,8 +244,9 @@ export default function ProAuditLog() {
                         size="sm"
                         disabled={currentPage >= pagination.totalPages}
                         onClick={() => setCurrentPage((p) => p + 1)}
+                        aria-label={t('pro:audit_log.next_page', 'Page suivante')}
                     >
-                        <ChevronRight size={14} />
+                        <ChevronRight size={14} aria-hidden="true" />
                     </Button>
                 </div>
             )}

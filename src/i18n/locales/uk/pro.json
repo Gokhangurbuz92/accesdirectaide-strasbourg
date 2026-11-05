@@ -1290,5 +1290,7 @@
  "siao.urgent": "Заявлена терміновість",
  "siao.format_note": "Власний формат Accès Direct Aide (ada.siao-handover/1), який не є національним форматом.",
  "siao.download": "Завантажити аркуш (JSON)",
- "siao.print": "Друкувати"
+ "siao.print": "Друкувати",
+ "audit_log.previous_page": "Попередня сторінка",
+ "audit_log.next_page": "Наступна сторінка"
 }

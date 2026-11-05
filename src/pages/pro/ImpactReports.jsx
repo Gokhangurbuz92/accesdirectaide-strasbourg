@@ -268,7 +268,8 @@ export default function ImpactReports() {
                                     </div>
                                 ) : (
                                     <div className="h-[250px] flex items-center">
-                                        <div className="w-1/2 h-full">
+                                        {/* R46: the legend beside the ring carries the same figures as text; the drawing itself is hidden from assistive technology (axe svg-img-alt) */}
+                                        <div className="w-1/2 h-full" aria-hidden="true">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <PieChart>
                                                     <Pie
@@ -277,6 +278,7 @@ export default function ImpactReports() {
                                                         outerRadius={85}
                                                         paddingAngle={4}
                                                         dataKey="value"
+                                                        rootTabIndex={-1}
                                                     >
                                                         {data.themes.map((/** @type {{ name: import("react").Key | null | undefined; }} */ entry, /** @type {number} */ i) => (
                                                             <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />

@@ -1276,5 +1276,7 @@
  "siao.urgent": "Belirtilen aciliyet",
  "siao.format_note": "Accès Direct Aide’ın kendi biçimi (ada.siao-handover/1); ulusal biçim değildir.",
  "siao.download": "Formu indir (JSON)",
- "siao.print": "Yazdır"
+ "siao.print": "Yazdır",
+ "audit_log.previous_page": "Önceki sayfa",
+ "audit_log.next_page": "Sonraki sayfa"
 }
