@@ -3,6 +3,7 @@ import { requireCitizen, resolveCitizen } from './citizen-auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from './rateLimit.js';
 import { describeDbError } from './errors.js';
 import logger from './logger.js';
+import { capabilitiesOfRoute, requireCapability } from './capabilities.js';
 
 /**
  * PKG-1 / K0 shared wrapper: no-store, verified citizen session (cookie), per-user rate limit, uniform error shape. `fn(citizen, req, res)` returns the service result
@@ -13,6 +14,8 @@ export function citizenHandler(name, methods, fn) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Referrer-Policy', 'no-referrer');
     if (!methods.includes(req.method)) return res.status(405).json({ error: 'Method not allowed' });
+    // R45 / ENG-LR-6: the handler-level capability gate (the router applies the same one): a closed capability answers before the session is read
+    if (!requireCapability(res, capabilitiesOfRoute(`citizen/${name}`))) return undefined;
     const citizen = await requireCitizen(req, res);
     if (!citizen) return undefined;
     const limit = await checkRateLimit(req.method === 'GET' ? 'CITIZEN_ACCOUNT_READ' : 'CITIZEN_ACCOUNT_WRITE', `${citizen.id}:${getClientIp(req)}`);

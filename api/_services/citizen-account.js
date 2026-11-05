@@ -8,6 +8,7 @@ import { and, desc, eq, sql } from 'drizzle-orm';
 import { isRestricted, SHARE_SEAL } from './processing-restriction.js';
 import { db as defaultDb } from '../../src/db/index.js';
 import { CitizenProfile, CitizenUser, ConsentLog, GuardianRelationship, HouseholdMember, NotificationPreference, SharedDiagnostic } from '../../src/db/schema.js';
+import { capabilityOpen } from '../_utils/capabilities.js';
 import { AGE_BAND_KEYS } from '../lib/ageBands.js';
 import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { evaluateAge } from '../lib/agePolicy.js';
@@ -78,7 +79,9 @@ function cleanAccessibility(a) {
 }
 export async function getAccount(userId, db = defaultDb) {
   const [profile] = await db.select().from(CitizenProfile).where(eq(CitizenProfile.userId, userId)).limit(1);
-  const household = await db.select().from(HouseholdMember).where(eq(HouseholdMember.userId, userId)).orderBy(HouseholdMember.createdAt);
+  // R45 / ENG-LR-6 (minimisation): the household (C03) is outside the AIPD — while citizen.household is closed it is neither read nor returned (an empty list
+  // keeps the response shape; the person still gets every stored row through the data export, art. 15)
+  const household = capabilityOpen('citizen.household') ? await db.select().from(HouseholdMember).where(eq(HouseholdMember.userId, userId)).orderBy(HouseholdMember.createdAt) : [];
   const preferences = await getPreferences(userId, db);
   const gate = await ageGate(userId, db);
   return {

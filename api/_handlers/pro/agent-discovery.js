@@ -23,6 +23,7 @@ import { recordMetric } from '../../lib/gemini-metrics.js';
 const AGENT_TIMEOUT_MS = 30_000;
 
 import { getGenAI } from '../../lib/gemini.js';
+import { withCapability } from '../../_utils/capabilities.js';
 
 async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
     // PKG-11 audit: a disabled or moved account keeps a « revoked » context that belongs to no organization; this route acts on the user alone, so it refuses it
@@ -151,4 +152,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability('ai.processing', requireProAuth(handler));

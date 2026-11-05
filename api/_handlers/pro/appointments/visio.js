@@ -9,6 +9,7 @@ import { issueJoin, joinRefusal, newRoomNonce, publicVideoStatus } from '../../.
 import { formatParis, noticeCitizen } from '../../../_services/appointment-notices.js';
 import { buildAppUrl } from '../../../_utils/user-auth.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { withCapability } from '../../../_utils/capabilities.js';
 
 /**
  * PKG-3 / B07 — POST /api/pro/appointments/visio { appointmentId, action: 'approve' | 'revoke' | 'join' } — a member of the appointment's structure only.
@@ -52,4 +53,5 @@ async function handler(req, res) {
   return res.status(200).json({ ok: true, video: { approved: false } });
 }
 
-export default withProRdvHandler('pro.appointments.visio', handler);
+// R45 / ENG-LR-6: video is outside the AIPD — refused before authentication and any database access while the capability is closed
+export default withCapability('video', withProRdvHandler('pro.appointments.visio', handler));

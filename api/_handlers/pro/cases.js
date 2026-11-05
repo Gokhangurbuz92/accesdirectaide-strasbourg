@@ -2,6 +2,7 @@
 import { requireProStructureContext } from '../../_utils/auth.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { addNote, assign, close, getCase, listQueue, reopen, setStatus } from '../../_services/pro-cases.js';
+import { withCapability } from '../../_utils/capabilities.js';
 
 /**
  * PKG-4 / R03 R06 R07 R08 R11 — ADA Pro cases of the caller's organization (api/_services/pro-cases.js holds every rule).
@@ -26,4 +27,5 @@ async function handler(req, res) {
   }
 }
 
-export default withProRdvHandler('pro.cases', handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability('pro.case_management', withProRdvHandler('pro.cases', handler));

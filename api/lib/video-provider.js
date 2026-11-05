@@ -14,6 +14,7 @@
  * start to 15 minutes after the end.
  */
 import crypto from 'node:crypto';
+import { capabilityState } from '../_utils/capabilities.js';
 
 export const VIDEO_JOIN_EARLY_MINUTES = 15;
 export const VIDEO_JOIN_LATE_MINUTES = 15;
@@ -36,6 +37,8 @@ export function videoStatus(env = process.env) {
 /** What a screen may show about video, never a secret. */
 export function publicVideoStatus(env = process.env) {
   const s = videoStatus(env);
+  // R45 / ENG-LR-6: video is outside the AIPD — a configured provider is not enough while the « video » capability is closed (api/_utils/capabilities.js)
+  if (s.bookable && !capabilityState('video', env).open) return { available: false, sandbox: s.sandbox, reason: 'CAPABILITY_NOT_OPEN' };
   return { available: s.bookable, sandbox: s.sandbox, reason: s.reason };
 }
 
@@ -47,6 +50,7 @@ export function joinWindow(appointment) {
 export function joinRefusal(appointment, { now = new Date(), env = process.env } = {}) {
   const s = videoStatus(env);
   if (!s.joinable) return { status: 503, code: 'VIDEO_DISABLED', message: 'La visio n’est pas activée sur ce service pour le moment.' };
+  if (!capabilityState('video', env).open) return { status: 503, code: 'CAPABILITY_NOT_OPEN', message: 'La visio n’est pas encore ouverte sur ce service.' };   // R45 / ENG-LR-6
   if (appointment.mode !== 'VIDEO') return { status: 409, code: 'NOT_A_VIDEO_APPOINTMENT', message: 'Ce rendez-vous a lieu en présentiel.' };
   if (!['booked', 'requested', 'confirmed'].includes(String(appointment.status || '').toLowerCase())) return { status: 409, code: 'APPOINTMENT_NOT_ACTIVE', message: 'Ce rendez-vous n’est plus actif.' };
   if (!appointment.visioApprovedAt || !appointment.visioRoomId) return { status: 409, code: 'VIDEO_NOT_APPROVED', message: 'La structure n’a pas encore validé la visio pour ce rendez-vous.' };
