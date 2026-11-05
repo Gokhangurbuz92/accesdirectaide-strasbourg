@@ -16,11 +16,11 @@ import {
   RETENTION_POLICY, POLICY_STATUS_PROPOSED, isPolicyApproved, executionGate, approvedStepsFromEnv, policyDays,
 } from '../../api/_services/retention-policy.js';
 import { RETENTION, PURGE_STEPS, runGdprPurge, anonymisationSet } from '../../api/_handlers/cron/gdpr-purge.js';
-import { approvedTestPolicy, approvalEnv, executableStepIds } from '../helpers/gdpr-purge-approval.js';
+import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION } from '../helpers/gdpr-purge-approval.js';
 
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
-  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral'];
+  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042
 const dialect = new PgDialect();
 const render = (w) => dialect.sqlToQuery(w).sql;
 const log = { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} };
@@ -66,7 +66,10 @@ describe('R44 retention policy object', () => {
   });
   it('carries the R43 § 3.1 proposals (values) and stays equal to the RETENTION constants of the registry', () => {
     const d = (k) => policyDays(RETENTION_POLICY, k);
-    expect([d('APPOINTMENT_CONFIRMED_DAYS'), d('APPOINTMENT_UNCONFIRMED_DAYS'), d('APPOINTMENT_CANCELLED_DAYS'), d('APPOINTMENT_MESSAGE_DAYS')]).toEqual([730, 90, 90, 30]);
+    // R45: A7 (APPOINTMENT_CONFIRMED_DAYS) is an owner choice with no default (D4 v2): 365 or 730 — see tests/unit/r45-purge-readiness.test.js
+    expect(() => d('APPOINTMENT_CONFIRMED_DAYS')).toThrow(/owner choice A7/);
+    expect(policyDays(approvedTestPolicy(), 'APPOINTMENT_CONFIRMED_DAYS')).toBe(730);
+    expect([d('APPOINTMENT_UNCONFIRMED_DAYS'), d('APPOINTMENT_CANCELLED_DAYS'), d('APPOINTMENT_MESSAGE_DAYS')]).toEqual([90, 90, 30]);
     expect([d('PRO_NOTIFICATION_DAYS'), d('PUSH_FAILING_DAYS'), d('RDV_CONVERSATION_DAYS'), d('LEGAL_HOLD_RELEASED_DAYS'), d('SUPPORT_REQUEST_DAYS'), d('DSR_REQUEST_DAYS')]).toEqual([180, 30, 730, 365, 365, 1095]);
     expect([d('CONSENT_SUPERSEDED_DAYS'), d('CONSENT_AFTER_ERASURE_DAYS'), d('INACTIVE_ACCOUNT_DAYS'), d('BACKUP_KEEP_DAYS'), d('BACKUP_KEEP_WEEKLY')]).toEqual([1095, 365, 730, 30, 4]);
     expect(d('AUDIT_LOG_DAYS')).toBe(RETENTION.AUDIT_LOG_DAYS);
@@ -77,7 +80,7 @@ describe('R44 retention policy object', () => {
     expect(d('CONSENT_SUPERSEDED_DAYS')).toBe(RETENTION.CONSENT_LOG_DAYS);
     expect(d('INVITATION_GRACE_DAYS')).toBe(RETENTION.INVITATION_GRACE_DAYS);
     expect(d('OUTLOOK_TOKEN_GRACE_DAYS')).toBe(RETENTION.OUTLOOK_TOKEN_GRACE_DAYS);
-    expect(d('APPOINTMENT_CONFIRMED_DAYS')).toBe(RETENTION.APPOINTMENT_ANON_DAYS);
+    expect(RETENTION_POLICY.durations.APPOINTMENT_CONFIRMED_DAYS.options).toContain(RETENTION.APPOINTMENT_ANON_DAYS);   // R45: the registry shows an option, not a choice
     expect(d('GUEST_HOLD_DAYS')).toBe(RETENTION.GUEST_HOLD_DAYS);
     expect(() => policyDays(RETENTION_POLICY, 'NOPE')).toThrow();
   });
@@ -108,7 +111,7 @@ describe('R44 / E16 execution gate', () => {
     const ids = PURGE_STEPS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['disabledProUsersReport', 'E9b']]);
-    for (const s of PURGE_STEPS) if (s.durationKey) expect(() => policyDays(RETENTION_POLICY, s.durationKey), s.id).not.toThrow();
+    for (const s of PURGE_STEPS) if (s.durationKey) expect(() => policyDays(approvedTestPolicy(), s.durationKey), s.id).not.toThrow();   // R45: A7 resolved in the approved copy
   });
 });
 
@@ -122,6 +125,9 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     expect(writes(db)).toEqual([]);
     expect(body.steps.length).toBe(PURGE_STEPS.length);
     expect(body.steps.filter((l) => l.decision === 'dry-run' || l.decision === 'report_only').every((l) => l.count === 3)).toBe(true);
+    // R45: the A7 steps (owner choice open) are counted once per option, never executed
+    expect(body.steps.filter((l) => l.decision === 'owner_choice_required').map((l) => [l.id, l.countsByOption])).toEqual([
+      ['anonymisedAppointmentsCount', { 365: 3, 730: 3 }], ['appointmentsStructureRecordAnonymised', { 365: 3, 730: 3 }]]);
     expect(body.steps.find((l) => l.id === 'clearedGuestHoldsCount').decision).toBe('skipped_schema');   // a 0042 database: no guest columns
     expect(body.status).toBeUndefined();
   });
@@ -134,7 +140,7 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     const w = writes(db);
     expect(w.map((c) => `${c.op}:${c.table}`)).toEqual(['delete:AuthToken', 'insert:AuditLog']);
     const evidence = w[1].values;
-    expect(evidence).toMatchObject({ action: 'GDPR_PURGE_RUN', entity: 'RetentionPolicy', entity_id: RETENTION_POLICY.version });
+    expect(evidence).toMatchObject({ action: 'GDPR_PURGE_RUN', entity: 'RetentionPolicy', entity_id: TEST_POLICY_VERSION });
     expect(evidence.details.executed).toEqual({ deletedTokensCount: 2 });
     expect(JSON.stringify(evidence)).not.toMatch(/@|beneficiary|notes/);
     expect(body.not_approved_steps).toContain('anonymisedAppointmentsCount');
@@ -184,8 +190,8 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
 });
 
 describe('R44 step SQL — anchors and discriminants of the canonical E-items', () => {
-  const ctx = { now: NOW, policy: RETENTION_POLICY, guestSchema: { guestBooking: false, guestReminderConsent: false },
-    cutoff: (k) => new Date(NOW.getTime() - policyDays(RETENTION_POLICY, k) * 86_400_000) };
+  const ctx = { now: NOW, policy: approvedTestPolicy(), guestSchema: { guestBooking: false, guestReminderConsent: false },
+    cutoff: (k) => new Date(NOW.getTime() - policyDays(approvedTestPolicy(), k) * 86_400_000) };   // R45: A7 resolved (test value 730)
   const whereOf = async (id, c = ctx) => {
     const db = recDb(); const step = PURGE_STEPS.find((s) => s.id === id); await step.count(db, c);
     return render(db.calls.find((x) => x.op === 'select').where);

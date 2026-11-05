@@ -31,9 +31,14 @@ Vérifier la page d'état d'Upstash ; si la clé est en cause, la remplacer (Ver
 - **Sauvegarder** : `BACKUP_ENCRYPTION_KEY=<64 hex> DATABASE_URL=… node scripts/db-backup.mjs --out <dossier> --label prod`
   → `ada_prod_<date>.dump.enc` (AES-256-GCM, 0600) et son `.sha256`. La clé de sauvegarde n'est jamais `ADA_ENCRYPTION_KEY` et se garde hors des
   sauvegardes.
-- **Vérifier** : `node scripts/db-backup.mjs --verify <fichier>` (empreinte, étiquette GCM, archive lisible).
-- **Restaurer** : `TARGET_DATABASE_URL=… node scripts/db-restore.mjs --file <fichier> --confirm-target <hôte>/<base>` — dans une base **vide**
-  (sinon `--into-nonempty`, qui remplace les objets de la sauvegarde).
+- **Vérifier** : `node scripts/db-backup.mjs --verify <fichier> [--work-dir <dossier privé>]` (empreinte, étiquette GCM, archive lisible).
+- **Restaurer** : `TARGET_DATABASE_URL=… node scripts/db-restore.mjs --file <fichier> --confirm-target <hôte>/<base> --work-dir <dossier privé>` — dans
+  une base **vide** (sinon `--into-nonempty`, qui remplace les objets de la sauvegarde : jamais en Production). R45 : l'archive déchiffrée est écrite
+  dans `--work-dir` (dossier 0700, de préférence sur un volume chiffré ; refusé s'il est modifiable par d'autres) et **supprimée même en cas d'échec** ;
+  elle est relue par `pg_restore --list` **avant** de toucher la cible ; le résultat donne le nombre de tables, de lignes d'historique des migrations et
+  la date de la sauvegarde (lue dans son nom).
+- **Vérifier le schéma restauré** (R45) : `DATABASE_URL_UNPOOLED=<base restaurée> node scripts/db-deploy-migrate.mjs --check` (lecture seule ;
+  `--lab-rehearsal` en plus pour une base locale `…_test`) : 43 lignes, empreintes, aucune dérive, 0043/0044 jamais appliquées.
 - **Rotation des fichiers** (R44 / E15) : `--list <dossier>` liste et calcule le plan de rotation : toutes les sauvegardes des 30 derniers jours, plus la
   plus récente de chacune des 4 semaines précédentes, et toujours la plus récente. Ces valeurs viennent de la politique de conservation versionnée
   (`api/_services/retention-policy.js`), aujourd'hui **PROPOSED — NOT APPROVED** : tant qu'elle n'est pas approuvée, `--prune` exige un `--keep-days`
@@ -43,12 +48,19 @@ Vérifier la page d'état d'Upstash ; si la clé est en cause, la remplacer (Ver
   identifiant de la demande, identifiant de la personne, date, domaines — ni nom, ni e-mail, ni contenu). Il se garde et tourne avec les sauvegardes.
 - **Rejeu des effacements après une restauration** (R44 / E15) : avec le registre le plus récent (exporté de la base vivante si elle est lisible,
   sinon le dernier fichier) et la date de la sauvegarde restaurée :
-  `BACKUP_ENCRYPTION_KEY=… TARGET_DATABASE_URL=… node scripts/db-erasure-replay.mjs --ledger <fichier> --since <date ISO de la sauvegarde> --confirm-target <hôte>/<base>`
+  `BACKUP_ENCRYPTION_KEY=… TARGET_DATABASE_URL=… node scripts/db-erasure-replay.mjs --ledger <fichier> --since-backup <fichier .dump.enc restauré> --confirm-target <hôte>/<base>`
+  (ou `--since <date ISO>`). R45 — registre version 2 : en plus des effacements, il contient les **retraits de message** de rendez-vous et les
+  **protections** en vigueur (gels légaux actifs, limitations art. 18 actives, demandes d'accès ouvertes). Le rejeu rétablit d'abord les protections,
+  puis rejoue les effacements, puis efface de nouveau les messages retirés ; un registre exporté **avant** la sauvegarde restaurée est refusé. Un gel
+  présent mais levé dans la copie restaurée est compté pour décision humaine, jamais réactivé seul.
   → essai à blanc : combien de personnes effacées sont revenues ; puis la même commande avec `npx tsx` et `--execute` : effacement par le moteur DSR
   de l'application (mêmes domaines, refus en cas de gel légal, journal `DSR_DELETE_COMPLETED`) et la demande d'effacement réinscrite (`REPLAYED_AFTER_RESTORE`).
   Une personne sous gel légal dans la copie restaurée est comptée, pas effacée : décision humaine.
 - L'ancienne tâche `cron/backup-db` (copie JSON en clair) est retirée.
 - Exercice de restauration : au moins une fois avant le lancement, puis après chaque changement de schéma important.
+  Répétition LAB (R45, données **synthétiques**, ce n'est pas une restauration de Production) :
+  `node --import tsx scripts/lab/r45-restore-rehearsal.mjs --out <dossier de preuves> --work <dossier privé>` (cluster local 127.0.0.1:55434, bases
+  `ada_r45_ops_*_test`, clé jetable détruite à la fin). Plan Production : `STRASBOURG_FULL_PRODUCT_PLAN/CONTROL/r45/R45_PRODUCTION_RESTORE_PLAN_FR.md`.
 
 ## 5. Rotation des clés de chiffrement
 

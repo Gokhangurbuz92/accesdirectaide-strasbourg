@@ -1,70 +1,21 @@
 import 'dotenv/config';
-import { db } from '../src/db/index.js';
-import { sql } from 'drizzle-orm';
-import { logger } from '../api/lib/logger.js';
 
 /**
- * Data Retention & Deletion Policy Purge
- * 
- * Enforces RGPD / Privacy data retention requirements mechanically.
- * 
- * IMPORTANT: Destructive purge is DISABLED until canonical retention values
- * are explicitly approved and defined in the environment configuration.
- * Do not invent retention values (e.g., 12 months, 3 years).
+ * R45 / ENG-LR-9 — this operator script used to run its OWN purge: DELETE from AuditLog / SyncRun / CronRun and an UPDATE that masked CitizenUser rows
+ * whose `updatedAt` was old — outside every safeguard of the policy-driven purge (no approved policy, no per-step approval, no legal hold, no restriction,
+ * no open-request check, no evidence row, and an ACTIVE account could be anonymised: `updatedAt` is not activity). It now delegates to the one purge
+ * engine, api/_handlers/cron/gdpr-purge.js runGdprPurge, with its execution gate unchanged (GDPR_PURGE_ENABLED + approved policy version with the A7
+ * choice + GDPR_PURGE_POLICY_VERSION + GDPR_PURGE_APPROVED_STEPS + each step's approval in the policy). Without all of them it is a dry run: counts only.
+ * The RETENTION_AUDIT_MONTHS / RETENTION_SYNC_MONTHS / RETENTION_USER_YEARS variables are no longer read.
+ *
+ *   DATABASE_URL=… node --import tsx scripts/cron-purge.js [--dry-run]
  */
-async function purge() {
-    logger.info('[Purge] Starting RGPD data retention purge evaluation...');
-    
-    // Check if canonical retention policy is defined
-    const auditRetention = process.env.RETENTION_AUDIT_MONTHS;
-    const syncRetention = process.env.RETENTION_SYNC_MONTHS;
-    const userRetention = process.env.RETENTION_USER_YEARS;
-
-    if (!auditRetention || !syncRetention || !userRetention) {
-        logger.warn('[Purge] ABORTED: Missing retention policy configuration. Destructive purge is disabled.');
-        process.exit(0);
-    }
-
-    try {
-        logger.info(`[Purge] Policy: AuditLog=${auditRetention}m, SyncRun=${syncRetention}m, CitizenUser=${userRetention}y`);
-        
-        // 1. Purge AuditLog
-        const auditRes = await db.execute(sql`
-            DELETE FROM "AuditLog"
-            WHERE timestamp < NOW() - INTERVAL '${sql.raw(auditRetention)} months'
-        `);
-        logger.info(`[Purge] AuditLog: deleted ${auditRes.rowCount} old records.`);
-
-        // 2. Purge SyncRun
-        const syncRes = await db.execute(sql`
-            DELETE FROM "SyncRun"
-            WHERE "completedAt" < NOW() - INTERVAL '${sql.raw(syncRetention)} months'
-        `);
-        logger.info(`[Purge] SyncRun: deleted ${syncRes.rowCount} old records.`);
-
-        // 3. Purge old CronRun
-        const cronRes = await db.execute(sql`
-            DELETE FROM "CronRun"
-            WHERE "startedAt" < NOW() - INTERVAL '${sql.raw(syncRetention)} months'
-        `);
-        logger.info(`[Purge] CronRun: deleted ${cronRes.rowCount} old records.`);
-        
-        // 4. Scrub inactive CitizenUser data
-        const citizenRes = await db.execute(sql`
-            UPDATE "CitizenUser"
-            SET email = '[MASQUÉ]', name = 'Anonyme', phone = NULL
-            WHERE "updatedAt" < NOW() - INTERVAL '${sql.raw(userRetention)} years'
-            AND email != '[MASQUÉ]'
-        `);
-        logger.info(`[Purge] CitizenUser: anonymized ${citizenRes.rowCount} inactive users.`);
-
-        logger.info('[Purge] Completed successfully.');
-    } catch (err) {
-        logger.error('[Purge] Failed', err);
-        process.exit(1);
-    }
-    
-    process.exit(0);
+async function main() {
+  const { runGdprPurge } = await import('../api/_handlers/cron/gdpr-purge.js');
+  const { status, body } = await runGdprPurge({ dryRunRequested: process.argv.includes('--dry-run') });
+  const steps = (body.steps || []).map((l) => ({ id: l.id, decision: l.decision, count: l.count, ...(l.countsByOption ? { countsByOption: l.countsByOption } : {}) }));
+  console.log(JSON.stringify({ status, mode: body.mode, reason: body.reason ?? null, policy: body.policy?.version, steps }));
+  process.exit(status === 200 ? 0 : 1);
 }
 
-purge();
+main().catch(() => { console.error('cron-purge : erreur inattendue (aucune donnée affichée).'); process.exit(1); });

@@ -9,10 +9,18 @@
  * Real execution of ONE step needs ALL of (api/_handlers/cron/gdpr-purge.js `executionGate`):
  *   - GDPR_PURGE_ENABLED=true (the operator switch, unchanged since R33);
  *   - this policy approved: status APPROVED and approvedPolicyVersion === version;
+ *   - R45 / ENG-LR-9: every OWNER CHOICE of the policy made (A7 — completed appointments: 1 year OR 2 years after startAt, R44 D4 v2, annex A) in
+ *     `approvedChoices`, one of the listed options, AND named in the approved version string (« a7-365d » or « a7-730d »): the version the deployment
+ *     pins therefore carries the choice, and a later change of the choice is a new version;
  *   - GDPR_PURGE_POLICY_VERSION === version (the deployment pins the version it was approved for: a later code change of a duration cannot silently run);
  *   - the step id listed in GDPR_PURGE_APPROVED_STEPS (comma separated: approval can be partial, step by step — E16);
+ *   - R45 / ENG-LR-9: the step's OWN approval recorded in the policy (`approvedSteps[stepId]`: approvedOn, dryRunReviewedOn, backupVerified — the three
+ *     conditions of the D4 text: a dry-run report read, a verified backup, the controller's written agreement for that step) and, for a step flagged
+ *     shared-controller (structure records), the written basis agreed with the structure (`sharedControllerBasis`). The environment list alone never
+ *     executes a step; the policy record alone neither;
  *   - the step is executable (report-only steps never are).
- * Otherwise the run is a DRY RUN: it counts what each step would touch and changes nothing.
+ * Otherwise the run is a DRY RUN: it counts what each step would touch and changes nothing. While an owner choice is open, the dry run counts the steps
+ * that depend on it once per option (`countsByOption`), so the owner sees the effect of each option before choosing.
  *
  * No value here is a legal obligation: « Obligation légale » is stated only with a read and cited text (R43 § 3); none was identified for these durations.
  */
@@ -21,8 +29,10 @@ export const POLICY_STATUS_PROPOSED = 'PROPOSED — NOT APPROVED';
 export const POLICY_STATUS_APPROVED = 'APPROVED';
 
 /**
- * @typedef {{ days: number, anchor: string, basis: string, ecode?: string }} PolicyDuration
- * @typedef {{ id: string, version: string, status: string, approvedPolicyVersion?: string, source: string, durations: Record<string, PolicyDuration> }} RetentionPolicy
+ * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[] }} PolicyDuration
+ * @typedef {{ id: string, version: string, status: string, approvedPolicyVersion?: string, source: string, durations: Record<string, PolicyDuration>,
+ *   ownerChoices?: Record<string, { durationKey: string, options: number[], label: string }>, approvedChoices?: Record<string, number>,
+ *   approvedSteps?: Record<string, { approvedOn: string, dryRunReviewedOn: string, backupVerified: string, sharedControllerBasis?: string }> }} RetentionPolicy
  */
 
 /** @template T @param {T} o @returns {T} */
@@ -41,10 +51,16 @@ const PROOF = 'preuve (proposition, à justifier par écrit)';
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
   id: 'ada-retention-policy',
-  version: 'r44-proposal-1-2026-11-04',
+  version: 'r45-proposal-2-2026-11-05',
   status: POLICY_STATUS_PROPOSED,
   // approvedPolicyVersion: ABSENT on purpose (set only by the controller's decision, see above)
-  source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]',
+  // approvedChoices: ABSENT on purpose — e.g. { A7: 365 } or { A7: 730 }, with the version renamed « …-a7-365d » / « …-a7-730d » (controller's decision)
+  // approvedSteps: ABSENT on purpose — { [stepId]: { approvedOn: 'YYYY-MM-DD', dryRunReviewedOn: 'YYYY-MM-DD', backupVerified: '<backup name or evidence ref>',
+  //   sharedControllerBasis?: '<written agreement with the structure>' } }, one entry per step the controller approved (D4: step by step)
+  source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable)',
+  ownerChoices: {
+    A7: { durationKey: 'APPOINTMENT_CONFIRMED_DAYS', options: [365, 730], label: 'rendez-vous confirmés, tenus, absences : 1 an ou 2 ans après startAt (D4 v2, annexe A, ligne A7)' },
+  },
   durations: {
     ENTITY_VERSION_DAYS: { days: 90, anchor: 'createdAt (superseded versions only)', basis: OPS },
     UPDATE_LOG_DAYS: { days: 90, anchor: 'ran_at', basis: OPS },
@@ -57,7 +73,9 @@ export const RETENTION_POLICY = deepFreeze({
     INVITATION_GRACE_DAYS: { days: 30, anchor: 'expires_at', basis: OPS },
     OUTLOOK_TOKEN_GRACE_DAYS: { days: 30, anchor: 'expiresAt', basis: OPS },
     PRO_AUDIT_LOG_DAYS: { days: 365, anchor: 'createdAt', basis: CNIL_LOG, ecode: 'E13' },
-    APPOINTMENT_CONFIRMED_DAYS: { days: 730, anchor: 'startAt (date of the appointment)', basis: OPS, ecode: 'E1' },
+    // R45: A7 is an OWNER CHOICE (R44 D4 v2): 365 (the most minimising: the platform organises access, it does not accompany) or 730 (the CNIL
+    // reference for social accompaniment). No default: `days` stays null until approvedChoices.A7 is set by the controller's decision.
+    APPOINTMENT_CONFIRMED_DAYS: { days: null, ownerChoice: 'A7', options: [365, 730], anchor: 'startAt (date of the appointment)', basis: OPS, ecode: 'E1' },
     APPOINTMENT_UNCONFIRMED_DAYS: { days: 90, anchor: 'startAt', basis: OPS, ecode: 'E3' },
     APPOINTMENT_CANCELLED_DAYS: { days: 90, anchor: 'COALESCE(cancelledAt, startAt)', basis: OPS, ecode: 'E3' },
     APPOINTMENT_MESSAGE_DAYS: { days: 30, anchor: 'startAt, or LEAST(startAt, cancelledAt) when cancelled', basis: OPS, ecode: 'E5' },
@@ -76,17 +94,73 @@ export const RETENTION_POLICY = deepFreeze({
   },
 });
 
-/** The number of days of a policy duration (throws on an unknown key: a step can never run with an undefined duration). @param {RetentionPolicy} policy @param {string} key */
-export function policyDays(policy, key) {
-  const d = policy?.durations?.[key];
+export const OWNER_CHOICE_REQUIRED = 'OWNER_CHOICE_REQUIRED';
+
+/** the chosen value of an owner choice, or null when not made / not one of the options @param {RetentionPolicy} policy @param {string} choiceId */
+export function ownerChoiceValue(policy, choiceId) {
+  const c = /** @type {any} */ (policy)?.ownerChoices?.[choiceId];
+  const v = /** @type {any} */ (policy)?.approvedChoices?.[choiceId];
+  return c && Array.isArray(c.options) && Number.isInteger(v) && c.options.includes(v) ? v : null;
+}
+
+/**
+ * The number of days of a policy duration (throws on an unknown key: a step can never run with an undefined duration). R45: a duration that is an owner
+ * choice (A7) throws OWNER_CHOICE_REQUIRED until the choice is made — `opts.option` evaluates one option for a dry run only.
+ * @param {RetentionPolicy} policy @param {string} key @param {{ option?: number }} [opts]
+ */
+export function policyDays(policy, key, opts = {}) {
+  const d = /** @type {any} */ (policy?.durations?.[key]);
+  if (d && d.ownerChoice) {
+    if (opts.option !== undefined) {
+      if (!Array.isArray(d.options) || !d.options.includes(opts.option)) throw new Error(`retention policy ${policy?.version}: ${opts.option} is not an option of ${key}`);
+      return opts.option;
+    }
+    const v = ownerChoiceValue(policy, d.ownerChoice);
+    if (v === null) throw Object.assign(new Error(`retention policy ${policy?.version}: ${key} is owner choice ${d.ownerChoice} (${(d.options || []).join(' or ')} days), not made`), { code: OWNER_CHOICE_REQUIRED, choice: d.ownerChoice, options: d.options });
+    return v;
+  }
   if (!d || !Number.isInteger(d.days) || d.days <= 0) throw new Error(`retention policy ${policy?.version}: no duration ${key}`);
   return d.days;
 }
 
-/** The policy records the controller's approval of THIS version. @param {RetentionPolicy} policy */
+/** the owner choice behind a duration key, or null @param {RetentionPolicy} policy @param {string | null} key @returns {{ id: string, options: number[] } | null} */
+export function ownerChoiceOf(policy, key) {
+  const d = /** @type {any} */ (key ? policy?.durations?.[key] : null);
+  return d && d.ownerChoice ? { id: d.ownerChoice, options: [...(d.options || [])] } : null;
+}
+
+/** the version tag that must name a made choice (« a7-365d ») @param {string} choiceId @param {number} days */
+export const choiceTag = (choiceId, days) => `${choiceId.toLowerCase()}-${days}d`;
+
+/** owner choices not made, or made but not named in the version string @param {RetentionPolicy} policy @returns {string[]} */
+export function missingOwnerChoices(policy) {
+  const choices = /** @type {any} */ (policy)?.ownerChoices || {};
+  return Object.keys(choices).filter((id) => {
+    const v = ownerChoiceValue(policy, id);
+    return v === null || !String(policy?.version || '').split(/[^a-z0-9]+/i).join('-').toLowerCase().includes(choiceTag(id, v));
+  });
+}
+
+/** The policy records the controller's approval of THIS version, owner choices included (R45: A7). @param {RetentionPolicy} policy */
 export function isPolicyApproved(policy) {
   return Boolean(policy) && policy.status === POLICY_STATUS_APPROVED && typeof policy.approvedPolicyVersion === 'string'
-    && policy.approvedPolicyVersion.length > 0 && policy.approvedPolicyVersion === policy.version;
+    && policy.approvedPolicyVersion.length > 0 && policy.approvedPolicyVersion === policy.version && missingOwnerChoices(policy).length === 0;
+}
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+/**
+ * R45 / ENG-LR-9 — the controller's own approval of ONE step, recorded in the policy (the environment list GDPR_PURGE_APPROVED_STEPS is the operator's
+ * activation, not the approval). Returns null when complete, else why not. @param {RetentionPolicy} policy @param {{ id: string, sharedController?: string }} step
+ */
+export function stepApprovalProblem(policy, step) {
+  const a = /** @type {any} */ (policy)?.approvedSteps?.[step.id];
+  if (!a || typeof a !== 'object') return 'STEP_NOT_APPROVED_IN_POLICY';
+  if (!ISO_DAY.test(String(a.approvedOn || ''))) return 'STEP_APPROVAL_DATE_MISSING';
+  if (!ISO_DAY.test(String(a.dryRunReviewedOn || ''))) return 'STEP_DRY_RUN_REVIEW_MISSING';
+  if (String(a.dryRunReviewedOn) > String(a.approvedOn)) return 'STEP_DRY_RUN_REVIEW_AFTER_APPROVAL';
+  if (typeof a.backupVerified !== 'string' || a.backupVerified.trim().length < 3) return 'STEP_BACKUP_VERIFICATION_MISSING';
+  if (step.sharedController && (typeof a.sharedControllerBasis !== 'string' || a.sharedControllerBasis.trim().length < 3)) return 'STEP_SHARED_CONTROLLER_BASIS_MISSING';
+  return null;
 }
 
 /** The step ids of GDPR_PURGE_APPROVED_STEPS (comma or space separated; no wildcard). @param {Record<string, string | undefined>} env */
@@ -104,6 +178,7 @@ export function executionGate(policy, env, opts = {}) {
   const no = (/** @type {string} */ reason) => ({ execute: false, reason, approvedSteps });
   if (String(env.GDPR_PURGE_ENABLED || '').trim().toLowerCase() !== 'true') return no('GDPR_PURGE_DISABLED');
   if (opts.dryRunRequested) return no('DRY_RUN_REQUESTED');
+  if (policy?.status === POLICY_STATUS_APPROVED && policy.approvedPolicyVersion === policy.version && missingOwnerChoices(policy).length > 0) return no('OWNER_CHOICE_MISSING');
   if (!isPolicyApproved(policy)) return no('POLICY_NOT_APPROVED');
   if (String(env.GDPR_PURGE_POLICY_VERSION || '').trim() !== policy.version) return no('POLICY_VERSION_NOT_PINNED');
   if (approvedSteps.size === 0) return no('NO_APPROVED_STEPS');
@@ -112,5 +187,7 @@ export function executionGate(policy, env, opts = {}) {
 
 /** A public summary of a policy (no secret, no personal data). @param {RetentionPolicy} policy */
 export function policySummary(policy) {
-  return { id: policy.id, version: policy.version, status: policy.status, approved: isPolicyApproved(policy), approvedPolicyVersion: policy.approvedPolicyVersion ?? null, source: policy.source };
+  return { id: policy.id, version: policy.version, status: policy.status, approved: isPolicyApproved(policy), approvedPolicyVersion: policy.approvedPolicyVersion ?? null, source: policy.source,
+    ownerChoicesOpen: missingOwnerChoices(policy), approvedChoices: /** @type {any} */ (policy).approvedChoices ?? null,
+    approvedStepCount: Object.keys(/** @type {any} */ (policy).approvedSteps || {}).length };
 }
