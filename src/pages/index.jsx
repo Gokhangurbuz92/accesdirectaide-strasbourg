@@ -80,6 +80,7 @@ const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
 const Tools = lazy(() => import("./Tools.jsx"));
 const ToolDetail = lazy(() => import("./ToolDetail.jsx"));
 const MentionsLegales = lazy(() => import("./MentionsLegales.jsx"));
+const LegalDraftDocument = lazy(() => import("./LegalDraftDocument.jsx"));   // R45 (ENG-LR-5): draft legal documents, shown only when approved or in LAB preview
 const SourcesMethode = lazy(() => import("./SourcesMethode.jsx"));
 const Impact = lazy(() => import("./Impact.jsx"));
 const Mission = lazy(() => import("./Mission.jsx"));
@@ -582,6 +583,10 @@ function PagesContent() {
                                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                                 <Route path="/cgu" element={<CGU />} />
                                 <Route path="/conditions-generales" element={<Navigate to="/cgu" replace />} />
+                                <Route path="/cgu/citoyen" element={<LegalDraftDocument />} />
+                                <Route path="/cgu/professionnel" element={<LegalDraftDocument />} />
+                                <Route path="/conditions-structures" element={<LegalDraftDocument />} />
+                                <Route path="/confidentialite/notice" element={<LegalDraftDocument />} />
                                 <Route path="/sourcesmethode" element={<SourcesMethode />} />
                                 <Route path="/sentry-test" element={<Navigate to="/" replace />} />{/* owner usefulness pass: a developer error-trigger page (English) was public; /__sentry_test stays behind the diagnostics flag */}
                                 <Route path="/r/messages" element={<LegacyAppointmentLink kind="messages" />} />

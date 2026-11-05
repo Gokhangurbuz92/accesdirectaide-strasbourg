@@ -57,6 +57,7 @@
     "test:db:prod": "node scripts/test-db-production.cjs",
     "test:db:dev": "node scripts/test-db-development.cjs",
     "verify:env": "node scripts/verify-env-consistency.cjs",
+    "check:legal-publisher": "node scripts/check-legal-publisher.mjs",
     "security:secrets": "node scripts/security-secrets-scan.mjs",
     "security:scan": "npm run security:secrets",
     "security:scan:git": "gitleaks detect --redact --source .",

@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import fs from "fs";
@@ -71,6 +71,23 @@ function apiSourceGuardPlugin() {
   };
 }
 
+/**
+ * R45 (ENG-LR-4): the publisher's domicile and telephone (LCEN art. 1-1 I 1°) are build-only variables (never VITE_*). They are injected into the bundle
+ * ONLY when VITE_LEGAL_PUBLISHER_MODE=A_I and VITE_LEGAL_A_I_ADDRESS_PUBLICATION_APPROVED=yes-owner-approved; in every other case the injection is
+ * null and the values never reach dist/ (src/config/legal-publisher.js; build check scripts/check-legal-publisher.mjs). Values are never printed.
+ */
+function legalAIdentificationDefine(mode) {
+  const env = { ...loadEnv(mode, process.cwd(), ""), ...process.env };
+  const clean = (v) => String(v ?? "").trim();
+  const approved = clean(env.VITE_LEGAL_PUBLISHER_MODE) === "A_I" && clean(env.VITE_LEGAL_A_I_ADDRESS_PUBLICATION_APPROVED) === "yes-owner-approved";
+  const domicile = clean(env.LEGAL_A_I_PUBLISHER_DOMICILE);
+  const phone = clean(env.LEGAL_A_I_PUBLISHER_PHONE);
+  return JSON.stringify(approved && domicile && phone ? { domicile, phone } : null);
+}
+
+// the config stays an object (tests read .plugins); the mode is the one `vite build` / `vite` would use
+const argvMode = process.argv.includes("--mode") ? process.argv[process.argv.indexOf("--mode") + 1] : process.argv.includes("build") ? "production" : "development";
+
 export default defineConfig({
   plugins: [
     react(),
@@ -87,6 +104,9 @@ export default defineConfig({
   ].filter(Boolean),
 
   define: {
+    __ADA_LEGAL_A_I_IDENTIFICATION__: legalAIdentificationDefine(argvMode),
+    // R45 (ENG-LR-5): the draft legal documents never preview in a Production build (src/config/legal-drafts.js)
+    __ADA_PRODUCTION_BUILD__: JSON.stringify(process.env.VERCEL_ENV === "production"),
     "import.meta.env.VITE_GIT_COMMIT_SHA": JSON.stringify(
       process.env.VERCEL_GIT_COMMIT_SHA ||
       process.env.VITE_GIT_COMMIT_SHA ||
