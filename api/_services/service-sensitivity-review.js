@@ -64,8 +64,8 @@ export async function listForReview(structureId, database = defaultDb) {
       reviewedAt: value === SENSITIVITY.UNKNOWN ? null : record.reviewedAt, reviewedBy: value === SENSITIVITY.UNKNOWN ? null : record.reviewedBy,
       ...suggestSensitivity({ serviceName: s.name, structure: st }) };
   });
-  const bookable = items.filter((i) => i.active);
-  return { structure: { id: st.id, name: st.nom }, items, reviewComplete: bookable.length > 0 && bookable.every((i) => i.value !== SENSITIVITY.UNKNOWN) };
+  const bookable = items.filter((/** @type {any} */ i) => i.active);
+  return { structure: { id: st.id, name: st.nom }, items, reviewComplete: bookable.length > 0 && bookable.every((/** @type {any} */ i) => i.value !== SENSITIVITY.UNKNOWN) };
 }
 
 /**

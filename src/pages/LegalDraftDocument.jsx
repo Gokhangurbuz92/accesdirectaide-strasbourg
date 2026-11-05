@@ -16,6 +16,7 @@ import { useLanguage, useT } from '@/i18n';
  * HIDDEN (Production, not approved): a neutral « not in force » page that links to the in-force pages; the draft text is not rendered.
  * PREVIEW (LAB): the text with the « Projet — non approuvé » banner. IN_FORCE: the approved text.
  */
+/** @param {{ path?: string }} props */
 export default function LegalDraftDocument({ path: forcedPath }) {
   const { t } = useT('legal');
   const { isSource } = useLanguage();

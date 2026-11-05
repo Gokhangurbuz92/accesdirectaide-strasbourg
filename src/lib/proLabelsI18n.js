@@ -45,7 +45,7 @@ export function useProLabels() {
     const emailDelivered = t('pro:notice_labels.status.delivered_email', 'remis au serveur de messagerie de la personne (lecture non garantie)');
     /** same text as proLabels.noticeLine in French; unknown codes still fall back to the code itself */
     const noticeLine = (/** @type {{ kind: string, recipient: string, channel: string, status: string }} */ n) => t('pro:notice_labels.line', '{{kind}} — {{recipient}}, {{channel}} : {{status}}', {
-      kind: noticeKind[n.kind] || n.kind, recipient: noticeRecipient[n.recipient] || n.recipient, channel: noticeChannel[n.channel] || n.channel, status: noticeStatusOf(n, noticeStatus, emailDelivered),
+      kind: noticeKind[n.kind] || n.kind, recipient: noticeRecipient[n.recipient] || n.recipient, channel: noticeChannel[n.channel] || n.channel, status: noticeStatusOf(n, /** @type {any} */ (noticeStatus), emailDelivered),
     });
     const proRole = (/** @type {string | null | undefined} */ role) => proRoleLabels[String(role || '').toUpperCase()] || role || '';
     return { noticeKind, noticeRecipient, noticeChannel, noticeStatus, noticeLine, proRoleLabels, proRole, mfaError };

@@ -16,6 +16,10 @@ import i18n, { useLanguage, useT } from '@/i18n';
 // The "[À COMPLÉTER : …]" placeholders are intentional and must be filled by the owner before any public launch.
 // R32: translated (namespace « legal »); the French text stays the legal reference. Values of the configuration (publisher identity, host address,
 // project status, version label) are shown as written and marked as French when the interface is in another language.
+// R45 integ: the service name and contact address of the variant block (proper nouns, not translated; same text as the block in force)
+const SERVICE_NAME = 'AccesDirectAide (accesdirectaide.fr)';
+const CONTACT_EMAIL = 'contact@accesdirectaide.fr';
+
 export default function MentionsLegales() {
   const { t } = useT('legal');
   const { isSource } = useLanguage();
@@ -72,7 +76,7 @@ export default function MentionsLegales() {
               ) : (
                 <div className="space-y-3 text-slate-700 leading-relaxed px-2" data-testid="legal-publisher-variant" data-publisher-mode={mode}>
                   {variantState === 'PREVIEW' && <LegalDraftBanner version={`${LEGAL_NOTICE_VARIANT_DOCUMENT.id}@${LEGAL_NOTICE_VARIANT_DOCUMENT.version}`} />}
-                  <p><strong>{t('legal:mentions.publisher.serviceLabel', 'Nom du service :')}</strong> AccesDirectAide (accesdirectaide.fr)</p>
+                  <p><strong>{t('legal:mentions.publisher.serviceLabel', 'Nom du service :')}</strong> {SERVICE_NAME}</p>
                   <p><strong>{t('legal:mentions.publisher.natureLabel', 'Nature du service :')}</strong> {t('legal:mentions.publisher.nature', "Service gratuit d'information sur les droits sociaux et d'aide à l'orientation. Ce n'est pas un site de l'administration. Il n'est pas édité par l'État, une collectivité, la CAF ou un autre organisme payeur.")}</p>
                   {mode === 'A_II' ? (
                     <>
@@ -88,7 +92,7 @@ export default function MentionsLegales() {
                       <p><strong>{t('legal:mentions.a1.nameLabel', 'Nom et prénoms :')}</strong> <span {...fr}>{LEGAL_PLACEHOLDERS.publisherIdentity}</span></p>
                       <p data-testid="legal-a1-domicile"><strong>{t('legal:mentions.a1.domicileLabel', 'Domicile :')}</strong> <span {...fr}>{publisher.identification ? publisher.identification.domicile : t('legal:mentions.a1.missing', '[À COMPLÉTER : variable de build manquante]')}</span></p>
                       <p><strong>{t('legal:mentions.a1.phoneLabel', 'Téléphone :')}</strong> <span {...fr}>{publisher.identification ? publisher.identification.phone : t('legal:mentions.a1.missing', '[À COMPLÉTER : variable de build manquante]')}</span></p>
-                      <p><strong>{t('legal:mentions.publisher.emailLabel', 'Adresse électronique :')}</strong> contact@accesdirectaide.fr</p>
+                      <p><strong>{t('legal:mentions.publisher.emailLabel', 'Adresse électronique :')}</strong> {CONTACT_EMAIL}</p>
                       <p><strong>{t('legal:mentions.publisher.directorLabel', 'Directeur ou directrice de la publication :')}</strong> <em {...fr}>{LEGAL_PLACEHOLDERS.publicationDirector}</em> — {t('legal:mentions.a1.directorNote', "lorsque le service est fourni par une personne physique, le directeur de la publication est cette personne (loi n° 82-652 du 29 juillet 1982, art. 93-2).")}</p>
                     </>
                   )}

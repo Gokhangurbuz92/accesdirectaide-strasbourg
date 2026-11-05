@@ -58,7 +58,7 @@ export function bookingLocation(payload) {
  * What a refused booking (POST /api/rdv/appointments) means for the journey. The server codes are the contract; « Slot no longer available » (409 without a
  * code) is a slot taken meanwhile.
  * @param {number} status @param {{ code?: unknown, error?: unknown } | null | undefined} body
- * @returns {'AUTH' | 'EMAIL_NOT_VERIFIED' | 'AGE_DECLARATION' | 'MINOR' | 'PROFESSIONAL' | 'MESSAGE_CONSENT' | 'VIDEO_CONSENT' | 'MODE' | 'SLOT_TAKEN' | 'OTHER'}
+ * @returns {'AUTH' | 'EMAIL_NOT_VERIFIED' | 'AGE_DECLARATION' | 'MINOR' | 'PROFESSIONAL' | 'MESSAGE_CONSENT' | 'VIDEO_CONSENT' | 'MODE' | 'SLOT_TAKEN' | 'CONTACT_STRUCTURE' | 'SENSITIVE_CONSENT' | 'OTHER'}
  */
 export function bookingRefusal(status, body) {
   const code = String(body?.code || '');

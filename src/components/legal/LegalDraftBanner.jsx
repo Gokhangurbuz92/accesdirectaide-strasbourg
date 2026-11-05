@@ -6,6 +6,7 @@ import { useT } from '@/i18n';
  * R45 (ENG-LR-5) — shown on every draft legal text rendered in LAB (VITE_LEGAL_DRAFT_PREVIEW=1): the text is a project, not approved by the owner,
  * not in force. Never rendered for an approved document; drafts are never rendered at all in a Production build (src/config/legal-drafts.js).
  */
+/** @param {{ version?: string, className?: string }} props */
 export default function LegalDraftBanner({ version, className = '' }) {
   const { t } = useT('legal');
   return (
