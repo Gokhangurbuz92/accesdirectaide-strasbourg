@@ -130,6 +130,28 @@ function FundingDetail({ id }) {
         <section className="space-y-3 rounded border p-3" aria-label={t('admin:k5.funding.sections', 'Sections')}>
           {(v.sections || []).map((s) => <Field key={s.key} id={`fdd-sec-${s.key}`} label={`${s.label}${s.required ? t('admin:k5.funding.expected', ' (attendue)') : ''}`} rows={5} value={c.sections?.[s.key] || ''} onChange={(x) => setC({ sections: { ...c.sections, [s.key]: x } })} />)}
         </section>
+        {/* R46 / P27: the funder's own headings prevail — added here beside the Cerfa sections; an « attendue » heading left empty blocks « prêt pour validation » */}
+        <section className="space-y-3 rounded border p-3" aria-labelledby="fdd-rub" data-testid="funding-rubriques">
+          <h2 id="fdd-rub" className="font-semibold">{t('admin:k5.funding.rubriques', 'Rubriques demandées par le financeur')}</h2>
+          <p className="text-sm text-slate-700">{t('admin:k5.funding.rubriques_help', 'Recopiez les intitulés exacts du dossier du financeur : ils priment sur les sections du Cerfa.')}</p>
+          {(c.rubriques || []).map((r, i) => {
+            const upd = (patch) => setC({ rubriques: c.rubriques.map((x, n) => (n === i ? { ...x, ...patch } : x)) });
+            return (
+              <div key={r.id || i} className="space-y-2 rounded border border-slate-200 p-2" data-testid="funding-rubrique">
+                <Field id={`fdd-rub-${i}-titre`} label={t('admin:k5.funding.rubrique_title', 'Intitulé du financeur')} value={r.titre || ''} onChange={(x) => upd({ titre: x })} />
+                <Field id={`fdd-rub-${i}-texte`} label={t('admin:k5.funding.rubrique_text', 'Texte')} rows={4} value={r.texte || ''} onChange={(x) => upd({ texte: x })} />
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm" htmlFor={`fdd-rub-${i}-att`}>
+                    <input id={`fdd-rub-${i}-att`} type="checkbox" checked={r.attendue === true} onChange={(e) => upd({ attendue: e.target.checked })} />
+                    {t('admin:k5.funding.rubrique_required', 'Rubrique attendue par le financeur')}
+                  </label>
+                  <Button type="button" size="sm" variant="outline" onClick={() => setC({ rubriques: c.rubriques.filter((_, n) => n !== i) })}>{t('admin:k5.funding.remove', 'Retirer')}</Button>
+                </div>
+              </div>
+            );
+          })}
+          <Button type="button" size="sm" variant="outline" onClick={() => setC({ rubriques: [...(c.rubriques || []), { id: Math.random().toString(36).slice(2, 10), titre: '', texte: '', attendue: true }] })}>{t('admin:k5.funding.rubrique_add', 'Ajouter une rubrique du financeur')}</Button>
+        </section>
         <Rows title={t('admin:k5.funding.budget', 'Budget prévisionnel')} rows={c.budget || []} onChange={(budget) => setC({ budget })} add={blankLine}
           columns={[['poste', t('admin:k5.funding.col.poste', 'Poste'), 'wide'], ['nature', t('admin:k5.funding.col.nature', 'Nature'), 'select', { CHARGE: t('admin:k5.funding.col.charge', 'Charge'), PRODUIT: t('admin:k5.funding.col.produit', 'Produit') }], ['montant', t('admin:k5.funding.col.amount', 'Montant (€)'), 'amount'], ['statut', t('admin:k5.funding.col.status', 'Statut'), 'select', v.budgetStatuses || {}], ['justification', t('admin:k5.funding.col.justification', 'Justification (relevé, devis, facture)'), 'wide']]} />
         <p className="text-sm">{t('admin:k5.funding.totals', 'Charges : {{charges}} — produits : {{produits}} (chiffres du dernier enregistrement).', { charges: eur(t, d.totals.charges), produits: eur(t, d.totals.produits) })}</p>

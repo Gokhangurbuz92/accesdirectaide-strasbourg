@@ -1554,5 +1554,11 @@
  "review_queue.type.aide": "Допомога",
  "review_queue.type.demarche": "Процедура",
  "review_queue.type.structure": "Організація",
- "review_queue.type.actualite": "Новина"
+ "review_queue.type.actualite": "Новина",
+ "k5.funding.rubriques": "Розділи, яких вимагає грантодавець",
+ "k5.funding.rubriques_help": "Перепишіть точні заголовки форми заявки грантодавця: вони мають перевагу над розділами Cerfa.",
+ "k5.funding.rubrique_title": "Заголовок грантодавця",
+ "k5.funding.rubrique_text": "Текст",
+ "k5.funding.rubrique_required": "Розділ, якого вимагає грантодавець",
+ "k5.funding.rubrique_add": "Додати розділ грантодавця"
 }

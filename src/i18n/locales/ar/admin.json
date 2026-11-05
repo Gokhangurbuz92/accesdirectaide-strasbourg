@@ -1563,5 +1563,11 @@
  "review_queue.type.aide": "مساعدة",
  "review_queue.type.demarche": "إجراء",
  "review_queue.type.structure": "جهة",
- "review_queue.type.actualite": "خبر"
+ "review_queue.type.actualite": "خبر",
+ "k5.funding.rubriques": "الأقسام التي يطلبها المموّل",
+ "k5.funding.rubriques_help": "انسخ العناوين كما وردت في ملف طلب المموّل: فهي مقدَّمة على أقسام Cerfa.",
+ "k5.funding.rubrique_title": "عنوان المموّل",
+ "k5.funding.rubrique_text": "النص",
+ "k5.funding.rubrique_required": "قسم يطلبه المموّل",
+ "k5.funding.rubrique_add": "إضافة قسم من أقسام المموّل"
 }

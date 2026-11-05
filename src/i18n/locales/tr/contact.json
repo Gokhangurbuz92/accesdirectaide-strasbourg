@@ -56,5 +56,11 @@
  "request.adresse_e_mail_ou_telephone": "e-posta adresi veya telefon",
  "request.ne_pas_remplir": "Doldurmayın",
  "request.envoyer": "Gönder",
- "form.email_placeholder": "ayse@ornek.com"
+ "form.email_placeholder": "ayse@ornek.com",
+ "error.not_connected": "Mesajınız iletilmedi: bu form üzerinden gönderim henüz hizmette değil. Bize doğrudan contact@accesdirectaide.fr adresine yazın.",
+ "sent.test": "Test ortamı: mesaj test posta kutusuna kaydedildi; hiçbir e-posta gönderilmedi.",
+ "channel.not_connected_title": "Bu form üzerinden gönderim henüz hizmette değil",
+ "channel.closed": "Açık beta süresince bu form hiçbir şey göndermez. Bize yazmak için contact@accesdirectaide.fr adresini kullanın.",
+ "channel.not_connected": "Henüz bağlı bir e-posta gönderim hizmeti yok: buradan gönderilen bir mesaj iletilmez. Bize yazmak için contact@accesdirectaide.fr adresini kullanın.",
+ "channel.test": "Test ortamı: mesajlar bir test posta kutusuna kaydedilir ve hiçbir e-posta gönderilmez."
 }

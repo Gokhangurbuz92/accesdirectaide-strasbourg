@@ -1544,5 +1544,11 @@
  "review_queue.type.aide": "Aid",
  "review_queue.type.demarche": "Procedure",
  "review_queue.type.structure": "Organisation",
- "review_queue.type.actualite": "News item"
+ "review_queue.type.actualite": "News item",
+ "k5.funding.rubriques": "Headings required by the funder",
+ "k5.funding.rubriques_help": "Copy the exact headings of the funder's application form: they take precedence over the Cerfa sections.",
+ "k5.funding.rubrique_title": "Funder's heading",
+ "k5.funding.rubrique_text": "Text",
+ "k5.funding.rubrique_required": "Heading required by the funder",
+ "k5.funding.rubrique_add": "Add a funder heading"
 }

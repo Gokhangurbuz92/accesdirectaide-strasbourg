@@ -9,6 +9,7 @@
 
 const CACHE_NAME = 'ada-static-shell-v1';   // unchanged name: a changed sw.js reinstalls and re-precaches (offline page included) anyway
 const OFFLINE_URL = '/offline.html';
+// R46 / M01: offline page revision 2 (six languages): editing this file is what makes installed workers reinstall and re-precache it
 const PRECACHE_URLS = ['/index.html', '/manifest.json', OFFLINE_URL, '/icons/icon-192.png'];
 
 const NEVER_CACHE_PREFIXES = [

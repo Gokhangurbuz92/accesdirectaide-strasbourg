@@ -1544,5 +1544,11 @@
  "review_queue.type.aide": "Yardım",
  "review_queue.type.demarche": "İşlem",
  "review_queue.type.structure": "Kuruluş",
- "review_queue.type.actualite": "Haber"
+ "review_queue.type.actualite": "Haber",
+ "k5.funding.rubriques": "Finansörün istediği bölümler",
+ "k5.funding.rubriques_help": "Finansörün başvuru dosyasındaki başlıkları aynen yazın: Cerfa bölümlerine göre önceliklidir.",
+ "k5.funding.rubrique_title": "Finansörün başlığı",
+ "k5.funding.rubrique_text": "Metin",
+ "k5.funding.rubrique_required": "Finansörün beklediği bölüm",
+ "k5.funding.rubrique_add": "Finansör bölümü ekle"
 }

@@ -233,5 +233,12 @@
  "chat.assessment_attached_other": "{{count}} simülasyon öneriniz sorularınıza salt okunur olarak eklendi. La Boussole bunları açıklar, karar vermez.",
  "chat.feedback_failed": "Görüşünüz gönderilemedi.",
  "chat.feedback_retry": "Tekrar deneyin",
- "health_notice.text": "Tıbbi belge göndermeyin (rapor, sağlık raporu, reçete, sağlık bilgisi içeren MDPH dosyası — engelli merkezi dosyası): AccesDirectAide henüz sağlık verileri için onaylı bir barındırıcıya sahip değil (HDS, sağlık verilerinin barındırılmasına ilişkin Fransız sertifikası)."
+ "health_notice.text": "Tıbbi belge göndermeyin (rapor, sağlık raporu, reçete, sağlık bilgisi içeren MDPH dosyası — engelli merkezi dosyası): AccesDirectAide henüz sağlık verileri için onaylı bir barındırıcıya sahip değil (HDS, sağlık verilerinin barındırılmasına ilişkin Fransız sertifikası).",
+ "chat.rate_limited": "Kısa sürede çok fazla soru soruldu. Bir dakika bekleyin, sonra yeniden deneyin.",
+ "chat.closed": "La Boussole Sociale henüz açık değil. Sitenin arama özelliğiyle bir yardım, bir işlem veya bir kurum arayabilirsiniz.",
+ "chat.go_search": "Aramaya git",
+ "chat.outcome_abstention": "Kaynaklı yanıt yok: doğrulanmış bir kaynak olmadan yanıt vermem.",
+ "chat.outcome_grounded": "Yanıt aşağıda listelenen resmî kaynaklara dayanıyor. Haklarınız hakkında bir karar değildir.",
+ "chat.postal_choose": "{{code}} posta kodunun belediyeleri (La Poste resmî veritabanı): kendi belediyenizi seçin.",
+ "chat.postal_outside": "(kapsanan bölgenin dışında)"
 }

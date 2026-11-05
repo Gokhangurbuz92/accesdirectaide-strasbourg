@@ -56,5 +56,11 @@
  "request.adresse_e_mail_ou_telephone": "адреса електронної пошти або телефон",
  "request.ne_pas_remplir": "Не заповнювати",
  "request.envoyer": "Надіслати",
- "form.email_placeholder": "olena@example.com"
+ "form.email_placeholder": "olena@example.com",
+ "error.not_connected": "Ваше повідомлення не передано: надсилання через цю форму ще не працює. Напишіть нам напряму на contact@accesdirectaide.fr.",
+ "sent.test": "Тестове середовище: повідомлення збережено в тестовій скриньці; жодного листа не надіслано.",
+ "channel.not_connected_title": "Надсилання через цю форму ще не працює",
+ "channel.closed": "Під час публічної бета-версії ця форма нічого не надсилає. Щоб написати нам, використовуйте адресу contact@accesdirectaide.fr.",
+ "channel.not_connected": "Сервіс надсилання електронної пошти ще не підключено: повідомлення, надіслане тут, не буде передано. Щоб написати нам, використовуйте адресу contact@accesdirectaide.fr.",
+ "channel.test": "Тестове середовище: повідомлення зберігаються в тестовій скриньці, жоден лист не надсилається."
 }

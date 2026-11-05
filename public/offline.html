@@ -18,6 +18,9 @@
   li a strong { font-size: 1.25rem; color: var(--link); }
   .retry { display: inline-block; padding: .75rem 1.25rem; border-radius: .5rem; background: #0B3A6A; color: #fff; text-decoration: none; min-height: 44px; box-sizing: border-box; }
   a:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
+  section.other { border-top: 1px solid var(--line); margin-top: 2rem; padding-top: 1rem; }
+  section.other h2 { font-size: 1.125rem; margin: 1.25rem 0 .25rem; color: var(--fg); }
+  section.other p { font-size: 1rem; }
 </style>
 </head>
 <body>
@@ -33,6 +36,20 @@
     <li><a href="tel:115"><span>SAMU social</span><strong>115</strong></a></li>
   </ul>
   <a class="retry" href="/">Réessayer</a>
+
+  <!-- R46 / M01: the same message in the five other interface languages (static: the page loads nothing and cannot know the chosen language) -->
+  <section class="other" aria-label="Other languages / Autres langues">
+    <div lang="en"><h2>You are not connected to the Internet</h2>
+      <p>AccesDirectAide needs the Internet to show benefits and your space. Your information is not kept on this device. In an emergency, call the free numbers above: 112 (European emergency number), 15 (SAMU, medical emergency), 17 (police), 18 (fire brigade), 115 (SAMU social, emergency shelter). « Réessayer » means « Try again ».</p></div>
+    <div lang="tr"><h2>İnternete bağlı değilsiniz</h2>
+      <p>AccesDirectAide, yardımları ve alanınızı göstermek için internete ihtiyaç duyar. Bilgileriniz bu cihazda saklanmaz. Acil durumda yukarıdaki ücretsiz numaraları arayın: 112 (Avrupa acil numarası), 15 (SAMU, tıbbi acil), 17 (polis), 18 (itfaiye), 115 (SAMU social, acil barınma). « Réessayer », « Yeniden dene » demektir.</p></div>
+    <div lang="ar" dir="rtl"><h2>أنت غير متصل بالإنترنت</h2>
+      <p>تحتاج AccesDirectAide إلى الإنترنت لعرض المساعدات ومساحتك. لا تُحفظ معلوماتك على هذا الجهاز. في حالة الطوارئ، اتصل بالأرقام المجانية أعلاه: <span dir="ltr">112</span> (رقم الطوارئ الأوروبي)، <span dir="ltr">15</span> (SAMU، طوارئ طبية)، <span dir="ltr">17</span> (الشرطة)، <span dir="ltr">18</span> (الإطفاء)، <span dir="ltr">115</span> (SAMU social، إيواء طارئ). « Réessayer » تعني « حاول مجددًا ».</p></div>
+    <div lang="de"><h2>Sie sind nicht mit dem Internet verbunden</h2>
+      <p>AccesDirectAide braucht das Internet, um Leistungen und Ihren Bereich anzuzeigen. Ihre Daten werden nicht auf diesem Gerät gespeichert. Im Notfall rufen Sie die kostenlosen Nummern oben an: 112 (europäischer Notruf), 15 (SAMU, medizinischer Notfall), 17 (Polizei), 18 (Feuerwehr), 115 (SAMU social, Notunterkunft). « Réessayer » bedeutet « Erneut versuchen ».</p></div>
+    <div lang="uk"><h2>Ви не підключені до інтернету</h2>
+      <p>AccesDirectAide потребує інтернету, щоб показати допомоги та ваш простір. Ваші дані не зберігаються на цьому пристрої. У разі надзвичайної ситуації телефонуйте за безкоштовними номерами вище: 112 (єдиний європейський номер екстреної допомоги), 15 (SAMU, швидка медична допомога), 17 (поліція), 18 (пожежна служба), 115 (SAMU social, екстрене житло). « Réessayer » означає « Спробувати ще раз ».</p></div>
+  </section>
 </main>
 </body>
 </html>
