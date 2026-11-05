@@ -445,17 +445,7 @@ export const env = {
     },
   },
 
-  siao: {
-    get enabled() {
-      return getEnv('SIAO_ENABLED') === 'true';
-    },
-    get apiUrl() {
-      return getEnv('SIAO_API_URL');
-    },
-    get apiKey() {
-      return getEnv('SIAO_API_KEY');
-    },
-  },
+  // R46 / R22: no SIAO network variables any more — no official SI-SIAO interface specification exists here (api/lib/siao-handover.js: DISCONNECTED)
 
   flags: {
     get devLoginEnabled() {

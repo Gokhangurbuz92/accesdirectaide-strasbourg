@@ -159,9 +159,9 @@ export default function ImpactReports() {
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_shared', 'Diagnostics partagés')}
-                            value={kpis.diagnosticsShared ?? 0}
+                            value={kpis.diagnosticsShared === null ? '—' : kpis.diagnosticsShared ?? 0}
                             icon={<FileText size={16} className="text-amber-800" />}
-                            sub={t('pro:impact.kpi_shared_sub', 'Dossiers transmis')}
+                            sub={kpis.diagnosticsShared === null ? t('pro:impact.not_open', 'Fonction non ouverte : non mesuré') : t('pro:impact.kpi_shared_sub', 'Dossiers transmis')}
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_team', 'Équipe active')}
@@ -188,9 +188,9 @@ export default function ImpactReports() {
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_referrals', 'Orientations')}
-                            value={kpis.referralsSent ?? 0}
+                            value={kpis.referralsSent === null ? '—' : kpis.referralsSent ?? 0}
                             icon={<Compass size={16} className="text-indigo-600" />}
-                            sub={`${t('pro:impact.kpi_referrals_sub', 'envoyées · {{received}} reçues · {{closed}} dossiers clôturés', { received: kpis.referralsReceived ?? 0, closed: kpis.casesClosed ?? 0 })}${kpis.casesClosedPartial ? t('pro:impact.kpi_referrals_partial', ' (hors résultats de moins de 5 dossiers)') : ''}`}
+                            sub={kpis.referralsSent === null || kpis.casesClosed === null ? t('pro:impact.not_open', 'Fonction non ouverte : non mesuré') : `${t('pro:impact.kpi_referrals_sub', 'envoyées · {{received}} reçues · {{closed}} dossiers clôturés', { received: kpis.referralsReceived ?? 0, closed: kpis.casesClosed ?? 0 })}${kpis.casesClosedPartial ? t('pro:impact.kpi_referrals_partial', ' (hors résultats de moins de 5 dossiers)') : ''}`}
                         />
                     </div>
 

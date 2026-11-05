@@ -95,6 +95,10 @@ export default function ProLayout() {
             await fetch('/api/pro/auth/logout', { method: 'POST', credentials: 'include', headers: { Authorization: `Bearer ${token}`, ...getCsrfHeaders() } }).catch(() => undefined);
         }
         localStorage.removeItem('pro_token');
+        // R46 / N09: a session opened through ProConnect also ends at the federation (RP-initiated logout; the server falls back to the sign-in page)
+        let viaProConnect = false;
+        try { viaProConnect = localStorage.getItem('pro_login_via') === 'proconnect'; localStorage.removeItem('pro_login_via'); } catch { viaProConnect = false; }
+        if (viaProConnect) { window.location.assign('/api/pro/auth/proconnect/logout'); return; }
         navigate(proLoginEntry, { replace: true });
     };
 

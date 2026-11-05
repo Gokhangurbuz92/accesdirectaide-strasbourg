@@ -14,6 +14,7 @@ import {
 import SecureChat from '@/components/Messaging/SecureChat';
 import FileVault from '@/components/FileVault';
 import ExpertTools from '@/components/ExpertTools';
+import SiaoHandoverCard from '@/components/pro/SiaoHandoverCard';
 import { takePendingInvite } from '@/lib/pendingInvite';
 import { getCsrfHeaders } from '@/lib/csrf';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
@@ -388,6 +389,9 @@ export default function SharedDossier() {
 
                     {/* Expert Tools: AI Synthesis + PDF Signature */}
                     <ExpertTools shareId={shareId} aiAllowed={(access?.purposes || []).includes('PURP-05')} />
+
+                    {/* R46 / R22: SI-SIAO — disconnected adapter, manual handover sheet only with the person's SIAO consent (PURP-07) */}
+                    <SiaoHandoverCard shareId={shareId} siaoAllowed={(access?.purposes || []).includes('PURP-07')} />
 
                     {/* Security badge */}
                     <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">

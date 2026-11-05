@@ -57,6 +57,7 @@ const CONFIG = {
     PRO_MFA_ENROL_REDEEM: { limit: 5, window: 3600 },
     REGISTER_INVITE: { limit: 5, window: 3600 }, // 5 per hour
     REFRESH_PRO: { limit: 10, window: 900 },  // 10 per 15 min
+    PROCONNECT_PRO: { limit: 20, window: 900 },  // R46 / N09: ProConnect start / callback / complete per IP (the ADA second factor keeps its own limits)
     LOGIN_USER: { limit: 8, window: 900 },  // 8 per 15 min
     SIGNUP_USER: { limit: 5, window: 3600 }, // 5 per hour
     RESEND_VERIFY: { limit: 5, window: 3600 }, // 5 per hour

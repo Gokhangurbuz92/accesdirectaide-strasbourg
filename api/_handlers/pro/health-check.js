@@ -58,7 +58,6 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         const appointmentsThisMonth = Number(appCountRes[0].count);
 
         // 6. Service status inference
-        const siaEnabled = env.siao.enabled;
         const services = [
             {
                 id: 'db',
@@ -85,8 +84,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             {
                 id: 'siao',
                 label: 'Passerelle SIAO',
-                sub: 'Interop National',
-                status: siaEnabled && env.siao.apiUrl ? 'configured' : 'not_configured',
+                // R46 / R22: no official SI-SIAO interface specification: the adapter is disconnected (manual handover sheet only)
+                sub: 'Non connectée (fiche de transmission manuelle)',
+                status: 'not_configured',
             },
         ];
 
