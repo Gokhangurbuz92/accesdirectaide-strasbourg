@@ -44,3 +44,13 @@ et latence de la base Neon restent à mesurer sur le staging (`docs/deployment.m
 Les réponses publiques passent par le cache de lecture (époque de contenu) : les chiffres mesurent surtout le chemin du code et la base locale.
 Sur le LAB lui-même (127.0.0.1:3000), une mesure n'est pas possible : son serveur se comporte comme un mandataire de confiance et remplace `X-Forwarded-For`
 par l'adresse du poste (`scripts/lab-server.mjs`) — tout le trafic d'un poste est un seul client, et les limites répondent 429, comme elles le doivent.
+Pour mesurer sur un LAB jetable (autre port que 3000), démarrer son serveur avec `LAB_LOAD_FORWARDED=1` (refusé sur le port 3000) : il garde alors
+`X-Forwarded-For` comme le serveur de QA ; `e2e-r46/finish/run-lab.mjs --keep --load` le fait. Le script n'envoie plus d'en-tête `Origin` par défaut
+(`--origin <url>` pour en envoyer un) : sur un port local autre que 5173 / 3000, la recherche était refusée par le contrôle d'origine avant d'être mesurée.
+
+## Mesure du 05/11/2026 (R46) — LAB jetable, données synthétiques
+
+Site construit + API réelle (`scripts/lab-server.mjs`, `LAB_LOAD_FORWARDED=1`, port 5187), PostgreSQL 17 local, 12 structures, 3 aides, 1 démarche
+synthétiques. 150 utilisateurs pendant 60 s : 59.9 requêtes/s, 3 600 requêtes, tout dans le budget (p95 : santé 5 ms, annuaire 10 ms, structure 9 ms,
+aides 10 ms, démarches 9 ms, recherche 9 ms ; 0 erreur, 0 429). Sans `LAB_LOAD_FORWARDED`, le même essai répond 429 sur les pages limitées par adresse
+(un seul client), ce qui est le comportement attendu.

@@ -5,7 +5,8 @@
  * time) between two pages, the pages of a visit in turn (directory, a structure, aides, démarches, « J'ai besoin d'aide pour… ») — for a fixed time; per page
  * p50 / p95 / p99, throughput and errors, each compared with its budget. A 429 (rate limit) is counted apart: a person never reaches the per-address limits at
  * this pace, so a 429 here means the pace is wrong or a limit is too tight — the run is then « hors budget ». Read-only pages plus the anonymous search.
- * The client address is given in X-Forwarded-For, which a server outside Vercel takes as the first hop (api/_utils/client-ip.js): the LAB and a self-hosted
+ * The client address is given in X-Forwarded-For, which a server outside Vercel takes as the first hop (api/_utils/client-ip.js): a disposable LAB started with
+ * LAB_LOAD_FORWARDED=1 on a port other than 3000 (scripts/lab-server.mjs; e2e-r46/finish/run-lab.mjs --load) and a self-hosted
  * staging behind a proxy; on Vercel the edge overwrites it, so a load test there comes from real distinct clients.
  *
  *   node scripts/load-budget.mjs --base http://127.0.0.1:3000 [--duration 60] [--users 150] [--think 2500] [--out report.json]
@@ -18,6 +19,9 @@ import fs from 'node:fs';
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = String(arg('base', 'http://127.0.0.1:3000')).replace(/\/$/, '');
 const DURATION_S = Number(arg('duration', '60')); const USERS = Number(arg('users', '150')); const THINK_MS = Number(arg('think', '2500'));
+// R46: no Origin by default (a non-browser client sends none; the router's origin gate only lets the production and :5173 / :3000 dev origins through, so a
+// measurement on another LAB port was refused before the search handler); --origin <url> sends one, e.g. the staging site's own origin
+const ORIGIN = arg('origin', '');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** the budgets (ms, at the given number of users on this machine) and the error budget (share of 5xx / network errors) */
@@ -48,7 +52,7 @@ async function main() {
       const p = sc.path.replace('{structureSlug}', encodeURIComponent(ids[(u + k) % ids.length]));
       const t = performance.now();
       try {
-        const r = await fetch(`${BASE}${p}`, { method: sc.method, headers: { 'X-Forwarded-For': ip, ...(sc.body ? { 'Content-Type': 'application/json', Origin: BASE } : {}) }, body: sc.body ? JSON.stringify(sc.body) : undefined });
+        const r = await fetch(`${BASE}${p}`, { method: sc.method, headers: { 'X-Forwarded-For': ip, ...(sc.body ? { 'Content-Type': 'application/json', ...(ORIGIN ? { Origin: ORIGIN } : {}) } : {}) }, body: sc.body ? JSON.stringify(sc.body) : undefined });
         await r.arrayBuffer();
         const ms = performance.now() - t;
         if (r.status === 429) st.limited += 1; else if (r.status >= 500) st.errors += 1; else if (r.status >= 200 && r.status < 400) { st.ok += 1; st.lat.push(ms); } else st.other += 1;

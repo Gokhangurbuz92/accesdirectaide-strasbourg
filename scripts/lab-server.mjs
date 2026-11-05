@@ -7,6 +7,10 @@ const fail = (m) => { console.error('refusing to start: ' + m); process.exit(3);
 if (process.env.USE_MOCKS || process.env.VITE_USE_MOCKS) fail('mock flags set');
 if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') fail('production profile');
 try { const h = new URL(process.env.DATABASE_URL || '').hostname; if (!['127.0.0.1', 'localhost', '::1'].includes(h)) fail('the database is not local'); } catch { fail('DATABASE_URL missing'); }
+// R46 / Q05: LAB_LOAD_FORWARDED=1 keeps a client-supplied X-Forwarded-For (as the native-QA server does) so scripts/load-budget.mjs can model distinct visitors on a
+// disposable LAB; never on the owner's LAB port (3000), where the server stays a trusted proxy. The per-address limits stay fully active.
+const KEEP_FORWARDED = process.env.LAB_LOAD_FORWARDED === '1';
+if (KEEP_FORWARDED && PORT === 3000) fail('LAB_LOAD_FORWARDED is for a disposable LAB on another port');
 if (!fs.existsSync(path.join(DIST, 'index.html'))) fail(`no build in ${DIST} (run: node --import tsx scripts/lab-local.mjs build)`);
 const { default: api } = await import('../api/index.js');
 // P22: the record pages' initial HTML (canonical, title, description, 404 / 410), as the hosting's rewrite to /api/public/page does
@@ -36,7 +40,7 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify(__getTestOutbox().filter((m) => String(Array.isArray(m.to) ? m.to.join(',') : m.to).toLowerCase().includes(to)).map((m) => ({ subject: m.subject, text: m.text }))));
   }
   // like a trusted proxy: the client address is the socket's, never a client-supplied X-Forwarded-For (the per-address limits of sign-in, MFA, forms rely on it)
-  req.headers['x-forwarded-for'] = req.socket?.remoteAddress || '127.0.0.1';
+  if (!KEEP_FORWARDED || !req.headers['x-forwarded-for']) req.headers['x-forwarded-for'] = req.socket?.remoteAddress || '127.0.0.1';
   res.status = (c) => { res.statusCode = c; return res; };
   res.json = (d) => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(d)); return res; };
   res.send = (d) => { res.end(d); return res; };

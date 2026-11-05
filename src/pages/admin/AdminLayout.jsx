@@ -85,6 +85,7 @@ const SIDEBAR_SECTIONS = [
         items: [
             { label: 'Protection des données', to: '/admin/privacy', icon: Shield },
             { label: 'Demandes d’aide', to: '/admin/support', icon: Inbox },
+            { label: 'Représentants légaux (vérification)', to: '/admin/representants-legaux', icon: Shield },   // R46 / C05 verifier side
         ]
     },
     {
@@ -151,6 +152,7 @@ function navLabel(t, label) {
         'Personnes et données': t('admin:layout.nav.people_data', 'Personnes et données'),
         'Protection des données': t('admin:layout.nav.privacy', 'Protection des données'),
         'Demandes d’aide': t('admin:layout.nav.support', 'Demandes d’aide'),
+        'Représentants légaux (vérification)': t('admin:layout.nav.guardians', 'Représentants légaux (vérification)'),
         'Plateforme': t('admin:layout.nav.platform', 'Plateforme'),
         'Opérations et journal d’audit': t('admin:layout.nav.operations', 'Opérations et journal d’audit'),
         'Signaux de sécurité': t('admin:layout.nav.security', 'Signaux de sécurité'),
