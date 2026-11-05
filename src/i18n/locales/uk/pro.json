@@ -1040,6 +1040,7 @@
  "notice_labels.status.failed": "помилка надсилання",
  "notice_labels.status.sent": "надіслано",
  "notice_labels.status.delivered": "доставлено в особистий простір",
+ "notice_labels.status.delivered_email": "передано на поштовий сервер людини (прочитання не гарантовано)",
  "notice_labels.line": "{{kind}} — {{recipient}}, {{channel}}: {{status}}",
  "role_labels.structure_admin": "Адміністратор організації",
  "role_labels.pro": "Фахівець",

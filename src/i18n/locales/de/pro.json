@@ -1030,6 +1030,7 @@
  "notice_labels.status.failed": "Versand fehlgeschlagen",
  "notice_labels.status.sent": "gesendet",
  "notice_labels.status.delivered": "im Bereich zugestellt",
+ "notice_labels.status.delivered_email": "an den Mailserver der Person übergeben (Lesen nicht garantiert)",
  "notice_labels.line": "{{kind}} — {{recipient}}, {{channel}}: {{status}}",
  "role_labels.structure_admin": "Administrator/in der Einrichtung",
  "role_labels.pro": "Fachkraft",

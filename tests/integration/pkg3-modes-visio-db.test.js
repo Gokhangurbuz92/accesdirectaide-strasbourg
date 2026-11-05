@@ -16,6 +16,13 @@ import { vi, afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest
 import { sql } from 'drizzle-orm';
 import { declareAdult } from './helpers/adult-age.mjs';
 
+// R45 / ENG-LR-3: this file pins the DETAILED notice content (dates, place, structure, calendar file), which is now the REDUCED level of a verified
+// « ordinary » service. The default (sensitivity unknown → minimal e-mail) is pinned by tests/unit/r45-notification-privacy.test.js and by
+// tests/integration/r42-booking-db.test.js (Mode A); here the same verified classification is injected, nothing else changes.
+vi.mock('../../api/lib/notification-privacy.js', async (importOriginal) => {
+  const orig = await importOriginal();
+  return { ...orig, resolveNotificationPrivacy: (record, deps = {}) => orig.resolveNotificationPrivacy(record, { resolveSensitivity: deps?.resolveSensitivity || (() => 'ordinary') }) };
+});
 vi.mock('../../api/_utils/pipelineLock.js', () => ({ withLock: async (_name, fn) => fn() }));   // the cron's distributed lock is infrastructure (KV), not under test here
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 

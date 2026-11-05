@@ -9,6 +9,13 @@
  * as the French one; a slot list asked in a modality the service does not offer is refused (409 MODE_UNAVAILABLE) and booking it too.
  */
 import { vi } from 'vitest';
+// R45 / ENG-LR-3: this file pins the DETAILED notice content (dates, place, structure, calendar file), which is now the REDUCED level of a verified
+// « ordinary » service. The default (sensitivity unknown → minimal e-mail) is pinned by tests/unit/r45-notification-privacy.test.js and by
+// tests/integration/r42-booking-db.test.js (Mode A); here the same verified classification is injected, nothing else changes.
+vi.mock('../../api/lib/notification-privacy.js', async (importOriginal) => {
+  const orig = await importOriginal();
+  return { ...orig, resolveNotificationPrivacy: (record, deps = {}) => orig.resolveNotificationPrivacy(record, { resolveSensitivity: deps?.resolveSensitivity || (() => 'ordinary') }) };
+});
 vi.stubEnv('MAILER_PROVIDER', 'test');
 vi.stubEnv('MAILER_FROM', 'noreply@example.test');
 vi.mock('@sentry/node', () => ({ captureException: vi.fn(), default: { captureException: vi.fn() } }));

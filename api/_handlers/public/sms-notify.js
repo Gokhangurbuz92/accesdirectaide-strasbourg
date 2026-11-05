@@ -15,6 +15,9 @@ import { canNotify, setPreference } from '../../_services/citizen-account.js';
 import { formatParisDate, formatParisTime } from '../../_services/appointment-notices.js';
 import { isSmsSendWindow, normalizeFrenchPhone, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { MINIMAL_PATH, minimalMail, minimalSms, resolveNotificationPrivacy } from '../../lib/notification-privacy.js';
+import { citizenMailLanguage } from '../../_services/mail-language.js';
+import { buildAppUrl } from '../../_utils/user-auth.js';
 
 const escapeHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -39,7 +42,7 @@ async function ownsAppointment(appointment, req, shareId) {
  * Ne crash jamais — absorbe les erreurs silencieusement.
  */
 // @ts-ignore
-async function sendEmailFallback(appointment, phoneNumber, smsMessage) {
+async function sendEmailFallback(appointment, phoneNumber, smsMessage, minimalLang = null) {
     try {
         const beneficiaryEmail = appointment.beneficiaryEmail;
         if (!beneficiaryEmail) {
@@ -47,7 +50,9 @@ async function sendEmailFallback(appointment, phoneNumber, smsMessage) {
             return;
         }
 
-        const out = await sendMail({
+        // R45 / ENG-LR-3: at the minimal level the fallback is the minimal e-mail (neutral subject, no appointment detail)
+        const minimal = minimalLang ? minimalMail(minimalLang, { url: buildAppUrl(MINIMAL_PATH) }) : null;
+        const out = minimal ? await sendMail({ to: beneficiaryEmail, subject: minimal.subject, text: minimal.text, html: minimal.html, category: minimal.category }) : await sendMail({
             to: beneficiaryEmail,
             subject: 'Rappel de votre rendez-vous — AccesDirectAide',
             text: `${smsMessage}\n\n(Ce message vous est envoyé car le rappel SMS n'a pas pu être délivré.)`,
@@ -144,7 +149,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
         // the structure's own name and the appointment's own mode (the former text hard-coded "CCAS Strasbourg" for every in-person appointment)
         const mode = appointment.visioEnabled ? 'Lien visio dans votre Passeport' : 'Sur place';
 
-        const message = withOptOut(`Rappel ADA : Votre RDV avec ${proName} est prévu le ${dateStr}. ${mode}.`);
+        // R45 / ENG-LR-3: at the minimal level (sensitive or unknown service — the default) neither the structure nor the date is named
+        const minimalLang = (await resolveNotificationPrivacy(appointment)).level === 'minimal' ? await citizenMailLanguage(appointment.citizenUserId) : null;
+        const message = withOptOut(minimalLang ? minimalSms(minimalLang) : `Rappel ADA : Votre RDV avec ${proName} est prévu le ${dateStr}. ${mode}.`);
         // PKG-11 / N02: no SMS 20:00-08:00 Paris — at night the confirmation SMS is not sent (the reminder the day before still is). Audit pass 2: nor while the
         // person may not be notified (a restriction of processing, the age policy): the same canNotify as every other notice
         const sendNow = isSmsSendWindow() && await canNotify(appointment.citizenUserId, 'sms', 'reminder').catch(() => false);
@@ -189,7 +196,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     }
 
                     // Attempt email fallback
-                    await sendEmailFallback(appointment, phoneNumber, message);
+                    await sendEmailFallback(appointment, phoneNumber, message, minimalLang);
                 } else {
                     const smsResult = await twilioRes.json();
                     logger.info(`[SMS] Sent to=${maskPhone(phoneNumber)} sid=${smsResult.sid}`);
@@ -197,7 +204,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
             } catch (twilioErr) {
                 logger.error({ err: { name: twilioErr?.name } }, '[SMS] Twilio network error');   // R41-E: the name only
                 // Email fallback on network failure
-                await sendEmailFallback(appointment, phoneNumber, message);
+                await sendEmailFallback(appointment, phoneNumber, message, minimalLang);
             }
         } else if (sendNow) {
             logger.warn(`[SMS] Twilio not configured — no SMS sent: ${maskPhone(phoneNumber)}`);

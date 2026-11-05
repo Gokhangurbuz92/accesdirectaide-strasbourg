@@ -1050,6 +1050,7 @@
  "notice_labels.status.failed": "فشل الإرسال",
  "notice_labels.status.sent": "أُرسِل",
  "notice_labels.status.delivered": "سُلِّم في الفضاء الشخصي",
+ "notice_labels.status.delivered_email": "سُلِّم إلى خادم البريد الخاص بالشخص (القراءة غير مضمونة)",
  "notice_labels.line": "{{kind}} — {{recipient}}، {{channel}}: {{status}}",
  "role_labels.structure_admin": "مسؤول الهيئة",
  "role_labels.pro": "مهني",

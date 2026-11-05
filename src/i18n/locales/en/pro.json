@@ -1030,6 +1030,7 @@
  "notice_labels.status.failed": "sending failed",
  "notice_labels.status.sent": "sent",
  "notice_labels.status.delivered": "delivered to the space",
+ "notice_labels.status.delivered_email": "handed to the person’s mail server (reading not guaranteed)",
  "notice_labels.line": "{{kind}} — {{recipient}}, {{channel}}: {{status}}",
  "role_labels.structure_admin": "Structure administrator",
  "role_labels.pro": "Professional",

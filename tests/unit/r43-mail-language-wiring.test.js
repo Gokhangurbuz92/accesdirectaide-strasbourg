@@ -22,6 +22,9 @@ function fakeDb(lang) {
     select: () => ({ from: () => ({ where: () => ({ limit: async () => (call++ % 2 === 0 ? [{ email: 'person@example.test', verified: new Date() }] : (lang === undefined ? [] : [{ lang }])) }) }) }),
   };
 }
+// R45 / ENG-LR-3: the catalogue texts below are the REDUCED level (a verified « ordinary » service); the default is now the minimal message
+// (tests/unit/r45-notification-privacy.test.js), so these cases inject that verified classification explicitly
+const ORDINARY = () => 'ordinary';
 const LEAKY = { subject: 'Annulation chez Centre Addictologie le 12/11 à 10:00', text: 'Votre rendez-vous du mercredi 12 novembre à 10:00 avec Centre Addictologie est annulé.' };
 
 describe('R43 citizen notices in the stored language', () => {
@@ -35,7 +38,7 @@ describe('R43 citizen notices in the stored language', () => {
   });
   it('a person who chose Arabic gets the Arabic subject and opening, then the French text; the caller subject never leaves', async () => {
     const db = fakeDb('ar'); const sendMail = vi.fn(async () => ({ outcome: 'PROVIDER_ACCEPTED', delivered: true }));
-    expect(await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, 'CANCELLED_BY_STRUCTURE', LEAKY, { db, sendMail, canNotify: async () => true })).toBe('PROVIDER_ACCEPTED');
+    expect(await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, 'CANCELLED_BY_STRUCTURE', LEAKY, { db, sendMail, canNotify: async () => true, resolveSensitivity: ORDINARY })).toBe('PROVIDER_ACCEPTED');
     const sent = sendMail.mock.calls[0][0];
     expect(sent.subject).toBe(mailText('appointment_cancellation', 'ar').subject);
     expect(sent.subject).not.toMatch(/Addictologie|\d/);
@@ -45,7 +48,7 @@ describe('R43 citizen notices in the stored language', () => {
   it('no profile, an unknown language or a failed lookup → French, the text unchanged', async () => {
     for (const lang of [undefined, 'es', null]) {
       const sendMail = vi.fn(async () => ({ outcome: 'TEST_RECORDED' }));
-      await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, 'REMINDER_J1', LEAKY, { db: fakeDb(lang), sendMail, canNotify: async () => true });
+      await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, 'REMINDER_J1', LEAKY, { db: fakeDb(lang), sendMail, canNotify: async () => true, resolveSensitivity: ORDINARY });
       expect(sendMail.mock.calls[0][0]).toMatchObject({ subject: 'Rappel de votre rendez-vous - Accès Direct Aide', text: LEAKY.text });
     }
     expect(await citizenMailLanguage('u1', { select: () => { throw new Error('db down'); } })).toBe('fr');
@@ -55,7 +58,7 @@ describe('R43 citizen notices in the stored language', () => {
   it('every kind sent by the booking handlers reads neutrally in all six languages', async () => {
     for (const lang of ['fr', 'en', 'tr', 'ar', 'de', 'uk']) for (const kind of Object.keys(NOTICE_MAIL_KINDS)) {
       const sendMail = vi.fn(async () => ({ outcome: 'TEST_RECORDED' }));
-      await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, kind, LEAKY, { db: fakeDb(lang), sendMail, canNotify: async () => true });
+      await noticeCitizen({ id: 'a1', citizenUserId: 'u1' }, kind, LEAKY, { db: fakeDb(lang), sendMail, canNotify: async () => true, resolveSensitivity: ORDINARY });
       const subject = sendMail.mock.calls[0][0].subject;
       expect(subject, `${lang}/${kind}`).toBe(mailText(NOTICE_MAIL_KINDS[kind], lang).subject);
       expect(subject).not.toMatch(/Addictologie|\d/);
@@ -76,7 +79,7 @@ describe('R43 the new-message alert', () => {
     vi.resetModules();
     const { notifyConversationMessage } = await import('../../api/_utils/rdv-messaging.js');
     const base = { conversationId: 'c1', messageId: 'm1', recipientEmail: 'person@example.test', recipientEnabled: true, structureName: 'Centre X', appointmentStartAt: new Date('2026-11-12T09:00:00Z') };
-    expect(await notifyConversationMessage({ ...base, recipientType: 'USER', recipientUserId: 'u1' })).toMatchObject({ sent: true });
+    expect(await notifyConversationMessage({ ...base, recipientType: 'USER', recipientUserId: 'u1' }, { resolveSensitivity: ORDINARY })).toMatchObject({ sent: true });
     expect(sent[0].subject).toBe(mailText('appointment_message', 'tr').subject);
     profileLang = 'ar';
     await notifyConversationMessage({ ...base, recipientType: 'PRO', recipientUserId: null });

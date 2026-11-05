@@ -100,6 +100,7 @@ async function handler(req, res) {
       // PKG-11 audit: the single consent question (preference, ledger, restriction of processing) — the bare flag ignored an art. 18 restriction
       recipientEnabled: Boolean(citizen?.emailVerifiedAt && appointment.citizenUserId && await canNotify(appointment.citizenUserId, 'email', 'service').catch(() => false)),
       structureName: appointment.structure?.nom || 'Acces Direct Aide', appointmentStartAt: appointment.startAt || null,
+      appointment,   // R45 / ENG-LR-3: the record whose sensitivity sets the alert's privacy level
     });
   } catch {
     // e-mail stays best-effort
