@@ -56,6 +56,7 @@ const routeTable = [
     { path: 'auth/forgot-password', match: 'exact', handler: () => import('./_handlers/auth/forgot-password.js') },
     { path: 'auth/reset-password', match: 'exact', handler: () => import('./_handlers/auth/reset-password.js') },
     { path: 'auth/delete-account', match: 'exact', handler: () => import('./_handlers/auth/delete-account.js') },
+    { path: 'auth/franceconnect', match: 'prefix', handler: () => import('./_handlers/auth/franceconnect.js') },   // R46 / N08: FranceConnect OIDC adapter (not live)
     { path: 'auth/export-data', match: 'exact', handler: () => import('./_handlers/auth/export-data.js') },
 
     // --- Pro Module ---
@@ -188,6 +189,7 @@ const routeTable = [
     { path: 'admin/org-closure', match: 'exact', handler: () => import('./_handlers/admin/org-closure.js') },
     { path: 'admin/processing-restrictions', match: 'exact', handler: () => import('./_handlers/admin/processing-restrictions.js') },
     { path: 'admin/mail-suppressions', match: 'exact', handler: () => import('./_handlers/admin/mail-suppressions.js') },   // R44-MAIL: MFA + elevation, reason, audited
+    { path: 'admin/guardianships', match: 'exact', handler: () => import('./_handlers/admin/guardianships.js') },   // R46 / C05: the verifier records the strong check of a guardian link
     { path: 'admin/service-sensitivity', match: 'exact', handler: () => import('./_handlers/admin/service-sensitivity.js') },   // R45 ENG-LR-2: MFA + elevation, reason, audited
     { path: 'admin/organizations', match: 'exact', handler: () => import('./_handlers/admin/organizations.js') },
     { path: 'admin/ws2-queue', match: 'exact', handler: () => import('./_handlers/admin/ws2-queue.js') },
@@ -220,6 +222,7 @@ const routeTable = [
     { path: 'citizen/favorites', match: 'exact', handler: () => import('./_handlers/citizen/favorites.js') },
     { path: 'citizen/history', match: 'exact', handler: () => import('./_handlers/citizen/history.js') },
     { path: 'citizen/coffre', match: 'exact', handler: () => import('./_handlers/citizen/coffre.js') },
+    { path: 'citizen/notifications', match: 'exact', handler: () => import('./_handlers/citizen/notifications.js') },   // R46 / N03: in-app notifications (derived, no content)
     { path: 'citizen/espace', match: 'exact', handler: () => import('./_handlers/citizen/espace.js') },
     { path: 'citizen/dossier', match: 'exact', handler: () => import('./_handlers/citizen/dossier.js') },
     { path: 'citizen/delegations', match: 'exact', handler: () => import('./_handlers/citizen/delegations.js') },

@@ -27,6 +27,8 @@ export function citizenHandler(name, methods, fn) {
       const { ok: _ok, status, ...body } = out;
       return res.status(status || 200).json(body);
     } catch (error) {
+      // R46: the HDS-ready storage boundary refused (api/lib/protected-store): 503, nothing read or written
+      if (error && error.code === 'PROTECTED_STORE_REFUSED') return res.status(503).json({ error: 'PROTECTED_STORE_REFUSED', message: 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.' });
       // the database's own diagnosis (SQLSTATE, constraint) without parameters or row data
       const err = describeDbError(error);
       // F6 (native run 20261018T192252Z-2ede5b): the account was erased while this request was in flight (account deletion / DSR erasure cascade). A write keyed on it then

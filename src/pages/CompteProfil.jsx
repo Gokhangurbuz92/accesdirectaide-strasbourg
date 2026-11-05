@@ -9,6 +9,7 @@ import GuardianLinks from '@/components/account/GuardianLinks';
 import { AGE_BANDS } from '@/lib/ageBandOptions';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import DevicePush from '@/components/DevicePush';
+import { FranceConnectLink } from '@/components/account/FranceConnect';
 import { LANGUAGES, formatDate, setLanguage, useLanguage, useT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
@@ -237,6 +238,8 @@ export default function CompteProfil() {
       </Card>
 
       <DevicePush />
+
+      <FranceConnectLink />
 
       <Card id="mes-dossiers" tabIndex={-1} ref={(el) => { if (el && typeof window !== 'undefined' && window.location.hash === '#mes-dossiers' && !el.dataset.focused) { el.dataset.focused = '1'; el.scrollIntoView(); el.focus({ preventScroll: true }); } }}>   {/* R18: the « Mes dossiers partagés » tile lands here */}
         <CardHeader><CardTitle className="text-lg">{t('compte:profile.mes_dossiers_partages', 'Mes dossiers partagés')}</CardTitle></CardHeader>

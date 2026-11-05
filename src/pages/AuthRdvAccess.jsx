@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { FranceConnectSignIn } from '@/components/account/FranceConnect';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
@@ -369,6 +370,8 @@ export default function AuthRdvAccess({ mode = 'login' }) {
               {isSignupMode ? t('booking:auth.creer_mon_compte', "Créer mon compte") : t('booking:auth.se_connecter', "Se connecter")}
             </Button>
           </form>
+
+          {!isSignupMode && <FranceConnectSignIn next={next} errorCode={String(searchParams.get('fc') || '')} />}
 
           {!isSignupMode && (
             <div className="flex flex-wrap gap-3 text-sm">

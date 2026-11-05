@@ -53,6 +53,8 @@ export const CAPABILITIES = Object.freeze({
   'citizen.parcours': { description: 'Mon Parcours: the person’s own tracking of démarches and deadlines (C07 C12)', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row; self-tracking, not care or ESSMS follow-up: no (art. 9 may apply)`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
   'citizen.favorites': { description: 'kept records (C10)', aipd: 'out', requiresHds: false, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
   'citizen.history': { description: 'opt-in consultation history (C11)', aipd: 'out', requiresHds: false, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
+  'citizen.franceconnect': { description: 'FranceConnect sign-in and account link (N08 / C26: OIDC adapter; needs the DataPass habilitation and FRANCECONNECT_PRODUCTION_APPROVED)',
+    aipd: 'out', requiresHds: false, surface: 'accounts', aipdRef: 'C-PER' },
   'citizen.delegations': { description: 'trusted persons with read-only access', aipd: 'out', requiresHds: false, hdsNote: `${M} row 2 (ordinary account): no`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
   'citizen.orientation_records': { description: 'the person’s orientations / referral proposals', aipd: 'out', requiresHds: true, hdsNote: `${M} row 10: yes for medical pieces, probable to / from an ESSMS — closed until HDS`, surface: 'accounts', accountsFull: true, aipdRef: 'P8' },
   'citizen.vault': { description: 'Mon Coffre: the person’s encrypted documents (C09)', aipd: 'out', requiresHds: true, hdsNote: `${M} row 8: yes (ANS example of hosting on behalf of the patient)`, surface: 'documents', aipdRef: 'AIPD § 2.1 « coffre »' },
@@ -78,10 +80,10 @@ export const CAPABILITIES = Object.freeze({
  */
 export const ROUTE_CAPABILITIES = Object.freeze({
   // accounts
-  auth: ['citizen.account'], 'login-pro-guard': ['citizen.account'],
+  auth: ['citizen.account'], 'login-pro-guard': ['citizen.account'], 'auth/franceconnect': ['citizen.account', 'citizen.franceconnect'],
   'citizen/profile': ['citizen.account'], 'citizen/age-declaration': ['citizen.account'], 'citizen/email-change': ['citizen.account'],
   'citizen/email-change-confirm': ['citizen.account'], 'citizen/phone': ['citizen.account'], 'citizen/preferences': ['citizen.account'],
-  'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'],
+  'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'], 'citizen/notifications': ['citizen.account'],
   'citizen/push': ['citizen.push'], 'citizen/household': ['citizen.household'], 'citizen/guardians': ['citizen.guardians'],
   'citizen/parcours': ['citizen.parcours'], 'citizen/favorites': ['citizen.favorites'], 'citizen/history': ['citizen.history'],
   'citizen/delegations': ['citizen.delegations'], 'citizen/referrals': ['citizen.orientation_records'], 'citizen/shares': ['citizen.shared_dossier'],
@@ -108,6 +110,7 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   // diagnostic / AI
   diagnostic: ['diagnostic.questionnaire'], assistant: ['ai.processing'], 'public/assistant': ['ai.processing'], 'public/falc': ['ai.processing'],
   // institution, video
+  'admin/guardianships': ['citizen.guardians'],   // R46 / C05 verifier side
   institution: ['institution.portal'], 'admin/institutions': ['institution.portal'],
   'pro/appointments/visio': ['video'], 'rdv/appointments/visio': ['video'],
 });
