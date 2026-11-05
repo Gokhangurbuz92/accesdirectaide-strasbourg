@@ -238,7 +238,16 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
     expect(mails.length).toBe(1);
     expect(mails[0].subject).not.toContain(A.name);
     expect(mails[0].subject).not.toContain('Accueil social');
-    expect(mails[0].text).toContain(A.name);   // the details stay in the body
+    // R45 / ENG-LR-3: the service's sensitivity is not verified (default resolver → unknown) → the MINIMAL e-mail: neutral subject, no structure,
+    // service, date or slug anywhere, no calendar file, a link to the generic account page only (the details stay in the account: r.body.calendar)
+    const privacy = await import('../../api/lib/notification-privacy.js');
+    expect(mails[0].subject).toBe(privacy.minimalTexts('fr').subject);
+    expect(mails[0].category).toBe(privacy.MINIMAL_CATEGORY);
+    expect(mails[0].attachments || []).toEqual([]);
+    for (const part of [mails[0].subject, mails[0].text, mails[0].html]) {
+      expect(part).not.toContain(A.name); expect(part).not.toContain(A.slug); expect(part).not.toContain(r.body.id); expect(part).not.toContain('Accueil social');
+    }
+    expect([...mails[0].text.matchAll(/https?:\/\/\S+/g)].map((x) => x[0])).toEqual([new URL('/compte', mails[0].text.match(/https?:\/\/[^/\s]+/)[0]).toString()]);
     const c = await call('POST', `appointments/${r.body.id}/cancel`, { as: C[1], body: {} });
     expect([c.statusCode, c.body.state], show(c)).toEqual([200, 'CANCELLED']);
     expect(['TEST_RECORDED', 'NOT_SENT', 'NO_PROVIDER', 'ACCEPTED_BY_PROVIDER']).toContain(c.body.notification.email);

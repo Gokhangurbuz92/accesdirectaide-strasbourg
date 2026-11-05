@@ -1030,6 +1030,7 @@
  "notice_labels.status.failed": "gönderim başarısız",
  "notice_labels.status.sent": "gönderildi",
  "notice_labels.status.delivered": "alana teslim edildi",
+ "notice_labels.status.delivered_email": "kişinin e-posta sunucusuna teslim edildi (okunması garanti değil)",
  "notice_labels.line": "{{kind}} — {{recipient}}, {{channel}}: {{status}}",
  "role_labels.structure_admin": "Kuruluş yöneticisi",
  "role_labels.pro": "Profesyonel",

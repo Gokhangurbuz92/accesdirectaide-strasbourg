@@ -82,7 +82,8 @@ describe('noticeCitizen for an account-free booking (injected db / mailer)', () 
 
   it('REMINDER_J1 with the reminder consent: one e-mail to the sealed address, ledger TEST_RECORDED (never DELIVERED)', async () => {
     const sendMail = out('TEST_RECORDED'); const a = guest({ guestReminderConsentAt: new Date() });
-    expect(await noticeCitizen(a, 'REMINDER_J1', msg, { db, sendMail })).toBe('TEST_RECORDED');
+    // R45 / ENG-LR-3: a verified « ordinary » service (reduced level) keeps the appointment category; the default (minimal) is account_notice (r45 test)
+    expect(await noticeCitizen(a, 'REMINDER_J1', msg, { db, sendMail, resolveSensitivity: () => 'ordinary' })).toBe('TEST_RECORDED');
     expect(sendMail).toHaveBeenCalledTimes(1);
     expect(sendMail.mock.calls[0][0]).toMatchObject({ to: 'guest@example.test', category: 'appointment-reminder_j1' });
     // R44-MAIL: a row whose e-mail was attempted takes the pre-chosen notice id (its status trail and the message's CustomID name it)

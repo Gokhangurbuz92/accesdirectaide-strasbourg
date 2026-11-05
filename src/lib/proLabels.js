@@ -16,7 +16,10 @@ export const NOTICE_STATUS = {
   PROVIDER_ACCEPTED: 'remis au service d’envoi', TEST_RECORDED: 'enregistré (environnement de test)', NO_RECIPIENT: 'pas d’adresse confirmée',
   NO_CONSENT: 'la personne a refusé ces messages', NOT_DELIVERED: 'non transmis', FAILED: 'échec de l’envoi', SENT: 'envoyé', DELIVERED: 'remise dans l’espace',
 };
-export const noticeLine = (n) => `${NOTICE_KIND[n.kind] || n.kind} — ${NOTICE_RECIPIENT[n.recipient] || n.recipient}, ${NOTICE_CHANNEL[n.channel] || n.channel} : ${NOTICE_STATUS[n.status] || n.status}`;
+/** R45: an e-mail DELIVERED is a provider « sent » event — handed to the person's mail server, not read and not « in the space » (that is the in-app wording) */
+export const NOTICE_EMAIL_DELIVERED = 'remis au serveur de messagerie de la personne (lecture non garantie)';
+export const noticeStatusOf = (n, labels = NOTICE_STATUS, emailDelivered = NOTICE_EMAIL_DELIVERED) => (n.channel === 'email' && n.status === 'DELIVERED' ? emailDelivered : labels[n.status] || n.status);
+export const noticeLine = (n) => `${NOTICE_KIND[n.kind] || n.kind} — ${NOTICE_RECIPIENT[n.recipient] || n.recipient}, ${NOTICE_CHANNEL[n.channel] || n.channel} : ${noticeStatusOf(n)}`;
 export const PRO_ROLE = { STRUCTURE_ADMIN: 'Administrateur de la structure', PRO: 'Professionnel', SUPERADMIN: 'Super-administrateur' };
 export const proRole = (role) => PRO_ROLE[String(role || '').toUpperCase()] || role || '';
 export const MFA_ERROR = {

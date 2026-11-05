@@ -15,6 +15,8 @@ import { MODE_LABELS, modeLabel, locationOf, locationText } from '../../lib/appo
 import { buildAppUrl } from '../../_utils/user-auth.js';
 import { isSmsSendWindow, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { sendTwilioSms } from '../../_utils/twilio-sms.js';
+import { minimalSms, resolveNotificationPrivacy } from '../../lib/notification-privacy.js';
+import { citizenMailLanguage } from '../../_services/mail-language.js';
 import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
 import { appointmentColumns, appointmentGuestSchema, columnFlags } from '../../_utils/schema-features.js';
 
@@ -259,7 +261,10 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 if (done.has('citizen:sms')) reached++;   // R41-E: already accepted today (retry pass)
                 else if (smsAllowed && inWindow && channelReady && env.twilio.sid && env.twilio.authToken && env.twilio.from) {
                     // R41-E / G6: through sendTwilioSms — a 10 s timeout, nothing logged (Twilio's error text quotes the number), only status / numeric code kept
-                    const smsBody = withOptOut(`Rappel ADA : Votre RDV est prévu demain ${dateStr} à ${timeStr}. Pour annuler ou reporter, consultez votre email de confirmation.`);
+                    // R45 / ENG-LR-3: at the minimal level (sensitive or unknown service — the default) the SMS names no date, time or appointment
+                    const smsMinimal = (await resolveNotificationPrivacy(rdv)).level === 'minimal';
+                    const smsBody = withOptOut(smsMinimal ? minimalSms(await citizenMailLanguage(rdv.citizenUserId))
+                        : `Rappel ADA : Votre RDV est prévu demain ${dateStr} à ${timeStr}. Pour annuler ou reporter, consultez votre email de confirmation.`);
                     const sms = await sendTwilioSms({ to: rdv.beneficiaryPhone, body: smsBody }, env.twilio);
                     if (sms.ok) {
                         smsSent++; reached++;

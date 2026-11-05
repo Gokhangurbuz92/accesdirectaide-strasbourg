@@ -220,6 +220,7 @@ async function sendMessage(req, res, proCtx, conversationId) {
         && await canNotify(created.conversation.citizenUser.id, 'email', 'service').catch(() => false)),
       structureName: created.conversation.structure?.nom || 'Acces Direct Aide',
       appointmentStartAt: created.conversation.appointment?.startAt || null,
+      appointment: created.conversation.appointment || null,   // R45 / ENG-LR-3: the record whose sensitivity sets the alert's privacy level
     });
   } catch {
     // Email delivery stays best-effort for messaging.

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { localizedMail } from '../_utils/mail-catalogue.js';
+import { MINIMAL_PATH, minimalMail, resolveNotificationPrivacy } from '../lib/notification-privacy.js';
 import { citizenMailLanguage } from '../_services/mail-language.js';
 import crypto from 'node:crypto';
 import logger from '../_utils/logger.js';
@@ -575,6 +576,12 @@ function createConfirmedAppointmentPayload(appointment, options = {}) {
  * }} input
  */
 async function sendAppointmentConfirmationEmail(input) {
+  // R45 / ENG-LR-3: the confirmation follows the appointment's privacy level (api/lib/notification-privacy.js; minimal by default: no structure, service,
+  // date, place, link with an id or slug, nor calendar file)
+  if ((await resolveNotificationPrivacy(input.appointment)).level === 'minimal') {
+    const minimal = minimalMail(await citizenMailLanguage(input.appointment?.citizenUserId), { url: buildAppUrl(MINIMAL_PATH) });
+    return sendMail({ to: input.toEmail, subject: minimal.subject, text: minimal.text, html: minimal.html, category: minimal.category });
+  }
   const startsAt = new Date(input.appointment.startAt);
   const endsAt = new Date(input.appointment.endAt);
   const manageUrl = buildAppointmentManageUrl(
@@ -625,7 +632,7 @@ async function sendAppointmentConfirmationEmail(input) {
 /**
  * R42 — what the person is told about the e-mail of this action: the REAL outcome, never an assumed delivery.
  *   ACCEPTED_BY_PROVIDER  a real provider accepted the message (not a proof of delivery)
- *   TEST_RECORDED         recorded in the test outbox (LAB / tests: nothing left)
+ *   TEST_RECORDED         recorded in the test outbox, or validated by the provider sandbox (LAB / tests: nothing left, nothing delivered)
  *   NO_PROVIDER           no e-mail provider is configured: nothing was sent
  *   NOT_SENT              not sent (provider refusal or failure, no verified address, e-mails switched off by the person)
  * @param {unknown} out a sendMail() result, or a noticeCitizen() ledger status
@@ -634,7 +641,7 @@ async function sendAppointmentConfirmationEmail(input) {
 export function mailOutcome(out) {
   const v = typeof out === 'string' ? out : (out && typeof out === 'object' ? out.outcome : null);
   if (v === 'PROVIDER_ACCEPTED') return 'ACCEPTED_BY_PROVIDER';
-  if (v === 'TEST_RECORDED') return 'TEST_RECORDED';
+  if (v === 'TEST_RECORDED' || v === 'SANDBOX_VALIDATED') return 'TEST_RECORDED';   // R45: a provider sandbox delivered nothing — simulated, never « sent »
   if (v === 'NOT_SENT' || (typeof out === 'string' && out !== 'PROVIDER_ACCEPTED' && !getMailerStatus().deliverable)) return 'NO_PROVIDER';
   return 'NOT_SENT';
 }

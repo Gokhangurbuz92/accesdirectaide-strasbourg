@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { localizedMail } from './mail-catalogue.js';
+import { MINIMAL_PATH, minimalMail, resolveNotificationPrivacy } from '../lib/notification-privacy.js';
 import { citizenMailLanguage } from '../_services/mail-language.js';
 import { db } from '../../src/db/index.js';
 import { RdvNotificationLog } from '../../src/db/schema.js';
@@ -159,9 +160,11 @@ export function serializeConversationDetail(conversation) {
  *  recipientEnabled: boolean,
  *  structureName: string,
  *  appointmentStartAt: Date | null,
+ *  appointment?: object | null,
  * }} input
+ * @param {{ resolveSensitivity?: (record: unknown) => unknown }} [deps] R45: the sensitivity resolver (api/lib/notification-privacy.js)
  */
-export async function notifyConversationMessage(input) {
+export async function notifyConversationMessage(input, deps = {}) {
   if (!input.recipientEmail || !input.recipientEnabled) {
     return { sent: false, skipped: true, reason: 'opt_out' };
   }
@@ -194,7 +197,11 @@ export async function notifyConversationMessage(input) {
 
   // R43-MAIL: neutral subject in the reader's language (a person: their stored preference; a professional: French)
   const lang = input.recipientType === 'USER' ? await citizenMailLanguage(input.recipientUserId) : 'fr';
-  const mail = localizedMail('appointment_message', lang, [
+  // R45 / ENG-LR-3: a person's alert follows the appointment's privacy level (minimal by default: no structure, no date, a link to the generic account
+  // page — no conversation id); a professional's alert is unchanged
+  const minimal = input.recipientType === 'USER' && (await resolveNotificationPrivacy(input.appointment || null, deps)).level === 'minimal'
+    ? minimalMail(lang, { url: buildAppUrl(MINIMAL_PATH) }) : null;
+  const mail = minimal || localizedMail('appointment_message', lang, [
     'Vous avez recu un nouveau message concernant votre rendez-vous.',
     '',
     `Structure: ${input.structureName || 'Acces Direct Aide'}`,
@@ -206,7 +213,8 @@ export async function notifyConversationMessage(input) {
     to: input.recipientEmail,
     subject: mail.subject,
     text: mail.text,
-    category: 'appointment_message',
+    ...(minimal ? { html: minimal.html } : {}),
+    category: minimal ? minimal.category : 'appointment_message',
   });
 
   // R42-MAIL: « sent » only when a provider accepted it (or the LAB test outbox kept it) — with noop / no provider / a refusal it was NOT sent

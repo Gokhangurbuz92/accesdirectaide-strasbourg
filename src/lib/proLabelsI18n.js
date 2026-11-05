@@ -1,7 +1,7 @@
 // The labels of src/lib/proLabels.js in the interface language (same keys and order; French stays the default text of each key, so the French screens are unchanged).
 import { useMemo } from 'react';
 import { useT } from '@/i18n';
-import { MFA_ERROR, NOTICE_CHANNEL, NOTICE_KIND, NOTICE_RECIPIENT, NOTICE_STATUS, PRO_ROLE } from '@/lib/proLabels';
+import { MFA_ERROR, NOTICE_CHANNEL, NOTICE_KIND, NOTICE_RECIPIENT, NOTICE_STATUS, PRO_ROLE, noticeStatusOf } from '@/lib/proLabels';
 
 /** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
 const over = (base, labels) => Object.freeze(Object.fromEntries(Object.keys(base).map((k) => [k, labels[k] || base[k]])));
@@ -41,9 +41,11 @@ export function useProLabels() {
       INVALID_CODE: t('pro:mfa_errors.invalid_code', 'Code incorrect ou expiré.'),
       MFA_UNAVAILABLE: t('pro:mfa_errors.unavailable', 'La double authentification est momentanément indisponible.'),
     });
+    // R45: an e-mail DELIVERED (a provider « sent » event) is « handed to the mail server », never « delivered to the space »
+    const emailDelivered = t('pro:notice_labels.status.delivered_email', 'remis au serveur de messagerie de la personne (lecture non garantie)');
     /** same text as proLabels.noticeLine in French; unknown codes still fall back to the code itself */
     const noticeLine = (/** @type {{ kind: string, recipient: string, channel: string, status: string }} */ n) => t('pro:notice_labels.line', '{{kind}} — {{recipient}}, {{channel}} : {{status}}', {
-      kind: noticeKind[n.kind] || n.kind, recipient: noticeRecipient[n.recipient] || n.recipient, channel: noticeChannel[n.channel] || n.channel, status: noticeStatus[n.status] || n.status,
+      kind: noticeKind[n.kind] || n.kind, recipient: noticeRecipient[n.recipient] || n.recipient, channel: noticeChannel[n.channel] || n.channel, status: noticeStatusOf(n, noticeStatus, emailDelivered),
     });
     const proRole = (/** @type {string | null | undefined} */ role) => proRoleLabels[String(role || '').toUpperCase()] || role || '';
     return { noticeKind, noticeRecipient, noticeChannel, noticeStatus, noticeLine, proRoleLabels, proRole, mfaError };
