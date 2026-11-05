@@ -46,7 +46,7 @@ describe('N10 provider status', () => {
     for (const r of rows) { expect(PROVIDER_STATES).toContain(r.state); expect(PROVIDER_REASON_CODES).toContain(r.reasonCode); }
     expect(rows.filter((r) => r.state === 'CONNECTED').map((r) => r.id)).toEqual(['maps']);
     expect(Object.fromEntries(rows.map((r) => [r.id, r.state]))).toMatchObject({ mail: 'NOT_CONFIGURED', openfisca: 'SIMULATED', upstash: 'SIMULATED', hosting: 'SIMULATED', franceconnect: 'NOT_CONFIGURED' });
-    expect(rows.find((r) => r.id === 'proconnect').adapter).toBe('ABSENT');
+    expect(rows.find((r) => r.id === 'proconnect')).toMatchObject({ adapter: 'PRESENT', state: 'NOT_CONFIGURED' });   // R46 integ: the N09 adapter exists
     expect(summarizeProviders(rows)).toEqual({ CONNECTED: 1, SIMULATED: 3, NOT_CONFIGURED: 11 });
   });
   it('sandbox / test / prototype configurations are SIMULATED, complete ones CONNECTED — and no value is ever returned', () => {

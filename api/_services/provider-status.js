@@ -15,6 +15,7 @@ import { pushConfig } from './web-push.js';
 import { outlookStatus } from './calendar-outlook.js';
 import { videoStatus } from '../lib/video-provider.js';
 import { franceConnectConfig } from '../lib/franceconnect/oidc-client.js';
+import { proConnectStatus, PROCONNECT_REQUIRED_ENV, PROCONNECT_OPTIONAL_ENV } from '../lib/proconnect-oidc.js';
 
 export const PROVIDER_STATES = Object.freeze(['CONNECTED', 'SIMULATED', 'NOT_CONFIGURED']);
 /** every reasonCode a row can carry (the page translates them; `reason` is the operator's French detail) */
@@ -101,8 +102,12 @@ export function providerStatuses(env = process.env) {
     reasonCode: fc.ok ? (fcLoopback ? 'SANDBOX' : 'COMPLETE') : fc.reason === 'NOT_CONFIGURED' ? 'NOT_CONFIGURED' : fc.reason === 'PRODUCTION_NOT_APPROVED' ? 'PRODUCTION_ACTIVATION_PENDING' : 'INCOMPLETE_CONFIGURATION',
     reason: fc.ok ? (fcLoopback ? 'fournisseur de test local (LAB)' : 'configuration complète (habilitation et connexion réelle non vérifiées par cette page)') : 'non configuré : la connexion se fait par adresse e-mail et mot de passe',
     variables: presence(env, ['FRANCECONNECT_ISSUER', 'FRANCECONNECT_CLIENT_ID', 'FRANCECONNECT_CLIENT_SECRET', 'FRANCECONNECT_REDIRECT_URI', 'FRANCECONNECT_PRODUCTION_APPROVED']) });
-  row({ id: 'proconnect', category: 'identity', label: 'ProConnect (identité des professionnels)', adapter: 'ABSENT', state: 'NOT_CONFIGURED',
-    reasonCode: 'NO_ADAPTER', reason: 'aucun adaptateur dans le produit : les professionnels se connectent avec leur compte ADA Pro (MFA)', variables: [] });
+  // ProConnect (R46 N09 adapter api/lib/proconnect-oidc.js): identifies an invited professional only; ADA MFA still required
+  const pc = proConnectStatus(env);
+  row({ id: 'proconnect', category: 'identity', label: 'ProConnect (identité des professionnels)', state: pc.available ? 'CONNECTED' : 'NOT_CONFIGURED',
+    reasonCode: pc.available ? 'COMPLETE' : (pc.missing.length === PROCONNECT_REQUIRED_ENV.length ? 'NOT_CONFIGURED' : 'INCOMPLETE_CONFIGURATION'),
+    reason: pc.available ? 'configuration complète (inscription et connexion réelle non vérifiées par cette page)' : 'non configuré : les professionnels se connectent avec leur compte ADA Pro (MFA)',
+    variables: presence(env, [...PROCONNECT_REQUIRED_ENV, ...PROCONNECT_OPTIONAL_ENV]) });
 
   // maps: OpenStreetMap tiles (browser) + Base Adresse Nationale geocoder (server), public services without a credential
   row({ id: 'maps', category: 'maps', label: 'Cartes (OpenStreetMap) et géocodage (Base Adresse Nationale)', state: 'CONNECTED',

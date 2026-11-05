@@ -42,6 +42,11 @@ describe.skipIf(!hasDatabase)('R46 security signals and provider status (real DB
     ({ db } = await import('../../src/db/index.js'));
     api = (await import('../../api/index.js')).default; auth = await import('../../api/_utils/auth.js');
     ({ default: health } = await import('../../api/_handlers/cron/health-alert.js'));
+    // R46 integ: the signals count EVERY row of their actions in the window; earlier files of the shared integration database (refused sign-ins,
+    // exports) leave such rows minutes before this file runs. Start from a clean window so the counts below are this file's own.
+    const { SECURITY_SIGNAL_ACTIONS } = await import('../../api/_services/security-signals.js');
+    const actions = [...new Set(Object.values(SECURITY_SIGNAL_ACTIONS).flat())];
+    await db.execute(sql`DELETE FROM "AuditLog" WHERE action IN ${sql.raw(`(${actions.map((a) => `'${String(a).replace(/'/g, "''")}'`).join(', ')})`)} AND "timestamp" > NOW() - interval '3 hours'`);
   }, 60000);
   afterAll(async () => {
     for (const [k, v] of Object.entries(saved)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
@@ -111,7 +116,7 @@ describe.skipIf(!hasDatabase)('R46 security signals and provider status (real DB
     const by = Object.fromEntries(r.body.providers.map((p) => [p.id, p]));
     expect(by.upstash.state).toBe('SIMULATED');
     expect(by.database.state).toBe('CONNECTED');
-    expect(by.franceconnect).toMatchObject({ adapter: 'ABSENT', state: 'NOT_CONFIGURED' });
+    expect(by.franceconnect).toMatchObject({ adapter: 'PRESENT', state: 'NOT_CONFIGURED' });   // R46 integ: the N08 adapter exists, not configured here
     expect(by.mail.variables.find((v) => v.name === 'MAILER_API_KEY')).toEqual({ name: 'MAILER_API_KEY', set: true });
     expect(JSON.stringify(r.body)).not.toContain(SECRET);
     expect(JSON.stringify(r.body)).not.toMatch(/postgres(ql)?:\/\//);
