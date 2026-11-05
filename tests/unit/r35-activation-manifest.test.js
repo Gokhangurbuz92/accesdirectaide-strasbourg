@@ -90,7 +90,9 @@ describe('R35 feature readiness doctor', () => {
     expect(r.modules.coffre).toMatchObject({ verdict: 'LEGAL_OR_PRIVACY_GATE', blockers: ['gate: hds', 'gate: storage-dpa'] });
     expect(r.modules['gdpr-purge'].verdict).toBe('LEGAL_OR_PRIVACY_GATE');
     expect(r.modules.mail.blockers).toContain('gate: mail-dpa');
-    expect(r.modules.sms.blockers).toContain('gap: sms-stop-route');
+    // R46: the STOP route exists (gap fixed in code); the legal gate (DPA, sender registration, consent) still keeps SMS closed
+    expect(r.modules.sms.blockers).not.toContain('gap: sms-stop-route');
+    expect(r.modules.sms.blockers).toContain('gate: sms-dpa');
   });
 
   it('flags forbidden variables', () => {

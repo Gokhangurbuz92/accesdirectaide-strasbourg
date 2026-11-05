@@ -1578,6 +1578,52 @@
       ],
       "format": "^(main-db-certified)?$",
       "note": "R46: the controller states that the PostgreSQL holding the protected case records (ProCaseNote) is on the certified (HDS) host. Production / preview refuse case notes (503 PROTECTED_STORE_REFUSED) unless this AND a valid ADA_HDS_CERTIFIED_HOSTING are set (api/_services/pro-protected-records.js). A statement, not a verification; unset until a certified host exists"
+    },
+    "ALERT_EXPORT_BURST": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{1,5}$",
+      "note": "R46 (Q07): exports of personal or audit data in one window (all actors) that raise a security alert; default in api/_services/security-signals.js"
+    },
+    "ALERT_EXPORT_PER_ACTOR": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{1,5}$",
+      "note": "R46 (Q07): exports by ONE actor in one window that raise a security alert"
+    },
+    "ALERT_FAILED_LOGIN_BURST": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{1,5}$",
+      "note": "R46 (Q07): refused sign-ins (every surface) in one window that raise a security alert"
+    },
+    "ALERT_MFA_FAILURE_BURST": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{1,5}$",
+      "note": "R46 (Q07): refused MFA codes in one window that raise a security alert"
+    },
+    "ALERT_SECURITY_WINDOW_MINUTES": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{1,5}$",
+      "note": "R46 (Q07): the window of the security signals, in minutes"
+    },
+    "MOCK_FC_PORT": {
+      "class": "lab",
+      "nature": "config",
+      "note": "R46 (N08): port of the LAB mock FranceConnect provider (scripts/lab/mock-franceconnect.mjs); LAB only"
+    },
+    "MOCK_FC_SUB": {
+      "class": "lab",
+      "nature": "config",
+      "note": "R46 (N08): synthetic subject returned by the LAB mock FranceConnect provider; LAB only"
+    },
+    "SIG_VILLE_API_VERIFIED": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^(documented-official-api)?$",
+      "note": "R46 (P07): exact value documented-official-api allows the QPV adapter to call the SIG Ville coordinate API — only once an official, documented API and its terms are verified; unset = no call (commune-level QPV answer from the open ANCT list)"
     }
   },
   "platform": [

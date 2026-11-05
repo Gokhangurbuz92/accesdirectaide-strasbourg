@@ -42,7 +42,9 @@ describe('contact form', () => {
     const { container } = render(wrap(h(Contact)));
     expect(container.querySelector('form')).toHaveAttribute('novalidate');
     await submit(container);
-    expect(fetchSpy).not.toHaveBeenCalled();
+    // R46 / P20: the page reads the channel status on load (GET /api/contact); the empty submit sends NOTHING (no POST at all)
+    expect(fetchSpy.mock.calls.filter(([, init]) => String(init?.method || 'GET').toUpperCase() !== 'GET')).toEqual([]);
+    expect(fetchSpy.mock.calls.every(([url]) => String(url) === '/api/contact')).toBe(true);
     const summary = screen.getByTestId('contact-error-summary');
     expect(summary).toHaveAttribute('role', 'alert');
     expect(document.activeElement).toBe(summary);

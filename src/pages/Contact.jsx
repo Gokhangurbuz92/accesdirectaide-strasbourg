@@ -48,8 +48,9 @@ export default function Contact() {
   const [channel, setChannel] = useState(/** @type {'UNKNOWN' | 'CONNECTED' | 'TEST' | 'NOT_CONNECTED' | 'CLOSED'} */ ('UNKNOWN'));
   useEffect(() => {
     let alive = true;
-    fetch('/api/contact', { headers: { Accept: 'application/json' } })
+    Promise.resolve().then(() => fetch('/api/contact', { headers: { Accept: 'application/json' } }))
       .then(async (r) => {
+        if (!alive || !r) return;
         const d = await r.json().catch(() => ({}));
         if (!alive) return;
         if (r.status === 503 && (d?.error === 'PUBLIC_BETA_RESTRICTED' || d?.error === 'CAPABILITY_NOT_OPEN' || d?.code === 'CAPABILITY_NOT_OPEN')) setChannel('CLOSED');

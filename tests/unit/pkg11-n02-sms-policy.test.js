@@ -24,7 +24,8 @@ describe('PKG-11 / N02 SMS policy', () => {
 
   it('the opt-out line promises STOP only when the inbound webhook is routed and configured; GSM-7 only', () => {
     expect(optOutLine({})).toBe('Arreter ces SMS : Mon compte > Notifications.');
-    expect(optOutLine(ON)).toBe('Arreter ces SMS : Mon compte > Notifications.');   // configured but not routed: no STOP promise
+    expect(optOutLine(ON, false)).toBe('Arreter ces SMS : Mon compte > Notifications.');   // configured but not routed: no STOP promise
+    expect(optOutLine(ON)).toMatch(/^STOP /);   // R46: the webhook is routed (POST /api/monitor/sms-inbound/twilio) and configured
     expect(optOutLine({ ...ON, SMS_INBOUND_URL: 'http://example.test/x' }, true)).not.toMatch(/STOP/);
     expect(optOutLine(ON, true)).toMatch(/^STOP /);
     for (const env of [{}, ON]) expect(withOptOut('Rappel ADA : Votre RDV est prévu demain à 10:00.', env)).toMatch(GSM7);
@@ -56,10 +57,11 @@ describe('PKG-11 / N02 SMS policy', () => {
     expect([r.statusCode, r.body]).toEqual([200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>']);
   });
 
-  it('every sender applies the window and the opt-out line; the webhook is not routed while the CSRF router code stays pinned', () => {
+  it('every sender applies the window and the opt-out line; R46: the webhook is routed under the CSRF-exempt /monitor/ prefix (pinned router untouched)', () => {
     for (const f of ['api/_handlers/cron/rdv-reminder.js', 'api/_handlers/cron/parcours-reminder.js', 'api/_handlers/public/sms-notify.js']) {
       const s = readFileSync(f, 'utf8'); expect(s, f).toMatch(/isSmsSendWindow\(/); expect(s, f).toMatch(/withOptOut\(/);
     }
-    expect(readFileSync('api/routes.js', 'utf8')).not.toMatch(/sms-inbound/);
+    expect(readFileSync('api/routes.js', 'utf8')).toMatch(/path: 'monitor\/sms-inbound\/twilio'/);
+    expect(readFileSync('api/routes.js', 'utf8')).not.toMatch(/public\/sms-inbound/);
   });
 });
