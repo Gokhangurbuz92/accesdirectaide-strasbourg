@@ -7,6 +7,7 @@ import { env } from '../../_utils/env.js';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import { grantHasPurpose, resolveDossierForStructure } from '../../_utils/share-access.js';
 import crypto from 'crypto';
+import { withCapability } from '../../_utils/capabilities.js';
 
 /**
  * SI-SIAO Interoperability API (Pro-only)
@@ -166,4 +167,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability(['pro.siao_interop', 'citizen.shared_dossier'], requireProAuth(handler));

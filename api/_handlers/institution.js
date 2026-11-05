@@ -8,6 +8,7 @@ import { templates } from '../lib/email-service.js';
 import { env } from '../_utils/env.js';
 import { observatoire, territoryCsv } from '../_services/territorial-stats.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
+import { requireCapability } from '../_utils/capabilities.js';
 
 /**
  * PKG-5 / I01 I03 I04 — the institutional space (separate login, aggregates only):
@@ -17,6 +18,7 @@ import { isFeatureOn } from '../_services/feature-flags.js';
  *   GET  institution/me | institution/observatoire | institution/export?period=month|quarter|year (CSV; needs the OPEN_DATA_EXPORT flag: licence still to decide)
  */
 export default async function handler(req, res) {
+    if (!requireCapability(res, 'institution.portal')) return undefined;   // R45 / ENG-LR-6: outside the AIPD — refused before anything is read (api/_utils/capabilities.js)
   res.setHeader('Cache-Control', 'no-store');
   const path = new URL(req.url || '/', 'http://x').pathname.replace(/^\/api\//, '').replace(/\/+$/, '');
   try {

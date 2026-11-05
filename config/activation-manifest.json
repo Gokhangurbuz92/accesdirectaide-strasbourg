@@ -245,6 +245,30 @@
       "format": "^(full)?$",
       "note": "R43 (E2): what the « accounts » surface opens during the beta. Unset = booking scope (auth/*, citizen profile, age-declaration, email-change(-confirm), phone, preferences, restriction, espace); « full » = the whole citizen space (household, guardians, push, shares, parcours, favorites, history, delegations, referrals)"
     },
+    "ADA_CAPABILITIES_OPEN": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^[a-z0-9._, -]*$",
+      "note": "R45 (ENG-LR-6): comma list of capabilities OUTSIDE the AIPD to open (api/_utils/capabilities.js, CONTROL/r45/R45_CAPABILITY_GATES_EN.md). Unset = none; exact names, unknown names open nothing, no wildcard. The capability’s surface must be open too; a requiresHds capability also needs ADA_HDS_CERTIFIED_HOSTING. Set only after the controller extends the AIPD"
+    },
+    "ADA_HDS_CERTIFIED_HOSTING": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(HDS1:[a-z0-9][a-z0-9-]{1,39}:[A-Za-z0-9][A-Za-z0-9._-]{2,63}:[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9a-f]{64})?$",
+      "note": "R45 (ENG-LR-6): attestation token of a certified health-data host (HDS), HDS1:<provider-slug>:<certificate-reference>:<valid-until YYYY-MM-DD>:<sha256 of the certificate document>. Malformed or expired = no HDS capability opens. A recorded statement by the controller, not a verification; unset until a certified host exists"
+    },
+    "ADA_CAPABILITY_ENFORCEMENT": {
+      "class": "lab",
+      "nature": "config",
+      "format": "^(1)?$",
+      "note": "R45 (ENG-LR-6): « 1 » turns the capability gates on in a LAB / test run. Production, Preview and the restricted beta enforce them whatever this says (no value turns them off there)"
+    },
     "ADA_BETA_OPEN_JOBS": {
       "class": "decision",
       "nature": "config",

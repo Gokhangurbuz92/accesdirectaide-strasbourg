@@ -9,6 +9,7 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '../api/_utils/public-beta.js';
+import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -104,6 +105,23 @@ export function evaluateReleasePreflight(env, opts = {}) {
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
     : 'accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary');
+  // R45 / ENG-LR-6: capabilities outside the AIPD (api/_utils/capabilities.js) — evaluated as Production does (enforced). PASS when none is open; WARN when
+  // one is named or open (an AIPD extension and, for the HDS ones, a certified host are needed); a malformed HDS token is a FAIL (it would open nothing)
+  {
+    const prodEnv = { ...env, VERCEL_ENV: 'production' };
+    const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+    const unknown = named.filter((n) => !Object.prototype.hasOwnProperty.call(CAPABILITIES, n));
+    const openOut = capabilityStates(prodEnv).filter((c) => c.aipd === 'out' && c.open).map((c) => c.name);
+    const namedClosed = named.filter((n) => !unknown.includes(n) && !openOut.includes(n) && CAPABILITIES[n].aipd === 'out');
+    const status = openOut.length || named.length ? 'WARN' : 'PASS';
+    add('capabilities.out_of_aipd', status, status === 'PASS' ? 'no capability outside the AIPD is open (ADA_CAPABILITIES_OPEN unset)'
+      : `outside the AIPD — open: ${openOut.join(', ') || 'none'}; named but still closed: ${namedClosed.join(', ') || 'none'}; unknown names (open nothing): ${unknown.join(', ') || 'none'}`);
+    if (get('ADA_HDS_CERTIFIED_HOSTING')) {
+      const h = hdsAttestation(env);
+      add('capabilities.hds_attestation', h.valid ? 'WARN' : 'FAIL', h.valid ? 'ADA_HDS_CERTIFIED_HOSTING holds a well-formed, unexpired token: check the certificate itself (a token is a statement, not a verification)'
+        : `ADA_HDS_CERTIFIED_HOSTING is set but invalid (${h.reason}): no HDS capability opens`);
+    }
+  }
   if (beta) add('beta.open_surfaces', opened.size ? 'WARN' : 'PASS', opened.size ? `surfaces opened during the beta: ${[...opened].sort().join(', ')} (their services are required above)` : 'no surface opened: only public read-only routes');
   return out;
 }

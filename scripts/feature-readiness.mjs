@@ -17,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { isAllowedInPublicBeta } from '../api/_utils/public-beta.js';
+import { CAPABILITIES, capabilitiesOfRoute, capabilityState } from '../api/_utils/capabilities.js';
 
 export const VERDICTS = ['MISSING_IMPLEMENTATION', 'LEGAL_OR_PRIVACY_GATE', 'MISSING_PROVIDER', 'MISSING_VARIABLES', 'MISSING_TEST_EVIDENCE', 'PRODUCTION_RESTRICTED', 'READY_TECHNICALLY', 'LIVE_VERIFIED'];
 
@@ -78,6 +79,12 @@ let srcAliases = {};
 /**
  * @param {{ root: string, manifest: any, source: EnvSource, testsReport?: Map<string, 'passed' | 'failed'> }} input
  */
+/** @param {string} c */
+function capabilityNote(c) {
+  const cap = CAPABILITIES[c];
+  return `capability ${c} closed in production${cap.aipd === 'out' ? ' (outside the AIPD: ADA_CAPABILITIES_OPEN' + (cap.requiresHds ? ' + ADA_HDS_CERTIFIED_HOSTING' : '') + ')' : ''}`;
+}
+
 export function evaluateReadiness({ root, manifest, source, testsReport }) {
   srcAliases = Object.fromEntries(Object.entries(manifest.variables).filter(([, m]) => /** @type {any} */ (m).class === 'alias').map(([n, m]) => [n, /** @type {any} */ (m).canonical]));
   const routes = declaredRoutes(root);
@@ -111,6 +118,12 @@ export function evaluateReadiness({ root, manifest, source, testsReport }) {
     const untested = !testFiles.length || (testsReport ? testFiles.some((/** @type {any} */ t) => t.result !== 'passed') : false);
     const deps = (m.requires_module || []).filter((/** @type {string} */ d) => !byId.has(d));
     const betaOpen = m.beta_open || (m.routes || []).every((/** @type {string} */ r) => isAllowedInPublicBeta('GET', r.replace(/\/$/, '')));
+    // R45 / ENG-LR-6: the capabilities of the module's routes, as Production evaluates them (enforced). Names mode cannot read ADA_CAPABILITIES_OPEN or the HDS
+    // token: an out-of-AIPD capability is then reported as « open only if named », never as open.
+    const caps = [...new Set((m.routes || []).flatMap((/** @type {string} */ r) => [...capabilitiesOfRoute(r.replace(/\/$/, ''))]))];
+    const closedCaps = caps.filter((c) => (source.mode === 'values'
+      ? !capabilityState(c, { ...source.env, VERCEL_ENV: 'production' }).open
+      : CAPABILITIES[c].aipd !== 'in'));
 
     /** @type {string[]} */
     const blockers = [];
@@ -136,13 +149,17 @@ export function evaluateReadiness({ root, manifest, source, testsReport }) {
     } else if (beta && !betaOpen) {
       verdict = 'PRODUCTION_RESTRICTED';
       blockers.push('closed by the restricted public beta (ADA_PUBLIC_BETA_RESTRICTED)');
+    } else if (closedCaps.length) {
+      verdict = 'PRODUCTION_RESTRICTED';
+      blockers.push(...closedCaps.map((c) => capabilityNote(c)));
     }
     // every other condition is still reported, so one run shows all the work left, not only the first blocker
     const also = [];
     if (verdict !== 'MISSING_VARIABLES' && verdict !== 'MISSING_PROVIDER' && missingVars.length) also.push(...missingVars.map((/** @type {any} */ v) => `${v.name} ${v.state}`));
     if (verdict !== 'LEGAL_OR_PRIVACY_GATE' && gates.length) also.push(...gates.map((/** @type {string} */ g) => `gate: ${g}`));
     if (verdict !== 'PRODUCTION_RESTRICTED' && beta && !betaOpen) also.push('closed by the restricted public beta');
-    results[m.id] = { verdict, blockers, also, surfaces: m.surfaces, label: m.label, order: m.order, variables: vars.map((/** @type {any} */ v) => ({ name: v.name, state: v.state })), tests: testFiles };
+    if (!blockers.some((b) => b.startsWith('capability '))) also.push(...closedCaps.map((c) => capabilityNote(c)));
+    results[m.id] = { verdict, blockers, also, capabilities: caps, surfaces: m.surfaces, label: m.label, order: m.order, variables: vars.map((/** @type {any} */ v) => ({ name: v.name, state: v.state })), tests: testFiles };
   }
 
   // environment-wide findings: forbidden variables that are present (names only when values are unknown)

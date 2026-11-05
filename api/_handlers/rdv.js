@@ -1606,6 +1606,9 @@ async function citizenVisio(req, res) {
   if (appointment.mode !== 'VIDEO') return res.status(409).json({ error: 'NOT_A_VIDEO_APPOINTMENT', code: 'NOT_A_VIDEO_APPOINTMENT', message: 'Ce rendez-vous a lieu en présentiel.' });
   const action = toTrimmedString(req.body?.action);
   if (action === 'consent' || action === 'withdraw') {
+    // R45 / ENG-LR-6: video is outside the AIPD — no new agreement is recorded while the capability is closed (withdrawing one always stays possible; the
+    // join is refused by joinRefusal, and the router refuses the whole route while the capability is closed)
+    if (action === 'consent') { const { requireCapability } = await import('../_utils/capabilities.js'); if (!requireCapability(res, 'video')) return undefined; }
     await db.update(schema.ProAppointment).set({ visioCitizenConsentAt: action === 'consent' ? new Date() : null }).where(eq(schema.ProAppointment.id, appointment.id));
     return res.status(200).json(serializeAppointment(await loadAppointmentWithRelations(appointment.id)));
   }

@@ -2,6 +2,7 @@
 import { requireProStructureContext } from '../../_utils/auth.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { act, eligibleReceivers, getReferral, listBox, propose } from '../../_services/referrals.js';
+import { withCapability } from '../../_utils/capabilities.js';
 
 /**
  * PKG-4 / R09 R10 R11 E06 — referrals of the caller's organization (rules in api/_services/referrals.js).
@@ -25,4 +26,5 @@ async function handler(req, res) {
   return send(await act(ctx, b.id, String(b.action || ''), b));
 }
 
-export default withProRdvHandler('pro.referrals', handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability('pro.referrals', withProRdvHandler('pro.referrals', handler));

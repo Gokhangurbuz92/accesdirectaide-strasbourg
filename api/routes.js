@@ -10,8 +10,10 @@
  * @property {Function} handler - Lazy loader: () => import('./handler.js')
  */
 
+import { gateRoute } from './_utils/capabilities.js';
+
 /** @type {Route[]} */
-export const routes = [
+const routeTable = [
     // --- Health ---
     { path: 'health/live', match: 'exact', handler: () => import('./_handlers/health.js') },
     { path: 'health/ready', match: 'exact', handler: () => import('./_handlers/health.js') },
@@ -252,3 +254,10 @@ export const routes = [
     // --- Documentation ---
     { path: 'docs/openapi.json', match: 'exact', handler: () => import('./_handlers/openapi.js') },
 ];
+
+/**
+ * R45 / ENG-LR-6: every route passes the capability gate (api/_utils/capabilities.js) before its handler runs — out-of-AIPD capabilities stay closed in
+ * production, preview and the restricted beta, whatever the beta flag says later. The gate is a no-op for a route of no capability.
+ * @type {Route[]}
+ */
+export const routes = routeTable.map((r) => gateRoute(r));

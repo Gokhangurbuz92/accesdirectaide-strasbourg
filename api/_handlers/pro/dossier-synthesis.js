@@ -4,6 +4,7 @@ import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js
 import { resolveDossierForStructure, grantHasPurpose, PURPOSE_AI } from '../../_utils/share-access.js';
 import { presentResults } from '../../lib/shareResults.js';
 import { createDraft, listDrafts, review } from '../../_services/dossier-synthesis.js';
+import { withCapability } from '../../_utils/capabilities.js';
 
 /**
  * Dossier AI synthesis (Pro-only) — PKG-6 / R17: LOCAL model only (no Gemini, no external model, no fallback); the result is a DRAFT in the review queue.
@@ -54,4 +55,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability(['ai.processing', 'citizen.shared_dossier'], requireProAuth(handler));

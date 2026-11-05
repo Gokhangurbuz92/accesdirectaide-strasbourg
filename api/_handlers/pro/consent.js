@@ -8,6 +8,7 @@ import { resolveDossierForStructure, activeGrantExists } from '../../_utils/shar
 import { logProAudit } from '../../_utils/auth.js';
 import crypto from 'crypto';
 import { clientIp } from '../../_utils/client-ip.js';
+import { withCapability } from '../../_utils/capabilities.js';
 /**
  * Consent API (Pro-authenticated)
  *
@@ -102,4 +103,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability('citizen.shared_dossier', requireProAuth(handler));

@@ -5,6 +5,7 @@ import { requireProStructureContext } from '../../_utils/auth.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { getCanonicalOrigin } from '../../_utils/site-origin.js';
 import { addItem, createBasket, getBasket, linkCase, listBaskets, removeItem, searchCatalogue, shareToCase, updateBasket, updateItem } from '../../_services/orientation-basket.js';
+import { withCapability } from '../../_utils/capabilities.js';
 
 /**
  * R18 (R31) — « Sélections d'orientation » of the caller's organization (rules in api/_services/orientation-basket.js).
@@ -41,4 +42,5 @@ async function handler(req, res) {
   }
 }
 
-export default withProRdvHandler('pro.orientation-baskets', handler);
+// R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
+export default withCapability('pro.orientation_selections', withProRdvHandler('pro.orientation-baskets', handler));

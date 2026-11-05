@@ -16,6 +16,7 @@ import { storage as defaultStorage } from '../lib/storage.js';
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
+import { capabilityOpen } from '../_utils/capabilities.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -299,23 +300,44 @@ export async function coffreStorageKeys(userId, db = defaultDb) {
 }
 
 // ───────────── Mon Espace summary (C13)
-export async function espaceSummary(userId, db = defaultDb) {
-  const parcours = (await listParcours(userId, db)).items;
-  const open = parcours.filter((i) => !['CLOSED', 'DECISION_POSITIVE', 'DECISION_NEGATIVE'].includes(i.status));
-  const nextDue = open.filter((i) => i.dueDate && new Date(i.dueDate).getTime() > Date.now()).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0] || null;
-  const coffre = (await listCoffre(userId, db)).quota;
-  const [{ f }] = (await db.execute(sql`SELECT count(*)::int AS f FROM "CitizenFavorite" WHERE "userId" = ${userId}`)).rows;
-  const [{ s }] = (await db.execute(sql`SELECT count(*)::int AS s FROM "SharedDiagnostic" WHERE "ownerCitizenId" = ${userId}`)).rows;
-  const appts = await db.select({ id: ProAppointment.id, startAt: ProAppointment.startAt, status: ProAppointment.status }).from(ProAppointment)
-    .where(and(eq(ProAppointment.citizenUserId, userId), sql`${ProAppointment.startAt} > NOW()`, sql`${ProAppointment.status} <> 'cancelled'`)).orderBy(asc(ProAppointment.startAt)).limit(1);
-  // C13: the message state of the account (no read markers exist, so no « unread » count is invented): how many conversations, when the latest message was
-  // written and whether the structure wrote last (= the person may have something to read or answer). Message bodies are never read here.
-  const [m] = (await db.execute(sql`SELECT count(DISTINCT c.id)::int AS conversations, max(msg."createdAt") AS "lastAt",
-      (SELECT x."senderType" FROM "RdvConversationMessage" x JOIN "RdvConversation" y ON y.id = x."conversationId" WHERE y."citizenUserId" = ${userId} ORDER BY x."createdAt" DESC LIMIT 1) AS "lastSender"
-    FROM "RdvConversation" c LEFT JOIN "RdvConversationMessage" msg ON msg."conversationId" = c.id WHERE c."citizenUserId" = ${userId}`)).rows;
-  const messages = { conversations: m?.conversations || 0, lastMessageAt: m?.lastAt || null, lastFromStructure: m?.lastSender ? m.lastSender !== 'USER' : false };
-  return { ok: true, status: 200, summary: { parcours: { total: parcours.length, open: open.length, nextDue: nextDue ? { id: nextDue.id, title: nextDue.title, dueDate: nextDue.dueDate } : null },
-    documents: coffre.files, favorites: f, dossiers: s, nextAppointment: appts[0] || null, messages } };
+/**
+ * C13 summary. R45 / ENG-LR-6 (data minimisation): a part of the summary whose capability is closed (api/_utils/capabilities.js) is neither read nor returned —
+ * no count, no flag, no key: Mon Parcours (citizen.parcours), Mon Coffre (citizen.vault), favourites (citizen.favorites), shared dossiers
+ * (citizen.shared_dossier), next appointment (citizen.booking), message state (citizen.booking_message). In the LAB (enforcement off) every part is returned.
+ * @param {string} userId @param {any} [db] @param {{ isOpen?: (capability: string) => boolean }} [opts]
+ */
+export async function espaceSummary(userId, db = defaultDb, opts = {}) {
+  const isOpen = opts.isOpen || ((c) => capabilityOpen(c));
+  const summary = {};
+  if (isOpen('citizen.parcours')) {
+    const parcours = (await listParcours(userId, db)).items;
+    const open = parcours.filter((i) => !['CLOSED', 'DECISION_POSITIVE', 'DECISION_NEGATIVE'].includes(i.status));
+    const nextDue = open.filter((i) => i.dueDate && new Date(i.dueDate).getTime() > Date.now()).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0] || null;
+    summary.parcours = { total: parcours.length, open: open.length, nextDue: nextDue ? { id: nextDue.id, title: nextDue.title, dueDate: nextDue.dueDate } : null };
+  }
+  if (isOpen('citizen.vault')) summary.documents = (await listCoffre(userId, db)).quota.files;
+  if (isOpen('citizen.favorites')) {
+    const [{ f }] = (await db.execute(sql`SELECT count(*)::int AS f FROM "CitizenFavorite" WHERE "userId" = ${userId}`)).rows;
+    summary.favorites = f;
+  }
+  if (isOpen('citizen.shared_dossier')) {
+    const [{ s }] = (await db.execute(sql`SELECT count(*)::int AS s FROM "SharedDiagnostic" WHERE "ownerCitizenId" = ${userId}`)).rows;
+    summary.dossiers = s;
+  }
+  if (isOpen('citizen.booking')) {
+    const appts = await db.select({ id: ProAppointment.id, startAt: ProAppointment.startAt, status: ProAppointment.status }).from(ProAppointment)
+      .where(and(eq(ProAppointment.citizenUserId, userId), sql`${ProAppointment.startAt} > NOW()`, sql`${ProAppointment.status} <> 'cancelled'`)).orderBy(asc(ProAppointment.startAt)).limit(1);
+    summary.nextAppointment = appts[0] || null;
+  }
+  if (isOpen('citizen.booking_message')) {
+    // C13: the message state of the account (no read markers exist, so no « unread » count is invented): how many conversations, when the latest message was
+    // written and whether the structure wrote last (= the person may have something to read or answer). Message bodies are never read here.
+    const [m] = (await db.execute(sql`SELECT count(DISTINCT c.id)::int AS conversations, max(msg."createdAt") AS "lastAt",
+        (SELECT x."senderType" FROM "RdvConversationMessage" x JOIN "RdvConversation" y ON y.id = x."conversationId" WHERE y."citizenUserId" = ${userId} ORDER BY x."createdAt" DESC LIMIT 1) AS "lastSender"
+      FROM "RdvConversation" c LEFT JOIN "RdvConversationMessage" msg ON msg."conversationId" = c.id WHERE c."citizenUserId" = ${userId}`)).rows;
+    summary.messages = { conversations: m?.conversations || 0, lastMessageAt: m?.lastAt || null, lastFromStructure: m?.lastSender ? m.lastSender !== 'USER' : false };
+  }
+  return { ok: true, status: 200, summary };
 }
 
 // ───────────── R16 / C17 — transparency on a dossier the ACCOUNT owns
