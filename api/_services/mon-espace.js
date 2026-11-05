@@ -12,7 +12,7 @@ import { CitizenDocument, CitizenFavorite, CitizenHistoryEntry, CitizenProfile, 
 import { buildActionPlan } from '../../src/lib/actionPlan.js';
 import { decide } from '../lib/publicVisibility.js';
 import { ENTITY_TABLES, evidenceUrlAllowed } from './content-verification.js';
-import { storage as defaultStorage } from '../lib/storage.js';
+import { protectedStore as defaultStorage } from '../lib/protected-store/index.js';   // R46: HDS-ready storage boundary (Coffre + dossier files)
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';

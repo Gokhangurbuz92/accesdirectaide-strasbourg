@@ -8,6 +8,7 @@ import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
+import NotificationCenter from '@/components/account/NotificationCenter';
 
 /**
  * PKG-2 / C13 — Mon Espace (/compte): one page that says where the person stands — Mon Parcours, the next deadline and appointment, Mon Coffre, favourites and the dossiers
@@ -64,6 +65,7 @@ export default function MonEspace() {
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8" data-testid="mon-espace">
       <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>
+      <NotificationCenter />
       <div className="grid gap-4 sm:grid-cols-2">
         {s.parcours ? (<Card data-testid="espace-next-due">
           <CardHeader><CardTitle className="text-base">{t('compte:space.next_due', 'Prochaine échéance')}</CardTitle></CardHeader>

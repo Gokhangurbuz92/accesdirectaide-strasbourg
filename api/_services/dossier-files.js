@@ -26,7 +26,7 @@ export function storageKeysOf(results) {
 export async function purgeDossierFiles(keys, deps = {}) {
   const unique = [...new Set((keys || []).filter((k) => typeof k === 'string' && k))];
   if (unique.length === 0) return { requested: 0, deleted: 0, failed: [] };
-  const storage = deps.storage || (await import('../lib/storage.js')).storage;
+  const storage = deps.storage || (await import('../lib/protected-store/index.js')).protectedStore;   // R46: erasure goes to the driver that wrote the key
   /** @type {string[]} */
   const failed = [];
   let deleted = 0;

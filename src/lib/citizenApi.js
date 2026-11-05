@@ -53,6 +53,12 @@ export const citizenApi = {
   pushUnsubscribe: (/** @type {string | null} */ endpoint) => call('/api/citizen/push', { method: 'DELETE', body: endpoint ? { endpoint } : {} }),
   listShares: () => call('/api/citizen/shares'),
   claimShare: (/** @type {string} */ shareId, /** @type {string} */ ownerSecret) => call('/api/citizen/shares', { method: 'POST', body: { shareId }, headers: { 'X-Share-Owner-Secret': ownerSecret } }),
+  // R46 / N03: in-app notifications (kind, time, link — never a content)
+  notifications: () => call('/api/citizen/notifications'),
+  markNotificationsRead: () => call('/api/citizen/notifications', { method: 'POST', body: { action: 'read-all' } }),
+  // R46 / N08: FranceConnect (OIDC adapter, not live): status line, link / unlink, logout through the provider
+  franceConnectStatus: () => call('/api/auth/franceconnect/status'),
+  franceConnectUnlink: () => call('/api/auth/franceconnect/unlink', { method: 'POST', body: {} }),
   // PKG-2 / K2 Mon Espace
   espace: async () => (await call('/api/citizen/espace')).summary,
   listParcours: () => call('/api/citizen/parcours'),

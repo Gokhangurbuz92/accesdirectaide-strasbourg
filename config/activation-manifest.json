@@ -1440,6 +1440,94 @@
       "nature": "config",
       "format": "^(1)?$",
       "note": "R45 (ENG-LR-2): « 1 » refuses booking of unreviewed services in a LAB / test run. Production, Preview and the restricted beta always refuse them (no value turns it off there)"
+    },
+    "ADA_PROTECTED_STORE": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(lab|certified)?$",
+      "note": "R46: storage driver of the HDS-relevant blobs (api/lib/protected-store/CONTRACT.md). « lab » is refused in production / preview; « certified » needs ADA_PROTECTED_STORE_ENDPOINT / _TOKEN and, there, a valid ADA_HDS_CERTIFIED_HOSTING"
+    },
+    "ADA_PROTECTED_STORE_ENDPOINT": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true,
+      "format": "^https://"
+    },
+    "ADA_PROTECTED_STORE_TOKEN": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true
+    },
+    "ADA_PROTECTED_STORE_TIMEOUT_MS": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^[0-9]{4,5}$"
+    },
+    "FRANCECONNECT_ISSUER": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "franceconnect",
+      "account": true,
+      "format": "^https://",
+      "note": "R46 / N08: OIDC issuer of FranceConnect (after the DataPass habilitation); unset = FranceConnect unavailable"
+    },
+    "FRANCECONNECT_CLIENT_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "franceconnect",
+      "account": true
+    },
+    "FRANCECONNECT_CLIENT_SECRET": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "franceconnect",
+      "account": true
+    },
+    "FRANCECONNECT_REDIRECT_URI": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^https://"
+    },
+    "FRANCECONNECT_POST_LOGOUT_REDIRECT_URI": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^https://"
+    },
+    "FRANCECONNECT_SCOPES": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "FRANCECONNECT_ACR_VALUES": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "FRANCECONNECT_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$"
     }
   },
   "platform": [
