@@ -21,7 +21,7 @@ import SEO from '@/components/SEO';
 
 import { csrfFetch, ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { normalizeNextPath } from '@/lib/rdvRouting';
-import { parisBookingWindow } from '@/lib/parisCalendar';
+import { BOOKING_WINDOW_DAYS, MAX_WINDOW_OFFSET, parisBookingWindow } from '@/lib/parisCalendar';
 import i18n, { formatDate, useT } from '@/i18n';
 // R42: account-required journey pieces (suitability, professional choice, optional message, age statement, true e-mail outcome)
 import BookingMessageField from '@/components/rdv/BookingMessageField.jsx';
@@ -84,6 +84,9 @@ export default function PublicBooking() {
     // R44: why the person is back on the slot list (slot taken meanwhile, modality changed) — announced, never a raw server code
     const [slotNotice, setSlotNotice] = useState('');
     const pendingModeRef = useRef('');
+    // R46: which fortnight of the 60 bookable days the slot list shows (0 = the next 14 days); kept in a ref so every existing reload keeps the period
+    const windowOffsetRef = useRef(0);
+    const [windowOffset, setWindowOffset] = useState(0);
     const offeredModes = serviceModes(selectedService);
     const location = bookingLocation(servicesPayload);
     const modalities = modalityOptions(servicesPayload, selectedService);
@@ -154,7 +157,7 @@ export default function PublicBooking() {
         try {
             const token = getToken();
             // R43: 14 PARIS days from today in Paris (the UTC date was the day before after midnight in Paris; R7: the server counts the last day to its end)
-            const { from, to } = parisBookingWindow();
+            const { from, to } = parisBookingWindow(new Date(), windowOffsetRef.current);
             const res = await fetch(
                 `/api/rdv/structures/${encodeURIComponent(structureSlug)}/slots?serviceId=${encodeURIComponent(serviceId)}&from=${from}&to=${to}&mode=${encodeURIComponent(mode || 'IN_PERSON')}${teamChoice ? `&professional=${encodeURIComponent(who)}` : ''}`,
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
@@ -276,6 +279,7 @@ export default function PublicBooking() {
         setModalityError('');
         setSlotNotice('');
         setSelectedSlot(null);
+        windowOffsetRef.current = 0; setWindowOffset(0);   // R46: a new service starts at the next 14 days
         if (modes.length === 1 || wanted) {
             const mode = wanted || modes[0];
             setBookingMode(mode);
@@ -297,6 +301,15 @@ export default function PublicBooking() {
         fetchSlots(selectedService.id, professional, bookingMode);
         setStep(2);
     };
+    // R46: earlier / later fortnight of the bookable period (up to 60 days ahead); the slots of that period are reloaded, focus stays on the control
+    const moveWindow = (/** @type {number} */ delta) => {
+        const next = Math.min(MAX_WINDOW_OFFSET, Math.max(0, windowOffsetRef.current + delta * BOOKING_WINDOW_DAYS));
+        if (next === windowOffsetRef.current || !selectedService) return;
+        windowOffsetRef.current = next; setWindowOffset(next);
+        setSelectedSlot(null);
+        fetchSlots(selectedService.id, professional, bookingMode);
+    };
+    const shownWindow = parisBookingWindow(new Date(), windowOffset);
     // R44: changing the modality on the recap reloads the slots of that modality (a slot of one modality is not bookable in the other)
     const switchMode = (/** @type {string} */ mode) => {
         if (mode === bookingMode) return;
@@ -612,6 +625,22 @@ export default function PublicBooking() {
                         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4">
                             {t('booking:public.creneaux_disponibles', "Créneaux disponibles")}
                         </h3>
+                        <nav aria-label={t('booking:public.period_nav_r46', 'Période des créneaux')} className="mb-4 flex flex-wrap items-center justify-between gap-2" data-testid="booking-period">
+                            <button type="button" data-testid="booking-period-prev" disabled={loading || windowOffset === 0} onClick={() => moveWindow(-1)}
+                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                                {t('booking:public.period_prev_r46', '‹ 14 jours précédents')}
+                            </button>
+                            <p className="text-sm text-slate-700" aria-live="polite" data-testid="booking-period-label">
+                                {t('booking:public.period_label_r46', 'Du {{from}} au {{to}}', {
+                                    from: formatDate(`${shownWindow.from}T12:00:00Z`, { weekday: 'short', day: 'numeric', month: 'short' }),
+                                    to: formatDate(`${shownWindow.to}T12:00:00Z`, { weekday: 'short', day: 'numeric', month: 'short' }),
+                                })}
+                            </p>
+                            <button type="button" data-testid="booking-period-next" disabled={loading || windowOffset >= MAX_WINDOW_OFFSET} onClick={() => moveWindow(1)}
+                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                                {t('booking:public.period_next_r46', '14 jours suivants ›')}
+                            </button>
+                        </nav>
 
                         {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : slotsError ? (
                             <div className="py-8 text-center" data-testid="booking-slots-error">
@@ -629,7 +658,9 @@ export default function PublicBooking() {
                             </div>
                         ) : slots.length === 0 ? (
                             <p className="text-sm text-slate-600 py-8 text-center" data-testid="booking-slots-empty">
-                                {t('booking:public.aucun_creneau_disponible_sur_les', "Aucun créneau disponible sur les 14 prochains jours. Choisissez un autre service ou contactez la structure.")}
+                                {windowOffset === 0
+                                    ? t('booking:public.aucun_creneau_disponible_sur_les', "Aucun créneau disponible sur les 14 prochains jours. Choisissez un autre service ou contactez la structure.")
+                                    : t('booking:public.no_slot_period_r46', 'Aucun créneau disponible sur cette période. Essayez une autre période, choisissez un autre service ou contactez la structure.')}
                             </p>
                         ) : (
                             <div className="space-y-4 max-h-[400px] overflow-y-auto">

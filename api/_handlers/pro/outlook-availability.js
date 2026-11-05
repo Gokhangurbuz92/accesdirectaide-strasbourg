@@ -7,6 +7,12 @@ import { eq } from 'drizzle-orm';
 import { env } from '../../_utils/env.js';
 import { decryptToken, encryptToken, envelopeIv } from '../../_utils/outlook-token-crypto.js';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
+import { outlookStatus } from '../../_services/calendar-outlook.js';
+
+// R46: the same endpoints as the shared free/busy adapter (api/_services/rdv-calendar-busy.js) — OUTLOOK_AUTHORITY_URL / OUTLOOK_GRAPH_BASE_URL point at a
+// sandbox or a local mock Graph; this route used to hard-code Microsoft's hosts, so it could not be tested against a mock and ignored the sandbox setting
+const authorityBase = () => String(process.env.OUTLOOK_AUTHORITY_URL || 'https://login.microsoftonline.com/common/oauth2/v2.0').replace(/\/+$/, '');
+const graphBase = () => String(process.env.OUTLOOK_GRAPH_BASE_URL || 'https://graph.microsoft.com/v1.0').replace(/\/+$/, '');
 
 /**
  * Outlook Availability Handler
@@ -44,7 +50,7 @@ async function refreshOutlookToken(storedToken, userId) {
 
     try {
         const response = await fetch(
-            'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            `${authorityBase()}/token`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -58,8 +64,8 @@ async function refreshOutlookToken(storedToken, userId) {
         );
 
         const tokens = await response.json();
-        if (!tokens.access_token) {
-            logger.error('[Outlook Availability] Token refresh failed:', tokens.error || 'unknown');
+        if (!response.ok || !tokens.access_token) {
+            logger.warn('[Outlook Availability] token refresh refused');   // R46: no provider text, no account id in logs
             return null;
         }
 
@@ -74,10 +80,9 @@ async function refreshOutlookToken(storedToken, userId) {
             expiresAt: newExpiresAt,
         }).where(eq(ProOutlookToken.userId, userId));
 
-        logger.info('[Outlook Availability] Token refreshed for user:', userId);
         return tokens.access_token;
     } catch (err) {
-        logger.error('[Outlook Availability] Token refresh error:', err.message);
+        logger.warn({ err: { name: err?.name } }, '[Outlook Availability] token refresh failed');
         return null;
     }
 }
@@ -89,6 +94,10 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 
     const proCtx = requireProStructureContext(req, res);
     if (!proCtx) return;
+    res.setHeader('Cache-Control', 'no-store');
+    // R46: Outlook switched off (or incomplete / pending activation) = the same honest state as /api/pro/outlook — no token is read, no provider is called
+    const status = outlookStatus();
+    if (!status.enabled) return res.status(200).json({ ok: false, status: status.reason === 'NOT_CONFIGURED' ? 'not_configured' : 'disabled', reason: status.reason });
 
     const url = new URL(req.url || '/', `https://${req.headers?.host || 'localhost'}`);
     const start = url.searchParams.get('start');
@@ -136,7 +145,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 
         // Query Microsoft Graph for free/busy
         const graphResponse = await fetch(
-            'https://graph.microsoft.com/v1.0/me/calendar/getSchedule',
+            `${graphBase()}/me/calendar/getSchedule`,
             {
                 method: 'POST',
                 headers: {
@@ -153,8 +162,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         );
 
         if (!graphResponse.ok) {
-            const errorData = await graphResponse.json().catch(() => ({}));
-            logger.error('[Outlook Availability] Graph API error:', errorData);
+            await graphResponse.json().catch(() => ({}));   // R46: the provider's error body is never logged (it can quote the mailbox)
+            logger.warn({ status: graphResponse.status }, '[Outlook Availability] Graph refused the free/busy read');
 
             // Token rejected at runtime (maybe revoked externally)
             if (graphResponse.status === 401) {
@@ -167,7 +176,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 }
                 // Retry once with refreshed token
                 const retryResponse = await fetch(
-                    'https://graph.microsoft.com/v1.0/me/calendar/getSchedule',
+                    `${graphBase()}/me/calendar/getSchedule`,
                     {
                         method: 'POST',
                         headers: {
@@ -216,7 +225,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         });
     } catch (error) {
         // @ts-ignore
-        logger.error('[Outlook Availability] Erreur:', error.message);
+        logger.error({ err: { name: error?.name } }, '[Outlook Availability] failed');
         return res.status(500).json({ error: 'Erreur serveur interne' });
     }
 }

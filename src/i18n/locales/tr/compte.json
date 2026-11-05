@@ -553,5 +553,9 @@
  "push.title": "Bu cihazdaki bildirimler",
  "push.enable": "Hatırlatmaları bu cihazda almayı kabul ediyorum",
  "push.disable": "Bu cihazdaki bildirimleri durdur",
- "push.retry": "Tekrar dene"
+ "push.retry": "Tekrar dene",
+ "rdv.choose_slot_period_r46": "Yeni bir zaman dilimi seçin ({{from}} – {{to}})",
+ "rdv.no_slot_period_r46": "Bu dönemde başka boş zaman dilimi yok.",
+ "rdv.move_earlier_r46": "‹ Önceki 14 gün",
+ "rdv.move_later_r46": "Sonraki 14 gün ›"
 }

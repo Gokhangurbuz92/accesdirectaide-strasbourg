@@ -15,6 +15,8 @@ import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
 import { activeAppointmentWhere } from '../../../_utils/rdv-active.js';
 import { appointmentTable, flagsOf, requestGuestSchema, serviceTable } from '../../../_utils/schema-features.js';
 import { decrypt, encrypt, isV1Text } from '../../../lib/crypto.js';
+import { SENSITIVITY_CODES, bookingDecision } from '../../../lib/service-sensitivity.js';
+import { readServiceSensitivity } from '../../../_services/service-sensitivity-review.js';
 
 // launch-readiness item 61: the name and the notes a professional records for a person are encrypted at rest (v1, covered by the key rotation); rows written
 // before stay readable as they are. The phone number stays in clear: the SMS « STOP » replies are matched on it (SMS is disabled, N02) — the privacy page says so.
@@ -205,6 +207,20 @@ async function handler(req, res) {
     // R12: another organization's service answers exactly like an unknown one (no existence oracle)
     if (!service || service.structureId !== proCtx.structureId) return res.status(404).json({ error: 'Service not found' });
     if (!service.isActive) return res.status(409).json({ error: 'Service is inactive' });
+    // R46 (closes the R45 limit « professional-created appointments are not gated »): an appointment created by the team for a NAMED person is stored by the
+    // platform with that person's name and phone, so it reveals the same as a citizen booking. The same rule applies on the CURRENT verified classification:
+    // a verified sensitive service is refused while the art. 9 gate is closed (every environment); an unreviewed one where the review is enforced
+    // (Production, Preview, restricted beta). With the gate open, the professional also records the person's explicit agreement to the nature of the
+    // service (the structure's own art. 9 condition, art. 26/28 agreement). Nothing about it is logged or audited; the refusal names the service rule only.
+    const sensitivityGate = bookingDecision(await readServiceSensitivity(proCtx.structureId, service.id));
+    if (!sensitivityGate.allowed) {
+      return res.status(409).json({ error: sensitivityGate.code, code: sensitivityGate.code,
+        message: 'Ce service n’est pas ouvert à la prise de rendez-vous sur la plateforme (service sensible, ou classification pas encore revue par ADA). Notez ce rendez-vous dans votre outil habituel.' });
+    }
+    if (sensitivityGate.requiresConsent && req.body?.sensitiveConsent !== true) {
+      return res.status(400).json({ error: SENSITIVITY_CODES.CONSENT_REQUIRED, code: SENSITIVITY_CODES.CONSENT_REQUIRED,
+        message: 'Confirmez que la personne a donné son accord explicite, en connaissant la nature de ce service.' });
+    }
     const [settings] = await db.select({ bookingMode: StructureRdvSettings.bookingMode }).from(StructureRdvSettings).where(eq(StructureRdvSettings.structureId, proCtx.structureId)).limit(1);
     const mode = req.body?.mode === undefined ? 'IN_PERSON' : normalizeMode(req.body.mode);
     if (!mode || !offeredModes(settings?.bookingMode || 'IN_PERSON', service.modes, publicVideoStatus()).includes(mode)) {

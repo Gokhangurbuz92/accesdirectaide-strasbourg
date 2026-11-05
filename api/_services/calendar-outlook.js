@@ -29,15 +29,8 @@ export const OUTLOOK_SCOPES = 'openid profile email offline_access Calendars.Rea
 const STATE_TTL_MS = 10 * 60_000;
 const authority = (env) => String(env.OUTLOOK_AUTHORITY_URL || 'https://login.microsoftonline.com/common/oauth2/v2.0').replace(/\/+$/, '');
 
-export function outlookStatus(env = process.env) {
-  const off = (reason) => ({ enabled: false, reason });
-  if (String(env.OUTLOOK_ENABLED || '') !== 'true') return off('NOT_CONFIGURED');
-  if (!env.OUTLOOK_CLIENT_ID || !env.OUTLOOK_CLIENT_SECRET || !env.OUTLOOK_REDIRECT_URI) return off('INCOMPLETE_CONFIGURATION');
-  // R35: the vault key is ADA_VAULT_KEY (what the token encryption reads first); OUTLOOK_TOKEN_ENCRYPTION_KEY is only its former name
-  if (String(env.ADA_VAULT_KEY || env.OUTLOOK_TOKEN_ENCRYPTION_KEY || '').length < 32) return off('MISSING_ENCRYPTION_KEY');
-  if (String(env.VERCEL_ENV || '') === 'production' && String(env.CALENDAR_PRODUCTION_APPROVED || '') !== 'true') return off('PRODUCTION_ACTIVATION_PENDING');
-  return { enabled: true, reason: null };
-}
+// R46: the pure configuration rule lives in api/lib/outlook-status.js (no database import: the offline channels check reads it); re-exported here unchanged
+export { outlookStatus } from '../lib/outlook-status.js';
 
 function stateSecret(env) {
   // the server's signing secret (same resolution as the admin tokens: AUTH_SECRET / AUTH_JWT_SECRET, else JWT_SECRET), domain-separated; no secret = no state (fail closed)

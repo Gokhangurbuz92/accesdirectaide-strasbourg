@@ -317,5 +317,11 @@
  "modality.chosen": "Form:",
  "modality.date_at": "{{date}} um {{time}}",
  "modality.video_short": "Über „Meine Termine“, nach Bestätigung durch die Einrichtung",
- "modality.video_consent_required": "Zustimmung zum Videotermin: Kreuzen Sie das Kästchen an, um einen Termin aus der Ferne anzufragen, oder wählen Sie „Vor Ort“."
+ "modality.video_consent_required": "Zustimmung zum Videotermin: Kreuzen Sie das Kästchen an, um einen Termin aus der Ferne anzufragen, oder wählen Sie „Vor Ort“.",
+ "sensitive.move_contact_structure_r46": "Dieser Termin kann nicht online verschoben werden. Um die Uhrzeit zu ändern, wenden Sie sich direkt über die üblichen Kontaktwege an die Einrichtung. Sie können ihn hier auch absagen.",
+ "public.period_nav_r46": "Zeitraum der Termine",
+ "public.period_prev_r46": "‹ Vorherige 14 Tage",
+ "public.period_next_r46": "Nächste 14 Tage ›",
+ "public.period_label_r46": "Vom {{from}} bis {{to}}",
+ "public.no_slot_period_r46": "In diesem Zeitraum ist kein Termin frei. Versuchen Sie einen anderen Zeitraum, wählen Sie einen anderen Dienst oder wenden Sie sich an die Einrichtung."
 }

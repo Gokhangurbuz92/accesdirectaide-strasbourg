@@ -64,7 +64,10 @@ export default function ProRdvNew() {
     notes: '',
     mode: 'IN_PERSON',
     personConsent: false,
+    sensitiveConsent: false,
   });
+  // R46: shown only when the server says this service needs the person's explicit agreement (sensitive service, art. 9 gate open)
+  const [needsSensitiveConsent, setNeedsSensitiveConsent] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -165,12 +168,20 @@ export default function ProRdvNew() {
         notes: form.notes.trim() || undefined,
         mode: form.mode,
         personConsent: true,
+        ...(needsSensitiveConsent && form.sensitiveConsent ? { sensitiveConsent: true } : {}),
       });
       setSuccessMessage(t('pro:rdv_new.created', 'Rendez-vous cree avec succes.'));
       setTimeout(() => navigate('/pro/rdv/agenda'), 500);
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
-      if (status === 409) {
+      const code = requestError?.payload?.code || requestError?.payload?.error;
+      // R46: the service's online-booking rule (R45 sensitivity gate) also applies to an appointment created by the team for a named person
+      if (code === 'SENSITIVE_BOOKING_NOT_OPEN' || code === 'SERVICE_SENSITIVITY_UNREVIEWED') {
+        setError(t('pro:rdv_new.sensitive_not_open_r46', 'Ce service n’est pas ouvert à la prise de rendez-vous sur la plateforme (service sensible, ou classification pas encore revue par ADA). Notez ce rendez-vous dans votre outil habituel.'));
+      } else if (code === 'SENSITIVE_CONSENT_REQUIRED') {
+        setNeedsSensitiveConsent(true);
+        setError(t('pro:rdv_new.sensitive_consent_r46', 'Pour ce service, confirmez que la personne a donné son accord explicite, en connaissant la nature du service.'));
+      } else if (status === 409) {
         setError(t('pro:rdv_new.slot_taken', "Ce creneau n'est plus disponible. Rechargez les creneaux."));
       } else {
         setError(t('pro:rdv_new.create_failed', 'Impossible de creer le rendez-vous.'));
@@ -318,7 +329,13 @@ export default function ProRdvNew() {
             <span>{t('pro:rdv_new.consent', 'La personne est d’accord pour ce rendez-vous et pour que son nom et son téléphone soient enregistrés pour ce rendez-vous.')}</span>
           </label>
 
-          {error ? <p className="text-sm text-rose-700">{error}</p> : null}
+          {needsSensitiveConsent ? (
+            <label className="flex items-start gap-2 text-sm text-slate-800">
+              <input type="checkbox" data-testid="pro-new-sensitive-consent" checked={form.sensitiveConsent} onChange={(event) => setForm((prev) => ({ ...prev, sensitiveConsent: event.target.checked }))} />
+              <span>{t('pro:rdv_new.sensitive_consent_label_r46', 'La personne a donné son accord explicite pour ce rendez-vous, en sachant que la nature de ce service peut révéler une information sur sa santé ou un handicap.')}</span>
+            </label>
+          ) : null}
+          {error ? <p role="alert" className="text-sm text-rose-700">{error}</p> : null}
           {successMessage ? <p className="text-sm text-emerald-700">{successMessage}</p> : null}
 
           <Button type="button" onClick={handleCreateAppointment} disabled={saving || !selectedSlot}>

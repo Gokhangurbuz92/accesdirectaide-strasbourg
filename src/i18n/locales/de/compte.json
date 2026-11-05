@@ -553,5 +553,9 @@
  "push.title": "Benachrichtigungen auf diesem Gerät",
  "push.enable": "Ich bin einverstanden, die Erinnerungen auf diesem Gerät zu erhalten",
  "push.disable": "Benachrichtigungen auf diesem Gerät beenden",
- "push.retry": "Erneut versuchen"
+ "push.retry": "Erneut versuchen",
+ "rdv.choose_slot_period_r46": "Wählen Sie einen neuen Termin (vom {{from}} bis {{to}})",
+ "rdv.no_slot_period_r46": "In diesem Zeitraum ist kein anderer Termin frei.",
+ "rdv.move_earlier_r46": "‹ Vorherige 14 Tage",
+ "rdv.move_later_r46": "Nächste 14 Tage ›"
 }

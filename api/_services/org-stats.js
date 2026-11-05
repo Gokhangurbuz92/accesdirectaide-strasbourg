@@ -22,8 +22,11 @@ async function member(ctx, db) { return Boolean((await db.execute(sql`SELECT 1 A
 export async function teamStats(ctx, db = defaultDb) {
   if (!(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   const s = ctx.structureId;
+  // R46: « today » is the Paris calendar day (the database runs in UTC: between 00:00 and 01:00/02:00 in Paris, date_trunc('day', NOW()) was still yesterday)
+  const parisToday = sql`(date_trunc('day', NOW() AT TIME ZONE 'Europe/Paris') AT TIME ZONE 'Europe/Paris')`;
+  const parisTomorrow = sql`((date_trunc('day', NOW() AT TIME ZONE 'Europe/Paris') + interval '1 day') AT TIME ZONE 'Europe/Paris')`;
   const [g] = (await db.execute(sql`SELECT
-      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled') AND "startAt" >= date_trunc('day', NOW()) AND "startAt" < date_trunc('day', NOW()) + interval '1 day') AS "appointmentsToday",
+      (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled') AND "startAt" >= ${parisToday} AND "startAt" < ${parisTomorrow}) AS "appointmentsToday",
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled', 'done', 'no_show') AND "startAt" >= NOW()) AS "appointmentsUpcoming",
       (SELECT count(*)::int FROM "RdvConversation" WHERE "structureId" = ${s} AND "lastMessageAt" >= NOW() - interval '30 days') AS "conversationsActive",
       (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status <> 'CLOSED' AND "assigneeProUserId" IS NULL) AS "casesUnassigned"`)).rows;

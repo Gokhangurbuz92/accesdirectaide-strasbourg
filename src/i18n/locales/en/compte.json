@@ -553,5 +553,9 @@
  "push.title": "Notifications on this device",
  "push.enable": "I agree to receive the reminders on this device",
  "push.disable": "Stop notifications on this device",
- "push.retry": "Try again"
+ "push.retry": "Try again",
+ "rdv.choose_slot_period_r46": "Choose a new slot (from {{from}} to {{to}})",
+ "rdv.no_slot_period_r46": "No other free slot in this period.",
+ "rdv.move_earlier_r46": "‹ Previous 14 days",
+ "rdv.move_later_r46": "Next 14 days ›"
 }
