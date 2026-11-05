@@ -11,7 +11,7 @@ import { db as defaultDb } from '../../src/db/index.js';
 import { ProCase, ProCaseEvent, ProCaseNote, ProUser } from '../../src/db/schema.js';
 import { activeGrantExists, activeMemberSql, referralGrantLapsedSql } from '../_utils/share-access.js';
 import { restrictedDossierSql } from './processing-restriction.js';
-import { openText, sealText } from '../lib/data-keys.js';
+import { proProtectedRecords, protectedRecordsRefusal } from './pro-protected-records.js';   // R46: notes behind the protected-records interface (HDS-ready)
 
 export const CASE_STATUSES = ['NEW', 'IN_PROGRESS', 'WAITING_CITIZEN', 'WAITING_PARTNER', 'REFERRED', 'CLOSED'];
 export const OUTCOMES = ['SUPPORT_COMPLETED', 'APPLICATION_FILED', 'INFORMATION_PROVIDED', 'REFERRED_ELSEWHERE', 'CITIZEN_WITHDREW', 'NO_RESPONSE', 'OTHER'];
@@ -73,6 +73,7 @@ async function openCase(id, ctx, db) {
 }
 
 export async function getCase(id, ctx, db = defaultDb) {
+  if (!proProtectedRecords.state().ok) return protectedRecordsRefusal();
   const c = await openCase(id, ctx, db);
   if (!c) return notFound();
   const events = await db.select({ kind: ProCaseEvent.kind, fromValue: ProCaseEvent.fromValue, toValue: ProCaseEvent.toValue, at: ProCaseEvent.createdAt, actorId: ProCaseEvent.actorProUserId })
@@ -81,7 +82,7 @@ export async function getCase(id, ctx, db = defaultDb) {
   const members = (await db.execute(sql`SELECT id, email, role FROM "ProUser" WHERE "structureId" = ${ctx.structureId} AND status = 'active' AND upper(role) IN ('PRO', 'STRUCTURE_ADMIN') ORDER BY email`)).rows;
   const assignee = members.find((m) => m.id === c.assigneeProUserId) || (c.assigneeProUserId ? { id: c.assigneeProUserId, email: '(compte inactif)' } : null);
   return { ok: true, status: 200, case: { id: c.id, dossierId: c.sharedDiagnosticId, status: c.status, outcome: c.outcome, outcomeCitizenSummary: c.outcomeCitizenSummary, openedAt: c.openedAt, closedAt: c.closedAt, assignee },
-    notes: notes.map((n) => ({ id: n.id, visibility: n.visibility, body: openText(n.bodyEncrypted, { purpose: 'case-note', context: `case:${c.id}` }), authorId: n.authorProUserId, mentions: n.mentions, at: n.createdAt })),
+    notes: notes.map((n) => ({ id: n.id, visibility: n.visibility, body: proProtectedRecords.openCaseNote(c.id, n.bodyEncrypted), authorId: n.authorProUserId, mentions: n.mentions, at: n.createdAt })),
     events, members: members.map((m) => ({ id: m.id, email: m.email, role: m.role })), canAssignOthers: isAdmin(ctx) };
 }
 
@@ -128,6 +129,7 @@ export async function addNote(id, input, ctx, db = defaultDb) {
   const body = String(input?.body || '').trim();
   if (!visibility) return bad('INVALID_VISIBILITY', 'Précisez si la note est interne à l’équipe ou visible par la personne.');
   if (body.length < 2 || body.length > 4000) return bad('INVALID_BODY', 'La note doit faire 2 à 4000 caractères.');
+  if (!proProtectedRecords.state().ok) return protectedRecordsRefusal();
   const c = await openCase(id, ctx, db);
   if (!c) return notFound();
   // R12 (R06): a closed case takes no new note (its record is final; reopen it first) — before, notes could still be added, including notes shown to the person
@@ -136,7 +138,7 @@ export async function addNote(id, input, ctx, db = defaultDb) {
   const mentions = wanted.length ? (await db.select({ id: ProUser.id }).from(ProUser).where(and(inArray(ProUser.id, wanted), eq(ProUser.structureId, ctx.structureId), eq(ProUser.status, 'active')))).map((r) => r.id) : [];
   if (mentions.length !== wanted.length) return bad('INVALID_MENTION', 'Vous ne pouvez mentionner que des membres actifs de votre structure.');
   const [n] = await db.insert(ProCaseNote).values({ caseId: c.id, structureId: c.structureId, authorProUserId: ctx.userId, visibility, mentions,
-    bodyEncrypted: sealText(body, { purpose: 'case-note', context: `case:${c.id}` }) }).returning();
+    bodyEncrypted: proProtectedRecords.sealCaseNote(c.id, body) }).returning();
   await event(db, c, ctx, visibility === 'CITIZEN' ? 'NOTE_CITIZEN' : 'NOTE_INTERNAL');
   for (const m of mentions) if (m !== ctx.userId) await notify(db, m, ctx.structureId, 'case_mention', 'Vous êtes mentionné·e sur un dossier', 'Un membre de votre équipe vous a mentionné·e dans une note.', { caseId: c.id });
   return { ok: true, status: 201, note: { id: n.id, visibility, at: n.createdAt } };
@@ -189,10 +191,11 @@ export async function citizenFollowUps(ownerCitizenId, dossierId, db = defaultDb
     FROM "ProCase" c JOIN "SharedDiagnostic" d ON d.id = c."sharedDiagnosticId" JOIN "Structure" s ON s.id = c."structureId"
     WHERE c."sharedDiagnosticId" = ${dossierId} AND d."ownerCitizenId" = ${ownerCitizenId} ORDER BY c."openedAt" DESC`)).rows;
   const out = [];
+  const readable = proProtectedRecords.state().ok;   // R46: without the protected store the person still sees status and summary; notes are withheld, never shown sealed
   for (const r of rows) {
-    const notes = await db.select().from(ProCaseNote).where(and(eq(ProCaseNote.caseId, r.id), eq(ProCaseNote.visibility, 'CITIZEN'))).orderBy(desc(ProCaseNote.createdAt)).limit(50);
+    const notes = !readable ? [] : await db.select().from(ProCaseNote).where(and(eq(ProCaseNote.caseId, r.id), eq(ProCaseNote.visibility, 'CITIZEN'))).orderBy(desc(ProCaseNote.createdAt)).limit(50);
     out.push({ organization: r.organization, status: r.status, outcome: r.outcome, summary: r.summary, openedAt: r.openedAt, closedAt: r.closedAt,
-      notes: notes.map((n) => ({ body: openText(n.bodyEncrypted, { purpose: 'case-note', context: `case:${r.id}` }), at: n.createdAt })) });
+      notes: notes.map((n) => ({ body: proProtectedRecords.openCaseNote(r.id, n.bodyEncrypted), at: n.createdAt })) });
   }
   return out;
 }

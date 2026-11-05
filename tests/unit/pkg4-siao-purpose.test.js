@@ -1,7 +1,8 @@
 /**
- * PKG-4 / D10 — SI-SIAO transmission: even with the feature flag ON and a provider URL configured, nothing is sent unless the citizen granted the dedicated SIAO purpose
- * (sharing PURP-06 or the AI purpose PURP-05 never stand in for it); when it is sent, the identifier is a keyed pseudonym (not the dossier id) and no log line carries the
- * dossier id or the provider's answer body.
+ * PKG-4 / D10 — SI-SIAO: nothing is prepared unless the citizen granted the dedicated SIAO purpose (sharing PURP-06 or the AI purpose PURP-05 never stand in
+ * for it). R46 / R22: the adapter is DISCONNECTED (no official SI-SIAO interface specification): even with the former SIAO_* variables set, NO network call is
+ * ever made; with the purpose, a manual handover sheet (ada.siao-handover/1) carries a keyed pseudonym (not the dossier id), and no log line carries the
+ * dossier id; the audit records the purpose.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -13,7 +14,7 @@ vi.mock('../../src/db/index.js', () => ({ db: { insert: () => ({ values: async (
 vi.mock('../../api/_utils/logger.js', () => ({ default: { info: (...a) => h.logs.push(a), warn: (...a) => h.logs.push(a), error: (...a) => h.logs.push(a) } }));
 
 const SHARE = 'dossier-0123456789abcdef';
-const mk = () => ({ statusCode: 200, body: null, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; } });
+const mk = () => ({ statusCode: 200, body: null, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; } });
 const call = async (handler) => { const r = mk(); await handler({ method: 'POST', body: { shareId: SHARE }, headers: {} }, r); return r; };
 const dossier = { id: SHARE, situation: { zipCode: '67000', isUrgent: true }, createdAt: new Date('2026-10-01T00:00:00Z') };
 
@@ -32,13 +33,13 @@ describe('PKG-4 D10 SI-SIAO purpose', () => {
     expect(fetchSpy).not.toHaveBeenCalled(); expect(h.inserted).toEqual([]);
   });
 
-  it('with the SIAO purpose: a keyed pseudonym is sent, never the dossier id; logs carry neither the id nor the provider answer; the audit records the purpose', async () => {
+  it('with the SIAO purpose: never a network call (disconnected adapter), a keyed pseudonym and never the dossier id; logs clean; the audit records the purpose', async () => {
     h.found = { status: 'ok', shared: dossier, grant: { purposes: 'PURP-06,PURP-07' } };
     const r = await call(handler);
-    expect(r.statusCode).toBe(502); expect(r.body.transmissionStatus).toBe('FAILED'); expect(r.body.ok, 'R12: a refused transmission is not a success').toBe(false);
-    const sent = JSON.parse(fetchSpy.mock.calls[0][1].body);
-    expect(sent.demandeur.identifiant_anonyme).toMatch(/^[0-9a-f]{24}$/); expect(JSON.stringify(sent)).not.toContain(SHARE.slice(0, 10));
+    expect(r.statusCode).toBe(200); expect(r.body.transmissionStatus).toBe('NOT_TRANSMITTED'); expect(r.body.status).toBe('DISCONNECTED');
+    expect(fetchSpy, 'R46: no undocumented SIAO endpoint is ever called').not.toHaveBeenCalled();
+    expect(r.body.handover.request.pseudonym).toMatch(/^[0-9a-f]{24}$/); expect(JSON.stringify(r.body.handover)).not.toContain(SHARE.slice(0, 10));
     expect(JSON.stringify(h.logs)).not.toContain(SHARE.slice(0, 10));
-    expect(h.inserted[0].details.purpose).toBe('PURP-07');
+    expect(h.inserted[0].details.purpose).toBe('PURP-07'); expect(h.inserted[0].details.transmissionStatus).toBe('NOT_TRANSMITTED');
   });
 });

@@ -68,6 +68,7 @@ const routeTable = [
     { path: 'pro/auth/register-invite', match: 'exact', handler: () => import('./_handlers/pro/auth/register-invite.js') },
     { path: 'pro/auth/refresh', match: 'exact', handler: () => import('./_handlers/pro/auth/refresh.js') },
     { path: 'pro/auth/logout', match: 'exact', handler: () => import('./_handlers/pro/auth/logout.js') },   // PKG-11 audit: server-side pro logout
+    { path: 'pro/auth/proconnect', match: 'prefix', handler: () => import('./_handlers/pro/auth/proconnect.js') },   // R46 / N09: ProConnect for existing invited accounts (DISCONNECTED until configured)
     { path: 'pro/me', match: 'exact', handler: () => import('./_handlers/pro/me.js') },
     { path: 'pro/mfa-setup', match: 'exact', handler: () => import('./_handlers/pro/mfa-setup.js') },
     { path: 'pro/mfa-enrolment', match: 'exact', handler: () => import('./_handlers/pro/mfa-enrolment.js') },   // R42-A08: redeem an MFA enrolment invitation

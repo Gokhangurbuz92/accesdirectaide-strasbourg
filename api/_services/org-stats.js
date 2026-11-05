@@ -12,6 +12,22 @@ import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { activeMemberSql } from '../_utils/share-access.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
+import { capabilityOpen } from '../_utils/capabilities.js';
+
+/**
+ * R46 / R45 residual F-9: the reports, team statistics and CSV of an organization no longer return the aggregate counts of a capability that is CLOSED in this
+ * environment (pro.case_management → follow-ups and outcomes; pro.referrals → referrals; citizen.shared_dossier → dossiers shared with the organization). The
+ * response keeps its keys (value null, never 0: « not measured » is not « none ») and names the closed capabilities in `withheldCapabilities`; the closed tables
+ * are not even read. In the LAB (enforcement off) every capability is open and nothing changes.
+ * @param {Record<string, string | undefined>} [envVars]
+ */
+export function closedCounterCapabilities(envVars = process.env) {
+  const cases = !capabilityOpen('pro.case_management', envVars);
+  const referrals = !capabilityOpen('pro.referrals', envVars);
+  const dossiers = !capabilityOpen('citizen.shared_dossier', envVars);
+  const withheldCapabilities = [cases && 'pro.case_management', referrals && 'pro.referrals', dossiers && 'citizen.shared_dossier'].filter(Boolean);
+  return { cases, referrals, dossiers, withheldCapabilities };
+}
 
 export const K_MIN = 5;
 export const K_ORGS = 3;
@@ -19,22 +35,25 @@ const bad = (code, message, status = 400) => ({ ok: false, status, code, message
 const suppress = (n) => (Number(n) >= K_MIN ? Number(n) : null);
 async function member(ctx, db) { return Boolean((await db.execute(sql`SELECT 1 AS ok WHERE ${activeMemberSql(ctx)}`)).rows[0]); }
 
-export async function teamStats(ctx, db = defaultDb) {
+export async function teamStats(ctx, db = defaultDb, envVars = process.env) {
   if (!(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   const s = ctx.structureId;
   // R46: « today » is the Paris calendar day (the database runs in UTC: between 00:00 and 01:00/02:00 in Paris, date_trunc('day', NOW()) was still yesterday)
   const parisToday = sql`(date_trunc('day', NOW() AT TIME ZONE 'Europe/Paris') AT TIME ZONE 'Europe/Paris')`;
   const parisTomorrow = sql`((date_trunc('day', NOW() AT TIME ZONE 'Europe/Paris') + interval '1 day') AT TIME ZONE 'Europe/Paris')`;
+  const closed = closedCounterCapabilities(envVars);
+  const casesUnassigned = closed.cases ? sql`NULL::int` : sql`(SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status <> 'CLOSED' AND "assigneeProUserId" IS NULL)`;
+  const openCases = closed.cases ? sql`NULL::int` : sql`(SELECT count(*)::int FROM "ProCase" c WHERE c."structureId" = ${s} AND c."assigneeProUserId" = u.id AND c.status <> 'CLOSED')`;
   const [g] = (await db.execute(sql`SELECT
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled') AND "startAt" >= ${parisToday} AND "startAt" < ${parisTomorrow}) AS "appointmentsToday",
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND status NOT IN ('cancelled', 'done', 'no_show') AND "startAt" >= NOW()) AS "appointmentsUpcoming",
       (SELECT count(*)::int FROM "RdvConversation" WHERE "structureId" = ${s} AND "lastMessageAt" >= NOW() - interval '30 days') AS "conversationsActive",
-      (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status <> 'CLOSED' AND "assigneeProUserId" IS NULL) AS "casesUnassigned"`)).rows;
+      ${casesUnassigned} AS "casesUnassigned"`)).rows;
   const members = (await db.execute(sql`SELECT u.id,
       (SELECT count(*)::int FROM "ProAppointment" a WHERE a."structureId" = ${s} AND a."createdByProUserId" = u.id AND a."createdAt" >= NOW() - interval '30 days') AS "appointmentsCount",
-      (SELECT count(*)::int FROM "ProCase" c WHERE c."structureId" = ${s} AND c."assigneeProUserId" = u.id AND c.status <> 'CLOSED') AS "openCases"
+      ${openCases} AS "openCases"
     FROM "ProUser" u WHERE u."structureId" = ${s} AND u.status = 'active' ORDER BY u.email`)).rows;
-  return { ok: true, global: g, members, measured: 'appointmentsCount = appointments created by the member in the last 30 days' };
+  return { ok: true, global: g, members, measured: 'appointmentsCount = appointments created by the member in the last 30 days', withheldCapabilities: closed.withheldCapabilities };
 }
 
 export async function regionalStats(ctx, db = defaultDb) {
@@ -75,27 +94,30 @@ export async function regionalStats(ctx, db = defaultDb) {
 const PERIODS = { month: '1 month', quarter: '3 months', year: '1 year' };
 const cell = (v) => { const s = v === null || v === undefined ? '' : String(v); const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; return /[",\n;]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe; };
 
-export async function reportCsv(ctx, period = 'month', db = defaultDb) {
+export async function reportCsv(ctx, period = 'month', db = defaultDb, envVars = process.env) {
   if (!(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   const span = PERIODS[period] || PERIODS.month; const s = ctx.structureId;
   const since = sql`NOW() - ${span}::interval`;
+  const closed = closedCounterCapabilities(envVars);
+  const NA = sql`NULL::int`;
   const [r] = (await db.execute(sql`SELECT
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since}) AS appointments,
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'cancelled') AS cancelled,
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'done') AS attended,
       (SELECT count(*)::int FROM "ProAppointment" WHERE "structureId" = ${s} AND ${notGuestDecoySql(sql`"beneficiaryName"`)} AND "startAt" >= ${since} AND status = 'no_show') AS "noShow",
-      (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND "openedAt" >= ${since}) AS "casesOpened",
-      (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND status = 'CLOSED' AND "closedAt" >= ${since}) AS "casesClosed",
-      (SELECT count(*)::int FROM "Referral" WHERE "fromStructureId" = ${s} AND "createdAt" >= ${since}) AS "referralsSent",
-      (SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${s} AND "sentAt" IS NOT NULL AND "createdAt" >= ${since}) AS "referralsReceived",
-      (SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${s} AND status IN ('COMPLETED', 'CLOSED') AND "closedAt" >= ${since}) AS "referralsCompleted"`)).rows;
-  const outcomes = (await db.execute(sql`SELECT outcome, count(*)::int AS n FROM "ProCase" WHERE "structureId" = ${s} AND status = 'CLOSED' AND "closedAt" >= ${since} GROUP BY outcome ORDER BY outcome`)).rows;
+      ${closed.cases ? NA : sql`(SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${s} AND "openedAt" >= ${since})`} AS "casesOpened",
+      ${closed.referrals ? NA : sql`(SELECT count(*)::int FROM "Referral" WHERE "fromStructureId" = ${s} AND "createdAt" >= ${since})`} AS "referralsSent",
+      ${closed.referrals ? NA : sql`(SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${s} AND "sentAt" IS NOT NULL AND "createdAt" >= ${since})`} AS "referralsReceived",
+      ${closed.referrals ? NA : sql`(SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${s} AND status IN ('COMPLETED', 'CLOSED') AND "closedAt" >= ${since})`} AS "referralsCompleted"`)).rows;
+  const outcomes = closed.cases ? [] : (await db.execute(sql`SELECT outcome, count(*)::int AS n FROM "ProCase" WHERE "structureId" = ${s} AND status = 'CLOSED' AND "closedAt" >= ${since} GROUP BY outcome ORDER BY outcome`)).rows;
   // PKG-11 audit: the closed total is the sum of the published outcome cells (with the raw total, total minus published cells gave back a masked one)
   const closedPublished = outcomes.reduce((n, o) => n + (suppress(o.n) ?? 0), 0);
   const closedPartial = outcomes.some((o) => suppress(o.n) === null);
   const rows = [['indicateur', 'valeur'], ['periode', period in PERIODS ? period : 'month'], ['genere_le', new Date().toISOString()],
     ['rdv_total', r.appointments], ['rdv_annules', r.cancelled], ['rdv_honores', r.attended], ['rdv_absences', r.noShow],
-    ['dossiers_ouverts', r.casesOpened], ['dossiers_clotures', closedPartial ? `${closedPublished} (hors résultats < ${K_MIN})` : closedPublished], ['orientations_envoyees', r.referralsSent], ['orientations_recues', r.referralsReceived], ['orientations_terminees', r.referralsCompleted],
-    ...outcomes.map((o) => [`resultat_${String(o.outcome || 'NON_RENSEIGNE').toLowerCase()}`, suppress(o.n) ?? `<${K_MIN}`])];
+    ['dossiers_ouverts', r.casesOpened], ['dossiers_clotures', closed.cases ? null : closedPartial ? `${closedPublished} (hors résultats < ${K_MIN})` : closedPublished], ['orientations_envoyees', r.referralsSent], ['orientations_recues', r.referralsReceived], ['orientations_terminees', r.referralsCompleted],
+    ...outcomes.map((o) => [`resultat_${String(o.outcome || 'NON_RENSEIGNE').toLowerCase()}`, suppress(o.n) ?? `<${K_MIN}`]),
+    // F-9: an empty value above is « not measured » (capability not open), never zero
+    ...(closed.withheldCapabilities.length ? [['fonctions_non_ouvertes', closed.withheldCapabilities.join(' ')]] : [])];
   return { ok: true, csv: '﻿' + rows.map((row) => row.map(cell).join(',')).join('\r\n') + '\r\n' };
 }

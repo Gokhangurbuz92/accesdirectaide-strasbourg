@@ -5,7 +5,7 @@ import { db } from '../../../src/db/index.js';
 import { ProAppointment, ProRdvService, RdvConversation, SharedDossierGrant, ProUser } from '../../../src/db/schema.js';
 import { eq, and, gte, not, inArray, count, sql } from 'drizzle-orm';
 import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../_utils/auth.js';
-import { reportCsv } from '../../_services/org-stats.js';
+import { reportCsv, closedCounterCapabilities } from '../../_services/org-stats.js';
 import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 
 /**
@@ -142,12 +142,14 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         );
         const conversationsCount = conversationsCountRes[0].count;
 
+        // R46 / F-9: counters of a capability closed here are neither read nor returned (null, not 0); the closed capabilities are named in the answer
+        const closed = closedCounterCapabilities();
+
         // 6. Shared diagnostics count
         // DTA S1D: scoped to THIS organization (dossiers shared with it through a grant in the period). Before S1D this counted every SharedDiagnostic row of the platform.
-        const diagnosticsCountRes = await db.select({ count: sql`count(distinct ${SharedDossierGrant.sharedDiagnosticId})`.mapWith(Number) }).from(SharedDossierGrant).where(
+        const diagnosticsCount = closed.dossiers ? null : (await db.select({ count: sql`count(distinct ${SharedDossierGrant.sharedDiagnosticId})`.mapWith(Number) }).from(SharedDossierGrant).where(
             and(eq(SharedDossierGrant.structureId, structureId), gte(SharedDossierGrant.createdAt, startDate))
-        );
-        const diagnosticsCount = diagnosticsCountRes[0].count;
+        ))[0].count;
 
         // 7. Active team size
         const teamSizeRes = await db.select({ count: count() }).from(ProUser).where(
@@ -174,11 +176,10 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 
         // 10. PKG-4 / R19 — closed-loop activity of THIS organization; outcome counts below K_MIN are suppressed (small cells could single a person out).
         const K_MIN = 5;
-        const loop = (await db.execute(sql`SELECT
+        const loop = closed.referrals ? { referralsSent: null, referralsReceived: null } : (await db.execute(sql`SELECT
             (SELECT count(*)::int FROM "Referral" WHERE "fromStructureId" = ${structureId} AND "createdAt" >= ${startDate}) AS "referralsSent",
-            (SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${structureId} AND "sentAt" IS NOT NULL AND "createdAt" >= ${startDate}) AS "referralsReceived",
-            (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${structureId} AND status = 'CLOSED' AND "closedAt" >= ${startDate}) AS "casesClosed"`)).rows[0] || {};
-        const outcomeRows = (await db.execute(sql`SELECT outcome, count(*)::int AS n FROM "ProCase" WHERE "structureId" = ${structureId} AND status = 'CLOSED' AND "closedAt" >= ${startDate} GROUP BY outcome ORDER BY outcome`)).rows;
+            (SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${structureId} AND "sentAt" IS NOT NULL AND "createdAt" >= ${startDate}) AS "referralsReceived"`)).rows[0] || {};
+        const outcomeRows = closed.cases ? [] : (await db.execute(sql`SELECT outcome, count(*)::int AS n FROM "ProCase" WHERE "structureId" = ${structureId} AND status = 'CLOSED' AND "closedAt" >= ${startDate} GROUP BY outcome ORDER BY outcome`)).rows;
         const caseOutcomes = outcomeRows.map((r) => ({ outcome: r.outcome, count: r.n >= K_MIN ? r.n : null, suppressed: r.n < K_MIN }));
         // PKG-11 audit: the total of closed cases is the sum of the PUBLISHED outcome cells — the raw total minus the published cells gave back a masked one
         const casesClosedPublished = caseOutcomes.reduce((n, o) => n + (o.count || 0), 0);
@@ -204,11 +205,12 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 smsImpactRate: past.held > 0
                     ? Math.round((smsNotifications / past.held) * 100)
                     : 0,
-                referralsSent: loop.referralsSent ?? 0,
-                referralsReceived: loop.referralsReceived ?? 0,
-                casesClosed: casesClosedPublished,
-                casesClosedPartial: casesClosedSuppressed,   // true: some outcome cells are below the threshold and not counted
+                referralsSent: closed.referrals ? null : loop.referralsSent ?? 0,
+                referralsReceived: closed.referrals ? null : loop.referralsReceived ?? 0,
+                casesClosed: closed.cases ? null : casesClosedPublished,
+                casesClosedPartial: closed.cases ? false : casesClosedSuppressed,   // true: some outcome cells are below the threshold and not counted
             },
+            withheldCapabilities: closed.withheldCapabilities,
             caseOutcomes,
             kAnonymityMin: K_MIN,
             dailyActivity,

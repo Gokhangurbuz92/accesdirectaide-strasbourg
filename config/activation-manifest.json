@@ -1207,15 +1207,15 @@
       "account": true
     },
     "SIAO_ENABLED": {
-      "class": "owner_deferred",
+      "class": "dead",
       "nature": "config"
     },
     "SIAO_API_URL": {
-      "class": "owner_deferred",
+      "class": "dead",
       "nature": "config"
     },
     "SIAO_API_KEY": {
-      "class": "owner_deferred",
+      "class": "dead",
       "nature": "secret"
     },
     "GDPR_PURGE_ENABLED": {
@@ -1528,6 +1528,56 @@
         "production"
       ],
       "format": "^true$"
+    },
+    "PROCONNECT_ENABLED": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_ISSUER": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_CLIENT_ID": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_CLIENT_SECRET": {
+      "class": "owner_deferred",
+      "nature": "secret",
+      "provider": "proconnect",
+      "account": true
+    },
+    "PROCONNECT_REDIRECT_URI": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_POST_LOGOUT_REDIRECT_URI": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_SCOPES": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "PROCONNECT_ACR_VALUES": {
+      "class": "owner_deferred",
+      "nature": "config",
+      "provider": "proconnect"
+    },
+    "ADA_PROTECTED_RECORDS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(main-db-certified)?$",
+      "note": "R46: the controller states that the PostgreSQL holding the protected case records (ProCaseNote) is on the certified (HDS) host. Production / preview refuse case notes (503 PROTECTED_STORE_REFUSED) unless this AND a valid ADA_HDS_CERTIFIED_HOSTING are set (api/_services/pro-protected-records.js). A statement, not a verification; unset until a certified host exists"
     }
   },
   "platform": [
@@ -1632,6 +1682,11 @@
       "label": "SIG Ville (ANCT)",
       "account": "on request",
       "cost": "unknown"
+    },
+    "proconnect": {
+      "label": "ProConnect (State identity federation for professionals, DINUM)",
+      "account": "to create (partner registration of ADA Pro as a service provider)",
+      "cost": "free"
     }
   },
   "modules": [
@@ -2657,26 +2712,24 @@
       "surfaces": [
         "pro"
       ],
-      "label": "SIAO interoperability",
+      "label": "SIAO interoperability (disconnected: manual handover sheet ada.siao-handover/1)",
       "code": [
-        "api/_handlers/pro/interop-siao.js"
+        "api/_handlers/pro/interop-siao.js",
+        "api/lib/siao-handover.js"
       ],
       "routes": [
         "pro/interop-siao"
       ],
-      "requires": [
-        "SIAO_ENABLED",
-        "SIAO_API_URL",
-        "SIAO_API_KEY"
-      ],
+      "requires": [],
       "tests": [
-        "pkg4-siao-purpose.test.js"
+        "pkg4-siao-purpose.test.js",
+        "r46-siao-handover.test.js"
       ],
       "gates": [
         {
           "id": "siao-convention",
           "kind": "owner",
-          "text": "owner-deferred; operator convention required"
+          "text": "owner-deferred; operator convention AND the official SI-SIAO interface specification are required before any transport is written (none in the repository)"
         }
       ],
       "order": 99
@@ -2684,10 +2737,9 @@
     {
       "id": "franceconnect",
       "surfaces": [
-        "citizen",
-        "pro"
+        "citizen"
       ],
-      "label": "FranceConnect / ProConnect",
+      "label": "FranceConnect (citizens)",
       "code": [],
       "requires": [],
       "tests": [],
@@ -2704,6 +2756,39 @@
           "file": "api/routes.js",
           "fixed_when": "franceconnect",
           "text": "no implementation"
+        }
+      ],
+      "order": 99
+    },
+    {
+      "id": "proconnect",
+      "surfaces": [
+        "pro"
+      ],
+      "label": "ProConnect sign-in for invited professional accounts (N09)",
+      "code": [
+        "api/lib/proconnect-oidc.js",
+        "api/_handlers/pro/auth/proconnect.js",
+        "src/components/pro/ProConnectSignIn.jsx"
+      ],
+      "routes": [
+        "pro/auth/proconnect"
+      ],
+      "requires": [
+        "PROCONNECT_ENABLED",
+        "PROCONNECT_ISSUER",
+        "PROCONNECT_CLIENT_ID",
+        "PROCONNECT_CLIENT_SECRET",
+        "PROCONNECT_REDIRECT_URI"
+      ],
+      "tests": [
+        "r46-proconnect-oidc.test.js"
+      ],
+      "gates": [
+        {
+          "id": "proconnect-registration",
+          "kind": "owner",
+          "text": "owner-deferred (narrowed N09/R02); ADA Pro registered with the federation (client, redirect and post-logout URIs); identification only: invited account + ADA MFA still required"
         }
       ],
       "order": 99

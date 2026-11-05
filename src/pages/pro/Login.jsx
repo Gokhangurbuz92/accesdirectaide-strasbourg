@@ -12,6 +12,7 @@ import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
+import ProConnectSignIn from '@/components/pro/ProConnectSignIn';
 /**
  * ProLogin — Page de connexion Espace Professionnel
  * Design avancé avec support MFA.
@@ -41,6 +42,7 @@ export default function ProLogin() {
         e.preventDefault();
         setLoading(true);
         setError('');
+        try { localStorage.removeItem('pro_login_via'); } catch { /* R46: a password sign-in is not a ProConnect session */ }
 
         try {
             const res = await fetch('/api/pro/auth/login', {
@@ -269,6 +271,9 @@ export default function ProLogin() {
                             </p>
                         </form>
                     )}
+
+                    {/* R46 / N09: ProConnect (identification only; the invited account and the ADA second factor stay required) */}
+                    {!isMfaStep && <ProConnectSignIn next={next} onMfaToken={(tok) => { setError(''); setMfaToken(tok); }} />}
 
                     {/* Security badge — owner usefulness pass: the former badge claimed end-to-end encryption, which is false (crypto-messaging.js; the server encrypts at rest) */}
                     {!isMfaStep && (

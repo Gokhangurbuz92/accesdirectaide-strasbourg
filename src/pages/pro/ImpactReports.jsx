@@ -159,9 +159,9 @@ export default function ImpactReports() {
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_shared', 'Diagnostics partagés')}
-                            value={kpis.diagnosticsShared ?? 0}
+                            value={kpis.diagnosticsShared === null ? '—' : kpis.diagnosticsShared ?? 0}
                             icon={<FileText size={16} className="text-amber-800" />}
-                            sub={t('pro:impact.kpi_shared_sub', 'Dossiers transmis')}
+                            sub={kpis.diagnosticsShared === null ? t('pro:impact.not_open', 'Fonction non ouverte : non mesuré') : t('pro:impact.kpi_shared_sub', 'Dossiers transmis')}
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_team', 'Équipe active')}
@@ -188,9 +188,9 @@ export default function ImpactReports() {
                         />
                         <KpiCard
                             label={t('pro:impact.kpi_referrals', 'Orientations')}
-                            value={kpis.referralsSent ?? 0}
+                            value={kpis.referralsSent === null ? '—' : kpis.referralsSent ?? 0}
                             icon={<Compass size={16} className="text-indigo-600" />}
-                            sub={`${t('pro:impact.kpi_referrals_sub', 'envoyées · {{received}} reçues · {{closed}} dossiers clôturés', { received: kpis.referralsReceived ?? 0, closed: kpis.casesClosed ?? 0 })}${kpis.casesClosedPartial ? t('pro:impact.kpi_referrals_partial', ' (hors résultats de moins de 5 dossiers)') : ''}`}
+                            sub={kpis.referralsSent === null || kpis.casesClosed === null ? t('pro:impact.not_open', 'Fonction non ouverte : non mesuré') : `${t('pro:impact.kpi_referrals_sub', 'envoyées · {{received}} reçues · {{closed}} dossiers clôturés', { received: kpis.referralsReceived ?? 0, closed: kpis.casesClosed ?? 0 })}${kpis.casesClosedPartial ? t('pro:impact.kpi_referrals_partial', ' (hors résultats de moins de 5 dossiers)') : ''}`}
                         />
                     </div>
 
@@ -268,7 +268,8 @@ export default function ImpactReports() {
                                     </div>
                                 ) : (
                                     <div className="h-[250px] flex items-center">
-                                        <div className="w-1/2 h-full">
+                                        {/* R46: the legend beside the ring carries the same figures as text; the drawing itself is hidden from assistive technology (axe svg-img-alt) */}
+                                        <div className="w-1/2 h-full" aria-hidden="true">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <PieChart>
                                                     <Pie
@@ -277,6 +278,7 @@ export default function ImpactReports() {
                                                         outerRadius={85}
                                                         paddingAngle={4}
                                                         dataKey="value"
+                                                        rootTabIndex={-1}
                                                     >
                                                         {data.themes.map((/** @type {{ name: import("react").Key | null | undefined; }} */ entry, /** @type {number} */ i) => (
                                                             <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />
