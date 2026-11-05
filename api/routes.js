@@ -28,7 +28,8 @@ const routeTable = [
     { path: 'monitor/ingestion-freshness', match: 'exact', handler: () => import('./_handlers/monitor/ingestion-freshness.js') },
     { path: 'monitor/pro-rdv', match: 'exact', handler: () => import('./_handlers/monitor/pro-rdv.js') },
     { path: 'monitor/csp-report', match: 'exact', handler: () => import('./_handlers/monitor/csp-report.js') },
-    { path: 'monitor/mail-events/mailjet', match: 'exact', handler: () => import('./_handlers/monitor/mail-events-mailjet.js') },   // R43-MAIL: off unless MAILER_EVENTS_ENABLED=1
+    { path: 'monitor/mail-events/mailjet', match: 'exact', handler: () => import('./_handlers/monitor/mail-events-mailjet.js') },
+    { path: 'monitor/sms-inbound/twilio', match: 'exact', handler: () => import('./_handlers/monitor/sms-inbound-twilio.js') },   // R46 N02: off unless SMS_INBOUND_URL + TWILIO_AUTH_TOKEN   // R43-MAIL: off unless MAILER_EVENTS_ENABLED=1
     // --- Special / Root ---
     { path: 'download', match: 'exact', handler: () => import('./_handlers/download.js') },
     { path: 'robots.txt', match: 'exact', handler: () => import('./_handlers/robots.js') },

@@ -13,9 +13,13 @@ const src = (p) => readFileSync(p, 'utf8');
 const stubDb = (row) => ({ select: () => ({ from: () => ({ where: () => ({ limit: async () => (row ? [row] : []) }) }) }) });
 
 describe('PKG-11 slice 10 — pure rules', () => {
-  it('N02: the SMS channel stays inactive while « STOP » is not routed, whatever is configured; every sender checks the gate', () => {
-    expect(INBOUND_STOP_ROUTED).toBe(false);
-    expect(optOutReady({ SMS_INBOUND_URL: 'https://example.test/sms', TWILIO_AUTH_TOKEN: 't' })).toBe(false);
+  it('N02: the SMS channel stays inactive while « STOP » cannot be honoured; every sender checks the gate', () => {
+    // R46: the STOP webhook is routed (POST /api/monitor/sms-inbound/twilio); the channel opens only once it is CONFIGURED (https address + token)
+    expect(INBOUND_STOP_ROUTED).toBe(true);
+    expect(optOutReady({ SMS_INBOUND_URL: 'https://example.test/sms', TWILIO_AUTH_TOKEN: 't' })).toBe(true);
+    expect(optOutReady({ TWILIO_AUTH_TOKEN: 't' })).toBe(false);
+    expect(optOutReady({ SMS_INBOUND_URL: 'http://example.test/sms', TWILIO_AUTH_TOKEN: 't' })).toBe(false);
+    expect(optOutReady({ SMS_INBOUND_URL: 'https://example.test/sms', TWILIO_AUTH_TOKEN: 't' }, false)).toBe(false);
     expect(optOutReady({ SMS_INBOUND_URL: 'https://example.test/sms', TWILIO_AUTH_TOKEN: 't' }, true)).toBe(true);
     expect(optOutReady({}, true)).toBe(false);
     for (const f of ['api/_handlers/cron/rdv-reminder.js', 'api/_handlers/cron/parcours-reminder.js', 'api/_handlers/public/sms-notify.js']) expect(src(f), f).toMatch(/optOutReady\(\)/);

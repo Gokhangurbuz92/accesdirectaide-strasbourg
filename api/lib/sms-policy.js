@@ -20,8 +20,8 @@ export const isSmsSendWindow = (date = new Date()) => { const h = parisHour(date
 
 /** Whether the inbound webhook is configured with a verifiable signature (the handler answers 404 otherwise). */
 export const inboundStopConfigured = (env = process.env) => Boolean(String(env.SMS_INBOUND_URL || '').startsWith('https://') && env.TWILIO_AUTH_TOKEN);
-/** The STOP handler (api/_services/sms-stop.js) is not routed yet (see above): until it is, no SMS may say « STOP ». */
-export const INBOUND_STOP_ROUTED = false;
+/** R46: the STOP handler (api/_services/sms-stop.js) is routed at POST /api/monitor/sms-inbound/twilio; SMS still need it CONFIGURED (optOutReady). */
+export const INBOUND_STOP_ROUTED = true;   // R46: POST /api/monitor/sms-inbound/twilio (CSRF-exempt /monitor/ prefix, signature-checked)
 /**
  * PKG-11 / N02 (owner decision 2026-10-24): the SMS channel stays INACTIVE until a reply « STOP » is really honoured — the STOP webhook routed AND configured with
  * a verifiable signature. Every sender checks this before calling the provider (rdv-reminder, parcours-reminder, sms-notify): a configured provider alone no longer

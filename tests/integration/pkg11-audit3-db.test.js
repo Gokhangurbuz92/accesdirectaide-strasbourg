@@ -149,7 +149,7 @@ describe.skipIf(!hasDatabase)('PKG-11 slice 10 (real DB)', () => {
 
   it('N02: with an SMS provider configured, nothing is sent while « STOP » cannot be honoured; the notice says NOT_DELIVERED', async () => {
     const svc = await import('../../api/_services/citizen-account.js'); const notices = await import('../../api/_services/appointment-notices.js'); const policy = await import('../../api/lib/sms-policy.js');
-    expect(policy.optOutReady({ SMS_INBOUND_URL: 'https://example.test/x', TWILIO_AUTH_TOKEN: 't' })).toBe(false);   // configured, but not routed
+    expect(policy.optOutReady({ TWILIO_AUTH_TOKEN: 't' })).toBe(false);   // R46: provider configured, STOP webhook address not set (the test env sets none)
     expect((await svc.setPreference(ID.cit, { channel: 'sms', category: 'reminder', enabled: true, consentGiven: true })).ok).toBe(true);
     const { start } = notices.parisDayWindow(new Date(), 1); const at = new Date(start.getTime() + 11 * 3600000);
     await db.insert(schema.ProRdvService).values({ id: ID.svc, structureId: ID.o1, name: 'S', durationMinutes: 30, bufferBeforeMinutes: 0, bufferAfterMinutes: 0, isActive: true });

@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- * PKG-11 / N02 — the STOP reply handler, kept as a SERVICE until it is routed (intended route POST /api/public/sms-inbound; see INBOUND_STOP_ROUTED in
+ * PKG-11 / N02 — the STOP reply handler; R46: routed at POST /api/monitor/sms-inbound/twilio (api/_handlers/monitor/sms-inbound-twilio.js; INBOUND_STOP_ROUTED in
  * api/lib/sms-policy.js: routing needs a reviewed exemption from the byte-pinned CSRF router code, and an unrouted file under api/_handlers is an undocumented
  * orphan). A reply « STOP » to a reminder SMS ends the SMS reminders of that number.
  *  - OFF unless the owner configures it (SMS_INBOUND_URL = the exact https address given to the provider, TWILIO_AUTH_TOKEN): otherwise 404;

@@ -33,6 +33,12 @@ export function isMailEventsRequest(method, path, envVars = process.env) {
     && ['1', 'true'].includes(String(envVars.MAILER_EVENTS_ENABLED || '').trim().toLowerCase());
 }
 
+/** R46 (N02): the provider's inbound-SMS webhook (STOP replies), only once it is configured @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
+export function isSmsInboundRequest(method, path, envVars = process.env) {
+  return String(method || '').toUpperCase() === 'POST' && path === 'monitor/sms-inbound/twilio'
+    && String(envVars.SMS_INBOUND_URL || '').startsWith('https://') && Boolean(envVars.TWILIO_AUTH_TOKEN);
+}
+
 /** @param {Record<string, string | undefined>} [envVars] */
 export function isPublicBetaRestricted(envVars = process.env) {
   return ['1', 'true'].includes(String(envVars.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
@@ -172,6 +178,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   if (isCspReportRequest(method, p, envVars)) return true;
   // R43-MAIL: the Mailjet delivery events — POST to that exact path only, and only when MAILER_EVENTS_ENABLED=1 (basic auth is checked by the handler)
   if (isMailEventsRequest(method, p, envVars)) return true;
+  if (isSmsInboundRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
   if (surface && openSurfaces(envVars).has(surface) && subSwitchAllows(surface, p, envVars)) return true;
   if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time

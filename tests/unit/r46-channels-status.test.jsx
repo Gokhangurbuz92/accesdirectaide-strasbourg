@@ -35,11 +35,12 @@ describe('channel state matrix (pure, configuration only)', () => {
     expect(emailChannel({ MAILER_PROVIDER: 'carrier-pigeon' }).state).toBe('OFF');
   });
 
-  it('SMS: incomplete (names) / configured but BLOCKED while « STOP » cannot be honoured (N02) — even with the inbound URL set, the webhook is not routed', () => {
+  it('SMS: incomplete (names) / configured but BLOCKED while « STOP » cannot be honoured (N02); CONFIGURED once the routed STOP webhook has its https address (R46)', () => {
     expect(smsChannel({ TWILIO_SID: 'AC1' })).toMatchObject({ state: 'INCOMPLETE', missing: ['TWILIO_AUTH_TOKEN', 'TWILIO_FROM'] });
     const full = { TWILIO_SID: 'AC1', TWILIO_AUTH_TOKEN: SECRET, TWILIO_FROM: '+33600000000' };
     expect(smsChannel(full)).toMatchObject({ state: 'BLOCKED', reason: 'STOP_WEBHOOK_NOT_CONFIGURED', missing: ['SMS_INBOUND_URL'], reachesPeople: false });
-    expect(smsChannel({ ...full, SMS_INBOUND_URL: 'https://lab.invalid/api/public/sms-stop' })).toMatchObject({ state: 'BLOCKED', reason: 'STOP_WEBHOOK_NOT_ROUTED', reachesPeople: false });
+    expect(smsChannel({ ...full, SMS_INBOUND_URL: 'https://lab.invalid/api/monitor/sms-inbound/twilio' })).toMatchObject({ state: 'CONFIGURED', reachesPeople: true });
+    expect(smsChannel({ ...full, SMS_INBOUND_URL: 'http://lab.invalid/api/monitor/sms-inbound/twilio' })).toMatchObject({ state: 'BLOCKED', reason: 'STOP_WEBHOOK_NOT_CONFIGURED' });
     expect(JSON.stringify(smsChannel(full))).not.toContain(SECRET);
   });
 
