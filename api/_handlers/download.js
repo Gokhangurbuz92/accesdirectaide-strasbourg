@@ -114,7 +114,7 @@ export default async function handler(/** @type {import('../_utils/http-types').
         res.setHeader('X-Content-Type-Options', 'nosniff');
         return res.send(fileBuffer);
     } catch (error) {
-        if (error && error.code === 'PROTECTED_STORE_REFUSED') return res.status(503).json({ error: 'PROTECTED_STORE_REFUSED', message: 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.' });
+        if (error && /** @type {any} */ (error).code === 'PROTECTED_STORE_REFUSED') return res.status(503).json({ error: 'PROTECTED_STORE_REFUSED', message: 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.' });
         logger.error({ err: safeDownloadError(error) }, '[Document Download] Error');
         return res.status(500).json({ error: 'Internal Server Error' });
     }
