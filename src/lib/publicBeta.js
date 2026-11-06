@@ -23,6 +23,14 @@ const builtOpen = () => {
 };
 
 /**
+ * R47: does this build open a surface that the beta banner says is closed (accounts, appointments, documents)? Then the banner must not say « not open yet ».
+ * @param {string[]} [open]
+ */
+export function personalSurfacesOpened(open = builtOpen()) {
+  return open.some((x) => x === 'accounts' || x === 'appointments' || x === 'documents');
+}
+
+/**
  * R36 (header): the account entry points (« Se connecter », « Créer un compte ») are offered only when accounts can really be used: outside the beta, or
  * when this build opens the accounts surface. @param {boolean} beta @param {string[]} [open]
  */

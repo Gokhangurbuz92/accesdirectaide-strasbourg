@@ -65,6 +65,7 @@
  "retry": "Erneut versuchen",
  "crash.support": "Wenn das Problem weiterhin besteht, kontaktieren Sie uns unter <0>support@accesdirectaide.fr</0>",
  "beta.banner": "<strong>Öffentliche Beta</strong> · Hilfen, Behördengänge und Anlaufstellen, geprüft anhand offizieller Quellen. Konten, Termine und Dokumente: noch nicht verfügbar. Nur die zuständige Stelle entscheidet über Ihre Ansprüche.",
+ "beta.banner_partial": "<strong>Öffentliche Beta</strong> · Leistungen, Verfahren und Anlaufstellen, geprüft anhand offizieller Quellen. Einige Funktionen werden schrittweise geöffnet. Nur die zuständige Stelle entscheidet über Ihre Rechte.",
  "beta.closed.title": "Diese Funktion ist noch nicht verfügbar",
  "beta.closed.intro": "Accès Direct Aide befindet sich in der <strong>öffentlichen Beta</strong>. In dieser Phase können Sie die geprüften Hilfen, Behördengänge und Anlaufstellen mit ihren offiziellen Quellen einsehen.",
  "beta.closed.later": "Kontoerstellung, persönlicher Bereich, Terminbuchung, Teilen einer Akte, Versand von Dokumenten und die Kontaktformulare werden später freigeschaltet, sobald die Datenschutzgarantien bestehen. Hier wird nichts von Ihnen verlangt: Es werden nur technische Daten verarbeitet (IP-Adresse in den Protokollen des Hosting-Anbieters, Sicherheits-Cookie), wie auf der Seite <0>Datenschutz</0> erklärt.",
