@@ -599,5 +599,6 @@
  "fc.status_not_linked": "Şifresiz giriş yapmak için hesabınızı FranceConnect’e bağlayabilirsiniz. ADA yalnızca FranceConnect kimlik numarasını ve e-posta adresinizi alır.",
  "fc.link": "Hesabımı FranceConnect’e bağla",
  "fc.linked": "Hesabınız artık FranceConnect’e bağlı.",
- "profile.inapp_center_r46": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. Hatırlatmalar size e-postayla (ve yalnızca etkinleştirirseniz SMS ile) ulaşır."
+ "profile.inapp_center_r46": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. Hatırlatmalar size e-postayla (ve yalnızca etkinleştirirseniz SMS ile) ulaşır.",
+ "rdv.moved_by_structure_r47": "Saat, kuruluş tarafından {{when}} tarihinde değiştirildi."
 }

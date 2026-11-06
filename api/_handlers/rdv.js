@@ -424,6 +424,7 @@ function buildAppointmentManageUrl(appointmentId, structureSlug, confirmationTok
  *  confirmationToken?: string | null,
  *  confirmationExpiresAt?: string | null,
  *  includeCalendar?: boolean,
+ *  extraSequence?: number,
  * }=} options
  */
 function serializeAppointment(appointment, options = {}) {
@@ -451,7 +452,7 @@ function serializeAppointment(appointment, options = {}) {
           structureName,
           serviceName,
           manageUrl,
-          sequence: Number(appointment.rescheduleCount || 0),
+          sequence: Number(appointment.rescheduleCount || 0) + Number(options.extraSequence || 0),   // R47: + the structure's own moves
           location: icsLocation(appointment),
         }),
       }
@@ -1619,6 +1620,8 @@ async function listMyAppointments(req, res) {
   const now = Date.now();
   // R44: the fixed reason of a refused request (journal row of the decision, same structure only), shown to the person in their language
   const reasons = await requests.refusalReasonsFor(rows);
+  // R47: the moves made by the structure (journal rows, same structure only): shown to the person, and counted in the calendar file's SEQUENCE
+  const moves = await (await import('../_services/rdv-team-moves.js')).teamMovesFor(rows.map((a) => ({ id: a.id, structureId: a.structureId })));
   // R45 (ENG-LR-2): the appointments with an active art. 9 booking consent (withdrawable here; withdrawal cancels an upcoming one)
   const { activeSensitiveConsents } = await import('../_services/sensitive-booking-consent.js');
   let consented = new Set();
@@ -1629,7 +1632,7 @@ async function listMyAppointments(req, res) {
       const upcoming = new Date(a.startAt).getTime() > now;
       const inTime = new Date(a.startAt).getTime() - now >= RESCHEDULE_MIN_NOTICE_HOURS * 3_600_000;
       // R12 (C19): an active upcoming appointment carries its calendar file (« Ajouter au calendrier » in Mes rendez-vous)
-      return { ...serializeAppointment(a, { includeCalendar: active && upcoming }), canCancel: active && upcoming, canReschedule: active && inTime && Number(a.rescheduleCount || 0) < MAX_RESCHEDULES,
+      return { ...serializeAppointment(a, { includeCalendar: active && upcoming, extraSequence: moves.get(a.id)?.count || 0 }), ...(moves.has(a.id) ? { movedByStructure: { count: moves.get(a.id)?.count, lastAt: moves.get(a.id)?.lastAt } } : {}), canCancel: active && upcoming, canReschedule: active && inTime && Number(a.rescheduleCount || 0) < MAX_RESCHEDULES,
         ...(reasons.has(a.id) ? { refusal: { reasonCode: reasons.get(a.id) } } : {}), ...(consented.has(a.id) ? { sensitiveConsent: true } : {}) };
     }),
   });
@@ -1678,10 +1681,12 @@ export function rescheduleRefusal(row) {
  * R38 — the atomic move shared by the citizen reschedule and the account-free one: under the booking locks of both Paris days (fixed order: no deadlock), on
  * the row itself (FOR UPDATE): owner check, policy re-check, overlap re-check with buffers (shared « still active » rule), closure re-check, then a
  * compare-and-set update on rescheduleCount. Either the appointment moves or nothing changes.
- * @param {{ appointment: any, structure: any, service: any, startAt: Date, endAt: Date, refuse: (row: any) => any, owns: (row: any) => boolean, set?: Record<string, any> }} input
+ * R47: `personMove: false` = a move by the STRUCTURE (api/_services/rdv-pro-reschedule.js): the same locks and re-checks, but the person's own move
+ * allowance (rescheduleCount, rescheduledAt) is left as it is; the compare-and-set is then on the status the row had under the lock.
+ * @param {{ appointment: any, structure: any, service: any, startAt: Date, endAt: Date, refuse: (row: any) => any, owns: (row: any) => boolean, set?: Record<string, any>, personMove?: boolean }} input
  * @returns {Promise<{ moved: any, outcome: { status: number, body: any } }>}
  */
-export async function moveSlot({ appointment, structure, service, startAt, endAt, refuse, owns, set = {}, counts = () => true, guard = null }) {
+export async function moveSlot({ appointment, structure, service, startAt, endAt, refuse, owns, set = {}, counts = () => true, guard = null, personMove = true }) {
   const keys = [...new Set([`${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(appointment.startAt))}`, `${structure.id}:${new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(startAt)}`])].sort();   // R14: the Paris day, as the booking lock (was the UTC day: two locks for one slot near midnight)
   const withLocks = (i, task) => (i >= keys.length ? task() : withBookingCollisionLock(keys[i], () => withLocks(i + 1, task)));
   let moved = null;
@@ -1690,7 +1695,7 @@ export async function moveSlot({ appointment, structure, service, startAt, endAt
   const outcome = await withLocks(0, () => db.transaction(async (tx) => {
     for (const k of keys) await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${k}, 0))`);
     // re-check everything under the locks, on the row itself (FOR UPDATE)
-    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", "citizenUserId", ${features.guestBooking ? sql`"guestManageTokenHash"` : sql`NULL AS "guestManageTokenHash"`}, "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
+    const [row] = (await tx.execute(sql`SELECT id, status, "startAt", (extract(epoch from "startAt") * 1000)::bigint AS "startMs", "structureId", "citizenUserId", ${features.guestBooking ? sql`"guestManageTokenHash"` : sql`NULL AS "guestManageTokenHash"`}, "rescheduleCount" FROM "ProAppointment" WHERE id = ${appointment.id} FOR UPDATE`)).rows;
     if (!row || !owns(row)) return { status: 404, body: { error: 'Appointment not found' } };
     const late = refuse(row);
     if (late) return { status: late.status, body: { error: late.code, code: late.code, message: late.error } };
@@ -1704,9 +1709,9 @@ export async function moveSlot({ appointment, structure, service, startAt, endAt
     if (Number(off.value) > 0) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
     // R42: the caller's last check under the same locks (team: the assigned professional is still free, absences included)
     if (typeof guard === 'function' && !(await guard(tx))) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
-    const [updated] = await tx.update(T).set({ startAt, endAt, rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date(), reminder_sent_at: null, reminder_locked_at: null,
+    const [updated] = await tx.update(T).set({ startAt, endAt, ...(personMove ? { rescheduleCount: Number(row.rescheduleCount || 0) + 1, rescheduledAt: new Date() } : {}), reminder_sent_at: null, reminder_locked_at: null,
       ...set })
-      .where(and(eq(schema.ProAppointment.id, appointment.id), eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)))).returning();
+      .where(and(eq(schema.ProAppointment.id, appointment.id), personMove ? eq(schema.ProAppointment.rescheduleCount, Number(row.rescheduleCount || 0)) : eq(schema.ProAppointment.status, String(row.status)))).returning();
     if (!updated) return { status: 409, body: { error: 'Slot no longer available', code: 'SLOT_TAKEN', message: 'Ce créneau n’est plus libre. Choisissez-en un autre.' } };
     moved = { ...updated, structure: appointment.structure, service: appointment.service };   // structure carries the address fields (loader)
     return { status: 200, body: null };

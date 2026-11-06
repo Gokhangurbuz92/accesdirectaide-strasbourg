@@ -599,5 +599,6 @@
  "fc.status_not_linked": "You can link your account to FranceConnect to sign in without a password. ADA only receives the FranceConnect identifier and your e-mail address.",
  "fc.link": "Link my account to FranceConnect",
  "fc.linked": "Your account is now linked to FranceConnect.",
- "profile.inapp_center_r46": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Reminders reach you by e-mail (and by text message only if you turn it on)."
+ "profile.inapp_center_r46": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Reminders reach you by e-mail (and by text message only if you turn it on).",
+ "rdv.moved_by_structure_r47": "Time changed by the organisation on {{when}}."
 }

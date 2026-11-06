@@ -119,8 +119,11 @@ describe.skipIf(!hasDatabase)('messaging (real DB)', () => {
     const ok = await call(pro(P1, S1), APT_B); expect(ok.statusCode).toBe(200); expect(ok.body.item.status).toBe('cancelled');
     const row = (await db.execute(sql`SELECT status, "cancelledAt", "cancelledBy" FROM "ProAppointment" WHERE id = ${APT_B}`)).rows[0];
     expect(row.status).toBe('cancelled'); expect(row.cancelledBy).toBe('PRO'); expect(row.cancelledAt).toBeTruthy();
-    const box = mailer.__getTestOutbox(); expect(box).toHaveLength(1); expect(box[0].to).toBe(B.email); expect(box[0].subject).not.toContain('MSG');   // citizen told, no structure name in subject
-    expect((await call(pro(P1, S1), APT_B)).statusCode).toBe(200); expect(mailer.__getTestOutbox()).toHaveLength(1);      // idempotent: no second mail
+    // R47: the team is told as well (its own notice, per member preference) — the person gets exactly one e-mail
+    const box = mailer.__getTestOutbox(); const toPerson = box.filter((m) => m.to === B.email);
+    expect(toPerson).toHaveLength(1); expect(toPerson[0].subject).not.toContain('MSG');   // citizen told, no structure name in subject
+    expect(box.filter((m) => m.to !== B.email).every((m) => !String(m.text || '').includes(B.email))).toBe(true);
+    expect((await call(pro(P1, S1), APT_B)).statusCode).toBe(200); expect(mailer.__getTestOutbox()).toHaveLength(box.length);      // idempotent: no second mail
     expect((await call(pro(P1, S1), 'nope')).statusCode).toBe(404);
   });
 

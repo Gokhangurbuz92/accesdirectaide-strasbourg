@@ -200,7 +200,10 @@ describe.skipIf(!hasDatabase)('PKG-3 batch 2 — modalities, video, notices, Out
     const b = (await book(SV_IP, ip[6].startAt)).body;
     await citizen.setPreference(C.id, { channel: 'email', category: 'service', enabled: false });
     await callPro(proCancel, { method: 'POST', body: { id: b.id } });
-    expect((await notices(b.id)).filter((n) => n.kind !== 'BOOKED_BY_CITIZEN')).toEqual([{ kind: 'CANCELLED_BY_STRUCTURE', recipient: 'citizen', channel: 'email', status: 'NO_CONSENT' }]);   // R43: BOOKED_BY_CITIZEN rows of the booking itself from 0045
+    const cancelRows = (await notices(b.id)).filter((n) => n.kind !== 'BOOKED_BY_CITIZEN');   // R43: BOOKED_BY_CITIZEN rows of the booking itself from 0045
+    expect(cancelRows.filter((n) => n.recipient === 'citizen')).toEqual([{ kind: 'CANCELLED_BY_STRUCTURE', recipient: 'citizen', channel: 'email', status: 'NO_CONSENT' }]);
+    // R47: the team is told of a cancellation by one of its members (in-app + e-mail per preference), recorded under the same kind
+    expect(cancelRows.filter((n) => n.recipient === 'structure').map((n) => `${n.kind}:${n.channel}`).sort()).toEqual(['CANCELLED_BY_STRUCTURE:email', 'CANCELLED_BY_STRUCTURE:in_app']);
     await citizen.setPreference(C.id, { channel: 'email', category: 'service', enabled: true });
     const c = (await book(SV_IP, ip[7].startAt)).body; mailer.__clearTestOutbox();
     await callPro(proCancel, { method: 'POST', body: { id: c.id } });

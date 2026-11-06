@@ -599,5 +599,6 @@
  "fc.status_not_linked": "Sie können Ihr Konto mit FranceConnect verknüpfen, um sich ohne Passwort anzumelden. ADA erhält nur die FranceConnect-Kennung und Ihre E-Mail-Adresse.",
  "fc.link": "Mein Konto mit FranceConnect verknüpfen",
  "fc.linked": "Ihr Konto ist jetzt mit FranceConnect verknüpft.",
- "profile.inapp_center_r46": "Neue Informationen zu Ihrem Konto werden ohne Einstellung auch unter « Benachrichtigungen » in Mein Bereich angezeigt: Sie verlassen die Plattform nicht. Erinnerungen erhalten Sie per E-Mail (und per SMS nur, wenn Sie dies aktivieren)."
+ "profile.inapp_center_r46": "Neue Informationen zu Ihrem Konto werden ohne Einstellung auch unter « Benachrichtigungen » in Mein Bereich angezeigt: Sie verlassen die Plattform nicht. Erinnerungen erhalten Sie per E-Mail (und per SMS nur, wenn Sie dies aktivieren).",
+ "rdv.moved_by_structure_r47": "Uhrzeit am {{when}} von der Einrichtung geändert."
 }

@@ -45,6 +45,7 @@ import i18n, { useT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
+import PublicProfileForm from '@/components/pro/PublicProfileForm';
 /**
  * ProTeam — Page enrichie de gestion d'équipe
  *
@@ -71,6 +72,9 @@ export default function ProTeam() {
     const [page, setPage] = useState(1);
     const [changingId, setChangingId] = useState(null);
     const [successorId, setSuccessorId] = useState('');
+    // R47: the members' public display names (the administrator sets a member's name; GET /api/pro/profile lists them)
+    const [publicNames, setPublicNames] = useState(/** @type {Record<string, { displayName: string | null, jobTitle: string | null }>} */ ({}));
+    const [editingName, setEditingName] = useState(/** @type {string | null} */ (null));
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('pro_token') : null;
     const headers = { Authorization: `Bearer ${token}` };
@@ -80,10 +84,15 @@ export default function ProTeam() {
     const fetchTeam = useCallback(async () => {
         setLoading(true); setLoadProblem('');
         try {
-            const [teamRes, statsRes] = await Promise.allSettled([
+            const [teamRes, statsRes, namesRes] = await Promise.allSettled([
                 fetch(`/api/pro/team?limit=50&page=${page}`, { headers }),
                 fetch('/api/pro/team/stats', { headers }),
+                fetch('/api/pro/profile', { headers }),
             ]);
+            if (namesRes.status === 'fulfilled' && namesRes.value.ok) {
+                const names = await namesRes.value.json().catch(() => null);
+                setPublicNames(Object.fromEntries((names?.members || []).map((/** @type {any} */ m) => [m.id, { displayName: m.displayName, jobTitle: m.jobTitle }])));
+            }
 
             if (teamRes.status === 'fulfilled' && teamRes.value.ok) {
                 setData(await teamRes.value.json());
@@ -340,7 +349,7 @@ export default function ProTeam() {
                             key={u.id}
                             className={
                                 u.status === 'disabled'
-                                    ? 'opacity-50'
+                                    ? 'border-dashed bg-slate-50'   // R47: was opacity-50 — the e-mail and status of a disabled member fell below the AA contrast
                                     : u.status === 'active'
                                         ? ''
                                         : 'bg-slate-50'
@@ -358,6 +367,13 @@ export default function ProTeam() {
                                         <p className="font-medium text-slate-900 text-sm truncate">
                                             {u.email}
                                         </p>
+                                        {u.status === 'active' ? (
+                                            <p className="text-xs text-slate-700" data-testid={`team-public-name-value-${u.id}`}>
+                                                {publicNames[u.id]?.displayName
+                                                    ? t('pro:team.public_name_is_r47', 'Nom public : {{name}}', { name: publicNames[u.id].displayName })
+                                                    : t('pro:team.public_name_none_r47', 'Sans nom public : ne peut pas être choisi par son nom')}
+                                            </p>
+                                        ) : null}
                                         <div className="flex items-center gap-2 text-xs text-slate-700 mt-0.5">
                                             <RoleBadge role={u.role} />
                                             <span>•</span>
@@ -413,6 +429,11 @@ export default function ProTeam() {
                                             <span>{t('pro:team.manages_schedule', 'Gère le planning')}<span className="sr-only">{t('pro:team.manages_schedule_sr', ' (horaires et absences de l’équipe) : {{email}}', { email: u.email })}</span></span>
                                         </label>
                                     )}
+                                    {u.status === 'active' && (
+                                        <Button variant="outline" size="sm" aria-expanded={editingName === u.id} aria-controls={`team-public-name-panel-${u.id}`} onClick={() => setEditingName(editingName === u.id ? null : u.id)} data-testid={`team-public-name-${u.id}`}>
+                                            {t('pro:team.public_name_edit_r47', 'Nom public')}<span className="sr-only">{t('pro:team.public_name_edit_sr_r47', ' : modifier le nom public de {{email}}', { email: u.email })}</span>
+                                        </Button>
+                                    )}
                                     {/* R42-A08: the second factor is enrolled only through an invitation sent by another administrator */}
                                     {u.id !== user?.id && u.status === 'active' && (
                                         u.mfa_enabled ? (
@@ -450,6 +471,13 @@ export default function ProTeam() {
                                     )}
                                 </div>
                             </CardContent>
+                            {editingName === u.id ? (
+                                <div id={`team-public-name-panel-${u.id}`} className="border-t border-slate-200 p-4" data-testid={`team-public-name-panel-${u.id}`}>
+                                    <PublicProfileForm memberId={u.id} idPrefix={`team-profile-${u.id}`} initial={publicNames[u.id] || { displayName: null, jobTitle: null }}
+                                        label={t('pro:team.public_name_form_r47', 'Nom public de {{email}}', { email: u.email })}
+                                        onSaved={(p) => setPublicNames((cur) => ({ ...cur, [u.id]: { displayName: p.displayName, jobTitle: p.jobTitle } }))} />
+                                </div>
+                            ) : null}
                         </Card>
                     ))}
                 </div>

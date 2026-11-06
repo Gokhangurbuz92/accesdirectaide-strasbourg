@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 
 import SEO from '@/components/SEO';
+import PublicProfileForm from '@/components/pro/PublicProfileForm';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -391,6 +392,15 @@ export default function ProParametres() {
                     {t('pro:parametres.subtitle', '{{name}} — Configuration et préférences', { name: structure?.nom || t('pro:parametres.my_structure', 'Ma structure') })}
                 </p>
             </div>
+
+            {/* R47: my public display name (self-service; what a person sees when the structure makes me selectable for a booking) */}
+            <Card data-testid="pro-public-profile">
+                <CardContent className="pt-6 space-y-3">
+                    <h2 id="pro-public-profile-title" className="text-lg font-semibold text-slate-900">{t('pro:public_profile.title_r47', 'Mon nom public')}</h2>
+                    <p className="text-sm text-slate-700">{t('pro:public_profile.intro_r47', 'Ce nom permet aux personnes de vous choisir quand elles prennent rendez-vous, si votre structure l’autorise. Votre adresse e-mail n’est jamais montrée.')}</p>
+                    <PublicProfileForm idPrefix="pro-profile" label={t('pro:public_profile.title_r47', 'Mon nom public')} />
+                </CardContent>
+            </Card>
 
             {/* Tabs */}
             <Tabs defaultValue="structure" className="space-y-6">

@@ -175,6 +175,9 @@ async function handler(req, res) {
     ]);
     const total = totalRes[0]?.value || 0;
     const items = appointments.map(serialize);
+    // R47: the moves made by the team (journal rows, same structure only): « déplacé par l’équipe » in the agenda and the detail
+    const moves = await (await import('../../../_services/rdv-team-moves.js')).teamMovesFor(appointments.map((a) => ({ id: a.id, structureId: a.structureId })));
+    for (const item of items) item.teamMoves = moves.get(item.id) || null;
     if (id && items.length === 1) items[0].notices = await listNotices(items[0].id);   // honest delivery record of the notices about this appointment
 
     return res.status(200).json({

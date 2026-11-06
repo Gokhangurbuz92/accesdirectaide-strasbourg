@@ -274,6 +274,7 @@ export default function ProAppointments() {
                       <Badge className={statusClass}>{STATUS_LABEL[appointment.status] || appointment.status}</Badge>
                       <Badge className="border-indigo-200 bg-indigo-50 text-indigo-800" data-testid="pro-agenda-mode">{appointment.mode === 'VIDEO' ? t('pro:appointments.mode_video', 'À distance (visio)') : t('pro:appointments.mode_onsite', 'En présentiel')}</Badge>
                       {appointment.rescheduleCount ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-rescheduled">{t('pro:appointments.rescheduled', 'Déplacé par la personne ({{n}})', { n: appointment.rescheduleCount })}</Badge> : null}
+                      {appointment.teamMoves?.count ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-team-moved">{t('pro:appointments.team_moved_r47', 'Déplacé par l’équipe ({{n}})', { n: appointment.teamMoves.count })}</Badge> : null}
                       {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">{t('pro:appointments.video_pending', 'Visio à valider')}</Badge> : null}
                     </div>
                     <p className="text-sm text-slate-700">
