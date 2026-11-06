@@ -81,7 +81,7 @@ async function counts(db, sid) {
     openCases: await one(sql`SELECT count(*)::int AS n FROM "ProCase" WHERE "structureId" = ${sid} AND status <> 'CLOSED'`),
     internalNotes: await one(sql`SELECT count(*)::int AS n FROM "ProCaseNote" WHERE "structureId" = ${sid} AND visibility = 'INTERNAL'`),
     liveReferrals: await one(sql`SELECT count(*)::int AS n FROM "Referral" WHERE (("fromStructureId" = ${sid} AND status NOT IN ('ACCEPTED', 'IN_PROGRESS')) OR "toStructureId" = ${sid}) AND status IN (${list(LIVE_REFERRALS)})`),
-    futureAppointments: await one(sql`SELECT count(*)::int AS n FROM "ProAppointment" WHERE "structureId" = ${sid} AND status = 'booked' AND "startAt" > NOW()`),
+    futureAppointments: await one(sql`SELECT count(*)::int AS n FROM "ProAppointment" WHERE "structureId" = ${sid} AND status IN ('booked', 'requested', 'confirmed') AND "startAt" > NOW()`),
     activeLegalHolds: await one(sql`SELECT count(*)::int AS n FROM "LegalHold" WHERE status = 'ACTIVE' AND "dataCategory" = 'Structure' AND "recordId" = ${sid}`),
   };
 }
@@ -142,7 +142,7 @@ async function execute(tx, sid, requestId, reviewer) {
   }
   summary.referralsEnded = ended;
   const appts = (await tx.execute(sql`UPDATE "ProAppointment" SET status = 'cancelled', "cancelledAt" = NOW(), "cancelledBy" = 'ORGANIZATION_CLOSED', "updatedAt" = NOW()
-    WHERE "structureId" = ${sid} AND status = 'booked' AND "startAt" > NOW() RETURNING id, "citizenUserId", "startAt"`)).rows;
+    WHERE "structureId" = ${sid} AND status IN ('booked', 'requested', 'confirmed') AND "startAt" > NOW() RETURNING id, "citizenUserId", "startAt"`)).rows;   // R47: the account bookings (confirmed, requested) too, not only the legacy « booked »
   summary.appointmentsCancelled = appts.length;
   summary.servicesDeactivated = await n(sql`UPDATE "ProRdvService" SET "isActive" = false, "updatedAt" = NOW() WHERE "structureId" = ${sid} AND "isActive" = true`);
   await tx.execute(sql`UPDATE "StructureRdvSettings" SET "isPublished" = false, "contactEmail" = NULL, "contactPhone" = NULL, "updatedAt" = NOW() WHERE "structureId" = ${sid}`);

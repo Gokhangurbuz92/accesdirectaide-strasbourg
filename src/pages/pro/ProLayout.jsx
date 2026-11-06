@@ -44,6 +44,8 @@ export default function ProLayout() {
         }
 
         // Verify token validity via /api/pro/me
+        // R47: an answer that arrives after the page changed (the person signed in meanwhile and went to `next`) is ignored — it used to send them to the dashboard
+        let current = true;
         fetch('/api/pro/me', {
             headers: { Authorization: `Bearer ${token}` }
         })
@@ -54,6 +56,7 @@ export default function ProLayout() {
                 throw err;
             })
             .then(data => {
+                if (!current) return;
                 setUser(data.user);
                 // R34: where ADA Pro requires the second factor (production), a password-only session can only set it up — every other route refuses it
                 if (data.session?.mfaRequired && !data.session.mfa && location.pathname !== '/pro/mfa-settings') {
@@ -74,18 +77,22 @@ export default function ProLayout() {
                 }
             })
             .catch((e) => {
+                if (!current) return;
                 // Q10: only a REFUSED session signs the person out; an outage (5xx, network) keeps the session and says so
                 if (e && [401, 403, 404].includes(e.status)) {
                     localStorage.removeItem('pro_token');
                     // R21: the sign-in page says why (the session ended: logout elsewhere, password reset, membership removed, 8 h) and the page asked for is
                     // resumed after the sign-in, as for a signed-out deep link (before: a silent jump to the sign-in, the page lost)
                     const deep = !['/pro', '/pro/', '/pro/login', '/pro/register', '/pro/register-invite', '/pro/forgot-password', '/pro/reset-password'].includes(location.pathname);
-                    navigate(deep ? `${proLoginEntry}?next=${encodeURIComponent(location.pathname + location.search)}` : proLoginEntry, { replace: true, state: { sessionEnded: true } });
+                    // R47: on the sign-in page itself its own ?next= is kept (an expired token left in the browser dropped it: the person landed on the dashboard)
+                    const keep = location.pathname === '/pro/login' ? location.search : '';
+                    navigate(deep ? `${proLoginEntry}?next=${encodeURIComponent(location.pathname + location.search)}` : `${proLoginEntry}${keep}`, { replace: true, state: { sessionEnded: true } });
                 } else {
                     setUnavailable(true);
                 }
             })
-            .finally(() => setLoading(false));
+            .finally(() => { if (current) setLoading(false); });
+        return () => { current = false; };
     }, [navigate, location.pathname, location.search, proLoginEntry]);
 
     // PKG-11 audit: the session is ended ON THE SERVER first (before: only the browser copy was removed and the token stayed valid for 8 h)

@@ -86,6 +86,10 @@ export default function PublicBooking() {
     const pendingModeRef = useRef('');
     // R46: which fortnight of the 60 bookable days the slot list shows (0 = the next 14 days); kept in a ref so every existing reload keeps the period
     const windowOffsetRef = useRef(0);
+    // R47: the period buttons keep the keyboard focus while a window loads (aria-disabled, not disabled); reaching the first or the last window hands the
+    // focus to the other button instead of dropping it on the page
+    const periodPrevRef = useRef(null);
+    const periodNextRef = useRef(null);
     const [windowOffset, setWindowOffset] = useState(0);
     const offeredModes = serviceModes(selectedService);
     const location = bookingLocation(servicesPayload);
@@ -304,8 +308,11 @@ export default function PublicBooking() {
     // R46: earlier / later fortnight of the bookable period (up to 60 days ahead); the slots of that period are reloaded, focus stays on the control
     const moveWindow = (/** @type {number} */ delta) => {
         const next = Math.min(MAX_WINDOW_OFFSET, Math.max(0, windowOffsetRef.current + delta * BOOKING_WINDOW_DAYS));
-        if (next === windowOffsetRef.current || !selectedService) return;
+        if (loading || next === windowOffsetRef.current || !selectedService) return;
+        const atBound = next === 0 || next >= MAX_WINDOW_OFFSET;
+        const focused = typeof document !== 'undefined' && (document.activeElement === periodPrevRef.current || document.activeElement === periodNextRef.current);
         windowOffsetRef.current = next; setWindowOffset(next);
+        if (atBound && focused) (next === 0 ? periodNextRef : periodPrevRef).current?.focus();
         setSelectedSlot(null);
         fetchSlots(selectedService.id, professional, bookingMode);
     };
@@ -626,8 +633,8 @@ export default function PublicBooking() {
                             {t('booking:public.creneaux_disponibles', "Créneaux disponibles")}
                         </h3>
                         <nav aria-label={t('booking:public.period_nav_r46', 'Période des créneaux')} className="mb-4 flex flex-wrap items-center justify-between gap-2" data-testid="booking-period">
-                            <button type="button" data-testid="booking-period-prev" disabled={loading || windowOffset === 0} onClick={() => moveWindow(-1)}
-                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                            <button type="button" ref={periodPrevRef} data-testid="booking-period-prev" disabled={windowOffset === 0} aria-disabled={loading || windowOffset === 0} onClick={() => moveWindow(-1)}
+                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:opacity-50">
                                 {t('booking:public.period_prev_r46', '‹ 14 jours précédents')}
                             </button>
                             <p className="text-sm text-slate-700" aria-live="polite" data-testid="booking-period-label">
@@ -636,8 +643,8 @@ export default function PublicBooking() {
                                     to: formatDate(`${shownWindow.to}T12:00:00Z`, { weekday: 'short', day: 'numeric', month: 'short' }),
                                 })}
                             </p>
-                            <button type="button" data-testid="booking-period-next" disabled={loading || windowOffset >= MAX_WINDOW_OFFSET} onClick={() => moveWindow(1)}
-                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                            <button type="button" ref={periodNextRef} data-testid="booking-period-next" disabled={windowOffset >= MAX_WINDOW_OFFSET} aria-disabled={loading || windowOffset >= MAX_WINDOW_OFFSET} onClick={() => moveWindow(1)}
+                                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:opacity-50">
                                 {t('booking:public.period_next_r46', '14 jours suivants ›')}
                             </button>
                         </nav>

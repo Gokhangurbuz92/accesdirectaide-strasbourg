@@ -37,6 +37,9 @@ export default function CompteProfil() {
   const { t } = useT('compte');
   const [state, setState] = useState({ loading: true, error: '', account: null });
   const [shares, setShares] = useState([]);
+  // R47: dossier sharing is a capability of its own (citizen.shared_dossier, closed in Production until its AIPD/HDS): while it is closed the profile still
+  // opens — rectification is a right of every account — and the « Mes dossiers partagés » card is simply not shown
+  const [sharesOpen, setSharesOpen] = useState(true);
   const [message, setMessage] = useState('');
   const [problem, setProblem] = useState('');
   const { code: uiLanguage } = useLanguage();
@@ -52,7 +55,10 @@ export default function CompteProfil() {
     setState((s) => (s.account ? s : { ...s, loading: true, error: '' }));   // a refresh after an action keeps the screen (and the keyboard focus) in place
     try {
       const account = await citizenApi.getProfile();
-      const owned = await citizenApi.listShares();
+      let owned = { shares: [] };
+      try { owned = await citizenApi.listShares(); setSharesOpen(true); } catch (err) {
+        if (err.status === 503 && err.code === 'CAPABILITY_NOT_OPEN') setSharesOpen(false); else throw err;
+      }
       setShares(owned.shares || []);
       const p = account.profile;
       applyAccountAccessibility(p.accessibilityPrefs);   // K0 / C04: the saved preferences apply to the whole site, not only to this form
@@ -241,6 +247,7 @@ export default function CompteProfil() {
 
       <FranceConnectLink />
 
+      {sharesOpen ? (
       <Card id="mes-dossiers" tabIndex={-1} ref={(el) => { if (el && typeof window !== 'undefined' && window.location.hash === '#mes-dossiers' && !el.dataset.focused) { el.dataset.focused = '1'; el.scrollIntoView(); el.focus({ preventScroll: true }); } }}>   {/* R18: the « Mes dossiers partagés » tile lands here */}
         <CardHeader><CardTitle className="text-lg">{t('compte:profile.mes_dossiers_partages', 'Mes dossiers partagés')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -265,6 +272,7 @@ export default function CompteProfil() {
           </form>
         </CardContent>
       </Card>
+      ) : null}
     </div>
   );
 }

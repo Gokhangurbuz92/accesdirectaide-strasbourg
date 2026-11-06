@@ -193,6 +193,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             if (successorUserId === targetUserId) return badSuccessor();
             // R12 (E03): disable + hand-over in ONE transaction — the successor is locked and re-checked inside it (a successor disabled at the same moment cannot
             // receive the cases), and a failure leaves the member active with their cases (never a disabled member still holding them)
+            let movedAppointments = { toSuccessor: 0, toStructure: 0 };
             const movedCases = await db.transaction(async (tx) => {
                 if (successorUserId) {
                     const [successor] = await tx.select({ id: ProUser.id }).from(ProUser)
@@ -201,16 +202,26 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 }
                 // R18: the departure also ENDS the member's sessions — a later reactivation must not revive a token issued before it (8 h + refresh grace)
                 await tx.update(ProUser).set({ status: 'disabled', sessionsValidAfter: sql`NOW()` }).where(and(eq(ProUser.id, targetUserId), eq(ProUser.structureId, structureId)));
-                return handOverAll(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx), { notice: false });
+                const cases = await handOverAll(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx), { notice: false });
+                // R47 (R12 « no orphans »): the member's future appointments and pending requests are not left on a disabled account — they go to the
+                // successor when that person is free at that time, otherwise to the structure (unassigned: any member may decide, the administrator reassigns)
+                const moved = await tx.execute(sql`UPDATE "ProAppointment" a SET "createdByProUserId" = CASE WHEN ${successorUserId}::text IS NOT NULL AND NOT EXISTS (
+                        SELECT 1 FROM "ProAppointment" b WHERE b."createdByProUserId" = ${successorUserId}::text AND b.id <> a.id AND b.status IN ('booked', 'requested', 'confirmed')
+                          AND b."startAt" < a."endAt" AND b."endAt" > a."startAt") THEN ${successorUserId}::text ELSE NULL END, "updatedAt" = NOW()
+                    WHERE a."structureId" = ${structureId} AND a."createdByProUserId" = ${targetUserId} AND a.status IN ('booked', 'requested', 'confirmed') AND a."endAt" > NOW()
+                    RETURNING a."createdByProUserId" AS "to"`);
+                const rows = moved.rows || [];
+                movedAppointments = { toSuccessor: rows.filter((r) => r.to).length, toStructure: rows.filter((r) => !r.to).length };
+                return cases;
             });
             if (movedCases === null) return badSuccessor();
             await handoverNotice(successorUserId, structureId, movedCases);
 
             await logProAudit('USER_DISABLED', userId, structureId, {
-                targetUserId, successorUserId, movedCases,
+                targetUserId, successorUserId, movedCases, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure,
             }, clientIp(req));
 
-            return res.status(200).json({ ok: true, movedCases, successorUserId });
+            return res.status(200).json({ ok: true, movedCases, movedAppointments, successorUserId });
         }
 
         return res.status(405).json({ error: 'Méthode non autorisée' });

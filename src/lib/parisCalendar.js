@@ -29,3 +29,25 @@ export function parisBookingWindow(now = new Date(), offsetDays = 0) {
   const from = addCalendarDays(parisDate(now), offset);
   return { from, to: addCalendarDays(from, BOOKING_WINDOW_DAYS - 1) };
 }
+
+// R47: the professional's datetime-local fields (absences) are Paris wall time, whatever the time zone of the device — the screens list them in Paris time
+const PARIS_WALL = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+/** an instant as the value of a datetime-local field in Paris wall time (YYYY-MM-DDTHH:MM), '' when invalid @param {string | number | Date} raw */
+export function parisWallValue(raw) {
+  const d = raw instanceof Date ? raw : new Date(String(raw));
+  return Number.isNaN(d.getTime()) ? '' : PARIS_WALL.format(d).replace(' ', 'T');
+}
+/** a datetime-local value read as Paris wall time → the ISO instant ('' when invalid); a time skipped by the spring change is moved forward @param {string} value */
+export function parisWallToIso(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(value || '').trim());
+  if (!m) return '';
+  const [y, mo, d, h, mi] = m.slice(1).map(Number);
+  const wall = Date.UTC(y, mo - 1, d, h, mi);
+  let t = wall;
+  for (let i = 0; i < 2; i += 1) {   // two passes settle the offset on either side of a change
+    const [dd, tt] = PARIS_WALL.format(new Date(t)).split(' ');
+    const shown = Date.parse(`${dd}T${tt}:00Z`);
+    t += wall - shown;
+  }
+  return Number.isNaN(t) ? '' : new Date(t).toISOString();
+}
