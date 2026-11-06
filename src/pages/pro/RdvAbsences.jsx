@@ -9,23 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { proRdvClient } from '@/api/pro-rdv-client';
 import { formatDate, useT } from '@/i18n';
+import { parisWallValue, parisWallToIso } from '@/lib/parisCalendar';
 
-function toDateTimeLocalValue(raw) {
-  if (!raw) return '';
-  const date = new Date(String(raw));
-  if (Number.isNaN(date.getTime())) return '';
-  const offset = date.getTimezoneOffset();
-  const adjusted = new Date(date.getTime() - offset * 60_000);
-  return adjusted.toISOString().slice(0, 16);
-}
-
-function toIsoFromDateTimeLocal(localValue) {
-  const value = String(localValue || '').trim();
-  if (!value) return '';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return '';
-  return parsed.toISOString();
-}
+// R47: the fields are Paris wall time (as every time of the agenda), not the device's time zone
+const toDateTimeLocalValue = (raw) => (raw ? parisWallValue(raw) : '');
+const toIsoFromDateTimeLocal = (localValue) => parisWallToIso(localValue);
 
 function formatDateTime(raw) {
   if (!raw) return '-';

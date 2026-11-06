@@ -155,7 +155,7 @@ export default function NotificationCenter({ className = '' }) {
                     size={20}
                 />
                 {totalBadge > 0 && (
-                    <span className="absolute -top-0.5 -end-0.5 w-4.5 h-4.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white min-w-[18px]">
+                    <span className="absolute -top-0.5 -end-0.5 w-4.5 h-4.5 bg-red-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white min-w-[18px]">
                         {totalBadge > 9 ? '9+' : totalBadge}
                     </span>
                 )}

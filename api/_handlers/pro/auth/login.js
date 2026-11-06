@@ -1,4 +1,5 @@
 // @ts-nocheck
+import crypto from 'node:crypto';
 import logger from '../../../_utils/logger.js';
 import { verifyPassword } from '../../../_utils/user-auth.js';
 import { signProToken, signProMfaPendingToken, logProAudit } from '../../../_utils/auth.js';
@@ -57,7 +58,8 @@ export default async function handler(req, res) {
 
         if (!rows.length) {
             await verifyPassword(password, DUMMY_HASH).catch(() => false);   // same work as a real check (timing)
-            await logProAudit('LOGIN_FAILED', 'unknown', 'unknown', { email, reason: 'User not found' }, ip);
+            // R47: no e-mail address in the audit trail — a short one-way digest still links repeated attempts on the same address
+            await logProAudit('LOGIN_FAILED', 'unknown', 'unknown', { emailDigest: crypto.createHash('sha256').update(String(email)).digest('hex').slice(0, 16), reason: 'User not found' }, ip);
             return authError();
         }
 

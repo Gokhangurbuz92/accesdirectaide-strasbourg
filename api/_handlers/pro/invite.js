@@ -49,8 +49,8 @@ async function handler(req, res) {
 
             await db.delete(Invitation).where(eq(Invitation.id, invitationId));
 
+            // R47: no e-mail address in the audit trail (the invitation id names it; the Invitation row is the record)
             await logProAudit('INVITATION_CANCELLED', userId, structureId, {
-                email: invitation.email,
                 invitationId,
             }, clientIp(req));
 
@@ -98,7 +98,7 @@ async function handler(req, res) {
             text: `Vous êtes invité·e à rejoindre une équipe sur Accès Direct Aide.\nCréez votre accès (lien valable 7 jours, utilisable une fois) : ${buildAppUrl(`/pro/register-invite?token=${encodeURIComponent(token)}`)}\n\nSi vous n’attendiez pas cette invitation, ignorez ce message.` }).catch(() => ({ accepted: false }));
         logger.info({ accepted: Boolean(mail?.accepted) }, '[Invite] invitation e-mail handed to the mailer');
 
-        await logProAudit('INVITATION_SENT', userId, structureId, { email, role: inviteRole, invitationId: invitation.id }, clientIp(req));   // R20: the sender of this invitation (redemption checks they are still an administrator)
+        await logProAudit('INVITATION_SENT', userId, structureId, { role: inviteRole, invitationId: invitation.id }, clientIp(req));   // R47: no e-mail address in the audit trail   // R20: the sender of this invitation (redemption checks they are still an administrator)
 
         // PKG-11 audit: the page says whether the e-mail was really handed to a provider (mailLedgerStatus semantics; « sent » was shown whatever happened)
         return res.status(201).json({ ...publicInvitation(invitation), mailStatus: mailLedgerStatus(mail) });

@@ -34,7 +34,7 @@ const actionLabels = (t) => ({
     REGISTER_VIA_INVITE: { label: t('pro:audit_log.action.register_via_invite', 'Inscription via invite'), icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
     INVITATION_SENT: { label: t('pro:audit_log.action.invitation_sent', 'Invitation envoyée'), icon: UserPlus, color: 'text-indigo-600 bg-indigo-50' },
     LOGIN_SUCCESS: { label: t('pro:audit_log.action.login', 'Connexion'), icon: LogIn, color: 'text-slate-600 bg-slate-100' },
-    USER_DISABLED: { label: t('pro:audit_log.action.user_disabled', 'Membre désactivé'), icon: UserX, color: 'text-red-600 bg-red-50' },
+    USER_DISABLED: { label: t('pro:audit_log.action.user_disabled', 'Membre désactivé'), icon: UserX, color: 'text-red-800 bg-red-50' },
     REGISTER_SUCCESS: { label: t('pro:audit_log.action.register_structure', 'Inscription structure'), icon: UserPlus, color: 'text-emerald-700 bg-emerald-50' },
 });
 
