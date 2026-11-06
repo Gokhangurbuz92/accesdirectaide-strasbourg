@@ -309,9 +309,16 @@ function affectedRecordIds(/** @type {unknown} */ subjectId, /** @type {{ appoin
 * @param {Set<string>} recordIds
 */
 async function findActiveLegalHolds(database, recordIds) {
-    const holds = await safeFindMany(database.query?.LegalHold, {
-        where: eq(LegalHold.status, 'ACTIVE')
-    });
+    // R47 audit: the legal-hold safeguard fails CLOSED. It used safeFindMany, which turns a missing query API or a failed read into an EMPTY list — i.e.
+    // « no hold » — so an erasure could proceed past a hold it could not read. Now an unreadable LegalHold table refuses the erasure.
+    const queryApi = database?.query?.LegalHold;
+    if (!queryApi || typeof queryApi.findMany !== 'function') throw privacyError('LEGAL_HOLD_CHECK_FAILED', 'Legal holds could not be read: erasure refused');
+    let holds;
+    try {
+        holds = safeArray(await queryApi.findMany({ where: eq(LegalHold.status, 'ACTIVE') }));
+    } catch {
+        throw privacyError('LEGAL_HOLD_CHECK_FAILED', 'Legal holds could not be read: erasure refused');
+    }
     return holds.filter((hold) => recordIds.has(String(hold?.recordId)));
 }
 
@@ -915,7 +922,8 @@ export function createPrivacyRightsService({ db, cryptoLib }) {
                 await this.updateDsrRequestStatus(requestId, 'COMPLETED');
                 return summary;
             } catch (error) {
-                if (error?.code !== 'LEGAL_HOLD_ACTIVE') {
+                // R47: an unreadable hold table refuses before anything is deleted (the transaction is rolled back): not « partially completed »
+                if (error?.code !== 'LEGAL_HOLD_ACTIVE' && error?.code !== 'LEGAL_HOLD_CHECK_FAILED') {
                     await this.updateDsrRequestStatus(requestId, 'PARTIALLY_COMPLETED').catch(() => null);
                 }
                 throw error;

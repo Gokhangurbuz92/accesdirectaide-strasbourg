@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-25T21:53:57.276Z",
+ "generatedAt": "2026-11-06T14:13:23.986Z",
  "scope": "npm ls --omit=dev --all (production dependency tree)",
- "packages": 576,
+ "packages": 580,
  "byLicence": {
   "(non déclarée)": 1,
-  "MIT": 404,
-  "Apache-2.0": 119,
+  "MIT": 407,
+  "Apache-2.0": 120,
   "Apache-2.0 AND LGPL-3.0-or-later AND MIT": 1,
   "ISC": 24,
   "MPL-2.0": 1,
@@ -306,7 +306,7 @@
   },
   {
    "name": "@babel/runtime",
-   "version": "7.28.6",
+   "version": "7.29.10",
    "licence": "MIT",
    "repository": "https://github.com/babel/babel.git"
   },
@@ -2093,6 +2093,12 @@
    "repository": "syntax-tree/hast-util-whitespace"
   },
   {
+   "name": "html-parse-stringify",
+   "version": "4.0.1",
+   "licence": "MIT",
+   "repository": "git+https://github.com/i18next/html-parse-stringify.git"
+  },
+  {
    "name": "html-url-attributes",
    "version": "3.0.1",
    "licence": "MIT",
@@ -2109,6 +2115,12 @@
    "version": "10.1.0",
    "licence": "MIT",
    "repository": "git://github.com/fb55/htmlparser2.git"
+  },
+  {
+   "name": "i18next",
+   "version": "26.6.0",
+   "licence": "MIT",
+   "repository": "https://github.com/i18next/i18next.git"
   },
   {
    "name": "iconv-lite",
@@ -2814,7 +2826,7 @@
   },
   {
    "name": "postcss-selector-parser",
-   "version": "6.1.4",
+   "version": "6.1.5",
    "licence": "MIT",
    "repository": "https://github.com/postcss/postcss-selector-parser.git"
   },
@@ -2931,6 +2943,12 @@
    "version": "7.71.1",
    "licence": "MIT",
    "repository": "https://github.com/react-hook-form/react-hook-form"
+  },
+  {
+   "name": "react-i18next",
+   "version": "17.1.9",
+   "licence": "MIT",
+   "repository": "https://github.com/i18next/react-i18next.git"
   },
   {
    "name": "react-is",
@@ -3339,6 +3357,12 @@
    "version": "4.21.0",
    "licence": "MIT",
    "repository": "privatenumber/tsx"
+  },
+  {
+   "name": "typescript",
+   "version": "5.9.3",
+   "licence": "Apache-2.0",
+   "repository": "https://github.com/microsoft/TypeScript.git"
   },
   {
    "name": "uncrypto",

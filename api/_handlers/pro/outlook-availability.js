@@ -13,6 +13,9 @@ import { outlookStatus } from '../../_services/calendar-outlook.js';
 // sandbox or a local mock Graph; this route used to hard-code Microsoft's hosts, so it could not be tested against a mock and ignored the sandbox setting
 const authorityBase = () => String(process.env.OUTLOOK_AUTHORITY_URL || 'https://login.microsoftonline.com/common/oauth2/v2.0').replace(/\/+$/, '');
 const graphBase = () => String(process.env.OUTLOOK_GRAPH_BASE_URL || 'https://graph.microsoft.com/v1.0').replace(/\/+$/, '');
+/** R47: every Microsoft call is bounded (a hung token or Graph request used to hold the function until the platform killed it); same bound as rdv-calendar-busy */
+export const OUTLOOK_PROVIDER_TIMEOUT_MS = 8_000;
+const bounded = () => AbortSignal.timeout(OUTLOOK_PROVIDER_TIMEOUT_MS);
 
 /**
  * Outlook Availability Handler
@@ -53,6 +56,7 @@ async function refreshOutlookToken(storedToken, userId) {
             `${authorityBase()}/token`,
             {
                 method: 'POST',
+                signal: bounded(),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({
                     client_id: clientId,
@@ -148,6 +152,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             `${graphBase()}/me/calendar/getSchedule`,
             {
                 method: 'POST',
+                signal: bounded(),
                 headers: {
                     Authorization: `Bearer ${currentToken}`,
                     'Content-Type': 'application/json',
@@ -179,6 +184,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                     `${graphBase()}/me/calendar/getSchedule`,
                     {
                         method: 'POST',
+                        signal: bounded(),
                         headers: {
                             Authorization: `Bearer ${refreshed}`,
                             'Content-Type': 'application/json',
@@ -226,6 +232,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     } catch (error) {
         // @ts-ignore
         logger.error({ err: { name: error?.name } }, '[Outlook Availability] failed');
+        // R47: Microsoft did not answer in time (or the network failed): the provider's state, not a server fault
+        // @ts-ignore
+        if (error?.name === 'TimeoutError' || error?.name === 'AbortError' || (error?.name === 'TypeError' && error?.message === 'fetch failed')) return res.status(504).json({ error: 'Impossible de lire l\'agenda Outlook.' });
         return res.status(500).json({ error: 'Erreur serveur interne' });
     }
 }
