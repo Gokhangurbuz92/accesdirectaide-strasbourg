@@ -307,9 +307,14 @@ async function handleDiagnosticInner(req, res, track) {
         }
         // @ts-ignore
         if (err && err.fallback === true) {
+            // R47: an engine that answered the (cached, 60 s) health probe and then fails the calculation is the same state as an engine found down: the
+            // stable code and the ENGINE_UNAVAILABLE assessment were missing here (every client error of openfiscaClient.post is flagged fallback, so the
+            // OPENFISCA_TIMEOUT / NETWORK_ERROR branch below was unreachable for them)
             return res.status(503).json({
                 error: SAFE_MESSAGES.ENGINE_FALLBACK,
+                code: 'OPENFISCA_UNAVAILABLE',
                 fallback: true,
+                assessment: engineUnavailableAssessment({ retryable: true }),
                 requestId,
             });
         }

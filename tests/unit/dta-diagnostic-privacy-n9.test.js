@@ -166,6 +166,15 @@ describe('N9 — failure paths', () => {
     expect(r.body.error).toBe('Le simulateur national des aides est momentanément indisponible. Veuillez réessayer plus tard.');
     expect(leaks()).toEqual([]);
   });
+  it('R47: an engine that passed the health probe and then fails the calculation answers the stable OPENFISCA_UNAVAILABLE code and the ENGINE_UNAVAILABLE assessment', async () => {
+    S.mode.engineUp = true;
+    S.mode.calc = Object.assign(new Error('network'), { fallback: true, status: 503, code: 'OPENFISCA_NETWORK_ERROR' });
+    const r = await call({ answers: answers() });
+    expect(r.statusCode).toBe(503);
+    expect(r.body.code).toBe('OPENFISCA_UNAVAILABLE');
+    expect(r.body.assessment.items.map((i) => i.state)).toEqual(['ENGINE_UNAVAILABLE']);
+    expect(JSON.stringify(r.body)).not.toMatch(/"amount":\s*[0-9]|eligible/i);
+  });
   it('health-check exception (message carries the answers): logged by code only and reported as a synthetic event', async () => {
     const mod = await import('../../api/lib/openfiscaClient.js');
     expect(mod).toBeDefined();

@@ -65,6 +65,7 @@
  "retry": "Try again",
  "crash.support": "If the problem continues, contact us at <0>support@accesdirectaide.fr</0>",
  "beta.banner": "<strong>Public beta</strong> · Benefits, procedures and support centres checked against official sources. Accounts, appointments and documents: not open yet. Only the organisation concerned decides on your rights.",
+ "beta.banner_partial": "<strong>Public beta</strong> · Benefits, procedures and support centres checked against official sources. Some features are being opened step by step. Only the organisation concerned decides on your rights.",
  "beta.closed.title": "This feature is not open yet",
  "beta.closed.intro": "Accès Direct Aide is in <strong>public beta</strong>. During this phase, you can consult the checked benefits, procedures and support centres, with their official sources.",
  "beta.closed.later": "Creating an account, the personal area, booking appointments, sharing a file, sending documents and the contact forms will open later, once the data protection safeguards are in place. Nothing is asked of you here: only technical data is processed (IP address in the host’s logs, security cookie), as explained on the <0>Privacy</0> page.",

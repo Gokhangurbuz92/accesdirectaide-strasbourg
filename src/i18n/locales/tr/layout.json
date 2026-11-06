@@ -65,6 +65,7 @@
  "retry": "Yeniden dene",
  "crash.support": "Sorun devam ederse bize <0>support@accesdirectaide.fr</0> adresinden ulaşın",
  "beta.banner": "<strong>Genel beta</strong> · Resmi kaynaklarda doğrulanmış yardımlar, işlemler ve destek noktaları. Hesaplar, randevular ve belgeler: henüz açık değil. Haklarınız hakkında yalnızca ilgili kurum karar verir.",
+ "beta.banner_partial": "<strong>Herkese açık beta</strong> · Resmî kaynaklarla doğrulanmış yardımlar, işlemler ve kurumlar. Bazı işlevler adım adım açılıyor. Haklarınıza yalnızca ilgili kurum karar verir.",
  "beta.closed.title": "Bu işlev henüz açık değil",
  "beta.closed.intro": "Accès Direct Aide <strong>genel beta</strong> aşamasındadır. Bu aşamada doğrulanmış yardımlara, işlemlere ve kuruluşlara resmi kaynaklarıyla birlikte göz atabilirsiniz.",
  "beta.closed.later": "Hesap oluşturma, kişisel alan, randevu alma, dosya paylaşma, belge gönderme ve iletişim formları, veri koruma güvenceleri sağlandığında daha sonra açılacaktır. Burada sizden hiçbir şey istenmez: <0>Gizlilik</0> sayfasında açıklandığı gibi yalnızca teknik veriler işlenir (barındırma sağlayıcısının kayıtlarındaki IP adresi, güvenlik çerezi).",

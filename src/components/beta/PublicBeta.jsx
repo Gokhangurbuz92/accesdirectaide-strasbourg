@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { publicContactEmail } from '@/lib/contactEmail';
 import i18n, { useT } from '@/i18n';
+import { personalSurfacesOpened } from '@/lib/publicBeta';
 
 /** Discreet, always-visible notice of the restricted public beta (owner directive 29/10/2026). */
 export function PublicBetaBanner() {
@@ -10,10 +11,16 @@ export function PublicBetaBanner() {
     <div role="note" data-testid="public-beta-banner" className="w-full bg-amber-50 border-b border-amber-200 text-amber-950 text-xs sm:text-sm">
       {/* R26: one short line — what works, what is not open yet, who decides (it used to fill three lines on a phone) */}
       <p className="max-w-7xl mx-auto px-4 py-1.5 sm:px-6 lg:px-8">
-        <Trans i18n={i18n} i18nKey="layout:beta.banner" defaults="<strong>Bêta publique</strong> · Aides, démarches et lieux vérifiés sur sources officielles. Comptes, rendez-vous et documents : pas encore ouverts. Seul l’organisme concerné décide de vos droits." />
+        {/* R47: a build that opens accounts, appointments or documents (VITE_PUBLIC_BETA_OPEN_SURFACES) no longer says they are « not open yet » */}
+        {personalSurfacesOpened() ? <PartialBetaBannerText /> : <Trans i18n={i18n} i18nKey="layout:beta.banner" defaults="<strong>Bêta publique</strong> · Aides, démarches et lieux vérifiés sur sources officielles. Comptes, rendez-vous et documents : pas encore ouverts. Seul l’organisme concerné décide de vos droits." />}
       </p>
     </div>
   );
+}
+
+/** R47: the banner line once some personal-data surfaces are opened by the build (same length and tone as the default line) */
+function PartialBetaBannerText() {
+  return <Trans i18n={i18n} i18nKey="layout:beta.banner_partial" defaults="<strong>Bêta publique</strong> · Aides, démarches et lieux vérifiés sur sources officielles. Certaines fonctions ouvrent progressivement. Seul l’organisme concerné décide de vos droits." />;
 }
 
 /** Shown instead of a screen that needs an account, a booking, a document or a form while the beta is restricted. */
