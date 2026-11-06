@@ -53,7 +53,9 @@ export default function AdminObservability() {
   const [error, setError] = useState('');
   const [liveMessage, setLiveMessage] = useState('');
 
-  const CRON_JOBS = ['actualites', 'ingest-demarches', 'ingest-annuaire', 'ingest-aids', 'hive-scan'];
+  // R47: the jobs that really write CronRun rows under these names (ingest-demarches / ingest-annuaire are legacy and record nothing; hive-scan writes
+  // « HIVE_SCAN » and is a closed legacy job; veille = the D-5 v2 automatic verification; parcours-reminder and ingest-structures were missing)
+  const CRON_JOBS = ['actualites', 'veille', 'ingest-aids', 'ingest-structures', 'parcours-reminder'];
 
   const load = useCallback(async () => {
     setLoading(true);
