@@ -232,7 +232,7 @@ describe('R46 N09 ProConnect — identification only: invited account + ADA seco
     expect(choose.statusCode).toBe(409); expect(choose.body.organizations.map((o) => o.structureId)).toEqual(['st-1', 'st-2']);
     const done = await call('/api/pro/auth/proconnect/complete', { method: 'POST', db, cookie: jar(cb), body: { structureId: 'st-2' } });
     expect(auth.verifyProMfaPendingToken(done.body.mfa_token)).toMatchObject({ userId: 'pu-2' });
-    const forged = await call('/api/pro/auth/proconnect/complete', { method: 'POST', db, cookie: 'ada_pc_handoff=eyJhbGciOiJub25lIn0.eyJ1IjpbInB1LTEiXX0.' });
+    const forged = await call('/api/pro/auth/proconnect/complete', { method: 'POST', db, cookie: `ada_pc_handoff=${Buffer.from('{"alg":"none"}').toString('base64url')}.${Buffer.from('{"u":["pu-1"]}').toString('base64url')}.` });   // an unsigned (alg none) forged hand-off, built at run time
     expect(forged.statusCode).toBe(401);
   });
   it('an account disabled between the callback and completion: refused', async () => {
