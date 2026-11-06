@@ -167,6 +167,14 @@ export function isOpenJobPath(path, envVars = process.env) {
   return p.startsWith('cron/') && openJobs(envVars).has(p.slice('cron/'.length));
 }
 
+/** R47 (F1): a citizen appointment action (account-bound): any write under rdv/, or reading the person's own appointments @param {string} method @param {string} path */
+export function citizenAppointmentNeedsAccounts(method, path) {
+  const p = String(path || '');
+  if (!(p === 'rdv' || p.startsWith('rdv/'))) return false;
+  if (!['GET', 'HEAD'].includes(String(method || '').toUpperCase())) return true;
+  return p === 'rdv/appointments' || p.startsWith('rdv/appointments/');
+}
+
 /**
  * @param {string} method
  * @param {string} path normalized API path without the « /api/ » prefix and without leading or trailing slashes
@@ -182,6 +190,9 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   if (isMailEventsRequest(method, p, envVars)) return true;
   if (isSmsInboundRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
+  // R47 (activation finding F1): the citizen side of « appointments » acts through a citizen account, so it follows « accounts » too — closing
+  // « accounts » (rollback) must also stop an already-open citizen session from booking, rescheduling or cancelling; public slot reading stays
+  if (surface === 'appointments' && citizenAppointmentNeedsAccounts(method, p) && !openSurfaces(envVars).has('accounts')) return false;
   if (surface && openSurfaces(envVars).has(surface) && subSwitchAllows(surface, p, envVars)) return true;
   if (isOpenJobPath(p, envVars) && ['GET', 'POST'].includes(String(method || '').toUpperCase())) return true;   // R38: one job at a time
   if (!READ_METHODS.has(String(method || '').toUpperCase())) return false;
