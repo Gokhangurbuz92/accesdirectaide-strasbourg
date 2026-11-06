@@ -34,7 +34,7 @@ const ctx = async (browser, lang, { mobile = false, admin = true } = {}) => {
 
 test('without a session the two administrator pages send to the sign-in, and their API refuses', async ({ browser }) => {
   const context = await ctx(browser, 'fr', { admin: false }); const page = await context.newPage();
-  for (const p of ['/admin/fournisseurs', '/admin/securite']) { await page.goto(`${BASE}${p}`); await expect(page).toHaveURL(/\/admin\/login$/); }
+  for (const p of ['/admin/fournisseurs', '/admin/securite']) { await page.goto(`${BASE}${p}`); await expect(page).toHaveURL(/\/admin\/login\?reason=restricted$/); }   // R47: the redirect now says why
   for (const p of ['provider-status', 'security-signals']) expect((await context.request.get(`${BASE}/api/admin/${p}`)).status()).toBe(401);
   await context.close();
 });

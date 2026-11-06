@@ -47,7 +47,7 @@ test.beforeAll(() => { expect(TOKEN, 'R46F_TOKEN').not.toBe(''); expect(LINKS.st
 test('without a session the page sends to the sign-in; the API refuses without CSRF token (403), without a session (401) and without MFA (403)', async ({ browser, request }) => {
   const context = await ctx(browser, 'fr', { token: '' }); const page = await context.newPage();
   await page.goto(`${BASE}${PAGE}`);
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page).toHaveURL(/\/admin\/login\?reason=restricted$/);   // R47: the redirect now says why
   // an anonymous POST without the double-submit token stops at the CSRF check (403); with it, the gate answers 401 (no session)
   expect((await api(request, BASE, '', { action: 'list' })).status()).toBe(403);
   await context.request.get(`${BASE}/api/health`);

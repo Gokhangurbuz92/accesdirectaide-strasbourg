@@ -106,9 +106,10 @@ add({ id: 'appointments.services', item: 'surface.appointments', features: ['B01
   removals: [beta('ADA_BETA_OPEN_SURFACES', 'appointments')] });
 add({ id: 'appointments.book_ordinary', item: 'capability.citizen.booking', features: ['B02', 'B03'], run: () => book(S.svc.ordinary), ok: (r) => r.status === 201,
   removals: [beta('ADA_BETA_OPEN_SURFACES', 'appointments')] });
-// R47 finding F1 (recorded, not a gate of the code): closing « accounts » stops sign-up and sign-in, but a citizen session issued before keeps booking on « appointments »
-add({ id: 'finding.accounts_closed_session_still_books', item: 'surface.appointments', features: ['B03'], byDesign: true, finding: true,
-  run: async () => { apply({ name: 'ADA_BETA_OPEN_SURFACES', token: 'accounts' }); const r = await book(S.svc.ordinary); restore(); return r; }, ok: (r) => r.status === 201, removals: [] });
+// R47 finding F1 — FIXED in d5d3c15: closing « accounts » (rollback) also stops a citizen session issued before from booking on « appointments »
+add({ id: 'accounts_closed_session_refused', item: 'surface.appointments', features: ['B03'], byDesign: true,
+  run: async () => { apply({ name: 'ADA_BETA_OPEN_SURFACES', token: 'accounts' }); const r = await book(S.svc.ordinary); restore(); return r; },
+  ok: (r) => r.status === 503 && codeOf(r) === 'PUBLIC_BETA_RESTRICTED', removals: [] });
 add({ id: 'booking.sensitive_consent_required', item: 'booking.sensitive', features: ['B03'], run: () => book(S.svc.sensitive), ok: (r) => r.status === 400 && codeOf(r) === 'SENSITIVE_CONSENT_REQUIRED', removals: [] });
 add({ id: 'booking.sensitive', item: 'booking.sensitive', features: ['B01', 'B03'], run: () => book(S.svc.sensitive, { sensitiveConsent: true }), ok: (r) => r.status === 201,
   removals: [{ change: { name: 'ADA_SENSITIVE_BOOKING_APPROVED' }, status: 409, code: 'SENSITIVE_BOOKING_NOT_OPEN' }, { change: { name: 'ADA_HDS_BOOKING_ASSESSED' }, status: 409, code: 'SENSITIVE_BOOKING_NOT_OPEN' },
