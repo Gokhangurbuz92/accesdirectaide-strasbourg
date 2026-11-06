@@ -237,7 +237,9 @@ describe('search engines (audit of 31/10/2026)', () => {
 describe('R35 per-surface opening during the beta (ADA_BETA_OPEN_SURFACES)', () => {
   it('opens only the named surface, for every method of its routes; everything else stays closed', () => {
     const env = { ADA_BETA_OPEN_SURFACES: 'appointments' };
-    expect(isAllowedInPublicBeta('POST', 'rdv', env)).toBe(true);
+    // R47 (F1): the citizen side of appointments acts through an account, so it also needs « accounts » open
+    expect(isAllowedInPublicBeta('POST', 'rdv', env)).toBe(false);
+    expect(isAllowedInPublicBeta('POST', 'rdv', { ADA_BETA_OPEN_SURFACES: 'accounts,appointments' })).toBe(true);
     expect(isAllowedInPublicBeta('GET', 'pro/slots', env)).toBe(true);
     for (const p of ['auth/signup', 'citizen/coffre', 'pro/dossier', 'admin/login', 'cron/gdpr-purge', 'pro/appointments/visio', 'contact'])
       expect(isAllowedInPublicBeta('POST', p, env), p).toBe(false);

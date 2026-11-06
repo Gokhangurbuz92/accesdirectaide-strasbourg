@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+/** @param {string} metaUrl import.meta.url of the calling module */
 export function isMainModule(metaUrl) {
   try {
     if (!process.argv[1]) return false;

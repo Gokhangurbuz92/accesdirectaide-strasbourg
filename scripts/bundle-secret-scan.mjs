@@ -6,7 +6,6 @@
  */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { isMainModule } from './lib/is-main.mjs';
 
 /** server-only names whose value must never reach the browser (secret-like names; VITE_* excluded) */

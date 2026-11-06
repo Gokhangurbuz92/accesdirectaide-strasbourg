@@ -27,7 +27,7 @@ const LOCALE_VALUES = Object.fromEntries(['en', 'tr', 'ar', 'de', 'uk'].map((l) 
 const classify = (/** @type {string} */ s, /** @type {string} */ lang = '') => {
   if (lang && LOCALE_VALUES[lang]?.has(norm(s).trim())) return 'translated';
   if (/@|^www\.|^https?:|\.(fr|com|org|test|eu)\b/.test(s) || NAME.test(s.trim()) || /^[\d\s.,:/+()–-]+$/.test(s) || /^\d{2} \d{2} \d{2} \d{2} \d{2}$/.test(s)) return 'name';
-  if (/^[a-z0-9._][a-z0-9_.\/-]*$/.test(s) || /^[A-Z0-9_]+(\/[A-Z_]+)?$/.test(s) || /^[a-z_-]+(, [a-zA-Z_-]+)+$/.test(s) || /^(GET|POST) \/api\//.test(s)) return 'name';   // identifiers shown as such (job names, codes, file names)
+  if (/^[a-z0-9._][a-z0-9_./-]*$/.test(s) || /^[A-Z0-9_]+(\/[A-Z_]+)?$/.test(s) || /^[a-z_-]+(, [a-zA-Z_-]+)+$/.test(s) || /^(GET|POST) \/api\//.test(s)) return 'name';   // identifiers shown as such (job names, codes, file names)
   if (DATA.test(s)) return 'data';
   const n = norm(s);
   if (SRC.includes(n)) return 'ui';

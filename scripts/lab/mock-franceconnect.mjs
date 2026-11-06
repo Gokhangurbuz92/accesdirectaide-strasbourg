@@ -10,7 +10,6 @@
  */
 import http from 'node:http';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
 import { isMainModule } from '../lib/is-main.mjs';
 
 const b64u = (b) => Buffer.from(b).toString('base64url');
