@@ -15,10 +15,12 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertTestServer } from '../../scripts/lib/test-isolation.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const PORT = Number(process.env.R46F_PORT || 5187), PORT_CONF = Number(process.env.R46F_PORT_CONF || 3187);
-if ([PORT, PORT_CONF].includes(3000)) throw new Error('port 3000 is the owner LAB');
+// R47: both servers loopback, never :3000, on the disposable test cluster (127.0.0.1:55434, *_test) — scripts/lib/test-isolation.mjs
+for (const port of [PORT, PORT_CONF]) assertTestServer({ host: '127.0.0.1', port, databaseUrl: process.env.DATABASE_URL, label: 'e2e-r46/finish/run-lab' });
 const DIST = path.resolve(process.env.R46F_DIST || '');
 if (!fs.existsSync(path.join(DIST, 'index.html'))) throw new Error('R46F_DIST: no built app (npx vite build --outDir <dir>)');
 const u = new URL(process.env.DATABASE_URL || 'postgres://none/none');
@@ -31,7 +33,7 @@ const hex = () => crypto.randomBytes(32).toString('hex');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'r46f-'));
 const SECRETS = { JWT_SECRET: hex(), AUTH_SECRET: hex(), ADA_ENCRYPTION_KEY: hex(), CRON_SECRET: hex(), BYPASS_SECRET: hex() };
 const BASE_ENV = {
-  PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'fr_FR.UTF-8', TZ: 'Europe/Paris', NODE_ENV: 'development', VERCEL_ENV: 'development',
+  PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'fr_FR.UTF-8', TZ: 'Europe/Paris', NODE_ENV: 'development', VERCEL_ENV: 'development', ADA_TEST_ISOLATION: '1',
   DATABASE_URL: process.env.DATABASE_URL, ADA_PUBLIC_CONTENT_MODE: 'lab', MAILER_PROVIDER: 'test', OLLAMA_BASE_URL: 'http://127.0.0.1:9',
   ADA_VEILLE: 'off', ADA_VERIFICATION_NETWORK: 'off', LAB_QA_PRIORITY: 'off', ...(load ? { LAB_LOAD_FORWARDED: '1' } : {}), LAB_DIST: DIST, ADA_LOCAL_STORAGE_DIR: path.join(tmp, 'storage'), ...SECRETS,
 };

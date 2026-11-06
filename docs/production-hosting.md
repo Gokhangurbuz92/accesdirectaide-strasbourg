@@ -60,6 +60,12 @@ transformerait en test de la limite, et il consomme du crédit. Il demande l'acc
   audit des dépendances de production), déploie (le build lance `scripts/release-preflight.mjs` et s'arrête sur un FAIL), puis essaie
   l'adresse publique (en-tête `x-release-sha`, disponibilité, une liste, l'accueil) et revient automatiquement au déploiement précédent si
   l'essai échoue. Voir aussi `operating-model-and-costs.md`.
+- R47 : `QA_SUMMARY=<RC5_AUTHZ_QA/runs/<id>/evidence/SUMMARY.json> scripts/release-production.sh <sha>` — la preuve de QA native est
+  obligatoire et doit être un PASS complet de exactement ce commit (et cet arbre) ; le garde `scripts/release-guard.mjs` (scan de secrets de
+  l'arbre et de tout l'historique du commit) arrête la publication sur toute découverte ; le déploiement part en `--no-wait`, puis
+  `vercel inspect` est interrogé jusqu'à READY / ERROR / CANCELED : on ne continue que si le déploiement est READY et que le domaine de
+  production sert `x-release-sha` = `<sha>` (une erreur d'autorisation de la CLI dans ce cas n'est qu'un WARN) ; sinon FAIL (code 5) avec
+  la commande de retour arrière. Crochet pre-push facultatif, local au clone : `node scripts/install-git-hooks.mjs`.
 - Retour arrière : Vercel → Deployments → déploiement précédent → *Instant Rollback* (ou `vercel rollback <url>`), sans rebuild. Les
   migrations sont additives : un retour du code ne demande pas de retour du schéma.
 - Vérification après déploiement : en-tête `x-release-sha` de `/api/health`, `/api/health/ready`, une page d'aide, une recherche.

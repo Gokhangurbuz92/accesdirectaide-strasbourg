@@ -6,8 +6,11 @@
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
+
+const isMainModule = () => { try { return !!process.argv[1] && fs.realpathSync(process.argv[1]) === fileURLToPath(import.meta.url); } catch { return false; } };
 
 // R33: empty — the four WS2/WS8 failures were resolved (stale privacy counts after the public export; WS8 rewritten to the PKG-5 contract)
 export const KNOWN_FAILURES = [];
@@ -29,7 +32,8 @@ export function gateDecision(report, root = process.cwd()) {
   return { ok: unexpected.length === 0 && passed > 0, passed, failed: failed.length, unexpected, nowPassing };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// R47: compared on real paths — through a symlinked or URL-escaped path the `file://${argv[1]}` test was false and the script did NOTHING (exit 0)
+if (isMainModule()) {
   const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'unit-gate-')), 'report.json');
   spawnSync('npx', ['vitest', 'run', 'tests/unit', '--reporter=json', `--outputFile=${out}`], { stdio: ['ignore', 'ignore', 'inherit'] });
   if (!fs.existsSync(out)) { console.log('UNIT_GATE {"ok":false,"error":"no test report"}'); process.exit(1); }

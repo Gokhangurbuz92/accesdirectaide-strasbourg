@@ -9,13 +9,13 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertTestServer } from '../../scripts/lib/test-isolation.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DIST = path.join(ROOT, process.env.R46_DIST || 'dist');
 const PORT = Number(process.env.R46_PRO_PORT || 5186);
-if (PORT === 3000) throw new Error('port 3000 is reserved');
-const db = new URL(String(process.env.DATABASE_URL || 'postgres://x@invalid/x'));
-if (!['127.0.0.1', 'localhost'].includes(db.hostname) || !/(^|_)(lab|test|e2e)(_|$)/i.test(db.pathname.slice(1))) throw new Error('LAB loopback database only');
+// R47: loopback, never :3000, the disposable test cluster (127.0.0.1:55434, *_test database) only — scripts/lib/test-isolation.mjs
+assertTestServer({ host: '127.0.0.1', port: PORT, databaseUrl: process.env.DATABASE_URL, label: 'e2e-r46/pro/serve' });
 if (process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production') throw new Error('not in production');
 const { default: api } = await import('../../api/index.js');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain' };

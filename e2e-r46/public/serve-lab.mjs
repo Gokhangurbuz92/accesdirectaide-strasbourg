@@ -5,11 +5,12 @@
  *   R46_PORT=5181 DATABASE_URL=postgres://…@127.0.0.1:55434/ada_r46_public_test node e2e-r46/public/serve-lab.mjs
  */
 import { createServer } from 'vite';
+import { assertTestServer } from '../../scripts/lib/test-isolation.mjs';
 
 const PORT = Number(process.env.R46_PORT || 5181);
-if (PORT === 3000) throw new Error('port 3000 is the owner LAB');
 if (process.env.NODE_ENV === 'production') throw new Error('LAB only');
-if (process.env.DATABASE_URL && !['127.0.0.1', 'localhost'].includes(new URL(process.env.DATABASE_URL).hostname)) throw new Error('local database only');
+// R47: loopback, never :3000; a database, when given, is the disposable test cluster (127.0.0.1:55434, *_test) — scripts/lib/test-isolation.mjs
+assertTestServer({ host: '127.0.0.1', port: PORT, databaseUrl: process.env.DATABASE_URL, requireDatabase: false, label: 'e2e-r46/public/serve-lab' });
 
 const { default: api } = await import('../../api/index.js');
 

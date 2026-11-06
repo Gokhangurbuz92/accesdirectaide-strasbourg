@@ -7,6 +7,9 @@ const fail = (m) => { console.error('refusing to start: ' + m); process.exit(3);
 if (process.env.USE_MOCKS || process.env.VITE_USE_MOCKS) fail('mock flags set');
 if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') fail('production profile');
 try { const h = new URL(process.env.DATABASE_URL || '').hostname; if (!['127.0.0.1', 'localhost', '::1'].includes(h)) fail('the database is not local'); } catch { fail('DATABASE_URL missing'); }
+// R47: started by a test (ADA_TEST_ISOLATION=1, NODE_ENV=test, CI, PLAYWRIGHT_TEST, VITEST), never the owner LAB port 3000 and only the disposable test cluster
+// (127.0.0.1:55434, *_test database) — scripts/lib/test-isolation.mjs. The owner's LAB (none of these flags) is unchanged.
+{ const iso = await import('./lib/test-isolation.mjs'); if (iso.isTestContext(process.env)) { try { iso.assertTestServer({ host: HOST, port: PORT, databaseUrl: process.env.DATABASE_URL, label: 'test context' }); } catch (e) { fail(e.message); } } }
 // R46 / Q05: LAB_LOAD_FORWARDED=1 keeps a client-supplied X-Forwarded-For (as the native-QA server does) so scripts/load-budget.mjs can model distinct visitors on a
 // disposable LAB; never on the owner's LAB port (3000), where the server stays a trusted proxy. The per-address limits stay fully active.
 const KEEP_FORWARDED = process.env.LAB_LOAD_FORWARDED === '1';

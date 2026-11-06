@@ -3,26 +3,38 @@ import react from "@vitejs/plugin-react";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import fs from "fs";
 import path from "path";
+import { resolveDevApiTarget } from "./scripts/lib/test-isolation.mjs";
 
-function apiMiddlewarePlugin() {
+/**
+ * The dev API proxy. Owner default: `npm run dev` proxies /api/* to the tsx dev-server on localhost:3000 (`npm run dev:api` in another terminal).
+ * R47: the target is explicit and validated (scripts/lib/test-isolation.mjs): VITE_DEV_API_TARGET=http://<loopback>:<port> overrides it, and in a test
+ * context (PLAYWRIGHT_TEST, CI, VITEST, ADA_TEST_ISOLATION=1, NODE_ENV=test, VITE_USE_MOCKS/USE_MOCKS=true) the proxy refuses the owner LAB on :3000 —
+ * such a request is answered 503 here and never leaves this server — unless VITE_DEV_API_TARGET names a loopback port other than 3000.
+ */
+function apiMiddlewarePlugin(env = process.env) {
+  const target = resolveDevApiTarget(env);
   return {
     name: "accesdirectaide-api-proxy",
     configureServer(server) {
-      // Proxy /api/* requests to the tsx dev-server on port 3000.
-      // Run `npm run dev:api` in a separate terminal first.
+      if (!target.ok && !env.VITEST) console.warn(`[vite] dev API proxy REFUSED: ${target.reason}`);
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || "";
         if (!(url.startsWith("/api") || url === "/robots.txt" || url === "/sitemap.xml")) {
           return next();
         }
+        if (!target.ok) {
+          res.writeHead(503, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "API Dev Proxy Refused", message: target.reason }));
+          return;
+        }
 
         const http = await import("http");
         const options = {
-          hostname: "localhost",
-          port: 3000,
+          hostname: target.hostname,
+          port: target.port,
           path: url,
           method: req.method,
-          headers: { ...req.headers, host: "localhost:3000" },
+          headers: { ...req.headers, host: `${target.hostname.includes(":") ? `[${target.hostname}]` : target.hostname}:${target.port}` },
         };
 
         const proxyReq = http.request(options, (proxyRes) => {

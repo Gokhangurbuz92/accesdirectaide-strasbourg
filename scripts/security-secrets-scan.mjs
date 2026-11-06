@@ -60,7 +60,9 @@ try {
 
   // R45 (sec): scan from INSIDE the copy with a relative source, so finding fingerprints are repository-relative (« src/…:rule:line ») and the reviewed
   // entries of .gitleaksignore apply; with an absolute temp path every fingerprint carried that random path and the ignore file never matched.
-  const exitCode = run('gitleaks', ['detect', '--no-git', '--redact', '--source', '.'], { cwd: tempDir });
+  // R47: SECRETS_SCAN_REPORT=<absolute path> also writes the (redacted) findings as JSON, for scripts/release-guard.mjs, which prints rule ids and files only
+  const report = process.env.SECRETS_SCAN_REPORT ? ['--report-format', 'json', '--report-path', path.resolve(process.env.SECRETS_SCAN_REPORT)] : [];
+  const exitCode = run('gitleaks', ['detect', '--no-git', '--redact', '--source', '.', ...report], { cwd: tempDir });
   process.exit(exitCode);
 } catch (err) {
   const message = err instanceof Error ? err.message : String(err);

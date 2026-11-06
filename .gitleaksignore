@@ -19,3 +19,7 @@ src/i18n/locales/en/admin.json:generic-api-key:640
 # R45 (sec): the same reviewed translation strings in the git history (commit 906587f, before they moved to line 129): no secret value, reviewed 2026-11-05
 906587f5c57168bd3583dc7738d39984b2124cef:src/i18n/locales/en/legal.json:generic-api-key:126
 906587f5c57168bd3583dc7738d39984b2124cef:src/i18n/locales/de/legal.json:generic-api-key:126
+
+# R47 (tooling): the forged « alg=none » hand-off cookie of the ProConnect test (synthetic claims, no signature, no secret) as committed in ae51520 (R46);
+# cc02779 builds it at run time. Exact history fingerprint only, so `gitleaks git` of the release history (scripts/release-guard.mjs) is clean. Reviewed 2026-11-06.
+ae51520de57d9d999b63b2570e4c43e4ae1df3ea:tests/unit/r46-proconnect-oidc.test.js:jwt:235
