@@ -25,7 +25,18 @@ const routeLabels = (t) => ({
     selections: t('pro:breadcrumb.selections', 'Sélections d’orientation'),
     rdv: t('pro:breadcrumb.rdv', 'Rendez-vous'),
     regional: t('pro:breadcrumb.regional', 'Observatoire territorial'),
+    // R47 (whole-product crawl): the agenda's sub-pages and the other sections showed their raw segment (« Disponibilites » in every language)
+    disponibilites: t('pro:breadcrumb.disponibilites', 'Disponibilités'),
+    agenda: t('pro:breadcrumb.agenda', 'Agenda'),
+    new: t('pro:breadcrumb.new', 'Nouveau rendez-vous'),
+    absences: t('pro:breadcrumb.absences', 'Absences'),
+    attestation: t('pro:breadcrumb.attestation', 'Récapitulatif officiel'),
+    parametres: t('pro:breadcrumb.parametres', 'Paramètres'),
+    'mfa-settings': t('pro:breadcrumb.mfa_settings', 'Double authentification'),
 });
+
+/** R47: sections that have no page of their own (only their records do): shown as text, not as a link to the « page introuvable » */
+const NO_PAGE = new Set(['/pro/attestation', '/pro/dossier']);
 
 /**
  * ProBreadcrumb — Automatic breadcrumb from current route
@@ -68,8 +79,8 @@ export default function ProBreadcrumb({ className = '' }) {
             {crumbs.map((crumb) => (
                 <span key={crumb.path} className="flex items-center gap-1">
                     <ChevronRight size={10} className="text-slate-500 rtl:-scale-x-100" aria-hidden="true" />
-                    {crumb.isLast ? (
-                        <span className="font-medium text-slate-700" aria-current="page">
+                    {crumb.isLast || NO_PAGE.has(crumb.path) ? (
+                        <span className="font-medium text-slate-700" aria-current={crumb.isLast ? 'page' : undefined}>
                             {crumb.label}
                         </span>
                     ) : (

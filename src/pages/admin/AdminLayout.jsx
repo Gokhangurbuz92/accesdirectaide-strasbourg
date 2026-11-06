@@ -285,7 +285,7 @@ export default function AdminLayout() {
 
     if (loading) return <PageLoader />;
     if (unavailable) return <ServiceUnavailable area={t('admin:layout.area', 'L’administration')} />;
-    if (!allowed) return <Navigate to="/admin/login" replace />;
+    if (!allowed) return <Navigate to="/admin/login?reason=restricted" replace />;   // R47: the sign-in page says why it is shown
 
     // the server ends the session (ADM-10: every session of this administrator); dropping the local token alone left a copied token valid for 8 hours
     const handleLogout = () => apiClient.auth.logout();

@@ -65,5 +65,10 @@
  "space.telecharger_csv": "İndir (CSV)",
  "space.territoire": "— bölge:",
  "space.vos_autres_sessions_seront": "Diğer oturumlarınız kapatılacak.",
- "space.vous_etes_connecte_avec": "ADA tarafından verilen geçici bir şifreyle giriş yaptınız. İstatistiklere erişmek için kendi şifrenizi seçin."
+ "space.vous_etes_connecte_avec": "ADA tarafından verilen geçici bir şifreyle giriş yaptınız. İstatistiklere erişmek için kendi şifrenizi seçin.",
+ "space.totals_note": "yalnızca yayımlanan hücrelerin toplamı",
+ "space.method.sources": "Doğrulanmış kuruluşların platforma kaydettiği randevular ve yönlendirmeler (tahmin yok, dış veri yok).",
+ "space.method.unmet": "Alıcı kuruluşun « kapasite yok » veya « alanımız dışında » diye yanıtladığı yönlendirmeler.",
+ "space.method.limits": "Yalnızca platform üzerinden yapılan talepler sayılır; bir belediye ancak en az 3 doğrulanmış kuruluşla görünür; 5’in altındaki her değer gizlenir ve tek gizli değer kalacaksa aynı sütundaki başka bir değer de gizlenir; toplamlar yalnızca yayımlanan değerleri toplar.",
+ "space.method.periods": "Yalnızca tam takvim çeyrekleri, çakışmasız (ay, yıl veya serbest dönem yok: iç içe iki dönem gizli bir değerin bulunmasını sağlardı)."
 }

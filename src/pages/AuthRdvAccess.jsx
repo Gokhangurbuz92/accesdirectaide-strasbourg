@@ -12,7 +12,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import { getCsrfHeaders } from '@/lib/csrf';
-import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useT } from '@/i18n';
 import { emailMessage, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
 import socialReference from '../../data/reference/social-domains.v1.json';
@@ -118,7 +119,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
       const errs = { ...base };
       // R18: the sign-up rule is checked here too (the same rule as the server), so a refusal never reaches the person as « Une erreur est survenue »
       if (!errs.password && password.length < 8) errs.password = t('booking:auth.le_mot_de_passe_doit', "Le mot de passe doit contenir au moins 8 caractères.");
-      else if (!errs.password && passwordProblems(password).length) errs.password = passwordMessage(passwordProblems(password));
+      else if (!errs.password && passwordProblems(password).length) errs.password = passwordMessageText(passwordProblems(password));
       if (!confirmPassword) errs.confirm = requiredMessage(msgT, t('booking:auth.confirmer_le_mot_de_passe', 'Confirmer le mot de passe'));
       else if (password !== confirmPassword) errs.confirm = t('booking:auth.les_mots_de_passe_ne', "Les mots de passe ne correspondent pas.");
       if (!adultDeclaration) errs.adult = t('booking:auth.adult_required', "Cochez la déclaration « J’ai 18 ans ou plus » pour créer un compte. Si vous avez moins de 18 ans, lisez les informations ci-dessous.");
@@ -297,7 +298,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                 minLength={8}
                 {...fieldA11y('password', isSignupMode ? 'auth-password-rule' : '')}
               />
-              {isSignupMode ? <p id="auth-password-rule" className="text-xs text-slate-700">{PASSWORD_RULE}</p> : null}
+              {isSignupMode ? <p id="auth-password-rule" className="text-xs text-slate-700">{passwordRuleText()}</p> : null}
               {fieldErrors.password ? <p id="auth-password-error" className="text-sm font-medium text-red-800">{fieldErrors.password}</p> : null}
             </div>
 

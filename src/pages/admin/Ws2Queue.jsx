@@ -5,6 +5,7 @@ import { apiClient } from '@/api/client';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
+import { DATE_SHORT, formatDate } from '@/i18n';
 
 const STATE_LABEL = () => ({
   HUMAN_VERIFIED: i18n.t('admin:ws2.state.human_verified', 'Vérifié par une personne'), PENDING_HUMAN_VERIFICATION: i18n.t('admin:ws2.state.pending', 'À vérifier'), REJECTED: i18n.t('admin:ws2.state.rejected', 'Refusé'), ON_HOLD: i18n.t('admin:ws2.state.on_hold', 'En attente'), NOT_IN_DATABASE: i18n.t('admin:ws2.state.not_in_database', 'Absent de la base'),
@@ -63,7 +64,7 @@ export default function AdminWs2Queue() {
           {records.map((r) => (
             <li key={key(r)} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-ws2-record">
               <p className="font-semibold">{r.title} <span className="font-normal text-slate-700">— {r.dataset}</span></p>
-              <p data-testid="admin-ws2-state">{stateLabel[r.state] || r.state}{r.decision ? t('admin:ws2.decision_of', ' — décision du {{date}}', { date: new Date(r.decision.at).toLocaleDateString('fr-FR') }) : ''}</p>
+              <p data-testid="admin-ws2-state">{stateLabel[r.state] || r.state}{r.decision ? t('admin:ws2.decision_of', ' — décision du {{date}}', { date: formatDate(r.decision.at, DATE_SHORT) }) : ''}</p>
               {r.hold ? <p className="text-slate-800" data-testid="admin-ws2-hold-reason">{t('admin:ws2.hold_reason', 'Motif de l’attente : {{reason}}', { reason: r.hold })}</p> : null}
               {r.entityId && EDITOR[r.entityType] ? <p><Link className="text-blue-800 underline" to={`/admin/${EDITOR[r.entityType]}/${r.entityId}`}>{t('admin:ws2.fix_in_editor', 'Corriger la fiche dans l’éditeur')}</Link> <span className="text-slate-700">{t('admin:ws2.fix_changes_version', '(une correction change la version : la décision se prend ensuite sur la fiche corrigée)')}</span></p> : null}
               {r.preparation && r.state !== 'HUMAN_VERIFIED' ? (

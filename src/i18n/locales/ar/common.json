@@ -16,5 +16,17 @@
  "form.errors.min_length": "{{label}}: أدخل {{min}} أحرف على الأقل.",
  "form.errors.https_url": "{{label}}: أدخل عنوانًا كاملًا يبدأ بـ https://، مثل https://www.service-public.fr.",
  "form.errors.choose": "{{label}}: اختر خيارًا من القائمة.",
- "form.status.saving": "جارٍ الحفظ…"
+ "form.status.saving": "جارٍ الحفظ…",
+ "password.rule": "8 أحرف على الأقل، منها حرف كبير وحرف صغير ورقم.",
+ "password.problem.length": "8 أحرف على الأقل",
+ "password.problem.upper": "حرف كبير واحد مطلوب",
+ "password.problem.lower": "حرف صغير واحد مطلوب",
+ "password.problem.digit": "رقم واحد مطلوب",
+ "password.too_weak": "كلمة المرور ضعيفة جدًا: {{problems}}.",
+ "server.dossier_not_found": "الملف غير موجود.",
+ "server.conversation_not_found": "المحادثة غير موجودة.",
+ "server.appointment_not_found": "الموعد غير موجود.",
+ "server.not_found": "غير موجود: هذه الصفحة أو هذا العنصر غير موجود أو لم يعد موجودًا.",
+ "server.share_not_found": "هذا الملف غير موجود أو غير مرتبط بحسابك.",
+ "server.too_many": "طلبات كثيرة جدًا في وقت قصير: انتظر دقيقة ثم أعد المحاولة."
 }

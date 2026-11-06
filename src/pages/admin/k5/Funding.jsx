@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { downloadText, explain, useK5 } from './helpers.js';
 import { Field, Status } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, DATE_SHORT, formatDate } from '@/i18n';
 
-const day = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—');
+const day = (d) => (d ? formatDate(d, DATE_SHORT) : '—');
 const eur = (t, n) => (n === null || n === undefined || n === '' ? t('admin:k5.funding.to_fill', 'à renseigner') : `${Number(n).toFixed(2).replace('.', ',')} €`);
 const blankLine = () => ({ id: Math.random().toString(36).slice(2, 10), poste: '', nature: 'CHARGE', montant: '', statut: 'PROVISOIRE', justification: '' });
 

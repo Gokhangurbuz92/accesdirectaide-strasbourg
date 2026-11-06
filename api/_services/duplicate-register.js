@@ -34,18 +34,25 @@ export function distinctivePartsClose(nameA, nameB) {
 }
 
 export async function candidates({ db = defaultDb, limit = 100 } = {}) {
+  // R47 (load acceptance on 1,600 structures): the pairs are found by five equality joins (hash joins: same SIRET, RNA, FINESS, address + postcode, and same
+  // postcode for the name similarity) instead of one self-join on an OR of them, which compared every structure with every other one (1.3 million pairs on
+  // a Production-sized directory, ~0.3 s on each administration dashboard load). Same pairs, same columns, same order (ties now in a stable order: by identifiers).
   const rows = (await db.execute(sql`
-    WITH s AS (SELECT id, nom, code_postal AS cp, ville, regexp_replace(lower(coalesce(adresse, '')), '[^a-z0-9]+', '', 'g') AS addr,
+    WITH s AS MATERIALIZED (SELECT id, nom, code_postal AS cp, ville, regexp_replace(lower(coalesce(adresse, '')), '[^a-z0-9]+', '', 'g') AS addr,
         nullif(regexp_replace(coalesce(siret, ''), '[^0-9]', '', 'g'), '') AS siret, nullif(upper(regexp_replace(coalesce(rna_id, ''), '[^0-9A-Za-z]', '', 'g')), '') AS rna,
-        nullif(regexp_replace(coalesce(numero_finess, ''), '[^0-9A-Za-z]', '', 'g'), '') AS finess, verification_status AS vs, publication_hold IS NOT NULL AS held FROM "Structure")   -- the same number written differently (spaces, dots)
+        nullif(regexp_replace(coalesce(numero_finess, ''), '[^0-9A-Za-z]', '', 'g'), '') AS finess, verification_status AS vs, publication_hold IS NOT NULL AS held FROM "Structure"),   -- the same number written differently (spaces, dots)
+    p AS (SELECT a.id AS a, b.id AS b FROM s a JOIN s b ON a.siret = b.siret AND a.id < b.id
+      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.rna = b.rna AND a.id < b.id
+      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.finess = b.finess AND a.id < b.id
+      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.addr = b.addr AND a.addr <> '' AND a.cp IS NOT DISTINCT FROM b.cp AND a.id < b.id
+      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.cp = b.cp AND a.id < b.id AND similarity(coalesce(a.nom, ''), coalesce(b.nom, '')) >= 0.6)
     SELECT a.id AS a, b.id AS b, a.nom AS "nomA", b.nom AS "nomB", a.ville AS "villeA", b.ville AS "villeB",
       (a.siret IS NOT NULL AND a.siret = b.siret) AS "sameSiret", (a.rna IS NOT NULL AND a.rna = b.rna) AS "sameRna", (a.finess IS NOT NULL AND a.finess = b.finess) AS "sameFiness",
       (a.addr <> '' AND a.addr = b.addr AND a.cp IS NOT DISTINCT FROM b.cp) AS "sameAddress", round(similarity(coalesce(a.nom, ''), coalesce(b.nom, ''))::numeric, 2) AS "nameSimilarity",
       a.vs AS "decisionA", b.vs AS "decisionB", a.held AS "heldA", b.held AS "heldB"
-    FROM s a JOIN s b ON a.id < b.id AND ((a.siret IS NOT NULL AND a.siret = b.siret) OR (a.rna IS NOT NULL AND a.rna = b.rna) OR (a.finess IS NOT NULL AND a.finess = b.finess)
-      OR (a.addr <> '' AND a.addr = b.addr AND a.cp IS NOT DISTINCT FROM b.cp) OR (a.cp = b.cp AND similarity(coalesce(a.nom, ''), coalesce(b.nom, '')) >= 0.6))
+    FROM p JOIN s a ON a.id = p.a JOIN s b ON b.id = p.b
     WHERE NOT EXISTS (SELECT 1 FROM "StructureDuplicateDecision" d WHERE d."structureA" = a.id AND d."structureB" = b.id AND d."supersededAt" IS NULL)
-    ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC LIMIT ${Math.min(Number(limit) || 100, 200)}`)).rows;
+    ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC, 1, 2 LIMIT ${Math.min(Number(limit) || 100, 200)}`)).rows;
   const kept = rows.filter((r) => r.sameSiret || r.sameRna || r.sameFiness || r.sameAddress || distinctivePartsClose(r.nomA, r.nomB));
   return { ok: true, candidates: kept };
 }

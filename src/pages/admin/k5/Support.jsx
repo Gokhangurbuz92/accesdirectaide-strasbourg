@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useK5 } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 /** PKG-5 / A19 — support requests (/admin/support): read (MFA), take, answer, close with a note. No dossier, case or document is reachable from here. */
 export default function AdminSupport() {
@@ -20,7 +20,7 @@ export default function AdminSupport() {
       <ul className="space-y-3">
         {(k.data?.requests || []).map((r) => (
           <li key={r.id} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-support-request">
-            <p className="font-semibold">{CAT[r.category] || r.category} — {ST[r.status] || r.status} — {new Date(r.createdAt).toLocaleString('fr-FR')}{r.assignedTo ? t('admin:k5.support.assigned', ' — suivie par {{who}}', { who: r.assignedTo }) : ''}</p>
+            <p className="font-semibold">{CAT[r.category] || r.category} — {ST[r.status] || r.status} — {formatDateTime(r.createdAt)}{r.assignedTo ? t('admin:k5.support.assigned', ' — suivie par {{who}}', { who: r.assignedTo }) : ''}</p>
             {r.routedTo === 'PRIVACY_CONSOLE' ? <p className="text-amber-800">{t('admin:k5.support.privacy_console', 'À traiter dans la console de protection des données.')}</p> : null}
             <p className="whitespace-pre-wrap">{r.message ?? t('admin:k5.support.unreadable', '(illisible)')}</p>
             {r.contact ? <p>{t('admin:k5.support.contact', 'Contact : {{contact}}', { contact: r.contact })}</p> : null}

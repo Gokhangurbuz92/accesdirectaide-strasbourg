@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useK5 } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, DATE_SHORT, formatDate } from '@/i18n';
 
 /**
  * PKG-5 / I05 I01 — partner agreements and institutional accounts (/admin/institutions). An agreement is recorded from a REAL signed document (reference,
@@ -32,7 +32,7 @@ export default function AdminInstitutions() {
         <ul className="space-y-2">
           {(d?.agreements || []).map((g) => (
             <li key={g.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-inst-agreement">
-              <p className="font-semibold">{g.partnerName} — {g.status === 'DRAFT' ? t('admin:k5.institutions.draft', 'brouillon') : g.status === 'SIGNED' ? t('admin:k5.institutions.signed_on', 'signée le {{date}} ({{ref}})', { date: new Date(g.signedAt).toLocaleDateString('fr-FR'), ref: g.documentRef }) : t('admin:k5.institutions.ended', 'terminée')}</p>
+              <p className="font-semibold">{g.partnerName} — {g.status === 'DRAFT' ? t('admin:k5.institutions.draft', 'brouillon') : g.status === 'SIGNED' ? t('admin:k5.institutions.signed_on', 'signée le {{date}} ({{ref}})', { date: formatDate(g.signedAt, DATE_SHORT), ref: g.documentRef }) : t('admin:k5.institutions.ended', 'terminée')}</p>
               {g.status === 'DRAFT' ? (
                 <div className="grid gap-2 sm:grid-cols-3">
                   <Field id={`ref-${g.id}`} label={t('admin:k5.institutions.doc_ref', 'Référence du document signé')} value={v(`ref-${g.id}`)} onChange={(x) => set(`ref-${g.id}`, x)} />

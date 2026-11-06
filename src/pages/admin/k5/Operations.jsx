@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { useK5, explain, downloadText } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, formatDateTime, formatTime } from '@/i18n';
 
 /**
  * PKG-5 / A16 A15 A13 — platform operations (/admin/operations). Elevation: a super-administrator asks for 15 minutes with a fresh MFA code and a reason;
@@ -48,7 +48,7 @@ export default function AdminOperations() {
       ) : null}
       <section className="space-y-2 rounded border p-3" aria-labelledby="ops-elev">
         <h2 id="ops-elev" className="font-semibold">{t('admin:k5.operations.elevation_heading', 'Élévation temporaire')}</h2>
-        <p data-testid="admin-ops-elevation">{elev.error ? t('admin:k5.operations.elevation_unknown', 'État de l’élévation inconnu (non chargé).') : e?.elevated ? t('admin:k5.operations.elevation_active', 'Élévation active ({{kind}}) jusqu’à {{time}}', { kind: e.kind === 'BREAK_GLASS' ? t('admin:k5.operations.kind_break_glass', 'accès d’urgence') : t('admin:k5.operations.kind_ordinary', 'ordinaire'), time: new Date(e.until).toLocaleTimeString('fr-FR') }) : t('admin:k5.operations.no_elevation', 'Aucune élévation active.')}{e && !e.mfa ? t('admin:k5.operations.no_mfa', ' — session sans MFA : lecture seule.') : ''}</p>
+        <p data-testid="admin-ops-elevation">{elev.error ? t('admin:k5.operations.elevation_unknown', 'État de l’élévation inconnu (non chargé).') : e?.elevated ? t('admin:k5.operations.elevation_active', 'Élévation active ({{kind}}) jusqu’à {{time}}', { kind: e.kind === 'BREAK_GLASS' ? t('admin:k5.operations.kind_break_glass', 'accès d’urgence') : t('admin:k5.operations.kind_ordinary', 'ordinaire'), time: formatTime(e.until) }) : t('admin:k5.operations.no_elevation', 'Aucune élévation active.')}{e && !e.mfa ? t('admin:k5.operations.no_mfa', ' — session sans MFA : lecture seule.') : ''}</p>
         <Field id="ops-reason" label={t('admin:k5.operations.reason', 'Motif (conservé dans le journal)')} value={f.reason} onChange={(v) => set({ reason: v })} rows={2} />
         <Field id="ops-code" label={t('admin:k5.operations.mfa_code', 'Code MFA (6 chiffres)')} value={f.code} onChange={(v) => set({ code: v })} />
         <div className="flex flex-wrap gap-2">
@@ -60,9 +60,9 @@ export default function AdminOperations() {
         <ul className="space-y-2">
           {(e?.pendingBreakGlassReviews || []).map((r) => (
             <li key={r.id} className="rounded border p-2 text-sm" data-testid="admin-ops-bg">
-              <p>{r.actor} — {new Date(r.openedAt).toLocaleString('fr-FR')} — {r.reason}</p>
+              <p>{r.actor} — {formatDateTime(r.openedAt)} — {r.reason}</p>
               <details data-testid="admin-ops-bg-actions"><summary className="cursor-pointer text-blue-800">{t('admin:k5.operations.bg_actions', 'Ce qui a été fait pendant l’accès d’urgence ({{n}} entrée(s) du journal)', { n: (r.actions || []).length })}</summary>
-                <ul className="list-disc pl-5">{(r.actions || []).map((x, i) => <li key={i}>{new Date(x.at).toLocaleTimeString('fr-FR')} — {x.action}{x.entity ? ` — ${x.entity}` : ''}{x.entityId ? ` ${x.entityId}` : ''}</li>)}</ul>
+                <ul className="list-disc pl-5">{(r.actions || []).map((x, i) => <li key={i}>{formatTime(x.at)} — {x.action}{x.entity ? ` — ${x.entity}` : ''}{x.entityId ? ` ${x.entityId}` : ''}</li>)}</ul>
               </details>
               <Field id={`bg-${r.id}`} label={t('admin:k5.operations.review_label', 'Revue (ce qui a été vérifié dans le journal)')} value={f.review[r.id] || ''} onChange={(v) => set({ review: { ...f.review, [r.id]: v } })} rows={2} />
               <Button size="sm" variant="outline" disabled={busy} onClick={async () => { setProblem(''); try { await apiClient.admin.elevation({ action: 'review', id: r.id, note: f.review[r.id] || '' }); setMsg(t('admin:k5.operations.review_saved', 'Revue enregistrée.')); await elev.load(); } catch (x) { setProblem(explain(x)); } }}>{t('admin:k5.operations.save_review', 'Enregistrer la revue')}</Button>
@@ -95,7 +95,7 @@ export default function AdminOperations() {
         <Button size="sm" onClick={searchAudit} data-testid="admin-ops-audit-search">{t('admin:k5.operations.search', 'Rechercher')}</Button>
         {found ? (
           <ul className="space-y-1 text-sm" data-testid="admin-ops-audit-results">
-            {found.items.map((i) => <li key={i.id}>{new Date(i.at).toLocaleString('fr-FR')} — {i.action} — {i.actor || '—'} — {i.entity || ''} {i.entityId || ''}</li>)}
+            {found.items.map((i) => <li key={i.id}>{formatDateTime(i.at)} — {i.action} — {i.actor || '—'} — {i.entity || ''} {i.entityId || ''}</li>)}
             {!found.items.length ? <li>{t('admin:k5.operations.no_entry', 'Aucune entrée.')}</li> : null}
           </ul>
         ) : null}

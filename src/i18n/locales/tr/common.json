@@ -16,5 +16,17 @@
  "form.errors.min_length": "{{label}}: en az {{min}} karakter girin.",
  "form.errors.https_url": "{{label}}: https:// ile başlayan tam bir adres girin, örneğin https://www.service-public.fr.",
  "form.errors.choose": "{{label}}: listeden bir seçenek seçin.",
- "form.status.saving": "Kaydediliyor…"
+ "form.status.saving": "Kaydediliyor…",
+ "password.rule": "En az 8 karakter; bir büyük harf, bir küçük harf ve bir rakam içermeli.",
+ "password.problem.length": "en az 8 karakter",
+ "password.problem.upper": "1 büyük harf gerekli",
+ "password.problem.lower": "1 küçük harf gerekli",
+ "password.problem.digit": "1 rakam gerekli",
+ "password.too_weak": "Parola çok zayıf: {{problems}}.",
+ "server.dossier_not_found": "Dosya bulunamadı.",
+ "server.conversation_not_found": "Konuşma bulunamadı.",
+ "server.appointment_not_found": "Randevu bulunamadı.",
+ "server.not_found": "Bulunamadı: bu sayfa veya öğe yok ya da artık yok.",
+ "server.share_not_found": "Bu dosya bulunamadı veya hesabınıza bağlı değil.",
+ "server.too_many": "Kısa sürede çok fazla istek: bir dakika bekleyin, sonra tekrar deneyin."
 }

@@ -19,7 +19,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 const MODE_CONFIG = {
     rag: { label: 'RAG 3072d', icon: Cpu, className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
@@ -160,7 +160,7 @@ export default function AdminConversations() {
                                 <div className="space-y-2">
                                     {topIntents.map((item, /** @type {string} */ idx) => (
                                         <div key={item.intent} className="flex items-center gap-3">
-                                            <span className="text-xs font-bold text-slate-400 w-4">{idx + 1}.</span>
+                                            <span className="text-xs font-bold text-slate-600 w-4">{idx + 1}.</span>
                                             <Badge className="bg-indigo-50 text-indigo-700 border-0 text-xs font-bold">
                                                 {item.intent}
                                             </Badge>
@@ -175,7 +175,7 @@ export default function AdminConversations() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-slate-400 italic">{t('admin:conversations.no_intent', 'Aucune intention détectée pour l\'instant.')}</p>
+                                <p className="text-sm text-slate-600 italic">{t('admin:conversations.no_intent', 'Aucune intention détectée pour l\'instant.')}</p>
                             )}
                         </CardContent>
                     </Card>
@@ -229,7 +229,7 @@ export default function AdminConversations() {
                                                     </span>
                                                     <span className="flex items-center gap-1">
                                                         <Clock className="h-3 w-3" />
-                                                        {new Date(log.createdAt).toLocaleString('fr-FR')}
+                                                        {formatDateTime(log.createdAt)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -250,7 +250,7 @@ export default function AdminConversations() {
                         <CardContent className="p-12 text-center">
                             <MessageSquare className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                             <p className="text-slate-600">{t('admin:conversations.empty', 'Aucun échange enregistré')}</p>
-                            <p className="text-sm text-slate-400 mt-1">
+                            <p className="text-sm text-slate-600 mt-1">
                                 {t('admin:conversations.empty_hint', 'Les logs apparaîtront ici après les premières conversations.')}
                             </p>
                         </CardContent>
@@ -267,7 +267,7 @@ export default function AdminConversations() {
                                     <p className="font-bold text-sm">
                                         {t('admin:conversations.static_detected', { count: stats.static, n: stats.static, defaultValue_one: '{{n}} réponse en mode statique détectée', defaultValue_other: '{{n}} réponses en mode statique détectées' })}
                                     </p>
-                                    <p className="text-slate-400 text-xs mt-1">
+                                    <p className="text-slate-600 text-xs mt-1">
                                         {t('admin:conversations.static_hint', 'Le mode statique signifie que le modèle local était indisponible : la réponse a été construite à partir des fiches, sans IA.')}
                                     </p>
                                 </div>

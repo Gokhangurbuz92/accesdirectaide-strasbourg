@@ -134,6 +134,23 @@ export function formatDate(value, options = { day: 'numeric', month: 'long', yea
   return new Intl.DateTimeFormat(intlOf(code), { timeZone: 'Europe/Paris', ...options }).format(d);
 }
 
+/** R47: the short numeric date (« 06/11/2026 », « 06.11.2026 »…) and the date with its time, the forms the screens used to print with a fixed « fr-FR » */
+export const DATE_SHORT = Object.freeze({ day: '2-digit', month: '2-digit', year: 'numeric' });
+export const DATE_TIME = Object.freeze({ day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+/**
+ * R47 — a date and time in the interface language, on the Paris clock (an appointment at 14:00 in Strasbourg reads 14:00 on a computer set to another
+ * zone); '' for an invalid value. @param {string | number | Date | null | undefined} value @param {Intl.DateTimeFormatOptions} [options] @param {string} [code]
+ */
+export function formatDateTime(value, options = DATE_TIME, code = undefined) {
+  return formatDate(value, options || DATE_TIME, code);
+}
+
+/** R47 — a time of day (hours and minutes) in the interface language, on the Paris clock @param {string | number | Date | null | undefined} value @param {Intl.DateTimeFormatOptions} [options] @param {string} [code] */
+export function formatTime(value, options = { hour: '2-digit', minute: '2-digit' }, code = undefined) {
+  return formatDate(value, options, code);
+}
+
 /** a number in the interface language @param {unknown} value @param {Intl.NumberFormatOptions} [options] @param {string} [code] */
 export function formatNumber(value, options = {}, code = undefined) {
   const n = Number(value);

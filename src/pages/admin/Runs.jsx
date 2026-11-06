@@ -5,9 +5,8 @@ import SEO from '@/components/SEO';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import i18n, { useT } from '@/i18n';
+import { formatDateTime } from '@/i18n';
 
 /**
  * PKG-11 / A06 — run history: the synchronization queue (runs requested by an administrator, executed by the cron consumer: waiting, running, done, partly done,
@@ -16,7 +15,7 @@ import i18n, { useT } from '@/i18n';
  */
 const QUEUE_STATE = () => ({ PENDING: i18n.t('admin:runs.queue.pending', 'En attente'), RUNNING: i18n.t('admin:runs.queue.running', 'En cours'), COMPLETE: i18n.t('admin:runs.queue.complete', 'Terminée'), PARTIAL: i18n.t('admin:runs.queue.partial', 'Terminée en partie'), FAILED: i18n.t('admin:runs.queue.failed', 'Échec définitif') });
 const IMPORT_STATE = () => ({ SUCCESS: i18n.t('admin:runs.import.success', 'Réussi'), PARTIAL: i18n.t('admin:runs.import.partial', 'Partiel'), FAILED: i18n.t('admin:runs.import.failed', 'Échec'), ERROR: i18n.t('admin:runs.import.failed', 'Échec') });
-const when = (d) => { try { return d ? format(new Date(d), 'dd/MM/yyyy HH:mm', { locale: fr }) : '—'; } catch { return '—'; } };
+const when = (d) => { try { return d ? formatDateTime(d) : '—'; } catch { return '—'; } };
 const variant = (s) => (['COMPLETE', 'SUCCESS'].includes(s) ? 'default' : ['FAILED', 'ERROR'].includes(s) ? 'destructive' : 'secondary');
 
 export default function AdminRuns() {

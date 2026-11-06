@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { explain } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 /** PKG-5 / A07 — versions of a published record and exact rollback (/admin/versions). The verification state is never rolled back (only the ledger writes it). */
 export default function AdminVersions() {
@@ -31,10 +31,10 @@ export default function AdminVersions() {
         <div className="flex items-end"><Button onClick={load}>{t('admin:k5.versions.show', 'Afficher')}</Button></div>
       </div>
       <Field id="ver-reason" label={t('admin:k5.versions.reason', 'Motif du retour arrière')} value={reason} onChange={setReason} />
-      {list ? <ul className="space-y-1 text-sm">{list.map((v) => <li key={v.id} className="flex items-center gap-2" data-testid="admin-version">{new Date(v.createdAt).toLocaleString('fr-FR')} — {v.reason} — {v.actor || '—'} <Button size="sm" variant="outline" onClick={() => show(v.id)}>{t('admin:k5.versions.preview', 'Voir ce que le retour changerait')}</Button></li>)}{!list.length ? <li>{t('admin:k5.versions.none', 'Aucune version.')}</li> : null}</ul> : null}
+      {list ? <ul className="space-y-1 text-sm">{list.map((v) => <li key={v.id} className="flex items-center gap-2" data-testid="admin-version">{formatDateTime(v.createdAt)} — {v.reason} — {v.actor || '—'} <Button size="sm" variant="outline" onClick={() => show(v.id)}>{t('admin:k5.versions.preview', 'Voir ce que le retour changerait')}</Button></li>)}{!list.length ? <li>{t('admin:k5.versions.none', 'Aucune version.')}</li> : null}</ul> : null}
       {preview ? (
         <section className="space-y-2 rounded border p-3" aria-labelledby="ver-preview" data-testid="admin-version-preview">
-          <h2 id="ver-preview" className="font-semibold">{t('admin:k5.versions.back_to', 'Retour à la version du {{date}}', { date: new Date(preview.versionAt).toLocaleString('fr-FR') })}</h2>
+          <h2 id="ver-preview" className="font-semibold">{t('admin:k5.versions.back_to', 'Retour à la version du {{date}}', { date: formatDateTime(preview.versionAt) })}</h2>
           {preview.changes.length ? (
             <table className="w-full text-sm"><thead><tr className="text-left"><th scope="col">{t('admin:k5.versions.field', 'Champ')}</th><th scope="col">{t('admin:k5.versions.today', 'Aujourd’hui')}</th><th scope="col">{t('admin:k5.versions.after', 'Après le retour')}</th></tr></thead>
               <tbody>{preview.changes.map((c) => <tr key={c.field} className="align-top"><td className="font-medium">{c.field}</td><td className="whitespace-pre-wrap">{fmt(c.current)}</td><td className="whitespace-pre-wrap">{fmt(c.restored)}</td></tr>)}</tbody></table>

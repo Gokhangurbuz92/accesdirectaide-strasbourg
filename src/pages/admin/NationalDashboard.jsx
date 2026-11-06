@@ -13,7 +13,7 @@ import {
   AlertCircle,
   ChevronRight,
 } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useT, formatDateTime, formatNumber } from '@/i18n';
 
 /**
  * NationalDashboard
@@ -75,7 +75,7 @@ export default function NationalDashboard() {
                             </p>
                         </div>
                         <Badge className="bg-slate-100 text-slate-700 border-0 gap-1" data-testid="national-timestamp">
-                            {data?.timestamp ? t('admin:national.data_of', 'Données du {{date}}', { date: new Date(data.timestamp).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }) }) : t('admin:national.data_pending', 'Données en attente')}
+                            {data?.timestamp ? t('admin:national.data_of', 'Données du {{date}}', { date: formatDateTime(data.timestamp) }) : t('admin:national.data_pending', 'Données en attente')}
                         </Badge>
                     </div>
                 </div>
@@ -144,7 +144,7 @@ export default function NationalDashboard() {
                                         <div key={scope.scope} className="flex justify-between items-center border-b border-white/10 pb-3">
                                             <div>
                                                 <p className="text-xs uppercase text-slate-300">{scope.scope}</p>
-                                                <p className="text-xl font-bold font-mono">{scope.count.toLocaleString('fr-FR')}</p>
+                                                <p className="text-xl font-bold font-mono">{formatNumber(scope.count)}</p>
                                             </div>
                                             <ChevronRight className="text-teal-400" size={16} />
                                         </div>
@@ -167,7 +167,7 @@ function StatCard({ icon, label, value }) {
                 <div className="flex items-center gap-2 mb-2">
                     <div className="p-1.5 bg-slate-50 rounded-lg">{icon}</div>
                 </div>
-                <p className="text-2xl font-bold text-slate-900">{value != null ? value.toLocaleString('fr-FR') : '—'}</p>
+                <p className="text-2xl font-bold text-slate-900">{value != null ? formatNumber(value) : '—'}</p>
                 <p className="text-sm text-slate-700">{label}</p>
             </CardContent>
         </Card>

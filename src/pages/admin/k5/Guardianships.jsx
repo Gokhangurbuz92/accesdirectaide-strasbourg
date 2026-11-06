@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
-import i18n, { useT } from '@/i18n';
+import { useT, formatDate } from '@/i18n';
 import { explain } from './helpers.js';
 import { REASON_MAX, REASON_MIN, validate } from './guardians-validate.js';
 
@@ -60,7 +60,7 @@ export default function AdminGuardianships() {
   const policyPending = data && data.policy?.strongVerification !== 'CONFIGURED';
   const ids = { link: `${uid}-link`, method: `${uid}-method`, reason: `${uid}-reason` };
   const errId = (k) => `${uid}-${k}-error`;
-  const fmtDate = (d) => { try { return new Date(d).toLocaleDateString(i18n.language || 'fr', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return String(d); } };
+  const fmtDate = (d) => { try { return formatDate(d, { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return String(d); } };
 
   const submit = async (ev) => {
     ev.preventDefault();

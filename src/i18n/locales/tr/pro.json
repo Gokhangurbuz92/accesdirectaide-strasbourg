@@ -1298,5 +1298,13 @@
  "siao.download": "Formu indir (JSON)",
  "siao.print": "Yazdır",
  "audit_log.previous_page": "Önceki sayfa",
- "audit_log.next_page": "Sonraki sayfa"
+ "audit_log.next_page": "Sonraki sayfa",
+ "register.submit": "Kaydol",
+ "breadcrumb.disponibilites": "Müsaitlik",
+ "breadcrumb.agenda": "Ajanda",
+ "breadcrumb.new": "Yeni randevu",
+ "breadcrumb.absences": "Devamsızlıklar",
+ "breadcrumb.attestation": "Resmî özet",
+ "breadcrumb.parametres": "Ayarlar",
+ "breadcrumb.mfa_settings": "İki adımlı doğrulama"
 }

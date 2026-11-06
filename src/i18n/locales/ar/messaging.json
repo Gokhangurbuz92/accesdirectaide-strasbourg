@@ -122,5 +122,7 @@
  "transparency.uploaded_by": "أودعته",
  "transparency.uploaded_on": "بتاريخ {{date}}",
  "chat.attachment_size": "{{name}} ({{size}} ك.ب)",
- "chat.attachment_remove": "إزالة الملف"
+ "chat.attachment_remove": "إزالة الملف",
+ "sharing.transparency_failed": "تعذّرت قراءة متابعة هذا الملف.",
+ "sharing.action_failed": "تعذّر تنفيذ الإجراء. أعد المحاولة."
 }

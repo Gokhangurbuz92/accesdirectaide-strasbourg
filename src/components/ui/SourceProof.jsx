@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { ShieldCheck } from "lucide-react";
+import { formatDate } from '@/i18n';
 
 export function SourceProof({
   publisher = "Source officielle",
@@ -8,7 +9,7 @@ export function SourceProof({
   className = "",
 }) {
   const formattedDate = date
-    ? new Date(date).toLocaleDateString("fr-FR", {
+    ? formatDate(date, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",

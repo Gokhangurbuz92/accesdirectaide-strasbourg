@@ -33,6 +33,7 @@ import {
 } from 'recharts';
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import { formatDate } from '@/i18n';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -45,6 +46,14 @@ const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
  * Affiche les métriques agrégées de la structure pour justifier
  * les financements sans compromettre la vie privée.
  */
+// R47: the statuses in the interface language (the same keys as the agenda, src/pages/pro/Appointments.jsx) — they showed the raw codes (« no_show »)
+const appointmentStatusLabels = (/** @type {(k: string, d: string) => string} */ t) => /** @type {Record<string, string>} */ ({
+  booked: t('pro:appointments.status.booked', 'Réservé par la structure'), confirmed: t('pro:appointments.status.confirmed', 'Confirmé'),
+  requested: t('pro:appointments.status.requested', 'Demandé'), pending: t('pro:appointments.status.pending', 'En attente'),
+  cancelled: t('pro:appointments.status.cancelled', 'Annulé'), done: t('pro:appointments.status.done', 'Venu'), no_show: t('pro:appointments.status.no_show', 'Absent'),
+  refused: t('pro:appointments.status.refused', 'Demande refusée'), expired: t('pro:appointments.status.expired', 'Demande expirée'),
+});
+
 export default function ImpactReports() {
     const { t } = useT('pro');
     useOutletContext();
@@ -238,7 +247,7 @@ export default function ImpactReports() {
                                                         fontSize: '12px',
                                                     }}
                                                     labelFormatter={(v) =>
-                                                        new Date(v).toLocaleDateString('fr-FR', {
+                                                        formatDate(v, {
                                                             weekday: 'short',
                                                             day: 'numeric',
                                                             month: 'short',
@@ -339,8 +348,8 @@ export default function ImpactReports() {
                                         ) : (
                                             <CheckCircle2 size={12} className="text-emerald-500" />
                                         )}
-                                        <span className="text-xs font-medium text-slate-700 capitalize">
-                                            {s.status}
+                                        <span className="text-xs font-medium text-slate-700">
+                                            {appointmentStatusLabels(t)[s.status] || s.status}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">{s.count}</span>
                                     </div>

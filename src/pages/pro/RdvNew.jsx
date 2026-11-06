@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { proRdvClient } from '@/api/pro-rdv-client';
-import { useT } from '@/i18n';
+import { useT, formatDate } from '@/i18n';
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
@@ -36,11 +36,7 @@ function formatSlot(value) {
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString('fr-FR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-    timeZone: 'Europe/Paris',
-  });
+  return formatDate(date, { dateStyle: 'short', timeStyle: 'short' });
 }
 
 export default function ProRdvNew() {

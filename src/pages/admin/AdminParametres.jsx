@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Trans } from 'react-i18next';
-import i18n, { useT } from '@/i18n';
+import i18n, { useT, DATE_SHORT, formatDate, formatDateTime } from '@/i18n';
 
 // ─── Profil Tab ──────────────────────────────────────────────
 
@@ -64,9 +64,9 @@ function ProfilTab({ user }) {
                 </div>
 
                 <div className="p-4 rounded-lg border bg-slate-50 text-sm text-slate-600 space-y-1">
-                    <p>{t('admin:parametres.last_login', 'Dernière connexion :')} <span className="font-medium">{user?.lastLogin ? new Date(user.lastLogin).toLocaleString('fr-FR') : t('admin:parametres.current_session_value', 'Session actuelle')}</span></p>
+                    <p>{t('admin:parametres.last_login', 'Dernière connexion :')} <span className="font-medium">{user?.lastLogin ? formatDateTime(user.lastLogin) : t('admin:parametres.current_session_value', 'Session actuelle')}</span></p>
                     {user?.createdAt && (
-                        <p>{t('admin:parametres.created_on', 'Compte créé le :')} <span className="font-medium">{new Date(user.createdAt).toLocaleDateString('fr-FR')}</span></p>
+                        <p>{t('admin:parametres.created_on', 'Compte créé le :')} <span className="font-medium">{formatDate(user.createdAt, DATE_SHORT)}</span></p>
                     )}
                 </div>
             </div>
@@ -177,7 +177,7 @@ const eventLabels = (t) => ({ ADMIN_LOGIN_SUCCEEDED: t('admin:parametres.ev.logi
     ADMIN_LOGOUT: t('admin:parametres.ev.logout', 'Fin de toutes les sessions'), ADMIN_SESSIONS_REVOKED: t('admin:parametres.ev.sessions_revoked', 'Sessions terminées par un super-administrateur'), ADMIN_DISABLED: t('admin:parametres.ev.disabled', 'Compte désactivé'), ADMIN_ENABLED: t('admin:parametres.ev.enabled', 'Compte réactivé'),
     ADMIN_MFA_ENROLLED: t('admin:parametres.ev.mfa_enrolled', 'MFA configurée'), ADMIN_MFA_VERIFIED: t('admin:parametres.ev.mfa_verified', 'Code MFA validé'), ADMIN_MFA_FAILED: t('admin:parametres.ev.mfa_failed', 'Code MFA refusé'), ADMIN_ACCOUNT_CREATED_LOCAL: t('admin:parametres.ev.account_created_local', 'Compte créé sur cette machine'), ADMIN_ACCOUNT_BOOTSTRAP: t('admin:parametres.ev.account_bootstrap', 'Compte créé par l’amorçage sécurisé'),
     ADMIN_MFA_RESET_LOCAL: t('admin:parametres.ev.mfa_reset_local', 'MFA réinitialisée sur cette machine'), ADMIN_PASSWORD_RESET_LOCAL: t('admin:parametres.ev.password_reset_local', 'Mot de passe remplacé sur cette machine') });
-const when = (d) => (d ? new Date(d).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }) : '—');
+const when = (d) => (d ? formatDateTime(d) : '—');
 
 function SessionsTab() {
     const { t } = useT('admin');

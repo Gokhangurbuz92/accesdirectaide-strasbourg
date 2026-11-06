@@ -166,6 +166,7 @@ async function requestJson(path, options = {}) {
 }
 
 import { cryptoE2EE } from '@/lib/crypto-messaging.js';
+import { serverText } from '@/lib/serverText';
 
 /**
  * Décrypte les messages d'une conversation s'ils sont chiffrés E2EE.
@@ -301,7 +302,8 @@ export const rdvMessagingClient = {
 export function messagingErrorText(error, fallback = 'Une erreur est survenue.') {
   if (!error) return fallback;
   if (typeof error === 'string') return error;
-  if (error?.payload?.error && typeof error.payload.error === 'string') return error.payload.error;
-  if (error?.message && typeof error.message === 'string') return error.message;
+  // R47: in another language than French, the server's French sentence is translated or replaced by the caller's fallback (src/lib/serverText.js)
+  if (error?.payload?.error && typeof error.payload.error === 'string') return serverText(error.payload.error, fallback);
+  if (error?.message && typeof error.message === 'string') return serverText(error.message, fallback);
   return fallback;
 }

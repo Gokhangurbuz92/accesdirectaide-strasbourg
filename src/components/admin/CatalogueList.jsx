@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { explain } from '@/pages/admin/k5/helpers.js';
 import i18n, { useT } from '@/i18n';
+import { DATE_SHORT, formatDate } from '@/i18n';
 
 /**
  * PKG-11 / A02 — administrator list of one catalogue kind (aide, démarche, structure) through /api/admin/content: drafts, unverified and archived records
@@ -68,7 +69,7 @@ export default function CatalogueList({ kind, title, published, newPath, editPat
             <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-slate-300 bg-white p-3" data-testid="admin-catalogue-row" data-id={r.id}>
               <div className="min-w-0">
                 <p className="font-semibold text-slate-900">{r.label}</p>
-                <p className="text-xs text-slate-700">{[r.categorie || r.ville || r.departement, r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: new Date(r.updatedAt).toLocaleDateString('fr-FR') }) : null].filter(Boolean).join(' — ')}</p>
+                <p className="text-xs text-slate-700">{[r.categorie || r.ville || r.departement, r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: formatDate(r.updatedAt, DATE_SHORT) }) : null].filter(Boolean).join(' — ')}</p>
                 <div className="mt-1 flex flex-wrap gap-2">
                   <Badge variant="secondary" data-testid="admin-catalogue-state">{states[r.statut] || r.statut}</Badge>
                   {verifiable ? <Badge variant="outline" data-testid="admin-catalogue-verification">{verification(r)}</Badge> : null}

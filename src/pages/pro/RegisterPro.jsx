@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react';
-import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,7 +83,7 @@ export default function RegisterPro() {
 
         const problems = passwordProblems(password);   // R21: the shared rule, the same sentence as the server
         if (problems.length) {
-            setError(passwordMessage(problems));
+            setError(passwordMessageText(problems));
             return;
         }
 
@@ -278,7 +279,7 @@ export default function RegisterPro() {
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
-                                <p id="reg-password-rule" className="text-xs text-slate-700">{PASSWORD_RULE}</p>
+                                <p id="reg-password-rule" className="text-xs text-slate-700">{passwordRuleText()}</p>
                             </div>
 
                             <div className="space-y-2">

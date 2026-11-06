@@ -1298,5 +1298,13 @@
  "siao.download": "Blatt herunterladen (JSON)",
  "siao.print": "Drucken",
  "audit_log.previous_page": "Vorherige Seite",
- "audit_log.next_page": "Nächste Seite"
+ "audit_log.next_page": "Nächste Seite",
+ "register.submit": "Registrieren",
+ "breadcrumb.disponibilites": "Verfügbarkeiten",
+ "breadcrumb.agenda": "Kalender",
+ "breadcrumb.new": "Neuer Termin",
+ "breadcrumb.absences": "Abwesenheiten",
+ "breadcrumb.attestation": "Offizielle Zusammenfassung",
+ "breadcrumb.parametres": "Einstellungen",
+ "breadcrumb.mfa_settings": "Zwei-Faktor-Authentifizierung"
 }

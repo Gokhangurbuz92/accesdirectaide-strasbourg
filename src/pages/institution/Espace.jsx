@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { csrfFetch } from '@/lib/csrf';
 import { Button } from '@/components/ui/button';
-import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
-import { useT } from '@/i18n';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
+import { useT, formatDate, DATE_SHORT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
@@ -43,7 +44,7 @@ function PasswordForm({ temporary, onChanged }) {
     const problems = passwordProblems(next);
     if (!next) errs['pw-new'] = requiredMessage(t, t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe'));
     if (!errs['pw-new'] && !errs['pw-cur'] && problems.length) {
-      pwErr.reset(); setWeak(true); setError(passwordMessage(problems));
+      pwErr.reset(); setWeak(true); setError(passwordMessageText(problems));
       document.getElementById('pw-new')?.focus();
       return;
     }
@@ -66,7 +67,7 @@ function PasswordForm({ temporary, onChanged }) {
         <ErrorSummary ref={pwErr.summaryRef} errors={pwErr.errors} order={['pw-cur', 'pw-new', 'pw-again']} testid="institution-password-errors" />
         <div><label htmlFor="pw-cur" className="block">{t('institution:space.mot_passe_actuel', 'Mot de passe actuel')}</label><input id="pw-cur" type="password" autoComplete="current-password" className="w-full rounded border p-2" value={cur} {...fieldA11y('pw-cur', pwErr.errors)} onChange={(e) => { setCur(e.target.value); pwErr.clear('pw-cur'); }} aria-required="true" /><FieldError field="pw-cur" errors={pwErr.errors} /></div>
         <div><label htmlFor="pw-new" className="block">{t('institution:space.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="pw-new" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={next} {...fieldA11y('pw-new', pwErr.errors, 'pw-rule')} {...(weak ? { 'aria-invalid': true } : {})} onChange={(e) => { setNext(e.target.value); pwErr.clear('pw-new'); setWeak(false); }} aria-required="true" />
-          <p id="pw-rule" className="text-sm">{PASSWORD_RULE}</p><FieldError field="pw-new" errors={pwErr.errors} /></div>
+          <p id="pw-rule" className="text-sm">{passwordRuleText()}</p><FieldError field="pw-new" errors={pwErr.errors} /></div>
         <div><label htmlFor="pw-again" className="block">{t('institution:space.confirmer_nouveau_mot_passe', 'Confirmer le nouveau mot de passe')}</label><input id="pw-again" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={again} {...fieldA11y('pw-again', pwErr.errors)} onChange={(e) => { setAgain(e.target.value); pwErr.clear('pw-again'); }} aria-required="true" /><FieldError field="pw-again" errors={pwErr.errors} /></div>
         <Button type="submit" disabled={busy}>{t('institution:space.changer_mot_passe', 'Changer le mot de passe')}</Button>
         <p className="text-sm">{t('institution:space.vos_autres_sessions_seront', 'Vos autres sessions seront fermées.')}</p>
@@ -74,6 +75,14 @@ function PasswordForm({ temporary, onChanged }) {
     </section>
   );
 }
+
+// R47: the methodology of api/_services/territorial-stats.js (METHODOLOGY, sent in French by key) in the interface language; an unknown key keeps the server's text
+const methodText = (/** @type {(k: string, d: string) => string} */ t) => /** @type {Record<string, string>} */ ({
+  sources: t('institution:space.method.sources', 'Rendez-vous et orientations enregistrés dans la plateforme par les structures vérifiées (aucune estimation, aucune donnée externe).'),
+  besoinsNonCouverts: t('institution:space.method.unmet', 'Orientations auxquelles la structure destinataire a répondu « pas de capacité » ou « hors de notre champ ».'),
+  limites: t('institution:space.method.limits', 'Seules les demandes passées par la plateforme sont comptées ; une commune n’apparaît qu’avec au moins 3 structures vérifiées ; toute valeur inférieure à 5 est masquée, et une autre valeur de la même colonne l’est aussi quand elle serait seule masquée ; les totaux n’additionnent que les valeurs publiées.'),
+  periodes: t('institution:space.method.periods', 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).'),
+});
 
 export default function InstitutionEspace() {
   const { t } = useT('institution');
@@ -135,7 +144,7 @@ export default function InstitutionEspace() {
           {me?.temporaryPassword ? null : obs ? (
             <section className="space-y-3" aria-labelledby="obs-h">
               <h2 id="obs-h" className="text-xl font-semibold">{t('institution:space.observatoire_des_besoins_non', 'Observatoire des besoins non couverts')}</h2>
-              <p className="text-sm">{t('institution:space.period_totals', 'Période : du {{from}} au {{to}} (exclu). Orientations envoyées : {{sent}} ; besoins non couverts : {{unmet}} ({{note}}).', { from: obs.window.from, to: obs.window.to, sent: n(obs.totals.sent), unmet: n(obs.totals.unmet), note: obs.totals.note })}</p>
+              <p className="text-sm">{t('institution:space.period_totals', 'Période : du {{from}} au {{to}} (exclu). Orientations envoyées : {{sent}} ; besoins non couverts : {{unmet}} ({{note}}).', { from: formatDate(obs.window.from, DATE_SHORT) || obs.window.from, to: formatDate(obs.window.to, DATE_SHORT) || obs.window.to, sent: n(obs.totals.sent), unmet: n(obs.totals.unmet), note: obs.totals.note === 'somme des cellules publiées seulement' ? t('institution:space.totals_note', 'somme des cellules publiées seulement') : obs.totals.note })}</p>
               <table className="text-sm" data-testid="institution-by-need"><caption className="text-left font-medium">{t('institution:space.par_besoin', 'Par besoin')}</caption>
                 <thead><tr><th scope="col" className="pr-4 text-left">{t('institution:space.besoin', 'Besoin')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="text-left">{t('institution:space.non_couverts', 'Non couverts')}</th></tr></thead>
                 <tbody>{obs.byNeed.map((r) => <tr key={r.need}><th scope="row" className="pr-4 text-left font-normal">{r.need}</th><td className="pr-4">{n(r.sent)}</td><td>{n(r.unmet)}</td></tr>)}</tbody></table>
@@ -143,7 +152,7 @@ export default function InstitutionEspace() {
                 <thead><tr><th scope="col" className="pr-4 text-left">{t('institution:space.commune', 'Commune')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="text-left">{t('institution:space.non_couverts', 'Non couverts')}</th></tr></thead>
                 <tbody>{obs.byCommune.map((r) => <tr key={r.commune}><th scope="row" className="pr-4 text-left font-normal">{r.commune}</th><td className="pr-4">{n(r.sent)}</td><td>{n(r.unmet)}</td></tr>)}</tbody></table>
               <h3 className="font-semibold">{t('institution:space.methode', 'Méthode')}</h3>
-              <ul className="list-disc pl-5 text-sm" data-testid="institution-method">{Object.entries(obs.methodology).map(([k, v]) => <li key={k}>{v}</li>)}</ul>
+              <ul className="list-disc pl-5 text-sm" data-testid="institution-method">{Object.entries(obs.methodology).map(([k, v]) => <li key={k}>{methodText(t)[k] || v}</li>)}</ul>
             </section>
           ) : <p role="status">{t('institution:space.chargement', 'Chargement…')}</p>}
           {me?.temporaryPassword ? null : <section className="space-y-2" aria-labelledby="exp-h">

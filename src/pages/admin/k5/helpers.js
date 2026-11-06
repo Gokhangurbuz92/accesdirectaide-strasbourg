@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/api/client';
 import i18n from '@/i18n';
+import { serverText } from '@/lib/serverText';
 
 /** PKG-5 batch 2 — shared state for the K5 administrator pages: load a resource, run an action, show the outcome in French (never a raw status code). */
 export function explain(e) {
@@ -9,7 +10,9 @@ export function explain(e) {
   const p = e?.payload || {};
   if (p.error === 'ELEVATION_REQUIRED') return i18n.t('admin:k5.helpers.elevation_required', 'Opération de plateforme : demandez d’abord une élévation temporaire (page Opérations).');
   if (e?.status === 403 && !p.message) return i18n.t('admin:k5.helpers.refused_mfa', 'Refusé : cette action demande une session administrateur nominative avec MFA.');
-  return p.message || p.error || i18n.t('admin:k5.helpers.action_impossible', 'Action impossible.');
+  // R47: the server's French sentence on a page in another language is replaced by a translated one (src/lib/serverText.js)
+  if (e?.status === 404) return serverText(p.message || p.error, i18n.t('admin:k5.helpers.not_found', 'Introuvable : cet élément n’existe pas, ou plus.'));
+  return serverText(p.message || p.error, i18n.t('admin:k5.helpers.action_impossible', 'Action impossible.')) || i18n.t('admin:k5.helpers.action_impossible', 'Action impossible.');
 }
 
 export function useK5(path) {

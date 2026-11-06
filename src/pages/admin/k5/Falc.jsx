@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { useK5, explain } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, DATE_SHORT, formatDate } from '@/i18n';
 
 /** ADM-11: the FALC fields of each kind (api/_services/falc-governance.js FALC_FIELDS) */
 const FIELDS = { aide: ['summary_falc', 'conditions_falc', 'montant_falc'], demarche: ['summary_falc'], structure: ['summary_falc'] };
@@ -59,7 +59,7 @@ export default function AdminFalc() {
             <p className="font-medium">{rec.title || rec.entityId}</p>
             {rec.fields.map((x) => (
               <div key={x.field} className="rounded bg-slate-50 p-2 text-sm" data-testid="admin-falc-field">
-                <p className="font-medium">{FIELD_LABEL[x.field]} — {!x.text ? t('admin:k5.falc.no_text', 'aucun texte') : x.review?.current ? t('admin:k5.falc.reviewed_by', 'relu par {{by}} le {{date}}', { by: x.review.by, date: new Date(x.review.at).toLocaleDateString('fr-FR') }) : x.review ? t('admin:k5.falc.changed', 'relu, mais le texte a changé depuis : à relire') : t('admin:k5.falc.not_reviewed', 'non relu')}</p>
+                <p className="font-medium">{FIELD_LABEL[x.field]} — {!x.text ? t('admin:k5.falc.no_text', 'aucun texte') : x.review?.current ? t('admin:k5.falc.reviewed_by', 'relu par {{by}} le {{date}}', { by: x.review.by, date: formatDate(x.review.at, DATE_SHORT) }) : x.review ? t('admin:k5.falc.changed', 'relu, mais le texte a changé depuis : à relire') : t('admin:k5.falc.not_reviewed', 'non relu')}</p>
                 {x.text ? <p className="whitespace-pre-wrap">{x.text}</p> : null}
                 {x.source ? <details><summary className="cursor-pointer text-blue-800">{t('admin:k5.falc.source', 'Texte source')}</summary><p className="whitespace-pre-wrap">{x.source}</p></details> : null}
                 {x.text ? <label className="mt-1 flex items-center gap-2"><input type="checkbox" checked={Boolean(checked[x.field])} onChange={(e) => setChecked((c) => ({ ...c, [x.field]: e.target.checked }))} /> {t('admin:k5.falc.read_all', 'J’ai relu ce texte en entier et l’ai comparé à la source')}</label> : null}

@@ -75,7 +75,7 @@ export default function Login() {
 
                 {/* Accès admin discret — invisible pour le grand public */}
                 <div className="mt-12 flex justify-center">
-                    <Link to="/admin/login" className="text-xs text-gray-300 hover:text-gray-400 transition-colors">
+                    <Link to="/admin/login" className="text-xs text-slate-600 underline-offset-2 hover:underline transition-colors">
                         {t('account:login.restricted', 'Accès restreint')}
                     </Link>
                 </div>

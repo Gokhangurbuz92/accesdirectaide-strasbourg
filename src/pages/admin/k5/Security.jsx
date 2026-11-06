@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button } from '@/components/ui/button';
 import { useK5 } from './helpers.js';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 /**
  * R46 / Q07 — « Signaux de sécurité » (/admin/securite): what the 5-minute health check watches in the audit trail — refused sign-ins, refused MFA codes,
@@ -67,7 +67,7 @@ export default function AdminSecurity() {
             <h2 id="sec-sent" className="font-semibold">{t('admin:k5.security.sent_heading', 'Alertes de sécurité déjà envoyées')}</h2>
             {s.data.alertsSent.length ? (
               <ul className="space-y-1 text-sm" data-testid="admin-security-sent">
-                {s.data.alertsSent.map((a, i) => <li key={`${a.name}-${i}`}>{new Date(a.timestamp).toLocaleString()} — {alertName(t, a.name)}{a.details?.count !== undefined ? ` (${a.details.count})` : ''}</li>)}
+                {s.data.alertsSent.map((a, i) => <li key={`${a.name}-${i}`}>{formatDateTime(a.timestamp)} — {alertName(t, a.name)}{a.details?.count !== undefined ? ` (${a.details.count})` : ''}</li>)}
               </ul>
             ) : <p className="text-sm">{t('admin:k5.security.none_sent', 'Aucune alerte de sécurité dans le journal des alertes.')}</p>}
           </section>

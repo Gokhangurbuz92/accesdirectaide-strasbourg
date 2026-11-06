@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { useK5, explain } from './helpers.js';
 import { Status, Field } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, DATE_SHORT, formatDate, formatDateTime } from '@/i18n';
 
 /**
  * PKG-5 / A12 — privacy console (/admin/privacy). Access requests with organization-held notes (two people: one proposes, another confirms), legal holds
@@ -15,7 +15,7 @@ import { useT } from '@/i18n';
 function DsrDue({ r }) {
   const { t } = useT('admin');
   if (!r?.dueAt) return null;
-  const date = new Date(r.dueAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const date = formatDate(r.dueAt, { day: 'numeric', month: 'long', year: 'numeric' });
   return r.overdue
     ? <p className="font-semibold text-red-800" data-testid="dsr-overdue">{t('admin:k5.privacy.overdue', 'Délai dépassé : la réponse était due le {{date}}.', { date })}</p>
     : <p className={r.daysLeft <= 7 ? 'font-semibold text-amber-900' : 'text-slate-700'} data-testid="dsr-due">{t('admin:k5.privacy.due', 'Réponse due au plus tard le {{date}} ({{days}} j).', { date, days: r.daysLeft })}</p>;
@@ -47,7 +47,7 @@ export default function AdminPrivacy() {
           {(d?.accessRequests?.requests || []).map((r) => (
             <li key={r.id} className="space-y-2 rounded border p-2 text-sm" data-testid="admin-privacy-dsr">
               <DsrDue r={r} />
-              <p>{t('admin:k5.privacy.request_of', 'Demande du {{date}} — {{stage}}', { date: new Date(r.createdAt).toLocaleDateString('fr-FR'), stage: r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed }) : t('admin:k5.privacy.to_examine', 'à examiner') })}</p>
+              <p>{t('admin:k5.privacy.request_of', 'Demande du {{date}} — {{stage}}', { date: formatDate(r.createdAt, DATE_SHORT), stage: r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed }) : t('admin:k5.privacy.to_examine', 'à examiner') })}</p>
               <Button size="sm" variant="outline" onClick={() => readNotes(r.id)}>{t('admin:k5.privacy.read_notes', 'Lire les notes concernées (journalisé)')}</Button>
               {notes[r.id] ? <ul className="list-disc pl-5">{notes[r.id].map((n, i) => <li key={i}>{n.body}</li>)}</ul> : null}
               {r.stage === 'AWAITING_PROPOSAL' ? (
@@ -61,7 +61,7 @@ export default function AdminPrivacy() {
                 </div>
               ) : (
                 <div className="space-y-1">
-                  <p data-testid="admin-dsr-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? new Date(r.proposedAt).toLocaleString('fr-FR') : '—' })}{bases[r.id] ? t('admin:k5.privacy.basis_suffix', ' — fondement : {{basis}}', { basis: bases[r.id] }) : ''}</p>
+                  <p data-testid="admin-dsr-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? formatDateTime(r.proposedAt) : '—' })}{bases[r.id] ? t('admin:k5.privacy.basis_suffix', ' — fondement : {{basis}}', { basis: bases[r.id] }) : ''}</p>
                   {notes[r.id] ? <p className="whitespace-pre-wrap rounded bg-slate-50 p-2" data-testid="admin-dsr-extract">{extracts[r.id] != null ? t('admin:k5.privacy.extract_proposed', 'Extrait proposé : {{extract}}', { extract: extracts[r.id] || '—' }) : t('admin:k5.privacy.no_extract', 'Aucun extrait : la proposition est de ne pas communiquer.')}</p> : <p className="text-sm" data-testid="admin-dsr-read-first">{t('admin:k5.privacy.read_first', 'Lisez les notes (journalisé) pour voir l’extrait proposé : « Confirmer » s’active après votre lecture.')}</p>}
                   <Field id={`confirm-${r.id}`} label={t('admin:k5.privacy.second_note', 'Note de la deuxième personne')} value={v(`confirm-${r.id}`)} onChange={(x) => set(`confirm-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
@@ -83,7 +83,7 @@ export default function AdminPrivacy() {
           {(d?.erasureRequests?.requests || []).map((r) => (
             <li key={r.id} className="space-y-2 rounded border p-2 text-sm" data-testid="admin-privacy-erasure" data-request={r.id}>
               <DsrDue r={r} />
-              <p>{t('admin:k5.privacy.request_of', 'Demande du {{date}} — {{stage}}', { date: new Date(r.createdAt).toLocaleDateString('fr-FR'), stage: r.stage === 'BLOCKED_BY_LEGAL_HOLD' ? t('admin:k5.privacy.blocked', 'bloquée par une conservation légale') : r.stage === 'EXECUTION_FAILED_RETRYABLE' ? t('admin:k5.privacy.failed', 'exécution échouée (rien n’a été effacé) : à relancer') : r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed === 'APPROVE' ? t('admin:k5.privacy.execute', 'exécuter') : t('admin:k5.privacy.refuse', 'refuser') }) : t('admin:k5.privacy.to_examine', 'à examiner') })}</p>
+              <p>{t('admin:k5.privacy.request_of', 'Demande du {{date}} — {{stage}}', { date: formatDate(r.createdAt, DATE_SHORT), stage: r.stage === 'BLOCKED_BY_LEGAL_HOLD' ? t('admin:k5.privacy.blocked', 'bloquée par une conservation légale') : r.stage === 'EXECUTION_FAILED_RETRYABLE' ? t('admin:k5.privacy.failed', 'exécution échouée (rien n’a été effacé) : à relancer') : r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed === 'APPROVE' ? t('admin:k5.privacy.execute', 'exécuter') : t('admin:k5.privacy.refuse', 'refuser') }) : t('admin:k5.privacy.to_examine', 'à examiner') })}</p>
               <Button size="sm" variant="outline" onClick={() => readErasure(r.id)}>{t('admin:k5.privacy.see_erasure', 'Voir ce qui serait supprimé (journalisé)')}</Button>
               {erasure[r.id] ? <p data-testid="admin-erasure-summary">{t('admin:k5.privacy.erasure_summary', 'Compte : {{account}} — dossiers : {{dossiers}} — rendez-vous : {{appointments}} — conservations légales actives : {{holds}}', { account: erasure[r.id].accountExists ? t('admin:k5.privacy.present', 'présent') : t('admin:k5.privacy.absent', 'absent'), dossiers: erasure[r.id].dossiers, appointments: erasure[r.id].appointments, holds: erasure[r.id].activeLegalHolds })}</p> : null}
               {r.stage === 'AWAITING_PROPOSAL' ? (
@@ -96,7 +96,7 @@ export default function AdminPrivacy() {
                 </div>
               ) : r.stage === 'AWAITING_SECOND_REVIEWER' ? (
                 <div className="space-y-1">
-                  <p data-testid="admin-erasure-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? new Date(r.proposedAt).toLocaleString('fr-FR') : '—' })}{r.reason ? t('admin:k5.privacy.reason_suffix', ' — raison : {{reason}}', { reason: r.reason }) : ''}</p>
+                  <p data-testid="admin-erasure-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? formatDateTime(r.proposedAt) : '—' })}{r.reason ? t('admin:k5.privacy.reason_suffix', ' — raison : {{reason}}', { reason: r.reason }) : ''}</p>
                   {erasure[r.id] ? null : <p className="text-sm" data-testid="admin-erasure-read-first">{t('admin:k5.privacy.erasure_read_first', 'Ouvrez « Voir ce qui serait supprimé » (journalisé) : « Confirmer » s’active après votre lecture.')}</p>}
                   <Field id={`erase-confirm-${r.id}`} label={t('admin:k5.privacy.second_note', 'Note de la deuxième personne')} value={v(`erase-confirm-${r.id}`)} onChange={(x) => set(`erase-confirm-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
@@ -120,7 +120,7 @@ export default function AdminPrivacy() {
           <ul className="space-y-2">
             {restrictions.map((r) => (
               <li key={r.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-privacy-restriction" data-request={r.id}>
-                <p>{t('admin:k5.privacy.restriction_line', '{{account}} — depuis le {{date}} — raison : {{ground}}', { account: r.account || t('admin:k5.privacy.account', 'compte'), date: new Date(r.since).toLocaleDateString('fr-FR'), ground: r.ground })}</p>
+                <p>{t('admin:k5.privacy.restriction_line', '{{account}} — depuis le {{date}} — raison : {{ground}}', { account: r.account || t('admin:k5.privacy.account', 'compte'), date: formatDate(r.since, DATE_SHORT), ground: r.ground })}</p>
                 <Field id={`lift-${r.id}`} label={t('admin:k5.privacy.lift_reason', 'Raison de la levée (communiquée à la personne)')} value={v(`lift-${r.id}`)} onChange={(x) => set(`lift-${r.id}`, x)} rows={2} />
                 <Button size="sm" variant="outline" disabled={k.busy} onClick={() => liftRestriction(r.id)}>{t('admin:k5.privacy.lift', 'Lever la limitation')}</Button>
               </li>
@@ -140,7 +140,7 @@ export default function AdminPrivacy() {
         <ul className="space-y-2">
           {(d?.organizationClosures?.requests || []).map((r) => (
             <li key={r.id} className="space-y-2 rounded border p-2 text-sm" data-testid="admin-privacy-closure" data-request={r.id}>
-              <p>{r.structureNom} — {r.origin === 'ADA' ? t('admin:k5.privacy.closure_by_ada', 'demande d’ADA du {{date}}', { date: new Date(r.createdAt).toLocaleDateString('fr-FR') }) : t('admin:k5.privacy.closure_by_structure', 'demande de la structure du {{date}}', { date: new Date(r.createdAt).toLocaleDateString('fr-FR') })}{r.requestReason ? ` (« ${r.requestReason} »)` : ''} — {r.stage === 'BLOCKED_BY_LEGAL_HOLD' ? t('admin:k5.privacy.blocked', 'bloquée par une conservation légale') : r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed === 'APPROVE' ? t('admin:k5.privacy.execute', 'exécuter') : t('admin:k5.privacy.refuse', 'refuser') }) : t('admin:k5.privacy.to_examine', 'à examiner')}</p>
+              <p>{r.structureNom} — {r.origin === 'ADA' ? t('admin:k5.privacy.closure_by_ada', 'demande d’ADA du {{date}}', { date: formatDate(r.createdAt, DATE_SHORT) }) : t('admin:k5.privacy.closure_by_structure', 'demande de la structure du {{date}}', { date: formatDate(r.createdAt, DATE_SHORT) })}{r.requestReason ? ` (« ${r.requestReason} »)` : ''} — {r.stage === 'BLOCKED_BY_LEGAL_HOLD' ? t('admin:k5.privacy.blocked', 'bloquée par une conservation légale') : r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed === 'APPROVE' ? t('admin:k5.privacy.execute', 'exécuter') : t('admin:k5.privacy.refuse', 'refuser') }) : t('admin:k5.privacy.to_examine', 'à examiner')}</p>
               <Button size="sm" variant="outline" onClick={() => readClosure(r.id)}>{t('admin:k5.privacy.see_closure', 'Voir ce que la fermeture toucherait (journalisé)')}</Button>
               {closure[r.id] ? <p data-testid="admin-closure-summary">{t('admin:k5.privacy.closure_summary', 'Membres : {{members}} — accès aux dossiers : {{accesses}} — suivis ouverts : {{cases}} — notes internes : {{notes}} — orientations en cours : {{referrals}} — rendez-vous à venir : {{appointments}} — conservations légales actives : {{holds}}', { members: closure[r.id].members, accesses: closure[r.id].activeDossierAccesses, cases: closure[r.id].openCases, notes: closure[r.id].internalNotes, referrals: closure[r.id].liveReferrals, appointments: closure[r.id].futureAppointments, holds: closure[r.id].activeLegalHolds })}</p> : null}
               {r.stage === 'AWAITING_PROPOSAL' ? (
@@ -153,7 +153,7 @@ export default function AdminPrivacy() {
                 </div>
               ) : r.stage === 'AWAITING_SECOND_REVIEWER' ? (
                 <div className="space-y-1">
-                  <p data-testid="admin-closure-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? new Date(r.proposedAt).toLocaleString('fr-FR') : '—' })}{r.reason ? t('admin:k5.privacy.reason_suffix', ' — raison : {{reason}}', { reason: r.reason }) : ''}</p>
+                  <p data-testid="admin-closure-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? formatDateTime(r.proposedAt) : '—' })}{r.reason ? t('admin:k5.privacy.reason_suffix', ' — raison : {{reason}}', { reason: r.reason }) : ''}</p>
                   {closure[r.id] ? null : <p className="text-sm" data-testid="admin-closure-read-first">{t('admin:k5.privacy.closure_read_first', 'Ouvrez « Voir ce que la fermeture toucherait » (journalisé) : « Confirmer » s’active après votre lecture.')}</p>}
                   <Field id={`close-confirm-${r.id}`} label={t('admin:k5.privacy.second_note', 'Note de la deuxième personne')} value={v(`close-confirm-${r.id}`)} onChange={(x) => set(`close-confirm-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
@@ -206,7 +206,7 @@ export default function AdminPrivacy() {
         <ul className="space-y-2">
           {(d?.recoveryCases || []).map((c) => (
             <li key={c.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-privacy-recovery">
-              <p>{t('admin:k5.privacy.rec_proposed_by', 'Proposée par {{by}} le {{date}}', { by: c.proposedBy, date: new Date(c.proposedAt).toLocaleDateString('fr-FR') })} — {c.evidenceNote}</p>
+              <p>{t('admin:k5.privacy.rec_proposed_by', 'Proposée par {{by}} le {{date}}', { by: c.proposedBy, date: formatDate(c.proposedAt, DATE_SHORT) })} — {c.evidenceNote}</p>
               <Field id={`dec-${c.id}`} label={t('admin:k5.privacy.decision_reason', 'Motif de la décision')} value={v(`dec-${c.id}`)} onChange={(x) => set(`dec-${c.id}`, x)} />
               <div className="flex gap-2">
                 <Button size="sm" disabled={k.busy} onClick={() => k.act({ action: 'recovery_decide', id: c.id, decision: 'APPROVE', note: v(`dec-${c.id}`) }, t('admin:k5.privacy.rec_approved', 'Récupération approuvée.'))}>{t('admin:k5.privacy.approve', 'Approuver')}</Button>
@@ -236,7 +236,7 @@ export default function AdminPrivacy() {
                   <tr key={it.key}>
                     <td>{it.label}{it.blocker ? <span className="block text-xs text-slate-600">{it.blocker}</span> : null}</td>
                     <td>{it.durationDays ? t('admin:k5.privacy.days_from', '{{n}} jours ({{from}})', { n: it.durationDays, from: it.durationFrom }) : t('admin:k5.privacy.to_decide', 'à décider')}</td>
-                    <td>{it.total ?? '—'}{it.oldest ? <span className="block text-xs text-slate-600">{t('admin:k5.privacy.since', 'depuis le {{date}}', { date: new Date(it.oldest).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }) })}</span> : null}</td>
+                    <td>{it.total ?? '—'}{it.oldest ? <span className="block text-xs text-slate-600">{t('admin:k5.privacy.since', 'depuis le {{date}}', { date: formatDate(it.oldest, DATE_SHORT) })}</span> : null}</td>
                     <td>{it.overdue ?? '—'}</td>
                   </tr>
                 ))}

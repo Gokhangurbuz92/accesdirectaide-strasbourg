@@ -65,5 +65,10 @@
  "space.telecharger_csv": "Download (CSV)",
  "space.territoire": "— area:",
  "space.vos_autres_sessions_seront": "Your other sessions will be closed.",
- "space.vous_etes_connecte_avec": "You are signed in with a temporary password given by ADA. Choose your own password to access the statistics."
+ "space.vous_etes_connecte_avec": "You are signed in with a temporary password given by ADA. Choose your own password to access the statistics.",
+ "space.totals_note": "sum of the published cells only",
+ "space.method.sources": "Appointments and referrals recorded in the platform by verified organisations (no estimate, no external data).",
+ "space.method.unmet": "Referrals to which the receiving organisation answered “no capacity” or “outside our scope”.",
+ "space.method.limits": "Only requests made through the platform are counted; a municipality appears only with at least 3 verified organisations; any value below 5 is hidden, and another value in the same column is hidden too when it would be the only hidden one; totals add up published values only.",
+ "space.method.periods": "Complete calendar quarters only, without overlap (no month, year or free period: two nested periods would make it possible to recover a hidden value)."
 }

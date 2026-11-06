@@ -1326,5 +1326,13 @@
  "siao.download": "تنزيل البطاقة (JSON)",
  "siao.print": "طباعة",
  "audit_log.previous_page": "الصفحة السابقة",
- "audit_log.next_page": "الصفحة التالية"
+ "audit_log.next_page": "الصفحة التالية",
+ "register.submit": "التسجيل",
+ "breadcrumb.disponibilites": "أوقات التوفر",
+ "breadcrumb.agenda": "جدول المواعيد",
+ "breadcrumb.new": "موعد جديد",
+ "breadcrumb.absences": "الغيابات",
+ "breadcrumb.attestation": "الملخص الرسمي",
+ "breadcrumb.parametres": "الإعدادات",
+ "breadcrumb.mfa_settings": "المصادقة الثنائية"
 }

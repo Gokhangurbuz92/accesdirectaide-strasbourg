@@ -6,9 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RefreshCw, Database, Mail } from 'lucide-react';
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { useT } from '@/i18n';
+import { useT, formatDate, formatDateTime as formatInLanguage, formatTime, DATE_TIME } from '@/i18n';
 
 /** @param {unknown} value @param {any} t */
 function formatOk(value, t) {
@@ -31,7 +29,7 @@ function formatDateTime(value) {
   if (!value) return '-';
   const date = new Date(String(value));
   if (Number.isNaN(date.getTime())) return '-';
-  return format(date, 'dd/MM/yyyy HH:mm:ss', { locale: fr });
+  return formatInLanguage(date, { ...DATE_TIME, second: '2-digit' });
 }
 
 /** @param {unknown} state */
@@ -92,7 +90,7 @@ export default function AdminObservability() {
     }
 
     setError(nextError);
-    setLiveMessage(t('admin:observability.updated_at', 'Données mises à jour à {{time}}', { time: format(new Date(), 'HH:mm:ss', { locale: fr }) }));
+    setLiveMessage(t('admin:observability.updated_at', 'Données mises à jour à {{time}}', { time: formatTime(new Date(), { hour: '2-digit', minute: '2-digit', second: '2-digit' }) }));
     setLoading(false);
   }, [selectedCron, t]);
 
@@ -363,7 +361,7 @@ export default function AdminObservability() {
                 cronRuns.map((run) => (
                   <TableRow key={run.id}>
                     <TableCell className="font-mono text-xs">
-                      {run.startedAt ? format(new Date(run.startedAt), 'dd/MM HH:mm:ss', { locale: fr }) : '-'}
+                      {run.startedAt ? formatDate(run.startedAt, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}
                     </TableCell>
                     <TableCell>
                       <Badge
