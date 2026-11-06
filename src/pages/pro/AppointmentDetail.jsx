@@ -7,6 +7,7 @@ import { Loader2, ArrowLeft, Calendar, User, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatWindow from '@/components/Messaging/ChatWindow';
 import VisioTrigger from '@/components/pro/VisioTrigger';
+import ProReschedulePanel from '@/components/rdv/ProReschedulePanel';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useProLabels } from '@/lib/proLabelsI18n';
@@ -141,6 +142,7 @@ export default function ProAppointmentDetail() {
                                 <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-700" /> {formatDateTime(appointment.start_at, LONG_DATE_TIME)}</div>
                                 <div className="flex items-center gap-2"><Video className="h-4 w-4 text-slate-700" /> <span data-testid="pro-appt-mode">{appointment.mode === 'VIDEO' ? t('pro:rdv_new.mode_video', 'À distance (visio)') : appointment.mode === 'IN_PERSON' ? t('pro:rdv_new.mode_in_person', 'En présentiel') : (appointment.modeLabel || appointment.mode)}</span></div>
                                 {appointment.rescheduleCount ? <div className="text-sm text-amber-900" data-testid="pro-appt-rescheduled">{t('pro:appointment_detail.rescheduled', 'Déplacé {{n}} fois par la personne', { n: appointment.rescheduleCount })}{appointment.rescheduledAt ? ` (${t('pro:appointment_detail.rescheduled_last', 'dernière fois le {{date}}', { date: formatDateTime(appointment.rescheduledAt, LONG_DATE_TIME) })})` : ''}</div> : null}
+                                {appointment.teamMoves?.count ? <div className="text-sm text-amber-900" data-testid="pro-appt-team-moved">{t('pro:appointment_detail.team_moved_r47', 'Déplacé {{n}} fois par l’équipe (dernière fois le {{date}})', { n: appointment.teamMoves.count, date: formatDateTime(appointment.teamMoves.lastAt, LONG_DATE_TIME) })}</div> : null}
                                 {Array.isArray(appointment.notices) && appointment.notices.length ? (
                                     <ul className="text-xs text-slate-600" data-testid="pro-appt-notices">{appointment.notices.map((n, i) => <li key={i}>{noticeLine(n)}</li>)}</ul>
                                 ) : null}
@@ -162,6 +164,13 @@ export default function ProAppointmentDetail() {
                             </div>
                         </div>
                     </div>
+
+                    {/* R47: the structure moves the appointment (same service, a free slot of the same professional) */}
+                    {['booked', 'confirmed'].includes(String(appointment.status || '').toLowerCase()) && Date.parse(appointment.start_at) > Date.now() ? (
+                        <div className="border-t border-slate-200 pt-4">
+                            <ProReschedulePanel appointment={appointment} onMoved={() => setReloadKey((k) => k + 1)} />
+                        </div>
+                    ) : null}
 
                     {/* Visio */}
                     {appointment.status !== 'cancelled' && appointment.mode === 'VIDEO' && (

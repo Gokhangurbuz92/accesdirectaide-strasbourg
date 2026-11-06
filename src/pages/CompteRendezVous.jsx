@@ -150,6 +150,8 @@ export default function CompteRendezVous() {
                   </div>
                 ) : null}
                 {a.reschedule && a.reschedule.count ? <p className="text-slate-700" data-testid="rdv-moves">{t('compte:rdv.moves_count', 'Déplacé {{n}} fois sur {{max}}.', { n: a.reschedule.count, max: a.reschedule.max })}</p> : null}
+                {/* R47: a move made by the structure (it does not use up the person's own moves) */}
+                {a.movedByStructure ? <p className="text-amber-900" data-testid="rdv-moved-by-structure">{t('compte:rdv.moved_by_structure_r47', 'Horaire modifié par la structure le {{when}}.', { when: when(a.movedByStructure.lastAt) })}</p> : null}
                 <div className="flex flex-wrap gap-2">
                   {a.canReschedule ? <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="rdv-move" onClick={() => startMove(a)}>{t('compte:rdv.deplacer', 'Déplacer')}</Button> : null}
                   <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="rdv-write" onClick={() => writeTo(a)}>{t('compte:rdv.ecrire_structure', 'Écrire à la structure')}</Button>

@@ -22,6 +22,7 @@ import { citizenMailLanguage } from './mail-language.js';
 import { mailStatusFromSend } from '../lib/mail-status.js';
 import { MINIMAL_PATH, minimalMail, resolveNotificationPrivacy, withoutPersonalFreeText } from '../lib/notification-privacy.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
+import { teamMoveCount } from './rdv-team-moves.js';
 
 /**
  * R45 / ENG-LR-3 — the kinds that are NOT notices about an appointment but a code the person asked for (GUEST_CODE: no caller sends it today). They keep
@@ -35,7 +36,7 @@ export const PRIVACY_EXEMPT_KINDS = Object.freeze(['GUEST_CODE']);
  *   reduced (verified ordinary service): the catalogue subject and opening in the reader's language, the caller's details, the calendar file — never the
  *   booking message nor any free text of the person.
  * @param {object} appointment @param {string} kind @param {{ subject: string, text: string, mailKind?: string, calendar?: object, attachments?: any[] }} message
- * @param {{ lang: string, to: string, guest?: boolean, resolveSensitivity?: (record: unknown) => unknown }} opts
+ * @param {{ lang: string, to: string, guest?: boolean, resolveSensitivity?: (record: unknown) => unknown, db?: any }} opts
  * @returns {Promise<{ level: 'minimal' | 'reduced', subject: string, text: string, html?: string, category: string, attachments: any[] }>}
  */
 export async function buildCitizenNoticeMail(appointment, kind, message, opts) {
@@ -44,7 +45,9 @@ export async function buildCitizenNoticeMail(appointment, kind, message, opts) {
     const m = minimalMail(opts.lang, { guest: Boolean(opts.guest), url: buildAppUrl(MINIMAL_PATH) });
     return { level, subject: m.subject, text: m.text, html: m.html, category: m.category, attachments: [] };
   }
-  const attachments = [...(message.attachments || []), ...(message.calendar ? [calendarAttachment(message.calendar, opts.to)] : [])];
+  // R47: the calendar SEQUENCE counts the structure's own moves too (api/_services/rdv-team-moves.js), so a later update / cancellation always supersedes
+  const calendar = message.calendar ? { ...message.calendar, sequence: Number(message.calendar.sequence || 0) + (opts.db ? await teamMoveCount(message.calendar.appointmentId || appointment.id, opts.db) : 0) } : null;
+  const attachments = [...(message.attachments || []), ...(calendar ? [calendarAttachment(calendar, opts.to)] : [])];
   const { subject, text } = localizeNotice(kind, message, opts.lang);
   return { level, subject, text: withoutPersonalFreeText(text, appointment), category: `appointment-${kind.toLowerCase()}`, attachments };
 }
@@ -155,7 +158,7 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         if (!(await canNotify(appointment.citizenUserId, 'email', category).catch(() => false))) status = 'NO_CONSENT';
         else {
           // R45 / ENG-LR-3: the privacy level of the appointment decides what the e-mail may say (minimal by default)
-          const mail = await buildCitizenNoticeMail(appointment, kind, message, { lang: deps.lang || await citizenMailLanguage(appointment.citizenUserId, db), to: u.email, resolveSensitivity: deps.resolveSensitivity });
+          const mail = await buildCitizenNoticeMail(appointment, kind, message, { lang: deps.lang || await citizenMailLanguage(appointment.citizenUserId, db), to: u.email, resolveSensitivity: deps.resolveSensitivity, db });
           const out = await send({ to: u.email, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}), category: mail.category, ...(mail.attachments.length ? { attachments: mail.attachments } : {}) });
           status = mailLedgerStatus(out);   // PKG-4: the test outbox is TEST_RECORDED, never DELIVERED
         }
@@ -170,7 +173,7 @@ export async function noticeCitizen(appointment, kind, message, deps = {}) {
         const to = isV1Text(appointment.guestEmail) ? decrypt(appointment.guestEmail) : null;
         if (to) {
           // an account-free booking has no stored language: French (R43-MAIL); R45: no account page to sign in to (the minimal text says so)
-          const mail = await buildCitizenNoticeMail(appointment, kind, message, { lang: deps.lang || 'fr', to, guest: true, resolveSensitivity: deps.resolveSensitivity });
+          const mail = await buildCitizenNoticeMail(appointment, kind, message, { lang: deps.lang || 'fr', to, guest: true, resolveSensitivity: deps.resolveSensitivity, db });
           const out = await send({ to, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}), category: mail.category, ...(mail.attachments.length ? { attachments: mail.attachments } : {}) });
           status = mailLedgerStatus(out);
         }

@@ -5,7 +5,10 @@ import { appointmentTable, flagsOf, requestGuestSchema } from '../../../_utils/s
 import { requireProStructureContext } from '../../../_utils/auth.js';
 import { withProRdvHandler } from '../../../_utils/with-pro-rdv-handler.js';
 import { buildAppUrl } from '../../../_utils/user-auth.js';
-import { noticeCitizen } from '../../../_services/appointment-notices.js';
+import { noticeCitizen, noticeStructure } from '../../../_services/appointment-notices.js';
+import { logProAudit } from '../../../_utils/auth.js';
+import { clientIp } from '../../../_utils/client-ip.js';
+import { cancelReasonCode } from '../../../_services/rdv-pro-reschedule.js';
 
 /** @param {Date} d */
 const formatParis = (d) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(d);
@@ -48,6 +51,10 @@ async function handler(req, res) {
   // PKG-3 / B04: tell the person (verified account, channel allowed: canNotify email/service) with a calendar CANCEL; the outcome is recorded honestly in AppointmentNotice.
   // Generic subject: no structure name in the subject line (data minimisation, unchanged).
   if (cancelledNow) {
+    // R47: the cancellation by the team is journaled (ids and a fixed reason code only — no name, no time, no free text) and the team is told (in-app
+    // notice to every active member, e-mail per preference) — it used to leave no trace but the row
+    await logProAudit('RDV_PRO_CANCELLED', proCtx.userId, proCtx.structureId, { appointmentId: updated.id, reasonCode: cancelReasonCode(req.body?.reasonCode) }, clientIp(req));
+    await noticeStructure(updated, 'CANCELLED_BY_STRUCTURE', { title: 'Rendez-vous annulé par l’équipe', text: `Le rendez-vous du ${formatParis(new Date(appointment.startAt))} a été annulé par un membre de l’équipe.` });
     await noticeCitizen(updated, 'CANCELLED_BY_STRUCTURE', {
       subject: 'Votre rendez-vous a été annulé - Accès Direct Aide',
       text: ['Votre rendez-vous a été annulé par la structure.', '', `Date prévue : ${formatParis(new Date(appointment.startAt))}`, '', `Pour reprendre rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`].join('\n'),

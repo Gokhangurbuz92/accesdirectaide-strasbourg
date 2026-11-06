@@ -93,6 +93,20 @@ export const cancelAppointmentSchema = z.object({
     id: z.string().min(1, 'ID du rendez-vous requis'),
 });
 
+// R47: a move of an appointment by the structure, and a professional's public name (the handlers validate the values themselves)
+export const proRescheduleSchema = z.object({
+    id: z.string().min(1, 'ID du rendez-vous requis').max(200),
+    startAt: z.string().min(1, 'Nouveau créneau requis').max(64),
+    expectedStartAt: z.string().max(64).optional(),
+    sensitiveConsent: z.boolean().optional(),
+});
+
+export const proPublicProfileSchema = z.object({
+    memberId: z.string().min(1).max(100).optional(),
+    displayName: z.string().max(200).nullable().optional(),
+    jobTitle: z.string().max(200).nullable().optional(),
+});
+
 export const startVisioSchema = z.object({
     appointmentId: z.string().min(1, 'appointmentId requis'),
 });

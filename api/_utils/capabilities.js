@@ -94,7 +94,7 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'pro/slots': ['pro.agenda'], 'pro/availability': ['pro.agenda'], 'pro/timeoff': ['pro.agenda'], 'pro/rdv': ['pro.agenda'], 'pro/appointments': ['pro.agenda'],
   'pro/outlook': ['calendar.outlook'], 'pro/services': ['pro.agenda'],
   // pro
-  'pro/auth': ['pro.account'], 'pro/me': ['pro.account'], 'pro/mfa-setup': ['pro.account'], 'pro/mfa-enrolment': ['pro.account'], 'pro/mfa-invitation': ['pro.account'],
+  'pro/auth': ['pro.account'], 'pro/me': ['pro.account'], 'pro/profile': ['pro.account'], 'pro/mfa-setup': ['pro.account'], 'pro/mfa-enrolment': ['pro.account'], 'pro/mfa-invitation': ['pro.account'],
   'pro/notifications': ['pro.account'], 'pro/audit': ['pro.account'],
   'pro/team': ['pro.structure_admin'], 'pro/regional-stats': ['pro.structure_admin'], 'pro/invite': ['pro.structure_admin'], 'pro/resend-invite': ['pro.structure_admin'],
   'pro/structure': ['pro.structure_admin'], 'pro/reports': ['pro.structure_admin'],
