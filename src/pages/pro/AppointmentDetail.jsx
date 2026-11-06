@@ -12,11 +12,13 @@ import ProReschedulePanel from '@/components/rdv/ProReschedulePanel';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useProLabels } from '@/lib/proLabelsI18n';
 import { useT, formatDateTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /** R47: « 10 juillet 2026 à 16:00 » in French, the same date in the interface language otherwise — always on the Paris clock */
 const LONG_DATE_TIME = Object.freeze({ day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 export default function ProAppointmentDetail() {
     const { t } = useT('pro');
+    const fr = useFrAttrs();   // R47: the service name and the person's name stay as written (lang="fr" outside French)
     const { noticeLine } = useProLabels();
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
@@ -146,13 +148,13 @@ export default function ProAppointmentDetail() {
                                 {Array.isArray(appointment.notices) && appointment.notices.length ? (
                                     <ul className="text-xs text-slate-600" data-testid="pro-appt-notices">{appointment.notices.map((n, i) => <li key={i}>{noticeLine(n)}</li>)}</ul>
                                 ) : null}
-                                <div className="flex items-center gap-2"><User className="h-4 w-4 text-slate-700" /> {appointment.serviceName}</div>
+                                <div className="flex items-center gap-2"><User className="h-4 w-4 text-slate-700" /> <span {...fr}>{appointment.serviceName}</span></div>
                             </div>
                         </div>
                         <div>
                             <h3 className="font-semibold text-slate-900 mb-2">{t('pro:appointment_detail.beneficiary', 'Bénéficiaire')}</h3>
                             <div className="space-y-2 text-sm">
-                                <p>{t('pro:appointment_detail.name_label', 'Nom :')} {appointment.beneficiary.firstName || t('pro:appointment_detail.masked', 'Masqué')}</p>
+                                <p>{t('pro:appointment_detail.name_label', 'Nom :')} {appointment.beneficiary.firstName ? <span {...fr}>{appointment.beneficiary.firstName}</span> : t('pro:appointment_detail.masked', 'Masqué')}</p>
                                 <p>{t('pro:appointment_detail.contact_label', 'Contact :')} {appointment.beneficiary.contactMasked}</p>
                                 {/* R38/R39: booked without an account — the masked e-mail only, and whether the optional J-1 reminder e-mail was asked for (yes / no) */}
                                 {appointment.guest ? (

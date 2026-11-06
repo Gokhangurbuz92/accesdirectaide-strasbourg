@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { proRdvClient } from '@/api/pro-rdv-client';
 import { formatDate, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { parisWallValue, parisWallToIso } from '@/lib/parisCalendar';
 
 // R47: the fields are Paris wall time (as every time of the agenda), not the device's time zone
@@ -29,6 +30,7 @@ function formatDateTime(raw) {
 
 export default function ProRdvAbsences() {
   const { t } = useT('pro');
+  const fr = useFrAttrs();   // R47: the reason the team wrote stays as written (French: lang="fr" outside French)
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [items, setItems] = useState([]);
@@ -226,7 +228,7 @@ export default function ProRdvAbsences() {
                     <p className="font-medium text-slate-900">
                       {formatDateTime(item.startAt)} - {formatDateTime(item.endAt)}
                     </p>
-                    <p className="text-slate-600">{item.reason || t('pro:rdv_absences.no_reason', 'Sans raison précisée')}</p>
+                    <p className="text-slate-600" {...(item.reason ? fr : {})}>{item.reason || t('pro:rdv_absences.no_reason', 'Sans raison précisée')}</p>
                     <p className="text-xs text-slate-700" data-testid="pro-timeoff-owner">
                       {item.scope === 'structure' ? t('pro:rdv_absences.owner_structure', 'Fermeture de toute la structure') : item.mine ? t('pro:rdv_absences.owner_mine', 'Mon absence') : t('pro:rdv_absences.owner_member', 'Absence de {{who}}', { who: item.memberEmail || t('pro:rdv_absences.a_member', 'un membre') })}
                     </p>

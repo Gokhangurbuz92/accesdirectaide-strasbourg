@@ -1712,5 +1712,12 @@
  "features.flag.maintenance.label": "Bakım modu",
  "features.flag.maintenance.description": "Her sayfa bakım sayfasını gösterir (MAINTENANCE_MODE=1).",
  "features.flag.audit_log.label": "KVKK/GDPR denetimi",
- "features.flag.audit_log.description": "Hassas verilere erişimi kayda alır."
+ "features.flag.audit_log.description": "Hassas verilere erişimi kayda alır.",
+ "veille.alert.no_run": "Henüz tamamlanmış bir izleme çalışması yok.",
+ "veille.alert.no_run_since": "{{date}} tarihinden beri tamamlanmış izleme çalışması yok: LAB sunucusu çalışıyor mu?",
+ "veille.alert.important_changes": "Son üç günde koşullarda, tutarlarda, hukuki metinlerde veya bölgede {{n}} önemli değişiklik: kayıtlara zaten yansıtıldı (« Önemli değişiklikler » bölümüne bakın).",
+ "k5.operations.flag.public_feedback": "İçerik bildirimleri ve kuruluş önerileri (herkese açık)",
+ "k5.operations.flag.support_form": "Yardım formu (destek)",
+ "k5.operations.flag.open_data_export": "Bölgesel istatistik dışa aktarımı (lisansa sahip karar verecek)",
+ "k5.privacy.legal_text_fr": "Fransızca hukuki metin: kategoriler ve koşulları, veri koruma görevlisi (DPO) onaylayana kadar Fransızca kalır."
 }

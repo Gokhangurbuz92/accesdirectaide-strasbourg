@@ -27,6 +27,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 // ─── Local Preferences helpers ────────────────────────────────
 
@@ -35,6 +36,7 @@ import i18n, { useT } from '@/i18n';
 // @ts-ignore
 function StructureTab({ structure, user, loadFailed, onRetry }) {
     const { t } = useT('pro');
+    const fr = useFrAttrs();   // R47: the structure's name and address stay French (lang="fr" outside French)
     // R8: a failed reading of the account is not « no structure »
     if (loadFailed) {
         return (
@@ -62,7 +64,7 @@ function StructureTab({ structure, user, loadFailed, onRetry }) {
                         <Building2 className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
                             <span className="text-sm font-medium text-slate-700">{t('pro:parametres.structure_name', 'Nom de la structure')}</span>
-                            <p className="text-sm font-semibold text-slate-900">{structure.nom || structure.name || '-'}</p>
+                            <p className="text-sm font-semibold text-slate-900" {...fr}>{structure.nom || structure.name || '-'}</p>
                         </div>
                     </div>
 
@@ -71,9 +73,9 @@ function StructureTab({ structure, user, loadFailed, onRetry }) {
                             <MapPin className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
                                 <span className="text-sm font-medium text-slate-700">{t('pro:parametres.address', 'Adresse')}</span>
-                                <p className="text-sm text-slate-900">{structure.adresse || structure.address}</p>
+                                <p className="text-sm text-slate-900" {...fr}>{structure.adresse || structure.address}</p>
                                 {(structure.code_postal || structure.zipCode) && (
-                                    <p className="text-xs text-slate-700 mt-0.5">
+                                    <p className="text-xs text-slate-700 mt-0.5" {...fr}>
                                         {structure.code_postal || structure.zipCode} {structure.ville || structure.city}
                                     </p>
                                 )}

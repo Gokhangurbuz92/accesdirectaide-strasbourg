@@ -24,10 +24,16 @@ const norm = (/** @type {string} */ x) => x.replace(/[’']/g, "'").replace(/\s+
 const SRC = norm(readTree('src').join('\n')); const API = norm(readTree('api').join('\n'));
 /** the translated values of each language: a text identical to the French one that IS the translation (« Export CSV », « SMS (Twilio) ») is not a defect */
 const LOCALE_VALUES = Object.fromEntries(['en', 'tr', 'ar', 'de', 'uk'].map((l) => { const d = path.join(ROOT, 'src/i18n/locales', l); return [l, new Set(fs.readdirSync(d).flatMap((f) => Object.values(JSON.parse(fs.readFileSync(path.join(d, f), 'utf8'))).map((v) => norm(String(v)).trim())))]; }));
+// R47 langfr: the same for a translation with values (« Page {{page}} / {{total}} », « Items ({{n}}) »): the text matches the language's own pattern
+// (only patterns with at least four letters of their own, so a bare « {{name}} » never excuses anything)
+const esc = (/** @type {string} */ x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const LOCALE_PATTERNS = Object.fromEntries(Object.entries(LOCALE_VALUES).map(([l, set]) => [l, [...set].filter((v) => /\{\{\w+\}\}/.test(v) && (v.replace(/\{\{\w+\}\}/g, '').match(/\p{L}/gu) || []).length >= 4)
+  .map((v) => new RegExp(`^${v.split(/\{\{\w+\}\}/).map(esc).join('.+')}$`))]));
 const classify = (/** @type {string} */ s, /** @type {string} */ lang = '') => {
   if (lang && LOCALE_VALUES[lang]?.has(norm(s).trim())) return 'translated';
+  if (lang && LOCALE_PATTERNS[lang]?.some((re) => re.test(norm(s).trim()))) return 'translated';
   if (/@|^www\.|^https?:|\.(fr|com|org|test|eu)\b/.test(s) || NAME.test(s.trim()) || /^[\d\s.,:/+()–-]+$/.test(s) || /^\d{2} \d{2} \d{2} \d{2} \d{2}$/.test(s)) return 'name';
-  if (/^[a-z0-9._][a-z0-9_./-]*$/.test(s) || /^[A-Z0-9_]+(\/[A-Z_]+)?$/.test(s) || /^[a-z_-]+(, [a-zA-Z_-]+)+$/.test(s) || /^(GET|POST) \/api\//.test(s)) return 'name';   // identifiers shown as such (job names, codes, file names)
+  if (/^[a-z0-9._][a-z0-9_./-]*$/.test(s) || /^[A-Z0-9_]+(\/[A-Z_]+)?$/.test(s) || /^[a-z_-]+(, [a-zA-Z_-]+)+$/.test(s) || /^(GET|POST) \/api\//.test(s) || /^#[a-z_]+=$/.test(s)) return 'name';   // identifiers shown as such (job names, codes, file names)
   if (DATA.test(s)) return 'data';
   const n = norm(s);
   if (SRC.includes(n)) return 'ui';

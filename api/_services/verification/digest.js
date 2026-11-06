@@ -36,7 +36,7 @@ function alertsOf({ runs, pause, feeds, important, now }) {
   const real = runs.filter((r) => r.job === 'veille' && r.status !== 'skipped');
   const lastDone = real.find((r) => ['success', 'partial', 'stopped'].includes(r.status));
   if (pause.paused) out.push({ code: 'PAUSED', level: 'info', message: `La veille est en pause depuis le ${new Date(pause.since).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}${pause.reason ? ` (${pause.reason})` : ''}.` });
-  else if (!lastDone || now - new Date(lastDone.startedAt).getTime() > 48 * 3600000) out.push({ code: 'NO_RUN', level: 'critical', message: lastDone ? `Aucune veille terminée depuis le ${new Date(lastDone.startedAt).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} : le serveur du LAB est-il lancé ?` : 'Aucune veille terminée pour l’instant.' });
+  else if (!lastDone || now - new Date(lastDone.startedAt).getTime() > 48 * 3600000) out.push({ code: 'NO_RUN', level: 'critical', since: lastDone ? lastDone.startedAt : null, message: lastDone ? `Aucune veille terminée depuis le ${new Date(lastDone.startedAt).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} : le serveur du LAB est-il lancé ?` : 'Aucune veille terminée pour l’instant.' });
   if (real.length >= 2 && real[0].status === 'error' && real[1].status === 'error') out.push({ code: 'RUN_ERRORS', level: 'critical', message: `Les deux dernières veilles se sont arrêtées sur une erreur (${String(real[0].errorSample || '').slice(0, 160)}).` });
   const skipped = runs.find((r) => r.job === 'veille' && r.status === 'skipped' && now - new Date(r.startedAt).getTime() < 24 * 3600000 && r.skipReason !== 'PAUSED');
   if (skipped) out.push({ code: skipped.skipReason, level: 'info', message: `Veille reportée : ${skipped.errorSample}.` });
@@ -44,7 +44,7 @@ function alertsOf({ runs, pause, feeds, important, now }) {
   const last = real[0];
   for (const a of last?.metrics?.alerts || []) out.push(a);
   const recent = important.filter((e) => now - new Date(e.createdAt).getTime() < 72 * 3600000);
-  if (recent.length) out.push({ code: 'IMPORTANT_CHANGES', level: 'info', message: `${recent.length} changement(s) important(s) de conditions, de montants, de textes juridiques ou de territoire ces trois derniers jours : déjà répercutés sur les fiches (voir « Changements importants »).` });
+  if (recent.length) out.push({ code: 'IMPORTANT_CHANGES', level: 'info', count: recent.length, message: `${recent.length} changement(s) important(s) de conditions, de montants, de textes juridiques ou de territoire ces trois derniers jours : déjà répercutés sur les fiches (voir « Changements importants »).` });
   return out;
 }
 

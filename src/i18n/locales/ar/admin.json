@@ -1731,5 +1731,12 @@
  "features.flag.maintenance.label": "وضع الصيانة",
  "features.flag.maintenance.description": "تعرض كل صفحة صفحة الصيانة (MAINTENANCE_MODE=1).",
  "features.flag.audit_log.label": "تدقيق اللائحة العامة لحماية البيانات",
- "features.flag.audit_log.description": "يسجّل الوصول إلى البيانات الحساسة."
+ "features.flag.audit_log.description": "يسجّل الوصول إلى البيانات الحساسة.",
+ "veille.alert.no_run": "لم تكتمل أي عملية رصد حتى الآن.",
+ "veille.alert.no_run_since": "لم تكتمل أي عملية رصد منذ {{date}}: هل خادم LAB قيد التشغيل؟",
+ "veille.alert.important_changes": "{{n}} تغيير(ات) مهمة في الشروط أو المبالغ أو النصوص القانونية أو النطاق الجغرافي خلال الأيام الثلاثة الأخيرة: طُبّقت بالفعل على البطاقات (انظر « التغييرات المهمة »).",
+ "k5.operations.flag.public_feedback": "بلاغات المحتوى واقتراحات الهيئات (عامة)",
+ "k5.operations.flag.support_form": "نموذج طلب المساعدة (الدعم)",
+ "k5.operations.flag.open_data_export": "تصدير الإحصاءات الإقليمية (الترخيص يقرره المالك)",
+ "k5.privacy.legal_text_fr": "نص قانوني بالفرنسية: تبقى الفئات وشروطها مكتوبة بالفرنسية إلى أن يصادق عليها مسؤول حماية البيانات (DPO)."
 }

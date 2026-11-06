@@ -6,6 +6,7 @@ import VerificationPanel from '@/components/admin/VerificationPanel';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
 import { DATE_SHORT, formatDate } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 const STATE_LABEL = () => ({
   HUMAN_VERIFIED: i18n.t('admin:ws2.state.human_verified', 'Vérifié par une personne'), PENDING_HUMAN_VERIFICATION: i18n.t('admin:ws2.state.pending', 'À vérifier'), REJECTED: i18n.t('admin:ws2.state.rejected', 'Refusé'), ON_HOLD: i18n.t('admin:ws2.state.on_hold', 'En attente'), NOT_IN_DATABASE: i18n.t('admin:ws2.state.not_in_database', 'Absent de la base'),
@@ -22,6 +23,9 @@ const GROUPS = () => ({ A_PRET: i18n.t('admin:ws2.group.ready', 'Prêtes à comp
  */
 export default function AdminWs2Queue() {
   const { t } = useT('admin');
+  // R47: the record's title and content, and the server's preparation notes (French), stay French: lang="fr" outside French; the earlier research
+  // notes of the evidence matrix are written in English (codes and an English sentence): lang="en"
+  const fr = useFrAttrs();
   const stateLabel = STATE_LABEL(); const groups = GROUPS();
   const [state, setState] = useState({ loading: true, error: '', data: null });
   // owner LAB audit: the view opens on what still needs a person — « à vérifier » if any, else the records on hold, else everything (it used to open on an
@@ -63,18 +67,18 @@ export default function AdminWs2Queue() {
           {records.length === 0 ? <li className="text-slate-700" data-testid="admin-ws2-empty">{t('admin:ws2.empty', 'Aucune fiche dans ce filtre.')}</li> : null}
           {records.map((r) => (
             <li key={key(r)} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-ws2-record">
-              <p className="font-semibold">{r.title} <span className="font-normal text-slate-700">— {r.dataset}</span></p>
+              <p className="font-semibold"><span {...fr}>{r.title}</span> <span className="font-normal text-slate-700">— {r.dataset}</span></p>
               <p data-testid="admin-ws2-state">{stateLabel[r.state] || r.state}{r.decision ? t('admin:ws2.decision_of', ' — décision du {{date}}', { date: formatDate(r.decision.at, DATE_SHORT) }) : ''}</p>
               {r.hold ? <p className="text-slate-800" data-testid="admin-ws2-hold-reason">{t('admin:ws2.hold_reason', 'Motif de l’attente : {{reason}}', { reason: r.hold })}</p> : null}
               {r.entityId && EDITOR[r.entityType] ? <p><Link className="text-blue-800 underline" to={`/admin/${EDITOR[r.entityType]}/${r.entityId}`}>{t('admin:ws2.fix_in_editor', 'Corriger la fiche dans l’éditeur')}</Link> <span className="text-slate-700">{t('admin:ws2.fix_changes_version', '(une correction change la version : la décision se prend ensuite sur la fiche corrigée)')}</span></p> : null}
               {r.preparation && r.state !== 'HUMAN_VERIFIED' ? (
                 <div className="rounded bg-slate-50 p-2" data-testid="admin-ws2-prep">
-                  <p><span className="font-medium">{groups[r.preparation.group]}</span> — {r.preparation.next}</p>
-                  <ul className="list-disc pl-5">{r.preparation.check.map((c, i) => <li key={i}>{c}</li>)}</ul>
+                  <p><span className="font-medium">{groups[r.preparation.group]}</span> — <span {...fr}>{r.preparation.next}</span></p>
+                  <ul className="list-disc pl-5">{r.preparation.check.map((c, i) => <li key={i} {...fr}>{c}</li>)}</ul>
                   {r.preparation.sourceUrl ? <p>{t('admin:ws2.source_to_check', 'Source à consulter :')} <a className="text-blue-800 underline" href={r.preparation.sourceUrl} target="_blank" rel="noreferrer noopener">{r.preparation.sourceUrl}</a>{r.preparation.sourceAccepted ? t('admin:ws2.source_accepted', ' (acceptée)') : t('admin:ws2.source_not_accepted', ' (non acceptée en l’état)')}</p> : null}
                   {r.current?.length ? (
                     <details data-testid="admin-ws2-current"><summary className="cursor-pointer text-blue-800">{t('admin:ws2.current_content', 'Contenu actuel de la fiche (à comparer)')}</summary>
-                      <dl className="mt-1 space-y-1">{r.current.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap">{reviewValue(c.field, c.value)}</dd></div>)}</dl>
+                      <dl className="mt-1 space-y-1">{r.current.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap" {...(c.field === 'accessibilite_pmr' ? {} : fr)}>{reviewValue(c.field, c.value)}</dd></div>)}</dl>
                     </details>
                   ) : null}
                   <p className="text-xs text-slate-700">{t('admin:ws2.prep_note', 'Préparation automatique : elle aide, elle ne vaut pas vérification. La décision reste la vôtre.')}</p>
@@ -84,8 +88,8 @@ export default function AdminWs2Queue() {
                 <summary className="cursor-pointer text-blue-800">{t('admin:ws2.research', 'Recherche préparatoire (aide, non probante)')}</summary>
                 <dl className="mt-1 space-y-1">
                   <div><dt className="inline text-slate-700">{t('admin:ws2.candidate_source', 'Source candidate :')} </dt><dd className="inline">{r.research.officialSourceCandidate || '—'}</dd></div>
-                  <div><dt className="inline text-slate-700">{t('admin:ws2.findings', 'Constats :')} </dt><dd className="inline">{r.research.findings || '—'}</dd></div>
-                  <div><dt className="inline text-slate-700">{t('admin:ws2.to_check', 'À contrôler :')} </dt><dd className="inline">{r.research.humanValidation || '—'}</dd></div>
+                  <div><dt className="inline text-slate-700">{t('admin:ws2.findings', 'Constats :')} </dt><dd className="inline" lang="en" dir="ltr">{r.research.findings || '—'}</dd></div>
+                  <div><dt className="inline text-slate-700">{t('admin:ws2.to_check', 'À contrôler :')} </dt><dd className="inline" lang="en" dir="ltr">{r.research.humanValidation || '—'}</dd></div>
                 </dl>
               </details>
               {r.entityId ? (

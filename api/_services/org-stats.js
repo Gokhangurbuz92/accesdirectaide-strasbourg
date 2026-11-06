@@ -85,7 +85,7 @@ export async function regionalStats(ctx, db = defaultDb) {
       activeStructures: cnt.n, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: cnt.n - shownOrgs,
       totalAgents: suppress(published('agents')), appointmentsThisMonth: suppress(published('rdv')), totalCitizensHelped: suppress(published('helped')),
       maskedCells: { agents: masked('agents'), appointments: masked('rdv'), citizensHelped: masked('helped') },
-      cities: communes.map((c) => ({ id: c.commune, name: c.commune, city: `${c.orgs} structures vérifiées`, agents: suppress(c.agents), rdv: suppress(c.rdv), status: suppress(c.rdv) ? 'optimal' : 'inactive' })),
+      cities: communes.map((c) => ({ id: c.commune, name: c.commune, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: suppress(c.agents), rdv: suppress(c.rdv), status: suppress(c.rdv) ? 'optimal' : 'inactive' })),
       trend: trend.map((d) => ({ date: d.date, value: suppress(d.n) })),
     },
     note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées) ; valeurs inférieures à 5 masquées ; les totaux additionnent seulement les valeurs publiées ; les structures des autres communes sont seulement dénombrées.' };

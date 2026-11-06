@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import VisioWindow from '@/components/Visio/VisioWindow';
 import { formatDate, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { refusalReasonText } from '@/lib/refusalReasons';
 import { BOOKING_WINDOW_DAYS, MAX_WINDOW_OFFSET, parisBookingWindow } from '@/lib/parisCalendar';
 
@@ -26,6 +27,7 @@ const modeLabels = (t) => ({ IN_PERSON: t('compte:rdv.mode.in_person', 'En prés
  */
 export default function CompteRendezVous() {
   const { t } = useT('compte');
+  const fr = useFrAttrs();   // R47: the structure's and the service's names stay French (lang="fr" outside French)
   const STATUS = statusLabels(t); const STATE = stateLabels(t); const MODE = modeLabels(t);
   const [mailOutcome, setMailOutcome] = useState(null);
   const [state, setState] = useState({ loading: true, error: '', items: [] });
@@ -127,7 +129,7 @@ export default function CompteRendezVous() {
         {state.items.map((a) => (
           <li key={a.id}>
             <Card data-testid="rdv-item">
-              <CardHeader><CardTitle className="text-lg">{a.structure?.name} — {a.service?.name}</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg"><span {...fr}>{a.structure?.name}</span> — <span {...fr}>{a.service?.name}</span></CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm text-slate-800">
                 <p><span data-testid="rdv-when">{when(a.startsAt)}</span> — <span data-testid="rdv-state">{STATE[a.state] || STATUS[a.status] || a.status}</span> — <strong data-testid="rdv-mode">{MODE[a.mode || 'IN_PERSON']}</strong></p>
                 {/* R44: the structure's fixed reason (optional for the team; none chosen = the neutral sentence), in the person's language */}

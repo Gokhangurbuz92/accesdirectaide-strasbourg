@@ -8,6 +8,7 @@ import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { label } from '@/lib/caseLabels';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { useT, formatDateTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { serverText } from '@/lib/serverText';
 
 /**
@@ -17,6 +18,7 @@ import { serverText } from '@/lib/serverText';
  */
 export default function DossierTransparency({ shareId }) {
   const { t } = useT('messaging');
+  const fr = useFrAttrs();   // R47: the structures' names stay French (lang="fr" outside French)
   const { coffreCategory: COFFRE_CATEGORY_LABELS, formatBytes } = useMonEspaceLabels();
   const { caseStatus: CASE_STATUS_LABELS, outcome: OUTCOME_LABELS } = useCaseLabels();
   const [data, setData] = useState({ loading: true, events: [], documents: [], grants: [], coffre: [], followUps: [] });
@@ -85,7 +87,7 @@ export default function DossierTransparency({ shareId }) {
                 </select></div>
               <div><label htmlFor="sfc-org" className="block text-sm text-slate-800">{t('messaging:transparency.org', 'Organisation qui a accès')}</label>
                 <select id="sfc-org" data-testid="share-coffre-org" required className="mt-1 w-full rounded-md border border-slate-300 p-2" value={pick.structureId} onChange={(e) => setPick({ ...pick, structureId: e.target.value })}>
-                  <option value="">{t('messaging:transparency.choose', 'Choisir…')}</option>{data.grants.map((g) => <option key={g.structureId} value={g.structureId}>{g.structureName}</option>)}
+                  <option value="">{t('messaging:transparency.choose', 'Choisir…')}</option>{data.grants.map((g) => <option key={g.structureId} value={g.structureId} {...fr}>{g.structureName}</option>)}
                 </select></div>
               <div className="flex items-end"><Button type="submit" data-testid="share-coffre-send">{t('messaging:transparency.send', 'Envoyer')}</Button></div>
             </form>

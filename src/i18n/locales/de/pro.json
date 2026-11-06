@@ -1353,5 +1353,6 @@
  "reschedule.later_r47": "Nächste 14 Tage ›",
  "reschedule.attest_r47": "Die Person hat diesem Termin ausdrücklich zugestimmt und kennt die Art dieses Dienstes.",
  "reschedule.confirm_r47": "Verschiebung bestätigen",
- "reschedule.keep_r47": "Aktuelle Uhrzeit behalten"
+ "reschedule.keep_r47": "Aktuelle Uhrzeit behalten",
+ "regional.verified_structures": "{{n}} geprüfte Einrichtungen"
 }

@@ -20,6 +20,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * RegionalDashboard — Multi-structure observatory
@@ -286,6 +287,7 @@ function KpiCard({ label, value, icon }) {
 
 function StructureCard({ city }) {
     const { t } = useT('pro');
+    const fr = useFrAttrs();   // R47: the commune's name stays French (lang="fr" outside French); the count is said in the interface language
     const isActive = city.status === 'optimal';
     return (
         <Card className="hover:shadow-md transition-shadow">
@@ -296,9 +298,9 @@ function StructureCard({ city }) {
                             {(city.name || '??').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-slate-900">{city.name}</p>
+                            <p className="text-xs font-bold text-slate-900" {...fr}>{city.name}</p>
                             {city.city && (
-                                <p className="text-[10px] text-slate-600">{city.city}</p>
+                                <p className="text-[10px] text-slate-600">{typeof city.orgs === 'number' ? t('pro:regional.verified_structures', '{{n}} structures vérifiées', { n: city.orgs }) : city.city}</p>
                             )}
                         </div>
                     </div>

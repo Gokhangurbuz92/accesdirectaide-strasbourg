@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Check, X, RefreshCw, ExternalLink } from 'lucide-react';
 import { toast } from "sonner";
 import { useT, formatDate } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 
 export default function AdminInbox() {
     const { t } = useT('admin');
@@ -149,7 +150,7 @@ export default function AdminInbox() {
                                         <Badge variant="outline">{item.source_name}</Badge>
                                     </TableCell>
                                     <TableCell className="max-w-md">
-                                        <div className="font-medium truncate" title={item.titre}>{item.titre}</div>
+                                        <RecordText as="div" className="font-medium truncate" title={item.titre}>{item.titre}</RecordText>
                                         <div className="text-sm text-gray-500 flex items-center mt-1">
                                             {item.falc_status === 'generated' ? (
                                                 <Badge variant="secondary" className="text-xs mr-2">{t('admin:inbox.falc_ok', 'FALC OK')}</Badge>

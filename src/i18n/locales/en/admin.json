@@ -1712,5 +1712,12 @@
  "features.flag.maintenance.label": "Maintenance mode",
  "features.flag.maintenance.description": "Every page shows the maintenance page (MAINTENANCE_MODE=1).",
  "features.flag.audit_log.label": "GDPR audit",
- "features.flag.audit_log.description": "Logs access to sensitive data."
+ "features.flag.audit_log.description": "Logs access to sensitive data.",
+ "veille.alert.no_run": "No monitoring run has finished yet.",
+ "veille.alert.no_run_since": "No monitoring run has finished since {{date}}: is the LAB server running?",
+ "veille.alert.important_changes": "{{n}} important change(s) to conditions, amounts, legal texts or territory in the last three days: already applied to the records (see « Important changes »).",
+ "k5.operations.flag.public_feedback": "Content reports and organisation suggestions (public)",
+ "k5.operations.flag.support_form": "Help form (support)",
+ "k5.operations.flag.open_data_export": "Territorial statistics export (licence to be decided by the owner)",
+ "k5.privacy.legal_text_fr": "Legal text in French: the categories and their conditions stay written in French until the DPO has validated them."
 }

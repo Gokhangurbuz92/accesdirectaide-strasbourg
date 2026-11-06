@@ -1722,5 +1722,12 @@
  "features.flag.maintenance.label": "Режим обслуговування",
  "features.flag.maintenance.description": "Кожна сторінка показує сторінку обслуговування (MAINTENANCE_MODE=1).",
  "features.flag.audit_log.label": "Аудит GDPR",
- "features.flag.audit_log.description": "Реєструє доступ до чутливих даних."
+ "features.flag.audit_log.description": "Реєструє доступ до чутливих даних.",
+ "veille.alert.no_run": "Жоден запуск моніторингу ще не завершився.",
+ "veille.alert.no_run_since": "Від {{date}} жоден запуск моніторингу не завершився: чи працює сервер LAB?",
+ "veille.alert.important_changes": "Важливих змін умов, сум, правових текстів або території за останні три дні: {{n}}; їх уже внесено до записів (див. « Важливі зміни »).",
+ "k5.operations.flag.public_feedback": "Повідомлення про вміст і пропозиції організацій (публічні)",
+ "k5.operations.flag.support_form": "Форма допомоги (підтримка)",
+ "k5.operations.flag.open_data_export": "Експорт територіальної статистики (ліцензію визначає власник)",
+ "k5.privacy.legal_text_fr": "Юридичний текст французькою: категорії та їхні умови залишаються французькою, доки їх не затвердить відповідальний за захист даних (DPO)."
 }

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { CheckCircle, XCircle } from 'lucide-react';
 import { useT } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 
 export default function AdminReview() {
     const { t } = useT('admin');
@@ -62,9 +63,9 @@ export default function AdminReview() {
                     <Card key={item.id}>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xl font-medium">
-                                {item.titre}
+                                <RecordText>{item.titre}</RecordText>
                             </CardTitle>
-                            <Badge variant="secondary">{item.categorie}</Badge>
+                            <Badge variant="secondary"><RecordText>{item.categorie}</RecordText></Badge>
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm text-gray-500 mb-2">{t('admin:review.id', 'ID: {{id}}', { id: item.id })}</p>

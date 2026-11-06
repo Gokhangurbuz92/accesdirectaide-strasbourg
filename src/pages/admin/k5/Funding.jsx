@@ -6,6 +6,7 @@ import { apiClient } from '@/api/client';
 import { downloadText, explain, useK5 } from './helpers.js';
 import { Field, Status } from './ui.jsx';
 import { useT, DATE_SHORT, formatDate } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 
 const day = (d) => (d ? formatDate(d, DATE_SHORT) : '—');
 const eur = (t, n) => (n === null || n === undefined || n === '' ? t('admin:k5.funding.to_fill', 'à renseigner') : `${Number(n).toFixed(2).replace('.', ',')} €`);
@@ -43,7 +44,7 @@ function FundingList() {
       <ul className="space-y-2">
         {(k.data?.dossiers || []).map((d) => (
           <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded border p-2 text-sm" data-testid="admin-funding-item">
-            <span><strong>{d.title}</strong> — {t('admin:k5.funding.item_line', '{{funder}} — {{status}} — date limite {{deadline}} — version {{version}}', { funder: d.funderName || t('admin:k5.funding.funder_tbd', 'financeur à préciser'), status: d.statusLabel, deadline: day(d.deadline), version: d.version })}{d.blocking ? t('admin:k5.funding.blocking', ' — {{n}} point(s) bloquant(s)', { n: d.blocking }) : ''}</span>
+            <span><RecordText as="strong">{d.title}</RecordText> — {t('admin:k5.funding.item_line', '{{funder}} — {{status}} — date limite {{deadline}} — version {{version}}', { funder: d.funderName || t('admin:k5.funding.funder_tbd', 'financeur à préciser'), status: d.statusLabel, deadline: day(d.deadline), version: d.version })}{d.blocking ? t('admin:k5.funding.blocking', ' — {{n}} point(s) bloquant(s)', { n: d.blocking }) : ''}</span>
             <Link className="text-sky-800 underline" to={`/admin/financement/${encodeURIComponent(d.id)}`}>{t('admin:k5.funding.open', 'Ouvrir')}</Link>
           </li>
         ))}
@@ -109,7 +110,7 @@ function FundingDetail({ id }) {
   return (
     <div className="space-y-4 p-4" data-testid="admin-funding-detail">
       <p><Link to="/admin/financement" className="text-sm text-sky-800 underline">{t('admin:k5.funding.all', '← Tous les dossiers')}</Link></p>
-      <h1 className="text-2xl font-bold">{d.title}</h1>
+      <RecordText as="h1" className="text-2xl font-bold">{d.title}</RecordText>
       <p className="text-sm">{t('admin:k5.funding.status_prefix', 'Statut : ')}<strong>{d.statusLabel}</strong>{t('admin:k5.funding.version_suffix', ' — version {{version}}', { version: d.version })}{d.decisionRef ? t('admin:k5.funding.decision_suffix', ' — décision {{ref}} du {{date}}', { ref: d.decisionRef, date: day(d.decisionAt) }) : ''}{d.submittedAt ? t('admin:k5.funding.submitted_suffix', ' — déposé le {{date}}', { date: day(d.submittedAt) }) : ''}</p>
       <Status msg={k.msg} problem={k.problem || exportProblem} id="admin-funding-detail" />
       {d.warnings.length ? (

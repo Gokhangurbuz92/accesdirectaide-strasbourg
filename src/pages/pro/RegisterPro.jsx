@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import SEO from '@/components/SEO';
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 import {
     Loader2,
     ShieldCheck,
@@ -232,9 +233,9 @@ export default function RegisterPro() {
                     <CardContent className="p-4 space-y-2">
                         <div className="flex items-center gap-2 text-sm">
                             <Building2 size={14} className="text-indigo-600" />
-                            <span className="font-semibold text-slate-900">
+                            <RecordText className="font-semibold text-slate-900">
                                 {invitation?.structureName}
-                            </span>
+                            </RecordText>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                             <span>{t('pro:register_pro.email', 'Email :')}</span>

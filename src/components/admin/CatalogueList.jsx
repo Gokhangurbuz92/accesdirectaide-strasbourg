@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { explain } from '@/pages/admin/k5/helpers.js';
 import i18n, { useT } from '@/i18n';
 import { DATE_SHORT, formatDate } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * PKG-11 / A02 — administrator list of one catalogue kind (aide, démarche, structure) through /api/admin/content: drafts, unverified and archived records
@@ -24,6 +25,7 @@ const FILTERS = () => [['all', i18n.t('admin:catalogue_list.filter.all', 'Toutes
 
 export default function CatalogueList({ kind, title, published, newPath, editPath, createLabel, verifiable = true }) {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the record's own words (name, category, town) stay French: lang="fr" outside French
   const filters = FILTERS(); const states = STATE();
   const [q, setQ] = useState(''); const [items, setItems] = useState(null); const [error, setError] = useState('');
   const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
@@ -68,8 +70,8 @@ export default function CatalogueList({ kind, title, published, newPath, editPat
           {items.filter((r) => show === 'all' || statusOf(r) === show).map((r) => (
             <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-slate-300 bg-white p-3" data-testid="admin-catalogue-row" data-id={r.id}>
               <div className="min-w-0">
-                <p className="font-semibold text-slate-900">{r.label}</p>
-                <p className="text-xs text-slate-700">{[r.categorie || r.ville || r.departement, r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: formatDate(r.updatedAt, DATE_SHORT) }) : null].filter(Boolean).join(' — ')}</p>
+                <p className="font-semibold text-slate-900" {...fr}>{r.label}</p>
+                <p className="text-xs text-slate-700">{(r.categorie || r.ville || r.departement) ? <span {...fr}>{r.categorie || r.ville || r.departement}</span> : null}{(r.categorie || r.ville || r.departement) && r.updatedAt ? ' — ' : null}{r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: formatDate(r.updatedAt, DATE_SHORT) }) : null}</p>
                 <div className="mt-1 flex flex-wrap gap-2">
                   <Badge variant="secondary" data-testid="admin-catalogue-state">{states[r.statut] || r.statut}</Badge>
                   {verifiable ? <Badge variant="outline" data-testid="admin-catalogue-verification">{verification(r)}</Badge> : null}

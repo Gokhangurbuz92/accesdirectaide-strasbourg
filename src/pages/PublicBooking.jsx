@@ -23,6 +23,7 @@ import { csrfFetch, ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { normalizeNextPath } from '@/lib/rdvRouting';
 import { BOOKING_WINDOW_DAYS, MAX_WINDOW_OFFSET, parisBookingWindow } from '@/lib/parisCalendar';
 import i18n, { formatDate, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 // R42: account-required journey pieces (suitability, professional choice, optional message, age statement, true e-mail outcome)
 import BookingMessageField from '@/components/rdv/BookingMessageField.jsx';
 import ProfessionalChoice from '@/components/rdv/ProfessionalChoice.jsx';
@@ -49,6 +50,7 @@ import { refusalReasonText } from '@/lib/refusalReasons';
  */
 export default function PublicBooking() {
     const { t } = useT('booking');
+    const fr = useFrAttrs();   // R47: the structure's service names stay French (lang="fr" outside French)
     const { structureSlug } = useParams();
     const [searchParams] = useSearchParams();
     const nextPath = normalizeNextPath(searchParams.get('next') || '', '');
@@ -543,7 +545,7 @@ export default function PublicBooking() {
                                             <CalendarIcon className="text-indigo-600" size={20} />
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-slate-900">
+                                            <p className="font-semibold text-slate-900" {...fr}>
                                                 {service.name}
                                             </p>
                                             <p className="text-xs text-slate-600">
@@ -587,7 +589,7 @@ export default function PublicBooking() {
                         <button type="button" onClick={() => setStep(team ? 1.5 : 1)} className="flex min-h-11 items-center gap-2 text-xs font-bold text-slate-600 hover:text-indigo-600">
                             <ArrowLeft size={14} className="rtl:rotate-180" aria-hidden="true" /> {t('booking:public.retour_aux_services', "Retour aux services")}
                         </button>
-                        <p className="font-bold text-slate-900">{selectedService.name}</p>
+                        <p className="font-bold text-slate-900" {...fr}>{selectedService.name}</p>
                         <ModalityChoice ref={modalityRef} options={modalities} value={bookingMode} location={location} error={modalityError}
                             onChange={(m) => { setBookingMode(m); setModalityError(''); setVideoConsent(false); setVideoConsentError(false); }} />
                         <button type="button" data-testid="booking-modality-continue" onClick={continueFromModality}
@@ -613,7 +615,7 @@ export default function PublicBooking() {
                                 <CalendarIcon className="text-white" size={18} />
                             </div>
                             <div>
-                                <p className="font-bold text-slate-900">
+                                <p className="font-bold text-slate-900" {...fr}>
                                     {selectedService?.name}
                                 </p>
                                 <p className="text-[10px] text-emerald-700 font-bold uppercase flex items-center gap-1">
@@ -728,6 +730,7 @@ export default function PublicBooking() {
                                 icon={<CalendarIcon className="text-indigo-600" size={18} />}
                                 label={t('booking:public.service', "Service")}
                                 value={selectedService?.name}
+                                valueAttrs={fr}
                             />
                             <SummaryRow
                                 icon={<Clock className="text-indigo-600" size={18} />}
@@ -973,7 +976,7 @@ function StepIndicator(/** @type {{ current: number, label: string, target: numb
 }
 
 // @ts-ignore
-function SummaryRow({ icon, label, value }) {
+function SummaryRow({ icon, label, value, valueAttrs = {} }) {
     return (
         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
             <div className="p-2.5 bg-white rounded-lg shadow-sm">{icon}</div>
@@ -981,7 +984,7 @@ function SummaryRow({ icon, label, value }) {
                 <p className="text-[10px] font-bold uppercase text-slate-600">
                     {label}
                 </p>
-                <p className="font-semibold text-slate-900">{value}</p>
+                <p className="font-semibold text-slate-900" {...valueAttrs}>{value}</p>
             </div>
         </div>
     );

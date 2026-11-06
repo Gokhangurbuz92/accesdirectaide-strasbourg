@@ -7,7 +7,8 @@ import { apiClient } from '@/api/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Pause, Play, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
-import i18n, { formatDate, useT } from '@/i18n';
+import i18n, { formatDate, formatDateTime, useLanguage, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * Automatic verification — the owner's dashboard (owner decision D-5 v2, 2026-10-25: the system checks, publishes, corrects and withdraws by itself; the owner
@@ -92,6 +93,15 @@ function History({ kind, id }) {
 
 export default function AdminVeille() {
   const { t, OUTCOME, FILTERS, KIND, KINDS_PLURAL, LEVEL, CLASS, PHASE, STATUS, FEED } = useVeilleLabels();
+  // R47: an alert the server writes in French is said in the interface language when its code is known (the French page keeps the server's sentence);
+  // any other alert stays in French, marked lang="fr"
+  const { isSource } = useLanguage(); const fr = useFrAttrs();
+  const alertText = (/** @type {any} */ a) => {
+    if (isSource) return a.message;
+    if (a.code === 'NO_RUN' && 'since' in a) return a.since ? t('admin:veille.alert.no_run_since', 'Aucune veille terminée depuis le {{date}} : le serveur du LAB est-il lancé ?', { date: formatDateTime(a.since) }) : t('admin:veille.alert.no_run', 'Aucune veille terminée pour l’instant.');
+    if (a.code === 'IMPORTANT_CHANGES' && typeof a.count === 'number') return t('admin:veille.alert.important_changes', '{{n}} changement(s) important(s) de conditions, de montants, de textes juridiques ou de territoire ces trois derniers jours : déjà répercutés sur les fiches (voir « Changements importants »).', { n: a.count });
+    return null;
+  };
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
@@ -161,7 +171,7 @@ export default function AdminVeille() {
               <p className="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-950"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> {t('admin:veille.no_problem', 'Aucun problème : la veille fonctionne normalement.')}</p>
             ) : data.alerts.map((a, i) => (
               <p key={`${a.code}-${i}`} role={a.level === 'critical' ? 'alert' : undefined} className={`flex items-start gap-2 rounded-md border px-3 py-2 ${LEVEL_STYLE[a.level] || LEVEL_STYLE.info}`}>
-                {a.level === 'info' ? <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />}<span>{a.message}</span>
+                {a.level === 'info' ? <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />}{alertText(a) !== null ? <span>{alertText(a)}</span> : <span {...fr}>{a.message}</span>}
               </p>
             ))}
           </div>

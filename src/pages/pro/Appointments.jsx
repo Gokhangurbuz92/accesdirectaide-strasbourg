@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { buildProAuthHeaders, getProToken, proRdvClient } from '@/api/pro-rdv-client';
 import { formatDate, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 // R44: the refusal carries an optional fixed reason (API contract), and the team sees whether the person was told
 import RefusalPanel from '@/components/rdv/RefusalPanel.jsx';
 import { useProLabels } from '@/lib/proLabelsI18n';
@@ -55,6 +56,7 @@ const STATUS_STYLES = {
 
 export default function ProAppointments() {
   const { t } = useT('pro');
+  const fr = useFrAttrs();   // R47: service names (the structure's words) and the person's name stay as written (lang="fr" outside French)
   const STATUS_LABEL = statusLabels(t);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState('');
@@ -189,7 +191,7 @@ export default function ProAppointments() {
             >
               <option value="">{t('pro:appointments.all', 'Tous')}</option>
               {serviceOptions.map((service) => (
-                <option key={service.id} value={service.id}>
+                <option key={service.id} value={service.id} {...fr}>
                   {service.name}
                 </option>
               ))}
@@ -278,9 +280,9 @@ export default function ProAppointments() {
                       {appointment.mode === 'VIDEO' && !appointment.video?.approved ? <Badge className="border-amber-200 bg-amber-50 text-amber-900" data-testid="pro-agenda-video-pending">{t('pro:appointments.video_pending', 'Visio à valider')}</Badge> : null}
                     </div>
                     <p className="text-sm text-slate-700">
-                      {appointment.serviceName || t('pro:appointments.service_fallback', 'Service')}
+                      {appointment.serviceName ? <span {...fr}>{appointment.serviceName}</span> : t('pro:appointments.service_fallback', 'Service')}
                       {' - '}
-                      {appointment.beneficiaryName || t('pro:appointments.beneficiary_fallback', 'Beneficiaire')}
+                      {appointment.beneficiaryName ? <span {...fr}>{appointment.beneficiaryName}</span> : t('pro:appointments.beneficiary_fallback', 'Beneficiaire')}
                     </p>
                     {appointment.citizenMessage ? (
                       <p className="text-xs text-slate-800" data-testid="pro-agenda-citizen-message"><span className="font-medium">{t('pro:appointments.citizen_message', 'Message de la personne :')}</span>{' '}<span className="whitespace-pre-line">{appointment.citizenMessage}</span></p>

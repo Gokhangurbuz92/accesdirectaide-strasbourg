@@ -1353,5 +1353,6 @@
  "reschedule.later_r47": "Next 14 days ›",
  "reschedule.attest_r47": "The person gave their explicit agreement to this appointment, knowing the nature of this service.",
  "reschedule.confirm_r47": "Confirm the move",
- "reschedule.keep_r47": "Keep the current time"
+ "reschedule.keep_r47": "Keep the current time",
+ "regional.verified_structures": "{{n}} verified organisations"
 }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 
 const PATH = { aide: '/aides/', demarche: '/demarches/', structure: '/structures/' };
 const typeLabels = (t) => ({ aide: t('compte:favorites.type.aide', 'Aide'), demarche: t('compte:favorites.type.demarche', 'Démarche'), structure: t('compte:favorites.type.structure', 'Structure') });
@@ -35,7 +36,7 @@ export default function CompteFavoris() {
             <ul className="space-y-2" data-testid="favoris-list">
               {state.favorites.map((f) => (
                 <li key={`${f.entityType}:${f.entityId}`} data-testid="favori-item" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 p-2 text-sm">
-                  <span>{TYPE[f.entityType]} — {f.available ? <Link className="font-medium text-blue-800 underline" to={`${PATH[f.entityType]}${encodeURIComponent(f.slug)}`}>{f.title}</Link> : <span data-testid="favori-unavailable">{t('compte:favorites.cette_fiche_est_plus', 'Cette fiche n’est plus publiée.')}</span>} <span className="text-slate-600">{t('compte:favorites.added_on', '(ajoutée le {{date}})', { date: formatDate(f.createdAt) })}</span></span>
+                  <span>{TYPE[f.entityType]} — {f.available ? <Link className="font-medium text-blue-800 underline" to={`${PATH[f.entityType]}${encodeURIComponent(f.slug)}`}><RecordText>{f.title}</RecordText></Link> : <span data-testid="favori-unavailable">{t('compte:favorites.cette_fiche_est_plus', 'Cette fiche n’est plus publiée.')}</span>} <span className="text-slate-600">{t('compte:favorites.added_on', '(ajoutée le {{date}})', { date: formatDate(f.createdAt) })}</span></span>
                   <Button type="button" size="sm" variant="outline" onClick={async () => {
                     // R12 (C10): a failed removal says so (it was an unhandled error and the list looked unchanged without explanation)
                     try { await citizenApi.removeFavorite(f.entityType, f.entityId); setMessage(t('compte:favorites.removed', 'Favori retiré.')); load(); }

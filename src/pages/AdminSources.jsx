@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { adminClient as client, apiClient } from '@/api/client';
 import i18n, { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * /admin/sources — the official sources the system reads and may cite (owner decision 2026-10-25: a list of serious official sources that updates itself).
@@ -17,6 +18,7 @@ const ORDER = ['NATIONAL', 'EUROPEEN', 'ORGANISME', 'OPERATEUR', 'REGIONAL', 'DE
 
 export default function AdminSources() {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the registry's own names and descriptions of the sources are French (lang="fr" outside French)
   const levels = LEVEL();
   const stats = useQuery({ queryKey: ['admin-stats'], queryFn: () => client.get('/api/admin/stats').then((r) => r.data) });
   const veille = useQuery({ queryKey: ['admin-veille'], queryFn: () => apiClient.admin.getVeille(7) });
@@ -40,9 +42,9 @@ export default function AdminSources() {
             <ul className="mt-2 space-y-3">
               {ORDER.flatMap((l) => seed.filter((s) => s.level === l)).map((s) => (
                 <li key={s.sourceId}>
-                  <p className="font-medium text-slate-900">{s.name}</p>
+                  <p className="font-medium text-slate-900" {...fr}>{s.name}</p>
                   <p className="text-sm text-slate-700">{levels[s.level]} · {s.domains.join(', ')} · {t('admin:sources.updated', 'mise à jour {{frequency}}', { frequency: s.frequency })}</p>
-                  <p className="text-sm text-slate-600">{s.attestation}</p>
+                  <p className="text-sm text-slate-600" {...fr}>{s.attestation}</p>
                 </li>
               ))}
             </ul>

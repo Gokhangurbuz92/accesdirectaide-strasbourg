@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import { publicReason } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
@@ -24,6 +25,7 @@ const explain = (e) => {
  */
 export default function AdminOrganizations() {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the structure's name and town stay French (lang="fr" outside French)
   const [q, setQ] = useState(''); const [state, setState] = useState({ loading: true, error: '', items: [] });
   const [form, setForm] = useState({}); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async (query = '') => {
@@ -55,7 +57,7 @@ export default function AdminOrganizations() {
         <ul className="space-y-3">
           {state.items.map((o) => (
             <li key={o.id} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-org">
-              <p className="font-semibold">{o.nom} <span className="font-normal text-slate-700">— {o.ville || '—'}</span></p>
+              <p className="font-semibold"><span {...fr}>{o.nom}</span> <span className="font-normal text-slate-700">— <span {...fr}>{o.ville || '—'}</span></span></p>
               <dl className="grid grid-cols-2 gap-1 sm:grid-cols-4">
                 {/* owner LAB audit (2026-10-25): a record a reviewer put on hold says so (it showed « Non vérifiée »); the public reasons are in French, not codes */}
                 <div><dt className="text-slate-700">{t('admin:organizations.identity', 'Identité')}</dt><dd data-testid="admin-org-identity">{o.publicationHold && o.identity !== 'REJECTED' ? t('admin:organizations.identity.on_hold', 'En attente (décision d’une personne)') : (ID_LABEL()[o.identity] || o.identity)}</dd></div>

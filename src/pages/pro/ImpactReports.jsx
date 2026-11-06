@@ -34,6 +34,7 @@ import {
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
 import { formatDate } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -56,6 +57,7 @@ const appointmentStatusLabels = (/** @type {(k: string, d: string) => string} */
 
 export default function ImpactReports() {
     const { t } = useT('pro');
+    const fr = useFrAttrs();   // R47: the service names (the structures' own words) stay French (lang="fr" outside French)
     useOutletContext();
 
     const [period, setPeriod] = useState('month');
@@ -314,7 +316,7 @@ export default function ImpactReports() {
                                                                 className="w-2.5 h-2.5 rounded-full shrink-0"
                                                                 style={{ backgroundColor: COLORS[i % COLORS.length] }}
                                                             />
-                                                            <span className="text-xs text-slate-600 truncate">
+                                                            <span className="text-xs text-slate-600 truncate" {...fr}>
                                                                 {item.name}
                                                             </span>
                                                         </div>

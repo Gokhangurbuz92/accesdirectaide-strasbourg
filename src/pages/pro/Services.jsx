@@ -20,6 +20,7 @@ import { proRdvClient } from '@/api/pro-rdv-client';
 import BookingConfigPanel from '@/components/rdv/BookingConfigPanel.jsx';
 import ChannelStatusPanel from '@/components/rdv/ChannelStatusPanel.jsx';
 import { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 function toPositiveInt(value, fallback) {
   const parsed = Number.parseInt(String(value || ''), 10);
@@ -35,6 +36,7 @@ function toNonNegativeInt(value, fallback = 0) {
 
 export default function ProServices() {
   const { t } = useT('pro');
+  const fr = useFrAttrs();   // R47: the structure's own service names stay French (lang="fr" outside French)
   const { user, rdvReadiness } = useOutletContext();
   const canEdit = user?.role === 'STRUCTURE_ADMIN' || user?.role === 'SUPERADMIN';
   const readinessOk = rdvReadiness?.status === 200 && rdvReadiness?.payload?.ok === true;
@@ -392,7 +394,7 @@ export default function ProServices() {
             <Card key={service.id}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between gap-2">
-                  <span>{service.name}</span>
+                  <span {...fr}>{service.name}</span>
                   <span
                     className={`rounded-full px-2 py-1 text-xs ${service.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
                       }`}

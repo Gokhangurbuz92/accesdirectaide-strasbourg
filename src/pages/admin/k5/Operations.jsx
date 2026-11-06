@@ -5,6 +5,7 @@ import { apiClient } from '@/api/client';
 import { useK5, explain, downloadText } from './helpers.js';
 import { Status, Field } from './ui.jsx';
 import { useT, formatDateTime, formatTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * PKG-5 / A16 A15 A13 — platform operations (/admin/operations). Elevation: a super-administrator asks for 15 minutes with a fresh MFA code and a reason;
@@ -13,6 +14,11 @@ import { useT, formatDateTime, formatTime } from '@/i18n';
  */
 export default function AdminOperations() {
   const { t } = useT('admin');
+  const fr = useFrAttrs();
+  // R47: the switches the server lists (api/_services/feature-flags.js) are named by their key in the interface language; an unknown key keeps the server's
+  // French label, marked lang="fr"
+  const FLAG_LABEL = { PUBLIC_FEEDBACK: t('admin:k5.operations.flag.public_feedback', 'Signalements de contenu et suggestions de structures (public)'), SUPPORT_FORM: t('admin:k5.operations.flag.support_form', 'Formulaire d’aide (support)'),
+    OPEN_DATA_EXPORT: t('admin:k5.operations.flag.open_data_export', 'Export statistique territorial (licence à décider par le propriétaire)') };
   const elev = useK5('elevation'); const plat = useK5('platform');
   const [f, setF] = useState({ code: '', reason: '', review: {}, flagReason: {}, audit: { action: '', actor: '', from: '', to: '', reason: '' } });
   const [found, setFound] = useState(null); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState('');
@@ -76,7 +82,7 @@ export default function AdminOperations() {
         <ul className="space-y-2">
           {(plat.data?.flags || []).map((fl) => (
             <li key={fl.key} className="rounded border p-2 text-sm" data-testid="admin-ops-flag">
-              <p className="font-semibold">{fl.label}</p>
+              {FLAG_LABEL[fl.key] ? <p className="font-semibold">{FLAG_LABEL[fl.key]}</p> : <p className="font-semibold" {...fr}>{fl.label}</p>}
               <p data-testid={`admin-ops-flag-${fl.key}`}>{t('admin:k5.operations.flag_state', 'Configuration : {{env}} — effectif : {{effective}}', { env: fl.environment === 'ON' ? t('admin:k5.operations.env_open', 'ouverte') : t('admin:k5.operations.env_closed', 'fermée'), effective: fl.effective === 'ON' ? t('admin:k5.operations.eff_open', 'ouvert') : t('admin:k5.operations.eff_closed', 'fermé') })}{fl.forcedOff ? t('admin:k5.operations.forced_off', ' (fermé par un administrateur)') : ''}</p>
               <Field id={`flag-${fl.key}`} label={t('admin:k5.operations.flag_reason', 'Motif')} value={f.flagReason[fl.key] || ''} onChange={(v) => set({ flagReason: { ...f.flagReason, [fl.key]: v } })} />
               <Button size="sm" variant="outline" disabled={plat.busy} onClick={() => plat.act({ action: 'flag', key: fl.key, forcedOff: !fl.forcedOff, reason: f.flagReason[fl.key] || '' }, fl.forcedOff ? t('admin:k5.operations.lifted', 'Fermeture levée.') : t('admin:k5.operations.closed', 'Fonction fermée.'))}>{fl.forcedOff ? t('admin:k5.operations.lift', 'Lever la fermeture') : t('admin:k5.operations.close', 'Fermer cette fonction')}</Button>

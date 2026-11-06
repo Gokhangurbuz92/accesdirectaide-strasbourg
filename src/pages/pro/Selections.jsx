@@ -7,6 +7,7 @@ import { proRdvRequest } from '@/api/pro-rdv-client';
 import { ITEM_KINDS } from '@/config/orientationNeeds';
 import { useOrientationLabels } from '@/lib/orientationNeedsI18n';
 import { formatDate, useT } from '@/i18n';
+import RecordText from '@/components/i18n/RecordText';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
 const day = (d, t) => (d ? formatDate(new Date(d), { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: undefined }) : t('pro:selections.unknown_date', 'date inconnue'));
@@ -176,7 +177,7 @@ function SelectionDetail({ id }) {
                 const key = `${r.kind}:${r.refId}`;
                 return (
                   <li key={key} className="space-y-2 rounded-md border border-slate-200 p-3 text-sm" data-testid="selection-result">
-                    <p><strong>{r.title}</strong> — {itemKinds[r.kind] || r.kind}{r.place ? `, ${r.place}` : ''} — {t('pro:selections.verified_on', 'vérifiée le {{date}}', { date: day(r.verifiedAt, t) })}</p>
+                    <p><RecordText as="strong">{r.title}</RecordText> — {itemKinds[r.kind] || r.kind}{r.place ? `, ${r.place}` : ''} — {t('pro:selections.verified_on', 'vérifiée le {{date}}', { date: day(r.verifiedAt, t) })}</p>
                     {r.summary ? <p className="text-slate-700">{r.summary}</p> : null}
                     {inBasket.has(key) ? <p className="text-emerald-800">{t('pro:selections.already_in', 'Déjà dans la sélection.')}</p> : (
                       <div className="flex flex-wrap items-end gap-2">
@@ -238,7 +239,7 @@ function SelectionDetail({ id }) {
         <p>{t('pro:selections.print_disclaimer', 'Ces pistes sont une orientation, pas une décision : seul l’organisme concerné décide de vos droits, après examen de votre situation.')}</p>
         <ol className="list-decimal space-y-2 pl-5">
           {shown.map((i) => (
-            <li key={i.key}><strong>{i.title}</strong> ({itemKinds[i.kind] || i.kindLabel}{i.place ? `, ${i.place}` : ''})<br />{t('pro:selections.print_why', 'Pourquoi : {{why}}', { why: personWhy(i, basket.needCodes, t, needLabel) })}<br />{t('pro:selections.print_source', 'Source officielle : {{url}} (vérifiée le {{date}})', { url: i.sourceUrl, date: day(i.verifiedAt, t) })}</li>
+            <li key={i.key}><RecordText as="strong">{i.title}</RecordText> ({itemKinds[i.kind] || i.kindLabel}{i.place ? `, ${i.place}` : ''})<br />{t('pro:selections.print_why', 'Pourquoi : {{why}}', { why: personWhy(i, basket.needCodes, t, needLabel) })}<br />{t('pro:selections.print_source', 'Source officielle : {{url}} (vérifiée le {{date}})', { url: i.sourceUrl, date: day(i.verifiedAt, t) })}</li>
           ))}
         </ol>
         <p>{t('pro:selections.printed_on', 'Imprimé le {{date}} depuis AccesDirectAide.', { date: day(new Date(), t) })}</p>

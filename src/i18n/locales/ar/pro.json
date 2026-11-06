@@ -1381,5 +1381,6 @@
  "reschedule.later_r47": "الأيام الـ14 التالية ›",
  "reschedule.attest_r47": "أعطى الشخص موافقته الصريحة على هذا الموعد مع علمه بطبيعة هذه الخدمة.",
  "reschedule.confirm_r47": "تأكيد النقل",
- "reschedule.keep_r47": "الإبقاء على الوقت الحالي"
+ "reschedule.keep_r47": "الإبقاء على الوقت الحالي",
+ "regional.verified_structures": "{{n}} هيئة تم التحقق منها"
 }

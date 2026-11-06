@@ -1353,5 +1353,6 @@
  "reschedule.later_r47": "Sonraki 14 gün ›",
  "reschedule.attest_r47": "Kişi, bu hizmetin niteliğini bilerek bu randevuya açık onay verdi.",
  "reschedule.confirm_r47": "Taşımayı onayla",
- "reschedule.keep_r47": "Mevcut saati koru"
+ "reschedule.keep_r47": "Mevcut saati koru",
+ "regional.verified_structures": "{{n}} doğrulanmış kuruluş"
 }

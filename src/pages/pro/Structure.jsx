@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { useStructureFieldLabels } from '@/lib/structureFieldsI18n';
 import { formatDate, useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { chooseMessage, fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
@@ -22,6 +23,7 @@ const shown = (field, v, t) => (v === null || v === undefined || v === '' ? '—
 const closureStates = (t) => ({ IN_REVIEW: t('pro:structure.closure.in_review', 'en cours d’examen par l’équipe ADA (deux personnes)'), BLOCKED: t('pro:structure.closure.blocked', 'suspendue : une conservation légale s’applique'), EXECUTING: t('pro:structure.closure.executing', 'en cours d’exécution'), COMPLETED: t('pro:structure.closure.completed', 'exécutée'), REJECTED: t('pro:structure.closure.rejected', 'refusée') });
 export default function ProStructure() {
   const { t } = useT('pro');
+  const fr = useFrAttrs();   // R47: the public record's own text (name, address, hours…) stays French (lang="fr" outside French)
   const { fieldLabels: STRUCTURE_FIELD_LABELS, proposalStatus: PROPOSAL_STATUS_LABELS } = useStructureFieldLabels();
   const CLOSURE_STATE = closureStates(t);
   const [state, setState] = useState({ loading: true, error: '', structure: null, proposals: [], canPropose: false, fields: [] });
@@ -76,10 +78,10 @@ export default function ProStructure() {
       {problem ? <p role="alert" data-testid="structure-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <div aria-live="polite" role="status" data-testid="structure-status">{busy ? <span className="sr-only">{t('common:form.status.saving', 'Enregistrement en cours…')}</span> : null}{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {s ? (
-        <Card><CardHeader><CardTitle>{s.nom}</CardTitle><CardDescription>{s.verification_status !== 'VERIFIED' ? t('pro:structure.record_unverified', 'Fiche publique telle que vérifiée par ADA (non vérifiée).') : s.date_verification ? t('pro:structure.record_verified_on', 'Fiche publique telle que vérifiée par ADA (vérifiée le {{date}}).', { date: formatDate(s.date_verification, { dateStyle: 'short' }) }) : t('pro:structure.record_verified', 'Fiche publique telle que vérifiée par ADA (vérifiée).')}</CardDescription></CardHeader>
+        <Card><CardHeader><CardTitle {...fr}>{s.nom}</CardTitle><CardDescription>{s.verification_status !== 'VERIFIED' ? t('pro:structure.record_unverified', 'Fiche publique telle que vérifiée par ADA (non vérifiée).') : s.date_verification ? t('pro:structure.record_verified_on', 'Fiche publique telle que vérifiée par ADA (vérifiée le {{date}}).', { date: formatDate(s.date_verification, { dateStyle: 'short' }) }) : t('pro:structure.record_verified', 'Fiche publique telle que vérifiée par ADA (vérifiée).')}</CardDescription></CardHeader>
           <CardContent><dl className="grid gap-2 text-sm sm:grid-cols-2" data-testid="structure-record">
             {Object.keys(STRUCTURE_FIELD_LABELS).map((f) => (
-              <div key={f}><dt className="font-medium text-slate-700">{STRUCTURE_FIELD_LABELS[f]}</dt><dd className="whitespace-pre-wrap text-slate-900">{shown(f, f === 'service_area' ? s.insee_codes : s[f], t)}</dd></div>
+              <div key={f}><dt className="font-medium text-slate-700">{STRUCTURE_FIELD_LABELS[f]}</dt><dd className="whitespace-pre-wrap text-slate-900" {...(f === 'accessibilite_pmr' ? {} : fr)}>{shown(f, f === 'service_area' ? s.insee_codes : s[f], t)}</dd></div>
             ))}
           </dl></CardContent></Card>
       ) : null}
@@ -94,7 +96,7 @@ export default function ProStructure() {
             <div><label htmlFor="structure-value" className="block text-sm font-medium">{t('pro:structure.nouvelle_valeur', 'Nouvelle valeur')}</label>
               {field === 'accessibilite_pmr'
                 ? <select id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={value} {...fieldA11y('structure-value', proposeErr.errors)} onChange={(e) => { setValue(e.target.value); proposeErr.clear('structure-value'); }} required><option value="">{t('pro:structure.choisir', 'Choisir…')}</option><option value="true">{t('pro:structure.oui', 'Oui')}</option><option value="false">{t('pro:structure.non', 'Non')}</option></select>
-                : <textarea id="structure-value" data-testid="structure-value" className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={field === 'summary_falc' || field === 'horaires' || field === 'service_area' ? 4 : 1} value={value} onChange={(e) => { setValue(e.target.value); proposeErr.clear('structure-value'); }} required {...fieldA11y('structure-value', proposeErr.errors, field === 'service_area' ? 'structure-value-help' : '')} />}
+                : <textarea id="structure-value" data-testid="structure-value" {...fr} className="mt-1 w-full rounded-md border border-slate-300 p-2" rows={field === 'summary_falc' || field === 'horaires' || field === 'service_area' ? 4 : 1} value={value} onChange={(e) => { setValue(e.target.value); proposeErr.clear('structure-value'); }} required {...fieldA11y('structure-value', proposeErr.errors, field === 'service_area' ? 'structure-value-help' : '')} />}
               {field === 'service_area' ? <p id="structure-value-help" className="mt-1 text-xs text-slate-600">{t('pro:structure.codes_insee_separes_par', 'Codes INSEE séparés par des virgules (ex. 67482 pour Strasbourg).')}</p> : null}
               <FieldError field="structure-value" errors={proposeErr.errors} />
             </div>

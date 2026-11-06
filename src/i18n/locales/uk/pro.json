@@ -1367,5 +1367,6 @@
  "reschedule.later_r47": "Наступні 14 днів ›",
  "reschedule.attest_r47": "Людина надала явну згоду на цей запис, знаючи характер цієї послуги.",
  "reschedule.confirm_r47": "Підтвердити перенесення",
- "reschedule.keep_r47": "Залишити поточний час"
+ "reschedule.keep_r47": "Залишити поточний час",
+ "regional.verified_structures": "Перевірених організацій: {{n}}"
 }

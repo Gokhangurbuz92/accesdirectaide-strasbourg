@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import i18n, { useT } from '@/i18n';
 import { reviewValue } from './reviewValue.js';
+import { useFrAttrs } from '@/lib/recordLang';
 
 const explain = (e) => {
   if (e?.status === 401 || e?.status === 403) return i18n.t('admin:verification.refused_mfa', 'Refusé : cette action demande une session administrateur nominative avec MFA.');
@@ -20,6 +21,7 @@ const explain = (e) => {
  */
 export default function VerificationPanel({ entityType, entityId, initial, candidateSource = null, showContent = true, testIdPrefix = 'admin-verify', verifyLabel, onDone, onProblem }) {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the record's content is French (lang="fr" outside French); the accessibility flag is translated
   const [data, setData] = useState(initial?.version ? { content: initial.content || [], version: initial.version, hold: initial.hold || null, editHold: initial.editHold === true } : null);
   const [sourceUrl, setSourceUrl] = useState(''); const [note, setNote] = useState(''); const [territory, setTerritory] = useState(false);
   const [busy, setBusy] = useState(false); const [local, setLocal] = useState('');
@@ -50,7 +52,7 @@ export default function VerificationPanel({ entityType, entityId, initial, candi
       {showContent ? (
         <details data-testid={`${testIdPrefix}-content`}>
           <summary className="cursor-pointer text-blue-800">{t('admin:verification.public_content', 'Contenu public de la fiche, en entier (ce que vous vérifiez)')}</summary>
-          {data.content.length ? <dl className="mt-1 space-y-1">{data.content.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap">{reviewValue(c.field, c.value)}</dd></div>)}</dl>
+          {data.content.length ? <dl className="mt-1 space-y-1">{data.content.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap" {...(c.field === 'accessibilite_pmr' ? {} : fr)}>{reviewValue(c.field, c.value)}</dd></div>)}</dl>
             : <p className="mt-1">{t('admin:verification.no_public_content', 'La fiche n’a aucun contenu public renseigné.')}</p>}
         </details>
       ) : null}

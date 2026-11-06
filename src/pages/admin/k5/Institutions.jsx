@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useK5 } from './helpers.js';
 import { Status, Field } from './ui.jsx';
 import { useT, DATE_SHORT, formatDate } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * PKG-5 / I05 I01 — partner agreements and institutional accounts (/admin/institutions). An agreement is recorded from a REAL signed document (reference,
@@ -12,6 +13,7 @@ import { useT, DATE_SHORT, formatDate } from '@/i18n';
  */
 export default function AdminInstitutions() {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the partners' names stay French (lang="fr" outside French)
   const k = useK5('institutions'); const [f, setF] = useState({}); const v = (x) => f[x] || ''; const set = (x, val) => setF((s) => ({ ...s, [x]: val }));
   const [once, setOnce] = useState(null);
   const d = k.data;
@@ -32,7 +34,7 @@ export default function AdminInstitutions() {
         <ul className="space-y-2">
           {(d?.agreements || []).map((g) => (
             <li key={g.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-inst-agreement">
-              <p className="font-semibold">{g.partnerName} — {g.status === 'DRAFT' ? t('admin:k5.institutions.draft', 'brouillon') : g.status === 'SIGNED' ? t('admin:k5.institutions.signed_on', 'signée le {{date}} ({{ref}})', { date: formatDate(g.signedAt, DATE_SHORT), ref: g.documentRef }) : t('admin:k5.institutions.ended', 'terminée')}</p>
+              <p className="font-semibold"><span {...fr}>{g.partnerName}</span> — {g.status === 'DRAFT' ? t('admin:k5.institutions.draft', 'brouillon') : g.status === 'SIGNED' ? t('admin:k5.institutions.signed_on', 'signée le {{date}} ({{ref}})', { date: formatDate(g.signedAt, DATE_SHORT), ref: g.documentRef }) : t('admin:k5.institutions.ended', 'terminée')}</p>
               {g.status === 'DRAFT' ? (
                 <div className="grid gap-2 sm:grid-cols-3">
                   <Field id={`ref-${g.id}`} label={t('admin:k5.institutions.doc_ref', 'Référence du document signé')} value={v(`ref-${g.id}`)} onChange={(x) => set(`ref-${g.id}`, x)} />
@@ -52,13 +54,13 @@ export default function AdminInstitutions() {
           <Field id="acc-org" label={t('admin:k5.institutions.org', 'Organisme')} value={v('org')} onChange={(x) => set('org', x)} />
           <Field id="acc-terr" label={t('admin:k5.institutions.territory', 'Territoire')} value={v('terr')} onChange={(x) => set('terr', x)} />
           <div className="space-y-1"><label htmlFor="acc-agr" className="block text-sm">{t('admin:k5.institutions.agreement', 'Convention')}</label>
-            <select id="acc-agr" className="w-full rounded border p-2" value={v('agr')} onChange={(e) => set('agr', e.target.value)}><option value="">—</option>{(d?.agreements || []).filter((g) => g.status !== 'ENDED').map((g) => <option key={g.id} value={g.id}>{g.partnerName}</option>)}</select></div>
+            <select id="acc-agr" className="w-full rounded border p-2" value={v('agr')} onChange={(e) => set('agr', e.target.value)}><option value="">—</option>{(d?.agreements || []).filter((g) => g.status !== 'ENDED').map((g) => <option key={g.id} value={g.id} {...fr}>{g.partnerName}</option>)}</select></div>
         </div>
         <Button size="sm" disabled={k.busy} onClick={async () => { const out = await k.act({ action: 'account_create', email: v('email'), organisationName: v('org'), territory: v('terr'), agreementId: v('agr') }, t('admin:k5.institutions.account_created', 'Compte créé (inactif tant que la convention n’est pas signée et le compte activé).')); if (out?.initialPassword) setOnce(out.initialPassword); }}>{t('admin:k5.institutions.create_account', 'Créer le compte')}</Button>
         <ul className="space-y-2">
           {(d?.accounts || []).map((a) => (
             <li key={a.id} className="flex flex-wrap items-center gap-2 rounded border p-2 text-sm" data-testid="admin-inst-account">
-              <span>{a.organisationName} — {a.email} — {a.status === 'ACTIVE' ? t('admin:k5.institutions.active', 'actif') : a.status === 'SUSPENDED' ? t('admin:k5.institutions.suspended', 'suspendu') : t('admin:k5.institutions.awaiting', 'en attente de convention')}{a.temporaryPassword ? t('admin:k5.institutions.temp_password', ' — mot de passe provisoire pas encore remplacé') : ''}</span>
+              <span><span {...fr}>{a.organisationName}</span> — {a.email} — {a.status === 'ACTIVE' ? t('admin:k5.institutions.active', 'actif') : a.status === 'SUSPENDED' ? t('admin:k5.institutions.suspended', 'suspendu') : t('admin:k5.institutions.awaiting', 'en attente de convention')}{a.temporaryPassword ? t('admin:k5.institutions.temp_password', ' — mot de passe provisoire pas encore remplacé') : ''}</span>
               {a.status !== 'ACTIVE' ? <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'account_activate', id: a.id }, t('admin:k5.institutions.activated', 'Compte activé.'))}>{t('admin:k5.institutions.activate', 'Activer')}</Button>
                 : <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'account_suspend', id: a.id }, t('admin:k5.institutions.suspended_ok', 'Compte suspendu.'))}>{t('admin:k5.institutions.suspend', 'Suspendre')}</Button>}
               <Button size="sm" variant="outline" disabled={k.busy} aria-label={t('admin:k5.institutions.reset_aria', 'Nouveau mot de passe provisoire pour {{email}}', { email: a.email })} onClick={async () => { const out = await k.act({ action: 'account_password_reset', id: a.id }, t('admin:k5.institutions.reset_done', 'Nouveau mot de passe provisoire créé ; les sessions du compte sont fermées.')); if (out?.initialPassword) setOnce(out.initialPassword); }}>{t('admin:k5.institutions.reset', 'Nouveau mot de passe provisoire')}</Button>

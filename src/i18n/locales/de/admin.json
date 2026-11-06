@@ -1712,5 +1712,12 @@
  "features.flag.maintenance.label": "Wartungsmodus",
  "features.flag.maintenance.description": "Jede Seite zeigt die Wartungsseite an (MAINTENANCE_MODE=1).",
  "features.flag.audit_log.label": "DSGVO-Audit",
- "features.flag.audit_log.description": "Protokolliert Zugriffe auf sensible Daten."
+ "features.flag.audit_log.description": "Protokolliert Zugriffe auf sensible Daten.",
+ "veille.alert.no_run": "Bisher wurde noch kein Überwachungslauf abgeschlossen.",
+ "veille.alert.no_run_since": "Seit {{date}} wurde kein Überwachungslauf abgeschlossen: Läuft der LAB-Server?",
+ "veille.alert.important_changes": "{{n}} wichtige Änderung(en) an Bedingungen, Beträgen, Rechtstexten oder Gebiet in den letzten drei Tagen: bereits in die Einträge übernommen (siehe « Wichtige Änderungen »).",
+ "k5.operations.flag.public_feedback": "Inhaltsmeldungen und Vorschläge für Einrichtungen (öffentlich)",
+ "k5.operations.flag.support_form": "Hilfeformular (Support)",
+ "k5.operations.flag.open_data_export": "Export der Gebietsstatistik (Lizenz entscheidet der Eigentümer)",
+ "k5.privacy.legal_text_fr": "Rechtstext auf Französisch: Die Kategorien und ihre Bedingungen bleiben auf Französisch, bis der Datenschutzbeauftragte (DPO) sie bestätigt hat."
 }

@@ -7,6 +7,7 @@ import { Status } from './ui.jsx';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
 import { formatDateTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 // owner LAB audit (2026-10-25): each record's current decision is shown, so a pair whose record was already refused or put on hold is recognisable at once
 const STATE = (t, decision, held) => (decision === 'REJECTED' ? t('admin:k5.duplicates.state.rejected', ' — fiche refusée') : held ? t('admin:k5.duplicates.state.held', ' — fiche en attente') : decision === 'VERIFIED' ? t('admin:k5.duplicates.state.verified', ' — fiche vérifiée') : '');
@@ -19,6 +20,7 @@ const WHY = (t, c) => [c.sameSiret && t('admin:k5.duplicates.why.siret', 'même 
  */
 export default function AdminDuplicates() {
   const { t } = useT('admin');
+  const fr = useFrAttrs();   // R47: the structures' names, towns and content stay French (lang="fr" outside French)
   const [list, setList] = useState({ loading: true, items: [] }); const [pair, setPair] = useState(null);
   const [form, setForm] = useState({ decision: '', primaryId: '', evidenceUrl: '', note: '' }); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
@@ -44,9 +46,9 @@ export default function AdminDuplicates() {
   };
   const Record = ({ r, label }) => (
     <div className="space-y-1 rounded border p-2" data-testid="admin-duplicate-record">
-      <p className="font-semibold">{label} : {r.nom}</p>
+      <p className="font-semibold">{label} : <span {...fr}>{r.nom}</span></p>
       <p className="text-xs text-slate-700">{t('admin:k5.duplicates.record_status', 'Statut : {{statut}} — vérification : {{verification}}', { statut: r.statut || '—', verification: r.verification || t('admin:k5.duplicates.none_f', 'aucune') })}{r.hold ? t('admin:k5.duplicates.record_hold', ' — en attente : {{hold}}', { hold: r.hold }) : ''}</p>
-      <dl className="space-y-1 text-sm">{r.content.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap">{reviewValue(c.field, c.value)}</dd></div>)}</dl>
+      <dl className="space-y-1 text-sm">{r.content.map((c) => <div key={c.field}><dt className="inline font-medium">{c.field} : </dt><dd className="inline whitespace-pre-wrap" {...(c.field === 'accessibilite_pmr' ? {} : fr)}>{reviewValue(c.field, c.value)}</dd></div>)}</dl>
     </div>
   );
   return (
@@ -58,7 +60,7 @@ export default function AdminDuplicates() {
         <ul className="space-y-2">
           {list.items.map((c) => (
             <li key={`${c.a}|${c.b}`} className="flex flex-wrap items-center justify-between gap-2 rounded border p-2 text-sm" data-testid="admin-duplicate-candidate">
-              <span>{c.nomA} ({c.villeA || '—'}){STATE(t, c.decisionA, c.heldA)} / {c.nomB} ({c.villeB || '—'}){STATE(t, c.decisionB, c.heldB)} — {WHY(t, c)}</span>
+              <span><span {...fr}>{c.nomA}</span> (<span {...fr}>{c.villeA || '—'}</span>){STATE(t, c.decisionA, c.heldA)} / <span {...fr}>{c.nomB}</span> (<span {...fr}>{c.villeB || '—'}</span>){STATE(t, c.decisionB, c.heldB)} — {WHY(t, c)}</span>
               <Button size="sm" variant="outline" onClick={() => open(c)}>{t('admin:k5.duplicates.compare', 'Comparer')}</Button>
             </li>
           ))}

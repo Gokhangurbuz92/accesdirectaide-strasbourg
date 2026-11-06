@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { passwordProblems } from '@/lib/passwordPolicy';
 import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useT, formatDate, DATE_SHORT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
@@ -86,6 +87,7 @@ const methodText = (/** @type {(k: string, d: string) => string} */ t) => /** @t
 
 export default function InstitutionEspace() {
   const { t } = useT('institution');
+  const fr = useFrAttrs();   // R47: the organisation's name and territory stay French (lang="fr" outside French)
   const [logged, setLogged] = useState(Boolean(get())); const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
   const [me, setMe] = useState(null); const [obs, setObs] = useState(null); const [problem, setProblem] = useState(''); const [notice, setNotice] = useState(''); const period = 'quarter';
   const ended = useCallback(() => { try { sessionStorage.removeItem(KEY); } catch { /* ignore */ } setLogged(false); setMe(null); setObs(null);
@@ -139,7 +141,7 @@ export default function InstitutionEspace() {
         </form>
       ) : (
         <>
-          {me ? <p data-testid="institution-me">{me.organisation} {t('institution:space.territoire', '— territoire :')} {me.territory}</p> : null}
+          {me ? <p data-testid="institution-me"><span {...fr}>{me.organisation}</span> {t('institution:space.territoire', '— territoire :')} <span {...fr}>{me.territory}</span></p> : null}
           {me?.temporaryPassword ? <PasswordForm temporary onChanged={(x) => (x ? ended() : load())} /> : null}
           {me?.temporaryPassword ? null : obs ? (
             <section className="space-y-3" aria-labelledby="obs-h">

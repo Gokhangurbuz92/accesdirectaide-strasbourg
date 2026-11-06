@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { proRdvClient } from '@/api/pro-rdv-client';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /** @typedef {{ id: string, email: string, role: string, verified: boolean, displayName: string | null, jobTitle: string | null }} Member */
 /** @typedef {{ bookable: boolean, selectable: boolean, serviceIds: string[] }} MemberConfig */
@@ -20,6 +21,7 @@ function readView(v) {
 /** @param {{ canEdit: boolean }} props */
 export default function BookingConfigPanel({ canEdit }) {
   const { t } = useT('pro');
+  const fr = useFrAttrs();   // R47: service names and the members' public names are the structure's own words (lang="fr" outside French)
   const [view, setView] = useState(/** @type {BookingView | null} */ (null));
   const [state, setState] = useState(/** @type {'loading' | 'idle' | 'saving' | 'saved' | 'error'} */ ('loading'));
 
@@ -64,7 +66,7 @@ export default function BookingConfigPanel({ canEdit }) {
           <legend className="text-sm font-medium text-slate-800">{t('pro:booking_config.per_service', 'Par service (facultatif)')}</legend>
           {view.services.map((s) => (
             <label key={s.id} className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-              <span className="min-w-40" lang="fr">{s.name}</span>
+              <span className="min-w-40" {...fr}>{s.name}</span>
               <select className="h-11 rounded-md border border-slate-300 bg-white px-3 text-sm" disabled={!canEdit || state === 'saving'} value={view.serviceConfirmation[s.id] || ''}
                 onChange={(e) => save({ serviceConfirmation: { [s.id]: e.target.value === 'APPROVAL' ? 'APPROVAL' : e.target.value === 'DIRECT' ? 'DIRECT' : null } })}>
                 <option value="">{t('pro:booking_config.as_structure', 'Comme la structure')}</option>
@@ -96,7 +98,7 @@ export default function BookingConfigPanel({ canEdit }) {
               return (
                 <tr key={m.id} className="border-t border-slate-200">
                   <td className="py-2">
-                    <span dir="ltr">{m.displayName || m.email}</span>
+                    <span dir="ltr" {...(m.displayName ? fr : {})}>{m.displayName || m.email}</span>
                     {blocked ? <span className="block text-xs text-amber-900">{t('pro:booking_config.needs_mfa', 'Connexion à double facteur non activée : ne peut pas recevoir de rendez-vous en ligne.')}</span> : null}
                     {!m.displayName ? <span className="block text-xs text-slate-600">{t('pro:booking_config.needs_name', 'Sans nom public : jamais affiché aux personnes (adresse e-mail jamais montrée).')}</span> : null}
                   </td>

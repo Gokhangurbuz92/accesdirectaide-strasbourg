@@ -5,6 +5,7 @@ import { apiClient } from '@/api/client';
 import { useK5, explain } from './helpers.js';
 import { Status, Field } from './ui.jsx';
 import { useT, DATE_SHORT, formatDate, formatDateTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * PKG-5 / A12 — privacy console (/admin/privacy). Access requests with organization-held notes (two people: one proposes, another confirms), legal holds
@@ -23,6 +24,8 @@ function DsrDue({ r }) {
 
 export default function AdminPrivacy() {
   const { t } = useT('admin');
+  // R47: the retention categories and their conditions are French legal wording the DPO must validate: never translated, marked lang="fr" and said so
+  const fr = useFrAttrs();
   const k = useK5('privacy');
   const [f, setF] = useState({}); const v = (key) => f[key] || ''; const set = (key, val) => setF((x) => ({ ...x, [key]: val }));
   const [notes, setNotes] = useState({}); const [extracts, setExtracts] = useState({}); const [bases, setBases] = useState({}); const [problem, setProblem] = useState('');
@@ -229,12 +232,13 @@ export default function AdminPrivacy() {
         {d?.retentionReport ? (
           <>
             <h3 className="font-semibold">{t('admin:k5.privacy.report_heading', 'Données qu’aucune tâche ne supprime encore (comptage seulement)')}</h3>
+            {fr.lang ? <p className="text-xs text-slate-600" data-testid="admin-privacy-legal-fr">{t('admin:k5.privacy.legal_text_fr', 'Texte juridique en français : les catégories et leurs conditions restent rédigées en français tant que le DPO ne les a pas validées.')}</p> : null}
             <table className="w-full text-left text-sm" data-testid="admin-privacy-retention-report">
               <thead><tr><th scope="col">{t('admin:k5.privacy.category', 'Catégorie')}</th><th scope="col">{t('admin:k5.privacy.col.duration', 'Durée')}</th><th scope="col">{t('admin:k5.privacy.col.records', 'Enregistrements')}</th><th scope="col">{t('admin:k5.privacy.col.overdue', 'Au-delà de la durée')}</th></tr></thead>
               <tbody>
                 {d.retentionReport.items.map((it) => (
                   <tr key={it.key}>
-                    <td>{it.label}{it.blocker ? <span className="block text-xs text-slate-600">{it.blocker}</span> : null}</td>
+                    <td><span {...fr}>{it.label}</span>{it.blocker ? <span className="block text-xs text-slate-600" {...fr}>{it.blocker}</span> : null}</td>
                     <td>{it.durationDays ? t('admin:k5.privacy.days_from', '{{n}} jours ({{from}})', { n: it.durationDays, from: it.durationFrom }) : t('admin:k5.privacy.to_decide', 'à décider')}</td>
                     <td>{it.total ?? '—'}{it.oldest ? <span className="block text-xs text-slate-600">{t('admin:k5.privacy.since', 'depuis le {{date}}', { date: formatDate(it.oldest, DATE_SHORT) })}</span> : null}</td>
                     <td>{it.overdue ?? '—'}</td>

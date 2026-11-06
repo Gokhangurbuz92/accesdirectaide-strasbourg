@@ -10,6 +10,7 @@ import VerificationPanel from '@/components/admin/VerificationPanel';
 import { explain } from '@/pages/admin/k5/helpers.js';
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { chooseMessage, emailMessage, fieldA11y, httpsUrlMessage, looksLikeEmail, looksLikeHttpsUrl, requiredMessage } from '@/lib/fieldErrors';
@@ -72,6 +73,7 @@ const errorOrder = (fields, form) => fields.flatMap((f) => (f.type === 'links' ?
 /** Repeated groups (steps, links): one fieldset, each item named by its position, add / remove buttons. */
 function RepeatedField({ f, items, onChange, errors = {}, onFix = () => {} }) {
   const { t } = useT('admin');
+  const fr = useFrAttrs();
   const parts = f.type === 'steps' ? [['titre', t('admin:catalogue_editor.step_title', 'Titre de l’étape'), 'input'], ['texte', t('admin:catalogue_editor.step_text', 'Texte de l’étape'), 'textarea']] : [['nom', t('admin:catalogue_editor.link_name', 'Nom du lien'), 'input'], ['url', t('admin:catalogue_editor.link_url', 'Adresse (https://…)'), 'input']];
   const set = (i, key, value) => { onChange(items.map((x, j) => (j === i ? { ...x, [key]: value } : x))); onFix(`f-${f.name}-${i}-${key}`); };
   return (
@@ -84,8 +86,8 @@ function RepeatedField({ f, items, onChange, errors = {}, onFix = () => {} }) {
             <div key={key} className="space-y-1">
               <label htmlFor={`f-${f.name}-${i}-${key}`} className="block text-sm text-slate-900">{label} {i + 1}</label>
               {kind === 'textarea'
-                ? <Textarea id={`f-${f.name}-${i}-${key}`} rows={4} value={x[key] || ''} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />
-                : <Input id={`f-${f.name}-${i}-${key}`} value={x[key] || ''} {...(key === 'url' ? { type: 'url', inputMode: 'url' } : {})} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />}
+                ? <Textarea id={`f-${f.name}-${i}-${key}`} rows={4} value={x[key] || ''} {...fr} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />
+                : <Input id={`f-${f.name}-${i}-${key}`} value={x[key] || ''} {...(key === 'url' ? { type: 'url', inputMode: 'url' } : fr)} {...fieldA11y(`f-${f.name}-${i}-${key}`, errors)} onChange={(e) => set(i, key, e.target.value)} />}
               <FieldError field={`f-${f.name}-${i}-${key}`} errors={errors} />
             </div>
           ))}
@@ -102,6 +104,8 @@ function RepeatedField({ f, items, onChange, errors = {}, onFix = () => {} }) {
 
 export default function CatalogueEditor({ kind, title, fields, listPath }) {
   const { t } = useT('admin');
+  // R47: the record's fields are written in French: the inputs holding them are marked lang="fr" outside French (pronunciation, spell-check)
+  const fr = useFrAttrs();
   const { id: routeId } = useParams(); const id = routeId && routeId !== 'new' ? routeId : null;
   const navigate = useNavigate();
   const [form, setForm] = useState(() => toForm(fields, null)); const [loaded, setLoaded] = useState(!id); const [meta, setMeta] = useState(null);
@@ -163,12 +167,12 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
               <>
                 <label htmlFor={`f-${f.name}`} className="block text-sm font-medium text-slate-900">{f.label}{f.required ? ' *' : ''}{f.type === 'list' ? t('admin:catalogue_editor.one_per_line', ' (une valeur par ligne)') : ''}</label>
                 {f.type === 'select'
-                  ? <select id={`f-${f.name}`} className="min-h-11 w-full rounded border border-slate-400 bg-white p-2" value={form[f.name]} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }}>
+                  ? <select id={`f-${f.name}`} className="min-h-11 w-full rounded border border-slate-400 bg-white p-2" value={form[f.name]} {...fr} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }}>
                     <option value="">—</option>{[...new Set([...(f.options || []), form[f.name]].filter(Boolean))].map((o) => <option key={o} value={o}>{o}</option>)}
                   </select>
                   : f.type === 'textarea' || f.type === 'list'
-                  ? <Textarea id={`f-${f.name}`} rows={f.type === 'list' ? 3 : 4} value={form[f.name]} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />
-                  : <Input id={`f-${f.name}`} value={form[f.name]} required={Boolean(f.required)} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />}
+                  ? <Textarea id={`f-${f.name}`} rows={f.type === 'list' ? 3 : 4} value={form[f.name]} {...fr} {...(f.required ? { 'aria-required': 'true' } : {})} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />
+                  : <Input id={`f-${f.name}`} value={form[f.name]} {...(/url|email|siret|telephone|phone|code_postal/i.test(f.name) ? {} : fr)} required={Boolean(f.required)} {...fieldA11y(`f-${f.name}`, fieldErr.errors)} onChange={(e) => { setForm({ ...form, [f.name]: e.target.value }); fieldErr.clear(`f-${f.name}`); }} />}
                 <FieldError field={`f-${f.name}`} errors={fieldErr.errors} />
               </>
             )}

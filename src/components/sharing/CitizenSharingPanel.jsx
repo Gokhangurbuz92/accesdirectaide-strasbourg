@@ -9,6 +9,7 @@ import { AlertTriangle, Check, Copy, Lock, Search, ShieldCheck, Trash2 } from 'l
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
 import { formatDateTime } from '@/i18n';
+import { useFrAttrs } from '@/lib/recordLang';
 
 /**
  * CitizenSharingPanel - "Mon partage": four DISTINCT actions in plain language (never one ambiguous "revoke").
@@ -29,6 +30,7 @@ const fmt = (d) => formatDateTime(d, { day: 'numeric', month: 'long', hour: '2-d
 
 export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) {
   const { t } = useT('messaging');
+  const fr = useFrAttrs();   // R47: the structures' names and towns stay French (lang="fr" outside French)
   const MESSAGES = messagesOf(t);
   const [data, setData] = useState(null);
   const [loadError, setLoadError] = useState('');
@@ -165,8 +167,8 @@ export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) 
                   {results.map((o) => (
                     <li key={o.id}>
                       <button type="button" onClick={() => setPicked(o)} className="w-full min-h-[44px] text-left rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600">
-                        <span className="font-semibold text-slate-900">{o.nom}</span>
-                        <span className="block text-xs text-slate-500">{[o.codePostal, o.ville].filter(Boolean).join(' ')}</span>
+                        <span className="font-semibold text-slate-900" {...fr}>{o.nom}</span>
+                        <span className="block text-xs text-slate-500" {...fr}>{[o.codePostal, o.ville].filter(Boolean).join(' ')}</span>
                       </button>
                     </li>
                   ))}
@@ -179,7 +181,7 @@ export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) 
             <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4 space-y-3" data-testid="share-summary">
               <h3 className="font-bold text-slate-900">{t('messaging:sharing.before_confirm', 'Avant de confirmer')}</h3>
               <dl className="text-sm text-slate-800 space-y-1">
-                <div><dt className="inline font-semibold">{t('messaging:sharing.with_whom', 'Avec qui :')} </dt><dd className="inline">{picked.nom}{picked.ville ? ` (${picked.ville})` : ''}</dd></div>
+                <div><dt className="inline font-semibold">{t('messaging:sharing.with_whom', 'Avec qui :')} </dt><dd className="inline" {...fr}>{picked.nom}{picked.ville ? ` (${picked.ville})` : ''}</dd></div>
                 <div><dt className="inline font-semibold">{t('messaging:sharing.what', 'Ce qui est partagé :')} </dt><dd className="inline">{t('messaging:sharing.what_value', 'votre diagnostic (votre situation et vos droits estimés).')}</dd></div>
                 <div><dt className="inline font-semibold">{t('messaging:sharing.why', 'Pourquoi :')} </dt><dd className="inline">{t('messaging:sharing.why_value', 'pour que cette structure puisse vous accompagner.')}</dd></div>
                 <div><dt className="inline font-semibold">{t('messaging:sharing.how_long', 'Combien de temps :')} </dt><dd className="inline">{data?.expiresAt ? t('messaging:sharing.how_long_value_date', 'jusqu\'à l\'expiration du dossier ({{date}}), ou jusqu\'à ce que vous retiriez l\'accès.', { date: fmt(data.expiresAt) }) : t('messaging:sharing.how_long_value', 'jusqu\'à l\'expiration du dossier, ou jusqu\'à ce que vous retiriez l\'accès.')}</dd></div>
