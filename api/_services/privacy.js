@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { eq, and, or, sql, desc } from 'drizzle-orm';
 import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
@@ -197,11 +198,17 @@ function subjectFingerprint(cryptoLib, /** @type {unknown} */ subjectId) {
     return cryptoLib.createHash('sha256').update(String(subjectId)).digest('hex');
 }
 
+// R47 (art. 15 completeness): a read that FAILS while an export is being assembled is counted, so the export says it is incomplete instead of
+// silently showing an empty section (a missing query API on a database double is not a failure)
+const exportReadFailures = new AsyncLocalStorage();
+const noteReadFailure = () => { const store = exportReadFailures.getStore(); if (store) store.count += 1; };
+
 async function safeFindMany(/** @type {{ findMany: unknown }} */ queryApi, /** @type {unknown} */ options) {
     if (!queryApi || typeof queryApi.findMany !== 'function') return [];
     try {
         return safeArray(await queryApi.findMany(options));
     } catch {
+        noteReadFailure();
         return [];
     }
 }
@@ -372,6 +379,18 @@ export function createPrivacyRightsService({ db, cryptoLib }) {
        * @param {string | import("drizzle-orm").SQLWrapper} userId
        */
         async getExportData(userId) {
+            const failures = { count: 0 };
+            const data = await exportReadFailures.run(failures, () => this.assembleExportData(userId));
+            if (data && failures.count > 0) {
+                data.exportInfo = { ...data.exportInfo, complete: false, failedSections: failures.count,
+                    notice: 'Export incomplet : une partie de vos données n’a pas pu être lue à ce moment. Réessayez plus tard ; si le problème persiste, utilisez le formulaire de contact (vos droits).' };
+            } else if (data) {
+                data.exportInfo = { ...data.exportInfo, complete: true };
+            }
+            return data;
+        },
+        /** the export itself (getExportData adds the completeness flag) @param {string | import("drizzle-orm").SQLWrapper} userId */
+        async assembleExportData(userId) {
             const user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.id, userId) });
             if (!user) return null;
 
@@ -419,7 +438,7 @@ export function createPrivacyRightsService({ db, cryptoLib }) {
             // Organizations' INTERNAL notes may contain personal data about the person: they are NOT released automatically (they can also concern third parties and the
             // organization's own assessment), but they are NOT silently excluded either — they are listed below as organization-held records awaiting a HUMAN review,
             // and the request is then recorded as PARTIALLY_COMPLETED with an ACCESS_REVIEW request (never "completed" while that review is open).
-            const safeRows = async (q) => { try { return (await db.execute(q)).rows || []; } catch { return []; } };
+            const safeRows = async (q) => { if (typeof db.execute !== 'function') return []; try { return (await db.execute(q)).rows || []; } catch { noteReadFailure(); return []; } };
             const caseFollowUps = await safeRows(sql`SELECT c."sharedDiagnosticId" AS "dossierId", s.nom AS organization, c.status, c.outcome, c."outcomeCitizenSummary" AS summary, c."openedAt", c."closedAt"
               FROM "ProCase" c JOIN "SharedDiagnostic" d ON d.id = c."sharedDiagnosticId" JOIN "Structure" s ON s.id = c."structureId" WHERE d."ownerCitizenId" = ${userId}`);
             const referrals = await safeRows(sql`SELECT r."sharedDiagnosticId" AS "dossierId", sf.nom AS "from", st.nom AS "to", r.status, r."reasonCode", r.outcome, r."outcomeCitizenSummary" AS summary, r."createdAt", r."citizenDecisionAt"
