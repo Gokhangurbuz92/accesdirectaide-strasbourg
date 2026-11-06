@@ -68,7 +68,7 @@ Les rendez-vous de plus de 2 ans sont anonymisés (pas supprimés) :
 |--------|---------|
 | Mots de passe | scrypt (salt + 64 bytes) |
 | NIR/IBAN/CB dans prompts | Bloqués par sanitizer |
-| Tokens OAuth | AES-256-GCM (`vault-crypto.js`) |
+| Tokens OAuth | AES-256-GCM (`api/_utils/outlook-token-crypto.js` pour Outlook, `api/_utils/vault.ts` pour les autres secrets) |
 | Tokens MFA | AES-256-GCM |
 
 ## Cookie banner
@@ -81,7 +81,7 @@ Implémenté dans `src/components/CookieBanner.jsx` (bandeau d'information, opti
 
 ## PII Detection
 
-Le `prompt-sanitizer.js` détecte et bloque :
+Le `api/lib/prompt-sanitizer.js` détecte et bloque :
 - Numéros de sécurité sociale (NIR)
 - IBAN
 - Numéros de carte bancaire

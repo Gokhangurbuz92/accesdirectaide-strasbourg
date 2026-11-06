@@ -7,6 +7,8 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const taxonomy = require('../../data/taxonomy.json');
 
+/** R47: bound of one page fetch (ms) */
+export const AGEFIPH_TIMEOUT_MS = 15_000;
 const USER_AGENT =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
@@ -34,6 +36,7 @@ export class AgefiphConnector extends SourceConnector {
 
     async fetch(url) {
         const response = await fetch(url, {
+            signal: AbortSignal.timeout(AGEFIPH_TIMEOUT_MS),   // R47: a hung page no longer holds the scheduled ingest-aids run (same bound as GrandEstConnector)
             headers: {
                 'User-Agent': USER_AGENT,
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
