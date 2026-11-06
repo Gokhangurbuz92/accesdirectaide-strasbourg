@@ -81,6 +81,8 @@ export const CAPABILITIES = Object.freeze({
 export const ROUTE_CAPABILITIES = Object.freeze({
   // accounts
   auth: ['citizen.account'], 'login-pro-guard': ['citizen.account'], 'auth/franceconnect': ['citizen.account', 'citizen.franceconnect'],
+  // R47: the status line answers { available:false, reason } itself when citizen.franceconnect is closed (no 503 noise on every sign-in page)
+  'auth/franceconnect/status': ['citizen.account'],
   'citizen/profile': ['citizen.account'], 'citizen/age-declaration': ['citizen.account'], 'citizen/email-change': ['citizen.account'],
   'citizen/email-change-confirm': ['citizen.account'], 'citizen/phone': ['citizen.account'], 'citizen/preferences': ['citizen.account'],
   'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'], 'citizen/notifications': ['citizen.account'],
