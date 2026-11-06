@@ -37,6 +37,7 @@ import { connectionOptions, databaseHost } from './admin-bootstrap.mjs';
 import { hashPassword } from '../api/_utils/password-hash.js';
 import { hashInviteToken, newInviteToken } from '../api/_utils/invite-token.js';
 import { passwordProblems } from '../src/lib/passwordPolicy.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOCAL = /^(localhost|127\.0\.0\.1|::1)$/i;
@@ -279,4 +280,4 @@ async function main() {
   } finally { await client.end().catch(() => {}); }
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));
+if (process.argv[1] && isMainModule(import.meta.url)) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));

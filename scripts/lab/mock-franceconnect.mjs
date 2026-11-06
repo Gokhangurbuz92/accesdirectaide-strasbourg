@@ -11,6 +11,7 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from '../lib/is-main.mjs';
 
 const b64u = (b) => Buffer.from(b).toString('base64url');
 
@@ -91,7 +92,7 @@ export async function startMockFranceConnect(opts = {}) {
   };
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (isMainModule(import.meta.url)) {
   const mock = await startMockFranceConnect({ port: Number(process.env.MOCK_FC_PORT || 3110), sub: process.env.MOCK_FC_SUB || undefined });
   console.log(JSON.stringify({ issuer: mock.issuer, clientId: mock.clientId }));
 }

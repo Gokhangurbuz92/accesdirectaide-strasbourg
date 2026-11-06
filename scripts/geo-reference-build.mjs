@@ -13,6 +13,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const REFERENCE_PATH = 'data/geography/insee-2026.v1.json';
 export const SERVICE_TERRITORY_PATH = 'data/geography/service-territory.v1.json';
@@ -117,7 +118,7 @@ export function buildReference(cogDir, epciDir) {
 
 const serialize = (/** @type {unknown} */ o) => JSON.stringify(o) + '\n';
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const [cogDir, epciDir] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
   if (!cogDir || !epciDir) { console.error('usage: geo-reference-build.mjs <cogCsvDir> <epciCsvDir> [--check]'); process.exit(2); }
   const { reference, serviceTerritory } = buildReference(cogDir, epciDir);

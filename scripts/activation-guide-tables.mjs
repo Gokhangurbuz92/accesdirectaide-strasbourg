@@ -7,6 +7,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { isMainModule } from './lib/is-main.mjs';
 
 const CLASS_FR = {
   required: 'OBLIGATOIRE', required_outside_beta: 'OBLIGATOIRE hors bêta', conditional: 'SI LA FONCTION EST ACTIVÉE', optional: 'OPTIONNELLE',
@@ -38,7 +39,7 @@ export function guideMissingNames(manifest, guideText) {
   return Object.keys(manifest.variables).filter((n) => !text.includes(`\`${n}\``));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'config', 'activation-manifest.json'), 'utf8'));
   const arg = (/** @type {string} */ k) => (process.argv.includes(k) ? process.argv[process.argv.indexOf(k) + 1] : undefined);
   if (arg('--check')) {

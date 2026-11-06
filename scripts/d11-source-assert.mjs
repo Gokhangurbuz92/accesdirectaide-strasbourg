@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadArchive, parseFiche, resolveId, ficheMeta } from '../api/_services/verification/dila.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const VERDICTS = ['FICHE_MISSING', 'NUMBER_NOT_FOUND', 'QUOTE_NOT_FOUND', 'CITATION_NOT_IN_LEGI', 'SOURCE_REVISED', 'FICHE_REDIRECTED', 'TEXT_CONFIRMED', 'LIVE_PAGE_CONFIRMED', 'METADATA_UNCHANGED', 'NO_ARCHIVE_SOURCE', 'NOT_MACHINE_CHECKABLE'];
 
@@ -179,7 +180,7 @@ export function parseFormCsv(text) {
   return out;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const zip = process.argv[2];
   const arg = (/** @type {string} */ k) => (process.argv.includes(k) ? process.argv[process.argv.indexOf(k) + 1] : undefined);
   if (!zip || !fs.existsSync(zip)) { process.stderr.write('usage: node scripts/d11-source-assert.mjs <vosdroits.zip> [--reference-date YYYY-MM-DD] [--out report.json]\n'); process.exit(2); }

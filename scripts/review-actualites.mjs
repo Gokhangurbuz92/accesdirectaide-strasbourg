@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainModule } from './lib/is-main.mjs';
 /**
  * R28 — human publication control for news drafts. Nothing is published without a named reviewer, and the decision is written on the item.
  *
@@ -38,4 +39,4 @@ async function main() {
   }
   process.exit(0);
 }
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(String(e?.message || e).slice(0, 200)); process.exit(1); });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(String(e?.message || e).slice(0, 200)); process.exit(1); });

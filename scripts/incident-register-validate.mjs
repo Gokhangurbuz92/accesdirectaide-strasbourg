@@ -16,6 +16,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const SCHEMA_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs', 'security', 'incident-register.schema.json');
 export const DEADLINE_HOURS = 72;
@@ -217,7 +218,7 @@ export function validateRegister(register, options = {}) {
   return { ok: errors.length === 0, entries: entries.length, errors, warnings, clocks };
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (isMainModule(import.meta.url)) {
   const args = process.argv.slice(2);
   const file = args.find((a) => !a.startsWith('--'));
   const nowArg = args.find((a) => a.startsWith('--now='))?.slice('--now='.length);

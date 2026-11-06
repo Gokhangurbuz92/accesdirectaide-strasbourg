@@ -1630,6 +1630,27 @@
       "nature": "config",
       "format": "^(1)?$",
       "note": "R46 (Q05): « 1 » makes scripts/lab-server.mjs keep the client X-Forwarded-For so a local load test sees many clients; refused on port 3000; LAB only, rate limits stay on"
+    },
+    "ADA_TEST_ISOLATION": {
+      "class": "lab",
+      "nature": "config",
+      "format": "^(1)?$",
+      "note": "R47: « 1 » marks a test context: the Vite dev proxy refuses the owner LAB port 3000 and test servers validate loopback host, port and a *_test database (scripts/lib/test-isolation.mjs); LAB/test only"
+    },
+    "VITE_DEV_API_TARGET": {
+      "class": "lab",
+      "nature": "config",
+      "note": "R47: Vite dev proxy target (loopback URL only; default http://localhost:3000 for the owner LAB; refused on :3000 in a test context); development only, never a build variable"
+    },
+    "VITEST": {
+      "class": "lab",
+      "nature": "config",
+      "note": "set by Vitest itself; read only to detect a test context (R47 isolation)"
+    },
+    "SECRETS_SCAN_REPORT": {
+      "class": "lab",
+      "nature": "config",
+      "note": "R47: optional path where scripts/security-secrets-scan.mjs writes its redacted JSON report (release guard); release machine only"
     }
   },
   "platform": [

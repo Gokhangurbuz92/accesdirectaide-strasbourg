@@ -22,6 +22,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../api/_services/retention-policy.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const MAGIC = Buffer.from('ADAB1');
 const IV_LEN = 12; const TAG_LEN = 16;
@@ -200,7 +201,7 @@ function listOrPrune() {
     pruned: prune ? plan.prune.length : 0, newest, policy: { version: RETENTION_POLICY.version, status: RETENTION_POLICY.status } }));
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (isMainModule(import.meta.url)) {
   if (process.argv.includes('--verify')) verify().catch(() => die('erreur inattendue (aucune donnée affichée).'));
   else if (process.argv.includes('--list')) listOrPrune();
   else backup().catch(() => die('erreur inattendue (aucune donnée affichée).'));

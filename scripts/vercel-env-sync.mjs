@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isMainModule } from './lib/is-main.mjs';
 
 /**
  * R34 (R33 audit): the check read a `.env.template` that no longer exists, and asked for EVERY template variable in every environment — the opposite of
@@ -75,7 +76,7 @@ function buildPresenceIndex(vercelList) {
   return index;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const required = readTemplateVarNames();
   const vercelList = runVercelJson();
   const presence = buildPresenceIndex(vercelList);

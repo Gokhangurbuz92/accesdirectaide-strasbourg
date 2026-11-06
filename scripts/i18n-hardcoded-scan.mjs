@@ -17,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from '@babel/parser';
+import { isMainModule } from './lib/is-main.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
@@ -120,7 +121,7 @@ export function scan({ srcDir = SRC, exceptions = loadExceptions() } = {}) {
   return { total: findings.length, approved: findings.length - unapproved.length, unapproved, staleUnmounted, unusedExceptions, findings, exceptions: exceptions.length };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const r = scan();
   if (process.argv.includes('--json')) console.log(JSON.stringify(r, null, 1));
   else {

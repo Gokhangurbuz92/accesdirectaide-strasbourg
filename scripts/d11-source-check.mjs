@@ -6,6 +6,7 @@
  *   node scripts/d11-source-check.mjs [--out report.json]
  */
 import fs from 'node:fs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const MONTHS = { janvier: '01', février: '02', fevrier: '02', mars: '03', avril: '04', mai: '05', juin: '06', juillet: '07', août: '08', aout: '08', septembre: '09', octobre: '10', novembre: '11', décembre: '12', decembre: '12' };
 /** « Vérifié le 01 avril 2026 » → 2026-04-01 (Service-Public); null when the page carries no such line */
@@ -38,4 +39,4 @@ async function main() {
   console.log(text);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+if (isMainModule(import.meta.url)) main();

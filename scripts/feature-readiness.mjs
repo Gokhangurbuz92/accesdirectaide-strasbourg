@@ -18,6 +18,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { isAllowedInPublicBeta } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilitiesOfRoute, capabilityState } from '../api/_utils/capabilities.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const VERDICTS = ['MISSING_IMPLEMENTATION', 'LEGAL_OR_PRIVACY_GATE', 'MISSING_PROVIDER', 'MISSING_VARIABLES', 'MISSING_TEST_EVIDENCE', 'PRODUCTION_RESTRICTED', 'READY_TECHNICALLY', 'LIVE_VERIFIED'];
 
@@ -191,7 +192,7 @@ function vercelNames(target) {
   return new Set(items.filter((/** @type {any} */ i) => [].concat(i.target || i.targets || []).includes(target)).map((/** @type {any} */ i) => i.key || i.name));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const arg = (/** @type {string} */ k) => (process.argv.includes(k) ? process.argv[process.argv.indexOf(k) + 1] : undefined);
   const root = process.cwd();
   const manifest = loadManifest(root);

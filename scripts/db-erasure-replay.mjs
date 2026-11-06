@@ -29,6 +29,7 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 import pg from 'pg';
 import { backupKey, backupTimeOf, encryptStreamToFile, decryptFileToFile } from './db-backup.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const LEDGER_KIND = 'ada-erasure-ledger';
 const die = (m) => { console.error(`db-erasure-replay : ${m}`); process.exit(1); };
@@ -277,6 +278,6 @@ async function replayMain() {
   } finally { await pool.end(); }
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (isMainModule(import.meta.url)) {
   (process.argv.includes('--export') ? exportMain() : replayMain()).catch(() => die('erreur inattendue (aucune donnée affichée).'));
 }

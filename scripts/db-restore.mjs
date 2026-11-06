@@ -19,6 +19,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import pg from 'pg';
 import { backupKey, backupTimeOf, decryptFileToFile, pgEnv, removeOnExit, sidecarMatches, workDir } from './db-backup.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const die = (m) => { console.error(`db-restore : ${m}`); process.exit(1); };
 const arg = (name, dflt = '') => { const i = process.argv.indexOf(`--${name}`); return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : dflt; };
@@ -64,4 +65,4 @@ async function main() {
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) main().catch(() => die('erreur inattendue (aucune donnée affichée).'));
+if (isMainModule(import.meta.url)) main().catch(() => die('erreur inattendue (aucune donnée affichée).'));

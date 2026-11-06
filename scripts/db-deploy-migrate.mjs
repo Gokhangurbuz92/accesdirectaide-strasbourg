@@ -30,6 +30,7 @@ import pg from 'pg';
 import {
   OBSOLETE_MIGRATIONS, auditHistory, isLocalDatabaseUrl, loadMigrations, physicalDrift, planDeploy, preflight, readCatalogue, readHistory, verifyJournal,
 } from './db-migrate-guard.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 export { OBSOLETE_MIGRATIONS, planDeploy };
 
@@ -183,7 +184,7 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((e) => { console.error(`DB_DEPLOY_MIGRATE {"ok":false,"error":${JSON.stringify(String(e?.code || e?.message || e).slice(0, 200))}}`); process.exit(1); });
 }
 

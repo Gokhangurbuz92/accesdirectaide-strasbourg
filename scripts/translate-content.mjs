@@ -17,6 +17,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FIELDS, KINDS, SCHEMA, checkField, fieldStatus, protect, recordStatus, restore, sourceFields, sourceHash, unitsOf } from '../api/lib/contentTranslation.js';
 import { Engine } from './lib/translation-engines.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const CHECKS_VERSION = 'r33-repair-1';   // 2: lower-case acronyms and MSA protected, more uncertainty phrasings; 3: mixed-script words; r33: per-sentence repair attempts
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -164,4 +165,4 @@ async function main() {
   console.log(`TRANSLATE_DONE ${JSON.stringify({ engine: engine.id, stats: engine.stats, repairedSentences: repaired.count })}`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });

@@ -17,6 +17,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readConditions } from '../api/lib/rulesDraft.js';
 import { gateStatus, validatedRight } from '../api/lib/validatedRules.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 const REGISTER = new URL('../data/rules/rights-rules.v1.json', import.meta.url);
 const PROPOSED = new URL('../data/rules/reference-cases.proposed.v1.json', import.meta.url);
@@ -127,4 +128,4 @@ function main() {
   process.exitCode = 2;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+if (isMainModule(import.meta.url)) main();

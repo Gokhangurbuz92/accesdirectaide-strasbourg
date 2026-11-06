@@ -18,6 +18,7 @@ import path from 'node:path';
 import { publishedRecords } from './translate-content.mjs';
 import TERMS from '../api/_services/verification/datainclusion-terms.js';
 import { withoutExclusions } from '../api/lib/finess-labels.js';   // R37: « (non compris …) » clauses never match
+import { isMainModule } from './lib/is-main.mjs';
 
 /** R36: the kind of answer each need calls for (data/reference/service-response-types.v1.json) */
 const RESPONSES = JSON.parse(fs.readFileSync(new URL('../data/reference/service-response-types.v1.json', import.meta.url), 'utf8')).subdomains;
@@ -156,4 +157,4 @@ async function main() {
   console.log(JSON.stringify({ totals: out.totals, catalogue: out.catalogue }));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });

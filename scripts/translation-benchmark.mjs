@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import { FIELDS, KINDS, checkField, protect, restore, unitsOf } from '../api/lib/contentTranslation.js';
 import { Engine } from './lib/translation-engines.mjs';
 import { publishedRecords } from './translate-content.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const arg = (n, d = null) => { const i = process.argv.indexOf(`--${n}`); return i > 0 && process.argv[i + 1] ? process.argv[i + 1] : d; };
 const NEG = /(?<![\p{L}])(ne|n['’]|pas|jamais|aucun|sans|ni|non)(?![\p{L}])/iu;
@@ -77,4 +78,4 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(e?.stack || e); process.exitCode = 1; });

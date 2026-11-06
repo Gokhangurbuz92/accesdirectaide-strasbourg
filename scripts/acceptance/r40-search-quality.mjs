@@ -13,6 +13,7 @@
  * 13 démarches). A sheet that is not published cannot be expected. The LAB catalogue differs: read LAB numbers with that in mind.
  */
 import fs from 'node:fs';
+import { isMainModule } from '../lib/is-main.mjs';
 
 const args = process.argv.slice(2);
 const base = (args.find((a) => a.startsWith('http')) || 'https://www.accesdirectaide.fr').replace(/\/$/, '');
@@ -317,4 +318,4 @@ async function main() {
   if (out) fs.writeFileSync(out, JSON.stringify({ summary, rows }, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) await main();
+if (isMainModule(import.meta.url)) await main();

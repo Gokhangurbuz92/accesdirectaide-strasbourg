@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainModule } from './lib/is-main.mjs';
 /**
  * R46 (N01 / N02 / N06 / B10) — offline verification of the appointment communication channels: e-mail, SMS, video, connected calendar.
  * No network, no database, no provider call, no message sent. It applies the adapters' own readiness rules to the current environment and prints, per
@@ -23,6 +24,6 @@ export async function runChannelsCheck(argv, io = {}) {
   return 0;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   runChannelsCheck(process.argv.slice(2)).then((code) => { process.exitCode = code; }, (err) => { process.stdout.write(`error: ${err?.name || 'Error'}\n`); process.exitCode = 1; });
 }

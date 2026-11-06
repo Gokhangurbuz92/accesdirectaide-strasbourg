@@ -6,6 +6,7 @@
  *   DATABASE_URL=… node scripts/verify-actualites.mjs --apply
  */
 import { verifyNewsDrafts } from '../api/_services/news-verification.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 async function main() {
   const apply = process.argv.includes('--apply');
@@ -16,4 +17,4 @@ async function main() {
   console.log(`NEWS_VERIFY ${JSON.stringify({ apply, ...result })}`);
   process.exit(0);
 }
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(`NEWS_VERIFY {"ok":false,"error":${JSON.stringify(String(e?.message || e).slice(0, 200))}}`); process.exit(1); });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(`NEWS_VERIFY {"ok":false,"error":${JSON.stringify(String(e?.message || e).slice(0, 200))}}`); process.exit(1); });

@@ -1,7 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const REMOTE_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL; // PROD or Preview
-const LOCAL_BASE_URL = 'http://127.0.0.1:3000';
+// R47 (isolation): never the owner LAB port 3000 — a local run used to REUSE whatever served :3000 (reuseExistingServer), i.e. the owner's LAB
+const LOCAL_PORT = Number(process.env.PW_LOCAL_PORT || 5179);
+if (LOCAL_PORT === 3000) throw new Error('playwright.config.js: port 3000 is the owner LAB — choose another PW_LOCAL_PORT');
+const LOCAL_BASE_URL = `http://127.0.0.1:${LOCAL_PORT}`;
 
 // If a remote URL is provided, use it. Otherwise, assume local.
 const BASE_URL = REMOTE_BASE_URL || LOCAL_BASE_URL;
@@ -53,8 +56,8 @@ export default defineConfig({
       // In CI, use `vite preview` (serves pre-built dist — starts instantly).
       // Locally, use `vite` (dev server with HMR).
       command: process.env.CI
-        ? 'npx vite preview --port 3000 --host 127.0.0.1'
-        : 'npx vite --port 3000 --host 127.0.0.1',
+        ? `npx vite preview --port ${LOCAL_PORT} --strictPort --host 127.0.0.1`
+        : `npx vite --port ${LOCAL_PORT} --strictPort --host 127.0.0.1`,
       url: LOCAL_BASE_URL,
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000, // 3min for slow CI containers

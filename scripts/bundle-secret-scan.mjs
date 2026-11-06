@@ -7,6 +7,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from './lib/is-main.mjs';
 
 /** server-only names whose value must never reach the browser (secret-like names; VITE_* excluded) */
 export const SECRET_NAME = /(SECRET|TOKEN|PASSWORD|PRIVATE_KEY|API_KEY|ACCESS_KEY|ENCRYPTION_KEY|VAULT_KEY|DATABASE_URL|AUTH_TOKEN|DSN_SERVER)/;
@@ -39,7 +40,7 @@ export function scanBundle(dir, env) {
   return { checked: secrets.map(([k]) => k).sort(), leaks };
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (isMainModule(import.meta.url)) {
   const dir = process.argv[2] || 'dist';
   if (!existsSync(dir)) { console.error(`[bundle-secret-scan] ${dir} not found: build first`); process.exit(2); }
   const { checked, leaks } = scanBundle(dir, process.env);

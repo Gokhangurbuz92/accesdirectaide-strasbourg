@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from '@babel/parser';
 import { TARGET_LANGUAGES } from '../src/i18n/languages.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
@@ -138,7 +139,7 @@ export function check({ srcDir = SRC, localesDir = LOCALES, languages = TARGET_L
   return { keys: used.size, files: nfiles, languages: languagesOut, noDefault, unused, ok };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const nsArg = process.argv.includes('--ns') ? process.argv[process.argv.indexOf('--ns') + 1] : null;
   const r = check({ namespaces: nsArg ? nsArg.split(',').map((x) => x.trim()).filter(Boolean) : null });
   if (process.argv.includes('--json')) console.log(JSON.stringify(r, null, 1));

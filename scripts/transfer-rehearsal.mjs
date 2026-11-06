@@ -27,6 +27,7 @@ import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { exportContent, readBundle, importContent, rollbackImport, schemaIdentity, TABLES, rowHash } from './content-transfer.mjs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const arg = (n) => { const i = process.argv.indexOf(`--${n}`); return i > 0 ? process.argv[i + 1] : undefined; };
@@ -147,4 +148,4 @@ async function main() {
   process.exit(report.ok ? 0 : 1);
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) main();
+if (isMainModule(import.meta.url)) main();

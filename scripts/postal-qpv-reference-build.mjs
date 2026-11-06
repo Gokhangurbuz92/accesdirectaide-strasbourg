@@ -14,6 +14,7 @@
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const POSTAL_PATH = 'data/reference/postal-codes.v1.json';
 export const QPV_PATH = 'data/reference/qpv-2024.v1.json';
@@ -150,7 +151,7 @@ export function buildReferences(postalFile, qpvFile) {
 
 const serialize = (/** @type {object} */ obj) => `${JSON.stringify(obj)}\n`;
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const [postalFile, qpvFile, flag] = process.argv.slice(2);
   if (!postalFile || !qpvFile) { console.error('usage: node scripts/postal-qpv-reference-build.mjs <hexasmal.csv> <listeqp2024.csv> [--check]'); process.exit(2); }
   const out = buildReferences(postalFile, qpvFile);

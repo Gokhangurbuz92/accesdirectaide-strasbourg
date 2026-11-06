@@ -15,6 +15,7 @@
  * on the chosen hosting (cold starts, region, database latency) is still needed before launch (docs/performance-budgets.md).
  */
 import fs from 'node:fs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = String(arg('base', 'http://127.0.0.1:3000')).replace(/\/$/, '');
@@ -72,4 +73,4 @@ async function main() {
   const out = arg('out', null); if (out) fs.writeFileSync(out, JSON.stringify(report, null, 1));
   process.exit(report.allWithinBudget ? 0 : 1);
 }
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) main();
+if (isMainModule(import.meta.url)) main();

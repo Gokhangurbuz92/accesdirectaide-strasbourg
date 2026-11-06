@@ -10,6 +10,7 @@ import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -126,7 +127,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   return out;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const results = evaluateReleasePreflight(process.env);
   for (const r of results) console.log(`${r.status.padEnd(4)} ${r.id} — ${r.detail}`);
   process.exit(results.some((r) => r.status === 'FAIL') ? 1 : 0);

@@ -19,6 +19,7 @@ import crypto from 'node:crypto';
 import readline from 'node:readline';
 import pg from 'pg';
 import { hashPassword } from '../api/_utils/password-hash.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 const LOCAL = /^(localhost|127\.0\.0\.1|::1|\[::1\])$/i;
 export const MIN_PASSWORD = 12;
@@ -133,4 +134,4 @@ async function main() {
   } finally { await client.end().catch(() => {}); }
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));
+if (isMainModule(import.meta.url)) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));

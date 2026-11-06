@@ -13,6 +13,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { loadArchive, readSource } from '../api/_services/verification/dila.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 /** the curated practical sheets: everyday situations of the people AccesDirectAide serves (papers, address, budget, recourse, housing) */
 export const OFFICIAL_GUIDES = [
@@ -243,4 +244,4 @@ async function main() {
   process.exit(0);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((err) => { console.error(`OFFICIAL_GUIDES {"ok":false,"error":${JSON.stringify(String(err?.message || err).slice(0, 200))}}`); process.exit(1); });
+if (isMainModule(import.meta.url)) main().catch((err) => { console.error(`OFFICIAL_GUIDES {"ok":false,"error":${JSON.stringify(String(err?.message || err).slice(0, 200))}}`); process.exit(1); });

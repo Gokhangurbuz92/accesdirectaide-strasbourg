@@ -7,6 +7,7 @@
  * file (one row per result shown) for a human to grade 0 / 1 / 2. Machine labels and human grades are kept apart: the score is never presented as validated.
  */
 import fs from 'node:fs';
+import { isMainModule } from './lib/is-main.mjs';
 
 const SECTIONS = { aide: 'items', demarche: 'demarches', structure: 'structures' };
 const K = 5;
@@ -82,4 +83,4 @@ async function main() {
   console.log(JSON.stringify({ base, summary: result.summary }, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((e) => { console.error(e?.message || e); process.exitCode = 1; });
+if (isMainModule(import.meta.url)) main().catch((e) => { console.error(e?.message || e); process.exitCode = 1; });

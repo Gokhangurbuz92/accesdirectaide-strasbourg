@@ -34,6 +34,7 @@ import path from 'node:path';
 import pg from 'pg';
 import { connectionOptions, databaseHost } from './admin-bootstrap.mjs';
 import { nominativeEmail } from '../api/_services/verification/contacts.js';
+import { isMainModule } from './lib/is-main.mjs';
 
 export const FORMAT = 'ada-content-transfer/2';
 export const RECEIPT_FORMAT = 'ada-content-transfer-receipt/1';
@@ -386,4 +387,4 @@ async function main() {
   die('commande : export | import | rollback');
 }
 
-if (import.meta.url === new URL(`file://${process.argv[1]}`).href) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));
+if (isMainModule(import.meta.url)) main().catch((e) => die(e?.code ? `erreur ${e.code}` : 'erreur inattendue (aucune donnée affichée).'));

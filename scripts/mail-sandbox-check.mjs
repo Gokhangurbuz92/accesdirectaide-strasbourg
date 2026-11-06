@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isMainModule } from './lib/is-main.mjs';
 /**
  * R43-MAIL — one genuine Mailjet check WITHOUT delivering anything: Mailjet validates the key, the sender (domain), the Reply-To and the message
  * (SandboxMode, forced on here whatever the environment says) and answers as for a real send; nothing reaches any mailbox.
@@ -26,6 +27,6 @@ export async function runSandboxCheck(argv, io = {}) {
   return out.outcome === 'SANDBOX_VALIDATED' ? 0 : 1;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   runSandboxCheck(process.argv.slice(2)).then((code) => { process.exitCode = code; }, (err) => { process.stdout.write(`error: ${err?.name || 'Error'}\n`); process.exitCode = 1; });
 }
