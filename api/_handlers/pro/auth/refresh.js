@@ -67,7 +67,7 @@ export default async function handler(req, res) {
                 return res.status(401).json({ error: 'Session invalide. Veuillez vous reconnecter.', code: 'MEMBERSHIP_CHANGED' });
             }
             // PKG-11 audit: a session ended by logout or password reset cannot be extended
-            if (proSessionRevoked(validClaims.iat, m)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
+            if (proSessionRevoked(validClaims.iat, m, validClaims.iatMs)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
             const refused = refreshRefusal(validClaims.authTime, validClaims.mfa === true, m);
             if (refused) return res.status(401).json(refused);
             const newToken = signProToken({
@@ -135,7 +135,7 @@ export default async function handler(req, res) {
         if (!m || !PRO_SESSION_STATUSES.includes(m.status) || m.structureId !== structureId) {
             return res.status(401).json({ error: 'Session invalide. Veuillez vous reconnecter.', code: 'MEMBERSHIP_CHANGED' });
         }
-        if (proSessionRevoked(typeof decoded.iat === 'number' ? decoded.iat : undefined, m)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
+        if (proSessionRevoked(typeof decoded.iat === 'number' ? decoded.iat : undefined, m, typeof decoded.iat_ms === 'number' ? decoded.iat_ms : undefined)) return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
         void role;
         const authTime = typeof decoded.auth_time === 'number' ? decoded.auth_time : decoded.iat;
         const refused = refreshRefusal(authTime, decoded.mfa === true, m);

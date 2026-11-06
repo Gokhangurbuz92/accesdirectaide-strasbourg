@@ -78,6 +78,9 @@ export function signProToken(user, opts = {}) {
             scope: 'pro',
             jti,
             auth_time: authTime,
+            // R47: issue instant in milliseconds — session revocation (sessionsValidAfter) is compared to the millisecond; « iat » has 1 s resolution,
+            // so a token issued in the same second as a logout / MFA enrolment used to survive it
+            iat_ms: Date.now(),
             exp,
             ...(opts.mfa === true ? { mfa: true } : {}),
         },
@@ -192,6 +195,7 @@ function validateProClaims(/** @type {string | number | boolean | null | undefin
         role: roleRaw,
         scope: scope || undefined,
         iat: typeof payload.iat === 'number' ? payload.iat : undefined,   // issue time: a session revoked after it is refused (sessionsValidAfter)
+        iatMs: typeof payload.iat_ms === 'number' ? payload.iat_ms : undefined,   // R47: millisecond issue instant (tokens issued before R47 have none)
         authTime: typeof payload.auth_time === 'number' ? payload.auth_time : (typeof payload.iat === 'number' ? payload.iat : undefined),   // R40: sign-in time (older tokens: their issue time)
         mfa: payload.mfa === true,
     };
@@ -507,6 +511,7 @@ export async function resolveAuthContext(/** @type {unknown} */ req) {
       userId: String(/** @type {any} */(proClaims).userId || ''),
       structureId: String(/** @type {any} */(proClaims).structureId || ''),
       iat: /** @type {any} */ (proClaims).iat,
+      iatMs: /** @type {any} */ (proClaims).iatMs,
       authTime: /** @type {any} */ (proClaims).authTime,
       mfa: /** @type {any} */ (proClaims).mfa === true,
     };
@@ -664,11 +669,13 @@ export async function currentProMembership(userId) {
  * Granularity is the token's issue second. A token without an issue time is refused once a revocation exists.
  * @param {number | undefined} iat token issue time (seconds) @param {{ sessionsValidAfter?: Date | string | null } | null | undefined} membership
  */
-export function proSessionRevoked(iat, membership) {
+export function proSessionRevoked(iat, membership, iatMs) {
   const after = membership?.sessionsValidAfter ? new Date(membership.sessionsValidAfter).getTime() : NaN;
   if (!Number.isFinite(after)) return false;
+  // R47: compared to the millisecond when the token carries iat_ms; a token without it is placed at the START of its second (revoked if in doubt)
+  if (Number.isFinite(iatMs)) return /** @type {number} */ (iatMs) < after;
   if (!Number.isFinite(iat)) return true;
-  return /** @type {number} */ (iat) < Math.floor(after / 1000);
+  return /** @type {number} */ (iat) * 1000 < after;
 }
 
 /** Ends every session of a professional (server-side logout, password reset). @param {string} userId @param {any} [dbh] */
@@ -710,7 +717,7 @@ export function requireProAuth(handler) {
       logger.error({ err: { name: err?.name } }, '[Auth] pro membership check failed');
       return res.status(503).json({ error: 'Service temporairement indisponible' });
     }
-    if (membership && proSessionRevoked(/** @type {any} */ (auth).iat, membership)) {
+    if (membership && proSessionRevoked(/** @type {any} */ (auth).iat, membership, /** @type {any} */ (auth).iatMs)) {
       return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.', code: 'SESSION_REVOKED' });
     }
     // R41-K F1: the 12 h maximum holds at access time too, not only at refresh (tokens issued before the cap; older tokens fall back to iat)

@@ -106,7 +106,8 @@ describe('pro enrolment (POST /api/pro/mfa-setup)', () => {
     const auth = await import('../../api/_utils/auth.js');
     const claims = auth.verifyProToken(r.body.token);
     expect(claims.mfa).toBe(true);
-    expect(auth.proSessionRevoked(claims.iat, { sessionsValidAfter: state.updates[0].sessionsValidAfter })).toBe(false);
+    expect(typeof claims.iatMs).toBe('number');   // R47: millisecond issue instant
+    expect(auth.proSessionRevoked(claims.iat, { sessionsValidAfter: state.updates[0].sessionsValidAfter }, claims.iatMs)).toBe(false);
   });
 });
 
