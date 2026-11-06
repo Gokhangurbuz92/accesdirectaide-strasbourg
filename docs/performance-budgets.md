@@ -54,3 +54,39 @@ Site construit + API réelle (`scripts/lab-server.mjs`, `LAB_LOAD_FORWARDED=1`, 
 synthétiques. 150 utilisateurs pendant 60 s : 59.9 requêtes/s, 3 600 requêtes, tout dans le budget (p95 : santé 5 ms, annuaire 10 ms, structure 9 ms,
 aides 10 ms, démarches 9 ms, recherche 9 ms ; 0 erreur, 0 429). Sans `LAB_LOAD_FORWARDED`, le même essai répond 429 sur les pages limitées par adresse
 (un seul client), ce qui est le comportement attendu.
+
+## Mesure du 06/11/2026 (R47) — candidat intégré, LAB jetable, données « taille Production »
+
+Site construit + API réelle (`scripts/lab-server.mjs`, `LAB_LOAD_FORWARDED=1`, port 5195), PostgreSQL 17 local au schéma 0042, données synthétiques
+(`e2e-r47/quality/seed.mjs` + `load-accounts.mjs`) : 1 602 structures (Production : 1 639), 6 001 rendez-vous dont 2 000 dans l'agenda d'une même
+organisation, 2 002 personnes, 40 aides, 20 démarches. Script : `node e2e-r47/quality/load.mjs` (même méthode que `load-budget.mjs`, étendue aux
+parcours connectés : chaque utilisateur virtuel a sa propre adresse et sa propre session). Un seul processus Node, une seule machine (Mac mini partagé).
+
+| Parcours | 150 utilisateurs p50 / p95 / p99 (ms) | 600 utilisateurs p50 / p95 / p99 (ms) | Budget p95 |
+|---|---|---|---|
+| accueil (page) | 2 / 3 / 4 | 2 / 5 / 23 | 400 |
+| accueil : actualités | 3 / 7 / 16 | 35 / 163 / 226 | 600 |
+| recherche | 124 / 259 / 310 | 481 / **1 327** / 1 654 | 900 |
+| annuaire (12) | 6 / 11 / 31 | 71 / 275 / 361 | 600 |
+| annuaire par code postal | 5 / 13 / 40 | 62 / 262 / 352 | 600 |
+| code postal → communes | 2 / 4 / 7 | 2 / 6 / 27 | 300 |
+| connexion citoyenne | 32 / 52 / 73 | 101 / 313 / 440 | 900 |
+| créneaux (14 jours) | 7 / 16 / 77 | 233 / **1 085** / 1 305 | 800 |
+| agenda pro (semaine, 2 000 rdv) | 6 / 12 / 33 | 98 / 386 / 502 | 800 |
+| tableau de bord pro | 6 / 10 / 29 | 88 / 398 / 515 | 800 |
+| état du service (public) | 2 / 4 / 6 | 2 / 8 / 40 | 300 |
+| débit total, erreurs, 429 | 56,4 req/s, 0, 0 | 211,6 req/s, 0, 0 | — |
+| serveur (CPU moyen / max, RSS max) | 31 % / 66 %, 359 Mo | 97 % / 157 %, 564 Mo (254 Mo 20 s après) | — |
+
+Administration (5 opérateurs pendant 60 s) : tableau de bord p50 183 / p95 193 ms, national 6 / 14 ms, état des fournisseurs 5 / 9 ms ; 0 erreur, 0 429.
+
+À 150 utilisateurs tout est dans le budget. À 600 utilisateurs, le processus unique est saturé (97 % d'un cœur en moyenne) : la recherche et le calcul
+des créneaux, les deux parcours les plus coûteux en calcul, dépassent leur budget ; c'est une limite d'une instance, pas une requête lente (seuls : 30 à
+50 ms et 5 à 8 ms). L'hébergement exécute les requêtes en parallèle sur plusieurs instances : le staging doit le confirmer (§ 8 de `docs/deployment.md`).
+Aucune croissance de mémoire durable (retour à 254 Mo après la charge).
+
+Défaut corrigé par cette mesure : le tableau de bord de l'administration comptait les doublons possibles de l'annuaire par une auto-jointure de toutes les
+structures entre elles (1,3 million de paires à 1 600 fiches) : ~340 ms à chaque ouverture, et, avec des noms très proches, jusqu'à 650 ms qui
+ralentissaient toutes les autres pages pendant la charge. La recherche des paires passe par cinq jointures d'égalité (même résultat, prouvé par
+`tests/integration/r47-duplicate-scan-db.test.js`) : ~180 ms. Le reste du coût (similarité des noms dans un même code postal) demanderait un index
+trigramme, donc une migration : non fait (pas nécessaire au budget).

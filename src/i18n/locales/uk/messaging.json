@@ -122,5 +122,7 @@
  "transparency.uploaded_by": "завантажено:",
  "transparency.uploaded_on": "{{date}}",
  "chat.attachment_size": "{{name}} ({{size}} КБ)",
- "chat.attachment_remove": "Прибрати файл"
+ "chat.attachment_remove": "Прибрати файл",
+ "sharing.transparency_failed": "Не вдалося прочитати перебіг цієї справи.",
+ "sharing.action_failed": "Не вдалося виконати дію. Спробуйте ще раз."
 }

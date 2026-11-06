@@ -16,5 +16,17 @@
  "form.errors.min_length": "{{label}}: Geben Sie mindestens {{min}} Zeichen ein.",
  "form.errors.https_url": "{{label}}: Geben Sie eine vollständige Adresse ein, die mit https:// beginnt, zum Beispiel https://www.service-public.fr.",
  "form.errors.choose": "{{label}}: Wählen Sie eine Option aus der Liste.",
- "form.status.saving": "Wird gespeichert…"
+ "form.status.saving": "Wird gespeichert…",
+ "password.rule": "Mindestens 8 Zeichen, darunter ein Großbuchstabe, ein Kleinbuchstabe und eine Ziffer.",
+ "password.problem.length": "mindestens 8 Zeichen",
+ "password.problem.upper": "1 Großbuchstabe erforderlich",
+ "password.problem.lower": "1 Kleinbuchstabe erforderlich",
+ "password.problem.digit": "1 Ziffer erforderlich",
+ "password.too_weak": "Passwort zu schwach: {{problems}}.",
+ "server.dossier_not_found": "Akte nicht gefunden.",
+ "server.conversation_not_found": "Unterhaltung nicht gefunden.",
+ "server.appointment_not_found": "Termin nicht gefunden.",
+ "server.not_found": "Nicht gefunden: Diese Seite oder dieses Element existiert nicht (mehr).",
+ "server.share_not_found": "Diese Akte wurde nicht gefunden oder ist nicht mit Ihrem Konto verknüpft.",
+ "server.too_many": "Zu viele Anfragen in kurzer Zeit: Warten Sie eine Minute und versuchen Sie es dann erneut."
 }

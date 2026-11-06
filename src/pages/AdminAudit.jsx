@@ -13,7 +13,7 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 /**
  * AdminAudit
@@ -115,7 +115,7 @@ export default function AdminAudit() {
                         <CardContent className="p-8 text-center">
                             <AlertCircle className="mx-auto mb-3 h-10 w-10 text-red-400" />
                             <p className="text-slate-600">{t('admin:audit.load_error', 'Erreur de chargement')}</p>
-                            <p className="mt-1 text-sm text-slate-400">{error.message}</p>
+                            <p className="mt-1 text-sm text-slate-600">{error.message}</p>
                         </CardContent>
                     </Card>
                 ) : logs.length === 0 ? (
@@ -144,12 +144,12 @@ export default function AdminAudit() {
                                                 <ThumbsDown className="h-5 w-5" />
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">
                                                     {t('admin:audit.relevance_failure', 'Échec de pertinence')}
                                                 </p>
-                                                <p className="flex items-center gap-1 text-xs text-slate-400">
+                                                <p className="flex items-center gap-1 text-xs text-slate-600">
                                                     <Clock className="h-3 w-3" />
-                                                    {new Date(log.createdAt).toLocaleString('fr-FR')}
+                                                    {formatDateTime(log.createdAt)}
                                                 </p>
                                             </div>
                                         </div>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState } from 'react';
-import { passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordMessageText } from '@/lib/passwordPolicyText';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -43,7 +44,7 @@ export default function ResetPassword() {
         }
         const problems = passwordProblems(password);   // R21: the shared rule, the same sentence as the server
         if (problems.length) {
-             setStatus({ type: 'error', message: passwordMessage(problems) });
+             setStatus({ type: 'error', message: passwordMessageText(problems) });
              return;
         }
 

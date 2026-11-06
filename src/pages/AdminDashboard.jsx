@@ -17,7 +17,7 @@ import {
     Clock,
     Shield,
 } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useT, formatDateTime, formatTime } from '@/i18n';
 
 /**
  * AdminDashboard — « À traiter » (owner LAB audit, 2026-10-25).
@@ -39,7 +39,7 @@ function VeilleSummary() {
     return (
         <Card data-testid="admin-veille-summary"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
             <p className="text-slate-800">
-                <strong>{t('admin:dashboard.veille.title', 'Veille automatique')}</strong> — {data.status?.paused?.paused ? t('admin:dashboard.veille.paused', 'en pause. ') : ''}{last ? t('admin:dashboard.veille.last', 'dernière le {{date}} : {{added}} publiées ou ajoutées, {{updated}} mises à jour, {{withdrawn}} retirées.', { date: new Date(last.startedAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Paris' }), added: n(/:PUBLISHED$/) + n(/:CREATED$/), updated: n(/:(UPDATED|CORRECTED)$/), withdrawn: n(/:WITHDRAWN$/) }) : t('admin:dashboard.veille.none', 'pas encore de veille : la première a lieu cette nuit à 3 h 17.')}
+                <strong>{t('admin:dashboard.veille.title', 'Veille automatique')}</strong> — {data.status?.paused?.paused ? t('admin:dashboard.veille.paused', 'en pause. ') : ''}{last ? t('admin:dashboard.veille.last', 'dernière le {{date}} : {{added}} publiées ou ajoutées, {{updated}} mises à jour, {{withdrawn}} retirées.', { date: formatDateTime(last.startedAt, { dateStyle: 'medium', timeStyle: 'short'}), added: n(/:PUBLISHED$/) + n(/:CREATED$/), updated: n(/:(UPDATED|CORRECTED)$/), withdrawn: n(/:WITHDRAWN$/) }) : t('admin:dashboard.veille.none', 'pas encore de veille : la première a lieu cette nuit à 3 h 17.')}
                 {' '}{t('admin:dashboard.veille.self_check', 'Les fiches se vérifient seules ; vous n’avez rien à valider.')}{alerts.length ? ` ${t('admin:dashboard.veille.alerts', '{{n}} alerte(s) à lire.', { n: alerts.length })}` : ''}
             </p>
             <Link to="/admin/veille" className="text-sm font-medium text-blue-700 underline underline-offset-2">{t('admin:dashboard.veille.link', 'Voir ce que le système a fait')}</Link>
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
     const activity = inner.activity || {};
     const rag = inner.rag || { total: 0, indexed: 0, missing: 0 };
     const tasks = inner.tasks || {};
-    const loadedAt = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('fr-FR') : '—';
+    const loadedAt = dataUpdatedAt ? formatTime(dataUpdatedAt) : '—';
     const n = (v) => (v == null ? null : Number(v));
     const sum = (...vals) => (vals.some((v) => v == null) ? null : vals.reduce((a, v) => a + Number(v), 0));
 
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
                                                             </div>
                                                         </div>
                                                         <span className="text-xs text-slate-600">
-                                                            {cron.startedAt ? new Date(cron.startedAt).toLocaleString('fr-FR') : '—'}
+                                                            {cron.startedAt ? formatDateTime(cron.startedAt) : '—'}
                                                         </span>
                                                     </div>
                                                 ))
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
                                                             </div>
                                                         </div>
                                                         <span className="text-xs text-slate-600">
-                                                            {log.createdAt ? new Date(log.createdAt).toLocaleString('fr-FR') : '—'}
+                                                            {log.createdAt ? formatDateTime(log.createdAt) : '—'}
                                                         </span>
                                                     </div>
                                                 ))

@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useT } from '@/i18n';
 // R44 (A5): field-level errors (aria-invalid, aria-describedby, focused summary) — the R43 pattern
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
@@ -47,7 +48,7 @@ export default function AuthResetPassword() {
     /** @type {Record<string, string>} */
     const errs = {};
     if (!password) errs['reset-password'] = requiredMessage(msgT, t('account:fields.new_password', 'Nouveau mot de passe'));
-    else if (passwordProblems(password).length) errs['reset-password'] = passwordMessage(passwordProblems(password));   // R18: the sign-up rule (the server applies it to the reset too)
+    else if (passwordProblems(password).length) errs['reset-password'] = passwordMessageText(passwordProblems(password));   // R18: the sign-up rule (the server applies it to the reset too)
     if (!confirmPassword) errs['reset-password-confirm'] = requiredMessage(msgT, t('account:fields.confirm_password', 'Confirmer le mot de passe'));
     else if (password !== confirmPassword) errs['reset-password-confirm'] = t('account:reset.mismatch', 'Les mots de passe ne correspondent pas.');
     if (!check(errs)) return;
@@ -116,7 +117,7 @@ export default function AuthResetPassword() {
                 onChange={(event) => { setPassword(event.target.value); clear('reset-password'); }}
                 {...fieldA11y('reset-password', errors, 'reset-password-rule')}
               />
-              <p id="reset-password-rule" className="text-xs text-slate-700">{PASSWORD_RULE}</p>
+              <p id="reset-password-rule" className="text-xs text-slate-700">{passwordRuleText()}</p>
               <FieldError field="reset-password" errors={errors} />
             </div>
 

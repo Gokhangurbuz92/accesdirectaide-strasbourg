@@ -46,7 +46,7 @@ export default function AdminSubmissions() {
           </li>))}{d.loaded && !d.reports.length ? <li data-testid="admin-submissions-empty">{t('admin:k5.submissions.none_m', 'Aucun.')}</li> : null}</ul>
       </section>
       <section className="space-y-2" aria-labelledby="sub-s"><h2 id="sub-s" className="font-semibold">{t('admin:k5.submissions.suggestions_heading', 'Suggestions de structures')}</h2>
-        <ul className="space-y-1 text-sm">{d.suggestions.map((s) => <li key={s.id} data-testid="admin-submission-suggestion">{s.structureName} — {s.city} — {SUGGESTION[s.status] || s.status}</li>)}{d.suggestionsFailed ? <li role="alert" data-testid="admin-suggestions-problem">{t('admin:k5.submissions.suggestions_failed', 'Les suggestions n’ont pas pu être chargées.')}</li> : d.loaded && !d.suggestions.length ? <li>{t('admin:k5.submissions.none_f', 'Aucune.')}</li> : null}</ul>
+        <ul className="space-y-1 text-sm">{d.suggestions.map((s) => <li key={s.id} data-testid="admin-submission-suggestion">{s.structureName} — {s.city} — {SUGGESTION[s.status] || s.status}</li>)}{d.suggestionsFailed ? <li data-testid="admin-suggestions-problem"><span role="alert">{t('admin:k5.submissions.suggestions_failed', 'Les suggestions n’ont pas pu être chargées.')}</span></li> : d.loaded && !d.suggestions.length ? <li>{t('admin:k5.submissions.none_f', 'Aucune.')}</li> : null}</ul>
         <p className="text-xs text-slate-700">{t('admin:k5.submissions.never_published', 'Une suggestion n’est jamais publiée telle quelle : la fiche passe par la vérification (source officielle, MFA).')}</p>
       </section>
     </div>

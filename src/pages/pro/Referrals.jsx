@@ -7,10 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { label } from '@/lib/caseLabels';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
-const when = (d) => (d ? new Date(d).toLocaleString('fr-FR') : '');
+const when = (d) => (d ? formatDateTime(d) : '');
 
 /**
  * PKG-4 / E06 R09 R10 R11 — Orientations (/pro/orientations, /pro/orientations/:id): the organization's inbox of received referrals and the referrals it sent. The server

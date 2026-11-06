@@ -7,13 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { label } from '@/lib/caseLabels';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { chooseMessage, fieldA11y, minLengthMessage, requiredMessage } from '@/lib/fieldErrors';
 
 const msgOf = (e, fallback) => e?.payload?.message || fallback;
-const when = (d) => (d ? new Date(d).toLocaleString('fr-FR') : '');
+const when = (d) => (d ? formatDateTime(d) : '');
 
 /**
  * PKG-4 / R03 R06 R07 R08 R09 R11 — Dossiers suivis (/pro/dossiers, /pro/dossiers/:id). Every rule (grant, membership, assignment, visibility) is enforced by

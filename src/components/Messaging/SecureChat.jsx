@@ -4,7 +4,7 @@ import { Send, ShieldCheck, Lock, Clock, AlertCircle, Loader2 } from 'lucide-rea
 import { cryptoE2EE } from '@/lib/crypto-messaging.js';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { useT } from '@/i18n';
+import { useT, formatTime } from '@/i18n';
 /**
  * SecureChat
  * Messagerie asynchrone chiffrée côté navigateur.
@@ -164,7 +164,7 @@ export default function SecureChat({ shareId, senderId, receiverId, authToken })
                                 </p>
                                 <div className={`text-[9px] mt-2 flex items-center gap-1 font-bold uppercase tracking-tight ${msg.senderId === senderId ? 'text-indigo-200' : 'text-slate-400'}`}>
                                     <Clock size={10} />
-                                    {new Date(msg.createdAt).toLocaleTimeString('fr-FR', {
+                                    {formatTime(msg.createdAt, {
                                         hour: '2-digit',
                                         minute: '2-digit',
                                     })}

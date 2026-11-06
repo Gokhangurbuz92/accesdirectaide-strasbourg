@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import { apiClient } from '@/api/client';
 import { ensureCsrfHeaders } from '@/lib/csrf';
@@ -26,6 +26,9 @@ export default function AdminLogin() {
     const [otpauth, setOtpauth] = useState('');
     const [problem, setProblem] = useState('');
     const navigate = useNavigate();
+    const [params] = useSearchParams();
+    // R47: opened by a protected administration page without an administrator session (signed out, or signed in as a citizen or a professional)
+    const restricted = params.get('reason') === 'restricted';
 
     const handleLogin = async (/** @type {{ preventDefault: () => void; }} */ e) => {
         e.preventDefault(); setProblem('');
@@ -65,6 +68,7 @@ export default function AdminLogin() {
                     <CardTitle as="h1" className="text-center">{t('admin:login.title', 'Administration')}</CardTitle>
                 </CardHeader>
                 <CardContent>
+                    {restricted && step === 'credentials' ? <p className="mb-3 rounded border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800" data-testid="admin-login-restricted">{t('admin:login.restricted', 'Cette page est réservée à l’équipe d’administration d’Accès Direct Aide. Connectez-vous avec votre compte administrateur ; un compte citoyen ou professionnel n’y donne pas accès.')}</p> : null}
                     {problem ? <p role="alert" className="mb-3 text-red-800" data-testid="admin-login-problem">{problem}</p> : null}
                     {step === 'credentials' ? (
                         <form onSubmit={handleLogin} className="space-y-4">

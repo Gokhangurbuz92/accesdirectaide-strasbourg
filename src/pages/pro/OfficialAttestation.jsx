@@ -10,6 +10,7 @@ import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { Printer, ArrowLeft, Info } from 'lucide-react';
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import { DATE_SHORT, formatDate } from '@/i18n';
 
 /**
  * Printable dossier RECAP for the professional who holds access — Route: /pro/attestation/:shareId (data: /api/pro/attestation-data).
@@ -112,7 +113,7 @@ export default function OfficialAttestation() {
 
                     <dl className="grid grid-cols-2 gap-6 py-6 border-y border-slate-200 mb-8">
                         <div><dt className="text-xs font-bold text-slate-600 uppercase mb-1">{t('pro:attestation.reference', 'Référence')}</dt><dd className="text-sm font-bold text-slate-900">{att.reference}</dd></div>
-                        <div><dt className="text-xs font-bold text-slate-600 uppercase mb-1">{t('pro:attestation.valid_until', 'Partage valable jusqu\'au')}</dt><dd className="text-sm font-bold text-slate-900">{att.expiresAt ? new Date(att.expiresAt).toLocaleDateString('fr-FR') : t('pro:attestation.not_specified', 'Non précisé')}</dd></div>
+                        <div><dt className="text-xs font-bold text-slate-600 uppercase mb-1">{t('pro:attestation.valid_until', 'Partage valable jusqu\'au')}</dt><dd className="text-sm font-bold text-slate-900">{att.expiresAt ? formatDate(att.expiresAt, DATE_SHORT) : t('pro:attestation.not_specified', 'Non précisé')}</dd></div>
                         <div><dt className="text-xs font-bold text-slate-600 uppercase mb-1">{t('pro:attestation.prepared_by', 'Préparé par')}</dt><dd className="text-sm text-slate-900">{att.professional?.name} ({att.professional?.role})</dd></div>
                         <div><dt className="text-xs font-bold text-slate-600 uppercase mb-1">{t('pro:attestation.signature', 'Signature')}</dt><dd className="text-sm text-slate-900">{t('pro:attestation.no_signature', 'Aucune (document non signé)')}</dd></div>
                     </dl>

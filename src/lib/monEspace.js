@@ -1,4 +1,5 @@
 // PKG-2 / K2 — labels shared by the Mon Espace screens. A Parcours status is the PERSON's own tracking: ADA never records or implies a decision of an organisation.
+import { formatDate as formatInLanguage } from '@/i18n';
 export const PARCOURS_STATUS_LABELS = Object.freeze({
   NOT_STARTED: 'À commencer',
   IN_PROGRESS: 'En cours',
@@ -20,7 +21,7 @@ export const COFFRE_UPLOAD_CATEGORIES = Object.freeze(Object.keys(COFFRE_CATEGOR
 
 export const HISTORY_KIND_LABELS = Object.freeze({ search: 'Recherche', aide: 'Aide consultée', demarche: 'Démarche consultée', structure: 'Structure consultée', diagnostic: 'Simulation', plan: 'Plan d’action' });
 export const formatBytes = (/** @type {number} */ n) => (n >= 1024 * 1024 ? `${(n / (1024 * 1024)).toFixed(1).replace('.', ',')} Mo` : `${Math.max(1, Math.round(n / 1024))} Ko`);
-export const formatDate = (/** @type {string | Date | null} */ d) => (d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
+export const formatDate = (/** @type {string | Date | null} */ d) => (d ? formatInLanguage(d, { day: 'numeric', month: 'long', year: 'numeric' }) : '');
 /** Reads a File as base64 (no data: prefix). @param {Blob} file @returns {Promise<string>} */
 export function fileToBase64(file) {
   return new Promise((resolve, reject) => {

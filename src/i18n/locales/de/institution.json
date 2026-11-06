@@ -65,5 +65,10 @@
  "space.telecharger_csv": "Herunterladen (CSV)",
  "space.territoire": "— Gebiet:",
  "space.vos_autres_sessions_seront": "Ihre anderen Sitzungen werden beendet.",
- "space.vous_etes_connecte_avec": "Sie sind mit einem vorläufigen Passwort von ADA angemeldet. Wählen Sie Ihr eigenes Passwort, um die Statistiken zu sehen."
+ "space.vous_etes_connecte_avec": "Sie sind mit einem vorläufigen Passwort von ADA angemeldet. Wählen Sie Ihr eigenes Passwort, um die Statistiken zu sehen.",
+ "space.totals_note": "Summe nur der veröffentlichten Zellen",
+ "space.method.sources": "Termine und Vermittlungen, die verifizierte Einrichtungen auf der Plattform erfasst haben (keine Schätzung, keine externen Daten).",
+ "space.method.unmet": "Vermittlungen, auf die die empfangende Einrichtung mit « keine Kapazität » oder « außerhalb unseres Bereichs » geantwortet hat.",
+ "space.method.limits": "Gezählt werden nur Anfragen über die Plattform; eine Gemeinde erscheint erst ab 3 verifizierten Einrichtungen; jeder Wert unter 5 wird ausgeblendet, und ein weiterer Wert derselben Spalte ebenfalls, wenn er sonst der einzige ausgeblendete wäre; die Summen addieren nur veröffentlichte Werte.",
+ "space.method.periods": "Nur vollständige Kalenderquartale ohne Überschneidung (kein Monat, kein Jahr, kein freier Zeitraum: zwei verschachtelte Zeiträume würden einen ausgeblendeten Wert erkennbar machen)."
 }

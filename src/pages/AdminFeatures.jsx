@@ -22,6 +22,24 @@ import i18n, { useT } from '@/i18n';
  *
  * Les flags sont en lecture seule (pilotés par variables d'environnement).
  */
+// R47: the flags' names and descriptions in the interface language, by flag id (api/_handlers/admin/features.js sends them in French; an unknown id keeps it)
+const flagLabels = (/** @type {(k: string, d: string) => string} */ t) => /** @type {Record<string, string>} */ ({
+  AI_AGENT: t('admin:features.flag.ai_agent.label', 'Agent conversationnel (IA)'),
+  RAG: t('admin:features.flag.rag.label', 'Recherche Sémantique (RAG)'),
+  OPENFISCA: t('admin:features.flag.openfisca.label', 'Calculateur OpenFisca'),
+  CACHE: t('admin:features.flag.cache.label', 'Cache Distribué'),
+  MAINTENANCE: t('admin:features.flag.maintenance.label', 'Mode Maintenance'),
+  AUDIT_LOG: t('admin:features.flag.audit_log.label', 'Audit RGPD'),
+});
+const flagDescriptions = (/** @type {(k: string, d: string) => string} */ t) => /** @type {Record<string, string>} */ ({
+  AI_AGENT: t('admin:features.flag.ai_agent.description', 'Active l’assistant conversationnel ; aucun fournisseur d’IA en ligne n’est approuvé pour la production (modèle local du LAB seulement).'),
+  RAG: t('admin:features.flag.rag.description', 'Utilise pgvector pour sourcer les réponses de l\'IA.'),
+  OPENFISCA: t('admin:features.flag.openfisca.description', 'Interroge un moteur OpenFisca pour les simulations ; sans moteur déployé, le résultat reste une estimation non officielle.'),
+  CACHE: t('admin:features.flag.cache.description', 'Réduit les coûts API en mémorisant les calculs.'),
+  MAINTENANCE: t('admin:features.flag.maintenance.description', 'Chaque page affiche la page de maintenance (MAINTENANCE_MODE=1).'),
+  AUDIT_LOG: t('admin:features.flag.audit_log.description', 'Journalise les accès aux données sensibles.'),
+});
+
 export default function AdminFeatures() {
     const { t } = useT('admin');
     const { data, isLoading, error } = useQuery({
@@ -85,12 +103,12 @@ export default function AdminFeatures() {
                             >
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-bold text-slate-800">{flag.label}</span>
+                                        <span className="font-bold text-slate-800">{flagLabels(t)[flag.id] || flag.label}</span>
                                         <code className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">
                                             {flag.id}
                                         </code>
                                     </div>
-                                    <p className="text-sm text-slate-600 max-w-md">{flag.description}</p>
+                                    <p className="text-sm text-slate-600 max-w-md">{flagDescriptions(t)[flag.id] || flag.description}</p>
                                 </div>
 
                                 <div className="flex items-center gap-3">
@@ -127,7 +145,7 @@ export default function AdminFeatures() {
                         <div className="bg-slate-900 rounded-lg p-4 text-sm font-mono text-slate-300 space-y-1">
                             {flags.map((/** @type {{ enabled: string | number, id: string | number, label: string | number }} */ flag) => (
                                 <div key={flag.id}>
-                                    <span className="text-slate-400"># {flag.label}</span>
+                                    <span className="text-slate-400"># {flagLabels(t)[flag.id] || flag.label}</span>
                                     <br />
                                     <span className="text-emerald-400">ENABLE_{flag.id}</span>
                                     <span className="text-slate-400">=</span>

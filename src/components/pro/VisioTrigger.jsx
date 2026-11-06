@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { getCsrfHeaders } from '@/lib/csrf';
 import VisioWindow from '@/components/Visio/VisioWindow';
 
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 /**
  * PKG-3 / B07 — the structure's video controls for a VIDEO appointment: validate / withdraw video, and join (moderator) inside the time window.
  * Every rule is enforced by POST /api/pro/appointments/visio; this component only shows the server's answer. No link is ever shown, copied or e-mailed.
@@ -34,7 +34,7 @@ export default function VisioTrigger({ appointment, onChange }) {
     <div className="space-y-2" data-testid="pro-visio">
       {!video.service?.available ? <p className="text-sm text-amber-900" data-testid="pro-visio-disabled">{t('pro:visio.la_visio_n_est_pas', "La visio n’est pas activée sur ce service pour le moment.")}</p> : null}
       {video.service?.sandbox ? <p className="text-sm text-amber-900" data-testid="pro-visio-sandbox">{t('pro:visio.environnement_de_test_la_connexion', "Environnement de test : la connexion au fournisseur de visio n’est pas vérifiée ici.")}</p> : null}
-      <p className="text-sm text-slate-700" data-testid="pro-visio-state">{video.approved ? 'Visio validée' : 'Visio à valider'} · {video.citizenConsent ? 'accord de la personne enregistré' : 'accord de la personne manquant'}{video.opensAt ? ` · salle ouverte à partir du ${new Date(video.opensAt).toLocaleString('fr-FR')}` : ''}</p>
+      <p className="text-sm text-slate-700" data-testid="pro-visio-state">{video.approved ? 'Visio validée' : 'Visio à valider'} · {video.citizenConsent ? 'accord de la personne enregistré' : 'accord de la personne manquant'}{video.opensAt ? ` · salle ouverte à partir du ${formatDateTime(video.opensAt)}` : ''}</p>
       <div className="flex flex-wrap gap-2">
         {!video.approved ? <Button type="button" size="sm" disabled={busy || !video.service?.available} onClick={() => call('approve')} data-testid="pro-visio-approve">{busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Video className="mr-1 h-4 w-4" />}{t('pro:visio.valider_la_visio', "Valider la visio")}</Button>
           : <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => call('revoke')} data-testid="pro-visio-revoke">{t('pro:visio.retirer_la_validation', "Retirer la validation")}</Button>}

@@ -62,7 +62,7 @@ export default function AdminGuard(/** @type {Record<string, string | number | b
 
     if (loading) return <PageLoader />;
     if (unavailable) return <ServiceUnavailable area={t('admin:layout.area', 'L’administration')} />;
-    if (!allowed) return <Navigate to="/admin/login" replace />;
+    if (!allowed) return <Navigate to="/admin/login?reason=restricted" replace />;   // R47: the sign-in page says why it is shown
 
     return (
         <>

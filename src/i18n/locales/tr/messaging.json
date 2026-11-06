@@ -122,5 +122,7 @@
  "transparency.uploaded_by": "yükleyen:",
  "transparency.uploaded_on": "{{date}} tarihinde",
  "chat.attachment_size": "{{name}} ({{size}} KB)",
- "chat.attachment_remove": "Dosyayı kaldır"
+ "chat.attachment_remove": "Dosyayı kaldır",
+ "sharing.transparency_failed": "Bu dosyanın takibi okunamadı.",
+ "sharing.action_failed": "İşlem yapılamadı. Tekrar deneyin."
 }

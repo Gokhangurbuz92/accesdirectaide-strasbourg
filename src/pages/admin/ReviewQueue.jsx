@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { Loader2, RefreshCw, Wrench } from 'lucide-react';
 
 import SEO from '@/components/SEO';
@@ -11,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_FILTERS = {
@@ -36,7 +34,7 @@ function formatDate(value) {
   if (!value) return '-';
   const date = new Date(String(value));
   if (Number.isNaN(date.getTime())) return '-';
-  return format(date, 'dd/MM/yyyy HH:mm', { locale: fr });
+  return formatDateTime(date);
 }
 
 /** @param {string} severity */

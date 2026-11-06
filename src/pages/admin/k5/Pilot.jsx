@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { downloadText, explain, useK5 } from './helpers.js';
 import { Field, Status } from './ui.jsx';
-import { useT } from '@/i18n';
+import { useT, DATE_SHORT, formatDate, formatDateTime } from '@/i18n';
+import { translatedVocab, pilotKind, pilotReason } from './pilotVocab';
 
 const pc = (v) => (v === null || v === undefined ? '—' : `${String(v).replace('.', ',')} %`);
 const empty = { participantCode: '', journeyCode: 'J1_AIDE_LOGEMENT', environment: 'PRODUCTION', deviceType: 'TELEPHONE', assistiveTech: 'AUCUNE', outcome: 'REUSSI', assistance: 'AUCUNE',
@@ -23,7 +24,7 @@ function Select({ id, label, value, onChange, options }) {
  */
 export default function AdminPilot() {
   const { t } = useT('admin');
-  const k = useK5('pilot'); const d = k.data; const v = d?.vocab || {};
+  const k = useK5('pilot'); const d = k.data; const v = translatedVocab(d?.vocab || {}, t);   // R47: the codes' labels in the interface language
   const [s, setS] = useState(empty); const set = (x, val) => setS((o) => ({ ...o, [x]: val }));
   const [problem, setProblem] = useState('');
   const draw = async () => { setProblem(''); try { const out = await apiClient.admin.k5('pilot?code=new'); set('participantCode', out.participantCode); } catch (e) { setProblem(explain(e)); } };
@@ -37,9 +38,9 @@ export default function AdminPilot() {
 
       {d ? (
         <section className="space-y-2 rounded border p-3" aria-labelledby="pi-tech" data-testid="pilot-technical">
-          <h2 id="pi-tech" className="font-semibold">{t('admin:k5.pilot.technical', 'Indicateurs techniques (mesurés le {{date}})', { date: new Date(d.technical.measuredAt).toLocaleString('fr-FR') })}</h2>
+          <h2 id="pi-tech" className="font-semibold">{t('admin:k5.pilot.technical', 'Indicateurs techniques (mesurés le {{date}})', { date: formatDateTime(d.technical.measuredAt) })}</h2>
           <table className="w-full text-sm"><thead><tr className="text-left"><th>{t('admin:k5.pilot.col.content', 'Contenu')}</th><th>{t('admin:k5.pilot.col.visible', 'Publiés et vérifiés')}</th><th>{t('admin:k5.pilot.col.current', 'Vérifiés depuis moins de 90 jours')}</th><th>{t('admin:k5.pilot.col.held', 'Publiés mais retenus')}</th><th>{t('admin:k5.pilot.col.oldest', 'Vérification la plus ancienne')}</th></tr></thead>
-            <tbody>{d.technical.catalogue.map((c) => <tr key={c.kind}><td>{c.label}</td><td>{c.visible}</td><td>{c.current} ({pc(c.currentShare)})</td><td>{c.heldBack}</td><td>{t('admin:k5.pilot.days', '{{n}} j', { n: c.oldestVerificationDays ?? '—' })}</td></tr>)}</tbody></table>
+            <tbody>{d.technical.catalogue.map((c) => <tr key={c.kind}><td>{pilotKind(t, c.kind, c.label)}</td><td>{c.visible}</td><td>{c.current} ({pc(c.currentShare)})</td><td>{c.heldBack}</td><td>{t('admin:k5.pilot.days', '{{n}} j', { n: c.oldestVerificationDays ?? '—' })}</td></tr>)}</tbody></table>
           <p className="text-sm">{t('admin:k5.pilot.news_line', 'Actualités publiées après vérification : {{published}} (gardées non publiées : {{kept}}) — guides publiés : {{guides}}.', { published: d.technical.news.published, kept: d.technical.news.keptUnpublished, guides: d.technical.guides.published })}</p>
         </section>
       ) : null}
@@ -51,8 +52,8 @@ export default function AdminPilot() {
           <ul className="space-y-2 text-sm">
             {d.journeys.map((j) => (
               <li key={j.journeyCode} className="rounded border p-2">
-                <p className="font-medium">{j.label}</p>
-                {j.suppressed || !j.sessions ? <p>{t('admin:k5.pilot.suppressed', '{{sessions}} séance(s) — {{reason}}.', { sessions: j.sessions, reason: j.reason })}</p> : (
+                <p className="font-medium">{v.journeys?.[j.journeyCode] || j.label}</p>
+                {j.suppressed || !j.sessions ? <p>{t('admin:k5.pilot.suppressed', '{{sessions}} séance(s) — {{reason}}.', { sessions: j.sessions, reason: pilotReason(t, j.sessions, d.k, j.reason) })}</p> : (
                   <p>{t('admin:k5.pilot.journey_line', '{{sessions}} séances, {{participants}} participants — réussi sans aide {{alone}}, avec aide {{withHelp}}, échec ou abandon {{failure}} — durée médiane {{duration}} s — erreurs médianes {{errors}}', { sessions: j.sessions, participants: j.participants, alone: pc(j.successAlone), withHelp: pc(j.successWithHelp), failure: pc(j.failure), duration: j.medianDurationSeconds ?? '—', errors: j.medianErrors ?? '—' })}{j.clarity ? t('admin:k5.pilot.clarity', ' — clarté {{mean}}/5 ({{n}} réponses)', { mean: String(j.clarity.mean).replace('.', ','), n: j.clarity.n }) : ''}{j.accessibilityIssues.length ? t('admin:k5.pilot.issues', ' — difficultés : {{list}}', { list: j.accessibilityIssues.map((x) => `${x.label} (${x.suppressed ? t('admin:k5.pilot.below_k', 'moins de {{k}} séances', { k: d.k }) : x.sessions})`).join(', ') }) : ''}</p>
                 )}
               </li>
@@ -98,7 +99,7 @@ export default function AdminPilot() {
         <section className="space-y-2 rounded border p-3 text-sm" aria-labelledby="pi-recent">
           <h2 id="pi-recent" className="font-semibold">{t('admin:k5.pilot.recent', 'Dernières séances (corrections et retraits de consentement)')}</h2>
           <ul>{d.recent.map((r) => (
-            <li key={r.id} className="flex flex-wrap items-center gap-2">{new Date(r.conductedAt).toLocaleDateString('fr-FR')} — {r.participantCode} — {v.journeys?.[r.journeyCode]} — {v.outcomes?.[r.outcome]}
+            <li key={r.id} className="flex flex-wrap items-center gap-2">{formatDate(r.conductedAt, DATE_SHORT)} — {r.participantCode} — {v.journeys?.[r.journeyCode]} — {v.outcomes?.[r.outcome]}
               <Button size="sm" variant="outline" onClick={() => k.act({ action: 'delete', id: r.id }, t('admin:k5.pilot.deleted', 'Séance supprimée.'))}>{t('admin:k5.pilot.delete', 'Supprimer')}</Button>
               <Button size="sm" variant="outline" onClick={() => k.act({ action: 'delete', participantCode: r.participantCode }, (o) => t('admin:k5.pilot.withdrawn', '{{n}} séance(s) de {{code}} supprimée(s).', { n: o?.deleted ?? 0, code: r.participantCode }))}>{t('admin:k5.pilot.withdraw', 'Retrait du consentement')}</Button></li>
           ))}</ul>

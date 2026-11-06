@@ -8,9 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X, RefreshCw, ExternalLink } from 'lucide-react';
 import { toast } from "sonner";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { useT } from '@/i18n';
+import { useT, formatDate } from '@/i18n';
 
 export default function AdminInbox() {
     const { t } = useT('admin');
@@ -145,7 +143,7 @@ export default function AdminInbox() {
                                         />
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap">
-                                        {item.fetched_at && !Number.isNaN(new Date(item.fetched_at).getTime()) ? format(new Date(item.fetched_at), 'dd/MM HH:mm', { locale: fr }) : '—'}
+                                        {item.fetched_at && !Number.isNaN(new Date(item.fetched_at).getTime()) ? formatDate(item.fetched_at, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'}
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">{item.source_name}</Badge>

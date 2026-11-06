@@ -6,6 +6,7 @@ import { explain } from './helpers.js';
 import { Status } from './ui.jsx';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
+import { formatDateTime } from '@/i18n';
 
 // owner LAB audit (2026-10-25): each record's current decision is shown, so a pair whose record was already refused or put on hold is recognisable at once
 const STATE = (t, decision, held) => (decision === 'REJECTED' ? t('admin:k5.duplicates.state.rejected', ' — fiche refusée') : held ? t('admin:k5.duplicates.state.held', ' — fiche en attente') : decision === 'VERIFIED' ? t('admin:k5.duplicates.state.verified', ' — fiche vérifiée') : '');
@@ -85,7 +86,7 @@ export default function AdminDuplicates() {
           <Button disabled={busy || !form.decision} onClick={decide} data-testid="admin-duplicate-decide">{t('admin:k5.duplicates.save', 'Enregistrer la décision')}</Button>
           {pair.decisions?.length ? (
             <details><summary className="cursor-pointer text-blue-800">{t('admin:k5.duplicates.previous', 'Décisions précédentes pour cette paire')}</summary>
-              <ul className="text-sm">{pair.decisions.map((d) => <li key={d.id}>{new Date(d.decidedAt).toLocaleString('fr-FR')} — {d.decision === 'SAME_ENTITY' ? t('admin:k5.duplicates.prev_same', 'même organisation') : t('admin:k5.duplicates.prev_distinct', 'distinctes')} — {d.reviewerId}{d.supersededAt ? t('admin:k5.duplicates.superseded', ' (remplacée)') : ''}</li>)}</ul>
+              <ul className="text-sm">{pair.decisions.map((d) => <li key={d.id}>{formatDateTime(d.decidedAt)} — {d.decision === 'SAME_ENTITY' ? t('admin:k5.duplicates.prev_same', 'même organisation') : t('admin:k5.duplicates.prev_distinct', 'distinctes')} — {d.reviewerId}{d.supersededAt ? t('admin:k5.duplicates.superseded', ' (remplacée)') : ''}</li>)}</ul>
             </details>
           ) : null}
         </section>

@@ -5,6 +5,7 @@ import { Trans } from 'react-i18next';
 import { apiClient } from '@/api/client';
 import i18n, { useT } from '@/i18n';
 import { explain } from '@/pages/admin/k5/helpers.js';
+import { formatDateTime } from '@/i18n';
 
 /**
  * PKG-11 / A02 — versions of one catalogue record, read through the routed /api/admin/content-versions (A07). Before: it called /api/admin/versions (no such
@@ -31,7 +32,7 @@ export default function EntityHistory({ entityType, entityId, refreshKey }) {
       {problem ? <p role="alert" className="text-sm text-rose-800">{problem}</p> : null}
       {versions === null ? <p role="status" className="text-sm">{t('admin:history.loading', 'Chargement…')}</p> : versions.length === 0 ? <p className="text-sm">{t('admin:history.empty', 'Aucune version précédente.')}</p> : (
         <ul className="space-y-1 text-sm">
-          {versions.map((v) => <li key={v.id} data-testid="entity-history-item">{new Date(v.createdAt).toLocaleString('fr-FR')} — {v.reason} — {v.actor || '—'}</li>)}
+          {versions.map((v) => <li key={v.id} data-testid="entity-history-item">{formatDateTime(v.createdAt)} — {v.reason} — {v.actor || '—'}</li>)}
         </ul>
       )}
     </section>

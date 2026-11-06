@@ -1312,5 +1312,13 @@
  "siao.download": "Завантажити аркуш (JSON)",
  "siao.print": "Друкувати",
  "audit_log.previous_page": "Попередня сторінка",
- "audit_log.next_page": "Наступна сторінка"
+ "audit_log.next_page": "Наступна сторінка",
+ "register.submit": "Зареєструватися",
+ "breadcrumb.disponibilites": "Доступність",
+ "breadcrumb.agenda": "Розклад",
+ "breadcrumb.new": "Новий запис",
+ "breadcrumb.absences": "Відсутності",
+ "breadcrumb.attestation": "Офіційний підсумок",
+ "breadcrumb.parametres": "Налаштування",
+ "breadcrumb.mfa_settings": "Двофакторна автентифікація"
 }

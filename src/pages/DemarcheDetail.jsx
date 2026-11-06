@@ -231,7 +231,7 @@ export default function DemarcheDetail() {
         {/* Retour */}
         <Link
           to={createPageUrl('Demarches')}
-          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-6"
+          className="inline-flex items-center gap-2 text-slate-600 underline underline-offset-2 hover:text-blue-600 mb-6"
         >
           <ArrowLeft className="h-4 w-4 rtl-flip" />
           {t('demarches:detail.back', 'Retour aux démarches')}

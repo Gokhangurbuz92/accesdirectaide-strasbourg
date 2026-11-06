@@ -34,6 +34,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useT, formatDate } from '@/i18n';
+import { serverText } from '@/lib/serverText';
 
 /**
  * SharedDossier — Vue Pro d'un diagnostic partagé
@@ -106,7 +107,7 @@ export default function SharedDossier() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.error || data.message || t('pro:shared_dossier.not_found', 'Dossier introuvable.'));
+                setError(serverText(data.error || data.message, t('pro:shared_dossier.not_found', 'Dossier introuvable.')));
                 return;
             }
 

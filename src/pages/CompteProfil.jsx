@@ -10,7 +10,7 @@ import { AGE_BANDS } from '@/lib/ageBandOptions';
 import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import DevicePush from '@/components/DevicePush';
 import { FranceConnectLink } from '@/components/account/FranceConnect';
-import { LANGUAGES, formatDate, setLanguage, useLanguage, useT } from '@/i18n';
+import { LANGUAGES, SOURCE_LANGUAGE, formatDate, setLanguage, storedLanguage, useLanguage, useT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { fieldA11y, requiredMessage } from '@/lib/fieldErrors';
@@ -57,7 +57,9 @@ export default function CompteProfil() {
       const p = account.profile;
       applyAccountAccessibility(p.accessibilityPrefs);   // K0 / C04: the saved preferences apply to the whole site, not only to this form
       // R35 (C04): the account's language applies to the interface on every device the person signs in on
-      if (p.preferredLanguage && p.preferredLanguage !== uiLanguage) void setLanguage(p.preferredLanguage);
+      // R47: « fr » is also the column's default (a person who never chose), so it does not override a language this visitor chose in this browser — the
+      // profile used to switch an Arabic or English visitor to French on opening; a non-French account language still applies everywhere
+      if (p.preferredLanguage && p.preferredLanguage !== uiLanguage && (p.preferredLanguage !== SOURCE_LANGUAGE || !storedLanguage())) void setLanguage(p.preferredLanguage);
       setForm({ displayName: p.displayName || '', preferredLanguage: p.preferredLanguage || 'fr', ageBand: p.ageBand || '', departement: p.departement || '', prefillConsent: Boolean(p.prefillConsent), falc: Boolean(p.accessibilityPrefs?.falc), highContrast: Boolean(p.accessibilityPrefs?.highContrast), textScale: p.accessibilityPrefs?.textScale || 'normal' });
       setState({ loading: false, error: '', account });
     } catch (err) {

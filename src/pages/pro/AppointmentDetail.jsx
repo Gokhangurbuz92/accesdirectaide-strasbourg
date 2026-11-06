@@ -5,14 +5,15 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Loader2, ArrowLeft, Calendar, User, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import ChatWindow from '@/components/Messaging/ChatWindow';
 import VisioTrigger from '@/components/pro/VisioTrigger';
 
 import { getCsrfHeaders } from '@/lib/csrf';
 import { useProLabels } from '@/lib/proLabelsI18n';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
+
+/** R47: « 10 juillet 2026 à 16:00 » in French, the same date in the interface language otherwise — always on the Paris clock */
+const LONG_DATE_TIME = Object.freeze({ day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 export default function ProAppointmentDetail() {
     const { t } = useT('pro');
     const { noticeLine } = useProLabels();
@@ -100,7 +101,7 @@ export default function ProAppointmentDetail() {
     if (loadingAppt) return <SkeletonList count={3} variant="card" />;
     if (loadError) return (
         <div role="alert" data-testid="pro-appointment-load-error" className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-900">
-            <p className="font-semibold">{loadError}</p>
+            <h1 className="font-semibold">{loadError}</h1>
             <Button className="mt-4" variant="outline" onClick={() => { setLoadingAppt(true); setReloadKey((k) => k + 1); }}>{t('pro:appointment_detail.retry', 'Réessayer')}</Button>
         </div>
     );
@@ -137,9 +138,9 @@ export default function ProAppointmentDetail() {
                         <div>
                             <h3 className="font-semibold text-slate-900 mb-2">{t('pro:appointment_detail.info', 'Informations')}</h3>
                             <div className="space-y-2 text-sm">
-                                <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-700" /> {format(new Date(appointment.start_at), 'PPP à HH:mm', { locale: fr })}</div>
-                                <div className="flex items-center gap-2"><Video className="h-4 w-4 text-slate-700" /> <span data-testid="pro-appt-mode">{appointment.modeLabel || appointment.mode}</span></div>
-                                {appointment.rescheduleCount ? <div className="text-sm text-amber-900" data-testid="pro-appt-rescheduled">{t('pro:appointment_detail.rescheduled', 'Déplacé {{n}} fois par la personne', { n: appointment.rescheduleCount })}{appointment.rescheduledAt ? ` (${t('pro:appointment_detail.rescheduled_last', 'dernière fois le {{date}}', { date: format(new Date(appointment.rescheduledAt), 'PPP à HH:mm', { locale: fr }) })})` : ''}</div> : null}
+                                <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-700" /> {formatDateTime(appointment.start_at, LONG_DATE_TIME)}</div>
+                                <div className="flex items-center gap-2"><Video className="h-4 w-4 text-slate-700" /> <span data-testid="pro-appt-mode">{appointment.mode === 'VIDEO' ? t('pro:rdv_new.mode_video', 'À distance (visio)') : appointment.mode === 'IN_PERSON' ? t('pro:rdv_new.mode_in_person', 'En présentiel') : (appointment.modeLabel || appointment.mode)}</span></div>
+                                {appointment.rescheduleCount ? <div className="text-sm text-amber-900" data-testid="pro-appt-rescheduled">{t('pro:appointment_detail.rescheduled', 'Déplacé {{n}} fois par la personne', { n: appointment.rescheduleCount })}{appointment.rescheduledAt ? ` (${t('pro:appointment_detail.rescheduled_last', 'dernière fois le {{date}}', { date: formatDateTime(appointment.rescheduledAt, LONG_DATE_TIME) })})` : ''}</div> : null}
                                 {Array.isArray(appointment.notices) && appointment.notices.length ? (
                                     <ul className="text-xs text-slate-600" data-testid="pro-appt-notices">{appointment.notices.map((n, i) => <li key={i}>{noticeLine(n)}</li>)}</ul>
                                 ) : null}

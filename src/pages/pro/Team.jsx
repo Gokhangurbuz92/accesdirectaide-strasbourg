@@ -374,7 +374,7 @@ export default function ProTeam() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 max-w-full">
                                     {/* Stat pill */}
                                     <div className="flex items-center gap-1.5 text-xs text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg">
                                         <Calendar size={12} />

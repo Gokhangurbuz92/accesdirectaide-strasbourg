@@ -4,7 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { csrfFetch } from '@/lib/csrf';
 import { Button } from '@/components/ui/button';
-import { PASSWORD_RULE, passwordMessage, passwordProblems } from '@/lib/passwordPolicy';
+import { passwordProblems } from '@/lib/passwordPolicy';
+import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useT } from '@/i18n';
 
 const post = async (path, body) => {
@@ -64,7 +65,7 @@ export function InstitutionReset() {
     e.preventDefault(); setError(''); setDone('');
     if (!token.current) return setError(t('institution:recovery.link_incomplete', 'Ce lien est incomplet. Ouvrez le lien reçu par e-mail, ou demandez-en un nouveau.'));
     const problems = passwordProblems(next);
-    if (problems.length) return setError(passwordMessage(problems));
+    if (problems.length) return setError(passwordMessageText(problems));
     if (next !== again) return setError(t('institution:recovery.pw_mismatch', 'Les deux saisies du nouveau mot de passe sont différentes.'));
     setBusy(true);
     try { const out = await post('/api/institution/reset', { token: token.current, password: next }); token.current = ''; setNext(''); setAgain(''); setDone(out.message || t('institution:recovery.pw_saved', 'Mot de passe enregistré.')); }
@@ -80,7 +81,7 @@ export function InstitutionReset() {
       {done ? <p><Link to="/institution" className="underline" data-testid="institution-reset-login">{t('institution:recovery.connecter', 'Se connecter')}</Link></p> : (
         <form onSubmit={submit} className="space-y-3" noValidate>
           <div><label htmlFor="reset-new" className="block">{t('institution:recovery.nouveau_mot_passe', 'Nouveau mot de passe')}</label><input id="reset-new" type="password" autoComplete="new-password" aria-describedby="reset-rule" className="w-full rounded border p-2" value={next} onChange={(e) => setNext(e.target.value)} required />
-            <p id="reset-rule" className="text-sm">{PASSWORD_RULE}</p></div>
+            <p id="reset-rule" className="text-sm">{passwordRuleText()}</p></div>
           <div><label htmlFor="reset-again" className="block">{t('institution:recovery.confirmer_nouveau_mot_passe', 'Confirmer le nouveau mot de passe')}</label><input id="reset-again" type="password" autoComplete="new-password" className="w-full rounded border p-2" value={again} onChange={(e) => setAgain(e.target.value)} required /></div>
           <Button type="submit" disabled={busy}>{t('institution:recovery.enregistrer_mot_passe', 'Enregistrer le mot de passe')}</Button>
           <p className="text-sm">{t('institution:recovery.toutes_vos_sessions_ouvertes', 'Toutes vos sessions ouvertes seront fermées.')}</p>

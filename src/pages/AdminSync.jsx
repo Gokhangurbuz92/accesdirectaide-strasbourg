@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { apiClient } from '@/api/client';
 import i18n, { useT } from '@/i18n';
+import { formatDateTime } from '@/i18n';
 
 const STATUS = () => ({ success: i18n.t('admin:sync.status.success', 'Réussie'), completed: i18n.t('admin:sync.status.success', 'Réussie'), failed: i18n.t('admin:sync.status.failed', 'Échec'), error: i18n.t('admin:sync.status.failed', 'Échec'), skipped: i18n.t('admin:sync.status.skipped', 'Non lancée'), running: i18n.t('admin:sync.status.running', 'En cours') });
 
@@ -34,7 +35,7 @@ export default function AdminSync() {
             <thead><tr><th scope="col">{t('admin:sync.col.job', 'Tâche')}</th><th scope="col">{t('admin:sync.col.start', 'Début')}</th><th scope="col">{t('admin:sync.col.result', 'Résultat')}</th><th scope="col">{t('admin:sync.col.duration', 'Durée')}</th></tr></thead>
             <tbody>{runs.map((r) => (
               <tr key={r.id} className="border-t border-slate-200">
-                <td>{r.job}</td><td>{r.startedAt ? new Date(r.startedAt).toLocaleString('fr-FR') : '—'}</td>
+                <td>{r.job}</td><td>{r.startedAt ? formatDateTime(r.startedAt) : '—'}</td>
                 <td>{STATUS()[String(r.status || '').toLowerCase()] || r.status}{r.skipReason ? ` (${r.skipReason})` : ''}</td>
                 <td>{r.durationMs != null ? `${(r.durationMs / 1000).toFixed(1)} s` : '—'}</td>
               </tr>

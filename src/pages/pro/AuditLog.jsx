@@ -26,6 +26,7 @@ import {
   Download,
 } from 'lucide-react';
 import i18n, { formatDate, useT } from '@/i18n';
+import { formatDateTime } from '@/i18n';
 
 const actionLabels = (t) => ({
     DOSSIER_VIEWED: { label: t('pro:audit_log.action.dossier_viewed', 'Dossier consulté'), icon: Eye, color: 'text-amber-800 bg-amber-50' },
@@ -98,7 +99,7 @@ export default function ProAuditLog() {
         // R41-K F5: every cell through csvLine — a value starting with = + - @ (an RFC-valid e-mail can) is not read as a formula
         const csv = [
             'Date,Action,Acteur,IP Hash,Détails',
-            ...entries.map((e) => csvLine([new Date(e.timestamp).toLocaleString('fr-FR'), e.action, e.actorEmail || e.actorId, e.ipHash || '', JSON.stringify(e.details || {})])),
+            ...entries.map((e) => csvLine([formatDateTime(e.timestamp, undefined, 'fr'), e.action, e.actorEmail || e.actorId, e.ipHash || '', JSON.stringify(e.details || {})])),
         ].join('\n');
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

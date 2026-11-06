@@ -7,7 +7,8 @@ import { COFFRE_UPLOAD_CATEGORIES, formatDate } from '@/lib/monEspace';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { label } from '@/lib/caseLabels';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
+import { serverText } from '@/lib/serverText';
 
 /**
  * PKG-2 — on a dossier attached to the account: R16 "who did what with my dossier" (by organisation, no staff name, no IP), C17 the documents organisations attached
@@ -26,10 +27,10 @@ export default function DossierTransparency({ shareId }) {
       const [a, d, g, c, f] = await Promise.all([citizenApi.dossierAccess(shareId), citizenApi.dossierDocuments(shareId), citizenApi.dossierGrants(shareId).catch(() => ({ grants: [] })), citizenApi.listCoffre().catch(() => ({ documents: [] })),
         (citizenApi.dossierFollowUps ? citizenApi.dossierFollowUps(shareId) : Promise.resolve({ followUps: [] })).catch(() => ({ followUps: [] }))]);
       setData({ loading: false, events: a.events || [], documents: d.documents || [], grants: (g.grants || []).filter((x) => !x.revoked), coffre: (c.documents || []).filter((x) => COFFRE_UPLOAD_CATEGORIES.includes(x.category)), followUps: (f && f.followUps) || [] });
-    } catch (err) { setData((x) => ({ ...x, loading: false, failed: true })); setProblem(err.message); }   // R8: what could not be read is not « nobody »
-  }, [shareId]);
+    } catch (err) { setData((x) => ({ ...x, loading: false, failed: true })); setProblem(serverText(err.message, t('messaging:sharing.transparency_failed', 'Le suivi de ce dossier n’a pas pu être lu.'))); }   // R8: what could not be read is not « nobody »
+  }, [shareId, t]);
   useEffect(() => { load(); }, [load]);
-  const run = async (fn, ok) => { setMessage(''); setProblem(''); try { await fn(); setMessage(ok); await load(); } catch (err) { setProblem(err.message); } };
+  const run = async (fn, ok) => { setMessage(''); setProblem(''); try { await fn(); setMessage(ok); await load(); } catch (err) { setProblem(serverText(err.message, t('messaging:sharing.action_failed', 'L’action n’a pas pu être faite. Réessayez.'))); } };
   if (data.loading) return <p role="status">{t('messaging:transparency.loading', 'Chargement…')}</p>;
   return (
     <div className="space-y-4" data-testid="dossier-transparency">
@@ -54,7 +55,7 @@ export default function DossierTransparency({ shareId }) {
         <CardContent>
           {data.failed ? <p className="text-sm text-slate-700" data-testid="access-unknown">{t('messaging:transparency.access_unknown', 'Le journal des consultations n’a pas pu être lu.')}</p> : data.events.length ? (
             <ol className="space-y-1 text-sm text-slate-800" data-testid="access-log">
-              {data.events.map((e, i) => <li key={i} data-testid="access-event">{new Date(e.at).toLocaleString('fr-FR')} — <strong>{e.organization}</strong> {e.label}</li>)}
+              {data.events.map((e, i) => <li key={i} data-testid="access-event">{formatDateTime(e.at)} — <strong>{e.organization}</strong> {e.label}</li>)}
             </ol>
           ) : <p className="text-sm text-slate-700" data-testid="access-empty">{t('messaging:transparency.access_empty', 'Aucune organisation n’a encore consulté ce dossier.')}</p>}
         </CardContent>

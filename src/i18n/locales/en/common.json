@@ -16,5 +16,17 @@
  "form.errors.min_length": "{{label}}: enter at least {{min}} characters.",
  "form.errors.https_url": "{{label}}: enter a full address starting with https://, for example https://www.service-public.fr.",
  "form.errors.choose": "{{label}}: choose an option from the list.",
- "form.status.saving": "Saving…"
+ "form.status.saving": "Saving…",
+ "password.rule": "At least 8 characters, including an upper-case letter, a lower-case letter and a digit.",
+ "password.problem.length": "8 characters minimum",
+ "password.problem.upper": "1 upper-case letter required",
+ "password.problem.lower": "1 lower-case letter required",
+ "password.problem.digit": "1 digit required",
+ "password.too_weak": "Password too weak: {{problems}}.",
+ "server.dossier_not_found": "File not found.",
+ "server.conversation_not_found": "Conversation not found.",
+ "server.appointment_not_found": "Appointment not found.",
+ "server.not_found": "Not found: this page or item does not exist, or no longer exists.",
+ "server.share_not_found": "This file cannot be found or is not linked to your account.",
+ "server.too_many": "Too many requests in a short time: wait a minute, then try again."
 }

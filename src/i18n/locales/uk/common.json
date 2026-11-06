@@ -16,5 +16,17 @@
  "form.errors.min_length": "{{label}}: введіть щонайменше {{min}} символів.",
  "form.errors.https_url": "{{label}}: введіть повну адресу, що починається з https://, наприклад https://www.service-public.fr.",
  "form.errors.choose": "{{label}}: виберіть варіант зі списку.",
- "form.status.saving": "Збереження…"
+ "form.status.saving": "Збереження…",
+ "password.rule": "Щонайменше 8 символів, серед них велика літера, мала літера й цифра.",
+ "password.problem.length": "щонайменше 8 символів",
+ "password.problem.upper": "потрібна 1 велика літера",
+ "password.problem.lower": "потрібна 1 мала літера",
+ "password.problem.digit": "потрібна 1 цифра",
+ "password.too_weak": "Пароль надто слабкий: {{problems}}.",
+ "server.dossier_not_found": "Справу не знайдено.",
+ "server.conversation_not_found": "Розмову не знайдено.",
+ "server.appointment_not_found": "Запис не знайдено.",
+ "server.not_found": "Не знайдено: ця сторінка чи елемент не існує або вже не існує.",
+ "server.share_not_found": "Цю справу не знайдено або вона не пов’язана з вашим обліковим записом.",
+ "server.too_many": "Забагато запитів за короткий час: зачекайте хвилину й спробуйте ще раз."
 }

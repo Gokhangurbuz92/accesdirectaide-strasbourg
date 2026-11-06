@@ -8,6 +8,7 @@ import { OWNER_HEADER } from '@/lib/shareOwner';
 import { AlertTriangle, Check, Copy, Lock, Search, ShieldCheck, Trash2 } from 'lucide-react';
 import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
+import { formatDateTime } from '@/i18n';
 
 /**
  * CitizenSharingPanel - "Mon partage": four DISTINCT actions in plain language (never one ambiguous "revoke").
@@ -24,7 +25,7 @@ const messagesOf = (t) => ({
   410: t('messaging:sharing.err_410', 'Ce dossier a expiré. Faites un nouveau diagnostic pour le partager.'),
   429: t('messaging:sharing.err_429', 'Trop d\'essais. Patientez quelques minutes, puis réessayez.'),
 });
-const fmt = (d) => new Date(d).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+const fmt = (d) => formatDateTime(d, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
 export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) {
   const { t } = useT('messaging');

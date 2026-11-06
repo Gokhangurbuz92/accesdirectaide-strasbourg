@@ -10,7 +10,7 @@ import {
     ScrollText, AlertCircle, RefreshCw,
     Info, AlertTriangle, XCircle, Bug,
 } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useT, formatDateTime } from '@/i18n';
 
 const levelOptions = (t) => [
     { value: '', label: t('admin:logs.level_all', 'Tous les niveaux') },
@@ -69,7 +69,7 @@ export default function AdminLogs() {
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
                         <p className="text-slate-600">{(error?.status ?? error?.response?.status) === 429 ? t('admin:logs.error_429', 'Trop de demandes en peu de temps : la page se rechargera d’elle-même dans une minute.') : t('admin:logs.load_error', 'Erreur de chargement des logs')}</p>
-                        <p className="text-sm text-slate-400 mt-1">{error.message}</p>
+                        <p className="text-sm text-slate-600 mt-1">{error.message}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -132,7 +132,7 @@ export default function AdminLogs() {
                                     <p className="text-slate-700" data-testid="admin-logs-not-collected">{t('admin:logs.not_collected', 'Les journaux centralisés ne sont pas collectés sur cet environnement (aucun stockage configuré) : la liste vide ne veut pas dire qu’il ne s’est rien passé.')}</p>
                                 ) : <p className="text-slate-500" data-testid="admin-logs-empty">{t('admin:logs.empty', 'Aucun log trouvé')}</p>}
                                 {level && (
-                                    <p className="text-sm text-slate-400 mt-1">
+                                    <p className="text-sm text-slate-600 mt-1">
                                         {t('admin:logs.try_filter', 'Essayez un filtre différent')}
                                     </p>
                                 )}
@@ -160,7 +160,7 @@ export default function AdminLogs() {
                                                 </td>
                                                 <td className="px-4 py-3 text-slate-500 whitespace-nowrap text-xs font-mono">
                                                     {log.timestamp
-                                                        ? new Date(log.timestamp).toLocaleString('fr-FR')
+                                                        ? formatDateTime(log.timestamp)
                                                         : '—'}
                                                 </td>
                                                 <td className="px-4 py-3">
@@ -168,7 +168,7 @@ export default function AdminLogs() {
                                                         {log.message || log.msg || '—'}
                                                     </p>
                                                     {log.details && (
-                                                        <pre className="mt-1 text-xs text-slate-400 whitespace-pre-wrap break-all max-w-xl">
+                                                        <pre className="mt-1 text-xs text-slate-600 whitespace-pre-wrap break-all max-w-xl">
                                                             {typeof log.details === 'string'
                                                                 ? log.details
                                                                 : JSON.stringify(log.details, null, 2)}
