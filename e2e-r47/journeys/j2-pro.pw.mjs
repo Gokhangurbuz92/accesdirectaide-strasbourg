@@ -8,7 +8,7 @@
  */
 import { test, expect } from '@playwright/test';
 import {
-  BASE, GRAPH, CREDS, SLUG, SVC_DIRECT, SVC_APPROVAL, STAMP, HAS_0045, db, person, citizenSignIn, proSignIn, outbox, linkIn, axe, allSlots, pickSlot, book,
+  BASE, GRAPH, CREDS, SVC_DIRECT, SVC_APPROVAL, STAMP, HAS_0045, db, person, citizenSignIn, proSignIn, outbox, linkIn, axe, allSlots, pickSlot, book,
   expectNotice, papi, bearer, totp, parisHM, auditWithoutPersonalData, forgetPro, lastStep,
 } from './lib.mjs';
 
