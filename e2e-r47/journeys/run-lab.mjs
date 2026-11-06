@@ -141,6 +141,5 @@ const pw = spawnSync('npx', ['--no-install', 'playwright', 'test', '-c', 'e2e-r4
     ...(process.env.R47_REPORT ? { R47_REPORT: process.env.R47_REPORT } : {}), ...(process.env.R47_OUT ? { R47_OUT: process.env.R47_OUT } : {}) },
 });
 stopAll();
-if (!process.env.R47_LOG_DIR) fs.rmSync(tmp, { recursive: true, force: true });
-else { fs.rmSync(creds, { force: true }); fs.rmSync(path.join(tmp, 'tokens.json'), { force: true }); }
+fs.rmSync(tmp, { recursive: true, force: true });   // credentials, tokens, TOTP steps, storage: never kept (the logs go to R47_LOG_DIR when set)
 process.exit(pw.status ?? 1);
