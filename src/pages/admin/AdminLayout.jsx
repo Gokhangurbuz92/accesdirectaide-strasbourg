@@ -255,19 +255,25 @@ export default function AdminLayout() {
     const [allowed, setAllowed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [unavailable, setUnavailable] = useState(false);
+    // G-4: the layout stays mounted across the administration (one stable transition key in src/pages/index.jsx), so the session is checked again each
+    // time the person LEAVES the sign-in page (after the sign-in and the second factor) — it no longer relies on a remount at every route change
+    const onLogin = location.pathname === '/admin/login';
 
     useEffect(() => {
+        // the sign-in page needs no session: the state goes back to « checking », so the first render after the sign-in shows the loader (not a stale
+        // « not allowed » that would send the person back to the sign-in page); the check runs when a protected page is reached
+        if (onLogin) { setLoading(true); setAllowed(false); setUnavailable(false); return undefined; }
         let cancelled = false;
+        setLoading(true); setUnavailable(false);
 
         (async () => {
             try {
                 const userData = await apiClient.auth.getUser();
                 if (cancelled) return;
 
-                if (isAdminUser(userData)) {
-                    setUser(userData);
-                    setAllowed(true);
-                }
+                const ok = isAdminUser(userData);
+                setUser(ok ? userData : null);
+                setAllowed(ok);
             } catch {
                 if (!cancelled) setUnavailable(true);   // Q10: the session could not be checked (outage) — not a sign-out
             } finally {
@@ -276,10 +282,10 @@ export default function AdminLayout() {
         })();
 
         return () => { cancelled = true; };
-    }, []);
+    }, [onLogin]);
 
     // If on login page, just render it (no sidebar)
-    if (location.pathname === '/admin/login') {
+    if (onLogin) {
         return <Outlet />;
     }
 

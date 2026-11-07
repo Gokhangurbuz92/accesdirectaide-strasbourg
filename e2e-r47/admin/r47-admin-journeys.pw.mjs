@@ -295,3 +295,35 @@ test('G-3 (V1a): with ONLY « admin » open (« accounts » closed) the console 
   expect((await api(request, 'GET', '/api/admin/provider-status')).status).toBe(401);
   expect((await api(request, 'GET', '/api/admin/provider-status', { bearer: S.mfa })).status).toBe(200);
 });
+
+test('G-4 (V1a): sign-in → MFA → console and the redirects of the administration never leave a blank page (no fade between administration pages)', async ({ page, request }) => {
+  await control(request, '/env', { name: 'ADA_BETA_OPEN_SURFACES', value: 'admin' });
+  // samples the opacity of the administration wrapper every 50 ms until stop() — the minimum after the first full paint must stay visible
+  const opacity = () => page.evaluate(() => { const w = document.querySelector('#root .w-full.h-full.min-h-screen'); return w ? Number(getComputedStyle(w).opacity) : -1; });
+  const watch = () => { const seen = []; let on = true; const run = (async () => { while (on) { seen.push(await opacity().catch(() => -1)); await page.waitForTimeout(50); } })(); return async () => { on = false; await run; return seen; }; };
+  const afterFullPaint = (seen) => seen.slice(Math.max(0, seen.findIndex((v) => v >= 0.99)));
+  // 1. a protected page without a session → the sign-in page (redirect), visible
+  await page.goto(`${B}/admin/dashboard`);
+  await page.waitForURL((u) => u.pathname === '/admin/login');
+  await expect.poll(opacity).toBeGreaterThanOrEqual(0.99);
+  // 2. sign-in → MFA → /admin → /admin/dashboard: the page never fades out (the code of a fresh 30-s window: the administrator's earlier codes are spent)
+  await page.locator('#email').fill(A2.email); await page.locator('#password').fill(A2.password);
+  await page.locator('form').filter({ has: page.locator('#password') }).getByRole('button', { name: 'Se connecter' }).click();
+  await expect(page.getByTestId('admin-mfa-form')).toBeVisible();
+  const wait = 30 - (Math.floor(Date.now() / 1000) % 30) + 1; await page.waitForTimeout(wait * 1000);
+  await page.locator('#mfa-code').fill(code(A2.secret));
+  const stop = watch();
+  await page.getByRole('button', { name: 'Valider' }).click();
+  await page.waitForURL((u) => u.pathname === '/admin/dashboard');
+  await page.waitForTimeout(1200);
+  const seen = afterFullPaint(await stop());
+  expect(Math.min(...seen), `opacity samples ${seen.join(',')}`).toBeGreaterThanOrEqual(0.99);
+  await expect(page.locator('main')).toBeVisible();
+  // 3. an in-app redirect inside the administration (/admin → /admin/dashboard) keeps the page visible
+  const stop2 = watch();
+  await page.evaluate(() => { window.history.pushState({}, '', '/admin'); window.dispatchEvent(new PopStateEvent('popstate')); });
+  await page.waitForURL((u) => u.pathname === '/admin/dashboard');
+  await page.waitForTimeout(800);
+  const seen2 = await stop2();
+  expect(Math.min(...seen2), `opacity samples ${seen2.join(',')}`).toBeGreaterThanOrEqual(0.99);
+});

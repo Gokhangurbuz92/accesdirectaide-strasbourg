@@ -337,8 +337,11 @@ function PagesContent() {
             <Suspense fallback={<PageLoader />}>
                 <LazyMotion features={domAnimation} strict>
                     <AnimatePresence mode="wait">
+                        {/* G-4 (07/11/2026, V1a): ONE stable key for the whole administration, like « pro-shell » below. Keyed by the path, every route change
+                            faded the page out then in (mode « wait »), and the administration reaches its pages through redirect chains (/admin → /admin/dashboard,
+                            a protected page → /admin/login, sign-in → /admin): the page sat near opacity 0 and could stay blank until a reload. */}
                         <m.div
-                            key={location.pathname}
+                            key="admin-shell"
                             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.98 }}
