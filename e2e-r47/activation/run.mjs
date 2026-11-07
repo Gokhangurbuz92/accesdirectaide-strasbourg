@@ -120,6 +120,9 @@ add({ id: 'appointments.book_video', item: 'capability.video', features: ['B07']
   ok: (r) => r.status === 201, removals: [] });
 add({ id: 'pro.me', item: 'surface.pro', features: ['R01'], run: () => c.req('GET', '/api/pro/me', { bearer: proToken }), ok: (r) => r.status === 200,
   removals: [beta('ADA_BETA_OPEN_SURFACES', 'pro'), { change: { name: 'PRO_MFA_REQUIRED', set: 'true' }, test: () => true, why: 'unchanged (already required)' }].slice(0, 1) });
+// Release A / G-2: the professional's own notices follow « pro » — closing « communications » leaves them open, closing « pro » closes them
+add({ id: 'pro.notifications', item: 'surface.pro', features: ['R20'], run: () => c.req('GET', '/api/pro/notifications/unread-count', { bearer: proToken }), ok: (r) => r.status === 200 && typeof r.json?.notifications === 'number',
+  removals: [beta('ADA_BETA_OPEN_SURFACES', 'pro'), { change: { name: 'ADA_BETA_OPEN_SURFACES', token: 'communications' }, test: (r) => r.status === 200, why: 'still open without « communications »' }] });
 add({ id: 'pro.agenda', item: 'capability.pro.agenda', features: ['B08'], run: () => c.req('GET', '/api/pro/appointments', { bearer: proToken }), ok: (r) => r.status === 200, removals: [beta('ADA_BETA_OPEN_SURFACES', 'appointments')] });
 add({ id: 'pro.video_approve', item: 'capability.video', features: ['B07', 'N06'], run: () => c.req('POST', '/api/pro/appointments/visio', { bearer: proToken, body: { appointmentId: videoAppointment, action: 'approve' } }),
   ok: (r) => r.status === 200, removals: [{ change: { name: 'VIDEO_PROVIDER' }, status: 503, code: 'VIDEO_DISABLED' }, capOff('video'), beta('ADA_BETA_OPEN_SURFACES', 'video')] });

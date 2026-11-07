@@ -1,7 +1,7 @@
 /**
- * R47 journey 3 — STRUCTURE, on the built app with the REAL API (run-lab.mjs): a synthetic organisation onboards in the LAB (/pro/register) → not bookable
- * and its console closed until verified (second factor required) → identity verified by a platform administrator (evidence, version check) and activated →
- * the first administrator's second factor through the platform operator's invitation → team: a member invited, roles changed → services → the platform
+ * R47 journey 3 — STRUCTURE, on the built app with the REAL API (run-lab.mjs). Release A (G-1): the Production path — the platform creates the partner's
+ * record (draft, unverified, not bookable; public sign-up stays closed) → identity verified by a platform administrator (evidence, version check) and
+ * activated → the platform operator (SUPERADMIN, second factor) invites its first administrator from « Équipe » → password + second factor bound to the invitation → team: a member invited, roles changed → services → the platform
  * administrator classifies sensitivity (ordinary / sensitive, MFA + elevation) → opening hours, booking settings in the screen (direct vs approval) →
  * a citizen books; the sensitive service is refused while its gate is closed → reports (k-anonymity, withheld counters, CSV) → organisation export →
  * the member leaves (access ends) → closure request in the screen → two-administrator review.
@@ -17,41 +17,25 @@ const S = { since: new Date() };
 let adminP; let citizen;
 test.afterAll(async () => { for (const c of [adminP, citizen]) await c?.context.close(); });
 
-test('E01 fr: a synthetic organisation onboards in /pro/register — draft, unverified, not bookable, its console closed until the second factor', async ({ browser }) => {
+test('E01 fr (Production path, Release A / G-1): the platform creates the partner record — draft, unverified, not bookable; the platform invitation of its administrator is refused until it is verified and active, and to anyone but a second-factor SUPERADMIN', async ({ browser }) => {
   adminP = await person(browser);
-  const page = await adminP.context.newPage();
-  await page.goto(`${BASE}/pro/register`);
-  await page.locator('#structureName').fill(ORG.name); await page.locator('#email').fill(A.email); await page.locator('#password').fill('court');
-  await page.locator('button[type="submit"]').click();
-  await expect(page.locator('#password')).toBeFocused();   // too short: the form is not sent, the field is focused
-  expect(await page.locator('#password').evaluate((e) => e.validity.valid)).toBe(false);
-  await page.locator('#password').fill('courtcourt');
-  await page.locator('button[type="submit"]').click();
-  await expect(page.locator('[role="alert"]').first()).toBeVisible();   // the server's password policy refuses it
-  expect((await db(`SELECT count(*)::int n FROM "ProUser" WHERE email = $1`, [A.email]))[0].n).toBe(0);
-  await page.locator('#password').fill(A.password);
-  await axe(page, 'registration form');
-  const [resp] = await Promise.all([page.waitForResponse((r) => new URL(r.url()).pathname === '/api/pro/auth/register'), page.locator('button[type="submit"]').click()]);
-  expect(resp.status()).toBe(200);
-  const j = await resp.json(); ORG.id = j.user.structureId; A.id = j.user.id; A.firstToken = j.token;
-  const s = (await db(`SELECT slug, statut, verification_status, data_origin FROM "Structure" WHERE id = $1`, [ORG.id]))[0];
-  expect(s).toMatchObject({ statut: 'brouillon', verification_status: 'UNVERIFIED' });
-  ORG.slug = s.slug;
-  expect((await db(`SELECT role, status, mfa_enabled FROM "ProUser" WHERE id = $1`, [A.id]))[0]).toMatchObject({ role: 'STRUCTURE_ADMIN', status: 'active', mfa_enabled: false });
-  // without the second factor the console's data stay closed (Production rule PRO_MFA_REQUIRED)
-  const closed = await bearer(A.firstToken, 'GET', '/api/pro/team', undefined, { ip: adminP.ip });
-  expect(closed.status).toBe(403); expect(closed.json.code).toBe('PRO_MFA_REQUIRED');
-  // and a self-set second factor is refused: it must be bound to an invitation of the platform
-  expect((await bearer(A.firstToken, 'GET', '/api/pro/mfa-setup', undefined, { ip: adminP.ip })).json.error).toBe('MFA_INVITATION_REQUIRED');
-  // not bookable while unverified
-  expect((await fetch(`${BASE}/api/rdv/structures/${ORG.slug}/profile`)).status).toBe(404);
-  await page.close();
+  // public structure sign-up stays closed in Production (R43 E1): the partner's record is created by the platform team, as a draft
+  ORG.id = `r47-org-${STAMP}`; ORG.slug = `structure-r47-fictive-${STAMP}`;
+  await db(`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
+    VALUES ($1, $2, $3, 'association', '1 rue fictive', 'Strasbourg', '67000', false, ARRAY['accueil'], ARRAY['tout_public'], ARRAY['social'], 'brouillon', 'UNVERIFIED', NOW(), NOW())`, [ORG.id, ORG.name, ORG.slug]);
+  expect((await fetch(`${BASE}/api/rdv/structures/${ORG.slug}/profile`)).status, 'not bookable while unverified').toBe(404);
+  const ask = (k, body) => papi(k, 'POST', '/api/pro/invite', { email: A.email, role: 'STRUCTURE_ADMIN', structure: ORG.slug, ...body });
+  // a structure administrator cannot invite into another structure; the platform role cannot name a plain member; an unknown structure reveals nothing
+  const other = await ask('temoinAdmin'); expect(other.status).toBe(403); expect(other.json.code).toBe('PLATFORM_INVITATION_FORBIDDEN');
+  const pro = await ask('operator', { role: 'PRO' }); expect(pro.status).toBe(400); expect(pro.json.code).toBe('PLATFORM_INVITATION_ROLE');
+  const unknown = await ask('operator', { structure: `inconnue-${STAMP}` }); expect(unknown.status).toBe(404);
+  // draft and unverified: refused (the platform verifies first)
+  const early = await ask('operator'); expect(early.status).toBe(409); expect(early.json.code).toBe('PLATFORM_INVITATION_STRUCTURE_NOT_ELIGIBLE');
+  expect((await db(`SELECT count(*)::int n FROM "Invitation" WHERE "structureId" = $1`, [ORG.id]))[0].n, 'nothing created by a refusal').toBe(0);
+  expect((await db(`SELECT count(*)::int n FROM "ProUser" WHERE "structureId" = $1`, [ORG.id]))[0].n).toBe(0);
 });
 
-test('E01 fr: the platform administrator verifies the identity (stale version and unlisted evidence refused) and activates it; the platform operator invites the first administrator to the second factor', async () => {
-  // a professional session is revoked at the SECOND (ProUser.sessionsValidAfter vs the token's iat): one issued in the same second as the enrolment survives
-  // it (reported to the lead as a residual window) — this journey enrols at least one second after the registration
-  await new Promise((r) => setTimeout(r, 1100));
+test('E01 fr: the platform administrator verifies the identity (stale version and unlisted evidence refused) and activates it; the platform operator invites its first administrator from « Équipe » → password → second factor bound to the invitation', async ({ browser }) => {
   const g = await aapi('admin', 'GET', `/api/admin/content-verification?entityType=structure&entityId=${ORG.id}`);
   expect(g.status).toBe(200);
   const base = { entityType: 'structure', entityId: ORG.id, action: 'VERIFY', evidenceNote: 'R47 LAB : pièces d’identité fictives contrôlées (synthétique)', territoryConfirmed: true };
@@ -62,20 +46,47 @@ test('E01 fr: the platform administrator verifies the identity (stale version an
   const act = await aapi('admin', 'POST', '/api/admin/organizations', { id: ORG.id, action: 'REACTIVATE', reason: 'R47 LAB : identité vérifiée' });
   expect(act.status).toBe(200); expect(act.json.organization.statut).toBe('actif');
   expect((await db(`SELECT statut, verification_status FROM "Structure" WHERE id = $1`, [ORG.id]))[0]).toMatchObject({ statut: 'actif', verification_status: 'VERIFIED' });
-  // the second factor of the first administrator: an invitation of the platform operator (the R42-A08 root of trust)
-  const inv = await papi('operator', 'POST', '/api/pro/mfa-invitation', { memberId: A.id });
-  expect(inv.status).toBe(201);
-  const link = linkIn(await outbox(A.email), /#invitation=([A-Za-z0-9%_-]+)/);
+  // the platform operator (SUPERADMIN, second factor) invites the first administrator from its « Équipe » screen
+  // the operator works in its own browser (the invited administrator signs in later in adminP's)
+  const operatorP = await person(browser);
+  const page = await operatorP.context.newPage();
+  await proSignIn(page, 'operator', { next: '/pro/team' });
+  await page.getByRole('button', { name: /Inviter/ }).first().click();
+  await page.locator('#invite-email').fill(A.email);
+  await page.getByTestId('team-invite-structure').fill(ORG.slug);
+  await expect(page.locator('#invite-role')).toBeDisabled();   // the platform invitation only names the structure's administrator
+  await axe(page, 'platform invitation dialog');
+  const [resp] = await Promise.all([page.waitForResponse((r) => new URL(r.url()).pathname === '/api/pro/invite' && r.request().method() === 'POST'),
+    page.locator('form').filter({ has: page.locator('#invite-email') }).getByRole('button', { name: /Inviter/ }).click()]);
+  expect(resp.status()).toBe(201);
+  const j = await resp.json(); expect(j.structure).toMatchObject({ id: ORG.id, nom: ORG.name });
+  await expect(page.getByText(new RegExp(`Invitation de l’administrateur de « ${ORG.name} »`))).toBeVisible();
+  await operatorP.context.close();
+  const inv = (await db(`SELECT id, role, "structureId" FROM "Invitation" WHERE email = $1`, [A.email]))[0];
+  expect(inv).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: ORG.id });
+  const audit = (await db(`SELECT actor_id, details FROM "AuditLog" WHERE action = 'INVITATION_SENT' AND details->>'invitationId' = $1`, [inv.id]))[0];
+  expect((await db(`SELECT role FROM "ProUser" WHERE id = $1`, [audit.actor_id]))[0].role, 'the sender recorded is the platform operator').toBe('SUPERADMIN');
+  expect(audit.details).toMatchObject({ platform: true, role: 'STRUCTURE_ADMIN' });
+  expect(JSON.stringify(audit.details)).not.toContain(A.email);
+  // the invited person sets a password, then enrols the second factor bound to that invitation
+  const link = linkIn(await outbox(A.email), /\/pro\/register-invite\?token=([^\s]+)/);
   expect(link).not.toBeNull();
-  const red = await bearer(A.firstToken, 'POST', '/api/pro/mfa-enrolment', { token: decodeURIComponent(link[1]) }, { ip: adminP.ip });
-  expect(red.status).toBe(200);
-  const grant = red.json.enrolmentToken;
-  const setup = await fetch(`${BASE}/api/pro/mfa-setup`, { headers: { authorization: `Bearer ${A.firstToken}`, 'x-ada-mfa-enrolment': grant, 'x-forwarded-for': adminP.ip } }).then((r) => r.json());
+  const reg = await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password });
+  expect(reg.status, JSON.stringify(reg.json)).toBe(201);
+  expect(reg.json.user).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: ORG.id });
+  A.id = reg.json.user.id;
+  // without the second factor the console's data stay closed (Production rule PRO_MFA_REQUIRED)
+  const closed = await bearer(reg.json.token, 'GET', '/api/pro/team', undefined, { ip: adminP.ip });
+  expect(closed.status).toBe(403); expect(closed.json.code).toBe('PRO_MFA_REQUIRED');
+  const grant = reg.json.mfaEnrolment.token;
+  const setup = await fetch(`${BASE}/api/pro/mfa-setup`, { headers: { authorization: `Bearer ${reg.json.token}`, 'x-ada-mfa-enrolment': grant, 'x-forwarded-for': adminP.ip } }).then((r) => r.json());
   A.totpSecret = setup.secret;
-  const done = await bearer(A.firstToken, 'POST', '/api/pro/mfa-setup', { code: await totp(A.totpSecret, 'r47admin'), enrolmentToken: grant }, { ip: adminP.ip });
+  const done = await bearer(reg.json.token, 'POST', '/api/pro/mfa-setup', { code: await totp(A.totpSecret, 'r47admin'), enrolmentToken: grant }, { ip: adminP.ip });
   expect(done.status).toBe(200);
   CREDS.pros.r47admin = { email: A.email, password: A.password, totpSecret: A.totpSecret };
-  expect((await bearer(A.firstToken, 'GET', '/api/pro/me', undefined, { ip: adminP.ip })).status, 'the password-only session ended with the enrolment').toBe(401);
+  expect((await db(`SELECT role, status, mfa_enabled FROM "ProUser" WHERE id = $1`, [A.id]))[0]).toMatchObject({ role: 'STRUCTURE_ADMIN', status: 'active', mfa_enabled: true });
+  // the same link cannot be used twice
+  expect((await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password })).status).toBe(410);
 });
 
 test('E03 E04 fr: team — a member invited and registered, roles changed (a member cannot change roles); services created (a member cannot)', async () => {

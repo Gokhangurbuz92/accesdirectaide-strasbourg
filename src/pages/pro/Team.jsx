@@ -124,6 +124,11 @@ export default function ProTeam() {
     const inviteErr = useFormErrors();
     const [inviteProblem, setInviteProblem] = useState('');
     const [inviteRole, setInviteRole] = useState('PRO');
+    // Release A / G-1: the platform team (SUPERADMIN) invites the FIRST administrator of a partner structure (identifier or short address of the structure);
+    // the server only accepts an active, identity-verified structure and the STRUCTURE_ADMIN role
+    const isPlatform = user?.role === 'SUPERADMIN';
+    const [inviteStructure, setInviteStructure] = useState('');
+    const platformInvite = isPlatform && inviteStructure.trim() !== '';
 
     const handleInvite = async (/** @type {{ preventDefault: () => void; }} */ e) => {
         e.preventDefault();
@@ -135,16 +140,18 @@ export default function ProTeam() {
             const res = await fetch('/api/pro/invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...headers, ...getCsrfHeaders() },
-                body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
+                body: JSON.stringify(platformInvite ? { email: inviteEmail, role: 'STRUCTURE_ADMIN', structure: inviteStructure.trim() } : { email: inviteEmail, role: inviteRole }),
             });
             if (res.ok) {
                 const out = await res.json().catch(() => ({}));
                 // PKG-11 audit: « envoyée » only when a provider accepted the e-mail (or the LAB test outbox recorded it)
-                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(t('pro:team.invite_sent', 'Invitation transmise à {{email}}', { email: inviteEmail }));
+                if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus) && out?.structure?.nom) toast.success(t('pro:team.invite_sent_platform', 'Invitation de l’administrateur de « {{structure}} » transmise à {{email}}', { email: inviteEmail, structure: out.structure.nom }));
+                else if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(out?.mailStatus)) toast.success(t('pro:team.invite_sent', 'Invitation transmise à {{email}}', { email: inviteEmail }));
                 else toast.warning(t('pro:team.invite_not_mailed', 'Invitation créée pour {{email}}, mais l’e-mail n’a pas pu être envoyé : renvoyez-la plus tard.', { email: inviteEmail }));
                 fetchTeam();
                 setIsInviteOpen(false);
                 setInviteEmail('');
+                setInviteStructure('');
             } else {
                 const err = await res.json().catch(() => ({}));
                 const why = err.error || t('pro:team.invite_error', 'Erreur lors de l\'envoi');
@@ -571,9 +578,26 @@ export default function ProTeam() {
                             />
                             <FieldError field="invite-email" errors={inviteErr.errors} />
                         </div>
+                        {isPlatform ? (
+                            <div>
+                                <Label htmlFor="invite-structure">{t('pro:team.invite_structure', 'Structure partenaire (facultatif)')}</Label>
+                                <Input
+                                    id="invite-structure"
+                                    type="text"
+                                    autoComplete="off"
+                                    aria-describedby="invite-structure-hint"
+                                    value={inviteStructure}
+                                    onChange={(e) => { setInviteStructure(e.target.value); setInviteProblem(''); }}
+                                    data-testid="team-invite-structure"
+                                />
+                                <p id="invite-structure-hint" className="mt-1 text-xs text-muted-foreground">
+                                    {t('pro:team.invite_structure_hint', 'Pour inviter le premier administrateur d’une structure partenaire : son identifiant ou son adresse courte. La structure doit être active et vérifiée ; le rôle est alors « Administrateur ».')}
+                                </p>
+                            </div>
+                        ) : null}
                         <div>
                             <Label htmlFor="invite-role">{t('pro:team.role', 'Rôle')}</Label>
-                            <Select value={inviteRole} onValueChange={setInviteRole}>
+                            <Select value={platformInvite ? 'STRUCTURE_ADMIN' : inviteRole} onValueChange={setInviteRole} disabled={platformInvite}>
                                 <SelectTrigger id="invite-role">
                                     <SelectValue />
                                 </SelectTrigger>

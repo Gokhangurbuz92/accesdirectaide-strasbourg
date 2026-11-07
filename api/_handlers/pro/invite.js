@@ -10,6 +10,7 @@ import { sendMail, mailLedgerStatus } from '../../_utils/mailer.js';
 import { buildAppUrl } from '../../_utils/user-auth.js';
 import { clientIp } from '../../_utils/client-ip.js';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
+import { authorizePlatformInvitation, platformTargetOf } from '../../_services/platform-invitation.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
@@ -23,7 +24,8 @@ async function handler(req, res) {
     const proCtx = requireProStructureContext(req, res);
     if (!proCtx) return;
 
-    const { structureId, userId } = proCtx;
+    const { userId } = proCtx;
+    let { structureId } = proCtx;
 
     // ── DELETE: Cancel a pending invitation ──
     if (req.method === 'DELETE') {
@@ -73,6 +75,17 @@ async function handler(req, res) {
     const inviteRole = requestedRole === undefined || requestedRole === null || requestedRole === '' ? ROLE.PRO : String(requestedRole);
     if (!['PRO', 'STRUCTURE_ADMIN'].includes(inviteRole)) return res.status(400).json({ error: 'Rôle invalide. Valeurs acceptées : PRO, STRUCTURE_ADMIN' });
 
+    // Release A / G-1: { structure } names ANOTHER structure — only the platform's SUPERADMIN, with a second-factor session, may invite that structure's
+    // first administrator, and only into an active, identity-verified structure (api/_services/platform-invitation.js). Without it: the ordinary path.
+    const platformTarget = platformTargetOf(req.body);
+    let platform = null;
+    if (platformTarget) {
+        const decision = await authorizePlatformInvitation({ dbh: db, actor: /** @type {any} */ (req.user), target: platformTarget, role: inviteRole });
+        if (!decision.ok) return res.status(decision.status).json(decision.body);
+        platform = decision.structure;
+        structureId = platform.id;
+    }
+
     try {
         // Check if user already exists in structure
         const existing = await db.query.ProUser.findFirst({
@@ -98,10 +111,10 @@ async function handler(req, res) {
             text: `Vous êtes invité·e à rejoindre une équipe sur Accès Direct Aide.\nCréez votre accès (lien valable 7 jours, utilisable une fois) : ${buildAppUrl(`/pro/register-invite?token=${encodeURIComponent(token)}`)}\n\nSi vous n’attendiez pas cette invitation, ignorez ce message.` }).catch(() => ({ accepted: false }));
         logger.info({ accepted: Boolean(mail?.accepted) }, '[Invite] invitation e-mail handed to the mailer');
 
-        await logProAudit('INVITATION_SENT', userId, structureId, { role: inviteRole, invitationId: invitation.id }, clientIp(req));   // R47: no e-mail address in the audit trail   // R20: the sender of this invitation (redemption checks they are still an administrator)
+        await logProAudit('INVITATION_SENT', userId, structureId, { role: inviteRole, invitationId: invitation.id, ...(platform ? { platform: true, actorStructureId: proCtx.structureId } : {}) }, clientIp(req));   // R47: no e-mail address in the audit trail   // R20: the sender of this invitation (redemption checks they are still an administrator)
 
         // PKG-11 audit: the page says whether the e-mail was really handed to a provider (mailLedgerStatus semantics; « sent » was shown whatever happened)
-        return res.status(201).json({ ...publicInvitation(invitation), mailStatus: mailLedgerStatus(mail) });
+        return res.status(201).json({ ...publicInvitation(invitation), mailStatus: mailLedgerStatus(mail), ...(platform ? { structure: platform } : {}) });
 
     } catch (e) {
         logger.error({ err: e }, "Invite API Error");
