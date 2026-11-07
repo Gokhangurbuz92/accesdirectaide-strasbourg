@@ -4,6 +4,18 @@ import { db } from '../../../src/db/index.js';
 import { CitizenUser } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { citizenSessionRevoked, getUserSessionTokenFromRequest, verifyUserSessionToken } from '../../_utils/user-auth.js';
+import { capabilityOpen } from '../../_utils/capabilities.js';
+import { isPublicBetaRestricted, openSurfaces } from '../../_utils/public-beta.js';
+
+/**
+ * G-3 (07/11/2026): this route is not gated by a capability as a whole (api/_utils/capabilities.js « auth/me »: []); each session kind is answered only
+ * when its own surface is served, otherwise it reads as « not signed in » (401, nothing read from the database):
+ *   administrator session → the « admin » surface (during the restricted beta: ADA_BETA_OPEN_SURFACES names it)
+ *   professional session  → the capability pro.account (« pro » surface)
+ *   citizen session       → the capability citizen.account (« accounts » surface; closing it signs citizen sessions out, R47 F1)
+ */
+const adminSurfaceServed = () => !isPublicBetaRestricted() || openSurfaces().has('admin');
+const UNAUTHORIZED = { error: 'Unauthorized' };
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
@@ -17,6 +29,7 @@ export default async function handler(req, res) {
     const auth = await resolveAuthContext(req);
     if (auth) {
         if (auth.authType === 'pro_jwt') {
+            if (!capabilityOpen('pro.account')) return res.status(401).json(UNAUTHORIZED);
             return res.status(200).json({
                 session: {
                     kind: 'pro',
@@ -33,6 +46,7 @@ export default async function handler(req, res) {
             });
         }
 
+        if (!adminSurfaceServed()) return res.status(401).json(UNAUTHORIZED);
         return res.status(200).json({
             session: {
                 kind: 'admin',
@@ -48,6 +62,7 @@ export default async function handler(req, res) {
         });
     }
 
+    if (!capabilityOpen('citizen.account')) return res.status(401).json(UNAUTHORIZED);   // citizen accounts closed: no citizen session is recognised
     const sessionToken = getUserSessionTokenFromRequest(req);
     const userClaims = verifyUserSessionToken(sessionToken);
     if (!userClaims) {

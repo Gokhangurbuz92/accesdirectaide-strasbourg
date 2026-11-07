@@ -263,3 +263,35 @@ test('P13/D10/D11/D20: OpenFisca states — simulation (non-authoritative), engi
   const down = await api(request, 'POST', '/api/diagnostic', { data: { mode: 'AUTHORITATIVE_MODE', answers } });
   expect(down.status).toBe(503); expect(down.json.code).toBe('OPENFISCA_UNAVAILABLE'); expect(down.json.assessment.items.map((i) => i.state)).toEqual(['ENGINE_UNAVAILABLE']);
 });
+
+test('G-3 (V1a): with ONLY « admin » open (« accounts » closed) the console opens after MFA — never « momentanément indisponible »; an invalid session goes back to sign-in; every other surface stays closed', async ({ page, request }) => {
+  await control(request, '/env', { name: 'ADA_BETA_OPEN_SURFACES', value: 'admin' });
+  // the session check of the console (auth/me) with the MFA session of step A01
+  const probe = await api(request, 'GET', '/api/auth/me', { bearer: S.mfa });
+  expect(probe.status, probe.text).toBe(200); expect(probe.json.session.kind).toBe('admin');
+  // the browser: the same MFA session opens the console
+  await page.goto(`${B}/admin/login`);
+  await page.evaluate((t) => sessionStorage.setItem('access_token', t), S.mfa);
+  await page.goto(`${B}/admin`);
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByTestId('service-unavailable')).toHaveCount(0);
+  expect(new URL(page.url()).pathname).toMatch(/^\/admin(\/(?!login)[a-z-]+)?$/);   // the console (e.g. /admin/dashboard), not the sign-in page
+  await expect(page.locator('main')).toBeVisible();
+  // an invalid session: back to the sign-in page (signed out), not an outage
+  await page.evaluate(() => sessionStorage.setItem('access_token', 'invalid.session.token'));
+  await page.goto(`${B}/admin`);
+  await page.waitForURL((u) => u.pathname === '/admin/login');
+  await expect(page.getByTestId('service-unavailable')).toHaveCount(0);
+  expect((await api(request, 'GET', '/api/auth/me', { bearer: 'invalid.session.token' })).status).toBe(401);
+  // citizen and professional sessions are not recognised while their surfaces are closed; their routes stay closed
+  expect((await api(request, 'GET', '/api/auth/me', { cookie: C.citizen.cookie })).status).toBe(401);
+  expect((await api(request, 'GET', '/api/auth/me', { bearer: C.pro.token })).status).toBe(401);
+  for (const [p, o] of [['/api/citizen/espace', { cookie: C.citizen.cookie }], ['/api/pro/me', { bearer: C.pro.token }], ['/api/pro/notifications', { bearer: C.pro.token }],
+    ['/api/rdv/appointments', { cookie: C.citizen.cookie }], ['/api/institution/me', {}], ['/api/diagnostic', {}], ['/api/messages', {}], ['/api/contact', {}], ['/api/citizen/coffre', { cookie: C.citizen.cookie }]]) {   // (jobs: this LAB server opens them in its final configuration; their closure is proven on Production by the V1a probe)
+    const r = await api(request, 'GET', p, o);
+    expect(r.status, p).toBe(503); expect(r.json?.error, p).toBe('PUBLIC_BETA_RESTRICTED');
+  }
+  // the console API itself stays behind the administrator session
+  expect((await api(request, 'GET', '/api/admin/provider-status')).status).toBe(401);
+  expect((await api(request, 'GET', '/api/admin/provider-status', { bearer: S.mfa })).status).toBe(200);
+});

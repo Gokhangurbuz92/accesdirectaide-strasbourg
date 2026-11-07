@@ -83,6 +83,10 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   auth: ['citizen.account'], 'login-pro-guard': ['citizen.account'], 'auth/franceconnect': ['citizen.account', 'citizen.franceconnect'],
   // R47: the status line answers { available:false, reason } itself when citizen.franceconnect is closed (no 503 noise on every sign-in page)
   'auth/franceconnect/status': ['citizen.account'],
+  // G-3 (07/11/2026, V1a): « auth/me » is the identity probe of EVERY session kind (administrator, professional, citizen). Gating it on citizen.account
+  // refused the administrator console whenever « accounts » is closed (503 before the handler, shown as an outage). The route itself is not gated here;
+  // the handler answers each session kind only when ITS surface / capability is open (admin surface, pro.account, citizen.account) — otherwise 401.
+  'auth/me': [],
   'citizen/profile': ['citizen.account'], 'citizen/age-declaration': ['citizen.account'], 'citizen/email-change': ['citizen.account'],
   'citizen/email-change-confirm': ['citizen.account'], 'citizen/phone': ['citizen.account'], 'citizen/preferences': ['citizen.account'],
   'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'], 'citizen/notifications': ['citizen.account'],

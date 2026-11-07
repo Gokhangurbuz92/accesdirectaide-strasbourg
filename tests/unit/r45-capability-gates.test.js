@@ -57,11 +57,12 @@ describe('capability registry', () => {
   it('the route map names only known capabilities', () => {
     for (const [route, list] of Object.entries(ROUTE_CAPABILITIES)) for (const c of list) expect(CAPABILITIES[c], `${route} -> ${c}`).toBeTruthy();
   });
-  it('every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces carries a capability (three reviewed exceptions)', () => {
+  it('every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces carries a capability (four reviewed exceptions)', () => {
     const EXCEPTIONS = {
       pdf: 'only pdf/aides and pdf/demarches answer (published public records, open in the beta); every other pdf path is a 404',
       tts: 'retired: answers 410 (R12, P26)',
       drees: 'public reference data (DREES programme list), no personal data',
+      'auth/me': 'G-3: the identity probe of every session kind — the handler answers each kind only when its own surface / capability is open (401 otherwise)',
     };
     const gated = ['accounts', 'appointments', 'pro', 'documents', 'diagnostic', 'institution', 'video'];
     const unmapped = routes.map((r) => r.path.replace(/\/$/, '')).filter((p) => gated.includes(/** @type {string} */ (surfaceOf(p))) && !capabilitiesOfRoute(p).length);

@@ -159,6 +159,11 @@ add({ id: 'ai.orient', item: 'capability.ai.processing', features: ['P16', 'P17'
   ok: (r) => r.status === 200 && (r.json?.grounded === true || r.json?.meta?.reason === 'no_verified_local_source'), removals: [capOff('ai.processing'), beta('ADA_BETA_OPEN_SURFACES', 'diagnostic')] });
 add({ id: 'admin.provider_status', item: 'surface.admin', features: ['A17', 'N10', 'M04'], run: () => c.req('GET', '/api/admin/provider-status', { bearer: adminToken }), ok: (r) => r.status === 200 && Array.isArray(r.json?.providers),
   removals: [beta('ADA_BETA_OPEN_SURFACES', 'admin')] });
+// G-3: the administrator console checks its session through auth/me — answered with « admin » open whatever « accounts » is; « admin » closed → 401 (signed out),
+// never a 503 outage; « accounts » closed does not touch it
+add({ id: 'admin.session_probe', item: 'surface.admin', features: ['A01', 'A16'], run: () => c.req('GET', '/api/auth/me', { bearer: adminToken }), ok: (r) => r.status === 200 && r.json?.session?.kind === 'admin',
+  removals: [{ change: { name: 'ADA_BETA_OPEN_SURFACES', token: 'admin' }, test: (r) => r.status === 401, why: '401 not signed in (admin closed), not 503' },
+    { change: { name: 'ADA_BETA_OPEN_SURFACES', token: 'accounts' }, test: (r) => r.status === 200 && r.json?.session?.kind === 'admin', why: 'unchanged without « accounts »' }] });
 add({ id: 'admin.guardianships', item: 'policy.guardians', features: ['C05'], run: () => c.req('POST', '/api/admin/guardianships', { bearer: adminToken, body: { action: 'list' } }), ok: (r) => r.status === 200 && r.json?.policy?.strongVerification === 'CONFIGURED',
   removals: [{ change: { name: 'ADA_AGE_POLICY_JSON' }, test: (r) => r.status === 200 && r.json?.policy?.strongVerification === 'POLICY_PENDING', why: 'policy POLICY_PENDING' }, capOff('citizen.guardians')] });
 add({ id: 'jobs.rdv_reminder', item: 'job.rdv-reminder', features: ['B06'], run: () => c.req('GET', '/api/cron/rdv-reminder', { headers: cron }), ok: (r) => r.status === 200 && r.json?.ok !== false,
