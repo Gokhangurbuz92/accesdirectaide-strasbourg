@@ -34,3 +34,16 @@ describe('Release B — telephone collection closed outside the LAB', () => {
     expect(phoneCollectionOpen(env)).toBe(open);
   });
 });
+
+import { optionalProfileFieldsOpen, MINIMISED_PROFILE_FIELDS } from '../../api/_utils/profile-minimisation.js';
+describe('Release B — optional profile fields (age band, département) closed in the narrow V2 scope', () => {
+  it('names exactly the two minimised fields', () => { expect(MINIMISED_PROFILE_FIELDS).toEqual(['ageBand', 'departement']); });
+  it.each([
+    [{ VERCEL_ENV: 'production' }, false],
+    [{ VERCEL_ENV: 'preview' }, false],
+    [{ ADA_PUBLIC_BETA_RESTRICTED: '1', ADA_BETA_OPEN_SURFACES: 'admin,accounts' }, false],
+    [{ ADA_PUBLIC_BETA_RESTRICTED: '1', ADA_BETA_ACCOUNTS_SCOPE: 'full' }, true],
+    [{ VERCEL_ENV: 'production', ADA_BETA_ACCOUNTS_SCOPE: 'FULL ' }, true],
+    [{}, true],
+  ])('%j → open %s', (env, open) => { expect(optionalProfileFieldsOpen(env)).toBe(open); });
+});

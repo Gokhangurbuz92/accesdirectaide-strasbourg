@@ -12,10 +12,15 @@ import { createElement as h } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-const { setPhone } = vi.hoisted(() => ({ setPhone: vi.fn(async () => ({ ok: true, phone: null })) }));
-vi.mock('../../src/lib/citizenApi.js', async (orig) => { const m = await orig(); return { ...m, citizenApi: { ...m.citizenApi, setPhone } }; });
+const { setPhone, getProfile, saveProfile } = vi.hoisted(() => ({
+  setPhone: vi.fn(async () => ({ ok: true, phone: null })),
+  getProfile: vi.fn(),
+  saveProfile: vi.fn(async () => ({ ok: true })),
+}));
+vi.mock('../../src/lib/citizenApi.js', async (orig) => { const m = await orig(); return { ...m, citizenApi: { ...m.citizenApi, setPhone, getProfile, saveProfile, listShares: async () => ({ shares: [] }) } }; });
 import AuthRdvAccess from '../../src/pages/AuthRdvAccess.jsx';
 import { ContactChange } from '../../src/pages/CompteParametres.jsx';
+import CompteProfil from '../../src/pages/CompteProfil.jsx';
 import { setLanguage } from '../../src/i18n/index.js';
 
 const lang = async (code) => { await act(async () => { await setLanguage(code, { persist: false }); }); };
@@ -93,5 +98,30 @@ describe('Release B — settings: no phone field while its collection is closed'
   it('open (LAB): the field is offered as before', () => {
     settings({ email: 'nom@exemple.fr', phone: null, phoneCollection: true });
     expect(document.querySelector('#cc-phone')).not.toBeNull();
+  });
+});
+
+describe('Release B — profile: no age band or département in the narrow V2 scope', () => {
+  const account = (collect) => ({ profile: { displayName: 'Personne fictive', preferredLanguage: 'fr', ageBand: null, departement: null, accessibilityPrefs: {}, prefillConsent: false },
+    household: [], preferences: [], collect, agePolicy: { accountFeatures: true, allowed: true, status: 'CONFIGURED', publicInformation: 'ALL_AGES', adultAccount: true } });
+  const page = () => render(h(HelmetProvider, null, h(MemoryRouter, null, h(CompteProfil))));
+  it('closed: neither field is offered, the accessibility settings are; saving sends neither field', async () => {
+    getProfile.mockResolvedValue(account({ ageBand: false, departement: false, phone: false }));
+    page();
+    expect(await screen.findByTestId('pf-falc')).toBeInTheDocument();
+    expect(screen.queryByTestId('pf-band')).toBeNull();
+    expect(screen.queryByTestId('pf-dep')).toBeNull();
+    const form = screen.getByTestId('pf-falc').closest('form');
+    await act(async () => { fireEvent.submit(form); });
+    expect(saveProfile).toHaveBeenCalled();
+    const body = saveProfile.mock.calls.at(-1)[0];
+    expect(body).not.toHaveProperty('ageBand'); expect(body).not.toHaveProperty('departement');
+    expect(body.accessibilityPrefs).toBeTruthy();
+  });
+  it('open (LAB): both fields are offered as before', async () => {
+    getProfile.mockResolvedValue(account({ ageBand: true, departement: true, phone: true }));
+    page();
+    expect(await screen.findByTestId('pf-band')).toBeInTheDocument();
+    expect(screen.getByTestId('pf-dep')).toBeInTheDocument();
   });
 });

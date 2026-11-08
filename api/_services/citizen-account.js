@@ -15,6 +15,8 @@ import { evaluateAge } from '../lib/agePolicy.js';
 import { isAdultAccount } from '../_utils/age-policy.js';
 import { holdsOwnerSecret, isExpired } from '../_utils/share-access.js';
 import { pushConfig, removeSubscriptions } from './web-push.js';
+import { optionalProfileFieldsOpen } from '../_utils/profile-minimisation.js';
+import { phoneCollectionOpen } from '../_utils/phone-collection.js';
 
 export const CHANNELS = ['email', 'sms', 'inapp', 'push'];
 /** Launch-readiness item 59 / R11 (N04): web push exists only where the deployment holds its VAPID keys (api/_services/web-push.js pushConfig); without them the
@@ -87,6 +89,8 @@ export async function getAccount(userId, db = defaultDb) {
   return {
     profile: profile ? { displayName: profile.displayName, preferredLanguage: profile.preferredLanguage, ageBand: profile.ageBand, departement: profile.departement, accessibilityPrefs: profile.accessibilityPrefs, prefillConsent: profile.prefillConsent } : { displayName: null, preferredLanguage: 'fr', ageBand: null, departement: null, accessibilityPrefs: {}, prefillConsent: false },
     household: household.map((h) => ({ id: h.id, relation: h.relation, ageBand: h.ageBand, label: h.label })),
+    // Release B: which optional fields the service collects in this environment (the screen offers only those)
+    collect: { ageBand: optionalProfileFieldsOpen(), departement: optionalProfileFieldsOpen(), phone: phoneCollectionOpen() },
     preferences, agePolicy: { accountFeatures: gate.accountFeatures, allowed: gate.allowed, status: gate.policyStatus, publicInformation: 'ALL_AGES', adultAccount: await isAdultAccount(userId, db) },   // R42-A07
   };
 }
@@ -100,11 +104,13 @@ export async function saveProfile(userId, input, db = defaultDb) {
   }
   // R35 (C04): the six interface languages (src/i18n/languages.js); the verified content stays French-authoritative whatever the account's language
   if ('preferredLanguage' in b) { if (!LANGUAGE_CODES.includes(b.preferredLanguage)) return bad('UNSUPPORTED_LANGUAGE', 'Langue non disponible : français, English, Türkçe, العربية, Deutsch ou Українська.'); patch.preferredLanguage = b.preferredLanguage; }
-  if ('ageBand' in b) {
+  // Release B (D2 V2 minimisation): in the narrow scope a new age band or département is not stored; erasing one (null) stays possible
+  const optionalOpen = optionalProfileFieldsOpen();
+  if ('ageBand' in b && (optionalOpen || b.ageBand === null)) {
     if (b.ageBand !== null && !AGE_BAND_KEYS.includes(b.ageBand)) return bad('INVALID_AGE_BAND', 'Tranche d’âge inconnue.');
     patch.ageBand = b.ageBand;
   }
-  if ('departement' in b) {
+  if ('departement' in b && (optionalOpen || b.departement === null)) {
     if (b.departement !== null && !DEPT.test(String(b.departement))) return bad('INVALID_DEPARTEMENT', 'Département invalide.');
     patch.departement = b.departement;
   }
@@ -119,7 +125,8 @@ export async function saveProfile(userId, input, db = defaultDb) {
     patch.prefillConsent = b.prefillConsent;
   }
   const [existing] = await db.select({ userId: CitizenProfile.userId, prefillConsent: CitizenProfile.prefillConsent }).from(CitizenProfile).where(eq(CitizenProfile.userId, userId)).limit(1);
-  if (existing) await db.update(CitizenProfile).set(patch).where(eq(CitizenProfile.userId, userId));
+  // Release B: a request whose every field is dropped (e.g. only a minimised age band) changes nothing — no empty UPDATE (it threw « No values to set »)
+  if (existing) { if (Object.keys(patch).length) await db.update(CitizenProfile).set(patch).where(eq(CitizenProfile.userId, userId)); }
   else await db.insert(CitizenProfile).values({ userId, ...patch });
   if ('prefillConsent' in patch && patch.prefillConsent !== (existing ? existing.prefillConsent : false)) await appendConsent({ userId, purpose: 'PROFILE_PREFILL', decision: patch.prefillConsent }, db);
   return { ok: true, status: 200, account: await getAccount(userId, db) };

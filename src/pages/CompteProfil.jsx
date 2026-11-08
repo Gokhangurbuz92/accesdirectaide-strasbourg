@@ -36,6 +36,8 @@ const bandLabel = (v, t) => (ageBands(t).find((b) => b[0] === v) || [v, t('compt
 export default function CompteProfil() {
   const { t } = useT('compte');
   const [state, setState] = useState({ loading: true, error: '', account: null });
+  // Release B: GET /api/citizen/profile says whether the age band and the département are collected here (closed in the narrow V2 scope)
+  const optionalFields = state.account?.collect ? state.account.collect.ageBand !== false : true;
   const [shares, setShares] = useState([]);
   // R47: dossier sharing is a capability of its own (citizen.shared_dossier, closed in Production until its AIPD/HDS): while it is closed the profile still
   // opens — rectification is a right of every account — and the « Mes dossiers partagés » card is simply not shown
@@ -82,7 +84,9 @@ export default function CompteProfil() {
   const saveProfile = (e) => {
     e.preventDefault();
     return run(() => citizenApi.saveProfile({
-      displayName: form.displayName.trim() || null, preferredLanguage: form.preferredLanguage, ageBand: form.ageBand || null, departement: form.departement.trim() || null, prefillConsent: form.prefillConsent,
+      displayName: form.displayName.trim() || null, preferredLanguage: form.preferredLanguage, prefillConsent: form.prefillConsent,
+      // Release B (D2 V2 minimisation): the age band and the département are sent only where the service collects them
+      ...(optionalFields ? { ageBand: form.ageBand || null, departement: form.departement.trim() || null } : {}),
       accessibilityPrefs: { falc: form.falc, highContrast: form.highContrast, textScale: form.textScale },
     }), t('compte:profile.saved', 'Profil enregistré.'));
   };
@@ -134,6 +138,7 @@ export default function CompteProfil() {
               </select>
               <p className="mt-1 text-xs text-slate-600">{t('compte:profile.les_informations_verifiees_restent', 'Les informations vérifiées restent rédigées en français ; les autres langues sont des traductions automatiques signalées.')}</p>
             </div>
+            {optionalFields ? (<>
             <div>
               <label htmlFor="pf-band" className="block text-sm font-medium text-slate-800">{t('compte:profile.tranche_age_declarative_facultative', 'Tranche d’âge (déclarative, facultative)')}</label>
               <select id="pf-band" data-testid="pf-band" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={form.ageBand} onChange={(e) => setForm({ ...form, ageBand: e.target.value })}>
@@ -145,6 +150,7 @@ export default function CompteProfil() {
               <label htmlFor="pf-dep" className="block text-sm font-medium text-slate-800">{t('compte:profile.departement_facultatif', 'Département (facultatif)')}</label>
               <input id="pf-dep" data-testid="pf-dep" className="mt-1 w-32 rounded-md border border-slate-300 p-2" inputMode="text" maxLength={3} placeholder="67" value={form.departement} onChange={(e) => setForm({ ...form, departement: e.target.value.toUpperCase() })} />
             </div>
+            </>) : null}
             <fieldset className="space-y-2">
               <legend className="text-sm font-medium text-slate-800">{t('compte:profile.accessibilite', 'Accessibilité')}</legend>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-testid="pf-falc" checked={form.falc} onChange={(e) => setForm({ ...form, falc: e.target.checked })} /> {t('compte:profile.preferer_les_textes_francais', 'Préférer les textes en français facile (FALC)')}</label>

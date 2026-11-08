@@ -50,8 +50,17 @@ test('cross-surface fr: request → accepted → moved → accepted → cancelle
   expect(early.status).toBe(409); expect(early.json.code || early.json.error).toBe('ATTENDANCE_TOO_EARLY');
   // the person moves it: back to a request everywhere
   // (a time the assigned professional is free at: a slot taken for them answers 409 SLOT_TAKEN and the next one is tried)
+  // (test fix 08/11/2026: every refused try is a write of the person, and the public write limit is 10/min per account and address — on days where many
+  // listed times are already taken for the assigned professional, the tries ate the budget and the cancellation below got 429. The candidate times are
+  // now the listed ones where that professional has no active appointment in the database; the product's own refusal is still checked when it happens.)
+  const own = (await db(`SELECT "createdByProUserId" p FROM "ProAppointment" WHERE id = $1`, [S.id]))[0];
+  const busy = (await db(`SELECT "startAt" s, "endAt" e FROM "ProAppointment" WHERE "createdByProUserId" = $1 AND id <> $2 AND status IN ('requested','confirmed')`, [own.p, S.id]))
+    .map((r) => [new Date(r.s).getTime(), new Date(r.e).getTime()]);
+  const durMs = (await db(`SELECT EXTRACT(EPOCH FROM ("endAt" - "startAt"))::int * 1000 ms FROM "ProAppointment" WHERE id = $1`, [S.id]))[0].ms;
+  const freeForPro = slots.slice(7).filter((x) => { const st = new Date(x.startAt).getTime(); return !busy.some(([bs, be]) => st < be && st + durMs > bs); });
+  expect(freeForPro.length, 'a listed time where the assigned professional is free').toBeGreaterThan(0);
   let mv; const tried = [];
-  for (let n = 7; n < 30; n += 1) { mv = await client.api('POST', `/api/rdv/appointments/${S.id}/reschedule`, { startAt: pickSlot(slots, { nth: n }).startAt }); if (mv.status !== 409) break; tried.push(mv.json.code); }
+  for (const x of freeForPro.slice(0, 5)) { mv = await client.api('POST', `/api/rdv/appointments/${S.id}/reschedule`, { startAt: x.startAt }); if (mv.status !== 409) break; tried.push(mv.json.code); }
   expect(mv.status, tried.join(',')).toBe(200);
   expect(tried.every((c) => c === 'SLOT_TAKEN')).toBe(true);
   s = await sides(S.id);

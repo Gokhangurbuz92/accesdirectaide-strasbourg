@@ -166,16 +166,29 @@ test('B03 negative: a stale slot (taken by someone else meanwhile) answers 409 a
   await page.getByTestId('booking-suitability').getByLabel('Oui').check();
   await page.getByTestId(`booking-service-${SVC_DIRECT}`).click();
   await page.getByTestId('booking-professional-choice').getByLabel(/Pas de préférence/).check();
-  await page.getByTestId('booking-professional-continue').click();
+  // the slot the page really shows (« no preference »: one slot stands for every free professional of the team at that time)
+  const [slotsResp] = await Promise.all([page.waitForResponse((r) => new URL(r.url()).pathname.endsWith('/slots')), page.getByTestId('booking-professional-continue').click()]);
+  const pageFirst = (await slotsResp.json()).slots[0].startAt;
   const firstSlot = page.getByTestId('booking-slot').first();
   await expect(firstSlot).toBeVisible();
   const before = await page.getByTestId('booking-slot').count();
   await firstSlot.click();
   await expect(page.getByTestId('booking-confirm')).toBeVisible();
-  // meanwhile the visitor takes exactly that slot (the first offered one) through the API
+  // meanwhile the visitor takes THAT time for every free professional (test fix 08/11/2026: with « no preference » a slot is free while ONE professional
+  // is — on days where two members work at that hour, one concurrent booking left the other free and the page rightly got 201). Each booking must land on
+  // a different professional (a genuine double booking fails here), and the next one is refused once nobody is free.
+  // the concurrent bookings come from the visitor's account in a SEPARATE browser (its own address): the public write limit is per account and address
+  // (10/min, api/_utils/rateLimit.js), and these extra writes must not eat the budget the visitor's next journeys (C18) rely on
+  const taker = await person(browser);
+  const takerPage = await taker.context.newPage(); await citizenSignIn(takerPage, V, '/compte'); await takerPage.close();
   const offered = await allSlots(visitor, SVC_DIRECT, { windows: 1 });
-  const taken = await book(visitor, SVC_DIRECT, offered[0].startAt);
-  expect(taken.status).toBe(201); S.taken = taken.json.id;
+  const takenIds = []; let lastTake;
+  for (let i = 0; i < 6; i += 1) { lastTake = await book(taker, SVC_DIRECT, pageFirst); if (lastTake.status !== 201) break; takenIds.push(lastTake.json.id); }
+  expect(takenIds.length, 'the visitor got at least the first free professional').toBeGreaterThanOrEqual(1);
+  expect(lastTake.status, 'once every professional is taken the time is refused').toBe(409);
+  const takenPros = (await db(`SELECT "createdByProUserId" p FROM "ProAppointment" WHERE id = ANY($1)`, [takenIds])).map((r) => r.p);
+  expect(new Set(takenPros).size, 'never two appointments on one professional at the same time').toBe(takenIds.length);
+  S.takenIds = takenIds;
   const [resp] = await Promise.all([page.waitForResponse((r) => new URL(r.url()).pathname === '/api/rdv/appointments' && r.request().method() === 'POST'), page.getByTestId('booking-confirm').click()]);
   expect(resp.status()).toBe(409);
   const notice = page.getByTestId('booking-slot-notice');
@@ -186,7 +199,7 @@ test('B03 negative: a stale slot (taken by someone else meanwhile) answers 409 a
   await axe(page, 'stale slot notice');
   // idempotency: the same key twice → one appointment, the second answer is the replay of the first
   const key = `r47-dup-${STAMP}`;
-  const s2 = pickSlot(offered, { avoid: [offered[0].startAt, S.directSlot], nth: 3 });
+  const s2 = pickSlot(offered, { avoid: [offered[0].startAt, pageFirst, S.directSlot], nth: 3 });
   const a = await other.api('POST', '/api/rdv/appointments', { structureSlug: SLUG, serviceId: SVC_DIRECT, startAt: s2.startAt, idempotencyKey: key });
   const b = await other.api('POST', '/api/rdv/appointments', { structureSlug: SLUG, serviceId: SVC_DIRECT, startAt: s2.startAt, idempotencyKey: key });
   expect(a.status).toBe(201); expect(b.status).toBe(200); expect(b.json.id).toBe(a.json.id);
@@ -198,7 +211,9 @@ test('B03 negative: a stale slot (taken by someone else meanwhile) answers 409 a
   const pros = (await db(`SELECT "createdByProUserId" p FROM "ProAppointment" WHERE id = ANY($1)`, [ids])).map((r) => r.p);
   expect(new Set(pros).size, 'one appointment per professional on the same time').toBe(ids.length);
   for (const id of ids) await other.api('POST', `/api/rdv/appointments/${id}/cancel`, {});
-  await visitor.api('POST', `/api/rdv/appointments/${S.taken}/cancel`, {});
+  for (const id of S.takenIds) expect((await taker.api('POST', `/api/rdv/appointments/${id}/cancel`, {})).status).toBe(200);
+  expect(taker.serverErrors).toEqual([]);
+  await taker.context.close();
   expect(other.serverErrors).toEqual([]);
   await other.context.close();
 });
