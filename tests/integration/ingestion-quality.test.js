@@ -56,8 +56,9 @@ describe('Ingestion Quality - Phase 7', () => {
       expect(existing).toBeTruthy();
       expect(existing.id).toBe(first.id);
 
-      // Verify no duplication
-      const count = await (await db.select({ count: sql`count(*)` }).from(schema.Aide))[0].count;
+      // Verify no duplication — of THIS item (same slug or same source). V2 (09/11/2026): the former global count of the whole Aide table also counted
+      // rows written by anything else on the shared suite database (native QA v10 saw 16): it measured the table, not the idempotence of this item.
+      const count = await (await db.select({ count: sql`count(*)` }).from(schema.Aide).where(or(eq(schema.Aide.slug, testSlug), eq(schema.Aide.source_url, itemData.source_url))))[0].count;
       expect(Number(count)).toBe(1);
     });
 
