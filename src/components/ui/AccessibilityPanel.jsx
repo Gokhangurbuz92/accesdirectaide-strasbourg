@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Eye,
@@ -15,17 +15,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ACCESSIBILITY_EVENT } from '@/lib/accountAccessibility';
+import { ACCESSIBILITY_EVENT, resetDisplayPreferences } from '@/lib/accountAccessibility';
 import { useT } from '@/i18n';
 
 export default function AccessibilityPanel() {
   const { t } = useT('layout');
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState(/** @type {{ fontSize: number, contrast: string, lineHeight: string, simplifiedMode: boolean, reduceMotion?: boolean }} */ ({
     fontSize: 100,
     contrast: 'normal',
     lineHeight: 'normal',
     simplifiedMode: false
-  });
+  }));
 
   useEffect(() => {
     try {
@@ -38,8 +38,11 @@ export default function AccessibilityPanel() {
     return () => window.removeEventListener(ACCESSIBILITY_EVENT, onAccount);
   }, []);
 
+  // P2b / art. 82 LIL: the device is written only after a choice of the person (a button here, or a change announced by ACCESSIBILITY_EVENT, which the
+  // helper already stored) — never at page load: an untouched browser keeps no display key at all
+  const chosen = useRef(false);
   useEffect(() => {
-    try { localStorage.setItem('accessibilitySettings', JSON.stringify(settings)); } catch { /* private browsing */ }
+    if (chosen.current) { try { localStorage.setItem('accessibilitySettings', JSON.stringify(settings)); } catch { /* private browsing */ } }
 
     document.documentElement.style.fontSize = `${settings.fontSize}%`;
 
@@ -59,21 +62,19 @@ export default function AccessibilityPanel() {
     }
 
     document.body.classList.toggle('simplified-mode', settings.simplifiedMode);
-    // K0 / C04: the settings screen's "reduce motion" choice is re-applied on every page, not only at the moment it is toggled
-    try { document.body.classList.toggle('reduce-motion', JSON.parse(localStorage.getItem('ada_citizen_prefs') || '{}').reduceMotion === true); } catch { /* unreadable storage */ }
+    // « reduce motion » (device-only display preference, src/lib/accountAccessibility.js) is re-applied on every page; the legacy key is still read once
+    let legacyMotion = false;
+    try { legacyMotion = JSON.parse(localStorage.getItem('ada_citizen_prefs') || '{}').reduceMotion === true; } catch { /* unreadable storage */ }
+    document.body.classList.toggle('reduce-motion', typeof settings.reduceMotion === 'boolean' ? settings.reduceMotion : legacyMotion);
   }, [settings]);
 
-  const resetSettings = () => {
-    setSettings({
-      fontSize: 100,
-      contrast: 'normal',
-      lineHeight: 'normal',
-      simplifiedMode: false
-    });
-  };
+  // P2b (device-only): « reset » puts EVERY display preference of this device back (text, contrast, motion, FALC, read-aloud), through the shared helper
+  /** a choice made in this panel: applied and kept on this device */
+  const choose = (/** @type {(prev: typeof settings) => typeof settings} */ fn) => { chosen.current = true; setSettings(fn); };
+  const resetSettings = () => { chosen.current = false; setSettings(resetDisplayPreferences()); };   // the helper removed the keys; nothing is rewritten
 
   const adjustFontSize = (/** @type {number} */ delta) => {
-    setSettings(prev => ({
+    choose(prev => ({
       ...prev,
       fontSize: Math.min(150, Math.max(80, prev.fontSize + delta))
     }));
@@ -179,7 +180,7 @@ export default function AccessibilityPanel() {
                 <Button
                   variant={settings.contrast === 'normal' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSettings(prev => ({ ...prev, contrast: 'normal' }))}
+                  onClick={() => choose(prev => ({ ...prev, contrast: 'normal' }))}
                   aria-pressed={settings.contrast === 'normal'}
                   className={`text-xs h-8 ${settings.contrast !== 'normal' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
@@ -189,7 +190,7 @@ export default function AccessibilityPanel() {
                 <Button
                   variant={settings.contrast === 'high' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSettings(prev => ({ ...prev, contrast: 'high' }))}
+                  onClick={() => choose(prev => ({ ...prev, contrast: 'high' }))}
                   aria-pressed={settings.contrast === 'high'}
                   className={`text-xs h-8 ${settings.contrast !== 'high' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
@@ -199,7 +200,7 @@ export default function AccessibilityPanel() {
                 <Button
                   variant={settings.contrast === 'dark' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSettings(prev => ({ ...prev, contrast: 'dark' }))}
+                  onClick={() => choose(prev => ({ ...prev, contrast: 'dark' }))}
                   aria-pressed={settings.contrast === 'dark'}
                   className={`text-xs h-8 ${settings.contrast !== 'dark' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
@@ -220,7 +221,7 @@ export default function AccessibilityPanel() {
                 <Button
                   variant={settings.lineHeight === 'normal' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSettings(prev => ({ ...prev, lineHeight: 'normal' }))}
+                  onClick={() => choose(prev => ({ ...prev, lineHeight: 'normal' }))}
                   aria-pressed={settings.lineHeight === 'normal'}
                   className={`text-xs h-8 ${settings.lineHeight !== 'normal' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
@@ -229,7 +230,7 @@ export default function AccessibilityPanel() {
                 <Button
                   variant={settings.lineHeight === 'large' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSettings(prev => ({ ...prev, lineHeight: 'large' }))}
+                  onClick={() => choose(prev => ({ ...prev, lineHeight: 'large' }))}
                   aria-pressed={settings.lineHeight === 'large'}
                   className={`text-xs h-8 ${settings.lineHeight !== 'large' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
                 >
@@ -246,7 +247,7 @@ export default function AccessibilityPanel() {
               <Button
                 variant={settings.simplifiedMode ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSettings(prev => ({ ...prev, simplifiedMode: !prev.simplifiedMode }))}
+                onClick={() => choose(prev => ({ ...prev, simplifiedMode: !prev.simplifiedMode }))}
                 aria-pressed={settings.simplifiedMode}
                 className={`w-full text-xs h-8 ${!settings.simplifiedMode ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
               >

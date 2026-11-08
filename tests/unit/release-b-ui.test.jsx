@@ -102,21 +102,22 @@ describe('Release B — settings: no phone field while its collection is closed'
 });
 
 describe('Release B — profile: no age band or département in the narrow V2 scope', () => {
-  const account = (collect) => ({ profile: { displayName: 'Personne fictive', preferredLanguage: 'fr', ageBand: null, departement: null, accessibilityPrefs: {}, prefillConsent: false },
+  const account = (collect) => ({ profile: { displayName: 'Personne fictive', preferredLanguage: 'fr', ageBand: null, departement: null, prefillConsent: false },
     household: [], preferences: [], collect, agePolicy: { accountFeatures: true, allowed: true, status: 'CONFIGURED', publicInformation: 'ALL_AGES', adultAccount: true } });
   const page = () => render(h(HelmetProvider, null, h(MemoryRouter, null, h(CompteProfil))));
-  it('closed: neither field is offered, the accessibility settings are; saving sends neither field', async () => {
+  it('closed: neither field is offered; saving sends neither field nor any display preference (P2b: device only, outside the account form)', async () => {
     getProfile.mockResolvedValue(account({ ageBand: false, departement: false, phone: false }));
     page();
     expect(await screen.findByTestId('pf-falc')).toBeInTheDocument();
     expect(screen.queryByTestId('pf-band')).toBeNull();
     expect(screen.queryByTestId('pf-dep')).toBeNull();
-    const form = screen.getByTestId('pf-falc').closest('form');
+    expect(screen.getByTestId('pf-falc').closest('form'), 'the display preferences are not part of the account form').toBeNull();
+    const form = screen.getByTestId('profil-save').closest('form');
     await act(async () => { fireEvent.submit(form); });
     expect(saveProfile).toHaveBeenCalled();
     const body = saveProfile.mock.calls.at(-1)[0];
     expect(body).not.toHaveProperty('ageBand'); expect(body).not.toHaveProperty('departement');
-    expect(body.accessibilityPrefs).toBeTruthy();
+    expect(body).not.toHaveProperty('accessibilityPrefs');
   });
   it('open (LAB): both fields are offered as before', async () => {
     getProfile.mockResolvedValue(account({ ageBand: true, departement: true, phone: true }));

@@ -72,13 +72,6 @@ export const ageRefusal = (gate) => bad('AGE_POLICY_PENDING', gate.accountFeatur
 
 // ───────────── profile
 const DEPT = /^(?:\d{2}|2A|2B|97\d)$/;
-function cleanAccessibility(a) {
-  const src = a && typeof a === 'object' ? a : {};
-  const out = {};
-  for (const k of ['falc', 'highContrast', 'reduceMotion', 'voice']) if (typeof src[k] === 'boolean') out[k] = src[k];
-  if (TEXT_SCALES.includes(src.textScale)) out.textScale = src.textScale;
-  return out;
-}
 export async function getAccount(userId, db = defaultDb) {
   const [profile] = await db.select().from(CitizenProfile).where(eq(CitizenProfile.userId, userId)).limit(1);
   // R45 / ENG-LR-6 (minimisation): the household (C03) is outside the AIPD — while citizen.household is closed it is neither read nor returned (an empty list
@@ -87,7 +80,7 @@ export async function getAccount(userId, db = defaultDb) {
   const preferences = await getPreferences(userId, db);
   const gate = await ageGate(userId, db);
   return {
-    profile: profile ? { displayName: profile.displayName, preferredLanguage: profile.preferredLanguage, ageBand: profile.ageBand, departement: profile.departement, accessibilityPrefs: profile.accessibilityPrefs, prefillConsent: profile.prefillConsent } : { displayName: null, preferredLanguage: 'fr', ageBand: null, departement: null, accessibilityPrefs: {}, prefillConsent: false },
+    profile: profile ? { displayName: profile.displayName, preferredLanguage: profile.preferredLanguage, ageBand: profile.ageBand, departement: profile.departement, prefillConsent: profile.prefillConsent } : { displayName: null, preferredLanguage: 'fr', ageBand: null, departement: null, prefillConsent: false },
     household: household.map((h) => ({ id: h.id, relation: h.relation, ageBand: h.ageBand, label: h.label })),
     // Release B: which optional fields the service collects in this environment (the screen offers only those)
     collect: { ageBand: optionalProfileFieldsOpen(), departement: optionalProfileFieldsOpen(), phone: phoneCollectionOpen() },
@@ -114,7 +107,8 @@ export async function saveProfile(userId, input, db = defaultDb) {
     if (b.departement !== null && !DEPT.test(String(b.departement))) return bad('INVALID_DEPARTEMENT', 'Département invalide.');
     patch.departement = b.departement;
   }
-  if ('accessibilityPrefs' in b) patch.accessibilityPrefs = cleanAccessibility(b.accessibilityPrefs);
+  // P2b (owner decision 08/11/2026, D2 V2 option B): display preferences are kept ON THE DEVICE ONLY — a value sent to the API is never stored, and a value
+  // stored before this change is cleared at the next profile save (see below). The display itself is unaffected (src/lib/accountAccessibility.js).
   if ('prefillConsent' in b) {
     if (typeof b.prefillConsent !== 'boolean') return bad('INVALID_PREFILL_CONSENT', 'prefillConsent doit être vrai ou faux.');
     if (b.prefillConsent) {
@@ -124,7 +118,9 @@ export async function saveProfile(userId, input, db = defaultDb) {
     }
     patch.prefillConsent = b.prefillConsent;
   }
-  const [existing] = await db.select({ userId: CitizenProfile.userId, prefillConsent: CitizenProfile.prefillConsent }).from(CitizenProfile).where(eq(CitizenProfile.userId, userId)).limit(1);
+  const [existing] = await db.select({ userId: CitizenProfile.userId, prefillConsent: CitizenProfile.prefillConsent, accessibilityPrefs: CitizenProfile.accessibilityPrefs }).from(CitizenProfile).where(eq(CitizenProfile.userId, userId)).limit(1);
+  // P2b: display preferences stored by an earlier version are erased at the first profile save (they now live on the device only)
+  if (existing && existing.accessibilityPrefs && typeof existing.accessibilityPrefs === 'object' && Object.keys(existing.accessibilityPrefs).length) patch.accessibilityPrefs = {};
   // Release B: a request whose every field is dropped (e.g. only a minimised age band) changes nothing — no empty UPDATE (it threw « No values to set »)
   if (existing) { if (Object.keys(patch).length) await db.update(CitizenProfile).set(patch).where(eq(CitizenProfile.userId, userId)); }
   else await db.insert(CitizenProfile).values({ userId, ...patch });

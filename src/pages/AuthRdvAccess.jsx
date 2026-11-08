@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import { applyAccountAccessibility } from '@/lib/accountAccessibility';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { passwordProblems } from '@/lib/passwordPolicy';
 import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
@@ -171,11 +170,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
         return;
       }
 
-      // K0 / C04: the account's saved accessibility preferences follow the person to this device (best effort; never blocks the sign-in)
-      try {
-        const prof = await fetch('/api/citizen/profile', { credentials: 'include' });
-        if (prof.ok) applyAccountAccessibility((await prof.json())?.account?.profile?.accessibilityPrefs);
-      } catch { /* the preferences are applied again on the profile screen */ }
+      // P2b (owner decision 08/11/2026): the display preferences are kept on this device only — nothing is fetched from the account at sign-in
 
       if (typeof window !== 'undefined') {
         window.location.assign(next);

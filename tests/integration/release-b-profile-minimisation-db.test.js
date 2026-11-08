@@ -39,7 +39,7 @@ describe.skipIf(!hasDatabase)('Release B — age band and département not colle
     expect(await stored()).toEqual({ ageBand: null, departement: null, displayName: 'Personne fictive' });
     const a = await acc.getAccount(U.id);
     expect(a.collect).toEqual({ ageBand: false, departement: false, phone: false });
-    expect(a.profile.accessibilityPrefs).toEqual({ highContrast: true });
+    expect(a.profile).not.toHaveProperty('accessibilityPrefs');   // P2b: device only
   });
 
   it('narrow scope: a band cannot turn an adult account into a minor one (nor the reverse) — the adult declaration stays the age element', async () => {

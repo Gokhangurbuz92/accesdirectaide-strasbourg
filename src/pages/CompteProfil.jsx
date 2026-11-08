@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import GuardianLinks from '@/components/account/GuardianLinks';
 import { AGE_BANDS } from '@/lib/ageBandOptions';
-import { applyAccountAccessibility } from '@/lib/accountAccessibility';
+import DeviceDisplayPreferences from '@/components/account/DeviceDisplayPreferences';
 import DevicePush from '@/components/DevicePush';
 import { FranceConnectLink } from '@/components/account/FranceConnect';
 import { LANGUAGES, SOURCE_LANGUAGE, formatDate, setLanguage, storedLanguage, useLanguage, useT } from '@/i18n';
@@ -45,7 +45,7 @@ export default function CompteProfil() {
   const [message, setMessage] = useState('');
   const [problem, setProblem] = useState('');
   const { code: uiLanguage } = useLanguage();
-  const [form, setForm] = useState({ displayName: '', preferredLanguage: 'fr', ageBand: '', departement: '', prefillConsent: false, falc: false, highContrast: false, textScale: 'normal' });
+  const [form, setForm] = useState({ displayName: '', preferredLanguage: 'fr', ageBand: '', departement: '', prefillConsent: false });
   const [member, setMember] = useState({ relation: 'partner', ageBand: '', label: '' });
   const [claim, setClaim] = useState({ shareId: '', ownerSecret: '' });
   // R43 (A5): the two fields of « rattacher un dossier » say what is missing (the button was disabled without a reason)
@@ -63,12 +63,12 @@ export default function CompteProfil() {
       }
       setShares(owned.shares || []);
       const p = account.profile;
-      applyAccountAccessibility(p.accessibilityPrefs);   // K0 / C04: the saved preferences apply to the whole site, not only to this form
+      // P2b (08/11/2026): the display preferences are no longer part of the account — they live on this device only (DeviceDisplayPreferences below)
       // R35 (C04): the account's language applies to the interface on every device the person signs in on
       // R47: « fr » is also the column's default (a person who never chose), so it does not override a language this visitor chose in this browser — the
       // profile used to switch an Arabic or English visitor to French on opening; a non-French account language still applies everywhere
       if (p.preferredLanguage && p.preferredLanguage !== uiLanguage && (p.preferredLanguage !== SOURCE_LANGUAGE || !storedLanguage())) void setLanguage(p.preferredLanguage);
-      setForm({ displayName: p.displayName || '', preferredLanguage: p.preferredLanguage || 'fr', ageBand: p.ageBand || '', departement: p.departement || '', prefillConsent: Boolean(p.prefillConsent), falc: Boolean(p.accessibilityPrefs?.falc), highContrast: Boolean(p.accessibilityPrefs?.highContrast), textScale: p.accessibilityPrefs?.textScale || 'normal' });
+      setForm({ displayName: p.displayName || '', preferredLanguage: p.preferredLanguage || 'fr', ageBand: p.ageBand || '', departement: p.departement || '', prefillConsent: Boolean(p.prefillConsent) });
       setState({ loading: false, error: '', account });
     } catch (err) {
       setState({ loading: false, error: err.status === 401 ? t('compte:profile.login_required', 'Connectez-vous pour accéder à votre profil.') : err.message, account: null });
@@ -87,7 +87,6 @@ export default function CompteProfil() {
       displayName: form.displayName.trim() || null, preferredLanguage: form.preferredLanguage, prefillConsent: form.prefillConsent,
       // Release B (D2 V2 minimisation): the age band and the département are sent only where the service collects them
       ...(optionalFields ? { ageBand: form.ageBand || null, departement: form.departement.trim() || null } : {}),
-      accessibilityPrefs: { falc: form.falc, highContrast: form.highContrast, textScale: form.textScale },
     }), t('compte:profile.saved', 'Profil enregistré.'));
   };
 
@@ -151,23 +150,14 @@ export default function CompteProfil() {
               <input id="pf-dep" data-testid="pf-dep" className="mt-1 w-32 rounded-md border border-slate-300 p-2" inputMode="text" maxLength={3} placeholder="67" value={form.departement} onChange={(e) => setForm({ ...form, departement: e.target.value.toUpperCase() })} />
             </div>
             </>) : null}
-            <fieldset className="space-y-2">
-              <legend className="text-sm font-medium text-slate-800">{t('compte:profile.accessibilite', 'Accessibilité')}</legend>
-              <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-testid="pf-falc" checked={form.falc} onChange={(e) => setForm({ ...form, falc: e.target.checked })} /> {t('compte:profile.preferer_les_textes_francais', 'Préférer les textes en français facile (FALC)')}</label>
-              <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-testid="pf-contrast" checked={form.highContrast} onChange={(e) => setForm({ ...form, highContrast: e.target.checked })} /> {t('compte:profile.contraste_renforce', 'Contraste renforcé')}</label>
-              <div>
-                <label htmlFor="pf-scale" className="block text-sm text-slate-800">{t('compte:profile.taille_texte', 'Taille du texte')}</label>
-                <select id="pf-scale" data-testid="pf-scale" className="mt-1 rounded-md border border-slate-300 p-2" value={form.textScale} onChange={(e) => setForm({ ...form, textScale: e.target.value })}>
-                  <option value="normal">{t('compte:profile.normale', 'Normale')}</option><option value="large">{t('compte:profile.grande', 'Grande')}</option><option value="xlarge">{t('compte:profile.tres_grande', 'Très grande')}</option>
-                </select>
-              </div>
-            </fieldset>
             <label className="flex items-start gap-2 text-sm">
               <input type="checkbox" data-testid="pf-prefill" className="mt-1" checked={form.prefillConsent} onChange={(e) => setForm({ ...form, prefillConsent: e.target.checked })} />
               <span>{t('compte:profile.accepte_que_ces_informations', 'J’accepte que ces informations préremplissent mes démarches (je peux retirer mon accord à tout moment).')}</span>
             </label>
             <Button type="submit" data-testid="profil-save">{t('compte:profile.enregistrer', 'Enregistrer')}</Button>
           </form>
+          {/* P2b (owner decision 08/11/2026): outside the account form — applied at once, kept on this device only, never sent with « Enregistrer » */}
+          <div className="mt-6 border-t border-slate-200 pt-4"><DeviceDisplayPreferences /></div>
         </CardContent>
       </Card>
 

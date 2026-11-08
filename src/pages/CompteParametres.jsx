@@ -33,23 +33,11 @@ import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { csrfFetch } from '@/lib/csrf';
 import { logoutOnServer } from '@/lib/citizenSession';
-import { applyDeviceAccessibility } from '@/lib/accountAccessibility';
+import { ACCESSIBILITY_EVENT, applyDisplayPreferences, readDisplayPreferences } from '@/lib/accountAccessibility';
+import DeviceDisplayPreferences from '@/components/account/DeviceDisplayPreferences';
 import { formatDate, useT } from '@/i18n';
 
-// ─── Local Preferences helpers ────────────────────────────────
-const PREFS_KEY = 'ada_citizen_prefs';
-
-function loadPrefs() {
-    try {
-        return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
-    } catch {
-        return {};
-    }
-}
-
-function savePrefs(/** @type {Record<string, string | number | boolean | null | undefined>} */ prefs) {
-    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-}
+// (P2b, 08/11/2026: the display preferences moved to the device store of src/lib/accountAccessibility.js; « ada_citizen_prefs » is only read once there)
 
 // ─── Tab Components ───────────────────────────────────────────
 
@@ -256,34 +244,19 @@ function SecurityTab({ user }) {
 
 function AccessibilityTab() {
     const { t } = useT('compte');
-    const [prefs, setPrefs] = useState(() => {
-        const saved = loadPrefs();
-        return {
-            fontSize: saved.fontSize ?? 100,
-            reduceMotion: saved.reduceMotion ?? false,
-            highContrast: saved.highContrast ?? false,
-        };
-    });
+    // P2b (owner decision 08/11/2026): the display preferences of THIS DEVICE (src/lib/accountAccessibility.js) — the same store the whole site applies,
+    // kept after sign-out, never sent to the server; a reset from anywhere (this screen, the header panel, the profile) is followed here
+    const current = () => { const d = readDisplayPreferences(); return { fontSize: d.fontSize, reduceMotion: d.reduceMotion, highContrast: d.highContrast }; };
+    const [prefs, setPrefs] = useState(current);
+    useEffect(() => {
+        const refresh = () => setPrefs(current());
+        window.addEventListener(ACCESSIBILITY_EVENT, refresh);
+        return () => window.removeEventListener(ACCESSIBILITY_EVENT, refresh);
+    }, []);
 
     const handleChange = (/** @type {string} */ key, value) => {
-        setPrefs(prev => {
-            const next = { ...prev, [key]: value };
-            savePrefs(next);
-
-            // Apply immediately
-            if (key === 'fontSize' || key === 'highContrast') {
-                applyDeviceAccessibility({ [key]: value });   // K0 / C04: the same settings the whole site applies (survives a reload)
-                document.documentElement.style.fontSize = `${key === 'fontSize' ? value : (next.fontSize ?? 100)}%`;
-            }
-            if (key === 'reduceMotion') {
-                document.body.classList.toggle('reduce-motion', value);
-            }
-            if (key === 'highContrast') {
-                document.body.classList.toggle('high-contrast', value);
-            }
-
-            return next;
-        });
+        applyDisplayPreferences({ [key]: value });   // applied at once by AccessibilityPanel (text size, contrast, motion) and kept on this device
+        setPrefs(current());
     };
 
     return (
@@ -359,6 +332,8 @@ function AccessibilityTab() {
                     </div>
                 </div>
             </div>
+
+            <DeviceDisplayPreferences controls={false} idPrefix="settings" />
 
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
                 <p>{t('compte:settings.a11y_panel_before', '💡 Vous pouvez aussi utiliser le')} <strong>{t('compte:settings.a11y_panel_strong', 'panneau d\'accessibilité')}</strong> {t('compte:settings.a11y_panel_after', 'dans le header (bouton « Accessibilité ») pour des contrôles rapides.')}</p>

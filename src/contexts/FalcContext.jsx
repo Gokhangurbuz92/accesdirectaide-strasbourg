@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { ACCESSIBILITY_EVENT } from '@/lib/accountAccessibility';
 
 const FalcContext = createContext(null);
@@ -18,11 +18,16 @@ export function FalcProvider({ children }) {
     }
   });
 
+  // P2b / art. 82 LIL: the device is written only when the person switches FALC here (toggleFalc) — not at page load; a change made elsewhere is
+  // already stored by src/lib/accountAccessibility.js and only applied here
+  const chosen = useRef(false);
   useEffect(() => {
-    try {
-      localStorage.setItem('falc-mode', String(isFalcEnabled));
-    } catch {
-      // localStorage unavailable (private browsing)
+    if (chosen.current) {
+      try {
+        localStorage.setItem('falc-mode', String(isFalcEnabled));
+      } catch {
+        // localStorage unavailable (private browsing)
+      }
     }
 
     if (isFalcEnabled) {
@@ -39,7 +44,7 @@ export function FalcProvider({ children }) {
     return () => window.removeEventListener(ACCESSIBILITY_EVENT, onAccount);
   }, []);
 
-  const toggleFalc = () => setIsFalcEnabled(prev => !prev);
+  const toggleFalc = () => { chosen.current = true; setIsFalcEnabled(prev => !prev); };
 
   const value = useMemo(() => ({
     isFalcEnabled,

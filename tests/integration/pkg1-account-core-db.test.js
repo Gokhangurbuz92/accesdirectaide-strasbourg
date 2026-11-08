@@ -69,7 +69,9 @@ describe.skipIf(!hasDatabase)('PKG-1 account core (real DB)', () => {
       const p = await call(H.profile, { method: 'PUT', as: A, body: { displayName: 'Alex', ageBand: '25-59', departement: '67', accessibilityPrefs: { falc: true, textScale: 'large', junk: 1 } } });
       expect(p.statusCode, JSON.stringify(p.body)).toBe(200);
       expect(p.body.account.profile).toMatchObject({ displayName: 'Alex', ageBand: '25-59', departement: '67' });
-      expect(p.body.account.profile.accessibilityPrefs).toEqual({ falc: true, textScale: 'large' });
+      // P2b (08/11/2026): display preferences are kept on the device only — never stored in the account, never returned
+      expect(p.body.account.profile).not.toHaveProperty('accessibilityPrefs');
+      expect((await db.execute(sql`SELECT "accessibilityPrefs" a FROM "CitizenProfile" WHERE "userId" = ${A.id}`)).rows[0].a).toEqual({});
       expect((await call(H.profile, { as: B })).body.account.profile.displayName).toBeNull();   // B sees nothing of A
     });
     it('a body userId cannot redirect the write to another account', async () => {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { LANGUAGE_EVENT } from '@/i18n';
+import { ACCESSIBILITY_EVENT } from '@/lib/accountAccessibility';
 import { canSpeak, chunkText, claimSpeech, currentSectionIndex, extractSections, holdsSpeech, langOf, releaseSpeech, silenceSpeech, voicesFor } from '@/lib/readAloud';
 
 /**
@@ -36,6 +37,12 @@ export default function useReadAloud() {
   const [state, setState] = useState(/** @type {ReaderState} */ ({ status: 'idle', section: 0, total: 0, heading: '', skipped: [], error: '' }));
   const run = useRef({ sections: /** @type {import('@/lib/readAloud').ReadSection[]} */ ([]), s: 0, b: 0, c: 0, token: 0, status: /** @type {ReaderStatus} */ ('idle'), el: /** @type {Element|null} */ (null), skipped: /** @type {Set<string>} */ (new Set()), prefs, voices: /** @type {SpeechSynthesisVoice[]} */ ([]) });
   run.current.prefs = prefs; run.current.voices = voices;
+  // P2b: « reset the display » (src/lib/accountAccessibility.js) also puts the read-aloud settings of this device back to the defaults
+  useEffect(() => {
+    const onReset = (/** @type {any} */ e) => { if (e?.detail?.reset) { const d = { rate: 1, voices: {}, highlight: true }; run.current.prefs = d; setPrefsState(d); } };
+    window.addEventListener(ACCESSIBILITY_EVENT, onReset);
+    return () => window.removeEventListener(ACCESSIBILITY_EVENT, onReset);
+  }, []);
   // this reader as a holder of the device's speech: when another reader starts, nothing more is spoken and the controls return to idle
   const owner = useRef(/** @type {import('@/lib/readAloud').SpeechOwner} */ ({ preempt: () => {} }));
 
