@@ -281,7 +281,7 @@ describe.skipIf(!hasDatabase)('R43-BOOK lifecycle, notice ledger and security (r
 
   it('security: a publicly registered citizen never obtains a professional, structure, territory or administrator role (sign-up, booking, age statement)', async () => {
     const r = mk();
-    await signup({ method: 'POST', url: '/api/auth/signup', headers: { host: 'localhost', 'x-forwarded-for': '10.43.0.1' }, body: { email: SIGNUP_EMAIL, password: 'Synthetic-QA-Pass-01', adultDeclaration: true,
+    await signup({ method: 'POST', url: '/api/auth/signup', headers: { host: 'localhost', 'x-forwarded-for': '10.43.0.1' }, body: { email: SIGNUP_EMAIL, password: 'Synthetic-QA-Pass-01', adultDeclaration: true, termsAccepted: true,
       role: 'SUPERADMIN', kind: 'pro', structureId: A.id, isAdmin: true, territory: 'strasbourg', mfa_enabled: true } }, r);
     expect(r.statusCode, show(r)).toBe(200);
     const user = (await db.execute(sql`SELECT * FROM "CitizenUser" WHERE email = ${SIGNUP_EMAIL}`)).rows[0];

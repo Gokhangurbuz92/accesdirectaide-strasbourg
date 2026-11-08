@@ -473,6 +473,7 @@
  "settings.sessions": "Sessions",
  "settings.supprimer_mon_compte": "Delete my account",
  "settings.supprimer_numero": "Remove the number",
+ "settings.phone_not_collected": "The service no longer asks for a telephone number. You can remove the one that is stored.",
  "settings.supprimer_votre_compte": "Delete your account?",
  "settings.taille_texte": "Text size",
  "settings.telechargez_une_copie_des": "Download a copy of the personal data of your account (right of access and portability, GDPR art. 15 and 20).",

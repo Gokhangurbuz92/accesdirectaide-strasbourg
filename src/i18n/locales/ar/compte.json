@@ -473,6 +473,7 @@
  "settings.sessions": "الجلسات",
  "settings.supprimer_mon_compte": "حذف حسابي",
  "settings.supprimer_numero": "حذف الرقم",
+ "settings.phone_not_collected": "لم تعد الخدمة تطلب رقم هاتف. يمكنك حذف الرقم المحفوظ.",
  "settings.supprimer_votre_compte": "هل تريد حذف حسابك؟",
  "settings.taille_texte": "حجم النص",
  "settings.telechargez_une_copie_des": "نزّل نسخة من البيانات الشخصية لحسابك (حق الاطلاع وقابلية النقل، RGPD المادتان 15 و20).",

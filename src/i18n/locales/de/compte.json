@@ -473,6 +473,7 @@
  "settings.sessions": "Sitzungen",
  "settings.supprimer_mon_compte": "Mein Konto löschen",
  "settings.supprimer_numero": "Nummer löschen",
+ "settings.phone_not_collected": "Der Dienst fragt keine Telefonnummer mehr ab. Sie können die gespeicherte Nummer löschen.",
  "settings.supprimer_votre_compte": "Ihr Konto löschen?",
  "settings.taille_texte": "Textgröße",
  "settings.telechargez_une_copie_des": "Laden Sie eine Kopie der persönlichen Daten Ihres Kontos herunter (Auskunftsrecht und Datenübertragbarkeit, DSGVO Art. 15 und 20).",

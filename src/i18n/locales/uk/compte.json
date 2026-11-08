@@ -473,6 +473,7 @@
  "settings.sessions": "Сеанси",
  "settings.supprimer_mon_compte": "Видалити мій обліковий запис",
  "settings.supprimer_numero": "Видалити номер",
+ "settings.phone_not_collected": "Сервіс більше не запитує номер телефону. Ви можете видалити збережений номер.",
  "settings.supprimer_votre_compte": "Видалити обліковий запис?",
  "settings.taille_texte": "Розмір тексту",
  "settings.telechargez_une_copie_des": "Завантажте копію персональних даних вашого облікового запису (право доступу та перенесення, GDPR / RGPD ст. 15 і 20).",

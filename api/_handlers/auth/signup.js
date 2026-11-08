@@ -20,6 +20,8 @@ import {
   unsetPasswordHash,
 } from '../../_utils/user-auth.js';
 import { ADULT_REQUIRED_REFUSAL, adultDeclarationGiven, recordAgeDeclaration } from '../../_utils/age-policy.js';
+import { TERMS_REQUIRED_REFUSAL, recordTermsAcceptance, termsAcceptanceGiven } from '../../_utils/terms-acceptance.js';
+import { phoneCollectionOpen } from '../../_utils/phone-collection.js';
 
 const VERIFY_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for stricter security
 
@@ -44,7 +46,8 @@ export default async function handler(req, res) {
 
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
-  const phone = normalizePhone(req.body?.phone);
+  // Release B / D2 V2: no phone is collected while its collection is closed (api/_utils/phone-collection.js) — the field is ignored, never stored
+  const phone = phoneCollectionOpen() ? normalizePhone(req.body?.phone) : null;
   const nextPath = normalizeNextPath(req.body?.next, '/annuaire');
 
   // R18: every refusal carries the French sentence the screen shows (`message`); the screen used to show « Une erreur est survenue » for both
@@ -66,6 +69,11 @@ export default async function handler(req, res) {
   // address (no account oracle). No date of birth is asked (api/_utils/age-policy.js).
   if (!adultDeclarationGiven(req.body?.adultDeclaration)) {
     return res.status(400).json({ ...ADULT_REQUIRED_REFUSAL });
+  }
+  // Release B / D2 V2: the citizen terms of use are accepted at sign-up (a contract acceptance, not a GDPR consent: api/_utils/terms-acceptance.js); checked
+  // after the adult declaration and before anything is looked up (same refusal whatever the address)
+  if (!termsAcceptanceGiven(req.body?.termsAccepted)) {
+    return res.status(400).json({ ...TERMS_REQUIRED_REFUSAL });
   }
 
   const ip = getClientIp(req);
@@ -115,6 +123,7 @@ export default async function handler(req, res) {
 
     // R42-A07: the declaration of THIS sign-up (append-only ledger); a re-sign-up of an unverified address declares again
     await recordAgeDeclaration(user.id, { adult: true, channel: 'signup' });
+    await recordTermsAcceptance(user.id, { channel: 'signup' });   // Release B: the accepted terms and their version, with this sign-up
 
     const rawToken = generateAuthToken();
     const tokenHash = hashAuthToken(rawToken);

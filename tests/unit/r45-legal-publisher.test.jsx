@@ -136,10 +136,19 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   it('the privacy notice covers art. 13 / 14: controller as natural person without address, P1–P16 proposed, A7 pending, processors, transfers, rights, CNIL, booking, sensitive services, art. 14 sources', () => {
     const t = text(notice);
     expect(t).toContain('{{controller}}, personne physique');
-    for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
-    expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes', 'retention']);
-    expect(t).toContain('1 an ou 2 ans après la date du rendez-vous — choix en attente');
-    for (const w of ['Vercel Inc.', 'Neon', 'Upstash', "Mailjet (groupe Sinch) : envoi des e-mails de service, seulement lorsqu'il sera activé", 'États-Unis', 'à tout moment', 'CNIL', 'responsable de son propre traitement', 'La réservation de ces services est fermée', 'FINESS', 'data·inclusion', 'Annuaire de l\'administration']) expect(t, w).toContain(w);
+    for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10a', 'P10b/P10c', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
+    // Release B (D2 V2): the account purposes (P1, P2, P2b, P3, P10a, P12–P16) are a section of their own, without the « proposed » badge; the later-wave
+    // purposes stay proposed (3 bis) with the retention periods (D4 is not approved)
+    expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later', 'retention']);
+    const v2 = notice.sections.find((s) => s.id === 'purposes');
+    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16']);
+    expect(t).toContain('ne sont pas des consentements au sens du RGPD');
+    expect(t).toContain('Aucun numéro de téléphone n\'est demandé');
+    expect(t).toContain('aucune information de ce type n\'est demandée');
+    expect(t).not.toMatch(/consentement explicite \(art\. 9, 2, a\) si une préférence révèle un handicap/);
+    expect(t).toContain('1 an après la date du rendez-vous, puis anonymisation');   // A7 = 365 days: the owner's conditional preference (08/11/2026)
+    expect(t).not.toContain('choix en attente');
+    for (const w of ['Vercel Inc.', 'Neon', 'Upstash', "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse", 'États-Unis', 'à tout moment', 'CNIL', 'responsable de son propre traitement', 'La réservation de ces services est fermée', 'FINESS', 'data·inclusion', 'Annuaire de l\'administration']) expect(t, w).toContain(w);
     expect(t).toMatch(/Aucun délégué à la protection des données n'est désigné/);
     expect(t).not.toMatch(/SIRET|SIREN|association inscrite|DPO\b|partenaire signé/i);
   });
@@ -259,9 +268,9 @@ describe('R45 draft documents rendering', () => {
     const { container } = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_VERSION}`);
-    expect(screen.getAllByTestId('legal-proposed-badge').length).toBe(19 + 9);
+    expect(screen.getAllByTestId('legal-proposed-badge').length).toBe(LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite').sections.filter((s) => s.proposed).reduce((n, s) => n + (s.items || []).length, 0));
     expect(screen.getAllByTestId('legal-proposed-badge')[0]).toHaveTextContent('proposé — en attente de validation du responsable');
-    expect(container.textContent).toContain('1 an ou 2 ans après la date du rendez-vous — choix en attente');
+    expect(container.textContent).toContain('1 an après la date du rendez-vous, puis anonymisation');
     expect(container.textContent).toContain('Le responsable du traitement est Personne Test, personne physique');
     expect(container.textContent).not.toMatch(/\{\{/);
     cleanup();

@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { citizenSessionRevoked, getUserSessionTokenFromRequest, verifyUserSessionToken } from '../../_utils/user-auth.js';
 import { capabilityOpen } from '../../_utils/capabilities.js';
 import { isPublicBetaRestricted, openSurfaces } from '../../_utils/public-beta.js';
+import { phoneCollectionOpen } from '../../_utils/phone-collection.js';
 
 /**
  * G-3 (07/11/2026): this route is not gated by a capability as a whole (api/_utils/capabilities.js « auth/me »: []); each session kind is answered only
@@ -99,6 +100,7 @@ export default async function handler(req, res) {
             emailVerified: true,
             role: 'user',
             authType: 'user_cookie',
+            phoneCollection: phoneCollectionOpen(),   // Release B: the settings screen offers the phone field only when its collection is open
         },
     });
 }

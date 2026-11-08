@@ -55,7 +55,7 @@ describe.skipIf(!hasDatabase)('citizen e-mail journey (real DB, synthetic mail)'
 
   it('deliverable provider: signup → mail → blocked login → verify (single use) → login → /auth/me', async () => {
     mailer.__clearTestOutbox();
-    const created = await post(signup, '/api/auth/signup', { email: EMAIL, password: PASSWORD, adultDeclaration: true });
+    const created = await post(signup, '/api/auth/signup', { email: EMAIL, password: PASSWORD, adultDeclaration: true, termsAccepted: true });
     expect(created.statusCode).toBe(200);
     const box = mailer.__getTestOutbox();
     expect(box).toHaveLength(1);
@@ -95,7 +95,7 @@ describe.skipIf(!hasDatabase)('citizen e-mail journey (real DB, synthetic mail)'
   it('noop provider (the default): the journey is blocked and the failure is VISIBLE (error log + production readiness 503)', async () => {
     vi.stubEnv('MAILER_PROVIDER', 'noop');
     const email2 = `noop-${TS}@example.test`;
-    const created = await post(signup, '/api/auth/signup', { email: email2, password: PASSWORD, adultDeclaration: true });
+    const created = await post(signup, '/api/auth/signup', { email: email2, password: PASSWORD, adultDeclaration: true, termsAccepted: true });
     expect(created.statusCode).toBe(200);                       // generic anti-enumeration answer is preserved
     expect(created.body.message).toMatch(/lien/i);               // ...which is exactly why undelivered mail must be observable elsewhere
     const undelivered = hoisted.calls.filter((c) => c.level === 'error' && c.args[0]?.msg === 'mailer.undelivered');

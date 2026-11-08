@@ -110,7 +110,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
       expect(mailer.__getTestOutbox().filter((m) => m.to === email)).toHaveLength(0);
       // an existing VERIFIED address gets the very same refusal (no account oracle)
       const known = `r42c-known-${TS}@example.test`;
-      expect((await signup({ email: known, password: PASSWORD, adultDeclaration: true })).statusCode).toBe(200);
+      expect((await signup({ email: known, password: PASSWORD, adultDeclaration: true, termsAccepted: true })).statusCode).toBe(200);
       await db.execute(sql`UPDATE "CitizenUser" SET "emailVerifiedAt" = NOW() WHERE email = ${known}`);
       const a = await signup({ email: known, password: PASSWORD }); const b = await signup({ email: `r42c-unknown-${TS}@example.test`, password: PASSWORD });
       expect(a.statusCode).toBe(b.statusCode); expect(a.body).toEqual(b.body);
@@ -119,16 +119,19 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
     it('adult sign-up → declaration in the ledger (no birth data) → verification link single use → login → isAdultAccount; same answer for an existing address', async () => {
       mailer.__clearTestOutbox();
       const email = `r42c-adult-${TS}@example.test`;
-      const created = await signup({ email, password: PASSWORD, adultDeclaration: true, next: '/compte' });
+      const created = await signup({ email, password: PASSWORD, adultDeclaration: true, termsAccepted: true, next: '/compte' });
       expect(created.statusCode).toBe(200);
       const u = (await db.execute(sql`SELECT id, "emailVerifiedAt" v FROM "CitizenUser" WHERE email = ${email}`)).rows[0];
       expect(u.v).toBeNull();
-      const decl = (await db.execute(sql`SELECT purpose, decision, proof_level, policy_version, collection_channel FROM "ConsentLog" WHERE subject_id = ${u.id}`)).rows;
-      expect(decl).toEqual([{ purpose: 'AGE_DECLARATION_ADULT', decision: true, proof_level: 'SELF_DECLARATION', policy_version: ageP.AGE_DECLARATION_VERSION, collection_channel: 'signup' }]);
+      const decl = (await db.execute(sql`SELECT purpose, decision, proof_level, policy_version, collection_channel FROM "ConsentLog" WHERE subject_id = ${u.id} ORDER BY purpose`)).rows;
+      // Release B: the sign-up also keeps the acceptance of the terms (a contract acceptance, never a consent) next to the adult declaration
+      const { termsReference } = await import('../../api/_utils/terms-acceptance.js');
+      expect(decl).toEqual([{ purpose: 'AGE_DECLARATION_ADULT', decision: true, proof_level: 'SELF_DECLARATION', policy_version: ageP.AGE_DECLARATION_VERSION, collection_channel: 'signup' },
+        { purpose: 'TERMS_ACCEPTANCE_CGU_CITOYEN', decision: true, proof_level: 'CONTRACT_ACCEPTANCE', policy_version: termsReference(), collection_channel: 'signup' }]);
       expect(await ageP.isAdultAccount({ id: u.id }), 'not verified yet').toBe(false);
       // enumeration-safe: a second sign-up of the same (now existing) address answers the same as a brand-new one
-      const again = await signup({ email, password: PASSWORD, adultDeclaration: true });
-      const fresh = await signup({ email: `r42c-other-${TS}@example.test`, password: PASSWORD, adultDeclaration: true });
+      const again = await signup({ email, password: PASSWORD, adultDeclaration: true, termsAccepted: true });
+      const fresh = await signup({ email: `r42c-other-${TS}@example.test`, password: PASSWORD, adultDeclaration: true, termsAccepted: true });
       expect(again.body).toEqual(fresh.body); expect(again.statusCode).toBe(fresh.statusCode);
 
       const token = linkOf(lastMail(email, 'email_verify')).searchParams.get('token');
@@ -153,7 +156,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
 
     it('an expired verification link does not verify', async () => {
       const email = `r42c-exp-${TS}@example.test`;
-      expect((await signup({ email, password: PASSWORD, adultDeclaration: true })).statusCode).toBe(200);
+      expect((await signup({ email, password: PASSWORD, adultDeclaration: true, termsAccepted: true })).statusCode).toBe(200);
       const token = linkOf(lastMail(email, 'email_verify')).searchParams.get('token');
       await db.execute(sql`UPDATE "AuthToken" SET "expiresAt" = NOW() - interval '1 second' WHERE "userId" = (SELECT id FROM "CitizenUser" WHERE email = ${email})`);
       const r = await call(H.verify, { method: 'GET', url: '/api/auth/verify-email', query: { token } });
@@ -163,8 +166,8 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
 
     it('the hidden honeypot field: the ordinary answer, nothing created, nothing sent', async () => {
       const email = `r42c-bot-${TS}@example.test`;
-      const r = await signup({ email, password: PASSWORD, adultDeclaration: true, site_web: 'http://spam.example' });
-      const normal = await signup({ email: `r42c-human-${TS}@example.test`, password: PASSWORD, adultDeclaration: true });
+      const r = await signup({ email, password: PASSWORD, adultDeclaration: true, termsAccepted: true, site_web: 'http://spam.example' });
+      const normal = await signup({ email: `r42c-human-${TS}@example.test`, password: PASSWORD, adultDeclaration: true, termsAccepted: true });
       expect(r.statusCode).toBe(200); expect(r.body).toEqual(normal.body);
       expect((await db.execute(sql`SELECT count(*)::int n FROM "CitizenUser" WHERE email = ${email}`)).rows[0].n).toBe(0);
       expect(mailer.__getTestOutbox().filter((m) => m.to === email)).toHaveLength(0);
@@ -175,11 +178,11 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
       try {
         const fixed = ip();
         const codes = [];
-        for (let i = 0; i < 7; i += 1) codes.push((await signup({ email: `r42c-rl-${i}-${TS}@example.test`, password: PASSWORD, adultDeclaration: true }, { 'x-forwarded-for': fixed })).statusCode);
+        for (let i = 0; i < 7; i += 1) codes.push((await signup({ email: `r42c-rl-${i}-${TS}@example.test`, password: PASSWORD, adultDeclaration: true, termsAccepted: true }, { 'x-forwarded-for': fixed })).statusCode);
         expect(codes.slice(0, 5).every((c) => c === 200), JSON.stringify(codes)).toBe(true);
         expect(codes.slice(5)).toEqual([429, 429]);
         const one = `r42c-rl-one-${TS}@example.test`; const perAddress = [];
-        for (let i = 0; i < 7; i += 1) perAddress.push((await signup({ email: one, password: PASSWORD, adultDeclaration: true })).statusCode);
+        for (let i = 0; i < 7; i += 1) perAddress.push((await signup({ email: one, password: PASSWORD, adultDeclaration: true, termsAccepted: true })).statusCode);
         expect(perAddress.slice(5), JSON.stringify(perAddress)).toEqual([429, 429]);
       } finally { limits.real = false; }
     });
@@ -218,7 +221,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
 
     it('password reset (single use, old password refused) and erasure request; an erased account is never adult', async () => {
       const email = `r42c-reset-${TS}@example.test`;
-      expect((await signup({ email, password: PASSWORD, adultDeclaration: true })).statusCode).toBe(200);
+      expect((await signup({ email, password: PASSWORD, adultDeclaration: true, termsAccepted: true })).statusCode).toBe(200);
       const vt = linkOf(lastMail(email, 'email_verify')).searchParams.get('token');
       await call(H.verify, { method: 'GET', url: '/api/auth/verify-email', query: { token: vt } });
       const id = (await db.execute(sql`SELECT id FROM "CitizenUser" WHERE email = ${email}`)).rows[0].id;
@@ -404,7 +407,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
 
       const saved = process.env.MAILER_PROVIDER; process.env.MAILER_PROVIDER = 'noop';
       try {
-        const su = await call(H.signup, { url: '/api/auth/signup', body: { email: `r42c-noop-${TS}@example.test`, password: PASSWORD, adultDeclaration: true }, headers: { 'x-forwarded-for': ip() } });
+        const su = await call(H.signup, { url: '/api/auth/signup', body: { email: `r42c-noop-${TS}@example.test`, password: PASSWORD, adultDeclaration: true, termsAccepted: true }, headers: { 'x-forwarded-for': ip() } });
         expect(su.body.emailDelivery).toBe('UNAVAILABLE'); expect(su.body.message).toMatch(/aucun lien/);
         const fg = await call(H.forgot, { url: '/api/auth/forgot-password', body: { email: `r42c-noop-${TS}@example.test` }, headers: { 'x-forwarded-for': ip() } });
         expect(fg.body.emailDelivery).toBe('UNAVAILABLE');

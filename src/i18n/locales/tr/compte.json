@@ -473,6 +473,7 @@
  "settings.sessions": "Oturumlar",
  "settings.supprimer_mon_compte": "Hesabımı sil",
  "settings.supprimer_numero": "Numarayı sil",
+ "settings.phone_not_collected": "Hizmet artık telefon numarası istemiyor. Kayıtlı numarayı silebilirsiniz.",
  "settings.supprimer_votre_compte": "Hesabınız silinsin mi?",
  "settings.taille_texte": "Metin boyutu",
  "settings.telechargez_une_copie_des": "Hesabınızdaki kişisel verilerin bir kopyasını indirin (erişim ve taşınabilirlik hakkı, GDPR / RGPD md. 15 ve 20).",

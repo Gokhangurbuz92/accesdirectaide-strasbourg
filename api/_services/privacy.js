@@ -31,6 +31,8 @@ import {
     CitizenDelegation,
     DelegationAccessEvent
 } from '../../src/db/schema.js';
+/** ledger proof levels that are not GDPR consents (Release B): terms acceptance (contract) and the adult declaration (access condition) */
+const NOT_CONSENT_PROOF_LEVELS = ['CONTRACT_ACCEPTANCE', 'SELF_DECLARATION'];
 
 export const PURPOSE_REGISTRY = {
     MARKETING_EMAIL: { defaultOff: true, requiresConsent: true },
@@ -516,7 +518,11 @@ export function createPrivacyRightsService({ db, cryptoLib }) {
                 guardianRelationships: records.guardianRelationships,
                 authTokens,
                 diagnostics,
-                consents: records.consents,
+                // Release B (D2 V2): the ledger also keeps proofs that are NOT GDPR consents — the acceptance of the terms of use (a contract) and the adult
+                // declaration (an access condition); they are exported apart, so the export never presents them as consents that could be withdrawn
+                consents: (records.consents || []).filter((c) => !NOT_CONSENT_PROOF_LEVELS.includes(String(c?.proof_level || ''))),
+                termsAcceptances: (records.consents || []).filter((c) => c?.proof_level === 'CONTRACT_ACCEPTANCE'),
+                ageDeclarations: (records.consents || []).filter((c) => c?.proof_level === 'SELF_DECLARATION'),
                 // PKG-4: a human review's internal fields (reviewer identity, encrypted extract) never leave ADA; the decision and the released extract are in organizationHeldRecords
                 dsrRequests: (records.dsrRequests || []).map((r) => (r && r.reviewOutcome ? { ...r, reviewOutcome: { decision: r.reviewOutcome.decision || null, decidedAt: r.reviewOutcome.decidedAt || null } } : r)),
                 legalHolds,

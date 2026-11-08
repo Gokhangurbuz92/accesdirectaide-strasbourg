@@ -177,7 +177,7 @@ describe.skipIf(!hasDatabase)('PKG-11 slice 10 (real DB)', () => {
     const signup = (await import('../../api/_handlers/auth/signup.js')).default; const login = (await import('../../api/_handlers/auth/login.js')).default;
     const post = async (h, body) => { const r = mk(); await h({ method: 'POST', url: '/api/auth/x', query: {}, headers: { host: 'localhost' }, body }, r); return r; };
     const email = `a3-r27-${TS}@example.test`;
-    expect((await post(signup, { email, password: 'Nouveau-Mot-2026x', adultDeclaration: true })).statusCode).toBe(200);   // R42-A07: adults only
+    expect((await post(signup, { email, password: 'Nouveau-Mot-2026x', adultDeclaration: true, termsAccepted: true })).statusCode).toBe(200);   // R42-A07: adults only
     const fresh = await post(login, { email, password: 'Nouveau-Mot-2026x' });
     const unknown = await post(login, { email: `a3-r27-${TS}-nobody@example.test`, password: 'Nouveau-Mot-2026x' });
     expect([fresh.statusCode, unknown.statusCode]).toEqual([401, 401]); expect(fresh.body).toEqual(unknown.body);

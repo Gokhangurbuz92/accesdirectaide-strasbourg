@@ -25,7 +25,7 @@ describe.skipIf(!hasDatabase)('R12 sign-up honesty (real DB)', () => {
     await db.execute(sql`DELETE FROM "AuthToken" WHERE "userId" IN (SELECT id FROM "CitizenUser" WHERE email IN (${KNOWN}, ${FRESH}))`);
     await db.execute(sql`DELETE FROM "CitizenUser" WHERE email IN (${KNOWN}, ${FRESH})`);
   });
-  const call = async (h, email, i) => { const r = mk(); await h({ method: 'POST', url: '/api/auth/x', headers: { host: 'localhost', 'x-forwarded-for': `10.8.${i}.1` }, body: { email, password: 'Synthetic-QA-Pass-01', next: '/', adultDeclaration: true } }, r); return r; };
+  const call = async (h, email, i) => { const r = mk(); await h({ method: 'POST', url: '/api/auth/x', headers: { host: 'localhost', 'x-forwarded-for': `10.8.${i}.1` }, body: { email, password: 'Synthetic-QA-Pass-01', next: '/', adultDeclaration: true, termsAccepted: true } }, r); return r; };
 
   it('no provider: the same honest body for a new and an existing address; nothing claims a link was sent', async () => {
     delete process.env.MAILER_PROVIDER;

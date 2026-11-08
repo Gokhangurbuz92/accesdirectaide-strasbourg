@@ -54,7 +54,7 @@ function savePrefs(/** @type {Record<string, string | number | boolean | null | 
 // ─── Tab Components ───────────────────────────────────────────
 
 /** Launch-readiness item 66: change the e-mail address (password + confirmation link to the new address) and the phone number. */
-function ContactChange({ user }) {
+export function ContactChange({ user }) {   // exported for the Release B interface test
     const { t } = useT('compte');
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -86,6 +86,15 @@ function ContactChange({ user }) {
                 <Button type="submit" disabled={busy} data-testid="cc-email-submit">{t('compte:settings.envoyer_lien_confirmation', 'Envoyer le lien de confirmation')}</Button>
                 {emailMsg.text ? <p role="status" data-testid="cc-email-status" className={emailMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{emailMsg.text}</p> : null}
             </form>
+            {/* Release B / D2 V2: while phone collection is closed (auth/me phoneCollection false) no number is asked; a number stored earlier can still be removed */}
+            {user?.phoneCollection === false ? (user?.phone ? (
+                <div className="space-y-2 rounded-lg border bg-white p-4" data-testid="cc-phone-closed">
+                    <p className="text-sm font-medium text-slate-900">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
+                    <p className="text-sm text-slate-800">{t('compte:settings.phone_not_collected', 'Le service ne demande plus de numéro de téléphone. Vous pouvez supprimer celui qui est enregistré.')}</p>
+                    <Button type="button" variant="outline" disabled={busy} onClick={(e) => submitPhone(e, true)} data-testid="cc-phone-remove">{t('compte:settings.supprimer_numero', 'Supprimer le numéro')}</Button>
+                    {phoneMsg.text ? <p role="status" data-testid="cc-phone-status" className={phoneMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{phoneMsg.text}</p> : null}
+                </div>
+            ) : null) : (
             <form onSubmit={(e) => submitPhone(e)} className="space-y-2 rounded-lg border bg-white p-4">
                 <p className="text-sm font-medium text-slate-900">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
                 <Label htmlFor="cc-phone">{t('compte:settings.numero_facultatif', 'Numéro (facultatif)')}</Label>
@@ -96,6 +105,7 @@ function ContactChange({ user }) {
                 </div>
                 {phoneMsg.text ? <p role="status" data-testid="cc-phone-status" className={phoneMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{phoneMsg.text}</p> : null}
             </form>
+            )}
         </div>
     );
 }

@@ -136,7 +136,7 @@ export default function AuthRdvAccess({ mode = 'login' }) {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
-        body: JSON.stringify(isSignupMode ? { email, password, next, adultDeclaration, site_web: siteWeb } : { email, password, next }),
+        body: JSON.stringify(isSignupMode ? { email, password, next, adultDeclaration, termsAccepted: true, site_web: siteWeb } : { email, password, next }),   // Release B: pressing « Créer mon compte » under the terms sentence accepts them
       });
 
       const payload = await response.json().catch(() => null);
@@ -365,8 +365,26 @@ export default function AuthRdvAccess({ mode = 'login' }) {
               </>
             )}
 
+            {/* Release B / D2 V2: the terms of use are accepted by creating the account (a contract acceptance recorded with its version, not a GDPR consent);
+                the privacy notice is information; optional processing is offered separately later — never bundled here */}
+            {isSignupMode ? (
+              <div className="space-y-1 text-sm text-slate-800" data-testid="auth-terms-statement">
+                <p id="auth-terms">
+                  {t('booking:auth.terms_before', 'En créant mon compte, j’accepte les')}{' '}
+                  <Link className="text-blue-900 underline" to="/cgu/citoyen">{t('booking:auth.terms_link', 'conditions d’utilisation')}</Link>
+                  {t('booking:auth.terms_after', '.')}
+                </p>
+                <p>
+                  {t('booking:auth.privacy_before', 'Mes données sont traitées comme expliqué dans la')}{' '}
+                  <Link className="text-blue-900 underline" to="/confidentialite/notice">{t('booking:auth.privacy_link', 'notice de confidentialité')}</Link>
+                  {t('booking:auth.privacy_after', '.')}{' '}
+                  {t('booking:auth.optional_separate', 'Les options facultatives (message, rappels, notifications) me seront proposées à part.')}
+                </p>
+              </div>
+            ) : null}
+
             {/* R44 (A5): never disabled for a missing field (a disabled button gave no reason): the summary says what is missing */}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading} aria-describedby={isSignupMode ? 'auth-terms' : undefined}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {isSignupMode ? t('booking:auth.creer_mon_compte', "Créer mon compte") : t('booking:auth.se_connecter', "Se connecter")}
             </Button>

@@ -236,6 +236,15 @@
       "format": "^(open)?$",
       "note": "R43 (E1): public structure self-registration (POST /api/pro/auth/register creates a Structure + its STRUCTURE_ADMIN). Closed unless « open »: during the beta even when « pro » is open, and in Production outside the beta (handler). Members join by invitation; the first SUPERADMIN comes from scripts/pro-superadmin-bootstrap.mjs"
     },
+    "ADA_CITIZEN_PHONE_COLLECTION": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(open)?$",
+      "note": "Release B (D2 V2, owner decision 08/11/2026): citizen telephone number collection. Closed unless « open » in Production, Preview and the beta (sign-up ignores the field, PUT /api/citizen/phone refuses a new number, removal stays possible) until a specific purpose and a lawful basis are approved"
+    },
     "ADA_BETA_ACCOUNTS_SCOPE": {
       "class": "decision",
       "nature": "config",

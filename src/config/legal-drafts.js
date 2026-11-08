@@ -16,14 +16,14 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
 });
 
 /** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'r45-2026-11-05';
+export const LEGAL_DRAFTS_VERSION = 'v2-2026-11-08';   // Release B (D2 V2, owner direction 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
  * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
  * @typedef {{ id: string, key: string, path: string | null, version: string, status: string, title: string, intro: string, sections: DraftSection[] }} DraftDocument
  */
 
-const PROPOSED_NOTE = 'Les bases légales et les durées indiquées sont des propositions. Elles sont en attente de validation du responsable du traitement et ne sont pas encore décidées.';
+const V2_STATUS_NOTE = 'Cette notice décrit les traitements des comptes personnels (section 3). Les rendez-vous, les messages, les rappels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.';
 
 /** @type {DraftDocument[]} */
 export const LEGAL_DRAFT_DOCUMENTS = [
@@ -194,35 +194,40 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Le responsable du traitement est {{controller}}, personne physique, qui exploite AccesDirectAide à titre personnel et bénévole. Aucune association n'a été créée à ce jour. Aucun délégué à la protection des données n'est désigné.",
         'Pour vos données : {{contact}} ou le formulaire de contact.',
       ] },
-      { id: 'status', title: '2. Statut de cette notice', paras: [PROPOSED_NOTE] },
-      { id: 'purposes', title: '3. Finalités et bases légales', proposed: true, items: [
+      { id: 'status', title: '2. Statut de cette notice', paras: [V2_STATUS_NOTE] },
+      { id: 'purposes', title: '3. Finalités et bases légales des comptes personnels', items: [
         "P1 — Fonctionnement et sécurité du site public (journaux techniques, limitation du nombre de requêtes, cookie de sécurité « __csrf ») : intérêt légitime (art. 6, 1, f).",
-        "P2 — Création et tenue du compte (adresse électronique vérifiée, mot de passe protégé, déclaration « 18 ans ou plus ») : exécution des conditions d'utilisation (art. 6, 1, b). La déclaration de majorité est une condition d'accès, pas un consentement.",
-        "P2b — Préférences facultatives (accessibilité, foyer, tranche d'âge) : consentement (art. 6, 1, a) ; consentement explicite (art. 9, 2, a) si une préférence révèle un handicap.",
-        "P3 — Connexion, verrouillage après plusieurs échecs, double authentification des professionnels : exécution des conditions (art. 6, 1, b) ; intérêt légitime pour les mesures de sécurité (art. 6, 1, f).",
+        "P2 — Création et tenue du compte (adresse électronique vérifiée, mot de passe protégé, déclaration « 18 ans ou plus », preuve de l'acceptation des conditions d'utilisation et de leur version) : exécution du contrat que sont les conditions d'utilisation (art. 6, 1, b), pour les seules données nécessaires au compte. L'acceptation des conditions et la déclaration de majorité ne sont pas des consentements au sens du RGPD. Aucun numéro de téléphone n'est demandé.",
+        "P2b — Réglages d'affichage facultatifs que vous choisissez (taille du texte, contraste, animations réduites, lecture à voix haute, FALC) : exécution du service tel que vous le demandez (art. 6, 1, b). Ces réglages ne disent rien de votre santé ou d'un handicap, et aucune information de ce type n'est demandée. Vous pouvez les modifier ou les effacer à tout moment.",
+        "P3 — Connexion et verrouillage après plusieurs échecs : exécution du contrat (art. 6, 1, b) pour la connexion ; intérêt légitime de protéger les comptes (art. 6, 1, f) pour les mesures de sécurité.",
+        "P10a — E-mails de service liés au compte (vérification de l'adresse, mot de passe, changement d'adresse, avis du compte) : exécution du contrat (art. 6, 1, b).",
+        "P12 — Journal des actions d'administration : intérêt légitime (art. 6, 1, f).",
+        "P13 — Exercice de vos droits : obligation légale (art. 6, 1, c ; articles 12 à 22 du RGPD). Conservation bloquée (« gel ») d'une donnée précise : obligation légale lorsqu'une autorité ou un juge l'exige (art. 6, 1, c) ; sinon, pour constater, exercer ou défendre un droit en justice, intérêt légitime (art. 6, 1, f) et, pour une donnée sensible, art. 9, 2, f — accès restreint, durée limitée au litige.",
+        "P14 — Journaux de sécurité : intérêt légitime (art. 6, 1, f).",
+        "P15 — Effacement aux échéances : obligation légale (art. 6, 1, c ; art. 5, 1, e et 17 du RGPD). Archives de preuve à accès restreint (par exemple la preuve d'un consentement ou d'une demande d'exercice des droits) : intérêt légitime (art. 6, 1, f), pour la durée indiquée en section 4.",
+        "P16 — Prestataires techniques : pas de base propre ; ils agissent sur instruction (art. 28).",
+      ], paras: [
+        "Aucune finalité ne repose sur une mission d'intérêt public. Aucune décision produisant des effets juridiques n'est prise de façon automatisée : le service ne décide d'aucun droit.",
+        "Sans adresse électronique, aucun compte ne peut être créé ; les champs facultatifs peuvent rester vides.",
+      ] },
+      { id: 'purposes-later', title: '3 bis. Fonctions non encore ouvertes (bases proposées)', proposed: true, paras: [
+        "Ces traitements ne sont pas en service. Leurs bases légales seront confirmées par le responsable du traitement avant leur ouverture ; cette notice sera alors mise à jour.",
+      ], items: [
         "P4 — Recherche d'un rendez-vous et affichage du nom des professionnels : pour vous, exécution des conditions (art. 6, 1, b) ; pour les professionnels, intérêt légitime de l'exploitant et de leur structure (art. 6, 1, f).",
-        "P4p — Comptes des professionnels : intérêt légitime (art. 6, 1, f) ; exécution des conditions professionnelles acceptées (art. 6, 1, b).",
+        "P4p — Comptes des professionnels, y compris leur double authentification : intérêt légitime (art. 6, 1, f) ; exécution des conditions professionnelles acceptées (art. 6, 1, b).",
         "P5 — Demande, report, annulation, confirmation ou refus d'un rendez-vous, et messages de service liés : exécution des conditions (art. 6, 1, b).",
         "P5s — Rendez-vous auprès d'un service dont la nature peut révéler une donnée de santé ou de handicap : exécution des conditions (art. 6, 1, b) et consentement explicite (art. 9, 2, a) par une case distincte. Cette réservation n'est pas ouverte.",
         "P6 — Message facultatif joint à une demande : consentement (art. 6, 1, a) et consentement explicite (art. 9, 2, a), retirable à tout moment.",
         "P7 — Affectation d'un professionnel à un rendez-vous : exécution des conditions (art. 6, 1, b) ; choix « sans préférence » : intérêt légitime de la structure (art. 6, 1, f).",
         "P8 — Orientations entre professionnels (fonction fermée) : consentement à chaque partage (art. 6, 1, a ; art. 9, 2, a).",
         "P9 — Dossiers partagés et suivi (fonction fermée) : consentement au partage (art. 6, 1, a ; art. 9, 2, a).",
-        "P10 — E-mails de service : exécution des conditions (art. 6, 1, b) ; rappel la veille et notifications du navigateur : consentement (art. 6, 1, a), retirable à tout moment.",
+        "P10b/P10c — Rappel la veille et notifications du navigateur : consentement (art. 6, 1, a), retirable à tout moment.",
         "P11 — Disponibilités Outlook d'une structure (désactivé) : base choisie par la structure ; l'exploitant agit pour elle.",
-        "P12 — Journal des actions d'administration : intérêt légitime (art. 6, 1, f).",
-        "P13 — Exercice de vos droits : obligation légale (art. 6, 1, c) ; gel en cas de litige : intérêt légitime (art. 6, 1, f) et, pour une donnée sensible, art. 9, 2, f.",
-        "P14 — Journaux de sécurité : intérêt légitime (art. 6, 1, f).",
-        "P15 — Effacement et durées de conservation : obligation légale (art. 6, 1, c) ; conservation de preuves : intérêt légitime (art. 6, 1, f).",
-        "P16 — Prestataires techniques : pas de base propre ; ils agissent sur instruction (art. 28).",
-      ], paras: [
-        "Aucune finalité ne repose sur une mission d'intérêt public. Aucune décision produisant des effets juridiques n'est prise de façon automatisée : le service ne décide d'aucun droit.",
-        "Sans adresse électronique, aucun compte ne peut être créé ; les champs facultatifs peuvent rester vides.",
       ] },
       { id: 'retention', title: '4. Durées de conservation', proposed: true, items: [
         "Compte : tant que vous l'utilisez. Après 24 mois sans connexion, un e-mail vous prévient ; sans reconnexion dans les 30 jours, le compte est effacé.",
         'Demandes de rendez-vous refusées ou expirées, et rendez-vous annulés : 3 mois, puis anonymisation.',
-        'Rendez-vous confirmés, tenus ou manqués : 1 an ou 2 ans après la date du rendez-vous — choix en attente — puis anonymisation.',
+        'Rendez-vous confirmés, tenus ou manqués (fonction non encore ouverte) : 1 an après la date du rendez-vous, puis anonymisation.',
         "Message facultatif : effacé dès le retrait de votre accord ; sinon 30 jours après la date du rendez-vous, ou après une annulation, un refus ou une expiration.",
         'Notifications des professionnels : 6 mois. Abonnements aux notifications : jusqu\'au retrait ; supprimés après 30 jours d\'échec.',
         "Preuves de consentement remplacées : 3 ans. Dernière décision d'un compte effacé : 12 mois après l'effacement.",
@@ -239,7 +244,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         'Vercel Inc. : hébergement du site et des fonctions serveur, exécutées à Francfort.',
         'Neon (contrat Databricks, Inc.) : base de données hébergée à Francfort.',
         'Upstash, Inc. : compteurs de sécurité et limitation du nombre de requêtes, à Francfort.',
-        "Mailjet (groupe Sinch) : envoi des e-mails de service, seulement lorsqu'il sera activé ; il ne l'est pas à ce jour.",
+        "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte).",
         'Microsoft : boîte de réception de l\'adresse de contact.',
       ], paras: [
         'Les contrats de sous-traitance de certains prestataires sont encore en cours de vérification.',

@@ -15,6 +15,7 @@ import { openText, sealText } from '../lib/data-keys.js';
 import { buildAppUrl, generateAuthToken, hashAuthToken, isUnsetPassword, isValidEmail, normalizeEmail, normalizePhone, verifyPassword } from '../_utils/user-auth.js';
 import { sendMail } from '../_utils/mailer.js';
 import { templates } from '../lib/email-service.js';
+import { PHONE_COLLECTION_CLOSED, phoneCollectionOpen } from '../_utils/phone-collection.js';
 
 export const EMAIL_CHANGE_TTL_MS = 30 * 60 * 1000;
 const seal = (/** @type {string} */ id, /** @type {string} */ email) => sealText(email, { purpose: 'email-change', context: `email-change:${id}` });
@@ -78,6 +79,8 @@ export async function setPhone(userId, input, deps = {}) {
   const db = deps.db || defaultDb;
   const rawValue = input?.phone;
   const remove = rawValue === null || String(rawValue ?? '').trim() === '';
+  // Release B / D2 V2: a NEW number is refused while phone collection is closed; removing a number already stored stays possible (art. 17)
+  if (!remove && !phoneCollectionOpen()) return { ok: false, status: 403, code: PHONE_COLLECTION_CLOSED.code, message: PHONE_COLLECTION_CLOSED.message };
   const phone = remove ? null : normalizePhone(rawValue);
   if (!remove && !/^(?:0[1-9]\d{8}|\+33[1-9]\d{8})$/.test(String(phone))) return bad('INVALID_PHONE', 'Numéro de téléphone invalide (format français attendu, par exemple 06 12 34 56 78).');
   await db.update(CitizenUser).set({ phone, phoneVerifiedAt: null }).where(eq(CitizenUser.id, userId));
