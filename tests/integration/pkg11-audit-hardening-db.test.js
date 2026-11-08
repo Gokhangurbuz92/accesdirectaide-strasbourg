@@ -92,6 +92,7 @@ describe.skipIf(!hasDatabase)('PKG-11 deep audit fixes (real DB)', () => {
     const links = [];
     for (const password of ['Attaquant-2026x', 'Victime-2026xy']) {
       const r = mk(); await signup({ method: 'POST', url: '/api/auth/signup', query: {}, headers: { host: 'localhost' }, body: { email, password, adultDeclaration: true, termsAccepted: true } }, r); expect(r.statusCode).toBe(200);
+      await (await import('../../api/_utils/after-response.js')).settleAfterResponse();   // V2 / D1
       const box = mailer.__getTestOutbox().filter((m) => m.to === email); links.push(new URL(box[box.length - 1].text.match(/https?:\/\/\S+/)[0]).searchParams.get('token'));
     }
     const [u] = (await db.execute(sql`SELECT id, "passwordHash" h, "emailVerifiedAt" v FROM "CitizenUser" WHERE email = ${email}`)).rows;

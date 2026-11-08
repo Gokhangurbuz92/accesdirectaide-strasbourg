@@ -23,9 +23,11 @@ const READ_METHODS = new Set(['GET', 'HEAD']);
 // the two citizen searches take their query in a POST body; they read and write nothing (no account, no history)
 const READ_ONLY_POST = new Set(['search', 'search-pro']);
 
-export const PUBLIC_BETA_MESSAGE =
-  'Bêta publique : cette fonction n’est pas encore ouverte. Pendant la bêta, Accès Direct Aide permet seulement de consulter les aides, les démarches '
-  + 'et les structures vérifiées ; aucun compte, rendez-vous ni document ne peut être créé.';
+const BETA_MESSAGE_READ_ONLY = 'Bêta publique : cette fonction n’est pas encore ouverte. Pendant la bêta, Accès Direct Aide permet seulement de consulter les aides, '
+  + 'les démarches et les structures vérifiées ; aucun compte, rendez-vous ni document ne peut être créé.';
+// V2 (security review D3): once personal accounts are open, the refusal of a still-closed function must not say « no account can be created »
+const BETA_MESSAGE_ACCOUNTS = 'Bêta publique : cette fonction n’est pas encore ouverte. Pendant la bêta, Accès Direct Aide permet de consulter les aides, '
+  + 'les démarches et les structures vérifiées et de créer un compte personnel ; les rendez-vous, les messages et les documents ne sont pas encore ouverts.';
 
 /** R43-MAIL: the provider's delivery-event webhook, when switched on @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
 export function isMailEventsRequest(method, path, envVars = process.env) {
@@ -202,3 +204,9 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   if (EXACT.has(p)) return true;
   return PREFIX.some((x) => p === x || p.startsWith(`${x}/`));
 }
+
+/** The refusal message of a closed function, for this deployment's open surfaces (the environment is fixed for a deployment). @param {Record<string, string | undefined>} [envVars] */
+export function publicBetaMessage(envVars = process.env) {
+  return openSurfaces(envVars).has('accounts') ? BETA_MESSAGE_ACCOUNTS : BETA_MESSAGE_READ_ONLY;
+}
+export const PUBLIC_BETA_MESSAGE = publicBetaMessage();

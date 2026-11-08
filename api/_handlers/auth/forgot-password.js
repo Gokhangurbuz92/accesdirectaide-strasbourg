@@ -5,6 +5,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
 import { templates } from '../../lib/email-service.js';
+import { afterResponse, holdResponseFloor } from '../../_utils/after-response.js';
 import {
   buildAppUrl,
   generateAuthToken,
@@ -24,11 +25,27 @@ const GENERIC_RESPONSE = {
 // R12 (C01): « sent » only when this service can send e-mail at all (configuration only — the same answer for every address)
 const genericAnswer = () => (getMailerStatus().deliverable ? { ...GENERIC_RESPONSE, emailDelivery: 'SENT_IF_VALID' } : { ok: true, message: "L’envoi d’e-mails n’est pas disponible sur ce service pour le moment : aucun lien n’a pu être envoyé. Réessayez plus tard.", emailDelivery: 'UNAVAILABLE' });
 
+/** The link of an existing account (run after the answer: V2 / D1, no timing oracle). @param {string} email */
+async function issueReset(email) {
+  const user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
+  if (!user) return;
+  const rawToken = generateAuthToken();
+  const tokenHash = hashAuthToken(rawToken);
+  const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+  // Sequential operations (neon-http driver doesn't support transactions)
+  await db.update(AuthToken).set({ usedAt: new Date() }).where(and(eq(AuthToken.userId, user.id), eq(AuthToken.type, 'PASSWORD_RESET'), isNull(AuthToken.usedAt)));
+  await db.insert(AuthToken).values({ userId: user.id, type: 'PASSWORD_RESET', tokenHash, expiresAt });
+  const resetUrl = buildAppUrl(`/auth/reset?token=${encodeURIComponent(rawToken)}`);
+  const emailTemplate = templates.resetPassword(user.email.split('@')[0], resetUrl);
+  await sendMail({ to: email, subject: emailTemplate.subject, text: `Lien de reinitialisation: ${resetUrl}`, html: emailTemplate.html, category: 'password_reset' });
+}
+
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
  */
 export default async function handler(req, res) {
+  const startedAt = Date.now();
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -49,44 +66,8 @@ export default async function handler(req, res) {
     return res.status(getRateLimitStatus(emailLimit)).json(emailLimit.error || { error: 'Too many attempts' });
   }
 
-  try {
-    const user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
-    if (!user) {
-      return res.status(200).json(genericAnswer());
-    }
-
-    const rawToken = generateAuthToken();
-    const tokenHash = hashAuthToken(rawToken);
-    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
-
-    // Sequential operations (neon-http driver doesn't support transactions)
-    await db.update(AuthToken).set({ usedAt: new Date() }).where(
-      and(
-        eq(AuthToken.userId, user.id),
-        eq(AuthToken.type, 'PASSWORD_RESET'),
-        isNull(AuthToken.usedAt)
-      )
-    );
-    await db.insert(AuthToken).values({
-        userId: user.id,
-        type: 'PASSWORD_RESET',
-        tokenHash,
-        expiresAt,
-    });
-
-    const resetUrl = buildAppUrl(`/auth/reset?token=${encodeURIComponent(rawToken)}`);
-    const emailTemplate = templates.resetPassword(user.email.split('@')[0], resetUrl);
-
-    await sendMail({
-      to: email,
-      subject: emailTemplate.subject,
-      text: `Lien de reinitialisation: ${resetUrl}`,
-      html: emailTemplate.html,
-      category: 'password_reset',
-    });
-
-    return res.status(200).json(genericAnswer());
-  } catch {
-    return res.status(500).json({ error: 'Internal error', message: 'La demande n’a pas pu être traitée : réessayez dans quelques minutes.' });
-  }
+  // V2 / D1: the same answer, after the same time, whether or not the address has an account; the link is issued after the answer
+  afterResponse(() => issueReset(email), 'forgot-password');
+  await holdResponseFloor(startedAt);
+  return res.status(200).json(genericAnswer());
 }

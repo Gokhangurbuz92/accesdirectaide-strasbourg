@@ -47,7 +47,9 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
   let db, mailer, auth, otp, ageP, enrol, kv, H;
   const ip = () => `10.42.${crypto.randomInt(0, 255)}.${crypto.randomInt(1, 254)}`;
   const call = async (handler, { method = 'POST', url = '/api/x', body, query = {}, headers = {} } = {}) => {
-    const r = mk(); await handler({ method, url, query, body, headers: { host: 'localhost:3000', 'content-type': 'application/json', ...headers }, socket: {} }, r); return r;
+    const r = mk(); await handler({ method, url, query, body, headers: { host: 'localhost:3000', 'content-type': 'application/json', ...headers }, socket: {} }, r);
+    await (await import('../../api/_utils/after-response.js')).settleAfterResponse();   // V2 / D1: e-mails and tokens are issued after the answer
+    return r;
   };
   const bearer = (u, opts) => ({ authorization: `Bearer ${auth.signProToken({ id: u.id, email: u.email, structureId: u.st, role: u.role }, opts)}` });
   const lastMail = (to, category) => mailer.__getTestOutbox().filter((m) => m.to === to && (!category || m.category === category)).pop();

@@ -30,6 +30,11 @@ export function personalSurfacesOpened(open = builtOpen()) {
   return open.some((x) => x === 'accounts' || x === 'appointments' || x === 'documents');
 }
 
+/** V2 (security review D3): this build opens the personal accounts — the beta notices then describe them instead of saying « not open ». @param {string[]} [open] */
+export function accountsOpened(open = builtOpen()) {
+  return open.includes('accounts');
+}
+
 /**
  * R36 (header): the account entry points (« Se connecter », « Créer un compte ») are offered only when accounts can really be used: outside the beta, or
  * when this build opens the accounts surface. @param {boolean} beta @param {string[]} [open]

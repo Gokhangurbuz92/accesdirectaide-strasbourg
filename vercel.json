@@ -40,7 +40,7 @@
     },
     {
       "path": "/api/cron/health-alert",
-      "schedule": "*/5 * * * *"
+      "schedule": "7 * * * *"
     }
   ],
   "redirects": [

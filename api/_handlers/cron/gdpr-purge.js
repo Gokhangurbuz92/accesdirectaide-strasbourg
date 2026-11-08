@@ -217,6 +217,10 @@ function messageWhere(ctx) {
 }
 
 /** @param {any} table @param {(ctx: PurgeContext) => any} where */
+/** 6c: never confirmed, older than the cutoff, not held, not restricted, no open request @param {Date} before */
+export const unverifiedAccountsWhere = (before) => and(isNull(CitizenUser.emailVerifiedAt), lt(CitizenUser.createdAt, before),
+    sql`NOT ${heldSql(CitizenUser.id)}`, sql`NOT ${personProtectedSql(CitizenUser.id)}`);
+
 const deleteStep = (table, where) => ({
     count: (db, ctx) => countWhere(db, table, where(ctx)),
     run: async (db, ctx) => affected(await db.delete(table).where(where(ctx))),
@@ -283,6 +287,19 @@ export const PURGE_STEPS = [
     // 6b. launch-readiness item 66: expired e-mail change requests (an encrypted pending address, single-use link)
     { id: 'deletedEmailChangeCount', summaryKey: 'email_change_requests_deleted', ecode: null, kind: 'delete', table: 'EmailChangeRequest', durationKey: null, tables: ['EmailChangeRequest'],
         ...deleteStep(EmailChangeRequest, (ctx) => lt(EmailChangeRequest.expiresAt, ctx.now)) },
+
+    // 6c. V2 (security review D6) — accounts whose address was NEVER confirmed, 7 days after creation: anyone can type any address at sign-up, so such a row
+    //     may be a third party's address; no contract was formed (the account never opened). Their sign-up ledger rows (adult statement, terms acceptance)
+    //     go in the same transaction — the 12-month CGU evidence applies to accounts that existed. Legal hold, restriction or an open request keep them.
+    { id: 'unverifiedAccountsDeleted', summaryKey: 'unverified_accounts_deleted', ecode: 'D4-V2', kind: 'delete', table: 'CitizenUser', durationKey: 'UNVERIFIED_ACCOUNT_DAYS',
+        tables: ['CitizenUser', 'ConsentLog', 'DSRRequest', 'LegalHold'],
+        count: (db, ctx) => countWhere(db, CitizenUser, unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS'))),
+        run: async (db, ctx) => {
+            const ids = (await db.select({ id: CitizenUser.id }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')))).map((r) => r.id);
+            if (!ids.length) return 0;
+            await db.delete(ConsentLog).where(and(eq(ConsentLog.subject_type, 'CITIZEN_USER'), inArray(ConsentLog.subject_id, ids)));
+            return affected(await db.delete(CitizenUser).where(and(inArray(CitizenUser.id, ids), isNull(CitizenUser.emailVerifiedAt))));
+        } },
 
     // 7. Old AI Metrics (90 days — non-personal, storage hygiene)
     { id: 'deletedAiMetricsCount', summaryKey: 'ai_metrics_deleted', ecode: null, kind: 'delete', table: 'AiMetric', durationKey: 'AI_METRIC_DAYS', tables: ['AiMetric'],

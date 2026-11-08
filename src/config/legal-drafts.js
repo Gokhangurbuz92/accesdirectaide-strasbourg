@@ -16,7 +16,7 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
 });
 
 /** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'v2-2026-11-08';   // Release B (D2 V2, owner direction 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
+export const LEGAL_DRAFTS_VERSION = 'v2-2026-11-09';   // V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
  * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
@@ -225,11 +225,11 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "P11 — Disponibilités Outlook d'une structure (désactivé) : base choisie par la structure ; l'exploitant agit pour elle.",
       ] },
       { id: 'retention', title: '4. Durées de conservation', proposed: true, items: [
-        "Compte (adresse électronique, mot de passe protégé, nom affiché, langue, préférences de notification) : tant que vous l'utilisez. Vous pouvez l'effacer à tout moment depuis votre espace ; l'effacement est immédiat.",
-        "Compte inactif : un compte sans activité de votre part (connexion) pendant 24 mois pourra être effacé. Cet effacement n'est pas encore en service ; avant qu'il le soit, cette notice indiquera comment vous serez prévenu.",
+        "Compte (adresse électronique, mot de passe protégé, nom affiché, langue, préférences de notification) : tant que vous l'utilisez. Vous pouvez demander son effacement à tout moment depuis votre espace : une personne vérifie la demande, pour éviter une erreur ou une usurpation, puis efface le compte dans un délai d'un mois au plus.",
+        "Compte inactif : un compte sans activité de votre part (connexion) pendant 24 mois pourra être effacé. Cet effacement n'est pas encore en service ; avant qu'il le soit, cette notice indiquera comment vous serez prévenu. Compte jamais activé (adresse électronique jamais confirmée) : effacé 7 jours après sa création, avec la trace de son inscription.",
         "Liens de vérification de l'adresse, de mot de passe et de changement d'adresse : valables 15 minutes (30 minutes pour un changement d'adresse), puis supprimés.",
         "Session de connexion : 7 jours au plus. Après 5 échecs de connexion, le compte est verrouillé 15 minutes.",
-        "Compteurs de limitation des requêtes (ils contiennent votre adresse IP) : effacés à la fin de leur fenêtre, de quelques minutes à une heure. Les journaux n'en gardent qu'une empreinte condensée.",
+        "Compteurs de limitation des requêtes (votre adresse IP et, pour la connexion, la création de compte et l'envoi de liens, une empreinte de votre adresse électronique, jamais l'adresse elle-même) : effacés à la fin de leur fenêtre, de quelques minutes à une heure. Les journaux n'en gardent qu'une empreinte condensée.",
         "E-mails de service : leur contenu n'est pas conservé par AccesDirectAide ; la trace de l'envoi (numéro du message chez le prestataire) est gardée 12 mois. Si une adresse refuse définitivement les messages, une empreinte de l'adresse (pas l'adresse elle-même) bloque les envois ; ce blocage est revu après 12 mois et supprimé s'il n'est plus justifié.",
         "Archives à accès restreint après l'effacement d'un compte : preuve de l'acceptation des conditions d'utilisation et de la déclaration « 18 ans ou plus », 12 mois ; demandes d'exercice des droits, 3 ans après leur clôture. Elles ne servent qu'à prouver ou à se défendre en cas de litige.",
         "Journaux d'administration et de sécurité (sans votre adresse électronique) : 12 mois.",

@@ -39,7 +39,7 @@ describe('rotationPlan (E15)', () => {
       fs.writeFileSync(path.join(dir, 'ada_t_new.dump.enc'), 'x');
       const run = (...a) => spawnSync(process.execPath, ['scripts/db-backup.mjs', '--list', dir, ...a], { encoding: 'utf8', env: { PATH: process.env.PATH } });
       const list = JSON.parse(run().stdout);
-      expect(list).toMatchObject({ total: 2, keepDays: 30, keepWeekly: 4, pruned: 0, policy: { status: 'PROPOSED — NOT APPROVED' } });
+      expect(list).toMatchObject({ total: 2, keepDays: 35, keepWeekly: 0, pruned: 0, policy: { status: 'PROPOSED — NOT APPROVED' } });
       const refused = run('--prune');
       expect(refused.status).toBe(1);
       expect(fs.existsSync(old)).toBe(true);

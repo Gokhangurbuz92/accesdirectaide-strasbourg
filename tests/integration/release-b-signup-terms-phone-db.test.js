@@ -20,7 +20,7 @@ const GATES = ['ADA_PUBLIC_BETA_RESTRICTED', 'ADA_BETA_OPEN_SURFACES', 'ADA_CAPA
 
 describe.skipIf(!hasDatabase)('Release B — sign-up terms acceptance and closed phone collection (real DB)', () => {
   let db, signup, phoneH, me, userAuth, saved;
-  const call = async (h, req) => { const r = mk(); await h({ query: {}, socket: {}, headers: { host: 'localhost', ...(req.headers || {}) }, ...req }, r); return r; };
+  const call = async (h, req) => { const r = mk(); await h({ query: {}, socket: {}, headers: { host: 'localhost', ...(req.headers || {}) }, ...req }, r); await (await import('../../api/_utils/after-response.js')).settleAfterResponse(); return r; };   // V2 / D1: work after the answer
   const doSignup = (body) => call(signup, { method: 'POST', url: '/api/auth/signup', body: { password: PW, next: '/compte', ...body } });
   const userOf = async (email) => (await db.execute(sql`SELECT id, phone FROM "CitizenUser" WHERE email = ${email}`)).rows[0];
   const prodLike = () => { process.env.ADA_PUBLIC_BETA_RESTRICTED = '1'; process.env.ADA_BETA_OPEN_SURFACES = 'admin,accounts'; process.env.ADA_CAPABILITY_ENFORCEMENT = '1'; };

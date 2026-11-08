@@ -12,6 +12,7 @@
 import { db as defaultDb } from '../../src/db/index.js';
 import { ConsentLog } from '../../src/db/schema.js';
 import { LEGAL_DRAFTS_VERSION } from '../../src/config/legal-drafts.js';
+export { CITIZEN_ACCOUNT_DOCUMENTS, TERMS_NOT_IN_FORCE_REFUSAL, citizenTermsInForce } from './terms-in-force.js';
 
 export const TERMS_ACCEPTANCE_PURPOSE = 'TERMS_ACCEPTANCE_CGU_CITOYEN';
 export const TERMS_DOCUMENT_ID = 'cgu-citoyen';

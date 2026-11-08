@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import brand from '@/lib/brand-config';
 import { frontendEnv } from "@/config/env";
+import { accountsOpened } from '@/lib/publicBeta';
 import { currentPublisherConfig, HOST } from '@/config/legal-publisher';
 import { LEGAL_NOTICE_VARIANT_DOCUMENT, currentDraftContext, draftVisibility } from '@/config/legal-drafts';
 import LegalDraftBanner from '@/components/legal/LegalDraftBanner';
@@ -132,7 +133,7 @@ export default function MentionsLegales() {
                       <li><strong>{filesLabel}</strong> {t('legal:mentions.host.filesBeta', 'non utilisé pendant la bêta publique (aucun document ne peut être envoyé).')}</li>
                       <li><strong>{rateLabel}</strong> {t('legal:mentions.host.rateBeta', "Upstash, Inc. — données hébergées à Francfort (Union européenne), souscrit par l'intermédiaire de Vercel ; coordonnées : https://upstash.com.")}</li>
                       <li><strong>{errorsLabel}</strong> {t('legal:mentions.host.errorsBeta', "Sentry n'est pas activé pendant la bêta publique.")}</li>
-                      <li><strong>{t('legal:mentions.host.mailLabel', 'Messagerie de contact :')}</strong> {t('legal:mentions.host.mailBeta', "Microsoft (Outlook), pour l'adresse de contact publiée ci-dessus : les messages reçus servent seulement à répondre.")}</li>
+                      <li><strong>{t('legal:mentions.host.mailLabel', 'Messagerie de contact :')}</strong> {accountsOpened() ? t('legal:mentions.host.mailAccounts', "Mailjet (groupe Sinch), pour les e-mails des comptes personnels (confirmation de l'adresse, mot de passe), données hébergées dans l'Union européenne ; Microsoft (Outlook), pour l'adresse de contact publiée ci-dessus : les messages reçus servent seulement à répondre.") : t('legal:mentions.host.mailBeta', "Microsoft (Outlook), pour l'adresse de contact publiée ci-dessus : les messages reçus servent seulement à répondre.")}</li>
                     </>
                   ) : (
                     <>

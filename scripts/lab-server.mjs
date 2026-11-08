@@ -38,6 +38,8 @@ const server = http.createServer(async (req, res) => {
   if (u.pathname === '/__lab/outbox') {
     res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store');
     if (String(process.env.MAILER_PROVIDER || '') !== 'test' || !u.searchParams.get('to')) { res.statusCode = 404; return res.end('{}'); }
+    // V2 / D1: sign-up, forgot-password and resend send their e-mail AFTER the answer — the outbox is read once that deferred work has finished
+    await (await import('../api/_utils/after-response.js')).settleAfterResponse();
     const { __getTestOutbox } = await import('../api/_utils/mailer.js');
     const to = u.searchParams.get('to').toLowerCase();
     return res.end(JSON.stringify(__getTestOutbox().filter((m) => String(Array.isArray(m.to) ? m.to.join(',') : m.to).toLowerCase().includes(to)).map((m) => ({ subject: m.subject, text: m.text }))));

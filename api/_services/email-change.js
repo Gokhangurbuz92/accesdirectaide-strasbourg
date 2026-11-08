@@ -8,9 +8,9 @@
  * Every step is journalised without the addresses. The mail result is reported honestly (an unconfigured provider is never « sent »).
  */
 import crypto from 'node:crypto';
-import { and, eq, isNull, lt, or } from 'drizzle-orm';
+import { and, eq, inArray, isNull, lt, or } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { AuditLog, CitizenUser, EmailChangeRequest } from '../../src/db/schema.js';
+import { AuditLog, AuthToken, CitizenUser, EmailChangeRequest } from '../../src/db/schema.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { buildAppUrl, generateAuthToken, hashAuthToken, isUnsetPassword, isValidEmail, normalizeEmail, normalizePhone, verifyPassword } from '../_utils/user-auth.js';
 import { sendMail } from '../_utils/mailer.js';
@@ -69,6 +69,8 @@ export async function confirmEmailChange(rawToken, deps = {}) {
     const [taken] = await tx.select({ id: CitizenUser.id }).from(CitizenUser).where(eq(CitizenUser.email, newEmail)).limit(1);
     if (taken) { await audit(tx, 'CITIZEN_EMAIL_CHANGE_REFUSED', row.userId, { reason: 'address_in_use' }); return { ok: false, status: 'taken' }; }
     await tx.update(CitizenUser).set({ email: newEmail, emailVerifiedAt: now, sessionsValidAfter: now }).where(eq(CitizenUser.id, row.userId));
+    // V2 / D2: a reset or verification link already sent to the OLD address stops working once the address has changed
+    await tx.update(AuthToken).set({ usedAt: now }).where(and(eq(AuthToken.userId, row.userId), inArray(AuthToken.type, ['PASSWORD_RESET', 'EMAIL_VERIFY']), isNull(AuthToken.usedAt)));
     await audit(tx, 'CITIZEN_EMAIL_CHANGED', row.userId, { sessionsEnded: true });
     return { ok: true, status: 'changed' };
   });

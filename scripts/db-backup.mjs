@@ -15,6 +15,14 @@
  * retention policy's PROPOSED values (api/_services/retention-policy.js: 30 days, 4 weekly) — while that policy is not approved, --prune also requires an
  * explicit --keep-days (the operator's own choice), and the output says the policy status. After a restore, replay the erasures: scripts/db-erasure-replay.mjs.
  * Output: names, sizes, counts — never a value of the database, the key or the connection string.
+ *
+ * V2 (Neon Free, unattended backups): a second format, "ADAB2", for a machine that must NOT be able to read its own backups (an automated runner):
+ *   … node scripts/db-backup.mjs --keygen --out <offline dir>      (BACKUP_PRIVATE_KEY_PASSPHRASE ≥ 16 characters, typed hidden) writes
+ *       backup-private.pem (RSA-4096, encrypted with the passphrase, 0600 — kept OFFLINE) and backup-public.pem (given to the runner).
+ *   BACKUP_PUBLIC_KEY=<PEM> DATABASE_URL=… node scripts/db-backup.mjs --out <dir>     encrypts with a fresh data key wrapped by RSA-OAEP-SHA256.
+ *   --verify / db-restore: BACKUP_PRIVATE_KEY_FILE=<pem> + BACKUP_PRIVATE_KEY_PASSPHRASE for ADAB2 files; BACKUP_ENCRYPTION_KEY for ADAB1 files.
+ *   Format: "ADAB2" ‖ u16 length ‖ RSA-OAEP(data key) ‖ iv(12) ‖ AES-256-GCM(pg_dump -Fc) ‖ tag(16); the header is authenticated (GCM AAD).
+ *   … node scripts/db-backup.mjs --check-header <file>   checks the magic, the wrapped-key length and the .sha256 sidecar WITHOUT any key (runner side).
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -25,6 +33,8 @@ import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../api/_services
 import { isMainModule } from './lib/is-main.mjs';
 
 export const MAGIC = Buffer.from('ADAB1');
+export const MAGIC2 = Buffer.from('ADAB2');
+const MIN_PASSPHRASE = 16;
 const IV_LEN = 12; const TAG_LEN = 16;
 const die = (m) => { console.error(`db-backup : ${m}`); process.exit(1); };
 const arg = (name, dflt = '') => { const i = process.argv.indexOf(`--${name}`); return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : dflt; };
@@ -53,14 +63,55 @@ export function backupKey(hex = process.env.BACKUP_ENCRYPTION_KEY) {
   return Buffer.from(String(hex), 'hex');
 }
 
-/** Encrypts a readable stream into a file (0600), with backpressure. @returns {Promise<{ bytes: number }>} */
+/**
+ * V2: the public key of an ADAB2 backup (PEM text, RSA ≥ 3072 bits). @param {string | undefined} pem
+ * @returns {crypto.KeyObject}
+ */
+export function backupPublicKey(pem = process.env.BACKUP_PUBLIC_KEY) {
+  let k; try { k = crypto.createPublicKey(String(pem || '').replace(/\\n/g, '\n')); } catch { throw new Error('BACKUP_PUBLIC_KEY is not a PEM public key'); }
+  if (k.asymmetricKeyType !== 'rsa' || (k.asymmetricKeyDetails?.modulusLength || 0) < 3072) throw new Error('BACKUP_PUBLIC_KEY must be an RSA key of at least 3072 bits');
+  return k;
+}
+/** V2: the private key of ADAB2 backups, from a PEM file encrypted with a passphrase. @returns {crypto.KeyObject} */
+export function backupPrivateKey(file = process.env.BACKUP_PRIVATE_KEY_FILE, passphrase = process.env.BACKUP_PRIVATE_KEY_PASSPHRASE) {
+  let pem; try { pem = fs.readFileSync(String(file || '')); } catch { throw new Error('BACKUP_PRIVATE_KEY_FILE not readable'); }
+  try { return crypto.createPrivateKey({ key: pem, passphrase: String(passphrase || '') }); } catch { throw new Error('private key refused (wrong passphrase or not a key)'); }
+}
+/** V2: generates the ADAB2 key pair; the private key is encrypted with the passphrase. @returns {{ privatePem: string, publicPem: string }} */
+export function generateBackupKeyPair(passphrase) {
+  if (String(passphrase || '').length < MIN_PASSPHRASE) throw new Error(`BACKUP_PRIVATE_KEY_PASSPHRASE must have at least ${MIN_PASSPHRASE} characters`);
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 4096 });
+  return { privatePem: privateKey.export({ type: 'pkcs8', format: 'pem', cipher: 'aes-256-cbc', passphrase }).toString(), publicPem: publicKey.export({ type: 'spki', format: 'pem' }).toString() };
+}
+/**
+ * The key material for decryption: ADAB1 needs the 32-byte key, ADAB2 the private key. Resolved lazily so a run only needs the variables of its format.
+ * @param {string} file
+ */
+export function decryptionKeyFor(file) {
+  const head = Buffer.alloc(MAGIC.length); const fd = fs.openSync(file, 'r'); fs.readSync(fd, head, 0, head.length, 0); fs.closeSync(fd);
+  return head.equals(MAGIC2) ? backupPrivateKey() : backupKey();
+}
+
+/**
+ * Encrypts a readable stream into a file (0600), with backpressure. `key`: a 32-byte Buffer (ADAB1) or an RSA public KeyObject (ADAB2: a fresh data key,
+ * wrapped with RSA-OAEP-SHA256; the whole header is GCM additional data). @returns {Promise<{ bytes: number }>}
+ */
 export function encryptStreamToFile(input, file, key) {
   return new Promise((resolve, reject) => {
     const iv = crypto.randomBytes(IV_LEN);
-    const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-    const out = fs.createWriteStream(file, { mode: 0o600 });
+    let header; let dataKey = key;
+    if (Buffer.isBuffer(key)) header = Buffer.concat([MAGIC, iv]);
+    else {
+      dataKey = crypto.randomBytes(32);
+      const wrapped = crypto.publicEncrypt({ key, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: 'sha256' }, dataKey);
+      const len = Buffer.alloc(2); len.writeUInt16BE(wrapped.length);
+      header = Buffer.concat([MAGIC2, len, wrapped, iv]);
+    }
+    const cipher = crypto.createCipheriv('aes-256-gcm', dataKey, iv);
+    if (!Buffer.isBuffer(key)) cipher.setAAD(header);
+    const out = fs.createWriteStream(file, { mode: 0o600, flags: 'wx' });   // V2: never overwrite an existing backup (two runs in the same second)
     let bytes = 0;
-    out.write(Buffer.concat([MAGIC, iv]));
+    out.write(header);
     input.on('data', (c) => { bytes += c.length; });
     input.on('error', reject); cipher.on('error', reject); out.on('error', reject);
     cipher.on('end', () => out.end(cipher.getAuthTag()));
@@ -73,16 +124,50 @@ export function encryptStreamToFile(input, file, key) {
  * Decrypts a backup file into `target` (0600), streaming. The result is written to a temporary name and renamed only once the GCM tag has been checked:
  * nothing unauthenticated is ever left under the target name.
  */
+/**
+ * Parses the header of an ADAB1 / ADAB2 file (no key needed). @param {string} file @param {number} size
+ * @returns {{ v: 1 | 2, header: Buffer, iv: Buffer, wrapped?: Buffer, tag: Buffer }}
+ */
+export function readHeader(file, size = fs.statSync(file).size) {
+  const fd = fs.openSync(file, 'r');
+  try {
+    const magic = Buffer.alloc(MAGIC.length); fs.readSync(fd, magic, 0, magic.length, 0);
+    const tag = Buffer.alloc(TAG_LEN); fs.readSync(fd, tag, 0, TAG_LEN, Math.max(0, size - TAG_LEN));
+    if (magic.equals(MAGIC)) {
+      if (size < MAGIC.length + IV_LEN + TAG_LEN) throw new Error('not an AccesDirectAide encrypted backup');
+      const header = Buffer.alloc(MAGIC.length + IV_LEN); fs.readSync(fd, header, 0, header.length, 0);
+      return { v: 1, header, iv: header.subarray(MAGIC.length), tag };
+    }
+    if (magic.equals(MAGIC2)) {
+      const len = Buffer.alloc(2); fs.readSync(fd, len, 0, 2, MAGIC2.length);
+      const n = len.readUInt16BE(0);
+      if (n < 384 || n > 1024 || size < MAGIC2.length + 2 + n + IV_LEN + TAG_LEN) throw new Error('not an AccesDirectAide encrypted backup');
+      const header = Buffer.alloc(MAGIC2.length + 2 + n + IV_LEN); fs.readSync(fd, header, 0, header.length, 0);
+      return { v: 2, header, wrapped: header.subarray(MAGIC2.length + 2, MAGIC2.length + 2 + n), iv: header.subarray(MAGIC2.length + 2 + n), tag };
+    }
+    throw new Error('not an AccesDirectAide encrypted backup');
+  } finally { fs.closeSync(fd); }
+}
+
 export function decryptFileToFile(file, target, key) {
   return new Promise((resolve, reject) => {
     const size = fs.statSync(file).size;
     if (size < MAGIC.length + IV_LEN + TAG_LEN) return reject(new Error('not an AccesDirectAide encrypted backup'));
-    const fd = fs.openSync(file, 'r');
-    const head = Buffer.alloc(MAGIC.length + IV_LEN); fs.readSync(fd, head, 0, head.length, 0);
-    const tag = Buffer.alloc(TAG_LEN); fs.readSync(fd, tag, 0, TAG_LEN, size - TAG_LEN); fs.closeSync(fd);
-    if (!head.subarray(0, MAGIC.length).equals(MAGIC)) return reject(new Error('not an AccesDirectAide encrypted backup'));
-    const decipher = crypto.createDecipheriv('aes-256-gcm', key, head.subarray(MAGIC.length));
-    decipher.setAuthTag(tag);
+    let head; let decipher;
+    try {
+      const parsed = readHeader(file, size);
+      head = parsed.header;
+      if (parsed.v === 1) {
+        if (!Buffer.isBuffer(key)) throw new Error('an ADAB1 backup needs BACKUP_ENCRYPTION_KEY');
+        decipher = crypto.createDecipheriv('aes-256-gcm', key, parsed.iv);
+      } else {
+        if (Buffer.isBuffer(key)) throw new Error('an ADAB2 backup needs the private key');
+        const dataKey = crypto.privateDecrypt({ key, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: 'sha256' }, parsed.wrapped);
+        decipher = crypto.createDecipheriv('aes-256-gcm', dataKey, parsed.iv);
+        decipher.setAAD(head);
+      }
+      decipher.setAuthTag(parsed.tag);
+    } catch (e) { return reject(e); }
     const tmp = `${target}.partial`;
     const out = fs.createWriteStream(tmp, { mode: 0o600 });
     let bytes = 0;
@@ -131,7 +216,7 @@ export function backupTimeOf(file) {
 
 async function backup() {
   const url = process.env.DATABASE_URL || die('DATABASE_URL absente.');
-  const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
+  const key = (() => { try { return process.env.BACKUP_PUBLIC_KEY ? backupPublicKey() : backupKey(); } catch (e) { return die(e.message); } })();
   const outDir = arg('out') || die('indiquez --out <dossier>.');
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const label = String(arg('label', 'db')).replace(/[^a-z0-9_-]/gi, '').slice(0, 30) || 'db';
@@ -143,12 +228,32 @@ async function backup() {
   const code = await exited;
   if (code !== 0) { fs.rmSync(file, { force: true }); die(`pg_dump a échoué (code ${code})${/password|authentication/i.test(err) ? ' : authentification' : ''}.`); }
   fs.writeFileSync(`${file}.sha256`, `${await sha256OfFile(file)}  ${path.basename(file)}\n`, { mode: 0o600 });
-  console.log(JSON.stringify({ file, archiveBytes: bytes, encryptedBytes: fs.statSync(file).size }));
+  console.log(JSON.stringify({ file, format: Buffer.isBuffer(key) ? 'ADAB1' : 'ADAB2', archiveBytes: bytes, encryptedBytes: fs.statSync(file).size }));
+}
+
+/** V2 runner side: structure + sidecar, no key. */
+async function checkHeader() {
+  const file = arg('check-header') || die('indiquez le fichier.');
+  let h; try { h = readHeader(file); } catch { return die('en-tête invalide : ce n’est pas une sauvegarde AccesDirectAide.'); }
+  const side = await sidecarMatches(file);
+  if (side !== true) die(side === null ? 'empreinte .sha256 absente.' : 'empreinte SHA-256 différente : le fichier a changé.');
+  console.log(JSON.stringify({ file, ok: true, format: `ADAB${h.v}`, encryptedBytes: fs.statSync(file).size, takenAt: backupTimeOf(file) }));
+}
+
+function keygen() {
+  const outDir = arg('out') || die('indiquez --out <dossier hors ligne>.');
+  let pair; try { pair = generateBackupKeyPair(process.env.BACKUP_PRIVATE_KEY_PASSPHRASE); } catch (e) { return die(e.message); }
+  fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
+  const priv = path.join(outDir, 'backup-private.pem'); const pub = path.join(outDir, 'backup-public.pem');
+  if (fs.existsSync(priv) || fs.existsSync(pub)) die('une paire existe déjà dans ce dossier : rien n’est écrasé.');
+  fs.writeFileSync(priv, pair.privatePem, { mode: 0o600, flag: 'wx' });
+  fs.writeFileSync(pub, pair.publicPem, { mode: 0o644, flag: 'wx' });
+  console.log(JSON.stringify({ privateKey: priv, publicKey: pub, fingerprint: crypto.createHash('sha256').update(pair.publicPem).digest('hex').slice(0, 16) }));
 }
 
 async function verify() {
   const file = arg('verify') || die('indiquez le fichier.');
-  const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
+  const key = (() => { try { return decryptionKeyFor(file); } catch (e) { return die(e.message); } })();
   if (await sidecarMatches(file) === false) die('empreinte SHA-256 différente : le fichier a changé.');
   const tmp = fs.mkdtempSync(path.join(workDir(), 'ada-verify-'));
   removeOnExit(tmp);
@@ -202,7 +307,9 @@ function listOrPrune() {
 }
 
 if (isMainModule(import.meta.url)) {
-  if (process.argv.includes('--verify')) verify().catch(() => die('erreur inattendue (aucune donnée affichée).'));
+  if (process.argv.includes('--keygen')) keygen();
+  else if (process.argv.includes('--check-header')) checkHeader().catch(() => die('erreur inattendue (aucune donnée affichée).'));
+  else if (process.argv.includes('--verify')) verify().catch(() => die('erreur inattendue (aucune donnée affichée).'));
   else if (process.argv.includes('--list')) listOrPrune();
   else backup().catch(() => die('erreur inattendue (aucune donnée affichée).'));
 }

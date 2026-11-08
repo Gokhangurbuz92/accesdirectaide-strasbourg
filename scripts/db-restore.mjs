@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Restore of an encrypted backup made by scripts/db-backup.mjs (launch-readiness item 52).
+ * Restore of an encrypted backup made by scripts/db-backup.mjs (launch-readiness item 52). ADAB2 files (V2): BACKUP_PRIVATE_KEY_FILE + BACKUP_PRIVATE_KEY_PASSPHRASE
+ * instead of BACKUP_ENCRYPTION_KEY.
  *
  *   BACKUP_ENCRYPTION_KEY=<64 hex> TARGET_DATABASE_URL=… node scripts/db-restore.mjs --file <x.dump.enc> --confirm-target <host>/<database>
  *       [--work-dir <private dir>] [--into-nonempty]
@@ -18,7 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import pg from 'pg';
-import { backupKey, backupTimeOf, decryptFileToFile, pgEnv, removeOnExit, sidecarMatches, workDir } from './db-backup.mjs';
+import { decryptionKeyFor, backupTimeOf, decryptFileToFile, pgEnv, removeOnExit, sidecarMatches, workDir } from './db-backup.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const die = (m) => { console.error(`db-restore : ${m}`); process.exit(1); };
@@ -34,8 +35,8 @@ async function main() {
   const want = targetName(url);
   if (!arg('confirm-target')) die(`indiquez --confirm-target ${want}.`);
   if (arg('confirm-target').toLowerCase() !== want) die('la cible confirmée ne correspond pas à TARGET_DATABASE_URL : rien n’est restauré.');
-  const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
   if (!fs.existsSync(file)) die('fichier de sauvegarde introuvable.');
+  const key = (() => { try { return decryptionKeyFor(file); } catch (e) { return die(e.message); } })();   // V2: ADAB1 (BACKUP_ENCRYPTION_KEY) or ADAB2 (private key)
   if (await sidecarMatches(file) === false) die('empreinte SHA-256 différente : le fichier a changé.');
   const work = workDir();
 

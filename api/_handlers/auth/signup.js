@@ -1,11 +1,11 @@
 // @ts-nocheck
-import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
 import { CitizenUser, AuthToken } from '../../../src/db/schema.js';
 import { eq, and, isNull } from 'drizzle-orm';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
 import { templates } from '../../lib/email-service.js';
+import { afterResponse, holdResponseFloor } from '../../_utils/after-response.js';
 import { passwordMessage, passwordProblems } from '../../../src/lib/passwordPolicy.js';
 import {
   buildAppUrl,
@@ -20,7 +20,7 @@ import {
   unsetPasswordHash,
 } from '../../_utils/user-auth.js';
 import { ADULT_REQUIRED_REFUSAL, adultDeclarationGiven, recordAgeDeclaration } from '../../_utils/age-policy.js';
-import { TERMS_REQUIRED_REFUSAL, recordTermsAcceptance, termsAcceptanceGiven } from '../../_utils/terms-acceptance.js';
+import { TERMS_NOT_IN_FORCE_REFUSAL, TERMS_REQUIRED_REFUSAL, citizenTermsInForce, recordTermsAcceptance, termsAcceptanceGiven } from '../../_utils/terms-acceptance.js';
 import { phoneCollectionOpen } from '../../_utils/phone-collection.js';
 
 const VERIFY_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for stricter security
@@ -39,10 +39,62 @@ function signupAnswer() {
     : { ok: true, message: "Votre demande est enregistrée, mais l’envoi d’e-mails n’est pas disponible sur ce service pour le moment : aucun lien n’a pu être envoyé.", emailDelivery: 'UNAVAILABLE' };
 }
 
+/** Postgres unique violation, whether the driver wraps it (drizzle DrizzleQueryError → cause) or not. @param {any} err */
+export const isUniqueViolation = (err) => err?.code === '23505' || err?.cause?.code === '23505';
+
+/**
+ * The address-dependent part of a sign-up (after the answer). A new address gets an account; an unverified one loses any password already set (PKG-11);
+ * a verified one gets nothing (no e-mail: the person is not told someone tried). A concurrent duplicate insert is the « already exists » case.
+ * @param {{ email: string, passwordHash: string, phone: string | null, nextPath: string }} p
+ */
+async function registerOrRefresh({ email, passwordHash, phone, nextPath }) {
+  let user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
+  if (!user) {
+    try {
+      [user] = await db.insert(CitizenUser).values({ email, passwordHash, phone: phone || null }).returning();
+    } catch (err) {
+      if (isUniqueViolation(err)) return;   // another sign-up of the same address won the race: that one sends the link
+      throw err;
+    }
+  } else if (!user.emailVerifiedAt) {
+    // PKG-11 audit pass 2 (pre-registration / recovery takeover): a sign-up for an address whose account is still UNVERIFIED sets no password at all — neither
+    // the first registrant's nor this one's survives: the password becomes « not chosen » and whoever proves the mailbox by clicking the (new) link chooses it
+    // then (verify-email → /auth/reset). A re-sign-up never changes the phone either. The older links die below.
+    await db.update(CitizenUser).set({ passwordHash: unsetPasswordHash(), updatedAt: new Date() }).where(and(eq(CitizenUser.id, user.id), isNull(CitizenUser.emailVerifiedAt)));
+  }
+  if (user.emailVerifiedAt) return;
+
+  // R42-A07: the declaration of THIS sign-up (append-only ledger); a re-sign-up of an unverified address declares again
+  await recordAgeDeclaration(user.id, { adult: true, channel: 'signup' });
+  await recordTermsAcceptance(user.id, { channel: 'signup' });   // Release B: the accepted terms and their version, with this sign-up
+
+  const rawToken = generateAuthToken();
+  const tokenHash = hashAuthToken(rawToken);
+  const expiresAt = new Date(Date.now() + VERIFY_TOKEN_TTL_MS);
+  // Sequential operations (neon-http driver doesn't support transactions)
+  await db.update(AuthToken).set({ usedAt: new Date() }).where(and(eq(AuthToken.userId, user.id), eq(AuthToken.type, 'EMAIL_VERIFY'), isNull(AuthToken.usedAt)));
+  await db.insert(AuthToken).values({ userId: user.id, type: 'EMAIL_VERIFY', tokenHash, expiresAt });
+
+  const verifyUrl = buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(rawToken)}&next=${encodeURIComponent(nextPath)}`);
+  const text = [
+    'Confirmez votre adresse email pour activer votre compte Acces Direct Aide.',
+    '',
+    `Lien de verification: ${verifyUrl}`,
+    '',
+    "Si vous n'etes pas a l'origine de cette demande, ignorez cet email.",
+  ].join('\n');
+  const emailTemplate = templates.welcome(email.split('@')[0], verifyUrl);
+  await sendMail({ to: email, subject: emailTemplate.subject, text, html: emailTemplate.html, category: 'email_verify' });
+}
+
 export default async function handler(req, res) {
+  const startedAt = Date.now();
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
+  // V2 / D6: no account under terms that are not in force (Production): refused before anything is read, the same for every address
+  if (!citizenTermsInForce()) return res.status(503).json({ ...TERMS_NOT_IN_FORCE_REFUSAL });
 
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
@@ -91,87 +143,15 @@ export default async function handler(req, res) {
   // after the same password work, and nothing is created or sent (a bot learns nothing; the rate limits above still count it).
   if (String(req.body?.site_web ?? '').trim()) {
     await hashPassword(password);
+    await holdResponseFloor(startedAt);
     return res.status(200).json(signupAnswer());
   }
 
-  try {
-    let user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
-
-    if (!user) {
-      const passwordHash = await hashPassword(password);
-      const [newUser] = await db.insert(CitizenUser).values({
-          email,
-          passwordHash,
-          phone: phone || null,
-      }).returning();
-      user = newUser;
-    }
-
-    else if (!user.emailVerifiedAt) {
-      // PKG-11 audit pass 2 (pre-registration / recovery takeover): a sign-up for an address whose account is still UNVERIFIED sets no password at all — neither
-      // the first registrant's nor this one's survives: the password becomes « not chosen » and whoever proves the mailbox by clicking the (new) link chooses it
-      // then (verify-email → /auth/reset). Pass 1 let the latest sign-up win, so someone re-signing after the person (or after an ownership recovery) got the
-      // account at the person's click. A re-sign-up never changes the phone either. The older links die below.
-      await hashPassword(password);   // same work as the other branches (timing)
-      await db.update(CitizenUser).set({ passwordHash: unsetPasswordHash(), updatedAt: new Date() }).where(and(eq(CitizenUser.id, user.id), isNull(CitizenUser.emailVerifiedAt)));
-    }
-
-    if (user.emailVerifiedAt) {
-      await hashPassword(password);   // PKG-11 audit pass 2: same password work as a new sign-up (an existing verified address answered measurably faster)
-      return res.status(200).json(signupAnswer());
-    }
-
-    // R42-A07: the declaration of THIS sign-up (append-only ledger); a re-sign-up of an unverified address declares again
-    await recordAgeDeclaration(user.id, { adult: true, channel: 'signup' });
-    await recordTermsAcceptance(user.id, { channel: 'signup' });   // Release B: the accepted terms and their version, with this sign-up
-
-    const rawToken = generateAuthToken();
-    const tokenHash = hashAuthToken(rawToken);
-    const expiresAt = new Date(Date.now() + VERIFY_TOKEN_TTL_MS);
-
-    // Sequential operations (neon-http driver doesn't support transactions)
-    await db.update(AuthToken).set({ usedAt: new Date() }).where(
-      and(
-        eq(AuthToken.userId, user.id),
-        eq(AuthToken.type, 'EMAIL_VERIFY'),
-        isNull(AuthToken.usedAt)
-      )
-    );
-    await db.insert(AuthToken).values({
-        userId: user.id,
-        type: 'EMAIL_VERIFY',
-        tokenHash,
-        expiresAt,
-    });
-
-    const verifyUrl = buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(rawToken)}&next=${encodeURIComponent(nextPath)}`);
-    const text = [
-      'Confirmez votre adresse email pour activer votre compte Acces Direct Aide.',
-      '',
-      `Lien de verification: ${verifyUrl}`,
-      '',
-      "Si vous n'etes pas a l'origine de cette demande, ignorez cet email.",
-    ].join('\n');
-
-    const emailTemplate = templates.welcome(email.split('@')[0], verifyUrl);
-
-    await sendMail({
-      to: email,
-      subject: emailTemplate.subject,
-      text,
-      html: emailTemplate.html,
-      category: 'email_verify',
-    });
-
-    return res.status(200).json(signupAnswer());
-  } catch (err) {
-    // @ts-ignore
-    const message = String(err?.message || '');
-    // Duplicate email: don't leak account existence — return same generic OK
-    if (message.includes('unique') || message.includes('duplicate')) {
-      return res.status(200).json(signupAnswer());
-    }
-    logger.error({ err }, '[signup] Registration failed');
-    return res.status(500).json({ error: 'Erreur interne du serveur' });
-  }
+  // V2 / D1: the password work is the same for every address and is done before the answer; everything that depends on whether the address already has
+  // an account (lookup, writes, the e-mail) runs after the answer, which is never sent before the same floor. V2 / D4: a failure is logged by name and
+  // SQL state only (the driver's message carries the query parameters, including the password hash).
+  const passwordHash = await hashPassword(password);
+  afterResponse(() => registerOrRefresh({ email, passwordHash, phone, nextPath }), 'signup');
+  await holdResponseFloor(startedAt);
+  return res.status(200).json(signupAnswer());
 }

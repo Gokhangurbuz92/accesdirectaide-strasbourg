@@ -283,6 +283,7 @@ describe.skipIf(!hasDatabase)('R43-BOOK lifecycle, notice ledger and security (r
     const r = mk();
     await signup({ method: 'POST', url: '/api/auth/signup', headers: { host: 'localhost', 'x-forwarded-for': '10.43.0.1' }, body: { email: SIGNUP_EMAIL, password: 'Synthetic-QA-Pass-01', adultDeclaration: true, termsAccepted: true,
       role: 'SUPERADMIN', kind: 'pro', structureId: A.id, isAdmin: true, territory: 'strasbourg', mfa_enabled: true } }, r);
+    await (await import('../../api/_utils/after-response.js')).settleAfterResponse();   // V2 / D1: the account is created after the answer
     expect(r.statusCode, show(r)).toBe(200);
     const user = (await db.execute(sql`SELECT * FROM "CitizenUser" WHERE email = ${SIGNUP_EMAIL}`)).rows[0];
     expect(user).toBeTruthy();

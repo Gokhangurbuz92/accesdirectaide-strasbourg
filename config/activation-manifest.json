@@ -60,6 +60,21 @@
       "nature": "secret",
       "note": "owner workstation only (backups), never on Vercel"
     },
+    "BACKUP_PUBLIC_KEY": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2: public key of the ADAB2 backups (unattended backup runner); never on Vercel"
+    },
+    "BACKUP_PRIVATE_KEY_FILE": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2: path of the passphrase-encrypted ADAB2 private key, kept offline; restore and verify only"
+    },
+    "BACKUP_PRIVATE_KEY_PASSPHRASE": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2: typed hidden at restore time; never stored, never on Vercel"
+    },
     "JWT_SECRET": {
       "class": "required",
       "nature": "secret",
@@ -484,6 +499,11 @@
     "ALERT_VEILLE_STALE_HOURS": {
       "class": "optional",
       "nature": "config"
+    },
+    "ENUMERATION_FLOOR_MS": {
+      "class": "optional",
+      "nature": "config",
+      "note": "V2 / D1: minimum answer time of sign-up, forgot-password and resend-verification in Production / Preview (default 400 ms)"
     },
     "ALERT_MAIL_BOUNCE_BURST": {
       "class": "optional",

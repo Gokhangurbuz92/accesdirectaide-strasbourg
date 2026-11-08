@@ -11,6 +11,7 @@ import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
 import { isMainModule } from './lib/is-main.mjs';
+import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -103,6 +104,9 @@ export function evaluateReleasePreflight(env, opts = {}) {
   if (betaOn) add('beta.pro_self_registration', proSelfRegistrationOpen(env) ? 'WARN' : 'PASS', proSelfRegistrationOpen(env)
     ? 'ADA_PRO_SELF_REGISTRATION=open: anyone can create a structure and its administrator once « pro » is open'
     : 'public structure sign-up closed (structures are created by the platform; members join by invitation)');
+  // V2 / D6: citizen accounts open only with the citizen terms and the privacy notice IN FORCE (the server refuses sign-ups otherwise)
+  if (!betaOn || opened.has('accounts')) add('legal.citizen_terms_in_force', citizenTermsInForce({ ...env, VERCEL_ENV: 'production' }) ? 'PASS' : 'FAIL',
+    'VITE_LEGAL_DOCS_APPROVED_VERSION names the approved cgu-citoyen and notice-confidentialite versions (sign-up refuses with TERMS_NOT_IN_FORCE otherwise)');
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
     : 'accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary');

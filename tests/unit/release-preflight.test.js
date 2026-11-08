@@ -8,6 +8,8 @@ const GOOD = {
   APP_BASE_URL: 'https://www.example.test', ADA_VAULT_KEY: 'cd'.repeat(32), KV_REST_API_URL: 'https://kv.example.test', KV_REST_API_TOKEN: 'kv-synthetic',
   STORAGE_ENDPOINT: 'https://s3.example.test', STORAGE_BUCKET: 'b', STORAGE_ACCESS_KEY_ID: 'a', STORAGE_SECRET_ACCESS_KEY: 's', DATABASE_SSL_VERIFY: 'true',
   ALERT_WEBHOOK_URL: 'https://alerts.example.test/hook', SENTRY_DSN: 'https://k@o1.ingest.de.sentry.io/1',
+  // V2 / D6: citizen accounts open only under terms in force
+  VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v2-2026-11-09,notice-confidentialite@v2-2026-11-09',
 };
 const LEGAL_DONE = 'export const LEGAL = { publisher: "Association X, inscrite au registre des associations du tribunal judiciaire de Strasbourg" };';
 const run = (env) => evaluateReleasePreflight(env, { legalText: LEGAL_DONE });

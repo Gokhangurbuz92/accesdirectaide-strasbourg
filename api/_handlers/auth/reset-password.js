@@ -1,5 +1,5 @@
 import { db } from '../../../src/db/index.js';
-import { AuthToken, CitizenUser } from '../../../src/db/schema.js';
+import { AuthToken, CitizenUser, EmailChangeRequest } from '../../../src/db/schema.js';
 import { and, eq, isNull } from 'drizzle-orm';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { getClientIp, hashAuthToken, hashPassword } from '../../_utils/user-auth.js';
@@ -49,6 +49,10 @@ export default async function handler(req, res) {
       // PKG-11 audit: every existing session ends (pass 2: compared to the millisecond, see citizenSessionRevoked); the e-mailed link proves the mailbox, so an
       // unverified address is verified by it (the « choose your password » step after a contested sign-up)
       await tx.update(CitizenUser).set({ passwordHash, sessionsValidAfter: new Date(), emailVerifiedAt: row.user.emailVerifiedAt || new Date() }).where(eq(CitizenUser.id, row.userId));
+      // V2 / D2: a reset also cancels a pending e-mail change — the notice to the old address tells the person to change the password, and that must stop
+      // a change requested by someone who knew the old one (they could otherwise still click their link, then take the account by « forgot password »)
+      await tx.delete(EmailChangeRequest).where(eq(EmailChangeRequest.userId, row.userId));
+      await tx.update(AuthToken).set({ usedAt: new Date() }).where(and(eq(AuthToken.userId, row.userId), eq(AuthToken.type, 'PASSWORD_RESET'), isNull(AuthToken.usedAt)));
       return true;
     });
     if (!changed) return res.status(400).json({ error: 'Invalid or expired token', message: 'Ce lien est expiré ou a déjà servi : demandez un nouveau lien.' });

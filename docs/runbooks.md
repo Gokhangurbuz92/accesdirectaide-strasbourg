@@ -76,7 +76,7 @@ fichiers). Avant, elles devenaient illisibles dès la promotion d'une nouvelle c
 
 ## 6. Alertes
 
-- **Webhook** : `ALERT_WEBHOOK_URL` (obligatoire, porte de pré-lancement) reçoit les alertes de santé (toutes les 5 minutes) et les échecs des
+- **Webhook** : `ALERT_WEBHOOK_URL` (obligatoire, porte de pré-lancement) reçoit les alertes de santé (toutes les heures, minute 7 : sur Neon Free, un contrôle toutes les 5 minutes empêcherait la base de se mettre en veille et épuiserait le quota mensuel de calcul) et les échecs des
   tâches d'import.
 - **Erreurs** : Sentry, région UE, 10 % des traces de performance (`SENTRY_TRACES_SAMPLE_RATE`), Session Replay désactivé.
 - **Externe** : `.github/workflows/healthcheck.yml`, toutes les 30 minutes ; un échec envoie un e-mail au propriétaire du dépôt.

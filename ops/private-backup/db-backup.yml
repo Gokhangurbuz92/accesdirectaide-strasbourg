@@ -1,0 +1,77 @@
+# V2 — daily encrypted backup of the Production database (Neon Free), run OUTSIDE the owner's Mac.
+# THIS FILE BELONGS IN A SEPARATE **PRIVATE** REPOSITORY (e.g. <owner>/ada-backups) at .github/workflows/db-backup.yml — never in the public
+# application repository (public-repository artifacts and logs are readable by anyone signed in to GitHub).
+# The runner holds only the PUBLIC key: it can write backups, it can never read them. The private key stays offline (ops/private-backup/README_FR.md).
+# Secrets of the private repository (Settings → Secrets and variables → Actions):
+#   ADA_BACKUP_DATABASE_URL  connection string of a READ-ONLY Neon role (unpooled host, sslmode=require)
+#   ADA_BACKUP_PUBLIC_KEY    content of backup-public.pem (not secret, kept as a secret to avoid accidental edits)
+name: db-backup
+on:
+  schedule:
+    - cron: '17 2 * * *'        # 02:17 UTC daily
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read                 # list the previous backup artifacts (missed-run detection)
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+env:
+  ADA_SCRIPTS_REPO: Gokhangurbuz92/accesdirectaide-strasbourg
+  ADA_SCRIPTS_SHA: '<release SHA containing scripts/db-backup.mjs ADAB2>'   # pinned: a change of the backup code is a reviewed change here
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout the backup scripts (pinned)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683   # v4.2.2
+        with:
+          repository: ${{ env.ADA_SCRIPTS_REPO }}
+          ref: ${{ env.ADA_SCRIPTS_SHA }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/db-backup.mjs
+            scripts/db-backup-freshness.mjs
+            scripts/lib/
+            api/_services/retention-policy.js
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020   # v4.4.0
+        with:
+          node-version: '22'
+      - name: PostgreSQL 18 client (Neon runs PostgreSQL 18)
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-18 >/dev/null
+          /usr/lib/postgresql/18/bin/pg_dump --version
+      - name: Previous backup still fresh? (missed-run detection)
+        id: fresh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts" --paginate --jq '.artifacts[]' > "$RUNNER_TEMP/artifacts.ndjson"
+          if node scripts/db-backup-freshness.mjs --artifacts "$RUNNER_TEMP/artifacts.ndjson" --prefix ada-prod-backup --max-hours 36 --first-run-ok; then echo "stale=no" >> "$GITHUB_OUTPUT"; else echo "stale=yes" >> "$GITHUB_OUTPUT"; fi
+      - name: Encrypted backup (ADAB2, public key only)
+        env:
+          DATABASE_URL: ${{ secrets.ADA_BACKUP_DATABASE_URL }}
+          BACKUP_PUBLIC_KEY: ${{ secrets.ADA_BACKUP_PUBLIC_KEY }}
+          PG_BIN: /usr/lib/postgresql/18/bin
+        run: |
+          umask 077
+          node scripts/db-backup.mjs --out "$RUNNER_TEMP/out" --label prod
+          for f in "$RUNNER_TEMP"/out/*.dump.enc; do node scripts/db-backup.mjs --check-header "$f"; done
+      - name: Keep 35 days (GitHub artifact, private repository)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02   # v4.6.2
+        with:
+          name: ada-prod-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/out/
+          retention-days: 35
+          compression-level: 0
+          if-no-files-found: error
+      - name: Report a missed run (after today's backup is safe)
+        if: steps.fresh.outputs.stale == 'yes'
+        run: |
+          echo "::error::The previous backup was older than 36 hours: at least one daily run was missed. Today's backup is stored; check the Actions history."
+          exit 1

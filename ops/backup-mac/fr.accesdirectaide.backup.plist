@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- V2 — TEMPLATE, not installed. Owner install (after authorization): copy to ~/Library/LaunchAgents/, replace HOME_DIR, then
+     launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/fr.accesdirectaide.backup.plist
+     A calendar job missed while the Mac sleeps runs at wake; while it is powered off it does not run (the next run reports the gap). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>fr.accesdirectaide.backup</string>
+  <key>ProgramArguments</key>
+  <array><string>/bin/zsh</string><string>HOME_DIR/Projects/ADA_CLAUDE_LAB/CLEAN_EXPORT_R24/deploy/ops/backup-mac/ada-backup-daily.sh</string></array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>9</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Hour</key><integer>21</integer><key>Minute</key><integer>30</integer></dict>
+  </array>
+  <key>StandardOutPath</key><string>HOME_DIR/ADA-Backups/launchd.out.log</string>
+  <key>StandardErrorPath</key><string>HOME_DIR/ADA-Backups/launchd.err.log</string>
+  <key>ProcessType</key><string>Background</string>
+</dict>
+</plist>

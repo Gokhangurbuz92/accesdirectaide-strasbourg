@@ -30,7 +30,7 @@ import { securitySignalCounts, evaluateSecuritySignals } from '../../_services/s
  *
  * Anti-spam: same alert type suppressed for 1 hour via KV.
  *
- * Schedule: every 5 minutes (vercel.json)
+ * Schedule: hourly at minute 7 (vercel.json). V2: Neon Free suspends its compute after 5 idle minutes (fixed); a 5-minute check kept it awake around the clock (≥ 180 CU-h/month against the 100 CU-h allowance)
  * Auth: CRON_SECRET or Vercel cron UA
  */
 
@@ -184,7 +184,11 @@ export default async function handler(req, res) {
     }
 
     // Check 3: Ingestion freshness (last successful cron < 48h)
-    try {
+    // V2: only when an ingestion job is meant to run here (beta lifted, or one of them opened in ADA_BETA_OPEN_JOBS). While they are intentionally closed
+    // (Production in V1a/V2), an old CronRun row would otherwise raise « ingestion.stale » every hour for an expected state — the same rule as the veille (G8).
+    const ingestionExpected = !isPublicBetaRestricted(process.env) || ['ingest-aids', 'actualites', 'ingest-structures'].some((j) => openJobs(process.env).has(j));
+    if (!ingestionExpected) checks.ingestionFreshness = { ok: true, skipped: 'JOB_NOT_OPENED' };
+    else try {
         const result = await db.select({
             maxStartedAt: sql`MAX(${CronRun.startedAt})`,
         }).from(CronRun).where(sql`${CronRun.status} = 'success' AND ${CronRun.job} IN ('INGEST_AIDS', 'ACTUALITES', 'ingest-aids', 'actualites', 'ingest-structures')`);   // R40 / G4: ingest-structures writes CronRun too

@@ -142,8 +142,8 @@ describe('cascades onto records of another controller (structures)', () => {
     const flagged = PURGE_STEPS.filter((s) => s.sharedController).map((s) => s.id);
     expect(flagged).toEqual(['diagnosticsRedactedWithFollowUp', 'appointmentsStructureRecordAnonymised', 'rdvConversationsDeleted', 'disabledProUsersReport']);
   });
-  it('no step deletes or anonymises a citizen ACCOUNT (CitizenUser is report-only)', () => {
-    expect(PURGE_STEPS.filter((s) => s.table === 'CitizenUser').map((s) => s.kind)).toEqual(['report']);
+  it('no step deletes or anonymises a citizen ACCOUNT — except a NEVER-ACTIVATED one (V2 / D6: address never confirmed, 7 days)', () => {
+    expect(PURGE_STEPS.filter((s) => s.table === 'CitizenUser').map((s) => [s.id, s.kind])).toEqual([['unverifiedAccountsDeleted', 'delete'], ['inactiveAccountsReport', 'report']]);
   });
 });
 

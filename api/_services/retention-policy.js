@@ -87,11 +87,12 @@ export const RETENTION_POLICY = deepFreeze({
     SUPPORT_REQUEST_DAYS: { days: 365, anchor: 'closedAt', basis: OPS, ecode: 'E9b' },
     DSR_REQUEST_DAYS: { days: 1095, anchor: 'completedAt', basis: PROOF, ecode: 'E9b' },
     INACTIVE_ACCOUNT_DAYS: { days: 730, anchor: 'COALESCE(CitizenUser.lastSeenAt, createdAt) — last sign-in, or creation if never signed in', basis: OPS, ecode: 'E7' },
+    UNVERIFIED_ACCOUNT_DAYS: { days: 7, anchor: 'CitizenUser.createdAt of an account whose address was never confirmed (emailVerifiedAt IS NULL)', basis: OPS, ecode: 'D4-V2' },
     MAIL_SUPPRESSION_REVIEW_DAYS: { days: 365, anchor: 'timestamp of the active « mail.suppressed » row (review, never automatic deletion)', basis: OPS, ecode: 'D4-V2' },
     INACTIVE_WARNING_GRACE_DAYS: { days: 30, anchor: 'warning e-mail sent (not built)', basis: OPS, ecode: 'E7' },
     PRO_USER_DISABLED_DAYS: { days: 365, anchor: 'disabling date (not recorded on 0042)', basis: OPS, ecode: 'E9b' },
-    BACKUP_KEEP_DAYS: { days: 30, anchor: 'backup file time', basis: OPS, ecode: 'E15' },
-    BACKUP_KEEP_WEEKLY: { days: 4, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days)', basis: OPS, ecode: 'E15' },
+    BACKUP_KEEP_DAYS: { days: 35, anchor: 'backup file time (V2: 35 days, as the privacy notice § 4 says)', basis: OPS, ecode: 'E15' },
+    BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });
 
@@ -103,6 +104,9 @@ export function ownerChoiceValue(policy, choiceId) {
   const v = /** @type {any} */ (policy)?.approvedChoices?.[choiceId];
   return c && Array.isArray(c.options) && Number.isInteger(v) && c.options.includes(v) ? v : null;
 }
+
+/** keys that are counts, where 0 is a valid value */
+const ZERO_ALLOWED = new Set(['BACKUP_KEEP_WEEKLY']);
 
 /**
  * The number of days of a policy duration (throws on an unknown key: a step can never run with an undefined duration). R45: a duration that is an owner
@@ -120,7 +124,8 @@ export function policyDays(policy, key, opts = {}) {
     if (v === null) throw Object.assign(new Error(`retention policy ${policy?.version}: ${key} is owner choice ${d.ownerChoice} (${(d.options || []).join(' or ')} days), not made`), { code: OWNER_CHOICE_REQUIRED, choice: d.ownerChoice, options: d.options });
     return v;
   }
-  if (!d || !Number.isInteger(d.days) || d.days <= 0) throw new Error(`retention policy ${policy?.version}: no duration ${key}`);
+  // V2: a COUNT may be 0 (BACKUP_KEEP_WEEKLY: no weekly copy beyond BACKUP_KEEP_DAYS); a duration in days never is
+  if (!d || !Number.isInteger(d.days) || d.days < 0 || (d.days === 0 && !ZERO_ALLOWED.has(key))) throw new Error(`retention policy ${policy?.version}: no duration ${key}`);
   return d.days;
 }
 

@@ -33,7 +33,7 @@ function makeRes() {
 
 describe.skipIf(!hasDatabase)('citizen e-mail journey (real DB, synthetic mail)', () => {
   let db, mailer, signup, verify, login, me, health;
-  const post = async (handler, url, body, cookie) => { const res = makeRes(); await handler({ method: 'POST', url, query: {}, body, headers: { host: 'localhost:3000', 'content-type': 'application/json', ...(cookie ? { cookie } : {}) } }, res); return res; };
+  const post = async (handler, url, body, cookie) => { const res = makeRes(); await handler({ method: 'POST', url, query: {}, body, headers: { host: 'localhost:3000', 'content-type': 'application/json', ...(cookie ? { cookie } : {}) } }, res); await (await import('../../api/_utils/after-response.js')).settleAfterResponse(); return res; };   // V2 / D1: work after the answer
   const get = async (handler, url, query = {}, cookie) => { const res = makeRes(); await handler({ method: 'GET', url, query, headers: { host: 'localhost:3000', ...(cookie ? { cookie } : {}) } }, res); return res; };
 
   beforeAll(async () => {

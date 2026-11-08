@@ -229,8 +229,24 @@ function getErrorObject() {
 // Default fallback config for unknown actions — never crash
 const DEFAULT_RATE_LIMIT = { limit: 30, window: 60 };
 
+/**
+ * V2 (privacy notice, D3): an identifier that carries an e-mail address (« email:x@y », « institution-forgot-to:x@y ») never reaches the counter store
+ * in clear — the address part is replaced by a keyed hash (HMAC-SHA-256, server secret), so Upstash holds pseudonymous counters only. Other identifiers
+ * (IP, ids) are unchanged.
+ * @param {string | number | boolean | null | undefined} identifier
+ */
+export function pseudonymiseRateIdentifier(identifier) {
+    const s = String(identifier ?? '');
+    if (!s.includes('@')) return identifier;
+    const i = s.indexOf(':');
+    const prefix = i >= 0 && i < s.indexOf('@') ? s.slice(0, i + 1) : '';
+    const secret = process.env.AUTH_SECRET || process.env.JWT_SECRET || 'ada-rate-limit';
+    return `${prefix}h:${crypto.createHmac('sha256', secret).update(s.slice(prefix.length).toLowerCase()).digest('hex').slice(0, 32)}`;
+}
+
 // @ts-ignore
 export async function checkRateLimit(action, /** @type {string | number | boolean | null | undefined} */ identifier) {
+    identifier = pseudonymiseRateIdentifier(identifier);
     // @ts-ignore
     let config = CONFIG[action];
     if (!config) {
