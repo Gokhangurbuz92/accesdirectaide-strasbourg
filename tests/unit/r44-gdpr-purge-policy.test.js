@@ -107,10 +107,10 @@ describe('R44 / E16 execution gate', () => {
   it('the approved-steps list is explicit (comma or space separated)', () => {
     expect([...approvedStepsFromEnv({ GDPR_PURGE_APPROVED_STEPS: ' a, b  c,,' })]).toEqual(['a', 'b', 'c']);
   });
-  it('step ids are unique; report steps are E7 / E9b; every step names its duration in the policy (or an expiry)', () => {
+  it('step ids are unique; report steps are E7 / D4-V2 (suppression review) / E9b; every step names its duration in the policy (or an expiry)', () => {
     const ids = PURGE_STEPS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['disabledProUsersReport', 'E9b']]);
+    expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['mailSuppressionsReview', 'D4-V2'], ['disabledProUsersReport', 'E9b']]);
     for (const s of PURGE_STEPS) if (s.durationKey) expect(() => policyDays(approvedTestPolicy(), s.durationKey), s.id).not.toThrow();   // R45: A7 resolved in the approved copy
   });
 });

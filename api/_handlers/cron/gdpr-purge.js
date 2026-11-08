@@ -58,6 +58,9 @@ export const RETENTION = {
  * credentials (AuthToken, EmailChangeRequest, ProOutlookToken: keeping an expired secret proves nothing) are not filtered.
  * @param {...any} ids SQL expressions (columns) of the row
  */
+/** an e-mail suppression row (« mail.suppressed ») not followed by a lift of the same HMAC — the suppression still applies @param {any} t */
+export const activeSuppressionSql = (t) => sql`(${t.action} = 'mail.suppressed' AND NOT EXISTS (SELECT 1 FROM "AuditLog" l WHERE l.action = 'mail.suppression_lifted'
+    AND l.entity_id = ${t.entity_id} AND l.timestamp > ${t.timestamp}))`;
 export const heldSql = (...ids) => sql`EXISTS (SELECT 1 FROM "LegalHold" h WHERE h.status = 'ACTIVE' AND h."recordId" IN (${sql.join(ids, sql`, `)}))`;
 
 /** R44 — DSR interplay: an access / review request of the person still open keeps their data until it is answered (an erasure request does not: it goes the same way). */
@@ -237,6 +240,9 @@ export const PURGE_STEPS = [
     { id: 'deletedAuditCount', summaryKey: 'audit_logs_deleted', ecode: 'E13', kind: 'delete', table: 'AuditLog', durationKey: 'AUDIT_LOG_DAYS', tables: ['AuditLog', 'LegalHold'],
         ...deleteStep(AuditLog, (ctx) => and(lt(AuditLog.timestamp, ctx.cutoff('AUDIT_LOG_DAYS')),
             sql`NOT (${AuditLog.action} = 'BREAK_GLASS_OPENED' AND NOT EXISTS (SELECT 1 FROM "AuditLog" r WHERE r.action = 'BREAK_GLASS_REVIEWED' AND r.entity_id = ${AuditLog.entity_id}))`,
+            // D4 V2 (owner direction 08/11/2026): an ACTIVE e-mail suppression (HMAC of the address, never the address) is not deleted blindly at 12 months — it is
+            // listed for review (step mailSuppressionsReview); once lifted by an administrator it follows the ordinary 12 months
+            sql`NOT ${activeSuppressionSql(AuditLog)}`,
             sql`NOT ${heldSql(AuditLog.entity_id, AuditLog.actor_id, AuditLog.target)}`)) },   // R40 / G7: the trail of a held record is evidence
 
     // 4. Old Conversation Logs (90 days — the assistant, closed)
@@ -384,10 +390,15 @@ export const PURGE_STEPS = [
             sql`NOT (${DSRRequest.requestType} = 'DELETE' AND EXISTS (SELECT 1 FROM "ConsentLog" c WHERE c.subject_id = ${DSRRequest.subjectId}))`,
             sql`NOT ${heldSql(DSRRequest.id, DSRRequest.subjectId)}`)) },
 
-    // 21. R44 / E7 — REPORT ONLY: accounts without sign-in for 24 months. Deleting needs the warning e-mail and the 30-day answer window first (not built: mail
-    //     workstream), then the DSR erasure engine — never this job directly.
+    // 21. R44 / E7 — REPORT ONLY: accounts without citizen activity for 24 months (last sign-in; an account never signed into counts from its creation —
+    //     D4 V2, 08/11/2026: it used to be left out). Deleting is a later, separate decision (D4 V2 procedure: notice first, erasure engine — never this job).
     { id: 'inactiveAccountsReport', summaryKey: 'inactive_accounts_eligible', ecode: 'E7', kind: 'report', table: 'CitizenUser', durationKey: 'INACTIVE_ACCOUNT_DAYS', tables: ['CitizenUser'],
-        count: (db, ctx) => countWhere(db, CitizenUser, and(isNotNull(CitizenUser.lastSeenAt), lt(CitizenUser.lastSeenAt, ctx.cutoff('INACTIVE_ACCOUNT_DAYS')))) },
+        count: (db, ctx) => countWhere(db, CitizenUser, sql`COALESCE(${CitizenUser.lastSeenAt}, ${CitizenUser.createdAt}) < ${ctx.cutoff('INACTIVE_ACCOUNT_DAYS')}`) },
+
+    // 21b. D4 V2 (owner direction 08/11/2026) — REPORT ONLY: active e-mail suppressions (HMAC) older than 12 months, to REVIEW: an administrator lifts the ones
+    //      no longer justified (they then follow the ordinary 12 months) or records why a block stays (deliverability, provider requirement, an individual case)
+    { id: 'mailSuppressionsReview', summaryKey: 'mail_suppressions_to_review', ecode: 'D4-V2', kind: 'report', table: 'AuditLog', durationKey: 'MAIL_SUPPRESSION_REVIEW_DAYS', tables: ['AuditLog'],
+        count: (db, ctx) => countWhere(db, AuditLog, and(activeSuppressionSql(AuditLog), lt(AuditLog.timestamp, ctx.cutoff('MAIL_SUPPRESSION_REVIEW_DAYS')))) },
 
     // 22. R44 / E9b — REPORT ONLY: disabled professional accounts. 0042 records no disabling date (updatedAt moves on any change), and a professional
     //     account is referenced by the structure's records (cases, notes, appointments): deletion is a shared decision with the structure.
