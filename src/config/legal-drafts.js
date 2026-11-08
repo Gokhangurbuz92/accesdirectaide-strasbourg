@@ -235,7 +235,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Journaux d'administration et de sécurité (sans votre adresse électronique) : 12 mois.",
         "Conservation bloquée (« gel ») d'une donnée précise, lorsqu'une autorité l'exige ou qu'un litige l'impose : jusqu'à la fin de la procédure ; la trace de la levée est gardée 12 mois.",
         "Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution de 1 heure à 1 jour selon l'offre ; la durée des journaux du prestataire d'e-mails (Mailjet) est en cours de vérification.",
-        "Historique de restauration : copies de sauvegarde chiffrées, 35 jours au plus ; historique de la base de données chez Neon, 7 jours au plus. Une donnée effacée peut subsister dans ces copies pendant ces durées ; elle n'est utilisée que pour réparer un incident.",
+        "Historique de restauration : copies de sauvegarde chiffrées, 35 jours au plus ; historique de la base de données chez Neon, 6 heures au plus. Une donnée effacée peut subsister dans ces copies pendant ces durées ; elle n'est utilisée que pour réparer un incident.",
         "Fonctions pas encore ouvertes (rendez-vous, message facultatif, notifications des professionnels, assistant) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.",
       ], paras: [
         "Aucune de ces durées n'est imposée par un texte : elles sont fixées par le responsable du traitement. La suppression automatique à ces échéances n'est pas encore entièrement activée ; vous pouvez demander l'effacement à tout moment.",
@@ -247,13 +247,13 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         'Vercel Inc. : hébergement du site et des fonctions serveur, exécutées à Francfort.',
         'Neon (contrat Databricks, Inc.) : base de données hébergée à Francfort.',
         'Upstash, Inc. : compteurs de sécurité et limitation du nombre de requêtes, à Francfort.',
-        "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte).",
+        "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).",
         'Microsoft : boîte de réception de l\'adresse de contact.',
       ], paras: [
-        'Les contrats de sous-traitance de certains prestataires sont encore en cours de vérification.',
+        "Chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service.",
       ] },
       { id: 'transfers', title: '7. Transferts hors de l\'Union européenne', paras: [
-        "Ces prestataires appartiennent à des groupes établis aux États-Unis : un accès depuis les États-Unis est possible. Les garanties annoncées par les prestataires (clauses contractuelles types de la Commission européenne ; pour certains, le cadre de protection des données UE–États-Unis) figurent dans leurs propres conditions. Leur application à ce service est en cours de vérification.",
+        "Ces prestataires appartiennent à des groupes établis aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision 2021/914) et, pour Vercel, Upstash et Mailjet (Sinch), le cadre de protection des données UE–États-Unis, selon leurs propres conditions.",
       ] },
       { id: 'rights', title: '8. Vos droits', items: [
         "Accès, rectification, effacement et limitation de vos données.",
