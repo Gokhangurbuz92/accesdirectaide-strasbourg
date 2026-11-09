@@ -288,7 +288,10 @@ async function replayMain() {
   // V2: erasures completed after the newest backup are only in the tombstones (KV). A real replay (--execute) must say where they come from:
   // --kv (KV_REST_API_URL + KV_REST_API_TOKEN of Production, read only) or --tombstones-file <json>; --no-tombstones is an explicit, recorded choice.
   let snap = null; let tombstoneSource = 'none';
-  const T = await import('../api/_services/erasure-tombstones.js');
+  // lazily: the cloud verifier job runs this script from a minimal file set (ops/cloud-backup/job-entrypoint.sh) WITHOUT the KV module; only the
+  // operator's restore (--kv / --tombstones-file, full repository) needs it. Closure test: tests/unit/v2-job-archive-closure.test.js
+  let T = null;
+  if (arg('tombstones-file') || process.argv.includes('--kv')) T = await import('../api/_services/erasure-tombstones.js');
   if (arg('tombstones-file')) {
     try {
       const raw = JSON.parse(fs.readFileSync(arg('tombstones-file'), 'utf8'));
@@ -303,7 +306,7 @@ async function replayMain() {
     die('--execute exige --kv ou --tombstones-file <json> : sans eux, une personne effacée après la dernière sauvegarde reviendrait sans bruit (ou --no-tombstones, choix explicite).');
   }
   let tombstoneProblems = [];
-  if (snap) {
+  if (snap && T) {
     tombstoneProblems = snap.fileWithoutMarker ? [] : T.tombstoneCoverage(snap, since);
     plan = mergeTombstones(plan, T.tombstoneStates(snap.entries), since, { includeUnconfirmed: process.argv.includes('--include-unconfirmed') });
     if (execute && tombstoneProblems.length) die(`pierres tombales incomplètes (${tombstoneProblems.join(', ')}) : rien n’est rejoué (TOMBSTONES_INCOMPLETE).`);
@@ -335,5 +338,5 @@ async function replayMain() {
 }
 
 if (isMainModule(import.meta.url)) {
-  (process.argv.includes('--export') ? exportMain() : replayMain()).catch(() => die('erreur inattendue (aucune donnée affichée).'));
+  (process.argv.includes('--export') ? exportMain() : replayMain()).catch((e) => die(`erreur inattendue (${/^[A-Z][A-Z0-9_]{1,40}$/.test(String(e?.code)) ? e.code : 'sans code'} ; aucune donnée affichée).`));
 }
