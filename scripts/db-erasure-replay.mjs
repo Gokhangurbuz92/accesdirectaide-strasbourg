@@ -21,6 +21,9 @@
  *     is missing from it → reinstated FIRST (before any erasure is replayed and before the purge runs again), so nothing protected is erased or purged.
  * `--since-backup <file.dump.enc>` takes the backup time from the backup's own name (scripts/db-backup.mjs) instead of a typed date; a ledger exported
  * BEFORE that time is refused (it cannot know what happened after the backup: export the newest one). Version 1 ledgers are still read (erasures only).
+ *
+ * V2 (owner review 09/11/2026): erasures completed AFTER the newest backup are in no ledger; they are in the erasure tombstones (KV, written before each
+ * erasure). `--kv` or `--tombstones-file <json>` merges them; `--execute` refuses without one of them (or an explicit `--no-tombstones`).
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -88,6 +91,25 @@ export function replayPlan(ledger, since = null) {
   const withdrawals = (Array.isArray(ledger.messageWithdrawals) ? ledger.messageWithdrawals : []).filter((w) => t === null || new Date(w.withdrawnAt).getTime() >= t);
   const p = ledger.protections && typeof ledger.protections === 'object' ? ledger.protections : {};
   return { entries, withdrawals, protections: { legalHolds: Array.isArray(p.legalHolds) ? p.legalHolds : [], requests: Array.isArray(p.requests) ? p.requests : [] } };
+}
+
+/**
+ * V2 (owner review 09/11/2026): the ledger travels with the backup, so it cannot name an erasure completed AFTER the newest backup. The erasure
+ * tombstones (api/_services/erasure-tombstones.js, written to KV before each erasure) close that interval: they are merged here (deduplicated by request
+ * id), keeping those at or after the backup time. @param {{ entries: any[] }} plan @param {any[]} tombstones @param {string | Date | null} since
+ */
+export function mergeTombstones(plan, tombstones, since = null) {
+  const t = since ? new Date(since).getTime() : null;
+  const seen = new Set(plan.entries.map((e) => String(e.requestId)));
+  const added = [];
+  for (const x of Array.isArray(tombstones) ? tombstones : []) {
+    if (!x?.requestId || !x?.subjectId || seen.has(String(x.requestId))) continue;
+    const at = new Date(x.completedAt).getTime();
+    if (!Number.isFinite(at) || (t !== null && at < t)) continue;
+    seen.add(String(x.requestId));
+    added.push({ requestId: String(x.requestId), subjectId: String(x.subjectId), completedAt: new Date(at).toISOString(), domains: Array.isArray(x.domains) ? x.domains.map(String) : [] });
+  }
+  return { ...plan, entries: [...plan.entries, ...added], tombstonesAdded: added.length };
 }
 
 /** the entries completed at or after the backup time (all when no time is given) @param {any} ledger @param {string | Date | null} [since] */
@@ -258,22 +280,37 @@ async function replayMain() {
   if (arg('since-backup')) { since = backupTimeOf(arg('since-backup')); if (!since) die('--since-backup : le nom du fichier ne porte pas la date de la sauvegarde (ada_<label>_AAAAMMJJTHHMMSSZ.dump.enc).'); }
   let plan;
   try { plan = replayPlan(ledger, since); } catch (e) { return die(`${/** @type {Error} */ (e).message} (rien n’est rejoué).`); }
-  const { entries } = plan;
   const execute = process.argv.includes('--execute');
+  // V2: erasures completed after the newest backup are only in the tombstones (KV). A real replay (--execute) must say where they come from:
+  // --kv (KV_REST_API_URL + KV_REST_API_TOKEN of Production, read only) or --tombstones-file <json>; --no-tombstones is an explicit, recorded choice.
+  let tombstones = null; let tombstoneSource = 'none';
+  if (arg('tombstones-file')) {
+    const { parseTombstones } = await import('../api/_services/erasure-tombstones.js');
+    try { tombstones = parseTombstones(JSON.parse(fs.readFileSync(arg('tombstones-file'), 'utf8'))); tombstoneSource = 'file'; } catch { return die('--tombstones-file illisible.'); }
+  } else if (process.argv.includes('--kv')) {
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) die('--kv : KV_REST_API_URL et KV_REST_API_TOKEN sont nécessaires.');
+    const { createErasureTombstones } = await import('../api/_services/erasure-tombstones.js');
+    try { tombstones = await createErasureTombstones({ requireRemote: true }).list(); tombstoneSource = 'kv'; } catch { return die('--kv : lecture des pierres tombales impossible (rien n’est rejoué).'); }
+  } else if (execute && !process.argv.includes('--no-tombstones')) {
+    die('--execute exige --kv ou --tombstones-file <json> : sans eux, une personne effacée après la dernière sauvegarde reviendrait sans bruit (ou --no-tombstones, choix explicite).');
+  }
+  if (tombstones) plan = mergeTombstones(plan, tombstones, since);
+  const { entries } = plan;
   const pool = new pg.Pool({ connectionString: url, max: 2 });
   try {
     const inspected = await inspectTarget(pool, entries);
     const present = inspected.filter((e) => e.present).length;
     const prot = await inspectProtections(pool, plan.protections);
     const withdrawals = await inspectWithdrawals(pool, plan.withdrawals);
-    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, presentAgain: present, withdrawalsSince: withdrawals.length,
+    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, tombstoneSource, tombstonesAdded: plan.tombstonesAdded ?? 0, presentAgain: present, withdrawalsSince: withdrawals.length,
       messagesPresentAgain: withdrawals.filter((w) => w.present).length, holdsMissing: prot.legalHolds.filter((h) => h.state === 'missing').length,
       holdsNotActive: prot.legalHolds.filter((h) => h.state === 'not_active').length, requestsMissing: prot.requests.filter((q) => q.state !== 'present').length };
     if (!execute) { console.log(JSON.stringify({ mode: 'dry-run', ...summary })); return; }
     const query = (/** @type {string} */ q, /** @type {any[]} */ p) => pool.query(q, p);
     const protections = await reinstateProtections({ inspected: prot, query });   // FIRST: what protects data is back before anything is erased
     const [{ drizzle }, schema, { createPrivacyRightsService }] = await Promise.all([import('drizzle-orm/node-postgres'), import('../src/db/schema.js'), import('../api/_services/privacy.js')]);
-    const privacy = createPrivacyRightsService({ db: drizzle(pool, { schema }), cryptoLib: crypto });
+    const { NO_TOMBSTONES } = await import('../api/_services/erasure-tombstones.js');
+    const privacy = createPrivacyRightsService({ db: drizzle(pool, { schema }), cryptoLib: crypto, tombstones: NO_TOMBSTONES });
     const out = await replayErasures({ entries: inspected, privacy, recordRequest: (e) => pool.query(recordRequestSql, [e.requestId, e.subjectId, JSON.stringify(e.domains), e.completedAt]) });
     const messages = await replayWithdrawals({ inspected: withdrawals, query });
     console.log(JSON.stringify({ mode: 'execute', ...summary, ...out, protections, messages }));

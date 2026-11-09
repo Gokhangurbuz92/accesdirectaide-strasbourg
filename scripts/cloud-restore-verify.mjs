@@ -3,7 +3,7 @@
  * V2 C7 — independent restore verification of the cloud backups (verifier). Runs in a SEPARATE job from the producer: it holds the private key and a
  * READ-ONLY bucket token; the producer holds neither. Target: an EMPTY, isolated, disposable database (never Production, never DATABASE_URL).
  *
- *   BACKUP_S3_* (read-only token) BACKUP_PRIVATE_KEY_FILE BACKUP_PRIVATE_KEY_PASSPHRASE TARGET_DATABASE_URL=<empty disposable db> PG_BIN=…
+ *   BACKUP_S3_* (read-only token) BACKUP_PRIVATE_KEY_FILE BACKUP_PRIVATE_KEY_PASSPHRASE BACKUP_SIGNING_PUBLIC_KEY TARGET_DATABASE_URL=<empty disposable db> PG_BIN=…
  *   node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> [--key <prefix/object>] [--expect-migrations N (Production 0042: 43)] [--evidence <file.json>] [--keep-restored]
  *
  * Steps: newest dump (or --key) → download to a private folder → SHA-256 sidecar + object digest → db-restore.mjs (GCM tag checked before pg_restore,
@@ -22,7 +22,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { sha256OfFile } from './db-backup.mjs';
-import { bucketConfig, bucketPlan, getFile, ledgerForDump, listObjects, objectTime, ping, pingUrl, s3Client } from './lib/backup-bucket.mjs';
+import { bucketConfig, bucketPlan, getFile, ledgerForDump, listObjects, objectTime, ping, pingUrl, s3Client, signingPublicKey, verifyObjectSignature } from './lib/backup-bucket.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -56,6 +56,9 @@ export async function verifyRestore() {
   const cfg = bucketConfig();
   if (!cfg.ok) throw Object.assign(new Error('CONFIG'), { code: 'CONFIG', problems: [cfg.reason, ...(cfg.missing || [])] });
   if (process.env.DATABASE_URL) throw Object.assign(new Error('DATABASE_URL_PRESENT'), { code: 'DATABASE_URL_PRESENT' });   // the verifier never sees the live database
+  // provenance: only objects signed by the producer's key are restored (the verifier holds the PUBLIC half only)
+  if (String(process.env.BACKUP_SIGNING_KEY || '').trim()) throw Object.assign(new Error('SIGNING_KEY_PRESENT_IN_VERIFIER'), { code: 'SIGNING_KEY_PRESENT_IN_VERIFIER' });
+  let sigKey; try { sigKey = signingPublicKey(process.env.BACKUP_SIGNING_PUBLIC_KEY); } catch { throw Object.assign(new Error('CONFIG'), { code: 'CONFIG', problems: ['BACKUP_SIGNING_PUBLIC_KEY_INVALID'] }); }
   const target = process.env.TARGET_DATABASE_URL || '';
   if (!target) throw Object.assign(new Error('TARGET_MISSING'), { code: 'TARGET_MISSING' });
   const hc = pingUrl(process.env.RESTORE_HEALTHCHECK_URL) || null;
@@ -75,6 +78,7 @@ export async function verifyRestore() {
     if (hasSidecar) await getFile(client, cfg, `${dumpKey}.sha256`, `${dumpFile}.sha256`);
     const digest = await sha256OfFile(dumpFile);
     if (meta.sha256 && meta.sha256 !== digest) throw Object.assign(new Error('OBJECT_DIGEST_MISMATCH'), { code: 'OBJECT_DIGEST_MISMATCH' });
+    if (!verifyObjectSignature(sigKey, dumpKey, digest, meta.sig)) throw Object.assign(new Error('DUMP_SIGNATURE_INVALID'), { code: 'DUMP_SIGNATURE_INVALID' });
     restoredSomething = true;
     const restore = child('db-restore.mjs', ['--file', dumpFile, '--confirm-target', arg('confirm-target'), '--work-dir', work], 'RESTORE_FAILED');
     const c = new pg.Client({ connectionString: target }); await c.connect();
@@ -90,10 +94,11 @@ export async function verifyRestore() {
     let replay = null;
     if (ledgerKey) {
       const ledgerFile = path.join(work, path.basename(ledgerKey));
-      await getFile(client, cfg, ledgerKey, ledgerFile);
+      const lmeta = await getFile(client, cfg, ledgerKey, ledgerFile);
+      if (!verifyObjectSignature(sigKey, ledgerKey, await sha256OfFile(ledgerFile), lmeta.sig)) throw Object.assign(new Error('LEDGER_SIGNATURE_INVALID'), { code: 'LEDGER_SIGNATURE_INVALID' });
       replay = child('db-erasure-replay.mjs', ['--ledger', ledgerFile, '--since-backup', dumpFile, '--confirm-target', arg('confirm-target')], 'REPLAY_DRY_RUN_FAILED');
     }
-    const checks = { sidecar: hasSidecar, objectDigest: Boolean(meta.sha256), coreTablesMissing: core, migrationRows: restore.migrationRows, expectedMigrations: expect,
+    const checks = { sidecar: hasSidecar, objectDigest: Boolean(meta.sha256), signatures: true, coreTablesMissing: core, migrationRows: restore.migrationRows, expectedMigrations: expect,
       journalEntries: journal, migrationsMatch: expect === null ? null : restore.migrationRows === expect,
       migrationsPlausible: restore.migrationRows > 0 && (journal === null || restore.migrationRows <= journal), ledger: Boolean(ledgerKey) };
     const failures = [];

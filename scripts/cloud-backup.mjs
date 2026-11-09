@@ -22,7 +22,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { backupPublicKey, sha256OfFile } from './db-backup.mjs';
 import { RETENTION_POLICY, policyDays } from '../api/_services/retention-policy.js';
-import { bucketConfig, bucketPlan, deleteKeys, listObjects, ping, pingUrl, probePermissions, putFile, s3Client } from './lib/backup-bucket.mjs';
+import { bucketConfig, bucketPlan, deleteKeys, generateSigningKeyPair, listObjects, ping, pingUrl, probePermissions, putFile, s3Client, signObject, signingPrivateKey } from './lib/backup-bucket.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +43,9 @@ export function producerConfig(env = process.env) {
     } catch { problems.push('DATABASE_URL_INVALID'); }
   }
   try { backupPublicKey(env.BACKUP_PUBLIC_KEY); } catch { problems.push('BACKUP_PUBLIC_KEY_INVALID'); }
+  // provenance: every object is signed (Ed25519); without the signing key the verifier would refuse every backup
+  if (!String(env.BACKUP_SIGNING_KEY || '').trim()) problems.push('BACKUP_SIGNING_KEY_MISSING');
+  else { try { signingPrivateKey(env.BACKUP_SIGNING_KEY); } catch { problems.push('BACKUP_SIGNING_KEY_INVALID'); } }
   if (String(env.BACKUP_PRIVATE_KEY_FILE || '').trim() || String(env.BACKUP_PRIVATE_KEY_PASSPHRASE || '').trim() || String(env.BACKUP_ENCRYPTION_KEY || '').trim()) problems.push('DECRYPTION_KEY_PRESENT_IN_PRODUCER');
   // the producer's own execution identity must not be able to reach other secrets: no cloud API key in its environment (the verifier's secrets live in
   // another Scaleway project; a job without an API key cannot call Secret Manager at all)
@@ -80,7 +83,8 @@ async function run() {
     const uploads = [];
     for (const f of [dump.file, `${dump.file}.sha256`, ledger.file]) {
       const key = `${cfg.prefix}${path.basename(f)}`;
-      uploads.push({ key, bytes: await putFile(client, cfg, f, key, await sha256OfFile(f)) });
+      const digest = await sha256OfFile(f);
+      uploads.push({ key, bytes: await putFile(client, cfg, f, key, digest, signObject(signingPrivateKey(process.env.BACKUP_SIGNING_KEY), key, digest)) });
     }
     const after = bucketPlan(await listObjects(client, cfg), { keepDays: cfgCheck.keepDays, maxAgeHours: cfgCheck.maxAgeHours });
     let pruned = 0;
@@ -121,7 +125,16 @@ const STATUS_DUMMY_KEY = () => crypto.generateKeyPairSync('rsa', { modulusLength
 if (isMainModule(import.meta.url)) {
   const out = (o) => console.log(JSON.stringify(o));
   const fail = (e) => { out({ ok: false, code: e?.code || 'UNEXPECTED', stage: e?.stage || null, problems: e?.problems || undefined }); process.exitCode = 1; };
-  if (process.argv.includes('--check-config')) { const c = producerConfig(); out(c); process.exitCode = c.ok ? 0 : 1; }
+  if (process.argv.includes('--signing-keygen')) {
+    // once, by the owner, offline: the private half → the producer's Secret Manager (BACKUP_SIGNING_KEY); the public half → the verifier (BACKUP_SIGNING_PUBLIC_KEY)
+    const dir = (() => { const i = process.argv.indexOf('--out'); return i > 0 ? process.argv[i + 1] : ''; })();
+    if (!dir) { console.error('usage: --signing-keygen --out <offline directory>'); process.exit(2); }
+    fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+    const pair = generateSigningKeyPair();
+    fs.writeFileSync(path.join(dir, 'backup-signing-private.pem'), pair.privatePem, { mode: 0o600, flag: 'wx' });
+    fs.writeFileSync(path.join(dir, 'backup-signing-public.pem'), pair.publicPem, { mode: 0o644, flag: 'wx' });
+    out({ ok: true, files: ['backup-signing-private.pem (producer only)', 'backup-signing-public.pem (verifier)'] });
+  } else if (process.argv.includes('--check-config')) { const c = producerConfig(); out(c); process.exitCode = c.ok ? 0 : 1; }
   else if (process.argv.includes('--status')) status().then(out, fail);
   else if (process.argv.includes('--probe-permissions')) probe().then((r) => { out(r); process.exitCode = r.ok ? 0 : 1; }, fail);
   else if (process.argv.includes('--run')) run().then((s) => { out(s); process.exitCode = s.ok ? 0 : 1; }, fail);

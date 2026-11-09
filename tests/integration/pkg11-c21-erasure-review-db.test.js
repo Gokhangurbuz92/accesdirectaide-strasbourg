@@ -10,7 +10,8 @@ import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
 
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429), rateLimitMiddleware: vi.fn() }));
-vi.mock('../../api/_utils/kv.js', () => ({ kv: { incr: async () => 1, expire: async () => 1, get: async () => null, set: async () => 'OK', del: async () => 0 } }));
+vi.mock('../../api/_utils/kv.js', () => ({ kv: { incr: async () => 1, expire: async () => 1, get: async () => null, set: async () => 'OK', del: async () => 0,
+  lpush: async () => 1, ltrim: async () => 'OK', lrange: async () => [] } }));   // V2: erasure tombstones (api/_services/erasure-tombstones.js)
 
 const TS = Date.now(); const CSRF = 'c21csrf' + TS;
 const CIT = [1, 2, 3].map((n) => ({ id: `c21-cit${n}-${TS}`, email: `c21-cit${n}-${TS}@example.test` }));

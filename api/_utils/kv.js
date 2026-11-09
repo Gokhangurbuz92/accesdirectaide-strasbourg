@@ -81,6 +81,30 @@ export const kv = {
      * @param {string} key
      * @param {number} seconds
      */
+    /** true when a real KV store is configured (Production), false for the in-memory development fallback */
+    get isRemote() { return Boolean(kvClient); },
+    /** list push at the head (Redis LPUSH) @param {string} key @param {string} value */
+    async lpush(key, value) {
+        if (kvClient) return kvClient.lpush(key, value);
+        const data = memoryStore.get(key); const list = Array.isArray(data?.value) ? data.value : [];
+        list.unshift(value); memoryStore.set(key, { value: list, expires: data?.expires ?? null });
+        return list.length;
+    },
+    /** @param {string} key @param {number} start @param {number} stop */
+    async lrange(key, start, stop) {
+        if (kvClient) return kvClient.lrange(key, start, stop);
+        const data = memoryStore.get(key);
+        if (!data || (data.expires && Date.now() > data.expires)) return [];
+        const list = Array.isArray(data.value) ? data.value : [];
+        return list.slice(start, stop < 0 ? list.length + stop + 1 : stop + 1);
+    },
+    /** @param {string} key @param {number} start @param {number} stop */
+    async ltrim(key, start, stop) {
+        if (kvClient) return kvClient.ltrim(key, start, stop);
+        const data = memoryStore.get(key);
+        if (data && Array.isArray(data.value)) data.value = data.value.slice(start, stop < 0 ? data.value.length + stop + 1 : stop + 1);
+        return 'OK';
+    },
     async expire(key, seconds) {
         if (kvClient) return kvClient.expire(key, seconds);
         const data = memoryStore.get(key);

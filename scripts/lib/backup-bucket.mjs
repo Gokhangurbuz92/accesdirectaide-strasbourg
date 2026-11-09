@@ -12,6 +12,7 @@
  *   BACKUP_S3_SECRET_ACCESS_KEY
  *   BACKUP_S3_PREFIX              default « prod/ »
  */
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 
@@ -141,14 +142,48 @@ export async function listObjects(client, cfg) {
 }
 
 /** uploads a local file (streamed, with its length) and checks the stored size and digest metadata with a HEAD */
-export async function putFile(client, cfg, file, key, sha256) {
+export async function putFile(client, cfg, file, key, sha256, sig = null) {
   const { PutObjectCommand, HeadObjectCommand } = await import('@aws-sdk/client-s3');
   const size = fs.statSync(file).size;
   await client.send(new PutObjectCommand({ Bucket: cfg.bucket, Key: key, Body: fs.createReadStream(file), ContentLength: size,
-    ContentType: 'application/octet-stream', Metadata: { sha256 } }));
+    ContentType: 'application/octet-stream', Metadata: { sha256, ...(sig ? { sig } : {}) } }));
   const h = await client.send(new HeadObjectCommand({ Bucket: cfg.bucket, Key: key }));
-  if (Number(h.ContentLength) !== size || h.Metadata?.sha256 !== sha256) throw Object.assign(new Error('UPLOAD_NOT_CONFIRMED'), { code: 'UPLOAD_NOT_CONFIRMED' });
+  if (Number(h.ContentLength) !== size || h.Metadata?.sha256 !== sha256 || (sig && h.Metadata?.sig !== sig)) throw Object.assign(new Error('UPLOAD_NOT_CONFIRMED'), { code: 'UPLOAD_NOT_CONFIRMED' });
   return size;
+}
+
+/**
+ * Provenance (owner review 09/11/2026). The producer's bucket token and the PUBLIC encryption key are enough to make an object that decrypts and restores
+ * perfectly; encryption proves nothing about who made it. Every uploaded object therefore carries an Ed25519 signature (metadata `sig`) over its exact
+ * name and SHA-256, made with a signing key that lives only in the producer's Secret Manager (never in the bucket, never with the verifier). The verifier
+ * holds only the public half and refuses an unsigned or wrongly signed dump or ledger BEFORE anything is restored; binding the name stops an old real
+ * backup from being copied under a newer name.
+ */
+export const SIGNATURE_CONTEXT = 'ada-backup-object-v1';
+const signingMessage = (key, sha256) => Buffer.from(`${SIGNATURE_CONTEXT}\n${key}\n${sha256}`, 'utf8');
+/** @param {string | undefined} pem @returns {crypto.KeyObject} an Ed25519 private key */
+export function signingPrivateKey(pem) {
+  const k = crypto.createPrivateKey(String(pem || '').replace(/\\n/g, '\n'));
+  if (k.asymmetricKeyType !== 'ed25519') throw new Error('BACKUP_SIGNING_KEY must be an Ed25519 private key');
+  return k;
+}
+/** @param {string | undefined} pem @returns {crypto.KeyObject} an Ed25519 public key */
+export function signingPublicKey(pem) {
+  const k = crypto.createPublicKey(String(pem || '').replace(/\\n/g, '\n'));
+  if (k.asymmetricKeyType !== 'ed25519') throw new Error('BACKUP_SIGNING_PUBLIC_KEY must be an Ed25519 public key');
+  return k;
+}
+/** @param {crypto.KeyObject} privateKey @param {string} key @param {string} sha256 */
+export const signObject = (privateKey, key, sha256) => crypto.sign(null, signingMessage(key, sha256), privateKey).toString('base64');
+/** @param {crypto.KeyObject} publicKey @param {string} key @param {string} sha256 @param {string | null | undefined} sig */
+export function verifyObjectSignature(publicKey, key, sha256, sig) {
+  if (!sig || !/^[A-Za-z0-9+/=]{80,100}$/.test(String(sig))) return false;
+  try { return crypto.verify(null, signingMessage(key, sha256), publicKey, Buffer.from(String(sig), 'base64')); } catch { return false; }
+}
+/** a new signing key pair (PEM): the private half goes to the producer's Secret Manager, the public half to the verifier */
+export function generateSigningKeyPair() {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519');
+  return { privatePem: privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(), publicPem: publicKey.export({ type: 'spki', format: 'pem' }).toString() };
 }
 
 /** downloads an object to a local file (0600) */
@@ -156,7 +191,7 @@ export async function getFile(client, cfg, key, file) {
   const { GetObjectCommand } = await import('@aws-sdk/client-s3');
   const r = await client.send(new GetObjectCommand({ Bucket: cfg.bucket, Key: key }));
   await pipeline(/** @type {any} */ (r.Body), fs.createWriteStream(file, { mode: 0o600, flags: 'wx' }));
-  return { sha256: r.Metadata?.sha256 || null };
+  return { sha256: r.Metadata?.sha256 || null, sig: r.Metadata?.sig || null };
 }
 
 export async function deleteKeys(client, cfg, keys) {

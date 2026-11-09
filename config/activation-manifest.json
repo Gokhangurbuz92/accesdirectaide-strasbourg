@@ -65,6 +65,16 @@
       "nature": "config",
       "note": "V2: public key of the ADAB2 backups (unattended backup runner); never on Vercel"
     },
+    "BACKUP_SIGNING_KEY": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: Ed25519 private key that signs every backup object (producer job's Secret Manager only); never on Vercel, never with the verifier"
+    },
+    "BACKUP_SIGNING_PUBLIC_KEY": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: Ed25519 public key; the restore verifier refuses an unsigned or wrongly signed dump or ledger; never on Vercel"
+    },
     "BACKUP_PRIVATE_KEY_FILE": {
       "class": "lab",
       "nature": "config",

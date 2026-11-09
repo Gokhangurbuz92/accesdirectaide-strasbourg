@@ -6,7 +6,7 @@ import { checkEvidence } from '../../scripts/check-restore-evidence.mjs';
 
 const good = () => ({ kind: 'ada-restore-verification', ok: true, failures: [], verifiedAt: '2026-12-03T03:12:00.000Z', dump: 'prod/ada_prod_20261203T021700Z.dump.enc',
   backupTakenAt: '2026-12-03T02:17:00.000Z', backupAgeHours: 0.9, encryptedBytes: 266693, dumpSha256: 'a'.repeat(64), restoredTables: 108,
-  checks: { sidecar: true, objectDigest: true, coreTablesMissing: [], migrationRows: 43, expectedMigrations: 43, journalEntries: 46, migrationsMatch: true, migrationsPlausible: true, ledger: true },
+  checks: { sidecar: true, objectDigest: true, signatures: true, coreTablesMissing: [], migrationRows: 43, expectedMigrations: 43, journalEntries: 46, migrationsMatch: true, migrationsPlausible: true, ledger: true },
   erasureReplay: { mode: 'dry-run', ledgerEntries: 2, presentAgain: 0, holdsMissing: 0 }, seconds: 41, wiped: true });
 
 describe('V2 C7 restore evidence checker', () => {
@@ -20,6 +20,7 @@ describe('V2 C7 restore evidence checker', () => {
     ['no erasure replay', (e) => { e.erasureReplay = null; }, 'ERASURE_REPLAY'],
     ['failed run', (e) => { e.ok = false; e.failures = ['LEDGER_MISSING']; }, 'FAILURES_PRESENT'],
     ['sidecar not checked', (e) => { e.checks.sidecar = false; }, 'SIDECAR_NOT_CHECKED'],
+    ['producer signatures not checked (an older verifier)', (e) => { delete e.checks.signatures; }, 'SIGNATURES_NOT_CHECKED'],
     ['bad digest', (e) => { e.dumpSha256 = 'xyz'; }, 'DUMP_SHA256'],
     ['not a dump object', (e) => { e.dump = 'prod/ada_erasures_20261203T021700Z.json.enc'; }, 'DUMP_NAME'],
   ])('refuses: %s', (_n, mutate, code) => {

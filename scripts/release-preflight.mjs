@@ -12,6 +12,7 @@ import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '
 import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
+import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -35,7 +36,7 @@ export function outlookCheck(env, { get, betaOn, opened }) {
   return missing.length ? ['FAIL', `OUTLOOK_ENABLED=true needs: ${missing.join('; ')}`] : ['PASS', 'Outlook free/busy (Calendars.ReadBasic) approved and configured; a real Microsoft sign-in is checked in the release acceptance'];
 }
 
-/** @param {Record<string, string | undefined>} env @param {{ legalText?: string }} [opts] legalText: the legal-pages source (tests pass their own) */
+/** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
 export function evaluateReleasePreflight(env, opts = {}) {
   const get = (/** @type {string} */ k) => String(env[k] ?? '').trim();
   /** @type {{ id: string, status: 'PASS' | 'WARN' | 'FAIL', detail: string }[]} */
@@ -107,6 +108,20 @@ export function evaluateReleasePreflight(env, opts = {}) {
   // V2 / D6: citizen accounts open only with the citizen terms and the privacy notice IN FORCE (the server refuses sign-ups otherwise)
   if (!betaOn || opened.has('accounts')) add('legal.citizen_terms_in_force', citizenTermsInForce({ ...env, VERCEL_ENV: 'production' }) ? 'PASS' : 'FAIL',
     'VITE_LEGAL_DOCS_APPROVED_VERSION names the approved cgu-citoyen and notice-confidentialite versions (sign-up refuses with TERMS_NOT_IN_FORCE otherwise)');
+  // V2 (owner review 09/11/2026): the privacy notice promises that a never-confirmed account is erased 7 days after creation (D4, UNVERIFIED_ACCOUNT_DAYS).
+  // The ONLY mechanism is purge step 6c (unverifiedAccountsDeleted): citizen accounts open only when that step really executes — the gdpr-purge job open
+  // and approved, the policy approved and pinned, the step listed AND approved in the policy (dry run reviewed, verified backup). Otherwise the promise is false.
+  if (!betaOn || opened.has('accounts')) {
+    const policy = opts.policy || RETENTION_POLICY;
+    const gate = executionGate(policy, env);
+    const why = !openJobs(env).has('gdpr-purge') && betaOn ? 'the gdpr-purge job is not open (ADA_BETA_OPEN_JOBS + ADA_JOBS_APPROVED)'
+      : !gate.execute ? `purge execution refused: ${gate.reason}`
+        : !gate.approvedSteps.has('unverifiedAccountsDeleted') ? 'GDPR_PURGE_APPROVED_STEPS does not list unverifiedAccountsDeleted'
+          : stepApprovalProblem(policy, { id: 'unverifiedAccountsDeleted' });
+    add('retention.unverified_accounts_7d', why ? 'FAIL' : 'PASS', why
+      ? `citizen accounts need purge step 6c in force (notice: never-confirmed account erased after 7 days): ${why}`
+      : 'step 6c (never-confirmed accounts, 7 days) executes daily');
+  }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
     : 'accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary');

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateReleasePreflight } from '../../scripts/release-preflight.mjs';
+import { approvalEnv, approvedTestPolicy } from '../helpers/gdpr-purge-approval.js';
 
 const GOOD = {
   MAILER_PROVIDER: 'resend', MAILER_FROM: 'noreply@example.test', MAILER_API_KEY: 'k-synthetic', AUTH_MODE: 'jwt',
@@ -12,7 +13,9 @@ const GOOD = {
   VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v2-2026-11-09,notice-confidentialite@v2-2026-11-09',
 };
 const LEGAL_DONE = 'export const LEGAL = { publisher: "Association X, inscrite au registre des associations du tribunal judiciaire de Strasbourg" };';
-const run = (env) => evaluateReleasePreflight(env, { legalText: LEGAL_DONE });
+// beta off = every surface open: the notice's 7-day erasure of never-confirmed accounts needs purge step 6c in force (test copy of an approved policy)
+Object.assign(GOOD, approvalEnv(['unverifiedAccountsDeleted'], { a7: 365 }));
+const run = (env) => evaluateReleasePreflight(env, { legalText: LEGAL_DONE, policy: approvedTestPolicy({ a7: 365, steps: ['unverifiedAccountsDeleted'] }) });
 const by = (rs, id) => rs.find((r) => r.id === id).status;
 
 describe('release preflight (synthetic env, values never printed)', () => {

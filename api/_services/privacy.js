@@ -4,6 +4,7 @@ import { eq, and, or, sql, desc } from 'drizzle-orm';
 import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
+import { createErasureTombstones } from './erasure-tombstones.js';
 import {
     CitizenUser,
     AuthToken,
@@ -375,7 +376,7 @@ async function executeWithTransaction(/** @type {{ transaction: unknown }} */ da
 }
 
 // @ts-ignore
-export function createPrivacyRightsService({ db, cryptoLib }) {
+export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones() }) {
     return {
         /**
        * @param {string | import("drizzle-orm").SQLWrapper} userId
@@ -940,6 +941,9 @@ export function createPrivacyRightsService({ db, cryptoLib }) {
                 throw privacyError('LEGAL_HOLD_ACTIVE', 'Active legal hold blocks erasure');
             }
 
+            // V2 (owner review 09/11/2026): the tombstone is written BEFORE anything is erased, outside the database, so a restore of a backup taken
+            // before this moment can replay it (api/_services/erasure-tombstones.js). If it cannot be written, nothing is erased (request stays open).
+            await tombstones.record({ requestId, subjectId, domains: ERASABLE_DOMAINS });
             await this.updateDsrRequestStatus(requestId, 'EXECUTING');
 
             try {

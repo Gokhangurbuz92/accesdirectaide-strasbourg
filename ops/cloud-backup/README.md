@@ -8,9 +8,9 @@ Status: **LAB-verified (incl. the Debian job image, 09/11/2026), not provisioned
 ```
 Neon (PG 18, Frankfurt) ──read-only role──► PRODUCER job (Scaleway Serverless Jobs, fr-par, cron 2×/day)
                                               pg_dump 18 → ADAB2 (RSA-4096 public key + AES-256-GCM) → erasure ledger (ADAB2)
-                                              → PUT to R2 bucket (EU jurisdiction) → HEAD confirm → ping Healthchecks
+                                              → Ed25519 signature (name + SHA-256) per object → PUT to R2 (EU) → HEAD confirm → ping Healthchecks
 R2 bucket « ada-db-backups » (EU) : lifecycle 35 days (deletion within ~24 h after) · Bucket Lock 30 days (age) · objects: dump, .sha256, ledger
-VERIFIER job (separate job + separate token, monthly)  ─read-only token─► newest dump → private key → empty disposable DB (wiped at the end)
+VERIFIER job (separate job + separate token, monthly)  ─read-only token─► newest dump → signature check → private key → empty disposable DB (wiped)
                                               → structure / migration / ledger checks → evidence JSON (counts only) → ping Healthchecks
 Healthchecks.io : 2 checks (producer every 12 h, grace 3 h; verifier monthly, grace 2 days) → e-mail to the owner
 ```
@@ -20,6 +20,7 @@ Healthchecks.io : 2 checks (producer every 12 h, grace 3 h; verifier monthly, gr
 | Neon read-only connection | yes | **no** (refused if present) | — |
 | Backup public key | yes | — | copy |
 | Backup private key + passphrase | **no** (refused if present) | yes (Secret Manager of a separate job) | **yes** (recovery copy) |
+| Signing key (Ed25519) | **private** half (`BACKUP_SIGNING_KEY`) | **public** half only (`BACKUP_SIGNING_PUBLIC_KEY`; private refused) | private copy |
 | R2 token | **Object Read & Write**, scoped to this bucket only (it can read, list, write and delete objects) | **Object Read only**, this bucket only | Cloudflare account |
 | Cloud API key (Scaleway, AWS…) | **none** (refused if present) | none | console |
 | Scaleway project | `ada-backup` (producer job + its secrets) | `ada-restore-verify` (**separate project**: verifier job + private key) | both |
@@ -28,6 +29,13 @@ Healthchecks.io : 2 checks (producer every 12 h, grace 3 h; verifier monthly, gr
 anywhere in the producer project) and delete or overwrite an object younger than 30 days (Bucket Lock on the whole bucket, shorter than the 35-day
 lifecycle so the lifecycle can always delete). R2 has no write-only permission. The endpoint must be the EU-jurisdiction one (enforced by the code:
 `BUCKET_ENDPOINT_NOT_EU_JURISDICTION`); a jurisdictional bucket is reachable only there.
+
+**Provenance (owner review 09/11/2026).** Encryption proves nothing about origin: the producer token + the public key are enough to upload a dump of
+an attacker's choosing that decrypts and restores perfectly (LAB test: the previous verifier took such a forged « newest » backup and said `ok: true`).
+Every object now carries an Ed25519 signature over its exact name and SHA-256 (object metadata `sig`), made with a key that exists only in the
+producer's Secret Manager. The verifier refuses an unsigned or wrongly signed dump (`DUMP_SIGNATURE_INVALID`) or ledger (`LEDGER_SIGNATURE_INVALID`)
+before anything is restored; binding the name stops an old real backup from posing as the newest. A forged object therefore raises an alert instead of
+being restored. Keys: `node scripts/cloud-backup.mjs --signing-keygen --out <offline dir>` (owner, once).
 
 Isolation of the producer: a Serverless Job receives only the secrets referenced in its own definition, and the producer holds no cloud API key
 (enforced: `CLOUD_API_KEY_PRESENT_IN_PRODUCER`), so its execution cannot call Secret Manager; the verifier's secrets also live in another project.
@@ -39,12 +47,12 @@ Isolation of the producer: a Serverless Job receives only the secrets referenced
 |---|---|---|---|
 | Cloudflare R2 Standard (purchase of the R2 plan + payment method required before any token) | 10 GB-month, 1 M class A, 10 M class B free; then 0.015 $/GB-month, 4.50 $/M class A, 0.36 $/M class B; egress free; DeleteObject free | ~70 objects (35 days × 2) + probes; a few hundred class A ops/month | **0 $** while dumps stay < ~140 MB; 1 GB dumps ≈ 0.90 $/month |
 | Scaleway Serverless Jobs | 200 000 vCPU-s and 400 000 GB-s free per month; then 0.0000100 €/vCPU-s, 0.0000020 €/GB-s | 60 producer runs + 1 verifier run, ~1–3 min each at 1 vCPU / 2 GB | **0 €** |
-| Scaleway Secret Manager | 0.04 €/secret version/month; 0.03 €/10 000 accesses | ~12 secret versions (4 producer, 6 verifier, + the startup script `job-entrypoint.sh` once in each project) | **≈ 0.48 €/month** |
+| Scaleway Secret Manager | 0.04 €/secret version/month; 0.03 €/10 000 accesses | ~14 secret versions (5 producer incl. the signing key, 7 verifier incl. its public half, + the startup script once in each project) | **≈ 0.56 €/month** |
 | Container registry | public `docker.io/library/node:22-bookworm-slim`, no private registry | — | **0 €** (if Docker Hub limits block pulls: Scaleway Container Registry, price to be read then) |
 | Healthchecks.io Hobbyist | 0 $, 20 checks | 2 checks, e-mail notifications to the owner | **0 $** |
 | Neon (read-only role; separate empty `ada-restore-check` project) | Free plan | — | **0 €** (Free-plan project limit not re-verified) |
 
-**Expected total ≈ 0.50 €/month** (≈ 0.04 € more for a few days at each release, while the old script version is still kept). None of these providers offers a hard spending cap on these plans: Scaleway has **billing alerts**
+**Expected total ≈ 0.56 €/month** (≈ 0.04 € more for a few days at each release, while the old script version is still kept). None of these providers offers a hard spending cap on these plans: Scaleway has **billing alerts**
 (e-mail/SMS/webhook at a threshold of a budget), which notify but do not stop spending; Cloudflare R2 bills usage beyond the free tier. Cost is bounded
 **by design**: fixed schedule, job timeout 30 min and 1 vCPU / 2 GB set in the job definition, no parallel manual runs, objects deleted by the lifecycle at 35 days. Worst case if every
 scheduled run hit the 30-min limit: 61 × 1 800 vCPU-s = 109 800 vCPU-s, still inside the free allowance. Set a Scaleway billing alert at 5 € (budget) and
@@ -54,9 +62,9 @@ a Cloudflare billing notification if offered on the account.
 
 Producer job: `DATABASE_URL` (read-only role, **unpooled** host, `sslmode=require`), `BACKUP_PUBLIC_KEY`, `BACKUP_S3_ENDPOINT`
 (`https://<account id>.eu.r2.cloudflarestorage.com`), `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY`,
-`BACKUP_HEALTHCHECK_URL`, optional `BACKUP_MAX_AGE_HOURS` (36).
+`BACKUP_HEALTHCHECK_URL`, `BACKUP_SIGNING_KEY` (Ed25519 private PEM), optional `BACKUP_MAX_AGE_HOURS` (36).
 Verifier job (separate Scaleway project): `TARGET_DATABASE_URL` (empty disposable database in the separate Neon project `ada-restore-check`), `BACKUP_PRIVATE_KEY_FILE` (mounted secret file), `BACKUP_PRIVATE_KEY_PASSPHRASE`,
-the four `BACKUP_S3_*` with the **read-only** token, `RESTORE_HEALTHCHECK_URL`. Command:
+the four `BACKUP_S3_*` with the **read-only** token, `BACKUP_SIGNING_PUBLIC_KEY`, `RESTORE_HEALTHCHECK_URL`. Command:
 `node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> --expect-migrations 43` (43 = history rows of a database at 0042; 44 after 0045).
 
 `node scripts/cloud-backup.mjs --check-config` lists missing or invalid variables by name (never a value).
@@ -112,7 +120,10 @@ itself never modifies Production application data. The restore check writes only
 
 1. Freeze writes: close the citizen surfaces (Vercel variable) and redeploy.
 2. New empty Neon database. Download the newest dump and its ledger from R2 (owner's Cloudflare account).
-3. `db-restore.mjs` with the private key (owner's recovery copy) → `db-deploy-migrate.mjs --check` → `db-erasure-replay.mjs` dry run then `--execute`.
+3. Restore through the verifier with `--keep-restored` (signatures checked) or `db-restore.mjs` after checking the dump's signature → `db-deploy-migrate.mjs --check`
+   → `db-erasure-replay.mjs --kv` (dry run, then `--execute`). **`--kv` matters:** the ledger in the bucket only knows the erasures done before that
+   backup; the erasure tombstones (Upstash KV, written before every erasure, kept 40 days, `api/_services/erasure-tombstones.js`) name those done after
+   it. `--execute` refuses without `--kv` / `--tombstones-file` (LAB test: without them, a person erased after the newest backup comes back silently).
 4. Point Vercel at the restored database, redeploy, re-run the retention purge, check `/api/health`.
 5. Record the incident (GDPR art. 33 assessment within 72 h if personal data were lost or exposed).
 

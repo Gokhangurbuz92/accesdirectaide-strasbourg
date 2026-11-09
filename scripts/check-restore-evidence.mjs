@@ -6,7 +6,7 @@
  *
  *   node scripts/check-restore-evidence.mjs <evidence.json>
  *
- * Accepted only when: ok, wiped, migration history equal to the expected count, sidecar + object digest checked, core tables present, erasure ledger
+ * Accepted only when: ok, wiped, migration history equal to the expected count, sidecar + object digest + producer signatures checked, core tables present, erasure ledger
  * replayed (dry run). Privacy: only the known fields are allowed (counts, codes, digests, object names); anything else is refused, so a record that
  * carried row content or a credential fails. The record's own SHA-256 is printed so the stored file can be cited.
  * Independent cross-checks for the owner (no secret needed): `dump` and `encryptedBytes` against the object list in the Cloudflare R2 console,
@@ -19,7 +19,7 @@ import { isMainModule } from './lib/is-main.mjs';
 
 const TOP = new Set(['kind', 'ok', 'failures', 'verifiedAt', 'dump', 'backupTakenAt', 'backupAgeHours', 'encryptedBytes', 'dumpSha256', 'restoredTables', 'checks',
   'erasureReplay', 'seconds', 'wiped', 'code', 'stage', 'problems']);
-const CHECKS = new Set(['sidecar', 'objectDigest', 'coreTablesMissing', 'migrationRows', 'expectedMigrations', 'journalEntries', 'migrationsMatch', 'migrationsPlausible', 'ledger']);
+const CHECKS = new Set(['sidecar', 'objectDigest', 'signatures', 'coreTablesMissing', 'migrationRows', 'expectedMigrations', 'journalEntries', 'migrationsMatch', 'migrationsPlausible', 'ledger']);
 const REPLAY = new Set(['mode', 'ledgerEntries', 'presentAgain', 'holdsMissing']);
 const CODE = /^[A-Z][A-Z0-9_]{0,63}$/;
 const isCount = (v) => Number.isInteger(v) && v >= 0;
@@ -44,6 +44,7 @@ export function checkEvidence(ev) {
   const c = ev.checks || {};
   if (c.sidecar !== true) problems.push('SIDECAR_NOT_CHECKED');
   if (c.objectDigest !== true) problems.push('OBJECT_DIGEST_NOT_CHECKED');
+  if (c.signatures !== true) problems.push('SIGNATURES_NOT_CHECKED');
   if (!Array.isArray(c.coreTablesMissing) || c.coreTablesMissing.length) problems.push('CORE_TABLES');
   if (c.migrationsMatch !== true || !isCount(c.expectedMigrations) || c.migrationRows !== c.expectedMigrations) problems.push('MIGRATIONS_NOT_MATCHED');
   if (c.ledger !== true) problems.push('LEDGER_MISSING');

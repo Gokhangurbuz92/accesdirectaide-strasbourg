@@ -11,6 +11,7 @@ import http from 'node:http';
 import pg from 'pg';
 import { startFakeS3 } from '../helpers/fake-s3.mjs';
 import { generateBackupKeyPair } from '../../scripts/db-backup.mjs';
+import { generateSigningKeyPair } from '../../scripts/lib/backup-bucket.mjs';
 import { checkEvidence } from '../../scripts/check-restore-evidence.mjs';
 
 const ADMIN = process.env.CLOUD_BACKUP_E2E_ADMIN_URL || process.env.DATABASE_URL;
@@ -21,7 +22,7 @@ const dbUrl = (name) => { const u = new URL(ADMIN); u.pathname = `/${name}`; ret
 const target = (name) => `${new URL(ADMIN).hostname}/${name}`;
 
 run('V2 C7 cloud backup (LAB, fake bucket)', () => {
-  let s3; let hc; const pings = []; let keyDir; let pubPem; const passphrase = crypto.randomBytes(24).toString('hex');
+  let s3; let hc; const pings = []; let keyDir; let pubPem; const signing = generateSigningKeyPair(); const passphrase = crypto.randomBytes(24).toString('hex');
   const rw = { id: 'AKLABWRITER0000001', secret: crypto.randomBytes(20).toString('hex') };
   const ro = { id: 'AKLABREADER0000001', secret: crypto.randomBytes(20).toString('hex') };
   const sub = crypto.randomUUID();
@@ -30,10 +31,10 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
 
   const producerEnv = (extra = {}) => ({ PATH: process.env.PATH, HOME: os.homedir(), TZ: 'UTC', PG_BIN: process.env.PG_BIN || '', DATABASE_URL: dbUrl(SOURCE_DB),
     BACKUP_PUBLIC_KEY: pubPem, BACKUP_S3_ENDPOINT: s3.endpoint, BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: rw.id,
-    BACKUP_S3_SECRET_ACCESS_KEY: rw.secret, BACKUP_HEALTHCHECK_URL: `${hc.url}/producer`, ...extra });
+    BACKUP_S3_SECRET_ACCESS_KEY: rw.secret, BACKUP_HEALTHCHECK_URL: `${hc.url}/producer`, BACKUP_SIGNING_KEY: signing.privatePem, ...extra });
   const verifierEnv = (db, extra = {}) => ({ PATH: process.env.PATH, HOME: os.homedir(), TZ: 'UTC', PG_BIN: process.env.PG_BIN || '', TARGET_DATABASE_URL: dbUrl(db),
     BACKUP_PRIVATE_KEY_FILE: path.join(keyDir, 'backup-private.pem'), BACKUP_PRIVATE_KEY_PASSPHRASE: passphrase, BACKUP_S3_ENDPOINT: s3.endpoint,
-    BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: ro.id, BACKUP_S3_SECRET_ACCESS_KEY: ro.secret, RESTORE_HEALTHCHECK_URL: `${hc.url}/verifier`, ...extra });
+    BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: ro.id, BACKUP_S3_SECRET_ACCESS_KEY: ro.secret, RESTORE_HEALTHCHECK_URL: `${hc.url}/verifier`, BACKUP_SIGNING_PUBLIC_KEY: signing.publicPem, ...extra });
   // async on purpose: the fake bucket and the healthcheck server live in THIS process (a sync spawn would block them)
   const node = (script, args, env) => new Promise((resolve) => {
     const c = spawn(process.execPath, [path.join(ROOT, 'scripts', script), ...args], { env, cwd: ROOT });
@@ -47,7 +48,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
   const admin = async (sql) => { const c = new pg.Client({ connectionString: ADMIN }); await c.connect(); try { return await c.query(sql); } finally { await c.end(); } };
   const src = async (sql, params) => { const c = new pg.Client({ connectionString: dbUrl(SOURCE_DB) }); await c.connect(); try { return await c.query(sql, params); } finally { await c.end(); } };
   const freshDb = async () => { const n = `ada_cb_restore_${crypto.randomBytes(4).toString('hex')}`; await admin(`CREATE DATABASE ${n}`); restoreDbs.push(n); return n; };
-  const secretsIn = (text) => [rw.secret, ro.secret, passphrase].filter((s) => text.includes(s));
+  const secretsIn = (text) => [rw.secret, ro.secret, passphrase, signing.privatePem.split('\n')[1]].filter((s) => text.includes(s));
 
   beforeAll(async () => {
     keyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-cb-keys-'));
@@ -169,6 +170,47 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     expect(w.out.code).toBe('BUCKET_ACCESS_DENIED');
     expect(pings.at(-1).path).toBe('/producer/fail');
   }, 120000);
+
+  it('provenance (owner review 09/11/2026): a backup forged with ONLY the producer token + the public key is refused before any restore', async () => {
+    // the attacker: no database access, no signing key — they encrypt a database of their choice (here: the LAB source with a planted row) with the
+    // PUBLIC key, export a ledger the same way, and upload all three with the producer's write token, newer than every real backup
+    const planted = crypto.randomUUID();
+    await src(`INSERT INTO "CitizenUser" (id, email, "passwordHash", "updatedAt") VALUES ($1, $2, 'x', now())`, [planted, `planted-${planted}@example.invalid`]);
+    const out = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-forge-'));
+    const attackerEnv = { PATH: process.env.PATH, HOME: os.homedir(), TZ: 'UTC', PG_BIN: process.env.PG_BIN || '', DATABASE_URL: dbUrl(SOURCE_DB), BACKUP_PUBLIC_KEY: pubPem };
+    try {
+      await new Promise((r) => setTimeout(r, 1100));
+      expect((await node('db-backup.mjs', ['--out', out, '--label', 'prod'], attackerEnv)).status).toBe(0);
+      expect((await node('db-erasure-replay.mjs', ['--export', '--out', out], attackerEnv)).status).toBe(0);
+    } finally { await src('DELETE FROM "CitizenUser" WHERE id = $1', [planted]); }
+    const { bucketConfig: bc, putFile: put, s3Client: mk } = await import('../../scripts/lib/backup-bucket.mjs');
+    const { sha256OfFile: sha } = await import('../../scripts/db-backup.mjs');
+    const cfg = bc({ BACKUP_S3_ENDPOINT: s3.endpoint, BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: rw.id, BACKUP_S3_SECRET_ACCESS_KEY: rw.secret });
+    const client = await mk(cfg);
+    const forged = [];
+    for (const f of fs.readdirSync(out)) { const key = `prod/${f}`; await put(client, cfg, path.join(out, f), key, await sha(path.join(out, f))); forged.push(key); }
+    fs.rmSync(out, { recursive: true, force: true });
+    const forgedDump = forged.find((k) => k.endsWith('.dump.enc'));
+    try {
+      const db = await freshDb();
+      const r = await node('cloud-restore-verify.mjs', ['--confirm-target', target(db), '--expect-migrations', String(migrations), '--keep-restored'], verifierEnv(db));
+      const left = async () => { const c = new pg.Client({ connectionString: dbUrl(db) }); await c.connect(); try { return (await c.query(`SELECT count(*)::int n FROM pg_tables WHERE schemaname = 'public'`)).rows[0].n; } finally { await c.end(); } };
+      expect({ status: r.status, ok: r.out.ok, code: r.out.code, dump: r.out.dump ?? null }).toEqual({ status: 1, ok: false, code: 'DUMP_SIGNATURE_INVALID', dump: null });
+      expect(await left()).toBe(0);   // nothing was restored from the forged object
+      // a forged ledger next to a REAL dump is refused too (it could hide erasures from the replay)
+      const db2 = await freshDb();
+      const r2 = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', String(migrations)], verifierEnv(db2));
+      expect(r2.out.code).toBe('LEDGER_SIGNATURE_INVALID');
+      // a REAL signed dump copied under a newer name is refused (the signature binds the object name, so an old backup cannot pose as the newest)
+      const real = s3.objects.get(firstDump); const renamed = forgedDump.replace('.dump.enc', '.dump.enc').replace(/(\d{8}T\d{6})Z/, (m, t) => `${t.slice(0, -1)}${(Number(t.at(-1)) + 1) % 10}Z`);
+      for (const k of forged) s3.objects.delete(k);
+      s3.objects.set(renamed, real);
+      const db3 = await freshDb();
+      const r3 = await node('cloud-restore-verify.mjs', ['--key', renamed, '--confirm-target', target(db3), '--expect-migrations', String(migrations)], verifierEnv(db3));
+      expect(r3.out.code).toBe('DUMP_SIGNATURE_INVALID');
+      s3.objects.delete(renamed);
+    } finally { for (const k of forged) s3.objects.delete(k); }
+  }, 180000);
 
   it('missed run and overdue retention are alerts (after the new backup is stored)', async () => {
     // move every stored object 3 days back (names carry the time)

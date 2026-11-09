@@ -8,6 +8,8 @@ import { pseudonymiseRateIdentifier } from '../../api/_utils/rateLimit.js';
 import { publicBetaMessage } from '../../api/_utils/public-beta.js';
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 import { LEGAL_DRAFTS_VERSION } from '../../src/config/legal-drafts.js';
+import { approvalEnv, approvedTestPolicy } from '../helpers/gdpr-purge-approval.js';
+import { RETENTION_POLICY } from '../../api/_services/retention-policy.js';
 
 const APPROVED = `cgu-citoyen@${LEGAL_DRAFTS_VERSION},notice-confidentialite@${LEGAL_DRAFTS_VERSION}`;
 const BASE = {
@@ -17,6 +19,8 @@ const BASE = {
 };
 const MAILJET = { MAILER_PROVIDER: 'mailjet', MAILER_FROM: 'Accès Direct Aide <noreply@example.test>', MAILER_API_KEY: 'pub-synthetic:sec-synthetic', ALERT_EMAIL: 'ops@example.test' };
 const LEGAL = 'export const LEGAL = { publisher: "complete" };';
+const POLICY_6C = approvedTestPolicy({ a7: 365, steps: ['unverifiedAccountsDeleted'] });
+const PURGE_6C = { ...approvalEnv(['unverifiedAccountsDeleted'], { a7: 365 }), ADA_BETA_OPEN_JOBS: 'gdpr-purge', ADA_JOBS_APPROVED: 'gdpr-purge' };
 const st = (env, id) => evaluateReleasePreflight(env, { legalText: LEGAL }).find((r) => r.id === id)?.status;
 const fails = (env) => evaluateReleasePreflight(env, { legalText: LEGAL }).filter((r) => r.status === 'FAIL').map((r) => r.id);
 
@@ -32,7 +36,23 @@ describe('V2 — atomic activation of accounts and Mailjet (release preflight)',
   it('accounts + Mailjet without the approved terms fail; with them the V2 target configuration has no FAIL', () => {
     expect(st({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET }, 'legal.citizen_terms_in_force')).toBe('FAIL');
     expect(st({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET, VITE_LEGAL_DOCS_APPROVED_VERSION: `cgu-citoyen@${LEGAL_DRAFTS_VERSION}` }, 'legal.citizen_terms_in_force')).toBe('FAIL');
-    expect(fails({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET, VITE_LEGAL_DOCS_APPROVED_VERSION: APPROVED })).toEqual([]);
+    // without step 6c in force the notice's 7-day promise would be false: refused (owner review 09/11/2026)
+    expect(fails({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET, VITE_LEGAL_DOCS_APPROVED_VERSION: APPROVED })).toEqual(['retention.unverified_accounts_7d']);
+    const V2 = { ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET, VITE_LEGAL_DOCS_APPROVED_VERSION: APPROVED, ...PURGE_6C };
+    expect(evaluateReleasePreflight(V2, { legalText: LEGAL, policy: POLICY_6C }).filter((r) => r.status === 'FAIL').map((r) => r.id)).toEqual([]);
+  });
+  it('step 6c gate: each missing condition is named (job, switch, policy pin, env step, policy step approval)', () => {
+    const V2 = { ...BASE, ADA_BETA_OPEN_SURFACES: 'admin,accounts', ...MAILJET, VITE_LEGAL_DOCS_APPROVED_VERSION: APPROVED, ...PURGE_6C };
+    const why = (env, policy = POLICY_6C) => evaluateReleasePreflight(env, { legalText: LEGAL, policy }).find((r) => r.id === 'retention.unverified_accounts_7d');
+    expect(why(V2).status).toBe('PASS');
+    expect(why({ ...V2, ADA_JOBS_APPROVED: '' }).detail).toMatch(/gdpr-purge job is not open/);
+    expect(why({ ...V2, GDPR_PURGE_ENABLED: '' }).detail).toMatch(/GDPR_PURGE_DISABLED/);
+    expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: 'other' }).detail).toMatch(/POLICY_VERSION_NOT_PINNED/);
+    expect(why({ ...V2, GDPR_PURGE_APPROVED_STEPS: 'accountTokensDeleted' }).detail).toMatch(/does not list unverifiedAccountsDeleted/);
+    expect(why(V2, approvedTestPolicy({ a7: 365, steps: [] })).detail).toMatch(/STEP_NOT_APPROVED_IN_POLICY/);
+    expect(why(V2, RETENTION_POLICY).detail).toMatch(/POLICY_NOT_APPROVED/);   // the real policy today: PROPOSED — so V2 cannot open accounts yet
+    // admin only (accounts closed): the rule does not apply
+    expect(evaluateReleasePreflight({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin' }, { legalText: LEGAL }).some((r) => r.id === 'retention.unverified_accounts_7d')).toBe(false);
   });
   it('the terms check is a Production rule only', () => {
     expect(citizenTermsInForce({ VERCEL_ENV: 'production' })).toBe(false);

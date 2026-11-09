@@ -2,14 +2,15 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { bucketConfig, bucketPlan, ledgerForDump, objectTime, pingUrl } from '../../scripts/lib/backup-bucket.mjs';
+import { bucketConfig, bucketPlan, generateSigningKeyPair, ledgerForDump, objectTime, pingUrl, signObject, signingPrivateKey, signingPublicKey, verifyObjectSignature } from '../../scripts/lib/backup-bucket.mjs';
 import { producerConfig } from '../../scripts/cloud-backup.mjs';
 
 const NOW = Date.UTC(2026, 10, 9, 12, 0, 0);
 const at = (hoursAgo) => new Date(NOW - hoursAgo * 3600000).toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
 const pub = crypto.generateKeyPairSync('rsa', { modulusLength: 3072 }).publicKey.export({ type: 'spki', format: 'pem' }).toString();
 const bucketEnv = { BACKUP_S3_ENDPOINT: 'https://abc123.eu.r2.cloudflarestorage.com', BACKUP_S3_BUCKET: 'ada-db-backups', BACKUP_S3_ACCESS_KEY_ID: 'k', BACKUP_S3_SECRET_ACCESS_KEY: 's' };
-const producerEnv = { ...bucketEnv, DATABASE_URL: 'postgresql://ada_backup_ro:x@ep-a.eu-central-1.aws.neon.tech/neondb?sslmode=require', BACKUP_PUBLIC_KEY: pub };
+const SIGN = generateSigningKeyPair();
+const producerEnv = { ...bucketEnv, DATABASE_URL: 'postgresql://ada_backup_ro:x@ep-a.eu-central-1.aws.neon.tech/neondb?sslmode=require', BACKUP_PUBLIC_KEY: pub, BACKUP_SIGNING_KEY: SIGN.privatePem };
 
 describe('bucket configuration', () => {
   it('accepts an R2 EU endpoint and flags the jurisdiction', () => {
@@ -95,5 +96,24 @@ describe('job image and retired templates', () => {
     expect(fs.existsSync('ops/backup-mac')).toBe(false);
     expect(fs.existsSync('ops/private-backup')).toBe(false);
     expect(fs.existsSync('.github/workflows/db-backup.yml')).toBe(false);
+  });
+});
+
+describe('V2 C7 provenance: Ed25519 signature over object name + SHA-256 (owner review 09/11/2026)', () => {
+  const sha = 'b'.repeat(64); const key = 'prod/ada_prod_20261109T141700Z.dump.enc';
+  it('a signature verifies only for the same name, the same digest and the producer key', () => {
+    const sig = signObject(signingPrivateKey(SIGN.privatePem), key, sha);
+    const pubKey = signingPublicKey(SIGN.publicPem);
+    expect(verifyObjectSignature(pubKey, key, sha, sig)).toBe(true);
+    expect(verifyObjectSignature(pubKey, key.replace('141700', '141701'), sha, sig)).toBe(false);   // renamed (an old backup posing as newer)
+    expect(verifyObjectSignature(pubKey, key, 'c'.repeat(64), sig)).toBe(false);                   // other content
+    expect(verifyObjectSignature(signingPublicKey(generateSigningKeyPair().publicPem), key, sha, sig)).toBe(false);   // another key
+    expect(verifyObjectSignature(pubKey, key, sha, null)).toBe(false);                             // unsigned
+  });
+  it('the producer needs a valid Ed25519 signing key; an RSA key is refused', () => {
+    expect(producerConfig({ ...producerEnv, BACKUP_SIGNING_KEY: '' }).problems).toContain('BACKUP_SIGNING_KEY_MISSING');
+    const rsa = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+    expect(producerConfig({ ...producerEnv, BACKUP_SIGNING_KEY: rsa }).problems).toContain('BACKUP_SIGNING_KEY_INVALID');
+    expect(JSON.stringify(producerConfig({ ...producerEnv, BACKUP_SIGNING_KEY: rsa }))).not.toContain('PRIVATE KEY');
   });
 });
