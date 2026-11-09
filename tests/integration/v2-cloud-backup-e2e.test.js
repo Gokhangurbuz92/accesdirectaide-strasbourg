@@ -118,9 +118,17 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     expect(r.out.restoredTables).toBeGreaterThan(50);
     // the restored copy holds the erased person again: the dry run says so (the replay must run before any use of the copy)
     expect(r.out.erasureReplay.presentAgain).toBe(1);
+    // data minimisation: the restored copy is gone at the end (and was gone after the failing run too)
+    expect(r.out.wiped).toBe(true);
+    const left = async (n) => { const c = new pg.Client({ connectionString: dbUrl(n) }); await c.connect(); try { return (await c.query(`SELECT count(*)::int n FROM pg_tables WHERE schemaname IN ('public','drizzle')`)).rows[0].n; } finally { await c.end(); } };
+    expect(await left(db2)).toBe(0);
+    expect(await left(db)).toBe(0);
+    // the same target can be used again next month
+    const again = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', '46'], verifierEnv(db2));
+    expect(again.status, again.all).toBe(0);
     expect(secretsIn(r.all)).toEqual([]);
     expect(r.all).not.toContain(`synthetic-${sub}`);
-    expect(pings.filter((p) => p.path.startsWith('/verifier')).map((p) => p.path)).toEqual(['/verifier/start', '/verifier/fail', '/verifier/start', '/verifier']);
+    expect(pings.filter((p) => p.path.startsWith('/verifier')).map((p) => p.path)).toEqual(['/verifier/start', '/verifier/fail', '/verifier/start', '/verifier', '/verifier/start', '/verifier']);
   }, 180000);
 
   it('a tampered object is refused before anything is restored', async () => {

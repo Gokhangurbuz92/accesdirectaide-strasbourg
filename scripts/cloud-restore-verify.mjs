@@ -4,12 +4,14 @@
  * READ-ONLY bucket token; the producer holds neither. Target: an EMPTY, isolated, disposable database (never Production, never DATABASE_URL).
  *
  *   BACKUP_S3_* (read-only token) BACKUP_PRIVATE_KEY_FILE BACKUP_PRIVATE_KEY_PASSPHRASE TARGET_DATABASE_URL=<empty disposable db> PG_BIN=…
- *   node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> [--key <prefix/object>] [--expect-migrations N (Production 0042: 43)] [--evidence <file.json>]
+ *   node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> [--key <prefix/object>] [--expect-migrations N (Production 0042: 43)] [--evidence <file.json>] [--keep-restored]
  *
  * Steps: newest dump (or --key) → download to a private folder → SHA-256 sidecar + object digest → db-restore.mjs (GCM tag checked before pg_restore,
  * empty target required) → structure checks (public tables, migration history = expected count, core tables present) → erasure ledger exported at or
  * after the dump → db-erasure-replay.mjs DRY RUN (how many erased people the restore brought back: they must be replayed before any use of the copy).
  * Evidence: one JSON document, counts and object names only — no row content, no personal data, no credential.
+ * Data minimisation: the restored copy is WIPED at the end, success or failure (schemas public and drizzle dropped), unless --keep-restored (a real
+ * recovery, typed by an operator). The next monthly run therefore starts again from an empty target.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -36,6 +38,17 @@ function child(script, args, code, env = process.env) {
   return JSON.parse(String(r.stdout).trim().split('\n').filter(Boolean).pop() || '{}');
 }
 
+/** drops what a restore created (public + drizzle schemas), leaving an empty target; returns the number of public tables left (0) */
+export async function wipeTarget(url) {
+  const c = new pg.Client({ connectionString: url }); await c.connect();
+  try {
+    await c.query('DROP SCHEMA IF EXISTS drizzle CASCADE');
+    await c.query('DROP SCHEMA IF EXISTS public CASCADE');
+    await c.query('CREATE SCHEMA public');
+    return (await c.query(`SELECT count(*)::int AS n FROM pg_tables WHERE schemaname = 'public'`)).rows[0].n;
+  } finally { await c.end(); }
+}
+
 export async function verifyRestore() {
   const t0 = Date.now();
   const cfg = bucketConfig();
@@ -47,6 +60,7 @@ export async function verifyRestore() {
   await ping(hc, '/start');
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-restore-verify-'));
   fs.chmodSync(work, 0o700);
+  let restoredSomething = false;
   try {
     const client = await s3Client(cfg);
     const objects = await listObjects(client, cfg);
@@ -59,6 +73,7 @@ export async function verifyRestore() {
     if (hasSidecar) await getFile(client, cfg, `${dumpKey}.sha256`, `${dumpFile}.sha256`);
     const digest = await sha256OfFile(dumpFile);
     if (meta.sha256 && meta.sha256 !== digest) throw Object.assign(new Error('OBJECT_DIGEST_MISMATCH'), { code: 'OBJECT_DIGEST_MISMATCH' });
+    restoredSomething = true;
     const restore = child('db-restore.mjs', ['--file', dumpFile, '--confirm-target', arg('confirm-target'), '--work-dir', work], 'RESTORE_FAILED');
     const c = new pg.Client({ connectionString: target }); await c.connect();
     let core; try {
@@ -88,6 +103,11 @@ export async function verifyRestore() {
       backupAgeHours: plan.ageHours, encryptedBytes: fs.statSync(dumpFile).size, restoredTables: restore.tables, checks,
       erasureReplay: replay ? { mode: replay.mode, ledgerEntries: replay.ledgerEntries, presentAgain: replay.presentAgain, holdsMissing: replay.holdsMissing } : null,
       seconds: Math.round((Date.now() - t0) / 1000) };
+    if (!process.argv.includes('--keep-restored')) {
+      evidence.wiped = (await wipeTarget(target)) === 0;
+      restoredSomething = false;
+      if (!evidence.wiped) { evidence.ok = false; evidence.failures.push('WIPE_FAILED'); }
+    } else evidence.wiped = false;
     await ping(hc, evidence.ok ? '' : '/fail', JSON.stringify(evidence));
     return evidence;
   } catch (e) {
@@ -95,7 +115,10 @@ export async function verifyRestore() {
     const code = err?.code && /^[A-Z_]+$/.test(err.code) ? err.code : 'UNEXPECTED';
     await ping(hc, '/fail', JSON.stringify({ code, stage: err?.stage || null }));
     throw Object.assign(new Error(code), { code, stage: err?.stage || null, problems: err?.problems });
-  } finally { fs.rmSync(work, { recursive: true, force: true }); }
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true });
+    if (restoredSomething && !process.argv.includes('--keep-restored')) await wipeTarget(target).catch(() => {});   // failure path: never leave a copy behind
+  }
 }
 
 if (isMainModule(import.meta.url)) {

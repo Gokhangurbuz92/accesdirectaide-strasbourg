@@ -10,7 +10,7 @@ Neon (PG 18, Frankfurt) ──read-only role──► PRODUCER job (Scaleway Ser
                                               pg_dump 18 → ADAB2 (RSA-4096 public key + AES-256-GCM) → erasure ledger (ADAB2)
                                               → PUT to R2 bucket (EU jurisdiction) → HEAD confirm → ping Healthchecks
 R2 bucket « ada-db-backups » (EU) : lifecycle 35 days (deletion within ~24 h after) · Bucket Lock 30 days (age) · objects: dump, .sha256, ledger
-VERIFIER job (separate job + separate token, monthly)  ─read-only token─► newest dump → private key → empty disposable DB
+VERIFIER job (separate job + separate token, monthly)  ─read-only token─► newest dump → private key → empty disposable DB (wiped at the end)
                                               → structure / migration / ledger checks → evidence JSON (counts only) → ping Healthchecks
 Healthchecks.io : 2 checks (producer every 12 h, grace 3 h; verifier monthly, grace 2 days) → e-mail to the owner
 ```
