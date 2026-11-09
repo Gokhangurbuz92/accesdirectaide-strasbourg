@@ -9,7 +9,9 @@
  * Steps: newest dump (or --key) → download to a private folder → SHA-256 sidecar + object digest → db-restore.mjs (GCM tag checked before pg_restore,
  * empty target required) → structure checks (public tables, migration history = expected count, core tables present) → erasure ledger exported at or
  * after the dump → db-erasure-replay.mjs DRY RUN (how many erased people the restore brought back: they must be replayed before any use of the copy).
- * Evidence: one JSON document, counts and object names only — no row content, no personal data, no credential.
+ * Evidence: one JSON document, counts, digests and object names only — no row content, no personal data, no credential. The job's container is
+ * ephemeral, so the DURABLE record is the Healthchecks.io ping body (success and failure, same JSON; kept in the check's log) plus the job log;
+ * the operator copies it to CONTROL/v2/c7/EVIDENCE_<date>.json and checks it with scripts/check-restore-evidence.mjs. --evidence only helps local runs.
  * Data minimisation: the restored copy is WIPED at the end, success or failure (schemas public and drizzle dropped), unless --keep-restored (a real
  * recovery, typed by an operator). The next monthly run therefore starts again from an empty target.
  */
@@ -100,7 +102,7 @@ export async function verifyRestore() {
     if (checks.migrationsMatch === false || !checks.migrationsPlausible) failures.push('MIGRATIONS_MISMATCH');
     if (!ledgerKey) failures.push('LEDGER_MISSING');
     const evidence = { kind: 'ada-restore-verification', ok: failures.length === 0, failures, verifiedAt: new Date().toISOString(), dump: dumpKey, backupTakenAt: restore.backupTakenAt,
-      backupAgeHours: plan.ageHours, encryptedBytes: fs.statSync(dumpFile).size, restoredTables: restore.tables, checks,
+      backupAgeHours: plan.ageHours, encryptedBytes: fs.statSync(dumpFile).size, dumpSha256: digest, restoredTables: restore.tables, checks,
       erasureReplay: replay ? { mode: replay.mode, ledgerEntries: replay.ledgerEntries, presentAgain: replay.presentAgain, holdsMissing: replay.holdsMissing } : null,
       seconds: Math.round((Date.now() - t0) / 1000) };
     if (!process.argv.includes('--keep-restored')) {
@@ -113,8 +115,11 @@ export async function verifyRestore() {
   } catch (e) {
     const err = /** @type {any} */ (e);
     const code = err?.code && /^[A-Z_]+$/.test(err.code) ? err.code : 'UNEXPECTED';
-    await ping(hc, '/fail', JSON.stringify({ code, stage: err?.stage || null }));
-    throw Object.assign(new Error(code), { code, stage: err?.stage || null, problems: err?.problems });
+    // failure path: wipe BEFORE reporting, so the durable record (Healthchecks log) states whether a copy was left behind
+    let wiped = null;
+    if (restoredSomething && !process.argv.includes('--keep-restored')) { wiped = (await wipeTarget(target).catch(() => -1)) === 0; restoredSomething = !wiped; }
+    await ping(hc, '/fail', JSON.stringify({ kind: 'ada-restore-verification', ok: false, code, stage: err?.stage || null, wiped, verifiedAt: new Date().toISOString() }));
+    throw Object.assign(new Error(code), { code, stage: err?.stage || null, problems: err?.problems, wiped });
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
     if (restoredSomething && !process.argv.includes('--keep-restored')) await wipeTarget(target).catch(() => {});   // failure path: never leave a copy behind
@@ -125,5 +130,5 @@ if (isMainModule(import.meta.url)) {
   verifyRestore().then((ev) => {
     if (arg('evidence')) fs.writeFileSync(arg('evidence'), `${JSON.stringify(ev, null, 2)}\n`, { mode: 0o600, flag: 'wx' });
     console.log(JSON.stringify(ev)); process.exitCode = ev.ok ? 0 : 1;
-  }, (e) => { console.log(JSON.stringify({ ok: false, code: e?.code || 'UNEXPECTED', stage: e?.stage || null, problems: e?.problems })); process.exitCode = 1; });
+  }, (e) => { console.log(JSON.stringify({ kind: 'ada-restore-verification', ok: false, code: e?.code || 'UNEXPECTED', stage: e?.stage || null, problems: e?.problems, wiped: e?.wiped ?? null })); process.exitCode = 1; });
 }

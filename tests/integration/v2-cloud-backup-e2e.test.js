@@ -11,6 +11,7 @@ import http from 'node:http';
 import pg from 'pg';
 import { startFakeS3 } from '../helpers/fake-s3.mjs';
 import { generateBackupKeyPair } from '../../scripts/db-backup.mjs';
+import { checkEvidence } from '../../scripts/check-restore-evidence.mjs';
 
 const ADMIN = process.env.CLOUD_BACKUP_E2E_ADMIN_URL || process.env.DATABASE_URL;
 const SOURCE_DB = process.env.CLOUD_BACKUP_E2E_SOURCE_DB || (process.env.DATABASE_URL ? decodeURIComponent(new URL(process.env.DATABASE_URL).pathname.slice(1)) : '');
@@ -130,7 +131,18 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     expect(again.status, again.all).toBe(0);
     expect(secretsIn(r.all)).toEqual([]);
     expect(r.all).not.toContain(`synthetic-${sub}`);
-    expect(pings.filter((p) => p.path.startsWith('/verifier')).map((p) => p.path)).toEqual(['/verifier/start', '/verifier/fail', '/verifier/start', '/verifier', '/verifier/start', '/verifier']);
+    const vp = pings.filter((p) => p.path.startsWith('/verifier'));
+    expect(vp.map((p) => p.path)).toEqual(['/verifier/start', '/verifier/fail', '/verifier/start', '/verifier', '/verifier/start', '/verifier']);
+    // durable record: the Healthchecks ping body IS the evidence (the job container is ephemeral); the checker accepts it and refuses the failed run
+    const durable = JSON.parse(vp[3].body);
+    expect(durable).toEqual(r.out);
+    expect(checkEvidence(durable)).toMatchObject({ accepted: true, problems: [], summary: { wiped: true, erasedPeoplePresentAgain: 1 } });
+    expect(durable.dumpSha256).toBe(crypto.createHash('sha256').update(s3.objects.get(firstDump).body).digest('hex'));
+    const failed = checkEvidence(JSON.parse(vp[1].body));
+    expect(failed.accepted).toBe(false);
+    expect(failed.problems).toEqual(expect.arrayContaining(['NOT_OK', 'FAILURES_PRESENT', 'MIGRATIONS_NOT_MATCHED']));
+    expect(JSON.parse(vp[1].body).wiped).toBe(true);
+    expect(secretsIn(vp.map((p) => p.body).join('\n'))).toEqual([]);
   }, 180000);
 
   it('a tampered object is refused before anything is restored', async () => {
@@ -141,6 +153,8 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     const r = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db)], verifierEnv(db));
     expect(r.status).toBe(1);
     expect(r.out.code).toBe('OBJECT_DIGEST_MISMATCH');
+    expect(r.out.wiped).toBe(null);   // nothing was restored, so nothing to wipe — stated in the durable failure record too
+    expect(JSON.parse(pings.filter((p) => p.path === '/verifier/fail').pop().body)).toMatchObject({ ok: false, code: 'OBJECT_DIGEST_MISMATCH', wiped: null });
     const t = await (async () => { const c = new pg.Client({ connectionString: dbUrl(db) }); await c.connect(); try { return (await c.query(`SELECT count(*)::int n FROM pg_tables WHERE schemaname='public'`)).rows[0].n; } finally { await c.end(); } })();
     expect(t).toBe(0);
     s3.objects.set(firstDump, o);
