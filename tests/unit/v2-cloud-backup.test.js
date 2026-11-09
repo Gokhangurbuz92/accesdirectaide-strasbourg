@@ -14,7 +14,9 @@ const producerEnv = { ...bucketEnv, DATABASE_URL: 'postgresql://ada_backup_ro:x@
 describe('bucket configuration', () => {
   it('accepts an R2 EU endpoint and flags the jurisdiction', () => {
     expect(bucketConfig(bucketEnv)).toMatchObject({ ok: true, region: 'auto', prefix: 'prod/', euJurisdiction: true });
-    expect(bucketConfig({ ...bucketEnv, BACKUP_S3_ENDPOINT: 'https://abc123.r2.cloudflarestorage.com' })).toMatchObject({ ok: true, euJurisdiction: false });
+    expect(bucketConfig({ ...bucketEnv, BACKUP_S3_ENDPOINT: 'https://abc123.r2.cloudflarestorage.com' })).toMatchObject({ ok: false, reason: 'BUCKET_ENDPOINT_NOT_EU_JURISDICTION' });
+    expect(bucketConfig({ ...bucketEnv, BACKUP_S3_ENDPOINT: 'https://abc123.eu.r2.cloudflarestorage.com.evil.example' })).toMatchObject({ ok: false, reason: 'BUCKET_ENDPOINT_NOT_EU_JURISDICTION' });
+    expect(bucketConfig({ ...bucketEnv, BACKUP_S3_ENDPOINT: 'https://s3.fr-par.scw.cloud' })).toMatchObject({ ok: false, reason: 'BUCKET_ENDPOINT_NOT_EU_JURISDICTION' });
   });
   it('refuses plain http (except loopback), credentials or paths in the endpoint, bad names, and names missing variables', () => {
     expect(bucketConfig({ ...bucketEnv, BACKUP_S3_ENDPOINT: 'http://abc.example.org' })).toMatchObject({ ok: false, reason: 'BUCKET_ENDPOINT_NOT_HTTPS' });
@@ -31,6 +33,9 @@ describe('bucket configuration', () => {
 
 describe('producer configuration', () => {
   it('passes with a read-only unpooled TLS connection and a public key', () => { expect(producerConfig(producerEnv)).toMatchObject({ ok: true, problems: [], keepDays: 35 }); });
+  it('refuses a producer whose environment holds a cloud API key (its identity could reach other secrets)', () => {
+    for (const k of ['SCW_SECRET_KEY', 'AWS_SECRET_ACCESS_KEY', 'CLOUDFLARE_API_TOKEN']) expect(producerConfig({ ...producerEnv, [k]: 'x' }).problems).toContain('CLOUD_API_KEY_PRESENT_IN_PRODUCER');
+  });
   it('refuses a decryption key in the producer, a pooled host, no TLS, a short key, a bad ping URL — by name only', () => {
     const r = producerConfig({ ...producerEnv, BACKUP_PRIVATE_KEY_PASSPHRASE: 'pass-phrase-value-123',
       DATABASE_URL: 'postgresql://u:pw-value@ep-a-pooler.eu-central-1.aws.neon.tech/neondb', BACKUP_HEALTHCHECK_URL: 'ftp://x' });

@@ -19,6 +19,9 @@ const LOOPBACK = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
 const flag = (/** @type {unknown} */ v) => String(v ?? '').trim();
 
 /** names of the configuration, for messages (never values) */
+/** https://<account id>.eu.r2.cloudflarestorage.com (Cloudflare R2, EU jurisdiction) */
+const EU_R2_HOST = /^[a-z0-9]+\.eu\.r2\.cloudflarestorage\.com$/;
+
 export const BUCKET_VARS = Object.freeze(['BACKUP_S3_ENDPOINT', 'BACKUP_S3_BUCKET', 'BACKUP_S3_ACCESS_KEY_ID', 'BACKUP_S3_SECRET_ACCESS_KEY']);
 
 /**
@@ -32,13 +35,15 @@ export function bucketConfig(env = process.env) {
   let u; try { u = new URL(flag(env.BACKUP_S3_ENDPOINT)); } catch { return { ok: false, reason: 'BUCKET_ENDPOINT_INVALID' }; }
   if (u.username || u.password || u.search || u.hash || (u.pathname && u.pathname !== '/')) return { ok: false, reason: 'BUCKET_ENDPOINT_INVALID' };
   if (u.protocol !== 'https:' && !(u.protocol === 'http:' && LOOPBACK.has(u.hostname))) return { ok: false, reason: 'BUCKET_ENDPOINT_NOT_HTTPS' };
+  // Production data stays in the EU: only the R2 EU-jurisdiction endpoint (a jurisdictional bucket is reachable ONLY there) or a loopback LAB bucket.
+  if (!LOOPBACK.has(u.hostname) && !EU_R2_HOST.test(u.hostname)) return { ok: false, reason: 'BUCKET_ENDPOINT_NOT_EU_JURISDICTION' };
   const bucket = flag(env.BACKUP_S3_BUCKET);
   if (!/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(bucket)) return { ok: false, reason: 'BUCKET_NAME_INVALID' };
   const prefix = flag(env.BACKUP_S3_PREFIX || 'prod/');
   if (!/^[a-z0-9_-]+\/$/.test(prefix)) return { ok: false, reason: 'BUCKET_PREFIX_INVALID' };
   return { ok: true, endpoint: u.origin, bucket, region: flag(env.BACKUP_S3_REGION) || 'auto', prefix,
     accessKeyId: flag(env.BACKUP_S3_ACCESS_KEY_ID), secretAccessKey: flag(env.BACKUP_S3_SECRET_ACCESS_KEY),
-    euJurisdiction: /\.eu\.r2\.cloudflarestorage\.com$/.test(u.hostname) };
+    euJurisdiction: EU_R2_HOST.test(u.hostname) };
 }
 
 /**
@@ -159,4 +164,37 @@ export async function deleteKeys(client, cfg, keys) {
   let n = 0;
   for (const k of keys) { await client.send(new DeleteObjectCommand({ Bucket: cfg.bucket, Key: k })); n += 1; }
   return n;
+}
+
+/** refusal of the store (403 / AccessDenied / a lock): the call was NOT carried out */
+const refused = (e) => { const st = Number(e?.$metadata?.httpStatusCode || 0); return st === 403 || st === 409 || e?.name === 'AccessDenied' || /lock|retention/i.test(String(e?.name || e?.Code || '')); };
+const attempt = async (fn) => { try { await fn(); return 'allowed'; } catch (e) { if (refused(e)) return 'refused'; throw Object.assign(new Error('PROBE_UNEXPECTED'), { code: 'PROBE_UNEXPECTED', status: Number(e?.$metadata?.httpStatusCode || 0) || null }); } };
+
+/**
+ * Effective permissions of the token actually configured (run once at setup, inside the job, before the first real backup). Writes ONE tiny object
+ * `probe/<role>_<UTC>.txt` (no personal data) that the bucket lock keeps 30 days and the lifecycle deletes at 35. Expected:
+ *   both roles: list objects allowed; list buckets refused (an object token, not an admin token); read allowed (R2 « Object Read » / « Read & Write »).
+ *   producer:   put allowed; deleting the fresh probe refused (bucket lock active) — « Object Read & Write » CAN read and delete, only the lock stops deletion.
+ *   verifier:   put refused (read-only token).
+ * @param {'producer' | 'verifier'} role
+ */
+export async function probePermissions(client, cfg, role, now = new Date()) {
+  const s3 = await import('@aws-sdk/client-s3');
+  const key = `probe/${role}_${now.toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')}.txt`;
+  const r = {
+    listObjects: await attempt(() => client.send(new s3.ListObjectsV2Command({ Bucket: cfg.bucket, Prefix: cfg.prefix, MaxKeys: 1 }))),
+    listBuckets: await attempt(() => client.send(new s3.ListBucketsCommand({}))),
+    put: await attempt(() => client.send(new s3.PutObjectCommand({ Bucket: cfg.bucket, Key: key, Body: `ADA C7 permission probe ${role}\n`, ContentType: 'text/plain' }))),
+  };
+  if (r.put === 'allowed') {
+    r.read = await attempt(() => client.send(new s3.GetObjectCommand({ Bucket: cfg.bucket, Key: key })).then((o) => o.Body?.transformToString?.()));
+    r.deleteFresh = await attempt(() => client.send(new s3.DeleteObjectCommand({ Bucket: cfg.bucket, Key: key })));
+  }
+  const problems = [];
+  if (r.listObjects !== 'allowed') problems.push('LIST_OBJECTS_REFUSED');
+  if (r.listBuckets !== 'refused') problems.push('TOKEN_HAS_ACCOUNT_SCOPE');
+  if (role === 'producer' && r.put !== 'allowed') problems.push('PRODUCER_CANNOT_WRITE');
+  if (role === 'producer' && r.deleteFresh === 'allowed') problems.push('BUCKET_LOCK_NOT_ENFORCED');
+  if (role === 'verifier' && r.put !== 'refused') problems.push('VERIFIER_TOKEN_CAN_WRITE');
+  return { ok: problems.length === 0, role, euJurisdiction: cfg.euJurisdiction, probeKey: r.put === 'allowed' ? key : null, ...r, problems };
 }

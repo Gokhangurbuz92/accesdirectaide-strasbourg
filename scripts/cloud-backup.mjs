@@ -5,6 +5,7 @@
  *   node scripts/cloud-backup.mjs --run [--label prod] [--prune]     one backup: dump → ADAB2 → erasure ledger → upload → confirm → retention → ping
  *   node scripts/cloud-backup.mjs --status                           bucket only: freshness, counts, retention (no database access)
  *   node scripts/cloud-backup.mjs --check-config                     which variables are missing or invalid (names only)
+ *   node scripts/cloud-backup.mjs --probe-permissions --role producer|verifier   effective bucket permissions of the configured token (setup, once)
  *
  * Holds: DATABASE_URL (a READ-ONLY Neon role), BACKUP_PUBLIC_KEY (it can encrypt, never decrypt: the private key is not in this job), the bucket token
  * (scripts/lib/backup-bucket.mjs) and optionally BACKUP_HEALTHCHECK_URL (dead-man's switch: /start, success, /fail; a run that never happens is reported by
@@ -21,7 +22,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { backupPublicKey, sha256OfFile } from './db-backup.mjs';
 import { RETENTION_POLICY, policyDays } from '../api/_services/retention-policy.js';
-import { bucketConfig, bucketPlan, deleteKeys, listObjects, ping, pingUrl, putFile, s3Client } from './lib/backup-bucket.mjs';
+import { bucketConfig, bucketPlan, deleteKeys, listObjects, ping, pingUrl, probePermissions, putFile, s3Client } from './lib/backup-bucket.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +44,9 @@ export function producerConfig(env = process.env) {
   }
   try { backupPublicKey(env.BACKUP_PUBLIC_KEY); } catch { problems.push('BACKUP_PUBLIC_KEY_INVALID'); }
   if (String(env.BACKUP_PRIVATE_KEY_FILE || '').trim() || String(env.BACKUP_PRIVATE_KEY_PASSPHRASE || '').trim() || String(env.BACKUP_ENCRYPTION_KEY || '').trim()) problems.push('DECRYPTION_KEY_PRESENT_IN_PRODUCER');
+  // the producer's own execution identity must not be able to reach other secrets: no cloud API key in its environment (the verifier's secrets live in
+  // another Scaleway project; a job without an API key cannot call Secret Manager at all)
+  if (['SCW_SECRET_KEY', 'SCW_ACCESS_KEY', 'AWS_SECRET_ACCESS_KEY', 'GOOGLE_APPLICATION_CREDENTIALS', 'CLOUDFLARE_API_TOKEN'].some((k) => String(env[k] || '').trim())) problems.push('CLOUD_API_KEY_PRESENT_IN_PRODUCER');
   if (pingUrl(env.BACKUP_HEALTHCHECK_URL) === false) problems.push('BACKUP_HEALTHCHECK_URL_INVALID');
   const maxAge = Number(env.BACKUP_MAX_AGE_HOURS || 36);
   if (!Number.isFinite(maxAge) || maxAge < 6 || maxAge > 168) problems.push('BACKUP_MAX_AGE_HOURS_INVALID');
@@ -105,6 +109,13 @@ async function status() {
   const plan = bucketPlan(await listObjects(await s3Client(b), b), { keepDays: cfgCheck.keepDays, maxAgeHours: cfgCheck.maxAgeHours });
   return { ...plan, prune: plan.prune.length, euJurisdiction: b.euJurisdiction };
 }
+async function probe() {
+  const role = arg('role');
+  if (role !== 'producer' && role !== 'verifier') throw Object.assign(new Error('ROLE'), { code: 'PROBE_ROLE_INVALID' });
+  const b = bucketConfig();
+  if (!b.ok) throw Object.assign(new Error('CONFIG'), { code: 'CONFIG', problems: [b.reason, ...(b.missing || [])] });
+  return probePermissions(await s3Client(b), b, role);
+}
 const STATUS_DUMMY_KEY = () => crypto.generateKeyPairSync('rsa', { modulusLength: 3072 }).publicKey.export({ type: 'spki', format: 'pem' }).toString();
 
 if (isMainModule(import.meta.url)) {
@@ -112,6 +123,7 @@ if (isMainModule(import.meta.url)) {
   const fail = (e) => { out({ ok: false, code: e?.code || 'UNEXPECTED', stage: e?.stage || null, problems: e?.problems || undefined }); process.exitCode = 1; };
   if (process.argv.includes('--check-config')) { const c = producerConfig(); out(c); process.exitCode = c.ok ? 0 : 1; }
   else if (process.argv.includes('--status')) status().then(out, fail);
+  else if (process.argv.includes('--probe-permissions')) probe().then((r) => { out(r); process.exitCode = r.ok ? 0 : 1; }, fail);
   else if (process.argv.includes('--run')) run().then((s) => { out(s); process.exitCode = s.ok ? 0 : 1; }, fail);
-  else { console.error('usage: --run [--label prod] [--prune] | --status | --check-config'); process.exitCode = 2; }
+  else { console.error('usage: --run [--label prod] [--prune] | --status | --check-config | --probe-permissions --role producer|verifier'); process.exitCode = 2; }
 }

@@ -6,8 +6,8 @@ import crypto from 'node:crypto';
 
 const xml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** @param {{ bucket: string, keys: Record<string, { write: boolean }> }} opts */
-export async function startFakeS3({ bucket, keys }) {
+/** @param {{ bucket: string, keys: Record<string, { write: boolean }>, lockSeconds?: number }} opts  lockSeconds: bucket lock (age) — DELETE refused before */
+export async function startFakeS3({ bucket, keys, lockSeconds = 0 }) {
   /** @type {Map<string, { body: Buffer, meta: Record<string, string>, t: Date }>} */
   const objects = new Map();
   const log = [];
@@ -23,6 +23,7 @@ export async function startFakeS3({ bucket, keys }) {
       log.push({ method: req.method, path: u.pathname, key: m?.[1] || null });
       const send = (status, body = '', headers = {}) => { res.writeHead(status, headers); res.end(body); };
       if (!who) return send(403, '<Error><Code>AccessDenied</Code></Error>', { 'content-type': 'application/xml' });
+      if (!parts.length && req.method === 'GET') return send(403, '<Error><Code>AccessDenied</Code></Error>', { 'content-type': 'application/xml' });   // ListBuckets: object tokens only
       if (parts[0] !== bucket) return send(404, '<Error><Code>NoSuchBucket</Code></Error>', { 'content-type': 'application/xml' });
       const key = parts.slice(1).join('/');
       if (!key && req.method === 'GET' && u.searchParams.get('list-type') === '2') {
@@ -42,6 +43,7 @@ export async function startFakeS3({ bucket, keys }) {
         return send(200, '', { etag: `"${crypto.createHash('md5').update(body).digest('hex')}"` });
       }
       const o = objects.get(key);
+      if (req.method === 'DELETE' && o && lockSeconds > 0 && Date.now() - o.t.getTime() < lockSeconds * 1000) return send(403, '<Error><Code>AccessDenied</Code><Message>object locked</Message></Error>', { 'content-type': 'application/xml' });
       if (req.method === 'DELETE') { objects.delete(key); return send(204); }
       if (!o) return send(404, '<Error><Code>NoSuchKey</Code></Error>', { 'content-type': 'application/xml' });
       const headers = { 'content-length': String(o.body.length), 'content-type': 'application/octet-stream', 'last-modified': o.t.toUTCString(), ...o.meta };
