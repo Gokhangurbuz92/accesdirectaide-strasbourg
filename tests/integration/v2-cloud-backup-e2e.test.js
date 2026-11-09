@@ -1,6 +1,6 @@
 // V2 C7 — end-to-end LAB proof of the cloud-only backup: producer job → (fake, loopback) S3 bucket → independent verifier → empty disposable database.
-// Gated: CLOUD_BACKUP_E2E_ADMIN_URL=postgresql://postgres@127.0.0.1:55434/postgres (superuser of a LAB cluster) and CLOUD_BACKUP_E2E_SOURCE_DB (a migrated
-// LAB database). PG_BIN must hold pg_dump / pg_restore of the cluster's major version. Synthetic rows only.
+// Database: CLOUD_BACKUP_E2E_ADMIN_URL + CLOUD_BACKUP_E2E_SOURCE_DB, or else the integration suite's own DATABASE_URL (a migrated LAB database whose role
+// may create the disposable restore databases — the native QA's run database). pg_dump / pg_restore on PATH (or PG_BIN). Synthetic rows only.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -12,8 +12,8 @@ import pg from 'pg';
 import { startFakeS3 } from '../helpers/fake-s3.mjs';
 import { generateBackupKeyPair } from '../../scripts/db-backup.mjs';
 
-const ADMIN = process.env.CLOUD_BACKUP_E2E_ADMIN_URL;
-const SOURCE_DB = process.env.CLOUD_BACKUP_E2E_SOURCE_DB;
+const ADMIN = process.env.CLOUD_BACKUP_E2E_ADMIN_URL || process.env.DATABASE_URL;
+const SOURCE_DB = process.env.CLOUD_BACKUP_E2E_SOURCE_DB || (process.env.DATABASE_URL ? decodeURIComponent(new URL(process.env.DATABASE_URL).pathname.slice(1)) : '');
 const run = ADMIN && SOURCE_DB ? describe : describe.skip;
 const ROOT = path.resolve(__dirname, '../..');
 const dbUrl = (name) => { const u = new URL(ADMIN); u.pathname = `/${name}`; return u.toString(); };
@@ -25,6 +25,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
   const ro = { id: 'AKLABREADER0000001', secret: crypto.randomBytes(20).toString('hex') };
   const sub = crypto.randomUUID();
   const restoreDbs = [];
+  let migrations = 0;   // the source's own history length (Production at 0042 would be 43)
 
   const producerEnv = (extra = {}) => ({ PATH: process.env.PATH, HOME: os.homedir(), TZ: 'UTC', PG_BIN: process.env.PG_BIN || '', DATABASE_URL: dbUrl(SOURCE_DB),
     BACKUP_PUBLIC_KEY: pubPem, BACKUP_S3_ENDPOINT: s3.endpoint, BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: rw.id,
@@ -57,6 +58,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     await new Promise((r) => server.listen(0, '127.0.0.1', r));
     hc = { url: `http://127.0.0.1:${server.address().port}`, close: () => new Promise((r) => server.close(r)) };
     await src(`INSERT INTO "CitizenUser" (id, email, "passwordHash", "updatedAt") VALUES ($1, $2, 'x', now())`, [sub, `synthetic-${sub}@example.invalid`]);
+    migrations = (await src('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations')).rows[0].n;
   }, 60000);
 
   afterAll(async () => {
@@ -105,12 +107,12 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     const second = await node('cloud-backup.mjs', ['--run'], producerEnv());
     expect(second.status, second.all).toBe(0);
     const db = await freshDb();
-    // the LAB source applied the whole journal (46, 0043/0044 included); Production at 0042 would be --expect-migrations 43
-    const wrong = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db), '--expect-migrations', '43'], verifierEnv(db));
+    // a wrong expected history length is a failure (Production at 0042 is --expect-migrations 43)
+    const wrong = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db), '--expect-migrations', String(migrations - 1)], verifierEnv(db));
     expect(wrong.status).toBe(1);
     expect(wrong.out.failures).toContain('MIGRATIONS_MISMATCH');
     const db2 = await freshDb();
-    const r = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', '46'], verifierEnv(db2));
+    const r = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', String(migrations)], verifierEnv(db2));
     expect(r.status, r.all).toBe(0);
     expect(r.out.ok).toBe(true);
     expect(r.out.checks.migrationsMatch).toBe(true);
@@ -124,7 +126,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     expect(await left(db2)).toBe(0);
     expect(await left(db)).toBe(0);
     // the same target can be used again next month
-    const again = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', '46'], verifierEnv(db2));
+    const again = await node('cloud-restore-verify.mjs', ['--key', firstDump, '--confirm-target', target(db2), '--expect-migrations', String(migrations)], verifierEnv(db2));
     expect(again.status, again.all).toBe(0);
     expect(secretsIn(r.all)).toEqual([]);
     expect(r.all).not.toContain(`synthetic-${sub}`);
