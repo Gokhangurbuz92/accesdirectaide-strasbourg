@@ -95,21 +95,25 @@ export function replayPlan(ledger, since = null) {
 
 /**
  * V2 (owner review 09/11/2026): the ledger travels with the backup, so it cannot name an erasure completed AFTER the newest backup. The erasure
- * tombstones (api/_services/erasure-tombstones.js, written to KV before each erasure) close that interval: they are merged here (deduplicated by request
- * id), keeping those at or after the backup time. @param {{ entries: any[] }} plan @param {any[]} tombstones @param {string | Date | null} since
+ * tombstones (api/_services/erasure-tombstones.js) close that interval. Only erasures whose tombstone says `done` are merged (deduplicated by request id,
+ * at or after the backup time); `aborted` ones never ran; `unconfirmed` ones (intent only) are listed and merged only with includeUnconfirmed — an erasure
+ * that may not have happened never deletes anyone by default. @param {{ entries: any[] }} plan @param {any[]} states tombstoneStates() output
+ * @param {string | Date | null} since @param {{ includeUnconfirmed?: boolean }} [opts]
  */
-export function mergeTombstones(plan, tombstones, since = null) {
+export function mergeTombstones(plan, states, since = null, { includeUnconfirmed = false } = {}) {
   const t = since ? new Date(since).getTime() : null;
   const seen = new Set(plan.entries.map((e) => String(e.requestId)));
-  const added = [];
-  for (const x of Array.isArray(tombstones) ? tombstones : []) {
+  const added = []; const unconfirmed = []; let aborted = 0;
+  for (const x of Array.isArray(states) ? states : []) {
     if (!x?.requestId || !x?.subjectId || seen.has(String(x.requestId))) continue;
     const at = new Date(x.completedAt).getTime();
     if (!Number.isFinite(at) || (t !== null && at < t)) continue;
-    seen.add(String(x.requestId));
-    added.push({ requestId: String(x.requestId), subjectId: String(x.subjectId), completedAt: new Date(at).toISOString(), domains: Array.isArray(x.domains) ? x.domains.map(String) : [] });
+    const entry = { requestId: String(x.requestId), subjectId: String(x.subjectId), completedAt: new Date(at).toISOString(), domains: Array.isArray(x.domains) ? x.domains.map(String) : [] };
+    if (x.state === 'aborted') { aborted += 1; continue; }
+    if (x.state !== 'done') { unconfirmed.push(entry); if (!includeUnconfirmed) continue; }
+    seen.add(entry.requestId); added.push(entry);
   }
-  return { ...plan, entries: [...plan.entries, ...added], tombstonesAdded: added.length };
+  return { ...plan, entries: [...plan.entries, ...added], tombstonesAdded: added.length, tombstonesUnconfirmed: unconfirmed.length, tombstonesAborted: aborted, unconfirmed };
 }
 
 /** the entries completed at or after the backup time (all when no time is given) @param {any} ledger @param {string | Date | null} [since] */
@@ -283,18 +287,30 @@ async function replayMain() {
   const execute = process.argv.includes('--execute');
   // V2: erasures completed after the newest backup are only in the tombstones (KV). A real replay (--execute) must say where they come from:
   // --kv (KV_REST_API_URL + KV_REST_API_TOKEN of Production, read only) or --tombstones-file <json>; --no-tombstones is an explicit, recorded choice.
-  let tombstones = null; let tombstoneSource = 'none';
+  let snap = null; let tombstoneSource = 'none';
+  const T = await import('../api/_services/erasure-tombstones.js');
   if (arg('tombstones-file')) {
-    const { parseTombstones } = await import('../api/_services/erasure-tombstones.js');
-    try { tombstones = parseTombstones(JSON.parse(fs.readFileSync(arg('tombstones-file'), 'utf8'))); tombstoneSource = 'file'; } catch { return die('--tombstones-file illisible.'); }
+    try {
+      const raw = JSON.parse(fs.readFileSync(arg('tombstones-file'), 'utf8'));
+      snap = Array.isArray(raw) ? { entries: T.parseTombstones(raw), last: null, length: raw.length, fileWithoutMarker: true }
+        : { entries: T.parseTombstones(raw.entries), last: raw.last ?? null, length: Number(raw.length ?? (raw.entries || []).length) };
+      tombstoneSource = 'file';
+    } catch { return die('--tombstones-file illisible.'); }
   } else if (process.argv.includes('--kv')) {
     if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) die('--kv : KV_REST_API_URL et KV_REST_API_TOKEN sont nécessaires.');
-    const { createErasureTombstones } = await import('../api/_services/erasure-tombstones.js');
-    try { tombstones = await createErasureTombstones({ requireRemote: true }).list(); tombstoneSource = 'kv'; } catch { return die('--kv : lecture des pierres tombales impossible (rien n’est rejoué).'); }
+    try { snap = await T.createErasureTombstones({ requireRemote: true }).snapshot(); tombstoneSource = 'kv'; } catch { return die('--kv : lecture des pierres tombales impossible (rien n’est rejoué).'); }
   } else if (execute && !process.argv.includes('--no-tombstones')) {
     die('--execute exige --kv ou --tombstones-file <json> : sans eux, une personne effacée après la dernière sauvegarde reviendrait sans bruit (ou --no-tombstones, choix explicite).');
   }
-  if (tombstones) plan = mergeTombstones(plan, tombstones, since);
+  let tombstoneProblems = [];
+  if (snap) {
+    tombstoneProblems = snap.fileWithoutMarker ? [] : T.tombstoneCoverage(snap, since);
+    plan = mergeTombstones(plan, T.tombstoneStates(snap.entries), since, { includeUnconfirmed: process.argv.includes('--include-unconfirmed') });
+    if (execute && tombstoneProblems.length) die(`pierres tombales incomplètes (${tombstoneProblems.join(', ')}) : rien n’est rejoué (TOMBSTONES_INCOMPLETE).`);
+    if (execute && plan.tombstonesUnconfirmed > 0 && !process.argv.includes('--include-unconfirmed') && !process.argv.includes('--skip-unconfirmed')) {
+      die(`${plan.tombstonesUnconfirmed} effacement(s) non confirmé(s) (intention sans fin) : vérifiez-les, puis --include-unconfirmed ou --skip-unconfirmed (UNCONFIRMED_TOMBSTONES ; rien n’est rejoué).`);
+    }
+  }
   const { entries } = plan;
   const pool = new pg.Pool({ connectionString: url, max: 2 });
   try {
@@ -302,7 +318,7 @@ async function replayMain() {
     const present = inspected.filter((e) => e.present).length;
     const prot = await inspectProtections(pool, plan.protections);
     const withdrawals = await inspectWithdrawals(pool, plan.withdrawals);
-    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, tombstoneSource, tombstonesAdded: plan.tombstonesAdded ?? 0, presentAgain: present, withdrawalsSince: withdrawals.length,
+    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, tombstoneSource, tombstonesAdded: plan.tombstonesAdded ?? 0, tombstonesUnconfirmed: plan.tombstonesUnconfirmed ?? 0, tombstonesAborted: plan.tombstonesAborted ?? 0, tombstoneProblems, presentAgain: present, withdrawalsSince: withdrawals.length,
       messagesPresentAgain: withdrawals.filter((w) => w.present).length, holdsMissing: prot.legalHolds.filter((h) => h.state === 'missing').length,
       holdsNotActive: prot.legalHolds.filter((h) => h.state === 'not_active').length, requestsMissing: prot.requests.filter((q) => q.state !== 'present').length };
     if (!execute) { console.log(JSON.stringify({ mode: 'dry-run', ...summary })); return; }

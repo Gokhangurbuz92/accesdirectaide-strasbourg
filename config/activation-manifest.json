@@ -65,6 +65,26 @@
       "nature": "config",
       "note": "V2: public key of the ADAB2 backups (unattended backup runner); never on Vercel"
     },
+    "EVIDENCE_S3_ENDPOINT": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: EU-jurisdiction R2 endpoint of the separate restore-evidence bucket (verifier job only); never on Vercel"
+    },
+    "EVIDENCE_S3_BUCKET": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: name of the restore-evidence bucket (must differ from the backups bucket); verifier job only"
+    },
+    "EVIDENCE_S3_ACCESS_KEY_ID": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: token scoped to the evidence bucket only (verifier job Secret Manager); never on Vercel"
+    },
+    "EVIDENCE_S3_SECRET_ACCESS_KEY": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: token scoped to the evidence bucket only (verifier job Secret Manager); never on Vercel"
+    },
     "BACKUP_SIGNING_KEY": {
       "class": "lab",
       "nature": "secret",

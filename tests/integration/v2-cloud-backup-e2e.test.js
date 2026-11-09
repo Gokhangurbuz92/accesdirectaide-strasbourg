@@ -22,7 +22,7 @@ const dbUrl = (name) => { const u = new URL(ADMIN); u.pathname = `/${name}`; ret
 const target = (name) => `${new URL(ADMIN).hostname}/${name}`;
 
 run('V2 C7 cloud backup (LAB, fake bucket)', () => {
-  let s3; let hc; const pings = []; let keyDir; let pubPem; const signing = generateSigningKeyPair(); const passphrase = crypto.randomBytes(24).toString('hex');
+  let s3; let evs3; let hc; const pings = []; let keyDir; let pubPem; const signing = generateSigningKeyPair(); const passphrase = crypto.randomBytes(24).toString('hex');
   const rw = { id: 'AKLABWRITER0000001', secret: crypto.randomBytes(20).toString('hex') };
   const ro = { id: 'AKLABREADER0000001', secret: crypto.randomBytes(20).toString('hex') };
   const sub = crypto.randomUUID();
@@ -34,7 +34,8 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     BACKUP_S3_SECRET_ACCESS_KEY: rw.secret, BACKUP_HEALTHCHECK_URL: `${hc.url}/producer`, BACKUP_SIGNING_KEY: signing.privatePem, ...extra });
   const verifierEnv = (db, extra = {}) => ({ PATH: process.env.PATH, HOME: os.homedir(), TZ: 'UTC', PG_BIN: process.env.PG_BIN || '', TARGET_DATABASE_URL: dbUrl(db),
     BACKUP_PRIVATE_KEY_FILE: path.join(keyDir, 'backup-private.pem'), BACKUP_PRIVATE_KEY_PASSPHRASE: passphrase, BACKUP_S3_ENDPOINT: s3.endpoint,
-    BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: ro.id, BACKUP_S3_SECRET_ACCESS_KEY: ro.secret, RESTORE_HEALTHCHECK_URL: `${hc.url}/verifier`, BACKUP_SIGNING_PUBLIC_KEY: signing.publicPem, ...extra });
+    BACKUP_S3_BUCKET: 'ada-backups-lab', BACKUP_S3_ACCESS_KEY_ID: ro.id, BACKUP_S3_SECRET_ACCESS_KEY: ro.secret, RESTORE_HEALTHCHECK_URL: `${hc.url}/verifier`, BACKUP_SIGNING_PUBLIC_KEY: signing.publicPem,
+    EVIDENCE_S3_ENDPOINT: evs3.endpoint, EVIDENCE_S3_BUCKET: 'ada-restore-evidence-lab', EVIDENCE_S3_ACCESS_KEY_ID: 'AKLABEVIDENCE00001', EVIDENCE_S3_SECRET_ACCESS_KEY: 'lab-evidence-secret', ...extra });
   // async on purpose: the fake bucket and the healthcheck server live in THIS process (a sync spawn would block them)
   const node = (script, args, env) => new Promise((resolve) => {
     const c = spawn(process.execPath, [path.join(ROOT, 'scripts', script), ...args], { env, cwd: ROOT });
@@ -56,6 +57,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     fs.writeFileSync(path.join(keyDir, 'backup-private.pem'), pair.privatePem, { mode: 0o600 });
     pubPem = pair.publicPem;
     s3 = await startFakeS3({ bucket: 'ada-backups-lab', keys: { [rw.id]: { write: true }, [ro.id]: { write: false } } });
+    evs3 = await startFakeS3({ bucket: 'ada-restore-evidence-lab', keys: { AKLABEVIDENCE00001: { write: true } }, lockSeconds: 3600 });   // the separate evidence bucket
     const server = http.createServer((req, res) => { let b = ''; req.on('data', (c) => { b += c; }); req.on('end', () => { pings.push({ path: req.url, body: b }); res.end('OK'); }); });
     await new Promise((r) => server.listen(0, '127.0.0.1', r));
     hc = { url: `http://127.0.0.1:${server.address().port}`, close: () => new Promise((r) => server.close(r)) };
@@ -67,7 +69,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     await src('DELETE FROM "DSRRequest" WHERE "subjectId" = $1', [sub]).catch(() => {});
     await src('DELETE FROM "CitizenUser" WHERE id = $1', [sub]).catch(() => {});
     for (const n of restoreDbs) await admin(`DROP DATABASE IF EXISTS ${n} WITH (FORCE)`).catch(() => {});
-    await s3?.close(); await hc?.close();
+    await s3?.close(); await evs3?.close(); await hc?.close();
     fs.rmSync(keyDir, { recursive: true, force: true });
   });
 
@@ -137,6 +139,13 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     // durable record: the Healthchecks ping body IS the evidence (the job container is ephemeral); the checker accepts it and refuses the failed run
     const durable = JSON.parse(vp[3].body);
     expect(durable).toEqual(r.out);
+    // the automatic archive (evidence bucket): the same record, written by the job itself; the checker accepts it as stored
+    expect(r.out.evidenceStored).toMatch(/^evidence\/ada_restore_evidence_\d{8}T\d{9}Z_[0-9a-f]{8}_ok\.json$/);
+    const stored = JSON.parse(evs3.objects.get(r.out.evidenceStored).body.toString('utf8'));
+    expect({ ...stored, evidenceStored: r.out.evidenceStored }).toEqual(r.out);
+    expect(checkEvidence(stored)).toMatchObject({ accepted: true, summary: { cryptographicallyVerified: ['dumpSha256', 'dumpSignature', 'ledgerSignature', 'gcmTag'] } });
+    expect([...evs3.objects.keys()].filter((k) => k.endsWith('_fail.json')).length).toBeGreaterThanOrEqual(1);   // the failed run is archived too
+    expect(evs3.objects.size).toBe(3);   // three runs, three records: none overwritten
     expect(checkEvidence(durable)).toMatchObject({ accepted: true, problems: [], summary: { wiped: true, erasedPeoplePresentAgain: 1 } });
     expect(durable.dumpSha256).toBe(crypto.createHash('sha256').update(s3.objects.get(firstDump).body).digest('hex'));
     const failed = checkEvidence(JSON.parse(vp[1].body));

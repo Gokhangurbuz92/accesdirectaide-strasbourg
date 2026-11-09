@@ -15,6 +15,7 @@
  * Data minimisation: the restored copy is WIPED at the end, success or failure (schemas public and drizzle dropped), unless --keep-restored (a real
  * recovery, typed by an operator). The next monthly run therefore starts again from an empty target.
  */
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -22,7 +23,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { sha256OfFile } from './db-backup.mjs';
-import { bucketConfig, bucketPlan, getFile, ledgerForDump, listObjects, objectTime, ping, pingUrl, s3Client, signingPublicKey, verifyObjectSignature } from './lib/backup-bucket.mjs';
+import { bucketConfig, bucketPlan, getFile, ledgerForDump, listObjects, objectTime, ping, pingUrl, putFile, s3Client, signingPublicKey, verifyObjectSignature } from './lib/backup-bucket.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -51,6 +52,47 @@ export async function wipeTarget(url) {
   } finally { await c.end(); }
 }
 
+/**
+ * Which evidence fields are proven how (final data-integrity review, 09/11/2026). `verified`: checked cryptographically by THIS job (digest recomputed,
+ * producer signatures, AES-GCM tag at decryption); `measured`: observed by this job on the restored copy; `fromSignedName`: read from the object name,
+ * which the producer's signature covers; `notProven`: what no check here establishes (the signature proves origin, not that the dump is complete).
+ */
+export const ATTESTATION = Object.freeze({
+  verified: Object.freeze(['dumpSha256', 'dumpSignature', 'ledgerSignature', 'gcmTag']),
+  measured: Object.freeze(['encryptedBytes', 'restoredTables', 'checks.coreTablesMissing', 'checks.migrationRows', 'erasureReplay', 'wiped', 'seconds']),
+  fromSignedName: Object.freeze(['backupTakenAt', 'backupAgeHours']),
+  notProven: Object.freeze(['dumpCompleteness']),
+});
+
+/**
+ * Durable evidence, automatic and independent of any personal computer: an OPTIONAL second bucket (EVIDENCE_S3_*, same EU-jurisdiction rules, its own
+ * token scoped to that bucket only) receiving one small JSON per run (counts, codes, digests, object names — no personal data). The Healthchecks log
+ * keeps only the last 100 events per check: it is a notification channel, not the archive. When configured, a run whose evidence cannot be stored
+ * FAILS (EVIDENCE_NOT_STORED → Healthchecks /fail). The backups bucket is refused here: the verifier's backup token must stay read-only.
+ * @param {Record<string, string | undefined>} env
+ */
+export function evidenceStoreConfig(env = process.env) {
+  const names = ['EVIDENCE_S3_ENDPOINT', 'EVIDENCE_S3_BUCKET', 'EVIDENCE_S3_ACCESS_KEY_ID', 'EVIDENCE_S3_SECRET_ACCESS_KEY'];
+  if (!names.some((k) => String(env[k] || '').trim())) return null;
+  const c = bucketConfig({ BACKUP_S3_ENDPOINT: env.EVIDENCE_S3_ENDPOINT, BACKUP_S3_BUCKET: env.EVIDENCE_S3_BUCKET, BACKUP_S3_ACCESS_KEY_ID: env.EVIDENCE_S3_ACCESS_KEY_ID,
+    BACKUP_S3_SECRET_ACCESS_KEY: env.EVIDENCE_S3_SECRET_ACCESS_KEY, BACKUP_S3_PREFIX: 'evidence/' });
+  if (!c.ok) return { ...c, reason: `EVIDENCE_${c.reason}`, ...(c.missing ? { missing: c.missing.map((m) => m.replace('BACKUP_S3_', 'EVIDENCE_S3_')) } : {}) };
+  if (String(env.EVIDENCE_S3_BUCKET).trim() === String(env.BACKUP_S3_BUCKET || '').trim()) return { ok: false, reason: 'EVIDENCE_BUCKET_SAME_AS_BACKUPS' };
+  return c;
+}
+
+async function storeEvidence(/** @type {any} */ ecfg, /** @type {any} */ ev) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-evidence-')); fs.chmodSync(dir, 0o700);
+  try {
+    // milliseconds + random suffix: two runs never share a key (a later run must never overwrite an earlier record)
+    const stamp = new Date().toISOString().replace(/[-:.]/g, '');
+    const key = `${ecfg.prefix}ada_restore_evidence_${stamp}_${crypto.randomBytes(4).toString('hex')}_${ev.ok ? 'ok' : 'fail'}.json`;
+    const file = path.join(dir, 'e.json'); fs.writeFileSync(file, `${JSON.stringify(ev, null, 2)}\n`, { mode: 0o600 });
+    await putFile(await s3Client(ecfg), ecfg, file, key, await sha256OfFile(file));
+    return key;
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
 export async function verifyRestore() {
   const t0 = Date.now();
   const cfg = bucketConfig();
@@ -61,6 +103,8 @@ export async function verifyRestore() {
   let sigKey; try { sigKey = signingPublicKey(process.env.BACKUP_SIGNING_PUBLIC_KEY); } catch { throw Object.assign(new Error('CONFIG'), { code: 'CONFIG', problems: ['BACKUP_SIGNING_PUBLIC_KEY_INVALID'] }); }
   const target = process.env.TARGET_DATABASE_URL || '';
   if (!target) throw Object.assign(new Error('TARGET_MISSING'), { code: 'TARGET_MISSING' });
+  const ecfg = evidenceStoreConfig();
+  if (ecfg && !ecfg.ok) throw Object.assign(new Error('CONFIG'), { code: 'CONFIG', problems: [ecfg.reason, ...(ecfg.missing || [])] });
   const hc = pingUrl(process.env.RESTORE_HEALTHCHECK_URL) || null;
   await ping(hc, '/start');
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-restore-verify-'));
@@ -109,12 +153,16 @@ export async function verifyRestore() {
     const evidence = { kind: 'ada-restore-verification', ok: failures.length === 0, failures, verifiedAt: new Date().toISOString(), dump: dumpKey, backupTakenAt: restore.backupTakenAt,
       backupAgeHours: plan.ageHours, encryptedBytes: fs.statSync(dumpFile).size, dumpSha256: digest, restoredTables: restore.tables, checks,
       erasureReplay: replay ? { mode: replay.mode, ledgerEntries: replay.ledgerEntries, presentAgain: replay.presentAgain, holdsMissing: replay.holdsMissing } : null,
-      seconds: Math.round((Date.now() - t0) / 1000) };
+      seconds: Math.round((Date.now() - t0) / 1000), attestation: ATTESTATION };
     if (!process.argv.includes('--keep-restored')) {
       evidence.wiped = (await wipeTarget(target)) === 0;
       restoredSomething = false;
       if (!evidence.wiped) { evidence.ok = false; evidence.failures.push('WIPE_FAILED'); }
     } else evidence.wiped = false;
+    if (ecfg) {
+      try { evidence.evidenceStored = await storeEvidence(ecfg, evidence); }
+      catch { evidence.evidenceStored = null; evidence.ok = false; evidence.failures.push('EVIDENCE_NOT_STORED'); }
+    }
     await ping(hc, evidence.ok ? '' : '/fail', JSON.stringify(evidence));
     return evidence;
   } catch (e) {
@@ -123,7 +171,9 @@ export async function verifyRestore() {
     // failure path: wipe BEFORE reporting, so the durable record (Healthchecks log) states whether a copy was left behind
     let wiped = null;
     if (restoredSomething && !process.argv.includes('--keep-restored')) { wiped = (await wipeTarget(target).catch(() => -1)) === 0; restoredSomething = !wiped; }
-    await ping(hc, '/fail', JSON.stringify({ kind: 'ada-restore-verification', ok: false, code, stage: err?.stage || null, wiped, verifiedAt: new Date().toISOString() }));
+    const failure = { kind: 'ada-restore-verification', ok: false, code, stage: err?.stage || null, wiped, verifiedAt: new Date().toISOString() };
+    if (ecfg?.ok) { try { failure.evidenceStored = await storeEvidence(ecfg, failure); } catch { failure.evidenceStored = null; } }
+    await ping(hc, '/fail', JSON.stringify(failure));
     throw Object.assign(new Error(code), { code, stage: err?.stage || null, problems: err?.problems, wiped });
   } finally {
     fs.rmSync(work, { recursive: true, force: true });

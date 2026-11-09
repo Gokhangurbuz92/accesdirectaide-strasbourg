@@ -943,14 +943,20 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
 
             // V2 (owner review 09/11/2026): the tombstone is written BEFORE anything is erased, outside the database, so a restore of a backup taken
             // before this moment can replay it (api/_services/erasure-tombstones.js). If it cannot be written, nothing is erased (request stays open).
-            await tombstones.record({ requestId, subjectId, domains: ERASABLE_DOMAINS });
-            await this.updateDsrRequestStatus(requestId, 'EXECUTING');
-
+            const tomb = { requestId, subjectId, domains: ERASABLE_DOMAINS };
+            await tombstones.record(tomb);
+            try { await this.updateDsrRequestStatus(requestId, 'EXECUTING'); } catch (error) { await tombstones.abort(tomb); throw error; }
+            let committed = false;
             try {
                 const summary = await this.deleteDataDomains(subjectId, ERASABLE_DOMAINS, { requestId });
+                committed = true;
+                // after the commit: mark the tombstone done (only « done » erasures are replayed after a restore); a failure here is reported, never
+                // undone — the restore will list this erasure as unconfirmed instead of silently skipping or wrongly replaying it
+                summary.tombstoneDone = await tombstones.complete(tomb);
                 await this.updateDsrRequestStatus(requestId, 'COMPLETED');
                 return summary;
             } catch (error) {
+                if (!committed) await tombstones.abort(tomb);
                 // R47: an unreadable hold table refuses before anything is deleted (the transaction is rolled back): not « partially completed »
                 if (error?.code !== 'LEGAL_HOLD_ACTIVE' && error?.code !== 'LEGAL_HOLD_CHECK_FAILED') {
                     await this.updateDsrRequestStatus(requestId, 'PARTIALLY_COMPLETED').catch(() => null);

@@ -18,7 +18,7 @@ import { objectTime } from './lib/backup-bucket.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 const TOP = new Set(['kind', 'ok', 'failures', 'verifiedAt', 'dump', 'backupTakenAt', 'backupAgeHours', 'encryptedBytes', 'dumpSha256', 'restoredTables', 'checks',
-  'erasureReplay', 'seconds', 'wiped', 'code', 'stage', 'problems']);
+  'erasureReplay', 'seconds', 'wiped', 'code', 'stage', 'problems', 'attestation', 'evidenceStored']);
 const CHECKS = new Set(['sidecar', 'objectDigest', 'signatures', 'coreTablesMissing', 'migrationRows', 'expectedMigrations', 'journalEntries', 'migrationsMatch', 'migrationsPlausible', 'ledger']);
 const REPLAY = new Set(['mode', 'ledgerEntries', 'presentAgain', 'holdsMissing']);
 const CODE = /^[A-Z][A-Z0-9_]{0,63}$/;
@@ -45,6 +45,12 @@ export function checkEvidence(ev) {
   if (c.sidecar !== true) problems.push('SIDECAR_NOT_CHECKED');
   if (c.objectDigest !== true) problems.push('OBJECT_DIGEST_NOT_CHECKED');
   if (c.signatures !== true) problems.push('SIGNATURES_NOT_CHECKED');
+  // what the record says was verified cryptographically, versus measured or merely read from the signed name (cloud-restore-verify.mjs ATTESTATION)
+  const att = ev.attestation;
+  const verified = Array.isArray(att?.verified) ? att.verified : [];
+  if (!['dumpSha256', 'dumpSignature', 'ledgerSignature', 'gcmTag'].every((x) => verified.includes(x))) problems.push('ATTESTATION_MISSING');
+  if (att && typeof att === 'object') for (const k of Object.keys(att)) if (!['verified', 'measured', 'fromSignedName', 'notProven'].includes(k)) problems.push(`UNKNOWN_FIELD:attestation.${k.slice(0, 40)}`);
+  if (ev.evidenceStored !== undefined && ev.evidenceStored !== null && !/^evidence\/ada_restore_evidence_\d{8}T\d{9}Z_[0-9a-f]{8}_(ok|fail)\.json$/.test(String(ev.evidenceStored))) problems.push('EVIDENCE_KEY_FORMAT');
   if (!Array.isArray(c.coreTablesMissing) || c.coreTablesMissing.length) problems.push('CORE_TABLES');
   if (c.migrationsMatch !== true || !isCount(c.expectedMigrations) || c.migrationRows !== c.expectedMigrations) problems.push('MIGRATIONS_NOT_MATCHED');
   if (c.ledger !== true) problems.push('LEDGER_MISSING');
@@ -52,7 +58,9 @@ export function checkEvidence(ev) {
   if (!r || r.mode !== 'dry-run' || !isCount(r.ledgerEntries) || !isCount(r.presentAgain) || !isCount(r.holdsMissing)) problems.push('ERASURE_REPLAY');
   const summary = { verifiedAt: ev.verifiedAt ?? null, dump: ev.dump ?? null, dumpSha256: ev.dumpSha256 ?? null, encryptedBytes: ev.encryptedBytes ?? null,
     restoredTables: ev.restoredTables ?? null, migrations: c.migrationRows ?? null, expectedMigrations: c.expectedMigrations ?? null,
-    erasedPeoplePresentAgain: r?.presentAgain ?? null, legalHoldsMissing: r?.holdsMissing ?? null, wiped: ev.wiped ?? null, seconds: ev.seconds ?? null };
+    erasedPeoplePresentAgain: r?.presentAgain ?? null, legalHoldsMissing: r?.holdsMissing ?? null, wiped: ev.wiped ?? null, seconds: ev.seconds ?? null,
+    cryptographicallyVerified: verified, measured: Array.isArray(att?.measured) ? att.measured : [], fromSignedName: Array.isArray(att?.fromSignedName) ? att.fromSignedName : [],
+    notProven: Array.isArray(att?.notProven) ? att.notProven : [], storedAt: ev.evidenceStored ?? null };
   return { accepted: problems.length === 0, problems, summary };
 }
 
