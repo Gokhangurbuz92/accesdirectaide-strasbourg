@@ -249,11 +249,12 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         'Upstash, Inc. : compteurs de sécurité et limitation du nombre de requêtes, à Francfort.',
         "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).",
         'Microsoft : boîte de réception de l\'adresse de contact.',
+        "Scaleway SAS (France) et Cloudflare, Inc. : copies de sauvegarde de la base de données. La tâche de sauvegarde s'exécute chez Scaleway, à Paris, et chiffre la copie avant tout envoi ; Cloudflare la stocke dans l'Union européenne sans pouvoir la lire.",
       ], paras: [
         "Chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service.",
       ] },
       { id: 'transfers', title: '7. Transferts hors de l\'Union européenne', paras: [
-        "Ces prestataires appartiennent à des groupes établis aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision 2021/914) et, pour Vercel, Upstash et Mailjet (Sinch), le cadre de protection des données UE–États-Unis, selon leurs propres conditions.",
+        "Ces prestataires appartiennent à des groupes établis aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision 2021/914) et, pour Vercel, Upstash et Mailjet (Sinch), le cadre de protection des données UE–États-Unis, selon leurs propres conditions. Scaleway SAS fait exception : c'est une société française, qui exécute la tâche de sauvegarde à Paris.",
       ] },
       { id: 'rights', title: '8. Vos droits', items: [
         "Accès, rectification, effacement et limitation de vos données.",
