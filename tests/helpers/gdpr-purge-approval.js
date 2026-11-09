@@ -12,8 +12,9 @@ import { RETENTION_POLICY, POLICY_STATUS_APPROVED, POLICY_STATUS_PROPOSED, choic
 export const PROPOSAL_VERSION = 'r45-proposal-2-2026-11-05';
 /** a copy of the policy as it was BEFORE the controller's approval (tests of the not-approved path) */
 export const proposedTestPolicy = () => {
-  const { approvedPolicyVersion: _a, approvedChoices: _c, approvedSteps: _s, ...rest } = /** @type {any} */ (RETENTION_POLICY);
-  return { ...rest, version: PROPOSAL_VERSION, status: POLICY_STATUS_PROPOSED };
+  const copy = /** @type {any} */ ({ ...RETENTION_POLICY });
+  for (const k of ['approvedPolicyVersion', 'approvedChoices', 'approvedSteps']) delete copy[k];
+  return { ...copy, version: PROPOSAL_VERSION, status: POLICY_STATUS_PROPOSED };
 };
 
 /** the per-step approval record a test copy carries for every step (synthetic) */
