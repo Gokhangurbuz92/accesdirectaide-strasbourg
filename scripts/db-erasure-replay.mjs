@@ -28,7 +28,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import pg from 'pg';
-import { backupKey, backupTimeOf, encryptStreamToFile, decryptFileToFile } from './db-backup.mjs';
+import { backupKey, backupPublicKey, backupTimeOf, decryptionKeyFor, encryptStreamToFile, decryptFileToFile } from './db-backup.mjs';
 import { isMainModule } from './lib/is-main.mjs';
 
 export const LEDGER_KIND = 'ada-erasure-ledger';
@@ -99,12 +99,12 @@ export function entriesSince(ledger, since = null) {
   return ledger.entries.filter((e) => new Date(e.completedAt).getTime() >= t);
 }
 
-/** @param {any} ledger @param {string} file @param {Buffer} key */
+/** @param {any} ledger @param {string} file @param {Buffer | import('node:crypto').KeyObject} key ADAB1 key, or (V2 cloud backups) the RSA public key → ADAB2 */
 export async function writeLedgerFile(ledger, file, key) {
   await encryptStreamToFile(Readable.from([Buffer.from(JSON.stringify(ledger), 'utf8')]), file, key);
   fs.chmodSync(file, 0o600);
 }
-/** @param {string} file @param {Buffer} key */
+/** @param {string} file @param {Buffer | import('node:crypto').KeyObject} key */
 export async function readLedgerFile(file, key) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-ledger-'));
   try {
@@ -234,7 +234,8 @@ const targetName = (url) => { try { const u = new URL(url); return `${u.hostname
 
 async function exportMain() {
   const url = process.env.DATABASE_URL || die('DATABASE_URL absente.');
-  const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
+  // V2 cloud backups: with BACKUP_PUBLIC_KEY the ledger is ADAB2, like the dump — the backup worker can write it but never read it back
+  const key = (() => { try { return process.env.BACKUP_PUBLIC_KEY ? backupPublicKey() : backupKey(); } catch (e) { return die(e.message); } })();
   const outDir = arg('out') || die('indiquez --out <dossier>.');
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const c = new pg.Client({ connectionString: url }); await c.connect();
@@ -249,8 +250,10 @@ async function replayMain() {
   const url = process.env.TARGET_DATABASE_URL || die('TARGET_DATABASE_URL absente (la cible est toujours explicite).');
   const want = targetName(url);
   if (String(arg('confirm-target')).toLowerCase() !== want) die(`indiquez --confirm-target ${want} (rien n’est rejoué).`);
-  const key = (() => { try { return backupKey(); } catch (e) { return die(e.message); } })();
-  const ledger = await readLedgerFile(arg('ledger') || die('indiquez --ledger <fichier>.'), key).catch(() => die('registre illisible (clé différente ou fichier modifié).'));
+  const ledgerFile = arg('ledger') || die('indiquez --ledger <fichier>.');
+  if (!fs.existsSync(ledgerFile)) die('registre introuvable.');
+  const key = (() => { try { return decryptionKeyFor(ledgerFile); } catch (e) { return die(e.message); } })();   // ADAB1 key or (ADAB2) the private key
+  const ledger = await readLedgerFile(ledgerFile, key).catch(() => die('registre illisible (clé différente ou fichier modifié).'));
   let since = arg('since') || null;
   if (arg('since-backup')) { since = backupTimeOf(arg('since-backup')); if (!since) die('--since-backup : le nom du fichier ne porte pas la date de la sauvegarde (ada_<label>_AAAAMMJJTHHMMSSZ.dump.enc).'); }
   let plan;

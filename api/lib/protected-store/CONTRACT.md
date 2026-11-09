@@ -10,6 +10,7 @@ Status: the LAB driver exists; **no certified host is contracted**. Nothing in t
 |---|---|---|
 | empty / `lab` | existing object storage (`api/lib/storage.js`: local filesystem in the LAB, S3-compatible bucket) | development / test only |
 | `certified` | HTTP client of § 3 at `ADA_PROTECTED_STORE_ENDPOINT` | anywhere its configuration is valid |
+| `certified-s3` | S3-compatible API of an HDS host (§ 3b), `ADA_PROTECTED_STORE_S3_*` | anywhere its configuration is valid |
 | anything else | — | nowhere (refused) |
 
 In **production and preview** (`VERCEL_ENV`), every operation is refused unless `ADA_HDS_CERTIFIED_HOSTING` holds a valid, unexpired
@@ -37,6 +38,15 @@ Base: `ADA_PROTECTED_STORE_ENDPOINT` (https). Authentication: `Authorization: Be
 
 The client retries network errors, `429` and `5xx` up to 3 attempts with linear backoff (PUT is safe to retry: same id); timeout per request
 `ADA_PROTECTED_STORE_TIMEOUT_MS` (default 8 s). A digest mismatch on PUT or GET is an error (integrity), never silently accepted.
+
+## 3b. Alternative: the host's S3-compatible API (V7 preparation, 09/11/2026)
+
+Most HDS object-storage offers expose an S3 API, not § 3. `certified-s3.js` keeps the same guarantees: random UUID object keys
+(`objects/<uuid>`, ADA key `phs2/<uuid>`), SHA-256 stored as object metadata and checked after PUT (HEAD) and on every GET, idempotent delete,
+https only, a credential limited to one bucket. Variables: `ADA_PROTECTED_STORE_S3_ENDPOINT`, `_BUCKET`, `_REGION`, `_ACCESS_KEY_ID`,
+`_SECRET_ACCESS_KEY`. Tests: `tests/unit/v7-protected-store-s3.test.js` (loopback fake bucket). **A certificate of the object storage alone does
+not make the processing HDS-compliant**: the application code that handles the documents in clear and the dossier metadata must also be inside a
+certified perimeter (CSP R1111-9, activities 3–5) — see `CONTROL/master/HDS_KARSILASTIRMA_TR.md`.
 
 ## 4. What the host must provide outside this interface (activation phase, not engineering)
 

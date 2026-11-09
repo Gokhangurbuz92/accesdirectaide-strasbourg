@@ -75,6 +75,56 @@
       "nature": "secret",
       "note": "V2: typed hidden at restore time; never stored, never on Vercel"
     },
+    "BACKUP_S3_ENDPOINT": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel: R2 EU endpoint"
+    },
+    "BACKUP_S3_BUCKET": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel"
+    },
+    "BACKUP_S3_REGION": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel (default auto)"
+    },
+    "BACKUP_S3_PREFIX": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel (default prod/)"
+    },
+    "BACKUP_S3_ACCESS_KEY_ID": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel: bucket-scoped token"
+    },
+    "BACKUP_S3_SECRET_ACCESS_KEY": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel: bucket-scoped token"
+    },
+    "BACKUP_HEALTHCHECK_URL": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel: dead-man switch ping URL"
+    },
+    "BACKUP_MAX_AGE_HOURS": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: cloud backup job only (ops/cloud-backup), never on Vercel (default 36)"
+    },
+    "RESTORE_HEALTHCHECK_URL": {
+      "class": "lab",
+      "nature": "secret",
+      "note": "V2 C7: restore verifier job only, never on Vercel"
+    },
+    "RESTORE_EXPECT_MIGRATIONS": {
+      "class": "lab",
+      "nature": "config",
+      "note": "V2 C7: restore verifier job only (43 at 0042)"
+    },
     "JWT_SECRET": {
       "class": "required",
       "nature": "secret",
@@ -1476,7 +1526,7 @@
       "scope": [
         "production"
       ],
-      "format": "^(lab|certified)?$",
+      "format": "^(lab|certified|certified-s3)?$",
       "note": "R46: storage driver of the HDS-relevant blobs (api/lib/protected-store/CONTRACT.md). « lab » is refused in production / preview; « certified » needs ADA_PROTECTED_STORE_ENDPOINT / _TOKEN and, there, a valid ADA_HDS_CERTIFIED_HOSTING"
     },
     "ADA_PROTECTED_STORE_ENDPOINT": {
@@ -1497,6 +1547,47 @@
       ],
       "provider": "hds-host",
       "account": true
+    },
+    "ADA_PROTECTED_STORE_S3_ENDPOINT": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true,
+      "format": "^https://"
+    },
+    "ADA_PROTECTED_STORE_S3_BUCKET": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true
+    },
+    "ADA_PROTECTED_STORE_S3_ACCESS_KEY_ID": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true
+    },
+    "ADA_PROTECTED_STORE_S3_SECRET_ACCESS_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true
+    },
+    "ADA_PROTECTED_STORE_S3_REGION": {
+      "class": "optional",
+      "nature": "config"
     },
     "ADA_PROTECTED_STORE_TIMEOUT_MS": {
       "class": "optional",

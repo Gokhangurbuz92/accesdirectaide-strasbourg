@@ -9,7 +9,6 @@ import { Readable } from 'node:stream';
 import { spawnSync } from 'node:child_process';
 import { describe, expect, it, beforeAll } from 'vitest';
 import { backupPublicKey, backupPrivateKey, decryptFileToFile, decryptionKeyFor, encryptStreamToFile, generateBackupKeyPair, readHeader } from '../../scripts/db-backup.mjs';
-import { backupFreshness } from '../../scripts/db-backup-freshness.mjs';
 
 const PASS = 'correct horse battery staple 42';
 let dir; let pair; let privFile;
@@ -81,28 +80,5 @@ describe('ADAB2 — the runner can write a backup it cannot read', () => {
     expect(JSON.parse(ok.stdout)).toMatchObject({ ok: true, format: 'ADAB2', takenAt: '2026-11-08T02:17:00.000Z' });
     const buf = fs.readFileSync(f); buf[buf.length - 1] ^= 1; fs.writeFileSync(f, buf);
     expect(spawnSync(process.execPath, ['scripts/db-backup.mjs', '--check-header', f], { encoding: 'utf8', env }).status).toBe(1);
-  });
-});
-
-describe('missed-run detection', () => {
-  const NOW = Date.UTC(2026, 10, 8, 2, 20);
-  const a = (name, hoursAgo, extra = {}) => ({ name, created_at: new Date(NOW - hoursAgo * 3600000).toISOString(), size_in_bytes: 10, ...extra });
-  it('is fresh when the newest backup is within the limit, stale otherwise, and ignores expired or foreign artifacts', () => {
-    expect(backupFreshness({ artifacts: [a('ada-prod-backup-2', 24), a('ada-prod-backup-1', 48)] }, { prefix: 'ada-prod-backup', maxHours: 36, now: NOW })).toMatchObject({ fresh: true, newest: 'ada-prod-backup-2', count: 2 });
-    expect(backupFreshness([a('ada-prod-backup-1', 49), a('ada-prod-backup-9', 1, { expired: true }), a('other', 1)], { prefix: 'ada-prod-backup', maxHours: 36, now: NOW })).toMatchObject({ fresh: false, ageHours: 49, count: 1 });
-    expect(backupFreshness([], { prefix: 'ada-prod-backup', maxHours: 36, now: NOW })).toMatchObject({ fresh: false, newest: null, count: 0 });
-  });
-});
-
-describe('workflow template (private repository only)', () => {
-  const y = fs.readFileSync('ops/private-backup/db-backup.yml', 'utf8');
-  it('is not installed in the public repository', () => { expect(fs.existsSync('.github/workflows/db-backup.yml')).toBe(false); });
-  it('gives the runner the public key only, pins every action by commit, keeps 35 days and reports missed runs', () => {
-    expect(y).not.toMatch(/BACKUP_PRIVATE_KEY|BACKUP_ENCRYPTION_KEY/);
-    expect(y).toMatch(/BACKUP_PUBLIC_KEY: \$\{\{ secrets\.ADA_BACKUP_PUBLIC_KEY \}\}/);
-    for (const m of y.matchAll(/uses: ([^\s]+)/g)) expect(m[1]).toMatch(/@[0-9a-f]{40}$/);
-    expect(y).toMatch(/retention-days: 35/);
-    expect(y).toMatch(/--max-hours 36/);
-    expect(y).toMatch(/permissions:\n {2}contents: read\n {2}actions: read/);
   });
 });

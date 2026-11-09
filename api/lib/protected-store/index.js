@@ -5,6 +5,7 @@
  * Contract: api/lib/protected-store/CONTRACT.md (what a future certified health-data host must implement). Two drivers, chosen by ADA_PROTECTED_STORE:
  *   lab        (default)  the existing object storage of api/lib/storage.js (local filesystem in the LAB, S3-compatible bucket otherwise). NOT an HDS host.
  *   certified             api/lib/protected-store/certified-host.js — the HTTP contract of CONTRACT.md, at ADA_PROTECTED_STORE_ENDPOINT.
+ *   certified-s3          api/lib/protected-store/certified-s3.js — an HDS host's S3-compatible API (V7 preparation, CONTRACT.md § 3b).
  *
  * Fail-closed selection (resolveProtectedStore):
  *   - in production / preview (VERCEL_ENV) NOTHING is served unless the HDS attestation token (ADA_HDS_CERTIFIED_HOSTING, api/_utils/capabilities.js) is valid;
@@ -20,8 +21,15 @@ import crypto from 'node:crypto';
 import { hdsAttestation } from '../../_utils/capabilities.js';
 import { logger } from '../logger.js';
 import { certifiedHostConfig, createCertifiedHostStore, CERTIFIED_KEY_PREFIX } from './certified-host.js';
+import { certifiedS3Config, createCertifiedS3Store, CERTIFIED_S3_KEY_PREFIX } from './certified-s3.js';
 
-export const PROTECTED_STORE_DRIVERS = Object.freeze(['lab', 'certified']);
+export const PROTECTED_STORE_DRIVERS = Object.freeze(['lab', 'certified', 'certified-s3']);
+/** the driver that wrote a key (a key always goes back to it): phs1/ = HTTP contract, phs2/ = S3-compatible certified host, else the lab store */
+export const driverOfKey = (/** @type {string} */ key) => (String(key).startsWith(CERTIFIED_KEY_PREFIX) ? 'certified' : String(key).startsWith(CERTIFIED_S3_KEY_PREFIX) ? 'certified-s3' : 'lab');
+/** @param {string} driver @param {Record<string, string | undefined>} envVars */
+const certifiedConfigOf = (driver, envVars) => (driver === 'certified-s3' ? certifiedS3Config(envVars) : certifiedHostConfig(envVars));
+/** @param {string} driver @param {Record<string, string | undefined>} envVars @param {{ fetchImpl?: typeof fetch, s3ClientFactory?: (cfg: any) => Promise<any> }} opts */
+const certifiedStoreOf = (driver, envVars, opts) => (driver === 'certified-s3' ? createCertifiedS3Store(envVars, { clientFactory: opts.s3ClientFactory }) : createCertifiedHostStore(envVars, { fetchImpl: opts.fetchImpl }));
 export const PROTECTED_STORE_REFUSED = 'PROTECTED_STORE_REFUSED';
 export const PROTECTED_STORE_REFUSED_MESSAGE = 'Le stockage protégé de ces documents n’est pas disponible sur ce service : aucun document n’a été lu ni enregistré.';
 
@@ -69,21 +77,21 @@ export function protectedStoreState(envVars = process.env, now = new Date()) {
     if (deployed) return { ok: false, driver, reason: 'LAB_DRIVER_NOT_ALLOWED_IN_DEPLOYED_ENVIRONMENT', hdsCertified: false };
     return { ok: true, driver, reason: null, hdsCertified: false };
   }
-  const cfg = certifiedHostConfig(envVars);
+  const cfg = certifiedConfigOf(driver, envVars);
   if (!cfg.ok) return { ok: false, driver, reason: cfg.reason, hdsCertified: false };
   return { ok: true, driver, reason: null, hdsCertified: hds.valid };
 }
 
 /**
  * @param {Record<string, string | undefined>} [envVars]
- * @param {{ now?: Date, fetchImpl?: typeof fetch }} [opts]
+ * @param {{ now?: Date, fetchImpl?: typeof fetch, s3ClientFactory?: (cfg: any) => Promise<any> }} [opts]
  * @returns {Promise<Resolution>}
  */
 export async function resolveProtectedStore(envVars = process.env, opts = {}) {
   const state = protectedStoreState(envVars, opts.now);
   if (!state.ok) return { ok: false, driver: state.driver, reason: /** @type {string} */ (state.reason) };
   if (state.driver === 'lab') return { ok: true, driver: 'lab', hdsCertified: false, store: await labStore() };
-  return { ok: true, driver: 'certified', hdsCertified: state.hdsCertified, store: createCertifiedHostStore(envVars, { fetchImpl: opts.fetchImpl }) };
+  return { ok: true, driver: state.driver, hdsCertified: state.hdsCertified, store: certifiedStoreOf(state.driver, envVars, opts) };
 }
 
 /** @param {string} key */
@@ -93,20 +101,20 @@ const keyRef = (key) => crypto.createHash('sha256').update(String(key)).digest('
  * The store the services use. Same shape as api/lib/storage.js (upload / download / delete), so it replaces it where the blobs are HDS-relevant.
  * The driver is resolved on EVERY call (configuration changes and expired tokens take effect at once). A key written by the certified driver is
  * prefixed (CERTIFIED_KEY_PREFIX) and is only ever read back through it; an unprefixed key belongs to the lab driver.
- * @param {{ env?: Record<string, string | undefined>, fetchImpl?: typeof fetch, now?: () => Date }} [deps]
+ * @param {{ env?: Record<string, string | undefined>, fetchImpl?: typeof fetch, s3ClientFactory?: (cfg: any) => Promise<any>, now?: () => Date }} [deps]
  * @returns {BlobStore & { state: () => ReturnType<typeof protectedStoreState> }}
  */
 export function createProtectedStore(deps = {}) {
   const envOf = () => deps.env || process.env;
   /** @param {string} op @param {string | null} key */
   const resolveFor = async (op, key) => {
-    const r = await resolveProtectedStore(envOf(), { fetchImpl: deps.fetchImpl, now: deps.now ? deps.now() : undefined });
+    const r = await resolveProtectedStore(envOf(), { fetchImpl: deps.fetchImpl, s3ClientFactory: deps.s3ClientFactory, now: deps.now ? deps.now() : undefined });
     if (!r.ok) {
       logger.warn(`[ProtectedStore] ${op} refused (${r.driver}: ${r.reason})`);
       throw new ProtectedStoreRefusedError(r.reason);
     }
     // a key always goes back to the driver that wrote it: a certified key is never handed to the lab store and vice versa
-    if (key !== null && String(key).startsWith(CERTIFIED_KEY_PREFIX) !== (r.driver === 'certified')) {
+    if (key !== null && driverOfKey(key) !== r.driver) {
       logger.warn(`[ProtectedStore] ${op} refused: key ${keyRef(key)} belongs to another driver than ${r.driver}`);
       throw new ProtectedStoreRefusedError('KEY_OF_ANOTHER_DRIVER');
     }
@@ -131,14 +139,14 @@ export function createProtectedStore(deps = {}) {
      * an unprefixed key through the object storage it was written to, a certified key through the certified client when it is configured.
      */
     async delete(key) {
-      const certified = String(key).startsWith(CERTIFIED_KEY_PREFIX);
-      if (certified && !certifiedHostConfig(envOf()).ok) {
-        logger.warn(`[ProtectedStore] delete refused: key ${keyRef(key)} needs the certified host configuration`);
+      const owner = driverOfKey(key);
+      if (owner !== 'lab' && !certifiedConfigOf(owner, envOf()).ok) {
+        logger.warn(`[ProtectedStore] delete refused: key ${keyRef(key)} needs the ${owner} configuration`);
         throw new ProtectedStoreRefusedError('CERTIFIED_HOST_NOT_CONFIGURED_FOR_ERASURE');
       }
-      const store = certified ? createCertifiedHostStore(envOf(), { fetchImpl: deps.fetchImpl }) : await labStore();
+      const store = owner === 'lab' ? await labStore() : certifiedStoreOf(owner, envOf(), { fetchImpl: deps.fetchImpl, s3ClientFactory: deps.s3ClientFactory });
       await store.delete(key);
-      logger.info(`[ProtectedStore] delete ${certified ? 'certified' : 'lab'} ${keyRef(key)}`);
+      logger.info(`[ProtectedStore] delete ${owner} ${keyRef(key)}`);
     },
   };
 }
