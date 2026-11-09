@@ -117,3 +117,17 @@ describe('V2 C7 provenance: Ed25519 signature over object name + SHA-256 (owner 
     expect(JSON.stringify(producerConfig({ ...producerEnv, BACKUP_SIGNING_KEY: rsa }))).not.toContain('PRIVATE KEY');
   });
 });
+
+describe('V2 C7 keys from single-line environment variables (Scaleway: multi-line variables are not injected properly)', () => {
+  it('base64 PEM, escaped « \\n » PEM and a real PEM give the same keys; anything else is refused', () => {
+    const b64 = (pem) => Buffer.from(pem, 'utf8').toString('base64');
+    const esc = (pem) => pem.replace(/\n/g, '\\n');
+    for (const form of [(x) => x, b64, esc]) {
+      expect(signingPrivateKey(form(SIGN.privatePem)).asymmetricKeyType).toBe('ed25519');
+      expect(signingPublicKey(form(SIGN.publicPem)).asymmetricKeyType).toBe('ed25519');
+      expect(producerConfig({ ...producerEnv, BACKUP_PUBLIC_KEY: form(pub), BACKUP_SIGNING_KEY: form(SIGN.privatePem) }).problems).toEqual([]);
+    }
+    expect(b64(SIGN.privatePem)).not.toMatch(/\n/);
+    expect(producerConfig({ ...producerEnv, BACKUP_SIGNING_KEY: Buffer.from('not a key').toString('base64') }).problems).toContain('BACKUP_SIGNING_KEY_INVALID');
+  });
+});

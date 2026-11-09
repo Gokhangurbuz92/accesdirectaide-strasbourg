@@ -67,6 +67,10 @@ Verifier job (separate Scaleway project): `TARGET_DATABASE_URL` (empty disposabl
 the four `BACKUP_S3_*` with the **read-only** token, `BACKUP_SIGNING_PUBLIC_KEY`, `RESTORE_HEALTHCHECK_URL`, the four `EVIDENCE_S3_*` (evidence bucket, its own token). Command:
 `node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> --expect-migrations 43` (43 = history rows of a database at 0042; 44 after 0045).
 
+**Keys in variables: one line.** Scaleway: secrets spread over several lines « will not be injected properly » as variables (it recommends base64).
+`BACKUP_PUBLIC_KEY`, `BACKUP_SIGNING_KEY` and `BACKUP_SIGNING_PUBLIC_KEY` are therefore stored as the **base64 of the PEM** (`base64 -i key.pem | tr -d '\n'`);
+the private backup key stays a mounted file (`BACKUP_PRIVATE_KEY_FILE`). The code also accepts a PEM with escaped `\n` (LAB).
+
 `node scripts/cloud-backup.mjs --check-config` lists missing or invalid variables by name (never a value).
 
 **Startup (stock image, no build, no multiline environment variable).** Scaleway's docs (GitHub `scaleway/docs-content`, read 2026-11-09): variables or

@@ -159,17 +159,29 @@ export async function putFile(client, cfg, file, key, sha256, sig = null) {
  * holds only the public half and refuses an unsigned or wrongly signed dump or ledger BEFORE anything is restored; binding the name stops an old real
  * backup from being copied under a newer name.
  */
+/**
+ * A PEM key from an environment variable. Scaleway: secrets spread over several lines « will not be injected properly » as variables; it recommends
+ * base64. Accepted: single-line base64 of the PEM (recommended), PEM with escaped « \\n », or a real multi-line PEM (LAB). @param {string | undefined} v
+ */
+export function pemFromEnv(v) {
+  const raw = String(v || '').trim();
+  if (!raw) return '';
+  if (raw.includes('-----BEGIN')) return raw.replace(/\\n/g, '\n');
+  if (/^[A-Za-z0-9+/=\s]+$/.test(raw)) { const d = Buffer.from(raw.replace(/\s+/g, ''), 'base64').toString('utf8'); if (d.includes('-----BEGIN')) return d; }
+  return raw;
+}
+
 export const SIGNATURE_CONTEXT = 'ada-backup-object-v1';
 const signingMessage = (key, sha256) => Buffer.from(`${SIGNATURE_CONTEXT}\n${key}\n${sha256}`, 'utf8');
 /** @param {string | undefined} pem @returns {crypto.KeyObject} an Ed25519 private key */
 export function signingPrivateKey(pem) {
-  const k = crypto.createPrivateKey(String(pem || '').replace(/\\n/g, '\n'));
+  const k = crypto.createPrivateKey(pemFromEnv(pem));
   if (k.asymmetricKeyType !== 'ed25519') throw new Error('BACKUP_SIGNING_KEY must be an Ed25519 private key');
   return k;
 }
 /** @param {string | undefined} pem @returns {crypto.KeyObject} an Ed25519 public key */
 export function signingPublicKey(pem) {
-  const k = crypto.createPublicKey(String(pem || '').replace(/\\n/g, '\n'));
+  const k = crypto.createPublicKey(pemFromEnv(pem));
   if (k.asymmetricKeyType !== 'ed25519') throw new Error('BACKUP_SIGNING_PUBLIC_KEY must be an Ed25519 public key');
   return k;
 }

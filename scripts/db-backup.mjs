@@ -31,6 +31,7 @@ import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../api/_services/retention-policy.js';
 import { isMainModule } from './lib/is-main.mjs';
+import { pemFromEnv } from './lib/backup-bucket.mjs';
 
 export const MAGIC = Buffer.from('ADAB1');
 export const MAGIC2 = Buffer.from('ADAB2');
@@ -68,7 +69,7 @@ export function backupKey(hex = process.env.BACKUP_ENCRYPTION_KEY) {
  * @returns {crypto.KeyObject}
  */
 export function backupPublicKey(pem = process.env.BACKUP_PUBLIC_KEY) {
-  let k; try { k = crypto.createPublicKey(String(pem || '').replace(/\\n/g, '\n')); } catch { throw new Error('BACKUP_PUBLIC_KEY is not a PEM public key'); }
+  let k; try { k = crypto.createPublicKey(pemFromEnv(pem)); } catch { throw new Error('BACKUP_PUBLIC_KEY is not a PEM public key'); }
   if (k.asymmetricKeyType !== 'rsa' || (k.asymmetricKeyDetails?.modulusLength || 0) < 3072) throw new Error('BACKUP_PUBLIC_KEY must be an RSA key of at least 3072 bits');
   return k;
 }
