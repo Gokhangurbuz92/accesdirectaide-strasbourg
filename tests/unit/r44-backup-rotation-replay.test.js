@@ -31,7 +31,7 @@ describe('rotationPlan (E15)', () => {
     expect(() => rotationPlan([], { keepDays: 0, keepWeekly: 4 })).toThrow();
     expect(() => rotationPlan([], { keepDays: 30, keepWeekly: -1 })).toThrow();
   });
-  it('the CLI: --list reports the PROPOSED policy; --prune refuses without an explicit --keep-days while the policy is not approved, and prunes with it', () => {
+  it('the CLI: --list reports the APPROVED policy (phase 1, 09/11/2026); --prune uses its 35 days without an explicit --keep-days', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-rot-'));
     try {
       const old = path.join(dir, 'ada_t_old.dump.enc'); fs.writeFileSync(old, 'x'); fs.writeFileSync(`${old}.sha256`, 'x');
@@ -39,11 +39,9 @@ describe('rotationPlan (E15)', () => {
       fs.writeFileSync(path.join(dir, 'ada_t_new.dump.enc'), 'x');
       const run = (...a) => spawnSync(process.execPath, ['scripts/db-backup.mjs', '--list', dir, ...a], { encoding: 'utf8', env: { PATH: process.env.PATH } });
       const list = JSON.parse(run().stdout);
-      expect(list).toMatchObject({ total: 2, keepDays: 35, keepWeekly: 0, pruned: 0, policy: { status: 'PROPOSED — NOT APPROVED' } });
-      const refused = run('--prune');
-      expect(refused.status).toBe(1);
-      expect(fs.existsSync(old)).toBe(true);
-      const pruned = JSON.parse(run('--prune', '--keep-days', '30', '--keep-weekly', '0').stdout);
+      expect(list).toMatchObject({ total: 2, keepDays: 35, keepWeekly: 0, pruned: 0, policy: { status: 'APPROVED' } });
+      expect(fs.existsSync(old)).toBe(true);   // --list never deletes
+      const pruned = JSON.parse(run('--prune').stdout);
       expect(pruned.pruned).toBe(1);
       expect(fs.existsSync(old) || fs.existsSync(`${old}.sha256`)).toBe(false);
       expect(fs.existsSync(path.join(dir, 'ada_t_new.dump.enc'))).toBe(true);

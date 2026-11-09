@@ -63,10 +63,12 @@ describe.skipIf(!hasDatabase)('D4 V2 — expired-token cleanup steps 6 and 6b (r
     await db.execute(sql`DELETE FROM "AdminUser" WHERE id = ${ADMIN.id}`);
   });
 
-  it('the production policy (not approved) changes nothing, even with the execution variables set', async () => {
+  it('the production policy (approved at phase 1, no step record yet) changes nothing, even with the execution variables set', async () => {
+    const { RETENTION_POLICY } = await import('../../api/_services/retention-policy.js');
     const before = [await ids('AuthToken'), await ids('EmailChangeRequest')];
     const r = await mod.runGdprPurge({ env: approvalEnv(STEPS) });
-    expect([r.body.skipped, r.body.reason, r.body.mode]).toEqual([true, 'POLICY_NOT_APPROVED', 'dry-run']);
+    expect([r.body.skipped, r.body.reason, r.body.mode]).toEqual([true, 'POLICY_VERSION_NOT_PINNED', 'dry-run']);
+    expect(RETENTION_POLICY.version).not.toBe(approvalEnv(STEPS).GDPR_PURGE_POLICY_VERSION);   // pinned to its own version, no step record: tests/unit/r44-gdpr-purge-policy.test.js
     expect([await ids('AuthToken'), await ids('EmailChangeRequest')]).toEqual(before);
   });
 

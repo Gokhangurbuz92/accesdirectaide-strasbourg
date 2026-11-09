@@ -19,7 +19,7 @@ import { RETENTION_POLICY, executionGate, ownerChoiceOf, policyDays, policySumma
 
 /**
  * Per-table RGPD retention constants (read by scripts/gdpr-suite.mjs for REGISTRE_RGPD.json, and by tests).
- * R44: the purge itself takes its durations from the VERSIONED policy (api/_services/retention-policy.js, status PROPOSED — NOT APPROVED); these values are
+ * R44: the purge itself takes its durations from the VERSIONED policy (api/_services/retention-policy.js, APPROVED at V2 phase 1 — each step still needs its own record); these values are
  * the same numbers (a unit test keeps them equal). R44 / E13: no value here is a legal obligation — none was identified (R43 dossier § 3).
  */
 export const RETENTION = {

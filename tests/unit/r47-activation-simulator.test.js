@@ -34,7 +34,7 @@ describe('R47 activation simulator — proof as Production evaluates it', () => 
   });
   it('closed by design stays closed in the final configuration: jobs surface, minors, unreviewed service, gdpr-purge (policy in code), legacy jobs', () => {
     expect(rep.summary.closedByDesign).toEqual(expect.arrayContaining(['surface.jobs', 'capability.citizen.minor_accounts', 'booking.unreviewed_service', 'job.gdpr-purge', 'job.ingest-demarches']));
-    expect(rep.results.find((r) => r.id === 'job.gdpr-purge').final.code).toBe('POLICY_NOT_APPROVED');
+    expect(rep.results.find((r) => r.id === 'job.gdpr-purge').final.code).toBe('STEP_NOT_APPROVED_IN_POLICY');   // policy approved (phase 1), no step record yet
     expect(rep.results.find((r) => r.id === 'booking.unreviewed_service').final.code).toBe('SERVICE_SENSITIVITY_UNREVIEWED');
   });
   it('gdpr-purge: with an approved policy record the three variables are each necessary', () => {

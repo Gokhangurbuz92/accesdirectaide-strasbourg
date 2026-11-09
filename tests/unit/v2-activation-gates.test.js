@@ -50,7 +50,9 @@ describe('V2 — atomic activation of accounts and Mailjet (release preflight)',
     expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: 'other' }).detail).toMatch(/POLICY_VERSION_NOT_PINNED/);
     expect(why({ ...V2, GDPR_PURGE_APPROVED_STEPS: 'accountTokensDeleted' }).detail).toMatch(/does not list unverifiedAccountsDeleted/);
     expect(why(V2, approvedTestPolicy({ a7: 365, steps: [] })).detail).toMatch(/STEP_NOT_APPROVED_IN_POLICY/);
-    expect(why(V2, RETENTION_POLICY).detail).toMatch(/POLICY_NOT_APPROVED/);   // the real policy today: PROPOSED — so V2 cannot open accounts yet
+    // the real policy since phase 1: APPROVED, pinned by the deployment, but step 6c has no approval record yet (it comes after phase 4) → accounts stay closed
+    expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, RETENTION_POLICY).detail).toMatch(/STEP_NOT_APPROVED_IN_POLICY/);
+    expect(evaluateReleasePreflight({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, { legalText: LEGAL }).find((r) => r.id === 'retention.unverified_accounts_7d').status).toBe('FAIL');
     // admin only (accounts closed): the rule does not apply
     expect(evaluateReleasePreflight({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin' }, { legalText: LEGAL }).some((r) => r.id === 'retention.unverified_accounts_7d')).toBe(false);
   });

@@ -27,7 +27,7 @@ import { SURFACES, NOT_OPENABLE, SCHEDULED_JOBS, isAllowedInPublicBeta, isSmsInb
 import { CAPABILITIES, capabilityState, hdsAttestation } from '../api/_utils/capabilities.js';
 import { bookingDecision, SENSITIVE_BOOKING_APPROVAL_VALUE, SENSITIVE_BOOKING_CONSENT_VERSION } from '../api/lib/service-sensitivity.js';
 import { protectedStoreState } from '../api/lib/protected-store/index.js';
-import { RETENTION_POLICY, executionGate, POLICY_STATUS_APPROVED } from '../api/_services/retention-policy.js';
+import { RETENTION_POLICY, executionGate, POLICY_STATUS_APPROVED, stepApprovalProblem } from '../api/_services/retention-policy.js';
 import { loadGuardianPolicy } from '../api/_services/guardianship.js';
 import { isBetaRestrictedPath } from '../src/lib/publicBeta.js';
 import { LEGAL_DRAFT_DOCUMENTS, draftVisibility } from '../src/config/legal-drafts.js';
@@ -276,12 +276,16 @@ export function buildItems() {
       other.push({ type: 'code_record', what: `RETENTION_POLICY statut « ${RETENTION_POLICY.status} » : l’approbation (status APPROVED, approvedPolicyVersion, choix A7 dans la version, approvedSteps avec date de revue du dry-run et sauvegarde vérifiée) s’enregistre DANS LE CODE — aucune variable ne l’ouvre`, ref: 'api/_services/retention-policy.js' });
     }
     items.push({ id: `job.${job}`, kind: 'job', label: `Tâche planifiée ${job} (catégorie ${cat})`, features: JOB_FEATURES[job] || [], env, requires: JOB_REQUIRES[job] || [], other,
-      finalExpected: cat === 'D' || job === 'gdpr-purge' ? 'closed' : 'open', note: cat === 'D' ? 'LEGACY_CLOSED : remplacée par la veille, jamais ouvrable' : job === 'gdpr-purge' ? 'reste en DRY RUN tant que la politique n’est pas approuvée dans le code' : undefined,
+      finalExpected: cat === 'D' || job === 'gdpr-purge' ? 'closed' : 'open', note: cat === 'D' ? 'LEGACY_CLOSED : remplacée par la veille, jamais ouvrable' : job === 'gdpr-purge' ? 'politique approuvée (phase 1) ; aucune étape n’exécute tant que son propre enregistrement d’approbation n’est pas dans le code (6c : après la phase 4)' : undefined,
       rollback: `retirer « ${job} » de ADA_BETA_OPEN_JOBS`,
       probe: (e) => {
         if (!isAllowedInPublicBeta('POST', `cron/${job}`, e)) return no(cat === 'D' ? 'LEGACY_CLOSED' : cat === 'C' && String(e.ADA_BETA_OPEN_JOBS || '').includes(job) ? 'AWAITING_APPROVAL' : 'JOB_CLOSED');
         if (String(e.CRON_SECRET || '').length < 24) return no('CRON_SECRET_MISSING');
-        if (job === 'gdpr-purge') { const g = executionGate(RETENTION_POLICY, e); return g.execute ? ok : no(g.reason); }
+        if (job === 'gdpr-purge') {
+          const g = executionGate(RETENTION_POLICY, e); if (!g.execute) return no(g.reason);
+          // V2 phase 1: the policy is approved, but a step executes only with its OWN approval record in the policy (none yet)
+          return [...g.approvedSteps].some((id) => !stepApprovalProblem(RETENTION_POLICY, { id })) ? ok : no('STEP_NOT_APPROVED_IN_POLICY');
+        }
         return ok;
       } });
   }
@@ -470,7 +474,7 @@ export function toMarkdown(rep, live = []) {
     const codes = [...new Set(r.removals.map((x) => x.code))].join(', ') || (r.final.code || '—');
     L.push(`| \`${r.id}\`${r.note ? `<br>_${cell(r.note)}_` : ''} | ${r.features.join(' ') || '—'} | ${cell(vars)} | ${r.requires.map((x) => `\`${x}\``).join(' ') || '—'} | ${cell(other)} | ${cell(codes)} | ${cell(r.rollback)} |`);
   }
-  L.push('', '## 2. Purge RGPD (gdpr-purge)', '', `Avec la politique livrée (statut « ${RETENTION_POLICY.status} ») la tâche reste en DRY RUN quelles que soient les variables. Avec un enregistrement d’approbation synthétique : exécution = ${rep.gdprPurgeWithApprovedPolicyRecord.execute} ; retrait d’une variable → ${rep.gdprPurgeWithApprovedPolicyRecord.minusOne.map((m) => `${m.removed} : ${m.reason}`).join(' ; ')}.`, '');
+  L.push('', '## 2. Purge RGPD (gdpr-purge)', '', `Avec la politique livrée (statut « ${RETENTION_POLICY.status} », aucune étape approuvée dans le code) aucune étape n’exécute, quelles que soient les variables. Avec un enregistrement d’approbation synthétique : exécution = ${rep.gdprPurgeWithApprovedPolicyRecord.execute} ; retrait d’une variable → ${rep.gdprPurgeWithApprovedPolicyRecord.minusOne.map((m) => `${m.removed} : ${m.reason}`).join(' ; ')}.`, '');
   L.push('## 3. Contrôle de mise en production sur la configuration finale (hors PASS)', '');
   for (const c of rep.releasePreflightNonPass) L.push(`- ${c.status} \`${c.id}\` — ${cell(c.detail)}`);
   L.push('', '## 4. Les 38 lignes « prêtes, rien en attente » de R46 : verrous de surface encore fermés en Production', '', '| Ligne | Fermée aujourd’hui | Verrous |', '|---|---|---|');

@@ -2,7 +2,8 @@
  * R44 / E16 — the VERSIONED retention policy that drives cron/gdpr-purge (and the backup rotation of scripts/db-backup.mjs).
  *
  * Every duration below is the PROPOSAL of the R43 dossier (STRASBOURG_FULL_PRODUCT_PLAN/CONTROL/r43/R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1, each one
- * « [PROPOSITION — À VALIDER RT] »). None is a decision: the policy status is PROPOSED — NOT APPROVED and `approvedPolicyVersion` is deliberately ABSENT.
+ * « [PROPOSITION — À VALIDER RT] »). V2 phase 1 (owner, 09/11/2026): the controller approved this proposal with A7 = 365 (see RETENTION_POLICY below).
+ * Before that, none was a decision: the policy status was PROPOSED — NOT APPROVED and `approvedPolicyVersion` was deliberately ABSENT.
  * Engineering never approves it. The controller's decision is recorded by a reviewed commit that (1) adjusts the durations if needed, (2) sets
  * `status: 'APPROVED'` and (3) sets `approvedPolicyVersion` to the exact `version` approved. Until then no purge step can delete or anonymise anything.
  *
@@ -51,10 +52,14 @@ const PROOF = 'preuve (proposition, à justifier par écrit)';
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
   id: 'ada-retention-policy',
-  version: 'r45-proposal-2-2026-11-05',
-  status: POLICY_STATUS_PROPOSED,
-  // approvedPolicyVersion: ABSENT on purpose (set only by the controller's decision, see above)
-  // approvedChoices: ABSENT on purpose — e.g. { A7: 365 } or { A7: 730 }, with the version renamed « …-a7-365d » / « …-a7-730d » (controller's decision)
+  // V2 phase 1 (owner, 09/11/2026): the controller APPROVED the retention policy directions of the review package (candidate e227df1, MANIFEST.json:
+  // D4 V2 with its 09/11 addenda) — proposal r45-proposal-2-2026-11-05, durations unchanged, owner choice A7 = 365 days. This is the approval of the
+  // policy directions, NOT the final AIPD signature. No purge step executes from this alone: each step still needs its own approval record below
+  // (approvedSteps), GDPR_PURGE_ENABLED, GDPR_PURGE_POLICY_VERSION = this version, and GDPR_PURGE_APPROVED_STEPS (executionGate).
+  version: 'r45-proposal-2-2026-11-05-a7-365d',
+  status: POLICY_STATUS_APPROVED,
+  approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d',
+  approvedChoices: { A7: 365 },
   // approvedSteps: ABSENT on purpose — { [stepId]: { approvedOn: 'YYYY-MM-DD', dryRunReviewedOn: 'YYYY-MM-DD', backupVerified: '<backup name or evidence ref>',
   //   sharedControllerBasis?: '<written agreement with the structure>' } }, one entry per step the controller approved (D4: step by step)
   source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable)',

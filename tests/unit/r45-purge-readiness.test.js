@@ -22,7 +22,7 @@ import {
 } from '../../api/_services/retention-policy.js';
 import { PURGE_STEPS, OPEN_DSR_STATUSES, hasFollowUpSql, runGdprPurge } from '../../api/_handlers/cron/gdpr-purge.js';
 import { OPEN_REQUEST_STATUSES } from '../../scripts/db-erasure-replay.mjs';
-import { approvedTestPolicy, approvalEnv, executableStepIds, testPolicyVersion, TEST_STEP_APPROVAL } from '../helpers/gdpr-purge-approval.js';
+import { approvedTestPolicy, approvalEnv, executableStepIds, testPolicyVersion, TEST_STEP_APPROVAL, proposedTestPolicy } from '../helpers/gdpr-purge-approval.js';
 
 const dialect = new PgDialect();
 const NOW = new Date('2026-11-05T12:00:00Z');
@@ -46,31 +46,36 @@ const writes = (db) => db.calls.filter((c) => c.op !== 'select');
 const A7_STEPS = ['anonymisedAppointmentsCount', 'appointmentsStructureRecordAnonymised'];
 
 describe('A7 — an owner choice that blocks approval until it is made', () => {
-  it('the production policy has no A7 value: policyDays refuses (OWNER_CHOICE_REQUIRED), the choice is listed as open', () => {
-    expect(RETENTION_POLICY.durations.APPOINTMENT_CONFIRMED_DAYS).toMatchObject({ days: null, ownerChoice: 'A7', options: [365, 730] });
-    expect('approvedChoices' in RETENTION_POLICY).toBe(false);
-    expect(missingOwnerChoices(RETENTION_POLICY)).toEqual(['A7']);
-    let err; try { policyDays(RETENTION_POLICY, 'APPOINTMENT_CONFIRMED_DAYS'); } catch (e) { err = e; }
+  it('the proposal had no A7 value: policyDays refused (OWNER_CHOICE_REQUIRED); the owner chose 365 (phase 1, 09/11/2026), named in the production version', () => {
+    expect(RETENTION_POLICY.approvedChoices).toEqual({ A7: 365 });
+    expect(missingOwnerChoices(RETENTION_POLICY)).toEqual([]);
+    expect(policyDays(RETENTION_POLICY, 'APPOINTMENT_CONFIRMED_DAYS')).toBe(365);
+    const RETENTION_PROPOSAL = proposedTestPolicy();
+    expect(RETENTION_PROPOSAL.durations.APPOINTMENT_CONFIRMED_DAYS).toMatchObject({ days: null, ownerChoice: 'A7', options: [365, 730] });
+    expect('approvedChoices' in RETENTION_PROPOSAL).toBe(false);
+    expect(missingOwnerChoices(RETENTION_PROPOSAL)).toEqual(['A7']);
+    let err; try { policyDays(RETENTION_PROPOSAL, 'APPOINTMENT_CONFIRMED_DAYS'); } catch (e) { err = e; }
     expect(err?.code).toBe(OWNER_CHOICE_REQUIRED);
-    expect(policyDays(RETENTION_POLICY, 'APPOINTMENT_CONFIRMED_DAYS', { option: 365 })).toBe(365);
-    expect(() => policyDays(RETENTION_POLICY, 'APPOINTMENT_CONFIRMED_DAYS', { option: 500 })).toThrow();
+    expect(policyDays(RETENTION_PROPOSAL, 'APPOINTMENT_CONFIRMED_DAYS', { option: 365 })).toBe(365);
+    expect(() => policyDays(RETENTION_PROPOSAL, 'APPOINTMENT_CONFIRMED_DAYS', { option: 500 })).toThrow();
   });
   it('approved status + pinned version is NOT enough: missing choice, a value outside the options, or a version that does not name the choice → OWNER_CHOICE_MISSING', () => {
-    const base = { ...RETENTION_POLICY, status: POLICY_STATUS_APPROVED, approvedPolicyVersion: RETENTION_POLICY.version };
-    const env = { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version, GDPR_PURGE_APPROVED_STEPS: 'deletedTokensCount' };
+    const RETENTION_PROPOSAL = proposedTestPolicy();
+    const base = { ...RETENTION_PROPOSAL, status: POLICY_STATUS_APPROVED, approvedPolicyVersion: RETENTION_PROPOSAL.version };
+    const env = { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_POLICY_VERSION: RETENTION_PROPOSAL.version, GDPR_PURGE_APPROVED_STEPS: 'deletedTokensCount' };
     expect(isPolicyApproved(base)).toBe(false);
     expect(executionGate(base, env).reason).toBe('OWNER_CHOICE_MISSING');
     expect(executionGate({ ...base, approvedChoices: { A7: 500 } }, env).reason).toBe('OWNER_CHOICE_MISSING');
     expect(executionGate({ ...base, approvedChoices: { A7: 365 } }, env).reason).toBe('OWNER_CHOICE_MISSING');   // version does not say a7-365d
-    const v = `${RETENTION_POLICY.version}-${choiceTag('A7', 365)}`;
+    const v = `${RETENTION_PROPOSAL.version}-${choiceTag('A7', 365)}`;
     const named = { ...base, version: v, approvedPolicyVersion: v, approvedChoices: { A7: 365 } };
     expect(isPolicyApproved(named)).toBe(true);
     expect(executionGate(named, { ...env, GDPR_PURGE_POLICY_VERSION: v })).toMatchObject({ execute: true });
     expect(isPolicyApproved({ ...named, approvedChoices: { A7: 730 } })).toBe(false);   // the tag names 365: changing the choice needs a new version
   });
-  it('the production policy dry run counts the A7 steps once per option and never gives them a single « days »', async () => {
+  it('the proposal (A7 open) dry run counts the A7 steps once per option and never gives them a single « days »', async () => {
     const db = recDb();
-    const { body } = await runGdprPurge({ database: db, env: { GDPR_PURGE_ENABLED: 'true' }, now: NOW, logger: log });
+    const { body } = await runGdprPurge({ database: db, policy: proposedTestPolicy(), env: { GDPR_PURGE_ENABLED: 'true' }, now: NOW, logger: log });
     expect(body.reason).toBe('POLICY_NOT_APPROVED');
     expect(body.owner_choice_required_steps).toEqual(A7_STEPS);
     for (const id of A7_STEPS) expect(body.steps.find((l) => l.id === id)).toMatchObject({ decision: 'owner_choice_required', days: null, count: null, countsByOption: { 365: 3, 730: 3 }, ownerChoice: { id: 'A7', made: false } });
@@ -124,7 +129,7 @@ describe('per-step approval recorded in the policy (D4: dry run read, backup ver
     const p = approvedTestPolicy();
     const env = approvalEnv(['deletedTokensCount']);
     expect(executionGate(p, { ...env, GDPR_PURGE_ENABLED: '' }).reason).toBe('GDPR_PURGE_DISABLED');
-    expect(executionGate(RETENTION_POLICY, { ...env, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }).reason).toBe('POLICY_NOT_APPROVED');
+    expect(executionGate(proposedTestPolicy(), { ...env, GDPR_PURGE_POLICY_VERSION: proposedTestPolicy().version }).reason).toBe('POLICY_NOT_APPROVED');
     expect(executionGate(p, { ...env, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }).reason).toBe('POLICY_VERSION_NOT_PINNED');
     expect(executionGate(p, { ...env, GDPR_PURGE_APPROVED_STEPS: '' }).reason).toBe('NO_APPROVED_STEPS');
     expect(executionGate(p, env).execute).toBe(true);

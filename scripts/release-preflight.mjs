@@ -119,8 +119,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
         : !gate.approvedSteps.has('unverifiedAccountsDeleted') ? 'GDPR_PURGE_APPROVED_STEPS does not list unverifiedAccountsDeleted'
           : stepApprovalProblem(policy, { id: 'unverifiedAccountsDeleted' });
     add('retention.unverified_accounts_7d', why ? 'FAIL' : 'PASS', why
-      ? `citizen accounts need purge step 6c in force (notice: never-confirmed account erased after 7 days): ${why}`
-      : 'step 6c (never-confirmed accounts, 7 days) executes daily');
+      ? `citizen accounts need purge step 6c in force (notice: never-confirmed account erased no later than 8 days after creation): ${why}`
+      : 'step 6c (never-confirmed accounts: 7-day threshold, daily run, at most 8 days) executes');
   }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'

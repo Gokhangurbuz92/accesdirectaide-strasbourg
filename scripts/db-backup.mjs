@@ -12,8 +12,8 @@
  * Format: "ADAB1" ‖ iv(12) ‖ AES-256-GCM(pg_dump -Fc) ‖ tag(16). The key never touches the disk here; the file is 0600 with a .sha256 of the ciphertext.
  * Old backups are only LISTED by default; --prune deletes, and only with that explicit flag. R44 / E15 rotation (rotationPlan): every backup of the last
  * --keep-days days is kept, plus the newest backup of each of the --keep-weekly most recent older weeks, and always the newest backup. The defaults are the
- * retention policy's PROPOSED values (api/_services/retention-policy.js: 30 days, 4 weekly) — while that policy is not approved, --prune also requires an
- * explicit --keep-days (the operator's own choice), and the output says the policy status. After a restore, replay the erasures: scripts/db-erasure-replay.mjs.
+ * retention policy's values (api/_services/retention-policy.js; approved at V2 phase 1, 09/11/2026: 35 days, no weekly copy) — were the policy not approved,
+ * --prune would also require an explicit --keep-days (the operator's own choice); the output says the policy status. After a restore, replay the erasures: scripts/db-erasure-replay.mjs.
  * Output: names, sizes, counts — never a value of the database, the key or the connection string.
  *
  * V2 (Neon Free, unattended backups): a second format, "ADAB2", for a machine that must NOT be able to read its own backups (an automated runner):

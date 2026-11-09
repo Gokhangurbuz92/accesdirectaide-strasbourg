@@ -16,7 +16,7 @@ import {
   RETENTION_POLICY, POLICY_STATUS_PROPOSED, isPolicyApproved, executionGate, approvedStepsFromEnv, policyDays,
 } from '../../api/_services/retention-policy.js';
 import { RETENTION, PURGE_STEPS, runGdprPurge, anonymisationSet } from '../../api/_handlers/cron/gdpr-purge.js';
-import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION } from '../helpers/gdpr-purge-approval.js';
+import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION, proposedTestPolicy } from '../helpers/gdpr-purge-approval.js';
 
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
@@ -50,24 +50,30 @@ const writes = (db) => db.calls.filter((c) => c.op !== 'select');
 const NOW = new Date('2026-11-04T12:00:00Z');
 
 describe('R44 retention policy object', () => {
-  it('is PROPOSED — NOT APPROVED, without approvedPolicyVersion, frozen, and not approved', () => {
-    expect(RETENTION_POLICY.status).toBe(POLICY_STATUS_PROPOSED);
-    expect(RETENTION_POLICY.status).toBe('PROPOSED — NOT APPROVED');
-    expect('approvedPolicyVersion' in RETENTION_POLICY).toBe(false);
-    expect(isPolicyApproved(RETENTION_POLICY)).toBe(false);
+  it('V2 phase 1 (owner, 09/11/2026): APPROVED with A7 = 365 named in the version, NO step approved, frozen; the proposal stays unapproved', () => {
+    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'r45-proposal-2-2026-11-05-a7-365d', approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
+    expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
+    expect('approvedSteps' in RETENTION_POLICY).toBe(false);   // every purge step still needs its own approval record
+    const PROPOSED = proposedTestPolicy();
+    expect(PROPOSED.status).toBe(POLICY_STATUS_PROPOSED);
+    expect('approvedPolicyVersion' in PROPOSED).toBe(false);
+    expect(isPolicyApproved(PROPOSED)).toBe(false);
     expect(Object.isFrozen(RETENTION_POLICY) && Object.isFrozen(RETENTION_POLICY.durations) && Object.isFrozen(RETENTION_POLICY.durations.AUDIT_LOG_DAYS)).toBe(true);
     expect(RETENTION_POLICY.source).toMatch(/R43_DOSSIER_RGPD_ACTIVATION_FR\.md § 3\.1/);
   });
   it('approval needs status APPROVED AND approvedPolicyVersion equal to the version', () => {
-    expect(isPolicyApproved({ ...RETENTION_POLICY, status: 'APPROVED' })).toBe(false);
-    expect(isPolicyApproved({ ...RETENTION_POLICY, approvedPolicyVersion: RETENTION_POLICY.version })).toBe(false);
-    expect(isPolicyApproved({ ...RETENTION_POLICY, status: 'APPROVED', approvedPolicyVersion: 'r44-other' })).toBe(false);
+    const P = proposedTestPolicy();
+    expect(isPolicyApproved({ ...P, status: 'APPROVED' })).toBe(false);
+    expect(isPolicyApproved({ ...P, approvedPolicyVersion: P.version })).toBe(false);
+    expect(isPolicyApproved({ ...RETENTION_POLICY, approvedPolicyVersion: 'r44-other' })).toBe(false);
+    expect(isPolicyApproved({ ...RETENTION_POLICY, status: 'PROPOSED — NOT APPROVED' })).toBe(false);
     expect(isPolicyApproved(approvedTestPolicy())).toBe(true);
   });
   it('carries the R43 § 3.1 proposals (values) and stays equal to the RETENTION constants of the registry', () => {
     const d = (k) => policyDays(RETENTION_POLICY, k);
-    // R45: A7 (APPOINTMENT_CONFIRMED_DAYS) is an owner choice with no default (D4 v2): 365 or 730 — see tests/unit/r45-purge-readiness.test.js
-    expect(() => d('APPOINTMENT_CONFIRMED_DAYS')).toThrow(/owner choice A7/);
+    // R45: A7 (APPOINTMENT_CONFIRMED_DAYS) is an owner choice with no default (D4 v2): 365 or 730 — the owner chose 365 (phase 1, 09/11/2026)
+    expect(() => policyDays(proposedTestPolicy(), 'APPOINTMENT_CONFIRMED_DAYS')).toThrow(/owner choice A7/);
+    expect(d('APPOINTMENT_CONFIRMED_DAYS')).toBe(365);
     expect(policyDays(approvedTestPolicy(), 'APPOINTMENT_CONFIRMED_DAYS')).toBe(730);
     expect([d('APPOINTMENT_UNCONFIRMED_DAYS'), d('APPOINTMENT_CANCELLED_DAYS'), d('APPOINTMENT_MESSAGE_DAYS')]).toEqual([90, 90, 30]);
     expect([d('PRO_NOTIFICATION_DAYS'), d('PUSH_FAILING_DAYS'), d('RDV_CONVERSATION_DAYS'), d('LEGAL_HOLD_RELEASED_DAYS'), d('SUPPORT_REQUEST_DAYS'), d('DSR_REQUEST_DAYS')]).toEqual([180, 30, 730, 365, 365, 1095]);
@@ -98,7 +104,8 @@ describe('R44 / E16 execution gate', () => {
     expect(executionGate(approvedTestPolicy(), {}).reason).toBe('GDPR_PURGE_DISABLED');
     expect(executionGate(approvedTestPolicy(), { ...ok, GDPR_PURGE_ENABLED: '1' }).reason).toBe('GDPR_PURGE_DISABLED');
     expect(executionGate(approvedTestPolicy(), ok, { dryRunRequested: true }).reason).toBe('DRY_RUN_REQUESTED');
-    expect(executionGate(RETENTION_POLICY, ok).reason).toBe('POLICY_NOT_APPROVED');
+    expect(executionGate(proposedTestPolicy(), ok).reason).toBe('POLICY_NOT_APPROVED');
+    expect(executionGate(RETENTION_POLICY, ok).reason).toBe('POLICY_VERSION_NOT_PINNED');   // the approved production policy: the deployment must pin ITS version
     expect(executionGate(approvedTestPolicy(), { ...ok, GDPR_PURGE_POLICY_VERSION: 'r44-proposal-0' }).reason).toBe('POLICY_VERSION_NOT_PINNED');
     expect(executionGate(approvedTestPolicy(), { ...ok, GDPR_PURGE_APPROVED_STEPS: '' }).reason).toBe('NO_APPROVED_STEPS');
     expect(executionGate(approvedTestPolicy(), { ...ok, GDPR_PURGE_APPROVED_STEPS: '*' }).reason).toBe('NO_APPROVED_STEPS');   // no wildcard
@@ -116,10 +123,23 @@ describe('R44 / E16 execution gate', () => {
 });
 
 describe('R44 runGdprPurge — dry run by default, execution only of approved steps', () => {
-  it('the production policy with GDPR_PURGE_ENABLED=true: a dry run, nothing written (no delete, update, insert), every step counted', async () => {
+  it('the production policy, enabled, pinned and EVERY step listed: nothing written — no step carries its own approval record yet', async () => {
     const db = recDb();
     const { status, body } = await runGdprPurge({ database: db, env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_APPROVED_STEPS: executableStepIds(PURGE_STEPS).join(','),
       GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, now: NOW, logger: log });
+    expect(status).toBe(200);
+    // the only write is the run's evidence row (AuditLog GDPR_PURGE_RUN, counts only): no delete, no update of any personal data
+    expect(writes(db).filter((w) => w.op !== 'insert')).toEqual([]);
+    expect(writes(db).map((w) => w.table)).toEqual(['AuditLog']);
+    // every executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
+    expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort()).toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount').sort());
+    expect(body.steps.find((l) => l.id === 'clearedGuestHoldsCount').decision).toBe('skipped_schema');
+  });
+  it('the proposal (unapproved) with GDPR_PURGE_ENABLED=true: a dry run, nothing written (no delete, update, insert), every step counted', async () => {
+    const db = recDb();
+    const P = proposedTestPolicy();
+    const { status, body } = await runGdprPurge({ database: db, policy: P, env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_APPROVED_STEPS: executableStepIds(PURGE_STEPS).join(','),
+      GDPR_PURGE_POLICY_VERSION: P.version }, now: NOW, logger: log });
     expect(status).toBe(200);
     expect(body).toMatchObject({ skipped: true, reason: 'POLICY_NOT_APPROVED', mode: 'dry-run', policy: { status: 'PROPOSED — NOT APPROVED', approved: false, approvedPolicyVersion: null } });
     expect(writes(db)).toEqual([]);
