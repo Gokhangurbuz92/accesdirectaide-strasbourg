@@ -35,7 +35,27 @@ const unavailable = () => Object.assign(new Error('ERASURE_TOMBSTONE_UNAVAILABLE
 /**
  * @param {{ kv?: any, requireRemote?: boolean }} [opts] requireRemote: Production — refuse when only the in-memory fallback exists
  */
-export function createErasureTombstones({ kv = defaultKv, requireRemote = process.env.VERCEL_ENV === 'production' } = {}) {
+/** outside Production: a process-local store (development, tests, QA — whose KV variables may point at a placeholder host) */
+const localKv = (() => {
+  /** @type {Map<string, any>} */ const m = new Map();
+  /** @param {any[]} l @param {number} a @param {number} b */ const cut = (l, a, b) => l.slice(a, b < 0 ? l.length + b + 1 : b + 1);
+  return { isRemote: false,
+    /** @param {string} k @param {string} v */ async lpush(k, v) { const l = m.get(k) || []; l.unshift(v); m.set(k, l); return l.length; },
+    /** @param {string} k @param {number} a @param {number} b */ async lrange(k, a, b) { return cut(m.get(k) || [], a, b); },
+    /** @param {string} k @param {number} a @param {number} b */ async ltrim(k, a, b) { m.set(k, cut(m.get(k) || [], a, b)); return 'OK'; },
+    async expire() { return 1; },
+    /** @param {string} k @param {any} v */ async set(k, v) { m.set(k, v); return 'OK'; },
+    /** @param {string} k */ async get(k) { return m.get(k) ?? null; } };
+})();
+
+/**
+ * Production (VERCEL_ENV=production): the real KV store, required — no store, no erasure (fail-closed). Elsewhere: a process-local store, so a
+ * development or test environment never depends on (or waits for) a remote KV it does not own; the fail-closed path is tested with an explicit kv.
+ */
+/** @param {{ requireRemote?: boolean, kv?: any }} [opts] */
+export function createErasureTombstones(opts = {}) {
+  const requireRemote = opts.requireRemote ?? process.env.VERCEL_ENV === 'production';
+  const kv = opts.kv ?? (requireRemote ? defaultKv : localKv);
   const push = async (/** @type {ReturnType<typeof tombstoneOf>} */ t) => {
     if (requireRemote && !kv.isRemote) throw unavailable();
     try {

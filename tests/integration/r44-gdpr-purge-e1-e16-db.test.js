@@ -135,14 +135,14 @@ describe.skipIf(!hasDatabase)('R44 GDPR purge E1–E16 (real DB, 0042 and full s
     await db.execute(sql`DELETE FROM "AuditLog" WHERE action = 'GDPR_PURGE_RUN'`);
   });
 
-  it('refusal: the production policy (PROPOSED — NOT APPROVED) changes nothing even when enabled, pinned and every step listed', async () => {
+  it('refusal: the production policy (APPROVED at phase 1, no step record) changes nothing even when enabled and every step listed (test version pinned)', async () => {
     const before = await snapshot();
     // the integration DB is shared by every file of the run (earlier files record their own approved-policy runs): count this run's evidence rows only
     const runsBefore = await n(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'GDPR_PURGE_RUN'`);
     const restore = setApprovalEnv(allSteps);
     const r = mk();
     try { await mod.default({ method: 'GET', url: '/api/cron/gdpr-purge', query: {}, headers: { 'x-cron-secret': process.env.CRON_SECRET } }, r); } finally { restore(); }
-    expect([r.statusCode, r.body.skipped, r.body.reason, r.body.mode, r.body.policy.status]).toEqual([200, true, 'POLICY_NOT_APPROVED', 'dry-run', 'PROPOSED — NOT APPROVED']);
+    expect([r.statusCode, r.body.skipped, r.body.reason, r.body.mode, r.body.policy.status]).toEqual([200, true, 'POLICY_VERSION_NOT_PINNED', 'dry-run', 'APPROVED']);
     expect(await snapshot()).toEqual(before);
     expect(await n(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'GDPR_PURGE_RUN'`)).toBe(runsBefore);
   });
