@@ -141,7 +141,7 @@ function subSwitchAllows(surface, path, envVars) {
 /** @type {Readonly<Record<string, 'A' | 'B' | 'C' | 'D'>>} */
 export const SCHEDULED_JOBS = Object.freeze({
   // R40 / G1: the automatic verification (D-5 v2, api/_services/verification/chain.js) — the only path that re-verifies, corrects and withdraws published
-  // records. Public official sources only, no personal data: category A. Known (so it CAN be opened alone later), closed by default, no schedule yet.
+  // records. Public official sources only, no personal data: category A. Known (so it CAN be opened alone later), closed by default; scheduled nightly since V1c (00:37–05:37 UTC), refused while closed.
   veille: 'A',
   actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',

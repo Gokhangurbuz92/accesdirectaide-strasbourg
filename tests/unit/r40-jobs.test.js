@@ -63,10 +63,14 @@ describe('G1 — the veille is a known job, closed by default, openable alone', 
     expect(isAllowedInPublicBeta('GET', 'cron/veille', e)).toBe(true);
     for (const p of ['cron/actualites', 'cron/ingest-aids', 'cron/hive-scan', 'monitor/core']) expect(isAllowedInPublicBeta('GET', p, e), p).toBe(false);
   });
-  it('no schedule is added for the veille (owner decision: frequency, Production writes) — vercel.json is unchanged', () => {
-    const crons = JSON.parse(fs.readFileSync('vercel.json', 'utf8')).crons.map((c) => c.path);
-    expect(crons).not.toContain('/api/cron/veille');
-    expect(crons).toHaveLength(8);
+  // V1c (R43 E5): the veille has a schedule — six bounded runs a night (00:37–05:37 UTC, 4 min each, away from :00 actualites and :07 health-alert) —
+  // but stays CLOSED until the owner opens it by name in ADA_BETA_OPEN_JOBS (frequency and Production writes remain the owner's decision): while closed,
+  // the scheduled call is refused server-side (503) and writes nothing
+  it('the veille is scheduled nightly and still closed by default', () => {
+    const crons = JSON.parse(fs.readFileSync('vercel.json', 'utf8')).crons;
+    expect(crons.find((c) => c.path === '/api/cron/veille')?.schedule).toBe('37 0-5 * * *');
+    expect(crons).toHaveLength(9);
+    expect(isAllowedInPublicBeta('GET', 'cron/veille', BETA)).toBe(false);
   });
 });
 
