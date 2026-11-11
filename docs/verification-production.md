@@ -59,6 +59,25 @@ Les chiffres viennent des exécutions mesurées dans le LAB du 25 et du 26/10/20
 - Concurrence : une seule veille à la fois (verrou de base, simulé à deux processus : Q11 S6b) ; une alerte de santé n'est envoyée qu'une fois pour plusieurs
   instances (cooldown atomique, Q11 S6a) ; les tentatives réseau sont bornées (KV 3 s, sources 30 s à 15 min selon le fichier).
 
+## 5 bis. Production : la nuit en six tranches (K12, 11/11/2026)
+
+`/api/cron/veille` (`37 0-5 * * *`, UTC) exécute **une tranche** par appel (`api/_handlers/cron/veille.js` `CRON_PLAN`), 4 min au plus :
+
+| Créneau UTC | Étapes | Sources |
+|---|---|---|
+| 0 h 37 | aide, demarche, dispositif, fiches | archive Service-Public (DILA) du jour |
+| 1 h 37 | structure, offices, finess | SIRENE, Annuaire, FINESS (≈ 132 Mo sur disque) |
+| 2 h 37 | datainclusion | export data·inclusion (≈ 329 Mo sur disque), seul |
+| 3 h 37 | aide, demarche, dispositif | suite de 0 h 37 (les fiches vérifiées depuis le plus longtemps d'abord) |
+| 4 h 37 | structure, offices | suite de 1 h 37 |
+| 5 h 37 | review, audit | registre des sources + contrat D-5 v2 sur toute la base |
+
+- Chaque tranche lit FINESS / data·inclusion dans **son propre dossier de `/tmp`**, supprimé à la fin (sans dossier de cache la chaîne ne les télécharge pas).
+- Le plafond de retraits (20 %, au moins 5) est celui de la **nuit** : les retraits automatiques des 20 dernières heures (registre `ContentVerification`,
+  `reviewerRole = system`, `HOLD`) sont déduits (`nightCap`).
+- Répétition du 11/11/2026 (copie jetable du catalogue LAB, sources réelles, sans modèle) : 6 tranches réussies en 23 à 49 s ; mémoire maximale 1,05 Go
+  (tranche FINESS), disque 132 / 329 Mo ; aucune fiche retirée ; 6 lieux FINESS ajoutés (MJPM).
+
 ## 6. Ce qui reste au propriétaire
 
 Choix du plan d'hébergement ; clés et secrets de production ; activation de la planification ; décision sur un modèle hébergé (option b) ou sur le

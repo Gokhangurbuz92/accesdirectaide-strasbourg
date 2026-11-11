@@ -185,7 +185,7 @@ export async function runVeille(opts = {}) {
     net: { fetchImpl: opts.fetchImpl, env }, hints: loadHints(opts.root || process.cwd()), archive: null, metas: [], offices: [], allOffices: [], officeRows: [], annuaireOk: false,
     trusted: [], registry: [], departement: opts.departement || '67', cacheDir: opts.cacheDir !== undefined ? opts.cacheDir : (env.ADA_VEILLE_CACHE_DIR || null),
     machine, health, lastHealth: null, modelOptions: machine ? modelOptions(env) : {}, modelUsed: false, stop: null, progress: {}, lastBeat: 0,
-    withdrawn: {}, caps: {}, deferred: {}, alerts: [],
+    withdrawn: {}, caps: {}, deferred: {}, alerts: [], nightCap: opts.nightCap === true,
     now: () => (opts.now ? new Date(opts.now) : new Date()), timeUp: () => Date.now() > deadline };
   ctx.halted = () => ctx.timeUp() || Boolean(ctx.stop);
   ctx.activatedAt = opts.activatedAt ? new Date(opts.activatedAt) : await firstAutomaticDecision(db);   // supervision: see personDecision
@@ -226,7 +226,7 @@ export async function runVeille(opts = {}) {
       model: { used: ctx.modelUsed, unloaded: ctx.modelUnloaded ?? null, options: ctx.modelOptions, deferredBecause: ctx.textsDeferred || null },
       finess: ctx.finess ? { version: ctx.finess.version, entities: ctx.finess.entities, establishments: ctx.finess.establishments, inScope: ctx.finess.inScope, closed: ctx.finess.closed, files: ctx.finess.fileMeta } : null,
       datainclusion: ctx.di ? ctx.di.summary : null,
-      caps: ctx.caps, withdrawn: ctx.withdrawn, deferred: ctx.deferred, alerts: ctx.alerts, review: ctx.review || null, audit: ctx.audit || null, registry: ctx.registryRefresh || null } })
+      caps: ctx.caps, priorWithdrawn: ctx.priorWithdrawn || {}, withdrawn: ctx.withdrawn, deferred: ctx.deferred, alerts: ctx.alerts, review: ctx.review || null, audit: ctx.audit || null, registry: ctx.registryRefresh || null } })
     .where(and(eq(CronRun.id, ctx.runId), eq(CronRun.status, 'running')));   // R14: a superseded run never rewrites its successor's « interrupted »
   return { ok: status !== 'error', status, runId: ctx.runId, counts: ctx.counts, durationMs: Date.now() - t0, error, stop: ctx.stop, alerts: ctx.alerts, audit: ctx.audit || null };
 }
@@ -374,13 +374,28 @@ async function archiveSanity(db, a) {
   return { ok: true };
 }
 
-/** at most 20 % of the public records of a kind (and at least 5) are withdrawn in one night */
-async function withdrawalCaps(ctx) {
+/**
+ * at most 20 % of the public records of a kind (and at least 5) are withdrawn in one night.
+ * K12 (11/11/2026, `nightCap`): in Production the night is several bounded cron runs (vercel.json « 37 0-5 * * * »): the cap is the NIGHT's, so the automatic withdrawals
+ * already recorded in the ledger in the last NIGHT_HOURS (system HOLD rows, by kind) are taken off this run's allowance — six runs no longer mean six caps.
+ */
+export const NIGHT_HOURS = 20;
+export async function withdrawalCaps(ctx) {
   const rows = (await ctx.db.execute(sql`SELECT 'aide' AS k, count(*)::int AS n FROM "Aide" WHERE statut = 'publie' AND verification_status = 'VERIFIED' AND publication_hold IS NULL
     UNION ALL SELECT 'demarche', count(*)::int FROM "Demarche" WHERE statut = 'publie' AND verification_status = 'VERIFIED' AND publication_hold IS NULL
     UNION ALL SELECT 'dispositif', count(*)::int FROM "Dispositif" WHERE statut = 'publie' AND verification_status = 'VERIFIED' AND publication_hold IS NULL
     UNION ALL SELECT 'structure', count(*)::int FROM "Structure" WHERE statut IN ('actif', 'publie') AND verification_status = 'VERIFIED' AND publication_hold IS NULL`)).rows;
   for (const r of rows) ctx.caps[r.k] = Number.isFinite(ctx.limits.withdrawCap) ? ctx.limits.withdrawCap : Math.max(5, Math.ceil(0.2 * Number(r.n || 0)));
+  ctx.priorWithdrawn = {};
+  if (!ctx.nightCap) return;   // one run per night (the LAB schedule, a command-line or test run): the run's own count is the night's
+  const since = new Date(ctx.now().getTime() - NIGHT_HOURS * 3600000).toISOString();
+  const prior = (await ctx.db.execute(sql`SELECT "entityType" AS k, count(*)::int AS n FROM "ContentVerification"
+    WHERE "reviewerRole" = 'system' AND outcome = 'HOLD' AND "createdAt" >= ${since} GROUP BY "entityType"`)).rows;
+  for (const r of prior) {
+    if (!(r.k in ctx.caps)) continue;
+    ctx.priorWithdrawn[r.k] = Number(r.n || 0);
+    ctx.caps[r.k] = Math.max(0, ctx.caps[r.k] - Number(r.n || 0));
+  }
 }
 
 /**
@@ -1323,6 +1338,10 @@ async function feedFiches(ctx) {
   const may = await textsAllowed(ctx); if (!may.ok) return;
   await beat(ctx, { phase: 'nouvelles fiches', current: null }, true);
   const linked = new Set();
+  // K12 (11/11/2026): a fiche already in the catalogue under its DILA identity is linked whatever its address looks like — F15252 is recorded at
+  // entreprendre.service-public.gouv.fr/vosdroits/F15252, which SP_ID does not read: it was proposed again every night, its insert broke
+  // « Aide_externalId_unique » and the error ended the whole run (LAB: every night from 29/10 to 11/11)
+  for (const r of (await ctx.db.execute(sql`SELECT "externalId" AS x FROM "Aide" WHERE "externalId" LIKE 'dila:%'`)).rows) linked.add(resolveId(String(r.x).slice(5).toUpperCase(), ctx.archive.redirections));
   for (const t of ['Aide', 'Demarche', 'Dispositif']) for (const r of (await ctx.db.execute(sql`SELECT source_url FROM ${sql.raw(`"${t}"`)} WHERE source_url IS NOT NULL`)).rows) { const m = String(r.source_url).match(SP_ID); if (m) linked.add(resolveId(m[1].toUpperCase(), ctx.archive.redirections)); }
   const failed = new Set((await ctx.db.execute(sql`SELECT "entity_id" FROM "VeilleEvent" WHERE kind = 'TEXTS' AND outcome = 'RETRY' AND entity_type = 'fiche' AND created_at > ${new Date(Date.now() - 30 * 86400000).toISOString()} GROUP BY 1 HAVING count(*) >= 3`)).rows.map((r) => r.entity_id));
   const candidates = ctx.metas.filter((m) => /Fiche d'information/.test(m.kind || '') && !linked.has(m.id) && !failed.has(m.id) && OUR_COVERAGE.test(String(m.coverage || '')) && SOCIAL_PATH.test(`${m.path.map((x) => x.title).join(' ')} ${m.title}`))
@@ -1337,6 +1356,7 @@ async function feedFiches(ctx) {
     const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx), reuseOpen: true });   // a DILA fiche (Licence Ouverte 2.0)
     if (!t.ok) { count(ctx, 'texts:refused'); await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'TEXTS', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » pas encore ajoutée : textes refusés par le contrôle automatique.`, details: { reasons: t.reasons } }); continue; }
     const id = crypto.randomUUID(); const table = TABLES[kind];
+    try {   // K12: one fiche that cannot be added is noted and skipped — it never ends the night's run
     const patch = textPatch(kind, t, src);
     const tier = tierOf('DILA', src);
     const auto = { checkedAt: ctx.now().toISOString(), runId: ctx.runId, origin: 'DILA', sourceUrl: src.url, sourceTitle: src.title, sourceId: meta.id, importantChangeAt: src.importantChangeAt || null, coverage: src.coverage || null,
@@ -1353,6 +1373,10 @@ async function feedFiches(ctx) {
     if (r.ok) await ctx.db.update(table).set({ statut: 'publie', published_at: new Date() }).where(eq(table.id, id));
     created += 1;
     await note(ctx, { entityType: kind, entityId: id, title: meta.title, kind: 'NEW_RECORD', outcome: r.ok ? 'CREATED' : 'UNRESOLVED', summary: r.ok ? `Ajoutée automatiquement depuis Service-Public (fiche ${meta.id}, ${kind === 'dispositif' ? 'dispositif' : categoryOf(meta)}).` : `Ajoutée mais non publiée (${r.message || r.code}).` });
+    } catch (e) {
+      count(ctx, 'fiches:failed');
+      await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'NEW_RECORD', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » non ajoutée (${String(e?.code || e?.message || e).slice(0, 120)}) : nouvel essai à la prochaine veille.` }).catch(() => {});
+    }
   }
   count(ctx, 'fiches:candidates', candidates.length);
 }
