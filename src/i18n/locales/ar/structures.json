@@ -65,7 +65,6 @@
  "filters.all": "الكل",
  "filters.city": "المدينة",
  "filters.city_placeholder": "مثال: Strasbourg",
- "filters.close": "إغلاق",
  "filters.departement": "المقاطعة",
  "filters.departement_placeholder": "مثال: 67",
  "filters.needs_query": "(يتطلب إجراء بحث)",
@@ -181,5 +180,7 @@
  "suggest.contact_us": "اتصل بنا",
  "suggest.website_placeholder": "https://www.my-structure.fr",
  "detail.booking.account_required": "يلزم حساب شخصي لطلب موعد. تبقى معلومات هذه الصفحة متاحة بدون حساب.",
- "detail.booking.not_partner": "إدراج هذه الجهة في الدليل لا يعني أنها شريكة لـ AccesDirectAide."
+ "detail.booking.not_partner": "إدراج هذه الجهة في الدليل لا يعني أنها شريكة لـ AccesDirectAide.",
+ "pagination.nav": "صفحات الدليل",
+ "view.label": "طريقة العرض"
 }

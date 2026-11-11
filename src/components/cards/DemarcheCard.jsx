@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { Link } from 'react-router-dom';
 import {
-  FileText,
   Clock,
   CheckCircle2,
   Brain,
@@ -46,36 +45,32 @@ export default function DemarcheCard({ demarche, index = 0 }) {
 
   return (
     <AnimatedCard index={index}>
-      <Card className="hover:shadow-md transition-all border-slate-200 overflow-hidden group relative bg-white flex h-full flex-col" data-testid="demarche-card">
+      <Card className="group relative flex h-full flex-col overflow-hidden rounded-2xl border-slate-200 bg-white shadow-subtle transition-shadow hover:border-blue-200 hover:shadow-float" data-testid="demarche-card">
         <Link
           to={targetUrl}
-          className="absolute inset-0 z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl"
+          className="absolute inset-0 z-10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2"
           aria-label={t('demarches:card.open', 'Voir la démarche {{title}}', { title })}
         >
           <span className="sr-only">{t('demarches:card.open', 'Voir la démarche {{title}}', { title })}</span>
         </Link>
 
         <CardContent className="flex h-full flex-col p-0">
-          <div className="flex-1 p-6">
-            <div className="flex justify-between items-start mb-4">
+          <div className="flex-1 p-5 sm:p-6">
+            {/* R31: the badge stays on the end side (ms-auto) when the record has no category */}
+            <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
               <CategoryChip slug={demarche.categorie} label={demarche.category?.label} />
-              <div className="ms-auto flex flex-col items-end gap-2">   {/* R31: stays right when the record has no category */}
-                <Badge
-                  variant="outline"
-                  className={FRESHNESS_BADGE_CLASS[freshness.state] || FRESHNESS_BADGE_CLASS.not_verified}
-                  data-testid="demarche-freshness-badge"
-                >
-                  {freshnessLabel}
-                </Badge>
-                <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-blue-600" />
-                </div>
-              </div>
+              <Badge
+                variant="outline"
+                className={`ms-auto ${FRESHNESS_BADGE_CLASS[freshness.state] || FRESHNESS_BADGE_CLASS.not_verified}`}
+                data-testid="demarche-freshness-badge"
+              >
+                {freshnessLabel}
+              </Badge>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors mb-2" data-testid="demarche-title" {...tr.attrs('titre')}>
+            <h3 className="mb-2 font-heading text-lg font-semibold leading-snug text-slate-900 transition-colors group-hover:text-blue-800" data-testid="demarche-title" {...tr.attrs('titre')}>
               {title}
             </h3>
-            <p className="text-slate-600 text-sm line-clamp-4 mb-4" {...tr.attrs(summaryField)}>
+            <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-slate-600" {...tr.attrs(summaryField)}>
               {tr.value(summaryField)}
             </p>
             {/* FALC badge */}

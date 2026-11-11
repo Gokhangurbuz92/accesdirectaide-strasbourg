@@ -43,9 +43,7 @@
  "error.retry": "Спробувати ще раз",
  "error.title": "Не вдалося завантажити процедури",
  "filters.all": "Усі",
- "filters.all_sources": "Усі джерела",
  "filters.category": "Категорія",
- "filters.close": "Закрити",
  "filters.needs_query": "(потрібен пошук)",
  "filters.per_page": "На сторінці",
  "filters.reset": "Скинути",
@@ -54,8 +52,6 @@
  "filters.sort_quality": "Якість",
  "filters.sort_recent": "Найновіші",
  "filters.sort_relevance": "Релевантність",
- "filters.source": "Джерело",
- "filters.source_curated": "Перевірені дані",
  "filters.toggle": "Фільтри",
  "list.count_few": "Знайдено {{count}} процедури.",
  "list.count_many": "Знайдено {{count}} процедур.",
@@ -80,5 +76,6 @@
  "seo.title_category": "Процедури - {{category}}",
  "seo.title_query": "Процедури - {{q}}",
  "seo.title_situation": "Процедури для ситуації: {{situation}}",
- "verified_on": "Перевірено {{date}}"
+ "verified_on": "Перевірено {{date}}",
+ "pagination.nav": "Сторінки процедур"
 }

@@ -2,12 +2,12 @@ import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import PageHeader from '@/components/layout/PageHeader';
+import { ActiveFilters, CatalogBody, FilterField, HeroSearch, InlineSelect, MobileFilters, Pager, ResultsBar, SELECT } from '@/components/layout/catalog';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
 import NoResultsHelp from '@/components/search/NoResultsHelp';
@@ -43,7 +43,6 @@ function parseLimit(value) {
 export default function Demarches() {
   const { t } = useT('demarches');
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const q = (searchParams.get('q') || '').trim();
   const category = (searchParams.get('category') || searchParams.get('theme') || '').trim();
@@ -116,15 +115,8 @@ export default function Demarches() {
     setSearchParams(newParams);
   };
 
-  /** @param {import('react').FormEvent<HTMLFormElement>} event */
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    handleParamChange('q', queryInput.trim());
-  };
-
   const clearFilters = () => {
     setSearchParams({});
-    setIsFiltersOpen(false);
   };
 
   const getTitle = () => {
@@ -162,6 +154,42 @@ export default function Demarches() {
     ].filter(Boolean);
   }, [t]);
 
+  const hasFilters = Boolean(q || category || situation);
+  const categoryName = (/** @type {string} */ slug) => taxonomyData?.categories?.find((c) => c.slug === slug)?.label || slug;
+  const situationName = (/** @type {string} */ slug) => taxonomyData?.situations?.find((c) => c.slug === slug)?.label || slug;
+  /** @typedef {{ key: string, label: string, onRemove: () => void, lang?: string }} ActiveFilter */
+  /** @type {ActiveFilter[]} */
+  const activeFilters = /** @type {ActiveFilter[]} */ ([
+    q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
+    category && { key: 'category', label: categoryName(category), lang: 'fr', onRemove: () => handleParamChange('category', '') },
+    situation && { key: 'situation', label: situationName(situation), lang: 'fr', onRemove: () => handleParamChange('situation', '') },
+  ].filter(Boolean));
+
+  /** the filter fields, drawn in the sidebar (prefix '') and in the phone sheet (prefix 'm-') @param {string} prefix */
+  // 11/11/2026: the « Source » select was removed — /api/demarches has no source parameter (searchDemarchesSchema), so it changed the address and
+  // nothing else; a control that does nothing misleads
+  const renderFilters = (prefix) => (
+    <div className="space-y-5">
+      <FilterField id={`${prefix}demarches-category`} label={t('demarches:filters.category', 'Catégorie')}>
+        <select id={`${prefix}demarches-category`} className={SELECT} value={category} onChange={(e) => handleParamChange('category', e.target.value)}>
+          <option value="">{t('demarches:filters.all', 'Toutes')}</option>
+          {(taxonomyData?.categories || []).map((cat) => <option key={cat.slug} value={cat.slug}>{cat.label}</option>)}
+        </select>
+      </FilterField>
+      <FilterField id={`${prefix}demarches-situation`} label={t('demarches:filters.situation', 'Situation')}>
+        <select id={`${prefix}demarches-situation`} className={SELECT} value={situation} onChange={(e) => handleParamChange('situation', e.target.value)}>
+          <option value="">{t('demarches:filters.all', 'Toutes')}</option>
+          {(taxonomyData?.situations || []).map((sit) => <option key={sit.slug} value={sit.slug}>{sit.label}</option>)}
+        </select>
+      </FilterField>
+      {hasFilters && (
+        <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('demarches:filters.reset', 'Réinitialiser')}</Button>
+      )}
+    </div>
+  );
+
+  const countText = t('demarches:list.count', { count: pagination.total ?? items.length, defaultValue_one: '{{count}} démarche trouvée.', defaultValue_other: '{{count}} démarches trouvées.' });
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO
@@ -175,173 +203,38 @@ export default function Demarches() {
         {liveMessage}
       </p>
 
-      {/* Gradient Banner */}
-      <div
-        className="relative overflow-hidden py-10 sm:py-14"
-        style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
+      <PageHeader
+        title={t('demarches:list.title', 'Démarches')}
+        description={t('demarches:list.intro', 'Trouvez une démarche, filtrez par catégorie ou situation, et accédez aux liens officiels.')}
       >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{t('demarches:list.title', 'Démarches')}</h1>
-          <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
-            {t('demarches:list.intro', 'Trouvez une démarche, filtrez par catégorie ou situation, et accédez aux liens officiels.')}
-          </p>
-        </div>
-      </div>
+        <HeroSearch
+          value={queryInput}
+          onChange={setQueryInput}
+          onSubmit={() => handleParamChange('q', queryInput.trim())}
+          label={t('demarches:search.label', 'Rechercher une démarche')}
+          placeholder={t('demarches:search.placeholder', 'Rechercher une démarche (ex: passeport, RSA...)')}
+          submitLabel={t('demarches:search.submit', 'Rechercher')}
+          inputTestId="demarches-search-input"
+          submitTestId="demarches-search-submit"
+        />
+      </PageHeader>
 
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 py-4 sticky top-16 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => setIsFiltersOpen((open) => !open)}
-              aria-expanded={isFiltersOpen}
-            >
-              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              {t('demarches:filters.toggle', 'Filtres')}
-            </Button>
-          </div>
+      <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('demarches:filters.toggle', 'Filtres')}>
+        <ResultsBar summary={!error && !isLoading && items.length > 0 ? <span data-testid="demarches-success-state">{countText}</span> : null}>
+          <MobileFilters title={t('demarches:filters.toggle', 'Filtres')} count={activeFilters.filter((f) => f.key !== 'q').length} render={renderFilters} onReset={clearFilters} />
+          <InlineSelect id="demarches-sort" label={t('demarches:filters.sort', 'Trier')} value={sort} onChange={(v) => handleParamChange('sort', v)}>
+            <option value="quality">{t('demarches:filters.sort_quality', 'Qualité')}</option>
+            <option value="recent">{t('demarches:filters.sort_recent', 'Récents')}</option>
+            <option value="relevance" disabled={!q}>
+              {t('demarches:filters.sort_relevance', 'Pertinence')} {q ? '' : t('demarches:filters.needs_query', '(nécessite une recherche)')}
+            </option>
+          </InlineSelect>
+          <InlineSelect id="demarches-limit" label={t('demarches:filters.per_page', 'Par page')} value={String(limit)} onChange={(v) => handleParamChange('limit', v)}>
+            {LIMIT_OPTIONS.map((opt) => <option key={opt} value={String(opt)}>{opt}</option>)}
+          </InlineSelect>
+        </ResultsBar>
+        <ActiveFilters items={activeFilters} onClear={clearFilters} />
 
-          {/* Search bar */}
-          <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
-              <Input
-                value={queryInput}
-                onChange={(e) => setQueryInput(e.target.value)}
-                placeholder={t('demarches:search.placeholder', 'Rechercher une démarche (ex: passeport, RSA...)')}
-                aria-label={t('demarches:search.label', 'Rechercher une démarche')}
-                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
-                data-testid="demarches-search-input"
-              />
-            </div>
-            <Button type="submit" className="h-11" data-testid="demarches-search-submit">
-              {t('demarches:search.submit', 'Rechercher')}
-            </Button>
-          </form>
-
-          {/* Filters */}
-          {isFiltersOpen && (
-            <Card>
-              <CardContent className="p-4">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  <div>
-                    <label htmlFor="demarches-category" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('demarches:filters.category', 'Catégorie')}
-                    </label>
-                    <select
-                      id="demarches-category"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={category}
-                      onChange={(e) => handleParamChange('category', e.target.value)}
-                    >
-                      <option value="">{t('demarches:filters.all', 'Toutes')}</option>
-                      {(taxonomyData?.categories || []).map((cat) => (
-                        <option key={cat.slug} value={cat.slug}>
-                          {cat.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="demarches-situation" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('demarches:filters.situation', 'Situation')}
-                    </label>
-                    <select
-                      id="demarches-situation"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={situation}
-                      onChange={(e) => handleParamChange('situation', e.target.value)}
-                    >
-                      <option value="">{t('demarches:filters.all', 'Toutes')}</option>
-                      {(taxonomyData?.situations || []).map((sit) => (
-                        <option key={sit.slug} value={sit.slug}>
-                          {sit.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="demarches-source" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('demarches:filters.source', 'Source')}
-                    </label>
-                    <select
-                      id="demarches-source"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={searchParams.get('source') || ''}
-                      onChange={(e) => handleParamChange('source', e.target.value)}
-                    >
-                      <option value="">{t('demarches:filters.all_sources', 'Toutes les sources')}</option>
-                      {/* names of official platforms and of the region: not translated */}
-                      <option value="service-public">Service-Public</option>
-                      <option value="demarches-simplifiees">Démarches Simplifiées</option>
-                      <option value="curated">{t('demarches:filters.source_curated', 'Données vérifiées')}</option>
-                      <option value="aides-territoires">Aides Territoires</option>
-                      <option value="grand-est">Grand Est</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="demarches-sort" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('demarches:filters.sort', 'Trier')}
-                    </label>
-                    <select
-                      id="demarches-sort"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={sort}
-                      onChange={(e) => handleParamChange('sort', e.target.value)}
-                    >
-                      <option value="quality">{t('demarches:filters.sort_quality', 'Qualité')}</option>
-                      <option value="recent">{t('demarches:filters.sort_recent', 'Récents')}</option>
-                      <option value="relevance" disabled={!q}>
-                        {t('demarches:filters.sort_relevance', 'Pertinence')} {q ? '' : t('demarches:filters.needs_query', '(nécessite une recherche)')}
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="demarches-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('demarches:filters.per_page', 'Par page')}
-                    </label>
-                    <select
-                      id="demarches-limit"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={String(limit)}
-                      onChange={(e) => handleParamChange('limit', e.target.value)}
-                    >
-                      {LIMIT_OPTIONS.map((opt) => (
-                        <option key={opt} value={String(opt)}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <Button type="button" variant="ghost" onClick={clearFilters}>
-                    {t('demarches:filters.reset', 'Réinitialiser')}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setIsFiltersOpen(false)}>
-                    {t('demarches:filters.close', 'Fermer')}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-
-      {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {error && (
           <EmptyState
             title={t('demarches:error.title', 'Impossible de charger les démarches')}
@@ -358,10 +251,10 @@ export default function Demarches() {
           />
         )}
 
-        {(isLoading || isFetching) && !error && (
-          <div className="space-y-3" data-testid="demarches-loading-state">
+        {isLoading && !error && (
+          <div className="grid gap-5 md:grid-cols-2" data-testid="demarches-loading-state">
             {[1, 2, 3, 4, 5, 6].map((value) => (
-              <div key={value} className="rounded-xl border border-slate-200 bg-white p-5">
+              <div key={value} className="rounded-2xl border border-slate-200 bg-white p-5">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="mt-3 h-5 w-3/4" />
                 <Skeleton className="mt-2 h-4 w-full" />
@@ -375,15 +268,15 @@ export default function Demarches() {
           <div data-testid="demarches-empty-state">
             <OfficialResourcesNotice />
             <EmptyState
-              title={q || category || situation ? t('demarches:empty.title_filtered', "Aucune démarche trouvée") : t('demarches:empty.title', "Démarches en cours d'intégration")}
+              title={hasFilters ? t('demarches:empty.title_filtered', "Aucune démarche trouvée") : t('demarches:empty.title', "Démarches en cours d'intégration")}
               description={
-                q || category || situation
+                hasFilters
                   ? t('demarches:empty.description_filtered', "Essayez une autre recherche ou ajustez les filtres.")
                   : t('demarches:empty.description', "Notre catalogue de démarches est en cours de constitution. En attendant, les sites officiels ci-dessus et les structures d’accompagnement de l’annuaire peuvent vous aider.")
               }
               icon={<Search className="h-6 w-6" />}
               actions={
-                q || category || situation ? (
+                hasFilters ? (
                   <Button type="button" variant="outline" onClick={clearFilters} data-testid="empty-reset">
                     {t('demarches:empty.reset', 'Réinitialiser les filtres')}
                   </Button>
@@ -391,10 +284,10 @@ export default function Demarches() {
               }
               data-testid="demarches-empty-component"
             />
-            {(q || category || situation) && <NoResultsHelp kind="demarches" q={q} />}
+            {hasFilters && <NoResultsHelp kind="demarches" q={q} />}
             {/* launch-readiness item 58: this pointed to the orientation assistant, whose calculation needs the OpenFisca engine that production does not have
                 (it answers 503 there); the directory of support structures works */}
-            {!(q || category || situation) && (
+            {!hasFilters && (
               <div className="mt-4 flex justify-center">
                 <Link to="/structures">
                   <Button variant="outline" className="gap-2" data-testid="demarches-empty-directory">
@@ -406,43 +299,27 @@ export default function Demarches() {
           </div>
         )}
 
-        {!error && items.length > 0 && (
+        {!error && !isLoading && items.length > 0 && (
           <>
-            <p className="mb-4 text-sm text-slate-600" data-testid="demarches-success-state">
-              {t('demarches:list.count', { count: pagination.total ?? items.length, defaultValue_one: '{{count}} démarche trouvée.', defaultValue_other: '{{count}} démarches trouvées.' })}
-            </p>
-            <div className="grid gap-6 md:grid-cols-2" data-testid="demarches-results-list">
+            <div className={`grid gap-5 md:grid-cols-2 ${isFetching ? 'opacity-60 transition-opacity' : ''}`} aria-busy={isFetching || undefined} data-testid="demarches-results-list">
               {items.map((demarche) => (
                 <DemarcheCard key={demarche.id} demarche={demarche} />
               ))}
             </div>
 
-            {(pagination.totalPages || 1) > 1 && (
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={page <= 1}
-                  onClick={() => handleParamChange('page', String(page - 1))}
-                >
-                  {t('demarches:pagination.previous', 'Précédent')}
-                </Button>
-                <span className="text-sm text-slate-600">
-                  {t('demarches:pagination.page', 'Page {{page}} sur {{total}}', { page, total: pagination.totalPages || 1 })}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={pagination.hasNext != null ? !pagination.hasNext : page >= (pagination.totalPages || 1)}
-                  onClick={() => handleParamChange('page', String(page + 1))}
-                >
-                  {t('demarches:pagination.next', 'Suivant')}
-                </Button>
-              </div>
-            )}
+            <Pager
+              page={page}
+              totalPages={pagination.totalPages || 1}
+              hasNext={pagination.hasNext != null ? Boolean(pagination.hasNext) : page < (pagination.totalPages || 1)}
+              onPage={(p) => handleParamChange('page', String(p))}
+              label={t('demarches:pagination.nav', 'Pages des démarches')}
+              previous={t('demarches:pagination.previous', 'Précédent')}
+              next={t('demarches:pagination.next', 'Suivant')}
+              status={t('demarches:pagination.page', 'Page {{page}} sur {{total}}', { page, total: pagination.totalPages || 1 })}
+            />
           </>
         )}
-      </div>
+      </CatalogBody>
     </div>
   );
 }

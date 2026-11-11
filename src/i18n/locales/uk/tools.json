@@ -20,7 +20,6 @@
  "filters.category-all": "Усі",
  "filters.public": "Аудиторія",
  "filters.public-all": "Усі",
- "filters.title": "Фільтрувати за",
  "filters.type": "Тип інструмента",
  "filters.type-all": "Усі",
  "header.description": "Калькулятори та онлайн-послуги, корисні для ваших процедур, вибрані з сайтів державних установ.",
@@ -35,5 +34,8 @@
  "type.methode": "Метод",
  "type.modele": "Шаблон",
  "type.numerique": "Цифровий інструмент",
- "type.ressource": "Ресурс"
+ "type.ressource": "Ресурс",
+ "official.badge": "Офіційний сервіс",
+ "ada.title": "Інструменти AccesDirectAide",
+ "ada.badge": "AccesDirectAide"
 }

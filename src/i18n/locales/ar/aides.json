@@ -50,17 +50,13 @@
  "filters.all": "الكل",
  "filters.category": "الفئة",
  "filters.category_all": "جميع الفئات",
- "filters.close": "إغلاق",
  "filters.per_page": "لكل صفحة",
  "filters.priority": "الأولوية",
  "filters.region_label": "عوامل تصفية البحث",
- "filters.reset": "إعادة الضبط",
  "filters.reset_all": "إعادة ضبط عوامل التصفية",
  "filters.search_placeholder": "بحث…",
  "filters.situation": "الوضع",
  "filters.sort": "الترتيب",
- "filters.source": "المصدر",
- "filters.source_all": "جميع المصادر",
  "filters.territory": "المنطقة",
  "filters.territory_all": "جميع المناطق",
  "filters.title": "عوامل التصفية",
@@ -115,5 +111,6 @@
  "legacy.aucune_aide_publiee_ne_correspond": "لا توجد مساعدة منشورة تطابق هذا الرابط: ربما أُزيلت، أو أن الرابط غير مكتمل.",
  "legacy.fiche_momentanement_indisponible": "الصفحة غير متاحة مؤقتًا",
  "legacy.la_fiche_n_a_pas": "تعذّر تحميل الصفحة. هذا لا يعني غياب المساعدة: أعد المحاولة بعد لحظة.",
- "legacy.voir_toutes_les_aides": "عرض جميع المساعدات"
+ "legacy.voir_toutes_les_aides": "عرض جميع المساعدات",
+ "pagination.nav": "صفحات المساعدات"
 }

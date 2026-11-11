@@ -50,17 +50,13 @@
  "filters.all": "Alle",
  "filters.category": "Kategorie",
  "filters.category_all": "Alle Kategorien",
- "filters.close": "Schließen",
  "filters.per_page": "Pro Seite",
  "filters.priority": "Priorität",
  "filters.region_label": "Suchfilter",
- "filters.reset": "Zurücksetzen",
  "filters.reset_all": "Filter zurücksetzen",
  "filters.search_placeholder": "Suchen…",
  "filters.situation": "Lebenslage",
  "filters.sort": "Sortieren",
- "filters.source": "Quelle",
- "filters.source_all": "Alle Quellen",
  "filters.territory": "Gebiet",
  "filters.territory_all": "Alle Gebiete",
  "filters.title": "Filter",
@@ -111,5 +107,6 @@
  "legacy.aucune_aide_publiee_ne_correspond": "Keine veröffentlichte Hilfe passt zu diesem Link: Sie wurde vielleicht entfernt, oder der Link ist unvollständig.",
  "legacy.fiche_momentanement_indisponible": "Seite vorübergehend nicht verfügbar",
  "legacy.la_fiche_n_a_pas": "Die Seite konnte nicht geladen werden. Das heißt nicht, dass es keine Hilfe gibt: Versuchen Sie es gleich noch einmal.",
- "legacy.voir_toutes_les_aides": "Alle Hilfen ansehen"
+ "legacy.voir_toutes_les_aides": "Alle Hilfen ansehen",
+ "pagination.nav": "Seiten der Hilfen"
 }

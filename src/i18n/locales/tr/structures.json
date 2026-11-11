@@ -65,7 +65,6 @@
  "filters.all": "Tümü",
  "filters.city": "Şehir",
  "filters.city_placeholder": "Örn. Strasbourg",
- "filters.close": "Kapat",
  "filters.departement": "Departman",
  "filters.departement_placeholder": "Örn. 67",
  "filters.needs_query": "(arama gerektirir)",
@@ -173,5 +172,7 @@
  "suggest.contact_us": "Bize ulaşın",
  "suggest.website_placeholder": "https://www.kurulusum.fr",
  "detail.booking.account_required": "Randevu talep etmek için kişisel bir hesap gerekir. Bu sayfadaki bilgiler hesapsız da görüntülenebilir.",
- "detail.booking.not_partner": "Rehberde yer alması, bu kurumun AccesDirectAide ile ortak olduğu anlamına gelmez."
+ "detail.booking.not_partner": "Rehberde yer alması, bu kurumun AccesDirectAide ile ortak olduğu anlamına gelmez.",
+ "pagination.nav": "Rehber sayfaları",
+ "view.label": "Görünüm"
 }

@@ -50,17 +50,13 @@
  "filters.all": "All",
  "filters.category": "Category",
  "filters.category_all": "All categories",
- "filters.close": "Close",
  "filters.per_page": "Per page",
  "filters.priority": "Priority",
  "filters.region_label": "Search filters",
- "filters.reset": "Reset",
  "filters.reset_all": "Reset filters",
  "filters.search_placeholder": "Search…",
  "filters.situation": "Situation",
  "filters.sort": "Sort",
- "filters.source": "Source",
- "filters.source_all": "All sources",
  "filters.territory": "Area",
  "filters.territory_all": "All areas",
  "filters.title": "Filters",
@@ -111,5 +107,6 @@
  "legacy.aucune_aide_publiee_ne_correspond": "No published aid matches this link: it may have been removed, or the link is incomplete.",
  "legacy.fiche_momentanement_indisponible": "Page temporarily unavailable",
  "legacy.la_fiche_n_a_pas": "The page could not be loaded. This does not mean there is no aid: try again in a moment.",
- "legacy.voir_toutes_les_aides": "See all aids"
+ "legacy.voir_toutes_les_aides": "See all aids",
+ "pagination.nav": "Pages of benefits"
 }

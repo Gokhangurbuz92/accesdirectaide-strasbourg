@@ -4,14 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { track } from '@vercel/analytics';
-import { Search, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import PageHeader from '@/components/layout/PageHeader';
+import { ActiveFilters, CatalogBody, ChoiceChips, FilterField, HeroSearch, InlineSelect, MobileFilters, Pager, ResultsBar, SELECT } from '@/components/layout/catalog';
 import { Skeleton } from '@/components/ui/skeleton';
-import FilterPanel from '@/components/organisms/FilterPanel';
 import EmptyState from '@/components/ui/EmptyState';
 import NoResultsHelp from '@/components/search/NoResultsHelp';
 import AidGrid from '@/components/organisms/AidGrid';
@@ -28,7 +27,9 @@ const slugOf = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/
 const DEFAULT_LIMIT = 20;
 const LIMIT_OPTIONS = [10, 20, 50];
 
-const INITIAL_LOCAL_FILTERS = { search: '', category: '', urgentOnly: false };
+// 11/11/2026: only the urgency remains local state. The old sidebar « Catégorie » kept a slug and looked for it inside titles (« social-sante » in
+// « Revenu de solidarité active »): any choice emptied the list. The category is now the API filter (chips), the same as the old top select.
+const INITIAL_LOCAL_FILTERS = { urgentOnly: false };
 
 /** the listing hook (useAidesListing) reports a failure with this French sentence: it is shown in the interface language */
 const LISTING_ERROR_FR = 'Impossible de charger les aides. Réessayez.';
@@ -64,13 +65,9 @@ export default function Aides() {
   const navigate = useNavigate();
   const { slug, categorySlug, territorySlug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [localFilters, setLocalFilters] = useState(INITIAL_LOCAL_FILTERS);
 
-  const hasActiveLocalFilters =
-    localFilters.search.trim() !== '' ||
-    localFilters.category !== '' ||
-    localFilters.urgentOnly;
+  const hasActiveLocalFilters = localFilters.urgentOnly;
 
   const resetLocalFilters = () => setLocalFilters(INITIAL_LOCAL_FILTERS);
 
@@ -101,7 +98,6 @@ export default function Aides() {
   const category = (categorySlug || searchParams.get('category') || searchParams.get('theme') || '').trim();
   const situation = (searchParams.get('situation') || '').trim();
   const territory = (territorySlug || searchParams.get('territory') || searchParams.get('territoire') || '').trim();
-  const source = (searchParams.get('source') || '').trim();
   const page = parsePage(searchParams.get('page'));
   const limit = parseLimit(searchParams.get('limit') || searchParams.get('pageSize'));
   const sort = (searchParams.get('sort') || (q ? 'relevance' : 'quality')).trim();
@@ -143,23 +139,8 @@ export default function Aides() {
   // ------------------------------------------------------------------
   // Apply local filters ON TOP of API results
   // ------------------------------------------------------------------
-  const filteredItems = useMemo(() => {
-    if (!apiItems.length) return apiItems;
-
-    const localSearch = localFilters.search.trim().toLowerCase();
-
-    return apiItems.filter((item) => {
-      if (localFilters.category) {
-        const searchStr = `${item.title} ${item.summary || ''}`.toLowerCase();
-        if (!searchStr.includes(localFilters.category.toLowerCase())) return false;
-      }
-      if (localSearch) {
-        const searchStr = `${item.title} ${item.summary || ''}`.toLowerCase();
-        if (!searchStr.includes(localSearch)) return false;
-      }
-      return true;
-    });
-  }, [apiItems, localFilters]);
+  // the API applies every filter (category, situation, territory, urgency): nothing is filtered again in the browser
+  const filteredItems = apiItems;
 
   const hasAnyFilters = hasActiveLocalFilters ||
     Boolean(q) || Boolean(category) || Boolean(situation) || Boolean(territory);
@@ -200,7 +181,6 @@ export default function Aides() {
 
   const clearFilters = () => {
     setSearchParams({});
-    setIsFiltersOpen(false);
   };
 
   const handlePageChange = (/** @type {number} */ nextPage) => {
@@ -288,6 +268,52 @@ export default function Aides() {
   const hasNext = Boolean(pagination?.hasNext);
   const totalPages = pagination?.totalPages || 1;
 
+  const categoryOptions = [
+    { value: '', label: t('aides:filters.all', 'Toutes') },
+    ...(taxonomy?.categories || []).map((/** @type {{ label: string, slug: string }} */ cat) => ({ value: cat.slug, label: categoryText(cat), lang: categoryLang(cat) })),
+  ];
+  const situationLabel = (code) => taxonomy?.aidSituations?.find((/** @type {{ code: string; slug: string; }} */ s) => s.code === code || s.slug === code)?.label || code;
+  const territoryLabel = (value) => territoryOptions.find((o) => o.value === value)?.label || value;
+  const activeFilters = [
+    q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
+    category && !categorySlug && { key: 'category', label: (categoryOptions.find((o) => o.value === category) || { label: category }).label, lang: (categoryOptions.find((o) => o.value === category) || {}).lang, onRemove: () => handleParamChange('category', '') },
+    situation && { key: 'situation', label: situationLabel(situation), lang: 'fr', onRemove: () => handleParamChange('situation', '') },
+    territory && !territorySlug && { key: 'territory', label: territoryLabel(territory), onRemove: () => handleParamChange('territory', '') },
+    localFilters.urgentOnly && { key: 'urgent', label: t('aides:filters.urgent_only', 'Urgence uniquement'), onRemove: () => setLocalFilters({ ...localFilters, urgentOnly: false }) },
+  ].filter(Boolean);
+  const resetAll = () => { clearFilters(); resetLocalFilters(); };
+
+  /** the filter fields, in the sidebar (prefix '') and in the phone sheet (prefix 'm-'); the categories are the chips above the results @param {string} prefix */
+  const renderFilters = (prefix) => (
+    <div className="space-y-5">
+      <FilterField id={`${prefix}aides-situation`} label={t('aides:filters.situation', 'Situation')}>
+        <select id={`${prefix}aides-situation`} className={SELECT} value={situation} onChange={(e) => handleParamChange('situation', e.target.value)}>
+          <option value="">{t('aides:filters.all', 'Toutes')}</option>
+          {/* the situations are named by the API (French) */}
+          {(taxonomy?.aidSituations || []).map((/** @type {{ code: string | number, label: string | number }} */ sit) => (
+            <option key={sit.code} value={sit.code} lang="fr">{sit.label}</option>
+          ))}
+        </select>
+      </FilterField>
+      <FilterField id={`${prefix}aides-territory`} label={t('aides:filters.territory', 'Territoire')}>
+        <select id={`${prefix}aides-territory`} className={SELECT} value={territory} onChange={(e) => handleParamChange('territory', e.target.value)}>
+          {territoryOptions.map((opt) => <option key={opt.value || 'all'} value={opt.value} lang={opt.lang}>{opt.label}</option>)}
+        </select>
+      </FilterField>
+      <fieldset>
+        <legend className="mb-1.5 text-sm font-semibold text-slate-900">{t('aides:filters.priority', 'Priorité')}</legend>
+        <label htmlFor={`${prefix}filter-urgent`} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900">
+          <input id={`${prefix}filter-urgent`} type="checkbox" checked={localFilters.urgentOnly} onChange={(e) => setLocalFilters({ ...localFilters, urgentOnly: e.target.checked })}
+            className="h-5 w-5 rounded border-slate-400 accent-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700" />
+          {t('aides:filters.urgent_only', 'Urgence uniquement')}
+        </label>
+      </fieldset>
+      {hasAnyFilters && <Button type="button" variant="ghost" className="h-11 w-full" onClick={resetAll}>{t('aides:filters.reset_all', 'Réinitialiser les filtres')}</Button>}
+    </div>
+  );
+
+  const countText = t('aides:list.results', { count: pagination?.total ?? filteredItems.length, defaultValue_one: '{{count}} aide trouvée.', defaultValue_other: '{{count}} aides trouvées.' });
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO
@@ -301,336 +327,160 @@ export default function Aides() {
         {liveMessage}
       </p>
 
-      {/* Gradient Banner */}
-      <div
-        className="relative overflow-hidden py-10 sm:py-14"
-        style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
-            {/* Q10: the address is never echoed into the heading — only a known theme / commune is named */}
-            {!categorySlug
-              ? t('aides:list.title', 'Aides sociales')
-              : themeKnown
-                ? (communeKnown
-                  ? t('aides:list.title_theme_commune', 'Aides : {{theme}} à {{commune}}', { theme: categoryText(themeKnown), commune: communeKnown })
-                  : t('aides:list.title_theme', 'Aides : {{theme}}', { theme: categoryText(themeKnown) }))
-                : taxonomy ? t('aides:list.title', 'Aides sociales') : t('aides:list.title_short', 'Aides')}
-          </h1>
-          {categorySlug && taxonomy && !themeKnown ? (
-            <p className="mt-2 text-sm text-white" data-testid="aides-unknown-theme">
-              {t('aides:list.unknown_theme', "Ce thème n'est pas reconnu.")} <Link to="/aides" className="underline underline-offset-2">{t('aides:list.see_all', 'Voir toutes les aides')}</Link>
-            </p>
-          ) : null}
-          <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
+      <PageHeader
+        title={
+          /* Q10: the address is never echoed into the heading — only a known theme / commune is named */
+          !categorySlug
+            ? t('aides:list.title', 'Aides sociales')
+            : themeKnown
+              ? (communeKnown
+                ? t('aides:list.title_theme_commune', 'Aides : {{theme}} à {{commune}}', { theme: categoryText(themeKnown), commune: communeKnown })
+                : t('aides:list.title_theme', 'Aides : {{theme}}', { theme: categoryText(themeKnown) }))
+              : taxonomy ? t('aides:list.title', 'Aides sociales') : t('aides:list.title_short', 'Aides')
+        }
+        description={
+          <>
+            {categorySlug && taxonomy && !themeKnown ? (
+              <span className="mb-1 block text-white" data-testid="aides-unknown-theme">
+                {t('aides:list.unknown_theme', "Ce thème n'est pas reconnu.")} <Link to="/aides" className="underline underline-offset-2">{t('aides:list.see_all', 'Voir toutes les aides')}</Link>
+              </span>
+            ) : null}
             {categorySlug && territorySlug
               ? t('aides:list.intro_territory', 'Explorez les dispositifs et accompagnements disponibles pour votre région.')
               : t('aides:list.intro', 'Filtrez par catégorie, situation ou territoire, ou lancez une recherche.')}
-          </p>
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 py-4 sticky top-20 z-20 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-            <div className="flex items-center gap-2">
-              <Link to="/recherche" className="text-sm font-semibold text-blue-700 hover:text-blue-900">
-                {t('aides:list.smart_search', 'Recherche intelligente')}
-              </Link>
-              <Button
-                type="button"
-                variant="outline"
-                className="gap-2"
-                onClick={() => setIsFiltersOpen((open) => !open)}
-                aria-expanded={isFiltersOpen}
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                {t('aides:filters.title', 'Filtres')}
-              </Button>
-            </div>
-          </div>
-
-          {/* Search bar */}
-          <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3" role="search">
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
-              <Input
-                value={queryInput}
-                onChange={(e) => setQueryInput(e.target.value)}
-                placeholder={t('aides:search.placeholder', 'Rechercher une aide (ex: APL, CSS, Visale...)')}
-                aria-label={t('aides:search.label', 'Rechercher une aide')}
-                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
-              />
-            </div>
-            <Button type="submit" className="h-11 bg-slate-950 text-white hover:bg-slate-800">
-              {t('aides:search.submit', 'Rechercher')}
-            </Button>
-          </form>
-
-          <p className="text-sm text-slate-500">
+          </>
+        }
+      >
+        <HeroSearch
+          value={queryInput}
+          onChange={setQueryInput}
+          onSubmit={() => handleSearchSubmit({ preventDefault() {} })}
+          label={t('aides:search.label', 'Rechercher une aide')}
+          placeholder={t('aides:search.placeholder', 'Rechercher une aide (ex: APL, CSS, Visale...)')}
+          submitLabel={t('aides:search.submit', 'Rechercher')}
+        >
+          <Link to="/recherche" className="ada-target font-semibold text-white underline-offset-2 hover:underline">
+            {t('aides:list.smart_search', 'Recherche intelligente')}
+          </Link>
+          <span>
             <Trans
               i18n={i18n}
               i18nKey="aides:list.glossary_tip"
               defaults="Astuce : consultez notre <0>glossaire</0> pour comprendre les sigles (RSA, APL, AAH...)"
-              components={[<Link key="glossaire" to="/glossaire" className="text-blue-600 hover:text-blue-800 underline" />]}
+              components={[<Link key="glossaire" to="/glossaire" className="font-semibold text-white underline underline-offset-2" />]}
             />
-          </p>
+          </span>
+        </HeroSearch>
+      </PageHeader>
 
-          {/* Filters */}
-          {isFiltersOpen && (
-            <Card>
-              <CardContent className="p-4">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                  <div>
-                    <label htmlFor="aides-category" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.category', 'Catégorie')}
-                    </label>
-                    <select
-                      id="aides-category"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={category}
-                      onChange={(e) => handleParamChange('category', e.target.value)}
-                    >
-                      <option value="">{t('aides:filters.all', 'Toutes')}</option>
-                      {(taxonomy?.categories || []).map((/** @type {{ label: string, slug: string }} */ cat) => (
-                        <option key={cat.slug} value={cat.slug} lang={categoryLang(cat)}>
-                          {categoryText(cat)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+      <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('aides:filters.region_label', 'Filtres de recherche')}>
+        {!categorySlug && (
+          <div className="mb-5">
+            <ChoiceChips label={t('aides:filters.category', 'Catégorie')} options={categoryOptions} value={category} onChange={(v) => handleParamChange('category', v)} testId="aides-category-chips" />
+          </div>
+        )}
+        <ResultsBar summary={isSuccess && filteredItems.length > 0 ? <span data-testid="aides-success-state">{countText}</span> : null}>
+          <MobileFilters title={t('aides:filters.title', 'Filtres')} count={[situation, territory && !territorySlug, localFilters.urgentOnly].filter(Boolean).length} render={renderFilters} onReset={resetAll} />
+          <InlineSelect id="aides-sort" label={t('aides:filters.sort', 'Trier')} value={sort} onChange={(v) => handleParamChange('sort', v)}>
+            <option value="quality">{t('aides:sort.quality', 'Qualité')}</option>
+            <option value="recent">{t('aides:sort.recent', 'Récents')}</option>
+            <option value="relevance" disabled={!q}>
+              {q ? t('aides:sort.relevance', 'Pertinence') : t('aides:sort.relevance_needs_query', 'Pertinence (nécessite une recherche)')}
+            </option>
+          </InlineSelect>
+          <InlineSelect id="aides-limit" label={t('aides:filters.per_page', 'Par page')} value={String(limit)} onChange={(v) => handleParamChange('limit', v)}>
+            {LIMIT_OPTIONS.map((opt) => <option key={opt} value={String(opt)}>{opt}</option>)}
+          </InlineSelect>
+        </ResultsBar>
+        <ActiveFilters items={activeFilters} onClear={resetAll} />
 
-                  <div>
-                    <label htmlFor="aides-situation" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.situation', 'Situation')}
-                    </label>
-                    <select
-                      id="aides-situation"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={situation}
-                      onChange={(e) => handleParamChange('situation', e.target.value)}
-                    >
-                      <option value="">{t('aides:filters.all', 'Toutes')}</option>
-                      {/* the situations are named by the API (French) */}
-                      {(taxonomy?.aidSituations || []).map((/** @type {{ code: string | number, label: string | number }} */ sit) => (
-                        <option key={sit.code} value={sit.code} lang="fr">
-                          {sit.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="aides-territory" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.territory', 'Territoire')}
-                    </label>
-                    <select
-                      id="aides-territory"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={territory}
-                      onChange={(e) => handleParamChange('territory', e.target.value)}
-                    >
-                      {territoryOptions.map((opt) => (
-                        <option key={opt.value || 'all'} value={opt.value} lang={opt.lang}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="aides-source" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.source', 'Source')}
-                    </label>
-                    <select
-                      id="aides-source"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={source}
-                      onChange={(e) => handleParamChange('source', e.target.value)}
-                    >
-                      <option value="">{t('aides:filters.source_all', 'Toutes les sources')}</option>
-                      <option value="aides-territoires">Aides Territoires</option>
-                      <option value="drees">DREES</option>
-                      <option value="grand-est">Grand Est</option>
-                      <option value="agefiph">Agefiph</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="aides-sort" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.sort', 'Trier')}
-                    </label>
-                    <select
-                      id="aides-sort"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={sort}
-                      onChange={(e) => handleParamChange('sort', e.target.value)}
-                    >
-                      <option value="quality">{t('aides:sort.quality', 'Qualité')}</option>
-                      <option value="recent">{t('aides:sort.recent', 'Récents')}</option>
-                      <option value="relevance" disabled={!q}>
-                        {q ? t('aides:sort.relevance', 'Pertinence') : t('aides:sort.relevance_needs_query', 'Pertinence (nécessite une recherche)')}
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="aides-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('aides:filters.per_page', 'Par page')}
-                    </label>
-                    <select
-                      id="aides-limit"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={String(limit)}
-                      onChange={(e) => handleParamChange('limit', e.target.value)}
-                    >
-                      {LIMIT_OPTIONS.map((opt) => (
-                        <option key={opt} value={String(opt)}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <Button type="button" variant="ghost" onClick={clearFilters}>
-                    {t('aides:filters.reset', 'Réinitialiser')}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setIsFiltersOpen(false)}>
-                    {t('aides:filters.close', 'Fermer')}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        <section className="min-w-0" aria-label={t('aides:list.results_label', 'Résultats des aides')}>
+          {/* Error state */}
+          {isError && (
+            <EmptyState
+              title={t('aides:error.title', 'Impossible de charger les aides')}
+              description={errorText}
+              icon={<RotateCcw className="h-6 w-6" />}
+              actions={
+                <Button type="button" variant="outline" onClick={() => refetch()}>
+                  <RotateCcw className="me-2 h-4 w-4" />
+                  {t('aides:error.retry', 'Réessayer')}
+                </Button>
+              }
+              role="alert"
+              data-testid="aides-error-state"
+            />
           )}
-        </div>
-      </div>
 
-      {/* Main content: sidebar + results */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="flex flex-col gap-8 lg:flex-row">
-          {/* Sidebar FilterPanel */}
-          <aside className="w-full shrink-0 lg:w-64" aria-label={t('aides:filters.region_label', 'Filtres de recherche')}>
-            <FilterPanel
-              showSearch={false}
-              filters={localFilters}
-              onChange={setLocalFilters}
-              onReset={resetLocalFilters}
-            />
-          </aside>
+          {/* Loading state — show skeletons */}
+          {isLoading && !isError && (
+            <div className="grid gap-5 sm:grid-cols-2" data-testid="aides-loading-state">
+              {[1, 2, 3, 4, 5, 6].map((value) => (
+                <div key={value} className="rounded-2xl border border-border bg-card p-5">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="mt-3 h-5 w-3/4" />
+                  <Skeleton className="mt-2 h-4 w-full" />
+                  <Skeleton className="mt-2 h-4 w-2/3" />
+                </div>
+              ))}
+            </div>
+          )}
 
-          {/* Results column */}
-          <section className="min-w-0 flex-1" aria-label={t('aides:list.results_label', 'Résultats des aides')}>
-            {/* Error state */}
-            {isError && (
-              <EmptyState
-                title={t('aides:error.title', 'Impossible de charger les aides')}
-                description={errorText}
-                icon={<RotateCcw className="h-6 w-6" />}
-                actions={
-                  <Button type="button" variant="outline" onClick={() => refetch()}>
-                    <RotateCcw className="me-2 h-4 w-4" />
-                    {t('aides:error.retry', 'Réessayer')}
-                  </Button>
-                }
-                role="alert"
-                data-testid="aides-error-state"
-              />
-            )}
+          {/* Success state */}
+          {isSuccess && !isError && (
+            <>
+              {/* Empty without active filters */}
+              {filteredItems.length === 0 && !hasAnyFilters && (
+                <div className="my-8" data-testid="aides-empty-neutral">
+                  <EmptyState
+                    title={t('aides:empty.none_title', 'Aucune aide disponible pour le moment')}
+                    description={t('aides:empty.none_text', "Notre catalogue d'aides est en cours de mise à jour. N'hésitez pas à revenir plus tard.")}
+                    icon={<Search className="h-6 w-6" />}
+                  />
+                  <OfficialResourcesNotice />
+                </div>
+              )}
 
-            {/* Loading state — show skeletons */}
-            {isLoading && !isError && (
-              <div className="space-y-3" data-testid="aides-loading-state">
-                {[1, 2, 3, 4, 5, 6].map((value) => (
-                  <div key={value} className="rounded-xl border border-border bg-card p-5">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="mt-3 h-5 w-3/4" />
-                    <Skeleton className="mt-2 h-4 w-full" />
-                    <Skeleton className="mt-2 h-4 w-2/3" />
-                  </div>
-                ))}
-              </div>
-            )}
+              {/* Empty with active filters — EmptyState via AidGrid */}
+              {/* D-5: a search or filter that matches nothing still points to the official portals (never a dead end, never a fabricated record) */}
+              {filteredItems.length === 0 && hasAnyFilters && (
+                <div data-testid="aides-empty-filtered">
+                  <AidGrid
+                    items={[]}
+                    hasActiveFilters={true}
+                    onReset={resetAll}
+                  />
+                  <NoResultsHelp kind="aides" q={q} />
+                  <OfficialResourcesNotice />
+                </div>
+              )}
 
-            {/* Success state */}
-            {isSuccess && !isError && (() => {
-              return (
-                <>
-                  {filteredItems.length > 0 && (
-                    <p className="mb-4 text-sm text-muted-foreground" data-testid="aides-success-state">
-                      {t('aides:list.results', { count: pagination?.total ?? filteredItems.length, defaultValue_one: '{{count}} aide trouvée.', defaultValue_other: '{{count}} aides trouvées.' })}
-                    </p>
-                  )}
+              {/* Items grid */}
+              {filteredItems.length > 0 && (
+                <AidGrid
+                  items={filteredItems}
+                  hasActiveFilters={hasAnyFilters}
+                  onReset={resetAll}
+                />
+              )}
 
-                  {/* Empty without active filters */}
-                  {filteredItems.length === 0 && !hasAnyFilters && (
-                    <div className="my-8" data-testid="aides-empty-neutral">
-                      <EmptyState
-                        title={t('aides:empty.none_title', 'Aucune aide disponible pour le moment')}
-                        description={t('aides:empty.none_text', "Notre catalogue d'aides est en cours de mise à jour. N'hésitez pas à revenir plus tard.")}
-                        icon={<Search className="h-6 w-6" />}
-                      />
-                      <OfficialResourcesNotice />
-                    </div>
-                  )}
-
-                  {/* Empty with active filters — EmptyState via AidGrid */}
-                  {/* D-5: a search or filter that matches nothing still points to the official portals (never a dead end, never a fabricated record) */}
-                  {filteredItems.length === 0 && hasAnyFilters && (
-                    <div data-testid="aides-empty-filtered">
-                      <AidGrid
-                        items={[]}
-                        hasActiveFilters={true}
-                        onReset={() => { clearFilters(); resetLocalFilters(); }}
-                      />
-                      <NoResultsHelp kind="aides" q={q} />
-                      <OfficialResourcesNotice />
-                    </div>
-                  )}
-
-                  {/* Items grid */}
-                  {filteredItems.length > 0 && (
-                    <AidGrid
-                      items={filteredItems}
-                      hasActiveFilters={hasAnyFilters}
-                      onReset={() => { clearFilters(); resetLocalFilters(); }}
-                    />
-                  )}
-
-                  {/* Pagination */}
-                  {filteredItems.length > 0 && totalPages > 1 && (
-                    <div className="flex flex-col sm:flex-row items-center justify-center mt-10 gap-3">
-                      <Button
-                        variant="outline"
-                        disabled={page <= 1}
-                        onClick={() => handlePageChange(page - 1)}
-                      >
-                        {t('aides:pagination.previous', 'Précédent')}
-                      </Button>
-                      <span className="flex items-center px-4 text-sm font-medium text-foreground">
-                        {t('aides:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
-                      </span>
-                      <Button
-                        variant="outline"
-                        disabled={!hasNext}
-                        onClick={() => handlePageChange(page + 1)}
-                      >
-                        {t('aides:pagination.next', 'Suivant')}
-                      </Button>
-                    </div>
-                  )}
-                </>
-              );
-            })()}
-          </section>
-        </div>
-      </div>
+              {/* Pagination */}
+              {filteredItems.length > 0 && (
+                <Pager
+                  page={page}
+                  totalPages={totalPages}
+                  hasNext={hasNext}
+                  onPage={handlePageChange}
+                  label={t('aides:pagination.nav', 'Pages des aides')}
+                  previous={t('aides:pagination.previous', 'Précédent')}
+                  next={t('aides:pagination.next', 'Suivant')}
+                  status={t('aides:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
+                />
+              )}
+            </>
+          )}
+        </section>
+      </CatalogBody>
     </div>
   );
 }

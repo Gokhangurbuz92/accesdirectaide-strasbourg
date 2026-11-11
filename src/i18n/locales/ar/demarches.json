@@ -47,9 +47,7 @@
  "error.retry": "إعادة المحاولة",
  "error.title": "تعذّر تحميل الإجراءات",
  "filters.all": "الكل",
- "filters.all_sources": "جميع المصادر",
  "filters.category": "الفئة",
- "filters.close": "إغلاق",
  "filters.needs_query": "(يتطلب إجراء بحث)",
  "filters.per_page": "في كل صفحة",
  "filters.reset": "إعادة الضبط",
@@ -58,8 +56,6 @@
  "filters.sort_quality": "الجودة",
  "filters.sort_recent": "الأحدث",
  "filters.sort_relevance": "الأكثر صلة",
- "filters.source": "المصدر",
- "filters.source_curated": "بيانات تم التحقق منها",
  "filters.toggle": "عوامل التصفية",
  "list.count_few": "تم العثور على {{count}} إجراءات.",
  "list.count_many": "تم العثور على {{count}} إجراءً.",
@@ -86,5 +82,6 @@
  "seo.title_category": "الإجراءات - {{category}}",
  "seo.title_query": "الإجراءات - {{q}}",
  "seo.title_situation": "إجراءات لحالة: {{situation}}",
- "verified_on": "تم التحقق في {{date}}"
+ "verified_on": "تم التحقق في {{date}}",
+ "pagination.nav": "صفحات الإجراءات"
 }

@@ -13,13 +13,14 @@ import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCard
 import { formatProvenanceDate } from '@/lib/provenance';
 import { geoLabel, laneLabel, topicLabel } from './newsLabels';
 
-/** @param {{ item: any, featured?: boolean, saved?: boolean, onToggleSave?: (item: any) => void, falc?: boolean }} props */
-export default function NewsCardV2({ item, featured = false, saved = false, onToggleSave, falc = false }) {
+/** `compact`: a secondary story beside the lead one (smaller picture, shorter summary)
+ * @param {{ item: any, featured?: boolean, compact?: boolean, saved?: boolean, onToggleSave?: (item: any) => void, falc?: boolean }} props */
+export default function NewsCardV2({ item, featured = false, compact = false, saved = false, onToggleSave, falc = false }) {
   const { t } = useT('news');
   const tr = useContentTranslation('actualite', item);
   const title = tr.value('titre') || item.titre;
   const summary = (falc && tr.value('summary_falc')) || tr.value('resume') || item.resume || '';
-  const excerpt = htmlToPlainText(summary, { maxLength: featured ? 320 : 200 });
+  const excerpt = htmlToPlainText(summary, { maxLength: featured ? 320 : compact ? 140 : 200 });
   const href = item.slug ? `/actualites/${item.slug}` : `/actualites/view?id=${item.id}`;
   const topic = (item.topics || []).find((x) => x !== 'une') || 'societe';
   const flag = item.geo?.scope === 'monde' ? '🌍' : item.geo?.scope === 'alsace' ? '📍' : '🇫🇷';
@@ -29,27 +30,27 @@ export default function NewsCardV2({ item, featured = false, saved = false, onTo
   const verifiedAt = formatProvenanceDate(item.lane === 'A' && item.auto_publish ? item.published_at : item.lane === 'ADA' ? item.ada?.reviewedAt : null);
   const sourceLabel = item.publisher;
   return (
-    <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md focus-within:ring-2 focus-within:ring-blue-600 ${featured ? 'md:flex-row' : ''} ${item.est_important ? 'ring-1 ring-amber-300' : ''}`}
+    <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-subtle transition-shadow hover:border-blue-200 hover:shadow-float focus-within:ring-2 focus-within:ring-blue-700 ${featured ? 'md:flex-row lg:flex-col' : ''} ${item.est_important ? 'ring-1 ring-amber-300' : ''}`}
       data-testid="actualite-card" data-lane={item.lane} data-geo={item.geo?.scope}>
       <Link to={href} className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none" aria-label={readLabel}><span className="sr-only">{readLabel}</span></Link>
-      <div className={`relative overflow-hidden bg-slate-100 ${featured ? 'md:w-1/2 aspect-[16/9] md:aspect-auto' : 'aspect-[16/9]'}`}>
+      <div className={`relative overflow-hidden bg-slate-100 ${featured ? 'aspect-[16/9] md:aspect-auto md:min-h-[20rem] md:w-[46%] md:shrink-0 lg:aspect-[2/1] lg:min-h-0 lg:w-full' : compact ? 'aspect-[21/9]' : 'aspect-[16/9]'}`}>
         {item.image ? (
-          <img src={item.image.url} alt={item.image.alt || ''} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+          <img src={item.image.url} alt={item.image.alt || ''} loading="lazy" decoding="async" referrerPolicy="no-referrer" className={`h-full w-full object-cover ${featured ? 'md:absolute md:inset-0' : ''}`} />
         ) : (
-          <NewsIllustration topic={topic} className="h-full w-full" />
+          <NewsIllustration topic={topic} className={`h-full w-full ${featured ? 'md:absolute md:inset-0' : ''}`} />
         )}
         {item.image?.aiGenerated && (
           <span className="absolute bottom-2 start-2 rounded bg-slate-900/80 px-2 py-0.5 text-[11px] font-medium text-white">{t('news:image.ai_label', 'Illustration générée par IA')}</span>
         )}
       </div>
-      <div className={`flex flex-1 flex-col p-5 ${featured ? 'md:p-7' : ''}`}>
+      <div className={`flex flex-1 flex-col ${featured ? 'p-5 md:p-7' : compact ? 'p-4' : 'p-5'}`}>
         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-700"><span aria-hidden="true">{flag} </span>{geoLabel(item.geo?.scope || 'france', t, item.geo?.area)}</span>
           <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800">{topicLabel(topic, t)}</span>
           {item.est_important && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-900">{t('news:badge.important', 'Important')}</span>}
         </div>
-        <h2 className={`font-bold leading-snug text-slate-900 group-hover:text-blue-800 ${featured ? 'text-2xl md:text-3xl' : 'text-lg'}`} data-testid="actualite-title" {...tr.attrs('titre')}>{title}</h2>
-        {excerpt && <p className={`mt-2 text-slate-700 ${featured ? 'line-clamp-5 text-base' : 'line-clamp-3 text-sm'}`} {...tr.attrs(falc && tr.value('summary_falc') ? 'summary_falc' : 'resume')}>{excerpt}</p>}
+        <h2 className={`font-heading font-bold leading-snug tracking-tight text-slate-900 group-hover:text-blue-800 ${featured ? 'text-2xl' : compact ? 'text-base' : 'text-lg'}`} data-testid="actualite-title" {...tr.attrs('titre')}>{title}</h2>
+        {excerpt && <p className={`mt-2 leading-relaxed text-slate-700 ${featured ? 'line-clamp-5 text-base' : compact ? 'line-clamp-2 text-sm' : 'line-clamp-3 text-sm'}`} {...tr.attrs(falc && tr.value('summary_falc') ? 'summary_falc' : 'resume')}>{excerpt}</p>}
         <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-4 text-xs text-slate-600">
           <span className="font-semibold text-slate-800">{item.publisher}</span>
           <time dateTime={new Date(item.date_publication).toISOString()}>{formatDate(item.date_publication, { day: 'numeric', month: 'long', year: 'numeric' })}</time>

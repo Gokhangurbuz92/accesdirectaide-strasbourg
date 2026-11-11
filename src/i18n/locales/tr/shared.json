@@ -240,5 +240,11 @@
  "chat.outcome_abstention": "Kaynaklı yanıt yok: doğrulanmış bir kaynak olmadan yanıt vermem.",
  "chat.outcome_grounded": "Yanıt aşağıda listelenen resmî kaynaklara dayanıyor. Haklarınız hakkında bir karar değildir.",
  "chat.postal_choose": "{{code}} posta kodunun belediyeleri (La Poste resmî veritabanı): kendi belediyenizi seçin.",
- "chat.postal_outside": "(kapsanan bölgenin dışında)"
+ "chat.postal_outside": "(kapsanan bölgenin dışında)",
+ "filters.close": "Filtreleri kapat",
+ "filters.sheet_help": "Her seçim listeyi hemen günceller.",
+ "filters.reset": "Tümünü temizle",
+ "filters.apply": "Sonuçları göster",
+ "filters.active": "Etkin filtreler:",
+ "filters.remove": "{{label}} filtresini kaldır"
 }

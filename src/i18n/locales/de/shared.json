@@ -240,5 +240,11 @@
  "chat.outcome_abstention": "Keine Antwort mit Quelle: Ohne geprüfte Quelle antworte ich nicht.",
  "chat.outcome_grounded": "Antwort auf Grundlage der unten aufgeführten offiziellen Quellen. Sie ist keine Entscheidung über Ihre Rechte.",
  "chat.postal_choose": "Gemeinden der Postleitzahl {{code}} (offizielle Datenbank von La Poste): Wählen Sie Ihre aus.",
- "chat.postal_outside": "(außerhalb des abgedeckten Gebiets)"
+ "chat.postal_outside": "(außerhalb des abgedeckten Gebiets)",
+ "filters.close": "Filter schließen",
+ "filters.sheet_help": "Jede Auswahl aktualisiert die Liste sofort.",
+ "filters.reset": "Alle zurücksetzen",
+ "filters.apply": "Ergebnisse anzeigen",
+ "filters.active": "Aktive Filter:",
+ "filters.remove": "Filter {{label}} entfernen"
 }

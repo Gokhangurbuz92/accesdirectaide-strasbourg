@@ -240,5 +240,11 @@
  "chat.outcome_abstention": "No sourced answer: I do not answer without a verified source.",
  "chat.outcome_grounded": "Answer based on the official sources listed below. It is not a decision about your rights.",
  "chat.postal_choose": "Communes of postcode {{code}} (La Poste official database): choose yours.",
- "chat.postal_outside": "(outside the area covered)"
+ "chat.postal_outside": "(outside the area covered)",
+ "filters.close": "Close filters",
+ "filters.sheet_help": "Each choice updates the list immediately.",
+ "filters.reset": "Clear all",
+ "filters.apply": "Show results",
+ "filters.active": "Active filters:",
+ "filters.remove": "Remove the filter {{label}}"
 }

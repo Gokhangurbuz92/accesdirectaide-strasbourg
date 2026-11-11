@@ -39,9 +39,7 @@
  "error.retry": "Erneut versuchen",
  "error.title": "Die Behördengänge konnten nicht geladen werden",
  "filters.all": "Alle",
- "filters.all_sources": "Alle Quellen",
  "filters.category": "Kategorie",
- "filters.close": "Schließen",
  "filters.needs_query": "(erfordert eine Suche)",
  "filters.per_page": "Pro Seite",
  "filters.reset": "Zurücksetzen",
@@ -50,8 +48,6 @@
  "filters.sort_quality": "Qualität",
  "filters.sort_recent": "Neueste",
  "filters.sort_relevance": "Relevanz",
- "filters.source": "Quelle",
- "filters.source_curated": "Geprüfte Daten",
  "filters.toggle": "Filter",
  "list.count_one": "{{count}} Behördengang gefunden.",
  "list.count_other": "{{count}} Behördengänge gefunden.",
@@ -74,5 +70,6 @@
  "seo.title_category": "Behördengänge - {{category}}",
  "seo.title_query": "Behördengänge - {{q}}",
  "seo.title_situation": "Behördengänge für: {{situation}}",
- "verified_on": "Geprüft am {{date}}"
+ "verified_on": "Geprüft am {{date}}",
+ "pagination.nav": "Seiten der Behördengänge"
 }

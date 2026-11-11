@@ -3,12 +3,12 @@ import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { List, Map as MapIcon } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import PageHeader from '@/components/layout/PageHeader';
+import { ActiveFilters, CatalogBody, ChoiceChips, FilterField, HeroSearch, InlineSelect, MobileFilters, Pager, ResultsBar, TEXT_INPUT } from '@/components/layout/catalog';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
 import NoResultsHelp from '@/components/search/NoResultsHelp';
@@ -61,7 +61,8 @@ export default function Annuaire() {
   const { t } = useT('structures');
   const [searchParams, setSearchParams] = useSearchParams();
   // PKG-11 / P28: a link that arrives with a location filter (e.g. from /territoire) shows it, so the person knows the list is filtered
-  const [isFiltersOpen, setIsFiltersOpen] = useState(() => ['city', 'departement', 'territory', 'geo'].some((k) => (searchParams.get(k) || '').trim() !== ''));
+  // PKG-11 / P28: a link that arrives with a location filter (e.g. from /territoire) shows it — 11/11/2026: as an active-filter chip above the results
+  // (and in the always-visible sidebar from `lg`), so the person knows the list is filtered
   const [viewMode, setViewMode] = useState('list');
 
   const q = (searchParams.get('q') || '').trim();
@@ -144,15 +145,8 @@ export default function Annuaire() {
     setSearchParams(params);
   };
 
-  /** @param {import('react').FormEvent<HTMLFormElement>} event */
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    handleParamChange('q', queryInput.trim());
-  };
-
   const clearFilters = () => {
     setSearchParams({});
-    setIsFiltersOpen(false);
   };
 
   const handlePageChange = (/** @type {number} */ nextPage) => {
@@ -173,6 +167,47 @@ export default function Annuaire() {
   const hasNext = Boolean(pagination.hasNext);
   const totalPages = pagination.totalPages || 1;
 
+  const typeOptions = TYPE_STRUCTURES.map((opt) => ({ value: opt.value, label: opt.value ? typeLabel(opt) : t('structures:filters.all', 'Tous') }));
+  const activeFilters = [
+    q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
+    type && { key: 'type', label: typeLabel(TYPE_STRUCTURES.find((o) => o.value === type) || { value: type, label: type }), onRemove: () => handleParamChange('type', '') },
+    city && { key: 'city', label: city, lang: 'fr', onRemove: () => handleParamChange('city', '') },
+    departement && { key: 'departement', label: departement, onRemove: () => handleParamChange('departement', '') },
+    pmrEnabled && { key: 'pmr', label: t('structures:filters.pmr_only', 'Accessible PMR uniquement'), onRemove: () => handleParamChange('pmr', '') },
+  ].filter(Boolean);
+
+  /** the place filters, in the sidebar (prefix '') and in the phone sheet (prefix 'm-'); the types are the chips above the results @param {string} prefix */
+  const renderFilters = (prefix) => (
+    <div className="space-y-5">
+      <FilterField id={`${prefix}structures-city`} label={t('structures:filters.city', 'Ville')}>
+        <input id={`${prefix}structures-city`} type="text" className={TEXT_INPUT} value={city} onChange={(e) => handleParamChange('city', e.target.value)}
+          placeholder={t('structures:filters.city_placeholder', 'Ex: Strasbourg')} autoComplete="off" />
+      </FilterField>
+      <FilterField id={`${prefix}structures-departement`} label={t('structures:filters.departement', 'Département')}>
+        <input id={`${prefix}structures-departement`} type="text" inputMode="numeric" className={TEXT_INPUT} value={departement} onChange={(e) => handleParamChange('departement', e.target.value)}
+          placeholder={t('structures:filters.departement_placeholder', 'Ex: 67')} autoComplete="off" />
+      </FilterField>
+      <label htmlFor={`${prefix}structures-pmr`} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900">
+        <input id={`${prefix}structures-pmr`} type="checkbox" className="h-5 w-5 rounded border-slate-400 accent-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+          checked={pmrEnabled} onChange={(e) => handleParamChange('pmr', e.target.checked ? '1' : '')} />
+        {t('structures:filters.pmr_only', 'Accessible PMR uniquement')}
+      </label>
+      {activeFilters.length > 0 && <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('structures:filters.reset', 'Réinitialiser')}</Button>}
+    </div>
+  );
+
+  /** list / map: a real tab pair (arrow keys move between the two, the panel is labelled by its tab) @param {import('react').KeyboardEvent} e */
+  const onTabKey = (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+      e.preventDefault();
+      const next = viewMode === 'list' ? 'map' : 'list';
+      setViewMode(next);
+      document.getElementById(`annuaire-tab-${next}`)?.focus();
+    }
+  };
+  const tabClass = (active) => `inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${active ? 'bg-white text-blue-900 shadow-subtle' : 'text-slate-700 hover:text-slate-900'}`;
+  const total = typeof pagination.total === 'number' ? pagination.total : structures.length;
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO
@@ -186,294 +221,132 @@ export default function Annuaire() {
         {liveMessage}
       </p>
 
-      {/* Gradient Banner */}
-      <div
-        className="relative overflow-hidden py-10 sm:py-14"
-        style={{ background: 'linear-gradient(135deg, #020617 0%, #002D5A 30%, #1e3a8a 60%, #3730a3 85%, #4F46E5 100%)' }}
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-16 -end-16 w-72 h-72 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{t('structures:list.title', 'Annuaire')}</h1>
-          <p className="mt-2 text-blue-100/80 text-sm sm:text-base">
-            {t('structures:list.intro', 'Recherchez une structure et filtrez par type ou localisation.')}
-          </p>
-        </div>
-      </div>
+      <PageHeader title={t('structures:list.title', 'Annuaire')} description={t('structures:list.intro', 'Recherchez une structure et filtrez par type ou localisation.')}>
+        <HeroSearch
+          value={queryInput}
+          onChange={setQueryInput}
+          onSubmit={() => handleParamChange('q', queryInput.trim())}
+          label={t('structures:search.label', 'Rechercher une structure')}
+          placeholder={t('structures:search.placeholder', 'Rechercher une structure (ex: médiation numérique, CCAS...)')}
+          submitLabel={t('structures:search.submit', 'Rechercher')}
+          inputTestId="structures-search-input"
+          submitTestId="structures-search-submit"
+        />
+      </PageHeader>
 
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 py-4 sticky top-16 z-20 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-            <div className="flex gap-2" role="tablist">
-              <button role="tab" aria-selected={viewMode === 'list'}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-gray-100'}`}
-                onClick={() => setViewMode('list')}>
-                {t('structures:view.list', 'Liste')}
-              </button>
-              <button role="tab" aria-selected={viewMode === 'map'}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium ${viewMode === 'map' ? 'bg-primary text-white' : 'bg-gray-100'}`}
-                onClick={() => setViewMode('map')}>
-                {t('structures:view.map', 'Carte')}
-              </button>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => setIsFiltersOpen((open) => !open)}
-              aria-expanded={isFiltersOpen}
-            >
-              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              {t('structures:filters.toggle', 'Filtres')}
-            </Button>
+      <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('structures:filters.toggle', 'Filtres')}>
+        <div className="mb-5">
+          <ChoiceChips label={t('structures:filters.type', 'Type')} options={typeOptions} value={type} onChange={(v) => handleParamChange('type', v)} testId="structures-type-chips" />
+        </div>
+
+        <ResultsBar summary={!isLoading && !error && structures.length > 0
+          ? t('structures:list.count', { count: total, defaultValue_one: '{{count}} structure trouvée.', defaultValue_other: '{{count}} structures trouvées.' }) : null}>
+          <MobileFilters title={t('structures:filters.toggle', 'Filtres')} count={[city, departement, pmrEnabled].filter(Boolean).length} render={renderFilters} onReset={clearFilters} />
+          <div role="tablist" aria-label={t('structures:view.label', 'Affichage')} className="inline-flex rounded-lg bg-slate-100 p-1">
+            <button id="annuaire-tab-list" role="tab" type="button" aria-selected={viewMode === 'list'} aria-controls="annuaire-panel" tabIndex={viewMode === 'list' ? 0 : -1}
+              className={tabClass(viewMode === 'list')} onClick={() => setViewMode('list')} onKeyDown={onTabKey}>
+              <List className="h-4 w-4" aria-hidden="true" />{t('structures:view.list', 'Liste')}
+            </button>
+            <button id="annuaire-tab-map" role="tab" type="button" aria-selected={viewMode === 'map'} aria-controls="annuaire-panel" tabIndex={viewMode === 'map' ? 0 : -1}
+              className={tabClass(viewMode === 'map')} onClick={() => setViewMode('map')} onKeyDown={onTabKey}>
+              <MapIcon className="h-4 w-4" aria-hidden="true" />{t('structures:view.map', 'Carte')}
+            </button>
           </div>
+          <InlineSelect id="structures-sort" label={t('structures:filters.sort', 'Trier')} value={sort} onChange={(v) => handleParamChange('sort', v)}>
+            <option value="quality">{t('structures:filters.sort_quality', 'Qualité')}</option>
+            <option value="recent">{t('structures:filters.sort_recent', 'Récents')}</option>
+            <option value="alpha">{t('structures:filters.sort_alpha', 'A-Z')}</option>
+            <option value="relevance" disabled={!q}>
+              {t('structures:filters.sort_relevance', 'Pertinence')} {q ? '' : t('structures:filters.needs_query', '(nécessite une recherche)')}
+            </option>
+          </InlineSelect>
+          <InlineSelect id="structures-limit" label={t('structures:filters.per_page', 'Par page')} value={String(limit)} onChange={(v) => handleParamChange('limit', v)}>
+            {LIMIT_OPTIONS.map((opt) => <option key={opt} value={String(opt)}>{opt}</option>)}
+          </InlineSelect>
+        </ResultsBar>
+        <ActiveFilters items={activeFilters} onClear={clearFilters} />
 
-          {/* Search bar */}
-          <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
-              <Input
-                value={queryInput}
-                onChange={(e) => setQueryInput(e.target.value)}
-                placeholder={t('structures:search.placeholder', 'Rechercher une structure (ex: médiation numérique, CCAS...)')}
-                aria-label={t('structures:search.label', 'Rechercher une structure')}
-                className="ps-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
-                data-testid="structures-search-input"
-              />
-            </div>
-            <Button type="submit" className="h-11" data-testid="structures-search-submit">
-              {t('structures:search.submit', 'Rechercher')}
-            </Button>
-          </form>
-
-          {/* Quick-access type filter buttons */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant={type === '' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleParamChange('type', '')}
-            >
-              {t('structures:filters.all', 'Tous')}
-            </Button>
-            {TYPE_STRUCTURES.filter((opt) => opt.value).slice(0, 10).map((opt) => (
-              <Button
-                key={opt.value}
-                type="button"
-                variant={type === opt.value ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => handleParamChange('type', opt.value)}
-              >
-                {typeLabel(opt)}
-              </Button>
-            ))}
-          </div>
-
-          {/* Filters */}
-          {isFiltersOpen && (
-            <Card>
-              <CardContent className="p-4">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                  <div>
-                    <label htmlFor="structures-type" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('structures:filters.type', 'Type')}
-                    </label>
-                    <select
-                      id="structures-type"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={type}
-                      onChange={(e) => handleParamChange('type', e.target.value)}
-                    >
-                      {TYPE_STRUCTURES.map((opt) => (
-                        <option key={opt.value || 'all'} value={opt.value}>
-                          {typeLabel(opt)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="structures-city" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('structures:filters.city', 'Ville')}
-                    </label>
-                    <Input
-                      id="structures-city"
-                      value={city}
-                      onChange={(e) => handleParamChange('city', e.target.value)}
-                      placeholder={t('structures:filters.city_placeholder', 'Ex: Strasbourg')}
-                      className="h-10 bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="structures-departement" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('structures:filters.departement', 'Département')}
-                    </label>
-                    <Input
-                      id="structures-departement"
-                      value={departement}
-                      onChange={(e) => handleParamChange('departement', e.target.value)}
-                      placeholder={t('structures:filters.departement_placeholder', 'Ex: 67')}
-                      className="h-10 bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="structures-sort" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('structures:filters.sort', 'Trier')}
-                    </label>
-                    <select
-                      id="structures-sort"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={sort}
-                      onChange={(e) => handleParamChange('sort', e.target.value)}
-                    >
-                      <option value="quality">{t('structures:filters.sort_quality', 'Qualité')}</option>
-                      <option value="recent">{t('structures:filters.sort_recent', 'Récents')}</option>
-                      <option value="alpha">{t('structures:filters.sort_alpha', 'A-Z')}</option>
-                      <option value="relevance" disabled={!q}>
-                        {t('structures:filters.sort_relevance', 'Pertinence')} {q ? '' : t('structures:filters.needs_query', '(nécessite une recherche)')}
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="structures-limit" className="block text-sm font-semibold text-slate-900 mb-1">
-                      {t('structures:filters.per_page', 'Par page')}
-                    </label>
-                    <select
-                      id="structures-limit"
-                      className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      value={String(limit)}
-                      onChange={(e) => handleParamChange('limit', e.target.value)}
-                    >
-                      {LIMIT_OPTIONS.map((opt) => (
-                        <option key={opt} value={String(opt)}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <label className="flex items-center gap-2 text-sm text-slate-700">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-input text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      checked={pmrEnabled}
-                      onChange={(e) => handleParamChange('pmr', e.target.checked ? '1' : '')}
-                    />
-                    {t('structures:filters.pmr_only', 'Accessible PMR uniquement')}
-                  </label>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button type="button" variant="ghost" onClick={clearFilters}>
-                      {t('structures:filters.reset', 'Réinitialiser')}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setIsFiltersOpen(false)}>
-                      {t('structures:filters.close', 'Fermer')}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {serves && (
-          <p className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900" data-testid="annuaire-serves-filter">
+          <p className="mb-5 flex flex-wrap items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2 text-sm text-teal-900" data-testid="annuaire-serves-filter">
             {servesName
               ? t('structures:serves.named', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre {{commune}} (code Insee {{code}}).", { commune: servesName, code: serves })
               : t('structures:serves.code', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre la commune de code Insee {{code}}.", { code: serves })}
-            <button type="button" className="underline underline-offset-2 min-h-11" onClick={() => handleParamChange('serves', '')}>{t('structures:serves.remove', 'Retirer ce filtre')}</button>
+            <button type="button" className="min-h-11 font-semibold underline underline-offset-2" onClick={() => handleParamChange('serves', '')}>{t('structures:serves.remove', 'Retirer ce filtre')}</button>
           </p>
         )}
-        {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label={t('structures:list.loading_results', 'Chargement des résultats')}>
-            {Array.from({ length: Math.min(limit, 12) }).map((_, idx) => (
-              <Card key={idx} className="border-slate-200">
-                <CardContent className="p-6 space-y-3">
+
+        <div id="annuaire-panel" role="tabpanel" aria-labelledby={`annuaire-tab-${viewMode}`}>
+          {isLoading ? (
+            <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3" role="status" aria-label={t('structures:list.loading_results', 'Chargement des résultats')}>
+              {Array.from({ length: Math.min(limit, 12) }).map((_, idx) => (
+                <div key={idx} className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
                   <Skeleton className="h-5 w-1/3" />
                   <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-2/3" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : error ? (
-          <EmptyState
-            title={t('structures:error.title', "Impossible de charger l'annuaire")}
-            description={t('structures:error.description', 'Vérifiez votre connexion puis réessayez.')}
-            actions={
-              <Button type="button" onClick={() => refetch()}>
-                {t('structures:error.retry', 'Réessayer')}
-              </Button>
-            }
-            role="alert"
-          />
-        ) : structures.length > 0 ? (
-          <>
-            {viewMode === 'map' ? (
-              <>
-                {/* N11: the map tiles come from OpenStreetMap's servers, only once the visitor chooses « Carte »; the page says so */}
-                <p className="mb-3 text-sm text-slate-600" data-testid="map-provider-notice">
-                  {t('structures:map.provider_notice', 'Fonds de carte © OpenStreetMap. En affichant la carte, votre navigateur les charge depuis les serveurs de la fondation OpenStreetMap, qui reçoivent votre adresse IP. La vue « Liste » n’en charge aucun.')}
-                </p>
-                <React.Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-500">{t('structures:map.loading', 'Chargement de la carte…')}</div>}>
-                  <StructureMap structures={structures} />
-                </React.Suspense>
-              </>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="structures-results-list">
-                {structures.map((/** @type {{ id: string | number }} */ s) => (
-                  <StructureCard key={s.id} structure={s} />
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row items-center justify-center mt-10 gap-3">
-              <Button
-                variant="outline"
-                disabled={page <= 1}
-                onClick={() => handlePageChange(page - 1)}
-              >
-                {t('structures:pagination.previous', 'Précédent')}
-              </Button>
-              <span className="flex items-center px-4 text-sm font-medium text-slate-700">
-                {t('structures:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
-              </span>
-              <Button
-                variant="outline"
-                disabled={!hasNext}
-                onClick={() => handlePageChange(page + 1)}
-              >
-                {t('structures:pagination.next', 'Suivant')}
-              </Button>
+                </div>
+              ))}
             </div>
-          </>
-        ) : (
-          <EmptyState
-            title={t('structures:empty.title', 'Aucune structure trouvée')}
-            description={serves
-              ? t('structures:empty.description_serves', "Aucune structure n'a encore une zone d'intervention vérifiée qui couvre cette commune. Les lieux situés dans la commune restent visibles sans ce filtre.")
-              : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
-            actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>}
-            data-testid="annuaire-empty"
-          />
-        )}
-        {!isLoading && !structures.length && (
-          <NoResultsHelp kind="structures" q={q} />
-        )}
-        {!isLoading && !structures.length ? <OfficialResourcesNotice /> : null}
-      </div>
+          ) : error ? (
+            <EmptyState
+              title={t('structures:error.title', "Impossible de charger l'annuaire")}
+              description={t('structures:error.description', 'Vérifiez votre connexion puis réessayez.')}
+              actions={
+                <Button type="button" onClick={() => refetch()}>
+                  {t('structures:error.retry', 'Réessayer')}
+                </Button>
+              }
+              role="alert"
+            />
+          ) : structures.length > 0 ? (
+            <>
+              {viewMode === 'map' ? (
+                <>
+                  {/* N11: the map tiles come from OpenStreetMap's servers, only once the visitor chooses « Carte »; the page says so */}
+                  <p className="mb-3 text-sm text-slate-600" data-testid="map-provider-notice">
+                    {t('structures:map.provider_notice', 'Fonds de carte © OpenStreetMap. En affichant la carte, votre navigateur les charge depuis les serveurs de la fondation OpenStreetMap, qui reçoivent votre adresse IP. La vue « Liste » n’en charge aucun.')}
+                  </p>
+                  <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-subtle">
+                    <React.Suspense fallback={<div className="flex h-96 items-center justify-center text-slate-600">{t('structures:map.loading', 'Chargement de la carte…')}</div>}>
+                      <StructureMap structures={structures} />
+                    </React.Suspense>
+                  </div>
+                </>
+              ) : (
+                <div className={`grid gap-5 md:grid-cols-2 2xl:grid-cols-3 ${isFetching ? 'opacity-60 transition-opacity' : ''}`} aria-busy={isFetching || undefined} data-testid="structures-results-list">
+                  {structures.map((/** @type {{ id: string | number }} */ s) => (
+                    <StructureCard key={s.id} structure={s} />
+                  ))}
+                </div>
+              )}
+
+              <Pager
+                page={page}
+                totalPages={totalPages}
+                hasNext={hasNext}
+                onPage={handlePageChange}
+                label={t('structures:pagination.nav', "Pages de l'annuaire")}
+                previous={t('structures:pagination.previous', 'Précédent')}
+                next={t('structures:pagination.next', 'Suivant')}
+                status={t('structures:pagination.page', 'Page {{page}} / {{total}}', { page, total: totalPages })}
+              />
+            </>
+          ) : (
+            <EmptyState
+              title={t('structures:empty.title', 'Aucune structure trouvée')}
+              description={serves
+                ? t('structures:empty.description_serves', "Aucune structure n'a encore une zone d'intervention vérifiée qui couvre cette commune. Les lieux situés dans la commune restent visibles sans ce filtre.")
+                : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
+              actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>}
+              data-testid="annuaire-empty"
+            />
+          )}
+          {!isLoading && !structures.length && (
+            <NoResultsHelp kind="structures" q={q} />
+          )}
+          {!isLoading && !structures.length ? <OfficialResourcesNotice /> : null}
+        </div>
+      </CatalogBody>
     </div>
   );
 }

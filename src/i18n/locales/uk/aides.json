@@ -50,17 +50,13 @@
  "filters.all": "Усі",
  "filters.category": "Категорія",
  "filters.category_all": "Усі категорії",
- "filters.close": "Закрити",
  "filters.per_page": "На сторінці",
  "filters.priority": "Пріоритет",
  "filters.region_label": "Фільтри пошуку",
- "filters.reset": "Скинути",
  "filters.reset_all": "Скинути фільтри",
  "filters.search_placeholder": "Пошук…",
  "filters.situation": "Ситуація",
  "filters.sort": "Сортувати",
- "filters.source": "Джерело",
- "filters.source_all": "Усі джерела",
  "filters.territory": "Територія",
  "filters.territory_all": "Усі території",
  "filters.title": "Фільтри",
@@ -113,5 +109,6 @@
  "legacy.aucune_aide_publiee_ne_correspond": "Жодна опублікована допомога не відповідає цьому посиланню: її могли вилучити, або посилання неповне.",
  "legacy.fiche_momentanement_indisponible": "Сторінка тимчасово недоступна",
  "legacy.la_fiche_n_a_pas": "Не вдалося завантажити сторінку. Це не означає, що допомоги немає: спробуйте за мить.",
- "legacy.voir_toutes_les_aides": "Переглянути всю допомогу"
+ "legacy.voir_toutes_les_aides": "Переглянути всю допомогу",
+ "pagination.nav": "Сторінки допомог"
 }

@@ -20,7 +20,6 @@
  "filters.category-all": "All",
  "filters.public": "Audience",
  "filters.public-all": "All",
- "filters.title": "Filter by",
  "filters.type": "Type of tool",
  "filters.type-all": "All",
  "header.description": "Online calculators and services that help with your procedures, chosen from the websites of public bodies.",
@@ -35,5 +34,8 @@
  "type.methode": "Method",
  "type.modele": "Template",
  "type.numerique": "Digital tool",
- "type.ressource": "Resource"
+ "type.ressource": "Resource",
+ "official.badge": "Official service",
+ "ada.title": "AccesDirectAide tools",
+ "ada.badge": "AccesDirectAide"
 }

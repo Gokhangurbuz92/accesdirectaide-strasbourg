@@ -39,9 +39,7 @@
  "error.retry": "Tekrar dene",
  "error.title": "İşlemler yüklenemedi",
  "filters.all": "Tümü",
- "filters.all_sources": "Tüm kaynaklar",
  "filters.category": "Kategori",
- "filters.close": "Kapat",
  "filters.needs_query": "(arama gerektirir)",
  "filters.per_page": "Sayfa başına",
  "filters.reset": "Sıfırla",
@@ -50,8 +48,6 @@
  "filters.sort_quality": "Kalite",
  "filters.sort_recent": "En yeniler",
  "filters.sort_relevance": "İlgi düzeyi",
- "filters.source": "Kaynak",
- "filters.source_curated": "Doğrulanmış veriler",
  "filters.toggle": "Filtreler",
  "list.count_one": "{{count}} işlem bulundu.",
  "list.count_other": "{{count}} işlem bulundu.",
@@ -74,5 +70,6 @@
  "seo.title_category": "İşlemler - {{category}}",
  "seo.title_query": "İşlemler - {{q}}",
  "seo.title_situation": "Şu durum için işlemler: {{situation}}",
- "verified_on": "{{date}} tarihinde doğrulandı"
+ "verified_on": "{{date}} tarihinde doğrulandı",
+ "pagination.nav": "İşlem sayfaları"
 }

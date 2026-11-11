@@ -39,9 +39,7 @@
  "error.retry": "Try again",
  "error.title": "The procedures could not be loaded",
  "filters.all": "All",
- "filters.all_sources": "All sources",
  "filters.category": "Category",
- "filters.close": "Close",
  "filters.needs_query": "(needs a search)",
  "filters.per_page": "Per page",
  "filters.reset": "Reset",
@@ -50,8 +48,6 @@
  "filters.sort_quality": "Quality",
  "filters.sort_recent": "Most recent",
  "filters.sort_relevance": "Relevance",
- "filters.source": "Source",
- "filters.source_curated": "Checked data",
  "filters.toggle": "Filters",
  "list.count_one": "{{count}} procedure found.",
  "list.count_other": "{{count}} procedures found.",
@@ -74,5 +70,6 @@
  "seo.title_category": "Procedures - {{category}}",
  "seo.title_query": "Procedures - {{q}}",
  "seo.title_situation": "Procedures for: {{situation}}",
- "verified_on": "Checked on {{date}}"
+ "verified_on": "Checked on {{date}}",
+ "pagination.nav": "Pages of procedures"
 }

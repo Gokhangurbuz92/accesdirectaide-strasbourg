@@ -65,7 +65,6 @@
  "filters.all": "Alle",
  "filters.city": "Ort",
  "filters.city_placeholder": "z. B. Strasbourg",
- "filters.close": "Schließen",
  "filters.departement": "Département",
  "filters.departement_placeholder": "z. B. 67",
  "filters.needs_query": "(erfordert eine Suche)",
@@ -173,5 +172,7 @@
  "suggest.contact_us": "Kontakt aufnehmen",
  "suggest.website_placeholder": "https://www.meine-einrichtung.fr",
  "detail.booking.account_required": "Für eine Terminanfrage ist ein persönliches Konto nötig. Die Informationen dieser Seite bleiben ohne Konto zugänglich.",
- "detail.booking.not_partner": "Die Aufnahme in das Verzeichnis bedeutet keine Partnerschaft dieser Einrichtung mit AccesDirectAide."
+ "detail.booking.not_partner": "Die Aufnahme in das Verzeichnis bedeutet keine Partnerschaft dieser Einrichtung mit AccesDirectAide.",
+ "pagination.nav": "Seiten des Verzeichnisses",
+ "view.label": "Ansicht"
 }

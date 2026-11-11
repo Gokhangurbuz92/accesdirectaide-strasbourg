@@ -97,9 +97,10 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                 {structure.categorie && (
                   <CategoryChip slug={structure.categorie} />
                 )}
-                <Badge className={TYPE_COLORS[structure.type_structure] || 'bg-slate-100 text-slate-800'}>
+                {/* 11/11/2026: the type in sentence case (long French names were hard to read in the uppercase monospace badge) */}
+                <span className={`inline-flex max-w-full items-center rounded-md border px-2 py-0.5 text-xs font-semibold leading-snug ${TYPE_COLORS[structure.type_structure] || 'bg-slate-100 text-slate-800'}`}>
                   {typeLabel(structure.type_structure)}
-                </Badge>
+                </span>
                 {structure.coverage === 'OFFICIAL' && (
                   <Badge variant="outline" className="text-green-700 border-green-300">
                     {t('structures:card.coverage.official', 'Source officielle')}

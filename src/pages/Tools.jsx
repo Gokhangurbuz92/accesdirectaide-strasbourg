@@ -6,31 +6,54 @@ import SEO from '@/components/SEO';
 import LoadError from '@/components/LoadError';
 import PageHeader from '@/components/layout/PageHeader';
 import { OFFICIAL_TOOLS, OFFICIAL_TOOLS_CHECKED_AT, toolText } from '@/config/officialTools';
-import { ExternalLink } from 'lucide-react';
+import { Compass, ExternalLink, Gavel, GraduationCap, HeartPulse, Home, Hourglass, IdCard, Landmark, Scale } from 'lucide-react';
+import { CONTAINER, ChoiceChips, FilterField, SELECT } from '@/components/layout/catalog';
 import { formatDate, useLanguage, useT } from '@/i18n';
 
-/** R26: the official public services and simulators — real, usable tools while AccesDirectAide publishes none of its own */
+const CATEGORY_ICON = { droits: Scale, jeunes: GraduationCap, logement: Home, sante: HeartPulse, retraite: Hourglass, justice: Gavel, papiers: IdCard, orientation: Compass };
+
+/** R26: the official public services and simulators — real, usable tools while AccesDirectAide publishes none of its own.
+ * 11/11/2026: grouped by topic (chips filter them in the page, nothing is sent), each card says it is an official service and opens on the body's site. */
 function OfficialTools() {
     const { t } = useT('tools');
     // R32: the name, purpose and topic of each official tool in the interface language (src/config/officialTools.js, namespace « shared »)
     const { t: tShared } = useT('shared');
+    const [topic, setTopic] = useState('');
     const checkedDay = formatDate(`${OFFICIAL_TOOLS_CHECKED_AT}T12:00:00Z`, { day: 'numeric', month: 'long', year: 'numeric' });
+    const topics = [...new Set(OFFICIAL_TOOLS.map((tool) => tool.categorie))];
+    const topicName = (c) => { const x = OFFICIAL_TOOLS.find((tool) => tool.categorie === c); const s0 = x ? toolText(x, tShared).categorie : c; return s0.charAt(0).toUpperCase() + s0.slice(1); };
+    const shown = topic ? OFFICIAL_TOOLS.filter((tool) => tool.categorie === topic) : OFFICIAL_TOOLS;
     return (
         <section aria-labelledby="official-tools-title" data-testid="official-tools">
-            <h2 id="official-tools-title" className="text-xl font-bold text-slate-900">{t('tools:official.title', 'Outils officiels en ligne')}</h2>
-            <p className="mt-2 max-w-3xl text-sm text-slate-600">
-                {t('tools:official.intro', 'Simulateurs et services en ligne des organismes publics. Ils s’ouvrent sur le site de l’organisme : AccesDirectAide ne les gère pas et ne garantit pas leurs résultats. Adresses vérifiées le {{date}}.', { date: checkedDay })}
-            </p>
-            <ul className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {OFFICIAL_TOOLS.map((tool) => {
+            <div className="flex flex-col gap-1">
+                <h2 id="official-tools-title" className="font-heading text-xl font-bold text-slate-900 sm:text-2xl">{t('tools:official.title', 'Outils officiels en ligne')}</h2>
+                <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
+                    {t('tools:official.intro', 'Simulateurs et services en ligne des organismes publics. Ils s’ouvrent sur le site de l’organisme : AccesDirectAide ne les gère pas et ne garantit pas leurs résultats. Adresses vérifiées le {{date}}.', { date: checkedDay })}
+                </p>
+            </div>
+            <div className="mt-5">
+                <ChoiceChips label={t('tools:filters.category', 'Catégorie')} value={topic} onChange={setTopic} testId="official-tools-topics"
+                    options={[{ value: '', label: t('tools:filters.category-all', 'Toutes'), count: OFFICIAL_TOOLS.length },
+                        ...topics.map((c) => ({ value: c, label: topicName(c), count: OFFICIAL_TOOLS.filter((tool) => tool.categorie === c).length }))]} />
+            </div>
+            <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {shown.map((tool) => {
                     const text = toolText(tool, tShared);
+                    const Icon = CATEGORY_ICON[tool.categorie] || Compass;
+                    const host = new URL(tool.url).hostname.replace(/^www\./, '');
                     return (
-                        <li key={tool.id} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" data-testid="official-tool">
-                            <span className="w-fit rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-800">{text.categorie}</span>
-                            <h3 className="mt-3 text-base font-semibold text-slate-900">{text.titre}</h3>
-                            <p className="mt-1 flex-1 text-sm text-slate-600">{text.description}</p>
-                            <a href={tool.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded">
-                                {t('tools:official.open', 'Ouvrir sur {{host}}', { host: new URL(tool.url).hostname.replace(/^www\./, '') })}<ExternalLink className="h-4 w-4" aria-hidden="true" /><span className="sr-only">{t('tools:official.new-tab', ' (nouvel onglet)')}</span>
+                        <li key={tool.id} className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-subtle transition-shadow hover:border-blue-200 hover:shadow-float" data-testid="official-tool">
+                            <div className="flex items-start justify-between gap-3">
+                                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true"><Icon className="h-5 w-5" /></span>
+                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900">
+                                    <Landmark className="h-3.5 w-3.5" aria-hidden="true" />{t('tools:official.badge', 'Service officiel')}
+                                </span>
+                            </div>
+                            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-blue-800">{text.categorie}</p>
+                            <h3 className="mt-1 font-heading text-base font-semibold leading-snug text-slate-900">{text.titre}</h3>
+                            <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-600">{text.description}</p>
+                            <a href={tool.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-1.5 self-start rounded-lg text-sm font-semibold text-blue-800 hover:text-blue-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700">
+                                {t('tools:official.open', 'Ouvrir sur {{host}}', { host })}<ExternalLink className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" /><span className="sr-only">{t('tools:official.new-tab', ' (nouvel onglet)')}</span>
                             </a>
                         </li>
                     );
@@ -96,7 +119,7 @@ export default function Tools() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen overflow-x-hidden bg-slate-50">
             <SEO
                 title={t('tools:seo.title', 'Boîte à Outils')}
                 description={t('tools:seo.description', 'Outils pratiques pour l\'accompagnement.')}
@@ -105,78 +128,61 @@ export default function Tools() {
 
             <PageHeader title={t('tools:header.title', 'Boîte à outils')} description={t('tools:header.description', 'Simulateurs et services en ligne utiles pour vos démarches, choisis sur les sites des organismes publics.')} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+            <div className={`${CONTAINER} space-y-12 py-6 sm:py-8`}>
             {failed && <LoadError what={t('tools:error.what', 'les outils')} onRetry={() => setAttempt((n) => n + 1)} testId="tools-error" />}
             {(tools.length > 0 || hasFilter) && !failed && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {/* Filters */}
-                <aside className="bg-white p-6 rounded-lg shadow h-fit">
-                    <h2 className="font-semibold mb-4">{t('tools:filters.title', 'Filtrer par')}</h2>
-
-                    <div className="mb-4">
-                        <label htmlFor="tools-f1" className="block text-sm font-medium mb-1">{t('tools:filters.type', 'Type d\'outil')}</label>
-                        <select id="tools-f1"
-                            className="w-full border rounded p-2"
-                            value={filters.type}
-                            onChange={e => setFilters({ ...filters, type: e.target.value })}
-                        >
-                            <option value="">{t('tools:filters.type-all', 'Tous')}</option>
-                            {facets.types?.map(type => (
-                                <option key={type} value={type} {...(typeLabels[type] ? {} : fr)}>{typeLabels[type] || type}</option>
-                            ))}
-                        </select>
+            <section aria-labelledby="ada-tools-title" data-testid="ada-tools">
+                <h2 id="ada-tools-title" className="font-heading text-xl font-bold text-slate-900 sm:text-2xl">{t('tools:ada.title', 'Outils AccesDirectAide')}</h2>
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-subtle">
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <FilterField id="tools-f1" label={t('tools:filters.type', 'Type d\'outil')}>
+                            <select id="tools-f1" className={SELECT} value={filters.type} onChange={e => setFilters({ ...filters, type: e.target.value })}>
+                                <option value="">{t('tools:filters.type-all', 'Tous')}</option>
+                                {facets.types?.map(type => (
+                                    <option key={type} value={type} {...(typeLabels[type] ? {} : fr)}>{typeLabels[type] || type}</option>
+                                ))}
+                            </select>
+                        </FilterField>
+                        <FilterField id="tools-f2" label={t('tools:filters.category', 'Catégorie')}>
+                            <select id="tools-f2" className={SELECT} value={filters.categorie} onChange={e => setFilters({ ...filters, categorie: e.target.value })}>
+                                <option value="">{t('tools:filters.category-all', 'Toutes')}</option>
+                                {facets.categories?.map(c => (
+                                    <option key={c} value={c} {...fr}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+                                ))}
+                            </select>
+                        </FilterField>
+                        <FilterField id="tools-f3" label={t('tools:filters.public', 'Public')}>
+                            <select id="tools-f3" className={SELECT} value={filters.public} onChange={e => setFilters({ ...filters, public: e.target.value })}>
+                                <option value="">{t('tools:filters.public-all', 'Tous')}</option>
+                                {facets.publics?.map(p => (
+                                    <option key={p} value={p} {...fr}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
+                                ))}
+                            </select>
+                        </FilterField>
                     </div>
+                </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="tools-f2" className="block text-sm font-medium mb-1">{t('tools:filters.category', 'Catégorie')}</label>
-                        <select id="tools-f2"
-                            className="w-full border rounded p-2"
-                            value={filters.categorie}
-                            onChange={e => setFilters({ ...filters, categorie: e.target.value })}
-                        >
-                            <option value="">{t('tools:filters.category-all', 'Toutes')}</option>
-                            {facets.categories?.map(c => (
-                                <option key={c} value={c} {...fr}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="mb-4">
-                        <label htmlFor="tools-f3" className="block text-sm font-medium mb-1">{t('tools:filters.public', 'Public')}</label>
-                        <select id="tools-f3"
-                            className="w-full border rounded p-2"
-                            value={filters.public}
-                            onChange={e => setFilters({ ...filters, public: e.target.value })}
-                        >
-                            <option value="">{t('tools:filters.public-all', 'Tous')}</option>
-                            {facets.publics?.map(p => (
-                                <option key={p} value={p} {...fr}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
-                            ))}
-                        </select>
-                    </div>
-                </aside>
-
-                {/* Results */}
-                <div className="md:col-span-3">
+                <div className="mt-5">
                     {loading ? (
-                        <div className="text-center py-10" role="status">{t('tools:loading', 'Chargement…')}</div>
+                        <div className="py-10 text-center text-slate-600" role="status">{t('tools:loading', 'Chargement…')}</div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                             {tools.map(tool => (
-                                <Link key={tool.id} to={`/outils/${tool.slug}`} className="block group h-full" data-testid="tool-card">
-                                    <article className="bg-white p-6 rounded-lg shadow-sm border border-purple-50 hover:border-purple-200 group-hover:shadow-md transition h-full flex flex-col">
-                                        <div className="flex gap-2 mb-3">
-                                            <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full uppercase font-bold" {...(typeLabels[tool.type] ? {} : fr)}>
+                                <Link key={tool.id} to={`/outils/${tool.slug}`} className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2" data-testid="tool-card">
+                                    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-subtle transition-shadow group-hover:border-blue-200 group-hover:shadow-float">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-900">{t('tools:ada.badge', 'AccesDirectAide')}</span>
+                                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800" {...(typeLabels[tool.type] ? {} : fr)}>
                                                 {typeLabels[tool.type] || tool.type}
                                             </span>
                                         </div>
-                                        <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600" {...fr}>
+                                        <h3 className="mt-3 font-heading text-lg font-semibold leading-snug text-slate-900 group-hover:text-blue-800" {...fr}>
                                             {tool.titre}
-                                        </h2>
-                                        <p className="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow" {...fr}>
+                                        </h3>
+                                        <p className="mt-1.5 line-clamp-3 flex-grow text-sm leading-relaxed text-slate-600" {...fr}>
                                             {tool.resume_falc}
                                         </p>
-                                        <div className="text-purple-600 font-medium text-sm mt-auto">
+                                        <div className="mt-4 text-sm font-semibold text-blue-800">
                                             {t('tools:card.open', 'Voir l\'outil →')}
                                         </div>
                                     </article>
@@ -184,14 +190,14 @@ export default function Tools() {
                             ))}
 
                             {tools.length === 0 && (
-                                <div className="col-span-3 text-gray-700 text-center py-10 bg-gray-50 rounded" data-testid="tools-empty">
+                                <div className="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white py-10 text-center text-slate-700" data-testid="tools-empty">
                                     {t('tools:empty', 'Aucun outil publié pour ces critères.')}
                                 </div>
                             )}
                         </div>
                     )}
                 </div>
-            </div>
+            </section>
             )}
             <OfficialTools />
             </div>

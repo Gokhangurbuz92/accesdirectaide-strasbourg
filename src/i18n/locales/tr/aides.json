@@ -50,17 +50,13 @@
  "filters.all": "Tümü",
  "filters.category": "Kategori",
  "filters.category_all": "Tüm kategoriler",
- "filters.close": "Kapat",
  "filters.per_page": "Sayfa başına",
  "filters.priority": "Öncelik",
  "filters.region_label": "Arama filtreleri",
- "filters.reset": "Sıfırla",
  "filters.reset_all": "Filtreleri sıfırla",
  "filters.search_placeholder": "Ara…",
  "filters.situation": "Durum",
  "filters.sort": "Sırala",
- "filters.source": "Kaynak",
- "filters.source_all": "Tüm kaynaklar",
  "filters.territory": "Bölge",
  "filters.territory_all": "Tüm bölgeler",
  "filters.title": "Filtreler",
@@ -111,5 +107,6 @@
  "legacy.aucune_aide_publiee_ne_correspond": "Bu bağlantıya uyan yayımlanmış bir yardım yok: kaldırılmış olabilir veya bağlantı eksik.",
  "legacy.fiche_momentanement_indisponible": "Sayfa geçici olarak kullanılamıyor",
  "legacy.la_fiche_n_a_pas": "Sayfa yüklenemedi. Bu, yardım olmadığı anlamına gelmez: birazdan tekrar deneyin.",
- "legacy.voir_toutes_les_aides": "Tüm yardımları gör"
+ "legacy.voir_toutes_les_aides": "Tüm yardımları gör",
+ "pagination.nav": "Yardım sayfaları"
 }

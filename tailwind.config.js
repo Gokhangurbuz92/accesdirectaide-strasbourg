@@ -18,6 +18,9 @@ module.exports = {
 				'240': '240ms',
 			},
 			backgroundImage: {
+				// the banner of the public pages (Démarches' navy → blue → indigo, owner's reference, 11/11/2026)
+				'ada-hero': 'linear-gradient(135deg, #020617 0%, #002D5A 32%, #1e3a8a 62%, #3730a3 86%, #4F46E5 100%)',
+				'ada-hero-glow': 'radial-gradient(circle, rgba(129,140,248,0.55) 0%, rgba(129,140,248,0) 70%)',
 				'blueprint-grid': 'linear-gradient(to right, rgba(230,237,247,0.7) 1px, transparent 1px), linear-gradient(to bottom, rgba(230,237,247,0.7) 1px, transparent 1px)',
 			},
 			borderRadius: {

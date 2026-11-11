@@ -362,54 +362,6 @@
    "reason": "Literal URL fragment the person must look for in their link (in <code>)."
   },
   {
-   "file": "src/pages/Aides.jsx",
-   "text": "Aides Territoires",
-   "category": "proper-name",
-   "reason": "Name of a data source / public body / region in the source filter."
-  },
-  {
-   "file": "src/pages/Aides.jsx",
-   "text": "DREES",
-   "category": "proper-name",
-   "reason": "Name of a data source / public body / region in the source filter."
-  },
-  {
-   "file": "src/pages/Aides.jsx",
-   "text": "Grand Est",
-   "category": "proper-name",
-   "reason": "Name of a data source / public body / region in the source filter."
-  },
-  {
-   "file": "src/pages/Aides.jsx",
-   "text": "Agefiph",
-   "category": "proper-name",
-   "reason": "Name of a data source / public body / region in the source filter."
-  },
-  {
-   "file": "src/pages/Demarches.jsx",
-   "text": "Service-Public",
-   "category": "proper-name",
-   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
-  },
-  {
-   "file": "src/pages/Demarches.jsx",
-   "text": "Démarches Simplifiées",
-   "category": "proper-name",
-   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
-  },
-  {
-   "file": "src/pages/Demarches.jsx",
-   "text": "Aides Territoires",
-   "category": "proper-name",
-   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
-  },
-  {
-   "file": "src/pages/Demarches.jsx",
-   "text": "Grand Est",
-   "category": "proper-name",
-   "reason": "Name of an official platform or of the region in the source filter (comment in the file)."
-  },
-  {
    "file": "src/pages/Dispositifs.jsx",
    "text": "Bas-Rhin (67)",
    "category": "proper-name",

@@ -65,7 +65,6 @@
  "filters.all": "All",
  "filters.city": "Town",
  "filters.city_placeholder": "E.g. Strasbourg",
- "filters.close": "Close",
  "filters.departement": "Department",
  "filters.departement_placeholder": "E.g. 67",
  "filters.needs_query": "(needs a search)",
@@ -173,5 +172,7 @@
  "suggest.contact_us": "Contact us",
  "suggest.website_placeholder": "https://www.my-organisation.fr",
  "detail.booking.account_required": "A personal account is needed to request an appointment. The information on this page remains available without an account.",
- "detail.booking.not_partner": "Being listed in the directory does not mean this organisation is a partner of AccesDirectAide."
+ "detail.booking.not_partner": "Being listed in the directory does not mean this organisation is a partner of AccesDirectAide.",
+ "pagination.nav": "Directory pages",
+ "view.label": "Display"
 }

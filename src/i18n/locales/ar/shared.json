@@ -268,5 +268,11 @@
  "chat.outcome_abstention": "لا توجد إجابة موثّقة بمصدر: لا أجيب دون مصدر موثّق.",
  "chat.outcome_grounded": "إجابة مبنية على المصادر الرسمية المذكورة أدناه. وهي ليست قرارًا بشأن حقوقك.",
  "chat.postal_choose": "بلديات الرمز البريدي {{code}} (القاعدة الرسمية لـ La Poste): اختر بلديتك.",
- "chat.postal_outside": "(خارج المنطقة المشمولة)"
+ "chat.postal_outside": "(خارج المنطقة المشمولة)",
+ "filters.close": "إغلاق عوامل التصفية",
+ "filters.sheet_help": "كل اختيار يحدّث القائمة فورًا.",
+ "filters.reset": "مسح الكل",
+ "filters.apply": "عرض النتائج",
+ "filters.active": "عوامل التصفية النشطة:",
+ "filters.remove": "إزالة عامل التصفية {{label}}"
 }
