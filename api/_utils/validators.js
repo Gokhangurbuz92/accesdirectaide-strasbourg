@@ -125,7 +125,17 @@ export const searchStructuresSchema = baseSearchSchema.extend({
   ]).optional(),
 });
 
+const optionalNews = (/** @type {z.ZodTypeAny} */ schema) => z.preprocess((value) => (value === '' || value == null ? undefined : value), schema.optional());
 export const searchActualitesSchema = baseSearchSchema.extend({
+  // Actualités v2 (11/11/2026): place of the event, editorial category, date range, story grouping, France/Monde balance, related items
+  view: optionalNews(z.enum(['v2'])),
+  geo: optionalNews(z.enum(['france', 'monde', 'alsace'])),
+  topic: optionalNews(z.enum(['une', 'societe', 'politique', 'economie', 'international', 'sante', 'environnement', 'justice', 'emploi', 'education', 'technologie', 'culture', 'logement', 'handicap', 'famille', 'droits', 'strasbourg'])),
+  from: optionalNews(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)),
+  to: optionalNews(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)),
+  group: optionalNews(z.enum(['0', '1'])),
+  balance: optionalNews(z.enum(['0', '1'])),
+  franceShare: optionalNews(z.coerce.number().min(0).max(1)),
   // P5: cap listing page size for public /api/actualites
   pageSize: z.coerce.number().int().min(1).max(50).default(10),
   // Allow `limit=` (empty) without failing validation (compat with legacy list() calls).

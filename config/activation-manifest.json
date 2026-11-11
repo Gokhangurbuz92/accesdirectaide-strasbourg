@@ -1801,6 +1801,29 @@
       "class": "lab",
       "nature": "config",
       "note": "R47: optional path where scripts/security-secrets-scan.mjs writes its redacted JSON report (release guard); release machine only"
+    },
+    "NEWS_DISCOVERY_GDELT": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^(on)?$",
+      "note": "Actualités v2: GDELT DOC 2.0 discovery of other reports (links only, no titles or images), rate-limited and cached; off unless « on »"
+    },
+    "NEWS_AI_IMAGES_APPROVED": {
+      "class": "decision",
+      "nature": "config",
+      "format": "^(on)?$",
+      "note": "Actualités v2: AI illustrations allowed only after the owner approves a provider and its budget; no adapter is implemented until then"
+    },
+    "NEWS_AI_IMAGES_PROVIDER": {
+      "class": "decision",
+      "nature": "config",
+      "note": "Actualités v2: name of the approved image provider (none approved)"
+    },
+    "NEWS_EDITORIAL_FOUR_EYES": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^(on)?$",
+      "note": "Actualités v2: the approver of an ADA article must not be its author"
     }
   },
   "platform": [

@@ -145,6 +145,7 @@ const AdminStructureProposals = lazy(() => import("./admin/StructureProposals.js
 const AdminOrganizations = lazy(() => import("./admin/Organizations.jsx"));
 const AdminWs2Queue = lazy(() => import("./admin/Ws2Queue.jsx"));
 const AdminVeille = lazy(() => import("./admin/Veille.jsx"));
+const AdminNewsEditorial = lazy(() => import("./admin/NewsEditorial.jsx"));
 const AdminOperations = lazy(() => import("./admin/k5/Operations.jsx"));
 const AdminPrivacy = lazy(() => import("./admin/k5/Privacy.jsx"));
 const AdminSupport = lazy(() => import("./admin/k5/Support.jsx"));
@@ -373,6 +374,7 @@ function PagesContent() {
                                     <Route path="structure-proposals" element={<AdminStructureProposals />} />
                                     <Route path="organizations" element={<AdminOrganizations />} />
                                     <Route path="veille" element={<AdminVeille />} />
+                                    <Route path="actualites-redaction" element={<AdminNewsEditorial />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />

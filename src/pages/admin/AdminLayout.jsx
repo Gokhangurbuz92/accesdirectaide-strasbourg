@@ -47,6 +47,7 @@ const SIDEBAR_SECTIONS = [
         items: [
             { label: 'À traiter', to: '/admin/dashboard', icon: LayoutDashboard },
             { label: 'Veille automatique', to: '/admin/veille', icon: RefreshCw },
+            { label: 'Rédaction des actualités', to: '/admin/actualites-redaction', icon: RefreshCw },
         ]
     },
     {

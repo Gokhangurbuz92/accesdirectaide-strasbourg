@@ -10,7 +10,26 @@
     "enabled": true,
     "language": "fr",
     "territory": "FRANCE",
-    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026"
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026",
+    "country": "FR",
+    "scope": "FRANCE",
+    "publisher": "Service-Public.fr (DILA)",
+    "hosts": [
+      "www.service-public.gouv.fr"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.service-public.gouv.fr/P10025",
+    "verifiedAt": "2026-10-31",
+    "updateFrequency": "daily",
+    "retention": "none stated (Licence Ouverte 2.0: attribution and date of last update)",
+    "licence": "Licence Ouverte 2.0 (Etalab)",
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
   },
   {
     "id": "service_public_professionnels",
@@ -23,7 +42,26 @@
     "enabled": true,
     "language": "fr",
     "territory": "FRANCE",
-    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026"
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — mentions légales https://www.service-public.gouv.fr/P10025 vérifiées le 31/10/2026",
+    "country": "FR",
+    "scope": "FRANCE",
+    "publisher": "Service-Public.fr Entreprendre (DILA)",
+    "hosts": [
+      "entreprendre.service-public.gouv.fr"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.service-public.gouv.fr/P10025",
+    "verifiedAt": "2026-10-31",
+    "updateFrequency": "daily",
+    "note_audience": "published items are « Particuliers » only (news-verification.js audience rule)",
+    "licence": "Licence Ouverte 2.0 (Etalab)",
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
   },
   {
     "id": "grandest_actu",
@@ -36,7 +74,21 @@
     "enabled": false,
     "language": "fr",
     "territory": "GRAND_EST",
-    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grandest.fr/mentions-legales/) ; à réactiver seulement avec cet accord."
+    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grandest.fr/mentions-legales/) ; à réactiver seulement avec cet accord.",
+    "country": "FR",
+    "scope": "GRAND_EST",
+    "status": "blocked",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.grandest.fr/mentions-legales/",
+    "verifiedAt": "2026-11-03",
+    "hosts": [
+      "www.grandest.fr"
+    ]
   },
   {
     "id": "prefecture_bas_rhin",
@@ -49,7 +101,19 @@
     "enabled": false,
     "language": "fr",
     "territory": "DEP_67",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "DEP_67",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.bas-rhin.gouv.fr"
+    ]
   },
   {
     "id": "prefecture_haut_rhin",
@@ -62,7 +126,19 @@
     "enabled": false,
     "language": "fr",
     "territory": "DEP_68",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "DEP_68",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.haut-rhin.gouv.fr"
+    ]
   },
   {
     "id": "ars_grand_est",
@@ -76,7 +152,21 @@
     "language": "fr",
     "territory": "GRAND_EST",
     "note": "R28 (31/10/2026) : le flux a changé d’adresse (/feed → /rss.xml, vérifié : RSS valide).",
-    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grand-est.ars.sante.fr/mentions-legales-9) ; à réactiver seulement avec cet accord."
+    "disabledReason": "R29 (31/10/2026) : réutilisation des textes interdite sans accord écrit de l’organisme (mentions légales : https://www.grand-est.ars.sante.fr/mentions-legales-9) ; à réactiver seulement avec cet accord.",
+    "country": "FR",
+    "scope": "GRAND_EST",
+    "status": "blocked",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.grand-est.ars.sante.fr/mentions-legales-9",
+    "verifiedAt": "2026-11-03",
+    "hosts": [
+      "www.grand-est.ars.sante.fr"
+    ]
   },
   {
     "id": "vigicrues",
@@ -89,7 +179,19 @@
     "enabled": false,
     "language": "fr",
     "territory": "FRANCE",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.vigicrues.gouv.fr"
+    ]
   },
   {
     "id": "boss_social",
@@ -102,7 +204,19 @@
     "enabled": false,
     "language": "fr",
     "territory": "FRANCE",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (pas de réponse) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (pas de réponse) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.boss.gouv.fr"
+    ]
   },
   {
     "id": "urssaf_actu",
@@ -115,7 +229,19 @@
     "enabled": false,
     "language": "fr",
     "territory": "FRANCE",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (pas de réponse) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (pas de réponse) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.urssaf.fr"
+    ]
   },
   {
     "id": "fonction_publique",
@@ -128,6 +254,18 @@
     "enabled": false,
     "language": "fr",
     "territory": "FRANCE",
-    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse."
+    "disabledReason": "R28 (31/10/2026) : flux inaccessible (HTTP 404) ; à réactiver quand l’organisme publie une nouvelle adresse.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "hosts": [
+      "www.fonction-publique.gouv.fr"
+    ]
   }
 ]

@@ -6,6 +6,18 @@ import { logger } from '../lib/logger.js'; // Ensure logger is imported
 import { searchActualitesSchema } from '../_utils/validators.js';
 import crypto from 'crypto';
 import { buildProvenance } from '../_utils/provenance.js';
+import { buildNewsFeed, enrichItem, loadRegistry, relatedTo } from '../_services/news/feed.js';
+import { discoverCoverage } from '../_services/news/discovery-gdelt.js';
+
+/** Actualités v2: the window the editorial feed is built from (published items, newest first) — bounded so a request stays cheap */
+export const NEWS_V2_WINDOW = 600;
+let registryCache = null;
+const newsRegistry = () => (registryCache ||= loadRegistry());
+const V2_COLUMNS = { id: true, slug: true, titre: true, resume: true, summary_falc: true, date_publication: true, updatedAt: true, published_at: true, type_actu: true,
+  categorie: true, est_important: true, image_url: true, canonical_url: true, lien_url: true, url: true, source_url: true, auto_publish: true, raw_payload_json: true, statut: true };
+async function newsWindow() {
+  return db.query.Actualite.findMany({ where: eq(schema.Actualite.statut, 'publie'), orderBy: [desc(schema.Actualite.date_publication), desc(schema.Actualite.id)], limit: NEWS_V2_WINDOW, columns: V2_COLUMNS });
+}
 /**
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
@@ -148,12 +160,34 @@ export default async function handler(req, res) {
             });
 
             if (!item) return res.status(404).json({ error: 'Not found' });
+            // an ADA article that was retracted stays visible as a retraction notice (never silently removed): 410 with the note and its date
+            if (!isAdmin && item.statut === 'retire' && item.type_actu === 'ada_original') {
+                const ed = /** @type {any} */ (item.raw_payload_json)?.ada?.editorial || {};
+                return res.status(410).json({ error: 'Gone', retracted: true, titre: item.titre, retractedAt: ed.retractedAt || null, note: String(ed.retractionNote || '').slice(0, 500) });
+            }
             if (!isAdmin && item.statut !== 'publie') return res.status(404).json({ error: 'Not found' });
+            /** @type {any} */ let news = null;
+            if (!isAdmin || effectiveParams.view === 'v2') {
+                news = enrichItem(item, newsRegistry());
+                // a source whose rights are not (or no longer) evidenced, or a link-only report, has no article page here
+                if (!isAdmin && (!news || news.externalOnly)) return res.status(404).json({ error: 'Not found' });
+                if (news) {
+                    try {
+                        const feed = buildNewsFeed(await newsWindow(), { group: true, balance: false, pageSize: 50, page: 1 }, newsRegistry());
+                        const all = feed.items; const story = all.find((c) => c.id === news.id);
+                        // optional worldwide discovery (links only, off unless NEWS_DISCOVERY_GDELT=on, bounded and cached)
+                        const known = (story?.coverage || []).map((/** @type {any} */ c) => { try { return new URL(c.url).hostname.replace(/^www\./, ''); } catch { return ''; } });
+                        const found = news.titre ? await discoverCoverage(news.titre, { exclude: known }) : [];
+                        news = { ...news, coverage: [...(story?.coverage || []), ...found], related: relatedTo(story || { ...news, storyKey: null }, all).map((/** @type {any} */ r) => ({ id: r.id, slug: r.slug, titre: r.titre, date_publication: r.date_publication, publisher: r.publisher, geo: r.geo, topics: r.topics })) };
+                    } catch (e) { logger.warn('actualites v2 related unavailable', { requestId, error: e }); news = { ...news, coverage: [], related: [] }; }
+                }
+            }
 
             const { sourceDocument, ...row } = item;
             const safeItem = isAdmin ? row : publicNewsFields(row);
             return res.status(200).json({
               ...safeItem,
+              ...(news ? { news } : {}),
               provenance: buildProvenance({
                 verifiedAt: newsVerifiedAt(row),
                 fetchedAt: sourceDocument?.fetched_at || safeItem.fetched_at,
@@ -168,6 +202,26 @@ export default async function handler(req, res) {
         }
 
         // 2) Listing / search
+        // Actualités v2: the editorial feed (place, category, story grouping, balance, rights per source); the legacy list below is unchanged
+        const wantsV2 = effectiveParams.view === 'v2' || ['geo', 'topic', 'from', 'to', 'group', 'balance', 'franceShare'].some((k) => /** @type {any} */ (effectiveParams)[k] != null);
+        if (wantsV2 && effectiveParams.statut === 'publie') {
+            try {
+                const ep = /** @type {any} */ (effectiveParams);
+                const feed = buildNewsFeed(await newsWindow(), {
+                    geo: ep.geo, topic: ep.topic, source: ep.source, q: ep.q, from: ep.from, to: ep.to,
+                    sort: ep.sort === 'relevance' ? 'relevant' : 'recent', group: ep.group !== '0', balance: ep.balance !== '0',
+                    franceShare: ep.franceShare, page: ep.page || 1, pageSize: ep.pageSize || 12,
+                }, newsRegistry());
+                return res.status(200).json({ view: 'v2', items: feed.items, facets: feed.facets, window: NEWS_V2_WINDOW,
+                    pagination: { total: feed.total, page: feed.page, limit: feed.pageSize, pageSize: feed.pageSize, totalPages: Math.ceil(feed.total / feed.pageSize), hasNext: feed.page * feed.pageSize < feed.total } });
+            } catch (dbError) {
+                logger.error('Actualites v2 DB Error (Recovered):', { requestId, error: dbError });
+                res.setHeader?.('Cache-Control', 'no-store');
+                return res.status(200).json({ view: 'v2', degraded: true, items: [], facets: { topics: {}, geo: { france: 0, monde: 0, alsace: 0 }, sources: {} },
+                    pagination: { total: 0, page: 1, limit: 12, pageSize: 12, totalPages: 0, hasNext: false } });
+            }
+        }
+
         const andConditions = [];
 
         if (effectiveParams.statut) {

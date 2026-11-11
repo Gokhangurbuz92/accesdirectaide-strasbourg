@@ -224,6 +224,12 @@ export const apiClient = {
         /** the owner's emergency stop (the run in progress stops at the next record, no new run starts) and its end. @param {string=} reason */
         pauseVeille: function (reason) { return apiRequest('/api/admin/veille', { method: 'POST', body: { action: 'pause', reason: reason || '' } }); },
         resumeVeille: function () { return apiRequest('/api/admin/veille', { method: 'POST', body: { action: 'resume' } }); },
+        /** Actualités v2 — ADA's own articles. @param {string=} status */
+        listNewsArticles: function (status) { return apiRequest('/api/admin/news-editorial' + (status ? '?status=' + encodeURIComponent(status) : '')); },
+        /** @param {string} id */
+        getNewsArticle: function (id) { return apiRequest('/api/admin/news-editorial?id=' + encodeURIComponent(String(id))); },
+        /** @param {Record<string, unknown>} body { action: save|submit|reject|approve|correct|retract, id?, draft?, note?, kind? } */
+        newsEditorial: function (body) { return apiRequest('/api/admin/news-editorial', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q */
         getOrganizations: function (q) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

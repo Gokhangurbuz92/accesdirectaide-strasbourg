@@ -65,7 +65,9 @@ describe('news names its publisher and its licence', () => {
     expect(shownNewsCategory('logement')).toBe('logement');
   });
   it('the list and detail pages use the shared card parts and the attribution', () => {
-    const list = fs.readFileSync('src/pages/Actualites.jsx', 'utf8');
+    // Actualités v2: the list page renders its cards with src/components/news/NewsCardV2.jsx — the same shared card parts
+    expect(fs.readFileSync('src/pages/Actualites.jsx', 'utf8')).toMatch(/<NewsCardV2 /);
+    const list = fs.readFileSync('src/components/news/NewsCardV2.jsx', 'utf8');
     expect(list).toMatch(/<RecordProvenance verifiedAt=\{verifiedAt\} sourceHost=\{sourceLabel\}/);
     expect(list).toMatch(/<CardActionStrip label=\{t\('news:card\.action', 'Lire l’actualité'\)\} \/>/);   // R32: the French label is the key's default
     expect(fs.readFileSync('src/pages/ActualiteDetail.jsx', 'utf8')).toMatch(/data-testid="news-attribution"/);

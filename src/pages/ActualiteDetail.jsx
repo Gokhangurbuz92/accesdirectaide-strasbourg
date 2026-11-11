@@ -31,6 +31,8 @@ import { Trans } from 'react-i18next';
 import i18n, { formatDate, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
+import { NewsAdaBlock, NewsArticleHeader, NewsArticleTools, NewsCoverageAndRelated, ReadingProgress } from '@/components/news/NewsArticleExtras';
+import useReaderMode from '@/hooks/useReaderMode';
 
 const TYPE_ICONS = {
   nouveaute: Star,
@@ -115,6 +117,8 @@ export default function ActualiteDetail() {
   });
   // R32: the item's own text (title, summary, body) — French, marked lang="fr", until a verified translation may be shown
   const tr = useContentTranslation('actualite', actu);
+  // Actualités v2: comfortable reading (kept for this viewer only)
+  const [readerOn, toggleReader] = useReaderMode();
 
   // Canonical Redirect: If accessed via ID but slug exists, redirect to slug URL
   React.useEffect(() => {
@@ -170,6 +174,7 @@ export default function ActualiteDetail() {
     { maxLength: 160 },
   );
   const contentText = htmlToPlainText(tr.value('contenu') || '');
+  const news = actu.news || null;
 
   const breadcrumbs = [
     { name: t('news:breadcrumb.home', 'Accueil'), url: '/' },
@@ -204,7 +209,8 @@ export default function ActualiteDetail() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <ReadingProgress targetId="news-article" />
+      <div id="news-article" className={`mx-auto px-4 sm:px-6 py-8 ${readerOn ? 'max-w-2xl' : 'max-w-4xl'}`}>
         <Link
           to={createPageUrl('Actualites')}
           className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-6"
@@ -213,8 +219,11 @@ export default function ActualiteDetail() {
           {t('news:detail.back', 'Retour aux actualités')}
         </Link>
 
+        <NewsArticleTools item={actu} news={news} readerOn={readerOn} onReader={toggleReader} />
+
         <Card className={`mb-6 ${actu.est_important ? 'border-s-4 border-s-blue-500' : ''}`}>
           <CardContent className="p-6 md:p-8">
+            <NewsArticleHeader news={news} />
             <div className="flex flex-wrap gap-2 mb-4">
               <Badge className={TYPE_COLORS[actu.type_actu] || 'bg-slate-100 text-slate-800'}>
                 <TypeIcon className="h-3 w-3 me-1" />
@@ -247,10 +256,16 @@ export default function ActualiteDetail() {
               )}
             </div>
 
-            <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed whitespace-pre-line" {...tr.attrs('contenu')}>
+            <div className={`prose prose-slate max-w-none text-slate-700 whitespace-pre-line ${readerOn ? 'font-serif text-lg leading-8' : 'leading-relaxed'}`} {...tr.attrs('contenu')}>
               {contentText}
             </div>
 
+            {!publisher && news?.lane === 'A' && news.licence && (
+              <p className="mt-6 text-sm text-slate-600" data-testid="news-attribution">
+                {t('news:detail.attribution_generic', 'Texte de {{publisher}}, repris sans modification sous {{licence}}.', { publisher: news.publisher, licence: news.licence })}
+                {news.licenceUrl && <> <a className="underline" href={news.licenceUrl} target="_blank" rel="noopener noreferrer">{t('news:image.licence', 'licence')}</a></>}
+              </p>
+            )}
             {publisher && (
               <p className="mt-6 text-sm text-slate-600" data-testid="news-attribution">
                 {/* R32: the publisher, its owner and the licence are names and stay as they are; only the words around them are translated */}
@@ -262,8 +277,11 @@ export default function ActualiteDetail() {
               </p>
             )}
 
-            {sourceUrl && (
-              <div className="mt-8">
+            <NewsAdaBlock news={news} />
+            <NewsCoverageAndRelated news={news} />
+
+            {sourceUrl && news?.lane !== 'ADA' && (
+              <div className="mt-8 print:hidden">
                 <a
                   href={sourceUrl}
                   target="_blank"

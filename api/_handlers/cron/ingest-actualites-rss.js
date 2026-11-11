@@ -29,6 +29,7 @@ const USER_AGENT = 'AccesDirectAideBot/1.0 (+https://www.accesdirectaide.fr)';
  * @property {boolean=} enabled
  * @property {string=} language
  * @property {string=} territory
+ * @property {string=} status   Actualités v2: approved | pending_review | restricted | blocked (data/news-sources.json)
  */
 
 /**
@@ -364,7 +365,10 @@ export async function runIngestActualitesRss({ limit, runId } = {}) {
     const name = safeString(src?.name) || guessDomain(feedUrl) || 'RSS source';
     const domain = safeString(src?.domain) || guessDomain(feedUrl) || 'unknown';
     const trustLevel = safeString(src?.trustLevel) || safeString(src?.trust_level) || 'OFFICIAL';
-    const enabled = typeof src?.enabled === 'boolean' ? src.enabled : true;
+    // Actualités v2: a source is fetched only when the registry records it as « approved » with its rights evidence (data/news-sources.json); a source
+    // without a status is the legacy shape and keeps its `enabled` flag; « pending_review », « restricted » and « blocked » are never fetched
+    const statusOk = src?.status === undefined || src?.status === 'approved';
+    const enabled = statusOk && (typeof src?.enabled === 'boolean' ? src.enabled : true);
 
     try {
       await db.insert(RssSource).values({
