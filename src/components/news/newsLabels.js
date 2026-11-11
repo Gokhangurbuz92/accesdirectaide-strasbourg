@@ -46,6 +46,7 @@ export const TOPIC_CHIPS = Object.freeze(['une', 'societe', 'politique', 'econom
 /** what kind of text the reader has in front of them @param {{ lane?: string, auto_publish?: boolean }} item @param {(k: string, d: string) => string} t */
 export function laneLabel(item, t) {
   if (item.lane === 'ADA') return t('news:lane.ada', 'Article AccesDirectAide');
+  if (item.lane === 'OWN') return t('news:lane.own', 'Information AccesDirectAide');
   if (item.lane === 'A') return t('news:lane.licensed', 'Texte officiel sous licence ouverte');
   return t('news:lane.external', 'À lire sur le site de l’éditeur');
 }

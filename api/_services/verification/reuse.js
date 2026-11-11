@@ -12,6 +12,8 @@
 /** @type {Readonly<Record<string, ReuseTerms>>} */
 export const REUSE_BY_HOST = Object.freeze({
   'www.service-public.gouv.fr': { status: 'open', publisher: 'Service-Public.fr (DILA)', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.service-public.gouv.fr/P10025', checkedAt: '2026-10-31' },
+  // the previous address of the same DILA site (it now redirects to service-public.gouv.fr): same publisher, same licence and legal notice
+  'www.service-public.fr': { status: 'open', publisher: 'Service-Public.fr (DILA)', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.service-public.gouv.fr/P10025', checkedAt: '2026-10-31' },
   'entreprendre.service-public.gouv.fr': { status: 'open', publisher: 'Service-Public.fr Entreprendre (DILA)', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.service-public.gouv.fr/P10025', checkedAt: '2026-10-31' },
   // Actualités v2 (11/11/2026): legal notices read on the publishers' sites; texts only (no image is covered or taken)
   'www.insee.fr': { status: 'open', publisher: 'Insee', licence: 'Licence Ouverte 2.0 (etalab-2.0)', evidenceUrl: 'https://www.insee.fr/fr/information/2008466', checkedAt: '2026-11-11', profile: 'generic' },

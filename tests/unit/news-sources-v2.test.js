@@ -110,3 +110,20 @@ describe('regional news outside Alsace is labelled « Grand Est », not « Alsac
     expect(classifyGeo({ titre: 'Les chiffres du trimestre' }, { scope: 'DEP_67' }).area).toBe('alsace');
   });
 });
+
+describe('content published before v2 stays visible (native QA v18 findings, DTA-B63 / DTA-B65)', async () => {
+  const { enrichItem, loadRegistry } = await import('../../api/_services/news/feed.js');
+  const reg = loadRegistry(registry);
+  const row = (o) => ({ id: 'x', titre: 'Titre', resume: 'Résumé', contenu: 'Texte', statut: 'publie', date_publication: NOW, ...o });
+  it('an item with no source address is AccesDirectAide’s own text: shown in full, labelled as ADA information, no image right', () => {
+    const c = enrichItem(row({ image_url: 'https://cdn.example/x.jpg' }), reg, NOW);
+    expect([c.lane, c.publisher, c.titre, c.contenu, c.image, c.ada]).toEqual(['OWN', 'AccesDirectAide', 'Titre', 'Texte', null, null]);
+  });
+  it('an item on the previous Service-Public address (www.service-public.fr) is the same licensed publisher', () => {
+    const c = enrichItem(row({ canonical_url: 'https://www.service-public.fr/particuliers/actualites/A1' }), reg, NOW);
+    expect([c.lane, c.publisher]).toEqual(['A', 'Service-Public.fr (DILA)']);
+  });
+  it('an unregistered third-party address is still hidden (fail-closed)', () => {
+    expect(enrichItem(row({ canonical_url: 'https://journal.example/a' }), reg, NOW)).toBeNull();
+  });
+});

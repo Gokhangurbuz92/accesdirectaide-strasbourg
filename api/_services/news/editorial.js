@@ -142,7 +142,7 @@ export function clusterStories(items, { threshold = 0.5, windowHours = 72 } = {}
     if (hit) { hit.members.push(it); continue; }
     clusters.push({ key: `story:${it.id}`, lead: it, members: [it], tokens, at });
   }
-  const rank = (/** @type {T} */ x) => (x.lane === 'A' || x.lane === 'ADA' ? 0 : 1);
+  const rank = (/** @type {T} */ x) => (x.lane === 'A' || x.lane === 'ADA' || x.lane === 'OWN' ? 0 : 1);
   return clusters.map((c) => {
     const lead = [...c.members].sort((a, b) => rank(a) - rank(b) || new Date(a.date_publication).getTime() - new Date(b.date_publication).getTime())[0];
     return { key: c.key, lead, members: c.members };

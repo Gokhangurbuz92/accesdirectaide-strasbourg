@@ -15,7 +15,8 @@
     "scope": "FRANCE",
     "publisher": "Service-Public.fr (DILA)",
     "hosts": [
-      "www.service-public.gouv.fr"
+      "www.service-public.gouv.fr",
+      "www.service-public.fr"
     ],
     "status": "approved",
     "rights": {
@@ -29,7 +30,8 @@
     "updateFrequency": "daily",
     "retention": "none stated (Licence Ouverte 2.0: attribution and date of last update)",
     "licence": "Licence Ouverte 2.0 (Etalab)",
-    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
+    "note_hosts": "www.service-public.fr: previous address of the same DILA site (now redirects to service-public.gouv.fr); items linked there are the same publisher under the same licence"
   },
   {
     "id": "service_public_professionnels",

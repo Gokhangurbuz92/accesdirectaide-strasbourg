@@ -62,7 +62,11 @@ export function enrichItem(row, registry, now = new Date(), { internal = false }
   const url = row.canonical_url || row.lien_url || row.url || row.source_url || null;
   const isAda = row.type_actu === 'ada_original';
   const src = isAda ? null : registry.of(url);
-  const rights = isAda ? { lane: 'ADA', allow: { headline: true, excerpt: true, fullText: true, images: true }, reason: null } : sourceRights(src, now);
+  // an item with no source address at all is AccesDirectAide's own text, written and published by an administrator (P10): no third party's words, so no
+  // rights lane applies; it is shown as before, labelled as ADA information (not as an article of the editorial workflow), with no image right
+  const own = !isAda && !url;
+  const rights = isAda ? { lane: 'ADA', allow: { headline: true, excerpt: true, fullText: true, images: true }, reason: null }
+    : own ? { lane: 'OWN', allow: { headline: true, excerpt: true, fullText: true, images: false }, reason: null } : sourceRights(src, now);
   if (rights.lane === 'BLOCKED') return null;
   const geo = classifyGeo(row, src);
   const topics = classifyTopics(row, geo);
@@ -70,7 +74,7 @@ export function enrichItem(row, registry, now = new Date(), { internal = false }
   const base = {
     id: row.id, slug: row.slug, date_publication: row.date_publication, updatedAt: row.updatedAt, published_at: row.published_at,
     lane: rights.lane, geo, topics: [...new Set(topics)], est_important: Boolean(row.est_important),
-    publisher: isAda ? 'AccesDirectAide' : (src?.publisher || src?.name || hostOf(url).replace(/^www\./, '')),
+    publisher: isAda || own ? 'AccesDirectAide' : (src?.publisher || src?.name || hostOf(url).replace(/^www\./, '')),
     sourceUrl: url, licence: isAda ? null : (src?.licence || null), licenceUrl: isAda ? null : (src?.licenceUrl || null), rightsEvidenceUrl: isAda ? null : (src?.evidenceUrl || null),
     language: src?.language || 'fr',
     ...(internal ? { _t: String(row.titre || '') } : {}),   // internal only (feed grouping): never part of a returned item
