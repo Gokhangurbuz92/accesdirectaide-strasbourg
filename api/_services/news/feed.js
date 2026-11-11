@@ -108,7 +108,7 @@ export function buildNewsFeed(rows, p, registry, now = new Date()) {
   cards.sort((a, b) => new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime() || String(b.id).localeCompare(String(a.id)));
   const stories = p.group === false ? cards.map((c) => ({ key: `story:${c.id}`, lead: c, members: [c] }))
     : clusterStories(cards.map((c) => ({ ...c, titre: c._t })), {});
-  const strip = (/** @type {any} */ o) => { const { _t, ...rest } = o; return rest; };
+  const strip = (/** @type {any} */ o) => { const rest = { ...o }; delete rest._t; return rest; };
   /** @type {any[]} */
   let out = stories.filter((s) => !s.lead.externalOnly).map((s) => ({
     ...strip(s.lead), storyKey: s.key,   // leads are lane A or ADA only (filtered above): their internal title is their public title

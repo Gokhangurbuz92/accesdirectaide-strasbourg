@@ -267,5 +267,433 @@
     "hosts": [
       "www.fonction-publique.gouv.fr"
     ]
+  },
+  {
+    "id": "insee_grand_est",
+    "name": "Insee - Grand Est",
+    "feedUrl": "https://www.insee.fr/fr/flux/11",
+    "homepageUrl": "https://www.insee.fr/fr/accueil",
+    "domain": "insee.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": true,
+    "language": "fr",
+    "territory": "GRAND_EST",
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — https://www.insee.fr/fr/information/2008466 vérifiée le 11/11/2026 ; mention « Source : Insee » et date de mise à jour ; pas de logo ni de capture",
+    "country": "FR",
+    "scope": "GRAND_EST",
+    "publisher": "Insee",
+    "hosts": [
+      "www.insee.fr"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.insee.fr/fr/information/2008466",
+    "verifiedAt": "2026-11-11",
+    "updateFrequency": "weekly",
+    "licence": "Licence Ouverte 2.0 (Etalab)",
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
+    "note": "flux régional Grand Est (8 éléments, chacun avec le résumé de l’éditeur) ; pages vérifiables (profil « generic », 11/11/2026)"
+  },
+  {
+    "id": "vie_publique",
+    "name": "Vie-publique.fr - Actualités",
+    "feedUrl": "https://www.vie-publique.fr/actualites-feeds.xml",
+    "homepageUrl": "https://www.vie-publique.fr/",
+    "domain": "vie-publique.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": false,
+    "language": "fr",
+    "territory": "FRANCE",
+    "disabledReason": "Actualités v2 (11/11/2026) : droits établis (Licence Ouverte 2.0, textes seulement ; images Adobe Stock exclues) mais accès automatique refusé : les pages répondent par une page de script et de cookie, la vérification de la page d’origine est impossible et n’est pas contournée.",
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) — textes seulement",
+    "country": "FR",
+    "scope": "FRANCE",
+    "publisher": "Vie-publique.fr (DILA)",
+    "hosts": [
+      "www.vie-publique.fr"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.vie-publique.fr/mentions-legales",
+    "verifiedAt": "2026-11-11",
+    "licence": "Licence Ouverte 2.0 (Etalab)",
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
+  },
+  {
+    "id": "info_gouv",
+    "name": "info.gouv.fr - Actualités",
+    "feedUrl": "https://www.info.gouv.fr/rss/actualites.xml",
+    "homepageUrl": "https://www.info.gouv.fr/",
+    "domain": "info.gouv.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": false,
+    "language": "fr",
+    "territory": "FRANCE",
+    "disabledReason": "Actualités v2 (11/11/2026) : droits établis (Licence Ouverte 2.0 sauf propriété de tiers signalée) mais accès automatique refusé : le flux répond HTTP 403 (défi anti-robot), il n’est pas contourné.",
+    "reuse": "Licence Ouverte 2.0 (etalab-2.0) sauf mention de propriété de tiers",
+    "country": "FR",
+    "scope": "FRANCE",
+    "publisher": "info.gouv.fr",
+    "hosts": [
+      "www.info.gouv.fr"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.info.gouv.fr/mentions-legales",
+    "verifiedAt": "2026-11-11",
+    "licence": "Licence Ouverte 2.0 (Etalab)",
+    "licenceUrl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
+  },
+  {
+    "id": "europarl_fr",
+    "name": "Parlement européen - Communiqués de presse",
+    "feedUrl": "https://www.europarl.europa.eu/rss/doc/press-releases/fr.xml",
+    "homepageUrl": "https://www.europarl.europa.eu/news/fr",
+    "domain": "europarl.europa.eu",
+    "trustLevel": "OFFICIAL",
+    "category": "europe",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : droits établis (réutilisation autorisée si l’élément reste intègre et la source est citée : « © Union européenne – Source : Parlement européen ») mais accès automatique refusé : le flux répond HTTP 403, il n’est pas contourné.",
+    "reuse": "© Union européenne – Source : Parlement européen (intégrité et mention de la source ; reproduction partielle avec lien vers l’élément complet)",
+    "country": "EU",
+    "scope": "WORLD",
+    "publisher": "Parlement européen",
+    "hosts": [
+      "www.europarl.europa.eu"
+    ],
+    "status": "approved",
+    "rights": {
+      "headline": true,
+      "excerpt": true,
+      "fullText": true,
+      "images": false
+    },
+    "evidenceUrl": "https://www.europarl.europa.eu/legal-notice/fr",
+    "verifiedAt": "2026-11-11",
+    "licence": "© Union européenne – Source : Parlement européen",
+    "licenceUrl": "https://www.europarl.europa.eu/legal-notice/fr"
+  },
+  {
+    "id": "defenseur_droits",
+    "name": "Défenseur des droits - Actualités",
+    "feedUrl": "https://www.defenseurdesdroits.fr/rss/actualites",
+    "domain": "defenseurdesdroits.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": false,
+    "language": "fr",
+    "territory": "FRANCE",
+    "disabledReason": "Actualités v2 (11/11/2026) : en attente de décision — informations publiques réutilisables (CRPA) mais la même page renvoie à « contacter l’administrateur » pour les conditions ; images de banques d’images exclues.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.defenseurdesdroits.fr/mentions-legales-367",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.defenseurdesdroits.fr"
+    ]
+  },
+  {
+    "id": "cnil",
+    "name": "CNIL - Actualités",
+    "feedUrl": "https://www.cnil.fr/fr/rss.xml",
+    "domain": "cnil.fr",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": false,
+    "language": "fr",
+    "territory": "FRANCE",
+    "disabledReason": "Actualités v2 (11/11/2026) : en attente de décision — textes sous CC BY-ND 4.0 FR : reprise mot pour mot seulement, aucune modification ni coupe ; adresse du flux non annoncée sur le site.",
+    "country": "FR",
+    "scope": "FRANCE",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.cnil.fr/fr/mentions-legales",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.cnil.fr"
+    ]
+  },
+  {
+    "id": "onu_info",
+    "name": "ONU Info - Actualités",
+    "feedUrl": "https://news.un.org/feed/subscribe/fr/news/all/rss.xml",
+    "domain": "news.un.org",
+    "trustLevel": "OFFICIAL",
+    "category": "general",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : en attente de décision — reprise autorisée avec mention et en informant l’ONU (« the United Nations is advised ») ; page des flux non vérifiée (HTTP 403).",
+    "country": "INT",
+    "scope": "WORLD",
+    "status": "pending_review",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.un.org/fr/about-us/copyright",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "news.un.org"
+    ]
+  },
+  {
+    "id": "oms",
+    "name": "OMS (WHO) - Actualités",
+    "domain": "who.int",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — tous droits réservés ; reproduction substantielle sur autorisation écrite ; photos exclues.",
+    "country": "INT",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.who.int/about/policies/copyright",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.who.int"
+    ]
+  },
+  {
+    "id": "france24",
+    "name": "France 24",
+    "domain": "france24.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — reproduction et collecte automatisée interdites (CGU France Médias Monde).",
+    "country": "FR",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.francemm.com/fr/legal-notice",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.france24.com"
+    ]
+  },
+  {
+    "id": "rfi",
+    "name": "RFI",
+    "domain": "rfi.fr",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — reproduction et collecte automatisée interdites (CGU France Médias Monde).",
+    "country": "FR",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.francemm.com/fr/legal-notice",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.rfi.fr"
+    ]
+  },
+  {
+    "id": "bbc_news",
+    "name": "BBC News",
+    "domain": "bbc.co.uk",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — titres et lien autorisés pour un usage non commercial avec mention « BBC News » ; aucun logo ni image ; non collecté.",
+    "country": "GB",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.bbc.co.uk/news/10628494",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.bbc.co.uk"
+    ]
+  },
+  {
+    "id": "deutsche_welle",
+    "name": "Deutsche Welle",
+    "domain": "dw.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — conditions d’utilisation non vérifiées (page non lisible) ; non collecté.",
+    "country": "DE",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://corporate.dw.com/en/rss-feeds/a-68693346",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.dw.com"
+    ]
+  },
+  {
+    "id": "euronews",
+    "name": "Euronews",
+    "domain": "euronews.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : lien seulement — usage personnel non commercial seulement ; aucune publication ni redistribution.",
+    "country": "EU",
+    "scope": "WORLD",
+    "status": "restricted",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.euronews.com/terms-and-conditions",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.euronews.com"
+    ]
+  },
+  {
+    "id": "afp",
+    "name": "AFP",
+    "domain": "afp.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : réutilisation des textes interdite — toute reproduction et agrégation automatisée interdite sans autorisation écrite.",
+    "country": "FR",
+    "scope": "WORLD",
+    "status": "blocked",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.afp.com/fr/liens-pratiques/conditions-generales-dutilisation-cgu",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.afp.com"
+    ]
+  },
+  {
+    "id": "ap",
+    "name": "Associated Press",
+    "domain": "apnews.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : réutilisation des textes interdite — licence d’usage personnel non commercial seulement.",
+    "country": "US",
+    "scope": "WORLD",
+    "status": "blocked",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://apnews.com/termsofservice",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "apnews.com"
+    ]
+  },
+  {
+    "id": "reuters",
+    "name": "Reuters",
+    "domain": "reuters.com",
+    "trustLevel": "PRESS",
+    "category": "presse",
+    "enabled": false,
+    "language": "fr",
+    "territory": "WORLD",
+    "disabledReason": "Actualités v2 (11/11/2026) : réutilisation des textes interdite — conditions non lisibles (HTTP 401) : traité comme interdit.",
+    "country": "GB",
+    "scope": "WORLD",
+    "status": "blocked",
+    "rights": {
+      "headline": false,
+      "excerpt": false,
+      "fullText": false,
+      "images": false
+    },
+    "evidenceUrl": "https://www.reuters.com/info-pages/terms-of-use/",
+    "verifiedAt": "2026-11-11",
+    "hosts": [
+      "www.reuters.com"
+    ]
   }
 ]

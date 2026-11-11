@@ -5,19 +5,22 @@
  *
  * A draft is published only when ALL of these hold:
  *   1. reuse      — the publisher's legal notice allows reuse of its texts (checked by hand, dated, with the address of the notice: REUSE_BY_HOST);
- *   2. audience   — the item is written for private individuals (Service-Public « Particuliers »), not for companies;
+ *   2. audience   — the item is written for private individuals (Service-Public « Particuliers »), not for companies (Service-Public hosts only; the
+ *                   other open publishers — Insee, vie-publique, … — write for the general public and are read with the « generic » page profile);
  *   3. date       — published at most NEWS_MAX_AGE_DAYS ago and not in the future;
  *   4. own words  — the summary is the publisher's own text from its feed: no model-written summary or key points are stored on the item;
  *   5. duplicate  — no other item with the same title is already published or chosen in this run;
  *   6. live page  — the original page answers 200 on the publisher's own site, shows the same title, the same publication day (one day of margin for
- *                   time zones) and contains the summary word for word.
+ *                   time zones) and contains the summary word for word. Service-Public pages are read with their own date line; « generic » pages with
+ *                   the title as the page names it (<h1>, <title>, og:title) and any date the page states (« Publié le … », « Paru le JJ/MM/AAAA »,
+ *                   article:published_time, <time datetime>, JSON-LD datePublished / dateModified).
  * Any failed check keeps the item as a draft, with the reasons written on it (« commentaire_statut »); the next run checks it again.
  */
 import { officialGet } from './verification/fetcher.js';
 import { parseOfficialPage, decode, frenchDate } from './verification/pages.js';
 import { REUSE_BY_HOST } from './verification/reuse.js';
 
-export const NEWS_RULES_VERSION = 1;
+export const NEWS_RULES_VERSION = 2;   // v2 (11/11/2026): « generic » page profile for the open publishers other than Service-Public
 export const NEWS_MAX_AGE_DAYS = 90;
 export const PUBLISHER = 'verification-automatique';
 
@@ -52,7 +55,7 @@ export function offlineChecks(item, ctx) {
   if (!/^https:\/\//i.test(url)) reasons.push('adresse d’origine absente ou non sécurisée');
   if (!reuse) reasons.push(`éditeur inconnu (${host || 'aucune adresse'}) : conditions de réutilisation non vérifiées`);
   else if (reuse.status !== 'open') reasons.push(`réutilisation non autorisée sans accord écrit de ${reuse.publisher} (mentions légales vérifiées le ${reuse.checkedAt.split('-').reverse().join('/')})`);
-  const audience = audienceOf(url);
+  const audience = reuse?.profile === 'generic' ? 'particuliers' : audienceOf(url);
   if (audience === 'professionnels') reasons.push('actualité destinée aux entreprises (Service-Public Entreprendre)');
   else if (audience !== 'particuliers') reasons.push('public visé non établi (seules les actualités « Particuliers » de Service-Public sont publiées)');
   const at = item.date_publication ? new Date(item.date_publication) : null;
@@ -73,6 +76,8 @@ export function offlineChecks(item, ctx) {
  * @returns {Promise<{ reasons: string[], page?: { url: string, title: string | null, day: string | null } }>}
  */
 export async function pageChecks(item, opts = {}) {
+  let host = ''; try { host = new URL(item.canonical_url || item.url).hostname; } catch { /* reported by the offline checks */ }
+  if (REUSE_BY_HOST[host]?.profile === 'generic') return genericPageChecks(item, opts);
   const url = cleanUrl(item.canonical_url || item.url);
   let r;
   try { r = await officialGet(url, opts); } catch (err) { return { reasons: [`page d’origine non consultée (${String(err?.message || err).slice(0, 80)})`] }; }
@@ -95,6 +100,59 @@ export async function pageChecks(item, opts = {}) {
   const summary = squashed(item.resume).replace(/(\[…\]|…|\.\.\.)$/, '');
   if (!body.includes(summary.slice(0, 160))) reasons.push('le résumé ne figure pas mot pour mot sur la page d’origine');
   return { reasons, page: { url: r.url || url, title: page.title, day, updated } };
+}
+
+/** every date a page states about itself, as « AAAA-MM-JJ » @param {string} html */
+export function pageDates(html) {
+  const raw = decode(String(html || ''));
+  const text = raw.replace(/<[^>]+>/g, ' ').replace(/[\u00a0\u202f\s]+/g, ' ');
+  const out = new Set();
+  const iso = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || '').trim()); return m ? `${m[1]}-${m[2]}-${m[3]}` : null; };
+  for (const m of text.matchAll(/(?:Publi[ée]e? le|Mise à jour le|Paru le|Modifi[ée]e? le)\s*:?\s*([0-9]{1,2}(?:er)?\s+[a-zéû]+\s+[0-9]{4})/gi)) { const d = frenchDate(m[1]); if (d) out.add(d); }
+  for (const m of text.matchAll(/(?:Publi[ée]e? le|Mise à jour le|Paru le|Modifi[ée]e? le)\s*:?\s*(?:Paru le\s*)?([0-3]?\d)\/([01]?\d)\/(\d{4})/gi)) out.add(`${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`);
+  for (const m of raw.matchAll(/<meta[^>]+(?:property|name)=["'](?:article:published_time|article:modified_time|dc\.date|date)["'][^>]*content=["']([^"']+)["']/gi)) { const d = iso(m[1]); if (d) out.add(d); }
+  for (const m of raw.matchAll(/<time[^>]+datetime=["']([^"']+)["']/gi)) { const d = iso(m[1]); if (d) out.add(d); }
+  for (const m of raw.matchAll(/"date(?:Published|Modified)"\s*:\s*"([^"]+)"/g)) { const d = iso(m[1]); if (d) out.add(d); }
+  return [...out];
+}
+
+/** the names a page gives itself: <h1>, <title> (before « | » or « - »), og:title @param {string} html */
+export function pageTitles(html) {
+  const raw = decode(String(html || ''));
+  const clean = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/[\u00a0\u202f\s]+/g, ' ').trim();
+  const t = clean((raw.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]);
+  const h1 = clean((raw.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1]);
+  const og = clean((raw.match(/<meta[^>]+property=["']og:title["'][^>]*content=["']([^"']+)["']/i) || [])[1]);
+  return [h1, t, t.split(' | ')[0], t.split(' - ')[0], og].filter(Boolean);
+}
+
+/**
+ * Check 6 for a « generic » publisher. Same rule as Service-Public, read from markup any publisher uses: the page is on the publisher's own site, answers
+ * 200, names itself with the item's title (the page title may add a subtitle or the publisher's name after it), states a date within one day of the
+ * feed's, and contains the summary word for word. A page that cannot be read (a bot wall, a script-only page) fails: nothing is published from it.
+ * @param {any} item @param {{ fetchImpl?: typeof fetch, env?: any }} [opts]
+ */
+export async function genericPageChecks(item, opts = {}) {
+  const url = cleanUrl(item.canonical_url || item.url);
+  const host = new URL(url).hostname;
+  let r;
+  // the publisher's own host only: it is on the hand-checked reuse registry, so it is trusted for this one read (no other site, no redirect away)
+  try { r = await officialGet(url, { ...opts, trustedDomains: [host] }); } catch (err) { return { reasons: [`page d’origine non consultée (${String(err?.message || err).slice(0, 80)})`] }; }
+  if (r.status !== 200) return { reasons: [`page d’origine indisponible (HTTP ${r.status})`] };
+  let finalHost = ''; try { finalHost = new URL(r.url || url).hostname; } catch { /* */ }
+  const reasons = [];
+  if (finalHost !== host) reasons.push(`la page d’origine redirige vers un autre site (${finalHost})`);
+  const want = sameText(item.titre);
+  const titles = pageTitles(r.text);
+  if (!want || !titles.some((x) => sameText(x) === want || sameText(x).startsWith(`${want} `))) reasons.push('le titre de la page d’origine est différent');
+  const days = pageDates(r.text);
+  if (!days.length) reasons.push('date de publication absente de la page d’origine');
+  else if (!days.some((d) => dayGap(d, parisDay(item.date_publication)) <= 1)) reasons.push(`la page d’origine est datée du ${days[0].split('-').reverse().join('/')}`);
+  const squashed = (s) => sameText(s).replace(/\s+/g, '');
+  const body = squashed(decode(String(r.text || '')).replace(/<[^>]+>/g, ' '));
+  const summary = squashed(item.resume).replace(/(\[…\]|…|\.\.\.)$/, '');
+  if (!summary || !body.includes(summary.slice(0, 160))) reasons.push('le résumé ne figure pas mot pour mot sur la page d’origine');
+  return { reasons, page: { url: r.url || url, title: titles[0] || null, day: days[0] || null } };
 }
 
 const frDay = (d) => new Date(d).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' });

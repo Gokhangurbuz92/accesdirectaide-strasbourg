@@ -109,6 +109,7 @@
  "topic.strasbourg": "Straßburg / Elsass",
  "geo.monde": "Welt",
  "geo.alsace": "Elsass / Straßburg",
+ "geo.grand_est": "Grand Est",
  "geo.all": "Alle",
  "geo.france": "Frankreich",
  "lane.ada": "Artikel von AccesDirectAide",
@@ -132,6 +133,7 @@
  "coverage.title": "Quellen und Berichterstattung",
  "coverage.text": "Dasselbe Thema bei anderen Herausgebern (Lektüre auf deren Website):",
  "coverage.external": "externe Website",
+ "coverage.gdelt": "Einige Links wurden mit dem GDELT-Projekt gefunden:",
  "related.title": "Siehe auch",
  "saved.count_one": "{{count}} gespeicherter Artikel.",
  "saved.count_other": "{{count}} gespeicherte Artikel."

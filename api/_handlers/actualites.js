@@ -177,7 +177,9 @@ export default async function handler(req, res) {
                         const all = feed.items; const story = all.find((c) => c.id === news.id);
                         // optional worldwide discovery (links only, off unless NEWS_DISCOVERY_GDELT=on, bounded and cached)
                         const known = (story?.coverage || []).map((/** @type {any} */ c) => { try { return new URL(c.url).hostname.replace(/^www\./, ''); } catch { return ''; } });
-                        const found = news.titre ? await discoverCoverage(news.titre, { exclude: known }) : [];
+                        // a publisher whose terms forbid any reuse (registry « blocked »: AFP, AP, Reuters, …) is not listed, even as a link
+                        const blockedHost = (/** @type {any} */ l) => { try { const h = new URL(l.url).hostname.replace(/^www\./, ''); return [h, `www.${h}`].some((x) => newsRegistry().byHost.get(x)?.status === 'blocked'); } catch { return true; } };
+                        const found = news.titre ? (await discoverCoverage(news.titre, { exclude: known })).filter((/** @type {any} */ l) => !blockedHost(l)) : [];
                         news = { ...news, coverage: [...(story?.coverage || []), ...found], related: relatedTo(story || { ...news, storyKey: null }, all).map((/** @type {any} */ r) => ({ id: r.id, slug: r.slug, titre: r.titre, date_publication: r.date_publication, publisher: r.publisher, geo: r.geo, topics: r.topics })) };
                     } catch (e) { logger.warn('actualites v2 related unavailable', { requestId, error: e }); news = { ...news, coverage: [], related: [] }; }
                 }

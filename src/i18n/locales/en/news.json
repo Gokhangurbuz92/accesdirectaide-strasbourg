@@ -109,6 +109,7 @@
  "topic.strasbourg": "Strasbourg / Alsace",
  "geo.monde": "World",
  "geo.alsace": "Alsace / Strasbourg",
+ "geo.grand_est": "Grand Est",
  "geo.all": "All",
  "geo.france": "France",
  "lane.ada": "AccesDirectAide article",
@@ -132,6 +133,7 @@
  "coverage.title": "Sources and coverage",
  "coverage.text": "The same topic from other publishers (read on their website):",
  "coverage.external": "external website",
+ "coverage.gdelt": "Some links were found with the GDELT Project:",
  "related.title": "See also",
  "saved.count_one": "{{count}} saved article.",
  "saved.count_other": "{{count}} saved articles."

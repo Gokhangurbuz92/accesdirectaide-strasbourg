@@ -109,6 +109,7 @@
  "topic.strasbourg": "Strazburg / Alsas",
  "geo.monde": "Dünya",
  "geo.alsace": "Alsas / Strazburg",
+ "geo.grand_est": "Grand Est",
  "geo.all": "Tümü",
  "geo.france": "Fransa",
  "lane.ada": "AccesDirectAide makalesi",
@@ -132,6 +133,7 @@
  "coverage.title": "Kaynaklar ve kapsam",
  "coverage.text": "Aynı konu diğer yayıncılarda (kendi sitelerinde okunur):",
  "coverage.external": "harici site",
+ "coverage.gdelt": "Bazı bağlantılar GDELT projesi aracılığıyla bulundu:",
  "related.title": "Bunlara da göz atın",
  "saved.count_one": "{{count}} kayıtlı makale.",
  "saved.count_other": "{{count}} kayıtlı makale."

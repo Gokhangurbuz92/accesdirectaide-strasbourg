@@ -61,9 +61,9 @@ describe('news: drafts and human publication', () => {
   });
   it('the source list keeps broken feeds, and feeds whose texts may not be reused, disabled with their reason', () => {
     const list = JSON.parse(fs.readFileSync('data/news-sources.json', 'utf8'));
-    for (const s of list.filter((x) => x.enabled === false)) expect(s.disabledReason, s.name).toMatch(/flux inaccessible|réutilisation des textes interdite/);
+    for (const s of list.filter((x) => x.enabled === false)) expect(s.disabledReason, s.name).toMatch(/flux inaccessible|réutilisation des textes interdite|accès automatique refusé|en attente de décision|lien seulement/);
     expect(list.find((s) => s.name.startsWith('ARS')).feedUrl).toBe('https://www.grand-est.ars.sante.fr/rss.xml');
-    expect(list.filter((s) => s.enabled !== false).map((s) => s.id)).toEqual(['service_public_particuliers', 'service_public_professionnels']);
+    expect(list.filter((s) => s.enabled !== false).map((s) => s.id)).toEqual(['service_public_particuliers', 'service_public_professionnels', 'insee_grand_est']);
     for (const s of list.filter((x) => x.enabled !== false)) expect(s.reuse).toMatch(/Licence Ouverte 2\.0/);
   });
 });

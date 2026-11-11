@@ -58,7 +58,9 @@ const RULES = {
   droits: ['droit*', 'aide*', 'allocation*', 'prestation*', 'rsa', 'prime d activite', 'minima sociaux', 'demarche*', 'formulaire*', 'cheque energie', 'complementaire sante solidaire', 'css', 'aide sociale', 'france services'],
 };
 /** places, folded; « Alsace / Strasbourg » first (it is also France) */
-const ALSACE = ['strasbourg', 'alsace', 'alsacien*', 'bas rhin', 'haut rhin', 'eurometropole', 'colmar', 'mulhouse', 'haguenau', 'selestat', 'schiltigheim', 'illkirch', 'grand est', 'moselle'];
+const ALSACE = ['strasbourg', 'alsace', 'alsacien*', 'bas rhin', 'haut rhin', 'eurometropole', 'colmar', 'mulhouse', 'haguenau', 'selestat', 'schiltigheim', 'illkirch'];
+/** the wider region: local news, but not Alsace — labelled « Grand Est », never « Alsace / Strasbourg » */
+const GRAND_EST = ['grand est', 'moselle', 'lorraine', 'nancy', 'metz', 'reims', 'champagne ardenne'];
 const FRANCE = ['france', 'francais*', 'national*', 'paris', 'metropole', 'outre mer', 'departement*', 'prefecture*', 'mairie*', 'commune*', 'service public', 'caf', 'cpam', 'urssaf', 'france travail', 'gouvernement', 'assemblee nationale', 'senat'];
 /** countries and international bodies (folded French names) → ISO code or « INT » */
 const WORLD = {
@@ -75,21 +77,22 @@ const matches = (/** @type {string} */ text, /** @type {string} */ rule) => (rul
 
 /**
  * Where the event happens. @param {{ titre?: string, resume?: string, contenu?: string }} item @param {{ territory?: string, scope?: string } | null} [source]
- * @returns {{ scope: 'alsace' | 'france' | 'monde', countries: string[], basis: 'text' | 'source-scope' | 'default' }}
+ * @returns {{ scope: 'alsace' | 'france' | 'monde', area?: 'alsace' | 'grand_est', countries: string[], basis: 'text' | 'source-scope' | 'default' }}
  */
 export function classifyGeo(item, source = null) {
   const text = fold([item.titre, item.resume, item.contenu].filter(Boolean).join(' ')).slice(0, 4000);
   const countries = [...new Set(Object.entries(WORLD).filter(([k]) => matches(text, k)).map(([, v]) => v))];
   const alsace = ALSACE.some((r) => matches(text, r));
+  const region = !alsace && GRAND_EST.some((r) => matches(text, r));
   const france = FRANCE.some((r) => matches(text, r));
-  if (alsace) return { scope: 'alsace', countries: ['FR', ...countries.filter((c) => c !== 'FR')], basis: 'text' };
+  if (alsace || region) return { scope: 'alsace', area: alsace ? 'alsace' : 'grand_est', countries: ['FR', ...countries.filter((c) => c !== 'FR')], basis: 'text' };
   // a foreign country named and no French marker: the event is abroad, whoever publishes it
   if (countries.length && !france) return { scope: 'monde', countries, basis: 'text' };
   if (france) return { scope: 'france', countries: ['FR', ...countries], basis: 'text' };
   // no place in the text: the source's own declared scope (e.g. a national French administration publishes French measures), else France by default
   const s = String(source?.scope || source?.territory || '').toUpperCase();
   if (s === 'WORLD' || s === 'INT' || s === 'EU') return { scope: 'monde', countries: [s === 'EU' ? 'EU' : 'INT'], basis: 'source-scope' };
-  if (s === 'GRAND_EST' || s.startsWith('DEP_6')) return { scope: 'alsace', countries: ['FR'], basis: 'source-scope' };
+  if (s === 'GRAND_EST' || s.startsWith('DEP_6')) return { scope: 'alsace', area: s === 'GRAND_EST' ? 'grand_est' : 'alsace', countries: ['FR'], basis: 'source-scope' };
   if (s === 'FRANCE') return { scope: 'france', countries: ['FR'], basis: 'source-scope' };
   return { scope: 'france', countries: [], basis: 'default' };
 }
@@ -108,11 +111,12 @@ export function classifyTopics(item, geo) {
   }
   // an existing category from the feed counts (the current filters keep their meaning)
   const legacy = NEWS_TOPICS.find((t) => t.legacy.includes(String(item.categorie || '')));
-  if (legacy && legacy.id !== 'societe') { const e = scores.find(([t]) => t === legacy.id); if (e) e[1] += 2; else scores.push([legacy.id, 2]); }
+  // a regional feed's « region » category is not a Strasbourg story when the text names only the wider Grand Est
+  if (legacy && legacy.id !== 'societe' && !(legacy.id === 'strasbourg' && /** @type {any} */ (geo)?.area === 'grand_est')) { const e = scores.find(([t]) => t === legacy.id); if (e) e[1] += 2; else scores.push([legacy.id, 2]); }
   scores.sort((/** @type {[string, number]} */ a, /** @type {[string, number]} */ b) => b[1] - a[1] || TOPIC_IDS.indexOf(a[0]) - TOPIC_IDS.indexOf(b[0]));
   const out = scores.slice(0, 3).map(([t]) => t);
   if (geo?.scope === 'monde' && !out.includes('international')) out.push('international');
-  if (geo?.scope === 'alsace' && !out.includes('strasbourg')) out.push('strasbourg');
+  if (geo?.scope === 'alsace' && /** @type {any} */ (geo).area !== 'grand_est' && !out.includes('strasbourg')) out.push('strasbourg');
   return out.length ? out : ['societe'];
 }
 

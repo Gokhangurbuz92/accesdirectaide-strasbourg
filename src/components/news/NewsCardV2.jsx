@@ -44,7 +44,7 @@ export default function NewsCardV2({ item, featured = false, saved = false, onTo
       </div>
       <div className={`flex flex-1 flex-col p-5 ${featured ? 'md:p-7' : ''}`}>
         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-700"><span aria-hidden="true">{flag} </span>{geoLabel(item.geo?.scope || 'france', t)}</span>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-700"><span aria-hidden="true">{flag} </span>{geoLabel(item.geo?.scope || 'france', t, item.geo?.area)}</span>
           <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800">{topicLabel(topic, t)}</span>
           {item.est_important && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-900">{t('news:badge.important', 'Important')}</span>}
         </div>

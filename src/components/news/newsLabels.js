@@ -27,8 +27,9 @@ export function topicLabel(id, t) {
   }
 }
 
-/** @param {string} scope @param {(k: string, d: string) => string} t */
-export function geoLabel(scope, t) {
+/** @param {string} scope @param {(k: string, d: string) => string} t @param {string} [area] 'grand_est' for regional news outside Alsace */
+export function geoLabel(scope, t, area) {
+  if (scope === 'alsace' && area === 'grand_est') return t('news:geo.grand_est', 'Grand Est');
   if (scope === 'monde') return t('news:geo.monde', 'Monde');
   if (scope === 'alsace') return t('news:geo.alsace', 'Alsace / Strasbourg');
   if (scope === 'all') return t('news:geo.all', 'Tout');

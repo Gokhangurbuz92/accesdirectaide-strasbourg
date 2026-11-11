@@ -63,7 +63,7 @@ export function NewsArticleHeader({ news }) {
   return (
     <>
       <div className="mb-3 flex flex-wrap gap-2 text-xs font-medium" data-testid="news-labels">
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-800">{geoLabel(news.geo?.scope || 'france', t)}</span>
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-800">{geoLabel(news.geo?.scope || 'france', t, news.geo?.area)}</span>
         {(news.topics || []).filter((x) => x !== 'une').map((x) => <span key={x} className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-900">{topicLabel(x, t)}</span>)}
         <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-900">{laneLabel(news, t)}</span>
       </div>
@@ -112,6 +112,9 @@ export function NewsAdaBlock({ news }) {
   );
 }
 
+/** the citation GDELT's terms require when its data is used: a proper name, never translated */
+const GDELT_NAME = 'The GDELT Project';
+
 /** the other reports of the same story (links only: their words belong to their publishers) and related articles @param {{ news: any }} props */
 export function NewsCoverageAndRelated({ news }) {
   const { t } = useT('news');
@@ -126,6 +129,12 @@ export function NewsCoverageAndRelated({ news }) {
           <ul className="mt-2 space-y-1 text-sm">
             {coverage.map((c) => <li key={c.url}><a className="text-blue-800 underline" href={c.url} target="_blank" rel="noopener noreferrer">{c.publisher}</a> <span className="text-slate-600">· {formatDate(c.date, LONG)} · {t('news:coverage.external', 'site externe')}</span></li>)}
           </ul>
+          {coverage.some((c) => c.via === 'gdelt') && (
+            <p className="mt-2 text-xs text-slate-600" data-testid="news-coverage-gdelt">
+              {t('news:coverage.gdelt', 'Certains liens ont été trouvés grâce au projet GDELT :')}{' '}
+              <a className="underline" href="https://www.gdeltproject.org/" target="_blank" rel="noopener noreferrer">{GDELT_NAME}</a>
+            </p>
+          )}
         </section>
       )}
       {related.length > 0 && (
