@@ -362,14 +362,15 @@ export default function Aides() {
           <Link to="/recherche" className="ada-target font-semibold text-white underline-offset-2 hover:underline">
             {t('aides:list.smart_search', 'Recherche intelligente')}
           </Link>
-          <span>
+          {/* a sentence (p): its inline link is exempt from the 24 px target rule (WCAG 2.5.8 « inline »), as before the redesign */}
+          <p className="m-0">
             <Trans
               i18n={i18n}
               i18nKey="aides:list.glossary_tip"
               defaults="Astuce : consultez notre <0>glossaire</0> pour comprendre les sigles (RSA, APL, AAH...)"
               components={[<Link key="glossaire" to="/glossaire" className="font-semibold text-white underline underline-offset-2" />]}
             />
-          </span>
+          </p>
         </HeroSearch>
       </PageHeader>
 

@@ -29,8 +29,13 @@ export function HeroSearch({ value, onChange, onSubmit, label, placeholder, subm
       <form role="search" onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="flex flex-col gap-2 sm:flex-row sm:gap-0 sm:rounded-2xl sm:bg-white sm:p-1.5 sm:shadow-float">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" aria-hidden="true" />
+          {/* type="text" (role textbox, as the pages had it): a search field announced as « zone de recherche » by some readers loses its label
+              in others, and the e2e contract (getByRole('textbox')) is kept; the form itself is the search landmark */}
           <input
-            type="search"
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}

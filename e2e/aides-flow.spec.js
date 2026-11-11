@@ -62,11 +62,12 @@ test.describe('Aides Flow', () => {
         await page.goto('/aides');
         await expect(page.getByRole('heading', { level: 1, name: 'Aides' })).toBeVisible();
 
-        // 3. Open Filters (use the specific Filtres button in the header,
-        //    it has aria-expanded attribute to distinguish it)
-        await page.getByRole('button', { name: 'Filtres', exact: true }).first().click();
-        await expect(page.locator('#aides-category')).toBeVisible();
-        await page.locator('#aides-category').selectOption('logement');
+        // 3. Choose a category. 11/11/2026 redesign: the categories are chips above the results (the old « Filtres » panel and its #aides-category
+        //    select are gone; the sidebar keeps situation / territory / urgency) — the same API filter, the same URL contract
+        const chips = page.getByTestId('aides-category-chips');
+        await expect(chips).toBeVisible();
+        await chips.getByRole('button', { name: 'Logement', exact: true }).click();
+        await expect(chips.getByRole('button', { name: 'Logement', exact: true })).toHaveAttribute('aria-pressed', 'true');
 
         await expect(page).toHaveURL(/category=logement/);
 
