@@ -174,5 +174,8 @@
  "detail.booking.account_required": "Randevu talep etmek için kişisel bir hesap gerekir. Bu sayfadaki bilgiler hesapsız da görüntülenebilir.",
  "detail.booking.not_partner": "Rehberde yer alması, bu kurumun AccesDirectAide ile ortak olduğu anlamına gelmez.",
  "pagination.nav": "Rehber sayfaları",
- "view.label": "Görünüm"
+ "view.label": "Görünüm",
+ "detail.no_contact": "Resmî kaynak bu kuruluş için telefon, e-posta veya web sitesi yayımlamıyor. Belirtilen adrese gidebilir ya da yakında başka bir kuruluş arayabilirsiniz.",
+ "detail.nearby_in_city": "{{city}} içindeki diğer kuruluşları gör",
+ "detail.nearby": "Rehbere bak"
 }

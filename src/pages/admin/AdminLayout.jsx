@@ -398,7 +398,10 @@ export default function AdminLayout() {
             )}
 
             {/* Main Content Area */}
-            <main id="main-content" tabIndex={-1} className="flex-1 overflow-auto outline-none">
+            {/* UX ecosystem (2026-11-12): no scroll container here — « overflow-auto » made <main> a scroll box that grew with its content, so every
+                position: sticky inside the administration (action bars, decision column, status) never stuck. min-w-0 keeps the flex item within the
+                viewport; wide content scrolls in its own wrapper. */}
+            <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 outline-none">
                 {/* Mobile Header */}
                 <header className="bg-white border-b border-slate-200 p-4 sticky top-0 z-40 md:hidden flex items-center justify-between">
                     {/* PKG-9 / M04: both icon buttons had no accessible name and a 32 px target */}

@@ -13,7 +13,6 @@
   "category.social-sante": "Sosyal - Sağlık",
   "category.transports": "Ulaşım",
   "category.travail-formation": "İş - Eğitim",
-  "empty.rerun": "Aramayı yeniden başlatın",
   "empty.text": "Filtrelerinizi değiştirmeyi veya aramanızı sıfırlamayı deneyin.",
   "empty.title": "Sonuç yok",
   "error.failed": "Arama başarısız oldu.",
@@ -117,5 +116,9 @@
   "orientation.search_topic": "Bu ihtiyaç için yerler ve yardımlar",
   "orientation.check": "Listedeki bir yardıma başvurmadan önce kontrol edin",
   "orientation.check_short": "Kontrol edin:",
-  "orientation.human": "Destek için: belediyenizin CCAS’ı, bir Maison des solidarités veya bir France Services ofisi."
+  "orientation.human": "Destek için: belediyenizin CCAS’ı, bir Maison des solidarités veya bir France Services ofisi.",
+  "empty.all_categories": "Tüm kategorilerde ara",
+  "empty.by_need": "İhtiyaca göre bul",
+  "empty.orientation": "Adım adım yönlendirilin",
+  "empty.directory": "Rehberde başvurulacak bir yer arayın"
 }

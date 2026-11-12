@@ -97,7 +97,7 @@ export default function AdminDashboard() {
             todo: t('admin:dashboard.card.ws2.todo', 'Vérifier une fiche demande la source officielle ouverte, la relecture complète et la confirmation du territoire. Les fiches en attente reviennent ici après correction.'),
         },
         {
-            key: 'orgs', title: t('admin:dashboard.card.orgs.title', 'Organisations'), to: '/admin/organizations', count: orgs ? n(orgs.never) : null, unit: t('admin:dashboard.card.orgs.unit', 'sans décision'),
+            key: 'orgs', title: t('admin:dashboard.card.orgs.title', 'Organisations'), to: '/admin/organizations?decision=never', count: orgs ? n(orgs.never) : null, unit: t('admin:dashboard.card.orgs.unit', 'sans décision'),
             detail: orgs ? t('admin:dashboard.card.orgs.detail', '{{onHold}} en attente · {{rejected}} refusée(s) · {{verified}} vérifiée(s) sur {{total}}', { onHold: orgs.onHold, rejected: orgs.rejected, verified: orgs.verified, total: orgs.total }) : null,
             todo: t('admin:dashboard.card.orgs.todo', 'Vérifier l’identité d’une organisation sur un registre officiel, séparément de son activité.'),
         },

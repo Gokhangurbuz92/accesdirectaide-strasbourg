@@ -40,6 +40,11 @@ export default function ProRdvLayout() {
   }, [loadReadiness]);
 
   const isReady = readiness.status === 200 && readiness.payload?.ok === true;
+  // UX ecosystem (2026-11-12): the readiness check is a « monitor » route, which the public beta keeps closed even when appointments are opened
+  // (api/_utils/public-beta.js: monitor routes are not openable). Every Pro appointment page then showed « n’a pas pu être vérifié. Réessayez » and a
+  // « Vérifier l’état » button that could never succeed. A beta refusal of the CHECK is not a failure of appointments: no warning, no useless button —
+  // each appointment screen still reports its own errors.
+  const checkClosedByBeta = readiness.status === 503 && readiness.payload?.error === 'PUBLIC_BETA_RESTRICTED';
   const missingTables = useMemo(() => {
     const candidate = readiness.payload?.missingTables;
     return Array.isArray(candidate) ? candidate : [];
@@ -52,15 +57,17 @@ export default function ProRdvLayout() {
           <h1 className="text-2xl font-bold text-slate-900">{t('pro:rdv_layout.title', 'Rendez-vous')}</h1>
           <p className="text-sm text-slate-600">{t('pro:rdv_layout.subtitle', 'Gestion des motifs, disponibilités, absences et agenda.')}</p>
         </div>
-        <Button variant="outline" className="gap-2" onClick={loadReadiness} disabled={loading}>
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-          {t('pro:rdv_layout.check', 'Vérifier l’état')}
-        </Button>
+        {checkClosedByBeta ? null : (
+          <Button variant="outline" className="gap-2" onClick={loadReadiness} disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            {t('pro:rdv_layout.check', 'Vérifier l’état')}
+          </Button>
+        )}
       </div>
 
       {/* owner usefulness pass (2026-10-25): the warning showed while the check was still loading (every page flashed it) and spoke to developers
           (« Voir doc go-live », table names); it now appears only when the check answered, in plain words */}
-      {!loading && !isReady && (
+      {!loading && !isReady && !checkClosedByBeta && (
         <div
           className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
           data-testid="pro-rdv-readiness-banner"

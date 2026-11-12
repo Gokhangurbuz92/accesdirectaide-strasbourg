@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { ensureCsrfHeaders } from '@/lib/csrf';
 import { frontendEnv } from '@/config/env';
+import { accountEntriesShown } from '@/lib/publicBeta';
 
 class ApiError extends Error {
   /** @param {string} message @param {number} status @param {any} [payload] @param {string|null} [requestId] */
@@ -215,8 +216,10 @@ async function decryptConversationList(data) {
 
 export const rdvMessagingClient = {
   authMe() {
-    // R29: no account can exist in the public beta — the visitor is anonymous without asking the server (one refused request per page before)
-    if (frontendEnv.flags.publicBeta) return Promise.resolve({ authenticated: false, session: null });
+    // R29: while the beta keeps accounts closed no account can exist — the visitor is anonymous without asking the server (one refused request per page
+    // before). UX ecosystem (2026-11-12): only while CLOSED — once the « accounts » surface is opened, a signed-in person was sent to the sign-in page
+    // from « Messages » and « Paramètres » (every other Mon Espace page asks the server)
+    if (!accountEntriesShown(frontendEnv.flags.publicBeta)) return Promise.resolve({ authenticated: false, session: null });
     return requestJson('/api/auth/me', { auth: 'user' });
   },
   user: {

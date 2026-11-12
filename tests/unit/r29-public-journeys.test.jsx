@@ -129,7 +129,7 @@ describe('Q01 keyboard: phone menu', () => {
 
 describe('beta: no session request', () => {
   it('the visitor is anonymous without a request to /api/auth/me while accounts are closed', () => {
-    expect(fs.readFileSync('src/api/rdv-messaging-client.js', 'utf8')).toMatch(/if \(frontendEnv\.flags\.publicBeta\) return Promise\.resolve\(\{ authenticated: false, session: null \}\);/);
+    expect(fs.readFileSync('src/api/rdv-messaging-client.js', 'utf8')).toMatch(/if \(!accountEntriesShown\(frontendEnv\.flags\.publicBeta\)\) return Promise\.resolve\(\{ authenticated: false, session: null \}\);/);   // UX ecosystem: closed accounts only (behaviour: ux-eco-authme-accounts-open)
   });
 });
 

@@ -101,18 +101,18 @@ export default function ProRdvNew() {
     setSuccessMessage('');
     setSelectedSlot(null);
     if (!form.serviceId) {
-      setError(t('pro:rdv_new.select_service', 'Selectionnez un service.'));
+      setError(t('pro:rdv_new.select_service', 'Sélectionnez un service.'));
       return;
     }
     if (!form.fromDate || !form.toDate) {
-      setError(t('pro:rdv_new.select_period', 'Selectionnez une periode de recherche.'));
+      setError(t('pro:rdv_new.select_period', 'Sélectionnez une période de recherche.'));
       return;
     }
 
     const from = toDayIso(form.fromDate, 'start');
     const to = toDayIso(form.toDate, 'end');
     if (!from || !to) {
-      setError(t('pro:rdv_new.invalid_period', 'Periode invalide.'));
+      setError(t('pro:rdv_new.invalid_period', 'Période invalide.'));
       return;
     }
 
@@ -127,11 +127,11 @@ export default function ProRdvNew() {
       const nextSlots = Array.isArray(response?.slots) ? response.slots : [];
       setSlots(nextSlots);
       if (nextSlots.length === 0) {
-        setError(t('pro:rdv_new.no_slots', 'Aucun creneau disponible sur cette periode.'));
+        setError(t('pro:rdv_new.no_slots', 'Aucun créneau disponible sur cette période.'));
       }
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
-      setError(status === 400 ? t('pro:rdv_new.invalid_params', 'Parametres invalides pour la recherche de creneaux.') : t('pro:rdv_new.load_slots_failed', 'Impossible de charger les creneaux.'));
+      setError(status === 400 ? t('pro:rdv_new.invalid_params', 'Paramètres invalides pour la recherche de créneaux.') : t('pro:rdv_new.load_slots_failed', 'Impossible de charger les créneaux.'));
     } finally {
       setLoadingSlots(false);
     }
@@ -142,11 +142,11 @@ export default function ProRdvNew() {
     setSuccessMessage('');
 
     if (!selectedSlot) {
-      setError(t('pro:rdv_new.select_slot', 'Selectionnez un creneau.'));
+      setError(t('pro:rdv_new.select_slot', 'Sélectionnez un créneau.'));
       return;
     }
     if (!form.beneficiaryName.trim()) {
-      setError(t('pro:rdv_new.name_required', 'Le nom du beneficiaire est requis.'));
+      setError(t('pro:rdv_new.name_required', 'Le nom du bénéficiaire est requis.'));
       return;
     }
     if (!form.personConsent) {
@@ -166,7 +166,7 @@ export default function ProRdvNew() {
         personConsent: true,
         ...(needsSensitiveConsent && form.sensitiveConsent ? { sensitiveConsent: true } : {}),
       });
-      setSuccessMessage(t('pro:rdv_new.created', 'Rendez-vous cree avec succes.'));
+      setSuccessMessage(t('pro:rdv_new.created', 'Rendez-vous créé avec succès.'));
       setTimeout(() => navigate('/pro/rdv/agenda'), 500);
     } catch (requestError) {
       const status = Number(requestError?.status || 0);
@@ -180,7 +180,7 @@ export default function ProRdvNew() {
       } else if (status === 409) {
         setError(t('pro:rdv_new.slot_taken', "Ce creneau n'est plus disponible. Rechargez les creneaux."));
       } else {
-        setError(t('pro:rdv_new.create_failed', 'Impossible de creer le rendez-vous.'));
+        setError(t('pro:rdv_new.create_failed', 'Impossible de créer le rendez-vous.'));
       }
     } finally {
       setSaving(false);
@@ -202,7 +202,7 @@ export default function ProRdvNew() {
               onChange={(event) => setForm((prev) => ({ ...prev, serviceId: event.target.value }))}
               disabled={loadingServices}
             >
-              <option value="">{t('pro:rdv_new.select', 'Selectionner')}</option>
+              <option value="">{t('pro:rdv_new.select', 'Sélectionner')}</option>
               {services.map((service) => (
                 <option key={service.id} value={service.id}>
                   {t('pro:rdv_new.service_option', '{{name}} ({{minutes}} min)', { name: service.name, minutes: service.durationMinutes })}
@@ -212,7 +212,7 @@ export default function ProRdvNew() {
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm font-medium text-slate-700">{t('pro:rdv_new.start_date', 'Date de debut')}</span>
+            <span className="text-sm font-medium text-slate-700">{t('pro:rdv_new.start_date', 'Date de début')}</span>
             <Input
               type="date"
               value={form.fromDate}
@@ -232,7 +232,7 @@ export default function ProRdvNew() {
           <div className="flex items-end">
             <Button type="button" onClick={handleLoadSlots} disabled={loadingServices || loadingSlots || !form.serviceId}>
               {loadingSlots ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {t('pro:rdv_new.load_slots', 'Charger les creneaux')}
+              {t('pro:rdv_new.load_slots', 'Charger les créneaux')}
             </Button>
           </div>
         </CardContent>
@@ -240,13 +240,13 @@ export default function ProRdvNew() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('pro:rdv_new.available_slots', 'Creneaux disponibles')}</CardTitle>
+          <CardTitle>{t('pro:rdv_new.available_slots', 'Créneaux disponibles')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {loadingSlots ? (
             <ListSkeleton count={4} title={false} />
           ) : slots.length === 0 ? (
-            <p className="text-sm text-slate-600">{t('pro:rdv_new.no_slot_loaded', 'Aucun creneau charge.')}</p>
+            <p className="text-sm text-slate-600">{t('pro:rdv_new.no_slot_loaded', 'Aucun créneau chargé.')}</p>
           ) : (
             <div className="grid gap-2 md:grid-cols-2">
               {slots.map((slot) => {
@@ -271,7 +271,7 @@ export default function ProRdvNew() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('pro:rdv_new.beneficiary_info', 'Informations beneficiaire')}</CardTitle>
+          <CardTitle>{t('pro:rdv_new.beneficiary_info', 'Informations bénéficiaire')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -285,7 +285,7 @@ export default function ProRdvNew() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="beneficiary-phone">{t('pro:rdv_new.phone', 'Telephone (optionnel)')}</Label>
+              <Label htmlFor="beneficiary-phone">{t('pro:rdv_new.phone', 'Téléphone (optionnel)')}</Label>
               <Input
                 id="beneficiary-phone"
                 value={form.beneficiaryPhone}
@@ -305,7 +305,7 @@ export default function ProRdvNew() {
 
           {selectedService ? (
             <p className="text-xs text-slate-700">
-              {t('pro:rdv_new.selected_service', 'Service selectionne: {{name}} ({{minutes}} min)', { name: selectedService.name, minutes: selectedService.durationMinutes })}
+              {t('pro:rdv_new.selected_service', 'Service sélectionné : {{name}} ({{minutes}} min)', { name: selectedService.name, minutes: selectedService.durationMinutes })}
             </p>
           ) : null}
 

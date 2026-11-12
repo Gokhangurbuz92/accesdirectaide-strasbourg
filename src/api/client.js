@@ -1,6 +1,7 @@
 // src/api/client.js
 // Final build-safe version for Vite & Vercel
 // No JSX, no advanced syntax that confuses Rollup parser
+import i18n from '@/i18n';
 
 /**
  * @typedef {Object} ApiRequestOptions
@@ -85,8 +86,13 @@ var apiRequest = async function (path, options) {
     }
 
     if (!res.ok) {
+        // UX ecosystem (2026-11-12): a screen that shows error.message showed « API Error: 429 » when the administration's per-address limit was reached
+        // (60 requests a minute: a fast review session reaches it). A refused-for-volume or failed-server answer now reads as a sentence in the interface
+        // language; status and payload are unchanged for the callers that branch on them.
+        var human = res.status === 429 ? i18n.t('common:server.too_many', 'Trop de demandes en peu de temps : patientez une minute, puis réessayez.')
+            : res.status >= 500 ? i18n.t('common:unavailable.text', "Le serveur n'a pas répondu. Votre session est conservée : réessayez dans un instant.") : null;
         /** @type {Error & {status?: number, payload?: unknown}} */
-        var err = new Error("API Error: " + res.status);
+        var err = new Error(human || ("API Error: " + res.status));
         err.status = res.status;
         err.payload = payload;
         throw err;
@@ -230,8 +236,8 @@ export const apiClient = {
         getNewsArticle: function (id) { return apiRequest('/api/admin/news-editorial?id=' + encodeURIComponent(String(id))); },
         /** @param {Record<string, unknown>} body { action: save|submit|reject|approve|correct|retract, id?, draft?, note?, kind? } */
         newsEditorial: function (body) { return apiRequest('/api/admin/news-editorial', { method: 'POST', body: body }); },
-        /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q */
-        getOrganizations: function (q) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '')); },
+        /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
+        getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */
         getElevation: function () { return apiRequest('/api/admin/elevation'); },
         /** PKG-11 / ADM-10 — administrators, recent session events; revoke / disable / enable another administrator (elevated superadmin). */
@@ -289,8 +295,8 @@ export const apiClient = {
         },
         // PKG-11 / A02: catalogue administration — drafts and unverified records included; writes need the session's MFA; archive, never delete
         content: {
-            /** @param {'aide'|'demarche'|'structure'} kind @param {string=} q */
-            list: function (kind, q) { return apiRequest('/api/admin/content?kind=' + encodeURIComponent(kind) + (q ? '&q=' + encodeURIComponent(q) : '')); },
+            /** @param {'aide'|'demarche'|'structure'} kind @param {string=} q @param {string=} status all | never | hold | edit | rejected | verified */
+            list: function (kind, q, status) { return apiRequest('/api/admin/content?kind=' + encodeURIComponent(kind) + (q ? '&q=' + encodeURIComponent(q) : '') + (status && status !== 'all' ? '&status=' + encodeURIComponent(status) : '')); },
             /** @param {'aide'|'demarche'|'structure'} kind @param {string} id */
             get: function (kind, id) { return apiRequest('/api/admin/content?kind=' + encodeURIComponent(kind) + '&id=' + encodeURIComponent(id)); },
             /** @param {'aide'|'demarche'|'structure'} kind @param {Record<string, any>} data */

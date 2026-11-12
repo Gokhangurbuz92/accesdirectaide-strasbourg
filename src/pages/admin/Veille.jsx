@@ -108,6 +108,9 @@ export default function AdminVeille() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
   const [open, setOpen] = useState(null);
+  const PAGE = 20; const [limit, setLimit] = useState(PAGE);
+  useEffect(() => { setLimit(PAGE); }, [filter]);
+  const countFor = (v) => (data?.events || []).filter((e) => v === 'all' || v.split(',').includes(e.outcome)).length;
   const load = useCallback(() => {
     setError(null);
     apiClient.admin.getVeille(7).then(setData).catch((e) => setError(e?.message || t('admin:veille.load_failed', 'Chargement impossible.')));
@@ -222,18 +225,31 @@ export default function AdminVeille() {
             )}
           </Section>
 
+          {/* UX ecosystem (2026-11-12): what may need a person (not resolved, texts refused) comes before the routine log, which is paged */}
+          <Section title={t('admin:veille.unresolved_title', 'Ce que le système n’a pas encore pu résoudre')} testid="admin-veille-unresolved" intro={t('admin:veille.unresolved_intro', 'Il réessaie à chaque veille. Aucune action n’est nécessaire ; si vous connaissez la page officielle d’une fiche, vous pouvez l’ajouter dans la fiche, le système la vérifiera.')}>
+            {(data.unresolved || []).length === 0 ? <p className="text-slate-700">{t('admin:veille.nothing_yet', 'Rien pour l’instant.')}</p> : (
+              <ul className="space-y-2">{data.unresolved.map((u) => <li key={`${u.entity_type}:${u.entity_id}`} className="text-sm text-slate-800"><strong>{KIND[u.entity_type] || u.entity_type}{u.title ? t('admin:veille.quoted_title', ' « {{title}} »', { title: u.title }) : ''}</strong> — {u.summary} <span className="text-slate-600">{t('admin:veille.attempts', '({{n}} essais)', { n: u.times })}</span></li>)}</ul>
+            )}
+          </Section>
+
+          <Section title={t('admin:veille.texts_rejected_title', 'Textes refusés par le contrôle automatique')} testid="admin-veille-texts-rejected" intro={t('admin:veille.texts_rejected_intro', 'Le modèle local rédige ; le contrôle refuse tout texte avec un nombre absent de la source, une phrase trop longue, un mot difficile non expliqué ou une condition que la source ne pose pas. Une fiche refusée n’est pas publiée et le système réessaie à la veille suivante, avec les mêmes exigences.')}>
+            {(data.textsRejected || []).length === 0 ? <p className="text-slate-700">{t('admin:veille.none_this_week', 'Aucun cette semaine.')}</p> : (
+              <ul className="space-y-2">{data.textsRejected.map((tx) => <li key={tx.id} className="text-sm text-slate-800"><Trans i18n={i18n} i18nKey="admin:veille.text_rejected_line" defaults="<0>{{kind}} « {{title}} »</0> ({{date}}) : {{reasons}}" values={{ kind: KIND[tx.entityType] || tx.entityType, title: tx.title, date: when(tx.createdAt), reasons: (tx.reasons || []).join(' ; ').slice(0, 400) }} components={[strong]} /></li>)}</ul>
+            )}
+          </Section>
+
           <Card><CardContent className="p-5" data-testid="admin-veille-events">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-slate-900">{t('admin:veille.events_title', 'Ce que le système a fait')}</h2>
               <label className="flex items-center gap-2 text-sm text-slate-700">{t('admin:veille.show', 'Afficher')}
                 <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-md border border-slate-300 bg-white px-2 py-1 text-slate-900" data-testid="admin-veille-filter">
-                  {FILTERS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                  {FILTERS.map(([v, l]) => <option key={v} value={v}>{`${l} (${countFor(v)})`}</option>)}
                 </select>
               </label>
             </div>
             {events.length === 0 ? <p className="mt-3 text-slate-700">{t('admin:veille.nothing_for_filter', 'Rien à afficher pour ce choix.')}</p> : (
               <ul className="mt-3 divide-y divide-slate-200">
-                {events.slice(0, 200).map((e) => (
+                {events.slice(0, Math.min(limit, 200)).map((e) => (
                   <li key={e.id} className="py-3" data-testid="admin-veille-event">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${OUTCOME_CLS[e.outcome] || OUTCOME_CLS.OK}`}>{OUTCOME[e.outcome] || e.outcome}</span>
@@ -255,19 +271,12 @@ export default function AdminVeille() {
                 ))}
               </ul>
             )}
+            {events.length > Math.min(limit, 200) ? (
+              <Button type="button" variant="outline" className="mt-3" data-testid="admin-veille-more" onClick={() => setLimit((n) => n + PAGE)}>
+                {t('admin:veille.show_more', 'Afficher {{n}} de plus ({{left}} restants)', { n: Math.min(PAGE, Math.min(events.length, 200) - limit), left: Math.min(events.length, 200) - limit })}
+              </Button>
+            ) : null}
           </CardContent></Card>
-
-          <Section title={t('admin:veille.unresolved_title', 'Ce que le système n’a pas encore pu résoudre')} testid="admin-veille-unresolved" intro={t('admin:veille.unresolved_intro', 'Il réessaie à chaque veille. Aucune action n’est nécessaire ; si vous connaissez la page officielle d’une fiche, vous pouvez l’ajouter dans la fiche, le système la vérifiera.')}>
-            {(data.unresolved || []).length === 0 ? <p className="text-slate-700">{t('admin:veille.nothing_yet', 'Rien pour l’instant.')}</p> : (
-              <ul className="space-y-2">{data.unresolved.map((u) => <li key={`${u.entity_type}:${u.entity_id}`} className="text-sm text-slate-800"><strong>{KIND[u.entity_type] || u.entity_type}{u.title ? t('admin:veille.quoted_title', ' « {{title}} »', { title: u.title }) : ''}</strong> — {u.summary} <span className="text-slate-600">{t('admin:veille.attempts', '({{n}} essais)', { n: u.times })}</span></li>)}</ul>
-            )}
-          </Section>
-
-          <Section title={t('admin:veille.texts_rejected_title', 'Textes refusés par le contrôle automatique')} testid="admin-veille-texts-rejected" intro={t('admin:veille.texts_rejected_intro', 'Le modèle local rédige ; le contrôle refuse tout texte avec un nombre absent de la source, une phrase trop longue, un mot difficile non expliqué ou une condition que la source ne pose pas. Une fiche refusée n’est pas publiée et le système réessaie à la veille suivante, avec les mêmes exigences.')}>
-            {(data.textsRejected || []).length === 0 ? <p className="text-slate-700">{t('admin:veille.none_this_week', 'Aucun cette semaine.')}</p> : (
-              <ul className="space-y-2">{data.textsRejected.map((tx) => <li key={tx.id} className="text-sm text-slate-800"><Trans i18n={i18n} i18nKey="admin:veille.text_rejected_line" defaults="<0>{{kind}} « {{title}} »</0> ({{date}}) : {{reasons}}" values={{ kind: KIND[tx.entityType] || tx.entityType, title: tx.title, date: when(tx.createdAt), reasons: (tx.reasons || []).join(' ; ').slice(0, 400) }} components={[strong]} /></li>)}</ul>
-            )}
-          </Section>
 
           <Section title={t('admin:veille.sources_title', 'Sources officielles suivies')} testid="admin-veille-sources"
             intro={`${t('admin:veille.sources_intro', 'La liste se met à jour seule chaque semaine (sites attestés par l’Annuaire de l’administration, services en ligne cités par Service-Public) ; chaque site est revisité une fois par mois.')}${data.sources?.lastRefresh ? t('admin:veille.sources_refresh', ' Dernière mise à jour : {{last}} ; prochaine vers le {{next}}.', { last: when(data.sources.lastRefresh), next: when(data.sources.nextRefresh) }) : ''}`}>

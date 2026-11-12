@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiClient } from '@/api/client';
 import { Button } from '@/components/ui/button';
@@ -113,10 +113,18 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
   const [loadFailure, setLoadFailure] = useState(/** @type {null | 'missing' | 'error'} */ (null)); const [attempt, setAttempt] = useState(0);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const fieldErr = useFormErrors();
+  // UX ecosystem (2026-11-12): what was loaded, to tell the person that changes are not saved yet (the save button sits in a sticky bar, with Ctrl/Cmd+S)
+  const [baseline, setBaseline] = useState(() => JSON.stringify(toForm(fields, null)));
+  const dirty = JSON.stringify(form) !== baseline;
+  const formRef = useRef(/** @type {HTMLFormElement | null} */ (null));
+  useEffect(() => {
+    const onKey = (e) => { if ((e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === 's' && formRef.current) { e.preventDefault(); formRef.current.requestSubmit(); } };
+    window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey);
+  }, []);
   useEffect(() => {
     if (!id) return;
     setLoadFailure(null);
-    apiClient.admin.content.get(kind, id).then((r) => { setForm(toForm(fields, r.item)); setMeta({ ...r.item, verifiable: r.verified !== false, editVersion: r.version || null }); setLoaded(true); })
+    apiClient.admin.content.get(kind, id).then((r) => { setForm(toForm(fields, r.item)); setBaseline(JSON.stringify(toForm(fields, r.item))); setMeta({ ...r.item, verifiable: r.verified !== false, editVersion: r.version || null }); setLoaded(true); })
       .catch((e) => { setProblem(explain(e)); setLoadFailure(e?.status === 404 ? 'missing' : 'error'); setLoaded(true); });   // Q10: never an empty editor for a record that did not load
   }, [kind, id, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
   const save = async (e) => {
@@ -155,7 +163,7 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
       <Link to={listPath} className="inline-flex min-h-11 items-center text-sm text-blue-800 underline">{t('admin:catalogue_editor.back', 'Retour à la liste')}</Link>
       <h1 className="text-2xl font-bold text-slate-900">{id ? t('admin:catalogue_editor.edit_title', 'Modifier : {{name}}', { name: meta?.titre || meta?.nom || '' }) : t('admin:catalogue_editor.new_title', 'Nouvelle fiche — {{kind}}', { kind: title })}</h1>
       {meta ? <p className="text-sm text-slate-700" data-testid="admin-editor-meta">{t('admin:catalogue_editor.status', 'Statut : {{status}}', { status: meta.statut })}{meta.verifiable ? ` — ${meta.publication_hold ? t('admin:catalogue_editor.meta.hold', 'en attente de revérification') : meta.verification_status === 'VERIFIED' ? t('admin:catalogue_editor.meta.verified', 'vérifiée') : t('admin:catalogue_editor.meta.not_verified', 'non vérifiée')}` : t('admin:catalogue_editor.meta.editorial', ' — contenu éditorial (sans registre de vérification)')}</p> : null}
-      <form onSubmit={save} className="space-y-4" noValidate aria-busy={busy || undefined}>
+      <form ref={formRef} onSubmit={save} className="space-y-4" noValidate aria-busy={busy || undefined}>
         <ErrorSummary ref={fieldErr.summaryRef} errors={fieldErr.errors} order={errorOrder(fields, form)} testid="admin-editor-errors" />
         {fields.map((f) => (
           <div key={f.name} className="space-y-1">
@@ -178,10 +186,13 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
             )}
           </div>
         ))}
-        <Button type="submit" disabled={busy} className="min-h-11">{id ? t('admin:catalogue_editor.save', 'Enregistrer') : t('admin:catalogue_editor.create_draft', 'Créer le brouillon')}</Button>
+        <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-slate-300 bg-white px-4 py-3 shadow-[0_-2px_6px_rgba(0,0,0,0.06)] md:-mx-6 md:px-6" data-testid="admin-editor-actions">
+          <Button type="submit" disabled={busy} className="min-h-11" aria-keyshortcuts="Control+S Meta+S">{id ? t('admin:catalogue_editor.save', 'Enregistrer') : t('admin:catalogue_editor.create_draft', 'Créer le brouillon')}</Button>
+          <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</p>
+          {dirty && !busy ? <p className="text-sm font-medium text-amber-900" data-testid="admin-editor-dirty">{t('admin:catalogue_editor.unsaved', 'Modifications non enregistrées')}</p> : null}
+          {problem ? <p role="alert" data-testid="admin-editor-problem" className="w-full text-sm text-rose-800">{problem}</p> : null}
+        </div>
       </form>
-      <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</p>
-      {problem ? <p role="alert" data-testid="admin-editor-problem" className="text-sm text-rose-800">{problem}</p> : null}
       {id && ['aide', 'demarche', 'structure'].includes(kind) ? <p className="text-sm text-slate-700"><Trans i18n={i18n} i18nKey="admin:catalogue_editor.falc_hint" defaults="Les textes faciles à lire se relisent et se signent dans <0>Textes faciles à lire</0>." components={[<Link key="falc" className="text-blue-800 underline" to={`/admin/falc?type=${kind}&id=${encodeURIComponent(id)}`} />]} /></p> : null}
       {id && meta?.verifiable && ['aide', 'demarche', 'structure', 'dispositif'].includes(kind) ? (
         // owner LAB audit: any record can be verified (the WS2 page covers only the 49 launch records), with the same version-bound form

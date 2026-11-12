@@ -13,7 +13,6 @@
   "category.social-sante": "الشؤون الاجتماعية - الصحة",
   "category.transports": "النقل",
   "category.travail-formation": "العمل - التدريب",
-  "empty.rerun": "إعادة البحث",
   "empty.text": "حاول تعديل عوامل التصفية أو إعادة ضبط بحثك.",
   "empty.title": "لا توجد نتائج",
   "error.failed": "فشل البحث.",
@@ -133,5 +132,9 @@
   "orientation.search_topic": "أماكن ومساعدات لهذا الاحتياج",
   "orientation.check": "تحقّق قبل طلب مساعدة من القائمة",
   "orientation.check_short": "للتحقق:",
-  "orientation.human": "للحصول على مرافقة: مركز CCAS في بلديتك، أو Maison des solidarités، أو مكتب France Services."
+  "orientation.human": "للحصول على مرافقة: مركز CCAS في بلديتك، أو Maison des solidarités، أو مكتب France Services.",
+  "empty.all_categories": "البحث في جميع الفئات",
+  "empty.by_need": "البحث حسب الحاجة",
+  "empty.orientation": "احصل على توجيه خطوة بخطوة",
+  "empty.directory": "ابحث عن مكان استقبال في الدليل"
 }

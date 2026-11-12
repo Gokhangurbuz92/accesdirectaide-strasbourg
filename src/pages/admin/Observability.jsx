@@ -322,9 +322,9 @@ export default function AdminObservability() {
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>{t('admin:observability.history', 'Historique des tâches planifiées')}</CardTitle>
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1">
             {CRON_JOBS.map(job => (
               <Button
                 key={job}

@@ -13,7 +13,6 @@
   "category.social-sante": "Соціальна сфера - Здоров’я",
   "category.transports": "Транспорт",
   "category.travail-formation": "Робота - Навчання",
-  "empty.rerun": "Повторити пошук",
   "empty.text": "Спробуйте змінити фільтри або скинути пошук.",
   "empty.title": "Немає результатів",
   "error.failed": "Пошук не вдався.",
@@ -125,5 +124,9 @@
   "orientation.search_topic": "Місця та допомога для цієї потреби",
   "orientation.check": "Перевірте, перш ніж просити допомогу зі списку",
   "orientation.check_short": "Перевірте:",
-  "orientation.human": "Щоб отримати супровід: CCAS вашої громади, Maison des solidarités або офіс France Services."
+  "orientation.human": "Щоб отримати супровід: CCAS вашої громади, Maison des solidarités або офіс France Services.",
+  "empty.all_categories": "Шукати в усіх категоріях",
+  "empty.by_need": "Знайти за потребою",
+  "empty.orientation": "Отримати покрокову орієнтацію",
+  "empty.directory": "Знайти місце прийому в довіднику"
 }

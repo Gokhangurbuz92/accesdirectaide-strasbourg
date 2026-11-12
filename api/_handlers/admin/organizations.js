@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   const auth = await resolveAuthContext(req);
   if (!auth || !isAdminRole(auth.role) || !['admin_jwt', 'admin_token'].includes(String(auth.authType))) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    if (req.method === 'GET') return res.status(200).json(await listOrganizations({ q: String(req.query?.q || '') }));
+    if (req.method === 'GET') return res.status(200).json(await listOrganizations({ q: String(req.query?.q || ''), decision: String(req.query?.decision || '') }));
     if (auth.authType !== 'admin_jwt' || auth.mfa_verified !== true || !auth.email) return res.status(403).json({ error: 'HUMAN_MFA_SESSION_REQUIRED', message: 'Requires a named administrator session with MFA.' });
     const out = await setActivity(req.body?.id, req.body || {}, String(auth.email));
     if (!out.ok) return res.status(out.status).json({ error: out.code, message: out.message });

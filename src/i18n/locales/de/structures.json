@@ -174,5 +174,8 @@
  "detail.booking.account_required": "Für eine Terminanfrage ist ein persönliches Konto nötig. Die Informationen dieser Seite bleiben ohne Konto zugänglich.",
  "detail.booking.not_partner": "Die Aufnahme in das Verzeichnis bedeutet keine Partnerschaft dieser Einrichtung mit AccesDirectAide.",
  "pagination.nav": "Seiten des Verzeichnisses",
- "view.label": "Ansicht"
+ "view.label": "Ansicht",
+ "detail.no_contact": "Die amtliche Quelle veröffentlicht für diese Einrichtung weder Telefon noch E-Mail noch Website. Sie können die angegebene Adresse aufsuchen oder eine andere Einrichtung in der Nähe suchen.",
+ "detail.nearby_in_city": "Weitere Einrichtungen in {{city}} anzeigen",
+ "detail.nearby": "Verzeichnis ansehen"
 }

@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   const auth = await adminGate(req, res, { write: req.method !== 'GET' }); if (!auth) return;
   const kind = String(req.query?.kind || ''); const id = String(req.query?.id || ''); const actor = String(auth.email || auth.id || 'admin');
   try {
-    const out = req.method === 'GET' ? (id ? await readContent(kind, id) : await listContent(kind, { q: String(req.query?.q || '') }))
+    const out = req.method === 'GET' ? (id ? await readContent(kind, id) : await listContent(kind, { q: String(req.query?.q || ''), status: String(req.query?.status || '') }))
       : req.method === 'POST' ? await createContent(kind, req.body || {}, actor)
         : !id ? { ok: false, status: 400, code: 'ID_REQUIRED', message: 'id requis.' }
           : req.method === 'PUT' ? await updateContent(kind, id, req.body || {}, actor) : await archiveContent(kind, id, actor);

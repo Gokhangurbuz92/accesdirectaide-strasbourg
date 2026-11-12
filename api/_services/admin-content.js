@@ -13,12 +13,12 @@
  * (contenu_json) and a dispositif's links (liens) are validated structures, never free JSON. The first publication dates the record (published_at).
  */
 import crypto from 'node:crypto';
-import { desc, eq, ilike, or, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { getTableConfig } from 'drizzle-orm/pg-core';
 import { db as defaultDb } from '../../src/db/index.js';
 import { Aide, AuditLog, Demarche, Dispositif, Guide, Structure } from '../../src/db/schema.js';
 import { ensureSlugOrNull } from '../_utils/slug.js';
-import { isEditHold, snapshotRow } from './content-versions.js';
+import { EDIT_HOLD_PREFIX, SOURCE_UPDATE_HOLD_PREFIX, isEditHold, snapshotRow } from './content-versions.js';
 import { holdForReverification } from './content-verification.js';
 
 export const KINDS = {
@@ -101,16 +101,35 @@ async function resolveRefs(kind, values, db) {
 
 const audit = (tx, action, actor, kind, id, details) => tx.insert(AuditLog).values({ action, actor, actor_id: actor, entity: kind, entity_id: id, details, ip_hash: 'ADMIN_MFA' });
 
-export async function listContent(kind, { q = '' } = {}, db = defaultDb) {
+/** the list's verification status of a record, in SQL (the same rule as the list screen: a hold first — EDIT or a person's DECISION —, then the ledger state) */
+export const LIST_STATUSES = ['never', 'hold', 'edit', 'rejected', 'verified'];
+const statusSql = (t) => sql`CASE WHEN ${t.publication_hold} IS NOT NULL THEN (CASE WHEN left(${t.publication_hold}, ${EDIT_HOLD_PREFIX.length}) = ${EDIT_HOLD_PREFIX}
+  OR left(${t.publication_hold}, ${SOURCE_UPDATE_HOLD_PREFIX.length}) = ${SOURCE_UPDATE_HOLD_PREFIX} THEN 'edit' ELSE 'hold' END)
+  WHEN ${t.verification_status} = 'VERIFIED' THEN 'verified' WHEN ${t.verification_status} = 'REJECTED' THEN 'rejected' ELSE 'never' END`;
+export const LIST_LIMIT = 500;
+
+export async function listContent(kind, { q = '', status = '' } = {}, db = defaultDb) {
   const k = KINDS[kind]; if (!k) return UNKNOWN();
   const t = k.table; const label = t[k.label];
-  const where = q ? or(ilike(label, `%${String(q).slice(0, 100)}%`), eq(t.id, String(q))) : undefined;
+  const search = q ? or(ilike(label, `%${String(q).slice(0, 100)}%`), eq(t.id, String(q))) : undefined;
+  // UX ecosystem (2026-11-12): the list stops at 500 records (1 653 structures, 1 053 dispositifs in the catalogue): the answer now says how many match,
+  // counts every verification status over the whole catalogue (not over the first 500), and filters by status on the server
+  const verifiable = Boolean(t.verification_status);
+  const st = verifiable && LIST_STATUSES.includes(String(status)) ? String(status) : '';
+  const where = st ? and(search, sql`${statusSql(t)} = ${st}`) : search;
+  const counts = {};
+  if (verifiable) {
+    const grouped = await db.select({ s: statusSql(t), n: sql`count(*)::int` }).from(t).where(search).groupBy(sql`1`);   // by position: the bound prefixes make the expression text differ
+    for (const g of grouped) counts[String(g.s)] = Number(g.n);
+  }
+  const [{ n: total }] = await db.select({ n: sql`count(*)::int` }).from(t).where(where);
   const rows = await db.select({ id: t.id, slug: t.slug, label, statut: t.statut, updatedAt: t.updatedAt,
     ...(t.verification_status ? { verification_status: t.verification_status, publication_hold: t.publication_hold } : {}),
-    ...(kind === 'structure' ? { ville: t.ville } : kind === 'dispositif' ? { departement: t.departement } : { categorie: t.categorie }) }).from(t).where(where).orderBy(desc(t.updatedAt)).limit(500);
+    ...(kind === 'structure' ? { ville: t.ville } : kind === 'dispositif' ? { departement: t.departement } : { categorie: t.categorie }) }).from(t).where(where).orderBy(desc(t.updatedAt)).limit(LIST_LIMIT);
   // owner LAB audit (2026-10-25): the list told every hold « en attente de revérification » — a reviewer's own HOLD decision on a never-verified record
   // included. The kind of hold is now explicit: EDIT (the record changed after a verification) or DECISION (a person put it on hold, with a reason).
-  return { ok: true, items: rows.map((r) => (r.publication_hold ? { ...r, holdKind: isEditHold(r.publication_hold) ? 'EDIT' : 'DECISION' } : r)) };
+  return { ok: true, total: Number(total), limit: LIST_LIMIT, ...(verifiable ? { counts } : {}),
+    items: rows.map((r) => (r.publication_hold ? { ...r, holdKind: isEditHold(r.publication_hold) ? 'EDIT' : 'DECISION' } : r)) };
 }
 
 /** Owner LAB audit — the version of what the editor loaded (its editable fields and statut): a save sent with it is refused if the record changed in between

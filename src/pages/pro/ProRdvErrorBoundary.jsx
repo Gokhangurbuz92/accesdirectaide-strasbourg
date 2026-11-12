@@ -17,13 +17,13 @@ function ProRdvFallback(props) {
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
         <div className="space-y-2">
           <p className="font-medium">{t('pro:rdv_error.title', 'Une erreur est survenue dans le module RDV.')}</p>
-          <p>{t('pro:rdv_error.retry_hint', 'Veuillez reessayer. Si le probleme persiste, contactez le support.')}</p>
+          <p>{t('pro:rdv_error.retry_hint', 'Veuillez réessayer. Si le problème persiste, contactez le support.')}</p>
           <button
             type="button"
             className="rounded-md border border-rose-300 bg-white px-3 py-1 text-xs font-medium text-rose-800 hover:bg-rose-100"
             onClick={props.reset}
           >
-            {t('pro:rdv_error.retry', 'Reessayer')}
+            {t('pro:rdv_error.retry', 'Réessayer')}
           </button>
         </div>
       </div>

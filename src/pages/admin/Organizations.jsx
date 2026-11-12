@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import { publicReason } from '@/components/admin/reviewValue.js';
 import i18n, { useT } from '@/i18n';
@@ -23,16 +23,20 @@ const explain = (e) => {
  * activity (active / suspended / not activated) and D-5 public visibility (derived). Only an active AND verified organization with members can receive a NEW
  * dossier access or NEW bookings. Every write needs an administrator session with MFA; the reason is kept in the audit log.
  */
+const DECISIONS = ['never', 'hold', 'rejected', 'verified'];
+
 export default function AdminOrganizations() {
   const { t } = useT('admin');
   const fr = useFrAttrs();   // R47: the structure's name and town stay French (lang="fr" outside French)
-  const [q, setQ] = useState(''); const [state, setState] = useState({ loading: true, error: '', items: [] });
+  const [q, setQ] = useState(''); const [state, setState] = useState({ loading: true, error: '', items: [], total: 0, limit: 0 });
+  // UX ecosystem (2026-11-12): a decision filter, set from the « À traiter » card (?decision=never), and how many organisations match (the list stops at 200)
+  const [params, setParams] = useSearchParams(); const decision = DECISIONS.includes(params.get('decision') || '') ? params.get('decision') : '';
   const [form, setForm] = useState({}); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async (query = '') => {
-    try { const out = await apiClient.admin.getOrganizations(query); setState({ loading: false, error: '', items: out.organizations || [] }); }
-    catch (e) { setState({ loading: false, error: e?.message || t('admin:organizations.load_impossible', 'Chargement impossible.'), items: [] }); }
-  }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; the message follows the language at load time
-  useEffect(() => { load(''); }, [load]);
+    try { const out = await apiClient.admin.getOrganizations(query, decision); setState({ loading: false, error: '', items: out.organizations || [], total: out.total ?? (out.organizations || []).length, limit: out.limit || 0 }); }
+    catch (e) { setState({ loading: false, error: e?.message || t('admin:organizations.load_impossible', 'Chargement impossible.'), items: [], total: 0, limit: 0 }); }
+  }, [decision]);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
+  useEffect(() => { load(q); }, [load]);   // eslint-disable-line react-hooks/exhaustive-deps -- the search is applied on submit
   const f = (id) => form[id] || {}; const setF = (id, patch) => setForm((x) => ({ ...x, [id]: { ...f(id), ...patch } }));
   // R43 (A5): the reason is mandatory on the server (5 characters, kept in the audit log); it is checked first, with its own message and a focused summary
   const reasonErr = useFormErrors();
@@ -50,11 +54,25 @@ export default function AdminOrganizations() {
         <input id="org-q" className="rounded border p-2" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('admin:organizations.search_placeholder', 'Nom ou ville')} />
         <Button type="submit" variant="outline">{t('admin:organizations.search', 'Rechercher')}</Button>
       </form>
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <label htmlFor="org-decision">{t('admin:organizations.decision_filter', 'Décision')}</label>
+        <select id="org-decision" className="min-h-11 rounded border p-2" value={decision} data-testid="admin-org-decision"
+          onChange={(e) => { const next = new URLSearchParams(params); if (e.target.value) next.set('decision', e.target.value); else next.delete('decision'); setParams(next, { replace: true }); }}>
+          <option value="">{t('admin:organizations.decision.all', 'Toutes')}</option>
+          <option value="never">{t('admin:organizations.decision.never', 'Sans décision')}</option>
+          <option value="hold">{t('admin:organizations.decision.hold', 'En attente (décision d’une personne)')}</option>
+          <option value="rejected">{t('admin:organizations.decision.rejected', 'Refusées')}</option>
+          <option value="verified">{t('admin:organizations.decision.verified', 'Vérifiées')}</option>
+        </select>
+        {!state.loading && !state.error ? <span className="text-slate-700" data-testid="admin-org-count">{t('admin:organizations.count', '{{shown}} affichée(s) sur {{total}}', { shown: state.items.length, total: state.total })}</span> : null}
+      </div>
+      {!state.loading && state.total > state.items.length ? <p className="rounded border border-amber-300 bg-amber-50 p-2 text-sm text-amber-950" data-testid="admin-org-truncated">{t('admin:organizations.truncated', 'La liste s’arrête aux {{shown}} premières par ordre alphabétique : recherchez par nom ou ville, ou choisissez une décision.', { shown: state.items.length })}</p> : null}
       {state.error ? <p role="alert" className="text-red-800">{state.error}</p> : null}
       {problem ? <p role="alert" className="text-red-800" data-testid="admin-org-problem">{problem}</p> : null}
-      <div role="status" aria-live="polite" data-testid="admin-org-status">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</div>
+      <div role="status" aria-live="polite" data-testid="admin-org-status" className={busy || msg ? 'sticky top-20 z-10 rounded border border-green-300 bg-green-50 p-2 text-sm text-green-900 md:top-0' : ''}>{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</div>
       {state.loading ? <p role="status">{t('admin:organizations.loading', 'Chargement…')}</p> : (
         <ul className="space-y-3">
+          {!state.error && state.items.length === 0 ? <li className="text-slate-700" data-testid="admin-org-empty">{decision ? t('admin:organizations.empty_decision', 'Aucune organisation pour cette décision : rien à traiter ici.') : t('admin:organizations.empty', 'Aucune organisation ne correspond.')}</li> : null}
           {state.items.map((o) => (
             <li key={o.id} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-org">
               <p className="font-semibold"><span {...fr}>{o.nom}</span> <span className="font-normal text-slate-700">— <span {...fr}>{o.ville || '—'}</span></span></p>

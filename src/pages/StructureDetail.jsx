@@ -449,7 +449,18 @@ export default function StructureDetail() {
                   </Button>
                 ) : (
                   // owner usefulness pass (2026-10-25): this structure takes no booking online; the button led through sign-in to an error page
-                  <p className="text-sm text-slate-700" data-testid="structure-no-online-booking">{t('structures:detail.no_online_booking', 'Pas de prise de rendez-vous en ligne pour cette structure : contactez-la directement.')}</p>
+                  // UX ecosystem (2026-11-12): « contactez-la directement » was shown for structures whose official source publishes no telephone, e-mail or
+                  // site (113 verified records in the LAB catalogue): a dead end. Without a contact channel the page says so and offers the next step.
+                  (structure.telephone || structure.email || structure.site_web || structure.verification_auto?.phones?.length > 0)
+                    ? <p className="text-sm text-slate-700" data-testid="structure-no-online-booking">{t('structures:detail.no_online_booking', 'Pas de prise de rendez-vous en ligne pour cette structure : contactez-la directement.')}</p>
+                    : (
+                      <div className="space-y-2 text-sm text-slate-700" data-testid="structure-no-contact">
+                        <p>{t('structures:detail.no_contact', 'La source officielle ne publie ni téléphone, ni courriel, ni site pour cette structure. Vous pouvez vous rendre à l’adresse indiquée, ou chercher une autre structure à proximité.')}</p>
+                        <Link className="inline-flex min-h-11 items-center text-blue-800 underline" to={structure.ville ? `/structures?city=${encodeURIComponent(structure.ville)}` : '/structures'}>
+                          {structure.ville ? t('structures:detail.nearby_in_city', 'Voir les autres structures à {{city}}', { city: structure.ville }) : t('structures:detail.nearby', 'Voir l’annuaire')}
+                        </Link>
+                      </div>
+                    )
                 )}
 
                 {structure.telephone && (

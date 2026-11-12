@@ -69,7 +69,9 @@ export default function AdminLogs() {
                     <CardContent className="p-8 text-center">
                         <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
                         <p className="text-slate-600">{(error?.status ?? error?.response?.status) === 429 ? t('admin:logs.error_429', 'Trop de demandes en peu de temps : la page se rechargera d’elle-même dans une minute.') : t('admin:logs.load_error', 'Erreur de chargement des logs')}</p>
-                        <p className="text-sm text-slate-600 mt-1">{error.message}</p>
+                        {/* UX ecosystem: a 429 / 5xx message is already a sentence (apiRequest) — not repeated; a way to try again now rather than wait */}
+                        {(error?.status ?? 0) !== 429 && (error?.status ?? 0) < 500 ? <p className="text-sm text-slate-600 mt-1">{error.message}</p> : null}
+                        <Button variant="outline" size="sm" className="mt-3 gap-2" onClick={() => refetch()} data-testid="admin-logs-retry"><RefreshCw className="h-4 w-4" aria-hidden="true" />{t('admin:logs.retry', 'Réessayer')}</Button>
                     </CardContent>
                 </Card>
             </div>

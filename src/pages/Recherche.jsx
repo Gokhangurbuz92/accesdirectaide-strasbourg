@@ -415,10 +415,17 @@ export default function Recherche() {
               title={t('search:empty.title', 'Aucun résultat')}
               description={t('search:empty.text', 'Essayez de modifier vos filtres ou de réinitialiser votre recherche.')}
               icon={<Search className="h-6 w-6" />}
+              // UX ecosystem (2026-11-12): « Relancer la recherche » re-ran the same query (same empty answer): a dead end. The next steps are a search
+              // without the category, the guided paths (by need, orientation) and the directory with the same words
               actions={
-                <Button type="button" variant="outline" onClick={handleRetry}>
-                  {t('search:empty.rerun', 'Relancer la recherche')}
-                </Button>
+                <div className="flex flex-wrap justify-center gap-2" data-testid="search-empty-next">
+                  {categoryFromUrl ? (
+                    <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
+                  ) : null}
+                  <Button asChild variant="outline"><Link to="/besoins">{t('search:empty.by_need', 'Trouver par besoin')}</Link></Button>
+                  <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button>
+                  {queryFromUrl ? <Button asChild variant="outline"><Link to={`/structures?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.directory', 'Chercher un lieu d’accueil dans l’annuaire')}</Link></Button> : null}
+                </div>
               }
               data-testid="search-empty-state"
             />

@@ -13,7 +13,6 @@
   "category.social-sante": "Social - Health",
   "category.transports": "Transport",
   "category.travail-formation": "Work - Training",
-  "empty.rerun": "Run the search again",
   "empty.text": "Try changing your filters or resetting your search.",
   "empty.title": "No results",
   "error.failed": "The search failed.",
@@ -117,5 +116,9 @@
   "orientation.search_topic": "Places and aids for this need",
   "orientation.check": "Check before applying for an aid in the list",
   "orientation.check_short": "To check:",
-  "orientation.human": "To get support: the CCAS of your town, a Maison des solidarités or a France Services office."
+  "orientation.human": "To get support: the CCAS of your town, a Maison des solidarités or a France Services office.",
+  "empty.all_categories": "Search all categories",
+  "empty.by_need": "Find by need",
+  "empty.orientation": "Get guided step by step",
+  "empty.directory": "Look for a place to go in the directory"
 }

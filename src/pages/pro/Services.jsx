@@ -109,7 +109,7 @@ export default function ProServices() {
       const response = await proRdvClient.settings.get();
       hydrateSettings(response);
     } catch {
-      setSettingsError(t('pro:services.settings_load_error', 'Impossible de charger les parametres de publication RDV.'));
+      setSettingsError(t('pro:services.settings_load_error', 'Impossible de charger les paramètres de publication RDV.'));
     } finally {
       setSettingsLoading(false);
     }
@@ -137,12 +137,12 @@ export default function ProServices() {
 
       const updated = await proRdvClient.settings.update(payload);
       hydrateSettings(updated);
-      setSettingsNotice(t('pro:services.settings_saved', 'Parametres RDV enregistres.'));
+      setSettingsNotice(t('pro:services.settings_saved', 'Paramètres RDV enregistrés.'));
     } catch (requestError) {
       if (requestError && typeof requestError === 'object' && requestError.status === 409) {
-        setSettingsError(t('pro:services.settings_not_ready', 'Impossible de publier: la base RDV n est pas prete sur cet environnement.'));
+        setSettingsError(t('pro:services.settings_not_ready', 'Impossible de publier : la base RDV n’est pas prête sur cet environnement.'));
       } else {
-        setSettingsError(t('pro:services.settings_save_error', 'Impossible de sauvegarder les parametres RDV.'));
+        setSettingsError(t('pro:services.settings_save_error', 'Impossible de sauvegarder les paramètres RDV.'));
       }
     } finally {
       setSettingsSaving(false);
@@ -282,7 +282,7 @@ export default function ProServices() {
 
               <div className="grid gap-3 md:grid-cols-3">
                 <label className="space-y-1">
-                  <span className="text-sm font-medium text-slate-700">{t('pro:services.booking_mode', 'Mode de reservation')}</span>
+                  <span className="text-sm font-medium text-slate-700">{t('pro:services.booking_mode', 'Mode de réservation')}</span>
                   <select
                     className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm"
                     value={settingsForm.bookingMode}
@@ -291,9 +291,9 @@ export default function ProServices() {
                       setSettingsForm((prev) => ({ ...prev, bookingMode: event.target.value }))
                     }
                   >
-                    <option value="IN_PERSON">{t('pro:services.mode_in_person', 'Presentiel')}</option>
+                    <option value="IN_PERSON">{t('pro:services.mode_in_person', 'Présentiel')}</option>
                     <option value="VIDEO">{t('pro:services.mode_video', 'Visio')}</option>
-                    <option value="BOTH">{t('pro:services.mode_both', 'Presentiel + visio')}</option>
+                    <option value="BOTH">{t('pro:services.mode_both', 'Présentiel + visio')}</option>
                   </select>
                 </label>
 
@@ -310,7 +310,7 @@ export default function ProServices() {
                 </label>
 
                 <label className="space-y-1">
-                  <span className="text-sm font-medium text-slate-700">{t('pro:services.contact_phone', 'Telephone contact (optionnel)')}</span>
+                  <span className="text-sm font-medium text-slate-700">{t('pro:services.contact_phone', 'Téléphone contact (optionnel)')}</span>
                   <Input
                     type="text"
                     value={settingsForm.contactPhone}
@@ -345,7 +345,7 @@ export default function ProServices() {
                   ) : (
                     <Save className="mr-2 h-4 w-4" />
                   )}
-                  {t('pro:services.save_settings', 'Enregistrer les parametres')}
+                  {t('pro:services.save_settings', 'Enregistrer les paramètres')}
                 </Button>
               ) : null}
             </form>
@@ -404,7 +404,7 @@ export default function ProServices() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-slate-700">
-                <p>{t('pro:services.duration_line', 'Duree: {{n}} min', { n: service.durationMinutes })}</p>
+                <p>{t('pro:services.duration_line', 'Durée : {{n}} min', { n: service.durationMinutes })}</p>
                 <p>{t('pro:services.buffers_line', 'Buffers: -{{before}} min / +{{after}} min', { before: service.bufferBeforeMinutes, after: service.bufferAfterMinutes })}</p>
                 <p data-testid="pro-service-modes">{t('pro:services.modes_line', 'Modalités : {{modes}}', { modes: (Array.isArray(service.modes) && service.modes.length ? service.modes : ['IN_PERSON']).map((m) => (m === 'VIDEO' ? t('pro:services.modality_video', 'À distance (visio)') : t('pro:services.modality_in_person', 'En présentiel'))).join(' · ') })}</p>
                 {canEdit ? (
@@ -415,7 +415,7 @@ export default function ProServices() {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleToggleActive(service)}>
                       <Power className="mr-1 h-4 w-4" />
-                      {service.isActive ? t('pro:services.deactivate', 'Desactiver') : t('pro:services.activate', 'Activer')}
+                      {service.isActive ? t('pro:services.deactivate', 'Désactiver') : t('pro:services.activate', 'Activer')}
                     </Button>
                     <Button variant="destructive" size="sm" onClick={() => handleDelete(service.id)}>
                       <Trash2 className="mr-1 h-4 w-4" />
@@ -432,7 +432,7 @@ export default function ProServices() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingService ? t('pro:services.dialog_edit', 'Modifier le service') : t('pro:services.dialog_create', 'Creer un service')}</DialogTitle>
+            <DialogTitle>{editingService ? t('pro:services.dialog_edit', 'Modifier le service') : t('pro:services.dialog_create', 'Créer un service')}</DialogTitle>
             <DialogDescription>{t('pro:services.dialog_description', 'Configuration minimale d\'un motif de rendez-vous.')}</DialogDescription>
           </DialogHeader>
 
@@ -448,7 +448,7 @@ export default function ProServices() {
 
             <div className="grid gap-3 md:grid-cols-3">
               <label className="space-y-1">
-                <span className="text-sm font-medium text-slate-700">{t('pro:services.duration', 'Duree (min)')}</span>
+                <span className="text-sm font-medium text-slate-700">{t('pro:services.duration', 'Durée (min)')}</span>
                 <Input
                   type="number"
                   min={5}
@@ -470,7 +470,7 @@ export default function ProServices() {
               </label>
 
               <label className="space-y-1">
-                <span className="text-sm font-medium text-slate-700">{t('pro:services.buffer_after', 'Buffer apres')}</span>
+                <span className="text-sm font-medium text-slate-700">{t('pro:services.buffer_after', 'Buffer après')}</span>
                 <Input
                   type="number"
                   min={0}

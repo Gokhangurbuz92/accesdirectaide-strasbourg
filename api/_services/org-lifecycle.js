@@ -16,11 +16,25 @@ import { decide as publicDecision } from '../lib/publicVisibility.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 
-export async function listOrganizations({ q = '' } = {}, db = defaultDb) {
+/** UX ecosystem (2026-11-12): the decision filters of the screen — the same predicates as the « À traiter » counts (api/_services/admin-tasks.js) */
+const DECISION = {
+  never: sql`s.publication_hold IS NULL AND s.verification_status IS DISTINCT FROM 'VERIFIED' AND s.verification_status IS DISTINCT FROM 'REJECTED' AND s.statut IS DISTINCT FROM 'archive'`,
+  hold: sql`s.publication_hold IS NOT NULL AND s.verification_status IS DISTINCT FROM 'REJECTED' AND s.statut IS DISTINCT FROM 'archive'`,
+  rejected: sql`s.verification_status = 'REJECTED' AND s.statut IS DISTINCT FROM 'archive'`,
+  verified: sql`s.verification_status = 'VERIFIED' AND s.publication_hold IS NULL AND s.statut IS DISTINCT FROM 'archive'`,
+};
+export const ORG_LIST_LIMIT = 200;
+
+export async function listOrganizations({ q = '', decision = '' } = {}, db = defaultDb) {
   const like = `%${String(q).trim().slice(0, 80).replace(/[%_\\]/g, (c) => `\\${c}`)}%`;
+  // the « À traiter » card counted organisations « sans décision » and linked here, where the first 200 by name were shown: the list now filters by decision
+  // and says how many match (it stops at 200)
+  const d = DECISION[String(decision)] || sql`TRUE`;
+  const where = sql`(${String(q).trim() === ''} OR s.nom ILIKE ${like} OR s.ville ILIKE ${like}) AND ${d}`;
   const rows = (await db.execute(sql`SELECT s.*, (SELECT count(*)::int FROM "ProUser" u WHERE u."structureId" = s.id AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN')) AS "activeMembers"
-    FROM "Structure" s WHERE (${String(q).trim() === ''} OR s.nom ILIKE ${like} OR s.ville ILIKE ${like}) ORDER BY s.nom LIMIT 200`)).rows;
-  return { ok: true, organizations: rows.map((s) => {
+    FROM "Structure" s WHERE ${where} ORDER BY s.nom LIMIT ${ORG_LIST_LIMIT}`)).rows;
+  const [{ total }] = (await db.execute(sql`SELECT count(*)::int AS total FROM "Structure" s WHERE ${where}`)).rows;
+  return { ok: true, total: Number(total), limit: ORG_LIST_LIMIT, organizations: rows.map((s) => {
     const pub = publicDecision(s, 'structure');
     return { id: s.id, nom: s.nom, ville: s.ville, statut: s.statut,
       identity: s.verification_status, identityVerifiedBy: s.verified_by ? 'ADA' : null, identityVerifiedAt: s.date_verification,

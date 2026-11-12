@@ -172,7 +172,7 @@ export default function ProAppointments() {
             {t('pro:appointments.export_ics', 'Exporter l’agenda (.ics)')}
           </Button>
           <Button asChild>
-            <Link to="/pro/rdv/new">{t('pro:appointments.create', 'Creer un RDV')}</Link>
+            <Link to="/pro/rdv/new">{t('pro:appointments.create', 'Créer un RDV')}</Link>
           </Button>
         </div>
       </div>

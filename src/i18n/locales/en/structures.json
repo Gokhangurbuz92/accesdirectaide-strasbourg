@@ -174,5 +174,8 @@
  "detail.booking.account_required": "A personal account is needed to request an appointment. The information on this page remains available without an account.",
  "detail.booking.not_partner": "Being listed in the directory does not mean this organisation is a partner of AccesDirectAide.",
  "pagination.nav": "Directory pages",
- "view.label": "Display"
+ "view.label": "Display",
+ "detail.no_contact": "The official source publishes no telephone, e-mail or website for this organisation. You can go to the address shown, or look for another organisation nearby.",
+ "detail.nearby_in_city": "See the other organisations in {{city}}",
+ "detail.nearby": "See the directory"
 }
