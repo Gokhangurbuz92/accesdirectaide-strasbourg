@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { categoryVariants } from '../_services/verification/classify.js';
 import { visibleSql } from './publicVisibility.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
@@ -111,6 +112,7 @@ function buildAideFilters({ category, situations, geoScope }) {
         a."category_code" = CAST(${category} AS "AidCategoryCode")
         OR a."theme" = ${categorySlug}
         OR a."categorie" = ${categorySlug}
+        OR a."categorie" IN (${sql.join(categoryVariants(categorySlug).map((v) => sql`${v}`), sql`, `)})
         OR EXISTS (
           SELECT 1
           FROM "AidCategory" category

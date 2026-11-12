@@ -146,7 +146,7 @@ export default async function handler(req, res) {
             }
 
             const { sourceDocument, ...demarcheRest } = demarcheObj;
-            const safeDemarche = stripReviewFields(demarcheRest, isAdmin);   // reviewer identity and hold reasons are internal
+            const safeDemarche = stripReviewFields(demarcheRest, isAdmin, { detail: true });   // reviewer identity and hold reasons are internal
             return res.status(200).json({
                 ...safeDemarche,
                 provenance: {

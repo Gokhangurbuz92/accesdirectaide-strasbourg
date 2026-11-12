@@ -33,7 +33,8 @@ import { recordVerification, rowJson, contentVersion } from '../content-verifica
 import { snapshotRow, isEditHold } from '../content-versions.js';
 import { DUPLICATE_HOLD, decide as decideDuplicate } from '../duplicate-register.js';
 import { isAllowedSource } from '../../lib/services/official-sources.js';
-import { fetchArchive, ficheMeta, readSource, resolveId, titleTokens, titleAcronym } from './dila.js';
+import { fetchArchive, ficheMeta, readSource, resolveId, titleTokens, titleAcronym, DILA_ARCHIVE_URL } from './dila.js';
+import { classifyFiche } from './classify.js';
 import { readOfficialPage, sha256, frenchDate } from './pages.js';
 import { digits, lookupSiret, searchEstablishments } from './registries.js';
 import { checkStructure, sameStreet, sameStreetNumber, streetOnly, readableCase } from './structure-check.js';
@@ -178,14 +179,14 @@ export async function runVeille(opts = {}) {
   if (acq.busy) return { ok: false, skipped: 'ALREADY_RUNNING', runId: acq.busy };
   clearStop();
   const ctx = { db, env, runId: acq.id, scope, log, deadline, counts: {}, texts: opts.texts !== false, generate: opts.generate, force: Boolean(opts.force),
-    limits: { newOffices: 150, newFiness: 150, newDataInclusion: 100, examineDataInclusion: 150, newFiches: 6, reviewSources: 30, ...(opts.limits || {}) }, only, finessFiles: opts.finessFiles || null, finess: null, finessOk: false,
+    limits: { newOffices: 150, newFiness: 150, newDataInclusion: 100, examineDataInclusion: 150, newFiches: 6, newOfficial: 150, reviewSources: 30, ...(opts.limits || {}) }, only, finessFiles: opts.finessFiles || null, finess: null, finessOk: false,
     dataInclusionFiles: opts.dataInclusionFiles || null, di: null, select: typeof opts.select === 'function' ? opts.select : () => true,
     // R38: a bounded run may add new FINESS records of these official categories only (e.g. ['340'], the MJPM services); unset = every category in scope
     categories: Array.isArray(opts.categories) && opts.categories.length ? new Set(opts.categories.map(String)) : null,
     net: { fetchImpl: opts.fetchImpl, env }, hints: loadHints(opts.root || process.cwd()), archive: null, metas: [], offices: [], allOffices: [], officeRows: [], annuaireOk: false,
     trusted: [], registry: [], departement: opts.departement || '67', cacheDir: opts.cacheDir !== undefined ? opts.cacheDir : (env.ADA_VEILLE_CACHE_DIR || null),
     machine, health, lastHealth: null, modelOptions: machine ? modelOptions(env) : {}, modelUsed: false, stop: null, progress: {}, lastBeat: 0,
-    withdrawn: {}, caps: {}, deferred: {}, alerts: [], nightCap: opts.nightCap === true,
+    withdrawn: {}, caps: {}, deferred: {}, alerts: [], nightCap: opts.nightCap === true, newOfficial: opts.newOfficial === true,
     now: () => (opts.now ? new Date(opts.now) : new Date()), timeUp: () => Date.now() > deadline };
   ctx.halted = () => ctx.timeUp() || Boolean(ctx.stop);
   ctx.activatedAt = opts.activatedAt ? new Date(opts.activatedAt) : await firstAutomaticDecision(db);   // supervision: see personDecision
@@ -648,6 +649,52 @@ export function officialExcerpt(src, origin, url) {
   const who = origin === 'DILA' ? 'Service-Public.gouv.fr' : host || 'la source officielle';
   return `Extrait de la fiche officielle « ${squash(src.title || '')} » (${who}) : « ${out} »`;
 }
+// ---------------------------------------------------------------------------------------------------------------- Level 1: the official fiche
+/**
+ * Catalogue (12/11/2026) — LEVEL 1 « contenu officiel vérifié ». A Service-Public fiche is published under Licence Ouverte 2.0 (Etalab): the platform may show
+ * it as it is, with its publisher, its address, the date of the file it comes from and the date of its last update (data.gouv.fr dataset 53699fe5…: « Service-
+ * Public.gouv.fr / DILA », the download address, the file name and its date). The whole fiche is kept (headings, lists, tables as rows) so that no condition,
+ * exclusion or deadline is lost; a fiche longer than OFFICIAL_TEXT_MAX is cut at a heading and says so (`truncated`: the rest is read on Service-Public).
+ * No text is written: the summary shown on a card is the fiche's own official description, in quotation marks. The FALC version is « en attente » (never invented).
+ */
+export const OFFICIAL_TEXT_MAX = 40000;
+export const DILA_PUBLISHER = 'Service-Public.gouv.fr / DILA';
+export const DILA_LICENCE = Object.freeze({ name: 'Licence Ouverte 2.0 (Etalab)', url: 'https://www.etalab.gouv.fr/licence-ouverte-open-licence/' });
+/** a date of the flux that can be true (the archive of 11/11/2026 holds « 2620-05-01 » and « 0002-03-22 »): none rather than a false one */
+export const plausibleDay = (d, now = new Date()) => { const m = String(d || '').match(/^(\d{4})-\d{2}-\d{2}/); if (!m) return null; const y = Number(m[1]); return y >= 1990 && y <= now.getUTCFullYear() + 1 ? String(d).slice(0, 10) : null; };
+/** @param {any} src the parsed fiche @param {string} id its number @param {{ builtAt?: string|null } | null} archive */
+export function officialContent(src, id, archive) {
+  const full = String(src?.text || '');
+  let text = full; let truncated = false;
+  if (full.length > OFFICIAL_TEXT_MAX) {
+    const cut = full.slice(0, OFFICIAL_TEXT_MAX); const at = cut.lastIndexOf('\n## ');
+    text = (at > OFFICIAL_TEXT_MAX / 2 ? cut.slice(0, at) : cut.slice(0, Math.max(cut.lastIndexOf('\n'), 1))).trim(); truncated = true;
+  }
+  return { mode: 'OFFICIAL_SOURCE', publisher: DILA_PUBLISHER, licence: DILA_LICENCE.name, licenceUrl: DILA_LICENCE.url, sourceId: id || src?.id || null, title: squash(src?.title || ''), url: src?.url || null,
+    description: squash(src?.description || '') || null, text, truncated, chars: full.length, importantChangeAt: plausibleDay(src?.importantChangeAt), modifiedAt: plausibleDay(src?.modifiedAt),
+    archive: { url: DILA_ARCHIVE_URL, file: 'vosdroits-latest.zip', date: archive?.builtAt || null }, fingerprint: src?.fingerprint || null,
+    online: (src?.online || []).filter((o) => /^https:\/\//.test(o.url || '')).slice(0, 12).map((o) => ({ title: squash(o.title || ''), url: o.url, type: o.type || null })),
+    references: (src?.references || []).slice(0, 12).map((r) => ({ title: squash(r.title || ''), url: r.url })) };
+}
+/** the short text of a card: the fiche's own description (or its first sentences), quoted and attributed — never a summary written by the platform */
+export function officialLead(src) {
+  const d = squash(src?.description || '');
+  if (d.length >= 40) return `Résumé officiel (Service-Public.gouv.fr) : « ${d} »`;
+  return officialExcerpt(src, 'DILA', src?.url || '') || null;
+}
+/** the record's fields for a Level 1 record: the official lead, the links of the fiche; every text written for an earlier version removed */
+export function officialPatch(kind, src) {
+  const lead = officialLead(src); const p = practical(src);
+  const cleared = { summary_falc: null, conditions_falc: null, falc_origin: null };
+  if (kind === 'dispositif') return { ...cleared, description_falc: lead, montant: null, liens: [{ nom: 'Fiche officielle', url: src.url }, ...(p.apply && p.apply !== src.url ? [{ nom: 'Faire la démarche en ligne', url: p.apply }] : [])] };
+  if (kind === 'aide') return { ...cleared, cest_quoi: lead, description: lead, ce_que_ca_aide: null, montant_falc: null, pour_qui: null, etapes: [], etapes_falc: [], documents_necessaires: [],
+    ...(p.where ? { ou_demander: p.where } : {}), ...(p.apply ? { lien_demande: p.apply } : {}) };
+  return { ...cleared, description_courte: lead, contenu_detaille: lead, pour_qui: null, etapes: [], etapes_falc: [], documents_necessaires: [], ...(p.where ? { ou_faire: p.where } : {}), ...(p.apply ? { lien_teleservice: p.apply } : {}) };
+}
+const officialTextsMeta = (ctx, src, mark) => ({ at: ctx.now().toISOString(), mode: 'OFFICIAL_SOURCE', level: 1, falc: 'PENDING', sourceFingerprint: src.fingerprint, sourceMark: mark });
+/** Level 1 publication of NEW fiches is a decision of its own (ADA_VEILLE_NEW_OFFICIAL=on, or the run's option): deploying the code adds nothing by itself */
+const newOfficialOn = (ctx) => ctx.newOfficial === true || String(ctx.env.ADA_VEILLE_NEW_OFFICIAL || '') === 'on';
+
 /** may the words of this source be republished as an excerpt? @param {string} origin @param {string} url */
 export const excerptAllowed = (origin, url) => origin === 'DILA' || isReuseOpen(url);
 /** the fields of a record while it shows the official excerpt: the excerpt as its summary; the texts written from an older version of the source removed */
@@ -749,6 +796,8 @@ async function checkContent(ctx, kind, row) {
   const published = { normal: { resume: row.cest_quoi || row.description_courte || row.description_falc || '', pour_qui: lines(row.pour_qui) }, falc: { resume: lines(row.summary_falc), pour_qui: lines(row.conditions_falc) } };
   const mark = sourceMark(src, origin);
   const chainTexts = hasChainTexts(row);
+  // Catalogue (12/11/2026): a record published as the reproduced official fiche (Level 1) follows its source without a model
+  const officialMode = origin === 'DILA' && row.auto_check?.texts?.mode === 'OFFICIAL_SOURCE';
   // texts written from an older version of the source (an important change since), texts with a number the source no longer has or a « condition » it says is
   // none, texts written under older rules
   const outdated = chainTexts && row.auto_check?.texts?.sourceMark !== mark;
@@ -765,6 +814,13 @@ async function checkContent(ctx, kind, row) {
     const may = await textsAllowed(ctx);
     // only a record shown today stays online on the excerpt (a first publication still waits for its texts)
     const shownNow = row.verification_status === 'VERIFIED' && row.statut === PUBLISHED[kind] && !row.publication_hold;
+    if (!may.ok && officialMode) {
+      // Level 1: the official fiche itself is the content; a new version of the fiche is reproduced again (no text is written, nothing to wait for)
+      const same = row.auto_check?.official?.fingerprint === src.fingerprint;
+      if (!same) { patch = officialPatch(kind, src); textsMeta = officialTextsMeta(ctx, src, mark); count(ctx, 'texts:officialRefreshed'); }
+      textsNote = same ? 'fiche officielle reproduite inchangée (Service-Public.gouv.fr / DILA, Licence Ouverte 2.0) ; version facile à lire en attente'
+        : 'fiche officielle reproduite depuis sa nouvelle version (Service-Public.gouv.fr / DILA, Licence Ouverte 2.0) ; version facile à lire en attente';
+    } else {
     const excerpt = !may.ok && !keepable && !excerptCurrent && shownNow && String(ctx.env.ADA_VEILLE_TEXT_FALLBACK || 'excerpt') !== 'withdraw' ? officialExcerpt(src, origin, where.url) : null;
     if (!may.ok && !keepable && excerptCurrent && shownNow) {   // R14: a record withdrawn since (shown no longer) is not put back online on the excerpt
       textsNote = 'extrait mot pour mot de la source officielle inchangé ; résumé et version facile à lire en attente du modèle local';
@@ -784,6 +840,7 @@ async function checkContent(ctx, kind, row) {
       await note(ctx, { ...base, kind: 'TEXTS', outcome: 'RETRY', summary: `Textes à rédiger depuis la fiche officielle : reporté à la prochaine veille (${may.reason}).` });
       count(ctx, 'texts:waitingModel'); ctx.textsWaitingReason = may.reason;   // R11: summed into one alert at the end of the run (visible, recoverable)
       return;
+    }
     }
     if (may.ok) {
       ctx.modelUsed = true;
@@ -808,7 +865,7 @@ async function checkContent(ctx, kind, row) {
   const legal = legalChange(row.auto_check?.legal, (src.references || []).slice(0, 6));
   const coverageChanged = row.auto_check?.coverage !== undefined && (row.auto_check.coverage || null) !== (src.coverage || null);
   const auto = { checkedAt: ctx.now().toISOString(), runId: ctx.runId, origin, sourceUrl: where.url, sourceTitle: src.title, sourceId: where.id || null, importantChangeAt: src.importantChangeAt || null,
-    sourceModifiedAt: origin === 'DILA' ? (ctx.metaById?.get(where.id)?.modifiedAt || null) : null, officialCheckedAt: src.officialCheckedAt || null, coverage: src.coverage || null, legal: (src.references || []).slice(0, 6), texts: textsMeta, discovered: where.discovered || null, moved: where.moved || null,
+    sourceModifiedAt: origin === 'DILA' ? (ctx.metaById?.get(where.id)?.modifiedAt || null) : null, officialCheckedAt: src.officialCheckedAt || null, coverage: src.coverage || null, legal: (src.references || []).slice(0, 6), texts: textsMeta, ...(origin === 'DILA' && (officialMode || row.auto_check?.official) ? { official: officialContent(src, where.id, ctx.archive) } : {}), ...(row.auto_check?.classification ? { classification: row.auto_check.classification } : {}), discovered: where.discovered || null, moved: where.moved || null,
     authority: where.authority || (origin === 'DILA' ? { sourceId: 'dila-service-public', level: 'NATIONAL' } : null), tier: tier.tier, nextCheckAt: nextAt(ctx, tier) };
   // bookkeeping (not public content: no new verification for it) and provenance (public: a new address of the source is verified like a new text)
   const fixed = { auto_check: auto, last_checked_at: ctx.now(), retrieved_at: ctx.now(), ...(src.importantChangeAt ? { source_last_modified: new Date(src.importantChangeAt) } : {}) };
@@ -1324,61 +1381,89 @@ async function feedOffices(ctx) {
   if (fresh.length > created) count(ctx, 'offices:later', fresh.length - created);
 }
 
-/** Service-Public fiches of the social themes, not yet in the catalogue (a few per run: each needs its texts written and checked) */
-const SOCIAL_PATH = /aides? (personnelles )?au logement|logement social|h[ée]bergement|handicap|personnes [âa]g[ée]es|autonomie|\bRSA\b|revenu de solidarit[ée]|prime d.activit[ée]|minima sociaux|compl[ée]mentaire sant[ée]|aide m[ée]dicale|protection sociale|prestations familiales|allocations familiales|garde d.enfant|naissance|ch[ôo]mage|insertion|surendettement|microcr[ée]dit|aide juridictionnelle|victime|titre de s[ée]jour|asile|ch[èe]que [ée]nergie|pr[ée]carit[ée]|aide sociale|retraite/i;
-const AIDE_TITLE = /^(aides?|allocation|prime|revenu|prestation|compl[ée]ment|compl[ée]mentaire|ch[èe]que|bourse|carte|pass\b|indemni|fonds|microcr[ée]dit|tarif|r[ée]duction|majoration|cong[ée])/i;
-/** a programme rather than a benefit or a procedure (« Contrat d'engagement jeune », « Service civique », « Parcours emploi compétences »…) */
-const DISPOSITIF_TITLE = /^(contrat d.engagement|contrat d.insertion|parcours|service civique|garantie|dispositif|programme|accompagnement)/i;
-const CATEGORY = [[/handicap/i, 'handicap'], [/personnes [âa]g[ée]es|autonomie|retraite/i, 'personnes-agees'], [/^Logement/i, 'logement'], [/^Social - Sant[ée]/i, 'social-sante'], [/^Famille/i, 'famille'],
-  [/^Travail/i, 'travail-formation'], [/^Argent/i, 'argent'], [/^Justice/i, 'justice'], [/^[ÉE]tranger/i, 'etranger'], [/^Papiers/i, 'papiers-citoyennete'], [/^Transports/i, 'transports'], [/^Loisirs/i, 'loisirs']];
-const categoryOf = (meta) => { const p = meta.path.map((x) => x.title).join(' > '); for (const [re, c] of CATEGORY) if (re.test(p) || re.test(meta.subject || '')) return c; return 'social-sante'; };
-
+/**
+ * Service-Public fiches not yet in the catalogue. Catalogue (12/11/2026): the candidates are every « Fiche d'information » of the Particuliers flux that the
+ * classification places (api/_services/verification/classify.js: kind, domain / subdomain of the 20 × 86 reference, taxonomy category) — no longer the thirty
+ * phrases of the former SOCIAL_PATH, which kept 1 324 of the 1 497 fiches of the archive of 11/11/2026 out of the platform. A fiche the classification cannot
+ * place stays out, with its reason counted. Two ways in:
+ *  - LEVEL 2 (the LAB's local model): summary and FALC written and checked, a few a night (newFiches);
+ *  - LEVEL 1 (no model; ADA_VEILLE_NEW_OFFICIAL=on): the official fiche reproduced under Licence Ouverte 2.0 with its attribution, FALC « en attente », a
+ *    bounded number a run (newOfficial), the fiches serving a subdomain of the reference first.
+ * Every new record is published only through the verification ledger (recordVerification), never by a statut alone.
+ */
 async function feedFiches(ctx) {
   if (!ctx.archive || ctx.halted()) return;
-  const may = await textsAllowed(ctx); if (!may.ok) return;
+  const may = await textsAllowed(ctx);
+  const level1 = !may.ok && newOfficialOn(ctx);
+  if (!may.ok && !level1) return;
   await beat(ctx, { phase: 'nouvelles fiches', current: null }, true);
   const linked = new Set();
   // K12 (11/11/2026): a fiche already in the catalogue under its DILA identity is linked whatever its address looks like — F15252 is recorded at
   // entreprendre.service-public.gouv.fr/vosdroits/F15252, which SP_ID does not read: it was proposed again every night, its insert broke
   // « Aide_externalId_unique » and the error ended the whole run (LAB: every night from 29/10 to 11/11)
   for (const r of (await ctx.db.execute(sql`SELECT "externalId" AS x FROM "Aide" WHERE "externalId" LIKE 'dila:%'`)).rows) linked.add(resolveId(String(r.x).slice(5).toUpperCase(), ctx.archive.redirections));
-  for (const t of ['Aide', 'Demarche', 'Dispositif']) for (const r of (await ctx.db.execute(sql`SELECT source_url FROM ${sql.raw(`"${t}"`)} WHERE source_url IS NOT NULL`)).rows) { const m = String(r.source_url).match(SP_ID); if (m) linked.add(resolveId(m[1].toUpperCase(), ctx.archive.redirections)); }
-  const failed = new Set((await ctx.db.execute(sql`SELECT "entity_id" FROM "VeilleEvent" WHERE kind = 'TEXTS' AND outcome = 'RETRY' AND entity_type = 'fiche' AND created_at > ${new Date(Date.now() - 30 * 86400000).toISOString()} GROUP BY 1 HAVING count(*) >= 3`)).rows.map((r) => r.entity_id));
-  const candidates = ctx.metas.filter((m) => /Fiche d'information/.test(m.kind || '') && !linked.has(m.id) && !failed.has(m.id) && OUR_COVERAGE.test(String(m.coverage || '')) && SOCIAL_PATH.test(`${m.path.map((x) => x.title).join(' ')} ${m.title}`))
-    .sort((a, b) => String(b.importantChangeAt || '').localeCompare(String(a.importantChangeAt || '')));
+  for (const t of ['Aide', 'Demarche', 'Dispositif']) {
+    for (const r of (await ctx.db.execute(sql`SELECT source_url, auto_check->>'sourceId' AS sid FROM ${sql.raw(`"${t}"`)} WHERE source_url IS NOT NULL OR auto_check ? 'sourceId'`)).rows) {
+      const m = String(r.source_url || '').match(SP_ID); if (m) linked.add(resolveId(m[1].toUpperCase(), ctx.archive.redirections));
+      if (r.sid && /^[FN]\d+$/.test(String(r.sid))) linked.add(resolveId(String(r.sid), ctx.archive.redirections));   // the identity the chain recorded, whatever the address
+    }
+  }
+  const failed = new Set((await ctx.db.execute(sql`SELECT "entity_id" FROM "VeilleEvent" WHERE kind IN ('TEXTS', 'NEW_RECORD') AND outcome = 'RETRY' AND entity_type = 'fiche' AND created_at > ${new Date(Date.now() - 30 * 86400000).toISOString()} GROUP BY 1 HAVING count(*) >= 3`)).rows.map((r) => r.entity_id));
+  const candidates = [];
+  for (const m of ctx.metas) {
+    if (linked.has(m.id) || failed.has(m.id)) continue;
+    const c = classifyFiche(m);   // without the parsed fiche: theme, coverage, subdomain (the kind is decided again on the full fiche)
+    if (!c.ok) { if (c.pending !== 'NOT_A_CATALOGUE_KIND') count(ctx, `fiches:pending:${c.pending}`); continue; }
+    candidates.push({ meta: m, rank: c.subdomain ? 0 : 1 });
+  }
+  candidates.sort((x, y) => x.rank - y.rank || String(plausibleDay(y.meta.importantChangeAt) || '').localeCompare(String(plausibleDay(x.meta.importantChangeAt) || '')) || x.meta.id.localeCompare(y.meta.id));
+  const limit = level1 ? ctx.limits.newOfficial : ctx.limits.newFiches;
   let created = 0;
-  for (const meta of candidates) {
-    if (created >= ctx.limits.newFiches || ctx.halted() || !(await beat(ctx, { done: created, total: Math.min(candidates.length, ctx.limits.newFiches), current: meta.title }))) break;
-    if (!(await textsAllowed(ctx)).ok) break;
+  for (const { meta } of candidates) {
+    if (created >= limit || ctx.halted() || !(await beat(ctx, { done: created, total: Math.min(candidates.length, limit), current: meta.title }))) break;
+    if (!level1 && !(await textsAllowed(ctx)).ok) break;
     const src = readSource(meta.id, ctx.archive); if (!src) continue;
-    const kind = DISPOSITIF_TITLE.test(meta.title) ? 'dispositif' : AIDE_TITLE.test(meta.title) ? 'aide' : 'demarche';
-    ctx.modelUsed = true;
-    const t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx), reuseOpen: true });   // a DILA fiche (Licence Ouverte 2.0)
-    if (!t.ok) { count(ctx, 'texts:refused'); await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'TEXTS', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » pas encore ajoutée : textes refusés par le contrôle automatique.`, details: { reasons: t.reasons } }); continue; }
+    const c = classifyFiche(meta, src);
+    if (!c.ok) { count(ctx, `fiches:pending:${c.pending}`); continue; }
+    if (level1 && String(src.text || '').length < 400) { count(ctx, 'fiches:pending:TEXT_TOO_SHORT'); continue; }   // too little official text to stand as a page
+    const kind = c.kind;
+    let t = null;
+    if (!level1) {
+      ctx.modelUsed = true;
+      t = await writeTexts(src, { generate: ctx.generate, modelOptions: ctx.modelOptions, beat: () => beat(ctx), reuseOpen: true });   // a DILA fiche (Licence Ouverte 2.0)
+      if (!t.ok) { count(ctx, 'texts:refused'); await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'TEXTS', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » pas encore ajoutée : textes refusés par le contrôle automatique.`, details: { reasons: t.reasons } }); continue; }
+    }
     const id = crypto.randomUUID(); const table = TABLES[kind];
     try {   // K12: one fiche that cannot be added is noted and skipped — it never ends the night's run
-    const patch = textPatch(kind, t, src);
+    const mark = sourceMark(src, 'DILA');
+    const patch = level1 ? officialPatch(kind, src) : textPatch(kind, t, src);
     const tier = tierOf('DILA', src);
-    const auto = { checkedAt: ctx.now().toISOString(), runId: ctx.runId, origin: 'DILA', sourceUrl: src.url, sourceTitle: src.title, sourceId: meta.id, importantChangeAt: src.importantChangeAt || null, coverage: src.coverage || null,
-      legal: (src.references || []).slice(0, 6), authority: { sourceId: 'dila-service-public', level: 'NATIONAL' }, tier: tier.tier, nextCheckAt: nextAt(ctx, tier),
-      texts: { at: ctx.now().toISOString(), model: t.model, sourceFingerprint: src.fingerprint, sourceMark: sourceMark(src, 'DILA'), checks: t.checks, attempts: t.attempts, ms: t.ms }, created: true };
+    const classification = { at: ctx.now().toISOString(), kind, categorie: c.categorie, audience: c.audience, domain: c.domain, subdomain: c.subdomain, subdomains: c.subdomains, confidence: c.confidence, reasons: c.reasons };
+    const auto = { checkedAt: ctx.now().toISOString(), runId: ctx.runId, origin: 'DILA', sourceUrl: src.url, sourceTitle: src.title, sourceId: meta.id, importantChangeAt: plausibleDay(src.importantChangeAt), coverage: src.coverage || null,
+      legal: (src.references || []).slice(0, 6), authority: { sourceId: 'dila-service-public', level: 'NATIONAL' }, tier: tier.tier, nextCheckAt: nextAt(ctx, tier), classification,
+      official: officialContent(src, meta.id, ctx.archive),
+      texts: level1 ? officialTextsMeta(ctx, src, mark) : { at: ctx.now().toISOString(), model: t.model, sourceFingerprint: src.fingerprint, sourceMark: mark, checks: t.checks, attempts: t.attempts, ms: t.ms }, created: true };
+    const keywords = [c.domain, c.subdomain].filter(Boolean);
     const common = { id, titre: meta.title, slug: `${slugify(meta.title)}-${id.slice(0, 6)}`, ...patch, source_url: src.url, source_url_exact: src.url, data_origin: 'official', statut: 'brouillon',
-      auto_check: auto, last_checked_at: ctx.now(), source_last_modified: src.importantChangeAt ? new Date(src.importantChangeAt) : null, updatedAt: new Date() };
+      auto_check: auto, last_checked_at: ctx.now(), source_last_modified: plausibleDay(src.importantChangeAt) ? new Date(plausibleDay(src.importantChangeAt)) : null, updatedAt: new Date() };
     if (kind === 'dispositif') await ctx.db.insert(table).values({ ...common, public: [] });
-    else await ctx.db.insert(table).values({ ...common, categorie: categoryOf(meta), department_codes: [], updatedBy: SYSTEM_REVIEWER.id,
+    else await ctx.db.insert(table).values({ ...common, categorie: c.categorie, department_codes: [], updatedBy: SYSTEM_REVIEWER.id, mots_cles: keywords,
       ...(kind === 'aide' ? { source_name: 'Service-Public.gouv.fr', source_org: 'DILA', externalId: `dila:${meta.id}`, theme: meta.subject || null } : {}) });
     await saveSnapshot(ctx.db, kind, id, src, src.url);
-    const evidence = `Vérification automatique du ${frDay(day(ctx.now()))} : fiche ${meta.id} « ${src.title} » du flux officiel Service-Public (DILA, archive du ${frDay(ctx.archive.builtAt)}), dernière modification importante le ${frDay(src.importantChangeAt) || 'non précisée'} ; résumé et version FALC rédigés à partir de cette fiche et contrôlés automatiquement.`;
-    const r = await recordVerification({ entityType: kind, entityId: id, action: 'VERIFY', reviewer: SYSTEM_REVIEWER, sourceUrl: src.url, evidenceNote: evidence, territoryConfirmed: true }, { db: ctx.db, env: ctx.env, trustedDomains: ctx.trusted });
+    const evidence = level1
+      ? `Vérification automatique du ${frDay(day(ctx.now()))} : fiche ${meta.id} « ${src.title} » du flux officiel Service-Public (DILA, archive du ${frDay(ctx.archive.builtAt)}), dernière modification importante le ${frDay(plausibleDay(src.importantChangeAt)) || 'non précisée'} ; publiée telle quelle (fiche officielle reproduite, Licence Ouverte 2.0, aucun texte rédigé) ; classée ${kind} / ${c.domain}${c.subdomain ? `/${c.subdomain}` : ''} (${c.reasons.join(' ; ')}) ; version facile à lire en attente.`
+      : `Vérification automatique du ${frDay(day(ctx.now()))} : fiche ${meta.id} « ${src.title} » du flux officiel Service-Public (DILA, archive du ${frDay(ctx.archive.builtAt)}), dernière modification importante le ${frDay(src.importantChangeAt) || 'non précisée'} ; résumé et version FALC rédigés à partir de cette fiche et contrôlés automatiquement.`;
+    const r = await recordVerification({ entityType: kind, entityId: id, action: 'VERIFY', reviewer: SYSTEM_REVIEWER, sourceUrl: src.url, evidenceNote: evidence.slice(0, 2000), territoryConfirmed: true }, { db: ctx.db, env: ctx.env, trustedDomains: ctx.trusted });
     if (r.ok) await ctx.db.update(table).set({ statut: 'publie', published_at: new Date() }).where(eq(table.id, id));
-    created += 1;
-    await note(ctx, { entityType: kind, entityId: id, title: meta.title, kind: 'NEW_RECORD', outcome: r.ok ? 'CREATED' : 'UNRESOLVED', summary: r.ok ? `Ajoutée automatiquement depuis Service-Public (fiche ${meta.id}, ${kind === 'dispositif' ? 'dispositif' : categoryOf(meta)}).` : `Ajoutée mais non publiée (${r.message || r.code}).` });
+    created += 1; if (level1) count(ctx, 'fiches:official');
+    await note(ctx, { entityType: kind, entityId: id, title: meta.title, kind: 'NEW_RECORD', outcome: r.ok ? 'CREATED' : 'UNRESOLVED', summary: r.ok ? `Ajoutée automatiquement depuis Service-Public (fiche ${meta.id}, ${kind}, ${c.categorie}${level1 ? ', fiche officielle reproduite' : ''}).` : `Ajoutée mais non publiée (${r.message || r.code}).` });
     } catch (e) {
       count(ctx, 'fiches:failed');
       await note(ctx, { entityType: 'fiche', entityId: meta.id, title: meta.title, kind: 'NEW_RECORD', outcome: 'RETRY', summary: `Nouvelle fiche « ${meta.title} » non ajoutée (${String(e?.code || e?.message || e).slice(0, 120)}) : nouvel essai à la prochaine veille.` }).catch(() => {});
     }
   }
   count(ctx, 'fiches:candidates', candidates.length);
+  if (candidates.length > created) count(ctx, 'fiches:later', candidates.length - created);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------- self-check

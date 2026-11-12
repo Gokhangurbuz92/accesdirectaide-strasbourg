@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { formatDate, useT } from '@/i18n';
+import OfficialContent from '@/components/OfficialContent';
 
 /**
  * Automatic verification chain — the lines a person reads on a record (api/lib/publicVisibility.js publicAutoCheck), in the owner's words (D-5 v2, 2026-10-25):
@@ -32,14 +33,16 @@ export default function AutoVerificationNote({ record, kind }) {
     ? (a.sources || []).map((s) => KIND[s.kind]?.(t)).filter(Boolean)
     : [NAMES[host(a.sourceUrl)]?.(t) || host(a.sourceUrl)].filter(Boolean);
   const url = a.sourceUrl || (a.sources || []).find((s) => s.url)?.url || null;
-  return (
+  const note = (
     <div data-testid="auto-verification-note" role="note" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
       <p>
         <strong>{t('shared:autoCheck.title', 'Informations vérifiées automatiquement le {{date}} à partir de sources officielles', { date: day(a.checkedAt) })}</strong>
         {names.length ? t('shared:autoCheck.names', ' : {{names}}', { names: names.join(t('shared:autoCheck.and', ' et ')) }) : null}
         {a.importantChangeAt ? t('shared:autoCheck.change', ' (dernière modification importante de la source : {{date}})', { date: day(a.importantChangeAt) }) : null}.
       </p>
-      {a.textsMode === 'OFFICIAL_EXCERPT' ? (
+      {a.textsMode === 'OFFICIAL_SOURCE' ? (
+        <p className="mt-1" data-testid="auto-verification-official">{t('shared:autoCheck.official', 'Cette page reproduit la fiche officielle de Service-Public.gouv.fr, sans résumé rédigé par AccesDirectAide. La version facile à lire (FALC) est en préparation.')}</p>
+      ) : a.textsMode === 'OFFICIAL_EXCERPT' ? (
         <p className="mt-1" data-testid="auto-verification-excerpt">{t('shared:autoCheck.excerpt', 'La source officielle a changé : le résumé est pour l’instant un extrait mot pour mot de la fiche officielle. La version facile à lire sera réécrite à partir de la nouvelle version de la source.')}</p>
       ) : a.textsWrittenAt ? (
         <p className="mt-1">{t('shared:autoCheck.written', 'Le résumé et la version facile à lire ont été rédigés automatiquement à partir de la source officielle, puis contrôlés automatiquement.')}</p>
@@ -48,4 +51,7 @@ export default function AutoVerificationNote({ record, kind }) {
       {url ? <a href={url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block font-medium text-emerald-950 underline underline-offset-2">{t('shared:autoCheck.open', 'Consulter la source')}</a> : null}
     </div>
   );
+  // Catalogue (12/11/2026): the official fiche itself (Level 1), folded when the record also has written texts
+  if (!a.official) return note;
+  return <>{note}<div className="mt-4"><OfficialContent official={a.official} folded={a.textsMode !== 'OFFICIAL_SOURCE'} /></div></>;
 }

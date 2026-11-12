@@ -1,106 +1,140 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import SEO from '@/components/SEO';
+import { client } from '@/api/client';
+import { Button } from '@/components/ui/button';
 import DispositifCard from '@/components/cards/DispositifCard';
 import LoadError from '@/components/LoadError';
 import PageHeader from '@/components/layout/PageHeader';
 import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
+import { ActiveFilters, CatalogBody, ChoiceChips, FilterField, HeroSearch, MobileFilters, Pager, ResultsBar, SELECT } from '@/components/layout/catalog';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useT } from '@/i18n';
 
+/**
+ * Catalogue (12/11/2026) — « Dispositifs et guides officiels »: the local programmes verified on their organisation's page and, since the catalogue work, the
+ * official Service-Public fiches that explain a right, a rule or a public programme (neither a benefit nor a procedure). Hundreds of records: the list is paged,
+ * searchable and filtered on the server (/api/dispositifs?page=…), in the shared catalogue layout of Aides and Démarches.
+ */
+const LIMIT = 20;
+/** @typedef {{ slug: string, label: string }} TaxonomyItem */
+/** @param {unknown} v */
+const parsePage = (v) => { const n = Number.parseInt(String(v ?? '1'), 10); return Number.isFinite(n) && n >= 1 ? n : 1; };
+
 export default function Dispositifs() {
-    const { t } = useT('dispositifs');
-    const [dispositifs, setDispositifs] = useState(/** @type {any[]} */ ([]));
-    const [loading, setLoading] = useState(true);
-    const [filterDept, setFilterDept] = useState('');
-    const [filterPublic, setFilterPublic] = useState('');
-    const [failed, setFailed] = useState(false); const [attempt, setAttempt] = useState(0);
+  const { t } = useT('dispositifs');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const q = (searchParams.get('q') || '').trim();
+  const category = (searchParams.get('category') || '').trim();
+  const scope = ['local', 'national'].includes(searchParams.get('scope') || '') ? String(searchParams.get('scope')) : '';
+  const page = parsePage(searchParams.get('page'));
+  const [queryInput, setQueryInput] = useState(q);
+  useEffect(() => { setQueryInput(q); }, [q]);
 
-    useEffect(() => {
-        const fetchDispositifs = async () => {
-            setLoading(true); setFailed(false);
-            try {
-                let url = '/api/dispositifs';
-                const params = new URLSearchParams();
-                if (filterDept) params.append('departement', filterDept);
-                if (filterPublic) params.append('public', filterPublic);
+  const { data: taxonomy } = useQuery({ queryKey: ['taxonomy'], queryFn: () => client.taxonomy.get() });
+  /** @type {TaxonomyItem[]} */
+  const categories = /** @type {any} */ (taxonomy)?.categories || [];
 
-                if (params.toString()) url += `?${params.toString()}`;
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
+    queryKey: ['dispositifs', { q, category, scope, page }],
+    queryFn: async () => {
+      const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
+      if (q) params.set('q', q); if (category) params.set('category', category); if (scope) params.set('scope', scope);
+      const res = await fetch(`/api/dispositifs?${params}`);
+      if (!res.ok) throw new Error(`dispositifs ${res.status}`);
+      const body = await res.json();
+      // an older server answers the plain array: paged here
+      if (Array.isArray(body)) return { items: body.slice((page - 1) * LIMIT, page * LIMIT), pagination: { total: body.length, totalPages: Math.max(1, Math.ceil(body.length / LIMIT)), hasNext: page * LIMIT < body.length } };
+      return body;
+    },
+  });
+  /** @type {any[]} */
+  const items = data?.items || [];
+  const pagination = data?.pagination || {};
+  const total = typeof pagination.total === 'number' ? pagination.total : items.length;
 
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`dispositifs ${res.status}`);
-                const data = await res.json();
-                setDispositifs(Array.isArray(data) ? data : []);
-            } catch {
-                setFailed(true);   // an outage is said as such, never shown as « aucun dispositif »
-            } finally {
-                setLoading(false);
-            }
-        };
+  /** @param {string} key @param {string} value */
+  const setParam = (key, value) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value); else next.delete(key);
+    if (key !== 'page') next.delete('page');
+    setSearchParams(next);
+  };
+  const clearFilters = () => setSearchParams({});
+  const hasFilters = Boolean(q || category || scope);
+  const categoryName = (/** @type {string} */ slug) => categories.find((c) => c.slug === slug)?.label || slug;
+  const scopeOptions = [
+    { value: '', label: t('dispositifs:scope.all', 'Tout') },
+    { value: 'local', label: t('dispositifs:scope.local', 'Programmes locaux') },
+    { value: 'national', label: t('dispositifs:scope.national', 'Règles et droits nationaux') },
+  ];
+  /** @typedef {{ key: string, label: string, onRemove: () => void, lang?: string }} ActiveFilter */
+  /** @type {ActiveFilter[]} */
+  const activeFilters = /** @type {ActiveFilter[]} */ ([
+    q && { key: 'q', label: `« ${q} »`, onRemove: () => setParam('q', '') },
+    category && { key: 'category', label: categoryName(category), lang: 'fr', onRemove: () => setParam('category', '') },
+    scope && { key: 'scope', label: scopeOptions.find((o) => o.value === scope)?.label || scope, onRemove: () => setParam('scope', '') },
+  ].filter(Boolean));
 
-        fetchDispositifs();
-    }, [filterDept, filterPublic, attempt]);
+  /** @param {string} prefix */
+  const renderFilters = (prefix) => (
+    <div className="space-y-5">
+      <FilterField id={`${prefix}dispositifs-category`} label={t('dispositifs:filters.category', 'Catégorie')}>
+        <select id={`${prefix}dispositifs-category`} className={SELECT} value={category} onChange={(e) => setParam('category', e.target.value)}>
+          <option value="">{t('dispositifs:filters.all', 'Toutes')}</option>
+          {categories.map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
+        </select>
+      </FilterField>
+      {hasFilters && <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('dispositifs:filters.reset', 'Réinitialiser')}</Button>}
+    </div>
+  );
+  const countText = t('dispositifs:list.count', { count: total, defaultValue_one: '{{count}} dispositif ou guide', defaultValue_other: '{{count}} dispositifs et guides' });
+  const liveMessage = useMemo(() => (isLoading || isFetching ? t('dispositifs:list.loading', 'Chargement...') : error ? '' : countText), [isLoading, isFetching, error, countText, t]);
 
-    return (
-        <div className="min-h-screen bg-slate-50">
-            <SEO
-                title={t('dispositifs:list.title', 'Dispositifs territoriaux')}
-                description={t('dispositifs:seo.description', 'Découvrez les dispositifs locaux et territoriaux pour vous aider.')}
-                path="/dispositifs"
-            />
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-slate-50">
+      <SEO title={t('dispositifs:list.title2', 'Dispositifs et guides officiels')} description={t('dispositifs:seo.description2', 'Les programmes locaux et les fiches officielles qui expliquent vos droits et les règles qui s’appliquent.')} path="/dispositifs" />
+      <p className="sr-only" role="status" aria-live="polite">{liveMessage}</p>
+      <PageHeader title={t('dispositifs:list.title2', 'Dispositifs et guides officiels')} description={t('dispositifs:list.intro2', 'Les programmes locaux de Strasbourg et du Bas-Rhin, et les fiches officielles de Service-Public.gouv.fr qui expliquent un droit, une règle ou un programme public.')}>
+        <HeroSearch value={queryInput} onChange={setQueryInput} onSubmit={() => setParam('q', queryInput.trim())}
+          label={t('dispositifs:search.label', 'Rechercher un dispositif ou un guide')} placeholder={t('dispositifs:search.placeholder', 'Ex. : congé parental, surendettement, tutelle…')}
+          submitLabel={t('dispositifs:search.submit', 'Rechercher')} inputTestId="dispositifs-search-input" submitTestId="dispositifs-search-submit" maxLength={120} />
+      </PageHeader>
 
-            <PageHeader title={t('dispositifs:list.title', 'Dispositifs territoriaux')} description={t('dispositifs:list.intro', 'Les programmes locaux d’aide de Strasbourg, de l’Eurométropole et du Bas-Rhin, vérifiés sur leur source officielle.')} />
+      <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('dispositifs:filters.toggle', 'Filtres')}>
+        <ChoiceChips label={t('dispositifs:scope.label', 'Portée')} options={scopeOptions} value={scope} onChange={(v) => setParam('scope', v)} testId="dispositifs-scope" />
+        <ResultsBar summary={!error && !isLoading && items.length > 0 ? <span data-testid="dispositifs-count">{countText}</span> : null}>
+          <MobileFilters title={t('dispositifs:filters.toggle', 'Filtres')} count={category ? 1 : 0} render={renderFilters} onReset={clearFilters} />
+        </ResultsBar>
+        <ActiveFilters items={activeFilters} onClear={clearFilters} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* R18: no published programme at all (none verified on an official source yet) = said as such, with the next steps; the filters only when there is something to filter */}
-            {!loading && !failed && dispositifs.length === 0 && !filterDept && !filterPublic ? (
-                <EmptyCatalogue title={t('dispositifs:none.title', 'Aucun dispositif local n’est encore publié')} testId="dispositifs-none-published">
-                    <p>{t('dispositifs:none.why', 'Un dispositif n’apparaît ici qu’après sa vérification sur la page officielle de l’organisme qui le gère. Les dispositifs locaux pour le logement, comme le Fonds de solidarité pour le logement, sont en cours de vérification.')}</p>
-                    <p>{t('dispositifs:none.next', 'Les aides, les démarches et les lieux d’accueil ci-dessous sont déjà vérifiés.')}</p>
-                </EmptyCatalogue>
-            ) : (
-            <>
-            <div className="bg-white p-4 rounded-lg shadow mb-8 flex flex-wrap gap-4 items-center">
-                <label htmlFor="dispositifs-departement" className="sr-only">{t('dispositifs:filters.departement', 'Département')}</label>
-                <select id="dispositifs-departement"
-                    className="border p-2 rounded min-h-11"
-                    value={filterDept}
-                    onChange={(e) => setFilterDept(e.target.value)}
-                >
-                    <option value="">{t('dispositifs:filters.departement_all', 'Tous les départements')}</option>
-                    <option value="67">Bas-Rhin (67)</option>
-                    <option value="68">Haut-Rhin (68)</option>
-                </select>
-
-                <label htmlFor="dispositifs-public" className="sr-only">{t('dispositifs:filters.public', 'Public')}</label>
-                <select id="dispositifs-public"
-                    className="border p-2 rounded min-h-11"
-                    value={filterPublic}
-                    onChange={(e) => setFilterPublic(e.target.value)}
-                >
-                    <option value="">{t('dispositifs:filters.public_all', 'Tous publics')}</option>
-                    <option value="jeunes">{t('dispositifs:public.jeunes', 'Jeunes')}</option>
-                    <option value="seniors">{t('dispositifs:public.seniors', 'Seniors')}</option>
-                    <option value="familles">{t('dispositifs:public.familles', 'Familles')}</option>
-                    <option value="handicap">{t('dispositifs:public.handicap', 'Personnes handicapées')}</option>
-                </select>
+        {error ? (
+          <LoadError what={t('dispositifs:load.list', 'les dispositifs')} onRetry={() => refetch()} testId="dispositifs-error" />
+        ) : isLoading ? (
+          <div className="grid gap-5 md:grid-cols-2" data-testid="dispositifs-loading">
+            {[1, 2, 3, 4].map((n) => <div key={n} className="rounded-2xl border border-slate-200 bg-white p-5"><Skeleton className="h-5 w-3/4" /><Skeleton className="mt-2 h-4 w-full" /></div>)}
+          </div>
+        ) : items.length === 0 && !hasFilters ? (
+          <EmptyCatalogue title={t('dispositifs:none.title', 'Aucun dispositif local n’est encore publié')} testId="dispositifs-none-published">
+            <p>{t('dispositifs:none.why', 'Un dispositif n’apparaît ici qu’après sa vérification sur la page officielle de l’organisme qui le gère.')}</p>
+          </EmptyCatalogue>
+        ) : items.length === 0 ? (
+          <div className="rounded-lg border border-slate-200 bg-white p-6 text-center" data-testid="dispositifs-empty">
+            <p className="text-slate-700">{t('dispositifs:list.empty', 'Aucun dispositif trouvé pour ces critères.')}</p>
+            <Button type="button" variant="outline" className="mt-3 h-11" onClick={clearFilters}>{t('dispositifs:filters.reset', 'Réinitialiser')}</Button>
+          </div>
+        ) : (
+          <>
+            <div className={`grid gap-5 md:grid-cols-2 ${isFetching ? 'opacity-60 transition-opacity' : ''}`} aria-busy={isFetching || undefined} data-testid="dispositifs-list">
+              {items.map((d) => <DispositifCard key={d.id} dispositif={d} />)}
             </div>
-
-            {loading ? (
-                <p role="status">{t('dispositifs:list.loading', 'Chargement...')}</p>
-            ) : failed ? (
-                <LoadError what={t('dispositifs:load.list', 'les dispositifs')} onRetry={() => setAttempt((n) => n + 1)} testId="dispositifs-error" />
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="dispositifs-list">
-                    {dispositifs.map((/** @type {{ id: string | number }} */ d) => (
-                        <DispositifCard key={d.id} dispositif={d} />
-                    ))}
-                    {dispositifs.length === 0 && (
-                        <p className="col-span-3 text-center text-gray-700" data-testid="dispositifs-empty">{t('dispositifs:list.empty', 'Aucun dispositif trouvé pour ces critères.')}</p>
-                    )}
-                </div>
-            )}
-            </>
-            )}
-            </div>
-        </div>
-    );
+            <Pager page={page} totalPages={pagination.totalPages || 1} hasNext={Boolean(pagination.hasNext)} onPage={(p) => setParam('page', String(p))}
+              label={t('dispositifs:pagination.nav', 'Pages des dispositifs')} previous={t('dispositifs:pagination.previous', 'Précédent')} next={t('dispositifs:pagination.next', 'Suivant')}
+              status={t('dispositifs:pagination.page', 'Page {{page}} sur {{total}}', { page, total: pagination.totalPages || 1 })} />
+          </>
+        )}
+      </CatalogBody>
+    </div>
+  );
 }

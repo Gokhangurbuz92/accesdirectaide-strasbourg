@@ -4,6 +4,14 @@ import { EXCLUSION_CLAUSE, withoutExclusions } from './finess-labels.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
 import { expandQueryWithSynonyms } from './search-utils.js';
+import { categoryVariants } from '../_services/verification/classify.js';
+/** Catalogue (12/11/2026): every stored value meaning this taxonomy category (« social », « santé »… for social-sante) @param {string} c */
+/**
+ * Catalogue (12/11/2026): at equal quality, the records written and checked for the platform come first, then the reproduced official fiches that serve a
+ * subdomain of the reference, then the others — a thousand official fiches published the same night must not push the RSA or the APL off the first page.
+ */
+const CURATED_FIRST = sql`(coalesce(auto_check->'texts'->>'mode', '') = 'OFFICIAL_SOURCE') ASC, (auto_check->'classification'->>'subdomain' IS NULL) ASC,`;
+const categoryIn = (c) => sql`"categorie" IN (${sql.join(categoryVariants(c).map((v) => sql`${v}`), sql`, `)})`;
 import { buildProvenance } from '../_utils/provenance.js';
 
 // DTA S3B: `search_vector` is NOT created by any migration of this repository (drizzle/*.sql, src/db/schema*). PostgreSQL resolves a column at parse time, even inside a CASE branch,
@@ -117,7 +125,9 @@ export function wordPlan(q, columns, titleColumn, sv, extra) {
   if (!words.length) return null;
   const group = (w, cols) => sql`(${sql.join(wordTerms(w).flatMap((t) => [...cols.map((c) => termMatch(FOLDED(c), t)), ...(extra && cols.length > 1 ? [extra(t)] : [])]), sql.raw(' OR '))}${cols.length > 1 ? svOr(sv, w) : sql``})`;
   const count = (cols) => sql.join(words.map((w) => sql`(CASE WHEN ${group(w, cols)} THEN 1 ELSE 0 END)`), sql.raw(' + '));
-  return { words, matchCount: sql`(${count(columns)})`, titleHits: sql`(${count([titleColumn])})` };
+  // 12/11/2026: the word itself in the title weighs more than a synonym of it (« hébergement » ranked « Maison : travaux extérieurs » first through « maison »)
+  const exact = (cols) => sql.join(words.map((w) => { const base = foldAccents(w.length > 4 && !w.includes(' ') ? w.replace(/[sx]$/, '') : w); return sql`(CASE WHEN (${sql.join(cols.map((c) => termMatch(FOLDED(c), base)), sql.raw(' OR '))}) THEN 1 ELSE 0 END)`; }), sql.raw(' + '));
+  return { words, matchCount: sql`(${count(columns)})`, titleHits: sql`(${count([titleColumn])})`, exactTitleHits: sql`(${exact([titleColumn])})`, hits: (cols) => sql`(${exact(cols)})` };
 }
 
 /**
@@ -196,7 +206,7 @@ export async function searchAides(params) {
     const t = foldAccents(effectiveTheme);
     const pattern = themePattern(t);
     conditions.push(sql`("theme" = ${effectiveTheme} OR "categoryId" = ${effectiveTheme} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Aide"."categoryId" AND c.slug = ${effectiveTheme})
-      OR ${FOLDED('"categorie"')} = ${t}${pattern ? sql` OR (${FOLDED('"titre"')} || ' ' || ${FOLDED('"description"')}) ~ ${pattern}` : sql``})`);
+      OR ${FOLDED('"categorie"')} = ${t} OR ${categoryIn(effectiveTheme)}${pattern ? sql` OR (${FOLDED('"titre"')} || ' ' || ${FOLDED('"description"')}) ~ ${pattern}` : sql``})`);
   }
 
   if (sousTheme) {
@@ -284,7 +294,7 @@ export async function searchAides(params) {
   };
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
-    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "cest_quoi" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END END as rank`;
+    selectRank = plan ? sql`, (${plan.exactTitleHits} * 3 + ${plan.titleHits}) as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "cest_quoi" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to date.
@@ -296,7 +306,7 @@ export async function searchAides(params) {
     // P2: quality sort should remain stable and useful, even when many scores are equal.
     if (dbColumn === 'quality_score') {
       orderBy = sortDirection === 'DESC'
-        ? sql`ORDER BY ${safeColumn} DESC, published_at DESC, id ASC`
+        ? sql`ORDER BY ${safeColumn} DESC, ${CURATED_FIRST} published_at DESC, id ASC`
         : sql`ORDER BY ${safeColumn} ASC, published_at DESC, id ASC`;
     } else {
       orderBy = sortDirection === 'DESC'
@@ -474,7 +484,8 @@ export async function searchDemarches(params) {
   const plan = q ? wordPlan(q, ['"titre"', '"description_courte"'], '"titre"', sv) : null;
 
   if (effectiveCategory) {
-    conditions.push(sql`("categoryId" = ${effectiveCategory} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Demarche"."categoryId" AND c.slug = ${effectiveCategory}))`);
+    // Catalogue (12/11/2026): the démarche's own category too — the chips filtered on the category relation only, which the verified records do not carry
+    conditions.push(sql`("categoryId" = ${effectiveCategory} OR EXISTS (SELECT 1 FROM "AidCategory" c WHERE c.id = "Demarche"."categoryId" AND c.slug = ${effectiveCategory}) OR ${categoryIn(effectiveCategory)})`);
   }
 
   if (situation) {
@@ -557,7 +568,7 @@ export async function searchDemarches(params) {
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
     // Use simple ordering by titre match when search_vector is missing
-    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
+    selectRank = plan ? sql`, (${plan.exactTitleHits} * 3 + ${plan.titleHits}) as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to date.
@@ -568,7 +579,7 @@ export async function searchDemarches(params) {
 
     if (dbColumn === 'quality_score') {
       orderBy = sortDirection === 'DESC'
-        ? sql`ORDER BY ${safeColumn} DESC, published_at DESC, id ASC`
+        ? sql`ORDER BY ${safeColumn} DESC, ${CURATED_FIRST} published_at DESC, id ASC`
         : sql`ORDER BY ${safeColumn} ASC, published_at DESC, id ASC`;
     } else {
       orderBy = sortDirection === 'DESC'
@@ -576,7 +587,7 @@ export async function searchDemarches(params) {
         : sql`ORDER BY ${safeColumn} ASC, id ASC`;
     }
   } else if (q) {
-    selectRank = plan ? sql`, ${plan.titleHits} as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
+    selectRank = plan ? sql`, (${plan.exactTitleHits} * 3 + ${plan.titleHits}) as rank` : sql`, CASE WHEN "titre" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 ELSE 0 END as rank`;
     orderBy = sql`ORDER BY rank DESC, published_at DESC, id ASC`;
   } else {
     // Default without q: quality first, then recent.
@@ -768,8 +779,10 @@ export async function searchStructures(params) {
   };
 
   if (q && (effectiveSort === 'pertinence' || sortField === 'pertinence')) {
-    selectRank = plan ? sql`, (${serviceHits} * 2 + ${plan.titleHits}) as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
-    orderBy = sql`ORDER BY rank DESC, quality_score DESC, nom ASC, id ASC`;
+    // 12/11/2026: a place whose own name or type is the word (« CCAS ») comes before a place that only declares a service mentioning it
+    selectRank = plan ? sql`, (${plan.exactTitleHits} * 4 + ${plan.hits(['"type_structure"'])} * 4 + ${serviceHits} * 2 + ${plan.titleHits}) as rank` : sql`, CASE WHEN ${svFlag(sv)} THEN ${svRank(sv, q)} ELSE CASE WHEN "nom" ILIKE ${'%' + q + '%'} THEN 2 WHEN "description_courte" ILIKE ${'%' + q + '%'} THEN 1 WHEN ${serviceMatch} THEN 1 ELSE 0 END END as rank`;
+    // 12/11/2026: at equal relevance, the places of Strasbourg first (the platform's territory), then the rest of the département
+    orderBy = sql`ORDER BY rank DESC, (lower(coalesce("ville", '')) LIKE 'strasbourg%') DESC, quality_score DESC, nom ASC, id ASC`;
   } else if (sortField === 'pertinence') {
     // Relevance sorting requires q. Without q we fallback to quality.
     orderBy = sql`ORDER BY quality_score DESC, "updatedAt" DESC, id ASC`;

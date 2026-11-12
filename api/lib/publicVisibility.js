@@ -122,16 +122,16 @@ export function visibleSql(kind, opts = {}) {
  * Reviewer identity (verified_by) and hold reasons (publication_hold) are internal review data: never part of a public payload (admin reviewers keep them).
  * @template {Record<string, any> | null | undefined} T @param {T} row @param {boolean} [isAdmin] @returns {T}
  */
-export function stripReviewFields(row, isAdmin = false) {
+export function stripReviewFields(row, isAdmin = false, opts = {}) {
   if (!row) return row;
   // an administrator keeps the internal data, and sees the record's public line too (the owner looking at a public page)
-  if (isAdmin) { const a = publicAutoCheck(/** @type {any} */ (row).auto_check); return /** @type {T} */ (a ? { ...row, verification_auto: a } : row); }
+  if (isAdmin) { const a = publicAutoCheck(/** @type {any} */ (row).auto_check, opts); return /** @type {T} */ (a ? { ...row, verification_auto: a } : row); }
   // PKG-11 audit: also the staff identities and internal reasons other writers keep on the row (updatedBy and falc_reviewed_by hold administrator e-mails;
   // commentaire_statut holds the internal suspension / reactivation reason)
   // automatic verification chain: the run's bookkeeping (run ids, scores, drafts) is internal; the public part is publicAutoCheck
   const { verified_by: _reviewer, publication_hold: _hold, updatedBy: _by, falc_reviewed_by: _falcBy, commentaire_statut: _why, falc_field_reviews: _fr, auto_check: _auto, services_externes: _ext, ...rest } = /** @type {Record<string, any>} */ (row);
   const review = falcFieldReview(row);   // ADM-11: per FALC field, the review date while the text is still the one reviewed (no reviewer identity)
-  const auto = publicAutoCheck(/** @type {any} */ (row).auto_check);
+  const auto = publicAutoCheck(/** @type {any} */ (row).auto_check, opts);
   // R11 / D05: the services other platforms list, each with its producer and that producer's authority — never the run's bookkeeping (places, absences)
   const ext = publicServices(/** @type {any} */ (row).services_externes);
   // R31: a published simplified text that asserts a right (« Vous avez droit si… ») is withheld until the chain rewrites it; the standard text stays
@@ -148,14 +148,31 @@ export function stripReviewFields(row, isAdmin = false) {
  * as the Annuaire de l'administration lists them. Never the run's internal data (ids, scores, drafts, refused sentences).
  * @param {any} a the row's auto_check
  */
-export function publicAutoCheck(a) {
+/**
+ * Catalogue (12/11/2026): the official fiche a Level 1 record reproduces (Licence Ouverte 2.0) — publisher, licence, address, the file it comes from and its date,
+ * its last update, its whole text (detail views only: a list never carries it).
+ * @param {any} o
+ */
+export function publicOfficial(o) {
+  if (!o || typeof o !== 'object' || o.mode !== 'OFFICIAL_SOURCE' || typeof o.text !== 'string' || !o.text.trim()) return null;
+  const list = (/** @type {unknown} */ v) => /** @type {any[]} */ (Array.isArray(v) ? v : []);
+  return { publisher: o.publisher || null, licence: o.licence || null, licenceUrl: o.licenceUrl || null, sourceId: o.sourceId || null, title: o.title || null, url: o.url || null,
+    text: o.text, truncated: o.truncated === true, importantChangeAt: o.importantChangeAt || null, modifiedAt: o.modifiedAt || null,
+    archive: o.archive ? { url: o.archive.url || null, file: o.archive.file || null, date: o.archive.date || null } : null,
+    online: list(o.online).map((x) => ({ title: x?.title || null, url: x?.url || null, type: x?.type || null })).filter((x) => /^https:\/\//.test(String(x.url))),
+    references: list(o.references).map((x) => ({ title: x?.title || null, url: x?.url || null })).filter((x) => /^https:\/\//.test(String(x.url))) };
+}
+const TEXTS_MODES = new Set(['OFFICIAL_EXCERPT', 'OFFICIAL_SOURCE']);
+/** @param {any} a @param {{ detail?: boolean }} [opts] */
+export function publicAutoCheck(a, opts = {}) {
   if (!a || typeof a !== 'object' || !a.checkedAt) return null;
   const list = (/** @type {unknown} */ v) => /** @type {any[]} */ (Array.isArray(v) ? v : []);
   return { checkedAt: a.checkedAt, origin: a.origin || null, sourceUrl: a.sourceUrl || null, sourceTitle: a.sourceTitle || null, importantChangeAt: a.importantChangeAt || null,
-    officialCheckedAt: a.officialCheckedAt || null, textsWrittenAt: a.texts?.at || null, textsMode: a.texts?.mode === 'OFFICIAL_EXCERPT' ? 'OFFICIAL_EXCERPT' : (a.texts?.at ? 'WRITTEN' : null),
+    officialCheckedAt: a.officialCheckedAt || null, textsWrittenAt: a.texts?.at || null, textsMode: TEXTS_MODES.has(a.texts?.mode) ? a.texts.mode : (a.texts?.at ? 'WRITTEN' : null), falcPending: a.texts?.mode === 'OFFICIAL_SOURCE' || undefined,
     sources: list(a.sources).map((s) => ({ kind: s?.kind || null, url: s?.url || null, updatedAt: s?.updatedAt || null })),
     phones: list(a.phones).map((p) => ({ numero: p?.numero || null, precision: p?.precision || null })).filter((p) => p.numero),
-    accessiblePhone: list(a.accessiblePhone).map((p) => ({ url: p?.url || null, precision: p?.precision || null })).filter((p) => p.url), contactForm: a.contactForm || null };
+    accessiblePhone: list(a.accessiblePhone).map((p) => ({ url: p?.url || null, precision: p?.precision || null })).filter((p) => p.url), contactForm: a.contactForm || null,
+    ...(opts.detail ? { official: publicOfficial(a.official) } : { hasOfficial: Boolean(publicOfficial(a.official)) || undefined }) };
 }
 
 export const FALC_TEXT_FIELDS = ['summary_falc', 'conditions_falc', 'montant_falc'];

@@ -5,6 +5,7 @@
  * dispositifs says why and where to go; an outage of Mon Coffre offers to try again instead of « Se connecter »; « Mes rendez-vous » opens the conversation
  * with the organization. The server-side professional rules are in tests/integration/r18-pro-journeys-db.test.js (real PostgreSQL).
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
@@ -25,7 +26,8 @@ import Dispositifs from '../../src/pages/Dispositifs.jsx';
 import CompteCoffre from '../../src/pages/CompteCoffre.jsx';
 import CompteRendezVous from '../../src/pages/CompteRendezVous.jsx';
 
-const wrap = (C) => render(createElement(HelmetProvider, null, createElement(MemoryRouter, null, createElement(C))));
+// Catalogue (12/11/2026): the Dispositifs page reads through React Query like Aides and Démarches
+const wrap = (C) => render(createElement(QueryClientProvider, { client: new QueryClient({ defaultOptions: { queries: { retry: false } } }) }, createElement(HelmetProvider, null, createElement(MemoryRouter, null, createElement(C)))));
 const mkRes = () => ({ statusCode: 0, body: null, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; }, end() { return this; } });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); Object.values(api).forEach((f) => f.mockReset()); messaging.getOrCreateFromAppointment.mockReset(); navigate.mockReset(); });
 

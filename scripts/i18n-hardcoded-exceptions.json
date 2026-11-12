@@ -362,18 +362,6 @@
    "reason": "Literal URL fragment the person must look for in their link (in <code>)."
   },
   {
-   "file": "src/pages/Dispositifs.jsx",
-   "text": "Bas-Rhin (67)",
-   "category": "proper-name",
-   "reason": "Name and number of a French département."
-  },
-  {
-   "file": "src/pages/Dispositifs.jsx",
-   "text": "Haut-Rhin (68)",
-   "category": "proper-name",
-   "reason": "Name and number of a French département."
-  },
-  {
    "file": "src/pages/Confidentialite.jsx",
    "text": "Cookies",
    "category": "trans-component",

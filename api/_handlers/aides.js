@@ -155,7 +155,7 @@ async function handler(req, res) {
             }
 
             const { sourceDocument, ...aideRest } = aide;
-            const safeAide = stripReviewFields(aideRest, isAdmin);   // reviewer identity and hold reasons are internal
+            const safeAide = stripReviewFields(aideRest, isAdmin, { detail: true });   // reviewer identity and hold reasons are internal
             const payload = {
                 ...safeAide,
                 provenance: {

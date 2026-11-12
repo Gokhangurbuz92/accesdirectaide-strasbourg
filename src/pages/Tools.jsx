@@ -6,6 +6,7 @@ import SEO from '@/components/SEO';
 import LoadError from '@/components/LoadError';
 import PageHeader from '@/components/layout/PageHeader';
 import { OFFICIAL_TOOLS, OFFICIAL_TOOLS_CHECKED_AT, toolText } from '@/config/officialTools';
+import OfficialServices from '@/components/OfficialServices';
 import { Compass, ExternalLink, Gavel, GraduationCap, HeartPulse, Home, Hourglass, IdCard, Landmark, Scale } from 'lucide-react';
 import { CONTAINER, ChoiceChips, FilterField, SELECT } from '@/components/layout/catalog';
 import { formatDate, useLanguage, useT } from '@/i18n';
@@ -200,6 +201,7 @@ export default function Tools() {
             </section>
             )}
             <OfficialTools />
+            <OfficialServices />
             </div>
         </div>
     );
