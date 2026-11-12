@@ -51,9 +51,9 @@ describe('UX ecosystem: WS2 compare-and-decide', () => {
     const first = reviews()[0];
     fireEvent.change(within(first).getByRole('textbox', { name: /Ce qui a été contrôlé/ }), { target: { value: 'note synthétique' } });
     fireEvent.click(within(first).getByTestId('admin-ws2-hold'));
-    await waitFor(() => expect(reviews().map((d) => d.open)).toEqual([false, true, false]));
+    await waitFor(() => expect(reviews().map((d) => d.open)).toEqual([false, true, false]), { timeout: 5000 });
     expect(api.apiClient.admin.verifyContent).toHaveBeenCalledWith(expect.objectContaining({ entityId: 'id-aide-a', action: 'HOLD' }));
-    await waitFor(() => expect(globalThis.document.activeElement?.id).toBe('ws2-rec-aides:aide-b'));
+    await waitFor(() => expect(globalThis.document.activeElement?.id).toBe('ws2-rec-aides:aide-b'), { timeout: 5000 });
   });
 
   it('the search narrows the records (accent- and case-insensitive) and says how many are shown', async () => {

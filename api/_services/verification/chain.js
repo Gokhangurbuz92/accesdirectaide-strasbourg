@@ -98,7 +98,9 @@ async function firstAutomaticDecision(db) {
 const SP_ID = /service-public\.(?:gouv\.)?fr\/(?:particuliers|associations|professionnels-entreprises)\/vosdroits\/([FN]\d+)/i;
 /** the territories a Service-Public fiche may cover for a record of the Bas-Rhin (the archive says « France entière » or « Métropole ») */
 const OUR_COVERAGE = /^\s*$|France enti[èe]re|M[ée]tropole|France m[ée]tropolitaine|Alsace|Moselle|Bas-Rhin|Grand Est/i;
-const day = (d) => (d ? new Date(d).toISOString().slice(0, 10) : null);
+// a calendar date without a time zone (FINESS « 2024-06-17 00:00:00 ») is that day everywhere: reading it as local time moved it one day back on a
+// Paris-time machine (K12 first night, 12/11/2026: 745 descriptions rewritten when the UTC server wrote the right day)
+export const day = (d) => { if (!d) return null; if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?$/.test(d.trim())) return d.trim().slice(0, 10); const t = new Date(d); return Number.isNaN(t.getTime()) ? null : t.toISOString().slice(0, 10); };
 const frDay = (d) => { if (!d) return null; const [y, m, dd] = String(d).slice(0, 10).split('-'); return `${dd}/${m}/${y}`; };
 const squash = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');

@@ -102,4 +102,14 @@ describe('bulk duplicate review page', () => {
     await waitFor(() => expect(screen.queryByTestId('admin-duplicate-pair')).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(rows()[0]));
   });
+
+  it('the decision toolbar and the compare drawer stay above the cookie banner (WCAG 2.2 SC 2.4.11: --cookie-banner-offset)', async () => {
+    api.apiClient.admin.getDuplicateRegister.mockResolvedValue({ total: PAIRS.length, pairs: PAIRS });
+    render(createElement(AdminDuplicates));
+    await waitFor(() => expect(rows().length).toBeGreaterThan(1));
+    expect(screen.getByTestId('dup-toolbar').className).toContain('bottom-[var(--cookie-banner-offset,0px)]');
+    expect(screen.getByTestId('dup-toolbar').className).not.toMatch(/(^|\s)bottom-0(\s|$)/);
+    fireEvent.click(within(rows()[0]).getByTestId('dup-compare'));
+    expect((await screen.findByTestId('admin-duplicate-pair')).className).toContain('bottom-[calc(4rem+var(--cookie-banner-offset,0px))]');
+  });
 });

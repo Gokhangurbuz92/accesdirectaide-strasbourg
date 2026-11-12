@@ -186,7 +186,7 @@ export default function CatalogueEditor({ kind, title, fields, listPath }) {
             )}
           </div>
         ))}
-        <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-slate-300 bg-white px-4 py-3 shadow-[0_-2px_6px_rgba(0,0,0,0.06)] md:-mx-6 md:px-6" data-testid="admin-editor-actions">
+        <div className="sticky bottom-[var(--cookie-banner-offset,0px)] z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-slate-300 bg-white px-4 py-3 shadow-[0_-2px_6px_rgba(0,0,0,0.06)] md:-mx-6 md:px-6" data-testid="admin-editor-actions">
           <Button type="submit" disabled={busy} className="min-h-11" aria-keyshortcuts="Control+S Meta+S">{id ? t('admin:catalogue_editor.save', 'Enregistrer') : t('admin:catalogue_editor.create_draft', 'Créer le brouillon')}</Button>
           <p role="status" aria-live="polite" data-testid="admin-editor-status" className="text-sm text-slate-900">{busy ? t('common:form.status.saving', 'Enregistrement en cours…') : msg}</p>
           {dirty && !busy ? <p className="text-sm font-medium text-amber-900" data-testid="admin-editor-dirty">{t('admin:catalogue_editor.unsaved', 'Modifications non enregistrées')}</p> : null}

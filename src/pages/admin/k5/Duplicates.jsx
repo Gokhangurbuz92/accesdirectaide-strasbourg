@@ -355,7 +355,7 @@ export default function AdminDuplicates() {
 
       {drawerPair ? (
         <aside role="dialog" aria-modal="false" aria-labelledby="dup-drawer-title" data-testid="admin-duplicate-pair"
-          className="fixed inset-x-0 top-0 bottom-16 z-40 overflow-y-auto border-s bg-background p-3 shadow-lg md:start-auto md:end-0 md:w-[42rem]">
+          className="fixed inset-x-0 top-0 bottom-[calc(4rem+var(--cookie-banner-offset,0px))] z-40 overflow-y-auto border-s bg-background p-3 shadow-lg md:start-auto md:end-0 md:w-[42rem]">
           <div className="flex items-start justify-between gap-2">
             <h2 id="dup-drawer-title" ref={drawerHeading} tabIndex={-1} className="font-semibold focus:outline-none">{t('admin:k5.duplicates.compare_heading', 'Comparer les deux fiches')}</h2>
             <div className="flex gap-1">
@@ -431,7 +431,7 @@ export default function AdminDuplicates() {
         </div>
       ) : null}
 
-      <div className="fixed inset-x-0 bottom-0 z-40 flex flex-wrap items-center justify-between gap-2 border-t bg-background px-4 py-2 text-sm shadow" role="region" aria-label={t('admin:k5.duplicates.toolbar', 'Envoi des décisions')} data-testid="dup-toolbar">
+      <div className="fixed inset-x-0 bottom-[var(--cookie-banner-offset,0px)] z-40 flex flex-wrap items-center justify-between gap-2 border-t bg-background px-4 py-2 text-sm shadow" role="region" aria-label={t('admin:k5.duplicates.toolbar', 'Envoi des décisions')} data-testid="dup-toolbar">
         <span aria-live="polite" data-testid="dup-toolbar-counts">{t('admin:k5.duplicates.toolbar_counts', '{{ready}} prête(s) · {{incomplete}} incomplète(s) · {{left}} paire(s) restante(s) · {{done}} décidée(s) ici', { ready: ready.length, incomplete, left: data.pairs.length, done: decidedCount })}</span>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" disabled={!selected.size || busy} onClick={() => setSelected(new Set())}>{t('admin:k5.duplicates.clear_selection', 'Vider la sélection')}</Button>
