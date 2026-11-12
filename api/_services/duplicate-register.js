@@ -34,11 +34,8 @@ export function distinctivePartsClose(nameA, nameB) {
   return trigramSimilarity(ra, rb) >= 0.5;
 }
 
-export async function candidates({ db = defaultDb, limit = 100 } = {}) {
-  // R47 (load acceptance on 1,600 structures): the pairs are found by five equality joins (hash joins: same SIRET, RNA, FINESS, address + postcode, and same
-  // postcode for the name similarity) instead of one self-join on an OR of them, which compared every structure with every other one (1.3 million pairs on
-  // a Production-sized directory, ~0.3 s on each administration dashboard load). Same pairs, same columns, same order (ties now in a stable order: by identifiers).
-  const rows = (await db.execute(sql`
+// the proposed pairs (the five equality joins) with their identity flags, pairs with an active decision excluded — shared by the list and by the count
+const pairsSql = () => sql`
     WITH s AS MATERIALIZED (SELECT id, nom, code_postal AS cp, ville, regexp_replace(lower(coalesce(adresse, '')), '[^a-z0-9]+', '', 'g') AS addr,
         nullif(regexp_replace(coalesce(siret, ''), '[^0-9]', '', 'g'), '') AS siret, nullif(upper(regexp_replace(coalesce(rna_id, ''), '[^0-9A-Za-z]', '', 'g')), '') AS rna,
         nullif(regexp_replace(coalesce(numero_finess, ''), '[^0-9A-Za-z]', '', 'g'), '') AS finess, verification_status AS vs, publication_hold IS NOT NULL AS held FROM "Structure"),   -- the same number written differently (spaces, dots)
@@ -46,16 +43,37 @@ export async function candidates({ db = defaultDb, limit = 100 } = {}) {
       UNION SELECT a.id, b.id FROM s a JOIN s b ON a.rna = b.rna AND a.id < b.id
       UNION SELECT a.id, b.id FROM s a JOIN s b ON a.finess = b.finess AND a.id < b.id
       UNION SELECT a.id, b.id FROM s a JOIN s b ON a.addr = b.addr AND a.addr <> '' AND a.cp IS NOT DISTINCT FROM b.cp AND a.id < b.id
-      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.cp = b.cp AND a.id < b.id AND similarity(coalesce(a.nom, ''), coalesce(b.nom, '')) >= 0.6)
-    SELECT a.id AS a, b.id AS b, a.nom AS "nomA", b.nom AS "nomB", a.ville AS "villeA", b.ville AS "villeB",
+      UNION SELECT a.id, b.id FROM s a JOIN s b ON a.cp = b.cp AND a.id < b.id AND similarity(coalesce(a.nom, ''), coalesce(b.nom, '')) >= 0.6),
+    c AS (SELECT a.id AS a, b.id AS b, a.nom AS "nomA", b.nom AS "nomB", a.ville AS "villeA", b.ville AS "villeB",
       (a.siret IS NOT NULL AND a.siret = b.siret) AS "sameSiret", (a.rna IS NOT NULL AND a.rna = b.rna) AS "sameRna", (a.finess IS NOT NULL AND a.finess = b.finess) AS "sameFiness",
       (a.addr <> '' AND a.addr = b.addr AND a.cp IS NOT DISTINCT FROM b.cp) AS "sameAddress", round(similarity(coalesce(a.nom, ''), coalesce(b.nom, ''))::numeric, 2) AS "nameSimilarity",
       a.vs AS "decisionA", b.vs AS "decisionB", a.held AS "heldA", b.held AS "heldB"
     FROM p JOIN s a ON a.id = p.a JOIN s b ON b.id = p.b
-    WHERE NOT EXISTS (SELECT 1 FROM "StructureDuplicateDecision" d WHERE d."structureA" = a.id AND d."structureB" = b.id AND d."supersededAt" IS NULL)
-    ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC, 1, 2 LIMIT ${Math.min(Number(limit) || 100, 1000)}`)).rows;
+    WHERE NOT EXISTS (SELECT 1 FROM "StructureDuplicateDecision" d WHERE d."structureA" = a.id AND d."structureB" = b.id AND d."supersededAt" IS NULL))`;
+
+export async function candidates({ db = defaultDb, limit = 100 } = {}) {
+  // R47 (load acceptance on 1,600 structures): the pairs are found by five equality joins (hash joins: same SIRET, RNA, FINESS, address + postcode, and same
+  // postcode for the name similarity) instead of one self-join on an OR of them, which compared every structure with every other one (1.3 million pairs on
+  // a Production-sized directory, ~0.3 s on each administration dashboard load). Same pairs, same columns, same order (ties now in a stable order: by identifiers).
+  const rows = (await db.execute(sql`${pairsSql()}
+    SELECT * FROM c ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC, 1, 2 LIMIT ${Math.min(Number(limit) || 100, 1000)}`)).rows;
   const kept = rows.filter((r) => r.sameSiret || r.sameRna || r.sameFiness || r.sameAddress || distinctivePartsClose(r.nomA, r.nomB));
   return { ok: true, candidates: kept };
+}
+
+/**
+ * The number of pairs to examine (the administration dashboard's « À traiter »), not bounded by the list's page: the pairs proposed by an identifier or the
+ * address are counted in SQL; only the pairs proposed by the name alone come back, as distinct name couples with their count, for the same
+ * distinctivePartsClose rule as the list (two short strings per couple, no record).
+ */
+export async function countCandidates({ db = defaultDb } = {}) {
+  const [r] = (await db.execute(sql`${pairsSql()}
+    SELECT count(*) FILTER (WHERE "sameSiret" OR "sameRna" OR "sameFiness" OR "sameAddress")::int AS strong,
+      coalesce((SELECT json_agg(json_build_array(n."nomA", n."nomB", n.k)) FROM (SELECT "nomA", "nomB", count(*)::int AS k FROM c
+        WHERE NOT ("sameSiret" OR "sameRna" OR "sameFiness" OR "sameAddress") GROUP BY 1, 2) n), '[]'::json) AS names
+    FROM c`)).rows;
+  const names = typeof r?.names === 'string' ? JSON.parse(r.names) : (r?.names || []);
+  return { ok: true, total: Number(r?.strong || 0) + names.reduce((n, [x, y, k]) => n + (distinctivePartsClose(x, y) ? Number(k) : 0), 0) };
 }
 
 /** Both records in full (what the reviewer compares) with their versions, and the decisions of the pair (active and superseded). */
@@ -100,10 +118,12 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
     if (Object.prototype.hasOwnProperty.call(input || {}, 'expectedDecisionId')) {
       const [active] = (await tx.execute(sql`SELECT id, decision, "primaryId", "evidenceUrl", "versionA", "versionB" FROM "StructureDuplicateDecision" WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL LIMIT 1`)).rows;
       if (active && active.decision === decision && (active.primaryId || null) === primaryId && active.evidenceUrl === evidenceUrl && active.versionA === versionA && active.versionB === versionB) {
-        return { ok: true, status: 200, idempotent: true, decision: { id: active.id, decision, primaryId, held: decision === 'SAME_ENTITY' ? (primaryId === a ? b : a) : null, superseded: 0 } };
+        return { ok: true, status: 200, idempotent: true, decision: { id: active.id, decision, primaryId, held: decision === 'SAME_ENTITY' ? (primaryId === a ? b : a) : null, released: [], superseded: 0 } };
       }
       if ((active?.id || null) !== (input.expectedDecisionId || null)) return bad(409, 'PAIR_ALREADY_DECIDED', 'Cette paire a reçu une autre décision entre-temps : rechargez le registre et relisez-la.');
     }
+    // the decision(s) this one replaces, read before they are superseded: a record a SAME_ENTITY decision put aside must not stay aside once that decision is replaced
+    const previous = (await tx.execute(sql`SELECT id, decision, "primaryId" FROM "StructureDuplicateDecision" WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL`)).rows;
     const superseded = (await tx.execute(sql`UPDATE "StructureDuplicateDecision" SET "supersededAt" = NOW() WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL RETURNING id`)).rows.length;
     const [row] = await tx.insert(StructureDuplicateDecision).values({ structureA: a, structureB: b, decision, primaryId, evidenceUrl, note: note.slice(0, 1000), reviewerId: reviewer, versionA, versionB }).returning({ id: StructureDuplicateDecision.id });
     let held = null;
@@ -113,9 +133,24 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
       const r = await recordVerification({ entityType: 'structure', entityId: held, action: 'HOLD', holdReason: `${DUPLICATE_HOLD} : même organisation que « ${primary?.nom || primaryId} »`, reviewer: { id: reviewer, role } }, { db: tx });
       if (!r.ok) throw Object.assign(new Error('duplicate hold failed'), { code: r.code });
     }
+    // the hold of a replaced SAME_ENTITY decision is lifted — by the author of the new decision, through the verification ledger (RELEASE_HOLD only clears the
+    // hold: the record goes back to its own verification state, nothing is published that was not verified) — only when it is still this register's hold (a
+    // hold put by a person or the chain since is left as it is) and no other active SAME_ENTITY decision (another pair) still puts the record aside
+    const released = [];
+    const wasHeld = [...new Set(previous.filter((d) => d.decision === 'SAME_ENTITY' && [a, b].includes(d.primaryId)).map((d) => (d.primaryId === a ? b : a)))].filter((id) => id !== held);
+    for (const id of wasHeld) {
+      const [cur] = (await tx.execute(sql`SELECT publication_hold AS hold FROM "Structure" WHERE id = ${id}`)).rows;
+      if (!String(cur?.hold || '').startsWith(DUPLICATE_HOLD)) continue;
+      const [other] = (await tx.execute(sql`SELECT id FROM "StructureDuplicateDecision" WHERE "supersededAt" IS NULL AND decision = 'SAME_ENTITY' AND ("structureA" = ${id} OR "structureB" = ${id}) AND "primaryId" <> ${id} LIMIT 1`)).rows;
+      if (other) continue;
+      const r = await recordVerification({ entityType: 'structure', entityId: id, action: 'RELEASE_HOLD', reviewer: { id: reviewer, role },
+        evidenceNote: `Levée de la mise de côté « doublon » : la décision ${row.id} (${decision === 'DISTINCT' ? 'établissements distincts' : 'autre fiche conservée'}) remplace la décision précédente de la paire. ${evidenceUrl}`.slice(0, 2000) }, { db: tx });
+      if (!r.ok) throw Object.assign(new Error('duplicate hold release failed'), { code: r.code });
+      released.push(id);
+    }
     await tx.insert(AuditLog).values({ action: 'STRUCTURE_DUPLICATE_DECIDED', actor: reviewer, actor_id: reviewer, entity: 'Structure', entity_id: `${a}|${b}`,
-      details: { decision, primaryId, held, evidenceUrl, superseded, decisionId: row.id }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
-    return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, superseded } };
+      details: { decision, primaryId, held, released, evidenceUrl, superseded, decisionId: row.id }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
+    return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, released, superseded } };
   });
 }
 

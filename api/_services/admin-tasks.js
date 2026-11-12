@@ -7,7 +7,7 @@
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { ws2Queue } from './ws2-review.js';
-import { candidates as duplicateCandidates } from './duplicate-register.js';
+import { countCandidates as countDuplicateCandidates } from './duplicate-register.js';
 import { reviewQueue as proposalQueue } from './structure-proposals.js';
 import { listPending as falcPending } from './falc-governance.js';
 import { listOpen as openAccessRequests } from './dsr-review.js';
@@ -33,7 +33,7 @@ export async function adminTasks({ db = defaultDb, root } = {}) {
         FROM "Structure" WHERE statut IS DISTINCT FROM 'archive'`);
       return { total: r.total, verified: r.verified, rejected: r.rejected, onHold: r.onHold, never: r.never };
     }),
-    safe(async () => (await duplicateCandidates({ db })).candidates.length),
+    safe(async () => (await countDuplicateCandidates({ db })).total),   // every open pair (the list page shows at most its own page)
     safe(async () => (await proposalQueue(db, { status: 'PENDING' })).proposals.length),
     safe(async () => (await falcPending(db)).drafts.length),
     safe(async () => (await openAccessRequests(db)).requests.length),
