@@ -52,5 +52,14 @@
  "pagination.nav": "Pages of programmes",
  "pagination.previous": "Previous",
  "pagination.next": "Next",
- "pagination.page": "Page {{page}} of {{total}}"
+ "pagination.page": "Page {{page}} of {{total}}",
+ "preparing.title": "The list of programmes and guides is being prepared",
+ "preparing.why": "This list is being built from official sources: each local programme and each guide only appears here after it has been checked on the official page of the organisation concerned. Nothing has been published yet.",
+ "preparing.meanwhile": "In the meantime, these pages are already available:",
+ "preparing.aides": "Benefits",
+ "preparing.demarches": "Procedures",
+ "preparing.services": "Official online services (Tools page)",
+ "list.emptyPage": "No results on this page.",
+ "filters.clear": "Clear the search and filters",
+ "pagination.first": "Back to the first page"
 }

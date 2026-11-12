@@ -52,5 +52,14 @@
  "pagination.nav": "Program sayfaları",
  "pagination.previous": "Önceki",
  "pagination.next": "Sonraki",
- "pagination.page": "Sayfa {{page}} / {{total}}"
+ "pagination.page": "Sayfa {{page}} / {{total}}",
+ "preparing.title": "Program ve rehber listesi hazırlanıyor",
+ "preparing.why": "Bu liste resmî kaynaklardan oluşturuluyor: her yerel program ve her rehber, ilgili kurumun resmî sayfasında doğrulandıktan sonra burada görünür. Henüz hiçbir şey yayımlanmadı.",
+ "preparing.meanwhile": "Bu arada şu sayfalar zaten kullanılabilir:",
+ "preparing.aides": "Yardımlar",
+ "preparing.demarches": "İşlemler",
+ "preparing.services": "Resmî çevrim içi hizmetler (Araçlar sayfası)",
+ "list.emptyPage": "Bu sayfada sonuç yok.",
+ "filters.clear": "Aramayı ve filtreleri temizle",
+ "pagination.first": "İlk sayfaya dön"
 }

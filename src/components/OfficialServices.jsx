@@ -4,6 +4,7 @@ import { ExternalLink } from 'lucide-react';
 import { formatDate, useT } from '@/i18n';
 import { ChoiceChips, FilterField, Pager, SELECT, TEXT_INPUT } from '@/components/layout/catalog';
 import { categoryLabel } from '@/components/ui/CategoryChip';
+import { filterServices } from '@/lib/officialServicesSearch';
 
 /**
  * Catalogue (12/11/2026) — the official online services listed by Service-Public.gouv.fr (DILA flux, Licence Ouverte 2.0): simulators, online procedures,
@@ -12,8 +13,6 @@ import { categoryLabel } from '@/components/ui/CategoryChip';
  * not run it and does not vouch for a result. Titles stay the services' own (French, lang="fr").
  */
 const PAGE = 24;
-const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-
 export default function OfficialServices() {
   const { t } = useT('tools');
   const [doc, setDoc] = useState(null); const [failed, setFailed] = useState(false);
@@ -21,22 +20,19 @@ export default function OfficialServices() {
   useEffect(() => { let alive = true; import('@/config/officialServices.generated.json').then((m) => { if (alive) setDoc(m.default || m); }).catch(() => alive && setFailed(true)); return () => { alive = false; }; }, []);
   useEffect(() => { setPage(1); }, [q, kind, cat, pro]);
   const items = useMemo(() => doc?.items || [], [doc]);
-  const shown = useMemo(() => {
-    const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 2);
-    return items.filter((x) => (pro || x.audience !== 'pro') && (!kind || x.kind === kind) && (!cat || x.categorie === cat)
-      && words.every((w) => fold(`${x.title} ${x.operator || ''} ${x.cerfa || ''}`).includes(w)))
-      .sort((a, b) => (b.cited || 0) - (a.cited || 0) || a.title.localeCompare(b.title, 'fr'));
-  }, [items, q, kind, cat, pro]);
-  const KIND = {
+  const KIND = useMemo(() => ({
     simulateur: t('tools:services.kind.simulateur', 'Simulateurs'), teleservice: t('tools:services.kind.teleservice', 'Démarches en ligne'),
     formulaire: t('tools:services.kind.formulaire', 'Formulaires (cerfa)'), modele: t('tools:services.kind.modele', 'Modèles de lettres'), recherche: t('tools:services.kind.recherche', 'Outils de recherche'),
-  };
+  }), [t]);
+  const shown = useMemo(() => filterServices(items, { q, kind, cat, pro, kindLabels: KIND }), [items, q, kind, cat, pro, KIND]);
   const cats = [...new Set(items.map((x) => x.categorie).filter(Boolean))].sort();
   const totalPages = Math.max(1, Math.ceil(shown.length / PAGE));
   const slice = shown.slice((page - 1) * PAGE, page * PAGE);
   if (failed) return null;
+  // a link to /outils#services-officiels (e.g. from the empty « Dispositifs » page) lands on this section once
+  const landOnHash = (el) => { if (el && typeof window !== 'undefined' && window.location.hash === '#services-officiels' && !el.dataset.landed) { el.dataset.landed = '1'; el.scrollIntoView?.(); el.focus({ preventScroll: true }); } };
   return (
-    <section aria-labelledby="official-services-title" data-testid="official-services" className="mt-12">
+    <section id="services-officiels" ref={landOnHash} tabIndex={-1} aria-labelledby="official-services-title" data-testid="official-services" className="mt-12 scroll-mt-24 focus:outline-none">
       <h2 id="official-services-title" className="text-2xl font-semibold text-slate-900">{t('tools:services.title', 'Services en ligne officiels')}</h2>
       <p className="mt-1 max-w-3xl text-slate-700">{t('tools:services.intro', 'Les simulateurs, démarches en ligne, formulaires et modèles de lettres recensés par Service-Public.gouv.fr. Chaque lien mène au service officiel lui-même ; AccesDirectAide ne le gère pas et ne garantit pas son résultat.')}</p>
       {doc ? (

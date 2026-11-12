@@ -56,5 +56,14 @@
  "pagination.nav": "صفحات البرامج",
  "pagination.previous": "السابق",
  "pagination.next": "التالي",
- "pagination.page": "الصفحة {{page}} من {{total}}"
+ "pagination.page": "الصفحة {{page}} من {{total}}",
+ "preparing.title": "قائمة البرامج والأدلة قيد الإعداد",
+ "preparing.why": "يجري إعداد هذه القائمة انطلاقًا من المصادر الرسمية: لا يظهر هنا أي برنامج محلي أو دليل إلا بعد التحقق منه على الصفحة الرسمية للجهة المعنية. لم يُنشر أي عنصر بعد.",
+ "preparing.meanwhile": "في الأثناء، هذه الصفحات متاحة بالفعل:",
+ "preparing.aides": "المساعدات",
+ "preparing.demarches": "الإجراءات",
+ "preparing.services": "الخدمات الرسمية عبر الإنترنت (صفحة الأدوات)",
+ "list.emptyPage": "لا توجد نتائج في هذه الصفحة.",
+ "filters.clear": "مسح البحث والمرشحات",
+ "pagination.first": "العودة إلى الصفحة الأولى"
 }

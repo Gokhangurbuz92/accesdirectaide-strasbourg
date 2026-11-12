@@ -52,5 +52,14 @@
  "pagination.nav": "Seiten der Programme",
  "pagination.previous": "Zurück",
  "pagination.next": "Weiter",
- "pagination.page": "Seite {{page}} von {{total}}"
+ "pagination.page": "Seite {{page}} von {{total}}",
+ "preparing.title": "Die Liste der Programme und Leitfäden wird vorbereitet",
+ "preparing.why": "Diese Liste wird anhand offizieller Quellen erstellt: Jedes lokale Programm und jeder Leitfaden erscheint hier erst, nachdem es auf der offiziellen Seite der zuständigen Stelle geprüft wurde. Bisher ist noch nichts veröffentlicht.",
+ "preparing.meanwhile": "In der Zwischenzeit sind diese Seiten bereits verfügbar:",
+ "preparing.aides": "Hilfen",
+ "preparing.demarches": "Verfahren",
+ "preparing.services": "Offizielle Online-Dienste (Seite Werkzeuge)",
+ "list.emptyPage": "Keine Ergebnisse auf dieser Seite.",
+ "filters.clear": "Suche und Filter löschen",
+ "pagination.first": "Zurück zur ersten Seite"
 }

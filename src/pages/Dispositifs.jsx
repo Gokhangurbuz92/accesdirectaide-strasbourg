@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
@@ -89,8 +89,11 @@ export default function Dispositifs() {
       {hasFilters && <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('dispositifs:filters.reset', 'Réinitialiser')}</Button>}
     </div>
   );
+  // 12/11/2026 — nothing published yet (total 0, no search or filter): the catalogue is still being prepared from the official sources. Said plainly, with
+  // where to go meanwhile, instead of a bare « 0 dispositif ou guide » (the publication itself is a separate owner gate: the data and the API are unchanged).
+  const preparing = !error && !isLoading && total === 0 && items.length === 0 && !hasFilters;
   const countText = t('dispositifs:list.count', { count: total, defaultValue_one: '{{count}} dispositif ou guide', defaultValue_other: '{{count}} dispositifs et guides' });
-  const liveMessage = useMemo(() => (isLoading || isFetching ? t('dispositifs:list.loading', 'Chargement...') : error ? '' : countText), [isLoading, isFetching, error, countText, t]);
+  const liveMessage = useMemo(() => (isLoading || isFetching ? t('dispositifs:list.loading', 'Chargement...') : error || preparing ? '' : countText), [isLoading, isFetching, error, preparing, countText, t]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
@@ -103,11 +106,15 @@ export default function Dispositifs() {
       </PageHeader>
 
       <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('dispositifs:filters.toggle', 'Filtres')}>
-        <ChoiceChips label={t('dispositifs:scope.label', 'Portée')} options={scopeOptions} value={scope} onChange={(v) => setParam('scope', v)} testId="dispositifs-scope" />
-        <ResultsBar summary={!error && !isLoading && items.length > 0 ? <span data-testid="dispositifs-count">{countText}</span> : null}>
-          <MobileFilters title={t('dispositifs:filters.toggle', 'Filtres')} count={category ? 1 : 0} render={renderFilters} onReset={clearFilters} />
-        </ResultsBar>
-        <ActiveFilters items={activeFilters} onClear={clearFilters} />
+        {!preparing && (
+          <>
+            <ChoiceChips label={t('dispositifs:scope.label', 'Portée')} options={scopeOptions} value={scope} onChange={(v) => setParam('scope', v)} testId="dispositifs-scope" />
+            <ResultsBar summary={!error && !isLoading && items.length > 0 ? <span data-testid="dispositifs-count">{countText}</span> : null}>
+              <MobileFilters title={t('dispositifs:filters.toggle', 'Filtres')} count={category ? 1 : 0} render={renderFilters} onReset={clearFilters} />
+            </ResultsBar>
+            <ActiveFilters items={activeFilters} onClear={clearFilters} />
+          </>
+        )}
 
         {error ? (
           <LoadError what={t('dispositifs:load.list', 'les dispositifs')} onRetry={() => refetch()} testId="dispositifs-error" />
@@ -115,14 +122,23 @@ export default function Dispositifs() {
           <div className="grid gap-5 md:grid-cols-2" data-testid="dispositifs-loading">
             {[1, 2, 3, 4].map((n) => <div key={n} className="rounded-2xl border border-slate-200 bg-white p-5"><Skeleton className="h-5 w-3/4" /><Skeleton className="mt-2 h-4 w-full" /></div>)}
           </div>
-        ) : items.length === 0 && !hasFilters ? (
-          <EmptyCatalogue title={t('dispositifs:none.title', 'Aucun dispositif local n’est encore publié')} testId="dispositifs-none-published">
-            <p>{t('dispositifs:none.why', 'Un dispositif n’apparaît ici qu’après sa vérification sur la page officielle de l’organisme qui le gère.')}</p>
+        ) : preparing ? (
+          <EmptyCatalogue title={t('dispositifs:preparing.title', 'La liste des dispositifs et guides est en préparation')} testId="dispositifs-none-published" exclude={['aides', 'demarches', 'outils']}>
+            <div role="status" data-testid="dispositifs-preparing">
+              <p>{t('dispositifs:preparing.why', 'Cette liste est en cours de constitution à partir des sources officielles : chaque programme local et chaque fiche n’apparaît ici qu’après sa vérification sur la page officielle de l’organisme concerné. Aucun élément n’est encore publié.')}</p>
+              <p className="mt-2">{t('dispositifs:preparing.meanwhile', 'En attendant, ces pages sont déjà disponibles :')}</p>
+            </div>
+            <ul className="mt-2 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-6" data-testid="dispositifs-preparing-links">
+              <li><Link to="/aides" className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline underline-offset-2 hover:text-blue-900">{t('dispositifs:preparing.aides', 'Aides')}</Link></li>
+              <li><Link to="/demarches" className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline underline-offset-2 hover:text-blue-900">{t('dispositifs:preparing.demarches', 'Démarches')}</Link></li>
+              <li><Link to="/outils#services-officiels" className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline underline-offset-2 hover:text-blue-900">{t('dispositifs:preparing.services', 'Services en ligne officiels (page Outils)')}</Link></li>
+            </ul>
           </EmptyCatalogue>
         ) : items.length === 0 ? (
           <div className="rounded-lg border border-slate-200 bg-white p-6 text-center" data-testid="dispositifs-empty">
-            <p className="text-slate-700">{t('dispositifs:list.empty', 'Aucun dispositif trouvé pour ces critères.')}</p>
-            <Button type="button" variant="outline" className="mt-3 h-11" onClick={clearFilters}>{t('dispositifs:filters.reset', 'Réinitialiser')}</Button>
+            <p role="status" className="text-slate-700">{hasFilters ? t('dispositifs:list.empty', 'Aucun dispositif trouvé pour ces critères.') : t('dispositifs:list.emptyPage', 'Aucun résultat sur cette page.')}</p>
+            {hasFilters ? <Button type="button" variant="outline" className="mt-3 h-11" onClick={clearFilters}>{t('dispositifs:filters.clear', 'Effacer la recherche et les filtres')}</Button>
+              : <Button type="button" variant="outline" className="mt-3 h-11" onClick={() => setParam('page', '')}>{t('dispositifs:pagination.first', 'Revenir à la première page')}</Button>}
           </div>
         ) : (
           <>
