@@ -29,13 +29,13 @@ IA : aucune en production (sauf choix par le propriétaire d'un modèle héberg�
 | State | TanStack Query | Cache + synchronisation |
 | Animations | Framer Motion | Transitions de page |
 | UI | Radix UI + Tailwind | Design system accessible |
-| Backend | Vercel Functions (Node 20) | API serverless |
+| Backend | Vercel Functions (Node 22) | API serverless |
 | Validation | Zod | Schémas de validation stricts |
 | DB | Neon PostgreSQL + Drizzle ORM | SQL type-safe |
 | Vector | pgvector | RAG / recherche sémantique |
 | Cache | Upstash Redis | Rate limiting, KV |
 | IA | Modèle local Ollama (qwen3:8b), LAB uniquement | Chat, FALC, rédaction des textes de la veille ; désactivée en production |
-| Monitoring | Sentry | Errors + performance |
+| Monitoring | Sentry (désactivé tant que sa porte d'activation n'est pas ouverte) | Errors + performance |
 | CI/CD | GitHub Actions → Vercel | Preview + Production |
 
 ## Flux de requête
@@ -83,19 +83,17 @@ Le schema Drizzle ORM est dans `src/db/schema.ts` (40+ tables) :
 ## Pipeline d'ingestion
 
 ```
-Vercel Crons (11 planifiés dans vercel.json, heures UTC)
+Vercel Crons (9 planifiés dans vercel.json, heures UTC ; pendant la bêta chaque tâche reste refusée tant qu'elle n'est pas ouverte nommément — ADA_BETA_OPEN_JOBS / ADA_JOBS_APPROVED)
   │
+  ├─ actualites         → Flux officiels (toutes les 6h)
   ├─ ingest-aids        → Aides Territoires (quotidien 3h)
   ├─ ingest-structures  → Annuaire structures (hebdo dim 2h)
-  ├─ ingest-demarches   → Service-public.fr (hebdo lun 4h)
-  ├─ ingest-annuaire    → Annuaire complet (hebdo lun 1h)
-  ├─ actualites         → Flux RSS (toutes les 6h)
-  ├─ review-queue/scan  → Scan qualité (toutes les 6h, à la demi-heure)
   ├─ parcours-reminder  → Rappels d'échéances du parcours (quotidien 7h)
   ├─ referral-timeouts  → Orientations sans réponse (quotidien 7h30)
   ├─ rdv-reminder       → Rappels RDV (quotidien 8h)
-  ├─ gdpr-purge         → Purge RGPD (hebdo dim 3h)
-  └─ health-alert       → Monitoring (toutes les 5 min)
+  ├─ gdpr-purge         → Purge RGPD (quotidien 3h)
+  ├─ health-alert       → Monitoring (toutes les heures, à la 7e minute)
+  └─ veille             → Vérification automatique des sources officielles (6 tranches nocturnes, 0h37–5h37)
 ```
 
 12 connecteurs d'ingestion :
@@ -167,7 +165,7 @@ En production, l'assistant IA est désactivé tant que le propriétaire n'a pas 
 │   │   ├── auth/            # Auth citoyen (login, signup, MFA)
 │   │   ├── pro/             # Espace pro (30+ handlers)
 │   │   ├── admin/           # Admin (dashboard, sync, features)
-│   │   └── cron/            # Cron jobs (11 crons)
+│   │   └── cron/            # Cron jobs (9 crons)
 │   ├── _utils/              # Auth, CSRF, rate limiting, logger
 │   ├── _services/verification/ # Veille automatique (chain.js)
 │   ├── lib/                 # IA locale (Gemini hérité, désactivé), circuit breaker, search

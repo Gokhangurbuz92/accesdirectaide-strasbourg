@@ -26,7 +26,7 @@ Personne n'est présenté comme relecteur d'un contenu qu'il n'a pas relu : une 
 | Audit des dépendances | à chaque mise en production | `npm audit --omit=dev --audit-level=high` (dans la porte) | quelques secondes | aucun |
 | Relevé des coûts | mensuel | Vercel → Usage ; taille de la base (`pg_database_size`) | quelques minutes | aucun |
 
-Pendant la bêta, tous les crons Vercel sont refusés par le serveur : les tâches ci-dessus sont lancées depuis le LAB. Les déploiements Git sont
+Pendant la bêta, chaque cron Vercel est refusé par le serveur tant qu'il n'est pas ouvert nommément (ADA_BETA_OPEN_JOBS) ; depuis le 12/11/2026 sont ouverts en Production : health-alert, actualites, ingest-structures et veille. Les autres tâches restent lancées depuis le LAB. Les déploiements Git sont
 désactivés : une mise en production est un acte volontaire.
 
 ## 3. Coûts mesurés
