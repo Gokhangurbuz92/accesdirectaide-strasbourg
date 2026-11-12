@@ -1,0 +1,421 @@
+{
+ "_comment": "Copies (LAB, 12/11/2026) of real proposed pairs of the duplicate register: public structure records only (names, addresses, official identifiers and the official source pages recorded by the verification chain). No personal data.",
+ "pairs": {
+  "castel": {
+   "A": {
+    "id": "1eaf06f9-4314-4b56-ac7a-636e0b85a361",
+    "nom": "FAM PHV le Castel",
+    "type_structure": "Établissement d’accueil médicalisé pour personnes handicapées",
+    "adresse": "5 rue de l'Eglise",
+    "code_postal": "67730",
+    "ville": "Chatenois",
+    "siret": "33149835200094",
+    "rna_id": null,
+    "numero_finess": "670015072",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670015072",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:11.277Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670015072"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "e0a56c76-56d6-43aa-beff-c394daf6b2f6",
+    "nom": "Fas / FAM le Castel",
+    "type_structure": "Établissement d’accueil non médicalisé pour personnes handicapées",
+    "adresse": "5 rue de l'Eglise",
+    "code_postal": "67730",
+    "ville": "Chatenois",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": "670017722",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670017722",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:11.280Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670017722"
+      }
+     ]
+    }
+   }
+  },
+  "mairie_ccas": {
+   "A": {
+    "id": "1b0d5023-02e4-4be1-9564-e5ed78265806",
+    "nom": "Centre communal d'action sociale (CCAS) - Neewiller-près-Lauterbourg",
+    "type_structure": "CCAS (centre communal d'action sociale)",
+    "adresse": "2 Place Saint-Sulpice les Feuilles",
+    "code_postal": "67630",
+    "ville": "Neewiller-près-Lauterbourg",
+    "siret": "21670315700018",
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "7c6856d2-e375-498b-9cdb-d26b006140ed",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/7c6856d2-e375-498b-9cdb-d26b006140ed",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:09.361Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/7c6856d2-e375-498b-9cdb-d26b006140ed"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "3a21fe85-7b72-487f-a724-62a93ee0613a",
+    "nom": "Mairie - Neewiller-près-Lauterbourg",
+    "type_structure": "Mairie",
+    "adresse": "2 place Saint-Sulpice-les-Feuilles",
+    "code_postal": "67630",
+    "ville": "Neewiller-près-Lauterbourg",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "ff58ccd1-aae1-4e65-b2bb-351384879d36",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/ff58ccd1-aae1-4e65-b2bb-351384879d36",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:12.046Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/ff58ccd1-aae1-4e65-b2bb-351384879d36"
+      }
+     ]
+    }
+   }
+  },
+  "mairie_france_services": {
+   "A": {
+    "id": "82e4fc9d-cba2-4ef8-882c-ca23084fc621",
+    "nom": "Mairie - Truchtersheim",
+    "type_structure": "Mairie",
+    "adresse": "32 rue des Romains, Le Trèfle",
+    "code_postal": "67370",
+    "ville": "Truchtersheim",
+    "siret": "20005732100016",
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "3421f930-ed38-4700-8181-b5b68fe0fcb0",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/3421f930-ed38-4700-8181-b5b68fe0fcb0",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:11.736Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/3421f930-ed38-4700-8181-b5b68fe0fcb0"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "92dcbbc6-e986-40f7-88fc-cd7c8073a368",
+    "nom": "France services - Truchtersheim",
+    "type_structure": "Espace France Services",
+    "adresse": "32 rue des Romains, Le Trèfle",
+    "code_postal": "67370",
+    "ville": "Truchtersheim",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "9d4af9ae-70b6-4c3c-b7e5-1d94065db0d4",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/9d4af9ae-70b6-4c3c-b7e5-1d94065db0d4",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:12.703Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/9d4af9ae-70b6-4c3c-b7e5-1d94065db0d4"
+      }
+     ]
+    }
+   }
+  },
+  "dental_medical": {
+   "A": {
+    "id": "2e2880bf-65fa-4479-8117-d42028e9b6e4",
+    "nom": "Espace de Santé Mutualiste de l'Esplanade - Soins Dentaires",
+    "type_structure": "Centre de santé",
+    "adresse": "8 rue de Londres",
+    "code_postal": "67000",
+    "ville": "Strasbourg",
+    "siret": "43411112600034",
+    "rna_id": null,
+    "numero_finess": "670792175",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670792175",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:10.276Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670792175"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "d4824392-c7ca-43fc-b501-c005d83a372b",
+    "nom": "Espace de Sante Mutualiste de l'Esplanade - Soins Médicaux",
+    "type_structure": "Centre de santé",
+    "adresse": "8 rue de Londres",
+    "code_postal": "67000",
+    "ville": "Strasbourg",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": "670017284",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670017284",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:10.284Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670017284"
+      }
+     ]
+    }
+   }
+  },
+  "same_name_ccas": {
+   "A": {
+    "id": "23685d86-b4cc-4cf9-b2ca-d9d27e381d95",
+    "nom": "Centre communal d'action sociale (CCAS) - Lobsann",
+    "type_structure": "Mairie",
+    "adresse": "7 rue Principale",
+    "code_postal": "67250",
+    "ville": "Lobsann",
+    "siret": "21670271200011",
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "d56069a0-77cc-403d-86c1-f1cb5c6938a7",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/d56069a0-77cc-403d-86c1-f1cb5c6938a7",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:10.032Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/d56069a0-77cc-403d-86c1-f1cb5c6938a7"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "260a035d-50ed-4905-8c1e-c474660b63af",
+    "nom": "Centre communal d'action sociale (CCAS) - Lobsann",
+    "type_structure": "CCAS (centre communal d'action sociale)",
+    "adresse": "7 Rue Principale",
+    "code_postal": "67250",
+    "ville": "Lobsann",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "13d80416-7c95-47e8-8f17-43a401ecc582",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/13d80416-7c95-47e8-8f17-43a401ecc582",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:12.500Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/13d80416-7c95-47e8-8f17-43a401ecc582"
+      }
+     ]
+    }
+   }
+  },
+  "false_positive": {
+   "A": {
+    "id": "a2c142bd-9145-40bc-9905-cf195d16e142",
+    "nom": "Mairie - Retschwiller",
+    "type_structure": "Mairie",
+    "adresse": "1 rue de l'École",
+    "code_postal": "67250",
+    "ville": "Retschwiller",
+    "siret": "21670394200013",
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "07378617-3b73-4057-a79e-60e6248c903a",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/07378617-3b73-4057-a79e-60e6248c903a",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:09.659Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/07378617-3b73-4057-a79e-60e6248c903a"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "a61b2289-53e0-47ad-bcb2-ac9859c269a3",
+    "nom": "Mairie - Kutzenhausen",
+    "type_structure": "Mairie",
+    "adresse": "1 rue de l'École",
+    "code_postal": "67250",
+    "ville": "Kutzenhausen",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "78f2be55-9893-4fa8-8ad6-29ef7ac925ea",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/78f2be55-9893-4fa8-8ad6-29ef7ac925ea",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:12.113Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/78f2be55-9893-4fa8-8ad6-29ef7ac925ea"
+      }
+     ]
+    }
+   }
+  },
+  "missing_evidence": {
+   "A": {
+    "id": "3289fc5a-2098-4117-a158-381719e3ade2",
+    "nom": "Mission locale pour l'insertion professionnelle et sociale des jeunes (16-25 ans) - Haguenau",
+    "type_structure": "Mission locale (jeunes de 16 à 25 ans)",
+    "adresse": "27 rue de la Redoute",
+    "code_postal": "67500",
+    "ville": "Haguenau",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": "8fcc8cec-aa72-450b-a9e8-8c56ba28172e",
+    "source_url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/8fcc8cec-aa72-450b-a9e8-8c56ba28172e",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "PUBLIC_OFFICE",
+     "checkedAt": "2026-11-11T02:21:09.204Z",
+     "sources": [
+      {
+       "kind": "ANNUAIRE",
+       "url": "https://lannuaire.service-public.gouv.fr/grand-est/bas-rhin/8fcc8cec-aa72-450b-a9e8-8c56ba28172e"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "6d591fbd-10e9-4aaf-82f1-b86135b77987",
+    "nom": "Mission locale Alsace du Nord",
+    "type_structure": "Association",
+    "adresse": "27 Rue de la Redoute",
+    "code_postal": "67500",
+    "ville": "Haguenau",
+    "siret": "38795894500025",
+    "rna_id": null,
+    "numero_finess": null,
+    "source_annuaire": null,
+    "source_url": "https://annuaire-entreprises.data.gouv.fr/etablissement/38795894500025",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "OPEN",
+     "checkedAt": "2026-11-09T04:06:04.472Z",
+     "sources": [
+      {
+       "kind": "SIRENE",
+       "url": "https://annuaire-entreprises.data.gouv.fr/etablissement/38795894500025"
+      }
+     ]
+    }
+   }
+  },
+  "camsp": {
+   "A": {
+    "id": "25ceb3ec-036e-44fb-b7dd-fac8b08dc809",
+    "nom": "CAMSP Schiltigheim",
+    "type_structure": "Centre d’action médico-sociale précoce (CAMSP)",
+    "adresse": "33 rue du Barrage",
+    "code_postal": "67300",
+    "ville": "Schiltigheim",
+    "siret": null,
+    "rna_id": null,
+    "numero_finess": "670797158",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670797158",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:11.254Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670797158"
+      }
+     ]
+    }
+   },
+   "B": {
+    "id": "65e9f582-f56d-4541-b8c1-6e0409c63cd0",
+    "nom": "Edipa CAMSP Pierre Burgun Schiltigheim",
+    "type_structure": "Établissement expérimental pour enfants handicapés",
+    "adresse": "33 rue du Barrage",
+    "code_postal": "67300",
+    "ville": "Schiltigheim",
+    "siret": "32091524200327",
+    "rna_id": null,
+    "numero_finess": "670018134",
+    "source_annuaire": null,
+    "source_url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670018134",
+    "verification_status": "VERIFIED",
+    "publication_hold": null,
+    "auto_check": {
+     "identity": "FINESS",
+     "checkedAt": "2026-11-11T02:21:11.216Z",
+     "sources": [
+      {
+       "kind": "FINESS",
+       "url": "https://finess.esante.gouv.fr/fininter/jsp/actionDetailEtablissement.do?noFinesset=670018134"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

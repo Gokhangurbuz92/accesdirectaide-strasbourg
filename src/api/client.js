@@ -262,6 +262,10 @@ export const apiClient = {
         getDuplicates: function (/** @type {string=} */ a, /** @type {string=} */ b) { return apiRequest('/api/admin/duplicates' + (a && b ? '?a=' + encodeURIComponent(a) + '&b=' + encodeURIComponent(b) : '')); },
         /** @param {{ a: string, b: string, decision: string, primaryId?: string, evidenceUrl: string, note: string, versionA: string, versionB: string }} input */
         decideDuplicate: function (input) { return apiRequest('/api/admin/duplicates', { method: 'POST', body: input }); },
+        /** bulk duplicate register: every pair with both records, their versions and the evidence assistance; or the recent decisions ('history') @param {'register'|'history'} view */
+        getDuplicateRegister: function (view) { return apiRequest('/api/admin/duplicates?view=' + encodeURIComponent(view || 'register')); },
+        /** several decisions, each through the single-decision path; one result per item @param {any[]} decisions */
+        decideDuplicates: function (decisions) { return apiRequest('/api/admin/duplicates', { method: 'POST', body: { decisions: decisions } }); },
         /** @param {string} entityType @param {string} entityId */
         getVerification: function (entityType, entityId) { return apiRequest('/api/admin/content-verification?entityType=' + encodeURIComponent(entityType) + '&entityId=' + encodeURIComponent(entityId)); },
         /** PKG-4 / E02 — structure profile proposals awaiting ADA review. @param {string=} status */
