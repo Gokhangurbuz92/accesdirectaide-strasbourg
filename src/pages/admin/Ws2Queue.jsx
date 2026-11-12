@@ -94,7 +94,10 @@ export default function AdminWs2Queue() {
               {r.hold ? <p className="text-slate-800" data-testid="admin-ws2-hold-reason">{t('admin:ws2.hold_reason', 'Motif de l’attente : {{reason}}', { reason: r.hold })}</p> : null}
               {r.entityId && EDITOR[r.entityType] ? <p><Link className="text-blue-800 underline" to={`/admin/${EDITOR[r.entityType]}/${r.entityId}`}>{t('admin:ws2.fix_in_editor', 'Corriger la fiche dans l’éditeur')}</Link> <span className="text-slate-700">{t('admin:ws2.fix_changes_version', '(une correction change la version : la décision se prend ensuite sur la fiche corrigée)')}</span></p> : null}
               {r.preparation && r.state !== 'HUMAN_VERIFIED' ? <p data-testid="admin-ws2-prep-summary"><span className="font-medium">{groups[r.preparation.group]}</span> — <span {...fr}>{r.preparation.next}</span></p> : null}
-              <details open={openKey === key(r)} onToggle={(e) => { const o = e.currentTarget.open; setOpenKey((k) => (o ? key(r) : k === key(r) ? '' : k)); }} data-testid="admin-ws2-review">
+              {/* 'toggle' is dispatched asynchronously (a queued task) for EVERY change of `open`, ours included; an event whose state equals what this render
+                  already shows is the echo of our own change, not the person's. Applying it could undo a newer choice queued meanwhile (after a decision, the
+                  late echo of the first record's auto-open re-opened it over the next record — flaky ws2 test, CI 43241511517). */}
+              <details open={openKey === key(r)} onToggle={(e) => { const o = e.currentTarget.open; if (o === (openKey === key(r))) return; setOpenKey((k) => (o ? key(r) : k === key(r) ? '' : k)); }} data-testid="admin-ws2-review">
                 <summary id={`ws2-rec-${key(r)}`} tabIndex={-1} className="cursor-pointer font-medium text-blue-800">{r.entityId ? (r.state === 'HUMAN_VERIFIED' ? t('admin:ws2.review_verified', 'Revoir la fiche et la décision') : t('admin:ws2.compare_decide', 'Comparer et décider')) : t('admin:ws2.research', 'Recherche préparatoire (aide, non probante)')}</summary>
                 <div className="mt-2 grid gap-4 lg:grid-cols-2">
                   <div className="space-y-2">

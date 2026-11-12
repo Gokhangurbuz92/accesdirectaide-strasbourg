@@ -9,6 +9,7 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { createRequire } from 'node:module';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const api = vi.hoisted(() => ({ apiClient: { admin: { getWs2Queue: vi.fn(), verifyContent: vi.fn(), getVerification: vi.fn() } } }));
@@ -26,6 +27,10 @@ const queue = { totals: { records: 3, humanVerified: 0, pending: 0, onHold: 3, r
   records: [rec('aide-a', 'Aide synthétique A'), rec('aide-b', 'Aide synthétique B'), rec('aide-c', 'Carte synthétique C')] };
 
 afterEach(() => { cleanup(); Object.values(api.apiClient.admin).forEach((f) => f.mockReset()); });
+// jsdom dispatches 'toggle' from a queued task (setTimeout 0), like a browser: holding that task lets a test release it at a chosen moment
+const DetailsImpl = createRequire(import.meta.url)('jsdom/lib/jsdom/living/nodes/HTMLDetailsElement-impl.js').implementation;
+const dispatchToggle = DetailsImpl.prototype._dispatchToggleEvent;
+afterEach(() => { DetailsImpl.prototype._dispatchToggleEvent = dispatchToggle; });
 const mount = () => render(createElement(MemoryRouter, null, createElement(AdminWs2Queue)));
 const reviews = () => screen.getAllByTestId('admin-ws2-review');
 
@@ -54,6 +59,36 @@ describe('UX ecosystem: WS2 compare-and-decide', () => {
     await waitFor(() => expect(reviews().map((d) => d.open)).toEqual([false, true, false]), { timeout: 5000 });
     expect(api.apiClient.admin.verifyContent).toHaveBeenCalledWith(expect.objectContaining({ entityId: 'id-aide-a', action: 'HOLD' }));
     await waitFor(() => expect(globalThis.document.activeElement?.id).toBe('ws2-rec-aides:aide-b'), { timeout: 5000 });
+  });
+
+  // CI 43241511517 (flaky): the 'toggle' of the first record's auto-open was still queued when the decision chose the next record; dispatched between
+  // setOpenKey(next) and the re-render, it re-opened the first record over the next one. Released here at every microtask depth after the reload.
+  it('a late toggle echo of the first auto-open never undoes the move to the next record', async () => {
+    for (let ticks = 0; ticks <= 6; ticks += 1) {
+      const held = [];
+      DetailsImpl.prototype._dispatchToggleEvent = function hold() { held.push(this); };
+      const release = () => held.splice(0).forEach((d) => dispatchToggle.call(d));
+      api.apiClient.admin.verifyContent.mockResolvedValue({ ok: true });
+      api.apiClient.admin.getWs2Queue.mockResolvedValueOnce(queue).mockImplementationOnce(() => {
+        let p = Promise.resolve(); for (let i = 0; i < ticks; i += 1) p = p.then(() => {});
+        p.then(release);
+        return Promise.resolve(queue);
+      });
+      mount();
+      await screen.findAllByTestId('admin-ws2-record');
+      await waitFor(() => expect(reviews().map((d) => d.open)).toEqual([true, false, false]));
+      expect(held).toHaveLength(1);   // the first record's auto-open toggle is still pending when the person decides
+      const first = reviews()[0];
+      fireEvent.change(within(first).getByRole('textbox', { name: /Ce qui a été contrôlé/ }), { target: { value: 'note synthétique' } });
+      fireEvent.click(within(first).getByTestId('admin-ws2-hold'));
+      await waitFor(() => expect(api.apiClient.admin.getWs2Queue).toHaveBeenCalledTimes(2));
+      await waitFor(() => expect(globalThis.document.activeElement?.id).toBe('ws2-rec-aides:aide-b'));
+      release();
+      await new Promise((r) => { setTimeout(r, 0); });
+      expect({ ticks, open: reviews().map((d) => d.open) }).toEqual({ ticks, open: [false, true, false] });
+      DetailsImpl.prototype._dispatchToggleEvent = dispatchToggle;
+      cleanup(); Object.values(api.apiClient.admin).forEach((f) => f.mockReset());
+    }
   });
 
   it('the search narrows the records (accent- and case-insensitive) and says how many are shown', async () => {
