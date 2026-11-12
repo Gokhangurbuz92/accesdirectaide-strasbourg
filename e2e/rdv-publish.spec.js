@@ -202,9 +202,9 @@ test.describe('P10-C RDV publish settings', () => {
 
     await expect(page.getByTestId('pro-rdv-settings-card')).toBeVisible({ timeout: 15000 });
     await page.getByLabel('Publier la prise de RDV en ligne').check();
-    await page.getByRole('button', { name: 'Enregistrer les parametres' }).click();
+    await page.getByRole('button', { name: 'Enregistrer les paramètres' }).click();
 
     await expect.poll(() => putCalled, { timeout: 15000 }).toBe(true);
-    await expect(page.getByText('Parametres RDV enregistres.')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('Paramètres RDV enregistrés.')).toBeVisible({ timeout: 15000 });
   });
 });
