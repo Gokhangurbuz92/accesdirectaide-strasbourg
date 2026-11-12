@@ -23,3 +23,7 @@ src/i18n/locales/en/admin.json:generic-api-key:640
 # R47 (tooling): the forged « alg=none » hand-off cookie of the ProConnect test (synthetic claims, no signature, no secret) as committed in ae51520 (R46);
 # cc02779 builds it at run time. Exact history fingerprint only, so `gitleaks git` of the release history (scripts/release-guard.mjs) is clean. Reviewed 2026-11-06.
 ae51520de57d9d999b63b2570e4c43e4ae1df3ea:tests/unit/r46-proconnect-oidc.test.js:jwt:235
+
+# 12/11/2026 (integration-1112): « key M », the label of the keyboard shortcut M in the duplicate register (k5.duplicates.key_m) — a UI string, no secret.
+# Exact history fingerprint of the commit that introduced it; reviewed 2026-11-12.
+13286fab5b364f550ca050edf80bcb29441ea8e2:src/i18n/locales/en/admin.json:generic-api-key:427
