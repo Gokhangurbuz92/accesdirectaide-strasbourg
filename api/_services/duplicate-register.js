@@ -14,6 +14,7 @@ import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, StructureDuplicateDecision } from '../../src/db/schema.js';
 import { contentVersion, evidenceUrlAllowed, recordVerification, reviewContent, rowJson } from './content-verification.js';
+import { assessPair, identityOf } from './duplicate-evidence.js';
 
 const bad = (status, code, message) => ({ ok: false, status, code, message });
 const ordered = (x, y) => (String(x) < String(y) ? [String(x), String(y)] : [String(y), String(x)]);
@@ -52,7 +53,7 @@ export async function candidates({ db = defaultDb, limit = 100 } = {}) {
       a.vs AS "decisionA", b.vs AS "decisionB", a.held AS "heldA", b.held AS "heldB"
     FROM p JOIN s a ON a.id = p.a JOIN s b ON b.id = p.b
     WHERE NOT EXISTS (SELECT 1 FROM "StructureDuplicateDecision" d WHERE d."structureA" = a.id AND d."structureB" = b.id AND d."supersededAt" IS NULL)
-    ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC, 1, 2 LIMIT ${Math.min(Number(limit) || 100, 200)}`)).rows;
+    ORDER BY 7 DESC, 8 DESC, 9 DESC, 10 DESC, 11 DESC, 1, 2 LIMIT ${Math.min(Number(limit) || 100, 1000)}`)).rows;
   const kept = rows.filter((r) => r.sameSiret || r.sameRna || r.sameFiness || r.sameAddress || distinctivePartsClose(r.nomA, r.nomB));
   return { ok: true, candidates: kept };
 }
@@ -80,7 +81,7 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
   const versionA = String((swapped ? input?.versionB : input?.versionA) || ''); const versionB = String((swapped ? input?.versionA : input?.versionB) || '');
   const decision = String(input?.decision || '');
   if (!a || !b || a === b) return bad(400, 'PAIR_REQUIRED', 'Choisissez deux fiches différentes.');
-  if (!['SAME_ENTITY', 'DISTINCT'].includes(decision)) return bad(400, 'INVALID_DECISION', 'Décision : même organisation ou organisations distinctes.');
+  if (!['SAME_ENTITY', 'DISTINCT'].includes(decision)) return bad(400, 'INVALID_DECISION', 'Décision : même établissement ou établissements distincts.');
   const primaryId = decision === 'SAME_ENTITY' ? String(input?.primaryId || '') : null;
   if (decision === 'SAME_ENTITY' && ![a, b].includes(primaryId)) return bad(400, 'PRIMARY_REQUIRED', 'Indiquez la fiche à conserver.');
   const evidenceUrl = String(input?.evidenceUrl || '').trim();
@@ -93,6 +94,15 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
     if (locked.length !== 2) return bad(404, 'not_found', 'Fiche introuvable.');
     if (contentVersion(await rowJson(tx, 'structure', a)) !== versionA || contentVersion(await rowJson(tx, 'structure', b)) !== versionB) {
       return bad(409, 'STALE_REVIEW', 'Une des fiches a changé depuis votre lecture : rechargez la paire et relisez-la.');
+    }
+    // the bulk register (owner LAB 12/11/2026): the decision is bound to the pair's state the reviewer saw (no active decision, or that one). Replaying the
+    // same decision is answered as already done (idempotent: a retried request after a lost answer writes nothing); another decision recorded meanwhile is refused.
+    if (Object.prototype.hasOwnProperty.call(input || {}, 'expectedDecisionId')) {
+      const [active] = (await tx.execute(sql`SELECT id, decision, "primaryId", "evidenceUrl", "versionA", "versionB" FROM "StructureDuplicateDecision" WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL LIMIT 1`)).rows;
+      if (active && active.decision === decision && (active.primaryId || null) === primaryId && active.evidenceUrl === evidenceUrl && active.versionA === versionA && active.versionB === versionB) {
+        return { ok: true, status: 200, idempotent: true, decision: { id: active.id, decision, primaryId, held: decision === 'SAME_ENTITY' ? (primaryId === a ? b : a) : null, superseded: 0 } };
+      }
+      if ((active?.id || null) !== (input.expectedDecisionId || null)) return bad(409, 'PAIR_ALREADY_DECIDED', 'Cette paire a reçu une autre décision entre-temps : rechargez le registre et relisez-la.');
     }
     const superseded = (await tx.execute(sql`UPDATE "StructureDuplicateDecision" SET "supersededAt" = NOW() WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL RETURNING id`)).rows.length;
     const [row] = await tx.insert(StructureDuplicateDecision).values({ structureA: a, structureB: b, decision, primaryId, evidenceUrl, note: note.slice(0, 1000), reviewerId: reviewer, versionA, versionB }).returning({ id: StructureDuplicateDecision.id });
@@ -107,4 +117,69 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
       details: { decision, primaryId, held, evidenceUrl, superseded, decisionId: row.id }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
     return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, superseded } };
   });
+}
+
+const REGISTER_FIELDS = ['id', 'nom', 'type_structure', 'adresse', 'code_postal', 'ville', 'siret', 'rna_id', 'numero_finess', 'source_annuaire', 'source_url', 'verification_status',
+  'publication_hold', 'statut', 'telephone', 'email', 'site_web', 'horaires', 'description_courte'];
+
+/**
+ * The bulk review register (owner LAB request 12/11/2026): every proposed pair with both records' identity, their content versions (a decision taken from the
+ * table is bound to them exactly like one taken after « Comparer »), the detection reasons and the evidence assistance (duplicate-evidence.js: a suggestion,
+ * never a decision). Pairs with an active decision are not proposed (their history stays in readPair / recentDecisions).
+ */
+export async function register({ db = defaultDb, env = process.env, trustedDomains = [], limit = 1000 } = {}) {
+  const { candidates: list } = await candidates({ db, limit });
+  const ids = [...new Set(list.flatMap((c) => [c.a, c.b]))];
+  const rows = ids.length ? (await db.execute(sql`SELECT to_jsonb(t) AS j FROM "Structure" t WHERE id IN (${sql.join(ids.map((i) => sql`${i}`), sql`, `)})`)).rows.map((r) => r.j) : [];
+  const byId = new Map(rows.map((j) => [j.id, j]));
+  const view = (j) => {
+    const idn = identityOf(j, env, trustedDomains);
+    return { ...Object.fromEntries(REGISTER_FIELDS.map((k) => [k, j[k] ?? null])), version: contentVersion(j), sources: idn.sources, checkedAt: j.auto_check?.checkedAt || null, identity: j.auto_check?.identity || null };
+  };
+  const pairs = list.filter((c) => byId.has(c.a) && byId.has(c.b)).map((c) => {
+    const A = byId.get(c.a); const B = byId.get(c.b);
+    return { key: `${c.a}|${c.b}`, a: c.a, b: c.b, detection: { sameSiret: c.sameSiret, sameRna: c.sameRna, sameFiness: c.sameFiness, sameAddress: c.sameAddress, nameSimilarity: Number(c.nameSimilarity) },
+      A: view(A), B: view(B), assessment: assessPair(A, B, { env, trustedDomains }), expectedDecisionId: null };
+  });
+  return { ok: true, generatedAt: new Date().toISOString(), total: pairs.length, pairs };
+}
+
+/** the decisions recorded lately (the history of the pairs that left the queue): active and superseded, with both names */
+export async function recentDecisions({ db = defaultDb, limit = 50 } = {}) {
+  const rows = (await db.execute(sql`SELECT d.id, d."structureA" AS a, d."structureB" AS b, sa.nom AS "nomA", sb.nom AS "nomB", d.decision, d."primaryId", d."evidenceUrl", d.note,
+      d."reviewerId", d."decidedAt", d."supersededAt"
+    FROM "StructureDuplicateDecision" d JOIN "Structure" sa ON sa.id = d."structureA" JOIN "Structure" sb ON sb.id = d."structureB"
+    ORDER BY d."decidedAt" DESC LIMIT ${Math.min(Number(limit) || 50, 200)}`)).rows;
+  return { ok: true, decisions: rows };
+}
+
+export const BATCH_MAX = 50;
+/**
+ * Several decisions in one request — each one through decide() (its own transaction: the versions read, the pair's state seen, official evidence, a note,
+ * the hold of SAME_ENTITY, the audit row), so one failure never undoes or blocks the others. Answers one result per item, in order.
+ * @param {any[]} items [{ a, b, decision, primaryId?, evidenceUrl, note, versionA, versionB, expectedDecisionId }]
+ */
+export async function decideBatch(items, reviewer, deps = {}) {
+  const db = deps.db || defaultDb;
+  if (!Array.isArray(items) || !items.length) return bad(400, 'DECISIONS_REQUIRED', 'Sélectionnez au moins une décision.');
+  if (items.length > BATCH_MAX) return bad(400, 'BATCH_TOO_LARGE', `Au plus ${BATCH_MAX} décisions par envoi.`);
+  const seen = new Set(); const results = [];
+  for (const item of items) {
+    const [a, b] = ordered(item?.a, item?.b); const key = `${a}|${b}`;
+    if (seen.has(key)) { results.push({ key, ok: false, status: 400, code: 'DUPLICATE_IN_BATCH', message: 'Cette paire figure deux fois dans l’envoi.' }); continue; }
+    seen.add(key);
+    // the bulk path always binds the decision to the pair's state the reviewer saw (no active decision unless one is named)
+    const input = { ...(item && typeof item === 'object' ? item : {}), expectedDecisionId: item?.expectedDecisionId ?? null };
+    try {
+      const out = await decide(input, reviewer, deps);
+      results.push(out.ok ? { key, ok: true, status: 200, idempotent: Boolean(out.idempotent), decision: out.decision } : { key, ok: false, status: out.status, code: out.code, message: out.message });
+    } catch (e) {
+      results.push({ key, ok: false, status: 500, code: e?.code === '23505' ? 'PAIR_ALREADY_DECIDED' : 'DECISION_FAILED', message: e?.code === '23505' ? 'Cette paire a reçu une autre décision entre-temps : rechargez le registre et relisez-la.' : 'La décision n’a pas pu être enregistrée.' });
+    }
+  }
+  const saved = results.filter((r) => r.ok && !r.idempotent).length;
+  await db.insert(AuditLog).values({ action: 'STRUCTURE_DUPLICATE_BATCH', actor: reviewer, actor_id: reviewer, entity: 'StructureDuplicateDecision', entity_id: 'batch',
+    details: { submitted: items.length, saved, idempotent: results.filter((r) => r.idempotent).length, failed: results.filter((r) => !r.ok).length, codes: [...new Set(results.filter((r) => !r.ok).map((r) => r.code))] },
+    ip_hash: 'ADMIN_MFA' }).catch(() => {});
+  return { ok: true, status: 200, results, saved, failed: results.filter((r) => !r.ok).length };
 }
