@@ -1160,6 +1160,10 @@
       "class": "optional",
       "nature": "config"
     },
+    "ADA_VEILLE_NEW_OFFICIAL_LIMIT": {
+      "class": "optional",
+      "nature": "config"
+    },
     "ADA_VEILLE_CACHE_DIR": {
       "class": "optional",
       "nature": "config"

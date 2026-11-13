@@ -38,6 +38,7 @@ Les chiffres viennent des exécutions mesurées dans le LAB du 25 et du 26/10/20
   de source, la veille de la cible les publie seulement si la source est encore la même ; ou (b) un modèle hébergé — décision et coût du propriétaire, non activé.
 - La production ne dépend pas d'un Mac interactif : la veille est une fonction planifiée (`/api/cron/veille`, `ADA_VEILLE_MAX_MINUTES`, reprise par les fiches
   vérifiées depuis le plus longtemps). Le Mac du LAB n'apporte que l'option (a).
+- `ADA_VEILLE_NEW_OFFICIAL_LIMIT` (optionnel, entier 0..150) : plafond des nouvelles fiches officielles de niveau 1 par exécution (premier lot réduit ; 0 = aucune) ; vide ou invalide = 150 par défaut (avertissement journalisé), jamais au-dessus de 150.
 
 ## 4. Fraîcheur et expiration
 

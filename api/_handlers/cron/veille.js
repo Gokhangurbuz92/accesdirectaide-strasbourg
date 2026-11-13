@@ -32,6 +32,20 @@ export function planFor(req, now = new Date()) {
 }
 
 /**
+ * CAT-CANARY (13/11/2026): ADA_VEILLE_NEW_OFFICIAL_LIMIT caps the NEW Level 1 fiches (ADA_VEILLE_NEW_OFFICIAL=on) one run may create, for a small first batch:
+ * a base-10 integer 0..150 is passed as limits.newOfficial (0 = none even with the flag on); unset or empty keeps the chain's default (150); anything else
+ * (not an integer, negative, above 150) keeps the default and logs a warning. It can only LOWER the limit, never raise it; it changes nothing else.
+ */
+export const NEW_OFFICIAL_MAX = 150;
+export function newOfficialLimit(raw = process.env.ADA_VEILLE_NEW_OFFICIAL_LIMIT) {
+  if (raw === undefined || raw === null || String(raw).trim() === '') return null;
+  const v = String(raw).trim();
+  if (/^\d+$/.test(v)) { const n = Number.parseInt(v, 10); if (n >= 0 && n <= NEW_OFFICIAL_MAX) return n; }
+  logger.warn('VEILLE_NEW_OFFICIAL_LIMIT_INVALID', { value: v.slice(0, 20), kept: NEW_OFFICIAL_MAX });
+  return null;
+}
+
+/**
  * Automatic verification (« veille automatique », api/_services/verification/chain.js) as a cron. A serverless function has minutes, not hours: the run is bounded
  * (ADA_VEILLE_MAX_MINUTES, default 4) and starts with the records checked the longest ago, so successive runs cover the whole catalogue. The texts (normal summary,
  * FALC) are written only where a LOCAL model is available (ADA_VEILLE_TEXTS=on, with Ollama on the same machine): elsewhere a record whose texts must be written
@@ -56,8 +70,10 @@ export default async function handler(req, res, deps = {}) {
   const own = process.env.ADA_VEILLE_CACHE_DIR ? null : fs.mkdtempSync(path.join(deps.tmpdir || os.tmpdir(), 'ada-veille-'));
   const cacheDir = process.env.ADA_VEILLE_CACHE_DIR || own;
   try {
+    const officialLimit = newOfficialLimit();
     const r = await (deps.runVeille || runVeille)({ trigger: `cron:slot${plan.slot}`, only: plan.only, nightCap: true, cacheDir, texts: process.env.ADA_VEILLE_TEXTS === 'on',
-      maxMinutes: Number(process.env.ADA_VEILLE_MAX_MINUTES) || 4, ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}) });
+      maxMinutes: Number(process.env.ADA_VEILLE_MAX_MINUTES) || 4, ...(officialLimit !== null ? { limits: { newOfficial: officialLimit } } : {}),
+      ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}) });
     if (r.ok) await bumpContentEpoch().catch(() => {});
     logger.info('VEILLE_END', { slot: plan.slot, steps: plan.only, status: r.status, counts: r.counts });
     return res.status(200).json({ success: r.ok, slot: plan.slot, steps: plan.only, ...r });
