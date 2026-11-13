@@ -127,8 +127,15 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
     const superseded = (await tx.execute(sql`UPDATE "StructureDuplicateDecision" SET "supersededAt" = NOW() WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL RETURNING id`)).rows.length;
     const [row] = await tx.insert(StructureDuplicateDecision).values({ structureA: a, structureB: b, decision, primaryId, evidenceUrl, note: note.slice(0, 1000), reviewerId: reviewer, versionA, versionB }).returning({ id: StructureDuplicateDecision.id });
     let held = null;
+    /** @type {string | null} */ let holdKept = null;
     if (decision === 'SAME_ENTITY') {
       held = primaryId === a ? b : a;
+      // DBL-HOLD: a hold that is not this register's (a person's, editorial, the chain's) already keeps the record off the public pages: it is left exactly as
+      // it is — overwriting its reason made a later reversal of this decision lift it as if it were the register's — and the decision journals that it was kept
+      const [cur] = (await tx.execute(sql`SELECT publication_hold AS hold FROM "Structure" WHERE id = ${held}`)).rows;
+      if (cur?.hold && !String(cur.hold).startsWith(DUPLICATE_HOLD)) holdKept = 'EXISTING_HUMAN_HOLD';
+    }
+    if (decision === 'SAME_ENTITY' && !holdKept) {
       const primary = locked.find((r) => r.id === primaryId);
       const r = await recordVerification({ entityType: 'structure', entityId: held, action: 'HOLD', holdReason: `${DUPLICATE_HOLD} : même organisation que « ${primary?.nom || primaryId} »`, reviewer: { id: reviewer, role } }, { db: tx });
       if (!r.ok) throw Object.assign(new Error('duplicate hold failed'), { code: r.code });
@@ -149,7 +156,7 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
       released.push(id);
     }
     await tx.insert(AuditLog).values({ action: 'STRUCTURE_DUPLICATE_DECIDED', actor: reviewer, actor_id: reviewer, entity: 'Structure', entity_id: `${a}|${b}`,
-      details: { decision, primaryId, held, released, evidenceUrl, superseded, decisionId: row.id }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
+      details: { decision, primaryId, held, released, evidenceUrl, superseded, decisionId: row.id, ...(holdKept ? { holdKept } : {}) }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
     return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, released, superseded } };
   });
 }

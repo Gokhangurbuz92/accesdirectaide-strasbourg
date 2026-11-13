@@ -90,6 +90,44 @@ describe.skipIf(!hasDatabase)('D13 duplicate decision reversal and open-pair cou
     expect((await hold(B)).h).toBe('Signalement en cours d’examen');
   });
 
+  // DBL-HOLD: a person's hold present BEFORE the SAME_ENTITY decision is never overwritten by the register, so a later reversal cannot lift it
+  const auditOf = async (A, B, decision) => (await db.execute(sql`SELECT details FROM "AuditLog" WHERE action = 'STRUCTURE_DUPLICATE_DECIDED' AND entity_id = ${[A, B].sort().join('|')}
+    AND details->>'decision' = ${decision} ORDER BY "timestamp" DESC LIMIT 1`)).rows[0]?.details;
+  it('a person\'s hold placed before SAME_ENTITY keeps its reason; the decision records that the hold was kept', async () => {
+    const A = await mkStructure(); const B = await mkStructure({ verified: true });
+    const { recordVerification } = await import('../../api/_services/content-verification.js');
+    expect((await recordVerification({ entityType: 'structure', entityId: B, action: 'HOLD', holdReason: 'Mise de côté éditoriale : vérification en cours', reviewer: { id: OTHER_ADMIN, role: 'admin' } })).ok).toBe(true);
+    const out = await decideOn(A, B, 'SAME_ENTITY', A);
+    expect([out.ok, out.decision.held]).toEqual([true, B]);
+    expect(await hold(B), 'the person\'s hold reason is unchanged').toEqual({ h: 'Mise de côté éditoriale : vérification en cours', v: 'VERIFIED' });
+    expect((await auditOf(A, B, 'SAME_ENTITY')).holdKept).toBe('EXISTING_HUMAN_HOLD');
+    const ledger = (await db.execute(sql`SELECT outcome, "reviewerId" FROM "ContentVerification" WHERE "entityId" = ${B} ORDER BY "createdAt", outcome`)).rows;
+    expect(ledger, 'only the person\'s HOLD in the ledger').toEqual([{ outcome: 'HOLD', reviewerId: OTHER_ADMIN }]);
+  });
+
+  it('a person\'s hold placed before SAME_ENTITY survives the reversal to DISTINCT', async () => {
+    const A = await mkStructure(); const B = await mkStructure({ verified: true });
+    const { recordVerification } = await import('../../api/_services/content-verification.js');
+    expect((await recordVerification({ entityType: 'structure', entityId: B, action: 'HOLD', holdReason: 'Signalement usager à examiner', reviewer: { id: OTHER_ADMIN, role: 'admin' } })).ok).toBe(true);
+    expect((await decideOn(A, B, 'SAME_ENTITY', A)).ok).toBe(true);
+    const out = await decideOn(A, B, 'DISTINCT');
+    expect([out.ok, out.decision.released]).toEqual([true, []]);
+    expect(await hold(B), 'the person\'s hold is still active').toEqual({ h: 'Signalement usager à examiner', v: 'VERIFIED' });
+    const ledger = (await db.execute(sql`SELECT outcome FROM "ContentVerification" WHERE "entityId" = ${B} ORDER BY "createdAt", outcome`)).rows.map((r) => r.outcome);
+    expect(ledger).toEqual(['HOLD']);
+  });
+
+  it('without a prior hold, SAME_ENTITY still holds and DISTINCT still releases; no holdKept is recorded', async () => {
+    const A = await mkStructure(); const B = await mkStructure({ verified: true });
+    const first = await decideOn(A, B, 'SAME_ENTITY', A);
+    expect([first.ok, first.decision.held]).toEqual([true, B]);
+    expect((await hold(B)).h).toMatch(/^Doublon \(registre des doublons\)/);
+    expect((await auditOf(A, B, 'SAME_ENTITY')).holdKept).toBeUndefined();
+    const second = await decideOn(A, B, 'DISTINCT');
+    expect([second.ok, second.decision.released]).toEqual([true, [B]]);
+    expect(await hold(B)).toEqual({ h: null, v: 'VERIFIED' });
+  });
+
   it('a record another active SAME_ENTITY pair still puts aside stays aside', async () => {
     const A = await mkStructure(); const B = await mkStructure(); const C = await mkStructure();
     await decideOn(A, B, 'SAME_ENTITY', A);   // B aside (kept: A)
