@@ -21,6 +21,8 @@ export const EDIT_HOLD_PREFIX = 'Contenu modifié par l’administration';
 /** Launch-readiness item 45: the same hold when an IMPORT changed the public content of a verified record (api/_services/source-updates.js). */
 export const SOURCE_UPDATE_HOLD_PREFIX = 'Contenu mis à jour par l’import';
 export const isEditHold = (/** @type {unknown} */ hold) => String(hold || '').startsWith(EDIT_HOLD_PREFIX) || String(hold || '').startsWith(SOURCE_UPDATE_HOLD_PREFIX);
+/** DBL-HOLD: an edit hold carried AFTER another marker (the duplicate register's hold placed over it keeps it): a plain release must not drop it either. */
+export const carriesEditHold = (/** @type {unknown} */ hold) => String(hold || '').includes(EDIT_HOLD_PREFIX) || String(hold || '').includes(SOURCE_UPDATE_HOLD_PREFIX);
 const bad = (status, code, message) => ({ ok: false, status, code, message });
 const tableOf = (type) => VERSIONED[String(type || '').toLowerCase()] || null;
 

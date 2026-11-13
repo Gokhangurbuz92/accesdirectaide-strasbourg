@@ -11,7 +11,7 @@
 import crypto from 'node:crypto';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { EDIT_HOLD_PREFIX, isEditHold, snapshotRow } from './content-versions.js';
+import { EDIT_HOLD_PREFIX, carriesEditHold, isEditHold, snapshotRow } from './content-versions.js';
 import { Aide, Demarche, Structure, Dispositif, ContentVerification, AuditLog } from '../../src/db/schema.js';
 import { ALLOWED_DOMAINS, isAllowedSource } from '../lib/services/official-sources.js';
 import { decide } from '../lib/publicVisibility.js';
@@ -91,7 +91,9 @@ export async function holdForReverification(tx, entityType, row, fields, actor, 
  * @param {{ entityType: string, entityId: string, action: string, reviewer: { id: string, role: string }, sourceUrl?: string, evidenceNote?: string, territoryConfirmed?: boolean, holdReason?: string, expectedVersion?: string }} input
  *   expectedVersion: the contentVersion the reviewer saw; when given, the decision is refused (409 STALE_REVIEW) if the record changed since (the HTTP handler requires
  *   it for VERIFY and RELEASE_HOLD). The ledger keeps the version decided on.
- * @param {{ db?: any, now?: Date, env?: Record<string, string | undefined>, trustedDomains?: string[] }} [deps]
+ * @param {{ db?: any, now?: Date, env?: Record<string, string | undefined>, trustedDomains?: string[], carriesPriorHold?: boolean }} [deps]
+ *   carriesPriorHold (the duplicate register only, DBL-HOLD): the reason already carries the record's current hold after its own marker; it is written as
+ *   given (refused if the current hold is an edit hold the reason does not carry)
  */
 export async function recordVerification(input, deps = {}) {
   const db = deps.db || defaultDb; const now = deps.now || new Date(); const env = deps.env || process.env;
@@ -131,10 +133,17 @@ export async function recordVerification(input, deps = {}) {
     } else if (input.action === 'HOLD') {
       // PKG-11 audit pass 2: a new hold on a record held for re-verification keeps the marker (it used to overwrite it, and a RELEASE then republished unreviewed text)
       const reason = String(input.holdReason).trim();
-      patch = { publication_hold: (isEditHold(row.publication_hold) && !isEditHold(reason) ? `${row.publication_hold} · ${reason}` : reason).slice(0, 500) };
+      if (deps.carriesPriorHold === true) {
+        const hold = reason.slice(0, 500);
+        if (carriesEditHold(row.publication_hold) && !carriesEditHold(hold)) return fail(409, 'EDIT_HOLD_NOT_CARRIED', 'The new hold must carry the re-verification hold it replaces.');
+        patch = { publication_hold: hold };
+      } else {
+        patch = { publication_hold: (isEditHold(row.publication_hold) && !isEditHold(reason) ? `${row.publication_hold} · ${reason}` : reason).slice(0, 500) };
+      }
     } else {
       // PKG-11 audit: releasing an edit hold would republish text no reviewer saw under the OLD verification: a fresh VERIFY is required instead
-      if (isEditHold(row.publication_hold) && row.verification_status === 'VERIFIED') return fail(409, 'REVERIFICATION_REQUIRED', 'This record changed after its verification: verify it again (VERIFY) to publish it.');
+      // DBL-HOLD: also when the edit hold is carried after another marker (a duplicate hold placed over it)
+      if (carriesEditHold(row.publication_hold) && row.verification_status === 'VERIFIED') return fail(409, 'REVERIFICATION_REQUIRED', 'This record changed after its verification: verify it again (VERIFY) to publish it.');
       patch = { publication_hold: null };
     }
     await snapshotRow(tx, input.entityType, input.entityId, `before ${input.action}`, input.reviewer.id);   // PKG-5 / A07: exact prior version kept

@@ -92,6 +92,20 @@ export async function readPair(x, y, { db = defaultDb } = {}) {
  * @param {{ a: string, b: string, decision: 'SAME_ENTITY' | 'DISTINCT', primaryId?: string, evidenceUrl: string, note: string, versionA: string, versionB: string }} input
  * @param {string} reviewer named MFA administrator (the handler enforces the session)
  */
+/**
+ * DBL-HOLD: the hold a SAME_ENTITY decision found on the record it put aside (journalised as priorHold in that decision's STRUCTURE_DUPLICATE_DECIDED entry),
+ * from the latest decision that still puts this record aside or that the current decision replaces (`replacedIds`). Read from the append-only journal.
+ * @param {any} tx @param {string} id @param {string[]} replacedIds @returns {Promise<{ reason: string, at?: string } | null>}
+ */
+async function priorHoldOf(tx, id, replacedIds) {
+  const replaced = replacedIds.length ? sql`d.id IN (${sql.join(replacedIds.map((x) => sql`${x}`), sql`, `)})` : sql`FALSE`;
+  const [hit] = (await tx.execute(sql`SELECT a.details->'priorHold' AS p FROM "AuditLog" a JOIN "StructureDuplicateDecision" d ON d.id = a.details->>'decisionId'
+    WHERE a.action = 'STRUCTURE_DUPLICATE_DECIDED' AND a.details->'priorHold' IS NOT NULL AND d.decision = 'SAME_ENTITY' AND (d."structureA" = ${id} OR d."structureB" = ${id})
+      AND d."primaryId" <> ${id} AND (d."supersededAt" IS NULL OR ${replaced}) ORDER BY a."timestamp" DESC LIMIT 1`)).rows;
+  const p = hit?.p;
+  return p && typeof p.reason === 'string' && p.reason.trim() ? { reason: p.reason, ...(p.at ? { at: String(p.at) } : {}) } : null;
+}
+
 /** @param {any} input @param {string} reviewer @param {{ db?: any, env?: any, role?: string, trustedDomains?: string[] }} [deps] role « system »: the automatic verification chain (same SIRET / same Annuaire office) */
 export async function decide(input, reviewer, { db = defaultDb, env = process.env, role = 'admin', trustedDomains = [] } = {}) {
   const [a, b] = ordered(input?.a, input?.b);
@@ -126,38 +140,56 @@ export async function decide(input, reviewer, { db = defaultDb, env = process.en
     const previous = (await tx.execute(sql`SELECT id, decision, "primaryId" FROM "StructureDuplicateDecision" WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL`)).rows;
     const superseded = (await tx.execute(sql`UPDATE "StructureDuplicateDecision" SET "supersededAt" = NOW() WHERE "structureA" = ${a} AND "structureB" = ${b} AND "supersededAt" IS NULL RETURNING id`)).rows.length;
     const [row] = await tx.insert(StructureDuplicateDecision).values({ structureA: a, structureB: b, decision, primaryId, evidenceUrl, note: note.slice(0, 1000), reviewerId: reviewer, versionA, versionB }).returning({ id: StructureDuplicateDecision.id });
+    const replacedIds = previous.map((d) => String(d.id));
     let held = null;
-    /** @type {string | null} */ let holdKept = null;
+    /** @type {{ reason: string, at?: string } | null} */ let priorHold = null;
     if (decision === 'SAME_ENTITY') {
       held = primaryId === a ? b : a;
-      // DBL-HOLD: a hold that is not this register's (a person's, editorial, the chain's) already keeps the record off the public pages: it is left exactly as
-      // it is — overwriting its reason made a later reversal of this decision lift it as if it were the register's — and the decision journals that it was kept
-      const [cur] = (await tx.execute(sql`SELECT publication_hold AS hold FROM "Structure" WHERE id = ${held}`)).rows;
-      if (cur?.hold && !String(cur.hold).startsWith(DUPLICATE_HOLD)) holdKept = 'EXISTING_HUMAN_HOLD';
-    }
-    if (decision === 'SAME_ENTITY' && !holdKept) {
       const primary = locked.find((r) => r.id === primaryId);
-      const r = await recordVerification({ entityType: 'structure', entityId: held, action: 'HOLD', holdReason: `${DUPLICATE_HOLD} : même organisation que « ${primary?.nom || primaryId} »`, reviewer: { id: reviewer, role } }, { db: tx });
+      const dupReason = `${DUPLICATE_HOLD} : même organisation que « ${primary?.nom || primaryId} »`;
+      // DBL-HOLD: the register's hold always goes first (every duplicate guard reads its marker), but a hold already on the record (a person's, editorial,
+      // a re-verification hold) is not lost: it is carried after the marker, kept in this decision's journal (priorHold) and put back when the decision is replaced
+      const [cur] = (await tx.execute(sql`SELECT publication_hold AS hold FROM "Structure" WHERE id = ${held}`)).rows;
+      const curHold = String(cur?.hold || '');
+      if (curHold && !curHold.startsWith(DUPLICATE_HOLD)) {
+        const [last] = (await tx.execute(sql`SELECT outcome, "createdAt" AS at FROM "ContentVerification" WHERE "entityType" = 'structure' AND "entityId" = ${held} ORDER BY "createdAt" DESC LIMIT 1`)).rows;
+        priorHold = { reason: curHold, ...(last?.outcome === 'HOLD' && last.at ? { at: new Date(last.at).toISOString() } : {}) };
+      } else if (curHold) {
+        priorHold = await priorHoldOf(tx, held, replacedIds);   // already put aside by another decision: the hold that decision kept is kept as well
+      }
+      const r = await recordVerification({ entityType: 'structure', entityId: held, action: 'HOLD', holdReason: priorHold ? `${dupReason.slice(0, 400)} · ${priorHold.reason}` : dupReason, reviewer: { id: reviewer, role },
+        ...(priorHold ? { evidenceNote: `${dupReason} — mise de côté antérieure conservée, rétablie si la décision est remplacée : « ${priorHold.reason} »`.slice(0, 2000) } : {}) },
+      { db: tx, carriesPriorHold: !!priorHold });
       if (!r.ok) throw Object.assign(new Error('duplicate hold failed'), { code: r.code });
     }
     // the hold of a replaced SAME_ENTITY decision is lifted — by the author of the new decision, through the verification ledger (RELEASE_HOLD only clears the
     // hold: the record goes back to its own verification state, nothing is published that was not verified) — only when it is still this register's hold (a
-    // hold put by a person or the chain since is left as it is) and no other active SAME_ENTITY decision (another pair) still puts the record aside
-    const released = [];
+    // hold put by a person or the chain since is left as it is) and no other active SAME_ENTITY decision (another pair) still puts the record aside.
+    // DBL-HOLD: when the replaced decision had found another hold on the record (priorHold), that hold is put back (HOLD, same ledger) instead of a release.
+    const released = []; const restored = [];
     const wasHeld = [...new Set(previous.filter((d) => d.decision === 'SAME_ENTITY' && [a, b].includes(d.primaryId)).map((d) => (d.primaryId === a ? b : a)))].filter((id) => id !== held);
     for (const id of wasHeld) {
       const [cur] = (await tx.execute(sql`SELECT publication_hold AS hold FROM "Structure" WHERE id = ${id}`)).rows;
       if (!String(cur?.hold || '').startsWith(DUPLICATE_HOLD)) continue;
       const [other] = (await tx.execute(sql`SELECT id FROM "StructureDuplicateDecision" WHERE "supersededAt" IS NULL AND decision = 'SAME_ENTITY' AND ("structureA" = ${id} OR "structureB" = ${id}) AND "primaryId" <> ${id} LIMIT 1`)).rows;
       if (other) continue;
+      const why = `la décision ${row.id} (${decision === 'DISTINCT' ? 'établissements distincts' : 'autre fiche conservée'}) remplace la décision précédente de la paire. ${evidenceUrl}`;
+      const prior = await priorHoldOf(tx, id, replacedIds);
+      if (prior) {
+        const r = await recordVerification({ entityType: 'structure', entityId: id, action: 'HOLD', holdReason: prior.reason, reviewer: { id: reviewer, role },
+          evidenceNote: `Mise de côté antérieure rétablie (« ${prior.reason} ») à la place de la mise de côté « doublon » : ${why}`.slice(0, 2000) }, { db: tx });
+        if (!r.ok) throw Object.assign(new Error('prior hold restore failed'), { code: r.code });
+        restored.push(id);
+        continue;
+      }
       const r = await recordVerification({ entityType: 'structure', entityId: id, action: 'RELEASE_HOLD', reviewer: { id: reviewer, role },
-        evidenceNote: `Levée de la mise de côté « doublon » : la décision ${row.id} (${decision === 'DISTINCT' ? 'établissements distincts' : 'autre fiche conservée'}) remplace la décision précédente de la paire. ${evidenceUrl}`.slice(0, 2000) }, { db: tx });
+        evidenceNote: `Levée de la mise de côté « doublon » : ${why}`.slice(0, 2000) }, { db: tx });
       if (!r.ok) throw Object.assign(new Error('duplicate hold release failed'), { code: r.code });
       released.push(id);
     }
     await tx.insert(AuditLog).values({ action: 'STRUCTURE_DUPLICATE_DECIDED', actor: reviewer, actor_id: reviewer, entity: 'Structure', entity_id: `${a}|${b}`,
-      details: { decision, primaryId, held, released, evidenceUrl, superseded, decisionId: row.id, ...(holdKept ? { holdKept } : {}) }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
-    return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, released, superseded } };
+      details: { decision, primaryId, held, released, restored, evidenceUrl, superseded, decisionId: row.id, ...(priorHold ? { priorHold } : {}) }, ip_hash: role === 'system' ? 'SYSTEM_VEILLE' : 'ADMIN_MFA' });
+    return { ok: true, status: 200, decision: { id: row.id, decision, primaryId, held, released, restored, superseded } };
   });
 }
 
