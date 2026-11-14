@@ -606,5 +606,6 @@
  "fc.link": "Link my account to FranceConnect",
  "fc.linked": "Your account is now linked to FranceConnect.",
  "profile.inapp_center_r46": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Reminders reach you by e-mail (and by text message only if you turn it on).",
+ "profile.inapp_center_v2": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Text messages, reminders and optional information are not open yet.",
  "rdv.moved_by_structure_r47": "Time changed by the organisation on {{when}}."
 }

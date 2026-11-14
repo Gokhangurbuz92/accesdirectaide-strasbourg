@@ -106,6 +106,12 @@ export default function CompteProfil() {
   }
   const { account } = state;
   const prefs = account.preferences;
+  // V2 legal review (14/11/2026): the server says which options may be switched on (SMS, reminders and optional information are closed in the narrow V2
+  // scope — setPreference refuses them); a closed option is not offered. An answer without the field (older server) keeps the former table.
+  const optionsOpen = account.notificationOptions || { sms: true, reminder: true, marketing: true };
+  const shownChannels = CHANNELS.filter(([c]) => c !== 'sms' || optionsOpen.sms);
+  const shownCategories = categories(t).filter(([c]) => (c !== 'reminder' || optionsOpen.reminder) && (c !== 'marketing' || optionsOpen.marketing));
+  const someClosed = !optionsOpen.sms || !optionsOpen.reminder || !optionsOpen.marketing;
   const pending = account.agePolicy && !account.agePolicy.allowed;
 
   return (
@@ -196,12 +202,12 @@ export default function CompteProfil() {
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm" data-testid="prefs-table">
               <caption className="sr-only">{t('compte:profile.preferences_notification_par_canal', 'Préférences de notification par canal et par catégorie')}</caption>
-              <thead><tr><th scope="col" className="p-2 text-left">{t('compte:profile.categorie', 'Catégorie')}</th>{CHANNELS.map(([c, l]) => <th key={c} scope="col" className="p-2 text-left">{l}</th>)}</tr></thead>
+              <thead><tr><th scope="col" className="p-2 text-left">{t('compte:profile.categorie', 'Catégorie')}</th>{shownChannels.map(([c, l]) => <th key={c} scope="col" className="p-2 text-left">{l}</th>)}</tr></thead>
               <tbody>
-                {categories(t).map(([cat, catLabel]) => (
+                {shownCategories.map(([cat, catLabel]) => (
                   <tr key={cat} className="border-t border-slate-200">
                     <th scope="row" className="p-2 text-left font-medium">{catLabel}</th>
-                    {CHANNELS.map(([ch, chLabel]) => {
+                    {shownChannels.map(([ch, chLabel]) => {
                       const key = `${ch}.${cat}`;
                       const on = prefs[key] === true; const needs = NEEDS_CONSENT(ch, cat);
                       // the box follows the click at once and says it is being saved; the server's answer then decides (a refusal puts the saved value back)
@@ -237,7 +243,9 @@ export default function CompteProfil() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-700" data-testid="prefs-no-inapp">{t('compte:profile.inapp_center_r46', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les rappels vous parviennent par e-mail (et par SMS seulement si vous l’activez).')}</p>
+          <p className="text-xs text-slate-700" data-testid="prefs-no-inapp">{someClosed
+            ? t('compte:profile.inapp_center_v2', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les SMS, les rappels et les informations facultatives ne sont pas encore ouverts.')
+            : t('compte:profile.inapp_center_r46', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les rappels vous parviennent par e-mail (et par SMS seulement si vous l’activez).')}</p>
         </CardContent>
       </Card>
 

@@ -8,7 +8,7 @@ import { and, desc, eq, sql } from 'drizzle-orm';
 import { isRestricted, SHARE_SEAL } from './processing-restriction.js';
 import { db as defaultDb } from '../../src/db/index.js';
 import { CitizenProfile, CitizenUser, ConsentLog, GuardianRelationship, HouseholdMember, NotificationPreference, SharedDiagnostic } from '../../src/db/schema.js';
-import { capabilityOpen } from '../_utils/capabilities.js';
+import { capabilityEnforced, capabilityOpen } from '../_utils/capabilities.js';
 import { AGE_BAND_KEYS } from '../lib/ageBands.js';
 import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { evaluateAge } from '../lib/agePolicy.js';
@@ -40,10 +40,41 @@ export const DEFAULT_PREFS = Object.freeze({
 const CONSENT_REQUIRED = (channel, category) => category === 'marketing' || channel === 'sms' || channel === 'push';
 export const purposeOf = (channel, category) => `NOTIF_${channel.toUpperCase()}_${category.toUpperCase()}`;
 
+/**
+ * V2 legal review (14/11/2026) — notification options with no open purpose in the notice cannot be switched on. Fail-closed, server-side (the screen only
+ * follows): in the narrow V2 scope the privacy notice (legal-drafts v3-2026-11-14) covers service e-mails (P10a) only; reminders (P10b) and SMS are « not open
+ * yet » and no marketing purpose exists at all.
+ *   sms        open only where the telephone number is collected (api/_utils/phone-collection.js: closed in Production, Preview and the beta)
+ *   reminder   open only where appointments (citizen.booking) or Mon Parcours (citizen.parcours) are open — the only things a reminder is about
+ *   marketing  no purpose in the notice: open only where the capability gate is not enforced (development / test LAB)
+ * Switching an option OFF, and withdrawing a consent, always stays possible (art. 7, 3). Stored rows are not changed.
+ * @param {Record<string, string | undefined>} [env]
+ */
+export function notificationOptionsOpen(env = process.env) {
+  return {
+    sms: phoneCollectionOpen(env),
+    reminder: capabilityOpen('citizen.booking', env) || capabilityOpen('citizen.parcours', env),
+    marketing: !capabilityEnforced(env),
+  };
+}
+/** may this channel × category be switched on in this environment @param {string} channel @param {string} category @param {Record<string, string | undefined>} [env] */
+export function notificationOptionOpen(channel, category, env = process.env) {
+  const open = notificationOptionsOpen(env);
+  return (channel !== 'sms' || open.sms) && (category !== 'reminder' || open.reminder) && (category !== 'marketing' || open.marketing);
+}
+export const NOTIFICATION_OPTION_CLOSED = 'NOTIFICATION_OPTION_CLOSED';
+const NOTIFICATION_OPTION_CLOSED_MESSAGE = 'Cette option n’est pas encore ouverte : les SMS, les rappels et les informations facultatives ne sont pas proposés pour le moment. Rien n’a été activé.';
+const NOTIF_PURPOSE = /^NOTIF_([A-Z]+)_([A-Z]+)$/;
+
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 
 // ───────────── consent ledger (append-only)
 export async function appendConsent({ userId, purpose, decision, channel = 'ui', guardianInvolved = false, proofLevel = 'AUTHENTICATED_SESSION' }, db = defaultDb) {
+  // V2 legal review: a « yes » to a notification option that is not open is never recorded (a « no » — a withdrawal — always is)
+  const notif = NOTIF_PURPOSE.exec(String(purpose || ''));
+  if (decision && notif && !notificationOptionOpen(notif[1].toLowerCase(), notif[2].toLowerCase())) {
+    throw Object.assign(new Error(NOTIFICATION_OPTION_CLOSED_MESSAGE), { code: NOTIFICATION_OPTION_CLOSED, status: 409 });
+  }
   const [row] = await db.insert(ConsentLog).values({
     subject_type: 'CITIZEN_USER', subject_id: userId, purpose, decision: Boolean(decision), policy_version: CONSENT_POLICY_VERSION,
     policy_hash: `${CONSENT_POLICY_VERSION}:${purpose}`, collection_channel: channel, guardian_involved: guardianInvolved, proof_level: proofLevel,
@@ -84,6 +115,8 @@ export async function getAccount(userId, db = defaultDb) {
     household: household.map((h) => ({ id: h.id, relation: h.relation, ageBand: h.ageBand, label: h.label })),
     // Release B: which optional fields the service collects in this environment (the screen offers only those)
     collect: { ageBand: optionalProfileFieldsOpen(), departement: optionalProfileFieldsOpen(), phone: phoneCollectionOpen() },
+    // V2 legal review: which notification options may be switched on here (the screen offers only those; setPreference enforces it)
+    notificationOptions: notificationOptionsOpen(),
     preferences, agePolicy: { accountFeatures: gate.accountFeatures, allowed: gate.allowed, status: gate.policyStatus, publicInformation: 'ALL_AGES', adultAccount: await isAdultAccount(userId, db) },   // R42-A07
   };
 }
@@ -162,6 +195,7 @@ export async function setPreference(userId, input, db = defaultDb) {
   const b = input && typeof input === 'object' ? input : {};
   if (!CHANNELS.includes(b.channel) || !CATEGORIES.includes(b.category)) return bad('INVALID_PREFERENCE', 'Canal ou catégorie inconnus.');
   if (typeof b.enabled !== 'boolean') return bad('INVALID_PREFERENCE', 'enabled doit être vrai ou faux.');
+  if (b.enabled && !notificationOptionOpen(b.channel, b.category)) return bad(NOTIFICATION_OPTION_CLOSED, NOTIFICATION_OPTION_CLOSED_MESSAGE, 409);
   const needsConsent = CONSENT_REQUIRED(b.channel, b.category);
   if (b.enabled && needsConsent) {
     if (b.consentGiven !== true) return bad('CONSENT_REQUIRED', 'Cette option nécessite votre consentement explicite, distinct de l’acceptation du service.');
@@ -187,6 +221,7 @@ export async function setPreference(userId, input, db = defaultDb) {
 /** The single question every sender must ask. Marketing, SMS and push additionally need a recorded consent whose LATEST decision is "yes". */
 export async function canNotify(userId, channel, category, db = defaultDb) {
   if (!CHANNELS.includes(channel) || !CATEGORIES.includes(category)) return false;
+  if (!notificationOptionOpen(channel, category)) return false;   // V2 legal review: nothing is sent for an option that is not open
   if (await isRestricted(userId, db)) return false;   // PKG-11 / C21: no notification while the person restricts processing (art. 18); its own notices are sent apart
   const prefs = await getPreferences(userId, db);
   if (prefs[`${channel}.${category}`] !== true) return false;

@@ -154,7 +154,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   });
   it('the terms say free service, no entitlement decision, AI limits, structure confirms, deletion, lawful liability, French law and mediation « à vérifier »', () => {
     const c = text(LEGAL_DRAFT_DOCUMENTS[0]);
-    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il peut se tromper', "C'est la structure qui confirme", 'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
+    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il pourra se tromper', "c'est la structure qui confirmera", 'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
     // no abusive-clause style exclusions (consumer code L212-1; civil code 1171 to be checked by counsel)
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d)).not.toMatch(/décline toute responsabilité|aucune responsabilité|en aucun cas responsable|sans préavis ni indemnité|tribunaux de Strasbourg seuls compétents/i);
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d), d.id).toMatch(/version française de ce(?:s conditions| cette notice|tte notice)? est la seule juridiquement de référence|La version française de cette notice/);

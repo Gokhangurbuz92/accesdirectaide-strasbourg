@@ -606,5 +606,6 @@
  "fc.link": "Hesabımı FranceConnect’e bağla",
  "fc.linked": "Hesabınız artık FranceConnect’e bağlı.",
  "profile.inapp_center_r46": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. Hatırlatmalar size e-postayla (ve yalnızca etkinleştirirseniz SMS ile) ulaşır.",
+ "profile.inapp_center_v2": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. SMS, hatırlatmalar ve isteğe bağlı bilgiler henüz açık değil.",
  "rdv.moved_by_structure_r47": "Saat, kuruluş tarafından {{when}} tarihinde değiştirildi."
 }

@@ -16,7 +16,7 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
 });
 
 /** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'v2-2026-11-09';   // V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
+export const LEGAL_DRAFTS_VERSION = 'v3-2026-11-14';   // V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
  * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
@@ -47,26 +47,27 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "AccesDirectAide n'est pas un site de l'administration. Il vous aide à trouver une information, à vérifier si une aide peut vous concerner et à contacter une structure. Il ne prend aucune décision sur vos droits : seul l'organisme compétent (Caf, CPAM, France Travail, Collectivité européenne d'Alsace, CCAS…) décide.",
         "Les informations sont données à titre indicatif, avec leur source officielle et leur date. Elles peuvent changer : vérifiez-les auprès de la source indiquée.",
       ] },
-      { id: 'ai', title: "4. L'assistant automatique", paras: [
-        "L'assistant peut chercher, expliquer et proposer un brouillon. Il peut se tromper. Il ne donne pas de conseil juridique et ne décide de rien.",
-        "N'y écrivez pas d'information sur votre santé, un handicap, votre situation administrative ou celle d'une autre personne.",
+      { id: 'ai', title: "4. L'assistant automatique (pas encore ouvert)", paras: [
+        "L'assistant automatique n'est pas encore ouvert. Quand il le sera, il pourra chercher, expliquer et proposer un brouillon. Il pourra se tromper. Il ne donnera pas de conseil juridique et ne décidera de rien.",
+        "Lorsqu'il sera ouvert, n'y écrivez pas d'information sur votre santé, un handicap, votre situation administrative ou celle d'une autre personne.",
       ] },
       { id: 'account', title: '5. Votre compte', items: [
-        'Un compte est nécessaire pour demander un rendez-vous.',
+        "Un compte vous donne accès à votre espace personnel (Mon Espace). Il sera nécessaire pour demander un rendez-vous lorsque cette fonction sera ouverte ; elle ne l'est pas encore.",
         'Vous devez avoir 18 ans ou plus pour créer un compte.',
         'Vous donnez des informations exactes et gardez votre mot de passe secret.',
         "Votre compte est personnel : n'agissez pas au nom d'une autre personne sans son accord.",
       ] },
-      { id: 'appointments', title: '6. Les rendez-vous', paras: [
-        "Une demande de rendez-vous n'est pas un rendez-vous confirmé. C'est la structure qui confirme, propose un autre créneau ou refuse. Elle peut aussi modifier ou annuler un rendez-vous ; vous en êtes informé dans votre espace.",
-        "Vous pouvez annuler votre demande ou votre rendez-vous depuis votre espace. Prévenez le plus tôt possible.",
+      { id: 'appointments', title: '6. Les rendez-vous (pas encore ouverts)', paras: [
+        "La demande de rendez-vous n'est pas encore ouverte. Les règles ci-dessous s'appliqueront lorsqu'elle le sera ; ces conditions seront alors mises à jour et les titulaires d'un compte en seront informés.",
+        "Une demande de rendez-vous ne sera pas un rendez-vous confirmé : c'est la structure qui confirmera, proposera un autre créneau ou refusera. Elle pourra aussi modifier ou annuler un rendez-vous ; vous en serez informé dans votre espace.",
+        "Vous pourrez annuler votre demande ou votre rendez-vous depuis votre espace. Il faudra prévenir le plus tôt possible.",
         "Chaque structure fixe ses propres règles d'accueil. AccesDirectAide ne garantit ni une place disponible ni l'attribution d'une aide.",
-        "Le message joint à une demande est facultatif. Il n'est transmis qu'avec votre accord, que vous pouvez retirer à tout moment depuis votre espace.",
+        "Le message joint à une demande sera facultatif. Il ne sera transmis qu'avec votre accord, que vous pourrez retirer à tout moment depuis votre espace.",
       ] },
       { id: 'use', title: '7. Utilisation correcte', items: [
         "Ne publiez ni n'envoyez de contenu illicite, injurieux ou qui porte atteinte à une autre personne.",
         "Ne cherchez pas à accéder aux données d'autrui ni à perturber le service.",
-        "N'utilisez pas de programme pour extraire le contenu en masse ou pour réserver des créneaux.",
+        "N'utilisez pas de programme pour extraire le contenu en masse ou pour utiliser une fonction du service de façon automatisée, y compris, lorsqu'elle sera ouverte, la réservation de créneaux.",
       ] },
       { id: 'deletion', title: '8. Supprimer votre compte', paras: [
         "Vous pouvez demander la suppression de votre compte à tout moment, depuis votre espace ou en écrivant à {{contact}}. Une personne vérifie la demande avant la suppression, pour éviter une erreur ou une usurpation.",
@@ -192,7 +193,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
     sections: [
       { id: 'controller', title: '1. Responsable du traitement', paras: [
         "Le responsable du traitement est {{controller}}, personne physique, qui exploite AccesDirectAide à titre personnel et bénévole. Aucune association n'a été créée à ce jour. Aucun délégué à la protection des données n'est désigné.",
-        'Pour vos données : {{contact}} ou le formulaire de contact.',
+        "Pour vos données : écrivez à {{contact}}. Plusieurs droits peuvent aussi être exercés directement depuis votre espace (section 8).",
       ] },
       { id: 'status', title: '2. Statut de cette notice', paras: [V2_STATUS_NOTE] },
       { id: 'purposes', title: '3. Finalités et bases légales des comptes personnels', items: [
@@ -241,7 +242,8 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Aucune de ces durées n'est imposée par un texte : elles sont fixées par le responsable du traitement. La suppression automatique à ces échéances n'est pas encore entièrement activée ; vous pouvez demander l'effacement à tout moment.",
       ] },
       { id: 'recipients', title: '5. Destinataires', paras: [
-        "Vos données ne sont ni vendues ni louées. Y ont accès : l'exploitant ; la structure que vous choisissez pour un rendez-vous, pour ce qui lui est transmis ; les prestataires techniques ci-dessous, sur instruction.",
+        "Vos données ne sont ni vendues ni louées. Y ont accès : l'exploitant ; les prestataires techniques ci-dessous, sur instruction.",
+        "Lorsque les rendez-vous seront ouverts (ils ne le sont pas encore), la structure que vous choisirez pour un rendez-vous recevra aussi ce qui lui sera transmis (section 9).",
       ] },
       { id: 'processors', title: '6. Prestataires techniques (sous-traitants)', items: [
         'Vercel Inc. : hébergement du site et des fonctions serveur, exécutées à Francfort.',
@@ -262,12 +264,14 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Opposition, pour les traitements fondés sur l'intérêt légitime.",
         "Retrait de votre consentement à tout moment, aussi simplement que vous l'avez donné. Le retrait ne remet pas en cause ce qui a été fait avant.",
       ], paras: [
-        'Écrivez à {{contact}}. Une réponse vous est donnée dans un délai d\'un mois.',
+        "Depuis votre espace, vous pouvez vous-même : télécharger une copie de vos données (export), corriger les informations de votre compte, demander l'effacement de votre compte et demander la limitation de l'utilisation de vos données.",
+        'Vous pouvez aussi écrire à {{contact}}, pour ces droits comme pour les autres. Une réponse vous est donnée dans un délai d\'un mois.',
         'Vous pouvez aussi adresser une réclamation à la CNIL (www.cnil.fr).',
       ] },
-      { id: 'booking', title: '9. Quand vous demandez un rendez-vous', paras: [
-        "La structure choisie reçoit votre nom, votre adresse électronique, votre téléphone si vous l'indiquez, le créneau demandé et, si vous l'avez accepté, votre message.",
-        "Pour ce qu'elle reçoit, la structure est responsable de son propre traitement : elle décide de ce qu'elle en fait dans ses dossiers, selon ses obligations. Vous pouvez exercer vos droits auprès d'elle.",
+      { id: 'booking', title: '9. Quand vous demanderez un rendez-vous (projet)', paras: [
+        "La demande de rendez-vous n'est pas encore ouverte. Ce qui suit s'appliquera lorsqu'elle le sera.",
+        "La structure choisie recevra votre nom, votre adresse électronique, votre téléphone si vous l'indiquez, le créneau demandé et, si vous l'avez accepté, votre message.",
+        "Pour ce qu'elle recevra, la structure sera responsable de son propre traitement : elle décidera de ce qu'elle en fait dans ses dossiers, selon ses obligations. Vous pourrez exercer vos droits auprès d'elle.",
         "Pour la gestion de la demande dans la plateforme, l'exploitant et la structure seraient responsables conjoints ; un accord le précisera et ses grandes lignes seront publiées. Aucune structure n'a signé d'accord à ce jour.",
       ] },
       { id: 'sensitive', title: '10. Services sensibles (projet)', paras: [
