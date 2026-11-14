@@ -119,6 +119,7 @@ export async function recordVerification(input, deps = {}) {
     const version = contentVersion(await rowJson(tx, input.entityType, input.entityId));
     if (input.expectedVersion !== undefined && input.expectedVersion !== version) return fail(409, 'STALE_REVIEW', 'Le contenu de la fiche a changé depuis votre lecture : rechargez-la et relisez-la avant de décider.');
     /** @type {Record<string, any>} */ let patch;
+    /** @type {string | null} */ let restoredHold = null;
     if (input.action === 'VERIFY') {
       // PKG-11 audit: a hold put by a content change is lifted BY the re-verification itself (atomically); any other hold must be released first
       if (row.publication_hold && !isEditHold(row.publication_hold)) return fail(409, 'PUBLICATION_HOLD_ACTIVE', 'Release the publication hold first.');
@@ -144,20 +145,38 @@ export async function recordVerification(input, deps = {}) {
       // PKG-11 audit: releasing an edit hold would republish text no reviewer saw under the OLD verification: a fresh VERIFY is required instead
       // DBL-HOLD: also when the edit hold is carried after another marker (a duplicate hold placed over it)
       if (carriesEditHold(row.publication_hold) && row.verification_status === 'VERIFIED') return fail(409, 'REVERIFICATION_REQUIRED', 'This record changed after its verification: verify it again (VERIFY) to publish it.');
-      patch = { publication_hold: null };
+      // DBL-HOLD-2: releasing a duplicate hold that carries an earlier hold (a person's, editorial — the register keeps it after « » · ») lifts ONLY the
+      // duplicate part: the earlier hold is put back, never lost; a second, explicit release lifts it. Fail-closed: an unparsable hold stays held.
+      const prior = carriedPriorHold(row.publication_hold);
+      patch = { publication_hold: prior };
+      if (prior) restoredHold = prior;
     }
     await snapshotRow(tx, input.entityType, input.entityId, `before ${input.action}`, input.reviewer.id);   // PKG-5 / A07: exact prior version kept
     await tx.update(table).set(patch).where(eq(table.id, input.entityId));
     await tx.insert(ContentVerification).values({
       entityType: input.entityType, entityId: input.entityId, outcome: OUTCOME[input.action], reviewerId: input.reviewer.id, reviewerRole: input.reviewer.role,
-      sourceUrl: sourceUrl || null, evidenceNote: note || input.holdReason || null, territoryConfirmed: input.action === 'VERIFY' ? true : false, verifiedAt: now, contentVersion: version,
+      sourceUrl: sourceUrl || null, evidenceNote: (restoredHold ? `${note ? `${note} — ` : ''}doublon levé ; mise de côté antérieure rétablie : « ${restoredHold} »`.slice(0, 2000) : null) || note || input.holdReason || null, territoryConfirmed: input.action === 'VERIFY' ? true : false, verifiedAt: now, contentVersion: version,
     });
     // the decision is also in the administration journal (/admin/audit), with the version decided on; the ledger stays the authority (same transaction)
     await tx.insert(AuditLog).values({ action: `CONTENT_${OUTCOME[input.action]}`, actor: input.reviewer.id, actor_id: input.reviewer.id, entity: input.entityType, entity_id: input.entityId,
-      details: { contentVersion: version, sourceUrl: sourceUrl || null }, ip_hash: input.reviewer.role === 'system' ? (input.reviewer.id === 'ada-veille-automatique' ? 'SYSTEM_VEILLE' : 'SYSTEM_IMPORT') : 'ADMIN_MFA' });
+      details: { contentVersion: version, sourceUrl: sourceUrl || null, ...(restoredHold ? { restoredHold } : {}) }, ip_hash: input.reviewer.role === 'system' ? (input.reviewer.id === 'ada-veille-automatique' ? 'SYSTEM_VEILLE' : 'SYSTEM_IMPORT') : 'ADMIN_MFA' });
     const [after] = await tx.select().from(table).where(eq(table.id, input.entityId));
     return { ok: true, status: 200, decision: decide(after, input.entityType) };
   });
+}
+
+/** The duplicate register's hold marker (duplicate-register.js DUPLICATE_HOLD; not imported: that module imports this one). */
+export const DUPLICATE_HOLD_MARKER = 'Doublon (registre des doublons)';
+/**
+ * DBL-HOLD-2: the earlier hold a duplicate hold carries (`<marker> : même organisation que « … » · <earlier hold>`), or null.
+ * @param {string | null | undefined} hold
+ */
+export function carriedPriorHold(hold) {
+  const h = String(hold || '');
+  if (!h.startsWith(DUPLICATE_HOLD_MARKER)) return null;
+  const i = h.indexOf('» · ');
+  const rest = i >= 0 ? h.slice(i + 4).trim() : '';
+  return rest ? rest.slice(0, 500) : null;
 }
 
 /** @param {string} entityType @param {string} entityId @param {{ db?: any }} [deps] */

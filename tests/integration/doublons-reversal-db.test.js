@@ -189,6 +189,21 @@ describe.skipIf(!hasDatabase)('D13 duplicate decision reversal and open-pair cou
     expect((await hold(B)).h).toBe('Signalement en cours');
   });
 
+  it('(g) DBL-HOLD-2: a direct admin release of a duplicate hold carrying a person\'s hold lifts only the duplicate part; a second release lifts the rest', async () => {
+    const { recordVerification } = await import('../../api/_services/content-verification.js');
+    const A = await mkStructure(); const B = await mkStructure({ verified: true });
+    await personHold(B, 'Signalement en cours');
+    await decideOn(A, B, 'SAME_ENTITY', A);
+    expect((await hold(B)).h).toMatch(/^Doublon \(registre des doublons\).* · Signalement en cours$/);
+    const rel = (await recordVerification({ entityType: 'structure', entityId: B, action: 'RELEASE_HOLD', reviewer: { id: ADMIN, role: 'admin' } })).ok;
+    expect(rel).toBe(true);
+    expect(await hold(B), 'the person\'s hold is put back, not lost').toEqual({ h: 'Signalement en cours', v: 'VERIFIED' });
+    const audit = (await db.execute(sql`SELECT details FROM "AuditLog" WHERE entity_id = ${B} AND action = 'CONTENT_RELEASE_HOLD' ORDER BY timestamp DESC LIMIT 1`)).rows[0];
+    expect(audit.details.restoredHold).toBe('Signalement en cours');
+    expect((await recordVerification({ entityType: 'structure', entityId: B, action: 'RELEASE_HOLD', reviewer: { id: ADMIN, role: 'admin' } })).ok).toBe(true);
+    expect(await hold(B)).toEqual({ h: null, v: 'VERIFIED' });
+  });
+
   it('a record another active SAME_ENTITY pair still puts aside stays aside', async () => {
     const A = await mkStructure(); const B = await mkStructure(); const C = await mkStructure();
     await decideOn(A, B, 'SAME_ENTITY', A);   // B aside (kept: A)
