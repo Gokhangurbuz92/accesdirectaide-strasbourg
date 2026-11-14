@@ -583,6 +583,11 @@ export async function runGdprPurge(opts = {}) {
     if (!gate.execute) {
         // R33 + R44: nothing is changed or written; the counts say what an approved run would do
         const out = await body(false);
+        // C3 6c: the scheduled dry run is the controller's report — its counts (numbers per step id only, never a value or an identifier) go to the logs,
+        // the only durable trace of a run that writes nothing (Vercel discards the cron response body)
+        log.info({ reason: gate.reason, policyVersion: policy.version,
+            counts: Object.fromEntries((out.steps || []).map((l) => [l.id, l.countsByOption ?? l.count ?? null])), countErrors: out.count_errors || [] },
+            '[gdpr-purge] dry run — counts only, nothing changed');
         const message = gate.reason === 'GDPR_PURGE_DISABLED'
             ? 'Purge disabled until GDPR_PURGE_ENABLED=true (retention periods must be approved first). Nothing deleted.'
             : gate.reason === 'OWNER_CHOICE_MISSING'

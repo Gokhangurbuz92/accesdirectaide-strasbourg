@@ -280,3 +280,22 @@ describe('R44 source pins', () => {
     expect(fs.readFileSync('api/_handlers/cron/gdpr-purge.js', 'utf8')).toMatch(/export default createGdprPurgeHandler\(\);/);
   });
 });
+
+describe('C3 6c — the scheduled dry run logs its counts (the only durable trace of a run that writes nothing)', () => {
+  it('one info line with the reason and a number (or per-option numbers) per step id — no row, value or identifier', async () => {
+    const lines = [];
+    const spy = { ...log, info: (obj, msg) => lines.push({ obj, msg }) };
+    const db = recDb();
+    const { status, body } = await runGdprPurge({ database: db, env: {}, now: NOW, logger: spy });
+    expect([status, body.reason]).toEqual([200, 'GDPR_PURGE_DISABLED']);
+    const l = lines.find((x) => typeof x.msg === 'string' && x.msg.includes('dry run — counts only'));
+    expect(l).toBeTruthy();
+    expect(l.obj.reason).toBe('GDPR_PURGE_DISABLED');
+    expect(Object.keys(l.obj.counts).sort()).toEqual(body.steps.map((s) => s.id).sort());
+    expect(l.obj.counts.unverifiedAccountsDeleted).toBe(3);
+    for (const v of Object.values(l.obj.counts)) {
+      expect(v === null || typeof v === 'number' || (typeof v === 'object' && Object.values(v).every((n) => typeof n === 'number'))).toBe(true);
+    }
+    expect(writes(db)).toEqual([]);
+  });
+});
