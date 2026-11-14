@@ -50,9 +50,12 @@ describe('V2 — atomic activation of accounts and Mailjet (release preflight)',
     expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: 'other' }).detail).toMatch(/POLICY_VERSION_NOT_PINNED/);
     expect(why({ ...V2, GDPR_PURGE_APPROVED_STEPS: 'accountTokensDeleted' }).detail).toMatch(/does not list unverifiedAccountsDeleted/);
     expect(why(V2, approvedTestPolicy({ a7: 365, steps: [] })).detail).toMatch(/STEP_NOT_APPROVED_IN_POLICY/);
-    // the real policy since phase 1: APPROVED, pinned by the deployment, but step 6c has no approval record yet (it comes after phase 4) → accounts stay closed
-    expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, RETENTION_POLICY).detail).toMatch(/STEP_NOT_APPROVED_IN_POLICY/);
-    expect(evaluateReleasePreflight({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, { legalText: LEGAL }).find((r) => r.id === 'retention.unverified_accounts_7d').status).toBe('FAIL');
+    // the real policy since C3 6c (14/11/2026): APPROVED, pinned by the deployment AND step 6c approved in the policy → the rule passes only with the 6B env
+    expect(why({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, RETENTION_POLICY).status).toBe('PASS');
+    expect(evaluateReleasePreflight({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, { legalText: LEGAL }).find((r) => r.id === 'retention.unverified_accounts_7d').status).toBe('PASS');
+    // ...and still FAILS without any one of the 6B switches (the record alone opens nothing)
+    expect(evaluateReleasePreflight({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version, GDPR_PURGE_ENABLED: '' }, { legalText: LEGAL }).find((r) => r.id === 'retention.unverified_accounts_7d').status).toBe('FAIL');
+    expect(evaluateReleasePreflight({ ...V2, GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version, GDPR_PURGE_APPROVED_STEPS: '' }, { legalText: LEGAL }).find((r) => r.id === 'retention.unverified_accounts_7d').status).toBe('FAIL');
     // admin only (accounts closed): the rule does not apply
     expect(evaluateReleasePreflight({ ...BASE, ADA_BETA_OPEN_SURFACES: 'admin' }, { legalText: LEGAL }).some((r) => r.id === 'retention.unverified_accounts_7d')).toBe(false);
   });

@@ -50,10 +50,11 @@ const writes = (db) => db.calls.filter((c) => c.op !== 'select');
 const NOW = new Date('2026-11-04T12:00:00Z');
 
 describe('R44 retention policy object', () => {
-  it('V2 phase 1 (owner, 09/11/2026): APPROVED with A7 = 365 named in the version, NO step approved, frozen; the proposal stays unapproved', () => {
+  it('V2 phase 1 (owner, 09/11/2026): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
     expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'r45-proposal-2-2026-11-05-a7-365d', approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
-    expect('approvedSteps' in RETENTION_POLICY).toBe(false);   // every purge step still needs its own approval record
+    // C3 step 6c (V2 6B): ONLY unverifiedAccountsDeleted is approved; every other purge step still needs its own approval record
+    expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted']);
     const PROPOSED = proposedTestPolicy();
     expect(PROPOSED.status).toBe(POLICY_STATUS_PROPOSED);
     expect('approvedPolicyVersion' in PROPOSED).toBe(false);
@@ -123,17 +124,23 @@ describe('R44 / E16 execution gate', () => {
 });
 
 describe('R44 runGdprPurge — dry run by default, execution only of approved steps', () => {
-  it('the production policy, enabled, pinned and EVERY step listed: nothing written — no step carries its own approval record yet', async () => {
+  it('the production policy, enabled, pinned and EVERY step listed: ONLY the 6c step (approved in the policy) executes; every other step is refused', async () => {
     const db = recDb();
     const { status, body } = await runGdprPurge({ database: db, env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_APPROVED_STEPS: executableStepIds(PURGE_STEPS).join(','),
       GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, now: NOW, logger: log });
     expect(status).toBe(200);
-    // the only write is the run's evidence row (AuditLog GDPR_PURGE_RUN, counts only): no delete, no update of any personal data
-    expect(writes(db).filter((w) => w.op !== 'insert')).toEqual([]);
-    expect(writes(db).map((w) => w.table)).toEqual(['AuditLog']);
-    // every executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
-    expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort()).toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount').sort());
+    // C3 6c: the never-confirmed accounts (and their consent rows) are the only deletions; plus the run's evidence row (AuditLog GDPR_PURGE_RUN, counts only)
+    expect(writes(db).map((w) => [w.op, w.table])).toEqual([['delete', 'ConsentLog'], ['delete', 'CitizenUser'], ['insert', 'AuditLog']]);
+    expect(body.steps.find((l) => l.id === 'unverifiedAccountsDeleted')).toMatchObject({ decision: 'executed', table: 'CitizenUser', days: 7 });
+    // every other executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
+    expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort())
+      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted').sort());
     expect(body.steps.find((l) => l.id === 'clearedGuestHoldsCount').decision).toBe('skipped_schema');
+  });
+  it('the production policy, enabled and pinned, but GDPR_PURGE_APPROVED_STEPS without the 6c step: nothing deleted (the operator list is still required)', async () => {
+    const db = recDb();
+    await runGdprPurge({ database: db, env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_APPROVED_STEPS: 'deletedTokensCount', GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, now: NOW, logger: log });
+    expect(writes(db).filter((w) => w.op === 'delete' && (w.table === 'CitizenUser' || w.table === 'ConsentLog'))).toEqual([]);
   });
   it('the proposal (unapproved) with GDPR_PURGE_ENABLED=true: a dry run, nothing written (no delete, update, insert), every step counted', async () => {
     const db = recDb();

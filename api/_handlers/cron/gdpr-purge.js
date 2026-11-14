@@ -47,7 +47,7 @@ export const RETENTION = {
  * Missing tables or columns (Production is at migration 0042) skip the step, said in skipped_steps. One run at a time (advisory lock). An executing run
  * leaves one AuditLog row (GDPR_PURGE_RUN: counts only) as evidence.
  *
- * Schedule: every Sunday at 03:00 (vercel.json)
+ * Schedule: daily at 03:00 UTC (vercel.json "0 3 * * *")
  */
 
 /**

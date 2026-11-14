@@ -60,8 +60,18 @@ export const RETENTION_POLICY = deepFreeze({
   status: POLICY_STATUS_APPROVED,
   approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d',
   approvedChoices: { A7: 365 },
-  // approvedSteps: ABSENT on purpose — { [stepId]: { approvedOn: 'YYYY-MM-DD', dryRunReviewedOn: 'YYYY-MM-DD', backupVerified: '<backup name or evidence ref>',
-  //   sharedControllerBasis?: '<written agreement with the structure>' } }, one entry per step the controller approved (D4: step by step)
+  // approvedSteps: one entry per step the controller approved (D4: step by step) — { [stepId]: { approvedOn, dryRunReviewedOn, backupVerified,
+  //   sharedControllerBasis? } }. C3 step 6c ONLY (V2 stage 6B): unverified accounts deleted after 7 days. Dry run opened in Production 14/11/2026
+  //   (owner approval of CONTROL/v2/C3_6C_PAKETI_TR.md); first dry-run report reviewed 14/11; verified backup = C7 restore evidence 12/11 + K3 scheduled
+  //   backups accepted 13/11. This record executes nothing alone: GDPR_PURGE_ENABLED, GDPR_PURGE_POLICY_VERSION and GDPR_PURGE_APPROVED_STEPS are set
+  //   only by the owner's 6B sentence. No other step is approved (steps 6 and 6b need their own dry run and approval).
+  approvedSteps: {
+    unverifiedAccountsDeleted: {
+      approvedOn: '2026-11-14',
+      dryRunReviewedOn: '2026-11-14',
+      backupVerified: 'CONTROL/v2/c7/EVIDENCE_2026-11-12.json (restore verified) + K3 scheduled backups 2026-11-13T02:20Z/14:17Z (ADAB2, EU)',
+    },
+  },
   source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable)',
   ownerChoices: {
     A7: { durationKey: 'APPOINTMENT_CONFIRMED_DAYS', options: [365, 730], label: 'rendez-vous confirmés, tenus, absences : 1 an ou 2 ans après startAt (D4 v2, annexe A, ligne A7)' },
