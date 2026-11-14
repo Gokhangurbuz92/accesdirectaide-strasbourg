@@ -67,7 +67,8 @@ describe('erasure ledger and replay (E15)', () => {
     try {
       const key = crypto.randomBytes(32); const file = path.join(dir, 'l.json.enc');
       await writeLedgerFile(ledgerOf(entries), file, key);
-      expect(fs.readFileSync(file).includes(Buffer.from('s1'))).toBe(false);
+      // no subject id in clear: look for the JSON-encoded id (« "s1" », 4 bytes). The bare 2 bytes « s1 » occur by chance in random ciphertext (flaky).
+      expect(fs.readFileSync(file).includes(Buffer.from('"s1"'))).toBe(false);
       expect((fs.statSync(file).mode & 0o777).toString(8)).toBe('600');
       expect((await readLedgerFile(file, key)).entries).toEqual(entries);
       await expect(readLedgerFile(file, crypto.randomBytes(32))).rejects.toThrow();
