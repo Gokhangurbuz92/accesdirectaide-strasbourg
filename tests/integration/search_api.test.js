@@ -28,6 +28,7 @@ vi.mock('../../api/lib/search-cache.js', () => ({
 // R31 (D16): the démarche, place and news sections use the word search of api/lib/search-query.js (no whole-phrase findMany any more)
 vi.mock('../../api/lib/search-query.js', () => ({
     searchDemarches: vi.fn().mockResolvedValue({ items: [], total: 0 }),
+    searchDispositifs: vi.fn().mockResolvedValue({ items: [] }),   // SRCH-DISP-1
     searchStructures: vi.fn().mockResolvedValue({ items: [], total: 0 }),
     wordPlan: vi.fn().mockReturnValue(null),
     bestMatchCondition: vi.fn(),
