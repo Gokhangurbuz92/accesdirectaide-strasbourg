@@ -103,6 +103,8 @@
   "success.count_other": "{{count}} results shown.",
   "link.guide": "Read the official sheet",
   "section.guides": "Official practical sheets ({{n}})",
+  "section.dispositifs": "Schemes ({{n}})",
+  "link.dispositif": "See the scheme",
   "orientation.new_tab": "(service-public.gouv.fr, new tab)",
   "orientation.title_many": "Your situation: {{n}} needs, most urgent first",
   "orientation.title_one": "Your situation",

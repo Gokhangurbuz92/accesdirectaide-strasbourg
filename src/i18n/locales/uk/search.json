@@ -111,6 +111,8 @@
   "success.count_other": "Показано {{count}} результату.",
   "link.guide": "Читати офіційну сторінку",
   "section.guides": "Офіційні практичні сторінки ({{n}})",
+  "section.dispositifs": "Програми ({{n}})",
+  "link.dispositif": "Переглянути програму",
   "orientation.new_tab": "(service-public.gouv.fr, нова вкладка)",
   "orientation.title_many": "Ваша ситуація: {{n}} потреб, від найтерміновішої",
   "orientation.title_one": "Ваша ситуація",

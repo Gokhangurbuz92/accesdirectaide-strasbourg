@@ -119,6 +119,8 @@
   "success.count_other": "{{count}} نتيجة معروضة.",
   "link.guide": "اقرأ الصفحة الرسمية",
   "section.guides": "الصفحات العملية الرسمية ({{n}})",
+  "section.dispositifs": "البرامج ({{n}})",
+  "link.dispositif": "عرض البرنامج",
   "orientation.new_tab": "(service-public.gouv.fr، علامة تبويب جديدة)",
   "orientation.title_many": "وضعك: {{n}} احتياجات، من الأكثر إلحاحًا إلى الأقل",
   "orientation.title_one": "وضعك",

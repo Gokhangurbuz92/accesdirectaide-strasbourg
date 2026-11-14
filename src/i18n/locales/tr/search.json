@@ -103,6 +103,8 @@
   "success.count_other": "{{count}} sonuç gösteriliyor.",
   "link.guide": "Resmî bilgi sayfasını okuyun",
   "section.guides": "Resmî uygulama sayfaları ({{n}})",
+  "section.dispositifs": "Programlar ({{n}})",
+  "link.dispositif": "Programı görün",
   "orientation.new_tab": "(service-public.gouv.fr, yeni sekme)",
   "orientation.title_many": "Durumunuz: {{n}} ihtiyaç, en acil olandan başlayarak",
   "orientation.title_one": "Durumunuz",

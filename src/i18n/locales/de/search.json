@@ -103,6 +103,8 @@
   "success.count_other": "{{count}} Ergebnisse angezeigt.",
   "link.guide": "Offizielles Merkblatt lesen",
   "section.guides": "Offizielle Merkblätter ({{n}})",
+  "section.dispositifs": "Programme ({{n}})",
+  "link.dispositif": "Programm ansehen",
   "orientation.new_tab": "(service-public.gouv.fr, neuer Tab)",
   "orientation.title_many": "Ihre Situation: {{n}} Anliegen, das dringendste zuerst",
   "orientation.title_one": "Ihre Situation",

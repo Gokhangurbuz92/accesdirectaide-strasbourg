@@ -146,6 +146,8 @@ function normalizeResponse(payload) {
   const structures = Array.isArray(payload?.structures) ? payload.structures : [];
   const actualites = Array.isArray(payload?.actualites) ? payload.actualites : [];
   const guides = Array.isArray(payload?.guides) ? payload.guides : [];
+  // SRCH-DISP-1: the published dispositifs (official Service-Public fiches)
+  const dispositifs = Array.isArray(payload?.dispositifs) ? payload.dispositifs : [];
 
   return {
     results,
@@ -153,13 +155,14 @@ function normalizeResponse(payload) {
     structures,
     actualites,
     guides,
+    dispositifs,
     // R34: the danger signal of the server (emergency numbers to show first), or null
     safety: payload?.safety && Array.isArray(payload.safety.numbers) ? { kind: String(payload.safety.kind || ''), numbers: payload.safety.numbers.map(String) } : null,
     // R37: the multi-need orientation of the server (needs, cautions, question, official sheets), or null
     orientation: payload?.orientation && Array.isArray(payload.orientation.needs) ? payload.orientation : null,
     meta: {
       total: Number.isFinite(totalFromPayload) ? totalFromPayload : results.length,
-      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length,
+      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length + dispositifs.length,
       message: typeof payload?.message === 'string' ? payload.message : null,
     },
     error: typeof payload?.error === 'string' ? payload.error : null,

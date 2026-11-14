@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen } from 'lucide-react';
+import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen, Landmark } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -99,6 +99,23 @@ function GuideResult({ g }) {
   );
 }
 
+/** SRCH-DISP-1: one dispositif result (an official Service-Public fiche published as a dispositif); its title through the content translation */
+function DispositifResult({ d }) {
+  const { t } = useT('search');
+  const tr = useContentTranslation('dispositif', d);
+  return (
+    <li>
+      <Link to={`/dispositifs/${d.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all group">
+        <h3 className="font-semibold text-slate-900 group-hover:text-teal-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
+        {d.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" lang="fr" dir="ltr">{d.description}</p>}
+        <span className="inline-flex items-center gap-1 text-teal-800 text-sm font-medium mt-2">
+          {t('search:link.dispositif', 'Voir le dispositif')} <ArrowRight className="rtl-flip h-3 w-3" />
+        </span>
+      </Link>
+    </li>
+  );
+}
+
 /** R32: one news result (title and summary through the content translation) */
 function ActualiteResult({ a }) {
   const { t } = useT('search');
@@ -175,6 +192,7 @@ export default function Recherche() {
   const [structures, setStructures] = useState([]);
   const [actualites, setActualites] = useState([]);
   const [guides, setGuides] = useState([]);
+  const [dispositifs, setDispositifs] = useState([]);
   const [safety, setSafety] = useState(null);
   const [meta, setMeta] = useState({ total: 0, totalAll: 0, message: null });
   // R32: what went wrong, put into words at render (the interface language may change): « too-short », or the search library's message
@@ -194,6 +212,7 @@ export default function Recherche() {
       setStructures([]);
       setActualites([]);
       setGuides([]);
+      setDispositifs([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -208,6 +227,7 @@ export default function Recherche() {
       setStructures([]);
       setActualites([]);
       setGuides([]);
+      setDispositifs([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -236,10 +256,11 @@ export default function Recherche() {
         setStructures(response.structures || []);
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
+        setDispositifs(response.dispositifs || []);
         setSafety(response.safety || null);
         setOrientation(response.orientation || null);
         setMeta(response.meta);
-        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0);
+        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0) || (response.dispositifs?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
       })
       .catch((error) => {
@@ -249,6 +270,7 @@ export default function Recherche() {
         setStructures([]);
         setActualites([]);
         setGuides([]);
+        setDispositifs([]);
         setSafety(null);
         setOrientation(null);
         setMeta({ total: 0, totalAll: 0, message: null });
@@ -460,6 +482,21 @@ export default function Recherche() {
                   <ul className="grid gap-3 md:grid-cols-2">
                     {demarches.map((/** @type {{ description: string | number, id: string | number, slug: string | number, title: string | number }} */ d) => (
                       <DemarcheResult key={d.id} d={d} />
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* SRCH-DISP-1: dispositifs */}
+              {dispositifs.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-teal-700" aria-hidden="true" />
+                    {t('search:section.dispositifs', 'Dispositifs ({{n}})', { n: dispositifs.length })}
+                  </h2>
+                  <ul className="grid gap-3 md:grid-cols-2">
+                    {dispositifs.map((/** @type {{ description: string, id: string, slug: string, title: string }} */ d) => (
+                      <DispositifResult key={d.id} d={d} />
                     ))}
                   </ul>
                 </div>

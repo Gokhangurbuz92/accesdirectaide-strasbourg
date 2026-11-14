@@ -20,7 +20,7 @@ const TRANSLATED = new Set(['aide', 'demarche', 'guide', 'actualite', 'dispositi
 const SUMMARY = { aide: ['titre', 'description', 'cest_quoi'], demarche: ['titre', 'description_courte'], guide: ['titre'], actualite: ['titre', 'resume'], dispositif: ['titre', 'summary_falc'] };
 // R33: the search result cards carry normalised names (title, description); the translation files keep the record's own field names
 /** @type {Partial<Record<string, Record<string, string>>>} */
-const ALIAS = { aide: { title: 'titre' }, demarche: { title: 'titre', description: 'description_courte' }, actualite: { title: 'titre', description: 'resume' }, guide: { title: 'titre' } };
+const ALIAS = { aide: { title: 'titre' }, demarche: { title: 'titre', description: 'description_courte' }, actualite: { title: 'titre', description: 'resume' }, guide: { title: 'titre' }, dispositif: { title: 'titre' } };
 /**
  * What GET /api/translations answers (api/_handlers/translations.js): `items` by slug for a kind, or the fields of one record.
  * @typedef {{ status: string, fields: Record<string, unknown>, fieldStatus?: Record<string, string> }} RecordTranslation

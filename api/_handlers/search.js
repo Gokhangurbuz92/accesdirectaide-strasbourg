@@ -8,7 +8,7 @@ import { generateEmbedding, getActiveEmbeddingModel } from '../lib/EmbeddingProv
 import { cachedSearch } from '../lib/search-cache.js';
 import { analyseNeeds, annotateAides, SHEET_TITLES, sheetUrl } from '../lib/multi-need.js';
 import { GLOSSAIRE } from '../lib/glossaire.js';
-import { bestMatchCondition, searchDemarches, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
+import { bestMatchCondition, searchDemarches, searchDispositifs, searchStructures, searchWords, wordPlan } from '../lib/search-query.js';
 import { crossLanguageQuery } from '../lib/search-crosslanguage.js';
 import { structureTypeHint } from '../lib/search-structure-type.js';
 import { offTopicIntent } from '../lib/search-off-topic.js';
@@ -17,7 +17,7 @@ import { guideOffices } from '../lib/official-offices.js';
 import { sql } from 'drizzle-orm';
 
 /**
- * Universal search handler — searches Aides, Démarches, Structures, Actualités.
+ * Universal search handler — searches Aides, Démarches, Dispositifs, Structures, Actualités, Guides.
  * Returns results grouped by type.
  *
  * @param {import('../_utils/http-types').ApiRequest} req
@@ -86,10 +86,10 @@ export default async function handler(req, res) {
     // R35 (D16): a purchase of luxury or consumer goods, or a leisure request, with no social marker is not a need this site answers: no result rather
     // than places that share one word with it (« acheter une voiture de luxe » listed Action Logement and Mobilex)
     if (!safety && offTopicIntent(payload.query, cross.changed ? cross.query : '')) {
-      return res.status(200).json({ items: [], total: 0, demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, offTopic: true, message: 'not found' });
+      return res.status(200).json({ items: [], total: 0, demarches: [], dispositifs: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, offTopic: true, message: 'not found' });
     }
     if (cross.changed && !searchWords(cross.query).length) {
-      return res.status(200).json({ items: [], demarches: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe, ...(await orientationOf(analysis)) });
+      return res.status(200).json({ items: [], demarches: [], dispositifs: [], structures: [], actualites: [], guides: [], glossaire: [], cached: false, crossLanguage: { understood: false, concepts: [] }, ...safe, ...(await orientationOf(analysis)) });
     }
     const crossLanguage = cross.changed ? { understood: true, query: cross.query, concepts: cross.concepts } : undefined;
     if (cross.changed) payload.query = cross.query;
@@ -102,6 +102,8 @@ export default async function handler(req, res) {
       geoScope: payload.geoScope || null,
       territory: payload.territory || null,
       limit: payload.limit || 10,
+      // SRCH-DISP-1: the response shape (a result cached before the dispositifs group existed has no `dispositifs`: never served for the new shape)
+      shape: 2,
     };
 
     // R12 (P08): the commune's hierarchy (commune → EPCI → département → région → national) selects the applicable aides before ranking
@@ -147,6 +149,15 @@ export default async function handler(req, res) {
       } catch (e) {
         // @ts-ignore
         logger.warn('[search] demarches search failed:', e.message); partial.push('demarches');
+      }
+
+      // SRCH-DISP-1: the published dispositifs (official Service-Public fiches: « Carte Vitale », « ALD »…), same word search, same public rule as /dispositifs
+      let dispositifs = [];
+      try {
+        dispositifs = hasWords ? (await searchDispositifs({ q: payload.query, page: 1, pageSize: 5 })).items.filter((d) => d.slug) : [];   // the public page is /dispositifs/<slug>
+      } catch (e) {
+        // @ts-ignore
+        logger.warn('[search] dispositifs search failed:', e.message); partial.push('dispositifs');
       }
 
       let structures = [];
@@ -233,7 +244,7 @@ export default async function handler(req, res) {
         logger.warn('[search] official offices failed:', e.message);
       }
 
-      const totalResults = aideTotal + demarches.length + structures.length + actualites.length + guides.length;
+      const totalResults = aideTotal + demarches.length + dispositifs.length + structures.length + actualites.length + guides.length;
 
       // 5. Match Glossaire terms
       const queryLower = payload.query.toLowerCase();
@@ -252,11 +263,12 @@ export default async function handler(req, res) {
           type: 'glossaire',
         }));
 
-      if (totalResults === 0 && glossaireResults.length === 0 && (weakResult && demarches.length === 0 && structures.length === 0 && actualites.length === 0 && guides.length === 0)) {
+      if (totalResults === 0 && glossaireResults.length === 0 && (weakResult && demarches.length === 0 && dispositifs.length === 0 && structures.length === 0 && actualites.length === 0 && guides.length === 0)) {
         return {
           items: [],
           total: 0,
           demarches: [],
+          dispositifs: [],
           structures: [],
           actualites: [],
           guides: [],
@@ -276,6 +288,7 @@ export default async function handler(req, res) {
           category: d.categorie,
           type: 'demarche',
         })),
+        dispositifs: dispositifs.map((d) => ({ id: d.id, slug: d.slug, title: d.titre, description: d.description, url: `/dispositifs/${d.slug}`, type: 'dispositif' })),
         structures: structures.map(s => ({
           id: s.id,
           slug: s.slug,

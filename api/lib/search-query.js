@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { decide, visibleSql } from './publicVisibility.js';
+import { claimsEntitlement } from './entitlementWording.js';
 import { EXCLUSION_CLAUSE, withoutExclusions } from './finess-labels.js';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
@@ -665,6 +666,35 @@ export async function searchDemarches(params) {
   return {
     items: enrichedItems,
     total: Number(countResult[0].total || 0)
+  };
+}
+
+/**
+ * SRCH-DISP-1: the dispositifs (official Service-Public fiches published as Dispositif records — « Carte Vitale », « Prise en charge d'une affection de
+ * longue durée (ALD) ») in the universal search. Same word search as the démarches (each meaningful word, its synonyms, best match level), over the title
+ * and the simplified texts. Visibility: EXACTLY the rule of the public list (api/_handlers/dispositifs/index.js: visibleSql('dispositif')) — published,
+ * verified, launch-eligible, not on hold, real origin, current verification, with a source. A query with no meaningful word gets no dispositif.
+ * @param {{ q: string, page?: number, pageSize?: number }} params
+ */
+export async function searchDispositifs(params) {
+  const { q, page, pageSize } = params;
+  const LIMIT = Math.max(1, Math.min(50, Number(pageSize) || 5));
+  const OFFSET = (Math.max(1, Number(page) || 1) - 1) * LIMIT;
+  const sv = q ? await hasSearchVector('Dispositif') : false;
+  const plan = q ? wordPlan(q, ['"titre"', '"summary_falc"', '"description_falc"'], '"titre"', sv) : null;
+  if (!plan) return { items: [] };
+  const conditions = [visibleSql('dispositif')];   // D-5: the public list's condition, never widened
+  conditions.push(await bestMatchCondition('Dispositif', conditions, plan));
+  const res = await db.execute(sql`SELECT id, slug, titre, summary_falc, description_falc FROM "Dispositif" WHERE ${sql.join(conditions, sql.raw(' AND '))}
+    ORDER BY (${plan.exactTitleHits} * 3 + ${plan.titleHits}) DESC, ${plan.matchCount} DESC, (auto_check ? 'official') ASC, titre ASC, id ASC LIMIT ${LIMIT} OFFSET ${OFFSET}`);
+  const rows = res.rows || res;
+  // a simplified text that asserts a right is withheld from the public (as stripReviewFields does); the word « null » is no text
+  const text = (/** @type {unknown} */ v) => (typeof v === 'string' && v.trim() && !/^\s*(null|undefined)\s*$/i.test(v) && !claimsEntitlement(v) ? v.trim() : null);
+  return {
+    items: rows.map((/** @type {Record<string, any>} */ r) => {
+      const description = text(r.summary_falc) || text(r.description_falc);
+      return { id: r.id, slug: r.slug, titre: r.titre, description: description && description.length > 240 ? `${description.slice(0, 237).trimEnd()}…` : description };
+    }),
   };
 }
 
