@@ -11,6 +11,24 @@ const PAGES_PER_RUN = 20; // 50 * 20 = 1000 aides per run (safe within Vercel 30
 const KV_CURSOR_KEY = 'at-connector:next-url';
 
 /**
+ * AT-HH-1 — the Aides-territoires « targeted_audiences » value for private persons / households. Every other value of that field (commune, epci,
+ * department, region, association, private_sector, farmer, researcher, public_cies, public_org, special…) is a grant for an organisation, never a
+ * benefit for a citizen.
+ */
+export const CITIZEN_AUDIENCE = 'private_person';
+
+/**
+ * AT-HH-1 — fail closed: an aid is a citizen aid only when its audiences explicitly include private persons. Missing, empty, malformed or
+ * organisation-only audiences ⇒ false (the aid is never imported as a citizen « Aide »).
+ * @param {unknown} audiences the provider's targeted_audiences (raw) or the parsed _targeted_audiences
+ * @returns {boolean}
+ */
+export function isCitizenAudience(audiences) {
+    if (!Array.isArray(audiences)) return false;
+    return audiences.some((a) => typeof a === 'string' && a.trim().toLowerCase() === CITIZEN_AUDIENCE);
+}
+
+/**
  * Connector for the Aides Territoires API v1.8+ (beta.gouv.fr).
  *
  * Auth flow (2 steps):
@@ -314,6 +332,16 @@ export class AidesTerritoiresConnector extends SourceConnector {
             _financers: financers || null,
             _targeted_audiences: targetedAudiences,
         };
+    }
+
+    /**
+     * AT-HH-1 — called by IngestionPipelineCore after parse(): true ⇒ the aid is not for private persons / households and is dropped before
+     * validation and upsert (counted in the run stats as excludedNonCitizen). Fail closed on a missing or empty audience.
+     * @param {{ _targeted_audiences?: unknown }|null|undefined} parsed the object returned by parse()
+     * @returns {boolean}
+     */
+    excludeFromCitizenCatalogue(parsed) {
+        return !isCitizenAudience(parsed?._targeted_audiences);
     }
 
     /**
