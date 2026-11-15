@@ -163,6 +163,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             if (!c) {
                 return res.status(404).json({ error: 'Dossier introuvable.' });
             }
+            /** @type {any} */
             const out = await setStatus(c.id, status, proCtx);
             if (out.ok === false) {
                 return res.status(out.status || 400).json({ error: out.code, message: out.message });
