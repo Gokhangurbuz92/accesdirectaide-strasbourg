@@ -8,6 +8,7 @@ import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../_ut
 import { createNotification } from './notifications.js';
 import { invitationsWithRevokedSender } from '../../_utils/invite-token.js';
 import { handOverAll, handoverNotice } from '../../_services/pro-cases.js';
+import { handOverProposals } from '../../_services/referrals.js';
 import { clientIp } from '../../_utils/client-ip.js';
 // PKG-4 / D3: a structure can only grant its own roles. SUPERADMIN is a platform role and is never assignable from a structure's team screen (privilege escalation).
 const VALID_ROLES = ['PRO', 'STRUCTURE_ADMIN'];
@@ -194,6 +195,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             // R12 (E03): disable + hand-over in ONE transaction — the successor is locked and re-checked inside it (a successor disabled at the same moment cannot
             // receive the cases), and a failure leaves the member active with their cases (never a disabled member still holding them)
             let movedAppointments = { toSuccessor: 0, toStructure: 0 };
+            let movedProposals = 0;
             const movedCases = await db.transaction(async (tx) => {
                 if (successorUserId) {
                     const [successor] = await tx.select({ id: ProUser.id }).from(ProUser)
@@ -203,6 +205,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 // R18: the departure also ENDS the member's sessions — a later reactivation must not revive a token issued before it (8 h + refresh grace)
                 await tx.update(ProUser).set({ status: 'disabled', sessionsValidAfter: sql`NOW()` }).where(and(eq(ProUser.id, targetUserId), eq(ProUser.structureId, structureId)));
                 const cases = await handOverAll(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx), { notice: false });
+                // G6: the referral proposals the member made and the person has not answered yet follow the cases (same transaction) — otherwise the
+                // person's « accept » is refused (SENDER_GONE) and the proposal waits for ever
+                movedProposals = await handOverProposals(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx));
                 // R47 (R12 « no orphans »): the member's future appointments and pending requests are not left on a disabled account — they go to the
                 // successor when that person is free at that time, otherwise to the structure (unassigned: any member may decide, the administrator reassigns)
                 const moved = await tx.execute(sql`UPDATE "ProAppointment" a SET "createdByProUserId" = CASE WHEN ${successorUserId}::text IS NOT NULL AND NOT EXISTS (
@@ -218,10 +223,10 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             await handoverNotice(successorUserId, structureId, movedCases);
 
             await logProAudit('USER_DISABLED', userId, structureId, {
-                targetUserId, successorUserId, movedCases, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure,
+                targetUserId, successorUserId, movedCases, movedProposals, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure,
             }, clientIp(req));
 
-            return res.status(200).json({ ok: true, movedCases, movedAppointments, successorUserId });
+            return res.status(200).json({ ok: true, movedCases, movedProposals, movedAppointments, successorUserId });
         }
 
         return res.status(405).json({ error: 'Méthode non autorisée' });

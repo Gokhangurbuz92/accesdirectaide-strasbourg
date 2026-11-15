@@ -10,6 +10,7 @@ import { nextDecisionAt } from '../../lib/consent-ledger.js';   // PKG-6 / R17: 
 import { holdsOwnership, isExpired, NOT_FOUND_BODY, ALL_PURPOSES, PURPOSE_SHARING, PURPOSE_AI, PURPOSE_SIAO, INVITE_TTL_HOURS } from '../../_utils/share-access.js';
 import { isDossierRestricted } from '../../_services/processing-restriction.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { closeForWithdrawnAccess, notifyAccessWithdrawn } from '../../_services/referrals.js';
 
 const MAX_PENDING_INVITES = 10;
 const sha256 = (/** @type {string} */ v) => crypto.createHash('sha256').update(v, 'utf8').digest('hex');
@@ -133,12 +134,16 @@ export default async function handler(req, res) {
       const done = await db.transaction(async (tx) => {
         await tx.update(SharedDossierInvite).set({ revokedAt: new Date() })
           .where(and(eq(SharedDossierInvite.sharedDiagnosticId, shareId), eq(SharedDossierInvite.structureId, structureId), isNull(SharedDossierInvite.usedAt), isNull(SharedDossierInvite.revokedAt)));
-        return tx.update(SharedDossierGrant).set({ revokedAt: new Date() })
+        const grants = await tx.update(SharedDossierGrant).set({ revokedAt: new Date() })
           .where(and(eq(SharedDossierGrant.sharedDiagnosticId, shareId), eq(SharedDossierGrant.structureId, structureId), isNull(SharedDossierGrant.revokedAt))).returning({ id: SharedDossierGrant.id });
+        // G1: the referrals still live towards this organization end with its access, in the same transaction (never an ACCEPTED referral nobody can finish)
+        const referrals = grants.length ? await closeForWithdrawnAccess(tx, shareId, structureId, shared.ownerCitizenId || null) : [];
+        return Object.assign(grants, { referrals });
       });
       if (!done.length) return res.status(404).json(NOT_FOUND_BODY);
       await forgetSyntheses(db, shareId, structureId);
-      await logProAudit('DOSSIER_ACCESS_REVOKED_BY_OWNER', 'citizen', structureId, { shareId, structureId }, ip).catch(() => { });
+      await notifyAccessWithdrawn(done.referrals);
+      await logProAudit('DOSSIER_ACCESS_REVOKED_BY_OWNER', 'citizen', structureId, { shareId, structureId, referralsClosed: done.referrals.length }, ip).catch(() => { });
       return res.status(200).json({ ok: true });
     }
 
@@ -189,11 +194,14 @@ export default async function handler(req, res) {
       const g = await tx.update(SharedDossierGrant).set({ revokedAt: new Date() }).where(and(eq(SharedDossierGrant.sharedDiagnosticId, shareId), isNull(SharedDossierGrant.revokedAt))).returning({ id: SharedDossierGrant.id });
       const i = await tx.update(SharedDossierInvite).set({ revokedAt: new Date() }).where(and(eq(SharedDossierInvite.sharedDiagnosticId, shareId), isNull(SharedDossierInvite.usedAt), isNull(SharedDossierInvite.revokedAt))).returning({ id: SharedDossierInvite.id });
       await tx.update(SharedDiagnostic).set({ shareTokenHash: sha256(crypto.randomBytes(32).toString('base64url')) }).where(eq(SharedDiagnostic.id, shareId));   // the old read link now matches nothing
-      return { grants: g.length, invites: i.length };
+      const referrals = await closeForWithdrawnAccess(tx, shareId, null, shared.ownerCitizenId || null);   // G1: every live referral of the dossier ends with the accesses
+      return { grants: g.length, invites: i.length, referrals };
     });
+    const { referrals: closedReferrals, ...counts } = stopped;
     await forgetSyntheses(db, shareId, null);
-    await logProAudit('DOSSIER_SHARING_STOPPED_BY_OWNER', 'citizen', '', { shareId, ...stopped }, ip).catch(() => { });
-    return res.status(200).json({ ok: true, ...stopped });
+    await notifyAccessWithdrawn(closedReferrals);
+    await logProAudit('DOSSIER_SHARING_STOPPED_BY_OWNER', 'citizen', '', { shareId, ...counts, referralsClosed: closedReferrals.length }, ip).catch(() => { });
+    return res.status(200).json({ ok: true, ...counts, referralsClosed: closedReferrals.length });
   } catch (error) {
     logger.error({ err: { name: /** @type {any} */ (error)?.name, message: /** @type {any} */ (error)?.message } }, '[Dossier Grants] Erreur');
     return res.status(500).json({ error: 'Erreur serveur.' });

@@ -100,9 +100,16 @@ function CaseDetail({ id }) {
     if (!referralErr.check(errs)) return;
     setBusy(true); setMessage(''); setProblem('');
     try {
-      await proRdvRequest('/api/pro/referrals', { method: 'POST', body: { action: 'propose', caseId: id, toStructureId: referral.toStructureId, reasonCode: referral.reasonCode, message: referral.message, idempotencyKey: crypto.randomUUID() } });
-      setMessage(t('pro:cases.referral_proposed', 'Orientation proposée. Rien n’est transmis avant l’accord de la personne (elle est prévenue).')); setReferral({ q: '', receivers: [], toStructureId: '', reasonCode: '', message: '' }); await load();
-    } catch (err) { setProblem(msgOf(err, t('pro:cases.referral_failed', 'Orientation impossible.'))); } finally { setBusy(false); }
+      const out = await proRdvRequest('/api/pro/referrals', { method: 'POST', body: { action: 'propose', caseId: id, toStructureId: referral.toStructureId, reasonCode: referral.reasonCode, message: referral.message, idempotencyKey: crypto.randomUUID() } });
+      // G2: « she is told » only when an e-mail really left; otherwise the sender is asked to tell the person (the proposal is in her space either way)
+      setMessage(out?.referral?.citizenNotified === false
+        ? t('pro:cases.referral_proposed_no_mail', 'Orientation proposée. Rien n’est transmis avant l’accord de la personne. Aucun e-mail n’a pu lui être envoyé : la proposition l’attend dans son espace, pensez à la prévenir.')
+        : t('pro:cases.referral_proposed', 'Orientation proposée. Rien n’est transmis avant l’accord de la personne (elle est prévenue).')); setReferral({ q: '', receivers: [], toStructureId: '', reasonCode: '', message: '' }); await load();
+    } catch (err) {
+      setProblem(err?.payload?.error === 'NO_CITIZEN_ACCOUNT'
+        ? t('pro:cases.referral_no_citizen_account', 'Cette orientation ne peut pas être proposée : le dossier n’est rattaché à aucun compte vérifié, personne ne pourrait donner son accord.')
+        : msgOf(err, t('pro:cases.referral_failed', 'Orientation impossible.')));
+    } finally { setBusy(false); }
   };
   if (error) return <div className="space-y-3" data-testid="pro-case-detail"><h1 className="text-xl font-bold text-slate-900">{t('pro:cases.detail_title', 'Dossier suivi')}</h1><p role="alert" data-testid="pro-case-error" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{error}</p><Button variant="outline" onClick={() => navigate('/pro/dossiers')}>{t('pro:cases.back_to_list', 'Retour aux dossiers')}</Button></div>;
   if (!data) return <p role="status">{t('pro:cases.loading', 'Chargement…')}</p>;

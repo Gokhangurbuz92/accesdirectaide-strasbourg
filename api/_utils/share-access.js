@@ -119,6 +119,11 @@ export function caseAccessSql(dossierId, ctx) {
  * same rule themselves, so a referral grant past that point is closed even when the cron has not run (the cron stays the writer of the EXPIRED state).
  */
 export const REFERRAL_EXPIRE_AFTER_DUE_DAYS = 14;
+/**
+ * G4: the states in which a sent referral still waits for an answer against its due date. ONE list for the « overdue » flag of the lists, the cron's overdue
+ * notice, the expiry and the lapse rule below (before: the list flagged SENT/NEEDS_INFO, the cron notified SENT/ACKNOWLEDGED, the expiry took all three).
+ */
+export const REFERRAL_AWAITING_ANSWER_STATUSES = Object.freeze(['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO']);
 /** @param {Date} [now] */
 const referralLapseLimit = (now = new Date()) => new Date(now.getTime() - REFERRAL_EXPIRE_AFTER_DUE_DAYS * 86400000);
 /**
@@ -127,7 +132,7 @@ const referralLapseLimit = (now = new Date()) => new Date(now.getTime() - REFERR
  */
 export function referralGrantLapsedSql(alias = 'g', now = new Date()) {
   const g = sql.raw(`"${alias.replace(/[^A-Za-z0-9_]/g, '')}"`);
-  return sql`(${g}."grantedVia" = 'referral' AND EXISTS (SELECT 1 FROM "Referral" lr WHERE lr."grantId" = ${g}.id AND lr.status IN ('SENT', 'ACKNOWLEDGED', 'NEEDS_INFO') AND lr."dueAt" < ${referralLapseLimit(now)}))`;
+  return sql`(${g}."grantedVia" = 'referral' AND EXISTS (SELECT 1 FROM "Referral" lr WHERE lr."grantId" = ${g}.id AND lr.status IN (${sql.join(REFERRAL_AWAITING_ANSWER_STATUSES.map((x) => sql`${x}`), sql`, `)}) AND lr."dueAt" < ${referralLapseLimit(now)}))`;
 }
 
 /** SQL predicate "ctx holds an active grant on dossier Y AND is an active member (AND may open the case)" - usable inside UPDATE ... WHERE (revocation / departure / expiry / reassignment cannot be raced). @param {string} dossierId @param {ProCtx} ctx */

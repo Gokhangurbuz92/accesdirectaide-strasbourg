@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
-import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
+import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_AWAITING_ANSWER_STATUSES, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
@@ -28,7 +28,16 @@ export const REASONS = ['SPECIALISED_SUPPORT', 'ACCESS_TO_RIGHTS', 'HOUSING', 'E
 export const RESPONSES = ['OUT_OF_SCOPE', 'NO_CAPACITY', 'ALREADY_SUPPORTED', 'NEEDS_MORE_INFORMATION', 'OTHER'];
 export const ACK_DAYS = 5;
 export const EXPIRE_AFTER_DUE_DAYS = REFERRAL_EXPIRE_AFTER_DUE_DAYS;   // R40: one value, also applied by the access checks (share-access.js)
+/** G4: waiting for an answer against the due date — the ONE list behind the « overdue » flag, the overdue notice and the expiry (share-access.js) */
+export const AWAITING_ANSWER_STATUSES = REFERRAL_AWAITING_ANSWER_STATUSES;
+/** G1: the states in which the receiver holds (or may hold) the access the person authorized — closed when the person withdraws that access */
+export const LIVE_AFTER_CONSENT_STATUSES = Object.freeze(['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'IN_PROGRESS']);
+/** G2: a proposal the person has not answered is closed after this many days (nothing was shared; the sender may propose again) */
+export const PENDING_CITIZEN_EXPIRE_DAYS = 30;
+/** G4: an ACCEPTED referral with no step recorded after this many days is FLAGGED in the lists (human follow-up only: nothing is changed or claimed) */
+export const ACCEPTED_NO_PROGRESS_DAYS = 14;
 const day = 86400000;
+const inList = (values) => sql.join(values.map((v) => sql`${v}`), sql`, `);
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('not_found', 'Orientation introuvable.', 404);
 const ctxOf = (id) => ({ purpose: 'referral-message', context: `referral:${id}` });
@@ -77,15 +86,21 @@ export async function propose(ctx, input, deps = {}) {
     const [replay] = await db.select().from(Referral).where(and(eq(Referral.fromStructureId, ctx.structureId), eq(Referral.idempotencyKey, key))).limit(1);
     if (replay) return { ok: true, status: 200, referral: { id: replay.id, status: replay.status } };
   }
+  // G2: only the dossier's owner can decide, from a verified account. Without one the proposal could never be answered (it used to be created, 201, and to
+  // wait forever): refused, nothing is written.
+  if (!(await db.execute(sql`SELECT 1 AS ok FROM "SharedDiagnostic" d JOIN "CitizenUser" u ON u.id = d."ownerCitizenId" WHERE d.id = ${c.sharedDiagnosticId} AND u."emailVerifiedAt" IS NOT NULL`)).rows.length) {
+    return bad('NO_CITIZEN_ACCOUNT', 'Cette orientation ne peut pas être proposée : le dossier n’est rattaché à aucun compte vérifié, personne ne pourrait donner son accord.', 409);
+  }
   const id = crypto.randomUUID();
   const rows = await db.insert(Referral).values({ id, sharedDiagnosticId: c.sharedDiagnosticId, fromStructureId: ctx.structureId, toStructureId, fromCaseId: c.id, createdByProUserId: ctx.userId,
     status: 'PENDING_CITIZEN', reasonCode, messageEncrypted: message ? sealText(message, ctxOf(id)) : null, idempotencyKey: key }).onConflictDoNothing().returning();
   if (!rows.length) return bad('ALREADY_REFERRED', 'Une orientation vers cette structure est déjà en cours pour ce dossier.', 409);
   await record(db, rows[0], 'SENDER', ctx.userId, null, 'PENDING_CITIZEN');
   await db.insert(ProCaseEvent).values({ caseId: c.id, structureId: c.structureId, actorProUserId: ctx.userId, kind: 'REFERRAL', toValue: 'PENDING_CITIZEN' });
-  await tellCitizen(db, rows[0], deps.sendMail || defaultSendMail, 'Une proposition d’orientation attend votre accord',
+  const notice = await tellCitizen(db, rows[0], deps.sendMail || defaultSendMail, 'Une proposition d’orientation attend votre accord',
     `Une structure qui vous accompagne propose de transmettre votre dossier à ${target.name}. Rien n’est transmis sans votre accord.\nDécidez depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'PENDING_CITIZEN');
-  return { ok: true, status: 201, referral: { id, status: 'PENDING_CITIZEN', to: target.name } };
+  // G2: the sender learns whether an e-mail left (the proposal is in Mon Espace either way) instead of an unconditional « the person is told »
+  return { ok: true, status: 201, referral: { id, status: 'PENDING_CITIZEN', to: target.name, citizenNotified: ['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(notice) } };
 }
 
 /**
@@ -156,7 +171,8 @@ export async function listBox(ctx, box, db = defaultDb) {
   if (!(await db.execute(sql`SELECT 1 AS ok WHERE ${activeMemberSql(ctx)}`)).rows.length) return bad('forbidden', 'Accès refusé.', 403);
   const inbox = box !== 'outbox';
   const rows = (await db.execute(sql`SELECT r.id, r.status, r."reasonCode", r."responseCode", r.outcome, r."createdAt", r."sentAt", r."dueAt", r."acknowledgedAt", r."respondedAt", r."closedAt",
-      r."sharedDiagnosticId" AS "dossierId", sf.nom AS "fromName", st.nom AS "toName", (r."dueAt" < NOW() AND r.status IN ('SENT', 'NEEDS_INFO')) AS overdue
+      r."sharedDiagnosticId" AS "dossierId", sf.nom AS "fromName", st.nom AS "toName", (r."dueAt" < NOW() AND r.status IN (${inList(AWAITING_ANSWER_STATUSES)})) AS overdue,
+      (r.status = 'ACCEPTED' AND r."respondedAt" < NOW() - make_interval(days => ${ACCEPTED_NO_PROGRESS_DAYS})) AS stalled${inbox ? sql`` : sql`, (${caseAccessSql(sql`r."sharedDiagnosticId"`, ctx)}) AS "caseOpen"`}
     FROM "Referral" r JOIN "Structure" sf ON sf.id = r."fromStructureId" JOIN "Structure" st ON st.id = r."toStructureId"
     WHERE ${inbox ? sql`r."toStructureId" = ${ctx.structureId} AND r.status NOT IN ('DRAFT', 'PENDING_CITIZEN') AND r."sentAt" IS NOT NULL` : sql`r."fromStructureId" = ${ctx.structureId}`}
     ORDER BY r."createdAt" DESC LIMIT 200`)).rows;
@@ -165,6 +181,10 @@ export async function listBox(ctx, box, db = defaultDb) {
     const open = new Map();
     for (const id of new Set(rows.map((x) => x.dossierId).filter(Boolean))) open.set(id, (await db.execute(sql`SELECT 1 AS ok WHERE ${activeGrantExists(id, ctx)}`)).rows.length > 0);
     for (const x of rows) if (!open.get(x.dossierId)) x.dossierId = null;
+  } else {
+    // G8: in the sending organization, a referral of a case assigned to a colleague shows its state only — not which dossier it is, nor the reason (the
+    // PKG-4 assignment rule, as everywhere else)
+    for (const x of rows) { if (!x.caseOpen) { x.dossierId = null; x.reasonCode = null; } delete x.caseOpen; }
   }
   return { ok: true, status: 200, box: inbox ? 'inbox' : 'outbox', referrals: rows };
 }
@@ -182,16 +202,18 @@ export async function getReferral(ctx, id, db = defaultDb) {
   // PKG-11 audit: the free texts are about the person: shown only to a side that still holds an active access to the dossier (revoked, declined or restricted
   // processing = the texts are hidden; the statuses and dates stay)
   const textsOpen = side === 'RECEIVER' ? dossierOpen : (await db.execute(sql`SELECT 1 AS ok WHERE ${activeGrantExists(r.sharedDiagnosticId, ctx)}`)).rows.length > 0;
+  // G8: a sender-side colleague who may not open the case (assigned to someone else) sees the state and the dates only
+  const caseOpen = side === 'RECEIVER' ? true : (await db.execute(sql`SELECT 1 AS ok WHERE ${caseAccessSql(r.sharedDiagnosticId, ctx)}`)).rows.length > 0;
   let appointment = null;
   if (r.appointmentId) {
     const [a] = await db.select({ startAt: ProAppointment.startAt, mode: ProAppointment.mode, status: ProAppointment.status }).from(ProAppointment).where(eq(ProAppointment.id, r.appointmentId)).limit(1);
     appointment = a || null;
   }
-  return { ok: true, status: 200, side, referral: { id: r.id, status: r.status, reasonCode: r.reasonCode, from: nameOf(r.fromStructureId), to: nameOf(r.toStructureId),
+  return { ok: true, status: 200, side, referral: { id: r.id, status: r.status, reasonCode: caseOpen ? r.reasonCode : null, from: nameOf(r.fromStructureId), to: nameOf(r.toStructureId),
     message: textsOpen && r.messageEncrypted ? openText(r.messageEncrypted, ctxOf(r.id)) : '', responseCode: r.responseCode,
-    responseMessage: textsOpen && r.responseMessageEncrypted ? openText(r.responseMessageEncrypted, ctxOf(r.id)) : '', textsHidden: !textsOpen, outcome: r.outcome, outcomeSummary: r.outcomeCitizenSummary,
+    responseMessage: textsOpen && r.responseMessageEncrypted ? openText(r.responseMessageEncrypted, ctxOf(r.id)) : '', textsHidden: !textsOpen, outcome: r.outcome, outcomeSummary: caseOpen ? r.outcomeCitizenSummary : null,
     createdAt: r.createdAt, sentAt: r.sentAt, dueAt: r.dueAt, acknowledgedAt: r.acknowledgedAt, respondedAt: r.respondedAt, closedAt: r.closedAt, appointment,
-    dossierId: side === 'RECEIVER' && dossierOpen ? r.sharedDiagnosticId : side === 'SENDER' ? r.sharedDiagnosticId : null },
+    dossierId: side === 'RECEIVER' && dossierOpen ? r.sharedDiagnosticId : side === 'SENDER' && caseOpen ? r.sharedDiagnosticId : null },
     events: events.map((e) => ({ actor: e.actorType, from: e.fromStatus, to: e.toStatus, at: e.createdAt })) };
 }
 
@@ -242,8 +264,11 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
     return out;
   }
   if (receiver && action === 'link_appointment') {
-    const [a] = await db.select({ id: ProAppointment.id }).from(ProAppointment).where(and(eq(ProAppointment.id, String(input.appointmentId || '')), eq(ProAppointment.structureId, ctx.structureId))).limit(1);
-    if (!a) return bad('INVALID_APPOINTMENT', 'Rendez-vous introuvable dans votre structure.', 400);
+    // G8: the appointment must be the receiver's AND the one of the person this dossier belongs to (before: any appointment of the structure, so another
+    // person's appointment could be attached to this referral). Appointments carry no dossier id: the link is the owner's account.
+    const [a] = (await db.execute(sql`SELECT a.id FROM "ProAppointment" a JOIN "SharedDiagnostic" d ON d.id = ${r.sharedDiagnosticId}
+      WHERE a.id = ${String(input.appointmentId || '')} AND a."structureId" = ${ctx.structureId} AND a."citizenUserId" IS NOT NULL AND a."citizenUserId" = d."ownerCitizenId"`)).rows;
+    if (!a) return bad('INVALID_APPOINTMENT', 'Rendez-vous introuvable dans votre structure pour la personne concernée par cette orientation.', 400);
     const done = await transition(db, r.id, ['ACCEPTED', 'IN_PROGRESS'], { appointmentId: a.id, status: 'IN_PROGRESS' }, receiverGrant);
     if (!done) return bad('INVALID_TRANSITION', 'Acceptez d’abord l’orientation.', 409);
     if (r.status !== 'IN_PROGRESS') await record(db, r, 'RECEIVER', ctx.userId, r.status, 'IN_PROGRESS');
@@ -272,10 +297,57 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
   if (sender && action === 'cancel') {
     const out = await go(['DRAFT', 'PENDING_CITIZEN', 'SENT', 'ACKNOWLEDGED', 'NEEDS_INFO'], { status: 'CANCELLED', closedAt: now }, 'SENDER', 'CANCELLED', senderCase);
     if (out.ok) { await revokeReferralGrant(db, r); if (!['DRAFT', 'PENDING_CITIZEN'].includes(r.status)) await notifyOrg(db, r.toStructureId, 'referral_cancelled', 'Orientation annulée', 'La structure d’origine a annulé l’orientation.', { referralId: r.id }); }
+    // G4: the person is told too (they were asked to decide, or had authorized the transmission) — no reason, no message
+    if (out.ok) await tellCitizen(db, r, deps.sendMail || defaultSendMail, 'Une orientation a été annulée',
+      `La structure qui vous accompagne a annulé l’orientation qu’elle avait proposée. ${r.sentAt ? 'L’accès ouvert par cette orientation est retiré.' : 'Rien n’a été transmis.'} Détails dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'CANCELLED');
     return out;
   }
   if ((sender || (receiver && isAdmin(ctx))) && action === 'close') return go(['COMPLETED', 'DECLINED', 'EXPIRED'], { status: 'CLOSED', closedAt: now }, sender ? 'SENDER' : 'RECEIVER', 'CLOSED', sender ? senderCase : sql`TRUE`);
   return bad('INVALID_ACTION', 'Action inconnue ou non autorisée pour votre structure.', 400);
+}
+
+/**
+ * G1 — the person withdrew the receiver's access (one organization: `structureId`; « stop sharing »: null = every organization). Called INSIDE the transaction
+ * that revokes the grant: every referral still live towards that receiver ends as CANCELLED with the controlled outcome CITIZEN_WITHDREW and a ReferralEvent
+ * (actor CITIZEN, no free text). Before, it stayed ACCEPTED / IN_PROGRESS for ever: the receiver could not complete it, the sender could not cancel it, the
+ * cron ignored it and its live key refused any new referral to that organization. A proposal not yet authorized (PENDING_CITIZEN) shares nothing and stays
+ * the person's to decide. Returns the closed referrals for notifyAccessWithdrawn (after COMMIT).
+ * @param {any} tx @param {string} dossierId @param {string | null} [structureId] @param {string | null} [citizenId]
+ * @returns {Promise<Array<{ id: string, fromStatus: string, fromStructureId: string, toStructureId: string }>>}
+ */
+export async function closeForWithdrawnAccess(tx, dossierId, structureId = null, citizenId = null) {
+  const rows = (await tx.execute(sql`WITH live AS (SELECT id, status FROM "Referral" WHERE "sharedDiagnosticId" = ${dossierId} AND status IN (${inList(LIVE_AFTER_CONSENT_STATUSES)})
+      ${structureId ? sql`AND "toStructureId" = ${structureId}` : sql``} FOR UPDATE)
+    UPDATE "Referral" r SET status = 'CANCELLED', outcome = 'CITIZEN_WITHDREW', "closedAt" = NOW(), "updatedAt" = NOW() FROM live WHERE r.id = live.id
+    RETURNING r.id, live.status AS "fromStatus", r."fromStructureId", r."toStructureId"`)).rows;
+  for (const r of rows) await record(tx, r, 'CITIZEN', citizenId, r.fromStatus, 'CANCELLED');
+  return rows;
+}
+/**
+ * G1: both organizations are told through the professional notification catalogue (in-app always, e-mail per member preference) — after COMMIT, best effort.
+ * @param {Array<{ id: string, fromStructureId: string, toStructureId: string }>} rows @param {any} [db]
+ */
+export async function notifyAccessWithdrawn(rows, db = defaultDb) {
+  for (const r of rows || []) {
+    await notifyOrg(db, r.fromStructureId, 'referral_cancelled', 'Orientation close : accès retiré par la personne', 'La personne a retiré l’accès de la structure destinataire à son dossier : l’orientation est close. Une nouvelle orientation reste possible avec son accord.', { referralId: r.id });
+    await notifyOrg(db, r.toStructureId, 'referral_cancelled', 'Orientation close : accès retiré par la personne', 'La personne a retiré l’accès de votre structure à son dossier : l’orientation est close.', { referralId: r.id });
+  }
+}
+
+/**
+ * G6 — departure of a member: the proposals they made that still wait for the person go to the successor, or to the administrator who records the departure
+ * when no successor is named (an active member of the organization in both cases — otherwise nothing changes). Before, the person's « accept » failed with
+ * SENDER_GONE and the proposal stayed pending. Called in the transaction that disables the account; each change is a ReferralEvent (actor SENDER).
+ * @param {string} leavingUserId @param {string | null} successorUserId @param {{ userId: string, structureId: string, role?: string }} ctx @param {any} [db]
+ * @returns {Promise<number>}
+ */
+export async function handOverProposals(leavingUserId, successorUserId, ctx, db = defaultDb) {
+  const heir = successorUserId || ctx.userId;
+  if (!heir || heir === leavingUserId || !(await db.execute(sql`SELECT 1 AS ok WHERE ${activeMemberSql({ userId: heir, structureId: ctx.structureId })}`)).rows.length) return 0;
+  const rows = await db.update(Referral).set({ createdByProUserId: heir })
+    .where(and(eq(Referral.fromStructureId, ctx.structureId), eq(Referral.createdByProUserId, leavingUserId), inArray(Referral.status, ['DRAFT', 'PENDING_CITIZEN']))).returning({ id: Referral.id, status: Referral.status });
+  for (const r of rows) await record(db, r, 'SENDER', ctx.userId, r.status, r.status);
+  return rows.length;
 }
 
 /** Cron: notify the sender once when the receiver has not answered by the due date; expire (and revoke the referral grant) EXPIRE_AFTER_DUE_DAYS later. */
@@ -284,6 +356,8 @@ export const NOTICE_MAX_ATTEMPTS = 5;
 const NOTICE_TEXT = {
   overdue: ['referral_overdue', 'Orientation sans réponse', 'Une orientation n’a pas reçu de réponse dans le délai prévu.'],
   expired: ['referral_expired', 'Orientation expirée', 'Une orientation a expiré sans réponse ; l’accès de la structure destinataire est retiré.'],
+  // G2: a proposal the person never answered (same catalogue event: no new e-mail type)
+  citizen_unanswered: ['referral_expired', 'Orientation sans accord de la personne', `Une orientation proposée n’a pas reçu l’accord de la personne en ${PENDING_CITIZEN_EXPIRE_DAYS} jours : elle est close, rien n’a été transmis. Vous pouvez la proposer à nouveau.`],
 };
 /**
  * R39 — one organization notice, classified: DELIVERED (at least one member's in-app notice stored), NO_RECIPIENT (no active member: permanent, never
@@ -308,15 +382,15 @@ async function deliverTimeoutNotice(db, r, kind, notifyImpl) {
  * failure is logged and the flag kept); the expiry, its ledger entry and the revocation of the receiver's access are ONE transaction (a referral can no longer
  * be « expired » while the receiving organization keeps the dossier); a failed expiry notice is retried on the next runs within the same bound.
  */
-export async function runReferralTimeouts({ now = new Date(), notifyImpl = null } = {}, db = defaultDb) {
+export async function runReferralTimeouts({ now = new Date(), notifyImpl = null, sendMail = defaultSendMail } = {}, db = defaultDb) {
   const notify = notifyImpl || (async (args) => (await import('./pro-notifications.js')).notify(args));
-  const summary = { overdueNotified: 0, overdueNoRecipient: 0, overdueRetry: 0, overdueAbandoned: 0, expired: 0, expiredNoticeFailed: 0, expiredNoticeRetried: 0 };
+  const summary = { overdueNotified: 0, overdueNoRecipient: 0, overdueRetry: 0, overdueAbandoned: 0, expired: 0, expiredNoticeFailed: 0, expiredNoticeRetried: 0, pendingCitizenExpired: 0, pendingCitizenNoticeFailed: 0 };
   return db.transaction(async (lockTx) => {
     const [lock] = (await lockTx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext('ada:referral-timeouts')) AS ok`)).rows;
     if (!lock?.ok) return { ...summary, skipped: 'ALREADY_RUNNING' };
     // 1. overdue: claim, notify, give the claim back when the notice could not be stored
     const due = await db.select().from(Referral)
-      .where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED']), sql`${Referral.dueAt} < ${now}`, sql`${Referral.overdueNotifiedAt} IS NULL`));
+      .where(and(inArray(Referral.status, [...AWAITING_ANSWER_STATUSES]), sql`${Referral.dueAt} < ${now}`, sql`${Referral.overdueNotifiedAt} IS NULL`));
     for (const c of due) {
       const [r] = await db.update(Referral).set({ overdueNotifiedAt: now }).where(and(eq(Referral.id, c.id), sql`${Referral.overdueNotifiedAt} IS NULL`)).returning();
       if (!r) continue;
@@ -331,10 +405,10 @@ export async function runReferralTimeouts({ now = new Date(), notifyImpl = null 
     // 2. expiry: status, ledger and access revocation together
     const limit = new Date(now.getTime() - EXPIRE_AFTER_DUE_DAYS * day);
     const failedNow = new Set();
-    const stale = await db.select({ id: Referral.id }).from(Referral).where(and(inArray(Referral.status, ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO']), sql`${Referral.dueAt} < ${limit}`));
+    const stale = await db.select({ id: Referral.id }).from(Referral).where(and(inArray(Referral.status, [...AWAITING_ANSWER_STATUSES]), sql`${Referral.dueAt} < ${limit}`));
     for (const { id } of stale) {
       const r = await db.transaction(async (tx) => {
-        const row = await transition(tx, id, ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO'], { status: 'EXPIRED', closedAt: now }, sql`${Referral.dueAt} < ${limit}`);
+        const row = await transition(tx, id, [...AWAITING_ANSWER_STATUSES], { status: 'EXPIRED', closedAt: now }, sql`${Referral.dueAt} < ${limit}`);
         if (!row) return null;
         await record(tx, row, 'SYSTEM', null, null, 'EXPIRED');
         await revokeReferralGrant(tx, row);
@@ -344,18 +418,42 @@ export async function runReferralTimeouts({ now = new Date(), notifyImpl = null 
       summary.expired += 1;
       const { outcome } = await deliverTimeoutNotice(db, r, 'expired', notify);
       if (outcome === 'FAILED') { summary.expiredNoticeFailed += 1; failedNow.add(r.id); }
+      // G4: the person is told as well (best effort, recorded in AuditLog like every notice to them) — before, only the sending organization was
+      await tellCitizen(db, r, sendMail, 'Votre orientation n’a pas reçu de réponse',
+        `La structure proposée n’a pas répondu dans le délai prévu : l’orientation est close et l’accès ouvert par cette orientation est retiré. La structure qui vous accompagne peut vous proposer une autre orientation. Détails dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'EXPIRED');
     }
-    // 3. expiry notices that failed before: tried again (same bound), never once one was stored or there was no recipient
-    const pending = (await db.execute(sql`SELECT r.id FROM "Referral" r WHERE r.status = 'EXPIRED'
-      AND EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired' AND a.details->>'outcome' = 'FAILED')
-      AND NOT EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired' AND a.details->>'outcome' IN ('DELIVERED', 'NO_RECIPIENT'))
-      AND (SELECT count(*) FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = 'expired') < ${NOTICE_MAX_ATTEMPTS}`)).rows;
-    for (const { id } of pending) {
-      if (failedNow.has(id)) continue;   // just tried in step 2 of this run: the next run tries again
-      const [r] = await db.select().from(Referral).where(eq(Referral.id, id)).limit(1);
+    // 2b. G2: a proposal the person has not answered for PENDING_CITIZEN_EXPIRE_DAYS is closed (before: it waited forever and kept the live key, so the
+    // sender could not propose again). Nothing was shared, so there is no access to revoke; the state is CANCELLED by SYSTEM — the database reserves
+    // EXPIRED for a referral that was sent (Referral_sent_needs_citizen_check). The sender and the person are told.
+    const pendingLimit = new Date(now.getTime() - PENDING_CITIZEN_EXPIRE_DAYS * day);
+    const unanswered = await db.select({ id: Referral.id }).from(Referral).where(and(eq(Referral.status, 'PENDING_CITIZEN'), sql`${Referral.createdAt} < ${pendingLimit}`));
+    for (const { id } of unanswered) {
+      const r = await db.transaction(async (tx) => {
+        const row = await transition(tx, id, ['PENDING_CITIZEN'], { status: 'CANCELLED', closedAt: now }, sql`${Referral.createdAt} < ${pendingLimit}`);
+        if (!row) return null;
+        await record(tx, row, 'SYSTEM', null, 'PENDING_CITIZEN', 'CANCELLED');
+        return row;
+      });
       if (!r) continue;
-      await deliverTimeoutNotice(db, r, 'expired', notify);
-      summary.expiredNoticeRetried += 1;
+      summary.pendingCitizenExpired += 1;
+      const { outcome } = await deliverTimeoutNotice(db, r, 'citizen_unanswered', notify);
+      if (outcome === 'FAILED') { summary.pendingCitizenNoticeFailed += 1; failedNow.add(r.id); }
+      await tellCitizen(db, r, sendMail, 'Une proposition d’orientation n’est plus valable',
+        `Une proposition d’orientation est restée sans réponse de votre part pendant ${PENDING_CITIZEN_EXPIRE_DAYS} jours : elle est close et rien n’a été transmis. La structure qui vous accompagne peut vous la proposer à nouveau. Détails dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'PENDING_EXPIRED');
+    }
+    // 3. timeout notices that failed before: tried again (same bound), never once one was stored or there was no recipient
+    for (const [kind, status] of [['expired', 'EXPIRED'], ['citizen_unanswered', 'CANCELLED']]) {
+      const pending = (await db.execute(sql`SELECT r.id FROM "Referral" r WHERE r.status = ${status}
+        AND EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = ${kind} AND a.details->>'outcome' = 'FAILED')
+        AND NOT EXISTS (SELECT 1 FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = ${kind} AND a.details->>'outcome' IN ('DELIVERED', 'NO_RECIPIENT'))
+        AND (SELECT count(*) FROM "AuditLog" a WHERE a.action = 'REFERRAL_TIMEOUT_NOTICE' AND a.entity_id = r.id AND a.details->>'kind' = ${kind}) < ${NOTICE_MAX_ATTEMPTS}`)).rows;
+      for (const { id } of pending) {
+        if (failedNow.has(id)) continue;   // just tried in this run: the next run tries again
+        const [r] = await db.select().from(Referral).where(eq(Referral.id, id)).limit(1);
+        if (!r) continue;
+        await deliverTimeoutNotice(db, r, kind, notify);
+        summary.expiredNoticeRetried += 1;
+      }
     }
     return summary;
   });

@@ -44,7 +44,7 @@ function ReferralBoxes() {
       {state.loading ? <p role="status">{t('pro:referrals.loading', 'Chargement…')}</p> : state.referrals.length ? (
         <ul className="space-y-2">{state.referrals.map((r) => (
           <li key={r.id} data-testid="pro-ref-item" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm">
-            <span>{box === 'inbox' ? t('pro:referrals.from', 'De {{name}}', { name: r.fromName }) : t('pro:referrals.to', 'Vers {{name}}', { name: r.toName })} — {label(REASON_LABELS, r.reasonCode)} — <strong data-testid="pro-ref-status">{label(REFERRAL_STATUS_LABELS, r.status)}</strong>{r.overdue ? ` — ${t('pro:referrals.overdue', 'en retard')}` : ''}</span>
+            <span>{box === 'inbox' ? t('pro:referrals.from', 'De {{name}}', { name: r.fromName }) : t('pro:referrals.to', 'Vers {{name}}', { name: r.toName })}{r.reasonCode ? ` — ${label(REASON_LABELS, r.reasonCode)}` : ''} — <strong data-testid="pro-ref-status">{label(REFERRAL_STATUS_LABELS, r.status)}</strong>{r.overdue ? ` — ${t('pro:referrals.overdue', 'en retard')}` : ''}{r.stalled ? <span data-testid="pro-ref-stalled">{` — ${t('pro:referrals.stalled', 'acceptée, sans suite enregistrée')}`}</span> : null}</span>
             <Button asChild size="sm" variant="outline"><Link to={`/pro/orientations/${encodeURIComponent(r.id)}`} data-testid="pro-ref-open">{t('pro:referrals.open', 'Ouvrir')}</Link></Button>
           </li>
         ))}</ul>
@@ -83,7 +83,7 @@ function ReferralDetail({ id }) {
       <div aria-live="polite" role="status" data-testid="pro-ref-status-msg">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="pro-ref-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <Card><CardHeader><CardTitle className="text-lg">{t('pro:referrals.card_request', 'Demande')}</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
-        <p>{t('pro:referrals.reason_label', 'Motif :')} {label(REASON_LABELS, r.reasonCode)}</p>
+        {r.reasonCode ? <p>{t('pro:referrals.reason_label', 'Motif :')} {label(REASON_LABELS, r.reasonCode)}</p> : null}
         {r.message ? <p className="whitespace-pre-wrap rounded-md bg-slate-50 p-2" data-testid="pro-ref-message">{r.message}</p> : null}
         {r.responseCode ? <p>{t('pro:referrals.response_label', 'Réponse :')} {label(RESPONSE_LABELS, r.responseCode)}{r.responseMessage ? ` — « ${r.responseMessage} »` : ''}</p> : null}
         {r.outcome ? <p data-testid="pro-ref-outcome">{t('pro:referrals.outcome_label', 'Résultat :')} <strong>{label(OUTCOME_LABELS, r.outcome)}</strong>{r.outcomeSummary ? ` — « ${r.outcomeSummary} »` : ''}</p> : null}
