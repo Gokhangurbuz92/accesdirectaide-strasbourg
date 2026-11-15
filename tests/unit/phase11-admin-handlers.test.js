@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import markFreshHandler from '../../api/_handlers/admin/mark-fresh.js';
 import overrideReputationHandler from '../../api/_handlers/admin/override-reputation.js';
-import { mergeStructuresBySiret } from '../../api/lib/services/siret-merger.js';
 import { db } from '../../src/db/index.js';
 
 vi.mock('../../api/_utils/auth.js', () => ({
@@ -64,13 +63,5 @@ describe('Phase 11 Remediations', () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ ok: true });
     expect(db.update).toHaveBeenCalled();
-  });
-
-  it('siret-merger correctly calls transaction to merge duplicates', async () => {
-    const result = await mergeStructuresBySiret('12345678901234');
-    expect(result.success).toBe(true);
-    expect(result.primaryId).toBe('struct-1');
-    expect(result.mergedCount).toBe(1);
-    expect(db.transaction).toHaveBeenCalled();
   });
 });

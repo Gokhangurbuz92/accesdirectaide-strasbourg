@@ -32,6 +32,7 @@ import { Aide, Demarche, Dispositif, Structure, SourceSnapshot, SourceRegistryEn
 import { recordVerification, rowJson, contentVersion } from '../content-verification.js';
 import { snapshotRow, isEditHold } from '../content-versions.js';
 import { DUPLICATE_HOLD, decide as decideDuplicate } from '../duplicate-register.js';
+import { assessPair } from '../duplicate-evidence.js';
 import { isAllowedSource } from '../../lib/services/official-sources.js';
 import { fetchArchive, ficheMeta, readSource, resolveId, titleTokens, titleAcronym, DILA_ARCHIVE_URL } from './dila.js';
 import { classifyFiche } from './classify.js';
@@ -1069,7 +1070,36 @@ function sireneStat(ctx, ok, e = null) {
   if (ok) ctx.sirene.ok += 1; else { ctx.sirene.failed += 1; ctx.sirene.error = String(e?.code || e?.message || e).slice(0, 120); }
 }
 
-/** two records of the same establishment (same SIRET or same Annuaire office): the most complete is kept, the other is put aside through the duplicate register */
+/**
+ * Two records the night identified by the same SIRET: is that enough to put one aside WITHOUT a person? The answer is the duplicate register's own assessor's
+ * (duplicate-evidence.assessPair — its rules are not repeated here): one establishment in SIRENE can run two services (two FINESS establishments of one
+ * manager, a point-justice in a mission locale), and a record wrongly put aside is a real service hidden from the public. Automatic only when the assessor
+ * reads the same establishment (same SIRET / FINESS number / Annuaire entry) AND finds nothing that tells the two apart (other FINESS numbers, other Annuaire
+ * entries, two registers, two functions, conflicting identifiers). The SIRET column is unique, so the second record's SIRET is the one SIRENE gave the chain
+ * tonight (name and street): both rows are read with the night's identity, at the address the chain already compared with SIRENE.
+ * @param {Record<string, any>} a the record that would be kept (to_jsonb row) @param {Record<string, any>} b the other one @param {string} siret
+ * @returns {{ auto: boolean, basis: string, why: string }}
+ */
+const SAME_ESTABLISHMENT = ['SIRET_SAME_ONLY', 'FINESS_SAME', 'ANNUAIRE_SAME'];
+const TELLS_APART = { FINESS_DIFFERENT: (p) => `deux numéros FINESS différents (${p?.a} et ${p?.b})`, ANNUAIRE_DIFFERENT: () => 'deux fiches différentes de l’Annuaire de l’administration',
+  REGISTERS_DIFFERENT: () => 'deux registres officiels différents (FINESS et Annuaire de l’administration)', DENTAL_VS_MEDICAL: () => 'un centre dentaire et un centre médical',
+  FUNCTIONS_DIFFER: () => 'deux fonctions différentes d’après leurs noms', DATA_CONFLICT: () => 'adresse ou identifiants officiels discordants' };
+export function siretDuplicateVerdict(a, b, siret, { env = process.env, trustedDomains = [] } = {}) {
+  const r = assessPair({ ...a, siret }, { ...b, siret, adresse: a?.adresse, code_postal: a?.code_postal }, { env, trustedDomains });
+  const found = [...r.reasons, ...r.warnings];
+  const apart = Object.keys(TELLS_APART).map((code) => found.find((x) => x.code === code)).find(Boolean);
+  if (apart) return { auto: false, basis: apart.code, why: TELLS_APART[apart.code](apart.params) };
+  if (r.reasons.some((x) => SAME_ESTABLISHMENT.includes(x.code))) return { auto: true, basis: r.reasons.find((x) => SAME_ESTABLISHMENT.includes(x.code)).code, why: '' };
+  return { auto: false, basis: 'INSUFFICIENT', why: 'preuve insuffisante' };
+}
+/** the same « still to be read » pair is reported once, then again only after this many days (a reminder, not a nightly line) */
+const DUPLICATE_NOTE_DAYS = 30;
+
+/**
+ * two records of the same establishment: the most complete is kept, the other is put aside through the duplicate register — automatically for the same
+ * Annuaire office, and for the same SIRET only when nothing tells the two records apart (siretDuplicateVerdict); otherwise both stay online and the night's
+ * report says so (a person decides in the duplicate register)
+ */
 async function mergeDuplicates(ctx) {
   await beat(ctx, { phase: 'doublons', current: null }, true);
   const ids = ctx.structureIdentity || new Map();
@@ -1085,7 +1115,20 @@ async function mergeDuplicates(ctx) {
       const [a, b] = [primary.id, other.id].sort();
       const active = (await ctx.db.select().from(StructureDuplicateDecision).where(and(eq(StructureDuplicateDecision.structureA, a), eq(StructureDuplicateDecision.structureB, b), sql`"supersededAt" IS NULL`)))[0];
       if (active) continue;
-      const versions = { [primary.id]: contentVersion(await rowJson(ctx.db, 'structure', primary.id)), [other.id]: contentVersion(await rowJson(ctx.db, 'structure', other.id)) };
+      const json = { [primary.id]: await rowJson(ctx.db, 'structure', primary.id), [other.id]: await rowJson(ctx.db, 'structure', other.id) };
+      if (key.startsWith('s:')) {
+        const verdict = siretDuplicateVerdict(json[primary.id], json[other.id], key.slice(2), { env: ctx.env, trustedDomains: ctx.trusted });
+        if (!verdict.auto) {
+          count(ctx, 'DUPLICATE:pending');
+          const told = (await ctx.db.execute(sql`SELECT 1 FROM "VeilleEvent" WHERE entity_type = 'structure' AND entity_id = ${other.id} AND kind = 'DUPLICATE' AND outcome = 'UNRESOLVED'
+            AND details->>'primaryId' = ${primary.id} AND details->>'basis' = ${verdict.basis} AND created_at > ${new Date(ctx.now().getTime() - DUPLICATE_NOTE_DAYS * 86400000).toISOString()} LIMIT 1`)).rows[0];
+          if (!told) await note(ctx, { entityType: 'structure', entityId: other.id, title: other.nom, kind: 'DUPLICATE', outcome: 'UNRESOLVED',
+            summary: `Doublon possible de « ${primary.nom} » : même SIRET, services possiblement distincts : les deux fiches restent en ligne (${verdict.why} ; SIRET ${key.slice(2)}). À décider dans le registre des doublons.`,
+            details: { primaryId: primary.id, key, basis: verdict.basis } });
+          continue;
+        }
+      }
+      const versions = { [primary.id]: contentVersion(json[primary.id]), [other.id]: contentVersion(json[other.id]) };
       const r = await decideDuplicate({ a, b, decision: 'SAME_ENTITY', primaryId: primary.id, versionA: versions[a], versionB: versions[b], evidenceUrl: members[0].evidenceUrl,
         note: `Même établissement selon ${key.startsWith('a:') ? "l'Annuaire de l'administration" : 'le répertoire SIRENE'} (${key.slice(2)}) : la fiche la plus complète est conservée.` }, SYSTEM_REVIEWER.id, { db: ctx.db, env: ctx.env, role: SYSTEM_REVIEWER.role, trustedDomains: ctx.trusted });
       await note(ctx, { entityType: 'structure', entityId: other.id, title: other.nom, kind: 'DUPLICATE', outcome: r.ok ? 'WITHDRAWN' : 'UNRESOLVED',

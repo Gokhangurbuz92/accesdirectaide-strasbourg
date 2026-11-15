@@ -36,7 +36,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/duplicate-register.js': 'admin: D13 duplicate register (MFA administrators compare records, hidden ones included)',
   'api/_services/admin-tasks.js': 'admin: « À traiter » counts for the administrator dashboard (counts only, hidden records included, nothing public)',
   'api/_services/verification/chain.js': 'automatic verification chain: reads every record (hidden ones included) to check it against the official sources; publishes only through content-verification.js, returns nothing public',
-  'api/lib/agent-orchestrator.js': 'admin orchestrator (discovery of records to review)', 'api/lib/services/siret-merger.js': 'admin maintenance', 'api/_utils/dataQuality.js': 'data-quality monitor',
+  'api/lib/agent-orchestrator.js': 'admin orchestrator (discovery of records to review)', 'api/_utils/dataQuality.js': 'data-quality monitor',
   // booking and sharing: governed by the ORGANIZATION's own publication (RDV settings / Pro membership), not by directory content verification; see docs/pkg1-d5-publication-policy-and-structure-model.md (open decision recorded)
   'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 'api/_handlers/public/appointments/create.js': 'booking governed by StructureRdvSettings.isPublished',
   'api/_services/rdv-booking-config.js': 'R42: the structure\'s own booking configuration (settings_json.rdvBooking), read by the booking engine; never returned publicly',
