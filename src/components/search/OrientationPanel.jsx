@@ -6,6 +6,20 @@ import reference from '../../../data/reference/social-domains.v1.json';
 
 /** French official text inside any interface language: marked French and left-to-right (an Arabic page would otherwise flip its punctuation) */
 const FR = { lang: 'fr', dir: 'ltr' };
+/** the taxonomy of needs: the ids of the subdomains of data/reference/social-domains.v1.json */
+const NEED_IDS = new Set(reference.domains.flatMap((d) => d.subdomains.map((s) => s.id)));
+const OFFICIAL_SHEET = 'https://www.service-public.gouv.fr/';
+/**
+ * M1 — the durable plan data of the step a need becomes in Mon Parcours: the need itself (only an id of the taxonomy), its official Service-Public sheets
+ * as links, and « lire la fiche » as the next action. undefined for a need outside the taxonomy: the step is then added as before, without plan data.
+ * @param {{ id: string, sheets: string[] }} n @param {Record<string, { title?: string, url?: string }>} sources
+ */
+function needPlanStep(n, sources) {
+  if (!NEED_IDS.has(n.id)) return undefined;
+  const links = n.sheets.map((id) => sources[id]).filter((x) => x && typeof x.url === 'string' && x.url.startsWith(OFFICIAL_SHEET) && x.url.length <= 500 && typeof x.title === 'string' && x.title.trim())
+    .slice(0, 5).map((x) => ({ url: String(x.url), label: String(x.title).trim().slice(0, 200) }));
+  return { need: n.id, ...(links.length ? { links } : {}), nextActionKey: 'read_record' };
+}
 /** the official emergency numbers and their French names (data/reference/social-domains.v1.json) */
 const EMERGENCY = new Map(Object.entries(reference.emergency));
 const tel = (/** @type {string} */ n) => (n.length === 10 && n.startsWith('0') ? `${n.slice(0, 1)} ${n.slice(1, 4)} ${n.slice(4, 6)} ${n.slice(6, 8)} ${n.slice(8)}` : n);
@@ -120,7 +134,7 @@ export default function OrientationPanel({ orientation, query }) {
             </Link>
             {n.sheets.some((id) => sources[id]?.slug) && (
               <ParcoursAccessGate>
-                <AddToParcoursControl className="mt-2" title={n.label} records={n.sheets.filter((id) => sources[id]?.slug).slice(0, 5).map((id) => ({ type: /** @type {'guide'} */ ('guide'), id: String(sources[id].slug) }))} />
+                <AddToParcoursControl className="mt-2" title={n.label} planStep={needPlanStep(n, sources)} records={n.sheets.filter((id) => sources[id]?.slug).slice(0, 5).map((id) => ({ type: /** @type {'guide'} */ ('guide'), id: String(sources[id].slug) }))} />
               </ParcoursAccessGate>
             )}
           </li>

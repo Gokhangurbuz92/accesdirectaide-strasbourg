@@ -39,16 +39,17 @@ export function ParcoursAccessGate({ children }) {
 /**
  * The control itself (no session lookup: the caller decided it may be shown). One click sends the records to the server, which checks that each is public,
  * and answers « added » or « already there » — both are said in a polite live region with a link to Mon Parcours. Adding a step records nothing about a right.
- * @param {{ records: { type: 'aide' | 'demarche' | 'dispositif' | 'guide', id: string }[], title?: string, className?: string }} props
+ * M1: `planStep` (the need, official links, the next action — validated by the server) is sent with the step when the caller has it.
+ * @param {{ records: { type: 'aide' | 'demarche' | 'dispositif' | 'guide', id: string }[], title?: string, className?: string, planStep?: Record<string, unknown> }} props
  */
-export function AddToParcoursControl({ records, title, className = '' }) {
+export function AddToParcoursControl({ records, title, className = '', planStep = undefined }) {
   const { t } = useT('shared');
   const [state, setState] = useState({ busy: false, done: '', error: '' });
   if (!Array.isArray(records) || !records.length) return null;
   const add = async () => {
     setState({ busy: true, done: '', error: '' });
     try {
-      const out = await citizenApi.parcours({ action: 'add', records: records.slice(0, 5), ...(title ? { title: String(title).trim().slice(0, 200) } : {}) });
+      const out = await citizenApi.parcours({ action: 'add', records: records.slice(0, 5), ...(title ? { title: String(title).trim().slice(0, 200) } : {}), ...(planStep ? { planStep } : {}) });
       setState({ busy: false, done: out && out.added === false ? 'already' : 'added', error: '' });
     } catch (err) { setState({ busy: false, done: '', error: err.message || t('shared:parcours_add.failed', 'L’étape n’a pas pu être ajoutée. Réessayez.') }); }
   };

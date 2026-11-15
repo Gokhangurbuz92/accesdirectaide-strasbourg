@@ -13,6 +13,11 @@ export const PARCOURS_STATUS_LABELS = Object.freeze({
   CLOSED: 'Terminé',
 });
 export const PARCOURS_DONE = ['DECISION_POSITIVE', 'DECISION_NEGATIVE', 'CLOSED'];
+/** M1: why a closed step ended, when the person said so — stored with the step (planStep.closure), the status itself stays « Terminé » (src/lib/parcoursPlan.js) */
+export const PARCOURS_CLOSURE_LABELS = Object.freeze({
+  ABANDONED: 'Abandonné (indiqué par vous)',
+  OUTCOME_UNKNOWN: 'Terminé sans connaître la réponse',
+});
 export const COFFRE_CATEGORY_LABELS = Object.freeze({
   identite: 'Identité', revenus: 'Revenus', logement: 'Logement', famille: 'Famille', sante: 'Santé', emploi: 'Emploi', autre: 'Autre',
 });

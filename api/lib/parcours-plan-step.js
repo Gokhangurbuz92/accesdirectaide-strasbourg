@@ -155,15 +155,16 @@ export function planStepFromPlan(step) {
   /** @type {Record<string, any>} */ const out = { v: PLAN_STEP_VERSION };
   const map = STEP_ACTORS[/** @type {keyof typeof STEP_ACTORS} */ (String(step.kind))];
   if (map) {
-    const who = map[0] === 'organisation' ? text(step.who, 1, 200) : null;
+    const who = map[0] === 'organisation' && typeof step.who === 'string' ? text(step.who.slice(0, 200), 1, 200) : null;
     if (map[0] !== 'organisation') out.actor = { kind: map[0] };
     else if (who) out.actor = { kind: 'organisation', name: who };
     out.nextActionKey = map[1];
   }
   const detail = typeof step.detail === 'string' ? text(step.detail.slice(0, 1000), 1, 1000) : null;
   if (detail) out.detail = detail;
-  const links = (Array.isArray(step.links) ? step.links : []).filter((l) => l && typeof l.to === 'string' && INTERNAL_ROUTE.test(l.to) && text(l.label, 1, 200))
-    .slice(0, MAX_STORED_PLAN_LINKS).map((l) => ({ to: String(l.to), label: String(text(String(l.label).slice(0, 200), 1, 200)) }));
+  // a longer label is cut, as the plan's read-back always did
+  const links = (Array.isArray(step.links) ? step.links : []).map((l) => (l && typeof l.to === 'string' && INTERNAL_ROUTE.test(l.to) && typeof l.label === 'string' ? { to: l.to, label: text(l.label.slice(0, 200), 1, 200) } : null))
+    .filter((l) => l && l.label).slice(0, MAX_STORED_PLAN_LINKS);
   if (links.length) out.links = links;
   return Object.keys(out).length > 1 ? out : null;
 }

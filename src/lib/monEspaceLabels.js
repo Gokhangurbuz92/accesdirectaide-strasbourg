@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { formatNumber, useT } from '@/i18n';
 import {
-  COFFRE_CATEGORY_LABELS, DELEGATION_ROLE_LABELS, DELEGATION_SCOPE_LABELS, DELEGATION_STATUS_LABELS, HISTORY_KIND_LABELS, PARCOURS_STATUS_LABELS,
+  COFFRE_CATEGORY_LABELS, DELEGATION_ROLE_LABELS, DELEGATION_SCOPE_LABELS, DELEGATION_STATUS_LABELS, HISTORY_KIND_LABELS, PARCOURS_CLOSURE_LABELS, PARCOURS_STATUS_LABELS,
 } from '@/lib/monEspace';
 
 /** keeps the French map's keys and order; a key without a translation keeps its French label @param {Readonly<Record<string, string>>} base @param {Readonly<Record<string, string>>} labels */
@@ -23,6 +23,10 @@ export function useMonEspaceLabels() {
       DECISION_POSITIVE: t('compte:labels.parcours.decision_positive', 'Réponse favorable (indiquée par vous)'),
       DECISION_NEGATIVE: t('compte:labels.parcours.decision_negative', 'Réponse défavorable (indiquée par vous)'),
       CLOSED: t('compte:labels.parcours.closed', 'Terminé'),
+    }),
+    parcoursClosure: over(PARCOURS_CLOSURE_LABELS, {
+      ABANDONED: t('compte:labels.parcours.abandoned', 'Abandonné (indiqué par vous)'),
+      OUTCOME_UNKNOWN: t('compte:labels.parcours.outcome_unknown', 'Terminé sans connaître la réponse'),
     }),
     coffreCategory: over(COFFRE_CATEGORY_LABELS, {
       identite: t('compte:labels.coffre.identite', 'Identité'), revenus: t('compte:labels.coffre.revenus', 'Revenus'), logement: t('compte:labels.coffre.logement', 'Logement'),
