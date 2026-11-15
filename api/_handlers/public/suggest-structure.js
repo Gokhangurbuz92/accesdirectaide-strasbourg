@@ -5,6 +5,7 @@ import crypto from 'crypto';
 
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { isFeatureOn } from '../../_services/feature-flags.js';
+import { suggestStructureSchema } from '../../_utils/schemas.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
@@ -30,6 +31,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'MISSING_FIELDS', message: 'Indiquez le nom de la structure, sa ville, et cochez la case d’accord.' });
     }
 
+    // A-31: website and e-mail are optional in the schema and on the form, but the columns are NOT NULL: a direct call without them was a 500.
+    // The body is validated here too (types, lengths, URL and e-mail shape → 400) and an absent optional value is stored as the empty string, as the form sends it.
+    const parsed = suggestStructureSchema.safeParse({ structureName, city, type, website, email, message, consent });
+    if (!parsed.success) {
+        return res.status(400).json({ error: 'VALIDATION_ERROR', message: 'Vérifiez les informations saisies.', fields: [...new Set(parsed.error.issues.map((i) => String(i.path[0] ?? '')))] });
+    }
+    const data = parsed.data;
+
     // PKG-5 / P19: shared abuse limit (KV-backed, fail-closed in production) instead of a per-instance memory map, and the administrator kill switch (after the cheap checks: nothing is read before an invalid request is refused)
     if (!(await isFeatureOn('PUBLIC_FEEDBACK'))) return res.status(503).json({ error: 'FEATURE_DISABLED', message: 'Les suggestions sont momentanément fermées.' });
     const rl = await checkRateLimit('FEEDBACK', `suggest:${getClientIp(req)}`);
@@ -40,13 +49,13 @@ export default async function handler(req, res) {
         const ipHash = crypto.createHash('sha256').update(String(getClientIp(req))).digest('hex');
 
         const [request] = await db.insert(PartnershipRequest).values({
-                structureName,
-                city,
-                type,
-                website,
-                email,
-                message,
-                consent: Boolean(consent),
+                structureName: data.structureName,
+                city: data.city,
+                type: data.type ?? null,
+                website: data.website || '',
+                email: data.email || '',
+                message: data.message ?? null,
+                consent: true,
                 ip_hash: ipHash,
                 status: 'pending'
         }).returning();
