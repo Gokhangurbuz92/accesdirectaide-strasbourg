@@ -4,14 +4,15 @@
  * Kept free of HTTP concerns so the authorization logic in the handlers can be tested against a fake of this module,
  * and the SQL itself against a real PostgreSQL (tests/integration/shared-dossier-thread-db.test.js).
  */
-import { and, asc, eq } from 'drizzle-orm';
+import crypto from 'node:crypto';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
-import { SharedDiagnostic, SharedDossierMessage, SharedDossierThread, Structure } from '../../src/db/schema.js';
+import { SharedDiagnostic, SharedDossierGrant, SharedDossierMessage, SharedDossierThread, Structure } from '../../src/db/schema.js';
 import { sealText, openText } from '../lib/data-keys.js';
 
 /** @param {string} id */
 export async function getDossier(id) {
-  const [row] = await db.select({ id: SharedDiagnostic.id, expiresAt: SharedDiagnostic.expiresAt, rightsSecretHash: SharedDiagnostic.rightsSecretHash, shareTokenHash: SharedDiagnostic.shareTokenHash })
+  const [row] = await db.select({ id: SharedDiagnostic.id, expiresAt: SharedDiagnostic.expiresAt, rightsSecretHash: SharedDiagnostic.rightsSecretHash, shareTokenHash: SharedDiagnostic.shareTokenHash, ownerCitizenId: SharedDiagnostic.ownerCitizenId })
     .from(SharedDiagnostic).where(eq(SharedDiagnostic.id, id)).limit(1);
   return row || null;
 }
@@ -43,10 +44,34 @@ export async function openThread({ dossierId, structureId, proUserId }) {
   return findThread(dossierId, structureId);
 }
 
+/**
+ * A-17: `closed` = the organisation of the thread no longer holds an active grant on the dossier (the person removed it, or stopped sharing): its members can no longer
+ * open the thread, so the person may still read it but a new message would reach nobody.
+ */
 export async function listThreads(dossierId) {
-  return db.select({ id: SharedDossierThread.id, structureName: Structure.nom, lastMessageAt: SharedDossierThread.lastMessageAt, createdAt: SharedDossierThread.createdAt })
+  return db.select({
+    id: SharedDossierThread.id, structureName: Structure.nom, lastMessageAt: SharedDossierThread.lastMessageAt, createdAt: SharedDossierThread.createdAt,
+    closed: sql`NOT EXISTS (SELECT 1 FROM ${SharedDossierGrant} g WHERE g."sharedDiagnosticId" = ${SharedDossierThread.sharedDiagnosticId} AND g."structureId" = ${SharedDossierThread.structureId} AND g."revokedAt" IS NULL)`.mapWith(Boolean),
+  })
     .from(SharedDossierThread).innerJoin(Structure, eq(Structure.id, SharedDossierThread.structureId))
     .where(eq(SharedDossierThread.sharedDiagnosticId, dossierId)).orderBy(asc(SharedDossierThread.createdAt)).limit(50);
+}
+
+/** A-17: does the organisation of this thread still hold an active (not revoked) grant on the dossier? @param {{ sharedDiagnosticId: string, structureId: string }} thread */
+export async function threadGrantActive(thread) {
+  const [row] = await db.select({ id: SharedDossierGrant.id }).from(SharedDossierGrant)
+    .where(and(eq(SharedDossierGrant.sharedDiagnosticId, thread.sharedDiagnosticId), eq(SharedDossierGrant.structureId, thread.structureId), sql`${SharedDossierGrant.revokedAt} IS NULL`)).limit(1);
+  return Boolean(row);
+}
+
+/**
+ * A-17: trace of an answer written by the person (who, on which dossier, to which organisation — never the content). Best effort: the message is already stored.
+ * @param {{ dossierId: string, threadId: string, structureId: string, citizenId?: string | null }} e
+ */
+export async function auditSharerMessage(e) {
+  await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details, "timestamp")
+    VALUES (${crypto.randomUUID()}, 'DOSSIER_THREAD_ANSWERED', ${e.citizenId ? 'citizen' : 'sharer'}, ${e.citizenId || null}, 'SharedDiagnostic', ${e.dossierId},
+      ${JSON.stringify({ shareId: e.dossierId, threadId: e.threadId, structureId: e.structureId, via: e.citizenId ? 'account' : 'owner_secret' })}::jsonb, NOW())`).catch(() => {});
 }
 
 export async function listMessages(threadId, limit = 50) {

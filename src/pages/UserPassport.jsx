@@ -8,6 +8,7 @@ import SEO from '@/components/SEO';
 import SmsToggle from '@/components/SmsToggle';
 import { OWNER_HEADER, resolveOwnerSecret, forgetOwnerSecret } from '@/lib/shareOwner';
 import CitizenSharingPanel from '@/components/sharing/CitizenSharingPanel';
+import DossierThreads from '@/components/sharing/DossierThreads';
 import { formatDate, useT } from '@/i18n';
 import {
   ShieldCheck,
@@ -264,6 +265,9 @@ export default function UserPassport() {
 
                 {/* Sharing & data control: share with one organization / remove one / stop all / erase - four distinct actions */}
                 <CitizenSharingPanel shareId={shareId} ownerSecret={ownerSecret} onErased={() => { forgetOwnerSecret(shareId); setRevokeStep('done'); }} />
+
+                {/* A-17: the organisations' messages on this dossier, read and answered with the private owner link */}
+                <DossierThreads shareId={shareId} ownerSecret={ownerSecret} />
 
                 {/* Footer */}
                 {/* PKG-11 audit pass 2: the dossier's situation and results are stored as plain JSON; only documents and messages are encrypted at rest */}

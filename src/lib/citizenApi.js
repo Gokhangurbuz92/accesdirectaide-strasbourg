@@ -83,6 +83,10 @@ export const citizenApi = {
   dossierDocumentUrl: (/** @type {string} */ shareId, /** @type {string} */ fileId) => `/api/citizen/dossier?shareId=${encodeURIComponent(shareId)}&download=${encodeURIComponent(fileId)}`,
   removeDossierDocument: (/** @type {string} */ shareId, /** @type {string} */ fileId) => call('/api/citizen/dossier', { method: 'DELETE', body: { shareId, fileId } }),
   dossierGrants: (/** @type {string} */ shareId) => call('/api/public/dossier-grants', { method: 'POST', body: { shareId, action: 'list' } }),
+  // A-17 — the organisations' threads on a dossier the person owns (account session, or the private owner link on the passport page: `ownerSecret`)
+  dossierThreads: (/** @type {string} */ shareId, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'list', ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
+  dossierThreadMessages: (/** @type {string} */ shareId, /** @type {string} */ threadId, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'messages', threadId, ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
+  sendDossierThreadMessage: (/** @type {string} */ shareId, /** @type {string} */ threadId, /** @type {string} */ encryptedContent, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'send', threadId, encryptedContent, ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
   // PKG-2 / C23 — delegation (read-only, scoped, time-limited, revocable)
   listDelegations: () => call('/api/citizen/delegations'),
   inviteDelegate: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'invite', ...input } }),
