@@ -69,6 +69,6 @@ describe('A-17 dossier threads panel', () => {
     const alert = await screen.findByTestId('thread-problem');
     expect(alert.getAttribute('role')).toBe('alert');
     expect(alert.textContent).toBe('Ce message est trop long. Raccourcissez-le, puis réessayez.');
-    expect(document.body.textContent).not.toContain('RAW SERVER TEXT');
+    expect(globalThis.document.body.textContent).not.toContain('RAW SERVER TEXT');
   });
 });

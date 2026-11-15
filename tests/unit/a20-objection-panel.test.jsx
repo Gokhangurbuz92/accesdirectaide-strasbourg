@@ -13,7 +13,7 @@ const { ObjectionPanel } = await import('../../src/pages/CompteParametres.jsx');
 const json = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
 let calls;
 const serve = (get, post) => { calls = []; globalThis.fetch = vi.fn(async (url, init = {}) => { calls.push({ url, method: init.method || 'GET', body: init.body ? JSON.parse(init.body) : null }); return (init.method === 'POST' ? post : get)(); }); };
-beforeEach(() => { vi.spyOn(window, 'alert').mockImplementation(() => {}); });
+beforeEach(() => { vi.spyOn(globalThis.window, 'alert').mockImplementation(() => {}); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe('A-20 objection panel', () => {
@@ -25,7 +25,7 @@ describe('A-20 objection panel', () => {
     await waitFor(() => expect(calls.find((c) => c.method === 'POST')).toEqual({ url: '/api/citizen/restriction', method: 'POST', body: { action: 'object', reason: 'Je ne souhaite plus ce traitement.' } }));
     expect((await screen.findByTestId('compte-objection-open')).textContent).toMatch(/en cours d’examen/);
     expect(screen.getByTestId('compte-objection-status').textContent).toMatch(/enregistrée.*vous répond dans un délai d’un mois/);
-    expect(document.body.textContent).not.toMatch(/accept/i);
+    expect(globalThis.document.body.textContent).not.toMatch(/accept/i);
     expect(screen.queryByTestId('compte-objection-send')).toBeNull();
   });
 
@@ -41,15 +41,15 @@ describe('A-20 objection panel', () => {
     expect(screen.getByTestId('compte-objection-send')).toBeTruthy();
   });
 
-  it('a refusal or an unreadable state is an inline alert (no window.alert, no raw server sentence)', async () => {
+  it('a refusal or an unreadable state is an inline alert (no globalThis.window.alert, no raw server sentence)', async () => {
     serve(() => json(200, { objection: null }), () => json(400, { error: 'reason_too_long', message: 'RAW SERVER SENTENCE' }));
     render(createElement(ObjectionPanel));
     fireEvent.click(await screen.findByTestId('compte-objection-send'));
     const alert = await screen.findByTestId('compte-objection-problem');
     expect(alert.getAttribute('role')).toBe('alert');
     expect(alert.textContent).toBe('Votre explication est trop longue (1000 caractères au plus).');
-    expect(document.body.textContent).not.toContain('RAW SERVER SENTENCE');
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(globalThis.document.body.textContent).not.toContain('RAW SERVER SENTENCE');
+    expect(globalThis.window.alert).not.toHaveBeenCalled();
     cleanup();
     serve(() => json(503, {}), () => json(500, {}));
     render(createElement(ObjectionPanel));
