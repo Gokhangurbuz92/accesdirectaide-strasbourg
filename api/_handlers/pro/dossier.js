@@ -5,7 +5,7 @@ import { ProCase, SharedDiagnostic } from '../../../src/db/schema.js';
 import { eq, and, sql } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import { logProAudit } from '../../_utils/auth.js';
-import { resolveDossierForStructure, projectResultsForStructure } from '../../_utils/share-access.js';
+import { resolveDossierForStructure, activeGrantExists, projectResultsForStructure } from '../../_utils/share-access.js';
 import { CASE_STATUSES, addNote, ensureCase, setStatus } from '../../_services/pro-cases.js';
 import { capabilityOpen, requireCapability } from '../../_utils/capabilities.js';
 import { openText } from '../../lib/data-keys.js';
@@ -23,6 +23,7 @@ const FOLLOW_UP_STATUSES = CASE_STATUSES.filter((x) => x !== 'CLOSED');
  * @param {any} shared @param {string} caseId @param {{ structureId: string, userId: string, role: any }} ctx
  */
 async function retireLegacyFollowUp(shared, caseId, ctx) {
+    const proCtx = ctx; const shareId = String(shared?.id || '');
     try {
         const legacy = shared?.results?._followUps?.[ctx.structureId];
         if (!legacy || typeof legacy !== 'object') return;
@@ -31,7 +32,9 @@ async function retireLegacyFollowUp(shared, caseId, ctx) {
             const moved = await addNote(caseId, { visibility: 'INTERNAL', body: `[Note reprise de l’ancien suivi du dossier]\n${note}`.slice(0, 4000) }, ctx);
             if (!moved.ok) return;
         }
-        await db.update(SharedDiagnostic).set({ results: sql`${SharedDiagnostic.results} #- ARRAY['_followUps', ${ctx.structureId}::text]` }).where(eq(SharedDiagnostic.id, shared.id));
+        // the only write this route still makes to the dossier JSON: like every write path, grant AND active membership are re-checked inside the statement
+        await db.update(SharedDiagnostic).set({ results: sql`${SharedDiagnostic.results} #- ARRAY['_followUps', ${ctx.structureId}::text]` })
+            .where(and(eq(SharedDiagnostic.id, shareId), activeGrantExists(shareId, proCtx)));
     } catch (err) {
         logger.warn({ err: { name: /** @type {any} */ (err)?.name } }, '[Pro Dossier] legacy follow-up not retired');
     }

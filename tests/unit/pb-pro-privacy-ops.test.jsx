@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/* global document, window, Blob */
 /**
  * Pro / Structure privacy and operations fixes (RECON_PRO_STRUCTURE_TERRITORY 2026-11-15) — screens.
  *   A04  the dossier page shows and sets the CASE status; no label that reads as a decision
