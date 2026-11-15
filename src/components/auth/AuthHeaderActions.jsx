@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from '@tanstack/react-query';
 import { rdvMessagingClient } from '@/api/rdv-messaging-client';
-import { useT } from '@/i18n';
+import { useEffect } from 'react';
+import { useLanguage, useT } from '@/i18n';
+import { applyAccountLanguageOnce } from '@/lib/accountLanguage';
 
 import { logoutOnServer } from '@/lib/citizenSession';
 /**
@@ -38,6 +40,11 @@ export function AuthHeaderActions() {
     });
 
     const isUser = authQuery.data?.session?.kind === 'user';
+    // A-23: the header is on every page — the account's stored language is applied once when the session is recognised (not only on the profile page)
+    const { code: uiLanguage } = useLanguage();
+    const sessionUser = isUser ? authQuery.data?.user : null;
+    useEffect(() => { if (sessionUser) void applyAccountLanguageOnce(sessionUser, uiLanguage); }, [sessionUser?.id, sessionUser?.preferredLanguage]);   // eslint-disable-line react-hooks/exhaustive-deps -- once per session, not on every interface change
+
     const userEmail = (authQuery.data?.user?.email ?? authQuery.data?.session?.user?.email);
 
     const handleLogout = async () => {
@@ -185,6 +192,11 @@ export function AuthMobileActions({ onNavigate }) {
     });
 
     const isUser = authQuery.data?.session?.kind === 'user';
+    // A-23: same once-per-session application when only this (mobile) menu is mounted
+    const { code: uiLanguage } = useLanguage();
+    const sessionUser = isUser ? authQuery.data?.user : null;
+    useEffect(() => { if (sessionUser) void applyAccountLanguageOnce(sessionUser, uiLanguage); }, [sessionUser?.id, sessionUser?.preferredLanguage]);   // eslint-disable-line react-hooks/exhaustive-deps -- once per session
+
 
     const handleLogout = async () => {
         if (!(await logoutOnServer())) return;

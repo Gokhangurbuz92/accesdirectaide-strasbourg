@@ -1,7 +1,7 @@
 import { resolveAuthContext } from '../../_utils/auth.js';
 import { env } from '../../_utils/env.js';
 import { db } from '../../../src/db/index.js';
-import { CitizenUser } from '../../../src/db/schema.js';
+import { CitizenProfile, CitizenUser } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { citizenSessionRevoked, getUserSessionTokenFromRequest, verifyUserSessionToken } from '../../_utils/user-auth.js';
 import { capabilityOpen } from '../../_utils/capabilities.js';
@@ -85,6 +85,11 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // A-23: the account's stored interface language, so the application can apply it once at session start (before: only the profile page did).
+    // A failed read is not a sign-in failure: the language is then simply not applied.
+    const preferredLanguage = await db.select({ lang: CitizenProfile.preferredLanguage }).from(CitizenProfile).where(eq(CitizenProfile.userId, user.id)).limit(1)
+        .then((rows) => rows[0]?.lang || null).catch(() => null);
+
     return res.status(200).json({
         session: {
             kind: 'user',
@@ -98,6 +103,7 @@ export default async function handler(req, res) {
             createdAt: user.createdAt || null,
             emailVerifiedAt: user.emailVerifiedAt || null,
             emailVerified: true,
+            preferredLanguage,
             role: 'user',
             authType: 'user_cookie',
             phoneCollection: phoneCollectionOpen(),   // Release B: the settings screen offers the phone field only when its collection is open
