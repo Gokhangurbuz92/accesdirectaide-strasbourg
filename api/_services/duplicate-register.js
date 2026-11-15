@@ -201,15 +201,18 @@ const REGISTER_FIELDS = ['id', 'nom', 'type_structure', 'adresse', 'code_postal'
  * table is bound to them exactly like one taken after « Comparer »), the detection reasons and the evidence assistance (duplicate-evidence.js: a suggestion,
  * never a decision). Pairs with an active decision are not proposed (their history stays in readPair / recentDecisions).
  */
+/** one record as the register shows it: identifying fields, the content version a decision is bound to, the official pages it already holds */
+const registerView = (j, env, trustedDomains) => {
+  const idn = identityOf(j, env, trustedDomains);
+  return { ...Object.fromEntries(REGISTER_FIELDS.map((k) => [k, j[k] ?? null])), version: contentVersion(j), sources: idn.sources, checkedAt: j.auto_check?.checkedAt || null, identity: j.auto_check?.identity || null };
+};
+
 export async function register({ db = defaultDb, env = process.env, trustedDomains = [], limit = 1000 } = {}) {
   const { candidates: list } = await candidates({ db, limit });
   const ids = [...new Set(list.flatMap((c) => [c.a, c.b]))];
   const rows = ids.length ? (await db.execute(sql`SELECT to_jsonb(t) AS j FROM "Structure" t WHERE id IN (${sql.join(ids.map((i) => sql`${i}`), sql`, `)})`)).rows.map((r) => r.j) : [];
   const byId = new Map(rows.map((j) => [j.id, j]));
-  const view = (j) => {
-    const idn = identityOf(j, env, trustedDomains);
-    return { ...Object.fromEntries(REGISTER_FIELDS.map((k) => [k, j[k] ?? null])), version: contentVersion(j), sources: idn.sources, checkedAt: j.auto_check?.checkedAt || null, identity: j.auto_check?.identity || null };
-  };
+  const view = (j) => registerView(j, env, trustedDomains);
   const pairs = list.filter((c) => byId.has(c.a) && byId.has(c.b)).map((c) => {
     const A = byId.get(c.a); const B = byId.get(c.b);
     return { key: `${c.a}|${c.b}`, a: c.a, b: c.b, detection: { sameSiret: c.sameSiret, sameRna: c.sameRna, sameFiness: c.sameFiness, sameAddress: c.sameAddress, nameSimilarity: Number(c.nameSimilarity) },
@@ -225,6 +228,50 @@ export async function recentDecisions({ db = defaultDb, limit = 50 } = {}) {
     FROM "StructureDuplicateDecision" d JOIN "Structure" sa ON sa.id = d."structureA" JOIN "Structure" sb ON sb.id = d."structureB"
     ORDER BY d."decidedAt" DESC LIMIT ${Math.min(Number(limit) || 50, 200)}`)).rows;
   return { ok: true, decisions: rows };
+}
+
+/** the reviewer the automatic verification chain signs with (api/_services/verification/chain.js SYSTEM_REVIEWER, role « system ») — never a person */
+export const AUTOMATIC_REVIEWER = 'ada-veille-automatique';
+export const DECIDED_PAGE_MAX = 100;
+const isoDay = (v) => { const d = /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? new Date(`${v}T00:00:00Z`) : null; return d && !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v ? String(v) : null; };   // a real calendar day, else ignored
+
+/**
+ * RA-05 — the DECIDED pairs, for a person who reviews what was recorded (in particular the automatic « same SIRET » decisions of the verification chain) and
+ * replaces a decision through decide() with `expectedDecisionId`. Read-only: filters (decision, automatic or human author, in force or superseded, day
+ * range in UTC, text), pages beyond the 50 newest, both records' identifying fields with their CURRENT content versions (what a replacement is bound to),
+ * the evidence and the note of each decision, and whether a record changed since the decision.
+ * @param {{ db?: any, env?: any, trustedDomains?: string[], decision?: string, reviewer?: string, status?: string, from?: string, to?: string, q?: string, page?: any, pageSize?: any }} [input]
+ */
+export async function decidedPairs({ db = defaultDb, env = process.env, trustedDomains = [], decision = '', reviewer = '', status = 'active', from = '', to = '', q = '', page = 1, pageSize = 25 } = {}) {
+  const size = Math.min(Math.max(parseInt(pageSize, 10) || 25, 1), DECIDED_PAGE_MAX);
+  const current = Math.max(parseInt(page, 10) || 1, 1);
+  const conds = [];
+  if (['SAME_ENTITY', 'DISTINCT'].includes(String(decision))) conds.push(sql`d.decision = ${String(decision)}`);
+  if (reviewer === 'auto') conds.push(sql`d."reviewerId" = ${AUTOMATIC_REVIEWER}`);
+  else if (reviewer === 'human') conds.push(sql`d."reviewerId" <> ${AUTOMATIC_REVIEWER}`);
+  if (status === 'superseded') conds.push(sql`d."supersededAt" IS NOT NULL`);
+  else if (status !== 'all') conds.push(sql`d."supersededAt" IS NULL`);
+  const dayFrom = isoDay(from); const dayTo = isoDay(to);
+  if (dayFrom) conds.push(sql`d."decidedAt" >= ${dayFrom}::date`);
+  if (dayTo) conds.push(sql`d."decidedAt" < (${dayTo}::date + 1)`);
+  const text = String(q || '').trim().slice(0, 100);
+  if (text) {
+    const like = `%${text.replace(/[\\%_]/g, '\\$&')}%`;
+    conds.push(sql`(sa.nom ILIKE ${like} OR sb.nom ILIKE ${like} OR sa.ville ILIKE ${like} OR sb.ville ILIKE ${like} OR sa.adresse ILIKE ${like} OR sb.adresse ILIKE ${like}
+      OR sa.siret ILIKE ${like} OR sb.siret ILIKE ${like} OR sa.numero_finess ILIKE ${like} OR sb.numero_finess ILIKE ${like} OR sa.rna_id ILIKE ${like} OR sb.rna_id ILIKE ${like}
+      OR d.note ILIKE ${like} OR d."evidenceUrl" ILIKE ${like} OR d."reviewerId" ILIKE ${like} OR sa.id = ${text} OR sb.id = ${text})`);
+  }
+  const where = conds.length ? sql.join(conds, sql` AND `) : sql`TRUE`;
+  const from_ = sql`FROM "StructureDuplicateDecision" d JOIN "Structure" sa ON sa.id = d."structureA" JOIN "Structure" sb ON sb.id = d."structureB" WHERE ${where}`;
+  const total = Number((await db.execute(sql`SELECT count(*)::int AS n ${from_}`)).rows[0]?.n || 0);
+  const rows = (await db.execute(sql`SELECT d.id, d."structureA" AS a, d."structureB" AS b, d.decision, d."primaryId", d."evidenceUrl", d.note, d."reviewerId", d."decidedAt", d."supersededAt",
+      d."versionA", d."versionB", to_jsonb(sa) AS ja, to_jsonb(sb) AS jb ${from_} ORDER BY d."decidedAt" DESC, d.id DESC LIMIT ${size} OFFSET ${(current - 1) * size}`)).rows;
+  const decisions = rows.map((r) => {
+    const A = registerView(r.ja, env, trustedDomains); const B = registerView(r.jb, env, trustedDomains);
+    return { id: r.id, key: `${r.a}|${r.b}`, a: r.a, b: r.b, decision: r.decision, primaryId: r.primaryId || null, evidenceUrl: r.evidenceUrl, note: r.note, reviewerId: r.reviewerId,
+      automatic: r.reviewerId === AUTOMATIC_REVIEWER, decidedAt: r.decidedAt, supersededAt: r.supersededAt || null, changedSince: r.versionA !== A.version || r.versionB !== B.version, A, B };
+  });
+  return { ok: true, total, page: current, pageSize: size, pages: Math.max(1, Math.ceil(total / size)), automaticReviewer: AUTOMATIC_REVIEWER, decisions };
 }
 
 export const BATCH_MAX = 50;

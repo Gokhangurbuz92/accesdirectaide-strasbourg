@@ -14,7 +14,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../fixtures/duplicate-pairs-lab.json';
 import { assessPair } from '../../api/_services/duplicate-evidence.js';
 
-const api = vi.hoisted(() => ({ apiClient: { admin: { getDuplicateRegister: vi.fn(), getDuplicates: vi.fn(), decideDuplicates: vi.fn() } } }));
+const api = vi.hoisted(() => ({ apiClient: { admin: { getDuplicateRegister: vi.fn(), getDuplicates: vi.fn(), decideDuplicates: vi.fn(), getDecidedDuplicates: vi.fn() } } }));
 vi.mock('@/api/client', () => api);
 import AdminDuplicates from '../../src/pages/admin/k5/Duplicates.jsx';
 
