@@ -36,11 +36,17 @@ async function drizzleWouldApply(lastCreatedAt) {
 }
 
 describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
-  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045', async () => {
-    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45]);
+  /** the migrations added after 0045 (M2: 0047, 0048): later « when », so they are pending wherever 0045 is the newest recorded one */
+  const LATER = E.filter((e) => e.when > byTag(T45).when).map((e) => e.tag);
+  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044, 0045 and everything later', async () => {
+    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, ...LATER]);
   });
-  it('after 0045 applied out of order, nothing is pending: 0043 / 0044 are skipped for good', async () => {
-    expect(await drizzleWouldApply(byTag(T45).when)).toEqual([]);
+  it('after 0045 applied out of order, only later migrations are pending: 0043 / 0044 are skipped for good', async () => {
+    const pending = await drizzleWouldApply(byTag(T45).when);
+    expect(pending).toEqual(LATER);
+    expect(pending).not.toContain(T43);
+    expect(pending).not.toContain(T44);
+    expect(await drizzleWouldApply(E[E.length - 1].when)).toEqual([]);
   });
   it('planDeploy() computes the same pending set as drizzle for every level, and refuses while an obsolete one is pending', async () => {
     for (const lvl of [null, ...E.map((e) => e.when)]) {
@@ -50,10 +56,13 @@ describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
       else expect(p.ok && p.apply.map((e) => e.tag)).toEqual(drizzleSet);
     }
   });
-  it('a future 0046 after 0045 is the only pending migration on Production 0042 + 0045', () => {
-    const e46 = { idx: 46, when: byTag(T45).when + 1000, tag: '0046_future' };
-    const p = planDeploy([...E, e46], byTag(T45).when);
-    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0046_future']);
+  it('a future migration after the newest one is pending on Production 0042 + 0045 with the later ones — never 0043 / 0044; alone once they are applied', () => {
+    const last = E[E.length - 1];
+    const future = { idx: last.idx + 1, when: last.when + 1000, tag: `${String(last.idx + 1).padStart(4, '0')}_future` };
+    const p = planDeploy([...E, future], byTag(T45).when);
+    expect(p.ok && p.apply.map((e) => e.tag)).toEqual([...LATER, future.tag]);
+    const q = planDeploy([...E, future], last.when);
+    expect(q.ok && q.apply.map((e) => e.tag)).toEqual([future.tag]);
   });
 });
 
@@ -171,7 +180,7 @@ describe('physical schema vs history', () => {
     ]));
     expect(physicalDrift(E, real.files, PROD_0042, catalogueOf(PROD_0042, ELEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_UNRECORDED', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
     expect(physicalDrift(E, real.files, [...PROD_0042, T45], catalogueOf(PROD_0042, SEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_MISSING', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
-    expect(CHECK_MARKERS.map((m) => m.tag)).toEqual([T43, T45]);
+    expect(CHECK_MARKERS.map((m) => m.tag)).toEqual([T43, T45, '0047_m2_referral_redirect_referent']);   // M2: 0047 widens Referral_response_check
   });
 });
 

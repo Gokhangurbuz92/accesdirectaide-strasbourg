@@ -19,6 +19,7 @@
  *   - kept on purpose: citizen-visible notes and case outcomes (part of the person's follow-up, erasable through the person's own request), the messages exchanged
  *     with people, the consent ledger, the audit trails, and the public directory record (public-source information; online booking is switched off).
  */
+import { endReferentsForClosedOrganization } from './dossier-referent.js';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
@@ -119,6 +120,7 @@ async function execute(tx, sid, requestId, reviewer) {
   summary.invitesRevoked = await n(sql`UPDATE "SharedDossierInvite" SET "revokedAt" = NOW() WHERE "structureId" = ${sid} AND "usedAt" IS NULL AND "revokedAt" IS NULL`);
   const grants = (await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE "structureId" = ${sid} AND "revokedAt" IS NULL RETURNING "sharedDiagnosticId" AS d`)).rows;
   summary.dossierAccessesRevoked = grants.length;
+  summary.referentsEnded = (await endReferentsForClosedOrganization(tx, sid)).length;   // M2 / G5: no contact person of a closed organization stays shown
   summary.aiDraftsForgotten = await n(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "scopeStructureId" = ${sid}`);
   summary.internalNotesErased = await n(sql`DELETE FROM "ProCaseNote" WHERE "structureId" = ${sid} AND visibility = 'INTERNAL'`);
   const open = (await tx.execute(sql`UPDATE "ProCase" SET status = 'CLOSED', outcome = COALESCE(outcome, 'OTHER'), "closedAt" = NOW() WHERE "structureId" = ${sid} AND status <> 'CLOSED'

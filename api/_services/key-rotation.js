@@ -5,7 +5,7 @@
  * retire the old key. Payloads are never decrypted to disk nor re-encrypted.
  *
  * PKG-5 coverage (was: dossier-thread messages only):
- *   text columns  SharedDossierMessage.body, ProCaseNote.bodyEncrypted, Referral.messageEncrypted / responseMessageEncrypted, CitizenDocument.filenameEncrypted,
+ *   text columns  SharedDossierMessage.body, ProCaseNote.bodyEncrypted, Referral.messageEncrypted / responseMessageEncrypted, ReferralMessage.bodyEncrypted (0048), CitizenDocument.filenameEncrypted,
  *                 RdvMessageAttachment.filenameEncrypted, SharedDiagnostic.results._files[].filenameEncrypted, DSRRequest.reviewOutcome.extractEncrypted
  *   blobs         CitizenDocument (Mon Coffre), RdvMessageAttachment (message attachments), SharedDiagnostic.results._files[] (dossier documents)
  * Text: compare-and-set UPDATE on the old value (a concurrent writer or a second run cannot clobber data).
@@ -28,7 +28,7 @@ import { SITUATION_SEAL } from '../lib/situation-codec.js';
 import { currentKeyId, isPrimaryKeyId, keyIdOf, needsRewrap, rewrapBuffer, rewrapText } from '../lib/data-keys.js';
 import { bufferKeyIndex, isV1Text, reencryptBuffer, reencryptV1, v1KeyIndex } from '../lib/crypto.js';
 import { storage as defaultStorage } from '../lib/storage.js';
-import { appointmentGuestSchema } from '../_utils/schema-features.js';
+import { appointmentGuestSchema, readReferralChainSchema } from '../_utils/schema-features.js';
 
 /** @param {{ apply?: boolean, batch?: number }} [options] */
 export async function rewrapMessages({ apply = false, batch = 200 } = {}) {
@@ -79,6 +79,12 @@ const TEXT_COLUMNS = [
   // R18 (R31): the label and reasons of a professional's orientation basket
   { table: 'ProOrientationBasket', idCol: 'id', col: 'privateEncrypted', purpose: 'orientation-basket', ctx: (r) => `basket:${r.id}`, select: '1 AS one' },
 ];
+/**
+ * M2 add-on / B01: the history of the referral texts (drizzle/0048). Added ONLY when the database has the table (api/_utils/schema-features.js), so the
+ * rotation keeps working before the migration; sealed like Referral.messageEncrypted (context « referral:<referralId> »).
+ * @type {TextColumn}
+ */
+const REFERRAL_MESSAGE_COLUMN = { table: 'ReferralMessage', idCol: 'id', col: 'bodyEncrypted', purpose: 'referral-message', ctx: (r) => `referral:${r.referralId}`, select: '"referralId"' };
 /** v1-only text columns (api/lib/crypto.ts encrypt): no envelope, re-encrypted with the primary key when a previous key wrote them */
 const V1_TEXT_COLUMNS = [
   { table: 'RdvConversationMessage', idCol: 'id', col: 'body' },
@@ -114,7 +120,9 @@ const bump = (s, kind, k) => { (s.byKind[kind] = s.byKind[kind] || { needing: 0,
 export async function rewrapAll({ apply = false, batch = 200, db = defaultDb, storage = defaultStorage, stopAfter = Infinity } = {}) {
   const s = newStats(apply); let writes = 0;
   const interrupted = () => writes >= stopAfter;
-  for (const c of TEXT_COLUMNS) {
+  // fail closed: when the schema cannot be read, the run counts a failure (status never says « safe to retire » on an unknown schema)
+  const history = await readReferralChainSchema(db).catch(() => { s.failed += 1; bump(s, 'ReferralMessage.bodyEncrypted', 'failed'); return { messages: false }; });
+  for (const c of history.messages ? [...TEXT_COLUMNS, REFERRAL_MESSAGE_COLUMN] : TEXT_COLUMNS) {
     const kind = `${c.table}.${c.col}`; let last = '';
     for (;;) {
       if (interrupted()) return { ...s, interrupted: true };

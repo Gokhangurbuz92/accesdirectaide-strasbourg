@@ -37,7 +37,11 @@ describe('referral chain gaps — static contracts', () => {
     const types = [...service.matchAll(/'(referral_[a-z_]+)'/g)].map((m) => m[1]);
     expect(types.length).toBeGreaterThan(10);
     for (const t of types) expect(CATALOGUE[t], t).toBeTruthy();
-    expect(Object.keys(CATALOGUE).filter((k) => k.startsWith('referral_'))).toHaveLength(10);
+    // M2 / G4 adds ONE event, in-app only (« a human should follow this up »): still no new e-mail type
+    const referralEvents = Object.keys(CATALOGUE).filter((k) => k.startsWith('referral_'));
+    expect(referralEvents).toHaveLength(11);
+    expect(referralEvents.filter((k) => CATALOGUE[k].email)).toHaveLength(10);
+    expect(CATALOGUE.referral_follow_up.email).toBe(false);
     expect(service).toMatch(/export const PENDING_CITIZEN_EXPIRE_DAYS = \d+;/);
     expect(service).toMatch(/export const ACCEPTED_NO_PROGRESS_DAYS = \d+;/);
   });

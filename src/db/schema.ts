@@ -2666,8 +2666,18 @@ export const Referral = pgTable('Referral', {
 	overdueNotifiedAt: timestamp('overdueNotifiedAt', { precision: 3 }),
 	closedAt: timestamp('closedAt', { precision: 3 }),
 	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
-	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+	/** M2 / G3 (0047): the declined referral this one follows. A link only: the new referral starts at PENDING_CITIZEN and needs the person's own authorization. */
+	previousReferralId: text('previousReferralId'),
+	/** M2 / G3 (0047): the organization a declining receiver suggests (identifier only; nothing is disclosed to it). Only on a DECLINED / CLOSED referral. */
+	suggestedStructureId: text('suggestedStructureId'),
+	/** M2 / G4 (0047): the one « needs a human follow-up » notice was sent (accepted without a recorded step, or a suggestion nobody acted on) */
+	followUpNotifiedAt: timestamp('followUpNotifiedAt', { precision: 3 })
 }, (Referral) => ({
+	'Referral_previous_fkey': foreignKey({ name: 'Referral_previous_fkey', columns: [Referral.previousReferralId], foreignColumns: [Referral.id] }).onDelete('set null').onUpdate('cascade'),
+	'Referral_suggested_fkey': foreignKey({ name: 'Referral_suggested_fkey', columns: [Referral.suggestedStructureId], foreignColumns: [Structure.id] }).onDelete('set null').onUpdate('cascade'),
+	'Referral_previous_idx': index('Referral_previous_idx').on(Referral.previousReferralId),
+	'Referral_previous_live_key': uniqueIndex('Referral_previous_live_key').on(Referral.previousReferralId).where(sql`"previousReferralId" IS NOT NULL AND "status" IN ('DRAFT', 'PENDING_CITIZEN', 'SENT', 'ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'IN_PROGRESS')`),
 	'Referral_dossier_fkey': foreignKey({ name: 'Referral_dossier_fkey', columns: [Referral.sharedDiagnosticId], foreignColumns: [SharedDiagnostic.id] }).onDelete('cascade').onUpdate('cascade'),
 	'Referral_from_fkey': foreignKey({ name: 'Referral_from_fkey', columns: [Referral.fromStructureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
 	'Referral_to_fkey': foreignKey({ name: 'Referral_to_fkey', columns: [Referral.toStructureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
@@ -2693,6 +2703,66 @@ export const ReferralEvent = pgTable('ReferralEvent', {
 }, (ReferralEvent) => ({
 	'ReferralEvent_referral_fkey': foreignKey({ name: 'ReferralEvent_referral_fkey', columns: [ReferralEvent.referralId], foreignColumns: [Referral.id] }).onDelete('cascade').onUpdate('cascade'),
 	'ReferralEvent_referral_idx': index('ReferralEvent_referral_idx').on(ReferralEvent.referralId)
+}));
+
+/**
+ * M2 add-on / B01 (0048) — the history of the texts exchanged on a referral (the proposal's message, the receiver's answers, the sender's replies). Append-only
+ * (the database allows one update only: re-sealing the ciphertext under a rotated key). Sealed like Referral.messageEncrypted (purpose referral-message,
+ * context « referral:<referralId> »). Referral.messageEncrypted / responseMessageEncrypted stay the current text of each side.
+ */
+export const ReferralMessage = pgTable('ReferralMessage', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	referralId: text('referralId').notNull(),
+	side: text('side').notNull(),
+	bodyEncrypted: text('bodyEncrypted').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (ReferralMessage) => ({
+	'ReferralMessage_referral_fkey': foreignKey({ name: 'ReferralMessage_referral_fkey', columns: [ReferralMessage.referralId], foreignColumns: [Referral.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ReferralMessage_referral_idx': index('ReferralMessage_referral_idx').on(ReferralMessage.referralId, ReferralMessage.createdAt)
+}));
+
+/**
+ * M2 / G5 (0047) — « référent de parcours »: a named contact person for the person's path, DECLARATIVE. This row gives NO access to the dossier (access is the
+ * SharedDossierGrant alone — api/_utils/share-access.js never reads this table) and carries no legal responsibility. A professional volunteers (PROPOSED);
+ * only the person makes it effective (ACCEPTED_BY_CITIZEN, citizenDecisionAt enforced by the database) and ends it at any time. One current row per dossier.
+ */
+export const DossierReferent = pgTable('DossierReferent', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	sharedDiagnosticId: text('sharedDiagnosticId').notNull(),
+	structureId: text('structureId').notNull(),
+	proUserId: text('proUserId'),
+	/** the name the professional agreed to show (displayNameConsentAt) to the person and to the organizations holding an active grant */
+	displayName: text('displayName').notNull(),
+	status: text('status').notNull().default('PROPOSED'),
+	displayNameConsentAt: timestamp('displayNameConsentAt', { precision: 3 }).notNull(),
+	proposedAt: timestamp('proposedAt', { precision: 3 }).notNull().defaultNow(),
+	citizenDecisionAt: timestamp('citizenDecisionAt', { precision: 3 }),
+	endedAt: timestamp('endedAt', { precision: 3 }),
+	endedBy: text('endedBy'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (DossierReferent) => ({
+	'DossierReferent_dossier_fkey': foreignKey({ name: 'DossierReferent_dossier_fkey', columns: [DossierReferent.sharedDiagnosticId], foreignColumns: [SharedDiagnostic.id] }).onDelete('cascade').onUpdate('cascade'),
+	'DossierReferent_structure_fkey': foreignKey({ name: 'DossierReferent_structure_fkey', columns: [DossierReferent.structureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'DossierReferent_pro_fkey': foreignKey({ name: 'DossierReferent_pro_fkey', columns: [DossierReferent.proUserId], foreignColumns: [ProUser.id] }).onDelete('set null').onUpdate('cascade'),
+	'DossierReferent_current_key': uniqueIndex('DossierReferent_current_key').on(DossierReferent.sharedDiagnosticId).where(sql`"status" IN ('PROPOSED', 'ACCEPTED_BY_CITIZEN')`),
+	'DossierReferent_structure_idx': index('DossierReferent_structure_idx').on(DossierReferent.structureId),
+	'DossierReferent_pro_idx': index('DossierReferent_pro_idx').on(DossierReferent.proUserId)
+}));
+
+/** M2 (0047): append-only history of a référent de parcours (who proposed, the person's decision, how it ended). Codes only. */
+export const DossierReferentEvent = pgTable('DossierReferentEvent', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	referentId: text('referentId').notNull(),
+	actorType: text('actorType').notNull(),
+	actorId: text('actorId'),
+	fromStatus: text('fromStatus'),
+	toStatus: text('toStatus').notNull(),
+	reason: text('reason'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (DossierReferentEvent) => ({
+	'DossierReferentEvent_referent_fkey': foreignKey({ name: 'DossierReferentEvent_referent_fkey', columns: [DossierReferentEvent.referentId], foreignColumns: [DossierReferent.id] }).onDelete('cascade').onUpdate('cascade'),
+	'DossierReferentEvent_referent_idx': index('DossierReferentEvent_referent_idx').on(DossierReferentEvent.referentId)
 }));
 
 /**

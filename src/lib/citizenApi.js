@@ -95,6 +95,10 @@ export const citizenApi = {
   referrals: () => call('/api/citizen/referrals'),
   decideReferral: (/** @type {string} */ id, /** @type {'accept'|'refuse'} */ decision) => call('/api/citizen/referrals', { method: 'POST', body: { id, decision } }),
   dossierFollowUps: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=followups&shareId=${encodeURIComponent(shareId)}`),
+  // M2 / G5 — the contact person of the path (« référent de parcours »): declarative, set only with the person's agreement, ended by them at any time
+  dossierReferent: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=referent&shareId=${encodeURIComponent(shareId)}`),
+  decideReferent: (/** @type {string} */ shareId, /** @type {boolean} */ accept) => call('/api/citizen/dossier', { method: 'POST', body: { action: 'referent_decide', shareId, accept } }),
+  endReferent: (/** @type {string} */ shareId) => call('/api/citizen/dossier', { method: 'POST', body: { action: 'referent_end', shareId } }),
   myAppointments: () => call('/api/rdv/appointments'),
   cancelAppointment: (/** @type {string} */ id) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/cancel`, { method: 'POST', body: {} }),
   rescheduleAppointment: (/** @type {string} */ id, /** @type {string} */ startAt, /** @type {Record<string, unknown>} */ extra = {}) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/reschedule`, { method: 'POST', body: { startAt, ...extra } }),

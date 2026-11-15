@@ -35,6 +35,8 @@ export const CATALOGUE = Object.freeze({
   referral_cancelled: ev('referrals', 'Orientation annulée'),
   referral_overdue: ev('referrals', 'Orientation sans réponse'),
   referral_expired: ev('referrals', 'Orientation expirée'),
+  referral_follow_up: ev('referrals', 'Orientation à relancer', false),   // M2 / G4: in-app only (no new e-mail type)
+  referent_update: ev('cases', 'Personne de contact du parcours', false),   // M2 / G5: the person's decision on a proposed contact person — in-app only
   rdv_new: ev('appointments', 'Rendez-vous demain'),
   rdv_booked_by_structure: ev('appointments', 'Rendez-vous créé'),
   rdv_booked_by_guest: ev('appointments', 'Rendez-vous pris sans compte'),   // R38

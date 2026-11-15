@@ -71,6 +71,7 @@ function CaseDetail({ id }) {
   const [referrals, setReferrals] = useState([]);
   const [referralsProblem, setReferralsProblem] = useState(false);   // R18: a failed load of the sent referrals is said (it read as « none sent »)
   const [me, setMe] = useState({});
+  const [referentForm, setReferentForm] = useState({ displayName: '', consent: false });   // M2 / G5
   // R43 (A5): each form has its own error summary (focused on a refused submit) and per-field messages; nothing is sent while a field is in error
   const noteErr = useFormErrors(); const referralErr = useFormErrors(); const closeErr = useFormErrors();
   useEffect(() => { proRdvRequest('/api/pro/me').then((out) => setMe(out?.user || {})).catch(() => setMe({})); }, []);
@@ -150,6 +151,29 @@ function CaseDetail({ id }) {
             <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="pro-case-reopen" onClick={() => run({ action: 'reopen' }, t('pro:cases.reopened', 'Dossier rouvert.'))}>{t('pro:cases.reopen', 'Rouvrir')}</Button>
           </div>
         ) : null}
+      </CardContent></Card>
+
+      {/* M2 / G5 — the contact person of the person's path: declarative, no access, no legal responsibility; effective only with the person's agreement */}
+      <Card data-testid="pro-case-referent"><CardHeader><CardTitle className="text-lg">{t('pro:referent.title', 'Personne de contact du parcours')}</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">
+        <p className="text-slate-700">{t('pro:referent.notice', 'Rôle déclaratif : il ne donne aucun accès supplémentaire au dossier, ne remplace aucune désignation légale ou contractuelle et ne crée aucune obligation de résultat. Il ne prend effet qu’avec l’accord de la personne, qui peut y mettre fin à tout moment.')}</p>
+        {data.referent ? (
+          <div className="space-y-2">
+            <p data-testid="pro-case-referent-current"><strong>{data.referent.displayName}</strong> — {data.referent.organization} — {data.referent.status === 'ACCEPTED_BY_CITIZEN' ? t('pro:referent.accepted', 'désignée avec l’accord de la personne') : t('pro:referent.proposed', 'proposée : en attente de l’accord de la personne')}</p>
+            {data.referent.mine || (data.referent.ownOrganization && data.canAssignOthers) ? <Button type="button" size="sm" variant="outline" disabled={busy} data-testid="pro-case-referent-step-down" onClick={() => run({ action: 'referent_step_down' }, t('pro:referent.stepped_down', 'Ce rôle de personne de contact est terminé. La personne est prévenue.'))}>{t('pro:referent.step_down', 'Mettre fin à ce rôle')}</Button> : null}
+          </div>
+        ) : (
+          <>
+            <p data-testid="pro-case-referent-none">{t('pro:referent.none', 'Aucune personne de contact pour ce parcours.')}</p>
+            {!closed ? (
+              <form className="space-y-2" data-testid="pro-case-referent-form" onSubmit={async (e) => { e.preventDefault(); if (await run({ action: 'referent_volunteer', displayName: referentForm.displayName, displayNameConsent: referentForm.consent }, t('pro:referent.volunteered', 'Proposition envoyée : la personne décide depuis son espace.'))) setReferentForm({ displayName: '', consent: false }); }}>
+                <label className="block" htmlFor="case-referent-name">{t('pro:referent.name', 'Nom à afficher (par exemple votre prénom et votre fonction)')}</label>
+                <input id="case-referent-name" data-testid="pro-case-referent-name" maxLength={80} className="w-full rounded-md border border-slate-300 p-2" value={referentForm.displayName} onChange={(e) => setReferentForm({ ...referentForm, displayName: e.target.value })} />
+                <label className="flex items-start gap-2"><input type="checkbox" className="mt-1" data-testid="pro-case-referent-consent" checked={referentForm.consent} onChange={(e) => setReferentForm({ ...referentForm, consent: e.target.checked })} /><span>{t('pro:referent.consent', 'J’accepte que ce nom soit montré à la personne et aux structures qui ont accès à son dossier.')}</span></label>
+                <Button type="submit" size="sm" variant="outline" disabled={busy || !referentForm.consent || referentForm.displayName.trim().length < 2} data-testid="pro-case-referent-volunteer">{t('pro:referent.volunteer', 'Me proposer comme personne de contact')}</Button>
+              </form>
+            ) : null}
+          </>
+        )}
       </CardContent></Card>
 
       <Card><CardHeader><CardTitle className="text-lg">{t('pro:cases.card_notes', 'Notes')}</CardTitle></CardHeader><CardContent className="space-y-3">

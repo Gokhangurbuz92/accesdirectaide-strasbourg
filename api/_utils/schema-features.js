@@ -6,7 +6,7 @@
  * column. Nothing is cached across runs: applying the migration later is picked up by the next run.
  */
 import { Table, getTableColumns, sql } from 'drizzle-orm';
-import { ProAppointment, ProRdvService, StructureRdvSettings } from '../../src/db/schema.js';
+import { ProAppointment, ProRdvService, Referral, StructureRdvSettings } from '../../src/db/schema.js';
 
 /** ProAppointment columns added by drizzle/0043_r38_guest_booking.sql (schema keys = column names) */
 export const GUEST_BOOKING_COLUMNS = Object.freeze(['guestEmail', 'guestEmailHash', 'guestPhone', 'guestMailConsentAt', 'guestHoldExpiresAt', 'guestCodeHash',
@@ -126,3 +126,40 @@ export function noticeLedgerKinds(database) {
 }
 /** for the tests: forget what was read (a migration applied or rolled back inside one process) */
 export function forgetNoticeLedgerKinds(database) { ledgerCache.delete(database); }
+
+/**
+ * M2 — migrations 0047 (referral redirect, follow-up notice, « référent de parcours ») and 0048 (history of the referral texts). The code may be released before the migration is authorized on a
+ * database (Production): every path that existed before M2 must keep working there — the referral-timeouts cron, the person withdrawing an access, a
+ * member's departure, an organization's closure. drizzle names EVERY column of a table object in select() / insert() / returning(), so those paths use
+ * referralTable(f) (the table without the 0047 columns when the database does not have them); the new features answer « not available » instead of
+ * failing. Read at most once per GUEST_SCHEMA_TTL_MS per database object; a failed read is not remembered.
+ */
+export const REFERRAL_CHAIN_COLUMNS = Object.freeze(['previousReferralId', 'suggestedStructureId', 'followUpNotifiedAt']);
+/**
+ * @param {any} database a drizzle client (or transaction) with execute()
+ * @returns {Promise<{ chain: boolean, referent: boolean, messages: boolean }>} chain = the three 0047 columns of "Referral" exist; referent = "DossierReferent" and
+ *   its event table exist (0047); messages = "ReferralMessage" exists (0048, the history of the texts exchanged on a referral)
+ */
+export async function readReferralChainSchema(database) {
+  const res = await database.execute(sql`SELECT
+    (SELECT count(*)::int FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'Referral'
+      AND column_name IN (${sql.join(REFERRAL_CHAIN_COLUMNS.map((c) => sql`${c}`), sql`, `)})) AS cols,
+    (SELECT count(*)::int FROM information_schema.tables WHERE table_schema = current_schema() AND table_name IN ('DossierReferent', 'DossierReferentEvent')) AS tables,
+    (SELECT count(*)::int FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = 'ReferralMessage') AS messages`);
+  const row = (res?.rows || res || [])[0] || {};
+  return { chain: Number(row.cols) === REFERRAL_CHAIN_COLUMNS.length, referent: Number(row.tables) === 2, messages: Number(row.messages) === 1 };
+}
+const chainCache = new WeakMap();
+/** @param {any} database @returns {Promise<{ chain: boolean, referent: boolean, messages: boolean }>} */
+export function referralChainSchema(database) {
+  const hit = chainCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const value = readReferralChainSchema(database);
+  chainCache.set(database, { at: Date.now(), value });
+  value.catch(() => { if (chainCache.get(database)?.value === value) chainCache.delete(database); });
+  return value;
+}
+/** for the tests: forget what was read (a migration applied or rolled back inside one process) */
+export function forgetReferralChainSchema(database) { chainCache.delete(database); }
+/** Referral as this database has it @param {{ chain: boolean }} f @returns {typeof Referral} */
+export const referralTable = (f) => without(Referral, f.chain ? [] : [...REFERRAL_CHAIN_COLUMNS]);
