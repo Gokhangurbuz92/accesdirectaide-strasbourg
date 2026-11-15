@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
+/* global window */
 /**
  * A-9 (P16) — the orientation wizard asked for a date of birth, income and housing with no privacy notice, and kept its progress for 24 hours in
- * localStorage. It now shows a notice before the first question; its progress lives in the tab's session only, holds the first steps' choices only
+ * window.localStorage. It now shows a notice before the first question; its progress lives in the tab's session only, holds the first steps' choices only
  * (never the last step's answers), is removed when the result is shown, and the 24-hour copy of earlier versions is deleted. No JSX in the body.
  */
 import '@testing-library/jest-dom/vitest';
@@ -20,35 +21,35 @@ const KEY = 'ada_wizard_state';
 const FULL = { need: 'logement', territory: '67000', situation: 'seul', statut: 'emploi', urgency: 'haute',
   birthDate: '1990-05-01', ageBand: '25-59', householdSize: '1', salary: '1200', unemployment: '0', rent: '450', charges: '50', housingStatus: 'tenant' };
 
-beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
+beforeEach(() => { window.localStorage.clear(); window.sessionStorage.clear(); });
 afterEach(() => cleanup());
 
 describe('A-9: what the wizard keeps in the browser', () => {
-  it('progress goes to the tab session, never to localStorage', () => {
+  it('progress goes to the tab session, never to window.localStorage', () => {
     storage.saveWizard({ step: 2, data: { need: 'logement', territory: '67000' } });
-    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(window.localStorage.getItem(KEY)).toBeNull();
     expect(storage.loadWizard()).toEqual({ step: 2, data: { need: 'logement', territory: '67000' } });
   });
   it('the last step\'s answers (birth date, age band, income, rent, housing) are never written', () => {
     storage.saveWizard({ step: 4, data: FULL });
-    const raw = sessionStorage.getItem(KEY) || '';
+    const raw = window.sessionStorage.getItem(KEY) || '';
     for (const secret of ['1990-05-01', '25-59', '1200', '450', 'tenant', 'birthDate', 'salary', 'rent', 'housingStatus', 'householdSize']) expect(raw, secret).not.toContain(secret);
     expect(Object.keys(storage.loadWizard().data).sort()).toEqual([...WIZARD_KEPT_FIELDS].sort());
     expect(WIZARD_KEPT_FIELDS).toEqual(['need', 'territory', 'situation', 'statut', 'urgency']);
   });
-  it('the 24-hour localStorage copy of earlier versions is deleted, never read', () => {
-    localStorage.setItem(KEY, JSON.stringify({ data: { step: 4, data: FULL }, timestamp: Date.now() }));
+  it('the 24-hour window.localStorage copy of earlier versions is deleted, never read', () => {
+    window.localStorage.setItem(KEY, JSON.stringify({ data: { step: 4, data: FULL }, timestamp: Date.now() }));
     expect(storage.loadWizard()).toBeNull();
-    expect(localStorage.getItem(KEY)).toBeNull();
-    localStorage.setItem(KEY, JSON.stringify({ data: { step: 4, data: FULL }, timestamp: Date.now() }));
+    expect(window.localStorage.getItem(KEY)).toBeNull();
+    window.localStorage.setItem(KEY, JSON.stringify({ data: { step: 4, data: FULL }, timestamp: Date.now() }));
     storage.purgeExpired();
-    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(window.localStorage.getItem(KEY)).toBeNull();
   });
   it('clearWizard and clearAll remove the session copy', () => {
     storage.saveWizard({ step: 1, data: { need: 'sante' } }); storage.clearWizard();
-    expect(sessionStorage.getItem(KEY)).toBeNull();
+    expect(window.sessionStorage.getItem(KEY)).toBeNull();
     storage.saveWizard({ step: 1, data: { need: 'sante' } }); storage.clearAll();
-    expect(sessionStorage.getItem(KEY)).toBeNull();
+    expect(window.sessionStorage.getItem(KEY)).toBeNull();
   });
   it('the result screen removes the stored progress (source: clearWizard right after the result is set)', () => {
     const src = fs.readFileSync('src/components/assistant/Wizard.jsx', 'utf8');
@@ -68,10 +69,10 @@ describe('A-9: the wizard shows its privacy notice before the first question', (
     expect(notice).not.toHaveTextContent('24 heures');
     expect(screen.getByRole('link', { name: 'Lire la politique de confidentialité' })).toHaveAttribute('href', '/politique-confidentialite');
     // the notice comes before the step's first control in reading order
-    const firstControl = document.querySelector('button, input, select');
-    expect(notice.compareDocumentPosition(firstControl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    await waitFor(() => expect(sessionStorage.getItem(KEY)).not.toBeNull());
-    expect(localStorage.getItem(KEY)).toBeNull();
+    const firstControl = window.document.querySelector('button, input, select');
+    expect(notice.compareDocumentPosition(firstControl) & window.Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await waitFor(() => expect(window.sessionStorage.getItem(KEY)).not.toBeNull());
+    expect(window.localStorage.getItem(KEY)).toBeNull();
   });
   it.each(['en', 'tr', 'ar', 'de', 'uk'])('%s: the browser sentence is translated and keeps « {{restart}} »', (lang) => {
     const loc = JSON.parse(fs.readFileSync(`src/i18n/locales/${lang}/diagnostic.json`, 'utf8'));

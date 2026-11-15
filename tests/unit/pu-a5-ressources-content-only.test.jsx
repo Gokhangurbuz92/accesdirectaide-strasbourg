@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/* global window */
 /**
  * A-5 (P12) — ResourceAccessibility has no writer (no admin editor, importer or seed): the document list of /ressources could only show « Aucun document
  * n'est encore publié ici » with a promise of future publication. The list part now appears only when a published document exists; without one the page
@@ -25,7 +26,7 @@ describe('A-5: /ressources shows a document list only when a document is publish
     await waitFor(() => expect(screen.getByTestId('emergency-resources')).toBeInTheDocument());
     for (const n of ['112', '15', '17', '18', '115']) expect(screen.getByTestId(`emergency-resource-${n}`)).toHaveAttribute('href', `tel:${n}`);
     expect(screen.queryByTestId('ressources-none-published')).toBeNull();
-    expect(document.body.textContent).not.toMatch(/seront publiés|Aucun document n’est encore publié ici/);
+    expect(window.document.body.textContent).not.toMatch(/seront publiés|Aucun document n’est encore publié ici/);
     expect(screen.queryByRole('combobox')).toBeNull();
     expect(screen.queryByTestId('emergency-link')).toBeNull();
     expect(screen.queryByTestId('ressource-card')).toBeNull();

@@ -75,7 +75,7 @@ export const storage = {
 
     /**
      * Sauvegarde l'état du wizard (étape + données accumulées).
-     * @param {Object} data
+     * @param {{ step?: number, data?: Record<string, unknown> }} data
      */
     saveWizard(data) {
         // A-9: the wizard's progress stays in this tab only (sessionStorage) and holds only the first steps' choices — never the last step's
