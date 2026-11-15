@@ -877,12 +877,8 @@
  "shared_dossier.service_unreachable": "الخدمة غير متاحة مؤقتًا: لم تُحفظ الحالة.",
  "shared_dossier.session_expired": "انتهت جلستك: يرجى تسجيل الدخول من جديد.",
  "shared_dossier.situation": "وضع الشخص",
- "shared_dossier.status_in_review": "قيد الدراسة",
- "shared_dossier.status_needs_documents": "مستندات مطلوبة",
  "shared_dossier.status_not_saved": "تعذّر حفظ الحالة. أعد المحاولة.",
- "shared_dossier.status_to_handle": "قيد الانتظار",
  "shared_dossier.status_updated": "تم تحديث الحالة",
- "shared_dossier.status_validated": "تم اعتماد الملف",
  "shared_dossier.title": "الملف #{{id}}",
  "shared_dossier.update": "تحديث",
  "shared_dossier.views_few": "{{count}} مشاهدات",
@@ -1388,5 +1384,9 @@
  "reschedule.attest_r47": "أعطى الشخص موافقته الصريحة على هذا الموعد مع علمه بطبيعة هذه الخدمة.",
  "reschedule.confirm_r47": "تأكيد النقل",
  "reschedule.keep_r47": "الإبقاء على الوقت الحالي",
- "regional.verified_structures": "{{n}} هيئة تم التحقق منها"
+ "regional.verified_structures": "{{n}} هيئة تم التحقق منها",
+ "shared_dossier.status_hint": "تصف هذه الحالة تقدّم المرافقة التي تقومون بها. وهي ليست قرارًا بشأن حق أو طلب.",
+ "shared_dossier.case_closed": "أُغلقت المتابعة. لإعادة فتحها، افتحوا متابعة الملف.",
+ "shared_dossier.open_case": "فتح متابعة الملف (الملاحظات، السجل)",
+ "shared_dossier.status_conflict": "تغيّرت المتابعة في هذه الأثناء أو أُغلقت: أعيدوا تحميل الصفحة."
 }

@@ -861,12 +861,8 @@
  "shared_dossier.service_unreachable": "Hizmete şu anda ulaşılamıyor: durum kaydedilmedi.",
  "shared_dossier.session_expired": "Oturumunuzun süresi doldu: lütfen yeniden giriş yapın.",
  "shared_dossier.situation": "Kişinin durumu",
- "shared_dossier.status_in_review": "İnceleniyor",
- "shared_dossier.status_needs_documents": "Belge gerekli",
  "shared_dossier.status_not_saved": "Durum kaydedilemedi. Tekrar deneyin.",
- "shared_dossier.status_to_handle": "İşlenecek",
  "shared_dossier.status_updated": "Durum güncellendi",
- "shared_dossier.status_validated": "Dosya onaylandı",
  "shared_dossier.title": "Dosya #{{id}}",
  "shared_dossier.update": "Güncelle",
  "shared_dossier.views_one": "{{count}} görüntüleme",
@@ -1360,5 +1356,9 @@
  "reschedule.attest_r47": "Kişi, bu hizmetin niteliğini bilerek bu randevuya açık onay verdi.",
  "reschedule.confirm_r47": "Taşımayı onayla",
  "reschedule.keep_r47": "Mevcut saati koru",
- "regional.verified_structures": "{{n}} doğrulanmış kuruluş"
+ "regional.verified_structures": "{{n}} doğrulanmış kuruluş",
+ "shared_dossier.status_hint": "Bu durum, yürüttüğünüz desteğin ilerleyişini gösterir. Bir hak veya başvuru hakkında karar anlamına gelmez.",
+ "shared_dossier.case_closed": "Takip kapatıldı. Yeniden açmak için dosyanın takibini açın.",
+ "shared_dossier.open_case": "Dosyanın takibini aç (notlar, geçmiş)",
+ "shared_dossier.status_conflict": "Takip bu arada değişti veya kapatıldı: sayfayı yeniden yükleyin."
 }

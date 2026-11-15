@@ -861,12 +861,8 @@
  "shared_dossier.service_unreachable": "Der Dienst ist vorübergehend nicht erreichbar: Der Status wurde nicht gespeichert.",
  "shared_dossier.session_expired": "Ihre Sitzung ist abgelaufen: Bitte melden Sie sich erneut an.",
  "shared_dossier.situation": "Situation der Person",
- "shared_dossier.status_in_review": "In Bearbeitung",
- "shared_dossier.status_needs_documents": "Unterlagen benötigt",
  "shared_dossier.status_not_saved": "Der Status konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
- "shared_dossier.status_to_handle": "Zu bearbeiten",
  "shared_dossier.status_updated": "Status aktualisiert",
- "shared_dossier.status_validated": "Akte bestätigt",
  "shared_dossier.title": "Akte #{{id}}",
  "shared_dossier.update": "Aktualisieren",
  "shared_dossier.views_one": "{{count}} Aufruf",
@@ -1360,5 +1356,9 @@
  "reschedule.attest_r47": "Die Person hat diesem Termin ausdrücklich zugestimmt und kennt die Art dieses Dienstes.",
  "reschedule.confirm_r47": "Verschiebung bestätigen",
  "reschedule.keep_r47": "Aktuelle Uhrzeit behalten",
- "regional.verified_structures": "{{n}} geprüfte Einrichtungen"
+ "regional.verified_structures": "{{n}} geprüfte Einrichtungen",
+ "shared_dossier.status_hint": "Dieser Status beschreibt den Stand Ihrer Begleitung. Er ist keine Entscheidung über einen Anspruch oder einen Antrag.",
+ "shared_dossier.case_closed": "Begleitung abgeschlossen. Um sie wieder zu öffnen, öffnen Sie die Nachverfolgung der Akte.",
+ "shared_dossier.open_case": "Nachverfolgung der Akte öffnen (Notizen, Verlauf)",
+ "shared_dossier.status_conflict": "Die Nachverfolgung wurde inzwischen geändert oder ist abgeschlossen: Laden Sie die Seite neu."
 }
