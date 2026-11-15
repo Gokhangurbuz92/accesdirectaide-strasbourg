@@ -40,7 +40,10 @@ function serialize(item, proCtx, manager = false, emails = new Map()) {
     canEdit: manager || mine,
     startAt: item.startAt,
     endAt: item.endAt,
-    reason: item.reason || null,
+    // A21: a member's reason can be a health fact about an employee — returned to that member and to a schedule manager only; the team sees the dates.
+    // A closure of the whole structure (« fermeture annuelle ») keeps its reason for everyone.
+    reason: (!item.proUserId || mine || manager) ? (item.reason || null) : null,
+    reasonWithheld: Boolean(item.proUserId && !mine && !manager && item.reason),
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
   };

@@ -4,6 +4,8 @@
  *   A04  one follow-up status (the case status); no note in clear in the dossier JSON; a legacy note moves to the protected case notes
  *   A13  a SIAO hand-over sheet prepared by a professional appears in the person's access log
  *   A15  organisation export: services, booking settings, opening hours, absences (no individual reason), selections (no sealed text), journal; audited
+ *   A20  per-member activity figures: the structure's administrator only (another member gets their own line)
+ *   A21  a colleague's absence reason is not returned to the team (dates only); the member and a schedule manager read it
  *   A14  dossier export: only json / csv, audited with the validated format; the organisation's access trail (dossier/views) lists it
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -36,6 +38,7 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
     H.dossier = (await import('../../api/_handlers/pro/dossier.js')).default; H.cases = (await import('../../api/_handlers/pro/cases.js')).default;
     H.exp = (await import('../../api/_handlers/pro/dossier/export.js')).default; H.views = (await import('../../api/_handlers/pro/dossier/views.js')).default;
     H.structure = (await import('../../api/_handlers/pro/structure.js')).default;
+    H.teamStats = (await import('../../api/_handlers/pro/team-stats.js')).default; H.timeoff = (await import('../../api/_handlers/pro/timeoff.js')).default;
     H.siao = (await import('../../api/_handlers/pro/interop-siao.js')).default; H.citDossier = (await import('../../api/_handlers/citizen/dossier.js')).default;
     for (const id of Object.values(S)) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, is_pro_enabled, "updatedAt", "createdAt")
       VALUES (${id}, ${'Org ' + id}, ${id}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', true, NOW(), NOW())`);
@@ -173,6 +176,45 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
       expect(audit[0]).toMatchObject({ actor_id: P.admin.id, details: { members: 3, services: 1, absences: 2, selections: 1, structureId: S.A } });
       // the next export shows the previous one in the journal
       expect((await pro(H.structure, P.admin, { query: { export: '1' } })).body.export.journal[0]).toMatchObject({ action: 'ORGANIZATION_EXPORTED', actor: `${P.admin.id}@example.test` });
+    });
+  });
+
+  describe('A20 — per-member activity figures are for the structure’s administrator', () => {
+    it('a member gets the global block and their own line only; the administrator gets the team; another organisation gets nothing of this one', async () => {
+      const mine = await pro(H.teamStats, P.pro1);
+      expect(mine.statusCode, JSON.stringify(mine.body)).toBe(200);
+      expect(mine.body.members.map((m) => m.id)).toEqual([P.pro1.id]); expect(mine.body.membersScope).toBe('self');
+      expect(mine.body.global).toHaveProperty('appointmentsUpcoming');
+      expect(JSON.stringify(mine.body)).not.toContain(P.pro2.id); expect(JSON.stringify(mine.body)).not.toContain(P.admin.id);
+      const team = await pro(H.teamStats, P.admin);
+      expect(team.body.members.map((m) => m.id).sort()).toEqual([P.admin.id, P.pro1.id, P.pro2.id].sort()); expect(team.body.membersScope).toBe('team');
+      expect((await pro(H.teamStats, P.b)).body.members.map((m) => m.id)).toEqual([P.b.id]);
+      // the role is read from the database on each request: a token still saying STRUCTURE_ADMIN for a member who is now PRO gets the member view
+      const stale = auth.signProToken({ id: P.pro2.id, email: `${P.pro2.id}@example.test`, structureId: S.A, role: 'STRUCTURE_ADMIN' });
+      const r = mk(); await H.teamStats({ method: 'GET', url: '/api/pro/team/stats', query: {}, headers: { host: 'localhost', authorization: `Bearer ${stale}` } }, r);
+      expect(r.statusCode === 200 ? r.body.members.map((m) => m.id) : []).toEqual(r.statusCode === 200 ? [P.pro2.id] : []);
+      expect([200, 401, 403]).toContain(r.statusCode);
+    });
+  });
+
+  describe('A21 — a colleague’s absence reason stays with that colleague and the schedule managers', () => {
+    it('the team sees the dates; the reason goes to the member and to a manager; a closure of the structure keeps its reason', async () => {
+      await db.execute(sql`DELETE FROM "ProTimeOff" WHERE "structureId" = ${S.A}`);
+      await db.execute(sql`INSERT INTO "ProTimeOff" (id, "structureId", "proUserId", "startAt", "endAt", reason, "updatedAt") VALUES
+        (${'pbt1-' + TS}, ${S.A}, ${P.pro1.id}, NOW() + interval '5 days', NOW() + interval '6 days', 'MOTIF-SANTE-QA', NOW()),
+        (${'pbt2-' + TS}, ${S.A}, NULL, NOW() + interval '20 days', NOW() + interval '27 days', 'Fermeture annuelle', NOW()),
+        (${'pbt3-' + TS}, ${S.A}, ${P.pro2.id}, NOW() + interval '8 days', NOW() + interval '9 days', NULL, NOW())`);
+      const view = async (p) => Object.fromEntries((await pro(H.timeoff, p, { url: '/api/pro/timeoff' })).body.items.map((i) => [i.id.split('-')[0], [i.reason, i.reasonWithheld, Boolean(i.startAt && i.endAt)]]));
+      const colleague = await pro(H.timeoff, P.pro2, { url: '/api/pro/timeoff' });
+      expect(colleague.statusCode).toBe(200);
+      expect(JSON.stringify(colleague.body)).not.toContain('MOTIF-SANTE-QA');
+      expect(await view(P.pro2)).toEqual({ pbt1: [null, true, true], pbt2: ['Fermeture annuelle', false, true], pbt3: [null, false, true] });
+      expect((await view(P.pro1)).pbt1).toEqual(['MOTIF-SANTE-QA', false, true]);   // the member
+      expect((await view(P.admin)).pbt1).toEqual(['MOTIF-SANTE-QA', false, true]);   // a schedule manager
+      await db.execute(sql`UPDATE "ProUser" SET "canManageSchedule" = true WHERE id = ${P.pro2.id}`);
+      expect((await view(P.pro2)).pbt1).toEqual(['MOTIF-SANTE-QA', false, true]);   // a member the administrator designated for the schedule
+      await db.execute(sql`UPDATE "ProUser" SET "canManageSchedule" = false WHERE id = ${P.pro2.id}`);
+      expect(JSON.stringify((await pro(H.timeoff, P.b, { url: '/api/pro/timeoff' })).body)).not.toMatch(/MOTIF-SANTE-QA|Fermeture annuelle/);   // another organisation
     });
   });
 });

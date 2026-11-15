@@ -228,7 +228,7 @@ export default function ProRdvAbsences() {
                     <p className="font-medium text-slate-900">
                       {formatDateTime(item.startAt)} - {formatDateTime(item.endAt)}
                     </p>
-                    <p className="text-slate-600" {...(item.reason ? fr : {})}>{item.reason || t('pro:rdv_absences.no_reason', 'Sans raison précisée')}</p>
+                    <p className="text-slate-600" {...(item.reason ? fr : {})}>{item.reason || (item.reasonWithheld ? t('pro:rdv_absences.reason_withheld', 'Motif non affiché (réservé à la personne concernée et aux responsables du planning)') : t('pro:rdv_absences.no_reason', 'Sans raison précisée'))}</p>
                     <p className="text-xs text-slate-700" data-testid="pro-timeoff-owner">
                       {item.scope === 'structure' ? t('pro:rdv_absences.owner_structure', 'Fermeture de toute la structure') : item.mine ? t('pro:rdv_absences.owner_mine', 'Mon absence') : t('pro:rdv_absences.owner_member', 'Absence de {{who}}', { who: item.memberEmail || t('pro:rdv_absences.a_member', 'un membre') })}
                     </p>

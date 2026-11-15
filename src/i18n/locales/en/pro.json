@@ -1380,5 +1380,6 @@
  "dossier_export.action_exported": "Export",
  "dossier_export.action_status": "Follow-up status changed",
  "dossier_export.by_you": "you",
- "dossier_export.by_colleague": "a member of your team"
+ "dossier_export.by_colleague": "a member of your team",
+ "rdv_absences.reason_withheld": "Reason not shown (reserved for the person concerned and the schedule managers)"
 }

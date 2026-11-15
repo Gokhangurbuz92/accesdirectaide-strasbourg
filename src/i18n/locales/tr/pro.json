@@ -1380,5 +1380,6 @@
  "dossier_export.action_exported": "Dışa aktarma",
  "dossier_export.action_status": "Takip durumu değiştirildi",
  "dossier_export.by_you": "siz",
- "dossier_export.by_colleague": "ekibinizden bir üye"
+ "dossier_export.by_colleague": "ekibinizden bir üye",
+ "rdv_absences.reason_withheld": "Gerekçe gösterilmiyor (yalnızca ilgili kişi ve planlama sorumluları görebilir)"
 }

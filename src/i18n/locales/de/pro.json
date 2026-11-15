@@ -1380,5 +1380,6 @@
  "dossier_export.action_exported": "Export",
  "dossier_export.action_status": "Status der Begleitung geändert",
  "dossier_export.by_you": "Sie",
- "dossier_export.by_colleague": "ein Mitglied Ihres Teams"
+ "dossier_export.by_colleague": "ein Mitglied Ihres Teams",
+ "rdv_absences.reason_withheld": "Grund nicht angezeigt (nur für die betroffene Person und die Planungsverantwortlichen)"
 }

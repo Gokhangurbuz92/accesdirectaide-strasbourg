@@ -1408,5 +1408,6 @@
  "dossier_export.action_exported": "تصدير",
  "dossier_export.action_status": "تغيير حالة المتابعة",
  "dossier_export.by_you": "أنتم",
- "dossier_export.by_colleague": "أحد أعضاء فريقكم"
+ "dossier_export.by_colleague": "أحد أعضاء فريقكم",
+ "rdv_absences.reason_withheld": "السبب غير معروض (مخصّص للشخص المعني ولمسؤولي الجدول)"
 }

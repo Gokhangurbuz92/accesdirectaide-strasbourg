@@ -1394,5 +1394,6 @@
  "dossier_export.action_exported": "Експорт",
  "dossier_export.action_status": "Статус супроводу змінено",
  "dossier_export.by_you": "ви",
- "dossier_export.by_colleague": "член вашої команди"
+ "dossier_export.by_colleague": "член вашої команди",
+ "rdv_absences.reason_withheld": "Причину не показано (лише для відповідної особи та відповідальних за розклад)"
 }
