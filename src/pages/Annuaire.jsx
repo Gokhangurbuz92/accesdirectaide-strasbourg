@@ -269,9 +269,11 @@ export default function Annuaire() {
 
         {serves && (
           <p className="mb-5 flex flex-wrap items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2 text-sm text-teal-900" data-testid="annuaire-serves-filter">
+            {/* A-3: the filter matches the commune codes recorded on the place. For an imported record that is the commune where the place is LOCATED
+                (api/_services/verification/chain.js); only a reviewed Espace Structure proposal adds a declared area. The label says both, and claims no ADA check. */}
             {servesName
-              ? t('structures:serves.named', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre {{commune}} (code Insee {{code}}).", { commune: servesName, code: serves })
-              : t('structures:serves.code', "Lieux dont la zone d'intervention, vérifiée par ADA, couvre la commune de code Insee {{code}}.", { code: serves })}
+              ? t('structures:serves.named', "Lieux situés à {{commune}} ou dont la structure déclare y intervenir (code Insee {{code}}). Vérifiez auprès de la structure qu'elle peut vous recevoir.", { commune: servesName, code: serves })
+              : t('structures:serves.code', "Lieux situés dans la commune de code Insee {{code}} ou dont la structure déclare y intervenir. Vérifiez auprès de la structure qu'elle peut vous recevoir.", { code: serves })}
             <button type="button" className="min-h-11 font-semibold underline underline-offset-2" onClick={() => handleParamChange('serves', '')}>{t('structures:serves.remove', 'Retirer ce filtre')}</button>
           </p>
         )}
@@ -336,7 +338,7 @@ export default function Annuaire() {
             <EmptyState
               title={t('structures:empty.title', 'Aucune structure trouvée')}
               description={serves
-                ? t('structures:empty.description_serves', "Aucune structure n'a encore une zone d'intervention vérifiée qui couvre cette commune. Les lieux situés dans la commune restent visibles sans ce filtre.")
+                ? t('structures:empty.description_serves', "Aucun lieu publié n'est enregistré pour cette commune : ni situé dans la commune, ni déclarant y intervenir. Vous pouvez chercher par ville ou voir toutes les structures.")
                 : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
               actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>}
               data-testid="annuaire-empty"
