@@ -47,7 +47,7 @@ export default function NotificationCenter() {
       <CardHeader>
         <CardTitle as="h2" id="notifications-title" className="text-base">
           {t('compte:notifications.title', 'Notifications')}
-          {data.unread ? <span className="ml-2 rounded-full bg-blue-800 px-2 py-0.5 text-xs font-semibold text-white" data-testid="notifications-unread">{t('compte:notifications.unread', '{{n}} non lue(s)', { n: data.unread })}</span> : null}
+          {data.unread ? <span className="ms-2 rounded-full bg-blue-800 px-2 py-0.5 text-xs font-semibold text-white" data-testid="notifications-unread">{t('compte:notifications.unread', '{{n}} non lue(s)', { n: data.unread })}</span> : null}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-slate-800">
@@ -56,7 +56,7 @@ export default function NotificationCenter() {
             {items.map((n) => (
               <li key={n.id} className={`rounded-md border p-2 ${n.unread ? 'border-blue-300 bg-blue-50' : 'border-slate-200'}`} data-testid="notification-item" data-kind={n.kind}>
                 <Link to={n.link} className="font-medium text-blue-900 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">{LABELS[n.kind]}</Link>
-                <span className="ml-2 text-xs text-slate-700">{formatDate(n.at, { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                <span className="ms-2 text-xs text-slate-700">{formatDate(n.at, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                 {n.unread ? <span className="sr-only">{t('compte:notifications.unread_item', '(non lue)')}</span> : null}
               </li>
             ))}

@@ -120,7 +120,7 @@ export default function UserPassport() {
                         <p className="text-sm text-slate-500 mb-4">{error}</p>
                         <Button variant="outline" asChild>
                             <Link to="/">
-                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                <ArrowLeft className="me-2 h-4 w-4" />
                                 {t('compte:passport.accueil', 'Accueil')}
                             </Link>
                         </Button>

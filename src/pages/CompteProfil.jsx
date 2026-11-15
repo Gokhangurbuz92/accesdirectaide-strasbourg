@@ -202,11 +202,11 @@ export default function CompteProfil() {
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm" data-testid="prefs-table">
               <caption className="sr-only">{t('compte:profile.preferences_notification_par_canal', 'Préférences de notification par canal et par catégorie')}</caption>
-              <thead><tr><th scope="col" className="p-2 text-left">{t('compte:profile.categorie', 'Catégorie')}</th>{shownChannels.map(([c, l]) => <th key={c} scope="col" className="p-2 text-left">{l}</th>)}</tr></thead>
+              <thead><tr><th scope="col" className="p-2 text-start">{t('compte:profile.categorie', 'Catégorie')}</th>{shownChannels.map(([c, l]) => <th key={c} scope="col" className="p-2 text-start">{l}</th>)}</tr></thead>
               <tbody>
                 {shownCategories.map(([cat, catLabel]) => (
                   <tr key={cat} className="border-t border-slate-200">
-                    <th scope="row" className="p-2 text-left font-medium">{catLabel}</th>
+                    <th scope="row" className="p-2 text-start font-medium">{catLabel}</th>
                     {shownChannels.map(([ch, chLabel]) => {
                       const key = `${ch}.${cat}`;
                       const on = prefs[key] === true; const needs = NEEDS_CONSENT(ch, cat);

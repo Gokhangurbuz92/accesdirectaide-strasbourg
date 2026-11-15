@@ -215,7 +215,7 @@ function SecurityTab({ user }) {
                         </div>
                         <Button variant="outline" size="sm" asChild>
                             <Link to="/auth/forgot">
-                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                <ExternalLink className="h-3.5 w-3.5 me-1.5" />
                                 {t('compte:settings.modifier', 'Modifier')}
                             </Link>
                         </Button>
@@ -231,7 +231,7 @@ function SecurityTab({ user }) {
                                 <p className="text-xs text-slate-700 mt-0.5">{t('compte:settings.logout_all_before', 'Se déconnecter met fin à votre session sur')} <strong>{t('compte:settings.logout_all_strong', 'tous')}</strong> {t('compte:settings.logout_all_after', 'les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).')}</p>
                             </div>
                         </div>
-                        <div className="ml-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
+                        <div className="ms-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
                             <span>{t('compte:settings.cet_appareil', 'Cet appareil —')} {typeof navigator !== 'undefined' ? navigator.userAgent.split('(')[1]?.split(')')[0] || t('compte:settings.browser', 'Navigateur') : t('compte:settings.browser', 'Navigateur')}</span>
                             <Button type="button" variant="outline" size="sm" className="min-h-11" data-testid="compte-logout-everywhere" onClick={async () => { if (await logoutOnServer()) window.location.assign('/auth/login'); }}>{t('compte:settings.deconnecter_partout', 'Me déconnecter partout')}</Button>
                         </div>
@@ -273,7 +273,7 @@ function AccessibilityTab() {
                                 <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.font_size_hint', 'Ajuster la taille de l’interface ({{size}} %)', { size: prefs.fontSize })}</p>
                             </div>
                         </div>
-                        <div className="ml-9 flex items-center gap-3">
+                        <div className="ms-9 flex items-center gap-3">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -508,7 +508,7 @@ function DataTab() {
                                     disabled={exporting}
                                     className="mt-3"
                                 >
-                                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                                    <Download className="h-3.5 w-3.5 me-1.5" />
                                     {exporting ? t('compte:settings.exporting', 'Export en cours...') : t('compte:settings.download_json', 'Télécharger (JSON)')}
                                 </Button>
                                 <p role="status" aria-live="polite" data-testid="compte-export-status" className="text-xs text-slate-700 mt-2">{exportNote}</p>
@@ -547,7 +547,7 @@ function DataTab() {
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="destructive" size="sm" className="mt-3">
-                                            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                                            <Trash2 className="h-3.5 w-3.5 me-1.5" />
                                             {t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}
                                         </Button>
                                     </AlertDialogTrigger>
