@@ -65,7 +65,10 @@ Producer job: `DATABASE_URL` (read-only role, **unpooled** host, `sslmode=requir
 `BACKUP_HEALTHCHECK_URL`, `BACKUP_SIGNING_KEY` (Ed25519 private PEM), optional `BACKUP_MAX_AGE_HOURS` (36).
 Verifier job (separate Scaleway project): `TARGET_DATABASE_URL` (empty disposable database in the separate Neon project `ada-restore-check`), `BACKUP_PRIVATE_KEY_FILE` (mounted secret file), `BACKUP_PRIVATE_KEY_PASSPHRASE`,
 the four `BACKUP_S3_*` with the **read-only** token, `BACKUP_SIGNING_PUBLIC_KEY`, `RESTORE_HEALTHCHECK_URL`, the four `EVIDENCE_S3_*` (evidence bucket, its own token). Command:
-`node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database> --expect-migrations 43` (43 = history rows of a database at 0042; 44 after 0045).
+`node scripts/cloud-restore-verify.mjs --confirm-target <host>/<database>`. RA-08: the expected migration history is derived from the journal of the release
+(`checks.migrationsDerived`); `RESTORE_EXPECT_MIGRATIONS` / `--expect-migrations N` is optional and, when set, an additional strict equality (43 = history rows
+of a database at 0042; 44 after 0045) — remove it or update it at each Production migration (`docs/database.md`, step 6). A job image built before RA-08
+still requires the variable.
 
 **Keys in variables: one line.** Scaleway: secrets spread over several lines « will not be injected properly » as variables (it recommends base64).
 `BACKUP_PUBLIC_KEY`, `BACKUP_SIGNING_KEY` and `BACKUP_SIGNING_PUBLIC_KEY` are therefore stored as the **base64 of the PEM** (`base64 -i key.pem | tr -d '\n'`);

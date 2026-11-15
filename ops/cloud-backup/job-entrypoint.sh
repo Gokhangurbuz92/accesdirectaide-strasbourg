@@ -51,6 +51,7 @@ case "${ADA_JOB:-}" in
   producer) exec node scripts/cloud-backup.mjs --run --label prod ;;
   probe-producer) exec node scripts/cloud-backup.mjs --probe-permissions --role producer ;;
   probe-verifier) exec node scripts/cloud-backup.mjs --probe-permissions --role verifier ;;
-  verifier) exec node scripts/cloud-restore-verify.mjs --confirm-target "${RESTORE_CONFIRM_TARGET:?}" --expect-migrations "${RESTORE_EXPECT_MIGRATIONS:?}" ;;
+  # RA-08: RESTORE_EXPECT_MIGRATIONS is optional — the verifier derives the expected history from the journal of the release; when set it is an extra check
+  verifier) exec node scripts/cloud-restore-verify.mjs --confirm-target "${RESTORE_CONFIRM_TARGET:?}" ${RESTORE_EXPECT_MIGRATIONS:+--expect-migrations "$RESTORE_EXPECT_MIGRATIONS"} ;;
   *) echo '{"ok":false,"code":"ADA_JOB_INVALID"}'; exit 1 ;;
 esac

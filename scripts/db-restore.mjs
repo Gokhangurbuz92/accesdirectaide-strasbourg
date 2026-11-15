@@ -59,9 +59,11 @@ async function main() {
     const c2 = new pg.Client({ connectionString: url }); await c2.connect();
     try {
       const after = (await c2.query(`SELECT count(*)::int AS n FROM pg_tables WHERE schemaname = 'public'`)).rows[0].n;
-      const hist = (await c2.query(`SELECT to_regclass('drizzle.__drizzle_migrations') IS NOT NULL AS e`)).rows[0].e
-        ? (await c2.query('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations')).rows[0].n : 0;
-      console.log(JSON.stringify({ restoredInto: want, tables: after, migrationRows: hist, backupTakenAt: backupTimeOf(file) }));
+      // RA-08: the restored history itself (the « when » of each applied migration — numbers of the journal, no data), so the verifier can compare it with
+      // the journal of the release instead of a count typed by hand
+      const whens = (await c2.query(`SELECT to_regclass('drizzle.__drizzle_migrations') IS NOT NULL AS e`)).rows[0].e
+        ? (await c2.query('SELECT created_at FROM drizzle.__drizzle_migrations ORDER BY created_at')).rows.map((x) => Number(x.created_at)) : [];
+      console.log(JSON.stringify({ restoredInto: want, tables: after, migrationRows: whens.length, migrationWhens: whens, backupTakenAt: backupTimeOf(file) }));
     } finally { await c2.end(); }
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }

@@ -35,6 +35,15 @@ npx drizzle-kit studio     # UI pour explorer la DB
 3. Vérifier le SQL généré dans `drizzle/`
 4. `npx drizzle-kit migrate` (`npm run db:migrate`) en local ; en Production `scripts/db-deploy-migrate.mjs` (accord du propriétaire, sauvegarde chiffrée avant)
 5. Commiter le fichier de migration
+6. **Vérification de restauration après une migration de Production** (RA-08). Le vérificateur mensuel (`scripts/cloud-restore-verify.mjs`, tâche
+   Scaleway `verifier`) ne dépend plus d'un nombre saisi à la main : il déduit l'historique attendu du journal livré avec la version
+   (`drizzle/meta/_journal.json`) et des lignes restaurées — chaque ligne restaurée est une entrée du journal, sans doublon, et aucune entrée plus ancienne
+   que la plus récente restaurée ne manque, sauf 0043 / 0044 (obsolètes, jamais appliquées en Production). Résultat : `checks.migrationsDerived` dans la
+   preuve (`ok`, `expected`, `highest`, `missing`). À faire à chaque migration de Production :
+   - lancer une sauvegarde puis une vérification après la migration et lire `migrationsDerived.highest` : ce doit être la migration qui vient d'être appliquée ;
+   - la variable `RESTORE_EXPECT_MIGRATIONS` de la tâche `verifier` est désormais **facultative**. Si elle est encore définie (43 à 0042), elle reste un
+     contrôle supplémentaire d'égalité stricte : la **retirer** ou la mettre à jour (44 après 0045) au moment de la migration, sinon la vérification
+     suivante échoue avec `MIGRATIONS_MISMATCH`. Une image de tâche construite avant RA-08 exige encore la variable (`ops/cloud-backup/README.md` § 3).
 
 ### Retour arrière (`drizzle/rollback/NNNN_down.sql`)
 Un fichier de retour arrière défait le schéma d'une migration ; il doit aussi supprimer la ligne de cette migration dans `drizzle.__drizzle_migrations`

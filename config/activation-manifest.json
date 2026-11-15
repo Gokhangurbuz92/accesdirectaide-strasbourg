@@ -153,7 +153,7 @@
     "RESTORE_EXPECT_MIGRATIONS": {
       "class": "lab",
       "nature": "config",
-      "note": "V2 C7: restore verifier job only (43 at 0042)"
+      "note": "V2 C7: restore verifier job only; optional since RA-08 (the expected history is derived from the journal) — when set, strict equality (43 at 0042, 44 after 0045)"
     },
     "JWT_SECRET": {
       "class": "required",
