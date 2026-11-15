@@ -40,7 +40,7 @@ export function ParcoursAccessGate({ children }) {
  * The control itself (no session lookup: the caller decided it may be shown). One click sends the records to the server, which checks that each is public,
  * and answers « added » or « already there » — both are said in a polite live region with a link to Mon Parcours. Adding a step records nothing about a right.
  * M1: `planStep` (the need, official links, the next action — validated by the server) is sent with the step when the caller has it.
- * @param {{ records: { type: 'aide' | 'demarche' | 'dispositif' | 'guide', id: string }[], title?: string, className?: string, planStep?: Record<string, unknown> }} props
+ * @param {{ records: { type: 'aide' | 'demarche' | 'dispositif' | 'guide' | 'structure', id: string }[], title?: string, className?: string, planStep?: Record<string, unknown> }} props
  */
 export function AddToParcoursControl({ records, title, className = '', planStep = undefined }) {
   const { t } = useT('shared');
@@ -73,9 +73,9 @@ export function AddToParcoursControl({ records, title, className = '', planStep 
 }
 
 /**
- * « Ajouter à mon parcours » on a record page (aide, démarche, dispositif). Renders nothing — and asks the server nothing — unless Mon Parcours is open and
+ * « Ajouter à mon parcours » on a record page (aide, démarche, dispositif, guide, structure — A-10). Renders nothing — and asks the server nothing — unless Mon Parcours is open and
  * the person is signed in, so the public beta is unchanged.
- * @param {{ type: 'aide' | 'demarche' | 'dispositif' | 'guide', id: string, className?: string }} props
+ * @param {{ type: 'aide' | 'demarche' | 'dispositif' | 'guide' | 'structure', id: string, className?: string }} props
  */
 export default function AddToParcoursButton({ type, id, className }) {
   if (!id) return null;

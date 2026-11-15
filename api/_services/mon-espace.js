@@ -49,26 +49,30 @@ async function event(db, item, kind, fromStatus = null, toStatus = null) {
 
 // VIS-R: a tracked step can point at catalogue records. `itemCodes` holds « <type>:<id> » for a step the person added from a record page or an orientation
 // (origin MANUAL, the database accepts only PLAN | MANUAL), and the bare assessment codes of a plan step (an aide slug, see src/lib/actionPlan.js).
-export const PARCOURS_RECORD_TYPES = ['aide', 'demarche', 'dispositif', 'guide'];
+// A-10: a place (structure) can be a step too, like a favourite: « aller à la permanence de … » is a step of a real pathway. Its code is « structure:<id> ».
+export const PARCOURS_RECORD_TYPES = ['aide', 'demarche', 'dispositif', 'guide', 'structure'];
 export const MAX_PARCOURS_RECORDS = 5;
-const RECORD_PATHS = { aide: '/aides', demarche: '/demarches', dispositif: '/dispositifs', guide: '/bonnes-pratiques' };
-const RECORD_TABLES = { aide: ENTITY_TABLES.aide, demarche: ENTITY_TABLES.demarche, dispositif: ENTITY_TABLES.dispositif, guide: Guide };
+const RECORD_PATHS = { aide: '/aides', demarche: '/demarches', dispositif: '/dispositifs', guide: '/bonnes-pratiques', structure: '/structures' };
+const RECORD_TABLES = { aide: ENTITY_TABLES.aide, demarche: ENTITY_TABLES.demarche, dispositif: ENTITY_TABLES.dispositif, guide: Guide, structure: ENTITY_TABLES.structure };
+/** a structure has a name (« nom »), the other records a title */
+const recordTitle = (type, r) => (type === 'structure' ? r.nom : r.titre);
 const RECORD_KEY = /^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/;
-const RECORD_CODE = /^(aide|demarche|dispositif|guide):([A-Za-z0-9][A-Za-z0-9._-]{0,119})$/;
+const RECORD_CODE = /^(aide|demarche|dispositif|guide|structure):([A-Za-z0-9][A-Za-z0-9._-]{0,119})$/;
 /** the ONE visibility decision (D-5, api/lib/publicVisibility.js) — the same as favourites; a guide is not a D-5 record: public when published (api/_handlers/guides.js) */
 const recordVisible = (type, r) => Boolean(r && (type === 'guide' ? r.statut === 'publie' : decide(r, type).visible));
 const hasText = (v) => typeof v === 'string' && v.trim().length > 0;
 /** where the record says whom to contact (« Où demander » / « Où faire »), when it has it */
-const recordContact = (type, r) => (type === 'aide' ? hasText(r.ou_demander) : type === 'demarche' ? hasText(r.ou_faire) : false);
+const recordContact = (type, r) => (type === 'aide' ? hasText(r.ou_demander) : type === 'demarche' ? hasText(r.ou_faire)
+  : type === 'structure' ? [r.telephone, r.email, r.adresse, r.site_web].some(hasText) : false);   // a place's own page is where its contact details are
 const recordView = (code, type, r) => {
   const visible = recordVisible(type, r);   // a record that is no longer public gives neither its title nor its address
-  return { code, type, available: visible, title: visible ? r.titre : null, href: visible ? `${RECORD_PATHS[type]}/${encodeURIComponent(r.slug || r.id)}` : null, contact: visible && recordContact(type, r) };
+  return { code, type, available: visible, title: visible ? recordTitle(type, r) : null, href: visible ? `${RECORD_PATHS[type]}/${encodeURIComponent(r.slug || r.id)}` : null, contact: visible && recordContact(type, r) };
 };
 const recordKeyOf = (codes) => crypto.createHash('sha256').update(JSON.stringify(['record', codes])).digest('hex').slice(0, 40);
 
 /** the records the items point at, by code. A typed code that no longer resolves is « no longer available »; a bare plan code ADA holds no record for is not listed at all. */
 async function recordsOf(rows, db) {
-  const typed = { aide: new Set(), demarche: new Set(), dispositif: new Set(), guide: new Set() }; const bare = new Set();
+  const typed = Object.fromEntries(PARCOURS_RECORD_TYPES.map((t) => [t, new Set()])); const bare = new Set();
   for (const code of rows.flatMap((r) => r.itemCodes || [])) {
     const m = RECORD_CODE.exec(String(code));
     if (m) typed[m[1]].add(m[2]); else if (RECORD_KEY.test(String(code))) bare.add(String(code));
@@ -224,7 +228,7 @@ async function addRecordItem(userId, input, db) {
   if (already) return { ok: true, status: 200, added: false, item: itemView(already) };   // the step that exists keeps its own plan data
   if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
   const ps = await newPlanStep(userId, plan, db, has, T); if (ps.refusal) return ps.refusal;
-  const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(found[0].r.titre).trim().slice(0, 200), ...ps.values })
+  const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(recordTitle(found[0].type, found[0].r)).trim().slice(0, 200), ...ps.values })
     .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
   if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };   // two clicks at once: the other request created it
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
@@ -268,8 +272,8 @@ export async function setPlanStep(userId, id, input, db = defaultDb) {
   return { ok: true, status: 200, item: itemView(up) };
 }
 
-/** The person records where they are. Any status can follow any other (real procedures go back and forth); every change is kept in the append-only history. */
 /**
+ * The person records where they are. Any status can follow any other (real procedures go back and forth); every change is kept in the append-only history.
  * M1: `status` may also be ABANDONED (the person gave the step up) or OUTCOME_UNKNOWN (they never learnt the outcome). Both are honest ways a step ends
  * without an answer: the step becomes CLOSED — one of the ten states, so the status CHECK and the history are unchanged — and the reason is kept in
  * planStep.closure; choosing any of the ten states afterwards removes the reason. A dependency never blocks a change of status.

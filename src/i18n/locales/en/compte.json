@@ -654,5 +654,8 @@
  "parcours.organise_save": "Save the organisation of the step",
  "parcours.organise_saved": "Organisation of the step saved.",
  "parcours.group_need": "Need:",
- "parcours.group_other": "Other steps"
+ "parcours.group_other": "Other steps",
+ "profile.not_offered": "Not offered",
+ "profile.sms_reminder_scope": "By text message, reminders concern your appointments only. The deadlines of My Journey are reminded by e-mail, never by text message.",
+ "parcours.reminder_channels": "Deadline reminder: by e-mail, according to your notification settings (My profile page). No deadline reminder is sent by text message."
 }

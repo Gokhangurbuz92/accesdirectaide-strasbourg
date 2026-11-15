@@ -112,6 +112,10 @@ export default function CompteProfil() {
   const shownChannels = CHANNELS.filter(([c]) => c !== 'sms' || optionsOpen.sms);
   const shownCategories = categories(t).filter(([c]) => (c !== 'reminder' || optionsOpen.reminder) && (c !== 'marketing' || optionsOpen.marketing));
   const someClosed = !optionsOpen.sms || !optionsOpen.reminder || !optionsOpen.marketing;
+  // A-19: an SMS reminder exists for appointments only (a Mon Parcours deadline is never sent by SMS). Where appointments are not open the « SMS × rappels »
+  // box is not offered — unless it is already on, so that it can still be switched off. An answer without the field (older server) keeps the former table.
+  const smsReminderClosed = account.smsReminderOpen === false;
+  const smsReminderShown = shownChannels.some(([c]) => c === 'sms') && shownCategories.some(([c]) => c === 'reminder');
   const pending = account.agePolicy && !account.agePolicy.allowed;
 
   return (
@@ -212,6 +216,9 @@ export default function CompteProfil() {
                       const on = prefs[key] === true; const needs = NEEDS_CONSENT(ch, cat);
                       // the box follows the click at once and says it is being saved; the server's answer then decides (a refusal puts the saved value back)
                       const saving = key in pendingPrefs;
+                      if (key === 'sms.reminder' && smsReminderClosed && !on) {
+                        return <td key={ch} className="p-2 align-top text-xs text-slate-700" data-testid="pref-sms-reminder-closed">{t('compte:profile.not_offered', 'Non proposé')}</td>;
+                      }
                       return (
                         <td key={ch} className="p-2 align-top">
                           <label className="flex items-center gap-2">
@@ -243,6 +250,9 @@ export default function CompteProfil() {
               </tbody>
             </table>
           </div>
+          {smsReminderShown ? (
+            <p className="text-xs text-slate-700" data-testid="prefs-sms-reminder-scope">{t('compte:profile.sms_reminder_scope', 'Par SMS, les rappels concernent uniquement vos rendez-vous. Les échéances de Mon Parcours sont rappelées par e-mail, jamais par SMS.')}</p>
+          ) : null}
           <p className="text-xs text-slate-700" data-testid="prefs-no-inapp">{someClosed
             ? t('compte:profile.inapp_center_v2', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les SMS, les rappels et les informations facultatives ne sont pas encore ouverts.')
             : t('compte:profile.inapp_center_r46', 'Les nouvelles informations de votre compte s’affichent aussi dans « Notifications » de Mon Espace, sans réglage : elles ne quittent pas la plateforme. Les rappels vous parviennent par e-mail (et par SMS seulement si vous l’activez).')}</p>

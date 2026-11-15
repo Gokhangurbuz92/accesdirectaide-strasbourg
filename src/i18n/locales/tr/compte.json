@@ -654,5 +654,8 @@
  "parcours.organise_save": "Adımın düzenini kaydet",
  "parcours.organise_saved": "Adımın düzeni kaydedildi.",
  "parcours.group_need": "İhtiyaç:",
- "parcours.group_other": "Diğer adımlar"
+ "parcours.group_other": "Diğer adımlar",
+ "profile.not_offered": "Sunulmuyor",
+ "profile.sms_reminder_scope": "SMS ile hatırlatmalar yalnızca randevularınızla ilgilidir. Sürecim’deki son tarihler e-postayla hatırlatılır, asla SMS ile değil.",
+ "parcours.reminder_channels": "Son tarih hatırlatması: bildirim ayarlarınıza göre (Profilim sayfası) e-postayla. SMS ile son tarih hatırlatması gönderilmez."
 }

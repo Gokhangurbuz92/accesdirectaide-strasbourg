@@ -57,9 +57,20 @@ export function notificationOptionsOpen(env = process.env) {
     marketing: !capabilityEnforced(env),
   };
 }
+/**
+ * A-19 — can an SMS reminder actually be sent to a citizen here? Only for an APPOINTMENT (the number given with the booking, api/_handlers/cron/rdv-reminder.js).
+ * A Mon Parcours deadline is never reminded by SMS: that job (api/_handlers/cron/parcours-reminder.js) texts only a VERIFIED account number, and nothing
+ * verifies a number (no SMS provider is approved; phone verification is not built). So « SMS × rappels » is open only where the number is collected AND
+ * appointments are open; where only Mon Parcours is open it is not offered and cannot be switched on. Switching it off always stays possible.
+ * @param {Record<string, string | undefined>} [env]
+ */
+export function smsReminderOpen(env = process.env) {
+  return phoneCollectionOpen(env) && capabilityOpen('citizen.booking', env);
+}
 /** may this channel × category be switched on in this environment @param {string} channel @param {string} category @param {Record<string, string | undefined>} [env] */
 export function notificationOptionOpen(channel, category, env = process.env) {
   const open = notificationOptionsOpen(env);
+  if (channel === 'sms' && category === 'reminder' && !smsReminderOpen(env)) return false;
   return (channel !== 'sms' || open.sms) && (category !== 'reminder' || open.reminder) && (category !== 'marketing' || open.marketing);
 }
 export const NOTIFICATION_OPTION_CLOSED = 'NOTIFICATION_OPTION_CLOSED';
@@ -117,6 +128,7 @@ export async function getAccount(userId, db = defaultDb) {
     collect: { ageBand: optionalProfileFieldsOpen(), departement: optionalProfileFieldsOpen(), phone: phoneCollectionOpen() },
     // V2 legal review: which notification options may be switched on here (the screen offers only those; setPreference enforces it)
     notificationOptions: notificationOptionsOpen(),
+    smsReminderOpen: smsReminderOpen(),   // A-19: an SMS reminder exists for appointments only
     preferences, agePolicy: { accountFeatures: gate.accountFeatures, allowed: gate.allowed, status: gate.policyStatus, publicInformation: 'ALL_AGES', adultAccount: await isAdultAccount(userId, db) },   // R42-A07
   };
 }

@@ -218,6 +218,8 @@ export default function CompteParcours() {
             <div><label htmlFor={`ds-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.source_officielle_cette_echeance', 'Source officielle de cette échéance (adresse du site)')}</label><input id={`ds-${i.id}`} data-testid="parcours-due-source" type="url" required placeholder="https://www.service-public.fr/…" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={due.source} onChange={(e) => setDue({ ...due, source: e.target.value })} /></div>
             <div className="flex items-end"><Button type="submit" size="sm" data-testid="parcours-due-save">{t('compte:parcours.enregistrer', 'Enregistrer')}</Button></div>
           </form>
+          {/* A-19: only the channels that can really carry this reminder are named */}
+          <p className="text-xs text-slate-700" data-testid="parcours-reminder-channels">{t('compte:parcours.reminder_channels', 'Rappel d’échéance : par e-mail, selon vos réglages de notification (page Mon profil). Aucun rappel d’échéance n’est envoyé par SMS.')}</p>
           {i.dueDate ? <Button type="button" size="sm" variant="outline" onClick={() => run(() => citizenApi.parcours({ action: 'deadline', id: i.id, dueDate: null }), t('compte:parcours.due_removed', 'Échéance retirée.'))}>{t('compte:parcours.retirer_echeance', 'Retirer l’échéance')}</Button> : null}
           <div>
             <label htmlFor={`nt-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.note_personnelle_visible_par', 'Note personnelle (visible par vous seul)')}</label>

@@ -654,5 +654,8 @@
  "parcours.organise_save": "Organisation des Schritts speichern",
  "parcours.organise_saved": "Organisation des Schritts gespeichert.",
  "parcours.group_need": "Bedarf:",
- "parcours.group_other": "Weitere Schritte"
+ "parcours.group_other": "Weitere Schritte",
+ "profile.not_offered": "Nicht angeboten",
+ "profile.sms_reminder_scope": "Per SMS betreffen Erinnerungen nur Ihre Termine. An die Fristen von „Mein Weg“ wird per E-Mail erinnert, nie per SMS.",
+ "parcours.reminder_channels": "Fristerinnerung: per E-Mail, gemäß Ihren Benachrichtigungseinstellungen (Seite „Mein Profil“). Es wird keine Fristerinnerung per SMS gesendet."
 }

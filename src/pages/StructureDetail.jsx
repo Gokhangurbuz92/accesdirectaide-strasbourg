@@ -34,6 +34,7 @@ import { getProvenance } from '@/lib/provenance';
 import { buildPublicRdvPath } from '@/lib/rdvRouting';
 import { departementLabel } from '@/lib/structureFields';
 import FavoriteButton from '@/components/FavoriteButton';
+import AddToParcoursButton from '@/components/AddToParcoursButton';
 import { useFalc } from '@/contexts/FalcContext';
 import { formatDate, useT } from '@/i18n';
 import { isFinessRecord } from '@/lib/structureActivities';
@@ -321,6 +322,8 @@ export default function StructureDetail() {
                 </div>
 
                 <div className="mb-2"><FavoriteButton entityType="structure" entityId={structure.id} label={structure.nom} /></div>
+                {/* A-10: a place can become a step of Mon Parcours (nothing rendered unless Mon Parcours is open and a citizen is signed in) */}
+                <AddToParcoursButton type="structure" id={structure.id} className="mb-2 print:hidden" />
                 <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4" {...tr.attrs('nom')}>
                   {name}
                 </h1>

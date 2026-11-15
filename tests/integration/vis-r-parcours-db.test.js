@@ -88,7 +88,7 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
       }
       const ok = await record('demarche', 'ok');
       expect((await add(A, { records: [{ type: 'demarche', id: ok }, { type: 'aide', id: hidden }] })).statusCode, 'one hidden record refuses the whole step').toBe(404);
-      for (const records of [[], 'x', [{ type: 'structure', id: ok }], [{ type: 'aide', id: "x' OR '1'='1" }], Array.from({ length: 6 }, () => ({ type: 'demarche', id: ok }))])
+      for (const records of [[], 'x', [{ type: 'actualite', id: ok }], [{ type: 'aide', id: "x' OR '1'='1" }], Array.from({ length: 6 }, () => ({ type: 'demarche', id: ok }))])
         expect((await add(A, { records })).body.error, JSON.stringify(records)).toBe('INVALID_RECORDS');
       expect((await add(A, { records: [{ type: 'demarche', id: ok }], title: 'x' })).body.error).toBe('INVALID_TITLE');
       expect(await count(A)).toBe(before);
