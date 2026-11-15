@@ -126,5 +126,7 @@
   "orientation.french_notice": "Aşağıdaki ayrıntılı öneriler Fransızcadır: bu resmî metindir ve otomatik olarak çevrilmez.",
   "form.territory": "Belediye",
   "form.territory-all": "Tüm belediyeler",
-  "form.territory-help": "Bir belediye seçildiğinde, başka bir bölgeye ayrılmış yardımlar gösterilmez. İşlemler, yerler ve haberler filtrelenmez."
+  "form.territory-help": "Bir belediye seçildiğinde, başka bir bölgeye ayrılmış yardımlar gösterilmez. İşlemler, yerler ve haberler filtrelenmez.",
+  "section.glossary": "Tanımlar ({{n}})",
+  "link.glossary": "Tüm sözlüğü gör"
 }

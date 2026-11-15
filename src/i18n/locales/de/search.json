@@ -126,5 +126,7 @@
   "orientation.french_notice": "Die ausführlichen Hinweise unten sind auf Französisch: Es ist der offizielle Text, er wird nicht automatisch übersetzt.",
   "form.territory": "Gemeinde",
   "form.territory-all": "Alle Gemeinden",
-  "form.territory-help": "Mit einer ausgewählten Gemeinde werden Hilfen, die einem anderen Gebiet vorbehalten sind, nicht angezeigt. Verfahren, Orte und Nachrichten werden nicht gefiltert."
+  "form.territory-help": "Mit einer ausgewählten Gemeinde werden Hilfen, die einem anderen Gebiet vorbehalten sind, nicht angezeigt. Verfahren, Orte und Nachrichten werden nicht gefiltert.",
+  "section.glossary": "Begriffserklärungen ({{n}})",
+  "link.glossary": "Das ganze Glossar ansehen"
 }

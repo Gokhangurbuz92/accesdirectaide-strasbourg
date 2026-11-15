@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen, Landmark } from 'lucide-react';
+import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen, BookA, Landmark } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -213,6 +213,7 @@ export default function Recherche() {
   const [actualites, setActualites] = useState([]);
   const [guides, setGuides] = useState([]);
   const [dispositifs, setDispositifs] = useState([]);
+  const [glossaire, setGlossaire] = useState(/** @type {{ id: string, title: string, description: string }[]} */ ([]));
   const [safety, setSafety] = useState(null);
   const [meta, setMeta] = useState({ total: 0, totalAll: 0, message: null });
   // R32: what went wrong, put into words at render (the interface language may change): « too-short », or the search library's message
@@ -234,6 +235,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
+      setGlossaire([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -249,6 +251,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
+      setGlossaire([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -279,10 +282,11 @@ export default function Recherche() {
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
         setDispositifs(response.dispositifs || []);
+        setGlossaire(response.glossaire || []);
         setSafety(response.safety || null);
         setOrientation(response.orientation || null);
         setMeta(response.meta);
-        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0) || (response.dispositifs?.length > 0);
+        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0) || (response.dispositifs?.length > 0) || (response.glossaire?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
       })
       .catch((error) => {
@@ -293,6 +297,7 @@ export default function Recherche() {
         setActualites([]);
         setGuides([]);
         setDispositifs([]);
+      setGlossaire([]);
         setSafety(null);
         setOrientation(null);
         setMeta({ total: 0, totalAll: 0, message: null });
@@ -579,6 +584,29 @@ export default function Recherche() {
                       <ActualiteResult key={a.id} a={a} />
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* A-7: the glossary terms the search matched — the term and its French definition, with the way to the whole glossary */}
+              {glossaire.length > 0 && (
+                <div className="mb-8" data-testid="search-glossary">
+                  <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <BookA className="h-5 w-5 text-slate-700" aria-hidden="true" />
+                    {t('search:section.glossary', 'Définitions ({{n}})', { n: glossaire.length })}
+                  </h2>
+                  <dl className="grid gap-3 md:grid-cols-2">
+                    {glossaire.map((g) => (
+                      <div key={g.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                        <dt className="font-semibold text-slate-900" {...(isSource ? {} : { lang: 'fr', dir: 'ltr' })}>{g.title}</dt>
+                        <dd className="mt-1 text-sm text-slate-700" {...(isSource ? {} : { lang: 'fr', dir: 'ltr' })}>{g.description}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="mt-3 text-sm">
+                    <Link to="/glossaire" className="inline-flex items-center gap-1 font-medium text-slate-900 underline">
+                      {t('search:link.glossary', 'Voir tout le glossaire')} <ArrowRight className="rtl-flip h-3 w-3" aria-hidden="true" />
+                    </Link>
+                  </p>
                 </div>
               )}
             </>

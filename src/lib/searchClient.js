@@ -148,6 +148,10 @@ function normalizeResponse(payload) {
   const guides = Array.isArray(payload?.guides) ? payload.guides : [];
   // SRCH-DISP-1: the published dispositifs (official Service-Public fiches)
   const dispositifs = Array.isArray(payload?.dispositifs) ? payload.dispositifs : [];
+  // A-7: the glossary terms the search matched (term and French definition); only well-formed entries are kept
+  const glossaire = (Array.isArray(payload?.glossaire) ? payload.glossaire : [])
+    .filter((/** @type {any} */ g) => g && typeof g.title === 'string' && g.title && typeof g.description === 'string' && g.description)
+    .map((/** @type {any} */ g) => ({ id: String(g.id ?? g.title), title: g.title, description: g.description }));
 
   return {
     results,
@@ -156,13 +160,14 @@ function normalizeResponse(payload) {
     actualites,
     guides,
     dispositifs,
+    glossaire,
     // R34: the danger signal of the server (emergency numbers to show first), or null
     safety: payload?.safety && Array.isArray(payload.safety.numbers) ? { kind: String(payload.safety.kind || ''), numbers: payload.safety.numbers.map(String) } : null,
     // R37: the multi-need orientation of the server (needs, cautions, question, official sheets), or null
     orientation: payload?.orientation && Array.isArray(payload.orientation.needs) ? payload.orientation : null,
     meta: {
       total: Number.isFinite(totalFromPayload) ? totalFromPayload : results.length,
-      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length + dispositifs.length,
+      totalAll: (Number.isFinite(totalFromPayload) ? totalFromPayload : results.length) + demarches.length + structures.length + actualites.length + guides.length + dispositifs.length + glossaire.length,
       message: typeof payload?.message === 'string' ? payload.message : null,
     },
     error: typeof payload?.error === 'string' ? payload.error : null,
