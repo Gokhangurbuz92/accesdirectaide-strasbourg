@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { useT } from '@/i18n';
+import i18n, { useT } from '@/i18n';
 // R44 (A5): field-level errors (aria-invalid, aria-describedby, focused summary) — the R43 pattern
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
 import { useFormErrors } from '@/components/forms/useFormErrors';
@@ -43,7 +43,7 @@ export default function AuthForgotPassword() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, language: i18n.language }),   // A-15: the reset e-mail in the language of this page when the account has none stored
       });
 
       const payload = await response.json().catch(() => null);

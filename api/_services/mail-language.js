@@ -18,3 +18,14 @@ export async function citizenMailLanguage(citizenUserId, db = defaultDb) {
     return 'fr';
   }
 }
+
+/**
+ * A-15 — the language of an ACCOUNT e-mail (verification link, password reset): the person's stored language; when none was ever chosen (no profile row, or the
+ * column's default « fr »), the interface language of the page the request came from (`requestLanguage`: the sign-up or the « forgot password » form); French
+ * otherwise. The request language only chooses the wording of a message sent to the account's own address: it is not stored and opens nothing.
+ * @param {unknown} citizenUserId @param {unknown} requestLanguage @param {typeof defaultDb} [db] @returns {Promise<string>}
+ */
+export async function accountMailLanguage(citizenUserId, requestLanguage, db = defaultDb) {
+  const stored = await citizenMailLanguage(citizenUserId, db);
+  return stored !== 'fr' ? stored : mailLanguage(requestLanguage);
+}
