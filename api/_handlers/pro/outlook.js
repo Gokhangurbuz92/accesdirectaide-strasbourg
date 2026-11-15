@@ -3,6 +3,7 @@ import logger from '../../_utils/logger.js';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import crypto from 'node:crypto';
 import { authorizeUrl, connectionOf, disconnect, outlookStatus, stateCookie } from '../../_services/calendar-outlook.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 /**
  * Outlook calendar connection of the signed-in professional (PKG-3 / B10 redesign — see api/_services/calendar-outlook.js).
@@ -42,4 +43,5 @@ async function handler(req, res) {
   }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.outlook', handler));

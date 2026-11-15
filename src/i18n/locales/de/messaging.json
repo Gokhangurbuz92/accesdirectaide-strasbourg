@@ -124,5 +124,6 @@
  "chat.attachment_size": "{{name}} ({{size}} KB)",
  "chat.attachment_remove": "Datei entfernen",
  "sharing.transparency_failed": "Der Verlauf dieser Akte konnte nicht gelesen werden.",
- "sharing.action_failed": "Die Aktion konnte nicht ausgeführt werden. Versuchen Sie es erneut."
+ "sharing.action_failed": "Die Aktion konnte nicht ausgeführt werden. Versuchen Sie es erneut.",
+ "transparency.action_siao_prepared": "hat ein Übergabeblatt für den SIAO vorbereitet (AccèsDirectAide sendet nichts)"
 }

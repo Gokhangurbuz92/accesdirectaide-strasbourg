@@ -5,6 +5,7 @@ import { resolveDossierForStructure, grantHasPurpose, PURPOSE_AI } from '../../_
 import { presentResults } from '../../lib/shareResults.js';
 import { createDraft, listDrafts, review } from '../../_services/dossier-synthesis.js';
 import { withCapability } from '../../_utils/capabilities.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 /**
  * Dossier AI synthesis (Pro-only) — PKG-6 / R17: LOCAL model only (no Gemini, no external model, no fallback); the result is a DRAFT in the review queue.
@@ -56,4 +57,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
-export default withCapability(['ai.processing', 'citizen.shared_dossier'], requireProAuth(handler));
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default withCapability(['ai.processing', 'citizen.shared_dossier'], requireProAuth(withProRateLimit('pro.dossier.synthesis', handler, { action: 'PRO_AI', methods: ['POST'] })));

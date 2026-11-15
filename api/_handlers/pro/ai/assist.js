@@ -3,6 +3,7 @@ import logger from '../../../_utils/logger.js';
 import { requireProAuth, requireProStructureContext } from '../../../_utils/auth.js';
 import { generateText } from '../../../lib/gemini.js';
 import { AUDIENCE } from '../../../lib/ai-policy.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 const PROMPTS = {
     'summarize': `Tu es un assistant pour travailleur social. 
@@ -70,4 +71,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.ai.assist', handler, { action: 'PRO_AI' }));

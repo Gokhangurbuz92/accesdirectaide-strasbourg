@@ -5,6 +5,7 @@ import { ProNotification } from '../../../src/db/schema.js';
 import { eq, and, isNull, inArray, count } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import { CATALOGUE, getPreferences, safeMetadata, setPreferences } from '../../_services/pro-notifications.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 /**
  * Pro Notifications API
  *
@@ -126,7 +127,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     return res.status(405).json({ error: 'Méthode non autorisée' });
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.notifications', handler));
 
 /**
  * Helper to create a notification (used by other handlers/crons).

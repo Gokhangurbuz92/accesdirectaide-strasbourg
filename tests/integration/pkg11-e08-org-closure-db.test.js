@@ -72,6 +72,9 @@ describe.skipIf(!hasDatabase)('PKG-11 / E08 organization closure through the rea
     await db.execute(sql`INSERT INTO "AiOutputReview" (id, kind, "entityType", "entityId", field, origin, "sourceTextHash", "outputText", status, "createdBy", "sharedDiagnosticId", "scopeStructureId")
       VALUES (${'ai-' + TS}, 'DOSSIER_SYNTHESIS', 'shared_diagnostic', ${DOS}, 'synthesis', 'AI_LOCAL', 'h', '["brouillon"]', 'PENDING', ${P.pro.id}, ${DOS}, ${S.A})`);
     await db.execute(sql`INSERT INTO "ProAuditLog" (id, "proUserId", "structureId", action, metadata) VALUES (${'pa-' + TS}, ${P.pro.id}, ${S.A}, 'QA_E08_TRACE', '{}'::jsonb)`);
+    // A03: an Outlook link in the closing organization (erased) and one in another organization (untouched); A02: the person keeps service e-mails on
+    for (const p of [P.pro, P.b]) await db.execute(sql`INSERT INTO "ProOutlookToken" (id, "userId", email, "accessTokenEnc", "refreshTokenEnc", iv, "expiresAt", "updatedAt") VALUES (${'ot-' + p.id}, ${p.id}, ${p.id + '@outlook.example.test'}, 'enc-a', 'enc-r', 'iv', NOW() + interval '1 hour', NOW())`);
+    await db.execute(sql`INSERT INTO "NotificationPreference" ("userId", channel, category, enabled, "updatedAt") VALUES (${CIT.id}, 'email', 'service', true, NOW())`);
   }, 60000);
   afterAll(async () => {
     if (!db) return;
@@ -81,6 +84,7 @@ describe.skipIf(!hasDatabase)('PKG-11 / E08 organization closure through the rea
       sql`DELETE FROM "ProRdvService" WHERE "structureId" IN (${L})`, sql`DELETE FROM "StructureRdvSettings" WHERE "structureId" IN (${L})`, sql`DELETE FROM "SharedDiagnostic" WHERE id IN (${DOS}, ${DOS2}, ${DOS3})`,
       sql`DELETE FROM "StructureProposal" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProNotification" WHERE "structureId" IN (${L})`, sql`DELETE FROM "Invitation" WHERE "structureId" IN (${L})`,
       sql`DELETE FROM "ProAuditLog" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProProfile" WHERE "proUserId" IN (SELECT id FROM "ProUser" WHERE "structureId" IN (${L}))`,
+      sql`DELETE FROM "ProOutlookToken" WHERE "userId" IN (SELECT id FROM "ProUser" WHERE "structureId" IN (${L}))`, sql`DELETE FROM "NotificationPreference" WHERE "userId" = ${CIT.id}`,
       sql`DELETE FROM "ProUser" WHERE "structureId" IN (${L})`, sql`DELETE FROM "LegalHold" WHERE "recordId" IN (${L})`, sql`DELETE FROM "DSRRequest" WHERE "subjectId" IN (${L})`,
       sql`DELETE FROM "EntityVersion" WHERE entity_id IN (${L})`, sql`DELETE FROM "Structure" WHERE id IN (${L})`, sql`DELETE FROM "CitizenUser" WHERE id = ${CIT.id}`]) await db.execute(q).catch(() => {});
   });
@@ -131,6 +135,29 @@ describe.skipIf(!hasDatabase)('PKG-11 / E08 organization closure through the rea
     expect(done.body.summary).toMatchObject({ dossierAccessesRevoked: 2, invitesRevoked: 1, aiDraftsForgotten: 1, internalNotesErased: 1, casesClosed: 1, referralsEnded: 3, appointmentsCancelled: 1,
       servicesDeactivated: 1, proposalsWithdrawn: 1, memberInvitationsErased: 1, notificationsErased: 1, membersAnonymized: 2 });
     expect((await db.execute(sql`SELECT status FROM "DSRRequest" WHERE id = ${reqId}`)).rows[0].status).toBe('COMPLETED');
+    expect(done.body.summary.outlookLinksErased).toBe(1);
+    expect(done.body.notices).toEqual({ organizationsNotified: 2, peopleNotified: 1, people: 1 });
+  });
+
+  it('A03: the Outlook links of the closed organization are deleted (tokens and Outlook address), another organization keeps its own; the count is in the audit row', async () => {
+    expect((await db.execute(sql`SELECT "userId" FROM "ProOutlookToken" WHERE "userId" IN (${P.pro.id}, ${P.b.id})`)).rows).toEqual([{ userId: P.b.id }]);
+    expect((await db.execute(sql`SELECT details->>'outlookLinksErased' AS n FROM "AuditLog" WHERE action = 'ORGANIZATION_CLOSED' AND entity_id = ${S.A}`)).rows[0].n).toBe('1');
+  });
+
+  it('A02: the other organization and the person are told what the closure ended — one e-mail per person, no reason, the outcome in the ledger', async () => {
+    // B knew of the referral it received from A (SENT) and of the one it sent to A: both are announced; the draft B never saw and the accepted one that stays are not
+    const told = (await db.execute(sql`SELECT metadata->>'referralId' AS r, metadata->>'kind' AS k, type, "userId" FROM "ProNotification" WHERE "structureId" = ${S.B} AND type = 'referral_cancelled' ORDER BY 1`)).rows;
+    expect(told).toEqual([{ r: `rIn-${TS}`, k: 'ORGANIZATION_CLOSED', type: 'referral_cancelled', userId: P.b.id }, { r: `rSent-${TS}`, k: 'ORGANIZATION_CLOSED', type: 'referral_cancelled', userId: P.b.id }]);
+    expect(await one(sql`SELECT count(*)::int AS n FROM "ProNotification" WHERE "structureId" = ${S.C}`)).toBe(0);   // an organization that is not concerned hears nothing
+    const { __getTestOutbox } = await import('../../api/_utils/mailer.js');
+    const mails = __getTestOutbox().filter((m) => m.to === CIT.email && m.category === 'organization-closure');
+    expect(mails).toHaveLength(1);   // three dossiers, two referrals: ONE message
+    expect(mails[0].text).toContain(`Org ${S.A}`); expect(mails[0].text).toContain('2 orientations');
+    expect(mails[0].text).not.toMatch(/Fin de notre activité/);   // never the reason of the closure
+    const ledger = (await db.execute(sql`SELECT action, entity_id AS id, details->>'kind' AS k, details->>'outcome' AS o FROM "AuditLog" WHERE action IN ('REFERRAL_CITIZEN_NOTICE', 'DOSSIER_ACCESS_CITIZEN_NOTICE')
+      AND entity_id LIKE ${'%-' + TS} AND details->>'kind' = 'ORGANIZATION_CLOSED' ORDER BY action, entity_id`)).rows;
+    expect(ledger).toEqual([{ action: 'DOSSIER_ACCESS_CITIZEN_NOTICE', id: DOS, k: 'ORGANIZATION_CLOSED', o: 'TEST_RECORDED' }, { action: 'DOSSIER_ACCESS_CITIZEN_NOTICE', id: DOS3, k: 'ORGANIZATION_CLOSED', o: 'TEST_RECORDED' },
+      { action: 'REFERRAL_CITIZEN_NOTICE', id: `rIn-${TS}`, k: 'ORGANIZATION_CLOSED', o: 'TEST_RECORDED' }, { action: 'REFERRAL_CITIZEN_NOTICE', id: `rSent-${TS}`, k: 'ORGANIZATION_CLOSED', o: 'TEST_RECORDED' }]);
   });
 
   it('after the closure: the person keeps the dossier, the organization data is erased, nobody of the organization gets in, the other organization keeps its work', async () => {

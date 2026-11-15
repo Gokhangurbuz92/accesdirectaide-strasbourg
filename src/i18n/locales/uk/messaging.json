@@ -124,5 +124,6 @@
  "chat.attachment_size": "{{name}} ({{size}} КБ)",
  "chat.attachment_remove": "Прибрати файл",
  "sharing.transparency_failed": "Не вдалося прочитати перебіг цієї справи.",
- "sharing.action_failed": "Не вдалося виконати дію. Спробуйте ще раз."
+ "sharing.action_failed": "Не вдалося виконати дію. Спробуйте ще раз.",
+ "transparency.action_siao_prepared": "підготувала картку передачі для SIAO (AccèsDirectAide нічого не надсилає)"
 }

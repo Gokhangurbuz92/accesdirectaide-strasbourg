@@ -4,14 +4,17 @@ import { requireProAuth, requireProStructureContext } from '../../../_utils/auth
 import { logProAudit } from '../../../_utils/auth.js';
 import { resolveDossierForStructure, projectResultsForStructure } from '../../../_utils/share-access.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 /**
  * Dossier Export API (Pro-only, RGPD)
  *
- * GET /api/pro/dossier/export?shareId=xxx&format=json|csv
+ * GET /api/pro/dossier/export?shareId=xxx&format=json|csv   (any other format: 400)
  *
  * Exports a dossier's data in JSON or CSV format (RGPD data portability).
  * Also logs the export action for audit compliance.
  */
+const EXPORT_FORMATS = ['json', 'csv'];
+
 async function handler(/** @type {import('../../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Méthode non autorisée' });
@@ -28,6 +31,11 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
 
     if (!shareId) {
         return res.status(400).json({ error: 'shareId requis.' });
+    }
+    // A14: only the two formats this route produces (any other value used to be served as JSON and written as is in the audit row). PDF is the printable
+    // recap of the interface (/pro/attestation/:shareId), not a format of this route.
+    if (!EXPORT_FORMATS.includes(format)) {
+        return res.status(400).json({ error: 'INVALID_FORMAT', message: 'Format inconnu : json ou csv.' });
     }
 
     try {
@@ -112,4 +120,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier.export', handler, { action: 'PRO_EXPORT' }));

@@ -93,7 +93,10 @@ describe.skipIf(!hasDatabase)('PKG-4 batch 3 through the real API entry (real DB
   });
 
   it('E07: team stats are the caller organization\'s only; regional aggregates hide communes with < 3 organizations and counts < 5; CSV for administrators only', async () => {
-    const t = await call('GET', '/api/pro/team/stats', { pro: P.pro1 });
+    // A20: the per-member lines are the administrator's; a member reads the global block and their own line
+    const own = await call('GET', '/api/pro/team/stats', { pro: P.pro1 });
+    expect(own.body.members.map((m) => m.id)).toEqual([P.pro1.id]); expect(own.body.global.appointmentsUpcoming).toBe(1);
+    const t = await call('GET', '/api/pro/team/stats', { pro: P.admin });
     expect(t.body.members.map((m) => m.id).sort()).toEqual([P.admin.id, P.pro1.id, P.pro2.id].sort());
     expect(t.body.global.appointmentsUpcoming).toBe(1);
     expect(t.body.members.find((m) => m.id === P.pro1.id).appointmentsCount).toBe(1);

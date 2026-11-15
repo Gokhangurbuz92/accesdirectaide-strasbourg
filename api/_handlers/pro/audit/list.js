@@ -3,6 +3,7 @@ import { db } from '../../../../src/db/index.js';
 import { ProAuditLog } from '../../../../src/db/schema.js';
 import { eq, and, count } from 'drizzle-orm';
 import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../../_utils/auth.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 /**
  * Pro Audit Log — List (G2)
@@ -77,4 +78,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProRole(handler, [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProRole(withProRateLimit('pro.audit.list', handler), [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);

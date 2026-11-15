@@ -124,5 +124,6 @@
  "chat.attachment_size": "{{name}} ({{size}} ك.ب)",
  "chat.attachment_remove": "إزالة الملف",
  "sharing.transparency_failed": "تعذّرت قراءة متابعة هذا الملف.",
- "sharing.action_failed": "تعذّر تنفيذ الإجراء. أعد المحاولة."
+ "sharing.action_failed": "تعذّر تنفيذ الإجراء. أعد المحاولة.",
+ "transparency.action_siao_prepared": "أعدّت بطاقة إحالة إلى SIAO (لا يرسل AccèsDirectAide أي شيء)"
 }

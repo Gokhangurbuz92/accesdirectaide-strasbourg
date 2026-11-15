@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { SkeletonList } from '@/components/ui/skeleton';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { Link, useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,6 +15,7 @@ import SecureChat from '@/components/Messaging/SecureChat';
 import FileVault from '@/components/FileVault';
 import ExpertTools from '@/components/ExpertTools';
 import SiaoHandoverCard from '@/components/pro/SiaoHandoverCard';
+import DossierExportCard from '@/components/pro/DossierExportCard';
 import { takePendingInvite } from '@/lib/pendingInvite';
 import { getCsrfHeaders } from '@/lib/csrf';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
@@ -35,6 +36,10 @@ import {
 } from 'lucide-react';
 import { useT, formatDate } from '@/i18n';
 import { serverText } from '@/lib/serverText';
+import { useCaseLabels } from '@/lib/caseLabelsI18n';
+
+/** A04: the statuses this page may set = the open case statuses (the API refuses anything else; closing needs an outcome, on the case page) */
+const FOLLOW_UP_STATUSES = ['NEW', 'IN_PROGRESS', 'WAITING_CITIZEN', 'WAITING_PARTNER', 'REFERRED'];
 
 /**
  * SharedDossier — Vue Pro d'un diagnostic partagé
@@ -43,7 +48,7 @@ import { serverText } from '@/lib/serverText';
  *
  * - Récupère le diagnostic via /api/pro/dossier?shareId=...
  * - Affiche situation + résultats en lecture seule
- * - Permet de changer le statut de suivi (PATCH)
+ * - Permet de changer le statut de suivi (PATCH) — A04 : c'est le statut du suivi (ProCase), le même que sur /pro/dossiers/:id
  * - Intègre le SecureChat existant (chiffré à l'enregistrement, pas de bout en bout) pour communiquer avec l'usager
  */
 /** R41: dates in the interface language (« 03/11/2026 » in French, as before) */
@@ -60,7 +65,10 @@ export default function SharedDossier() {
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [followUp, setFollowUp] = useState('À traiter');
+    const { caseStatus: CASE_STATUS_LABELS } = useCaseLabels();
+    const [followUp, setFollowUp] = useState('NEW');
+    // A04: what the server says of the case behind this dossier ({ available, caseId, status }); absent on an older answer = shown
+    const [caseInfo, setCaseInfo] = useState(null);
     const [updating, setUpdating] = useState(false);
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [updateProblem, setUpdateProblem] = useState('');
@@ -114,8 +122,8 @@ export default function SharedDossier() {
             setDossier(data.dossier);
             setDocuments(Array.isArray(data.documents) ? data.documents : []);
             setAccess(data.access || null);
-            const savedStatus = data.dossier?.results?._followUp?.status;
-            if (savedStatus) setFollowUp(savedStatus);
+            setCaseInfo(data.followUp || null);
+            if (FOLLOW_UP_STATUSES.includes(data.followUp?.status)) setFollowUp(data.followUp.status);
         } catch {
             setError(t('pro:shared_dossier.load_failed', 'Impossible de charger le dossier.'));
         } finally {
@@ -145,10 +153,12 @@ export default function SharedDossier() {
                 }
             );
             if (res.ok) {
+                const saved = await res.json().catch(() => ({}));
+                if (saved?.caseId) setCaseInfo((c) => ({ available: true, ...(c || {}), caseId: saved.caseId, status: followUp }));
                 setUpdateSuccess(true);   // R43: kept until the status is changed again (it vanished after 3 s, before some people could read it)
             } else {
                 // R7: a refused update is said (it was silent: the person believed the status saved)
-                setUpdateProblem(res.status === 401 ? t('pro:shared_dossier.session_expired', 'Votre session a expiré : reconnectez-vous.') : res.status === 403 || res.status === 404
+                setUpdateProblem(res.status === 409 ? t('pro:shared_dossier.status_conflict', 'Le suivi a changé entre-temps ou est clôturé : rechargez la page.') : res.status === 401 ? t('pro:shared_dossier.session_expired', 'Votre session a expiré : reconnectez-vous.') : res.status === 403 || res.status === 404
                     ? t('pro:shared_dossier.no_longer_shared', 'Ce dossier n’est plus partagé avec votre structure : le statut n’a pas été modifié.') : t('pro:shared_dossier.status_not_saved', 'Le statut n’a pas pu être enregistré. Réessayez.'));
             }
         } catch {
@@ -301,7 +311,8 @@ export default function SharedDossier() {
 
                 {/* Sidebar: Status + Chat */}
                 <div className="space-y-6">
-                    {/* Follow-up status */}
+                    {/* Follow-up status (A04: the case status — hidden while the case follow-up capability is closed) */}
+                    {caseInfo?.available === false ? null : (
                     <Card className="bg-slate-900 text-white border-slate-800">
                         <CardHeader className="pb-3">
                             <CardTitle as="h2" className="text-sm font-bold flex items-center gap-2">
@@ -310,6 +321,9 @@ export default function SharedDossier() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4" aria-busy={updating || undefined}>
+                            {caseInfo?.status === 'CLOSED' ? (
+                                <p className="text-sm" data-testid="dossier-status-closed">{t('pro:shared_dossier.case_closed', 'Suivi clôturé. Pour le rouvrir, ouvrez le suivi du dossier.')}</p>
+                            ) : (<>
                             <div>
                                 <label
                                     htmlFor="dossier-status"
@@ -325,18 +339,11 @@ export default function SharedDossier() {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="À traiter">{t('pro:shared_dossier.status_to_handle', 'À traiter')}</SelectItem>
-                                        <SelectItem value="En cours d'instruction">
-                                            {t('pro:shared_dossier.status_in_review', "En cours d'instruction")}
-                                        </SelectItem>
-                                        <SelectItem value="Besoin de pièces">
-                                            {t('pro:shared_dossier.status_needs_documents', 'Besoin de pièces')}
-                                        </SelectItem>
-                                        <SelectItem value="Dossier validé">
-                                            {t('pro:shared_dossier.status_validated', 'Dossier validé')}
-                                        </SelectItem>
+                                        {FOLLOW_UP_STATUSES.map((code) => <SelectItem key={code} value={code}>{CASE_STATUS_LABELS[code]}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
+                                {/* A04: a status of the support work, never a decision on a right */}
+                                <p className="mt-1.5 text-xs text-slate-300" data-testid="dossier-status-hint">{t('pro:shared_dossier.status_hint', 'Ce statut décrit l’avancement de votre accompagnement. Il ne vaut pas décision sur un droit ou sur une demande.')}</p>
                             </div>
 
                             <Button
@@ -352,6 +359,12 @@ export default function SharedDossier() {
                                 {t('pro:shared_dossier.update', 'Mettre à jour')}
                             </Button>
 
+                            </>)}
+                            {caseInfo?.caseId ? (
+                                <Link to={`/pro/dossiers/${encodeURIComponent(caseInfo.caseId)}`} className="block text-xs font-semibold text-white underline" data-testid="dossier-open-case">
+                                    {t('pro:shared_dossier.open_case', 'Ouvrir le suivi du dossier (notes, historique)')}
+                                </Link>
+                            ) : null}
                             {updateProblem ? <p role="alert" className="text-xs text-red-300" data-testid="dossier-status-problem">{updateProblem}</p> : null}
                             {/* R43 (A5): the result of the save is announced (it was a silent text that disappeared after 3 s) */}
                             <div role="status" aria-live="polite" data-testid="dossier-status-saved">
@@ -363,7 +376,7 @@ export default function SharedDossier() {
                                 )}
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card>)}
 
                     {/* Secure chat */}
                     <Card>
@@ -393,6 +406,9 @@ export default function SharedDossier() {
 
                     {/* R46 / R22: SI-SIAO — disconnected adapter, manual handover sheet only with the person's SIAO consent (PURP-07) */}
                     <SiaoHandoverCard shareId={shareId} siaoAllowed={(access?.purposes || []).includes('PURP-07')} />
+
+                    {/* A14 / R15: export (JSON, CSV, printable recap for PDF) and the organisation's own access trail */}
+                    <DossierExportCard shareId={shareId} userId={user?.id} />
 
                     {/* Security badge */}
                     <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">

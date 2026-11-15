@@ -284,8 +284,13 @@ describe.skipIf(!hasDatabase)('PKG-4 cases and referrals (real DB, four organiza
 
   it('departure: the leaving member loses access at once and their open cases go to the successor; the database refuses bad states', async () => {
     await caseAct(P.admin, { action: 'assign', id: caseId, userId: P.pro2.id });
+    // A03: the departing member's Outlook link (tokens, Outlook address) is deleted with the departure; a colleague's link is untouched
+    for (const p of [P.pro2, P.pro1]) await db.execute(sql`INSERT INTO "ProOutlookToken" (id, "userId", email, "accessTokenEnc", "refreshTokenEnc", iv, "expiresAt", "updatedAt") VALUES (${'ot-' + p.id}, ${p.id}, ${p.id + '@outlook.example.test'}, 'enc-a', 'enc-r', 'iv', NOW() + interval '1 hour', NOW())`);
     const out = await pro(H.team, P.admin, { method: 'DELETE', query: { userId: P.pro2.id, successorUserId: P.pro1.id }, url: `/api/pro/team?userId=${P.pro2.id}&successorUserId=${P.pro1.id}` });
     expect(out.statusCode, JSON.stringify(out.body)).toBe(200); expect(out.body.movedCases).toBe(1);
+    expect((await db.execute(sql`SELECT "userId" FROM "ProOutlookToken" WHERE "userId" IN (${P.pro1.id}, ${P.pro2.id})`)).rows).toEqual([{ userId: P.pro1.id }]);
+    expect((await db.execute(sql`SELECT details->>'outlookLinksErased' AS n FROM "AuditLog" WHERE action = 'USER_DISABLED' AND details->>'targetUserId' = ${P.pro2.id} ORDER BY timestamp DESC LIMIT 1`)).rows[0]?.n).toBe('1');
+    await db.execute(sql`DELETE FROM "ProOutlookToken" WHERE "userId" = ${P.pro1.id}`);
     expect((await db.execute(sql`SELECT "assigneeProUserId" a FROM "ProCase" WHERE id = ${caseId}`)).rows[0].a).toBe(P.pro1.id);
     expect((await cases(P.pro2, {})).statusCode).toBe(403);
     expect((await pro(H.team, P.admin, { method: 'PATCH', body: { targetUserId: P.pro2.id, reactivate: true } })).statusCode).toBe(200);

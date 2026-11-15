@@ -3,6 +3,7 @@ import { requireProAuth, requireProStructureContext, proMfaRequired } from '../.
 import { db } from '../../../src/db/index.js';
 import { ProUser } from '../../../src/db/schema.js';
 import { eq, and } from 'drizzle-orm';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
@@ -46,4 +47,5 @@ async function handler(req, res) {
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.me', handler));

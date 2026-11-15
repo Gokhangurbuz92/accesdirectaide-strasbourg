@@ -1,16 +1,45 @@
 import logger from '../../_utils/logger.js';
 // @ts-nocheck
 import { db } from '../../../src/db/index.js';
-import { SharedDiagnostic } from '../../../src/db/schema.js';
-import { eq, and, gt, sql } from 'drizzle-orm';
+import { ProCase, SharedDiagnostic } from '../../../src/db/schema.js';
+import { eq, and, sql } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import { logProAudit } from '../../_utils/auth.js';
 import { resolveDossierForStructure, activeGrantExists, projectResultsForStructure } from '../../_utils/share-access.js';
+import { CASE_STATUSES, addNote, ensureCase, setStatus } from '../../_services/pro-cases.js';
+import { capabilityOpen, requireCapability } from '../../_utils/capabilities.js';
 import { openText } from '../../lib/data-keys.js';
 import { generateAttachmentToken } from '../../lib/crypto.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 const DOCUMENT_TOKEN_TTL_SECONDS = 60 * 60;
+/** A04: the statuses this page may set — the open case statuses (closing needs an outcome: the case page) */
+const FOLLOW_UP_STATUSES = CASE_STATUSES.filter((x) => x !== 'CLOSED');
+
+/**
+ * A04: the organization's legacy entry in results._followUps (free label + optional note in clear) is retired once the case holds the status. A legacy note is
+ * first moved into a protected INTERNAL case note; if that cannot be done (protected records unavailable, closed case) the legacy entry is left as it is —
+ * a note is never dropped. Only the caller organization's own key is touched. Best effort: the status change is already recorded.
+ * @param {any} shared @param {string} caseId @param {{ structureId: string, userId: string, role: any }} ctx
+ */
+async function retireLegacyFollowUp(shared, caseId, ctx) {
+    const proCtx = ctx; const shareId = String(shared?.id || '');
+    try {
+        const legacy = shared?.results?._followUps?.[ctx.structureId];
+        if (!legacy || typeof legacy !== 'object') return;
+        const note = typeof legacy.internalNote === 'string' ? legacy.internalNote.trim() : '';
+        if (note.length >= 2) {
+            const moved = await addNote(caseId, { visibility: 'INTERNAL', body: `[Note reprise de l’ancien suivi du dossier]\n${note}`.slice(0, 4000) }, ctx);
+            if (!moved.ok) return;
+        }
+        // the only write this route still makes to the dossier JSON: like every write path, grant AND active membership are re-checked inside the statement
+        await db.update(SharedDiagnostic).set({ results: sql`${SharedDiagnostic.results} #- ARRAY['_followUps', ${ctx.structureId}::text]` })
+            .where(and(eq(SharedDiagnostic.id, shareId), activeGrantExists(shareId, proCtx)));
+    } catch (err) {
+        logger.warn({ err: { name: /** @type {any} */ (err)?.name } }, '[Pro Dossier] legacy follow-up not retired');
+    }
+}
 
 /**
  * DTA S8: the organization's own uploaded documents as a safe LIST (id, decrypted name, type, size, date, one-hour download capability bound to this dossier + file).
@@ -38,7 +67,8 @@ export function documentsOf(results, shareId, memberId = null) {
  * Pro Dossier Handler  (RC5: structure-scoped)
  *
  * GET /api/pro/dossier?shareId=...  — Retrieve a shared diagnostic the CALLER'S STRUCTURE holds an active grant on (see POST /api/pro/dossier/redeem)
- * PATCH /api/pro/dossier?shareId=... — Update the caller structure's own follow-up status / note
+ * PATCH /api/pro/dossier?shareId=... — A04: set the follow-up status = the organization's CASE status (same rule and history as POST /api/pro/cases
+ *   { action: 'status' }); an `internalNote` is refused (notes live in the protected case notes)
  *
  * A pro session + a shareId is not authorization: no grant (or revoked grant) answers the same 404 as an unknown id. Follow-up notes and uploaded files are
  * per structure; one structure never reads another structure's notes or files.
@@ -81,6 +111,13 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 viewCount: shared.viewCount + 1,
             }, clientIp(req));
 
+            // A04: the one follow-up status shown on this page is the case status (read only here; null while no case exists or the capability is closed)
+            /** @type {{ available: boolean, caseId: string | null, status: string | null }} */
+            const followUp = { available: capabilityOpen('pro.case_management'), caseId: null, status: null };
+            if (followUp.available) {
+                const [c] = await db.select({ id: ProCase.id, status: ProCase.status }).from(ProCase).where(and(eq(ProCase.sharedDiagnosticId, shareId), eq(ProCase.structureId, structureId))).limit(1);
+                if (c) { followUp.caseId = c.id; followUp.status = c.status; }
+            }
             const projected = projectResultsForStructure(shared.results, structureId);
             const documents = documentsOf(projected, shareId, userId);
             delete projected._files;
@@ -88,6 +125,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             return res.status(200).json({
                 ok: true,
                 documents,
+                followUp,
                 dossier: {
                     id: shared.id,
                     createdAt: shared.createdAt,
@@ -102,56 +140,43 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         }
 
         if (req.method === 'PATCH') {
-            const { status, internalNote } = req.body || {};
-
-            if (!status) {
-                return res.status(400).json({ error: 'Le champ status est requis.' });
-            }
-            // R18: a short label and a bounded note (the screen offers four labels; anything else was stored verbatim, of any type and size)
-            if (typeof status !== 'string' || status.length > 80 || (internalNote != null && (typeof internalNote !== 'string' || internalNote.length > 4000))) {
-                return res.status(400).json({ error: 'Statut ou note invalide.' });
-            }
-
-            const found = await resolveDossierForStructure(shareId, proCtx, { id: true, expiresAt: true });
+            // A04 — ONE follow-up status: the case status (ProCase, with its history, the one the person's view reads). Before, this route wrote an unrelated free label
+            // into the person's dossier JSON (results._followUps), with an optional internal note stored in clear there, outside the protected-records boundary.
+            const body = req.body || {};
+            const found = await resolveDossierForStructure(shareId, proCtx);
             if (found.status === 'not_found') {
                 return res.status(404).json({ error: 'Dossier introuvable.' });
             }
             if (found.status === 'expired') {
                 return res.status(410).json({ error: 'Ce dossier a expiré.' });
             }
-
-            const entry = JSON.stringify({
-                status,
-                internalNote: internalNote || null,
-                updatedAt: new Date().toISOString(),
-                updatedBy: userId,
-            });
-
-            // One atomic statement: writes ONLY results._followUps.<caller structure> (a concurrent upload's _files or another structure's note is never overwritten),
-            // and only while the dossier is unexpired AND the grant is still active (closes expiry / revocation races).
-            const updatedRows = await db.update(SharedDiagnostic)
-                .set({
-                    results: sql`jsonb_set(
-                        jsonb_set(coalesce(${SharedDiagnostic.results}, '{}'::jsonb), '{_followUps}',
-                            CASE WHEN jsonb_typeof(${SharedDiagnostic.results}->'_followUps') = 'object' THEN ${SharedDiagnostic.results}->'_followUps' ELSE '{}'::jsonb END, true),
-                        ARRAY['_followUps', ${structureId}::text], ${entry}::jsonb, true)`,
-                })
-                .where(and(
-                    eq(SharedDiagnostic.id, shareId),
-                    gt(SharedDiagnostic.expiresAt, new Date()),
-                    activeGrantExists(shareId, proCtx),
-                ))
-                .returning({ id: SharedDiagnostic.id });
-            if (!updatedRows.length) {
+            if (body.internalNote !== undefined && body.internalNote !== null) {
+                return res.status(400).json({ error: 'INTERNAL_NOTE_NOT_ACCEPTED', message: 'Les notes internes s’écrivent dans le suivi du dossier (notes protégées), pas ici. Rien n’a été enregistré.' });
+            }
+            const status = body.status;
+            if (typeof status !== 'string' || !FOLLOW_UP_STATUSES.includes(status)) {
+                return res.status(400).json({ error: 'INVALID_STATUS', message: 'Statut inconnu. Pour clôturer un dossier, indiquez un résultat depuis le suivi du dossier.' });
+            }
+            // the case follow-up is a capability of its own (outside the AIPD): this route never opens it by the back door
+            if (!requireCapability(res, 'pro.case_management')) return undefined;
+            const c = await ensureCase(shareId, proCtx);
+            if (!c) {
                 return res.status(404).json({ error: 'Dossier introuvable.' });
             }
+            /** @type {any} */
+            const out = await setStatus(c.id, status, proCtx);
+            if (out.ok === false) {
+                return res.status(out.status || 400).json({ error: out.code, message: out.message });
+            }
+            await retireLegacyFollowUp(found.shared, c.id, proCtx);
 
             await logProAudit('DOSSIER_STATUS_UPDATED', userId, structureId, {
                 shareId,
+                caseId: c.id,
                 status,
             }, clientIp(req));
 
-            return res.status(200).json({ ok: true, status });
+            return res.status(200).json({ ok: true, status, caseId: c.id });
         }
 
         return res.status(405).json({ error: 'Méthode non autorisée' });
@@ -161,4 +186,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier', handler));

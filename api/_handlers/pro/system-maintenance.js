@@ -5,6 +5,7 @@ import { SharedDiagnostic, AuditLog, ProUser } from '../../../src/db/schema.js';
 import { count } from 'drizzle-orm';
 import { requireProRole } from '../../_utils/auth.js';
 import crypto from 'crypto';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 /**
  * System Maintenance API (Pro — Admin only)
  *
@@ -87,4 +88,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // DTA S1D: SUPERADMIN only. BACKUP returns platform-wide totals (all dossiers, audit entries and professional users of every organization): a STRUCTURE_ADMIN must not read cross-organization numbers.
-export default requireProRole(handler, ['superadmin']);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProRole(withProRateLimit('pro.maintenance', handler), ['superadmin']);

@@ -17,7 +17,8 @@ describe('PKG-11 / E08 organization closure', () => {
   });
   it('never physically deletes what the people, the other organizations or the audit trail hold', () => {
     const deletes = [...svc.matchAll(/DELETE FROM "(\w+)"/g)].map((m) => m[1]).sort();
-    expect(deletes).toEqual(['AiOutputReview', 'Invitation', 'ProCaseNote', 'ProNotification']);
+    expect(deletes).toEqual(['AiOutputReview', 'Invitation', 'ProCaseNote', 'ProNotification', 'ProOutlookToken']);   // A03: the members' Outlook tokens are the organization's own secret
+    expect(svc).toMatch(/DELETE FROM "ProOutlookToken" WHERE "userId" IN \(SELECT id FROM "ProUser" WHERE "structureId" = \$\{sid\}\)/);
     expect(svc).toMatch(/DELETE FROM "ProCaseNote" WHERE "structureId" = \$\{sid\} AND visibility = 'INTERNAL'/);
     for (const t of ['Structure', 'ProUser', 'ProAuditLog', 'Referral', 'SharedDiagnostic', 'SharedDossierThread', 'SharedDossierMessage', 'ConsentLog']) expect(deletes).not.toContain(t);
   });

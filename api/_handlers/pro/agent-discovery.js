@@ -24,6 +24,7 @@ const AGENT_TIMEOUT_MS = 30_000;
 
 import { getGenAI } from '../../lib/gemini.js';
 import { withCapability } from '../../_utils/capabilities.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
     // PKG-11 audit: a disabled or moved account keeps a « revoked » context that belongs to no organization; this route acts on the user alone, so it refuses it
@@ -153,4 +154,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
-export default withCapability('ai.processing', requireProAuth(handler));
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default withCapability('ai.processing', requireProAuth(withProRateLimit('pro.agent.discovery', handler, { action: 'PRO_AI', methods: ['POST'] })));

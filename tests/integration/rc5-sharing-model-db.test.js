@@ -53,6 +53,9 @@ describe.skipIf(!hasDatabase)('RC5 product sharing model (real DB)', () => {
   const redeem = (u, s, inviteToken) => invoke(H.redeem, { method: 'POST', url: '/api/pro/dossier/redeem', body: { shareId: s.id, inviteToken }, headers: pro(u) });
   /** share + invite + redeem for one organization */
   const grantTo = async (s, u) => { expect((await redeem(u, s, await invite(s, u.sid))).statusCode).toBe(200); };
+  /** A04: a LEGACY per-organization follow-up entry, as the retired PATCH used to write it (results._followUps.<structure>) */
+  const legacyFollowUp = (s, structureId, entry) => db.execute(sql`UPDATE "SharedDiagnostic" SET results = jsonb_set(jsonb_set(coalesce(results, '{}'::jsonb), '{_followUps}',
+    CASE WHEN jsonb_typeof(results->'_followUps') = 'object' THEN results->'_followUps' ELSE '{}'::jsonb END, true), ARRAY['_followUps', ${structureId}::text], ${JSON.stringify(entry)}::jsonb, true) WHERE id = ${s.id}`);
   const getDossier = (u, s) => invoke(H.dossier, { url: `/api/pro/dossier?shareId=${s.id}`, headers: pro(u) });
   const snap = async (id) => {
     const n = async (q) => (await db.execute(q)).rows[0].n;
@@ -192,8 +195,12 @@ describe.skipIf(!hasDatabase)('RC5 product sharing model (real DB)', () => {
 
   it('REMOVE ONE ORGANIZATION: the others are untouched, notes/files stay per organization, a removed organization cannot return with its old invitation, only with a NEW one from the owner', async () => {
     const s = await newShare(); await grantTo(s, PA1); await grantTo(s, PB);
-    await invoke(H.dossier, { method: 'PATCH', url: `/api/pro/dossier?shareId=${s.id}`, body: { status: 'A', internalNote: 'note-of-A' }, headers: pro(PA1) });
-    await invoke(H.dossier, { method: 'PATCH', url: `/api/pro/dossier?shareId=${s.id}`, body: { status: 'B', internalNote: 'note-of-B' }, headers: pro(PB) });
+    // A04: the route no longer writes a note into the dossier JSON (refused, nothing stored); the per-organization isolation is still proven on LEGACY entries
+    const refusedNote = await invoke(H.dossier, { method: 'PATCH', url: `/api/pro/dossier?shareId=${s.id}`, body: { status: 'IN_PROGRESS', internalNote: 'note-of-A' }, headers: pro(PA1) });
+    expect([refusedNote.statusCode, refusedNote.body.error]).toEqual([400, 'INTERNAL_NOTE_NOT_ACCEPTED']);
+    expect(JSON.stringify((await db.execute(sql`SELECT results FROM "SharedDiagnostic" WHERE id = ${s.id}`)).rows[0].results)).not.toContain('note-of-A');
+    await legacyFollowUp(s, SA, { status: 'A', internalNote: 'note-of-A' });
+    await legacyFollowUp(s, SB, { status: 'B', internalNote: 'note-of-B' });
     expect(JSON.stringify((await getDossier(PA1, s)).body)).not.toContain('note-of-B'); expect(JSON.stringify((await getDossier(PB, s)).body)).not.toContain('note-of-A');
     expect(JSON.stringify((await invoke(H.exp, { url: `/api/pro/dossier/export?shareId=${s.id}&format=json`, headers: pro(PA1) })).body)).not.toContain('note-of-B');
     expect((await own(s, 'revoke', { structureId: SB })).statusCode).toBe(200);
@@ -240,7 +247,7 @@ describe.skipIf(!hasDatabase)('RC5 product sharing model (real DB)', () => {
     expect((await proConsent(['PURP-05'])).statusCode).toBe(400); expect((await proConsent(['PURP-99'])).statusCode).toBe(400);                    // a professional cannot grant AI
     expect((await proConsent(['PURP-06'])).statusCode).toBe(200); expect((await synth(PA1)).statusCode).toBe(403);                                // nor does an in-person sharing confirmation
     expect(spies.ai).toBe(0);
-    await invoke(H.dossier, { method: 'PATCH', url: `/api/pro/dossier?shareId=${s.id}`, body: { status: 'S', internalNote: 'private-note-B' }, headers: pro(PB) });
+    await legacyFollowUp(s, SB, { status: 'S', internalNote: 'private-note-B' });
     expect((await own(s, 'set_purposes', { structureId: SA, purposes: ['PURP-99'] })).statusCode).toBe(400);
     expect((await own(s, 'set_purposes', { structureId: SC, purposes: ['PURP-06', 'PURP-05'] })).statusCode).toBe(404);                           // an organization without a grant cannot be given AI
     expect((await own(s, 'set_purposes', { structureId: SA, purposes: ['PURP-06', 'PURP-05'] })).statusCode).toBe(200);

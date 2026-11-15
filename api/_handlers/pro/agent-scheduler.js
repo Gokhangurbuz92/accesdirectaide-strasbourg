@@ -4,6 +4,7 @@ import { ReviewQueueItem, AuditLog } from '../../../src/db/schema.js';
 import { requireProAuth } from '../../_utils/auth.js';
 import { discoverByCategory } from '../../lib/ai-discovery-core.js';
 import { withCapability } from '../../_utils/capabilities.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 /**
  * Agent Scheduler API (Pro-only)
@@ -108,4 +109,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
-export default withCapability('ai.processing', requireProAuth(handler));
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default withCapability('ai.processing', requireProAuth(withProRateLimit('pro.agent.scheduler', handler, { action: 'PRO_AI', methods: ['POST'] })));

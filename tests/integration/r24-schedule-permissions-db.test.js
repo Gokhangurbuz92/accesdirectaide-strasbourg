@@ -70,7 +70,8 @@ describe.skipIf(!hasDatabase)('R24 schedule permissions (real DB)', () => {
     expect((await off(ANNA, 'PATCH', { id, reason: 'Formation (déplacée)' })).statusCode).toBe(200);
     const seen = (await off(BRUNO, 'GET')).body;
     expect(seen.canManageOthers).toBe(false); expect(seen.members, 'only schedule managers get the member list').toEqual([]);
-    expect(seen.items).toEqual([expect.objectContaining({ id, scope: 'member', memberEmail: ANNA.email, mine: false, canEdit: false, reason: 'Formation (déplacée)' })]);
+    // A21: the team sees the absence and its dates; the reason stays with the member and the schedule managers
+    expect(seen.items).toEqual([expect.objectContaining({ id, scope: 'member', memberEmail: ANNA.email, mine: false, canEdit: false, reason: null, reasonWithheld: true })]);
     expect((await off(BRUNO, 'PATCH', { id, reason: 'x' })).statusCode, 'a colleague cannot edit it').toBe(403);
     expect((await off(BRUNO, 'DELETE', undefined, id)).statusCode, 'nor cancel it').toBe(403);
     expect((await off(BRUNO, 'POST', { startAt: at(3, 8), endAt: at(3, 9), scope: 'structure' })).statusCode, 'nor close the structure').toBe(403);
