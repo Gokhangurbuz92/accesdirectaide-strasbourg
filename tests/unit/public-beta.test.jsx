@@ -29,9 +29,10 @@ describe('server allowlist', () => {
       'diagnostic', 'pdf/x', 'download', 'health/deeper', 'aidesx', 'monitor/csp-report'])
       expect(isAllowedInPublicBeta('GET', p), p).toBe(false);
     for (const m of ['POST', 'PUT', 'PATCH', 'DELETE']) expect(isAllowedInPublicBeta(m, 'aides'), m).toBe(false);
-    // the citizen searches read only, through a POST body; nothing else is written
+    // the citizen search reads only, through a POST body; nothing else is written
     expect(isAllowedInPublicBeta('POST', 'search')).toBe(true);
-    expect(isAllowedInPublicBeta('POST', 'search-pro')).toBe(true);
+    // A-4: the second search lost its only page (/trouver-aide → /besoins): no caller in the beta, so it is closed like every unlisted route
+    expect(isAllowedInPublicBeta('POST', 'search-pro')).toBe(false);
     expect(isAllowedInPublicBeta('PUT', 'search')).toBe(false);
   });
   it('R36: the PDF of a published aide or démarche is public information (GET only); every other document path stays closed', () => {
