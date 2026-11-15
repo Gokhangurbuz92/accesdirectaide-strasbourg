@@ -24,6 +24,7 @@ vi.mock('../../api/lib/notification-privacy.js', async (importOriginal) => {
   return { ...orig, resolveNotificationPrivacy: (record, deps = {}) => orig.resolveNotificationPrivacy(record, { resolveSensitivity: deps?.resolveSensitivity || (() => 'ordinary') }) };
 });
 vi.mock('../../api/_utils/pipelineLock.js', () => ({ withLock: async (_name, fn) => fn() }));   // the cron's distributed lock is infrastructure (KV), not under test here
+vi.mock('../../api/_utils/pro-rdv-rate-limit.js', () => ({ enforceProRdvRateLimit: vi.fn().mockResolvedValue({ allowed: true }) }));   // A23: the Outlook routes now carry the tenant quota (KV-backed = infrastructure, tested in tests/unit/pb-pro-rate-limits.test.js)
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 
 const hasDatabase = !!process.env.DATABASE_URL;
