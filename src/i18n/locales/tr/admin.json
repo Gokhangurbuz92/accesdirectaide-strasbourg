@@ -1732,7 +1732,7 @@
  "k5.security.alert.mfa": "Reddedilen MFA kodlarında ani artış",
  "k5.security.alert.export": "Olağan dışı veri dışa aktarımları",
  "k5.security.title": "Güvenlik sinyalleri",
- "k5.security.intro": "Sağlık kontrolü (her 5 dakikada bir) denetim günlüğünü okur ve bir eşiğe ulaşıldığında uyarı kanalı üzerinden uyarı gönderir. Burada yalnızca sayılar gösterilir: adres yok, e-posta yok.",
+ "k5.security.intro": "Sağlık kontrolü (saatte bir) denetim günlüğünü okur ve bir eşiğe ulaşıldığında uyarı kanalı üzerinden uyarı gönderir. Burada yalnızca sayılar gösterilir: adres yok, e-posta yok.",
  "k5.security.loading": "Yükleniyor…",
  "k5.security.not_loaded": "Sinyaller yüklenemedi: {{why}}",
  "k5.security.retry": "Tekrar deneyin",

@@ -15,16 +15,16 @@ const counts = (o = {}) => ({ thresholds: securityThresholds({}), failedLogins: 
 
 describe('Q07 security signals', () => {
   it('thresholds: defaults, valid overrides, invalid values ignored', () => {
-    expect(securityThresholds({})).toEqual({ windowMinutes: 15, failedLogins: 30, mfaFailures: 10, exportsPerHour: 20, exportsPerActorPerHour: 8 });
+    expect(securityThresholds({})).toEqual({ windowMinutes: 70, failedLogins: 30, mfaFailures: 10, exportsPerHour: 20, exportsPerActorPerHour: 8 });
     expect(securityThresholds({ ALERT_FAILED_LOGIN_BURST: '5', ALERT_SECURITY_WINDOW_MINUTES: '60' })).toMatchObject({ failedLogins: 5, windowMinutes: 60 });
-    expect(securityThresholds({ ALERT_FAILED_LOGIN_BURST: '0', ALERT_MFA_FAILURE_BURST: 'x', ALERT_SECURITY_WINDOW_MINUTES: '99999' })).toMatchObject({ failedLogins: 30, mfaFailures: 10, windowMinutes: 15 });
+    expect(securityThresholds({ ALERT_FAILED_LOGIN_BURST: '0', ALERT_MFA_FAILURE_BURST: 'x', ALERT_SECURITY_WINDOW_MINUTES: '99999' })).toMatchObject({ failedLogins: 30, mfaFailures: 10, windowMinutes: 70 });
   });
   it('no alert under the thresholds; one per signal at the threshold, in French, counts only', () => {
     expect(evaluateSecuritySignals(counts())).toEqual([]);
     const a = evaluateSecuritySignals(counts({ failedLogins: { count: 30, sources: 4, byAction: { LOGIN_FAILED: 30 } }, mfaFailures: { count: 10, sources: 1, actors: 1, byAction: { ADMIN_MFA_FAILED: 10 } },
       exports: { count: 2, actors: 1, maxPerActor: 8, byAction: { AUDIT_EXPORTED: 2 } } }));
     expect(a.map((x) => x.name)).toEqual(['security.failed_login_burst', 'security.mfa_failure_burst', 'security.export_burst']);
-    expect(a[0].message).toMatch(/^Sécurité : 30 connexions refusées en 15 minutes \(seuil 30\), depuis 4 source\(s\)/);
+    expect(a[0].message).toMatch(/^Sécurité : 30 connexions refusées en 70 minutes \(seuil 30\), depuis 4 source\(s\)/);
     expect(JSON.stringify(a)).not.toMatch(/@/);
   });
   it('the citizen refusal row carries no identifier and never throws', async () => {

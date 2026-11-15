@@ -12,7 +12,7 @@ import { randomUUID } from 'crypto';
 import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 import { env } from '../../_utils/env.js';
 import { recentMailEventCounts } from '../../_services/mail-events.js';
-import { securitySignalCounts, evaluateSecuritySignals } from '../../_services/security-signals.js';
+import { securitySignalCounts, evaluateSecuritySignals, nextSecurityCheckState } from '../../_services/security-signals.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -30,7 +30,7 @@ import { securitySignalCounts, evaluateSecuritySignals } from '../../_services/s
  *
  * Anti-spam: same alert type suppressed for 1 hour via KV.
  *
- * Schedule: hourly at minute 7 (vercel.json). V2: Neon Free suspends its compute after 5 idle minutes (fixed); a 5-minute check kept it awake around the clock (≥ 180 CU-h/month against the 100 CU-h allowance)
+ * Schedule: hourly at minute 7 (vercel.json; the security look-back follows it — RA-01). V2: Neon Free suspends its compute after 5 idle minutes (fixed); a 5-minute check kept it awake around the clock (≥ 180 CU-h/month against the 100 CU-h allowance)
  * Auth: CRON_SECRET or Vercel cron UA
  */
 
@@ -42,6 +42,9 @@ const MAIL_BOUNCE_BURST_PER_HOUR = 10;
 /** R8: a KV call never holds the check (an unreachable KV retried for tens of seconds: the 5-minute check, and its alerts, stalled behind it) */
 const KV_TIMEOUT_MS = 3000;
 const bounded = (p) => Promise.race([p, new Promise((_, reject) => setTimeout(() => reject(new Error('KV timeout')), KV_TIMEOUT_MS))]);
+/** RA-01: what the previous security check left — { lastCheckAt, alertedThrough: { signal: ISO } }, timestamps only (api/_services/security-signals.js) */
+export const SECURITY_STATE_KEY = 'health-alert:security:state';
+const SECURITY_STATE_TTL_SECONDS = 2 * 24 * 3600;
 
 
 /**
@@ -49,7 +52,10 @@ const bounded = (p) => Promise.race([p, new Promise((_, reject) => setTimeout(()
  * @param {string} message
  * @param {Record<string, any>} details
  */
-async function fireAlert(name, message, details = {}) {
+async function fireAlert(name, message, details = {}) { return (await fireAlertDetailed(name, message, details)).fired; }
+
+/** @returns {Promise<{ fired: boolean, kept: boolean }>} fired: the alert was sent to the channels; kept: its cooldown stands (false = a delivery failed and the next check sends it again) */
+async function fireAlertDetailed(name, message, details = {}) {
     const alertKey = `alert:cooldown:${name}`;
 
     // Anti-spam: this alert type at most once per cooldown. R8: the cooldown lives in KV — when KV itself is unreachable the alert is still delivered (no
@@ -59,8 +65,9 @@ async function fireAlert(name, message, details = {}) {
     try { first = (await bounded(kv.set(alertKey, Date.now(), { ex: ALERT_COOLDOWN_SECONDS, nx: true }))) === 'OK'; } catch (err) { logger.warn({ err: err?.message }, '[HEALTH-ALERT] cooldown store unreachable: alert sent without cooldown'); }
     if (!first) {
         logger.info({ name }, '[HEALTH-ALERT] Alert suppressed (cooldown active)');
-        return false;
+        return { fired: false, kept: false };
     }
+    let kept = true;
 
     const alert = {
         name,
@@ -94,6 +101,7 @@ async function fireAlert(name, message, details = {}) {
         } catch (err) {
             // R12: not delivered — the cooldown is given back so the next check (5 minutes later) tries again instead of staying silent for an hour
             logger.warn({ err: err?.message }, '[HEALTH-ALERT] Webhook delivery failed');
+            kept = false;
             try { await bounded(kv.del(alertKey)); } catch { /* KV down: no cooldown was taken either */ }
         }
     }
@@ -104,7 +112,7 @@ async function fireAlert(name, message, details = {}) {
         const r = await sendMail({ to: alertEmail, subject: `[AccesDirectAide] Alerte : ${name}`, text: `${message}\n\n${JSON.stringify(details, null, 2)}\n\n${alert.timestamp}`, category: 'ops-alert' }).catch(() => null);
         if (!r || r.outcome !== 'PROVIDER_ACCEPTED') {
             logger.warn({ outcome: r?.outcome || 'ERROR' }, '[HEALTH-ALERT] e-mail alert not accepted by the provider');
-            if (!webhookUrl) { try { await bounded(kv.del(alertKey)); } catch { /* KV down: no cooldown was taken either */ } }
+            if (!webhookUrl) { kept = false; try { await bounded(kv.del(alertKey)); } catch { /* KV down: no cooldown was taken either */ } }
         }
     }
 
@@ -119,7 +127,7 @@ async function fireAlert(name, message, details = {}) {
     }
 
     logger.error({ alert }, '[HEALTH-ALERT] Alert fired');
-    return true;
+    return { fired: true, kept };
 }
 
 /**
@@ -280,12 +288,22 @@ export default async function handler(req, res) {
     // Check 7 (R46 / Q07): security signals from the audit trail — bursts of refused sign-ins (every surface), of refused MFA codes, and unusual exports of
     // personal or audit data (all actors in one hour, or one actor). Counts only; thresholds ALERT_FAILED_LOGIN_BURST, ALERT_MFA_FAILURE_BURST,
     // ALERT_EXPORT_BURST, ALERT_EXPORT_PER_ACTOR, ALERT_SECURITY_WINDOW_MINUTES (api/_services/security-signals.js). Read-only.
+    // RA-01: the check is hourly. The page figures (`c`) are the sliding window (default: the interval + an overlap); the ALERT decision uses the same query
+    // bounded by the state of the previous check — extended back to it when a run was late or skipped (nothing missed), and starting after the last
+    // delivered alert of each signal (nothing alerted twice). KV unreachable: no state, the sliding window alone, still longer than the interval.
     try {
-        const c = await securitySignalCounts({ db });
-        const alerts = evaluateSecuritySignals(c);
-        checks.security = { ok: alerts.length === 0, failedLogins: c.failedLogins.count, mfaFailures: c.mfaFailures.count, exports: c.exports.count, exportsMaxPerActor: c.exports.maxPerActor,
-            windowMinutes: c.thresholds.windowMinutes, thresholds: c.thresholds, raised: alerts.map((a) => a.name) };
-        for (const a of alerts) { if (await fireAlert(a.name, a.message, a.details)) alertCount++; }
+        const now = new Date();
+        let state = null;
+        try { state = (await bounded(kv.get(SECURITY_STATE_KEY))) || null; } catch (err) { logger.warn({ err: err?.name || 'Error' }, '[HEALTH-ALERT] security check state unreadable: sliding window only'); }
+        const c = await securitySignalCounts({ db, now });
+        const fresh = state ? await securitySignalCounts({ db, now, state }) : c;
+        const alerts = evaluateSecuritySignals(fresh);
+        checks.security = { ok: alerts.length === 0 && evaluateSecuritySignals(c).length === 0, failedLogins: c.failedLogins.count, mfaFailures: c.mfaFailures.count, exports: c.exports.count, exportsMaxPerActor: c.exports.maxPerActor,
+            windowMinutes: c.thresholds.windowMinutes, thresholds: c.thresholds, raised: alerts.map((a) => a.name),
+            sinceLastAlert: { failedLogins: fresh.failedLogins.count, mfaFailures: fresh.mfaFailures.count, exports: fresh.exports.count } };
+        const delivered = [];
+        for (const a of alerts) { const r = await fireAlertDetailed(a.name, a.message, a.details); if (r.fired) alertCount++; if (r.fired && r.kept) delivered.push(a.signal); }
+        try { await bounded(kv.set(SECURITY_STATE_KEY, nextSecurityCheckState({ now, previous: state, delivered }), { ex: SECURITY_STATE_TTL_SECONDS })); } catch { /* KV down: the next check uses the sliding window */ }
     } catch (err) {
         checks.security = { ok: false, error: err?.name || 'Error' };
     }

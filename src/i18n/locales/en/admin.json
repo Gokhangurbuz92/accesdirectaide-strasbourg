@@ -1732,7 +1732,7 @@
  "k5.security.alert.mfa": "Burst of refused MFA codes",
  "k5.security.alert.export": "Unusual data exports",
  "k5.security.title": "Security signals",
- "k5.security.intro": "The health check (every 5 minutes) reads the audit log and sends an alert through the alert channel when a threshold is reached. Only numbers are shown here: no address, no e-mail.",
+ "k5.security.intro": "The health check (every hour) reads the audit log and sends an alert through the alert channel when a threshold is reached. Only numbers are shown here: no address, no e-mail.",
  "k5.security.loading": "Loading…",
  "k5.security.not_loaded": "Signals not loaded: {{why}}",
  "k5.security.retry": "Try again",
