@@ -9,7 +9,7 @@ import {
     LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
-import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
+import { getCronAuth } from '../../_utils/cronAuth.js';
 import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
 import * as Sentry from '@sentry/node';
@@ -651,7 +651,7 @@ export function createGdprPurgeHandler(deps = {}) {
         // RA-03: a run record around the purge (runGdprPurge is unchanged; a dry run still changes no data of a person) — the mode, the gate reason, step ids
         // and counts per step only, exactly what the dry run already logs; never a value or an identifier
         const startedAtMs = Date.now();
-        const cronRunId = await startCronRun(defaultDb, 'gdpr-purge', { trigger: scheduledByVercel(req) ? 'vercel-cron' : 'manual' });
+        const cronRunId = await startCronRun(defaultDb, 'gdpr-purge', { trigger: dryRunRequested ? 'cron-dry-run-requested' : 'cron' });
         try {
             const { status, body } = await runGdprPurge({ policy: deps.policy ?? RETENTION_POLICY, dryRunRequested });
             await finishCronRun(defaultDb, cronRunId, purgeRunRecord(status, body, startedAtMs));

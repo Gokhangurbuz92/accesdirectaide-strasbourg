@@ -4,7 +4,7 @@ import { useK5 } from './helpers.js';
 import { useT, formatDateTime } from '@/i18n';
 
 /**
- * R46 / Q07 — « Signaux de sécurité » (/admin/securite): what the hourly health check watches in the audit trail — refused sign-ins, refused MFA codes,
+ * R46 / Q07 — « Signaux de sécurité » (/admin/securite): what the 5-minute health check watches in the audit trail — refused sign-ins, refused MFA codes,
  * exports of personal or audit data — as counts with their thresholds, the alerts they call for now, and the security alerts already sent through the alert
  * channel. Aggregates only (GET /api/admin/security-signals): no address, no e-mail.
  */

@@ -51,7 +51,7 @@ describe.skipIf(!hasDatabase)('RA-03 run records and per-job health (real DB)', 
       const r = await rows(job);
       expect(r, job).toHaveLength(1);
       expect(['success', 'partial'], job).toContain(r[0].status);
-      expect(r[0].finishedAt, job).toBeTruthy(); expect(r[0].durationMs, job).toBeGreaterThanOrEqual(0); expect(r[0].trigger).toBe('manual');
+      expect(r[0].finishedAt, job).toBeTruthy(); expect(r[0].durationMs, job).toBeGreaterThanOrEqual(0); expect(r[0].trigger).toBe(job === 'gdpr-purge' ? 'cron' : 'manual');
       const leaves = []; (function walk(v) { if (v && typeof v === 'object') Object.values(v).forEach(walk); else leaves.push(v); })(r[0].metrics);
       expect(JSON.stringify(r[0].metrics), job).not.toMatch(/@|\+33|\b0[1-9](\s?\d{2}){4}\b/);
       for (const v of leaves) expect(['number', 'boolean', 'string', 'undefined'].includes(typeof v) || v === null).toBe(true);
