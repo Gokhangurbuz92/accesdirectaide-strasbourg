@@ -18,14 +18,18 @@ Elle vérifie aussi que l'identité de l'éditeur est complète dans les pages l
 La liste des variables, avec les marqueurs `[REQUIRED-PROD]` / `[FORBIDDEN-PROD]`, est dans `.env.example` (noms seulement, jamais de valeur).
 Un administrateur connecté voit la même liste de contrôles manquants dans `/api/health/deep` (`config.failing`, identifiants seulement).
 
-## 2. Chaîne de déploiement (GitHub Actions)
+## 2. Chaîne de déploiement
 
-1. **Pull request** → CI : lint, typecheck, tests, build ; gitleaks (archive vérifiée par SHA-256) ; Semgrep (image épinglée par digest) ;
-   check-artifacts. Il n'y a plus de fusion automatique.
-2. **Fusion sur `main`** → `deploy.yml` ne démarre que lorsque le CI de ce même commit a réussi. Il tourne dans l'environnement GitHub
-   `production` (approbation requise) avec une version épinglée de Vercel CLI (`vars.VERCEL_CLI_VERSION`). Les tests de fumée sont bloquants.
-3. **Migrations** → `db-migrate-deploy.yml` : `drizzle-kit migrate`, jamais `push`. `push` contournerait les déclencheurs des tables en ajout
-   seul : registre des décisions, preuves de consentement, journaux. Staging d'abord, puis production après approbation.
+1. **CI GitHub** (`.github/workflows/ci.yml`, seul flux du dépôt) à chaque push et pull request sur `main` : lint, typecheck, bases de référence strictes
+   (TypeScript et ESLint), porte unitaire (`scripts/unit-gate.mjs`), audit des dépendances de production, configuration de l'éditeur légal, build ; et une
+   analyse des secrets (gitleaks, version et SHA-256 épinglés, tâche `secret-scan`). Le CI ne déploie jamais. Les suites d'intégration, de migration et de
+   bout en bout n'y tournent pas : elles sont couvertes par le QA natif exigé à l'étape 2.
+2. **Mise en production** : `QA_SUMMARY=<SUMMARY.json> scripts/release-production.sh <sha>` depuis un clone propre lié au projet Vercel (les déploiements
+   par git sont désactivés, `vercel.json` `git.deploymentEnabled: false`). Le script exige : le SHA en tête de `origin/main`, la preuve QA native de ce SHA
+   et de cet arbre, l'analyse des secrets (`scripts/release-guard.mjs`), le CI réussi, la porte locale ; il déploie, attend que la production serve
+   `x-release-sha = <sha>`, lance le test de fumée et revient seul à la version précédente en cas d'échec (`docs/runbooks.md` § 10).
+3. **Migrations** : jamais automatiques. `scripts/db-deploy-migrate.mjs` (plan vérifié par `scripts/db-migrate-guard.mjs`, une migration à la fois avec
+   `--only <tag>`), sur accord du propriétaire, après une sauvegarde chiffrée ; jamais `drizzle-kit push` (`docs/database.md`).
 
 ## 3. Premier administrateur
 
@@ -49,7 +53,7 @@ DATABASE_URL='…' node scripts/admin-bootstrap.mjs --confirm-host <hôte de la 
 Chaque étape attend la précédente ; aucune ne se lance d'ici sans l'autorisation du propriétaire.
 
 1. **Propriétaire** : générer des secrets neufs pour chaque fournisseur (aucune valeur reprise d'une installation antérieure).
-2. **Base** : une base Neon vide, région UE ; `db-migrate-deploy.yml` (staging, puis production) applique les migrations (`drizzle-kit migrate`).
+2. **Base** : une base Neon vide, région UE ; les migrations sont appliquées par `scripts/db-deploy-migrate.mjs` (accord du propriétaire, sauvegarde chiffrée avant ; `docs/database.md`).
    Puis le **référentiel territorial officiel** (INSEE COG 2026 + EPCI, livré dans `data/geography`) : `DATABASE_URL=… npx tsx scripts/geo-load.mjs`
    (sans réseau, idempotent, ne supprime rien ; sortie `GEO_LOAD_RESULT {"ok":true…}`). Sans lui aucune commune n'est reconnue (assistant, recherche par
    territoire) ; `/api/health/deep` signale alors `TERRITORY_REFERENCE_MISSING` à l'administrateur.
@@ -76,22 +80,24 @@ Ce sont des hypothèses **non vérifiables hors ligne** ; chacune est bloquante 
    restent des fonctions sans export par défaut : un appel direct répond une erreur, sans donnée.
 6. **Fichiers lus à l'exécution** : la recherche (synonymes), `/api/docs/openapi.json` et `/api/status` répondent normalement (`includeFiles`).
 7. **Région** : les fonctions s'exécutent à `fra1`.
-8. **Planification** : la vérification d'état toutes les 5 minutes (`/api/cron/health-alert`) exige le forfait Vercel Pro ; sur le forfait gratuit, le
-   déploiement refuse ce rythme. Choisir le forfait, ou espacer cette tâche.
+8. **Planification** : les tâches de `vercel.json` (neuf entrées) ; le contrôle de santé `/api/cron/health-alert` tourne **toutes les heures**
+   (minute 7) — un rythme de 5 minutes maintiendrait la base Neon Free éveillée en permanence.
 9. **Plan du site** : `/sitemap.xml` est le plan dynamique (il n'y a plus de fichier statique qui le masquait).
 10. **Maintenance** : `MAINTENANCE_MODE=1` sur la preview → chaque page répond 503 avec la page de maintenance ; l'API et `/api/health` répondent toujours.
-11. **Surveillance externe** : le flux `healthcheck.yml` (toutes les 30 minutes) passe au vert sur la nouvelle version.
-12. **Vérification automatique (veille) en production** : `/api/cron/veille` existe mais **n'est pas planifiée** dans `vercel.json`. Sans elle, aucune
-    fiche (transférée du LAB ou importée) ne devient publique : la publication exige une vérification de cet environnement (D-5 v2). Sur la preview :
-    l'appeler une fois avec `Authorization: Bearer <CRON_SECRET>`, vérifier son statut (`success` ou `partial`) et sa durée (4 minutes par passage,
-    `ADA_VEILLE_MAX_MINUTES` ; `maxDuration` 300 s = forfait Pro), puis la planifier (proposition : `*/30 1-4 * * *`, huit passages par nuit). Les textes
-    faciles à lire ne s'écrivent pas en production (aucun modèle) : ils viennent du LAB (`scripts/content-transfer.mjs`, `docs/runbooks.md` § 7).
+11. **Surveillance externe** : aucune aujourd'hui (le flux `healthcheck.yml` n'existe pas dans le dépôt). Proposition à activer par le propriétaire :
+    `docs/ops/healthcheck.workflow.yml.proposed`.
+12. **Vérification automatique (veille)** : `/api/cron/veille` **est planifiée** dans `vercel.json` (`37 0-5 * * *`, six passages bornés par nuit,
+    4 minutes par passage, `ADA_VEILLE_MAX_MINUTES`). En bêta restreinte elle ne tourne que si elle est ouverte (`ADA_BETA_OPEN_JOBS=veille`). Sans elle,
+    aucune fiche ne devient publique : la publication exige une vérification de cet environnement (D-5 v2). Les textes faciles à lire ne s'écrivent pas
+    en production (aucun modèle) : ils viennent du LAB (`scripts/content-transfer.mjs`, `docs/runbooks.md` § 7).
 
 ## 5. Retour arrière
 
-1. Vercel → Deployments → déploiement précédent → « Promote to Production » ; vérifier `/api/health`.
-2. Base : les migrations sont compatibles avec la version précédente (ajouts seulement). Si une restauration est nécessaire, voir
-   `docs/runbooks.md`.
+1. Pendant une mise en production : `scripts/release-production.sh` revient seul au déploiement précédent si le test de fumée échoue (code 4), ou affiche
+   la commande `vercel rollback` à lancer (code 5). Après coup : Vercel → Deployments → déploiement précédent → « Promote to Production » ; vérifier
+   `/api/health` (`x-release-sha`). Détail : `docs/runbooks.md` § 10.
+2. Base : les migrations sont compatibles avec la version précédente (ajouts seulement). Si une restauration est nécessaire : `docs/runbooks.md` § 4
+   (fichiers locaux) et § 9 (sauvegardes cloud).
 
 ## 6. Décisions du propriétaire encore ouvertes
 
@@ -127,7 +133,7 @@ Aucun staging n'existe encore ; rien ici ne s'y connecte. La répétition locale
 PostgreSQL local, `docs/runbooks.md` § 7 bis) a réussi ses 10 étapes le 25/10/2026, avec et sans réseau. Pour un vrai staging, il faut :
 
 1. **Base** : une base PostgreSQL séparée de la production (Neon, région UE, branche ou projet distinct), TLS vérifié, sauvegarde activée ; migrations
-   par `db-migrate-deploy.yml` (environnement GitHub `staging`), jamais `push`. Les mêmes migrations que le LAB, sinon l'import refuse.
+   par `scripts/db-deploy-migrate.mjs`, jamais `push`. Les mêmes migrations que le LAB, sinon l'import refuse.
 2. **Variables** : celles de `.env.example` marquées `[REQUIRED-PROD]`, avec des valeurs **propres au staging** (aucun secret partagé avec la production
    ni repris de l'ancienne version) : `DATABASE_URL`, `JWT_SECRET`, `ADA_ENCRYPTION_KEY`, `ADA_VAULT_KEY`, `CRON_SECRET`, `APP_BASE_URL` (https),
    KV (`KV_REST_API_URL`/`KV_REST_API_TOKEN`), stockage S3, `ALERT_WEBHOOK_URL` (un canal de staging), Sentry UE. `ADA_PUBLIC_CONTENT_MODE` n'est

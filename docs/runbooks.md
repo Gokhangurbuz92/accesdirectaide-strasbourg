@@ -38,7 +38,8 @@ Vérifier la page d'état d'Upstash ; si la clé est en cause, la remplacer (Ver
   elle est relue par `pg_restore --list` **avant** de toucher la cible ; le résultat donne le nombre de tables, de lignes d'historique des migrations et
   la date de la sauvegarde (lue dans son nom).
 - **Vérifier le schéma restauré** (R45) : `DATABASE_URL_UNPOOLED=<base restaurée> node scripts/db-deploy-migrate.mjs --check` (lecture seule ;
-  `--lab-rehearsal` en plus pour une base locale `…_test`) : 43 lignes, empreintes, aucune dérive, 0043/0044 jamais appliquées.
+  `--lab-rehearsal` en plus pour une base locale `…_test`) : une ligne par migration appliquée (43 à 0042, 44 après 0045), empreintes, aucune dérive,
+  0043/0044 jamais appliquées.
 - **Rotation des fichiers** (R44 / E15) : `--list <dossier>` liste et calcule le plan de rotation : toutes les sauvegardes des 30 derniers jours, plus la
   plus récente de chacune des 4 semaines précédentes, et toujours la plus récente. Ces valeurs viennent de la politique de conservation versionnée
   (`api/_services/retention-policy.js`), aujourd'hui **PROPOSED — NOT APPROVED** : tant qu'elle n'est pas approuvée, `--prune` exige un `--keep-days`
@@ -76,10 +77,19 @@ fichiers). Avant, elles devenaient illisibles dès la promotion d'une nouvelle c
 
 ## 6. Alertes
 
-- **Webhook** : `ALERT_WEBHOOK_URL` (obligatoire, porte de pré-lancement) reçoit les alertes de santé (toutes les heures, minute 7 : sur Neon Free, un contrôle toutes les 5 minutes empêcherait la base de se mettre en veille et épuiserait le quota mensuel de calcul) et les échecs des
-  tâches d'import.
+- **Canal d'alerte** : `ALERT_WEBHOOK_URL` (https) **ou** `ALERT_EMAIL` avec un vrai fournisseur d'e-mail (`MAILER_PROVIDER` = `resend`, `mailjet` ou
+  `msgraph` ; `noop` ne délivre rien). La porte de pré-lancement (`scripts/release-preflight.mjs`, contrôle `alerts.webhook`) exige l'un des deux dès
+  qu'une tâche planifiée est ouverte. Le contrôle de santé (`/api/cron/health-alert`) tourne **toutes les heures, minute 7** : sur Neon Free, un contrôle
+  toutes les 5 minutes empêcherait la base de se mettre en veille et épuiserait le quota mensuel de calcul. Une même alerte n'est envoyée qu'une fois par heure.
+- **Tâches planifiées** (RA-03) : chaque tâche écrit une ligne `CronRun` (historique : `/admin/sync`). Le contrôle de santé juge chaque tâche ouverte
+  séparément : `job.failed.<tâche>` (la dernière exécution a échoué) et `job.stale.<tâche>` (aucune exécution réussie depuis plus de deux intervalles
+  + 1 h : actualites 13 h, tâches quotidiennes 49 h, ingest-structures 337 h ; ou tâche ouverte qui n'a jamais tourné après ce délai). Voir § 13.
+- **Signaux de sécurité** (RA-01) : connexions refusées, codes MFA refusés, exports — fenêtre de 70 minutes (intervalle du contrôle + 10 minutes de
+  recouvrement, `ALERT_SECURITY_WINDOW_MINUTES`), prolongée jusqu'au contrôle précédent si une exécution a été retardée ; un même épisode n'est pas alerté deux fois.
 - **Erreurs** : Sentry, région UE, 10 % des traces de performance (`SENTRY_TRACES_SAMPLE_RATE`), Session Replay désactivé.
-- **Externe** : `.github/workflows/healthcheck.yml`, toutes les 30 minutes ; un échec envoie un e-mail au propriétaire du dépôt.
+- **Externe** : il n'y a **pas** de surveillance externe aujourd'hui (le flux `healthcheck.yml` cité auparavant n'existe pas ; `.github/workflows/` ne
+  contient que `ci.yml`). Si la fonction, le planificateur ou le déploiement est arrêté, le contrôle de santé ne peut pas signaler sa propre absence.
+  Proposition prête, à activer par le propriétaire : `docs/ops/healthcheck.workflow.yml.proposed` (voir `docs/ops/EXTERNAL_WATCHDOG.md`).
 - **CSP** : les violations apparaissent dans les journaux (`csp.violation` : directive, origine bloquée, chemin). Un pic après un déploiement indique
   une ressource bloquée.
 - **Veille automatique** (R8) : le contrôle de santé alerte (« veille.stale ») quand aucune veille ne s'est terminée depuis 48 h
@@ -181,3 +191,87 @@ ou ne la liste plus ; si le fichier du jour est illisible, plus ancien que le pr
   injoignable.
 - E-mail : un envoi non accepté par le fournisseur est enregistré comme non délivré (`NOT_SENT` / `NOT_DELIVERED`), jamais comme « envoyé » ; les
   écrans qui attendent un e-mail (par exemple le changement d'adresse) le disent à la personne.
+
+## 9. Restaurer depuis les sauvegardes cloud (copie indépendante, V2 C7)
+
+Les sauvegardes quotidiennes chiffrées et signées de la base de Production sont dans un compartiment R2 (tâche Scaleway `producer`,
+`scripts/cloud-backup.mjs`) ; une tâche `verifier` séparée (`scripts/cloud-restore-verify.mjs`) restaure la plus récente dans une base jetable chaque
+mois et dépose une preuve. Architecture, variables (noms) et coûts : `ops/cloud-backup/README.md`. C'est la voie à utiliser quand le fournisseur de la
+base est lui-même en cause ; pour une erreur récente sur une base saine, la restauration à un instant donné de Neon (`docs/disaster-recovery.md`) est plus rapide.
+
+1. **Geler les écritures** : fermer les surfaces citoyennes (variable Vercel) ou `MAINTENANCE_MODE=1` (§ 1), redéployer.
+2. **Base cible vide** (nouvelle base Neon). Ne jamais restaurer dans la base de Production en place.
+3. **Restaurer avec vérification des signatures** : `node scripts/cloud-restore-verify.mjs --confirm-target <hôte>/<base> --keep-restored`
+   (variables du vérificateur : jeton R2 en lecture seule, clé privée de sauvegarde, clé publique de signature, `TARGET_DATABASE_URL`). Le script refuse de
+   tourner si `DATABASE_URL` est présent. Il vérifie l'empreinte, la signature, les tables principales, l'historique des migrations (déduit du journal,
+   `checks.migrationsDerived`) et le registre des effacements.
+4. **Schéma** : `DATABASE_URL_UNPOOLED=<base restaurée> node scripts/db-deploy-migrate.mjs --check` (lecture seule).
+5. **Rejouer les effacements** : `node scripts/db-erasure-replay.mjs --ledger <registre> --since-backup <sauvegarde> --confirm-target <hôte>/<base> --kv`
+   à blanc, puis avec `--execute`. `--kv` est indispensable : les effacements postérieurs à la sauvegarde ne sont connus que par les marqueurs KV (40 jours).
+6. **Avant de rouvrir** : relancer la purge de conservation sur la base restaurée (§ 11), puis pointer Vercel sur la base restaurée, redéployer, vérifier
+   `/api/health` et `/api/health/ready`.
+7. **Consigner l'incident** dans le registre des violations (§ 12) : une perte ou une indisponibilité de données personnelles ouvre le délai de 72 h.
+
+## 10. Retour arrière d'une version (`scripts/release-production.sh`)
+
+Une mise en production se fait uniquement par `QA_SUMMARY=<SUMMARY.json du QA natif de ce SHA> scripts/release-production.sh <sha>`, depuis un clone propre lié
+au projet Vercel (les déploiements par git sont désactivés). Le script note le déploiement de production précédent **avant** de déployer.
+
+- **Automatique** : si le test de fumée échoue (en-tête `x-release-sha`, `/api/health/ready`, une liste publique, page d'accueil), le script exécute
+  `vercel rollback <déploiement précédent> --yes` (sans reconstruction) et sort avec le code **4**.
+- **Déploiement non vérifié** (code **5**) : le script n'a pas pu établir que la production sert le nouveau SHA ; il affiche la commande
+  `vercel rollback "<déploiement précédent>" --yes` à lancer par le propriétaire.
+- **Après coup** (régression découverte plus tard) : Vercel → Deployments → déploiement précédent → « Promote to Production », ou
+  `vercel rollback <url du déploiement> --yes` ; puis vérifier que `/api/health` renvoie le `x-release-sha` attendu.
+- **Autres codes** : 2 = précondition (clone, SHA, preuve QA, analyse des secrets, cible de retour introuvable), 3 = CI GitHub absent ou en échec. Rien n'a été déployé.
+- **Base de données** : un retour arrière du code ne défait aucune migration. Les migrations sont additives et compatibles avec la version précédente ;
+  si un schéma doit être défait : `drizzle/rollback/NNNN_down.sql` selon `docs/database.md` (« Retour arrière »), après une sauvegarde chiffrée.
+- **Variables d'environnement** : un retour arrière Vercel reprend le build précédent **avec ses variables d'alors** ; une variable changée depuis ne
+  s'applique qu'au prochain déploiement.
+
+## 11. Purge RGPD (`/api/cron/gdpr-purge`) : exploitation
+
+La tâche est planifiée chaque jour à 03:00 UTC. Elle **ne supprime rien** tant que toutes les conditions ne sont pas réunies
+(`api/_services/retention-policy.js`, `executionGate`) : `GDPR_PURGE_ENABLED=true`, politique de conservation approuvée pour sa version exacte,
+`GDPR_PURGE_POLICY_VERSION` égal à cette version, étape listée dans `GDPR_PURGE_APPROVED_STEPS` **et** approuvée dans la politique. En bêta restreinte, la
+tâche doit aussi être ouverte (`ADA_BETA_OPEN_JOBS`) et approuvée (`ADA_JOBS_APPROVED`).
+
+- **Essai à blanc** (état par défaut, ou `?dryRun=1`) : réponse `skipped: true` avec la raison ; les **nombres par étape** sont écrits dans les journaux
+  (« [gdpr-purge] dry run — counts only ») et, depuis RA-03, dans la ligne `CronRun` de la tâche (`metrics.mode = dry-run`, `metrics.counts`).
+- **Exécution** : chaque étape dans sa propre transaction ; preuve dans le journal d'audit (`GDPR_PURGE_RUN` : version, étapes, nombres — jamais une
+  valeur ni un identifiant de personne) ; ligne `CronRun` `success`, ou `partial` avec `failedSteps`.
+- **Une étape a échoué** : lire `failedSteps` (`/admin/sync` ou journaux, message « retention step failed » avec l'étape). Les autres étapes ont été
+  validées ; l'étape en échec n'a rien supprimé (transaction annulée). Corriger, puis attendre l'exécution suivante ou relancer la tâche.
+- **Deux exécutions en même temps** : la seconde répond 409 `ALREADY_RUNNING` (ligne `CronRun` `skipped`) ; rien à faire.
+- **Arrêt d'urgence** : retirer `gdpr-purge` de `ADA_BETA_OPEN_JOBS` ou mettre `GDPR_PURGE_ENABLED` à une autre valeur que `true`, puis redéployer.
+- **Gels légaux et limitations** (art. 18) : les personnes concernées sont exclues par les étapes elles-mêmes ; rien à faire à la main.
+- Une suppression est irréversible : avant d'approuver une nouvelle étape, lire les nombres de l'essai à blanc et vérifier qu'une sauvegarde récente existe (§ 9).
+
+## 12. Registre des violations de données (RGPD art. 33)
+
+Le registre réel est tenu **hors de ce dépôt public**. Son format est `docs/security/incident-register.schema.json`.
+
+1. À la découverte d'un incident touchant des données personnelles (confidentialité, intégrité **ou** disponibilité) : créer une entrée — dates de
+   détection et de prise de connaissance avec fuseau, canal, nature, cause, catégories de données, mesures. Le délai de notification à la CNIL est de
+   **72 h** à partir de la prise de connaissance.
+2. Valider : `node scripts/incident-register-validate.mjs <registre.json>` (codes et chemins JSON seulement, jamais le texte d'un champ). Sortie 0 = valide,
+   1 = erreurs (délai dépassé encore « pending », décision CNIL ou information des personnes non justifiée, adresse ou téléphone dans un texte…), 2 = fichier illisible.
+3. Décision de notifier ou non, information des personnes en cas de risque élevé, clôture : chaque décision est écrite avec sa raison dans l'entrée.
+4. Ne jamais copier dans le registre une adresse, un numéro ou un contenu de dossier ; ne jamais déposer le registre dans le dépôt.
+
+## 13. Une tâche planifiée échoue ou ne tourne plus
+
+Alerte `job.failed.<tâche>` ou `job.stale.<tâche>` (§ 6), ou ligne en échec dans `/admin/sync`.
+
+1. **Lire l'historique** : `/admin/sync` → statut (`failed`, `partial`, `skipped` avec sa raison), durée, `errorSample` (nom de l'erreur ou raison typée), `metrics`
+   (nombres seulement).
+2. **Lire les journaux** de la fonction à l'heure de l'exécution (Vercel → Logs, filtre sur le chemin `/api/cron/<tâche>`). Depuis RA-02, l'erreur
+   complète (nom, message masqué, pile) accompagne le message.
+3. **La tâche est-elle ouverte ?** En bêta restreinte, une tâche absente de `ADA_BETA_OPEN_JOBS` (et, pour les rappels, les délais d'orientation et la
+   purge, de `ADA_JOBS_APPROVED`) est refusée avant d'atteindre son code : aucune ligne, aucune alerte — c'est l'état voulu.
+4. **Causes fréquentes** : `CRON_SECRET` absent ou changé sans redéploiement (401 / 500) ; base injoignable (alerte `db.down` en même temps) ; fournisseur
+   d'e-mail refusé (rappels en `partial`) ; source officielle en panne (§ 8) ; verrou d'une exécution précédente encore tenu (`skipped`, se libère seul).
+5. **Relancer** (décision du propriétaire en Production) : `curl -H "Authorization: Bearer <CRON_SECRET>" https://<site>/api/cron/<tâche>`. Les tâches
+   sont idempotentes (verrou ou revendication ligne par ligne) : une relance ne double ni un rappel ni une suppression.
+6. **L'alerte s'arrête** à la première exécution réussie suivante. `health-alert` ne se surveille pas lui-même : son absence n'est visible que par la
+   surveillance externe (§ 6) ou par sa ligne `CronRun` (une seule ligne `success`, la plus récente ; les lignes `partial` sont conservées).

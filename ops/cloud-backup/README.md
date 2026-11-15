@@ -1,6 +1,7 @@
 # Cloud-only backups of the Production database (V2 C7)
 
-Status: **LAB-verified (incl. the Debian job image, 09/11/2026), not provisioned.** Nothing here runs until the owner approves the activation package
+Status: **provisioned and in use** — LAB-verified (incl. the Debian job image, 09/11/2026); a Production backup was restored and verified by the verifier job
+on 12/11/2026 (evidence kept outside the repository). Any change to the jobs still goes through the owner's activation package
 (`STRASBOURG_FULL_PRODUCT_PLAN/CONTROL/v2/C7_BULUT_YEDEK_YETKI_PAKETI_TR.md`). No step depends on the owner's computer.
 
 ## 1. Architecture

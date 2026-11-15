@@ -23,7 +23,6 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "npx tsx scripts/seed.mjs",
     "db:studio": "drizzle-kit studio",
-    "db:baseline:rdv": "node scripts/db-baseline-rdv.mjs",
     "doctor": "node scripts/doctor-env.mjs",
     "postinstall": "node scripts/generate-build-info.js",
     "lint": "eslint .",
