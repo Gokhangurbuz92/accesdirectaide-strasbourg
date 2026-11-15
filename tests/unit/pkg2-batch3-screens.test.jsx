@@ -65,3 +65,21 @@ describe('Personnes de confiance', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 });
+
+describe('A-18 — a part that is closed on this service is neither offered nor asked for', () => {
+  it('the invitation form offers only the open parts', async () => {
+    api.listDelegations.mockResolvedValue({ granted: [], received: [], offeredScopes: ['PARCOURS_READ', 'RDV_READ'] });
+    page('/compte/delegations');
+    expect(await screen.findByTestId('delegation-scope-PARCOURS_READ')).toBeTruthy();
+    expect(screen.getByTestId('delegation-scope-RDV_READ')).toBeTruthy();
+    expect(screen.queryByTestId('delegation-scope-COFFRE_LIST')).toBeNull();
+  });
+  it('the delegate page does not ask for a granted part that is closed (it would answer 404 and hide the open ones)', async () => {
+    api.listDelegations.mockResolvedValue({ granted: [], received: [RECEIVED], offeredScopes: ['PARCOURS_READ', 'RDV_READ'] });
+    api.delegateView.mockResolvedValue({ items: [] });
+    page('/compte/delegations/r1');
+    await screen.findByTestId('delegation-view');
+    expect(api.delegateView.mock.calls.map((c) => c[1])).toEqual(['parcours']);
+    expect(screen.queryByTestId('delegation-view-error')).toBeNull();
+  });
+});

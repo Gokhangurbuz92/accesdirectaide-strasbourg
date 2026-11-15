@@ -13,12 +13,20 @@ import { listCoffre } from './mon-espace.js';
 import { mailLedgerStatus } from '../_utils/mailer.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
+import { capabilityOpen } from '../_utils/capabilities.js';
 
 export const DELEGATION_ROLES = ['AIDANT', 'TUTEUR', 'CURATEUR', 'REPRESENTANT'];
 export const DELEGATION_SCOPES = ['PARCOURS_READ', 'COFFRE_LIST', 'RDV_READ'];
 export const DELEGATION_DURATIONS = [30, 90, 180, 365];
 export const MAX_LIVE_DELEGATIONS = 10;
 export const INVITE_DAYS = 7;
+/**
+ * A-18: a delegated view is a second door to a part of Mon Espace, so it follows that part's OWN capability gate (R45), not only the gate of the delegations
+ * themselves: with delegations open and the vault closed, a delegate must not list the names of the Coffre files.
+ */
+export const SCOPE_CAPABILITY = Object.freeze({ PARCOURS_READ: 'citizen.parcours', COFFRE_LIST: 'citizen.vault', RDV_READ: 'citizen.booking' });
+/** The scopes whose part of Mon Espace is open on this service. @param {(capability: string) => boolean} [isOpen] */
+export const openScopes = (isOpen = (c) => capabilityOpen(c)) => DELEGATION_SCOPES.filter((s) => isOpen(SCOPE_CAPABILITY[s]));
 const LIVE = ['INVITED', 'ACTIVE', 'PROOF_REQUIRED'];
 const VIEWS = Object.freeze({ parcours: ['PARCOURS_READ', 'PARCOURS_VIEWED'], coffre: ['COFFRE_LIST', 'COFFRE_LISTED'], rdv: ['RDV_READ', 'RDV_VIEWED'] });
 const ACTION_LABELS = Object.freeze({ PARCOURS_VIEWED: 'a consulté Mon Parcours', COFFRE_LISTED: 'a consulté la liste de Mon Coffre', RDV_VIEWED: 'a consulté les rendez-vous' });
@@ -51,6 +59,9 @@ export async function inviteDelegate(principal, input, deps = {}) {
   // PKG-11 audit: no new access to the account while the person restricts processing (art. 18)
   if (await isRestricted(principal.id, db)) return bad('PROCESSING_RESTRICTED', 'Vous avez demandé la limitation du traitement : levez-la avant d’inviter une personne de confiance.', 409);
   if (!scopes.length || scopes.some((s) => !DELEGATION_SCOPES.includes(s))) return bad('INVALID_SCOPES', 'Choisissez au moins ce que la personne pourra consulter.');
+  // A-18: a part of Mon Espace that is not open on this service cannot be delegated (the same gate closes its delegated view)
+  const offered = openScopes(deps.isOpen);
+  if (scopes.some((s) => !offered.includes(s))) return bad('SCOPE_NOT_OPEN', 'Une des parties choisies n’est pas ouverte sur ce service : elle ne peut pas être partagée.', 409);
   if (!DELEGATION_DURATIONS.includes(days)) return bad('INVALID_DURATION', 'Choisissez une durée (au plus un an).');
   const [{ n }] = (await db.execute(sql`SELECT count(*)::int AS n FROM "CitizenDelegation" WHERE "principalUserId" = ${principal.id} AND status IN ('INVITED', 'ACTIVE', 'PROOF_REQUIRED')`)).rows;
   if (n >= MAX_LIVE_DELEGATIONS) return bad('TOO_MANY_DELEGATIONS', `Au plus ${MAX_LIVE_DELEGATIONS} délégations en cours.`, 409);
@@ -104,12 +115,13 @@ async function emails(ids, db) {
 }
 
 /** granted: what I gave (with the invited e-mail); received: what was given to me and is not declined (with the principal's e-mail). */
-export async function listDelegations(userId, db = defaultDb) {
+export async function listDelegations(userId, db = defaultDb, opts = {}) {
   const granted = await db.select().from(CitizenDelegation).where(eq(CitizenDelegation.principalUserId, userId)).orderBy(desc(CitizenDelegation.createdAt));
   const received = await db.select().from(CitizenDelegation).where(and(eq(CitizenDelegation.delegateUserId, userId), inArray(CitizenDelegation.status, ['ACTIVE', 'PROOF_REQUIRED', 'REVOKED'])))
     .orderBy(desc(CitizenDelegation.createdAt));
   const who = await emails(received.map((r) => r.principalUserId), db);
-  return { ok: true, status: 200, granted: granted.map((r) => view(r, { inviteEmail: r.inviteEmail })), received: received.map((r) => view(r, { principalEmail: who[r.principalUserId] || '' })) };
+  // A-18: `offeredScopes` = what can be delegated / viewed on this service now (the screens offer nothing else)
+  return { ok: true, status: 200, offeredScopes: openScopes(opts.isOpen), granted: granted.map((r) => view(r, { inviteEmail: r.inviteEmail })), received: received.map((r) => view(r, { principalEmail: who[r.principalUserId] || '' })) };
 }
 
 /** The principal's log of what the delegate viewed (newest first). */
@@ -121,9 +133,11 @@ export async function delegationAccessLog(userId, id, db = defaultDb) {
 }
 
 /** A read-only projection for the delegate: ACTIVE, not expired, scope granted — otherwise nothing. Every view is logged before it is returned. */
-export async function delegateView(userId, id, what, db = defaultDb) {
+export async function delegateView(userId, id, what, db = defaultDb, opts = {}) {
   const spec = VIEWS[String(what || '')];
   if (!spec) return bad('INVALID_VIEW', 'Vue inconnue.');
+  // A-18: the part's own capability gate, before anything is read or logged (404: on this service that part does not exist, for the delegate as for the person)
+  if (!(opts.isOpen || ((c) => capabilityOpen(c)))(SCOPE_CAPABILITY[spec[0]])) return bad('CAPABILITY_NOT_OPEN', 'Cette partie n’est pas ouverte sur ce service.', 404);
   const [r] = await db.select().from(CitizenDelegation).where(and(eq(CitizenDelegation.id, String(id || '')), eq(CitizenDelegation.delegateUserId, userId))).limit(1);
   if (!r || statusOf(r) !== 'ACTIVE') return bad('NOT_FOUND', 'Délégation introuvable ou inactive.', 404);
   if (!r.scopes.includes(spec[0])) return bad('SCOPE_NOT_GRANTED', 'La personne ne vous a pas donné accès à cette partie.', 403);
