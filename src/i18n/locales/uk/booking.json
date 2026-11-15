@@ -87,6 +87,7 @@
  "public.impossible_de_charger_les_creneaux": "Не вдалося завантажити вільний час.",
  "public.ce_creneau_vient_d_etre": "Цей час щойно забронювали. Оберіть інший.",
  "public.impossible_de_confirmer_le_rendez": "Не вдалося підтвердити зустріч.",
+ "public.reponse_incertaine_a25": "Ми не отримали надійної відповіді: можливо, ваш запит уже збережено. Спробуйте ще раз: його не буде збережено двічі. Ви також можете перевірити у « Мої записи ».",
  "public.lien_de_gestion_du_rendez": "Посилання для керування зустріччю недійсне або неповне.",
  "public.lien_de_gestion_invalide_ou": "Посилання для керування недійсне або протерміноване.",
  "public.reservez_un_creneau_avec_un": "Забронюйте час у консультанта ADA",

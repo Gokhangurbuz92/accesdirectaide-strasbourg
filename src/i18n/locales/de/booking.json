@@ -87,6 +87,7 @@
  "public.impossible_de_charger_les_creneaux": "Die Zeitfenster konnten nicht geladen werden.",
  "public.ce_creneau_vient_d_etre": "Dieses Zeitfenster wurde gerade gebucht. Wählen Sie eine andere Uhrzeit.",
  "public.impossible_de_confirmer_le_rendez": "Der Termin konnte nicht bestätigt werden.",
+ "public.reponse_incertaine_a25": "Wir haben keine verlässliche Antwort erhalten: Ihre Anfrage ist möglicherweise bereits gespeichert. Versuchen Sie es erneut: Sie wird nicht doppelt gespeichert. Sie können auch unter « Meine Termine » nachsehen.",
  "public.lien_de_gestion_du_rendez": "Link zur Terminverwaltung ungültig oder unvollständig.",
  "public.lien_de_gestion_invalide_ou": "Verwaltungslink ungültig oder abgelaufen.",
  "public.reservez_un_creneau_avec_un": "Buchen Sie ein Zeitfenster bei einer ADA-Beratung",

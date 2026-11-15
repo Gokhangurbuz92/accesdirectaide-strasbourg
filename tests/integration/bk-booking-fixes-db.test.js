@@ -2,6 +2,8 @@
  * Booking audit fixes (RECON_PUBLIC_CITIZEN 2026-11-15, A-25 … A-30) on a REAL PostgreSQL through the real handlers. Synthetic structures, professionals
  * and citizens only (…@example.test); MAILER_PROVIDER=test; no Microsoft endpoint is ever called.
  *
+ *  A-25  replay: the same idempotency key answers the booking already made (200, same appointment, one row, no second e-mail) — what the page now sends
+ *        after a lost answer; a NEW key for the same slot (what the page sent before) is the 409 « slot taken » the person used to read.
  *  A-29  GET rdv/structures/:slug/profile (no account) applies the same sensitivity gate as its signed-in siblings: a service whose online booking is not
  *        open is listed as CONTACT_STRUCTURE and discloses no availability (nextAvailableDay).
  *  A-26  GET rdv/structures/:slug/slots?appointment=<id> lists the slots THAT appointment can be moved to, from the same source as the move itself: with
@@ -39,7 +41,7 @@ const cit = (k) => ({ id: `bkf-c${k}-${TS}`, email: `test.citizen+bkf${k}-${TS}@
 const C = [cit('0'), cit('1'), cit('2')];
 
 describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () => {
-  let db, rdv, userAuth;
+  let db, rdv, userAuth, mailer;
   const cookie = (c) => userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: c.id, email: c.email })).split(';')[0];
   const call = async (method, path, { body, query = {}, as } = {}) => {
     const res = mk();
@@ -74,6 +76,7 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
     ({ db } = await import('../../src/db/index.js'));
     ({ default: rdv } = await import('../../api/_handlers/rdv.js'));
     userAuth = await import('../../api/_utils/user-auth.js');
+    mailer = await import('../../api/_utils/mailer.js');
     for (const s of [A, T, G]) await seedStructure(s);
     for (const p of [P1, P2]) {
       await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, mfa_enabled, "updatedAt", "createdAt") VALUES (${p.id}, ${p.email}, 'x', ${p.sid}, ${p.role}, 'active', true, NOW(), NOW())`);
@@ -214,5 +217,29 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
       const again = await move(id, C[2], s2);
       expect(again.statusCode, show(again)).toBe(200);
     } finally { await unclassify(G); }
+  });
+
+  // ───────────────────────────── A-25 ─────────────────────────────
+  it('A-25 replay: a retry with the SAME key answers the confirmed booking (one row, one e-mail); a new key for the same slot is « slot taken »', async () => {
+    const slot = (await slotsOf(A, C[1])).at(-1);
+    const body = { structureSlug: A.slug, serviceId: A.svc, startAt: slot, idempotencyKey: `bkf-replay-${TS}` };
+    mailer.__clearTestOutbox();
+    const first = await call('POST', 'appointments', { as: C[1], body });   // its answer is « lost »: the person never sees it
+    expect(first.statusCode, show(first)).toBe(201);
+    const sent = mailer.__getTestOutbox().length;
+    expect(sent).toBeGreaterThan(0);
+    // what the page did before the fix: a new key on the second click → the person's own booking reads as someone else's
+    const newKey = await call('POST', 'appointments', { as: C[1], body: { ...body, idempotencyKey: `bkf-other-${TS}` } });
+    expect([newKey.statusCode, newKey.body.error], show(newKey)).toEqual([409, 'Slot no longer available']);
+    // what it does now: the same key → the booking itself, confirmed, manageable
+    const replay = await call('POST', 'appointments', { as: C[1], body });
+    expect(replay.statusCode, show(replay)).toBe(200);
+    expect([replay.body.id, replay.body.state, replay.body.startsAt]).toEqual([first.body.id, 'CONFIRMED', slot]);
+    expect(replay.body.manageUrl).toContain(first.body.id);
+    expect(await rows(sql`SELECT id FROM "ProAppointment" WHERE "citizenUserId" = ${C[1].id} AND "structureId" = ${A.id} AND "startAt" = ${slot}::timestamptz`)).toHaveLength(1);
+    expect(mailer.__getTestOutbox().length).toBe(sent);   // no second confirmation e-mail
+    // someone else's request with the same key string is not a replay of this booking
+    const stranger = await call('POST', 'appointments', { as: C[2], body });
+    expect(stranger.statusCode, show(stranger)).toBe(409);
   });
 });

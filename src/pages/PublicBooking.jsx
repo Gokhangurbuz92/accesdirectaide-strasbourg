@@ -36,6 +36,7 @@ import SensitiveConsentField, { ContactStructureNotice } from '@/components/rdv/
 import ModalityChoice, { LocationNote, UnavailableModalities, VideoNote } from '@/components/rdv/ModalityChoice.jsx';
 import { acceptedMode, bookingContextQuery, bookingLocation, bookingRefusal, modalityLabels, modalityOptions, serviceModes } from '@/lib/bookingModalities';
 import { refusalReasonText } from '@/lib/refusalReasons';
+import { attemptKey, attemptSignature, isDefinitiveAnswer, settleAttempt } from '@/lib/bookingAttempt';
 /**
  * PublicBooking
  *
@@ -208,7 +209,11 @@ export default function PublicBooking() {
         setError('');
         try {
             const token = getToken();
-            const idempotencyKey = createIdempotencyKey();
+            // A-25: ONE key per attempt (this service, slot, modality and professional choice), kept until a definitive answer — a second click after a
+            // lost answer replays the booking on the server and shows it confirmed, instead of « this slot was just taken »
+            const attempt = attemptSignature({ structureSlug, serviceId: selectedService.id, startAt: selectedSlot.startAt, mode: bookingMode, professional: teamChoice ? professional : '' });
+            const idempotencyKey = attemptKey(attempt, createIdempotencyKey);
+            const uncertain = () => new Error(t('booking:public.reponse_incertaine_a25', 'Nous n’avons pas reçu de réponse sûre : votre demande est peut-être déjà enregistrée. Réessayez : elle ne sera pas enregistrée deux fois. Vous pouvez aussi vérifier dans « Mes rendez-vous ».'));
             // R7: a first visit has no __csrf cookie yet: ask the server for one before the protected POST (it was refused with 403)
             const csrf = (await ensureCsrfHeaders()) || getCsrfHeaders();
             const res = await fetch('/api/rdv/appointments', {
@@ -229,10 +234,12 @@ export default function PublicBooking() {
                     ...(selectedService.explicitConsent === true ? { sensitiveConsent: sensitiveConsent === true } : {}),
                     idempotencyKey,
                 }),
-            });
+            }).catch(() => { throw uncertain(); });   // no answer at all (network, timeout): the key is kept
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                if (!isDefinitiveAnswer(res.status)) throw uncertain();   // server error / rate limit: the booking may exist — same key on the next click
+                settleAttempt(attempt);   // a refusal decided by the server: nothing was booked with this key
                 const refusal = bookingRefusal(res.status, errData);
                 // R44: the session ended meanwhile — sign in again and come back to the same service and modality (validated same-origin path)
                 if (refusal === 'AUTH') {
@@ -265,7 +272,8 @@ export default function PublicBooking() {
                 throw new Error(errData.message || t('booking:public.impossible_de_confirmer_le_rendez', "Impossible de confirmer le rendez-vous."));
             }
 
-            const data = await res.json();
+            const data = await res.json().catch(() => { throw uncertain(); });
+            settleAttempt(attempt);
             // R45: no structure in analytics for a service treated as sensitive (unknown included)
             track('booking_confirm_success', selectedService.protectedPrivacy === true ? { mode: bookingMode } : { structure: structureSlug, mode: bookingMode });
             setConfirmation(data);

@@ -87,6 +87,7 @@
  "public.impossible_de_charger_les_creneaux": "The time slots could not be loaded.",
  "public.ce_creneau_vient_d_etre": "This time slot has just been booked. Choose another time.",
  "public.impossible_de_confirmer_le_rendez": "The appointment could not be confirmed.",
+ "public.reponse_incertaine_a25": "We did not get a reliable answer: your request may already be recorded. Try again: it will not be recorded twice. You can also check in « My appointments ».",
  "public.lien_de_gestion_du_rendez": "Appointment management link invalid or incomplete.",
  "public.lien_de_gestion_invalide_ou": "Management link invalid or expired.",
  "public.reservez_un_creneau_avec_un": "Book a time slot with an ADA adviser",

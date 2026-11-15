@@ -87,6 +87,7 @@
  "public.impossible_de_charger_les_creneaux": "Zaman aralıkları yüklenemedi.",
  "public.ce_creneau_vient_d_etre": "Bu zaman aralığı az önce alındı. Başka bir saat seçin.",
  "public.impossible_de_confirmer_le_rendez": "Randevu onaylanamadı.",
+ "public.reponse_incertaine_a25": "Güvenilir bir yanıt alamadık: talebiniz kaydedilmiş olabilir. Tekrar deneyin: iki kez kaydedilmez. « Randevularım » sayfasından da kontrol edebilirsiniz.",
  "public.lien_de_gestion_du_rendez": "Randevu yönetim bağlantısı geçersiz veya eksik.",
  "public.lien_de_gestion_invalide_ou": "Yönetim bağlantısı geçersiz veya süresi dolmuş.",
  "public.reservez_un_creneau_avec_un": "Bir ADA danışmanıyla zaman aralığı ayırın",
