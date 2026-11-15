@@ -186,7 +186,7 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
       // M1 (migration 0046): the step carries its own copy of who / detail / links, so they outlive the dossier; on a database without "planStep" the
       // former behaviour stays (read back from the dossier only: nothing once it is gone). Details: tests/integration/m1-parcours-planstep-db.test.js
       const durable = (await db.execute(sql`SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'ParcoursItem' AND column_name = 'planStep'`)).rows.length > 0;
-      if (durable) expect(later.map((i) => i.plan)).toEqual(steps.map((i) => i.plan));
+      if (durable) expect(Object.fromEntries(later.map((i) => [i.id, i.plan]))).toEqual(Object.fromEntries(steps.map((i) => [i.id, i.plan])));
       else expect(later.every((i) => i.plan === null)).toBe(true);
     });
   });

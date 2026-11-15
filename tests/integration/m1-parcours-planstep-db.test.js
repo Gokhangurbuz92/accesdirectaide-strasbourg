@@ -244,7 +244,9 @@ describe.skipIf(!hasDatabase)('M1 Mon Parcours plan step (real DB)', () => {
       await db.execute(sql`DELETE FROM "SharedDiagnostic" WHERE id = ${id}`);
       const later = (await list(B)).filter((i) => i.origin === 'PLAN');
       expect(later.length).toBe(steps.length); expect(later.every((i) => i.sourceShareId === null)).toBe(true);
-      expect(later.map((i) => [i.plan, i.step])).toEqual(steps.map((i) => [i.plan, i.step]));
+      // by id: steps created in the same millisecond have no fixed order in the list
+      const byId = (l) => Object.fromEntries(l.map((i) => [i.id, [i.plan, i.step]]));
+      expect(byId(later)).toEqual(byId(steps));
       // importing the same plan again never rewrote a step (planKey): nothing to import any more, the copies are untouched
       expect((await post(B, { action: 'import', shareId: id })).statusCode).toBe(404);
     });

@@ -17,6 +17,11 @@ ALTER TABLE "ParcoursItem" ADD COLUMN IF NOT EXISTS "planStep" jsonb;
 - It touches nothing of the obsolete migrations 0043 / 0044: it can be applied on Production (0042 + 0045) on its own, with
   `scripts/db-deploy-migrate.mjs --only 0046_m1_parcours_plan_step` (after `--check` and `--dry-run`; never `npm run db:migrate` on Production).
 
+**Attention before any Production migration run.** With this entry in the journal, 0046 is the one pending, non-obsolete migration on a database at
+0042 + 0045: a PLAIN run of `scripts/db-deploy-migrate.mjs` (no `--only`) on Production would now plan and apply 0046 (`planDeploy`, covered by
+`tests/unit/r44-migrate-guard.test.js` and `tests/unit/r43-booking-units.test.jsx`). Do not run it on Production until the owner authorises 0046;
+`--check` and `--dry-run` stay read-only.
+
 ## 2. Data impact
 
 - No existing row is rewritten. PostgreSQL adds a nullable column without a default as a catalogue change only; every existing row reads `NULL`.
@@ -74,6 +79,9 @@ DELETE FROM drizzle.__drizzle_migrations WHERE created_at = 1794742203358;
 | New code (M1) | column absent (code released before the migration) | Works as before M1. `api/_utils/schema-features.js` (`parcoursPlanStepSchema`, `parcoursItemTable`) reads the information schema (cached 60 s per process) and every reader / writer of `ParcoursItem` uses the table without the column: `api/_services/mon-espace.js`, the data export in `api/_services/privacy.js`; the delegate's view (`api/_services/delegation.js`) selects explicit columns. The list answers `planSteps: false`; « add » creates the step without plan data and answers `planSaved: false`; the `plan` action and the statuses `ABANDONED` / `OUTCOME_UNKNOWN` answer 409 `PLAN_STEP_UNAVAILABLE` and change nothing; the screen does not offer them. Raw-SQL readers (`api/_handlers/cron/parcours-reminder.js`, `api/_services/citizen-inbox.js`) never name the column. Proven on a database migrated to 0045 only: `tests/integration/m1-parcours-without-0046-db.test.js` (without the guard, 20 parcours tests fail there with « column "planStep" does not exist »). |
 | New code (M1) | column present, value `NULL` (every row that existed before 0046) | The step lists and changes exactly as before: `step: null`, `closure: null`, `dependsOn: null`, `waiting: false`; a plan step imported before 0046 still reads « who / detail / links » back from its dossier while the account owns it. No former action writes the column (it stays `NULL`). Proven in `tests/integration/m1-parcours-planstep-db.test.js` (backward-compatibility block). |
 | New code (M1) | column present, value written | Plan data is validated on write and re-validated on read (a link whose host left the allow-list is not shown; another `v` is ignored). |
+
+LAB test fixtures that insert a step through the full Drizzle schema (for example `tests/integration/pkg11-n02-sms-stop-db.test.js`) need a database at
+0046; on a 0045-level database that one fixture fails by construction (the application code does not).
 
 After the migration is applied, the running code picks the column up within 60 seconds (cache TTL) without a redeploy.
 
