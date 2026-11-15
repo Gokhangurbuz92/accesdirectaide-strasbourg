@@ -876,6 +876,26 @@ export async function slotsForChoice(structure, service, mode, range, choice, { 
 }
 
 /**
+ * A-26 — the slots a person's OWN appointment can be moved to: ONE source for the list shown in « Mes rendez-vous » (GET …/slots?appointment=<id>) and for
+ * the move itself (POST …/appointments/:id/reschedule), so the panel never lists a slot the move refuses. With team choice the appointment keeps its
+ * professional: only that professional's free slots (own hours, absences, connected calendar); otherwise the structure's single agenda. In both cases the
+ * appointment being moved does not block its own neighbourhood (exceptId) and the booking window applies.
+ * @param {{ structure: any, service: any, mode: string, range: { from: Date, to: Date }, appointment: any, config: any }} input
+ * @returns {Promise<{ kind: 'PROFESSIONAL_UNAVAILABLE' } | { kind: 'TEAM' | 'SINGLE', assigned: any[], rules: any[], slots: Array<{ startAt: string, endAt: string }> }>}
+ */
+export async function slotsForMove({ structure, service, mode, range, appointment, config }) {
+  if (config.team.enabled && appointment.createdByProUserId) {
+    const team = await import('../_services/rdv-team.js');
+    const assigned = (await team.candidatesFor(structure.id, service.id, config)).filter((c) => c.id === appointment.createdByProUserId);
+    if (!assigned.length) return { kind: 'PROFESSIONAL_UNAVAILABLE' };
+    const out = await team.teamSlots({ structure, service, mode, range, candidates: assigned, exceptId: appointment.id, accept: withinBookingWindow });
+    return { kind: 'TEAM', assigned, rules: out.rules, slots: out.slots.map((slot) => ({ startAt: slot.startAt, endAt: slot.endAt })) };
+  }
+  const out = await computePublicSlots(structure, service, mode, range, { exceptId: appointment.id });
+  return { kind: 'SINGLE', assigned: [], rules: out.rules, slots: out.slots };
+}
+
+/**
  * R42 — the structure's public booking profile, WITHOUT an account (discovery stays open): verified structure, its bookable services with their
  * confirmation mode, whether a professional can be chosen, the first day with a free slot in the next 14 days (no slot list, no names), and that an
  * account is required to ask for an appointment. GET /api/rdv/structures/:slug/profile
@@ -1017,18 +1037,41 @@ async function getSlots(req, res) {
   // R45 (ENG-LR-2): no slots for a service whose online booking is not open (same neutral refusal as the booking itself)
   const sensitivityGate = bookingDecision(await readServiceSensitivity(structure.id, service.id));
   if (!sensitivityGate.allowed) { const refused = sensitivityRefusal(sensitivityGate.code); return res.status(refused.status).json(refused.body); }
-  // PKG-3: slots are computed for ONE modality (default in person); a modality the service / structure / video activation does not offer has no slots at all
-  const mode = req.query?.mode ? normalizeMode(req.query.mode) : 'IN_PERSON';
-  if (!mode || !offeredModes(structure.bookingMode, service.modes, publicVideoStatus()).includes(mode)) {
+  // A-26: ?appointment=<id> = the slots THIS appointment of the signed-in person can be moved to (same source and rules as the move itself). Someone
+  // else's appointment, or one of another structure / service, answers like an unknown one; an appointment that can no longer be moved answers the
+  // move's own refusal.
+  const moveId = toTrimmedString(req.query?.appointment);
+  let moving = null;
+  if (moveId) {
+    moving = await loadAppointmentWithRelations(moveId);
+    if (!moving || moving.citizenUserId !== auth.user.id || moving.structureId !== structure.id || moving.serviceId !== service.id) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+    const late = rescheduleRefusal(moving);
+    if (late) return res.status(late.status).json({ error: late.code, code: late.code, message: late.error });
+  }
+  // PKG-3: slots are computed for ONE modality (default in person; for a move, the appointment's own); a modality the service / structure / video
+  // activation does not offer has no slots at all (a move may keep the appointment's current modality, as the move itself does)
+  const currentMode = moving ? (moving.mode || 'IN_PERSON') : null;
+  const mode = req.query?.mode ? normalizeMode(req.query.mode) : (currentMode || 'IN_PERSON');
+  if (!mode || (mode !== currentMode && !offeredModes(structure.bookingMode, service.modes, publicVideoStatus()).includes(mode))) {
     return res.status(409).json({ error: 'MODE_UNAVAILABLE', code: 'MODE_UNAVAILABLE', message: 'Cette modalité n’est pas proposée pour ce service.' });
   }
 
   // R42: with team choice, the slots of the chosen professional(s) (?professional= ANY | a public handle | PREVIOUS); the answer never says who is free
   const config = await readBookingConfig(structure.id);
   const team = await import('../_services/rdv-team.js');
-  const choice = await team.resolveChoice({ choice: req.query?.professional, structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
-  if (choice.kind === 'UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
-  const { rules, slots } = await slotsForChoice(structure, service, mode, range, choice);
+  let rules; let slots;
+  if (moving) {
+    const source = await slotsForMove({ structure, service, mode, range, appointment: moving, config });
+    if (source.kind === 'PROFESSIONAL_UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
+    const currentStart = new Date(moving.startAt).toISOString();
+    rules = source.rules; slots = source.slots.filter((slot) => slot.startAt !== currentStart);   // the current slot is not a move (SAME_SLOT)
+  } else {
+    const choice = await team.resolveChoice({ choice: req.query?.professional, structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
+    if (choice.kind === 'UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
+    ({ rules, slots } = await slotsForChoice(structure, service, mode, range, choice));
+  }
 
   return res.status(200).json({
     timezone: rules[0]?.timezone || 'Europe/Paris',
@@ -1818,31 +1861,20 @@ async function rescheduleAppointment(req, res) {
   const backToRequest = confirmationModeFor(config, service.id) === 'APPROVAL' && appointmentState(appointment) === 'CONFIRMED';
   /** @type {{ counts?: (row: any) => boolean, guard?: (tx: any) => Promise<boolean> }} */
   let teamMove = {};
-  if (config.team.enabled && appointment.createdByProUserId) {
-    // R42 team choice: the appointment keeps its professional; the new slot must be free for that professional (agenda, absences, connected calendar)
+  // A-26: the new slot must be one of the slots the move list offers for THIS appointment (slotsForMove: the assigned professional's with team choice —
+  // agenda, absences, connected calendar — else the structure's single agenda; the appointment being moved does not block its own new slot)
+  const source = await slotsForMove({ structure, service, mode, range: { from: dayStart, to: dayEnd }, appointment, config });
+  if (source.kind === 'PROFESSIONAL_UNAVAILABLE') return res.status(409).json((await import('../_services/rdv-team.js')).PROFESSIONAL_UNAVAILABLE);
+  if (!source.slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) return res.status(409).json(SLOT_TAKEN);
+  if (source.kind === 'TEAM') {
+    // R42 team choice: the appointment keeps its professional; re-checked on the connected calendar now, and under the locks
     const team = await import('../_services/rdv-team.js');
-    const assigned = (await team.candidatesFor(structure.id, service.id, config)).filter((c) => c.id === appointment.createdByProUserId);
-    if (!assigned.length) return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
-    const { slots } = await team.teamSlots({ structure, service, mode, range: { from: dayStart, to: dayEnd }, candidates: assigned, exceptId: appointment.id });
-    if (!slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) return res.status(409).json(SLOT_TAKEN);
+    const assigned = source.assigned;
     if (!(await team.calendarFree(assigned, service, startAt, endAt)).length) return res.status(409).json(SLOT_TAKEN);
     teamMove = {
       counts: (row) => !row.createdByProUserId || row.createdByProUserId === appointment.createdByProUserId,
       guard: async (tx) => Boolean(await team.pickFreeUnderLock(tx, { structureId: structure.id, service, startAt, endAt, candidates: assigned, leastBookedFirst: false, exceptId: appointment.id })),
     };
-  } else {
-    const rules = rulesFor(await db.query.ProAvailabilityRule.findMany({
-      where: (r, { eq, and }) => and(eq(r.structureId, structure.id), eq(r.isActive, true)),
-      orderBy: (r, { asc }) => [asc(r.weekday), asc(r.startTime)],
-    }), mode);
-    const others = (await findOverlappingAppointments(db, { structureId: structure.id, statuses: ACTIVE_APPOINTMENT_STATUSES, startBefore: dayEnd, endAfter: dayStart }))
-      .filter((a) => a.id !== appointment.id);   // the appointment being moved does not block its own new slot
-    const timeOffs = await findOverlappingTimeOffs(db, { structureId: structure.id, startBefore: dayEnd, endAfter: dayStart });
-    const slots = generateSlots({ rules, from: dayStart, to: dayEnd, durationMinutes: service.durationMinutes, bufferBeforeMinutes: service.bufferBeforeMinutes,
-      bufferAfterMinutes: service.bufferAfterMinutes, busyWindows: [...toBusyWindows(others), ...timeOffs.map((t) => ({ start: t.startAt, end: t.endAt }))], maxSlots: 600 });
-    if (!slots.some((slot) => slot.startAt === startAt.toISOString() && slot.endAt === endAt.toISOString())) {
-      return res.status(409).json(SLOT_TAKEN);
-    }
   }
 
   const { moved, outcome } = await moveSlot({

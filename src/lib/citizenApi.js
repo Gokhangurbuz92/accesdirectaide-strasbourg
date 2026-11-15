@@ -104,6 +104,7 @@ export const citizenApi = {
   // R45 (ENG-LR-2): withdraw the explicit art. 9 consent of a sensitive-service booking (an upcoming active appointment is then cancelled)
   withdrawSensitiveConsent: (/** @type {string} */ id) => call(`/api/rdv/appointments/${encodeURIComponent(id)}/sensitive-consent/withdraw`, { method: 'POST', body: {} }),
   bookingServices: (/** @type {string} */ slug) => call(`/api/rdv/structures/${encodeURIComponent(slug)}/services`),
-  freeSlots: (/** @type {string} */ slug, /** @type {string} */ serviceId, /** @type {string} */ from, /** @type {string} */ to, /** @type {string} */ mode = 'IN_PERSON') =>
-    call(`/api/rdv/structures/${encodeURIComponent(slug)}/slots?serviceId=${encodeURIComponent(serviceId)}&mode=${encodeURIComponent(mode)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
+  // A-26: `appointmentId` = the slots THIS appointment can be moved to (the server's own move rules: its professional with team choice, its own slot freed)
+  freeSlots: (/** @type {string} */ slug, /** @type {string} */ serviceId, /** @type {string} */ from, /** @type {string} */ to, /** @type {string} */ mode = 'IN_PERSON', /** @type {string} */ appointmentId = '') =>
+    call(`/api/rdv/structures/${encodeURIComponent(slug)}/slots?serviceId=${encodeURIComponent(serviceId)}&mode=${encodeURIComponent(mode)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}${appointmentId ? `&appointment=${encodeURIComponent(appointmentId)}` : ''}`),
 };

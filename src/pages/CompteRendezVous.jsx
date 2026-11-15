@@ -52,9 +52,8 @@ export default function CompteRendezVous() {
     setProblem(''); setMessage(''); setMoving({ id: a.id, days: [], pick: '', loading: true, mode, modes: [a.mode || 'IN_PERSON'], consent: false, offset });
     try {
       const { from, to } = parisBookingWindow(new Date(), offset);
-      const out = mode === (a.mode || 'IN_PERSON')
-        ? await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to)
-        : await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to, mode);
+      // A-26: the server lists the slots THIS appointment can really be moved to (its own professional with team choice), in the asked modality
+      const out = await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to, mode, a.id);
       let modes = [a.mode || 'IN_PERSON'];
       try { const svc = ((await citizenApi.bookingServices(a.structure.slug)).items || []).find((x) => x.id === a.service.id); if (svc && Array.isArray(svc.modes) && svc.modes.length) modes = [...new Set([a.mode || 'IN_PERSON', ...svc.modes])]; } catch { /* keep the current modality only */ }
       setMoving({ id: a.id, days: out.days || [], pick: '', loading: false, mode, modes, consent: false, offset });

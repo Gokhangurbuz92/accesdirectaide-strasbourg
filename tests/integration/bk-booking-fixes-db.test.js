@@ -4,6 +4,8 @@
  *
  *  A-29  GET rdv/structures/:slug/profile (no account) applies the same sensitivity gate as its signed-in siblings: a service whose online booking is not
  *        open is listed as CONTACT_STRUCTURE and discloses no availability (nextAvailableDay).
+ *  A-26  GET rdv/structures/:slug/slots?appointment=<id> lists the slots THAT appointment can be moved to, from the same source as the move itself: with
+ *        team choice only the assigned professional's free slots (the union of the team was listed and then refused); every listed slot is accepted.
  */
 import { vi } from 'vitest';
 vi.stubEnv('MAILER_PROVIDER', 'test');
@@ -46,6 +48,14 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
   const day = (n) => new Date(Date.now() + n * DAY).toISOString().slice(0, 10);
   const classify = (s, svc, value) => db.execute(sql`UPDATE "Structure" SET settings_json = jsonb_set(coalesce(settings_json, '{}'::jsonb), '{serviceSensitivity}',
     jsonb_build_object('v', 1, 'services', jsonb_build_object(${svc}::text, jsonb_build_object('value', ${value}::text, 'reviewedAt', '2026-11-05T10:00:00.000Z', 'reviewedBy', 'seed@example.test', 'reason', 'Classification fictive'))), true) WHERE id = ${s.id}`);
+  const slotsOf = async (s, as, query = {}) => {
+    const r = await call('GET', `structures/${s.slug}/slots`, { query: { serviceId: s.svc, from: day(3), to: day(10), ...query }, as });
+    expect(r.statusCode, show(r)).toBe(200);
+    return r.body.slots.map((x) => x.startAt);
+  };
+  const book = (s, as, startAt, extra = {}) => call('POST', 'appointments', { as, body: { structureSlug: s.slug, serviceId: s.svc, startAt, idempotencyKey: `k-${Math.random()}`, ...extra } });
+  const move = (id, as, startAt, extra = {}) => call('POST', `appointments/${id}/reschedule`, { as, body: { startAt, ...extra } });
+  const rows = async (q) => (await db.execute(q)).rows;
   const unclassify = (s) => db.execute(sql`UPDATE "Structure" SET settings_json = coalesce(settings_json, '{}'::jsonb) - 'serviceSensitivity' WHERE id = ${s.id}`);
 
   async function seedStructure(s) {
@@ -117,5 +127,64 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
     const unreviewed = await call('GET', `structures/${G.slug}/profile`);
     expect(unreviewed.body.services[0].onlineBooking).toBe('CONTACT_STRUCTURE');
     expect(unreviewed.body.nextAvailableDay).toBeNull();
+  });
+
+  // ───────────────────────────── A-26 ─────────────────────────────
+  it('A-26 (team choice): the move list is the assigned professional’s own free slots — a slot only a colleague has free is not listed, and every listed slot moves', async () => {
+    const teamView = await call('GET', `structures/${T.slug}/team`, { query: { serviceId: T.svc }, as: C[0] });
+    expect(teamView.statusCode, show(teamView)).toBe(200);
+    const h1 = teamView.body.professionals.find((p) => p.displayName === P1.name).id;
+    const all = await slotsOf(T, C[0], { professional: 'ANY' });
+    const [s0, s1, s2] = all;
+    const mine = await book(T, C[0], s0, { professional: h1 });
+    expect(mine.statusCode, show(mine)).toBe(201);
+    const other = await book(T, C[1], s1, { professional: h1 });   // the same professional is taken at s1; the colleague is still free then
+    expect(other.statusCode, show(other)).toBe(201);
+    expect((await rows(sql`SELECT "createdByProUserId" AS pro FROM "ProAppointment" WHERE id IN (${mine.body.id}, ${other.body.id})`)).map((r) => r.pro)).toEqual([P1.id, P1.id]);
+
+    // the list without the appointment (what the panel asked before): the union of the team — s1 is there, although the move to s1 is refused
+    const union = await slotsOf(T, C[0]);
+    expect(union).toContain(s1);
+    const refused = await move(mine.body.id, C[0], s1);
+    expect([refused.statusCode, refused.body.code], show(refused)).toEqual([409, 'SLOT_TAKEN']);
+
+    // the list FOR this appointment: the server's own move rules
+    const forMove = await slotsOf(T, C[0], { appointment: mine.body.id });
+    expect(forMove).not.toContain(s1);   // its professional is busy then
+    expect(forMove).not.toContain(s0);   // the current slot is not a move
+    expect(forMove).toContain(s2);
+    // an absence of the assigned professional removes that time from the move list (a colleague being free does not help)
+    const off = new Date(s2);
+    await db.execute(sql`INSERT INTO "ProTimeOff" (id, "structureId", "proUserId", "startAt", "endAt", "updatedAt") VALUES (${'off-' + TS}, ${T.id}, ${P1.id}, ${off.toISOString()}::timestamptz, ${new Date(off.getTime() + 30 * 60_000).toISOString()}::timestamptz, NOW())`);
+    const withAbsence = await slotsOf(T, C[0], { appointment: mine.body.id });
+    expect(withAbsence).not.toContain(s2);
+    expect(await slotsOf(T, C[0])).toContain(s2);
+    const absent = await move(mine.body.id, C[0], s2);
+    expect(absent.statusCode, show(absent)).toBe(409);
+    // a listed slot is accepted by the move, and the appointment keeps its professional
+    const target = withAbsence[0];
+    const moved = await move(mine.body.id, C[0], target);
+    expect(moved.statusCode, show(moved)).toBe(200);
+    const after = (await rows(sql`SELECT "createdByProUserId" AS pro, (extract(epoch from "startAt") * 1000)::bigint AS ms FROM "ProAppointment" WHERE id = ${mine.body.id}`))[0];
+    expect([after.pro, Number(after.ms)]).toEqual([P1.id, new Date(target).getTime()]);
+  });
+
+  it('A-26: the move list is for the person’s own appointment of that service only, and answers the move’s own refusals', async () => {
+    const [s0, s1] = await slotsOf(A, C[0]);
+    const mine = await book(A, C[0], s0);
+    expect(mine.statusCode, show(mine)).toBe(201);
+    const forMove = await slotsOf(A, C[0], { appointment: mine.body.id });
+    expect(forMove).not.toContain(s0);
+    expect(forMove).toContain(s1);
+    const q = { serviceId: A.svc, from: day(3), to: day(10), appointment: mine.body.id };
+    // someone else's appointment, an unknown one, and one of another structure: the same 404
+    for (const r of [await call('GET', `structures/${A.slug}/slots`, { query: q, as: C[1] }), await call('GET', `structures/${A.slug}/slots`, { query: { ...q, appointment: 'no-such-id' }, as: C[0] }),
+      await call('GET', `structures/${T.slug}/slots`, { query: { ...q, serviceId: T.svc }, as: C[0] })]) {
+      expect([r.statusCode, r.body.error], show(r)).toEqual([404, 'Appointment not found']);
+    }
+    // an appointment that can no longer be moved (limit reached): the move's own refusal, no slot list
+    await db.execute(sql`UPDATE "ProAppointment" SET "rescheduleCount" = 2 WHERE id = ${mine.body.id}`);
+    const limit = await call('GET', `structures/${A.slug}/slots`, { query: q, as: C[0] });
+    expect([limit.statusCode, limit.body.code], show(limit)).toEqual([409, 'RESCHEDULE_LIMIT']);
   });
 });
