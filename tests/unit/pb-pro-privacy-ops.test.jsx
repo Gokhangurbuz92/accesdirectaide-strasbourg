@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-/* global document, window, Blob */
+/* global document, window, Blob, URL */
 /**
  * Pro / Structure privacy and operations fixes (RECON_PRO_STRUCTURE_TERRITORY 2026-11-15) — screens.
  *   A04  the dossier page shows and sets the CASE status; no label that reads as a decision
+ *   A14  the dossier export (JSON, CSV, printable recap for PDF) and the organisation's own access trail are reachable from the dossier page
  */
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,7 @@ import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import fs from 'node:fs';
 import SharedDossier from '../../src/pages/pro/SharedDossier.jsx';
+import DossierExportCard from '../../src/components/pro/DossierExportCard.jsx';
 
 const h = React.createElement;
 const json = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body, blob: async () => new Blob([JSON.stringify(body)]), headers: { get: () => null } });
@@ -55,5 +57,42 @@ describe('A04 — the dossier page follow-up is the case status', () => {
     const src = fs.readFileSync('src/pages/pro/SharedDossier.jsx', 'utf8');
     expect(src).not.toMatch(/status_validated|Dossier validé|internalNote/);
     for (const l of ['en', 'tr', 'ar', 'de', 'uk']) expect(Object.keys(JSON.parse(fs.readFileSync(`src/i18n/locales/${l}/pro.json`, 'utf8'))).filter((k) => /shared_dossier\.status_(validated|in_review|to_handle|needs_documents)/.test(k))).toEqual([]);
+  });
+});
+
+describe('A14 — dossier export reachable from the dossier page', () => {
+  const card = () => render(h(MemoryRouter, null, h(DossierExportCard, { shareId: 'abcdef1234', userId: 'u1' })));
+  it('JSON and CSV call the export route with the session; PDF opens the printable recap; a refusal is said', async () => {
+    window.localStorage.setItem('pro_token', 'tok');
+    const urls = []; let status = 200;
+    vi.stubGlobal('fetch', vi.fn(async (url, o) => { urls.push([url, o?.headers?.Authorization]); return json(status, { ok: true, export: { reference: 'ABCDEF12' } }); }));
+    const saved = [];
+    URL.createObjectURL = vi.fn(() => 'blob:x'); URL.revokeObjectURL = vi.fn();
+    const click = vi.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(function () { saved.push(this.download); });
+    card();
+    await act(async () => { fireEvent.click(screen.getByTestId('pro-dossier-export-json')); });
+    await act(async () => { fireEvent.click(screen.getByTestId('pro-dossier-export-csv')); });
+    expect(urls).toEqual([['/api/pro/dossier/export?shareId=abcdef1234&format=json', 'Bearer tok'], ['/api/pro/dossier/export?shareId=abcdef1234&format=csv', 'Bearer tok']]);
+    expect(saved).toEqual(['dossier-ABCDEF12.json', 'dossier-ABCDEF12.csv']);
+    expect(screen.getByTestId('pro-dossier-export-status')).toHaveTextContent('visible par la personne');
+    expect(screen.getByTestId('pro-dossier-export-pdf')).toHaveAttribute('href', '/pro/attestation/abcdef1234');
+    expect(document.body.textContent).toMatch(/n’est pas signé/);
+    status = 429;
+    await act(async () => { fireEvent.click(screen.getByTestId('pro-dossier-export-json')); });
+    expect(screen.getByRole('alert')).toHaveTextContent('Trop d’exports');
+    expect(saved).toHaveLength(2);
+    click.mockRestore();
+  });
+  it('the organisation’s own access trail is loaded on demand: action, date, « vous » or a colleague — never an identifier', async () => {
+    window.localStorage.setItem('pro_token', 'tok');
+    vi.stubGlobal('fetch', vi.fn(async () => json(200, { ok: true, views: [{ id: 'a1', action: 'DOSSIER_EXPORTED', actorId: 'u1', at: '2026-11-10T10:00:00.000Z' }, { id: 'a2', action: 'DOSSIER_VIEWED', actorId: 'u-other-777', at: '2026-11-09T10:00:00.000Z' }] })));
+    card();
+    await act(async () => { fireEvent.click(screen.getByTestId('pro-dossier-views-load')); });
+    const rows = await screen.findAllByTestId('pro-dossier-view');
+    expect(rows.map((r) => r.textContent.replace(/^.*— /, ''))).toEqual(['Export (vous)', 'Consultation (un membre de votre équipe)']);
+    expect(document.body.textContent).not.toContain('u-other-777');
+  });
+  it('the dossier page mounts the export card', () => {
+    expect(fs.readFileSync('src/pages/pro/SharedDossier.jsx', 'utf8')).toMatch(/<DossierExportCard shareId=\{shareId\}/);
   });
 });

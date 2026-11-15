@@ -15,6 +15,7 @@ import SecureChat from '@/components/Messaging/SecureChat';
 import FileVault from '@/components/FileVault';
 import ExpertTools from '@/components/ExpertTools';
 import SiaoHandoverCard from '@/components/pro/SiaoHandoverCard';
+import DossierExportCard from '@/components/pro/DossierExportCard';
 import { takePendingInvite } from '@/lib/pendingInvite';
 import { getCsrfHeaders } from '@/lib/csrf';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
@@ -405,6 +406,9 @@ export default function SharedDossier() {
 
                     {/* R46 / R22: SI-SIAO — disconnected adapter, manual handover sheet only with the person's SIAO consent (PURP-07) */}
                     <SiaoHandoverCard shareId={shareId} siaoAllowed={(access?.purposes || []).includes('PURP-07')} />
+
+                    {/* A14 / R15: export (JSON, CSV, printable recap for PDF) and the organisation's own access trail */}
+                    <DossierExportCard shareId={shareId} userId={user?.id} />
 
                     {/* Security badge */}
                     <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">

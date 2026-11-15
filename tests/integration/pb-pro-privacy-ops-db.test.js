@@ -3,6 +3,7 @@
  * Synthetic organizations A (admin, pro1, pro2) and B (pro). Synthetic data only; the mailer is the in-memory 'test' provider. Skipped without DATABASE_URL.
  *   A04  one follow-up status (the case status); no note in clear in the dossier JSON; a legacy note moves to the protected case notes
  *   A13  a SIAO hand-over sheet prepared by a professional appears in the person's access log
+ *   A14  dossier export: only json / csv, audited with the validated format; the organisation's access trail (dossier/views) lists it
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
@@ -32,6 +33,7 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
     auth = await import('../../api/_utils/auth.js'); userAuth = await import('../../api/_utils/user-auth.js');
     process.env.MAILER_PROVIDER = 'test'; process.env.MAILER_FROM = 'qa@example.test';
     H.dossier = (await import('../../api/_handlers/pro/dossier.js')).default; H.cases = (await import('../../api/_handlers/pro/cases.js')).default;
+    H.exp = (await import('../../api/_handlers/pro/dossier/export.js')).default; H.views = (await import('../../api/_handlers/pro/dossier/views.js')).default;
     H.siao = (await import('../../api/_handlers/pro/interop-siao.js')).default; H.citDossier = (await import('../../api/_handlers/citizen/dossier.js')).default;
     for (const id of Object.values(S)) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, is_pro_enabled, "updatedAt", "createdAt")
       VALUES (${id}, ${'Org ' + id}, ${id}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', true, NOW(), NOW())`);
@@ -114,6 +116,24 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
       await db.execute(sql`INSERT INTO "AuditLog" (id, action, entity, entity_id, actor_id, details, ip_hash) VALUES (${'pb-siao-old-' + TS}, 'SIAO_HANDOVER_PREPARED', 'DIAGNOSTIC', ${DOS}, ${P.pro1.id}, ${JSON.stringify({ structureId: S.A, purpose: 'PURP-07' })}::jsonb, 'SYSTEM_GATEWAY')`);
       expect(await log()).toHaveLength(2);
       expect(await log(DOS2)).toEqual([]);
+    });
+  });
+
+  describe('A14 — dossier export formats and the organisation’s access trail', () => {
+    const exp = (p, format) => pro(H.exp, p, { url: `/api/pro/dossier/export?shareId=${DOS2}${format === undefined ? '' : `&format=${encodeURIComponent(format)}`}` });
+    it('json and csv are served and audited; any other format is refused and leaves no audit row', async () => {
+      const exported = async () => (await db.execute(sql`SELECT details->>'format' AS f FROM "AuditLog" WHERE action = 'DOSSIER_EXPORTED' AND details->>'shareId' = ${DOS2} ORDER BY "timestamp"`)).rows.map((r) => r.f);
+      for (const bad of ['pdf', 'xml', 'json"\r\nX-Injected: 1']) { const r = await exp(P.pro1, bad); expect([r.statusCode, r.body.error], bad).toEqual([400, 'INVALID_FORMAT']); }
+      expect(await exported()).toEqual([]);
+      const j = await exp(P.pro1, undefined);
+      expect(j.statusCode).toBe(200); expect(j.body.export.reference).toBe(DOS2.slice(0, 8).toUpperCase());
+      const c = await exp(P.pro1, 'csv');
+      expect(c.statusCode).toBe(200); expect(c.headers['content-type']).toMatch(/text\/csv/); expect(String(c.body)).toContain('Référence');
+      expect(await exported()).toEqual(['json', 'csv']);
+      expect((await exp(P.b, 'json')).statusCode).toBe(404);   // no grant on this dossier
+      const trail = await pro(H.views, P.pro1, { url: `/api/pro/dossier/views?shareId=${DOS2}` });
+      expect(trail.body.views.filter((v) => v.action === 'DOSSIER_EXPORTED')).toHaveLength(2);
+      expect((await pro(H.views, P.b, { url: `/api/pro/dossier/views?shareId=${DOS2}` })).statusCode).toBe(404);
     });
   });
 });
