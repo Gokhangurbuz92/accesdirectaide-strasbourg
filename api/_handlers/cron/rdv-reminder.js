@@ -2,7 +2,8 @@
 import logger from '../../_utils/logger.js';
 import { env } from '../../_utils/env.js';
 // @ts-nocheck
-import { getCronAuth } from '../../_utils/cronAuth.js';
+import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
+import { startCronRun, finishCronRun, countsOnly } from '../../_utils/cron-run.js';
 import { db } from '../../../src/db/index.js';
 import { ProAppointment, ProUser, AuditLog, AppointmentNotice } from '../../../src/db/schema.js';
 import { gte, lt, and, inArray, eq, isNull, or, sql, count } from 'drizzle-orm';
@@ -78,6 +79,10 @@ export default async function handler(/** @type {import('../../_utils/http-types
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // RA-03: a run record around the job (what the job does is unchanged) — counts only, never an appointment, an address or a number
+    const startedAtMs = Date.now();
+    const cronRunId = await startCronRun(db, 'rdv-reminder', { trigger: scheduledByVercel(req) ? 'vercel-cron' : 'manual' });
+    let errorCount = 0;
     try {
         const result = await withLock('rdv-reminder', async () => {
             // Find appointments for tomorrow (J+1) — PKG-11 audit pass 2: « demain » for a person in Strasbourg (Paris calendar day), not the server's UTC day
@@ -325,6 +330,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 errors: errors.length,
             }, '[Cron] RDV J-1 reminder completed');
 
+            errorCount = errors.length;
             return {
                 ok: true,
                 appointmentsFound: appointments.length,
@@ -339,14 +345,17 @@ export default async function handler(/** @type {import('../../_utils/http-types
             };
         }, { ttl: 600 });
 
+        await finishCronRun(db, cronRunId, { status: errorCount > 0 ? 'partial' : 'success', startedAtMs, metrics: { ...countsOnly(result), errors: errorCount } });
         return res.status(200).json(result);
     } catch (error) {
         // @ts-ignore
         if (error.message?.includes('already running')) {
             logger.warn('[Cron] RDV reminder already running, skipping');
+            await finishCronRun(db, cronRunId, { status: 'skipped', skipReason: 'ALREADY_RUNNING', startedAtMs });
             return res.status(409).json({ error: 'RDV reminder already running' });
         }
         logger.error({ err: error }, '[Cron] RDV reminder failed');
+        await finishCronRun(db, cronRunId, { status: 'failed', startedAtMs, error: error?.name || 'Error' });
         return res.status(500).json({ error: 'Cron RDV reminder failed.' });
     }
 }
