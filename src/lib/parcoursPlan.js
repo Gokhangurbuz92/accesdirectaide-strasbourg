@@ -21,6 +21,7 @@ export const PLAN_DONE_STATUSES = Object.freeze(['DECISION_POSITIVE', 'DECISION_
 /** next actions the screen derives from where the person says they are — never stored */
 export const PLAN_DERIVED_ACTIONS = Object.freeze(['after_refusal', 'resume_or_search', 'ask_outcome']);
 
+/** @type {Readonly<Record<string, string>>} */
 const STATUS_ACTION = Object.freeze({ DOCUMENTS_REQUIRED: 'gather_documents', READY: 'submit_request', SUBMITTED: 'wait_answer', WAITING_ORGANIZATION: 'wait_answer',
   ADDITIONAL_INFORMATION: 'answer_organisation', DECISION_NEGATIVE: 'after_refusal' });
 
@@ -73,7 +74,7 @@ export function groupByNeed(items) {
 export function dependencyCycle(itemId, dependsOnId, edges) {
   const next = (/** @type {string} */ id) => (edges instanceof Map ? edges.get(id) : edges[id]) || null;
   const size = edges instanceof Map ? edges.size : Object.keys(edges).length;
-  let at = dependsOnId;
+  /** @type {string | null} */ let at = dependsOnId;
   for (let hop = 0; at && hop <= size + 1; hop += 1) {
     if (at === itemId) return true;
     at = next(at);
