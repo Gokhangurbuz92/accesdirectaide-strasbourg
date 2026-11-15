@@ -6,6 +6,8 @@
  *        open is listed as CONTACT_STRUCTURE and discloses no availability (nextAvailableDay).
  *  A-26  GET rdv/structures/:slug/slots?appointment=<id> lists the slots THAT appointment can be moved to, from the same source as the move itself: with
  *        team choice only the assigned professional's free slots (the union of the team was listed and then refused); every listed slot is accepted.
+ *  A-30  the same answer says whether the move will ask for the separate art. 9 agreement (move.sensitiveConsentRequired) — true exactly when the move
+ *        itself answers SENSITIVE_CONSENT_REQUIRED without it.
  */
 import { vi } from 'vitest';
 vi.stubEnv('MAILER_PROVIDER', 'test');
@@ -186,5 +188,31 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
     await db.execute(sql`UPDATE "ProAppointment" SET "rescheduleCount" = 2 WHERE id = ${mine.body.id}`);
     const limit = await call('GET', `structures/${A.slug}/slots`, { query: q, as: C[0] });
     expect([limit.statusCode, limit.body.code], show(limit)).toEqual([409, 'RESCHEDULE_LIMIT']);
+  });
+
+  // ───────────────────────────── A-30 ─────────────────────────────
+  it('A-30: the move list says when the art. 9 agreement is expected — exactly when the move refuses without it', async () => {
+    const OPEN = { ADA_SENSITIVE_BOOKING_APPROVED: 'art9-explicit-consent-v1', ADA_HDS_BOOKING_ASSESSED: '1' };
+    const open = () => { for (const [k, v] of Object.entries(OPEN)) vi.stubEnv(k, v); };
+    const list = async (id) => { const r = await call('GET', `structures/${G.slug}/slots`, { query: { serviceId: G.svc, from: day(3), to: day(10), appointment: id }, as: C[2] }); expect(r.statusCode, show(r)).toBe(200); return r.body; };
+    const first = await call('GET', `structures/${G.slug}/slots`, { query: { serviceId: G.svc, from: day(3), to: day(10) }, as: C[2] });
+    const [s0, s1, s2] = first.body.slots.map((x) => x.startAt);
+    const booked = await call('POST', 'appointments', { as: C[2], body: { structureSlug: G.slug, serviceId: G.svc, startAt: s0, idempotencyKey: `k-${Math.random()}` } });   // booked while ordinary / unreviewed (LAB)
+    expect(booked.statusCode, show(booked)).toBe(201);
+    const id = booked.body.id;
+    expect((await list(id)).move).toEqual({ appointmentId: id, sensitiveConsentRequired: false });
+
+    await classify(G, G.svc, 'sensitive'); open();   // reclassified sensitive, art. 9 gate open: no consent exists for this appointment
+    try {
+      expect((await list(id)).move.sensitiveConsentRequired).toBe(true);
+      const without = await move(id, C[2], s1);
+      expect([without.statusCode, without.body.code], show(without)).toEqual([400, 'SENSITIVE_CONSENT_REQUIRED']);
+      const withBox = await move(id, C[2], s1, { sensitiveConsent: true });
+      expect(withBox.statusCode, show(withBox)).toBe(200);
+      // the agreement given with the move is recorded for this appointment: the next move no longer asks for it
+      expect((await list(id)).move.sensitiveConsentRequired).toBe(false);
+      const again = await move(id, C[2], s2);
+      expect(again.statusCode, show(again)).toBe(200);
+    } finally { await unclassify(G); }
   });
 });

@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import SEO from '@/components/SEO';
 import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
+import SensitiveConsentField from '@/components/rdv/SensitiveConsentField.jsx';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
@@ -32,7 +33,8 @@ export default function CompteRendezVous() {
   const [mailOutcome, setMailOutcome] = useState(null);
   const [state, setState] = useState({ loading: true, error: '', items: [] });
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState('');
-  const [moving, setMoving] = useState(null); // { id, days, pick, loading, mode, modes, consent }
+  const [moving, setMoving] = useState(null); // { id, days, pick, loading, mode, modes, consent, needSensitive, sensitive, sensitiveError }
+  const sensitiveRef = useRef(null);   // A-30: the art. 9 box of the move panel takes the focus when it is missing
   const [busy, setBusy] = useState(false);
   const [join, setJoin] = useState(null);
   const load = useCallback(async () => {
@@ -40,10 +42,12 @@ export default function CompteRendezVous() {
     catch (err) { setState({ loading: false, error: err.status === 401 ? t('compte:rdv.login_required', 'Connectez-vous pour voir vos rendez-vous.') : err.message, auth: err.status === 401, items: [] }); }   // R18: « Se connecter » only when the session is really missing (401); any other failure offers to try again (it read as « please sign in »)
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
+  const sensitiveMissing = moving?.sensitiveError === true;
+  useEffect(() => { if (sensitiveMissing) sensitiveRef.current?.focus(); }, [sensitiveMissing]);   // A-30: after the box is rendered
   /** @param {number} offset */
   const periodOf = (offset) => { const w = parisBookingWindow(new Date(), offset); return { from: formatDate(`${w.from}T12:00:00Z`, { day: 'numeric', month: 'long' }), to: formatDate(`${w.to}T12:00:00Z`, { day: 'numeric', month: 'long' }) }; };
   // R46: a move takes a new slot, so the service's online-booking rule applies again (R45 sensitivity gate) — the refusal is shown in the reader's language
-  const moveProblem = (err) => (['SENSITIVE_BOOKING_NOT_OPEN', 'SERVICE_SENSITIVITY_UNREVIEWED', 'SENSITIVE_CONSENT_REQUIRED'].includes(err?.code)
+  const moveProblem = (err) => (['SENSITIVE_BOOKING_NOT_OPEN', 'SERVICE_SENSITIVITY_UNREVIEWED'].includes(err?.code)
     ? t('booking:sensitive.move_contact_structure_r46', 'Ce rendez-vous ne peut pas être déplacé en ligne. Pour changer l’heure, contactez directement la structure par ses moyens de contact habituels. Vous pouvez aussi l’annuler ici.')
     : err?.message);
   // the modality is kept unless the person explicitly picks another one that the service offers now (video needs their agreement)
@@ -56,22 +60,30 @@ export default function CompteRendezVous() {
       const out = await citizenApi.freeSlots(a.structure.slug, a.service.id, from, to, mode, a.id);
       let modes = [a.mode || 'IN_PERSON'];
       try { const svc = ((await citizenApi.bookingServices(a.structure.slug)).items || []).find((x) => x.id === a.service.id); if (svc && Array.isArray(svc.modes) && svc.modes.length) modes = [...new Set([a.mode || 'IN_PERSON', ...svc.modes])]; } catch { /* keep the current modality only */ }
-      setMoving({ id: a.id, days: out.days || [], pick: '', loading: false, mode, modes, consent: false, offset });
+      // A-30: the server says whether this move needs the separate art. 9 agreement (sensitive service, no active consent for this appointment)
+      setMoving({ id: a.id, days: out.days || [], pick: '', loading: false, mode, modes, consent: false, offset, needSensitive: out.move?.sensitiveConsentRequired === true, sensitive: false, sensitiveError: false });
     } catch (err) { setMoving(null); setProblem(moveProblem(err)); }
   };
   const confirmMove = async () => {
     setBusy(true); setProblem('');
     const a = state.items.find((x) => x.id === moving.id);
     const changed = a && moving.mode !== (a.mode || 'IN_PERSON');
+    // A-30: the art. 9 agreement is asked on its own field, never guessed: missing → said on the field, which takes the focus; nothing is sent
+    if (moving.needSensitive && !moving.sensitive) { setBusy(false); setMoving({ ...moving, sensitiveError: true }); return; }
+    const extra = { ...(changed ? { mode: moving.mode, ...(moving.mode === 'VIDEO' ? { videoConsent: moving.consent === true } : {}) } : {}), ...(moving.needSensitive ? { sensitiveConsent: true } : {}) };
     try {
-      const out = changed ? await citizenApi.rescheduleAppointment(moving.id, moving.pick, { mode: moving.mode, ...(moving.mode === 'VIDEO' ? { videoConsent: moving.consent === true } : {}) })
+      const out = Object.keys(extra).length ? await citizenApi.rescheduleAppointment(moving.id, moving.pick, extra)
         : await citizenApi.rescheduleAppointment(moving.id, moving.pick);
       setMailOutcome(out && typeof out === 'object' && out.notification ? out.notification.email : null);   // R42: the real e-mail outcome, never assumed
       setMoving(null); setMessage(changed ? (moving.mode === 'VIDEO' ? t('compte:rdv.moved_video', 'Rendez-vous déplacé, désormais à distance (visio). L’ancien créneau a été libéré.') : t('compte:rdv.moved_in_person', 'Rendez-vous déplacé, désormais en présentiel. L’ancien créneau a été libéré.')) : t('compte:rdv.moved', 'Rendez-vous déplacé. L’ancien créneau a été libéré.'));
       if (out && typeof out === 'object' && out.state === 'REQUESTED') setMessage(t('booking:journey.move_requested', 'Demande de déplacement envoyée : le nouveau créneau doit être accepté par la structure. L’ancien créneau a été libéré.'));
       await load();
     }
-    catch (err) { setProblem(moveProblem(err)); if (err.code === 'SLOT_TAKEN') startMove(a, moving.mode); }
+    catch (err) {
+      // A-30: the server asks for the agreement (e.g. it was withdrawn meanwhile): the box appears with its explanation, the chosen slot is kept
+      if (err?.code === 'SENSITIVE_CONSENT_REQUIRED') { setMoving({ ...moving, needSensitive: true, sensitive: false, sensitiveError: true }); return; }
+      setProblem(moveProblem(err)); if (err.code === 'SLOT_TAKEN') startMove(a, moving.mode, moving.offset || 0);
+    }
     finally { setBusy(false); }
   };
   const visio = async (a, action) => {
@@ -229,6 +241,10 @@ export default function CompteRendezVous() {
                         {moving.offset > 0 ? <Button type="button" size="sm" variant="outline" data-testid="rdv-move-earlier" onClick={() => startMove(a, moving.mode, moving.offset - BOOKING_WINDOW_DAYS)}>{t('compte:rdv.move_earlier_r46', '‹ 14 jours précédents')}</Button> : null}
                         {(moving.offset || 0) < MAX_WINDOW_OFFSET ? <Button type="button" size="sm" variant="outline" data-testid="rdv-move-later" onClick={() => startMove(a, moving.mode, (moving.offset || 0) + BOOKING_WINDOW_DAYS)}>{t('compte:rdv.move_later_r46', '14 jours suivants ›')}</Button> : null}
                       </div>
+                    ) : null}
+                    {moving.needSensitive && !moving.loading ? (
+                      <SensitiveConsentField ref={sensitiveRef} checked={moving.sensitive === true} disabled={busy} error={moving.sensitiveError === true}
+                        onChange={(v) => setMoving({ ...moving, sensitive: v, sensitiveError: v ? false : moving.sensitiveError })} />
                     ) : null}
                     <div className="flex gap-2">
                       <Button type="button" size="sm" disabled={!moving.pick || busy || (moving.mode === 'VIDEO' && moving.mode !== (a.mode || 'IN_PERSON') && !moving.consent)} data-testid="rdv-move-confirm" onClick={confirmMove}>{t('compte:rdv.confirmer_deplacement', 'Confirmer le déplacement')}</Button>

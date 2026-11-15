@@ -1061,12 +1061,18 @@ async function getSlots(req, res) {
   // R42: with team choice, the slots of the chosen professional(s) (?professional= ANY | a public handle | PREVIOUS); the answer never says who is free
   const config = await readBookingConfig(structure.id);
   const team = await import('../_services/rdv-team.js');
-  let rules; let slots;
+  let rules; let slots; let moveConsentRequired = false;
   if (moving) {
     const source = await slotsForMove({ structure, service, mode, range, appointment: moving, config });
     if (source.kind === 'PROFESSIONAL_UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
     const currentStart = new Date(moving.startAt).toISOString();
     rules = source.rules; slots = source.slots.filter((slot) => slot.startAt !== currentStart);   // the current slot is not a move (SAME_SLOT)
+    // A-30: whether the move will ask for the separate art. 9 agreement (a sensitive service with the gate open, and no active consent for THIS
+    // appointment) — the same rule as the move, so the panel shows the box exactly when the server expects it
+    if (sensitivityGate.requiresConsent) {
+      const consent = await import('../_services/sensitive-booking-consent.js');
+      moveConsentRequired = !(await consent.hasActiveSensitiveConsent(auth.user.id, moving.id));
+    }
   } else {
     const choice = await team.resolveChoice({ choice: req.query?.professional, structureId: structure.id, serviceId: service.id, citizenUserId: auth.user.id, config });
     if (choice.kind === 'UNAVAILABLE') return res.status(409).json(team.PROFESSIONAL_UNAVAILABLE);
@@ -1089,6 +1095,7 @@ async function getSlots(req, res) {
     total: slots.length,
     slots,
     days: groupSlotsByDay(slots),
+    ...(moving ? { move: { appointmentId: moving.id, sensitiveConsentRequired: moveConsentRequired } } : {}),
   });
 }
 
