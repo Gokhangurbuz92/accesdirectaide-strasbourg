@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const h = vi.hoisted(() => ({ found: null, logs: [], inserted: [] }));
 vi.mock('../../api/_utils/env.js', () => ({ env: { siao: { enabled: true, apiUrl: 'https://siao.lab.invalid', apiKey: 'lab-key' }, secrets: { jwtSecret: 'x' } } }));
+vi.mock('../../api/_utils/pro-rate-limit.js', () => ({ withProRateLimit: (_name, fn) => fn }));   // A23: the quota (KV-backed) is not under test here (tests/unit/pb-pro-rate-limits.test.js)
 vi.mock('../../api/_utils/auth.js', () => ({ requireProAuth: (fn) => fn, requireProStructureContext: () => ({ userId: 'u1', structureId: 's1', role: 'PRO' }) }));
 vi.mock('../../api/_utils/share-access.js', async (orig) => ({ ...(await orig()), resolveDossierForStructure: vi.fn(async () => h.found) }));
 vi.mock('../../src/db/index.js', () => ({ db: { insert: () => ({ values: async (v) => { h.inserted.push(v); } }) } }));

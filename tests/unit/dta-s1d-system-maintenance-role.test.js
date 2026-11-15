@@ -36,6 +36,6 @@ describe('system-maintenance is not a cross-organization read for a structure ad
     const r = await call('SUPERADMIN'); expect(r.statusCode).toBe(200); expect(r.body.counts).toEqual({ diagnostics: 7, auditEntries: 7, proUsers: 7 });
   });
   it('source guard: the role list contains only superadmin', () => {
-    expect(readFileSync('api/_handlers/pro/system-maintenance.js', 'utf8')).toMatch(/requireProRole\(handler, \['superadmin'\]\)/);
+    expect(readFileSync('api/_handlers/pro/system-maintenance.js', 'utf8')).toMatch(/requireProRole\(withProRateLimit\('pro\.maintenance', handler\), \['superadmin'\]\)/);
   });
 });
