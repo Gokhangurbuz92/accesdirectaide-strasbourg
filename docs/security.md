@@ -20,11 +20,11 @@
 | **Lockout citoyen** | 5 tentatives → 15min lock | `api/_handlers/auth/login.js` |
 | **Password policy** | 8+ chars, A-Z, a-z, 0-9 | `api/_handlers/auth/signup.js` |
 | **PII blocking** | NIR/IBAN/CB détectés et bloqués | `api/lib/prompt-sanitizer.js` |
-| **Chiffrement PII** | AES-256-GCM | `api/_utils/vault-crypto.js` |
-| **Circuit breaker** | Opossum (appels au fournisseur d'IA ; aucune IA en production) | `api/_utils/circuit.js` |
+| **Chiffrement PII** | AES-256-GCM | `api/_utils/vault.ts`, `api/lib/crypto.ts`, `api/lib/data-keys.ts` |
+| **Circuit breaker** | Opossum (appels au fournisseur d'IA ; aucune IA en production) | `api/lib/gemini-circuit-breaker.js` |
 | **Pas de clé IA non approuvée** | `GEMINI_API_KEY` / `GOOGLE_API_KEY` refusées en production | `scripts/release-preflight.mjs` |
-| **Secrets scan** | Gitleaks CI + GitGuardian | `.github/workflows/secrets-scan.yml` |
-| **SAST** | Semgrep CI | `.github/workflows/semgrep.yml` |
+| **Secrets scan** | Gitleaks (version et SHA-256 épinglés) sur les fichiers suivis, à chaque push et pull request sur `main` (tâche `secret-scan`, RA-10) ; le même contrôle en local (`npm run security:secrets`, crochet pre-push facultatif `scripts/install-git-hooks.mjs`) et dans le script de mise en production (`scripts/release-guard.mjs`) ; `npm run secrets:bundle` sur le build. Limite : l'arbre poussé est analysé, pas l'historique de chaque commit. Pas de GitGuardian. | `.github/workflows/ci.yml`, `.gitleaks.toml`, `.gitleaksignore` |
+| **SAST** | Aucun Semgrep en CI (le workflow n'existe plus). ESLint strict et TypeScript strict avec base de référence, audit des dépendances de production (`npm audit --omit=dev --audit-level=high`). Les suites d'intégration, de migration et de bout en bout ne tournent pas en CI : le script de mise en production exige la synthèse QA native du même SHA. | `.github/workflows/ci.yml`, `scripts/release-production.sh` |
 
 ## Security Headers (production)
 
