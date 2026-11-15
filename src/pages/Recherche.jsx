@@ -14,6 +14,8 @@ import OrientationPanel from '@/components/search/OrientationPanel';
 import { isAbortError, normalizeSearchCategory, searchAides } from '@/lib/searchClient';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 import { useLanguage, useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { isBetaRestrictedPath } from '@/lib/publicBeta';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
@@ -316,6 +318,7 @@ export default function Recherche() {
   // the server's own words are French: marked as such when the interface is in another language
   const errorDescription = searchError && knownError === null && !isSource ? <span lang="fr" dir="ltr">{errorMessage}</span> : errorMessage;
   const total = meta.totalAll || meta.total;
+  const orientationOpen = !frontendEnv.flags.publicBeta || !isBetaRestrictedPath('/orientation');
 
   const liveMessage = useMemo(() => {
     if (status === 'loading') return t('search:live.loading', 'Recherche en cours...');
@@ -474,7 +477,8 @@ export default function Recherche() {
                     <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl, ...(territoryFromUrl ? { territoire: territoryFromUrl } : {}) }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
                   ) : null}
                   <Button asChild variant="outline"><Link to="/besoins">{t('search:empty.by_need', 'Trouver par besoin')}</Link></Button>
-                  <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button>
+                  {/* A-2: the guided orientation is offered only when its screen is open (closed in the restricted beta: the link led to the closed notice); the person to ask is below in every case */}
+                  {orientationOpen ? <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button> : null}
                   {queryFromUrl ? <Button asChild variant="outline"><Link to={`/structures?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.directory', 'Chercher un lieu d’accueil dans l’annuaire')}</Link></Button> : null}
                 </div>
               }
