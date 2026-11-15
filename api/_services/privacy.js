@@ -478,6 +478,9 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
               FROM "SharedDossierInvite" i JOIN "SharedDiagnostic" d ON d.id = i."sharedDiagnosticId" LEFT JOIN "Structure" s ON s.id = i."structureId" WHERE d."ownerCitizenId" = ${userId}`);
             const dossierPurposeConsents = await safeRows(sql`SELECT c.subject_id AS "dossierAndOrganization", c.purpose, c.decision, c.created_at AS "decidedAt", c.withdrawn_at AS "withdrawnAt"
               FROM "ConsentLog" c WHERE c.subject_type = 'SHARED_DOSSIER_GRANT' AND split_part(c.subject_id, ':', 1) IN (SELECT id FROM "SharedDiagnostic" WHERE "ownerCitizenId" = ${userId}) ORDER BY c.created_at`);
+            // A-14 (art. 15 completeness): push subscriptions, e-mail change requests, assisted-recovery cases, Mon Parcours reminders, appointment notices (minimised)
+            const { accountLinkedSections } = await import('./export-account-sections.js');
+            const accountLinked = await accountLinkedSections(userId, safeRows);
             const userProfile = stripKeys(user, ['passwordHash']);
             const authTokens = records.tokens.map((token) => stripKeys(token, ['tokenHash']));
             const diagnostics = records.diagnostics.map((diagnostic) => stripKeys(diagnostic, ['rightsSecretHash', 'shareTokenHash']));
@@ -510,6 +513,7 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 dossierAccesses,
                 dossierInvitations,
                 dossierPurposeConsents,
+                ...accountLinked,
                 conversations: records.conversations,
                 appointments: records.appointments,
                 rdvConversations: records.rdvConversations,
