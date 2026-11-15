@@ -899,18 +899,26 @@ async function getPublicProfile(req, res) {
   const from = startOfUtcDay(new Date()); const to = endOfUtcDay(addDaysUtc(from, MAX_RANGE_DAYS - 1));
   let nextDay = null; let teamChoice = false;
   const items = [];
+  // A-29: the same sensitivity gate as the signed-in routes (services, slots, booking). A service whose online booking is not open (verified sensitive
+  // while the art. 9 gate is closed, or unreviewed where the review is enforced) is listed as CONTACT_STRUCTURE and no availability is computed or
+  // disclosed for it — it never feeds nextAvailableDay nor the team-choice flag. It describes the SERVICE, never the person.
+  const sensitivity = await readServiceSensitivityMap(structure.id);
   for (const service of services) {
     const modes = offeredModes(structure.bookingMode, service.modes, video);
     if (!modes.length) continue;
-    const candidates = await team.candidatesFor(structure.id, service.id, config);
-    if (candidates.some((c) => c.selectable)) teamChoice = true;
-    const choice = config.team.enabled ? (candidates.length ? { kind: 'ANY', candidates } : null) : { kind: 'NONE' };
-    if (choice) {
-      const { slots } = await slotsForChoice(structure, service, modes[0], { from, to }, choice);
-      const first = slots[0] ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(slots[0].startAt)) : null;
-      if (first && (!nextDay || first < nextDay)) nextDay = first;
+    const open = bookingDecision(sensitivity.get(service.id) || 'unknown').allowed;
+    if (open) {
+      const candidates = await team.candidatesFor(structure.id, service.id, config);
+      if (candidates.some((c) => c.selectable)) teamChoice = true;
+      const choice = config.team.enabled ? (candidates.length ? { kind: 'ANY', candidates } : null) : { kind: 'NONE' };
+      if (choice) {
+        const { slots } = await slotsForChoice(structure, service, modes[0], { from, to }, choice);
+        const first = slots[0] ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date(slots[0].startAt)) : null;
+        if (first && (!nextDay || first < nextDay)) nextDay = first;
+      }
     }
-    items.push({ id: service.id, name: service.name, durationMinutes: service.durationMinutes, modes, confirmation: confirmationModeFor(config, service.id) });
+    items.push({ id: service.id, name: service.name, durationMinutes: service.durationMinutes, modes, confirmation: confirmationModeFor(config, service.id),
+      onlineBooking: open ? 'OPEN' : 'CONTACT_STRUCTURE' });
   }
   res.setHeader('Cache-Control', 'no-store');
   return res.status(200).json({
