@@ -8,6 +8,7 @@ import { passwordProblems } from '@/lib/passwordPolicy';
 import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText';
 import { useT, formatDate, DATE_SHORT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
@@ -22,6 +23,8 @@ const call = async (path, opts = {}) => {
 };
 const n = (v) => (v === null || v === undefined ? '< 5' : v);
 const mustChoosePassword = (e) => e?.status === 403 && e?.body?.error === 'PASSWORD_CHANGE_REQUIRED';
+// owner decision G1 = b: an account without a defined authorised territory reads no statistic (the server refuses; this only says so)
+const scopeUndefined = (e) => e?.status === 403 && e?.body?.error === 'TERRITORY_SCOPE_UNDEFINED';
 
 /**
  * PKG-5 / I01 I03 I04 — institutional space (/institution): separate login, aggregate statistics only (observatoire with its methodology, territorial export when
@@ -85,21 +88,23 @@ const methodText = (/** @type {(k: string, d: string) => string} */ t) => /** @t
   horsPerimetre: t('institution:space.method.out_of_scope', 'Orientations auxquelles la structure destinataire a répondu « hors de notre champ » : une orientation mal adressée, comptée à part — ce n’est pas un besoin non couvert.'),
   limites: t('institution:space.method.limits_v2', 'Seules les demandes passées par la plateforme sont comptées ; une commune n’apparaît qu’avec au moins 3 structures vérifiées, et chaque commune affichée figure dans le tableau même sans orientation ; toute valeur inférieure à 5 est masquée, et une autre valeur de la même colonne l’est aussi quand elle serait seule masquée.'),
   totaux: t('institution:space.method.totals', 'Aucun total réel n’est publié : les totaux et la tendance par trimestre additionnent seulement les valeurs publiées du tableau par besoin. Quand l’un des deux tableaux (par besoin, par commune) a des valeurs masquées et l’autre aucune, les deux plus petites valeurs de l’autre sont masquées aussi : sans cela, la différence entre les deux tableaux donnerait la somme des valeurs masquées.'),
+  territoire: t('institution:space.method.territory', 'Seules les communes du territoire autorisé de votre compte sont comptées, d’après l’adresse déclarée des structures (nom de commune et code postal concordants). Le tableau par besoin additionne les valeurs publiées des intercommunalités entièrement situées dans ce territoire ; un territoire plus petit que son intercommunalité n’a pas de tableau par besoin, car la différence entre deux territoires emboîtés donnerait des valeurs masquées.'),
   periodes: t('institution:space.method.periods', 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).'),
 });
 
 export default function InstitutionEspace() {
   const { t } = useT('institution');
+  const needLabel = useCaseLabels().reason;   // audit A17: the table printed the raw reason code (ACCESS_TO_RIGHTS…); an unknown code stays as it is
   const fr = useFrAttrs();   // R47: the organisation's name and territory stay French (lang="fr" outside French)
   const [logged, setLogged] = useState(Boolean(get())); const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
-  const [me, setMe] = useState(null); const [obs, setObs] = useState(null); const [problem, setProblem] = useState(''); const [notice, setNotice] = useState(''); const period = 'quarter';
+  const [me, setMe] = useState(null); const [obs, setObs] = useState(null); const [noScope, setNoScope] = useState(false); const [problem, setProblem] = useState(''); const [notice, setNotice] = useState(''); const period = 'quarter';
   const ended = useCallback(() => { try { sessionStorage.removeItem(KEY); } catch { /* ignore */ } setLogged(false); setMe(null); setObs(null);
     setNotice(t('institution:space.session_ended', 'Votre session a pris fin (déconnexion, changement de mot de passe, fin de convention ou 8 heures écoulées). Reconnectez-vous.')); }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- t: the message follows the language when it is shown
   // the server refuses everything but « me » and the password change to a temporary password (403 PASSWORD_CHANGE_REQUIRED): show the form, not an error
   const passwordRequired = useCallback(() => { setObs(null); setMe((m) => ({ ...(m || {}), temporaryPassword: true })); }, []);
   const load = useCallback(async () => {
-    try { const m = await call('/api/institution/me'); setMe(m); setObs(m.temporaryPassword ? null : await call('/api/institution/observatoire')); }
-    catch (e) { if (e.status === 401) ended(); else if (mustChoosePassword(e)) passwordRequired(); else setProblem(t('institution:space.load_failed', 'Chargement impossible.')); }
+    try { const m = await call('/api/institution/me'); setMe(m); setNoScope(m.territoryScope?.defined === false); setObs(m.temporaryPassword || m.territoryScope?.defined === false ? null : await call('/api/institution/observatoire')); }
+    catch (e) { if (e.status === 401) ended(); else if (mustChoosePassword(e)) passwordRequired(); else if (scopeUndefined(e)) { setObs(null); setNoScope(true); } else setProblem(t('institution:space.load_failed', 'Chargement impossible.')); }
   }, [ended, passwordRequired]);   // eslint-disable-line react-hooks/exhaustive-deps -- t: the message follows the language when it is shown
   useEffect(() => { if (logged) load(); }, [logged, load]);
   const loginErr = useFormErrors();
@@ -119,7 +124,7 @@ export default function InstitutionEspace() {
     try {
       const csv = await call(`/api/institution/export?period=${period}`);
       const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); const a = document.createElement('a'); a.href = url; a.download = `territoire-${period}.csv`; a.click(); URL.revokeObjectURL(url);
-    } catch (x) { if (x.status === 401) ended(); else if (mustChoosePassword(x)) passwordRequired(); else setProblem(x.body?.message || t('institution:space.export_failed', 'Export impossible.')); }
+    } catch (x) { if (x.status === 401) ended(); else if (mustChoosePassword(x)) passwordRequired(); else if (scopeUndefined(x)) { setObs(null); setNoScope(true); } else setProblem(x.body?.message || t('institution:space.export_failed', 'Export impossible.')); }
   };
   const logout = async () => {
     setProblem('');
@@ -148,13 +153,15 @@ export default function InstitutionEspace() {
         <>
           {me ? <p data-testid="institution-me"><span {...fr}>{me.organisation}</span> {t('institution:space.territoire', '— territoire :')} <span {...fr}>{me.territory}</span></p> : null}
           {me?.temporaryPassword ? <PasswordForm temporary onChanged={(x) => (x ? ended() : load())} /> : null}
-          {me?.temporaryPassword ? null : obs ? (
+          {me?.temporaryPassword ? null : noScope ? <p role="alert" data-testid="institution-no-scope">{t('institution:space.scope_undefined', 'Le territoire autorisé de votre compte n’est pas défini : aucune statistique ne peut être affichée. Contactez ADA.')}</p> : obs ? (
             <section className="space-y-3" aria-labelledby="obs-h">
               <h2 id="obs-h" className="text-xl font-semibold">{t('institution:space.observatoire_des_besoins_non', 'Observatoire des besoins non couverts')}</h2>
-              <p className="text-sm">{t('institution:space.period_totals_v2', 'Période : du {{from}} au {{to}} (exclu). Orientations envoyées : {{sent}} ; besoins non couverts (pas de capacité) : {{unmet}} ; orientations hors périmètre : {{outOfScope}} ({{note}}).', { from: formatDate(obs.window.from, DATE_SHORT) || obs.window.from, to: formatDate(obs.window.to, DATE_SHORT) || obs.window.to, sent: n(obs.totals.sent), unmet: n(obs.totals.unmet), outOfScope: n(obs.totals.outOfScope), note: obs.totals.note === 'somme des cellules publiées seulement' ? t('institution:space.totals_note', 'somme des cellules publiées seulement') : obs.totals.note })}</p>
+              <p className="text-sm">{t('institution:space.period_totals_v2', 'Période : du {{from}} au {{to}} (exclu). Orientations envoyées : {{sent}} ; besoins non couverts (pas de capacité) : {{unmet}} ; orientations hors périmètre : {{outOfScope}} ({{note}}).', { from: formatDate(obs.window.from, DATE_SHORT) || obs.window.from, to: formatDate(obs.window.to, DATE_SHORT) || obs.window.to, sent: n(obs.totals.sent), unmet: n(obs.totals.unmet), outOfScope: n(obs.totals.outOfScope), note: obs.totals.note === 'somme des cellules publiées seulement' ? t('institution:space.totals_note', 'somme des cellules publiées seulement') : obs.scope?.totalsBasis === 'byCommune' ? t('institution:space.totals_note_commune', 'somme des cellules publiées du tableau par commune seulement') : obs.totals.note })}</p>
+              {obs.scope?.byNeed === 'NONE' ? <p className="text-sm" data-testid="institution-by-need-withheld">{t('institution:space.by_need_withheld', 'Votre territoire est plus petit que son intercommunalité : le tableau par besoin n’est pas publié à cette échelle, car la différence entre deux territoires emboîtés donnerait des valeurs masquées.')}</p> : null}
+              {obs.scope?.byNeed === 'PARTIAL' ? <p className="text-sm" data-testid="institution-by-need-partial">{t('institution:space.by_need_partial', 'Le tableau par besoin compte seulement les intercommunalités entièrement situées dans votre territoire.')}</p> : null}
               <table className="text-sm" data-testid="institution-by-need"><caption className="text-left font-medium">{t('institution:space.par_besoin', 'Par besoin')}</caption>
                 <thead><tr><th scope="col" className="pr-4 text-left">{t('institution:space.besoin', 'Besoin')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.non_couverts', 'Non couverts')}</th><th scope="col" className="text-left">{t('institution:space.hors_perimetre', 'Hors périmètre')}</th></tr></thead>
-                <tbody>{obs.byNeed.map((r) => <tr key={r.need}><th scope="row" className="pr-4 text-left font-normal">{r.need}</th><td className="pr-4">{n(r.sent)}</td><td className="pr-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>
+                <tbody>{obs.byNeed.map((r) => <tr key={r.need}><th scope="row" className="pr-4 text-left font-normal" data-need={r.need}>{needLabel[r.need] || r.need}</th><td className="pr-4">{n(r.sent)}</td><td className="pr-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>
               <table className="text-sm" data-testid="institution-by-commune"><caption className="text-left font-medium">{t('institution:space.par_commune_moins_3', 'Par commune (au moins 3 structures vérifiées)')}</caption>
                 <thead><tr><th scope="col" className="pr-4 text-left">{t('institution:space.commune', 'Commune')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="pr-4 text-left">{t('institution:space.non_couverts', 'Non couverts')}</th><th scope="col" className="text-left">{t('institution:space.hors_perimetre', 'Hors périmètre')}</th></tr></thead>
                 <tbody>{obs.byCommune.map((r) => <tr key={r.commune}><th scope="row" className="pr-4 text-left font-normal">{r.commune}</th><td className="pr-4">{n(r.sent)}</td><td className="pr-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>
@@ -162,7 +169,7 @@ export default function InstitutionEspace() {
               <ul className="list-disc pl-5 text-sm" data-testid="institution-method">{Object.entries(obs.methodology).map(([k, v]) => <li key={k}>{methodText(t)[k] || v}</li>)}</ul>
             </section>
           ) : <p role="status">{t('institution:space.chargement', 'Chargement…')}</p>}
-          {me?.temporaryPassword ? null : <section className="space-y-2" aria-labelledby="exp-h">
+          {me?.temporaryPassword || noScope ? null : <section className="space-y-2" aria-labelledby="exp-h">
             <h2 id="exp-h" className="text-xl font-semibold">{t('institution:space.export_territorial', 'Export territorial')}</h2>
             <p className="text-sm">{t('institution:space.periode_dernier_trimestre_civil', 'Période : le dernier trimestre civil complet (seule période publiée, pour qu’aucune valeur masquée ne se déduise de deux périodes emboîtées).')}</p>
             <Button size="sm" variant="outline" onClick={exportCsv}>{t('institution:space.telecharger_csv', 'Télécharger (CSV)')}</Button>

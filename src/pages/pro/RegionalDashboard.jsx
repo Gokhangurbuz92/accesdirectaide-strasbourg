@@ -288,7 +288,8 @@ function KpiCard({ label, value, icon }) {
 function StructureCard({ city }) {
     const { t } = useT('pro');
     const fr = useFrAttrs();   // R47: the commune's name stays French (lang="fr" outside French); the count is said in the interface language
-    const isActive = city.status === 'optimal';
+    // audit A19: a commune whose count is masked (< 5) is not « inactive » — the server says 'masked' or 'published', nothing about activity
+    const isMasked = city.status === 'masked';
     return (
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
@@ -305,12 +306,13 @@ function StructureCard({ city }) {
                         </div>
                     </div>
                     <span
-                        className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${isActive
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-slate-100 text-slate-600'
+                        data-testid="regional-city-status" data-status={isMasked ? 'masked' : 'published'}
+                        className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${isMasked
+                            ? 'bg-slate-100 text-slate-600'
+                            : 'bg-emerald-50 text-emerald-700'
                             }`}
                     >
-                        {isActive ? t('pro:regional.active', 'actif') : t('pro:regional.inactive', 'inactif')}
+                        {isMasked ? t('pro:regional.masked', 'valeur masquée (< 5)') : t('pro:regional.published', 'valeur publiée')}
                     </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">

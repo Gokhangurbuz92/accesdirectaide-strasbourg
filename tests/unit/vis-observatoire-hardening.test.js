@@ -13,10 +13,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const who = vi.hoisted(() => ({ current: null, observatoire: vi.fn(async () => ({ ok: true, byNeed: [] })), territoryCsv: vi.fn(async () => ({ ok: true, csv: 'x', period: '2026-T3', sha256: 'h' })) }));
 vi.mock('../../api/_utils/institution-auth.js', () => ({ resolveInstitution: vi.fn(async () => who.current) }));
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn(async () => ({ allowed: true })), getClientIp: () => '127.0.0.1', getRateLimitStatus: () => 429 }));
-vi.mock('../../api/_services/institutions.js', () => ({ institutionLogin: vi.fn(), changeInstitutionPassword: vi.fn(async () => ({ ok: true, token: 'new', message: 'ok' })), institutionLogout: vi.fn(async () => undefined), requestInstitutionReset: vi.fn(), completeInstitutionReset: vi.fn(), INSTITUTION_RESET_MINUTES: 30 }));
+vi.mock('../../api/_services/institutions.js', () => ({ institutionLogin: vi.fn(), changeInstitutionPassword: vi.fn(async () => ({ ok: true, token: 'new', message: 'ok' })), institutionLogout: vi.fn(async () => undefined), requestInstitutionReset: vi.fn(), completeInstitutionReset: vi.fn(), INSTITUTION_RESET_MINUTES: 30,
+  recordObservatoireRead: vi.fn(async () => undefined), recordExportDownload: vi.fn(async () => undefined) }));
 vi.mock('../../api/_services/feature-flags.js', () => ({ isFeatureOn: vi.fn(async () => true) }));
 vi.mock('../../api/_utils/capabilities.js', async (orig) => ({ ...(await orig()), requireCapability: () => true }));
-vi.mock('../../api/_services/territorial-stats.js', async (orig) => ({ ...(await orig()), observatoire: who.observatoire, territoryCsv: who.territoryCsv }));
+// owner decision G1 = b: the institutional handler reads the SCOPED functions only (the account's authorised territory); the unscoped ones are never called by it
+vi.mock('../../api/_services/territorial-stats.js', async (orig) => ({ ...(await orig()), scopedObservatoire: who.observatoire, scopedTerritoryCsv: who.territoryCsv,
+  observatoire: async () => { throw new Error('the unscoped observatoire must not be read by an institution'); }, territoryCsv: async () => { throw new Error('the unscoped export must not be read by an institution'); } }));
 
 const { publishTables, alignColumns, complementColumn, publishedSum, METHODOLOGY, SCHEMA_VERSION, lastQuarters, periodWindow } = await vi.importActual('../../api/_services/territorial-stats.js');
 const src = (p) => fs.readFileSync(p, 'utf8');

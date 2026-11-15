@@ -73,5 +73,10 @@
  "space.method.out_of_scope": "Alıcı kuruluşun « alanımız dışında » diye yanıtladığı yönlendirmeler: yanlış yere yapılmış bir yönlendirmedir, ayrı sayılır — karşılanmayan bir ihtiyaç değildir.",
  "space.method.limits_v2": "Yalnızca platform üzerinden yapılan talepler sayılır; bir belediye ancak en az 3 doğrulanmış kuruluşla görünür ve gösterilen her belediye, yönlendirme olmasa da tabloda yer alır; 5’in altındaki her değer gizlenir ve tek gizli değer kalacaksa aynı sütundaki başka bir değer de gizlenir.",
  "space.method.totals": "Gerçek toplam yayımlanmaz: toplamlar ve çeyrek bazındaki eğilim yalnızca ihtiyaca göre tablonun yayımlanan değerlerini toplar. İki tablodan birinde (ihtiyaca göre, belediyeye göre) gizli değer olup diğerinde yoksa, diğerinin en küçük iki değeri de gizlenir: aksi halde iki tablo arasındaki fark gizli değerlerin toplamını verirdi.",
- "space.method.periods": "Yalnızca tam takvim çeyrekleri, çakışmasız (ay, yıl veya serbest dönem yok: iç içe iki dönem gizli bir değerin bulunmasını sağlardı)."
+ "space.method.periods": "Yalnızca tam takvim çeyrekleri, çakışmasız (ay, yıl veya serbest dönem yok: iç içe iki dönem gizli bir değerin bulunmasını sağlardı).",
+ "space.scope_undefined": "Hesabınızın yetkili bölgesi tanımlı değil: hiçbir istatistik gösterilemez. ADA ile iletişime geçin.",
+ "space.by_need_withheld": "Bölgeniz, bağlı olduğu belediyeler birliğinden (intercommunalité) daha küçük: ihtiyaca göre tablo bu ölçekte yayımlanmaz, çünkü iç içe iki bölge arasındaki fark gizlenen değerleri ortaya çıkarırdı.",
+ "space.by_need_partial": "İhtiyaca göre tablo yalnızca tamamı bölgenizin içinde kalan belediyeler birliklerini (intercommunalité) sayar.",
+ "space.totals_note_commune": "yalnızca belediyeye göre tablonun yayımlanan hücrelerinin toplamı",
+ "space.method.territory": "Yalnızca hesabınızın yetkili bölgesindeki belediyeler, kuruluşların beyan ettiği adrese göre sayılır (belediye adı ve posta kodu birbirini tutmalıdır). İhtiyaca göre tablo, tamamı bu bölgenin içinde kalan belediyeler birliklerinin (intercommunalité) yayımlanan değerlerini toplar; belediyeler birliğinden daha küçük bir bölgenin ihtiyaca göre tablosu olmaz, çünkü iç içe iki bölge arasındaki fark gizlenen değerleri ortaya çıkarırdı."
 }

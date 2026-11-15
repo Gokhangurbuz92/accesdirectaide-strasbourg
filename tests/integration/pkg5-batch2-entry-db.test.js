@@ -278,9 +278,12 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     expect((await call('GET', '/api/admin/organizations', { bearer: it_ })).statusCode).toBe(401);
     // observatoire fixture: a commune with exactly three verified organizations; 7 referrals sent in the last complete calendar quarter (PKG-11 audit pass 2: the
     // observatoire and the export publish that quarter only — before, « last month » of a rolling window) to one of them, 2 unanswered for capacity (masked)
+    // owner decision G1 = b: the account reads its authorised territory (Bas-Rhin) only, and an organization counts where its address names ONE commune
+    // (name and postal code) — so the fixture commune is a real one of the Bas-Rhin that no other suite uses, shown under its official name
+    const OBS_COMMUNE = 'Wissembourg';
     const orgs = [`k5-o1-${TS}`, `k5-o2-${TS}`, `k5-o3-${TS}`];
     for (const id of orgs) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
-      VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${COMMUNE + '-obs'}, '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);
+      VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${OBS_COMMUNE}, '67160', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);
     const lastMonth = new Date((await import('../../api/_services/territorial-stats.js')).periodWindow('quarter').start.getTime() + 9 * 86400000);   // inside the published quarter
     const dossiers = [];   // one live referral per dossier and receiver: seven synthetic dossiers
     for (let i = 0; i < 7; i += 1) dossiers.push((await call('POST', '/api/share/create', { cit: true, body: { situation: { zipCode: '67000' }, results: { rights: [] } } })).body.shareId);
@@ -292,8 +295,8 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     expect(obs.body.byNeed.every((r) => (r.sent === null || r.sent >= 5) && (r.unmet === null || r.unmet >= 5))).toBe(true);
     // the commune's own cells: 2 « no capacity » and no out-of-scope answer are masked; its 7 referrals are published unless the cross-table alignment masks them
     // (when the table by need has masked cells and the table by commune none — never the case here: every shown commune is listed, the others at « < 5 »)
-    const communeRow = obs.body.byCommune.find((r) => r.commune === COMMUNE + '-obs');
-    expect(communeRow).toMatchObject({ commune: COMMUNE + '-obs', unmet: null, outOfScope: null }); expect([7, null]).toContain(communeRow.sent);
+    const communeRow = obs.body.byCommune.find((r) => r.commune === OBS_COMMUNE);
+    expect(communeRow).toMatchObject({ commune: OBS_COMMUNE, unmet: null, outOfScope: null }); expect([7, null]).toContain(communeRow.sent);
     expect(obs.body.byCommune.every((r) => ['sent', 'unmet', 'outOfScope'].every((k) => r[k] === null || r[k] >= 5))).toBe(true);
     const lastTrend = obs.body.trend[obs.body.trend.length - 1];
     expect(lastTrend.sent, 'the trend is the sum of the published cells by need, never a true total').toBe(obs.body.totals.sent);
@@ -304,7 +307,7 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     expect((await call('GET', '/api/institution/export?period=month', { bearer: it_ })).statusCode, 'PKG-11 audit pass 2: one granularity only').toBe(400);
     const e1 = await call('GET', '/api/institution/export?period=quarter', { bearer: it_ }); const e2 = await call('GET', '/api/institution/export?period=quarter', { bearer: it_ });
     expect(e1.statusCode).toBe(200); expect(e1.headers['x-content-sha256']).toBe(e2.headers['x-content-sha256']);
-    const line = String(e1.body).split('\r\n').find((l) => l.includes(COMMUNE + '-obs'));
+    const line = String(e1.body).split('\r\n').find((l) => l.includes(OBS_COMMUNE));
     expect(line).toMatch(/PENDING_OWNER_DECISION/);
     // organisations, rendez-vous, then the observatoire's own cells (referrals, unmet, out of scope)
     expect(line.split(',').slice(-5)).toEqual(['3', '', communeRow.sent === null ? '' : '7', '', '']);

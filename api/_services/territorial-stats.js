@@ -16,15 +16,18 @@
  *      two consecutive months differenced into one month's count per commune — and the export offered months, quarters and years — a year minus three
  *      published quarters gave the fourth, masked one back): one non-overlapping grid for every table
  *   5. no organization, professional or person is ever named; no free text is exported
+ *   7. authorised territory (owner decision G1 = b): an institutional account reads scopedObservatoire / scopedTerritoryCsv only, never the functions below
+ *      that count every commune (those stay for the platform administrators' preview). See « Scoped publication » at the end of this file.
  *   6. what a number is called: « besoin non couvert » is a referral answered NO_CAPACITY only. OUT_OF_SCOPE is a referral sent to the wrong place (a
  *      mis-orientation), published as its own indicator « orientations hors périmètre » under the same suppression rules — never as an unmet need
  */
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { K_MIN, K_ORGS } from './org-stats.js';
+import { K_MIN, K_ORGS, communeOrgCte } from './org-stats.js';
 import { periodWindow, lastQuarters } from './stat-periods.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
+import { communeOfAddress } from '../lib/geography/territoryScope.js';
 
 export const SCHEMA_VERSION = 'ada.territory-stats.v2';   // v2: column orientations_hors_perimetre; besoins_non_couverts = « pas de capacité » only
 export const LICENCE_STATUS = 'PENDING_OWNER_DECISION';   // I03: the open-data licence is the owner's decision; until then the export is for signed partners only
@@ -68,7 +71,8 @@ export function publishTables(needRows, communeRows) {
 /** Sum of the published cells of a column: the only « total » this file ever publishes. */
 export const publishedSum = (rows, k) => rows.reduce((t, r) => t + (r[k] ?? 0), 0);
 const verified = sql`s.statut = 'actif' AND s.verification_status = 'VERIFIED'`;
-const orgCte = sql`org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified}),
+// audit A16: one commune per name whatever its spelling (communeOrgCte), not one per way of typing it
+const orgCte = sql`${communeOrgCte(verified)},
   shown AS (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS}),
   sorg AS (SELECT o.id, o.commune FROM org o WHERE o.commune IN (SELECT commune FROM shown))`;
 
@@ -133,3 +137,140 @@ export const METHODOLOGY = {
   totaux: 'Aucun total réel n’est publié : les totaux et la tendance par trimestre additionnent seulement les valeurs publiées du tableau par besoin. Quand l’un des deux tableaux (par besoin, par commune) a des valeurs masquées et l’autre aucune, les deux plus petites valeurs de l’autre sont masquées aussi : sans cela, la différence entre les deux tableaux donnerait la somme des valeurs masquées.',
   periodes: 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).',
 };
+
+/* ------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * Scoped publication (owner decision G1 = b) — what an institutional account obtains: the communes of ITS authorised territory only, decided here on the
+ * server from the account row (api/lib/geography/territoryScope.js), never from the request.
+ *
+ * Why not simply « the same tables over the communes of the territory »: territories nest (a commune in its EPCI, an EPCI in its département). The table by
+ * need of the département minus the table by need of the EPCI would be the table by need of the REST of the département — a territory nobody published,
+ * whose cells may be 1 or 2 — and one administration often holds both accounts. So there is ONE publication, cut into blocks that never overlap:
+ *   - a block = the shown communes (>= K_ORGS located verified organizations) of one EPCI (a commune without EPCI is its own block);
+ *   - each block is published once, by publishTables, exactly like the whole table was (same thresholds, same complementary suppression);
+ *   - every institutional view is a RESTRICTION of those block tables and nothing else: the commune rows of its territory, and the table by need of the
+ *     blocks that lie ENTIRELY inside it (cell by cell, the sum of the published cells; a masked cell adds nothing). A territory smaller than its block
+ *     (a commune inside an EPCI) gets its commune rows and no table by need.
+ * Whatever accounts are combined, they hold a subset of the block tables; a count below K_MIN is in none of them and changes none of them.
+ * An organization whose address does not name exactly one commune (name and postal code must agree) is in no block: not located means not counted.
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+/**
+ * Pure. `blocks` [{ communes: [code], pub: { byNeed, byCommune } }] (pub = publishTables of that block, `commune` = INSEE code); `inScope` (code) => boolean.
+ * Returns the view of a territory: its commune rows, the table by need of the blocks entirely inside it, and how complete that table is.
+ */
+export function restrictToScope(blocks, inScope) {
+  const byCommune = []; const need = new Map(); let full = 0; let partial = 0;
+  for (const b of blocks) {
+    const inside = b.communes.filter((c) => inScope(c));
+    if (!inside.length) continue;
+    byCommune.push(...b.pub.byCommune.filter((r) => inScope(r.commune)));
+    if (inside.length !== b.communes.length) { partial += 1; continue; }
+    full += 1;
+    for (const r of b.pub.byNeed) {
+      const acc = need.get(r.need) || { need: r.need, sent: null, unmet: null, outOfScope: null };
+      for (const m of MEASURES) if (r[m] !== null && r[m] !== undefined) acc[m] = (acc[m] ?? 0) + r[m];
+      need.set(r.need, acc);
+    }
+  }
+  const byNeed = [...need.values()].sort((a, b) => String(a.need).localeCompare(String(b.need)));
+  return { byNeed, byCommune, byNeedCoverage: full === 0 ? 'NONE' : partial === 0 ? 'ALL' : 'PARTIAL' };
+}
+
+const jsonRows = (list) => sql`jsonb_to_recordset(${JSON.stringify(list)}::jsonb) AS m(id text, c text)`;
+
+/** The located verified organizations of the blocks a territory touches: { blocks: Map(block → [commune code]), names, orgs: [{ id, c }], perCommune }. */
+async function scopedPopulation(db, scope) {
+  const rows = (await db.execute(sql`SELECT s.id, s.ville, s.code_postal FROM "Structure" s WHERE ${verified}`)).rows;
+  const byCommune = new Map(); const names = new Map(); const blockOfCommune = new Map();
+  for (const r of rows) {
+    const at = communeOfAddress(r); if (!at) continue;
+    names.set(at.code, at.nom); blockOfCommune.set(at.code, at.block);
+    const list = byCommune.get(at.code); if (list) list.push(r.id); else byCommune.set(at.code, [r.id]);
+  }
+  const shown = [...byCommune.keys()].filter((c) => byCommune.get(c).length >= K_ORGS);
+  const touched = new Set(shown.filter((c) => scope.communes.has(c)).map((c) => blockOfCommune.get(c)));
+  const blocks = new Map();
+  for (const c of shown.sort()) { const b = blockOfCommune.get(c); if (!touched.has(b)) continue; const l = blocks.get(b); if (l) l.push(c); else blocks.set(b, [c]); }
+  const orgs = []; const perCommune = new Map();
+  for (const list of blocks.values()) for (const c of list) { perCommune.set(c, byCommune.get(c).length); for (const id of byCommune.get(c)) orgs.push({ id, c }); }
+  return { blocks, names, orgs, perCommune };
+}
+
+/** The block tables of one quarter (raw counts never leave this function). */
+async function scopedQuarter(db, pop, { start, end }) {
+  const raw = pop.orgs.length ? (await db.execute(sql`SELECT m.c AS commune, r."reasonCode" AS need, count(*)::int AS sent, count(*) FILTER (WHERE ${NO_CAPACITY})::int AS unmet, count(*) FILTER (WHERE ${OUT_OF_SCOPE})::int AS "outOfScope"
+    FROM "Referral" r JOIN ${jsonRows(pop.orgs)} ON m.id = r."toStructureId" WHERE r."sentAt" >= ${start} AND r."sentAt" < ${end} GROUP BY m.c, r."reasonCode"`)).rows : [];
+  const zero = () => ({ sent: 0, unmet: 0, outOfScope: 0 });
+  const out = [];
+  for (const communes of pop.blocks.values()) {
+    const perNeed = new Map(); const perCommune = new Map(communes.map((c) => [c, zero()]));
+    for (const r of raw) {
+      const c = perCommune.get(r.commune); if (!c) continue;
+      const n = perNeed.get(r.need) || zero(); perNeed.set(r.need, n);
+      for (const k of MEASURES) { c[k] += Number(r[k]); n[k] += Number(r[k]); }
+    }
+    const needRows = [...perNeed.keys()].sort((a, b) => String(a).localeCompare(String(b))).map((need) => ({ need, ...perNeed.get(need) }));
+    out.push({ communes, pub: publishTables(needRows, communes.map((commune) => ({ commune, ...perCommune.get(commune) }))) });
+  }
+  return out;
+}
+
+/** Commune codes → the official names shown (the code is added when two communes of the view share a name). */
+function communeLabels(codes, names) {
+  const seen = new Map(); for (const c of codes) seen.set(names.get(c), (seen.get(names.get(c)) || 0) + 1);
+  return new Map(codes.map((c) => [c, seen.get(names.get(c)) > 1 ? `${names.get(c)} (${c})` : names.get(c)]));
+}
+
+const noScope = () => ({ ok: false, status: 403, code: 'TERRITORY_SCOPE_UNDEFINED', message: 'Le territoire autorisé de ce compte n’est pas défini : aucune statistique ne peut être affichée. Contactez ADA.' });
+
+/**
+ * I04, scoped — the observatoire of ONE authorised territory (`scope` = territoryScope(account.territory), ok: true). Same shape as observatoire(), plus
+ * `scope` (what was applied). Without a defined scope: refused, no data.
+ */
+export async function scopedObservatoire(scope, db = defaultDb, now = new Date()) {
+  if (!scope || scope.ok !== true || !(scope.communes instanceof Set) || !scope.communes.size) return noScope();
+  const quarters = lastQuarters(now); const { start, end } = quarters[quarters.length - 1];
+  const pop = await scopedPopulation(db, scope);
+  const inScope = (c) => scope.communes.has(c);
+  const views = [];
+  for (const q of quarters) views.push(restrictToScope(await scopedQuarter(db, pop, q), inScope));
+  const last = views[views.length - 1];
+  // the « total » is the sum of the published cells of the table by need when that table covers the whole territory, of the table by commune otherwise
+  const basis = last.byNeedCoverage === 'ALL' ? 'byNeed' : 'byCommune';
+  const sums = (v) => Object.fromEntries(MEASURES.map((m) => [m, suppress(publishedSum(v[basis], m))]));
+  const labels = communeLabels(last.byCommune.map((r) => r.commune), pop.names);
+  const byCommune = last.byCommune.map((r) => ({ ...r, commune: labels.get(r.commune) })).sort((a, b) => String(a.commune).localeCompare(String(b.commune), 'fr'));
+  return { ok: true, window: { from: start.toISOString().slice(0, 10), to: end.toISOString().slice(0, 10), period: quarters[quarters.length - 1].label }, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
+    scope: { kind: scope.kind, code: scope.code, byNeed: last.byNeedCoverage, totalsBasis: basis },
+    byNeed: last.byNeed, byCommune, trend: quarters.map((q, i) => ({ quarter: q.label, ...sums(views[i]) })),
+    totals: { ...sums(last), note: basis === 'byNeed' ? 'somme des cellules publiées seulement' : 'somme des cellules publiées du tableau par commune seulement' },
+    methodology: { ...METHODOLOGY, territoire: METHODOLOGY_TERRITORY } };
+}
+
+/** I03, scoped — the CSV of ONE authorised territory: the same columns and schema as territoryCsv, the communes of the territory only. */
+export async function scopedTerritoryCsv(period, scope, db = defaultDb, now = new Date()) {
+  if (!scope || scope.ok !== true || !(scope.communes instanceof Set) || !scope.communes.size) return noScope();
+  if (period !== undefined && period !== null && period !== '' && period !== 'quarter') return { ok: false, status: 400, code: 'PERIOD_NOT_OFFERED', message: 'Seul le dernier trimestre civil complet est publié.' };
+  const w = periodWindow('quarter', now);
+  const pop = await scopedPopulation(db, scope);
+  const inScope = (c) => scope.communes.has(c);
+  const blocks = await scopedQuarter(db, pop, w);
+  const referrals = new Map(restrictToScope(blocks, inScope).byCommune.map((r) => [r.commune, r]));
+  const rdvRaw = pop.orgs.length ? (await db.execute(sql`SELECT m.c AS commune, count(*)::int AS n FROM "ProAppointment" a JOIN ${jsonRows(pop.orgs)} ON m.id = a."structureId"
+    WHERE ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= ${w.start} AND a."startAt" < ${w.end} GROUP BY m.c`)).rows : [];
+  const rdvTrue = new Map(rdvRaw.map((r) => [r.commune, r.n]));
+  // appointments: masked and complemented inside each block (like the referral cells), then restricted to the territory
+  const rdv = new Map();
+  for (const b of blocks) complementColumn(b.communes.map((c) => suppress(rdvTrue.get(c) || 0))).forEach((v, i) => rdv.set(b.communes[i], v));
+  const codes = [...referrals.keys()]; const labels = communeLabels(codes, pop.names);
+  const cell = (v) => { const s = v === null || v === undefined ? '' : String(v); const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; return /[",\n;\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe; };
+  const head = ['schema', 'licence', 'periode', 'commune', 'organisations_verifiees', 'rendez_vous', 'orientations_recues', 'besoins_non_couverts', 'orientations_hors_perimetre'];
+  const body = codes.map((c) => { const p = referrals.get(c); return [SCHEMA_VERSION, LICENCE_STATUS, w.label, labels.get(c), pop.perCommune.get(c), rdv.get(c) ?? null, p.sent ?? null, p.unmet ?? null, p.outOfScope ?? null]; })
+    .sort((a, b) => String(a[3]).localeCompare(String(b[3]), 'fr'));
+  const tot = (i) => body.reduce((n, r) => n + (r[i] ?? 0), 0);
+  body.push([SCHEMA_VERSION, LICENCE_STATUS, w.label, 'TOTAL (cellules publiées)', tot(4), suppress(tot(5)), suppress(tot(6)), suppress(tot(7)), suppress(tot(8))]);
+  const csv = '\uFEFF' + [head, ...body].map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+  return { ok: true, csv, period: w.label, sha256: crypto.createHash('sha256').update(csv).digest('hex') };
+}
+
+export const METHODOLOGY_TERRITORY = 'Seules les communes du territoire autorisé de votre compte sont comptées, d’après l’adresse déclarée des structures (nom de commune et code postal concordants). Le tableau par besoin additionne les valeurs publiées des intercommunalités entièrement situées dans ce territoire ; un territoire plus petit que son intercommunalité n’a pas de tableau par besoin, car la différence entre deux territoires emboîtés donnerait des valeurs masquées.';
