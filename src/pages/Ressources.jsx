@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { FileText, ExternalLink } from 'lucide-react';
 import { EMERGENCY_FALLBACK } from '@/lib/emergencyNumbers';
 import PageHeader from '@/components/layout/PageHeader';
+import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
 import { useLanguage, useT } from '@/i18n';
 
 export default function Ressources() {
@@ -156,6 +157,12 @@ export default function Ressources() {
                         <p className="col-span-3 text-center text-gray-500" data-testid="ressources-empty">{t('resources:empty.filtered', 'Aucune ressource trouvée pour ces critères.')}</p>
                     )}
                 </div>
+            )}
+            {/* A-5: said plainly, with the real content of the catalogue to use instead — and no promise of a publication that has no writer yet */}
+            {noDocuments && (
+                <EmptyCatalogue title={t('resources:empty.title', 'Aucun document n’est encore publié ici')} testId="ressources-none-published">
+                    <p>{t('resources:empty.text', 'Pour le moment, cette page ne contient que les numéros d’urgence nationaux, affichés ci-dessus.')}</p>
+                </EmptyCatalogue>
             )}
             </div>
         </div>

@@ -20,13 +20,14 @@ const mount = (search = '') => { window.history.pushState({}, '', `/ressources${
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); window.history.pushState({}, '', '/'); });
 
 describe('A-5: /ressources shows a document list only when a document is published', () => {
-  it('no published document: the emergency numbers are shown, with no empty catalogue, no filter and no promise of publication', async () => {
+  it('no published document: the emergency numbers are shown, with no filter over nothing and no promise of publication', async () => {
     answer([]);
     mount();
     await waitFor(() => expect(screen.getByTestId('emergency-resources')).toBeInTheDocument());
     for (const n of ['112', '15', '17', '18', '115']) expect(screen.getByTestId(`emergency-resource-${n}`)).toHaveAttribute('href', `tel:${n}`);
-    expect(screen.queryByTestId('ressources-none-published')).toBeNull();
-    expect(window.document.body.textContent).not.toMatch(/seront publiés|Aucun document n’est encore publié ici/);
+    // the empty catalogue says what the page holds and points to real content; it no longer promises a publication that has no writer
+    expect(screen.getByTestId('ressources-none-published')).toHaveTextContent('Pour le moment, cette page ne contient que les numéros d’urgence nationaux, affichés ci-dessus.');
+    expect(window.document.body.textContent).not.toMatch(/seront publiés/);
     expect(screen.queryByRole('combobox')).toBeNull();
     expect(screen.queryByTestId('emergency-link')).toBeNull();
     expect(screen.queryByTestId('ressource-card')).toBeNull();
