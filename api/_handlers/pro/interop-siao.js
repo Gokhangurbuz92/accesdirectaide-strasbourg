@@ -61,7 +61,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             entity_id: shareId,
             entity: 'DIAGNOSTIC',
             actor_id: proCtx.userId,
-            details: { reference: handover.request.reference, purpose: PURPOSE_SIAO, format: handover.format, structureId: proCtx.structureId, missing: handover.missing.join(',') || 'none', transmissionStatus: 'NOT_TRANSMITTED' },
+            // A13: `shareId` is the key the person's access log selects on (the dossier id was only in entity_id: the hand-over was invisible to the person)
+            details: { shareId, reference: handover.request.reference, purpose: PURPOSE_SIAO, format: handover.format, structureId: proCtx.structureId, missing: handover.missing.join(',') || 'none', transmissionStatus: 'NOT_TRANSMITTED' },
             ip_hash: 'SYSTEM_GATEWAY',
         });
 

@@ -2,6 +2,7 @@
  * Pro / Structure privacy and operations fixes (RECON_PRO_STRUCTURE_TERRITORY 2026-11-15), on REAL PostgreSQL through the real handlers.
  * Synthetic organizations A (admin, pro1, pro2) and B (pro). Synthetic data only; the mailer is the in-memory 'test' provider. Skipped without DATABASE_URL.
  *   A04  one follow-up status (the case status); no note in clear in the dossier JSON; a legacy note moves to the protected case notes
+ *   A13  a SIAO hand-over sheet prepared by a professional appears in the person's access log
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
@@ -31,6 +32,7 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
     auth = await import('../../api/_utils/auth.js'); userAuth = await import('../../api/_utils/user-auth.js');
     process.env.MAILER_PROVIDER = 'test'; process.env.MAILER_FROM = 'qa@example.test';
     H.dossier = (await import('../../api/_handlers/pro/dossier.js')).default; H.cases = (await import('../../api/_handlers/pro/cases.js')).default;
+    H.siao = (await import('../../api/_handlers/pro/interop-siao.js')).default; H.citDossier = (await import('../../api/_handlers/citizen/dossier.js')).default;
     for (const id of Object.values(S)) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, is_pro_enabled, "updatedAt", "createdAt")
       VALUES (${id}, ${'Org ' + id}, ${id}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', true, NOW(), NOW())`);
     for (const p of Object.values(P)) await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, role, status, "structureId", "notificationEmailEnabled", "updatedAt") VALUES (${p.id}, ${p.id + '@example.test'}, 'x', ${p.role}, 'active', ${p.st}, false, NOW())`);
@@ -92,6 +94,26 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
       expect([out.statusCode, out.body.error]).toEqual([409, 'CASE_CLOSED']);
       expect((await dossier(P.pro1)).body.followUp.status).toBe('CLOSED');
       expect((await pro(H.cases, P.pro1, { method: 'POST', body: { action: 'reopen', id: c.id } })).statusCode).toBe(200);
+    });
+  });
+
+  describe('A13 — the SIAO hand-over is visible to the person', () => {
+    const log = async (id = DOS) => (await cit(H.citDossier, { query: { view: 'access', shareId: id } })).body.events.filter((e) => e.action === 'SIAO_HANDOVER_PREPARED');
+    it('a sheet prepared with the person’s SIAO consent is listed in her access log, by organisation; a hand-over logged before the fix (no shareId) too', async () => {
+      expect(await log()).toEqual([]);
+      const out = await pro(H.siao, P.pro1, { method: 'POST', body: { shareId: DOS }, url: '/api/pro/interop-siao' });
+      expect(out.statusCode, JSON.stringify(out.body)).toBe(200);
+      const events = await log();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toMatchObject({ action: 'SIAO_HANDOVER_PREPARED', organization: `Org ${S.A}`, label: 'a préparé une fiche de transmission au SIAO (rien n’est envoyé par AccèsDirectAide)' });
+      expect(JSON.stringify(events[0])).not.toContain(P.pro1.id);   // by organisation: no staff identifier
+      // organisation B has no SIAO purpose: refused, nothing logged
+      expect((await pro(H.siao, P.b, { method: 'POST', body: { shareId: DOS }, url: '/api/pro/interop-siao' })).statusCode).toBe(403);
+      expect(await log()).toHaveLength(1);
+      // a row written before the fix (dossier id only in entity_id) is shown as well; another dossier's log stays empty
+      await db.execute(sql`INSERT INTO "AuditLog" (id, action, entity, entity_id, actor_id, details, ip_hash) VALUES (${'pb-siao-old-' + TS}, 'SIAO_HANDOVER_PREPARED', 'DIAGNOSTIC', ${DOS}, ${P.pro1.id}, ${JSON.stringify({ structureId: S.A, purpose: 'PURP-07' })}::jsonb, 'SYSTEM_GATEWAY')`);
+      expect(await log()).toHaveLength(2);
+      expect(await log(DOS2)).toEqual([]);
     });
   });
 });

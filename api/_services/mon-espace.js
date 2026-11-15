@@ -446,6 +446,8 @@ const ACCESS_LABELS = Object.freeze({
   DOSSIER_STATUS_UPDATED: 'a mis à jour le suivi', ATTESTATION_VIEWED: 'a consulté l’attestation', FILE_UPLOADED: 'a ajouté un document',
   DOSSIER_FILE_DOWNLOADED: 'a téléchargé un document', DOSSIER_SYNTHESIS_DRAFTED: 'a fait rédiger une synthèse automatique',
   DOSSIER_SYNTHESIS_APPROVED: 'a validé une synthèse automatique',
+  // A13: a hand-over sheet prepared for the SIAO is an access the person must see (nothing is sent by the platform: the sheet is entered by the organisation)
+  SIAO_HANDOVER_PREPARED: 'a préparé une fiche de transmission au SIAO (rien n’est envoyé par AccèsDirectAide)',
 });
 
 async function ownedDossier(userId, shareId, db) {
@@ -465,7 +467,7 @@ export async function dossierAccessLog(userId, shareId, db = defaultDb) {
   const s = await ownedDossier(userId, shareId, db);
   if (!s) return bad('not_found', 'Ce dossier est introuvable ou n’est pas rattaché à votre compte.', 404);
   const rows = (await db.execute(sql`SELECT action, "timestamp" AS at, details->>'structureId' AS sid FROM "AuditLog"
-    WHERE details->>'shareId' = ${s.id} AND action IN (${sql.join(Object.keys(ACCESS_LABELS).map((a) => sql`${a}`), sql`, `)}) ORDER BY "timestamp" DESC LIMIT 200`)).rows;
+    WHERE (details->>'shareId' = ${s.id} OR (action = 'SIAO_HANDOVER_PREPARED' AND entity_id = ${s.id})) AND action IN (${sql.join(Object.keys(ACCESS_LABELS).map((a) => sql`${a}`), sql`, `)}) ORDER BY "timestamp" DESC LIMIT 200`)).rows;
   const names = await structureNames(rows.map((r) => r.sid), db);
   return { ok: true, status: 200, events: rows.map((r) => ({ action: r.action, label: ACCESS_LABELS[r.action], at: r.at, organization: names[r.sid] || 'Organisation' })) };
 }

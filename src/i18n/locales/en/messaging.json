@@ -124,5 +124,6 @@
  "chat.attachment_size": "{{name}} ({{size}} KB)",
  "chat.attachment_remove": "Remove the file",
  "sharing.transparency_failed": "The follow-up of this file could not be read.",
- "sharing.action_failed": "The action could not be carried out. Try again."
+ "sharing.action_failed": "The action could not be carried out. Try again.",
+ "transparency.action_siao_prepared": "prepared a hand-over sheet for the SIAO (nothing is sent by AccèsDirectAide)"
 }

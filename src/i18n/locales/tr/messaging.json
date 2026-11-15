@@ -124,5 +124,6 @@
  "chat.attachment_size": "{{name}} ({{size}} KB)",
  "chat.attachment_remove": "Dosyayı kaldır",
  "sharing.transparency_failed": "Bu dosyanın takibi okunamadı.",
- "sharing.action_failed": "İşlem yapılamadı. Tekrar deneyin."
+ "sharing.action_failed": "İşlem yapılamadı. Tekrar deneyin.",
+ "transparency.action_siao_prepared": "SIAO için bir aktarım fişi hazırladı (AccèsDirectAide hiçbir şey göndermez)"
 }

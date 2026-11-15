@@ -57,7 +57,7 @@ export default function DossierTransparency({ shareId }) {
         <CardContent>
           {data.failed ? <p className="text-sm text-slate-700" data-testid="access-unknown">{t('messaging:transparency.access_unknown', 'Le journal des consultations n’a pas pu être lu.')}</p> : data.events.length ? (
             <ol className="space-y-1 text-sm text-slate-800" data-testid="access-log">
-              {data.events.map((e, i) => <li key={i} data-testid="access-event">{formatDateTime(e.at)} — <strong>{e.organization}</strong> {e.label}</li>)}
+              {data.events.map((e, i) => <li key={i} data-testid="access-event">{formatDateTime(e.at)} — <strong>{e.organization}</strong> {e.action === 'SIAO_HANDOVER_PREPARED' ? t('messaging:transparency.action_siao_prepared', 'a préparé une fiche de transmission au SIAO (rien n’est envoyé par AccèsDirectAide)') : e.label}</li>)}
             </ol>
           ) : <p className="text-sm text-slate-700" data-testid="access-empty">{t('messaging:transparency.access_empty', 'Aucune organisation n’a encore consulté ce dossier.')}</p>}
         </CardContent>
