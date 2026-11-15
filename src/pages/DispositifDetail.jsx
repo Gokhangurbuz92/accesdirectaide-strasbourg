@@ -25,6 +25,7 @@ import LoadError from '@/components/LoadError';
 import { formatDate, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
+import AddToParcoursButton from '@/components/AddToParcoursButton';
 
 export default function DispositifDetail() {
   const { t } = useT('dispositifs');
@@ -233,6 +234,7 @@ export default function DispositifDetail() {
 
             <Card>
               <CardContent className="p-6 space-y-3">
+                <AddToParcoursButton type="dispositif" id={dispositif.id} />
                 <Link to={createPageUrl('Contact') + `?page=${encodeURIComponent(window.location.href)}&sujet=signalement_erreur`}>
                   <Button variant="ghost" className="w-full text-slate-600">
                     <Flag className="me-2 h-4 w-4" />

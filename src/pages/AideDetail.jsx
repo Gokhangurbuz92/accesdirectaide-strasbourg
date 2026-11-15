@@ -43,6 +43,7 @@ import { buildPublicRdvPath } from '@/lib/rdvRouting';
 
 
 import FavoriteButton from '@/components/FavoriteButton';
+import AddToParcoursButton from '@/components/AddToParcoursButton';
 import { getCsrfHeaders } from '@/lib/csrf';
 import { formatDate, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
@@ -567,6 +568,7 @@ export default function AideDetail() {
                   </Button>
                 )}
                 <FavoriteButton entityType="aide" entityId={aide.id} label={tr.value('titre')} />
+                <AddToParcoursButton type="aide" id={aide.id} />
                 <FeedbackButton
                   type="aide"
                   entityId={aide.id}

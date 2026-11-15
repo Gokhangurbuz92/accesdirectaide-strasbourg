@@ -8,7 +8,7 @@
 import crypto from 'node:crypto';
 import { and, asc, desc, eq, inArray, or, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { CitizenDocument, CitizenFavorite, CitizenHistoryEntry, CitizenProfile, ParcoursEvent, ParcoursItem, ProAppointment, SharedDiagnostic } from '../../src/db/schema.js';
+import { CitizenDocument, CitizenFavorite, CitizenHistoryEntry, CitizenProfile, Guide, ParcoursEvent, ParcoursItem, ProAppointment, SharedDiagnostic } from '../../src/db/schema.js';
 import { buildActionPlan } from '../../src/lib/actionPlan.js';
 import { decide } from '../lib/publicVisibility.js';
 import { ENTITY_TABLES, evidenceUrlAllowed } from './content-verification.js';
@@ -32,9 +32,70 @@ async function event(db, item, kind, fromStatus = null, toStatus = null) {
   await db.insert(ParcoursEvent).values({ itemId: item.id, userId: item.userId, kind, fromStatus, toStatus });
 }
 
+// VIS-R: a tracked step can point at catalogue records. `itemCodes` holds « <type>:<id> » for a step the person added from a record page or an orientation
+// (origin MANUAL, the database accepts only PLAN | MANUAL), and the bare assessment codes of a plan step (an aide slug, see src/lib/actionPlan.js).
+export const PARCOURS_RECORD_TYPES = ['aide', 'demarche', 'dispositif', 'guide'];
+export const MAX_PARCOURS_RECORDS = 5;
+const RECORD_PATHS = { aide: '/aides', demarche: '/demarches', dispositif: '/dispositifs', guide: '/bonnes-pratiques' };
+const RECORD_TABLES = { aide: ENTITY_TABLES.aide, demarche: ENTITY_TABLES.demarche, dispositif: ENTITY_TABLES.dispositif, guide: Guide };
+const RECORD_KEY = /^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/;
+const RECORD_CODE = /^(aide|demarche|dispositif|guide):([A-Za-z0-9][A-Za-z0-9._-]{0,119})$/;
+/** the ONE visibility decision (D-5, api/lib/publicVisibility.js) — the same as favourites; a guide is not a D-5 record: public when published (api/_handlers/guides.js) */
+const recordVisible = (type, r) => Boolean(r && (type === 'guide' ? r.statut === 'publie' : decide(r, type).visible));
+const hasText = (v) => typeof v === 'string' && v.trim().length > 0;
+/** where the record says whom to contact (« Où demander » / « Où faire »), when it has it */
+const recordContact = (type, r) => (type === 'aide' ? hasText(r.ou_demander) : type === 'demarche' ? hasText(r.ou_faire) : false);
+const recordView = (code, type, r) => {
+  const visible = recordVisible(type, r);   // a record that is no longer public gives neither its title nor its address
+  return { code, type, available: visible, title: visible ? r.titre : null, href: visible ? `${RECORD_PATHS[type]}/${encodeURIComponent(r.slug || r.id)}` : null, contact: visible && recordContact(type, r) };
+};
+const recordKeyOf = (codes) => crypto.createHash('sha256').update(JSON.stringify(['record', codes])).digest('hex').slice(0, 40);
+
+/** the records the items point at, by code. A typed code that no longer resolves is « no longer available »; a bare plan code ADA holds no record for is not listed at all. */
+async function recordsOf(rows, db) {
+  const typed = { aide: new Set(), demarche: new Set(), dispositif: new Set(), guide: new Set() }; const bare = new Set();
+  for (const code of rows.flatMap((r) => r.itemCodes || [])) {
+    const m = RECORD_CODE.exec(String(code));
+    if (m) typed[m[1]].add(m[2]); else if (RECORD_KEY.test(String(code))) bare.add(String(code));
+  }
+  const out = new Map();
+  for (const type of PARCOURS_RECORD_TYPES) {
+    const T = RECORD_TABLES[type]; const ids = [...typed[type]]; const keys = type === 'aide' ? [...bare] : [];
+    if (!ids.length && !keys.length) continue;
+    const found = await db.select().from(T).where(keys.length ? or(inArray(T.id, [...ids, ...keys]), inArray(T.slug, keys)) : inArray(T.id, ids));
+    for (const id of ids) out.set(`${type}:${id}`, recordView(`${type}:${id}`, type, found.find((x) => x.id === id) || null));
+    for (const k of keys) { const r = found.find((x) => x.slug === k) || found.find((x) => x.id === k); if (r) out.set(k, recordView(k, 'aide', r)); }
+  }
+  return out;
+}
+
+/**
+ * « Who does what next » of a plan step (who, detail, internal links). ParcoursItem has no column for them, so they are READ BACK from the dossier the step
+ * came from, while the account still owns it (same planKey as at import); once the dossier is gone the step keeps its title only.
+ */
+async function planStepsOf(userId, rows, db) {
+  const shareIds = [...new Set(rows.filter((r) => r.origin === 'PLAN' && r.sourceShareId && r.planKey).map((r) => r.sourceShareId))];
+  const out = new Map(); if (!shareIds.length) return out;
+  const shares = await db.select({ id: SharedDiagnostic.id, results: SharedDiagnostic.results }).from(SharedDiagnostic)
+    .where(and(inArray(SharedDiagnostic.id, shareIds), eq(SharedDiagnostic.ownerCitizenId, userId)));
+  for (const sh of shares) {
+    let steps = []; try { steps = buildActionPlan(sh.results).steps; } catch { steps = []; }
+    for (const step of steps) {
+      out.set(`${sh.id}:${planKeyOf(sh.id, step)}`, { who: step.who ? String(step.who).slice(0, 200) : null, detail: step.detail ? String(step.detail).slice(0, 1000) : null,
+        links: (step.links || []).filter((l) => l && typeof l.to === 'string' && /^\/(?!\/)/.test(l.to) && l.label).slice(0, 10).map((l) => ({ to: l.to, label: String(l.label).slice(0, 200) })) });
+    }
+  }
+  return out;
+}
+
 export async function listParcours(userId, db = defaultDb) {
   const rows = await db.select().from(ParcoursItem).where(eq(ParcoursItem.userId, userId)).orderBy(asc(ParcoursItem.createdAt));
-  return { ok: true, status: 200, items: rows.map(itemView) };
+  const [records, plans] = [await recordsOf(rows, db), await planStepsOf(userId, rows, db)];
+  return { ok: true, status: 200, items: rows.map((r) => {
+    const recs = [...new Set(r.itemCodes || [])].map((c) => records.get(c)).filter(Boolean);
+    // `available: false` = at least one record of the step is withdrawn or no longer visible (same decision as a favourite)
+    return { ...itemView(r), records: recs, available: recs.every((x) => x.available), plan: plans.get(`${r.sourceShareId}:${r.planKey}`) || null };
+  }) };
 }
 
 /** The steps of the account-free plan of a dossier the ACCOUNT owns become tracked items; re-importing the same plan adds nothing twice (planKey). */
@@ -55,11 +116,50 @@ export async function importPlan(userId, shareId, db = defaultDb) {
   return { ok: true, status: 200, added, ...(await listParcours(userId, db)) };
 }
 
+const parcoursCount = async (userId, db) => (await db.execute(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE "userId" = ${userId}`)).rows[0].n;
+
+/**
+ * « Ajouter à mon parcours » from a record page or an orientation: `records` = 1 to 5 { type, id } (id or slug), every one of them PUBLIC now (a hidden or
+ * unknown record is the same 404: no existence oracle). The title is the person's (3–200) or the first record's. Idempotent: the same set of records gives
+ * the step that already exists (`added: false`), never a second one; the cap of 100 steps applies.
+ */
+async function addRecordItem(userId, input, db) {
+  const list = input.records;
+  if (!Array.isArray(list) || list.length < 1 || list.length > MAX_PARCOURS_RECORDS) return bad('INVALID_RECORDS', `Indiquez de 1 à ${MAX_PARCOURS_RECORDS} fiches.`);
+  for (const x of list) {
+    if (!x || typeof x !== 'object' || Array.isArray(x) || typeof x.type !== 'string' || typeof x.id !== 'string' || !PARCOURS_RECORD_TYPES.includes(x.type) || !RECORD_KEY.test(x.id)) return bad('INVALID_RECORDS', 'Fiche invalide.');
+  }
+  let title = null;
+  if (input.title != null) {
+    if (typeof input.title !== 'string') return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
+    title = input.title.trim();
+    if (title.length < 3 || title.length > 200) return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
+  }
+  const found = [];
+  for (const x of list) {
+    const T = RECORD_TABLES[x.type];
+    const [r] = await db.select().from(T).where(or(eq(T.id, x.id), eq(T.slug, x.id))).limit(1);
+    if (!recordVisible(x.type, r) || !RECORD_KEY.test(String(r.id))) return bad('NOT_FOUND', 'Cette fiche n’est pas publiée.', 404);
+    found.push({ type: x.type, r });
+  }
+  const codes = [...new Set(found.map((f) => `${f.type}:${f.r.id}`))].sort();
+  const planKey = recordKeyOf(codes);
+  const existing = async () => (await db.select().from(ParcoursItem).where(and(eq(ParcoursItem.userId, userId), eq(ParcoursItem.planKey, planKey))).limit(1))[0];
+  const already = await existing();
+  if (already) return { ok: true, status: 200, added: false, item: itemView(already) };
+  if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
+  const [row] = await db.insert(ParcoursItem).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(found[0].r.titre).trim().slice(0, 200) })
+    .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
+  if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };   // two clicks at once: the other request created it
+  await event(db, row, 'CREATED', null, 'NOT_STARTED');
+  return { ok: true, status: 201, added: true, item: itemView(row) };
+}
+
 export async function addManualItem(userId, input, db = defaultDb) {
+  if (input && input.records !== undefined) return addRecordItem(userId, input, db);
   const title = String(input?.title || '').trim();
   if (title.length < 3 || title.length > 200) return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
-  const [{ n }] = (await db.execute(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE "userId" = ${userId}`)).rows;
-  if (n >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
+  if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
   const [row] = await db.insert(ParcoursItem).values({ userId, origin: 'MANUAL', stepKind: 'custom', title }).returning();
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
   return { ok: true, status: 201, item: itemView(row) };

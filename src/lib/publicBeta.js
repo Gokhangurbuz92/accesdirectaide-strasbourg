@@ -75,6 +75,15 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
 }
 
 /**
+ * VIS-R — is Mon Parcours usable in this build: outside the beta, or when the build opens the accounts surface in its full scope (the server gate is
+ * api/_utils/public-beta.js: `citizen/parcours` is outside the narrow booking scope). « Ajouter à mon parcours » is offered only then.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function parcoursOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/compte/parcours', open, sub);
+}
+
+/**
  * The links a beta visitor can follow: a link to a closed screen (assistant, simulator, contact…) is not offered at all, rather than leading to the notice.
  * @template T @param {T[]} links @param {boolean} beta @param {(link: T) => string} pathOf
  */

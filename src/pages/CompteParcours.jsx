@@ -8,10 +8,21 @@ import { citizenApi } from '@/lib/citizenApi';
 import { PARCOURS_DONE } from '@/lib/monEspace';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { formatDate, useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { openLinks } from '@/lib/publicBeta';
+
+/** French text of the plan or of a record inside any interface language: marked French and left-to-right */
+const FR = { lang: 'fr', dir: 'ltr' };
+const searchFor = (/** @type {string} */ title) => `/recherche?q=${encodeURIComponent(String(title || '').slice(0, 100))}`;
+/** where a record says whom to contact: « Où demander » of an aide (its heading has an anchor), the page itself otherwise */
+const contactHref = (r) => (r.type === 'aide' ? `${r.href}#heading-ou-demander` : r.href);
 
 /**
  * PKG-2 / C07 — Mon Parcours (/compte/parcours): the steps the person follows, kept across sessions. The plan d'action of a dossier attached to the account becomes tracked steps;
  * the person records where each step stands (never a decision by ADA), adds a deadline ONLY with its official source, keeps a private note, and sees the history of each step.
+ * VIS-R: a plan step shows who does what next (read back from its dossier); a step whose record was withdrawn says so with a way to look for another one; after a
+ * « réponse défavorable » the person indicated, a neutral « Que faire ensuite ? » block points to the record's contact information, the search and human help —
+ * it never says what the organisation decided, nor that anything is due or possible.
  */
 export default function CompteParcours() {
   const { t } = useT('compte');
@@ -53,6 +64,10 @@ export default function CompteParcours() {
   }
   const active = state.items.filter((i) => !PARCOURS_DONE.includes(i.status));
   const done = state.items.filter((i) => PARCOURS_DONE.includes(i.status));
+  const helpLinks = openLinks([
+    { to: '/structures', label: t('compte:parcours.next_structures', 'Trouver une structure qui peut vous accompagner'), testid: 'parcours-next-structures' },
+    { to: '/demande-aide', label: t('compte:parcours.next_human', 'Demander de l’aide à une personne'), testid: 'parcours-next-human' },
+  ], frontendEnv.flags.publicBeta, (l) => l.to);
   const renderItem = (i) => (
     <li key={i.id} data-testid="parcours-item" className="rounded-md border border-slate-200 bg-white p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -62,6 +77,38 @@ export default function CompteParcours() {
         </div>
         <Button type="button" size="sm" variant="outline" aria-expanded={open === i.id} aria-controls={`parcours-detail-${i.id}`} onClick={() => toggle(i.id)}>{open === i.id ? t('compte:parcours.close', 'Fermer') : t('compte:parcours.update', 'Mettre à jour')}</Button>
       </div>
+      {i.plan && (i.plan.who || i.plan.detail || i.plan.links?.length) ? (
+        <div className="mt-2 text-sm text-slate-800" data-testid="parcours-plan">
+          {i.plan.who ? <p><span className="font-medium">{t('compte:parcours.plan_who', 'Auprès de qui :')}</span> <span {...FR}>{i.plan.who}</span></p> : null}
+          {i.plan.detail ? <p className="mt-1" {...FR}>{i.plan.detail}</p> : null}
+          {i.plan.links?.length ? <ul className="mt-1 list-disc space-y-1 ps-5">{i.plan.links.map((l) => <li key={l.to + l.label}><Link to={l.to} className="text-blue-800 underline" {...FR}>{l.label}</Link></li>)}</ul> : null}
+        </div>
+      ) : null}
+      {(i.records || []).length ? (
+        <ul className="mt-2 space-y-1 text-sm" data-testid="parcours-records">
+          {i.records.map((r) => (r.available ? (
+            <li key={r.code}><span className="text-slate-700">{t('compte:parcours.record', 'Fiche :')}</span> <Link to={r.href} className="font-medium text-blue-800 underline" {...FR}>{r.title}</Link></li>
+          ) : (
+            <li key={r.code} data-testid="parcours-record-unavailable" className="rounded-md border border-amber-300 bg-amber-50 p-2 text-amber-950">
+              {t('compte:parcours.record_unavailable', 'Cette fiche n’est plus disponible.')}{' '}
+              <Link to={searchFor(i.title)} className="font-medium underline">{t('compte:parcours.record_search_other', 'Chercher une autre fiche')}</Link>
+            </li>
+          )))}
+        </ul>
+      ) : null}
+      {i.status === 'DECISION_NEGATIVE' ? (
+        <section className="mt-3 rounded-md border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800" data-testid="parcours-next" aria-labelledby={`parcours-next-${i.id}`}>
+          <h3 id={`parcours-next-${i.id}`} className="font-semibold text-slate-900">{t('compte:parcours.next_title', 'Que faire ensuite ?')}</h3>
+          <p className="mt-1">{t('compte:parcours.next_body', 'Vous avez indiqué une réponse défavorable. AccesDirectAide ne connaît pas la décision de l’organisme et ne peut pas dire ce qui est possible dans votre situation. Vous pouvez relire le courrier de l’organisme, lui poser vos questions ou demander à un professionnel de le lire avec vous.')}</p>
+          <ul className="mt-2 list-disc space-y-1 ps-5">
+            {(i.records || []).filter((r) => r.available).map((r) => (
+              <li key={r.code}><Link to={r.contact ? contactHref(r) : r.href} className="font-medium text-blue-800 underline" data-testid="parcours-next-record">{r.contact ? t('compte:parcours.next_contact', 'Où s’adresser, d’après la fiche') : t('compte:parcours.next_record', 'Relire la fiche')}</Link> <span {...FR}>({r.title})</span></li>
+            ))}
+            <li><Link to={searchFor(i.title)} className="font-medium text-blue-800 underline" data-testid="parcours-next-search">{t('compte:parcours.next_search', 'Chercher d’autres aides et démarches')}</Link></li>
+            {helpLinks.map((l) => <li key={l.to}><Link to={l.to} className="font-medium text-blue-800 underline" data-testid={l.testid}>{l.label}</Link></li>)}
+          </ul>
+        </section>
+      ) : null}
       {open === i.id ? (
         <div id={`parcours-detail-${i.id}`} className="mt-3 space-y-3 border-t border-slate-200 pt-3" data-testid="parcours-detail">
           <div>

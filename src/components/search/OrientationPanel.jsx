@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Phone, ExternalLink, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useT } from '@/i18n';
+import { AddToParcoursControl, ParcoursAccessGate } from '@/components/AddToParcoursButton';
 import reference from '../../../data/reference/social-domains.v1.json';
 
 /** French official text inside any interface language: marked French and left-to-right (an Arabic page would otherwise flip its punctuation) */
@@ -40,6 +41,8 @@ function Sheet({ id, sources, newTab }) {
  * the official numbers, what to do next, the official rules and sheets, and a search of the places and aides for it. Then what to check before asking
  * for an aide the results list (cautions), and the one question that changes the answer. The texts are French official wording (lang="fr"); the frame
  * is in the interface language. Nothing here decides a right.
+ * VIS-R: when Mon Parcours is open AND a citizen is signed in (ParcoursAccessGate), a need whose official sheet is published on the site offers
+ * « Ajouter à mon parcours »: the step carries the need's label and points at those sheets (the server checks they are public).
  * @param {{ orientation: Orientation | null | undefined, query: string }} props
  */
 export default function OrientationPanel({ orientation, query }) {
@@ -108,6 +111,11 @@ export default function OrientationPanel({ orientation, query }) {
             <Link to={`/recherche?q=${encodeURIComponent(n.topic)}`} className="mt-3 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-blue-800 hover:underline">
               {t('search:orientation.search_topic', 'Lieux et aides pour ce besoin')}<ArrowRight className="h-4 w-4 rtl-flip" aria-hidden="true" />
             </Link>
+            {n.sheets.some((id) => sources[id]?.slug) && (
+              <ParcoursAccessGate>
+                <AddToParcoursControl className="mt-2" title={n.label} records={n.sheets.filter((id) => sources[id]?.slug).slice(0, 5).map((id) => ({ type: 'guide', id: sources[id].slug }))} />
+              </ParcoursAccessGate>
+            )}
           </li>
         ))}
       </ol>

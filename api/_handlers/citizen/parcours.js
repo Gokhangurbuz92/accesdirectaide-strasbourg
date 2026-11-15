@@ -3,8 +3,8 @@ import { citizenHandler } from '../../_utils/citizen-handler.js';
 import { addManualItem, importPlan, itemHistory, listParcours, removeItem, setDeadline, setNote, setStatus } from '../../_services/mon-espace.js';
 
 /**
- * PKG-2 / C07 Mon Parcours.  GET -> { items }   GET ?history=<id> -> { events }
- * POST { action: 'import', shareId } | { action: 'add', title } | { action: 'status', id, status } | { action: 'deadline', id, dueDate|null, dueSourceUrl } | { action: 'note', id, note }
+ * PKG-2 / C07 Mon Parcours.  GET -> { items } (each with its records, `available` and, for a plan step, `plan`: who / detail / links)   GET ?history=<id> -> { events }
+ * POST { action: 'import', shareId } | { action: 'add', title } | { action: 'add', records: [{ type, id }], title? } (a public record becomes a step; idempotent) | { action: 'status', id, status } | { action: 'deadline', id, dueDate|null, dueSourceUrl } | { action: 'note', id, note }
  * DELETE { id }
  */
 export default citizenHandler('parcours', ['GET', 'POST', 'DELETE'], async (citizen, req) => {

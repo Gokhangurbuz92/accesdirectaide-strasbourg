@@ -41,6 +41,7 @@ import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 
 import FavoriteButton from '@/components/FavoriteButton';
+import AddToParcoursButton from '@/components/AddToParcoursButton';
 import { getCsrfHeaders } from '@/lib/csrf';
 /** @typedef {Error & { status?: number, payload?: unknown }} ApiError */
 /** @typedef {{ numero?: number, titre?: string, title?: string, nom?: string, description?: string, contenu?: string, text?: string, conseils?: string }} DemarcheStep */
@@ -495,6 +496,7 @@ export default function DemarcheDetail() {
                   </Button>
                 )}
                 <FavoriteButton entityType="demarche" entityId={demarche.id} label={demarche.titre} />
+                <AddToParcoursButton type="demarche" id={demarche.id} />
                 <FeedbackButton
                   type="demarche"
                   entityId={demarche.id}
