@@ -153,7 +153,7 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
   });
 
   describe('« who does what next » of a plan step', () => {
-    it('is given back from the dossier the account owns (who, detail, internal links), and no longer once the dossier is not theirs', async () => {
+    it('is given back for the dossier the account owns (who, detail, internal links); once the dossier is not theirs it stays only as the step’s own copy (M1)', async () => {
       const id = `visr-share-${TS}`; ids.shares.push(id);
       const results = { assessment: buildAssessment({ answers: { birthDate: '1992-03-10', householdSize: 1, territory: '67000', income: { unemployment: 700 }, housing: { status: 'tenant', rent: 480 } }, unsupportedRights: UNSUPPORTED_RIGHTS }) };
       await db.execute(sql`INSERT INTO "SharedDiagnostic" (id, "expiresAt", situation, results, "viewCount", "rightsSecretHash", "shareTokenHash", "subjectType", "ownerCitizenId") VALUES (${id}, NOW() + interval '7 days', '{}'::jsonb, ${JSON.stringify(results)}::jsonb, 0, ${'h-' + id}, ${'t-' + id}, 'GUEST_SHARE', ${C.id})`);
@@ -182,7 +182,12 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
       expect((await list(A)).every((i) => i.plan === null)).toBe(true);
       await db.execute(sql`UPDATE "SharedDiagnostic" SET "ownerCitizenId" = NULL WHERE id = ${id}`);
       const later = (await list(C)).filter((i) => i.origin === 'PLAN');
-      expect(later.length).toBe(steps.length); expect(later.every((i) => i.plan === null)).toBe(true);
+      expect(later.length).toBe(steps.length);
+      // M1 (migration 0046): the step carries its own copy of who / detail / links, so they outlive the dossier; on a database without "planStep" the
+      // former behaviour stays (read back from the dossier only: nothing once it is gone). Details: tests/integration/m1-parcours-planstep-db.test.js
+      const durable = (await db.execute(sql`SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'ParcoursItem' AND column_name = 'planStep'`)).rows.length > 0;
+      if (durable) expect(later.map((i) => i.plan)).toEqual(steps.map((i) => i.plan));
+      else expect(later.every((i) => i.plan === null)).toBe(true);
     });
   });
 });
