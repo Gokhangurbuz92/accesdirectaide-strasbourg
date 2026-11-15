@@ -8,7 +8,7 @@
  *     nothing left the machine) | NOT_DELIVERED (no provider / refused) | OFF_BY_PREFERENCE | NOT_EMAILABLE | FAILED — never mixed up.
  * Metadata is restricted to identifiers and non-personal values (allow-list).
  */
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, isNull, or, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { ProNotification, ProUser } from '../../src/db/schema.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
@@ -37,15 +37,12 @@ export const CATALOGUE = Object.freeze({
   referral_expired: ev('referrals', 'Orientation expirée'),
   rdv_new: ev('appointments', 'Rendez-vous demain'),
   rdv_booked_by_structure: ev('appointments', 'Rendez-vous créé'),
-  rdv_booked_by_guest: ev('appointments', 'Rendez-vous pris sans compte'),   // R38
   rdv_booked_by_citizen: ev('appointments', 'Rendez-vous pris en ligne (compte)'),   // R42: Mode A
   rdv_request_received: ev('appointments', 'Demande de rendez-vous à valider'),   // R42: Mode B
   rdv_cancelled_by_citizen: ev('appointments', 'Rendez-vous annulé par la personne'),
   rdv_cancelled_by_structure: ev('appointments', 'Rendez-vous annulé par la structure'),
   rdv_rescheduled: ev('appointments', 'Rendez-vous déplacé'),
-  rdv_reminder_j1: ev('appointments', 'Rappel de rendez-vous', false),
-  rdv_visio_approved: ev('appointments', 'Visio validée'),
-  rdv_visio_revoked: ev('appointments', 'Visio retirée'),
+  message_received: ev('appointments', 'Nouveau message d’une personne'),   // A01: a person wrote in an appointment conversation — never the content
   rdv_message_withdrawn: ev('appointments', 'Message retiré par la personne', false),   // R45 (ENG-LR-1): in-app only, never the content
   team_role_change: ev('team', 'Votre rôle a changé'),
   structure_proposal_decided: ev('structure', 'Proposition de modification traitée'),
@@ -58,41 +55,81 @@ export function safeMetadata(m) {
   for (const [k, v] of Object.entries(m)) if (METADATA_KEYS.has(k) && (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v instanceof Date)) out[k] = v instanceof Date ? v.toISOString() : typeof v === 'string' ? v.slice(0, 120) : v;
   return Object.keys(out).length ? out : null;
 }
+/**
+ * A11: where a notice leads, from the identifiers stored with it (the same map as src/lib/pro-notification-view.js). In-site path only; an identifier that is
+ * not a plain id falls back to the dashboard.
+ * @param {string} type @param {Record<string, unknown> | null | undefined} metadata @returns {string}
+ */
+export function notificationPath(type, metadata) {
+  const m = metadata && typeof metadata === 'object' ? metadata : {};
+  const id = (v) => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(v) ? encodeURIComponent(v) : null);
+  if (id(m.referralId)) return `/pro/orientations/${id(m.referralId)}`;
+  if (id(m.caseId)) return `/pro/dossiers/${id(m.caseId)}`;
+  if (id(m.appointmentId)) return `/pro/appointments/${id(m.appointmentId)}`;
+  if (id(m.proposalId) || type === 'structure_proposal_decided') return '/pro/structure';
+  if (type === 'team_role_change') return '/pro/team';
+  if (type === 'case_handover') return '/pro/dossiers';
+  return '/pro/dashboard';
+}
+/** members read per query by notify(): every active member is reached, page after page (A11: a single query used to stop at 25, in no defined order) */
+export const MEMBER_PAGE = 100;
 export const emailWanted = (member, category) => Boolean(member?.notificationEmailEnabled) && (member?.notificationPrefs || {})[category] !== false;
 
 /**
- * Notify members of ONE organization. `to`: an array of user ids (only ACTIVE members of `structureId` are reached) or 'members' (every active member, max 25).
- * Returns { inApp, email: { DELIVERED, TEST_RECORDED, NOT_DELIVERED, OFF_BY_PREFERENCE, NOT_EMAILABLE, FAILED } }.
+ * Notify members of ONE organization. `to`: an array of user ids (only ACTIVE members of `structureId` are reached), 'members' (every active member, read page
+ * by page — no cap) or 'admins' (every active STRUCTURE_ADMIN); `also`: user ids reached in addition to 'admins'. `coalesceUnread: true`: a member who still has
+ * an UNREAD notice of the same type for the same appointment gets no second one (and no second e-mail) — used for conversation messages.
+ * Returns { recipients, inApp, email: { PROVIDER_ACCEPTED, TEST_RECORDED, NOT_DELIVERED, OFF_BY_PREFERENCE, NOT_EMAILABLE, FAILED } } (recipients = active
+ * members matched, before coalescing).
  */
-export async function notify({ structureId, to = 'members', type, title, message, metadata } = {}, deps = {}) {
+export async function notify({ structureId, to = 'members', also, type, title, message, metadata, coalesceUnread = false } = {}, deps = {}) {
   const db = deps.db || defaultDb; const sendMail = deps.sendMail || defaultSendMail;
-  const summary = { inApp: 0, email: { PROVIDER_ACCEPTED: 0, TEST_RECORDED: 0, NOT_DELIVERED: 0, OFF_BY_PREFERENCE: 0, NOT_EMAILABLE: 0, FAILED: 0 } };
+  const summary = { recipients: 0, inApp: 0, email: { PROVIDER_ACCEPTED: 0, TEST_RECORDED: 0, NOT_DELIVERED: 0, OFF_BY_PREFERENCE: 0, NOT_EMAILABLE: 0, FAILED: 0 } };
   const entry = CATALOGUE[type];
   if (!entry) { logger.warn({ type: String(type).slice(0, 40) }, '[pro-notifications] unknown event type refused'); return summary; }
   try {
     const where = [eq(ProUser.structureId, structureId), eq(ProUser.status, 'active'), sql`upper(${ProUser.role}) IN ('PRO', 'STRUCTURE_ADMIN')`];
     if (Array.isArray(to)) { if (!to.length) return summary; where.push(inArray(ProUser.id, to.map(String))); }
-    const members = await db.select({ id: ProUser.id, email: ProUser.email, notificationEmailEnabled: ProUser.notificationEmailEnabled, notificationPrefs: ProUser.notificationPrefs })
-      .from(ProUser).where(and(...where)).limit(25);
+    else if (to === 'admins') {
+      const extra = Array.isArray(also) ? also.filter(Boolean).map(String) : [];
+      where.push(extra.length ? or(sql`upper(${ProUser.role}) = 'STRUCTURE_ADMIN'`, inArray(ProUser.id, extra)) : sql`upper(${ProUser.role}) = 'STRUCTURE_ADMIN'`);
+    }
     const meta = safeMetadata(metadata);
-    for (const m of members) {
-      let email = 'NOT_EMAILABLE';
-      if (entry.email) {
-        if (!emailWanted(m, entry.category) || !m.email) email = 'OFF_BY_PREFERENCE';
-        else {
-          try {
-            const out = await sendMail({ to: m.email, subject: `${title || entry.label} — Accès Direct Aide`, category: `pro-${type}`,
-              text: `${title || entry.label}.\n\nConsultez votre espace professionnel : ${buildAppUrl('/pro/dashboard')}\n\nVous pouvez choisir les notifications reçues par e-mail dans Paramètres > Notifications.` });
-            email = mailLedgerStatus(out);
-          } catch { email = 'FAILED'; }
-        }
+    const link = buildAppUrl(notificationPath(type, meta));
+    let after = null;
+    for (;;) {
+      const members = await db.select({ id: ProUser.id, email: ProUser.email, notificationEmailEnabled: ProUser.notificationEmailEnabled, notificationPrefs: ProUser.notificationPrefs })
+        .from(ProUser).where(and(...where, ...(after === null ? [] : [gt(ProUser.id, after)]))).orderBy(asc(ProUser.id)).limit(MEMBER_PAGE);
+      if (!members.length) break;
+      after = members[members.length - 1].id;
+      summary.recipients += members.length;
+      let already = new Set();
+      if (coalesceUnread && meta?.appointmentId) {
+        const rows = await db.select({ userId: ProNotification.userId }).from(ProNotification).where(and(eq(ProNotification.structureId, structureId), eq(ProNotification.type, type),
+          isNull(ProNotification.readAt), inArray(ProNotification.userId, members.map((m) => m.id)), sql`${ProNotification.metadata}->>'appointmentId' = ${String(meta.appointmentId)}`));
+        already = new Set(rows.map((r) => r.userId));
       }
-      summary.email[email] += 1;
-      try {
-        await db.insert(ProNotification).values({ userId: m.id, structureId, type, title: String(title || entry.label).slice(0, 200), message: String(message || '').slice(0, 1000),
-          metadata: { ...(meta || {}), delivery: { inApp: 'STORED', email } } });
-        summary.inApp += 1;
-      } catch (err) { logger.warn({ err: { name: err?.name, code: err?.cause?.code || err?.code }, type }, '[pro-notifications] in-app write failed'); }
+      for (const m of members) {
+        if (already.has(m.id)) continue;
+        let email = 'NOT_EMAILABLE';
+        if (entry.email) {
+          if (!emailWanted(m, entry.category) || !m.email) email = 'OFF_BY_PREFERENCE';
+          else {
+            try {
+              const out = await sendMail({ to: m.email, subject: `${title || entry.label} — Accès Direct Aide`, category: `pro-${type}`,
+                text: `${title || entry.label}.\n\nConsultez votre espace professionnel : ${link}\n\nVous pouvez choisir les notifications reçues par e-mail dans Paramètres > Notifications.` });
+              email = mailLedgerStatus(out);
+            } catch { email = 'FAILED'; }
+          }
+        }
+        summary.email[email] += 1;
+        try {
+          await db.insert(ProNotification).values({ userId: m.id, structureId, type, title: String(title || entry.label).slice(0, 200), message: String(message || '').slice(0, 1000),
+            metadata: { ...(meta || {}), delivery: { inApp: 'STORED', email } } });
+          summary.inApp += 1;
+        } catch (err) { logger.warn({ err: { name: err?.name, code: err?.cause?.code || err?.code }, type }, '[pro-notifications] in-app write failed'); }
+      }
+      if (members.length < MEMBER_PAGE) break;
     }
   } catch (err) { logger.warn({ err: { name: err?.name }, type }, '[pro-notifications] notify failed'); }
   return summary;

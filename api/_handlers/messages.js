@@ -10,7 +10,7 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateL
 import { requireCitizenUser } from '../_utils/rdv-public-auth.js';
 import { encrypt } from '../lib/crypto.js';
 import {
-  notifyConversationMessage,
+  notifyStructureOfMessage,
   sanitizeMessageBody,
   serializeConversationDetail,
   serializeConversationListItem,
@@ -182,7 +182,7 @@ async function sendMessage(req, res, user, conversationId) {
       where: (conv, { eq }) => eq(conv.id, conversationId),
       with: {
         structure: { columns: { id: true, nom: true } },
-        appointment: { columns: { id: true, startAt: true } },
+        appointment: { columns: { id: true, startAt: true, createdByProUserId: true } },
       },
     });
 
@@ -201,28 +201,12 @@ async function sendMessage(req, res, user, conversationId) {
     return res.status(404).json({ error: 'Conversation introuvable.' });
   }
 
-  const recipient = await db.query.ProUser.findFirst({
-    where: (pro, { eq, and }) => and(
-      eq(pro.structureId, created.conversation.structureId),
-      eq(pro.status, 'active'),
-      eq(pro.notificationEmailEnabled, true)
-    ),
-    columns: { email: true, notificationEmailEnabled: true },
-    orderBy: (pro, { asc }) => [asc(pro.createdAt)],
-  });
-
+  // A01: the appointment's professional (else the team), by their own notification preferences, with an in-app notice — it used to be one e-mail to the
+  // OLDEST account of the structure, whatever its link to the appointment and its « appointments » preference, and nothing in the professional space
   try {
-    await notifyConversationMessage({
-      conversationId: created.conversation.id,
-      messageId: created.message.id,
-      recipientType: 'PRO',
-      recipientEmail: recipient?.email || null,
-      recipientEnabled: Boolean(recipient?.notificationEmailEnabled),
-      structureName: created.conversation.structure?.nom || 'Acces Direct Aide',
-      appointmentStartAt: created.conversation.appointment?.startAt || null,
-    });
+    await notifyStructureOfMessage({ conversation: created.conversation, messageId: created.message.id });
   } catch {
-    // Messaging must remain successful even if email delivery fails.
+    // Messaging must remain successful even if the alert fails.
   }
 
   return res.status(201).json({

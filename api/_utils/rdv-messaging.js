@@ -221,3 +221,31 @@ export async function notifyConversationMessage(input, deps = {}) {
   const accepted = out?.outcome === 'PROVIDER_ACCEPTED' || out?.outcome === 'TEST_RECORDED';
   return accepted ? { sent: true, skipped: false, outcome: out.outcome } : { sent: false, skipped: false, reason: 'not_accepted', outcome: out?.outcome || 'NOT_DELIVERED' };
 }
+
+/**
+ * A01 — a person wrote in an appointment conversation: the professional who holds the appointment (ProAppointment.createdByProUserId) is told when that
+ * account is still an active member of the structure; otherwise (appointment booked online, member gone) every active member is. Through the one catalogue
+ * (api/_services/pro-notifications.js): an in-app notice always, an e-mail only for members who keep e-mail on AND the « appointments » category on. A member
+ * who still has an unread notice for this appointment is not told again. The RdvNotificationLog row (one per message and side) stays the duplicate guard.
+ * Never the content, never a name: the notice carries the appointment id only.
+ * @param {{ conversation: { id: string, structureId: string, appointmentId?: string | null, appointment?: { id?: string, createdByProUserId?: string | null } | null }, messageId: string }} input
+ * @param {{ notify?: Function }} [deps]
+ */
+export async function notifyStructureOfMessage(input, deps = {}) {
+  const { conversation, messageId } = input;
+  try {
+    await db.insert(RdvNotificationLog).values({ kind: 'MESSAGE_EMAIL', conversationId: conversation.id, messageId, recipientType: 'PRO' });
+  } catch (error) {
+    const pgCode = error?.cause?.code || error?.code;
+    if (pgCode === '23505') return { skipped: true, reason: 'duplicate' };
+    throw error;
+  }
+  const notify = deps.notify || (await import('../_services/pro-notifications.js')).notify;
+  const appointmentId = conversation.appointment?.id || conversation.appointmentId || null;
+  const base = { structureId: conversation.structureId, type: 'message_received', message: 'Une personne vous a écrit au sujet d’un rendez-vous.', metadata: { appointmentId }, coalesceUnread: true };
+  const owner = conversation.appointment?.createdByProUserId || null;
+  let summary = owner ? await notify({ ...base, to: [owner] }) : null;
+  const target = summary && summary.recipients > 0 ? 'owner' : 'members';
+  if (target === 'members') summary = await notify({ ...base, to: 'members' });
+  return { skipped: false, target, summary };
+}
