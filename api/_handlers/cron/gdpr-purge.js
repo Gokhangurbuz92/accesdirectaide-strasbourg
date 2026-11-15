@@ -603,7 +603,7 @@ export async function runGdprPurge(opts = {}) {
         if (!lock?.ok) return { status: 409, body: { skipped: true, reason: 'ALREADY_RUNNING', message: 'Another purge is running. Nothing deleted.' } };
         log.info(`🧹 Starting GDPR Purge (policy ${policy.version})...`);
         const out = await body(true);
-        log.info('✅ GDPR Purge complete:', { status: out.status, failed_steps: out.failed_steps, skipped_steps: out.skipped_steps });
+        log.info({ status: out.status, failed_steps: out.failed_steps, skipped_steps: out.skipped_steps }, '[gdpr-purge] purge complete');
         return { status: failedSteps.length === 0 ? 200 : 500, body: out };
     });
 }
@@ -635,7 +635,7 @@ export function createGdprPurgeHandler(deps = {}) {
             const { status, body } = await runGdprPurge({ policy: deps.policy ?? RETENTION_POLICY, dryRunRequested });
             return res.status(status).json(body);
         } catch (e) {
-            defaultLogger.error('GDPR Purge Failed:', e);
+            defaultLogger.error({ err: e }, '[gdpr-purge] purge failed');
             Sentry.captureException(e);
             return res.status(500).json({ error: 'GDPR_PURGE_FAILED' });   // R38: the raw error stays in the logs and Sentry, not in the response
         }

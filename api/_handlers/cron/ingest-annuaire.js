@@ -150,13 +150,13 @@ export async function runIngestAnnuaire({ limit, runId } = {}) {
                     stats.created++;
                 }
             } catch (err) {
-                logger.error(`[ANNUAIRE] FINESS item error (${item.numero_finess}):`, getErrorMessage(err));
+                logger.error({ finess: item.numero_finess, err: getErrorMessage(err) }, '[ANNUAIRE] FINESS item error');
                 stats.errors.push(`FINESS ${item.numero_finess}: ${getErrorMessage(err)}`);
             }
         }
         stats.durationByStage.processingMs += Date.now() - startProcess;
     } catch (err) {
-        logger.error('[ANNUAIRE] FINESS fatal error:', getErrorMessage(err));
+        logger.error({ err: getErrorMessage(err) }, '[ANNUAIRE] FINESS fatal error');
         stats.errors.push(`FINESS fatal: ${getErrorMessage(err)}`);
     }
 
@@ -246,13 +246,13 @@ export async function runIngestAnnuaire({ limit, runId } = {}) {
                     stats.created++;
                 }
             } catch (err) {
-                logger.error(`[ANNUAIRE] RNA item error (${item.rna_id}):`, getErrorMessage(err));
+                logger.error({ rna: item.rna_id, err: getErrorMessage(err) }, '[ANNUAIRE] RNA item error');
                 stats.errors.push(`RNA ${item.rna_id}: ${getErrorMessage(err)}`);
             }
         }
         stats.durationByStage.processingMs += Date.now() - startProcess;
     } catch (err) {
-        logger.error('[ANNUAIRE] RNA fatal error:', getErrorMessage(err));
+        logger.error({ err: getErrorMessage(err) }, '[ANNUAIRE] RNA fatal error');
         stats.errors.push(`RNA fatal: ${getErrorMessage(err)}`);
     }
 
@@ -275,7 +275,7 @@ export async function runIngestAnnuaire({ limit, runId } = {}) {
             duration_ms: durationTotal,
         });
     } catch (e) {
-        logger.error('[ANNUAIRE] ImportLog failed:', getErrorMessage(e));
+        logger.error({ err: getErrorMessage(e) }, '[ANNUAIRE] ImportLog failed');
     }
 
     logger.info(`[ANNUAIRE] Done (${durationTotal}ms) — created: ${stats.created}, updated: ${stats.updated}, skipped: ${stats.skippedExisting}, errors: ${stats.errors.length}`);
@@ -310,7 +310,7 @@ export default async function handler(req, res) {
             logger.warn({ runId }, '[ANNUAIRE] Already running, skipping');
             return res.status(409).json({ error: 'Pipeline already running', runId });
         }
-        logger.error('[ANNUAIRE] Handler error:', getErrorMessage(error));
+        logger.error({ err: getErrorMessage(error) }, '[ANNUAIRE] Handler error');
         return res.status(500).json({ error: 'Internal Server Error', runId });
     }
 }

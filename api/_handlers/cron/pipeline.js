@@ -87,7 +87,7 @@ export default async function handler(req, res) {
     );
 
     const pipelineLogic = async () => {
-        logger.info("[PIPELINE] calling ingester", { sourceResolved, mode, limit });
+        logger.info({ sourceResolved, mode, limit }, '[PIPELINE] calling ingester');
 
         // ==========================================
         // ROUTING LOGIC
@@ -129,7 +129,7 @@ export default async function handler(req, res) {
         } else if (sourceResolved === 'geography') {
             // Phase 9: COG + BANATIC territory ingestion
             // Requires external data files or API access — ENVIRONMENT ACTION REQUIRED
-            logger.info('[PIPELINE] Geography ingestion route invoked', { runId });
+            logger.info({ runId }, '[PIPELINE] Geography ingestion route invoked');
             await import('../../lib/geography/COGIngestion.js');   // the module loads (its ingest functions need a data source, below)
             // This route requires pre-fetched COG/BANATIC data passed via request body or fetched from official APIs.
             // Production deployment must provide data source configuration.
@@ -165,7 +165,7 @@ export default async function handler(req, res) {
         }
 
     } catch (globalErr) {
-        logger.error("Pipeline Global Error:", globalErr);
+        logger.error({ err: globalErr }, '[PIPELINE] global error');
         // Try to log failure
         try {
             await db.insert(ImportLog).values({
@@ -209,7 +209,7 @@ export default async function handler(req, res) {
                 duration_ms: Date.now() - startTime
             });
         } catch (e) {
-            logger.error('Failed to log NOOP error:', e);
+            logger.error({ err: e }, '[PIPELINE] failed to log NOOP error');
         }
 
         return res.status(502).json({
