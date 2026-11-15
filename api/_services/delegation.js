@@ -132,7 +132,9 @@ export async function delegateView(userId, id, what, db = defaultDb) {
   if (await isRestricted(owner, db)) return bad('PROCESSING_RESTRICTED', 'La personne a demandé la limitation du traitement de ses données : la consultation est suspendue.', 409);
   let data;
   if (what === 'parcours') {
-    const rows = await db.select().from(ParcoursItem).where(eq(ParcoursItem.userId, owner)).orderBy(asc(ParcoursItem.createdAt));
+    // M1: only the columns shown are read — the delegate never gets the plan data, and the view works on a database without "planStep" (migration 0046)
+    const rows = await db.select({ id: ParcoursItem.id, title: ParcoursItem.title, status: ParcoursItem.status, dueDate: ParcoursItem.dueDate, dueSourceUrl: ParcoursItem.dueSourceUrl })
+      .from(ParcoursItem).where(eq(ParcoursItem.userId, owner)).orderBy(asc(ParcoursItem.createdAt));
     data = { items: rows.map((i) => ({ id: i.id, title: i.title, status: i.status, dueDate: i.dueDate, dueSourceUrl: i.dueSourceUrl })) }; // private notes never leave
   } else if (what === 'coffre') {
     data = { documents: (await listCoffre(owner, db)).documents.map((d) => ({ name: d.name, category: d.category, byteLength: d.byteLength, createdAt: d.createdAt, expired: d.expired })) };

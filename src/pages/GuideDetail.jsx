@@ -7,6 +7,7 @@ import SEO from '@/components/SEO';
 import { Printer, ArrowRight } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import HumanHelpBlock from '@/components/HumanHelpBlock';
+import AddToParcoursButton from '@/components/AddToParcoursButton';
 import LazyImage from '@/components/ui/LazyImage';
 import LoadError from '@/components/LoadError';
 import OfficialText from '@/components/guides/OfficialText';
@@ -100,6 +101,8 @@ export default function GuideDetail() {
                     {t('guides:detail.print', 'Imprimer la fiche')}
                 </button>
             </div>
+            {/* A-10: a guide can become a step of Mon Parcours (nothing rendered unless Mon Parcours is open and a citizen is signed in) */}
+            <AddToParcoursButton type="guide" id={guide.slug || slug} className="mb-4 print:hidden" />
             <article className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm print:shadow-none print:border-0 print:p-0" data-testid="guide-detail" aria-labelledby="guide-title">
                 <header className="mb-8 border-b pb-6">
                     <p className="hidden text-3xl font-bold text-gray-900 mb-4 print:block" {...tr.attrs('titre')}>{tr.value('titre')}</p>

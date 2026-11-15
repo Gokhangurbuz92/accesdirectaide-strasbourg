@@ -6,7 +6,7 @@
  * column. Nothing is cached across runs: applying the migration later is picked up by the next run.
  */
 import { Table, getTableColumns, sql } from 'drizzle-orm';
-import { ProAppointment, ProRdvService, StructureRdvSettings } from '../../src/db/schema.js';
+import { ParcoursItem, ProAppointment, ProRdvService, StructureRdvSettings } from '../../src/db/schema.js';
 
 /** ProAppointment columns added by drizzle/0043_r38_guest_booking.sql (schema keys = column names) */
 export const GUEST_BOOKING_COLUMNS = Object.freeze(['guestEmail', 'guestEmailHash', 'guestPhone', 'guestMailConsentAt', 'guestHoldExpiresAt', 'guestCodeHash',
@@ -126,3 +126,34 @@ export function noticeLedgerKinds(database) {
 }
 /** for the tests: forget what was read (a migration applied or rolled back inside one process) */
 export function forgetNoticeLedgerKinds(database) { ledgerCache.delete(database); }
+
+/**
+ * M1 — "ParcoursItem"."planStep" comes with migration 0046; Production may still be without it when the code is released. Every reader and writer of
+ * ParcoursItem asks first and uses the table as THIS database has it (drizzle otherwise lists the missing column in every SELECT / INSERT / RETURNING,
+ * which would break Mon Parcours, the delegate's view and — silently, as an empty list — the person's data export). Read at most once per
+ * GUEST_SCHEMA_TTL_MS per process; a failed read is not remembered and answers false (the plan-step parts are left out, nothing else fails because of
+ * it). A database double without execute() is taken as fully migrated.
+ */
+export const PLAN_STEP_COLUMN = 'planStep';
+const planStepCache = new WeakMap();
+/** @param {any} database @returns {Promise<boolean>} */
+async function readPlanStepColumn(database) {
+  const res = await database.execute(sql`SELECT 1 AS present FROM information_schema.columns
+    WHERE table_schema = current_schema() AND table_name = 'ParcoursItem' AND column_name = ${PLAN_STEP_COLUMN}`);
+  return (res?.rows || res || []).length > 0;
+}
+/** @param {any} database a drizzle client (or transaction) @returns {Promise<boolean>} does "ParcoursItem"."planStep" exist here */
+export function parcoursPlanStepSchema(database) {
+  if (!database || typeof database.execute !== 'function') return Promise.resolve(true);
+  const hit = planStepCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const read = readPlanStepColumn(database);
+  const value = read.catch(() => false);
+  planStepCache.set(database, { at: Date.now(), value });
+  read.catch(() => { if (planStepCache.get(database)?.value === value) planStepCache.delete(database); });
+  return value;
+}
+/** ParcoursItem as this database has it @param {boolean} hasPlanStep @returns {typeof ParcoursItem} */
+export const parcoursItemTable = (hasPlanStep) => without(ParcoursItem, hasPlanStep ? [] : [PLAN_STEP_COLUMN]);
+/** for the tests: forget what was read (a migration applied or rolled back inside one process) */
+export function forgetParcoursPlanStep(database) { planStepCache.delete(database); }

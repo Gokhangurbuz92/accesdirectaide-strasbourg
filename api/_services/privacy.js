@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { eq, and, or, sql, desc } from 'drizzle-orm';
-import { appointmentTable, flagsOf, requestGuestSchema } from '../_utils/schema-features.js';
+import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, requestGuestSchema } from '../_utils/schema-features.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
@@ -428,7 +428,8 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             const household = await safeFindMany(db.query?.HouseholdMember, { where: eq(HouseholdMember.userId, userId) });
             const notificationPreferences = await safeFindMany(db.query?.NotificationPreference, { where: eq(NotificationPreference.userId, userId) });
             // PKG-2: everything Mon Espace keeps about the person (the Coffre is listed as metadata: the documents themselves are downloaded from Mon Coffre; no storage key is exported)
-            const parcours = await safeFindMany(db.query?.ParcoursItem, { where: eq(ParcoursItem.userId, userId) });
+            // M1: the columns THIS database has ("planStep" comes with migration 0046) — a missing column would otherwise turn the person's steps into an empty list
+            const parcours = await safeFindMany(db.query?.ParcoursItem, { columns: flagsOf(parcoursItemTable(await parcoursPlanStepSchema(db))), where: eq(ParcoursItem.userId, userId) });
             const parcoursHistory = await safeFindMany(db.query?.ParcoursEvent, { where: eq(ParcoursEvent.userId, userId) });
             const favorites = await safeFindMany(db.query?.CitizenFavorite, { where: eq(CitizenFavorite.userId, userId) });
             const history = await safeFindMany(db.query?.CitizenHistoryEntry, { where: eq(CitizenHistoryEntry.userId, userId) });

@@ -17,6 +17,9 @@ import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js'
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
 import { capabilityOpen } from '../_utils/capabilities.js';
+import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-features.js';
+import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../lib/parcours-plan-step.js';
+import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -25,8 +28,20 @@ const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
 export const PARCOURS_STATUSES = ['NOT_STARTED', 'IN_PROGRESS', 'DOCUMENTS_REQUIRED', 'READY', 'SUBMITTED', 'WAITING_ORGANIZATION', 'ADDITIONAL_INFORMATION', 'DECISION_POSITIVE', 'DECISION_NEGATIVE', 'CLOSED'];
 export const MAX_PARCOURS_ITEMS = 100;
 const planKeyOf = (shareId, step) => crypto.createHash('sha256').update(JSON.stringify([shareId, step.kind, step.who || '', [...(step.itemCodes || [])].sort()])).digest('hex').slice(0, 40);
-const itemView = (r) => ({ id: r.id, origin: r.origin, sourceShareId: r.sourceShareId, stepKind: r.stepKind, itemCodes: r.itemCodes, title: r.title, status: r.status,
+// M1: `status` stays one of the ten self-declared states; `closure` says why a CLOSED step ended when the person said so (ABANDONED | OUTCOME_UNKNOWN), else null
+const itemView = (r) => ({ id: r.id, origin: r.origin, sourceShareId: r.sourceShareId, stepKind: r.stepKind, itemCodes: r.itemCodes, title: r.title, status: r.status, closure: closureOf(r),
   dueDate: r.dueDate, dueSourceUrl: r.dueSourceUrl, note: r.note, createdAt: r.createdAt, updatedAt: r.updatedAt });
+
+/**
+ * M1 — ParcoursItem as THIS database has it. "planStep" comes with migration 0046, which Production receives separately from the code: without the
+ * column Mon Parcours behaves as before M1 (no plan data is read or written, nothing fails), see api/_utils/schema-features.js.
+ * @returns {Promise<{ has: boolean, T: typeof ParcoursItem }>}
+ */
+async function parcoursSchema(db) {
+  const has = await parcoursPlanStepSchema(db);
+  return { has, T: parcoursItemTable(has) };
+}
+const PLAN_UNAVAILABLE = () => bad('PLAN_STEP_UNAVAILABLE', 'Cette fonction n’est pas encore disponible.', 409);
 
 async function event(db, item, kind, fromStatus = null, toStatus = null) {
   await db.insert(ParcoursEvent).values({ itemId: item.id, userId: item.userId, kind, fromStatus, toStatus });
@@ -34,26 +49,30 @@ async function event(db, item, kind, fromStatus = null, toStatus = null) {
 
 // VIS-R: a tracked step can point at catalogue records. `itemCodes` holds « <type>:<id> » for a step the person added from a record page or an orientation
 // (origin MANUAL, the database accepts only PLAN | MANUAL), and the bare assessment codes of a plan step (an aide slug, see src/lib/actionPlan.js).
-export const PARCOURS_RECORD_TYPES = ['aide', 'demarche', 'dispositif', 'guide'];
+// A-10: a place (structure) can be a step too, like a favourite: « aller à la permanence de … » is a step of a real pathway. Its code is « structure:<id> ».
+export const PARCOURS_RECORD_TYPES = ['aide', 'demarche', 'dispositif', 'guide', 'structure'];
 export const MAX_PARCOURS_RECORDS = 5;
-const RECORD_PATHS = { aide: '/aides', demarche: '/demarches', dispositif: '/dispositifs', guide: '/bonnes-pratiques' };
-const RECORD_TABLES = { aide: ENTITY_TABLES.aide, demarche: ENTITY_TABLES.demarche, dispositif: ENTITY_TABLES.dispositif, guide: Guide };
+const RECORD_PATHS = { aide: '/aides', demarche: '/demarches', dispositif: '/dispositifs', guide: '/bonnes-pratiques', structure: '/structures' };
+const RECORD_TABLES = { aide: ENTITY_TABLES.aide, demarche: ENTITY_TABLES.demarche, dispositif: ENTITY_TABLES.dispositif, guide: Guide, structure: ENTITY_TABLES.structure };
+/** a structure has a name (« nom »), the other records a title */
+const recordTitle = (type, r) => (type === 'structure' ? r.nom : r.titre);
 const RECORD_KEY = /^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/;
-const RECORD_CODE = /^(aide|demarche|dispositif|guide):([A-Za-z0-9][A-Za-z0-9._-]{0,119})$/;
+const RECORD_CODE = /^(aide|demarche|dispositif|guide|structure):([A-Za-z0-9][A-Za-z0-9._-]{0,119})$/;
 /** the ONE visibility decision (D-5, api/lib/publicVisibility.js) — the same as favourites; a guide is not a D-5 record: public when published (api/_handlers/guides.js) */
 const recordVisible = (type, r) => Boolean(r && (type === 'guide' ? r.statut === 'publie' : decide(r, type).visible));
 const hasText = (v) => typeof v === 'string' && v.trim().length > 0;
 /** where the record says whom to contact (« Où demander » / « Où faire »), when it has it */
-const recordContact = (type, r) => (type === 'aide' ? hasText(r.ou_demander) : type === 'demarche' ? hasText(r.ou_faire) : false);
+const recordContact = (type, r) => (type === 'aide' ? hasText(r.ou_demander) : type === 'demarche' ? hasText(r.ou_faire)
+  : type === 'structure' ? [r.telephone, r.email, r.adresse, r.site_web].some(hasText) : false);   // a place's own page is where its contact details are
 const recordView = (code, type, r) => {
   const visible = recordVisible(type, r);   // a record that is no longer public gives neither its title nor its address
-  return { code, type, available: visible, title: visible ? r.titre : null, href: visible ? `${RECORD_PATHS[type]}/${encodeURIComponent(r.slug || r.id)}` : null, contact: visible && recordContact(type, r) };
+  return { code, type, available: visible, title: visible ? recordTitle(type, r) : null, href: visible ? `${RECORD_PATHS[type]}/${encodeURIComponent(r.slug || r.id)}` : null, contact: visible && recordContact(type, r) };
 };
 const recordKeyOf = (codes) => crypto.createHash('sha256').update(JSON.stringify(['record', codes])).digest('hex').slice(0, 40);
 
 /** the records the items point at, by code. A typed code that no longer resolves is « no longer available »; a bare plan code ADA holds no record for is not listed at all. */
 async function recordsOf(rows, db) {
-  const typed = { aide: new Set(), demarche: new Set(), dispositif: new Set(), guide: new Set() }; const bare = new Set();
+  const typed = Object.fromEntries(PARCOURS_RECORD_TYPES.map((t) => [t, new Set()])); const bare = new Set();
   for (const code of rows.flatMap((r) => r.itemCodes || [])) {
     const m = RECORD_CODE.exec(String(code));
     if (m) typed[m[1]].add(m[2]); else if (RECORD_KEY.test(String(code))) bare.add(String(code));
@@ -70,8 +89,9 @@ async function recordsOf(rows, db) {
 }
 
 /**
- * « Who does what next » of a plan step (who, detail, internal links). ParcoursItem has no column for them, so they are READ BACK from the dossier the step
- * came from, while the account still owns it (same planKey as at import); once the dossier is gone the step keeps its title only.
+ * « Who does what next » of a plan step (who, detail, internal links) READ BACK from the dossier the step came from, while the account still owns it (same
+ * planKey as at import). Since M1 (migration 0046) an imported step carries its own durable copy (planStep, see listParcours); this read-back remains for
+ * the steps imported before, and on a database without the column: for those, once the dossier is gone the step keeps its title only.
  */
 async function planStepsOf(userId, rows, db) {
   const shareIds = [...new Set(rows.filter((r) => r.origin === 'PLAN' && r.sourceShareId && r.planKey).map((r) => r.sourceShareId))];
@@ -88,14 +108,67 @@ async function planStepsOf(userId, rows, db) {
   return out;
 }
 
+/** the plan data of a step as the screen gets it: the need with its French label, who acts, the links, the next action key, the plan's explanation */
+const stepView = (ps) => {
+  if (!ps) return null;
+  const out = { need: ps.need ? { id: ps.need, label: planNeeds().get(ps.need) } : null, actor: ps.actor, links: ps.links, nextActionKey: ps.nextActionKey, detail: ps.detail };
+  return out.need || out.actor || out.links.length || out.nextActionKey || out.detail ? out : null;
+};
+/** VIS-R shape of « who does what next », now from the step's own durable copy: the organisation, the explanation, the internal links */
+const planOfStep = (ps) => {
+  if (!ps) return null;
+  const out = { who: ps.actor && ps.actor.kind === 'organisation' ? ps.actor.name : null, detail: ps.detail, links: ps.links.filter((l) => l.to) };
+  return out.who || out.detail || out.links.length ? out : null;
+};
+
+/**
+ * M1: each step also gives `closure`, `step` (its durable plan data, null for a step without it — every step created before migration 0046),
+ * `dependsOn` (the person's OTHER step it depends on: id, title, status, closure, done) and `waiting` (that step is not finished yet — shown as waiting,
+ * never a lock: the person changes any status at any time). `planSteps` says whether this database stores plan data at all.
+ */
 export async function listParcours(userId, db = defaultDb) {
-  const rows = await db.select().from(ParcoursItem).where(eq(ParcoursItem.userId, userId)).orderBy(asc(ParcoursItem.createdAt));
+  const { has, T } = await parcoursSchema(db);
+  const rows = await db.select().from(T).where(eq(ParcoursItem.userId, userId)).orderBy(asc(ParcoursItem.createdAt));
   const [records, plans] = [await recordsOf(rows, db), await planStepsOf(userId, rows, db)];
-  return { ok: true, status: 200, items: rows.map((r) => {
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return { ok: true, status: 200, planSteps: has, items: rows.map((r) => {
     const recs = [...new Set(r.itemCodes || [])].map((c) => records.get(c)).filter(Boolean);
+    const ps = has ? readPlanStep(r.planStep) : null;
+    // a dependency is another step of the SAME account, still there (a removed one simply no longer holds anything back)
+    const dep = ps && ps.dependsOnItemId && ps.dependsOnItemId !== r.id ? byId.get(ps.dependsOnItemId) : null;
+    const dependsOn = dep ? { id: dep.id, title: dep.title, status: dep.status, closure: closureOf(dep), done: PLAN_DONE_STATUSES.includes(dep.status) } : null;
     // `available: false` = at least one record of the step is withdrawn or no longer visible (same decision as a favourite)
-    return { ...itemView(r), records: recs, available: recs.every((x) => x.available), plan: plans.get(`${r.sourceShareId}:${r.planKey}`) || null };
+    return { ...itemView(r), records: recs, available: recs.every((x) => x.available),
+      // the step's own copy first (it outlives the dossier); a step imported before 0046 is still read back from the dossier the account owns
+      plan: (r.origin === 'PLAN' ? planOfStep(ps) : null) || plans.get(`${r.sourceShareId}:${r.planKey}`) || null,
+      step: stepView(ps), dependsOn, waiting: Boolean(dependsOn && !dependsOn.done && !PLAN_DONE_STATUSES.includes(r.status)) };
   }) };
+}
+
+/**
+ * M1: may `itemId` (null = a step being created) depend on `dependsOnId`? Only the account's OWN steps are ever read: an id that is unknown and an id
+ * of another person's step take the same path and get the same refusal (no existence oracle). A loop — the step itself included — is refused.
+ */
+async function dependencyRefusal(userId, itemId, dependsOnId, db, T) {
+  const own = await db.select({ id: ParcoursItem.id, planStep: T.planStep }).from(T).where(eq(ParcoursItem.userId, userId));
+  if (itemId !== dependsOnId && !own.some((r) => r.id === dependsOnId)) return bad('INVALID_DEPENDENCY', 'Cette étape ne peut pas dépendre de cet élément.');
+  if (!itemId) return null;
+  const edges = new Map(own.map((r) => [r.id, readPlanStep(r.planStep)?.dependsOnItemId || null]));
+  return dependencyCycle(itemId, dependsOnId, edges) ? bad('DEPENDENCY_CYCLE', 'Ces étapes dépendraient l’une de l’autre : choisissez une autre étape.', 409) : null;
+}
+
+/** the plan data sent with « add », checked before any database access; `none` when nothing was sent */
+function planInput(input) {
+  if (!input || input.planStep === undefined || input.planStep === null) return { none: true };
+  const v = validatePlanStepInput(input.planStep);
+  return v.ok ? { change: v } : { refusal: bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.') };
+}
+/** the value to store with a NEW step ({} = nothing), or a refusal. On a database without the column the step is still created, without plan data (`planSaved: false`). */
+async function newPlanStep(userId, plan, db, has, T) {
+  if (plan.none || !has) return { values: {}, saved: plan.none ? undefined : false };
+  if (plan.change.set.dependsOnItemId) { const no = await dependencyRefusal(userId, null, plan.change.set.dependsOnItemId, db, T); if (no) return { refusal: no }; }
+  const value = mergePlanStep(null, plan.change);
+  return { values: value ? { planStep: value } : {}, saved: true };
 }
 
 /** The steps of the account-free plan of a dossier the ACCOUNT owns become tracked items; re-importing the same plan adds nothing twice (planKey). */
@@ -107,10 +180,14 @@ export async function importPlan(userId, shareId, db = defaultDb) {
   if (!plan.steps.length) return bad('NO_PLAN', 'Ce dossier ne contient pas encore de plan d’action à suivre.', 409);
   const [{ n }] = (await db.execute(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE "userId" = ${userId}`)).rows;
   if (n + plan.steps.length > MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
+  const { has, T } = await parcoursSchema(db);
   let added = 0;
   for (const step of plan.steps) {
-    const rows = await db.insert(ParcoursItem).values({ userId, origin: 'PLAN', sourceShareId: shared.id, planKey: planKeyOf(shared.id, step), stepKind: step.kind,
-      itemCodes: step.itemCodes || [], title: String(step.title).slice(0, 300) }).onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
+    // M1: who acts, the explanation, the internal links and the next action are COPIED into the step (planStep): they no longer depend on the dossier
+    const copy = has ? planStepFromPlan(step) : null;
+    const rows = await db.insert(T).values({ userId, origin: 'PLAN', sourceShareId: shared.id, planKey: planKeyOf(shared.id, step), stepKind: step.kind,
+      itemCodes: step.itemCodes || [], title: String(step.title).slice(0, 300), ...(copy && planStepFits(copy) ? { planStep: copy } : {}) })
+      .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
     if (rows.length) { added += 1; await event(db, rows[0], 'CREATED', null, 'NOT_STARTED'); }
   }
   return { ok: true, status: 200, added, ...(await listParcours(userId, db)) };
@@ -135,6 +212,7 @@ async function addRecordItem(userId, input, db) {
     title = input.title.trim();
     if (title.length < 3 || title.length > 200) return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
   }
+  const plan = planInput(input); if (plan.refusal) return plan.refusal;
   const found = [];
   for (const x of list) {
     const T = RECORD_TABLES[x.type];
@@ -144,45 +222,81 @@ async function addRecordItem(userId, input, db) {
   }
   const codes = [...new Set(found.map((f) => `${f.type}:${f.r.id}`))].sort();
   const planKey = recordKeyOf(codes);
-  const existing = async () => (await db.select().from(ParcoursItem).where(and(eq(ParcoursItem.userId, userId), eq(ParcoursItem.planKey, planKey))).limit(1))[0];
+  const { has, T } = await parcoursSchema(db);
+  const existing = async () => (await db.select().from(T).where(and(eq(ParcoursItem.userId, userId), eq(ParcoursItem.planKey, planKey))).limit(1))[0];
   const already = await existing();
-  if (already) return { ok: true, status: 200, added: false, item: itemView(already) };
+  if (already) return { ok: true, status: 200, added: false, item: itemView(already) };   // the step that exists keeps its own plan data
   if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
-  const [row] = await db.insert(ParcoursItem).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(found[0].r.titre).trim().slice(0, 200) })
+  const ps = await newPlanStep(userId, plan, db, has, T); if (ps.refusal) return ps.refusal;
+  const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(recordTitle(found[0].type, found[0].r)).trim().slice(0, 200), ...ps.values })
     .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
   if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };   // two clicks at once: the other request created it
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
-  return { ok: true, status: 201, added: true, item: itemView(row) };
+  return { ok: true, status: 201, added: true, item: itemView(row), ...(ps.saved === undefined ? {} : { planSaved: ps.saved }) };
 }
 
 export async function addManualItem(userId, input, db = defaultDb) {
   if (input && input.records !== undefined) return addRecordItem(userId, input, db);
   const title = String(input?.title || '').trim();
   if (title.length < 3 || title.length > 200) return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
+  const plan = planInput(input); if (plan.refusal) return plan.refusal;
   if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
-  const [row] = await db.insert(ParcoursItem).values({ userId, origin: 'MANUAL', stepKind: 'custom', title }).returning();
+  const { has, T } = await parcoursSchema(db);
+  const ps = await newPlanStep(userId, plan, db, has, T); if (ps.refusal) return ps.refusal;
+  const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', stepKind: 'custom', title, ...ps.values }).returning();
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
-  return { ok: true, status: 201, item: itemView(row) };
+  return { ok: true, status: 201, item: itemView(row), ...(ps.saved === undefined ? {} : { planSaved: ps.saved }) };
 }
 
-async function ownedItem(userId, id, db) {
-  const [row] = await db.select().from(ParcoursItem).where(and(eq(ParcoursItem.id, String(id || '')), eq(ParcoursItem.userId, userId))).limit(1);
+async function ownedItem(userId, id, db, T = ParcoursItem) {
+  const [row] = await db.select().from(T).where(and(eq(ParcoursItem.id, String(id || '')), eq(ParcoursItem.userId, userId))).limit(1);
   return row || null;
 }
 
-/** The person records where they are. Any status can follow any other (real procedures go back and forth); every change is kept in the append-only history. */
+/**
+ * M1 — the person changes the plan data of ONE of their steps: `planStep` = the keys to set (need, actor, links, dependsOnItemId, nextActionKey), a key
+ * set to null is cleared, a key left out is untouched; the plan's own explanation and a closing reason stay. Strictly validated
+ * (api/lib/parcours-plan-step.js); the dependency must be another step of the same account and must not close a loop. It changes no status and writes
+ * no history line (the history records statuses, deadlines and notes: its kinds are fixed by the database).
+ */
+export async function setPlanStep(userId, id, input, db = defaultDb) {
+  const v = validatePlanStepInput(input);
+  if (!v.ok) return bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.');
+  const { has, T } = await parcoursSchema(db);
+  const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
+  if (!has) return PLAN_UNAVAILABLE();
+  if (v.set.dependsOnItemId) { const no = await dependencyRefusal(userId, row.id, v.set.dependsOnItemId, db, T); if (no) return no; }
+  const value = mergePlanStep(row.planStep, v);
+  if (!planStepFits(value)) return bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.');
+  const [up] = await db.update(T).set({ planStep: value }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
+  return { ok: true, status: 200, item: itemView(up) };
+}
+
+/**
+ * The person records where they are. Any status can follow any other (real procedures go back and forth); every change is kept in the append-only history.
+ * M1: `status` may also be ABANDONED (the person gave the step up) or OUTCOME_UNKNOWN (they never learnt the outcome). Both are honest ways a step ends
+ * without an answer: the step becomes CLOSED — one of the ten states, so the status CHECK and the history are unchanged — and the reason is kept in
+ * planStep.closure; choosing any of the ten states afterwards removes the reason. A dependency never blocks a change of status.
+ */
 export async function setStatus(userId, id, status, db = defaultDb) {
-  if (!PARCOURS_STATUSES.includes(status)) return bad('INVALID_STATUS', 'État inconnu.');
-  const row = await ownedItem(userId, id, db); if (!row) return notFound();
-  if (row.status === status) return { ok: true, status: 200, item: itemView(row) };
-  const [up] = await db.update(ParcoursItem).set({ status }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
-  await event(db, row, 'STATUS', row.status, status);
+  const closure = PLAN_CLOSURES.includes(status) ? status : null;
+  if (!closure && !PARCOURS_STATUSES.includes(status)) return bad('INVALID_STATUS', 'État inconnu.');
+  const next = closure ? 'CLOSED' : status;
+  const { has, T } = await parcoursSchema(db);
+  const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
+  if (closure && !has) return PLAN_UNAVAILABLE();
+  const was = has ? closureOf(row) : null;
+  if (row.status === next && was === closure) return { ok: true, status: 200, item: itemView(row) };
+  const planStep = has && was !== closure ? mergePlanStep(row.planStep, {}, closure) : undefined;
+  const [up] = await db.update(T).set({ status: next, ...(planStep !== undefined ? { planStep } : {}) }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
+  await event(db, row, 'STATUS', row.status, next);
   return { ok: true, status: 200, item: itemView(up) };
 }
 
 /** A deadline only with its OFFICIAL source (the same allow-list as human verification); clearing it is always allowed. */
 export async function setDeadline(userId, id, input, db = defaultDb) {
-  const row = await ownedItem(userId, id, db); if (!row) return notFound();
+  const { T } = await parcoursSchema(db);
+  const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
   let dueDate = null; let dueSourceUrl = null;
   if (input?.dueDate != null) {
     dueDate = new Date(String(input.dueDate));
@@ -190,7 +304,7 @@ export async function setDeadline(userId, id, input, db = defaultDb) {
     dueSourceUrl = String(input.dueSourceUrl || '').trim();
     if (!evidenceUrlAllowed(dueSourceUrl)) return bad('DEADLINE_SOURCE_REQUIRED', 'Une échéance doit citer sa source officielle (adresse https d’un site public reconnu).');
   }
-  const [up] = await db.update(ParcoursItem).set({ dueDate, dueSourceUrl }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
+  const [up] = await db.update(T).set({ dueDate, dueSourceUrl }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   // R12 (C08): a MOVED deadline is reminded again at its new J-7 / J-1 (the reminders already sent were for the former date and kept it from ever being re-sent)
   const moved = (row.dueDate ? new Date(row.dueDate).getTime() : null) !== (dueDate ? dueDate.getTime() : null);
   if (up && moved) await db.execute(sql`DELETE FROM "ParcoursReminder" WHERE "itemId" = ${row.id}`);
@@ -199,9 +313,10 @@ export async function setDeadline(userId, id, input, db = defaultDb) {
 }
 
 export async function setNote(userId, id, note, db = defaultDb) {
-  const row = await ownedItem(userId, id, db); if (!row) return notFound();
+  const { T } = await parcoursSchema(db);
+  const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
   const v = note == null ? null : String(note).trim().slice(0, 500) || null;
-  const [up] = await db.update(ParcoursItem).set({ note: v }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
+  const [up] = await db.update(T).set({ note: v }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   await event(db, row, 'NOTE');
   return { ok: true, status: 200, item: itemView(up) };
 }
@@ -212,7 +327,7 @@ export async function removeItem(userId, id, db = defaultDb) {
 }
 
 export async function itemHistory(userId, id, db = defaultDb) {
-  const row = await ownedItem(userId, id, db); if (!row) return notFound();
+  const row = await ownedItem(userId, id, db, (await parcoursSchema(db)).T); if (!row) return notFound();
   const events = await db.select({ kind: ParcoursEvent.kind, fromStatus: ParcoursEvent.fromStatus, toStatus: ParcoursEvent.toStatus, createdAt: ParcoursEvent.createdAt })
     .from(ParcoursEvent).where(eq(ParcoursEvent.itemId, row.id)).orderBy(asc(ParcoursEvent.createdAt));
   return { ok: true, status: 200, events };

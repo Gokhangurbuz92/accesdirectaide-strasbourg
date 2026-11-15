@@ -10,6 +10,8 @@ import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { formatDate, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
+import HumanHelpBlock, { HUMAN_HELP_DIRECTORY } from '@/components/HumanHelpBlock';
+import { PLAN_CLOSURES, groupByNeed, needsRecovery, nextActionOf } from '@/lib/parcoursPlan';
 
 /** French text of the plan or of a record inside any interface language: marked French and left-to-right */
 const FR = { lang: 'fr', dir: 'ltr' };
@@ -23,11 +25,17 @@ const contactHref = (r) => (r.type === 'aide' ? `${r.href}#heading-ou-demander` 
  * VIS-R: a plan step shows who does what next (read back from its dossier); a step whose record was withdrawn says so with a way to look for another one; after a
  * « réponse défavorable » the person indicated, a neutral « Que faire ensuite ? » block points to the record's contact information, the search and human help —
  * it never says what the organisation decided, nor that anything is due or possible.
+ * M1 (the step's durable plan data, "ParcoursItem"."planStep"): the steps in progress are grouped by need; a step says who acts and the next action (what
+ * follows from the state the person indicated, else the action planned for the step); a step that comes after an unfinished one is shown as waiting — a
+ * notice, never a lock: its state can always be changed; a step whose record is no longer available also gets the « Parler à une personne » block; a step
+ * the person gave up, or whose outcome they never learnt, is closed with that reason and gets the same « Que faire ensuite ? » block. A link is only a
+ * link: following one never changes a step's state. Where the database does not store plan data yet (`planSteps: false`) the screen is the former one.
  */
 export default function CompteParcours() {
   const { t } = useT('compte');
-  const { parcoursStatus: PARCOURS_STATUS_LABELS } = useMonEspaceLabels();
-  const [state, setState] = useState({ loading: true, error: '', items: [], shares: [] });
+  const { parcoursStatus: PARCOURS_STATUS_LABELS, parcoursClosure: PARCOURS_CLOSURE_LABELS } = useMonEspaceLabels();
+  const [state, setState] = useState({ loading: true, error: '', items: [], shares: [], planSteps: false });
+  const [organise, setOrganise] = useState({ actor: '', name: '', dependsOn: '' });
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [open, setOpen] = useState(null);   // id of the step whose details are shown
@@ -37,7 +45,7 @@ export default function CompteParcours() {
   const load = useCallback(async () => {
     try {
       const [p, s] = await Promise.all([citizenApi.listParcours(), citizenApi.listShares()]);
-      setState({ loading: false, error: '', items: p.items || [], shares: s.shares || [] });
+      setState({ loading: false, error: '', items: p.items || [], shares: s.shares || [], planSteps: p.planSteps === true });
     } catch (err) { setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:parcours.login_required', 'Connectez-vous pour accéder à Mon Parcours.') : err.message, items: [], shares: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
@@ -46,6 +54,8 @@ export default function CompteParcours() {
   const toggle = async (id) => {
     if (open === id) { setOpen(null); return; }
     setOpen(id); setDue({ date: '', source: '' });
+    const it = state.items.find((x) => x.id === id);
+    setOrganise({ actor: it?.step?.actor?.kind || '', name: it?.step?.actor?.name || '', dependsOn: it?.dependsOn?.id || '' });
     try { const h = await citizenApi.parcoursHistory(id); setHistory((x) => ({ ...x, [id]: h.events || [] })); } catch { setHistory((x) => ({ ...x, [id]: [] })); }
   };
 
@@ -68,22 +78,69 @@ export default function CompteParcours() {
     { to: '/structures', label: t('compte:parcours.next_structures', 'Trouver une structure qui peut vous accompagner'), testid: 'parcours-next-structures' },
     { to: '/demande-aide', label: t('compte:parcours.next_human', 'Demander de l’aide à une personne'), testid: 'parcours-next-human' },
   ], frontendEnv.flags.publicBeta, (l) => l.to);
-  const renderItem = (i) => (
+  // the state as the person chose it: one of the ten states, or the reason a closed step ended (abandoned / outcome unknown)
+  const stateOf = (i) => (i.closure && PLAN_CLOSURES.includes(i.closure) ? i.closure : i.status);
+  const stateLabel = (i) => PARCOURS_CLOSURE_LABELS[stateOf(i)] || PARCOURS_STATUS_LABELS[i.status];
+  const ACTION_LABELS = {
+    read_record: t('compte:parcours.action.read_record', 'lire la fiche d’information'),
+    complete_information: t('compte:parcours.action.complete_information', 'compléter les informations qui manquent'),
+    gather_documents: t('compte:parcours.action.gather_documents', 'rassembler vos papiers'),
+    contact_organisation: t('compte:parcours.action.contact_organisation', 'contacter l’organisme'),
+    submit_request: t('compte:parcours.action.submit_request', 'envoyer votre demande'),
+    wait_answer: t('compte:parcours.action.wait_answer', 'attendre la réponse de l’organisme ; sans nouvelles, vous pouvez le relancer'),
+    answer_organisation: t('compte:parcours.action.answer_organisation', 'répondre à la demande d’informations de l’organisme'),
+    ask_professional: t('compte:parcours.action.ask_professional', 'demander à un professionnel de vous accompagner'),
+    share_dossier: t('compte:parcours.action.share_dossier', 'partager votre dossier avec une structure, si vous le souhaitez'),
+    emergency_resources: t('compte:parcours.action.emergency_resources', 'consulter les ressources d’urgence'),
+    after_refusal: t('compte:parcours.action.after_refusal', 'voir « Que faire ensuite ? » ci-dessous'),
+    resume_or_search: t('compte:parcours.action.resume_or_search', 'reprendre cette étape quand vous le souhaitez, ou chercher une autre piste'),
+    ask_outcome: t('compte:parcours.action.ask_outcome', 'demander à l’organisme où en est votre demande'),
+  };
+  const newWindow = t('compte:parcours.link_new_window', ' (nouvelle fenêtre)');
+  const directoryOpen = openLinks([{ to: HUMAN_HELP_DIRECTORY }], frontendEnv.flags.publicBeta, (l) => l.to).length > 0;
+  const savePlan = (i) => run(() => citizenApi.parcours({ action: 'plan', id: i.id, planStep: {
+    actor: organise.actor === 'organisation' ? { kind: 'organisation', name: organise.name.trim() } : organise.actor ? { kind: organise.actor } : null,
+    dependsOnItemId: organise.dependsOn || null,
+  } }), t('compte:parcours.organise_saved', 'Organisation de l’étape enregistrée.'));
+  const renderItem = (i) => {
+    // who acts / the explanation / the links: the step's own durable plan data, else (a step imported before it existed) what is read back from its dossier
+    const actor = i.step?.actor || (i.plan?.who ? { kind: 'organisation', name: i.plan.who } : null);
+    const detail = i.step?.detail || i.plan?.detail || null;
+    const links = i.step?.links?.length ? i.step.links : (i.plan?.links || []);
+    const action = nextActionOf(i);
+    const gone = (i.records || []).some((r) => !r.available);
+    return (
     <li key={i.id} data-testid="parcours-item" className="rounded-md border border-slate-200 bg-white p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-medium text-slate-900">{i.title}</p>
-          <p className="text-sm text-slate-700" data-testid="parcours-item-status">{PARCOURS_STATUS_LABELS[i.status]}{i.dueDate ? ` — ${t('compte:parcours.due_on', 'échéance le {{date}}', { date: formatDate(i.dueDate) })}` : ''}</p>
+          <p className="text-sm text-slate-700" data-testid="parcours-item-status">{stateLabel(i)}{i.dueDate ? ` — ${t('compte:parcours.due_on', 'échéance le {{date}}', { date: formatDate(i.dueDate) })}` : ''}</p>
         </div>
         <Button type="button" size="sm" variant="outline" aria-expanded={open === i.id} aria-controls={`parcours-detail-${i.id}`} onClick={() => toggle(i.id)}>{open === i.id ? t('compte:parcours.close', 'Fermer') : t('compte:parcours.update', 'Mettre à jour')}</Button>
       </div>
-      {i.plan && (i.plan.who || i.plan.detail || i.plan.links?.length) ? (
+      {i.waiting && i.dependsOn ? (
+        <p className="mt-2 rounded-md border border-slate-300 bg-slate-50 p-2 text-sm text-slate-800" data-testid="parcours-waiting">
+          {t('compte:parcours.waiting', 'En attente de l’étape « {{title}} » ({{status}}). Vous pouvez quand même mettre cette étape à jour.', { title: i.dependsOn.title, status: stateLabel(i.dependsOn) })}
+        </p>
+      ) : null}
+      {actor || detail || links.length ? (
         <div className="mt-2 text-sm text-slate-800" data-testid="parcours-plan">
-          {i.plan.who ? <p><span className="font-medium">{t('compte:parcours.plan_who', 'Auprès de qui :')}</span> <span {...FR}>{i.plan.who}</span></p> : null}
-          {i.plan.detail ? <p className="mt-1" {...FR}>{i.plan.detail}</p> : null}
-          {i.plan.links?.length ? <ul className="mt-1 list-disc space-y-1 ps-5">{i.plan.links.map((l) => <li key={l.to + l.label}><Link to={l.to} className="text-blue-800 underline" {...FR}>{l.label}</Link></li>)}</ul> : null}
+          {actor && actor.kind === 'organisation' ? <p><span className="font-medium">{t('compte:parcours.plan_who', 'Auprès de qui :')}</span> <span {...FR}>{actor.name}</span></p> : null}
+          {actor && actor.kind !== 'organisation' ? (
+            <p data-testid="parcours-actor"><span className="font-medium">{t('compte:parcours.actor_label', 'Qui agit :')}</span>{' '}
+              {actor.kind === 'professional' ? t('compte:parcours.actor_professional', 'un professionnel qui vous accompagne') : t('compte:parcours.actor_citizen', 'vous')}</p>
+          ) : null}
+          {detail ? <p className="mt-1" {...FR}>{detail}</p> : null}
+          {links.length ? (
+            <ul className="mt-1 list-disc space-y-1 ps-5">
+              {links.map((l) => (l.to
+                ? <li key={l.to + l.label}><Link to={l.to} className="text-blue-800 underline" {...FR}>{l.label}</Link></li>
+                : <li key={l.url + l.label}><a href={l.url} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline" data-testid="parcours-official-link"><span {...FR}>{l.label}</span><span className="sr-only">{newWindow}</span></a></li>))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
+      {action ? <p className="mt-2 text-sm text-slate-800" data-testid="parcours-next-action"><span className="font-medium">{t('compte:parcours.next_action', 'Prochaine action :')}</span> {ACTION_LABELS[action]}</p> : null}
       {(i.records || []).length ? (
         <ul className="mt-2 space-y-1 text-sm" data-testid="parcours-records">
           {i.records.map((r) => (r.available ? (
@@ -96,10 +153,16 @@ export default function CompteParcours() {
           )))}
         </ul>
       ) : null}
-      {i.status === 'DECISION_NEGATIVE' ? (
+      {/* a record that is gone is a dead end: the same human alternative as on the « record not available » page */}
+      {gone ? <HumanHelpBlock headingLevel={3} id={`parcours-help-${i.id}`} className="!mx-0 !my-3" directoryLink={directoryOpen} /> : null}
+      {needsRecovery(i) ? (
         <section className="mt-3 rounded-md border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800" data-testid="parcours-next" aria-labelledby={`parcours-next-${i.id}`}>
           <h3 id={`parcours-next-${i.id}`} className="font-semibold text-slate-900">{t('compte:parcours.next_title', 'Que faire ensuite ?')}</h3>
-          <p className="mt-1">{t('compte:parcours.next_body', 'Vous avez indiqué une réponse défavorable. AccesDirectAide ne connaît pas la décision de l’organisme et ne peut pas dire ce qui est possible dans votre situation. Vous pouvez relire le courrier de l’organisme, lui poser vos questions ou demander à un professionnel de le lire avec vous.')}</p>
+          <p className="mt-1">{i.closure === 'ABANDONED'
+            ? t('compte:parcours.next_body_abandoned', 'Vous avez indiqué avoir abandonné cette étape. Vous pouvez la reprendre à tout moment en changeant son état, chercher une autre piste ou en parler à une personne.')
+            : i.closure === 'OUTCOME_UNKNOWN'
+              ? t('compte:parcours.next_body_unknown', 'Vous avez indiqué ne pas connaître la réponse. AccesDirectAide ne la connaît pas non plus. Vous pouvez demander à l’organisme où en est votre demande ou demander à un professionnel de vous aider.')
+              : t('compte:parcours.next_body', 'Vous avez indiqué une réponse défavorable. AccesDirectAide ne connaît pas la décision de l’organisme et ne peut pas dire ce qui est possible dans votre situation. Vous pouvez relire le courrier de l’organisme, lui poser vos questions ou demander à un professionnel de le lire avec vous.')}</p>
           <ul className="mt-2 list-disc space-y-1 ps-5">
             {(i.records || []).filter((r) => r.available).map((r) => (
               <li key={r.code}><Link to={r.contact ? contactHref(r) : r.href} className="font-medium text-blue-800 underline" data-testid="parcours-next-record">{r.contact ? t('compte:parcours.next_contact', 'Où s’adresser, d’après la fiche') : t('compte:parcours.next_record', 'Relire la fiche')}</Link> <span {...FR}>({r.title})</span></li>
@@ -113,16 +176,50 @@ export default function CompteParcours() {
         <div id={`parcours-detail-${i.id}`} className="mt-3 space-y-3 border-t border-slate-200 pt-3" data-testid="parcours-detail">
           <div>
             <label htmlFor={`st-${i.id}`} className="block text-sm font-medium text-slate-800">{t('compte:parcours.etes_vous', 'Où en êtes-vous ?')}</label>
-            <select id={`st-${i.id}`} data-testid="parcours-status-select" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={i.status}
+            <select id={`st-${i.id}`} data-testid="parcours-status-select" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={stateOf(i)}
               onChange={(e) => run(() => citizenApi.parcours({ action: 'status', id: i.id, status: e.target.value }), t('compte:parcours.step_updated', 'Étape mise à jour.'))}>
               {Object.entries(PARCOURS_STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {/* the two honest endings without an answer, where the database stores them */}
+              {state.planSteps ? Object.entries(PARCOURS_CLOSURE_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>) : null}
             </select>
           </div>
+          {state.planSteps ? (
+            <form className="space-y-2 rounded-md border border-slate-200 p-3" data-testid="parcours-organise" aria-labelledby={`org-${i.id}`} onSubmit={(e) => { e.preventDefault(); savePlan(i); }}>
+              <h3 id={`org-${i.id}`} className="text-sm font-medium text-slate-800">{t('compte:parcours.organise_title', 'Organiser cette étape')}</h3>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <label htmlFor={`ac-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.organise_actor', 'Qui agit pour cette étape ?')}</label>
+                  <select id={`ac-${i.id}`} data-testid="parcours-actor-select" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={organise.actor} onChange={(e) => setOrganise({ ...organise, actor: e.target.value })}>
+                    <option value="">{t('compte:parcours.organise_actor_none', 'Non précisé')}</option>
+                    <option value="citizen">{t('compte:parcours.organise_actor_citizen', 'Moi')}</option>
+                    <option value="organisation">{t('compte:parcours.organise_actor_organisation', 'Un organisme')}</option>
+                    <option value="professional">{t('compte:parcours.organise_actor_professional', 'Un professionnel qui m’accompagne')}</option>
+                  </select>
+                </div>
+                {organise.actor === 'organisation' ? (
+                  <div>
+                    <label htmlFor={`on-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.organise_org_name', 'Nom de l’organisme')}</label>
+                    <input id={`on-${i.id}`} data-testid="parcours-actor-name" required minLength={2} maxLength={120} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={organise.name} onChange={(e) => setOrganise({ ...organise, name: e.target.value })} />
+                  </div>
+                ) : null}
+                <div>
+                  <label htmlFor={`dp-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.organise_depends', 'Cette étape vient après')}</label>
+                  <select id={`dp-${i.id}`} data-testid="parcours-depends-select" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={organise.dependsOn} onChange={(e) => setOrganise({ ...organise, dependsOn: e.target.value })}>
+                    <option value="">{t('compte:parcours.organise_depends_none', 'Aucune autre étape')}</option>
+                    {state.items.filter((x) => x.id !== i.id).map((x) => <option key={x.id} value={x.id}>{x.title}</option>)}
+                  </select>
+                </div>
+              </div>
+              <Button type="submit" size="sm" variant="outline" data-testid="parcours-organise-save">{t('compte:parcours.organise_save', 'Enregistrer l’organisation')}</Button>
+            </form>
+          ) : null}
           <form className="grid gap-2 sm:grid-cols-[1fr_2fr_auto]" onSubmit={(e) => { e.preventDefault(); run(() => citizenApi.parcours({ action: 'deadline', id: i.id, dueDate: due.date, dueSourceUrl: due.source }), t('compte:parcours.due_saved', 'Échéance enregistrée.')); }}>
             <div><label htmlFor={`dd-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.echeance', 'Échéance')}</label><input id={`dd-${i.id}`} data-testid="parcours-due-date" type="date" required className="mt-1 w-full rounded-md border border-slate-300 p-2" value={due.date} onChange={(e) => setDue({ ...due, date: e.target.value })} /></div>
             <div><label htmlFor={`ds-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.source_officielle_cette_echeance', 'Source officielle de cette échéance (adresse du site)')}</label><input id={`ds-${i.id}`} data-testid="parcours-due-source" type="url" required placeholder="https://www.service-public.fr/…" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={due.source} onChange={(e) => setDue({ ...due, source: e.target.value })} /></div>
             <div className="flex items-end"><Button type="submit" size="sm" data-testid="parcours-due-save">{t('compte:parcours.enregistrer', 'Enregistrer')}</Button></div>
           </form>
+          {/* A-19: only the channels that can really carry this reminder are named */}
+          <p className="text-xs text-slate-700" data-testid="parcours-reminder-channels">{t('compte:parcours.reminder_channels', 'Rappel d’échéance : par e-mail, selon vos réglages de notification (page Mon profil). Aucun rappel d’échéance n’est envoyé par SMS.')}</p>
           {i.dueDate ? <Button type="button" size="sm" variant="outline" onClick={() => run(() => citizenApi.parcours({ action: 'deadline', id: i.id, dueDate: null }), t('compte:parcours.due_removed', 'Échéance retirée.'))}>{t('compte:parcours.retirer_echeance', 'Retirer l’échéance')}</Button> : null}
           <div>
             <label htmlFor={`nt-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.note_personnelle_visible_par', 'Note personnelle (visible par vous seul)')}</label>
@@ -139,7 +236,11 @@ export default function CompteParcours() {
         </div>
       ) : null}
     </li>
-  );
+    );
+  };
+  // the steps in progress, by need (the taxonomy's French label); without any need on any step the list is the former flat one
+  const groups = groupByNeed(active);
+  const grouped = groups.some((g) => g.need);
 
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-parcours">
@@ -168,7 +269,18 @@ export default function CompteParcours() {
       <Card>
         <CardHeader><CardTitle className="text-lg">{t('compte:parcours.etapes_cours', 'Étapes en cours')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          {active.length ? <ul className="space-y-3" data-testid="parcours-active">{active.map(renderItem)}</ul> : <p className="text-sm text-slate-700" data-testid="parcours-empty">{t('compte:parcours.aucune_etape_cours', 'Aucune étape en cours.')}</p>}
+          {active.length && grouped ? (
+            <div className="space-y-4" data-testid="parcours-active">
+              {groups.map((g) => (
+                <section key={g.need ? g.need.id : 'other'} data-testid="parcours-group" aria-labelledby={`parcours-group-${g.need ? g.need.id : 'other'}`}>
+                  <h3 id={`parcours-group-${g.need ? g.need.id : 'other'}`} className="mb-2 text-base font-semibold text-slate-900">
+                    {g.need ? <><span className="font-medium text-slate-700">{t('compte:parcours.group_need', 'Besoin :')}</span> <span {...FR}>{g.need.label}</span></> : t('compte:parcours.group_other', 'Autres étapes')}
+                  </h3>
+                  <ul className="space-y-3">{g.items.map(renderItem)}</ul>
+                </section>
+              ))}
+            </div>
+          ) : active.length ? <ul className="space-y-3" data-testid="parcours-active">{active.map(renderItem)}</ul> : <p className="text-sm text-slate-700" data-testid="parcours-empty">{t('compte:parcours.aucune_etape_cours', 'Aucune étape en cours.')}</p>}
           <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); run(async () => { await citizenApi.parcours({ action: 'add', title: newTitle }); setNewTitle(''); }, t('compte:parcours.step_added', 'Étape ajoutée.')); }}>
             <div className="min-w-[240px] flex-1"><label htmlFor="pc-new" className="block text-sm text-slate-800">{t('compte:parcours.ajouter_une_etape', 'Ajouter une étape')}</label><input id="pc-new" data-testid="parcours-new-title" maxLength={200} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} /></div>
             <Button type="submit" data-testid="parcours-add" disabled={newTitle.trim().length < 3}>{t('compte:parcours.ajouter', 'Ajouter')}</Button>

@@ -120,9 +120,9 @@ describe('« Ajouter à mon parcours »', () => {
 describe('server validation of the record path (before any database access)', () => {
   it('refuses anything that is not 1 to 5 well-formed { type, id }, and a malformed title', async () => {
     const { addManualItem, PARCOURS_RECORD_TYPES, MAX_PARCOURS_RECORDS } = await import('../../api/_services/mon-espace.js');
-    expect(PARCOURS_RECORD_TYPES).toEqual(['aide', 'demarche', 'dispositif', 'guide']); expect(MAX_PARCOURS_RECORDS).toBe(5);
+    expect(PARCOURS_RECORD_TYPES).toEqual(['aide', 'demarche', 'dispositif', 'guide', 'structure']); expect(MAX_PARCOURS_RECORDS).toBe(5);   // A-10: a place can be a step too
     const ok = { type: 'aide', id: 'a1' };
-    const invalid = [null, 'aide:a1', {}, [], Array.from({ length: 6 }, () => ok), [null], ['aide:a1'], [[]], [{ type: 'structure', id: 'a1' }], [{ type: 'aide' }], [{ type: 'aide', id: 7 }],
+    const invalid = [null, 'aide:a1', {}, [], Array.from({ length: 6 }, () => ok), [null], ['aide:a1'], [[]], [{ type: 'actualite', id: 'a1' }], [{ type: 'Structure', id: 'a1' }], [{ type: 'aide' }], [{ type: 'aide', id: 7 }],
       [{ type: 'aide', id: '' }], [{ type: 'aide', id: 'a 1' }], [{ type: 'aide', id: "a1' OR 1=1" }], [{ type: 'aide', id: '../x' }], [{ type: 'aide', id: 'x'.repeat(121) }], [{ type: ['aide'], id: 'a1' }], [ok, { type: 'Aide', id: 'a1' }]];
     for (const records of invalid) expect((await addManualItem('u1', { records })).code, JSON.stringify(records)).toBe('INVALID_RECORDS');
     for (const title of ['ab', 'x'.repeat(201), 7, {}, '  a  ']) expect((await addManualItem('u1', { records: [ok], title })).code, String(title)).toBe('INVALID_TITLE');
