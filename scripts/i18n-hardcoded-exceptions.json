@@ -26,18 +26,6 @@
    "reason": "Not imported anywhere (Base44 legacy screen, English placeholder text)."
   },
   {
-   "file": "src/components/assistant/RecommendationCard.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Only imported by the unmounted ResultPanel.jsx."
-  },
-  {
-   "file": "src/components/assistant/ResultPanel.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Not imported anywhere (legacy assistant panel)."
-  },
-  {
    "file": "src/components/cards/AideCard.jsx",
    "text": "*",
    "category": "unmounted",
@@ -84,12 +72,6 @@
    "text": "*",
    "category": "unmounted",
    "reason": "Not imported anywhere."
-  },
-  {
-   "file": "src/components/layout/Header.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Not imported anywhere; the mounted header is in src/pages/Layout.jsx (translated)."
   },
   {
    "file": "src/components/molecules/FreshnessTag.tsx",
