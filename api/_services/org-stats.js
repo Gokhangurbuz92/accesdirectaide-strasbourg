@@ -31,6 +31,17 @@ export function closedCounterCapabilities(envVars = process.env) {
   return { cases, referrals, dossiers, withheldCapabilities };
 }
 
+/**
+ * Audit A16 — the commune of an organization in the cross-organization tables. The key used to be the free text `ville` as typed: « Strasbourg », « STRASBOURG »
+ * and « Strasbourg Cedex » were three communes, each possibly under the K_ORGS threshold (hidden) or publishing split counts. The key is now the name without
+ * case, accents, punctuation or a « cedex » suffix; every spelling of one key is published under ONE label (the first spelling in sort order). The scoped
+ * institutional tables go further and place each organization in its INSEE commune (api/lib/geography/territoryScope.js).
+ * `org` = (id, commune) of the organizations matching `where` (alias s).
+ */
+const villeLabel = sql`coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée')`;
+export const communeOrgCte = (where) => sql`org AS (SELECT x.id, first_value(x.label) OVER (PARTITION BY x.k ORDER BY x.label, x.id) AS commune
+    FROM (SELECT s.id, ${villeLabel} AS label, trim(regexp_replace(regexp_replace(lower(unaccent(${villeLabel})), '\\mcedex\\M.*$', ''), '[^a-z0-9]+', ' ', 'g')) AS k FROM "Structure" s WHERE ${where}) x)`;
+
 export const K_MIN = 5;
 export const K_ORGS = 3;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
@@ -72,7 +83,7 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   // hidden communes are only COUNTED (the number of verified organizations is public through the directory), never measured.
   const verified = sql`s.statut = 'actif' AND s.verification_status = 'VERIFIED'`;
   const quarters = lastQuarters(now); const last = quarters[quarters.length - 1];
-  const cte = sql`org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified}),
+  const cte = sql`${communeOrgCte(verified)},
       shown AS (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS})`;
   const inQuarter = (q) => sql`a."startAt" >= ${q.start} AND a."startAt" < ${q.end}`;
   const communes = (await db.execute(sql`WITH ${cte}
@@ -103,7 +114,7 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
       activeStructures: cnt.n, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: cnt.n - shownOrgs,
       totalAgents: suppress(published('agents')), appointmentsLastQuarter: suppress(published('rdv')), peopleWithAppointment: suppress(published('people')),
       maskedCells: { agents: masked('agents'), appointments: masked('rdv'), peopleWithAppointment: masked('people') },
-      cities: communes.map((c) => ({ id: c.commune, name: c.commune, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: suppress(c.agents), rdv: suppress(c.rdv), status: suppress(c.rdv) ? 'optimal' : 'inactive' })),
+      cities: communes.map((c) => ({ id: c.commune, name: c.commune, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: suppress(c.agents), rdv: suppress(c.rdv), status: suppress(c.rdv) === null ? 'masked' : 'published' })),
       trend,
     },
     note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées ; les totaux et la tendance additionnent seulement les valeurs publiées ; les structures des autres communes sont seulement dénombrées. Un rendez-vous enregistré n’est pas une aide obtenue.' };

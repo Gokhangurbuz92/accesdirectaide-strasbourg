@@ -736,6 +736,9 @@ export async function searchStructures(params) {
   const serviceHits = plan ? sql`(${sql.join(plan.words.map((w) => sql`(CASE WHEN (${sql.join(wordTerms(w).map((t) => declared(t)), sql.raw(' OR '))}) THEN 1 ELSE 0 END)`), sql.raw(' + '))})` : null;
 
   // Phase 9: StructureServiceArea Filtering (FR-010)
+  // Audit A27 — RESERVED, not live: nothing in api/ or scripts/ writes "StructureServiceArea", so both branches below reduce to « no row » and let every
+  // organization through. The service area that IS maintained and reviewed is "Structure".insee_codes (Espace Structure proposals, the `serves` filter
+  // above). Do not start writing this table without deciding which of the two models is the truth (tests/unit/g1-territory-scope.test.js watches for a writer).
   if (params.territoryFilter && params.territoryFilter.userTerritoryIds && params.territoryFilter.userTerritoryIds.length > 0) {
     const territoryIds = params.territoryFilter.userTerritoryIds;
     const joinedIds = sql.join(territoryIds.map(id => sql`${id}`));

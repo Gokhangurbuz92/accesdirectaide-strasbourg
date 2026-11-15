@@ -1,8 +1,9 @@
 /**
  * R20 — the territory named on an institutional account is an OFFICIAL territory of the committed INSEE reference (data/geography/insee-2026.v1.json, values as
  * published): a région, a département, an EPCI or a commune, given by its code or its official name (accents, case and hyphens do not matter). It used to be
- * free text (« Bas-Rhin », « bas rhin 67 », « mon secteur » were all accepted). The answer is the official label only: it assigns NO coverage and filters nothing
- * (which communes an institution may observe stays an owner decision, OWNER_ACTIONS R18.3), and the observatory keeps its aggregation and masking rules.
+ * free text (« Bas-Rhin », « bas rhin 67 », « mon secteur » were all accepted). The answer is the official label only. Since owner decision G1 = b that label
+ * IS the account's authorised territory: api/lib/geography/territoryScope.js reads it back into communes and the observatoire counts those only (a label
+ * that does not read back to one territory opens nothing). The observatory keeps its aggregation and masking rules.
  */
 import fs from 'node:fs';
 import path from 'node:path';

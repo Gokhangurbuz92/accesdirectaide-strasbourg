@@ -36,7 +36,8 @@
     { "name": "Cron", "description": "Tâches planifiées (pipelines, ingestion, backups)" },
     { "name": "Monitor", "description": "Monitoring avancé (data quality, freshness, cron)" },
     { "name": "Share", "description": "Partage de contenu" },
-    { "name": "Misc", "description": "PDF, TTS, téléchargements, taxonomie" }
+    { "name": "Misc", "description": "PDF, TTS, téléchargements, taxonomie" },
+    { "name": "Institution", "description": "Espace institutionnel (collectivités et partenaires sous convention signée) : statistiques agrégées du territoire autorisé du compte, jamais de dossier ni de donnée personnelle" }
   ],
   "paths": {
     "/health": {
@@ -1123,6 +1124,2146 @@
           }
         }
       }
+    },
+    "/institution/login": {
+      "post": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Connexion institutionnelle",
+        "description": "Compte actif sous convention signée. Le jeton renvoyé ouvre uniquement /institution/*.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session ouverte",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "token",
+                    "temporaryPassword"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "temporaryPassword": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ACCOUNT_NOT_ACTIVE : convention non signée ou compte non activé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Compte temporairement verrouillé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Trop de tentatives",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/institution/forgot": {
+      "post": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Demander un lien de réinitialisation",
+        "description": "La réponse ne dit jamais si l’adresse correspond à un compte. Lien valable 30 minutes, une seule fois.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Demande reçue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "emailDelivery"
+                  ],
+                  "properties": {
+                    "emailDelivery": {
+                      "type": "string",
+                      "enum": [
+                        "SENT_IF_VALID",
+                        "UNAVAILABLE"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "MISSING_EMAIL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Trop de tentatives",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/institution/reset": {
+      "post": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Choisir un mot de passe avec le lien reçu",
+        "description": "Consomme le lien ; toutes les sessions du compte prennent fin.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token",
+                  "password"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mot de passe enregistré",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_RESET_LINK, WEAK_PASSWORD ou SAME_PASSWORD",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Trop de tentatives",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/institution/password": {
+      "post": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Changer son mot de passe",
+        "description": "Mot de passe actuel requis ; les autres sessions prennent fin, celle-ci reçoit un nouveau jeton.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mot de passe modifié",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "token"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "MISSING_FIELDS, WEAK_PASSWORD, WRONG_CURRENT_PASSWORD ou SAME_PASSWORD",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absente, expirée, révoquée, ou compte non actif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PASSWORD_CHANGED_MEANWHILE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Trop de tentatives",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "InstitutionBearer": []
+          }
+        ]
+      }
+    },
+    "/institution/logout": {
+      "post": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Se déconnecter",
+        "description": "Met fin à toutes les sessions du compte, côté serveur.",
+        "responses": {
+          "200": {
+            "description": "Déconnecté",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absente, expirée, révoquée, ou compte non actif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "LOGOUT_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "InstitutionBearer": []
+          }
+        ]
+      }
+    },
+    "/institution/me": {
+      "get": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Compte institutionnel courant",
+        "description": "Organisme, territoire du compte et périmètre résolu par le serveur.",
+        "responses": {
+          "200": {
+            "description": "Compte",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionMe"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absente, expirée, révoquée, ou compte non actif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "InstitutionBearer": []
+          }
+        ]
+      }
+    },
+    "/institution/observatoire": {
+      "get": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Observatoire des besoins non couverts du territoire autorisé",
+        "description": "Agrégats seulement, limités par le serveur aux communes du territoire autorisé du compte (lu sur le compte à chaque requête). Aucun paramètre de territoire n’est accepté. Valeurs inférieures à 5 masquées, communes d’au moins 3 structures vérifiées, suppression complémentaire, trimestres civils complets. La consultation est journalisée (une ligne par compte et par jour, sans donnée personnelle).",
+        "responses": {
+          "200": {
+            "description": "Observatoire du territoire",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionObservatoire"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "SCOPE_PARAMETER_NOT_ACCEPTED : un paramètre nommant un territoire a été envoyé (même réponse quel que soit le lieu nommé)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absente, expirée, révoquée, ou compte non actif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "PASSWORD_CHANGE_REQUIRED (mot de passe provisoire) ou TERRITORY_SCOPE_UNDEFINED (territoire du compte absent ou ne désignant pas un seul territoire officiel : aucune donnée)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "InstitutionBearer": []
+          }
+        ]
+      }
+    },
+    "/institution/export": {
+      "get": {
+        "tags": [
+          "Institution"
+        ],
+        "summary": "Export CSV du territoire autorisé",
+        "description": "Mêmes cellules que l’observatoire, communes du territoire autorisé seulement. Schéma ada.territory-stats.v2 ; colonnes : schema, licence, periode, commune, organisations_verifiees, rendez_vous, orientations_recues, besoins_non_couverts, orientations_hors_perimetre ; une cellule vide est une valeur masquée ; dernière ligne « TOTAL (cellules publiées) ». Fermé tant que l’indicateur OPEN_DATA_EXPORT n’est pas ouvert. Chaque téléchargement est journalisé (période, empreinte du fichier).",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "quarter"
+              ],
+              "default": "quarter"
+            },
+            "description": "Seul le dernier trimestre civil complet est publié"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fichier CSV (UTF-8 avec BOM)",
+            "headers": {
+              "X-Content-SHA256": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Empreinte SHA-256 du fichier"
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "PERIOD_NOT_OFFERED (seul period=quarter est publié) ou SCOPE_PARAMETER_NOT_ACCEPTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absente, expirée, révoquée, ou compte non actif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "PASSWORD_CHANGE_REQUIRED (mot de passe provisoire) ou TERRITORY_SCOPE_UNDEFINED (territoire du compte absent ou ne désignant pas un seul territoire officiel : aucune donnée)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "EXPORT_NOT_OPEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "InstitutionBearer": []
+          }
+        ]
+      }
+    },
+    "/pro/auth/logout": {
+      "post": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "Déconnexion professionnelle",
+        "description": "Met fin aux sessions du professionnel côté serveur (tous les appareils) ; journalisé.",
+        "responses": {
+          "200": {
+            "description": "Sessions fermées"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/auth/proconnect/status": {
+      "get": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "ProConnect : état du connecteur",
+        "description": "ProConnect identifie seulement une personne : l’accès exige un compte professionnel actif créé par invitation, à la même adresse, et le second facteur ADA. Tant que l’adaptateur n’est pas configuré, chaque route répond DISCONNECTED.",
+        "responses": {
+          "200": {
+            "description": "{ provider, status: DISCONNECTED | CONFIGURED, available } — aucune valeur ni secret"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pro/auth/proconnect/start": {
+      "get": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "ProConnect : départ vers la fédération",
+        "description": "ProConnect identifie seulement une personne : l’accès exige un compte professionnel actif créé par invitation, à la même adresse, et le second facteur ADA. Tant que l’adaptateur n’est pas configuré, chaque route répond DISCONNECTED.",
+        "parameters": [
+          {
+            "name": "next",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chemin /pro/… où revenir"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirection vers la fédération (state, nonce et PKCE dans un cookie HttpOnly signé, 10 minutes)"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pro/auth/proconnect/callback": {
+      "get": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "ProConnect : retour de la fédération",
+        "description": "ProConnect identifie seulement une personne : l’accès exige un compte professionnel actif créé par invitation, à la même adresse, et le second facteur ADA. Tant que l’adaptateur n’est pas configuré, chaque route répond DISCONNECTED.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Code d’autorisation"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "État signé"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirection vers /pro/login?proconnect=<résultat> (jamais de jeton dans une URL)"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pro/auth/proconnect/complete": {
+      "post": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "ProConnect : terminer la connexion",
+        "description": "ProConnect identifie seulement une personne : l’accès exige un compte professionnel actif créé par invitation, à la même adresse, et le second facteur ADA. Tant que l’adaptateur n’est pas configuré, chaque route répond DISCONNECTED.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ structureId? }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ mfa_required, mfa_token } — puis /pro/auth/mfa-verify"
+          },
+          "401": {
+            "description": "Identification absente ou expirée"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pro/auth/proconnect/logout": {
+      "get": {
+        "tags": [
+          "Pro Auth"
+        ],
+        "summary": "ProConnect : déconnexion de la fédération",
+        "description": "ProConnect identifie seulement une personne : l’accès exige un compte professionnel actif créé par invitation, à la même adresse, et le second facteur ADA. Tant que l’adaptateur n’est pas configuré, chaque route répond DISCONNECTED.",
+        "responses": {
+          "302": {
+            "description": "Redirection vers la déconnexion de la fédération, sinon vers la page de connexion"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pro/profile": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Nom public et fonction d’un professionnel",
+        "description": "Soi-même ; l’administrateur de la structure pour un membre de sa structure.",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Membre de la structure (administrateur)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ profile: { memberId, displayName, jobTitle }, canManageOthers, members? }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Modifier le nom public et la fonction",
+        "description": "Journalisé avec des identifiants et des booléens seulement.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ memberId?, displayName, jobTitle }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ ok, profile }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Champ invalide { code, field }"
+          },
+          "404": {
+            "description": "MEMBER_NOT_FOUND"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/mfa-enrolment": {
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Utiliser une invitation d’enrôlement du second facteur",
+        "description": "L’invitation doit désigner ce compte, être inutilisée et non expirée ; le refus est le même quelle qu’en soit la raison.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ token }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ ok, enrolmentToken, expiresInSeconds }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/mfa-invitation": {
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Inviter un membre à enrôler son second facteur",
+        "description": "Administrateur de la structure (membres de sa structure) ou super-administrateur ; jamais pour soi-même. Jeton stocké haché, usage unique, 72 heures.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ memberId, lostDevice? }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation créée ; la réponse dit si un fournisseur d’e-mail l’a acceptée, jamais « remise »"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/rdv/hours": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Horaires de travail des professionnels",
+        "description": "Chaque membre lit ses propres horaires ; l’administrateur (ou un membre délégué au planning) ceux de sa structure.",
+        "responses": {
+          "200": {
+            "description": "{ timezone, canManageOthers, structureHours, members }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Modifier des horaires et des exceptions datées",
+        "description": "Les rendez-vous existants sont conservés et listés.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ memberId?, weekly, exceptions }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ ok, member, appointmentsOutsideHours }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Horaires invalides"
+          },
+          "404": {
+            "description": "Membre introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Revenir aux horaires de la structure",
+        "description": "",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Membre concerné"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Horaires propres supprimés"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Membre introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/team/stats": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Statistiques de l’équipe",
+        "description": "Chiffres mesurés de la structure de l’appelant uniquement.",
+        "responses": {
+          "200": {
+            "description": "{ global, members, withheldCapabilities }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/regional-stats": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Observatoire professionnel (agrégats inter-structures)",
+        "description": "Agrégats seulement, par commune d’au moins 3 structures vérifiées ; valeurs inférieures à 5 masquées (null, statut « masked ») ; trimestres civils complets ; aucun total réel.",
+        "responses": {
+          "200": {
+            "description": "{ kAnonymityMin, minOrganizationsPerCommune, stats, note }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/dossier/redeem": {
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Utiliser l’invitation d’un dossier partagé",
+        "description": "Seule voie d’accès d’une structure à un dossier partagé : invitation émise par la personne pour UNE structure, à usage unique.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ shareId, inviteToken }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accès accordé à la structure"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Dossier, invitation ou structure non concordants (réponse unique)"
+          },
+          "410": {
+            "description": "Invitation ou dossier expiré"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/appointments": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Rendez-vous de la structure",
+        "description": "Colonnes filtrées, limitées à la structure du professionnel.",
+        "responses": {
+          "200": {
+            "description": "Liste des rendez-vous"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Créer un rendez-vous",
+        "description": "Verrou de réservation, modalité, consentement enregistré de la personne.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Rendez-vous à créer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rendez-vous créé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Demande invalide"
+          },
+          "409": {
+            "description": "Créneau indisponible"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Modifier un rendez-vous",
+        "description": "",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Champs à modifier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rendez-vous modifié"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Demande invalide"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/appointments/cancel": {
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Annuler un rendez-vous",
+        "description": "",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ id, reasonCode }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rendez-vous annulé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/appointments/reschedule": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Créneaux possibles pour déplacer un rendez-vous",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rendez-vous"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Date de départ"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Créneaux proposés"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Déplacer un rendez-vous",
+        "description": "La structure déplace l’un de ses rendez-vous ; la personne est prévenue.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Rendez-vous et nouveau créneau"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rendez-vous déplacé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          },
+          "409": {
+            "description": "Créneau indisponible"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/appointments/visio": {
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Visio d’un rendez-vous : valider, retirer, rejoindre",
+        "description": "Membre de la structure du rendez-vous uniquement ; les journaux nomment le rendez-vous, jamais la salle ni un jeton.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ appointmentId, action: approve | revoke | join }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action effectuée"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/appointments/ics": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Rendez-vous de la structure au format iCalendar",
+        "description": "Au plus 92 jours et 500 événements ; jamais le nom ni les notes de la personne ; résumé neutre pour un service sensible.",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Début (date)"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Fin (date)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fichier .ics",
+            "content": {
+              "text/calendar": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/services": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Motifs de rendez-vous de la structure",
+        "description": "Tout membre.",
+        "responses": {
+          "200": {
+            "description": "Liste des motifs"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Créer un motif",
+        "description": "Administrateurs de la structure.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Motif (nom, durée, modalités)"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Motif créé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Modifier un motif",
+        "description": "Administrateurs de la structure.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Motif"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Champs à modifier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Motif modifié"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Supprimer un motif",
+        "description": "Un motif ayant des rendez-vous n’est jamais supprimé (409 : le désactiver).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Motif"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Motif supprimé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "409": {
+            "description": "Motif utilisé par des rendez-vous"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/messages": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Messages d’un rendez-vous",
+        "description": "Les rendez-vous d’une autre structure répondent 404.",
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rendez-vous"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ ok, conversationId, messages }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Envoyer un message pour un rendez-vous",
+        "description": "",
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rendez-vous"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ content }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "{ ok, item }"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Rendez-vous introuvable"
+          },
+          "409": {
+            "description": "NO_CITIZEN_ACCOUNT"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/messages/conversations": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Conversations de la structure",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Liste des conversations (dernier message seulement)"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/messages/conversations/{conversationId}": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Une conversation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation et ses messages les plus récents"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Conversation introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Envoyer un message dans une conversation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ content }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message envoyé"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Conversation introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/messages/conversations/{conversationId}/attachments/{attachmentId}": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Pièce jointe d’une conversation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contenu de la pièce jointe"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "404": {
+            "description": "Introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/cases": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Suivis (dossiers ADA Pro) de la structure",
+        "description": "File de travail (métadonnées) ou un suivi avec notes et historique.",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "mine | unassigned | all"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Un suivi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File de travail ou suivi"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Agir sur un suivi",
+        "description": "Actions : assign, status, note, close, reopen.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ action, id, … }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action effectuée"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Action invalide"
+          },
+          "404": {
+            "description": "Suivi introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/referrals": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Orientations de la structure",
+        "description": "Boîte de réception ou d’envoi, une orientation, ou recherche de structures destinataires vérifiées.",
+        "parameters": [
+          {
+            "name": "box",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "inbox | outbox"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Une orientation"
+          },
+          {
+            "name": "receivers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Recherche de destinataires"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste, orientation ou destinataires"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Proposer une orientation ou y répondre",
+        "description": "Actions : propose, acknowledge, accept, decline, needs_info, link_appointment, start, complete, reply, cancel, close.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ action, … }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action effectuée"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Action ou motif invalide"
+          },
+          "404": {
+            "description": "Orientation introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/selections": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Sélections d’orientation",
+        "description": "Mes sélections (administrateurs : celles de la structure), une sélection, ou recherche dans le catalogue vérifié.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Une sélection"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Recherche"
+          },
+          {
+            "name": "kinds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Types"
+          },
+          {
+            "name": "needs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Besoins"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sélections, sélection ou résultats"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Créer ou modifier une sélection d’orientation",
+        "description": "Actions : create, update, add, item, remove, link_case, share.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ action, … }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action effectuée"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Action invalide"
+          },
+          "404": {
+            "description": "Sélection introuvable"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/pro/structure": {
+      "get": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Fiche de la structure et propositions",
+        "description": "Avec export=1 : les données propres de la structure (administrateurs).",
+        "parameters": [
+          {
+            "name": "export",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "1 : export des données de la structure"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiche publique et propositions, ou export"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pro"
+        ],
+        "summary": "Proposer une modification, la retirer ou demander la fermeture",
+        "description": "Les propositions partent en relecture ADA ; rien n’est publié directement.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "{ action: propose | withdraw | request_closure, … }"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action effectuée"
+          },
+          "401": {
+            "description": "Session professionnelle absente ou expirée"
+          },
+          "403": {
+            "description": "Accès refusé (rôle, structure ou second facteur)"
+          },
+          "400": {
+            "description": "Action invalide"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -1191,6 +3332,284 @@
           "error": { "type": "string" },
           "details": { "type": "string" }
         }
+      },
+      "InstitutionError": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Code stable (par exemple Unauthorized, PASSWORD_CHANGE_REQUIRED, TERRITORY_SCOPE_UNDEFINED, SCOPE_PARAMETER_NOT_ACCEPTED, PERIOD_NOT_OFFERED, EXPORT_NOT_OPEN)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message en français, quand il existe"
+          }
+        }
+      },
+      "InstitutionTerritoryScope": {
+        "type": "object",
+        "required": [
+          "defined"
+        ],
+        "description": "Territoire autorisé du compte, résolu par le serveur à partir du compte (référentiel INSEE). defined = false : le compte ne lit aucune statistique.",
+        "properties": {
+          "defined": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "region",
+              "departement",
+              "epci",
+              "commune"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "Code officiel (département, SIREN de l’EPCI, code commune INSEE ou code région)"
+          }
+        }
+      },
+      "InstitutionMe": {
+        "type": "object",
+        "required": [
+          "organisation",
+          "territory",
+          "territoryScope",
+          "email",
+          "temporaryPassword"
+        ],
+        "properties": {
+          "organisation": {
+            "type": "string"
+          },
+          "territory": {
+            "type": "string",
+            "description": "Libellé officiel du territoire du compte"
+          },
+          "territoryScope": {
+            "$ref": "#/components/schemas/InstitutionTerritoryScope"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "temporaryPassword": {
+            "type": "boolean",
+            "description": "true : mot de passe provisoire — seuls me, password et logout répondent"
+          }
+        }
+      },
+      "InstitutionObservatoire": {
+        "type": "object",
+        "description": "Orientations du dernier trimestre civil complet, limitées aux communes du territoire autorisé du compte. Aucun total réel n’est publié.",
+        "required": [
+          "ok",
+          "window",
+          "kAnonymityMin",
+          "minOrganizationsPerCommune",
+          "scope",
+          "byNeed",
+          "byCommune",
+          "trend",
+          "totals",
+          "methodology"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "window": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date"
+              },
+              "to": {
+                "type": "string",
+                "format": "date",
+                "description": "exclu"
+              },
+              "period": {
+                "type": "string",
+                "example": "2026-T3"
+              }
+            }
+          },
+          "kAnonymityMin": {
+            "type": "integer",
+            "example": 5
+          },
+          "minOrganizationsPerCommune": {
+            "type": "integer",
+            "example": 3
+          },
+          "scope": {
+            "type": "object",
+            "description": "Périmètre appliqué par le serveur",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "region",
+                  "departement",
+                  "epci",
+                  "commune"
+                ]
+              },
+              "code": {
+                "type": "string"
+              },
+              "byNeed": {
+                "type": "string",
+                "enum": [
+                  "ALL",
+                  "PARTIAL",
+                  "NONE"
+                ],
+                "description": "ALL : le tableau par besoin couvre tout le territoire ; PARTIAL : seulement les intercommunalités entièrement situées dans le territoire ; NONE : territoire plus petit que son intercommunalité, pas de tableau par besoin"
+              },
+              "totalsBasis": {
+                "type": "string",
+                "enum": [
+                  "byNeed",
+                  "byCommune"
+                ],
+                "description": "Tableau dont les cellules publiées sont additionnées dans totals et trend"
+              }
+            }
+          },
+          "byNeed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "need": {
+                  "type": "string",
+                  "description": "Code du besoin (motif d’orientation)"
+                },
+                "sent": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "unmet": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "outOfScope": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                }
+              }
+            }
+          },
+          "byCommune": {
+            "type": "array",
+            "description": "Chaque commune affichée du territoire (au moins 3 structures vérifiées), même sans orientation",
+            "items": {
+              "type": "object",
+              "properties": {
+                "commune": {
+                  "type": "string",
+                  "description": "Nom officiel de la commune"
+                },
+                "sent": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "unmet": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "outOfScope": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                }
+              }
+            }
+          },
+          "trend": {
+            "type": "array",
+            "description": "Quatre derniers trimestres civils complets : somme des cellules publiées",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quarter": {
+                  "type": "string",
+                  "example": "2026-T3"
+                },
+                "sent": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "unmet": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                },
+                "outOfScope": {
+                  "type": "integer",
+                  "nullable": true,
+                  "minimum": 5,
+                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                }
+              }
+            }
+          },
+          "totals": {
+            "type": "object",
+            "properties": {
+              "sent": {
+                "type": "integer",
+                "nullable": true,
+                "minimum": 5,
+                "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+              },
+              "unmet": {
+                "type": "integer",
+                "nullable": true,
+                "minimum": 5,
+                "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+              },
+              "outOfScope": {
+                "type": "integer",
+                "nullable": true,
+                "minimum": 5,
+                "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "methodology": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Méthode, en français (sources, limites, totaux, périodes, territoire)"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -1211,6 +3630,12 @@
         "in": "header",
         "name": "authorization",
         "description": "Bearer token cron (CRON_SECRET)"
+      },
+      "InstitutionBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Jeton de session institutionnelle (8 heures) obtenu via /institution/login. Famille de jetons distincte : aucun autre espace ne l’accepte et il n’ouvre que /institution/*."
       }
     }
   }

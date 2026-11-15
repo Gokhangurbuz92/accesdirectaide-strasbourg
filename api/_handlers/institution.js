@@ -2,11 +2,12 @@
 import logger from '../_utils/logger.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { resolveInstitution } from '../_utils/institution-auth.js';
-import { institutionLogin, changeInstitutionPassword, institutionLogout, requestInstitutionReset, completeInstitutionReset, INSTITUTION_RESET_MINUTES } from '../_services/institutions.js';
+import { institutionLogin, changeInstitutionPassword, institutionLogout, requestInstitutionReset, completeInstitutionReset, INSTITUTION_RESET_MINUTES, recordObservatoireRead, recordExportDownload } from '../_services/institutions.js';
 import { sendMail, getMailerStatus } from '../_utils/mailer.js';
 import { templates } from '../lib/email-service.js';
 import { env } from '../_utils/env.js';
-import { observatoire, territoryCsv } from '../_services/territorial-stats.js';
+import { scopedObservatoire, scopedTerritoryCsv } from '../_services/territorial-stats.js';
+import { territoryScope } from '../lib/geography/territoryScope.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
 import { requireCapability } from '../_utils/capabilities.js';
 
@@ -16,8 +17,16 @@ import { requireCapability } from '../_utils/capabilities.js';
  *   POST institution/password {currentPassword, newPassword} (R21: other sessions end, a new token for this one) | POST institution/logout (R21: server-side)
  *   POST institution/forgot {email} | POST institution/reset {token, password} (R24, owner decision R21.1: self-service reset link by e-mail, 30 minutes, once)
  *   GET  institution/me | institution/observatoire | institution/export?period=quarter (CSV; needs the OPEN_DATA_EXPORT flag: licence still to decide)
+ *   Owner decision G1 = b: the observatoire and the export count the communes of the account's AUTHORISED TERRITORY only. The territory is read from the account
+ *   row on every request (never from the request: a territory, commune or code sent as a parameter is refused, the same answer whatever it names); an account
+ *   whose territory is missing or does not name one official territory reads nothing (403 TERRITORY_SCOPE_UNDEFINED) — never « every commune ».
+ *   Audit A18: an observatoire read (once per account and day) and every CSV download leave an AuditLog row (account id, territory, period, file hash).
  *   A session on a temporary password: `me`, `password` and `logout` only — everything else answers 403 PASSWORD_CHANGE_REQUIRED.
  */
+/** Parameters that would name a territory: none is accepted (the scope is the account's), and the refusal never says whether the place exists. */
+const SCOPE_PARAMETERS = new Set(['territory', 'territoire', 'territories', 'scope', 'commune', 'communes', 'ville', 'insee', 'code', 'code_insee', 'epci', 'departement', 'department', 'region', 'all', 'national']);
+const namesATerritory = (req) => Object.keys(req.query && typeof req.query === 'object' ? req.query : {}).some((k) => SCOPE_PARAMETERS.has(String(k).toLowerCase().replace(/\[\]$/, '')));
+
 export default async function handler(req, res) {
     if (!requireCapability(res, 'institution.portal')) return undefined;   // R45 / ENG-LR-6: outside the AIPD — refused before anything is read (api/_utils/capabilities.js)
   res.setHeader('Cache-Control', 'no-store');
@@ -76,15 +85,27 @@ export default async function handler(req, res) {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
     const inst = await resolveInstitution(req);
     if (!inst) return res.status(401).json({ error: 'Unauthorized' });
-    if (path === 'institution/me') return res.status(200).json({ organisation: inst.organisation, territory: inst.territory, email: inst.email, temporaryPassword: inst.temporaryPassword });
+    // G1: the authorised territory, resolved from the account row (never from the request)
+    const scope = territoryScope(inst.territory);
+    if (path === 'institution/me') return res.status(200).json({ organisation: inst.organisation, territory: inst.territory, territoryScope: scope.ok ? { defined: true, kind: scope.kind, code: scope.code } : { defined: false }, email: inst.email, temporaryPassword: inst.temporaryPassword });
     // Visibility audit (2026-11): the temporary-password gate was in the interface only. A session still on a password the partner has not chosen (the initial
     // one, or one an administrator handed over) reads nothing but `me`; it may change its password and sign out (handled above), nothing else.
     if (inst.temporaryPassword) return res.status(403).json({ error: 'PASSWORD_CHANGE_REQUIRED', message: 'Choisissez d’abord votre propre mot de passe : le mot de passe provisoire n’ouvre pas les statistiques.' });
-    if (path === 'institution/observatoire') return res.status(200).json(await observatoire());
+    if (path === 'institution/observatoire' || path === 'institution/export') {
+      if (namesATerritory(req)) return res.status(400).json({ error: 'SCOPE_PARAMETER_NOT_ACCEPTED', message: 'Le territoire est celui de votre compte : aucun paramètre de territoire n’est accepté.' });
+      if (!scope.ok) return res.status(403).json({ error: 'TERRITORY_SCOPE_UNDEFINED', message: 'Le territoire autorisé de ce compte n’est pas défini : aucune statistique ne peut être affichée. Contactez ADA.' });
+    }
+    if (path === 'institution/observatoire') {
+      const out = await scopedObservatoire(scope);
+      if (!out.ok) return res.status(out.status || 403).json({ error: out.code, message: out.message });
+      await recordObservatoireRead(inst, { kind: scope.kind, code: scope.code, period: out.window?.period });   // audit A18: no trace, no statistics
+      return res.status(200).json(out);
+    }
     if (path === 'institution/export') {
       if (!(await isFeatureOn('OPEN_DATA_EXPORT'))) return res.status(503).json({ error: 'EXPORT_NOT_OPEN', message: 'Export fermé : la licence et la publication des données restent à décider par ADA.' });
-      const out = await territoryCsv(String(req.query?.period || 'quarter'));
+      const out = await scopedTerritoryCsv(String(req.query?.period || 'quarter'), scope);
       if (!out.ok) return res.status(out.status || 400).json({ error: out.code, message: out.message });
+      await recordExportDownload(inst, { kind: scope.kind, code: scope.code, period: out.period, sha256: out.sha256 });   // audit A18
       res.setHeader('Content-Type', 'text/csv; charset=utf-8'); res.setHeader('Content-Disposition', `attachment; filename="territoire-${out.period}.csv"`); res.setHeader('X-Content-SHA256', out.sha256);
       return res.status(200).send(out.csv);
     }

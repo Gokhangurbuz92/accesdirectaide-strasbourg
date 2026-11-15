@@ -16,6 +16,7 @@ import { hashPassword, verifyPassword, isValidEmail, normalizeEmail } from '../_
 import { signInstitutionToken, TEMPORARY_PASSWORD_PREFIX, isTemporaryPassword, storedHash } from '../_utils/institution-auth.js';
 import { passwordMessage, passwordProblems } from '../../src/lib/passwordPolicy.js';
 import { officialTerritory } from '../lib/geography/officialTerritory.js';
+import { territoryScope, scopeLabel } from '../lib/geography/territoryScope.js';
 
 const KINDS = ['CONVENTION', 'DATA_SHARING', 'OTHER'];
 const bad = (status, code, message) => ({ ok: false, status, code, message });
@@ -29,6 +30,8 @@ export async function listAll(db = defaultDb) {
   const agreements = (await db.execute(sql`SELECT id, "partnerName", kind, status, scope, "documentRef", "signedAt", "signedByPartner", "recordedBy", "createdAt", "endedAt" FROM "PartnerAgreement" ORDER BY "createdAt" DESC`)).rows;
   const accounts = (await db.execute(sql`SELECT id, email, "organisationName", territory, status, "agreementId", "createdBy", "createdAt", "lastLogin",
     starts_with("passwordHash", ${TEMPORARY_PASSWORD_PREFIX}) AS "temporaryPassword" FROM "InstitutionAccount" ORDER BY "createdAt" DESC`)).rows;
+  // G1: whether the stored territory names one official territory — an account without a defined scope reads NO statistic (the administrator sees which)
+  for (const a of accounts) { const sc = territoryScope(a.territory); a.territoryScope = sc.ok ? { defined: true, kind: sc.kind, code: sc.code, communes: sc.communes.size } : { defined: false, reason: sc.reason }; }
   return { ok: true, agreements, accounts };
 }
 
@@ -66,18 +69,21 @@ export async function endAgreement(id, actor, db = defaultDb) {
 export async function createAccount({ email, organisationName, territory, agreementId }, actor, db = defaultDb) {
   const e = normalizeEmail(email); const org = String(organisationName || '').trim(); const terr = String(territory || '').trim();
   if (!isValidEmail(e) || org.length < 3 || terr.length < 3) return bad(400, 'INVALID_INPUT', 'Adresse, organisme et territoire requis.');
-  // R20: an official territory (INSEE reference), stored under its official label — a label, never a coverage (R18.3 stays an owner decision)
+  // R20: an official territory (INSEE reference), stored under its official label. Owner decision G1 = b: that label IS the account's authorised territory
+  // (api/lib/geography/territoryScope.js reads it back into communes), so it is stored only when it reads back to exactly one territory
   const place = officialTerritory(terr);
   if (!place.ok) return bad(400, 'INVALID_TERRITORY', place.reason === 'AMBIGUOUS'
     ? `Territoire ambigu : précisez son code officiel (par exemple ${(place.candidates || []).join(' ; ')}).`
     : 'Territoire inconnu : indiquez une région, un département, une intercommunalité ou une commune par son nom ou son code officiel (référentiel INSEE).');
+  const label = scopeLabel(place);
+  if (!label) return bad(400, 'INVALID_TERRITORY', 'Ce territoire ne peut pas être enregistré comme territoire autorisé : précisez une région, un département, une intercommunalité ou une commune par son code officiel.');
   const [g] = (await db.execute(sql`SELECT id FROM "PartnerAgreement" WHERE id = ${String(agreementId || '')} AND status IN ('DRAFT', 'SIGNED') LIMIT 1`)).rows;
   if (!g) return bad(404, 'AGREEMENT_NOT_FOUND', 'Rattachez le compte à une convention enregistrée.');
   const initialPassword = temporaryPassword();
   const id = crypto.randomUUID();
   try {
     await db.execute(sql`INSERT INTO "InstitutionAccount" (id, email, "passwordHash", "organisationName", territory, status, "agreementId", "createdBy", "createdAt")
-      VALUES (${id}, ${e}, ${TEMPORARY_PASSWORD_PREFIX + await hashPassword(initialPassword)}, ${org.slice(0, 200)}, ${place.label}, 'PENDING_AGREEMENT', ${g.id}, ${actor}, NOW())`);
+      VALUES (${id}, ${e}, ${TEMPORARY_PASSWORD_PREFIX + await hashPassword(initialPassword)}, ${org.slice(0, 200)}, ${label}, 'PENDING_AGREEMENT', ${g.id}, ${actor}, NOW())`);
   } catch { return bad(409, 'EMAIL_IN_USE', 'Un compte institutionnel existe déjà pour cette adresse.'); }
   await audit(db, 'INSTITUTION_ACCOUNT_CREATED', actor, 'InstitutionAccount', id, { agreementId: g.id });
   return { ok: true, id, initialPassword, note: 'Mot de passe initial affiché une seule fois : transmettez-le par un canal séparé.' };
@@ -194,6 +200,20 @@ export async function completeInstitutionReset({ token, password }, db = default
   if (!rows.length) return invalid();   // consumed meanwhile (two tabs): only one wins
   await audit(db, 'INSTITUTION_PASSWORD_RESET_BY_LINK', rows[0].email, 'InstitutionAccount', rows[0].id, { sessionsEnded: true });
   return { ok: true, message: 'Mot de passe enregistré. Toutes vos sessions ont été fermées : connectez-vous avec le nouveau mot de passe.' };
+}
+
+/**
+ * Audit A18 — reading the statistics leaves a trace, like signing in does. No personal data: the account id, the territory applied and the period; never an
+ * e-mail address, an IP address or a figure. The observatoire is journaled at most once per account and day (one statement: no duplicate under concurrency
+ * worth more than a second row); every CSV download is journaled with the SHA-256 of the file that left.
+ */
+export async function recordObservatoireRead(inst, { kind, code, period }, db = defaultDb) {
+  await db.execute(sql`INSERT INTO "AuditLog" (id, action, actor, actor_id, entity, entity_id, details)
+    SELECT ${crypto.randomUUID()}, 'INSTITUTION_OBSERVATOIRE_READ', 'institution', ${String(inst.id)}, 'InstitutionAccount', ${String(inst.id)}, ${JSON.stringify({ territoryKind: kind, territoryCode: code, period })}::jsonb
+    WHERE NOT EXISTS (SELECT 1 FROM "AuditLog" l WHERE l.action = 'INSTITUTION_OBSERVATOIRE_READ' AND l.entity = 'InstitutionAccount' AND l.entity_id = ${String(inst.id)} AND l.timestamp >= date_trunc('day', NOW()))`);
+}
+export async function recordExportDownload(inst, { kind, code, period, sha256 }, db = defaultDb) {
+  await db.insert(AuditLog).values({ action: 'INSTITUTION_EXPORT_DOWNLOADED', actor: 'institution', actor_id: String(inst.id), entity: 'InstitutionAccount', entity_id: String(inst.id), details: { territoryKind: kind, territoryCode: code, period, sha256, format: 'csv' } });
 }
 
 /** R21 — « Se déconnecter » ends the account's sessions on the server (every device), like the professional logout: the journal entry IS the revocation. */
