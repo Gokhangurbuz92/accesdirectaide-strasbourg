@@ -196,6 +196,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             // receive the cases), and a failure leaves the member active with their cases (never a disabled member still holding them)
             let movedAppointments = { toSuccessor: 0, toStructure: 0 };
             let movedProposals = 0;
+            let outlookLinksErased = 0;
             const movedCases = await db.transaction(async (tx) => {
                 if (successorUserId) {
                     const [successor] = await tx.select({ id: ProUser.id }).from(ProUser)
@@ -204,6 +205,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 }
                 // R18: the departure also ENDS the member's sessions — a later reactivation must not revive a token issued before it (8 h + refresh grace)
                 await tx.update(ProUser).set({ status: 'disabled', sessionsValidAfter: sql`NOW()` }).where(and(eq(ProUser.id, targetUserId), eq(ProUser.structureId, structureId)));
+                // A03: the member's Outlook link (refresh token, access token, Outlook address) leaves with them, in the same transaction. Nothing in the code
+                // revokes a token at Microsoft: the stored copy is deleted, so ADA can no longer read that calendar (the count goes to the audit row).
+                outlookLinksErased = (await tx.execute(sql`DELETE FROM "ProOutlookToken" WHERE "userId" = ${targetUserId}`)).rowCount ?? 0;
                 const cases = await handOverAll(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx), { notice: false });
                 // G6: the referral proposals the member made and the person has not answered yet follow the cases (same transaction) — otherwise the
                 // person's « accept » is refused (SENDER_GONE) and the proposal waits for ever
@@ -223,7 +227,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             await handoverNotice(successorUserId, structureId, movedCases);
 
             await logProAudit('USER_DISABLED', userId, structureId, {
-                targetUserId, successorUserId, movedCases, movedProposals, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure,
+                targetUserId, successorUserId, movedCases, movedProposals, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure, outlookLinksErased,
             }, clientIp(req));
 
             return res.status(200).json({ ok: true, movedCases, movedProposals, movedAppointments, successorUserId });

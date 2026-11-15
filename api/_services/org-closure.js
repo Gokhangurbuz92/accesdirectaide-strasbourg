@@ -16,6 +16,8 @@
  *   - open cases are closed; referrals it received end and those it sent that nobody accepted yet are cancelled (an accepted one stays: the other organization keeps
  *     supporting the person); the other organization and the person keep their history; future appointments are cancelled
  *     and the person is told (the notice ledger records the outcome), online booking is unpublished and the services deactivated, pending profile proposals withdrawn;
+ *   - A02: after the commit the other organization of each ended referral and each person whose dossier access or referral ended are told (tellClosure);
+ *     A03: the members' Outlook links (tokens, Outlook address) are deleted;
  *   - kept on purpose: citizen-visible notes and case outcomes (part of the person's follow-up, erasable through the person's own request), the messages exchanged
  *     with people, the consent ledger, the audit trails, and the public directory record (public-source information; online booking is switched off).
  */
@@ -26,6 +28,9 @@ import { AuditLog } from '../../src/db/schema.js';
 import { snapshotRow } from './content-versions.js';
 import { formatParis, noticeCitizen } from './appointment-notices.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
+import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
+import { canNotify } from './citizen-account.js';
+import { buildAppUrl } from '../_utils/user-auth.js';
 
 export const REQUEST_TYPE = 'ORGANIZATION_CLOSURE';
 const OPEN = ['IN_REVIEW', 'BLOCKED'];
@@ -119,6 +124,9 @@ async function execute(tx, sid, requestId, reviewer) {
   summary.invitesRevoked = await n(sql`UPDATE "SharedDossierInvite" SET "revokedAt" = NOW() WHERE "structureId" = ${sid} AND "usedAt" IS NULL AND "revokedAt" IS NULL`);
   const grants = (await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE "structureId" = ${sid} AND "revokedAt" IS NULL RETURNING "sharedDiagnosticId" AS d`)).rows;
   summary.dossierAccessesRevoked = grants.length;
+  // A03: the members' Outlook link (refresh token, access token, Outlook address) ends with the space. Nothing in the code revokes a token at Microsoft: the
+  // stored copy is deleted here, so ADA can no longer read any calendar; the member removes the application's consent from their Microsoft account themselves.
+  summary.outlookLinksErased = await n(sql`DELETE FROM "ProOutlookToken" WHERE "userId" IN (SELECT id FROM "ProUser" WHERE "structureId" = ${sid})`);
   summary.aiDraftsForgotten = await n(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "scopeStructureId" = ${sid}`);
   summary.internalNotesErased = await n(sql`DELETE FROM "ProCaseNote" WHERE "structureId" = ${sid} AND visibility = 'INTERNAL'`);
   const open = (await tx.execute(sql`UPDATE "ProCase" SET status = 'CLOSED', outcome = COALESCE(outcome, 'OTHER'), "closedAt" = NOW() WHERE "structureId" = ${sid} AND status <> 'CLOSED'
@@ -128,9 +136,9 @@ async function execute(tx, sid, requestId, reviewer) {
   summary.casesClosed = open.length;
   // referrals: one SENT by the closing organization and already ACCEPTED by the other one stays (that organization keeps supporting the person); one not yet accepted
   // is cancelled and the access it created is revoked; one RECEIVED by the closing organization ends (the sender sees it)
-  const refs = (await tx.execute(sql`SELECT id, status, "fromStructureId" AS f, "grantId" AS g FROM "Referral" WHERE ("fromStructureId" = ${sid} OR "toStructureId" = ${sid})
+  const refs = (await tx.execute(sql`SELECT id, status, "fromStructureId" AS f, "toStructureId" AS t, "sharedDiagnosticId" AS d, "grantId" AS g FROM "Referral" WHERE ("fromStructureId" = ${sid} OR "toStructureId" = ${sid})
     AND status IN (${list(LIVE_REFERRALS)}) FOR UPDATE`)).rows;
-  let ended = 0;
+  let ended = 0; const endedReferrals = [];
   for (const r of refs) {
     const sent = r.f === sid;
     if (sent && ['ACCEPTED', 'IN_PROGRESS'].includes(r.status)) continue;
@@ -139,6 +147,7 @@ async function execute(tx, sid, requestId, reviewer) {
     await tx.execute(sql`INSERT INTO "ReferralEvent" (id, "referralId", "actorType", "actorId", "fromStatus", "toStatus", "createdAt") VALUES (${crypto.randomUUID()}, ${r.id}, 'SYSTEM', 'ORGANIZATION_CLOSED', ${r.status}, ${to}, NOW())`);
     if (sent && r.g) await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE id = ${r.g} AND "grantedVia" = 'referral' AND "revokedAt" IS NULL`);
     ended += 1;
+    endedReferrals.push({ id: r.id, sharedDiagnosticId: r.d, was: r.status, sent, otherStructureId: sent ? r.t : r.f });
   }
   summary.referralsEnded = ended;
   const appts = (await tx.execute(sql`UPDATE "ProAppointment" SET status = 'cancelled', "cancelledAt" = NOW(), "cancelledBy" = 'ORGANIZATION_CLOSED', "updatedAt" = NOW()
@@ -156,7 +165,64 @@ async function execute(tx, sid, requestId, reviewer) {
     status = 'disabled', mfa_enabled = false, mfa_secret = NULL, "notificationEmailEnabled" = false, "notificationPrefs" = '{}'::jsonb, "sessionsValidAfter" = NOW(), "updatedAt" = NOW()
     WHERE "structureId" = ${sid} AND email NOT LIKE 'closed-%@closed.invalid'`);
   await tx.execute(sql`UPDATE "Structure" SET is_pro_enabled = false, "updatedAt" = NOW(), "updatedBy" = ${reviewer} WHERE id = ${sid}`);
-  return { summary, appointments: appts };
+  return { summary, appointments: appts, referrals: endedReferrals, dossiers: grants.map((g) => g.d) };
+}
+
+/**
+ * A02 — after the commit, the people and the other organizations learn what the closure ended (before: only the cancelled appointments were told; a referral
+ * silently became CANCELLED / CLOSED and an access disappeared). Best effort, like every other notice: the closure itself is already committed.
+ *   - the OTHER organization of each ended referral it already knew of (a proposal the person had not authorized yet was never shown to the receiver): in-app
+ *     notice through the one catalogue (`referral_cancelled`), identifiers only;
+ *   - the PERSON: ONE e-mail per person (never one per dossier), sent only with their service e-mails on (canNotify) to their verified account address. It names
+ *     the organization (public directory information) and never gives the reason of the closure. The outcome is written per referral (REFERRAL_CITIZEN_NOTICE,
+ *     kind ORGANIZATION_CLOSED — the ledger the referral chain already uses) and per dossier whose access ended (DOSSIER_ACCESS_CITIZEN_NOTICE): no address, no text.
+ */
+async function tellClosure(db, sid, result, deps = {}) {
+  const sendMail = deps.sendMail || defaultSendMail;
+  const out = { organizationsNotified: 0, peopleNotified: 0, people: 0 };
+  let name = '';
+  try { name = String((await db.execute(sql`SELECT nom FROM "Structure" WHERE id = ${sid}`)).rows[0]?.nom || ''); } catch { /* the notice stays generic */ }
+  for (const r of result.referrals || []) {
+    if (r.sent && ['DRAFT', 'PENDING_CITIZEN'].includes(r.was)) continue;
+    try {
+      const notify = deps.notifyPro || (await import('./pro-notifications.js')).notify;
+      const sum = await notify({ structureId: r.otherStructureId, to: 'members', type: 'referral_cancelled', title: 'Orientation close : la structure a fermé son espace',
+        message: r.sent ? 'La structure d’origine a fermé son espace sur AccèsDirectAide : l’orientation est annulée et l’accès au dossier est retiré.'
+          : 'La structure destinataire a fermé son espace sur AccèsDirectAide : l’orientation est close. Une nouvelle orientation reste possible avec l’accord de la personne.',
+        metadata: { referralId: r.id, kind: 'ORGANIZATION_CLOSED' } }, { db });
+      if (sum?.inApp) out.organizationsNotified += 1;
+    } catch { /* best effort */ }
+  }
+  // the person: every dossier whose access ended, every referral the person knew of (a DRAFT was never shown to anyone)
+  const told = (result.referrals || []).filter((r) => r.was !== 'DRAFT');
+  const dossierIds = [...new Set([...(result.dossiers || []), ...told.map((r) => r.sharedDiagnosticId)].map(String))];
+  if (!dossierIds.length) return out;
+  let owners = [];
+  try {
+    owners = (await db.execute(sql`SELECT d.id AS d, u.id AS uid, u.email FROM "SharedDiagnostic" d LEFT JOIN "CitizenUser" u ON u.id = d."ownerCitizenId" AND u."emailVerifiedAt" IS NOT NULL
+      WHERE d.id IN (${list(dossierIds)})`)).rows;
+  } catch { return out; }
+  const byPerson = new Map(); const outcomeOf = new Map();
+  for (const o of owners) { if (!o.uid) { outcomeOf.set(String(o.d), 'NO_RECIPIENT'); continue; } const e = byPerson.get(o.uid) || { email: o.email, dossiers: [] }; e.dossiers.push(String(o.d)); byPerson.set(o.uid, e); }
+  for (const [uid, p] of byPerson) {
+    out.people += 1;
+    let outcome = 'FAILED';
+    try {
+      const refs = told.filter((r) => p.dossiers.includes(String(r.sharedDiagnosticId))).length;
+      if (!(await canNotify(uid, 'email', 'service', db).catch(() => false))) outcome = 'NO_CONSENT';
+      else {
+        const who = name ? `La structure « ${name} »` : 'Une structure';
+        outcome = mailLedgerStatus(await sendMail({ to: p.email, category: 'organization-closure', subject: 'Une structure n’a plus accès à votre dossier',
+          text: `${who} a fermé son espace sur AccèsDirectAide.\n\nElle n’a plus accès à votre dossier.${refs ? `\n${refs > 1 ? `${refs} orientations qui la concernaient sont closes` : 'Une orientation qui la concernait est close'} : aucune suite ne sera donnée par cette structure.` : ''}`
+            + `\n\nVotre dossier reste à vous : rien n’est supprimé et vous n’avez rien à faire. Vous pouvez le partager avec une autre structure quand vous le souhaitez.\nLe détail est dans Mon Espace : ${buildAppUrl('/compte')}` }));
+      }
+    } catch { outcome = 'FAILED'; }
+    if (['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(outcome)) out.peopleNotified += 1;
+    for (const d of p.dossiers) outcomeOf.set(d, outcome);
+  }
+  for (const r of told) await db.insert(AuditLog).values({ action: 'REFERRAL_CITIZEN_NOTICE', actor: 'system', entity: 'Referral', entity_id: r.id, details: { kind: 'ORGANIZATION_CLOSED', outcome: outcomeOf.get(String(r.sharedDiagnosticId)) || 'NO_RECIPIENT' } }).catch(() => {});
+  for (const d of [...new Set((result.dossiers || []).map(String))]) await db.insert(AuditLog).values({ action: 'DOSSIER_ACCESS_CITIZEN_NOTICE', actor: 'system', entity: 'SharedDiagnostic', entity_id: d, details: { kind: 'ORGANIZATION_CLOSED', outcome: outcomeOf.get(d) || 'NO_RECIPIENT' } }).catch(() => {});
+  return out;
 }
 
 /** The second reviewer: confirm (APPROVE runs the closure now) or send back. The proposer can never confirm their own proposal. */
@@ -213,7 +279,8 @@ async function runApproved(db, r, outcome, same, reviewer, deps) {
   for (const a of result.appointments) {
     await notify(a, 'CANCELLED_BY_STRUCTURE', { subject: 'Rendez-vous annulé', text: `Votre rendez-vous du ${formatParis(a.startAt)} est annulé : la structure a fermé son espace sur AccèsDirectAide. Vos dossiers restent à vous ; vous pouvez prendre rendez-vous avec une autre structure.` }, { db }).catch(() => {});
   }
-  return { ok: true, request: { id: r.id, status: 'COMPLETED' }, summary: result.summary };
+  const notices = await tellClosure(db, sid, result, deps).catch(() => null);
+  return { ok: true, request: { id: r.id, status: 'COMPLETED' }, summary: result.summary, ...(notices ? { notices } : {}) };
 }
 
 /** After a legal hold is released, a BLOCKED closure is executed again (one MFA administrator: two people already decided). */
