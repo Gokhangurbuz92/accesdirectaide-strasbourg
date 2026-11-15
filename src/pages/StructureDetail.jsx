@@ -40,6 +40,8 @@ import { isFinessRecord } from '@/lib/structureActivities';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 import { mapUrl } from '@/lib/structureMapUrl';
+import { frontendEnv } from '@/config/env';
+import { bookingOpened } from '@/lib/publicBeta';
 
 // R32: the French labels (a badge is shown only for these types); typeLabel() gives them in the interface language — the names of public bodies and the
 // acronyms are not translated
@@ -150,6 +152,8 @@ export default function StructureDetail() {
   ].filter(Boolean);
   const provenance = getProvenance(structure);
   const rdvPath = buildPublicRdvPath(structure);
+  // A-8: the booking entry is offered only when booking is open in this build (in the restricted beta « Voir les créneaux » led to the closed notice)
+  const bookable = Boolean(structure.is_pro_enabled) && bookingOpened(frontendEnv.flags.publicBeta);
   const services = tr.value('services');
   const finess = isFinessRecord(structure);   // R37: FINESS « activités autorisées », never shown as services offered
   const publics = tr.value('publics_accueillis');
@@ -388,7 +392,7 @@ export default function StructureDetail() {
                 <ExternalServices data={tr.value('services_externes')} textAttrs={tr.attrs('services_externes')} />
 
                 {/* Pro Services (Lot 4) */}
-                {structure.is_pro_enabled && (
+                {bookable && (
                   <Card className="border-indigo-100 bg-indigo-50/30">
                     <CardContent className="p-6">
                       <h2 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
@@ -440,7 +444,7 @@ export default function StructureDetail() {
             {/* Actions rapides */}
             <Card>
               <CardContent className="p-6 space-y-3">
-                {structure.is_pro_enabled ? (
+                {bookable ? (
                   <Button className="w-full bg-indigo-600 hover:bg-indigo-700" asChild>
                     <Link to={rdvPath}>
                       <Calendar className="me-2 h-4 w-4" />
