@@ -8,10 +8,16 @@ import { ContentReport } from '../../src/db/schema.js';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
 
+// A-6: places can be reported with the enum value that already exists (STRUCTURE). The ContentType enum has no value for a dispositif and adding one is
+// a migration: a dispositif report is filed under AIDE (the nearest kind: an official rights sheet) with its target written `dispositif:<id or slug>`,
+// so the reviewer sees what it is; the page address is stored with every report.
 const CONTENT_TYPE_MAP = {
   aide: 'AIDE',
   demarche: 'DEMARCHE',
+  structure: 'STRUCTURE',
+  dispositif: 'AIDE',
 };
+const TARGET_PREFIX = { dispositif: 'dispositif:' };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -95,7 +101,7 @@ export default async function handler(req, res) {
   const email = normalizeText(payload.email, 254)?.toLowerCase() || null;
   const pageUrl = normalizePageUrl(normalizeText(payload.pageUrl, 2048));
 
-  if (!type || !CONTENT_TYPE_MAP[type]) {
+  if (!type || !Object.hasOwn(CONTENT_TYPE_MAP, type)) {   // own keys only: « constructor », « toString »… are not kinds
     return res.status(400).json({
       ok: false,
       requestId,
@@ -131,7 +137,7 @@ export default async function handler(req, res) {
     const [report] = await db.insert(ContentReport).values({
         // @ts-ignore
         contentType: CONTENT_TYPE_MAP[type],
-        contentId: id || `slug:${slug}`,
+        contentId: `${TARGET_PREFIX[type] || ''}${id || `slug:${slug}`}`,
         reason: 'AUTRE',
         message,
         pageUrl,

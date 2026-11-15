@@ -23,7 +23,7 @@ import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
 /**
  * @param {{
- *   type: 'aide' | 'demarche',
+ *   type: 'aide' | 'demarche' | 'structure' | 'dispositif',
  *   entityId?: string | null,
  *   entitySlug?: string | null,
  *   pageUrl?: string | null,

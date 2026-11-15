@@ -42,6 +42,7 @@ import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice
 import { mapUrl } from '@/lib/structureMapUrl';
 import { frontendEnv } from '@/config/env';
 import { bookingOpened } from '@/lib/publicBeta';
+import FeedbackButton from '@/components/FeedbackButton';
 
 // R32: the French labels (a badge is shown only for these types); typeLabel() gives them in the interface language — the names of public bodies and the
 // acronyms are not translated
@@ -491,6 +492,15 @@ export default function StructureDetail() {
                     </a>
                   </Button>
                 )}
+                {/* A-6: a wrong address, telephone or opening time can be reported from the place's own page (same control as aides and démarches) */}
+                <FeedbackButton
+                  type="structure"
+                  entityId={structure.id}
+                  entitySlug={structure.slug}
+                  pageUrl={typeof window !== 'undefined' ? window.location.href : null}
+                  variant="ghost"
+                  size="default"
+                />
               </CardContent>
             </Card>
 

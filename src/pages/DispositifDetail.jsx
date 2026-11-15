@@ -5,6 +5,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NotFound from "./NotFound";
 import { createPageUrl } from '@/utils';
+import FeedbackButton from '@/components/FeedbackButton';
 import { useQuery } from '@tanstack/react-query';
 import { generateBreadcrumbSchema, generateDispositifSchema } from '@/utils/schema';
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,7 @@ import {
   ChevronRight,
   ExternalLink,
   MapPin,
-  Banknote,
-  Flag
+  Banknote
 } from 'lucide-react';
 import SourceTraceability from '@/components/SourceTraceability';
 import FalcSummary from '@/components/FalcSummary';
@@ -235,12 +235,15 @@ export default function DispositifDetail() {
             <Card>
               <CardContent className="p-6 space-y-3">
                 <AddToParcoursButton type="dispositif" id={dispositif.id} />
-                <Link to={createPageUrl('Contact') + `?page=${encodeURIComponent(window.location.href)}&sujet=signalement_erreur`}>
-                  <Button variant="ghost" className="w-full text-slate-600">
-                    <Flag className="me-2 h-4 w-4" />
-                    {t('dispositifs:detail.report_error', 'Signaler une erreur')}
-                  </Button>
-                </Link>
+                {/* A-6: the report control of aides and démarches (it linked to /contact, a closed screen in the restricted beta) */}
+                <FeedbackButton
+                  type="dispositif"
+                  entityId={dispositif.id}
+                  entitySlug={dispositif.slug}
+                  pageUrl={typeof window !== 'undefined' ? window.location.href : null}
+                  variant="ghost"
+                  size="default"
+                />
               </CardContent>
             </Card>
           </div>
