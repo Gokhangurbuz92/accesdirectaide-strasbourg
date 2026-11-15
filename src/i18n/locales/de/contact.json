@@ -56,6 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "E-Mail-Adresse oder Telefon",
  "request.ne_pas_remplir": "Nicht ausfüllen",
  "request.envoyer": "Senden",
+ "request.recovery_help": "Sie haben keinen Zugriff mehr auf die E-Mail-Adresse Ihres Kontos? Schreiben Sie es unten und hinterlassen Sie eine Kontaktmöglichkeit (eine neue E-Mail-Adresse oder eine Telefonnummer). Eine Person aus dem Team prüft vor jeder Änderung mit Ihnen, dass das Konto wirklich Ihnen gehört. Wir fragen Sie nie nach Ihrem Passwort.",
  "form.email_placeholder": "max@beispiel.de",
  "error.not_connected": "Ihre Nachricht wurde nicht übermittelt: Der Versand über dieses Formular ist noch nicht in Betrieb. Schreiben Sie uns direkt an contact@accesdirectaide.fr.",
  "sent.test": "Testumgebung: Die Nachricht wurde im Testpostfach gespeichert; es wurde keine E-Mail versendet.",

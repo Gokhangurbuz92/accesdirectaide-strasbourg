@@ -56,6 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "e-posta adresi veya telefon",
  "request.ne_pas_remplir": "Doldurmayın",
  "request.envoyer": "Gönder",
+ "request.recovery_help": "Hesabınızın e-posta adresine artık erişemiyor musunuz? Bunu aşağıya yazın ve size ulaşabileceğimiz bir yol bırakın (yeni bir e-posta adresi veya telefon). Ekipten bir kişi, herhangi bir değişiklikten önce hesabın gerçekten size ait olduğunu sizinle birlikte doğrular. Sizden asla şifrenizi istemeyiz.",
  "form.email_placeholder": "ayse@ornek.com",
  "error.not_connected": "Mesajınız iletilmedi: bu form üzerinden gönderim henüz hizmette değil. Bize doğrudan contact@accesdirectaide.fr adresine yazın.",
  "sent.test": "Test ortamı: mesaj test posta kutusuna kaydedildi; hiçbir e-posta gönderilmedi.",

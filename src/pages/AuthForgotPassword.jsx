@@ -116,6 +116,10 @@ export default function AuthForgotPassword() {
             <Link className="text-slate-600 hover:underline" to={next}>
               {t('account:nav.back_journey', 'Retour au parcours')}
             </Link>
+            {/* A-16: the reset link goes to the account's mailbox; without that mailbox the person asks for assisted recovery */}
+            <Link className="text-blue-700 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="forgot-lost-email">
+              {t('account:nav.lost_email', 'Je n’ai plus accès à mon adresse e-mail')}
+            </Link>
           </div>
         </CardContent>
       </Card>

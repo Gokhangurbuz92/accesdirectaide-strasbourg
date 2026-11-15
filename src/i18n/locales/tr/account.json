@@ -28,6 +28,7 @@
  "nav.back_journey": "Sürece geri dön",
  "nav.back_login": "Girişe geri dön",
  "nav.continue": "Devam",
+ "nav.lost_email": "E-posta adresime artık erişemiyorum",
  "reset.choose_intro": "Adresiniz onaylandı. Şimdi hesabınızın şifresini seçin (e-postayla gelen bağlantı yalnızca bir kez çalışır).",
  "reset.choose_title": "Şifrenizi seçin",
  "reset.done": "Şifre güncellendi. Artık giriş yapabilirsiniz.",

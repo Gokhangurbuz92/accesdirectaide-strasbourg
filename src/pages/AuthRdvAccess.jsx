@@ -400,6 +400,10 @@ export default function AuthRdvAccess({ mode = 'login' }) {
               >
                 {resendLoading ? t('booking:auth.envoi', 'Envoi...') : t('booking:auth.renvoyer_un_email_de_verification', "Renvoyer un email de vérification")}
               </button>
+              {/* A-16: a person who lost the mailbox of the account cannot use « forgot password » — the way to assisted recovery (a person checks the account is theirs) */}
+              <Link className="text-blue-900 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="login-lost-email">
+                {t('account:nav.lost_email', 'Je n’ai plus accès à mon adresse e-mail')}
+              </Link>
             </div>
           )}
 
