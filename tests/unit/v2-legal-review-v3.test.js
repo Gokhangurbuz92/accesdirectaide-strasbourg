@@ -1,7 +1,8 @@
 /**
- * V2 legal review (14/11/2026) of legal-drafts v2-2026-11-09 → v3-2026-11-14: no present-tense booking promise in the citizen terms, no closed contact form
+ * V2 legal review (14/11/2026) of legal-drafts v2-2026-11-09 → v3 (14/11/2026): no present-tense booking promise in the citizen terms, no closed contact form
  * in the notice, appointment recipients marked « not open yet », Mon Espace self-service rights; the server refuses SMS / reminders / optional information
- * while those capabilities are closed (narrow V2 scope).
+ * while those capabilities are closed (narrow V2 scope). The current version is pinned by v2-legal-review-v4.test.js; what v3 changed must stay true in
+ * every later version, which is what this file keeps checking.
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -14,10 +15,11 @@ const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.par
 // the narrow V2 scope as configured for the opening (accounts + admin, restricted beta)
 const V2_ENV = { ADA_PUBLIC_BETA_RESTRICTED: '1', ADA_BETA_OPEN_SURFACES: 'accounts,admin', VERCEL_ENV: 'production' };
 
-describe('legal drafts v3-2026-11-14', () => {
-  it('the version is bumped', () => {
-    expect(LEGAL_DRAFTS_VERSION).toBe('v3-2026-11-14');
-    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe('v3-2026-11-14');
+describe('legal drafts: what the v3 review (14/11/2026) changed still holds', () => {
+  it('every document carries the one current version, later than v2', () => {
+    expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
+    expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(3);
+    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe(LEGAL_DRAFTS_VERSION);
   });
   it('cgu §5 / §6 carry the « pas encore ouvert » qualifier and no present-tense booking promise', () => {
     const account = textOf(section('cgu-citoyen', 'account'));

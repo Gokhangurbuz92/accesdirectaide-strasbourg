@@ -138,8 +138,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     expect(t).toContain('{{controller}}, personne physique');
     for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10a', 'P10b/P10c', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
     // Release B (D2 V2): the account purposes (P1, P2, P2b, P3, P10a, P12–P16) are a section of their own, without the « proposed » badge; the later-wave
-    // purposes stay proposed (3 bis) with the retention periods (D4 is not approved)
-    expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later', 'retention']);
+    // purposes stay proposed (3 bis). v4-2026-11-15: the retention periods are the approved policy (retention-policy.js, 09/11/2026) — no badge on § 4
+    expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later']);
     const v2 = notice.sections.find((s) => s.id === 'purposes');
     expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16']);
     expect(t).toContain('ne sont pas des consentements au sens du RGPD');
@@ -263,7 +263,7 @@ describe('R45 draft documents rendering', () => {
     await renderPage('CGU.jsx', '/cgu');
     expect(screen.queryByTestId('legal-draft-links')).toBeNull();
   });
-  it('LAB preview: banner « Projet — non approuvé », the proposed badge on purposes and retention, A7 pending; links listed on the privacy page', async () => {
+  it('LAB preview: banner « Projet — non approuvé », the proposed badge on the purposes not open yet (3 bis) only, A7 pending; links listed on the privacy page', async () => {
     vi.stubEnv('VITE_LEGAL_DRAFT_PREVIEW', '1'); vi.stubEnv('VITE_LEGAL_CONTROLLER_IDENTITY', 'Personne Test');
     const { container } = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');

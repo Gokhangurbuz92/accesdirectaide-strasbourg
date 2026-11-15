@@ -8,7 +8,8 @@
  *    (« id@version », or the bare version, comma-separated) — then it is in force.
  *  - Any other build with VITE_LEGAL_DRAFT_PREVIEW=1 (LAB): the drafts render with a visible « Projet — non approuvé » banner.
  *  - Otherwise: hidden (fail-closed). The existing in-force pages (/cgu, /politique-confidentialite, /mentions-legales) are not affected.
- * Proposed legal bases and retention periods come from CONTROL/r44/R44_DECISIONS_RGPD_D1_D6_FR_v2.md (annexes A and B), NOT approved (D2, D4).
+ * Proposed legal bases (section 3 bis: functions not open yet) come from CONTROL/r44/R44_DECISIONS_RGPD_D1_D6_FR_v2.md (annexes A and B), NOT approved (D2).
+ * The retention periods of section 4 are the APPROVED policy of api/_services/retention-policy.js (controller, 09/11/2026): no « proposé » badge since v4.
  */
 
 export const LEGAL_DRAFT_STATUS = Object.freeze({
@@ -16,7 +17,7 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
 });
 
 /** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'v3-2026-11-14';   // V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
+export const LEGAL_DRAFTS_VERSION = 'v4-2026-11-15';   // Final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
  * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
@@ -182,6 +183,29 @@ export const LEGAL_DRAFT_DOCUMENTS = [
       ] },
     ],
   },
+  /*
+   * v4-2026-11-15 — sources read on 15/11/2026 for the factual claims of the privacy notice (primary / official pages only):
+   *  § 4  CONSENT_SUPERSEDED_DAYS = 1095 (created_at of a decision replaced by a newer one) and SUPPORT_REQUEST_DAYS = 365 (closedAt):
+   *       api/_services/retention-policy.js; purge steps deletedConsentLogsCount / supportRequestsDeleted in api/_handlers/cron/gdpr-purge.js; a help request
+   *       is a row of « SupportRequest » written by the help form (api/_services/support.js, categories ACCOUNT…; surface « support » closed in the V2 scope).
+   *  § 4  Mailjet log period: NO figure. https://documentation.mailjet.com/hc/en-us/articles/360042755094 answered HTTP 403 to a direct read; the Sinch DPA
+   *       (https://sinch.com/legal/terms-and-conditions/other-sinch-terms-conditions/data-processing-agreement/) and https://www.mailjet.com/legal/security-privacy/
+   *       state no period for message / event data → « pendant la durée fixée par Mailjet dans sa documentation ».
+   *  § 6  Vercel: docs/production-hosting.md § 1 (« fonctions à Francfort (fra1) ; pages et fichiers publics distribués par le réseau mondial de Vercel »).
+   *  § 7  SCC, Commission Implementing Decision (EU) 2021/914 of 4 June 2021 (https://eur-lex.europa.eu/legal-content/FR/ALL/?uri=CELEX%3A32021D0914), named by:
+   *       Vercel DPA https://vercel.com/legal/dpa ; Upstash DPA https://upstash.com/trust/dpa.pdf ; Sinch DPA (URL above, § 12 d) ;
+   *       Cloudflare DPA https://www.cloudflare.com/cloudflare-customer-dpa/ (1.1 g). Microsoft: SCC offered through its DPA
+   *       (https://learn.microsoft.com/en-us/compliance/regulatory/offering-eu-model-clauses). Neon / Databricks: https://neon.com/dpa names Databricks, Inc. as the
+   *       contracting party; its transfer clause was NOT read on that page (to confirm on the Databricks DPA).
+   *  § 7  EU–US Data Privacy Framework, self-declarations only (« déclarent adhérer »): Vercel, changelog of 4 June 2024
+   *       https://vercel.com/changelog/vercel-is-now-certified-under-the-eu-us-data-privacy-framework-dpf ; Upstash, privacy policy
+   *       https://upstash.com/trust/privacy.pdf (section « Transfer Mechanism and Data Privacy Framework »). The list of dataprivacyframework.gov could not be
+   *       read (script-rendered). NOT stated for Mailjet / Sinch (the Sinch DPA lists the DPF for « Sinch Email », not confirmed on the official list).
+   *  § 7  Sinch AB (publ) is « a Swedish limited liability company » (https://www.group.sinch.com/corporate-governance); US entities of the group (Sinch America Inc.,
+   *       Mailgun Technologies, Inc.) and Mailjet SAS (France): https://sinch.com/legal/data-protection-agreement-sub-processors/.
+   *  § 8  Loi n° 78-17 du 6 janvier 1978, article 85 (LEGIARTI000039280582, version in force since 01/01/2020), I:
+   *       https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000039280582/2026-11-15.
+   */
   {
     id: 'notice-confidentialite',
     key: 'privacyNotice',
@@ -225,7 +249,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "P10b/P10c — Rappel la veille et notifications du navigateur : consentement (art. 6, 1, a), retirable à tout moment.",
         "P11 — Disponibilités Outlook d'une structure (désactivé) : base choisie par la structure ; l'exploitant agit pour elle.",
       ] },
-      { id: 'retention', title: '4. Durées de conservation', proposed: true, items: [
+      { id: 'retention', title: '4. Durées de conservation', items: [
         "Compte (adresse électronique, mot de passe protégé, nom affiché, langue, préférences de notification) : tant que vous l'utilisez. Vous pouvez demander son effacement à tout moment depuis votre espace : une personne vérifie la demande, pour éviter une erreur ou une usurpation, puis efface le compte dans un délai d'un mois au plus.",
         "Compte inactif : un compte sans activité de votre part (connexion) pendant 24 mois pourra être effacé. Cet effacement n'est pas encore en service ; avant qu'il le soit, cette notice indiquera comment vous serez prévenu. Compte jamais activé (adresse électronique jamais confirmée) : effacé avec la trace de son inscription au plus tard 8 jours après sa création : l'effacement automatique a lieu une fois par jour dès que le compte a 7 jours.",
         "Liens de vérification de l'adresse, de mot de passe et de changement d'adresse : valables 15 minutes (30 minutes pour un changement d'adresse), puis supprimés.",
@@ -233,9 +257,11 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Compteurs de limitation des requêtes (votre adresse IP et, pour la connexion, la création de compte et l'envoi de liens, une empreinte de votre adresse électronique, jamais l'adresse elle-même) : effacés à la fin de leur fenêtre, de quelques minutes à une heure. Les journaux n'en gardent qu'une empreinte condensée.",
         "E-mails de service : leur contenu n'est pas conservé par AccesDirectAide ; la trace de l'envoi (numéro du message chez le prestataire) est gardée 12 mois. Si une adresse refuse définitivement les messages, une empreinte de l'adresse (pas l'adresse elle-même) bloque les envois ; ce blocage est revu après 12 mois et supprimé s'il n'est plus justifié.",
         "Archives à accès restreint après l'effacement d'un compte : preuve de l'acceptation des conditions d'utilisation et de la déclaration « 18 ans ou plus », 12 mois ; demandes d'exercice des droits, 3 ans après leur clôture. Elles ne servent qu'à prouver ou à se défendre en cas de litige.",
+        "Décisions de consentement remplacées par une décision plus récente : 3 ans après leur enregistrement.",
+        "Demandes d'aide adressées au support par le formulaire d'aide (pas encore ouvert), y compris pour retrouver l'accès à un compte : 12 mois après la clôture de la demande.",
         "Journaux d'administration et de sécurité (sans votre adresse électronique) : 12 mois.",
         "Conservation bloquée (« gel ») d'une donnée précise, lorsqu'une autorité l'exige ou qu'un litige l'impose : jusqu'à la fin de la procédure ; la trace de la levée est gardée 12 mois.",
-        "Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution de 1 heure à 1 jour selon l'offre ; la durée des journaux du prestataire d'e-mails (Mailjet) est en cours de vérification.",
+        "Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution de 1 heure à 1 jour selon l'offre ; le prestataire d'e-mails (Mailjet) garde ses journaux pendant la durée fixée par Mailjet dans sa documentation.",
         "Historique de restauration : copies de sauvegarde chiffrées, 35 jours au plus ; historique de la base de données chez Neon, 6 heures au plus. Une donnée effacée peut subsister dans ces copies pendant ces durées ; elle n'est utilisée que pour réparer un incident. Pour qu'une restauration ne fasse pas revenir une personne effacée, une trace de chaque effacement (identifiant technique du compte et de la demande, date ; ni adresse ni nom) est gardée 40 jours hors de la base, chez Upstash (Francfort).",
         "Fonctions pas encore ouvertes (rendez-vous, message facultatif, notifications des professionnels, assistant) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.",
       ], paras: [
@@ -246,7 +272,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Lorsque les rendez-vous seront ouverts (ils ne le sont pas encore), la structure que vous choisirez pour un rendez-vous recevra aussi ce qui lui sera transmis (section 9).",
       ] },
       { id: 'processors', title: '6. Prestataires techniques (sous-traitants)', items: [
-        'Vercel Inc. : hébergement du site et des fonctions serveur, exécutées à Francfort.',
+        'Vercel Inc. : hébergement du site et des fonctions serveur, exécutées à Francfort ; les pages elles-mêmes (contenu statique, sans donnée de compte) sont distribuées par le réseau mondial de Vercel.',
         'Neon (contrat Databricks, Inc.) : base de données hébergée à Francfort.',
         'Upstash, Inc. : compteurs de sécurité et limitation du nombre de requêtes, à Francfort.',
         "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).",
@@ -256,13 +282,14 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service.",
       ] },
       { id: 'transfers', title: '7. Transferts hors de l\'Union européenne', paras: [
-        "Ces prestataires appartiennent à des groupes établis aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision 2021/914) et, pour Vercel, Upstash et Mailjet (Sinch), le cadre de protection des données UE–États-Unis, selon leurs propres conditions. Scaleway SAS fait exception : c'est une société française, qui exécute la tâche de sauvegarde à Paris.",
+        "La plupart de ces prestataires appartiennent à des groupes établis aux États-Unis ; Mailjet appartient au groupe suédois Sinch, qui a des filiales aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914), selon les conditions de chaque prestataire. Vercel et Upstash déclarent en outre adhérer au cadre de protection des données UE–États-Unis. Scaleway SAS fait exception : c'est une société française, qui exécute la tâche de sauvegarde à Paris.",
       ] },
       { id: 'rights', title: '8. Vos droits', items: [
         "Accès, rectification, effacement et limitation de vos données.",
         "Portabilité, pour les données traitées sur la base des conditions d'utilisation ou de votre consentement.",
         "Opposition, pour les traitements fondés sur l'intérêt légitime.",
         "Retrait de votre consentement à tout moment, aussi simplement que vous l'avez donné. Le retrait ne remet pas en cause ce qui a été fait avant.",
+        "Directives sur le sort de vos données après votre décès (conservation, effacement, communication) : vous pouvez en définir, selon l'article 85 de la loi Informatique et Libertés.",
       ], paras: [
         "Depuis votre espace, vous pouvez vous-même : télécharger une copie de vos données (export), corriger les informations de votre compte, demander l'effacement de votre compte et demander la limitation de l'utilisation de vos données.",
         'Vous pouvez aussi écrire à {{contact}}, pour ces droits comme pour les autres. Une réponse vous est donnée dans un délai d\'un mois.',
@@ -280,7 +307,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
       ] },
       { id: 'art14', title: '11. Professionnels et contacts des structures (article 14)', paras: [
         "L'annuaire contient des informations sur des structures et, le cas échéant, sur leurs contacts professionnels (nom de la structure, adresse de l'établissement, téléphone et adresse électronique professionnels, parfois le nom d'un responsable). Elles ne sont pas collectées auprès de vous : elles viennent de sources officielles ou publiques — FINESS, data·inclusion, l'Annuaire de l'administration (Service-Public / DILA). Chaque fiche indique sa source et sa date.",
-        "Finalité : informer le public sur les services qui existent. Base proposée : intérêt légitime (art. 6, 1, f). Durée proposée : tant que la source publie l'information ; mise à jour à chaque import.",
+        "Finalité : informer le public sur les services qui existent. Base : intérêt légitime (article 6, paragraphe 1, f) du RGPD. Durée : tant que la source officielle publie l'information ; mise à jour à chaque import.",
         "Si votre structure vous crée un compte professionnel, elle fournit votre nom et votre adresse professionnelle : les sections 3 à 8 s'appliquent aussi à vous.",
         'Vous pouvez demander une rectification ou vous opposer à l\'affichage d\'une donnée qui vous concerne : {{contact}}.',
       ] },
