@@ -39,6 +39,9 @@ function categoryLabel(t, value) {
  *  onLimitChange: (value: number) => void,
  *  onSubmit: (event: any) => void,
  *  isLoading?: boolean,
+ *  territory?: string,
+ *  territoryOptions?: { code: string, label: string }[],
+ *  onTerritoryChange?: (value: string) => void,
  * }} props
  */
 export default function AidesSearchForm(props) {
@@ -51,11 +54,16 @@ export default function AidesSearchForm(props) {
     onLimitChange,
     onSubmit,
     isLoading = false,
+    territory = '',
+    territoryOptions,
+    onTerritoryChange,
   } = props;
+  // A-1: the commune pre-filter is offered only where the page wires it (the server resolves the INSEE code to commune → EPCI → département → région)
+  const withTerritory = Array.isArray(territoryOptions) && typeof onTerritoryChange === 'function';
   const { t } = useT('search');
   return (
     <form onSubmit={onSubmit} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_120px_auto]">
+      <div className={`grid gap-4 ${withTerritory ? 'lg:grid-cols-[minmax(0,1fr)_200px_200px_110px_auto]' : 'lg:grid-cols-[minmax(0,1fr)_220px_120px_auto]'}`}>
         <div>
           <label htmlFor="aides-search-query" className="mb-1 block text-sm font-medium text-slate-700">
             {t('search:form.query', 'Recherche')}
@@ -91,6 +99,29 @@ export default function AidesSearchForm(props) {
           </select>
         </div>
 
+        {withTerritory && (
+          <div>
+            <label htmlFor="aides-search-territory" className="mb-1 block text-sm font-medium text-slate-700">
+              {t('search:form.territory', 'Commune')}
+            </label>
+            <select
+              id="aides-search-territory"
+              data-testid="search-territory"
+              className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={territory}
+              onChange={(event) => onTerritoryChange(event.target.value)}
+              aria-describedby="aides-search-territory-help"
+            >
+              <option value="">{t('search:form.territory-all', 'Toutes les communes')}</option>
+              {territoryOptions.map((option) => (
+                <option key={option.code} value={option.code} lang="fr">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div>
           <label htmlFor="aides-search-limit" className="mb-1 block text-sm font-medium text-slate-700">
             {t('search:form.limit', 'Limite')}
@@ -124,6 +155,11 @@ export default function AidesSearchForm(props) {
       <p id="aides-search-help" className="mt-3 text-sm text-slate-700">
         {t('search:form.help', 'Recherchez par mots-clés, puis affinez avec la catégorie.')}
       </p>
+      {withTerritory && (
+        <p id="aides-search-territory-help" className="mt-1 text-sm text-slate-700">
+          {t('search:form.territory-help', 'Avec une commune, les aides réservées à un autre territoire ne sont pas affichées. Les démarches, les lieux et les actualités ne sont pas filtrés.')}
+        </p>
+      )}
     </form>
   );
 }

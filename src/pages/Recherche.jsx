@@ -15,6 +15,7 @@ import { isAbortError, normalizeSearchCategory, searchAides } from '@/lib/search
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 import { useLanguage, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const DEFAULT_LIMIT = 10;
 // R32: `key` names the translated wording of each example; the example searches in the interface language
@@ -138,6 +139,16 @@ function ActualiteResult({ a }) {
   );
 }
 
+// A-1: the communes of the service territory (INSEE code, official name); the code is what the server resolves to the commune's hierarchy
+const TERRITORY_COMMUNES = /** @type {[string, string][]} */ (serviceTerritory.communes);
+const INSEE_COMMUNE = /^(?:\d{5}|2[AB]\d{3})$/;
+
+/** A-1: an INSEE commune code read from the URL or the control, or '' (anything else is ignored, never sent). @param {unknown} value */
+function parseTerritory(value) {
+  const code = String(value ?? '').trim().toUpperCase();
+  return INSEE_COMMUNE.test(code) ? code : '';
+}
+
 /**
  * @param {string | null} value
  */
@@ -150,7 +161,7 @@ function parseLimit(value) {
 }
 
 // @ts-ignore
-function buildCanonicalSearchParams(/** @type {string} */ query, category, limit, situation) {
+function buildCanonicalSearchParams(/** @type {string} */ query, category, limit, situation, territory) {
   const params = new URLSearchParams();
   const trimmedQuery = query.trim();
   if (trimmedQuery) {
@@ -161,6 +172,9 @@ function buildCanonicalSearchParams(/** @type {string} */ query, category, limit
   }
   if (situation) {
     params.set('situation', situation);
+  }
+  if (territory) {
+    params.set('territoire', territory);
   }
   params.set('limit', String(parseLimit(limit)));
   return params;
@@ -181,10 +195,13 @@ export default function Recherche() {
     searchParams.get('theme')
   );
   const limitFromUrl = parseLimit(searchParams.get('limit'));
+  // A-1: the commune pre-filter lives in the URL (`territoire=<INSEE code>`), so a filtered search can be shared and survives a reload
+  const territoryFromUrl = parseTerritory(searchParams.get('territoire') || searchParams.get('territory'));
 
   const [queryInput, setQueryInput] = useState(queryFromUrl);
   const [categoryInput, setCategoryInput] = useState(categoryFromUrl);
   const [limitInput, setLimitInput] = useState(limitFromUrl);
+  const [territoryInput, setTerritoryInput] = useState(territoryFromUrl);
   const [status, setStatus] = useState('idle');
   const [orientation, setOrientation] = useState(null);
   const [results, setResults] = useState([]);
@@ -203,7 +220,8 @@ export default function Recherche() {
     setQueryInput(queryFromUrl);
     setCategoryInput(categoryFromUrl);
     setLimitInput(limitFromUrl);
-  }, [queryFromUrl, categoryFromUrl, limitFromUrl]);
+    setTerritoryInput(territoryFromUrl);
+  }, [queryFromUrl, categoryFromUrl, limitFromUrl, territoryFromUrl]);
 
   useEffect(() => {
     if (!queryFromUrl) {
@@ -247,6 +265,7 @@ export default function Recherche() {
       category: categoryFromUrl,
       limit: limitFromUrl,
       situations: situationFromUrl ? [situationFromUrl] : undefined,
+      territory: territoryFromUrl || undefined,
       signal: controller.signal,
     })
       .then((response) => {
@@ -283,7 +302,7 @@ export default function Recherche() {
       isMounted = false;
       controller.abort();
     };
-  }, [queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, refreshKey]);
+  }, [queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, territoryFromUrl, refreshKey]);
 
   // R12 (C11): a finished search goes to the person's opt-in history (signed-in only; the server keeps nothing unless history is on)
   useEffect(() => {
@@ -314,11 +333,17 @@ export default function Recherche() {
   };
   const exampleQuery = (example) => exampleQueries[example.key] ?? example.query;
 
+  // A-1: a code given in the URL that is not one of the listed communes stays selectable (shown by its code), so the control always says what is applied
+  const territoryOptions = useMemo(() => {
+    const listed = TERRITORY_COMMUNES.map(([code, label]) => ({ code, label }));
+    return territoryFromUrl && !listed.some((o) => o.code === territoryFromUrl) ? [{ code: territoryFromUrl, label: territoryFromUrl }, ...listed] : listed;
+  }, [territoryFromUrl]);
+
   // @ts-ignore
-  const applySearch = (/** @type {string} */ query, /** @type {unknown} */ category, /** @type {any} */ limit) => {
+  const applySearch = (/** @type {string} */ query, /** @type {unknown} */ category, /** @type {any} */ limit, /** @type {unknown} */ territory = territoryInput) => {
     const normalizedCategory = normalizeSearchCategory(category);
-    const nextParams = buildCanonicalSearchParams(query, normalizedCategory, limit, situationFromUrl);
-    const currentParams = buildCanonicalSearchParams(queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl);
+    const nextParams = buildCanonicalSearchParams(query, normalizedCategory, limit, situationFromUrl, parseTerritory(territory));
+    const currentParams = buildCanonicalSearchParams(queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, territoryFromUrl);
 
     setSearchParams(nextParams);
     if (nextParams.toString() === currentParams.toString()) {
@@ -365,6 +390,9 @@ export default function Recherche() {
           onQueryChange={setQueryInput}
           onCategoryChange={setCategoryInput}
           onLimitChange={setLimitInput}
+          territory={territoryInput}
+          territoryOptions={territoryOptions}
+          onTerritoryChange={setTerritoryInput}
           onSubmit={handleSubmit}
           isLoading={status === 'loading'}
         />
@@ -443,7 +471,7 @@ export default function Recherche() {
               actions={
                 <div className="flex flex-wrap justify-center gap-2" data-testid="search-empty-next">
                   {categoryFromUrl ? (
-                    <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
+                    <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl, ...(territoryFromUrl ? { territoire: territoryFromUrl } : {}) }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
                   ) : null}
                   <Button asChild variant="outline"><Link to="/besoins">{t('search:empty.by_need', 'Trouver par besoin')}</Link></Button>
                   <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button>

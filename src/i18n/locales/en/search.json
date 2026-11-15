@@ -123,5 +123,8 @@
   "empty.by_need": "Find by need",
   "empty.orientation": "Get guided step by step",
   "empty.directory": "Look for a place to go in the directory",
-  "orientation.french_notice": "The detailed advice below is in French: it is the official text and is not translated automatically."
+  "orientation.french_notice": "The detailed advice below is in French: it is the official text and is not translated automatically.",
+  "form.territory": "Municipality",
+  "form.territory-all": "All municipalities",
+  "form.territory-help": "With a municipality selected, benefits reserved for another area are not shown. Procedures, places and news are not filtered."
 }
