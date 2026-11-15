@@ -3,6 +3,7 @@
  * Synthetic organizations A (admin, pro1, pro2) and B (pro). Synthetic data only; the mailer is the in-memory 'test' provider. Skipped without DATABASE_URL.
  *   A04  one follow-up status (the case status); no note in clear in the dossier JSON; a legacy note moves to the protected case notes
  *   A13  a SIAO hand-over sheet prepared by a professional appears in the person's access log
+ *   A15  organisation export: services, booking settings, opening hours, absences (no individual reason), selections (no sealed text), journal; audited
  *   A14  dossier export: only json / csv, audited with the validated format; the organisation's access trail (dossier/views) lists it
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -34,6 +35,7 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
     process.env.MAILER_PROVIDER = 'test'; process.env.MAILER_FROM = 'qa@example.test';
     H.dossier = (await import('../../api/_handlers/pro/dossier.js')).default; H.cases = (await import('../../api/_handlers/pro/cases.js')).default;
     H.exp = (await import('../../api/_handlers/pro/dossier/export.js')).default; H.views = (await import('../../api/_handlers/pro/dossier/views.js')).default;
+    H.structure = (await import('../../api/_handlers/pro/structure.js')).default;
     H.siao = (await import('../../api/_handlers/pro/interop-siao.js')).default; H.citDossier = (await import('../../api/_handlers/citizen/dossier.js')).default;
     for (const id of Object.values(S)) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, is_pro_enabled, "updatedAt", "createdAt")
       VALUES (${id}, ${'Org ' + id}, ${id}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', true, NOW(), NOW())`);
@@ -47,7 +49,7 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
   afterAll(async () => {
     if (!db) return;
     const L = sql.join(Object.values(S).map((i) => sql`${i}`), sql`, `);
-    for (const q of [sql`DELETE FROM "SharedDiagnostic" WHERE id IN (${DOS}, ${DOS2})`, sql`DELETE FROM "ProTimeOff" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProAvailabilityRule" WHERE "structureId" IN (${L})`,
+    for (const q of [sql`DELETE FROM "SharedDiagnostic" WHERE id IN (${DOS}, ${DOS2})`, sql`DELETE FROM "ProTimeOff" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProOrientationBasket" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProAvailabilityRule" WHERE "structureId" IN (${L})`,
       sql`DELETE FROM "ProAppointment" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProRdvService" WHERE "structureId" IN (${L})`, sql`DELETE FROM "StructureRdvSettings" WHERE "structureId" IN (${L})`,
       sql`DELETE FROM "ProNotification" WHERE "structureId" IN (${L})`, sql`DELETE FROM "ProUser" WHERE "structureId" IN (${L})`, sql`DELETE FROM "Structure" WHERE id IN (${L})`,
       sql`DELETE FROM "CitizenUser" WHERE id = ${CIT.id}`]) await db.execute(q).catch(() => {});
@@ -134,6 +136,43 @@ describe.skipIf(!hasDatabase)('Pro / Structure privacy and operations fixes (rea
       const trail = await pro(H.views, P.pro1, { url: `/api/pro/dossier/views?shareId=${DOS2}` });
       expect(trail.body.views.filter((v) => v.action === 'DOSSIER_EXPORTED')).toHaveLength(2);
       expect((await pro(H.views, P.b, { url: `/api/pro/dossier/views?shareId=${DOS2}` })).statusCode).toBe(404);
+    });
+  });
+
+  describe('A15 — the organisation export holds the organisation’s own records and is journalised', () => {
+    it('services, booking settings, opening hours, absences, selections, notification preferences and the journal — own rows only, no individual absence reason, no sealed text', async () => {
+      for (const st of [S.A, S.B]) {
+        await db.execute(sql`INSERT INTO "ProRdvService" (id, "structureId", name, "durationMinutes", "isActive", "updatedAt") VALUES (${'pbsvc-' + st}, ${st}, ${'Accueil ' + st}, 30, true, NOW())`);
+        await db.execute(sql`INSERT INTO "StructureRdvSettings" (id, "structureId", "isPublished", "contactEmail", "updatedAt") VALUES (${'pbrs-' + st}, ${st}, true, ${'accueil-' + st + '@example.test'}, NOW())`);
+        await db.execute(sql`INSERT INTO "ProAvailabilityRule" (id, "structureId", weekday, "startTime", "endTime", "updatedAt") VALUES (${'pbar-' + st}, ${st}, 1, '09:00', '12:00', NOW())`);
+      }
+      await db.execute(sql`INSERT INTO "ProTimeOff" (id, "structureId", "proUserId", "startAt", "endAt", reason, "updatedAt") VALUES
+        (${'pbto1-' + TS}, ${S.A}, ${P.pro1.id}, NOW() + interval '5 days', NOW() + interval '6 days', 'MOTIF-SANTE-QA', NOW()),
+        (${'pbto2-' + TS}, ${S.A}, NULL, NOW() + interval '20 days', NOW() + interval '27 days', 'Fermeture annuelle', NOW()),
+        (${'pbto3-' + TS}, ${S.B}, ${P.b.id}, NOW() + interval '5 days', NOW() + interval '6 days', 'MOTIF-B-QA', NOW())`);
+      await db.execute(sql`INSERT INTO "ProOrientationBasket" (id, "structureId", "ownerProUserId", "needCodes", items, "privateEncrypted", "updatedAt") VALUES
+        (${'pbbk-' + TS}, ${S.A}, ${P.pro1.id}, '{}', ${JSON.stringify([{ key: 'k1', kind: 'aide', refId: 'aide-qa-1', followUp: 'A_PROPOSER', addedAt: '2026-11-01T10:00:00.000Z' }])}::jsonb, 'SEALED-LABEL-QA', NOW())`);
+      await db.execute(sql`UPDATE "ProUser" SET "notificationPrefs" = '{"referrals": false}'::jsonb WHERE id = ${P.pro2.id}`);
+
+      expect((await pro(H.structure, P.pro1, { query: { export: '1' } })).statusCode).toBe(403);
+      const out = await pro(H.structure, P.admin, { query: { export: '1' } });
+      expect(out.statusCode, JSON.stringify(out.body).slice(0, 300)).toBe(200);
+      const e = out.body.export; const txt = JSON.stringify(e);
+      expect(e.services.map((x) => [x.name, x.durationMinutes, x.isActive])).toEqual([[`Accueil ${S.A}`, 30, true]]);
+      expect(e.bookingSettings).toMatchObject({ isPublished: true, contactEmail: `accueil-${S.A}@example.test` });
+      expect(e.openingHours).toEqual([expect.objectContaining({ weekday: 1, startTime: '09:00', endTime: '12:00' })]);
+      expect(e.absences.map((a) => [a.scope, a.member, a.reason])).toEqual([['member', `${P.pro1.id}@example.test`, null], ['structure', null, 'Fermeture annuelle']]);
+      expect(e.selections).toEqual([expect.objectContaining({ id: `pbbk-${TS}`, owner: `${P.pro1.id}@example.test`, linkedToCase: false, items: [{ kind: 'aide', refId: 'aide-qa-1', followUp: 'A_PROPOSER', addedAt: '2026-11-01T10:00:00.000Z' }] })]);
+      expect(e.team.find((m) => m.email === `${P.pro2.id}@example.test`).notificationPrefs).toEqual({ referrals: false });
+      expect(e.journal.length).toBeGreaterThan(0); expect(e.journal.length).toBe(e.journalTotal); expect(e.journalTruncated).toBe(false);
+      expect(e.journal.some((j) => j.action === 'DOSSIER_EXPORTED' && j.actor === `${P.pro1.id}@example.test`)).toBe(true);
+      for (const j of e.journal) expect(Object.keys(j).sort()).toEqual(['action', 'actor', 'at', 'details']);
+      for (const leak of ['MOTIF-SANTE-QA', 'MOTIF-B-QA', 'SEALED-LABEL-QA', `Accueil ${S.B}`, 'password', 'mfa_secret', 'ip_hash', 'ipHash', 'zipCode', P.b.id]) expect(txt, leak).not.toContain(leak);
+      const audit = (await db.execute(sql`SELECT actor_id, details FROM "AuditLog" WHERE action = 'ORGANIZATION_EXPORTED' AND details->>'structureId' = ${S.A}`)).rows;
+      expect(audit).toHaveLength(1);
+      expect(audit[0]).toMatchObject({ actor_id: P.admin.id, details: { members: 3, services: 1, absences: 2, selections: 1, structureId: S.A } });
+      // the next export shows the previous one in the journal
+      expect((await pro(H.structure, P.admin, { query: { export: '1' } })).body.export.journal[0]).toMatchObject({ action: 'ORGANIZATION_EXPORTED', actor: `${P.admin.id}@example.test` });
     });
   });
 });

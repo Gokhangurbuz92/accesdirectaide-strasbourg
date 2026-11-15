@@ -105,12 +105,39 @@ export async function withdraw(id, ctx, db = defaultDb) {
   return rows.length ? { ok: true } : bad('not_found', 'Proposition introuvable.', 404);
 }
 
-/** E08 — the organization's own data (administrators). No citizen dossier content, no secrets, no tokens. */
+export const EXPORT_JOURNAL_LIMIT = 2000;
+/** journal details in an export: identifiers and short scalar values only (never a nested object, never the organization id repeated on every line) */
+const journalDetails = (d) => Object.fromEntries(Object.entries(d && typeof d === 'object' ? d : {})
+  .filter(([k, v]) => k !== 'structureId' && (typeof v === 'number' || typeof v === 'boolean' || (typeof v === 'string' && v.length <= 120))));
+
+/**
+ * E08 — the organization's own data (administrators). No citizen dossier content, no secrets, no tokens.
+ * A15: beside the public record, the team and the proposals, the export now holds what the organization itself configured or produced: its appointment
+ * services, booking settings and opening hours, its absences (a member's absence: dates only — a reason can be a health fact about an employee; a closure of the whole structure keeps its reason), its orientation
+ * selections (references to public records and need codes — the sealed label and reasons, which may describe a person's situation, stay out), the team's
+ * notification preferences and the organization's journal (newest EXPORT_JOURNAL_LIMIT lines, identifiers only, no address hash).
+ */
 export async function exportOrganization(ctx, db = defaultDb) {
   if (!isStructureAdmin(ctx) || !(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   const s = await db.query.Structure.findFirst({ where: eq(Structure.id, ctx.structureId) });
   if (!s) return bad('not_found', 'Structure introuvable.', 404);
-  const team = await db.select({ email: ProUser.email, role: ProUser.role, status: ProUser.status, createdAt: ProUser.createdAt }).from(ProUser).where(eq(ProUser.structureId, ctx.structureId));
+  const sid = ctx.structureId;
+  const team = await db.select({ email: ProUser.email, role: ProUser.role, status: ProUser.status, createdAt: ProUser.createdAt,
+    notificationEmailEnabled: ProUser.notificationEmailEnabled, notificationPrefs: ProUser.notificationPrefs }).from(ProUser).where(eq(ProUser.structureId, ctx.structureId));
+  const rows = async (q) => (await db.execute(q)).rows;
+  const services = await rows(sql`SELECT name, "durationMinutes", "bufferBeforeMinutes", "bufferAfterMinutes", modes, "isActive", "guestBookable", "createdAt", "updatedAt" FROM "ProRdvService" WHERE "structureId" = ${sid} ORDER BY name`);
+  const [bookingSettings = null] = await rows(sql`SELECT "isPublished", "publishedAt", "allowGuestBooking", "contactEmail", "contactPhone", "updatedAt" FROM "StructureRdvSettings" WHERE "structureId" = ${sid}`);
+  const openingHours = await rows(sql`SELECT weekday, "startTime", "endTime", timezone, modes, "isActive" FROM "ProAvailabilityRule" WHERE "structureId" = ${sid} ORDER BY weekday, "startTime"`);
+  // a closure of the whole structure keeps its reason (« fermeture annuelle »); a member's absence is exported with its dates only
+  const absences = await rows(sql`SELECT CASE WHEN t."proUserId" IS NULL THEN 'structure' ELSE 'member' END AS scope, u.email AS member, t."startAt", t."endAt",
+      CASE WHEN t."proUserId" IS NULL THEN t.reason END AS reason, t."createdAt"
+    FROM "ProTimeOff" t LEFT JOIN "ProUser" u ON u.id = t."proUserId" AND u."structureId" = t."structureId" WHERE t."structureId" = ${sid} ORDER BY t."startAt"`);
+  const selections = (await rows(sql`SELECT b.id, u.email AS owner, b.status, b."needCodes", b.items, b."caseId", b."sharedAt", b."createdAt", b."updatedAt" FROM "ProOrientationBasket" b
+    LEFT JOIN "ProUser" u ON u.id = b."ownerProUserId" AND u."structureId" = b."structureId" WHERE b."structureId" = ${sid} ORDER BY b."createdAt"`)).map((b) => ({ id: b.id, owner: b.owner, status: b.status, needCodes: b.needCodes || [],
+    items: (Array.isArray(b.items) ? b.items : []).map((i) => ({ kind: i.kind, refId: i.refId, followUp: i.followUp, addedAt: i.addedAt })), linkedToCase: Boolean(b.caseId), sharedAt: b.sharedAt, createdAt: b.createdAt, updatedAt: b.updatedAt }));
+  const journalTotal = Number((await rows(sql`SELECT count(*)::int AS n FROM "AuditLog" WHERE details->>'structureId' = ${sid}`))[0]?.n || 0);
+  const journal = (await rows(sql`SELECT a.action, a."timestamp" AS at, u.email AS actor, a.details FROM "AuditLog" a LEFT JOIN "ProUser" u ON u.id = a.actor_id AND u."structureId" = ${sid}
+    WHERE a.details->>'structureId' = ${sid} ORDER BY a."timestamp" DESC LIMIT ${EXPORT_JOURNAL_LIMIT}`)).map((j) => ({ action: j.action, at: j.at, actor: j.actor || null, details: journalDetails(j.details) }));
   const proposals = await db.select().from(StructureProposal).where(eq(StructureProposal.structureId, ctx.structureId)).orderBy(desc(StructureProposal.createdAt));
   const counts = (await db.execute(sql`SELECT
       (SELECT count(*)::int FROM "ProCase" WHERE "structureId" = ${ctx.structureId}) AS cases,
@@ -118,7 +145,8 @@ export async function exportOrganization(ctx, db = defaultDb) {
       (SELECT count(*)::int FROM "Referral" WHERE "fromStructureId" = ${ctx.structureId}) AS "referralsSent",
       (SELECT count(*)::int FROM "Referral" WHERE "toStructureId" = ${ctx.structureId}) AS "referralsReceived"`)).rows[0] || {};
   return { ok: true, export: { generatedAt: new Date().toISOString(), structure: pick(s), team, proposals: proposals.map(viewProposal), activity: counts,
-    note: 'Export des données de la structure. Les dossiers des personnes accompagnées n’y figurent pas (ils appartiennent aux personnes). Fermeture de l’espace et effacement des données de la structure : demande depuis « Ma structure », examinée par deux personnes d’ADA.' } };
+    services, bookingSettings, openingHours, absences, selections, journal, journalTotal, journalTruncated: journalTotal > journal.length,
+    note: 'Export des données de la structure : fiche, équipe et préférences de notification, propositions, services de rendez-vous, réglages et horaires, absences (dates ; le motif d’une absence individuelle n’est pas exporté), sélections d’orientation (références et codes, sans le libellé ni les raisons), journal de la structure. Les dossiers des personnes accompagnées n’y figurent pas (ils appartiennent aux personnes). Fermeture de l’espace et effacement des données de la structure : demande depuis « Ma structure », examinée par deux personnes d’ADA.' } };
 }
 
 /** ADA review queue (any admin may read; deciding requires the MFA admin session — checked by the handler). */

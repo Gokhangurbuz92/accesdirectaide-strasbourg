@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { requireProStructureContext } from '../../_utils/auth.js';
+import { logProAudit, requireProStructureContext } from '../../_utils/auth.js';
+import { clientIp } from '../../_utils/client-ip.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { exportOrganization, getProfile, propose, requestOrganizationClosure, withdraw } from '../../_services/structure-proposals.js';
 
@@ -17,7 +18,12 @@ async function handler(req, res) {
   if (req.method === 'GET') {
     if (String(req.query?.export || '') === '1') {
       const out = await exportOrganization(ctx);
-      if (out.ok) res.setHeader('Content-Disposition', 'attachment; filename="export-structure.json"');
+      if (out.ok) {
+        res.setHeader('Content-Disposition', 'attachment; filename="export-structure.json"');
+        // A15: the export of an organization's data is itself journalised (who, when, how much — never the content)
+        const e = out.export;
+        await logProAudit('ORGANIZATION_EXPORTED', ctx.userId, ctx.structureId, { members: e.team.length, services: e.services.length, absences: e.absences.length, selections: e.selections.length, journalLines: e.journal.length }, clientIp(req));
+      }
       return send(out);
     }
     return send(await getProfile(ctx));
