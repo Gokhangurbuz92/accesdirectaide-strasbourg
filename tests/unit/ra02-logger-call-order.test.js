@@ -165,9 +165,9 @@ describe('RA-02 ratchet: call sites in api/', () => {
     expect(found.stringFirstOnPino.filter((x) => x.startsWith('api/index.js:')).length).toBeGreaterThan(0);
   });
   it('non-canonical call sites do not grow (new code: logger.info({ fields }, "message") with api/_utils/logger.js)', () => {
-    // 0645b6e had 96 string-first calls on the pino logger in api/ and 3 object-first calls on the console logger; the cron handlers were corrected with RA-02.
+    // 0645b6e had 96 string-first calls on the pino logger in api/ and 3 object-first calls on the console logger; the cron handlers were corrected with RA-02, five went with the dead handlers of RA-11.
     expect(found.stringFirstOnPino.length, found.stringFirstOnPino.join('\n')).toBeLessThanOrEqual(STRING_FIRST_CEILING);
     expect(found.objectFirstOnConsole, 'api/_services/referrals.js is owned by another package; the wrapper makes its call safe').toEqual(found.objectFirstOnConsole.filter((x) => x.startsWith('api/_services/referrals.js:')));
   });
 });
-const STRING_FIRST_CEILING = 85;
+const STRING_FIRST_CEILING = 80;

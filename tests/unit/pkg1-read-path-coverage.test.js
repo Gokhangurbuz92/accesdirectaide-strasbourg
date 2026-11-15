@@ -77,7 +77,7 @@ const REVIEWED_NOT_PUBLIC = {
   'scripts/transfer-rehearsal.mjs': 'R8: operator rehearsal of the content transfer on a NEW local database it creates (refuses a non-local server); counts and hashes only, never served',
   // maintenance scripts run by an operator, never served
   'scripts/cleanup-test-accounts.js': 'operator script', 'scripts/fix-source-urls.js': 'operator script', 'scripts/measure-phase10-baseline.js': 'operator script', 'scripts/recalculate-quality-scores.js': 'operator script',
-  'scripts/seed-test-accounts.js': 'operator script', 'scripts/seed-test-pro-profiles.ts': 'operator script', 'scripts/test-backup-restore.js': 'operator script', 'scripts/test-db-development.cjs': 'operator script', 'scripts/test-db-production.cjs': 'operator script',
+  'scripts/seed-test-accounts.js': 'operator script', 'scripts/seed-test-pro-profiles.ts': 'operator script', 'scripts/test-db-development.cjs': 'operator script', 'scripts/test-db-production.cjs': 'operator script',
 };
 
 describe('D-5 read-path coverage ratchet', () => {

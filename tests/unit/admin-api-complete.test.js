@@ -16,7 +16,6 @@ describe('Admin API completeness', () => {
         'api/_handlers/admin/cron-runs.js',
         'api/_handlers/admin/actions.js',
         'api/_handlers/admin/analytics.js',
-        'api/_handlers/admin/import.js',
         'api/_handlers/admin/runs.js',
         'api/_handlers/admin/alerts.js',
         'api/_handlers/admin/bulk-repair.js',
@@ -24,7 +23,6 @@ describe('Admin API completeness', () => {
         'api/_handlers/admin/national-stats.js',
         'api/_handlers/admin/rag-health.js',
         'api/_handlers/admin/validate-publication.js',
-        'api/_handlers/admin/versions.js',
         'api/_handlers/admin/partnerships.js',
     ];
 
