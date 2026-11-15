@@ -385,9 +385,10 @@
     "/pro/interop-siao": {
       "post": {
         "tags": ["Pro"],
-        "summary": "Interopérabilité SIAO (hébergement d'urgence)",
+        "summary": "Fiche de transmission SIAO à saisir manuellement (aucune transmission automatique)",
+        "description": "Adaptateur DÉCONNECTÉ : rien n'est envoyé au SI-SIAO. Renvoie la fiche de transmission `ada.siao-handover/1` d'un dossier partagé avec la structure (finalité PURP-07 accordée par la personne) ; le professionnel la saisit lui-même dans l'outil de l'opérateur. La réponse indique toujours transmissionStatus NOT_TRANSMITTED.",
         "security": [{ "BearerAuth": [] }],
-        "responses": { "200": { "description": "Données SIAO transmises" } }
+        "responses": { "200": { "description": "Fiche de transmission (non transmise : saisie manuelle par le professionnel)" } }
       }
     },
     "/pro/system-maintenance": {

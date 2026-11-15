@@ -15,7 +15,8 @@ import { requireCapability } from '../_utils/capabilities.js';
  *   POST institution/login {email, password}
  *   POST institution/password {currentPassword, newPassword} (R21: other sessions end, a new token for this one) | POST institution/logout (R21: server-side)
  *   POST institution/forgot {email} | POST institution/reset {token, password} (R24, owner decision R21.1: self-service reset link by e-mail, 30 minutes, once)
- *   GET  institution/me | institution/observatoire | institution/export?period=month|quarter|year (CSV; needs the OPEN_DATA_EXPORT flag: licence still to decide)
+ *   GET  institution/me | institution/observatoire | institution/export?period=quarter (CSV; needs the OPEN_DATA_EXPORT flag: licence still to decide)
+ *   A session on a temporary password: `me`, `password` and `logout` only — everything else answers 403 PASSWORD_CHANGE_REQUIRED.
  */
 export default async function handler(req, res) {
     if (!requireCapability(res, 'institution.portal')) return undefined;   // R45 / ENG-LR-6: outside the AIPD — refused before anything is read (api/_utils/capabilities.js)
@@ -76,6 +77,9 @@ export default async function handler(req, res) {
     const inst = await resolveInstitution(req);
     if (!inst) return res.status(401).json({ error: 'Unauthorized' });
     if (path === 'institution/me') return res.status(200).json({ organisation: inst.organisation, territory: inst.territory, email: inst.email, temporaryPassword: inst.temporaryPassword });
+    // Visibility audit (2026-11): the temporary-password gate was in the interface only. A session still on a password the partner has not chosen (the initial
+    // one, or one an administrator handed over) reads nothing but `me`; it may change its password and sign out (handled above), nothing else.
+    if (inst.temporaryPassword) return res.status(403).json({ error: 'PASSWORD_CHANGE_REQUIRED', message: 'Choisissez d’abord votre propre mot de passe : le mot de passe provisoire n’ouvre pas les statistiques.' });
     if (path === 'institution/observatoire') return res.status(200).json(await observatoire());
     if (path === 'institution/export') {
       if (!(await isFeatureOn('OPEN_DATA_EXPORT'))) return res.status(503).json({ error: 'EXPORT_NOT_OPEN', message: 'Export fermé : la licence et la publication des données restent à décider par ADA.' });

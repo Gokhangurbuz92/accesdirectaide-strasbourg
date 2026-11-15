@@ -5,6 +5,7 @@
  *                                      in the last 30 days and the open cases assigned to them. Active members only.
  *   regionalStats  (observatoire)    — cross-organization AGGREGATES only: per commune, only when at least K_ORGS verified active organizations are there, and every
  *                                      count below K_MIN is suppressed (null). No organization is named, no organization's own figures are disclosed to another.
+ *                                      Complete calendar quarters only (see regionalStats).
  *   reportCsv      (export E07)      — the caller's organization's indicators for a period as CSV (indicator,value); small outcome cells suppressed; no personal data;
  *                                      cells protected against spreadsheet formula injection.
  */
@@ -13,6 +14,7 @@ import { db as defaultDb } from '../../src/db/index.js';
 import { activeMemberSql } from '../_utils/share-access.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { capabilityOpen } from '../_utils/capabilities.js';
+import { lastQuarters } from './stat-periods.js';
 
 /**
  * R46 / R45 residual F-9: the reports, team statistics and CSV of an organization no longer return the aggregate counts of a capability that is CLOSED in this
@@ -56,24 +58,39 @@ export async function teamStats(ctx, db = defaultDb, envVars = process.env) {
   return { ok: true, global: g, members, measured: 'appointmentsCount = appointments created by the member in the last 30 days', withheldCapabilities: closed.withheldCapabilities };
 }
 
-export async function regionalStats(ctx, db = defaultDb) {
+/**
+ * Visibility audit (2026-11): every period figure is the last COMPLETE calendar quarter and the trend is the last four complete quarters — the grid of the
+ * institution observatoire (stat-periods.js). Before: appointments were month-to-date and the trend seven rolling days, so two polls a day apart differenced
+ * into one day's appointments of a commune. The trend is the sum of the PUBLISHED commune cells of each quarter (never a true total: true total minus the
+ * published cells gave the sum of the masked communes). `peopleWithAppointment` counts distinct citizen accounts with an appointment booked, confirmed or
+ * honoured in the quarter: a booking, NOT a person helped (the former key « totalCitizensHelped » claimed a social outcome nobody measures).
+ */
+export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   if (!(await member(ctx, db))) return bad('forbidden', 'Accès refusé.', 403);
   // PKG-5 / I02 (differencing): every figure is computed over the SAME population — organizations of communes shown (>= K_ORGS verified organizations).
   // Platform-wide totals minus the shown communes would otherwise reveal the organizations of hidden communes (possibly ONE organization). Organizations of
   // hidden communes are only COUNTED (the number of verified organizations is public through the directory), never measured.
   const verified = sql`s.statut = 'actif' AND s.verification_status = 'VERIFIED'`;
-  const communes = (await db.execute(sql`WITH org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified}),
-      shown AS (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS})
+  const quarters = lastQuarters(now); const last = quarters[quarters.length - 1];
+  const cte = sql`org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified}),
+      shown AS (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS})`;
+  const inQuarter = (q) => sql`a."startAt" >= ${q.start} AND a."startAt" < ${q.end}`;
+  const communes = (await db.execute(sql`WITH ${cte}
     SELECT o.commune, count(DISTINCT o.id)::int AS orgs,
       (SELECT count(*)::int FROM "ProUser" u JOIN org o2 ON o2.id = u."structureId" WHERE o2.commune = o.commune AND u.status = 'active') AS agents,
-      (SELECT count(*)::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= date_trunc('month', NOW())) AS rdv,
-      (SELECT count(DISTINCT a."citizenUserId")::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND a."citizenUserId" IS NOT NULL AND a.status IN ('done', 'booked', 'confirmed')) AS helped
+      (SELECT count(*)::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND ${inQuarter(last)}) AS rdv,
+      (SELECT count(DISTINCT a."citizenUserId")::int FROM "ProAppointment" a JOIN org o2 ON o2.id = a."structureId" WHERE o2.commune = o.commune AND a."citizenUserId" IS NOT NULL AND a.status IN ('done', 'booked', 'confirmed') AND ${inQuarter(last)}) AS people
     FROM org o WHERE o.commune IN (SELECT commune FROM shown) GROUP BY o.commune ORDER BY o.commune LIMIT 100`)).rows;
   const [cnt] = (await db.execute(sql`SELECT count(*)::int AS n FROM "Structure" s WHERE ${verified}`)).rows;
-  const shownIds = sql`(WITH org AS (SELECT s.id, coalesce(nullif(trim(s.ville), ''), 'Commune non renseignée') AS commune FROM "Structure" s WHERE ${verified})
-      SELECT id FROM org WHERE commune IN (SELECT commune FROM org GROUP BY commune HAVING count(*) >= ${K_ORGS}))`;
-  const trend = (await db.execute(sql`SELECT to_char(d, 'YYYY-MM-DD') AS date, (SELECT count(*)::int FROM "ProAppointment" a WHERE a."structureId" IN ${shownIds} AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND a."startAt" >= d AND a."startAt" < d + interval '1 day') AS n
-    FROM generate_series(date_trunc('day', NOW()) - interval '6 days', date_trunc('day', NOW()), interval '1 day') d ORDER BY d`)).rows;
+  const shownNames = communes.map((c) => c.commune);
+  const trend = [];
+  for (const q of quarters) {
+    // per commune, then suppressed, then summed: the same communes as the table above (LIMIT 100 included)
+    const rows = q === last ? communes.map((c) => ({ commune: c.commune, n: c.rdv })) : (await db.execute(sql`WITH ${cte}
+      SELECT o.commune, count(a.id)::int AS n FROM org o LEFT JOIN "ProAppointment" a ON a."structureId" = o.id AND ${notGuestDecoySql(sql`a."beneficiaryName"`)} AND a.status <> 'cancelled' AND ${inQuarter(q)}
+      WHERE o.commune IN (SELECT commune FROM shown) GROUP BY o.commune`)).rows.filter((r) => shownNames.includes(r.commune));
+    trend.push({ quarter: q.label, value: suppress(rows.reduce((n, r) => n + (suppress(r.n) ?? 0), 0)) });
+  }
   const sum = (k) => communes.reduce((n, c) => n + Number(c[k] || 0), 0);
   // PKG-5 batch 2 / I02 (complementary suppression): a total is the sum of the PUBLISHED cells only. A total over every commune minus the published communes
   // would otherwise give back a masked commune when exactly one is masked. The number of masked cells is stated instead.
@@ -81,14 +98,15 @@ export async function regionalStats(ctx, db = defaultDb) {
   const masked = (k) => communes.filter((c) => suppress(c[k]) === null).length;
   const shownOrgs = sum('orgs');
   return { ok: true, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
+    period: { label: last.label, from: last.start.toISOString().slice(0, 10), to: last.end.toISOString().slice(0, 10) },
     stats: {
       activeStructures: cnt.n, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: cnt.n - shownOrgs,
-      totalAgents: suppress(published('agents')), appointmentsThisMonth: suppress(published('rdv')), totalCitizensHelped: suppress(published('helped')),
-      maskedCells: { agents: masked('agents'), appointments: masked('rdv'), citizensHelped: masked('helped') },
+      totalAgents: suppress(published('agents')), appointmentsLastQuarter: suppress(published('rdv')), peopleWithAppointment: suppress(published('people')),
+      maskedCells: { agents: masked('agents'), appointments: masked('rdv'), peopleWithAppointment: masked('people') },
       cities: communes.map((c) => ({ id: c.commune, name: c.commune, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: suppress(c.agents), rdv: suppress(c.rdv), status: suppress(c.rdv) ? 'optimal' : 'inactive' })),
-      trend: trend.map((d) => ({ date: d.date, value: suppress(d.n) })),
+      trend,
     },
-    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées) ; valeurs inférieures à 5 masquées ; les totaux additionnent seulement les valeurs publiées ; les structures des autres communes sont seulement dénombrées.' };
+    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées ; les totaux et la tendance additionnent seulement les valeurs publiées ; les structures des autres communes sont seulement dénombrées. Un rendez-vous enregistré n’est pas une aide obtenue.' };
 }
 
 const PERIODS = { month: '1 month', quarter: '3 months', year: '1 year' };

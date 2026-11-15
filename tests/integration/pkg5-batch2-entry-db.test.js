@@ -264,7 +264,16 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     expect((await call('POST', '/api/admin/institutions', { bearer: mfa, body: { action: 'agreement_sign', id: g.body.id, documentRef: 'QA-REF-1', signedAt: '2026-10-01', signedByPartner: 'QA signataire' } })).statusCode).toBe(200);
     expect((await call('POST', '/api/admin/institutions', { bearer: tok, body: { action: 'account_activate', id: acc.body.id } })).statusCode).toBe(200);
     const login = await call('POST', '/api/institution/login', { anon: true, body: { email: `k5-inst-${TS}@example.test`, password: acc.body.initialPassword } });
-    expect(login.statusCode).toBe(200); const it_ = login.body.token;
+    expect(login.statusCode).toBe(200);
+    // visibility audit (2026-11): the initial password is temporary — the server opens `me` only, never the statistics or the export, until a personal one is chosen
+    expect(login.body.temporaryPassword).toBe(true);
+    expect((await call('GET', '/api/institution/me', { bearer: login.body.token })).statusCode).toBe(200);
+    for (const u of ['/api/institution/observatoire', '/api/institution/export?period=quarter']) {
+      const refused = await call('GET', u, { bearer: login.body.token });
+      expect(refused.statusCode, u).toBe(403); expect(refused.body.error).toBe('PASSWORD_CHANGE_REQUIRED');
+    }
+    const chosen = await call('POST', '/api/institution/password', { bearer: login.body.token, body: { currentPassword: acc.body.initialPassword, newPassword: ['Choisi-Par-K5', '-Partenaire-1'].join('') } });
+    expect(chosen.statusCode, JSON.stringify(chosen.body)).toBe(200); const it_ = chosen.body.token;
     for (const [m, u] of DOSSIER_ROUTES) expect([401, 403, 404]).toContain((await call(m, u, { bearer: it_, body: m === 'POST' ? { shareId: share.id } : undefined })).statusCode);
     expect((await call('GET', '/api/admin/organizations', { bearer: it_ })).statusCode).toBe(401);
     // observatoire fixture: a commune with exactly three verified organizations; 7 referrals sent in the last complete calendar quarter (PKG-11 audit pass 2: the
@@ -281,7 +290,13 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     const obs = await call('GET', '/api/institution/observatoire', { bearer: it_ });
     expect(obs.statusCode).toBe(200);
     expect(obs.body.byNeed.every((r) => (r.sent === null || r.sent >= 5) && (r.unmet === null || r.unmet >= 5))).toBe(true);
-    expect(obs.body.byCommune.find((r) => r.commune === COMMUNE + '-obs')).toEqual({ commune: COMMUNE + '-obs', sent: 7, unmet: null });
+    // the commune's own cells: 2 « no capacity » and no out-of-scope answer are masked; its 7 referrals are published unless the cross-table alignment masks them
+    // (when the table by need has masked cells and the table by commune none — never the case here: every shown commune is listed, the others at « < 5 »)
+    const communeRow = obs.body.byCommune.find((r) => r.commune === COMMUNE + '-obs');
+    expect(communeRow).toMatchObject({ commune: COMMUNE + '-obs', unmet: null, outOfScope: null }); expect([7, null]).toContain(communeRow.sent);
+    expect(obs.body.byCommune.every((r) => ['sent', 'unmet', 'outOfScope'].every((k) => r[k] === null || r[k] >= 5))).toBe(true);
+    const lastTrend = obs.body.trend[obs.body.trend.length - 1];
+    expect(lastTrend.sent, 'the trend is the sum of the published cells by need, never a true total').toBe(obs.body.totals.sent);
     expect(obs.body.methodology.limites).toMatch(/inférieure à 5/);
     expect(JSON.stringify(obs.body)).not.toMatch(/k5-o\d|@example\.test/);
     expect((await call('GET', '/api/institution/export?period=quarter', { bearer: it_ })).statusCode, 'licence not decided: closed').toBe(503);
@@ -290,7 +305,10 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     const e1 = await call('GET', '/api/institution/export?period=quarter', { bearer: it_ }); const e2 = await call('GET', '/api/institution/export?period=quarter', { bearer: it_ });
     expect(e1.statusCode).toBe(200); expect(e1.headers['x-content-sha256']).toBe(e2.headers['x-content-sha256']);
     const line = String(e1.body).split('\r\n').find((l) => l.includes(COMMUNE + '-obs'));
-    expect(line).toMatch(/PENDING_OWNER_DECISION/); expect(line.split(',').slice(-4)).toEqual(['3', '', '7', '']);
+    expect(line).toMatch(/PENDING_OWNER_DECISION/);
+    // organisations, rendez-vous, then the observatoire's own cells (referrals, unmet, out of scope)
+    expect(line.split(',').slice(-5)).toEqual(['3', '', communeRow.sent === null ? '' : '7', '', '']);
+    expect(String(e1.body).split('\r\n')[0]).toMatch(/besoins_non_couverts,orientations_hors_perimetre$/);
     delete process.env.OPEN_DATA_EXPORT_ENABLED;
     expect((await call('POST', '/api/admin/institutions', { bearer: mfa, body: { action: 'agreement_end', id: g.body.id } })).body.accountsSuspended).toBe(1);
     expect((await call('GET', '/api/institution/me', { bearer: it_ })).statusCode).toBe(401);

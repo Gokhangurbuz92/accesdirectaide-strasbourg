@@ -46,6 +46,11 @@ describe.skipIf(!hasDatabase)('R21 institutional password (real DB)', () => {
     const first = await login(initial); expect(first.statusCode).toBe(200); expect(first.body.temporaryPassword).toBe(true);
     const other = await login(initial);   // a second device
     expect((await inst('GET', 'me', first.body.token)).body).toMatchObject({ organisation: 'R21 Collectivité', temporaryPassword: true });
+    // visibility audit (2026-11): the gate is on the server — a temporary password reads `me` only (the interface alone used to hide the statistics)
+    for (const path of ['observatoire', 'export?period=quarter', 'unknown']) {
+      const refused = await inst('GET', path, first.body.token);
+      expect(refused.statusCode, path).toBe(403); expect(refused.body.error, path).toBe('PASSWORD_CHANGE_REQUIRED'); expect(Object.keys(refused.body).sort()).toEqual(['error', 'message']);
+    }
     expect((await inst('POST', 'password', null, { currentPassword: initial, newPassword: CHOSEN })).statusCode, 'no session').toBe(401);
     expect((await inst('GET', 'password', first.body.token)).statusCode).toBe(405);
     const wrong = await inst('POST', 'password', first.body.token, { currentPassword: 'Pas-Le-Bon-1', newPassword: CHOSEN });

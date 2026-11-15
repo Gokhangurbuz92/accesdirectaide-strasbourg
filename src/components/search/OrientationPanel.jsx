@@ -120,7 +120,7 @@ export default function OrientationPanel({ orientation, query }) {
             </Link>
             {n.sheets.some((id) => sources[id]?.slug) && (
               <ParcoursAccessGate>
-                <AddToParcoursControl className="mt-2" title={n.label} records={n.sheets.filter((id) => sources[id]?.slug).slice(0, 5).map((id) => ({ type: 'guide', id: sources[id].slug }))} />
+                <AddToParcoursControl className="mt-2" title={n.label} records={n.sheets.filter((id) => sources[id]?.slug).slice(0, 5).map((id) => ({ type: /** @type {'guide'} */ ('guide'), id: String(sources[id].slug) }))} />
               </ParcoursAccessGate>
             )}
           </li>

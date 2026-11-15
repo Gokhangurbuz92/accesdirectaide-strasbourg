@@ -110,7 +110,7 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
     expect(line).toBeTruthy();
     expect(line.split(',')[5]).toBe('5');   // rendez_vous of the last complete quarter
     const city = reg.stats.cities.find((c) => c.name === TOWN);
-    expect(city?.rdv).toBe(5);   // this month's 5 appointments; the decoy of this month is not one
+    expect(city?.rdv).toBe(5);   // the last complete quarter's 5 appointments (visibility audit 2026-11: no month-to-date figure any more); that quarter's decoy is not one
   });
 
   it('an absence over the upcoming decoy lists no appointment to move (0044; on 0042 this handler already fails before R41, see the R41-B report)', async () => {

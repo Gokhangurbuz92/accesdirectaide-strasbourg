@@ -38,10 +38,10 @@ export default function RegionalDashboard() {
     const [failed, setFailed] = useState(false);
     const [refused, setRefused] = useState(false);
 
-    // PKG-11 audit pass 2: the API gives 7 days of appointments as { date, value } (value null when masked); the chart read « rdv » / « diag » keys that never
-    // existed (always empty) and drew a « Diagnostics » series nobody measures
+    // Visibility audit (2026-11): the API gives the last four COMPLETE calendar quarters as { quarter, value } (value null when masked) — it was seven rolling
+    // days, which two polls differenced into one day's appointments
     const trendData = useMemo(
-        () => (data?.stats?.trend || []).map((d) => ({ date: d.date, rdv: d.value })),
+        () => (data?.stats?.trend || []).map((d) => ({ date: d.quarter, rdv: d.value })),
         [data]
     );
 
@@ -142,8 +142,8 @@ export default function RegionalDashboard() {
                 {/* KPIs */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <KpiCard
-                        label={t('pro:regional.kpi_citizens', 'Citoyens aidés')}
-                        value={stats.totalCitizensHelped ?? '< 5'}
+                        label={t('pro:regional.kpi_people_with_appointment', 'Personnes avec un rendez-vous (trimestre)')}
+                        value={stats.peopleWithAppointment ?? '< 5'}
                         icon={<Users size={14} className="text-indigo-500" />}
                     />
                     <KpiCard
@@ -157,8 +157,8 @@ export default function RegionalDashboard() {
                         icon={<ShieldCheck size={14} className="text-amber-500" />}
                     />
                     <KpiCard
-                        label={t('pro:regional.kpi_month', 'RDV ce mois')}
-                        value={stats.appointmentsThisMonth ?? '< 5'}
+                        label={t('pro:regional.kpi_quarter', 'RDV du dernier trimestre complet')}
+                        value={stats.appointmentsLastQuarter ?? '< 5'}
                         icon={<Calendar size={14} className="text-blue-500" />}
                     />
                 </div>
@@ -201,7 +201,7 @@ export default function RegionalDashboard() {
                         <CardHeader className="pb-1">
                             <CardTitle className="text-xs font-bold flex items-center gap-2">
                                 <Activity size={12} className="text-indigo-500" />
-                                {t('pro:regional.trend_title', 'Rendez-vous des 7 derniers jours (valeurs inférieures à 5 masquées)')}
+                                {t('pro:regional.trend_title_quarters', 'Rendez-vous des 4 derniers trimestres complets (valeurs inférieures à 5 masquées)')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
