@@ -1,7 +1,7 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.2",
-  "date_mise_a_jour": "2026-11-04",
+  "version": "0.3",
+  "date_mise_a_jour": "2026-11-15",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
     "retention": "api/_handlers/cron/gdpr-purge.js",
@@ -749,10 +749,12 @@
       "nom": "Vercel",
       "role": "Hébergement front et fonctions serveur, cron",
       "statut": "en service (bêta publique restreinte ; crons fermés)",
-      "localisation": "UE — région fra1 (Francfort) pour les fonctions",
-      "entite_contractante": "Vercel Inc. (USA)",
-      "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "localisation": "UE — région fra1 (Francfort) pour les fonctions ; pages statiques distribuées par le réseau mondial ; installations principales de Vercel aux États-Unis (DPA § 13.1)",
+      "entite_contractante": "Vercel Inc. (USA) — équipe sur l'offre Pro",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
+      "role_propre": "Vercel est aussi responsable de traitement pour les données d'usage de son service (DPA § 4.b)",
+      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro (option Observability Plus non vérifiée)"
     },
     {
       "nom": "Vercel Analytics + Speed Insights",
@@ -768,18 +770,19 @@
       "role": "Base de données PostgreSQL",
       "statut": "en service (bêta publique restreinte)",
       "localisation": "Francfort selon /mentions-legales — preuve console à archiver",
-      "entite_contractante": "Neon, LLC (groupe Databricks) selon /mentions-legales — contrat non vérifié",
-      "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "entite_contractante": "Databricks, Inc., société mère de Neon, LLC (neon.com/dpa) — offre gratuite",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, modules 2 et 3, réputées intégrées (DPA Databricks § 8.1, annexe B) ; Databricks, Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
+      "journaux": "historique de la base : 6 heures sur l'offre gratuite (plus long sur une offre payante)"
     },
     {
       "nom": "Upstash",
-      "role": "Limitation de débit (KV/Redis) ; ne contient plus l'état des leurres de réservation (R41-B)",
+      "role": "Limitation de débit (KV/Redis) ; traces d'effacement (40 jours) ; identifiants de contact Mailjet en attente de suppression (seulement après un échec, sans adresse) ; ne contient plus l'état des leurres de réservation (R41-B)",
       "statut": "en service (bêta publique restreinte)",
-      "localisation": "Francfort selon /mentions-legales — preuve console à archiver",
-      "entite_contractante": "Upstash, Inc. selon /mentions-legales — contrat non vérifié",
-      "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "localisation": "Francfort (fra1) — preuve UPSTASH_REGION_EVIDENCE_2026-11-15",
+      "entite_contractante": "Upstash, Inc. — offre gratuite",
+      "mecanisme_transfert": "Data Privacy Framework d'abord (Upstash, Inc. active sur la liste officielle, lue le 15/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s'il ne s'applique plus (DPA § 3.2 B, annexe 2)",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026"
     },
     {
       "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
@@ -809,20 +812,23 @@
       "dpa": "inconnu / non signé"
     },
     {
-      "nom": "Expéditeur des e-mails transactionnels (Microsoft Graph sendMail ou Resend — non choisi, R42-A05)",
+      "nom": "Autres expéditeurs codés (Microsoft Graph sendMail, Resend)",
       "role": "E-mails transactionnels",
-      "statut": "non choisi, non configuré : aucun envoi réel",
+      "statut": "non retenus, non configurés",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
       "dpa": "inconnu / non signé"
     },
     {
       "nom": "Mailjet (Sinch)",
-      "role": "E-mails transactionnels (adaptateur codé, non retenu)",
-      "statut": "non activé",
-      "localisation": "NON VÉRIFIÉ",
-      "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "role": "E-mails de service des comptes (vérification de l'adresse, mot de passe, avis du compte)",
+      "statut": "retenu (notice de confidentialité v5) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée",
+      "localisation": "Google Cloud, Francfort (Allemagne) et Saint-Ghislain (Belgique)",
+      "entite_contractante": "Groupe Sinch AB (Suède) ; Mailjet SAS est une société française — entité signataire exacte non vérifiée",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
+      "role_propre": "Sinch est aussi responsable de traitement indépendant pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau (DPA § 3 a iv)",
+      "journaux": "statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, supprimée à l'effacement du compte (api/_services/mail-contact-erasure.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages"
     },
     {
       "nom": "Twilio",
@@ -864,7 +870,7 @@
       "motif": "SIAO_ENABLED off ; aucune convention"
     }
   ],
-  "transferts_hors_ue": "Aucun mécanisme de transfert vérifié (statut DPF NON VÉRIFIÉ pour tous les prestataires) ; aucun contrat art. 28 démontré",
+  "transferts_hors_ue": "Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) : clauses contractuelles types (UE) 2021/914 intégrées à leurs conditions, lues sur leurs pages publiques le 15/11/2026 ; Vercel Inc., Upstash, Inc. et Databricks, Inc. actives sur la liste officielle du Data Privacy Framework à cette date (pas Mailjet). Accords art. 28 intégrés aux conditions de service, aucun signé. Autres prestataires : NON VÉRIFIÉ.",
   "droits_exercables": [
     "Droit d'accès (article 15) — export depuis le compte",
     "Droit de rectification (article 16)",

@@ -25,6 +25,26 @@
 | Métriques IA | — | 90 jours | ✅ |
 | Rendez-vous (ProAppointment) | Intérêt légitime | 2 ans puis anonymisation | ✅ |
 
+## Prestataires techniques : rôles, transferts, contact Mailjet (notice v5, 15/11/2026)
+
+> Source : vérification des pages publiques des prestataires du 15/11/2026 (`CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md`) ; détail par prestataire
+> dans `REGISTRE_RGPD.json` (`sous_traitants`, généré par `scripts/gdpr-suite.mjs`). Aucun accord n'est signé : ils sont intégrés aux conditions de service.
+
+- **Rôles.** Pour les données des personnes, Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) sont sous-traitants (art. 28). Deux d'entre eux sont
+  **aussi responsables de traitement** pour certaines données techniques : Vercel (données d'usage de son service, DPA § 4.b) et Sinch (acheminement des
+  messages, lutte contre le spam et la fraude, sécurité du réseau, DPA § 3 a iv).
+- **Transferts.** Clauses contractuelles types (UE) 2021/914 pour les quatre ; Vercel Inc., Upstash, Inc. et Databricks, Inc. sont en outre sur la liste
+  officielle du Data Privacy Framework (lue le 15/11/2026 ; à relire à chaque version de la notice). Pas Mailjet : la société inscrite est Mailgun Technologies, Inc.
+- **Durées chez les prestataires.** Vercel : journaux d'exécution 1 jour (offre Pro ; option Observability Plus non vérifiée). Mailjet : statistiques
+  90 jours (offre gratuite) ou 13 mois (offre payante) — l'offre du compte n'est pas enregistrée ; aucune durée publiée pour le contenu des messages.
+  Neon : historique de 6 heures sur l'offre gratuite (une offre payante l'allonge : la notice devrait alors changer).
+- **Contact Mailjet.** L'API d'envoi enregistre l'adresse de chaque destinataire comme « contact » pour la durée du compte Mailjet. Ce contact est supprimé
+  (`api/_services/mail-contact-erasure.js`, API Mailjet « GDPR Delete contacts ») : à l'effacement d'un compte, à la purge d'un compte jamais confirmé
+  (étape 6c) et, pour l'ancienne adresse, à la confirmation d'un changement d'adresse. Après le commit, sans jamais bloquer l'effacement ; si la suppression
+  échoue alors que l'identifiant du contact est connu, cet identifiant (jamais l'adresse) est réessayé à chaque purge ; si la recherche du contact échoue,
+  l'échec est journalisé sans l'adresse et signalé (`mailContactUnresolved`, étape `mailContactErasure`) — il n'y a alors pas de nouvel essai automatique.
+  Sans effet quand `MAILER_PROVIDER` n'est pas `mailjet`.
+
 ## Droits des utilisateurs
 
 | Droit | Endpoint | Implémenté |

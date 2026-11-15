@@ -16,6 +16,8 @@ import { buildAppUrl, generateAuthToken, hashAuthToken, isUnsetPassword, isValid
 import { sendMail } from '../_utils/mailer.js';
 import { templates } from '../lib/email-service.js';
 import { PHONE_COLLECTION_CLOSED, phoneCollectionOpen } from '../_utils/phone-collection.js';
+import { afterResponse } from '../_utils/after-response.js';
+import { mailContactEraser } from './mail-contact-erasure.js';
 
 export const EMAIL_CHANGE_TTL_MS = 30 * 60 * 1000;
 const seal = (/** @type {string} */ id, /** @type {string} */ email) => sealText(email, { purpose: 'email-change', context: `email-change:${id}` });
@@ -53,9 +55,22 @@ export async function requestEmailChange(userId, input, deps = {}) {
       : 'L’e-mail de confirmation n’a pas pu être envoyé (envoi d’e-mails non configuré) : votre adresse n’a pas changé. Réessayez plus tard ou contactez-nous.' };
 }
 
-/** @param {string} rawToken @param {{ db?: any, now?: Date }} [deps] @returns {Promise<{ ok: boolean, status: string }>} status for the account page */
+/**
+ * Legal v5: once the change is confirmed, the OLD address is no longer an account's address — its « contact » at the e-mail provider is deleted
+ * (api/_services/mail-contact-erasure.js), after the answer and fail-safe (the change stands whatever the provider answers).
+ * @param {string} rawToken @param {{ db?: any, now?: Date, mailContacts?: { erase: (email: string, o?: { reason?: string }) => Promise<unknown> } }} [deps]
+ * @returns {Promise<{ ok: boolean, status: string }>} status for the account page
+ */
 export async function confirmEmailChange(rawToken, deps = {}) {
-  const db = deps.db || defaultDb; const now = deps.now || new Date();
+  const db = deps.db || defaultDb; const now = deps.now || new Date(); const mailContacts = deps.mailContacts || mailContactEraser;
+  /** @type {string | null} */ let oldEmail = null;
+  const out = await confirmEmailChangeTx(rawToken, db, now, (e) => { oldEmail = e; });
+  if (out.ok && out.status === 'changed' && oldEmail) { const address = oldEmail; afterResponse(() => mailContacts.erase(address, { reason: 'email_change' }), 'mail-contact-erasure'); }
+  return out;
+}
+
+/** @param {string} rawToken @param {any} db @param {Date} now @param {(email: string) => void} noteOldEmail @returns {Promise<{ ok: boolean, status: string }>} */
+async function confirmEmailChangeTx(rawToken, db, now, noteOldEmail) {
   const token = String(rawToken || '').trim();
   if (!token) return { ok: false, status: 'invalid' };
   const [row] = await db.select().from(EmailChangeRequest).where(eq(EmailChangeRequest.tokenHash, hashAuthToken(token))).limit(1);
@@ -68,7 +83,9 @@ export async function confirmEmailChange(rawToken, deps = {}) {
     if (!newEmail) return { ok: false, status: 'invalid' };
     const [taken] = await tx.select({ id: CitizenUser.id }).from(CitizenUser).where(eq(CitizenUser.email, newEmail)).limit(1);
     if (taken) { await audit(tx, 'CITIZEN_EMAIL_CHANGE_REFUSED', row.userId, { reason: 'address_in_use' }); return { ok: false, status: 'taken' }; }
+    const [before] = await tx.select({ email: CitizenUser.email }).from(CitizenUser).where(eq(CitizenUser.id, row.userId)).limit(1);
     await tx.update(CitizenUser).set({ email: newEmail, emailVerifiedAt: now, sessionsValidAfter: now }).where(eq(CitizenUser.id, row.userId));
+    if (before?.email && normalizeEmail(before.email) !== normalizeEmail(newEmail)) noteOldEmail(String(before.email));
     // V2 / D2: a reset or verification link already sent to the OLD address stops working once the address has changed
     await tx.update(AuthToken).set({ usedAt: now }).where(and(eq(AuthToken.userId, row.userId), inArray(AuthToken.type, ['PASSWORD_RESET', 'EMAIL_VERIFY']), isNull(AuthToken.usedAt)));
     await audit(tx, 'CITIZEN_EMAIL_CHANGED', row.userId, { sessionsEnded: true });

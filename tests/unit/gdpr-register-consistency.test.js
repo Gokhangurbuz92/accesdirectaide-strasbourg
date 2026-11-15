@@ -71,7 +71,9 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.organisme.exploitant).toBe('NATURAL_PERSON');
     expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
     expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
-    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toBe('inconnu / non signé');
+    // legal v5: an agreement incorporated by a provider's terms is recorded as such — never as a signed one
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le 15\/11\/2026)$/);
+    expect(registre.transferts_hors_ue).toMatch(/aucun signé/);
   });
 
   it('Gemini is blocked, not a recipient; the assistant uses local Ollama', () => {
@@ -83,11 +85,17 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(assistant.modele_ia).toMatch(/Ollama/);
   });
 
-  it('Vercel: fra1 (EU) region, US contracting entity, unverified transfer mechanism', () => {
+  it('Vercel: fra1 (EU) region, US contracting entity, SCC module 2 read on 15/11/2026; Vercel and Sinch are also controllers for some technical data', () => {
     const vercel = registre.sous_traitants.find((s) => s.nom === 'Vercel');
     expect(vercel.localisation).toMatch(/fra1/);
     expect(vercel.entite_contractante).toMatch(/USA/);
-    expect(vercel.mecanisme_transfert).toBe('NON VÉRIFIÉ');
+    expect(vercel.mecanisme_transfert).toMatch(/2021\/914, module 2/);
+    expect(vercel.role_propre).toMatch(/responsable de traitement pour les données d'usage/);
+    const mailjet = registre.sous_traitants.find((s) => s.nom === 'Mailjet (Sinch)');
+    expect(mailjet.role_propre).toMatch(/responsable de traitement indépendant/);
+    expect(mailjet.mecanisme_transfert).toMatch(/pas de Data Privacy Framework pour Mailjet/);
+    expect(mailjet.journaux).toMatch(/90 jours \(offre gratuite\) ou 13 mois \(offre payante\)/);
+    expect(registre.sous_traitants.filter((s) => s.role_propre).map((s) => s.nom)).toEqual(['Vercel', 'Mailjet (Sinch)']);
   });
 
   it('diagnostic, OpenFisca and erasure are described as implemented', () => {
@@ -101,8 +109,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-11-04');   // R42-LEGAL: operator, account-required appointments, guest booking retired, beta statuses
-    expect(REGISTRE_DATE_REVISION).toBe('2026-11-04');
+    expect(registre.date_mise_a_jour).toBe('2026-11-15');   // legal v5: provider contracts, transfers and roles (2026-11-04 = R42-LEGAL)
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-15');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
   });
