@@ -10,6 +10,7 @@ import { invitationsWithRevokedSender } from '../../_utils/invite-token.js';
 import { handOverAll, handoverNotice } from '../../_services/pro-cases.js';
 import { handOverProposals } from '../../_services/referrals.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 // PKG-4 / D3: a structure can only grant its own roles. SUPERADMIN is a platform role and is never assignable from a structure's team screen (privilege escalation).
 const VALID_ROLES = ['PRO', 'STRUCTURE_ADMIN'];
 
@@ -240,4 +241,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProRole(handler, [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProRole(withProRateLimit('pro.team', handler), [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);

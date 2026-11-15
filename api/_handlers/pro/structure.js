@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { logProAudit, requireProStructureContext } from '../../_utils/auth.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { exportOrganization, getProfile, propose, requestOrganizationClosure, withdraw } from '../../_services/structure-proposals.js';
 
@@ -17,6 +18,9 @@ async function handler(req, res) {
   const send = (out) => (out.ok === false ? res.status(out.status || 400).json({ error: out.code, message: out.message }) : res.status(out.status || 200).json((({ ok, status, ...b }) => b)(out)));
   if (req.method === 'GET') {
     if (String(req.query?.export || '') === '1') {
+      // A23: exports have a tighter per-member budget than ordinary reads
+      const limit = await checkRateLimit('PRO_EXPORT', `pro:${ctx.userId}`);
+      if (!limit.allowed) return res.status(getRateLimitStatus(limit)).json({ ...(limit.error || { error: 'Too Many Requests' }), code: 'PRO_RATE_LIMITED', scope: 'PRO_EXPORT' });
       const out = await exportOrganization(ctx);
       if (out.ok) {
         res.setHeader('Content-Disposition', 'attachment; filename="export-structure.json"');

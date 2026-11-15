@@ -8,6 +8,7 @@ import { env } from '../../_utils/env.js';
 import { decryptToken, encryptToken, envelopeIv } from '../../_utils/outlook-token-crypto.js';
 import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js';
 import { outlookStatus } from '../../_services/calendar-outlook.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 // R46: the same endpoints as the shared free/busy adapter (api/_services/rdv-calendar-busy.js) — OUTLOOK_AUTHORITY_URL / OUTLOOK_GRAPH_BASE_URL point at a
 // sandbox or a local mock Graph; this route used to hard-code Microsoft's hosts, so it could not be tested against a mock and ignored the sandbox setting
@@ -254,4 +255,5 @@ function parseAvailabilityView(view) {
     }));
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.outlook.availability', handler));

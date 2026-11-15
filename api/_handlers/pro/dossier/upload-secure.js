@@ -13,6 +13,7 @@ import { generateAttachmentToken } from '../../../lib/crypto.js';
 import { sealBuffer, sealText } from '../../../lib/data-keys.js';
 import { clientIp } from '../../../_utils/client-ip.js';
 import { sniffType } from '../../../_services/mon-espace.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 const MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
 const DOWNLOAD_TOKEN_TTL_SECONDS = 60 * 60;
@@ -185,4 +186,5 @@ async function handler(req, res) {
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier.upload', handler, { action: 'PRO_UPLOAD' }));

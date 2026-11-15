@@ -7,6 +7,7 @@ import { requireProAuth, requireProStructureContext } from '../../_utils/auth.js
 import { grantHasPurpose, resolveDossierForStructure } from '../../_utils/share-access.js';
 import { withCapability } from '../../_utils/capabilities.js';
 import { buildSiaoHandover, siaoAdapterStatus, SIAO_PURPOSE } from '../../lib/siao-handover.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 /**
  * SI-SIAO interoperability (Pro-only) — R46 / R22: an honest DISCONNECTED adapter (api/lib/siao-handover.js).
@@ -74,4 +75,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // R45 / ENG-LR-6: outside the AIPD — refused before authentication and any database access while the capability is closed (api/_utils/capabilities.js)
-export default withCapability(['pro.siao_interop', 'citizen.shared_dossier'], requireProAuth(handler));
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default withCapability(['pro.siao_interop', 'citizen.shared_dossier'], requireProAuth(withProRateLimit('pro.siao', handler, { action: 'PRO_EXPORT', methods: ['POST'] })));

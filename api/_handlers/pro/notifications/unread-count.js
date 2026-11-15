@@ -4,6 +4,7 @@ import { db } from '../../../../src/db/index.js';
 import { ProNotification } from '../../../../src/db/schema.js';
 import { eq, and, isNull, count } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../../_utils/auth.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 /**
  * Pro Notifications — Verified Unread Notification Count (G6)
@@ -62,4 +63,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.notifications.count', handler));

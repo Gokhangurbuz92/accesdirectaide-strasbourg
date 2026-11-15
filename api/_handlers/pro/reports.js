@@ -6,6 +6,7 @@ import { ProAppointment, ProRdvService, RdvConversation, SharedDossierGrant, Pro
 import { eq, and, gte, not, inArray, count, sql } from 'drizzle-orm';
 import { AUTH_ROLE, requireProRole, requireProStructureContext } from '../../_utils/auth.js';
 import { reportCsv, closedCounterCapabilities } from '../../_services/org-stats.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 
 /**
@@ -16,6 +17,8 @@ import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a d
  * Aggregates anonymized metrics from ProAppointment, SharedDiagnostic,
  * and AuditLog for the structure. No private data is exposed.
  */
+const REPORT_PERIODS = ['month', 'quarter', 'year'];
+
 async function handler(/** @type {import('../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Méthode non autorisée' });
@@ -27,7 +30,10 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     const { structureId } = proCtx;
 
     const url = new URL(req.url || '/', `https://${req.headers?.host || 'localhost'}`);
-    const period = url.searchParams.get('period') || 'month';
+    // A24: only a known period goes further — the raw query value used to be written into Content-Disposition (a quote broke the header, CR/LF made Node
+    // throw: 500) and echoed in the JSON answer. An unknown value means « month », as the service already did.
+    const asked = url.searchParams.get('period') || 'month';
+    const period = REPORT_PERIODS.includes(asked) ? asked : 'month';
 
     // PKG-4 / E07: the same organization's indicators as CSV (measured values only, small outcome cells suppressed, no personal data)
     if ((url.searchParams.get('format') || req.query?.format) === 'csv') {
@@ -227,4 +233,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProRole(handler, [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProRole(withProRateLimit('pro.reports', handler, { action: 'PRO_EXPORT', when: (req) => String(req.query?.format || new URL(req.url || '/', 'http://localhost').searchParams.get('format') || '') === 'csv' }), [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);

@@ -7,6 +7,7 @@ import { sql, eq, desc, gte, and } from 'drizzle-orm';
 import { notGuestDecoy } from '../../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { env } from '../../_utils/env.js';
 import { requireProRole } from '../../_utils/auth.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 /**
  * Health Check API (Pro-only)
  *
@@ -119,4 +120,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // R12: platform-wide figures (appointments of every organization, moderation backlog, catalogue counts): SUPERADMIN only, like system-maintenance
-export default requireProRole(handler, ['superadmin']);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProRole(withProRateLimit('pro.health', handler), ['superadmin']);

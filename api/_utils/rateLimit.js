@@ -103,6 +103,10 @@ const CONFIG = {
     PDF_EXPORT: { limit: 30, window: 60 },        // public record PDF, per IP (CPU)
     FALC_SUMMARIZE: { limit: 10, window: 60 },    // model call, per IP
     PRO_INVITE: { limit: 30, window: 3600 },      // invitation e-mails, per member
+    // A23: tighter per-member budgets of the professional routes (api/_utils/pro-rate-limit.js), on top of the tenant read / write quota
+    PRO_EXPORT: { limit: 20, window: 600 },       // dossier / organisation / report exports, SIAO sheets: 20 per 10 min
+    PRO_AI: { limit: 10, window: 60 },            // model calls (assist, dossier synthesis, discovery agents): 10 per min
+    PRO_UPLOAD: { limit: 20, window: 300 },       // dossier uploads (bodies up to 10 MB): 20 per 5 min
 };
 
 function hashKey(/** @type {string} */ key) {

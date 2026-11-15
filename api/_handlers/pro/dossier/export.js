@@ -4,6 +4,7 @@ import { requireProAuth, requireProStructureContext } from '../../../_utils/auth
 import { logProAudit } from '../../../_utils/auth.js';
 import { resolveDossierForStructure, projectResultsForStructure } from '../../../_utils/share-access.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 /**
  * Dossier Export API (Pro-only, RGPD)
  *
@@ -119,4 +120,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota and a tighter per-member budget, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier.export', handler, { action: 'PRO_EXPORT' }));

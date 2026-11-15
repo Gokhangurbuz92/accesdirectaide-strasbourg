@@ -11,6 +11,7 @@ import { capabilityOpen, requireCapability } from '../../_utils/capabilities.js'
 import { openText } from '../../lib/data-keys.js';
 import { generateAttachmentToken } from '../../lib/crypto.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 
 const DOCUMENT_TOKEN_TTL_SECONDS = 60 * 60;
 /** A04: the statuses this page may set — the open case statuses (closing needs an outcome: the case page) */
@@ -184,4 +185,5 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier', handler));

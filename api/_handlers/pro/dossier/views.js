@@ -5,6 +5,7 @@ import { AuditLog } from '../../../../src/db/schema.js';
 import { desc, inArray, and, sql } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../../_utils/auth.js';
 import { resolveDossierForStructure } from '../../../_utils/share-access.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 /**
  * Dossier View Log API (Pro-only, RGPD transparency)
  *
@@ -74,4 +75,5 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.dossier.views', handler));

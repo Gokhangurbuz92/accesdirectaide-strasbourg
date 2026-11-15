@@ -2,6 +2,7 @@
 import { requireProAuth, revokeProSessions, logProAudit } from '../../../_utils/auth.js';
 import logger from '../../../_utils/logger.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 /**
  * PKG-11 audit — POST /api/pro/auth/logout: ends the professional's sessions ON THE SERVER (every device: sessions are revoked at account level), audited.
@@ -20,4 +21,5 @@ async function handler(req, res) {
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.auth.logout', handler));

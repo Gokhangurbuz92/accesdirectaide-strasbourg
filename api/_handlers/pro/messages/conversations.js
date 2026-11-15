@@ -2,6 +2,7 @@
 import logger from '../../../_utils/logger.js';
 import { db } from '../../../../src/db/index.js';
 import { requireProStructureContext, requireProAuth } from '../../../_utils/auth.js';
+import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
 
 /**
  * GET /api/pro/messages/conversations
@@ -36,4 +37,5 @@ async function handler(req, res) {
     }
 }
 
-export default requireProAuth(handler);
+// A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
+export default requireProAuth(withProRateLimit('pro.messages.conversations', handler));
