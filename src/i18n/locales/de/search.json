@@ -122,5 +122,6 @@
   "empty.all_categories": "In allen Kategorien suchen",
   "empty.by_need": "Nach Bedarf finden",
   "empty.orientation": "Schritt für Schritt orientieren lassen",
-  "empty.directory": "Eine Anlaufstelle im Verzeichnis suchen"
+  "empty.directory": "Eine Anlaufstelle im Verzeichnis suchen",
+  "orientation.french_notice": "Die ausführlichen Hinweise unten sind auf Französisch: Es ist der offizielle Text, er wird nicht automatisch übersetzt."
 }

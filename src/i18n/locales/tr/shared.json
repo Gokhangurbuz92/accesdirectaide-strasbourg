@@ -263,5 +263,11 @@
  "filters.reset": "Tümünü temizle",
  "filters.apply": "Sonuçları göster",
  "filters.active": "Etkin filtreler:",
- "filters.remove": "{{label}} filtresini kaldır"
+ "filters.remove": "{{label}} filtresini kaldır",
+ "humanHelp.title": "Bir kişiyle konuşun",
+ "humanHelp.text": "Yerinde yardım isteyebilirsiniz: bir France services ofisinde, CCAS’ta veya belediyenizde (mairie).",
+ "humanHelp.franceServices": "Bir France services ofisi bulun (resmî site)",
+ "humanHelp.ccas": "Bir CCAS bulun (resmî kamu hizmetleri rehberi)",
+ "humanHelp.mairie": "Bir belediye bulun (resmî kamu hizmetleri rehberi)",
+ "humanHelp.directory": "Rehberimizdeki France services ofislerini görün"
 }

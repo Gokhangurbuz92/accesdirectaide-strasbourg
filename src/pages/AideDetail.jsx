@@ -212,7 +212,7 @@ export default function AideDetail() {
   }
 
   if (status === 'not_found' || !aide) {
-    return <NotFound />;
+    return <NotFound kind="record" />;
   }
 
   // ------------------------------------------------------------------

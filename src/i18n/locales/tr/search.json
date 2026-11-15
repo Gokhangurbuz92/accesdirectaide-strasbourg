@@ -122,5 +122,6 @@
   "empty.all_categories": "Tüm kategorilerde ara",
   "empty.by_need": "İhtiyaca göre bul",
   "empty.orientation": "Adım adım yönlendirilin",
-  "empty.directory": "Rehberde başvurulacak bir yer arayın"
+  "empty.directory": "Rehberde başvurulacak bir yer arayın",
+  "orientation.french_notice": "Aşağıdaki ayrıntılı öneriler Fransızcadır: bu resmî metindir ve otomatik olarak çevrilmez."
 }

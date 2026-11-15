@@ -124,5 +124,10 @@
  "hide_screen.hidden_text": "Click anywhere on the screen to resume what you were doing.",
  "hide_screen.label": "Hide the screen immediately (or press Esc three times)",
  "hide_screen.title": "Hide the screen immediately (Esc three times)",
- "hide_screen.button": "Hide the screen"
+ "hide_screen.button": "Hide the screen",
+ "notFound.record.title": "Record not available",
+ "notFound.record.description": "This record is not available at the moment.",
+ "notFound.record.text": "This record is not available at the moment. It does not exist, or it is being checked.",
+ "notFound.search": "Search the site",
+ "notFound.themes": "See the list by need"
 }

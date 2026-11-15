@@ -122,7 +122,7 @@ export default function StructureDetail() {
   }
 
   if (!structure) {
-    return <NotFound />;
+    return <NotFound kind="record" />;
   }
 
   const name = tr.value('nom');

@@ -130,7 +130,7 @@ export default function DemarcheDetail() {
     const apiError = error;
     const status = apiError?.status;
     if (status === 410) return <Gone />;
-    if (status === 404) return <NotFound />;
+    if (status === 404) return <NotFound kind="record" />;
 
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 sm:px-6 py-12">
@@ -158,7 +158,7 @@ export default function DemarcheDetail() {
   }
 
   if (!demarche) {
-    return <NotFound />;
+    return <NotFound kind="record" />;
   }
 
   const categorySlug = (() => {

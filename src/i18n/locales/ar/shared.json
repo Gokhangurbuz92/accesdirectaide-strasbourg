@@ -291,5 +291,11 @@
  "filters.reset": "مسح الكل",
  "filters.apply": "عرض النتائج",
  "filters.active": "عوامل التصفية النشطة:",
- "filters.remove": "إزالة عامل التصفية {{label}}"
+ "filters.remove": "إزالة عامل التصفية {{label}}",
+ "humanHelp.title": "التحدث إلى شخص",
+ "humanHelp.text": "يمكنك طلب المساعدة في عين المكان: في مكتب France services، أو في مركز CCAS، أو في بلدية (mairie) مدينتك.",
+ "humanHelp.franceServices": "ابحث عن مكتب France services (الموقع الرسمي)",
+ "humanHelp.ccas": "ابحث عن مركز CCAS (الدليل الرسمي للإدارة)",
+ "humanHelp.mairie": "ابحث عن بلدية (الدليل الرسمي للإدارة)",
+ "humanHelp.directory": "عرض مكاتب France services في دليلنا"
 }

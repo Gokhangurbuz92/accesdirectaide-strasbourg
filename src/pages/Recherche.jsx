@@ -6,6 +6,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/ui/EmptyState';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import AidesSearchForm from '@/components/search/AidesSearchForm';
 import SearchResultsList from '@/components/search/SearchResultsList';
 import SafetyNotice from '@/components/search/SafetyNotice';
@@ -452,6 +453,8 @@ export default function Recherche() {
               data-testid="search-empty-state"
             />
           )}
+          {/* VIS: an empty search always shows a person to ask, whether or not a need was recognised (OrientationPanel only appears for a recognised need) */}
+          {status === 'empty' && <HumanHelpBlock />}
 
           {status === 'success' && (
             <>

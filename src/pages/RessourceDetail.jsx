@@ -60,7 +60,7 @@ export default function RessourceDetail() {
   }
 
   if (!ressource) {
-    return <NotFound />;
+    return <NotFound kind="record" />;
   }
 
   const breadcrumbs = [

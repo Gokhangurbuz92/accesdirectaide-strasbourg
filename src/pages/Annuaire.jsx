@@ -1,5 +1,6 @@
 // @ts-nocheck
 import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -344,6 +345,7 @@ export default function Annuaire() {
           {!isLoading && !structures.length && (
             <NoResultsHelp kind="structures" q={q} />
           )}
+          {!isLoading && !structures.length ? <HumanHelpBlock directoryLink={type !== 'france_services'} /> : null}
           {!isLoading && !structures.length ? <OfficialResourcesNotice /> : null}
         </div>
       </CatalogBody>

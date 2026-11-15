@@ -124,5 +124,10 @@
  "hide_screen.hidden_text": "Kaldığınız yerden devam etmek için ekranda herhangi bir yere tıklayın.",
  "hide_screen.label": "Ekranı hemen gizle (veya Esc tuşuna üç kez basın)",
  "hide_screen.title": "Ekranı hemen gizle (üç kez Esc)",
- "hide_screen.button": "Ekranı gizle"
+ "hide_screen.button": "Ekranı gizle",
+ "notFound.record.title": "Kayıt kullanılamıyor",
+ "notFound.record.description": "Bu kayıt şu anda kullanılamıyor.",
+ "notFound.record.text": "Bu kayıt şu anda kullanılamıyor. Kayıt mevcut değil veya doğrulanıyor.",
+ "notFound.search": "Sitede arayın",
+ "notFound.themes": "İhtiyaca göre listeyi görün"
 }

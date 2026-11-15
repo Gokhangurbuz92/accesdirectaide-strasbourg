@@ -124,5 +124,10 @@
  "hide_screen.hidden_text": "Натисніть будь-де на екрані, щоб продовжити.",
  "hide_screen.label": "Негайно приховати екран (або натисніть Esc тричі)",
  "hide_screen.title": "Негайно приховати екран (Esc тричі)",
- "hide_screen.button": "Приховати екран"
+ "hide_screen.button": "Приховати екран",
+ "notFound.record.title": "Запис недоступний",
+ "notFound.record.description": "Цей запис зараз недоступний.",
+ "notFound.record.text": "Цей запис зараз недоступний. Його не існує, або він перевіряється.",
+ "notFound.search": "Шукати на сайті",
+ "notFound.themes": "Переглянути список за потребами"
 }

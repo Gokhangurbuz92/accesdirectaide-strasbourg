@@ -1,5 +1,6 @@
 // @ts-nocheck
 import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -438,6 +439,7 @@ export default function Aides() {
                     description={t('aides:empty.none_text', "Notre catalogue d'aides est en cours de mise à jour. N'hésitez pas à revenir plus tard.")}
                     icon={<Search className="h-6 w-6" />}
                   />
+                  <HumanHelpBlock />
                   <OfficialResourcesNotice />
                 </div>
               )}
@@ -452,6 +454,7 @@ export default function Aides() {
                     onReset={resetAll}
                   />
                   <NoResultsHelp kind="aides" q={q} />
+                  <HumanHelpBlock />
                   <OfficialResourcesNotice />
                 </div>
               )}

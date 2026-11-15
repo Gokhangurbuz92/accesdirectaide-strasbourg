@@ -263,5 +263,11 @@
  "filters.reset": "Clear all",
  "filters.apply": "Show results",
  "filters.active": "Active filters:",
- "filters.remove": "Remove the filter {{label}}"
+ "filters.remove": "Remove the filter {{label}}",
+ "humanHelp.title": "Talk to a person",
+ "humanHelp.text": "You can ask for help in person: at a France services office, at the CCAS or at the town hall (mairie) of your town.",
+ "humanHelp.franceServices": "Find a France services office (official site)",
+ "humanHelp.ccas": "Find a CCAS (official directory of public services)",
+ "humanHelp.mairie": "Find a town hall (official directory of public services)",
+ "humanHelp.directory": "See the France services offices in our directory"
 }

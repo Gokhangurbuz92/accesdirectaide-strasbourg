@@ -66,7 +66,7 @@ export default function DispositifDetail() {
   }
 
   if (!dispositif) {
-    return <NotFound />;
+    return <NotFound kind="record" />;
   }
 
   const titre = tr.value('titre');

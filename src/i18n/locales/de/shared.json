@@ -263,5 +263,11 @@
  "filters.reset": "Alle zurücksetzen",
  "filters.apply": "Ergebnisse anzeigen",
  "filters.active": "Aktive Filter:",
- "filters.remove": "Filter {{label}} entfernen"
+ "filters.remove": "Filter {{label}} entfernen",
+ "humanHelp.title": "Mit einer Person sprechen",
+ "humanHelp.text": "Sie können vor Ort um Hilfe bitten: in einem France-services-Büro, beim CCAS oder im Rathaus (mairie) Ihrer Gemeinde.",
+ "humanHelp.franceServices": "Ein France-services-Büro finden (offizielle Website)",
+ "humanHelp.ccas": "Ein CCAS finden (offizielles Behördenverzeichnis)",
+ "humanHelp.mairie": "Ein Rathaus finden (offizielles Behördenverzeichnis)",
+ "humanHelp.directory": "France-services-Büros in unserem Verzeichnis ansehen"
 }

@@ -1,4 +1,5 @@
 import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -285,6 +286,7 @@ export default function Demarches() {
               data-testid="demarches-empty-component"
             />
             {hasFilters && <NoResultsHelp kind="demarches" q={q} />}
+            <HumanHelpBlock />
             {/* launch-readiness item 58: this pointed to the orientation assistant, whose calculation needs the OpenFisca engine that production does not have
                 (it answers 503 there); the directory of support structures works */}
             {!hasFilters && (

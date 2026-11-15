@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Phone, ExternalLink, AlertTriangle, ArrowRight } from 'lucide-react';
-import { useT } from '@/i18n';
+import { useLanguage, useT } from '@/i18n';
 import { AddToParcoursControl, ParcoursAccessGate } from '@/components/AddToParcoursButton';
 import reference from '../../../data/reference/social-domains.v1.json';
 
@@ -47,6 +47,7 @@ function Sheet({ id, sources, newTab }) {
  */
 export default function OrientationPanel({ orientation, query }) {
   const { t } = useT('search');
+  const { isSource } = useLanguage();
   if (!orientation || (!orientation.needs?.length && !orientation.questions?.length)) return null;
   const { needs = [], cautions = [], questions = [], sources = {} } = orientation;
   const newTab = t('search:orientation.new_tab', '(service-public.gouv.fr, nouvel onglet)');
@@ -58,6 +59,12 @@ export default function OrientationPanel({ orientation, query }) {
           : t('search:orientation.title_one', 'Votre situation')}
       </h2>
       <p className="mt-1 text-sm text-slate-700">{t('search:orientation.intro', 'Ces pistes viennent des fiches officielles de Service-Public. Elles ne disent pas qu’une aide vous est due : seul l’organisme concerné décide.')}</p>
+      {/* VIS: the actions and rules below are French official wording, never machine-translated; another interface language says so before the person reads on */}
+      {!isSource && (
+        <p className="mt-2 rounded-md border border-slate-200 bg-white p-2 text-sm text-slate-800" data-testid="orientation-french-notice">
+          {t('search:orientation.french_notice', 'Les conseils détaillés ci-dessous sont en français : c’est le texte officiel, il n’est pas traduit automatiquement.')}
+        </p>
+      )}
 
       {questions.map((q) => (
         <div key={q.id} className="mt-4 rounded-lg border border-slate-200 bg-white p-3" data-testid={`orientation-question-${q.id}`}>

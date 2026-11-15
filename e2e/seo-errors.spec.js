@@ -29,12 +29,14 @@ test.describe('P7-F SEO errors', () => {
     });
 
     await page.goto('/aides/slug-inexistant-123');
-    await expect(page.locator('h1')).toContainText(/introuvable/i);
+    // VIS: a record page says « Fiche non disponible » (unknown, or being checked: the API gives one 404 for both) and shows a person to ask
+    await expect(page.locator('h1')).toContainText(/fiche non disponible/i);
+    await expect(page.getByTestId('human-help-block')).toBeVisible();
     await expect(page.locator('head meta[name="robots"]').last()).toHaveAttribute(
       'content',
       /noindex,\s*nofollow/i,
     );
-    await expect(page).toHaveTitle(/(?:404|introuvable).*Acc[eè]s\s*Direct\s*Aide/i);
+    await expect(page).toHaveTitle(/fiche non disponible.*Acc[eè]s\s*Direct\s*Aide/i);
   });
 
   test('/aides/:slug gone renders gone with noindex', async ({ page }) => {
@@ -47,11 +49,11 @@ test.describe('P7-F SEO errors', () => {
     });
 
     await page.goto('/aides/slug-retire-410');
-    await expect(page.locator('h1')).toContainText(/contenu retire/i);
+    await expect(page.locator('h1')).toContainText(/contenu retiré/i);
     await expect(page.locator('head meta[name="robots"]').last()).toHaveAttribute(
       'content',
       /noindex,\s*nofollow/i,
     );
-    await expect(page).toHaveTitle(/contenu retire.*Accès Direct Aide/i);
+    await expect(page).toHaveTitle(/contenu retiré.*Accès Direct Aide/i);
   });
 });

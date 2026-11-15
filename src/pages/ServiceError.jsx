@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import brand from '@/lib/brand-config';
 import { useT } from '@/i18n';
 import {
@@ -93,6 +94,8 @@ export default function ServiceError({ code = 404 }) {
                         {t('layout:error.help', "Centre d'aide")}
                     </Link>
                 </div>
+                {/* VIS: an unknown address also shows a person to ask */}
+                {is404 && <HumanHelpBlock headingLevel={3} className="w-full" />}
             </section>
         </div>
     );

@@ -6,6 +6,7 @@ import { Trans } from 'react-i18next';
 import SEO from '@/components/SEO';
 import { Printer, ArrowRight } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
+import HumanHelpBlock from '@/components/HumanHelpBlock';
 import LazyImage from '@/components/ui/LazyImage';
 import LoadError from '@/components/LoadError';
 import OfficialText from '@/components/guides/OfficialText';
@@ -55,6 +56,7 @@ export default function GuideDetail() {
                     </Link>
                 }
             />
+            <HumanHelpBlock />
         </div>
     );
 

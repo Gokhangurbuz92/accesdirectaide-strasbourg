@@ -277,5 +277,11 @@
  "filters.reset": "Очистити все",
  "filters.apply": "Показати результати",
  "filters.active": "Активні фільтри:",
- "filters.remove": "Прибрати фільтр {{label}}"
+ "filters.remove": "Прибрати фільтр {{label}}",
+ "humanHelp.title": "Поговорити з людиною",
+ "humanHelp.text": "Ви можете попросити про допомогу на місці: в офісі France services, у CCAS або в мерії (mairie) вашої громади.",
+ "humanHelp.franceServices": "Знайти офіс France services (офіційний сайт)",
+ "humanHelp.ccas": "Знайти CCAS (офіційний довідник державних установ)",
+ "humanHelp.mairie": "Знайти мерію (офіційний довідник державних установ)",
+ "humanHelp.directory": "Переглянути офіси France services у нашому довіднику"
 }
