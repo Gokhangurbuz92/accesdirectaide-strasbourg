@@ -29,3 +29,9 @@ If Vercel's primary routing or compute fails:
 
 ## 4. Periodic Verification
 - **Execution required**: ENVIRONMENT ACTION REQUIRED to execute a real PITR simulation and measure the actual timing.
+
+## 5. Independent cloud backups (V2 C7)
+Besides the provider's PITR, an independent encrypted and signed copy of the Production database is stored daily in object storage and restored into a
+disposable database by a separate verifier job (`ops/cloud-backup/README.md`). A Production backup was restored and verified this way on 12/11/2026
+(evidence kept outside the repository); this covers the independent copy, **not** the provider PITR drill of § 4, which is still to be executed.
+Restore procedure: `docs/runbooks.md` § 9. Release rollback: `docs/runbooks.md` § 10.

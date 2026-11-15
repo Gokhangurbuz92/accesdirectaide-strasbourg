@@ -143,7 +143,7 @@ export default async function handler(req, res) {
     } catch (error) {
         // @ts-ignore
         if (error.message?.includes('already running')) {
-            logger.warn({ runId }, 'Ingest-Aids already running, skipping');
+            logger.warn('Ingest-Aids already running, skipping', { runId });
             return res.status(409).json({ error: 'Pipeline already running', runId });
         }
         logger.error('Ingest Aids Handler Error', { runId, error });

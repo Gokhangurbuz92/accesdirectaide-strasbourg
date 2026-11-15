@@ -10,6 +10,7 @@ import {
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
 import { getCronAuth } from '../../_utils/cronAuth.js';
+import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
 import * as Sentry from '@sentry/node';
 import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
@@ -603,9 +604,25 @@ export async function runGdprPurge(opts = {}) {
         if (!lock?.ok) return { status: 409, body: { skipped: true, reason: 'ALREADY_RUNNING', message: 'Another purge is running. Nothing deleted.' } };
         log.info(`🧹 Starting GDPR Purge (policy ${policy.version})...`);
         const out = await body(true);
-        log.info('✅ GDPR Purge complete:', { status: out.status, failed_steps: out.failed_steps, skipped_steps: out.skipped_steps });
+        log.info({ status: out.status, failed_steps: out.failed_steps, skipped_steps: out.skipped_steps }, '[gdpr-purge] purge complete');
         return { status: failedSteps.length === 0 ? 200 : 500, body: out };
     });
+}
+
+/**
+ * RA-03 (pure): the CronRun outcome of a purge answer. 409 = another purge holds the lock (skipped); a dry run that could count every step is a success, one
+ * whose counts failed is partial; an executing run follows its own status. @param {number} status @param {Record<string, any>} body @param {number} startedAtMs
+ */
+export function purgeRunRecord(status, body, startedAtMs) {
+    const ids = (/** @type {any} */ v) => (Array.isArray(v) ? v.map((x) => String(x?.id ?? x)).slice(0, 60) : []);
+    if (status === 409) return { status: 'skipped', skipReason: String(body?.reason || 'ALREADY_RUNNING'), startedAtMs };
+    const dryRun = body?.skipped === true;
+    const metrics = { mode: dryRun ? 'dry-run' : 'execute', reason: dryRun ? String(body?.reason || '') : undefined, outcome: body?.status,
+        failedSteps: ids(body?.failed_steps), skippedSteps: ids(body?.skipped_steps), countErrors: ids(body?.count_errors),
+        counts: Object.fromEntries((Array.isArray(body?.steps) ? body.steps : []).filter((l) => typeof l?.count === 'number').map((l) => [String(l.id), l.count])) };
+    const failed = metrics.failedSteps.length > 0 || status >= 500;
+    return { status: failed ? (dryRun || body?.status === 'partial_failure' ? 'partial' : 'failed') : metrics.countErrors.length ? 'partial' : 'success', startedAtMs, metrics,
+        ...(failed ? { error: `failed steps: ${metrics.failedSteps.join(', ') || 'unknown'}` } : {}) };
 }
 
 /**
@@ -631,11 +648,17 @@ export function createGdprPurgeHandler(deps = {}) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
         const dryRunRequested = ['1', 'true', 'yes'].includes(String(req.query?.dryRun ?? req.query?.dry_run ?? '').toLowerCase());
+        // RA-03: a run record around the purge (runGdprPurge is unchanged; a dry run still changes no data of a person) — the mode, the gate reason, step ids
+        // and counts per step only, exactly what the dry run already logs; never a value or an identifier
+        const startedAtMs = Date.now();
+        const cronRunId = await startCronRun(defaultDb, 'gdpr-purge', { trigger: dryRunRequested ? 'cron-dry-run-requested' : 'cron' });
         try {
             const { status, body } = await runGdprPurge({ policy: deps.policy ?? RETENTION_POLICY, dryRunRequested });
+            await finishCronRun(defaultDb, cronRunId, purgeRunRecord(status, body, startedAtMs));
             return res.status(status).json(body);
         } catch (e) {
-            defaultLogger.error('GDPR Purge Failed:', e);
+            defaultLogger.error({ err: e }, '[gdpr-purge] purge failed');
+            await finishCronRun(defaultDb, cronRunId, { status: 'failed', startedAtMs, error: e?.name || 'Error' });
             Sentry.captureException(e);
             return res.status(500).json({ error: 'GDPR_PURGE_FAILED' });   // R38: the raw error stays in the logs and Sentry, not in the response
         }

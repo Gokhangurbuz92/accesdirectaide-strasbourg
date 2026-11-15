@@ -136,7 +136,10 @@ describe('G8 / G9 — source pins', () => {
     const src = fs.readFileSync('api/_handlers/cron/health-alert.js', 'utf8');
     expect(src).toMatch(/const veilleExpected = !isPublicBetaRestricted\(process\.env\) \|\| openJobs\(process\.env\)\.has\('veille'\);/);
     expect(src).toMatch(/checks\.veille = \{ ok: true, skipped: 'JOB_NOT_OPENED' \}/);
-    expect(src).toMatch(/'actualites', 'ingest-structures'\)/);
+    // RA-03: each ingestion job is judged on its own (api/_services/job-watch.js) — ingest-structures is one of them, with its own weekly allowance
+    const watch = fs.readFileSync('api/_services/job-watch.js', 'utf8');
+    expect(watch).toMatch(/'ingest-structures': Object\.freeze\(\{ group: 'ingestion', maxAgeHours: 337, good: Object\.freeze\(\['success'\]\)/);
+    expect(src).toMatch(/const w = await watchJobs\('ingestion'\);\s*checks\.ingestionFreshness = \{ ok: w\.ok, jobs: w\.jobs \};/);
   });
   it('the RSS seed never re-enables a feed an administrator disabled (it writes enabled only to switch a feed off)', () => {
     const src = fs.readFileSync('api/_handlers/cron/ingest-actualites-rss.js', 'utf8');

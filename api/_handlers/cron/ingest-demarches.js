@@ -61,7 +61,7 @@ export default async function handler(req, res) {
         return res.status(200).json(stats);
     } catch (error) {
         if (error.message?.includes('already running')) {
-            logger.warn({ runId }, 'Ingest-Demarches already running, skipping');
+            logger.warn('Ingest-Demarches already running, skipping', { runId });
             return res.status(409).json({ error: 'Pipeline already running', runId });
         }
         logger.error('Ingest Demarches Handler Error', { runId, error });

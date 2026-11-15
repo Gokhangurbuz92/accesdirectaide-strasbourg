@@ -9,6 +9,8 @@
  * Default: 'info' in production, 'debug' in development
  */
 
+import { normalizeMessageData } from '../_utils/log-args.js';
+
 const LOG_LEVELS = { error: 0, warn: 1, info: 2, debug: 3 };
 
 function getConfiguredLevel() {
@@ -73,6 +75,8 @@ export function mask(input) {
 
     if (typeof input === 'object') {
         if (input instanceof Date) return input;
+        // RA-02: an Error has no enumerable field — spread, it became {} and the reason was lost. Name, masked message and masked stack are kept.
+        if (input instanceof Error) return { name: input.name, message: mask(input.message), stack: typeof input.stack === 'string' ? mask(input.stack) : undefined };
 
         const copy = { ...input };
         for (const key in copy) {
@@ -124,23 +128,28 @@ export function maskedLog(message, data = null) {
     }
 }
 
+/**
+ * RA-02: both call orders are accepted — `(message, data)` (this logger's own) and `(object, message)` (the pino order used by api/_utils/logger.js). The
+ * line never starts with « [object Object] »; the object is masked like any data.
+ */
+const emit = (/** @type {'info'|'warn'|'debug'} */ level, /** @type {unknown} */ a, /** @type {unknown} */ b) => {
+    if (!shouldLog(level)) return;
+    const { message, data } = normalizeMessageData(a, b);
+    maskedLog(`[${level.toUpperCase()}] ${mask(message)}`, data);
+};
+
 export const logger = {
     // @ts-ignore
-    info: (msg, data) => {
-        if (shouldLog('info')) maskedLog(`[INFO] ${msg}`, data);
-    },
+    info: (msg, data) => emit('info', msg, data),
     // @ts-ignore
     error: (msg, err) => {
         if (!shouldLog('error')) return;
-        const maskedErr = err instanceof Error ? { message: mask(err.message), stack: err.stack } : mask(err);
-        console.error(`[ERROR] ${msg}`, safeStringify(maskedErr));
+        const { message, data } = normalizeMessageData(msg, err);
+        console.error(`[ERROR] ${mask(message)}`, safeStringify(data));
     },
     // @ts-ignore
-    warn: (msg, data) => {
-        if (shouldLog('warn')) maskedLog(`[WARN] ${msg}`, data);
-    },
-    debug: (/** @type {string | number | boolean | null | undefined} */ msg, /** @type {string | number | boolean | null | undefined} */ data) => {
-        if (shouldLog('debug')) maskedLog(`[DEBUG] ${msg}`, data);
-    },
+    warn: (msg, data) => emit('warn', msg, data),
+    // @ts-ignore
+    debug: (msg, data) => emit('debug', msg, data),
     mask
 };

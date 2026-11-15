@@ -19,7 +19,7 @@ import { isMainModule } from './lib/is-main.mjs';
 
 const TOP = new Set(['kind', 'ok', 'failures', 'verifiedAt', 'dump', 'backupTakenAt', 'backupAgeHours', 'encryptedBytes', 'dumpSha256', 'restoredTables', 'checks',
   'erasureReplay', 'seconds', 'wiped', 'code', 'stage', 'problems', 'attestation', 'evidenceStored']);
-const CHECKS = new Set(['sidecar', 'objectDigest', 'signatures', 'coreTablesMissing', 'migrationRows', 'expectedMigrations', 'journalEntries', 'migrationsMatch', 'migrationsPlausible', 'ledger']);
+const CHECKS = new Set(['sidecar', 'objectDigest', 'signatures', 'coreTablesMissing', 'migrationRows', 'expectedMigrations', 'journalEntries', 'migrationsMatch', 'migrationsPlausible', 'migrationsDerived', 'ledger']);
 const REPLAY = new Set(['mode', 'ledgerEntries', 'presentAgain', 'holdsMissing']);
 const CODE = /^[A-Z][A-Z0-9_]{0,63}$/;
 const isCount = (v) => Number.isInteger(v) && v >= 0;
@@ -52,12 +52,17 @@ export function checkEvidence(ev) {
   if (att && typeof att === 'object') for (const k of Object.keys(att)) if (!['verified', 'measured', 'fromSignedName', 'notProven'].includes(k)) problems.push(`UNKNOWN_FIELD:attestation.${k.slice(0, 40)}`);
   if (ev.evidenceStored !== undefined && ev.evidenceStored !== null && !/^evidence\/ada_restore_evidence_\d{8}T\d{9}Z_[0-9a-f]{8}_(ok|fail)\.json$/.test(String(ev.evidenceStored))) problems.push('EVIDENCE_KEY_FORMAT');
   if (!Array.isArray(c.coreTablesMissing) || c.coreTablesMissing.length) problems.push('CORE_TABLES');
-  if (c.migrationsMatch !== true || !isCount(c.expectedMigrations) || c.migrationRows !== c.expectedMigrations) problems.push('MIGRATIONS_NOT_MATCHED');
+  // RA-08: the history is matched either against the operator's explicit count (records before RA-08) or against the expectation the verifier derived
+  // from the journal (no unknown, duplicated or missing migration; the restored rows equal the derived count). A given count that does not match always fails.
+  const d = c.migrationsDerived;
+  const byCount = c.migrationsMatch === true && isCount(c.expectedMigrations) && c.migrationRows === c.expectedMigrations;
+  const byJournal = Boolean(d) && d.ok === true && isCount(d.expected) && c.migrationRows === d.expected && d.unknown === 0 && d.duplicates === 0 && Array.isArray(d.missing) && d.missing.length === 0;
+  if (c.migrationsMatch === false || (d && d.ok === false) || !(byCount || byJournal)) problems.push('MIGRATIONS_NOT_MATCHED');
   if (c.ledger !== true) problems.push('LEDGER_MISSING');
   const r = ev.erasureReplay;
   if (!r || r.mode !== 'dry-run' || !isCount(r.ledgerEntries) || !isCount(r.presentAgain) || !isCount(r.holdsMissing)) problems.push('ERASURE_REPLAY');
   const summary = { verifiedAt: ev.verifiedAt ?? null, dump: ev.dump ?? null, dumpSha256: ev.dumpSha256 ?? null, encryptedBytes: ev.encryptedBytes ?? null,
-    restoredTables: ev.restoredTables ?? null, migrations: c.migrationRows ?? null, expectedMigrations: c.expectedMigrations ?? null,
+    restoredTables: ev.restoredTables ?? null, migrations: c.migrationRows ?? null, expectedMigrations: c.expectedMigrations ?? c.migrationsDerived?.expected ?? null,
     erasedPeoplePresentAgain: r?.presentAgain ?? null, legalHoldsMissing: r?.holdsMissing ?? null, wiped: ev.wiped ?? null, seconds: ev.seconds ?? null,
     cryptographicallyVerified: verified, measured: Array.isArray(att?.measured) ? att.measured : [], fromSignedName: Array.isArray(att?.fromSignedName) ? att.fromSignedName : [],
     notProven: Array.isArray(att?.notProven) ? att.notProven : [], storedAt: ev.evidenceStored ?? null };

@@ -120,6 +120,7 @@ run('V2 C7 cloud backup (LAB, fake bucket)', () => {
     expect(r.status, r.all).toBe(0);
     expect(r.out.ok).toBe(true);
     expect(r.out.checks.migrationsMatch).toBe(true);
+    expect(r.out.checks.migrationsDerived, 'RA-08: the same expectation, derived from the journal and the restored rows').toMatchObject({ ok: true, expected: migrations, unknown: 0, duplicates: 0, missing: [] });
     expect(r.out.checks.coreTablesMissing).toEqual([]);
     expect(r.out.restoredTables).toBeGreaterThan(50);
     // the restored copy holds the erased person again: the dry run says so (the replay must run before any use of the copy)

@@ -3,7 +3,7 @@ import conversations from '../../api/_handlers/admin/conversations.js';
 import cronRuns from '../../api/_handlers/admin/cron-runs.js';
 import linkChecks from '../../api/_handlers/admin/link-checks.js';
 import runs from '../../api/_handlers/admin/runs.js';
-import versions from '../../api/_handlers/admin/versions.js';
+// RA-11: admin/versions.js was never routed (the routed endpoint is admin/content-versions) — deleted with its entry here
 
 vi.mock('../../api/_utils/auth.js', () => ({
   verifyAdmin: vi.fn(() => Promise.resolve(true))
@@ -65,8 +65,7 @@ describe('Admin Pagination Enforcement (FR-016)', () => {
     { name: 'conversations', handler: conversations },
     { name: 'cron-runs', handler: cronRuns },
     { name: 'link-checks', handler: linkChecks },
-    { name: 'runs', handler: runs },
-    { name: 'versions', handler: versions }
+    { name: 'runs', handler: runs }
   ];
 
   for (const { name, handler } of handlers) {

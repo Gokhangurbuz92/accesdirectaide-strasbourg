@@ -40,4 +40,25 @@ describe('Q08 release script and CI workflow', () => {
     expect(ci).toMatch(/node scripts\/unit-gate\.mjs/);
     for (const gate of ['typecheck:strict:baseline', 'lint:strict:baseline']) expect(ci).toContain(`npm run ${gate}`);
   });
+  it('RA-10: CI scans the pushed tree for secrets with a pinned, checksum-verified gitleaks and the repository configuration; actions pinned by commit', () => {
+    const ci = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
+    const job = ci.slice(ci.indexOf('\n  secret-scan:'));
+    expect(job.length).toBeGreaterThan(200);
+    expect(job).toMatch(/GITLEAKS_VERSION: \d+\.\d+\.\d+\n/);
+    expect(job).toMatch(/GITLEAKS_SHA256: [0-9a-f]{64}\n/);
+    expect(job).toMatch(/echo "\$\{GITLEAKS_SHA256\} {2}\$RUNNER_TEMP\/\$tarball" \| sha256sum --check --strict/);
+    expect(job).toMatch(/run: npm run security:secrets\n/);
+    for (const use of job.match(/uses: \S+/g)) expect(use, 'pinned by commit SHA').toMatch(/@[0-9a-f]{40}$/);
+    expect(job).toMatch(/persist-credentials: false/);
+    expect(job).not.toMatch(/continue-on-error|\|\| true/);
+    // the scan the job runs is the repository's own: redacted, with the tracked .gitleaks.toml / .gitleaksignore copied next to the files
+    const scan = fs.readFileSync('scripts/security-secrets-scan.mjs', 'utf8');
+    expect(scan).toMatch(/'detect', '--no-git', '--redact'/);
+    for (const f of ['.gitleaks.toml', '.gitleaksignore']) expect(fs.existsSync(f), f).toBe(true);
+    expect(JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts['security:secrets']).toBe('node scripts/security-secrets-scan.mjs');
+    // the documents no longer claim workflows that do not exist
+    const sec = fs.readFileSync('docs/security.md', 'utf8');
+    expect(sec).not.toMatch(/secrets-scan\.yml|semgrep\.yml|GitGuardian \|/);
+    expect(sec).toMatch(/tâche `secret-scan`/);
+  });
 });

@@ -36,7 +36,7 @@ export default function AdminSecurity() {
   return (
     <div className="space-y-6 p-4" data-testid="admin-security">
       <h1 className="text-2xl font-bold">{t('admin:k5.security.title', 'Signaux de sécurité')}</h1>
-      <p className="max-w-3xl text-sm text-slate-700">{t('admin:k5.security.intro', 'Le contrôle de santé (toutes les 5 minutes) lit le journal d’audit et envoie une alerte par le canal d’alerte quand un seuil est atteint. Seuls des nombres sont montrés ici : aucune adresse, aucun e-mail.')}</p>
+      <p className="max-w-3xl text-sm text-slate-700">{t('admin:k5.security.intro', 'Le contrôle de santé (toutes les heures) lit le journal d’audit et envoie une alerte par le canal d’alerte quand un seuil est atteint. Seuls des nombres sont montrés ici : aucune adresse, aucun e-mail.')}</p>
       {s.loading ? <p role="status">{t('admin:k5.security.loading', 'Chargement…')}</p> : null}
       {s.error ? (
         <div role="alert" data-testid="admin-security-error" className="rounded border border-rose-300 bg-rose-50 p-3 text-sm text-rose-900">

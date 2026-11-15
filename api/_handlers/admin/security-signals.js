@@ -6,7 +6,7 @@ import { db } from '../../../src/db/index.js';
 import { securitySignalCounts, evaluateSecuritySignals } from '../../_services/security-signals.js';
 
 /**
- * R46 / Q07 — GET /api/admin/security-signals: the security signals the 5-minute health check watches (refused sign-ins, refused MFA codes, exports of
+ * R46 / Q07 — GET /api/admin/security-signals: the security signals the hourly health check watches (refused sign-ins, refused MFA codes, exports of
  * personal or audit data), as counts over their windows with their thresholds, which alerts they call for now, and the security alerts already sent
  * (KV alert log). Aggregates only — no address, no e-mail. A named administrator session (adminGate); read-only.
  */

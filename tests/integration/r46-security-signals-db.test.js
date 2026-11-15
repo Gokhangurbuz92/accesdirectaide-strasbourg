@@ -1,7 +1,7 @@
 /**
  * R46 / Q07 + N10 — on REAL PostgreSQL, through the real API entry where a route exists:
  *  - refused citizen and institution sign-ins leave an audit row WITHOUT the e-mail (CITIZEN_LOGIN_FAILED, INSTITUTION_LOGIN_FAILED);
- *  - the 5-minute health check counts refused sign-ins, refused MFA codes and data exports from the audit trail and sends ONE alert per signal through the
+ *  - the hourly health check counts refused sign-ins, refused MFA codes and data exports from the audit trail and sends ONE alert per signal through the
  *    alert channel (local webhook receiver), counts only, nothing secret; the cooldown holds the second run;
  *  - GET /api/admin/security-signals and GET /api/admin/provider-status answer only a named administrator session, with aggregates / variable names only
  *    (a synthetic secret placed in the environment never appears).
@@ -87,13 +87,34 @@ describe.skipIf(!hasDatabase)('R46 security signals and provider status (real DB
     const names = received.map((x) => x.name).filter((n) => n.startsWith('security.'));
     expect(names.sort()).toEqual(['security.export_burst', 'security.failed_login_burst', 'security.mfa_failure_burst']);
     const burst = received.find((x) => x.name === 'security.failed_login_burst');
-    expect(burst.text).toMatch(/Sécurité : 4 connexions refusées en 15 minutes \(seuil 3\)/);
+    expect(burst.text).toMatch(/Sécurité : 4 connexions refusées en 70 minutes \(seuil 3\)/);
     expect(burst.details).toMatchObject({ count: 4, byAction: { CITIZEN_LOGIN_FAILED: 3, INSTITUTION_LOGIN_FAILED: 1 } });
     expect(JSON.stringify(received)).not.toContain('@example.test');
     expect(JSON.stringify(received)).not.toContain(process.env.CRON_SECRET);
     const r2 = res(); await health({ method: 'GET', headers: auth2 }, r2);
     expect(r2.body.checks.security.ok).toBe(false);
     expect(received.filter((x) => String(x.name).startsWith('security.')), 'cooldown: not sent again').toHaveLength(3);
+  });
+
+  it('RA-01: a burst 40 minutes old is seen by the hourly check; an alerted burst is not alerted again; a late run looks back to the previous check', async () => {
+    const { securitySignalCounts, evaluateSecuritySignals, nextSecurityCheckState } = await import('../../api/_services/security-signals.js');
+    const env = { ALERT_FAILED_LOGIN_BURST: '3' };
+    const base = new Date('2031-03-04T10:07:00.000Z');                      // a fake clock far from every other row of the shared database
+    const at = (min) => new Date(base.getTime() + min * 60_000);
+    const ins = async (id, when) => db.execute(sql`INSERT INTO "AuditLog" (id, action, entity, "timestamp", ip_hash) VALUES (${`ra01-${TS}-${id}`}, 'LOGIN_FAILED', 'ProUser', ${when.toISOString()}, 'bbbb000000000001')`);
+    try {
+      for (const i of [1, 2, 3]) await ins(i, at(-40));                     // 09:27 — between two hourly checks (the former 15-minute window never saw it)
+      const c1 = await securitySignalCounts({ db, now: base, env });
+      expect(c1.failedLogins).toMatchObject({ count: 3, windowMinutes: 70 });
+      expect(evaluateSecuritySignals(c1).map((a) => a.signal)).toEqual(['failedLogins']);
+      const state = nextSecurityCheckState({ now: base, delivered: ['failedLogins'] });
+      const c2 = await securitySignalCounts({ db, now: at(60), env, state });   // 11:07: the burst of 09:27 was alerted at 10:07 — not again
+      expect(c2.failedLogins.count).toBe(0);
+      for (const i of [4, 5, 6]) await ins(i, at(75));                      // 11:22
+      const late = await securitySignalCounts({ db, now: at(200), env, state: nextSecurityCheckState({ now: at(60), previous: state }) });   // the 12:07 run was skipped; 13:27 looks back to 11:07
+      expect(late.failedLogins).toMatchObject({ count: 3, windowMinutes: 140 });
+      expect((await securitySignalCounts({ db, now: at(200), env })).failedLogins.count, 'without the state the sliding window alone would miss it').toBe(0);
+    } finally { await db.execute(sql`DELETE FROM "AuditLog" WHERE id LIKE ${`ra01-${TS}-%`}`); }
   });
 
   it('GET /api/admin/security-signals: refused without a named administrator session, aggregates for one', async () => {

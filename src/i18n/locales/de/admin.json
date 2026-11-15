@@ -1732,7 +1732,7 @@
  "k5.security.alert.mfa": "Häufung abgelehnter MFA-Codes",
  "k5.security.alert.export": "Ungewöhnliche Datenexporte",
  "k5.security.title": "Sicherheitssignale",
- "k5.security.intro": "Die Zustandsprüfung (alle 5 Minuten) liest das Prüfprotokoll und sendet über den Alarmkanal eine Warnung, wenn ein Schwellenwert erreicht ist. Hier werden nur Zahlen gezeigt: keine Adresse, keine E-Mail.",
+ "k5.security.intro": "Die Zustandsprüfung (stündlich) liest das Prüfprotokoll und sendet über den Alarmkanal eine Warnung, wenn ein Schwellenwert erreicht ist. Hier werden nur Zahlen gezeigt: keine Adresse, keine E-Mail.",
  "k5.security.loading": "Wird geladen…",
  "k5.security.not_loaded": "Signale nicht geladen: {{why}}",
  "k5.security.retry": "Erneut versuchen",
