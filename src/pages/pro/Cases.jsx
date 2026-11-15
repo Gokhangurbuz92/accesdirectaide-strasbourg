@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { noteAuthor } from '@/lib/pro-case-notes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { proRdvRequest } from '@/api/pro-rdv-client';
@@ -171,7 +172,7 @@ function CaseDetail({ id }) {
         ) : null}
         {data.notes.length ? <ul className="space-y-2" data-testid="pro-case-notes">{data.notes.map((n) => (
           <li key={n.id} data-testid="pro-case-note" className={`rounded-md border p-2 text-sm ${n.visibility === 'CITIZEN' ? 'border-blue-200 bg-blue-50' : 'border-slate-200'}`}>
-            <span className="text-xs font-semibold">{n.visibility === 'CITIZEN' ? t('pro:cases.vis_citizen', 'Visible par la personne') : t('pro:cases.internal', 'Interne')} · {when(n.at)}</span><p className="whitespace-pre-wrap">{n.body}</p></li>
+            <span className="text-xs font-semibold">{n.visibility === 'CITIZEN' ? t('pro:cases.vis_citizen', 'Visible par la personne') : t('pro:cases.internal', 'Interne')} · {when(n.at)} · <span data-testid="pro-case-note-author">{t('pro:cases.note_author', 'par {{author}}', { author: noteAuthor(n.authorId, data.members, t) })}</span></span><p className="whitespace-pre-wrap">{n.body}</p></li>
         ))}</ul> : <p className="text-sm text-slate-700">{t('pro:cases.no_note', 'Aucune note.')}</p>}
       </CardContent></Card>
 
