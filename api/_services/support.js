@@ -46,5 +46,10 @@ export async function updateRequest(id, { status, resolutionNote, assignToMe }, 
     WHERE id = ${String(id || '')} RETURNING id, status`)).rows;
   if (!rows.length) return bad(404, 'not_found', 'Demande introuvable.');
   await db.insert(AuditLog).values({ action: 'SUPPORT_REQUEST_UPDATED', actor, actor_id: actor, entity: 'SupportRequest', entity_id: rows[0].id, details: { status: rows[0].status, assigned: assignToMe === true } });
+  // A-20: the queue entry of an objection (RGPD art. 21) answered or closed → its row in the rights-request register is completed
+  if (['ANSWERED', 'CLOSED'].includes(rows[0].status)) {
+    const { completeObjectionOfSupportRequest } = await import('./processing-objection.js');
+    await completeObjectionOfSupportRequest(db, rows[0].id);
+  }
   return { ok: true, request: rows[0] };
 }
