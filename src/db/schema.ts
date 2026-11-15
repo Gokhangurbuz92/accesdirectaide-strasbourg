@@ -2439,6 +2439,8 @@ export const ParcoursItem = pgTable('ParcoursItem', {
 	dueDate: timestamp('dueDate', { precision: 3 }),
 	dueSourceUrl: text('dueSourceUrl'),
 	note: text('note'),
+	// M1 (0046): the durable « who does what next » of the step — need, who acts, links, dependency, next action, honest closure (api/lib/parcours-plan-step.js). NULL = a step without it.
+	planStep: jsonb('planStep'),
 	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
 	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
 }, (ParcoursItem) => ({
