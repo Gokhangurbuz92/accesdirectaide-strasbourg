@@ -7,6 +7,10 @@
 
 const STORAGE_KEY = 'ada_diagnostic_state';
 const WIZARD_KEY = 'ada_wizard_state';
+// A-9: what the orientation wizard may keep while the tab is open — the choices of its first four steps (need, postal code, household and work situation,
+// urgency). The last step (birth date or age band, income, rent, housing) is never written to the browser's storage.
+export const WIZARD_KEPT_FIELDS = Object.freeze(['need', 'territory', 'situation', 'statut', 'urgency']);
+const WIZARD_LAST_KEPT_STEP = 4;
 const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 heures
 
 /**
@@ -71,10 +75,15 @@ export const storage = {
 
     /**
      * Sauvegarde l'état du wizard (étape + données accumulées).
-     * @param {Object} data
+     * @param {{ step?: number, data?: Record<string, unknown> }} data
      */
     saveWizard(data) {
-        save(WIZARD_KEY, data);
+        // A-9: the wizard's progress stays in this tab only (sessionStorage) and holds only the first steps' choices — never the last step's
+        // birth date, income or housing answers (WIZARD_KEPT_FIELDS)
+        try {
+            const kept = Object.fromEntries(Object.entries((data && data.data) || {}).filter(([k]) => WIZARD_KEPT_FIELDS.includes(k)));
+            sessionStorage.setItem(WIZARD_KEY, JSON.stringify({ data: { step: Math.min(Number(data && data.step) || 0, WIZARD_LAST_KEPT_STEP), data: kept }, timestamp: Date.now() }));
+        } catch { /* storage unavailable: the wizard simply does not resume */ }
     },
 
     /**
@@ -82,7 +91,17 @@ export const storage = {
      * @returns {Object|null}
      */
     loadWizard() {
-        return load(WIZARD_KEY);
+        try { localStorage.removeItem(WIZARD_KEY); } catch { /* A-9: the 24-hour copy of earlier versions is removed, never read */ }
+        try {
+            const item = sessionStorage.getItem(WIZARD_KEY);
+            if (!item) return null;
+            const { data, timestamp } = JSON.parse(item);
+            if (!data || Date.now() - timestamp > EXPIRATION_TIME) { sessionStorage.removeItem(WIZARD_KEY); return null; }
+            return data;
+        } catch {
+            try { sessionStorage.removeItem(WIZARD_KEY); } catch { /* nothing to clean */ }
+            return null;
+        }
     },
 
     /**
@@ -96,7 +115,8 @@ export const storage = {
      * Supprime l'état du wizard.
      */
     clearWizard() {
-        localStorage.removeItem(WIZARD_KEY);
+        try { sessionStorage.removeItem(WIZARD_KEY); } catch { /* nothing to clean */ }
+        try { localStorage.removeItem(WIZARD_KEY); } catch { /* nothing to clean */ }
     },
 
     /**
@@ -105,7 +125,7 @@ export const storage = {
      */
     purgeExpired() {
         load(STORAGE_KEY);
-        load(WIZARD_KEY);
+        try { localStorage.removeItem(WIZARD_KEY); } catch { /* A-9: wizard answers are no longer kept across sessions */ }
     },
 
     /**
@@ -114,5 +134,6 @@ export const storage = {
     clearAll() {
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(WIZARD_KEY);
+        try { sessionStorage.removeItem(WIZARD_KEY); } catch { /* nothing to clean */ }
     },
 };

@@ -19,6 +19,8 @@ import CategoryChip from "@/components/ui/CategoryChip";
 import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { getProvenance } from '@/lib/provenance';
 import { buildPublicRdvPath } from '@/lib/rdvRouting';
+import { frontendEnv } from '@/config/env';
+import { bookingOpened } from '@/lib/publicBeta';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';
 import i18n, { formatDate, useT } from '@/i18n';
@@ -53,6 +55,8 @@ const NUMERIC_DATE = { day: '2-digit', month: '2-digit', year: 'numeric' };
 
 export default function StructureCard({ structure, compact = false, index = 0 }) {
   const { t } = useT('structures');
+  // A-8: « RDV en ligne » and its button are shown only when booking is open in this build
+  const bookable = Boolean(structure?.is_pro_enabled) && bookingOpened(frontendEnv.flags.publicBeta);
   // names, addresses, phone numbers and opening hours are never translated: tr.attrs() marks them as French
   const tr = useContentTranslation('structure', structure);
   const { isFalcEnabled } = useFalc();
@@ -116,7 +120,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                     {t('structures:card.coverage.contribution', 'Contribution')}
                   </Badge>
                 )}
-                {structure.is_pro_enabled && (
+                {bookable && (
                   <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
                     {t('structures:card.online_booking', 'RDV en ligne')}
@@ -198,7 +202,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
 
             {/* Actions */}
             <div className="flex flex-wrap gap-2 mt-2">
-              {structure.is_pro_enabled && (
+              {bookable && (
                 <Button
                   size="sm"
                   asChild

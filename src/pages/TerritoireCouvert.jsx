@@ -74,11 +74,12 @@ export default function TerritoireCouvert() {
         </p>
       </section>
 
-      {/* PKG-11 / E05: the places that SERVE a commune (service area declared by the structure and reviewed by ADA) — a different fact from being located there */}
+      {/* PKG-11 / E05, A-3: the places recorded for a commune code. For imported records the code is the commune where the place is located; a declared
+          service area only exists after a reviewed Espace Structure proposal — so the wording promises neither a verified area nor that the place serves the person */}
       <section aria-labelledby="territoire-serves-title" className="rounded-lg border border-slate-300 bg-white p-4" data-testid="territoire-serves">
-        <h2 id="territoire-serves-title" className="mb-2 text-xl font-semibold text-slate-900">{t('home:territory.serves.title', 'Lieux qui desservent une commune')}</h2>
+        <h2 id="territoire-serves-title" className="mb-2 text-xl font-semibold text-slate-900">{t('home:territory.serves.title', 'Lieux enregistrés pour une commune')}</h2>
         <p className="mb-3 text-sm text-slate-700">
-          {t('home:territory.serves.text', 'Ne montre que les structures dont la zone d\'intervention, déclarée par la structure, a été vérifiée par ADA. Une structure peut desservir une commune sans y être située.')}
+          {t('home:territory.serves.text', 'Montre les lieux situés dans la commune et ceux dont la structure a déclaré y intervenir. Pour la plupart des fiches, la seule information connue est la commune où le lieu est situé : vérifiez auprès de la structure qu\'elle peut vous recevoir.')}
         </p>
         <form
           className="flex flex-col gap-2 sm:flex-row sm:items-end"
@@ -92,7 +93,7 @@ export default function TerritoireCouvert() {
             </select>
           </div>
           <button type="submit" className="min-h-11 rounded-md bg-teal-800 px-4 font-medium text-white hover:bg-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2">
-            {t('home:territory.serves.submit', 'Voir les lieux qui la desservent')}
+            {t('home:territory.serves.submit', 'Voir les lieux enregistrés pour cette commune')}
           </button>
         </form>
       </section>

@@ -84,6 +84,15 @@ export function parcoursOpened(beta, open = builtOpen(), sub = builtSub()) {
 }
 
 /**
+ * A-8 — can an appointment be asked online in this build: outside the beta, or when the build opens the appointments surface (the booking screens live
+ * under /rdv). A place whose record says « online booking » is offered « Voir les créneaux » only then; otherwise the page shows its contact channels.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function bookingOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/rdv', open, sub);
+}
+
+/**
  * The links a beta visitor can follow: a link to a closed screen (assistant, simulator, contact…) is not offered at all, rather than leading to the notice.
  * @template T @param {T[]} links @param {boolean} beta @param {(link: T) => string} pathOf
  */

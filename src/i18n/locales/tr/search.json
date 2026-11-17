@@ -123,5 +123,10 @@
   "empty.by_need": "İhtiyaca göre bul",
   "empty.orientation": "Adım adım yönlendirilin",
   "empty.directory": "Rehberde başvurulacak bir yer arayın",
-  "orientation.french_notice": "Aşağıdaki ayrıntılı öneriler Fransızcadır: bu resmî metindir ve otomatik olarak çevrilmez."
+  "orientation.french_notice": "Aşağıdaki ayrıntılı öneriler Fransızcadır: bu resmî metindir ve otomatik olarak çevrilmez.",
+  "form.territory": "Belediye",
+  "form.territory-all": "Tüm belediyeler",
+  "form.territory-help": "Bir belediye seçildiğinde, başka bir bölgeye ayrılmış yardımlar gösterilmez. İşlemler, yerler ve haberler filtrelenmez.",
+  "section.glossary": "Tanımlar ({{n}})",
+  "link.glossary": "Tüm sözlüğü gör"
 }

@@ -9,7 +9,8 @@ import { isCspReportRequest } from './csp-reporting.js';
 const EXACT = new Set([
   'health', 'health/live', 'health/ready', 'healthz', 'status',
   'robots.txt', 'robots', 'sitemap.xml', 'sitemap',
-  'public/page', 'taxonomy', 'search', 'search-pro', 'glossaire',
+  // A-4: « search-pro » left the allowlist with its only page (/trouver-aide, an unlinked duplicate of /besoins + /recherche + /structures, now a redirect)
+  'public/page', 'taxonomy', 'search', 'glossaire',
   // R46 / P07: official reference lookups (La Poste postal codes, ANCT QPV list) — GET only, no record, nothing written or logged
   'territory/postal', 'territory/qpv',
   // read by the shell on every page: answers « not signed in » and creates nothing
@@ -20,8 +21,8 @@ const EXACT = new Set([
 // rate-limited) — the same public information as its page; every other « pdf » or document path stays closed (documents surface)
 const PREFIX = ['aides', 'aids', 'structures', 'demarches', 'actualites', 'guides', 'tools', 'dispositifs', 'ressources', 'translations', 'pdf/aides', 'pdf/demarches'];
 const READ_METHODS = new Set(['GET', 'HEAD']);
-// the two citizen searches take their query in a POST body; they read and write nothing (no account, no history)
-const READ_ONLY_POST = new Set(['search', 'search-pro']);
+// the citizen search takes its query in a POST body; it reads and writes nothing (no account, no history)
+const READ_ONLY_POST = new Set(['search']);
 
 const BETA_MESSAGE_READ_ONLY = 'Bêta publique : cette fonction n’est pas encore ouverte. Pendant la bêta, Accès Direct Aide permet seulement de consulter les aides, '
   + 'les démarches et les structures vérifiées ; aucun compte, rendez-vous ni document ne peut être créé.';

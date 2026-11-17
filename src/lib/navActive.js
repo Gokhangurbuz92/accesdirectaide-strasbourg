@@ -5,7 +5,7 @@
 /** @type {Record<string, string[]>} */
 const SECTIONS = {
   Home: ['/'],
-  Aides: ['/aides', '/aide', '/categories', '/situations', '/recherche', '/trouver-aide'],
+  Aides: ['/aides', '/aide', '/categories', '/situations', '/recherche'],
   Demarches: ['/demarches'],
   Annuaire: ['/structures', '/annuaire'],
   Tools: ['/outils'],

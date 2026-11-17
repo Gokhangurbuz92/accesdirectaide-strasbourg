@@ -52,7 +52,7 @@ describe('Q10 sweep fixes', () => {
     const Where = () => { at = useLocation().pathname + useLocation().search; return null; };
     render(h(HelmetProvider, null, h(MemoryRouter, { initialEntries: ['/territoire'] }, h(Routes, null, h(Route, { path: '/territoire', element: h(TerritoireCouvert) }), h(Route, { path: '/structures', element: h(Where) })))));
     fireEvent.change(screen.getByLabelText('Commune'), { target: { value: '67447' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Voir les lieux qui la desservent' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Voir les lieux enregistrés pour cette commune' }));   // A-3: honest wording (the filter matches the recorded commune, not a verified service area)
     expect(at).toBe('/structures?serves=67447');
   });
 

@@ -63,7 +63,6 @@ const AideDetail = lazy(() => import("./AideDetail.jsx"));
 const AideLegacyLink = lazy(() => import("./AideLegacyLink.jsx"));   // R7: /aidedetail?slug|id, /aide/view?id
 const Aides = lazy(() => import("./Aides.jsx"));
 const Recherche = lazy(() => import("./Recherche.jsx"));
-const RechercheAide = lazy(() => import("./RechercheAide.jsx"));
 const Annuaire = lazy(() => import("./Annuaire.jsx"));
 const Confidentialite = lazy(() => import("./Confidentialite.jsx"));
 const CGU = lazy(() => import("./CGU.jsx"));
@@ -562,7 +561,8 @@ function PagesContent() {
                                 <Route path="/aides/:slug" element={<AideDetail />} />
                                 <Route path="/aides" element={<Aides />} />
                                 <Route path="/recherche" element={<Recherche />} />
-                                <Route path="/trouver-aide" element={<RechercheAide />} />
+                                {/* A-4: /trouver-aide was an unlinked duplicate of « par besoin » + search + directory; old links land on the canonical entry */}
+                                <Route path="/trouver-aide" element={<Navigate to="/besoins" replace />} />
                                 <Route path="/categories/:slug" element={<Aides />} />
                                 <Route path="/situations/:slug" element={<SituationRedirect />} />
                                 <Route path="/glossaire" element={<Glossaire />} />

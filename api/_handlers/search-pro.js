@@ -5,6 +5,21 @@ import { db } from '../../src/db/index.js';
 import { sql } from 'drizzle-orm';
 import { visibleSql } from '../lib/publicVisibility.js';
 import { fallbackNeeds } from '../lib/need-fallback.js';
+import { z } from 'zod';
+import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
+
+// A-4: the body of this public POST was read as received (unbounded arrays and strings, non-string values threw → 500). Taxonomy slugs are short
+// lower-case identifiers; a territory is a département number or a town name; the free text has the same ceiling as the directory search.
+const slugList = z.array(z.string().trim().min(1).max(64).regex(/^[\p{L}\p{N}][\p{L}\p{N}_-]*$/u)).max(20);
+export const searchProSchema = z.object({
+  needs: slugList.optional(),
+  audiences: slugList.optional(),
+  modalities: slugList.optional(),
+  territory: z.string().trim().max(80).optional(),
+  q: z.string().trim().max(120).optional(),
+  page: z.coerce.number().int().min(1).max(500).optional(),
+  limit: z.coerce.number().int().min(1).max(50).optional(),
+});
 
 // drizzle renders a bare JS array inside sql`` as a parenthesised row `($1, $2)`, which `= ANY(...)` rejects on a real PostgreSQL ("requires array on right side"): build an explicit IN list.
 const idList = (/** @type {Array<string | number>} */ ids) => sql.join(ids.map((i) => sql`${i}`), sql`, `);
@@ -21,14 +36,23 @@ export default async function handler(/** @type {import('../_utils/http-types').
   }
 
   try {
-    const body = req.body || {};
-    const needs = Array.isArray(body.needs) ? body.needs.filter(Boolean) : [];
-    const audiences = Array.isArray(body.audiences) ? body.audiences.filter(Boolean) : [];
-    const modalities = Array.isArray(body.modalities) ? body.modalities.filter(Boolean) : [];
-    const territory = (body.territory || '').trim();
-    const q = (body.q || '').trim();
-    const page = Math.max(1, parseInt(body.page, 10) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(body.limit, 10) || 12));
+    // A-4: 5 to 9 queries per call — throttled per address like the directory search
+    const rateLimit = await checkRateLimit('SEARCH_STRUCTURES', getClientIp(req));
+    if (!rateLimit.allowed) {
+      return res.status(rateLimit.status || 429).json(rateLimit.error || { error: 'Trop de requêtes.', code: 'RATE_LIMITED' });
+    }
+    const parsed = searchProSchema.safeParse(req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {});
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Invalid payload', code: 'VALIDATION_ERROR', fields: [...new Set(parsed.error.issues.map((i) => String(i.path[0] ?? '')))] });
+    }
+    const body = parsed.data;
+    const needs = body.needs || [];
+    const audiences = body.audiences || [];
+    const modalities = body.modalities || [];
+    const territory = body.territory || '';
+    const q = body.q || '';
+    const page = body.page || 1;
+    const limit = body.limit || 12;
     const offset = (page - 1) * limit;
 
     // ── 1. Fetch taxonomy data for facets ───────────────────

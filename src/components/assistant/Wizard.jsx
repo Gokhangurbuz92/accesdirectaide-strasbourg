@@ -7,6 +7,7 @@ import StepProfile from './StepProfile';
 import StepUrgency from './StepUrgency';
 import StepDiagnostic from './StepDiagnostic';
 import NeedRecommendations from './NeedRecommendations';
+import WizardPrivacyNotice from './WizardPrivacyNotice';
 import DiagnosticOutcome from '@/components/diagnostic/DiagnosticOutcome';
 import { Button } from '@/components/ui/button';
 import { csrfFetch } from '@/lib/csrf';
@@ -40,7 +41,7 @@ export default function Wizard() {
         travail: t('diagnostic:wizard.need_title.travail', 'travail'), papiers: t('diagnostic:wizard.need_title.papiers', 'papiers et démarches'),
         urgence: t('diagnostic:wizard.need_title.urgence', 'urgence'),
     };
-    // Restore persisted wizard state (step + data) from localStorage
+    // A-9: progress is restored from this tab's session only (first steps' choices; src/lib/storage.js)
     const savedWizard = useRef(storage.loadWizard());
     const [step, setStep] = useState(savedWizard.current?.step ?? 0);
     const [data, setData] = useState(savedWizard.current?.data ?? {});
@@ -86,6 +87,7 @@ export default function Wizard() {
             if (!res.ok) throw Object.assign(new Error('diagnostic'), { status: res.status, code: result && result.error });
             setDiagnosticData({ result, situation });
             setPhase('diagnostic-results');
+            storage.clearWizard();   // A-9: once the result is shown nothing of the answers stays in the browser's storage
         } catch (err) {
             if (err instanceof DOMException && err.name === 'AbortError') return;
             setPhase('diagnostic-error');
@@ -154,6 +156,9 @@ export default function Wizard() {
                     </div>
                 </div>
             )}
+
+            {/* A-9: what happens to the answers, said before the first personal question and kept in view on every step */}
+            {phase === 'wizard' && <div className="px-6 pt-4"><WizardPrivacyNotice /></div>}
 
             {/* Content */}
             <div className="p-6">

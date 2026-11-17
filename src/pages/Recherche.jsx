@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen, Landmark } from 'lucide-react';
+import { Search, RotateCcw, FileText, Building2, Newspaper, ArrowRight, BookOpen, BookA, Landmark } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,7 +14,10 @@ import OrientationPanel from '@/components/search/OrientationPanel';
 import { isAbortError, normalizeSearchCategory, searchAides } from '@/lib/searchClient';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
 import { useLanguage, useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { isBetaRestrictedPath } from '@/lib/publicBeta';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const DEFAULT_LIMIT = 10;
 // R32: `key` names the translated wording of each example; the example searches in the interface language
@@ -138,6 +141,16 @@ function ActualiteResult({ a }) {
   );
 }
 
+// A-1: the communes of the service territory (INSEE code, official name); the code is what the server resolves to the commune's hierarchy
+const TERRITORY_COMMUNES = /** @type {[string, string][]} */ (serviceTerritory.communes);
+const INSEE_COMMUNE = /^(?:\d{5}|2[AB]\d{3})$/;
+
+/** A-1: an INSEE commune code read from the URL or the control, or '' (anything else is ignored, never sent). @param {unknown} value */
+function parseTerritory(value) {
+  const code = String(value ?? '').trim().toUpperCase();
+  return INSEE_COMMUNE.test(code) ? code : '';
+}
+
 /**
  * @param {string | null} value
  */
@@ -150,7 +163,7 @@ function parseLimit(value) {
 }
 
 // @ts-ignore
-function buildCanonicalSearchParams(/** @type {string} */ query, category, limit, situation) {
+function buildCanonicalSearchParams(/** @type {string} */ query, category, limit, situation, territory) {
   const params = new URLSearchParams();
   const trimmedQuery = query.trim();
   if (trimmedQuery) {
@@ -161,6 +174,9 @@ function buildCanonicalSearchParams(/** @type {string} */ query, category, limit
   }
   if (situation) {
     params.set('situation', situation);
+  }
+  if (territory) {
+    params.set('territoire', territory);
   }
   params.set('limit', String(parseLimit(limit)));
   return params;
@@ -181,10 +197,13 @@ export default function Recherche() {
     searchParams.get('theme')
   );
   const limitFromUrl = parseLimit(searchParams.get('limit'));
+  // A-1: the commune pre-filter lives in the URL (`territoire=<INSEE code>`), so a filtered search can be shared and survives a reload
+  const territoryFromUrl = parseTerritory(searchParams.get('territoire') || searchParams.get('territory'));
 
   const [queryInput, setQueryInput] = useState(queryFromUrl);
   const [categoryInput, setCategoryInput] = useState(categoryFromUrl);
   const [limitInput, setLimitInput] = useState(limitFromUrl);
+  const [territoryInput, setTerritoryInput] = useState(territoryFromUrl);
   const [status, setStatus] = useState('idle');
   const [orientation, setOrientation] = useState(null);
   const [results, setResults] = useState([]);
@@ -194,6 +213,7 @@ export default function Recherche() {
   const [actualites, setActualites] = useState([]);
   const [guides, setGuides] = useState([]);
   const [dispositifs, setDispositifs] = useState([]);
+  const [glossaire, setGlossaire] = useState(/** @type {{ id: string, title: string, description: string }[]} */ ([]));
   const [safety, setSafety] = useState(null);
   const [meta, setMeta] = useState({ total: 0, totalAll: 0, message: null });
   // R32: what went wrong, put into words at render (the interface language may change): « too-short », or the search library's message
@@ -203,7 +223,8 @@ export default function Recherche() {
     setQueryInput(queryFromUrl);
     setCategoryInput(categoryFromUrl);
     setLimitInput(limitFromUrl);
-  }, [queryFromUrl, categoryFromUrl, limitFromUrl]);
+    setTerritoryInput(territoryFromUrl);
+  }, [queryFromUrl, categoryFromUrl, limitFromUrl, territoryFromUrl]);
 
   useEffect(() => {
     if (!queryFromUrl) {
@@ -214,6 +235,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
+      setGlossaire([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -229,6 +251,7 @@ export default function Recherche() {
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
+      setGlossaire([]);
       setSafety(null);
       setOrientation(null);
       setMeta({ total: 0, totalAll: 0, message: null });
@@ -247,6 +270,7 @@ export default function Recherche() {
       category: categoryFromUrl,
       limit: limitFromUrl,
       situations: situationFromUrl ? [situationFromUrl] : undefined,
+      territory: territoryFromUrl || undefined,
       signal: controller.signal,
     })
       .then((response) => {
@@ -258,10 +282,11 @@ export default function Recherche() {
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
         setDispositifs(response.dispositifs || []);
+        setGlossaire(response.glossaire || []);
         setSafety(response.safety || null);
         setOrientation(response.orientation || null);
         setMeta(response.meta);
-        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0) || (response.dispositifs?.length > 0);
+        const hasAny = response.results.length > 0 || (response.demarches?.length > 0) || (response.structures?.length > 0) || (response.actualites?.length > 0) || (response.guides?.length > 0) || (response.dispositifs?.length > 0) || (response.glossaire?.length > 0);
         setStatus(hasAny ? 'success' : 'empty');
       })
       .catch((error) => {
@@ -272,6 +297,7 @@ export default function Recherche() {
         setActualites([]);
         setGuides([]);
         setDispositifs([]);
+      setGlossaire([]);
         setSafety(null);
         setOrientation(null);
         setMeta({ total: 0, totalAll: 0, message: null });
@@ -283,7 +309,7 @@ export default function Recherche() {
       isMounted = false;
       controller.abort();
     };
-  }, [queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, refreshKey]);
+  }, [queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, territoryFromUrl, refreshKey]);
 
   // R12 (C11): a finished search goes to the person's opt-in history (signed-in only; the server keeps nothing unless history is on)
   useEffect(() => {
@@ -297,6 +323,7 @@ export default function Recherche() {
   // the server's own words are French: marked as such when the interface is in another language
   const errorDescription = searchError && knownError === null && !isSource ? <span lang="fr" dir="ltr">{errorMessage}</span> : errorMessage;
   const total = meta.totalAll || meta.total;
+  const orientationOpen = !frontendEnv.flags.publicBeta || !isBetaRestrictedPath('/orientation');
 
   const liveMessage = useMemo(() => {
     if (status === 'loading') return t('search:live.loading', 'Recherche en cours...');
@@ -314,11 +341,17 @@ export default function Recherche() {
   };
   const exampleQuery = (example) => exampleQueries[example.key] ?? example.query;
 
+  // A-1: a code given in the URL that is not one of the listed communes stays selectable (shown by its code), so the control always says what is applied
+  const territoryOptions = useMemo(() => {
+    const listed = TERRITORY_COMMUNES.map(([code, label]) => ({ code, label }));
+    return territoryFromUrl && !listed.some((o) => o.code === territoryFromUrl) ? [{ code: territoryFromUrl, label: territoryFromUrl }, ...listed] : listed;
+  }, [territoryFromUrl]);
+
   // @ts-ignore
-  const applySearch = (/** @type {string} */ query, /** @type {unknown} */ category, /** @type {any} */ limit) => {
+  const applySearch = (/** @type {string} */ query, /** @type {unknown} */ category, /** @type {any} */ limit, /** @type {unknown} */ territory = territoryInput) => {
     const normalizedCategory = normalizeSearchCategory(category);
-    const nextParams = buildCanonicalSearchParams(query, normalizedCategory, limit, situationFromUrl);
-    const currentParams = buildCanonicalSearchParams(queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl);
+    const nextParams = buildCanonicalSearchParams(query, normalizedCategory, limit, situationFromUrl, parseTerritory(territory));
+    const currentParams = buildCanonicalSearchParams(queryFromUrl, categoryFromUrl, limitFromUrl, situationFromUrl, territoryFromUrl);
 
     setSearchParams(nextParams);
     if (nextParams.toString() === currentParams.toString()) {
@@ -365,6 +398,9 @@ export default function Recherche() {
           onQueryChange={setQueryInput}
           onCategoryChange={setCategoryInput}
           onLimitChange={setLimitInput}
+          territory={territoryInput}
+          territoryOptions={territoryOptions}
+          onTerritoryChange={setTerritoryInput}
           onSubmit={handleSubmit}
           isLoading={status === 'loading'}
         />
@@ -443,10 +479,11 @@ export default function Recherche() {
               actions={
                 <div className="flex flex-wrap justify-center gap-2" data-testid="search-empty-next">
                   {categoryFromUrl ? (
-                    <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
+                    <Button asChild variant="outline"><Link to={`/recherche?${new URLSearchParams({ q: queryFromUrl, ...(territoryFromUrl ? { territoire: territoryFromUrl } : {}) }).toString()}`}>{t('search:empty.all_categories', 'Chercher dans toutes les catégories')}</Link></Button>
                   ) : null}
                   <Button asChild variant="outline"><Link to="/besoins">{t('search:empty.by_need', 'Trouver par besoin')}</Link></Button>
-                  <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button>
+                  {/* A-2: the guided orientation is offered only when its screen is open (closed in the restricted beta: the link led to the closed notice); the person to ask is below in every case */}
+                  {orientationOpen ? <Button asChild variant="outline"><Link to="/orientation">{t('search:empty.orientation', 'Être orienté pas à pas')}</Link></Button> : null}
                   {queryFromUrl ? <Button asChild variant="outline"><Link to={`/structures?${new URLSearchParams({ q: queryFromUrl }).toString()}`}>{t('search:empty.directory', 'Chercher un lieu d’accueil dans l’annuaire')}</Link></Button> : null}
                 </div>
               }
@@ -547,6 +584,29 @@ export default function Recherche() {
                       <ActualiteResult key={a.id} a={a} />
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* A-7: the glossary terms the search matched — the term and its French definition, with the way to the whole glossary */}
+              {glossaire.length > 0 && (
+                <div className="mb-8" data-testid="search-glossary">
+                  <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <BookA className="h-5 w-5 text-slate-700" aria-hidden="true" />
+                    {t('search:section.glossary', 'Définitions ({{n}})', { n: glossaire.length })}
+                  </h2>
+                  <dl className="grid gap-3 md:grid-cols-2">
+                    {glossaire.map((g) => (
+                      <div key={g.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                        <dt className="font-semibold text-slate-900" {...(isSource ? {} : { lang: 'fr', dir: 'ltr' })}>{g.title}</dt>
+                        <dd className="mt-1 text-sm text-slate-700" {...(isSource ? {} : { lang: 'fr', dir: 'ltr' })}>{g.description}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="mt-3 text-sm">
+                    <Link to="/glossaire" className="inline-flex items-center gap-1 font-medium text-slate-900 underline">
+                      {t('search:link.glossary', 'Voir tout le glossaire')} <ArrowRight className="rtl-flip h-3 w-3" aria-hidden="true" />
+                    </Link>
+                  </p>
                 </div>
               )}
             </>

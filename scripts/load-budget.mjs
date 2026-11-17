@@ -32,7 +32,8 @@ export const SCENARIOS = [
   { name: 'page d’une structure', method: 'GET', path: '/api/structures/{structureSlug}', p95: 400, errors: 0 },
   { name: 'liste des aides (20)', method: 'GET', path: '/api/aides?limit=20', p95: 600, errors: 0 },
   { name: 'liste des démarches (20)', method: 'GET', path: '/api/demarches?limit=20', p95: 600, errors: 0 },
-  { name: '« J’ai besoin d’aide pour… » (logement)', method: 'POST', path: '/api/search-pro', body: { needs: ['logement'], page: 1 }, p95: 900, errors: 0 },
+  // A-4: /api/search-pro lost its page (/trouver-aide → /besoins); the directory search the public pages really call is measured instead
+  { name: 'annuaire : recherche « logement »', method: 'GET', path: '/api/structures?q=logement&limit=12', p95: 900, errors: 0 },
 ];
 
 const quantile = (xs, q) => { if (!xs.length) return null; const s = [...xs].sort((a, b) => a - b); return Math.round(s[Math.min(s.length - 1, Math.floor(q * s.length))]); };

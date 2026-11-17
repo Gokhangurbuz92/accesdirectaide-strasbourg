@@ -19,7 +19,7 @@ import DemandeAide from '../../src/pages/DemandeAide.jsx';
 import AuthRdvAccess from '../../src/pages/AuthRdvAccess.jsx';
 import { setLanguage } from '../../src/i18n/index.js';
 
-beforeEach(() => { window.localStorage.clear(); window.HTMLElement.prototype.scrollIntoView = () => {}; });
+beforeEach(() => { window.localStorage.clear(); window.sessionStorage.clear();   /* A-9: the wizard progress now lives in the tab session */ window.HTMLElement.prototype.scrollIntoView = () => {}; });
 afterEach(async () => { cleanup(); await act(async () => { await setLanguage('fr', { persist: false }); }); });
 const lang = async (code) => { await act(async () => { await setLanguage(code, { persist: false }); }); };
 const wrap = (el) => h(HelmetProvider, null, h(MemoryRouter, null, el));

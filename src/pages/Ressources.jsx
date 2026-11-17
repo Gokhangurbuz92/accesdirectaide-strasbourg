@@ -54,8 +54,14 @@ export default function Ressources() {
     }, [filterType, emergencyMode, attempt]);
 
     const apiEmergency = ressources.filter((r) => r.phone);
+    // A-5: no writer exists for the document list (no admin editor, importer or seed), so it can only be empty. The list part of the page (filter, cards,
+    // « nothing published yet » promise) appears only when a published document exists; without one the page shows what it really has: the national
+    // emergency numbers. Nothing links to the bare list in the site's navigation.
+    const documents = ressources.filter((r) => r.type !== 'URGENCE');
+    const noDocuments = !loading && !failed && !emergencyMode && !filterType && documents.length === 0;
+    const showEmergency = emergencyMode || noDocuments;
     // never leave the emergency box empty: the built-in national numbers take over when the list could not be loaded
-    const emergencyList = emergencyMode ? (apiEmergency.length > 0 ? apiEmergency : EMERGENCY_FALLBACK) : [];
+    const emergencyList = showEmergency ? (apiEmergency.length > 0 ? apiEmergency : EMERGENCY_FALLBACK) : [];
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -64,8 +70,10 @@ export default function Ressources() {
                 description={t('resources:seo.description', 'Numéros d’urgence et ressources utiles pour vos démarches.')}
                 path="/ressources"
             />
-            <PageHeader title={t('resources:title', 'Ressources utiles')} description={t('resources:header.description', 'Numéros d’urgence et documents utiles pour vos démarches.')}>
-                {!emergencyMode && (
+            <PageHeader title={t('resources:title', 'Ressources utiles')} description={noDocuments
+                ? t('resources:header.emergency_only', 'Numéros d’urgence nationaux. Aucun document n’est publié sur cette page pour le moment.')
+                : t('resources:header.description', 'Numéros d’urgence et documents utiles pour vos démarches.')}>
+                {!showEmergency && (
                     <Link to="/ressources?emergency=1" data-testid="emergency-link" className="inline-flex min-h-11 items-center rounded-lg bg-white px-4 text-sm font-semibold text-red-800 shadow hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
                         {t('resources:emergency.link', 'Voir les numéros d’urgence')}
                     </Link>
@@ -73,7 +81,7 @@ export default function Ressources() {
             </PageHeader>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-            {emergencyMode && (
+            {showEmergency && (
                 <section data-testid="emergency-resources" aria-labelledby="emergency-resources-title" className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
                     <h2 id="emergency-resources-title" className="text-xl font-bold text-red-900">{t('resources:emergency.title', 'Ressources d’urgence')}</h2>
                     <p className="mt-1 text-sm text-red-900">{t('resources:emergency.text', 'En cas de danger immédiat, utilisez le numéro adapté à votre situation.')}</p>
@@ -84,11 +92,11 @@ export default function Ressources() {
                             </a>
                         ))}
                     </div>
-                    {!loading && apiEmergency.length === 0 && <p data-testid="emergency-fallback-note" className="mt-3 text-sm text-red-900">{t('resources:emergency.fallback', 'Ces numéros nationaux s’affichent même sans connexion au service.')}</p>}
+                    {emergencyMode && !loading && apiEmergency.length === 0 && <p data-testid="emergency-fallback-note" className="mt-3 text-sm text-red-900">{t('resources:emergency.fallback', 'Ces numéros nationaux s’affichent même sans connexion au service.')}</p>}
                 </section>
             )}
 
-            {(filterType || ressources.some((r) => r.type !== 'URGENCE')) && (
+            {(filterType || documents.length > 0) && (
             <div className="bg-white p-4 rounded-lg shadow mb-8 flex flex-wrap gap-4 items-center">
                 <select
                     className="border p-2 rounded"
@@ -150,9 +158,10 @@ export default function Ressources() {
                     )}
                 </div>
             )}
-            {!loading && !failed && !emergencyMode && !filterType && ressources.filter((r) => r.type !== 'URGENCE').length === 0 && (
+            {/* A-5: said plainly, with the real content of the catalogue to use instead — and no promise of a publication that has no writer yet */}
+            {noDocuments && (
                 <EmptyCatalogue title={t('resources:empty.title', 'Aucun document n’est encore publié ici')} testId="ressources-none-published">
-                    <p>{t('resources:empty.text', 'Les documents et liens utiles seront publiés après vérification de leur source. Les numéros d’urgence nationaux sont disponibles avec le bouton ci-dessus.')}</p>
+                    <p>{t('resources:empty.text', 'Pour le moment, cette page ne contient que les numéros d’urgence nationaux, affichés ci-dessus.')}</p>
                 </EmptyCatalogue>
             )}
             </div>
