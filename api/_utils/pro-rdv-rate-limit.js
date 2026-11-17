@@ -40,7 +40,7 @@ export function buildRateLimitSubjectKey(input) {
 }
 
 /**
- * @param {{ scope: 'read' | 'write', subject: string, bucket: string }} input
+ * @param {{ scope: string, subject: string, bucket: string }} input   ('read' | 'write' | 'read-<named bucket>')
  * @returns {string}
  */
 export function buildProRdvRateLimitKey(input) {
@@ -94,7 +94,8 @@ async function incrementCounter(key, ttlSeconds) {
 /**
  * @param {import('./http-types').ApiRequest} req
  * @param {import('./http-types').ApiResponse} res
- * @param {{ handlerName: string }} options
+ * @param {{ handlerName: string, readBucket?: { name: string, perMinute: number } }} options   readBucket: the reads of this route count in a named bucket of
+ *   their own (key scope « read-<name> », its own per-minute limit) instead of the shared read budget; writes are unaffected
  * @returns {Promise<{ allowed: boolean, reason?: 'minute' | 'daily', retryAfterSeconds?: number }>}
  */
 export async function enforceProRdvRateLimit(req, res, options) {
@@ -108,12 +109,13 @@ export async function enforceProRdvRateLimit(req, res, options) {
   }
 
   const isWrite = isWriteMethod(method);
-  const minuteLimit = isWrite ? env.proRdv.writePerMinute : env.proRdv.readPerMinute;
+  const readBucket = !isWrite && options?.readBucket ? options.readBucket : null;
+  const minuteLimit = isWrite ? env.proRdv.writePerMinute : readBucket ? readBucket.perMinute : env.proRdv.readPerMinute;
   const nowMs = Date.now();
   const subject = buildRateLimitSubjectKey({ userId, structureId });
   const minuteBucket = `m:${Math.floor(nowMs / (MINUTE_WINDOW_SECONDS * 1000))}`;
   const minuteKey = buildProRdvRateLimitKey({
-    scope: isWrite ? 'write' : 'read',
+    scope: isWrite ? 'write' : readBucket ? `read-${readBucket.name}` : 'read',
     subject,
     bucket: minuteBucket,
   });

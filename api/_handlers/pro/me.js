@@ -48,4 +48,4 @@ async function handler(req, res) {
 }
 
 // A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
-export default requireProAuth(withProRateLimit('pro.me', handler));
+export default requireProAuth(withProRateLimit('pro.me', handler, { budget: 'session' }));

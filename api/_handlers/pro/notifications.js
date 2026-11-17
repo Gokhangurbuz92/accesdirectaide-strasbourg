@@ -128,7 +128,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
 }
 
 // A23: tenant read / write quota, after authentication (api/_utils/pro-rate-limit.js)
-export default requireProAuth(withProRateLimit('pro.notifications', handler));
+export default requireProAuth(withProRateLimit('pro.notifications', handler, { budget: 'session' }));
 
 /**
  * Helper to create a notification (used by other handlers/crons).

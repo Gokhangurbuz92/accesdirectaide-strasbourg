@@ -86,6 +86,40 @@ describe('A23 — 429 before the handler', () => {
 
   it('an unknown tight budget is a programming error, not a silent default', () => {
     expect(() => withProRateLimit('x', async () => {}, { action: 'NOT_A_BUDGET' })).toThrow(/unknown action/);
+    expect(() => withProRateLimit('x', async () => {}, { budget: 'NOT_A_BUDGET' })).toThrow(/unknown budget/);
+  });
+
+  // R47-QA (native QA v40, DTA-B49): a member going through a dozen pages in a minute had the session check refused (429) and the layout said the space was down
+  it('the reads every page makes by itself (budget « session ») have their own bucket: a member who spent the page budget is not refused the session check; that bucket is bounded too', async () => {
+    vi.useFakeTimers({ now: new Date('2026-11-17T10:00:05Z'), toFake: ['Date'] });
+    try {
+      const { env } = await import('../../api/_utils/env.js');
+      const { PRO_SESSION_READ_FACTOR } = await import('../../api/_utils/pro-rate-limit.js');
+      const limit = env.proRdv.readPerMinute; const sessionLimit = limit * PRO_SESSION_READ_FACTOR;
+      expect(PRO_SESSION_READ_FACTOR).toBe(3);
+      const inner = vi.fn(async (req, res) => res.status(200).json({ ok: true }));
+      const page = authed(withProRateLimit('pro.test.page', inner));
+      const session = authed(withProRateLimit('pro.test.session', inner, { budget: 'session' }));
+      const u = user('rl-s1');
+      for (let i = 0; i < limit; i += 1) expect((await call(page, u)).statusCode).toBe(200);
+      expect((await call(page, u)).statusCode).toBe(429);
+      for (let i = 0; i < sessionLimit; i += 1) expect((await call(session, u)).statusCode, `session read ${i + 1}`).toBe(200);
+      const over = await call(session, u);
+      expect([over.statusCode, over.body.code]).toEqual([429, 'PRO_RATE_LIMITED']);
+      // and the other way round: the session reads never spend the page budget
+      const v = user('rl-s2');
+      for (let i = 0; i < sessionLimit; i += 1) await call(session, v);
+      expect((await call(page, v)).statusCode).toBe(200);
+      // a write of a session route keeps the shared write budget
+      const w = user('rl-s3');
+      for (let i = 0; i < env.proRdv.writePerMinute; i += 1) expect((await call(session, w, { method: 'PATCH' })).statusCode).toBe(200);
+      expect((await call(page, w, { method: 'POST' })).statusCode).toBe(429);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('the session check, the notification centre and the unread count use the session bucket; no other professional route does', () => {
+    const session = walk(PRO_DIR).filter((f) => /budget: 'session'/.test(fs.readFileSync(f, 'utf8'))).map((f) => path.relative(PRO_DIR, f)).sort();
+    expect(session).toEqual(['me.js', 'notifications.js', path.join('notifications', 'unread-count.js')].sort());
   });
 });
 
