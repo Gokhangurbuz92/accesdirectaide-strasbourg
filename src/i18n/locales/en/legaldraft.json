@@ -159,6 +159,7 @@
  "privacyNotice.processors.i1": "Vercel Inc.: hosting of the site and of the server functions, run in Frankfurt; the pages themselves (static content, no account data) are distributed by Vercel's global network.",
  "privacyNotice.processors.i2": "Neon (contract with Databricks, Inc.): database hosted in Frankfurt.",
  "privacyNotice.processors.i3": "Upstash, Inc.: security counters and request rate limiting, in Frankfurt.",
+ "privacyNotice.processors.i3_v7": "Upstash, Inc.: security counters and request rate limiting, in Frankfurt. Upstash also keeps, in Frankfurt, the erasure records (section 4).",
  "privacyNotice.processors.i4": "Mailjet (Sinch group): sending of service e-mails (address verification, password, account notices); data hosted by Google Cloud in Frankfurt (Germany) and Saint-Ghislain (Belgium).",
  "privacyNotice.processors.i5": "Microsoft: inbox of the contact address.",
  "privacyNotice.processors.i6": "Scaleway SAS (France) and Cloudflare, Inc.: backup copies of the database. The backup task runs at Scaleway, in Paris, and encrypts the copy before it is sent anywhere; Cloudflare stores it in the European Union without being able to read it.",

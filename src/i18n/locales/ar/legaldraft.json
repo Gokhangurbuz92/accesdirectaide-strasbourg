@@ -159,6 +159,7 @@
  "privacyNotice.processors.i1": "Vercel Inc.: استضافة الموقع ووظائف الخادم، التي تعمل في فرانكفورت؛ أما الصفحات نفسها (محتوى ثابت، بلا بيانات حساب) فتوزّعها شبكة Vercel العالمية.",
  "privacyNotice.processors.i2": "Neon (عقد مع Databricks, Inc.): قاعدة بيانات مستضافة في فرانكفورت.",
  "privacyNotice.processors.i3": "Upstash, Inc.: عدّادات الأمان وتحديد عدد الطلبات، في فرانكفورت.",
+ "privacyNotice.processors.i3_v7": "Upstash, Inc.: عدّادات الأمان وتحديد عدد الطلبات، في فرانكفورت. وتحتفظ Upstash أيضًا، في فرانكفورت، بآثار المحو (القسم 4).",
  "privacyNotice.processors.i4": "Mailjet (مجموعة Sinch): إرسال رسائل البريد الإلكتروني الخدمية (التحقق من العنوان، كلمة المرور، إشعارات الحساب)؛ البيانات مستضافة لدى Google Cloud في فرانكفورت (ألمانيا) وسان غيسلان (بلجيكا).",
  "privacyNotice.processors.i5": "Microsoft: صندوق بريد عنوان التواصل.",
  "privacyNotice.processors.i6": "Scaleway SAS (فرنسا) وCloudflare, Inc.: النسخ الاحتياطية لقاعدة البيانات. تُنفَّذ مهمة النسخ الاحتياطي لدى Scaleway في باريس وتُشفِّر النسخة قبل أي إرسال؛ وتخزّنها Cloudflare في الاتحاد الأوروبي دون أن تتمكّن من قراءتها.",

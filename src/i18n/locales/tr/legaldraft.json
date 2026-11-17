@@ -159,6 +159,7 @@
  "privacyNotice.processors.i1": "Vercel Inc.: sitenin ve Frankfurt'ta çalışan sunucu işlevlerinin barındırılması; sayfaların kendisi (statik içerik, hesap verisi içermez) Vercel'in küresel ağı tarafından dağıtılır.",
  "privacyNotice.processors.i2": "Neon (Databricks, Inc. ile sözleşme): Frankfurt'ta barındırılan veritabanı.",
  "privacyNotice.processors.i3": "Upstash, Inc.: güvenlik sayaçları ve istek sayısının sınırlandırılması, Frankfurt'ta.",
+ "privacyNotice.processors.i3_v7": "Upstash, Inc.: güvenlik sayaçları ve istek sayısının sınırlandırılması, Frankfurt'ta. Upstash ayrıca silme izlerini de Frankfurt'ta saklar (bölüm 4).",
  "privacyNotice.processors.i4": "Mailjet (Sinch grubu): hizmet e-postalarının gönderimi (adres doğrulama, şifre, hesap bildirimleri); veriler Google Cloud tarafından Frankfurt (Almanya) ve Saint-Ghislain'de (Belçika) barındırılır.",
  "privacyNotice.processors.i5": "Microsoft: iletişim adresinin gelen kutusu.",
  "privacyNotice.processors.i6": "Scaleway SAS (Fransa) ve Cloudflare, Inc.: veritabanının yedek kopyaları. Yedekleme görevi Scaleway'de, Paris'te çalışır ve kopyayı herhangi bir yere göndermeden önce şifreler; Cloudflare kopyayı Avrupa Birliği'nde, okuyamadan saklar.",

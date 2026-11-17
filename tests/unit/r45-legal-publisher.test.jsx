@@ -296,6 +296,7 @@ describe('R45 draft documents rendering', () => {
     expect(r.container.querySelector('[data-legal-draft-version]')).toHaveTextContent('notice-confidentialite@v7-2026-11-18');
     expect(r.container.textContent).toContain("Une seconde copie chiffrée de cette trace, que Cloudflare ne peut pas lire, est gardée 40 jours chez Cloudflare dans l'Union européenne.");
     expect(r.container.textContent).toContain("Cloudflare garde aussi, dans l'Union européenne et sans pouvoir la lire, la seconde copie chiffrée des traces d'effacement (section 4).");
+    expect(r.container.textContent).toContain("Upstash garde aussi, à Francfort, les traces d'effacement (section 4).");
   });
   it('the four routes exist and point at the draft page', () => {
     const idx = readFileSync('src/pages/index.jsx', 'utf8');
