@@ -129,5 +129,6 @@
  "notFound.record.description": "This record is not available at the moment.",
  "notFound.record.text": "This record is not available at the moment. It does not exist, or it is being checked.",
  "notFound.search": "Search the site",
- "notFound.themes": "See the list by need"
+ "notFound.themes": "See the list by need",
+ "logout_failed": "Sign-out failed. Try again; on a shared device, also close the browser."
 }

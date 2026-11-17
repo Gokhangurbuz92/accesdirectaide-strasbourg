@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
+import { useAccessActionLabels } from '@/lib/accessActionLabels';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { formatDate, useT } from '@/i18n';
 
@@ -18,6 +19,7 @@ const LIVE = ['INVITED', 'ACTIVE', 'PROOF_REQUIRED', 'EXPIRED'];
 export default function CompteDelegations() {
   const { t } = useT('compte');
   const L = useMonEspaceLabels();
+  const { delegation: ACTION_LABELS } = useAccessActionLabels();   // A-13: what the trusted person viewed, in the interface language
   const [params, setParams] = useSearchParams();
   const invitation = params.get('invitation') || '';
   const [state, setState] = useState({ loading: true, error: '', granted: [], received: [] });
@@ -125,7 +127,7 @@ export default function CompteDelegations() {
                     {LIVE.includes(d.status) || d.status === 'INVITATION_EXPIRED' ? <Button type="button" size="sm" variant="outline" className="border-red-300 text-red-800" data-testid="delegation-revoke" onClick={() => run(() => citizenApi.endDelegation(d.id), t('compte:delegations.ended', 'Accès arrêté.'))}>{t('compte:delegations.arreter_acces', 'Arrêter l’accès')}</Button> : null}
                     <Button type="button" size="sm" variant="outline" data-testid="delegation-show-log" onClick={() => showLog(d.id)}>{t('compte:delegations.elle_consulte', 'Ce qu’elle a consulté')}</Button>
                   </div>
-                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {e.label}</li>)}</ol>
+                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {ACTION_LABELS[e.action] || <span lang="fr" dir="ltr">{e.label}</span>}</li>)}</ol>
                     : <p className="text-slate-700" data-testid="delegation-log-empty">{t('compte:delegations.rien_encore_ete_consulte', 'Rien n’a encore été consulté.')}</p>) : null}
                 </li>
               ))}

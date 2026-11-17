@@ -512,6 +512,7 @@
  "settings.objection_reason_label": "What you wish to tell us (optional)",
  "settings.objection_reason_help": "For example the processing concerned and the reason. Do not write medical information.",
  "settings.objection_send": "Send my objection request",
+ "settings.deletion_not_recorded": "Your deletion request could not be recorded. Your account has not changed. Try again in a moment.",
  "share.dossier_ete_supprime_certaines": "The file has been deleted. Some technical traces may be kept to comply with the law.",
  "share.gerer_dossier": "Manage this file",
  "share.gerer_dossier_partage": "Manage a shared file",
@@ -628,5 +629,17 @@
  "fc.linked": "Your account is now linked to FranceConnect.",
  "profile.inapp_center_r46": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Reminders reach you by e-mail (and by text message only if you turn it on).",
  "profile.inapp_center_v2": "New information about your account is also shown under « Notifications » in My Space, with no setting needed: it never leaves the platform. Text messages, reminders and optional information are not open yet.",
- "rdv.moved_by_structure_r47": "Time changed by the organisation on {{when}}."
+ "rdv.moved_by_structure_r47": "Time changed by the organisation on {{when}}.",
+ "access_action.access_granted": "opened access to the file",
+ "access_action.viewed": "viewed the file",
+ "access_action.exported": "exported the file",
+ "access_action.status_updated": "updated the follow-up",
+ "access_action.attestation_viewed": "viewed the certificate",
+ "access_action.file_uploaded": "added a document",
+ "access_action.file_downloaded": "downloaded a document",
+ "access_action.synthesis_drafted": "had an automatic summary drafted",
+ "access_action.synthesis_approved": "approved an automatic summary",
+ "access_action.parcours_viewed": "viewed My Journey",
+ "access_action.coffre_listed": "viewed the list of My Vault",
+ "access_action.rdv_viewed": "viewed the appointments"
 }

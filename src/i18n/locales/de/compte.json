@@ -512,6 +512,7 @@
  "settings.objection_reason_label": "Was Sie uns mitteilen möchten (freiwillig)",
  "settings.objection_reason_help": "Zum Beispiel die betroffene Verarbeitung und der Grund. Schreiben Sie keine medizinischen Angaben.",
  "settings.objection_send": "Meinen Widerspruch senden",
+ "settings.deletion_not_recorded": "Ihr Löschantrag konnte nicht erfasst werden. Ihr Konto ist unverändert. Versuchen Sie es gleich noch einmal.",
  "share.dossier_ete_supprime_certaines": "Die Unterlagen wurden gelöscht. Einige technische Spuren können aus rechtlichen Gründen aufbewahrt werden.",
  "share.gerer_dossier": "Diese Unterlagen verwalten",
  "share.gerer_dossier_partage": "Geteilte Unterlagen verwalten",
@@ -628,5 +629,17 @@
  "fc.linked": "Ihr Konto ist jetzt mit FranceConnect verknüpft.",
  "profile.inapp_center_r46": "Neue Informationen zu Ihrem Konto werden ohne Einstellung auch unter « Benachrichtigungen » in Mein Bereich angezeigt: Sie verlassen die Plattform nicht. Erinnerungen erhalten Sie per E-Mail (und per SMS nur, wenn Sie dies aktivieren).",
  "profile.inapp_center_v2": "Neue Informationen zu Ihrem Konto werden ohne Einstellung auch unter « Benachrichtigungen » in Mein Bereich angezeigt: Sie verlassen die Plattform nicht. SMS, Erinnerungen und freiwillige Informationen sind noch nicht geöffnet.",
- "rdv.moved_by_structure_r47": "Uhrzeit am {{when}} von der Einrichtung geändert."
+ "rdv.moved_by_structure_r47": "Uhrzeit am {{when}} von der Einrichtung geändert.",
+ "access_action.access_granted": "hat den Zugriff auf die Akte geöffnet",
+ "access_action.viewed": "hat die Akte eingesehen",
+ "access_action.exported": "hat die Akte exportiert",
+ "access_action.status_updated": "hat die Begleitung aktualisiert",
+ "access_action.attestation_viewed": "hat die Bescheinigung eingesehen",
+ "access_action.file_uploaded": "hat ein Dokument hinzugefügt",
+ "access_action.file_downloaded": "hat ein Dokument heruntergeladen",
+ "access_action.synthesis_drafted": "hat eine automatische Zusammenfassung erstellen lassen",
+ "access_action.synthesis_approved": "hat eine automatische Zusammenfassung freigegeben",
+ "access_action.parcours_viewed": "hat „Mein Weg“ eingesehen",
+ "access_action.coffre_listed": "hat die Liste von „Mein Tresor“ eingesehen",
+ "access_action.rdv_viewed": "hat die Termine eingesehen"
 }

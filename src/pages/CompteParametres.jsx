@@ -451,6 +451,7 @@ function RestrictionPanel() {
 function DataTab() {
     const { t } = useT('compte');
     const [deletionRequest, setDeletionRequest] = useState(null);
+    const [deletionProblem, setDeletionProblem] = useState('');
     // PKG-11 / C21: the state of the latest erasure request is read from the server (in review, refused with its reason, blocked by a legal hold)
     useEffect(() => {
         let alive = true;
@@ -544,6 +545,8 @@ function DataTab() {
                                     </p>
                                 ) : null}
 
+                                {deletionProblem ? <p role="alert" data-testid="compte-deletion-problem" className="mt-2 text-sm text-red-800">{deletionProblem}</p> : null}
+
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="destructive" size="sm" className="mt-3">
@@ -571,12 +574,13 @@ function DataTab() {
                                                             headers: { 'Content-Type': 'application/json' },
                                                         });
                                                         if (!res.ok) {
-                                                            const data = await res.json().catch(() => ({}));
-                                                            throw new Error(data.error || t('compte:settings.deletion_error', 'Erreur lors de la suppression'));
+                                                            throw new Error('refused');
                                                         }
+                                                        setDeletionProblem('');
                                                         setDeletionRequest(await res.json().catch(() => ({ requestId: '—' })));
-                                                    } catch (err) {
-                                                        alert(err.message);
+                                                    } catch {
+                                                        // A-13: said inline (role="alert") in the interface language — no window.alert, no raw server code
+                                                        setDeletionProblem(t('compte:settings.deletion_not_recorded', 'Votre demande de suppression n’a pas pu être enregistrée. Votre compte n’a pas changé. Réessayez dans un instant.'));
                                                     }
                                                 }}
                                             >

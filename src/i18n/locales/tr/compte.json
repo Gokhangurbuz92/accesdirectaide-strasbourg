@@ -512,6 +512,7 @@
  "settings.objection_reason_label": "Bize söylemek istedikleriniz (isteğe bağlı)",
  "settings.objection_reason_help": "Örneğin ilgili işleme ve nedeni. Tıbbi bilgi yazmayın.",
  "settings.objection_send": "İtiraz talebimi gönder",
+ "settings.deletion_not_recorded": "Silme talebiniz kaydedilemedi. Hesabınız değişmedi. Biraz sonra yeniden deneyin.",
  "share.dossier_ete_supprime_certaines": "Dosya silindi. Yasaya uymak için bazı teknik izler saklanabilir.",
  "share.gerer_dossier": "Bu dosyayı yönet",
  "share.gerer_dossier_partage": "Paylaşılan bir dosyayı yönet",
@@ -628,5 +629,17 @@
  "fc.linked": "Hesabınız artık FranceConnect’e bağlı.",
  "profile.inapp_center_r46": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. Hatırlatmalar size e-postayla (ve yalnızca etkinleştirirseniz SMS ile) ulaşır.",
  "profile.inapp_center_v2": "Hesabınızla ilgili yeni bilgiler, ayar gerekmeden Alanım'daki « Bildirimler » bölümünde de görünür: platformun dışına çıkmaz. SMS, hatırlatmalar ve isteğe bağlı bilgiler henüz açık değil.",
- "rdv.moved_by_structure_r47": "Saat, kuruluş tarafından {{when}} tarihinde değiştirildi."
+ "rdv.moved_by_structure_r47": "Saat, kuruluş tarafından {{when}} tarihinde değiştirildi.",
+ "access_action.access_granted": "dosyaya erişimi açtı",
+ "access_action.viewed": "dosyayı görüntüledi",
+ "access_action.exported": "dosyayı dışa aktardı",
+ "access_action.status_updated": "takibi güncelledi",
+ "access_action.attestation_viewed": "belgeyi görüntüledi",
+ "access_action.file_uploaded": "bir belge ekledi",
+ "access_action.file_downloaded": "bir belge indirdi",
+ "access_action.synthesis_drafted": "otomatik bir özet hazırlattı",
+ "access_action.synthesis_approved": "otomatik bir özeti onayladı",
+ "access_action.parcours_viewed": "Sürecim’i görüntüledi",
+ "access_action.coffre_listed": "Kasam’ın listesini görüntüledi",
+ "access_action.rdv_viewed": "randevuları görüntüledi"
 }

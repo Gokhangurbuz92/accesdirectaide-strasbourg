@@ -129,5 +129,6 @@
  "notFound.record.description": "Dieser Eintrag ist zurzeit nicht verfügbar.",
  "notFound.record.text": "Dieser Eintrag ist zurzeit nicht verfügbar. Er existiert nicht oder wird gerade überprüft.",
  "notFound.search": "Auf der Website suchen",
- "notFound.themes": "Liste nach Bedarf ansehen"
+ "notFound.themes": "Liste nach Bedarf ansehen",
+ "logout_failed": "Die Abmeldung ist fehlgeschlagen. Versuchen Sie es erneut; schließen Sie auf einem gemeinsam genutzten Gerät auch den Browser."
 }

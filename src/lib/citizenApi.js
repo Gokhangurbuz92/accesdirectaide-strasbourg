@@ -1,13 +1,16 @@
-// PKG-1 / K0 — thin client of /api/citizen/* (cookie session; protected writes go through csrfFetch: bootstrap + one safe retry). Errors keep the server's code and message so screens can be specific.
+// PKG-1 / K0 — thin client of /api/citizen/* (cookie session; protected writes go through csrfFetch: bootstrap + one safe retry). Errors keep the server's code and status.
+// A-13: `message` is the sentence to SHOW, in the interface language (src/lib/citizenErrors.js); the server's French sentence stays in `serverMessage`.
 import { csrfFetch, CsrfBootstrapError } from '@/lib/csrf';
+import { citizenErrorText } from '@/lib/citizenErrors';
 
 export class CitizenApiError extends Error {
-  /** @param {string} message @param {number} status @param {string} [code] */
-  constructor(message, status, code) {
+  /** @param {string} message @param {number} status @param {string} [code] @param {string} [serverMessage] */
+  constructor(message, status, code, serverMessage) {
     super(message);
     this.name = 'CitizenApiError';
     this.status = status;
     this.code = code || '';
+    this.serverMessage = serverMessage || '';
   }
 }
 
@@ -24,13 +27,13 @@ async function call(path, opts = {}) {
   try {
     res = method === 'GET' ? await fetch(path, init) : await csrfFetch(path, init);
   } catch (err) {
-    if (err instanceof CsrfBootstrapError) throw new CitizenApiError('Impossible de préparer la requête sécurisée. Rechargez la page puis réessayez.', 0, 'csrf_bootstrap');
-    throw new CitizenApiError('Le service est momentanément injoignable. Réessayez dans un instant.', 0, 'network');
+    if (err instanceof CsrfBootstrapError) throw new CitizenApiError(citizenErrorText({ code: 'csrf_bootstrap' }), 0, 'csrf_bootstrap');
+    throw new CitizenApiError(citizenErrorText({ code: 'network' }), 0, 'network');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const fallback = res.status === 401 ? 'Connectez-vous pour accéder à votre espace.' : res.status === 429 ? 'Trop de demandes, patientez un instant.' : 'Une erreur est survenue.';
-    throw new CitizenApiError(data.message || fallback, res.status, data.error);
+    const serverMessage = typeof data.message === 'string' ? data.message : '';
+    throw new CitizenApiError(citizenErrorText({ code: data.error, status: res.status, serverMessage }), res.status, typeof data.error === 'string' ? data.error : '', serverMessage);
   }
   return data;
 }

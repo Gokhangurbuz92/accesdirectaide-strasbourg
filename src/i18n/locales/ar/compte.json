@@ -512,6 +512,7 @@
  "settings.objection_reason_label": "ما تودّون قوله لنا (اختياري)",
  "settings.objection_reason_help": "مثلًا المعالجة المعنية والسبب. لا تكتبوا معلومات طبية.",
  "settings.objection_send": "إرسال طلب الاعتراض",
+ "settings.deletion_not_recorded": "تعذّر تسجيل طلب الحذف. لم يتغيّر حسابكم. أعيدوا المحاولة بعد قليل.",
  "share.dossier_ete_supprime_certaines": "تم حذف الملف. قد يُحتفظ ببعض الآثار التقنية احترامًا للقانون.",
  "share.gerer_dossier": "إدارة هذا الملف",
  "share.gerer_dossier_partage": "إدارة ملف مشترك",
@@ -628,5 +629,17 @@
  "fc.linked": "أصبح حسابك الآن مرتبطًا بـ FranceConnect.",
  "profile.inapp_center_r46": "تظهر المعلومات الجديدة عن حسابك أيضًا في « الإشعارات » ضمن مساحتي، دون أي إعداد: لا تغادر المنصة. تصلك التذكيرات عبر البريد الإلكتروني (وعبر الرسائل القصيرة فقط إذا فعّلتها).",
  "profile.inapp_center_v2": "تظهر المعلومات الجديدة عن حسابك أيضًا في « الإشعارات » ضمن مساحتي، دون أي إعداد: لا تغادر المنصة. الرسائل النصية والتذكيرات والمعلومات الاختيارية غير مفتوحة بعد.",
- "rdv.moved_by_structure_r47": "غيّرت المؤسسة الوقت في {{when}}."
+ "rdv.moved_by_structure_r47": "غيّرت المؤسسة الوقت في {{when}}.",
+ "access_action.access_granted": "فتحت الوصول إلى الملف",
+ "access_action.viewed": "اطّلعت على الملف",
+ "access_action.exported": "صدّرت الملف",
+ "access_action.status_updated": "حدّثت المتابعة",
+ "access_action.attestation_viewed": "اطّلعت على الشهادة",
+ "access_action.file_uploaded": "أضافت وثيقة",
+ "access_action.file_downloaded": "نزّلت وثيقة",
+ "access_action.synthesis_drafted": "طلبت إعداد ملخص آلي",
+ "access_action.synthesis_approved": "صادقت على ملخص آلي",
+ "access_action.parcours_viewed": "اطّلع على «مساري»",
+ "access_action.coffre_listed": "اطّلع على قائمة «خزنتي»",
+ "access_action.rdv_viewed": "اطّلع على المواعيد"
 }

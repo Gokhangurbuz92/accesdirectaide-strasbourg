@@ -512,6 +512,7 @@
  "settings.objection_reason_label": "Що ви хочете нам повідомити (необов’язково)",
  "settings.objection_reason_help": "Наприклад, про яку обробку йдеться і чому. Не пишіть медичних відомостей.",
  "settings.objection_send": "Надіслати мій запит про заперечення",
+ "settings.deletion_not_recorded": "Не вдалося зареєструвати ваш запит на видалення. Ваш обліковий запис не змінився. Спробуйте ще раз за мить.",
  "share.dossier_ete_supprime_certaines": "Справу видалено. Деякі технічні сліди можуть зберігатися відповідно до закону.",
  "share.gerer_dossier": "Керувати цією справою",
  "share.gerer_dossier_partage": "Керувати спільною справою",
@@ -628,5 +629,17 @@
  "fc.linked": "Ваш обліковий запис тепер пов’язано з FranceConnect.",
  "profile.inapp_center_r46": "Нова інформація про ваш обліковий запис також показується в розділі « Сповіщення » у Моєму просторі, без налаштувань: вона не залишає платформу. Нагадування надходять електронною поштою (і SMS лише якщо ви їх увімкнете).",
  "profile.inapp_center_v2": "Нова інформація про ваш обліковий запис також показується в розділі « Сповіщення » у Моєму просторі, без налаштувань: вона не залишає платформу. SMS, нагадування та необов’язкова інформація ще не відкриті.",
- "rdv.moved_by_structure_r47": "Час змінено організацією {{when}}."
+ "rdv.moved_by_structure_r47": "Час змінено організацією {{when}}.",
+ "access_action.access_granted": "відкрила доступ до досьє",
+ "access_action.viewed": "переглянула досьє",
+ "access_action.exported": "експортувала досьє",
+ "access_action.status_updated": "оновила супровід",
+ "access_action.attestation_viewed": "переглянула довідку",
+ "access_action.file_uploaded": "додала документ",
+ "access_action.file_downloaded": "завантажила документ",
+ "access_action.synthesis_drafted": "замовила автоматичне резюме",
+ "access_action.synthesis_approved": "затвердила автоматичне резюме",
+ "access_action.parcours_viewed": "переглянув(-ла) «Мій шлях»",
+ "access_action.coffre_listed": "переглянув(-ла) список «Мого сейфа»",
+ "access_action.rdv_viewed": "переглянув(-ла) зустрічі"
 }

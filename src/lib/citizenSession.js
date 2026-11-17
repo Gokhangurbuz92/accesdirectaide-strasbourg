@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { csrfFetch } from '@/lib/csrf';
+import i18n from '@/i18n';
+import { toast } from '@/components/ui/use-toast';
 
 /**
  * K0: logout is a protected POST like every mutation. It used to be sent WITHOUT the CSRF header: the API answered 403, the session cookie stayed, and the page
@@ -13,7 +15,8 @@ export async function logoutOnServer() {
     } catch {
         // network failure: same message below
     }
-    window.alert('La déconnexion a échoué. Réessayez ; sur un appareil partagé, fermez aussi le navigateur.');
+    // A-13: said in the interface language through the page's live region (the toaster), not a blocking French window.alert
+    toast({ variant: 'destructive', title: i18n.t('layout:logout_failed', 'La déconnexion a échoué. Réessayez ; sur un appareil partagé, fermez aussi le navigateur.') });
     return false;
 }
 
