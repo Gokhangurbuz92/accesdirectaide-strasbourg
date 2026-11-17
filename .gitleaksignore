@@ -18,6 +18,11 @@ src/i18n/locales/en/admin.json:generic-api-key:640
 # the same two reviewed strings (« emergency access », « Access requests to examine ») after the duplicate-register keys moved them (12/11/2026)
 src/i18n/locales/en/admin.json:generic-api-key:677
 src/i18n/locales/en/admin.json:generic-api-key:766
+# R47-QA (native QA v40): the same two reviewed strings again, two lines higher after the admin-pages merge (179be42) removed two keys above them.
+# Not a layout effect: 2-space JSON matches the same way (generic-api-key reads the keyword « access » in the value, then the NEXT key name across the
+# line break as the « secret »: 'access",\n "k5.operations.kind_ordinary"' and 'Access requests to examine",\n "k5.privacy.due"'). Reviewed 17/11/2026.
+src/i18n/locales/en/admin.json:generic-api-key:675
+src/i18n/locales/en/admin.json:generic-api-key:764
 
 # R45 (sec): the same reviewed translation strings in the git history (commit 906587f, before they moved to line 129): no secret value, reviewed 2026-11-05
 906587f5c57168bd3583dc7738d39984b2124cef:src/i18n/locales/en/legal.json:generic-api-key:126
