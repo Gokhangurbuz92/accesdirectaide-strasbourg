@@ -9,6 +9,7 @@ import { createNotification } from './notifications.js';
 import { invitationsWithRevokedSender } from '../../_utils/invite-token.js';
 import { handOverAll, handoverNotice } from '../../_services/pro-cases.js';
 import { handOverProposals } from '../../_services/referrals.js';
+import { endReferentsForDeparture, tellPersonReferentEnded } from '../../_services/dossier-referent.js';
 import { clientIp } from '../../_utils/client-ip.js';
 import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
 // PKG-4 / D3: a structure can only grant its own roles. SUPERADMIN is a platform role and is never assignable from a structure's team screen (privilege escalation).
@@ -198,6 +199,8 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             let movedAppointments = { toSuccessor: 0, toStructure: 0 };
             let movedProposals = 0;
             let outlookLinksErased = 0;
+            /** @type {any[]} */
+            let endedReferents = [];
             const movedCases = await db.transaction(async (tx) => {
                 if (successorUserId) {
                     const [successor] = await tx.select({ id: ProUser.id }).from(ProUser)
@@ -213,6 +216,9 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
                 // G6: the referral proposals the member made and the person has not answered yet follow the cases (same transaction) — otherwise the
                 // person's « accept » is refused (SENDER_GONE) and the proposal waits for ever
                 movedProposals = await handOverProposals(targetUserId, successorUserId, { userId, structureId, role: req.user?.role }, /** @type {any} */ (tx));
+                // M2 / G5: the member's « référent de parcours » roles END (same transaction) — the successor does not inherit a role the person agreed
+                // to for someone else; the successor may volunteer and the person decides again
+                endedReferents = await endReferentsForDeparture(/** @type {any} */ (tx), targetUserId, structureId);
                 // R47 (R12 « no orphans »): the member's future appointments and pending requests are not left on a disabled account — they go to the
                 // successor when that person is free at that time, otherwise to the structure (unassigned: any member may decide, the administrator reassigns)
                 const moved = await tx.execute(sql`UPDATE "ProAppointment" a SET "createdByProUserId" = CASE WHEN ${successorUserId}::text IS NOT NULL AND NOT EXISTS (
@@ -226,6 +232,7 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
             });
             if (movedCases === null) return badSuccessor();
             await handoverNotice(successorUserId, structureId, movedCases);
+            await tellPersonReferentEnded(endedReferents).catch(() => { });
 
             await logProAudit('USER_DISABLED', userId, structureId, {
                 targetUserId, successorUserId, movedCases, movedProposals, appointmentsToSuccessor: movedAppointments.toSuccessor, appointmentsToStructure: movedAppointments.toStructure, outlookLinksErased,

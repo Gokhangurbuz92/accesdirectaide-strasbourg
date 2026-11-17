@@ -30,7 +30,7 @@ export function useCaseLabels() {
     response: over(RESPONSE_LABELS, {
       OUT_OF_SCOPE: t('pro:case_labels.response.out_of_scope', 'Hors de notre champ'), NO_CAPACITY: t('pro:case_labels.response.no_capacity', 'Pas de capacité actuellement'),
       ALREADY_SUPPORTED: t('pro:case_labels.response.already_supported', 'Déjà accompagné·e'), NEEDS_MORE_INFORMATION: t('pro:case_labels.response.needs_more_information', 'Informations nécessaires'),
-      OTHER: t('pro:case_labels.response.other', 'Autre'),
+      OTHER: t('pro:case_labels.response.other', 'Autre'), REDIRECT_SUGGESTED: t('pro:case_labels.response.redirect_suggested', 'Autre structure suggérée'),
     }),
     referralStatus: over(REFERRAL_STATUS_LABELS, {
       DRAFT: t('pro:case_labels.referral.draft', 'Brouillon'), PENDING_CITIZEN: t('pro:case_labels.referral.pending_citizen', 'En attente de l’accord de la personne'),

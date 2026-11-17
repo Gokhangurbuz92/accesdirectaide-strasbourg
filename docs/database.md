@@ -77,5 +77,5 @@ Le garde-fou, utilisé par `scripts/db-deploy-migrate.mjs` avant toute écriture
 - schéma physique : objets des migrations enregistrées présents, objets des migrations non enregistrées absents, marqueurs de CHECK (0043, 0045) → `SCHEMA_DRIFT` ;
 - l'exécution simple n'appelle plus `migrate()` de drizzle : elle applique elle-même le plan vérifié, sous verrou consultatif, en une transaction, avec
   exactement les lignes d'historique qu'écrirait drizzle.
-Toute nouvelle migration : numéro 0046+, `when` postérieur à 0045, additive et idempotente. Répétition LAB :
+Toute nouvelle migration : numéro 0046+, `when` postérieur à 0045, additive et idempotente. M2 (LAB, non appliquées en Production) : 0047 (redirection d'orientation, personne de contact du parcours) et 0048 (historique des messages d'orientation) — SQL, impact, retour arrière (0048 avant 0047) et comportement du code sans elles : `docs/vision/M2_MIGRATION_NOTE.md`. Répétition LAB :
 `node scripts/lab/r44-migration-safety-rehearsal.mjs --out <dossier> --work <dossier temporaire>` (cluster LAB 127.0.0.1:55434, bases `ada_r44_migrate_*_test`).

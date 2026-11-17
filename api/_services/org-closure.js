@@ -21,6 +21,8 @@
  *   - kept on purpose: citizen-visible notes and case outcomes (part of the person's follow-up, erasable through the person's own request), the messages exchanged
  *     with people, the consent ledger, the audit trails, and the public directory record (public-source information; online booking is switched off).
  */
+import { releaseSenderCase } from './referrals.js';
+import { endReferentsForClosedOrganization } from './dossier-referent.js';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
@@ -127,6 +129,7 @@ async function execute(tx, sid, requestId, reviewer) {
   // A03: the members' Outlook link (refresh token, access token, Outlook address) ends with the space. Nothing in the code revokes a token at Microsoft: the
   // stored copy is deleted here, so ADA can no longer read any calendar; the member removes the application's consent from their Microsoft account themselves.
   summary.outlookLinksErased = await n(sql`DELETE FROM "ProOutlookToken" WHERE "userId" IN (SELECT id FROM "ProUser" WHERE "structureId" = ${sid})`);
+  summary.referentsEnded = (await endReferentsForClosedOrganization(tx, sid)).length;   // M2 / G5: no contact person of a closed organization stays shown
   summary.aiDraftsForgotten = await n(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "scopeStructureId" = ${sid}`);
   summary.internalNotesErased = await n(sql`DELETE FROM "ProCaseNote" WHERE "structureId" = ${sid} AND visibility = 'INTERNAL'`);
   const open = (await tx.execute(sql`UPDATE "ProCase" SET status = 'CLOSED', outcome = COALESCE(outcome, 'OTHER'), "closedAt" = NOW() WHERE "structureId" = ${sid} AND status <> 'CLOSED'
@@ -136,7 +139,7 @@ async function execute(tx, sid, requestId, reviewer) {
   summary.casesClosed = open.length;
   // referrals: one SENT by the closing organization and already ACCEPTED by the other one stays (that organization keeps supporting the person); one not yet accepted
   // is cancelled and the access it created is revoked; one RECEIVED by the closing organization ends (the sender sees it)
-  const refs = (await tx.execute(sql`SELECT id, status, "fromStructureId" AS f, "toStructureId" AS t, "sharedDiagnosticId" AS d, "grantId" AS g FROM "Referral" WHERE ("fromStructureId" = ${sid} OR "toStructureId" = ${sid})
+  const refs = (await tx.execute(sql`SELECT id, status, "fromStructureId" AS f, "toStructureId" AS t, "sharedDiagnosticId" AS d, "grantId" AS g, "fromCaseId" AS c FROM "Referral" WHERE ("fromStructureId" = ${sid} OR "toStructureId" = ${sid})
     AND status IN (${list(LIVE_REFERRALS)}) FOR UPDATE`)).rows;
   let ended = 0; const endedReferrals = [];
   for (const r of refs) {
@@ -146,6 +149,9 @@ async function execute(tx, sid, requestId, reviewer) {
     await tx.execute(sql`UPDATE "Referral" SET status = ${to}, "closedAt" = NOW(), "updatedAt" = NOW() WHERE id = ${r.id}`);
     await tx.execute(sql`INSERT INTO "ReferralEvent" (id, "referralId", "actorType", "actorId", "fromStatus", "toStatus", "createdAt") VALUES (${crypto.randomUUID()}, ${r.id}, 'SYSTEM', 'ORGANIZATION_CLOSED', ${r.status}, ${to}, NOW())`);
     if (sent && r.g) await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE id = ${r.g} AND "grantedVia" = 'referral' AND "revokedAt" IS NULL`);
+    // A07: a referral the closing organization RECEIVED ends without support — the sender's case leaves REFERRED when it has no other referral held by a
+    // receiver (the closing organization's own cases are closed above)
+    if (!sent) await releaseSenderCase(tx, r.c);
     ended += 1;
     endedReferrals.push({ id: r.id, sharedDiagnosticId: r.d, was: r.status, sent, otherStructureId: sent ? r.t : r.f });
   }

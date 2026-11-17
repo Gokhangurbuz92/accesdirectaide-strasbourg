@@ -47,6 +47,7 @@ const REVIEWED_NOT_PUBLIC = {
   // to statut 'actif' + verification_status 'VERIFIED' organizations with active members). Not a citizen-facing directory read; no unverified fact is published.
   'api/_services/privacy.js': 'DSR export of the person (names of organizations that hold their grant)', 'api/_services/pro-cases.js': 'professional back office + the person\'s own follow-ups',
   'api/_services/referrals.js': 'professional back office (verified receivers only) + the person\'s own referrals',
+  'api/_services/dossier-referent.js': 'M2: the organization NAME of a contact person, for the dossier\'s owner and for organizations holding a grant (authenticated; not a public read path)',
   'api/_services/dsr-review.js': 'ADA MFA review of a person\'s access request (organization names of their own case notes); never public',
   'api/_services/content-versions.js': 'PKG-5 / A07: administrator versions and rollback of a record (MFA); never public',
   'api/_services/privacy-console.js': 'PKG-5 / A12: administrator privacy console (legal-hold existence check by id); never public',

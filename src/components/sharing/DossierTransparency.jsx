@@ -10,6 +10,7 @@ import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 import { serverText } from '@/lib/serverText';
+import ReferentCard from '@/components/sharing/ReferentCard';
 
 /**
  * PKG-2 — on a dossier attached to the account: R16 "who did what with my dossier" (by organisation, no staff name, no IP), C17 the documents organisations attached
@@ -38,6 +39,7 @@ export default function DossierTransparency({ shareId }) {
     <div className="space-y-4" data-testid="dossier-transparency">
       <div aria-live="polite" role="status" data-testid="transparency-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="transparency-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
+      <ReferentCard shareId={shareId} />
       {data.followUps.length ? (
         <Card>
           <CardHeader><CardTitle className="text-lg">{t('messaging:transparency.followups', 'Suivi par les structures')}</CardTitle></CardHeader>

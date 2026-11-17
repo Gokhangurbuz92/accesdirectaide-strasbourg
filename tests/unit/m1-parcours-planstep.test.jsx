@@ -218,10 +218,19 @@ describe('migration 0046 and its rollback (files)', () => {
   const up = fs.readFileSync('drizzle/0046_m1_parcours_plan_step.sql', 'utf8');
   const down = fs.readFileSync('drizzle/rollback/0046_down.sql', 'utf8');
   const code = (text) => text.split('\n').filter((l) => !l.trim().startsWith('--') && l.trim()).join('\n');
-  it('the newest journal entry, after 0045; its snapshot has the nullable jsonb column', () => {
-    const e = journal.at(-1);
+  const e46 = journal.find((x) => x.tag === '0046_m1_parcours_plan_step');
+  it('the journal entry right after 0045 (the later ones — M2 0047, 0048 — come after it and keep the column); its snapshot has the nullable jsonb column', () => {
+    const e = e46;
     expect(e).toMatchObject({ idx: 46, tag: '0046_m1_parcours_plan_step', version: '7', breakpoints: true });
+    expect(journal[46]).toBe(e);
     expect(e.when).toBeGreaterThan(journal.find((x) => x.idx === 45).when);
+    for (const later of journal.filter((x) => x.idx > 46)) {
+      expect(later.when, later.tag).toBeGreaterThan(e.when);
+      const s = JSON.parse(fs.readFileSync(`drizzle/meta/${String(later.idx).padStart(4, '0')}_snapshot.json`, 'utf8'));
+      expect(s.tables['public.ParcoursItem'].columns.planStep, later.tag).toEqual({ name: 'planStep', type: 'jsonb', primaryKey: false, notNull: false });
+      expect(fs.readFileSync(`drizzle/${later.tag}.sql`, 'utf8'), later.tag).not.toMatch(/planStep/);   // nothing later touches the column
+    }
+    if (journal.length > 47) expect(JSON.parse(fs.readFileSync('drizzle/meta/0047_snapshot.json', 'utf8')).prevId).toBe(JSON.parse(fs.readFileSync('drizzle/meta/0046_snapshot.json', 'utf8')).id);
     const snap = JSON.parse(fs.readFileSync('drizzle/meta/0046_snapshot.json', 'utf8'));
     expect(snap.tables['public.ParcoursItem'].columns.planStep).toEqual({ name: 'planStep', type: 'jsonb', primaryKey: false, notNull: false });
     expect(snap.prevId).toBe(JSON.parse(fs.readFileSync('drizzle/meta/0045_snapshot.json', 'utf8')).id);
@@ -232,7 +241,7 @@ describe('migration 0046 and its rollback (files)', () => {
     expect(up).not.toMatch(/\b(UPDATE|DELETE|DROP|DEFAULT|NOT NULL|CREATE|CHECK \()/);
   });
   it('down drops exactly that column and forgets the migration row', () => {
-    expect(code(down)).toBe(`ALTER TABLE "ParcoursItem" DROP COLUMN IF EXISTS "planStep";\nDELETE FROM drizzle.__drizzle_migrations WHERE created_at = ${journal.at(-1).when};`);
+    expect(code(down)).toBe(`ALTER TABLE "ParcoursItem" DROP COLUMN IF EXISTS "planStep";\nDELETE FROM drizzle.__drizzle_migrations WHERE created_at = ${e46.when};`);
     expect(expectedObjects(down)).toEqual([{ op: 'drop', kind: 'column', key: 'ParcoursItem.planStep', table: 'ParcoursItem' }]);
   });
   it('the schema column is jsonb and nullable (an existing row needs no value)', () => {

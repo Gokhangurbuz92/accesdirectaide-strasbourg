@@ -16,7 +16,9 @@ const T42 = '0042_r31_orientation_funding_pilot';
 const T43 = '0043_r38_guest_booking';
 const T44 = '0044_r39_guest_reminder_consent';
 const T45 = '0045_r43_appointment_notice_kinds';
-const T46 = '0046_m1_parcours_plan_step';   // M1: the newest migration (additive, one nullable column)
+const T46 = '0046_m1_parcours_plan_step';   // M1 (additive, one nullable column)
+const T47 = '0047_m2_referral_redirect_referent';   // M2 (additive: referral redirect, contact person of the path)
+const T48 = '0048_m2_referral_message_history';   // M2: the newest migration (additive: history of the referral texts)
 /** the history rows a database holds after these tags (drizzle's shape: id, sha256 of the file, created_at = « when ») */
 const rowsFor = (tags) => tags.map((t, i) => ({ id: i + 1, hash: real.files[t].hash, created_at: String(byTag(t).when) }));
 const upTo = (idx) => E.filter((e) => e.idx <= idx).map((e) => e.tag);
@@ -37,12 +39,18 @@ async function drizzleWouldApply(lastCreatedAt) {
 }
 
 describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
-  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046)', async () => {
-    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46]);
+  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048)', async () => {
+    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48]);
   });
-  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046 is pending, and nothing after it', async () => {
-    expect(await drizzleWouldApply(byTag(T45).when)).toEqual([T46]);
-    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([]);
+  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048 are pending, and nothing after them', async () => {
+    const pending = await drizzleWouldApply(byTag(T45).when);
+    expect(pending).toEqual([T46, T47, T48]);
+    expect(pending).not.toContain(T43);
+    expect(pending).not.toContain(T44);
+    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48]);
+    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48]);
+    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([]);
+    expect(E[E.length - 1].tag).toBe(T48);
   });
   it('planDeploy() computes the same pending set as drizzle for every level, and refuses while an obsolete one is pending', async () => {
     for (const lvl of [null, ...E.map((e) => e.when)]) {
@@ -52,12 +60,14 @@ describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
       else expect(p.ok && p.apply.map((e) => e.tag)).toEqual(drizzleSet);
     }
   });
-  it('0046 is the only pending migration on Production 0042 + 0045; a future 0047 after it is the only one pending on 0042 + 0045 + 0046', () => {
+  it('0046, 0047, 0048 are the only pending migrations on Production 0042 + 0045; a future 0049 after them is the only one pending once they are applied', () => {
     const now = planDeploy(E, byTag(T45).when);
-    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46]);
-    const e47 = { idx: 47, when: byTag(T46).when + 1000, tag: '0047_future' };
-    const p = planDeploy([...E, e47], byTag(T46).when);
-    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0047_future']);
+    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48]);
+    const e49 = { idx: 49, when: byTag(T48).when + 1000, tag: '0049_future' };
+    const all = planDeploy([...E, e49], byTag(T45).when);
+    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, '0049_future']);
+    const p = planDeploy([...E, e49], byTag(T48).when);
+    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0049_future']);
   });
 });
 
@@ -78,16 +88,16 @@ describe('obsolete manifest and journal integrity', () => {
   });
   const codes = (r) => r.problems.map((p) => p.code);
   it('refuses a later migration whose « when » is not after the previous one (drizzle would skip it silently)', () => {
-    const r = verifyJournal(mk([...E, { idx: 47, when: byTag(T46).when, tag: '0047_x' }]));
+    const r = verifyJournal(mk([...E, { idx: 49, when: byTag(T48).when, tag: '0049_x' }]));
     expect(codes(r)).toContain('WHEN_NOT_INCREASING');
   });
   it('refuses idx gaps, duplicate tags, unnumbered tags, missing files and files without an entry', () => {
-    expect(codes(verifyJournal(mk([...E, { idx: 48, when: 9e12, tag: '0048_x' }])))).toContain('IDX_NOT_CONTIGUOUS');
-    expect(codes(verifyJournal(mk([...E, { idx: 47, when: 9e12, tag: '0099_x' }])))).toContain('TAG_NOT_NUMBERED_BY_IDX');
-    expect(codes(verifyJournal(mk([...E, { ...E[45], idx: 47, when: 9e12 }])))).toContain('DUPLICATE_TAG');
+    expect(codes(verifyJournal(mk([...E, { idx: 50, when: 9e12, tag: '0050_x' }])))).toContain('IDX_NOT_CONTIGUOUS');
+    expect(codes(verifyJournal(mk([...E, { idx: 49, when: 9e12, tag: '0099_x' }])))).toContain('TAG_NOT_NUMBERED_BY_IDX');
+    expect(codes(verifyJournal(mk([...E, { ...E[45], idx: 49, when: 9e12 }])))).toContain('DUPLICATE_TAG');
     const files = { ...real.files }; delete files[T42];
     expect(codes(verifyJournal(mk(E, files)))).toContain('MISSING_FILE');
-    expect(codes(verifyJournal(mk(E, null, [...real.sqlFiles, '0047_orphan.sql'])))).toContain('FILE_WITHOUT_ENTRY');
+    expect(codes(verifyJournal(mk(E, null, [...real.sqlFiles, '0049_orphan.sql'])))).toContain('FILE_WITHOUT_ENTRY');
   });
   it('refuses an obsolete migration removed, moved, edited or renamed', () => {
     expect(codes(verifyJournal(mk(E.filter((e) => e.tag !== T44))))).toEqual(expect.arrayContaining(['OBSOLETE_ENTRY_MISSING']));
@@ -175,7 +185,7 @@ describe('physical schema vs history', () => {
     ]));
     expect(physicalDrift(E, real.files, PROD_0042, catalogueOf(PROD_0042, ELEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_UNRECORDED', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
     expect(physicalDrift(E, real.files, [...PROD_0042, T45], catalogueOf(PROD_0042, SEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_MISSING', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
-    expect(CHECK_MARKERS.map((m) => m.tag)).toEqual([T43, T45]);
+    expect(CHECK_MARKERS.map((m) => m.tag)).toEqual([T43, T45, '0047_m2_referral_redirect_referent']);   // M2: 0047 widens Referral_response_check
   });
 });
 

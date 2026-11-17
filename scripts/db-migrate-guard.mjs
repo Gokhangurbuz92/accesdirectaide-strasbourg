@@ -13,7 +13,7 @@
  *   4. planDeploy() — what drizzle would apply, refused while an obsolete migration is pending; `only` = exactly one migration;
  *   5. expectedObjects() / physicalDrift() — the tables, columns, named constraints, indexes, enum types, triggers and functions the applied migrations create
  *      (parsed from their SQL), compared with the catalogue: an object missing, or an object that only an UNRECORDED migration creates (e.g. a guest column
- *      without a 0043 row), is drift; CHECK_MARKERS add the CHECK-content changes the parser cannot see (0043 and 0045 rewrite one CHECK);
+ *      without a 0043 row), is drift; CHECK_MARKERS add the CHECK-content changes the parser cannot see (0043, 0045 and 0047 rewrite one CHECK);
  *   6. stockMigrateRefusal() — `drizzle-kit migrate` / `push` are refused by drizzle.config.ts against any non-local database.
  * Historic migration files are never modified: LAB databases and the native QA rely on them.
  */
@@ -36,6 +36,7 @@ const isObsolete = (tag) => OBSOLETE_MIGRATIONS.includes(tag);
 export const CHECK_MARKERS = Object.freeze([
   Object.freeze({ tag: '0043_r38_guest_booking', table: 'AppointmentNotice', constraint: 'AppointmentNotice_kind_check', token: "'BOOKED_BY_GUEST'" }),
   Object.freeze({ tag: '0045_r43_appointment_notice_kinds', table: 'AppointmentNotice', constraint: 'AppointmentNotice_kind_check', token: "'REQUEST_RECEIVED'" }),
+  Object.freeze({ tag: '0047_m2_referral_redirect_referent', table: 'Referral', constraint: 'Referral_response_check', token: "'REDIRECT_SUGGESTED'" }),
 ]);
 
 export const sha256 = (text) => crypto.createHash('sha256').update(text).digest('hex');

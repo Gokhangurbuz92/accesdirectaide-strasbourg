@@ -1,6 +1,11 @@
 # Referral redirect (G3) and « référent de parcours » (G5) — design note
 
-Status: PROPOSAL, LAB only. Not implemented: both need a schema change (next migration, after 0045). Nothing here is active in Production.
+Status: IMPLEMENTED in LAB (M2, migrations 0047 / 0048 — see `docs/vision/M2_MIGRATION_NOTE.md`). Nothing here is active in Production: the migrations are
+not applied there and the surfaces stay closed. Differences from the proposal below, as built: the référent's displayed name is a text the professional
+enters and agrees to show (`displayName` + `displayNameConsentAt`; ProUser holds no first name); the redirect list of organizations is served by
+`GET /api/pro/referrals?suggestFor=<id>&receivers=<q>`; a follow-up may also start from an EXPIRED referral or one CLOSED without an outcome; one live
+follow-up per declined referral (unique index); a pending redirect is cancelled when the person withdraws the proposing organization's access or stops
+sharing; `followUpNotifiedAt` carries the one « needs a human follow-up » notice. The referral inbox does not show the sending side's référent (open question, left closed).
 Invariants kept: consent before disclosure, minimal disclosure, tenant filters, append-only `ReferralEvent`, one conditional UPDATE per transition.
 The platform records who said what; it never decides, never guarantees a place, never becomes the person's legal « référent ».
 

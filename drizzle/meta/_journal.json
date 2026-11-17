@@ -330,6 +330,20 @@
       "when": 1794742203358,
       "tag": "0046_m1_parcours_plan_step",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1794750000000,
+      "tag": "0047_m2_referral_redirect_referent",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1794750600000,
+      "tag": "0048_m2_referral_message_history",
+      "breakpoints": true
     }
   ]
 }

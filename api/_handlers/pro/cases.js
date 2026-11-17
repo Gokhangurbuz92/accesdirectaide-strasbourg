@@ -3,10 +3,13 @@ import { requireProStructureContext } from '../../_utils/auth.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { addNote, assign, close, getCase, listQueue, reopen, setStatus } from '../../_services/pro-cases.js';
 import { withCapability } from '../../_utils/capabilities.js';
+import { stepDown, volunteer } from '../../_services/dossier-referent.js';
 
 /**
  * PKG-4 / R03 R06 R07 R08 R11 — ADA Pro cases of the caller's organization (api/_services/pro-cases.js holds every rule).
  *   GET ?scope=mine|unassigned|all  -> work queue (metadata only)        GET ?id=  -> case (notes, history, members)
+ *   M2 / G5: POST { action: 'referent_volunteer', id, displayName, displayNameConsent: true } | { action: 'referent_step_down', id } — the contact person of the
+ *   person's path (declarative: no access, no legal responsibility; effective only with the person's agreement — api/_services/dossier-referent.js)
  *   POST { action: 'assign', id, userId|null } | { action: 'status', id, status } | { action: 'note', id, visibility, body, mentions } | { action: 'close', id, outcome, citizenSummary } | { action: 'reopen', id }
  */
 async function handler(req, res) {
@@ -23,6 +26,8 @@ async function handler(req, res) {
     case 'note': return send(await addNote(b.id, b, ctx));
     case 'close': return send(await close(b.id, b, ctx));
     case 'reopen': return send(await reopen(b.id, ctx));
+    case 'referent_volunteer': return send(await volunteer(ctx, b.id, b));
+    case 'referent_step_down': return send(await stepDown(ctx, b.id));
     default: return res.status(400).json({ error: 'INVALID_ACTION' });
   }
 }

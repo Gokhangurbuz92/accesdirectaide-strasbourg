@@ -6,6 +6,7 @@
  * protects the dossier, files, messages, exports). Every check is a SQL predicate evaluated with the read or inside the UPDATE (no check-then-act race).
  * Internal notes never leave the organization; citizen-visible notes and the outcome summary are the only texts the person sees. History is append-only.
  */
+import { referentForCase } from './dossier-referent.js';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { ProCase, ProCaseEvent, ProCaseNote, ProUser } from '../../src/db/schema.js';
@@ -83,7 +84,9 @@ export async function getCase(id, ctx, db = defaultDb) {
   const assignee = members.find((m) => m.id === c.assigneeProUserId) || (c.assigneeProUserId ? { id: c.assigneeProUserId, email: '(compte inactif)' } : null);
   return { ok: true, status: 200, case: { id: c.id, dossierId: c.sharedDiagnosticId, status: c.status, outcome: c.outcome, outcomeCitizenSummary: c.outcomeCitizenSummary, openedAt: c.openedAt, closedAt: c.closedAt, assignee },
     notes: notes.map((n) => ({ id: n.id, visibility: n.visibility, body: proProtectedRecords.openCaseNote(c.id, n.bodyEncrypted), authorId: n.authorProUserId, mentions: n.mentions, at: n.createdAt })),
-    events, members: members.map((m) => ({ id: m.id, email: m.email, role: m.role })), canAssignOthers: isAdmin(ctx) };
+    events, members: members.map((m) => ({ id: m.id, email: m.email, role: m.role })), canAssignOthers: isAdmin(ctx),
+    // M2 / G5: the contact person the PERSON agreed to (a name and an organization) — shown because the caller already holds access; the record itself opens nothing
+    referent: await referentForCase(c.sharedDiagnosticId, ctx, db) };
 }
 
 /**
