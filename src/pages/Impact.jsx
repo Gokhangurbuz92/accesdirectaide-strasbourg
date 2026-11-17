@@ -8,7 +8,8 @@ import i18n, { useT } from '@/i18n';
 /**
  * PKG-11 / P25: only measured figures. R26: what is measured today is what is published — the live counts of verified records, read from the public
  * lists themselves. Usage figures (visits, people helped, appointments) are not measured during the public beta, and the page says so instead of
- * showing empty counters (it used to call a figures endpoint the beta refuses).
+ * showing empty counters (it used to call a figures endpoint the beta refuses). FA-D9: it no longer promises to publish « people helped » once visits are
+ * measured — a visit is not a person helped, and no recorded fact says that a person obtained an aid (api/lib/observatory-metrics.js).
  */
 export default function Impact() {
     const { t } = useT('about');
@@ -28,7 +29,7 @@ export default function Impact() {
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="impact-no-figures">
                         <h2 id="impact-not-measured" className="text-lg font-semibold text-slate-900">{t('about:impact.not_measured.title', 'Ce que nous ne mesurons pas encore')}</h2>
                         <p className="mt-2 text-slate-700">
-                            {t('about:impact.not_measured.text', 'Pendant la bêta publique, nous ne mesurons pas l’audience et aucun compte n’est ouvert : nous ne connaissons ni le nombre de visites, ni le nombre de personnes aidées. Ces chiffres seront publiés lorsqu’ils seront mesurés, avec leur méthode.')}
+                            {t('about:impact.not_measured.text_v2', 'Pendant la bêta publique, nous ne mesurons pas l’audience et aucun compte n’est ouvert : nous ne connaissons ni le nombre de visites, ni le nombre de personnes aidées. Une visite ou une recherche n’est pas une personne aidée, et nous ne présenterons jamais l’une comme l’autre. Qu’une personne ait obtenu une aide n’est enregistré nulle part dans la plateforme : ce chiffre ne sera pas publié tant qu’une source ne l’établit pas.')}
                         </p>
                     </div>
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -139,10 +139,17 @@ export default function RegionalDashboard() {
                     </div>
                 </div>
 
+                {/* FA-D9: in Production a closed quarter is published only once frozen — before, the API withholds it and the page says so */}
+                {data?.period?.withheld ? (
+                    <p role="status" className="text-sm text-slate-700" data-testid="regional-quarter-withheld">
+                        {t('pro:regional.quarter_withheld', 'Le dernier trimestre clos n’est pas encore figé : aucune de ses valeurs n’est publiée avant son gel.')}
+                    </p>
+                ) : null}
+
                 {/* KPIs */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <KpiCard
-                        label={t('pro:regional.kpi_people_with_appointment', 'Personnes avec un rendez-vous (trimestre)')}
+                        label={t('pro:regional.kpi_accounts_with_appointment', 'Comptes citoyens avec un rendez-vous (trimestre, somme des communes)')}
                         value={stats.peopleWithAppointment ?? '< 5'}
                         icon={<Users size={14} className="text-indigo-500" />}
                     />
@@ -157,7 +164,7 @@ export default function RegionalDashboard() {
                         icon={<ShieldCheck size={14} className="text-amber-500" />}
                     />
                     <KpiCard
-                        label={t('pro:regional.kpi_quarter', 'RDV du dernier trimestre complet')}
+                        label={t('pro:regional.kpi_quarter_not_cancelled', 'Rendez-vous non annulés du dernier trimestre complet')}
                         value={stats.appointmentsLastQuarter ?? '< 5'}
                         icon={<Calendar size={14} className="text-blue-500" />}
                     />

@@ -1394,6 +1394,10 @@
       "class": "optional",
       "nature": "config"
     },
+    "OBS_PUBLISH_FROZEN_ONLY": {
+      "class": "optional",
+      "nature": "config"
+    },
     "CRON_ACTUALITES_STALE_MINUTES": {
       "class": "optional",
       "nature": "config"
