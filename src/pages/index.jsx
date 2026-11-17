@@ -1,5 +1,6 @@
 import { Suspense, lazy, Component } from "react";
 import { BrowserRouter, MemoryRouter, Route, Routes, useLocation, Navigate, useParams } from 'react-router-dom';
+import RedirectKeepingQuery from '@/components/routing/RedirectKeepingQuery';   // FA-D1 (D-FA1-2): a moved path keeps its query
 import ScrollToTop from '@/components/navigation/ScrollToTop';
 import RouteFocus from '@/components/navigation/RouteFocus';
 import { m, LazyMotion, domAnimation, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -575,7 +576,7 @@ function PagesContent() {
                                 <Route path="/besoins" element={<Besoins />} />
 
                                 <Route path="/structures" element={<Annuaire />} />
-                                <Route path="/annuaire" element={<Navigate to="/structures" replace />} />
+                                <Route path="/annuaire" element={<RedirectKeepingQuery to="/structures" />} />
                                 <Route path="/annuaire/:slug" element={<AnnuaireSlugRedirect />} />
                                 <Route path="/structures/view" element={<LegacyViewRedirect basePath="/structures" />} />
                                 <Route path="/structures/:slug" element={<StructureDetail />} />
@@ -639,7 +640,7 @@ function PagesContent() {
                                 <Route path="/structuredetail" element={<Navigate to="/annuaire" replace />} />
                                 <Route path="/DemarcheDetail" element={<Navigate to="/demarches" replace />} />
                                 <Route path="/demarchedetail" element={<Navigate to="/demarches" replace />} />
-                                <Route path="/Annuaire" element={<Navigate to="/annuaire" replace />} />
+                                <Route path="/Annuaire" element={<RedirectKeepingQuery to="/annuaire" />} />
                                 <Route path="/Aides" element={<Navigate to="/aides" replace />} />
 
                                 {/* Phase 1: /assistant redirect → /orientation */}

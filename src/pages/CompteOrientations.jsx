@@ -5,7 +5,9 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
-import { OUTCOME_LABELS, REASON_LABELS, REFERRAL_STATUS_LABELS, label } from '@/lib/caseLabels';
+import { label } from '@/lib/caseLabels';
+// FA-D1 (D-FA1-1): the referral codes in the interface language (pro:case_labels.*, as the professional pages and the dossier transparency show them)
+import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { useT, formatDate } from '@/i18n';
 import ReferentCard from '@/components/sharing/ReferentCard';
 import { useFrAttrs } from '@/lib/recordLang';
@@ -20,6 +22,7 @@ import { useFrAttrs } from '@/lib/recordLang';
 export default function CompteOrientations() {
   const { t } = useT('compte');
   const fr = useFrAttrs();
+  const L = useCaseLabels();
   const [state, setState] = useState({ loading: true, error: '', referrals: [] });
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
@@ -73,7 +76,7 @@ export default function CompteOrientations() {
         <Card><CardHeader><CardTitle className="text-lg">{t('compte:orientations.decider', 'À décider')}</CardTitle></CardHeader><CardContent className="space-y-3">
           {pending.map((r) => (
             <div key={r.id} data-testid="orientation-pending" className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
-              <p><strong>{r.from}</strong> {t('compte:orientations.proposes_to', 'propose de transmettre votre dossier à')} <strong>{r.to}</strong> {t('compte:orientations.reason', '— motif :')} {label(REASON_LABELS, r.reasonCode)}.</p>
+              <p><strong>{r.from}</strong> {t('compte:orientations.proposes_to', 'propose de transmettre votre dossier à')} <strong>{r.to}</strong> {t('compte:orientations.reason', '— motif :')} {label(L.reason, r.reasonCode)}.</p>
               {follows(r)}
               {r.message ? <p className="whitespace-pre-wrap">{t('compte:orientations.message_sent', 'Message qui sera transmis : « {{message}} »', { message: r.message })}</p> : null}
               <p>{t('compte:orientations.if_accept', 'Si vous acceptez, {{to}} pourra consulter votre dossier. Vous pourrez retirer cet accès à tout moment depuis la page du dossier.', { to: r.to })}</p>
@@ -88,11 +91,11 @@ export default function CompteOrientations() {
       <Card><CardHeader><CardTitle className="text-lg">{t('compte:orientations.suivi', 'Suivi')}</CardTitle></CardHeader><CardContent>
         {others.length ? <ul className="space-y-2">{others.map((r) => (
           <li key={r.id} data-testid="orientation-item" className="rounded-md border border-slate-200 p-2 text-sm">
-            <p>{r.from} → <strong>{r.to}</strong> — <span data-testid="orientation-item-status">{label(REFERRAL_STATUS_LABELS, r.status)}</span></p>
+            <p>{r.from} → <strong>{r.to}</strong> — <span data-testid="orientation-item-status">{label(L.referralStatus, r.status)}</span></p>
             {follows(r)}
             {r.responseCode && responseText(r.responseCode) ? <p data-testid="orientation-response">{t('compte:orientations.response_label', 'Réponse de {{to}} :', { to: r.to })} {responseText(r.responseCode)}{r.respondedAt ? ` (${formatDate(r.respondedAt)})` : ''}</p> : null}
             {r.suggested ? <p data-testid="orientation-suggested">{t('compte:orientations.suggested', 'Structure suggérée :')} <strong {...fr}>{r.suggested}</strong>. {t('compte:orientations.suggested_nothing_sent', 'Rien ne lui a été transmis.')}</p> : null}
-            {r.outcome ? <p data-testid="orientation-outcome">{t('compte:orientations.resultat', 'Résultat :')} {label(OUTCOME_LABELS, r.outcome)}{r.outcomeSummary ? ` — « ${r.outcomeSummary} »` : ''}</p> : null}
+            {r.outcome ? <p data-testid="orientation-outcome">{t('compte:orientations.resultat', 'Résultat :')} {label(L.outcome, r.outcome)}{r.outcomeSummary ? ` — « ${r.outcomeSummary} »` : ''}</p> : null}
             {nextText(r) ? <p data-testid="orientation-next"><strong>{t('compte:orientations.next_label', 'Prochaine étape :')}</strong> {nextText(r)}</p> : null}
             {r.needsFollowUp ? <p data-testid="orientation-follow-up" className="rounded-md border border-amber-200 bg-amber-50 p-2 text-amber-900">{t('compte:orientations.needs_follow_up', 'Cette étape n’a pas avancé depuis un moment. Vous pouvez contacter {{org}} pour savoir où elle en est.', { org: r.nextAction?.by === 'RECEIVER' ? r.to : r.from })}</p> : null}
             {!r.nextAction && r.closedAt ? <p className="text-slate-700">{t('compte:orientations.closed_on', 'Close le {{date}}.', { date: formatDate(r.closedAt) })}</p> : null}
