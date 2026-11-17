@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useK5 } from './helpers.js';
 import { Status, Field } from './ui.jsx';
 import { useT, formatDateTime } from '@/i18n';
+import MailSuppression from './MailSuppression.jsx';
 
 /** PKG-5 / A19 — support requests (/admin/support): read (MFA), take, answer, close with a note. No dossier, case or document is reachable from here. */
 export default function AdminSupport() {
@@ -34,6 +35,8 @@ export default function AdminSupport() {
         ))}
         {k.data && !k.data.requests.length ? <li>{t('admin:k5.support.none', 'Aucune demande ouverte.')}</li> : null}
       </ul>
+      {/* RA-07: the lift of an e-mail suppression (platform operation: MFA + elevation, reason, audited) */}
+      <MailSuppression />
     </div>
   );
 }

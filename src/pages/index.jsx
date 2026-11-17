@@ -158,6 +158,7 @@ const AdminVersions = lazy(() => import("./admin/k5/Versions.jsx"));
 const AdminFalc = lazy(() => import("./admin/k5/Falc.jsx"));
 const AdminDuplicates = lazy(() => import("./admin/k5/Duplicates.jsx"));
 const AdminLinkChecks = lazy(() => import("./admin/k5/LinkChecks.jsx"));   // RA-06
+const AdminServiceSensitivity = lazy(() => import("./admin/k5/ServiceSensitivity.jsx"));   // RA-07
 const AdminAiOversight = lazy(() => import("./admin/k5/AiOversight.jsx"));
 const AdminProviders = lazy(() => import("./admin/k5/Providers.jsx"));   // R46 / N10
 const AdminSecurity = lazy(() => import("./admin/k5/Security.jsx"));   // R46 / Q07
@@ -393,6 +394,7 @@ function PagesContent() {
                                     <Route path="falc" element={<AdminFalc />} />
                                     <Route path="doublons" element={<AdminDuplicates />} />
                                     <Route path="liens" element={<AdminLinkChecks />} />
+                                    <Route path="sensibilite-services" element={<AdminServiceSensitivity />} />
                                     <Route path="ai-oversight" element={<AdminAiOversight />} />
                                     <Route path="orchestrator" element={<AIOrchestrator />} />
                                     <Route path="features" element={<AdminFeatures />} />
