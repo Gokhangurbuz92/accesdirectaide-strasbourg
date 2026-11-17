@@ -2,7 +2,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { eq, and, or, sql, desc } from 'drizzle-orm';
 import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, referralChainSchema, requestGuestSchema } from '../_utils/schema-features.js';
-import { openText } from '../lib/data-keys.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
@@ -477,6 +476,9 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
               r.outcome, r."outcomeCitizenSummary" AS summary, r."createdAt", r."citizenDecisionAt"${m2.chain ? sql`, r."previousReferralId", ss.nom AS "suggestedOrganization"` : sql``}
               FROM "Referral" r JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId" JOIN "Structure" sf ON sf.id = r."fromStructureId" JOIN "Structure" st ON st.id = r."toStructureId"
               ${m2.chain ? sql`LEFT JOIN "Structure" ss ON ss.id = r."suggestedStructureId"` : sql``} WHERE d."ownerCitizenId" = ${userId}`);
+            // lazy, like openMessage below: api/lib/data-keys loads the application encryption key at import time, and this module is also loaded by tools that
+            // must run without it (scripts/db-erasure-replay.mjs --execute after a restore: TARGET_DATABASE_URL + BACKUP_ENCRYPTION_KEY only)
+            const { openText } = await import('../lib/data-keys.js');
             const referralCtx = (/** @type {string} */ id) => ({ purpose: 'referral-message', context: `referral:${id}` });
             const openReferralText = (/** @type {string} */ id, /** @type {string | null} */ enc) => { if (!enc) return null; try { return openText(enc, referralCtx(id)); } catch { noteReadFailure(); return null; } };
             const referrals = referralRows.map(({ messageEncrypted, ...r }) => ({ ...r, message: openReferralText(r.id, messageEncrypted) }));
