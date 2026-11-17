@@ -33,7 +33,11 @@ i18n.use(initReactI18next).init({
   defaultNS: 'common',
   keySeparator: false,
   nsSeparator: ':',
-  interpolation: { escapeValue: false },
+  // FA-D4: every value inserted into a sentence is isolated in a right-to-left language (FSI U+2068 … PDI U+2069, W3C « Inline markup and bidirectional
+  // text in HTML »): a Latin name, an e-mail address, a date, an amount or a count of unknown direction no longer merges with the Arabic sentence's
+  // punctuation and digits. i18next calls `escape` for each inserted value; React already escapes markup, so nothing else is changed, and the
+  // left-to-right languages get the value unchanged.
+  interpolation: { escapeValue: true, escape: (/** @type {unknown} */ value) => isolateInserted(value, i18n?.language) },
   returnNull: false,
   returnEmptyString: false,
   partialBundledLanguages: true,
@@ -43,6 +47,12 @@ i18n.use(initReactI18next).init({
 });
 
 export default i18n;
+
+/** FA-D4: a value inserted into a sentence, isolated when the language reads right to left (otherwise returned as it is) @param {unknown} value @param {string} [code] */
+export function isolateInserted(value, code) {
+  const s = value === null || value === undefined ? '' : String(value);
+  return s && languageOf(code)?.dir === 'rtl' && !/^\u2068[\s\S]*\u2069$/.test(s) ? `\u2068${s}\u2069` : s;
+}
 
 /** French, the source language, is the first entry: the language used when a code names none of ours */
 const SOURCE_ENTRY = LANGUAGES[0];

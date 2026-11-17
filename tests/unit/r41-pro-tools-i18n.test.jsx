@@ -16,6 +16,12 @@ import FileVault from '../../src/components/FileVault.jsx';
 import ChatWindow from '../../src/components/Messaging/ChatWindow.jsx';
 import { setLanguage } from '../../src/i18n/index.js';
 
+// FA-D4: in Arabic an inserted value (a name, a size, a file name) is isolated with FSI … PDI (src/i18n/index.js isolateInserted); the visible text
+// is unchanged, so the expectations compare the text without these invisible marks
+const bare = (/** @type {string} */ x) => String(x).replace(/[\u2066-\u2069]/g, '');
+const text = (/** @type {string} */ want) => (/** @type {string} */ _c, /** @type {Element | null} */ el) => !!el && bare(el.textContent || '') === want && [...el.children].every((c) => bare(c.textContent || '') !== want);
+
+
 const DRAFTS = { drafts: [
   { id: 'd1', status: 'PENDING', model: 'local-7b', points: ['Point A'], sourceChanged: true },
   { id: 'd2', status: 'APPROVED', model: 'local-7b', points: ['Point B'], reviewedBy: 'Camille', reviewNote: '' },
@@ -65,10 +71,10 @@ describe.each([
     const { container } = render(tools());
     await waitFor(() => expect(screen.getAllByTestId('pro-synthesis-draft')).toHaveLength(2));
     expect(screen.getByText(title)).toBeInTheDocument();
-    expect(screen.getByText(reviewed)).toBeInTheDocument();
+    expect(screen.getByText(text(reviewed))).toBeInTheDocument();
     expect(screen.getByText(vault)).toBeInTheDocument();
-    expect(screen.getByText(size)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: download })).toBeInTheDocument();
+    expect(screen.getByText(text(size))).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: (n) => bare(n) === download })).toBeInTheDocument();
     expect(container.textContent).toContain(e2e);
     expect(document.documentElement).toHaveAttribute('dir', code === 'ar' ? 'rtl' : 'ltr');
     expect(document.documentElement).toHaveAttribute('lang', code);
@@ -95,7 +101,7 @@ describe('the messaging attachment line', () => {
     await lang(code);
     const { container } = render(h(ChatWindow, { messages: [], onSendMessage: () => {}, onUploadFile: () => {}, loading: false }));
     fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [new File([new Uint8Array(2048)], 'note.pdf', { type: 'application/pdf' })] } });
-    expect(screen.getByText(line)).toBeInTheDocument();
+    expect(screen.getByText(text(line))).toBeInTheDocument();
     expect(screen.getByRole('button', { name: remove })).toBeInTheDocument();
   });
 });
