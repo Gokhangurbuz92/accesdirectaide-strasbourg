@@ -52,13 +52,37 @@ export async function fetchPage(url, { fetchImpl = fetch, timeoutMs = FETCH_TIME
 /** R39: the public listing shows a service's contact, never a person's own e-mail address (same rule as the veille: verification/contacts.js) */
 export const publicContactEmail = (/** @type {string | null | undefined} */ email) => (email && !nominativeEmail(email) ? email : null);
 
-/** D14: the structure of this dataset with the same identity (SIRET, else name + postal code). @param {string} datasetId @param {Record<string, any>} v */
-async function findByIdentity(datasetId, v) {
+/**
+ * D14 + D8: the structure of this dataset that IS this source record. Identity is the dataset + the SIRET when ONE record of this fetch carries that SIRET,
+ * else the dataset + the folded name + the postal code — never the content alone. D8 (owner 17/11, organisation ≠ establishment ≠ service): in the public
+ * source two operators share one name at one address, and one manager's SIRET is carried by many places (18 « centres médico-sociaux »). So a record already
+ * matched in this run is never matched again, and among several records of the same identity the one whose facts agree best is taken (the same content first).
+ * @param {string} datasetId @param {Record<string, any>} v @param {{ sharedSirets: Set<string>, claimed: Set<string>, hash: string }} run
+ */
+async function findByIdentity(datasetId, v, { sharedSirets, claimed, hash }) {
     const siret = String(v.siret || '').replace(/\s+/g, '');
-    const where = /^\d{14}$/.test(siret)
+    const bySiret = /^\d{14}$/.test(siret) && !sharedSirets.has(siret);
+    const where = bySiret
         ? and(eq(Structure.source_id, datasetId), eq(Structure.siret, siret))
         : and(eq(Structure.source_id, datasetId), sql`lower(trim(${Structure.nom})) = lower(trim(${v.nom}))`, eq(Structure.code_postal, v.code_postal));
-    return db.query.Structure.findFirst({ where });
+    const free = (await db.query.Structure.findMany({ where, orderBy: (s, { asc }) => [asc(s.createdAt), asc(s.id)], limit: 50 })).filter((r) => !claimed.has(r.id));
+    if (!free.length) return null;
+    const exact = free.find((r) => r.raw_data_hash === hash);
+    if (exact) return exact;
+    const distance = (/** @type {any} */ r) => classifyStructureChange(r, v, null).changed.length;
+    return free.reduce((best, r) => (distance(r) < distance(best) ? r : best), free[0]);
+}
+
+/** D8: the SIRETs that more than one record of this fetch carries (a manager's SIRET on several places): they identify no single place @param {any[]} items */
+export function sharedSiretsOf(items) {
+    const seen = new Set(); const shared = new Set();
+    for (const item of items) {
+        const f = item?.fields || item || {};
+        const s = f.siret ? String(f.siret).replace(/\s+/g, '') : '';
+        if (!/^\d{14}$/.test(s)) continue;
+        if (seen.has(s)) shared.add(s); else seen.add(s);
+    }
+    return shared;
 }
 
 /**
@@ -166,6 +190,7 @@ export async function runIngestStructures({ limit, runId }) {
 
         /** @type {Set<string>} ids of the structures of this dataset present in this fetch */
         const seen = new Set();
+        const sharedSirets = sharedSiretsOf(items);
         const startProcess = Date.now();
         let interrupted = false;
         for (const item of items) {
@@ -229,7 +254,9 @@ export async function runIngestStructures({ limit, runId }) {
                 }
 
                 // D14: identity is the dataset + SIRET, else the dataset + name + postal code — never the content (a changed phone number was a new structure)
-                const existing = await findByIdentity(dataset.id, val) || await db.query.Structure.findFirst({ where: eq(Structure.raw_data_hash, hash) });
+                // D8: a record already matched in this run is another place (never matched twice); the content-hash fallback obeys the same rule
+                const byHash = await db.query.Structure.findFirst({ where: eq(Structure.raw_data_hash, hash) });
+                const existing = await findByIdentity(dataset.id, val, { sharedSirets, claimed: seen, hash }) || (byHash && !seen.has(byHash.id) ? byHash : null);
                 const change = classifyStructureChange(existing, val, sourceDocumentId);
 
                 if (existing && change.state === 'UNCHANGED') {
@@ -262,7 +289,14 @@ export async function runIngestStructures({ limit, runId }) {
                 } else {
                     // CREATE - Valve 1: Ingest
                     const baseSlug = ensureSlugOrNull(val.nom);
-                    const normalizedSlug = ensureSlugOrNull(`${baseSlug || 'structure'}-${crypto.createHash('sha256').update(identityKey(dataset.id, val)).digest('hex').substring(0, 6)}`);
+                    let normalizedSlug = ensureSlugOrNull(`${baseSlug || 'structure'}-${crypto.createHash('sha256').update(identityKey(dataset.id, val)).digest('hex').substring(0, 6)}`);
+                    // D8: two places of one identity key (same name and postal code) — the second one's slug also carries its content hash (deterministic)
+                    if (normalizedSlug && await db.query.Structure.findFirst({ where: eq(Structure.slug, normalizedSlug), columns: { id: true } })) {
+                        normalizedSlug = ensureSlugOrNull(`${normalizedSlug}-${hash.substring(0, 6)}`);
+                    }
+                    // D8: Structure.siret is one record's (unique): a SIRET another record already holds is not written again (no wrong merge, no failed insert)
+                    const siretValue = typeof val.siret === 'string' && val.siret ? val.siret : null;
+                    const siretFree = siretValue && !(await db.query.Structure.findFirst({ where: eq(Structure.siret, siretValue), columns: { id: true } }));
                     const [newStructure] = await db.insert(Structure).values({
                         nom: val.nom,
                         slug: normalizedSlug || null,
@@ -272,7 +306,7 @@ export async function runIngestStructures({ limit, runId }) {
                         telephone: val.telephone,
                         email: val.email,
                         site_web: val.site_web,
-                        siret: typeof val.siret === 'string' && val.siret ? val.siret : null,   // passthrough field (zod: unknown)
+                        siret: siretFree ? siretValue : null,   // passthrough field (zod: unknown)
                         source_id: dataset.id,
                         source_url: dataset.url,
                         raw_data_hash: hash,

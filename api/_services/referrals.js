@@ -25,6 +25,7 @@ import crypto from 'node:crypto';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
+import { notPutAsideAsDuplicateSql } from '../_utils/org-eligibility.js';
 import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_AWAITING_ANSWER_STATUSES, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
 import { referralChainSchema, referralTable } from '../_utils/schema-features.js';
 import { endReferentsForLostAccess } from './dossier-referent.js';
@@ -133,13 +134,15 @@ async function notifyOrg(db, structureId, type, title, message, metadata) {
   try { const { notify } = await import('./pro-notifications.js'); await notify({ structureId, to: 'members', type, title, message, metadata }); } catch { /* best effort */ }
 }
 
-/** Receiving organizations a professional can propose: verified, active, with at least one active member, not their own. Names only (no personal data). */
+/** Receiving organizations a professional can propose: verified, active, with at least one active member, not their own, not a record the duplicate register
+ *  put aside (D8: org-eligibility.js notPutAsideAsDuplicateSql). Names only (no personal data). */
 export async function eligibleReceivers(ctx, q = '', db = defaultDb, onlyId = null, exceptId = null) {
   const term = `%${String(q || '').trim().slice(0, 60)}%`;
   return (await db.execute(sql`SELECT s.id, s.nom AS name, s.ville AS city FROM "Structure" s
     WHERE s.statut = 'actif' AND s.verification_status = 'VERIFIED' AND s.id <> ${ctx.structureId} AND s.nom ILIKE ${term}
       ${onlyId ? sql`AND s.id = ${String(onlyId)}` : sql``} ${exceptId ? sql`AND s.id <> ${String(exceptId)}` : sql``}
       AND EXISTS (SELECT 1 FROM "ProUser" u WHERE u."structureId" = s.id AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN'))
+      AND ${notPutAsideAsDuplicateSql(sql`s.id`)}
     ORDER BY s.nom LIMIT 30`)).rows;
 }
 

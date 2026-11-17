@@ -10,6 +10,7 @@ import { nextDecisionAt } from '../../lib/consent-ledger.js';   // PKG-6 / R17: 
 import { holdsOwnership, isExpired, NOT_FOUND_BODY, ALL_PURPOSES, PURPOSE_SHARING, PURPOSE_AI, PURPOSE_SIAO, INVITE_TTL_HOURS } from '../../_utils/share-access.js';
 import { isDossierRestricted } from '../../_services/processing-restriction.js';
 import { clientIp } from '../../_utils/client-ip.js';
+import { notPutAsideAsDuplicateSql } from '../../_utils/org-eligibility.js';
 import { closeForWithdrawnAccess, notifyAccessWithdrawn } from '../../_services/referrals.js';
 import { endReferentsForLostAccess } from '../../_services/dossier-referent.js';
 
@@ -66,7 +67,8 @@ export default async function handler(req, res) {
         .from(Structure)
         // PKG-5 / E01 (owner decision 2026-10-20): only ACTIVE + identity-VERIFIED organizations with someone to receive (api/_utils/org-eligibility.js)
         .where(and(eq(Structure.statut, 'actif'), eq(Structure.verification_status, 'VERIFIED'), or(ilike(Structure.nom, like), ilike(Structure.ville, like)),
-          sql`EXISTS (SELECT 1 FROM "ProUser" u WHERE u."structureId" = ${Structure.id} AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN'))`))
+          sql`EXISTS (SELECT 1 FROM "ProUser" u WHERE u."structureId" = ${Structure.id} AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN'))`,
+          notPutAsideAsDuplicateSql(sql`${Structure.id}`)))   // D8: never the record the duplicate register put aside
         .orderBy(asc(Structure.nom)).limit(8);
       return res.status(200).json({ ok: true, organizations: rows });
     }
@@ -92,7 +94,7 @@ export default async function handler(req, res) {
       if (!structureId) return res.status(404).json(NOT_FOUND_BODY);
       const org = (await db.select({ id: Structure.id, nom: Structure.nom, ville: Structure.ville }).from(Structure).where(and(eq(Structure.id, structureId), eq(Structure.statut, 'actif'), eq(Structure.verification_status, 'VERIFIED'),   // E01: unknown / inactive / unverified = same 404
        
-        sql`EXISTS (SELECT 1 FROM "ProUser" u WHERE u."structureId" = ${Structure.id} AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN'))`)).limit(1))[0];
+        sql`EXISTS (SELECT 1 FROM "ProUser" u WHERE u."structureId" = ${Structure.id} AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN'))`, notPutAsideAsDuplicateSql(sql`${Structure.id}`))).limit(1))[0];
       if (!org) return res.status(404).json(NOT_FOUND_BODY);                                              // unknown / not verified / nobody can receive it
       const active = (await db.select({ id: SharedDossierGrant.id }).from(SharedDossierGrant).where(and(eq(SharedDossierGrant.sharedDiagnosticId, shareId), eq(SharedDossierGrant.structureId, structureId), isNull(SharedDossierGrant.revokedAt))).limit(1))[0];
       if (active) return res.status(409).json({ error: 'already_shared', message: 'Ce dossier est déjà partagé avec cette structure.' });

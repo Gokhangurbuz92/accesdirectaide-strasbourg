@@ -57,6 +57,8 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/territorial-stats.js': 'PKG-5 / I03 I04: counts of verified organizations per commune for institutional aggregates (no record content); signed partners / admins only',
   'api/_services/org-lifecycle.js': 'PKG-5 / E01: administrator organization list (identity, activity, D-5 decision shown apart); admin sessions only, never public',
   'api/_handlers/pro/dossier/redeem.js': 'E01: reads only statut / verification_status of the redeeming organization (eligibility check); never public',
+  'api/lib/structure-model.js': 'D8: read-only Organisation / Établissement / Service view of one record for LAB analysis (identifiers, service origins); not wired to any public route',
+  'api/_utils/org-eligibility.js': 'D8: names the record an active SAME_ENTITY duplicate decision keeps (id / nom) for a SUPERADMIN invitation refusal; never public',
   'api/_services/platform-invitation.js': 'Release A / G-1: reads only id / nom / statut / verification_status of the ONE organization a second-factor SUPERADMIN names for its first administrator\'s invitation (eligibility check); never public',
   'api/_handlers/pro/auth/proconnect.js': 'R46 / N09: reads only the nom of the organizations of the identified person\'s own active accounts, so that they choose one; never public',
   'api/_handlers/pro/auth/login.js': 'PRO-11: reads only id / nom of the organizations whose account matched the password (the person\'s own), so that they choose one; never public',

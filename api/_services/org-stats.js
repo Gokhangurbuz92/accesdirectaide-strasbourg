@@ -88,7 +88,11 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   // active members are not quarterly: counted live per organization of the listed communes, then the same thresholds and collusion rule
   const pop = await population();
   const agentRows = pop.orgs.length ? (await db.execute(sql`SELECT m.id AS org, m.c AS commune, count(u.id)::int AS n FROM ${base.populationRows(pop)} JOIN "ProUser" u ON u."structureId" = m.id AND u.status = 'active' GROUP BY m.id, m.c`)).rows : [];
-  const agentsOf = (c) => { const xs = agentRows.filter((r) => r.commune === c).map((r) => Number(r.n)); return base.primaryCell(xs.reduce((a, b) => a + b, 0), xs, rules); };
+  // D8: one organisation's records are one contributor (pop.contributorOf: SIREN / duplicate register / record), as in every other cell of the base
+  const agentsOf = (c) => {
+    const per = new Map(); for (const r of agentRows.filter((x) => x.commune === c)) { const k = pop.contributorOf?.get(r.org) || r.org; per.set(k, (per.get(k) || 0) + Number(r.n)); }
+    const xs = [...per.values()]; return base.primaryCell(xs.reduce((a, b) => a + b, 0), xs, rules);
+  };
   const communes = listed.map((c) => ({ code: c, name: labels.get(c), orgs: orgs.get(c), agents: agentsOf(c), people: people.get(c) ?? null, rdv: rdv.get(c) ?? null }));
   // the trend: per quarter, the published appointment cells of the listed communes (the same cells as the table), summed, then suppressed
   const trend = quarters.map((q, i) => { const cells = cellsOf(perQuarter[i], 'appointments'); return { quarter: q.label, value: suppress(listed.reduce((n, c) => n + (cells.get(c) ?? 0), 0)) }; });

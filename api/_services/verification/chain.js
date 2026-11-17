@@ -1194,8 +1194,9 @@ async function checkFinessRecord(ctx, row) {
 
 /**
  * Growth from FINESS: the open establishments of the département of a kind the directory takes, not yet in it (a capped number per run). An establishment
- * already in the directory is not added again — the same FINESS number, or a record of ANOTHER source (Annuaire, SIRENE) with the same SIRET or on the same
- * street with the same name in the same postal code (a public office such as the MDPH or a PMI): that record keeps its own sources. Two FINESS establishments
+ * already in the directory is not added again — the same FINESS number, or a record of ANOTHER source (Annuaire, SIRENE) with the same SIRET AND the same name
+ * or street (D8: a SIRET alone may be the manager's), or on the same street with the same name in the same postal code (a public office such as the MDPH or a
+ * PMI): that record keeps its own sources. Two FINESS establishments
  * are two records even with the same SIRET (an EHPAD and its home-care service at one address are two services of one place).
  */
 async function feedFiness(ctx) {
@@ -1206,12 +1207,16 @@ async function feedFiness(ctx) {
   const takenSiret = new Set(all.map((r) => digits(r.siret)).filter(Boolean));
   const rows = all.filter((r) => !r.numero_finess);                                  // the records of the other sources
   const bySiret = new Map(rows.filter((r) => r.siret).map((r) => [digits(r.siret), r.id]));
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  // D8 (owner 17/11, organisation ≠ establishment): a SIRET is often the MANAGER's (a CCAS office of the Annuaire and the EHPAD it runs carry one SIRET, as
+  // 18 « centres médico-sociaux » of the city's open data carry the Eurométropole's). The SIRET says « already listed » only with the same name, or at the same street;
+  // two places of one manager stay two records (the duplicate register's rule: two registers, two functions — api/_services/duplicate-evidence.js).
+  const nameAgrees = (e, r) => { const want = titleTokens(e.nom).filter((w) => !GENERIC.has(w)); if (!want.length) return false; const have = new Set(titleTokens(r.nom)); return want.filter((w) => have.has(w)).length / want.length >= 0.75; };
   const sameRecord = (e) => {
-    if (e.siret && bySiret.has(e.siret)) return { id: bySiret.get(e.siret), by: 'SIRET' };
-    const want = titleTokens(e.nom).filter((w) => !GENERIC.has(w));
+    const bySiretRow = e.siret && bySiret.has(e.siret) ? byId.get(bySiret.get(e.siret)) : null;
+    if (bySiretRow && (nameAgrees(e, bySiretRow) || sameStreet(bySiretRow.adresse, e.adresse, e.code_postal, e.ville) === true)) return { id: bySiretRow.id, by: 'SIRET' };
     for (const r of rows) {
-      if (digits(r.code_postal).slice(0, 5) !== e.code_postal || !want.length) continue;
-      const have = new Set(titleTokens(r.nom)); if (want.filter((w) => have.has(w)).length / want.length < 0.75) continue;
+      if (digits(r.code_postal).slice(0, 5) !== e.code_postal || !nameAgrees(e, r)) continue;
       if (sameStreet(r.adresse, e.adresse, e.code_postal, e.ville) === true) return { id: r.id, by: 'adresse' };
     }
     return null;

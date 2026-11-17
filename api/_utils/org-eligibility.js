@@ -18,3 +18,20 @@ export const VERIFIED = 'VERIFIED';
 export const orgVerifiedActiveSql = (alias = sql`"Structure"`) => sql`${alias}.statut = 'actif' AND ${alias}.verification_status = ${VERIFIED}`;
 /** Same rule on a loaded row. */
 export const isVerifiedActive = (s) => Boolean(s) && s.statut === 'actif' && s.verification_status === VERIFIED;
+
+/**
+ * D8 (owner 17/11: organisation ≠ establishment ≠ service) — an IDENTITY rule, not a publication one: a record that an ACTIVE « same organisation » decision
+ * of the duplicate register (StructureDuplicateDecision SAME_ENTITY, api/_services/duplicate-register.js) put aside is the other record's organisation. It is
+ * never offered as a NEW destination (referral receiver, redirect suggestion, dossier sharing, a first administrator's invitation): the same organisation used
+ * to appear twice in each picker. Nothing that exists is touched (its members, the access people gave it, its referrals). A DISTINCT decision, or a
+ * replaced one, excludes nothing. `idExpr`: the SQL expression of the structure id.
+ */
+export const notPutAsideAsDuplicateSql = (idExpr) => sql`NOT EXISTS (SELECT 1 FROM "StructureDuplicateDecision" dd WHERE dd."supersededAt" IS NULL
+  AND dd.decision = 'SAME_ENTITY' AND (dd."structureA" = ${idExpr} OR dd."structureB" = ${idExpr}) AND dd."primaryId" <> ${idExpr})`;
+/** the record an active SAME_ENTITY decision keeps instead of `id` (null when `id` is not put aside) @param {any} dbh @param {string} id */
+export async function keptInsteadOf(dbh, id) {
+  const [r] = (await dbh.execute(sql`SELECT dd."primaryId" AS id, s.nom FROM "StructureDuplicateDecision" dd JOIN "Structure" s ON s.id = dd."primaryId"
+    WHERE dd."supersededAt" IS NULL AND dd.decision = 'SAME_ENTITY' AND (dd."structureA" = ${String(id)} OR dd."structureB" = ${String(id)}) AND dd."primaryId" <> ${String(id)}
+    ORDER BY dd."decidedAt" DESC LIMIT 1`)).rows;
+  return r || null;
+}
