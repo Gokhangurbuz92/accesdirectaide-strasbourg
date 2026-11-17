@@ -48,7 +48,7 @@
  "method.statuses.refused.text": "Die Quelle bestätigt die Information nicht, oder sie ist verschwunden: Die Seite wird mit Angabe des Grundes von der Website entfernt.",
  "method.report.title": "Einen Fehler melden",
  "method.report.text": "Jeder kann sich irren. Wenn Sie einen Fehler sehen, <0>melden Sie ihn über das Kontaktformular</0>: Jede Meldung wird gelesen, und die Seite wird erneut anhand ihrer Quelle geprüft.",
- "sources.list.aides_territoires": "Landesweite und lokale Datenbank öffentlicher Förderungen",
+ "sources.list.aides_territoires": "Förderungen für Gebietskörperschaften, Vereine und Projektträger zur Finanzierung von Projekten vor Ort. Das sind keine Hilfen für Privatpersonen: Wir stellen sie nie als solche dar.",
  "sources.list.annuaire": "Adressen, Öffnungszeiten und Kontaktdaten öffentlicher Dienste (Anlaufstellen)",
  "sources.list.sirene": "Bestehen, Adresse und Tätigkeit von Vereinen und Einrichtungen (Betriebsstätte offen oder geschlossen)",
  "sources.list.service_public": "Verwaltungsinformationen und Rechte",

@@ -48,7 +48,7 @@
  "method.statuses.refused.text": "Kaynak bilgiyi doğrulamıyor ya da kaynak ortadan kalktı: sayfa, gerekçesiyle birlikte siteden kaldırılır.",
  "method.report.title": "Bir hatayı bildirin",
  "method.report.text": "Herkes hata yapabilir. Bir hata görürseniz <0>iletişim formuyla bildirin</0>: her bildirim okunur ve sayfa kaynağına göre yeniden doğrulanır.",
- "sources.list.aides_territoires": "Kamu yardımlarına ilişkin ulusal ve yerel veri tabanı",
+ "sources.list.aides_territoires": "Yerel yönetimler, dernekler ve proje sahipleri için bölgesel projeleri finanse eden destekler. Bunlar bireylere yönelik yardımlar değildir: onları hiçbir zaman böyle sunmayız.",
  "sources.list.annuaire": "Kamu hizmetlerinin adresleri, çalışma saatleri ve iletişim bilgileri (destek noktaları)",
  "sources.list.sirene": "Dernek ve kuruluşların varlığı, adresi ve faaliyeti (işyerinin açık veya kapalı olması)",
  "sources.list.service_public": "İdari bilgiler ve haklar",

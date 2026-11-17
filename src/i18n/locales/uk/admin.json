@@ -1296,6 +1296,7 @@
  "review_value.pmr_confirmed": "підтверджено (публічний сайт це зазначає)",
  "review_value.pmr_not_confirmed": "не підтверджено (типове значення; публічний сайт нічого не показує)",
  "review_value.reason.archived": "в архіві",
+ "review_value.reason.institution_funding_source": "фінансування для органів місцевого самоврядування та організацій (Aides-territoires): ніколи не показується як допомога для приватних осіб",
  "review_value.reason.lab_origin": "запис, створений у LAB",
  "review_value.reason.no_provenance": "без офіційного джерела",
  "review_value.reason.no_verification_date": "без дати перевірки",
