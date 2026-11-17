@@ -62,6 +62,9 @@ export const citizenApi = {
   // R46 / N08: FranceConnect (OIDC adapter, not live): status line, link / unlink, logout through the provider
   franceConnectStatus: () => call('/api/auth/franceconnect/status'),
   franceConnectUnlink: () => call('/api/auth/franceconnect/unlink', { method: 'POST', body: {} }),
+  // PKG-11 / C21 restriction of processing (art. 18) and A-20 objection (art. 21): one route; A-13 remainder: refusals in the interface language
+  restrictionState: () => call('/api/citizen/restriction'),
+  restriction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/restriction', { method: 'POST', body }),
   // PKG-2 / K2 Mon Espace
   espace: async () => (await call('/api/citizen/espace')).summary,
   listParcours: () => call('/api/citizen/parcours'),

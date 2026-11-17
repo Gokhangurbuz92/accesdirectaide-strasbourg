@@ -44,6 +44,7 @@ const byCode = () => ({
   THREAD_CLOSED: i18n.t('common:api_error.thread_closed', 'Cette structure n’a plus accès à votre dossier : elle ne pourrait pas lire votre message.'),
   NOT_FOUND: i18n.t('common:api_error.not_found', 'Introuvable : cet élément n’existe pas, ou plus, ou n’est pas rattaché à votre compte.'),
   CSRF_BOOTSTRAP: i18n.t('common:api_error.csrf_bootstrap', 'Impossible de préparer la requête sécurisée. Rechargez la page puis réessayez.'),
+  GROUND_REQUIRED: i18n.t('common:api_error.ground_required', 'Choisissez la raison de votre demande (une des quatre raisons prévues par l’article 18 du RGPD).'),
   NETWORK: i18n.t('common:api_error.network', 'Le service est momentanément injoignable. Réessayez dans un instant.'),
 });
 

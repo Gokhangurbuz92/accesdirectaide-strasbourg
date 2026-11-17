@@ -63,6 +63,7 @@
  "api_error.not_found": "Nicht gefunden: Dieses Element existiert nicht (mehr) oder ist nicht mit Ihrem Konto verknüpft.",
  "api_error.csrf_bootstrap": "Die sichere Anfrage konnte nicht vorbereitet werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
  "api_error.network": "Der Dienst ist vorübergehend nicht erreichbar. Versuchen Sie es gleich noch einmal.",
+ "api_error.ground_required": "Wählen Sie den Grund Ihres Antrags (einen der vier in Artikel 18 DSGVO vorgesehenen Gründe).",
  "api_error.status_401": "Melden Sie sich an, um auf Ihren Bereich zuzugreifen.",
  "api_error.status_403": "Diese Aktion steht Ihnen nicht offen.",
  "api_error.status_409": "Diese Aktion ist im aktuellen Zustand nicht möglich. Laden Sie die Seite neu und versuchen Sie es erneut.",

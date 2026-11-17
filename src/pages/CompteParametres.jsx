@@ -15,7 +15,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { citizenApi } from '@/lib/citizenApi';
+import { citizenApi, CitizenApiError } from '@/lib/citizenApi';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -350,18 +350,19 @@ export function ObjectionPanel() {   // exported for tests/unit/a20-objection-pa
     const { t } = useT('compte');
     const [state, setState] = useState({ loading: true, failed: false, objection: null });
     const [reason, setReason] = useState(''); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
-    const load = () => fetch('/api/citizen/restriction', { credentials: 'include' }).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    const load = () => citizenApi.restrictionState()
         .then((d) => setState({ loading: false, failed: false, objection: d.objection || null })).catch(() => setState({ loading: false, failed: true, objection: null }));
     useEffect(() => { load(); }, []);
     const send = async () => {
         setBusy(true); setMsg(''); setProblem('');
         try {
-            const res = await csrfFetch('/api/citizen/restriction', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'object', reason }) });
-            const d = await res.json().catch(() => ({}));
-            if (!res.ok) { setProblem(d.error === 'reason_too_long' ? t('compte:settings.objection_too_long', 'Votre explication est trop longue (1000 caractères au plus).') : t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.')); return; }
+            const d = await citizenApi.restriction({ action: 'object', reason });
             setReason(''); setMsg(t('compte:settings.objection_filed', 'Votre demande d’opposition est enregistrée. Une personne d’ADA l’examine et vous répond dans un délai d’un mois.'));
             setState({ loading: false, failed: false, objection: d.objection || null });
-        } catch { setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.')); } finally { setBusy(false); }
+        } catch (e) {
+            if (!(e instanceof CitizenApiError) || !e.status) setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.'));
+            else setProblem(e.code === 'reason_too_long' ? t('compte:settings.objection_too_long', 'Votre explication est trop longue (1000 caractères au plus).') : t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.'));
+        } finally { setBusy(false); }
     };
     const open = state.objection && state.objection.status === 'OPEN';
     return (
@@ -398,22 +399,24 @@ const restrictionGrounds = (t) => [
     ['LEGAL_CLAIMS', t('compte:settings.ground.legal_claims', 'J’ai besoin que mes données soient conservées pour faire valoir un droit en justice')],
     ['OBJECTION_PENDING', t('compte:settings.ground.objection', 'Je me suis opposé·e au traitement et j’attends la réponse')],
 ];
-function RestrictionPanel() {
+export function RestrictionPanel() {   // exported for tests/unit/a13-restriction-panel-i18n.test.jsx
     const { t } = useT('compte');
     const [state, setState] = useState(null); const [ground, setGround] = useState(''); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
     // R18: an unreadable state is said and nothing is offered on top of it (the request form showed as if no restriction were active)
     const [loadFailed, setLoadFailed] = useState(false);
-    const load = () => fetch('/api/citizen/restriction', { credentials: 'include' }).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    const load = () => citizenApi.restrictionState()
         .then((d) => { setLoadFailed(false); setState(d); }).catch(() => { setLoadFailed(true); setState(null); });
     useEffect(() => { load(); }, []);
     const act = async (body, ok) => {
         setBusy(true); setMsg(''); setProblem('');
         try {
-            const res = await csrfFetch('/api/citizen/restriction', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-            const d = await res.json().catch(() => ({}));
-            if (!res.ok) { setProblem(d.message || t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.')); return; }
+            await citizenApi.restriction(body);
             setMsg(ok); await load();
-        } catch { setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.')); } finally { setBusy(false); }
+        } catch (e) {
+            // A-13 remainder: the refusal in the interface language (French page: the server's own sentence, as before; none: « not saved »); no answer: « not sent »
+            if (!(e instanceof CitizenApiError) || !e.status) setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.'));
+            else setProblem(e.serverMessage ? e.message : t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.'));
+        } finally { setBusy(false); }
     };
     const active = state?.restriction;
     return (
@@ -421,7 +424,7 @@ function RestrictionPanel() {
             <span className="text-sm font-medium text-slate-900">{t('compte:settings.limiter_utilisation_mes_donnees', 'Limiter l’utilisation de mes données (RGPD, article 18)')}</span>
             <p className="text-xs text-slate-700 mt-1">{t('compte:settings.vos_donnees_sont_alors', 'Vos données sont alors seulement conservées : aucune structure ne peut ouvrir vos dossiers, rien n’est partagé, vous ne recevez plus de notification et rien n’est effacé automatiquement. Vous gardez vos droits (consulter, exporter, demander l’effacement).')}</p>
             <p role="status" aria-live="polite" data-testid="compte-restriction-status" className="text-xs text-slate-900 mt-2">{msg}</p>
-            {problem ? <p role="alert" className="text-xs text-red-800 mt-1">{problem}</p> : null}
+            {problem ? <p role="alert" data-testid="compte-restriction-problem" className="text-xs text-red-800 mt-1">{problem}</p> : null}
             {loadFailed ? (
                 <div className="mt-2" role="alert" data-testid="compte-restriction-load-error">
                     <p className="text-sm text-red-800">{t('compte:settings.etat_limitation_pas_etre', 'L’état de la limitation n’a pas pu être lu.')}</p>

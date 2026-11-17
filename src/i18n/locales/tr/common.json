@@ -63,6 +63,7 @@
  "api_error.not_found": "Bulunamadı: bu öğe yok, artık yok veya hesabınıza bağlı değil.",
  "api_error.csrf_bootstrap": "Güvenli istek hazırlanamadı. Sayfayı yeniden yükleyip tekrar deneyin.",
  "api_error.network": "Hizmete şu anda ulaşılamıyor. Biraz sonra yeniden deneyin.",
+ "api_error.ground_required": "Talebinizin gerekçesini seçin (GDPR madde 18'de öngörülen dört gerekçeden biri).",
  "api_error.status_401": "Alanınıza erişmek için oturum açın.",
  "api_error.status_403": "Bu işlem size açık değil.",
  "api_error.status_409": "Bu işlem mevcut durumda mümkün değil. Sayfayı yeniden yükleyip tekrar deneyin.",

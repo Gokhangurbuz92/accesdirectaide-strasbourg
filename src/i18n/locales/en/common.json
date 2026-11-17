@@ -63,6 +63,7 @@
  "api_error.not_found": "Not found: this item does not exist, or no longer exists, or is not attached to your account.",
  "api_error.csrf_bootstrap": "The secure request could not be prepared. Reload the page, then try again.",
  "api_error.network": "The service is temporarily unreachable. Try again in a moment.",
+ "api_error.ground_required": "Choose the reason for your request (one of the four reasons provided for by Article 18 of the GDPR).",
  "api_error.status_401": "Sign in to access your space.",
  "api_error.status_403": "This action is not open to you.",
  "api_error.status_409": "This action is not possible in the current state. Reload the page, then try again.",
