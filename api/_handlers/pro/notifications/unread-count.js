@@ -5,15 +5,18 @@ import { ProNotification } from '../../../../src/db/schema.js';
 import { eq, and, isNull, count } from 'drizzle-orm';
 import { requireProAuth, requireProStructureContext } from '../../../_utils/auth.js';
 import { withProRateLimit } from '../../../_utils/pro-rate-limit.js';
+import { unreadConversationCount } from '../../../_services/conversation-read.js';
 
 /**
  * Pro Notifications — Verified Unread Notification Count (G6)
  *
  * GET /api/pro/notifications/unread-count
  *
- * Counts only ProNotification rows with a persisted readAt marker.
- * RdvConversationMessage has no durable read marker: its unread count is unknown.
- * The response explicitly reports notifications-only coverage (30s badge polling).
+ * `notifications`: ProNotification rows without a persisted readAt.
+ * `messages` (B02): the member's unread conversations, from the per-member read marker of drizzle/0049 (api/_services/conversation-read.js). On a database without that
+ * table the count stays unknown — `messages: null`, `countScope: 'notifications_only'`, `messageReadStateAvailable: false` — exactly the answer given
+ * before the marker existed; it is never inferred or fabricated.
+ * `total` stays the notices: a person's message is itself a notice (message_received), so adding `messages` would count it twice.
  */
 async function handler(/** @type {import('../../../_utils/http-types').ApiRequest} */ req, /** @type {import('../../../_utils/http-types').ApiResponse} */ res) {
     if (req.method !== 'GET') {
@@ -26,8 +29,6 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
     const { userId, structureId } = proCtx;
 
     try {
-        // Only ProNotification has a persisted per-user read state.
-        // Do not infer or fabricate unread conversation-message totals.
         const notifCountRes = await db.select({ count: count() }).from(ProNotification).where(
             and(
                 eq(ProNotification.userId, userId),
@@ -40,13 +41,16 @@ async function handler(/** @type {import('../../../_utils/http-types').ApiReques
             throw new Error('Invalid unread notification count');
         }
 
+        // B02: null = this database has no read marker yet (or the read failed): unknown, never zero
+        const messages = await unreadConversationCount({ structureId, userId }).catch(() => null);
+
         return res.status(200).json({
             ok: true,
-            messages: null,
+            messages,
             notifications: notifCount,
             total: notifCount,
-            countScope: 'notifications_only',
-            messageReadStateAvailable: false,
+            countScope: messages === null ? 'notifications_only' : 'notifications_and_messages',
+            messageReadStateAvailable: messages !== null,
         });
     } catch (error) {
         logger.error({ err: error }, '[UnreadCount] Erreur');

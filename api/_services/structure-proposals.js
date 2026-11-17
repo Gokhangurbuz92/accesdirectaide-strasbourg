@@ -162,7 +162,20 @@ export async function reviewQueue(db = defaultDb, { status = 'PENDING' } = {}) {
  * territory_verified unless the reviewer confirms the territory explicitly — publication stays derived by api/lib/publicVisibility.js.
  */
 export async function decide(id, decision, note, reviewer, db = defaultDb, evidence = {}) {
-  try { return await decideOnce(id, decision, note, reviewer, db, evidence); }
+  try {
+    const out = await decideOnce(id, decision, note, reviewer, db, evidence);
+    if (!out?.ok || !out.notice) return out;
+    // A10: the decision is committed — the structure's administrators and the author are told (in-app; e-mail per their « structure » preference). The notice
+    // says a proposal was decided and which way (kind), never the value or the reviewer's note: those are read in « Ma structure ».
+    const { notice, ...result } = out;
+    try {
+      const { notify } = await import('./pro-notifications.js');
+      await notify({ structureId: notice.structureId, to: 'admins', also: notice.proposedBy ? [notice.proposedBy] : [], type: 'structure_proposal_decided',
+        message: notice.kind === 'ACCEPTED' ? 'Votre proposition de modification a été acceptée.' : 'Votre proposition de modification a été refusée. Le motif est indiqué dans « Ma structure ».',
+        metadata: { proposalId: notice.proposalId, kind: notice.kind } }, { db });
+    } catch { /* notices are best effort: the decision stands */ }
+    return result;
+  }
   catch (e) { if (e?.stale) return bad('changed_since_proposal', 'La fiche a changé depuis cette proposition : la valeur « actuelle » affichée n’est plus celle de la fiche. Refusez la proposition (la structure pourra la refaire).', 409); throw e; }
 }
 
@@ -193,6 +206,6 @@ async function decideOnce(id, decision, note, reviewer, db, evidence) {
     // PKG-11 audit: every decision is in the audit log (search and export), not only in the proposal row
     await tx.insert(AuditLog).values({ action: d === 'ACCEPT' ? 'STRUCTURE_PROPOSAL_ACCEPTED' : 'STRUCTURE_PROPOSAL_REJECTED', actor: reviewer, actor_id: reviewer, entity: 'Structure', entity_id: p.structureId,
       details: { proposalId: p.id, field: p.field, sourceUrl: d === 'ACCEPT' ? sourceUrl : null } });
-    return { ok: true, proposal: viewProposal(p) };
+    return { ok: true, proposal: viewProposal(p), notice: { structureId: p.structureId, proposedBy: p.proposedByProUserId || null, proposalId: p.id, kind: p.status } };
   });
 }

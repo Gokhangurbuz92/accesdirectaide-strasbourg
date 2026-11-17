@@ -8,6 +8,7 @@ import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Cloc
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import NotificationCenter from '@/components/NotificationCenter';
+import { useProUnreadMessages } from '@/lib/use-pro-unread-messages';
 import OnboardingTour from '@/components/OnboardingTour';
 import ProBreadcrumb from '@/components/ProBreadcrumb';
 import { getCsrfHeaders } from '@/lib/csrf';
@@ -26,6 +27,7 @@ export default function ProLayout() {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [unavailable, setUnavailable] = useState(false);   // Q10: the session could not be checked (outage)
     const [menuOpen, setMenuOpen] = useState(false);   // PKG-9 / M04: phone navigation (before: no navigation at all below md)
+    const unreadMessages = useProUnreadMessages(Boolean(user), location.pathname);   // B02
     useEffect(() => { setMenuOpen(false); }, [location.pathname]);
     const proLoginEntry = '/pro/login';
 
@@ -143,7 +145,7 @@ export default function ProLayout() {
                     {user && <NotificationCenter proId={user.id} />}
                 </div>
                 <nav className="flex-1 p-4 space-y-1" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')}>
-                    <ProNavItems role={user?.role} />
+                    <ProNavItems role={user?.role} unreadMessages={unreadMessages} />
                 </nav>
                 <div className="p-4 border-t border-slate-200">
                     <div className="mb-4">
@@ -182,7 +184,7 @@ export default function ProLayout() {
                 </header>
                 {menuOpen && (
                     <nav id="pro-mobile-nav" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')} className="md:hidden border-b border-slate-200 bg-white p-3 space-y-1" data-testid="pro-mobile-nav">
-                        <ProNavItems role={user?.role} />
+                        <ProNavItems role={user?.role} unreadMessages={unreadMessages} />
                     </nav>
                 )}
                 <div className="p-4 md:p-8">
@@ -195,7 +197,7 @@ export default function ProLayout() {
 }
 
 /** The navigation entries, shared by the desktop sidebar and the phone menu. */
-function ProNavItems({ role }) {
+function ProNavItems({ role, unreadMessages = null }) {
     const { t } = useT('pro');
     return (
         <>
@@ -209,7 +211,8 @@ function ProNavItems({ role }) {
             <NavLink to="/pro/rdv/services" icon={FileText}>{t('pro:layout.services_rdv', 'Services RDV')}</NavLink>
             <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>{t('pro:layout.disponibilites', 'Disponibilités')}</NavLink>
             <NavLink to="/pro/rdv/absences" icon={Clock3}>{t('pro:layout.absences', 'Absences')}</NavLink>
-            <NavLink to="/pro/messages" icon={MessageCircle}>{t('pro:layout.messages', 'Messages')}</NavLink>
+            {/* B02: the member's unread conversations (a number only when the database keeps read markers) */}
+            <NavLink to="/pro/messages" icon={MessageCircle} badge={unreadMessages} badgeLabel={unreadMessages ? t('pro:layout.messages_unread', 'Messages, non lus : {{count}}', { count: unreadMessages }) : undefined}>{t('pro:layout.messages', 'Messages')}</NavLink>
             {/* R20: the territorial observatory (k-anonymous aggregates over verified organizations, ANONYMITY_REVIEW) was reachable only by its address */}
             <NavLink to="/pro/regional" icon={Globe}>{t('pro:layout.observatoire_territorial', 'Observatoire territorial')}</NavLink>
             {/* owner usefulness pass (2026-10-25): the video room opens from each video appointment (its page); /pro/visio was a « bientôt disponible » page */}
@@ -228,18 +231,20 @@ function ProNavItems({ role }) {
 }
 
 // @ts-ignore
-function NavLink({ to, icon: Icon, children }) {
+function NavLink({ to, icon: Icon, children, badge = null, badgeLabel = undefined }) {
     const location = useLocation();
     const isActive = location.pathname.startsWith(to);
     return (
         <Link
             to={to}
             aria-current={isActive ? 'page' : undefined}
+            aria-label={badge ? badgeLabel : undefined}
             className={`flex min-h-11 items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-800' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                 }`}
         >
             <Icon className="h-5 w-5" aria-hidden="true" />
             {children}
+            {badge ? <span data-testid="pro-nav-unread" aria-hidden="true" className="ms-auto inline-flex min-w-6 items-center justify-center rounded-full bg-blue-800 px-1.5 py-0.5 text-xs font-bold text-white">{badge > 99 ? '99+' : badge}</span> : null}
         </Link>
     );
 }

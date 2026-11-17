@@ -440,14 +440,6 @@
         "responses": { "200": { "description": "Notifications" } }
       }
     },
-    "/pro/audit/list": {
-      "get": {
-        "tags": ["Pro"],
-        "summary": "Historique d'audit de l'organisation",
-        "security": [{ "BearerAuth": [] }],
-        "responses": { "200": { "description": "Événements d'audit" } }
-      }
-    },
     "/pro/audit": {
       "get": {
         "tags": ["Pro"],

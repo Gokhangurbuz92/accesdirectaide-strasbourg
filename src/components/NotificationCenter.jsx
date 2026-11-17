@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { formatDate, useT } from '@/i18n';
+import { useNavigate } from 'react-router-dom';
+import { formatDate, useLanguage, useT } from '@/i18n';
+import { notificationView } from '@/lib/pro-notification-view';
 import {
     Bell,
     MessageSquare,
@@ -21,12 +23,18 @@ import {
  * Props:
  * - className: classes CSS additionnelles
  * R40: the texts are in the interface language (namespace `pro`), the times are written with Intl in that language.
+ * A11: a notice opens the record it is about (from the identifiers stored with it); its title and fixed messages follow the interface language.
+ * A12: the time is 12 px slate-600 (AA on white and on the hover tint); a read notice is no longer dimmed — an unread one carries a dot, a bold title and a
+ *      spoken « non lue ».
+ * The bell counts notices only: a person's message is itself a notice (message_received), so the conversations' unread count (shown on « Messages ») is not
+ * added a second time.
  */
 export default function NotificationCenter({ className = '' }) {
     const { t } = useT('pro');
-    const [notifications, setNotifications] = useState(/** @type {Array<{ createdAt: string | number, id: string | number, message: string | number, readAt: string | number, title: string | number, type: string | number }>} */ ([]));
+    const { code: language } = useLanguage();
+    const navigate = useNavigate();
+    const [notifications, setNotifications] = useState(/** @type {Array<{ createdAt: string | number, id: string | number, message: string | number, readAt: string | number, title: string | number, type: string | number, metadata?: any }>} */ ([]));
     const [unreadCount, setUnreadCount] = useState(0);
-    const [unreadMessages, setUnreadMessages] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const panelRef = useRef(/** @type {HTMLDivElement | null} */ (null));
@@ -39,32 +47,21 @@ export default function NotificationCenter({ className = '' }) {
     const fetchNotifications = useCallback(async () => {
         if (!token) return;
         try {
-            const [notifRes, countRes] = await Promise.all([
-                fetch('/api/pro/notifications?limit=20', {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                fetch('/api/pro/notifications/unread-count', {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-            ]);
+            const notifRes = await fetch('/api/pro/notifications?limit=20', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
             if (notifRes.ok) {
                 const data = await notifRes.json();
                 setNotifications(data.notifications || []);
                 setUnreadCount(data.unreadCount || 0);
             }
-
-            if (countRes.ok) {
-                const countData = await countRes.json();
-                setUnreadMessages(countData.messages || 0);
-            }
         } catch {
             // Silently handle
         }
     }, [token]);
 
-    // Total badge = notifications + unread messages
-    const totalBadge = unreadCount + unreadMessages;
+    const totalBadge = unreadCount;
 
     // Initial fetch + polling every 30s
     useEffect(() => {
@@ -197,14 +194,17 @@ export default function NotificationCenter({ className = '' }) {
                                 <p className="text-xs">{t('pro:notifications.empty', 'Vous êtes à jour ! Aucune nouvelle notification.')}</p>
                             </div>
                         ) : (
-                            notifications.map((/** @type {{ createdAt: string | number, id: string | number, message: string | number, readAt: string | number, title: string | number, type: string | number }} */ notif) => {
+                            notifications.map((notif) => {
                                 const isRead = Boolean(notif.readAt);
+                                const view = notificationView(t, language, notif);
                                 return (
                                     <button
                                         key={notif.id}
-                                        onClick={() => !isRead && markAsRead(notif.id)}
-                                        className={`w-full text-start px-4 py-3 flex gap-3 hover:bg-slate-50 transition-colors ${isRead ? 'opacity-60' : ''
-                                            }`}
+                                        type="button"
+                                        data-testid="pro-notification-item"
+                                        data-unread={isRead ? undefined : 'true'}
+                                        onClick={() => { if (!isRead) markAsRead(notif.id); setIsOpen(false); navigate(view.path); }}
+                                        className="w-full text-start px-4 py-3 flex gap-3 hover:bg-slate-50 transition-colors"
                                     >
                                         <div
                                             className={`p-1.5 rounded-lg h-fit mt-0.5 shrink-0 ${getIconBg(
@@ -214,19 +214,20 @@ export default function NotificationCenter({ className = '' }) {
                                             {getIcon(notif.type)}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-semibold text-slate-900 truncate">
-                                                {notif.title}
+                                            <p className={`text-xs text-slate-900 truncate ${isRead ? 'font-medium' : 'font-bold'}`} lang={view.titleLang} dir={view.titleLang ? 'ltr' : undefined}>
+                                                {!isRead && <span className="sr-only">{t('pro:notifications.unread_marker', 'Non lue :')} </span>}
+                                                {view.title}
                                             </p>
-                                            <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
-                                                {notif.message}
+                                            <p className="text-xs text-slate-700 mt-0.5 line-clamp-2" lang={view.messageLang} dir={view.messageLang ? 'ltr' : undefined}>
+                                                {view.message}
                                             </p>
-                                            <p className="text-[9px] text-slate-400 mt-1 flex items-center gap-1">
-                                                <Clock size={8} />
+                                            <p className="text-xs text-slate-600 mt-1 flex items-center gap-1" data-testid="pro-notification-time">
+                                                <Clock size={12} aria-hidden="true" />
                                                 {formatTime(notif.createdAt, t)}
                                             </p>
                                         </div>
                                         {!isRead && (
-                                            <span className="w-2 h-2 bg-indigo-500 rounded-full mt-2 shrink-0" />
+                                            <span className="w-2 h-2 bg-indigo-700 rounded-full mt-2 shrink-0" aria-hidden="true" />
                                         )}
                                     </button>
                                 );
@@ -244,6 +245,8 @@ function getIcon(/** @type {string | number | boolean | null | undefined} */ typ
     switch (type) {
         case 'message_new':
         case 'message':
+        case 'message_received':
+        case 'rdv_message_withdrawn':
             return <MessageSquare size={size} className="text-blue-600" />;
         case 'rdv_new':
         case 'rdv_cancel':
@@ -266,6 +269,8 @@ function getIconBg(/** @type {string | number | boolean | null | undefined} */ t
     switch (type) {
         case 'message_new':
         case 'message':
+        case 'message_received':
+        case 'rdv_message_withdrawn':
             return 'bg-blue-50';
         case 'rdv_new':
         case 'rdv_cancel':

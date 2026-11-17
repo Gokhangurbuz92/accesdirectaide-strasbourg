@@ -19,6 +19,7 @@ import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { encrypt } from '../../lib/crypto.js';
 import { notifyConversationMessage, sanitizeMessageBody, serializeRdvMessage } from '../../_utils/rdv-messaging.js';
 import { canNotify } from '../../_services/citizen-account.js';
+import { markConversationRead } from '../../_services/conversation-read.js';
 
 const PAGE = 200;
 
@@ -62,6 +63,8 @@ async function handler(req, res) {
 
   if (method === 'GET') {
     if (!conversation) return res.status(200).json({ ok: true, conversationId: null, messages: [] });
+    // B02: the appointment's « Messages » tab is the same thread — opening it reads it
+    await markConversationRead({ conversationId: conversation.id, appointmentId: appointment.id, structureId: proCtx.structureId, userId: proCtx.userId });
     const rows = await db.select().from(RdvConversationMessage)
       .where(eq(RdvConversationMessage.conversationId, conversation.id))
       .orderBy(asc(RdvConversationMessage.createdAt)).limit(PAGE);
@@ -92,6 +95,7 @@ async function handler(req, res) {
     conversationId: convId, senderType: 'PRO', senderProUserId: proCtx.userId, body: encrypt(body),
   }).returning();
   await db.update(RdvConversation).set({ lastMessageAt: message.createdAt }).where(eq(RdvConversation.id, convId));
+  await markConversationRead({ conversationId: convId, appointmentId: appointment.id, structureId: proCtx.structureId, userId: proCtx.userId });   // B02: answering is reading
 
   try {
     await notifyConversationMessage({
