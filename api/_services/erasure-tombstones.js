@@ -4,7 +4,8 @@
  * Why: the erasure ledger travels with each backup (scripts/db-erasure-replay.mjs), so it only knows the erasures completed BEFORE that backup. If the
  * database is lost between two backups (≤ 12 h), the latest backup brings back everyone erased in that interval. The tombstones close that interval.
  * Content: request id, subject id (pseudonymous UUID — no e-mail, no name, no content), domains, time, phase. Store: the KV store (Upstash, already a
- * V2 processor, Frankfurt), list kept 40 days after the last write (longer than the 35-day backups; every restorable backup is younger).
+ * V2 processor, Frankfurt), each entry kept 40 days (Y2: pruned entry by entry on every write and hourly — pruneTombstones; longer than the 35-day backups, so every restorable
+ * backup is younger).
  *
  * Two phases (final data-integrity review, 09/11/2026):
  *   - `intent`  written BEFORE anything is erased; if it cannot be written, nothing is erased (fail-closed, request stays open);
@@ -74,11 +75,14 @@ export function createErasureTombstones(opts = {}) {
     try {
       await kv.lpush(TOMBSTONE_KEY, JSON.stringify(t));
       await kv.ltrim(TOMBSTONE_KEY, 0, TOMBSTONE_MAX - 1);
+      // Y2: the key TTL below only removes a list nobody wrote to for 40 days; each ENTRY expires on its own (pruneTombstones), here and hourly
       await kv.expire(TOMBSTONE_KEY, TOMBSTONE_TTL_SECONDS);
       // the marker has NO TTL on purpose: with Upstash eviction enabled, keys WITH a TTL go first (« optimistic-volatile »), so the marker outlives a
       // silently evicted list and reveals it (eviction is disabled by default; it cannot be read through the REST API: owner console check)
       await kv.set(TOMBSTONE_LAST_KEY, JSON.stringify({ requestId: t.requestId, phase: t.phase, completedAt: t.completedAt }));
     } catch { throw unavailable(); }
+    // Y2: never refuses the erasure (the record is written); the hourly health check prunes again
+    try { await pruneTombstones(kv); } catch (e) { log.warn({ event: 'tombstones.prune_failed', err: /** @type {any} */ (e)?.name || 'Error' }, '[TOMBSTONES] retention prune failed'); }
   };
   const push = async (/** @type {ReturnType<typeof tombstoneOf>} */ t) => {
     if (!copy) return pushKv(t);   // copy off: Upstash only, exactly as before
@@ -114,6 +118,37 @@ export function createErasureTombstones(opts = {}) {
     /** @deprecated kept for callers that only need the records */
     async list() { return (await this.snapshot()).entries; },
   };
+}
+
+/**
+ * Y2 (owner, 18/11/2026) — the privacy notice says each erasure trace is kept 40 days (§ 4). The list's whole-key TTL is refreshed by every write, so it
+ * never removed old entries while erasures kept coming: each entry now expires on its own. The list is newest-first (LPUSH), so it is cut at the first
+ * entry aged 40 days or more (an entry pushed after it can only be younger, up to clock skew of a few seconds). The `…:last` marker (no TTL, on purpose:
+ * it reveals a lost list) keeps no request id once it is 40 days old — the coverage check ignores a marker of that age anyway. Called on every write
+ * (best effort) and by the hourly health check (api/_handlers/cron/health-alert.js). Counts only.
+ * @param {any} kv @param {number} [now] @returns {Promise<{ removed: number, kept: number, markerScrubbed: boolean } | { skipped: string }>}
+ */
+export async function pruneTombstones(kv, now = Date.now()) {
+  if (typeof kv?.lrange !== 'function' || typeof kv?.ltrim !== 'function') return { skipped: 'KV_NO_LIST' };
+  const limit = now - TOMBSTONE_TTL_SECONDS * 1000;
+  const rows = await kv.lrange(TOMBSTONE_KEY, 0, -1);
+  const list = Array.isArray(rows) ? rows : [];
+  const timeOf = (/** @type {unknown} */ r) => { const e = parseTombstones([r])[0]; return e ? Date.parse(e.completedAt) : null; };
+  const cut = list.findIndex((r) => { const t = timeOf(r); return t !== null && t <= limit; });
+  let removed = 0;
+  if (cut >= 0) {
+    // LTRIM 1 0 (start > stop) empties the list
+    await kv.ltrim(TOMBSTONE_KEY, cut === 0 ? 1 : 0, cut === 0 ? 0 : cut - 1);
+    removed = list.length - cut;
+  }
+  let markerScrubbed = false;
+  let last = typeof kv.get === 'function' ? await kv.get(TOMBSTONE_LAST_KEY) : null;
+  if (typeof last === 'string') { try { last = JSON.parse(last); } catch { last = null; } }
+  if (last && typeof last === 'object' && last.requestId && Date.parse(last.completedAt) <= limit && typeof kv.set === 'function') {
+    await kv.set(TOMBSTONE_LAST_KEY, JSON.stringify({ requestId: null, phase: null, completedAt: last.completedAt, expired: true }));
+    markerScrubbed = true;
+  }
+  return { removed, kept: cut >= 0 ? cut : list.length, markerScrubbed };
 }
 
 /** @param {unknown[]} rows raw KV values (strings, or objects when the client already parsed JSON) */

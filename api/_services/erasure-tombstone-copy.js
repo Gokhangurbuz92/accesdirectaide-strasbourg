@@ -138,14 +138,24 @@ export function createTombstoneCopy(cfg, opts = {}) {
     },
     /**
      * Health check: lists the records (proves the bucket answers with this token) and deletes those older than the retention (DeleteObject).
-     * @param {number} [now] @returns {Promise<{ objects: number, overdue: number, deleted: number, deleteFailed: number, truncated: boolean }>}
+     * @param {number} [now] @returns {Promise<{ objects: number, overdue: number, deleted: number, deleteFailed: number, truncated: boolean, markerScrubbed: boolean, markerScrubFailed: boolean }>}
      */
     async inventory(now = Date.now()) {
       const { keys, truncated } = await listRecords();
-      const old = keys.filter(({ key }) => { const t = recordTimeOf(key); return t !== null && now - t > COPY_RETENTION_DAYS * 86400000; });
+      // Y2: « gardée 40 jours » — a record is deleted once it is 40 days old (not later)
+      const old = keys.filter(({ key }) => { const t = recordTimeOf(key); return t !== null && now - t >= COPY_RETENTION_DAYS * 86400000; });
       let deleted = 0; let deleteFailed = 0;
       for (const { key } of old) { try { await client.send(new DeleteObjectCommand({ Bucket: cfg.bucket, Key: key })); deleted += 1; } catch { deleteFailed += 1; } }
-      return { objects: keys.length - deleted, overdue: old.length, deleted, deleteFailed, truncated };
+      // Y2: the marker (no lifecycle, like `…:last` in Upstash) keeps no request id once it is 40 days old
+      let markerScrubbed = false; let markerScrubFailed = false;
+      const lb = await get(lastName).catch(() => null);
+      if (lb !== null) {
+        let m = null; try { m = openObject(cfg.key, lastName, lb); } catch { m = null; }
+        if (m?.requestId && now - Date.parse(m.completedAt) >= COPY_RETENTION_DAYS * 86400000) {
+          try { await put(lastName, { requestId: null, phase: null, completedAt: m.completedAt, expired: true }); markerScrubbed = true; } catch { markerScrubFailed = true; }
+        }
+      }
+      return { objects: keys.length - deleted, overdue: old.length, deleted, deleteFailed, truncated, markerScrubbed, markerScrubFailed };
     },
   };
 }

@@ -16,7 +16,7 @@ import { env } from '../../_utils/env.js';
 import { recentMailEventCounts } from '../../_services/mail-events.js';
 import { securitySignalCounts, evaluateSecuritySignals, nextSecurityCheckState } from '../../_services/security-signals.js';
 import { copyWriteConfig, createTombstoneCopy } from '../../_services/erasure-tombstone-copy.js';
-import { TOMBSTONE_COPY_FAILED_KEY } from '../../_services/erasure-tombstones.js';
+import { TOMBSTONE_COPY_FAILED_KEY, pruneTombstones } from '../../_services/erasure-tombstones.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -261,6 +261,18 @@ export default async function handler(req, res) {
         checkFailed('kvData', err);
     }
 
+    // Check 2b' (Y2, owner 18/11/2026): the erasure traces in Upstash expire ENTRY BY ENTRY at 40 days (privacy notice § 4); the erasure prunes on
+    // every write, this hourly pass prunes when no erasure happens. Counts only. A failure is logged and alerted (the notice's 40 days are at stake).
+    if (!checks.kv?.ok) checks.tombstoneRetention = { ok: true, skipped: 'KV_UNREACHABLE' };
+    else try {
+        const p = await pruneTombstones(kv);
+        checks.tombstoneRetention = 'skipped' in p ? { ok: true, skipped: p.skipped } : { ok: true, removed: p.removed, kept: p.kept, ...(p.markerScrubbed ? { markerScrubbed: true } : {}) };
+    } catch (err) {
+        checks.tombstoneRetention = { ok: false, error: err?.name || 'Error' };
+        checkFailed('tombstoneRetention', err);
+        if (await fireAlert('tombstones.retention_failed', 'Traces d’effacement (Upstash) : la suppression des traces de plus de 40 jours a échoué ; elle sera retentée à la prochaine vérification horaire et à la prochaine écriture.', { error: err?.name || 'Error' })) alertCount++;
+    }
+
     // Check 2c (D5 b): the second copy of the erasure tombstones (K3 object storage, api/_services/erasure-tombstone-copy.js). Off without its variables.
     // Configured: (1) incomplete / invalid variables → « tombstone_copy.config_invalid » (the site then writes Upstash only); (2) the bucket is listed with
     // the site's own token (proves it answers) and records older than 40 days are deleted (the retention holds even without the bucket lifecycle rule);
@@ -278,13 +290,14 @@ export default async function handler(req, res) {
         const inv = await createTombstoneCopy(copyCfg).inventory();
         let failed = null;
         if (checks.kv?.ok) { try { const raw = await bounded(kv.get(TOMBSTONE_COPY_FAILED_KEY)); failed = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : null; } catch { failed = null; } }
-        checks.tombstoneCopy = { ok: !failed && !inv.truncated && inv.deleteFailed === 0, objects: inv.objects, overdueDeleted: inv.deleted, deleteFailed: inv.deleteFailed, truncated: inv.truncated,
+        checks.tombstoneCopy = { ok: !failed && !inv.truncated && inv.deleteFailed === 0 && !inv.markerScrubFailed, objects: inv.objects, overdueDeleted: inv.deleted, deleteFailed: inv.deleteFailed, truncated: inv.truncated,
+            ...(inv.markerScrubbed ? { markerScrubbed: true } : {}), ...(inv.markerScrubFailed ? { markerScrubFailed: true } : {}),
             ...(failed ? { lastWriteFailure: failed.at || null } : {}) };
         if (failed) {
             const a = await fireAlertDetailed('tombstone_copy.write_failed', `Seconde copie des traces d’effacement : une écriture a échoué (${failed.at || 'date inconnue'}, phase ${failed.phase || '?'}). La trace est dans Upstash seule ; une restauration devra le constater (docs/ops/RPO_RTO.md).`, { at: failed.at || null, phase: failed.phase || null });
             if (a.fired) { alertCount++; if (a.kept) { try { await bounded(kv.del(TOMBSTONE_COPY_FAILED_KEY)); } catch { /* alert again next hour */ } } }
         }
-        if (inv.deleteFailed > 0 && await fireAlert('tombstone_copy.retention', `Seconde copie des traces d’effacement : ${inv.deleteFailed} objet(s) de plus de 40 jours non supprimé(s) (droit « suppression » du jeton ?).`, { deleteFailed: inv.deleteFailed })) alertCount++;
+        if ((inv.deleteFailed > 0 || inv.markerScrubFailed) && await fireAlert('tombstone_copy.retention', `Seconde copie des traces d’effacement : ${inv.deleteFailed} objet(s) de plus de 40 jours non supprimé(s) (droit « suppression » du jeton ?).`, { deleteFailed: inv.deleteFailed })) alertCount++;
     } catch (err) {
         checks.tombstoneCopy = { ok: false, error: err?.name || 'Error', status: err?.$metadata?.httpStatusCode ?? null };
         checkFailed('tombstoneCopy', err);
