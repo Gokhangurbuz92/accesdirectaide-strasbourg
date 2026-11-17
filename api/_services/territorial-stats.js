@@ -33,6 +33,7 @@ import { K_MIN, K_ORGS } from './org-stats.js';
 import { periodWindow, lastQuarters } from './stat-periods.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { communeOfAddress } from '../lib/geography/territoryScope.js';
+import { contributorKey } from '../lib/structure-model.js';
 
 export const SCHEMA_VERSION = 'ada.territory-stats.v2';   // v2: column orientations_hors_perimetre; besoins_non_couverts = « pas de capacité » only
 export const LICENCE_STATUS = 'PENDING_OWNER_DECISION';   // I03: the open-data licence is the owner's decision; until then the export is for signed partners only
@@ -173,6 +174,7 @@ export const METHODOLOGY = {
   besoinsNonCouverts: 'Orientations auxquelles la structure destinataire a répondu « pas de capacité ».',
   horsPerimetre: 'Orientations auxquelles la structure destinataire a répondu « hors de notre champ » : une orientation mal adressée, comptée à part — ce n’est pas un besoin non couvert.',
   limites: 'Seules les demandes passées par la plateforme sont comptées ; une structure est placée dans sa commune d’après son adresse déclarée (nom de commune et code postal concordants), sinon elle n’est comptée nulle part ; une commune n’apparaît qu’avec au moins 3 structures vérifiées ainsi situées, et chaque commune affichée figure dans le tableau même sans orientation ; toute valeur inférieure à 5 est masquée, et une autre valeur de la même colonne l’est aussi quand elle serait seule masquée.',
+  organisations: 'Une organisation compte une seule fois : les établissements d’une même entité juridique (même SIREN) et une fiche enregistrée comme doublon d’une autre fiche forment une seule organisation, pour le seuil d’au moins 3 organisations par commune comme pour la règle des contributions ci-dessous.',
   dominance: 'Une valeur est aussi masquée quand elle vient de trop peu de structures : si deux structures, en retirant leurs propres chiffres, pouvaient estimer celui de la plus importante à 20 % près, la valeur est masquée (règle « p % » avec coalition). Une valeur qui vient de trois structures ou moins n’est donc jamais publiée.',
   totaux: 'Aucun total réel n’est publié : les totaux et la tendance par trimestre additionnent seulement les valeurs publiées. Quand l’un des deux tableaux (par besoin, par commune) a des valeurs masquées et l’autre aucune, les deux plus petites valeurs de l’autre sont masquées aussi, et d’autres encore quand la comparaison des deux tableaux permettrait d’encadrer trop précisément une valeur masquée.',
   periodes: 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).',
@@ -227,21 +229,32 @@ export const populationRows = (pop) => jsonRows(pop.orgs);
  * all its communes), whichever commune of it is touched.
  */
 export async function locatedPopulation(db, touches = everywhere) {
-  const rows = (await db.execute(sql`SELECT s.id, s.ville, s.code_postal FROM "Structure" s WHERE ${verified}`)).rows;
-  const byCommune = new Map(); const names = new Map(); const blockOfCommune = new Map();
+  // D8: with each record, the record an active « same organisation » decision of the duplicate register keeps instead of it (and that record's SIRET)
+  const rows = (await db.execute(sql`SELECT s.id, s.ville, s.code_postal, s.siret, k.id AS "keptId", k.siret AS "keptSiret" FROM "Structure" s
+    LEFT JOIN LATERAL (SELECT p.id, p.siret FROM "StructureDuplicateDecision" dd JOIN "Structure" p ON p.id = dd."primaryId" WHERE dd."supersededAt" IS NULL AND dd.decision = 'SAME_ENTITY'
+      AND (dd."structureA" = s.id OR dd."structureB" = s.id) AND dd."primaryId" <> s.id ORDER BY dd."decidedAt" DESC LIMIT 1) k ON TRUE
+    WHERE ${verified}`)).rows;
+  const byCommune = new Map(); const names = new Map(); const blockOfCommune = new Map(); const contributorOf = new Map();
   for (const r of rows) {
     const at = communeOfAddress(r); if (!at) continue;
     names.set(at.code, at.nom); blockOfCommune.set(at.code, at.block);
+    contributorOf.set(r.id, contributorKey(r));
     const list = byCommune.get(at.code); if (list) list.push(r.id); else byCommune.set(at.code, [r.id]);
   }
-  const shown = [...byCommune.keys()].filter((c) => byCommune.get(c).length >= K_ORGS);
+  // D8: « at least K_ORGS organisations » counts organisations (contributors), not records — one legal entity's establishments never make the threshold alone
+  const organisations = (c) => new Set(byCommune.get(c).map((i) => contributorOf.get(i))).size;
+  const shown = [...byCommune.keys()].filter((c) => organisations(c) >= K_ORGS);
   const touched = new Set(shown.filter((c) => touches(c)).map((c) => blockOfCommune.get(c)));
   const blocks = new Map();
   for (const c of shown.sort()) { const b = blockOfCommune.get(c); if (!touched.has(b)) continue; const l = blocks.get(b); if (l) l.push(c); else blocks.set(b, [c]); }
   const orgs = []; const perCommune = new Map();
   for (const list of blocks.values()) for (const c of list) { perCommune.set(c, byCommune.get(c).length); for (const id of byCommune.get(c)) orgs.push({ id, c }); }
-  return { blocks, names, orgs, perCommune, verifiedTotal: rows.length };
+  return { blocks, names, orgs, perCommune, verifiedTotal: rows.length, contributorOf };
 }
+
+/** D8: who CONTRIBUTES a record's counts (and knows them) — its organisation: the SIREN of its SIRET, the record the duplicate register keeps instead of it,
+ *  else the record itself (api/lib/structure-model.js contributorKey: never looser than counting records) */
+export { contributorKey };
 
 /**
  * The published blocks of one quarter, computed from the live data (raw counts and organization ids never leave this function):
@@ -262,7 +275,8 @@ async function liveBlocks(db, pop, { start, end }, rules) {
   const pplCommune = new Map((await db.execute(sql`SELECT m.c AS commune, count(DISTINCT a."citizenUserId")::int AS n FROM "ProAppointment" a JOIN ${rows} ON m.id = a."structureId"
     WHERE ${people} GROUP BY m.c`)).rows.map((r) => [r.commune, Number(r.n)]));
   const cell = () => ({ sent: 0, unmet: 0, outOfScope: 0, contrib: { sent: new Map(), unmet: new Map(), outOfScope: new Map() } });
-  const add = (acc, r) => { for (const m of MEASURES) { const v = Number(r[m]); acc[m] += v; acc.contrib[m].set(r.org, (acc.contrib[m].get(r.org) || 0) + v); } };
+  const who = (org) => pop.contributorOf?.get(org) || org;   // D8: one organisation's records are one contribution
+  const add = (acc, r) => { for (const m of MEASURES) { const v = Number(r[m]); acc[m] += v; acc.contrib[m].set(who(r.org), (acc.contrib[m].get(who(r.org)) || 0) + v); } };
   const flat = (acc) => ({ sent: acc.sent, unmet: acc.unmet, outOfScope: acc.outOfScope, contrib: Object.fromEntries(MEASURES.map((m) => [m, [...acc.contrib[m].values()]])) });
   const out = [];
   for (const [id, communes] of pop.blocks.entries()) {
@@ -275,9 +289,10 @@ async function liveBlocks(db, pop, { start, end }, rules) {
     }
     const needRows = [...perNeed.keys()].sort((a, b) => String(a).localeCompare(String(b))).map((need) => ({ need, ...flat(perNeed.get(need)) }));
     const pub = publishTables(needRows, communes.map((commune) => ({ commune, ...flat(perCommune.get(commune)) })), rules);
-    const aptOf = (c) => apt.filter((r) => r.commune === c).map((r) => Number(r.n));
+    const byContributor = (list) => [...list.reduce((m, r) => m.set(who(r.org), (m.get(who(r.org)) || 0) + Number(r.n)), new Map()).values()];
+    const aptOf = (c) => byContributor(apt.filter((r) => r.commune === c));
     const appointments = complementColumn(communes.map((c) => primaryCell(sumOf(aptOf(c)), aptOf(c), rules)));
-    const ppl = communes.map((c) => primaryCell(pplCommune.get(c) || 0, pplOrg.filter((r) => r.commune === c).map((r) => Number(r.n)), rules));
+    const ppl = communes.map((c) => primaryCell(pplCommune.get(c) || 0, byContributor(pplOrg.filter((r) => r.commune === c)), rules));
     out.push({ id, communes, names: Object.fromEntries(communes.map((c) => [c, pop.names.get(c)])), orgs: Object.fromEntries(communes.map((c) => [c, pop.perCommune.get(c)])),
       pub, appointments: Object.fromEntries(communes.map((c, i) => [c, appointments[i]])), people: Object.fromEntries(communes.map((c, i) => [c, ppl[i]])) });
   }

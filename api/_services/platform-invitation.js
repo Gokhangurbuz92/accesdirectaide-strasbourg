@@ -14,7 +14,7 @@
  * invitation if that SUPERADMIN later leaves or loses the role.
  */
 import { sql } from 'drizzle-orm';
-import { isVerifiedActive } from '../_utils/org-eligibility.js';
+import { isVerifiedActive, keptInsteadOf } from '../_utils/org-eligibility.js';
 
 export const PLATFORM_INVITATION_CODES = Object.freeze({
   FORBIDDEN: 'PLATFORM_INVITATION_FORBIDDEN',
@@ -57,6 +57,11 @@ export async function authorizePlatformInvitation({ dbh, actor, target, role }) 
   if (!s) return refuse(404, C.NOT_FOUND, 'Structure introuvable.');
   if (!isVerifiedActive(s)) {
     return refuse(409, C.NOT_ELIGIBLE, 'Cette structure n’est pas encore active et vérifiée par l’équipe d’Accès Direct Aide : vérifiez et activez-la dans l’administration avant d’inviter son administrateur.');
+  }
+  // D8: a record the duplicate register put aside is the kept record's organisation — its first administrator is invited THERE (names only; both records are ADA's own directory)
+  const kept = await keptInsteadOf(dbh, String(s.id));
+  if (kept) {
+    return refuse(409, C.NOT_ELIGIBLE, `Cette fiche a été enregistrée comme doublon de « ${kept.nom} » dans le registre des doublons : invitez l’administrateur sur la fiche conservée.`);
   }
   return { ok: true, structure: { id: String(s.id), nom: String(s.nom) } };
 }

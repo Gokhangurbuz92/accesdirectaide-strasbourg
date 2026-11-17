@@ -29,6 +29,10 @@ the collusion rule below — none of them was loosened.
    tighten them (`OBS_DOMINANCE_COALITION` 2..5, `OBS_DOMINANCE_P_PERCENT` 20..100). Applied to every referral cell (by need and by commune), appointment
    cell, « people with an appointment » cell and active-member cell. Consequence: a cell from three organizations or fewer is never published.
    Attack test: `tests/integration/c8-dominance-freeze-db.test.js` K (Villé 7 + 3 + 2 = 12 was published; two colluders obtained the 7).
+   D8 (17/11/2026): a contributor is an ORGANISATION, not a record — the SIREN of the record's SIRET, else the record an active SAME_ENTITY decision of
+   the duplicate register keeps, else the record itself (`contributorKey`, api/lib/structure-model.js); the « at least 3 organizations » per commune counts
+   contributors too. Records without identifier stay their own contributor (never looser than before). Quarters already frozen are unchanged; the CSV
+   column `organisations_verifiees` still counts records. Attack test: `tests/integration/d8-observatory-entity-db.test.js`.
 2. **Re-reading a closed quarter** — migration 0052 (`ObservatoryQuarterSnapshot`) and the daily job `/api/cron/observatory-freeze` (category A, closed
    in the beta until named): a closed quarter's published blocks are stored once and read back unchanged; UPDATE is refused by a trigger.
    Attack test: same file, F (a late answer and a lost verification moved the live cells; frozen, nothing moves). Without 0052, or before the job has run

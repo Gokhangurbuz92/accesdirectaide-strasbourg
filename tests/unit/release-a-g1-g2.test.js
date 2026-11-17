@@ -9,7 +9,7 @@ import { authorizePlatformInvitation, platformTargetOf, PLATFORM_INVITATION_CODE
 import { surfaceOf, isAllowedInPublicBeta, SURFACES } from '../../api/_utils/public-beta.js';
 import { capabilitiesOfRoute } from '../../api/_utils/capabilities.js';
 
-/** a fake drizzle handle answering the two reads of the rule */
+/** a fake drizzle handle answering the reads of the rule (actor, target, D8 duplicate decision) */
 function fakeDb({ me = { role: 'SUPERADMIN', status: 'active', mfa_enabled: true }, structure = { id: 's1', nom: 'Structure fictive', statut: 'actif', verification_status: 'VERIFIED' } } = {}) {
   const calls = [];
   return {
@@ -17,6 +17,7 @@ function fakeDb({ me = { role: 'SUPERADMIN', status: 'active', mfa_enabled: true
     async execute(q) {
       const text = JSON.stringify(q);
       calls.push(text);
+      if (text.includes('StructureDuplicateDecision')) return { rows: [] };   // D8: the target is not a record the duplicate register put aside
       if (text.includes('ProUser')) return { rows: me ? [me] : [] };
       if (text.includes('Structure')) return { rows: structure ? [structure] : [] };
       return { rows: [] };
