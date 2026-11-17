@@ -2127,5 +2127,13 @@
  "resources.a.publish": "Publish",
  "resources.withdrawn": "Document withdrawn from the public page.",
  "resources.a.withdraw": "Withdraw",
- "resources.history": "History (cannot be changed)"
+ "resources.history": "History (cannot be changed)",
+ "k5.submissions.kind.aide": "Aid",
+ "k5.submissions.kind.demarche": "Procedure",
+ "k5.submissions.kind.structure": "Place",
+ "k5.submissions.kind.dispositif": "Scheme",
+ "k5.submissions.kind.actualite": "News",
+ "k5.submissions.kind.all": "All",
+ "k5.submissions.kind_filter": "Content type",
+ "k5.submissions.legacy_dispositif": "Filed under « Aid » (earlier classification of schemes)."
 }

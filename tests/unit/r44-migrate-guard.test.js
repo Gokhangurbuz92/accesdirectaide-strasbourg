@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import {
-  CHECK_MARKERS, OBSOLETE_MANIFEST, OBSOLETE_MIGRATIONS, auditHistory, expectedObjects, isLocalDatabaseUrl, loadMigrations, physicalDrift, planDeploy,
+  CHECK_MARKERS, ENUM_VALUE_MARKERS, OBSOLETE_MANIFEST, OBSOLETE_MIGRATIONS, auditHistory, expectedObjects, isLocalDatabaseUrl, loadMigrations, physicalDrift, planDeploy,
   replayObjects, sha256, stockMigrateRefusal, verifyJournal,
 } from '../../scripts/db-migrate-guard.mjs';
 import * as deploy from '../../scripts/db-deploy-migrate.mjs';
@@ -20,7 +20,8 @@ const T46 = '0046_m1_parcours_plan_step';   // M1 (additive, one nullable column
 const T47 = '0047_m2_referral_redirect_referent';   // M2 (additive: referral redirect, contact person of the path)
 const T48 = '0048_m2_referral_message_history';   // M2 (additive: history of the referral texts)
 const T49 = '0049_pa_conversation_read';   // pro messages (additive: a member's read marker per conversation)
-const T50 = '0050_rs_resource_publication';   // C12: the newest migration (additive: /ressources publication columns + ledger)
+const T50 = '0050_rs_resource_publication';   // C12 (additive: /ressources publication columns + ledger)
+const T51 = '0051_p19_dispositif_content_type';   // P19: the newest migration (additive: ContentType DISPOSITIF)
 /** the history rows a database holds after these tags (drizzle's shape: id, sha256 of the file, created_at = « when ») */
 const rowsFor = (tags) => tags.map((t, i) => ({ id: i + 1, hash: real.files[t].hash, created_at: String(byTag(t).when) }));
 const upTo = (idx) => E.filter((e) => e.idx <= idx).map((e) => e.tag);
@@ -41,20 +42,21 @@ async function drizzleWouldApply(lastCreatedAt) {
 }
 
 describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
-  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048, 0049, 0050)', async () => {
-    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48, T49, T50]);
+  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048, 0049, 0050, 0051)', async () => {
+    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48, T49, T50, T51]);
   });
-  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048, 0049, 0050 are pending, and nothing after them', async () => {
+  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048, 0049, 0050, 0051 are pending, and nothing after them', async () => {
     const pending = await drizzleWouldApply(byTag(T45).when);
-    expect(pending).toEqual([T46, T47, T48, T49, T50]);
+    expect(pending).toEqual([T46, T47, T48, T49, T50, T51]);
     expect(pending).not.toContain(T43);
     expect(pending).not.toContain(T44);
-    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48, T49, T50]);
-    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48, T49, T50]);
-    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([T49, T50]);
-    expect(await drizzleWouldApply(byTag(T49).when)).toEqual([T50]);
-    expect(await drizzleWouldApply(byTag(T50).when)).toEqual([]);
-    expect(E[E.length - 1].tag).toBe(T50);
+    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48, T49, T50, T51]);
+    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48, T49, T50, T51]);
+    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([T49, T50, T51]);
+    expect(await drizzleWouldApply(byTag(T49).when)).toEqual([T50, T51]);
+    expect(await drizzleWouldApply(byTag(T50).when)).toEqual([T51]);
+    expect(await drizzleWouldApply(byTag(T51).when)).toEqual([]);
+    expect(E[E.length - 1].tag).toBe(T51);
   });
   it('planDeploy() computes the same pending set as drizzle for every level, and refuses while an obsolete one is pending', async () => {
     for (const lvl of [null, ...E.map((e) => e.when)]) {
@@ -64,14 +66,16 @@ describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
       else expect(p.ok && p.apply.map((e) => e.tag)).toEqual(drizzleSet);
     }
   });
-  it('0046, 0047, 0048, 0049, 0050 are the only pending migrations on Production 0042 + 0045; a future 0051 after them is the only one pending once they are applied', () => {
+  it('0046, 0047, 0048, 0049, 0050, 0051 are the only pending migrations on Production 0042 + 0045; a future 0052 after them is the only one pending once they are applied', () => {
     const now = planDeploy(E, byTag(T45).when);
-    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50]);
-    const e51 = { idx: 51, when: byTag(T50).when + 1000, tag: '0051_future' };
-    const all = planDeploy([...E, e51], byTag(T45).when);
-    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, '0051_future']);
-    const p = planDeploy([...E, e51], byTag(T50).when);
-    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0051_future']);
+    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51]);
+    const e52 = { idx: 52, when: byTag(T51).when + 1000, tag: '0052_future' };
+    const all = planDeploy([...E, e52], byTag(T45).when);
+    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51, '0052_future']);
+    const p = planDeploy([...E, e52], byTag(T51).when);
+    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0052_future']);
+    // 0051 needs 0050 first: --only 0051 on a 0049 database is refused
+    expect(planDeploy(E, byTag(T49).when, T51)).toEqual({ ok: false, reason: 'EARLIER_MIGRATION_PENDING', pending: [T50] });
   });
 });
 
@@ -192,6 +196,18 @@ describe('physical schema vs history', () => {
     expect(physicalDrift(E, real.files, PROD_0042, catalogueOf(PROD_0042, ELEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_UNRECORDED', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
     expect(physicalDrift(E, real.files, [...PROD_0042, T45], catalogueOf(PROD_0042, SEVEN)).findings).toEqual([{ code: 'CHECK_CHANGE_MISSING', tag: T45, key: 'AppointmentNotice.AppointmentNotice_kind_check' }]);
     expect(CHECK_MARKERS.map((m) => m.tag)).toEqual([T43, T45, '0047_m2_referral_redirect_referent']);   // M2: 0047 widens Referral_response_check
+  });
+  it('P19: the ContentType value DISPOSITIF exists exactly when 0051 is recorded (ALTER TYPE … ADD VALUE is invisible to the SQL parser)', () => {
+    expect(ENUM_VALUE_MARKERS).toEqual([{ tag: T51, type: 'ContentType', value: 'DISPOSITIF' }]);
+    expect(expectedObjects(fs.readFileSync(`drizzle/${T51}.sql`, 'utf8'))).toEqual([]);
+    const four = ['AIDE', 'DEMARCHE', 'STRUCTURE', 'ACTUALITE'].map((v) => `ContentType.${v}`);
+    const cat = (values) => ({ ...catalogueOf(PROD_0042, SEVEN), enumValues: new Set(values) });
+    expect(physicalDrift(E, real.files, PROD_0042, cat(four)).findings).toEqual([]);
+    expect(physicalDrift(E, real.files, PROD_0042, cat([...four, 'ContentType.DISPOSITIF'])).findings).toEqual([{ code: 'ENUM_VALUE_UNRECORDED', tag: T51, key: 'ContentType.DISPOSITIF' }]);
+    expect(physicalDrift(E, real.files, [...PROD_0042, T51], cat(four)).findings).toEqual([{ code: 'ENUM_VALUE_MISSING', tag: T51, key: 'ContentType.DISPOSITIF' }]);
+    expect(physicalDrift(E, real.files, [...PROD_0042, T51], cat([...four, 'ContentType.DISPOSITIF'])).findings).toEqual([]);
+    // a catalogue read without enum values (older reader) reports nothing for them
+    expect(physicalDrift(E, real.files, [...PROD_0042, T51], catalogueOf(PROD_0042, SEVEN)).findings).toEqual([]);
   });
 });
 

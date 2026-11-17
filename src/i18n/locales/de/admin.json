@@ -2127,5 +2127,13 @@
  "resources.a.publish": "Veröffentlichen",
  "resources.withdrawn": "Dokument von der öffentlichen Seite zurückgezogen.",
  "resources.a.withdraw": "Zurückziehen",
- "resources.history": "Verlauf (nicht änderbar)"
+ "resources.history": "Verlauf (nicht änderbar)",
+ "k5.submissions.kind.aide": "Hilfe",
+ "k5.submissions.kind.demarche": "Verfahren",
+ "k5.submissions.kind.structure": "Ort",
+ "k5.submissions.kind.dispositif": "Programm",
+ "k5.submissions.kind.actualite": "Neuigkeit",
+ "k5.submissions.kind.all": "Alle",
+ "k5.submissions.kind_filter": "Inhaltstyp",
+ "k5.submissions.legacy_dispositif": "Unter « Hilfe » abgelegt (frühere Einordnung der Programme)."
 }

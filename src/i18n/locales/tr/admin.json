@@ -2127,5 +2127,13 @@
  "resources.a.publish": "Yayımla",
  "resources.withdrawn": "Belge herkese açık sayfadan kaldırıldı.",
  "resources.a.withdraw": "Kaldır",
- "resources.history": "Geçmiş (değiştirilemez)"
+ "resources.history": "Geçmiş (değiştirilemez)",
+ "k5.submissions.kind.aide": "Yardım",
+ "k5.submissions.kind.demarche": "İşlem",
+ "k5.submissions.kind.structure": "Yer",
+ "k5.submissions.kind.dispositif": "Program",
+ "k5.submissions.kind.actualite": "Haber",
+ "k5.submissions.kind.all": "Tümü",
+ "k5.submissions.kind_filter": "İçerik türü",
+ "k5.submissions.legacy_dispositif": "« Yardım » altında kaydedildi (programların önceki sınıflandırması)."
 }

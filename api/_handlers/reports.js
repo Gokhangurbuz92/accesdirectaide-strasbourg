@@ -3,13 +3,29 @@ import logger from '../_utils/logger.js';
 import crypto from 'node:crypto';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
-import { eq, desc, count } from 'drizzle-orm';
+import { and, eq, desc, count, like, notLike, or } from 'drizzle-orm';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import { adminGate } from '../_utils/admin-gate.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
+import { LEGACY_DISPOSITIF_PREFIX, contentTypeSchema, dispositifReportKind, dispositifReportRow, forgetContentTypeSchema, isEnumValueRefusal } from '../_utils/schema-features.js';
 
-// Valid content types and reasons (matching DB schema enums)
-const VALID_CONTENT_TYPES = ['AIDE', 'DEMARCHE', 'STRUCTURE', 'ACTUALITE'];
+// Valid content types and reasons (matching DB schema enums). P19: DISPOSITIF is the 0051 value — on a database without it a DISPOSITIF report is filed
+// as before 0051 (AIDE + « dispositif:<id> ») and the DISPOSITIF filter finds both forms.
+const VALID_CONTENT_TYPES = ['AIDE', 'DEMARCHE', 'STRUCTURE', 'ACTUALITE', 'DISPOSITIF'];
+const LEGACY_DISPOSITIF_PATTERN = `${LEGACY_DISPOSITIF_PREFIX}%`;
+
+/**
+ * the filter of one content type: DISPOSITIF = the 0051 rows (when the database has the value) OR the AIDE rows whose target is « dispositif:… »;
+ * AIDE = the AIDE rows that are not dispositif reports filed before 0051
+ * @param {string} contentType @param {{ dispositif: boolean }} f
+ */
+function contentTypeCondition(contentType, f) {
+    const legacy = and(eq(schema.ContentReport.contentType, 'AIDE'), like(schema.ContentReport.contentId, LEGACY_DISPOSITIF_PATTERN));
+    if (contentType === 'DISPOSITIF') return f.dispositif ? or(eq(schema.ContentReport.contentType, 'DISPOSITIF'), legacy) : legacy;
+    if (contentType === 'AIDE') return and(eq(schema.ContentReport.contentType, 'AIDE'), notLike(schema.ContentReport.contentId, LEGACY_DISPOSITIF_PATTERN));
+    // @ts-ignore
+    return eq(schema.ContentReport.contentType, contentType);
+}
 const VALID_REASONS = ['LIEN_MORT', 'HORAIRES_FAUX', 'INFO_FAUSSE', 'INFO_OBSOLETE', 'AUTRE'];
 const VALID_STATUSES = ['NEW', 'IN_PROGRESS', 'FIXED', 'REJECTED'];
 
@@ -67,22 +83,32 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'reporterEmail must be a valid email address' });
             }
 
-            const [report] = await db.insert(schema.ContentReport).values({
+            const place = contentType === 'DISPOSITIF' ? dispositifReportRow(await contentTypeSchema(db), contentId) : { contentType, contentId };
+            const insert = (/** @type {{ contentType: string, contentId: string }} */ where) => db.insert(schema.ContentReport).values({
                 id: crypto.randomUUID(),
-                contentType,
-                contentId,
+                // @ts-ignore
+                ...where,
                 reason,
                 message: message || null,
                 pageUrl: pageUrl || null,
                 reporterEmail: reporterEmail || null,
                 status: 'NEW'
             }).returning();
+            let report;
+            try {
+                [report] = await insert(place);
+            } catch (e) {
+                // 0051 rolled back within the cache delay: file the report in the pre-0051 form instead of losing it
+                if (place.contentType !== 'DISPOSITIF' || !isEnumValueRefusal(e)) throw e;
+                forgetContentTypeSchema(db);
+                [report] = await insert(dispositifReportRow({ dispositif: false }, place.contentId));
+            }
 
             log.info({
                 msg: 'Content report created',
                 reportId: report.id,
-                contentType,
-                contentId,
+                contentType: report.contentType,
+                contentId: report.contentId,
                 reason
             });
 
@@ -122,13 +148,9 @@ export default async function handler(req, res) {
             if (Object.keys(where).length > 0) {
                const conditionArr = [];
                if (where.status) conditionArr.push(eq(schema.ContentReport.status, where.status));
-               if (where.contentType) conditionArr.push(eq(schema.ContentReport.contentType, where.contentType));
-               
-               if (conditionArr.length === 1) conditions = conditionArr[0];
-               else {
-                   const { and } = await import('drizzle-orm');
-                   conditions = and(...conditionArr);
-               }
+               if (where.contentType) conditionArr.push(contentTypeCondition(where.contentType, where.contentType === 'DISPOSITIF' ? await contentTypeSchema(db) : { dispositif: false }));
+
+               conditions = conditionArr.length === 1 ? conditionArr[0] : and(...conditionArr);
             }
 
             const [reports, totalRes] = await Promise.all([
@@ -143,7 +165,8 @@ export default async function handler(req, res) {
             const total = Number(totalRes[0].count);
 
             return res.status(200).json({
-                reports,
+                // P19: kind / target / legacyDispositif say what a row is about, whichever form it was filed in (contentType / contentId stay as stored)
+                reports: reports.map((r) => ({ ...r, ...dispositifReportKind(r) })),
                 pagination: {
                     page,
                     limit,
