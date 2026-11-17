@@ -2,8 +2,9 @@
 
 - **File**: `drizzle/0052_c8_observatory_quarter_snapshot.sql`; rollback `drizzle/rollback/0052_down.sql`; journal tag
   `0052_c8_observatory_quarter_snapshot` (`when` 1794940000000); snapshot `drizzle/meta/0052_snapshot.json`.
-- **Number**: 0052 by coordination — 0050 (ressources) and 0051 (P19) live on other branches. On this branch the journal goes 0049 → 0052 (`idx` 52) and
-  the 0052 snapshot's `prevId` is 0049's: the integrator re-chains `prevId` and orders the journal 0050 → 0051 → 0052 after merging.
+- **Number and order**: 0052, after 0050 (C12 ressources, `0050_rs_resource_publication`) and 0051 (P19, `0051_p19_dispositif_content_type`) — journal
+  contiguous 0049 → 0050 → 0051 → 0052 (`idx` 52, `when` 1794940000000 > 0051's); the 0052 snapshot's `prevId` is 0051's and it holds the 0050 / 0051
+  objects. In Production: `--only` in journal order, 0052 needs 0050 and 0051 first (the plan refuses otherwise: `EARLIER_MIGRATION_PENDING`).
 - **What it adds**: table `ObservatoryQuarterSnapshot` (quarter label PK with a format CHECK, rules, blocks, frozenAt, release), function
   `observatory_quarter_snapshot_immutable()` and trigger `ObservatoryQuarterSnapshot_no_update` (UPDATE refused). Additive only; nothing backfilled.
 - **Data held**: published cells only — per EPCI block the commune codes and official names, verified organizations per shown commune, the referral
