@@ -78,6 +78,7 @@ const SIDEBAR_SECTIONS = [
             { label: 'Sources officielles acceptées', to: '/admin/sources', icon: Database },
             { label: 'Versions des fiches', to: '/admin/versions', icon: FileText },
             { label: 'Qualité des données', to: '/admin/data-quality', icon: ListChecks },
+            { label: 'Liens officiels (contrôle)', to: '/admin/liens', icon: ListChecks },   // RA-06
         ]
     },
     {
@@ -150,6 +151,7 @@ function navLabel(t, label) {
         'Sources officielles acceptées': t('admin:layout.nav.sources', 'Sources officielles acceptées'),
         'Versions des fiches': t('admin:layout.nav.versions', 'Versions des fiches'),
         'Qualité des données': t('admin:layout.nav.data_quality', 'Qualité des données'),
+        'Liens officiels (contrôle)': t('admin:layout.nav.link_checks', 'Liens officiels (contrôle)'),
         'Personnes et données': t('admin:layout.nav.people_data', 'Personnes et données'),
         'Protection des données': t('admin:layout.nav.privacy', 'Protection des données'),
         'Demandes d’aide': t('admin:layout.nav.support', 'Demandes d’aide'),
