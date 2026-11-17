@@ -607,25 +607,6 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             return diagnostic ? diagnostic : null;
         },
 
-        async verifyGuardianScope(/** @type {string} */ minorId, /** @type {string} */ guardianId, /** @type {string | number | boolean | null | undefined} */ requestedScope, requiredRiskLevel = 'LOW_RISK_INFORMATIONAL') {
-            const rel = await db.query.GuardianRelationship.findFirst({
-                where: and(
-                    eq(GuardianRelationship.minorId, minorId),
-                    eq(GuardianRelationship.guardianId, guardianId)
-                )
-            });
-            if (!rel || rel.status === 'REVOKED' || rel.status === 'EXPIRED' || rel.status === 'DISPUTED') {
-                return false;
-            }
-            if (!rel.scopes.includes(requestedScope)) {
-                return false;
-            }
-            if (requiredRiskLevel === 'HIGH_RISK_SENSITIVE_DATA_ACCESS' && rel.status !== 'VERIFIED_STRONG') {
-                return false;
-            }
-            return true;
-        },
-
         async grantConsent(/** @type {string | number | boolean | null | undefined} */ subjectType, /** @type {string | number | boolean | null | undefined} */ subjectId, /** @type {string | number | boolean | null | undefined} */ purpose, /** @type {string | number | boolean | null | undefined} */ policyVersion, /** @type {string | number | boolean | null | undefined} */ collectionChannel, /** @type {string | number | boolean | null | undefined} */ guardianInvolved, /** @type {string | number | boolean | null | undefined} */ proofLevel) {
             return db.insert(ConsentLog).values({
                 subject_type: subjectType,

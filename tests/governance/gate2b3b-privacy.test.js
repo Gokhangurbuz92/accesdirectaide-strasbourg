@@ -2,73 +2,8 @@ import { describe, test, expect, vi } from 'vitest';
 import crypto from 'node:crypto';
 import { PURPOSE_REGISTRY, RETENTION_POLICY_REGISTRY, DSR_EXECUTION_POLICY, GUARDIAN_CAPABILITY_POLICY, createPrivacyRightsService } from '../../api/_services/privacy.js';
 
-describe('Gate 2B-3B: Minors Policy', () => {
-    test('Minor public informational access ALLOWED does not require guardian', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue(null) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE');
-        expect(allowed).toBe(false); 
-    });
-    test('Minor and guardian distinct principals (no impersonation)', async () => {
-        const service = createPrivacyRightsService({ db: {}, cryptoLib: crypto });
-        expect(service.authenticateAs).toBeUndefined();
-    });
-    test('Unknown relation deny', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue(null) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE');
-        expect(allowed).toBe(false);
-    });
-    test('No scope deny', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'VERIFIED_STRONG', scopes: [] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE');
-        expect(allowed).toBe(false);
-    });
-    test('Revoked relation deny', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'REVOKED', scopes: ['VIEW_PROFILE_SCOPE'] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE', 'LOW_RISK_INFORMATIONAL');
-        expect(allowed).toBe(false);
-    });
-    test('Expired relation deny', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'EXPIRED', scopes: ['VIEW_PROFILE_SCOPE'] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE', 'LOW_RISK_INFORMATIONAL');
-        expect(allowed).toBe(false);
-    });
-    test('Disputed relation deny', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'DISPUTED', scopes: ['VIEW_PROFILE_SCOPE'] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE', 'LOW_RISK_INFORMATIONAL');
-        expect(allowed).toBe(false);
-    });
-    test('Low-risk relationship policy', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'EMAIL_VERIFIED', scopes: ['VIEW_PROFILE_SCOPE'] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'VIEW_PROFILE_SCOPE', 'LOW_RISK_INFORMATIONAL');
-        expect(allowed).toBe(true);
-    });
-    test('Sensitive action needs sufficient verification or review', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue({ status: 'EMAIL_VERIFIED', scopes: ['SHARE_DOSSIER_SCOPE'] }) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'guardian1', 'SHARE_DOSSIER_SCOPE', 'HIGH_RISK_SENSITIVE_DATA_ACCESS');
-        expect(allowed).toBe(false); // EMAIL_VERIFIED is insufficient for high risk
-    });
-    test('Guardian cannot read all messages (no wildcard scope)', async () => {
-        expect(GUARDIAN_CAPABILITY_POLICY.HIGH_RISK_SENSITIVE_DATA_ACCESS.includes('READ_ALL_MESSAGES')).toBe(false);
-    });
-    test('Guardian cannot delete minor by default', async () => {
-        expect(GUARDIAN_CAPABILITY_POLICY.HIGH_RISK_SENSITIVE_DATA_ACCESS.includes('DELETE_ACCOUNT_SCOPE')).toBe(false);
-    });
-    test('Pro role alone not guardian', async () => {
-        const mockDb = { query: { GuardianRelationship: { findFirst: vi.fn().mockResolvedValue(null) } } };
-        const service = createPrivacyRightsService({ db: mockDb, cryptoLib: crypto });
-        const allowed = await service.verifyGuardianScope('minor1', 'pro1', 'VIEW_PROFILE_SCOPE');
-        expect(allowed).toBe(false); 
-    });
-});
-
+// A-24: the « Minors Policy » block tested privacy.js verifyGuardianScope, a helper with no production caller (removed). The live minor ↔ guardian
+// rules are the guardianship state machine (api/_services/guardianship.js), covered by tests/unit/c05-guardianship.test.js and tests/integration/c05-guardianship-db.test.js.
 describe('Gate 2B-3B: Consent', () => {
     test('Defaults off', () => {
         expect(PURPOSE_REGISTRY.MARKETING_EMAIL.defaultOff).toBe(true);
