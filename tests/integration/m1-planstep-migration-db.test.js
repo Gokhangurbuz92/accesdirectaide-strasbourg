@@ -5,17 +5,22 @@
  *     ctid and xmin for every row = no row version was written); no index, no constraint, no trigger added; idempotent;
  *   - down: the column and its data go, every other column of every row is identical, the migration's history row is forgotten; idempotent;
  *   - up again: the column is back, empty.
- * Needs M1_MIGRATION_TEST_URL = a loopback database whose name matches ada_m1_*_test at level 0045 (never the suite's main database); skipped otherwise.
+ * The database: M1_MIGRATION_TEST_URL when it is given (a loopback database whose name matches ada_m1_*_test at level 0045, never the suite's main
+ * database); otherwise (R47-QA) the file makes its own — a throwaway ada_m1_mig_*_test database on the cluster of DATABASE_URL, migrated by drizzle's
+ * migrator up to 0045, dropped at the end (tests/integration/helpers/throwaway-db.mjs) — so it runs wherever the suite runs, with no extra variable.
  * Synthetic data only.
  */
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createThrowawayDatabase, isLoopbackDatabaseUrl } from './helpers/throwaway-db.mjs';
 
-const url = process.env.M1_MIGRATION_TEST_URL || '';
-const target = (() => { try { const u = new URL(url); return { host: u.hostname, name: u.pathname.slice(1) }; } catch { return null; } })();
-const usable = Boolean(target && ['127.0.0.1', 'localhost'].includes(target.host) && /^ada_m1_[a-z0-9_]*_test$/.test(target.name));
+const GIVEN = process.env.M1_MIGRATION_TEST_URL || '';
+/** @param {string} u */
+const usableUrl = (u) => { try { const x = new URL(u); return ['127.0.0.1', 'localhost'].includes(x.hostname) && /^ada_m1_[a-z0-9_]*_test$/.test(x.pathname.slice(1)); } catch { return false; } };
+const given = usableUrl(GIVEN);
+const usable = given || isLoopbackDatabaseUrl(process.env.DATABASE_URL);   // without a given database, a throwaway one is made on the suite's loopback cluster
 const UP = fs.readFileSync('drizzle/0046_m1_parcours_plan_step.sql', 'utf8');
 const DOWN = fs.readFileSync('drizzle/rollback/0046_down.sql', 'utf8');
 const ENTRY = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.find((e) => e.tag === '0046_m1_parcours_plan_step');
@@ -23,7 +28,7 @@ const TS = Date.now();
 const USER = `m1mig-u-${TS}`;
 
 describe.skipIf(!usable)('M1 migration 0046: up → down → up (throwaway DB)', () => {
-  /** @type {import('pg').Client} */ let c;
+  /** @type {import('pg').Client} */ let c; let throwaway = null;
   const q = async (text, params) => (await c.query(text, params)).rows;
   const hasColumn = async () => (await q(`SELECT data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'ParcoursItem' AND column_name = 'planStep'`))[0] || null;
   /** drizzle's own way: the statements of the file, then the history row (sha256 of the file, created_at = the journal « when ») */
@@ -51,6 +56,9 @@ describe.skipIf(!usable)('M1 migration 0046: up → down → up (throwaway DB)',
   let before;
 
   beforeAll(async () => {
+    if (!given) throwaway = await createThrowawayDatabase({ prefix: 'ada_m1_mig', upTo: '0045_r43_appointment_notice_kinds' });
+    const url = given ? GIVEN : throwaway.url;
+    if (!usableUrl(url)) throw new Error('the migration database must be a loopback ada_m1_*_test database');
     c = new pg.Client({ connectionString: url }); await c.connect();
     // start from 0045 whatever a previous interrupted run left
     await c.query(DOWN);
@@ -60,14 +68,18 @@ describe.skipIf(!usable)('M1 migration 0046: up → down → up (throwaway DB)',
         [`m1mig-${TS}-${String(n).padStart(3, '0')}`, USER, `Étape de test ${n}`, n % 2 ? 'IN_PROGRESS' : 'CLOSED', n % 3 ? null : 'note de test', n % 5 ? '{}' : '{aide:exemple}']);
     }
     await c.query(`INSERT INTO "ParcoursEvent" (id, "itemId", "userId", kind, "toStatus") SELECT 'ev-' || id, id, "userId", 'CREATED', 'NOT_STARTED' FROM "ParcoursItem" WHERE "userId" = $1`, [USER]);
-  });
+  }, 240000);
   afterAll(async () => {
-    if (!c) return;
-    await c.query('ROLLBACK').catch(() => {});
-    await c.query(`DELETE FROM "CitizenUser" WHERE id = $1`, [USER]);
-    await c.query(DOWN);   // leave the database at 0045 for the next run
-    await c.end();
-  });
+    try {
+      if (!c) return;
+      await c.query('ROLLBACK').catch(() => {});
+      if (!throwaway) {   // a given database is left at 0045 for the next run; a throwaway one is dropped as a whole
+        await c.query(`DELETE FROM "CitizenUser" WHERE id = $1`, [USER]);
+        await c.query(DOWN);
+      }
+      await c.end();
+    } finally { await throwaway?.drop(); }
+  }, 60000);
 
   it('starts at 0045: no "planStep" column, no history row of 0046; the journal entry of 0046 comes right after 0045 (later migrations after it)', async () => {
     expect(await hasColumn()).toBeNull(); expect(await history()).toBe(0);

@@ -6,15 +6,19 @@
  *   - Mon Parcours behaves exactly as before M1 (list, add, records, import, status, deadline, note, history, delete);
  *   - plan data sent with « add » is not stored and the answer says so (planSaved: false); « plan » and the two closing reasons answer 409, change nothing;
  *   - the delegate's view and the person's data export still return the steps.
- * Runs only on a database WITHOUT the column (run it against a 0045-level database; on a migrated one every test is skipped and says why). Synthetic data only.
+ * R47-QA: the file makes its own database at that level — a throwaway database on the suite's cluster, migrated by drizzle's migrator up to 0045
+ * (tests/integration/helpers/throwaway-db.mjs), dropped at the end — so it runs wherever the suite runs (it used to skip itself on a migrated database
+ * and needed a hand-made 0045 database). The app's database module is imported AFTER DATABASE_URL points at it (vitest isolates each file). Synthetic data only.
  */
 import nodeCrypto from 'node:crypto';
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { createThrowawayDatabase, isLoopbackDatabaseUrl } from './helpers/throwaway-db.mjs';
 
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 
-const hasDatabase = !!process.env.DATABASE_URL;
+const SUITE_URL = process.env.DATABASE_URL;
+const hasDatabase = isLoopbackDatabaseUrl(SUITE_URL);   // a throwaway database is only made on a loopback cluster
 const TS = Date.now();
 const A = { id: `m1n-a-${TS}`, email: `m1n-a-${TS}@example.test` };
 const B = { id: `m1n-b-${TS}`, email: `m1n-b-${TS}@example.test` };
@@ -22,7 +26,7 @@ const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.s
 const OFFICIAL = 'https://www.service-public.gouv.fr/particuliers/vosdroits/F20055';
 
 describe.skipIf(!hasDatabase)('M1 Mon Parcours on a database without migration 0046 (real DB)', () => {
-  let db, userAuth, parcours, S, absent = false, buildAssessment, UNSUPPORTED_RIGHTS;
+  let db, userAuth, parcours, S, buildAssessment, UNSUPPORTED_RIGHTS, throwaway;
   const cookie = (u) => userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: u.id, email: u.email })).split(';')[0];
   const call = async ({ method = 'GET', body, query = {}, as } = {}) => { const r = mk(); await parcours({ method, url: '/api/citizen/parcours', query, body, headers: { host: 'localhost', ...(as ? { cookie: cookie(as) } : {}) } }, r); return r; };
   const post = (as, body) => call({ method: 'POST', as, body });
@@ -30,22 +34,25 @@ describe.skipIf(!hasDatabase)('M1 Mon Parcours on a database without migration 0
   const shares = []; const aides = [];
 
   beforeAll(async () => {
+    throwaway = await createThrowawayDatabase({ prefix: 'ada_m1_pre46', upTo: '0045_r43_appointment_notice_kinds' });
+    process.env.DATABASE_URL = throwaway.url;   // before the first import of the database module in this file
     ({ db } = await import('../../src/db/index.js'));
     S = await import('../../src/db/schema.js');
     userAuth = await import('../../api/_utils/user-auth.js');
     ({ buildAssessment } = await import('../../api/lib/assessmentContract.js'));
     ({ UNSUPPORTED_RIGHTS } = await import('../../api/lib/diagnosticAssessment.js'));
     parcours = (await import('../../api/_handlers/citizen/parcours.js')).default;
-    absent = (await db.execute(sql`SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'ParcoursItem' AND column_name = 'planStep'`)).rows.length === 0;
+    const absent = (await db.execute(sql`SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'ParcoursItem' AND column_name = 'planStep'`)).rows.length === 0;
+    if (!absent || throwaway.applied.at(-1) !== '0045_r43_appointment_notice_kinds') throw new Error('the throwaway database is not at 0045 (it has "planStep")');
     for (const u of [A, B]) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${u.id}, ${u.email}, 'x', NOW(), NOW())`);
-  });
+  }, 240000);
   afterAll(async () => {
-    if (!db) return;
-    for (const id of shares) await db.execute(sql`DELETE FROM "SharedDiagnostic" WHERE id = ${id}`);
-    for (const id of aides) await db.execute(sql`DELETE FROM "Aide" WHERE id = ${id}`);
-    await db.execute(sql`DELETE FROM "CitizenUser" WHERE id IN (${A.id}, ${B.id})`);
-  });
-  const without = (name, fn) => it(name, async (ctx) => { if (!absent) { console.info('[m1] this database has "planStep" (0046 applied): run this file against a 0045-level database'); return ctx.skip(); } return fn(); });
+    // the whole database goes: no row-by-row cleanup needed
+    await db?.$client?.end?.().catch(() => {});
+    process.env.DATABASE_URL = SUITE_URL;
+    await throwaway?.drop();
+  }, 60000);
+  const without = (name, fn) => it(name, fn);
 
   let itemId;
   without('the list answers, says that plan data is not stored here, and a step has the former fields with null plan data', async () => {

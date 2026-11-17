@@ -1,6 +1,7 @@
 /**
- * M2 — the code on a database WITHOUT migrations 0047 and 0048 (Production until the migration is authorized). Run this file against a database migrated up to 0045
- * (it skips itself where 0047 is applied; there the same paths are covered by m2-redirect-referent-db.test.js). The other referral suites
+ * M2 — the code on a database WITHOUT migrations 0047 and 0048 (Production until the migration is authorized). R47-QA: the file makes its own database migrated
+ * up to 0045 — a throwaway database on the suite's cluster, drizzle's migrator, dropped at the end (tests/integration/helpers/throwaway-db.mjs) — instead of
+ * skipping itself on a migrated database (on 0047 the same paths are covered by m2-redirect-referent-db.test.js). The other referral suites
  * (pkg4-cases-referrals-db, vis-referral-gaps-db, r40-referral-citizen-notice-db) are run against that database too.
  *   existing paths    propose → the person authorizes → acknowledge → decline; lists and detail on both sides; the person's list; the referral-timeouts cron;
  *                     the person withdrawing an access; a case view; a member's departure — all work, none names a 0047 column
@@ -8,11 +9,13 @@
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+import { createThrowawayDatabase, isLoopbackDatabaseUrl } from './helpers/throwaway-db.mjs';
 
 vi.mock('../../api/_utils/pro-rdv-rate-limit.js', () => ({ enforceProRdvRateLimit: vi.fn().mockResolvedValue({ allowed: true }) }));
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 
-const hasDatabase = !!process.env.DATABASE_URL;
+const SUITE_URL = process.env.DATABASE_URL;
+const hasDatabase = isLoopbackDatabaseUrl(SUITE_URL);   // a throwaway database is only made on a loopback cluster
 const TS = Date.now();
 const S = { X: `m2p-X-${TS}`, Y: `m2p-Y-${TS}`, Z: `m2p-Z-${TS}` };
 const P = { admin: { id: `m2p-adm-${TS}`, st: S.X, role: 'STRUCTURE_ADMIN' }, x1: { id: `m2p-x1-${TS}`, st: S.X, role: 'PRO' }, x2: { id: `m2p-x2-${TS}`, st: S.X, role: 'PRO' }, y: { id: `m2p-y-${TS}`, st: S.Y, role: 'PRO' }, z: { id: `m2p-z-${TS}`, st: S.Z, role: 'PRO' } };
@@ -21,7 +24,7 @@ const DOSSIER = `m2p-dos-${TS}`;
 const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, send(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; }, end() { return this; } });
 
 describe.skipIf(!hasDatabase)('M2 code on a database without migrations 0047 / 0048', () => {
-  let db, auth, userAuth, H, features, pre47 = false, caseId;
+  let db, auth, userAuth, H, features, pre47 = false, caseId, throwaway;
   const tok = (p) => auth.signProToken({ id: p.id, email: `${p.id}@example.test`, structureId: p.st, role: p.role });
   const pro = async (h, p, { method = 'GET', query = {}, body, url = '/api/pro/x' } = {}) => { const r = mk(); await h({ method, url, query, body, headers: { host: 'localhost', authorization: `Bearer ${tok(p)}` } }, r); return r; };
   const cit = async (h, { method = 'GET', query = {}, body } = {}) => { const r = mk(); const c = userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: CIT.id, email: CIT.email })).split(';')[0];
@@ -32,10 +35,12 @@ describe.skipIf(!hasDatabase)('M2 code on a database without migrations 0047 / 0
     expect((await cit(H.citRefs, { method: 'POST', body: { id: p.body.referral.id, decision: 'accept' } })).statusCode).toBe(200); return p.body.referral.id; };
 
   beforeAll(async () => {
+    throwaway = await createThrowawayDatabase({ prefix: 'ada_m2_pre47', upTo: '0045_r43_appointment_notice_kinds' });
+    process.env.DATABASE_URL = throwaway.url;   // before the first import of the database module in this file (vitest isolates each file)
     ({ db } = await import('../../src/db/index.js'));
     features = await (await import('../../api/_utils/schema-features.js')).readReferralChainSchema(db);
     pre47 = !features.chain && !features.referent;
-    if (!pre47) return;
+    if (!pre47) throw new Error('the throwaway database is not before 0047');
     auth = await import('../../api/_utils/auth.js'); userAuth = await import('../../api/_utils/user-auth.js');
     H = { cases: (await import('../../api/_handlers/pro/cases.js')).default, refs: (await import('../../api/_handlers/pro/referrals.js')).default, team: (await import('../../api/_handlers/pro/team.js')).default,
       citRefs: (await import('../../api/_handlers/citizen/referrals.js')).default, citDossier: (await import('../../api/_handlers/citizen/dossier.js')).default,
@@ -50,8 +55,15 @@ describe.skipIf(!hasDatabase)('M2 code on a database without migrations 0047 / 0
     await db.execute(sql`INSERT INTO "SharedDossierGrant" (id, "sharedDiagnosticId", "structureId", "grantedByProUserId", "grantedVia") VALUES (${'g-' + DOSSIER}, ${DOSSIER}, ${S.X}, ${P.x1.id}, 'invite')`);
     process.env.MAILER_PROVIDER = 'test'; process.env.MAILER_FROM = 'qa@example.test';
     caseId = (await pro(H.cases, P.x1, { query: { scope: 'unassigned' } })).body.cases.find((c) => c.dossierId === DOSSIER).id;
-  }, 60000);
+  }, 240000);
   afterAll(async () => {
+    try { await cleanup(); } finally {
+      await db?.$client?.end?.().catch(() => {});
+      process.env.DATABASE_URL = SUITE_URL;
+      await throwaway?.drop();
+    }
+  }, 60000);
+  const cleanup = async () => {
     if (!db || !pre47) return;
     const sts = sql.join(Object.values(S).map((s) => sql`${s}`), sql`, `);
     await db.execute(sql`DELETE FROM "AuditLog" WHERE entity = 'Referral' AND entity_id IN (SELECT id FROM "Referral" WHERE "sharedDiagnosticId" = ${DOSSIER})`).catch(() => {});
@@ -63,7 +75,7 @@ describe.skipIf(!hasDatabase)('M2 code on a database without migrations 0047 / 0
     await db.execute(sql`DELETE FROM "Structure" WHERE id IN (${sts})`);
     await db.execute(sql`DELETE FROM "ConsentLog" WHERE subject_id = ${CIT.id}`);
     await db.execute(sql`DELETE FROM "CitizenUser" WHERE id = ${CIT.id}`);
-  });
+  };
   const needs = (t) => { if (!pre47) t.skip(); };
 
   it('the database really has no 0047 / 0048 object', async (t) => {
