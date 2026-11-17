@@ -35,3 +35,6 @@ ae51520de57d9d999b63b2570e4c43e4ae1df3ea:tests/unit/r46-proconnect-oidc.test.js:
 # 12/11/2026 (integration-1112): « key M », the label of the keyboard shortcut M in the duplicate register (k5.duplicates.key_m) — a UI string, no secret.
 # Exact history fingerprint of the commit that introduced it; reviewed 2026-11-12.
 13286fab5b364f550ca050edf80bcb29441ea8e2:src/i18n/locales/en/admin.json:generic-api-key:427
+# cand-final (17/11/2026): the same two reviewed strings (« emergency access », « Access requests to examine ») one line lower after the C12/P19 locale keys. Reviewed 17/11/2026.
+src/i18n/locales/en/admin.json:generic-api-key:676
+src/i18n/locales/en/admin.json:generic-api-key:765
