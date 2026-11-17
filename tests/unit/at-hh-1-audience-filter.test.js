@@ -1,5 +1,6 @@
-// AT-HH-1 — Aides-territoires: only aids whose targeted_audiences include private persons are imported as citizen « Aide » records.
-// Fail closed: missing / empty / organisation-only audience ⇒ excluded and counted. Synthetic inline fixtures, no network, no DB.
+// AT-HH-1 mechanism (bd3ce38, cherry-picked) with the C11 / D08 rule (owner, 17/11/2026): the pipeline drops an item its connector excludes from the
+// citizen catalogue, before validation and upsert, and counts it; Aides-territoires excludes EVERY item (institution / structure / territory funding,
+// never citizen aid). Synthetic inline fixtures, no network, no DB.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const inserted = [];
@@ -9,7 +10,7 @@ vi.mock('../../src/db/index.js', () => ({
   },
 }));
 
-const { AidesTerritoiresConnector, isCitizenAudience, CITIZEN_AUDIENCE } = await import('../../api/lib/ingestion/AidesTerritoiresConnector.js');
+const { AidesTerritoiresConnector } = await import('../../api/lib/ingestion/AidesTerritoiresConnector.js');
 const { IngestionPipelineCore } = await import('../../api/lib/ingestion/IngestionPipelineCore.js');
 const { AidIngestSchema } = await import('../../api/lib/ingestion/validators.js');
 
@@ -27,54 +28,21 @@ async function parsedOf(raw) {
   return c.parse(JSON.stringify(raw), 'u');
 }
 
-describe('AT-HH-1 audience rule (connector)', () => {
-  it('the citizen value is private_person', () => {
-    expect(CITIZEN_AUDIENCE).toBe('private_person');
-  });
-
-  it('private_person is kept', async () => {
+describe('C11 / D08 — no Aides-territoires item is a citizen aid (connector)', () => {
+  it('every item is excluded, whatever its audience — private_person included (owner C11 supersedes AT-HH-1)', async () => {
     const c = new AidesTerritoiresConnector();
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(1, ['private_person'])))).toBe(false);
-  });
-
-  it('commune-only is excluded', async () => {
-    const c = new AidesTerritoiresConnector();
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(2, ['commune'])))).toBe(true);
-  });
-
-  it('organisation audiences only (epci, association, private_sector, farmer, researcher, public_cies) are excluded', async () => {
-    const c = new AidesTerritoiresConnector();
-    const p = await parsedOf(item(3, ['commune', 'epci', 'association', 'private_sector', 'farmer', 'researcher', 'public_cies']));
-    expect(c.excludeFromCitizenCatalogue(p)).toBe(true);
-  });
-
-  it('mixed [private_person, association] is kept', async () => {
-    const c = new AidesTerritoiresConnector();
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(4, ['private_person', 'association'])))).toBe(false);
-  });
-
-  it('missing, empty, null or malformed audience is excluded (fail closed)', async () => {
-    const c = new AidesTerritoiresConnector();
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(5, undefined)))).toBe(true);
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(6, [])))).toBe(true);
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(7, null)))).toBe(true);
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(8, 'private_person')))).toBe(true);
-    expect(c.excludeFromCitizenCatalogue(await parsedOf(item(9, [{ slug: 'private_person' }])))).toBe(true);
+    for (const [i, aud] of [[1, ['private_person']], [2, ['commune']], [3, ['private_person', 'association']], [4, undefined], [5, []], [6, null], [7, 'private_person']].entries()) {
+      expect(c.excludeFromCitizenCatalogue(await parsedOf(item(aud[0] ?? i, aud[1]))), JSON.stringify(aud)).toBe(true);
+    }
     expect(c.excludeFromCitizenCatalogue(null)).toBe(true);
     expect(c.excludeFromCitizenCatalogue(undefined)).toBe(true);
   });
-
-  it('isCitizenAudience tolerates case and surrounding spaces only', () => {
-    expect(isCitizenAudience([' Private_Person '])).toBe(true);
-    expect(isCitizenAudience(['private_persons'])).toBe(false);
-    expect(isCitizenAudience(['private'])).toBe(false);
-  });
 });
 
-describe('AT-HH-1 run summary (pipeline)', () => {
+describe('C11 / D08 run summary (pipeline, AT-HH-1 mechanism)', () => {
   beforeEach(() => { inserted.length = 0; });
 
-  it('non-citizen aids are never upserted and are counted as excludedNonCitizen', async () => {
+  it('no Aides-territoires item is ever upserted; each is counted as excludedNonCitizen, not as an error', async () => {
     const c = new AidesTerritoiresConnector();
     const fixtures = [
       item(101, ['private_person']),
@@ -98,12 +66,12 @@ describe('AT-HH-1 run summary (pipeline)', () => {
 
     expect(stats.fetched).toBe(6);
     expect(stats.processed).toBe(6);
-    expect(stats.excludedNonCitizen).toBe(4);
-    expect(upserted.map((b) => b.data.external_id).sort()).toEqual(['aides-territoires:101', 'aides-territoires:103']);
+    expect(stats.excludedNonCitizen).toBe(6);
+    expect(upserted).toEqual([]);
     // the excluded items are not errors
     expect(stats.errors.filter((e) => !String(e).includes('Graceful'))).toEqual([]);
     // the count reaches the persisted SyncRun stats
     const syncRun = inserted.find((v) => v && v.stats);
-    expect(syncRun.stats.excluded_non_citizen).toBe(4);
+    expect(syncRun.stats.excluded_non_citizen).toBe(6);
   });
 });
