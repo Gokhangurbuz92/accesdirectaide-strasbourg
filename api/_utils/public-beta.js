@@ -145,6 +145,8 @@ export const SCHEDULED_JOBS = Object.freeze({
   // records. Public official sources only, no personal data: category A. Known (so it CAN be opened alone later), closed by default; scheduled nightly since V1c (00:37–05:37 UTC), refused while closed.
   veille: 'A',
   actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
+  // C2 (RB-01): weekly check of the official links of visible records — public official sources only, report only, no personal data; ALSO needs LINK_CHECK_ENABLED=1
+  'link-check': 'A',
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
 });

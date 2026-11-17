@@ -19,7 +19,7 @@ import { approvalEnv, approvedTestPolicy, executableStepIds } from '../helpers/g
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
 const DAY = 86400000;
-const TOWN = `R41ville-${TS}`;
+const TOWN = 'Molsheim';   // C8: a real commune (the statistics place an organization by INSEE commune: name AND postal code)
 const STR = [0, 1, 2].map((i) => `r41sch-str${i}-${TS}`);
 const SVC = `r41sch-svc-${TS}`;
 const ADMIN = { id: `r41sch-pa-${TS}`, email: `r41sch-pa-${TS}@example.test`, sid: STR[0], role: 'STRUCTURE_ADMIN' };
@@ -56,7 +56,7 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
     lastQuarter = new Date(w.start.getTime() + 10 * DAY + 9 * 3_600_000);
     for (const id of STR) {
       await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
-        VALUES (${id}, ${'R41 ' + id}, ${id}, 'association', '1 rue', ${TOWN}, '67000', false, '{}', '{}', '{}', 'actif', 'VERIFIED', NOW(), NOW())`);
+        VALUES (${id}, ${'R41 ' + id}, ${id}, 'association', '1 rue', ${TOWN}, '67120', false, '{}', '{}', '{}', 'actif', 'VERIFIED', NOW(), NOW())`);
     }
     await db.execute(sql`INSERT INTO "ProRdvService" (id, "structureId", name, "durationMinutes", "updatedAt") VALUES (${SVC}, ${STR[0]}, 'S', 30, NOW())`);
     await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, "updatedAt", "createdAt") VALUES (${ADMIN.id}, ${ADMIN.email}, 'x', ${STR[0]}, ${ADMIN.role}, 'active', NOW(), NOW())`);

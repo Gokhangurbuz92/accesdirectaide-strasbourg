@@ -51,6 +51,8 @@ const KV_TIMEOUT_MS = 3000;
 const bounded = (p) => Promise.race([p, new Promise((_, reject) => setTimeout(() => reject(new Error('KV timeout')), KV_TIMEOUT_MS))]);
 /** RA-01: what the previous security check left — { lastCheckAt, alertedThrough: { signal: ISO } }, timestamps only (api/_services/security-signals.js) */
 export const SECURITY_STATE_KEY = 'health-alert:security:state';
+/** C5: a key WITHOUT TTL whose disappearance means the KV store lost its data (value: the ISO time it was written) */
+export const KV_SENTINEL_KEY = 'ada:kv-sentinel:v1';
 const SECURITY_STATE_TTL_SECONDS = 2 * 24 * 3600;
 
 
@@ -233,6 +235,30 @@ export default async function handler(req, res) {
         }
     }
 
+    // Check 2b (C5, Upstash Free): the store answers but has LOST its data — archived after idleness and recreated, flushed, or replaced by a new empty
+    // database. A sentinel key WITHOUT TTL is written once; the time it was written is copied into this job's run record (Postgres). Sentinel gone while the
+    // run record remembers it ⇒ « kv.data_lost »: the erasure tombstones (40 days) and the e-mail contact retry list may be gone (docs/ops/UPSTASH_FREE.md).
+    // The sentinel is then written again (the next check is green; the alert is not repeated). Names and timestamps only.
+    let kvSentinelSince = null;
+    if (!checks.kv?.ok) checks.kvData = { ok: true, skipped: 'KV_UNREACHABLE' };
+    else try {
+        const kept = await bounded(kv.get(KV_SENTINEL_KEY));
+        const [prev] = (await db.execute(sql`SELECT metrics->>'kvSentinelSince' AS since FROM "CronRun" WHERE job = 'health-alert' AND metrics ? 'kvSentinelSince' ORDER BY "startedAt" DESC LIMIT 1`)).rows || [];
+        if (kept) {
+            kvSentinelSince = String(kept);
+            checks.kvData = { ok: true, since: kvSentinelSince };
+        } else {
+            kvSentinelSince = new Date().toISOString();
+            await bounded(kv.set(KV_SENTINEL_KEY, kvSentinelSince, { nx: true }));
+            const lost = Boolean(prev?.since);
+            checks.kvData = { ok: !lost, ...(lost ? { lostSince: prev.since } : { firstWrite: true }) };
+            if (lost && await fireAlert('kv.data_lost', `Magasin Upstash : ses données ont disparu (repère posé le ${prev.since} introuvable). Archivage Upstash Free après inactivité, base recréée ou vidée ? Les traces d’effacement (40 jours) et la liste de reprise des contacts e-mail sont peut-être perdues : suivre docs/ops/UPSTASH_FREE.md (§ Reprise).`, { lostSince: prev.since })) alertCount++;
+        }
+    } catch (err) {
+        checks.kvData = { ok: false, error: err?.name || 'Error' };
+        checkFailed('kvData', err);
+    }
+
     // Check 3: the ingestion jobs, EACH ON ITS OWN (RA-03): a failed last run, a late run or a missing run of one job is no longer hidden by another job
     // that ran (the former single MAX over « job IN ('INGEST_AIDS', 'ACTUALITES', 'ingest-aids', 'actualites', 'ingest-structures') » let the 6-hourly
     // actualites cover a weekly ingest-structures that had stopped, and never read a « failed » status).
@@ -367,7 +393,7 @@ export default async function handler(req, res) {
     const flags = Object.fromEntries(Object.entries(checks).map(([k, c]) => [k, Boolean(c.ok)]));
     const checkErrors = Object.entries(checks).filter(([, c]) => c && c.error !== undefined).map(([k]) => k);
     (allOk ? logger.info : logger.warn).call(logger, { ok: allOk, alertsFired: alertCount, checks: flags, checkErrors, durationMs: Date.now() - startedAtMs }, '[HEALTH-ALERT] run summary');
-    await finishCronRun(db, cronRunId, { status: checkErrors.length ? 'partial' : 'success', startedAtMs, metrics: { ok: allOk, alertsFired: alertCount, checks: flags, checkErrors },
+    await finishCronRun(db, cronRunId, { status: checkErrors.length ? 'partial' : 'success', startedAtMs, metrics: { ok: allOk, alertsFired: alertCount, checks: flags, checkErrors, ...(kvSentinelSince ? { kvSentinelSince } : {}) },
         ...(checkErrors.length ? { error: `checks that could not run: ${checkErrors.join(', ')}` } : {}) });
     if (cronRunId && !checkErrors.length) {
         try { await db.execute(sql`DELETE FROM ${CronRun} WHERE ${CronRun.job} = 'health-alert' AND ${CronRun.status} = 'success' AND ${CronRun.id} <> ${cronRunId}`); }

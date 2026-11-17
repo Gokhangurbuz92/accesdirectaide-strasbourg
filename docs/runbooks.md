@@ -87,9 +87,9 @@ fichiers). Avant, elles devenaient illisibles dès la promotion d'une nouvelle c
 - **Signaux de sécurité** (RA-01) : connexions refusées, codes MFA refusés, exports — fenêtre de 70 minutes (intervalle du contrôle + 10 minutes de
   recouvrement, `ALERT_SECURITY_WINDOW_MINUTES`), prolongée jusqu'au contrôle précédent si une exécution a été retardée ; un même épisode n'est pas alerté deux fois.
 - **Erreurs** : Sentry, région UE, 10 % des traces de performance (`SENTRY_TRACES_SAMPLE_RATE`), Session Replay désactivé.
-- **Externe** : il n'y a **pas** de surveillance externe aujourd'hui (le flux `healthcheck.yml` cité auparavant n'existe pas ; `.github/workflows/` ne
-  contient que `ci.yml`). Si la fonction, le planificateur ou le déploiement est arrêté, le contrôle de santé ne peut pas signaler sa propre absence.
-  Proposition prête, à activer par le propriétaire : `docs/ops/healthcheck.workflow.yml.proposed` (voir `docs/ops/EXTERNAL_WATCHDOG.md`).
+- **Externe** (C1) : `.github/workflows/healthcheck.yml`, toutes les heures depuis GitHub, lectures publiques seulement ; échec de la 2e exécution
+  consécutive = e-mail GitHub au propriétaire (puis toutes les 6). Il signale l'absence du contrôle interne quand la fonction, le planificateur ou le
+  déploiement est arrêté. Il ne tourne qu'une fois poussé sur GitHub (`docs/ops/EXTERNAL_WATCHDOG.md`).
 - **CSP** : les violations apparaissent dans les journaux (`csp.violation` : directive, origine bloquée, chemin). Un pic après un déploiement indique
   une ressource bloquée.
 - **Veille automatique** (R8) : le contrôle de santé alerte (« veille.stale ») quand aucune veille ne s'est terminée depuis 48 h

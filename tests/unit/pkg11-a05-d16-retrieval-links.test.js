@@ -17,7 +17,8 @@ describe('PKG-11 / A05 link check', () => {
     expect((await checkOne('https://www.service-public.fr/page', { fetchImpl: f })).class).toBe('OK');
   });
   it('the cron is off unless the owner enables it', () => {
-    expect(readFileSync('api/_handlers/cron/link-check.js', 'utf8')).toMatch(/if \(process\.env\.LINK_CHECK_ENABLED !== '1'\) return res\.status\(200\)\.json\(\{ success: true, skipped: 'disabled'/);
+    // C2: the disabled branch also closes its run record (skipped) before answering — and requests nothing
+    expect(readFileSync('api/_handlers/cron/link-check.js', 'utf8')).toMatch(/if \(process\.env\.LINK_CHECK_ENABLED !== '1'\) \{\n\s+await finishCronRun\(database, cronRunId, \{ status: 'skipped', skipReason: 'LINK_CHECK_DISABLED', startedAtMs \}\);\n\s+return res\.status\(200\)\.json\(\{ success: true, skipped: 'disabled'/);
   });
 });
 

@@ -42,7 +42,8 @@
       "path": "/api/cron/health-alert",
       "schedule": "7 * * * *"
     },
-    { "path": "/api/cron/veille", "schedule": "37 0-5 * * *" }
+    { "path": "/api/cron/veille", "schedule": "37 0-5 * * *" },
+    { "path": "/api/cron/link-check", "schedule": "23 4 * * 1" }
   ],
   "redirects": [
     {

@@ -29,11 +29,12 @@ Verified on production (`www.accesdirectaide.fr`) — 2026-03-24 :
 > Updated 15/11/2026 against the code. The « Last Check » and « Verified » columns above are dated observations of 24/03/2026, not live status.
 
 - **Sentry** captures exceptions only when `SENTRY_DSN` is set (EU region). Without it the client is a no-op and errors go to the function logs only.
-- **Health alerts**: `/api/cron/health-alert` runs **once an hour** (minute 7, `vercel.json`). It checks the database, KV, each scheduled job on its own
+- **Health alerts**: `/api/cron/health-alert` runs **once an hour** (minute 7, `vercel.json`). It checks the database, KV (unreachable: `kv.down`; reachable but emptied — e.g. an Upstash Free database archived and recreated: `kv.data_lost`, C5, `docs/ops/UPSTASH_FREE.md`), each scheduled job on its own
   (`job.failed.<job>`, `job.stale.<job>`), the automatic veille (`veille.stale`), the review queue, mail delivery events and the security signals, and
   sends each alert at most once an hour to `ALERT_WEBHOOK_URL` (any https webhook) and/or by e-mail to `ALERT_EMAIL` through the site's mail provider.
   Every run leaves a `CronRun` row and one summary log line; a check that cannot run is logged.
-- **No external watchdog** is installed: nothing reports that the health check itself stopped (proposal: `docs/ops/healthcheck.workflow.yml.proposed`).
+- **External watchdog** (C1): `.github/workflows/healthcheck.yml`, hourly public read-only probes from GitHub's runners; it alerts at the 2nd consecutive
+  failed run (`docs/ops/EXTERNAL_WATCHDOG.md`). It runs only once pushed to GitHub.
 - **Thresholds**:
   - `data-quality` open tickets must stay below `openTotalMax = 500`.
   - Scheduled jobs: twice the schedule interval + 1 h (`api/_services/job-watch.js`).

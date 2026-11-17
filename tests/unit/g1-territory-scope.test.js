@@ -181,18 +181,19 @@ describe('H institution handler: the scope is the account\'s, on the server', ()
 });
 
 describe('audit findings fixed with G1', () => {
-  it('A16: both observatoires key a commune on its name without case, accents, punctuation or « cedex » — not on the text as typed', () => {
+  it('A16 + C8: every cross-organization table places an organization in its INSEE commune (name AND postal code), through ONE base — no table keys on the text as typed', () => {
     const org = src('api/_services/org-stats.js'); const terr = src('api/_services/territorial-stats.js');
-    expect(org).toContain('export const communeOrgCte'); expect(org).toMatch(/lower\(unaccent\(/); expect(org).toContain('mcedex');
-    expect(org.slice(org.indexOf('export async function regionalStats'))).toContain('${communeOrgCte(verified)}');
-    expect(terr).toContain('const orgCte = sql`${communeOrgCte(verified)}');
-    // the only place the raw text is still read is the label inside communeOrgCte
-    for (const code of [org, terr]) expect((code.match(/trim\(s\.ville\)/g) || []).length).toBeLessThanOrEqual(1);
+    const regional = org.slice(org.indexOf('export async function regionalStats'), org.indexOf('const PERIODS'));
+    expect(regional).toContain('base.locatedPopulation(db)'); expect(regional).toContain('base.blockAppointments(db, pop, q)'); expect(regional).not.toMatch(/s\.ville|GROUP BY o\.commune/);
+    expect(terr).toContain('const at = communeOfAddress(r); if (!at) continue;');
+    // the preview and the unscoped CSV are the restriction of the one base to every block — no second, name-keyed computation
+    for (const fn of ['export async function observatoire', 'export async function territoryCsv']) expect(terr.slice(terr.indexOf(fn), terr.indexOf(fn) + 600), fn).toMatch(/observatoireOf\(db, everywhere|csvOf\(db, everywhere/);
+    for (const code of [org, terr]) { expect(code).not.toContain('communeOrgCte'); expect(code).not.toMatch(/trim\(s\.ville\)/); }
   });
 
   it('A19: a masked commune is « masked », never « inactive »; the interface and the six languages say « masked value (< 5) »', () => {
     const org = src('api/_services/org-stats.js'); const page = src('src/pages/pro/RegionalDashboard.jsx');
-    expect(org).toContain("status: suppress(c.rdv) === null ? 'masked' : 'published'"); expect(org).not.toMatch(/'optimal'|'inactive'/);
+    expect(org).toContain("status: c.rdv === null ? 'masked' : 'published'"); expect(org).not.toMatch(/'optimal'|'inactive'/);
     expect(page).toContain("t('pro:regional.masked', 'valeur masquée (< 5)')"); expect(page).toContain("city.status === 'masked'"); expect(page).not.toMatch(/optimal|regional\.inactive|'inactif'/);
     for (const lang of ['en', 'tr', 'ar', 'de', 'uk']) {
       const pro = JSON.parse(src(`src/i18n/locales/${lang}/pro.json`));

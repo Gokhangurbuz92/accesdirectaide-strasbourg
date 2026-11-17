@@ -299,22 +299,26 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     delete process.env.OPEN_DATA_EXPORT_ENABLED;
   });
 
-  it('A16 on the unscoped tables (administrators\' preview, professional observatoire): three spellings of one name are ONE commune, so the 3-organization threshold counts them together', async () => {
-    const name = `G1 Orthographe ${TS}`;
-    for (const [i, ville] of [name, name.toUpperCase(), `${name.replace(/ /g, '-')} Cedex 2`].entries()) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
-      VALUES (${`g1-sp${i}-${TS}`}, ${`g1-sp${i}-${TS}`}, ${`g1-sp${i}-${TS}`}, 'association', '1 rue', ${ville}, '67000', false, '{}', '{}', '{}', 'actif', 'VERIFIED', NOW(), NOW())`);
-    const communes = (await stats.observatoire(db, NOW)).byCommune.map((r) => r.commune).filter((c) => c.toLowerCase().replace(/[^a-z0-9]+/g, ' ').includes(`g1 orthographe ${TS}`));
-    expect(communes, 'one row, under one of the spellings (before: no row at all — three « communes » of one organization each)').toHaveLength(1);
-    const csv = (await stats.territoryCsv('quarter', db, NOW)).csv.split('\r\n').filter((l) => l.includes(communes[0]));
+  it('A16 + C8 on the unscoped tables (administrators\' preview, professional observatoire): three spellings of one commune are ONE commune (located by name AND postal code), so the 3-organization threshold counts them together; a name that is no commune is counted nowhere', async () => {
+    const ORTHO = `g1-sp%-${TS}`;
+    for (const [i, ville] of ['Sarre-Union', 'SARRE UNION', 'Sarre-Union Cedex 2'].entries()) await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
+      VALUES (${`g1-sp${i}-${TS}`}, ${`g1-sp${i}-${TS}`}, ${`g1-sp${i}-${TS}`}, 'association', '1 rue', ${ville}, '67260', false, '{}', '{}', '{}', 'actif', 'VERIFIED', NOW(), NOW())`);
+    const communes = (await stats.observatoire(db, NOW)).byCommune.map((r) => r.commune).filter((c) => c === 'Sarre-Union');
+    expect(communes, 'one row, under the official name').toEqual(['Sarre-Union']);
+    const csv = (await stats.territoryCsv('quarter', db, NOW)).csv.split('\r\n').filter((l) => l.split(',')[3] === 'Sarre-Union');
     expect(csv).toHaveLength(1); expect(csv[0].split(',')[4]).toBe('3');
+    // the place that is no commune (« G1 Lieu-dit ») and the name / postal code that disagree (« Haguenau, 68000 ») are in no unscoped table either
+    expect(JSON.stringify(await stats.observatoire(db, NOW))).not.toMatch(/Lieu-dit/);
     await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, "updatedAt", "createdAt") VALUES (${`g1-pro-${TS}`}, ${`g1-pro-${TS}@example.test`}, 'x', ${`g1-sp0-${TS}`}, 'STRUCTURE_ADMIN', 'active', NOW(), NOW())`);
     const regional = await (await import('../../api/_services/org-stats.js')).regionalStats({ structureId: `g1-sp0-${TS}`, userId: `g1-pro-${TS}`, role: 'STRUCTURE_ADMIN' }, db, NOW);
     expect(regional.ok).toBe(true);
-    const city = regional.stats.cities.filter((c) => c.name === communes[0]);
+    const city = regional.stats.cities.filter((c) => c.name === 'Sarre-Union');
     expect(city).toHaveLength(1); expect(city[0].city).toBe('3 structures vérifiées');
+    expect(regional.stats.cities.find((c) => c.name === 'Haguenau').orgs, 'the organization « Haguenau, 68000 » is not located: Haguenau keeps its 3').toBe(3);
     // audit A19: its appointments are masked (none, so « < 5 »): the status says « masked », never « inactive »
     expect(city[0]).toMatchObject({ rdv: null, status: 'masked' }); expect(regional.stats.cities.every((c) => ['masked', 'published'].includes(c.status))).toBe(true);
     await db.execute(sql`DELETE FROM "ProUser" WHERE id = ${`g1-pro-${TS}`}`);
+    await db.execute(sql`DELETE FROM "Structure" WHERE id LIKE ${ORTHO}`);
   });
 
   it('B6 the administrator\'s list says which accounts have no defined territory; a new account is stored under a label that reads back to one territory', async () => {

@@ -1378,6 +1378,14 @@
       "class": "optional",
       "nature": "config"
     },
+    "LINK_CHECK_MAX_REQUESTS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "LINK_CHECK_BUDGET_SECONDS": {
+      "class": "optional",
+      "nature": "config"
+    },
     "CRON_ACTUALITES_STALE_MINUTES": {
       "class": "optional",
       "nature": "config"
@@ -2867,6 +2875,8 @@
       ],
       "optional": [
         "LINK_CHECK_ENABLED",
+        "LINK_CHECK_MAX_REQUESTS",
+        "LINK_CHECK_BUDGET_SECONDS",
         "DATA_REVIEW_SCAN_CRON_ENABLED"
       ],
       "requires_module": [

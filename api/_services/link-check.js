@@ -9,6 +9,12 @@
  *   - every result is kept (SourceSnapshot: status, final address); a link found BROKEN (404 / 410) on two consecutive runs opens ONE review item for a person
  *     (SOURCE_LINK_BROKEN) — nothing is unpublished automatically;
  *   - the cron runs only when the owner enables it (LINK_CHECK_ENABLED=1): it contacts external official sites.
+ * C2 (owner Paket 4, RB-01, conditional yes: LAB first; Production only allow-listed sources, quota and time limit, never publishes or deletes):
+ *   - per-run QUOTA: at most `maxRequests` HTTP requests (every HEAD, GET and redirect hop counts); no new address is started once it is reached;
+ *   - per-request TIMEOUT `timeoutMs`; total TIME BUDGET `budgetMs`: no new address is started after it (the run then ends at most one address later);
+ *   - fairness: the addresses never checked, then the ones checked longest ago, go first — a run that stops early does not starve the same tail every week;
+ *   - REPORT ONLY: it writes SourceSnapshot rows (its results, read by /admin/liens) and, after two consecutive 404/410, ONE review item for a person.
+ *     It never changes, unpublishes, withdraws or deletes a record (no UPDATE or DELETE in this file — pinned by tests/unit/c2-link-check-bounds.test.js).
  */
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
@@ -24,6 +30,8 @@ const SOURCES = [
 export const CLASSES = ['OK', 'REDIRECTED', 'BROKEN', 'BLOCKED', 'SERVER_ERROR', 'NETWORK_ERROR', 'OUTSIDE_ALLOWLIST'];
 const httpsAllowed = (u) => { try { return new URL(u).protocol === 'https:' && isAllowedSource(u); } catch { return false; } };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** C2 defaults (the cron handler may lower them through LINK_CHECK_MAX_REQUESTS / LINK_CHECK_BUDGET_SECONDS, never raise them past the caps) */
+export const LIMITS = Object.freeze({ maxRequests: 200, maxRequestsCap: 1000, timeoutMs: 8000, budgetMs: 200_000, budgetMsCap: 220_000 });
 
 /** The distinct addresses of the visible catalogue, each with the records that cite it. */
 export async function collectLinks({ db = defaultDb, limitPerKind = 500 } = {}) {
@@ -79,20 +87,36 @@ async function queueBroken(db, ref, url) {
   return true;
 }
 
-/** One run. `fetchImpl` is injectable (tests never touch the network). */
-export async function runLinkCheck({ db = defaultDb, fetchImpl = fetch, perHost = 20, spacingMs = 1000, limitPerKind = 500 } = {}) {
-  const links = await collectLinks({ db, limitPerKind });
-  const stats = Object.fromEntries([...CLASSES.map((c) => [c, 0]), ['addresses', links.length], ['skippedHostBudget', 0], ['reviewQueued', 0]]);
+/** When each address was last checked (its newest SourceSnapshot), to check the oldest first. @returns {Promise<Map<string, number>>} */
+async function lastChecked(db) {
+  const rows = (await db.execute(sql`SELECT raw_excerpt, max(fetched_at) AS at FROM "SourceSnapshot" WHERE raw_excerpt LIKE 'link:%' GROUP BY raw_excerpt`)).rows;
+  return new Map(rows.map((r) => [String(r.raw_excerpt).slice(5), new Date(r.at).getTime()]));
+}
+
+/**
+ * One run. `fetchImpl` and `clock` are injectable (tests never touch the network). Returns counts only.
+ * @param {{ db?: any, fetchImpl?: typeof fetch, perHost?: number, spacingMs?: number, limitPerKind?: number, maxRequests?: number, timeoutMs?: number,
+ *   budgetMs?: number, clock?: () => number }} [opts]
+ */
+export async function runLinkCheck({ db = defaultDb, fetchImpl = fetch, perHost = 20, spacingMs = 1000, limitPerKind = 500, maxRequests = LIMITS.maxRequests,
+  timeoutMs = LIMITS.timeoutMs, budgetMs = LIMITS.budgetMs, clock = Date.now } = {}) {
+  const started = clock();
+  const seen = await lastChecked(db);
+  const links = (await collectLinks({ db, limitPerKind })).sort((a, b) => (seen.get(a.url) ?? -1) - (seen.get(b.url) ?? -1) || (a.url < b.url ? -1 : a.url > b.url ? 1 : 0));
+  const stats = Object.fromEntries([...CLASSES.map((c) => [c, 0]), ['addresses', links.length], ['requests', 0], ['skippedHostBudget', 0], ['skippedQuota', 0], ['skippedTimeBudget', 0], ['reviewQueued', 0]]);
+  const counted = (url, init) => { stats.requests += 1; return fetchImpl(url, init); };
   const perHostCount = new Map(); const lastHit = new Map();
   for (const link of links) {
     let host = ''; try { host = new URL(link.url).host; } catch { /* recorded as outside */ }
     let out;
     if (!httpsAllowed(link.url)) out = { class: 'OUTSIDE_ALLOWLIST', status: null, finalUrl: link.url };
+    else if (stats.requests >= maxRequests) { stats.skippedQuota += 1; continue; }
+    else if (clock() - started >= budgetMs) { stats.skippedTimeBudget += 1; continue; }
     else if ((perHostCount.get(host) || 0) >= perHost) { stats.skippedHostBudget += 1; continue; }
     else {
       const wait = (lastHit.get(host) || 0) + spacingMs - Date.now(); if (wait > 0) await sleep(wait);
       perHostCount.set(host, (perHostCount.get(host) || 0) + 1); lastHit.set(host, Date.now());
-      out = await checkOne(link.url, { fetchImpl });
+      out = await checkOne(link.url, { fetchImpl: counted, timeoutMs });
     }
     stats[out.class] += 1;
     for (const ref of link.refs) {
@@ -101,5 +125,7 @@ export async function runLinkCheck({ db = defaultDb, fetchImpl = fetch, perHost 
       if (out.class === 'BROKEN' && await queueBroken(db, ref, link.url)) stats.reviewQueued += 1;
     }
   }
+  stats.stoppedEarly = stats.skippedQuota + stats.skippedTimeBudget > 0;
+  stats.durationMs = Math.max(0, clock() - started);
   return stats;
 }

@@ -93,13 +93,14 @@ Vercel Crons (9 planifiés dans vercel.json, heures UTC ; pendant la bêta chaqu
   ├─ rdv-reminder       → Rappels RDV (quotidien 8h)
   ├─ gdpr-purge         → Purge RGPD (quotidien 3h)
   ├─ health-alert       → Monitoring (toutes les heures, à la 7e minute)
-  └─ veille             → Vérification automatique des sources officielles (6 tranches nocturnes, 0h37–5h37)
+  ├─ veille             → Vérification automatique des sources officielles (6 tranches nocturnes, 0h37–5h37)
+  └─ link-check         → Contrôle des liens officiels, rapport seulement (lundi 4h23 UTC ; LINK_CHECK_ENABLED=1 requis)
 ```
 
 12 connecteurs d'ingestion :
 AidesTerritoires, DREES, ServicePublic, FINESS, RNA, GrandEst, Agefiph, MesAidesReno, DémarchesSimplifiées + IngestionPipelineCore.
 
-Routes existantes mais **non** planifiées dans vercel.json : `hive-scan`, `backup-db`, `link-check`, `pipeline` et `veille` (la chaîne de vérification automatique est exécutée chaque nuit par le serveur LAB).
+Routes existantes mais **non** planifiées dans vercel.json : `hive-scan`, `backup-db` et `pipeline` ; `link-check` (contrôle des liens officiels, rapport seulement) est planifiée chaque semaine depuis C2 et `veille` chaque nuit, toutes deux fermées tant qu'elles ne sont pas ouvertes.
 
 ### Veille automatique (vérification et publication)
 

@@ -20,7 +20,7 @@ Un administrateur connecté voit la même liste de contrôles manquants dans `/a
 
 ## 2. Chaîne de déploiement
 
-1. **CI GitHub** (`.github/workflows/ci.yml`, seul flux du dépôt) à chaque push et pull request sur `main` : lint, typecheck, bases de référence strictes
+1. **CI GitHub** (`.github/workflows/ci.yml` ; l'autre flux, `healthcheck.yml`, est la surveillance externe du § 11) à chaque push et pull request sur `main` : lint, typecheck, bases de référence strictes
    (TypeScript et ESLint), porte unitaire (`scripts/unit-gate.mjs`), audit des dépendances de production, configuration de l'éditeur légal, build ; et une
    analyse des secrets (gitleaks, version et SHA-256 épinglés, tâche `secret-scan`). Le CI ne déploie jamais. Les suites d'intégration, de migration et de
    bout en bout n'y tournent pas : elles sont couvertes par le QA natif exigé à l'étape 2.
@@ -80,12 +80,12 @@ Ce sont des hypothèses **non vérifiables hors ligne** ; chacune est bloquante 
    restent des fonctions sans export par défaut : un appel direct répond une erreur, sans donnée.
 6. **Fichiers lus à l'exécution** : la recherche (synonymes), `/api/docs/openapi.json` et `/api/status` répondent normalement (`includeFiles`).
 7. **Région** : les fonctions s'exécutent à `fra1`.
-8. **Planification** : les tâches de `vercel.json` (neuf entrées) ; le contrôle de santé `/api/cron/health-alert` tourne **toutes les heures**
+8. **Planification** : les tâches de `vercel.json` (dix entrées ; C2 : `/api/cron/link-check` le lundi à 04:23 UTC, fermée tant que `ADA_BETA_OPEN_JOBS` ne la nomme pas et que `LINK_CHECK_ENABLED` ne vaut pas `1`) ; le contrôle de santé `/api/cron/health-alert` tourne **toutes les heures**
    (minute 7) — un rythme de 5 minutes maintiendrait la base Neon Free éveillée en permanence.
 9. **Plan du site** : `/sitemap.xml` est le plan dynamique (il n'y a plus de fichier statique qui le masquait).
 10. **Maintenance** : `MAINTENANCE_MODE=1` sur la preview → chaque page répond 503 avec la page de maintenance ; l'API et `/api/health` répondent toujours.
-11. **Surveillance externe** : aucune aujourd'hui (le flux `healthcheck.yml` n'existe pas dans le dépôt). Proposition à activer par le propriétaire :
-    `docs/ops/healthcheck.workflow.yml.proposed`.
+11. **Surveillance externe** : `.github/workflows/healthcheck.yml` (C1), toutes les heures, lectures publiques seulement, alerte à la 2e exécution en
+    échec consécutive ; elle ne tourne qu'une fois poussée sur GitHub. Voir `docs/ops/EXTERNAL_WATCHDOG.md`.
 12. **Vérification automatique (veille)** : `/api/cron/veille` **est planifiée** dans `vercel.json` (`37 0-5 * * *`, six passages bornés par nuit,
     4 minutes par passage, `ADA_VEILLE_MAX_MINUTES`). En bêta restreinte elle ne tourne que si elle est ouverte (`ADA_BETA_OPEN_JOBS=veille`). Sans elle,
     aucune fiche ne devient publique : la publication exige une vérification de cet environnement (D-5 v2). Les textes faciles à lire ne s'écrivent pas

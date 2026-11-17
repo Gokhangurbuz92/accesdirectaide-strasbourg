@@ -14,7 +14,8 @@ import { sql } from 'drizzle-orm';
 const hasDatabase = !!process.env.DATABASE_URL;
 const TS = Date.now();
 const NOW = new Date('2019-02-15T10:00:00Z'); const SENT = new Date('2018-11-10T09:00:00Z');
-const COMMUNES = ['A', 'B', 'C', 'D'].map((c) => `VisDiff${c}-${TS}`);
+// C8: four real communes of ONE EPCI (Hanau-La Petite Pierre) — the statistics place an organization by INSEE commune and publish one table per EPCI
+const COMMUNES = ['Bischholtz', 'Bosselshausen', 'Bouxwiller', 'Buswiller']; const POSTAL = ['67340', '67330', '67330', '67350'];
 const org = (c, i) => `visd-${c}${i}-${TS}`;
 const DOSSIER = `visd-dos-${TS}`; const SVC = `visd-svc-${TS}`; const PRO = `visd-pro-${TS}`; const FROM = `visd-from-${TS}`;
 // [commune index, need, response, how many] — the TRUE counts (never published as such)
@@ -37,9 +38,9 @@ describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the obs
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
     stats = await import('../../api/_services/territorial-stats.js'); orgStats = await import('../../api/_services/org-stats.js');
-    const structure = (id, ville, verification) => db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
-      VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${ville}, '67000', false, '{}', '{}', '{}', 'actif', ${verification}, NOW(), NOW())`);
-    for (let c = 0; c < COMMUNES.length; c += 1) for (let i = 0; i < 3; i += 1) await structure(org(c, i), COMMUNES[c], 'VERIFIED');
+    const structure = (id, ville, verification, cp = '67000') => db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
+      VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${ville}, ${cp}, false, '{}', '{}', '{}', 'actif', ${verification}, NOW(), NOW())`);
+    for (let c = 0; c < COMMUNES.length; c += 1) for (let i = 0; i < 3; i += 1) await structure(org(c, i), COMMUNES[c], 'VERIFIED', POSTAL[c]);
     await structure(FROM, `VisDiffFrom-${TS}`, 'PENDING');   // the sender: not verified, so its commune is never shown
     await db.execute(sql`INSERT INTO "SharedDiagnostic" (id, "expiresAt", situation, results, "viewCount") VALUES (${DOSSIER}, NOW() + interval '7 days', '{}'::jsonb, '{}'::jsonb, 0)`);
     for (const [ci, need, response, count] of FIXTURE) for (let i = 0; i < count; i += 1) await referral(ci, need, response);

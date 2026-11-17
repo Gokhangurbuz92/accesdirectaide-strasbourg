@@ -122,11 +122,12 @@ describe.skipIf(!hasDatabase)('PKG-5 E01 verified-only choice through the real A
   });
 
   it('I02 differencing: an organization in a commune with fewer than 3 verified organizations never changes the published totals (no subtraction reveals it)', async () => {
-    const X = `CommuneX-${TS}`; const Y = `CommuneY-${TS}`; const ids = [];
+    // C8: real communes (organizations are placed by INSEE commune: name AND postal code), each in its own EPCI
+    const X = 'Obernai'; const Y = 'Erstein'; const CP = { [X]: '67210', [Y]: '67150' }; const ids = [];
     for (let i = 0; i < 4; i += 1) {
       const id = `e01-d${i}-${TS}`; ids.push(id); const ville = i < 3 ? X : Y;
       await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
-        VALUES (${id}, ${'Diff ' + i}, ${id}, 'association', '1 rue', ${ville}, '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);
+        VALUES (${id}, ${'Diff ' + i}, ${id}, 'association', '1 rue', ${ville}, ${CP[ville]}, false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], 'actif', 'VERIFIED', NOW(), NOW())`);
       for (let k = 0; k < (i < 3 ? 2 : 7); k += 1) await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, role, status, "structureId", "updatedAt") VALUES (${`${id}-u${k}`}, ${`${id}-u${k}@example.test`}, 'x', 'PRO', 'active', ${id}, NOW())`);
     }
     const before = (await call('GET', '/api/pro/regional-stats', { pro: PRO.V })).body.stats;

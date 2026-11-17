@@ -1,0 +1,96 @@
+# RA-04 / C1 (owner Paket 4: « EVET », hourly read-only public watchdog) — external watchdog of the public site, run on GitHub's runners: outside the
+# platform, so it still speaks when the function, the Vercel scheduler or the whole deployment is down. Read docs/ops/EXTERNAL_WATCHDOG.md.
+#
+# What it does: read-only GETs of PUBLIC pages and public API endpoints only. No credential, no secret, no write, no cron route, no administrator route.
+# The repository is public, so the logs are public: they hold paths, HTTP status codes, public component states and the short release SHA — never a
+# response body, a header other than x-release-sha, or anything personal.
+# Alerting without noise: a failed probe does NOT fail the run at once. The run fails (GitHub's standard e-mail to the owner) only when the previous
+# run(s) failed too: at the 2nd consecutive failed run, then every 6th while it lasts (2, 6, 12, 18 … hours). One cold start or one network blip
+# never alerts. To know the previous runs, it reads this workflow's own run history with the automatic GITHUB_TOKEN (actions: read) — no stored secret.
+# C5 (Upstash Free): /api/aides?pageSize=1 is a public read that passes the Upstash rate limiter (a real Redis command each hour), so the free database
+# never sits idle even if the in-platform hourly health check stops.
+name: External healthcheck
+on:
+  schedule:
+    # Hourly at minute 12 — five minutes after the in-platform health check (minute 7), while the Neon Free compute it woke is still awake.
+    - cron: '12 * * * *'
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: 'Optional: the release SHA production must serve (x-release-sha). Empty = only check that the header is present.'
+        required: false
+        default: ''
+permissions:
+  actions: read
+concurrency:
+  group: external-healthcheck
+  cancel-in-progress: false
+jobs:
+  probe:
+    name: Probe the public site
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SITE: https://www.accesdirectaide.fr
+      UA: ada-external-healthcheck
+      EXPECTED_SHA: ${{ github.event.inputs.expected_sha }}
+    steps:
+      - name: Probe public pages and public API (read-only)
+        id: probe
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          fail=0
+          probe() {   # probe <path> — two attempts, 15 s apart (a cold start is not an outage); status code only, never the body
+            code=000
+            for attempt in 1 2; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 -A "$UA" "$SITE$1" || echo 000)
+              [ "$code" = 200 ] && { echo "OK   $1"; return 0; }
+              [ "$attempt" = 1 ] && sleep 15
+            done
+            echo "FAIL $1 (last status $code)"; fail=1
+          }
+          probe /
+          probe /aides
+          probe /demarches
+          probe /structures
+          probe /sitemap.xml
+          probe /api/health
+          probe /api/health/ready
+          probe /api/status
+          probe '/api/aides?pageSize=1'
+          # public status: no unavailable component (the local assistant is ignored: there is no model in Production); ids and states only
+          body=$(curl -s --max-time 15 -A "$UA" "$SITE/api/status" || true)
+          if ! printf '%s' "$body" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{let j;try{j=JSON.parse(s)}catch{console.log("FAIL status: not JSON");process.exit(1)}const c=Array.isArray(j.components)?j.components:[];if(!c.length){console.log("FAIL status: no components");process.exit(1)}const bad=c.filter(x=>x.state==="unavailable"&&x.id!=="assistant").map(x=>x.id);console.log((bad.length?"FAIL":"OK  ")+" components: "+c.map(x=>String(x.id)+"="+String(x.state)).join(" "));process.exit(bad.length?1:0)})'; then fail=1; fi
+          # release header (x-release-sha): present; compared only on a manual run that names the expected SHA
+          got=$(curl -s -D - -o /dev/null --max-time 15 -A "$UA" "$SITE/api/health" | awk -F': ' 'tolower($1)=="x-release-sha"{print $2}' | tr -d '\r' || true)
+          if [ -z "$got" ]; then echo "FAIL no x-release-sha header"; fail=1; else echo "OK   served release ${got:0:7}"; fi
+          if [ -n "${EXPECTED_SHA:-}" ] && [ -n "$got" ] && [ "${got:0:7}" != "${EXPECTED_SHA:0:7}" ]; then echo "FAIL production serves ${got:0:7}, expected ${EXPECTED_SHA:0:7}"; fail=1; fi
+          exit $fail
+
+      # The NAME of this step is the marker the next runs read (it runs only when the probe failed). Do not rename it without updating STRIKE below.
+      - name: Probe failed (strike)
+        id: strike
+        if: steps.probe.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          STRIKE: Probe failed (strike)
+        run: |
+          set -uo pipefail
+          # consecutive failed runs BEFORE this one: walk back through this workflow's completed runs while each of them ran the strike step
+          runs=$(gh api "repos/$REPO/actions/workflows/healthcheck.yml/runs?status=completed&per_page=30" --jq ".workflow_runs[] | select(.id != $RUN_ID) | .id" 2>/dev/null) || runs="__unreadable__"
+          if [ "$runs" = "__unreadable__" ]; then echo "ALERT: the probe failed and the previous runs could not be read: alerting now rather than staying silent"; exit 1; fi
+          before=0
+          for id in $runs; do
+            ran=$(gh api "repos/$REPO/actions/runs/$id/jobs" --jq "[.jobs[].steps[]? | select(.name == \"$STRIKE\" and .conclusion != \"skipped\")] | length" 2>/dev/null) || { echo "ALERT: run history unreadable"; exit 1; }
+            [ "$ran" -gt 0 ] || break
+            before=$((before + 1))
+          done
+          streak=$((before + 1))
+          echo "consecutive failed runs: $streak"
+          if [ "$streak" -eq 2 ] || { [ "$streak" -gt 2 ] && [ $((streak % 6)) -eq 0 ]; }; then
+            echo "ALERT: the public site failed $streak runs in a row (see the probe step above)"; exit 1
+          fi
+          echo "Not alerting on this run (alert at the 2nd consecutive failure, then every 6th)."
