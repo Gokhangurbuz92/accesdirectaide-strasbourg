@@ -23,6 +23,8 @@ import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, CitizenUser } from '../../src/db/schema.js';
 import { sendMail as defaultSendMail, mailLedgerStatus } from '../_utils/mailer.js';
 import logger from '../_utils/logger.js';
+import { citizenMailLanguage } from './mail-language.js';
+import { templates } from '../lib/email-service.js';
 
 export const REQUEST_TYPE = 'RESTRICT';
 /** art. 18(1) a-d */
@@ -138,8 +140,10 @@ export async function liftByController(id, input, reviewer, db = defaultDb, deps
   try {
     const [u] = await db.select({ email: CitizenUser.email, verified: CitizenUser.emailVerifiedAt }).from(CitizenUser).where(sql`${CitizenUser.id} = ${r.s}`).limit(1);
     if (u?.email && u.verified) {
-      const out = await sendMail({ to: u.email, subject: 'Fin de la limitation du traitement de vos données', category: 'rights-restriction',
-        text: `L’équipe AccèsDirectAide va lever la limitation du traitement de vos données que vous aviez demandée (RGPD art. 18).\n\nRaison : ${reason}\n\nVous pouvez en demander une nouvelle à tout moment depuis « Mon compte ».` });
+      // A-15: in the person's stored language (French otherwise); the reason, written by the team in French, stays in the French text below
+      const mail = templates.accountNotice('restriction_lift', await citizenMailLanguage(String(r.s), db), 'Fin de la limitation du traitement de vos données',
+        `L’équipe AccèsDirectAide va lever la limitation du traitement de vos données que vous aviez demandée (RGPD art. 18).\n\nRaison : ${reason}\n\nVous pouvez en demander une nouvelle à tout moment depuis « Mon compte ».`);
+      const out = await sendMail({ to: u.email, subject: mail.subject, category: 'rights-restriction', text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
       notice = mailLedgerStatus(out);
     }
   } catch (error) { notice = 'FAILED'; logger.warn({ err: { name: error?.name } }, '[restriction] lift notice failed'); }

@@ -18,6 +18,8 @@ import { templates } from '../lib/email-service.js';
 import { PHONE_COLLECTION_CLOSED, phoneCollectionOpen } from '../_utils/phone-collection.js';
 import { afterResponse } from '../_utils/after-response.js';
 import { mailContactEraser } from './mail-contact-erasure.js';
+import { citizenMailLanguage } from './mail-language.js';
+import { localizedMail } from '../_utils/mail-catalogue.js';
 
 export const EMAIL_CHANGE_TTL_MS = 30 * 60 * 1000;
 const seal = (/** @type {string} */ id, /** @type {string} */ email) => sealText(email, { purpose: 'email-change', context: `email-change:${id}` });
@@ -44,9 +46,11 @@ export async function requestEmailChange(userId, input, deps = {}) {
   const id = crypto.randomUUID(); const raw = generateAuthToken();
   await db.insert(EmailChangeRequest).values({ id, userId, newEmailEncrypted: seal(id, newEmail), tokenHash: hashAuthToken(raw), expiresAt: new Date(now.getTime() + EMAIL_CHANGE_TTL_MS) });
   const link = buildAppUrl(`/api/citizen/email-change-confirm?token=${encodeURIComponent(raw)}`);
-  const confirm = templates.emailChangeConfirm(link);
-  const notice = templates.emailChangeNotice();
-  const toNew = await send({ to: newEmail, subject: confirm.subject, html: confirm.html, text: `Confirmez votre nouvelle adresse : ${link}`, category: 'email_change' });
+  // A-15: both messages in the account's stored language (French otherwise); the French text stays below a translated opening
+  const lang = await citizenMailLanguage(userId, db);
+  const confirm = templates.emailChangeConfirm(link, lang);
+  const notice = templates.emailChangeNotice(lang);
+  const toNew = await send({ to: newEmail, subject: confirm.subject, html: confirm.html, text: localizedMail('email_change_confirm', lang, `Confirmez votre nouvelle adresse : ${link}`).text, category: 'email_change' });
   const toOld = await send({ to: user.email, subject: notice.subject, html: notice.html, text: notice.text, category: 'email_change_notice' });
   await audit(db, 'CITIZEN_EMAIL_CHANGE_REQUESTED', userId, { linkSent: toNew?.outcome || null, noticeSent: toOld?.outcome || null });
   const sent = ['PROVIDER_ACCEPTED', 'TEST_RECORDED'].includes(toNew?.outcome);

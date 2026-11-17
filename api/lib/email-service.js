@@ -8,7 +8,7 @@
  */
 
 import { env } from '../_utils/env.js';
-import { mailText } from '../_utils/mail-catalogue.js';
+import { localizedMail, mailText } from '../_utils/mail-catalogue.js';
 
 /** @param {string} path */
 function appUrl(path) {
@@ -147,11 +147,10 @@ export const templates = {
   /**
    * Launch-readiness item 66 — confirmation of a NEW e-mail address (sent to that address).
    * @param {string} url the single-use confirmation link
+   * @param {unknown} [lang] A-15: the account's stored language; French when absent (French unchanged)
    */
-  emailChangeConfirm(url) {
-    return {
-      subject: 'Confirmez votre nouvelle adresse — Accès Direct Aide',
-      html: wrapTemplate(`
+  emailChangeConfirm(url, lang = 'fr') {
+    return localized('email_change_confirm', lang, 'Confirmez votre nouvelle adresse — Accès Direct Aide', `
         <h2 style="color: #1e293b; font-size: 22px;">Nouvelle adresse e-mail</h2>
         <p style="color: #475569; line-height: 1.6;">
           Vous avez demandé que cette adresse devienne celle de votre compte Accès Direct Aide.
@@ -162,21 +161,36 @@ export const templates = {
           Ce lien expire dans 30 minutes et ne sert qu'une fois. Après la confirmation, reconnectez-vous avec cette adresse.
           Si vous n'avez pas fait cette demande, ignorez cet e-mail : rien ne changera.
         </p>
-      `),
-    };
+      `, url);
   },
 
-  /** Launch-readiness item 66 — notice to the CURRENT address that a change was requested (no link, no new address). */
-  emailChangeNotice() {
+  /**
+   * Launch-readiness item 66 — notice to the CURRENT address that a change was requested (no link, no new address).
+   * @param {unknown} [lang] A-15: the account's stored language; French when absent (French unchanged)
+   */
+  emailChangeNotice(lang = 'fr') {
     const text = 'Une demande de changement de l’adresse e-mail de votre compte Accès Direct Aide vient d’être faite. Si ce n’est pas vous, connectez-vous et changez votre mot de passe : tant que la nouvelle adresse n’est pas confirmée, rien ne change.';
-    return {
-      subject: 'Demande de changement d’adresse — Accès Direct Aide',
-      text,
-      html: wrapTemplate(`
+    const mail = localized('email_change_notice', lang, 'Demande de changement d’adresse — Accès Direct Aide', `
         <h2 style="color: #1e293b; font-size: 22px;">Changement d'adresse demandé</h2>
         <p style="color: #475569; line-height: 1.6;">${esc(text)}</p>
-      `),
-    };
+      `, null);
+    return { subject: mail.subject, text: localizedMail('email_change_notice', lang, text).text, html: mail.html };
+  },
+
+  /**
+   * A-15 remainder — a plain-text account e-mail (Mon Parcours reminder, delegation invitation, restriction lift, recovery) in the reader's language.
+   * French (or an unsupported language): exactly the French subject and text as before, no HTML part (nothing changes for a French reader). Another
+   * language: the catalogue subject; text = heading and opening in that language, then the French text unchanged; an HTML part with the same order
+   * (button to `url` when given). The French text keeps every detail (dates, reasons, links); the catalogue lines carry none.
+   * @param {string} kind one of MAIL_KINDS @param {unknown} lang @param {string} subject the French subject @param {string} text the French text
+   * @param {string | null} [url] the link of the button (non-French HTML only)
+   * @returns {{ subject: string, text: string, html?: string, lang: string }}
+   */
+  accountNotice(kind, lang, subject, text, url = null) {
+    const plain = localizedMail(kind, lang, text);
+    if (plain.lang === 'fr') return { subject, text, lang: 'fr' };
+    const body = `<p style="color: #475569; line-height: 1.6; white-space: pre-line;">${esc(text)}</p>`;
+    return { subject: plain.subject, text: plain.text, html: localized(kind, plain.lang, subject, body, url ? esc(url) : null).html, lang: plain.lang };
   },
 
   /**

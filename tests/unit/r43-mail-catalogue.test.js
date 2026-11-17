@@ -11,7 +11,10 @@ import { LANGUAGE_CODES } from '../../src/i18n/languages.js';
 import { templates } from '../../api/lib/email-service.js';
 
 const REQUIRED = ['account_verification', 'password_reset', 'appointment_request', 'appointment_confirmation', 'appointment_refusal', 'appointment_cancellation',
-  'appointment_rescheduled', 'appointment_reminder', 'pro_invitation', 'appointment_video', 'appointment_message'];
+  'appointment_rescheduled', 'appointment_reminder', 'pro_invitation', 'appointment_video', 'appointment_message',
+  // A-15 remainder: the account e-mails (their French subjects are the ones already sent; some of them do not name the site, and stay as they were)
+  'parcours_reminder', 'delegation_invitation', 'email_change_confirm', 'email_change_notice', 'restriction_lift', 'account_recovery', 'account_recovery_notice'];
+const FRENCH_SUBJECT_WITHOUT_SITE = new Set(['parcours_reminder', 'delegation_invitation', 'restriction_lift', 'account_recovery_notice']);
 
 describe('R43 mail catalogue coverage', () => {
   it('has every required kind in all six languages, with non-empty subject, heading, opening and button', () => {
@@ -30,7 +33,7 @@ describe('R43 mail catalogue coverage', () => {
     for (const lang of LANGUAGE_CODES) for (const kind of REQUIRED) {
       const { subject, heading, intro } = cat[lang][kind];
       for (const s of [subject, heading, intro]) { expect(s).not.toMatch(/\$\{|\{\{|%s|<|>/); expect(s).not.toMatch(/\d/); }
-      expect(subject, `${lang}/${kind}`).toContain('Accès Direct Aide');
+      if (!(lang === 'fr' && FRENCH_SUBJECT_WITHOUT_SITE.has(kind))) expect(subject, `${lang}/${kind}`).toContain('Accès Direct Aide');
     }
     // the refusal is « a reply to your request » in every language — the outcome is read in the account
     expect(cat.fr.appointment_refusal.subject).not.toMatch(/refus/i);
@@ -47,6 +50,14 @@ describe('R43 mail catalogue coverage', () => {
     expect(fr.appointment_cancellation.subject).toBe('Votre rendez-vous a été annulé - Accès Direct Aide');
     expect(fr.appointment_rescheduled.subject).toBe('Votre rendez-vous est déplacé - Accès Direct Aide');
     expect(fr.pro_invitation.subject).toBe('Invitation à rejoindre une équipe sur Accès Direct Aide');
+    // A-15 remainder
+    expect(fr.parcours_reminder.subject).toBe('Rappel : une étape de Mon Parcours arrive à échéance');
+    expect(fr.delegation_invitation.subject).toBe('Invitation : personne de confiance sur AccesDirectAide');
+    expect(fr.email_change_confirm.subject).toBe('Confirmez votre nouvelle adresse — Accès Direct Aide');
+    expect(fr.email_change_notice.subject).toBe('Demande de changement d’adresse — Accès Direct Aide');
+    expect(fr.restriction_lift.subject).toBe('Fin de la limitation du traitement de vos données');
+    expect(fr.account_recovery.subject).toBe('Récupération de votre compte Accès Direct Aide');
+    expect(fr.account_recovery_notice.subject).toBe('L’adresse de votre compte a été changée');
   });
   it('language matching: tags and unknown values; Arabic is right-to-left; an unknown kind throws', () => {
     expect(mailLanguage('ar-MA')).toBe('ar'); expect(mailLanguage('uk-UA')).toBe('uk'); expect(mailLanguage('es')).toBe('fr'); expect(mailLanguage(null)).toBe('fr');
@@ -101,5 +112,34 @@ describe('R43 source scan: subjects sent to a person carry no interpolation', ()
     expect(found.length).toBeGreaterThan(0);   // the scan does see the reviewed files
     const unexpected = [...new Set(found)].filter((f) => !ALLOWED.some(([a]) => a === f));
     expect(unexpected).toEqual([]);
+  });
+});
+
+describe('A-15 remainder — account notices (Mon Parcours reminder, delegation, e-mail change, restriction lift, recovery)', () => {
+  const LINK = 'https://www.example.test/compte/delegations?invitation=t&x=1';
+  it('French (or an unsupported language): exactly the French subject and text, no HTML part', () => {
+    for (const lang of ['fr', undefined, 'es']) expect(templates.accountNotice('delegation_invitation', lang, 'Sujet FR', 'Texte FR\nlien', LINK)).toEqual({ subject: 'Sujet FR', text: 'Texte FR\nlien', lang: 'fr' });
+  });
+  it('another language: catalogue subject; text and HTML open in that language, the French text (escaped) follows; the button only with a link', () => {
+    for (const kind of ['parcours_reminder', 'delegation_invitation', 'restriction_lift', 'account_recovery', 'account_recovery_notice']) {
+      const ar = templates.accountNotice(kind, 'ar', 'Sujet FR', 'Texte <b>FR</b>', LINK);
+      expect(ar.subject, kind).toBe(mailText(kind, 'ar').subject);
+      expect(ar.text.startsWith(`${mailText(kind, 'ar').heading}\n${mailText(kind, 'ar').intro}`), kind).toBe(true);
+      expect(ar.text.endsWith('Texte <b>FR</b>'), kind).toBe(true);
+      expect(ar.html).toContain('dir="rtl" lang="ar"'); expect(ar.html).toContain('Texte &lt;b&gt;FR&lt;/b&gt;'); expect(ar.html).not.toContain('<b>FR</b>');
+      expect(ar.html).toContain(mailText(kind, 'ar').cta); expect(ar.html).toContain('invitation=t&amp;x=1');
+    }
+    expect(templates.accountNotice('restriction_lift', 'de', 'S', 'T').html).not.toContain(mailText('restriction_lift', 'de').cta);
+  });
+  it('e-mail change templates: French identical to the default call; another language keeps the French message below', () => {
+    expect(templates.emailChangeConfirm(LINK, 'fr')).toEqual(templates.emailChangeConfirm(LINK));
+    expect(templates.emailChangeNotice('fr')).toEqual(templates.emailChangeNotice());
+    expect(templates.emailChangeNotice().text).toMatch(/^Une demande de changement/);
+    const tr = templates.emailChangeConfirm(LINK, 'tr');
+    expect(tr.subject).toBe(mailText('email_change_confirm', 'tr').subject);
+    expect(tr.html).toContain('lang="tr"'); expect(tr.html).toContain('Confirmer cette adresse');
+    const uk = templates.emailChangeNotice('uk');
+    expect(uk.subject).toBe(mailText('email_change_notice', 'uk').subject);
+    expect(uk.text).toMatch(/---\n\nUne demande de changement/);
   });
 });

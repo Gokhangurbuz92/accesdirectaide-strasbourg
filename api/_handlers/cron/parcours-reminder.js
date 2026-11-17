@@ -12,6 +12,9 @@ import { formatParisDate } from '../../_services/appointment-notices.js';
 import { sendTwilioSms } from '../../_utils/twilio-sms.js';
 import { finishCronRun, startCronRun } from '../../_utils/cron-run.js';
 import { capabilityOpen } from '../../_utils/capabilities.js';
+import { citizenMailLanguage } from '../../_services/mail-language.js';
+import { templates } from '../../lib/email-service.js';
+import { buildAppUrl } from '../../_utils/user-auth.js';
 
 /**
  * PKG-2 / C08 — reminders of Mon Parcours deadlines (GET|POST /api/cron/parcours-reminder, CRON_SECRET).
@@ -57,9 +60,13 @@ async function sendSms(to, body) {
   return r.ok ? 'PROVIDER_ACCEPTED' : r.failure === 'retryable' ? 'FAILED' : 'NOT_DELIVERED';
 }
 
+/** the button link of a translated reminder; none when no public address is configured (the French text needs none) */
+const parcoursUrl = () => { try { return buildAppUrl('/compte/parcours'); } catch { return null; } };
+
 export async function runParcoursReminders({ now = new Date(), deps = {} } = {}) {
   const sendMail = deps.sendMail || defaultSendMail; const canNotify = deps.canNotify || defaultCanNotify;
   const sendToUser = deps.sendToUser || defaultSendToUser; const smsSender = deps.sendSms || sendSms;
+  const languageOf = deps.mailLanguage || citizenMailLanguage;   // A-15: the person's stored language (French otherwise)
   const summary = { considered: 0, providerAccepted: 0, testRecorded: 0, notDelivered: 0, noConsent: 0, failed: 0, alreadySent: 0, deferredQuietHours: 0, takenOver: 0, cancelled: 0 };
   const staleBefore = new Date(now.getTime() - STALE_CLAIM_MINUTES * 60000);
   const retryBefore = new Date(now.getTime() - RETRY_BACKOFF_HOURS * 3600000);
@@ -95,7 +102,9 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
         let final = 'FAILED';
         try {
           if (channel === 'email') {
-            const out = await sendMail({ to: r.email, subject: 'Rappel : une étape de Mon Parcours arrive à échéance', text, category: 'parcours-reminder',
+            // A-15: subject, opening and button in the person's stored language, the French text (with the date) below; French = exactly as before
+            const mail = templates.accountNotice('parcours_reminder', await languageOf(r.userId), 'Rappel : une étape de Mon Parcours arrive à échéance', text, parcoursUrl());
+            const out = await sendMail({ to: r.email, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}), category: 'parcours-reminder',
               idempotencyKey: `parcours-reminder/${r.id}/${threshold}/${due.getTime()}/email` });
             final = emailReminderStatus(out);   // PKG-4: test outbox = TEST_RECORDED; R41-E: retryable = FAILED, refused / noop = NOT_DELIVERED
           } else if (channel === 'sms') final = await smsSender(r.phone, withOptOut(`Rappel ADA : ${text}`));   // PKG-5: accepted, not proven delivered

@@ -14,6 +14,8 @@ import { mailLedgerStatus } from '../_utils/mailer.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
 import { capabilityOpen } from '../_utils/capabilities.js';
+import { accountMailLanguage } from './mail-language.js';
+import { templates } from '../lib/email-service.js';
 
 export const DELEGATION_ROLES = ['AIDANT', 'TUTEUR', 'CURATEUR', 'REPRESENTANT'];
 export const DELEGATION_SCOPES = ['PARCOURS_READ', 'COFFRE_LIST', 'RDV_READ'];
@@ -74,10 +76,16 @@ export async function inviteDelegate(principal, input, deps = {}) {
   const link = (deps.buildUrl || ((p) => p))(`/compte/delegations?invitation=${encodeURIComponent(token)}`);
   let delivery = 'NOT_DELIVERED';
   if (deps.sendMail) {
-    const out = await deps.sendMail({ to: email, category: 'delegation-invitation', subject: 'Invitation : personne de confiance sur AccesDirectAide',
-      text: `${principal.email} vous propose de consulter une partie de son espace AccesDirectAide, en lecture seule, pendant ${days} jours.\n`
+    // A-15: the invited person's stored language when the address already has an account; otherwise the language of the inviter's page (`language`,
+    // sent by the page, not stored); French otherwise. The French text (with the inviter's address, the duration and the link) stays below.
+    let inviteeId = null;
+    try { inviteeId = (await db.select({ id: CitizenUser.id }).from(CitizenUser).where(eq(CitizenUser.email, email)).limit(1))[0]?.id ?? null; } catch { inviteeId = null; }
+    const lang = await accountMailLanguage(inviteeId, input?.language, db);
+    const mail = templates.accountNotice('delegation_invitation', lang, 'Invitation : personne de confiance sur AccesDirectAide',
+      `${principal.email} vous propose de consulter une partie de son espace AccesDirectAide, en lecture seule, pendant ${days} jours.\n`
         + `Pour accepter ou refuser, connectez-vous avec cette adresse e-mail puis ouvrez ce lien (valable ${INVITE_DAYS} jours) :\n${link}\n`
-        + 'Si vous ne connaissez pas cette personne, ignorez ce message.' }).catch(() => null);
+        + 'Si vous ne connaissez pas cette personne, ignorez ce message.', link);
+    const out = await deps.sendMail({ to: email, category: 'delegation-invitation', subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) }).catch(() => null);
     if (out) delivery = mailLedgerStatus(out);   // PROVIDER_ACCEPTED | TEST_RECORDED | NOT_DELIVERED (never DELIVERED without a delivery event)
   }
   return { ok: true, status: 201, delegation: view(rows[0], { inviteEmail: email }), inviteLink: link, delivery };

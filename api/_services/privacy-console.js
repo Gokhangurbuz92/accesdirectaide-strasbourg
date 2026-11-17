@@ -21,6 +21,8 @@ import { sealText, openText } from '../lib/data-keys.js';
 import { retentionReport } from './retention.js';
 import { buildAppUrl, generateAuthToken, hashAuthToken, isValidEmail, normalizeEmail, unsetPasswordHash } from '../_utils/user-auth.js';
 import { sendMail as defaultSendMail, mailLedgerStatus } from '../_utils/mailer.js';
+import { citizenMailLanguage } from './mail-language.js';
+import { templates } from '../lib/email-service.js';
 
 export const HOLD_CATEGORIES = { SharedDiagnostic: 'SharedDiagnostic', CitizenUser: 'CitizenUser', ProCase: 'ProCase', Structure: 'Structure' };   // PKG-11 / E08: a hold on an organization blocks its closure
 const bad = (status, code, message) => ({ ok: false, status, code, message });
@@ -116,19 +118,23 @@ export async function decideRecovery(id, { decision, note }, actor, db = default
       // R12 (C25): the new address receives the link that proves it and lets the person choose a password; the former address is told — both after COMMIT
       const raw = generateAuthToken();
       await tx.execute(sql`INSERT INTO "AuthToken" (id, "userId", type, "tokenHash", "expiresAt") VALUES (${crypto.randomUUID()}, ${c.uid}, 'EMAIL_VERIFY', ${hashAuthToken(raw)}, NOW() + interval '2 hours')`);
-      mails = { next, previous: prev?.email || null, link: buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(raw)}&next=${encodeURIComponent('/compte')}`) };
+      mails = { uid: c.uid, next, previous: prev?.email || null, link: buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(raw)}&next=${encodeURIComponent('/compte')}`) };
     }
     await tx.execute(sql`UPDATE "OwnershipRecoveryCase" SET status = ${d === 'APPROVE' ? 'APPROVED' : 'REJECTED'}, "decidedBy" = ${actor}, "decidedAt" = NOW(), "decisionNote" = ${String(note).trim().slice(0, 1000)} WHERE id = ${c.id}`);
     await tx.insert(AuditLog).values({ action: d === 'APPROVE' ? 'OWNERSHIP_RECOVERY_APPROVED' : 'OWNERSHIP_RECOVERY_REJECTED', actor, actor_id: actor, entity: 'OwnershipRecoveryCase', entity_id: c.id, details: { proposedBy: c.p } });
     return { ok: true };
   });
   if (!out.ok || !mails) return out;
-  const sent = await sendMail({ to: mails.next, subject: 'Récupération de votre compte Accès Direct Aide', category: 'ownership_recovery',
-    text: `Notre équipe a rattaché votre compte à cette adresse après vérification de votre identité.\nConfirmez l’adresse et choisissez votre mot de passe (lien valable 2 heures ; ensuite, « Renvoyer un email de vérification » depuis la page de connexion) : ${mails.link}\nSi vous n’êtes pas à l’origine de cette demande, contactez-nous.` }).catch(() => null);
+  // A-15: both messages in the account's stored language (French otherwise; the recovery keeps the profile), the French text below a translated opening
+  const lang = await citizenMailLanguage(String(mails.uid), db);
+  const recovery = templates.accountNotice('account_recovery', lang, 'Récupération de votre compte Accès Direct Aide',
+    `Notre équipe a rattaché votre compte à cette adresse après vérification de votre identité.\nConfirmez l’adresse et choisissez votre mot de passe (lien valable 2 heures ; ensuite, « Renvoyer un email de vérification » depuis la page de connexion) : ${mails.link}\nSi vous n’êtes pas à l’origine de cette demande, contactez-nous.`, mails.link);
+  const sent = await sendMail({ to: mails.next, subject: recovery.subject, category: 'ownership_recovery', text: recovery.text, ...(recovery.html ? { html: recovery.html } : {}) }).catch(() => null);
   let previousNotice = null;
   if (mails.previous && normalizeEmail(mails.previous) !== normalizeEmail(mails.next)) {
-    previousNotice = await sendMail({ to: mails.previous, subject: 'L’adresse de votre compte a été changée', category: 'ownership_recovery_notice',
-      text: 'L’adresse e-mail de votre compte Accès Direct Aide a été remplacée à la suite d’une demande de récupération vérifiée par notre équipe. Si ce n’est pas vous, contactez-nous sans attendre.' }).catch(() => null);
+    const notice = templates.accountNotice('account_recovery_notice', lang, 'L’adresse de votre compte a été changée',
+      'L’adresse e-mail de votre compte Accès Direct Aide a été remplacée à la suite d’une demande de récupération vérifiée par notre équipe. Si ce n’est pas vous, contactez-nous sans attendre.');
+    previousNotice = await sendMail({ to: mails.previous, subject: notice.subject, category: 'ownership_recovery_notice', text: notice.text, ...(notice.html ? { html: notice.html } : {}) }).catch(() => null);
   }
   // the administrator sees what really happened to each message (never « sent » when no provider took it)
   return { ok: true, linkSent: mailLedgerStatus(sent), previousNotified: previousNotice ? mailLedgerStatus(previousNotice) : 'NO_PREVIOUS_ADDRESS' };

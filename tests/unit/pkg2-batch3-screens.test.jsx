@@ -31,7 +31,7 @@ describe('Personnes de confiance', () => {
     fireEvent.click(screen.getByTestId('delegation-scope-COFFRE_LIST'));
     fireEvent.change(screen.getByTestId('delegation-days'), { target: { value: '30' } });
     fireEvent.click(screen.getByTestId('delegation-invite'));
-    await waitFor(() => expect(api.inviteDelegate).toHaveBeenCalledWith({ email: 'ami@example.test', role: 'AIDANT', scopes: ['PARCOURS_READ', 'COFFRE_LIST'], days: 30 }));
+    await waitFor(() => expect(api.inviteDelegate).toHaveBeenCalledWith({ email: 'ami@example.test', role: 'AIDANT', scopes: ['PARCOURS_READ', 'COFFRE_LIST'], days: 30, language: 'fr' }));
     expect(await screen.findByTestId('delegation-link')).toHaveTextContent('invitation=tok');
     expect(screen.getByTestId('delegation-status')).toHaveTextContent('Aucun e-mail n’a pu être envoyé');
   });

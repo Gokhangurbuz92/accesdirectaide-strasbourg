@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { useAccessActionLabels } from '@/lib/accessActionLabels';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
-import { formatDate, useT } from '@/i18n';
+import i18n, { formatDate, useT } from '@/i18n';
 
 const durations = (t) => [[30, t('compte:delegations.d30', '30 jours')], [90, t('compte:delegations.d90', '3 mois')], [180, t('compte:delegations.d180', '6 mois')], [365, t('compte:delegations.d365', '1 an')]];
 const LIVE = ['INVITED', 'ACTIVE', 'PROOF_REQUIRED', 'EXPIRED'];
@@ -41,7 +41,7 @@ export default function CompteDelegations() {
   const toggleScope = (s) => setForm((f) => ({ ...f, scopes: f.scopes.includes(s) ? f.scopes.filter((x) => x !== s) : [...f.scopes, s] }));
   const invite = async (e) => {
     e.preventDefault(); setLink(null);
-    const out = await run(() => citizenApi.inviteDelegate(form), '');
+    const out = await run(() => citizenApi.inviteDelegate({ ...form, language: i18n.language }), '');   // A-15: the invitation e-mail in this page's language when the invited address has no stored one
     if (out) {
       setLink({ url: out.inviteLink, delivered: out.delivery === 'PROVIDER_ACCEPTED' });
       setMessage(out.delivery === 'PROVIDER_ACCEPTED' ? t('compte:delegations.invite_sent', 'Invitation transmise au service d’envoi d’e-mails (la réception n’est pas garantie : vous pouvez aussi transmettre le lien ci-dessous).') : t('compte:delegations.invite_not_sent', 'Invitation créée. Aucun e-mail n’a pu être envoyé : transmettez vous-même le lien ci-dessous.'));
