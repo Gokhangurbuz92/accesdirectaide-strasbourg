@@ -16,6 +16,7 @@ import { RETENTION_POLICY_REGISTRY } from './privacy.js';
 import { RETENTION } from '../_handlers/cron/gdpr-purge.js';
 import { listOpen } from './dsr-review.js';
 import { listOpenErasures } from './dsr-erasure-review.js';
+import { listMailContactFailures } from './mail-contact-failures.js';
 import { listOpenClosures } from './org-closure.js';
 import { sealText, openText } from '../lib/data-keys.js';
 import { retentionReport } from './retention.js';
@@ -44,7 +45,9 @@ export function retentionView() {
 export async function overview(db = defaultDb) {
   const holds = (await db.execute(sql`SELECT id, "dataCategory", "recordId", "reasonCode", "createdBy", "createdAt", "releaseProposedBy", "releaseProposedAt", "releaseReason" FROM "LegalHold" WHERE status = 'ACTIVE' ORDER BY "createdAt" DESC LIMIT 200`)).rows;
   const recovery = (await db.execute(sql`SELECT id, "citizenUserId", "evidenceNote", status, "proposedBy", "proposedAt" FROM "OwnershipRecoveryCase" WHERE status = 'PROPOSED' ORDER BY "proposedAt" LIMIT 100`)).rows;
-  return { ok: true, accessRequests: await listOpen(db), erasureRequests: await listOpenErasures(db), organizationClosures: await listOpenClosures(db), legalHolds: holds, recoveryCases: recovery, retention: retentionView(),
+  return { ok: true, accessRequests: await listOpen(db), erasureRequests: await listOpenErasures(db),
+    mailContactFailures: await listMailContactFailures(db).catch(() => ({ ok: false, failures: null })),   // legal v6 / C6: « intervention humaine requise »
+    organizationClosures: await listOpenClosures(db), legalHolds: holds, recoveryCases: recovery, retention: retentionView(),
     retentionReport: await retentionReport(db).catch(() => null) };   // launch-readiness item 62: counts only, nothing deleted
 }
 

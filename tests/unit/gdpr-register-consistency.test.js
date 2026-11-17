@@ -95,7 +95,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(mailjet.role_propre).toMatch(/responsable de traitement indépendant/);
     expect(mailjet.mecanisme_transfert).toMatch(/pas de Data Privacy Framework pour Mailjet/);
     expect(mailjet.journaux).toMatch(/90 jours \(offre gratuite\) ou 13 mois \(offre payante\)/);
-    expect(registre.sous_traitants.filter((s) => s.role_propre).map((s) => s.nom)).toEqual(['Vercel', 'Mailjet (Sinch)']);
+    // legal v6 (17/11/2026): Upstash's DPA excludes its own security / service-analytics processing
+    expect(registre.sous_traitants.filter((s) => s.role_propre).map((s) => s.nom)).toEqual(['Vercel', 'Upstash', 'Mailjet (Sinch)']);
   });
 
   it('diagnostic, OpenFisca and erasure are described as implemented', () => {
@@ -109,8 +110,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-11-15');   // legal v5: provider contracts, transfers and roles (2026-11-04 = R42-LEGAL)
-    expect(REGISTRE_DATE_REVISION).toBe('2026-11-15');
+    expect(registre.date_mise_a_jour).toBe('2026-11-17');   // legal v6: Mailjet outcomes, Vercel criterion, Upstash role (2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-17');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
   });

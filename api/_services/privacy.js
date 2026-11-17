@@ -6,6 +6,8 @@ import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
 import { mailContactEraser } from './mail-contact-erasure.js';
+import { recordMailContactFailure } from './mail-contact-failures.js';
+import { dsrDeadline } from './dsr-deadline.js';
 import {
     CitizenUser,
     AuthToken,
@@ -376,8 +378,29 @@ async function executeWithTransaction(/** @type {{ transaction: unknown }} */ da
     return fn(database);
 }
 
+/**
+ * Legal v6 / owner decision C6 (17/11/2026) — the Mailjet contact of an account is deleted BEFORE the account is erased from the database, while the
+ * address is still in its existing place (the account row): a failed deletion can then be retried without copying the address anywhere. The approved
+ * erasure waits (DSRRequest BLOCKED, reasonCode MAIL_CONTACT_RETRY, nothing erased) for at most MAIL_CONTACT_RETRY_WINDOW_DAYS after the first failure and
+ * never later than MAIL_CONTACT_DEADLINE_MARGIN_DAYS before the one-month answer deadline of art. 12(3) GDPR (api/_services/dsr-deadline.js). Once the window
+ * is closed the account is erased anyway and the failure is recorded, address-free, « intervention humaine requise » (api/_services/mail-contact-failures.js).
+ */
+export const MAIL_CONTACT_RETRY_WINDOW_DAYS = 3;
+export const MAIL_CONTACT_DEADLINE_MARGIN_DAYS = 3;
+const DAY_MS = 86400000;
+
+/** @param {{ createdAt?: any, reviewOutcome?: any } | null | undefined} request @param {Date} now @returns {{ open: boolean, until: Date }} */
+export function mailContactRetryWindow(request, now) {
+    const first = request?.reviewOutcome?.mailContactRetry?.firstFailedAt;
+    const start = first && !Number.isNaN(new Date(first).getTime()) ? new Date(first) : now;
+    let until = start.getTime() + MAIL_CONTACT_RETRY_WINDOW_DAYS * DAY_MS;
+    const due = dsrDeadline(request?.createdAt, now).dueAt;
+    if (due) until = Math.min(until, new Date(due).getTime() - MAIL_CONTACT_DEADLINE_MARGIN_DAYS * DAY_MS);
+    return { open: now.getTime() < until, until: new Date(until) };
+}
+
 // @ts-ignore
-export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones(), mailContacts = mailContactEraser }) {
+export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones(), mailContacts = mailContactEraser, now = () => new Date() }) {
     return {
         /**
        * @param {string | import("drizzle-orm").SQLWrapper} userId
@@ -882,15 +905,7 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 });
                 // Committed: now (and only now) the encrypted documents of the erased dossiers are deleted from object storage. Best effort; failures are logged by key.
                 await purgeDossierFiles(dossierStorageKeys).catch(() => { });
-                // Legal v5: the account is gone — the copy of its address that the e-mail provider keeps as a « contact » goes too (Mailjet GDPR delete,
-                // api/_services/mail-contact-erasure.js). After the commit and fail-safe: a provider error never undoes or blocks the erasure; « queued » is
-                // retried later from the contact id, « unresolved » (lookup failed, address no longer known) is reported in the summary.
-                if (domains.includes('CitizenProfile') && result?.profileDeleted > 0) {
-                    const contact = await mailContacts.erase(user.email, { reason: 'account_erasure' }).catch(() => ({ outcome: 'unresolved' }));
-                    result.mailContact = contact.outcome;
-                    result.mailContactUnresolved = contact.outcome === 'unresolved' ? 1 : 0;
-                    await mailContacts.drainPending({ limit: 10 }).catch(() => { });
-                }
+                // Legal v6: the Mailjet contact is handled BEFORE this erasure, by executeApprovedDeletion (owner decision C6) — nothing about it here.
                 return result;
             } catch (error) {
                 if (error?.code === 'LEGAL_HOLD_ACTIVE') {
@@ -937,6 +952,21 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 throw privacyError('LEGAL_HOLD_ACTIVE', 'Active legal hold blocks erasure');
             }
 
+            // Legal v6 / C6: the provider contact first, while the address is still in the account row. A failure inside the window stops here — nothing is
+            // erased, no tombstone, the request stays APPROVED and the caller parks it (dsr-erasure-review.js); outside the window the erasure goes on.
+            const account = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.id, subjectId) });
+            /** @type {{ outcome: string, step?: string, status?: number } | null} */ let contact = null;
+            if (account?.email) {
+                contact = await mailContacts.erase(account.email, { reason: 'account_erasure' }).catch(() => ({ outcome: 'failed', step: 'internal' }));
+                if (contact.outcome === 'failed') {
+                    const w = mailContactRetryWindow(request, now());
+                    if (w.open) {
+                        throw Object.assign(privacyError('MAIL_CONTACT_PENDING', 'The e-mail provider did not confirm the contact deletion: erasure deferred within the retry window'),
+                            { mailContact: { step: contact.step || 'internal', status: Number.isInteger(contact.status) ? contact.status : null, retryUntil: w.until.toISOString() } });
+                    }
+                }
+            }
+
             // V2 (owner review 09/11/2026): the tombstone is written BEFORE anything is erased, outside the database, so a restore of a backup taken
             // before this moment can replay it (api/_services/erasure-tombstones.js). If it cannot be written, nothing is erased (request stays open).
             const tomb = { requestId, subjectId, domains: ERASABLE_DOMAINS };
@@ -950,6 +980,13 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 // undone — the restore will list this erasure as unconfirmed instead of silently skipping or wrongly replaying it
                 summary.tombstoneDone = await tombstones.complete(tomb);
                 await this.updateDsrRequestStatus(requestId, 'COMPLETED');
+                summary.mailContact = contact ? contact.outcome : 'skipped';
+                if (contact?.outcome === 'failed') {
+                    // the window is closed: our erasure is done, the provider copy is not — recorded for a person, never reported as deleted
+                    summary.mailContactHumanIntervention = 1;
+                    summary.mailContactFailureRecorded = (await recordMailContactFailure(db, { reason: 'account_erasure', step: contact.step, status: contact.status ?? null,
+                        requestId, attempts: Number(request?.reviewOutcome?.mailContactRetry?.attempts || 0) + 1 })) ? 1 : 0;
+                }
                 return summary;
             } catch (error) {
                 if (!committed) await tombstones.abort(tomb);

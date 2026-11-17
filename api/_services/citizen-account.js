@@ -42,7 +42,7 @@ export const purposeOf = (channel, category) => `NOTIF_${channel.toUpperCase()}_
 
 /**
  * V2 legal review (14/11/2026) — notification options with no open purpose in the notice cannot be switched on. Fail-closed, server-side (the screen only
- * follows): in the narrow V2 scope the privacy notice (legal-drafts v5-2026-11-15, unchanged on this point since v3-2026-11-14) covers service e-mails (P10a) only; reminders (P10b) and SMS are « not open
+ * follows): in the narrow V2 scope the privacy notice (legal-drafts v6-2026-11-17, unchanged on this point since v3-2026-11-14) covers service e-mails (P10a) only; reminders (P10b) and SMS are « not open
  * yet » and no marketing purpose exists at all.
  *   sms        open only where the telephone number is collected (api/_utils/phone-collection.js: closed in Production, Preview and the beta)
  *   reminder   open only where appointments (citizen.booking) or Mon Parcours (citizen.parcours) are open — the only things a reminder is about

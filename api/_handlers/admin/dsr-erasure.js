@@ -3,6 +3,7 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import logger from '../../_utils/logger.js';
 import { resolveAuthContext, isAdminRole } from '../../_utils/auth.js';
 import { confirmErasure, listOpenErasures, proposeErasure, readErasure, retryBlockedErasure } from '../../_services/dsr-erasure-review.js';
+import { resolveMailContactFailure } from '../../_services/mail-contact-failures.js';
 
 /**
  * PKG-11 / C21 — two-person review of account erasure requests (api/_services/dsr-erasure-review.js).
@@ -10,7 +11,9 @@ import { confirmErasure, listOpenErasures, proposeErasure, readErasure, retryBlo
  *   GET  /api/admin/dsr-erasure?id=          what the deletion would touch (counts, legal holds) — named admin session WITH MFA; the reading is audited
  *   POST /api/admin/dsr-erasure { id, decision: APPROVE|REJECT, reason }        first reviewer PROPOSES (MFA)
  *   POST /api/admin/dsr-erasure { id, action: confirm|send_back, note, proposedAt }   a SECOND, different MFA reviewer; confirm+APPROVE runs the deletion
- *   POST /api/admin/dsr-erasure { id, action: retry }                         a request BLOCKED by a legal hold, after the hold is released (MFA)
+ *   POST /api/admin/dsr-erasure { id, action: retry }                         a BLOCKED request (legal hold released, execution failure, Mailjet retry) (MFA)
+ *   POST /api/admin/dsr-erasure { id, action: mail_contact_resolved, note }   legal v6 / C6: a person records what was done for a failed Mailjet contact
+ *                                                                             deletion (id = the failure record; the note must not hold an address) (MFA)
  */
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -27,6 +30,7 @@ export default async function handler(req, res) {
     const body = req.body || {}; const reviewer = String(auth.email); const target = String(body.id || '');
     const out = req.method === 'GET' ? await readErasure(id, reviewer)
       : body.action === 'retry' ? await retryBlockedErasure(target, reviewer)
+        : body.action === 'mail_contact_resolved' ? await resolveMailContactFailure(target, body, reviewer)
         : body.action ? await confirmErasure(target, body, reviewer)
           : await proposeErasure(target, body, reviewer);
     return out.ok ? res.status(200).json(out) : res.status(out.status).json({ error: out.code, message: out.message });
