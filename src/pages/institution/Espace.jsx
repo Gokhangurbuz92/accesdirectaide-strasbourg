@@ -9,6 +9,7 @@ import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText'
 import { useT, formatDate, DATE_SHORT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
+import { methodText } from '@/lib/observatoryMethodText';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
@@ -81,18 +82,6 @@ function PasswordForm({ temporary, onChanged }) {
   );
 }
 
-// R47: the methodology of api/_services/territorial-stats.js (METHODOLOGY, sent in French by key) in the interface language; an unknown key keeps the server's text
-const methodText = (/** @type {(k: string, d: string) => string} */ t) => /** @type {Record<string, string>} */ ({
-  sources: t('institution:space.method.sources', 'Rendez-vous et orientations enregistrés dans la plateforme par les structures vérifiées (aucune estimation, aucune donnée externe).'),
-  besoinsNonCouverts: t('institution:space.method.declined_capacity', 'Orientations refusées faute de capacité : orientations auxquelles la structure destinataire a répondu « pas de capacité ». Ce n’est pas un nombre de besoins non couverts : la personne a pu être orientée ensuite ailleurs et accompagnée, et un besoin qui n’a donné lieu à aucune orientation n’est pas compté.'),
-  completude: t('institution:space.method.completeness', 'Couverture et biais : seules les structures inscrites, vérifiées et situées par leur adresse sont comptées — une commune ou un besoin absent ne veut pas dire qu’il n’y a pas de besoin ; le motif d’une orientation est choisi par la structure qui oriente parmi neuf motifs ; la réponse « pas de capacité » est déclarée par la structure destinataire ; une réponse arrivée après le gel du trimestre n’y figure pas ; les rendez-vous pris sans compte ne comptent pas parmi les comptes citoyens. Ces chiffres décrivent l’activité enregistrée dans la plateforme, pas la situation du territoire.'),
-  nonRecours: t('institution:space.method.non_recours', 'Ces chiffres ne mesurent ni le non-recours, ni les services effectivement rendus, ni les personnes aidées : ce sont des orientations et des rendez-vous enregistrés. Le non-recours demanderait de savoir qui pourrait prétendre à un droit et ne le reçoit pas — la plateforme ne décide pas de l’éligibilité et ne reçoit aucune donnée des organismes payeurs. Les besoins exprimés, les aides consultées et les démarches suivies par les personnes restent dans leur espace personnel et ne sont pas comptés.'),
-  horsPerimetre: t('institution:space.method.out_of_scope', 'Orientations auxquelles la structure destinataire a répondu « hors de notre champ » : une orientation mal adressée, comptée à part — ce n’est pas un besoin non couvert.'),
-  limites: t('institution:space.method.limits_v2', 'Seules les demandes passées par la plateforme sont comptées ; une commune n’apparaît qu’avec au moins 3 structures vérifiées, et chaque commune affichée figure dans le tableau même sans orientation ; toute valeur inférieure à 5 est masquée, et une autre valeur de la même colonne l’est aussi quand elle serait seule masquée.'),
-  totaux: t('institution:space.method.totals', 'Aucun total réel n’est publié : les totaux et la tendance par trimestre additionnent seulement les valeurs publiées du tableau par besoin. Quand l’un des deux tableaux (par besoin, par commune) a des valeurs masquées et l’autre aucune, les deux plus petites valeurs de l’autre sont masquées aussi : sans cela, la différence entre les deux tableaux donnerait la somme des valeurs masquées.'),
-  territoire: t('institution:space.method.territory', 'Seules les communes du territoire autorisé de votre compte sont comptées, d’après l’adresse déclarée des structures (nom de commune et code postal concordants). Le tableau par besoin additionne les valeurs publiées des intercommunalités entièrement situées dans ce territoire ; un territoire plus petit que son intercommunalité n’a pas de tableau par besoin, car la différence entre deux territoires emboîtés donnerait des valeurs masquées.'),
-  periodes: t('institution:space.method.periods', 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).'),
-});
 
 export default function InstitutionEspace() {
   const { t } = useT('institution');
