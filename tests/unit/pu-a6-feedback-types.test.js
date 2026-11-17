@@ -1,5 +1,5 @@
 /**
- * A-6 (P19) — POST /api/feedback accepted « aide » and « demarche » only. A place is filed with the existing enum value STRUCTURE; a dispositif (no enum
+ * A-6 (P19) — POST /api/feedback accepted « aide » and « demarche » only. A place is filed with the existing enum value STRUCTURE; on a database without 0051 (this db double has no execute()) a dispositif (no enum
  * value, no migration) is filed under AIDE with its target written `dispositif:<id>`. Unknown kinds are still refused.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';

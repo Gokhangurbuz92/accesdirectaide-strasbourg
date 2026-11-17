@@ -229,3 +229,53 @@ export function resourcePublicationSchema(database) {
 export function forgetResourcePublicationSchema(database) { resourceCache.delete(database); }
 /** ResourceAccessibility as this database has it @param {boolean} has0050 @returns {typeof ResourceAccessibility} */
 export const resourceTable = (has0050) => without(ResourceAccessibility, has0050 ? [] : [...RESOURCE_PUBLICATION_COLUMNS]);
+
+/**
+ * P19 (RECON public A-6) — the "ContentType" value DISPOSITIF comes with migration 0051; Production may still be without it when the code is released.
+ * A writer asks first: with it, a dispositif report is filed as DISPOSITIF; without it (or when the read fails, or for a database double without
+ * execute()), exactly as before 0051 — under AIDE with its target written « dispositif:<id> » (LEGACY_DISPOSITIF_PREFIX). Readers treat both forms as
+ * the same kind (dispositifReportKind()). Read from pg_enum at most once per GUEST_SCHEMA_TTL_MS per process; a failed read answers false and is not
+ * remembered.
+ */
+export const CONTENT_TYPE_DISPOSITIF = 'DISPOSITIF';
+export const LEGACY_DISPOSITIF_PREFIX = 'dispositif:';
+const contentTypeCache = new WeakMap();
+/** @param {any} database @returns {Promise<boolean>} */
+async function readContentTypeDispositif(database) {
+  const res = await database.execute(sql`SELECT 1 AS present FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+    WHERE t.typname = 'ContentType' AND t.typnamespace = current_schema()::regnamespace AND e.enumlabel = ${CONTENT_TYPE_DISPOSITIF}`);
+  return (res?.rows || res || []).length > 0;
+}
+/** @param {any} database a drizzle client @returns {Promise<{ dispositif: boolean }>} dispositif = "ContentType" has DISPOSITIF here (0051) */
+export function contentTypeSchema(database) {
+  if (!database || typeof database.execute !== 'function') return Promise.resolve({ dispositif: false });
+  const hit = contentTypeCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const read = readContentTypeDispositif(database);
+  const value = read.then((dispositif) => ({ dispositif }), () => ({ dispositif: false }));
+  contentTypeCache.set(database, { at: Date.now(), value });
+  read.catch(() => { if (contentTypeCache.get(database)?.value === value) contentTypeCache.delete(database); });
+  return value;
+}
+/** for the tests, and after an insert refused for the value (0051 rolled back inside the cache delay): forget what was read */
+export function forgetContentTypeSchema(database) { contentTypeCache.delete(database); }
+/**
+ * where a dispositif report goes on THIS database
+ * @param {{ dispositif: boolean }} f @param {string} target the id, or « slug:<slug> »
+ * @returns {{ contentType: 'AIDE' | 'DISPOSITIF', contentId: string }}
+ */
+export function dispositifReportRow(f, target) {
+  const bare = target.startsWith(LEGACY_DISPOSITIF_PREFIX) ? target.slice(LEGACY_DISPOSITIF_PREFIX.length) : target;
+  return f.dispositif ? { contentType: CONTENT_TYPE_DISPOSITIF, contentId: bare } : { contentType: 'AIDE', contentId: `${LEGACY_DISPOSITIF_PREFIX}${bare}` };
+}
+/**
+ * the kind a reviewer sees: DISPOSITIF for both forms (0051 rows, and AIDE + « dispositif:… » filed before 0051 or on a database without it)
+ * @param {{ contentType: string, contentId: string }} row @returns {{ kind: string, target: string, legacyDispositif: boolean }}
+ */
+export function dispositifReportKind(row) {
+  const legacy = row.contentType === 'AIDE' && typeof row.contentId === 'string' && row.contentId.startsWith(LEGACY_DISPOSITIF_PREFIX);
+  if (legacy) return { kind: CONTENT_TYPE_DISPOSITIF, target: row.contentId.slice(LEGACY_DISPOSITIF_PREFIX.length), legacyDispositif: true };
+  return { kind: row.contentType, target: row.contentId, legacyDispositif: false };
+}
+/** a refused enum value (22P02 invalid_text_representation, as PostgreSQL reports « invalid input value for enum ») @param {any} e */
+export const isEnumValueRefusal = (e) => (e?.code || e?.cause?.code) === '22P02';

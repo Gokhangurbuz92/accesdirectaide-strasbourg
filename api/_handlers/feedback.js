@@ -7,17 +7,17 @@ import { db } from '../../src/db/index.js';
 import { ContentReport } from '../../src/db/schema.js';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
+import { contentTypeSchema, dispositifReportRow, forgetContentTypeSchema, isEnumValueRefusal } from '../_utils/schema-features.js';
 
-// A-6: places can be reported with the enum value that already exists (STRUCTURE). The ContentType enum has no value for a dispositif and adding one is
-// a migration: a dispositif report is filed under AIDE (the nearest kind: an official rights sheet) with its target written `dispositif:<id or slug>`,
-// so the reviewer sees what it is; the page address is stored with every report.
+// A-6: places are reported with the enum value STRUCTURE. P19 (0051): a dispositif has its own value DISPOSITIF once the database has it; on a database
+// without 0051 it is filed exactly as before — under AIDE with its target written `dispositif:<id or slug>` (dispositifReportRow()). The page address is
+// stored with every report.
 const CONTENT_TYPE_MAP = {
   aide: 'AIDE',
   demarche: 'DEMARCHE',
   structure: 'STRUCTURE',
-  dispositif: 'AIDE',
+  dispositif: 'DISPOSITIF',
 };
-const TARGET_PREFIX = { dispositif: 'dispositif:' };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -134,20 +134,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [report] = await db.insert(ContentReport).values({
+    const target = id || `slug:${slug}`;
+    const place = type === 'dispositif' ? dispositifReportRow(await contentTypeSchema(db), target) : { contentType: CONTENT_TYPE_MAP[type], contentId: target };
+    const insert = (/** @type {{ contentType: string, contentId: string }} */ where) => db.insert(ContentReport).values({
         // @ts-ignore
-        contentType: CONTENT_TYPE_MAP[type],
-        contentId: `${TARGET_PREFIX[type] || ''}${id || `slug:${slug}`}`,
+        ...where,
         reason: 'AUTRE',
         message,
         pageUrl,
         reporterEmail: email,
     }).returning();
+    let report;
+    try {
+      [report] = await insert(place);
+    } catch (e) {
+      // 0051 rolled back within the cache delay: the database refused DISPOSITIF — file the report in the pre-0051 form instead of losing it
+      if (place.contentType !== 'DISPOSITIF' || !isEnumValueRefusal(e)) throw e;
+      forgetContentTypeSchema(db);
+      [report] = await insert(dispositifReportRow({ dispositif: false }, place.contentId));
+    }
 
     log.info({
       msg: 'feedback.created',
       feedbackId: report.id,
       type,
+      contentType: report.contentType,
       hasId: Boolean(id),
       hasSlug: Boolean(slug),
       hasEmail: Boolean(email),

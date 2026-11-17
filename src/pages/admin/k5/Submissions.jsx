@@ -14,18 +14,22 @@ export default function AdminSubmissions() {
   const [d, setD] = useState(/** @type {{ reports: any[], suggestions: any[], loaded?: boolean, failed?: boolean }} */ ({ reports: [], suggestions: [] })); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState('');
   // owner LAB audit: every state can be listed (only NEW reports were, so a report moved to « En cours » could never be closed)
   const [status, setStatus] = useState('NEW'); const [notes, setNotes] = useState({});
+  // P19: the kind of a report, whichever form it was filed in (a dispositif report is DISPOSITIF since 0051, AIDE + « dispositif:… » before it)
+  const KIND = { AIDE: t('admin:k5.submissions.kind.aide', 'Aide'), DEMARCHE: t('admin:k5.submissions.kind.demarche', 'Démarche'), STRUCTURE: t('admin:k5.submissions.kind.structure', 'Lieu'),
+    DISPOSITIF: t('admin:k5.submissions.kind.dispositif', 'Dispositif'), ACTUALITE: t('admin:k5.submissions.kind.actualite', 'Actualité') };
+  const [kind, setKind] = useState('');
   const SUGGESTION = { pending: t('admin:k5.submissions.suggestion.pending', 'à traiter'), contacted: t('admin:k5.submissions.suggestion.contacted', 'contactée'), approved: t('admin:k5.submissions.suggestion.approved', 'acceptée'), rejected: t('admin:k5.submissions.suggestion.rejected', 'refusée') };
   const load = useCallback(async () => {
     // R7: a refused or failed load is said as such — it used to read as an empty list (« Aucun. » / « Aucune. »)
     try {
       setProblem('');
       // R7: the two lists load independently — a failed suggestions list no longer hides the public reports
-      const [rep, sug] = await Promise.allSettled([apiClient.admin.contentReports(status), apiClient.admin.k5('partnerships')]);
+      const [rep, sug] = await Promise.allSettled([apiClient.admin.contentReports(status, kind), apiClient.admin.k5('partnerships')]);
       if (rep.status === 'rejected') throw rep.reason;
       const suggestions = sug.status === 'fulfilled' ? sug.value : null;
       setD({ loaded: true, reports: rep.value.reports || [], suggestionsFailed: !suggestions, suggestions: !suggestions ? [] : Array.isArray(suggestions) ? suggestions : suggestions.items || suggestions.data || [] });
     } catch (e) { setD({ reports: [], suggestions: [], failed: true }); setProblem(i18n.t('admin:k5.submissions.load_failed', 'La liste n’a pas pu être chargée : {{why}}', { why: explain(e) })); }
-  }, [status]);
+  }, [status, kind]);
   useEffect(() => { load(); }, [load]);
   const setReport = async (id, next) => {
     setMsg(''); setProblem('');
@@ -38,9 +42,13 @@ export default function AdminSubmissions() {
       <section className="space-y-2" aria-labelledby="sub-r"><h2 id="sub-r" className="font-semibold">{t('admin:k5.submissions.reports_heading', 'Signalements de contenu')}</h2>
         <label htmlFor="sub-status" className="mr-2 text-sm">{t('admin:k5.submissions.show', 'Afficher')}</label>
         <select id="sub-status" className="rounded border p-2" value={status} onChange={(e) => setStatus(e.target.value)}>{Object.entries(REPORT).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
+        <label htmlFor="sub-kind" className="ml-4 mr-2 text-sm">{t('admin:k5.submissions.kind_filter', 'Type de contenu')}</label>
+        <select id="sub-kind" className="rounded border p-2" value={kind} onChange={(e) => setKind(e.target.value)} data-testid="admin-submissions-kind">
+          <option value="">{t('admin:k5.submissions.kind.all', 'Tous')}</option>{Object.entries(KIND).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
         <ul className="space-y-2">{d.reports.map((r) => (
           <li key={r.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-submission-report">
-            <p>{r.contentType} {r.contentId} — {r.reason} — {REPORT[r.status] || r.status}</p>{r.message ? <p className="whitespace-pre-wrap">{r.message}</p> : null}
+            <p>{KIND[r.kind || r.contentType] || r.contentType} {r.target ?? r.contentId} — {r.reason} — {REPORT[r.status] || r.status}</p>
+            {r.legacyDispositif ? <p className="text-xs text-slate-700" data-testid="admin-submission-legacy">{t('admin:k5.submissions.legacy_dispositif', 'Enregistré sous « Aide » (ancien classement des dispositifs).')}</p> : null}{r.message ? <p className="whitespace-pre-wrap">{r.message}</p> : null}
             <label htmlFor={`sub-note-${r.id}`} className="block text-xs">{t('admin:k5.submissions.note', 'Note (conservée dans le journal)')}</label>
             <input id={`sub-note-${r.id}`} className="w-full rounded border p-1" value={notes[r.id] || ''} onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))} />
             <div className="flex gap-2">{['IN_PROGRESS', 'FIXED', 'REJECTED'].filter((s) => s !== r.status).map((s) => <Button key={s} size="sm" variant="outline" onClick={() => setReport(r.id, s)}>{REPORT[s]}</Button>)}</div>

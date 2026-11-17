@@ -258,8 +258,8 @@ export const apiClient = {
         },
         /** PKG-5 batch 2 — K5 administrator surfaces (privacy, support, audit, platform, versions, data quality, institutions). @param {string} path @param {Record<string, unknown>=} body */
         k5: function (path, body) { return apiRequest('/api' + '/admin/' + path, body ? { method: 'POST', body: body } : undefined); },   // every target is an admin/* route listed in api/routes.js
-        /** PKG-5 / P19 — content-report triage (administrator session). @param {string} status */
-        contentReports: function (status) { return apiRequest('/api/reports?status=' + encodeURIComponent(status || 'NEW'), { auth: true }); },
+        /** PKG-5 / P19 — content-report triage (administrator session); contentType filters by kind (DISPOSITIF covers both forms). @param {string} status @param {string=} contentType */
+        contentReports: function (status, contentType) { return apiRequest('/api/reports?status=' + encodeURIComponent(status || 'NEW') + (contentType ? '&contentType=' + encodeURIComponent(contentType) : ''), { auth: true }); },
         /** @param {string} id @param {string} status */
         /** @param {string} id @param {string} status @param {string=} note kept in the journal */
         setContentReport: function (id, status, note) { return apiRequest('/api/reports?id=' + encodeURIComponent(id), { method: 'PUT', body: note ? { status: status, note: note } : { status: status }, auth: true }); },

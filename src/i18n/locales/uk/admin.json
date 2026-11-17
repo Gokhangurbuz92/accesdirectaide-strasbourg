@@ -2151,5 +2151,13 @@
  "resources.a.publish": "Опублікувати",
  "resources.withdrawn": "Документ вилучено з публічної сторінки.",
  "resources.a.withdraw": "Вилучити",
- "resources.history": "Історія (не можна змінити)"
+ "resources.history": "Історія (не можна змінити)",
+ "k5.submissions.kind.aide": "Допомога",
+ "k5.submissions.kind.demarche": "Процедура",
+ "k5.submissions.kind.structure": "Місце",
+ "k5.submissions.kind.dispositif": "Програма",
+ "k5.submissions.kind.actualite": "Новина",
+ "k5.submissions.kind.all": "Усі",
+ "k5.submissions.kind_filter": "Тип вмісту",
+ "k5.submissions.legacy_dispositif": "Зареєстровано як « Допомога » (попередня класифікація програм)."
 }

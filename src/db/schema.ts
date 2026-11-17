@@ -3,7 +3,8 @@ import { relations, sql } from 'drizzle-orm'
 import { boolean, check, doublePrecision, foreignKey, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp, uniqueIndex, vector } from 'drizzle-orm/pg-core'
 import { sealedJson } from './sealed-json.js'
 
-export const ContentType = pgEnum('ContentType', ['AIDE', 'DEMARCHE', 'STRUCTURE', 'ACTUALITE'])
+// P19 (0051): DISPOSITIF — a database before 0051 lacks it; writers ask api/_utils/schema-features.js contentTypeSchema() first
+export const ContentType = pgEnum('ContentType', ['AIDE', 'DEMARCHE', 'STRUCTURE', 'ACTUALITE', 'DISPOSITIF'])
 
 export const ReportReason = pgEnum('ReportReason', ['LIEN_MORT', 'HORAIRES_FAUX', 'INFO_FAUSSE', 'INFO_OBSOLETE', 'AUTRE'])
 

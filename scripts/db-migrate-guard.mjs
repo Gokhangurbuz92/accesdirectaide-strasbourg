@@ -14,6 +14,7 @@
  *   5. expectedObjects() / physicalDrift() — the tables, columns, named constraints, indexes, enum types, triggers and functions the applied migrations create
  *      (parsed from their SQL), compared with the catalogue: an object missing, or an object that only an UNRECORDED migration creates (e.g. a guest column
  *      without a 0043 row), is drift; CHECK_MARKERS add the CHECK-content changes the parser cannot see (0043, 0045 and 0047 rewrite one CHECK);
+ *      ENUM_VALUE_MARKERS the enum values added by « ALTER TYPE … ADD VALUE » (0051: ContentType DISPOSITIF);
  *   6. stockMigrateRefusal() — `drizzle-kit migrate` / `push` are refused by drizzle.config.ts against any non-local database.
  * Historic migration files are never modified: LAB databases and the native QA rely on them.
  */
@@ -37,6 +38,13 @@ export const CHECK_MARKERS = Object.freeze([
   Object.freeze({ tag: '0043_r38_guest_booking', table: 'AppointmentNotice', constraint: 'AppointmentNotice_kind_check', token: "'BOOKED_BY_GUEST'" }),
   Object.freeze({ tag: '0045_r43_appointment_notice_kinds', table: 'AppointmentNotice', constraint: 'AppointmentNotice_kind_check', token: "'REQUEST_RECEIVED'" }),
   Object.freeze({ tag: '0047_m2_referral_redirect_referent', table: 'Referral', constraint: 'Referral_response_check', token: "'REDIRECT_SUGGESTED'" }),
+]);
+
+/**
+ * Enum values the SQL parser cannot see (« ALTER TYPE … ADD VALUE »). For each tag: the value of `type` that exists exactly when that migration is applied.
+ */
+export const ENUM_VALUE_MARKERS = Object.freeze([
+  Object.freeze({ tag: '0051_p19_dispositif_content_type', type: 'ContentType', value: 'DISPOSITIF' }),
 ]);
 
 export const sha256 = (text) => crypto.createHash('sha256').update(text).digest('hex');
@@ -213,7 +221,8 @@ export async function readCatalogue(client) {
   /** @type {Record<string, string>} */
   const checks = {};
   for (const r of (await client.query(`select t.relname || '.' || c.conname k, pg_get_constraintdef(c.oid) d from pg_constraint c join pg_class t on t.oid = c.conrelid where t.relnamespace = 'public'::regnamespace and c.contype = 'c'`)).rows) checks[r.k] = r.d;
-  return { keys, checks };
+  const enumValues = new Set(await q(`select t.typname || '.' || e.enumlabel k from pg_enum e join pg_type t on t.oid = e.enumtypid where t.typnamespace = 'public'::regnamespace`));
+  return { keys, checks, enumValues };
 }
 
 /**
@@ -239,6 +248,12 @@ export function physicalDrift(entries, files, appliedTags, catalogue) {
     const has = def.includes(mk.token);
     if (appliedSet.has(mk.tag) && !has) findings.push({ code: 'CHECK_CHANGE_MISSING', tag: mk.tag, key: `${mk.table}.${mk.constraint}` });
     if (!appliedSet.has(mk.tag) && has) findings.push({ code: 'CHECK_CHANGE_UNRECORDED', tag: mk.tag, key: `${mk.table}.${mk.constraint}` });
+  }
+  for (const mk of ENUM_VALUE_MARKERS) {
+    if (!catalogue.enumValues || !catalogue.keys.has(`type:${mk.type}`)) continue;   // a catalogue read without enum values, or the type itself missing (covered above)
+    const has = catalogue.enumValues.has(`${mk.type}.${mk.value}`);
+    if (appliedSet.has(mk.tag) && !has) findings.push({ code: 'ENUM_VALUE_MISSING', tag: mk.tag, key: `${mk.type}.${mk.value}` });
+    if (!appliedSet.has(mk.tag) && has) findings.push({ code: 'ENUM_VALUE_UNRECORDED', tag: mk.tag, key: `${mk.type}.${mk.value}` });
   }
   const seen = new Set();
   const unique = findings.filter((f) => { const k = JSON.stringify(f); if (seen.has(k)) return false; seen.add(k); return true; });

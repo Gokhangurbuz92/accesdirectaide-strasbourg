@@ -2160,5 +2160,13 @@
  "resources.a.publish": "نشر",
  "resources.withdrawn": "تم سحب المستند من الصفحة العامة.",
  "resources.a.withdraw": "سحب",
- "resources.history": "السجل (غير قابل للتعديل)"
+ "resources.history": "السجل (غير قابل للتعديل)",
+ "k5.submissions.kind.aide": "مساعدة",
+ "k5.submissions.kind.demarche": "إجراء",
+ "k5.submissions.kind.structure": "مكان",
+ "k5.submissions.kind.dispositif": "برنامج",
+ "k5.submissions.kind.actualite": "خبر",
+ "k5.submissions.kind.all": "الكل",
+ "k5.submissions.kind_filter": "نوع المحتوى",
+ "k5.submissions.legacy_dispositif": "مسجّل تحت « مساعدة » (التصنيف السابق للبرامج)."
 }
