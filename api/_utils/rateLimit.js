@@ -107,6 +107,7 @@ const CONFIG = {
     PRO_EXPORT: { limit: 20, window: 600 },       // dossier / organisation / report exports, SIAO sheets: 20 per 10 min
     PRO_AI: { limit: 10, window: 60 },            // model calls (assist, dossier synthesis, discovery agents): 10 per min
     PRO_UPLOAD: { limit: 20, window: 300 },       // dossier uploads (bodies up to 10 MB): 20 per 5 min
+    OBSERVATORY_READ: { limit: 30, window: 3600 }, // FA-D9: institutional observatoire + export reads, per account (a frozen quarter does not change between reads)
 };
 
 function hashKey(/** @type {string} */ key) {

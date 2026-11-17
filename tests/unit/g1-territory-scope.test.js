@@ -171,7 +171,10 @@ describe('H institution handler: the scope is the account\'s, on the server', ()
       for (const p of ['observatoire', 'export']) { const r = await call(p, q); expect(r.statusCode, JSON.stringify(q)).toBe(400); expect(r.body.error).toBe('SCOPE_PARAMETER_NOT_ACCEPTED'); bodies.add(JSON.stringify(r.body)); }
     }
     expect(bodies.size).toBe(1); expect(who.observatoire).not.toHaveBeenCalled(); expect(who.csv).not.toHaveBeenCalled();
-    expect((await call('observatoire', { limit: '9999', page: '3', id: 'other-account' })).statusCode).toBe(200);
+    // FA-D9: any other parameter is refused too (it used to be ignored), before anything is read
+    const other = await call('observatoire', { limit: '9999', page: '3', id: 'other-account' });
+    expect(other.statusCode).toBe(400); expect(other.body.error).toBe('QUERY_PARAMETER_NOT_ACCEPTED'); expect(who.observatoire).not.toHaveBeenCalled();
+    expect((await call('observatoire')).statusCode).toBe(200);
     expect(who.observatoire.mock.calls[0][0]).toMatchObject({ kind: 'departement', code: '68' }); expect(who.observatoire.mock.calls[0]).toHaveLength(1);
     // the handler has no other way to the statistics: it imports the scoped functions only, and reads no territory from the request
     const code = src('api/_handlers/institution.js');

@@ -115,7 +115,7 @@
  "impact.description": "Yalnızca ölçülmüş rakamları yayımlıyoruz. İşte bugün ölçülenler ve henüz ölçülmeyenler.",
  "impact.published_today": "Bugün yayımlananlar (canlı rakamlar)",
  "impact.not_measured.title": "Henüz ölçmediklerimiz",
- "impact.not_measured.text": "Genel beta süresince ziyaretçi ölçümü yapmıyoruz ve hiçbir hesap açık değil: ne ziyaret sayısını ne de yardım edilen kişi sayısını biliyoruz. Bu rakamlar ölçüldüklerinde yöntemleriyle birlikte yayımlanacak.",
+ "impact.not_measured.text_v2": "Genel beta süresince ziyaretçi ölçümü yapmıyoruz ve hiçbir hesap açık değil: ne ziyaret sayısını ne de yardım edilen kişi sayısını biliyoruz. Bir ziyaret ya da arama, yardım edilmiş bir kişi değildir ve birini asla diğeri gibi sunmayacağız. Bir kişinin bir yardımı alıp almadığı platformda hiçbir yerde kaydedilmez: bu rakam bir kaynak onu kanıtlamadıkça yayımlanmayacak.",
  "impact.how.title": "Bu rakamlar nasıl elde ediliyor",
  "impact.how.text": "Sitede görünen sayfaları sayarlar: her yardım, işlem veya destek noktası ancak resmi kaynağına göre otomatik ve tarihli bir doğrulamadan sonra yayımlanır (Service-Public, FINESS kaydı, Annuaire de l’administration…).",
  "impact.how.link": "Doğrulama yöntemimiz",

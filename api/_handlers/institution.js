@@ -25,6 +25,13 @@ import { requireCapability } from '../_utils/capabilities.js';
  */
 /** Parameters that would name a territory: none is accepted (the scope is the account's), and the refusal never says whether the place exists. */
 const SCOPE_PARAMETERS = new Set(['territory', 'territoire', 'territories', 'scope', 'commune', 'communes', 'ville', 'insee', 'code', 'code_insee', 'epci', 'departement', 'department', 'region', 'all', 'national']);
+/**
+ * FA-D9 red team (filter changes): the statistics take NO filter — `period` is the only parameter, and its only value is the last complete quarter (the
+ * export refuses any other value itself, PERIOD_NOT_OFFERED; the observatoire here). Any other parameter is refused with one answer before anything is read
+ * (it used to be ignored: harmless while nothing reads it, but a later filter would have opened differencing by « two queries differing by one filter »).
+ */
+const unexpectedParameter = (req, path) => Object.entries(req.query && typeof req.query === 'object' ? req.query : {})
+  .some(([k, v]) => k !== 'period' || (path === 'institution/observatoire' && String(v) !== 'quarter'));
 const namesATerritory = (req) => Object.keys(req.query && typeof req.query === 'object' ? req.query : {}).some((k) => SCOPE_PARAMETERS.has(String(k).toLowerCase().replace(/\[\]$/, '')));
 
 export default async function handler(req, res) {
@@ -94,6 +101,11 @@ export default async function handler(req, res) {
     if (path === 'institution/observatoire' || path === 'institution/export') {
       if (namesATerritory(req)) return res.status(400).json({ error: 'SCOPE_PARAMETER_NOT_ACCEPTED', message: 'Le territoire est celui de votre compte : aucun paramètre de territoire n’est accepté.' });
       if (!scope.ok) return res.status(403).json({ error: 'TERRITORY_SCOPE_UNDEFINED', message: 'Le territoire autorisé de ce compte n’est pas défini : aucune statistique ne peut être affichée. Contactez ADA.' });
+      if (unexpectedParameter(req, path)) return res.status(400).json({ error: 'QUERY_PARAMETER_NOT_ACCEPTED', message: 'Les statistiques publiées ne prennent aucun filtre : le territoire est celui de votre compte, la période le dernier trimestre civil complet.' });
+      // FA-D9 red team (query rate): reads of the statistics are counted per account (OBSERVATORY_READ, api/_utils/rateLimit.js) — the published cells do not
+      // change between two reads of a frozen quarter, so a burst of reads has no legitimate use and is what a differencing script looks like
+      const rl = await checkRateLimit('OBSERVATORY_READ', `institution-obs:${inst.id}`);
+      if (!rl.allowed) return res.status(getRateLimitStatus(rl)).json(rl.error || { error: 'Too many requests', message: 'Trop de consultations des statistiques : réessayez plus tard.' });
     }
     if (path === 'institution/observatoire') {
       const out = await scopedObservatoire(scope);

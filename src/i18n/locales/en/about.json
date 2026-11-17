@@ -115,7 +115,7 @@
  "impact.description": "We only publish measured figures. Here is what is measured today, and what is not yet.",
  "impact.published_today": "Published today (live figures)",
  "impact.not_measured.title": "What we do not measure yet",
- "impact.not_measured.text": "During the public beta, we do not measure the audience and no accounts are open: we know neither the number of visits nor the number of people helped. These figures will be published when they are measured, with their method.",
+ "impact.not_measured.text_v2": "During the public beta, we do not measure the audience and no accounts are open: we know neither the number of visits nor the number of people helped. A visit or a search is not a person helped, and we will never present one as the other. Whether a person obtained a benefit is not recorded anywhere in the platform: this figure will not be published until a source establishes it.",
  "impact.how.title": "How these figures are obtained",
  "impact.how.text": "They count the pages visible on the site: each benefit, procedure or support centre is published only after an automatic, dated check against its official source (Service-Public, FINESS register, Annuaire de l’administration…).",
  "impact.how.link": "Our checking method",
