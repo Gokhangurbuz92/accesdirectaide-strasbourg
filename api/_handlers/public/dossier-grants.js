@@ -6,7 +6,7 @@ import { and, asc, eq, gt, ilike, isNull, or, sql } from 'drizzle-orm';
 import { logProAudit } from '../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { forgetSyntheses } from '../../_services/dossier-synthesis.js';
-import { nextDecisionAt } from '../../lib/consent-ledger.js';   // PKG-6 / R17: AI drafts follow the citizen's decisions
+import { DOSSIER_PURPOSE_POLICY_VERSION, dossierPurposePolicyHash, nextDecisionAt } from '../../lib/consent-ledger.js';   // PKG-6 / R17: AI drafts follow the citizen's decisions
 import { holdsOwnership, isExpired, NOT_FOUND_BODY, ALL_PURPOSES, PURPOSE_SHARING, PURPOSE_AI, PURPOSE_SIAO, INVITE_TTL_HOURS } from '../../_utils/share-access.js';
 import { isDossierRestricted } from '../../_services/processing-restriction.js';
 import { clientIp } from '../../_utils/client-ip.js';
@@ -19,11 +19,12 @@ const sha256 = (/** @type {string} */ v) => crypto.createHash('sha256').update(v
 
 // PKG-11 / C22: a change of the owner's decision on a purpose (PURP-05 AI, PURP-07 SIAO) is also an append-only ConsentLog row, written in the SAME transaction
 // as the grant — no proof, no change. Before: only the grant's current purposes (overwritten) and a best-effort audit line kept any trace.
-const PURPOSE_POLICY_VERSION = 'pkg11-2026-10-22-dossier-purposes';
+// FA-D5: the version and its hash now live in api/lib/consent-ledger.js, shared with the PURP-06 (sharing) rows written at grant and at withdrawal.
+const PURPOSE_POLICY_VERSION = DOSSIER_PURPOSE_POLICY_VERSION;
 /** @param {string} shareId @param {string} structureId @param {string} purpose @param {boolean} decision */
 const purposeDecision = (shareId, structureId, purpose, decision) => ({
   subject_type: 'SHARED_DOSSIER_GRANT', subject_id: `${shareId}:${structureId}`, purpose, decision, withdrawn_at: decision ? null : new Date(),
-  policy_version: PURPOSE_POLICY_VERSION, policy_hash: sha256(`${PURPOSE_POLICY_VERSION}:${purpose}`), collection_channel: 'owner_link', guardian_involved: false, proof_level: 'OWNER_SECRET',
+  policy_version: PURPOSE_POLICY_VERSION, policy_hash: dossierPurposePolicyHash(purpose), collection_channel: 'owner_link', guardian_involved: false, proof_level: 'OWNER_SECRET',
   created_at: nextDecisionAt('SHARED_DOSSIER_GRANT', `${shareId}:${structureId}`, purpose),
 });
 
@@ -35,6 +36,8 @@ const purposeDecision = (shareId, structureId, purpose, decision) => ({
  *   revoke {structureId}                        REMOVE ONE organization's access (and its pending invitations); the dossier and the others are untouched
  *   revoke_invite {inviteId}                    cancel a pending invitation
  *   set_purposes {structureId, purposes[]}      agree / withdraw PURP-05 (AI / external provider) for ONE organization; PURP-06 (sharing) is implicit while the grant exists
+ *   (FA-D5: PURP-06 itself is a ledger row too — « yes » when the organization redeems the invitation or the person accepts a referral, « no » on revoke /
+ *    stop_sharing through forgetSyntheses → withdrawPurposesOfRevokedGrants)
  *   stop_sharing                                STOP sharing with everyone: every grant and pending invitation is revoked and the recipient links are invalidated; the dossier is kept
  * Erasure of the data is a different, explicit operation: POST /api/public/dossier-revoke.
  * Requires the OWNER secret (X-Share-Owner-Secret / body.rightsSecret).  Anything else: uniform 404 and nothing changes.

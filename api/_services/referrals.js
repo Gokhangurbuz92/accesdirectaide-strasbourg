@@ -34,6 +34,7 @@ import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { canNotify } from './citizen-account.js';
 import { isDossierRestricted } from './processing-restriction.js';
+import { recordSharingGranted, SHARING_GRANTED_BY } from '../lib/consent-ledger.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
 import { logger } from '../lib/logger.js';
 
@@ -271,6 +272,7 @@ export async function citizenDecide(userId, id, accept, db = defaultDb) {
         purposesUpdatedAt: sql`CASE WHEN "SharedDossierGrant"."revokedAt" IS NULL THEN "SharedDossierGrant"."purposesUpdatedAt" ELSE NOW() END`,
         grantedVia: sql`CASE WHEN "SharedDossierGrant"."revokedAt" IS NULL THEN "SharedDossierGrant"."grantedVia" ELSE 'referral' END`,
         revokedAt: null } }).returning();
+    await recordSharingGranted(tx, r.sharedDiagnosticId, r.toStructureId, SHARING_GRANTED_BY.REFERRAL);   // FA-D5: the person's « yes » to PURP-06, same transaction
     const now = new Date();
     const done = await transition(tx, r.id, ['PENDING_CITIZEN'], { status: 'SENT', grantId: g.id, citizenDecisionAt: now, sentAt: now, dueAt: new Date(now.getTime() + ACK_DAYS * day) }, sql`TRUE`, R);
     if (!done) throw Object.assign(new Error('raced'), { code: 'ALREADY_DECIDED' });

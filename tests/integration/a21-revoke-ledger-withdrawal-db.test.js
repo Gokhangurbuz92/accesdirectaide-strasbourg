@@ -59,7 +59,8 @@ describe.skipIf(!hasDatabase)('A-21 revoke / stop sharing write the purpose with
     expect(await latest(SB, 'PURP-05')).toBe(true);
     expect(await latest(SA, 'PURP-05', OTHER)).toBe(true);
     const rows = await ledger();
-    expect(rows.filter((r) => r.startsWith('A ') && r.endsWith('no withdrawn')).sort()).toEqual(['A PURP-05 no withdrawn', 'A PURP-07 no withdrawn']);
+    // FA-D5: the sharing purpose PURP-06 itself is withdrawn too (these fixture grants predate any PURP-06 « yes » row: the withdrawal is still written)
+    expect(rows.filter((r) => r.startsWith('A ') && r.endsWith('no withdrawn')).sort()).toEqual(['A PURP-05 no withdrawn', 'A PURP-06 no withdrawn', 'A PURP-07 no withdrawn']);
     const [w] = (await db.execute(sql`SELECT w.policy_version = y.policy_version AND w.policy_hash = y.policy_hash AND w.proof_level = y.proof_level AND w.created_at > y.created_at AS ok
       FROM "ConsentLog" w JOIN "ConsentLog" y ON y.subject_id = w.subject_id AND y.purpose = w.purpose AND y.decision IS TRUE
       WHERE w.subject_id = ${`${D}:${SA}`} AND w.purpose = 'PURP-07' AND w.decision IS FALSE`)).rows;
@@ -84,7 +85,7 @@ describe.skipIf(!hasDatabase)('A-21 revoke / stop sharing write the purpose with
   it('the personal-data view of the ledger (export query) no longer shows a stale « yes »', async () => {
     const rows = (await db.execute(sql`SELECT DISTINCT ON (c.subject_id, c.purpose) c.subject_id, c.purpose, c.decision, c.withdrawn_at FROM "ConsentLog" c
       WHERE c.subject_type = 'SHARED_DOSSIER_GRANT' AND split_part(c.subject_id, ':', 1) = ${D} ORDER BY c.subject_id, c.purpose, c.created_at DESC`)).rows;
-    expect(rows).toHaveLength(3);
+    expect(rows).toHaveLength(5);   // A PURP-05 / PURP-06 / PURP-07, B PURP-05 / PURP-06 (FA-D5)
     for (const r of rows) { expect(r.decision).toBe(false); expect(r.withdrawn_at).not.toBeNull(); }
   });
 });

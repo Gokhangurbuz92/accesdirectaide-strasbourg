@@ -9,6 +9,7 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils
 import { holdsShareToken, isLegacyShare, readInviteToken, readShareToken, isExpired, isActiveMember, findGrant, legacyShareReadEnabled, NOT_FOUND_BODY } from '../../../_utils/share-access.js';
 import { isDossierRestricted } from '../../../_services/processing-restriction.js';
 import { clientIp } from '../../../_utils/client-ip.js';
+import { recordSharingGranted, SHARING_GRANTED_BY } from '../../../lib/consent-ledger.js';
 
 /**
  * POST /api/pro/dossier/redeem   body { shareId, inviteToken }   (or header X-Invite-Token)
@@ -61,6 +62,7 @@ async function handler(req, res) {
         } else {
           await tx.insert(SharedDossierGrant).values({ sharedDiagnosticId: shareId, structureId: ctx.structureId, grantedByProUserId: ctx.userId, grantedVia: 'invite', inviteId: invite.id, purposes: invite.purpose });
         }
+        await recordSharingGranted(tx, shareId, ctx.structureId, SHARING_GRANTED_BY.INVITE);   // FA-D5: the person's « yes » to PURP-06 in the consent ledger, same transaction
         return true;
       });
       if (!done) {
