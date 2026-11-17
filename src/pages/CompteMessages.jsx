@@ -113,7 +113,7 @@ export default function CompteMessages() {
                         </p>
                         <p className="text-sm text-slate-700">{item.lastMessagePreview || t('compte:messages.no_message', 'Aucun message')}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-end">
                         <p className="text-xs text-slate-500">{t('compte:messages.dernier_message', 'Dernier message:')} {formatDate(item.lastMessageAt)}</p>
                         <Link
                           to={`/compte/messages/${encodeURIComponent(item.id)}`}

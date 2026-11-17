@@ -1,13 +1,16 @@
-// PKG-1 / K0 — thin client of /api/citizen/* (cookie session; protected writes go through csrfFetch: bootstrap + one safe retry). Errors keep the server's code and message so screens can be specific.
+// PKG-1 / K0 — thin client of /api/citizen/* (cookie session; protected writes go through csrfFetch: bootstrap + one safe retry). Errors keep the server's code and status.
+// A-13: `message` is the sentence to SHOW, in the interface language (src/lib/citizenErrors.js); the server's French sentence stays in `serverMessage`.
 import { csrfFetch, CsrfBootstrapError } from '@/lib/csrf';
+import { citizenErrorText } from '@/lib/citizenErrors';
 
 export class CitizenApiError extends Error {
-  /** @param {string} message @param {number} status @param {string} [code] */
-  constructor(message, status, code) {
+  /** @param {string} message @param {number} status @param {string} [code] @param {string} [serverMessage] */
+  constructor(message, status, code, serverMessage) {
     super(message);
     this.name = 'CitizenApiError';
     this.status = status;
     this.code = code || '';
+    this.serverMessage = serverMessage || '';
   }
 }
 
@@ -24,13 +27,13 @@ async function call(path, opts = {}) {
   try {
     res = method === 'GET' ? await fetch(path, init) : await csrfFetch(path, init);
   } catch (err) {
-    if (err instanceof CsrfBootstrapError) throw new CitizenApiError('Impossible de préparer la requête sécurisée. Rechargez la page puis réessayez.', 0, 'csrf_bootstrap');
-    throw new CitizenApiError('Le service est momentanément injoignable. Réessayez dans un instant.', 0, 'network');
+    if (err instanceof CsrfBootstrapError) throw new CitizenApiError(citizenErrorText({ code: 'csrf_bootstrap' }), 0, 'csrf_bootstrap');
+    throw new CitizenApiError(citizenErrorText({ code: 'network' }), 0, 'network');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const fallback = res.status === 401 ? 'Connectez-vous pour accéder à votre espace.' : res.status === 429 ? 'Trop de demandes, patientez un instant.' : 'Une erreur est survenue.';
-    throw new CitizenApiError(data.message || fallback, res.status, data.error);
+    const serverMessage = typeof data.message === 'string' ? data.message : '';
+    throw new CitizenApiError(citizenErrorText({ code: data.error, status: res.status, serverMessage }), res.status, typeof data.error === 'string' ? data.error : '', serverMessage);
   }
   return data;
 }
@@ -83,6 +86,10 @@ export const citizenApi = {
   dossierDocumentUrl: (/** @type {string} */ shareId, /** @type {string} */ fileId) => `/api/citizen/dossier?shareId=${encodeURIComponent(shareId)}&download=${encodeURIComponent(fileId)}`,
   removeDossierDocument: (/** @type {string} */ shareId, /** @type {string} */ fileId) => call('/api/citizen/dossier', { method: 'DELETE', body: { shareId, fileId } }),
   dossierGrants: (/** @type {string} */ shareId) => call('/api/public/dossier-grants', { method: 'POST', body: { shareId, action: 'list' } }),
+  // A-17 — the organisations' threads on a dossier the person owns (account session, or the private owner link on the passport page: `ownerSecret`)
+  dossierThreads: (/** @type {string} */ shareId, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'list', ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
+  dossierThreadMessages: (/** @type {string} */ shareId, /** @type {string} */ threadId, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'messages', threadId, ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
+  sendDossierThreadMessage: (/** @type {string} */ shareId, /** @type {string} */ threadId, /** @type {string} */ encryptedContent, ownerSecret = '') => call('/api/share/thread', { method: 'POST', body: { id: shareId, action: 'send', threadId, encryptedContent, ...(ownerSecret ? { capability: ownerSecret } : {}) } }),
   // PKG-2 / C23 — delegation (read-only, scoped, time-limited, revocable)
   listDelegations: () => call('/api/citizen/delegations'),
   inviteDelegate: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'invite', ...input } }),

@@ -4,6 +4,8 @@ import { CitizenUser, AuthToken } from '../../../src/db/schema.js';
 import { eq, and, isNull } from 'drizzle-orm';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
+import { accountMailLanguage } from '../../_services/mail-language.js';
+import { localizedMail } from '../../_utils/mail-catalogue.js';
 import { templates } from '../../lib/email-service.js';
 import { afterResponse, holdResponseFloor } from '../../_utils/after-response.js';
 import { passwordMessage, passwordProblems } from '../../../src/lib/passwordPolicy.js';
@@ -47,7 +49,7 @@ export const isUniqueViolation = (err) => err?.code === '23505' || err?.cause?.c
  * a verified one gets nothing (no e-mail: the person is not told someone tried). A concurrent duplicate insert is the « already exists » case.
  * @param {{ email: string, passwordHash: string, phone: string | null, nextPath: string }} p
  */
-async function registerOrRefresh({ email, passwordHash, phone, nextPath }) {
+async function registerOrRefresh({ email, passwordHash, phone, nextPath, requestLanguage }) {
   let user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
   if (!user) {
     try {
@@ -83,8 +85,10 @@ async function registerOrRefresh({ email, passwordHash, phone, nextPath }) {
     '',
     "Si vous n'etes pas a l'origine de cette demande, ignorez cet email.",
   ].join('\n');
-  const emailTemplate = templates.welcome(email.split('@')[0], verifyUrl);
-  await sendMail({ to: email, subject: emailTemplate.subject, text, html: emailTemplate.html, category: 'email_verify' });
+  // A-15: a new account has no stored language yet — the verification e-mail is written in the interface language of the sign-up page (French otherwise)
+  const lang = await accountMailLanguage(user.id, requestLanguage);
+  const emailTemplate = templates.welcome(email.split('@')[0], verifyUrl, '15 minutes', lang);
+  await sendMail({ to: email, subject: emailTemplate.subject, text: localizedMail('account_verification', lang, text).text, html: emailTemplate.html, category: 'email_verify' });
 }
 
 export default async function handler(req, res) {
@@ -151,7 +155,7 @@ export default async function handler(req, res) {
   // an account (lookup, writes, the e-mail) runs after the answer, which is never sent before the same floor. V2 / D4: a failure is logged by name and
   // SQL state only (the driver's message carries the query parameters, including the password hash).
   const passwordHash = await hashPassword(password);
-  afterResponse(() => registerOrRefresh({ email, passwordHash, phone, nextPath }), 'signup');
+  afterResponse(() => registerOrRefresh({ email, passwordHash, phone, nextPath, requestLanguage: req.body?.language }), 'signup');
   await holdResponseFloor(startedAt);
   return res.status(200).json(signupAnswer());
 }

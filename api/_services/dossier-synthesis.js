@@ -21,6 +21,8 @@ import { resolveDossierForStructure, grantHasPurpose, PURPOSE_AI } from '../_uti
 import { presentResults } from '../lib/shareResults.js';
 import { generateStructuredContent } from '../lib/ai-foundation.js';
 import { AUDIENCE } from '../lib/ai-policy.js';
+import { withdrawPurposesOfRevokedGrants } from '../lib/consent-ledger.js';
+import logger from '../_utils/logger.js';
 
 export const MODEL = 'qwen3:8b';
 export const TIMEOUT_MS = 30000;
@@ -120,9 +122,17 @@ export async function review(shareId, draftId, decision, note, proCtx, { db = de
 
 /**
  * Called when the citizen revokes an organization (structureId), withdraws PURP-05 for it (structureId) or stops sharing (structureId null).
+ * A-21: it is also where the consent ledger learns that the purposes of an organisation that LOST its access have ended (PURP-05 / PURP-07 withdrawal rows):
+ * public/dossier-grants calls this right after each of those actions, and the ledger write is derived from the grants' state (an organisation that keeps its
+ * access is never touched — see withdrawPurposesOfRevokedGrants). A ledger failure is logged and does not undo the revocation, which is already committed.
  * @param {any} db @param {string} shareId @param {string | null} [structureId]
  */
 export async function forgetSyntheses(db, shareId, structureId = null) {
-  if (structureId) return db.execute(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "sharedDiagnosticId" = ${String(shareId)} AND "scopeStructureId" = ${String(structureId)}`);
-  return db.execute(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "sharedDiagnosticId" = ${String(shareId)}`);
+  const out = structureId
+    ? await db.execute(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "sharedDiagnosticId" = ${String(shareId)} AND "scopeStructureId" = ${String(structureId)}`)
+    : await db.execute(sql`DELETE FROM "AiOutputReview" WHERE kind = 'DOSSIER_SYNTHESIS' AND "sharedDiagnosticId" = ${String(shareId)}`);
+  try { await withdrawPurposesOfRevokedGrants(db, shareId, structureId); } catch (error) {
+    logger.error({ err: { name: /** @type {any} */ (error)?.name, message: /** @type {any} */ (error)?.message } }, '[consent-ledger] purpose withdrawal after a revoked access was not recorded');
+  }
+  return out;
 }

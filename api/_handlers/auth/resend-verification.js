@@ -3,6 +3,8 @@ import { CitizenUser, AuthToken } from '../../../src/db/schema.js';
 import { eq, and, isNull } from 'drizzle-orm';
 import { checkRateLimit, getRateLimitStatus } from '../../_utils/rateLimit.js';
 import { sendMail, getMailerStatus } from '../../_utils/mailer.js';
+import { accountMailLanguage } from '../../_services/mail-language.js';
+import { localizedMail } from '../../_utils/mail-catalogue.js';
 import { templates } from '../../lib/email-service.js';
 import { afterResponse, holdResponseFloor } from '../../_utils/after-response.js';
 import {
@@ -26,8 +28,8 @@ const GENERIC_RESPONSE = {
 const genericAnswer = () => (getMailerStatus().deliverable ? { ...GENERIC_RESPONSE, emailDelivery: 'SENT_IF_VALID' }
   : { ok: true, message: "L’envoi d’e-mails n’est pas disponible sur ce service pour le moment : aucun lien n’a pu être envoyé.", emailDelivery: 'UNAVAILABLE' });
 
-/** @param {string} email @param {string} nextPath */
-async function resendLink(email, nextPath) {
+/** @param {string} email @param {string} nextPath @param {unknown} [requestLanguage] */
+async function resendLink(email, nextPath, requestLanguage) {
   const user = await db.query.CitizenUser.findFirst({ where: eq(CitizenUser.email, email) });
   if (!user || user.emailVerifiedAt) return;
   const rawToken = generateAuthToken();
@@ -37,8 +39,11 @@ async function resendLink(email, nextPath) {
   await db.update(AuthToken).set({ usedAt: new Date() }).where(and(eq(AuthToken.userId, user.id), eq(AuthToken.type, 'EMAIL_VERIFY'), isNull(AuthToken.usedAt)));
   await db.insert(AuthToken).values({ userId: user.id, type: 'EMAIL_VERIFY', tokenHash, expiresAt });
   const verifyUrl = buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(rawToken)}&next=${encodeURIComponent(nextPath)}`);
-  const emailTemplate = templates.welcome(user.email.split('@')[0], verifyUrl);
-  await sendMail({ to: email, subject: emailTemplate.subject, text: `Lien de verification: ${verifyUrl}`, html: emailTemplate.html, category: 'email_verify' });
+  // A-15: in the person's stored language (else the language of the page they asked from, else French)
+  const lang = await accountMailLanguage(user.id, requestLanguage);
+  const emailTemplate = templates.welcome(user.email.split('@')[0], verifyUrl, '15 minutes', lang);
+  const plain = localizedMail('account_verification', lang, `Lien de verification: ${verifyUrl}`);
+  await sendMail({ to: email, subject: emailTemplate.subject, text: plain.text, html: emailTemplate.html, category: 'email_verify' });
 }
 
 /**
@@ -69,7 +74,7 @@ export default async function handler(req, res) {
     return res.status(getRateLimitStatus(/** @type {{ status?: number }} */ (emailLimit))).json(emailLimit.error || { error: 'Too many attempts' });
   }
   // V2 / D1: the link is issued after the answer, which takes the same time for every address
-  afterResponse(() => resendLink(email, nextPath), 'resend-verification');
+  afterResponse(() => resendLink(email, nextPath, req.body?.language), 'resend-verification');
   await holdResponseFloor(startedAt);
   return res.status(200).json(genericAnswer());
 }

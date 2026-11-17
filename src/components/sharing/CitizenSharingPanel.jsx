@@ -166,7 +166,7 @@ export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) 
                 <ul className="space-y-2" aria-label={t('messaging:sharing.results_label', 'Structures trouvées')}>
                   {results.map((o) => (
                     <li key={o.id}>
-                      <button type="button" onClick={() => setPicked(o)} className="w-full min-h-[44px] text-left rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600">
+                      <button type="button" onClick={() => setPicked(o)} className="w-full min-h-[44px] text-start rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600">
                         <span className="font-semibold text-slate-900" {...fr}>{o.nom}</span>
                         <span className="block text-xs text-slate-500" {...fr}>{[o.codePostal, o.ville].filter(Boolean).join(' ')}</span>
                       </button>
@@ -201,7 +201,7 @@ export default function CitizenSharingPanel({ shareId, ownerSecret, onErased }) 
               <div className="flex justify-center rounded-lg bg-white p-3"><QRCode value={`${window.location.origin}${invite.proUrl}`} size={144} level="M" /></div>
               <div className="flex items-center gap-2">
                 <input readOnly aria-label={t('messaging:sharing.invite_link', 'Lien d\'invitation')} value={`${window.location.origin}${invite.proUrl}`} className="flex-1 min-h-[44px] rounded-md border border-slate-300 px-2 text-xs font-mono" onFocus={(e) => e.target.select()} />
-                <Button type="button" variant="outline" className="min-h-[44px]" onClick={copyLink}>{copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}<span className="ml-1">{copied ? t('messaging:sharing.copied', 'Copié') : t('messaging:sharing.copy', 'Copier')}</span></Button>
+                <Button type="button" variant="outline" className="min-h-[44px]" onClick={copyLink}>{copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}<span className="ms-1">{copied ? t('messaging:sharing.copied', 'Copié') : t('messaging:sharing.copy', 'Copier')}</span></Button>
               </div>
               <p className="text-xs text-slate-600">{t('messaging:sharing.scan_hint', 'Accompagné(e) sur place (France Services, travailleur social) ? Le professionnel peut scanner ce code. Sur un appareil partagé, fermez cette page ensuite.')}</p>
               <Button type="button" variant="outline" className="w-full min-h-[44px]" onClick={() => setInvite(null)}>{t('messaging:sharing.done', 'J\'ai terminé')}</Button>

@@ -2,12 +2,6 @@
  "_doc": "R41-C: approved exceptions of scripts/i18n-hardcoded-scan.mjs. file + exact text (or « * » for a whole unmounted / Storybook / developer-only file). Categories: unmounted (valid only while no mounted file imports it: the scan fails otherwise), storybook, developer-only, proper-name, french-term, french-legal, lang-fr, unit, technical-id, example-value, trans-component, source-branch.",
  "exceptions": [
   {
-   "file": "src/components/ReportContentButton.jsx",
-   "text": "*",
-   "category": "unmounted",
-   "reason": "Not imported anywhere (content reports go through /contact?sujet=signalement_erreur, already translated)."
-  },
-  {
    "file": "src/components/SentryTest.jsx",
    "text": "*",
    "category": "unmounted",

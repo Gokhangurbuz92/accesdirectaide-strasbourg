@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { csrfFetch } from '@/lib/csrf';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,11 @@ export default function DemandeAide() {
     CONTENT: t('contact:request.cat_content', 'Une information du site'), PRIVACY: t('contact:request.cat_privacy', 'Mes données personnelles'),
     ACCESSIBILITY: t('contact:request.cat_accessibility', 'L’accessibilité du site'), OTHER: t('contact:request.cat_other', 'Autre chose'),
   };
-  const [cat, setCat] = useState(''); const [message, setMessage] = useState(''); const [contact, setContact] = useState(''); const [website, setWebsite] = useState('');
+  // A-16: `?cat=ACCOUNT` (the « I no longer have access to my e-mail » links of the sign-in pages) opens the form on that category, with how assisted recovery works
+  const [params] = useSearchParams();
+  const asked = String(params.get('cat') || '').toUpperCase();
+  const fromRecovery = asked === 'ACCOUNT';
+  const [cat, setCat] = useState(CATS.includes(asked) ? asked : ''); const [message, setMessage] = useState(''); const [contact, setContact] = useState(''); const [website, setWebsite] = useState('');
   const [done, setDone] = useState(null); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setProblem(''); setBusy(true);
@@ -40,6 +45,11 @@ export default function DemandeAide() {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3" noValidate>
+          {fromRecovery && cat === 'ACCOUNT' ? (
+            <p data-testid="support-recovery-help" className="rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+              {t('contact:request.recovery_help', 'Vous n’avez plus accès à l’adresse e-mail de votre compte ? Dites-le ci-dessous et laissez un moyen de vous joindre (une nouvelle adresse e-mail ou un téléphone). Une personne de l’équipe vérifiera avec vous que le compte est bien le vôtre avant tout changement. Nous ne vous demanderons jamais votre mot de passe.')}
+            </p>
+          ) : null}
           {problem ? <p role="alert" data-testid="support-problem" className="text-red-800">{problem}</p> : null}
           <div className="space-y-1">
             <label htmlFor="sup-cat" className="block font-medium">{t('contact:request.c_est_a_propos_de', "C’est à propos de")}</label>

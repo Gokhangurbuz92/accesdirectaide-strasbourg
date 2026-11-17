@@ -191,6 +191,8 @@ export default function Confidentialite() {
                   </div>
                   <div className="bg-slate-50 p-3 rounded border border-slate-100 sm:col-span-2">
                     <strong className="text-slate-900 block mb-1">{t('legal:privacy.rights.other.title', 'Rectification, opposition, limitation')}</strong>
+                    {/* A-20: limitation (art. 18) and objection (art. 21) are requested from the account settings; the e-mail / form stays for everything else */}
+                    <span className="text-sm block mb-1">{t('legal:privacy.rights.other.account', 'Limitation et opposition : faites la demande depuis les paramètres de votre compte. La limitation s’applique tout de suite ; l’opposition est examinée par une personne, qui vous répond.')}</span>
                     <span className="text-sm">
                       <Trans i18n={i18n} i18nKey="legal:privacy.rights.other.text" defaults="Pour toute autre demande, écrivez à <0/> ou utilisez notre formulaire. Nous répondons dans un délai d'un mois, prolongeable de deux mois si la demande est complexe (nous vous prévenons alors)."
                         components={[contactValue('contact')]} />

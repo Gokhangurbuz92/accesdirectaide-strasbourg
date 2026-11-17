@@ -129,5 +129,6 @@
  "notFound.record.description": "Bu kayıt şu anda kullanılamıyor.",
  "notFound.record.text": "Bu kayıt şu anda kullanılamıyor. Kayıt mevcut değil veya doğrulanıyor.",
  "notFound.search": "Sitede arayın",
- "notFound.themes": "İhtiyaca göre listeyi görün"
+ "notFound.themes": "İhtiyaca göre listeyi görün",
+ "logout_failed": "Oturum kapatılamadı. Yeniden deneyin; ortak kullanılan bir cihazda tarayıcıyı da kapatın."
 }

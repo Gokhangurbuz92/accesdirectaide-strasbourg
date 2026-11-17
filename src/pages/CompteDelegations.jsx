@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
+import { useAccessActionLabels } from '@/lib/accessActionLabels';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { formatDate, useT } from '@/i18n';
 
@@ -18,6 +19,7 @@ const LIVE = ['INVITED', 'ACTIVE', 'PROOF_REQUIRED', 'EXPIRED'];
 export default function CompteDelegations() {
   const { t } = useT('compte');
   const L = useMonEspaceLabels();
+  const { delegation: ACTION_LABELS } = useAccessActionLabels();   // A-13: what the trusted person viewed, in the interface language
   const [params, setParams] = useSearchParams();
   const invitation = params.get('invitation') || '';
   const [state, setState] = useState({ loading: true, error: '', granted: [], received: [] });
@@ -26,7 +28,12 @@ export default function CompteDelegations() {
   const [link, setLink] = useState(null);
   const [logs, setLogs] = useState({});
   const load = useCallback(async () => {
-    try { const d = await citizenApi.listDelegations(); setState({ loading: false, error: '', granted: d.granted || [], received: d.received || [] }); }
+    try {
+      const d = await citizenApi.listDelegations();
+      setState({ loading: false, error: '', granted: d.granted || [], received: d.received || [], offeredScopes: d.offeredScopes });
+      // A-18: a part that is not open on this service is not offered (the server refuses it too)
+      if (Array.isArray(d.offeredScopes)) setForm((f) => ({ ...f, scopes: f.scopes.filter((x) => d.offeredScopes.includes(x)) }));
+    }
     catch (err) { setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:delegations.login_required', 'Connectez-vous pour gérer vos personnes de confiance.') : err.message, granted: [], received: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
@@ -93,7 +100,7 @@ export default function CompteDelegations() {
               {form.role !== 'AIDANT' ? <p className="mt-1 text-sm text-amber-900" data-testid="delegation-proof-notice">{t('compte:delegations.mandat_legal_demande_une', 'Un mandat légal demande une preuve (jugement, mandat). Sa vérification n’est pas encore disponible : la délégation restera en attente et n’ouvrira aucun accès.')}</p> : null}
             </div>
             <fieldset><legend className="text-sm text-slate-800">{t('compte:delegations.elle_pourra_consulter', 'Ce qu’elle pourra consulter')}</legend>
-              {Object.entries(L.delegationScope).map(([k, v]) => (
+              {Object.entries(L.delegationScope).filter(([k]) => !Array.isArray(state.offeredScopes) || state.offeredScopes.includes(k)).map(([k, v]) => (
                 <label key={k} className="mt-1 flex items-center gap-2 text-sm"><input type="checkbox" data-testid={`delegation-scope-${k}`} checked={form.scopes.includes(k)} onChange={() => toggleScope(k)} />{v}</label>
               ))}
             </fieldset>
@@ -120,7 +127,7 @@ export default function CompteDelegations() {
                     {LIVE.includes(d.status) || d.status === 'INVITATION_EXPIRED' ? <Button type="button" size="sm" variant="outline" className="border-red-300 text-red-800" data-testid="delegation-revoke" onClick={() => run(() => citizenApi.endDelegation(d.id), t('compte:delegations.ended', 'Accès arrêté.'))}>{t('compte:delegations.arreter_acces', 'Arrêter l’accès')}</Button> : null}
                     <Button type="button" size="sm" variant="outline" data-testid="delegation-show-log" onClick={() => showLog(d.id)}>{t('compte:delegations.elle_consulte', 'Ce qu’elle a consulté')}</Button>
                   </div>
-                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {e.label}</li>)}</ol>
+                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {ACTION_LABELS[e.action] || <span lang="fr" dir="ltr">{e.label}</span>}</li>)}</ol>
                     : <p className="text-slate-700" data-testid="delegation-log-empty">{t('compte:delegations.rien_encore_ete_consulte', 'Rien n’a encore été consulté.')}</p>) : null}
                 </li>
               ))}

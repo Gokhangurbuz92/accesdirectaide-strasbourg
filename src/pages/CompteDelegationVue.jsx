@@ -22,11 +22,12 @@ export default function CompteDelegationVue() {
     let live = true;
     (async () => {
       try {
-        const { received } = await citizenApi.listDelegations();
+        const { received, offeredScopes } = await citizenApi.listDelegations();
+        const offered = (scope) => !Array.isArray(offeredScopes) || offeredScopes.includes(scope);   // A-18: a part closed on this service is not asked for (the server answers 404)
         const d = (received || []).find((x) => x.id === id);
         if (!d || d.status !== 'ACTIVE') throw Object.assign(new Error(t('compte:delegation_view.inactive', 'Cet accès n’est pas (ou plus) actif.')), { status: 404 });
         const parts = {};
-        for (const [view, scope] of VIEWS) if (d.scopes.includes(scope)) parts[view] = await citizenApi.delegateView(id, view);
+        for (const [view, scope] of VIEWS) if (d.scopes.includes(scope) && offered(scope)) parts[view] = await citizenApi.delegateView(id, view);
         if (live) setState({ loading: false, error: '', delegation: d, parts });
       } catch (err) { if (live) setState({ loading: false, error: err.status === 401 ? t('compte:delegation_view.login_required', 'Connectez-vous pour consulter cet accès.') : err.message, delegation: null, parts: {} }); }
     })();

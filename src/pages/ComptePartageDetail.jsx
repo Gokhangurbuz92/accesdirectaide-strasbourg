@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import CitizenSharingPanel from '@/components/sharing/CitizenSharingPanel';
 import DossierTransparency from '@/components/sharing/DossierTransparency';
+import DossierThreads from '@/components/sharing/DossierThreads';
 import { useT } from '@/i18n';
 
 /**
@@ -26,6 +27,8 @@ export default function ComptePartageDetail() {
       ) : (
         <>
           <CitizenSharingPanel shareId={shareId} ownerSecret="" onErased={() => setErased(true)} />
+          {/* A-17: the « new message on a shared dossier » notification leads here — the threads are read and answered on this page */}
+          <DossierThreads shareId={shareId} />
           <DossierTransparency shareId={shareId} />
         </>
       )}

@@ -215,7 +215,7 @@ function SecurityTab({ user }) {
                         </div>
                         <Button variant="outline" size="sm" asChild>
                             <Link to="/auth/forgot">
-                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                <ExternalLink className="h-3.5 w-3.5 me-1.5" />
                                 {t('compte:settings.modifier', 'Modifier')}
                             </Link>
                         </Button>
@@ -231,7 +231,7 @@ function SecurityTab({ user }) {
                                 <p className="text-xs text-slate-700 mt-0.5">{t('compte:settings.logout_all_before', 'Se déconnecter met fin à votre session sur')} <strong>{t('compte:settings.logout_all_strong', 'tous')}</strong> {t('compte:settings.logout_all_after', 'les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).')}</p>
                             </div>
                         </div>
-                        <div className="ml-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
+                        <div className="ms-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
                             <span>{t('compte:settings.cet_appareil', 'Cet appareil —')} {typeof navigator !== 'undefined' ? navigator.userAgent.split('(')[1]?.split(')')[0] || t('compte:settings.browser', 'Navigateur') : t('compte:settings.browser', 'Navigateur')}</span>
                             <Button type="button" variant="outline" size="sm" className="min-h-11" data-testid="compte-logout-everywhere" onClick={async () => { if (await logoutOnServer()) window.location.assign('/auth/login'); }}>{t('compte:settings.deconnecter_partout', 'Me déconnecter partout')}</Button>
                         </div>
@@ -273,7 +273,7 @@ function AccessibilityTab() {
                                 <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.font_size_hint', 'Ajuster la taille de l’interface ({{size}} %)', { size: prefs.fontSize })}</p>
                             </div>
                         </div>
-                        <div className="ml-9 flex items-center gap-3">
+                        <div className="ms-9 flex items-center gap-3">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -342,6 +342,55 @@ function AccessibilityTab() {
     );
 }
 
+/**
+ * A-20 — objection to processing (RGPD art. 21): the request is FILED from here (rights-request register + the privacy queue a person reads), no e-mail to write.
+ * It is recorded and answered by a person within one month — never applied automatically, and the screen never says it is accepted.
+ */
+export function ObjectionPanel() {   // exported for tests/unit/a20-objection-panel.test.jsx
+    const { t } = useT('compte');
+    const [state, setState] = useState({ loading: true, failed: false, objection: null });
+    const [reason, setReason] = useState(''); const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
+    const load = () => fetch('/api/citizen/restriction', { credentials: 'include' }).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+        .then((d) => setState({ loading: false, failed: false, objection: d.objection || null })).catch(() => setState({ loading: false, failed: true, objection: null }));
+    useEffect(() => { load(); }, []);
+    const send = async () => {
+        setBusy(true); setMsg(''); setProblem('');
+        try {
+            const res = await csrfFetch('/api/citizen/restriction', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'object', reason }) });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok) { setProblem(d.error === 'reason_too_long' ? t('compte:settings.objection_too_long', 'Votre explication est trop longue (1000 caractères au plus).') : t('compte:settings.request_not_saved', 'La demande n’a pas pu être enregistrée.')); return; }
+            setReason(''); setMsg(t('compte:settings.objection_filed', 'Votre demande d’opposition est enregistrée. Une personne d’ADA l’examine et vous répond dans un délai d’un mois.'));
+            setState({ loading: false, failed: false, objection: d.objection || null });
+        } catch { setProblem(t('compte:settings.request_not_sent', 'La demande n’a pas pu être envoyée.')); } finally { setBusy(false); }
+    };
+    const open = state.objection && state.objection.status === 'OPEN';
+    return (
+        <div className="p-4 rounded-lg border border-slate-300" data-testid="compte-objection">
+            <span className="text-sm font-medium text-slate-900">{t('compte:settings.objection_title', 'M’opposer à un traitement de mes données (RGPD, article 21)')}</span>
+            <p className="text-xs text-slate-700 mt-1">{t('compte:settings.objection_intro', 'Vous pouvez vous opposer à un traitement de vos données pour des raisons tenant à votre situation. Votre demande est examinée par une personne : elle n’est pas appliquée automatiquement. En attendant la réponse, vous pouvez demander la limitation ci-dessus.')}</p>
+            <p role="status" aria-live="polite" data-testid="compte-objection-status" className="text-xs text-slate-900 mt-2">{msg}</p>
+            {problem ? <p role="alert" data-testid="compte-objection-problem" className="text-xs text-red-800 mt-1">{problem}</p> : null}
+            {state.loading ? null : state.failed ? (
+                <div className="mt-2" role="alert" data-testid="compte-objection-load-error">
+                    <p className="text-sm text-red-800">{t('compte:settings.objection_state_unread', 'L’état de votre demande d’opposition n’a pas pu être lu.')}</p>
+                    <Button type="button" variant="outline" size="sm" className="mt-1 min-h-11" onClick={load}>{t('compte:settings.reessayer', 'Réessayer')}</Button>
+                </div>
+            ) : open ? (
+                <p className="mt-2 text-sm text-slate-900" data-testid="compte-objection-open">{t('compte:settings.objection_open_since', 'Demande d’opposition enregistrée le {{date}} : en cours d’examen.', { date: formatDate(state.objection.since, { dateStyle: 'short' }) })}</p>
+            ) : (
+                <div className="mt-2 space-y-2">
+                    {state.objection ? <p className="text-xs text-slate-700" data-testid="compte-objection-answered">{t('compte:settings.objection_answered', 'Votre précédente demande d’opposition (du {{date}}) a reçu une réponse.', { date: formatDate(state.objection.since, { dateStyle: 'short' }) })}</p> : null}
+                    <label htmlFor="objection-reason" className="block text-sm text-slate-900">{t('compte:settings.objection_reason_label', 'Ce que vous souhaitez nous dire (facultatif)')}</label>
+                    <textarea id="objection-reason" data-testid="compte-objection-reason" rows={3} maxLength={1000} value={reason} onChange={(e) => setReason(e.target.value)} dir="auto" aria-describedby="objection-reason-help"
+                        className="w-full rounded-md border border-slate-300 p-2 text-base" />
+                    <p id="objection-reason-help" className="text-xs text-slate-700">{t('compte:settings.objection_reason_help', 'Par exemple le traitement concerné et la raison. N’écrivez pas d’informations médicales.')}</p>
+                    <Button type="button" size="sm" className="min-h-11" data-testid="compte-objection-send" disabled={busy} onClick={send}>{t('compte:settings.objection_send', 'Envoyer ma demande d’opposition')}</Button>
+                </div>
+            )}
+        </div>
+    );
+}
+
 /** PKG-11 / C21 — restriction of processing (RGPD art. 18): applies at once; the person lifts it whenever they want; ADA informs them before lifting it. */
 const restrictionGrounds = (t) => [
     ['ACCURACY_CONTESTED', t('compte:settings.ground.accuracy', 'Je conteste l’exactitude de mes données (le temps de vérifier)')],
@@ -402,6 +451,7 @@ function RestrictionPanel() {
 function DataTab() {
     const { t } = useT('compte');
     const [deletionRequest, setDeletionRequest] = useState(null);
+    const [deletionProblem, setDeletionProblem] = useState('');
     // PKG-11 / C21: the state of the latest erasure request is read from the server (in review, refused with its reason, blocked by a legal hold)
     useEffect(() => {
         let alive = true;
@@ -459,7 +509,7 @@ function DataTab() {
                                     disabled={exporting}
                                     className="mt-3"
                                 >
-                                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                                    <Download className="h-3.5 w-3.5 me-1.5" />
                                     {exporting ? t('compte:settings.exporting', 'Export en cours...') : t('compte:settings.download_json', 'Télécharger (JSON)')}
                                 </Button>
                                 <p role="status" aria-live="polite" data-testid="compte-export-status" className="text-xs text-slate-700 mt-2">{exportNote}</p>
@@ -468,6 +518,8 @@ function DataTab() {
                     </div>
 
                     <RestrictionPanel />
+
+                    <ObjectionPanel />
 
                     {/* Delete Account */}
                     <div className="p-4 rounded-lg border border-red-200 bg-red-50/50">
@@ -493,10 +545,12 @@ function DataTab() {
                                     </p>
                                 ) : null}
 
+                                {deletionProblem ? <p role="alert" data-testid="compte-deletion-problem" className="mt-2 text-sm text-red-800">{deletionProblem}</p> : null}
+
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="destructive" size="sm" className="mt-3">
-                                            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                                            <Trash2 className="h-3.5 w-3.5 me-1.5" />
                                             {t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}
                                         </Button>
                                     </AlertDialogTrigger>
@@ -520,12 +574,13 @@ function DataTab() {
                                                             headers: { 'Content-Type': 'application/json' },
                                                         });
                                                         if (!res.ok) {
-                                                            const data = await res.json().catch(() => ({}));
-                                                            throw new Error(data.error || t('compte:settings.deletion_error', 'Erreur lors de la suppression'));
+                                                            throw new Error('refused');
                                                         }
+                                                        setDeletionProblem('');
                                                         setDeletionRequest(await res.json().catch(() => ({ requestId: '—' })));
-                                                    } catch (err) {
-                                                        alert(err.message);
+                                                    } catch {
+                                                        // A-13: said inline (role="alert") in the interface language — no window.alert, no raw server code
+                                                        setDeletionProblem(t('compte:settings.deletion_not_recorded', 'Votre demande de suppression n’a pas pu être enregistrée. Votre compte n’a pas changé. Réessayez dans un instant.'));
                                                     }
                                                 }}
                                             >

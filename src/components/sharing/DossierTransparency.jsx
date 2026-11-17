@@ -11,6 +11,7 @@ import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 import { serverText } from '@/lib/serverText';
 import ReferentCard from '@/components/sharing/ReferentCard';
+import { useAccessActionLabels } from '@/lib/accessActionLabels';
 
 /**
  * PKG-2 — on a dossier attached to the account: R16 "who did what with my dossier" (by organisation, no staff name, no IP), C17 the documents organisations attached
@@ -22,6 +23,7 @@ export default function DossierTransparency({ shareId }) {
   const fr = useFrAttrs();   // R47: the structures' names stay French (lang="fr" outside French)
   const { coffreCategory: COFFRE_CATEGORY_LABELS, formatBytes } = useMonEspaceLabels();
   const { caseStatus: CASE_STATUS_LABELS, outcome: OUTCOME_LABELS } = useCaseLabels();
+  const { dossier: ACTION_LABELS } = useAccessActionLabels();   // A-13: the journal's actions in the interface language (the API's French label is the fallback)
   const [data, setData] = useState({ loading: true, events: [], documents: [], grants: [], coffre: [], followUps: [] });
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState('');
   const [pick, setPick] = useState({ documentId: '', structureId: '' });
@@ -59,7 +61,7 @@ export default function DossierTransparency({ shareId }) {
         <CardContent>
           {data.failed ? <p className="text-sm text-slate-700" data-testid="access-unknown">{t('messaging:transparency.access_unknown', 'Le journal des consultations n’a pas pu être lu.')}</p> : data.events.length ? (
             <ol className="space-y-1 text-sm text-slate-800" data-testid="access-log">
-              {data.events.map((e, i) => <li key={i} data-testid="access-event">{formatDateTime(e.at)} — <strong>{e.organization}</strong> {e.action === 'SIAO_HANDOVER_PREPARED' ? t('messaging:transparency.action_siao_prepared', 'a préparé une fiche de transmission au SIAO (rien n’est envoyé par AccèsDirectAide)') : e.label}</li>)}
+              {data.events.map((e, i) => <li key={i} data-testid="access-event">{formatDateTime(e.at)} — <strong {...fr}>{e.organization}</strong> {ACTION_LABELS[e.action] || <span {...fr}>{e.label}</span>}</li>)}
             </ol>
           ) : <p className="text-sm text-slate-700" data-testid="access-empty">{t('messaging:transparency.access_empty', 'Aucune organisation n’a encore consulté ce dossier.')}</p>}
         </CardContent>

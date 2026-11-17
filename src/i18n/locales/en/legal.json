@@ -143,6 +143,7 @@
  "privacy.never.sell": "Sell your data or use it for advertising.",
  "privacy.never.transmit": "Pass your data on to a body (France Travail, CAF…) without your agreement, unless the law obliges us to — in that case, we check each request.",
  "privacy.never.ai": "Send your questions or your case files to an outside AI provider.",
+ "privacy.rights.other.account": "Restriction and objection: make the request from your account settings. The restriction applies at once; the objection is examined by a person, who answers you.",
  "cookies.title": "Cookies",
  "cookies.seo.title": "Cookies and trackers",
  "cookies.seo.description": "List of AccesDirectAide's cookies and trackers, how long they last and your choices.",

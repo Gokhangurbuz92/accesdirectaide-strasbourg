@@ -143,6 +143,7 @@
  "privacy.never.sell": "Verilerinizi satmak veya reklam için kullanmak.",
  "privacy.never.transmit": "Verilerinizi, yasa bizi zorunlu kılmadıkça, onayınız olmadan bir kuruma (France Travail, CAF…) iletmek — bu durumda her talebi kontrol ederiz.",
  "privacy.never.ai": "Sorularınızı veya dosyalarınızı dışarıdaki bir yapay zekâ sağlayıcısına göndermek.",
+ "privacy.rights.other.account": "Kısıtlama ve itiraz: talebi hesap ayarlarınızdan yapın. Kısıtlama hemen uygulanır; itirazı bir kişi inceler ve size yanıt verir.",
  "cookies.title": "Çerezler",
  "cookies.seo.title": "Çerezler ve izleyiciler",
  "cookies.seo.description": "AccesDirectAide'in çerezlerinin ve izleyicilerinin listesi, süreleri ve seçenekleriniz.",

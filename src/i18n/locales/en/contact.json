@@ -56,6 +56,7 @@
  "request.adresse_e_mail_ou_telephone": "e-mail address or telephone",
  "request.ne_pas_remplir": "Do not fill in",
  "request.envoyer": "Send",
+ "request.recovery_help": "You no longer have access to the e-mail address of your account? Say so below and leave a way to reach you (a new e-mail address or a phone number). A member of the team will check with you that the account is really yours before any change. We will never ask for your password.",
  "form.email_placeholder": "jane@example.com",
  "error.not_connected": "Your message was not sent: sending through this form is not in service yet. Write to us directly at contact@accesdirectaide.fr.",
  "sent.test": "Test environment: the message was recorded in the test mailbox; no e-mail was sent.",

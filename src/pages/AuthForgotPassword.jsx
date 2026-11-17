@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { getCsrfHeaders } from '@/lib/csrf';
-import { useT } from '@/i18n';
+import i18n, { useT } from '@/i18n';
 // R44 (A5): field-level errors (aria-invalid, aria-describedby, focused summary) — the R43 pattern
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
 import { useFormErrors } from '@/components/forms/useFormErrors';
@@ -43,7 +43,7 @@ export default function AuthForgotPassword() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, language: i18n.language }),   // A-15: the reset e-mail in the language of this page when the account has none stored
       });
 
       const payload = await response.json().catch(() => null);
@@ -115,6 +115,10 @@ export default function AuthForgotPassword() {
             </Link>
             <Link className="text-slate-600 hover:underline" to={next}>
               {t('account:nav.back_journey', 'Retour au parcours')}
+            </Link>
+            {/* A-16: the reset link goes to the account's mailbox; without that mailbox the person asks for assisted recovery */}
+            <Link className="text-blue-700 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="forgot-lost-email">
+              {t('account:nav.lost_email', 'Je n’ai plus accès à mon adresse e-mail')}
             </Link>
           </div>
         </CardContent>
