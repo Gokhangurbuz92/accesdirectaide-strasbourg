@@ -6,6 +6,7 @@ import { explain } from './helpers.js';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import DuplicateDecisions from './DuplicateDecisions.jsx';
 import { DISTINCT, SAME, batchItems, chunks, draftFor, draftProblems, filterPairs, paginate, reconcileDrafts, sortPairs, summary, wellDocumented } from './duplicatesModel.js';
 
 /**
@@ -124,7 +125,7 @@ export default function AdminDuplicates() {
   const [sort, setSort] = useState('detection'); const [page, setPage] = useState(1); const [size, setSize] = useState(25);
   const [focusKey, setFocusKey] = useState(null); const [drawer, setDrawer] = useState(null);   // { key, detail }
   const [confirm, setConfirm] = useState(null); const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState(''); const [problem, setProblem] = useState(''); const [history, setHistory] = useState(null);
+  const [msg, setMsg] = useState(''); const [problem, setProblem] = useState('');
   const rowRefs = useRef({}); const rootRef = useRef(null); const drawerHeading = useRef(null); const confirmRef = useRef(null); const returnFocus = useRef(null);
 
   const load = useCallback(async ({ keepDrafts = true } = {}) => {
@@ -188,6 +189,7 @@ export default function AdminDuplicates() {
   const onKeyDown = (e) => {
     if (confirm) { if (e.key === 'Escape') { e.preventDefault(); setConfirm(null); } return; }
     if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target?.closest?.('[data-dup-decisions]')) return;   // RA-05: the recorded decisions below have their own controls; the pair shortcuts never act from there
     if (e.target !== document.body && !rootRef.current?.contains(e.target)) return;   // the rest of the administration keeps its own keys
     const current = e.target?.closest?.('li[data-key]')?.getAttribute('data-key') || focusKey;   // the row the keys act on: the focused one, else the last one
     const p = byKey.get(current);
@@ -228,10 +230,6 @@ export default function AdminDuplicates() {
       setMsg(t('admin:k5.duplicates.saved_batch', '{{ok}} décision(s) enregistrée(s), {{failed}} en échec. Paires restantes : {{left}}.', { ok: okKeys.length, failed: failed.length, left: pairs.length }));
       if (failed.length) setFilter('state', 'failed');
     } finally { setBusy(false); setTimeout(() => returnFocus.current?.focus?.(), 0); }
-  };
-
-  const showHistory = async () => {
-    try { setHistory((await apiClient.admin.getDuplicateRegister('history')).decisions || []); } catch (e) { setProblem(explain(e)); }
   };
 
   const drawerPair = drawer ? byKey.get(drawer.key) : null;
@@ -341,17 +339,11 @@ export default function AdminDuplicates() {
             <span>{t('admin:k5.duplicates.page_of', 'Page {{page}} sur {{pages}}', { page: paged.page, pages: paged.pages })}</span>
             <Button size="sm" variant="outline" disabled={paged.page >= paged.pages} onClick={() => setPage(paged.page + 1)}>{t('admin:k5.duplicates.next_page', 'Page suivante')}</Button>
           </nav>
-          <div>
-            <Button size="sm" variant="ghost" onClick={showHistory} data-testid="dup-history-open">{t('admin:k5.duplicates.history', 'Décisions récentes (historique)')}</Button>
-            {history ? (
-              <ul className="mt-1 space-y-0.5 text-xs" data-testid="dup-history">
-                {history.map((h) => <li key={h.id}>{formatDateTime(h.decidedAt)} — <span {...fr}>{h.nomA}</span> / <span {...fr}>{h.nomB}</span> — {h.decision === SAME ? t('admin:k5.duplicates.prev_same', 'même établissement') : t('admin:k5.duplicates.prev_distinct', 'distincts')} — {h.reviewerId}{h.supersededAt ? t('admin:k5.duplicates.superseded', ' (remplacée)') : ''}</li>)}
-                {!history.length ? <li>{t('admin:k5.duplicates.history_none', 'Aucune décision enregistrée.')}</li> : null}
-              </ul>
-            ) : null}
-          </div>
         </>
       )}
+
+      {/* RA-05: the recorded decisions (automatic ones included), filtered and paged, each one reviewable and replaceable by a person */}
+      <DuplicateDecisions errorText={(r) => ERROR(t, r)} />
 
       {drawerPair ? (
         <aside role="dialog" aria-modal="false" aria-labelledby="dup-drawer-title" data-testid="admin-duplicate-pair"

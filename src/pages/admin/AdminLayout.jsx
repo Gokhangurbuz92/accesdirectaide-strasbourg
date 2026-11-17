@@ -78,6 +78,7 @@ const SIDEBAR_SECTIONS = [
             { label: 'Sources officielles acceptées', to: '/admin/sources', icon: Database },
             { label: 'Versions des fiches', to: '/admin/versions', icon: FileText },
             { label: 'Qualité des données', to: '/admin/data-quality', icon: ListChecks },
+            { label: 'Liens officiels (contrôle)', to: '/admin/liens', icon: ListChecks },   // RA-06
         ]
     },
     {
@@ -87,6 +88,7 @@ const SIDEBAR_SECTIONS = [
             { label: 'Protection des données', to: '/admin/privacy', icon: Shield },
             { label: 'Demandes d’aide', to: '/admin/support', icon: Inbox },
             { label: 'Représentants légaux (vérification)', to: '/admin/representants-legaux', icon: Shield },   // R46 / C05 verifier side
+            { label: 'Sensibilité des services réservables', to: '/admin/sensibilite-services', icon: Shield },   // RA-07
         ]
     },
     {
@@ -95,6 +97,7 @@ const SIDEBAR_SECTIONS = [
         items: [
             { label: 'Opérations et journal d’audit', to: '/admin/operations', icon: Shield },
             { label: 'Signaux de sécurité', to: '/admin/securite', icon: Shield },
+            { label: 'Alertes et tâches planifiées', to: '/admin/alertes', icon: Activity },   // RA-03 (interface)
             { label: 'Fournisseurs et intégrations', to: '/admin/fournisseurs', icon: Globe },
             { label: 'Partenaires institutionnels', to: '/admin/institutions', icon: Globe },
             { label: 'Dossiers de financement', to: '/admin/financement', icon: FileStack },
@@ -150,13 +153,16 @@ function navLabel(t, label) {
         'Sources officielles acceptées': t('admin:layout.nav.sources', 'Sources officielles acceptées'),
         'Versions des fiches': t('admin:layout.nav.versions', 'Versions des fiches'),
         'Qualité des données': t('admin:layout.nav.data_quality', 'Qualité des données'),
+        'Liens officiels (contrôle)': t('admin:layout.nav.link_checks', 'Liens officiels (contrôle)'),
         'Personnes et données': t('admin:layout.nav.people_data', 'Personnes et données'),
         'Protection des données': t('admin:layout.nav.privacy', 'Protection des données'),
         'Demandes d’aide': t('admin:layout.nav.support', 'Demandes d’aide'),
         'Représentants légaux (vérification)': t('admin:layout.nav.guardians', 'Représentants légaux (vérification)'),
+        'Sensibilité des services réservables': t('admin:layout.nav.service_sensitivity', 'Sensibilité des services réservables'),
         'Plateforme': t('admin:layout.nav.platform', 'Plateforme'),
         'Opérations et journal d’audit': t('admin:layout.nav.operations', 'Opérations et journal d’audit'),
         'Signaux de sécurité': t('admin:layout.nav.security', 'Signaux de sécurité'),
+        'Alertes et tâches planifiées': t('admin:layout.nav.alerts', 'Alertes et tâches planifiées'),
         'Fournisseurs et intégrations': t('admin:layout.nav.providers', 'Fournisseurs et intégrations'),
         'Partenaires institutionnels': t('admin:layout.nav.institutions', 'Partenaires institutionnels'),
         'Dossiers de financement': t('admin:layout.nav.funding', 'Dossiers de financement'),

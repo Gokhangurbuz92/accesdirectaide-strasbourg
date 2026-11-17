@@ -3,13 +3,15 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
 import { SourceSnapshot } from '../../../src/db/schema.js';
-import { or, gte, eq } from 'drizzle-orm';
+import { and, or, gte, eq, like } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
 import { parsePaginationParams } from '../../lib/geography/CursorPagination.js';
 
 /**
  * Admin endpoint to view link check results
  * GET /api/admin/link-checks?is_broken=true
+ * RA-06 (additive): `kind=link` keeps only the results of the link check (api/_services/link-check.js writes raw_excerpt « link:<address> »; the automatic
+ * verification keeps its own source snapshots in the same table), and every check carries the address that was checked (`url`, null for another snapshot).
  */
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -41,8 +43,12 @@ export default async function handler(req, res) {
             conditions.push(or(gte(SourceSnapshot.http_status, 400), eq(SourceSnapshot.http_status, 0)));
         }
 
+        if (req.query.kind === 'link') {
+            conditions.push(like(SourceSnapshot.raw_excerpt, 'link:%'));
+        }
+
         const results = await db.query.SourceSnapshot.findMany({
-            where: conditions.length ? conditions[0] : undefined,
+            where: conditions.length > 1 ? and(...conditions) : conditions.length ? conditions[0] : undefined,
             orderBy: (ss, { desc }) => [desc(ss.fetched_at)],
             limit: limit + 1
         });
@@ -60,7 +66,8 @@ export default async function handler(req, res) {
             acc[key].checks.push({
                 fetched_at: item.fetched_at,
                 http_status: item.http_status,
-                final_url: item.final_url
+                final_url: item.final_url,
+                url: typeof item.raw_excerpt === 'string' && item.raw_excerpt.startsWith('link:') ? item.raw_excerpt.slice(5) : null
             });
             return acc;
         }, {});

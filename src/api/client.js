@@ -272,6 +272,11 @@ export const apiClient = {
         getDuplicateRegister: function (view) { return apiRequest('/api/admin/duplicates?view=' + encodeURIComponent(view || 'register')); },
         /** several decisions, each through the single-decision path; one result per item @param {any[]} decisions */
         decideDuplicates: function (decisions) { return apiRequest('/api/admin/duplicates', { method: 'POST', body: { decisions: decisions } }); },
+        /** RA-05 — the decided pairs (filters, pages); a replacement goes through decideDuplicates with expectedDecisionId */
+        getDecidedDuplicates: function (/** @type {Record<string, any>=} */ params) {
+            var qs = Object.entries(params || {}).filter(function (e) { return e[1] !== '' && e[1] !== null && e[1] !== undefined; }).map(function (e) { return encodeURIComponent(e[0]) + '=' + encodeURIComponent(String(e[1])); }).join('&');
+            return apiRequest('/api/admin/duplicates?view=decided' + (qs ? '&' + qs : ''));
+        },
         /** @param {string} entityType @param {string} entityId */
         getVerification: function (entityType, entityId) { return apiRequest('/api/admin/content-verification?entityType=' + encodeURIComponent(entityType) + '&entityId=' + encodeURIComponent(entityId)); },
         /** PKG-4 / E02 — structure profile proposals awaiting ADA review. @param {string=} status */
