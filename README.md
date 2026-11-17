@@ -107,6 +107,10 @@ docs/                 # Documentation technique
 scripts/              # Scripts utilitaires (seed, backup, ingestion)
 ```
 
+## ⚖️ Droits d'auteur
+
+Dépôt public, pas open source : tous droits réservés, voir [COPYRIGHT.md](COPYRIGHT.md). Les composants tiers et les données publiques réutilisées gardent leurs propres licences. Les versions publiées avant le retrait du fichier `LICENSE` (MIT) restent sous MIT pour qui les a obtenues sous cette licence.
+
 ## 🔗 Liens utiles
 
 - **Production** : [accesdirectaide.fr](https://www.accesdirectaide.fr)

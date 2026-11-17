@@ -2,6 +2,7 @@
     "name": "@ada/shared",
     "version": "0.0.1",
     "private": true,
+    "license": "UNLICENSED",
     "type": "module",
     "description": "Constantes, enums, et validators Zod partagés — Accès Direct Aide",
     "main": "index.js",

@@ -7,7 +7,7 @@ import { existsSync } from 'fs';
 describe('Documentation completeness', () => {
   const requiredDocs = [
     'README.md',
-    'LICENSE',
+    'COPYRIGHT.md',
     'CHANGELOG.md',
     'docs/ARCHITECTURE.md',
     'docs/CONTRIBUTING.md',
