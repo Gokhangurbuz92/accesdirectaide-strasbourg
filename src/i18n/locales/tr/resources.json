@@ -23,5 +23,20 @@
   "retry": "Tekrar deneyin",
   "seo.description": "İşlemleriniz için acil durum numaraları ve yararlı kaynaklar.",
   "title": "Yararlı kaynaklar",
-  "header.emergency_only": "Ulusal acil numaralar. Bu sayfada şu an yayımlanmış bir belge yok."
+  "header.emergency_only": "Ulusal acil numaralar. Bu sayfada şu an yayımlanmış bir belge yok.",
+  "withdrawn.title": "Belge kaldırıldı",
+  "withdrawn.text": "Bu belge Kaynaklar sayfasından kaldırıldı. Doğrudan resmî sitelere ya da doğrulanmış yardımlara ve işlemlere bakın.",
+  "type.guide": "Rehber",
+  "type.tool": "Araç",
+  "type.document": "Belge",
+  "type.link": "Yararlı bağlantı",
+  "detail.source_title": "Resmî kaynak",
+  "detail.publisher": "Yayımlayan:",
+  "detail.address": "Adres:",
+  "detail.new_tab": "(yeni sekmede açılır)",
+  "detail.verified": "Doğrulama tarihi:",
+  "card.update_needed": "Üç aydan uzun süre önce doğrulandı: lütfen resmî kaynağa da bakın.",
+  "detail.source_rule": "Bu belge resmî kaynağı tanıtır; bir fark olması durumunda resmî kaynak esas alınır.",
+  "card.source": "Resmî kaynak:",
+  "card.verified": "Doğrulama tarihi: {{date}}"
 }

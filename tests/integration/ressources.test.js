@@ -5,34 +5,14 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 import '../../src/db/index.js';
 import { describe, it, expect, beforeEach } from 'vitest';
 
-// 1. Define Hoisted Mocks
-const { mockFindFirst, mockFindMany, mockCountFn } = vi.hoisted(() => {
-    const mockCountFn = vi.fn().mockResolvedValue([{ count: 0 }]);
-    return {
-        mockFindFirst: vi.fn(),
-        mockFindMany: vi.fn(),
-        mockCountFn
-    };
-});
+// 1. Define Hoisted Mocks — C12: the handler reads through db.select() (single: …where().limit(); list: …where().orderBy().limit()); a double without
+// execute() is taken as a database with migration 0050 (api/_utils/schema-features.js)
+const { mockRows } = vi.hoisted(() => ({ mockRows: vi.fn() }));
 
 // 2. Mock Drizzle
 vi.mock('../../src/db/index.js', () => {
-    return {
-        db: {
-            query: {
-                ResourceAccessibility: {
-                    findFirst: mockFindFirst,
-                    findMany: mockFindMany
-                }
-            },
-            select: vi.fn(() => ({
-                from: vi.fn(() => ({
-                    where: mockCountFn, // Assuming it uses where
-                    ...mockCountFn // Fallback if no where
-                }))
-            }))
-        }
-    };
+    const chain = () => { const c = { from: () => c, where: () => c, orderBy: () => c, limit: () => Promise.resolve(mockRows()) }; return c; };
+    return { db: { select: vi.fn(() => chain()) } };
 });
 
 // 3. Mock Rate Limit
@@ -44,6 +24,11 @@ vi.mock('../../api/_utils/rateLimit.js', () => {
 });
 
 import handler from '../../api/_handlers/ressources.js';
+import { contentVersion } from '../../api/_services/resource-publication.js';
+
+const BASE = { id: 'res-1', slug: 'res-1', title: 'Guide officiel', type: 'guide', content: 'Présentation officielle du service.', source_url: 'https://www.caf.fr/x',
+    source_publisher: 'Caf', territory_scope: null, status: 'published', reviewer_type: 'admin', reviewer_id: 'admin@example.test', verified_at: new Date(Date.now() - 5 * 86400000) };
+const PUBLISHED = { ...BASE, verified_version: contentVersion(BASE) };
 
 describe('Ressources API Handler', () => {
     let mockReq;
@@ -53,9 +38,7 @@ describe('Ressources API Handler', () => {
         vi.clearAllMocks();
 
         // Setup default mock returns
-        mockFindMany.mockResolvedValue([]);
-        mockCountFn.mockResolvedValue([{ count: 0 }]);
-        mockFindFirst.mockResolvedValue(null);
+        mockRows.mockReturnValue([]);
 
         // Mock response object
         mockRes = {
@@ -103,9 +86,8 @@ describe('Ressources API Handler', () => {
             headers: {}
         };
 
-        // Mock data
-        mockFindMany.mockResolvedValue([{ id: 'res-1', slug: 'res-1' }]);
-        mockCountFn.mockResolvedValue([{ count: 1 }]);
+        // Mock data: one document meeting the C12 contract, one legacy row « published » before 0050 (never public)
+        mockRows.mockReturnValue([PUBLISHED, { id: 'old', slug: 'old', title: 'Ancien', type: 'guide', status: 'published', source_url: 'https://www.caf.fr/x' }]);
 
         await handler(mockReq, mockRes);
         
@@ -113,6 +95,8 @@ describe('Ressources API Handler', () => {
         expect(mockRes.statusCode).toBe(200);
         expect(mockRes.body).toHaveProperty('items');
         expect(mockRes.body.items).toHaveLength(1);
+        expect(mockRes.body.items[0]).toMatchObject({ id: 'res-1', source_publisher: 'Caf', freshness: 'current' });
+        expect(mockRes.body.items[0]).not.toHaveProperty('reviewer_id');
         expect(mockRes.body.pagination.total).toBe(1);
     });
 
@@ -124,7 +108,7 @@ describe('Ressources API Handler', () => {
         };
 
         // Mock Found
-        mockFindFirst.mockResolvedValue({ id: 'res-1', slug: 'test-ressource', status: 'published' });
+        mockRows.mockReturnValue([{ ...PUBLISHED, slug: 'test-ressource' }]);
 
         await handler(mockReq, mockRes);
         
@@ -139,7 +123,7 @@ describe('Ressources API Handler', () => {
             headers: {}
         };
 
-        mockFindFirst.mockResolvedValue(null);
+        mockRows.mockReturnValue([]);
 
         await handler(mockReq, mockRes);
         expect(mockRes.statusCode).toBe(404);

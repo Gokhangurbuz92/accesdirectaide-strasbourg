@@ -48,6 +48,7 @@ const SIDEBAR_SECTIONS = [
             { label: 'À traiter', to: '/admin/dashboard', icon: LayoutDashboard },
             { label: 'Veille automatique', to: '/admin/veille', icon: RefreshCw },
             { label: 'Rédaction des actualités', to: '/admin/actualites-redaction', icon: RefreshCw },
+            { label: 'Documents de la page Ressources', to: '/admin/ressources-publication', icon: FileText },
         ]
     },
     {
@@ -134,6 +135,7 @@ function navLabel(t, label) {
     const labels = {
         'À traiter': t('admin:layout.nav.to_handle', 'À traiter'),
         'Veille automatique': t('admin:layout.nav.veille', 'Veille automatique'),
+        'Documents de la page Ressources': t('admin:layout.nav.resources', 'Documents de la page Ressources'),
         'Contrôles manuels (facultatifs)': t('admin:layout.nav.manual_checks', 'Contrôles manuels (facultatifs)'),
         'Fiches du lancement (WS2)': t('admin:layout.nav.ws2', 'Fiches du lancement (WS2)'),
         'Organisations': t('admin:layout.nav.organizations', 'Organisations'),

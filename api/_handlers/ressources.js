@@ -9,19 +9,37 @@ const EMERGENCY_RESOURCES = [
 import logger from '../_utils/logger.js';
 import { db } from '../../src/db/index.js';
 import { ResourceAccessibility } from '../../src/db/schema.js';
-import { eq, and, desc, count } from 'drizzle-orm';
+import { eq, and, desc, gte, isNotNull, lte } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
+import { resourcePublicationSchema } from '../_utils/schema-features.js';
+import { decideResource, publicView, TYPES } from '../_services/resource-publication.js';
+import { maxAgeDays } from '../lib/publicVisibility.js';
 import { z } from 'zod';
 
 const searchRessourcesSchema = z.object({
-    id: z.string().optional(),
-    slug: z.string().optional(),
-    type: z.string().optional(),
-    territory_scope: z.string().optional(),
+    id: z.string().max(64).optional(),
+    slug: z.string().max(120).optional(),
+    type: z.string().max(40).optional(),
+    territory_scope: z.string().max(80).optional(),
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().max(100).default(12),
     emergency: z.enum(['1', 'true']).optional()
 });
+
+/**
+ * C12 — a document of /ressources is public only when it meets the publication contract (api/_services/resource-publication.js): published by a named
+ * administrator, official https source and its publisher, a human verification date no older than the catalogue's limit (180 days by default) and the
+ * content unchanged since that verification. The SQL narrows the rows; decideResource() is the authority (same rule, plus the content check).
+ * On a database WITHOUT migration 0050 no row can meet the contract (no publisher, no verification, no reviewer): the list is empty, as before C12,
+ * and a single document answers 404. Rows created before 0050 are never public until a human completes and verifies them, whatever their old status.
+ * The public answer never carries the reviewer's identity or the withdrawal reason.
+ */
+/** @param {Date} now @param {number} maxAge */
+const publishedWhere = (now, maxAge) => and(
+    eq(ResourceAccessibility.status, 'published'),
+    isNotNull(ResourceAccessibility.verified_at), gte(ResourceAccessibility.verified_at, new Date(now.getTime() - maxAge * 86400000)), lte(ResourceAccessibility.verified_at, new Date(now.getTime() + 86400000)),
+    isNotNull(ResourceAccessibility.reviewer_id), isNotNull(ResourceAccessibility.source_publisher), isNotNull(ResourceAccessibility.source_url),
+);
 /**
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
@@ -54,41 +72,35 @@ async function handler(req, res) {
             });
         }
 
+        const has0050 = await resourcePublicationSchema(db);
+        const now = new Date(); const maxAge = maxAgeDays();
+
         // 1. Single Item (ID or Slug)
         if (params.id || params.slug) {
-            const ressource = await db.query.ResourceAccessibility.findFirst({
-                where: params.id ? eq(ResourceAccessibility.id, params.id) : eq(ResourceAccessibility.slug, params.slug || '')
-            });
-
-            if (!ressource || ressource.status !== 'published') {
+            if (!has0050) return res.status(404).json({ error: "Ressource non trouvée" });
+            const [ressource] = await db.select().from(ResourceAccessibility)
+                .where(params.id ? eq(ResourceAccessibility.id, params.id) : eq(ResourceAccessibility.slug, params.slug || '')).limit(1);
+            const decision = decideResource(ressource, { now, maxAge });
+            // a withdrawn document says so (410), without its reason; anything else not public is simply not found
+            if (ressource && ressource.status === 'withdrawn' && ressource.published_at) return res.status(410).json({ error: 'WITHDRAWN', withdrawn: true });
+            if (!decision.visible) {
                 return res.status(404).json({ error: "Ressource non trouvée" });
             }
-            return res.status(200).json(ressource);
+            return res.status(200).json(publicView(ressource, decision.freshness));
         }
 
         // 2. Search / List
-        const conditionArr = [eq(ResourceAccessibility.status, 'published')];
-
-        if (params.type) {
-            conditionArr.push(eq(ResourceAccessibility.type, params.type));
+        if (!has0050 || (params.type && !TYPES.includes(params.type))) {
+            return res.status(200).json({ items: [], pagination: { total: 0, page: params.page, pageSize: params.pageSize, totalPages: 0 } });
         }
-
-        if (params.territory_scope) {
-            conditionArr.push(eq(ResourceAccessibility.territory_scope, params.territory_scope));
-        }
-        
-        const conditions = conditionArr.length === 1 ? conditionArr[0] : and(...conditionArr);
-
-        const [items, totalRes] = await Promise.all([
-            db.query.ResourceAccessibility.findMany({
-                where: conditions,
-                orderBy: [desc(ResourceAccessibility.createdAt)],
-                offset: (params.page - 1) * params.pageSize,
-                limit: params.pageSize
-            }),
-            db.select({ count: count() }).from(ResourceAccessibility).where(conditions)
-        ]);
-        const total = Number(totalRes[0].count);
+        const conditionArr = [publishedWhere(now, maxAge)];
+        if (params.type) conditionArr.push(eq(ResourceAccessibility.type, params.type));
+        if (params.territory_scope) conditionArr.push(eq(ResourceAccessibility.territory_scope, params.territory_scope));
+        const rows = await db.select().from(ResourceAccessibility).where(and(...conditionArr))
+            .orderBy(desc(ResourceAccessibility.verified_at)).limit(500);
+        const visible = rows.map((r) => ({ r, d: decideResource(r, { now, maxAge }) })).filter((x) => x.d.visible).map((x) => publicView(x.r, x.d.freshness));
+        const total = visible.length;
+        const items = visible.slice((params.page - 1) * params.pageSize, params.page * params.pageSize);
 
         return res.status(200).json({
             items,

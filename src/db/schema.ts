@@ -1139,8 +1139,50 @@ export const ResourceAccessibility = pgTable('ResourceAccessibility', {
 	status: text('status').notNull().default("draft"),
 	retrieved_at: timestamp('retrieved_at', { precision: 3 }),
 	last_checked_at: timestamp('last_checked_at', { precision: 3 }),
-	source_last_modified: timestamp('source_last_modified', { precision: 3 })
-});
+	source_last_modified: timestamp('source_last_modified', { precision: 3 }),
+	/**
+	 * C12 (owner decision b, 0050) — the publication record of a document of /ressources, written ONLY by api/_services/resource-publication.js. The name of the
+	 * official publisher of source_url; the moment a named administrator (MFA) confirmed the document against that source (server clock, never a client value,
+	 * never an import time) and who did it (reviewer_type « admin » + reviewer_id = the administrator's e-mail, as AuditLog.actor_id); the content version
+	 * confirmed; publication and withdrawal times and the withdrawal reason. Rows created before 0050 have none of them and are never public until a human
+	 * completes them. A database without 0050 lacks these columns: every reader uses api/_utils/schema-features.js resourceTable().
+	 */
+	source_publisher: text('source_publisher'),
+	verified_at: timestamp('verified_at', { precision: 3 }),
+	reviewer_type: text('reviewer_type'),
+	reviewer_id: text('reviewer_id'),
+	verified_version: text('verified_version'),
+	published_at: timestamp('published_at', { precision: 3 }),
+	withdrawn_at: timestamp('withdrawn_at', { precision: 3 }),
+	withdrawal_reason: text('withdrawal_reason')
+}, (t) => ({
+	// 0050: a verification date never stands alone — it comes with its reviewer, the publisher and the official address (true of every row before 0050: no date)
+	'ResourceAccessibility_verification_check': check('ResourceAccessibility_verification_check', sql`${t.verified_at} IS NULL OR (${t.reviewer_type} IS NOT NULL AND ${t.reviewer_id} IS NOT NULL AND ${t.source_publisher} IS NOT NULL AND ${t.source_url} IS NOT NULL AND ${t.verified_version} IS NOT NULL)`)
+}));
+
+/**
+ * C12 (0050) — append-only ledger of every publication step of a /ressources document (create, edit, verify, publish, withdraw): who (actorType + actorId),
+ * when, from which status to which, the source and the content version at that moment. The database refuses UPDATE and DELETE (trigger "ada_append_only").
+ * No foreign key, like ContentVerification: the ledger outlives its document.
+ */
+export const ResourcePublicationEvent = pgTable('ResourcePublicationEvent', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	resourceId: text('resourceId').notNull(),
+	action: text('action').notNull(),
+	fromStatus: text('fromStatus'),
+	toStatus: text('toStatus').notNull(),
+	actorType: text('actorType').notNull(),
+	actorId: text('actorId').notNull(),
+	sourceUrl: text('sourceUrl'),
+	sourcePublisher: text('sourcePublisher'),
+	contentVersion: text('contentVersion'),
+	note: text('note'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'ResourcePublicationEvent_resource_idx': index('ResourcePublicationEvent_resource_idx').on(t.resourceId, t.createdAt),
+	'ResourcePublicationEvent_action_check': check('ResourcePublicationEvent_action_check', sql`${t.action} IN ('CREATE', 'EDIT', 'VERIFY', 'PUBLISH', 'WITHDRAW')`),
+	'ResourcePublicationEvent_status_check': check('ResourcePublicationEvent_status_check', sql`${t.toStatus} IN ('draft', 'published', 'withdrawn')`)
+}));
 
 export const ContentReport = pgTable('ContentReport', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),

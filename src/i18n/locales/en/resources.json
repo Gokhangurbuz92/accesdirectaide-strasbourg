@@ -23,5 +23,20 @@
   "retry": "Try again",
   "seo.description": "Emergency numbers and useful resources for your procedures.",
   "title": "Useful resources",
-  "header.emergency_only": "National emergency numbers. No document is published on this page for the moment."
+  "header.emergency_only": "National emergency numbers. No document is published on this page for the moment.",
+  "withdrawn.title": "Document withdrawn",
+  "withdrawn.text": "This document has been withdrawn from the Resources page. Consult the official websites directly, or the verified aids and procedures.",
+  "type.guide": "Guide",
+  "type.tool": "Tool",
+  "type.document": "Document",
+  "type.link": "Useful link",
+  "detail.source_title": "Official source",
+  "detail.publisher": "Publisher:",
+  "detail.address": "Address:",
+  "detail.new_tab": "(opens in a new tab)",
+  "detail.verified": "Verified on:",
+  "card.update_needed": "Verified more than three months ago: please also consult the official source.",
+  "detail.source_rule": "This document presents the official source; if they differ, the official source prevails.",
+  "card.source": "Official source:",
+  "card.verified": "Verified on {{date}}"
 }

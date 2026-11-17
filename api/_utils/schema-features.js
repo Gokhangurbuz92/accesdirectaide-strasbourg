@@ -6,7 +6,7 @@
  * column. Nothing is cached across runs: applying the migration later is picked up by the next run.
  */
 import { Table, getTableColumns, sql } from 'drizzle-orm';
-import { ParcoursItem, ProAppointment, ProRdvService, Referral, StructureRdvSettings } from '../../src/db/schema.js';
+import { ParcoursItem, ProAppointment, ProRdvService, Referral, ResourceAccessibility, StructureRdvSettings } from '../../src/db/schema.js';
 
 /** ProAppointment columns added by drizzle/0043_r38_guest_booking.sql (schema keys = column names) */
 export const GUEST_BOOKING_COLUMNS = Object.freeze(['guestEmail', 'guestEmailHash', 'guestPhone', 'guestMailConsentAt', 'guestHoldExpiresAt', 'guestCodeHash',
@@ -194,3 +194,38 @@ export function referralChainSchema(database) {
 export function forgetReferralChainSchema(database) { chainCache.delete(database); }
 /** Referral as this database has it @param {{ chain: boolean }} f @returns {typeof Referral} */
 export const referralTable = (f) => without(Referral, f.chain ? [] : [...REFERRAL_CHAIN_COLUMNS]);
+
+/**
+ * C12 — migration 0050 (publication of the /ressources documents: eight columns of "ResourceAccessibility" and the ledger "ResourcePublicationEvent"). The
+ * code may be released before the owner authorises 0050 on Production: there the public list keeps its pre-0050 behaviour (no document can meet the
+ * publication contract, so none is listed) and the administration tool answers « not available ». drizzle names EVERY column of the table object in
+ * select() / returning(), so readers use resourceTable(f). Read at most once per GUEST_SCHEMA_TTL_MS per database object; a failed read is not remembered
+ * and answers false (fail-closed: nothing is published). A database double without execute() is taken as fully migrated.
+ */
+export const RESOURCE_PUBLICATION_COLUMNS = Object.freeze(['source_publisher', 'verified_at', 'reviewer_type', 'reviewer_id', 'verified_version', 'published_at',
+  'withdrawn_at', 'withdrawal_reason']);
+/** @param {any} database @returns {Promise<boolean>} every 0050 column and the ledger exist */
+export async function readResourcePublicationSchema(database) {
+  const res = await database.execute(sql`SELECT
+    (SELECT count(*)::int FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'ResourceAccessibility'
+      AND column_name IN (${sql.join(RESOURCE_PUBLICATION_COLUMNS.map((c) => sql`${c}`), sql`, `)})) AS cols,
+    (SELECT count(*)::int FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = 'ResourcePublicationEvent') AS ledger`);
+  const row = (res?.rows || res || [])[0] || {};
+  return Number(row.cols) === RESOURCE_PUBLICATION_COLUMNS.length && Number(row.ledger) === 1;
+}
+const resourceCache = new WeakMap();
+/** @param {any} database a drizzle client (or transaction) @returns {Promise<boolean>} */
+export function resourcePublicationSchema(database) {
+  if (!database || typeof database.execute !== 'function') return Promise.resolve(true);
+  const hit = resourceCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const read = readResourcePublicationSchema(database);
+  const value = read.catch(() => false);
+  resourceCache.set(database, { at: Date.now(), value });
+  read.catch(() => { if (resourceCache.get(database)?.value === value) resourceCache.delete(database); });
+  return value;
+}
+/** for the tests: forget what was read (a migration applied or rolled back inside one process) */
+export function forgetResourcePublicationSchema(database) { resourceCache.delete(database); }
+/** ResourceAccessibility as this database has it @param {boolean} has0050 @returns {typeof ResourceAccessibility} */
+export const resourceTable = (has0050) => without(ResourceAccessibility, has0050 ? [] : [...RESOURCE_PUBLICATION_COLUMNS]);

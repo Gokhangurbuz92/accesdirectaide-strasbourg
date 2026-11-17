@@ -553,7 +553,8 @@
       "get": {
         "tags": ["Core Data"],
         "summary": "Ressources documentaires",
-        "responses": { "200": { "description": "Liste des ressources" } }
+        "description": "C12 : seuls les documents publiés qui respectent le contrat de publication (source officielle https et son éditeur, date « vérifié le » posée par un administrateur nommé, vérification de moins de 180 jours, contenu inchangé depuis). Sans la migration 0050 : aucun document. ?emergency=1 : numéros d'urgence nationaux.",
+        "responses": { "200": { "description": "Liste des ressources" }, "404": { "description": "Document inconnu ou non public" }, "410": { "description": "Document retiré" } }
       }
     },
     "/tools": {
@@ -790,6 +791,22 @@
           "200": { "description": "Contenu partagé" },
           "404": { "description": "Lien expiré ou invalide" }
         }
+      }
+    },
+    "/admin/resources": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Documents de /ressources (C12)",
+        "description": "Liste (ou ?id=) avec version du contenu, manques avant publication, décision publique et registre. available=false sans la migration 0050 (lignes en lecture seule).",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "{ available, items } ou un document" }, "401": { "description": "Session administrateur requise" }, "404": { "description": "Document inconnu" } }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Créer, modifier, vérifier, publier ou retirer un document de /ressources (C12)",
+        "description": "{ action: create | edit | verify | publish | withdraw, id?, draft?, expectedVersion?, note?, reason? } — session administrateur nominative avec MFA ; chaque étape est inscrite au registre en ajout seul. Rien n'est publié automatiquement.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Étape enregistrée" }, "201": { "description": "Brouillon créé" }, "400": { "description": "Note ou motif manquant" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "409": { "description": "STALE_REVIEW, WITHDRAW_BEFORE_EDITING, NOT_A_DRAFT, LEGACY_ROW_EDIT_FIRST" }, "422": { "description": "Contrat non respecté (problems)" }, "503": { "description": "MIGRATION_0050_REQUIRED" } }
       }
     },
     "/admin/inbox": {

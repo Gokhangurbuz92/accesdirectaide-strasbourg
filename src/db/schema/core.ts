@@ -21,6 +21,7 @@ export {
   Guide,
   ToolboxItem,
   ResourceAccessibility,
+  ResourcePublicationEvent,
   ContentReport,
 
   // Relations

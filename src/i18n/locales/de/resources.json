@@ -23,5 +23,20 @@
   "retry": "Erneut versuchen",
   "seo.description": "Notrufnummern und nützliche Ressourcen für Ihre Behördengänge.",
   "title": "Nützliche Ressourcen",
-  "header.emergency_only": "Nationale Notrufnummern. Auf dieser Seite ist derzeit kein Dokument veröffentlicht."
+  "header.emergency_only": "Nationale Notrufnummern. Auf dieser Seite ist derzeit kein Dokument veröffentlicht.",
+  "withdrawn.title": "Dokument zurückgezogen",
+  "withdrawn.text": "Dieses Dokument wurde von der Seite „Ressourcen“ zurückgezogen. Konsultieren Sie direkt die offiziellen Websites oder die geprüften Hilfen und Verfahren.",
+  "type.guide": "Leitfaden",
+  "type.tool": "Werkzeug",
+  "type.document": "Dokument",
+  "type.link": "Nützlicher Link",
+  "detail.source_title": "Offizielle Quelle",
+  "detail.publisher": "Herausgeber:",
+  "detail.address": "Adresse:",
+  "detail.new_tab": "(öffnet sich in einem neuen Tab)",
+  "detail.verified": "Geprüft am:",
+  "card.update_needed": "Vor mehr als drei Monaten geprüft: Bitte konsultieren Sie auch die offizielle Quelle.",
+  "detail.source_rule": "Dieses Dokument stellt die offizielle Quelle vor; bei Abweichungen ist die offizielle Quelle maßgeblich.",
+  "card.source": "Offizielle Quelle:",
+  "card.verified": "Geprüft am {{date}}"
 }

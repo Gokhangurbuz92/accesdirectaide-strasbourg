@@ -183,6 +183,7 @@ const routeTable = [
     { path: 'admin/validate-publication', match: 'exact', handler: () => import('./_handlers/admin/validate-publication.js') },
     { path: 'admin/content-verification', match: 'exact', handler: () => import('./_handlers/admin/content-verification.js') },
     { path: 'admin/news-editorial', match: 'exact', handler: () => import('./_handlers/admin/news-editorial.js') },   // Actualités v2: ADA articles (MFA writes)
+    { path: 'admin/resources', match: 'exact', handler: () => import('./_handlers/admin/resources.js') },   // C12: /ressources documents (MFA writes, ledger, needs 0050)
     { path: 'admin/veille', match: 'exact', handler: () => import('./_handlers/admin/veille.js') },   // the owner's digest of the automatic verification
     { path: 'admin/content', match: 'exact', handler: () => import('./_handlers/admin/content.js') },
     { path: 'admin/structure-proposals', match: 'exact', handler: () => import('./_handlers/admin/structure-proposals.js') },

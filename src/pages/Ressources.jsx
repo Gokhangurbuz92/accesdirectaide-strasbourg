@@ -9,7 +9,7 @@ import { FileText, ExternalLink } from 'lucide-react';
 import { EMERGENCY_FALLBACK } from '@/lib/emergencyNumbers';
 import PageHeader from '@/components/layout/PageHeader';
 import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
-import { useLanguage, useT } from '@/i18n';
+import { formatDate, useLanguage, useT } from '@/i18n';
 
 export default function Ressources() {
     const { t } = useT('resources');
@@ -53,10 +53,12 @@ export default function Ressources() {
         fetchRessources();
     }, [filterType, emergencyMode, attempt]);
 
+    const typeLabel = (x) => ({ guide: t('resources:type.guide', 'Guide'), tool: t('resources:type.tool', 'Outil'), document: t('resources:type.document', 'Document'), link: t('resources:type.link', 'Lien utile') }[x] || x);
+    const day = (d) => formatDate(d, { year: 'numeric', month: 'long', day: 'numeric' }) || '';
     const apiEmergency = ressources.filter((r) => r.phone);
-    // A-5: no writer exists for the document list (no admin editor, importer or seed), so it can only be empty. The list part of the page (filter, cards,
-    // « nothing published yet » promise) appears only when a published document exists; without one the page shows what it really has: the national
-    // emergency numbers. Nothing links to the bare list in the site's navigation.
+    // A-5 / C12: the documents come only from the administration's publication path (source, publisher, human verification date; migration 0050). The
+    // list part of the page (filter, cards) appears only when a published document exists; without one the page shows what it really has: the national
+    // emergency numbers, and says that no document is published. Nothing links to the bare list in the site's navigation.
     const documents = ressources.filter((r) => r.type !== 'URGENCE');
     const noDocuments = !loading && !failed && !emergencyMode && !filterType && documents.length === 0;
     const showEmergency = emergencyMode || noDocuments;
@@ -128,13 +130,13 @@ export default function Ressources() {
                                 <CardContent className="p-6">
                                     <div className="flex items-start gap-3 mb-3">
                                         <FileText className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                                        <h3 className="font-semibold text-lg text-slate-900" data-testid="ressource-title" {...fr}>
+                                        <h2 className="font-semibold text-lg text-slate-900" data-testid="ressource-title" {...fr}>
                                             {r.title}
-                                        </h3>
+                                        </h2>
                                     </div>
                                     {r.type && (
-                                        <Badge className="mb-3 bg-blue-100 text-blue-800" {...fr}>
-                                            {r.type}
+                                        <Badge className="mb-3 bg-blue-100 text-blue-800">
+                                            {typeLabel(r.type)}
                                         </Badge>
                                     )}
                                     {r.content && (
@@ -142,11 +144,22 @@ export default function Ressources() {
                                             {r.content.substring(0, 150)}...
                                         </p>
                                     )}
-                                    {r.source_url && (
-                                        <div className="mt-3 flex items-center gap-1 text-xs text-blue-600">
-                                            <ExternalLink className="h-3 w-3" />
-                                            <span>{t('resources:card.external', 'Source externe')}</span>
-                                        </div>
+                                    {/* C12: every listed document carries its official source and the date a person verified it against that source */}
+                                    {r.source_publisher && (
+                                        <p className="mt-3 flex items-center gap-1 text-sm text-slate-700" data-testid="ressource-source">
+                                            <ExternalLink className="h-4 w-4 flex-shrink-0 rtl-flip" aria-hidden="true" />
+                                            <span>{t('resources:card.source', 'Source officielle :')} <span {...fr}>{r.source_publisher}</span></span>
+                                        </p>
+                                    )}
+                                    {r.verified_at && (
+                                        <p className="mt-1 text-sm text-slate-700" data-testid="ressource-verified">
+                                            {t('resources:card.verified', 'Vérifié le {{date}}', { date: day(r.verified_at) })}
+                                        </p>
+                                    )}
+                                    {r.freshness === 'update_needed' && (
+                                        <p className="mt-1 text-sm text-amber-900" data-testid="ressource-update-needed">
+                                            {t('resources:card.update_needed', 'Vérifié il y a plus de trois mois : consultez aussi la source officielle.')}
+                                        </p>
                                     )}
                                 </CardContent>
                             </Card>

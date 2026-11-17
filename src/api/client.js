@@ -236,6 +236,12 @@ export const apiClient = {
         getNewsArticle: function (id) { return apiRequest('/api/admin/news-editorial?id=' + encodeURIComponent(String(id))); },
         /** @param {Record<string, unknown>} body { action: save|submit|reject|approve|correct|retract, id?, draft?, note?, kind? } */
         newsEditorial: function (body) { return apiRequest('/api/admin/news-editorial', { method: 'POST', body: body }); },
+        /** C12 — the /ressources documents (needs migration 0050: available=false otherwise). */
+        listResources: function () { return apiRequest('/api/admin/resources'); },
+        /** @param {string} id */
+        getResource: function (id) { return apiRequest('/api/admin/resources?id=' + encodeURIComponent(String(id))); },
+        /** @param {Record<string, unknown>} body { action: create|edit|verify|publish|withdraw, id?, draft?, expectedVersion?, note?, reason? } */
+        resourceAction: function (body) { return apiRequest('/api/admin/resources', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */
