@@ -27,8 +27,9 @@ Two independent recovery points exist:
 erasure ledger (erasures before it); the erasures after it are in the **erasure tombstones**, kept 40 days outside the database (longer than the
 35-day backups):
 - copy 1: Upstash (`ada:erasure-tombstones:v1`, Frankfurt) — `api/_services/erasure-tombstones.js`;
-- copy 2 (D5 b, 17/11/2026, **off until its variables are set**): one AES-256-GCM-encrypted object per record in a dedicated R2 EU bucket —
-  `api/_services/erasure-tombstone-copy.js`, variables `TOMBSTONE_COPY_*`, set by `CONTROL/v2/k3_tombstone_key_setup.sh`.
+- copy 2 (D5 b, 17/11/2026, **off until its variables are set AND the approved privacy notice is v7-2026-11-18 or later** — the version that names it;
+  otherwise it stays off and the health check warns `tombstone_copy.legal_gate`): one AES-256-GCM-encrypted object per record in a dedicated R2 EU
+  bucket — `api/_services/erasure-tombstone-copy.js`, variables `TOMBSTONE_COPY_*`, set by `CONTROL/v2/k3_tombstone_key_setup.sh`.
 An erasure is refused only when both copies fail; the restore replays the union and refuses when the two copies disagree without explanation
 (`scripts/db-erasure-replay.mjs`, § 3).
 
@@ -68,7 +69,7 @@ Without the copy variables and with no sign the copy was ever on, the replay beh
 | Neon restore (point in time → branch), timed end to end through § 2 steps 1–5 on a **branch**, never on Production | **yearly** (owner decision D7) | a dated record: start/end times, branch name, row counts, `/api/health` against the branch from a preview deployment | **not yet executed** |
 | Tombstone second copy — genuine recovery test (below) | once after activation, then with the yearly drill | replay dry-run output (counts only) | **not yet executed** — the copy is NOT operationally complete before it |
 
-### Genuine recovery test of the tombstone copy (owner / ops, after `k3_tombstone_key_setup.sh` and a redeploy)
+### Genuine recovery test of the tombstone copy (owner / ops, after `k3_tombstone_key_setup.sh`, the approval of notice v7 and a redeploy)
 
 1. Health check: the next hourly run shows `checks.tombstoneCopy.ok = true` (`/api/cron/health-alert` summary in the logs or admin alerts).
 2. Make one real erasure of a **test account** created for this purpose (the normal DSR flow). The bucket now holds 2 objects under

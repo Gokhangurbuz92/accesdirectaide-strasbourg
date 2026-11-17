@@ -26,15 +26,15 @@ import { startFakeS3 } from '../helpers/fake-s3.mjs';
 const hasDatabase = !!process.env.DATABASE_URL;
 const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; }, end() { return this; } });
 const BUCKET = 'ada-erasure-tombstones';
-const VARS = ['TOMBSTONE_COPY_S3_ENDPOINT', 'TOMBSTONE_COPY_S3_BUCKET', 'TOMBSTONE_COPY_S3_ACCESS_KEY_ID', 'TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY', 'TOMBSTONE_COPY_KEY', 'ALERT_WEBHOOK_URL', 'ALERT_EMAIL'];
+const VARS = ['TOMBSTONE_COPY_S3_ENDPOINT', 'TOMBSTONE_COPY_S3_BUCKET', 'TOMBSTONE_COPY_S3_ACCESS_KEY_ID', 'TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY', 'TOMBSTONE_COPY_KEY', 'VITE_LEGAL_DOCS_APPROVED_VERSION', 'ALERT_WEBHOOK_URL', 'ALERT_EMAIL'];
 
 describe.skipIf(!hasDatabase)('D5 b: the health check watches the second tombstone copy (real DB, fake bucket)', () => {
   let db, handler, s3, copyMod, tombMod; const saved = {};
   const check = async () => { const r = mk(); await handler({ method: 'GET', url: '/api/cron/health-alert', query: {}, headers: { host: 'x', authorization: `Bearer ${process.env.CRON_SECRET}` } }, r); return r.body; };
   const cooldowns = () => [...kvState.store.keys()].filter((k) => k.startsWith('alert:cooldown:tombstone_copy.')).map((k) => k.slice('alert:cooldown:'.length)).sort();
-  const setEnv = (o) => { for (const k of VARS.slice(0, 5)) delete process.env[k]; Object.assign(process.env, o); };
+  const setEnv = (o) => { for (const k of VARS.slice(0, 6)) delete process.env[k]; Object.assign(process.env, o); };
   const fullEnv = (key = 'tombkey') => ({ TOMBSTONE_COPY_S3_ENDPOINT: s3.endpoint, TOMBSTONE_COPY_S3_BUCKET: BUCKET, TOMBSTONE_COPY_S3_ACCESS_KEY_ID: key,
-    TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY: 'fake-secret', TOMBSTONE_COPY_KEY: 'ab'.repeat(32) });
+    TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY: 'fake-secret', TOMBSTONE_COPY_KEY: 'ab'.repeat(32), VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v7-2026-11-18,notice-confidentialite@v7-2026-11-18' });
   const wipe = () => db.execute(sql`DELETE FROM "CronRun" WHERE job = 'health-alert'`);
 
   beforeAll(async () => {
@@ -54,6 +54,15 @@ describe.skipIf(!hasDatabase)('D5 b: the health check watches the second tombsto
     const out = await check();
     expect(out.checks.tombstoneCopy).toMatchObject({ ok: false, reason: 'COPY_CONFIG_INCOMPLETE' });
     expect(cooldowns()).toEqual(['tombstone_copy.config_invalid']);
+  });
+
+  it('1b variables present but the approved notice is v6: the copy stays OFF and « tombstone_copy.legal_gate » warns (fail closed)', async () => {
+    setEnv({ ...fullEnv(), VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v6-2026-11-17,notice-confidentialite@v6-2026-11-17' });
+    const before = s3.log.length;
+    const out = await check();
+    expect(out.checks.tombstoneCopy).toEqual({ ok: false, reason: 'COPY_LEGAL_VERSION_NOT_APPROVED' });
+    expect(cooldowns()).toContain('tombstone_copy.legal_gate');
+    expect(s3.log.length).toBe(before);   // the bucket is not even contacted
   });
 
   it('3 reachable: green, overdue records deleted; 4 a failed write alerts once and the marker is cleared', async () => {

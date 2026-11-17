@@ -16,11 +16,15 @@
  * Content = exactly the Upstash record (request id, pseudonymous subject id, domains, time, phase — no e-mail, no name, no content), encrypted.
  * Layout: <prefix>t/<YYYYMMDDTHHMMSSmmmZ>_<0 intent | 1 done/aborted>_<hmac>.json (one object per record; the name orders them) and <prefix>last.json (the
  * newest record written, like `…:last` in Upstash: its absence while records exist, or a marker younger than 40 days whose record is gone, = a loss).
+ * Legal gate (owner, 18/11/2026): the privacy notice names this copy only from v7-2026-11-18. The site WRITES the copy only while the approved notice
+ * (VITE_LEGAL_DOCS_APPROVED_VERSION, the value the screens and the sign-up read) is v7 or later: otherwise it stays off — Upstash only — and the health
+ * check warns « tombstone_copy.legal_gate » (copyWriteConfig). Reading (restore, token probe) is never gated.
  * Retention: 40 days per record, like the Upstash list — a bucket lifecycle rule on <prefix>t/ AND the hourly health check deletes overdue records itself
  * (inventory(), api/_handlers/cron/health-alert.js), so the retention holds even if the lifecycle rule is missing.
  */
 import crypto from 'node:crypto';
 import { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { LEGAL_DRAFTS_V7, approvedAtLeast } from '../../src/config/legal-drafts.js';
 
 export const COPY_VARS = Object.freeze(['TOMBSTONE_COPY_S3_ENDPOINT', 'TOMBSTONE_COPY_S3_BUCKET', 'TOMBSTONE_COPY_S3_ACCESS_KEY_ID', 'TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY', 'TOMBSTONE_COPY_KEY']);
 export const COPY_RETENTION_DAYS = 40;
@@ -146,8 +150,20 @@ export function createTombstoneCopy(cfg, opts = {}) {
   };
 }
 
-/** the copy configured by the environment, or null (off) @param {Record<string, string | undefined>} [env] */
-export function tombstoneCopyFromEnv(env = process.env) {
+export const COPY_LEGAL_DOCUMENT = 'notice-confidentialite';
+/**
+ * The configuration for WRITING: copyConfig + the legal gate (the approved privacy notice must be v7 or later). Fail closed: not approved ⇒ off,
+ * reported as COPY_LEGAL_VERSION_NOT_APPROVED. @param {Record<string, string | undefined>} [env]
+ */
+export function copyWriteConfig(env = process.env) {
   const cfg = copyConfig(env);
+  if (!cfg.enabled) return cfg;
+  if (!approvedAtLeast(COPY_LEGAL_DOCUMENT, LEGAL_DRAFTS_V7, env.VITE_LEGAL_DOCS_APPROVED_VERSION)) return { enabled: false, invalid: true, reason: 'COPY_LEGAL_VERSION_NOT_APPROVED' };
+  return cfg;
+}
+
+/** the copy the site writes (configured AND legally announced), or null (off) @param {Record<string, string | undefined>} [env] */
+export function tombstoneCopyFromEnv(env = process.env) {
+  const cfg = copyWriteConfig(env);
   return cfg.enabled ? createTombstoneCopy(cfg) : null;
 }

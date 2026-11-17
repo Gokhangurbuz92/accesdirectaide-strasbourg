@@ -21,8 +21,10 @@ export default function LegalDraftDocument({ path: forcedPath }) {
   const { t } = useT('legal');
   const { isSource } = useLanguage();
   const location = useLocation();
-  const doc = draftByPath(forcedPath || location.pathname);
-  const state = doc ? draftVisibility(doc, currentDraftContext()) : 'HIDDEN';
+  const ctx = currentDraftContext();
+  // v7: the newest APPROVED version of this document (v6 and v7 can both be approved by name), else the newest draft
+  const doc = draftByPath(forcedPath || location.pathname, ctx);
+  const state = doc ? draftVisibility(doc, ctx) : 'HIDDEN';
 
   if (!doc || state === 'HIDDEN') {
     return (
@@ -71,7 +73,7 @@ export default function LegalDraftDocument({ path: forcedPath }) {
                   <ul className="list-disc ps-5 space-y-2 text-slate-700 leading-relaxed">
                     {s.items.map((txt, i) => (
                       <li key={i}>
-                        {t(k(`${s.id}.i${i + 1}`), txt, values)}
+                        {t(k(`${s.id}.${s.itemKeys?.[i] || `i${i + 1}`}`), txt, values)}
                         {s.proposed && <span className="ms-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-700" data-testid="legal-proposed-badge">{proposed}</span>}
                       </li>
                     ))}

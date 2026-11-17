@@ -55,7 +55,8 @@ commands a month for keep-alive, against 500K.
 ## Second copy of the erasure tombstones (D5 b, 17/11/2026)
 Owner decision D5 b: the tombstones also go, encrypted (AES-256-GCM), to a dedicated Cloudflare R2 EU bucket of the K3 object storage
 (`api/_services/erasure-tombstone-copy.js`, variables `TOMBSTONE_COPY_*`, owner setup `CONTROL/v2/k3_tombstone_key_setup.sh`). Off until those
-variables are set. When on: an erasure is refused only if both stores fail; a copy failure raises `tombstone_copy.write_failed`; the restore reads both
+variables are set **and** the approved privacy notice is v7-2026-11-18 or later (the version that names the copy; otherwise it stays off and the health
+check warns `tombstone_copy.legal_gate`). When on: an erasure is refused only if both stores fail; a copy failure raises `tombstone_copy.write_failed`; the restore reads both
 and refuses an unexplained disagreement, including a complete Upstash loss, unless the operator records `--accept-single-copy` (`docs/ops/RPO_RTO.md` § 3).
 Not operationally complete before the genuine recovery test of `docs/ops/RPO_RTO.md` § 4.
 

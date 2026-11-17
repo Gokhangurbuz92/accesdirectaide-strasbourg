@@ -21,7 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { A_I_APPROVAL_TOKEN, A_I_IDENTIFICATION_VARS, parsePublisherMode } from '../src/config/legal-publisher.js';
-import { LEGAL_NOTICE_VARIANT_DOCUMENT, ALL_LEGAL_DRAFT_IDS, LEGAL_DRAFTS_VERSION, draftVisibility } from '../src/config/legal-drafts.js';
+import { LEGAL_NOTICE_VARIANT_DOCUMENT as LATEST_VARIANT, ALL_LEGAL_DRAFT_IDS, LEGAL_DRAFT_VERSIONS, draftFor, draftVisibility } from '../src/config/legal-drafts.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -139,6 +139,7 @@ export function checkLegalPublisher(env, opts = {}) {
 
   const ctx = { approved: get('VITE_LEGAL_DOCS_APPROVED_VERSION'), preview: get('VITE_LEGAL_DRAFT_PREVIEW'), production };
   if (production && mode !== 'UNSET') {
+    const LEGAL_NOTICE_VARIANT_DOCUMENT = draftFor(LATEST_VARIANT.id, ctx) || LATEST_VARIANT;   // v7: the newest approved version (v6 or v7)
     const ok = draftVisibility(LEGAL_NOTICE_VARIANT_DOCUMENT, ctx) === 'IN_FORCE';
     add('legal.variant_text_approved', ok ? 'PASS' : 'FAIL', ok ? 'the A-I / A-II legal notice text is approved'
       : `Production: the A-I / A-II legal notice text is a draft; VITE_LEGAL_DOCS_APPROVED_VERSION must name ${LEGAL_NOTICE_VARIANT_DOCUMENT.id}@${LEGAL_NOTICE_VARIANT_DOCUMENT.version}`);
@@ -146,7 +147,7 @@ export function checkLegalPublisher(env, opts = {}) {
   add('legal.no_draft_preview_in_production', production && get('VITE_LEGAL_DRAFT_PREVIEW') ? 'FAIL' : 'PASS', production && get('VITE_LEGAL_DRAFT_PREVIEW')
     ? 'VITE_LEGAL_DRAFT_PREVIEW is LAB only: delete it from the Production environment' : 'no draft preview in a Production build');
   const tokens = ctx.approved.split(',').map((s) => s.trim()).filter(Boolean);
-  const unknown = tokens.filter((t) => t !== LEGAL_DRAFTS_VERSION && !ALL_LEGAL_DRAFT_IDS.some((id) => t === `${id}@${LEGAL_DRAFTS_VERSION}`));
+  const unknown = tokens.filter((t) => !LEGAL_DRAFT_VERSIONS.some((v) => t === v || ALL_LEGAL_DRAFT_IDS.some((id) => t === `${id}@${v}`)));
   if (unknown.length) add('legal.approved_versions_known', 'WARN', `${unknown.length} approved version token(s) name no current draft (a text changed since the approval?)`);
 
   const defaults = opts.defaults || readLegalDefaults();

@@ -18,23 +18,28 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
   DRAFT_PENDING_OWNER_APPROVAL: 'DRAFT_PENDING_OWNER_APPROVAL',
 });
 
-/** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'v6-2026-11-17';   // Owner conditions N2 / C3 / C4 / C6 on v5 (17/11/2026, CONTROL/v2/V6_METIN_FARKI_FR.md): § 4 the Mailjet deletion sentence describes the real outcomes (asked before our erasure, retried 3 days at most inside the one-month deadline, then erased anyway and flagged for a person; 6c and the old address of a change: one attempt), Vercel logs by criterion (1 day on Pro, 30 days with Observability Plus — the option's state is NOT verified); § 3 P16, § 5, § 6 provider roles made consistent (processor for your data; Vercel, Sinch and Upstash also controllers for some technical data, « notamment »); § 7 framework list re-read 17/11/2026. NOT approved: Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names v6; v5 was never in force. v5-2026-11-15 = provider verification (15/11/2026, CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md): § 4 Mailjet retention by objective criterion (90 days free plan / 13 months paid plan), recipient address kept as a contact and deleted at Mailjet when the account is erased, Vercel logs 1 day, Neon history tied to the free plan; § 6 Vercel and Sinch also act as controllers for some technical data; § 7 clauses incorporated, official Data Privacy Framework list (see the comment above the notice). v4-2026-11-15 = final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
+/**
+ * the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file).
+ * Since v7 (18/11/2026) TWO versions coexist, each approvable by name: v6 (texts below, unchanged byte for byte) and v7 = v6 + one sentence of the
+ * privacy notice § 4 (LEGAL_DRAFTS_V7_SENTENCE). The build shows the NEWEST version that VITE_LEGAL_DOCS_APPROVED_VERSION names (draftFor), the
+ * newest draft in LAB preview. LEGAL_DRAFTS_VERSION = the newest draft (v7).
+ */
+export const LEGAL_DRAFTS_V6 = 'v6-2026-11-17';   // Owner conditions N2 / C3 / C4 / C6 on v5 (17/11/2026, CONTROL/v2/V6_METIN_FARKI_FR.md): § 4 the Mailjet deletion sentence describes the real outcomes (asked before our erasure, retried 3 days at most inside the one-month deadline, then erased anyway and flagged for a person; 6c and the old address of a change: one attempt), Vercel logs by criterion (1 day on Pro, 30 days with Observability Plus — the option's state is NOT verified); § 3 P16, § 5, § 6 provider roles made consistent (processor for your data; Vercel, Sinch and Upstash also controllers for some technical data, « notamment »); § 7 framework list re-read 17/11/2026. NOT approved: Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names v6; v5 was never in force. v5-2026-11-15 = provider verification (15/11/2026, CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md): § 4 Mailjet retention by objective criterion (90 days free plan / 13 months paid plan), recipient address kept as a contact and deleted at Mailjet when the account is erased, Vercel logs 1 day, Neon history tied to the free plan; § 6 Vercel and Sinch also act as controllers for some technical data; § 7 clauses incorporated, official Data Privacy Framework list (see the comment above the notice). v4-2026-11-15 = final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
- * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
+ * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean, itemKeys?: Record<number, string> }} DraftSection
  * @typedef {{ id: string, key: string, path: string | null, version: string, status: string, title: string, intro: string, sections: DraftSection[] }} DraftDocument
  */
 
 const V2_STATUS_NOTE = 'Cette notice décrit les traitements des comptes personnels (section 3). Les rendez-vous, les messages, les rappels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.';
 
 /** @type {DraftDocument[]} */
-export const LEGAL_DRAFT_DOCUMENTS = [
+export const LEGAL_DRAFT_DOCUMENTS_V6 = [
   {
     id: 'cgu-citoyen',
     key: 'cguCitoyen',
     path: '/cgu/citoyen',
-    version: LEGAL_DRAFTS_VERSION,
+    version: LEGAL_DRAFTS_V6,
     status: LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL,
     title: "Conditions d'utilisation — particuliers",
     intro: "Ces conditions s'appliquent à toute personne qui utilise AccesDirectAide pour elle-même, avec ou sans compte.",
@@ -98,7 +103,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
     id: 'cgu-professionnel',
     key: 'cguPro',
     path: '/cgu/professionnel',
-    version: LEGAL_DRAFTS_VERSION,
+    version: LEGAL_DRAFTS_V6,
     status: LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL,
     title: "Conditions d'utilisation — professionnels",
     intro: "Ces conditions s'appliquent aux professionnels qui utilisent un compte ADA Pro créé à l'invitation de leur structure.",
@@ -144,7 +149,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
     id: 'conditions-structures',
     key: 'structures',
     path: '/conditions-structures',
-    version: LEGAL_DRAFTS_VERSION,
+    version: LEGAL_DRAFTS_V6,
     status: LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL,
     title: 'Conditions pour les structures',
     intro: "Ces conditions décrivent les règles proposées aux structures (associations, services publics, établissements) qui figurent dans l'annuaire ou qui reçoivent des demandes de rendez-vous. Aucune structure ne les a signées à ce jour.",
@@ -252,7 +257,7 @@ export const LEGAL_DRAFT_DOCUMENTS = [
     id: 'notice-confidentialite',
     key: 'privacyNotice',
     path: '/confidentialite/notice',
-    version: LEGAL_DRAFTS_VERSION,
+    version: LEGAL_DRAFTS_V6,
     status: LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL,
     title: 'Notice de confidentialité (RGPD, articles 13 et 14)',
     intro: 'Cette notice explique quelles données personnelles AccesDirectAide traite, pourquoi, sur quelle base, pendant combien de temps, et quels sont vos droits.',
@@ -361,13 +366,37 @@ export const LEGAL_DRAFT_DOCUMENTS = [
 ];
 
 /** The A-I / A-II legal notice texts live in the « legal » namespace (MentionsLegales.jsx); this entry gives them the same approval state. */
-export const LEGAL_NOTICE_VARIANT_DOCUMENT = Object.freeze({
+export const LEGAL_NOTICE_VARIANT_DOCUMENT_V6 = Object.freeze({
   id: 'mentions-legales-a1-a2',
   key: 'mentionsVariant',
   path: null,
-  version: LEGAL_DRAFTS_VERSION,
+  version: LEGAL_DRAFTS_V6,
   status: LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL,
 });
+
+/*
+ * v7-2026-11-18 — owner decision D5 b (17/11/2026): the erasure trace also has an encrypted second copy in the K3 object storage (Cloudflare R2, EU
+ * jurisdiction; api/_services/erasure-tombstone-copy.js). v7 = v6 + the sentence below appended to the privacy notice § 4 « Historique de restauration »
+ * item; nothing else changes (diff: CONTROL/v2/V7_METIN_FARKI_FR.md). Cloudflare's role is the one § 6 already states for the backups (processor; Cloudflare
+ * DPA https://www.cloudflare.com/cloudflare-customer-dpa/, cited above for v5). The copy is written only while v7 is approved (copyWriteConfig):
+ * Production can open on v6 with the copy off. The translations of the extended item are the « i13_v7 » keys (itemKeys).
+ */
+export const LEGAL_DRAFTS_V7 = 'v7-2026-11-18';
+export const LEGAL_DRAFTS_V7_SENTENCE = "Une seconde copie chiffrée de cette trace, que Cloudflare ne peut pas lire, est gardée 40 jours chez Cloudflare dans l'Union européenne.";
+/** @param {DraftDocument} d @returns {DraftDocument} */
+const toV7 = (d) => ({ ...d, version: LEGAL_DRAFTS_V7, sections: d.sections.map((s) => (d.id === 'notice-confidentialite' && s.id === 'retention' && s.items
+  ? { ...s, items: s.items.map((x, i) => (i === 12 ? `${x} ${LEGAL_DRAFTS_V7_SENTENCE}` : x)), itemKeys: { 12: 'i13_v7' } } : s)) });
+/** @type {DraftDocument[]} */
+export const LEGAL_DRAFT_DOCUMENTS_V7 = LEGAL_DRAFT_DOCUMENTS_V6.map(toV7);
+export const LEGAL_NOTICE_VARIANT_DOCUMENT_V7 = Object.freeze({ ...LEGAL_NOTICE_VARIANT_DOCUMENT_V6, version: LEGAL_DRAFTS_V7 });
+
+/** the newest draft version and its documents (LAB preview, tests); approvable versions oldest first */
+export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7;
+export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7]);
+/** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
+const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7] });
 
 export const ALL_LEGAL_DRAFT_IDS = Object.freeze([...LEGAL_DRAFT_DOCUMENTS.map((d) => d.id), LEGAL_NOTICE_VARIANT_DOCUMENT.id]);
 
@@ -404,7 +433,33 @@ export function currentDraftContext() {
   };
 }
 
-/** @param {string} path */
-export function draftByPath(path) {
-  return LEGAL_DRAFT_DOCUMENTS.find((d) => d.path === path) || null;
+/**
+ * The version of one document this build uses: the NEWEST approved version (IN_FORCE), else the newest draft (whose visibility is then PREVIEW or HIDDEN).
+ * @param {string} id @param {{ approved?: string, preview?: string, production?: boolean }} [ctx]
+ * @returns {DraftDocument | null} (the A-I / A-II variant has no sections: it is used for its id, version and visibility only)
+ */
+export function draftFor(id, ctx = {}) {
+  for (const v of [...LEGAL_DRAFT_VERSIONS].reverse()) {
+    const doc = SETS[v].find((d) => d.id === id);
+    if (doc && draftVisibility(doc, ctx) === 'IN_FORCE') return /** @type {DraftDocument} */ (doc);
+  }
+  return /** @type {DraftDocument | null} */ (SETS[LEGAL_DRAFTS_VERSION].find((d) => d.id === id) || null);
+}
+
+/** the newest approved version of a document, or null @param {string} id @param {string | undefined} approved */
+export function approvedVersionOf(id, approved) {
+  const doc = draftFor(id, { approved, production: true });
+  return doc && draftVisibility(doc, { approved, production: true }) === 'IN_FORCE' ? doc.version : null;
+}
+
+/** is the approved version of `id` at least `version` (order of LEGAL_DRAFT_VERSIONS)? @param {string} id @param {string} version @param {string | undefined} approved */
+export function approvedAtLeast(id, version, approved) {
+  const v = approvedVersionOf(id, approved);
+  return v !== null && LEGAL_DRAFT_VERSIONS.indexOf(v) >= LEGAL_DRAFT_VERSIONS.indexOf(version) && LEGAL_DRAFT_VERSIONS.includes(version);
+}
+
+/** @param {string} path @param {{ approved?: string, preview?: string, production?: boolean }} [ctx] the build context (default: the newest draft) */
+export function draftByPath(path, ctx) {
+  const latest = LEGAL_DRAFT_DOCUMENTS.find((d) => d.path === path);
+  return latest ? (ctx ? draftFor(latest.id, ctx) : latest) : null;
 }

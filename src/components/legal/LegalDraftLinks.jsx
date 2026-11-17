@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { LEGAL_DRAFT_DOCUMENTS, currentDraftContext, draftVisibility } from '@/config/legal-drafts';
+import { LEGAL_DRAFT_DOCUMENTS, currentDraftContext, draftFor, draftVisibility } from '@/config/legal-drafts';
 import { useT } from '@/i18n';
 
 /**
@@ -9,7 +9,7 @@ import { useT } from '@/i18n';
 export default function LegalDraftLinks() {
   const { t } = useT('legal');
   const ctx = currentDraftContext();
-  const visible = LEGAL_DRAFT_DOCUMENTS.map((d) => ({ d, state: draftVisibility(d, ctx) })).filter((x) => x.state !== 'HIDDEN');
+  const visible = LEGAL_DRAFT_DOCUMENTS.map((latest) => draftFor(latest.id, ctx) || latest).map((d) => ({ d, state: draftVisibility(d, ctx) })).filter((x) => x.state !== 'HIDDEN');
   if (!visible.length) return null;
   return (
     <nav aria-labelledby="legal-draft-links-title" data-testid="legal-draft-links" className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">

@@ -1,5 +1,5 @@
 /** V2 (security review D6) — pure (no database import): used by the sign-up and by the release preflight. */
-import { LEGAL_DRAFT_DOCUMENTS, draftVisibility } from '../../src/config/legal-drafts.js';
+import { draftFor, draftVisibility } from '../../src/config/legal-drafts.js';
 
 /** the documents a citizen account is created under */
 export const CITIZEN_ACCOUNT_DOCUMENTS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
@@ -13,8 +13,9 @@ export const CITIZEN_ACCOUNT_DOCUMENTS = Object.freeze(['cgu-citoyen', 'notice-c
 export function citizenTermsInForce(env = process.env) {
   if (String(env.VERCEL_ENV || '').toLowerCase() !== 'production') return true;
   return CITIZEN_ACCOUNT_DOCUMENTS.every((id) => {
-    const doc = LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === id);
-    return doc !== undefined && draftVisibility(doc, { approved: env.VITE_LEGAL_DOCS_APPROVED_VERSION, production: true }) === 'IN_FORCE';
+    const ctx = { approved: env.VITE_LEGAL_DOCS_APPROVED_VERSION, production: true };
+    const doc = draftFor(id, ctx);   // v7: any approvable version (v6 or v7) named by the approval
+    return doc !== null && draftVisibility(doc, ctx) === 'IN_FORCE';
   });
 }
 

@@ -11,7 +11,8 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS, LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT, draftVisibility } from '../../src/config/legal-drafts.js';
+// v7 (18/11/2026) coexists with v6: this file pins the v6 texts themselves (unchanged, still approvable by name)
+import { LEGAL_DRAFT_DOCUMENTS_V6 as LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS, LEGAL_DRAFTS_V6 as LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT_V6 as LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_DOCUMENTS_V7, draftVisibility } from '../../src/config/legal-drafts.js';
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 import { MAIL_CONTACT_DEADLINE_MARGIN_DAYS, MAIL_CONTACT_RETRY_WINDOW_DAYS } from '../../api/_services/privacy.js';
 import { RETENTION_POLICY } from '../../api/_services/retention-policy.js';
@@ -28,7 +29,7 @@ function frenchKeys(/** @type {any} */ doc) {
   /** @type {Record<string, string>} */ const out = { [`${doc.key}.title`]: doc.title, [`${doc.key}.intro`]: doc.intro };
   for (const s of doc.sections) {
     out[`${doc.key}.${s.id}.title`] = s.title;
-    (s.items || []).forEach((/** @type {string} */ x, /** @type {number} */ i) => { out[`${doc.key}.${s.id}.i${i + 1}`] = x; });
+    (s.items || []).forEach((/** @type {string} */ x, /** @type {number} */ i) => { out[`${doc.key}.${s.id}.${s.itemKeys?.[i] || `i${i + 1}`}`] = x; });
     (s.paras || []).forEach((/** @type {string} */ x, /** @type {number} */ i) => { out[`${doc.key}.${s.id}.p${i + 1}`] = x; });
   }
   return out;
@@ -113,7 +114,9 @@ describe('legal drafts v6-2026-11-17', () => {
           expect(tr[k], `${lang} ${k}`).toBeTruthy();
           expect(figures(tr[k]), `${lang} ${k}`).toBe(figures(v));
         }
-        const extra = Object.keys(tr).filter((k) => k.startsWith(`${doc.key}.`) && !(k in fr) && !/\.(badge|label)\b/.test(k));
+        // keys of the coexisting v7 (« i13_v7 ») have their French master in v7 (tests/unit/v7-legal-tombstone-copy.test.js)
+        const v7 = frenchKeys(LEGAL_DRAFT_DOCUMENTS_V7.find((d) => d.id === doc.id));
+        const extra = Object.keys(tr).filter((k) => k.startsWith(`${doc.key}.`) && !(k in fr) && !(k in v7) && !/\.(badge|label)\b/.test(k));
         expect(extra, `${lang} keys with no French master`).toEqual([]);
       }
     }

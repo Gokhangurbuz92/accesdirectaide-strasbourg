@@ -9,7 +9,7 @@ import brand from '@/lib/brand-config';
 import { frontendEnv } from "@/config/env";
 import { accountsOpened } from '@/lib/publicBeta';
 import { currentPublisherConfig, HOST } from '@/config/legal-publisher';
-import { LEGAL_NOTICE_VARIANT_DOCUMENT, currentDraftContext, draftVisibility } from '@/config/legal-drafts';
+import { LEGAL_NOTICE_VARIANT_DOCUMENT as LATEST_VARIANT, currentDraftContext, draftFor, draftVisibility } from '@/config/legal-drafts';
 import LegalDraftBanner from '@/components/legal/LegalDraftBanner';
 import i18n, { useLanguage, useT } from '@/i18n';
 
@@ -35,7 +35,9 @@ export default function MentionsLegales() {
   // R45 (ENG-LR-4): A-I / A-II variant of the publisher block. UNSET (Production today) = the block below, unchanged. The variant text is a draft:
   // it renders only when approved (VITE_LEGAL_DOCS_APPROVED_VERSION) or in LAB preview, otherwise the page keeps the current block (fail-closed).
   const publisher = currentPublisherConfig();
-  const variantState = draftVisibility(LEGAL_NOTICE_VARIANT_DOCUMENT, currentDraftContext());
+  const draftCtx = currentDraftContext();
+  const LEGAL_NOTICE_VARIANT_DOCUMENT = draftFor(LATEST_VARIANT.id, draftCtx) || LATEST_VARIANT;   // v7: the newest approved version (v6 or v7)
+  const variantState = draftVisibility(LEGAL_NOTICE_VARIANT_DOCUMENT, draftCtx);
   const mode = variantState === 'HIDDEN' ? 'UNSET' : publisher.mode;
   const privacyLink = <a key="privacy" href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>;
   return (

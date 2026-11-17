@@ -11,14 +11,18 @@
  */
 import { db as defaultDb } from '../../src/db/index.js';
 import { ConsentLog } from '../../src/db/schema.js';
-import { LEGAL_DRAFTS_VERSION } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFTS_VERSION, approvedVersionOf } from '../../src/config/legal-drafts.js';
 export { CITIZEN_ACCOUNT_DOCUMENTS, TERMS_NOT_IN_FORCE_REFUSAL, citizenTermsInForce } from './terms-in-force.js';
 
 export const TERMS_ACCEPTANCE_PURPOSE = 'TERMS_ACCEPTANCE_CGU_CITOYEN';
 export const TERMS_DOCUMENT_ID = 'cgu-citoyen';
 export const CONTRACT_ACCEPTANCE = 'CONTRACT_ACCEPTANCE';
-/** the accepted document and version, as recorded (« cgu-citoyen@<version> ») */
-export const termsReference = () => `${TERMS_DOCUMENT_ID}@${LEGAL_DRAFTS_VERSION}`;
+/**
+ * the accepted document and version, as recorded (« cgu-citoyen@<version> »): in Production the version IN FORCE (the newest one the approval names —
+ * v6 and v7 can coexist since 18/11/2026), elsewhere the newest draft. @param {Record<string, string | undefined>} [env]
+ */
+export const termsReference = (env = process.env) => `${TERMS_DOCUMENT_ID}@${(String(env.VERCEL_ENV || '').toLowerCase() === 'production'
+  && approvedVersionOf(TERMS_DOCUMENT_ID, env.VITE_LEGAL_DOCS_APPROVED_VERSION)) || LEGAL_DRAFTS_VERSION}`;
 
 export const TERMS_REQUIRED_REFUSAL = Object.freeze({
   error: 'TERMS_ACCEPTANCE_REQUIRED',

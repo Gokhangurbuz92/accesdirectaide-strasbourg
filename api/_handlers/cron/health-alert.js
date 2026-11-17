@@ -15,7 +15,7 @@ import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 import { env } from '../../_utils/env.js';
 import { recentMailEventCounts } from '../../_services/mail-events.js';
 import { securitySignalCounts, evaluateSecuritySignals, nextSecurityCheckState } from '../../_services/security-signals.js';
-import { copyConfig, createTombstoneCopy } from '../../_services/erasure-tombstone-copy.js';
+import { copyWriteConfig, createTombstoneCopy } from '../../_services/erasure-tombstone-copy.js';
 import { TOMBSTONE_COPY_FAILED_KEY } from '../../_services/erasure-tombstones.js';
 
 /**
@@ -266,11 +266,14 @@ export default async function handler(req, res) {
     // the site's own token (proves it answers) and records older than 40 days are deleted (the retention holds even without the bucket lifecycle rule);
     // unreachable → « tombstone_copy.unreachable »; (3) a write that failed since the last check (`…:copy-failed`, set by the erasure) →
     // « tombstone_copy.write_failed », cleared once the alert went out. Names, counts and times only.
-    const copyCfg = copyConfig(process.env);
+    const copyCfg = copyWriteConfig(process.env);
     if (!copyCfg.enabled && !copyCfg.invalid) checks.tombstoneCopy = { ok: true, skipped: 'COPY_OFF' };
     else if (copyCfg.invalid) {
         checks.tombstoneCopy = { ok: false, reason: copyCfg.reason, ...(copyCfg.missing ? { missing: copyCfg.missing } : {}) };
-        if (await fireAlert('tombstone_copy.config_invalid', `Seconde copie des traces d’effacement : configuration ${copyCfg.reason}. Le site écrit seulement dans Upstash ; corriger les variables TOMBSTONE_COPY_* puis redéployer (CONTROL/v2/k3_tombstone_key_setup.sh).`, { reason: copyCfg.reason, missing: copyCfg.missing || [] })) alertCount++;
+        if (copyCfg.reason === 'COPY_LEGAL_VERSION_NOT_APPROVED') {
+            // fail closed (owner, 18/11/2026): variables present but the approved privacy notice does not name the copy yet (v7) — the copy stays OFF
+            if (await fireAlert('tombstone_copy.legal_gate', 'Seconde copie des traces d’effacement : variables TOMBSTONE_COPY_* présentes, mais la notice de confidentialité approuvée (VITE_LEGAL_DOCS_APPROVED_VERSION) est antérieure à v7-2026-11-18, qui seule mentionne cette copie. La copie reste désactivée (Upstash seul) jusqu’à l’approbation de v7 et un nouveau déploiement.', { reason: copyCfg.reason })) alertCount++;
+        } else if (await fireAlert('tombstone_copy.config_invalid', `Seconde copie des traces d’effacement : configuration ${copyCfg.reason}. Le site écrit seulement dans Upstash ; corriger les variables TOMBSTONE_COPY_* puis redéployer (CONTROL/v2/k3_tombstone_key_setup.sh).`, { reason: copyCfg.reason, missing: copyCfg.missing || [] })) alertCount++;
     } else try {
         const inv = await createTombstoneCopy(copyCfg).inventory();
         let failed = null;

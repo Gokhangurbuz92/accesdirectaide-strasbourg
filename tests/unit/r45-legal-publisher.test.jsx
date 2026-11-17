@@ -284,6 +284,18 @@ describe('R45 draft documents rendering', () => {
     expect(screen.queryByTestId('legal-draft-banner')).toBeNull();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent("Conditions d'utilisation — professionnels");
   });
+  it('v7 (18/11/2026): v6 approved renders v6 (no Cloudflare sentence); v7 approved renders v7 with it — each with its own version line', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production'); vi.stubEnv('VITE_LEGAL_DOCS_APPROVED_VERSION', 'notice-confidentialite@v6-2026-11-17');
+    let r = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
+    expect(r.container.querySelector('[data-legal-draft-version]')).toHaveTextContent('notice-confidentialite@v6-2026-11-17');
+    expect(r.container.textContent).toContain('chez Upstash (Francfort).');
+    expect(r.container.textContent).not.toContain('seconde copie chiffrée');
+    cleanup();
+    vi.stubEnv('VITE_LEGAL_DOCS_APPROVED_VERSION', 'notice-confidentialite@v6-2026-11-17,notice-confidentialite@v7-2026-11-18');
+    r = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
+    expect(r.container.querySelector('[data-legal-draft-version]')).toHaveTextContent('notice-confidentialite@v7-2026-11-18');
+    expect(r.container.textContent).toContain("Une seconde copie chiffrée de cette trace, que Cloudflare ne peut pas lire, est gardée 40 jours chez Cloudflare dans l'Union européenne.");
+  });
   it('the four routes exist and point at the draft page', () => {
     const idx = readFileSync('src/pages/index.jsx', 'utf8');
     for (const p of ['/cgu/citoyen', '/cgu/professionnel', '/conditions-structures', '/confidentialite/notice']) expect(idx).toContain(`<Route path="${p}" element={<LegalDraftDocument />} />`);
