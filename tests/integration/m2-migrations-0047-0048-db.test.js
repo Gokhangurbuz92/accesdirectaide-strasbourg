@@ -21,6 +21,8 @@ const NAME = `ada_m2_mig_${Date.now().toString(36)}_test`;
 const TAG = '0047_m2_referral_redirect_referent';
 const TAG48 = '0048_m2_referral_message_history';
 const withDb = (url, name) => { const u = new URL(url); u.pathname = `/${name}`; return u.toString(); };
+/** the migrations recorded after 0048 (0049 …): drizzle re-applies only what is later than the newest recorded row, so they are rolled back first, newest first */
+const laterThan48 = () => JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.filter((e) => e.idx > 48).reverse();
 const statements = (file) => fs.readFileSync(file, 'utf8').split('--> statement-breakpoint').map((x) => x.trim()).filter(Boolean);
 
 describe.skipIf(!hasDatabase)('migrations 0047 and 0048: up → down → up on a throwaway database', () => {
@@ -95,18 +97,23 @@ describe.skipIf(!hasDatabase)('migrations 0047 and 0048: up → down → up on a
   });
 
   it('0048 down, then up: the history is dropped, the current texts stay; the texts that exist become the first rows, once', async () => {
+    for (const e of laterThan48()) await pool.query(fs.readFileSync(`drizzle/rollback/${String(e.idx).padStart(4, '0')}_down.sql`, 'utf8'));
+    for (const e of laterThan48()) expect(await journalRow(e.when), e.tag).toBe(0);
     await pool.query(fs.readFileSync('drizzle/rollback/0048_down.sql', 'utf8'));
     expect(await hasHistory()).toBe(false);
     expect(await journalRow(when48)).toBe(0);
     expect((await q(`SELECT "messageEncrypted" AS m, "responseMessageEncrypted" AS r FROM "Referral" WHERE id = 'mig-a'`))[0]).toEqual({ m: 'cipher-sender', r: 'cipher-receiver' });
     await pool.query(fs.readFileSync('drizzle/rollback/0048_down.sql', 'utf8'));   // idempotent
+    const beforeUp = (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations'))[0].n;
     await up();
+    expect((await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations'))[0].n).toBe(beforeUp + 1 + laterThan48().length);   // 0048 and the later ones, nothing else
     expect(await journalRow(when48)).toBe(1);
     const first = await history();
     expect(first).toEqual([{ id: 'rm-r-mig-a', referralId: 'mig-a', side: 'RECEIVER', bodyEncrypted: 'cipher-receiver' }, { id: 'rm-s-mig-a', referralId: 'mig-a', side: 'SENDER', bodyEncrypted: 'cipher-sender' }]);
     for (const st of statements(`drizzle/${TAG48}.sql`)) await pool.query(st);   // the file run a second time: nothing is inserted twice
     expect(await history()).toEqual(first);
     // back to « 0047 only » for the next steps (the rollbacks go newest first)
+    for (const e of laterThan48()) await pool.query(fs.readFileSync(`drizzle/rollback/${String(e.idx).padStart(4, '0')}_down.sql`, 'utf8'));
     await pool.query(fs.readFileSync('drizzle/rollback/0048_down.sql', 'utf8'));
   });
 
@@ -126,10 +133,11 @@ describe.skipIf(!hasDatabase)('migrations 0047 and 0048: up → down → up on a
     expect(await columns()).toEqual([]);
   });
 
-  it('up again: the migrator applies 0047 and 0048 (and nothing else); running the 0047 file a second time gives the same schema', async () => {
+  it('up again: the migrator applies 0047, 0048 and the later migrations rolled back with them (and nothing else); running the 0047 file a second time gives the same schema', async () => {
     const before = (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations'))[0].n;
     await up();
-    expect((await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations'))[0].n).toBe(before + 2);
+    expect((await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations'))[0].n).toBe(before + 2 + laterThan48().length);
+    for (const e of laterThan48()) expect(await journalRow(e.when), e.tag).toBe(1);
     expect(await journalRow()).toBe(1);
     expect(await journalRow(when48)).toBe(1);
     expect(await hasHistory()).toBe(true);

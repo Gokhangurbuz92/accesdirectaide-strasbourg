@@ -69,10 +69,11 @@ describe.skipIf(!usable)('M1 migration 0046: up → down → up (throwaway DB)',
     await c.end();
   });
 
-  it('starts at 0045: no "planStep" column, no history row of 0046; the journal entry of 0046 is the newest', async () => {
+  it('starts at 0045: no "planStep" column, no history row of 0046; the journal entry of 0046 comes right after 0045 (later migrations after it)', async () => {
     expect(await hasColumn()).toBeNull(); expect(await history()).toBe(0);
     const entries = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
-    expect(entries.at(-1).tag).toBe('0046_m1_parcours_plan_step'); expect(ENTRY.idx).toBe(46); expect(ENTRY.when).toBeGreaterThan(entries.at(-2).when);
+    expect(entries[46]).toBe(entries.find((e) => e.tag === '0046_m1_parcours_plan_step')); expect(ENTRY.idx).toBe(46); expect(ENTRY.when).toBeGreaterThan(entries[45].when);
+    for (const later of entries.filter((e) => e.idx > 46)) expect(later.when, later.tag).toBeGreaterThan(ENTRY.when);
     before = { physical: await physical(), content: await content(), objects: await objects() };
     expect(before.physical.rows.length).toBe(200);
   });
