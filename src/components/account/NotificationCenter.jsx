@@ -22,6 +22,10 @@ const kindLabels = (t) => ({
   PARCOURS_DEADLINE_SOON: t('compte:notifications.kind.parcours_deadline', 'Une échéance de Mon Parcours arrive dans moins de 7 jours.'),
   DOCUMENT_EXPIRING: t('compte:notifications.kind.document_expiring', 'Un document de Mon Coffre arrive à sa date de fin de validité.'),
   GUARDIAN_REQUEST: t('compte:notifications.kind.guardian_request', 'Une demande de lien de représentant légal attend votre réponse.'),
+  // E7: the referrals of the person's dossiers (api/_services/citizen-inbox.js) — kind, time and link only
+  REFERRAL_DECISION_NEEDED: t('compte:notifications.kind.referral_decision_needed', 'Une structure propose de transmettre votre dossier : votre accord est demandé.'),
+  REFERRAL_ANSWER: t('compte:notifications.kind.referral_answer', 'Une structure a répondu à une de vos orientations ou l’a fait avancer.'),
+  REFERRAL_ENDED: t('compte:notifications.kind.referral_ended', 'Une orientation a été annulée ou n’est plus valable.'),
 });
 
 /**
