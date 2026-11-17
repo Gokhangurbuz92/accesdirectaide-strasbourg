@@ -1274,6 +1274,7 @@
  "channels.sms_blocked_r46": "Yapılandırıldı ancak engellendi: « STOP » yanıtı dikkate alınamadığı sürece hiçbir SMS gönderilmez.",
  "channels.blocked_r46": "Yapılandırıldı ancak henüz açık değil: etkinleştirme onayı bekleniyor.",
  "channels.calendar_configured_r46": "Etkin: platform yalnızca dolu zamanlarınızı okur; takviminize hiçbir şey yazmaz.",
+ "channels.calendar_single_agenda_a27": "Etkin, ancak zaman dilimlerine etkisi yok: tek takvimle (profesyonel seçimi kapalı) yalnızca kurumun çalışma saatleri ve kapanışları dikkate alınır. Bağlı bir takvimin dolu zamanları yalnızca profesyonel seçimi açıkken okunur. Takviminize hiçbir şey yazılmaz.",
  "channels.configured_r46": "Etkin. Her mesajın iletimi randevunun bildirim kaydında gösterilir.",
  "channels.unknown_r46": "Bilinmeyen durum: etkin değil olarak kabul edilir.",
  "impact.not_open": "İşlev henüz açık değil: ölçülmedi",

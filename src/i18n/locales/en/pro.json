@@ -1274,6 +1274,7 @@
  "channels.sms_blocked_r46": "Configured but blocked: no SMS is sent as long as a « STOP » reply cannot be honoured.",
  "channels.blocked_r46": "Configured but not open yet: awaiting the activation approval.",
  "channels.calendar_configured_r46": "Activated: the platform only reads your busy times; it writes nothing in your calendar.",
+ "channels.calendar_single_agenda_a27": "Activated, with no effect on the slots: with a single agenda (choice of professional switched off), only the organisation's opening hours and closures count. The busy times of a connected calendar are read only when the choice of professional is switched on. Nothing is written in your calendar.",
  "channels.configured_r46": "Activated. The delivery of each message is shown in the appointment’s notification record.",
  "channels.unknown_r46": "Unknown state: treated as not activated.",
  "impact.not_open": "Function not open: not measured",

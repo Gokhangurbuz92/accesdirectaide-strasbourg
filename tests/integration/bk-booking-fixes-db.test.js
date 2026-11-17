@@ -4,6 +4,8 @@
  *
  *  A-25  replay: the same idempotency key answers the booking already made (200, same appointment, one row, no second e-mail) — what the page now sends
  *        after a lost answer; a NEW key for the same slot (what the page sent before) is the 409 « slot taken » the person used to read.
+ *  A-27  the connected calendar's status line no longer claims, in the default single-agenda mode, that busy times count for the slots
+ *        (rdv-settings GET channels[calendar].appliesToSlots = team choice on); the single-agenda engine indeed reads no calendar.
  *  A-29  GET rdv/structures/:slug/profile (no account) applies the same sensitivity gate as its signed-in siblings: a service whose online booking is not
  *        open is listed as CONTACT_STRUCTURE and discloses no availability (nextAvailableDay).
  *  A-26  GET rdv/structures/:slug/slots?appointment=<id> lists the slots THAT appointment can be moved to, from the same source as the move itself: with
@@ -36,12 +38,12 @@ const A = S('a');   // single agenda (the default)
 const T = S('t');   // team choice on, two professionals
 const G = S('g');   // one service, used by the sensitivity gate scenario
 const pro = (k, sid, name) => ({ id: `bkf-p${k}-${TS}`, email: `bkf-p${k}-${TS}@example.test`, sid, role: 'PRO', name });
-const P1 = pro('1', T.id, 'Camille Fictive'); const P2 = pro('2', T.id, 'Dominique Fictif');
+const P1 = pro('1', T.id, 'Camille Fictive'); const P2 = pro('2', T.id, 'Dominique Fictif'); const P3 = pro('3', A.id, 'Alex Fictif');
 const cit = (k) => ({ id: `bkf-c${k}-${TS}`, email: `test.citizen+bkf${k}-${TS}@example.test` });
 const C = [cit('0'), cit('1'), cit('2')];
 
 describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () => {
-  let db, rdv, userAuth, mailer;
+  let db, rdv, userAuth, mailer, auth, proSettings;
   const cookie = (c) => userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: c.id, email: c.email })).split(';')[0];
   const call = async (method, path, { body, query = {}, as } = {}) => {
     const res = mk();
@@ -77,8 +79,10 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
     ({ default: rdv } = await import('../../api/_handlers/rdv.js'));
     userAuth = await import('../../api/_utils/user-auth.js');
     mailer = await import('../../api/_utils/mailer.js');
+    auth = await import('../../api/_utils/auth.js');
+    proSettings = (await import('../../api/_handlers/pro/rdv-settings.js')).default;
     for (const s of [A, T, G]) await seedStructure(s);
-    for (const p of [P1, P2]) {
+    for (const p of [P1, P2, P3]) {
       await db.execute(sql`INSERT INTO "ProUser" (id, email, password_hash, "structureId", role, status, mfa_enabled, "updatedAt", "createdAt") VALUES (${p.id}, ${p.email}, 'x', ${p.sid}, ${p.role}, 'active', true, NOW(), NOW())`);
       await db.execute(sql`INSERT INTO "ProProfile" (id, "proUserId", "displayName", "jobTitle", "updatedAt") VALUES (${'pp-' + p.id}, ${p.id}, ${p.name}, 'Accueil', NOW())`);
     }
@@ -101,7 +105,8 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
       await db.execute(sql`DELETE FROM "ProRdvService" WHERE "structureId" = ${s.id}`);
       await db.execute(sql`DELETE FROM "StructureRdvSettings" WHERE "structureId" = ${s.id}`);
     }
-    for (const p of [P1, P2]) {
+    for (const p of [P1, P2, P3]) {
+      await db.execute(sql`DELETE FROM "AuditLog" WHERE actor_id = ${p.id}`).catch(() => {});
       await db.execute(sql`DELETE FROM "ProOutlookToken" WHERE "userId" = ${p.id}`).catch(() => {});
       await db.execute(sql`DELETE FROM "ProProfile" WHERE "proUserId" = ${p.id}`).catch(() => {});
       await db.execute(sql`DELETE FROM "ProUser" WHERE id = ${p.id}`);
@@ -241,5 +246,19 @@ describe.skipIf(!hasDatabase)('booking audit fixes A-25 … A-30 (real DB)', () 
     // someone else's request with the same key string is not a replay of this booking
     const stranger = await call('POST', 'appointments', { as: C[2], body });
     expect(stranger.statusCode, show(stranger)).toBe(409);
+  });
+
+  // ───────────────────────────── A-27 ─────────────────────────────
+  it('A-27: the calendar status says whether busy times count for the slots — not in the single-agenda mode (default), yes with team choice', async () => {
+    const settingsOf = async (who) => { const r = mk(); await proSettings({ method: 'GET', url: '/api/pro/rdv-settings', query: {}, headers: { host: 'x', authorization: `Bearer ${auth.signProToken({ id: who.id, email: who.email, structureId: who.sid, role: who.role })}` } }, r); expect(r.statusCode, show(r)).toBe(200); return r.body; };
+    const single = await settingsOf(P3);
+    expect(single.booking.team.enabled).toBe(false);
+    expect(single.channels.find((c) => c.channel === 'calendar').appliesToSlots).toBe(false);
+    expect(single.channels.filter((c) => c.channel !== 'calendar').every((c) => !('appliesToSlots' in c))).toBe(true);
+    expect((await settingsOf(P1)).channels.find((c) => c.channel === 'calendar').appliesToSlots).toBe(true);
+    // the fact the line now states: in the single-agenda mode a professional's connected calendar is not read for the public slots
+    await db.execute(sql`INSERT INTO "ProOutlookToken" (id, "userId", email, "accessTokenEnc", "refreshTokenEnc", iv, "expiresAt", scope, "updatedAt") VALUES (${'ot-' + P3.id}, ${P3.id}, ${P3.email}, 'not-an-envelope', 'not-an-envelope', 'x', NOW(), 'Calendars.ReadBasic', NOW())`);
+    vi.stubEnv('OUTLOOK_ENABLED', 'true');   // a calendar that cannot be read removes ALL its owner's slots where it is read (team, fail safe)
+    expect((await slotsOf(A, C[0])).length).toBeGreaterThan(10);
   });
 });

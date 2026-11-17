@@ -1274,6 +1274,7 @@
  "channels.sms_blocked_r46": "Konfiguriert, aber gesperrt: Solange eine Antwort « STOP » nicht berücksichtigt werden kann, wird keine SMS gesendet.",
  "channels.blocked_r46": "Konfiguriert, aber noch nicht geöffnet: Die Freigabe der Aktivierung steht aus.",
  "channels.calendar_configured_r46": "Aktiviert: Die Plattform liest nur Ihre belegten Zeiten; sie schreibt nichts in Ihren Kalender.",
+ "channels.calendar_single_agenda_a27": "Aktiviert, ohne Wirkung auf die Zeitfenster: Mit einem einzigen Terminkalender (Auswahl der Fachkraft ausgeschaltet) zählen nur die Öffnungszeiten und Schließungen der Einrichtung. Die belegten Zeiten eines verbundenen Kalenders werden nur gelesen, wenn die Auswahl der Fachkraft eingeschaltet ist. In Ihren Kalender wird nichts geschrieben.",
  "channels.configured_r46": "Aktiviert. Die Zustellung jeder Nachricht wird im Benachrichtigungsverlauf des Termins angezeigt.",
  "channels.unknown_r46": "Unbekannter Zustand: wird als nicht aktiviert behandelt.",
  "impact.not_open": "Funktion nicht freigegeben: nicht gemessen",

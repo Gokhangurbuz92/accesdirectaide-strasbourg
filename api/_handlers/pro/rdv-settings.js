@@ -133,7 +133,11 @@ async function handler(req, res) {
     const settings = await getOrCreateSettings(structureId);
     // R46: one honest status line per communication channel (e-mail, SMS, video, connected calendar) — states and variable NAMES only, never a secret
     const { channelStatuses } = await import('../../lib/communication-channels.js');
-    return res.status(200).json({ ...serialize(settings), booking: await bookingView(structureId), channels: channelStatuses() });
+    const booking = await bookingView(structureId);
+    // A-27: the connected calendar's busy times remove slots only with team choice (each professional's own agenda, api/_services/rdv-team.js); in the
+    // default single-agenda mode no professional's calendar is read for the public slots — the status line says so instead of claiming it
+    const channels = channelStatuses().map((c) => (c.channel === 'calendar' ? { ...c, appliesToSlots: booking.team.enabled === true } : c));
+    return res.status(200).json({ ...serialize(settings), booking, channels });
   }
 
   if (req.method !== 'PUT' && req.method !== 'PATCH') {
