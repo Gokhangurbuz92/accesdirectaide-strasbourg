@@ -9,6 +9,12 @@
  *   PARCOURS_DEADLINE_SOON      a sourced Mon Parcours deadline in the next 7 days, item still open                       (citizen.parcours)
  *   DOCUMENT_EXPIRING           a Mon Coffre document whose expiry date is in the next 30 days                            (citizen.vault)
  *   GUARDIAN_REQUEST            a minor's guardian-link request waiting for this account's answer                          (citizen.guardians)
+ *   REFERRAL_DECISION_NEEDED    E7: a referral proposal on a dossier the account owns, waiting for the person's consent    (citizen.orientation_records)
+ *   REFERRAL_ANSWER             E7: the receiving organisation answered or moved a referral of such a dossier (acknowledged, accepted, declined — with or
+ *                               without a suggestion —, asked for information, started, completed): one item per ReferralEvent by the RECEIVER
+ *   REFERRAL_ENDED              E7: the sender cancelled a referral, or it expired without an answer (ReferralEvent by SENDER / SYSTEM)
+ *   Before E7 the answer of a referral reached the person only by e-mail (when service e-mails are consented AND a provider delivers) or by opening the
+ *   orientations page: with e-mails off — or MAILER_PROVIDER=noop — nothing in Mon Espace said that an answer or a consent request was waiting.
  * Minimisation: an item carries a kind, a time, an in-app link and an opaque id — never a message body, a name, an organisation, an e-mail or a title
  * (the person opens the link to see the content, under that page's own authorisation). A part whose capability is closed is neither read nor returned.
  * Read state: one « seen up to » instant per account, kept in the NotificationPreference row (channel « inapp », category « seen ») — that row is never a
@@ -22,7 +28,12 @@ import { capabilityOpen } from '../_utils/capabilities.js';
 
 export const INBOX_LIMIT = 50;
 export const APPOINTMENT_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'REQUEST_ACCEPTED', 'REQUEST_REFUSED', 'BOOKED_BY_CITIZEN', 'REQUEST_RECEIVED'];
-export const INBOX_KINDS = [...APPOINTMENT_KINDS.map((k) => `APPOINTMENT_${k}`), 'MESSAGE_FROM_STRUCTURE', 'DOSSIER_MESSAGE', 'PARCOURS_DEADLINE_SOON', 'DOCUMENT_EXPIRING', 'GUARDIAN_REQUEST'];
+export const INBOX_KINDS = [...APPOINTMENT_KINDS.map((k) => `APPOINTMENT_${k}`), 'MESSAGE_FROM_STRUCTURE', 'DOSSIER_MESSAGE', 'PARCOURS_DEADLINE_SOON', 'DOCUMENT_EXPIRING', 'GUARDIAN_REQUEST',
+  'REFERRAL_DECISION_NEEDED', 'REFERRAL_ANSWER', 'REFERRAL_ENDED'];
+/** E7: the referral transitions the person is told about in the centre (ReferralEvent, append-only), by who made them */
+export const REFERRAL_ANSWER_STATUSES = Object.freeze(['ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'DECLINED', 'IN_PROGRESS', 'COMPLETED']);
+export const REFERRAL_ENDED_STATUSES = Object.freeze(['CANCELLED', 'EXPIRED']);
+const REFERRALS_LINK = '/compte/orientations';
 const SEEN = { channel: 'inapp', category: 'seen' };
 const opaque = (userId, kind, ref) => crypto.createHash('sha256').update(`${userId}\n${kind}\n${ref}`).digest('hex').slice(0, 24);
 const rows = async (db, q) => (await db.execute(q)).rows;
@@ -67,6 +78,21 @@ export async function listInbox(userId, db = defaultDb, opts = {}) {
   if (isOpen('citizen.guardians')) {
     for (const r of await rows(db, sql`SELECT id, "createdAt" AS at FROM "GuardianRelationship" WHERE "guardianId" = ${userId} AND status = 'DECLARED' LIMIT ${INBOX_LIMIT}`)) {
       items.push({ ref: `g:${r.id}`, kind: 'GUARDIAN_REQUEST', at: r.at, link: '/compte/profil' });
+    }
+  }
+  if (isOpen('citizen.orientation_records')) {
+    // a proposal waits for the person while it is PENDING_CITIZEN on a dossier they own that has not expired; it leaves the centre once answered
+    for (const r of await rows(db, sql`SELECT r.id, r."createdAt" AS at FROM "Referral" r JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId"
+        WHERE d."ownerCitizenId" = ${userId} AND d."expiresAt" > ${now} AND r.status = 'PENDING_CITIZEN' ORDER BY r."createdAt" DESC LIMIT ${INBOX_LIMIT}`)) {
+      items.push({ ref: `rp:${r.id}`, kind: 'REFERRAL_DECISION_NEEDED', at: r.at, link: REFERRALS_LINK });
+    }
+    // what the organisations did: the append-only events of the dossiers the person owns (the person's own decisions are not news to them)
+    for (const r of await rows(db, sql`SELECT e.id, e."actorType" AS actor, e."toStatus" AS status, e."createdAt" AS at FROM "ReferralEvent" e
+        JOIN "Referral" r ON r.id = e."referralId" JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId"
+        WHERE d."ownerCitizenId" = ${userId} AND ((e."actorType" = 'RECEIVER' AND e."toStatus" IN (${sql.join(REFERRAL_ANSWER_STATUSES.map((x) => sql`${x}`), sql`, `)}))
+          OR (e."actorType" IN ('SENDER', 'SYSTEM') AND e."toStatus" IN (${sql.join(REFERRAL_ENDED_STATUSES.map((x) => sql`${x}`), sql`, `)})))
+        ORDER BY e."createdAt" DESC LIMIT ${INBOX_LIMIT}`)) {
+      items.push({ ref: `re:${r.id}`, kind: r.actor === 'RECEIVER' ? 'REFERRAL_ANSWER' : 'REFERRAL_ENDED', at: r.at, link: REFERRALS_LINK });
     }
   }
   const seenAt = await seenUpTo(userId, db);
