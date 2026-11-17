@@ -64,6 +64,6 @@ describe('R42 (DEC-R42-01): no account-free booking is offered anywhere in the c
     for (const f of ['src/lib/guestBooking.js', 'src/pages/GuestBooking.jsx', 'src/pages/GuestManage.jsx', 'src/pages/AppointmentRequest.jsx']) expect(fs.existsSync(f)).toBe(false);
     const index = fs.readFileSync('src/pages/index.jsx', 'utf8');
     expect(index).toMatch(/path="\/rdv\/:structureSlug\/sans-compte" element={<RetiredGuestBookingLink \/>}/);
-    for (const f of ['src/pages/StructureDetail.jsx', 'src/pages/PublicRdvEntry.jsx', 'src/pages/PublicBookingAccessGate.jsx']) expect(fs.readFileSync(f, 'utf8')).not.toMatch(/guestBooking|sans-compte|rendez-vous sans compte/i);
+    for (const f of ['src/pages/StructureDetail.jsx', 'src/pages/PublicBookingAccessGate.jsx']) expect(fs.readFileSync(f, 'utf8')).not.toMatch(/guestBooking|sans-compte|rendez-vous sans compte/i);
   });
 });

@@ -44,7 +44,7 @@ const C = [cit('0', '25-59'), cit('1', '18-24'), cit('2', '60-et-plus'), cit('3'
 const MINOR = cit('m', null); const MINOR_BAND = cit('mb', null); const UNDECLARED = cit('u', null);
 
 describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () => {
-  let db, rdv, auth, userAuth, proList, proSettings, proServices, proTimeoff, structures, legacyCreate, mailer, features, calendar, cryptoTok, logger;
+  let db, rdv, auth, userAuth, proList, proSettings, proServices, proTimeoff, structures, mailer, features, calendar, cryptoTok, logger;
   let level = '';
   const cookie = (c) => userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: c.id, email: c.email })).split(';')[0];
   const call = async (method, path, { body, query = {}, as } = {}) => {
@@ -89,7 +89,6 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
     proServices = (await import('../../api/_handlers/pro/services.js')).default;
     proTimeoff = (await import('../../api/_handlers/pro/timeoff.js')).default;
     structures = (await import('../../api/_handlers/structures.js')).default;
-    legacyCreate = (await import('../../api/_handlers/public/appointments/create.js')).default;
     level = (await features.appointmentGuestSchema(db)).guestReminderConsent ? '0044' : '0042';
     for (const s of [A, B, T, D]) await seedStructure(s);
     for (const p of PROS) {
@@ -152,8 +151,6 @@ describe.skipIf(!hasDatabase)('R42-BOOK account-required booking (real DB)', () 
       // a signed-in person gets the same 410 on the retired routes (they are not a back door either)
       const signed = await call('POST', 'guest/hold', { as: C[3], body: {} });
       expect(signed.statusCode).toBe(410);
-      const legacy = mk(); await legacyCreate({ method: 'POST', url: '/api/public/appointments/create', body: { structureId: A.id, startAt: slot.startAt, email: 'x@example.test' }, headers: {} }, legacy);
-      expect([legacy.statusCode, legacy.body.code]).toEqual([410, 'ACCOUNT_REQUIRED']);
       const optIn = await invoke(proSettings, ADMIN_A, { method: 'PUT', url: '/api/pro/rdv-settings', body: { allowGuestBooking: true } });
       expect([optIn.statusCode, optIn.body.code], show(optIn)).toEqual([409, 'GUEST_BOOKING_RETIRED']);
       const svcOptIn = await invoke(proServices, ADMIN_A, { method: 'PATCH', url: `/api/pro/services?id=${A.svc}`, query: { id: A.svc }, body: { guestBookable: true } });

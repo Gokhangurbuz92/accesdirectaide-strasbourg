@@ -5,7 +5,6 @@ vi.stubEnv("KV_REST_API_TOKEN", "mock-token");
 import { describe, it, expect, beforeEach } from 'vitest';
 import aidesHandler from '../../api/_handlers/aides.js';
 import structuresHandler from '../../api/_handlers/structures.js';
-import bookingHandler from '../../api/_handlers/public/appointments/create.js';
 
 // Mock Sentry
 vi.mock('../../api/_utils/sentry.js', () => ({
@@ -175,46 +174,6 @@ describe.skip('API Integration Tests (Obsolete - See p0-api-smoke and aides_v2)'
       expect(res.status).toHaveBeenCalledWith(400);
       const response = res.json.mock.calls[0][0];
       expect(response.error).toMatch(/Invalid parameters/);
-    });
-  });
-
-  describe('POST /api/appointments', () => {
-    beforeEach(() => {
-      req.method = 'POST';
-    });
-
-    it('should validate body', async () => {
-      req.body = { structureId: '123' }; // Missing email, startAt
-
-      await bookingHandler(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      const response = res.json.mock.calls[0][0];
-      expect(response.error.code).toBe('VALIDATION_ERROR');
-    });
-
-    it('should handle logic error (SLOT_TAKEN)', async () => {
-      // Setup valid body
-      req.body = {
-        structureId: '123',
-        startAt: '2023-01-01T10:00:00Z',
-        email: 'test@example.com'
-      };
-
-      // Mock dependencies for success up to transaction
-      db.beneficiary.findFirst.mockResolvedValue({ id: 'ben_1' });
-      db.service.findFirst.mockResolvedValue({ id: 'ser_1', duration_minutes: 60 });
-
-      // Mock transaction to fail
-      db.$transaction.mockImplementation(async () => {
-        throw new Error('SLOT_TAKEN');
-      });
-
-      await bookingHandler(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(409);
-      const response = res.json.mock.calls[0][0];
-      expect(response.error.code).toBe('CONFLICT');
     });
   });
 });

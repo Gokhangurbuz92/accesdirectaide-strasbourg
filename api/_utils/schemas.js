@@ -240,10 +240,6 @@ export const proTeamActionSchema = z.object({
 
 // ─── Public Extended ──────────────────────────────────
 
-export const publicAppointmentCancelSchema = z.object({
-    id: z.string().optional(),
-    token: z.string().optional(),
-});
 
 export const publicDossierRevokeSchema = z.object({
     shareId: z.string().min(1, 'shareId requis'),

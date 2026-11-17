@@ -38,7 +38,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_services/verification/chain.js': 'automatic verification chain: reads every record (hidden ones included) to check it against the official sources; publishes only through content-verification.js, returns nothing public',
   'api/lib/agent-orchestrator.js': 'admin orchestrator (discovery of records to review)', 'api/_utils/dataQuality.js': 'data-quality monitor',
   // booking and sharing: governed by the ORGANIZATION's own publication (RDV settings / Pro membership), not by directory content verification; see docs/pkg1-d5-publication-policy-and-structure-model.md (open decision recorded)
-  'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 'api/_handlers/public/appointments/create.js': 'booking governed by StructureRdvSettings.isPublished',
+  'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 
   'api/_services/rdv-booking-config.js': 'R42: the structure\'s own booking configuration (settings_json.rdvBooking), read by the booking engine; never returned publicly',
   'api/_services/rdv-member-hours.js': 'R42-CDGG: the members\' own working hours (settings_json.rdvMemberHours) of one structure by id, read by the booking engine and the pro hours screen; never returned publicly',
   'api/_services/service-sensitivity-review.js': 'R45 ENG-LR-2: the administrator-verified sensitivity of a structure\'s services (settings_json.serviceSensitivity) by structure id, read by the booking engine and the administrator review route; never returned publicly',

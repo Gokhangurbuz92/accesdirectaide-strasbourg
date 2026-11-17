@@ -98,8 +98,6 @@ const AdminAudit = lazy(() => import("./AdminAudit.jsx"));
 const AdminParametres = lazy(() => import("./admin/AdminParametres.jsx"));
 const ServiceError = lazy(() => import("./ServiceError.jsx"));
 
-const AppointmentCancel = lazy(() => import("./AppointmentCancel.jsx"));
-const AppointmentReschedule = lazy(() => import("./AppointmentReschedule.jsx"));
 const LegacyAppointmentLink = lazy(() => import("./LegacyAppointmentLink.jsx"));
 // R44: the legacy screens /rdv/:slug, /services, /creneaux are retired from the routes; they redirect to the account journey /rdv/:slug/booking
 const LegacyCreneauxRedirect = lazy(() => import("./LegacyCreneauxRedirect.jsx"));
@@ -231,7 +229,7 @@ const PAGES = {
     AideDetail, Aides, Annuaire, Confidentialite, Contact, Cookies,
     DemarcheDetail, DispositifDetail, Login, Demarches, Home, Orientation,
     MentionsLegales, SourcesMethode, StructureDetail,
-    AdminInbox, AdminRuns, AdminObservability, AdminReviewQueue, AppointmentCancel, AppointmentReschedule, AdminStructures, AdminStructureEdit,
+    AdminInbox, AdminRuns, AdminObservability, AdminReviewQueue, AdminStructures, AdminStructureEdit,
     AdminDemarches, AdminDemarcheEdit, AdminAppointments, AdminReview, Status, AuthRdvAccess, AuthVerifyEmail, AuthForgotPassword, AuthResetPassword,
     CompteMessages, CompteMessageThread, ProMessages, ProMessageThread, AdminDashboard, AdminFeatures
 };
