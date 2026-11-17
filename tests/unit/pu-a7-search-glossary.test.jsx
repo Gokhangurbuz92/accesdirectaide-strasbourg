@@ -38,6 +38,8 @@ describe('A-7: glossary matches of the search are shown', () => {
     expect(within(group).getByRole('term')).toHaveTextContent('RSA');
     expect(within(group).getByRole('definition')).toHaveTextContent('Revenu de Solidarité Active. Revenu minimum.');
     expect(within(group).getByRole('link', { name: 'Voir tout le glossaire' })).toHaveAttribute('href', '/glossaire');
+    // R47-QA (native a11y self-check target-size-24): the link is alone in its paragraph (not an inline link in a sentence) — at least 24 px high
+    expect(within(group).getByRole('link', { name: 'Voir tout le glossaire' }).className).toMatch(/(^|\s)min-h-(6|11)(\s|$)/);
     expect(screen.queryByTestId('search-empty-state')).toBeNull();
     expect(screen.getByTestId('search-success-state')).toHaveTextContent('1 résultat affiché.');
   });

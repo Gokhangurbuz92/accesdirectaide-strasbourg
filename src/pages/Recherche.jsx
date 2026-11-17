@@ -587,7 +587,8 @@ export default function Recherche() {
                 </div>
               )}
 
-              {/* A-7: the glossary terms the search matched — the term and its French definition, with the way to the whole glossary */}
+              {/* A-7: the glossary terms the search matched — the term and its French definition, with the way to the whole glossary
+                  (R47-QA a11y: the link stands alone in its paragraph, so it is a 24 px target — WCAG 2.5.8, like the breadcrumb links) */}
               {glossaire.length > 0 && (
                 <div className="mb-8" data-testid="search-glossary">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
@@ -603,7 +604,7 @@ export default function Recherche() {
                     ))}
                   </dl>
                   <p className="mt-3 text-sm">
-                    <Link to="/glossaire" className="inline-flex items-center gap-1 font-medium text-slate-900 underline">
+                    <Link to="/glossaire" className="inline-flex min-h-6 items-center gap-1 py-0.5 font-medium text-slate-900 underline">
                       {t('search:link.glossary', 'Voir tout le glossaire')} <ArrowRight className="rtl-flip h-3 w-3" aria-hidden="true" />
                     </Link>
                   </p>
