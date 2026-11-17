@@ -18,6 +18,7 @@ import { templates } from '../lib/email-service.js';
 import { PHONE_COLLECTION_CLOSED, phoneCollectionOpen } from '../_utils/phone-collection.js';
 import { afterResponse } from '../_utils/after-response.js';
 import { mailContactEraser } from './mail-contact-erasure.js';
+import { recordMailContactFailure } from './mail-contact-failures.js';
 import { citizenMailLanguage } from './mail-language.js';
 import { localizedMail } from '../_utils/mail-catalogue.js';
 
@@ -61,7 +62,8 @@ export async function requestEmailChange(userId, input, deps = {}) {
 
 /**
  * Legal v5: once the change is confirmed, the OLD address is no longer an account's address — its « contact » at the e-mail provider is deleted
- * (api/_services/mail-contact-erasure.js), after the answer and fail-safe (the change stands whatever the provider answers).
+ * (api/_services/mail-contact-erasure.js), after the answer and fail-safe (the change stands whatever the provider answers); a failure is recorded,
+ * address-free, for a person (api/_services/mail-contact-failures.js).
  * @param {string} rawToken @param {{ db?: any, now?: Date, mailContacts?: { erase: (email: string, o?: { reason?: string }) => Promise<unknown> } }} [deps]
  * @returns {Promise<{ ok: boolean, status: string }>} status for the account page
  */
@@ -69,7 +71,14 @@ export async function confirmEmailChange(rawToken, deps = {}) {
   const db = deps.db || defaultDb; const now = deps.now || new Date(); const mailContacts = deps.mailContacts || mailContactEraser;
   /** @type {string | null} */ let oldEmail = null;
   const out = await confirmEmailChangeTx(rawToken, db, now, (e) => { oldEmail = e; });
-  if (out.ok && out.status === 'changed' && oldEmail) { const address = oldEmail; afterResponse(() => mailContacts.erase(address, { reason: 'email_change' }), 'mail-contact-erasure'); }
+  if (out.ok && out.status === 'changed' && oldEmail) {
+    const address = oldEmail;
+    // legal v6 / C6: the old address is no longer anywhere in our database, so there is no retry — a failure is recorded address-free for a person
+    afterResponse(async () => {
+      const r = /** @type {any} */ (await mailContacts.erase(address, { reason: 'email_change' }));
+      if (r?.outcome === 'failed') await recordMailContactFailure(db, { reason: 'email_change', step: r.step, status: r.status ?? null });
+    }, 'mail-contact-erasure');
+  }
   return out;
 }
 

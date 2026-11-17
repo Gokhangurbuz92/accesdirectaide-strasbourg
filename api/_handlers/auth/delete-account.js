@@ -38,9 +38,12 @@ export default async function handler(req, res) {
     }
 
     const { id: userId } = citizen;
-    const latest = async () => (await db.execute(sql`SELECT id, status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "subjectId" = ${userId} AND "requestType" = 'DELETE' ORDER BY "createdAt" DESC LIMIT 1`)).rows[0] || null;
+    const latest = async () => (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "subjectId" = ${userId} AND "requestType" = 'DELETE' ORDER BY "createdAt" DESC LIMIT 1`)).rows[0] || null;
     // launch-readiness item 63: the person sees by when the answer is due (one month, GDPR art. 12(3))
-    const view = (r) => (r ? { requestId: r.id, status: r.status, ...(['COMPLETED', 'REJECTED'].includes(r.status) ? {} : { dueAt: dsrDeadline(r.createdAt).dueAt }),
+    // legal v6: « BLOCKED » tells the person that a legal obligation of retention applies (CompteParametres) — true only for a legal hold. A request parked
+    // for a technical reason (execution failure, Mailjet contact not yet deleted: nothing erased, retried) is shown as still being processed.
+    const shown = (r) => (r.status === 'BLOCKED' && r.reasonCode !== 'LEGAL_HOLD_ACTIVE' ? 'APPROVED' : r.status);
+    const view = (r) => (r ? { requestId: r.id, status: shown(r), ...(['COMPLETED', 'REJECTED'].includes(r.status) ? {} : { dueAt: dsrDeadline(r.createdAt).dueAt }),
       ...(r.status === 'REJECTED' && r.o?.reason ? { reason: r.o.reason } : {}) } : null);
     if (req.method === 'GET') {
         try { return res.status(200).json({ ok: true, request: view(await latest()) }); }
@@ -51,7 +54,7 @@ export default async function handler(req, res) {
         // R12: one request per person even when the button is pressed twice at once — the check and the creation run under a per-person lock
         const outcome = await db.transaction(async (tx) => {
             await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${'dsr-delete:' + userId}, 0))`);
-            const open = (await tx.execute(sql`SELECT id, status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "subjectId" = ${userId} AND "requestType" = 'DELETE' ORDER BY "createdAt" DESC LIMIT 1`)).rows[0] || null;
+            const open = (await tx.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "subjectId" = ${userId} AND "requestType" = 'DELETE' ORDER BY "createdAt" DESC LIMIT 1`)).rows[0] || null;
             if (open && ['IDENTITY_OR_AUTHORITY_CHECK', 'IN_REVIEW', 'APPROVED', 'EXECUTING', 'BLOCKED'].includes(open.status)) return { open };
             logger.info('[GDPR] Account deletion request received');
             const privacyService = createPrivacyRightsService({ db: tx, cryptoLib: crypto });

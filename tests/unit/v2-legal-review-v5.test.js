@@ -8,6 +8,8 @@
  *  R3  § 6: for some technical data Vercel and Sinch (Mailjet) act on their own behalf.
  *  R4  § 7: clauses incorporated into each provider's terms; official Data Privacy Framework list for Vercel Inc., Upstash, Inc. and Databricks, Inc.
  *      (read 15/11/2026) — never for Mailjet / Sinch.
+ * The current version is pinned by v2-legal-review-v6.test.js (owner conditions of 17/11/2026: real Mailjet outcomes, Vercel criterion, provider roles);
+ * what v5 changed and v6 kept must stay true in every later version, which is what this file keeps checking.
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -22,23 +24,23 @@ const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.par
 const locale = (/** @type {string} */ lang) => JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
 const source = readFileSync('src/config/legal-drafts.js', 'utf8');
 
-describe('legal drafts v5-2026-11-15', () => {
-  it('the version is bumped on every document (one shared version, as for v4)', () => {
-    expect(LEGAL_DRAFTS_VERSION).toBe('v5-2026-11-15');
-    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe('v5-2026-11-15');
+describe('legal drafts: what the v5 provider verification (15/11/2026) changed still holds', () => {
+  it('every document carries the one current version, v5 or later', () => {
+    expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(5);
+    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_VERSION);
   });
 
-  it('Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names v5 — an approval of v4 does not carry over', () => {
+  it('Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names the current version — an approval of v4 or v5 does not carry over', () => {
     const v4 = 'cgu-citoyen@v4-2026-11-15,notice-confidentialite@v4-2026-11-15';
-    const v5 = 'cgu-citoyen@v5-2026-11-15,notice-confidentialite@v5-2026-11-15';
-    for (const approved of [undefined, '', v4, 'v4-2026-11-15']) {
+    const v5 = `cgu-citoyen@${LEGAL_DRAFTS_VERSION},notice-confidentialite@${LEGAL_DRAFTS_VERSION}`;
+    for (const approved of [undefined, '', v4, 'v4-2026-11-15', 'cgu-citoyen@v5-2026-11-15,notice-confidentialite@v5-2026-11-15', 'v5-2026-11-15']) {
       expect(draftVisibility(notice, { approved, production: true, preview: '1' })).toBe('HIDDEN');
       expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: approved })).toBe(false);
     }
     expect(draftVisibility(notice, { approved: v5, production: true })).toBe('IN_FORCE');
     expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: v5 })).toBe(true);
     // the notice alone is not enough: an account is created under both documents
-    expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: 'notice-confidentialite@v5-2026-11-15' })).toBe(false);
+    expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: `notice-confidentialite@${LEGAL_DRAFTS_VERSION}` })).toBe(false);
     expect(draftVisibility(notice, { approved: '', production: false, preview: '1' })).toBe('PREVIEW');
   });
 
@@ -67,7 +69,8 @@ describe('legal drafts v5-2026-11-15', () => {
 
   it('R1 — § 4: Vercel 1 day; Mailjet by objective criterion, never one guessed figure; the contact is disclosed; no period for message content', () => {
     const item = section('retention').items[11];
-    expect(item).toBe("Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution 1 jour. Le prestataire d'e-mails (Mailjet) garde les statistiques d'envoi 90 jours avec la formule gratuite de Mailjet, 13 mois avec une formule payante ; il enregistre l'adresse du destinataire comme contact et la garde tant que notre compte Mailjet existe, sauf si nous la supprimons avant ; à la fin de notre contrat, il efface les données dans un délai de 90 jours. Mailjet ne publie pas de durée pour le contenu des messages.");
+    expect(item).toMatch(/^Journaux techniques des prestataires : l'hébergeur \(Vercel\) garde ses journaux d'exécution 1 jour/);
+    expect(item.endsWith("Le prestataire d'e-mails (Mailjet) garde les statistiques d'envoi 90 jours avec la formule gratuite de Mailjet, 13 mois avec une formule payante ; il enregistre l'adresse du destinataire comme contact et la garde tant que notre compte Mailjet existe, sauf si nous la supprimons avant ; à la fin de notre contrat, il efface les données dans un délai de 90 jours. Mailjet ne publie pas de durée pour le contenu des messages.")).toBe(true);
     expect(item).not.toMatch(/1 heure|selon l'offre|dans sa documentation/);
     // both published figures, each tied to its plan
     expect(item).toMatch(/90 jours avec la formule gratuite de Mailjet, 13 mois avec une formule payante/);
@@ -83,26 +86,29 @@ describe('legal drafts v5-2026-11-15', () => {
     expect(source).toContain('https://neon.com/docs/introduction/plans');
   });
 
-  it('R2 — § 4: the contact is deleted on erasure, and the code that makes it true is wired in', () => {
+  it('R2 — § 4: the service e-mails line speaks of the Mailjet contact, and the code is wired in (the wording itself is v6\'s, pinned there)', () => {
     const item = section('retention').items[5];
     expect(item).toMatch(/^E-mails de service : /);
-    expect(item.endsWith("L'adresse enregistrée chez Mailjet est supprimée lorsque votre compte est effacé.")).toBe(true);
+    expect(item).toContain('Mailjet');
     expect(readFileSync('api/_services/mail-contact-erasure.js', 'utf8')).toContain('https://dev.mailjet.com/docs/email-api/contact-management/gdpr-delete-contacts');
-    expect(readFileSync('api/_services/privacy.js', 'utf8')).toContain("mailContacts.erase(user.email, { reason: 'account_erasure' })");
-    expect(readFileSync('api/_handlers/cron/gdpr-purge.js', 'utf8')).toContain("mailContactEraser.eraseMany(emails, { reason: 'unverified_account_purge' })");
+    expect(readFileSync('api/_services/privacy.js', 'utf8')).toContain("mailContacts.erase(account.email, { reason: 'account_erasure' })");
+    expect(readFileSync('api/_handlers/cron/gdpr-purge.js', 'utf8')).toContain("reason: 'unverified_account_purge'");
     expect(readFileSync('api/_services/email-change.js', 'utf8')).toContain("mailContacts.erase(address, { reason: 'email_change' })");
   });
 
   it('R3 — § 6: on instruction for the person\'s data; Vercel and Sinch also act on their own behalf for some technical data', () => {
     const paras = section('processors').paras;
-    expect(paras).toEqual(["Pour vos données, chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service. Deux d'entre eux traitent aussi certaines données techniques pour leur propre compte : Vercel, pour les données d'usage de son service ; Sinch (Mailjet), pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau."]);
+    expect(paras).toHaveLength(1);
+    expect(paras[0]).toMatch(/^Pour vos données, chacun de ces prestataires agit sur instruction/);
+    expect(paras[0]).toContain('Vercel, pour les données d\'usage');
+    expect(paras[0]).toContain('Sinch (Mailjet), pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau');
     expect(section('processors').items).toHaveLength(6);
   });
 
   it('R4 — § 7: clauses incorporated; the official list for Vercel Inc., Upstash, Inc. and Databricks, Inc.; Upstash relies on the framework first', () => {
     const t = section('transfers').paras.join('\n');
     expect(section('transfers').paras).toHaveLength(1);
-    expect(t).toContain("Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914), intégrées aux conditions de chaque prestataire. Vercel Inc. et Upstash, Inc. sont en outre inscrites sur la liste officielle du cadre de protection des données UE–États-Unis (consultée le 15 novembre 2026) ; Upstash s'appuie d'abord sur ce cadre, et sur les clauses contractuelles types s'il ne s'applique plus. Databricks, Inc. (Neon) y est également inscrite. Scaleway SAS fait exception");
+    expect(t).toContain("Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914), intégrées aux conditions de chaque prestataire. Vercel Inc. et Upstash, Inc. sont en outre inscrites sur la liste officielle du cadre de protection des données UE–États-Unis (consultée le 17 novembre 2026) ; Upstash s'appuie d'abord sur ce cadre, et sur les clauses contractuelles types s'il ne s'applique plus. Databricks, Inc. (Neon) y est également inscrite. Scaleway SAS fait exception");
     expect(t).not.toMatch(/déclarent en outre adhérer|selon les conditions de chaque prestataire/);
     expect(t).toMatch(/^La plupart de ces prestataires appartiennent à des groupes établis aux États-Unis ; Mailjet appartient au groupe suédois Sinch/);
   });
@@ -120,7 +126,7 @@ describe('legal drafts v5-2026-11-15', () => {
       const part = p.slice(from, to);
       for (const name of ['Vercel Inc.', 'Upstash, Inc.', 'Databricks, Inc. (Neon)']) expect(part, `${lang} ${name}`).toContain(name);
       expect(part, lang).not.toMatch(/Mailjet|Sinch|Mailgun/);
-      expect(part, lang).toMatch(/15/);
+      expect(part, lang).toMatch(/1[57]/);   // the reading date of the list (15/11 in v5, 17/11 since v6)
       expect(part, lang).toMatch(/2026/);
     }
     expect(source).toContain('Active on dataprivacyframework.gov/list, read 15/11/2026');
@@ -140,9 +146,8 @@ describe('legal drafts v5-2026-11-15', () => {
         for (let i = 1; i <= Number(n); i++) expect(tr[`privacyNotice.${s}.i${i}`], `${lang} ${s}.i${i}`).toBeTruthy();
         expect(tr[`privacyNotice.${s}.i${Number(n) + 1}`], `${lang} ${s}.i${Number(n) + 1}`).toBeUndefined();
       }
-      // R2: the last sentence of the service e-mails line names Mailjet
-      const mails = tr['privacyNotice.retention.i6'];
-      expect(mails.split(/[.。] /).at(-1), lang).toContain('Mailjet');
+      // R2: the service e-mails line names Mailjet
+      expect(tr['privacyNotice.retention.i6'], lang).toContain('Mailjet');
       // R1: 1 day for Vercel (no « 1 hour » range left), both Mailjet figures, the 90-day deletion, Neon's 6 hours on the free plan
       const logs = tr['privacyNotice.retention.i12'];
       const [vercelPart, mailjetPart] = [logs.slice(0, logs.indexOf('Mailjet')), logs.slice(logs.indexOf('Mailjet'))];
@@ -163,9 +168,8 @@ describe('legal drafts v5-2026-11-15', () => {
       expect(roles.length, lang).toBeGreaterThan(250);
     }
     const en = locale('en');
-    expect(en['privacyNotice.retention.i12']).toBe("Providers' technical logs: the host (Vercel) keeps its runtime logs for 1 day. The e-mail provider (Mailjet) keeps sending statistics for 90 days on Mailjet's free plan, 13 months on a paid plan; it records the recipient's address as a contact and keeps it as long as our Mailjet account exists, unless we delete it earlier; at the end of our contract, it erases the data within 90 days. Mailjet does not publish a period for the content of messages.");
-    expect(en['privacyNotice.retention.i6']).toMatch(/ The address recorded at Mailjet is deleted when your account is erased\.$/);
-    expect(en['privacyNotice.transfers.p1']).toContain('Vercel Inc. and Upstash, Inc. are in addition on the official list of the EU–US Data Privacy Framework (consulted on 15 November 2026); Upstash relies first on this framework, and on the standard contractual clauses if it no longer applies. Databricks, Inc. (Neon) is also on that list.');
+    expect(en['privacyNotice.retention.i12'].slice(en['privacyNotice.retention.i12'].indexOf('The e-mail provider'))).toBe("The e-mail provider (Mailjet) keeps sending statistics for 90 days on Mailjet's free plan, 13 months on a paid plan; it records the recipient's address as a contact and keeps it as long as our Mailjet account exists, unless we delete it earlier; at the end of our contract, it erases the data within 90 days. Mailjet does not publish a period for the content of messages.");
+    expect(en['privacyNotice.transfers.p1']).toContain('Vercel Inc. and Upstash, Inc. are in addition on the official list of the EU–US Data Privacy Framework (consulted on 17 November 2026); Upstash relies first on this framework, and on the standard contractual clauses if it no longer applies. Databricks, Inc. (Neon) is also on that list.');
     expect(en['privacyNotice.transfers.p1']).not.toMatch(/declare that they adhere/);
     expect(en['privacyNotice.processors.p1']).toMatch(/^For your data, each of these providers acts on instruction/);
     expect(en['badge.proposed']).toBeTruthy();

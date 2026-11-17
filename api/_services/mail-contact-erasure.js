@@ -1,38 +1,40 @@
 /**
- * Legal v5 (15/11/2026) — the recipient's contact at the e-mail provider is deleted when the address stops being an account's address.
+ * Legal v5 (15/11/2026), v6 (17/11/2026) — the recipient's contact at the e-mail provider is deleted when the address stops being an account's address.
  *
  * Why: the Mailjet Send API saves every recipient address as a contact and keeps it for the lifetime of the Mailjet account
- * (https://dev.mailjet.com/email/guides/send-api-v31/ ; Help Center article 360042755094, read 15/11/2026). Erasing the account in our database left
- * that copy behind. Callers: the erasure of a citizen account (api/_services/privacy.js), the purge of never-confirmed accounts (gdpr-purge step 6c) and
- * the confirmed change of address, for the OLD address (api/_services/email-change.js).
+ * (https://dev.mailjet.com/email/guides/send-api-v31/ ; Help Center article 360042755094, read again 17/11/2026: « Your templates and contacts are kept for
+ * the lifetime of your account »). Erasing the account in our database left that copy behind. Callers: the erasure of a citizen account
+ * (api/_services/privacy.js executeApprovedDeletion — BEFORE the database erasure), the purge of never-confirmed accounts (gdpr-purge step 6c, before the
+ * deletion transaction) and the confirmed change of address, for the OLD address (api/_services/email-change.js).
  *
- * How — Mailjet « GDPR Delete contacts », https://dev.mailjet.com/docs/email-api/contact-management/gdpr-delete-contacts (read 15/11/2026):
+ * How — Mailjet « GDPR Delete contacts », https://dev.mailjet.com/docs/email-api/contact-management/gdpr-delete-contacts (read 15/11 and 17/11/2026):
  *   1. GET    https://api.mailjet.com/v3/REST/contact/{email}        → Data[0].ID (the contact id)
  *   2. DELETE https://api.mailjet.com/v4/contacts/{contact_ID}       → « 200 OK »; « Any other response will indicate that the deletion was not
  *      successfully processed ». The contact is anonymised at once and its records are deleted after 30 days; this cannot be reversed.
  * Same credentials as the Send API (HTTP basic, MAILER_API_KEY = public:secret). Only the API key of this site is covered (the guide: a contact must be
  * removed from every account / sub-account that holds it — the site uses one).
  *
- * Fail-safe: nothing here throws and nothing here blocks an erasure — it runs AFTER the database commit. Outcomes:
- *   skipped     the provider is not Mailjet (noop, test, resend, msgraph) or has no credentials: no contact exists there through this site → no call
- *   absent      Mailjet knows no such contact (404 on the lookup)                         deleted   the DELETE answered 200
- *   queued      the contact id is known but the DELETE failed: the NUMERIC id (never the address) is put on a retry list in the KV store and tried again
- *               at every later erasure and every purge run (drainPending) until Mailjet answers 200 or 404
- *   unresolved  the lookup itself failed (two attempts): the id is unknown and the address is not kept anywhere for a retry (it has just been erased) —
- *               logged and reported to the caller, which flags it (summary / failed step). The contact then follows Mailjet's own rule.
- * Logs carry the outcome, the HTTP status and the reason — never the address, never the contact id.
+ * Owner decision C6 (17/11/2026, « HAYIR »): the address is never copied anywhere new — no retry list holding it (or a contact id derived from it) in the
+ * KV store. A retry is possible only while the address is still in its existing place (the account row): the caller decides (privacy.js keeps an approved
+ * erasure pending for a bounded window; 6c and the change of address cannot wait and record the failure). Outcomes (nothing here throws):
+ *   skipped   the provider is not Mailjet (noop, test, resend, msgraph) or has no credentials: no contact exists there through this site → no call
+ *   absent    Mailjet knows no such contact (404 on the lookup, or an empty answer)
+ *   deleted   the DELETE answered 200 (or 404: the contact disappeared between the two calls)
+ *   failed    anything else — `step` says where (lookup | delete | internal) and `status` the HTTP status (0 = unreachable). NEVER reported as deleted.
+ * Logs carry the outcome, the step, the HTTP status and the reason — never the address, never the contact id.
+ * The failure record itself (address-free, « intervention humaine requise ») is api/_services/mail-contact-failures.js.
  */
 import { env } from '../_utils/env.js';
 import { kv as defaultKv } from '../_utils/kv.js';
 import defaultLogger from '../_utils/logger.js';
 
 export const MAIL_CONTACT_PENDING_KEY = 'ada:mail-contact-erasure:pending:v1';
-export const MAIL_CONTACT_PENDING_MAX = 5000;
 const KIND = 'ada-mail-contact-erasure';
 const HTTP_TIMEOUT_MS = 5_000;
 const API = 'https://api.mailjet.com';
 
-/** @typedef {'skipped' | 'absent' | 'deleted' | 'queued' | 'unresolved'} MailContactOutcome */
+/** @typedef {'skipped' | 'absent' | 'deleted' | 'failed'} MailContactOutcome */
+/** @typedef {{ outcome: MailContactOutcome, status?: number, step?: 'lookup' | 'delete' | 'internal' }} MailContactResult */
 
 /**
  * @param {{ fetchImpl?: typeof fetch, kv?: any, logger?: any, sleep?: (ms: number) => Promise<void>,
@@ -85,15 +87,6 @@ export function createMailContactEraser(deps = {}) {
     return e && typeof e === 'object' && e.kind === KIND && /^\d{1,20}$/.test(String(e.contactId)) ? { contactId: String(e.contactId), queuedAt: String(e.queuedAt || ''), attempts: Number(e.attempts) || 0 } : null;
   };
 
-  /** @param {{ contactId: string, queuedAt?: string, attempts?: number }} e @returns {Promise<boolean>} false = the retry list could not be written */
-  const enqueue = async (e) => {
-    try {
-      await kv.lpush(MAIL_CONTACT_PENDING_KEY, JSON.stringify({ kind: KIND, contactId: String(e.contactId), queuedAt: e.queuedAt || new Date().toISOString(), attempts: e.attempts || 0 }));
-      await kv.ltrim(MAIL_CONTACT_PENDING_KEY, 0, MAIL_CONTACT_PENDING_MAX - 1);
-      return true;
-    } catch { return false; }
-  };
-
   return {
     /** true when a Mailjet account is configured (contacts can exist there) */
     active: () => authorization() !== null,
@@ -101,10 +94,15 @@ export function createMailContactEraser(deps = {}) {
     /**
      * Deletes the Mailjet contact of one address. Never throws.
      * @param {string | null | undefined} email @param {{ reason?: string }} [o] reason: a short label for the logs (« account_erasure », …)
-     * @returns {Promise<{ outcome: MailContactOutcome, status?: number }>}
+     * @returns {Promise<MailContactResult>}
      */
     async erase(email, o = {}) {
       const reason = String(o.reason || 'erasure');
+      /** @param {'lookup' | 'delete' | 'internal'} step @param {number} [status] @returns {MailContactResult} */
+      const failed = (step, status) => {
+        try { log.error({ msg: 'mail_contact.erasure_failed', reason, step, status: status ?? null }, '[mail-contact] provider contact NOT deleted'); } catch { /* the logger cannot break the caller */ }
+        return { outcome: 'failed', step, ...(status === undefined ? {} : { status }) };
+      };
       try {
         const auth = authorization();
         const address = String(email || '').trim();
@@ -113,67 +111,57 @@ export function createMailContactEraser(deps = {}) {
         if (found.status === 404) return { outcome: 'absent', status: 404 };
         const id = found.status === 200 ? found.body?.Data?.[0]?.ID : null;
         if (found.status === 200 && (id === null || id === undefined) && Number(found.body?.Count) === 0) return { outcome: 'absent', status: 200 };
-        if (!/^\d{1,20}$/.test(String(id ?? ''))) {
-          log.error({ msg: 'mail_contact.erasure_unresolved', reason, step: 'lookup', status: found.status }, '[mail-contact] contact lookup failed: provider contact not deleted');
-          return { outcome: 'unresolved', status: found.status };
-        }
+        if (!/^\d{1,20}$/.test(String(id ?? ''))) return failed('lookup', found.status);
         const del = await deleteById(id, auth);
-        if (del.done) { log.info({ msg: 'mail_contact.erased', reason, status: del.status }, '[mail-contact] provider contact deleted'); return { outcome: 'deleted', status: del.status }; }
-        const kept = await enqueue({ contactId: String(id) });
-        log.error({ msg: kept ? 'mail_contact.erasure_queued' : 'mail_contact.erasure_unresolved', reason, step: 'delete', status: del.status },
-          kept ? '[mail-contact] contact deletion failed: queued for retry' : '[mail-contact] contact deletion failed and the retry list is unavailable');
-        return { outcome: kept ? 'queued' : 'unresolved', status: del.status };
-      } catch (err) {
-        log.error({ msg: 'mail_contact.erasure_unresolved', reason, step: 'internal', err: { name: /** @type {any} */ (err)?.name } }, '[mail-contact] contact deletion failed');
-        return { outcome: 'unresolved' };
+        if (!del.done) return failed('delete', del.status);
+        try { log.info({ msg: 'mail_contact.erased', reason, status: del.status }, '[mail-contact] provider contact deleted'); } catch { /* deleted is deleted */ }
+        return { outcome: 'deleted', status: del.status };
+      } catch {
+        return failed('internal');
       }
     },
 
     /**
      * Several addresses, a few at a time. Never throws.
-     * @param {Array<string | null | undefined>} emails @param {{ reason?: string, concurrency?: number }} [o]
+     * @param {Array<string | null | undefined>} emails @param {{ reason?: string, concurrency?: number, onResult?: (r: MailContactResult) => void }} [o] onResult: per address, address-free
      * @returns {Promise<Record<MailContactOutcome, number>>}
      */
     async eraseMany(emails, o = {}) {
-      /** @type {Record<MailContactOutcome, number>} */ const totals = { skipped: 0, absent: 0, deleted: 0, queued: 0, unresolved: 0 };
+      /** @type {Record<MailContactOutcome, number>} */ const totals = { skipped: 0, absent: 0, deleted: 0, failed: 0 };
       const list = [...new Set((emails || []).map((e) => String(e || '').trim()).filter(Boolean))];
       const width = Math.max(1, Math.min(Number(o.concurrency) || 4, 8));
       let next = 0;
-      const worker = async () => { while (next < list.length) { const e = list[next]; next += 1; totals[(await this.erase(e, o)).outcome] += 1; } };
+      const worker = async () => { while (next < list.length) { const e = list[next]; next += 1; const r = await this.erase(e, o); totals[r.outcome] += 1; try { o.onResult?.(r); } catch { /* ignore */ } } };
       await Promise.all(Array.from({ length: Math.min(width, list.length) }, worker));
       return totals;
     },
 
     /**
-     * Tries the queued deletions again. Never throws.
-     * @param {{ limit?: number }} [o] @returns {Promise<{ tried: number, deleted: number, remaining: number }>}
+     * LEGACY ONLY (owner decision C6, 17/11/2026; Upstash Free may delete idle data, so nothing durable may live there): v5 put the numeric contact id
+     * of a failed DELETE on a KV retry list. Nothing is ever written to that list again — not even back. One pass: each id left there is tried once
+     * (oldest first), then the whole list is deleted; the ids Mailjet did not confirm are only COUNTED (`failed`) so the caller records them address-free
+     * for a person (api/_services/mail-contact-failures.js). Without Mailjet credentials the list is left untouched (nothing can be tried). Never throws.
+     * @returns {Promise<{ tried: number, deleted: number, failed: number, remaining: number }>}
      */
-    async drainPending(o = {}) {
-      const out = { tried: 0, deleted: 0, remaining: 0 };
+    async drainPending() {
+      const out = { tried: 0, deleted: 0, failed: 0, remaining: 0 };
       try {
         const auth = authorization();
         const rows = await kv.lrange(MAIL_CONTACT_PENDING_KEY, 0, -1);
-        const entries = (Array.isArray(rows) ? rows : []).map(parse).filter((e) => e !== null);
-        out.remaining = entries.length;
-        if (!auth || entries.length === 0) return out;
-        const limit = Math.max(1, Number(o.limit) || 50);
-        // oldest first (the list is newest first); an entry leaves the list only once Mailjet answered 200 or 404
-        const ordered = [...entries].reverse();
-        /** @type {typeof ordered} */ const keep = [];
-        for (const [i, e] of ordered.entries()) {
-          if (i >= limit) { keep.push(e); continue; }
+        const list = Array.isArray(rows) ? rows : [];
+        const entries = list.map(parse).filter((e) => e !== null);
+        out.remaining = list.length;
+        if (!auth || list.length === 0) return out;
+        for (const e of [...entries].reverse()) {
           out.tried += 1;
           const del = await deleteById(e.contactId, auth);
-          if (del.done) out.deleted += 1; else keep.push({ ...e, attempts: e.attempts + 1 });
+          if (del.done) out.deleted += 1; else out.failed += 1;
         }
-        if (out.deleted > 0 || out.tried > 0) {
-          await kv.del(MAIL_CONTACT_PENDING_KEY);
-          for (const e of keep) await enqueue(e);
-        }
-        out.remaining = keep.length;
-        if (out.tried) log[out.remaining ? 'warn' : 'info']({ msg: 'mail_contact.pending_drained', ...out }, '[mail-contact] queued contact deletions retried');
+        await kv.del(MAIL_CONTACT_PENDING_KEY);
+        out.remaining = 0;
+        log[out.failed ? 'warn' : 'info']({ msg: 'mail_contact.legacy_list_drained', ...out }, '[mail-contact] legacy v5 retry list drained and deleted');
       } catch (err) {
-        log.error({ msg: 'mail_contact.pending_drain_failed', err: { name: /** @type {any} */ (err)?.name } }, '[mail-contact] retry of queued contact deletions failed');
+        log.error({ msg: 'mail_contact.pending_drain_failed', err: { name: /** @type {any} */ (err)?.name } }, '[mail-contact] legacy retry list could not be drained');
       }
       return out;
     },

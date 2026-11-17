@@ -13,6 +13,8 @@ import { getCronAuth } from '../../_utils/cronAuth.js';
 import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
 import { mailContactEraser } from '../../_services/mail-contact-erasure.js';
+import { recordMailContactFailure } from '../../_services/mail-contact-failures.js';
+import { retryMailContactErasures } from '../../_services/dsr-erasure-review.js';
 import * as Sentry from '@sentry/node';
 import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
@@ -296,17 +298,27 @@ export const PURGE_STEPS = [
     { id: 'unverifiedAccountsDeleted', summaryKey: 'unverified_accounts_deleted', ecode: 'D4-V2', kind: 'delete', table: 'CitizenUser', durationKey: 'UNVERIFIED_ACCOUNT_DAYS',
         tables: ['CitizenUser', 'ConsentLog', 'DSRRequest', 'LegalHold'],
         count: (db, ctx) => countWhere(db, CitizenUser, unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS'))),
-        run: async (db, ctx) => {
-            const found = await db.select({ id: CitizenUser.id, email: CitizenUser.email }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')));
+        // Legal v6 / owner decision C6: the verification e-mail made the provider save each of these addresses as a « contact ». It is deleted there FIRST,
+        // outside the transaction and while the address is still in the account row (api/_services/mail-contact-erasure.js). The 8-day promise of the notice
+        // does not wait for Mailjet: the accounts are deleted whatever it answers, and a failure is recorded address-free, « intervention humaine requise »
+        // (api/_services/mail-contact-failures.js) and names the step mailContactErasure. Deleting the contact of an account confirmed in the meantime is
+        // harmless: the provider records the address again at the next e-mail.
+        before: async (db, ctx) => {
+            const found = await db.select({ email: CitizenUser.email }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')));
+            /** @type {{ step: string, status: number | null }[]} */ const failures = [];
+            await mailContactEraser.eraseMany(found.map((/** @type {{ email: string }} */ r) => r.email), { reason: 'unverified_account_purge',
+                onResult: (r) => { if (r.outcome === 'failed') failures.push({ step: r.step || 'internal', status: r.status ?? null }); } });
+            return { failures, record: (/** @type {{ step: string, status: number | null }[]} */ f) => recordMailContactFailure(db, { reason: 'unverified_account_purge', step: f[0].step, status: f[0].status, count: f.length }) };
+        },
+        run: async (db, ctx, prep) => {
+            const found = await db.select({ id: CitizenUser.id }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')));
             const ids = found.map((/** @type {{ id: string }} */ r) => r.id);
-            if (!ids.length) return 0;
-            await db.delete(ConsentLog).where(and(eq(ConsentLog.subject_type, 'CITIZEN_USER'), inArray(ConsentLog.subject_id, ids)));
-            const gone = await db.delete(CitizenUser).where(and(inArray(CitizenUser.id, ids), isNull(CitizenUser.emailVerifiedAt))).returning({ id: CitizenUser.id });
-            // Legal v5: the verification e-mail made the provider save each of these addresses as a « contact » — deleted there too, after the commit
-            // (api/_services/mail-contact-erasure.js; fail-safe: the accounts are gone whatever the provider answers; an unresolved contact fails the step name)
-            const goneIds = new Set(gone.map((/** @type {{ id: string }} */ r) => r.id));
-            const emails = found.filter((/** @type {{ id: string }} */ r) => goneIds.has(r.id)).map((/** @type {{ email: string }} */ r) => r.email);
-            return { count: gone.length, afterCommit: async () => ((await mailContactEraser.eraseMany(emails, { reason: 'unverified_account_purge' })).unresolved > 0 ? 'mailContactErasure' : null) };
+            if (!ids.length && !prep?.failures?.length) return 0;
+            if (ids.length) await db.delete(ConsentLog).where(and(eq(ConsentLog.subject_type, 'CITIZEN_USER'), inArray(ConsentLog.subject_id, ids)));
+            const gone = ids.length ? await db.delete(CitizenUser).where(and(inArray(CitizenUser.id, ids), isNull(CitizenUser.emailVerifiedAt))).returning({ id: CitizenUser.id }) : [];
+            const failures = prep?.failures || [];
+            return { count: gone.length, extra: failures.length ? { mail_contact_failures: failures.length } : {},
+                afterCommit: async () => (failures.length === 0 ? null : (await prep.record(failures)) ? 'mailContactErasure' : 'mailContactErasureUnrecorded') };
         } },
 
     // 7. Old AI Metrics (90 days — non-personal, storage hygiene)
@@ -544,7 +556,8 @@ export async function runGdprPurge(opts = {}) {
             if (runIt && (step.dependsOn || []).some((d) => failedSteps.includes(d))) { blocked.push(step.id); line.decision = 'blocked_by_failed_dependency'; continue; }
             if (runIt) {
                 try {
-                    const out = await database.transaction(async (tx) => step.run(tx, ctx));
+                    const prep = typeof step.before === 'function' ? await step.before(database, ctx) : undefined;   // legal v6: provider calls outside the transaction
+                    const out = await database.transaction(async (tx) => step.run(tx, ctx, prep));
                     const n = typeof out === 'number' ? out : Number(out?.count ?? 0);
                     counters[step.summaryKey] = n; line.count = n; line.decision = 'executed';
                     for (const [k, v] of Object.entries(out?.extra || {})) counters[k] = v;
@@ -573,9 +586,19 @@ export async function runGdprPurge(opts = {}) {
             steps: report,
         };
         if (execute) {
-            // Legal v5: provider contact deletions that failed earlier (contact ids only) are tried again at every run; what is still pending fails the run's status
-            const pendingContacts = await mailContactEraser.drainPending().catch(() => ({ remaining: 0 }));
-            if (pendingContacts.remaining > 0) { failedSteps.push('mailContactRetry'); out.status = 'partial_failure'; out.failed_steps = failedSteps; }
+            // Legal v6 / C6: approved account erasures parked because Mailjet did not confirm the contact deletion are tried again (dsr-erasure-review.js);
+            // one whose window has closed is erased and recorded for a person. Counts only.
+            const retryParked = opts.retryParkedErasures ?? retryMailContactErasures;
+            const parked = tables.has('DSRRequest') ? await retryParked(database).catch(() => ({ tried: 0, erased: 0, stillPending: 0, failed: 1, humanIntervention: 0 }))
+                : { tried: 0, erased: 0, stillPending: 0, failed: 0, humanIntervention: 0 };
+            if (parked.tried || parked.failed) out.mail_contact_erasures_retried = parked;
+            if (parked.failed > 0) { failedSteps.push('mailContactErasureRetry'); out.status = 'partial_failure'; out.failed_steps = failedSteps; }
+            // LEGACY (v5 only): the contact ids an earlier version left on the KV retry list are tried once and the list is deleted — nothing is ever
+            // written back to Upstash (owner decision C6). What Mailjet did not confirm is recorded address-free for a person; a list that could not be
+            // drained (no credentials) is reported.
+            const legacy = await mailContactEraser.drainPending().catch(() => ({ tried: 0, deleted: 0, failed: 0, remaining: 0 }));
+            if (legacy.failed > 0) await recordMailContactFailure(database, { reason: 'account_erasure', step: 'delete', count: legacy.failed });
+            if (legacy.failed > 0 || legacy.remaining > 0) { failedSteps.push('mailContactRetry'); out.status = 'partial_failure'; out.failed_steps = failedSteps; }
             // R44: evidence of the run (counts and step ids only — never a value, an address or an identifier of a person)
             try {
                 await database.insert(AuditLog).values({ action: 'GDPR_PURGE_RUN', actor: 'cron/gdpr-purge', entity: 'RetentionPolicy', entity_id: policy.version,

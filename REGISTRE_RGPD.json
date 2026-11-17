@@ -1,7 +1,7 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
   "version": "0.3",
-  "date_mise_a_jour": "2026-11-15",
+  "date_mise_a_jour": "2026-11-17",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
     "retention": "api/_handlers/cron/gdpr-purge.js",
@@ -751,10 +751,10 @@
       "statut": "en service (bêta publique restreinte ; crons fermés)",
       "localisation": "UE — région fra1 (Francfort) pour les fonctions ; pages statiques distribuées par le réseau mondial ; installations principales de Vercel aux États-Unis (DPA § 13.1)",
       "entite_contractante": "Vercel Inc. (USA) — équipe sur l'offre Pro",
-      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 17/11/2026)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Vercel est aussi responsable de traitement pour les données d'usage de son service (DPA § 4.b)",
-      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro (option Observability Plus non vérifiée)"
+      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026"
     },
     {
       "nom": "Vercel Analytics + Speed Insights",
@@ -777,12 +777,13 @@
     },
     {
       "nom": "Upstash",
-      "role": "Limitation de débit (KV/Redis) ; traces d'effacement (40 jours) ; identifiants de contact Mailjet en attente de suppression (seulement après un échec, sans adresse) ; ne contient plus l'état des leurres de réservation (R41-B)",
+      "role": "Limitation de débit (KV/Redis) ; traces d'effacement (40 jours) ; plus aucun identifiant de contact Mailjet depuis la v6 (décision C6 : ancienne liste seulement vidée) ; ne contient plus l'état des leurres de réservation (R41-B)",
       "statut": "en service (bêta publique restreinte)",
       "localisation": "Francfort (fra1) — preuve UPSTASH_REGION_EVIDENCE_2026-11-15",
       "entite_contractante": "Upstash, Inc. — offre gratuite",
-      "mecanisme_transfert": "Data Privacy Framework d'abord (Upstash, Inc. active sur la liste officielle, lue le 15/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s'il ne s'applique plus (DPA § 3.2 B, annexe 2)",
-      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026"
+      "mecanisme_transfert": "Data Privacy Framework d'abord (Upstash, Inc. active sur la liste officielle, lue le 17/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s'il ne s'applique plus (DPA § 3.2 B, annexe 2)",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
+      "role_propre": "Le DPA d'Upstash ne couvre pas ses traitements pour sa propre sécurité et l'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)"
     },
     {
       "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
@@ -822,13 +823,13 @@
     {
       "nom": "Mailjet (Sinch)",
       "role": "E-mails de service des comptes (vérification de l'adresse, mot de passe, avis du compte)",
-      "statut": "retenu (notice de confidentialité v5) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée",
+      "statut": "retenu (notice de confidentialité v6, non approuvée) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée",
       "localisation": "Google Cloud, Francfort (Allemagne) et Saint-Ghislain (Belgique)",
       "entite_contractante": "Groupe Sinch AB (Suède) ; Mailjet SAS est une société française — entité signataire exacte non vérifiée",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Sinch est aussi responsable de traitement indépendant pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau (DPA § 3 a iv)",
-      "journaux": "statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, supprimée à l'effacement du compte (api/_services/mail-contact-erasure.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages"
+      "journaux": "statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, suppression demandée avant l'effacement du compte (api/_services/mail-contact-erasure.js) ; en cas d'échec, nouvel essai 3 jours au plus dans le délai d'un mois, puis effacement du compte et signalement sans adresse « intervention humaine requise » (api/_services/mail-contact-failures.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages"
     },
     {
       "nom": "Twilio",

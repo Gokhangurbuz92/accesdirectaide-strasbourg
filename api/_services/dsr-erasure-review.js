@@ -25,12 +25,35 @@ async function parkFailedExecution(db, requestId, subjectId) {
   await db.execute(sql`UPDATE "DSRRequest" SET status = 'BLOCKED', "reasonCode" = 'EXECUTION_FAILED' WHERE id = ${requestId} AND status IN ('APPROVED', 'EXECUTING', 'PARTIALLY_COMPLETED')`);
   return true;
 }
+/**
+ * Legal v6 / owner decision C6 (17/11/2026): the engine refused to erase because Mailjet did not confirm the deletion of the account's contact and the retry
+ * window is still open (api/_services/privacy.js mailContactRetryWindow). Nothing was erased: the request is parked BLOCKED / MAIL_CONTACT_RETRY, the first
+ * failure time and the attempt count go to reviewOutcome.mailContactRetry (no address, no contact id), and the attempt is audited. It is retried by
+ * « Relancer », and by the daily purge when it runs in execute mode (retryMailContactErasures). When the window closes, the next attempt erases the account
+ * and records the failure for a person (api/_services/mail-contact-failures.js).
+ */
+async function parkForMailContact(db, requestId, error, actor) {
+  const info = error?.mailContact || {};
+  const now = new Date().toISOString();
+  const [row] = (await db.execute(sql`SELECT "reviewOutcome" AS o FROM "DSRRequest" WHERE id = ${requestId}`)).rows;
+  const prev = row?.o?.mailContactRetry || {};
+  const retry = { firstFailedAt: prev.firstFailedAt || now, lastFailedAt: now, attempts: Number(prev.attempts || 0) + 1, lastStep: info.step || 'internal', lastStatus: info.status ?? null, retryUntil: info.retryUntil || null };
+  const outcome = { ...(row?.o || {}), mailContactRetry: retry };
+  await db.execute(sql`UPDATE "DSRRequest" SET status = 'BLOCKED', "reasonCode" = 'MAIL_CONTACT_RETRY', "reviewOutcome" = ${JSON.stringify(outcome)}::jsonb
+      WHERE id = ${requestId} AND status IN ('APPROVED', 'EXECUTING')`);
+  await audit(db, 'MAIL_CONTACT_ERASURE_RETRY', actor, requestId, { step: retry.lastStep, status: retry.lastStatus, attempts: retry.attempts, retryUntil: retry.retryUntil });
+  return { ok: true, request: { id: requestId, status: 'BLOCKED' }, blockedBy: 'MAIL_CONTACT_RETRY', retryUntil: retry.retryUntil, attempts: retry.attempts };
+}
+
 const audit = (db, action, reviewer, requestId, details = {}) => db.insert(AuditLog).values({ action, entity: 'DSR_REQUEST', entity_id: requestId, actor_id: reviewer, details: { requestId, ...details }, ip_hash: 'ADMIN_MFA' });
+
+const blockedStage = (code) => (code === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : code === 'MAIL_CONTACT_RETRY' ? 'MAIL_CONTACT_RETRY' : 'BLOCKED_BY_LEGAL_HOLD');
 
 export async function listOpenErasures(db = defaultDb) {
   const rows = (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'DELETE' AND status IN ('IN_REVIEW', 'BLOCKED') ORDER BY "createdAt" LIMIT 100`)).rows;
   return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt),
-    stage: r.status === 'BLOCKED' ? (r.reasonCode === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : 'BLOCKED_BY_LEGAL_HOLD') : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
+    stage: r.status === 'BLOCKED' ? blockedStage(r.reasonCode) : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
+    ...(r.status === 'BLOCKED' && r.reasonCode === 'MAIL_CONTACT_RETRY' ? { mailContactRetry: { attempts: r.o?.mailContactRetry?.attempts ?? null, retryUntil: r.o?.mailContactRetry?.retryUntil ?? null } } : {}),
     proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null })) };
 }
 
@@ -94,12 +117,13 @@ export async function confirmErasure(id, input, reviewer, db = defaultDb, privac
   if (nextStatus === 'REJECTED') return { ok: true, request: { id: r.id, status: 'REJECTED' } };
   try {
     const summary = await privacy.executeApprovedDeletion(r.id);
-    return { ok: true, request: { id: r.id, status: 'COMPLETED' }, summary: Object.fromEntries(Object.entries(summary || {}).filter(([, v]) => typeof v === 'number')) };
+    return { ok: true, request: { id: r.id, status: 'COMPLETED' }, summary: Object.fromEntries(Object.entries(summary || {}).filter(([, v]) => typeof v === 'number')), mailContact: summary?.mailContact ?? null };
   } catch (error) {
     if (error?.code === 'LEGAL_HOLD_ACTIVE') {
       await db.execute(sql`UPDATE "DSRRequest" SET status = 'BLOCKED', "reasonCode" = 'LEGAL_HOLD_ACTIVE' WHERE id = ${r.id} AND status IN ('APPROVED', 'EXECUTING')`);
       return { ok: true, request: { id: r.id, status: 'BLOCKED' }, blockedBy: 'LEGAL_HOLD_ACTIVE' };
     }
+    if (error?.code === 'MAIL_CONTACT_PENDING') return parkForMailContact(db, r.id, error, reviewer);
     if (await parkFailedExecution(db, r.id, r.subjectId).catch(() => false)) return { ok: false, status: 503, code: 'EXECUTION_FAILED', message: 'L’effacement n’a pas pu être exécuté (rien n’a été effacé) : la demande reste dans la file, reprenez-la.', request: { id: r.id, status: 'BLOCKED' } };
     throw error;
   }
@@ -112,15 +136,39 @@ export async function retryBlockedErasure(id, reviewer, db = defaultDb, privacy 
   await audit(db, 'DSR_DELETE_RETRIED', reviewer, rows[0].id);
   try {
     const summary = await privacy.executeApprovedDeletion(rows[0].id);
-    return { ok: true, request: { id: rows[0].id, status: 'COMPLETED' }, summary: Object.fromEntries(Object.entries(summary || {}).filter(([, v]) => typeof v === 'number')) };
+    return { ok: true, request: { id: rows[0].id, status: 'COMPLETED' }, summary: Object.fromEntries(Object.entries(summary || {}).filter(([, v]) => typeof v === 'number')), mailContact: summary?.mailContact ?? null };
   } catch (error) {
     if (error?.code === 'LEGAL_HOLD_ACTIVE') {
       await db.execute(sql`UPDATE "DSRRequest" SET status = 'BLOCKED', "reasonCode" = 'LEGAL_HOLD_ACTIVE' WHERE id = ${rows[0].id} AND status IN ('APPROVED', 'EXECUTING')`);
       return { ok: true, request: { id: rows[0].id, status: 'BLOCKED' }, blockedBy: 'LEGAL_HOLD_ACTIVE' };
     }
+    if (error?.code === 'MAIL_CONTACT_PENDING') return parkForMailContact(db, rows[0].id, error, reviewer);
     const [subj] = (await db.execute(sql`SELECT "subjectId" FROM "DSRRequest" WHERE id = ${rows[0].id}`)).rows;
     if (await parkFailedExecution(db, rows[0].id, subj?.subjectId).catch(() => false)) return { ok: false, status: 503, code: 'EXECUTION_FAILED', message: 'L’effacement n’a pas pu être exécuté (rien n’a été effacé) : la demande reste dans la file, reprenez-la.', request: { id: rows[0].id, status: 'BLOCKED' } };
     throw error;
   }
 }
 
+
+/**
+ * Legal v6 / C6 — the daily purge (execute mode only) tries the parked MAIL_CONTACT_RETRY erasures again, as « Relancer » would: the decision was already
+ * taken by two people. Counts only. Never throws.
+ * @returns {Promise<{ tried: number, erased: number, stillPending: number, failed: number, humanIntervention: number }>}
+ */
+export async function retryMailContactErasures(db = defaultDb, privacy = createPrivacyRightsService({ db, cryptoLib: crypto }), { limit = 20 } = {}) {
+  const out = { tried: 0, erased: 0, stillPending: 0, failed: 0, humanIntervention: 0 };
+  let ids = [];
+  try {
+    ids = (await db.execute(sql`SELECT id FROM "DSRRequest" WHERE "requestType" = 'DELETE' AND status = 'BLOCKED' AND "reasonCode" = 'MAIL_CONTACT_RETRY' ORDER BY "createdAt" LIMIT ${limit}`)).rows.map((r) => r?.id).filter((x) => typeof x === 'string' && x.length > 0);
+  } catch { out.failed += 1; return out; }
+  for (const id of ids) {
+    out.tried += 1;
+    try {
+      const r = await retryBlockedErasure(id, 'cron/gdpr-purge', db, privacy);
+      if (r?.request?.status === 'COMPLETED') { out.erased += 1; if (r.mailContact === 'failed') out.humanIntervention += 1; }
+      else if (r?.blockedBy === 'MAIL_CONTACT_RETRY') out.stillPending += 1;
+      else out.failed += 1;
+    } catch { out.failed += 1; }
+  }
+  return out;
+}

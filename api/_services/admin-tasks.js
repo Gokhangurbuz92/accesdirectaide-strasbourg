@@ -12,6 +12,7 @@ import { reviewQueue as proposalQueue } from './structure-proposals.js';
 import { listPending as falcPending } from './falc-governance.js';
 import { listOpen as openAccessRequests } from './dsr-review.js';
 import { listOpenErasures } from './dsr-erasure-review.js';
+import { listMailContactFailures } from './mail-contact-failures.js';
 import { listOpenClosures } from './org-closure.js';
 import { pendingBreakGlass } from './admin-identity.js';
 import { list as aiOversightList } from './ai-oversight.js';
@@ -21,7 +22,7 @@ const firstRow = async (db, query) => (await db.execute(query)).rows?.[0] ?? {};
 /** @param {{ db?: any, root?: string }} [opts] */
 export async function adminTasks({ db = defaultDb, root } = {}) {
   const safe = async (fn) => { try { return await fn(); } catch { return null; } };
-  const [ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support] = await Promise.all([
+  const [ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures] = await Promise.all([
     safe(async () => (await ws2Queue({ db, root })).totals),
     // the identity / record decision of each organization (Structure.verification_status + the ledger's hold), as the Organizations screen shows it
     safe(async () => {
@@ -45,6 +46,8 @@ export async function adminTasks({ db = defaultDb, root } = {}) {
     // writers use 'open' and 'OPEN' (see admin/review-queue)
     safe(async () => (await firstRow(db, sql`SELECT count(*)::int AS n FROM "ReviewQueueItem" WHERE lower(status) = 'open'`)).n),
     safe(async () => (await firstRow(db, sql`SELECT count(*)::int AS n FROM "SupportRequest" WHERE upper(status) IN ('OPEN', 'IN_PROGRESS')`)).n),
+    // legal v6 / C6: Mailjet contact deletions that failed for good — « intervention humaine requise » (api/_services/mail-contact-failures.js)
+    safe(async () => (await listMailContactFailures(db)).failures.length),
   ]);
-  return { ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support };
+  return { ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures };
 }
