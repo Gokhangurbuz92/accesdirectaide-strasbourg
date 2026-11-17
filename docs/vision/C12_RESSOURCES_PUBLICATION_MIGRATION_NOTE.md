@@ -31,7 +31,8 @@ on a 0049 database the plan is exactly `0050_rs_resource_publication`.
 `api/_utils/schema-features.js` `resourcePublicationSchema()` (cached 60 s, fail-closed). Without 0050: `GET /api/ressources` lists no document and a
 document answers 404 (no row can meet the contract); `/api/admin/resources` lists the rows read-only (`available: false`) and refuses every write
 (503 `MIGRATION_0050_REQUIRED`); the administration page says so. Proven on a database rolled back to 0049
-(`tests/integration/c12-resource-publication-db.test.js`, `RS_EXPECT_0050=0`).
+(`tests/integration/c12-resource-publication-db.test.js`: since QA v43 the file makes its own throwaway databases at 0049 and at the latest
+migration, so both levels run in every integration run).
 
 ## 4. Rollback
 
