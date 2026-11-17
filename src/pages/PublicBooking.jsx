@@ -36,6 +36,7 @@ import SensitiveConsentField, { ContactStructureNotice } from '@/components/rdv/
 import ModalityChoice, { LocationNote, UnavailableModalities, VideoNote } from '@/components/rdv/ModalityChoice.jsx';
 import { acceptedMode, bookingContextQuery, bookingLocation, bookingRefusal, modalityLabels, modalityOptions, serviceModes } from '@/lib/bookingModalities';
 import { refusalReasonText } from '@/lib/refusalReasons';
+import { attemptKey, attemptSignature, isDefinitiveAnswer, settleAttempt } from '@/lib/bookingAttempt';
 /**
  * PublicBooking
  *
@@ -119,7 +120,10 @@ export default function PublicBooking() {
     const [ageStep, setAgeStep] = useState('');
     const [manageCapability, setManageCapability] = useState(null);
     const [cancelState, setCancelState] = useState('idle');   // R12 (B04): idle | confirm | sending | failed
+    // A-28: a manage link that cannot be opened (expired after 24 hours, incomplete, or not this appointment's) — '' | 'invalid' | 'unavailable'
+    const [manageLinkProblem, setManageLinkProblem] = useState('');
     const fragmentResolvedRef = useRef(false);
+    const [manageAttempt, setManageAttempt] = useState(0);   // A-28: « Réessayer » reloads the same manage link (a passing failure only)
 
     useLayoutEffect(() => {
         if (fragmentResolvedRef.current || typeof window === 'undefined') return;
@@ -208,7 +212,11 @@ export default function PublicBooking() {
         setError('');
         try {
             const token = getToken();
-            const idempotencyKey = createIdempotencyKey();
+            // A-25: ONE key per attempt (this service, slot, modality and professional choice), kept until a definitive answer — a second click after a
+            // lost answer replays the booking on the server and shows it confirmed, instead of « this slot was just taken »
+            const attempt = attemptSignature({ structureSlug, serviceId: selectedService.id, startAt: selectedSlot.startAt, mode: bookingMode, professional: teamChoice ? professional : '' });
+            const idempotencyKey = attemptKey(attempt, createIdempotencyKey);
+            const uncertain = () => new Error(t('booking:public.reponse_incertaine_a25', 'Nous n’avons pas reçu de réponse sûre : votre demande est peut-être déjà enregistrée. Réessayez : elle ne sera pas enregistrée deux fois. Vous pouvez aussi vérifier dans « Mes rendez-vous ».'));
             // R7: a first visit has no __csrf cookie yet: ask the server for one before the protected POST (it was refused with 403)
             const csrf = (await ensureCsrfHeaders()) || getCsrfHeaders();
             const res = await fetch('/api/rdv/appointments', {
@@ -229,10 +237,12 @@ export default function PublicBooking() {
                     ...(selectedService.explicitConsent === true ? { sensitiveConsent: sensitiveConsent === true } : {}),
                     idempotencyKey,
                 }),
-            });
+            }).catch(() => { throw uncertain(); });   // no answer at all (network, timeout): the key is kept
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                if (!isDefinitiveAnswer(res.status)) throw uncertain();   // server error / rate limit: the booking may exist — same key on the next click
+                settleAttempt(attempt);   // a refusal decided by the server: nothing was booked with this key
                 const refusal = bookingRefusal(res.status, errData);
                 // R44: the session ended meanwhile — sign in again and come back to the same service and modality (validated same-origin path)
                 if (refusal === 'AUTH') {
@@ -265,7 +275,8 @@ export default function PublicBooking() {
                 throw new Error(errData.message || t('booking:public.impossible_de_confirmer_le_rendez', "Impossible de confirmer le rendez-vous."));
             }
 
-            const data = await res.json();
+            const data = await res.json().catch(() => { throw uncertain(); });
+            settleAttempt(attempt);
             // R45: no structure in analytics for a service treated as sensitive (unknown included)
             track('booking_confirm_success', selectedService.protectedPrivacy === true ? { mode: bookingMode } : { structure: structureSlug, mode: bookingMode });
             setConfirmation(data);
@@ -381,10 +392,7 @@ export default function PublicBooking() {
     // into URL query/path. The fragment was scrubbed synchronously above.
     useEffect(() => {
         if (!appointmentId || manageCapability === null) return;
-        if (!manageCapability) {
-            setError(t('booking:public.lien_de_gestion_du_rendez', "Lien de gestion du rendez-vous invalide ou incomplet."));
-            return;
-        }
+        if (!manageCapability) { setManageLinkProblem('invalid'); return; }
 
         let cancelled = false;
         const loadManagedAppointment = async () => {
@@ -402,13 +410,16 @@ export default function PublicBooking() {
                     },
                 );
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(data.error || t('booking:public.lien_de_gestion_invalide_ou', "Lien de gestion invalide ou expiré."));
+                // A-28: the server answers one neutral 404 for an expired, altered or foreign link (no oracle): the person is told, in their language,
+                // that the link no longer opens the appointment and how to reach it (« Mes rendez-vous », after signing in) — never the raw server text
+                if (res.status === 404) { if (!cancelled) setManageLinkProblem('invalid'); return; }
+                if (!res.ok) throw new Error('unavailable');
                 if (!cancelled) {
                     setConfirmation(data);
                     setStep(4);
                 }
-            } catch (err) {
-                if (!cancelled) setError(err.message || t('booking:public.lien_de_gestion_invalide_ou', "Lien de gestion invalide ou expiré."));
+            } catch {
+                if (!cancelled) setManageLinkProblem('unavailable');
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -418,7 +429,7 @@ export default function PublicBooking() {
         return () => {
             cancelled = true;
         };
-    }, [appointmentId, manageCapability, t]);
+    }, [appointmentId, manageCapability, manageAttempt]);
 
     const downloadCalendar = useCallback(() => {
         const calendar = confirmation?.calendar;
@@ -480,8 +491,40 @@ export default function PublicBooking() {
                     </div>
                 )}
 
-                {/* Step 1: Choose Service */}
-                {step === 1 && (
+                {appointmentId && step !== 4 && !manageLinkProblem ? (
+                    <p role="status" className="text-center text-sm text-slate-700" data-testid="booking-manage-link-loading">{t('booking:manage_link.loading_a28', 'Ouverture du rendez-vous…')}</p>
+                ) : null}
+
+                {/* A-28: a manage link that does not open the appointment — what happened and how to reach it, in the reader's language */}
+                {appointmentId && step !== 4 && manageLinkProblem ? (
+                    <section className="bg-white p-8 rounded-2xl border border-slate-200 text-start space-y-4" aria-labelledby="booking-manage-link-title" data-testid="booking-manage-link-problem" data-reason={manageLinkProblem}>
+                        <h2 id="booking-manage-link-title" className="text-lg font-semibold text-slate-900">
+                            {manageLinkProblem === 'invalid'
+                                ? t('booking:manage_link.expired_title_a28', 'Ce lien ne permet plus d’ouvrir le rendez-vous')
+                                : t('booking:manage_link.unavailable_title_a28', 'Le rendez-vous n’a pas pu être affiché')}
+                        </h2>
+                        <p className="text-sm text-slate-700">
+                            {manageLinkProblem === 'invalid'
+                                ? t('booking:manage_link.expired_text_a28', 'Le lien reçu par e-mail est valable 24 heures, ou il est incomplet. Votre rendez-vous n’est pas modifié pour autant. Connectez-vous à votre compte : dans « Mes rendez-vous », vous pouvez le voir, le déplacer ou l’annuler.')
+                                : t('booking:manage_link.unavailable_text_a28', 'Un problème passager empêche de l’afficher. Votre rendez-vous n’est pas modifié. Réessayez, ou retrouvez-le dans « Mes rendez-vous » après vous être connecté(e).')}
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                            <Link to={`/auth/login?next=${encodeURIComponent('/compte/rendez-vous')}`} data-testid="booking-manage-link-signin"
+                                className="inline-flex min-h-11 items-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
+                                {t('booking:manage_link.signin_a28', 'Me connecter et voir mes rendez-vous')}
+                            </Link>
+                            {manageLinkProblem === 'unavailable' ? (
+                                <button type="button" data-testid="booking-manage-link-retry" onClick={() => { setManageLinkProblem(''); setManageAttempt((n) => n + 1); }}
+                                    className="inline-flex min-h-11 items-center rounded-xl border border-indigo-300 px-5 py-2.5 text-sm font-medium text-indigo-700 hover:bg-indigo-50">
+                                    {t('booking:public.reessayer', "Réessayer")}
+                                </button>
+                            ) : null}
+                        </div>
+                    </section>
+                ) : null}
+
+                {/* Step 1: Choose Service (never for a manage link: it opens one appointment, not the booking of a new one) */}
+                {step === 1 && !appointmentId && (
                     <div className="space-y-4">
                         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4">
                             {t('booking:public.choisissez_un_service', "Choisissez un service")}

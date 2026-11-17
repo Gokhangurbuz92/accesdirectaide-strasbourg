@@ -2,7 +2,7 @@
  * A-22 (RTL) — the citizen account screens use LOGICAL direction utilities (ms-/me-/ps-/pe-/text-start/text-end/start-/end-), so margins, paddings and
  * alignment follow the reading direction in Arabic. A physical utility (ml-, mr-, pl-, pr-, text-left, text-right, left-N, right-N, rounded-l/-r, border-l/-r,
  * float-left/right) in one of these files fails this test.
- * Not covered here: src/pages/CompteRendezVous.jsx (booking page, owned by the booking work; one `mr-4` remains at the time of writing).
+ * Since the booking work merged, src/pages/CompteRendezVous.jsx is covered too (its last `mr-4` became `me-4`).
  */
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
 const FILES = [
   'src/pages/CompteProfil.jsx', 'src/pages/CompteParametres.jsx', 'src/components/account/NotificationCenter.jsx', 'src/components/sharing/CitizenSharingPanel.jsx',
   'src/pages/CompteMessages.jsx', 'src/pages/UserPassport.jsx', 'src/components/sharing/DossierThreads.jsx', 'src/pages/ComptePartageDetail.jsx',
+  'src/pages/CompteRendezVous.jsx',
 ];
 // a class token: preceded by a quote, a space, a backtick or a variant prefix (sm:, hover:, rtl:…), optionally negative
 const PHYSICAL = /(?<=["'`\s:])-?(?:(?:ml|mr|pl|pr)-(?:\d|\[|px|auto)|text-(?:left|right)(?![\w-])|(?:left|right)-(?:\d|\[|px|auto|full|1\/2)|rounded-(?:l|r|tl|tr|bl|br)(?:-|(?![\w-]))|border-(?:l|r)(?:-|(?![\w-]))|float-(?:left|right))[\w./[\]-]*/g;

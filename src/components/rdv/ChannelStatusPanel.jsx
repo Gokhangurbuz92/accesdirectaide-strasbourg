@@ -3,7 +3,7 @@
 // (api/lib/communication-channels.js); no secret ever reaches this screen.
 import { useT } from '@/i18n';
 
-/** @typedef {{ channel: string, state: string, reason: string | null, provider: string, missing: string[], reachesPeople: boolean }} ChannelStatus */
+/** @typedef {{ channel: string, state: string, reason: string | null, provider: string, missing: string[], reachesPeople: boolean, appliesToSlots?: boolean }} ChannelStatus */
 
 const ORDER = ['email', 'sms', 'video', 'calendar'];
 
@@ -32,8 +32,11 @@ export default function ChannelStatusPanel({ channels }) {
       case 'BLOCKED': return s.channel === 'sms'
         ? t('pro:channels.sms_blocked_r46', 'Configuré mais bloqué : aucun SMS n’est envoyé tant que la réponse « STOP » ne peut pas être prise en compte.')
         : t('pro:channels.blocked_r46', 'Configuré mais pas encore ouvert : en attente de l’accord d’activation.');
+      // A-27: the busy times count for the slots only with team choice (each professional's own agenda); with the single agenda (the default) they do not
       case 'CONFIGURED': return s.channel === 'calendar'
-        ? t('pro:channels.calendar_configured_r46', 'Activé : la plateforme lit seulement vos plages occupées ; elle n’écrit rien dans votre agenda.')
+        ? (s.appliesToSlots === false
+          ? t('pro:channels.calendar_single_agenda_a27', 'Activé, sans effet sur les créneaux : avec un agenda unique (choix du professionnel désactivé), seuls les horaires et les fermetures de la structure comptent. Les plages occupées d’un agenda connecté ne sont lues que lorsque le choix du professionnel est activé. Rien n’est écrit dans votre agenda.')
+          : t('pro:channels.calendar_configured_r46', 'Activé : la plateforme lit seulement vos plages occupées ; elle n’écrit rien dans votre agenda.'))
         : t('pro:channels.configured_r46', 'Activé. La remise de chaque message est indiquée dans le suivi du rendez-vous.');
       default: return t('pro:channels.unknown_r46', 'État inconnu : considéré comme non activé.');
     }

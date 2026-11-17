@@ -278,18 +278,6 @@
    "reason": "Company/service name; the label and the description around it are translated."
   },
   {
-   "file": "src/pages/AppointmentCancel.jsx",
-   "text": "AccesDirectAide",
-   "category": "proper-name",
-   "reason": "Brand / service name, never translated."
-  },
-  {
-   "file": "src/pages/AppointmentReschedule.jsx",
-   "text": "AccesDirectAide",
-   "category": "proper-name",
-   "reason": "Brand / service name, never translated."
-  },
-  {
    "file": "src/pages/Layout.jsx",
    "text": "AccesDirectAide",
    "category": "proper-name",

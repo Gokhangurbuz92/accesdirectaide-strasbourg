@@ -16,7 +16,8 @@ const KNOWN_ORPHANS = new Set([
   '_handlers/cron/ingest-actualites-rss.js', '_handlers/cron/reset-lock.js',   // launch-readiness item 57: the mock OTP handlers (« mock-jwt ») were deleted
   '_handlers/pro/ai/assist.js', '_handlers/pro/appointments/index.js', '_handlers/pro/messages/conversations.js',
   // (PKG-4, 2026-10-20: '_handlers/pro/structure.js' rewritten as the Espace Structure proposals endpoint and routed)
-  '_handlers/public/appointments/cancel.js', '_handlers/public/appointments/create.js', '_handlers/public/consent.js', '_handlers/public/messages.js',
+  // A-24: the retired public/appointments/{create,cancel}.js adapters were deleted (unrouted; booking is POST /api/rdv/appointments)
+  '_handlers/public/consent.js', '_handlers/public/messages.js',
   // retired: answers 410; replaced by the routed pro/appointments/visio.js (owner decision 2026-10-19, PKG-3)
   '_handlers/pro/appointments/start-visio.js',
 ]);

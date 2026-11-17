@@ -39,22 +39,15 @@ describe('WS7 read-only journey preservation', () => {
   });
 
   it('preserves fragment capability handling and immediate history scrubbing', () => {
-    const cancel = read('src/pages/AppointmentCancel.jsx');
-    const reschedule = read('src/pages/AppointmentReschedule.jsx');
-
-    for (const source of [cancel, reschedule]) {
-      expect(source).toContain("window.location.hash.replace(/^#/, '')");
-      expect(source).toContain("params.get('token') || ''");
-      expect(source).toContain('window.history.replaceState');
-      expect(source).toContain('window.location.pathname');
-      expect(source).toContain('window.location.search');
-      expect(source).not.toContain('const { token } = useParams()');
-    }
-
-    expect(cancel).toContain("Lien d'annulation invalide.");
-    expect(cancel).toContain('body: JSON.stringify({ token, reason:');
-    expect(reschedule).toContain('Lien de report invalide.');
-    expect(reschedule).toContain('body: JSON.stringify({');
-    expect(reschedule).toContain('token,');
+    // A-24: the unrouted AppointmentCancel / AppointmentReschedule pages were deleted; the capability link of the e-mail opens the routed manage view
+    // of /rdv/:slug/booking (PublicBooking.jsx), which keeps the same contract: token read from the fragment only, history scrubbed at once, POST body only
+    const manage = read('src/pages/PublicBooking.jsx');
+    expect(manage).toContain("window.location.hash.replace(/^#/, '')");
+    expect(manage).toContain("params.get('token') || ''");
+    expect(manage).toContain('window.history.replaceState');
+    expect(manage).toContain('window.location.pathname');
+    expect(manage).toContain('window.location.search');
+    expect(manage).not.toContain('const { token } = useParams()');
+    expect(manage).toContain('body: JSON.stringify({ token: manageCapability })');
   });
 });
