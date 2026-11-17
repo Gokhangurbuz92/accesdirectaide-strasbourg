@@ -201,7 +201,7 @@ export default function DuplicateDecisions({ errorText }) {
                       </select></div>
                   ) : null}
                   <div><label htmlFor="dupdec-evidence" className="block">{t('admin:k5.duplicates.evidence_label', 'Preuve institutionnelle (page d’un registre officiel : annuaire des entreprises, FINESS, Journal officiel…)')}</label>
-                    <input id="dupdec-evidence" type="url" className="w-full rounded border p-1" value={form.evidenceUrl} onChange={(e) => setForm((f) => ({ ...f, evidenceUrl: e.target.value }))} placeholder="https://…" /></div>
+                    <input id="dupdec-evidence" type="url" className="w-full rounded border p-1" value={form.evidenceUrl} onChange={(e) => setForm((f) => ({ ...f, evidenceUrl: e.target.value }))} /></div>
                   <div><label htmlFor="dupdec-note" className="block">{t('admin:k5.duplicates.note_label', 'Ce que la source établit (conservé dans le registre)')}</label>
                     <textarea id="dupdec-note" className="w-full rounded border p-1" rows={3} value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))} /></div>
                   {formError ? <p role="alert" className="text-destructive" data-testid="dupdec-form-error">{formError} {refused ? <button type="button" className="underline" onClick={() => openReview(review.a, review.b)} data-testid="dupdec-reload">{t('admin:k5.dupdec.reload_pair', 'Recharger la paire')}</button> : null}</p> : null}
