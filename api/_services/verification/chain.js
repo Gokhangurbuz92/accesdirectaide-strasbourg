@@ -41,7 +41,7 @@ import { digits, lookupSiret, searchEstablishments } from './registries.js';
 import { checkStructure, sameStreet, sameStreetNumber, streetOnly, readableCase } from './structure-check.js';
 import { writeTexts, inventedNumbers, contradictions, TEXT_RULES_VERSION } from './texts.js';
 import { claimsEntitlement } from '../../lib/entitlementWording.js';
-import { refreshRegistry, refreshOnlineServices, ensureSeed, listDepartmentOffices, recordFeedHealth, reviewSources } from './sources.js';
+import { refreshRegistry, refreshOnlineServices, onlineServiceTerritory, ensureSeed, listDepartmentOffices, recordFeedHealth, reviewSources } from './sources.js';
 import { officeRecord, officeTexts } from './offices.js';
 import { fetchFiness, readFiness, finessTexts, termsVersion } from './finess.js';
 import { fetchDataInclusion, readDataInclusion, servicesValue, servicesFor, sameServices, producerOf, NOT_A_PLACE_NAME, termsVersion as diTermsVersion } from './datainclusion.js';
@@ -609,8 +609,12 @@ const listText = (items) => (items && items.length ? items.map((x) => `- ${x}`).
 const steps = (items) => (items || []).map((t, i) => ({ numero: i + 1, titre: t, description: '' }));
 
 /** where to go / online services of a Service-Public source, as the record's fields */
-function practical(src) {
-  const online = (src.online || []).filter((o) => /^https:\/\//.test(o.url || ''));
+export function practical(src) {
+  // FA-D2: never send a person in Strasbourg to another territory's service (the Île-de-France Dalo extranet, a Ville de Paris form); the service the DILA
+  // labels for the Bas-Rhin, when there is one, comes first. No service left: no link (the official fiche stays the way in).
+  const territory = (o) => onlineServiceTerritory(o);
+  const online = (src.online || []).filter((o) => /^https:\/\//.test(o.url || '') && territory(o) !== 'OTHER')
+    .map((o, i) => ({ o, i })).sort((a, b) => (territory(a.o) === 'OURS' ? 0 : 1) - (territory(b.o) === 'OURS' ? 0 : 1) || a.i - b.i).map((x) => x.o);
   const apply = online.find((o) => /t[ée]l[ée]service|demarche|formulaire en ligne/i.test(`${o.type} ${o.title}`)) || online.find((o) => !/simulateur/i.test(`${o.type} ${o.title}`)) || null;
   const where = [...new Set((src.whereToGo || []).map((w) => w.title).filter(Boolean))];
   return { apply: apply ? apply.url : null, where: where.length ? `Selon votre situation : ${where.join(', ')}.` : null };

@@ -192,7 +192,36 @@ export async function refreshRegistry({ db, departement = '67', rows, now = new 
 // ------------------------------------------------------------------------------------------------------------------------------- online services cited by Service-Public
 const LOCAL_BODY = /(^|\s)(ville|mairie|commune|d[ée]partement|conseil d[ée]partemental|r[ée]gion|collectivit[ée]|m[ée]tropole|pr[ée]fecture)(\s|$)/i;
 const OUR_TERRITORY = /strasbourg|bas-rhin|alsace|grand est|eurom[ée]tropole/i;
+/** FA-D2: a local body — never a ministry: « Ministère chargé de la ville » runs the national sig.ville.gouv.fr, which « ville » alone made « another territory » */
+const isLocalBody = (org) => LOCAL_BODY.test(org) && !/^minist[èe]re\b/i.test(String(org).trim());
 const SOCIAL_SECURITY = /caisse|assurance maladie|assurance retraite|mutualit[ée] sociale|urssaf|carsat|cnav|cnaf|\bmsa\b|agirc|arrco/i;
+
+/**
+ * FA-D2 (18/11/2026) — the territory of ONE online service cited by a fiche, from what the DILA publishes with it: the territory label that starts its title
+ * (« Bas-Rhin (67) : faire un recours Dalo », « Île-de-France : faire un recours Dalo »), the body that runs it (« Ville de Paris », « Gouvernement de
+ * Nouvelle Calédonie », « DRIHL Ile-de-France ») and, for the few services the DILA attributes to a ministry but that only serve one city (Paris resident
+ * parking, the Préfecture de police's lost property), the host. Read in the DILA 3.5 archive of 17/11/2026: F18005 (Dalo) listed the Île-de-France extranet
+ * first, F11994 / F11996 (livret de famille) a Ville de Paris PDF only, F1361 / F16828 the Nouvelle-Calédonie electoral site.
+ *  - 'OURS'   the label or the body names Strasbourg, the Bas-Rhin (67), Alsace, the Grand Est or the Eurométropole, or « Province » (outside Île-de-France);
+ *  - 'OTHER'  the label, the body or the host names another territory;
+ *  - 'ANY'    nothing territorial: a national service.
+ * @param {{ url?: string | null, title?: string | null, source?: string | null }} o
+ * @returns {'OURS' | 'OTHER' | 'ANY'}
+ */
+export function onlineServiceTerritory(o) {
+  const title = String(o?.title || ''); const org = String(o?.source || '');
+  let host = ''; try { host = new URL(String(o?.url || '')).hostname.toLowerCase(); } catch { /* no host */ }
+  const label = (title.match(/^\s*([^:]{2,80}?)\s+:\s/) || [])[1] || '';
+  if (label && (OUR_TERRITORY.test(label) || /\(67\)|^province\b/i.test(label))) return 'OURS';
+  if (label && (/\((\d{2,3}|2A|2B)\)/i.test(label) || OTHER_TERRITORY.test(label))) return 'OTHER';
+  if (org && ((isLocalBody(org) && !OUR_TERRITORY.test(org)) || OTHER_TERRITORY.test(org))) return 'OTHER';
+  if (OTHER_HOST.test(host)) return 'OTHER';
+  return 'ANY';
+}
+/** territories other than ours that the DILA names before a service title or in the body that runs it (regions, overseas, the cities with their own rules) */
+const OTHER_TERRITORY = /[îi]le-de-france|^paris\b|ville de paris|nouvelle[- ]cal[ée]donie|polyn[ée]sie|wallis|saint-pierre|guadeloupe|martinique|guyane|la r[ée]union|mayotte|\bcorse\b|^(lyon|marseille|bordeaux|lille|montpellier|grenoble|toulouse|nantes|nice)\b/i;
+/** hosts of single-city services that the DILA attributes to a ministry (Paris resident parking, the Paris Préfecture de police) */
+const OTHER_HOST = /(^|\.)paris\.fr$|(^|\.)prefecturedepolice\.(interieur\.gouv\.fr|franceobjetstrouves\.fr)$|^objetstrouvesprefecturedepolice\.|ile-de-france/;
 
 /**
  * What a cited online service is, truthfully: a State site (*.gouv.fr), a European institution (*.europa.eu), a social security body, or else a service OPERATOR
@@ -239,7 +268,7 @@ export async function refreshOnlineServices({ db, archive, now = new Date() }) {
   for (const [host, h] of hosts) {
     if (isShared(host)) { rejected.push({ host, reason: 'plateforme partagée' }); continue; }
     const org = [...h.orgs.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-    if (org && LOCAL_BODY.test(org) && !OUR_TERRITORY.test(org)) { rejected.push({ host, name: org, reason: 'service local d’un autre territoire' }); continue; }
+    if (org && isLocalBody(org) && !OUR_TERRITORY.test(org)) { rejected.push({ host, name: org, reason: 'service local d’un autre territoire' }); continue; }
     if (hostIn(host, covered)) continue;                                       // already a source of the registry (starting list, Annuaire)
     const sourceId = `dila-online:${host}`; seen.add(sourceId);
     const fiche = [...h.fiches][0];

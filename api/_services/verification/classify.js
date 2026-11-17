@@ -48,7 +48,10 @@ const wordRe = (k) => { const f = fold(k); const stem = /^[a-z]{4,}s$/.test(f) ?
 /** reference keywords too general to place a fiche on their own (« Impôt sur le revenu » is not a minimum income; « formation » alone is not a training right) */
 const GENERIC = new Set(['revenu', 'budget', 'formation', 'transport', 'parents', 'recours', 'culture', 'sport', 'loisirs', 'ecole', 'scolarite', 'detention', 'naissance', 'placement']);
 /** words the reference lacks for a subdomain (audit 12/11/2026: « carte de séjour » never reached titre-sejour, « Impôt » never reached impots) */
-const EXTRA = Object.freeze({ 'migration/titre-sejour': ['carte de séjour', 'carte de résident', 'certificat de résidence'], 'famille/garde-enfants': ['mode de garde'], 'budget/impots': ['impôt', 'fiscal'] });
+export const EXTRA = Object.freeze({ 'migration/titre-sejour': ['carte de séjour', 'carte de résident', 'certificat de résidence'], 'famille/garde-enfants': ['mode de garde'], 'budget/impots': ['impôt', 'fiscal'],
+  // FA-D2 (18/11/2026): the official sheet F34049 « Carte mobilité inclusion (CMI) » states that « La CMI permet de faciliter les déplacements des personnes en
+  // perte d'autonomie » (priority, parking): the right of the accessibility-and-mobility need, which the reference's words never reached (empty subdomain)
+  'handicap/accessibilite-mobilite': ['carte mobilité inclusion', 'CMI'] });
 /**
  * words that place a fiche only inside their own theme: « expulsion » of a foreigner is not a rent arrears, « pension alimentaire » is not food aid, « loyer »
  * in a rent rule is not a housing benefit, « alcool » at the wheel is not an addiction (audit: about 40 fiches)
@@ -98,6 +101,13 @@ const GUIDE_OF_AIDS = /^vous\b/i;
 const OTHER_CITY = /^(Paris|Lyon( et Villeurbanne)?|Bordeaux|Montpellier|Est Ensemble|Plaine Commune|Lille( Hellemmes Lomme)?|Grenoble|Pays Basque|Marseille|Toulouse|Nice|Nantes)\b[^:]*:/i;
 /** public agents' own rules (an audience of its own, shown as such) */
 const PUBLIC_AGENTS = /fonction publique|agent public|agents publics|fonctionnaire|contractuel de la fonction/i;
+/**
+ * FA-D2 (18/11/2026): a title that names the private-sector employee alongside the public agent (« Prime d'activité : salarié ou fonctionnaire », F2882) is for
+ * everyone; a sheet that DESCRIBES public agents to the public (« Magistrats du tribunal judiciaire et autres agents publics de justice », F2176, under « Acteurs
+ * du monde judiciaire ») is not their own rule. Both were marked agents-publics.
+ */
+const NOT_AGENTS_ONLY = /salari[ée]s?\s+(ou|et)\s+(fonctionnaire|agent)|(fonctionnaire|agent public)s?\s+(ou|et)\s+salari/i;
+const DESCRIBES_ACTORS = /^acteurs du monde judiciaire/i;
 /** the particulier-employeur and labour-law fiches stay in travail-formation (audit S5) */
 const LABOUR = /employeur|salari|contrat de travail|licenciement|d[ée]mission|cong[ée]s pay[ée]s|paie|salaire|temps de travail|p[ée]riode d.essai/i;
 const DISPOSITIF_TITLE = /^(contrat d.engagement|contrat d.insertion|parcours|service civique|garantie|dispositif|programme|accompagnement)/i;
@@ -158,6 +168,6 @@ export function classifyFiche(meta, src = null) {
   reasons.push(`nature : ${kind} (titre et structure : aide ${signals.aide}, démarche ${signals.demarche}, dispositif ${signals.dispositif})`);
   // a benefit title with a procedure title as strong (« Carte Mobilité Inclusion », « Chèque énergie : demande ») stays a candidate for a person to decide
   if (signals.aide >= 2 && signals.demarche >= 3 && kind === 'aide') return out({ pending: 'KIND_AMBIGUOUS', domain, subdomain, categorie, subdomains });
-  const audience = PUBLIC_AGENTS.test(meta.title) ? 'agents-publics' : 'particuliers';
+  const audience = PUBLIC_AGENTS.test(meta.title) && !NOT_AGENTS_ONLY.test(meta.title) && !pathTitles.some((t) => DESCRIBES_ACTORS.test(t)) ? 'agents-publics' : 'particuliers';
   return { ok: true, kind, categorie, domain, subdomain, subdomains, audience, confidence: subdomain ? 'high' : 'medium', reasons };
 }
