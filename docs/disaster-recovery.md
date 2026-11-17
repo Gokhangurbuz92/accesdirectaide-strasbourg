@@ -1,8 +1,9 @@
 # Disaster Recovery & PITR Playbook
 
 ## 1. RPO and RTO Targets
-- **Recovery Point Objective (RPO)**: USER DECISION REQUIRED (Measured provider capability is up to 5 minutes via Neon PITR, but actual business target is pending).
-- **Recovery Time Objective (RTO)**: USER DECISION REQUIRED (Measured provider capability is ~15 minutes to branch, but actual business target is pending).
+- **Recovery Point Objective (RPO)**: **24 hours** (owner decision D7, 17/11/2026; an objective, not a guarantee). Neon's history is 6 hours on the Free plan.
+- **Recovery Time Objective (RTO)**: **1 business day** (owner decision D7, 17/11/2026). Never timed on Production.
+- Yearly Neon restore drill, and how the K3 backups and the erasure tombstones meet these objectives: `docs/ops/RPO_RTO.md`.
 
 ## 2. Point-in-Time Recovery (PITR) Procedure (Neon)
 If a catastrophic data loss or corruption event occurs on the `production` database:

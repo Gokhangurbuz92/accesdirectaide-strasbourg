@@ -129,6 +129,9 @@ itself never modifies Production application data. The restore check writes only
 
 ## 5. RPO / RTO — targets, NOT yet verified operationally
 
+Owner decision D7 (17/11/2026): RPO 24 h, RTO 1 business day, yearly Neon restore drill — `docs/ops/RPO_RTO.md` (objectives, not guarantees). The
+technical estimates below are what the design allows.
+
 - **RPO** (data that can be lost), target: ≤ 12 h with two runs a day; ≤ 6 h for incidents noticed within Neon's own restore window (Free plan: 6 h).
 - **RTO** (time to be back), target: ~2 h (never rehearsed on Production) — new Neon project or branch, restore of the newest dump (minutes for < 1 GB), erasure replay, migration check,
   Vercel variable switch and redeploy.
@@ -141,6 +144,8 @@ itself never modifies Production application data. The restore check writes only
    → `db-erasure-replay.mjs --kv` (dry run, then `--execute`). **`--kv` matters:** the ledger in the bucket only knows the erasures done before that
    backup; the erasure tombstones (Upstash KV, written before every erasure, kept 40 days, `api/_services/erasure-tombstones.js`) name those done after
    it. `--execute` refuses without `--kv` / `--tombstones-file` (LAB test: without them, a person erased after the newest backup comes back silently).
+   D5 b: with the `TOMBSTONE_COPY_*` variables set, `--kv` also reads the encrypted second copy (dedicated R2 EU bucket `ada-erasure-tombstones`) and
+   replays the union; an unexplained gap between the two refuses `--execute` (`docs/ops/RPO_RTO.md` § 3).
 4. **Before reopening anything**, re-run the retention purge on the restored database: step 6c (never-confirmed accounts) re-erases from the data itself
    (no tombstone is needed: the criterion is in the restored rows; LAB test G). Then point Vercel at the restored database, redeploy, check `/api/health`.
    Tombstones: only `done` erasures are replayed; `aborted` never ran; an `unconfirmed` one (intent only) blocks `--execute` until the operator chooses

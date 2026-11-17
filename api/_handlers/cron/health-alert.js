@@ -15,6 +15,8 @@ import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 import { env } from '../../_utils/env.js';
 import { recentMailEventCounts } from '../../_services/mail-events.js';
 import { securitySignalCounts, evaluateSecuritySignals, nextSecurityCheckState } from '../../_services/security-signals.js';
+import { copyConfig, createTombstoneCopy } from '../../_services/erasure-tombstone-copy.js';
+import { TOMBSTONE_COPY_FAILED_KEY } from '../../_services/erasure-tombstones.js';
 
 /**
  * Health Alert Cron — automated health monitoring with alerting.
@@ -257,6 +259,33 @@ export default async function handler(req, res) {
     } catch (err) {
         checks.kvData = { ok: false, error: err?.name || 'Error' };
         checkFailed('kvData', err);
+    }
+
+    // Check 2c (D5 b): the second copy of the erasure tombstones (K3 object storage, api/_services/erasure-tombstone-copy.js). Off without its variables.
+    // Configured: (1) incomplete / invalid variables → « tombstone_copy.config_invalid » (the site then writes Upstash only); (2) the bucket is listed with
+    // the site's own token (proves it answers) and records older than 40 days are deleted (the retention holds even without the bucket lifecycle rule);
+    // unreachable → « tombstone_copy.unreachable »; (3) a write that failed since the last check (`…:copy-failed`, set by the erasure) →
+    // « tombstone_copy.write_failed », cleared once the alert went out. Names, counts and times only.
+    const copyCfg = copyConfig(process.env);
+    if (!copyCfg.enabled && !copyCfg.invalid) checks.tombstoneCopy = { ok: true, skipped: 'COPY_OFF' };
+    else if (copyCfg.invalid) {
+        checks.tombstoneCopy = { ok: false, reason: copyCfg.reason, ...(copyCfg.missing ? { missing: copyCfg.missing } : {}) };
+        if (await fireAlert('tombstone_copy.config_invalid', `Seconde copie des traces d’effacement : configuration ${copyCfg.reason}. Le site écrit seulement dans Upstash ; corriger les variables TOMBSTONE_COPY_* puis redéployer (CONTROL/v2/k3_tombstone_key_setup.sh).`, { reason: copyCfg.reason, missing: copyCfg.missing || [] })) alertCount++;
+    } else try {
+        const inv = await createTombstoneCopy(copyCfg).inventory();
+        let failed = null;
+        if (checks.kv?.ok) { try { const raw = await bounded(kv.get(TOMBSTONE_COPY_FAILED_KEY)); failed = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : null; } catch { failed = null; } }
+        checks.tombstoneCopy = { ok: !failed && !inv.truncated && inv.deleteFailed === 0, objects: inv.objects, overdueDeleted: inv.deleted, deleteFailed: inv.deleteFailed, truncated: inv.truncated,
+            ...(failed ? { lastWriteFailure: failed.at || null } : {}) };
+        if (failed) {
+            const a = await fireAlertDetailed('tombstone_copy.write_failed', `Seconde copie des traces d’effacement : une écriture a échoué (${failed.at || 'date inconnue'}, phase ${failed.phase || '?'}). La trace est dans Upstash seule ; une restauration devra le constater (docs/ops/RPO_RTO.md).`, { at: failed.at || null, phase: failed.phase || null });
+            if (a.fired) { alertCount++; if (a.kept) { try { await bounded(kv.del(TOMBSTONE_COPY_FAILED_KEY)); } catch { /* alert again next hour */ } } }
+        }
+        if (inv.deleteFailed > 0 && await fireAlert('tombstone_copy.retention', `Seconde copie des traces d’effacement : ${inv.deleteFailed} objet(s) de plus de 40 jours non supprimé(s) (droit « suppression » du jeton ?).`, { deleteFailed: inv.deleteFailed })) alertCount++;
+    } catch (err) {
+        checks.tombstoneCopy = { ok: false, error: err?.name || 'Error', status: err?.$metadata?.httpStatusCode ?? null };
+        checkFailed('tombstoneCopy', err);
+        if (await fireAlert('tombstone_copy.unreachable', 'Seconde copie des traces d’effacement : le compartiment K3 ne répond pas (ou refuse le jeton). Les effacements continuent avec Upstash seul.', { error: err?.name || 'Error', status: err?.$metadata?.httpStatusCode ?? null })) alertCount++;
     }
 
     // Check 3: the ingestion jobs, EACH ON ITS OWN (RA-03): a failed last run, a late run or a missing run of one job is no longer hidden by another job

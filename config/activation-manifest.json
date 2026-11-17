@@ -1848,6 +1848,71 @@
       "nature": "config",
       "format": "^(on)?$",
       "note": "Actualités v2: the approver of an ADA article must not be its author"
+    },
+    "TOMBSTONE_COPY_S3_ENDPOINT": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent",
+      "format": "^https://[a-z0-9]+\\.eu\\.r2\\.cloudflarestorage\\.com$"
+    },
+    "TOMBSTONE_COPY_S3_BUCKET": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
+    },
+    "TOMBSTONE_COPY_S3_ACCESS_KEY_ID": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
+    },
+    "TOMBSTONE_COPY_S3_SECRET_ACCESS_KEY": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
+    },
+    "TOMBSTONE_COPY_KEY": {
+      "class": "optional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent",
+      "format": "^[0-9a-fA-F]{64}$"
+    },
+    "TOMBSTONE_COPY_S3_PREFIX": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
+    },
+    "TOMBSTONE_COPY_S3_REGION": {
+      "class": "optional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "object-storage",
+      "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
     }
   },
   "platform": [

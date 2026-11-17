@@ -24,6 +24,14 @@
  *
  * V2 (owner review 09/11/2026): erasures completed AFTER the newest backup are in no ledger; they are in the erasure tombstones (KV, written before each
  * erasure). `--kv` or `--tombstones-file <json>` merges them; `--execute` refuses without one of them (or an explicit `--no-tombstones`).
+ *
+ * D5 b (owner decision 17/11/2026): the tombstones also have a second, encrypted copy in the K3 object storage (api/_services/erasure-tombstone-copy.js).
+ *   --kv                       reads Upstash AND, when the TOMBSTONE_COPY_* variables are set, the copy; the union is replayed
+ *   --copy                     reads the copy (TOMBSTONE_COPY_* variables; the token needs read + list)
+ *   --accept-single-copy kv|copy   the operator's recorded decision that this store alone is complete (after checking the « tombstone_copy.* » and
+ *                              « kv.data_lost » alert history): only its own problems then block. Without it, ANY unexplained gap between the two stores, a
+ *                              store that was not read although it was in use, an object that does not authenticate, refuses `--execute`
+ *                              (TOMBSTONES_INCOMPLETE). Full procedure: docs/ops/RPO_RTO.md (§ Tombstones) and ops/cloud-backup/README.md.
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -291,7 +299,11 @@ async function replayMain() {
   // lazily: the cloud verifier job runs this script from a minimal file set (ops/cloud-backup/job-entrypoint.sh) WITHOUT the KV module; only the
   // operator's restore (--kv / --tombstones-file, full repository) needs it. Closure test: tests/unit/v2-job-archive-closure.test.js
   let T = null;
-  if (arg('tombstones-file') || process.argv.includes('--kv')) T = await import('../api/_services/erasure-tombstones.js');
+  const useCopy = process.argv.includes('--copy');
+  const acceptSingle = arg('accept-single-copy') || null;
+  if (acceptSingle && !['kv', 'copy'].includes(acceptSingle)) die('--accept-single-copy : kv ou copy.');
+  if (arg('tombstones-file') || process.argv.includes('--kv') || useCopy) T = await import('../api/_services/erasure-tombstones.js');
+  /** @type {string[] | null} */ let combinedProblems = null; let tombstoneSources = [];
   if (arg('tombstones-file')) {
     try {
       const raw = JSON.parse(fs.readFileSync(arg('tombstones-file'), 'utf8'));
@@ -299,15 +311,30 @@ async function replayMain() {
         : { entries: T.parseTombstones(raw.entries), last: raw.last ?? null, length: Number(raw.length ?? (raw.entries || []).length) };
       tombstoneSource = 'file';
     } catch { return die('--tombstones-file illisible.'); }
-  } else if (process.argv.includes('--kv')) {
-    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) die('--kv : KV_REST_API_URL et KV_REST_API_TOKEN sont nécessaires.');
-    try { snap = await T.createErasureTombstones({ requireRemote: true }).snapshot(); tombstoneSource = 'kv'; } catch { return die('--kv : lecture des pierres tombales impossible (rien n’est rejoué).'); }
+  } else if (process.argv.includes('--kv') || useCopy) {
+    const C = await import('../api/_services/erasure-tombstone-copy.js');
+    const cfg = C.copyConfig(process.env);
+    if (cfg.invalid) die(`variables TOMBSTONE_COPY_* invalides (${cfg.reason}) : rien n’est rejoué.`);
+    if (useCopy && !cfg.enabled) die('--copy : les variables TOMBSTONE_COPY_* sont nécessaires.');
+    let kvSnap = null; let copySnap = null;
+    if (process.argv.includes('--kv')) {
+      if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) die('--kv : KV_REST_API_URL et KV_REST_API_TOKEN sont nécessaires.');
+      try { kvSnap = await T.createErasureTombstones({ requireRemote: true, copy: null }).snapshot(); } catch { return die('--kv : lecture des pierres tombales impossible (rien n’est rejoué).'); }
+    }
+    if (cfg.enabled) {
+      // the copy is unreadable: never a silent fallback to Upstash alone — the combination below reports COPY:NOT_READ (or the operator accepts kv alone)
+      try { copySnap = await C.createTombstoneCopy(cfg).snapshot(); } catch { copySnap = null; }
+    }
+    const combined = T.combineTombstoneSnapshots({ kv: kvSnap, copy: copySnap, copyExpected: cfg.enabled }, since, { acceptSingle: /** @type {any} */ (acceptSingle) });
+    combinedProblems = combined.problems; tombstoneSources = combined.sources;
+    snap = { entries: combined.entries, last: null, length: combined.entries.length, combined: true };
+    tombstoneSource = tombstoneSources.join('+') || 'none';
   } else if (execute && !process.argv.includes('--no-tombstones')) {
     die('--execute exige --kv ou --tombstones-file <json> : sans eux, une personne effacée après la dernière sauvegarde reviendrait sans bruit (ou --no-tombstones, choix explicite).');
   }
   let tombstoneProblems = [];
   if (snap && T) {
-    tombstoneProblems = snap.fileWithoutMarker ? [] : T.tombstoneCoverage(snap, since);
+    tombstoneProblems = combinedProblems ?? (snap.fileWithoutMarker ? [] : T.tombstoneCoverage(snap, since));
     plan = mergeTombstones(plan, T.tombstoneStates(snap.entries), since, { includeUnconfirmed: process.argv.includes('--include-unconfirmed') });
     if (execute && tombstoneProblems.length) die(`pierres tombales incomplètes (${tombstoneProblems.join(', ')}) : rien n’est rejoué (TOMBSTONES_INCOMPLETE).`);
     if (execute && plan.tombstonesUnconfirmed > 0 && !process.argv.includes('--include-unconfirmed') && !process.argv.includes('--skip-unconfirmed')) {
@@ -321,7 +348,7 @@ async function replayMain() {
     const present = inspected.filter((e) => e.present).length;
     const prot = await inspectProtections(pool, plan.protections);
     const withdrawals = await inspectWithdrawals(pool, plan.withdrawals);
-    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, tombstoneSource, tombstonesAdded: plan.tombstonesAdded ?? 0, tombstonesUnconfirmed: plan.tombstonesUnconfirmed ?? 0, tombstonesAborted: plan.tombstonesAborted ?? 0, tombstoneProblems, presentAgain: present, withdrawalsSince: withdrawals.length,
+    const summary = { ledgerVersion: ledger.version ?? 1, since, ledgerEntries: entries.length, tombstoneSource, ...(acceptSingle ? { acceptedSingleCopy: acceptSingle } : {}), tombstonesAdded: plan.tombstonesAdded ?? 0, tombstonesUnconfirmed: plan.tombstonesUnconfirmed ?? 0, tombstonesAborted: plan.tombstonesAborted ?? 0, tombstoneProblems, presentAgain: present, withdrawalsSince: withdrawals.length,
       messagesPresentAgain: withdrawals.filter((w) => w.present).length, holdsMissing: prot.legalHolds.filter((h) => h.state === 'missing').length,
       holdsNotActive: prot.legalHolds.filter((h) => h.state === 'not_active').length, requestsMissing: prot.requests.filter((q) => q.state !== 'present').length };
     if (!execute) { console.log(JSON.stringify({ mode: 'dry-run', ...summary })); return; }

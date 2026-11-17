@@ -15,6 +15,7 @@ const SELECTED = [...ep.slice(ep.indexOf('tar -xzf'), ep.indexOf('cd "$W/app"'))
 const BARE_ALLOWED = new Set(['pg', '@aws-sdk/client-s3']);
 // imports of files OUTSIDE the job set, allowed only on operator paths that never run in a job (each one is lazy and behind its flag)
 const OPERATOR_ONLY = new Set(['scripts/db-erasure-replay.mjs → ../api/_services/erasure-tombstones.js (--kv / --tombstones-file)',
+  'scripts/db-erasure-replay.mjs → ../api/_services/erasure-tombstone-copy.js (--kv / --copy, D5 b)',
   'scripts/db-erasure-replay.mjs → drizzle-orm/node-postgres (--execute)', 'scripts/db-erasure-replay.mjs → ../src/db/schema.js (--execute)',
   'scripts/db-erasure-replay.mjs → ../api/_services/privacy.js (--execute)']);
 

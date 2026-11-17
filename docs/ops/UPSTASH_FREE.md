@@ -52,6 +52,13 @@ commands a month for keep-alive, against 500K.
    - Mailjet retry list: the pending contact ids are unknown; ask the owner to review recent erasures with Mailjet support (human intervention).
 4. The next hourly health check is green once the sentinel is back.
 
+## Second copy of the erasure tombstones (D5 b, 17/11/2026)
+Owner decision D5 b: the tombstones also go, encrypted (AES-256-GCM), to a dedicated Cloudflare R2 EU bucket of the K3 object storage
+(`api/_services/erasure-tombstone-copy.js`, variables `TOMBSTONE_COPY_*`, owner setup `CONTROL/v2/k3_tombstone_key_setup.sh`). Off until those
+variables are set. When on: an erasure is refused only if both stores fail; a copy failure raises `tombstone_copy.write_failed`; the restore reads both
+and refuses an unexplained disagreement, including a complete Upstash loss, unless the operator records `--accept-single-copy` (`docs/ops/RPO_RTO.md` § 3).
+Not operationally complete before the genuine recovery test of `docs/ops/RPO_RTO.md` § 4.
+
 ## What is not solved on Free
-See `CONTROL/master/completion/C5_UPSTASH_FREE_RISK.md` (outside the repository): the two CRITICAL items have no second copy, and the 1-week deletion
-clause promises no restore. Moving the Mailjet retry list to Postgres needs a new migration (0050+), not done here.
+See `CONTROL/master/completion/C5_UPSTASH_FREE_RISK.md` (outside the repository): the Mailjet retry list has no second copy, the tombstones have one
+only once D5 b is activated, and the 1-week deletion clause promises no restore. Moving the Mailjet retry list to Postgres needs a new migration (0050+), not done here.
