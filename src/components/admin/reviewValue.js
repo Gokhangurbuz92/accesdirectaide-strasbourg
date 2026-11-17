@@ -14,4 +14,5 @@ export const publicReason = (code) => ({
   PUBLICATION_HOLD: i18n.t('admin:review_value.reason.publication_hold', 'en attente'), NO_PROVENANCE: i18n.t('admin:review_value.reason.no_provenance', 'sans source officielle'),
   NO_VERIFICATION_DATE: i18n.t('admin:review_value.reason.no_verification_date', 'sans date de vérification'), VERIFICATION_IN_FUTURE: i18n.t('admin:review_value.reason.verification_in_future', 'date de vérification invalide'),
   VERIFICATION_STALE: i18n.t('admin:review_value.reason.verification_stale', 'vérification trop ancienne'),
+  INSTITUTION_FUNDING_SOURCE: i18n.t('admin:review_value.reason.institution_funding_source', 'financement pour collectivités et structures (Aides-territoires) : jamais montré comme aide aux particuliers'),
 }[code] || code);

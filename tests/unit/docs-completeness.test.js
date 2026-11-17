@@ -7,7 +7,8 @@ import { existsSync } from 'fs';
 describe('Documentation completeness', () => {
   const requiredDocs = [
     'README.md',
-    'LICENSE',
+    'COPYRIGHT.md',
+    'public/fonts/LICENSE.txt',   // SIL OFL 1.1 of the shipped Inter fonts (C9)
     'CHANGELOG.md',
     'docs/ARCHITECTURE.md',
     'docs/CONTRIBUTING.md',

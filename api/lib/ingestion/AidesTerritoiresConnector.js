@@ -317,6 +317,19 @@ export class AidesTerritoiresConnector extends SourceConnector {
     }
 
     /**
+     * C11 / D08 (owner, Paket 4, 17/11/2026) — supersedes AT-HH-1's audience filter: Aides-territoires lists funding for institutions, structures and
+     * territories; NONE of its items is a citizen aid, whatever its targeted_audiences (the provider's audience list read 14/11 has no audience for
+     * individuals: CONTROL/catalogue/AT_KITLE_LISTESI.json). Called by IngestionPipelineCore after parse(): every item is dropped before validation and
+     * upsert into the citizen « Aide » table and counted as excludedNonCitizen. The public-visibility rule (api/lib/publicVisibility.js
+     * isInstitutionFundingSource) is the second barrier for rows that already exist.
+     * @param {unknown} _parsed the object returned by parse()
+     * @returns {true}
+     */
+    excludeFromCitizenCatalogue(_parsed) {
+        return true;
+    }
+
+    /**
      * @param {object} item
      * @returns {string}
      */

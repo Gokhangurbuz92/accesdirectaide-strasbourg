@@ -1,5 +1,10 @@
 # Changelog
 
+## Droits d'auteur — 2026-11-17
+
+- Fichier `LICENSE` (MIT) retiré pour les versions à venir ; `COPYRIGHT.md` : dépôt public, pas open source, tous droits réservés. `package.json` : `"license": "UNLICENSED"`.
+- Les versions publiées avant ce changement restent sous MIT pour qui les a obtenues sous cette licence (pas de révocation rétroactive). Les licences des composants tiers ne changent pas.
+
 ## [Unreleased] — 2026-03-25
 
 ### Admin Panel Complete

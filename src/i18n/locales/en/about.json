@@ -48,7 +48,7 @@
  "method.statuses.refused.text": "The source does not confirm the information, or it has disappeared: the page is removed from the site, with the reason.",
  "method.report.title": "Report an error",
  "method.report.text": "Anyone can make a mistake. If you see an error, <0>report it using the contact form</0>: every report is read, and the page is checked again against its source.",
- "sources.list.aides_territoires": "National and local database of public aid schemes",
+ "sources.list.aides_territoires": "Aid for local authorities, associations and project holders to fund local projects. These are not aid for individuals: we never present them as such.",
  "sources.list.annuaire": "Addresses, opening hours and contact details of public services (support centres)",
  "sources.list.sirene": "Existence, address and activity of associations and organisations (establishment open or closed)",
  "sources.list.service_public": "Administrative information and rights",

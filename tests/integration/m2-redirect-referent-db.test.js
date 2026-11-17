@@ -358,6 +358,9 @@ describe.skipIf(!hasDatabase)('M2 — redirect, follow-up and référent de parc
     for (const p of [P.y, P.z, P.w, P.x2]) expect((await volunteer(p)).statusCode, p.id).toBe(404);
     expect((await volunteer(P.x1, { displayNameConsent: false })).body.error).toBe('NAME_CONSENT_REQUIRED');
     expect((await volunteer(P.x1, { displayName: ' ' })).body.error).toBe('INVALID_NAME');
+    // C7 data minimisation: at most 80 characters, and a name only — no e-mail address, link or number
+    expect((await volunteer(P.x1, { displayName: 'C'.repeat(81) })).body.error).toBe('INVALID_NAME');
+    for (const n of ['Camille camille@example.org', 'Camille 06 12 34 56 78', 'Camille https://example.org', 'Camille www.example.org']) expect((await volunteer(P.x1, { displayName: n })).body.error, n).toBe('NAME_NOT_MINIMAL');
     expect((await referentRows()).length).toBe(0);
     const v = await volunteer(P.x1);
     expect(v.statusCode, JSON.stringify(v.body)).toBe(201);
@@ -491,5 +494,35 @@ describe.skipIf(!hasDatabase)('M2 — redirect, follow-up and référent de parc
     expect((await referentView(OTHER, FOREIGN)).body).toMatchObject({ referent: null, proposal: null });
     expect((await referentRows(FOREIGN)).length).toBe(1);
     expect((await pro(H.team, P.admin, { method: 'PATCH', body: { targetUserId: P.x2.id, reactivate: true } })).statusCode).toBe(200);
+  });
+
+  // ───────────────────────────── art. 15 export (C7 / M2) ─────────────────────────────
+  it('art. 15 export: the person gets the référent rows of their dossiers with their history, the referral chain and the sender texts — never the receiver texts, the professional account id or an actor id', async (t) => {
+    needs(t); await reset();
+    const SENDER_TEXT = `texte-pour-la-personne-${TS}`;
+    const b = await sent(S.W, { message: SENDER_TEXT });
+    const privacy = await import('../../api/_services/privacy.js');
+    const out = await privacy.createPrivacyRightsService({ db, cryptoLib: await import('node:crypto') }).getExportData(CIT.id);
+    // référent rows (proposed, accepted, ended ones from the scenarios above) with their decisions and history, as the person saw them
+    const refs = out.dossierReferents;
+    expect(refs.length).toBe((await referentRows()).length);
+    expect(refs.length).toBeGreaterThan(0);
+    expect(refs.every((f) => f.dossierId === DOSSIER && f.organization === 'Org test X' && typeof f.displayName === 'string' && Array.isArray(f.events) && f.events.length > 0)).toBe(true);
+    expect(refs.some((f) => f.status === 'ENDED' && f.endedBy)).toBe(true);
+    expect(refs.some((f) => f.citizenDecisionAt)).toBe(true);
+    const flat = JSON.stringify(refs);
+    expect(flat).not.toContain(P.x1.id); expect(flat).not.toContain(P.x2.id); expect(flat).not.toMatch(/proUserId|actorId/);
+    // referrals: the sender's message as Mon Espace shows it, the answer code, and the 0047 chain (previous referral, suggested organization)
+    const mineB = out.referrals.find((r) => r.id === b);
+    expect(mineB).toMatchObject({ message: SENDER_TEXT, to: 'Org test W' });
+    expect(out.referrals.some((r) => r.responseCode === 'REDIRECT_SUGGESTED' && r.suggestedOrganization === 'Org test Z')).toBe(true);
+    expect(out.referrals.some((r) => r.previousReferralId)).toBe(true);
+    expect(out.referrals.every((r) => !('messageEncrypted' in r))).toBe(true);
+    // 0048 history: sender texts only, decrypted; the receivers' answers are counted as organization-held, never released here
+    expect(out.referralTextHistory.some((m) => m.referralId === b && m.side === 'SENDER' && m.text === SENDER_TEXT)).toBe(true);
+    expect(out.referralTextHistory.every((m) => m.side === 'SENDER')).toBe(true);
+    expect(JSON.stringify(out)).not.toContain(SECRET_NOTE);
+    expect(out.organizationHeldRecords.referralReceiverTexts.find((x) => x.organization === 'Org test Y')?.count).toBeGreaterThan(0);
+    expect(out.exportInfo).toBeTruthy();
   });
 });

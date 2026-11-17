@@ -34,6 +34,26 @@ export const DEFAULT_MAX_AGE_DAYS = 180;
 /** Public `statut` values per kind (Structure rows use 'actif' for the directory; the sitemap historically used 'publie'). */
 export const PUBLIC_STATUTS = /** @type {Record<ContentKind, string[]>} */ ({ aide: ['publie'], demarche: ['publie'], dispositif: ['publie'], structure: ['actif', 'publie'] });
 
+/**
+ * C11 / D08 (owner, Paket 4, 17/11/2026): Aides-territoires lists funding for institutions, structures and territories (local authorities, associations, project
+ * holders) — it is NOT a source of aid for individuals. A record that comes from it is never shown to the public as a citizen « aide », in any mode, whatever its
+ * verification state (catalogue, detail, search, assistant retrieval, sitemap, orientation, favourites, PDF, page heads: every public path uses this rule).
+ * The administration keeps seeing such records. A record is from Aides-territoires when ANY of its provenance marks says so: the connector name (providerName),
+ * the provider id written by the connector (externalId « aides-territoires:<id> »), source_donnee, or a source URL on the Aides-territoires host.
+ */
+export const INSTITUTION_FUNDING_PROVIDERS = ['aides-territoires'];
+/** the same pattern in JS and in PostgreSQL (~*): http(s), any sub-domain of the host, then a path, a port or the end */
+export const INSTITUTION_FUNDING_URL_RE = '^https?://([a-z0-9-]+[.])*aides-territoires[.]beta[.]gouv[.]fr(/|:|$)';
+const FUNDING_URL = new RegExp(INSTITUTION_FUNDING_URL_RE, 'i');
+/** @param {Record<string, any> | null | undefined} r @returns {boolean} */
+export function isInstitutionFundingSource(r) {
+  if (!r) return false;
+  if (INSTITUTION_FUNDING_PROVIDERS.includes(String(r.providerName ?? '').trim().toLowerCase())) return true;
+  if (INSTITUTION_FUNDING_PROVIDERS.includes(String(r.source_donnee ?? '').trim().toLowerCase())) return true;
+  if (INSTITUTION_FUNDING_PROVIDERS.some((p) => String(r.externalId ?? '').toLowerCase().startsWith(`${p}:`))) return true;
+  return [r.source_url, r.source_url_exact].some((u) => FUNDING_URL.test(String(u ?? '').trim()));
+}
+
 /** @param {Record<string, string | undefined>} [env] @returns {'strict' | 'lab'} */
 export function contentMode(env = process.env) {
   const production = env.NODE_ENV === 'production' || env.VERCEL_ENV === 'production';
@@ -62,6 +82,7 @@ export function decide(r, kind, opts = {}) {
   if (!r) return { visible: false, contentStatus: 'HIDDEN', freshness: null, reasons: ['NOT_FOUND'] };
   if (!PUBLIC_STATUTS[kind].includes(String(r.statut ?? ''))) reasons.push('NOT_PUBLISHED');
   else if (kind === 'aide' && /** @type {any} */ (r).status_code === 'ARCHIVED') reasons.push('ARCHIVED');   // callers that do not select status_code are unaffected; the SQL forms always enforce it
+  if (kind === 'aide' && isInstitutionFundingSource(/** @type {any} */ (r))) reasons.push('INSTITUTION_FUNDING_SOURCE');   // C11 / D08: never citizen aid, in any mode
   const origin = String(r.data_origin ?? 'unclassified');
   const labOrigin = LAB_ORIGINS.includes(origin);
   if (reasons.length === 0 && labOrigin && mode === 'lab') return { visible: true, contentStatus: 'LAB_UNVERIFIED', freshness: null, reasons: [] };
@@ -90,13 +111,25 @@ export function decide(r, kind, opts = {}) {
 export function visibleWhere(table, kind, opts = {}) {
   const now = opts.now ?? new Date(); const mode = opts.mode ?? contentMode(); const maxAge = opts.maxAge ?? maxAgeDays();
   const oldest = new Date(now.getTime() - maxAge * 86400000); const latest = new Date(now.getTime() + 86400000);
-  const published = and(inArray(table.statut, PUBLIC_STATUTS[kind]), kind === 'aide' && table.status_code ? ne(table.status_code, 'ARCHIVED') : undefined);
+  const published = and(inArray(table.statut, PUBLIC_STATUTS[kind]), kind === 'aide' && table.status_code ? ne(table.status_code, 'ARCHIVED') : undefined,
+    kind === 'aide' ? notFundingWhere(table) : undefined);
   const provenance = or(and(isNotNull(table.source_url), sql`btrim(${table.source_url}) <> ''`), and(isNotNull(table.source_url_exact), sql`btrim(${table.source_url_exact}) <> ''`));
   const strict = and(
     eq(table.launch_eligible, true), eq(table.verification_status, 'VERIFIED'), isNotNull(table.verified_by), eq(table.territory_verified, true), isNull(table.publication_hold),
     notInArray(table.data_origin, LAB_ORIGINS), isNotNull(table.date_verification), gte(table.date_verification, oldest), lte(table.date_verification, latest), provenance,
   );
   return and(published, mode === 'lab' ? or(strict, inArray(table.data_origin, LAB_ORIGINS)) : strict);
+}
+
+/** C11 / D08 — NOT isInstitutionFundingSource(), drizzle form (only the provenance columns the table has; Aide has them all) @param {any} table */
+function notFundingWhere(table) {
+  const providers = sql.join(INSTITUTION_FUNDING_PROVIDERS.map((p) => sql`${p}`), sql`, `);
+  /** @type {any[]} */ const marks = [];
+  if (table.providerName) marks.push(sql`lower(btrim(COALESCE(${table.providerName}, ''))) IN (${providers})`);
+  if (table.source_donnee) marks.push(sql`lower(btrim(COALESCE(${table.source_donnee}, ''))) IN (${providers})`);
+  if (table.externalId) for (const p of INSTITUTION_FUNDING_PROVIDERS) marks.push(sql`lower(COALESCE(${table.externalId}, '')) LIKE ${`${p}:%`}`);
+  for (const c of ['source_url', 'source_url_exact']) if (table[c]) marks.push(sql`btrim(COALESCE(${table[c]}, '')) ~* ${INSTITUTION_FUNDING_URL_RE}`);
+  return marks.length ? sql`NOT (${sql.join(marks, sql` OR `)})` : undefined;
 }
 
 /**
@@ -109,7 +142,12 @@ export function visibleSql(kind, opts = {}) {
   const c = (/** @type {string} */ n) => sql.raw(`${a}"${n}"`);
   const statuts = sql.join(PUBLIC_STATUTS[kind].map((s) => sql`${s}`), sql`, `);
   const origins = sql.join(LAB_ORIGINS.map((s) => sql`${s}`), sql`, `);
-  const notArchived = kind === 'aide' ? sql` AND ${c('status_code')} <> 'ARCHIVED'` : sql``;
+  const providers = sql.join(INSTITUTION_FUNDING_PROVIDERS.map((p) => sql`${p}`), sql`, `);
+  const externalIds = sql.join(INSTITUTION_FUNDING_PROVIDERS.map((p) => sql`lower(COALESCE(${c('externalId')}, '')) LIKE ${`${p}:%`}`), sql` OR `);
+  // C11 / D08: an Aides-territoires record is never a public citizen aide (same marks as isInstitutionFundingSource)
+  const notArchived = kind === 'aide' ? sql` AND ${c('status_code')} <> 'ARCHIVED' AND NOT (lower(btrim(COALESCE(${c('providerName')}, ''))) IN (${providers})
+    OR lower(btrim(COALESCE(${c('source_donnee')}, ''))) IN (${providers}) OR ${externalIds}
+    OR btrim(COALESCE(${c('source_url')}, '')) ~* ${INSTITUTION_FUNDING_URL_RE} OR btrim(COALESCE(${c('source_url_exact')}, '')) ~* ${INSTITUTION_FUNDING_URL_RE})` : sql``;
   const strict = sql`(${c('launch_eligible')} = true AND ${c('verification_status')} = 'VERIFIED' AND ${c('verified_by')} IS NOT NULL AND ${c('territory_verified')} = true AND ${c('publication_hold')} IS NULL
     AND ${c('data_origin')} NOT IN (${origins}) AND ${c('date_verification')} IS NOT NULL AND ${c('date_verification')} <= now() + interval '1 day' AND ${c('date_verification')} >= now() - make_interval(days => ${maxAge})
     AND (NULLIF(btrim(COALESCE(${c('source_url')}, '')), '') IS NOT NULL OR NULLIF(btrim(COALESCE(${c('source_url_exact')}, '')), '') IS NOT NULL))`;

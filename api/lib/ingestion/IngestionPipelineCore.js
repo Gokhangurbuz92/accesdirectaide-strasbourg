@@ -51,6 +51,7 @@ export class IngestionPipelineCore {
             updated: 0,
             heldForReverification: 0,
             skippedExisting: 0,
+            excludedNonCitizen: 0,
             errors: [],
             durationByStage: {
                 fetchMs: 0,
@@ -135,6 +136,12 @@ export class IngestionPipelineCore {
     async _processItem(url) {
         const rawHtmlOrJson = await this.connector.fetch(url);
         const unvalidatedData = await this.connector.parse(rawHtmlOrJson, url);
+
+        // AT-HH-1: a connector that knows its items' audience drops what is not for private persons (never upserted as a citizen record)
+        if (typeof this.connector.excludeFromCitizenCatalogue === 'function' && this.connector.excludeFromCitizenCatalogue(unvalidatedData)) {
+            this.stats.excludedNonCitizen++;
+            return null;
+        }
 
         // Required minimal check to ensure mapping exists
         if (!unvalidatedData.titre && !unvalidatedData.title) {
@@ -371,6 +378,7 @@ export class IngestionPipelineCore {
                     created: this.stats.created,
                     updated: this.stats.updated,
                     skipped: this.stats.skippedExisting,
+                    excluded_non_citizen: this.stats.excludedNonCitizen,
                     errors: this.stats.errors.slice(0, 20),
                     processing_stage_ms: this.stats.durationByStage
                 }

@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { eq, and, or, sql, desc } from 'drizzle-orm';
-import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, requestGuestSchema } from '../_utils/schema-features.js';
+import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, referralChainSchema, requestGuestSchema } from '../_utils/schema-features.js';
+import { openText } from '../lib/data-keys.js';
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
@@ -446,8 +447,36 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             const safeRows = async (q) => { if (typeof db.execute !== 'function') return []; try { return (await db.execute(q)).rows || []; } catch { noteReadFailure(); return []; } };
             const caseFollowUps = await safeRows(sql`SELECT c."sharedDiagnosticId" AS "dossierId", s.nom AS organization, c.status, c.outcome, c."outcomeCitizenSummary" AS summary, c."openedAt", c."closedAt"
               FROM "ProCase" c JOIN "SharedDiagnostic" d ON d.id = c."sharedDiagnosticId" JOIN "Structure" s ON s.id = c."structureId" WHERE d."ownerCitizenId" = ${userId}`);
-            const referrals = await safeRows(sql`SELECT r."sharedDiagnosticId" AS "dossierId", sf.nom AS "from", st.nom AS "to", r.status, r."reasonCode", r.outcome, r."outcomeCitizenSummary" AS summary, r."createdAt", r."citizenDecisionAt"
-              FROM "Referral" r JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId" JOIN "Structure" sf ON sf.id = r."fromStructureId" JOIN "Structure" st ON st.id = r."toStructureId" WHERE d."ownerCitizenId" = ${userId}`);
+            // C7 / M2 (art. 15 completeness): what the person sees of a referral in Mon Espace (api/_services/referrals.js citizenList) — the sender's message, the
+            // controlled answer code and its dates, and with migration 0047 the chain (previous referral, organization suggested by a declining receiver)
+            const m2 = await referralChainSchema(/** @type {any} */ (db)).catch(() => { if (typeof db.execute === 'function') noteReadFailure(); return { chain: false, referent: false, messages: false }; });   // unknown schema = sections not read: counted
+            const referralRows = await safeRows(sql`SELECT r.id, r."sharedDiagnosticId" AS "dossierId", sf.nom AS "from", st.nom AS "to", r.status, r."reasonCode", r."messageEncrypted", r."responseCode", r."respondedAt", r."closedAt",
+              r.outcome, r."outcomeCitizenSummary" AS summary, r."createdAt", r."citizenDecisionAt"${m2.chain ? sql`, r."previousReferralId", ss.nom AS "suggestedOrganization"` : sql``}
+              FROM "Referral" r JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId" JOIN "Structure" sf ON sf.id = r."fromStructureId" JOIN "Structure" st ON st.id = r."toStructureId"
+              ${m2.chain ? sql`LEFT JOIN "Structure" ss ON ss.id = r."suggestedStructureId"` : sql``} WHERE d."ownerCitizenId" = ${userId}`);
+            const referralCtx = (/** @type {string} */ id) => ({ purpose: 'referral-message', context: `referral:${id}` });
+            const openReferralText = (/** @type {string} */ id, /** @type {string | null} */ enc) => { if (!enc) return null; try { return openText(enc, referralCtx(id)); } catch { noteReadFailure(); return null; } };
+            const referrals = referralRows.map(({ messageEncrypted, ...r }) => ({ ...r, message: openReferralText(r.id, messageEncrypted) }));
+            // M2 / 0048: the history of the SENDER's texts (written for the person to read). The RECEIVER's texts are not shown to the person in Mon Espace: they are
+            // listed below as organization-held records (count per organization), never silently left out.
+            const referralTextHistory = m2.messages ? (await safeRows(sql`SELECT m.id, m."referralId", m.side, m."bodyEncrypted", m."createdAt" FROM "ReferralMessage" m JOIN "Referral" r ON r.id = m."referralId"
+              JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId" WHERE d."ownerCitizenId" = ${userId} AND m.side = 'SENDER' ORDER BY m."createdAt"`))
+              .map((m) => ({ id: m.id, referralId: m.referralId, side: m.side, text: openReferralText(m.referralId, m.bodyEncrypted), createdAt: m.createdAt })) : [];
+            const referralReceiverTexts = await safeRows(m2.messages
+              ? sql`SELECT s.nom AS organization, count(*)::int AS count FROM "ReferralMessage" m JOIN "Referral" r ON r.id = m."referralId" JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId"
+                  JOIN "Structure" s ON s.id = r."toStructureId" WHERE d."ownerCitizenId" = ${userId} AND m.side = 'RECEIVER' GROUP BY s.nom ORDER BY s.nom`
+              : sql`SELECT s.nom AS organization, count(*)::int AS count FROM "Referral" r JOIN "SharedDiagnostic" d ON d.id = r."sharedDiagnosticId" JOIN "Structure" s ON s.id = r."toStructureId"
+                  WHERE d."ownerCitizenId" = ${userId} AND r."responseMessageEncrypted" IS NOT NULL GROUP BY s.nom ORDER BY s.nom`);
+            // C7 / M2 / 0047: the « référent de parcours » rows of the person's dossiers (proposals, decisions, ends — also ended ones) and their history, without the
+            // professional's account id or any actor id
+            const dossierReferents = [];
+            if (m2.referent) {
+                for (const f of await safeRows(sql`SELECT f.id, f."sharedDiagnosticId" AS "dossierId", s.nom AS organization, f."displayName", f.status, f."proposedAt", f."citizenDecisionAt", f."endedAt", f."endedBy"
+                  FROM "DossierReferent" f JOIN "SharedDiagnostic" d ON d.id = f."sharedDiagnosticId" JOIN "Structure" s ON s.id = f."structureId" WHERE d."ownerCitizenId" = ${userId} ORDER BY f."proposedAt"`)) {
+                    const events = await safeRows(sql`SELECT "actorType" AS actor, "fromStatus" AS "from", "toStatus" AS "to", reason, "createdAt" FROM "DossierReferentEvent" WHERE "referentId" = ${f.id} ORDER BY "createdAt"`);
+                    dossierReferents.push({ ...f, events });
+                }
+            }
             const internalNotes = await safeRows(sql`SELECT s.nom AS organization, count(*)::int AS count FROM "ProCaseNote" n JOIN "ProCase" c ON c.id = n."caseId"
               JOIN "SharedDiagnostic" d ON d.id = c."sharedDiagnosticId" JOIN "Structure" s ON s.id = c."structureId" WHERE d."ownerCitizenId" = ${userId} AND n.visibility = 'INTERNAL' GROUP BY s.nom ORDER BY s.nom`);
             const { releasedExtract } = await import('./dsr-review.js');
@@ -461,6 +490,11 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 explanation: internalNotes.length
                     ? 'Des notes internes des structures qui vous accompagnent vous concernent. Elles ne sont pas transmises automatiquement : elles doivent être examinées par une personne habilitée (informations concernant des tiers, restrictions applicables). Votre demande reste ouverte pour cette partie.'
                     : 'Aucune note interne de structure ne vous concerne.',
+                // M2: the answers written by a receiving organization on your referrals (not shown in Mon Espace); counted here, given on request by a person
+                referralReceiverTexts,
+                referralReceiverTextsExplanation: referralReceiverTexts.length
+                    ? 'Des structures ont répondu par écrit à des orientations vous concernant. Ces réponses, échangées entre structures, ne sont pas affichées dans Mon Espace ni transmises automatiquement : demandez-les en exerçant votre droit d’accès : une personne les examinera.'
+                    : 'Aucune réponse écrite de structure sur vos orientations.',
                 reviews,
             };
             const rdvMessageAttachments = (await safeRows(sql`SELECT a.id, a."conversationId", a."messageId", a."uploaderType", a."mimeType", a."byteLength", a."createdAt"
@@ -509,6 +543,8 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 delegationAccess,
                 caseFollowUps,
                 referrals,
+                referralTextHistory,
+                dossierReferents,
                 organizationHeldRecords,
                 rdvMessageAttachments,
                 dossierThreads,

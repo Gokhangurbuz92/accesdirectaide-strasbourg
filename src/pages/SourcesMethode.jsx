@@ -12,13 +12,6 @@ export default function SourcesMethode() {
   // the names are the official names of the services (kept as they are); the notes are ours
   const sources = [
     {
-      id: 'aides-territoires',
-      name: 'Aides-Territoires (Beta.gouv.fr)',
-      url: 'https://aides-territoires.beta.gouv.fr',
-      notes: t('about:sources.list.aides_territoires', 'Base de données nationale et locale des aides publiques'),
-      trust_level: 'officiel'
-    },
-    {
       id: 'annuaire',
       name: "Annuaire de l'administration (Service-Public)",
       url: 'https://lannuaire.service-public.gouv.fr',
@@ -44,6 +37,15 @@ export default function SourcesMethode() {
       name: 'Data.gouv.fr',
       url: 'https://www.data.gouv.fr',
       notes: t('about:sources.list.data_gouv', 'Plateforme ouverte des données publiques'),
+      trust_level: 'officiel'
+    },
+    // C11 / D08 (owner, 17/11/2026): Aides-territoires funds institutions, structures and territories — never presented as aid for individuals
+    // (api/lib/publicVisibility.js isInstitutionFundingSource keeps its records out of every public citizen path)
+    {
+      id: 'aides-territoires',
+      name: 'Aides-Territoires (Beta.gouv.fr)',
+      url: 'https://aides-territoires.beta.gouv.fr',
+      notes: t('about:sources.list.aides_territoires', "Aides aux collectivités, associations et porteurs de projets pour financer des projets de territoire. Ce ne sont pas des aides pour les particuliers : nous ne les présentons jamais comme telles."),
       trust_level: 'officiel'
     }
   ];

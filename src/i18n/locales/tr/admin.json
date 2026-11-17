@@ -1286,6 +1286,7 @@
  "review_value.pmr_confirmed": "doğrulandı (herkese açık site bunu belirtir)",
  "review_value.pmr_not_confirmed": "doğrulanmadı (varsayılan değer; herkese açık site hiçbir şey göstermez)",
  "review_value.reason.archived": "arşivlendi",
+ "review_value.reason.institution_funding_source": "kamu kurumları ve kuruluşlar için finansman (Aides-territoires): hiçbir zaman bireylere yardım olarak gösterilmez",
  "review_value.reason.lab_origin": "LAB’da oluşturulan kayıt",
  "review_value.reason.no_provenance": "resmî kaynak yok",
  "review_value.reason.no_verification_date": "doğrulama tarihi yok",

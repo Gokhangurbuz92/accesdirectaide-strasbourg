@@ -1305,6 +1305,7 @@
  "review_value.pmr_confirmed": "مؤكَّدة (يذكرها الموقع العام)",
  "review_value.pmr_not_confirmed": "غير مؤكَّدة (قيمة افتراضية؛ لا يعرض الموقع العام شيئًا)",
  "review_value.reason.archived": "مؤرشفة",
+ "review_value.reason.institution_funding_source": "تمويل للجماعات المحلية والهياكل (Aides-territoires): لا يُعرض أبدًا كمساعدة للأفراد",
  "review_value.reason.lab_origin": "بطاقة أُنشئت في LAB",
  "review_value.reason.no_provenance": "بلا مصدر رسمي",
  "review_value.reason.no_verification_date": "بلا تاريخ تحقق",

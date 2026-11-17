@@ -1286,6 +1286,7 @@
  "review_value.pmr_confirmed": "bestätigt (die öffentliche Website gibt es an)",
  "review_value.pmr_not_confirmed": "nicht bestätigt (Standardwert; die öffentliche Website zeigt nichts an)",
  "review_value.reason.archived": "archiviert",
+ "review_value.reason.institution_funding_source": "Förderung für Gebietskörperschaften und Einrichtungen (Aides-territoires): nie als Hilfe für Privatpersonen angezeigt",
  "review_value.reason.lab_origin": "im LAB erstellter Eintrag",
  "review_value.reason.no_provenance": "ohne offizielle Quelle",
  "review_value.reason.no_verification_date": "ohne Prüfdatum",

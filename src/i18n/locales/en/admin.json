@@ -1286,6 +1286,7 @@
  "review_value.pmr_confirmed": "confirmed (the public site states it)",
  "review_value.pmr_not_confirmed": "not confirmed (default value; the public site shows nothing)",
  "review_value.reason.archived": "archived",
+ "review_value.reason.institution_funding_source": "funding for local authorities and organisations (Aides-territoires): never shown as aid for individuals",
  "review_value.reason.lab_origin": "record created in the LAB",
  "review_value.reason.no_provenance": "no official source",
  "review_value.reason.no_verification_date": "no verification date",
